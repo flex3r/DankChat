@@ -1,0 +1,56 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    ext.kotlin_version = '1.3.30'
+    ext {
+        apkName = "DankChat"
+        appVersionCode = 1
+        appVersionName = "1.0"
+
+        gradle_build_tools_version = "3.4.0"
+        kotlin_version = "1.3.21"
+        safe_args_version = "1.0.0-alpha09"
+
+        appcompat_version = "1.1.0-alpha04"
+        constraint_version = "1.1.3"
+        core_version = "1.1.0-alpha05"
+        coroutines_version = "1.0.1"
+        koin_version = "1.0.2"
+        lifecycle_version = "2.1.0-alpha04"
+        material_version = "1.1.0-alpha05"
+        nav_version = "2.1.0-alpha02"
+        glide_version = "4.9.0"
+        three_ten_abp_version = "1.2.0"
+        browser_version = "1.0.0"
+        gif_drawable_version = "1.2.16"
+
+
+    }
+    repositories {
+        google()
+        jcenter()
+
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:$gradle_build_tools_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "android.arch.navigation:navigation-safe-args-gradle-plugin:$safe_args_version"
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven { url "https://oss.jfrog.org/artifactory/libs-release" }
+
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

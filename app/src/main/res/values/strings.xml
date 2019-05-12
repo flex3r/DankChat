@@ -1,0 +1,15 @@
+<resources>
+	<string name="app_name">DankChat</string>
+	<string name="chat">Chat</string>
+	<string name="nam">NaM</string>
+	<string name="loading_recent_messages">Loading recent messages</string>
+	<string name="start_chatting">Start chatting</string>
+	<string name="send_a_message">Send a message</string>
+	<string name="login">Login</string>
+	<string name="logout">Logout</string>
+	<string name="reload_emotes">Reload emotes</string>
+	<string name="reconnect">Reconnect</string>
+	<string name="clear_chat">Clear chat</string>
+
+	<string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
+</resources>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools">
+
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		tools:context=".MainActivity">
+
+		<com.google.android.material.appbar.AppBarLayout
+			android:id="@+id/appBarLayout"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
+			app:layout_constraintBottom_toTopOf="@+id/viewPager"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent">
+
+			<com.google.android.material.tabs.TabLayout
+				android:id="@+id/tabs"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				app:tabBackground="@color/colorPrimary"
+				app:tabGravity="fill"
+				app:tabIndicatorColor="@color/colorAccent"
+				app:tabMode="fixed"
+				app:tabTextColor="@android:color/white" />
+		</com.google.android.material.appbar.AppBarLayout>
+
+		<androidx.viewpager.widget.ViewPager
+			android:id="@+id/viewPager"
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
+
+	</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

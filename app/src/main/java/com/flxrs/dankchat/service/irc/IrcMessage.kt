@@ -1,0 +1,86 @@
+package com.flxrs.dankchat.service.irc
+
+import java.text.ParseException
+
+data class IrcMessage(val raw: String, val prefix: String, val command: String, val params: List<String> = listOf(), val tags: Map<String, String> = mapOf()) {
+	companion object {
+
+		fun parse(message: String): IrcMessage {
+			var pos = 0
+			var nextSpace: Int
+			var prefix = ""
+			var command = ""
+			val params = arrayListOf<String>()
+			val tags = mutableMapOf<String, String>()
+
+			fun skipTrailingWhitespace() {
+				while (message[pos] == ' ') pos++
+			}
+
+			//tags
+			if (message[pos] == '@') {
+				nextSpace = message.indexOf(' ')
+
+				if (nextSpace == -1) throw ParseException("Malformed IRC message", pos)
+
+				tags.putAll(message.substring(1, nextSpace).split(';').associate {
+					val kv = it.split('=')
+					val v = if (kv.size == 2) {
+						kv[1].replace("\\:", ";")
+								.replace("\\s", " ")
+								.replace("\\\\", "\\")
+					} else {
+						"true"
+					}
+					kv[0] to v
+				})
+				pos = nextSpace + 1
+			}
+
+			skipTrailingWhitespace()
+
+			//prefix
+			if (message[pos] == ':') {
+				nextSpace = message.indexOf(' ', pos)
+
+				if (nextSpace == -1) throw ParseException("Malformed IRC message", pos)
+
+				prefix = message.substring(pos + 1, nextSpace)
+				pos = nextSpace + 1
+				skipTrailingWhitespace()
+			}
+
+			nextSpace = message.indexOf(' ', pos)
+
+			if (nextSpace == -1) {
+				if (message.length > pos) command = message.substring(pos)
+			} else {
+				command = message.substring(pos, nextSpace)
+				pos = nextSpace + 1
+				skipTrailingWhitespace()
+
+				while (pos < message.length) {
+					nextSpace = message.indexOf(' ', pos)
+
+					if (message[pos] == ':') {
+						params.add(message.substring(pos + 1))
+						break
+					}
+
+					if (nextSpace != -1) {
+						params.add(message.substring(pos, nextSpace))
+						pos = nextSpace + 1
+						skipTrailingWhitespace()
+						continue
+					}
+
+					if (nextSpace == -1) {
+						params.add(message.substring(pos))
+						break
+					}
+				}
+			}
+			return IrcMessage(message, prefix, command, params, tags)
+		}
+	}
+}
