@@ -19,14 +19,29 @@ import java.net.URL
 
 class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
-	private val chat = MutableLiveData<Map<String, List<ChatItem>>>(mutableMapOf())
-	private val canType = MutableLiveData<Map<String, Boolean>>(mutableMapOf())
+	private val chat = mutableMapOf<String, MutableLiveData<List<ChatItem>>>()
+	private val canType = mutableMapOf<String, MutableLiveData<Boolean>>()
 	private var hasConnected = false
-	private val connection: WebSocketConnection = get { parametersOf(::onMessage) }
+	private var hasDisconnected = false
+	private val connection: WebSocketConnection = get { parametersOf(::onDisconnect, ::onMessage) }
 
-	fun getChat(): LiveData<Map<String, List<ChatItem>>> = chat
+	fun getChat(channel: String): LiveData<List<ChatItem>> {
+		var liveData = chat[channel]
+		if (liveData == null) {
+			liveData = MutableLiveData(listOf())
+			chat[channel] = liveData
+		}
+		return liveData
+	}
 
-	fun getCanType(): LiveData<Map<String, Boolean>> = canType
+	fun getCanType(channel: String): LiveData<Boolean> {
+		var liveData = canType[channel]
+		if (liveData == null) {
+			liveData = MutableLiveData(false)
+			canType[channel] = liveData
+		}
+		return liveData
+	}
 
 	fun connectAndAddChannel(channel: String, oAuth: String, name: String, loadEmotesAndBadges: Boolean = false, forceReconnect: Boolean = false) {
 		if (forceReconnect) hasConnected = false
@@ -46,30 +61,40 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		}
 	}
 
+	fun partChannel(channel: String) {
+		connection.partChannel(channel)
+	}
+
 	fun sendMessage(channel: String, message: String) {
 		connection.sendMessage("PRIVMSG #$channel :$message")
 	}
 
 	fun close() {
-		val map = canType.value?.toMutableMap() ?: mutableMapOf()
-		map.keys.forEach { map[it] = false }
-		canType.postValue(map)
-
-		connection.close()
-		scope.coroutineContext.cancel()
+		canType.keys.forEach { canType[it]?.postValue(false) }
 		makeAndPostSystemMessage("Disconnected")
+
+		scope.coroutineContext.cancel()
+		scope.coroutineContext.cancelChildren()
+		connection.close()
 	}
 
 	fun reconnect() {
 		close()
 	}
 
-	fun clear(channel: String) {
-		val map = chat.value ?: mapOf()
-		val current = map[channel]
-		current?.let {
-			chat.postValue(map.plus(channel to emptyList()))
+	@Synchronized
+	private fun onDisconnect() {
+		scope.coroutineContext.cancel()
+		scope.coroutineContext.cancelChildren()
+
+		if (!hasDisconnected) {
+			hasDisconnected = true
+			close()
 		}
+	}
+
+	fun clear(channel: String) {
+		chat[channel]?.postValue(emptyList())
 	}
 
 	fun reloadEmotes(channel: String) = scope.launch {
@@ -78,7 +103,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	}
 
 	private fun onMessage(msg: IrcMessage) {
-		//Log.i(TAG, msg.raw)
+		Log.i(TAG, msg.raw)
 		when (msg.command) {
 			"366"        -> handleConnected(msg.params[1].substring(1))
 			"PRIVMSG"    -> makeAndPostMessage(msg)
@@ -93,11 +118,9 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
 	private fun handleConnected(channel: String) {
 		makeAndPostSystemMessage("Connected", channel)
-		val map = canType.value?.toMutableMap() ?: mutableMapOf()
-		Log.d(TAG, "${connection.isJustinFan}")
+		hasDisconnected = false
 		if (!connection.isJustinFan) {
-			map[channel] = true
-			canType.postValue(map)
+			canType[channel]?.postValue(true) ?: MutableLiveData(true)
 		}
 	}
 
@@ -110,71 +133,58 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		val target = if (message.params.size > 1) message.params[1] else ""
 		val duration = message.tags["ban-duration"] ?: "idk"
 		val systemMessage = if (target.isBlank()) "Chat has been cleared by a moderator." else "$target has been timed out for ${duration}s."
-		val map = chat.value ?: mapOf()
-		val current = map[channel]
-		current?.replaceWithTimeOuts(target)?.run {
+		chat[channel]?.value?.replaceWithTimeOuts(target)?.run {
 			add(ChatItem(TwitchMessage.makeSystemMessage(systemMessage, channel)))
-			chat.postValue(map.plus(channel to this))
+			chat[channel]?.postValue(this)
 		}
 	}
 
 	private fun handleUserNotice(message: IrcMessage) {
-		val map = chat.value ?: mapOf()
 		val channel = message.params[0].substring(1)
-		val current = map[channel] ?: emptyList()
+		val currentChat = chat[channel]?.value ?: emptyList()
 		TwitchMessage.parseUserNotice(message).forEach {
-			current.addAndLimit(ChatItem(it))
+			currentChat.addAndLimit(ChatItem(it))
 		}
-		chat.postValue(map.plus(channel to current))
+		chat[channel]?.postValue(currentChat)
 	}
 
 	private fun handleNotice(message: IrcMessage) {
-		val map = chat.value ?: mapOf()
 		val channel = message.params[0].substring(1)
 		val notice = message.params[1]
 		val twitchMessage = TwitchMessage.makeSystemMessage(notice, channel)
-		val current = map[channel] ?: emptyList()
-		val pair = channel to current.addAndLimit(ChatItem(twitchMessage))
-		chat.postValue(map.plus(pair))
+		val currentChat = chat[channel]?.value ?: emptyList()
+		chat[channel]?.postValue(currentChat.addAndLimit(ChatItem(twitchMessage)))
 	}
 
 	private fun makeAndPostMessage(message: IrcMessage) {
 		val twitchMessage = TwitchMessage.parseFromIrc(message)
 		val channel = twitchMessage.channel
-		val map = chat.value ?: mapOf()
-		val current = map[channel] ?: emptyList()
-		val pair = channel to current.addAndLimit(ChatItem(twitchMessage))
-		chat.postValue(map.plus(pair))
+		val currentChat = chat[channel]?.value ?: emptyList()
+		chat[channel]?.postValue(currentChat.addAndLimit(ChatItem(twitchMessage)))
 	}
 
 	private fun makeAndPostSystemMessage(message: String, channel: String = "") {
-		var map = chat.value ?: mapOf()
 		if (channel.isBlank()) {
-			map.keys.forEach {
-				val current = map[it] ?: emptyList()
-				val pair = it to current.addAndLimit(ChatItem(TwitchMessage.makeSystemMessage(message, it)))
-				map = map.plus(pair)
+			chat.keys.forEach {
+				val currentChat = chat[it]?.value ?: emptyList()
+				chat[it]?.postValue(currentChat.addAndLimit(ChatItem(TwitchMessage.makeSystemMessage(message, it))))
 			}
 		} else {
-			val current = map[channel] ?: emptyList()
-			val pair = channel to current.addAndLimit(ChatItem(TwitchMessage.makeSystemMessage(message, channel)))
-			map = map.plus(pair)
+			val currentChat = chat[channel]?.value ?: emptyList()
+			chat[channel]?.postValue(currentChat.addAndLimit(ChatItem(TwitchMessage.makeSystemMessage(message, channel))))
 		}
-		chat.postValue(map)
 	}
 
 	private suspend fun loadBadges(channel: String) = withContext(Dispatchers.IO) {
-		launch { EmoteManager.loadGlobalBadges() }
-		launch {
-			val id = EmoteManager.getUserIdFromName(channel)
-			EmoteManager.loadChannelBadges(id, channel)
-		}
+		EmoteManager.loadGlobalBadges()
+		val id = EmoteManager.getUserIdFromName(channel)
+		EmoteManager.loadChannelBadges(id, channel)
 	}
 
 	private suspend fun load3rdPartyEmotes(channel: String) = withContext(Dispatchers.IO) {
-		launch { EmoteManager.loadFfzEmotes(channel) }
-		launch { EmoteManager.loadBttvEmotes(channel) }
-		launch { EmoteManager.loadGlobalBttvEmotes() }
+		EmoteManager.loadFfzEmotes(channel)
+		EmoteManager.loadBttvEmotes(channel)
+		EmoteManager.loadGlobalBttvEmotes()
 	}
 
 	private suspend fun loadRecentMessages(channel: String) = withContext(Dispatchers.IO) {
@@ -193,9 +203,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 				}
 				list.add(ChatItem(twitchMessage))
 			}
-			val map = chat.value ?: mapOf()
-			val current = map[channel] ?: listOf()
-			chat.postValue(map.plus(channel to list.plus(current)))
+			val currentChat = chat[channel]?.value ?: emptyList()
+			chat[channel]?.postValue(currentChat)
 		}
 	}
 

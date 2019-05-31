@@ -11,7 +11,7 @@ import org.koin.dsl.module.module
 
 val appModules = module {
 	factory { CoroutineScope(Dispatchers.IO + Job()) }
-	single { (onMessage: (IrcMessage) -> Unit) -> WebSocketConnection(get(), onMessage) }
+	single { (onDisconnect: () -> Unit, onMessage: (IrcMessage) -> Unit) -> WebSocketConnection(get(), onDisconnect, onMessage) }
 	single { TwitchRepository(get()) }
 	viewModel { DankChatViewModel(get()) }
 }

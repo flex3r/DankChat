@@ -1,16 +1,20 @@
 package com.flxrs.dankchat.service.twitch.connection
 
-import android.util.Log
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.utils.timer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import okhttp3.*
+import java.util.concurrent.TimeUnit
 
-class WebSocketConnection(private val scope: CoroutineScope, private val onMessage: (IrcMessage) -> Unit) {
+class WebSocketConnection(private val scope: CoroutineScope, private val onDisconnect: () -> Unit, private val onMessage: (IrcMessage) -> Unit) {
 
 	private val client = OkHttpClient.Builder()
 			.retryOnConnectionFailure(true)
+			.connectTimeout(5, TimeUnit.SECONDS)
+			.readTimeout(5, TimeUnit.SECONDS)
+			.writeTimeout(5, TimeUnit.SECONDS)
 			.build()
 	private val request = Request.Builder()
 			.url("wss://irc-ws.chat.twitch.tv")
@@ -45,6 +49,14 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onMessa
 		channels.add(channel)
 	}
 
+	fun partChannel(channel: String) {
+		if (readerConnected && writerConnected && channels.contains(channel)) {
+			writerWebSocket.sendMessage("PART #$channel")
+			readerWebSocket.sendMessage("PART #$channel")
+		}
+		channels.remove(channel)
+	}
+
 	fun connect(nick: String, oAuth: String, channel: String) {
 		this.nick = nick
 		this.oAuth = oAuth
@@ -55,107 +67,16 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onMessa
 		writerWebSocket = client.newWebSocket(request, WriterWebSocketListener())
 	}
 
-	private inner class ReaderWebSocketListener : WebSocketListener() {
-
-		override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-			Log.e(TAG, "Reader closed: $reason")
-			readerConnected = false
-		}
-
-		override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-			Log.e(TAG, "Reader failed: ${Log.getStackTraceString(t)}")
-			readerConnected = false
-		}
-
-		override fun onMessage(webSocket: WebSocket, text: String) {
-			val splits = text.split("\r\n")
-			val size = splits.size
-
-			splits.forEachIndexed { i, line ->
-				if (i != size - 1) {
-					val ircMessage = IrcMessage.parse(line)
-					when (ircMessage.command) {
-						"PING"      -> webSocket.handlePing()
-						"PONG"      -> readerPong = false
-						"RECONNECT" -> handleReaderReconnect()
-						else        -> onMessage(ircMessage)
-					}
-				}
-			}
-		}
-
-		override fun onOpen(webSocket: WebSocket, response: Response) {
-			readerConnected = true
-			val auth = if (isJustinFan) "NaM" else oAuth
-			val nick = if (nick.isBlank() || auth == "NaM") "justinfan12781923" else nick
-
-			webSocket.sendMessage("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership")
-			webSocket.sendMessage("PASS $auth")
-			webSocket.sendMessage("NICK $nick")
-			webSocket.joinCurrentChannels()
-			setupReaderPingInterval()
-		}
-
-	}
-
-	private inner class WriterWebSocketListener : WebSocketListener() {
-
-		override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-			Log.e(TAG, "Writer closed: $reason")
-			writerConnected = false
-		}
-
-		override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-			Log.e(TAG, "Writer failed: ${Log.getStackTraceString(t)}")
-			writerConnected = false
-		}
-
-		override fun onMessage(webSocket: WebSocket, text: String) {
-			val splits = text.split("\r\n")
-			val size = splits.size
-
-			splits.forEachIndexed { i, line ->
-				if (i != size - 1) {
-					val ircMessage = IrcMessage.parse(line)
-					when (ircMessage.command) {
-						"PING"      -> webSocket.handlePing()
-						"PONG"      -> writerPong = false
-						"RECONNECT" -> handleWriterReconnect()
-						else        -> Unit
-					}
-
-				}
-			}
-		}
-
-		override fun onOpen(webSocket: WebSocket, response: Response) {
-			writerConnected = true
-			val auth = if (isJustinFan) "NaM" else oAuth
-			val nick = if (nick.isBlank() || auth == "NaM") "justinfan12781923" else nick
-
-			webSocket.sendMessage("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership")
-			webSocket.sendMessage("PASS $auth")
-			webSocket.sendMessage("NICK $nick")
-			webSocket.joinCurrentChannels()
-			setupWriterPingInterval()
-		}
-
-	}
-
-	fun close() {
+	fun close(reconnect: Boolean = true) {
 		scope.coroutineContext.cancel()
-		handleReaderReconnect()
-		handleWriterReconnect()
-	}
-
-	private fun handleWriterReconnect() {
+		scope.coroutineContext.cancelChildren()
 		writerWebSocket.cancel()
-		writerWebSocket = client.newWebSocket(request, WriterWebSocketListener())
-	}
-
-	private fun handleReaderReconnect() {
 		readerWebSocket.cancel()
-		readerWebSocket = client.newWebSocket(request, ReaderWebSocketListener())
+
+		if (reconnect) {
+			writerWebSocket = client.newWebSocket(request, WriterWebSocketListener())
+			readerWebSocket = client.newWebSocket(request, ReaderWebSocketListener())
+		}
 	}
 
 	private fun WebSocket.sendMessage(msg: String) {
@@ -198,8 +119,90 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onMessa
 		}
 	}
 
-	companion object {
-		private val TAG = WebSocketConnection::class.java.simpleName
+	private inner class ReaderWebSocketListener : WebSocketListener() {
+
+		override fun onClosed(webSocket: WebSocket, code: Int, reason: String) = Unit
+
+		override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+			readerConnected = false
+			scope.coroutineContext.cancel()
+			scope.coroutineContext.cancelChildren()
+			webSocket.cancel()
+
+			onDisconnect()
+		}
+
+		override fun onMessage(webSocket: WebSocket, text: String) {
+			val splits = text.split("\r\n")
+			val size = splits.size
+
+			splits.forEachIndexed { i, line ->
+				if (i != size - 1) {
+					val ircMessage = IrcMessage.parse(line)
+					when (ircMessage.command) {
+						"PING"      -> webSocket.handlePing()
+						"PONG"      -> readerPong = false
+						"RECONNECT" -> close()
+						else        -> onMessage(ircMessage)
+					}
+				}
+			}
+		}
+
+		override fun onOpen(webSocket: WebSocket, response: Response) {
+			readerConnected = true
+			val auth = if (isJustinFan) "NaM" else oAuth
+			val nick = if (nick.isBlank() || auth == "NaM") "justinfan12781923" else nick
+
+			webSocket.sendMessage("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership")
+			webSocket.sendMessage("PASS $auth")
+			webSocket.sendMessage("NICK $nick")
+			webSocket.joinCurrentChannels()
+			setupReaderPingInterval()
+		}
 	}
 
+	private inner class WriterWebSocketListener : WebSocketListener() {
+
+		override fun onClosed(webSocket: WebSocket, code: Int, reason: String) = Unit
+
+		override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+			writerConnected = false
+			scope.coroutineContext.cancel()
+			scope.coroutineContext.cancelChildren()
+			webSocket.cancel()
+
+			onDisconnect()
+		}
+
+		override fun onMessage(webSocket: WebSocket, text: String) {
+			val splits = text.split("\r\n")
+			val size = splits.size
+
+			splits.forEachIndexed { i, line ->
+				if (i != size - 1) {
+					val ircMessage = IrcMessage.parse(line)
+					when (ircMessage.command) {
+						"PING"      -> webSocket.handlePing()
+						"PONG"      -> writerPong = false
+						"RECONNECT" -> close()
+						else        -> Unit
+					}
+
+				}
+			}
+		}
+
+		override fun onOpen(webSocket: WebSocket, response: Response) {
+			writerConnected = true
+			val auth = if (isJustinFan) "NaM" else oAuth
+			val nick = if (nick.isBlank() || auth == "NaM") "justinfan12781923" else nick
+
+			webSocket.sendMessage("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership")
+			webSocket.sendMessage("PASS $auth")
+			webSocket.sendMessage("NICK $nick")
+			webSocket.joinCurrentChannels()
+			setupWriterPingInterval()
+		}
+	}
 }

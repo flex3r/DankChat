@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.DankChatViewModel
+import com.flxrs.dankchat.MainActivity
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -47,12 +48,10 @@ class ChatFragment : Fragment() {
 
 		if (channel.isNotBlank()) {
 			viewModel.run {
-				chat.observe(viewLifecycleOwner, Observer { chatAdapter.submitList(it[channel]) })
-				canType.observe(viewLifecycleOwner, Observer {
-					val canType = it[channel] ?: false
-					Log.d("ChatFragment", "$channel $canType")
-					binding.input.isEnabled = canType
-					binding.input.hint = if (canType) "" else "Not logged in"
+				getChat(channel).observe(viewLifecycleOwner, Observer { chatAdapter.submitList(it) })
+				getCanType(channel).observe(viewLifecycleOwner, Observer {
+					binding.input.isEnabled = it
+					binding.input.hint = if (it) "" else "Not logged in"
 				})
 			}
 		}
@@ -63,12 +62,18 @@ class ChatFragment : Fragment() {
 
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
 		when (item.itemId) {
-			R.id.menu_login         -> return false
 			R.id.menu_reconnect     -> viewModel.reconnect()
 			R.id.menu_clear         -> viewModel.clear(channel)
 			R.id.menu_reload_emotes -> viewModel.reloadEmotes(channel)
+			R.id.menu_remove        -> removeChannel()
+			else                    -> return false
 		}
 		return true
+	}
+
+	private fun removeChannel() {
+		Log.d("ChatFragment", "remove")
+		(activity as? MainActivity)?.removeChannel(channel)
 	}
 
 	private fun handleSendMessage(): Boolean {

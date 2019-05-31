@@ -3,8 +3,19 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto">
 
 	<item
+		android:id="@+id/menu_add"
+		android:icon="@drawable/ic_add_box_24dp"
+		android:title="@string/add_channel"
+		app:showAsAction="ifRoom" />
+
+	<item
 		android:id="@+id/menu_login"
 		android:title="@string/login"
+		app:showAsAction="ifRoom" />
+
+	<item
+		android:id="@+id/menu_remove"
+		android:title="@string/remove_channel"
 		app:showAsAction="never" />
 
 	<item

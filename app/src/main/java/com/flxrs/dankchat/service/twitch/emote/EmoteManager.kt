@@ -43,8 +43,6 @@ object EmoteManager {
 	val gifCache = LruCache<String, GifDrawable>(4 * 1024 * 1024)
 	val gifCallback = MultiCallback(true)
 
-	private val scope = CoroutineScope(Dispatchers.IO + Job())
-
 	fun parseTwitchEmotes(message: String): List<ChatEmote> {
 		val emotes = arrayListOf<ChatEmote>()
 		val matcher = emotePattern.matcher(message)

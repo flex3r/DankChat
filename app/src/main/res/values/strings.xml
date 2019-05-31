@@ -10,6 +10,12 @@
 	<string name="reload_emotes">Reload emotes</string>
 	<string name="reconnect">Reconnect</string>
 	<string name="clear_chat">Clear chat</string>
+	<string name="dialog_title">Add channel</string>
+	<string name="dialog_positive_button">OK</string>
+	<string name="dialog_negative_button">Cancel</string>
 
 	<string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
+	<string name="add_channel">Add channel</string>
+	<string name="name">Name</string>
+	<string name="remove_channel">Remove channel</string>
 </resources>
