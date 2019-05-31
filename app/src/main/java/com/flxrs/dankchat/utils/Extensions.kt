@@ -46,7 +46,7 @@ fun List<ChatItem>.replaceWithTimeOuts(name: String): MutableList<ChatItem> = to
 	} else {
 		while (iterate.hasNext()) {
 			val item = iterate.next()
-			if (!item.message.isSystem && item.message.name == name) {
+			if (!item.message.isSystem && item.message.name.equals(name, true)) {
 				item.message.timedOut = true
 				iterate.set(item)
 			}

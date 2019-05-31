@@ -2,6 +2,7 @@ package com.flxrs.dankchat.chat
 
 import android.os.Bundle
 import android.text.Editable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -45,10 +46,11 @@ class ChatFragment : Fragment() {
 		}
 
 		if (channel.isNotBlank()) {
-			viewModel.apply {
+			viewModel.run {
 				chat.observe(viewLifecycleOwner, Observer { chatAdapter.submitList(it[channel]) })
 				canType.observe(viewLifecycleOwner, Observer {
 					val canType = it[channel] ?: false
+					Log.d("ChatFragment", "$channel $canType")
 					binding.input.isEnabled = canType
 					binding.input.hint = if (canType) "" else "Not logged in"
 				})

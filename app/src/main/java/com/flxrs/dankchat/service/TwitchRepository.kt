@@ -4,67 +4,50 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.flxrs.dankchat.chat.ChatItem
-import com.flxrs.dankchat.service.irc.IrcConnection
 import com.flxrs.dankchat.service.irc.IrcMessage
+import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import com.flxrs.dankchat.utils.addAndLimit
 import com.flxrs.dankchat.utils.replaceWithTimeOuts
-import com.flxrs.dankchat.utils.timer
 import kotlinx.coroutines.*
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import org.json.JSONObject
 import org.koin.core.parameter.parametersOf
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.get
 import java.net.URL
-import java.util.concurrent.atomic.AtomicBoolean
 
 class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
 	private val chat = MutableLiveData<Map<String, List<ChatItem>>>(mutableMapOf())
 	private val canType = MutableLiveData<Map<String, Boolean>>(mutableMapOf())
-
-	private val conn: IrcConnection = get { parametersOf("irc.chat.twitch.tv", 6667, 30, ::reconnect, ::onMessage) }
-	private val socketConnected = AtomicBoolean(false)
-	private val awaitingPong = AtomicBoolean(false)
-
-	private val channels = mutableListOf<String>()
-	private val connMutex = Mutex()
-
-	private var justinFan = false
-	private var oAuthKey = ""
-	private var loginName = ""
+	private var hasConnected = false
+	private val connection: WebSocketConnection = get { parametersOf(::onMessage) }
 
 	fun getChat(): LiveData<Map<String, List<ChatItem>>> = chat
 
 	fun getCanType(): LiveData<Map<String, Boolean>> = canType
 
-	fun connectAndAddChannel(channel: String, oAuth: String, name: String, loadEmotesAndBadges: Boolean) = scope.launch {
-		oAuthKey = oAuth
-		loginName = name
+	fun connectAndAddChannel(channel: String, oAuth: String, name: String, loadEmotesAndBadges: Boolean = false, forceReconnect: Boolean = false) {
+		if (forceReconnect) hasConnected = false
 
-		connMutex.withLock {
-			channels.add(channel)
-			if (loadEmotesAndBadges) loadBadges(channel)
-			if (socketConnected.get()) {
-				conn.joinChannel(channel)
-			} else {
-				conn.connectAndJoin(channel)
-			}
+		if (loadEmotesAndBadges) scope.launch { loadBadges(channel) }
+
+		if (hasConnected) {
+			connection.joinChannel(channel)
+		} else {
+			connection.connect(name, oAuth, channel)
+			hasConnected = true
 		}
 
-		if (loadEmotesAndBadges) launch {
+		if (loadEmotesAndBadges) scope.launch {
 			load3rdPartyEmotes(channel)
 			loadRecentMessages(channel)
 		}
 	}
 
-	fun sendMessage(channel: String, message: String) = scope.launch {
-		if (socketConnected.get() && !justinFan) {
-			conn.write("PRIVMSG #$channel :$message")
-		}
+	fun sendMessage(channel: String, message: String) {
+		connection.sendMessage("PRIVMSG #$channel :$message")
 	}
 
 	fun close() {
@@ -72,20 +55,13 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		map.keys.forEach { map[it] = false }
 		canType.postValue(map)
 
-		scope.launch {
-			conn.close()
-			socketConnected.set(false)
-			awaitingPong.set(false)
-		}
-		scope.coroutineContext.cancelChildren()
+		connection.close()
+		scope.coroutineContext.cancel()
 		makeAndPostSystemMessage("Disconnected")
 	}
 
 	fun reconnect() {
-		if (socketConnected.compareAndSet(true, false)) {
-			close()
-			conn.handleReconnect()
-		}
+		close()
 	}
 
 	fun clear(channel: String) {
@@ -102,12 +78,9 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	}
 
 	private fun onMessage(msg: IrcMessage) {
-		Log.i(TAG, msg.raw)
+		//Log.i(TAG, msg.raw)
 		when (msg.command) {
 			"366"        -> handleConnected(msg.params[1].substring(1))
-			"PING"       -> handlePing()
-			"PONG"       -> awaitingPong.compareAndSet(true, false)
-			"RECONNECT"  -> reconnect()
 			"PRIVMSG"    -> makeAndPostMessage(msg)
 			"NOTICE"     -> handleNotice(msg)
 			"USERNOTICE" -> handleUserNotice(msg)
@@ -120,14 +93,12 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
 	private fun handleConnected(channel: String) {
 		makeAndPostSystemMessage("Connected", channel)
-		val map = canType.value ?: mutableMapOf()
-		if (!justinFan) {
-			canType.postValue(map.plus(channel to true))
+		val map = canType.value?.toMutableMap() ?: mutableMapOf()
+		Log.d(TAG, "${connection.isJustinFan}")
+		if (!connection.isJustinFan) {
+			map[channel] = true
+			canType.postValue(map)
 		}
-	}
-
-	private fun handlePing() = scope.launch {
-		conn.write("PONG :tmi.twitch.tv")
 	}
 
 	private fun handleHostTarget(message: IrcMessage): Nothing = TODO()
@@ -190,50 +161,6 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 			map = map.plus(pair)
 		}
 		chat.postValue(map)
-	}
-
-	private suspend fun IrcConnection.connectAndJoin(channel: String) = withContext(Dispatchers.IO) {
-		val conn = connect()
-		awaitingPong.set(false)
-		socketConnected.set(conn)
-		justinFan = oAuthKey.isBlank() || !oAuthKey.startsWith("oauth:")
-		val auth = if (justinFan) "NaM" else oAuthKey
-		val nick = if (loginName.isBlank() || auth == "NaM") "justinfan772389412" else loginName
-		if (conn) {
-			write("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership")
-			write("PASS $auth")
-			write("NICK $nick")
-			write("JOIN #$channel")
-			setupPingInterval()
-		}
-	}
-
-	private fun IrcConnection.setupPingInterval() = scope.timer(5 * 60 * 1000) {
-		if (awaitingPong.get()) {
-			cancel()
-			return@timer
-		}
-		if (socketConnected.get()) {
-			write("PING")
-			awaitingPong.set(true)
-		}
-	}
-
-	private fun IrcConnection.handleReconnect() = scope.timer(5 * 1000) {
-		if (socketConnected.get()) {
-			cancel()
-			return@timer
-		}
-		chat.value?.keys?.forEachIndexed { i, s ->
-			connMutex.withLock {
-				if (i == 0) connectAndJoin(s)
-				else joinChannel(s)
-			}
-		}
-	}
-
-	private suspend fun IrcConnection.joinChannel(channel: String) = withContext(Dispatchers.IO) {
-		write("JOIN #$channel")
 	}
 
 	private suspend fun loadBadges(channel: String) = withContext(Dispatchers.IO) {

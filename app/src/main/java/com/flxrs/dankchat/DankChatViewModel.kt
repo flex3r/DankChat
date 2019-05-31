@@ -8,7 +8,7 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
 	val chat = twitchRepository.getChat()
 	val canType = twitchRepository.getCanType()
 
-	fun connectOrJoinChannel(channel: String, oauth: String, name: String, loadEmotesAndBadges: Boolean = false) = twitchRepository.connectAndAddChannel(channel, oauth, name, loadEmotesAndBadges)
+	fun connectOrJoinChannel(channel: String, oauth: String, name: String, loadEmotesAndBadges: Boolean = false, forceReconnect: Boolean = false) = twitchRepository.connectAndAddChannel(channel, oauth, name, loadEmotesAndBadges, forceReconnect)
 
 	fun close() = twitchRepository.close()
 

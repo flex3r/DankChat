@@ -3,7 +3,6 @@ package com.flxrs.dankchat
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -21,7 +20,6 @@ class MainActivity : AppCompatActivity() {
 	val viewModel: DankChatViewModel by viewModel()
 	private val channels = mutableSetOf<String>()
 	private lateinit var authStore: TwitchAuthStore
-	private var menu: Menu? = null
 	private lateinit var binding: MainActivityBinding
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +28,6 @@ class MainActivity : AppCompatActivity() {
 		authStore = TwitchAuthStore(this)
 		val oauth = authStore.getOAuthKey() ?: ""
 		val name = authStore.getUserName() ?: ""
-		Log.i(TAG, "$oauth $name")
 		binding = DataBindingUtil.setContentView(this, R.layout.main_activity)
 
 		val adapter = ViewPagerAdapter(supportFragmentManager)
@@ -81,8 +78,8 @@ class MainActivity : AppCompatActivity() {
 			val name = authStore.getUserName()
 			if (resultCode == Activity.RESULT_OK && oauth != null && name != null) {
 				viewModel.close()
-				channels.forEach {
-					viewModel.connectOrJoinChannel(it, oauth, name)
+				channels.forEachIndexed { index, channel ->
+					viewModel.connectOrJoinChannel(channel, oauth, name, forceReconnect = index == 0)
 				}
 				authStore.setLoggedIn(true)
 			} else {
@@ -100,7 +97,6 @@ class MainActivity : AppCompatActivity() {
 			}
 			authStore.setOAuthKey("")
 			authStore.setLoggedIn(false)
-			menu?.findItem(R.id.menu_login)?.setTitle(R.string.login)
 		} else {
 			val intent = Intent(this, LoginActivity::class.java)
 			startActivityForResult(intent, LOGIN_REQUEST)

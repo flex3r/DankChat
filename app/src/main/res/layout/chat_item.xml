@@ -14,6 +14,6 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:gravity="start"
-		android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+		android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
 		app:setTwitchMessage="@{chatItem}" />
 </layout>

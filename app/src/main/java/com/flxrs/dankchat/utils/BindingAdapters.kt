@@ -135,8 +135,8 @@ fun TextView.setTwitchMessage(item: ChatItem?) = item?.message?.apply {
 							val ratio = it.intrinsicWidth / it.intrinsicHeight.toFloat()
 
 							val height = when {
-								it.intrinsicHeight < 55 && e.keyword.isBlank()       -> 60
-								it.intrinsicHeight in 55..111 && e.keyword.isBlank() -> 112
+								it.intrinsicHeight < 55 && e.keyword.isBlank()       -> (70 * scaleFactor).roundToInt()
+								it.intrinsicHeight in 55..111 && e.keyword.isBlank() -> (112 * scaleFactor).roundToInt()
 								else                                                 -> (it.intrinsicHeight * scaleFactor).roundToInt()
 							}
 							val width = (height * ratio).roundToInt()
