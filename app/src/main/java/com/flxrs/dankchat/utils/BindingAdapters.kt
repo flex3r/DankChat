@@ -22,19 +22,25 @@ import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.linkedin.urls.detection.UrlDetector
 import com.linkedin.urls.detection.UrlDetectorOptions
+import kotlin.math.roundToInt
 
 @BindingAdapter("setTwitchMessage")
 fun TextView.setTwitchMessage(item: ChatItem?) = item?.message?.apply {
 	text = ""
+	movementMethod = LinkMovementMethod.getInstance()
+	val lineHeight = this@setTwitchMessage.lineHeight
+	val scaleFactor = lineHeight * 1.5 / 112
+
 	val foregroundColor = if (timedOut) ContextCompat.getColor(this@setTwitchMessage.context, R.color.colorTimeOut) else Color.TRANSPARENT
 	foreground = ColorDrawable(foregroundColor)
-	movementMethod = LinkMovementMethod.getInstance()
+
 	val backgroundResource = if (isSystem) {
 		R.color.sub_background
 	} else {
 		android.R.color.transparent
 	}
 	this@setTwitchMessage.setBackgroundColor(ContextCompat.getColor(this@setTwitchMessage.context, backgroundResource))
+
 	val displayName = if (isAction) "$name " else if (name.isBlank()) "" else "$name: "
 	val prefixLength = time.length + 1 + displayName.length
 	var badgesLength = 0
@@ -51,7 +57,10 @@ fun TextView.setTwitchMessage(item: ChatItem?) = item?.message?.apply {
 				.placeholder(R.drawable.ic_missing_emote)
 				.error(R.drawable.ic_missing_emote)
 				.into(ImageSpanBadgeTarget(context) {
-					spannable.setSpan(it, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+					val width = Math.round(lineHeight * it.intrinsicWidth / it.intrinsicHeight.toFloat())
+					it.setBounds(0, 0, width, lineHeight)
+					val imageSpan = ImageSpan(it, ImageSpan.ALIGN_BOTTOM)
+					spannable.setSpan(imageSpan, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
 					text = spannable
 				})
 	}
@@ -96,7 +105,9 @@ fun TextView.setTwitchMessage(item: ChatItem?) = item?.message?.apply {
 			if (e.isGif) {
 				val gifDrawable = EmoteManager.gifCache[e.keyword]
 				if (gifDrawable != null) {
-					//gifDrawable.start()
+					val height = (gifDrawable.intrinsicHeight * scaleFactor).roundToInt()
+					val width = (gifDrawable.intrinsicWidth * scaleFactor).roundToInt()
+					gifDrawable.setBounds(0, 0, width, height)
 					val imageSpan = ImageSpan(gifDrawable, ImageSpan.ALIGN_BOTTOM)
 					spannable.setSpan(imageSpan, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
 					text = spannable
@@ -107,7 +118,10 @@ fun TextView.setTwitchMessage(item: ChatItem?) = item?.message?.apply {
 							.placeholder(R.drawable.ic_missing_emote)
 							.error(R.drawable.ic_missing_emote)
 							.into(GifDrawableTarget(e.keyword) {
-								spannable.setSpan(it, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+								val height = (it.intrinsicHeight * scaleFactor).roundToInt()
+								val width = (it.intrinsicWidth * scaleFactor).roundToInt()
+								it.setBounds(0, 0, width, height)
+								spannable.setSpan(ImageSpan(it, ImageSpan.ALIGN_BOTTOM), start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
 								text = spannable
 							})
 				}
@@ -118,7 +132,16 @@ fun TextView.setTwitchMessage(item: ChatItem?) = item?.message?.apply {
 						.placeholder(R.drawable.ic_missing_emote)
 						.error(R.drawable.ic_missing_emote)
 						.into(ImageSpanEmoteTarget(e, context) {
-							spannable.setSpan(it, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+							val ratio = it.intrinsicWidth / it.intrinsicHeight.toFloat()
+
+							val height = when {
+								it.intrinsicHeight < 55 && e.keyword.isBlank()       -> 60
+								it.intrinsicHeight in 55..111 && e.keyword.isBlank() -> 112
+								else                                                 -> (it.intrinsicHeight * scaleFactor).roundToInt()
+							}
+							val width = (height * ratio).roundToInt()
+							it.setBounds(0, 0, width, height)
+							spannable.setSpan(ImageSpan(it, ImageSpan.ALIGN_BOTTOM), start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
 							text = spannable
 						})
 			}
