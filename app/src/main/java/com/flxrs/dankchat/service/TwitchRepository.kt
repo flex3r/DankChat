@@ -69,17 +69,17 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		connection.sendMessage("PRIVMSG #$channel :$message")
 	}
 
-	fun close() {
+	fun close(doReconnect: Boolean = false) {
 		canType.keys.forEach { canType[it]?.postValue(false) }
 		makeAndPostSystemMessage("Disconnected")
 
 		scope.coroutineContext.cancel()
 		scope.coroutineContext.cancelChildren()
-		connection.close()
+		connection.close(doReconnect)
 	}
 
 	fun reconnect() {
-		close()
+		close(true)
 	}
 
 	@Synchronized
@@ -182,9 +182,9 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	}
 
 	private suspend fun load3rdPartyEmotes(channel: String) = withContext(Dispatchers.IO) {
-		EmoteManager.loadFfzEmotes(channel)
-		EmoteManager.loadBttvEmotes(channel)
-		EmoteManager.loadGlobalBttvEmotes()
+		launch { EmoteManager.loadFfzEmotes(channel) }
+		launch { EmoteManager.loadBttvEmotes(channel) }
+		launch { EmoteManager.loadGlobalBttvEmotes() }
 	}
 
 	private suspend fun loadRecentMessages(channel: String) = withContext(Dispatchers.IO) {

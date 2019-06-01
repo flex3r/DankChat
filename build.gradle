@@ -23,6 +23,7 @@ buildscript {
         three_ten_abp_version = "1.2.0"
         browser_version = "1.0.0"
         gif_drawable_version = "1.2.16"
+        viewpager2_version = "1.0.0-alpha04"
 
 
     }

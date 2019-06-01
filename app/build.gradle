@@ -71,6 +71,8 @@ dependencies {
 
     implementation 'com.squareup.okhttp3:okhttp:4.0.0-alpha02'
 
+    implementation "androidx.viewpager2:viewpager2:$viewpager2_version"
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0-alpha04'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0-alpha04'

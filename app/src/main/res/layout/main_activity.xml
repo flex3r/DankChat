@@ -12,27 +12,38 @@
 			android:id="@+id/appBarLayout"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
+			android:background="@color/colorPrimary"
 			android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
-			app:layout_constraintBottom_toTopOf="@+id/viewPager"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toTopOf="parent">
 
 			<com.google.android.material.tabs.TabLayout
 				android:id="@+id/tabs"
-				android:layout_width="match_parent"
+				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:layout_gravity="center_horizontal"
 				app:tabBackground="@color/colorPrimary"
 				app:tabGravity="fill"
 				app:tabIndicatorColor="@color/colorAccent"
-				app:tabMode="fixed"
+				app:tabMode="scrollable"
 				app:tabTextColor="@android:color/white" />
 		</com.google.android.material.appbar.AppBarLayout>
 
-		<androidx.viewpager.widget.ViewPager
+		<androidx.viewpager2.widget.ViewPager2
 			android:id="@+id/viewPager"
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
+
+		<TextView
+			android:id="@+id/add_channels_text"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/no_channels_added"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"

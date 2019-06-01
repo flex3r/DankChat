@@ -61,7 +61,7 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 		this.nick = nick
 		this.oAuth = oAuth
 		isJustinFan = (oAuth.isBlank() || !oAuth.startsWith("oauth:"))
-		channels.add(channel)
+		if (!channels.contains(channel)) channels.add(channel)
 
 		readerWebSocket = client.newWebSocket(request, ReaderWebSocketListener())
 		writerWebSocket = client.newWebSocket(request, WriterWebSocketListener())

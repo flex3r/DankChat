@@ -65,15 +65,9 @@ class ChatFragment : Fragment() {
 			R.id.menu_reconnect     -> viewModel.reconnect()
 			R.id.menu_clear         -> viewModel.clear(channel)
 			R.id.menu_reload_emotes -> viewModel.reloadEmotes(channel)
-			R.id.menu_remove        -> removeChannel()
 			else                    -> return false
 		}
 		return true
-	}
-
-	private fun removeChannel() {
-		Log.d("ChatFragment", "remove")
-		(activity as? MainActivity)?.removeChannel(channel)
 	}
 
 	private fun handleSendMessage(): Boolean {

@@ -5,48 +5,51 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.flxrs.dankchat.chat.ChatFragment
-import com.flxrs.dankchat.chat.ViewPagerAdapter
+import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.TwitchAuthStore
 import com.flxrs.dankchat.utils.AddChannelDialogFragment
+import com.flxrs.dankchat.utils.TabLayoutMediator
 import com.google.android.material.snackbar.Snackbar
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class MainActivity : AppCompatActivity() {
 	private val viewModel: DankChatViewModel by viewModel()
-	private val channels = mutableSetOf<String>()
+	private val channels = mutableListOf<String>()
 	private lateinit var authStore: TwitchAuthStore
 	private lateinit var binding: MainActivityBinding
-	private lateinit var adapter: ViewPagerAdapter
+	private lateinit var adapter: ChatTabAdapter
+	private lateinit var tabLayoutMediator: TabLayoutMediator
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		//delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
+
 		authStore = TwitchAuthStore(this)
 		val oauth = authStore.getOAuthKey() ?: ""
 		val name = authStore.getUserName() ?: ""
-		binding = DataBindingUtil.setContentView(this, R.layout.main_activity)
 
-		adapter = ViewPagerAdapter(supportFragmentManager)
-		channels.add("pajlada")
-		channels.add("flex3rs")
-		channels.add("forsen")
-		channels.forEach {
-			adapter.addFragment(ChatFragment.newInstance(it), it)
+		adapter = ChatTabAdapter(supportFragmentManager, lifecycle)
+		authStore.getChannels()?.run { channels.addAll(this) }
+		channels.forEach { adapter.addFragment(ChatFragment.newInstance(it), it) }
 
-		}
-		binding.apply {
+		binding = DataBindingUtil.setContentView<MainActivityBinding>(this, R.layout.main_activity).apply {
 			viewPager.adapter = adapter
-			viewPager.offscreenPageLimit = channels.size - 1
-			tabs.setupWithViewPager(viewPager)
+			tabLayoutMediator = TabLayoutMediator(tabs, viewPager) { tab, position -> tab.text = adapter.titleList[position] }
+			tabLayoutMediator.attach()
 		}
+		updateViewPagerVisibility()
 
-		if (savedInstanceState == null) channels.forEach {
-			viewModel.connectOrJoinChannel(it, oauth, name, true)
+		if (savedInstanceState == null) {
+			if (name.isNotBlank()) showSnackbar("Logged in as $name")
+
+			channels.forEach {
+				viewModel.connectOrJoinChannel(it, oauth, name, true)
+			}
 		}
 	}
 
@@ -56,23 +59,25 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-		val item = menu?.findItem(R.id.menu_login)
-		if (authStore.isLoggedin()) {
-			item?.setTitle(R.string.logout)
-			item?.setIcon(R.drawable.ic_exit_to_app_24dp)
-			item?.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
-		} else {
-			item?.setTitle(R.string.login)
-			item?.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+		menu?.findItem(R.id.menu_login)?.run {
+			if (authStore.isLoggedin()) {
+				setTitle(R.string.logout)
+				setIcon(R.drawable.ic_exit_to_app_24dp)
+				setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
+			} else {
+				setTitle(R.string.login)
+				setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+			}
 		}
 		return true
 	}
 
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
 		when (item.itemId) {
-			R.id.menu_login -> handleLoginOrLogout()
-			R.id.menu_add   -> addChannel()
-			else            -> return false
+			R.id.menu_login  -> updateLoginState()
+			R.id.menu_add    -> addChannel()
+			R.id.menu_remove -> removeChannel()
+			else             -> return false
 		}
 		return true
 	}
@@ -81,31 +86,49 @@ class MainActivity : AppCompatActivity() {
 		if (requestCode == LOGIN_REQUEST) {
 			val oauth = authStore.getOAuthKey()
 			val name = authStore.getUserName()
+
 			if (resultCode == Activity.RESULT_OK && oauth != null && name != null) {
 				viewModel.close()
-				channels.forEachIndexed { index, channel ->
-					viewModel.connectOrJoinChannel(channel, oauth, name, forceReconnect = index == 0)
+				channels.forEachIndexed { i, channel ->
+					viewModel.connectOrJoinChannel(channel, oauth, name, forceReconnect = i == 0)
 				}
+
 				authStore.setLoggedIn(true)
+				showSnackbar("Logged in as $name")
+				invalidateOptionsMenu()
 			} else {
-				Snackbar.make(binding.root, "Failed to login", Snackbar.LENGTH_SHORT).show()
+				showSnackbar("Failed to login")
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data)
 	}
 
-	private fun handleLoginOrLogout() {
+	private fun updateViewPagerVisibility() = with(binding) {
+		if (channels.size > 0) {
+			viewPager.visibility = View.VISIBLE
+			tabs.visibility = View.VISIBLE
+			addChannelsText.visibility = View.GONE
+		} else {
+			viewPager.visibility = View.GONE
+			tabs.visibility = View.GONE
+			addChannelsText.visibility = View.VISIBLE
+		}
+	}
+
+	private fun showSnackbar(message: String) = Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+
+	private fun updateLoginState() {
 		if (authStore.isLoggedin()) {
 			viewModel.close()
-			channels.forEach {
-				viewModel.connectOrJoinChannel(it, "", "")
+			channels.forEachIndexed { i, channel ->
+				viewModel.connectOrJoinChannel(channel, "", "", forceReconnect = i == 0)
 			}
+
 			authStore.setOAuthKey("")
 			authStore.setLoggedIn(false)
+			invalidateOptionsMenu()
 		} else {
-			val intent = Intent(this, LoginActivity::class.java)
-			startActivityForResult(intent, LOGIN_REQUEST)
-
+			Intent(this, LoginActivity::class.java).run { startActivityForResult(this, LOGIN_REQUEST) }
 		}
 	}
 
@@ -115,24 +138,32 @@ class MainActivity : AppCompatActivity() {
 				val oauth = authStore.getOAuthKey() ?: ""
 				val name = authStore.getUserName() ?: ""
 				viewModel.connectOrJoinChannel(it, oauth, name, true)
-
 				channels.add(it)
-				adapter.addFragment(ChatFragment.newInstance(it), it)
+				authStore.setChannels(channels.toMutableSet())
 
-				binding.viewPager.currentItem = channels.size - 1
+				adapter.addFragment(ChatFragment.newInstance(it), it)
+				binding.viewPager.setCurrentItem(channels.size - 1, true)
 				binding.viewPager.offscreenPageLimit = channels.size - 1
+
+				updateViewPagerVisibility()
 			}
 		}.show(supportFragmentManager, DIALOG_TAG)
 	}
 
-	fun removeChannel(channel: String) {
+	private fun removeChannel() {
+		val index = binding.viewPager.currentItem
+		val channel = channels[index]
+		channels.remove(channel)
+		authStore.setChannels(channels.toMutableSet())
 		viewModel.partChannel(channel)
 
-		val index = channels.indexOf(channel)
-		channels.remove(channel)
+		if (channels.size > 0) {
+			binding.viewPager.setCurrentItem(0, true)
+			binding.viewPager.offscreenPageLimit = channels.size - 1
+		}
+
 		adapter.removeFragment(index)
-		binding.viewPager.currentItem = 0
-		binding.viewPager.offscreenPageLimit = channels.size - 1
+		updateViewPagerVisibility()
 	}
 
 	companion object {
