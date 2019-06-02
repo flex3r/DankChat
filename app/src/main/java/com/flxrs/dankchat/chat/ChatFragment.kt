@@ -2,7 +2,6 @@ package com.flxrs.dankchat.chat
 
 import android.os.Bundle
 import android.text.Editable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -13,7 +12,6 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.DankChatViewModel
-import com.flxrs.dankchat.MainActivity
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -23,7 +21,6 @@ class ChatFragment : Fragment() {
 	private lateinit var binding: ChatFragmentBinding
 	private var isAtBottom = true
 	private var channel: String = ""
-
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		channel = requireArguments().getString(CHANNEL_ARG, "")
@@ -46,14 +43,12 @@ class ChatFragment : Fragment() {
 			}
 		}
 
-		if (channel.isNotBlank()) {
-			viewModel.run {
-				getChat(channel).observe(viewLifecycleOwner, Observer { chatAdapter.submitList(it) })
-				getCanType(channel).observe(viewLifecycleOwner, Observer {
-					binding.input.isEnabled = it
-					binding.input.hint = if (it) "" else "Not logged in"
-				})
-			}
+		if (channel.isNotBlank()) viewModel.run {
+			getChat(channel).observe(viewLifecycleOwner, Observer { chatAdapter.submitList(it) })
+			getCanType(channel).observe(viewLifecycleOwner, Observer {
+				binding.input.isEnabled = it
+				binding.input.hint = if (it) "Start chatting" else "Not logged in"
+			})
 		}
 
 		setHasOptionsMenu(true)

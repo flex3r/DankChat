@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.utils
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.view.KeyEvent
@@ -11,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.DialogAddChannelBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class AddChannelDialogFragment(private val dialogCallback: (String) -> Unit) : DialogFragment(), TextView.OnEditorActionListener {
 
@@ -18,7 +18,7 @@ class AddChannelDialogFragment(private val dialogCallback: (String) -> Unit) : D
 
 	override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 		binding = DataBindingUtil.inflate(LayoutInflater.from(requireContext()), R.layout.dialog_add_channel, null, false)
-		val builder = AlertDialog.Builder(requireContext())
+		val builder = MaterialAlertDialogBuilder(requireContext())
 				.setTitle(R.string.dialog_title)
 				.setView(binding.root)
 				.setNegativeButton(R.string.dialog_negative_button) { _, _ -> dismiss() }

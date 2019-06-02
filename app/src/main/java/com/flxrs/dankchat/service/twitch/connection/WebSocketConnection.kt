@@ -16,6 +16,7 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 			.readTimeout(5, TimeUnit.SECONDS)
 			.writeTimeout(5, TimeUnit.SECONDS)
 			.build()
+
 	private val request = Request.Builder()
 			.url("wss://irc-ws.chat.twitch.tv")
 			.build()

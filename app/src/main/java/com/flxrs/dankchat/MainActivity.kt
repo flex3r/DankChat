@@ -13,8 +13,8 @@ import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.TwitchAuthStore
 import com.flxrs.dankchat.utils.AddChannelDialogFragment
-import com.flxrs.dankchat.utils.TabLayoutMediator
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayoutMediator
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity() {
 			tabLayoutMediator = TabLayoutMediator(tabs, viewPager) { tab, position -> tab.text = adapter.titleList[position] }
 			tabLayoutMediator.attach()
 		}
+		setSupportActionBar(binding.toolbar)
 		updateViewPagerVisibility()
 
 		if (savedInstanceState == null) {

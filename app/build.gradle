@@ -49,6 +49,7 @@ dependencies {
 
     implementation "androidx.appcompat:appcompat:$appcompat_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraint_version"
+    implementation "androidx.viewpager2:viewpager2:$viewpager2_version"
     implementation "androidx.core:core-ktx:$core_version"
     implementation "androidx.browser:browser:$browser_version"
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
@@ -67,13 +68,12 @@ dependencies {
 
     implementation "com.jakewharton.threetenabp:threetenabp:$three_ten_abp_version"
 
-    implementation "io.github.url-detector:url-detector:0.1.20"
+    implementation "io.github.url-detector:url-detector:$url_detector_version"
 
-    implementation 'com.squareup.okhttp3:okhttp:4.0.0-alpha02'
+    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
 
-    implementation "androidx.viewpager2:viewpager2:$viewpager2_version"
 
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.2.0-alpha04'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0-alpha04'
+    androidTestImplementation 'androidx.test:runner:1.2.0-beta01'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0-beta01'
 }
