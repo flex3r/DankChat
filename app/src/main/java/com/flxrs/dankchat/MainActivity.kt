@@ -47,10 +47,7 @@ class MainActivity : AppCompatActivity() {
 
 		if (savedInstanceState == null) {
 			if (name.isNotBlank() && oauth.isNotBlank()) showSnackbar("Logged in as $name")
-
-			channels.forEach {
-				viewModel.connectOrJoinChannel(it, oauth, name, true)
-			}
+			connectAndJoinChannels(name, oauth)
 		}
 	}
 
@@ -90,11 +87,7 @@ class MainActivity : AppCompatActivity() {
 
 			if (resultCode == Activity.RESULT_OK && oauth != null && name != null) {
 				viewModel.close()
-				if (channels.isEmpty()) {
-					viewModel.connectOrJoinChannel("", oauth, name, forceReconnect = true)
-				} else channels.forEachIndexed { i, channel ->
-					viewModel.connectOrJoinChannel(channel, oauth, name, forceReconnect = i == 0)
-				}
+				connectAndJoinChannels(oauth, name)
 
 				authStore.setLoggedIn(true)
 				showSnackbar("Logged in as $name")
@@ -104,6 +97,12 @@ class MainActivity : AppCompatActivity() {
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data)
+	}
+
+	private fun connectAndJoinChannels(name: String, oauth: String) {
+		if (channels.isEmpty()) {
+			viewModel.connectOrJoinChannel("", oauth, name, true)
+		} else channels.forEachIndexed { i, channel -> viewModel.connectOrJoinChannel(channel, oauth, name, forceReconnect = i == 0) }
 	}
 
 	private fun updateViewPagerVisibility() = with(binding) {
@@ -123,10 +122,9 @@ class MainActivity : AppCompatActivity() {
 	private fun updateLoginState() {
 		if (authStore.isLoggedin()) {
 			viewModel.close()
-			channels.forEachIndexed { i, channel ->
-				viewModel.connectOrJoinChannel(channel, "", "", forceReconnect = i == 0)
-			}
+			connectAndJoinChannels("", "")
 
+			authStore.setUserName("")
 			authStore.setOAuthKey("")
 			authStore.setLoggedIn(false)
 			invalidateOptionsMenu()
