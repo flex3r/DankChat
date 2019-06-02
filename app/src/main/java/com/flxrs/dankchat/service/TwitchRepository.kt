@@ -124,9 +124,13 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		}
 	}
 
-	private fun handleHostTarget(message: IrcMessage): Nothing = TODO()
+	private fun handleHostTarget(message: IrcMessage) {
 
-	private fun handleClearMsg(message: IrcMessage): Nothing = TODO()
+	}
+
+	private fun handleClearMsg(message: IrcMessage) {
+
+	}
 
 	private fun handleClearChat(message: IrcMessage) {
 		val channel = message.params[0].substring(1)

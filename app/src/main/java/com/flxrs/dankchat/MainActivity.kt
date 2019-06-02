@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 		updateViewPagerVisibility()
 
 		if (savedInstanceState == null) {
-			if (name.isNotBlank()) showSnackbar("Logged in as $name")
+			if (name.isNotBlank() && oauth.isNotBlank()) showSnackbar("Logged in as $name")
 
 			channels.forEach {
 				viewModel.connectOrJoinChannel(it, oauth, name, true)
@@ -90,7 +90,9 @@ class MainActivity : AppCompatActivity() {
 
 			if (resultCode == Activity.RESULT_OK && oauth != null && name != null) {
 				viewModel.close()
-				channels.forEachIndexed { i, channel ->
+				if (channels.isEmpty()) {
+					viewModel.connectOrJoinChannel("", oauth, name, forceReconnect = true)
+				} else channels.forEachIndexed { i, channel ->
 					viewModel.connectOrJoinChannel(channel, oauth, name, forceReconnect = i == 0)
 				}
 

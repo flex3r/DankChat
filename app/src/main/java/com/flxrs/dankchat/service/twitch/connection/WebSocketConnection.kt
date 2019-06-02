@@ -27,8 +27,8 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 
 	private val channels = mutableSetOf<String>()
 
-	private lateinit var readerWebSocket: WebSocket
-	private lateinit var writerWebSocket: WebSocket
+	private var readerWebSocket: WebSocket? = null
+	private var writerWebSocket: WebSocket? = null
 
 	private var readerConnected = false
 	private var readerPong = false
@@ -38,22 +38,22 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 
 	fun sendMessage(msg: String) {
 		if (readerConnected && writerConnected) {
-			writerWebSocket.sendMessage(msg)
+			writerWebSocket?.sendMessage(msg)
 		}
 	}
 
 	fun joinChannel(channel: String) {
 		if (readerConnected && writerConnected && !channels.contains(channel)) {
-			writerWebSocket.sendMessage("JOIN #$channel")
-			readerWebSocket.sendMessage("JOIN #$channel")
+			writerWebSocket?.sendMessage("JOIN #$channel")
+			readerWebSocket?.sendMessage("JOIN #$channel")
 		}
 		channels.add(channel)
 	}
 
 	fun partChannel(channel: String) {
 		if (readerConnected && writerConnected && channels.contains(channel)) {
-			writerWebSocket.sendMessage("PART #$channel")
-			readerWebSocket.sendMessage("PART #$channel")
+			writerWebSocket?.sendMessage("PART #$channel")
+			readerWebSocket?.sendMessage("PART #$channel")
 		}
 		channels.remove(channel)
 	}
@@ -62,7 +62,7 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 		this.nick = nick
 		this.oAuth = oAuth
 		isJustinFan = (oAuth.isBlank() || !oAuth.startsWith("oauth:"))
-		if (!channels.contains(channel)) channels.add(channel)
+		if (!channels.contains(channel) && channel.isNotBlank()) channels.add(channel)
 
 		readerWebSocket = client.newWebSocket(request, ReaderWebSocketListener())
 		writerWebSocket = client.newWebSocket(request, WriterWebSocketListener())
@@ -71,8 +71,10 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 	fun close(reconnect: Boolean = true) {
 		scope.coroutineContext.cancel()
 		scope.coroutineContext.cancelChildren()
-		writerWebSocket.cancel()
-		readerWebSocket.cancel()
+		writerWebSocket?.cancel()
+		readerWebSocket?.cancel()
+		writerWebSocket = null
+		readerWebSocket = null
 
 		if (reconnect) {
 			writerWebSocket = client.newWebSocket(request, WriterWebSocketListener())
@@ -102,7 +104,7 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 		}
 
 		if (readerConnected) {
-			readerWebSocket.sendMessage("PING")
+			readerWebSocket?.sendMessage("PING")
 			readerPong = true
 		}
 	}
@@ -115,7 +117,7 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 		}
 
 		if (writerConnected) {
-			writerWebSocket.sendMessage("PING")
+			writerWebSocket?.sendMessage("PING")
 			writerPong = true
 		}
 	}
