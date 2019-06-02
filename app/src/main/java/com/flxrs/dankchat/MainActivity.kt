@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.chat.ChatFragment
 import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.databinding.MainActivityBinding
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity() {
 
 		binding = DataBindingUtil.setContentView<MainActivityBinding>(this, R.layout.main_activity).apply {
 			viewPager.adapter = adapter
+			viewPager.offscreenPageLimit = if (channels.size > 0) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 			tabLayoutMediator = TabLayoutMediator(tabs, viewPager) { tab, position -> tab.text = adapter.titleList[position] }
 			tabLayoutMediator.attach()
 		}
@@ -161,6 +163,8 @@ class MainActivity : AppCompatActivity() {
 		if (channels.size > 0) {
 			binding.viewPager.setCurrentItem(0, true)
 			binding.viewPager.offscreenPageLimit = channels.size - 1
+		} else {
+			binding.viewPager.offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 		}
 
 		adapter.removeFragment(index)
