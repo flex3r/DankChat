@@ -177,8 +177,9 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
 	private suspend fun loadBadges(channel: String) = withContext(Dispatchers.IO) {
 		EmoteManager.loadGlobalBadges()
-		val id = TwitchApi.getUserIdFromName(channel)
-		if (id.isNotBlank()) EmoteManager.loadChannelBadges(id, channel)
+		TwitchApi.getChannelBadges(channel)?.let {
+			EmoteManager.setChannelBadges(channel, it)
+		}
 	}
 
 	private suspend fun load3rdPartyEmotes(channel: String) = withContext(Dispatchers.IO) {

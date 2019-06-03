@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.service.api
 
+import com.flxrs.dankchat.service.api.model.BadgeEntity
 import com.flxrs.dankchat.service.api.model.UserEntity
 import com.flxrs.dankchat.utils.TwitchApi
 import kotlinx.coroutines.Deferred
@@ -21,5 +22,8 @@ interface TwitchService {
 
 	@Headers("Client-ID: ${TwitchApi.CLIENT_ID}")
 	@GET
-	fun getUserHelixAsync(@Url url: String): Deferred<Response<UserEntity.HelixArray>>
+	fun getUserHelixAsync(@Url url: String): Deferred<Response<UserEntity.FromHelixAsArray>>
+
+	@GET
+	fun getChannelBadges(@Url url: String): Deferred<Response<BadgeEntity.BadgeSets>>
 }

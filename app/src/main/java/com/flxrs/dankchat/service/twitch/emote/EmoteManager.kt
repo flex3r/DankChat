@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.service.twitch.emote
 
 import androidx.collection.LruCache
+import com.flxrs.dankchat.service.api.model.BadgeEntity
 import com.flxrs.dankchat.service.twitch.badge.BadgeSet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -29,7 +30,7 @@ object EmoteManager {
 
 	private const val TWITCH_SUBBADGES_BASE_URL = "https://badges.twitch.tv/v1/badges/channels/"
 	private const val TWITCH_SUBBADGES_SUFFIX = "/display"
-	private val channelBadges = ConcurrentHashMap<String, HashMap<String, BadgeSet>>()
+	private val channelBadges = ConcurrentHashMap<String, BadgeEntity.BadgeSets>()
 
 	private const val TWITCH_BADGES_URL = "https://badges.twitch.tv/v1/badges/global/display"
 	private val globalBadges = ConcurrentHashMap<String, BadgeSet>()
@@ -68,27 +69,12 @@ object EmoteManager {
 		return emotes
 	}
 
-	fun getSubBadgeUrl(channel: String, set: String, version: String) = channelBadges[channel]?.get(set)?.versions?.get(version)
+	fun getSubBadgeUrl(channel: String, set: String, version: String) = channelBadges[channel]?.sets?.get(set)?.versions?.get(version)?.imageUrlHigh
 
 	fun getGlobalBadgeUrl(set: String, version: String) = globalBadges[set]?.versions?.get(version)
 
-	suspend fun loadChannelBadges(channelId: String, channel: String) = withContext(Dispatchers.IO) {
-		val response = URL("$TWITCH_SUBBADGES_BASE_URL$channelId$TWITCH_SUBBADGES_SUFFIX").readText()
-		withContext(Dispatchers.Default) {
-			val sets = hashMapOf<String, BadgeSet>()
-			val setsJson = JSONObject(response).getJSONObject("badge_sets")
-			setsJson.keys().forEach { set ->
-				val versions = mutableMapOf<String, String>()
-				val versionsJson = setsJson.getJSONObject(set).optJSONObject("versions")
-				versionsJson.keys().forEach { version ->
-					val url = versionsJson.getJSONObject(version).getString("image_url_4x")
-					versions[version] = url
-				}
-				val badgeSet = BadgeSet(set, versions)
-				sets[set] = badgeSet
-			}
-			channelBadges[channel] = sets
-		}
+	fun setChannelBadges(channel: String, entity: BadgeEntity.BadgeSets) {
+		channelBadges[channel] = entity
 	}
 
 	suspend fun loadGlobalBadges() = withContext(Dispatchers.IO) {

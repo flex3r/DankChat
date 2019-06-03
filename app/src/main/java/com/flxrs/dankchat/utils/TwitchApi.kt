@@ -2,6 +2,7 @@ package com.flxrs.dankchat.utils
 
 import android.util.Log
 import com.flxrs.dankchat.service.api.TwitchService
+import com.flxrs.dankchat.service.api.model.BadgeEntity
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +17,8 @@ object TwitchApi {
 
 	private const val KRAKEN_BASE_URL = "https://api.twitch.tv/kraken/"
 	private const val HELIX_BASE_URL = "https://api.twitch.tv/helix/"
-
+	private const val TWITCH_SUBBADGES_BASE_URL = "https://badges.twitch.tv/v1/badges/channels/"
+	private const val TWITCH_SUBBADGES_SUFFIX = "/display"
 
 	private const val BASE_LOGIN_URL = "https://id.twitch.tv/oauth2/authorize?response_type=token"
 	private const val REDIRECT_URL = "https://flxrs.com/dankchat"
@@ -51,5 +53,19 @@ object TwitchApi {
 			Log.e(TAG, e.message)
 		}
 		return@withContext ""
+	}
+
+	suspend fun getChannelBadges(channel: String): BadgeEntity.BadgeSets? = withContext(Dispatchers.IO) {
+		val id = getUserIdFromName(channel)
+		if (id.isNotBlank()) {
+			try {
+				service.getChannelBadges("$TWITCH_SUBBADGES_BASE_URL$id$TWITCH_SUBBADGES_SUFFIX").await().run {
+					if (isSuccessful) return@withContext body()
+				}
+			} catch (e: Throwable) {
+				Log.e(TAG, e.message)
+			}
+		}
+		return@withContext null
 	}
 }

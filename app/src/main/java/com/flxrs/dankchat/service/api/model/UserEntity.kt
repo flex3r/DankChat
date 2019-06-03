@@ -28,13 +28,13 @@ sealed class UserEntity {
 						 @field:Json(name = "offline_image_url") val offlineImageUrl: String,
 						 @field:Json(name = "view_count") val viewCount: Int) : UserEntity()
 
-	data class HelixArray(@field:Json(name = "data") val data: Array<UserEntity.FromHelix>) : UserEntity() {
+	data class FromHelixAsArray(@field:Json(name = "data") val data: Array<UserEntity.FromHelix>) : UserEntity() {
 		override fun hashCode(): Int = data.contentHashCode()
 		override fun equals(other: Any?): Boolean {
 			if (this === other) return true
 			if (javaClass != other?.javaClass) return false
 
-			other as HelixArray
+			other as FromHelixAsArray
 			if (!data.contentEquals(other.data)) return false
 
 			return true
