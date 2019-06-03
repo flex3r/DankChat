@@ -5,12 +5,12 @@ import com.flxrs.dankchat.service.TwitchRepository
 
 class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewModel() {
 
-	fun getChat(channel : String) = twitchRepository.getChat(channel)
+	fun getChat(channel: String) = twitchRepository.getChat(channel)
 
 	fun getCanType(channel: String) = twitchRepository.getCanType(channel)
 
-	fun connectOrJoinChannel(channel: String, oauth: String, name: String, loadEmotesAndBadges: Boolean = false, forceReconnect: Boolean = false) {
-		twitchRepository.connectAndAddChannel(channel, oauth, name, loadEmotesAndBadges, forceReconnect)
+	fun connectOrJoinChannel(channel: String, nick: String, oauth: String, loadEmotesAndBadges: Boolean = false, forceReconnect: Boolean = false) {
+		twitchRepository.connectAndAddChannel(channel, nick, oauth, loadEmotesAndBadges, forceReconnect)
 	}
 
 	fun partChannel(channel: String) = twitchRepository.partChannel(channel)

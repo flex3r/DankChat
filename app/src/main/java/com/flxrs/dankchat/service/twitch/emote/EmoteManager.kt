@@ -2,15 +2,11 @@ package com.flxrs.dankchat.service.twitch.emote
 
 import androidx.collection.LruCache
 import com.flxrs.dankchat.service.twitch.badge.BadgeSet
-import com.flxrs.dankchat.utils.TwitchApi
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import pl.droidsonroids.gif.GifDrawable
 import pl.droidsonroids.gif.MultiCallback
-import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
@@ -37,8 +33,6 @@ object EmoteManager {
 
 	private const val TWITCH_BADGES_URL = "https://badges.twitch.tv/v1/badges/global/display"
 	private val globalBadges = ConcurrentHashMap<String, BadgeSet>()
-
-	private const val TWITCH_NAME_TO_ID_URL = "https://api.twitch.tv/helix/users?login="
 
 	val gifCache = LruCache<String, GifDrawable>(4 * 1024 * 1024)
 	val gifCallback = MultiCallback(true)
@@ -77,16 +71,6 @@ object EmoteManager {
 	fun getSubBadgeUrl(channel: String, set: String, version: String) = channelBadges[channel]?.get(set)?.versions?.get(version)
 
 	fun getGlobalBadgeUrl(set: String, version: String) = globalBadges[set]?.versions?.get(version)
-
-	//TODO move to TwitchApi.kt
-	suspend fun getUserIdFromName(name: String): String = withContext(Dispatchers.IO) {
-		val url = URL("$TWITCH_NAME_TO_ID_URL$name")
-		val connection = url.openConnection() as HttpURLConnection
-		connection.setRequestProperty("Client-ID", TwitchApi.CLIENT_ID)
-		val response = connection.inputStream.bufferedReader().readText()
-		val json = JSONObject(response)
-		return@withContext json.getJSONArray("data").getJSONObject(0).getString("id")
-	}
 
 	suspend fun loadChannelBadges(channelId: String, channel: String) = withContext(Dispatchers.IO) {
 		val response = URL("$TWITCH_SUBBADGES_BASE_URL$channelId$TWITCH_SUBBADGES_SUFFIX").readText()

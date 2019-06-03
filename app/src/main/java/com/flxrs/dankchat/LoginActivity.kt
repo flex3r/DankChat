@@ -8,8 +8,8 @@ import androidx.databinding.DataBindingUtil
 import com.flxrs.dankchat.databinding.LoginActivityBinding
 import com.flxrs.dankchat.preferences.TwitchAuthStore
 import com.flxrs.dankchat.utils.TwitchApi
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -43,8 +43,8 @@ class LoginActivity : AppCompatActivity() {
 			val fragment = request?.url?.fragment ?: ""
 			if (fragment.startsWith("access_token=")) {
 				val token = fragment.substringAfter("access_token=").substringBefore("&scope=")
-				GlobalScope.launch {
-					val name = TwitchApi.getUserDataAsync(token).await()
+				CoroutineScope(Dispatchers.IO).launch {
+					val name = TwitchApi.getUserName(token)
 					withContext(Dispatchers.Main) {
 						if (name.isNotBlank()) {
 							val authStore = TwitchAuthStore(this@LoginActivity)

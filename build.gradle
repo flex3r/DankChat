@@ -24,6 +24,9 @@ buildscript {
         gif_drawable_version = "1.2.16"
         viewpager2_version = "1.0.0-alpha04"
         okhttp_version = "4.0.0-alpha02"
+        retrofit_version = "2.5.0"
+        moshi_version = "2.4.0"
+        retrofit_coroutines_adapter_version = "0.9.2"
         url_detector_version = "0.1.20"
 
 

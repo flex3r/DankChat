@@ -8,6 +8,7 @@ import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
+import com.flxrs.dankchat.utils.TwitchApi
 import com.flxrs.dankchat.utils.addAndLimit
 import com.flxrs.dankchat.utils.replaceWithTimeOuts
 import kotlinx.coroutines.*
@@ -43,7 +44,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		return liveData
 	}
 
-	fun connectAndAddChannel(channel: String, oAuth: String, name: String, loadEmotesAndBadges: Boolean = false, forceReconnect: Boolean = false) {
+	fun connectAndAddChannel(channel: String, nick: String, oAuth: String, loadEmotesAndBadges: Boolean = false, forceReconnect: Boolean = false) {
 		if (forceReconnect) hasConnected = false
 
 		if (loadEmotesAndBadges) scope.launch { loadBadges(channel) }
@@ -51,7 +52,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		if (hasConnected) {
 			connection.joinChannel(channel)
 		} else {
-			connection.connect(name, oAuth, channel)
+			Log.d(TAG, "$nick $oAuth $channel")
+			connection.connect(nick, oAuth, channel)
 			hasConnected = true
 		}
 
@@ -175,8 +177,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
 	private suspend fun loadBadges(channel: String) = withContext(Dispatchers.IO) {
 		EmoteManager.loadGlobalBadges()
-		val id = EmoteManager.getUserIdFromName(channel)
-		EmoteManager.loadChannelBadges(id, channel)
+		val id = TwitchApi.getUserIdFromName(channel)
+		if (id.isNotBlank()) EmoteManager.loadChannelBadges(id, channel)
 	}
 
 	private suspend fun load3rdPartyEmotes(channel: String) = withContext(Dispatchers.IO) {

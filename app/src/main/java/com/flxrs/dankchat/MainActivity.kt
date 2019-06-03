@@ -3,6 +3,7 @@ package com.flxrs.dankchat
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -87,9 +88,9 @@ class MainActivity : AppCompatActivity() {
 			val oauth = authStore.getOAuthKey()
 			val name = authStore.getUserName()
 
-			if (resultCode == Activity.RESULT_OK && oauth != null && name != null) {
+			if (resultCode == Activity.RESULT_OK && !oauth.isNullOrBlank() && !name.isNullOrBlank()) {
 				viewModel.close()
-				connectAndJoinChannels(oauth, name, true)
+				connectAndJoinChannels(name, oauth)
 
 				authStore.setLoggedIn(true)
 				showSnackbar("Logged in as $name")
@@ -103,8 +104,11 @@ class MainActivity : AppCompatActivity() {
 
 	private fun connectAndJoinChannels(name: String, oauth: String, loadEmotesAndBadges: Boolean = false) {
 		if (channels.isEmpty()) {
-			viewModel.connectOrJoinChannel("", oauth, name, false)
-		} else channels.forEachIndexed { i, channel -> viewModel.connectOrJoinChannel(channel, oauth, name, loadEmotesAndBadges, i == 0) }
+			viewModel.connectOrJoinChannel("", name, oauth, false)
+		} else channels.forEachIndexed { i, channel ->
+			Log.d(TAG, "$i")
+			viewModel.connectOrJoinChannel(channel, name, oauth, loadEmotesAndBadges, i == 0)
+		}
 	}
 
 	private fun updateViewPagerVisibility() = with(binding) {
@@ -140,7 +144,7 @@ class MainActivity : AppCompatActivity() {
 			if (!channels.contains(it)) {
 				val oauth = authStore.getOAuthKey() ?: ""
 				val name = authStore.getUserName() ?: ""
-				viewModel.connectOrJoinChannel(it, oauth, name, true)
+				viewModel.connectOrJoinChannel(it, name, oauth, true)
 				channels.add(it)
 				authStore.setChannels(channels.toMutableSet())
 
