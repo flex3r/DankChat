@@ -5,7 +5,7 @@
 		<item name="colorAccent">@color/colorAccent</item>
 	</style>
 
-	<style name="AppTheme.AppBar" parent="Widget.MaterialComponents.Toolbar.Surface">
+	<style name="AppTheme.AppBar" parent="Widget.MaterialComponents.Toolbar">
 		<item name="actionMenuTextColor">@android:color/white</item>
 		<item name="android:actionMenuTextColor">@android:color/white</item>
 	</style>
