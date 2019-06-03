@@ -91,7 +91,8 @@ class ChatFragment : Fragment() {
 		override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
 			super.onItemRangeInserted(positionStart, itemCount)
 			if (isAtBottom && chatAdapter.itemCount > 0) {
-				manager.scrollToPositionWithOffset(chatAdapter.itemCount - 1, 1)
+				manager.scrollToPosition(chatAdapter.itemCount - 1)
+				//manager.scrollToPositionWithOffset(chatAdapter.itemCount - 1, 1)
 			}
 		}
 	}

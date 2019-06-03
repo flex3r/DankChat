@@ -61,13 +61,11 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		}
 	}
 
-	fun partChannel(channel: String) {
-		connection.partChannel(channel)
-	}
+	fun partChannel(channel: String) = connection.partChannel(channel)
 
-	fun sendMessage(channel: String, message: String) {
-		connection.sendMessage("PRIVMSG #$channel :$message")
-	}
+	fun sendMessage(channel: String, message: String) = connection.sendMessage("PRIVMSG #$channel :$message")
+
+	fun reconnect() = close(true)
 
 	fun close(doReconnect: Boolean = false) {
 		canType.keys.forEach { canType[it]?.postValue(false) }
@@ -76,10 +74,6 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		scope.coroutineContext.cancel()
 		scope.coroutineContext.cancelChildren()
 		connection.close(doReconnect)
-	}
-
-	fun reconnect() {
-		close(true)
 	}
 
 	@Synchronized
@@ -125,11 +119,11 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	}
 
 	private fun handleHostTarget(message: IrcMessage) {
-
+		//TODO implement
 	}
 
 	private fun handleClearMsg(message: IrcMessage) {
-
+		//TODO implement
 	}
 
 	private fun handleClearChat(message: IrcMessage) {
@@ -191,7 +185,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		launch { EmoteManager.loadGlobalBttvEmotes() }
 	}
 
-	private suspend fun loadRecentMessages(channel: String) = withContext(Dispatchers.IO) {
+	private suspend fun loadRecentMessages(channel: String) = scope.launch {
 		val list = mutableListOf<ChatItem>()
 		val response = URL("$RECENT_MSG_URL$channel?clearchatToNotice=true").readText()
 		withContext(Dispatchers.Default) {
