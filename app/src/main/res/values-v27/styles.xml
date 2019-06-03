@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
+		<item name="android:navigationBarColor">@color/colorSurface</item>
+		<item name="android:navigationBarDividerColor">@color/colorSurface</item>
+		<item name="colorAccent">@color/colorAccent</item>
+	</style>
+</resources>

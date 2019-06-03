@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
 
 		if (savedInstanceState == null) {
 			if (name.isNotBlank() && oauth.isNotBlank()) showSnackbar("Logged in as $name")
-			connectAndJoinChannels(name, oauth)
+			connectAndJoinChannels(name, oauth, true)
 		}
 	}
 
@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
 
 			if (resultCode == Activity.RESULT_OK && oauth != null && name != null) {
 				viewModel.close()
-				connectAndJoinChannels(oauth, name)
+				connectAndJoinChannels(oauth, name, true)
 
 				authStore.setLoggedIn(true)
 				showSnackbar("Logged in as $name")
@@ -101,10 +101,10 @@ class MainActivity : AppCompatActivity() {
 		super.onActivityResult(requestCode, resultCode, data)
 	}
 
-	private fun connectAndJoinChannels(name: String, oauth: String) {
+	private fun connectAndJoinChannels(name: String, oauth: String, loadEmotesAndBadges: Boolean = false) {
 		if (channels.isEmpty()) {
-			viewModel.connectOrJoinChannel("", oauth, name, true)
-		} else channels.forEachIndexed { i, channel -> viewModel.connectOrJoinChannel(channel, oauth, name, forceReconnect = i == 0) }
+			viewModel.connectOrJoinChannel("", oauth, name, false)
+		} else channels.forEachIndexed { i, channel -> viewModel.connectOrJoinChannel(channel, oauth, name, loadEmotesAndBadges, i == 0) }
 	}
 
 	private fun updateViewPagerVisibility() = with(binding) {

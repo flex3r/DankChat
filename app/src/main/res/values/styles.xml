@@ -1,13 +1,12 @@
 <resources>
 
-	<!-- Base application theme. -->    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
-	<item name="colorAccent">@color/colorAccent</item>
-</style>
+	<style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
+		<item name="android:navigationBarColor">@color/colorSurface</item>
+		<item name="colorAccent">@color/colorAccent</item>
+	</style>
 
 	<style name="AppTheme.AppBar" parent="Widget.MaterialComponents.Toolbar.Surface">
 		<item name="actionMenuTextColor">@android:color/white</item>
 		<item name="android:actionMenuTextColor">@android:color/white</item>
-		<item name="android:background">@color/colorSurface</item>
 	</style>
-
 </resources>
