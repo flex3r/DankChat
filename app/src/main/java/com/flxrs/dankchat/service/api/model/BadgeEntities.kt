@@ -11,9 +11,9 @@ sealed class BadgeEntities {
 					 @field:Json(name = "title") val title: String,
 					 @field:Json(name = "click_action") val click_action: String,
 					 @field:Json(name = "click_url") val click_url: String,
-					 @field:Json(name = "last_updated") val lastUpdated: String?) : BadgeEntities()
+					 @field:Json(name = "last_updated") val lastUpdated: String?)
 
-	data class BadgeVersions(@field:Json(name = "versions") val versions: Map<String, Badge>) : BadgeEntities()
+	data class BadgeSet(@field:Json(name = "versions") val versions: Map<String, Badge>)
 
-	data class BadgeSets(@field:Json(name = "badge_sets") val sets: Map<String, BadgeVersions>) : BadgeEntities()
+	data class Result(@field:Json(name = "badge_sets") val sets: Map<String, BadgeSet>)
 }

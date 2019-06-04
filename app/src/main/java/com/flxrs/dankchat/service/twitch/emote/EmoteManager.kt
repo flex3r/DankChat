@@ -22,8 +22,8 @@ object EmoteManager {
 	private val bttvEmotes = hashMapOf<String, HashMap<String, GenericEmote>>()
 	private val globalBttvEmotes = ConcurrentHashMap<String, GenericEmote>()
 
-	private val channelBadges = ConcurrentHashMap<String, BadgeEntities.BadgeSets>()
-	private val globalBadges = ConcurrentHashMap<String, BadgeEntities.BadgeVersions>()
+	private val channelBadges = ConcurrentHashMap<String, BadgeEntities.Result>()
+	private val globalBadges = ConcurrentHashMap<String, BadgeEntities.BadgeSet>()
 
 	val gifCache = LruCache<String, GifDrawable>(4 * 1024 * 1024)
 	val gifCallback = MultiCallback(true)
@@ -62,11 +62,11 @@ object EmoteManager {
 
 	fun getGlobalBadgeUrl(set: String, version: String) = globalBadges[set]?.versions?.get(version)?.imageUrlHigh
 
-	fun setChannelBadges(channel: String, entity: BadgeEntities.BadgeSets) {
+	fun setChannelBadges(channel: String, entity: BadgeEntities.Result) {
 		channelBadges[channel] = entity
 	}
 
-	fun setGlobalBadges(entity: BadgeEntities.BadgeSets) {
+	fun setGlobalBadges(entity: BadgeEntities.Result) {
 		globalBadges.putAll(entity.sets)
 	}
 

@@ -26,7 +26,7 @@ interface TwitchService {
 	fun getUserHelixAsync(@Url url: String): Deferred<Response<UserEntities.FromHelixAsArray>>
 
 	@GET
-	fun getBadgeSetsAsync(@Url url: String): Deferred<Response<BadgeEntities.BadgeSets>>
+	fun getBadgeSetsAsync(@Url url: String): Deferred<Response<BadgeEntities.Result>>
 
 	@GET
 	fun getFFZChannelEmotesAsync(@Url url: String): Deferred<Response<EmoteEntities.FFZ.Result>>

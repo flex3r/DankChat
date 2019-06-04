@@ -16,7 +16,7 @@ sealed class UserEntities {
 						  @field:Json(name = "partnered") val isPartnered: Boolean,
 						  @field:Json(name = "twitter_connected") val isTwitterConnected: Boolean,
 						  @field:Json(name = "type") val type: String,
-						  @field:Json(name = "updated_at") val lastUpdated: String) : UserEntities()
+						  @field:Json(name = "updated_at") val lastUpdated: String)
 
 	data class FromHelix(@field:Json(name = "id") val id: String,
 						 @field:Json(name = "login") val name: String,
@@ -28,7 +28,7 @@ sealed class UserEntities {
 						 @field:Json(name = "offline_image_url") val offlineImageUrl: String,
 						 @field:Json(name = "view_count") val viewCount: Int) : UserEntities()
 
-	data class FromHelixAsArray(@field:Json(name = "data") val data: Array<UserEntities.FromHelix>) : UserEntities() {
+	data class FromHelixAsArray(@field:Json(name = "data") val data: Array<UserEntities.FromHelix>) {
 		override fun hashCode(): Int = data.contentHashCode()
 		override fun equals(other: Any?): Boolean {
 			if (this === other) return true

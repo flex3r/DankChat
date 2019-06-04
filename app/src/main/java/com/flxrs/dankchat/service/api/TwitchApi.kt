@@ -56,7 +56,7 @@ object TwitchApi {
 		return@withContext ""
 	}
 
-	suspend fun getChannelBadges(channel: String): BadgeEntities.BadgeSets? = withContext(Dispatchers.IO) {
+	suspend fun getChannelBadges(channel: String): BadgeEntities.Result? = withContext(Dispatchers.IO) {
 		getUserIdFromName(channel)?.let {
 			try {
 				val response = service.getBadgeSetsAsync("$TWITCH_SUBBADGES_BASE_URL$it$TWITCH_SUBBADGES_SUFFIX").await()
@@ -68,7 +68,7 @@ object TwitchApi {
 		return@withContext null
 	}
 
-	suspend fun getGlobalBadges(): BadgeEntities.BadgeSets? = withContext(Dispatchers.IO) {
+	suspend fun getGlobalBadges(): BadgeEntities.Result? = withContext(Dispatchers.IO) {
 		try {
 			val response = service.getBadgeSetsAsync(TWITCH_BADGES_URL).await()
 			if (response.isSuccessful) return@withContext response.body()
