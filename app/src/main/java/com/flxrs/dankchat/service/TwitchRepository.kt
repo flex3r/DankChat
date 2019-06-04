@@ -8,7 +8,7 @@ import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
-import com.flxrs.dankchat.utils.TwitchApi
+import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.utils.addAndLimit
 import com.flxrs.dankchat.utils.replaceWithTimeOuts
 import kotlinx.coroutines.*
@@ -24,6 +24,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	private val canType = mutableMapOf<String, MutableLiveData<Boolean>>()
 	private var hasConnected = false
 	private var hasDisconnected = false
+	private var loadedGlobalBadges = false
 	private val connection: WebSocketConnection = get { parametersOf(::onDisconnect, ::onMessage) }
 
 	fun getChat(channel: String): LiveData<List<ChatItem>> {
@@ -176,14 +177,16 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	}
 
 	private suspend fun loadBadges(channel: String) = withContext(Dispatchers.IO) {
-		EmoteManager.loadGlobalBadges()
-		TwitchApi.getChannelBadges(channel)?.let {
-			EmoteManager.setChannelBadges(channel, it)
+		if (!loadedGlobalBadges) TwitchApi.getGlobalBadges()?.let {
+			EmoteManager.setGlobalBadges(it)
+			loadedGlobalBadges = true
 		}
+		TwitchApi.getChannelBadges(channel)?.let { EmoteManager.setChannelBadges(channel, it) }
 	}
 
 	private suspend fun load3rdPartyEmotes(channel: String) = withContext(Dispatchers.IO) {
-		launch { EmoteManager.loadFfzEmotes(channel) }
+		TwitchApi.getFFZChannelEmotes(channel)?.let { EmoteManager.setFFZEmotes(channel, it) }
+		TwitchApi.getFFZGlobalEmotes()?.let { EmoteManager.setFFZGlobalEmotes(it) }
 		launch { EmoteManager.loadBttvEmotes(channel) }
 		launch { EmoteManager.loadGlobalBttvEmotes() }
 	}

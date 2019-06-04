@@ -2,7 +2,7 @@ package com.flxrs.dankchat.service.api.model
 
 import com.squareup.moshi.Json
 
-sealed class UserEntity {
+sealed class UserEntities {
 
 	data class FromKraken(@field:Json(name = "_id") val id: Int,
 						  @field:Json(name = "bio") val bio: String,
@@ -16,7 +16,7 @@ sealed class UserEntity {
 						  @field:Json(name = "partnered") val isPartnered: Boolean,
 						  @field:Json(name = "twitter_connected") val isTwitterConnected: Boolean,
 						  @field:Json(name = "type") val type: String,
-						  @field:Json(name = "updated_at") val lastUpdated: String) : UserEntity()
+						  @field:Json(name = "updated_at") val lastUpdated: String) : UserEntities()
 
 	data class FromHelix(@field:Json(name = "id") val id: String,
 						 @field:Json(name = "login") val name: String,
@@ -26,9 +26,9 @@ sealed class UserEntity {
 						 @field:Json(name = "description") val description: String,
 						 @field:Json(name = "profile_image_url") val avatarUrl: String,
 						 @field:Json(name = "offline_image_url") val offlineImageUrl: String,
-						 @field:Json(name = "view_count") val viewCount: Int) : UserEntity()
+						 @field:Json(name = "view_count") val viewCount: Int) : UserEntities()
 
-	data class FromHelixAsArray(@field:Json(name = "data") val data: Array<UserEntity.FromHelix>) : UserEntity() {
+	data class FromHelixAsArray(@field:Json(name = "data") val data: Array<UserEntities.FromHelix>) : UserEntities() {
 		override fun hashCode(): Int = data.contentHashCode()
 		override fun equals(other: Any?): Boolean {
 			if (this === other) return true

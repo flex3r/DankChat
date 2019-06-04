@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.flxrs.dankchat.databinding.LoginActivityBinding
 import com.flxrs.dankchat.preferences.TwitchAuthStore
-import com.flxrs.dankchat.utils.TwitchApi
+import com.flxrs.dankchat.service.api.TwitchApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
