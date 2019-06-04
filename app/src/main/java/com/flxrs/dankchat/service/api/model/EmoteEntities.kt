@@ -84,4 +84,83 @@ sealed class EmoteEntities {
 			}
 		}
 	}
+
+	sealed class BTTV {
+		data class Emote(@field:Json(name = "id") val id: String,
+						 @field:Json(name = "channel") val channel: String,
+						 @field:Json(name = "code") val code: String,
+						 @field:Json(name = "imageType") val imageType: String)
+
+		data class GlobalEmote(@field:Json(name = "id") val id: String,
+							   @field:Json(name = "code") val code: String,
+							   @field:Json(name = "channel") val channel: String?,
+							   @field:Json(name = "restrictions") val restrictions: Restriction,
+							   @field:Json(name = "imageType") val imageType: String)
+
+		data class Restriction(@field:Json(name = "channels") val channels: Array<String>,
+							   @field:Json(name = "games") val games: Array<String>) {
+			override fun equals(other: Any?): Boolean {
+				if (this === other) return true
+				if (javaClass != other?.javaClass) return false
+
+				other as Restriction
+				if (!channels.contentEquals(other.channels)) return false
+				if (!games.contentEquals(other.games)) return false
+
+				return true
+			}
+
+			override fun hashCode(): Int {
+				var result = channels.contentHashCode()
+				result = 31 * result + games.contentHashCode()
+				return result
+			}
+		}
+
+		data class Result(@field:Json(name = "status") val status: Int,
+						  @field:Json(name = "urlTemplate") val urlTemplate: String,
+						  @field:Json(name = "emotes") val emotes: Array<BTTV.Emote>) {
+			override fun equals(other: Any?): Boolean {
+				if (this === other) return true
+				if (javaClass != other?.javaClass) return false
+
+				other as Result
+				if (status != other.status) return false
+				if (urlTemplate != other.urlTemplate) return false
+				if (!emotes.contentEquals(other.emotes)) return false
+
+				return true
+			}
+
+			override fun hashCode(): Int {
+				var result = status
+				result = 31 * result + urlTemplate.hashCode()
+				result = 31 * result + emotes.contentHashCode()
+				return result
+			}
+		}
+
+		data class GlobalResult(@field:Json(name = "status") val status: Int,
+								@field:Json(name = "urlTemplate") val urlTemplate: String,
+								@field:Json(name = "emotes") val emotes: Array<BTTV.GlobalEmote>) {
+			override fun equals(other: Any?): Boolean {
+				if (this === other) return true
+				if (javaClass != other?.javaClass) return false
+
+				other as GlobalResult
+				if (status != other.status) return false
+				if (urlTemplate != other.urlTemplate) return false
+				if (!emotes.contentEquals(other.emotes)) return false
+
+				return true
+			}
+
+			override fun hashCode(): Int {
+				var result = status
+				result = 31 * result + urlTemplate.hashCode()
+				result = 31 * result + emotes.contentHashCode()
+				return result
+			}
+		}
+	}
 }

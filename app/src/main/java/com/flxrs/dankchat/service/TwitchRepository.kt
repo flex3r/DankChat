@@ -4,11 +4,11 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.flxrs.dankchat.chat.ChatItem
+import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
-import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.utils.addAndLimit
 import com.flxrs.dankchat.utils.replaceWithTimeOuts
 import kotlinx.coroutines.*
@@ -187,8 +187,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	private suspend fun load3rdPartyEmotes(channel: String) = withContext(Dispatchers.IO) {
 		TwitchApi.getFFZChannelEmotes(channel)?.let { EmoteManager.setFFZEmotes(channel, it) }
 		TwitchApi.getFFZGlobalEmotes()?.let { EmoteManager.setFFZGlobalEmotes(it) }
-		launch { EmoteManager.loadBttvEmotes(channel) }
-		launch { EmoteManager.loadGlobalBttvEmotes() }
+		TwitchApi.getBTTVChannelEmotes(channel)?.let { EmoteManager.setBTTVEmotes(channel, it) }
+		TwitchApi.getBTTVGlobalEmotes()?.let { EmoteManager.setBTTVGlobalEmotes(it) }
 	}
 
 	private suspend fun loadRecentMessages(channel: String) = scope.launch {

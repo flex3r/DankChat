@@ -32,4 +32,10 @@ interface TwitchService {
 
 	@GET
 	fun getFFZGlobalEmotesAsync(@Url url: String): Deferred<Response<EmoteEntities.FFZ.GlobalResult>>
+
+	@GET
+	fun getBTTVChannelEmotesAsync(@Url url: String): Deferred<Response<EmoteEntities.BTTV.Result>>
+
+	@GET
+	fun getBTTVGlobalEmotesAsync(@Url url: String): Deferred<Response<EmoteEntities.BTTV.GlobalResult>>
 }

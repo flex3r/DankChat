@@ -5,10 +5,8 @@ import com.flxrs.dankchat.service.api.model.BadgeEntities
 import com.flxrs.dankchat.service.api.model.EmoteEntities
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
 import pl.droidsonroids.gif.GifDrawable
 import pl.droidsonroids.gif.MultiCallback
-import java.net.URL
 import java.util.concurrent.ConcurrentHashMap
 import java.util.regex.Pattern
 
@@ -94,38 +92,34 @@ object EmoteManager {
 		}
 	}
 
-	suspend fun loadBttvEmotes(channel: String) = withContext(Dispatchers.IO) {
-		val response = URL("$BTTV_CHANNEL_BASE_URL$channel").readText()
-		withContext(Dispatchers.Default) {
-			val emotes = hashMapOf<String, GenericEmote>()
-			val json = JSONObject(response)
-			val emotesJson = json.getJSONArray("emotes")
-			for (i in 0 until emotesJson.length()) {
-				val emoteJson = emotesJson.getJSONObject(i)
-				val emote = parseBttvEmote(emoteJson)
-				emotes[emote.keyword] = emote
-			}
-			bttvEmotes[channel] = emotes
+	suspend fun setBTTVEmotes(channel: String, bttvResult: EmoteEntities.BTTV.Result) = withContext(Dispatchers.Default) {
+		val emotes = hashMapOf<String, GenericEmote>()
+		bttvResult.emotes.forEach {
+			val emote = parseBTTVEmote(it)
+			emotes[emote.keyword] = emote
+		}
+		bttvEmotes[channel] = emotes
+	}
+
+	suspend fun setBTTVGlobalEmotes(bttvResult: EmoteEntities.BTTV.GlobalResult) = withContext(Dispatchers.Default) {
+		bttvResult.emotes.forEach {
+			val emote = parseBTTVGlobalEmote(it)
+			globalBttvEmotes[emote.keyword] = emote
 		}
 	}
 
-	suspend fun loadGlobalBttvEmotes() = withContext(Dispatchers.IO) {
-		val response = URL(BTTV_GLOBAL_URL).readText()
-		withContext(Dispatchers.Default) {
-			val json = JSONObject(response)
-			val emotesJson = json.getJSONArray("emotes")
-			for (i in 0 until emotesJson.length()) {
-				val emoteJson = emotesJson.getJSONObject(i)
-				val emote = parseBttvEmote(emoteJson)
-				globalBttvEmotes[emote.keyword] = emote
-			}
-		}
+	private fun parseBTTVEmote(emote: EmoteEntities.BTTV.Emote): GenericEmote {
+		val name = emote.code
+		val id = emote.id
+		val type = emote.imageType == "gif"
+		val url = "$BTTV_BASE_URL$id/3x"
+		return GenericEmote(name, url, type, id, 1)
 	}
 
-	private fun parseBttvEmote(json: JSONObject): GenericEmote {
-		val name = json.getString("code")
-		val id = json.getString("id")
-		val type = json.getString("imageType") == "gif"
+	private fun parseBTTVGlobalEmote(emote: EmoteEntities.BTTV.GlobalEmote): GenericEmote {
+		val name = emote.code
+		val id = emote.id
+		val type = emote.imageType == "gif"
 		val url = "$BTTV_BASE_URL$id/3x"
 		return GenericEmote(name, url, type, id, 1)
 	}

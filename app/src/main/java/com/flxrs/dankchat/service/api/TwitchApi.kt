@@ -25,6 +25,9 @@ object TwitchApi {
 	private const val FFZ_BASE_URL = "https://api.frankerfacez.com/v1/room/"
 	private const val FFZ_GLOBAL_URL = "https://api.frankerfacez.com/v1/set/global"
 
+	private const val BTTV_CHANNEL_BASE_URL = "https://api.betterttv.net/2/channels/"
+	private const val BTTV_GLOBAL_URL = "https://api.betterttv.net/2/emotes/"
+
 	private const val BASE_LOGIN_URL = "https://id.twitch.tv/oauth2/authorize?response_type=token"
 	private const val REDIRECT_URL = "https://flxrs.com/dankchat"
 	private const val SCOPES = "chat:edit+chat:read+user_read"
@@ -84,6 +87,28 @@ object TwitchApi {
 	suspend fun getFFZGlobalEmotes(): EmoteEntities.FFZ.GlobalResult? = withContext(Dispatchers.IO) {
 		try {
 			val response = service.getFFZGlobalEmotesAsync(FFZ_GLOBAL_URL).await()
+			if (response.isSuccessful) return@withContext response.body()
+			else Log.e(TAG, response.message())
+		} catch (e: Throwable) {
+			Log.e(TAG, e.message)
+		}
+		return@withContext null
+	}
+
+	suspend fun getBTTVChannelEmotes(channel: String): EmoteEntities.BTTV.Result? = withContext(Dispatchers.IO) {
+		try {
+			val response = service.getBTTVChannelEmotesAsync("$BTTV_CHANNEL_BASE_URL$channel").await()
+			if (response.isSuccessful) return@withContext response.body()
+			else Log.e(TAG, response.message())
+		} catch (e: Throwable) {
+			Log.e(TAG, e.message)
+		}
+		return@withContext null
+	}
+
+	suspend fun getBTTVGlobalEmotes(): EmoteEntities.BTTV.GlobalResult? = withContext(Dispatchers.IO) {
+		try {
+			val response = service.getBTTVGlobalEmotesAsync(BTTV_GLOBAL_URL).await()
 			if (response.isSuccessful) return@withContext response.body()
 			else Log.e(TAG, response.message())
 		} catch (e: Throwable) {
