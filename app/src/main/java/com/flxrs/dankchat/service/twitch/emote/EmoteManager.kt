@@ -18,9 +18,7 @@ object EmoteManager {
 	private val ffzEmotes = ConcurrentHashMap<String, HashMap<String, GenericEmote>>()
 	private val globalFFZEmotes = ConcurrentHashMap<String, GenericEmote>()
 
-	private const val BTTV_BASE_URL = "https://cdn.betterttv.net/emote/"
-	private const val BTTV_CHANNEL_BASE_URL = "https://api.betterttv.net/2/channels/"
-	private const val BTTV_GLOBAL_URL = "https://api.betterttv.net/2/emotes/"
+	private const val BTTV_CDN_BASE_URL = "https://cdn.betterttv.net/emote/"
 	private val bttvEmotes = hashMapOf<String, HashMap<String, GenericEmote>>()
 	private val globalBttvEmotes = ConcurrentHashMap<String, GenericEmote>()
 
@@ -112,7 +110,7 @@ object EmoteManager {
 		val name = emote.code
 		val id = emote.id
 		val type = emote.imageType == "gif"
-		val url = "$BTTV_BASE_URL$id/3x"
+		val url = "$BTTV_CDN_BASE_URL$id/3x"
 		return GenericEmote(name, url, type, id, 1)
 	}
 
@@ -120,7 +118,7 @@ object EmoteManager {
 		val name = emote.code
 		val id = emote.id
 		val type = emote.imageType == "gif"
-		val url = "$BTTV_BASE_URL$id/3x"
+		val url = "$BTTV_CDN_BASE_URL$id/3x"
 		return GenericEmote(name, url, type, id, 1)
 	}
 

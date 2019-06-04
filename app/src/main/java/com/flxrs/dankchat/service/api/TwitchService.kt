@@ -2,6 +2,7 @@ package com.flxrs.dankchat.service.api
 
 import com.flxrs.dankchat.service.api.model.BadgeEntities
 import com.flxrs.dankchat.service.api.model.EmoteEntities
+import com.flxrs.dankchat.service.api.model.RecentMessages
 import com.flxrs.dankchat.service.api.model.UserEntities
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
@@ -38,4 +39,7 @@ interface TwitchService {
 
 	@GET
 	fun getBTTVGlobalEmotesAsync(@Url url: String): Deferred<Response<EmoteEntities.BTTV.GlobalResult>>
+
+	@GET
+	fun getRecentMessages(@Url url: String): Deferred<Response<RecentMessages>>
 }

@@ -2,6 +2,7 @@ package com.flxrs.dankchat.chat
 
 import android.os.Bundle
 import android.text.Editable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -83,7 +84,10 @@ class ChatFragment : Fragment() {
 	private inner class ChatScrollListener : RecyclerView.OnScrollListener() {
 		override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
 			super.onScrollStateChanged(recyclerView, newState)
-			isAtBottom = !recyclerView.canScrollVertically(1)
+			if (newState == RecyclerView.SCROLL_STATE_SETTLING && recyclerView.layoutManager?.isSmoothScrolling == false) {
+				isAtBottom = !recyclerView.canScrollVertically(1)
+				Log.d("ChatFragment", "$isAtBottom")
+			}
 		}
 	}
 

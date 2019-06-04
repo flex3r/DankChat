@@ -59,3 +59,8 @@ fun List<ChatItem>.addAndLimit(item: ChatItem): MutableList<ChatItem> = toMutabl
 	if (size > 999) removeAt(0)
 	add(item)
 }
+
+fun List<ChatItem>.addAndLimit(list: List<ChatItem>): MutableList<ChatItem> = toMutableList().apply {
+	this.plus(list)
+	while (size > 999) removeAt(0)
+}

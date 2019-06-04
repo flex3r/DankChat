@@ -3,6 +3,7 @@ package com.flxrs.dankchat.service.api
 import android.util.Log
 import com.flxrs.dankchat.service.api.model.BadgeEntities
 import com.flxrs.dankchat.service.api.model.EmoteEntities
+import com.flxrs.dankchat.service.api.model.RecentMessages
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +28,9 @@ object TwitchApi {
 
 	private const val BTTV_CHANNEL_BASE_URL = "https://api.betterttv.net/2/channels/"
 	private const val BTTV_GLOBAL_URL = "https://api.betterttv.net/2/emotes/"
+
+	private const val RECENT_MSG_URL = "https://recent-messages.robotty.de/api/v2/recent-messages/"
+	private const val RECENT_MSG_URL_SUFFIX = "?clearchatToNotice=true"
 
 	private const val BASE_LOGIN_URL = "https://id.twitch.tv/oauth2/authorize?response_type=token"
 	private const val REDIRECT_URL = "https://flxrs.com/dankchat"
@@ -111,6 +115,16 @@ object TwitchApi {
 			val response = service.getBTTVGlobalEmotesAsync(BTTV_GLOBAL_URL).await()
 			if (response.isSuccessful) return@withContext response.body()
 			else Log.e(TAG, response.message())
+		} catch (e: Throwable) {
+			Log.e(TAG, e.message)
+		}
+		return@withContext null
+	}
+
+	suspend fun getRecentMessages(channel: String): RecentMessages? = withContext(Dispatchers.IO) {
+		try {
+			val response = service.getRecentMessages("$RECENT_MSG_URL$channel$RECENT_MSG_URL_SUFFIX").await()
+			if (response.isSuccessful) return@withContext response.body()
 		} catch (e: Throwable) {
 			Log.e(TAG, e.message)
 		}
