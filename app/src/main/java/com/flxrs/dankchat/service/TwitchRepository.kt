@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.service
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.flxrs.dankchat.chat.ChatItem
@@ -47,7 +46,11 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	fun connectAndAddChannel(channel: String, nick: String, oAuth: String, loadEmotesAndBadges: Boolean = false, forceReconnect: Boolean = false) {
 		if (forceReconnect) hasConnected = false
 
-		if (loadEmotesAndBadges) scope.launch { loadBadges(channel) }
+		if (loadEmotesAndBadges) scope.launch {
+			loadBadges(channel)
+			load3rdPartyEmotes(channel)
+			loadRecentMessages(channel)
+		}
 
 		if (hasConnected) {
 			connection.joinChannel(channel)
@@ -56,10 +59,6 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 			hasConnected = true
 		}
 
-		if (loadEmotesAndBadges) scope.launch {
-			load3rdPartyEmotes(channel)
-			loadRecentMessages(channel)
-		}
 	}
 
 	fun partChannel(channel: String) = connection.partChannel(channel)
@@ -98,7 +97,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	}
 
 	private fun onMessage(msg: IrcMessage) {
-		Log.i(TAG, msg.raw)
+		//Log.i(TAG, msg.raw)
 		when (msg.command) {
 			"366"        -> handleConnected(msg.params[1].substring(1))
 			"PRIVMSG"    -> makeAndPostMessage(msg)
