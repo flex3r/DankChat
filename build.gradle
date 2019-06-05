@@ -28,6 +28,7 @@ buildscript {
         moshi_version = "2.4.0"
         retrofit_coroutines_adapter_version = "0.9.2"
         url_detector_version = "0.1.20"
+        appCenterSdkVersion = '2.0.0'
     }
 
     repositories {

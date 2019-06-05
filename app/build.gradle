@@ -74,6 +74,10 @@ dependencies {
     implementation "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:$retrofit_coroutines_adapter_version"
     implementation "com.squareup.retrofit2:converter-moshi:$moshi_version"
 
+    implementation "com.microsoft.appcenter:appcenter-analytics:$appCenterSdkVersion"
+    implementation "com.microsoft.appcenter:appcenter-crashes:$appCenterSdkVersion"
+    implementation "com.microsoft.appcenter:appcenter-distribute:$appCenterSdkVersion"
+
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0-beta01'

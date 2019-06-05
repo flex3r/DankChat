@@ -17,6 +17,10 @@ import com.flxrs.dankchat.preferences.TwitchAuthStore
 import com.flxrs.dankchat.utils.AddChannelDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
+import com.microsoft.appcenter.AppCenter
+import com.microsoft.appcenter.analytics.Analytics
+import com.microsoft.appcenter.crashes.Crashes
+import com.microsoft.appcenter.distribute.Distribute
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -30,6 +34,9 @@ class MainActivity : AppCompatActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+
+		AppCenter.start(application, "2be94b1a-8bd0-447d-8e06-db527eb6e944",
+				Analytics::class.java, Crashes::class.java, Distribute::class.java)
 
 		authStore = TwitchAuthStore(this)
 		val oauth = authStore.getOAuthKey() ?: ""
