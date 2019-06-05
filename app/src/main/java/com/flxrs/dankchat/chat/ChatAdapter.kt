@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide
 import com.flxrs.dankchat.databinding.ChatItemBinding
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 
-class ChatAdapter() : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
+class ChatAdapter(private val onListChanged: (position: Int) -> Unit) : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
 
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 		return ViewHolder(ChatItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -18,6 +18,10 @@ class ChatAdapter() : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()
 	override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 		EmoteManager.gifCallback.addView(holder.binding.itemText)
 		holder.binding.chatItem = getItem(position)
+	}
+
+	override fun onCurrentListChanged(previousList: MutableList<ChatItem>, currentList: MutableList<ChatItem>) {
+		onListChanged(currentList.size - 1)
 	}
 
 	override fun getItemId(position: Int): Long {

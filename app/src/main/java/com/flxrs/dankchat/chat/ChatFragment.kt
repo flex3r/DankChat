@@ -29,9 +29,8 @@ class ChatFragment : Fragment() {
 		manager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false).apply {
 			stackFromEnd = true
 		}
-		adapter = ChatAdapter().apply {
+		adapter = ChatAdapter { scrollToPosition(it) }.apply {
 			setHasStableIds(true)
-			registerAdapterDataObserver(ChatAdapterDataObserver())
 		}
 
 		binding = ChatFragmentBinding.inflate(inflater, container, false).apply {
@@ -53,12 +52,7 @@ class ChatFragment : Fragment() {
 		}
 
 		if (channel.isNotBlank()) viewModel.run {
-			getChat(channel).observe(viewLifecycleOwner, Observer {
-				adapter.submitList(it)
-				if (it.isNotEmpty() && it.last().historic) {
-					scrollToPosition(it.size - 1)
-				}
-			})
+			getChat(channel).observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
 			getCanType(channel).observe(viewLifecycleOwner, Observer {
 				binding.input.isEnabled = it
 				binding.input.hint = if (it) "Start chatting" else "Not logged in"
@@ -87,9 +81,9 @@ class ChatFragment : Fragment() {
 	}
 
 	private fun scrollToPosition(position: Int) {
-		if (position > 0) {
-			binding.chat.smoothScrollToPosition(position)
-			binding.chat.smoothScrollBy(0, 100)
+		if (position > 0 && isAtBottom) {
+			//manager.smoothScrollToPosition(binding.chat, RecyclerView.State(), position)
+			manager.scrollToPositionWithOffset(position, 0)
 		}
 	}
 
@@ -108,12 +102,6 @@ class ChatFragment : Fragment() {
 				isAtBottom = false
 				binding.scrollBottom.visibility = View.VISIBLE
 			}
-		}
-	}
-
-	private inner class ChatAdapterDataObserver : RecyclerView.AdapterDataObserver() {
-		override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-			if (isAtBottom) scrollToPosition(positionStart + itemCount)
 		}
 	}
 
