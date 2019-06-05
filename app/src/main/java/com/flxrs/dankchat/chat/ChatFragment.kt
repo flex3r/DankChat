@@ -1,7 +1,6 @@
 package com.flxrs.dankchat.chat
 
 import android.os.Bundle
-import android.text.Editable
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -19,34 +18,47 @@ import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 class ChatFragment : Fragment() {
 	private val viewModel: DankChatViewModel by sharedViewModel()
 	private lateinit var binding: ChatFragmentBinding
-	private var isAtBottom = true
+	private lateinit var adapter: ChatAdapter
+	private lateinit var manager: LinearLayoutManager
+	private var isAtBottom = false
 	private var channel: String = ""
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		channel = requireArguments().getString(CHANNEL_ARG, "")
 
-		val manager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false).apply {
+		manager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false).apply {
 			stackFromEnd = true
 		}
-		val chatAdapter = ChatAdapter().apply {
+		adapter = ChatAdapter().apply {
 			setHasStableIds(true)
-			registerAdapterDataObserver(ChatAdapterDataObserver(this, manager))
+			registerAdapterDataObserver(ChatAdapterDataObserver())
 		}
 
 		binding = ChatFragmentBinding.inflate(inflater, container, false).apply {
 			lifecycleOwner = this@ChatFragment
 			vm = viewModel
-			chat.setup(chatAdapter, manager)
+			chat.setup(adapter, manager)
 			input.setOnEditorActionListener { _, actionId, _ ->
 				return@setOnEditorActionListener when (actionId) {
 					EditorInfo.IME_ACTION_SEND -> handleSendMessage()
 					else                       -> false
 				}
 			}
+			scrollBottom.setOnClickListener {
+				isAtBottom = true
+				binding.chat.stopScroll()
+				scrollToPosition(adapter.itemCount - 1)
+				it.visibility = View.GONE
+			}
 		}
 
 		if (channel.isNotBlank()) viewModel.run {
-			getChat(channel).observe(viewLifecycleOwner, Observer { chatAdapter.submitList(it) })
+			getChat(channel).observe(viewLifecycleOwner, Observer {
+				adapter.submitList(it)
+				if (it.isNotEmpty() && it.last().historic) {
+					scrollToPosition(it.size - 1)
+				}
+			})
 			getCanType(channel).observe(viewLifecycleOwner, Observer {
 				binding.input.isEnabled = it
 				binding.input.hint = if (it) "Start chatting" else "Not logged in"
@@ -70,8 +82,15 @@ class ChatFragment : Fragment() {
 	private fun handleSendMessage(): Boolean {
 		val msg = binding.input.text.toString()
 		viewModel.sendMessage(channel, msg)
-		binding.input.text = Editable.Factory().newEditable("")
+		binding.input.setText("")
 		return true
+	}
+
+	private fun scrollToPosition(position: Int) {
+		if (position > 0) {
+			binding.chat.smoothScrollToPosition(position)
+			binding.chat.smoothScrollBy(0, 100)
+		}
 	}
 
 	private fun RecyclerView.setup(chatAdapter: ChatAdapter, manager: LinearLayoutManager) {
@@ -79,25 +98,22 @@ class ChatFragment : Fragment() {
 		adapter = chatAdapter
 		layoutManager = manager
 		itemAnimator = null
+		isNestedScrollingEnabled = false
 		addOnScrollListener(ChatScrollListener())
 	}
 
 	private inner class ChatScrollListener : RecyclerView.OnScrollListener() {
-		override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-			super.onScrollStateChanged(recyclerView, newState)
-			if (newState == RecyclerView.SCROLL_STATE_SETTLING && recyclerView.layoutManager?.isSmoothScrolling == false) {
-				isAtBottom = !recyclerView.canScrollVertically(1)
+		override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+			if (dy < 0) {
+				isAtBottom = false
+				binding.scrollBottom.visibility = View.VISIBLE
 			}
 		}
 	}
 
-	private inner class ChatAdapterDataObserver(private val chatAdapter: ChatAdapter, private val manager: LinearLayoutManager) : RecyclerView.AdapterDataObserver() {
+	private inner class ChatAdapterDataObserver : RecyclerView.AdapterDataObserver() {
 		override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-			super.onItemRangeInserted(positionStart, itemCount)
-			if (isAtBottom && chatAdapter.itemCount > 0) {
-				binding.chat.smoothScrollToPosition(chatAdapter.itemCount - 1)
-				binding.chat.smoothScrollBy(0, chatAdapter.lastItemHeight)
-			}
+			if (isAtBottom) scrollToPosition(positionStart + itemCount)
 		}
 	}
 

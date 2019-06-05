@@ -9,9 +9,7 @@ import com.bumptech.glide.Glide
 import com.flxrs.dankchat.databinding.ChatItemBinding
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 
-class ChatAdapter : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
-
-	var lastItemHeight = 0
+class ChatAdapter() : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
 
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 		return ViewHolder(ChatItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -20,9 +18,6 @@ class ChatAdapter : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) 
 	override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 		EmoteManager.gifCallback.addView(holder.binding.itemText)
 		holder.binding.chatItem = getItem(position)
-		if (position == itemCount - 1) {
-			lastItemHeight = holder.binding.itemText.measuredHeight
-		}
 	}
 
 	override fun getItemId(position: Int): Long {
@@ -54,6 +49,7 @@ class ChatAdapter : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) 
 					&& oldItem.message.isSystem == newItem.message.isSystem
 					&& oldItem.message.isAction == newItem.message.isAction
 					&& oldItem.message.time == newItem.message.time
+					&& oldItem.historic == newItem.historic
 		}
 	}
 }
