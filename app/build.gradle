@@ -11,15 +11,30 @@ android {
         applicationId "com.flxrs.dankchat"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode rootProject.ext.appVersionCode
-        versionName rootProject.ext.appVersionName
+        versionCode appVersionCode
+        versionName appVersionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "$apkName-$variant.name-${versionName}.apk"
+                }
+            }
+        }
+
+        debug {
+            applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "$apkName-$variant.name-${versionName}.apk"
+                }
+            }
         }
     }
     compileOptions {
@@ -34,6 +49,7 @@ android {
         exclude 'META-INF/kotlinx-coroutines-core.kotlin_module'
     }
 }
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])

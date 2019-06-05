@@ -83,6 +83,7 @@ class ChatFragment : Fragment() {
 	private fun scrollToPosition(position: Int) {
 		if (position > 0 && isAtBottom) {
 			//manager.smoothScrollToPosition(binding.chat, RecyclerView.State(), position)
+			binding.chat.stopScroll()
 			manager.scrollToPositionWithOffset(position, 0)
 		}
 	}

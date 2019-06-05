@@ -195,16 +195,13 @@ class MainActivity : AppCompatActivity() {
 	private inner class DankDistributeListener : DistributeListener {
 		override fun onReleaseAvailable(activity: Activity?, releaseDetails: ReleaseDetails?): Boolean {
 			val releaseNotes = releaseDetails?.releaseNotes
-			val builder = MaterialAlertDialogBuilder(this@MainActivity)
+			MaterialAlertDialogBuilder(this@MainActivity)
 					.setCancelable(false)
 					.setTitle(getString(R.string.new_version_title))
 					.setMessage(releaseNotes)
+					.setNegativeButton(getString(R.string.new_version_negative_button)) { _, _ -> Distribute.notifyUpdateAction(UpdateAction.POSTPONE) }
 					.setPositiveButton(getString(R.string.new_version_positive_button)) { _, _ -> Distribute.notifyUpdateAction(UpdateAction.UPDATE) }
-
-			if (releaseDetails?.isMandatoryUpdate == true) {
-				builder.setNegativeButton(getString(R.string.new_version_negative_button)) { _, _ -> Distribute.notifyUpdateAction(UpdateAction.POSTPONE) }
-			}
-			builder.create().show()
+					.create().show()
 			return true
 		}
 	}
