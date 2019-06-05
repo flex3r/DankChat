@@ -25,7 +25,9 @@ class ChatFragment : Fragment() {
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		channel = requireArguments().getString(CHANNEL_ARG, "")
 
-		val manager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false).apply { stackFromEnd = true }
+		val manager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false).apply {
+			stackFromEnd = true
+		}
 		val chatAdapter = ChatAdapter().apply {
 			setHasStableIds(true)
 			registerAdapterDataObserver(ChatAdapterDataObserver(this, manager))
@@ -93,7 +95,8 @@ class ChatFragment : Fragment() {
 		override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
 			super.onItemRangeInserted(positionStart, itemCount)
 			if (isAtBottom && chatAdapter.itemCount > 0) {
-				manager.scrollToPositionWithOffset(chatAdapter.itemCount - 1, 1)
+				binding.chat.smoothScrollToPosition(chatAdapter.itemCount - 1)
+				binding.chat.smoothScrollBy(0, chatAdapter.lastItemHeight)
 			}
 		}
 	}

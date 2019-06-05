@@ -11,6 +11,8 @@ import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 
 class ChatAdapter : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
 
+	var lastItemHeight = 0
+
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 		return ViewHolder(ChatItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 	}
@@ -18,6 +20,9 @@ class ChatAdapter : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) 
 	override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 		EmoteManager.gifCallback.addView(holder.binding.itemText)
 		holder.binding.chatItem = getItem(position)
+		if (position == itemCount - 1) {
+			lastItemHeight = holder.binding.itemText.measuredHeight
+		}
 	}
 
 	override fun getItemId(position: Int): Long {
