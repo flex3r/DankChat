@@ -21,7 +21,8 @@
 	<string name="no_channels_added">No channels added</string>
 	<string name="new_version_title">New version availiable</string>
 	<string name="new_version_positive_button">Install</string>
-	<string name="new_version_negative_button">Cancel</string>
+	<string name="new_version_negative_button">Ignore</string>
+	<string name="new_version_neutral_button">Postpone</string>
 	<string name="confirm_logout_title">Confirm logout</string>
 	<string name="confirm_logout_message">Are you sure you want to logout?</string>
 	<string name="confirm_logout_positive_button">Logout</string>

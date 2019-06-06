@@ -21,7 +21,6 @@ import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes
 import com.microsoft.appcenter.distribute.Distribute
-import com.microsoft.appcenter.distribute.DistributeListener
 import com.microsoft.appcenter.distribute.ReleaseDetails
 import com.microsoft.appcenter.distribute.UpdateAction
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -38,7 +37,7 @@ class MainActivity : AppCompatActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
-		Distribute.setListener(DankDistributeListener())
+		Distribute.setListener(::showUpdateDialog)
 		AppCenter.start(application, "067a0d4f-9e69-4ffd-9b46-0c5ccb2843a8", Analytics::class.java, Distribute::class.java, Crashes::class.java)
 
 		authStore = TwitchAuthStore(this)
@@ -150,6 +149,18 @@ class MainActivity : AppCompatActivity() {
 			.setNegativeButton(getString(R.string.confirm_logout_negative_button)) { dialog, _ -> dialog.dismiss() }
 			.create().show()
 
+	private fun showUpdateDialog(activity: Activity?, releaseDetails: ReleaseDetails?): Boolean {
+		val releaseNotes = releaseDetails?.releaseNotes
+		MaterialAlertDialogBuilder(this@MainActivity)
+				.setCancelable(false)
+				.setTitle(getString(R.string.new_version_title))
+				.setMessage(releaseNotes)
+				.setNegativeButton(getString(R.string.new_version_negative_button)) { _, _ -> Distribute.notifyUpdateAction(UpdateAction.POSTPONE) }
+				.setPositiveButton(getString(R.string.new_version_positive_button)) { _, _ -> Distribute.notifyUpdateAction(UpdateAction.UPDATE) }
+				.create().show()
+		return true
+	}
+
 	private fun updateLoginState() {
 		if (authStore.isLoggedin()) {
 			showLogoutConfirmationDialog()
@@ -198,19 +209,5 @@ class MainActivity : AppCompatActivity() {
 		private val TAG = MainActivity::class.java.simpleName
 		private const val DIALOG_TAG = "add_channel_dialog"
 		private const val LOGIN_REQUEST = 42
-	}
-
-	private inner class DankDistributeListener : DistributeListener {
-		override fun onReleaseAvailable(activity: Activity?, releaseDetails: ReleaseDetails?): Boolean {
-			val releaseNotes = releaseDetails?.releaseNotes
-			MaterialAlertDialogBuilder(this@MainActivity)
-					.setCancelable(false)
-					.setTitle(getString(R.string.new_version_title))
-					.setMessage(releaseNotes)
-					.setNegativeButton(getString(R.string.new_version_negative_button)) { _, _ -> Distribute.notifyUpdateAction(UpdateAction.POSTPONE) }
-					.setPositiveButton(getString(R.string.new_version_positive_button)) { _, _ -> Distribute.notifyUpdateAction(UpdateAction.UPDATE) }
-					.create().show()
-			return true
-		}
 	}
 }
