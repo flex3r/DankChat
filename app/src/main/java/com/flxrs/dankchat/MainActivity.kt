@@ -3,7 +3,6 @@ package com.flxrs.dankchat
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -115,9 +114,8 @@ class MainActivity : AppCompatActivity() {
 
 	private fun connectAndJoinChannels(name: String, oauth: String, loadEmotesAndBadges: Boolean = false) {
 		if (channels.isEmpty()) {
-			viewModel.connectOrJoinChannel("", name, oauth, false)
+			viewModel.connectOrJoinChannel("", name, oauth, false, forceReconnect = true)
 		} else channels.forEachIndexed { i, channel ->
-			Log.d(TAG, "$i")
 			viewModel.connectOrJoinChannel(channel, name, oauth, loadEmotesAndBadges, i == 0)
 		}
 	}
@@ -136,15 +134,25 @@ class MainActivity : AppCompatActivity() {
 
 	private fun showSnackbar(message: String) = Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
 
+	private fun showLogoutConfirmationDialog() = MaterialAlertDialogBuilder(this)
+			.setTitle(getString(R.string.confirm_logout_title))
+			.setMessage(getString(R.string.confirm_logout_message))
+			.setPositiveButton(getString(R.string.confirm_logout_positive_button)) { dialog, _ ->
+				viewModel.close()
+				connectAndJoinChannels("", "")
+
+				authStore.setUserName("")
+				authStore.setOAuthKey("")
+				authStore.setLoggedIn(false)
+				invalidateOptionsMenu()
+				dialog.dismiss()
+			}
+			.setNegativeButton(getString(R.string.confirm_logout_negative_button)) { dialog, _ -> dialog.dismiss() }
+			.create().show()
+
 	private fun updateLoginState() {
 		if (authStore.isLoggedin()) {
-			viewModel.close()
-			connectAndJoinChannels("", "")
-
-			authStore.setUserName("")
-			authStore.setOAuthKey("")
-			authStore.setLoggedIn(false)
-			invalidateOptionsMenu()
+			showLogoutConfirmationDialog()
 		} else {
 			Intent(this, LoginActivity::class.java).run { startActivityForResult(this, LOGIN_REQUEST) }
 		}

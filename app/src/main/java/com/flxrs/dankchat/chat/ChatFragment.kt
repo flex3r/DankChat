@@ -9,10 +9,12 @@ import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
+import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class ChatFragment : Fragment() {
@@ -82,9 +84,14 @@ class ChatFragment : Fragment() {
 
 	private fun scrollToPosition(position: Int) {
 		if (position > 0 && isAtBottom) {
-			//manager.smoothScrollToPosition(binding.chat, RecyclerView.State(), position)
 			binding.chat.stopScroll()
-			manager.scrollToPositionWithOffset(position, 0)
+			binding.chat.smoothSnapToPositon(position)
+			CoroutineScope(Dispatchers.Default + Job()).launch {
+				delay(50)
+				if (isAtBottom && position == adapter.itemCount - 1) {
+					binding.chat.post { manager.scrollToPositionWithOffset(position, 0) }
+				}
+			}
 		}
 	}
 
@@ -95,6 +102,16 @@ class ChatFragment : Fragment() {
 		itemAnimator = null
 		isNestedScrollingEnabled = false
 		addOnScrollListener(ChatScrollListener())
+	}
+
+	private fun RecyclerView.smoothSnapToPositon(position: Int, snapMode: Int = LinearSmoothScroller.SNAP_TO_END) {
+		val smoothScroller = object : LinearSmoothScroller(this.context) {
+			override fun getVerticalSnapPreference(): Int = snapMode
+
+			override fun getHorizontalSnapPreference(): Int = snapMode
+		}
+		smoothScroller.targetPosition = position
+		layoutManager?.startSmoothScroll(smoothScroller)
 	}
 
 	private inner class ChatScrollListener : RecyclerView.OnScrollListener() {

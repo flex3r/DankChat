@@ -9,7 +9,7 @@ android {
     dataBinding.enabled = true
     defaultConfig {
         applicationId "com.flxrs.dankchat"
-        minSdkVersion 23
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode appVersionCode
         versionName appVersionName

@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
+import android.os.Build
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
@@ -24,6 +25,7 @@ import com.linkedin.urls.detection.UrlDetector
 import com.linkedin.urls.detection.UrlDetectorOptions
 import kotlin.math.roundToInt
 
+
 @BindingAdapter("setTwitchMessage")
 fun TextView.setTwitchMessage(item: ChatItem?) = item?.message?.apply {
 	text = ""
@@ -31,8 +33,10 @@ fun TextView.setTwitchMessage(item: ChatItem?) = item?.message?.apply {
 	val lineHeight = this@setTwitchMessage.lineHeight
 	val scaleFactor = lineHeight * 1.5 / 112
 
-	val foregroundColor = if (timedOut) ContextCompat.getColor(this@setTwitchMessage.context, R.color.colorTimeOut) else Color.TRANSPARENT
-	foreground = ColorDrawable(foregroundColor)
+	if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+		val foregroundColor = if (timedOut) ContextCompat.getColor(this@setTwitchMessage.context, R.color.colorTimeOut) else Color.TRANSPARENT
+		foreground = ColorDrawable(foregroundColor)
+	}
 
 	val backgroundResource = if (isSystem) {
 		R.color.sub_background
@@ -149,4 +153,3 @@ fun TextView.setTwitchMessage(item: ChatItem?) = item?.message?.apply {
 	}
 	text = spannable
 }
-
