@@ -11,9 +11,9 @@ import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import com.flxrs.dankchat.utils.addAndLimit
 import com.flxrs.dankchat.utils.replaceWithTimeOuts
 import kotlinx.coroutines.*
+import org.koin.core.KoinComponent
+import org.koin.core.get
 import org.koin.core.parameter.parametersOf
-import org.koin.standalone.KoinComponent
-import org.koin.standalone.get
 
 class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 

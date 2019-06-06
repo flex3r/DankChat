@@ -6,8 +6,8 @@ import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import org.koin.androidx.viewmodel.ext.koin.viewModel
-import org.koin.dsl.module.module
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.dsl.module
 
 val appModules = module {
 	factory { CoroutineScope(Dispatchers.IO + Job()) }
