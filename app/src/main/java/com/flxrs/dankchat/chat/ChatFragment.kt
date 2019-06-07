@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
@@ -63,7 +64,13 @@ class ChatFragment : Fragment() {
 				binding.input.hint = if (it) "Start chatting" else "Not logged in"
 			})
 			getEmoteKeywords(channel).observe(viewLifecycleOwner, Observer {
-				val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, it)
+				val adapter = object : ArrayAdapter<String>(requireContext(), android.R.layout.simple_dropdown_item_1line, it) {
+					override fun getCount(): Int {
+						val count = super.getCount()
+						binding.input.dropDownHeight = (if (count > 3) 672 else WRAP_CONTENT)
+						return count
+					}
+				}
 				binding.input.setAdapter(adapter)
 			})
 		}
@@ -91,8 +98,9 @@ class ChatFragment : Fragment() {
 
 	private fun mentionUser(user: String) {
 		if (binding.input.isEnabled) {
-			val current = binding.input.text.trimEnd().toString().plus(" @$user, ")
-			binding.input.setText(current)
+			val currentWithMention = binding.input.text.trimEnd().toString().plus(" @$user, ")
+			binding.input.setText(currentWithMention)
+			binding.input.setSelection(currentWithMention.length)
 		}
 	}
 
