@@ -31,7 +31,7 @@ class ChatFragment : Fragment() {
 		manager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false).apply {
 			stackFromEnd = true
 		}
-		adapter = ChatAdapter { scrollToPosition(it) }.apply {
+		adapter = ChatAdapter(::scrollToPosition, ::mentionUser).apply {
 			setHasStableIds(true)
 		}
 
@@ -80,6 +80,13 @@ class ChatFragment : Fragment() {
 		viewModel.sendMessage(channel, msg)
 		binding.input.setText("")
 		return true
+	}
+
+	private fun mentionUser(user: String) {
+		if (binding.input.isEnabled) {
+			val current = binding.input.text.trimEnd().toString().plus(" @$user, ")
+			binding.input.setText(current)
+		}
 	}
 
 	private fun scrollToPosition(position: Int) {

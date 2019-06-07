@@ -7,5 +7,6 @@
 	<color name="background">#191919</color>
 	<color name="sub_background">#4A148C</color>
 	<color name="colorTimeOut">#5A000000</color>
+	<color name="colorThatIsActuallyTransparent">#00FFFFFF</color>
 	<!--<color name="colorAccent">#FFEB3B</color>-->
 </resources>
