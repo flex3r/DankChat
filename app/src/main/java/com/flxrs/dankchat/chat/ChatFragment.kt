@@ -98,7 +98,8 @@ class ChatFragment : Fragment() {
 
 	private fun mentionUser(user: String) {
 		if (binding.input.isEnabled) {
-			val currentWithMention = binding.input.text.trimEnd().toString().plus(" @$user, ")
+			val current = binding.input.text.trimEnd().toString()
+			val currentWithMention = if (current.isBlank()) "$user " else "$current $user "
 			binding.input.setText(currentWithMention)
 			binding.input.setSelection(currentWithMention.length)
 		}
