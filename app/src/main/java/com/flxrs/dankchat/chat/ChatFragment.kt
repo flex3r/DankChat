@@ -22,7 +22,7 @@ class ChatFragment : Fragment() {
 	private lateinit var binding: ChatFragmentBinding
 	private lateinit var adapter: ChatAdapter
 	private lateinit var manager: LinearLayoutManager
-	private var isAtBottom = false
+	private var isAtBottom = true
 	private var channel: String = ""
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
