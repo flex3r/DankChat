@@ -20,6 +20,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
 	private val chatLiveDatas = mutableMapOf<String, MutableLiveData<List<ChatItem>>>()
 	private val canType = mutableMapOf<String, MutableLiveData<Boolean>>()
+	private val emoteKeywords = mutableMapOf<String, MutableLiveData<List<String>>>()
 	private var hasConnected = false
 	private var hasDisconnected = false
 	private var loadedGlobalBadges = false
@@ -39,6 +40,15 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		if (liveData == null) {
 			liveData = MutableLiveData(false)
 			canType[channel] = liveData
+		}
+		return liveData
+	}
+
+	fun getEmoteKeywords(channel: String): LiveData<List<String>> {
+		var liveData = emoteKeywords[channel]
+		if (liveData == null) {
+			liveData = MutableLiveData(emptyList())
+			emoteKeywords[channel] = liveData
 		}
 		return liveData
 	}
@@ -186,6 +196,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		TwitchApi.getFFZGlobalEmotes()?.let { EmoteManager.setFFZGlobalEmotes(it) }
 		TwitchApi.getBTTVChannelEmotes(channel)?.let { EmoteManager.setBTTVEmotes(channel, it) }
 		TwitchApi.getBTTVGlobalEmotes()?.let { EmoteManager.setBTTVGlobalEmotes(it) }
+		val keywords = EmoteManager.getEmoteKeywords(channel)
+		emoteKeywords[channel]?.postValue(keywords)
 	}
 
 	private suspend fun loadRecentMessages(channel: String) = withContext(Dispatchers.Default) {

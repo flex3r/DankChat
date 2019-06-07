@@ -106,6 +106,16 @@ object EmoteManager {
 		}
 	}
 
+	suspend fun getEmoteKeywords(channel: String): List<String> = withContext(Dispatchers.Default) {
+		val result = mutableListOf<String>()
+		result.addAll(globalFFZEmotes.keys)
+		result.addAll(globalBttvEmotes.keys)
+		ffzEmotes[channel]?.let { result.addAll(it.keys) }
+		bttvEmotes[channel]?.let { result.addAll(it.keys) }
+		result.sort()
+		return@withContext result
+	}
+
 	private fun parseBTTVEmote(emote: EmoteEntities.BTTV.Emote): GenericEmote {
 		val name = emote.code
 		val id = emote.id

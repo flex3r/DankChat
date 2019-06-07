@@ -48,10 +48,11 @@
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toBottomOf="@id/chat" />
 
-		<EditText
+		<MultiAutoCompleteTextView
 			android:id="@+id/input"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
+			android:completionThreshold="2"
 			android:enabled="false"
 			android:hint="@string/start_chatting"
 			android:imeOptions="actionSend"

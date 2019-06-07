@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
+import com.flxrs.dankchat.utils.SpaceTokenizer
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
@@ -39,6 +41,7 @@ class ChatFragment : Fragment() {
 			lifecycleOwner = this@ChatFragment
 			vm = viewModel
 			chat.setup(adapter, manager)
+			input.setTokenizer(SpaceTokenizer())
 			input.setOnEditorActionListener { _, actionId, _ ->
 				return@setOnEditorActionListener when (actionId) {
 					EditorInfo.IME_ACTION_SEND -> handleSendMessage()
@@ -58,6 +61,10 @@ class ChatFragment : Fragment() {
 			getCanType(channel).observe(viewLifecycleOwner, Observer {
 				binding.input.isEnabled = it
 				binding.input.hint = if (it) "Start chatting" else "Not logged in"
+			})
+			getEmoteKeywords(channel).observe(viewLifecycleOwner, Observer {
+				val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, it)
+				binding.input.setAdapter(adapter)
 			})
 		}
 
