@@ -4,7 +4,6 @@ import com.flxrs.dankchat.service.api.model.BadgeEntities
 import com.flxrs.dankchat.service.api.model.EmoteEntities
 import com.flxrs.dankchat.service.api.model.RecentMessages
 import com.flxrs.dankchat.service.api.model.UserEntities
-import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -19,27 +18,27 @@ interface TwitchService {
 			"Client-ID: ${TwitchApi.CLIENT_ID}"
 	)
 	@GET("user")
-	fun getUserAsync(@Header("Authorization") oauth: String): Deferred<Response<UserEntities.FromKraken>>
+	suspend fun getUser(@Header("Authorization") oauth: String): Response<UserEntities.FromKraken>
 
 	@Headers("Client-ID: ${TwitchApi.CLIENT_ID}")
 	@GET
-	fun getUserHelixAsync(@Url url: String): Deferred<Response<UserEntities.FromHelixAsArray>>
+	suspend fun getUserHelix(@Url url: String): Response<UserEntities.FromHelixAsArray>
 
 	@GET
-	fun getBadgeSetsAsync(@Url url: String): Deferred<Response<BadgeEntities.Result>>
+	suspend fun getBadgeSets(@Url url: String): Response<BadgeEntities.Result>
 
 	@GET
-	fun getFFZChannelEmotesAsync(@Url url: String): Deferred<Response<EmoteEntities.FFZ.Result>>
+	suspend fun getFFZChannelEmotes(@Url url: String): Response<EmoteEntities.FFZ.Result>
 
 	@GET
-	fun getFFZGlobalEmotesAsync(@Url url: String): Deferred<Response<EmoteEntities.FFZ.GlobalResult>>
+	suspend fun getFFZGlobalEmotes(@Url url: String): Response<EmoteEntities.FFZ.GlobalResult>
 
 	@GET
-	fun getBTTVChannelEmotesAsync(@Url url: String): Deferred<Response<EmoteEntities.BTTV.Result>>
+	suspend fun getBTTVChannelEmotes(@Url url: String): Response<EmoteEntities.BTTV.Result>
 
 	@GET
-	fun getBTTVGlobalEmotesAsync(@Url url: String): Deferred<Response<EmoteEntities.BTTV.GlobalResult>>
+	suspend fun getBTTVGlobalEmotes(@Url url: String): Response<EmoteEntities.BTTV.GlobalResult>
 
 	@GET
-	fun getRecentMessages(@Url url: String): Deferred<Response<RecentMessages>>
+	suspend fun getRecentMessages(@Url url: String): Response<RecentMessages>
 }

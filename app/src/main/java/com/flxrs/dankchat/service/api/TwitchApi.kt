@@ -4,7 +4,6 @@ import android.util.Log
 import com.flxrs.dankchat.service.api.model.BadgeEntities
 import com.flxrs.dankchat.service.api.model.EmoteEntities
 import com.flxrs.dankchat.service.api.model.RecentMessages
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -41,15 +40,13 @@ object TwitchApi {
 	private val service = Retrofit.Builder()
 			.baseUrl(KRAKEN_BASE_URL)
 			.addConverterFactory(MoshiConverterFactory.create())
-			.addCallAdapterFactory(CoroutineCallAdapterFactory())
 			.build()
 			.create(TwitchService::class.java)
 
 	suspend fun getUserName(oAuth: String): String = withContext(Dispatchers.IO) {
 		try {
-			service.getUserAsync("OAuth $oAuth").await().run {
-				if (isSuccessful) return@withContext body()?.name ?: ""
-			}
+			val response = service.getUser("OAuth $oAuth")
+			if (response.isSuccessful) return@withContext response.body()?.name ?: ""
 		} catch (e: Throwable) {
 			Log.e(TAG, e.message)
 		}
@@ -59,7 +56,7 @@ object TwitchApi {
 	suspend fun getChannelBadges(channel: String): BadgeEntities.Result? = withContext(Dispatchers.IO) {
 		getUserIdFromName(channel)?.let {
 			try {
-				val response = service.getBadgeSetsAsync("$TWITCH_SUBBADGES_BASE_URL$it$TWITCH_SUBBADGES_SUFFIX").await()
+				val response = service.getBadgeSets("$TWITCH_SUBBADGES_BASE_URL$it$TWITCH_SUBBADGES_SUFFIX")
 				return@withContext if (response.isSuccessful) response.body() else null
 			} catch (e: Throwable) {
 				Log.e(TAG, e.message)
@@ -70,7 +67,7 @@ object TwitchApi {
 
 	suspend fun getGlobalBadges(): BadgeEntities.Result? = withContext(Dispatchers.IO) {
 		try {
-			val response = service.getBadgeSetsAsync(TWITCH_BADGES_URL).await()
+			val response = service.getBadgeSets(TWITCH_BADGES_URL)
 			if (response.isSuccessful) return@withContext response.body()
 		} catch (e: Throwable) {
 			Log.e(TAG, e.message)
@@ -80,7 +77,7 @@ object TwitchApi {
 
 	suspend fun getFFZChannelEmotes(channel: String): EmoteEntities.FFZ.Result? = withContext(Dispatchers.IO) {
 		try {
-			val response = service.getFFZChannelEmotesAsync("$FFZ_BASE_URL$channel").await()
+			val response = service.getFFZChannelEmotes("$FFZ_BASE_URL$channel")
 			if (response.isSuccessful) return@withContext response.body()
 		} catch (e: Throwable) {
 			Log.e(TAG, e.message)
@@ -90,7 +87,7 @@ object TwitchApi {
 
 	suspend fun getFFZGlobalEmotes(): EmoteEntities.FFZ.GlobalResult? = withContext(Dispatchers.IO) {
 		try {
-			val response = service.getFFZGlobalEmotesAsync(FFZ_GLOBAL_URL).await()
+			val response = service.getFFZGlobalEmotes(FFZ_GLOBAL_URL)
 			if (response.isSuccessful) return@withContext response.body()
 			else Log.e(TAG, response.message())
 		} catch (e: Throwable) {
@@ -101,7 +98,7 @@ object TwitchApi {
 
 	suspend fun getBTTVChannelEmotes(channel: String): EmoteEntities.BTTV.Result? = withContext(Dispatchers.IO) {
 		try {
-			val response = service.getBTTVChannelEmotesAsync("$BTTV_CHANNEL_BASE_URL$channel").await()
+			val response = service.getBTTVChannelEmotes("$BTTV_CHANNEL_BASE_URL$channel")
 			if (response.isSuccessful) return@withContext response.body()
 			else Log.e(TAG, response.message())
 		} catch (e: Throwable) {
@@ -112,7 +109,7 @@ object TwitchApi {
 
 	suspend fun getBTTVGlobalEmotes(): EmoteEntities.BTTV.GlobalResult? = withContext(Dispatchers.IO) {
 		try {
-			val response = service.getBTTVGlobalEmotesAsync(BTTV_GLOBAL_URL).await()
+			val response = service.getBTTVGlobalEmotes(BTTV_GLOBAL_URL)
 			if (response.isSuccessful) return@withContext response.body()
 			else Log.e(TAG, response.message())
 		} catch (e: Throwable) {
@@ -123,7 +120,7 @@ object TwitchApi {
 
 	suspend fun getRecentMessages(channel: String): RecentMessages? = withContext(Dispatchers.IO) {
 		try {
-			val response = service.getRecentMessages("$RECENT_MSG_URL$channel$RECENT_MSG_URL_SUFFIX").await()
+			val response = service.getRecentMessages("$RECENT_MSG_URL$channel$RECENT_MSG_URL_SUFFIX")
 			if (response.isSuccessful) return@withContext response.body()
 		} catch (e: Throwable) {
 			Log.e(TAG, e.message)
@@ -133,9 +130,8 @@ object TwitchApi {
 
 	private suspend fun getUserIdFromName(name: String): String? = withContext(Dispatchers.IO) {
 		try {
-			service.getUserHelixAsync("${HELIX_BASE_URL}users?login=$name").await().run {
-				if (isSuccessful) return@withContext body()?.data?.get(0)?.id
-			}
+			val response = service.getUserHelix("${HELIX_BASE_URL}users?login=$name")
+			if (response.isSuccessful) return@withContext response.body()?.data?.get(0)?.id
 		} catch (e: Throwable) {
 			Log.e(TAG, e.message)
 		}
