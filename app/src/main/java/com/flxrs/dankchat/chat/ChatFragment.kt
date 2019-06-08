@@ -17,6 +17,7 @@ import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.utils.SpaceTokenizer
+import com.flxrs.dankchat.utils.hideKeyboard
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
@@ -87,6 +88,15 @@ class ChatFragment : Fragment() {
 			else                    -> return false
 		}
 		return true
+	}
+
+	fun changeInputFocus(shouldFocus: Boolean) {
+		if (shouldFocus) {
+			binding.input.requestFocus()
+		} else {
+			binding.input.clearFocus()
+			hideKeyboard()
+		}
 	}
 
 	private fun handleSendMessage(): Boolean {

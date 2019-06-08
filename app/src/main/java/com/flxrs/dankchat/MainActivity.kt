@@ -16,6 +16,7 @@ import com.flxrs.dankchat.preferences.TwitchAuthStore
 import com.flxrs.dankchat.utils.AddChannelDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.crashes.Crashes
@@ -53,7 +54,23 @@ class MainActivity : AppCompatActivity() {
 			viewPager.offscreenPageLimit = if (channels.size > 0) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 			tabLayoutMediator = TabLayoutMediator(tabs, viewPager) { tab, position -> tab.text = adapter.titleList[position] }
 			tabLayoutMediator.attach()
+			tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+				override fun onTabReselected(tab: TabLayout.Tab?) = Unit
+
+				override fun onTabUnselected(tab: TabLayout.Tab?) {
+					tab?.position?.let {
+						(adapter.getItem(it) as? ChatFragment)?.changeInputFocus(false)
+					}
+				}
+
+				override fun onTabSelected(tab: TabLayout.Tab?) {
+					tab?.position?.let {
+						(adapter.getItem(it) as? ChatFragment)?.changeInputFocus(true)
+					}
+				}
+			})
 		}
+
 		setSupportActionBar(binding.toolbar)
 		updateViewPagerVisibility()
 

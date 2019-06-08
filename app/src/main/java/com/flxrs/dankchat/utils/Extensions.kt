@@ -1,5 +1,10 @@
 package com.flxrs.dankchat.utils
 
+import android.app.Activity
+import android.content.Context
+import android.view.View
+import android.view.inputmethod.InputMethodManager
+import androidx.fragment.app.Fragment
 import com.flxrs.dankchat.chat.ChatItem
 import kotlinx.coroutines.*
 
@@ -63,4 +68,13 @@ fun List<ChatItem>.addAndLimit(item: ChatItem): MutableList<ChatItem> = toMutabl
 fun List<ChatItem>.addAndLimit(list: List<ChatItem>): MutableList<ChatItem> = toMutableList().apply {
 	this.plus(list)
 	while (size > 999) removeAt(0)
+}
+
+fun Fragment.hideKeyboard() {
+	view?.let { activity?.hideKeyboard(it) }
+}
+
+fun Context.hideKeyboard(view: View) {
+	val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+	inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }
