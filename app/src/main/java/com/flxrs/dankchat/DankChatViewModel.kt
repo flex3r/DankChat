@@ -23,7 +23,7 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
 
 	fun clear(channel: String) = twitchRepository.clear(channel)
 
-	fun reloadEmotes(channel: String) = twitchRepository.reloadEmotes(channel)
+	fun reloadEmotes(channel: String, oauth: String, id: Int) = twitchRepository.reloadEmotes(channel, oauth, id)
 
 	fun sendMessage(channel: String, message: String) {
 		if (message.isNotBlank()) twitchRepository.sendMessage(channel, message)

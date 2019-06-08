@@ -57,15 +57,11 @@ class MainActivity : AppCompatActivity() {
 			tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
 				override fun onTabReselected(tab: TabLayout.Tab?) = Unit
 
+				override fun onTabSelected(tab: TabLayout.Tab?) = Unit
+
 				override fun onTabUnselected(tab: TabLayout.Tab?) {
 					tab?.position?.let {
-						(adapter.getItem(it) as? ChatFragment)?.changeInputFocus(false)
-					}
-				}
-
-				override fun onTabSelected(tab: TabLayout.Tab?) {
-					tab?.position?.let {
-						(adapter.getItem(it) as? ChatFragment)?.changeInputFocus(true)
+						(adapter.getItem(it) as? ChatFragment)?.clearInputFocus()
 					}
 				}
 			})
@@ -129,11 +125,11 @@ class MainActivity : AppCompatActivity() {
 		super.onActivityResult(requestCode, resultCode, data)
 	}
 
-	private fun connectAndJoinChannels(name: String, oauth: String, id: Int, loadEmotesAndBadges: Boolean = false) {
+	private fun connectAndJoinChannels(name: String, oauth: String, id: Int, load3rdPartyEmotesAndBadges: Boolean = false) {
 		if (channels.isEmpty()) {
 			viewModel.connectOrJoinChannel("", name, oauth, id, false, forceReconnect = true)
 		} else channels.forEachIndexed { i, channel ->
-			viewModel.connectOrJoinChannel(channel, name, oauth, id, loadEmotesAndBadges, i == 0)
+			viewModel.connectOrJoinChannel(channel, name, oauth, id, load3rdPartyEmotesAndBadges, i == 0)
 		}
 	}
 

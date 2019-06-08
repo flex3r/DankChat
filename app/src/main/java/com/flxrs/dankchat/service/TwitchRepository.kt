@@ -10,7 +10,10 @@ import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import com.flxrs.dankchat.utils.addAndLimit
 import com.flxrs.dankchat.utils.replaceWithTimeOuts
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import org.koin.core.parameter.parametersOf
@@ -55,22 +58,22 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		return liveData
 	}
 
-	fun connectAndAddChannel(channel: String, nick: String, oAuth: String, id: Int, loadEmotesAndBadges: Boolean = false, forceReconnect: Boolean = false) {
+	fun connectAndAddChannel(channel: String, nick: String, oAuth: String, id: Int, load3rdPartyEmotesAndBadges: Boolean = false, forceReconnect: Boolean = false) {
 		if (forceReconnect) {
 			hasConnected = false
 			loadedTwitchEmotes = false
 		}
 
-		if (loadEmotesAndBadges) scope.launch {
-			loadedGlobalEmotes = false
-			loadedGlobalBadges = false
-			loadedTwitchEmotes = false
-
+		if (load3rdPartyEmotesAndBadges) scope.launch {
 			loadBadges(channel)
 			load3rdPartyEmotes(channel)
 			loadRecentMessages(channel)
 		}
-		if (oAuth.isNotBlank() && oAuth.startsWith("oauth:")) scope.launch { loadTwitchEmotes(oAuth.substringAfter("oauth:"), id) }
+
+		if (oAuth.isNotBlank() && oAuth.startsWith("oauth:") && !loadedTwitchEmotes) {
+			loadedTwitchEmotes = true
+			loadTwitchEmotes(oAuth.substringAfter("oauth:"), id)
+		}
 
 		if (hasConnected) {
 			connection.joinChannel(channel)
@@ -90,17 +93,11 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	fun close(doReconnect: Boolean = false) {
 		canType.keys.forEach { canType[it]?.postValue(false) }
 		makeAndPostSystemMessage("Disconnected")
-
-		scope.coroutineContext.cancel()
-		scope.coroutineContext.cancelChildren()
 		connection.close(doReconnect)
 	}
 
 	@Synchronized
 	private fun onDisconnect() {
-		scope.coroutineContext.cancel()
-		scope.coroutineContext.cancelChildren()
-
 		if (!hasDisconnected) {
 			hasDisconnected = true
 			close()
@@ -111,9 +108,11 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		chatLiveDatas[channel]?.postValue(emptyList())
 	}
 
-	fun reloadEmotes(channel: String) = scope.launch {
-		loadBadges(channel)
+	fun reloadEmotes(channel: String, oAuth: String, id: Int) = scope.launch {
+		loadedGlobalEmotes = false
+		loadedTwitchEmotes = false
 		load3rdPartyEmotes(channel)
+		if (id != 0 && oAuth.isNotBlank() && oAuth.startsWith("oauth:")) loadTwitchEmotes(oAuth.substringAfter("oauth:"), id)
 	}
 
 	private fun onMessage(msg: IrcMessage) {
@@ -139,11 +138,13 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	}
 
 	private fun handleHostTarget(message: IrcMessage) {
-		//TODO implement
+		val target = message.params[1].substringBefore("-")
+		val channel = message.params[0].substring(1)
+		makeAndPostSystemMessage("Now hosting $target", channel)
 	}
 
 	private fun handleClearMsg(message: IrcMessage) {
-		//TODO implement
+		//TODO
 	}
 
 	private fun handleClearChat(message: IrcMessage) {
@@ -201,10 +202,9 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		TwitchApi.getChannelBadges(channel)?.let { EmoteManager.setChannelBadges(channel, it) }
 	}
 
-	private suspend fun loadTwitchEmotes(oAuth: String, id: Int) = withContext(Dispatchers.IO) {
-		if (!loadedTwitchEmotes) {
-			TwitchApi.getUserEmotes(oAuth, id)?.let { EmoteManager.setTwitchEmotes(it) }
-			loadedTwitchEmotes = true
+	private fun loadTwitchEmotes(oAuth: String, id: Int) = scope.launch {
+		TwitchApi.getUserEmotes(oAuth, id)?.let {
+			EmoteManager.setTwitchEmotes(it)
 		}
 	}
 

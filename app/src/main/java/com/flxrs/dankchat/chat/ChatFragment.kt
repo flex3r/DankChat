@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
+import com.flxrs.dankchat.preferences.TwitchAuthStore
 import com.flxrs.dankchat.utils.SpaceTokenizer
 import com.flxrs.dankchat.utils.hideKeyboard
 import kotlinx.coroutines.*
@@ -84,19 +85,22 @@ class ChatFragment : Fragment() {
 		when (item.itemId) {
 			R.id.menu_reconnect     -> viewModel.reconnect()
 			R.id.menu_clear         -> viewModel.clear(channel)
-			R.id.menu_reload_emotes -> viewModel.reloadEmotes(channel)
+			R.id.menu_reload_emotes -> reloadEmotes()
 			else                    -> return false
 		}
 		return true
 	}
 
-	fun changeInputFocus(shouldFocus: Boolean) {
-		if (shouldFocus) {
-			binding.input.requestFocus()
-		} else {
-			binding.input.clearFocus()
-			hideKeyboard()
-		}
+	fun clearInputFocus() {
+		binding.input.clearFocus()
+		hideKeyboard()
+	}
+
+	private fun reloadEmotes() {
+		val authStore = TwitchAuthStore(requireContext())
+		val oauth = authStore.getOAuthKey() ?: ""
+		val userId = authStore.getUserId()
+		viewModel.reloadEmotes(channel, oauth, userId)
 	}
 
 	private fun handleSendMessage(): Boolean {
