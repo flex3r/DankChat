@@ -67,7 +67,7 @@ class ChatFragment : Fragment() {
 				val adapter = object : ArrayAdapter<String>(requireContext(), android.R.layout.simple_dropdown_item_1line, it) {
 					override fun getCount(): Int {
 						val count = super.getCount()
-						binding.input.dropDownHeight = (if (count > 3) 672 else WRAP_CONTENT)
+						binding.input.dropDownHeight = (if (count > 2) binding.chat.measuredHeight / 2 else WRAP_CONTENT)
 						return count
 					}
 				}
