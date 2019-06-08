@@ -15,11 +15,13 @@ object EmoteManager {
 	private const val EMOTE_SIZE = "3.0"
 	private val emotePattern = Pattern.compile("(\\d+):((?:\\d+-\\d+,?)+)")
 
+	private val twitchEmotes = ConcurrentHashMap<String, GenericEmote>()
+
 	private val ffzEmotes = ConcurrentHashMap<String, HashMap<String, GenericEmote>>()
 	private val globalFFZEmotes = ConcurrentHashMap<String, GenericEmote>()
 
 	private const val BTTV_CDN_BASE_URL = "https://cdn.betterttv.net/emote/"
-	private val bttvEmotes = hashMapOf<String, HashMap<String, GenericEmote>>()
+	private val bttvEmotes = ConcurrentHashMap<String, HashMap<String, GenericEmote>>()
 	private val globalBttvEmotes = ConcurrentHashMap<String, GenericEmote>()
 
 	private val channelBadges = ConcurrentHashMap<String, BadgeEntities.Result>()
@@ -70,6 +72,15 @@ object EmoteManager {
 		globalBadges.putAll(entity.sets)
 	}
 
+	suspend fun setTwitchEmotes(twitchResult: EmoteEntities.Twitch.Result) = withContext(Dispatchers.Default) {
+		twitchResult.sets.forEach {
+			it.value.forEach { emoteResult ->
+				val emote = GenericEmote(emoteResult.name, "$BASE_URL/${emoteResult.id}/$EMOTE_SIZE", false, "${emoteResult.id}", 1)
+				twitchEmotes[emote.keyword] = emote
+			}
+		}
+	}
+
 	suspend fun setFFZEmotes(channel: String, ffzResult: EmoteEntities.FFZ.Result) = withContext(Dispatchers.Default) {
 		val emotes = hashMapOf<String, GenericEmote>()
 		ffzResult.sets.forEach {
@@ -108,6 +119,7 @@ object EmoteManager {
 
 	suspend fun getEmoteKeywords(channel: String): List<String> = withContext(Dispatchers.Default) {
 		val result = mutableListOf<String>()
+		result.addAll(twitchEmotes.keys)
 		result.addAll(globalFFZEmotes.keys)
 		result.addAll(globalBttvEmotes.keys)
 		ffzEmotes[channel]?.let { result.addAll(it.keys) }

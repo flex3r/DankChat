@@ -17,13 +17,15 @@ import org.koin.core.parameter.parametersOf
 
 class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
-
 	private val chatLiveDatas = mutableMapOf<String, MutableLiveData<List<ChatItem>>>()
 	private val canType = mutableMapOf<String, MutableLiveData<Boolean>>()
 	private val emoteKeywords = mutableMapOf<String, MutableLiveData<List<String>>>()
+
 	private var hasConnected = false
 	private var hasDisconnected = false
 	private var loadedGlobalBadges = false
+	private var loadedGlobalEmotes = false
+	private var loadedTwitchEmotes = false
 	private val connection: WebSocketConnection = get { parametersOf(::onDisconnect, ::onMessage) }
 
 	fun getChat(channel: String): LiveData<List<ChatItem>> {
@@ -53,14 +55,22 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		return liveData
 	}
 
-	fun connectAndAddChannel(channel: String, nick: String, oAuth: String, loadEmotesAndBadges: Boolean = false, forceReconnect: Boolean = false) {
-		if (forceReconnect) hasConnected = false
+	fun connectAndAddChannel(channel: String, nick: String, oAuth: String, id: Int, loadEmotesAndBadges: Boolean = false, forceReconnect: Boolean = false) {
+		if (forceReconnect) {
+			hasConnected = false
+			loadedTwitchEmotes = false
+		}
 
 		if (loadEmotesAndBadges) scope.launch {
+			loadedGlobalEmotes = false
+			loadedGlobalBadges = false
+			loadedTwitchEmotes = false
+
 			loadBadges(channel)
 			load3rdPartyEmotes(channel)
 			loadRecentMessages(channel)
 		}
+		if (oAuth.isNotBlank() && oAuth.startsWith("oauth:")) scope.launch { loadTwitchEmotes(oAuth.substringAfter("oauth:"), id) }
 
 		if (hasConnected) {
 			connection.joinChannel(channel)
@@ -191,11 +201,22 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		TwitchApi.getChannelBadges(channel)?.let { EmoteManager.setChannelBadges(channel, it) }
 	}
 
+	private suspend fun loadTwitchEmotes(oAuth: String, id: Int) = withContext(Dispatchers.IO) {
+		if (!loadedTwitchEmotes) {
+			TwitchApi.getUserEmotes(oAuth, id)?.let { EmoteManager.setTwitchEmotes(it) }
+			loadedTwitchEmotes = true
+		}
+	}
+
 	private suspend fun load3rdPartyEmotes(channel: String) = withContext(Dispatchers.IO) {
 		TwitchApi.getFFZChannelEmotes(channel)?.let { EmoteManager.setFFZEmotes(channel, it) }
-		TwitchApi.getFFZGlobalEmotes()?.let { EmoteManager.setFFZGlobalEmotes(it) }
 		TwitchApi.getBTTVChannelEmotes(channel)?.let { EmoteManager.setBTTVEmotes(channel, it) }
-		TwitchApi.getBTTVGlobalEmotes()?.let { EmoteManager.setBTTVGlobalEmotes(it) }
+
+		if (!loadedGlobalEmotes) {
+			TwitchApi.getFFZGlobalEmotes()?.let { EmoteManager.setFFZGlobalEmotes(it) }
+			TwitchApi.getBTTVGlobalEmotes()?.let { EmoteManager.setBTTVGlobalEmotes(it) }
+			loadedGlobalEmotes = true
+		}
 		val keywords = EmoteManager.getEmoteKeywords(channel)
 		emoteKeywords[channel]?.postValue(keywords)
 	}

@@ -5,10 +5,7 @@ import com.flxrs.dankchat.service.api.model.EmoteEntities
 import com.flxrs.dankchat.service.api.model.RecentMessages
 import com.flxrs.dankchat.service.api.model.UserEntities
 import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Headers
-import retrofit2.http.Url
+import retrofit2.http.*
 
 interface TwitchService {
 
@@ -19,6 +16,13 @@ interface TwitchService {
 	)
 	@GET("user")
 	suspend fun getUser(@Header("Authorization") oauth: String): Response<UserEntities.FromKraken>
+
+	@Headers(
+			"Accept: application/vnd.twitchtv.v5+json",
+			"Client-ID: ${TwitchApi.CLIENT_ID}"
+	)
+	@GET("users/{id}/emotes")
+	suspend fun getUserEmotes(@Header("Authorization") oauth: String, @Path("id") userId: Int): Response<EmoteEntities.Twitch.Result>
 
 	@Headers("Client-ID: ${TwitchApi.CLIENT_ID}")
 	@GET

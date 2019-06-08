@@ -44,15 +44,19 @@ class LoginActivity : AppCompatActivity() {
 			if (fragment.startsWith("access_token=")) {
 				val token = fragment.substringAfter("access_token=").substringBefore("&scope=")
 				CoroutineScope(Dispatchers.IO).launch {
-					val name = TwitchApi.getUserName(token)
-					withContext(Dispatchers.Main) {
-						if (name.isNotBlank()) {
-							val authStore = TwitchAuthStore(this@LoginActivity)
-							authStore.setOAuthKey("oauth:$token")
-							authStore.setUserName(name.toLowerCase())
+					TwitchApi.getUser(token)?.let {
+						val name = it.name
+						val id = it.id
+						withContext(Dispatchers.Main) {
+							if (name.isNotBlank()) {
+								val authStore = TwitchAuthStore(this@LoginActivity)
+								authStore.setOAuthKey("oauth:$token")
+								authStore.setUserName(name.toLowerCase())
+								authStore.setUserId(id)
+							}
+							setResult(Activity.RESULT_OK)
+							finish()
 						}
-						setResult(Activity.RESULT_OK)
-						finish()
 					}
 				}
 			}

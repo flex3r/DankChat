@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity() {
 		authStore = TwitchAuthStore(this)
 		val oauth = authStore.getOAuthKey() ?: ""
 		val name = authStore.getUserName() ?: ""
+		val id = authStore.getUserId()
 
 		adapter = ChatTabAdapter(supportFragmentManager, lifecycle)
 		authStore.getChannels()?.run { channels.addAll(this) }
@@ -58,7 +59,7 @@ class MainActivity : AppCompatActivity() {
 
 		if (savedInstanceState == null) {
 			if (name.isNotBlank() && oauth.isNotBlank()) showSnackbar("Logged in as $name")
-			connectAndJoinChannels(name, oauth, true)
+			connectAndJoinChannels(name, oauth, id, true)
 		}
 	}
 
@@ -95,10 +96,11 @@ class MainActivity : AppCompatActivity() {
 		if (requestCode == LOGIN_REQUEST) {
 			val oauth = authStore.getOAuthKey()
 			val name = authStore.getUserName()
+			val id = authStore.getUserId()
 
 			if (resultCode == Activity.RESULT_OK && !oauth.isNullOrBlank() && !name.isNullOrBlank()) {
 				viewModel.close()
-				connectAndJoinChannels(name, oauth)
+				connectAndJoinChannels(name, oauth, id)
 
 				authStore.setLoggedIn(true)
 				showSnackbar("Logged in as $name")
@@ -110,11 +112,11 @@ class MainActivity : AppCompatActivity() {
 		super.onActivityResult(requestCode, resultCode, data)
 	}
 
-	private fun connectAndJoinChannels(name: String, oauth: String, loadEmotesAndBadges: Boolean = false) {
+	private fun connectAndJoinChannels(name: String, oauth: String, id: Int, loadEmotesAndBadges: Boolean = false) {
 		if (channels.isEmpty()) {
-			viewModel.connectOrJoinChannel("", name, oauth, false, forceReconnect = true)
+			viewModel.connectOrJoinChannel("", name, oauth, id, false, forceReconnect = true)
 		} else channels.forEachIndexed { i, channel ->
-			viewModel.connectOrJoinChannel(channel, name, oauth, loadEmotesAndBadges, i == 0)
+			viewModel.connectOrJoinChannel(channel, name, oauth, id, loadEmotesAndBadges, i == 0)
 		}
 	}
 
@@ -137,10 +139,11 @@ class MainActivity : AppCompatActivity() {
 			.setMessage(getString(R.string.confirm_logout_message))
 			.setPositiveButton(getString(R.string.confirm_logout_positive_button)) { dialog, _ ->
 				viewModel.close()
-				connectAndJoinChannels("", "")
+				connectAndJoinChannels("", "", 0)
 
 				authStore.setUserName("")
 				authStore.setOAuthKey("")
+				authStore.setUserId(0)
 				authStore.setLoggedIn(false)
 				invalidateOptionsMenu()
 				dialog.dismiss()
@@ -173,7 +176,8 @@ class MainActivity : AppCompatActivity() {
 			if (!channels.contains(it)) {
 				val oauth = authStore.getOAuthKey() ?: ""
 				val name = authStore.getUserName() ?: ""
-				viewModel.connectOrJoinChannel(it, name, oauth, true)
+				val id = authStore.getUserId()
+				viewModel.connectOrJoinChannel(it, name, oauth, id, true)
 				channels.add(it)
 				authStore.setChannels(channels.toMutableSet())
 

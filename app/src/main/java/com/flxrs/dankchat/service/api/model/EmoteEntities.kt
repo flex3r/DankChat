@@ -3,6 +3,14 @@ package com.flxrs.dankchat.service.api.model
 import com.squareup.moshi.Json
 
 sealed class EmoteEntities {
+
+	sealed class Twitch {
+		data class Emote(@field:Json(name = "code") val name: String,
+						 @field:Json(name = "id") val id: Int)
+
+		data class Result(@field:Json(name = "emoticon_sets") val sets: Map<String, Array<Emote>>)
+	}
+
 	sealed class FFZ {
 		data class Room(@field:Json(name = "_id") val id: Int,
 						@field:Json(name = "css") val css: String?,
