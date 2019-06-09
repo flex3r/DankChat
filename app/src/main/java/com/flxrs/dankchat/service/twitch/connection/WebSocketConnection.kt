@@ -32,7 +32,6 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 	private var readerPong = false
 	private var writerPong = false
 
-	var connected = readerConnected && writerConnected
 	var isJustinFan = false
 
 

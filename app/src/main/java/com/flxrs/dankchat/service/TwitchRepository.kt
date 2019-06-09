@@ -93,7 +93,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	fun sendMessage(channel: String, message: String) = connection.sendMessage("PRIVMSG #$channel :$message")
 
 	fun reconnect(onlyIfNecessary: Boolean = false) {
-		if (onlyIfNecessary && !hasDisconnected && connection.connected) return
+		if (onlyIfNecessary && !hasDisconnected && startedConnection) return
 		close(true)
 	}
 
@@ -107,7 +107,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	private fun onDisconnect() {
 		if (!hasDisconnected) {
 			hasDisconnected = true
-			close()
+			close(true)
 		}
 	}
 

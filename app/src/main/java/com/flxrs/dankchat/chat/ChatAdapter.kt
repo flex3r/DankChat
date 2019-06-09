@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatItemBinding
+import com.flxrs.dankchat.preferences.TwitchAuthStore
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.GifDrawableTarget
 import com.flxrs.dankchat.utils.ImageSpanBadgeTarget
@@ -64,6 +65,7 @@ class ChatAdapter(private val onListChanged: (position: Int) -> Unit, private va
 			movementMethod = LinkMovementMethod.getInstance()
 			val lineHeight = this@with.lineHeight
 			val scaleFactor = lineHeight * 1.5 / 112
+			val currentUserName = TwitchAuthStore(this@with.context).getUserName() ?: ""
 
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 				val foregroundColor = if (timedOut) ContextCompat.getColor(this@with.context, R.color.colorTimeOut) else Color.TRANSPARENT
@@ -72,6 +74,8 @@ class ChatAdapter(private val onListChanged: (position: Int) -> Unit, private va
 
 			val backgroundResource = if (isSystem) {
 				R.color.sub_background
+			} else if (currentUserName.isNotBlank() && !name.equals(currentUserName, true) && !timedOut && message.contains(currentUserName, true)) {
+				R.color.highlight_background
 			} else {
 				android.R.color.transparent
 			}
