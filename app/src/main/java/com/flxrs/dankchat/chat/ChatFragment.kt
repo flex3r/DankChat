@@ -158,6 +158,15 @@ class ChatFragment : Fragment() {
 				binding.scrollBottom.visibility = View.VISIBLE
 			}
 		}
+
+		override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+			if (newState == RecyclerView.SCROLL_STATE_SETTLING && !isAtBottom) {
+				if (!recyclerView.canScrollVertically(1)) {
+					isAtBottom = true
+					binding.scrollBottom.visibility = View.GONE
+				}
+			}
+		}
 	}
 
 	companion object {

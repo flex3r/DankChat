@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.service
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.flxrs.dankchat.chat.ChatItem
@@ -121,7 +120,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	}
 
 	private fun onMessage(msg: IrcMessage) {
-		Log.i(TAG, msg.raw)
+		//Log.i(TAG, msg.raw)
 		val parsed = TwitchMessage.parse(msg).map { ChatItem(it) }
 		when (msg.command) {
 			"366"       -> handleConnected(msg.params[1].substring(1))
