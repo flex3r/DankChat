@@ -73,11 +73,45 @@ data class TwitchMessage(val time: String, val channel: String, val name: String
 
 			if (msgId != null && (msgId == "sub" || msgId == "resub")) {
 				val subMsg = parseFromIrc(message, true)
-				messages.add(subMsg)
+				if (subMsg.message.isNotBlank()) messages.add(subMsg)
 			}
 			val systemTwitchMessage = TwitchMessage(time, channel = channel, name = "", color = color, message = systemMsg, isSystem = true, id = id)
 			messages.add(systemTwitchMessage)
 			return messages
+		}
+
+		private fun parseHostTarget(message: IrcMessage): TwitchMessage = with(message) {
+			val target = params[1].substringBefore("-")
+			val channel = params[0].substring(1)
+			return makeSystemMessage("Now hosting $target", channel)
+		}
+
+		private fun parseClearChat(message: IrcMessage): TwitchMessage = with(message) {
+			val channel = params[0].substring(1)
+			val target = if (params.size > 1) params[1] else ""
+			val duration = tags["ban-duration"] ?: ""
+			val systemMessage = if (target.isBlank()) "Chat has been cleared by a moderator." else {
+				if (duration.isBlank()) "$target has been permanently banned" else "$target has been timed out for ${duration}s."
+			}
+			return makeSystemMessage(systemMessage, channel)
+		}
+
+		private fun parseNotice(message: IrcMessage): TwitchMessage = with(message) {
+			val channel = params[0].substring(1)
+			val notice = params[1]
+			return makeSystemMessage(notice, channel)
+		}
+
+		fun parse(message: IrcMessage): List<TwitchMessage> = with(message) {
+			return when (command) {
+				"PRIVMSG"    -> listOf(parseFromIrc(message))
+				"NOTICE"     -> listOf(parseNotice(message))
+				"USERNOTICE" -> parseUserNotice(message)
+				"CLEARCHAT"  -> listOf(parseClearChat(message))
+				"CLEARMSG"   -> listOf() //TODO
+				"HOSTTARGET" -> listOf(parseHostTarget(message))
+				else         -> listOf()
+			}
 		}
 	}
 }

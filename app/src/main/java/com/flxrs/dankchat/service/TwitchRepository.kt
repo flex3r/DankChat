@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.service
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.flxrs.dankchat.chat.ChatItem
@@ -34,7 +35,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	fun getChat(channel: String): LiveData<List<ChatItem>> {
 		var liveData = chatLiveDatas[channel]
 		if (liveData == null) {
-			liveData = MutableLiveData(listOf())
+			liveData = MutableLiveData(emptyList())
 			chatLiveDatas[channel] = liveData
 		}
 		return liveData
@@ -116,16 +117,23 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	}
 
 	private fun onMessage(msg: IrcMessage) {
-		//Log.i(TAG, msg.raw)
+		Log.i(TAG, msg.raw)
+		val parsed = TwitchMessage.parse(msg).map { ChatItem(it) }
 		when (msg.command) {
-			"366"        -> handleConnected(msg.params[1].substring(1))
-			"PRIVMSG"    -> makeAndPostMessage(msg)
-			"NOTICE"     -> handleNotice(msg)
-			"USERNOTICE" -> handleUserNotice(msg)
-			"CLEARCHAT"  -> handleClearChat(msg)
-			"CLEARMSG"   -> handleClearMsg(msg)
-			"HOSTTARGET" -> handleHostTarget(msg)
-			else         -> Unit
+			"366"       -> handleConnected(msg.params[1].substring(1))
+			"CLEARCHAT" -> {
+				val target = if (msg.params.size > 1) msg.params[1] else ""
+				val channel = msg.params[0].substring(1)
+				chatLiveDatas[channel]?.value?.replaceWithTimeOuts(target)?.run {
+					add(parsed[0])
+					chatLiveDatas[channel]?.postValue(this)
+				}
+			}
+			else        -> if (parsed.isNotEmpty()) {
+				val channel = msg.params[0].substring(1)
+				val currentChat = chatLiveDatas[channel]?.value ?: emptyList()
+				chatLiveDatas[channel]?.postValue(currentChat.addAndLimit(parsed))
+			}
 		}
 	}
 
@@ -135,51 +143,6 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		if (!connection.isJustinFan) {
 			canType[channel]?.postValue(true) ?: MutableLiveData(true)
 		}
-	}
-
-	private fun handleHostTarget(message: IrcMessage) {
-		val target = message.params[1].substringBefore("-")
-		val channel = message.params[0].substring(1)
-		makeAndPostSystemMessage("Now hosting $target", channel)
-	}
-
-	private fun handleClearMsg(message: IrcMessage) {
-		//TODO
-	}
-
-	private fun handleClearChat(message: IrcMessage) {
-		val channel = message.params[0].substring(1)
-		val target = if (message.params.size > 1) message.params[1] else ""
-		val duration = message.tags["ban-duration"] ?: "idk"
-		val systemMessage = if (target.isBlank()) "Chat has been cleared by a moderator." else "$target has been timed out for ${duration}s."
-		chatLiveDatas[channel]?.value?.replaceWithTimeOuts(target)?.run {
-			add(ChatItem(TwitchMessage.makeSystemMessage(systemMessage, channel)))
-			chatLiveDatas[channel]?.postValue(this)
-		}
-	}
-
-	private fun handleUserNotice(message: IrcMessage) {
-		val channel = message.params[0].substring(1)
-		val currentChat = chatLiveDatas[channel]?.value ?: emptyList()
-		TwitchMessage.parseUserNotice(message).forEach {
-			currentChat.addAndLimit(ChatItem(it))
-		}
-		chatLiveDatas[channel]?.postValue(currentChat)
-	}
-
-	private fun handleNotice(message: IrcMessage) {
-		val channel = message.params[0].substring(1)
-		val notice = message.params[1]
-		val twitchMessage = TwitchMessage.makeSystemMessage(notice, channel)
-		val currentChat = chatLiveDatas[channel]?.value ?: emptyList()
-		chatLiveDatas[channel]?.postValue(currentChat.addAndLimit(ChatItem(twitchMessage)))
-	}
-
-	private fun makeAndPostMessage(message: IrcMessage) {
-		val twitchMessage = TwitchMessage.parseFromIrc(message)
-		val channel = twitchMessage.channel
-		val currentChat = chatLiveDatas[channel]?.value ?: emptyList()
-		chatLiveDatas[channel]?.postValue(currentChat.addAndLimit(ChatItem(twitchMessage)))
 	}
 
 	private fun makeAndPostSystemMessage(message: String, channel: String = "") {
@@ -233,11 +196,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 			}
 			list.add(ChatItem(twitchMessage, true))
 		}
-		withContext(Dispatchers.Main) {
-			val current = chatLiveDatas[channel]?.value ?: emptyList()
-			val modified = current.map { ChatItem(it.message, true) }
-			chatLiveDatas[channel]?.value = list.addAndLimit(modified)
-		}
+		val current = chatLiveDatas[channel]?.value ?: emptyList()
+		chatLiveDatas[channel]?.postValue(list.addAndLimit(current))
 	}
 
 	private fun parseRecentNotice(message: IrcMessage): TwitchMessage {

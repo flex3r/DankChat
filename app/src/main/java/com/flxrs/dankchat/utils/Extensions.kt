@@ -39,7 +39,7 @@ class TimerScope {
 }
 
 fun List<ChatItem>.replaceWithTimeOuts(name: String): MutableList<ChatItem> = toMutableList().apply {
-	val iterate = this.listIterator()
+	val iterate = listIterator()
 	if (name.isBlank()) {
 		while (iterate.hasNext()) {
 			val item = iterate.next()
@@ -57,17 +57,20 @@ fun List<ChatItem>.replaceWithTimeOuts(name: String): MutableList<ChatItem> = to
 			}
 		}
 	}
-	return this
 }
 
 fun List<ChatItem>.addAndLimit(item: ChatItem): MutableList<ChatItem> = toMutableList().apply {
-	if (size > 999) removeAt(0)
 	add(item)
+	if (size > 500) removeAt(0)
 }
 
-fun List<ChatItem>.addAndLimit(list: List<ChatItem>): MutableList<ChatItem> = toMutableList().apply {
-	this.plus(list)
-	while (size > 999) removeAt(0)
+fun List<ChatItem>.addAndLimit(collection: Collection<ChatItem>): MutableList<ChatItem> = toMutableList().apply {
+	for (item in collection) {
+		if (!this.any { it.message.id == item.message.id }) {
+			add(item)
+			if (size > 500) removeAt(0)
+		}
+	}
 }
 
 fun Fragment.hideKeyboard() {
