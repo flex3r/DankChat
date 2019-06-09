@@ -85,7 +85,11 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
 	}
 
-	fun partChannel(channel: String) = connection.partChannel(channel)
+	fun partChannel(channel: String) {
+		connection.partChannel(channel)
+		chatLiveDatas[channel]?.postValue(emptyList())
+		chatLiveDatas.remove("channel")
+	}
 
 	fun sendMessage(channel: String, message: String) = connection.sendMessage("PRIVMSG #$channel :$message")
 

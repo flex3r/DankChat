@@ -96,7 +96,7 @@ class ChatAdapter(private val onListChanged: (position: Int) -> Unit, private va
 							val width = Math.round(lineHeight * it.intrinsicWidth / it.intrinsicHeight.toFloat())
 							it.setBounds(0, 0, width, lineHeight)
 							val imageSpan = ImageSpan(it, ImageSpan.ALIGN_BOTTOM)
-							spannable.setSpan(imageSpan, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+							spannable.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 							text = spannable
 						})
 			}
@@ -160,7 +160,7 @@ class ChatAdapter(private val onListChanged: (position: Int) -> Unit, private va
 							val width = (gifDrawable.intrinsicWidth * scaleFactor).roundToInt()
 							gifDrawable.setBounds(0, 0, width, height)
 							val imageSpan = ImageSpan(gifDrawable, ImageSpan.ALIGN_BOTTOM)
-							spannable.setSpan(imageSpan, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+							spannable.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 							text = spannable
 						} else {
 							Glide.with(this@with)
@@ -172,7 +172,7 @@ class ChatAdapter(private val onListChanged: (position: Int) -> Unit, private va
 										val height = (it.intrinsicHeight * scaleFactor).roundToInt()
 										val width = (it.intrinsicWidth * scaleFactor).roundToInt()
 										it.setBounds(0, 0, width, height)
-										spannable.setSpan(ImageSpan(it, ImageSpan.ALIGN_BOTTOM), start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+										spannable.setSpan(ImageSpan(it, ImageSpan.ALIGN_BOTTOM), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 										text = spannable
 									})
 						}
@@ -192,7 +192,7 @@ class ChatAdapter(private val onListChanged: (position: Int) -> Unit, private va
 									}
 									val width = (height * ratio).roundToInt()
 									it.setBounds(0, 0, width, height)
-									spannable.setSpan(ImageSpan(it, ImageSpan.ALIGN_BOTTOM), start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+									spannable.setSpan(ImageSpan(it, ImageSpan.ALIGN_BOTTOM), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 									text = spannable
 								})
 					}
