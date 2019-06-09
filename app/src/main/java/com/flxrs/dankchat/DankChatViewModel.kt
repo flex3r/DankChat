@@ -11,8 +11,8 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
 
 	fun getEmoteKeywords(channel: String) = twitchRepository.getEmoteKeywords(channel)
 
-	fun connectOrJoinChannel(channel: String, nick: String, oauth: String, id: Int, loadEmotesAndBadges: Boolean = false, forceReconnect: Boolean = false) {
-		twitchRepository.connectAndAddChannel(channel, nick, oauth, id, loadEmotesAndBadges, forceReconnect)
+	fun connectOrJoinChannel(channel: String, nick: String, oauth: String, id: Int, loadEmotesAndBadges: Boolean = false, doReauth: Boolean = false) {
+		twitchRepository.connectAndAddChannel(channel, nick, oauth, id, loadEmotesAndBadges, doReauth)
 	}
 
 	fun partChannel(channel: String) = twitchRepository.partChannel(channel)

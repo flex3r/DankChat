@@ -25,6 +25,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	private val emoteKeywords = mutableMapOf<String, MutableLiveData<List<String>>>()
 
 	private var startedConnection = false
+	private var startedReconnect = false
 	private var hasDisconnected = false
 	private var loadedGlobalBadges = false
 	private var loadedGlobalEmotes = false
@@ -58,9 +59,10 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		return liveData
 	}
 
-	fun connectAndAddChannel(channel: String, nick: String, oAuth: String, id: Int, load3rdPartyEmotesAndBadges: Boolean = false, forceReconnect: Boolean = false) {
-		if (forceReconnect) {
+	fun connectAndAddChannel(channel: String, nick: String, oAuth: String, id: Int, load3rdPartyEmotesAndBadges: Boolean = false, doReauth: Boolean = false) {
+		if (doReauth) {
 			startedConnection = false
+			startedReconnect = false
 			loadedTwitchEmotes = false
 		}
 
@@ -94,19 +96,22 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
 	fun reconnect(onlyIfNecessary: Boolean = false) {
 		if (onlyIfNecessary && !hasDisconnected && startedConnection) return
+		startedReconnect = true
 		close(true)
 	}
 
+	@Synchronized
 	fun close(doReconnect: Boolean = false) {
 		canType.keys.forEach { canType[it]?.postValue(false) }
 		makeAndPostSystemMessage("Disconnected")
+		hasDisconnected = true
 		connection.close(doReconnect)
 	}
 
 	@Synchronized
 	private fun onDisconnect() {
-		if (!hasDisconnected) {
-			hasDisconnected = true
+		if (!hasDisconnected && !startedReconnect) {
+			startedReconnect = true
 			close(true)
 		}
 	}
@@ -145,6 +150,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	private fun handleConnected(channel: String) {
 		makeAndPostSystemMessage("Connected", channel)
 		hasDisconnected = false
+		startedReconnect = false
 		if (!connection.isJustinFan) {
 			canType[channel]?.postValue(true) ?: MutableLiveData(true)
 		}

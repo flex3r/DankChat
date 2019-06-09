@@ -125,7 +125,7 @@ class MainActivity : AppCompatActivity() {
 
 	private fun connectAndJoinChannels(name: String, oauth: String, id: Int, load3rdPartyEmotesAndBadges: Boolean = false) {
 		if (channels.isEmpty()) {
-			viewModel.connectOrJoinChannel("", name, oauth, id, false, forceReconnect = true)
+			viewModel.connectOrJoinChannel("", name, oauth, id, false, doReauth = true)
 		} else channels.forEachIndexed { i, channel ->
 			viewModel.connectOrJoinChannel(channel, name, oauth, id, load3rdPartyEmotesAndBadges, i == 0)
 		}

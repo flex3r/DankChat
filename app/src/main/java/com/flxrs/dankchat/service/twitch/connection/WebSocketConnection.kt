@@ -67,6 +67,7 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 		writerWebSocket = client.newWebSocket(request, WriterWebSocketListener())
 	}
 
+	@Synchronized
 	fun close(reconnect: Boolean = true) {
 		scope.coroutineContext.cancel()
 		scope.coroutineContext.cancelChildren()
