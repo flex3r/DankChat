@@ -76,6 +76,11 @@ class MainActivity : AppCompatActivity() {
 		}
 	}
 
+	override fun onResume() {
+		super.onResume()
+		viewModel.reconnect(true)
+	}
+
 	override fun onCreateOptionsMenu(menu: Menu): Boolean {
 		menuInflater.inflate(R.menu.menu, menu)
 		return true

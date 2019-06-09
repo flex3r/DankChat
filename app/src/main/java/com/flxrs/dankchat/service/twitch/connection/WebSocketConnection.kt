@@ -23,18 +23,18 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 
 	private var nick = ""
 	private var oAuth = ""
-	var isJustinFan = false
-
 	private val channels = mutableSetOf<String>()
 
 	private var readerWebSocket: WebSocket? = null
 	private var writerWebSocket: WebSocket? = null
-
 	private var readerConnected = false
-	private var readerPong = false
-
 	private var writerConnected = false
+	private var readerPong = false
 	private var writerPong = false
+
+	var connected = readerConnected && writerConnected
+	var isJustinFan = false
+
 
 	fun sendMessage(msg: String) {
 		if (readerConnected && writerConnected) {

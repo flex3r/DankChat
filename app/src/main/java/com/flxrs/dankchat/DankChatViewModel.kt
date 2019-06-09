@@ -19,7 +19,7 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
 
 	fun close() = twitchRepository.close()
 
-	fun reconnect() = twitchRepository.reconnect()
+	fun reconnect(onlyIfNecessary: Boolean = false) = twitchRepository.reconnect(onlyIfNecessary)
 
 	fun clear(channel: String) = twitchRepository.clear(channel)
 

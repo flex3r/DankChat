@@ -24,7 +24,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	private val canType = mutableMapOf<String, MutableLiveData<Boolean>>()
 	private val emoteKeywords = mutableMapOf<String, MutableLiveData<List<String>>>()
 
-	private var hasConnected = false
+	private var startedConnection = false
 	private var hasDisconnected = false
 	private var loadedGlobalBadges = false
 	private var loadedGlobalEmotes = false
@@ -60,7 +60,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
 	fun connectAndAddChannel(channel: String, nick: String, oAuth: String, id: Int, load3rdPartyEmotesAndBadges: Boolean = false, forceReconnect: Boolean = false) {
 		if (forceReconnect) {
-			hasConnected = false
+			startedConnection = false
 			loadedTwitchEmotes = false
 		}
 
@@ -75,11 +75,11 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 			loadTwitchEmotes(oAuth.substringAfter("oauth:"), id)
 		}
 
-		if (hasConnected) {
+		if (startedConnection) {
 			connection.joinChannel(channel)
 		} else {
+			startedConnection = true
 			connection.connect(nick, oAuth, channel)
-			hasConnected = true
 		}
 
 	}
@@ -92,7 +92,10 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
 	fun sendMessage(channel: String, message: String) = connection.sendMessage("PRIVMSG #$channel :$message")
 
-	fun reconnect() = close(true)
+	fun reconnect(onlyIfNecessary: Boolean = false) {
+		if (onlyIfNecessary && !hasDisconnected && connection.connected) return
+		close(true)
+	}
 
 	fun close(doReconnect: Boolean = false) {
 		canType.keys.forEach { canType[it]?.postValue(false) }
