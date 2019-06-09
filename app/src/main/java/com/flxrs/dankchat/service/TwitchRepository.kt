@@ -200,7 +200,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 			list.add(ChatItem(twitchMessage, true))
 		}
 		val current = chatLiveDatas[channel]?.value ?: emptyList()
-		chatLiveDatas[channel]?.postValue(list.addAndLimit(current))
+		chatLiveDatas[channel]?.postValue(list.addAndLimit(current, true))
 	}
 
 	private fun parseRecentNotice(message: IrcMessage): TwitchMessage {

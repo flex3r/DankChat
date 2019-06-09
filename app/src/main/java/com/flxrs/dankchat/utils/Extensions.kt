@@ -64,9 +64,9 @@ fun List<ChatItem>.addAndLimit(item: ChatItem): MutableList<ChatItem> = toMutabl
 	if (size > 500) removeAt(0)
 }
 
-fun List<ChatItem>.addAndLimit(collection: Collection<ChatItem>): MutableList<ChatItem> = toMutableList().apply {
+fun List<ChatItem>.addAndLimit(collection: Collection<ChatItem>, checkForDuplicates: Boolean = false): MutableList<ChatItem> = toMutableList().apply {
 	for (item in collection) {
-		if (!this.any { it.message.id == item.message.id }) {
+		if (!checkForDuplicates || !this.any { it.message.id == item.message.id }) {
 			add(item)
 			if (size > 500) removeAt(0)
 		}
