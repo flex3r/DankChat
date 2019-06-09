@@ -88,14 +88,7 @@ class MainActivity : AppCompatActivity() {
 
 	override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
 		menu?.findItem(R.id.menu_login)?.run {
-			if (authStore.isLoggedin()) {
-				setTitle(R.string.logout)
-				setIcon(R.drawable.ic_exit_to_app_24dp)
-				setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
-			} else {
-				setTitle(R.string.login)
-				setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-			}
+			if (authStore.isLoggedin()) setTitle(R.string.logout) else setTitle(R.string.login)
 		}
 		return true
 	}
