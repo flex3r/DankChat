@@ -24,7 +24,6 @@ class LoginActivity : AppCompatActivity() {
 		binding.webview.apply {
 			with(settings) {
 				javaScriptEnabled = true
-				javaScriptCanOpenWindowsAutomatically = true
 				setSupportZoom(true)
 			}
 			CookieManager.getInstance().removeAllCookies(null)

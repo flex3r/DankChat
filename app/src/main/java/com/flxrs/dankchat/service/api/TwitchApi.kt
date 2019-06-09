@@ -45,8 +45,8 @@ object TwitchApi {
 		try {
 			val response = service.getUser("OAuth $oAuth")
 			if (response.isSuccessful) return@withContext response.body()
-		} catch (e: Throwable) {
-			Log.e(TAG, e.message)
+		} catch (t: Throwable) {
+			Log.e(TAG, Log.getStackTraceString(t))
 		}
 		return@withContext null
 	}
@@ -55,8 +55,8 @@ object TwitchApi {
 		try {
 			val response = service.getUserEmotes("OAuth $oAuth", id)
 			if (response.isSuccessful) return@withContext response.body()
-		} catch (e: Throwable) {
-			Log.e(TAG, e.message)
+		} catch (t: Throwable) {
+			Log.e(TAG, Log.getStackTraceString(t))
 		}
 		return@withContext null
 	}
@@ -66,8 +66,8 @@ object TwitchApi {
 			try {
 				val response = service.getBadgeSets("$TWITCH_SUBBADGES_BASE_URL$it$TWITCH_SUBBADGES_SUFFIX")
 				return@withContext if (response.isSuccessful) response.body() else null
-			} catch (e: Throwable) {
-				Log.e(TAG, e.message)
+			} catch (t: Throwable) {
+				Log.e(TAG, Log.getStackTraceString(t))
 			}
 		}
 		return@withContext null
@@ -77,8 +77,8 @@ object TwitchApi {
 		try {
 			val response = service.getBadgeSets(TWITCH_BADGES_URL)
 			if (response.isSuccessful) return@withContext response.body()
-		} catch (e: Throwable) {
-			Log.e(TAG, e.message)
+		} catch (t: Throwable) {
+			Log.e(TAG, Log.getStackTraceString(t))
 		}
 		return@withContext null
 	}
@@ -87,8 +87,8 @@ object TwitchApi {
 		try {
 			val response = service.getFFZChannelEmotes("$FFZ_BASE_URL$channel")
 			if (response.isSuccessful) return@withContext response.body()
-		} catch (e: Throwable) {
-			Log.e(TAG, e.message)
+		} catch (t: Throwable) {
+			Log.e(TAG, Log.getStackTraceString(t))
 		}
 		return@withContext null
 	}
@@ -97,9 +97,8 @@ object TwitchApi {
 		try {
 			val response = service.getFFZGlobalEmotes(FFZ_GLOBAL_URL)
 			if (response.isSuccessful) return@withContext response.body()
-			else Log.e(TAG, response.message())
-		} catch (e: Throwable) {
-			Log.e(TAG, e.message)
+		} catch (t: Throwable) {
+			Log.e(TAG, Log.getStackTraceString(t))
 		}
 		return@withContext null
 	}
@@ -108,9 +107,8 @@ object TwitchApi {
 		try {
 			val response = service.getBTTVChannelEmotes("$BTTV_CHANNEL_BASE_URL$channel")
 			if (response.isSuccessful) return@withContext response.body()
-			else Log.e(TAG, response.message())
-		} catch (e: Throwable) {
-			Log.e(TAG, e.message)
+		} catch (t: Throwable) {
+			Log.e(TAG, Log.getStackTraceString(t))
 		}
 		return@withContext null
 	}
@@ -119,9 +117,8 @@ object TwitchApi {
 		try {
 			val response = service.getBTTVGlobalEmotes(BTTV_GLOBAL_URL)
 			if (response.isSuccessful) return@withContext response.body()
-			else Log.e(TAG, response.message())
-		} catch (e: Throwable) {
-			Log.e(TAG, e.message)
+		} catch (t: Throwable) {
+			Log.e(TAG, Log.getStackTraceString(t))
 		}
 		return@withContext null
 	}
@@ -130,8 +127,8 @@ object TwitchApi {
 		try {
 			val response = service.getRecentMessages("$RECENT_MSG_URL$channel$RECENT_MSG_URL_SUFFIX")
 			if (response.isSuccessful) return@withContext response.body()
-		} catch (e: Throwable) {
-			Log.e(TAG, e.message)
+		} catch (t: Throwable) {
+			Log.e(TAG, Log.getStackTraceString(t))
 		}
 		return@withContext null
 	}
@@ -140,8 +137,8 @@ object TwitchApi {
 		try {
 			val response = service.getUserHelix("${HELIX_BASE_URL}users?login=$name")
 			if (response.isSuccessful) return@withContext response.body()?.data?.get(0)?.id
-		} catch (e: Throwable) {
-			Log.e(TAG, e.message)
+		} catch (t: Throwable) {
+			Log.e(TAG, Log.getStackTraceString(t))
 		}
 		return@withContext null
 	}

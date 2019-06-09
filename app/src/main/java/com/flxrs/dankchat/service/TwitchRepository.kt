@@ -120,7 +120,6 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	}
 
 	private fun onMessage(msg: IrcMessage) {
-		//Log.i(TAG, msg.raw)
 		val parsed = TwitchMessage.parse(msg).map { ChatItem(it) }
 		when (msg.command) {
 			"366"       -> handleConnected(msg.params[1].substring(1))
