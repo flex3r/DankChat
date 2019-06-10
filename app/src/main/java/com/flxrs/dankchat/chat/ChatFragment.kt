@@ -21,8 +21,8 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.preferences.TwitchAuthStore
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
-import com.flxrs.dankchat.utils.GifDrawableTarget
 import com.flxrs.dankchat.utils.BadgeDrawableTarget
+import com.flxrs.dankchat.utils.GifDrawableTarget
 import com.flxrs.dankchat.utils.SpaceTokenizer
 import com.flxrs.dankchat.utils.hideKeyboard
 import kotlinx.coroutines.*
@@ -92,7 +92,7 @@ class ChatFragment : Fragment() {
 	}
 
 	fun clearInputFocus() {
-		binding.input.clearFocus()
+		if (::binding.isInitialized) binding.input.clearFocus()
 		hideKeyboard()
 	}
 

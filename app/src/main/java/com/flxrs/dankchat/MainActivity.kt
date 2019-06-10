@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
 
 		binding = DataBindingUtil.setContentView<MainActivityBinding>(this, R.layout.main_activity).apply {
 			viewPager.adapter = adapter
-			viewPager.offscreenPageLimit = if (channels.size > 0) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
+			viewPager.offscreenPageLimit = if (channels.size > 1) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 			tabLayoutMediator = TabLayoutMediator(tabs, viewPager) { tab, position -> tab.text = adapter.titleList[position] }
 			tabLayoutMediator.attach()
 			tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
 
 				override fun onTabUnselected(tab: TabLayout.Tab?) {
 					tab?.position?.let {
-						(adapter.getItem(it) as? ChatFragment)?.clearInputFocus()
+						(adapter.createFragment(it) as? ChatFragment)?.clearInputFocus()
 					}
 				}
 			})
@@ -194,7 +194,7 @@ class MainActivity : AppCompatActivity() {
 
 				adapter.addFragment(ChatFragment.newInstance(it), it)
 				binding.viewPager.setCurrentItem(channels.size - 1, true)
-				binding.viewPager.offscreenPageLimit = channels.size - 1
+				binding.viewPager.offscreenPageLimit = if (channels.size > 1) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 
 				updateViewPagerVisibility()
 			}
@@ -210,10 +210,8 @@ class MainActivity : AppCompatActivity() {
 
 		if (channels.size > 0) {
 			binding.viewPager.setCurrentItem(0, true)
-			binding.viewPager.offscreenPageLimit = channels.size - 1
-		} else {
-			binding.viewPager.offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 		}
+		binding.viewPager.offscreenPageLimit = if (channels.size > 1) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 
 		adapter.removeFragment(index)
 		updateViewPagerVisibility()
