@@ -117,13 +117,13 @@ object EmoteManager {
 		}
 	}
 
-	suspend fun getEmoteKeywords(channel: String): List<String> = withContext(Dispatchers.Default) {
-		val result = mutableListOf<String>()
-		result.addAll(twitchEmotes.keys)
-		result.addAll(globalFFZEmotes.keys)
-		result.addAll(globalBttvEmotes.keys)
-		ffzEmotes[channel]?.let { result.addAll(it.keys) }
-		bttvEmotes[channel]?.let { result.addAll(it.keys) }
+	suspend fun getEmotesForSuggestions(channel: String): List<GenericEmote> = withContext(Dispatchers.Default) {
+		val result = mutableListOf<GenericEmote>()
+		result.addAll(twitchEmotes.values)
+		result.addAll(globalFFZEmotes.values)
+		result.addAll(globalBttvEmotes.values)
+		ffzEmotes[channel]?.let { result.addAll(it.values) }
+		bttvEmotes[channel]?.let { result.addAll(it.values) }
 		result.sort()
 		return@withContext result
 	}

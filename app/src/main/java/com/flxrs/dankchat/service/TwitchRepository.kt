@@ -7,6 +7,7 @@ import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
+import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import com.flxrs.dankchat.utils.addAndLimit
 import com.flxrs.dankchat.utils.replaceWithTimeOuts
@@ -22,7 +23,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
 	private val chatLiveDatas = mutableMapOf<String, MutableLiveData<List<ChatItem>>>()
 	private val canType = mutableMapOf<String, MutableLiveData<Boolean>>()
-	private val emoteKeywords = mutableMapOf<String, MutableLiveData<List<String>>>()
+	private val emoteSuggestions = mutableMapOf<String, MutableLiveData<List<GenericEmote>>>()
 
 	private var startedConnection = false
 	private var startedReconnect = false
@@ -50,11 +51,11 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		return liveData
 	}
 
-	fun getEmoteKeywords(channel: String): LiveData<List<String>> {
-		var liveData = emoteKeywords[channel]
+	fun getEmoteKeywords(channel: String): LiveData<List<GenericEmote>> {
+		var liveData = emoteSuggestions[channel]
 		if (liveData == null) {
 			liveData = MutableLiveData(emptyList())
-			emoteKeywords[channel] = liveData
+			emoteSuggestions[channel] = liveData
 		}
 		return liveData
 	}
@@ -191,8 +192,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 			TwitchApi.getBTTVGlobalEmotes()?.let { EmoteManager.setBTTVGlobalEmotes(it) }
 			loadedGlobalEmotes = true
 		}
-		val keywords = EmoteManager.getEmoteKeywords(channel)
-		emoteKeywords[channel]?.postValue(keywords)
+		val keywords = EmoteManager.getEmotesForSuggestions(channel)
+		emoteSuggestions[channel]?.postValue(keywords)
 	}
 
 	private suspend fun loadRecentMessages(channel: String) = withContext(Dispatchers.Default) {

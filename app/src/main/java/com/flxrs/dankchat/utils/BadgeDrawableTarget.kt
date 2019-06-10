@@ -7,7 +7,7 @@ import android.graphics.drawable.Drawable
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 
-class ImageSpanBadgeTarget(private val context: Context, private val callback: (Drawable) -> Unit) : CustomTarget<Bitmap>() {
+class BadgeDrawableTarget(private val context: Context, private val callback: (Drawable) -> Unit) : CustomTarget<Bitmap>() {
 
 	override fun onLoadStarted(placeholder: Drawable?) {
 		if (placeholder != null) {

@@ -8,7 +8,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.flxrs.dankchat.service.twitch.emote.ChatEmote
 
-class ImageSpanEmoteTarget(private val emote: ChatEmote, private val context: Context, private val callback: (Drawable) -> Unit) : CustomTarget<Bitmap>() {
+class EmoteDrawableTarget(private val emote: ChatEmote, private val context: Context, private val callback: (Drawable) -> Unit) : CustomTarget<Bitmap>() {
 
 	override fun onLoadStarted(placeholder: Drawable?) {
 		if (placeholder != null) {

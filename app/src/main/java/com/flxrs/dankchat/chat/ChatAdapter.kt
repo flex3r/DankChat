@@ -27,8 +27,8 @@ import com.flxrs.dankchat.databinding.ChatItemBinding
 import com.flxrs.dankchat.preferences.TwitchAuthStore
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.GifDrawableTarget
-import com.flxrs.dankchat.utils.ImageSpanBadgeTarget
-import com.flxrs.dankchat.utils.ImageSpanEmoteTarget
+import com.flxrs.dankchat.utils.BadgeDrawableTarget
+import com.flxrs.dankchat.utils.EmoteDrawableTarget
 import com.flxrs.dankchat.utils.normalizeColor
 import com.linkedin.urls.detection.UrlDetector
 import com.linkedin.urls.detection.UrlDetectorOptions
@@ -96,7 +96,7 @@ class ChatAdapter(private val onListChanged: (position: Int) -> Unit, private va
 						.load(badge.url)
 						.placeholder(R.drawable.ic_missing_emote)
 						.error(R.drawable.ic_missing_emote)
-						.into(ImageSpanBadgeTarget(context) {
+						.into(BadgeDrawableTarget(context) {
 							val width = Math.round(lineHeight * it.intrinsicWidth / it.intrinsicHeight.toFloat())
 							it.setBounds(0, 0, width, lineHeight)
 							val imageSpan = ImageSpan(it, ImageSpan.ALIGN_BOTTOM)
@@ -186,7 +186,7 @@ class ChatAdapter(private val onListChanged: (position: Int) -> Unit, private va
 								.load(e.url)
 								.placeholder(R.drawable.ic_missing_emote)
 								.error(R.drawable.ic_missing_emote)
-								.into(ImageSpanEmoteTarget(e, context) {
+								.into(EmoteDrawableTarget(e, context) {
 									val ratio = it.intrinsicWidth / it.intrinsicHeight.toFloat()
 
 									val height = when {

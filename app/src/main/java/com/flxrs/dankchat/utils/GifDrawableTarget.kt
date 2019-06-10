@@ -6,7 +6,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import pl.droidsonroids.gif.GifDrawable
 
-class GifDrawableTarget(private val keyword: String, private val callback: (Drawable) -> Unit) : CustomTarget<ByteArray>() {
+class GifDrawableTarget(private val keyword: String, private val storeInCache: Boolean = true, private val callback: (Drawable) -> Unit) : CustomTarget<ByteArray>() {
 
 	override fun onLoadStarted(placeholder: Drawable?) {
 		if (placeholder != null) {
@@ -24,9 +24,11 @@ class GifDrawableTarget(private val keyword: String, private val callback: (Draw
 
 	override fun onResourceReady(resource: ByteArray, transition: Transition<in ByteArray>?) {
 		val drawable = GifDrawable(resource)
-		drawable.callback = EmoteManager.gifCallback
 		drawable.start()
-		EmoteManager.gifCache.put(keyword, drawable)
+		if (storeInCache) {
+			drawable.callback = EmoteManager.gifCallback
+			EmoteManager.gifCache.put(keyword, drawable)
+		}
 		callback(drawable)
 	}
 }
