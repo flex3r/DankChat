@@ -26,9 +26,9 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatItemBinding
 import com.flxrs.dankchat.preferences.TwitchAuthStore
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
-import com.flxrs.dankchat.utils.GifDrawableTarget
 import com.flxrs.dankchat.utils.BadgeDrawableTarget
 import com.flxrs.dankchat.utils.EmoteDrawableTarget
+import com.flxrs.dankchat.utils.GifDrawableTarget
 import com.flxrs.dankchat.utils.normalizeColor
 import com.linkedin.urls.detection.UrlDetector
 import com.linkedin.urls.detection.UrlDetectorOptions
@@ -72,9 +72,9 @@ class ChatAdapter(private val onListChanged: (position: Int) -> Unit, private va
 				foreground = ColorDrawable(foregroundColor)
 			}
 
-			val backgroundResource = if (isSystem) {
+			val backgroundResource = if (isNotify) {
 				R.color.sub_background
-			} else if (currentUserName.isNotBlank() && !name.equals(currentUserName, true) && !timedOut && message.contains(currentUserName, true)) {
+			} else if (currentUserName.isNotBlank() && !name.equals(currentUserName, true) && !timedOut && !isSystem && message.contains(currentUserName, true)) {
 				R.color.highlight_background
 			} else {
 				android.R.color.transparent
@@ -216,9 +216,10 @@ class ChatAdapter(private val onListChanged: (position: Int) -> Unit, private va
 					&& oldItem.message.name == newItem.message.name
 					&& oldItem.message.channel == newItem.message.channel
 					&& oldItem.message.message == newItem.message.message
-					&& oldItem.message.isSystem == newItem.message.isSystem
+					&& oldItem.message.isNotify == newItem.message.isNotify
 					&& oldItem.message.isAction == newItem.message.isAction
 					&& oldItem.message.time == newItem.message.time
+					&& oldItem.message.isSystem == newItem.message.isSystem
 					&& oldItem.historic == newItem.historic
 		}
 	}

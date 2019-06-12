@@ -8,7 +8,7 @@ import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.TimeUtils
 
 data class TwitchMessage(val time: String, val channel: String, val name: String, val color: Int, val message: String, val emotes: List<ChatEmote> = listOf(),
-						 val isAction: Boolean = false, val isSystem: Boolean = false, val badges: List<Badge> = emptyList(), val id: String, var timedOut: Boolean = false) {
+						 val isAction: Boolean = false, val isNotify: Boolean = false, val badges: List<Badge> = emptyList(), val id: String, var timedOut: Boolean = false, val isSystem: Boolean = false) {
 
 	companion object {
 		fun parseFromIrc(ircMessage: IrcMessage, isSystem: Boolean = false, isHistoric: Boolean = false): TwitchMessage = with(ircMessage) {
@@ -53,7 +53,7 @@ data class TwitchMessage(val time: String, val channel: String, val name: String
 			val time = TimeUtils.localTime()
 			val color = Color.parseColor("#717171")
 			val id = System.nanoTime().toString()
-			return TwitchMessage(time, channel = channel, name = "", color = color, message = message, id = id)
+			return TwitchMessage(time, channel = channel, name = "", color = color, message = message, id = id, isSystem = true)
 		}
 
 		fun parseUserNotice(message: IrcMessage, historic: Boolean = false): List<TwitchMessage> = with(message) {
@@ -75,7 +75,7 @@ data class TwitchMessage(val time: String, val channel: String, val name: String
 				val subMsg = parseFromIrc(message, true)
 				if (subMsg.message.isNotBlank()) messages.add(subMsg)
 			}
-			val systemTwitchMessage = TwitchMessage(time, channel = channel, name = "", color = color, message = systemMsg, isSystem = true, id = id)
+			val systemTwitchMessage = TwitchMessage(time, channel = channel, name = "", color = color, message = systemMsg, isNotify = true, id = id)
 			messages.add(systemTwitchMessage)
 			return messages
 		}

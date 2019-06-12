@@ -2,10 +2,7 @@ package com.flxrs.dankchat.chat
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
@@ -51,11 +48,19 @@ class ChatFragment : Fragment() {
 			lifecycleOwner = this@ChatFragment
 			vm = viewModel
 			chat.setup(adapter, manager)
-			input.setTokenizer(SpaceTokenizer())
-			input.setOnEditorActionListener { _, actionId, _ ->
-				return@setOnEditorActionListener when (actionId) {
-					EditorInfo.IME_ACTION_SEND -> handleSendMessage()
-					else                       -> false
+			input.apply {
+				setTokenizer(SpaceTokenizer())
+				setOnEditorActionListener { _, actionId, _ ->
+					return@setOnEditorActionListener when (actionId) {
+						EditorInfo.IME_ACTION_SEND -> handleSendMessage()
+						else                       -> false
+					}
+				}
+				setOnKeyListener { _, keyCode, _ ->
+					return@setOnKeyListener when (keyCode) {
+						KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> if (!isPopupShowing) handleSendMessage() else false
+						else                                                  -> false
+					}
 				}
 			}
 			scrollBottom.setOnClickListener {
