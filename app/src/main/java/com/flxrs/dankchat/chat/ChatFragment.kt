@@ -18,7 +18,7 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.preferences.TwitchAuthStore
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
-import com.flxrs.dankchat.utils.BadgeDrawableTarget
+import com.flxrs.dankchat.utils.DrawableTarget
 import com.flxrs.dankchat.utils.GifDrawableTarget
 import com.flxrs.dankchat.utils.SpaceTokenizer
 import com.flxrs.dankchat.utils.hideKeyboard
@@ -187,16 +187,19 @@ class ChatFragment : Fragment() {
 			val view = super.getView(position, convertView, parent)
 			val item = getItem(position) ?: return view
 			view as TextView
-			if (item.isGif) Glide.with(this@ChatFragment).`as`(ByteArray::class.java)
+			Glide.with(view).clear(view)
+			if (item.isGif) Glide.with(view)
+					.`as`(ByteArray::class.java)
 					.load(item.url)
 					.placeholder(R.drawable.ic_missing_emote)
 					.error(R.drawable.ic_missing_emote)
 					.into(GifDrawableTarget(item.keyword, false) { setCompoundDrawable(view, it) })
-			else Glide.with(this@ChatFragment).asBitmap()
+			else Glide.with(view)
+					.asDrawable()
 					.load(item.url)
 					.placeholder(R.drawable.ic_missing_emote)
 					.error(R.drawable.ic_missing_emote)
-					.into(BadgeDrawableTarget(requireContext()) { setCompoundDrawable(view, it) })
+					.into(DrawableTarget { setCompoundDrawable(view, it) })
 			return view
 		}
 	}

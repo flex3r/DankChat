@@ -1,6 +1,8 @@
 package com.flxrs.dankchat
 
 import android.app.Application
+import androidx.emoji.bundled.BundledEmojiCompatConfig
+import androidx.emoji.text.EmojiCompat
 import com.jakewharton.threetenabp.AndroidThreeTen
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -15,6 +17,10 @@ class DankChatApplication : Application() {
 
 			modules(appModules)
 		}
+
 		AndroidThreeTen.init(this)
+
+		val config = BundledEmojiCompatConfig(this)
+		EmojiCompat.init(config)
 	}
 }

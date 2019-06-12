@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.service.twitch.emote
 
+import android.util.Log
 import androidx.collection.LruCache
 import com.flxrs.dankchat.service.api.model.BadgeEntities
 import com.flxrs.dankchat.service.api.model.EmoteEntities
@@ -35,7 +36,7 @@ object EmoteManager {
 		val matcher = emotePattern.matcher(message)
 		while (matcher.find()) {
 			val id = matcher.group(1)
-			emotes.add(ChatEmote(matcher.group(2).split(','), "$BASE_URL/$id/$EMOTE_SIZE", id, "", 1, false))
+			emotes.add(ChatEmote(matcher.group(2).split(','), "$BASE_URL/$id/$EMOTE_SIZE", id, "", 1, false, isTwitch = true))
 		}
 		return emotes
 	}
@@ -44,7 +45,8 @@ object EmoteManager {
 		val availableFFz = ffzEmotes[channel] ?: hashMapOf()
 		val availableBttv = bttvEmotes[channel] ?: hashMapOf()
 		val total = availableFFz.plus(availableBttv).plus(globalBttvEmotes).plus(globalFFZEmotes)
-		val splits = message.split(' ')
+		Log.d("Debug", message)
+		val splits = message.split(Regex("\\s"))
 		val emotes = arrayListOf<ChatEmote>()
 		total.forEach {
 			var i = 0

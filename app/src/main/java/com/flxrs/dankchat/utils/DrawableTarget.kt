@@ -1,13 +1,10 @@
 package com.flxrs.dankchat.utils
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 
-class BadgeDrawableTarget(private val context: Context, private val callback: (Drawable) -> Unit) : CustomTarget<Bitmap>() {
+class DrawableTarget(private val callback: (Drawable) -> Unit) : CustomTarget<Drawable>() {
 
 	override fun onLoadStarted(placeholder: Drawable?) {
 		if (placeholder != null) {
@@ -23,8 +20,8 @@ class BadgeDrawableTarget(private val context: Context, private val callback: (D
 
 	override fun onLoadCleared(placeholder: Drawable?) = Unit
 
-	override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-		val drawable = BitmapDrawable(context.resources, resource)
-		callback(drawable)
+	override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+		callback(resource)
 	}
+
 }

@@ -3,8 +3,8 @@
 buildscript {
     ext {
         apkName = "DankChat"
-        appVersionCode = 36
-        appVersionName = "0.3.2"
+        appVersionCode = 37
+        appVersionName = "0.3.3"
 
         gradle_build_tools_version = '3.4.1'
         kotlin_version = "1.3.31"
@@ -27,7 +27,8 @@ buildscript {
         retrofit_version = "2.6.0"
         moshi_version = '2.6.0'
         url_detector_version = "0.1.20"
-        appCenterSdkVersion = '2.0.0'
+        appcenter_version = '2.0.0'
+        emoji_version = "1.0.0"
     }
 
     repositories {
