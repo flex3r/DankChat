@@ -92,8 +92,6 @@ dependencies {
     implementation "com.microsoft.appcenter:appcenter-distribute:$appcenter_version"
 
     implementation "androidx.emoji:emoji:$emoji_version"
-    implementation "androidx.emoji:emoji-bundled:$emoji_version"
-
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
