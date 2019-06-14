@@ -75,7 +75,9 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	override fun onPause() {
-		binding.tabs.selectedTabPosition.let { (adapter.createFragment(it) as? ChatFragment)?.clearInputFocus() }
+		if (channels.isNotEmpty()) {
+			binding.tabs.selectedTabPosition.let { (adapter.createFragment(it) as? ChatFragment)?.clearInputFocus() }
+		}
 		super.onPause()
 	}
 
