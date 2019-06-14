@@ -59,7 +59,9 @@ class MainActivity : AppCompatActivity() {
 
 				override fun onTabSelected(tab: TabLayout.Tab?) = Unit
 
-				override fun onTabUnselected(tab: TabLayout.Tab?) = tab?.position?.let { (adapter.createFragment(it) as? ChatFragment)?.clearInputFocus() } ?: Unit
+				override fun onTabUnselected(tab: TabLayout.Tab?) {
+					tab?.position?.let { (adapter.createFragment(it) as? ChatFragment)?.clearInputFocus() }
+				}
 			})
 		}
 
