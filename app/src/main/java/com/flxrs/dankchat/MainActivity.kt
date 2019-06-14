@@ -109,13 +109,12 @@ class MainActivity : AppCompatActivity() {
 			val name = authStore.getUserName()
 			val id = authStore.getUserId()
 
-			if (resultCode == Activity.RESULT_OK && !oauth.isNullOrBlank() && !name.isNullOrBlank()) {
+			if (resultCode == Activity.RESULT_OK && !oauth.isNullOrBlank() && !name.isNullOrBlank() && id != 0) {
 				viewModel.close()
 				connectAndJoinChannels(name, oauth, id)
 
 				authStore.setLoggedIn(true)
 				showSnackbar("Logged in as $name")
-				invalidateOptionsMenu()
 			} else {
 				showSnackbar("Failed to login")
 			}
@@ -156,7 +155,6 @@ class MainActivity : AppCompatActivity() {
 				authStore.setOAuthKey("")
 				authStore.setUserId(0)
 				authStore.setLoggedIn(false)
-				invalidateOptionsMenu()
 				dialog.dismiss()
 			}
 			.setNegativeButton(getString(R.string.confirm_logout_negative_button)) { dialog, _ -> dialog.dismiss() }

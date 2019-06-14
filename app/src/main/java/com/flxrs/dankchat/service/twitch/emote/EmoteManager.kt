@@ -117,7 +117,7 @@ object EmoteManager {
 		}
 	}
 
-	suspend fun getEmotesForSuggestions(channel: String): List<GenericEmote> = withContext(Dispatchers.Default) {
+	fun getEmotesForSuggestions(channel: String): List<GenericEmote> {
 		val result = mutableListOf<GenericEmote>()
 		result.addAll(twitchEmotes.values)
 		result.addAll(globalFFZEmotes.values)
@@ -125,7 +125,7 @@ object EmoteManager {
 		ffzEmotes[channel]?.let { result.addAll(it.values) }
 		bttvEmotes[channel]?.let { result.addAll(it.values) }
 		result.sort()
-		return@withContext result
+		return result
 	}
 
 	private fun parseBTTVEmote(emote: EmoteEntities.BTTV.Emote): GenericEmote {

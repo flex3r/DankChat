@@ -60,6 +60,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		return liveData
 	}
 
+	@Synchronized
 	fun connectAndAddChannel(channel: String, nick: String, oAuth: String, id: Int, load3rdPartyEmotesAndBadges: Boolean = false, doReauth: Boolean = false) {
 		if (doReauth) {
 			startedConnection = false
@@ -67,15 +68,17 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 			loadedTwitchEmotes = false
 		}
 
-		if (load3rdPartyEmotesAndBadges) scope.launch {
-			loadBadges(channel)
-			load3rdPartyEmotes(channel)
-			loadRecentMessages(channel)
-		}
+		scope.launch {
+			if (load3rdPartyEmotesAndBadges) {
+				loadBadges(channel)
+				load3rdPartyEmotes(channel)
+				loadRecentMessages(channel)
+			}
+			if (oAuth.isNotBlank() && oAuth.startsWith("oauth:")) {
+				loadTwitchEmotes(oAuth.substringAfter("oauth:"), id)
+			}
 
-		if (oAuth.isNotBlank() && oAuth.startsWith("oauth:") && !loadedTwitchEmotes) {
-			loadedTwitchEmotes = true
-			loadTwitchEmotes(oAuth.substringAfter("oauth:"), id)
+			setSuggestions(channel)
 		}
 
 		if (startedConnection) {
@@ -84,7 +87,6 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 			startedConnection = true
 			connection.connect(nick, oAuth, channel)
 		}
-
 	}
 
 	fun partChannel(channel: String) {
@@ -95,6 +97,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
 	fun sendMessage(channel: String, message: String) = connection.sendMessage("PRIVMSG #$channel :$message")
 
+	@Synchronized
 	fun reconnect(onlyIfNecessary: Boolean = false) {
 		if (onlyIfNecessary && !hasDisconnected && startedConnection) return
 		startedReconnect = true
@@ -126,6 +129,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		loadedTwitchEmotes = false
 		load3rdPartyEmotes(channel)
 		if (id != 0 && oAuth.isNotBlank() && oAuth.startsWith("oauth:")) loadTwitchEmotes(oAuth.substringAfter("oauth:"), id)
+		setSuggestions(channel)
 	}
 
 	private fun onMessage(msg: IrcMessage) {
@@ -177,9 +181,10 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		TwitchApi.getChannelBadges(channel)?.let { EmoteManager.setChannelBadges(channel, it) }
 	}
 
-	private fun loadTwitchEmotes(oAuth: String, id: Int) = scope.launch {
-		TwitchApi.getUserEmotes(oAuth, id)?.let {
-			EmoteManager.setTwitchEmotes(it)
+	private suspend fun loadTwitchEmotes(oAuth: String, id: Int) = withContext(Dispatchers.IO) {
+		if (!loadedTwitchEmotes) {
+			TwitchApi.getUserEmotes(oAuth, id)?.let { EmoteManager.setTwitchEmotes(it) }
+			loadedTwitchEmotes = true
 		}
 	}
 
@@ -192,6 +197,9 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 			TwitchApi.getBTTVGlobalEmotes()?.let { EmoteManager.setBTTVGlobalEmotes(it) }
 			loadedGlobalEmotes = true
 		}
+	}
+
+	private fun setSuggestions(channel: String) {
 		val keywords = EmoteManager.getEmotesForSuggestions(channel)
 		emoteSuggestions[channel]?.postValue(keywords)
 	}

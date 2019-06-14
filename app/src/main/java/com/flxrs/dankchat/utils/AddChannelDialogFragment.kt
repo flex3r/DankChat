@@ -32,7 +32,7 @@ class AddChannelDialogFragment(private val dialogCallback: (String) -> Unit) : D
 	}
 
 	private fun addChannelAndDismiss(): Boolean {
-		val input = binding.editAddChannel.text.toString().trim()
+		val input = binding.editAddChannel.text.toString().trim().toLowerCase()
 		if (input.isNotBlank()) dialogCallback(input)
 		dismiss()
 		return true
