@@ -90,8 +90,13 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-		menu?.findItem(R.id.menu_login)?.run {
-			if (authStore.isLoggedin()) setTitle(R.string.logout) else setTitle(R.string.login)
+		menu?.run {
+			findItem(R.id.menu_login)?.run {
+				if (authStore.isLoggedin()) setTitle(R.string.logout) else setTitle(R.string.login)
+			}
+			findItem(R.id.menu_remove)?.run {
+				isVisible = channels.isNotEmpty()
+			}
 		}
 		return true
 	}
@@ -194,6 +199,7 @@ class MainActivity : AppCompatActivity() {
 				binding.viewPager.setCurrentItem(channels.size - 1, true)
 				binding.viewPager.offscreenPageLimit = if (channels.size > 1) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 
+				invalidateOptionsMenu()
 				updateViewPagerVisibility()
 			}
 		}.show(supportFragmentManager, DIALOG_TAG)
@@ -205,13 +211,14 @@ class MainActivity : AppCompatActivity() {
 		channels.remove(channel)
 		authStore.setChannels(channels.toMutableSet())
 		viewModel.partChannel(channel)
-
 		if (channels.size > 0) {
 			binding.viewPager.setCurrentItem(0, true)
 		}
-		binding.viewPager.offscreenPageLimit = if (channels.size > 1) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 
+		binding.viewPager.offscreenPageLimit = if (channels.size > 1) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 		adapter.removeFragment(index)
+
+		invalidateOptionsMenu()
 		updateViewPagerVisibility()
 	}
 
