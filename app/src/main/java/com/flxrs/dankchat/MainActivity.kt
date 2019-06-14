@@ -59,11 +59,7 @@ class MainActivity : AppCompatActivity() {
 
 				override fun onTabSelected(tab: TabLayout.Tab?) = Unit
 
-				override fun onTabUnselected(tab: TabLayout.Tab?) {
-					tab?.position?.let {
-						(adapter.createFragment(it) as? ChatFragment)?.clearInputFocus()
-					}
-				}
+				override fun onTabUnselected(tab: TabLayout.Tab?) = tab?.position?.let { (adapter.createFragment(it) as? ChatFragment)?.clearInputFocus() } ?: Unit
 			})
 		}
 
@@ -74,6 +70,11 @@ class MainActivity : AppCompatActivity() {
 			if (name.isNotBlank() && oauth.isNotBlank()) showSnackbar("Logged in as $name")
 			connectAndJoinChannels(name, oauth, id, true)
 		}
+	}
+
+	override fun onPause() {
+		binding.tabs.selectedTabPosition.let { (adapter.createFragment(it) as? ChatFragment)?.clearInputFocus() }
+		super.onPause()
 	}
 
 	override fun onResume() {
@@ -110,8 +111,7 @@ class MainActivity : AppCompatActivity() {
 			val id = authStore.getUserId()
 
 			if (resultCode == Activity.RESULT_OK && !oauth.isNullOrBlank() && !name.isNullOrBlank() && id != 0) {
-				viewModel.close()
-				connectAndJoinChannels(name, oauth, id)
+				viewModel.close { connectAndJoinChannels(name, oauth, id) }
 
 				authStore.setLoggedIn(true)
 				showSnackbar("Logged in as $name")
@@ -148,9 +148,7 @@ class MainActivity : AppCompatActivity() {
 			.setTitle(getString(R.string.confirm_logout_title))
 			.setMessage(getString(R.string.confirm_logout_message))
 			.setPositiveButton(getString(R.string.confirm_logout_positive_button)) { dialog, _ ->
-				viewModel.close()
-				connectAndJoinChannels("", "", 0)
-
+				viewModel.close { connectAndJoinChannels("", "", 0) }
 				authStore.setUserName("")
 				authStore.setOAuthKey("")
 				authStore.setUserId(0)

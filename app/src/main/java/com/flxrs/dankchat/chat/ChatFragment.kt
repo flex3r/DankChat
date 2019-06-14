@@ -74,8 +74,8 @@ class ChatFragment : Fragment() {
 		if (channel.isNotBlank()) viewModel.run {
 			getChat(channel).observe(viewLifecycleOwner) { adapter.submitList(it) }
 			getCanType(channel).observe(viewLifecycleOwner) {
-				binding.input.isEnabled = it
-				binding.input.hint = if (it) "Start chatting" else "Not logged in/Disconnected"
+				binding.input.isEnabled = it == "Start chatting"
+				binding.input.hint = it
 			}
 			getEmoteKeywords(channel).observe(viewLifecycleOwner) { list ->
 				val adapter = EmoteSuggestionsArrayAdapter(list)

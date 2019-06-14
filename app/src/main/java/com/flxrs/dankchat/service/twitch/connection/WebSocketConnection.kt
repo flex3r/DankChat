@@ -4,7 +4,6 @@ import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.utils.timer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.cancelChildren
 import okhttp3.*
 import java.util.concurrent.TimeUnit
 
@@ -33,7 +32,8 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 	private var writerPong = false
 
 	var isJustinFan = false
-
+	var shouldReconnect = false
+	private var onClosed: (() -> Unit)? = null
 
 	fun sendMessage(msg: String) {
 		if (readerConnected && writerConnected) {
@@ -42,44 +42,47 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 	}
 
 	fun joinChannel(channel: String) {
-		if (readerConnected && writerConnected && !channels.contains(channel)) {
-			writerWebSocket?.sendMessage("JOIN #$channel")
-			readerWebSocket?.sendMessage("JOIN #$channel")
+		if (!channels.contains(channel)) {
+			channels.add(channel)
+			if (readerConnected && writerConnected) {
+				writerWebSocket?.sendMessage("JOIN #$channel")
+				readerWebSocket?.sendMessage("JOIN #$channel")
+			}
 		}
-		channels.add(channel)
 	}
 
 	fun partChannel(channel: String) {
-		if (readerConnected && writerConnected && channels.contains(channel)) {
-			writerWebSocket?.sendMessage("PART #$channel")
-			readerWebSocket?.sendMessage("PART #$channel")
+		if (channels.contains(channel)) {
+			channels.remove(channel)
+			if (readerConnected && writerConnected) {
+				writerWebSocket?.sendMessage("PART #$channel")
+				readerWebSocket?.sendMessage("PART #$channel")
+			}
 		}
-		channels.remove(channel)
 	}
 
-	fun connect(nick: String, oAuth: String, channel: String) {
+	@Synchronized
+	fun connect(nick: String, oAuth: String) {
 		this.nick = nick
 		this.oAuth = oAuth
 		isJustinFan = (oAuth.isBlank() || !oAuth.startsWith("oauth:"))
-		if (!channels.contains(channel) && channel.isNotBlank()) channels.add(channel)
 
 		readerWebSocket = client.newWebSocket(request, ReaderWebSocketListener())
 		writerWebSocket = client.newWebSocket(request, WriterWebSocketListener())
 	}
 
 	@Synchronized
-	fun close(reconnect: Boolean = true) {
+	fun close(onClosed: (() -> Unit)?) {
+		this.onClosed = onClosed ?: onDisconnect
 		scope.coroutineContext.cancel()
-		scope.coroutineContext.cancelChildren()
-		writerWebSocket?.cancel()
-		readerWebSocket?.cancel()
-		writerWebSocket = null
-		readerWebSocket = null
+		writerWebSocket?.close(1000, null)
+		readerWebSocket?.close(1000, null)
+	}
 
-		if (reconnect) {
-			writerWebSocket = client.newWebSocket(request, WriterWebSocketListener())
-			readerWebSocket = client.newWebSocket(request, ReaderWebSocketListener())
-		}
+	@Synchronized
+	fun reconnect() {
+		shouldReconnect = true
+		close(null)
 	}
 
 	private fun WebSocket.sendMessage(msg: String) {
@@ -99,7 +102,7 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 	private fun setupReaderPingInterval() = scope.timer(5 * 60 * 1000) {
 		if (readerPong) {
 			cancel()
-			close()
+			reconnect()
 			return@timer
 		}
 
@@ -112,7 +115,7 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 	private fun setupWriterPingInterval() = scope.timer(5 * 60 * 1000) {
 		if (writerPong) {
 			cancel()
-			close()
+			reconnect()
 			return@timer
 		}
 
@@ -124,15 +127,23 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 
 	private inner class ReaderWebSocketListener : WebSocketListener() {
 
-		override fun onClosed(webSocket: WebSocket, code: Int, reason: String) = Unit
+		override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+			readerConnected = false
+			onDisconnect()
+			onClosed?.invoke()
+
+			if (shouldReconnect) {
+				shouldReconnect = false
+				connect(nick, oAuth)
+			}
+		}
 
 		override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
 			readerConnected = false
 			scope.coroutineContext.cancel()
-			scope.coroutineContext.cancelChildren()
-			webSocket.cancel()
-
 			onDisconnect()
+
+			connect(nick, oAuth)
 		}
 
 		override fun onMessage(webSocket: WebSocket, text: String) {
@@ -145,7 +156,7 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 					when (ircMessage.command) {
 						"PING"      -> webSocket.handlePing()
 						"PONG"      -> readerPong = false
-						"RECONNECT" -> close()
+						"RECONNECT" -> reconnect()
 						else        -> onMessage(ircMessage)
 					}
 				}
@@ -167,15 +178,12 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 
 	private inner class WriterWebSocketListener : WebSocketListener() {
 
-		override fun onClosed(webSocket: WebSocket, code: Int, reason: String) = Unit
+		override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+			writerConnected = false
+		}
 
 		override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
 			writerConnected = false
-			scope.coroutineContext.cancel()
-			scope.coroutineContext.cancelChildren()
-			webSocket.cancel()
-
-			onDisconnect()
 		}
 
 		override fun onMessage(webSocket: WebSocket, text: String) {
@@ -188,7 +196,7 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 					when (ircMessage.command) {
 						"PING"      -> webSocket.handlePing()
 						"PONG"      -> writerPong = false
-						"RECONNECT" -> close()
+						"RECONNECT" -> reconnect()
 						else        -> Unit
 					}
 

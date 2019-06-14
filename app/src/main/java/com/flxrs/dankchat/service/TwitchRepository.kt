@@ -22,16 +22,14 @@ import org.koin.core.parameter.parametersOf
 class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
 	private val chatLiveDatas = mutableMapOf<String, MutableLiveData<List<ChatItem>>>()
-	private val canType = mutableMapOf<String, MutableLiveData<Boolean>>()
+	private val canType = mutableMapOf<String, MutableLiveData<String>>()
 	private val emoteSuggestions = mutableMapOf<String, MutableLiveData<List<GenericEmote>>>()
 
-	private var startedConnection = false
-	private var startedReconnect = false
 	private var hasDisconnected = false
 	private var loadedGlobalBadges = false
 	private var loadedGlobalEmotes = false
 	private var loadedTwitchEmotes = false
-	private val connection: WebSocketConnection = get { parametersOf(::onDisconnect, ::onMessage) }
+	private val connection: WebSocketConnection = get { parametersOf(::handleDisconnect, ::onMessage) }
 
 	fun getChat(channel: String): LiveData<List<ChatItem>> {
 		var liveData = chatLiveDatas[channel]
@@ -42,10 +40,10 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		return liveData
 	}
 
-	fun getCanType(channel: String): LiveData<Boolean> {
+	fun getCanType(channel: String): LiveData<String> {
 		var liveData = canType[channel]
 		if (liveData == null) {
-			liveData = MutableLiveData(false)
+			liveData = MutableLiveData("Disconnected")
 			canType[channel] = liveData
 		}
 		return liveData
@@ -63,9 +61,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	@Synchronized
 	fun connectAndAddChannel(channel: String, nick: String, oAuth: String, id: Int, load3rdPartyEmotesAndBadges: Boolean = false, doReauth: Boolean = false) {
 		if (doReauth) {
-			startedConnection = false
-			startedReconnect = false
 			loadedTwitchEmotes = false
+			connection.connect(nick, oAuth)
 		}
 
 		scope.launch {
@@ -81,12 +78,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 			setSuggestions(channel)
 		}
 
-		if (startedConnection) {
-			connection.joinChannel(channel)
-		} else {
-			startedConnection = true
-			connection.connect(nick, oAuth, channel)
-		}
+		connection.joinChannel(channel)
 	}
 
 	fun partChannel(channel: String) {
@@ -98,25 +90,23 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	fun sendMessage(channel: String, message: String) = connection.sendMessage("PRIVMSG #$channel :$message")
 
 	@Synchronized
-	fun reconnect(onlyIfNecessary: Boolean = false) {
-		if (onlyIfNecessary && !hasDisconnected && startedConnection) return
-		startedReconnect = true
-		close(true)
+	fun reconnect(onlyIfNecessary: Boolean) {
+		if (!onlyIfNecessary || hasDisconnected) {
+			connection.reconnect()
+		}
 	}
 
 	@Synchronized
-	fun close(doReconnect: Boolean = false) {
-		canType.keys.forEach { canType[it]?.postValue(false) }
-		makeAndPostSystemMessage("Disconnected")
-		hasDisconnected = true
-		connection.close(doReconnect)
+	fun close(onClosed: () -> Unit) {
+		connection.close(onClosed)
 	}
 
 	@Synchronized
-	private fun onDisconnect() {
-		if (!hasDisconnected && !startedReconnect) {
-			startedReconnect = true
-			close(true)
+	private fun handleDisconnect() {
+		if (!hasDisconnected) {
+			hasDisconnected = true
+			canType.keys.forEach { canType[it]?.postValue("Disconnected") }
+			makeAndPostSystemMessage("Disconnected")
 		}
 	}
 
@@ -132,32 +122,35 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		setSuggestions(channel)
 	}
 
-	private fun onMessage(msg: IrcMessage) {
-		val parsed = TwitchMessage.parse(msg).map { ChatItem(it) }
-		when (msg.command) {
-			"366"       -> handleConnected(msg.params[1].substring(1))
-			"CLEARCHAT" -> {
-				val target = if (msg.params.size > 1) msg.params[1] else ""
-				val channel = msg.params[0].substring(1)
-				chatLiveDatas[channel]?.value?.replaceWithTimeOuts(target)?.run {
-					add(parsed[0])
-					chatLiveDatas[channel]?.postValue(this)
-				}
-			}
-			else        -> if (parsed.isNotEmpty()) {
-				val channel = msg.params[0].substring(1)
-				val currentChat = chatLiveDatas[channel]?.value ?: emptyList()
-				chatLiveDatas[channel]?.postValue(currentChat.addAndLimit(parsed))
-			}
-		}
+	private fun onMessage(msg: IrcMessage) = when (msg.command) {
+		"366"       -> handleConnected(msg.params[1].substring(1))
+		"CLEARCHAT" -> handleClearchat(msg)
+		else        -> handleMessage(msg)
 	}
 
 	private fun handleConnected(channel: String) {
 		makeAndPostSystemMessage("Connected", channel)
 		hasDisconnected = false
-		startedReconnect = false
-		if (!connection.isJustinFan) {
-			canType[channel]?.postValue(true) ?: MutableLiveData(true)
+		val hint = if (connection.isJustinFan) "Not logged in" else "Start chatting"
+		canType[channel]?.postValue(hint) ?: MutableLiveData(true)
+	}
+
+	private fun handleClearchat(msg: IrcMessage) {
+		val parsed = TwitchMessage.parse(msg).map { ChatItem(it) }
+		val target = if (msg.params.size > 1) msg.params[1] else ""
+		val channel = msg.params[0].substring(1)
+		chatLiveDatas[channel]?.value?.replaceWithTimeOuts(target)?.run {
+			add(parsed[0])
+			chatLiveDatas[channel]?.postValue(this)
+		}
+	}
+
+	private fun handleMessage(msg: IrcMessage) {
+		val parsed = TwitchMessage.parse(msg).map { ChatItem(it) }
+		if (parsed.isNotEmpty()) {
+			val channel = msg.params[0].substring(1)
+			val currentChat = chatLiveDatas[channel]?.value ?: emptyList()
+			chatLiveDatas[channel]?.postValue(currentChat.addAndLimit(parsed))
 		}
 	}
 
