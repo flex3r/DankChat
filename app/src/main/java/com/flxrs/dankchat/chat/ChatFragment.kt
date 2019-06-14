@@ -1,11 +1,11 @@
 package com.flxrs.dankchat.chat
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.*
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.observe
@@ -18,13 +18,11 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.preferences.TwitchAuthStore
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
-import com.flxrs.dankchat.utils.DrawableTarget
 import com.flxrs.dankchat.utils.GifDrawableTarget
 import com.flxrs.dankchat.utils.SpaceTokenizer
 import com.flxrs.dankchat.utils.hideKeyboard
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
-import pl.droidsonroids.gif.GifDrawable
 
 class ChatFragment : Fragment() {
 	private val viewModel: DankChatViewModel by sharedViewModel()
@@ -86,6 +84,11 @@ class ChatFragment : Fragment() {
 		return binding.root
 	}
 
+	override fun onActivityCreated(savedInstanceState: Bundle?) {
+		super.onActivityCreated(savedInstanceState)
+		binding.input.setDropDownBackgroundResource(R.color.colorPrimary)
+	}
+
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
 		when (item.itemId) {
 			R.id.menu_reconnect     -> viewModel.reconnect()
@@ -99,14 +102,6 @@ class ChatFragment : Fragment() {
 	fun clearInputFocus() {
 		if (::binding.isInitialized) binding.input.clearFocus()
 		hideKeyboard()
-	}
-
-	private fun setCompoundDrawable(textView: TextView, drawable: Drawable) {
-		if (drawable is GifDrawable) drawable.start()
-		val width = Math.round(textView.lineHeight * drawable.intrinsicWidth / drawable.intrinsicHeight.toFloat())
-		drawable.setBounds(0, 0, width, textView.lineHeight)
-		textView.compoundDrawablePadding = 16
-		textView.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, null, null, null)
 	}
 
 	private fun reloadEmotes() {
@@ -176,30 +171,42 @@ class ChatFragment : Fragment() {
 		}
 	}
 
-	private inner class EmoteSuggestionsArrayAdapter(list: List<GenericEmote>) : ArrayAdapter<GenericEmote>(requireContext(), android.R.layout.simple_dropdown_item_1line, list) {
+	private inner class EmoteSuggestionsArrayAdapter(list: List<GenericEmote>) : ArrayAdapter<GenericEmote>(requireContext(), R.layout.emote_suggestion_item, R.id.suggestion_text, list) {
 		override fun getCount(): Int {
 			val count = super.getCount()
-			binding.input.dropDownHeight = (if (count > 2) binding.chat.measuredHeight / 2 else WRAP_CONTENT)
+			binding.input.apply {
+				dropDownHeight = (if (count > 2) binding.chat.measuredHeight / 2 else WRAP_CONTENT)
+				dropDownWidth = binding.chat.measuredWidth / 2
+			}
+
 			return count
 		}
 
 		override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
 			val view = super.getView(position, convertView, parent)
-			val item = getItem(position) ?: return view
-			view as TextView
-			Glide.with(view).clear(view)
-			if (item.isGif) Glide.with(view)
-					.`as`(ByteArray::class.java)
-					.load(item.url)
-					.placeholder(R.drawable.ic_missing_emote)
-					.error(R.drawable.ic_missing_emote)
-					.into(GifDrawableTarget(item.keyword, false) { setCompoundDrawable(view, it) })
-			else Glide.with(view)
-					.asDrawable()
-					.load(item.url)
-					.placeholder(R.drawable.ic_missing_emote)
-					.error(R.drawable.ic_missing_emote)
-					.into(DrawableTarget { setCompoundDrawable(view, it) })
+			val textView = view.findViewById<TextView>(R.id.suggestion_text)
+			val imageView = view.findViewById<ImageView>(R.id.suggestion_image)
+			imageView.setImageDrawable(null)
+			Glide.with(imageView).clear(imageView)
+			getItem(position)?.let { emote ->
+				if (emote.isGif) Glide.with(imageView)
+						.`as`(ByteArray::class.java)
+						.override(textView.lineHeight)
+						.centerInside()
+						.load(emote.url)
+						.placeholder(R.drawable.ic_missing_emote)
+						.error(R.drawable.ic_missing_emote)
+						.into(GifDrawableTarget(emote.keyword, false) { imageView.setImageDrawable(it) })
+				else Glide.with(imageView)
+						.asDrawable()
+						.override(textView.lineHeight * 2)
+						.centerInside()
+						.load(emote.url)
+						.placeholder(R.drawable.ic_missing_emote)
+						.error(R.drawable.ic_missing_emote)
+						.into(imageView)
+			}
+
 			return view
 		}
 	}
