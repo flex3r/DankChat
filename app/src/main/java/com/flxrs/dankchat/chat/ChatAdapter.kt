@@ -76,13 +76,14 @@ class ChatAdapter(private val onListChanged: (position: Int) -> Unit, private va
 				foreground = ColorDrawable(foregroundColor)
 			}
 
-			if (isNotify) {
+			val background = if (isNotify) {
 				R.color.sub_background
 			} else if (currentUserName.isNotBlank() && !name.equals(currentUserName, true) && !timedOut && !isSystem && message.contains(currentUserName, true)) {
 				R.color.highlight_background
 			} else {
 				android.R.color.transparent
-			}.let { this@with.setBackgroundColor(ContextCompat.getColor(this@with.context, it)) }
+			}
+			this@with.setBackgroundResource(background)
 
 
 			val displayName = if (isAction) "$name " else if (name.isBlank()) "" else "$name: "

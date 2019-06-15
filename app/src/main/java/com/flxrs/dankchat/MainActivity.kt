@@ -9,7 +9,6 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.viewpager2.widget.ViewPager2
-import com.flxrs.dankchat.chat.ChatFragment
 import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.TwitchAuthStore
@@ -39,7 +38,7 @@ class MainActivity : AppCompatActivity() {
 
 		adapter = ChatTabAdapter(supportFragmentManager, lifecycle)
 		authStore.getChannels()?.run { channels.addAll(this) }
-		channels.forEach { adapter.addFragment(ChatFragment.newInstance(it), it) }
+		channels.forEach { adapter.addFragment(it) }
 
 		binding = DataBindingUtil.setContentView<MainActivityBinding>(this, R.layout.main_activity).apply {
 			viewPager.adapter = adapter
@@ -52,7 +51,7 @@ class MainActivity : AppCompatActivity() {
 				override fun onTabSelected(tab: TabLayout.Tab?) = Unit
 
 				override fun onTabUnselected(tab: TabLayout.Tab?) {
-					tab?.position?.let { (adapter.createFragment(it) as? ChatFragment)?.clearInputFocus() }
+					tab?.position?.let { adapter.fragmentList[it].clearInputFocus() }
 				}
 			})
 		}
@@ -68,7 +67,7 @@ class MainActivity : AppCompatActivity() {
 
 	override fun onPause() {
 		if (channels.isNotEmpty()) {
-			binding.tabs.selectedTabPosition.let { (adapter.createFragment(it) as? ChatFragment)?.clearInputFocus() }
+			binding.tabs.selectedTabPosition.let { adapter.fragmentList[it].clearInputFocus() }
 		}
 		super.onPause()
 	}
@@ -177,7 +176,7 @@ class MainActivity : AppCompatActivity() {
 				channels.add(it)
 				authStore.setChannels(channels.toMutableSet())
 
-				adapter.addFragment(ChatFragment.newInstance(it), it)
+				adapter.addFragment(it)
 				binding.viewPager.setCurrentItem(channels.size - 1, true)
 				binding.viewPager.offscreenPageLimit = if (channels.size > 1) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 

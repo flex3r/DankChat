@@ -9,9 +9,13 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 class ChatTabAdapter(supportFragmentManager: FragmentManager, lifecycle: Lifecycle) : FragmentStateAdapter(supportFragmentManager, lifecycle) {
 
 	val titleList = mutableListOf<String>()
-	private val fragmentList = mutableListOf<ChatFragment>()
+	val fragmentList = mutableListOf<ChatFragment>()
 
-	override fun createFragment(position: Int): Fragment = fragmentList[position]
+	override fun createFragment(position: Int): Fragment {
+		val fragment = ChatFragment.newInstance(titleList[position])
+		fragmentList.add(position, fragment)
+		return fragment
+	}
 
 	override fun getItemCount(): Int = titleList.size
 
@@ -30,9 +34,8 @@ class ChatTabAdapter(supportFragmentManager: FragmentManager, lifecycle: Lifecyc
 		return false
 	}
 
-	fun addFragment(fragment: ChatFragment, title: String) {
+	fun addFragment(title: String) {
 		titleList.add(title)
-		fragmentList.add(fragment)
 		notifyDataSetChanged()
 	}
 

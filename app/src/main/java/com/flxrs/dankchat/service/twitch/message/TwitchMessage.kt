@@ -11,8 +11,8 @@ data class TwitchMessage(val time: String, val channel: String, val name: String
 						 val isAction: Boolean = false, val isNotify: Boolean = false, val badges: List<Badge> = emptyList(), val id: String, var timedOut: Boolean = false, val isSystem: Boolean = false) {
 
 	companion object {
-		fun parseFromIrc(ircMessage: IrcMessage, isSystem: Boolean = false, isHistoric: Boolean = false): TwitchMessage = with(ircMessage) {
-			var system = isSystem
+		fun parseFromIrc(ircMessage: IrcMessage, isNotify: Boolean = false, isHistoric: Boolean = false): TwitchMessage = with(ircMessage) {
+			var notify = isNotify
 			val user = tags["display-name"] ?: "NaM"
 			val colorTag = tags["color"]?.ifBlank { "#717171" } ?: "#717171"
 			val color = Color.parseColor(colorTag)
@@ -38,7 +38,7 @@ data class TwitchMessage(val time: String, val channel: String, val name: String
 				val badgeSet = trimmed.substringBefore('/')
 				val badgeVersion = trimmed.substringAfter('/')
 				when {
-					badgeSet.startsWith("twitchbot")  -> if (isHistoric) system = true
+					badgeSet.startsWith("twitchbot")  -> if (isHistoric) notify = true
 					badgeSet.startsWith("subscriber") -> EmoteManager.getSubBadgeUrl(channel, badgeSet, badgeVersion)?.let { badges.add(Badge(badgeSet, it)) }
 					badgeSet.startsWith("bits")       -> EmoteManager.getSubBadgeUrl(channel, badgeSet, badgeVersion)
 							?: EmoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)?.let { badges.add(Badge(badgeSet, it)) }
@@ -46,7 +46,7 @@ data class TwitchMessage(val time: String, val channel: String, val name: String
 				}
 			}
 
-			return TwitchMessage(time, channel, user, color, content, emotes.plus(otherEmotes), isAction, system, badges, id)
+			return TwitchMessage(time, channel, user, color, content, emotes.plus(otherEmotes), isAction, notify, badges, id)
 		}
 
 		fun makeSystemMessage(message: String, channel: String): TwitchMessage {
