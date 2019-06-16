@@ -2,6 +2,7 @@ package com.flxrs.dankchat
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -142,7 +143,12 @@ class MainActivity : AppCompatActivity() {
 		}
 	}
 
-	private fun showSnackbar(message: String) = Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+	private fun showSnackbar(message: String) {
+		Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).apply {
+			view.setBackgroundResource(R.color.colorPrimary)
+			setTextColor(Color.WHITE)
+		}.show()
+	}
 
 	private fun showLogoutConfirmationDialog() = MaterialAlertDialogBuilder(this)
 			.setTitle(getString(R.string.confirm_logout_title))
