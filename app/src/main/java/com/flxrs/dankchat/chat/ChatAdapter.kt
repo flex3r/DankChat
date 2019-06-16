@@ -136,7 +136,10 @@ class ChatAdapter(private val onListChanged: (position: Int) -> Unit, private va
 
 			val messageStart = prefixLength + badgesLength
 			val messageEnd = messageStart + message.length
-			val spannableWithEmojis = EmojiCompat.get().process(spannable, messageStart, messageEnd, Int.MAX_VALUE, EmojiCompat.REPLACE_STRATEGY_ALL)
+			val spannableWithEmojis = if (EmojiCompat.get().loadState == EmojiCompat.LOAD_STATE_SUCCEEDED) {
+				EmojiCompat.get().process(spannable, messageStart, messageEnd, Int.MAX_VALUE, EmojiCompat.REPLACE_STRATEGY_ALL)
+			} else spannable
+
 			spannableWithEmojis as SpannableStringBuilder
 			val emojiStarts = spannableWithEmojis.getSpans<EmojiSpan>().mapIndexed { i, emojiSpan ->
 				spannableWithEmojis.getSpanStart(emojiSpan) - messageStart - i

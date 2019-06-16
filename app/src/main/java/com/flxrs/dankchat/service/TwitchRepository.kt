@@ -132,7 +132,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		makeAndPostSystemMessage("Connected", channel)
 		hasDisconnected = false
 		val hint = if (connection.isJustinFan) "Not logged in" else "Start chatting"
-		canType[channel]?.postValue(hint) ?: MutableLiveData(true)
+		canType[channel]?.postValue(hint) ?: MutableLiveData(hint)
 	}
 
 	private fun handleClearchat(msg: IrcMessage) {
