@@ -18,6 +18,7 @@ import kotlinx.coroutines.withContext
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import org.koin.core.parameter.parametersOf
+import java.nio.ByteBuffer
 
 class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
@@ -29,6 +30,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	private var loadedGlobalBadges = false
 	private var loadedGlobalEmotes = false
 	private var loadedTwitchEmotes = false
+	private var lastMessage = ""
 	private val connection: WebSocketConnection = get { parametersOf(::handleDisconnect, ::onMessage) }
 
 	fun getChat(channel: String): LiveData<List<ChatItem>> {
@@ -87,7 +89,11 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		chatLiveDatas.remove("channel")
 	}
 
-	fun sendMessage(channel: String, message: String) = connection.sendMessage("PRIVMSG #$channel :$message")
+	fun sendMessage(channel: String, message: String) {
+		val suffix = if (lastMessage == message) " $INVISIBLE_CHAR" else ""
+		connection.sendMessage("PRIVMSG #$channel :$message$suffix")
+		lastMessage = message
+	}
 
 	@Synchronized
 	fun reconnect(onlyIfNecessary: Boolean) {
@@ -223,5 +229,6 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
 	companion object {
 		private val TAG = TwitchRepository::class.java.simpleName
+		private val INVISIBLE_CHAR = String(ByteBuffer.allocate(4).putInt(0x000E0000).array(), Charsets.UTF_32)
 	}
 }
