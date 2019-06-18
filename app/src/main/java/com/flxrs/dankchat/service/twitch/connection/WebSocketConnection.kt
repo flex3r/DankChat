@@ -32,7 +32,6 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 	private var writerPong = false
 
 	var isJustinFan = false
-	var shouldReconnect = false
 	private var onClosed: (() -> Unit)? = null
 
 	fun sendMessage(msg: String) {
@@ -81,8 +80,7 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 
 	@Synchronized
 	fun reconnect() {
-		shouldReconnect = true
-		close(null)
+		close { connect(nick, oAuth) }
 	}
 
 	private fun WebSocket.sendMessage(msg: String) {
@@ -131,11 +129,6 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 			readerConnected = false
 			onDisconnect()
 			onClosed?.invoke()
-
-			if (shouldReconnect) {
-				shouldReconnect = false
-				connect(nick, oAuth)
-			}
 		}
 
 		override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {

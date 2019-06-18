@@ -91,7 +91,6 @@ class ChatFragment : Fragment() {
 
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
 		when (item.itemId) {
-			R.id.menu_reconnect     -> viewModel.reconnect()
 			R.id.menu_clear         -> viewModel.clear(channel)
 			R.id.menu_reload_emotes -> reloadEmotes()
 			else                    -> return false

@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
 
 	override fun onResume() {
 		super.onResume()
-		viewModel.reconnect(true)
+		reconnect(true)
 	}
 
 	override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -97,10 +97,11 @@ class MainActivity : AppCompatActivity() {
 
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
 		when (item.itemId) {
-			R.id.menu_login  -> updateLoginState()
-			R.id.menu_add    -> addChannel()
-			R.id.menu_remove -> removeChannel()
-			else             -> return false
+			R.id.menu_reconnect -> reconnect(false)
+			R.id.menu_login     -> updateLoginState()
+			R.id.menu_add       -> addChannel()
+			R.id.menu_remove    -> removeChannel()
+			else                -> return false
 		}
 		return true
 	}
@@ -121,6 +122,10 @@ class MainActivity : AppCompatActivity() {
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data)
+	}
+
+	private fun reconnect(onlyIfNecessary: Boolean = false) {
+		viewModel.reconnect(onlyIfNecessary)
 	}
 
 	private fun connectAndJoinChannels(name: String, oauth: String, id: Int, load3rdPartyEmotesAndBadges: Boolean = false) {
