@@ -196,11 +196,14 @@ class ChatAdapter(private val onListChanged: (position: Int) -> Unit, private va
 								.load(e.url)
 								.placeholder(R.drawable.ic_missing_emote)
 								.error(R.drawable.ic_missing_emote)
-								.into(GifDrawableTarget(e.keyword) {
-									val height = (it.intrinsicHeight * scaleFactor).roundToInt()
-									val width = (it.intrinsicWidth * scaleFactor).roundToInt()
-									it.setBounds(0, 0, width, height)
-									spannableWithEmojis.setSpan(ImageSpan(it, ImageSpan.ALIGN_BOTTOM), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+								.into(GifDrawableTarget(e.keyword, true, start, end) {
+									val drawable = it.first
+									val height = (drawable.intrinsicHeight * scaleFactor).roundToInt()
+									val width = (drawable.intrinsicWidth * scaleFactor).roundToInt()
+									drawable.setBounds(0, 0, width, height)
+
+									val imageSpan = ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM)
+									spannableWithEmojis.setSpan(imageSpan, it.second, it.third, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 									text = spannableWithEmojis
 								})
 					} else Glide.with(this@with)
@@ -208,17 +211,19 @@ class ChatAdapter(private val onListChanged: (position: Int) -> Unit, private va
 							.load(e.url)
 							.placeholder(R.drawable.ic_missing_emote)
 							.error(R.drawable.ic_missing_emote)
-							.into(EmoteDrawableTarget(e, context) {
-								val ratio = it.intrinsicWidth / it.intrinsicHeight.toFloat()
-
+							.into(EmoteDrawableTarget(e, context, start, end) {
+								val drawable = it.first
+								val ratio = drawable.intrinsicWidth / drawable.intrinsicHeight.toFloat()
 								val height = when {
-									it.intrinsicHeight < 55 && e.keyword.isBlank()       -> (70 * scaleFactor).roundToInt()
-									it.intrinsicHeight in 55..111 && e.keyword.isBlank() -> (112 * scaleFactor).roundToInt()
-									else                                                 -> (it.intrinsicHeight * scaleFactor).roundToInt()
+									drawable.intrinsicHeight < 55 && e.keyword.isBlank()       -> (70 * scaleFactor).roundToInt()
+									drawable.intrinsicHeight in 55..111 && e.keyword.isBlank() -> (112 * scaleFactor).roundToInt()
+									else                                                       -> (drawable.intrinsicHeight * scaleFactor).roundToInt()
 								}
 								val width = (height * ratio).roundToInt()
-								it.setBounds(0, 0, width, height)
-								spannableWithEmojis.setSpan(ImageSpan(it, ImageSpan.ALIGN_BOTTOM), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+								drawable.setBounds(0, 0, width, height)
+
+								val imageSpan = ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM)
+								spannableWithEmojis.setSpan(imageSpan, it.second, it.third, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 								text = spannableWithEmojis
 							})
 				}

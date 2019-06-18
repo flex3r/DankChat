@@ -195,7 +195,7 @@ class ChatFragment : Fragment() {
 						.load(emote.url)
 						.placeholder(R.drawable.ic_missing_emote)
 						.error(R.drawable.ic_missing_emote)
-						.into(GifDrawableTarget(emote.keyword, false) { imageView.setImageDrawable(it) })
+						.into(GifDrawableTarget(emote.keyword, false) { imageView.setImageDrawable(it.first) })
 				else Glide.with(imageView)
 						.asDrawable()
 						.override(textView.lineHeight * 2)
