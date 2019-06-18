@@ -67,8 +67,9 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	override fun onPause() {
-		if (channels.isNotEmpty()) {
-			binding.tabs.selectedTabPosition.let { adapter.fragmentList[it].clearInputFocus() }
+		val position = binding.tabs.selectedTabPosition
+		if (position in 0 until adapter.fragmentList.size) {
+			adapter.fragmentList[position].clearInputFocus()
 		}
 		super.onPause()
 	}
