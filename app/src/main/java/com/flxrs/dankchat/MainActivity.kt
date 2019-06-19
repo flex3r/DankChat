@@ -52,7 +52,10 @@ class MainActivity : AppCompatActivity() {
 				override fun onTabSelected(tab: TabLayout.Tab?) = Unit
 
 				override fun onTabUnselected(tab: TabLayout.Tab?) {
-					tab?.position?.let { adapter.fragmentList[it].clearInputFocus() }
+					val position = tab?.position ?: -1
+					if (position in 0 until adapter.fragmentList.size) {
+						adapter.fragmentList[position].clearInputFocus()
+					}
 				}
 			})
 		}
