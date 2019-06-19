@@ -98,11 +98,13 @@ class MainActivity : AppCompatActivity() {
 
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
 		when (item.itemId) {
-			R.id.menu_reconnect -> reconnect(false)
-			R.id.menu_login     -> updateLoginState()
-			R.id.menu_add       -> addChannel()
-			R.id.menu_remove    -> removeChannel()
-			else                -> return false
+			R.id.menu_reconnect     -> reconnect(false)
+			R.id.menu_login         -> updateLoginState()
+			R.id.menu_add           -> addChannel()
+			R.id.menu_remove        -> removeChannel()
+			R.id.menu_clear         -> clear()
+			R.id.menu_reload_emotes -> reloadEmotes()
+			else                    -> return false
 		}
 		return true
 	}
@@ -123,6 +125,22 @@ class MainActivity : AppCompatActivity() {
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data)
+	}
+
+	private fun clear() {
+		val position = binding.tabs.selectedTabPosition
+		if (position in 0 until adapter.fragmentList.size) {
+			viewModel.clear(adapter.titleList[position])
+		}
+	}
+
+	private fun reloadEmotes() {
+		val position = binding.tabs.selectedTabPosition
+		if (position in 0 until adapter.fragmentList.size) {
+			val oauth = authStore.getOAuthKey() ?: ""
+			val userId = authStore.getUserId()
+			viewModel.reloadEmotes(adapter.titleList[position], oauth, userId)
+		}
 	}
 
 	private fun reconnect(onlyIfNecessary: Boolean = false) {

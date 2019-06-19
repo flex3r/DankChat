@@ -1,14 +1,17 @@
 package com.flxrs.dankchat.chat
 
 import android.os.Bundle
-import android.view.*
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.observe
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -16,7 +19,6 @@ import com.bumptech.glide.Glide
 import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
-import com.flxrs.dankchat.preferences.TwitchAuthStore
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.utils.GifDrawableTarget
 import com.flxrs.dankchat.utils.SpaceTokenizer
@@ -70,17 +72,16 @@ class ChatFragment : Fragment() {
 		}
 
 		if (channel.isNotBlank()) viewModel.run {
-			getChat(channel).observe(viewLifecycleOwner) { adapter.submitList(it) }
-			getCanType(channel).observe(viewLifecycleOwner) {
+			getChat(channel).observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
+			getCanType(channel).observe(viewLifecycleOwner, Observer {
 				binding.input.isEnabled = it == "Start chatting"
 				binding.input.hint = it
-			}
-			getEmoteKeywords(channel).observe(viewLifecycleOwner) { list ->
+			})
+			getEmoteKeywords(channel).observe(viewLifecycleOwner, Observer { list ->
 				val adapter = EmoteSuggestionsArrayAdapter(list)
 				binding.input.setAdapter(adapter)
-			}
+			})
 		}
-		setHasOptionsMenu(true)
 		return binding.root
 	}
 
@@ -89,25 +90,9 @@ class ChatFragment : Fragment() {
 		binding.input.setDropDownBackgroundResource(R.color.colorPrimary)
 	}
 
-	override fun onOptionsItemSelected(item: MenuItem): Boolean {
-		when (item.itemId) {
-			R.id.menu_clear         -> viewModel.clear(channel)
-			R.id.menu_reload_emotes -> reloadEmotes()
-			else                    -> return false
-		}
-		return true
-	}
-
 	fun clearInputFocus() {
 		if (::binding.isInitialized) binding.input.clearFocus()
 		hideKeyboard()
-	}
-
-	private fun reloadEmotes() {
-		val authStore = TwitchAuthStore(requireContext())
-		val oauth = authStore.getOAuthKey() ?: ""
-		val userId = authStore.getUserId()
-		viewModel.reloadEmotes(channel, oauth, userId)
 	}
 
 	private fun handleSendMessage(): Boolean {
