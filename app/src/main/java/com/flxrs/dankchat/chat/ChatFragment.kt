@@ -67,7 +67,7 @@ class ChatFragment : Fragment() {
 				isAtBottom = true
 				binding.chat.stopScroll()
 				scrollToPosition(adapter.itemCount - 1)
-				it.visibility = View.GONE
+				scrollBottom.hide()
 			}
 		}
 
@@ -147,10 +147,10 @@ class ChatFragment : Fragment() {
 		override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
 			if (dy < 0) {
 				isAtBottom = false
-				binding.scrollBottom.visibility = View.VISIBLE
+				binding.scrollBottom.show()
 			} else if (dy > 0 && !isAtBottom && !recyclerView.canScrollVertically(1)) {
 				isAtBottom = true
-				binding.scrollBottom.visibility = View.GONE
+				binding.scrollBottom.hide()
 			}
 		}
 	}

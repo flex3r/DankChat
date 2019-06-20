@@ -30,4 +30,6 @@
 	<string name="upload_image">Upload image</string>
 	<string name="take_picture">Take picture</string>
 	<string name="choose_image">Choose image</string>
+	<string name="hide_actionbar">Hide actionbar</string>
+	<string name="resume_scroll">Resume scroll</string>
 </resources>

@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -71,6 +70,7 @@ class MainActivity : AppCompatActivity() {
 					}
 				}
 			})
+			showActionbarFab.setOnClickListener { showActionBar() }
 		}
 
 		viewModel.imageUploadedEvent.observe(this, Observer {
@@ -131,6 +131,7 @@ class MainActivity : AppCompatActivity() {
 			R.id.menu_reload_emotes -> reloadEmotes()
 			R.id.menu_choose_image  -> checkPermissionForGallery()
 			R.id.menu_capture_image -> startCameraCapture()
+			R.id.menu_hide          -> hideActionBar()
 			else                    -> return false
 		}
 		return true
@@ -166,7 +167,6 @@ class MainActivity : AppCompatActivity() {
 						viewModel.uploadImage(File(currentImagePath))
 					} catch (e: IOException) {
 						showSnackbar("Error during upload")
-						Log.e(TAG, Log.getStackTraceString(e))
 					}
 				}
 			}
@@ -210,6 +210,18 @@ class MainActivity : AppCompatActivity() {
 				startActivityForResult(galleryIntent, GALLERY_REQUEST)
 			}
 		}
+	}
+
+	private fun hideActionBar() {
+		supportActionBar?.hide()
+		binding.tabs.visibility = View.GONE
+		binding.showActionbarFab.visibility = View.VISIBLE
+	}
+
+	private fun showActionBar() {
+		supportActionBar?.show()
+		binding.showActionbarFab.visibility = View.GONE
+		binding.tabs.visibility = View.VISIBLE
 	}
 
 	private fun clear() {

@@ -9,6 +9,12 @@
 		app:showAsAction="ifRoom" />
 
 	<item
+		android:id="@+id/menu_hide"
+		android:icon="@drawable/ic_keyboard_arrow_up_24dp"
+		android:title="@string/hide_actionbar"
+		app:showAsAction="ifRoom" />
+
+	<item
 		android:id="@+id/menu_login"
 		android:title="@string/login"
 		app:showAsAction="never" />
