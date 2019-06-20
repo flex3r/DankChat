@@ -28,7 +28,7 @@ data class TwitchMessage(val time: String, val channel: String, val name: String
 
 			val channel = params[0].substring(1)
 			val emoteTag = tags["emotes"] ?: ""
-			val emotes = EmoteManager.parseTwitchEmotes(emoteTag)
+			val emotes = EmoteManager.parseTwitchEmotes(emoteTag, content)
 			val otherEmotes = EmoteManager.parse3rdPartyEmotes(content, channel)
 			val id = tags["id"] ?: System.nanoTime().toString()
 

@@ -30,12 +30,31 @@ object EmoteManager {
 	val gifCache = LruCache<String, GifDrawable>(4 * 1024 * 1024)
 	val gifCallback = MultiCallback(true)
 
-	fun parseTwitchEmotes(message: String): List<ChatEmote> {
+	fun parseTwitchEmotes(emoteTag: String, original: String): List<ChatEmote> {
+		val unicodeFixPositions = mutableListOf<Int>()
+		var offset = 0
+		var index = 0
+		while (offset < original.length) {
+			val codepoint = original.codePointAt(offset)
+			if (codepoint > 65535) {
+				unicodeFixPositions.add(offset - index)
+				index++
+			}
+			offset += Character.charCount(codepoint)
+		}
+
 		val emotes = arrayListOf<ChatEmote>()
-		val matcher = emotePattern.matcher(message)
+		val matcher = emotePattern.matcher(emoteTag)
 		while (matcher.find()) {
 			val id = matcher.group(1)
-			emotes.add(ChatEmote(matcher.group(2).split(','), "$BASE_URL/$id/$EMOTE_SIZE", id, "", 1, false, isTwitch = true))
+			val positions = matcher.group(2).split(',').map { pos ->
+				val start = pos.substringBefore('-').toInt()
+				val end = pos.substringAfter('-').toInt()
+				val unicodeExtra = unicodeFixPositions.count { it < start }
+				return@map "${(start + unicodeExtra)}-${(end + unicodeExtra + 1)}"
+			}
+
+			emotes.add(ChatEmote(positions, "$BASE_URL/$id/$EMOTE_SIZE", id, "", 1, false, isTwitch = true))
 		}
 		return emotes
 	}
@@ -51,7 +70,7 @@ object EmoteManager {
 			val positions = mutableListOf<String>()
 			splits.forEach { split ->
 				if (it.key == split.trim()) {
-					positions.add("$i-${i + split.length - 1}")
+					positions.add("$i-${i + split.length}")
 				}
 				i += split.length + 1
 			}

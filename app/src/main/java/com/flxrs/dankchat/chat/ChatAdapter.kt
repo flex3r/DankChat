@@ -18,9 +18,6 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.core.text.color
-import androidx.core.text.getSpans
-import androidx.emoji.text.EmojiCompat
-import androidx.emoji.text.EmojiSpan
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -102,7 +99,7 @@ class ChatAdapter(private val onListChanged: (position: Int) -> Unit, private va
 						.placeholder(R.drawable.ic_missing_emote)
 						.error(R.drawable.ic_missing_emote)
 						.into(DrawableTarget {
-							val width = Math.round(lineHeight * it.intrinsicWidth / it.intrinsicHeight.toFloat())
+							val width = (lineHeight * it.intrinsicWidth / it.intrinsicHeight.toFloat()).roundToInt()
 							it.setBounds(0, 0, width, lineHeight)
 							val imageSpan = ImageSpan(it, ImageSpan.ALIGN_BOTTOM)
 							spannable.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -134,17 +131,6 @@ class ChatAdapter(private val onListChanged: (position: Int) -> Unit, private va
 				spannable.setSpan(userClickableSpan, time.length + 1 + badgesLength, prefixLength + badgesLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 			}
 
-			val messageStart = prefixLength + badgesLength
-			val messageEnd = messageStart + message.length
-			val spannableWithEmojis = if (EmojiCompat.get().loadState == EmojiCompat.LOAD_STATE_SUCCEEDED) {
-				EmojiCompat.get().process(spannable, messageStart, messageEnd, Int.MAX_VALUE, EmojiCompat.REPLACE_STRATEGY_ALL)
-			} else spannable
-
-			spannableWithEmojis as SpannableStringBuilder
-			val emojiStarts = spannableWithEmojis.getSpans<EmojiSpan>().mapIndexed { i, emojiSpan ->
-				spannableWithEmojis.getSpanStart(emojiSpan) - messageStart - i
-			}
-
 			//links
 			UrlDetector(message, UrlDetectorOptions.Default).detect().forEach { url ->
 				val clickableSpan = object : ClickableSpan() {
@@ -163,23 +149,15 @@ class ChatAdapter(private val onListChanged: (position: Int) -> Unit, private va
 				}
 				val start = prefixLength + badgesLength + message.indexOf(url.originalUrl)
 				val end = start + url.originalUrl.length
-				spannableWithEmojis.setSpan(clickableSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-				text = spannableWithEmojis
+				spannable.setSpan(clickableSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+				text = spannable
 			}
 
 			emotes.forEach { e ->
 				e.positions.forEach { pos ->
 					val split = pos.split('-')
-					var start = split[0].toInt()
-					var end = split[1].toInt() + 1
-					if (e.isTwitch) {
-						val count = emojiStarts.count { it < start }
-						start += count
-						end += count
-					}
-					start += prefixLength + badgesLength
-					end += prefixLength + badgesLength
-
+					val start = split[0].toInt() + prefixLength + badgesLength
+					val end = split[1].toInt() + prefixLength + badgesLength
 					if (e.isGif) {
 						val gifDrawable = EmoteManager.gifCache[e.keyword]
 						if (gifDrawable != null) {
@@ -188,47 +166,44 @@ class ChatAdapter(private val onListChanged: (position: Int) -> Unit, private va
 							gifDrawable.setBounds(0, 0, width, height)
 
 							val imageSpan = ImageSpan(gifDrawable, ImageSpan.ALIGN_BOTTOM)
-							spannableWithEmojis.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-							text = spannableWithEmojis
+							spannable.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+							text = spannable
 						} else Glide.with(this@with)
 								.`as`(ByteArray::class.java)
 								.load(e.url)
 								.placeholder(R.drawable.ic_missing_emote)
 								.error(R.drawable.ic_missing_emote)
-								.into(GifDrawableTarget(e.keyword, true, start, end) {
-									val drawable = it.first
-									val height = (drawable.intrinsicHeight * scaleFactor).roundToInt()
-									val width = (drawable.intrinsicWidth * scaleFactor).roundToInt()
-									drawable.setBounds(0, 0, width, height)
+								.into(GifDrawableTarget(e.keyword, true) {
+									val height = (it.intrinsicHeight * scaleFactor).roundToInt()
+									val width = (it.intrinsicWidth * scaleFactor).roundToInt()
+									it.setBounds(0, 0, width, height)
 
-									val imageSpan = ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM)
-									spannableWithEmojis.setSpan(imageSpan, it.second, it.third, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-									text = spannableWithEmojis
+									val imageSpan = ImageSpan(it, ImageSpan.ALIGN_BOTTOM)
+									spannable.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+									text = spannable
 								})
 					} else Glide.with(this@with)
 							.asBitmap()
 							.load(e.url)
 							.placeholder(R.drawable.ic_missing_emote)
 							.error(R.drawable.ic_missing_emote)
-							.into(EmoteDrawableTarget(e, context, start, end) {
-								val drawable = it.first
-								val ratio = drawable.intrinsicWidth / drawable.intrinsicHeight.toFloat()
+							.into(EmoteDrawableTarget(e, context) {
+								val ratio = it.intrinsicWidth / it.intrinsicHeight.toFloat()
 								val height = when {
-									drawable.intrinsicHeight < 55 && e.keyword.isBlank()       -> (70 * scaleFactor).roundToInt()
-									drawable.intrinsicHeight in 55..111 && e.keyword.isBlank() -> (112 * scaleFactor).roundToInt()
-									else                                                       -> (drawable.intrinsicHeight * scaleFactor).roundToInt()
+									it.intrinsicHeight < 55 && e.keyword.isBlank()       -> (70 * scaleFactor).roundToInt()
+									it.intrinsicHeight in 55..111 && e.keyword.isBlank() -> (112 * scaleFactor).roundToInt()
+									else                                                 -> (it.intrinsicHeight * scaleFactor).roundToInt()
 								}
 								val width = (height * ratio).roundToInt()
-								drawable.setBounds(0, 0, width, height)
+								it.setBounds(0, 0, width, height)
 
-								val imageSpan = ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM)
-								spannableWithEmojis.setSpan(imageSpan, it.second, it.third, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-								text = spannableWithEmojis
+								val imageSpan = ImageSpan(it, ImageSpan.ALIGN_BOTTOM)
+								spannable.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+								text = spannable
 							})
 				}
 			}
-			text = spannableWithEmojis
+			text = spannable
 		}
 	}
 

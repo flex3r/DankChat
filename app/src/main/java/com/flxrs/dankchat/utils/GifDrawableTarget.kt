@@ -6,23 +6,17 @@ import com.bumptech.glide.request.transition.Transition
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import pl.droidsonroids.gif.GifDrawable
 
-class GifDrawableTarget(
-		private val keyword: String,
-		private val storeInCache: Boolean,
-		private val start: Int = 0,
-		private val end: Int = 0,
-		private val callback: (Triple<Drawable, Int, Int>) -> Unit
-) : CustomTarget<ByteArray>() {
+class GifDrawableTarget(private val keyword: String, private val storeInCache: Boolean, private val callback: (Drawable) -> Unit) : CustomTarget<ByteArray>() {
 
 	override fun onLoadStarted(placeholder: Drawable?) {
 		if (placeholder != null) {
-			callback(Triple(placeholder, start, end))
+			callback(placeholder)
 		}
 	}
 
 	override fun onLoadFailed(errorDrawable: Drawable?) {
 		if (errorDrawable != null) {
-			callback(Triple(errorDrawable, start, end))
+			callback(errorDrawable)
 		}
 	}
 
@@ -35,6 +29,6 @@ class GifDrawableTarget(
 			EmoteManager.gifCache.put(keyword, drawable)
 		}
 		drawable.start()
-		callback(Triple(drawable, start, end))
+		callback(drawable)
 	}
 }
