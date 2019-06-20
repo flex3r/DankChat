@@ -1,24 +1,37 @@
 package com.flxrs.dankchat
 
+import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.TwitchAuthStore
 import com.flxrs.dankchat.utils.AddChannelDialogFragment
+import com.flxrs.dankchat.utils.MediaUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import kotlinx.android.synthetic.main.main_activity.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.File
+import java.io.IOException
 
 
 class MainActivity : AppCompatActivity() {
@@ -28,6 +41,7 @@ class MainActivity : AppCompatActivity() {
 	private lateinit var binding: MainActivityBinding
 	private lateinit var adapter: ChatTabAdapter
 	private lateinit var tabLayoutMediator: TabLayoutMediator
+	private var currentImagePath = ""
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -59,6 +73,14 @@ class MainActivity : AppCompatActivity() {
 				}
 			})
 		}
+
+		viewModel.imageUploadedEvent.observe(this, Observer {
+			showSnackbar(it)
+			if (!it.startsWith("Error")) {
+				val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+				clipboard.primaryClip = android.content.ClipData.newPlainText("nuuls image url", it)
+			}
+		})
 
 		setSupportActionBar(binding.toolbar)
 		updateViewPagerVisibility()
@@ -107,27 +129,87 @@ class MainActivity : AppCompatActivity() {
 			R.id.menu_remove        -> removeChannel()
 			R.id.menu_clear         -> clear()
 			R.id.menu_reload_emotes -> reloadEmotes()
+			R.id.menu_choose_image  -> checkPermissionForGallery()
+			R.id.menu_capture_image -> startCameraCapture()
 			else                    -> return false
 		}
 		return true
 	}
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-		if (requestCode == LOGIN_REQUEST) {
-			val oauth = authStore.getOAuthKey()
-			val name = authStore.getUserName()
-			val id = authStore.getUserId()
+		when (requestCode) {
+			LOGIN_REQUEST   -> {
+				val oauth = authStore.getOAuthKey()
+				val name = authStore.getUserName()
+				val id = authStore.getUserId()
 
-			if (resultCode == Activity.RESULT_OK && !oauth.isNullOrBlank() && !name.isNullOrBlank() && id != 0) {
-				viewModel.close { connectAndJoinChannels(name, oauth, id) }
+				if (resultCode == Activity.RESULT_OK && !oauth.isNullOrBlank() && !name.isNullOrBlank() && id != 0) {
+					viewModel.close { connectAndJoinChannels(name, oauth, id) }
 
-				authStore.setLoggedIn(true)
-				showSnackbar("Logged in as $name")
-			} else {
-				showSnackbar("Failed to login")
+					authStore.setLoggedIn(true)
+					showSnackbar("Logged in as $name")
+				} else {
+					showSnackbar("Failed to login")
+				}
+			}
+			GALLERY_REQUEST -> {
+				if (resultCode == Activity.RESULT_OK) {
+					val uri = data?.data
+					val path = MediaUtils.getImagePathFromUri(this, uri) ?: return
+					viewModel.uploadImage(File(path))
+				}
+			}
+			CAPTURE_REQUEST -> {
+				if (resultCode == Activity.RESULT_OK) {
+					try {
+						MediaUtils.removeExifAttributes(currentImagePath)
+						viewModel.uploadImage(File(currentImagePath))
+					} catch (e: IOException) {
+						showSnackbar("Error during upload")
+						Log.e(TAG, Log.getStackTraceString(e))
+					}
+				}
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data)
+	}
+
+	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+		if (requestCode == GALLERY_REQUEST && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+			startGalleryPicker()
+		}
+	}
+
+	private fun checkPermissionForGallery() {
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+			ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), GALLERY_REQUEST)
+		} else {
+			startGalleryPicker()
+		}
+	}
+
+	private fun startCameraCapture() {
+		Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { captureIntent ->
+			captureIntent.resolveActivity(packageManager)?.also {
+				try {
+					MediaUtils.createImageFile(this).apply { currentImagePath = absolutePath }
+				} catch (ex: IOException) {
+					null
+				}?.also {
+					val uri = FileProvider.getUriForFile(this, "$packageName.fileprovider", it)
+					captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
+					startActivityForResult(captureIntent, CAPTURE_REQUEST)
+				}
+			}
+		}
+	}
+
+	private fun startGalleryPicker() {
+		Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).also { galleryIntent ->
+			galleryIntent.resolveActivity(packageManager)?.also {
+				startActivityForResult(galleryIntent, GALLERY_REQUEST)
+			}
+		}
 	}
 
 	private fun clear() {
@@ -240,5 +322,7 @@ class MainActivity : AppCompatActivity() {
 		private val TAG = MainActivity::class.java.simpleName
 		private const val DIALOG_TAG = "add_channel_dialog"
 		private const val LOGIN_REQUEST = 42
+		private const val GALLERY_REQUEST = 69
+		private const val CAPTURE_REQUEST = 420
 	}
 }

@@ -7,8 +7,14 @@ import com.flxrs.dankchat.service.api.model.RecentMessages
 import com.flxrs.dankchat.service.api.model.UserEntities
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.io.File
 
 object TwitchApi {
 	private val TAG = TwitchApi::class.java.simpleName
@@ -29,6 +35,8 @@ object TwitchApi {
 	private const val RECENT_MSG_URL = "https://recent-messages.robotty.de/api/v2/recent-messages/"
 	private const val RECENT_MSG_URL_SUFFIX = "?clearchatToNotice=true"
 
+	private const val NUULS_UPLOAD_URL = "https://i.nuuls.com/upload"
+
 	private const val BASE_LOGIN_URL = "https://id.twitch.tv/oauth2/authorize?response_type=token"
 	private const val REDIRECT_URL = "https://flxrs.com/dankchat"
 	private const val SCOPES = "chat:edit+chat:read+user_read+user_subscriptions+channel:moderate"
@@ -40,6 +48,8 @@ object TwitchApi {
 			.addConverterFactory(MoshiConverterFactory.create())
 			.build()
 			.create(TwitchService::class.java)
+
+	private val nuulsUploadClient = OkHttpClient()
 
 	suspend fun getUser(oAuth: String): UserEntities.FromKraken? = withContext(Dispatchers.IO) {
 		try {
@@ -127,6 +137,24 @@ object TwitchApi {
 		try {
 			val response = service.getRecentMessages("$RECENT_MSG_URL$channel$RECENT_MSG_URL_SUFFIX")
 			if (response.isSuccessful) return@withContext response.body()
+		} catch (t: Throwable) {
+			Log.e(TAG, Log.getStackTraceString(t))
+		}
+		return@withContext null
+	}
+
+	suspend fun uploadImage(file: File): String? = withContext(Dispatchers.IO) {
+		val body = MultipartBody.Builder()
+				.setType(MultipartBody.FORM)
+				.addFormDataPart("abc", "abc.png", file.toRequestBody(MediaType.parse("image/png")))
+				.build()
+		val request = Request.Builder()
+				.url(NUULS_UPLOAD_URL)
+				.post(body)
+				.build()
+		try {
+			val response = nuulsUploadClient.newCall(request).execute()
+			if (response.isSuccessful) return@withContext response.body?.string()
 		} catch (t: Throwable) {
 			Log.e(TAG, Log.getStackTraceString(t))
 		}

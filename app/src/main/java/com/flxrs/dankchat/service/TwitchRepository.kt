@@ -9,6 +9,7 @@ import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
+import com.flxrs.dankchat.utils.SingleLiveEvent
 import com.flxrs.dankchat.utils.addAndLimit
 import com.flxrs.dankchat.utils.replaceWithTimeOuts
 import kotlinx.coroutines.CoroutineScope
@@ -18,6 +19,7 @@ import kotlinx.coroutines.withContext
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import org.koin.core.parameter.parametersOf
+import java.io.File
 import java.nio.ByteBuffer
 
 class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
@@ -32,6 +34,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	private var loadedTwitchEmotes = false
 	private var lastMessage = ""
 	private val connection: WebSocketConnection = get { parametersOf(::handleDisconnect, ::onMessage) }
+
+	val imageUploadedEvent = SingleLiveEvent<String>()
 
 	fun getChat(channel: String): LiveData<List<ChatItem>> {
 		var liveData = chatLiveDatas[channel]
@@ -126,6 +130,11 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 		load3rdPartyEmotes(channel)
 		if (id != 0 && oAuth.isNotBlank() && oAuth.startsWith("oauth:")) loadTwitchEmotes(oAuth.substringAfter("oauth:"), id)
 		setSuggestions(channel)
+	}
+
+	fun uploadImage(file: File) = scope.launch {
+		val url = TwitchApi.uploadImage(file) ?: "Error during upload"
+		imageUploadedEvent.postValue(url)
 	}
 
 	private fun onMessage(msg: IrcMessage) = when (msg.command) {

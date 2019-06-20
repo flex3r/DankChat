@@ -5,8 +5,11 @@ import androidx.lifecycle.ViewModel
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.service.TwitchRepository
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
+import java.io.File
 
 class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewModel() {
+
+	val imageUploadedEvent = twitchRepository.imageUploadedEvent
 
 	fun getChat(channel: String): LiveData<List<ChatItem>> = twitchRepository.getChat(channel)
 
@@ -31,4 +34,6 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
 	fun sendMessage(channel: String, message: String) {
 		if (message.isNotBlank()) twitchRepository.sendMessage(channel, message)
 	}
+
+	fun uploadImage(file: File) = twitchRepository.uploadImage(file)
 }
