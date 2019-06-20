@@ -28,7 +28,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.android.synthetic.main.main_activity.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.IOException
@@ -75,11 +74,12 @@ class MainActivity : AppCompatActivity() {
 		}
 
 		viewModel.imageUploadedEvent.observe(this, Observer {
-			showSnackbar(it)
-			if (!it.startsWith("Error")) {
+			val message = if (!it.startsWith("Error")) {
 				val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
 				clipboard.primaryClip = android.content.ClipData.newPlainText("nuuls image url", it)
-			}
+				"Copied: $it"
+			} else it
+			showSnackbar(message)
 		})
 
 		setSupportActionBar(binding.toolbar)
