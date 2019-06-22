@@ -3,15 +3,20 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto">
 
 	<item
-		android:id="@+id/menu_add"
-		android:icon="@drawable/ic_add_box_24dp"
-		android:title="@string/add_channel"
-		app:showAsAction="ifRoom" />
+		android:id="@+id/progress"
+		android:title="@string/uploading_image"
+		app:showAsAction="always" />
 
 	<item
 		android:id="@+id/menu_hide"
 		android:icon="@drawable/ic_keyboard_arrow_up_24dp"
 		android:title="@string/hide_actionbar"
+		app:showAsAction="always" />
+
+	<item
+		android:id="@+id/menu_add"
+		android:icon="@drawable/ic_add_box_24dp"
+		android:title="@string/add_channel"
 		app:showAsAction="ifRoom" />
 
 	<item

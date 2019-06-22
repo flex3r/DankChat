@@ -11,10 +11,12 @@ import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.viewpager2.widget.ViewPager2
@@ -40,6 +42,7 @@ class MainActivity : AppCompatActivity() {
 	private lateinit var adapter: ChatTabAdapter
 	private lateinit var tabLayoutMediator: TabLayoutMediator
 	private var currentImagePath = ""
+	private var showProgressBar = false
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -80,6 +83,8 @@ class MainActivity : AppCompatActivity() {
 				"Copied: $it"
 			} else it
 			showSnackbar(message)
+			showProgressBar = false
+			invalidateOptionsMenu()
 		})
 
 		setSupportActionBar(binding.toolbar)
@@ -116,6 +121,13 @@ class MainActivity : AppCompatActivity() {
 			}
 			findItem(R.id.menu_remove)?.run {
 				isVisible = channels.isNotEmpty()
+			}
+			findItem(R.id.progress)?.run {
+				isVisible = showProgressBar
+				actionView = ProgressBar(this@MainActivity).apply {
+					indeterminateTintList = ContextCompat.getColorStateList(this@MainActivity, android.R.color.white)
+					isVisible = showProgressBar
+				}
 			}
 		}
 		return true
@@ -158,6 +170,8 @@ class MainActivity : AppCompatActivity() {
 					val uri = data?.data
 					val path = MediaUtils.getImagePathFromUri(this, uri) ?: return
 					viewModel.uploadImage(File(path))
+					showProgressBar = true
+					invalidateOptionsMenu()
 				}
 			}
 			CAPTURE_REQUEST -> {
@@ -165,6 +179,8 @@ class MainActivity : AppCompatActivity() {
 					try {
 						MediaUtils.removeExifAttributes(currentImagePath)
 						viewModel.uploadImage(File(currentImagePath))
+						showProgressBar = true
+						invalidateOptionsMenu()
 					} catch (e: IOException) {
 						showSnackbar("Error during upload")
 					}

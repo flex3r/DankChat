@@ -26,7 +26,8 @@ import com.flxrs.dankchat.utils.hideKeyboard
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-class ChatFragment : Fragment() {
+class ChatFragment : Fragment(), CoroutineScope {
+	override val coroutineContext = CoroutineScope(Dispatchers.Main + Job()).coroutineContext
 	private val viewModel: DankChatViewModel by sharedViewModel()
 	private lateinit var binding: ChatFragmentBinding
 	private lateinit var adapter: ChatAdapter
@@ -90,6 +91,11 @@ class ChatFragment : Fragment() {
 		binding.input.setDropDownBackgroundResource(R.color.colorPrimary)
 	}
 
+	override fun onDestroy() {
+		super.onDestroy()
+		coroutineContext.cancel()
+	}
+
 	fun clearInputFocus() {
 		if (::binding.isInitialized) binding.input.clearFocus()
 		hideKeyboard()
@@ -115,9 +121,9 @@ class ChatFragment : Fragment() {
 		if (position > 0 && isAtBottom) {
 			binding.chat.stopScroll()
 			binding.chat.smoothSnapToPositon(position)
-			CoroutineScope(Dispatchers.Default + Job()).launch {
+			launch {
 				delay(50)
-				if (isAtBottom && position == adapter.itemCount - 1) {
+				if (isAtBottom && position != adapter.itemCount - 1) {
 					binding.chat.post { manager.scrollToPositionWithOffset(position, 0) }
 				}
 			}
