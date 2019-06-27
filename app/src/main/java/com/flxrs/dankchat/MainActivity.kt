@@ -111,6 +111,10 @@ class MainActivity : AppCompatActivity() {
 		reconnect(true)
 	}
 
+	override fun onBackPressed() {
+		moveTaskToBack(true)
+	}
+
 	override fun onCreateOptionsMenu(menu: Menu): Boolean {
 		menuInflater.inflate(R.menu.menu, menu)
 		return true
