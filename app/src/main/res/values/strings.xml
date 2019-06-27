@@ -33,4 +33,8 @@
 	<string name="hide_actionbar">Hide toolbar</string>
 	<string name="resume_scroll">Resume scroll</string>
 	<string name="uploading_image">Uploading image</string>
+	<string name="change_mention_format">Change mention format</string>
+	<string name="mention_only_username">name</string>
+	<string name="mention_with_at">\@name</string>
+	<string name="mention_with_at_and_comma">\@name,</string>
 </resources>

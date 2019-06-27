@@ -17,13 +17,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.forEach
+import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.databinding.MainActivityBinding
-import com.flxrs.dankchat.preferences.TwitchAuthStore
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.MentionTemplate
 import com.flxrs.dankchat.utils.AddChannelDialogFragment
 import com.flxrs.dankchat.utils.MediaUtils
 import com.flxrs.dankchat.utils.reduceDragSensitivity
@@ -39,7 +42,7 @@ import java.io.IOException
 class MainActivity : AppCompatActivity() {
 	private val viewModel: DankChatViewModel by viewModel()
 	private val channels = mutableListOf<String>()
-	private lateinit var authStore: TwitchAuthStore
+	private lateinit var preferenceStore: DankChatPreferenceStore
 	private lateinit var binding: MainActivityBinding
 	private lateinit var adapter: ChatTabAdapter
 	private lateinit var tabLayoutMediator: TabLayoutMediator
@@ -50,13 +53,13 @@ class MainActivity : AppCompatActivity() {
 		super.onCreate(savedInstanceState)
 		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-		authStore = TwitchAuthStore(this)
-		val oauth = authStore.getOAuthKey() ?: ""
-		val name = authStore.getUserName() ?: ""
-		val id = authStore.getUserId()
+		preferenceStore = DankChatPreferenceStore(this)
+		val oauth = preferenceStore.getOAuthKey() ?: ""
+		val name = preferenceStore.getUserName() ?: ""
+		val id = preferenceStore.getUserId()
 
 		adapter = ChatTabAdapter(supportFragmentManager, lifecycle)
-		authStore.getChannels()?.run { channels.addAll(this) }
+		preferenceStore.getChannels()?.run { channels.addAll(this) }
 		channels.forEach { adapter.addFragment(it) }
 
 		binding = DataBindingUtil.setContentView<MainActivityBinding>(this, R.layout.main_activity).apply {
@@ -125,7 +128,7 @@ class MainActivity : AppCompatActivity() {
 	override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
 		menu?.run {
 			findItem(R.id.menu_login)?.run {
-				if (authStore.isLoggedin()) setTitle(R.string.logout) else setTitle(R.string.login)
+				if (preferenceStore.isLoggedin()) setTitle(R.string.logout) else setTitle(R.string.login)
 			}
 			findItem(R.id.menu_remove)?.run {
 				isVisible = channels.isNotEmpty()
@@ -137,22 +140,33 @@ class MainActivity : AppCompatActivity() {
 					isVisible = showProgressBar
 				}
 			}
+			findItem(R.id.menu_change_mention)?.subMenu?.run {
+				forEach { it.isChecked = false }
+				when (preferenceStore.getMentionTemplate()) {
+					MentionTemplate.DEFAULT.value           -> this[0].isChecked = true
+					MentionTemplate.WITH_AT.value           -> this[1].isChecked = true
+					MentionTemplate.WITH_AT_AND_COMMA.value -> this[2].isChecked = true
+				}
+			}
 		}
 		return true
 	}
 
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
 		when (item.itemId) {
-			R.id.menu_reconnect     -> reconnect(false)
-			R.id.menu_login         -> updateLoginState()
-			R.id.menu_add           -> addChannel()
-			R.id.menu_remove        -> removeChannel()
-			R.id.menu_clear         -> clear()
-			R.id.menu_reload_emotes -> reloadEmotes()
-			R.id.menu_choose_image  -> checkPermissionForGallery()
-			R.id.menu_capture_image -> startCameraCapture()
-			R.id.menu_hide          -> hideActionBar()
-			else                    -> return false
+			R.id.menu_reconnect                 -> reconnect(false)
+			R.id.menu_login                     -> updateLoginState()
+			R.id.menu_add                       -> addChannel()
+			R.id.menu_remove                    -> removeChannel()
+			R.id.menu_clear                     -> clear()
+			R.id.menu_reload_emotes             -> reloadEmotes()
+			R.id.menu_choose_image              -> checkPermissionForGallery()
+			R.id.menu_capture_image             -> startCameraCapture()
+			R.id.menu_hide                      -> hideActionBar()
+			R.id.menu_mention_default           -> setMentionTemplate(MentionTemplate.DEFAULT)
+			R.id.menu_mention_with_at           -> setMentionTemplate(MentionTemplate.WITH_AT)
+			R.id.menu_mention_with_at_and_comma -> setMentionTemplate(MentionTemplate.WITH_AT_AND_COMMA)
+			else                                -> return false
 		}
 		return true
 	}
@@ -160,14 +174,14 @@ class MainActivity : AppCompatActivity() {
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		when (requestCode) {
 			LOGIN_REQUEST   -> {
-				val oauth = authStore.getOAuthKey()
-				val name = authStore.getUserName()
-				val id = authStore.getUserId()
+				val oauth = preferenceStore.getOAuthKey()
+				val name = preferenceStore.getUserName()
+				val id = preferenceStore.getUserId()
 
 				if (resultCode == Activity.RESULT_OK && !oauth.isNullOrBlank() && !name.isNullOrBlank() && id != 0) {
 					viewModel.close { connectAndJoinChannels(name, oauth, id) }
 
-					authStore.setLoggedIn(true)
+					preferenceStore.setLoggedIn(true)
 					showSnackbar("Logged in as $name")
 				} else {
 					showSnackbar("Failed to login")
@@ -202,6 +216,11 @@ class MainActivity : AppCompatActivity() {
 		if (requestCode == GALLERY_REQUEST && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 			startGalleryPicker()
 		}
+	}
+
+	private fun setMentionTemplate(template: MentionTemplate) {
+		preferenceStore.setMentionTemplate(template)
+		invalidateOptionsMenu()
 	}
 
 	private fun checkPermissionForGallery() {
@@ -258,8 +277,8 @@ class MainActivity : AppCompatActivity() {
 	private fun reloadEmotes() {
 		val position = binding.tabs.selectedTabPosition
 		if (position in 0 until adapter.fragmentList.size) {
-			val oauth = authStore.getOAuthKey() ?: ""
-			val userId = authStore.getUserId()
+			val oauth = preferenceStore.getOAuthKey() ?: ""
+			val userId = preferenceStore.getUserId()
 			viewModel.reloadEmotes(adapter.titleList[position], oauth, userId)
 		}
 	}
@@ -300,17 +319,17 @@ class MainActivity : AppCompatActivity() {
 			.setMessage(getString(R.string.confirm_logout_message))
 			.setPositiveButton(getString(R.string.confirm_logout_positive_button)) { dialog, _ ->
 				viewModel.close { connectAndJoinChannels("", "", 0) }
-				authStore.setUserName("")
-				authStore.setOAuthKey("")
-				authStore.setUserId(0)
-				authStore.setLoggedIn(false)
+				preferenceStore.setUserName("")
+				preferenceStore.setOAuthKey("")
+				preferenceStore.setUserId(0)
+				preferenceStore.setLoggedIn(false)
 				dialog.dismiss()
 			}
 			.setNegativeButton(getString(R.string.confirm_logout_negative_button)) { dialog, _ -> dialog.dismiss() }
 			.create().show()
 
 	private fun updateLoginState() {
-		if (authStore.isLoggedin()) {
+		if (preferenceStore.isLoggedin()) {
 			showLogoutConfirmationDialog()
 		} else {
 			Intent(this, LoginActivity::class.java).run { startActivityForResult(this, LOGIN_REQUEST) }
@@ -320,12 +339,12 @@ class MainActivity : AppCompatActivity() {
 	private fun addChannel() {
 		AddChannelDialogFragment {
 			if (!channels.contains(it)) {
-				val oauth = authStore.getOAuthKey() ?: ""
-				val name = authStore.getUserName() ?: ""
-				val id = authStore.getUserId()
+				val oauth = preferenceStore.getOAuthKey() ?: ""
+				val name = preferenceStore.getUserName() ?: ""
+				val id = preferenceStore.getUserId()
 				viewModel.connectOrJoinChannel(it, name, oauth, id, true)
 				channels.add(it)
-				authStore.setChannels(channels.toMutableSet())
+				preferenceStore.setChannels(channels.toMutableSet())
 
 				adapter.addFragment(it)
 				binding.viewPager.setCurrentItem(channels.size - 1, true)
@@ -341,7 +360,7 @@ class MainActivity : AppCompatActivity() {
 		val index = binding.viewPager.currentItem
 		val channel = channels[index]
 		channels.remove(channel)
-		authStore.setChannels(channels.toMutableSet())
+		preferenceStore.setChannels(channels.toMutableSet())
 		viewModel.partChannel(channel)
 		if (channels.size > 0) {
 			binding.viewPager.setCurrentItem(0, true)

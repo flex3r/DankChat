@@ -9,7 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.flxrs.dankchat.databinding.LoginActivityBinding
-import com.flxrs.dankchat.preferences.TwitchAuthStore
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.api.TwitchApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -64,10 +64,11 @@ class LoginActivity : AppCompatActivity() {
 						val id = it.id
 						withContext(Dispatchers.Main) {
 							if (name.isNotBlank()) {
-								val authStore = TwitchAuthStore(this@LoginActivity)
-								authStore.setOAuthKey("oauth:$token")
-								authStore.setUserName(name.toLowerCase())
-								authStore.setUserId(id)
+								DankChatPreferenceStore(this@LoginActivity).apply {
+									setOAuthKey("oauth:$token")
+									setUserName(name.toLowerCase())
+									setUserId(id)
+								}
 							}
 							setResult(Activity.RESULT_OK)
 							finish()

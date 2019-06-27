@@ -19,6 +19,8 @@ import com.bumptech.glide.Glide
 import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.USER_VARIABLE
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.utils.GifDrawableTarget
 import com.flxrs.dankchat.utils.SpaceTokenizer
@@ -28,10 +30,13 @@ import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class ChatFragment : Fragment(), CoroutineScope {
 	override val coroutineContext = CoroutineScope(Dispatchers.Main + Job()).coroutineContext
+
 	private val viewModel: DankChatViewModel by sharedViewModel()
 	private lateinit var binding: ChatFragmentBinding
 	private lateinit var adapter: ChatAdapter
 	private lateinit var manager: LinearLayoutManager
+	private lateinit var preferenceStore: DankChatPreferenceStore
+
 	private var isAtBottom = true
 	private var channel: String = ""
 
@@ -89,6 +94,7 @@ class ChatFragment : Fragment(), CoroutineScope {
 	override fun onActivityCreated(savedInstanceState: Bundle?) {
 		super.onActivityCreated(savedInstanceState)
 		binding.input.setDropDownBackgroundResource(R.color.colorPrimary)
+		preferenceStore = DankChatPreferenceStore(requireContext())
 	}
 
 	override fun onDestroy() {
@@ -111,7 +117,10 @@ class ChatFragment : Fragment(), CoroutineScope {
 	private fun mentionUser(user: String) {
 		if (binding.input.isEnabled) {
 			val current = binding.input.text.trimEnd().toString()
-			val currentWithMention = if (current.isBlank()) "$user " else "$current $user "
+			val template = preferenceStore.getMentionTemplate()
+			val mention = template.replace(USER_VARIABLE.toRegex(), user)
+			val currentWithMention = if (current.isBlank()) mention else "$current $mention"
+
 			binding.input.setText(currentWithMention)
 			binding.input.setSelection(currentWithMention.length)
 		}
