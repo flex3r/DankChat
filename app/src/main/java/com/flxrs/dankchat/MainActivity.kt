@@ -26,6 +26,7 @@ import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.TwitchAuthStore
 import com.flxrs.dankchat.utils.AddChannelDialogFragment
 import com.flxrs.dankchat.utils.MediaUtils
+import com.flxrs.dankchat.utils.reduceDragSensitivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -60,6 +61,7 @@ class MainActivity : AppCompatActivity() {
 
 		binding = DataBindingUtil.setContentView<MainActivityBinding>(this, R.layout.main_activity).apply {
 			viewPager.adapter = adapter
+			viewPager.reduceDragSensitivity()
 			viewPager.offscreenPageLimit = if (channels.size > 1) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 			tabLayoutMediator = TabLayoutMediator(tabs, viewPager) { tab, position -> tab.text = adapter.titleList[position] }
 			tabLayoutMediator.attach()
