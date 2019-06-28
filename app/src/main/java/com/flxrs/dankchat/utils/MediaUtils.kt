@@ -2,15 +2,16 @@ package com.flxrs.dankchat.utils
 
 import android.content.ContentUris
 import android.content.Context
-import android.media.ExifInterface
 import android.net.Uri
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import androidx.exifinterface.media.ExifInterface
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 object MediaUtils {
 	private const val MEDIA_DOCUMENT_AUTHORITY = "com.android.providers.media.documents"
@@ -51,14 +52,10 @@ object MediaUtils {
 	}
 
 	@Throws(IOException::class)
-	fun createImageFile(context: Context): File {
+	fun createImageFile(context: Context, suffix: String = "jpg"): File {
 		val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
 		val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-		return File.createTempFile(
-				"JPEG_${timeStamp}_",
-				".jpg",
-				storageDir
-		)
+		return File.createTempFile(timeStamp, ".$suffix", storageDir)
 	}
 
 	@Throws(IOException::class)

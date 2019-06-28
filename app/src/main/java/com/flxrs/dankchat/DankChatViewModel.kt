@@ -5,11 +5,12 @@ import androidx.lifecycle.ViewModel
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.service.TwitchRepository
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
+import com.flxrs.dankchat.utils.SingleLiveEvent
 import java.io.File
 
 class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewModel() {
 
-	val imageUploadedEvent = twitchRepository.imageUploadedEvent
+	val imageUploadedEvent: SingleLiveEvent<Pair<String, File>> = twitchRepository.imageUploadedEvent
 
 	fun getChat(channel: String): LiveData<List<ChatItem>> = twitchRepository.getChat(channel)
 

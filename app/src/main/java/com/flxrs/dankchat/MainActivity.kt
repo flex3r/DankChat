@@ -83,15 +83,17 @@ class MainActivity : AppCompatActivity() {
 			showActionbarFab.setOnClickListener { showActionBar() }
 		}
 
-		viewModel.imageUploadedEvent.observe(this, Observer {
-			val message = if (!it.startsWith("Error")) {
+		viewModel.imageUploadedEvent.observe(this, Observer { (urlOrError, file) ->
+			val message: String = if (!urlOrError.startsWith("Error")) {
 				val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-				clipboard.primaryClip = android.content.ClipData.newPlainText("nuuls image url", it)
-				"Copied: $it"
-			} else it
+				clipboard.primaryClip = android.content.ClipData.newPlainText("nuuls image url", urlOrError)
+				"Copied: $urlOrError"
+			} else urlOrError
+
 			showSnackbar(message)
 			showProgressBar = false
 			invalidateOptionsMenu()
+			file.delete()
 		})
 
 		setSupportActionBar(binding.toolbar)
@@ -190,20 +192,31 @@ class MainActivity : AppCompatActivity() {
 			GALLERY_REQUEST -> {
 				if (resultCode == Activity.RESULT_OK) {
 					val uri = data?.data
-					val path = MediaUtils.getImagePathFromUri(this, uri) ?: return
-					viewModel.uploadImage(File(path))
-					showProgressBar = true
-					invalidateOptionsMenu()
+					val original = File(MediaUtils.getImagePathFromUri(this, uri) ?: return)
+					val copy = MediaUtils.createImageFile(this, original.extension)
+					try {
+						original.copyTo(copy, true)
+						if (copy.extension == "jpg" || copy.extension == "jpeg") MediaUtils.removeExifAttributes(copy.absolutePath)
+
+						viewModel.uploadImage(copy)
+						showProgressBar = true
+						invalidateOptionsMenu()
+					} catch (t: Throwable) {
+						copy.delete()
+						showSnackbar("Error during upload")
+					}
 				}
 			}
 			CAPTURE_REQUEST -> {
 				if (resultCode == Activity.RESULT_OK) {
+					val imageFile = File(currentImagePath)
 					try {
 						MediaUtils.removeExifAttributes(currentImagePath)
-						viewModel.uploadImage(File(currentImagePath))
+						viewModel.uploadImage(imageFile)
 						showProgressBar = true
 						invalidateOptionsMenu()
 					} catch (e: IOException) {
+						imageFile.delete()
 						showSnackbar("Error during upload")
 					}
 				}

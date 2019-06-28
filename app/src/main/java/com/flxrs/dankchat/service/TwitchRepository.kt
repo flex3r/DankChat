@@ -35,7 +35,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	private var lastMessage = ""
 	private val connection: WebSocketConnection = get { parametersOf(::handleDisconnect, ::onMessage) }
 
-	val imageUploadedEvent = SingleLiveEvent<String>()
+	val imageUploadedEvent = SingleLiveEvent<Pair<String, File>>()
 
 	fun getChat(channel: String): LiveData<List<ChatItem>> {
 		var liveData = chatLiveDatas[channel]
@@ -134,7 +134,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
 	fun uploadImage(file: File) = scope.launch {
 		val url = TwitchApi.uploadImage(file) ?: "Error during upload"
-		imageUploadedEvent.postValue(url)
+		imageUploadedEvent.postValue(url to file)
 	}
 
 	private fun onMessage(msg: IrcMessage) = when (msg.command) {
