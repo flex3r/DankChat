@@ -36,14 +36,14 @@ class ChatTabAdapter(supportFragmentManager: FragmentManager, lifecycle: Lifecyc
 
 	fun addFragment(title: String) {
 		titleList.add(title)
-		notifyDataSetChanged()
+		notifyItemInserted(titleList.size - 1)
 	}
 
 	fun removeFragment(index: Int) {
 		if (index < titleList.size) {
 			titleList.removeAt(index)
+			notifyItemRemoved(index)
 			fragmentList.removeAt(index)
-			notifyDataSetChanged()
 		}
 	}
 }

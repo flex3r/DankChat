@@ -30,6 +30,8 @@ import com.flxrs.dankchat.preferences.MentionTemplate
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.utils.EditTextDialogFragment
 import com.flxrs.dankchat.utils.MediaUtils
+import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
+import com.flxrs.dankchat.utils.dialog.AdvancedLoginDialogResultHandler
 import com.flxrs.dankchat.utils.reduceDragSensitivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -43,7 +45,7 @@ import java.io.File
 import java.io.IOException
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, AdvancedLoginDialogResultHandler {
 	private val viewModel: DankChatViewModel by viewModel()
 	private val channels = mutableListOf<String>()
 	private lateinit var preferenceStore: DankChatPreferenceStore
@@ -236,6 +238,47 @@ class MainActivity : AppCompatActivity() {
 		}
 	}
 
+	override fun onAddChannelDialogResult(channel: String) {
+		val lowerCaseChannel = channel.toLowerCase()
+		if (!channels.contains(lowerCaseChannel)) {
+			val oauth = preferenceStore.getOAuthKey() ?: ""
+			val name = preferenceStore.getUserName() ?: ""
+			val id = preferenceStore.getUserId()
+			viewModel.connectOrJoinChannel(lowerCaseChannel, name, oauth, id, true)
+			channels.add(lowerCaseChannel)
+			preferenceStore.setChannels(channels.toMutableSet())
+
+			adapter.addFragment(lowerCaseChannel)
+			binding.viewPager.setCurrentItem(channels.size - 1, true)
+			binding.viewPager.offscreenPageLimit = if (channels.size > 1) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
+
+			invalidateOptionsMenu()
+			updateViewPagerVisibility()
+		}
+	}
+
+	override fun onAdvancedLoginDialogResult(token: String) {
+		val tokenWithoutSuffix = when {
+			token.startsWith("oauth:", true) -> token.substringAfter(':')
+			else                             -> token
+		}
+
+		CoroutineScope(Dispatchers.IO).launch {
+			TwitchApi.getUser(tokenWithoutSuffix)?.let {
+				if (it.name.isNotBlank()) {
+					preferenceStore.apply {
+						setOAuthKey("oauth:$tokenWithoutSuffix")
+						setUserName(it.name.toLowerCase())
+						setUserId(it.id)
+						setLoggedIn(true)
+					}
+					viewModel.close { connectAndJoinChannels(it.name, "oauth:$tokenWithoutSuffix", it.id) }
+					showSnackbar("Logged in as ${it.name}")
+				} else showSnackbar("Failed to login")
+			} ?: showSnackbar("Invalid OAuth token")
+		}
+	}
+
 	private fun setMentionTemplate(template: MentionTemplate) {
 		preferenceStore.setMentionTemplate(template)
 		invalidateOptionsMenu()
@@ -287,14 +330,14 @@ class MainActivity : AppCompatActivity() {
 
 	private fun clear() {
 		val position = binding.tabs.selectedTabPosition
-		if (position in 0 until adapter.fragmentList.size) {
+		if (position in 0 until adapter.titleList.size) {
 			viewModel.clear(adapter.titleList[position])
 		}
 	}
 
 	private fun reloadEmotes() {
 		val position = binding.tabs.selectedTabPosition
-		if (position in 0 until adapter.fragmentList.size) {
+		if (position in 0 until adapter.titleList.size) {
 			val oauth = preferenceStore.getOAuthKey() ?: ""
 			val userId = preferenceStore.getUserId()
 			viewModel.reloadEmotes(adapter.titleList[position], oauth, userId)
@@ -346,48 +389,22 @@ class MainActivity : AppCompatActivity() {
 			.setNegativeButton(getString(R.string.confirm_logout_negative_button)) { dialog, _ -> dialog.dismiss() }
 			.create().show()
 
-	private fun showAdvancedLoginDialog() {
-		EditTextDialogFragment(R.string.login_with_oauth, R.string.confirm_logout_negative_button, R.string.login, R.string.required_oauth_scopes, "Token") { result ->
-			val token = when {
-				result.startsWith("oauth:", true) -> result.substringAfter(':')
-				else                              -> result
-			}
+	private fun showAdvancedLoginDialog() = EditTextDialogFragment.create(
+			R.string.login_with_oauth,
+			R.string.confirm_logout_negative_button,
+			R.string.login,
+			R.string.required_oauth_scopes,
+			"Token",
+			false
+	).show(supportFragmentManager, DIALOG_TAG)
 
-			CoroutineScope(Dispatchers.IO).launch {
-				TwitchApi.getUser(token)?.let {
-					if (it.name.isNotBlank()) {
-						preferenceStore.apply {
-							setOAuthKey("oauth:$token")
-							setUserName(it.name.toLowerCase())
-							setUserId(it.id)
-							setLoggedIn(true)
-						}
-						viewModel.close { connectAndJoinChannels(it.name, "oauth:$token", it.id) }
-						showSnackbar("Logged in as ${it.name}")
-					} else showSnackbar("Failed to login")
-				} ?: showSnackbar("Invalid OAuth token")
-			}
-		}.show(supportFragmentManager, DIALOG_TAG)
-	}
-
-	private fun addChannel() = EditTextDialogFragment(R.string.dialog_title, R.string.dialog_negative_button, R.string.dialog_positive_button, textHint = "Channel") {
-		val channel = it.toLowerCase()
-		if (!channels.contains(channel)) {
-			val oauth = preferenceStore.getOAuthKey() ?: ""
-			val name = preferenceStore.getUserName() ?: ""
-			val id = preferenceStore.getUserId()
-			viewModel.connectOrJoinChannel(channel, name, oauth, id, true)
-			channels.add(channel)
-			preferenceStore.setChannels(channels.toMutableSet())
-
-			adapter.addFragment(channel)
-			binding.viewPager.setCurrentItem(channels.size - 1, true)
-			binding.viewPager.offscreenPageLimit = if (channels.size > 1) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
-
-			invalidateOptionsMenu()
-			updateViewPagerVisibility()
-		}
-	}.show(supportFragmentManager, DIALOG_TAG)
+	private fun addChannel() = EditTextDialogFragment.create(
+			R.string.dialog_title,
+			R.string.dialog_negative_button,
+			R.string.dialog_positive_button,
+			textHint = "Channel",
+			isAddChannel = true
+	).show(supportFragmentManager, DIALOG_TAG)
 
 	private fun removeChannel() {
 		val index = binding.viewPager.currentItem
