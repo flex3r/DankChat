@@ -37,4 +37,8 @@
 	<string name="mention_only_username">name</string>
 	<string name="mention_with_at">\@name</string>
 	<string name="mention_with_at_and_comma">\@name,</string>
+	<string name="login_through_browser">Login through browser</string>
+	<string name="paste_oauth_token">Paste OAuth token</string>
+	<string name="login_with_oauth">Login with OAuth</string>
+	<string name="required_oauth_scopes">Required scopes: chat:edit, chat:read, user_read, user_subscriptions</string>
 </resources>

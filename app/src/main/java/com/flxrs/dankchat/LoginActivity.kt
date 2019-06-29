@@ -14,7 +14,6 @@ import com.flxrs.dankchat.service.api.TwitchApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class LoginActivity : AppCompatActivity() {
 
@@ -60,20 +59,17 @@ class LoginActivity : AppCompatActivity() {
 				val token = fragment.substringAfter("access_token=").substringBefore("&scope=")
 				CoroutineScope(Dispatchers.IO).launch {
 					TwitchApi.getUser(token)?.let {
-						val name = it.name
-						val id = it.id
-						withContext(Dispatchers.Main) {
-							if (name.isNotBlank()) {
-								DankChatPreferenceStore(this@LoginActivity).apply {
-									setOAuthKey("oauth:$token")
-									setUserName(name.toLowerCase())
-									setUserId(id)
-								}
+						if (it.name.isNotBlank()) {
+							DankChatPreferenceStore(this@LoginActivity).apply {
+								setOAuthKey("oauth:$token")
+								setUserName(it.name.toLowerCase())
+								setUserId(it.id)
 							}
 							setResult(Activity.RESULT_OK)
 							finish()
-						}
-					}
+						} else setResult(Activity.RESULT_CANCELED)
+					} ?: setResult(Activity.RESULT_CANCELED)
+					finish()
 				}
 			}
 		}
