@@ -11,11 +11,7 @@ class ChatTabAdapter(supportFragmentManager: FragmentManager, lifecycle: Lifecyc
 	val titleList = mutableListOf<String>()
 	val fragmentList = mutableListOf<ChatFragment>()
 
-	override fun createFragment(position: Int): Fragment {
-		val fragment = ChatFragment.newInstance(titleList[position])
-		fragmentList.add(position, fragment)
-		return fragment
-	}
+	override fun createFragment(position: Int): Fragment = fragmentList[position]
 
 	override fun getItemCount(): Int = titleList.size
 
@@ -36,6 +32,7 @@ class ChatTabAdapter(supportFragmentManager: FragmentManager, lifecycle: Lifecyc
 
 	fun addFragment(title: String) {
 		titleList.add(title)
+		fragmentList.add(ChatFragment.newInstance(title))
 		notifyItemInserted(titleList.size - 1)
 	}
 

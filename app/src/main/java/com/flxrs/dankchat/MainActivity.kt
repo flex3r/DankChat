@@ -28,10 +28,10 @@ import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.MentionTemplate
 import com.flxrs.dankchat.service.api.TwitchApi
-import com.flxrs.dankchat.utils.dialog.EditTextDialogFragment
 import com.flxrs.dankchat.utils.MediaUtils
 import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.AdvancedLoginDialogResultHandler
+import com.flxrs.dankchat.utils.dialog.EditTextDialogFragment
 import com.flxrs.dankchat.utils.reduceDragSensitivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
