@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.utils
+package com.flxrs.dankchat.utils.dialog
 
 import android.app.Dialog
 import android.os.Bundle
@@ -9,8 +9,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.EdittextDialogBinding
-import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
-import com.flxrs.dankchat.utils.dialog.AdvancedLoginDialogResultHandler
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class EditTextDialogFragment : DialogFragment() {
