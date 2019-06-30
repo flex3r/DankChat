@@ -30,6 +30,7 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 	private var writerConnected = false
 	private var readerPong = false
 	private var writerPong = false
+	private var connecting = false
 
 	var isJustinFan = false
 	private var onClosed: (() -> Unit)? = null
@@ -65,6 +66,7 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 		this.nick = nick
 		this.oAuth = oAuth
 		isJustinFan = (oAuth.isBlank() || !oAuth.startsWith("oauth:"))
+		connecting = true
 
 		readerWebSocket = client.newWebSocket(request, ReaderWebSocketListener())
 		writerWebSocket = client.newWebSocket(request, WriterWebSocketListener())
@@ -72,15 +74,21 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 
 	@Synchronized
 	fun close(onClosed: (() -> Unit)?) {
-		this.onClosed = onClosed ?: onDisconnect
+		this.onClosed = onClosed
 		scope.coroutineContext.cancel()
-		writerWebSocket?.close(1000, null)
-		readerWebSocket?.close(1000, null)
+		if (writerWebSocket != null && readerWebSocket != null) {
+			writerWebSocket?.close(1000, null)
+			readerWebSocket?.close(1000, null)
+		} else {
+			connect(nick, oAuth)
+		}
 	}
 
 	@Synchronized
-	fun reconnect() {
-		close { connect(nick, oAuth) }
+	fun reconnect(onlyIfNecessary: Boolean = false) {
+		if (!onlyIfNecessary || (!readerConnected && !writerConnected && !connecting)) {
+			close { connect(nick, oAuth) }
+		}
 	}
 
 	private fun WebSocket.sendMessage(msg: String) {
@@ -129,13 +137,13 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 			readerConnected = false
 			onDisconnect()
 			onClosed?.invoke()
+			onClosed = null
 		}
 
 		override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
 			readerConnected = false
 			scope.coroutineContext.cancel()
 			onDisconnect()
-
 			connect(nick, oAuth)
 		}
 
@@ -158,6 +166,7 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 
 		override fun onOpen(webSocket: WebSocket, response: Response) {
 			readerConnected = true
+			connecting = false
 			val auth = if (isJustinFan) "NaM" else oAuth
 			val nick = if (nick.isBlank() || auth == "NaM") "justinfan12781923" else nick
 

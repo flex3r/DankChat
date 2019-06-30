@@ -107,8 +107,8 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
 
 		if (savedInstanceState == null) {
 			if (name.isNotBlank() && oauth.isNotBlank()) showSnackbar("Logged in as $name")
-			connectAndJoinChannels(name, oauth, id, true)
 		}
+		connectAndJoinChannels(name, oauth, id, true)
 	}
 
 	override fun onPause() {

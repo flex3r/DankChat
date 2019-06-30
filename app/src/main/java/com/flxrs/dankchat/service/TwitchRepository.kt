@@ -101,9 +101,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
 	@Synchronized
 	fun reconnect(onlyIfNecessary: Boolean) {
-		if (!onlyIfNecessary || hasDisconnected) {
-			connection.reconnect()
-		}
+		connection.reconnect(onlyIfNecessary)
 	}
 
 	@Synchronized
