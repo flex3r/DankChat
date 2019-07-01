@@ -35,6 +35,7 @@
 	<string name="uploading_image">Uploading image</string>
 	<string name="change_mention_format">Change mention format</string>
 	<string name="mention_only_username">name</string>
+	<string name="mention_with_comma">name,</string>
 	<string name="mention_with_at">\@name</string>
 	<string name="mention_with_at_and_comma">\@name,</string>
 	<string name="login_through_browser">Login through browser</string>

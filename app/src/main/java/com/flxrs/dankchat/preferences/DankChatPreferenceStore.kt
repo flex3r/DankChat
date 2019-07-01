@@ -32,7 +32,7 @@ class DankChatPreferenceStore(context: Context) {
 
 	fun setMentionTemplate(template: MentionTemplate) = dankChatPreferences.edit { putString(MENTION_TEMPLATE_KEY, template.value) }
 
-	fun getMentionTemplate() = dankChatPreferences.getString(MENTION_TEMPLATE_KEY, MentionTemplate.DEFAULT.value) ?: MentionTemplate.DEFAULT.value
+	fun getMentionTemplate() = MentionTemplate.fromString(dankChatPreferences.getString(MENTION_TEMPLATE_KEY, MentionTemplate.DEFAULT.value))
 
 	companion object {
 		private const val LOGGED_IN_KEY = "loggedIn"

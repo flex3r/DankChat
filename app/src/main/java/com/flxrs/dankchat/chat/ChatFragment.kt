@@ -117,7 +117,7 @@ class ChatFragment : Fragment(), CoroutineScope {
 	private fun mentionUser(user: String) {
 		if (binding.input.isEnabled) {
 			val current = binding.input.text.trimEnd().toString()
-			val template = preferenceStore.getMentionTemplate()
+			val template = preferenceStore.getMentionTemplate().value
 			val mention = template.replace(USER_VARIABLE.toRegex(), user)
 			val currentWithMention = if (current.isBlank()) mention else "$current $mention"
 

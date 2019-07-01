@@ -17,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.core.view.forEach
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
@@ -148,12 +147,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
 				}
 			}
 			findItem(R.id.menu_change_mention)?.subMenu?.run {
-				forEach { it.isChecked = false }
-				when (preferenceStore.getMentionTemplate()) {
-					MentionTemplate.DEFAULT.value           -> this[0].isChecked = true
-					MentionTemplate.WITH_AT.value           -> this[1].isChecked = true
-					MentionTemplate.WITH_AT_AND_COMMA.value -> this[2].isChecked = true
-				}
+				this[preferenceStore.getMentionTemplate().ordinal].isChecked = true
 			}
 		}
 		return true
@@ -173,6 +167,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
 			R.id.menu_capture_image             -> startCameraCapture()
 			R.id.menu_hide                      -> hideActionBar()
 			R.id.menu_mention_default           -> setMentionTemplate(MentionTemplate.DEFAULT)
+			R.id.menu_mention_with_comma        -> setMentionTemplate(MentionTemplate.WITH_COMMA)
 			R.id.menu_mention_with_at           -> setMentionTemplate(MentionTemplate.WITH_AT)
 			R.id.menu_mention_with_at_and_comma -> setMentionTemplate(MentionTemplate.WITH_AT_AND_COMMA)
 			else                                -> return false

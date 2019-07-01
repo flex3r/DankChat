@@ -77,21 +77,20 @@
 		android:title="@string/change_mention_format"
 		app:showAsAction="never">
 		<menu>
-			<item
-				android:id="@+id/menu_mention_default"
-				android:checkable="true"
-				android:title="@string/mention_only_username"
-				app:showAsAction="never" />
-			<item
-				android:id="@+id/menu_mention_with_at"
-				android:checkable="true"
-				android:title="@string/mention_with_at"
-				app:showAsAction="never" />
-			<item
-				android:id="@+id/menu_mention_with_at_and_comma"
-				android:checkable="true"
-				android:title="@string/mention_with_at_and_comma"
-				app:showAsAction="never" />
+			<group android:checkableBehavior="single">
+				<item
+					android:id="@+id/menu_mention_default"
+					android:title="@string/mention_only_username" />
+				<item
+					android:id="@+id/menu_mention_with_comma"
+					android:title="@string/mention_with_comma" />
+				<item
+					android:id="@+id/menu_mention_with_at"
+					android:title="@string/mention_with_at" />
+				<item
+					android:id="@+id/menu_mention_with_at_and_comma"
+					android:title="@string/mention_with_at_and_comma" />
+			</group>
 		</menu>
 	</item>
 
