@@ -76,12 +76,8 @@ class WebSocketConnection(private val scope: CoroutineScope, private val onDisco
 	fun close(onClosed: (() -> Unit)?) {
 		this.onClosed = onClosed
 		scope.coroutineContext.cancel()
-		if (writerWebSocket != null && readerWebSocket != null) {
-			writerWebSocket?.close(1000, null)
-			readerWebSocket?.close(1000, null)
-		} else {
-			connect(nick, oAuth)
-		}
+		writerWebSocket?.close(1000, null)
+		readerWebSocket?.close(1000, null)
 	}
 
 	@Synchronized
