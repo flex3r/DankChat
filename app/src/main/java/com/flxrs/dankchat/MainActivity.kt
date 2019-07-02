@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
 
 		if (savedInstanceState == null) {
 			if (name.isNotBlank() && oauth.isNotBlank()) showSnackbar("Logged in as $name")
-			connectAndJoinChannels(name, oauth, id, true)
+			connectAndJoinChannels(name, oauth, id, true, true)
 		}
 	}
 
@@ -343,11 +343,11 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
 		viewModel.reconnect(onlyIfNecessary)
 	}
 
-	private fun connectAndJoinChannels(name: String, oauth: String, id: Int, load3rdPartyEmotesAndBadges: Boolean = false) {
+	private fun connectAndJoinChannels(name: String, oauth: String, id: Int, load3rdPartyEmotesAndBadges: Boolean = false, startup: Boolean = false) {
 		if (channels.isEmpty()) {
-			viewModel.connectOrJoinChannel("", name, oauth, id, false, doReauth = true)
+			viewModel.connectOrJoinChannel("", name, oauth, id, false, startup, true)
 		} else channels.forEachIndexed { i, channel ->
-			viewModel.connectOrJoinChannel(channel, name, oauth, id, load3rdPartyEmotesAndBadges, i == 0)
+			viewModel.connectOrJoinChannel(channel, name, oauth, id, load3rdPartyEmotesAndBadges, startup, i == 0)
 		}
 	}
 

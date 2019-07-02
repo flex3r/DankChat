@@ -3,8 +3,8 @@
 buildscript {
     ext {
         apkName = "DankChat"
-        appVersionCode = 58
-        appVersionName = "0.7.3"
+        appVersionCode = 59
+        appVersionName = "0.7.4"
 
         gradle_build_tools_version = '3.4.1'
         kotlin_version = "1.3.40"

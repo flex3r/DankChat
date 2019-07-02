@@ -28,7 +28,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	private val canType = mutableMapOf<String, MutableLiveData<String>>()
 	private val emoteSuggestions = mutableMapOf<String, MutableLiveData<List<GenericEmote>>>()
 
-	private var hasDisconnected = false
+	private var hasDisconnected = true
 	private var loadedGlobalBadges = false
 	private var loadedGlobalEmotes = false
 	private var loadedTwitchEmotes = false
@@ -65,7 +65,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 	}
 
 	@Synchronized
-	fun connectAndAddChannel(channel: String, nick: String, oAuth: String, id: Int, load3rdPartyEmotesAndBadges: Boolean = false, doReauth: Boolean = false) {
+	fun connectAndAddChannel(channel: String, nick: String, oAuth: String, id: Int, load3rdPartyEmotesAndBadges: Boolean = false, startup: Boolean = false, doReauth: Boolean = false) {
+		if (startup && !hasDisconnected) return
 		if (doReauth) {
 			loadedTwitchEmotes = false
 			connection.connect(nick, oAuth)
