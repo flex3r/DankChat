@@ -3,4 +3,4 @@
 Download the latest version manually: https://install.appcenter.ms/users/flex3r/apps/dankchat/distribution_groups/public  
 Make sure to click "install anyway" when a Play Protect dialog shows during install.   
 
-<img src="screens/screen1.png" width="30%"/> <img src="screens/screen2.png" width="30%"/> <img src="screens/screen3.png" width="30%"/>
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/screen1.png" width="30%"/> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/screen2.png" width="30%"/> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/screen3.png" width="30%"/>
