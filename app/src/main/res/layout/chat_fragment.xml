@@ -52,7 +52,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/chat" />
 
-        <MultiAutoCompleteTextView
+        <com.flxrs.dankchat.utils.CustomMultiAutoCompleteTextView
             android:id="@+id/input"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
