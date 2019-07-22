@@ -10,9 +10,15 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModules = module {
-	factory { CoroutineScope(Dispatchers.IO + Job()) }
-	single { (onDisconnect: () -> Unit, onMessage: (IrcMessage) -> Unit) -> WebSocketConnection(get(), onDisconnect, onMessage) }
-	single { TwitchRepository(get()) }
-	viewModel { DankChatViewModel(get()) }
+    factory { CoroutineScope(Dispatchers.IO + Job()) }
+    single { (onDisconnect: () -> Unit, onMessage: (IrcMessage) -> Unit) ->
+        WebSocketConnection(
+            get(),
+            onDisconnect,
+            onMessage
+        )
+    }
+    single { TwitchRepository(get()) }
+    viewModel { DankChatViewModel(get()) }
 }
 
