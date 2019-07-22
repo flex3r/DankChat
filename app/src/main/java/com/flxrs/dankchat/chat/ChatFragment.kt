@@ -75,6 +75,7 @@ class ChatFragment : Fragment(), CoroutineScope {
                 scrollToPosition(adapter.itemCount - 1)
                 scrollBottom.hide()
             }
+            send.setOnClickListener { handleSendMessage() }
         }
 
         if (channel.isNotBlank()) viewModel.run {
