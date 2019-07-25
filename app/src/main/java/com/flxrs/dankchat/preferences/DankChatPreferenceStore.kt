@@ -19,9 +19,11 @@ class DankChatPreferenceStore(context: Context) {
 
     fun setOAuthKey(oauth: String) = dankChatPreferences.edit { putString(OAUTH_KEY, oauth) }
 
-    fun getChannels(): MutableSet<String>? = dankChatPreferences.getStringSet(CHANNELS_KEY, setOf())
+    fun getChannelsAsString(): String? = dankChatPreferences.getString(CHANNELS_AS_STRING_KEY, null)
 
-    fun setChannels(channels: MutableSet<String>) = dankChatPreferences.edit { putStringSet(CHANNELS_KEY, channels) }
+    fun setChannelsString(channels: String) = dankChatPreferences.edit { putString(CHANNELS_AS_STRING_KEY, channels) }
+
+    fun getChannels(): MutableSet<String>? = dankChatPreferences.getStringSet(CHANNELS_KEY, setOf())
 
     fun getUserName(): String? = dankChatPreferences.getString(NAME_KEY, null)
 
@@ -42,6 +44,7 @@ class DankChatPreferenceStore(context: Context) {
         private const val OAUTH_KEY = "oAuthKey"
         private const val NAME_KEY = "nameKey"
         private const val CHANNELS_KEY = "channelsKey"
+        private const val CHANNELS_AS_STRING_KEY = "channelsAsStringKey"
         private const val ID_KEY = "idKey"
         private const val MENTION_TEMPLATE_KEY = "mentionTemplateKey"
     }

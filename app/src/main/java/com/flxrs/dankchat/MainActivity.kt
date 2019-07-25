@@ -65,7 +65,8 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
         val id = preferenceStore.getUserId()
 
         adapter = ChatTabAdapter(supportFragmentManager, lifecycle)
-        preferenceStore.getChannels()?.run { channels.addAll(this) }
+        preferenceStore.getChannelsAsString()?.let { channels.addAll(it.split(',')) }
+            ?: preferenceStore.getChannels()?.let { channels.addAll(it) }
         channels.forEach { adapter.addFragment(it) }
 
         binding = DataBindingUtil.setContentView<MainActivityBinding>(this, R.layout.main_activity).apply {
@@ -258,7 +259,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
             val id = preferenceStore.getUserId()
             viewModel.connectOrJoinChannel(lowerCaseChannel, name, oauth, id, true)
             channels.add(lowerCaseChannel)
-            preferenceStore.setChannels(channels.toMutableSet())
+            preferenceStore.setChannelsString(channels.joinToString(","))
 
             adapter.addFragment(lowerCaseChannel)
             binding.viewPager.setCurrentItem(channels.size - 1, true)
@@ -437,7 +438,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
         val index = binding.viewPager.currentItem
         val channel = channels[index]
         channels.remove(channel)
-        preferenceStore.setChannels(channels.toMutableSet())
+        preferenceStore.setChannelsString(channels.joinToString(","))
         viewModel.partChannel(channel)
         if (channels.size > 0) {
             binding.viewPager.setCurrentItem(0, true)
