@@ -94,12 +94,15 @@ data class TwitchMessage(
             )
         }
 
-        fun makeSystemMessage(message: String, channel: String): TwitchMessage {
-            val time = TimeUtils.localTime()
+        fun makeSystemMessage(
+            message: String,
+            channel: String,
+            timestamp: String = TimeUtils.localTime()
+        ): TwitchMessage {
             val color = Color.parseColor("#717171")
             val id = System.nanoTime().toString()
             return TwitchMessage(
-                time,
+                timestamp,
                 channel = channel,
                 name = "",
                 color = color,
@@ -141,26 +144,13 @@ data class TwitchMessage(
             return messages
         }
 
-        private fun parseHostTarget(message: IrcMessage): TwitchMessage = with(message) {
-            val target = params[1].substringBefore("-")
-            val channel = params[0].substring(1)
-            return makeSystemMessage("Now hosting $target", channel)
-        }
-
-        private fun parseClearChat(message: IrcMessage): TwitchMessage = with(message) {
-            val channel = params[0].substring(1)
-            val target = if (params.size > 1) params[1] else ""
-            val duration = tags["ban-duration"] ?: ""
-            val systemMessage = if (target.isBlank()) "Chat has been cleared by a moderator." else {
-                if (duration.isBlank()) "$target has been permanently banned" else "$target has been timed out for ${duration}s."
-            }
-            return makeSystemMessage(systemMessage, channel)
-        }
-
-        private fun parseNotice(message: IrcMessage): TwitchMessage = with(message) {
+        fun parseNotice(message: IrcMessage): TwitchMessage = with(message) {
             val channel = params[0].substring(1)
             val notice = params[1]
-            return makeSystemMessage(notice, channel)
+            val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
+            val time = TimeUtils.timestampToLocalTime(ts)
+
+            return makeSystemMessage(notice, channel, time)
         }
 
         fun parse(message: IrcMessage): List<TwitchMessage> = with(message) {
@@ -173,6 +163,28 @@ data class TwitchMessage(
                 "HOSTTARGET" -> listOf(parseHostTarget(message))
                 else -> listOf()
             }
+        }
+
+        private fun parseHostTarget(message: IrcMessage): TwitchMessage = with(message) {
+            val target = params[1].substringBefore("-")
+            val channel = params[0].substring(1)
+            val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
+            val time = TimeUtils.timestampToLocalTime(ts)
+
+            return makeSystemMessage("Now hosting $target", channel, time)
+        }
+
+        private fun parseClearChat(message: IrcMessage): TwitchMessage = with(message) {
+            val channel = params[0].substring(1)
+            val target = if (params.size > 1) params[1] else ""
+            val duration = tags["ban-duration"] ?: ""
+            val systemMessage = if (target.isBlank()) "Chat has been cleared by a moderator." else {
+                if (duration.isBlank()) "$target has been permanently banned" else "$target has been timed out for ${duration}s."
+            }
+            val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
+            val time = TimeUtils.timestampToLocalTime(ts)
+
+            return makeSystemMessage(systemMessage, channel, time)
         }
     }
 }

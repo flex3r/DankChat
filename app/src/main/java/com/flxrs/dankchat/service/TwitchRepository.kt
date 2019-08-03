@@ -184,26 +184,14 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
             chatLiveDatas.keys.forEach {
                 val currentChat = chatLiveDatas[it]?.value ?: emptyList()
                 chatLiveDatas[it]?.postValue(
-                    currentChat.addAndLimit(
-                        ChatItem(
-                            TwitchMessage.makeSystemMessage(
-                                message,
-                                it
-                            )
-                        )
-                    )
+                    currentChat.addAndLimit(ChatItem(TwitchMessage.makeSystemMessage(message, it)))
                 )
             }
         } else {
             val currentChat = chatLiveDatas[channel]?.value ?: emptyList()
             chatLiveDatas[channel]?.postValue(
                 currentChat.addAndLimit(
-                    ChatItem(
-                        TwitchMessage.makeSystemMessage(
-                            message,
-                            channel
-                        )
-                    )
+                    ChatItem(TwitchMessage.makeSystemMessage(message, channel))
                 )
             )
         }
@@ -245,9 +233,9 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         TwitchApi.getRecentMessages(channel)?.messages?.forEach {
             val message = IrcMessage.parse(it)
             val twitchMessage = when (message.tags["display-name"]) {
-                "NOTICE" -> parseRecentNotice(message)
-                "CLEARCHAT" -> parseRecentNotice(message)
-                "USERNOTICE" -> parseRecentUserNotice(message)
+                "NOTICE" -> TwitchMessage.parseNotice(message)
+                "CLEARCHAT" -> TwitchMessage.parseNotice(message)
+                "USERNOTICE" -> TwitchMessage.parseUserNotice(message, true)[0]
                 else -> TwitchMessage.parseFromIrc(message, isHistoric = true)
             }
             list.add(ChatItem(twitchMessage, true))
@@ -255,15 +243,6 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         val current = chatLiveDatas[channel]?.value ?: emptyList()
         chatLiveDatas[channel]?.postValue(list.addAndLimit(current, true))
     }
-
-    private fun parseRecentNotice(message: IrcMessage): TwitchMessage {
-        val channel = message.params[0].substring(1)
-        val notice = message.params[1]
-        return TwitchMessage.makeSystemMessage(notice, channel)
-    }
-
-    private fun parseRecentUserNotice(message: IrcMessage): TwitchMessage =
-        TwitchMessage.parseUserNotice(message, true)[0]
 
     companion object {
         private val TAG = TwitchRepository::class.java.simpleName
