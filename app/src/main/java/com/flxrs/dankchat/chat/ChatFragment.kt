@@ -25,7 +25,6 @@ import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.utils.GifDrawableTarget
 import com.flxrs.dankchat.utils.SpaceTokenizer
 import com.flxrs.dankchat.utils.hideKeyboard
-import com.flxrs.dankchat.utils.showKeyboard
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
@@ -107,20 +106,6 @@ class ChatFragment : Fragment(), CoroutineScope {
     fun clearInputFocus() {
         if (::binding.isInitialized) binding.input.clearFocus()
         hideKeyboard()
-    }
-
-    fun hasInputFocus(): Boolean {
-        if (::binding.isInitialized) {
-            return binding.input.hasFocus()
-        }
-        return false
-    }
-
-    fun requestInputFocus() {
-        if (::binding.isInitialized) {
-            binding.input.requestFocus()
-            binding.input.showKeyboard()
-        }
     }
 
     private fun handleSendMessage(): Boolean {

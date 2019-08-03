@@ -53,7 +53,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
     private lateinit var tabLayoutMediator: TabLayoutMediator
     private var currentImagePath = ""
     private var showProgressBar = false
-    private var previousTabHadFocus = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,21 +79,12 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
             tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                 override fun onTabReselected(tab: TabLayout.Tab?) = Unit
 
-                override fun onTabSelected(tab: TabLayout.Tab?) {
-                    val position = tab?.position ?: -1
-                    if (position in 0 until adapter.fragmentList.size && previousTabHadFocus) {
-                        adapter.fragmentList[position].requestInputFocus()
-                    }
-                }
+                override fun onTabSelected(tab: TabLayout.Tab?) = Unit
 
                 override fun onTabUnselected(tab: TabLayout.Tab?) {
                     val position = tab?.position ?: -1
                     if (position in 0 until adapter.fragmentList.size) {
-                        val fragment = adapter.fragmentList[position]
-                        previousTabHadFocus = if (fragment.hasInputFocus()) {
-                            adapter.fragmentList[position].clearInputFocus()
-                            true
-                        } else false
+                        adapter.fragmentList[position].clearInputFocus()
                     }
                 }
             })
