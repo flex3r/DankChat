@@ -17,15 +17,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.preferences.MentionTemplate
+import com.flxrs.dankchat.preferences.SettingsActivity
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.utils.MediaUtils
 import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
@@ -36,8 +36,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -149,9 +147,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
                     isVisible = showProgressBar
                 }
             }
-            findItem(R.id.menu_change_mention)?.subMenu?.run {
-                this[preferenceStore.getMentionTemplate().ordinal].isChecked = true
-            }
         }
         return true
     }
@@ -169,15 +164,12 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
             R.id.menu_logout -> showLogoutConfirmationDialog()
             R.id.menu_add -> addChannel()
             R.id.menu_remove -> removeChannel()
-            R.id.menu_clear -> clear()
             R.id.menu_reload_emotes -> reloadEmotes()
             R.id.menu_choose_image -> checkPermissionForGallery()
             R.id.menu_capture_image -> startCameraCapture()
             R.id.menu_hide -> hideActionBar()
-            R.id.menu_mention_default -> setMentionTemplate(MentionTemplate.DEFAULT)
-            R.id.menu_mention_with_comma -> setMentionTemplate(MentionTemplate.WITH_COMMA)
-            R.id.menu_mention_with_at -> setMentionTemplate(MentionTemplate.WITH_AT)
-            R.id.menu_mention_with_at_and_comma -> setMentionTemplate(MentionTemplate.WITH_AT_AND_COMMA)
+            R.id.menu_clear -> clear()
+            R.id.menu_settings -> Intent(this, SettingsActivity::class.java).run { startActivity(this) }
             else -> return false
         }
         return true
@@ -267,7 +259,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
             else -> token
         }
 
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch {
             TwitchApi.getUser(tokenWithoutSuffix)?.let {
                 if (it.name.isNotBlank()) {
                     preferenceStore.apply {
@@ -281,11 +273,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
                 } else showSnackbar("Failed to login")
             } ?: showSnackbar("Invalid OAuth token")
         }
-    }
-
-    private fun setMentionTemplate(template: MentionTemplate) {
-        preferenceStore.setMentionTemplate(template)
-        invalidateOptionsMenu()
     }
 
     private fun checkPermissionForGallery() {

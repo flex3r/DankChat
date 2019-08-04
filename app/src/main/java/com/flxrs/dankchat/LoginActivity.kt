@@ -8,11 +8,10 @@ import android.webkit.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import com.flxrs.dankchat.databinding.LoginActivityBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.api.TwitchApi
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
@@ -57,7 +56,7 @@ class LoginActivity : AppCompatActivity() {
         private fun parseOAuthToken(fragment: String) {
             if (fragment.startsWith("access_token=")) {
                 val token = fragment.substringAfter("access_token=").substringBefore("&scope=")
-                CoroutineScope(Dispatchers.IO).launch {
+                lifecycleScope.launch {
                     TwitchApi.getUser(token)?.let {
                         if (it.name.isNotBlank()) {
                             DankChatPreferenceStore(this@LoginActivity).apply {

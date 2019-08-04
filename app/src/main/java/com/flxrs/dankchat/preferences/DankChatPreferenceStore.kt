@@ -33,12 +33,6 @@ class DankChatPreferenceStore(context: Context) {
 
     fun setUserId(id: Int) = dankChatPreferences.edit { putInt(ID_KEY, id) }
 
-    fun setMentionTemplate(template: MentionTemplate) =
-        dankChatPreferences.edit { putString(MENTION_TEMPLATE_KEY, template.value) }
-
-    fun getMentionTemplate() =
-        MentionTemplate.fromString(dankChatPreferences.getString(MENTION_TEMPLATE_KEY, MentionTemplate.DEFAULT.value))
-
     companion object {
         private const val LOGGED_IN_KEY = "loggedIn"
         private const val OAUTH_KEY = "oAuthKey"
@@ -46,6 +40,5 @@ class DankChatPreferenceStore(context: Context) {
         private const val CHANNELS_KEY = "channelsKey"
         private const val CHANNELS_AS_STRING_KEY = "channelsAsStringKey"
         private const val ID_KEY = "idKey"
-        private const val MENTION_TEMPLATE_KEY = "mentionTemplateKey"
     }
 }

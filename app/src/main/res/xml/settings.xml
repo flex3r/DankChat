@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="@string/preference_timestamp_key"
+        android:title="@string/preference_timestamp_title" />
+
+    <ListPreference
+        android:defaultValue="name"
+        android:entries="@array/mention_formats"
+        android:entryValues="@array/mention_formats"
+        android:key="@string/preference_mention_format_key"
+        android:summary="@string/preference_mention_format_summary"
+        android:title="@string/preference_mention_format_title" />
+</PreferenceScreen>

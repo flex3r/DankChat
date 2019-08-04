@@ -66,7 +66,10 @@ dependencies {
     implementation "androidx.core:core-ktx:$core_version"
     implementation "androidx.browser:browser:$browser_version"
     implementation "androidx.exifinterface:exifinterface:$exif_version"
+    implementation "androidx.preference:preference-ktx:$preference_version"
+
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"

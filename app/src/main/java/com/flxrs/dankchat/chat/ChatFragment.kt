@@ -1,6 +1,8 @@
 package com.flxrs.dankchat.chat
 
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +14,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -19,23 +22,21 @@ import com.bumptech.glide.Glide
 import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
-import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.preferences.USER_VARIABLE
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.utils.GifDrawableTarget
 import com.flxrs.dankchat.utils.SpaceTokenizer
 import com.flxrs.dankchat.utils.hideKeyboard
-import kotlinx.coroutines.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-class ChatFragment : Fragment(), CoroutineScope {
-    override val coroutineContext = CoroutineScope(Dispatchers.Main + Job()).coroutineContext
+class ChatFragment : Fragment() {
 
     private val viewModel: DankChatViewModel by sharedViewModel()
     private lateinit var binding: ChatFragmentBinding
     private lateinit var adapter: ChatAdapter
     private lateinit var manager: LinearLayoutManager
-    private lateinit var preferenceStore: DankChatPreferenceStore
+    private lateinit var preferenceListener: SharedPreferences.OnSharedPreferenceChangeListener
 
     private var isAtBottom = true
     private var channel: String = ""
@@ -100,12 +101,13 @@ class ChatFragment : Fragment(), CoroutineScope {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         binding.input.setDropDownBackgroundResource(R.color.colorPrimary)
-        preferenceStore = DankChatPreferenceStore(requireContext())
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        coroutineContext.cancel()
+        preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            if (key == getString(R.string.preference_timestamp_key)) {
+                binding.chat.swapAdapter(adapter, false)
+            }
+        }
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+            .registerOnSharedPreferenceChangeListener(preferenceListener)
     }
 
     fun clearInputFocus() {
@@ -123,12 +125,14 @@ class ChatFragment : Fragment(), CoroutineScope {
     private fun mentionUser(user: String) {
         if (binding.input.isEnabled) {
             val current = binding.input.text.trimEnd().toString()
-            val template = preferenceStore.getMentionTemplate().value
-            val mention = template.replace(USER_VARIABLE.toRegex(), user)
-            val currentWithMention = if (current.isBlank()) mention else "$current $mention"
+            val template = PreferenceManager.getDefaultSharedPreferences(requireContext()).let {
+                it.getString(getString(R.string.preference_mention_format_key), "name") ?: "name"
+            }
+            val mention = template.replace("name", user)
+            val inputWithMention = if (current.isBlank()) "$mention " else "$current $mention "
 
-            binding.input.setText(currentWithMention)
-            binding.input.setSelection(currentWithMention.length)
+            binding.input.setText(inputWithMention)
+            binding.input.setSelection(inputWithMention.length)
         }
     }
 
@@ -136,7 +140,7 @@ class ChatFragment : Fragment(), CoroutineScope {
         if (position > 0 && isAtBottom) {
             binding.chat.stopScroll()
             binding.chat.smoothSnapToPositon(position)
-            launch {
+            lifecycleScope.launch {
                 delay(50)
                 if (isAtBottom && position != adapter.itemCount - 1) {
                     binding.chat.post { manager.scrollToPositionWithOffset(position, 0) }

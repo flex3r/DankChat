@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
+import android.preference.PreferenceManager
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.TextPaint
@@ -92,9 +93,14 @@ class ChatAdapter(
 
 
             val displayName = if (isAction) "$name " else if (name.isBlank()) "" else "$name: "
-            val prefixLength = time.length + 1 + displayName.length
             var badgesLength = 0
-            val spannable = SpannableStringBuilder().bold { append("$time ") }
+            val timestampPreferenceKey = this@with.context.getString(R.string.preference_timestamp_key)
+            val preferences = PreferenceManager.getDefaultSharedPreferences(this@with.context)
+            val (prefixLength, spannable) = if (preferences.getBoolean(timestampPreferenceKey, true)) {
+                time.length + 1 + displayName.length to SpannableStringBuilder().bold { append("$time ") }
+            } else {
+                displayName.length to SpannableStringBuilder()
+            }
 
             badges.forEach { badge ->
                 spannable.append("  ")
