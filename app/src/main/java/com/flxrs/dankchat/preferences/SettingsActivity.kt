@@ -13,8 +13,10 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         DataBindingUtil.setContentView<SettingsActivityBinding>(this, R.layout.settings_activity).apply {
             setSupportActionBar(settingsToolbar)
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            supportActionBar?.setDisplayShowHomeEnabled(true)
+            supportActionBar?.apply {
+                setDisplayHomeAsUpEnabled(true)
+                title = "Settings"
+            }
         }
         PreferenceManager.setDefaultValues(this, R.xml.settings, false)
     }
