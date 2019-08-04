@@ -51,5 +51,6 @@
     <string name="settings">Settings</string>
     <string name="nuuls_upload_disclaimer">External hosting provided by https://nuuls.com/i, use at your own risk.</string>
     <string name="nuuls_upload_title">Custom image upload</string>
+    <string name="snackbar_message_copied">Message copied</string>
 
 </resources>

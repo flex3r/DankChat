@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.chat
 
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.KeyEvent
@@ -12,6 +13,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -26,6 +28,7 @@ import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.utils.GifDrawableTarget
 import com.flxrs.dankchat.utils.SpaceTokenizer
 import com.flxrs.dankchat.utils.hideKeyboard
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -47,7 +50,7 @@ class ChatFragment : Fragment() {
         manager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false).apply {
             stackFromEnd = true
         }
-        adapter = ChatAdapter(::scrollToPosition, ::mentionUser).apply {
+        adapter = ChatAdapter(::scrollToPosition, ::mentionUser, ::copyMessage).apply {
             setHasStableIds(true)
         }
 
@@ -134,6 +137,19 @@ class ChatFragment : Fragment() {
             binding.input.setText(inputWithMention)
             binding.input.setSelection(inputWithMention.length)
         }
+    }
+
+    private fun copyMessage(message: String) {
+        (getSystemService(
+            requireContext(),
+            android.content.ClipboardManager::class.java
+        ) as android.content.ClipboardManager).apply {
+            primaryClip = android.content.ClipData.newPlainText("twitch message", message)
+        }
+        Snackbar.make(binding.root, R.string.snackbar_message_copied, Snackbar.LENGTH_SHORT).apply {
+            view.setBackgroundResource(R.color.colorPrimary)
+            setTextColor(Color.WHITE)
+        }.show()
     }
 
     private fun scrollToPosition(position: Int) {

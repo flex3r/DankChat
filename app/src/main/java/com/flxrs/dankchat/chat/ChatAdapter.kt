@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.chat
 
+import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -14,6 +15,7 @@ import android.text.style.ClickableSpan
 import android.text.style.ImageSpan
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -33,11 +35,16 @@ import com.flxrs.dankchat.utils.GifDrawableTarget
 import com.flxrs.dankchat.utils.normalizeColor
 import com.linkedin.urls.detection.UrlDetector
 import com.linkedin.urls.detection.UrlDetectorOptions
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 class ChatAdapter(
     private val onListChanged: (position: Int) -> Unit,
-    private val onUserClicked: (user: String) -> Unit
+    private val onUserClicked: (user: String) -> Unit,
+    private val onMessageLongClick: (message: String) -> Unit
 ) : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
     inner class ViewHolder(val binding: ChatItemBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -62,12 +69,31 @@ class ChatAdapter(
         super.onViewRecycled(holder)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: ViewHolder, position: Int): Unit = with(holder.binding.itemText) {
+        isClickable = false
         text = ""
         movementMethod = LinkMovementMethod.getInstance()
         EmoteManager.gifCallback.addView(this)
 
         getItem(position).message.apply {
+            var ignoreClicks = false
+            if (!this.isSystem) this@with.setOnLongClickListener {
+                ignoreClicks = true
+                onMessageLongClick(this.message)
+                true
+            }
+
+            this@with.setOnTouchListener { _, event ->
+                if (event.action == MotionEvent.ACTION_UP) {
+                    CoroutineScope(Dispatchers.Default).launch {
+                        delay(200)
+                        ignoreClicks = false
+                    }
+                }
+                false
+            }
+
             val lineHeight = this@with.lineHeight
             val scaleFactor = lineHeight * 1.5 / 112
             val currentUserName = DankChatPreferenceStore(this@with.context).getUserName() ?: ""
@@ -139,7 +165,7 @@ class ChatAdapter(
                     }
 
                     override fun onClick(v: View) {
-                        onUserClicked(name)
+                        if (!ignoreClicks) onUserClicked(name)
                     }
                 }
                 spannable.setSpan(
@@ -155,11 +181,12 @@ class ChatAdapter(
                 val clickableSpan = object : ClickableSpan() {
                     override fun onClick(v: View) {
                         try {
-                            androidx.browser.customtabs.CustomTabsIntent.Builder()
-                                .addDefaultShareMenuItem()
-                                .setToolbarColor(ContextCompat.getColor(v.context, R.color.colorPrimary))
-                                .setShowTitle(true)
-                                .build().launchUrl(v.context, Uri.parse(url.fullUrl))
+                            if (!ignoreClicks)
+                                androidx.browser.customtabs.CustomTabsIntent.Builder()
+                                    .addDefaultShareMenuItem()
+                                    .setToolbarColor(ContextCompat.getColor(v.context, R.color.colorPrimary))
+                                    .setShowTitle(true)
+                                    .build().launchUrl(v.context, Uri.parse(url.fullUrl))
                         } catch (e: ActivityNotFoundException) {
                             Log.e("ViewBinding", Log.getStackTraceString(e))
                         }
