@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.service.TwitchRepository
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
+import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import com.flxrs.dankchat.utils.SingleLiveEvent
 import java.io.File
 
@@ -17,6 +18,8 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
     fun getCanType(channel: String): LiveData<String> = twitchRepository.getCanType(channel)
 
     fun getEmoteKeywords(channel: String): LiveData<List<GenericEmote>> = twitchRepository.getEmoteKeywords(channel)
+
+    fun getRoomState(channel: String): LiveData<TwitchMessage.Roomstate> = twitchRepository.getRoomState(channel)
 
     fun connectOrJoinChannel(
         channel: String,

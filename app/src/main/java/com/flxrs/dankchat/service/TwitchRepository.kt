@@ -27,6 +27,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     private val chatLiveDatas = mutableMapOf<String, MutableLiveData<List<ChatItem>>>()
     private val canType = mutableMapOf<String, MutableLiveData<String>>()
     private val emoteSuggestions = mutableMapOf<String, MutableLiveData<List<GenericEmote>>>()
+    private val roomStates = mutableMapOf<String, MutableLiveData<TwitchMessage.Roomstate>>()
 
     private var hasDisconnected = true
     private var loadedGlobalBadges = false
@@ -60,6 +61,15 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         if (liveData == null) {
             liveData = MutableLiveData(emptyList())
             emoteSuggestions[channel] = liveData
+        }
+        return liveData
+    }
+
+    fun getRoomState(channel: String): LiveData<TwitchMessage.Roomstate> {
+        var liveData = roomStates[channel]
+        if (liveData == null) {
+            liveData = MutableLiveData(TwitchMessage.Roomstate(channel))
+            roomStates[channel] = liveData
         }
         return liveData
     }
@@ -150,6 +160,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     private fun onMessage(msg: IrcMessage) = when (msg.command) {
         "366" -> handleConnected(msg.params[1].substring(1))
         "CLEARCHAT" -> handleClearchat(msg)
+        "ROOMSTATE" -> handleRoomstate(msg)
         else -> handleMessage(msg)
     }
 
@@ -168,6 +179,14 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
             add(parsed[0])
             chatLiveDatas[channel]?.postValue(this)
         }
+    }
+
+    private fun handleRoomstate(msg: IrcMessage) {
+        val channel = msg.params[0].substring(1)
+        val state = roomStates[channel]?.value
+        state?.updateState(msg)
+        roomStates[channel]?.postValue(state)
+
     }
 
     private fun handleMessage(msg: IrcMessage) {

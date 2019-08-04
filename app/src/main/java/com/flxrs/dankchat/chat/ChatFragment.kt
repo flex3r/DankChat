@@ -88,6 +88,11 @@ class ChatFragment : Fragment(), CoroutineScope {
                 val adapter = EmoteSuggestionsArrayAdapter(list)
                 binding.input.setAdapter(adapter)
             })
+            getRoomState(channel).observe(viewLifecycleOwner, Observer {
+                val text = it.toString()
+                binding.roomstateText.visibility = if (text.isBlank()) View.GONE else View.VISIBLE
+                binding.roomstateText.text = text
+            })
         }
         return binding.root
     }

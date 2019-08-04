@@ -13,7 +13,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true">
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/scrollBottom"
@@ -62,7 +63,7 @@
             android:imeOptions="actionSend|flagNoExtractUi"
             android:inputType="text"
             android:singleLine="true"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/roomstate_text"
             app:layout_constraintEnd_toStartOf="@id/send"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider" />
@@ -74,10 +75,22 @@
             android:background="?android:selectableItemBackground"
             android:contentDescription="@string/send_hint"
             android:src="@drawable/ic_send_24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/input"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/input"
-            app:layout_constraintTop_toBottomOf="@id/divider" />
+            app:layout_constraintTop_toTopOf="@id/input" />
+
+        <TextView
+            android:id="@+id/roomstate_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="0dp"
+            android:paddingTop="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/input" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
