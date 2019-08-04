@@ -18,18 +18,30 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = DataBindingUtil.setContentView<LoginActivityBinding>(this, R.layout.login_activity)
-        binding.webview.apply {
-            with(settings) {
-                javaScriptEnabled = true
-                setSupportZoom(true)
+        DataBindingUtil.setContentView<LoginActivityBinding>(this, R.layout.login_activity).apply {
+            setSupportActionBar(loginToolbar)
+            supportActionBar?.apply {
+                setDisplayHomeAsUpEnabled(true)
+                title = "Login to Twitch.tv"
             }
-            CookieManager.getInstance().removeAllCookies(null)
-            clearCache(true)
-            clearFormData()
-            webViewClient = TwitchAuthClient()
-            loadUrl(TwitchApi.LOGIN_URL)
+
+            webview.apply {
+                with(settings) {
+                    javaScriptEnabled = true
+                    setSupportZoom(true)
+                }
+                CookieManager.getInstance().removeAllCookies(null)
+                clearCache(true)
+                clearFormData()
+                webViewClient = TwitchAuthClient()
+                loadUrl(TwitchApi.LOGIN_URL)
+            }
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 
     private inner class TwitchAuthClient : WebViewClient() {
