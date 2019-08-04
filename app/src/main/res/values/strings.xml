@@ -13,7 +13,6 @@
     <string name="dialog_title">Add channel</string>
     <string name="dialog_positive_button">OK</string>
     <string name="dialog_negative_button">Cancel</string>
-
     <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
     <string name="add_channel">Add channel</string>
     <string name="name">Name</string>
@@ -48,5 +47,9 @@
     <string name="preference_mention_format_title">Mention format</string>
     <string name="preference_mention_format_summary">Change the mention format when clicking an username</string>
     <string name="preference_mention_format_key">mention_format</string>
+
     <string name="settings">Settings</string>
+    <string name="nuuls_upload_disclaimer">External hosting provided by https://nuuls.com/i, use at your own risk.</string>
+    <string name="nuuls_upload_title">Custom image upload</string>
+
 </resources>

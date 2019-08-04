@@ -275,33 +275,52 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
         }
     }
 
+    private fun showNuulsUploadDialogIfNotAcknowledged(action: () -> Unit) {
+        if (!preferenceStore.getNuulsAcknowledge()) {
+            MaterialAlertDialogBuilder(this)
+                .setCancelable(false)
+                .setTitle(R.string.nuuls_upload_title)
+                .setMessage(R.string.nuuls_upload_disclaimer)
+                .setPositiveButton(R.string.dialog_positive_button) { dialog, _ ->
+                    dialog.dismiss()
+                    preferenceStore.setNuulsAcknowledge(true)
+                    action()
+                }
+                .show()
+        } else action()
+    }
+
     private fun checkPermissionForGallery() {
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                GALLERY_REQUEST
-            )
-        } else {
-            startGalleryPicker()
+        showNuulsUploadDialogIfNotAcknowledged {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    GALLERY_REQUEST
+                )
+            } else {
+                startGalleryPicker()
+            }
         }
     }
 
     private fun startCameraCapture() {
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { captureIntent ->
-            captureIntent.resolveActivity(packageManager)?.also {
-                try {
-                    MediaUtils.createImageFile(this).apply { currentImagePath = absolutePath }
-                } catch (ex: IOException) {
-                    null
-                }?.also {
-                    val uri = FileProvider.getUriForFile(this, "$packageName.fileprovider", it)
-                    captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-                    startActivityForResult(captureIntent, CAPTURE_REQUEST)
+        showNuulsUploadDialogIfNotAcknowledged {
+            Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { captureIntent ->
+                captureIntent.resolveActivity(packageManager)?.also {
+                    try {
+                        MediaUtils.createImageFile(this).apply { currentImagePath = absolutePath }
+                    } catch (ex: IOException) {
+                        null
+                    }?.also {
+                        val uri = FileProvider.getUriForFile(this, "$packageName.fileprovider", it)
+                        captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
+                        startActivityForResult(captureIntent, CAPTURE_REQUEST)
+                    }
                 }
             }
         }
