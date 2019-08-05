@@ -63,7 +63,10 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
 
         adapter = ChatTabAdapter(supportFragmentManager, lifecycle)
         preferenceStore.getChannelsAsString()?.let { channels.addAll(it.split(',')) }
-            ?: preferenceStore.getChannels()?.let { channels.addAll(it) }
+            ?: preferenceStore.getChannels()?.let {
+                channels.addAll(it)
+                preferenceStore.setChannels(null)
+            }
         channels.forEach { adapter.addFragment(it) }
 
         binding = DataBindingUtil.setContentView<MainActivityBinding>(this, R.layout.main_activity).apply {
@@ -244,9 +247,9 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
             preferenceStore.setChannelsString(channels.joinToString(","))
 
             adapter.addFragment(lowerCaseChannel)
-            binding.viewPager.setCurrentItem(channels.size - 1, true)
             binding.viewPager.offscreenPageLimit =
                 if (channels.size > 1) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
+            binding.viewPager.setCurrentItem(channels.size - 1, false)
 
             invalidateOptionsMenu()
             updateViewPagerVisibility()
@@ -434,11 +437,11 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
         val index = binding.viewPager.currentItem
         val channel = channels[index]
         channels.remove(channel)
-        preferenceStore.setChannelsString(channels.joinToString(","))
         viewModel.partChannel(channel)
         if (channels.size > 0) {
-            binding.viewPager.setCurrentItem(0, true)
-        }
+            preferenceStore.setChannelsString(channels.joinToString(","))
+            binding.viewPager.setCurrentItem(0, false)
+        } else preferenceStore.setChannelsString(null)
 
         binding.viewPager.offscreenPageLimit =
             if (channels.size > 1) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT

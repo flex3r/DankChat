@@ -113,6 +113,12 @@ class ChatFragment : Fragment() {
             .registerOnSharedPreferenceChangeListener(preferenceListener)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+            .unregisterOnSharedPreferenceChangeListener(preferenceListener)
+    }
+
     fun clearInputFocus() {
         if (::binding.isInitialized) binding.input.clearFocus()
         hideKeyboard()

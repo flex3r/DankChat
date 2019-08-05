@@ -21,9 +21,11 @@ class DankChatPreferenceStore(context: Context) {
 
     fun getChannelsAsString(): String? = dankChatPreferences.getString(CHANNELS_AS_STRING_KEY, null)
 
-    fun setChannelsString(channels: String) = dankChatPreferences.edit { putString(CHANNELS_AS_STRING_KEY, channels) }
+    fun setChannelsString(channels: String?) = dankChatPreferences.edit { putString(CHANNELS_AS_STRING_KEY, channels) }
 
     fun getChannels(): MutableSet<String>? = dankChatPreferences.getStringSet(CHANNELS_KEY, setOf())
+
+    fun setChannels(channels: MutableSet<String>?) = dankChatPreferences.edit { putStringSet(CHANNELS_KEY, channels) }
 
     fun getUserName(): String? = dankChatPreferences.getString(NAME_KEY, null)
 
