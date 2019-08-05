@@ -24,11 +24,14 @@ import com.bumptech.glide.Glide
 import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
+import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.utils.GifDrawableTarget
 import com.flxrs.dankchat.utils.SpaceTokenizer
 import com.flxrs.dankchat.utils.hideKeyboard
+import com.flxrs.dankchat.utils.timer
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -44,6 +47,7 @@ class ChatFragment : Fragment() {
 
     private var isAtBottom = true
     private var channel: String = ""
+    private var fetchJob: Job? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         channel = requireArguments().getString(CHANNEL_ARG, "")
@@ -95,16 +99,19 @@ class ChatFragment : Fragment() {
             })
             getRoomState(channel).observe(viewLifecycleOwner, Observer { updateRoomstate(it.toString()) })
         }
+        updateStreamInfo()
         return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         binding.input.setDropDownBackgroundResource(R.color.colorPrimary)
+
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             when (key) {
                 getString(R.string.preference_timestamp_key) -> binding.chat.swapAdapter(adapter, false)
                 getString(R.string.preference_roomstate_key) -> updateRoomstate(binding.roomstateText.text.toString())
+                getString(R.string.preference_streaminfo_key) -> updateStreamInfo()
             }
         }
         preferences = PreferenceManager.getDefaultSharedPreferences(requireContext()).apply {
@@ -130,6 +137,25 @@ class ChatFragment : Fragment() {
                 if (roomstate.isNotBlank() && ::preferences.isInitialized && preferences.getBoolean(key, true)) {
                     View.VISIBLE
                 } else View.GONE
+        }
+    }
+
+    private fun updateStreamInfo() {
+        val key = getString(R.string.preference_streaminfo_key)
+        fetchJob?.cancel()
+
+        fetchJob = lifecycleScope.launchWhenCreated {
+            if (::preferences.isInitialized && preferences.getBoolean(key, true)) {
+                timer(STREAM_REFRESH_RATE) {
+                    val stream = TwitchApi.getStream(channel)
+                    if (stream != null) {
+                        binding.streaminfoText.apply {
+                            visibility = View.VISIBLE
+                            text = getString(R.string.stream_information, stream.viewers)
+                        }
+                    } else binding.streaminfoText.visibility = View.GONE
+                }
+            } else binding.streaminfoText.visibility = View.GONE
         }
     }
 
@@ -262,6 +288,7 @@ class ChatFragment : Fragment() {
             return fragment
         }
 
+        private const val STREAM_REFRESH_RATE = 30000L
         const val CHANNEL_ARG = "channel"
     }
 }

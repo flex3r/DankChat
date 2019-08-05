@@ -2,10 +2,7 @@ package com.flxrs.dankchat.service.api
 
 import android.util.Log
 import com.flxrs.dankchat.BuildConfig
-import com.flxrs.dankchat.service.api.model.BadgeEntities
-import com.flxrs.dankchat.service.api.model.EmoteEntities
-import com.flxrs.dankchat.service.api.model.RecentMessages
-import com.flxrs.dankchat.service.api.model.UserEntities
+import com.flxrs.dankchat.service.api.model.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType
@@ -68,6 +65,18 @@ object TwitchApi {
             if (response.isSuccessful) return@withContext response.body()
         } catch (t: Throwable) {
             Log.e(TAG, Log.getStackTraceString(t))
+        }
+        return@withContext null
+    }
+
+    suspend fun getStream(channel: String): StreamEntities.Stream? = withContext(Dispatchers.IO) {
+        getUserIdFromName(channel)?.let {
+            try {
+                val response = service.getStream(it.toInt())
+                return@withContext if (response.isSuccessful) response.body()?.stream else null
+            } catch (t: Throwable) {
+                Log.e(TAG, Log.getStackTraceString(t))
+            }
         }
         return@withContext null
     }
