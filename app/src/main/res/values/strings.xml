@@ -47,10 +47,12 @@
     <string name="preference_mention_format_title">Mention format</string>
     <string name="preference_mention_format_summary">Change the mention format when clicking an username</string>
     <string name="preference_mention_format_key">mention_format</string>
+    <string name="preference_roomstate_key">show_roomstate</string>
+    <string name="preference_roomstate_title">Roomstate information</string>
+    <string name="preference_roomstate_summary">Shows information about the current roomstate like subscribers only mode</string>
 
     <string name="settings">Settings</string>
     <string name="nuuls_upload_disclaimer">External hosting provided by https://nuuls.com/i, use at your own risk.</string>
     <string name="nuuls_upload_title">Custom image upload</string>
     <string name="snackbar_message_copied">Message copied</string>
-
 </resources>

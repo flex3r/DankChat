@@ -5,6 +5,12 @@
         android:key="@string/preference_timestamp_key"
         android:title="@string/preference_timestamp_title" />
 
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="@string/preference_roomstate_key"
+        android:summary="@string/preference_roomstate_summary"
+        android:title="@string/preference_roomstate_title" />
+
     <ListPreference
         android:defaultValue="name"
         android:entries="@array/mention_formats"

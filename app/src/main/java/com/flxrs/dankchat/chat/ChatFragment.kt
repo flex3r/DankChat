@@ -40,6 +40,7 @@ class ChatFragment : Fragment() {
     private lateinit var adapter: ChatAdapter
     private lateinit var manager: LinearLayoutManager
     private lateinit var preferenceListener: SharedPreferences.OnSharedPreferenceChangeListener
+    private lateinit var preferences: SharedPreferences
 
     private var isAtBottom = true
     private var channel: String = ""
@@ -92,10 +93,13 @@ class ChatFragment : Fragment() {
                 val adapter = EmoteSuggestionsArrayAdapter(list)
                 binding.input.setAdapter(adapter)
             })
-            getRoomState(channel).observe(viewLifecycleOwner, Observer {
-                val text = it.toString()
-                binding.roomstateText.visibility = if (text.isBlank()) View.GONE else View.VISIBLE
-                binding.roomstateText.text = text
+            getRoomState(channel).observe(viewLifecycleOwner, Observer { state ->
+                val key = getString(R.string.preference_roomstate_key)
+                if (::preferences.isInitialized && preferences.getBoolean(key, true)) {
+                    val text = state.toString()
+                    binding.roomstateText.visibility = if (text.isBlank()) View.GONE else View.VISIBLE
+                    binding.roomstateText.text = text
+                }
             })
         }
         return binding.root
@@ -104,19 +108,23 @@ class ChatFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         binding.input.setDropDownBackgroundResource(R.color.colorPrimary)
-        preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (key == getString(R.string.preference_timestamp_key)) {
-                binding.chat.swapAdapter(adapter, false)
+        preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { preferences, key ->
+            when (key) {
+                getString(R.string.preference_timestamp_key) -> binding.chat.swapAdapter(adapter, false)
+                getString(R.string.preference_roomstate_key) -> {
+                    binding.roomstateText.visibility =
+                        if (preferences.getBoolean(key, true)) View.VISIBLE else View.GONE
+                }
             }
         }
-        PreferenceManager.getDefaultSharedPreferences(requireContext())
-            .registerOnSharedPreferenceChangeListener(preferenceListener)
+        preferences = PreferenceManager.getDefaultSharedPreferences(requireContext()).apply {
+            registerOnSharedPreferenceChangeListener(preferenceListener)
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        PreferenceManager.getDefaultSharedPreferences(requireContext())
-            .unregisterOnSharedPreferenceChangeListener(preferenceListener)
+        preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
     }
 
     fun clearInputFocus() {
