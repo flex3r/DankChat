@@ -93,14 +93,7 @@ class ChatFragment : Fragment() {
                 val adapter = EmoteSuggestionsArrayAdapter(list)
                 binding.input.setAdapter(adapter)
             })
-            getRoomState(channel).observe(viewLifecycleOwner, Observer { state ->
-                val key = getString(R.string.preference_roomstate_key)
-                if (::preferences.isInitialized && preferences.getBoolean(key, true)) {
-                    val text = state.toString()
-                    binding.roomstateText.visibility = if (text.isBlank()) View.GONE else View.VISIBLE
-                    binding.roomstateText.text = text
-                }
-            })
+            getRoomState(channel).observe(viewLifecycleOwner, Observer { updateRoomstate(it.toString()) })
         }
         return binding.root
     }
@@ -108,13 +101,10 @@ class ChatFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         binding.input.setDropDownBackgroundResource(R.color.colorPrimary)
-        preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { preferences, key ->
+        preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             when (key) {
                 getString(R.string.preference_timestamp_key) -> binding.chat.swapAdapter(adapter, false)
-                getString(R.string.preference_roomstate_key) -> {
-                    binding.roomstateText.visibility =
-                        if (preferences.getBoolean(key, true)) View.VISIBLE else View.GONE
-                }
+                getString(R.string.preference_roomstate_key) -> updateRoomstate(binding.roomstateText.text.toString())
             }
         }
         preferences = PreferenceManager.getDefaultSharedPreferences(requireContext()).apply {
@@ -130,6 +120,17 @@ class ChatFragment : Fragment() {
     fun clearInputFocus() {
         if (::binding.isInitialized) binding.input.clearFocus()
         hideKeyboard()
+    }
+
+    private fun updateRoomstate(roomstate: String) {
+        val key = getString(R.string.preference_roomstate_key)
+        binding.roomstateText.apply {
+            text = roomstate
+            visibility =
+                if (roomstate.isNotBlank() && ::preferences.isInitialized && preferences.getBoolean(key, true)) {
+                    View.VISIBLE
+                } else View.GONE
+        }
     }
 
     private fun handleSendMessage(): Boolean {
