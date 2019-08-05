@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.service.api
 
 import android.util.Log
+import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.service.api.model.BadgeEntities
 import com.flxrs.dankchat.service.api.model.EmoteEntities
 import com.flxrs.dankchat.service.api.model.RecentMessages
@@ -150,6 +151,7 @@ object TwitchApi {
             .build()
         val request = Request.Builder()
             .url(NUULS_UPLOAD_URL)
+            .header("User-Agent", "dankchat/${BuildConfig.VERSION_NAME}")
             .post(body)
             .build()
         try {
