@@ -170,7 +170,7 @@ class ChatAdapter(
                 }
                 spannable.setSpan(
                     userClickableSpan,
-                    time.length + 1 + badgesLength,
+                    prefixLength - displayName.length + badgesLength,
                     prefixLength + badgesLength,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
