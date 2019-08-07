@@ -77,6 +77,7 @@ class ChatFragment : Fragment() {
                         else -> false
                     }
                 }
+                chatLayout.layoutTransition.setAnimateParentHierarchy(false)
             }
             scrollBottom.setOnClickListener {
                 isAtBottom = true
