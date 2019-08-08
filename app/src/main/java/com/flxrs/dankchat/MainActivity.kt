@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
         viewModel.imageUploadedEvent.observe(this, Observer { (urlOrError, file) ->
             val message: String = if (!urlOrError.startsWith("Error")) {
                 val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                clipboard.primaryClip = android.content.ClipData.newPlainText("nuuls image url", urlOrError)
+                clipboard.setPrimaryClip(android.content.ClipData.newPlainText("nuuls image url", urlOrError))
                 "Copied: $urlOrError"
             } else urlOrError
 

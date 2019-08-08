@@ -46,13 +46,13 @@ object EmoteManager {
         val emotes = arrayListOf<ChatEmote>()
         val matcher = emotePattern.matcher(emoteTag)
         while (matcher.find()) {
-            val id = matcher.group(1)
-            val positions = matcher.group(2).split(',').map { pos ->
+            val id = matcher.group(1) ?: continue
+            val positions = matcher.group(2)?.split(',')?.map { pos ->
                 val start = pos.substringBefore('-').toInt()
                 val end = pos.substringAfter('-').toInt()
                 val unicodeExtra = unicodeFixPositions.count { it < start }
                 return@map "${(start + unicodeExtra)}-${(end + unicodeExtra + 1)}"
-            }
+            } ?: continue
 
             emotes.add(ChatEmote(positions, "$BASE_URL/$id/$EMOTE_SIZE", id, "", 1, false, isTwitch = true))
         }

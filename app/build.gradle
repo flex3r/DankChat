@@ -5,12 +5,12 @@ apply plugin: "kotlin-android-extensions"
 apply plugin: "kotlin-kapt"
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     dataBinding.enabled = true
     defaultConfig {
         applicationId "com.flxrs.dankchat"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 69
         versionName "0.9.7"
 

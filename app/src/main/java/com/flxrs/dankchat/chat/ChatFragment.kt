@@ -3,7 +3,6 @@ package com.flxrs.dankchat.chat
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +16,7 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -186,7 +186,7 @@ class ChatFragment : Fragment() {
             requireContext(),
             android.content.ClipboardManager::class.java
         ) as android.content.ClipboardManager).apply {
-            primaryClip = android.content.ClipData.newPlainText("twitch message", message)
+            setPrimaryClip(android.content.ClipData.newPlainText("twitch message", message))
         }
         Snackbar.make(binding.root, R.string.snackbar_message_copied, Snackbar.LENGTH_SHORT).apply {
             view.setBackgroundResource(R.color.colorPrimary)
