@@ -67,8 +67,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         preferenceStore = DankChatPreferenceStore(this)
-        val oauth = preferenceStore.getOAuthKey() ?: ""
-        val name = preferenceStore.getUserName() ?: ""
 
         adapter = ChatTabAdapter(supportFragmentManager, lifecycle)
         preferenceStore.getChannelsAsString()?.let { channels.addAll(it.split(',')) }
@@ -118,7 +116,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
         updateViewPagerVisibility()
 
         if (savedInstanceState == null) {
-            if (name.isNotBlank() && oauth.isNotBlank()) showSnackbar("Logged in as $name")
+
         }
     }
 
@@ -138,7 +136,12 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
     override fun onStart() {
         super.onStart()
         Intent(this, TwitchService::class.java).also {
-            if (!isServiceRunning(TwitchService::class.java)) startService(it)
+            if (!isServiceRunning(TwitchService::class.java)) {
+                startService(it)
+                val oauth = preferenceStore.getOAuthKey() ?: ""
+                val name = preferenceStore.getUserName() ?: ""
+                if (name.isNotBlank() && oauth.isNotBlank()) showSnackbar("Logged in as $name")
+            }
             if (!isBound) bindService(it, twitchServiceConnection, 0)
         }
     }
