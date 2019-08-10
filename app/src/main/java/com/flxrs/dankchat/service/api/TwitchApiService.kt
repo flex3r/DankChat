@@ -5,7 +5,7 @@ import com.flxrs.dankchat.service.api.model.*
 import retrofit2.Response
 import retrofit2.http.*
 
-interface TwitchService {
+interface TwitchApiService {
 
 
     @Headers(

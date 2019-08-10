@@ -59,4 +59,7 @@
     <string name="nuuls_upload_title">Custom image upload</string>
     <string name="snackbar_message_copied">Message copied</string>
     <string name="stream_information">Live with %d viewers</string>
+    <string name="notification_stop">Stop</string>
+    <string name="notification_title">FeelsDankMan</string>
+    <string name="notification_message">DankChat running in the background</string>
 </resources>

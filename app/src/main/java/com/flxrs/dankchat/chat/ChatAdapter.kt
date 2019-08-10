@@ -56,10 +56,6 @@ class ChatAdapter(
         onListChanged(currentList.size - 1)
     }
 
-    override fun getItemId(position: Int): Long {
-        return getItem(position).message.hashCode().toLong()
-    }
-
     override fun onViewRecycled(holder: ViewHolder) {
         val view = holder.binding.itemText
         EmoteManager.gifCallback.removeView(view)
@@ -255,19 +251,11 @@ class ChatAdapter(
 
     private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
         override fun areItemsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
-            return if ((!oldItem.historic && newItem.historic) || (!oldItem.message.timedOut && newItem.message.timedOut)) false else oldItem.message == newItem.message
+            return oldItem.message.id == newItem.message.id
         }
 
         override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
-            return oldItem.message.timedOut == newItem.message.timedOut
-                    && oldItem.message.name == newItem.message.name
-                    && oldItem.message.channel == newItem.message.channel
-                    && oldItem.message.message == newItem.message.message
-                    && oldItem.message.isNotify == newItem.message.isNotify
-                    && oldItem.message.isAction == newItem.message.isAction
-                    && oldItem.message.time == newItem.message.time
-                    && oldItem.message.isSystem == newItem.message.isSystem
-                    && oldItem.historic == newItem.historic
+            return oldItem == newItem && oldItem.message == newItem.message
         }
     }
 }

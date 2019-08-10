@@ -21,31 +21,17 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
 
     fun getRoomState(channel: String): LiveData<TwitchMessage.Roomstate> = twitchRepository.getRoomState(channel)
 
-    fun connectOrJoinChannel(
-        channel: String,
-        nick: String,
-        oauth: String,
-        id: Int,
-        loadEmotesAndBadges: Boolean = false,
-        startup: Boolean = false,
-        doReauth: Boolean = false
-    ) {
-        twitchRepository.connectAndAddChannel(channel, nick, oauth, id, loadEmotesAndBadges, startup, doReauth)
+    fun loadData(channel: String, oauth: String, id: Int, load3rdParty: Boolean, reAuth: Boolean) {
+        if (channel.isNotBlank()) {
+            twitchRepository.loadData(channel, oauth, id, load3rdParty, reAuth)
+        }
     }
 
-    fun partChannel(channel: String) = twitchRepository.partChannel(channel)
-
-    fun close(onClosed: () -> Unit) = twitchRepository.close(onClosed)
-
-    fun reconnect(onlyIfNecessary: Boolean = false) = twitchRepository.reconnect(onlyIfNecessary)
+    fun removeChannelData(channel: String) = twitchRepository.removeChannelData(channel)
 
     fun clear(channel: String) = twitchRepository.clear(channel)
 
     fun reloadEmotes(channel: String, oauth: String, id: Int) = twitchRepository.reloadEmotes(channel, oauth, id)
-
-    fun sendMessage(channel: String, message: String) {
-        if (message.isNotBlank()) twitchRepository.sendMessage(channel, message)
-    }
 
     fun uploadImage(file: File) = twitchRepository.uploadImage(file)
 }

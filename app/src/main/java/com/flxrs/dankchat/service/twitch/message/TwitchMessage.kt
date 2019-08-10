@@ -62,20 +62,10 @@ data class TwitchMessage(
                     )?.let { badges.add(Badge(badgeSet, it)) }
                     badgeSet.startsWith("bits") -> EmoteManager.getSubBadgeUrl(channel, badgeSet, badgeVersion)
                         ?: EmoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)?.let {
-                            badges.add(
-                                Badge(
-                                    badgeSet,
-                                    it
-                                )
-                            )
+                            badges.add(Badge(badgeSet, it))
                         }
                     else -> EmoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)?.let {
-                        badges.add(
-                            Badge(
-                                badgeSet,
-                                it
-                            )
-                        )
+                        badges.add(Badge(badgeSet, it))
                     }
                 }
             }
@@ -97,10 +87,10 @@ data class TwitchMessage(
         fun makeSystemMessage(
             message: String,
             channel: String,
-            timestamp: String = TimeUtils.localTime()
+            timestamp: String = TimeUtils.localTime(),
+            id: String = System.nanoTime().toString()
         ): TwitchMessage {
             val color = Color.parseColor("#717171")
-            val id = System.nanoTime().toString()
             return TwitchMessage(
                 timestamp,
                 channel = channel,
@@ -149,8 +139,9 @@ data class TwitchMessage(
             val notice = params[1]
             val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
             val time = TimeUtils.timestampToLocalTime(ts)
+            val id = tags["id"] ?: System.nanoTime().toString()
 
-            return makeSystemMessage(notice, channel, time)
+            return makeSystemMessage(notice, channel, time, id)
         }
 
         fun parse(message: IrcMessage): List<TwitchMessage> = with(message) {
@@ -170,8 +161,9 @@ data class TwitchMessage(
             val channel = params[0].substring(1)
             val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
             val time = TimeUtils.timestampToLocalTime(ts)
+            val id = tags["id"] ?: System.nanoTime().toString()
 
-            return makeSystemMessage("Now hosting $target", channel, time)
+            return makeSystemMessage("Now hosting $target", channel, time, id)
         }
 
         private fun parseClearChat(message: IrcMessage): TwitchMessage = with(message) {
@@ -183,8 +175,9 @@ data class TwitchMessage(
             }
             val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
             val time = TimeUtils.timestampToLocalTime(ts)
+            val id = tags["id"] ?: System.nanoTime().toString()
 
-            return makeSystemMessage(systemMessage, channel, time)
+            return makeSystemMessage(systemMessage, channel, time, id)
         }
     }
 

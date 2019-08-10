@@ -5,6 +5,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name=".DankChatApplication"
@@ -15,6 +16,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+
+        <service
+            android:name=".service.TwitchService"
+            android:stopWithTask="true" />
+
         <activity
             android:name=".MainActivity"
             android:windowSoftInputMode="adjustResize">

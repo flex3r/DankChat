@@ -2,11 +2,14 @@ package com.flxrs.dankchat
 
 import android.Manifest
 import android.app.Activity
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
+import android.os.IBinder
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
@@ -26,11 +29,13 @@ import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.SettingsActivity
+import com.flxrs.dankchat.service.TwitchService
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.utils.MediaUtils
 import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.AdvancedLoginDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.EditTextDialogFragment
+import com.flxrs.dankchat.utils.isServiceRunning
 import com.flxrs.dankchat.utils.reduceDragSensitivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -52,6 +57,11 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
     private var currentImagePath = ""
     private var showProgressBar = false
 
+    private var twitchService: TwitchService? = null
+    private var isBound = false
+
+    private val twitchServiceConnection = TwitchServiceConnection()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -59,7 +69,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
         preferenceStore = DankChatPreferenceStore(this)
         val oauth = preferenceStore.getOAuthKey() ?: ""
         val name = preferenceStore.getUserName() ?: ""
-        val id = preferenceStore.getUserId()
 
         adapter = ChatTabAdapter(supportFragmentManager, lifecycle)
         preferenceStore.getChannelsAsString()?.let { channels.addAll(it.split(',')) }
@@ -110,7 +119,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
 
         if (savedInstanceState == null) {
             if (name.isNotBlank() && oauth.isNotBlank()) showSnackbar("Logged in as $name")
-            connectAndJoinChannels(name, oauth, id, true, true)
         }
     }
 
@@ -125,6 +133,22 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
     override fun onResume() {
         super.onResume()
         reconnect(true)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Intent(this, TwitchService::class.java).also {
+            if (!isServiceRunning(TwitchService::class.java)) startService(it)
+            if (!isBound) bindService(it, twitchServiceConnection, 0)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (isBound) {
+            unbindService(twitchServiceConnection)
+            isBound = false
+        }
     }
 
     override fun onBackPressed() {
@@ -186,7 +210,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
                 val id = preferenceStore.getUserId()
 
                 if (resultCode == Activity.RESULT_OK && !oauth.isNullOrBlank() && !name.isNullOrBlank() && id != 0) {
-                    viewModel.close { connectAndJoinChannels(name, oauth, id) }
+                    twitchService?.close { connectAndJoinChannels(name, oauth, id) }
 
                     preferenceStore.setLoggedIn(true)
                     showSnackbar("Logged in as $name")
@@ -240,9 +264,10 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
         val lowerCaseChannel = channel.toLowerCase()
         if (!channels.contains(lowerCaseChannel)) {
             val oauth = preferenceStore.getOAuthKey() ?: ""
-            val name = preferenceStore.getUserName() ?: ""
             val id = preferenceStore.getUserId()
-            viewModel.connectOrJoinChannel(lowerCaseChannel, name, oauth, id, true)
+
+            twitchService?.joinChannel(lowerCaseChannel)
+            viewModel.loadData(lowerCaseChannel, oauth, id, load3rdParty = true, reAuth = false)
             channels.add(lowerCaseChannel)
             preferenceStore.setChannelsString(channels.joinToString(","))
 
@@ -271,7 +296,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
                         setUserId(it.id)
                         setLoggedIn(true)
                     }
-                    viewModel.close { connectAndJoinChannels(it.name, "oauth:$tokenWithoutSuffix", it.id) }
+                    twitchService?.close { connectAndJoinChannels(it.name, "oauth:$tokenWithoutSuffix", it.id) }
                     showSnackbar("Logged in as ${it.name}")
                 } else showSnackbar("Failed to login")
             } ?: showSnackbar("Invalid OAuth token")
@@ -366,20 +391,22 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
     }
 
     private fun reconnect(onlyIfNecessary: Boolean = false) {
-        viewModel.reconnect(onlyIfNecessary)
+        twitchService?.reconnect(onlyIfNecessary)
     }
 
     private fun connectAndJoinChannels(
         name: String,
         oauth: String,
         id: Int,
-        load3rdPartyEmotesAndBadges: Boolean = false,
-        startup: Boolean = false
+        load3rdParty: Boolean = false
     ) {
         if (channels.isEmpty()) {
-            viewModel.connectOrJoinChannel("", name, oauth, id, false, startup, true)
+            twitchService?.connect(name, oauth)
+            viewModel.loadData("", oauth, id, load3rdParty, true)
         } else channels.forEachIndexed { i, channel ->
-            viewModel.connectOrJoinChannel(channel, name, oauth, id, load3rdPartyEmotesAndBadges, startup, i == 0)
+            if (i == 0) twitchService?.connect(name, oauth)
+            twitchService?.joinChannel(channel)
+            viewModel.loadData(channel, oauth, id, load3rdParty, i == 0)
         }
     }
 
@@ -406,7 +433,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
         .setTitle(getString(R.string.confirm_logout_title))
         .setMessage(getString(R.string.confirm_logout_message))
         .setPositiveButton(getString(R.string.confirm_logout_positive_button)) { dialog, _ ->
-            viewModel.close { connectAndJoinChannels("", "", 0) }
+            twitchService?.close { connectAndJoinChannels("", "", 0) }
             preferenceStore.setUserName("")
             preferenceStore.setOAuthKey("")
             preferenceStore.setUserId(0)
@@ -437,7 +464,9 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
         val index = binding.viewPager.currentItem
         val channel = channels[index]
         channels.remove(channel)
-        viewModel.partChannel(channel)
+        twitchService?.partChannel(channel)
+        viewModel.removeChannelData(channel)
+
         if (channels.size > 0) {
             preferenceStore.setChannelsString(channels.joinToString(","))
             binding.viewPager.setCurrentItem(0, false)
@@ -449,6 +478,27 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
 
         invalidateOptionsMenu()
         updateViewPagerVisibility()
+    }
+
+    fun handleSendMessage(channel: String, input: String) = twitchService?.sendMessage(channel, input)
+
+    private inner class TwitchServiceConnection : ServiceConnection {
+
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            val binder = service as TwitchService.LocalBinder
+            twitchService = binder.service
+            isBound = true
+            val oauth = preferenceStore.getOAuthKey() ?: ""
+
+            val name = preferenceStore.getUserName() ?: ""
+            val id = preferenceStore.getUserId()
+            connectAndJoinChannels(name, oauth, id, true)
+        }
+
+        override fun onServiceDisconnected(className: ComponentName?) {
+            twitchService = null
+            isBound = false
+        }
     }
 
     companion object {

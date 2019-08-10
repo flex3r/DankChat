@@ -67,13 +67,15 @@ class WebSocketConnection(
 
     @Synchronized
     fun connect(nick: String, oAuth: String) {
-        this.nick = nick
-        this.oAuth = oAuth
-        isJustinFan = (oAuth.isBlank() || !oAuth.startsWith("oauth:"))
-        connecting = true
+        if (!readerConnected && !writerConnected) {
+            this.nick = nick
+            this.oAuth = oAuth
+            isJustinFan = (oAuth.isBlank() || !oAuth.startsWith("oauth:"))
+            connecting = true
 
-        readerWebSocket = client.newWebSocket(request, ReaderWebSocketListener())
-        writerWebSocket = client.newWebSocket(request, WriterWebSocketListener())
+            readerWebSocket = client.newWebSocket(request, ReaderWebSocketListener())
+            writerWebSocket = client.newWebSocket(request, WriterWebSocketListener())
+        }
     }
 
     @Synchronized

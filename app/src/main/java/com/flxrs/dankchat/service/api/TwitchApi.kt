@@ -45,7 +45,7 @@ object TwitchApi {
         .baseUrl(KRAKEN_BASE_URL)
         .addConverterFactory(MoshiConverterFactory.create())
         .build()
-        .create(TwitchService::class.java)
+        .create(TwitchApiService::class.java)
 
     private val nuulsUploadClient = OkHttpClient()
 

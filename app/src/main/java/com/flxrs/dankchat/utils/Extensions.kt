@@ -1,7 +1,9 @@
 package com.flxrs.dankchat.utils
 
 import android.app.Activity
+import android.app.ActivityManager
 import android.content.Context
+import android.content.Context.ACTIVITY_SERVICE
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
@@ -86,6 +88,12 @@ fun Context.hideKeyboard(view: View) {
     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }
+
+@Suppress("DEPRECATION") // Deprecated for third party Services.
+fun <T> Context.isServiceRunning(service: Class<T>) =
+    (getSystemService(ACTIVITY_SERVICE) as ActivityManager)
+        .getRunningServices(Integer.MAX_VALUE)
+        .any { it.service.className == service.name }
 
 // from https://medium.com/@al.e.shevelev/how-to-reduce-scroll-sensitivity-of-viewpager2-widget-87797ad02414
 fun ViewPager2.reduceDragSensitivity() {

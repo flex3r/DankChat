@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.flxrs.dankchat.DankChatViewModel
+import com.flxrs.dankchat.MainActivity
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.service.api.TwitchApi
@@ -55,9 +56,7 @@ class ChatFragment : Fragment() {
         manager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false).apply {
             stackFromEnd = true
         }
-        adapter = ChatAdapter(::scrollToPosition, ::mentionUser, ::copyMessage).apply {
-            setHasStableIds(true)
-        }
+        adapter = ChatAdapter(::scrollToPosition, ::mentionUser, ::copyMessage)
 
         binding = ChatFragmentBinding.inflate(inflater, container, false).apply {
             lifecycleOwner = this@ChatFragment
@@ -162,7 +161,7 @@ class ChatFragment : Fragment() {
 
     private fun handleSendMessage(): Boolean {
         val msg = binding.input.text.toString()
-        viewModel.sendMessage(channel, msg)
+        (requireActivity() as? MainActivity)?.handleSendMessage(channel, msg)
         binding.input.setText("")
         return true
     }

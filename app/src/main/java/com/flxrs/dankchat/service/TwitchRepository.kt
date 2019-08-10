@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.irc.IrcMessage
-import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
@@ -17,10 +16,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.core.KoinComponent
-import org.koin.core.get
-import org.koin.core.parameter.parametersOf
 import java.io.File
 import java.nio.ByteBuffer
+import kotlin.collections.set
 
 class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
@@ -34,7 +32,6 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     private var loadedGlobalEmotes = false
     private var loadedTwitchEmotes = false
     private var lastMessage = ""
-    private val connection: WebSocketConnection = get { parametersOf(::handleDisconnect, ::onMessage) }
 
     val imageUploadedEvent = SingleLiveEvent<Pair<String, File>>()
 
@@ -74,24 +71,13 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         return liveData
     }
 
-    @Synchronized
-    fun connectAndAddChannel(
-        channel: String,
-        nick: String,
-        oAuth: String,
-        id: Int,
-        load3rdPartyEmotesAndBadges: Boolean = false,
-        startup: Boolean = false,
-        doReauth: Boolean = false
-    ) {
-        if (startup && !hasDisconnected) return
-        if (doReauth) {
+    fun loadData(channel: String, oAuth: String, id: Int, load3rdParty: Boolean, reAuth: Boolean) {
+        if (reAuth) {
             loadedTwitchEmotes = false
-            connection.connect(nick, oAuth)
         }
 
         scope.launch {
-            if (load3rdPartyEmotesAndBadges) {
+            if (load3rdParty) {
                 loadBadges(channel)
                 load3rdPartyEmotes(channel)
                 loadRecentMessages(channel)
@@ -102,34 +88,23 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
             setSuggestions(channel)
         }
-
-        connection.joinChannel(channel)
     }
 
-    fun partChannel(channel: String) {
-        connection.partChannel(channel)
+    fun removeChannelData(channel: String) {
         chatLiveDatas[channel]?.postValue(emptyList())
         chatLiveDatas.remove("channel")
     }
 
-    fun sendMessage(channel: String, message: String) {
-        val suffix = if (lastMessage == message) " $INVISIBLE_CHAR" else ""
-        connection.sendMessage("PRIVMSG #$channel :$message$suffix")
-        lastMessage = message
+    fun sendMessage(channel: String, message: String, onResult: (msg: String) -> Unit) {
+        if (message.isNotBlank()) {
+            val suffix = if (lastMessage == message) " $INVISIBLE_CHAR" else ""
+            lastMessage = message
+            onResult("PRIVMSG #$channel :$message$suffix")
+        }
     }
 
     @Synchronized
-    fun reconnect(onlyIfNecessary: Boolean) {
-        connection.reconnect(onlyIfNecessary)
-    }
-
-    @Synchronized
-    fun close(onClosed: () -> Unit) {
-        connection.close(onClosed)
-    }
-
-    @Synchronized
-    private fun handleDisconnect() {
+    fun handleDisconnect() {
         if (!hasDisconnected) {
             hasDisconnected = true
             canType.keys.forEach { canType[it]?.postValue("Disconnected") }
@@ -157,17 +132,17 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         imageUploadedEvent.postValue(url to file)
     }
 
-    private fun onMessage(msg: IrcMessage) = when (msg.command) {
-        "366" -> handleConnected(msg.params[1].substring(1))
+    fun onMessage(msg: IrcMessage, isJustinFan: Boolean) = when (msg.command) {
+        "366" -> handleConnected(msg.params[1].substring(1), isJustinFan)
         "CLEARCHAT" -> handleClearchat(msg)
         "ROOMSTATE" -> handleRoomstate(msg)
         else -> handleMessage(msg)
     }
 
-    private fun handleConnected(channel: String) {
+    private fun handleConnected(channel: String, isJustinFan: Boolean) {
         makeAndPostSystemMessage("Connected", channel)
         hasDisconnected = false
-        val hint = if (connection.isJustinFan) "Not logged in" else "Start chatting"
+        val hint = if (isJustinFan) "Not logged in" else "Start chatting"
         canType[channel]?.postValue(hint) ?: MutableLiveData(hint)
     }
 
@@ -209,9 +184,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         } else {
             val currentChat = chatLiveDatas[channel]?.value ?: emptyList()
             chatLiveDatas[channel]?.postValue(
-                currentChat.addAndLimit(
-                    ChatItem(TwitchMessage.makeSystemMessage(message, channel))
-                )
+                currentChat.addAndLimit(ChatItem(TwitchMessage.makeSystemMessage(message, channel)))
             )
         }
     }
