@@ -10,7 +10,6 @@ import android.content.res.Configuration
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.media.app.NotificationCompat.MediaStyle
 import com.flxrs.dankchat.MainActivity
@@ -26,7 +25,8 @@ class TwitchService : Service(), KoinComponent {
     private val binder = LocalBinder()
     private val repository: TwitchRepository = get()
     private val connection: WebSocketConnection = get { parametersOf(::onDisconnect, ::onMessage) }
-    private var startedConnection = false
+    var startedConnection = false
+        private set
     private var changingConfiguration = false
 
     override fun onBind(p0: Intent?): IBinder? {
@@ -103,7 +103,10 @@ class TwitchService : Service(), KoinComponent {
     }
 
     fun connect(nick: String, oauth: String) {
-        if (!startedConnection) connection.connect(nick, oauth)
+        if (!startedConnection) {
+            connection.connect(nick, oauth)
+            startedConnection = true
+        }
     }
 
     fun joinChannel(channel: String) = connection.joinChannel(channel)

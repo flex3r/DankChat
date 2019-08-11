@@ -403,13 +403,15 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
         id: Int,
         load3rdParty: Boolean = false
     ) {
-        if (channels.isEmpty()) {
-            twitchService?.connect(name, oauth)
-            viewModel.loadData("", oauth, id, load3rdParty, true)
-        } else channels.forEachIndexed { i, channel ->
-            if (i == 0) twitchService?.connect(name, oauth)
-            twitchService?.joinChannel(channel)
-            viewModel.loadData(channel, oauth, id, load3rdParty, i == 0)
+        if (twitchService?.startedConnection == false) {
+            if (channels.isEmpty()) {
+                twitchService?.connect(name, oauth)
+                viewModel.loadData("", oauth, id, load3rdParty, true)
+            } else channels.forEachIndexed { i, channel ->
+                if (i == 0) twitchService?.connect(name, oauth)
+                twitchService?.joinChannel(channel)
+                viewModel.loadData(channel, oauth, id, load3rdParty, i == 0)
+            }
         }
     }
 

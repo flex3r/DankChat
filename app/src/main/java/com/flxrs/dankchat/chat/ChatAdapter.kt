@@ -100,17 +100,11 @@ class ChatAdapter(
                 foreground = ColorDrawable(foregroundColor)
             }
 
-            val background = if (isNotify) {
-                R.color.sub_background
-            } else if (currentUserName.isNotBlank() && !name.equals(
-                    currentUserName,
-                    true
-                ) && !timedOut && !isSystem && message.contains(currentUserName, true)
-            ) {
-                R.color.highlight_background
-            } else {
-                android.R.color.transparent
-            }
+            val background = if (isNotify) R.color.sub_background
+            else if (currentUserName.isNotBlank() && !name.equals(currentUserName, true)
+                && !timedOut && !isSystem && message.contains(currentUserName, true)
+            ) R.color.highlight_background
+            else android.R.color.transparent
             this@with.setBackgroundResource(background)
 
 
@@ -251,11 +245,11 @@ class ChatAdapter(
 
     private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
         override fun areItemsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
-            return oldItem.message.id == newItem.message.id
+            return oldItem == newItem
         }
 
         override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
-            return oldItem == newItem && oldItem.message == newItem.message
+            return oldItem.message == newItem.message
         }
     }
 }

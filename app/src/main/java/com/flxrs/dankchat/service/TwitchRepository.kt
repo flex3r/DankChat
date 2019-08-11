@@ -92,7 +92,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
     fun removeChannelData(channel: String) {
         chatLiveDatas[channel]?.postValue(emptyList())
-        chatLiveDatas.remove("channel")
+        chatLiveDatas.remove(channel)
     }
 
     fun sendMessage(channel: String, message: String, onResult: (msg: String) -> Unit) {
