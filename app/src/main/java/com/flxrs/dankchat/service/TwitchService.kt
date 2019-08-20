@@ -70,7 +70,11 @@ class TwitchService : Service(), KoinComponent {
                 .setVibrate(null)
                 .setContentTitle(title)
                 .setContentText(message)
-                .addAction(R.drawable.ic_clear_24dp, getString(R.string.notification_stop), pendingStopIntent)
+                .addAction(
+                    R.drawable.ic_clear_24dp,
+                    getString(R.string.notification_stop),
+                    pendingStopIntent
+                )
                 .setStyle(MediaStyle().setShowActionsInCompactView(0))
                 .setContentIntent(pendingStartActivityIntent)
                 .setSmallIcon(R.mipmap.ic_launcher_foreground)
@@ -94,13 +98,21 @@ class TwitchService : Service(), KoinComponent {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val name = getString(R.string.app_name)
-            val channel = NotificationChannel(CHANNEL_ID_LOW, name, NotificationManager.IMPORTANCE_LOW).apply {
+            val channel = NotificationChannel(
+                CHANNEL_ID_LOW,
+                name,
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
                 enableVibration(false)
                 enableLights(false)
                 setShowBadge(false)
             }
             val mentionChannel =
-                NotificationChannel(CHANNEL_ID_DEFAULT, "Mentions", NotificationManager.IMPORTANCE_DEFAULT)
+                NotificationChannel(
+                    CHANNEL_ID_DEFAULT,
+                    "Mentions",
+                    NotificationManager.IMPORTANCE_DEFAULT
+                )
 
             manager.createNotificationChannel(channel)
             manager.createNotificationChannel(mentionChannel)
@@ -165,6 +177,7 @@ class TwitchService : Service(), KoinComponent {
             .setSmallIcon(R.mipmap.ic_launcher_foreground)
             .setGroup(MENTION_GROUP)
             .setGroupSummary(true)
+            .setAutoCancel(true)
             .build()
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID_DEFAULT)

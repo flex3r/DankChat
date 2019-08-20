@@ -54,7 +54,17 @@ object EmoteManager {
                 return@map "${(start + unicodeExtra)}-${(end + unicodeExtra + 1)}"
             } ?: continue
 
-            emotes.add(ChatEmote(positions, "$BASE_URL/$id/$EMOTE_SIZE", id, "", 1, false, isTwitch = true))
+            emotes.add(
+                ChatEmote(
+                    positions,
+                    "$BASE_URL/$id/$EMOTE_SIZE",
+                    id,
+                    "",
+                    1,
+                    false,
+                    isTwitch = true
+                )
+            )
         }
         return emotes
     }
@@ -91,7 +101,8 @@ object EmoteManager {
     fun getSubBadgeUrl(channel: String, set: String, version: String) =
         channelBadges[channel]?.sets?.get(set)?.versions?.get(version)?.imageUrlHigh
 
-    fun getGlobalBadgeUrl(set: String, version: String) = globalBadges[set]?.versions?.get(version)?.imageUrlHigh
+    fun getGlobalBadgeUrl(set: String, version: String) =
+        globalBadges[set]?.versions?.get(version)?.imageUrlHigh
 
     fun setChannelBadges(channel: String, entity: BadgeEntities.Result) {
         channelBadges[channel] = entity
@@ -101,40 +112,43 @@ object EmoteManager {
         globalBadges.putAll(entity.sets)
     }
 
-    suspend fun setTwitchEmotes(twitchResult: EmoteEntities.Twitch.Result) = withContext(Dispatchers.Default) {
-        twitchResult.sets.forEach {
-            it.value.forEach { emoteResult ->
-                val emote = GenericEmote(
-                    emoteResult.name,
-                    "$BASE_URL/${emoteResult.id}/$EMOTE_SIZE",
-                    false,
-                    "${emoteResult.id}",
-                    1
-                )
-                twitchEmotes[emote.keyword] = emote
+    suspend fun setTwitchEmotes(twitchResult: EmoteEntities.Twitch.Result) =
+        withContext(Dispatchers.Default) {
+            twitchResult.sets.forEach {
+                it.value.forEach { emoteResult ->
+                    val emote = GenericEmote(
+                        emoteResult.name,
+                        "$BASE_URL/${emoteResult.id}/$EMOTE_SIZE",
+                        false,
+                        "${emoteResult.id}",
+                        1
+                    )
+                    twitchEmotes[emote.keyword] = emote
+                }
             }
         }
-    }
 
-    suspend fun setFFZEmotes(channel: String, ffzResult: EmoteEntities.FFZ.Result) = withContext(Dispatchers.Default) {
-        val emotes = hashMapOf<String, GenericEmote>()
-        ffzResult.sets.forEach {
-            it.value.emotes.forEach { emote ->
-                val parsedEmote = parseFFZEmote(emote)
-                emotes[parsedEmote.keyword] = parsedEmote
+    suspend fun setFFZEmotes(channel: String, ffzResult: EmoteEntities.FFZ.Result) =
+        withContext(Dispatchers.Default) {
+            val emotes = hashMapOf<String, GenericEmote>()
+            ffzResult.sets.forEach {
+                it.value.emotes.forEach { emote ->
+                    val parsedEmote = parseFFZEmote(emote)
+                    emotes[parsedEmote.keyword] = parsedEmote
+                }
             }
+            ffzEmotes[channel] = emotes
         }
-        ffzEmotes[channel] = emotes
-    }
 
-    suspend fun setFFZGlobalEmotes(ffzResult: EmoteEntities.FFZ.GlobalResult) = withContext(Dispatchers.Default) {
-        ffzResult.sets.forEach {
-            it.value.emotes.forEach { emote ->
-                val parsedEmote = parseFFZEmote(emote)
-                globalFFZEmotes[parsedEmote.keyword] = parsedEmote
+    suspend fun setFFZGlobalEmotes(ffzResult: EmoteEntities.FFZ.GlobalResult) =
+        withContext(Dispatchers.Default) {
+            ffzResult.sets.forEach {
+                it.value.emotes.forEach { emote ->
+                    val parsedEmote = parseFFZEmote(emote)
+                    globalFFZEmotes[parsedEmote.keyword] = parsedEmote
+                }
             }
         }
-    }
 
     suspend fun setBTTVEmotes(channel: String, bttvResult: EmoteEntities.BTTV.Result) =
         withContext(Dispatchers.Default) {
@@ -146,12 +160,13 @@ object EmoteManager {
             bttvEmotes[channel] = emotes
         }
 
-    suspend fun setBTTVGlobalEmotes(bttvResult: EmoteEntities.BTTV.GlobalResult) = withContext(Dispatchers.Default) {
-        bttvResult.emotes.forEach {
-            val emote = parseBTTVGlobalEmote(it)
-            globalBttvEmotes[emote.keyword] = emote
+    suspend fun setBTTVGlobalEmotes(bttvResult: EmoteEntities.BTTV.GlobalResult) =
+        withContext(Dispatchers.Default) {
+            bttvResult.emotes.forEach {
+                val emote = parseBTTVGlobalEmote(it)
+                globalBttvEmotes[emote.keyword] = emote
+            }
         }
-    }
 
     fun getEmotesForSuggestions(channel: String): List<GenericEmote> {
         val result = mutableListOf<GenericEmote>()

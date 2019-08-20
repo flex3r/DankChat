@@ -42,10 +42,11 @@ data class TwitchMessage(
             val time = TimeUtils.timestampToLocalTime(ts)
 
             var isAction = false
-            val content = if (params.size > 1 && params[1].startsWith("\u0001ACTION") && params[1].endsWith("\u0001")) {
-                isAction = true
-                params[1].substring("\u0001ACTION ".length, params[1].length - "\u0001".length)
-            } else if (params.size > 1) params[1] else ""
+            val content =
+                if (params.size > 1 && params[1].startsWith("\u0001ACTION") && params[1].endsWith("\u0001")) {
+                    isAction = true
+                    params[1].substring("\u0001ACTION ".length, params[1].length - "\u0001".length)
+                } else if (params.size > 1) params[1] else ""
 
             val channel = params[0].substring(1)
             val emoteTag = tags["emotes"] ?: ""
@@ -65,7 +66,11 @@ data class TwitchMessage(
                         badgeSet,
                         badgeVersion
                     )?.let { badges.add(Badge(badgeSet, it)) }
-                    badgeSet.startsWith("bits") -> EmoteManager.getSubBadgeUrl(channel, badgeSet, badgeVersion)
+                    badgeSet.startsWith("bits") -> EmoteManager.getSubBadgeUrl(
+                        channel,
+                        badgeSet,
+                        badgeVersion
+                    )
                         ?: EmoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)?.let {
                             badges.add(Badge(badgeSet, it))
                         }
@@ -107,37 +112,38 @@ data class TwitchMessage(
             )
         }
 
-        fun parseUserNotice(message: IrcMessage, historic: Boolean = false): List<TwitchMessage> = with(message) {
-            val messages = mutableListOf<TwitchMessage>()
-            val msgId = tags["msg-id"]
-            val id = tags["id"] ?: System.nanoTime().toString()
-            val channel = params[0].substring(1)
-            val systemMsg = if (historic) {
-                params[1]
-            } else {
-                tags["system-msg"] ?: ""
-            }
-            val color = Color.parseColor("#717171")
+        fun parseUserNotice(message: IrcMessage, historic: Boolean = false): List<TwitchMessage> =
+            with(message) {
+                val messages = mutableListOf<TwitchMessage>()
+                val msgId = tags["msg-id"]
+                val id = tags["id"] ?: System.nanoTime().toString()
+                val channel = params[0].substring(1)
+                val systemMsg = if (historic) {
+                    params[1]
+                } else {
+                    tags["system-msg"] ?: ""
+                }
+                val color = Color.parseColor("#717171")
 
-            val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
-            val time = TimeUtils.timestampToLocalTime(ts)
+                val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
+                val time = TimeUtils.timestampToLocalTime(ts)
 
-            if (msgId != null && (msgId == "sub" || msgId == "resub")) {
-                val subMsg = parseFromIrc(message, true)
-                if (subMsg.message.isNotBlank()) messages.add(subMsg)
+                if (msgId != null && (msgId == "sub" || msgId == "resub")) {
+                    val subMsg = parseFromIrc(message, true)
+                    if (subMsg.message.isNotBlank()) messages.add(subMsg)
+                }
+                val systemTwitchMessage = TwitchMessage(
+                    time,
+                    channel = channel,
+                    name = "",
+                    color = color,
+                    message = systemMsg,
+                    isNotify = true,
+                    id = id
+                )
+                messages.add(systemTwitchMessage)
+                return messages
             }
-            val systemTwitchMessage = TwitchMessage(
-                time,
-                channel = channel,
-                name = "",
-                color = color,
-                message = systemMsg,
-                isNotify = true,
-                id = id
-            )
-            messages.add(systemTwitchMessage)
-            return messages
-        }
 
         fun parseNotice(message: IrcMessage): TwitchMessage = with(message) {
             val channel = params[0].substring(1)

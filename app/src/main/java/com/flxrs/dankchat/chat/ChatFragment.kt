@@ -50,7 +50,11 @@ class ChatFragment : Fragment() {
     private var channel: String = ""
     private var fetchJob: Job? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         channel = requireArguments().getString(CHANNEL_ARG, "")
 
         manager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false).apply {
@@ -97,7 +101,9 @@ class ChatFragment : Fragment() {
                 val adapter = EmoteSuggestionsArrayAdapter(list)
                 binding.input.setAdapter(adapter)
             })
-            getRoomState(channel).observe(viewLifecycleOwner, Observer { updateRoomstate(it.toString()) })
+            getRoomState(channel).observe(
+                viewLifecycleOwner,
+                Observer { updateRoomstate(it.toString()) })
         }
         updateStreamInfo()
         return binding.root
@@ -109,7 +115,10 @@ class ChatFragment : Fragment() {
 
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             when (key) {
-                getString(R.string.preference_timestamp_key) -> binding.chat.swapAdapter(adapter, false)
+                getString(R.string.preference_timestamp_key) -> binding.chat.swapAdapter(
+                    adapter,
+                    false
+                )
                 getString(R.string.preference_roomstate_key) -> updateRoomstate(binding.roomstateText.text.toString())
                 getString(R.string.preference_streaminfo_key) -> updateStreamInfo()
             }
@@ -134,7 +143,11 @@ class ChatFragment : Fragment() {
         binding.roomstateText.apply {
             text = roomstate
             visibility =
-                if (roomstate.isNotBlank() && ::preferences.isInitialized && preferences.getBoolean(key, true)) {
+                if (roomstate.isNotBlank() && ::preferences.isInitialized && preferences.getBoolean(
+                        key,
+                        true
+                    )
+                ) {
                     View.VISIBLE
                 } else View.GONE
         }
@@ -215,7 +228,10 @@ class ChatFragment : Fragment() {
         addOnScrollListener(ChatScrollListener())
     }
 
-    private fun RecyclerView.smoothSnapToPositon(position: Int, snapMode: Int = LinearSmoothScroller.SNAP_TO_END) {
+    private fun RecyclerView.smoothSnapToPositon(
+        position: Int,
+        snapMode: Int = LinearSmoothScroller.SNAP_TO_END
+    ) {
         val smoothScroller = object : LinearSmoothScroller(this.context) {
             override fun getVerticalSnapPreference(): Int = snapMode
 
@@ -238,7 +254,12 @@ class ChatFragment : Fragment() {
     }
 
     private inner class EmoteSuggestionsArrayAdapter(list: List<GenericEmote>) :
-        ArrayAdapter<GenericEmote>(requireContext(), R.layout.emote_suggestion_item, R.id.suggestion_text, list) {
+        ArrayAdapter<GenericEmote>(
+            requireContext(),
+            R.layout.emote_suggestion_item,
+            R.id.suggestion_text,
+            list
+        ) {
         override fun getCount(): Int {
             val count = super.getCount()
             binding.input.apply {
@@ -263,7 +284,11 @@ class ChatFragment : Fragment() {
                     .load(emote.url)
                     .placeholder(R.drawable.ic_missing_emote)
                     .error(R.drawable.ic_missing_emote)
-                    .into(GifDrawableTarget(emote.keyword, false) { imageView.setImageDrawable(it) })
+                    .into(
+                        GifDrawableTarget(
+                            emote.keyword,
+                            false
+                        ) { imageView.setImageDrawable(it) })
                 else Glide.with(imageView)
                     .asDrawable()
                     .override(textView.lineHeight * 2)

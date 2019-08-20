@@ -82,8 +82,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             .apply {
                 viewPager.adapter = adapter
                 viewPager.reduceDragSensitivity()
-                viewPager.offscreenPageLimit =
-                    if (channels.size > 1) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
+                viewPager.offscreenPageLimit = calculatePageLimit()
                 tabLayoutMediator =
                     TabLayoutMediator(tabs, viewPager) { tab, position ->
                         tab.text = adapter.titleList[position]
@@ -293,8 +292,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             preferenceStore.setChannelsString(channels.joinToString(","))
 
             adapter.addFragment(lowerCaseChannel)
-            binding.viewPager.offscreenPageLimit =
-                if (channels.size > 1) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
+            binding.viewPager.offscreenPageLimit = calculatePageLimit()
             binding.viewPager.setCurrentItem(channels.size - 1, false)
 
             invalidateOptionsMenu()
@@ -313,7 +311,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 if (it.name.isNotBlank()) {
                     preferenceStore.apply {
                         setOAuthKey("oauth:$tokenWithoutSuffix")
-                        setUserName(it.name.toLowerCase())
+                        setUserName(it.name.toLowerCase(Locale.getDefault()))
                         setUserId(it.id)
                         setLoggedIn(true)
                     }
@@ -329,6 +327,9 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             } ?: showSnackbar("Invalid OAuth token")
         }
     }
+
+    fun handleSendMessage(channel: String, input: String) =
+        twitchService?.sendMessage(channel, input)
 
     private fun showNuulsUploadDialogIfNotAcknowledged(action: () -> Unit) {
         if (!preferenceStore.getNuulsAcknowledge()) {
@@ -504,16 +505,15 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             binding.viewPager.setCurrentItem(0, false)
         } else preferenceStore.setChannelsString(null)
 
-        binding.viewPager.offscreenPageLimit =
-            if (channels.size > 1) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
+        binding.viewPager.offscreenPageLimit = calculatePageLimit()
         adapter.removeFragment(index)
 
         invalidateOptionsMenu()
         updateViewPagerVisibility()
     }
 
-    fun handleSendMessage(channel: String, input: String) =
-        twitchService?.sendMessage(channel, input)
+    private fun calculatePageLimit() =
+        if (channels.size > 1) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 
     private inner class TwitchServiceConnection : ServiceConnection {
 

@@ -11,13 +11,14 @@ class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        DataBindingUtil.setContentView<SettingsActivityBinding>(this, R.layout.settings_activity).apply {
-            setSupportActionBar(settingsToolbar)
-            supportActionBar?.apply {
-                setDisplayHomeAsUpEnabled(true)
-                title = "Settings"
+        DataBindingUtil.setContentView<SettingsActivityBinding>(this, R.layout.settings_activity)
+            .apply {
+                setSupportActionBar(settingsToolbar)
+                supportActionBar?.apply {
+                    setDisplayHomeAsUpEnabled(true)
+                    title = "Settings"
+                }
             }
-        }
         PreferenceManager.setDefaultValues(this, R.xml.settings, false)
     }
 

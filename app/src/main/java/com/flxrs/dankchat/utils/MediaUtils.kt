@@ -37,7 +37,11 @@ object MediaUtils {
                     MEDIA_DOCUMENT_AUTHORITY -> {
                         val id = docId.split(":")[1]
                         val selection = MediaStore.Images.Media._ID + "=" + id
-                        return getImagePath(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection)
+                        return getImagePath(
+                            context,
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                            selection
+                        )
                     }
                     DOWNLOADS_DOCUMENT_AUTHORITY -> {
                         val contentUri = ContentUris.withAppendedId(
