@@ -49,12 +49,10 @@ class ChatFragment : Fragment() {
     private var isAtBottom = true
     private var channel: String = ""
     private var fetchJob: Job? = null
+    private var roomState = ""
+    private var liveInfo = ""
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         channel = requireArguments().getString(CHANNEL_ARG, "")
 
         manager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false).apply {
@@ -88,14 +86,14 @@ class ChatFragment : Fragment() {
                 scrollToPosition(adapter.itemCount - 1)
                 scrollBottom.hide()
             }
-            send.setOnClickListener { handleSendMessage() }
+            inputLayout.setEndIconOnClickListener { handleSendMessage() }
         }
 
         if (channel.isNotBlank()) viewModel.run {
             getChat(channel).observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
             getCanType(channel).observe(viewLifecycleOwner, Observer {
                 binding.input.isEnabled = it == "Start chatting"
-                binding.input.hint = it
+                binding.inputLayout.hint = it
             })
             getEmoteKeywords(channel).observe(viewLifecycleOwner, Observer { list ->
                 val adapter = EmoteSuggestionsArrayAdapter(list)
@@ -103,7 +101,7 @@ class ChatFragment : Fragment() {
             })
             getRoomState(channel).observe(
                 viewLifecycleOwner,
-                Observer { updateRoomstate(it.toString()) })
+                Observer { updateChannelData(roomState = it.toString()) })
         }
         updateStreamInfo()
         return binding.root
@@ -115,11 +113,8 @@ class ChatFragment : Fragment() {
 
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             when (key) {
-                getString(R.string.preference_timestamp_key) -> binding.chat.swapAdapter(
-                    adapter,
-                    false
-                )
-                getString(R.string.preference_roomstate_key) -> updateRoomstate(binding.roomstateText.text.toString())
+                getString(R.string.preference_timestamp_key) -> binding.chat.swapAdapter(adapter, false)
+                getString(R.string.preference_roomstate_key) -> updateChannelData()
                 getString(R.string.preference_streaminfo_key) -> updateStreamInfo()
             }
         }
@@ -138,18 +133,27 @@ class ChatFragment : Fragment() {
         hideKeyboard()
     }
 
-    private fun updateRoomstate(roomstate: String) {
-        val key = getString(R.string.preference_roomstate_key)
-        binding.roomstateText.apply {
-            text = roomstate
-            visibility =
-                if (roomstate.isNotBlank() && ::preferences.isInitialized && preferences.getBoolean(
-                        key,
-                        true
-                    )
-                ) {
-                    View.VISIBLE
-                } else View.GONE
+    private fun updateChannelData(roomState: String = this.roomState, liveInfo: String = this.liveInfo) {
+        this.roomState = roomState
+        this.liveInfo = liveInfo
+
+        if (::preferences.isInitialized) {
+            val roomStateKey = getString(R.string.preference_roomstate_key)
+            val liveInfoKey = getString(R.string.preference_streaminfo_key)
+
+            val roomStateEnabled =
+                preferences.getBoolean(roomStateKey, true) && roomState.isNotBlank()
+            val liveInfoEnabled = preferences.getBoolean(liveInfoKey, true) && liveInfo.isNotBlank()
+            val text = when {
+                roomStateEnabled && liveInfoEnabled -> "$roomState - $liveInfo"
+                roomStateEnabled -> roomState
+                liveInfoEnabled -> liveInfo
+                else -> ""
+            }
+            binding.inputLayout.apply {
+                helperText = text
+                isHelperTextEnabled = roomStateEnabled || liveInfoEnabled
+            }
         }
     }
 
@@ -162,13 +166,11 @@ class ChatFragment : Fragment() {
                 timer(STREAM_REFRESH_RATE) {
                     val stream = TwitchApi.getStream(channel)
                     if (stream != null) {
-                        binding.streaminfoText.apply {
-                            visibility = View.VISIBLE
-                            text = getString(R.string.stream_information, stream.viewers)
-                        }
-                    } else binding.streaminfoText.visibility = View.GONE
+                        val text = getString(R.string.stream_information, stream.viewers)
+                        updateChannelData(liveInfo = text)
+                    } else updateChannelData(liveInfo = "")
                 }
-            } else binding.streaminfoText.visibility = View.GONE
+            } else updateChannelData(liveInfo = "")
         }
     }
 
@@ -194,10 +196,7 @@ class ChatFragment : Fragment() {
     }
 
     private fun copyMessage(message: String) {
-        (getSystemService(
-            requireContext(),
-            android.content.ClipboardManager::class.java
-        ) as android.content.ClipboardManager).apply {
+        (getSystemService(requireContext(), android.content.ClipboardManager::class.java) as android.content.ClipboardManager).apply {
             setPrimaryClip(android.content.ClipData.newPlainText("twitch message", message))
         }
         Snackbar.make(binding.root, R.string.snackbar_message_copied, Snackbar.LENGTH_SHORT).apply {
@@ -212,9 +211,7 @@ class ChatFragment : Fragment() {
             binding.chat.smoothSnapToPositon(position)
             lifecycleScope.launch {
                 delay(50)
-                if (isAtBottom && position != adapter.itemCount - 1) {
-                    binding.chat.post { manager.scrollToPositionWithOffset(position, 0) }
-                }
+                if (isAtBottom && position != adapter.itemCount - 1) binding.chat.post { manager.scrollToPositionWithOffset(position, 0) }
             }
         }
     }
@@ -228,10 +225,7 @@ class ChatFragment : Fragment() {
         addOnScrollListener(ChatScrollListener())
     }
 
-    private fun RecyclerView.smoothSnapToPositon(
-        position: Int,
-        snapMode: Int = LinearSmoothScroller.SNAP_TO_END
-    ) {
+    private fun RecyclerView.smoothSnapToPositon(position: Int, snapMode: Int = LinearSmoothScroller.SNAP_TO_END) {
         val smoothScroller = object : LinearSmoothScroller(this.context) {
             override fun getVerticalSnapPreference(): Int = snapMode
 
@@ -254,12 +248,7 @@ class ChatFragment : Fragment() {
     }
 
     private inner class EmoteSuggestionsArrayAdapter(list: List<GenericEmote>) :
-        ArrayAdapter<GenericEmote>(
-            requireContext(),
-            R.layout.emote_suggestion_item,
-            R.id.suggestion_text,
-            list
-        ) {
+        ArrayAdapter<GenericEmote>(requireContext(), R.layout.emote_suggestion_item, R.id.suggestion_text, list) {
         override fun getCount(): Int {
             val count = super.getCount()
             binding.input.apply {

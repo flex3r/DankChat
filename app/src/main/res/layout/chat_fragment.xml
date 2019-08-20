@@ -31,7 +31,7 @@
             app:icon="@drawable/ic_keyboard_arrow_down_24dp"
             app:iconSize="16dp"
             app:iconTint="@android:color/white"
-            app:layout_constraintBottom_toTopOf="@id/input"
+            app:layout_constraintBottom_toTopOf="@id/input_layout"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -49,69 +49,39 @@
             android:layout_height="2dp"
             android:background="@color/colorPrimary"
             android:paddingBottom="1dp"
-            app:layout_constraintBottom_toTopOf="@id/input"
+            app:layout_constraintBottom_toTopOf="@id/input_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/chat" />
 
-        <com.flxrs.dankchat.utils.CustomMultiAutoCompleteTextView
-            android:id="@+id/input"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:completionThreshold="2"
-            android:enabled="false"
             android:hint="@string/start_chatting"
-            android:imeOptions="actionSend|flagNoExtractUi"
-            android:inputType="text"
-            android:singleLine="true"
-            app:layout_constraintBottom_toTopOf="@id/bottom_barrier"
-            app:layout_constraintEnd_toStartOf="@id/send"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider" />
-
-        <ImageButton
-            android:id="@+id/send"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?android:selectableItemBackground"
-            android:contentDescription="@string/send_hint"
-            android:src="@drawable/ic_send_24dp"
-            app:layout_constraintBottom_toBottomOf="@id/input"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/input"
-            app:layout_constraintTop_toTopOf="@id/input" />
-
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/bottom_barrier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:barrierDirection="top"
-            app:constraint_referenced_ids="roomstate_text,streaminfo_text" />
-
-        <TextView
-            android:id="@+id/roomstate_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="0dp"
-            android:paddingTop="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/streaminfo_text"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/bottom_barrier" />
-
-        <TextView
-            android:id="@+id/streaminfo_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="8dp"
-            android:gravity="end"
-            android:paddingTop="0dp"
+            app:counterEnabled="true"
+            app:counterMaxLength="500"
+            app:endIconContentDescription="@string/send_hint"
+            app:endIconDrawable="@drawable/ic_send_24dp"
+            app:endIconMode="custom"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/roomstate_text"
-            app:layout_constraintTop_toBottomOf="@id/bottom_barrier" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider">
+
+            <com.flxrs.dankchat.utils.CustomMultiAutoCompleteTextView
+                android:id="@+id/input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:completionThreshold="2"
+                android:enabled="false"
+                android:imeOptions="actionSend|flagNoExtractUi"
+                android:inputType="text"
+                android:paddingStart="12dp"
+                android:paddingEnd="8dp"
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
