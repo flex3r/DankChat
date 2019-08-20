@@ -28,25 +28,19 @@ data class TwitchMessage(
     }
 
     companion object {
-        fun parseFromIrc(
-            ircMessage: IrcMessage,
-            isNotify: Boolean = false,
-            isHistoric: Boolean = false
-        ): TwitchMessage = with(ircMessage) {
+        fun parseFromIrc(ircMessage: IrcMessage, isNotify: Boolean = false, isHistoric: Boolean = false): TwitchMessage = with(ircMessage) {
             var notify = isNotify
-            val user = tags["display-name"] ?: "NaM"
+            val user = tags.getValue("display-name")
             val colorTag = tags["color"]?.ifBlank { "#717171" } ?: "#717171"
             val color = Color.parseColor(colorTag)
 
-            val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
-            val time = TimeUtils.timestampToLocalTime(ts)
+            val time = tags.getValue("tmi-sent-ts").toLong().let { TimeUtils.timestampToLocalTime(it) }
 
             var isAction = false
-            val content =
-                if (params.size > 1 && params[1].startsWith("\u0001ACTION") && params[1].endsWith("\u0001")) {
-                    isAction = true
-                    params[1].substring("\u0001ACTION ".length, params[1].length - "\u0001".length)
-                } else if (params.size > 1) params[1] else ""
+            val content = if (params.size > 1 && params[1].startsWith("\u0001ACTION") && params[1].endsWith("\u0001")) {
+                isAction = true
+                params[1].substring("\u0001ACTION ".length, params[1].length - "\u0001".length)
+            } else if (params.size > 1) params[1] else ""
 
             val channel = params[0].substring(1)
             val emoteTag = tags["emotes"] ?: ""
@@ -61,55 +55,19 @@ data class TwitchMessage(
                 val badgeVersion = trimmed.substringAfter('/')
                 when {
                     badgeSet.startsWith("twitchbot") -> if (isHistoric) notify = true
-                    badgeSet.startsWith("subscriber") -> EmoteManager.getSubBadgeUrl(
-                        channel,
-                        badgeSet,
-                        badgeVersion
-                    )?.let { badges.add(Badge(badgeSet, it)) }
-                    badgeSet.startsWith("bits") -> EmoteManager.getSubBadgeUrl(
-                        channel,
-                        badgeSet,
-                        badgeVersion
-                    )
-                        ?: EmoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)?.let {
-                            badges.add(Badge(badgeSet, it))
-                        }
-                    else -> EmoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)?.let {
-                        badges.add(Badge(badgeSet, it))
-                    }
+                    badgeSet.startsWith("subscriber") -> EmoteManager.getSubBadgeUrl(channel, badgeSet, badgeVersion)?.let { badges += Badge(badgeSet, it) }
+                    badgeSet.startsWith("bits") -> EmoteManager.getSubBadgeUrl(channel, badgeSet, badgeVersion)
+                        ?: EmoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)?.let { badges += Badge(badgeSet, it) }
+                    else -> EmoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)?.let { badges.add(Badge(badgeSet, it)) }
                 }
             }
 
-            return TwitchMessage(
-                time,
-                channel,
-                user,
-                color,
-                content,
-                emotes.plus(otherEmotes),
-                isAction,
-                notify,
-                badges,
-                id
-            )
+            return TwitchMessage(time, channel, user, color, content, emotes.plus(otherEmotes), isAction, notify, badges, id)
         }
 
-        fun makeSystemMessage(
-            message: String,
-            channel: String,
-            timestamp: String = TimeUtils.localTime(),
-            id: String = System.nanoTime().toString()
-        ): TwitchMessage {
+        fun makeSystemMessage(message: String, channel: String, timestamp: String = TimeUtils.localTime(), id: String = System.nanoTime().toString()): TwitchMessage {
             val color = Color.parseColor("#717171")
-            return TwitchMessage(
-                timestamp,
-                channel = channel,
-                name = "",
-                color = color,
-                message = message,
-                id = id,
-                isSystem = true
-            )
+            return TwitchMessage(timestamp, channel = channel, name = "", color = color, message = message, id = id, isSystem = true)
         }
 
         fun parseUserNotice(message: IrcMessage, historic: Boolean = false): List<TwitchMessage> =
@@ -118,38 +76,24 @@ data class TwitchMessage(
                 val msgId = tags["msg-id"]
                 val id = tags["id"] ?: System.nanoTime().toString()
                 val channel = params[0].substring(1)
-                val systemMsg = if (historic) {
-                    params[1]
-                } else {
-                    tags["system-msg"] ?: ""
-                }
+                val systemMsg = if (historic) params[1] else tags["system-msg"] ?: ""
                 val color = Color.parseColor("#717171")
 
-                val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
-                val time = TimeUtils.timestampToLocalTime(ts)
+                val time = tags.getValue("tmi-sent-ts").toLong().let { TimeUtils.timestampToLocalTime(it) }
 
                 if (msgId != null && (msgId == "sub" || msgId == "resub")) {
                     val subMsg = parseFromIrc(message, true)
                     if (subMsg.message.isNotBlank()) messages.add(subMsg)
                 }
-                val systemTwitchMessage = TwitchMessage(
-                    time,
-                    channel = channel,
-                    name = "",
-                    color = color,
-                    message = systemMsg,
-                    isNotify = true,
-                    id = id
-                )
-                messages.add(systemTwitchMessage)
+                val systemTwitchMessage = TwitchMessage(time, channel = channel, name = "", color = color, message = systemMsg, isNotify = true, id = id)
+                messages += systemTwitchMessage
                 return messages
             }
 
         fun parseNotice(message: IrcMessage): TwitchMessage = with(message) {
             val channel = params[0].substring(1)
             val notice = params[1]
-            val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
-            val time = TimeUtils.timestampToLocalTime(ts)
+            val time = tags.getValue("tmi-sent-ts").toLong().let { TimeUtils.timestampToLocalTime(it) }
             val id = tags["id"] ?: System.nanoTime().toString()
 
             return makeSystemMessage(notice, channel, time, id)
@@ -170,8 +114,7 @@ data class TwitchMessage(
         private fun parseHostTarget(message: IrcMessage): TwitchMessage = with(message) {
             val target = params[1].substringBefore("-")
             val channel = params[0].substring(1)
-            val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
-            val time = TimeUtils.timestampToLocalTime(ts)
+            val time = tags.getValue("tmi-sent-ts").toLong().let { TimeUtils.timestampToLocalTime(it) }
             val id = tags["id"] ?: System.nanoTime().toString()
 
             return makeSystemMessage("Now hosting $target", channel, time, id)
@@ -184,8 +127,7 @@ data class TwitchMessage(
             val systemMessage = if (target.isBlank()) "Chat has been cleared by a moderator." else {
                 if (duration.isBlank()) "$target has been permanently banned" else "$target has been timed out for ${duration}s."
             }
-            val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
-            val time = TimeUtils.timestampToLocalTime(ts)
+            val time = tags.getValue("tmi-sent-ts").toLong().let { TimeUtils.timestampToLocalTime(it) }
             val id = tags["id"] ?: System.nanoTime().toString()
 
             return makeSystemMessage(systemMessage, channel, time, id)

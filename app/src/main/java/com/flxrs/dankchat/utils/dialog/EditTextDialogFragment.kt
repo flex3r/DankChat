@@ -18,12 +18,7 @@ class EditTextDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val args = requireArguments()
         val message = args.getInt(MESSAGE_ARG)
-        binding = DataBindingUtil.inflate(
-            LayoutInflater.from(requireContext()),
-            R.layout.edittext_dialog,
-            null,
-            false
-        )
+        binding = DataBindingUtil.inflate(LayoutInflater.from(requireContext()), R.layout.edittext_dialog, null, false)
         binding.dialogEdit.hint = args.getString(HINT_ARG)
         val builder = MaterialAlertDialogBuilder(requireContext())
             .setTitle(args.getInt(TITLE_ARG))
@@ -45,12 +40,8 @@ class EditTextDialogFragment : DialogFragment() {
         val input = binding.dialogEdit.text.toString().trim()
         if (input.isNotBlank()) {
             val activity = this.activity
-            if (requireArguments().getBoolean(IS_ADD_CHANNEL) && activity is AddChannelDialogResultHandler) activity.onAddChannelDialogResult(
-                input
-            )
-            else if (activity is AdvancedLoginDialogResultHandler) activity.onAdvancedLoginDialogResult(
-                input
-            )
+            if (requireArguments().getBoolean(IS_ADD_CHANNEL) && activity is AddChannelDialogResultHandler) activity.onAddChannelDialogResult(input)
+            else if (activity is AdvancedLoginDialogResultHandler) activity.onAdvancedLoginDialogResult(input)
         }
         dismiss()
         return true
@@ -73,6 +64,7 @@ class EditTextDialogFragment : DialogFragment() {
                 putString(HINT_ARG, textHint)
                 putBoolean(IS_ADD_CHANNEL, isAddChannel)
             }
+
             return EditTextDialogFragment().apply { arguments = args }
         }
 

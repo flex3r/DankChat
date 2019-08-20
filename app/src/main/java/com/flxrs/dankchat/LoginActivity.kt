@@ -45,11 +45,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private inner class TwitchAuthClient : WebViewClient() {
-        override fun onReceivedError(
-            view: WebView?,
-            request: WebResourceRequest?,
-            error: WebResourceError?
-        ) {
+        override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
             setResult(Activity.RESULT_CANCELED)
             finish()
         }
@@ -63,10 +59,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         @RequiresApi(Build.VERSION_CODES.N)
-        override fun shouldOverrideUrlLoading(
-            view: WebView?,
-            request: WebResourceRequest?
-        ): Boolean {
+        override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
             val fragment = request?.url?.fragment ?: ""
             parseOAuthToken(fragment)
             return false

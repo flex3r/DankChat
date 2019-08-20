@@ -54,17 +54,7 @@ object EmoteManager {
                 return@map "${(start + unicodeExtra)}-${(end + unicodeExtra + 1)}"
             } ?: continue
 
-            emotes.add(
-                ChatEmote(
-                    positions,
-                    "$BASE_URL/$id/$EMOTE_SIZE",
-                    id,
-                    "",
-                    1,
-                    false,
-                    isTwitch = true
-                )
-            )
+            emotes += ChatEmote(positions, "$BASE_URL/$id/$EMOTE_SIZE", id, "", 1, false, isTwitch = true)
         }
         return emotes
     }
@@ -84,16 +74,7 @@ object EmoteManager {
                 }
                 i += split.length + 1
             }
-            emotes.add(
-                ChatEmote(
-                    positions,
-                    it.value.url,
-                    it.value.id,
-                    it.value.keyword,
-                    it.value.scale,
-                    it.value.isGif
-                )
-            )
+            emotes += ChatEmote(positions, it.value.url, it.value.id, it.value.keyword, it.value.scale, it.value.isGif)
         }
         return emotes
     }
@@ -116,13 +97,7 @@ object EmoteManager {
         withContext(Dispatchers.Default) {
             twitchResult.sets.forEach {
                 it.value.forEach { emoteResult ->
-                    val emote = GenericEmote(
-                        emoteResult.name,
-                        "$BASE_URL/${emoteResult.id}/$EMOTE_SIZE",
-                        false,
-                        "${emoteResult.id}",
-                        1
-                    )
+                    val emote = GenericEmote(emoteResult.name, "$BASE_URL/${emoteResult.id}/$EMOTE_SIZE", false, "${emoteResult.id}", 1)
                     twitchEmotes[emote.keyword] = emote
                 }
             }

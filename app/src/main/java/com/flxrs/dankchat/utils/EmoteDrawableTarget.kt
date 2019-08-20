@@ -29,12 +29,7 @@ class EmoteDrawableTarget(
     override fun onLoadCleared(placeholder: Drawable?) = Unit
 
     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-        Bitmap.createScaledBitmap(
-            resource,
-            resource.width * emote.scale,
-            resource.height * emote.scale,
-            true
-        ).apply {
+        Bitmap.createScaledBitmap(resource, resource.width * emote.scale, resource.height * emote.scale, true).apply {
             callback((BitmapDrawable(context.resources, this)))
         }
     }

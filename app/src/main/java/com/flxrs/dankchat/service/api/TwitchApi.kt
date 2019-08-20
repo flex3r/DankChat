@@ -87,8 +87,7 @@ object TwitchApi {
         withContext(Dispatchers.IO) {
             getUserIdFromName(channel)?.let {
                 try {
-                    val response =
-                        service.getBadgeSets("$TWITCH_SUBBADGES_BASE_URL$it$TWITCH_SUBBADGES_SUFFIX")
+                    val response = service.getBadgeSets("$TWITCH_SUBBADGES_BASE_URL$it$TWITCH_SUBBADGES_SUFFIX")
                     return@withContext if (response.isSuccessful) response.body() else null
                 } catch (t: Throwable) {
                     Log.e(TAG, Log.getStackTraceString(t))
@@ -153,8 +152,7 @@ object TwitchApi {
 
     suspend fun getRecentMessages(channel: String): RecentMessages? = withContext(Dispatchers.IO) {
         try {
-            val response =
-                service.getRecentMessages("$RECENT_MSG_URL$channel$RECENT_MSG_URL_SUFFIX")
+            val response = service.getRecentMessages("$RECENT_MSG_URL$channel$RECENT_MSG_URL_SUFFIX")
             if (response.isSuccessful) return@withContext response.body()
         } catch (t: Throwable) {
             Log.e(TAG, Log.getStackTraceString(t))

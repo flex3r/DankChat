@@ -120,15 +120,17 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         loadedGlobalEmotes = false
         loadedTwitchEmotes = false
         load3rdPartyEmotes(channel)
-        if (id != 0 && oAuth.isNotBlank() && oAuth.startsWith("oauth:")) loadTwitchEmotes(
-            oAuth.substringAfter("oauth:"),
-            id
-        )
+
+        if (id != 0 && oAuth.isNotBlank() && oAuth.startsWith("oauth:")) {
+            loadTwitchEmotes(oAuth.substringAfter("oauth:"), id)
+        }
+
         setSuggestions(channel)
     }
 
     fun uploadImage(file: File) = scope.launch {
         val url = TwitchApi.uploadImage(file) ?: "Error during upload"
+
         imageUploadedEvent.postValue(url to file)
     }
 
@@ -145,6 +147,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     private fun handleConnected(channel: String, isJustinFan: Boolean) {
         makeAndPostSystemMessage("Connected", channel)
         hasDisconnected = false
+
         val hint = if (isJustinFan) "Not logged in" else "Start chatting"
         canType[channel]?.postValue(hint) ?: MutableLiveData(hint)
     }
@@ -153,6 +156,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         val parsed = TwitchMessage.parse(msg).map { ChatItem(it) }
         val target = if (msg.params.size > 1) msg.params[1] else ""
         val channel = msg.params[0].substring(1)
+
         chatLiveDatas[channel]?.value?.replaceWithTimeOuts(target)?.run {
             add(parsed[0])
             chatLiveDatas[channel]?.postValue(this)
@@ -163,6 +167,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         val channel = msg.params[0].substring(1)
         val state = roomStates[channel]?.value
         state?.updateState(msg)
+
         roomStates[channel]?.postValue(state)
 
     }
@@ -174,6 +179,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
             val currentChat = chatLiveDatas[channel]?.value ?: emptyList()
             chatLiveDatas[channel]?.postValue(currentChat.addAndLimit(parsed))
         }
+
         return parsed
     }
 
@@ -181,15 +187,11 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         if (channel.isBlank()) {
             chatLiveDatas.keys.forEach {
                 val currentChat = chatLiveDatas[it]?.value ?: emptyList()
-                chatLiveDatas[it]?.postValue(
-                    currentChat.addAndLimit(ChatItem(TwitchMessage.makeSystemMessage(message, it)))
-                )
+                chatLiveDatas[it]?.postValue(currentChat.addAndLimit(ChatItem(TwitchMessage.makeSystemMessage(message, it))))
             }
         } else {
             val currentChat = chatLiveDatas[channel]?.value ?: emptyList()
-            chatLiveDatas[channel]?.postValue(
-                currentChat.addAndLimit(ChatItem(TwitchMessage.makeSystemMessage(message, channel)))
-            )
+            chatLiveDatas[channel]?.postValue(currentChat.addAndLimit(ChatItem(TwitchMessage.makeSystemMessage(message, channel))))
         }
     }
 
@@ -234,8 +236,9 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
                 "USERNOTICE" -> TwitchMessage.parseUserNotice(message, true)[0]
                 else -> TwitchMessage.parseFromIrc(message, isHistoric = true)
             }
-            list.add(ChatItem(twitchMessage, true))
+            list += ChatItem(twitchMessage, true)
         }
+
         val current = chatLiveDatas[channel]?.value ?: emptyList()
         chatLiveDatas[channel]?.postValue(list.addAndLimit(current, true))
     }

@@ -6,8 +6,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
-class ChatTabAdapter(supportFragmentManager: FragmentManager, lifecycle: Lifecycle) :
-    FragmentStateAdapter(supportFragmentManager, lifecycle) {
+class ChatTabAdapter(supportFragmentManager: FragmentManager, lifecycle: Lifecycle) : FragmentStateAdapter(supportFragmentManager, lifecycle) {
 
     val titleList = mutableListOf<String>()
     val fragmentList = mutableListOf<ChatFragment>()
