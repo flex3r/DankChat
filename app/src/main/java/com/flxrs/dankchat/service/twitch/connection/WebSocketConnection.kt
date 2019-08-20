@@ -67,7 +67,7 @@ class WebSocketConnection(
 
     @Synchronized
     fun connect(nick: String, oAuth: String) {
-        if (!readerConnected && !writerConnected) {
+        if (!readerConnected && !writerConnected && !connecting) {
             this.nick = nick
             this.oAuth = oAuth
             isJustinFan = (oAuth.isBlank() || !oAuth.startsWith("oauth:"))
