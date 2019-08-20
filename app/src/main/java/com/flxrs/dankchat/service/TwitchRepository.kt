@@ -132,11 +132,14 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         imageUploadedEvent.postValue(url to file)
     }
 
-    fun onMessage(msg: IrcMessage, isJustinFan: Boolean) = when (msg.command) {
-        "366" -> handleConnected(msg.params[1].substring(1), isJustinFan)
-        "CLEARCHAT" -> handleClearchat(msg)
-        "ROOMSTATE" -> handleRoomstate(msg)
-        else -> handleMessage(msg)
+    fun onMessage(msg: IrcMessage, isJustinFan: Boolean): List<ChatItem>? {
+        when (msg.command) {
+            "366" -> handleConnected(msg.params[1].substring(1), isJustinFan)
+            "CLEARCHAT" -> handleClearchat(msg)
+            "ROOMSTATE" -> handleRoomstate(msg)
+            else -> return handleMessage(msg)
+        }
+        return null
     }
 
     private fun handleConnected(channel: String, isJustinFan: Boolean) {
@@ -164,13 +167,14 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
     }
 
-    private fun handleMessage(msg: IrcMessage) {
+    private fun handleMessage(msg: IrcMessage): List<ChatItem> {
         val parsed = TwitchMessage.parse(msg).map { ChatItem(it) }
         if (parsed.isNotEmpty()) {
             val channel = msg.params[0].substring(1)
             val currentChat = chatLiveDatas[channel]?.value ?: emptyList()
             chatLiveDatas[channel]?.postValue(currentChat.addAndLimit(parsed))
         }
+        return parsed
     }
 
     private fun makeAndPostSystemMessage(message: String, channel: String = "") {

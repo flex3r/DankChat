@@ -22,6 +22,11 @@ data class TwitchMessage(
     val isSystem: Boolean = false
 ) {
 
+    fun isMention(username: String): Boolean {
+        return username.isNotBlank() && !name.equals(username, true)
+                && !timedOut && !isSystem && message.contains(username, true)
+    }
+
     companion object {
         fun parseFromIrc(
             ircMessage: IrcMessage,

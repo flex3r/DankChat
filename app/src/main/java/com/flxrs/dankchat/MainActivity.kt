@@ -45,9 +45,11 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.IOException
+import java.util.*
 
 
-class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, AdvancedLoginDialogResultHandler {
+class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
+    AdvancedLoginDialogResultHandler {
     private val viewModel: DankChatViewModel by viewModel()
     private val channels = mutableListOf<String>()
     private lateinit var preferenceStore: DankChatPreferenceStore
@@ -76,33 +78,42 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
             }
         channels.forEach { adapter.addFragment(it) }
 
-        binding = DataBindingUtil.setContentView<MainActivityBinding>(this, R.layout.main_activity).apply {
-            viewPager.adapter = adapter
-            viewPager.reduceDragSensitivity()
-            viewPager.offscreenPageLimit =
-                if (channels.size > 1) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
-            tabLayoutMediator =
-                TabLayoutMediator(tabs, viewPager) { tab, position -> tab.text = adapter.titleList[position] }
-            tabLayoutMediator.attach()
-            tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-                override fun onTabReselected(tab: TabLayout.Tab?) = Unit
-
-                override fun onTabSelected(tab: TabLayout.Tab?) = Unit
-
-                override fun onTabUnselected(tab: TabLayout.Tab?) {
-                    val position = tab?.position ?: -1
-                    if (position in 0 until adapter.fragmentList.size) {
-                        adapter.fragmentList[position].clearInputFocus()
+        binding = DataBindingUtil.setContentView<MainActivityBinding>(this, R.layout.main_activity)
+            .apply {
+                viewPager.adapter = adapter
+                viewPager.reduceDragSensitivity()
+                viewPager.offscreenPageLimit =
+                    if (channels.size > 1) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
+                tabLayoutMediator =
+                    TabLayoutMediator(tabs, viewPager) { tab, position ->
+                        tab.text = adapter.titleList[position]
                     }
-                }
-            })
-            showActionbarFab.setOnClickListener { showActionBar() }
-        }
+                tabLayoutMediator.attach()
+                tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                    override fun onTabReselected(tab: TabLayout.Tab?) = Unit
+
+                    override fun onTabSelected(tab: TabLayout.Tab?) = Unit
+
+                    override fun onTabUnselected(tab: TabLayout.Tab?) {
+                        val position = tab?.position ?: -1
+                        if (position in 0 until adapter.fragmentList.size) {
+                            adapter.fragmentList[position].clearInputFocus()
+                        }
+                    }
+                })
+                showActionbarFab.setOnClickListener { showActionBar() }
+            }
 
         viewModel.imageUploadedEvent.observe(this, Observer { (urlOrError, file) ->
             val message: String = if (!urlOrError.startsWith("Error")) {
-                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                clipboard.setPrimaryClip(android.content.ClipData.newPlainText("nuuls image url", urlOrError))
+                val clipboard =
+                    getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                clipboard.setPrimaryClip(
+                    android.content.ClipData.newPlainText(
+                        "nuuls image url",
+                        urlOrError
+                    )
+                )
                 "Copied: $urlOrError"
             } else urlOrError
 
@@ -114,10 +125,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
 
         setSupportActionBar(binding.toolbar)
         updateViewPagerVisibility()
-
-        if (savedInstanceState == null) {
-
-        }
     }
 
     override fun onPause() {
@@ -173,7 +180,8 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
             findItem(R.id.progress)?.run {
                 isVisible = showProgressBar
                 actionView = ProgressBar(this@MainActivity).apply {
-                    indeterminateTintList = ContextCompat.getColorStateList(this@MainActivity, android.R.color.white)
+                    indeterminateTintList =
+                        ContextCompat.getColorStateList(this@MainActivity, android.R.color.white)
                     isVisible = showProgressBar
                 }
             }
@@ -199,7 +207,11 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
             R.id.menu_capture_image -> startCameraCapture()
             R.id.menu_hide -> hideActionBar()
             R.id.menu_clear -> clear()
-            R.id.menu_settings -> Intent(this, SettingsActivity::class.java).run { startActivity(this) }
+            R.id.menu_settings -> Intent(this, SettingsActivity::class.java).run {
+                startActivity(
+                    this
+                )
+            }
             else -> return false
         }
         return true
@@ -228,7 +240,9 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
                     val copy = MediaUtils.createImageFile(this, original.extension)
                     try {
                         original.copyTo(copy, true)
-                        if (copy.extension == "jpg" || copy.extension == "jpeg") MediaUtils.removeExifAttributes(copy.absolutePath)
+                        if (copy.extension == "jpg" || copy.extension == "jpeg") MediaUtils.removeExifAttributes(
+                            copy.absolutePath
+                        )
 
                         viewModel.uploadImage(copy)
                         showProgressBar = true
@@ -257,14 +271,18 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         if (requestCode == GALLERY_REQUEST && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             startGalleryPicker()
         }
     }
 
     override fun onAddChannelDialogResult(channel: String) {
-        val lowerCaseChannel = channel.toLowerCase()
+        val lowerCaseChannel = channel.toLowerCase(Locale.getDefault())
         if (!channels.contains(lowerCaseChannel)) {
             val oauth = preferenceStore.getOAuthKey() ?: ""
             val id = preferenceStore.getUserId()
@@ -299,7 +317,13 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
                         setUserId(it.id)
                         setLoggedIn(true)
                     }
-                    twitchService?.close { connectAndJoinChannels(it.name, "oauth:$tokenWithoutSuffix", it.id) }
+                    twitchService?.close {
+                        connectAndJoinChannels(
+                            it.name,
+                            "oauth:$tokenWithoutSuffix",
+                            it.id
+                        )
+                    }
                     showSnackbar("Logged in as ${it.name}")
                 } else showSnackbar("Failed to login")
             } ?: showSnackbar("Invalid OAuth token")
@@ -358,7 +382,10 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
     }
 
     private fun startGalleryPicker() {
-        Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).also { galleryIntent ->
+        Intent(
+            Intent.ACTION_PICK,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        ).also { galleryIntent ->
             galleryIntent.resolveActivity(packageManager)?.also {
                 startActivityForResult(galleryIntent, GALLERY_REQUEST)
             }
@@ -485,7 +512,8 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Advance
         updateViewPagerVisibility()
     }
 
-    fun handleSendMessage(channel: String, input: String) = twitchService?.sendMessage(channel, input)
+    fun handleSendMessage(channel: String, input: String) =
+        twitchService?.sendMessage(channel, input)
 
     private inner class TwitchServiceConnection : ServiceConnection {
 

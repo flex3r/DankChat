@@ -48,11 +48,14 @@
     <string name="preference_mention_format_summary">Change the mention format when clicking an username</string>
     <string name="preference_mention_format_key">mention_format</string>
     <string name="preference_roomstate_key">show_roomstate</string>
-    <string name="preference_roomstate_title">Roomstate information</string>
-    <string name="preference_roomstate_summary">Shows information about the current roomstate like subscribers only mode</string>
+    <string name="preference_roomstate_title">Show roomstate information</string>
+    <string name="preference_roomstate_summary">Displays information about the current roomstate like subscribers only mode</string>
     <string name="preference_streaminfo_key">show_streaminfo</string>
-    <string name="preference_streaminfo_title">Show Stream information</string>
+    <string name="preference_streaminfo_title">Show stream information</string>
     <string name="preference_streaminfo_summary">Displays live status and viewer count</string>
+    <string name="preference_notification_key">notification_key</string>
+    <string name="preference_notification_title">Show mention notifications</string>
+    <string name="preference_notification_summary">Creates notifications when mentioned while the app is in the background</string>
 
     <string name="settings">Settings</string>
     <string name="nuuls_upload_disclaimer">External hosting provided by https://nuuls.com/i, use at your own risk.</string>
