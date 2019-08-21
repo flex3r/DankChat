@@ -60,8 +60,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/start_chatting"
-            app:counterEnabled="true"
-            app:counterMaxLength="500"
             app:endIconContentDescription="@string/send_hint"
             app:endIconDrawable="@drawable/ic_send_24dp"
             app:endIconMode="custom"
