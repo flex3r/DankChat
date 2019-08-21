@@ -97,7 +97,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
     fun sendMessage(channel: String, message: String, onResult: (msg: String) -> Unit) {
         if (message.isNotBlank()) {
-            val messageWithSuffix = if (lastMessage == message) "$message $INVISIBLE_CHAR" else message
+            val messageWithSuffix =
+                if (lastMessage == message) "$message $INVISIBLE_CHAR" else message
             lastMessage = messageWithSuffix
             onResult("PRIVMSG #$channel :$messageWithSuffix")
         }
@@ -187,11 +188,29 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         if (channel.isBlank()) {
             chatLiveDatas.keys.forEach {
                 val currentChat = chatLiveDatas[it]?.value ?: emptyList()
-                chatLiveDatas[it]?.postValue(currentChat.addAndLimit(ChatItem(TwitchMessage.makeSystemMessage(message, it))))
+                chatLiveDatas[it]?.postValue(
+                    currentChat.addAndLimit(
+                        ChatItem(
+                            TwitchMessage.makeSystemMessage(
+                                message,
+                                it
+                            )
+                        )
+                    )
+                )
             }
         } else {
             val currentChat = chatLiveDatas[channel]?.value ?: emptyList()
-            chatLiveDatas[channel]?.postValue(currentChat.addAndLimit(ChatItem(TwitchMessage.makeSystemMessage(message, channel))))
+            chatLiveDatas[channel]?.postValue(
+                currentChat.addAndLimit(
+                    ChatItem(
+                        TwitchMessage.makeSystemMessage(
+                            message,
+                            channel
+                        )
+                    )
+                )
+            )
         }
     }
 
@@ -230,13 +249,13 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         val list = mutableListOf<ChatItem>()
         TwitchApi.getRecentMessages(channel)?.messages?.forEach {
             val message = IrcMessage.parse(it)
-            val twitchMessage = when (message.tags["display-name"]) {
-                "NOTICE" -> TwitchMessage.parseNotice(message)
-                "CLEARCHAT" -> TwitchMessage.parseNotice(message)
-                "USERNOTICE" -> TwitchMessage.parseUserNotice(message, true)[0]
-                else -> TwitchMessage.parseFromIrc(message, isHistoric = true)
+            val twitchMessages = when (message.tags["display-name"]) {
+                "NOTICE" -> listOf(TwitchMessage.parseNotice(message))
+                "CLEARCHAT" -> listOf(TwitchMessage.parseNotice(message))
+                "USERNOTICE" -> listOf(TwitchMessage.parseUserNotice(message, true)[0])
+                else -> TwitchMessage.parse(message, isHistoric = true)
             }
-            list += ChatItem(twitchMessage, true)
+            twitchMessages.forEach { msg -> list += ChatItem(msg, true) }
         }
 
         val current = chatLiveDatas[channel]?.value ?: emptyList()
@@ -246,6 +265,6 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     companion object {
         private val TAG = TwitchRepository::class.java.simpleName
         private val INVISIBLE_CHAR =
-                String(ByteBuffer.allocate(4).putInt(0x000E0000).array(), Charsets.UTF_32)
+            String(ByteBuffer.allocate(4).putInt(0x000E0000).array(), Charsets.UTF_32)
     }
 }

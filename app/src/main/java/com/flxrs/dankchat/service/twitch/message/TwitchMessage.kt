@@ -28,7 +28,78 @@ data class TwitchMessage(
     }
 
     companion object {
-        fun parseFromIrc(
+
+        fun makeSystemMessage(
+            message: String,
+            channel: String,
+            timestamp: String = TimeUtils.localTime(),
+            id: String = System.nanoTime().toString()
+        ): TwitchMessage {
+            val color = Color.parseColor("#717171")
+            return TwitchMessage(
+                timestamp,
+                channel = channel,
+                name = "",
+                color = color,
+                message = message,
+                id = id,
+                isSystem = true
+            )
+        }
+
+        fun parseUserNotice(message: IrcMessage, historic: Boolean = false): List<TwitchMessage> =
+            with(message) {
+                val messages = mutableListOf<TwitchMessage>()
+                val msgId = tags["msg-id"]
+                val id = tags["id"] ?: System.nanoTime().toString()
+                val channel = params[0].substring(1)
+                val systemMsg = if (historic) params[1] else tags["system-msg"] ?: ""
+                val color = Color.parseColor("#717171")
+
+                val time =
+                    tags.getValue("tmi-sent-ts").toLong().let { TimeUtils.timestampToLocalTime(it) }
+
+                if (msgId != null && (msgId == "sub" || msgId == "resub")) {
+                    val subMsg = parsePrivMessage(message, true)
+                    if (subMsg.message.isNotBlank()) messages.add(subMsg)
+                }
+                val systemTwitchMessage = TwitchMessage(
+                    time,
+                    channel = channel,
+                    name = "",
+                    color = color,
+                    message = systemMsg,
+                    isNotify = true,
+                    id = id
+                )
+                messages += systemTwitchMessage
+                return messages
+            }
+
+        fun parseNotice(message: IrcMessage): TwitchMessage = with(message) {
+            val channel = params[0].substring(1)
+            val notice = params[1]
+            val time =
+                tags.getValue("tmi-sent-ts").toLong().let { TimeUtils.timestampToLocalTime(it) }
+            val id = tags["id"] ?: System.nanoTime().toString()
+
+            return makeSystemMessage(notice, channel, time, id)
+        }
+
+        fun parse(message: IrcMessage, isHistoric: Boolean = false): List<TwitchMessage> =
+            with(message) {
+                return when (command) {
+                    "PRIVMSG" -> listOf(parsePrivMessage(message, isHistoric = isHistoric))
+                    "NOTICE" -> listOf(parseNotice(message))
+                    "USERNOTICE" -> parseUserNotice(message)
+                    "CLEARCHAT" -> listOf(parseClearChat(message))
+                    "CLEARMSG" -> listOf() //TODO
+                    "HOSTTARGET" -> listOf(parseHostTarget(message))
+                    else -> listOf()
+                }
+            }
+
+        private fun parsePrivMessage(
             ircMessage: IrcMessage,
             isNotify: Boolean = false,
             isHistoric: Boolean = false
@@ -94,75 +165,6 @@ data class TwitchMessage(
                 badges,
                 id
             )
-        }
-
-        fun makeSystemMessage(
-            message: String,
-            channel: String,
-            timestamp: String = TimeUtils.localTime(),
-            id: String = System.nanoTime().toString()
-        ): TwitchMessage {
-            val color = Color.parseColor("#717171")
-            return TwitchMessage(
-                timestamp,
-                channel = channel,
-                name = "",
-                color = color,
-                message = message,
-                id = id,
-                isSystem = true
-            )
-        }
-
-        fun parseUserNotice(message: IrcMessage, historic: Boolean = false): List<TwitchMessage> =
-            with(message) {
-                val messages = mutableListOf<TwitchMessage>()
-                val msgId = tags["msg-id"]
-                val id = tags["id"] ?: System.nanoTime().toString()
-                val channel = params[0].substring(1)
-                val systemMsg = if (historic) params[1] else tags["system-msg"] ?: ""
-                val color = Color.parseColor("#717171")
-
-                val time =
-                    tags.getValue("tmi-sent-ts").toLong().let { TimeUtils.timestampToLocalTime(it) }
-
-                if (msgId != null && (msgId == "sub" || msgId == "resub")) {
-                    val subMsg = parseFromIrc(message, true)
-                    if (subMsg.message.isNotBlank()) messages.add(subMsg)
-                }
-                val systemTwitchMessage = TwitchMessage(
-                    time,
-                    channel = channel,
-                    name = "",
-                    color = color,
-                    message = systemMsg,
-                    isNotify = true,
-                    id = id
-                )
-                messages += systemTwitchMessage
-                return messages
-            }
-
-        fun parseNotice(message: IrcMessage): TwitchMessage = with(message) {
-            val channel = params[0].substring(1)
-            val notice = params[1]
-            val time =
-                tags.getValue("tmi-sent-ts").toLong().let { TimeUtils.timestampToLocalTime(it) }
-            val id = tags["id"] ?: System.nanoTime().toString()
-
-            return makeSystemMessage(notice, channel, time, id)
-        }
-
-        fun parse(message: IrcMessage): List<TwitchMessage> = with(message) {
-            return when (command) {
-                "PRIVMSG" -> listOf(parseFromIrc(message))
-                "NOTICE" -> listOf(parseNotice(message))
-                "USERNOTICE" -> parseUserNotice(message)
-                "CLEARCHAT" -> listOf(parseClearChat(message))
-                "CLEARMSG" -> listOf() //TODO
-                "HOSTTARGET" -> listOf(parseHostTarget(message))
-                else -> listOf()
-            }
         }
 
         private fun parseHostTarget(message: IrcMessage): TwitchMessage = with(message) {
