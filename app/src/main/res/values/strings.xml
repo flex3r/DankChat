@@ -61,8 +61,12 @@
     <string name="nuuls_upload_disclaimer">External hosting provided by https://nuuls.com/i, use at your own risk.</string>
     <string name="nuuls_upload_title">Custom image upload</string>
     <string name="snackbar_message_copied">Message copied</string>
-    <string name="stream_information">Live with %d viewers</string>
     <string name="notification_stop">Stop</string>
     <string name="notification_title">FeelsDankMan</string>
     <string name="notification_message">DankChat running in the background</string>
+
+    <plurals name="viewers">
+        <item quantity="one">Live with %d viewer</item>
+        <item quantity="other">Live with %d viewers</item>
+    </plurals>
 </resources>

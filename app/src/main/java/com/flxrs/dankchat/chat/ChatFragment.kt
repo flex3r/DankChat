@@ -176,8 +176,8 @@ class ChatFragment : Fragment() {
                 timer(STREAM_REFRESH_RATE) {
                     val stream = TwitchApi.getStream(channel)
                     if (stream != null) {
-                        val text = getString(R.string.stream_information, stream.viewers)
-                        updateChannelData(liveInfo = text)
+                        val text = resources.getQuantityText(R.plurals.viewers, stream.viewers)
+                        updateChannelData(liveInfo = text.toString())
                     } else updateChannelData(liveInfo = "")
                 }
             } else updateChannelData(liveInfo = "")

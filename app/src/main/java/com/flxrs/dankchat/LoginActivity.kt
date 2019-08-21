@@ -1,5 +1,6 @@
 package com.flxrs.dankchat
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.net.Uri
 import android.os.Build
@@ -13,9 +14,11 @@ import com.flxrs.dankchat.databinding.LoginActivityBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.api.TwitchApi
 import kotlinx.coroutines.launch
+import java.util.*
 
 class LoginActivity : AppCompatActivity() {
 
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DataBindingUtil.setContentView<LoginActivityBinding>(this, R.layout.login_activity).apply {
@@ -80,7 +83,7 @@ class LoginActivity : AppCompatActivity() {
                         if (it.name.isNotBlank()) {
                             DankChatPreferenceStore(this@LoginActivity).apply {
                                 setOAuthKey("oauth:$token")
-                                setUserName(it.name.toLowerCase())
+                                setUserName(it.name.toLowerCase(Locale.getDefault()))
                                 setUserId(it.id)
                             }
                             setResult(Activity.RESULT_OK)
@@ -91,9 +94,5 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    companion object {
-        private val TAG = LoginActivity::class.java.simpleName
     }
 }
