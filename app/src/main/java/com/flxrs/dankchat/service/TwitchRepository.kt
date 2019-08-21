@@ -97,9 +97,9 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
     fun sendMessage(channel: String, message: String, onResult: (msg: String) -> Unit) {
         if (message.isNotBlank()) {
-            val suffix = if (lastMessage == message) " $INVISIBLE_CHAR" else ""
-            lastMessage = message
-            onResult("PRIVMSG #$channel :$message$suffix")
+            val messageWithSuffix = if (lastMessage == message) "$message $INVISIBLE_CHAR" else message
+            lastMessage = messageWithSuffix
+            onResult("PRIVMSG #$channel :$messageWithSuffix")
         }
     }
 
