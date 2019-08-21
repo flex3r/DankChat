@@ -2,10 +2,7 @@ package com.flxrs.dankchat
 
 import android.Manifest
 import android.app.Activity
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
+import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
@@ -15,6 +12,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import android.webkit.MimeTypeMap
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -231,14 +229,23 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             }
             GALLERY_REQUEST -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    val uri = data?.data
-                    val original = File(MediaUtils.getImagePathFromUri(this, uri) ?: return)
-                    val copy = MediaUtils.createImageFile(this, original.extension)
+                    val uri = data?.data ?: return
+                    val mimeType = contentResolver.getType(uri)
+                    val mimeTypeMap = MimeTypeMap.getSingleton()
+                    val extension = mimeTypeMap.getExtensionFromMimeType(mimeType)
+                    if (extension == null) {
+                        showSnackbar("Error during upload")
+                        return
+                    }
+
+                    val copy = MediaUtils.createImageFile(this, extension)
                     try {
-                        original.copyTo(copy, true)
-                        if (copy.extension == "jpg" || copy.extension == "jpeg") MediaUtils.removeExifAttributes(
-                            copy.absolutePath
-                        )
+                        contentResolver.openInputStream(uri)?.run {
+                            copy.outputStream().use { copyTo(it) }
+                        }
+                        if (copy.extension == "jpg" || copy.extension == "jpeg") {
+                            MediaUtils.removeExifAttributes(copy.absolutePath)
+                        }
 
                         viewModel.uploadImage(copy)
                         showProgressBar = true
