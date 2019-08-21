@@ -83,7 +83,9 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 viewPager.adapter = adapter
                 viewPager.reduceDragSensitivity()
                 viewPager.offscreenPageLimit = calculatePageLimit()
-                tabLayoutMediator = TabLayoutMediator(tabs, viewPager) { tab, position -> tab.text = adapter.titleList[position] }
+                tabLayoutMediator = TabLayoutMediator(tabs, viewPager) { tab, position ->
+                    tab.text = adapter.titleList[position]
+                }
                 tabLayoutMediator.attach()
                 tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                     override fun onTabReselected(tab: TabLayout.Tab?) = Unit
@@ -102,8 +104,14 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
 
         viewModel.imageUploadedEvent.observe(this, Observer { (urlOrError, file) ->
             val message: String = if (!urlOrError.startsWith("Error")) {
-                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                clipboard.setPrimaryClip(android.content.ClipData.newPlainText("nuuls image url", urlOrError))
+                val clipboard =
+                    getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                clipboard.setPrimaryClip(
+                    android.content.ClipData.newPlainText(
+                        "nuuls image url",
+                        urlOrError
+                    )
+                )
                 "Copied: $urlOrError"
             } else urlOrError
 
@@ -170,7 +178,8 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             findItem(R.id.progress)?.run {
                 isVisible = showProgressBar
                 actionView = ProgressBar(this@MainActivity).apply {
-                    indeterminateTintList = ContextCompat.getColorStateList(this@MainActivity, android.R.color.white)
+                    indeterminateTintList =
+                        ContextCompat.getColorStateList(this@MainActivity, android.R.color.white)
                     isVisible = showProgressBar
                 }
             }
@@ -181,7 +190,10 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_reconnect -> reconnect(false)
-            R.id.menu_login_default -> Intent(this, LoginActivity::class.java).run { startActivityForResult(this, LOGIN_REQUEST) }
+            R.id.menu_login_default -> Intent(
+                this,
+                LoginActivity::class.java
+            ).run { startActivityForResult(this, LOGIN_REQUEST) }
             R.id.menu_login_advanced -> showAdvancedLoginDialog()
             R.id.menu_logout -> showLogoutConfirmationDialog()
             R.id.menu_add -> addChannel()
@@ -191,7 +203,11 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             R.id.menu_capture_image -> startCameraCapture()
             R.id.menu_hide -> hideActionBar()
             R.id.menu_clear -> clear()
-            R.id.menu_settings -> Intent(this, SettingsActivity::class.java).run { startActivity(this) }
+            R.id.menu_settings -> Intent(this, SettingsActivity::class.java).run {
+                startActivity(
+                    this
+                )
+            }
             else -> return false
         }
         return true
@@ -220,7 +236,9 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                     val copy = MediaUtils.createImageFile(this, original.extension)
                     try {
                         original.copyTo(copy, true)
-                        if (copy.extension == "jpg" || copy.extension == "jpeg") MediaUtils.removeExifAttributes(copy.absolutePath)
+                        if (copy.extension == "jpg" || copy.extension == "jpeg") MediaUtils.removeExifAttributes(
+                            copy.absolutePath
+                        )
 
                         viewModel.uploadImage(copy)
                         showProgressBar = true
@@ -250,7 +268,11 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         if (requestCode == GALLERY_REQUEST && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             startGalleryPicker()
         }
@@ -291,7 +313,13 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                         setUserId(it.id)
                         setLoggedIn(true)
                     }
-                    twitchService?.close { connectAndJoinChannels(it.name, "oauth:$tokenWithoutSuffix", it.id) }
+                    twitchService?.close {
+                        connectAndJoinChannels(
+                            it.name,
+                            "oauth:$tokenWithoutSuffix",
+                            it.id
+                        )
+                    }
                     showSnackbar("Logged in as ${it.name}")
                 } else showSnackbar("Failed to login")
             } ?: showSnackbar("Invalid OAuth token")
@@ -318,8 +346,16 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
 
     private fun checkPermissionForGallery() {
         showNuulsUploadDialogIfNotAcknowledged {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), GALLERY_REQUEST)
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
+            )
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    GALLERY_REQUEST
+                )
             else startGalleryPicker()
         }
     }
@@ -379,7 +415,12 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         twitchService?.reconnect(onlyIfNecessary)
     }
 
-    private fun connectAndJoinChannels(name: String, oauth: String, id: Int, load3rdParty: Boolean = false) {
+    private fun connectAndJoinChannels(
+        name: String,
+        oauth: String,
+        id: Int,
+        load3rdParty: Boolean = false
+    ) {
         if (twitchService?.startedConnection == false) {
             if (channels.isEmpty()) {
                 twitchService?.connect(name, oauth)
@@ -461,7 +502,8 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         updateViewPagerVisibility()
     }
 
-    private fun calculatePageLimit() = if (channels.size > 1) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
+    private fun calculatePageLimit() =
+        if (channels.size > 1) channels.size - 1 else ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 
     private inner class TwitchServiceConnection : ServiceConnection {
 

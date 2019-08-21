@@ -246,6 +246,6 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     companion object {
         private val TAG = TwitchRepository::class.java.simpleName
         private val INVISIBLE_CHAR =
-            String(ByteBuffer.allocate(4).putInt(0x000E0000).array(), Charsets.UTF_32)
+                String(ByteBuffer.allocate(4).putInt(0x000E0000).array(), Charsets.UTF_32)
     }
 }

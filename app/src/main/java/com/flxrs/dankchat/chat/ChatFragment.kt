@@ -52,7 +52,11 @@ class ChatFragment : Fragment() {
     private var roomState = ""
     private var liveInfo = ""
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         channel = requireArguments().getString(CHANNEL_ARG, "")
 
         manager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false).apply {
@@ -113,7 +117,10 @@ class ChatFragment : Fragment() {
 
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             when (key) {
-                getString(R.string.preference_timestamp_key) -> binding.chat.swapAdapter(adapter, false)
+                getString(R.string.preference_timestamp_key) -> binding.chat.swapAdapter(
+                    adapter,
+                    false
+                )
                 getString(R.string.preference_roomstate_key) -> updateChannelData()
                 getString(R.string.preference_streaminfo_key) -> updateStreamInfo()
             }
@@ -133,7 +140,10 @@ class ChatFragment : Fragment() {
         hideKeyboard()
     }
 
-    private fun updateChannelData(roomState: String = this.roomState, liveInfo: String = this.liveInfo) {
+    private fun updateChannelData(
+        roomState: String = this.roomState,
+        liveInfo: String = this.liveInfo
+    ) {
         this.roomState = roomState
         this.liveInfo = liveInfo
 
@@ -196,7 +206,10 @@ class ChatFragment : Fragment() {
     }
 
     private fun copyMessage(message: String) {
-        (getSystemService(requireContext(), android.content.ClipboardManager::class.java) as android.content.ClipboardManager).apply {
+        (getSystemService(
+            requireContext(),
+            android.content.ClipboardManager::class.java
+        ) as android.content.ClipboardManager).apply {
             setPrimaryClip(android.content.ClipData.newPlainText("twitch message", message))
         }
         Snackbar.make(binding.root, R.string.snackbar_message_copied, Snackbar.LENGTH_SHORT).apply {
@@ -211,7 +224,12 @@ class ChatFragment : Fragment() {
             binding.chat.smoothSnapToPositon(position)
             lifecycleScope.launch {
                 delay(50)
-                if (isAtBottom && position != adapter.itemCount - 1) binding.chat.post { manager.scrollToPositionWithOffset(position, 0) }
+                if (isAtBottom && position != adapter.itemCount - 1) binding.chat.post {
+                    manager.scrollToPositionWithOffset(
+                        position,
+                        0
+                    )
+                }
             }
         }
     }
@@ -225,7 +243,10 @@ class ChatFragment : Fragment() {
         addOnScrollListener(ChatScrollListener())
     }
 
-    private fun RecyclerView.smoothSnapToPositon(position: Int, snapMode: Int = LinearSmoothScroller.SNAP_TO_END) {
+    private fun RecyclerView.smoothSnapToPositon(
+        position: Int,
+        snapMode: Int = LinearSmoothScroller.SNAP_TO_END
+    ) {
         val smoothScroller = object : LinearSmoothScroller(this.context) {
             override fun getVerticalSnapPreference(): Int = snapMode
 
@@ -248,7 +269,12 @@ class ChatFragment : Fragment() {
     }
 
     private inner class EmoteSuggestionsArrayAdapter(list: List<GenericEmote>) :
-        ArrayAdapter<GenericEmote>(requireContext(), R.layout.emote_suggestion_item, R.id.suggestion_text, list) {
+        ArrayAdapter<GenericEmote>(
+            requireContext(),
+            R.layout.emote_suggestion_item,
+            R.id.suggestion_text,
+            list
+        ) {
         override fun getCount(): Int {
             val count = super.getCount()
             binding.input.apply {

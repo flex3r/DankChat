@@ -49,10 +49,19 @@ class ChatAdapter(
     inner class ViewHolder(val binding: ChatItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(ChatItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return ViewHolder(
+            ChatItemBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
     }
 
-    override fun onCurrentListChanged(previousList: MutableList<ChatItem>, currentList: MutableList<ChatItem>) {
+    override fun onCurrentListChanged(
+        previousList: MutableList<ChatItem>,
+        currentList: MutableList<ChatItem>
+    ) {
         onListChanged(currentList.size - 1)
     }
 
@@ -66,182 +75,218 @@ class ChatAdapter(
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    override fun onBindViewHolder(holder: ViewHolder, position: Int): Unit = with(holder.binding.itemText) {
-        isClickable = false
-        text = ""
-        movementMethod = LinkMovementMethod.getInstance()
-        EmoteManager.gifCallback.addView(this)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int): Unit =
+        with(holder.binding.itemText) {
+            isClickable = false
+            text = ""
+            movementMethod = LinkMovementMethod.getInstance()
+            EmoteManager.gifCallback.addView(this)
 
-        getItem(position).message.apply {
-            var ignoreClicks = false
-            if (!this.isSystem) this@with.setOnLongClickListener {
-                ignoreClicks = true
-                onMessageLongClick(this.message)
-                true
-            }
-
-            this@with.setOnTouchListener { _, event ->
-                if (event.action == MotionEvent.ACTION_UP) {
-                    CoroutineScope(Dispatchers.Default).launch {
-                        delay(200)
-                        ignoreClicks = false
-                    }
+            getItem(position).message.apply {
+                var ignoreClicks = false
+                if (!this.isSystem) this@with.setOnLongClickListener {
+                    ignoreClicks = true
+                    onMessageLongClick(this.message)
+                    true
                 }
-                false
-            }
 
-            val lineHeight = this@with.lineHeight
-            val scaleFactor = lineHeight * 1.5 / 112
-            val currentUserName = DankChatPreferenceStore(this@with.context).getUserName() ?: ""
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                val foregroundColor = if (timedOut) ContextCompat.getColor(this@with.context, R.color.colorTimeOut) else Color.TRANSPARENT
-                foreground = ColorDrawable(foregroundColor)
-            }
-
-            val background = when {
-                isNotify -> R.color.sub_background
-                isMention(currentUserName) -> R.color.highlight_background
-                else -> android.R.color.transparent
-            }
-            this@with.setBackgroundResource(background)
-
-
-            val displayName = if (isAction) "$name " else if (name.isBlank()) "" else "$name: "
-            var badgesLength = 0
-            val timestampPreferenceKey = this@with.context.getString(R.string.preference_timestamp_key)
-            val preferences = PreferenceManager.getDefaultSharedPreferences(this@with.context)
-            val (prefixLength, spannable) = if (preferences.getBoolean(timestampPreferenceKey, true)) {
-                time.length + 1 + displayName.length to SpannableStringBuilder().bold { append("$time ") }
-            } else {
-                displayName.length to SpannableStringBuilder()
-            }
-
-            badges.forEach { badge ->
-                spannable.append("  ")
-                val start = spannable.length - 2
-                val end = spannable.length - 1
-                badgesLength += 2
-                Glide.with(this@with)
-                    .asDrawable()
-                    .load(badge.url)
-                    .placeholder(R.drawable.ic_missing_emote)
-                    .error(R.drawable.ic_missing_emote)
-                    .into(DrawableTarget {
-                        val width = (lineHeight * it.intrinsicWidth / it.intrinsicHeight.toFloat()).roundToInt()
-                        it.setBounds(0, 0, width, lineHeight)
-
-                        val imageSpan = ImageSpan(it, ImageSpan.ALIGN_BOTTOM)
-                        spannable.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                        text = spannable
-                    })
-            }
-
-            val normalizedColor = normalizeColor(color)
-            spannable.bold { color(normalizedColor) { append(displayName) } }
-
-            if (isAction) {
-                spannable.color(normalizedColor) { append(message) }
-            } else {
-                spannable.append(message)
-            }
-
-            //clicking usernames
-            if (name.isNotBlank()) {
-                val userClickableSpan = object : ClickableSpan() {
-                    override fun updateDrawState(ds: TextPaint) {
-                        ds.isUnderlineText = false
-                        ds.color = normalizedColor
-                    }
-
-                    override fun onClick(v: View) {
-                        if (!ignoreClicks) onUserClicked(name)
-                    }
-                }
-                spannable.setSpan(
-                    userClickableSpan,
-                    prefixLength - displayName.length + badgesLength,
-                    prefixLength + badgesLength,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-            }
-
-            //links
-            UrlDetector(message, UrlDetectorOptions.Default).detect().forEach { url ->
-                val clickableSpan = object : ClickableSpan() {
-                    override fun onClick(v: View) {
-                        try {
-                            if (!ignoreClicks)
-                                androidx.browser.customtabs.CustomTabsIntent.Builder()
-                                    .addDefaultShareMenuItem()
-                                    .setToolbarColor(ContextCompat.getColor(v.context, R.color.colorPrimary))
-                                    .setShowTitle(true)
-                                    .build().launchUrl(v.context, Uri.parse(url.fullUrl))
-                        } catch (e: ActivityNotFoundException) {
-                            Log.e("ViewBinding", Log.getStackTraceString(e))
+                this@with.setOnTouchListener { _, event ->
+                    if (event.action == MotionEvent.ACTION_UP) {
+                        CoroutineScope(Dispatchers.Default).launch {
+                            delay(200)
+                            ignoreClicks = false
                         }
-
                     }
+                    false
                 }
-                val start = prefixLength + badgesLength + message.indexOf(url.originalUrl)
-                val end = start + url.originalUrl.length
-                spannable.setSpan(clickableSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                text = spannable
-            }
 
-            emotes.forEach { e ->
-                e.positions.forEach { pos ->
-                    val split = pos.split('-')
-                    val start = split[0].toInt() + prefixLength + badgesLength
-                    val end = split[1].toInt() + prefixLength + badgesLength
-                    if (e.isGif) {
-                        val gifDrawable = EmoteManager.gifCache[e.code]
-                        if (gifDrawable != null) {
-                            val height = (gifDrawable.intrinsicHeight * scaleFactor).roundToInt()
-                            val width = (gifDrawable.intrinsicWidth * scaleFactor).roundToInt()
-                            gifDrawable.setBounds(0, 0, width, height)
+                val lineHeight = this@with.lineHeight
+                val scaleFactor = lineHeight * 1.5 / 112
+                val currentUserName = DankChatPreferenceStore(this@with.context).getUserName() ?: ""
 
-                            val imageSpan = ImageSpan(gifDrawable, ImageSpan.ALIGN_BOTTOM)
-                            spannable.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
-                            text = spannable
-                        } else Glide.with(this@with)
-                            .`as`(ByteArray::class.java)
-                            .load(e.url)
-                            .placeholder(R.drawable.ic_missing_emote)
-                            .error(R.drawable.ic_missing_emote)
-                            .into(GifDrawableTarget(e.code, true) {
-                                val height = (it.intrinsicHeight * scaleFactor).roundToInt()
-                                val width = (it.intrinsicWidth * scaleFactor).roundToInt()
-                                it.setBounds(0, 0, width, height)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    val foregroundColor = if (timedOut) ContextCompat.getColor(
+                        this@with.context,
+                        R.color.colorTimeOut
+                    ) else Color.TRANSPARENT
+                    foreground = ColorDrawable(foregroundColor)
+                }
 
-                                val imageSpan = ImageSpan(it, ImageSpan.ALIGN_BOTTOM)
-                                spannable.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
-                                text = spannable
-                            })
-                    } else Glide.with(this@with)
-                        .asBitmap()
-                        .load(e.url)
+                val background = when {
+                    isNotify -> R.color.sub_background
+                    isMention(currentUserName) -> R.color.highlight_background
+                    else -> android.R.color.transparent
+                }
+                this@with.setBackgroundResource(background)
+
+
+                val displayName = if (isAction) "$name " else if (name.isBlank()) "" else "$name: "
+                var badgesLength = 0
+                val timestampPreferenceKey =
+                    this@with.context.getString(R.string.preference_timestamp_key)
+                val preferences = PreferenceManager.getDefaultSharedPreferences(this@with.context)
+                val (prefixLength, spannable) = if (preferences.getBoolean(
+                        timestampPreferenceKey,
+                        true
+                    )
+                ) {
+                    time.length + 1 + displayName.length to SpannableStringBuilder().bold { append("$time ") }
+                } else {
+                    displayName.length to SpannableStringBuilder()
+                }
+
+                badges.forEach { badge ->
+                    spannable.append("  ")
+                    val start = spannable.length - 2
+                    val end = spannable.length - 1
+                    badgesLength += 2
+                    Glide.with(this@with)
+                        .asDrawable()
+                        .load(badge.url)
                         .placeholder(R.drawable.ic_missing_emote)
                         .error(R.drawable.ic_missing_emote)
-                        .into(EmoteDrawableTarget(e, context) {
-                            val ratio = it.intrinsicWidth / it.intrinsicHeight.toFloat()
-                            val height = when {
-                                it.intrinsicHeight < 55 && e.code.isBlank() -> (70 * scaleFactor).roundToInt()
-                                it.intrinsicHeight in 55..111 && e.code.isBlank() -> (112 * scaleFactor).roundToInt()
-                                else -> (it.intrinsicHeight * scaleFactor).roundToInt()
-                            }
-                            val width = (height * ratio).roundToInt()
-                            it.setBounds(0, 0, width, height)
+                        .into(DrawableTarget {
+                            val width =
+                                (lineHeight * it.intrinsicWidth / it.intrinsicHeight.toFloat()).roundToInt()
+                            it.setBounds(0, 0, width, lineHeight)
 
                             val imageSpan = ImageSpan(it, ImageSpan.ALIGN_BOTTOM)
-                            spannable.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+                            spannable.setSpan(
+                                imageSpan,
+                                start,
+                                end,
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                            )
                             text = spannable
                         })
                 }
+
+                val normalizedColor = normalizeColor(color)
+                spannable.bold { color(normalizedColor) { append(displayName) } }
+
+                if (isAction) {
+                    spannable.color(normalizedColor) { append(message) }
+                } else {
+                    spannable.append(message)
+                }
+
+                //clicking usernames
+                if (name.isNotBlank()) {
+                    val userClickableSpan = object : ClickableSpan() {
+                        override fun updateDrawState(ds: TextPaint) {
+                            ds.isUnderlineText = false
+                            ds.color = normalizedColor
+                        }
+
+                        override fun onClick(v: View) {
+                            if (!ignoreClicks) onUserClicked(name)
+                        }
+                    }
+                    spannable.setSpan(
+                        userClickableSpan,
+                        prefixLength - displayName.length + badgesLength,
+                        prefixLength + badgesLength,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
+
+                //links
+                UrlDetector(message, UrlDetectorOptions.Default).detect().forEach { url ->
+                    val clickableSpan = object : ClickableSpan() {
+                        override fun onClick(v: View) {
+                            try {
+                                if (!ignoreClicks)
+                                    androidx.browser.customtabs.CustomTabsIntent.Builder()
+                                        .addDefaultShareMenuItem()
+                                        .setToolbarColor(
+                                            ContextCompat.getColor(
+                                                v.context,
+                                                R.color.colorPrimary
+                                            )
+                                        )
+                                        .setShowTitle(true)
+                                        .build().launchUrl(v.context, Uri.parse(url.fullUrl))
+                            } catch (e: ActivityNotFoundException) {
+                                Log.e("ViewBinding", Log.getStackTraceString(e))
+                            }
+
+                        }
+                    }
+                    val start = prefixLength + badgesLength + message.indexOf(url.originalUrl)
+                    val end = start + url.originalUrl.length
+                    spannable.setSpan(clickableSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    text = spannable
+                }
+
+                emotes.forEach { e ->
+                    e.positions.forEach { pos ->
+                        val split = pos.split('-')
+                        val start = split[0].toInt() + prefixLength + badgesLength
+                        val end = split[1].toInt() + prefixLength + badgesLength
+                        if (e.isGif) {
+                            val gifDrawable = EmoteManager.gifCache[e.code]
+                            if (gifDrawable != null) {
+                                val height =
+                                    (gifDrawable.intrinsicHeight * scaleFactor).roundToInt()
+                                val width = (gifDrawable.intrinsicWidth * scaleFactor).roundToInt()
+                                gifDrawable.setBounds(0, 0, width, height)
+
+                                val imageSpan = ImageSpan(gifDrawable, ImageSpan.ALIGN_BOTTOM)
+                                spannable.setSpan(
+                                    imageSpan,
+                                    start,
+                                    end,
+                                    Spannable.SPAN_EXCLUSIVE_INCLUSIVE
+                                )
+                                text = spannable
+                            } else Glide.with(this@with)
+                                .`as`(ByteArray::class.java)
+                                .load(e.url)
+                                .placeholder(R.drawable.ic_missing_emote)
+                                .error(R.drawable.ic_missing_emote)
+                                .into(GifDrawableTarget(e.code, true) {
+                                    val height = (it.intrinsicHeight * scaleFactor).roundToInt()
+                                    val width = (it.intrinsicWidth * scaleFactor).roundToInt()
+                                    it.setBounds(0, 0, width, height)
+
+                                    val imageSpan = ImageSpan(it, ImageSpan.ALIGN_BOTTOM)
+                                    spannable.setSpan(
+                                        imageSpan,
+                                        start,
+                                        end,
+                                        Spannable.SPAN_EXCLUSIVE_INCLUSIVE
+                                    )
+                                    text = spannable
+                                })
+                        } else Glide.with(this@with)
+                            .asBitmap()
+                            .load(e.url)
+                            .placeholder(R.drawable.ic_missing_emote)
+                            .error(R.drawable.ic_missing_emote)
+                            .into(EmoteDrawableTarget(e, context) {
+                                val ratio = it.intrinsicWidth / it.intrinsicHeight.toFloat()
+                                val height = when {
+                                    it.intrinsicHeight < 55 && e.code.isBlank() -> (70 * scaleFactor).roundToInt()
+                                    it.intrinsicHeight in 55..111 && e.code.isBlank() -> (112 * scaleFactor).roundToInt()
+                                    else -> (it.intrinsicHeight * scaleFactor).roundToInt()
+                                }
+                                val width = (height * ratio).roundToInt()
+                                it.setBounds(0, 0, width, height)
+
+                                val imageSpan = ImageSpan(it, ImageSpan.ALIGN_BOTTOM)
+                                spannable.setSpan(
+                                    imageSpan,
+                                    start,
+                                    end,
+                                    Spannable.SPAN_EXCLUSIVE_INCLUSIVE
+                                )
+                                text = spannable
+                            })
+                    }
+                }
+                text = spannable
             }
-            text = spannable
         }
-    }
 
     private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
         override fun areItemsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {

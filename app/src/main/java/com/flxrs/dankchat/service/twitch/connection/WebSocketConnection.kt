@@ -84,7 +84,7 @@ class WebSocketConnection(
         scope.coroutineContext.cancel()
         readerConnected = false
         writerConnected = false
-        
+
         writerWebSocket?.close(1000, null)
         readerWebSocket?.close(1000, null)
     }
