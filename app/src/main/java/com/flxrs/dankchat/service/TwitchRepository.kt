@@ -249,13 +249,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         val list = mutableListOf<ChatItem>()
         TwitchApi.getRecentMessages(channel)?.messages?.forEach {
             val message = IrcMessage.parse(it)
-            val twitchMessages = when (message.tags["display-name"]) {
-                "NOTICE" -> listOf(TwitchMessage.parseNotice(message))
-                "CLEARCHAT" -> listOf(TwitchMessage.parseNotice(message))
-                "USERNOTICE" -> listOf(TwitchMessage.parseUserNotice(message, true)[0])
-                else -> TwitchMessage.parse(message, isHistoric = true)
-            }
-            twitchMessages.forEach { msg -> list += ChatItem(msg, true) }
+            TwitchMessage.parse(message).forEach { msg -> list += ChatItem(msg) }
         }
 
         val current = chatLiveDatas[channel]?.value ?: emptyList()

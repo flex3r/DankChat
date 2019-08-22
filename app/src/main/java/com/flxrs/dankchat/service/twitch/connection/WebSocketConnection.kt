@@ -149,7 +149,7 @@ class WebSocketConnection(
             readerConnected = false
             scope.coroutineContext.cancel()
             onDisconnect()
-            connect(nick, oAuth)
+            close { connect(nick, oAuth) }
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {

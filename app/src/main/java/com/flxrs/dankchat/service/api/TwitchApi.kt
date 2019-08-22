@@ -154,7 +154,7 @@ object TwitchApi {
     suspend fun getRecentMessages(channel: String): RecentMessages? = withContext(Dispatchers.IO) {
         try {
             val response =
-                service.getRecentMessages("$RECENT_MSG_URL$channel$RECENT_MSG_URL_SUFFIX")
+                service.getRecentMessages("$RECENT_MSG_URL$channel")
             if (response.isSuccessful) return@withContext response.body()
         } catch (t: Throwable) {
             Log.e(TAG, Log.getStackTraceString(t))
