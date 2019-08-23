@@ -66,8 +66,8 @@ class WebSocketConnection(
     }
 
     @Synchronized
-    fun connect(nick: String, oAuth: String) {
-        if (!readerConnected && !writerConnected && !connecting) {
+    fun connect(nick: String, oAuth: String, forceConnect: Boolean = false) {
+        if (forceConnect || (!readerConnected && !writerConnected && !connecting)) {
             this.nick = nick
             this.oAuth = oAuth
             isJustinFan = (oAuth.isBlank() || !oAuth.startsWith("oauth:"))
@@ -149,7 +149,7 @@ class WebSocketConnection(
             readerConnected = false
             scope.coroutineContext.cancel()
             onDisconnect()
-            close { connect(nick, oAuth) }
+            connect(nick, oAuth, true)
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
