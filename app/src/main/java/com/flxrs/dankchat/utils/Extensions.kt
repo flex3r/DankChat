@@ -44,22 +44,12 @@ class TimerScope {
 
 fun List<ChatItem>.replaceWithTimeOuts(name: String): MutableList<ChatItem> =
     toMutableList().apply {
-        val iterate = listIterator()
-        if (name.isBlank()) {
-            while (iterate.hasNext()) {
-                val item = iterate.next()
-                if (!item.message.isNotify) {
-                    item.message.timedOut = true
-                    iterate.set(item)
-                }
-            }
-        } else {
-            while (iterate.hasNext()) {
-                val item = iterate.next()
-                if (!item.message.isNotify && item.message.name.equals(name, true)) {
-                    item.message.timedOut = true
-                    iterate.set(item)
-                }
+        forEachIndexed { i, item ->
+            if (!item.message.isNotify
+                && (name.isBlank() || item.message.name.equals(name, true))
+            ) {
+                item.message.timedOut = true
+                this[i] = item
             }
         }
     }
@@ -70,14 +60,11 @@ fun List<ChatItem>.addAndLimit(item: ChatItem): MutableList<ChatItem> = toMutabl
 }
 
 fun List<ChatItem>.addAndLimit(
-    collection: Collection<ChatItem>,
-    checkForDuplicates: Boolean = false
+    collection: Collection<ChatItem>
 ): MutableList<ChatItem> = toMutableList().apply {
     for (item in collection) {
-        if (!checkForDuplicates || !this.any { it.message.id == item.message.id }) {
-            add(item)
-            if (size > 500) removeAt(0)
-        }
+        add(item)
+        if (size > 500) removeAt(0)
     }
 }
 

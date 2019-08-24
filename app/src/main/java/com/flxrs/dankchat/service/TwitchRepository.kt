@@ -18,7 +18,6 @@ import kotlinx.coroutines.withContext
 import org.koin.core.KoinComponent
 import java.io.File
 import java.nio.ByteBuffer
-import kotlin.collections.set
 
 class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
@@ -35,41 +34,23 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
     val imageUploadedEvent = SingleLiveEvent<Pair<String, File>>()
 
-    fun getChat(channel: String): LiveData<List<ChatItem>> {
-        var liveData = chatLiveDatas[channel]
-        if (liveData == null) {
-            liveData = MutableLiveData(emptyList())
-            chatLiveDatas[channel] = liveData
-        }
-        return liveData
+    fun getChat(channel: String): LiveData<List<ChatItem>> = chatLiveDatas.getOrPut(channel) {
+        MutableLiveData(emptyList())
     }
 
-    fun getCanType(channel: String): LiveData<String> {
-        var liveData = canType[channel]
-        if (liveData == null) {
-            liveData = MutableLiveData("Disconnected")
-            canType[channel] = liveData
-        }
-        return liveData
+    fun getCanType(channel: String): LiveData<String> = canType.getOrPut(channel) {
+        MutableLiveData("Disconnected")
     }
 
-    fun getEmoteKeywords(channel: String): LiveData<List<GenericEmote>> {
-        var liveData = emoteSuggestions[channel]
-        if (liveData == null) {
-            liveData = MutableLiveData(emptyList())
-            emoteSuggestions[channel] = liveData
+    fun getEmoteKeywords(channel: String): LiveData<List<GenericEmote>> =
+        emoteSuggestions.getOrPut(channel) {
+            MutableLiveData(emptyList())
         }
-        return liveData
-    }
 
-    fun getRoomState(channel: String): LiveData<TwitchMessage.Roomstate> {
-        var liveData = roomStates[channel]
-        if (liveData == null) {
-            liveData = MutableLiveData(TwitchMessage.Roomstate(channel))
-            roomStates[channel] = liveData
+    fun getRoomState(channel: String): LiveData<TwitchMessage.Roomstate> =
+        roomStates.getOrPut(channel) {
+            MutableLiveData(TwitchMessage.Roomstate(channel))
         }
-        return liveData
-    }
 
     fun loadData(channel: String, oAuth: String, id: Int, load3rdParty: Boolean, reAuth: Boolean) {
         if (reAuth) {
@@ -146,7 +127,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     }
 
     private fun handleConnected(channel: String, isJustinFan: Boolean) {
-        makeAndPostSystemMessage("Connected", channel)
+        makeAndPostSystemMessage("Connected", setOf(channel))
         hasDisconnected = false
 
         val hint = if (isJustinFan) "Not logged in" else "Start chatting"
@@ -159,8 +140,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         val channel = msg.params[0].substring(1)
 
         chatLiveDatas[channel]?.value?.replaceWithTimeOuts(target)?.run {
-            add(parsed[0])
-            chatLiveDatas[channel]?.postValue(this)
+            chatLiveDatas[channel]?.postValue(addAndLimit(parsed[0]))
         }
     }
 
@@ -184,32 +164,14 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         return parsed
     }
 
-    private fun makeAndPostSystemMessage(message: String, channel: String = "") {
-        if (channel.isBlank()) {
-            chatLiveDatas.keys.forEach {
-                val currentChat = chatLiveDatas[it]?.value ?: emptyList()
-                chatLiveDatas[it]?.postValue(
-                    currentChat.addAndLimit(
-                        ChatItem(
-                            TwitchMessage.makeSystemMessage(
-                                message,
-                                it
-                            )
-                        )
-                    )
-                )
-            }
-        } else {
-            val currentChat = chatLiveDatas[channel]?.value ?: emptyList()
-            chatLiveDatas[channel]?.postValue(
-                currentChat.addAndLimit(
-                    ChatItem(
-                        TwitchMessage.makeSystemMessage(
-                            message,
-                            channel
-                        )
-                    )
-                )
+    private fun makeAndPostSystemMessage(
+        message: String,
+        channels: Set<String> = chatLiveDatas.keys
+    ) {
+        channels.forEach {
+            val currentChat = chatLiveDatas[it]?.value ?: emptyList()
+            chatLiveDatas[it]?.postValue(
+                currentChat.addAndLimit(ChatItem(TwitchMessage.makeSystemMessage(message, it)))
             )
         }
     }
@@ -246,18 +208,17 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     }
 
     private suspend fun loadRecentMessages(channel: String) = withContext(Dispatchers.Default) {
-        val list = mutableListOf<ChatItem>()
-        TwitchApi.getRecentMessages(channel)?.messages?.forEach {
-            val message = IrcMessage.parse(it)
-            TwitchMessage.parse(message).forEach { msg -> list += ChatItem(msg) }
-        }
-
-        val current = chatLiveDatas[channel]?.value ?: emptyList()
-        chatLiveDatas[channel]?.postValue(list.addAndLimit(current, true))
+        TwitchApi.getRecentMessages(channel)
+            ?.messages?.map { TwitchMessage.parse(IrcMessage.parse(it)) }
+            ?.flatten()
+            ?.map { ChatItem(it) }
+            ?.let {
+                val current = chatLiveDatas[channel]?.value ?: emptyList()
+                chatLiveDatas[channel]?.postValue(it.addAndLimit(current))
+            }
     }
 
     companion object {
-        private val TAG = TwitchRepository::class.java.simpleName
         private val INVISIBLE_CHAR =
             String(ByteBuffer.allocate(4).putInt(0x000E0000).array(), Charsets.UTF_32)
     }
