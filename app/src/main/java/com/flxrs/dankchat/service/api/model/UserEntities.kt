@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 
 sealed class UserEntities {
 
-    data class FromKraken(
+    data class KrakenUser(
         @field:Json(name = "_id") val id: Int,
         @field:Json(name = "bio") val bio: String,
         @field:Json(name = "created_at") val createdAt: String,
@@ -20,7 +20,7 @@ sealed class UserEntities {
         @field:Json(name = "updated_at") val lastUpdated: String
     )
 
-    data class FromHelix(
+    data class HelixUser(
         @field:Json(name = "id") val id: String,
         @field:Json(name = "login") val name: String,
         @field:Json(name = "display_name") val displayName: String,
@@ -30,18 +30,7 @@ sealed class UserEntities {
         @field:Json(name = "profile_image_url") val avatarUrl: String,
         @field:Json(name = "offline_image_url") val offlineImageUrl: String,
         @field:Json(name = "view_count") val viewCount: Int
-    ) : UserEntities()
+    )
 
-    data class FromHelixAsArray(@field:Json(name = "data") val data: Array<UserEntities.FromHelix>) {
-        override fun hashCode(): Int = data.contentHashCode()
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as FromHelixAsArray
-            if (!data.contentEquals(other.data)) return false
-
-            return true
-        }
-    }
+    data class HelixUsers(@field:Json(name = "data") val data: List<HelixUser>)
 }

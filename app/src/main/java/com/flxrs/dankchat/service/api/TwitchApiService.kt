@@ -14,7 +14,7 @@ interface TwitchApiService {
         "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
     )
     @GET("user")
-    suspend fun getUser(@Header("Authorization") oauth: String): Response<UserEntities.FromKraken>
+    suspend fun getUser(@Header("Authorization") oauth: String): Response<UserEntities.KrakenUser>
 
     @Headers(
         "Accept: application/vnd.twitchtv.v5+json",
@@ -37,7 +37,7 @@ interface TwitchApiService {
         "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
     )
     @GET
-    suspend fun getUserHelix(@Url url: String): Response<UserEntities.FromHelixAsArray>
+    suspend fun getUserHelix(@Url url: String): Response<UserEntities.HelixUsers>
 
     @Headers(
         "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
@@ -67,7 +67,7 @@ interface TwitchApiService {
         "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
     )
     @GET
-    suspend fun getBTTVGlobalEmotes(@Url url: String): Response<EmoteEntities.BTTV.GlobalResult>
+    suspend fun getBTTVGlobalEmotes(@Url url: String): Response<List<EmoteEntities.BTTV.GlobalEmote>>
 
     @Headers(
         "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"

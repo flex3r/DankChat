@@ -27,11 +27,10 @@ object TwitchApi {
     private const val FFZ_BASE_URL = "https://api.frankerfacez.com/v1/room/"
     private const val FFZ_GLOBAL_URL = "https://api.frankerfacez.com/v1/set/global"
 
-    private const val BTTV_CHANNEL_BASE_URL = "https://api.betterttv.net/2/channels/"
-    private const val BTTV_GLOBAL_URL = "https://api.betterttv.net/2/emotes/"
+    private const val BTTV_CHANNEL_BASE_URL = "https://api.betterttv.net/3/cached/users/twitch/"
+    private const val BTTV_GLOBAL_URL = "https://api.betterttv.net/3/cached/emotes/global"
 
     private const val RECENT_MSG_URL = "https://recent-messages.robotty.de/api/v2/recent-messages/"
-    private const val RECENT_MSG_URL_SUFFIX = "?clearchatToNotice=true"
 
     private const val NUULS_UPLOAD_URL = "https://i.nuuls.com/upload"
 
@@ -50,7 +49,7 @@ object TwitchApi {
 
     private val nuulsUploadClient = OkHttpClient()
 
-    suspend fun getUser(oAuth: String): UserEntities.FromKraken? = withContext(Dispatchers.IO) {
+    suspend fun getUser(oAuth: String): UserEntities.KrakenUser? = withContext(Dispatchers.IO) {
         try {
             val response = service.getUser("OAuth $oAuth")
             if (response.isSuccessful) return@withContext response.body()
@@ -131,16 +130,18 @@ object TwitchApi {
 
     suspend fun getBTTVChannelEmotes(channel: String): EmoteEntities.BTTV.Result? =
         withContext(Dispatchers.IO) {
-            try {
-                val response = service.getBTTVChannelEmotes("$BTTV_CHANNEL_BASE_URL$channel")
-                if (response.isSuccessful) return@withContext response.body()
-            } catch (t: Throwable) {
-                Log.e(TAG, Log.getStackTraceString(t))
+            getUserIdFromName(channel)?.let {
+                try {
+                    val response = service.getBTTVChannelEmotes("$BTTV_CHANNEL_BASE_URL$it")
+                    if (response.isSuccessful) return@withContext response.body() else null
+                } catch (t: Throwable) {
+                    Log.e(TAG, Log.getStackTraceString(t))
+                }
             }
             return@withContext null
         }
 
-    suspend fun getBTTVGlobalEmotes(): EmoteEntities.BTTV.GlobalResult? =
+    suspend fun getBTTVGlobalEmotes(): List<EmoteEntities.BTTV.GlobalEmote>? =
         withContext(Dispatchers.IO) {
             try {
                 val response = service.getBTTVGlobalEmotes(BTTV_GLOBAL_URL)

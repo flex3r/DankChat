@@ -149,16 +149,16 @@ object EmoteManager {
     suspend fun setBTTVEmotes(channel: String, bttvResult: EmoteEntities.BTTV.Result) =
         withContext(Dispatchers.Default) {
             val emotes = hashMapOf<String, GenericEmote>()
-            bttvResult.emotes.forEach {
+            bttvResult.emotes.plus(bttvResult.sharedEmotes).forEach {
                 val emote = parseBTTVEmote(it)
                 emotes[emote.keyword] = emote
             }
             bttvEmotes[channel] = emotes
         }
 
-    suspend fun setBTTVGlobalEmotes(bttvResult: EmoteEntities.BTTV.GlobalResult) =
+    suspend fun setBTTVGlobalEmotes(globalEmotes: List<EmoteEntities.BTTV.GlobalEmote>) =
         withContext(Dispatchers.Default) {
-            bttvResult.emotes.forEach {
+            globalEmotes.forEach {
                 val emote = parseBTTVGlobalEmote(it)
                 globalBttvEmotes[emote.keyword] = emote
             }
