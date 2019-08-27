@@ -1,4 +1,5 @@
-# DankChat [![Build status](https://github.com/flex3r/DankChat/workflows/Android%20CI/badge.svg)](https://github.com/flex3r/DankChat/actions)  
+# DankChat  
+[![Build status](https://github.com/flex3r/DankChat/workflows/Android%20CI/badge.svg)](https://github.com/flex3r/DankChat/actions)  
 [<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/details?id=com.flxrs.dankchat)
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/com.flxrs.dankchat)  
 Download the latest version manually: https://install.appcenter.ms/users/flex3r/apps/dankchat/distribution_groups/public  
