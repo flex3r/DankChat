@@ -1,7 +1,6 @@
 package com.flxrs.dankchat.service.twitch.message
 
 import android.graphics.Color
-import android.util.Log
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.badge.Badge
 import com.flxrs.dankchat.service.twitch.emote.ChatEmote

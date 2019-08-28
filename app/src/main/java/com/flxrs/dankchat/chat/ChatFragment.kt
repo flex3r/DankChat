@@ -14,8 +14,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
@@ -94,18 +94,16 @@ class ChatFragment : Fragment() {
         }
 
         if (channel.isNotBlank()) viewModel.run {
-            getChat(channel).observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
-            getCanType(channel).observe(viewLifecycleOwner, Observer {
+            getChat(channel).observe(viewLifecycleOwner) { adapter.submitList(it) }
+            getCanType(channel).observe(viewLifecycleOwner) {
                 binding.input.isEnabled = it == "Start chatting"
                 binding.inputLayout.hint = it
-            })
-            getEmoteKeywords(channel).observe(viewLifecycleOwner, Observer { list ->
+            }
+            getEmoteKeywords(channel).observe(viewLifecycleOwner) { list ->
                 val adapter = EmoteSuggestionsArrayAdapter(list)
                 binding.input.setAdapter(adapter)
-            })
-            getRoomState(channel).observe(
-                viewLifecycleOwner,
-                Observer { updateChannelData(roomState = it.toString()) })
+            }
+            getRoomState(channel).observe(viewLifecycleOwner) { updateChannelData(roomState = it.toString()) }
         }
         updateStreamInfo()
         return binding.root

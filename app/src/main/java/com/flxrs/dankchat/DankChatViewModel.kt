@@ -1,6 +1,7 @@
 package com.flxrs.dankchat
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.service.TwitchRepository
@@ -12,6 +13,8 @@ import java.io.File
 class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewModel() {
 
     val imageUploadedEvent: SingleLiveEvent<Pair<String, File>> = twitchRepository.imageUploadedEvent
+    val appbarEnabled = MutableLiveData<Boolean>(true)
+
 
     fun getChat(channel: String): LiveData<List<ChatItem>> = twitchRepository.getChat(channel)
 

@@ -20,8 +20,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.observe
 import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.databinding.MainActivityBinding
@@ -97,22 +97,25 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                         }
                     }
                 })
-                showActionbarFab.setOnClickListener { showActionBar() }
+                showActionbarFab.setOnClickListener { viewModel.appbarEnabled.value = true }
             }
 
-        viewModel.imageUploadedEvent.observe(this, Observer { (urlOrError, file) ->
-            val message: String = if (!urlOrError.startsWith("Error")) {
-                val clipboard =
-                    getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                clipboard.setPrimaryClip(ClipData.newPlainText("nuuls image url", urlOrError))
-                "Copied: $urlOrError"
-            } else urlOrError
+        viewModel.apply {
+            imageUploadedEvent.observe(this@MainActivity) { (urlOrError, file) ->
+                val message: String = if (!urlOrError.startsWith("Error")) {
+                    val clipboard =
+                        getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    clipboard.setPrimaryClip(ClipData.newPlainText("nuuls image url", urlOrError))
+                    "Copied: $urlOrError"
+                } else urlOrError
 
-            showSnackbar(message)
-            showProgressBar = false
-            invalidateOptionsMenu()
-            file.delete()
-        })
+                showSnackbar(message)
+                showProgressBar = false
+                invalidateOptionsMenu()
+                file.delete()
+            }
+            appbarEnabled.observe(this@MainActivity) { changeActionBarVisibility(it) }
+        }
 
         setSupportActionBar(binding.toolbar)
         updateViewPagerVisibility()
@@ -194,7 +197,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             R.id.menu_reload_emotes -> reloadEmotes()
             R.id.menu_choose_image -> checkPermissionForGallery()
             R.id.menu_capture_image -> startCameraCapture()
-            R.id.menu_hide -> hideActionBar()
+            R.id.menu_hide -> viewModel.appbarEnabled.value = false
             R.id.menu_clear -> clear()
             R.id.menu_settings -> Intent(this, SettingsActivity::class.java).run {
                 startActivity(
@@ -386,16 +389,16 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         }
     }
 
-    private fun hideActionBar() {
-        supportActionBar?.hide()
-        binding.tabs.visibility = View.GONE
-        binding.showActionbarFab.visibility = View.VISIBLE
-    }
-
-    private fun showActionBar() {
-        supportActionBar?.show()
-        binding.showActionbarFab.visibility = View.GONE
-        binding.tabs.visibility = View.VISIBLE
+    private fun changeActionBarVisibility(enabled: Boolean) {
+        if (enabled) {
+            supportActionBar?.show()
+            binding.showActionbarFab.visibility = View.GONE
+            binding.tabs.visibility = View.VISIBLE
+        } else {
+            supportActionBar?.hide()
+            binding.tabs.visibility = View.GONE
+            binding.showActionbarFab.visibility = View.VISIBLE
+        }
     }
 
     private fun clear() {
