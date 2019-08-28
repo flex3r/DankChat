@@ -214,7 +214,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
             ?.map { ChatItem(it) }
             ?.let {
                 val current = chatLiveDatas[channel]?.value ?: emptyList()
-                chatLiveDatas[channel]?.postValue(it.addAndLimit(current))
+                chatLiveDatas[channel]?.postValue(it.addAndLimit(current, true))
             }
     }
 
