@@ -1,11 +1,13 @@
 package com.flxrs.dankchat.service.twitch.message
 
 import android.graphics.Color
+import android.util.Log
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.badge.Badge
 import com.flxrs.dankchat.service.twitch.emote.ChatEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.TimeUtils
+import java.util.regex.Pattern
 
 data class TwitchMessage(
     val time: String,
@@ -23,8 +25,9 @@ data class TwitchMessage(
 ) {
 
     fun isMention(username: String): Boolean {
+        val regex = """\b$username\b""".toPattern(Pattern.CASE_INSENSITIVE).toRegex()
         return username.isNotBlank() && !name.equals(username, true)
-                && !timedOut && !isSystem && message.contains(username, true)
+                && !timedOut && !isSystem && regex.containsMatchIn(message)
     }
 
     companion object {
