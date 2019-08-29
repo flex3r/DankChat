@@ -24,7 +24,7 @@ object TwitchApi {
     private const val TWITCH_SUBBADGES_SUFFIX = "/display"
     private const val TWITCH_BADGES_URL = "https://badges.twitch.tv/v1/badges/global/display"
 
-    private const val FFZ_BASE_URL = "https://api.frankerfacez.com/v1/room/"
+    private const val FFZ_BASE_URL = "https://api.frankerfacez.com/v1/room/id/"
     private const val FFZ_GLOBAL_URL = "https://api.frankerfacez.com/v1/set/global"
 
     private const val BTTV_CHANNEL_BASE_URL = "https://api.betterttv.net/3/cached/users/twitch/"
@@ -82,16 +82,14 @@ object TwitchApi {
         return@withContext null
     }
 
-    suspend fun getChannelBadges(channel: String): BadgeEntities.Result? =
+    suspend fun getChannelBadges(id: String): BadgeEntities.Result? =
         withContext(Dispatchers.IO) {
-            getUserIdFromName(channel)?.let {
-                try {
-                    val response =
-                        service.getBadgeSets("$TWITCH_SUBBADGES_BASE_URL$it$TWITCH_SUBBADGES_SUFFIX")
-                    return@withContext if (response.isSuccessful) response.body() else null
-                } catch (t: Throwable) {
-                    Log.e(TAG, Log.getStackTraceString(t))
-                }
+            try {
+                val response =
+                    service.getBadgeSets("$TWITCH_SUBBADGES_BASE_URL$id$TWITCH_SUBBADGES_SUFFIX")
+                return@withContext if (response.isSuccessful) response.body() else null
+            } catch (t: Throwable) {
+                Log.e(TAG, Log.getStackTraceString(t))
             }
             return@withContext null
         }
@@ -106,10 +104,10 @@ object TwitchApi {
         return@withContext null
     }
 
-    suspend fun getFFZChannelEmotes(channel: String): EmoteEntities.FFZ.Result? =
+    suspend fun getFFZChannelEmotes(id: String): EmoteEntities.FFZ.Result? =
         withContext(Dispatchers.IO) {
             try {
-                val response = service.getFFZChannelEmotes("$FFZ_BASE_URL$channel")
+                val response = service.getFFZChannelEmotes("$FFZ_BASE_URL$id")
                 if (response.isSuccessful) return@withContext response.body()
             } catch (t: Throwable) {
                 Log.e(TAG, Log.getStackTraceString(t))
@@ -128,15 +126,13 @@ object TwitchApi {
             return@withContext null
         }
 
-    suspend fun getBTTVChannelEmotes(channel: String): EmoteEntities.BTTV.Result? =
+    suspend fun getBTTVChannelEmotes(id: String): EmoteEntities.BTTV.Result? =
         withContext(Dispatchers.IO) {
-            getUserIdFromName(channel)?.let {
-                try {
-                    val response = service.getBTTVChannelEmotes("$BTTV_CHANNEL_BASE_URL$it")
-                    if (response.isSuccessful) return@withContext response.body() else null
-                } catch (t: Throwable) {
-                    Log.e(TAG, Log.getStackTraceString(t))
-                }
+            try {
+                val response = service.getBTTVChannelEmotes("$BTTV_CHANNEL_BASE_URL$id")
+                if (response.isSuccessful) return@withContext response.body() else null
+            } catch (t: Throwable) {
+                Log.e(TAG, Log.getStackTraceString(t))
             }
             return@withContext null
         }
@@ -182,7 +178,7 @@ object TwitchApi {
         return@withContext null
     }
 
-    private suspend fun getUserIdFromName(name: String): String? = withContext(Dispatchers.IO) {
+    suspend fun getUserIdFromName(name: String): String? = withContext(Dispatchers.IO) {
         try {
             val response = service.getUserHelix("${HELIX_BASE_URL}users?login=$name")
             if (response.isSuccessful) return@withContext response.body()?.data?.get(0)?.id

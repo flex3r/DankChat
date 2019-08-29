@@ -59,9 +59,12 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
         scope.launch {
             if (load3rdParty) {
-                loadBadges(channel)
-                load3rdPartyEmotes(channel)
+                TwitchApi.getUserIdFromName(channel)?.let {
+                    loadBadges(channel, it)
+                    load3rdPartyEmotes(channel, it)
+                }
                 loadRecentMessages(channel)
+
             }
             if (oAuth.isNotBlank() && oAuth.startsWith("oauth:")) {
                 loadTwitchEmotes(oAuth.substringAfter("oauth:"), id)
@@ -101,7 +104,9 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     fun reloadEmotes(channel: String, oAuth: String, id: Int) = scope.launch {
         loadedGlobalEmotes = false
         loadedTwitchEmotes = false
-        load3rdPartyEmotes(channel)
+        TwitchApi.getUserIdFromName(channel)?.let {
+            load3rdPartyEmotes(channel, it)
+        }
 
         if (id != 0 && oAuth.isNotBlank() && oAuth.startsWith("oauth:")) {
             loadTwitchEmotes(oAuth.substringAfter("oauth:"), id)
@@ -176,12 +181,12 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         }
     }
 
-    private suspend fun loadBadges(channel: String) = withContext(Dispatchers.IO) {
+    private suspend fun loadBadges(channel: String, id: String) = withContext(Dispatchers.IO) {
         if (!loadedGlobalBadges) TwitchApi.getGlobalBadges()?.let {
             EmoteManager.setGlobalBadges(it)
             loadedGlobalBadges = true
         }
-        TwitchApi.getChannelBadges(channel)?.let { EmoteManager.setChannelBadges(channel, it) }
+        TwitchApi.getChannelBadges(id)?.let { EmoteManager.setChannelBadges(channel, it) }
     }
 
     private suspend fun loadTwitchEmotes(oAuth: String, id: Int) = withContext(Dispatchers.IO) {
@@ -191,16 +196,17 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         }
     }
 
-    private suspend fun load3rdPartyEmotes(channel: String) = withContext(Dispatchers.IO) {
-        TwitchApi.getFFZChannelEmotes(channel)?.let { EmoteManager.setFFZEmotes(channel, it) }
-        TwitchApi.getBTTVChannelEmotes(channel)?.let { EmoteManager.setBTTVEmotes(channel, it) }
+    private suspend fun load3rdPartyEmotes(channel: String, id: String) =
+        withContext(Dispatchers.IO) {
+            TwitchApi.getFFZChannelEmotes(id)?.let { EmoteManager.setFFZEmotes(channel, it) }
+            TwitchApi.getBTTVChannelEmotes(id)?.let { EmoteManager.setBTTVEmotes(channel, it) }
 
-        if (!loadedGlobalEmotes) {
-            TwitchApi.getFFZGlobalEmotes()?.let { EmoteManager.setFFZGlobalEmotes(it) }
-            TwitchApi.getBTTVGlobalEmotes()?.let { EmoteManager.setBTTVGlobalEmotes(it) }
-            loadedGlobalEmotes = true
+            if (!loadedGlobalEmotes) {
+                TwitchApi.getFFZGlobalEmotes()?.let { EmoteManager.setFFZGlobalEmotes(it) }
+                TwitchApi.getBTTVGlobalEmotes()?.let { EmoteManager.setBTTVGlobalEmotes(it) }
+                loadedGlobalEmotes = true
+            }
         }
-    }
 
     private fun setSuggestions(channel: String) {
         val keywords = EmoteManager.getEmotesForSuggestions(channel)
