@@ -89,7 +89,5 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
             streamNotBlank -> streamInfo
             else -> ""
         }
-
-
     }
 }

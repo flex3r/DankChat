@@ -45,7 +45,7 @@ class ChatFragment : Fragment() {
         manager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false).apply {
             stackFromEnd = true
         }
-        adapter = ChatAdapter(::scrollToPosition, ::mentionUser, ::copyMessage)
+        adapter = ChatAdapter({ scrollToPosition(it) }, ::mentionUser, ::copyMessage)
 
         binding = ChatFragmentBinding.inflate(inflater, container, false).apply {
             lifecycleOwner = this@ChatFragment
@@ -105,14 +105,11 @@ class ChatFragment : Fragment() {
     private fun scrollToPosition(position: Int) {
         if (position > 0 && isAtBottom) {
             binding.chat.stopScroll()
-            binding.chat.smoothSnapToPositon(position)
+            binding.chat.scrollToPosition(position)
             lifecycleScope.launch {
                 delay(50)
                 if (isAtBottom && position != adapter.itemCount - 1) binding.chat.post {
-                    manager.scrollToPositionWithOffset(
-                        position,
-                        0
-                    )
+                    manager.scrollToPositionWithOffset(position, 0)
                 }
             }
         }
@@ -125,19 +122,6 @@ class ChatFragment : Fragment() {
         itemAnimator = null
         isNestedScrollingEnabled = false
         addOnScrollListener(ChatScrollListener())
-    }
-
-    private fun RecyclerView.smoothSnapToPositon(
-        position: Int,
-        snapMode: Int = LinearSmoothScroller.SNAP_TO_END
-    ) {
-        val smoothScroller = object : LinearSmoothScroller(this.context) {
-            override fun getVerticalSnapPreference(): Int = snapMode
-
-            override fun getHorizontalSnapPreference(): Int = snapMode
-        }
-        smoothScroller.targetPosition = position
-        layoutManager?.startSmoothScroll(smoothScroller)
     }
 
     private inner class ChatScrollListener : RecyclerView.OnScrollListener() {

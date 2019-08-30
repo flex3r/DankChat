@@ -20,6 +20,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
@@ -128,19 +129,20 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                     setTokenizer(SpaceTokenizer())
                     setOnEditorActionListener { _, actionId, _ ->
                         return@setOnEditorActionListener when (actionId) {
-                            EditorInfo.IME_ACTION_SEND -> handleSendMessage()
+                            EditorInfo.IME_ACTION_SEND -> sendMessage()
                             else -> false
                         }
                     }
                     setOnKeyListener { _, keyCode, _ ->
                         return@setOnKeyListener when (keyCode) {
-                            KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> if (!isPopupShowing) handleSendMessage() else false
+                            KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> if (!isPopupShowing) sendMessage() else false
                             else -> false
                         }
                     }
                 }
 
-                inputLayout.setEndIconOnClickListener { handleSendMessage() }
+
+                inputLayout.setEndIconOnClickListener { sendMessage() }
 
                 showActionbarFab.setOnClickListener { viewModel.appbarEnabled.value = true }
             }
@@ -172,8 +174,16 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 binding.inputLayout.isHelperTextEnabled = it
             }
             bottomText.observe(this@MainActivity) {
-                binding.inputLayout.helperText = null
-                binding.inputLayout.helperText = it
+                binding.inputLayout.run {
+                    val helperId = com.google.android.material.R.id.textinput_helper_text
+                    val previous = helperText
+                    helperText = it
+
+                    if (previous?.isBlank() == false) findViewById<TextView>(helperId)?.run {
+                        updatePadding(top = 12) //TODO check if still needed
+                    }
+
+                }
             }
 
         }
@@ -259,9 +269,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             R.id.menu_hide -> viewModel.appbarEnabled.value = false
             R.id.menu_clear -> clear()
             R.id.menu_settings -> Intent(this, SettingsActivity::class.java).run {
-                startActivity(
-                    this
-                )
+                startActivity(this)
             }
             else -> return false
         }
@@ -428,7 +436,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         }
     }
 
-    private fun handleSendMessage(): Boolean {
+    private fun sendMessage(): Boolean {
         val msg = binding.input.text.toString()
         twitchService?.sendMessage(currentChannel, msg)
         binding.input.setText("")

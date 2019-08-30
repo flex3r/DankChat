@@ -6,10 +6,12 @@ import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.chat.ChatItem
+import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.*
 
 fun CoroutineScope.timer(interval: Long, action: suspend TimerScope.() -> Unit): Job {
