@@ -8,12 +8,13 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.MediaStore
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.WindowManager
+import android.view.*
+import android.view.inputmethod.EditorInfo
 import android.webkit.MimeTypeMap
+import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -22,40 +23,44 @@ import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
+import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
+import com.bumptech.glide.Glide
 import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.SettingsActivity
 import com.flxrs.dankchat.service.TwitchService
 import com.flxrs.dankchat.service.api.TwitchApi
-import com.flxrs.dankchat.utils.MediaUtils
+import com.flxrs.dankchat.service.twitch.emote.GenericEmote
+import com.flxrs.dankchat.utils.*
 import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.AdvancedLoginDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.EditTextDialogFragment
-import com.flxrs.dankchat.utils.isServiceRunning
-import com.flxrs.dankchat.utils.reduceDragSensitivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.IOException
 import java.util.*
 
-
 class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     AdvancedLoginDialogResultHandler {
     private val viewModel: DankChatViewModel by viewModel()
     private val channels = mutableListOf<String>()
     private lateinit var preferenceStore: DankChatPreferenceStore
+    private lateinit var preferenceListener: SharedPreferences.OnSharedPreferenceChangeListener
+    private lateinit var preferences: SharedPreferences
     private lateinit var binding: MainActivityBinding
     private lateinit var adapter: ChatTabAdapter
     private lateinit var tabLayoutMediator: TabLayoutMediator
     private var currentImagePath = ""
     private var showProgressBar = false
+    private var currentChannel = ""
+    private var fetchJob: Job? = null
 
     private var twitchService: TwitchService? = null
     private var isBound = false
@@ -67,6 +72,29 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         preferenceStore = DankChatPreferenceStore(this)
+        preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
+            when (key) {
+                getString(R.string.preference_roomstate_key) -> viewModel.setRoomStateEnabled(
+                    p.getBoolean(
+                        key,
+                        true
+                    )
+                )
+                getString(R.string.preference_streaminfo_key) -> {
+                    fetchStreamInformation()
+                    viewModel.setStreamInfoEnabled(p.getBoolean(key, true))
+                }
+            }
+        }
+        preferences = PreferenceManager.getDefaultSharedPreferences(this).apply {
+            registerOnSharedPreferenceChangeListener(preferenceListener)
+            val roomStateKey = getString(R.string.preference_roomstate_key)
+            viewModel.setRoomStateEnabled(getBoolean(roomStateKey, true))
+
+            val streamInfoKey = getString(R.string.preference_streaminfo_key)
+            viewModel.setStreamInfoEnabled(getBoolean(streamInfoKey, true))
+        }
+
 
         adapter = ChatTabAdapter(supportFragmentManager, lifecycle)
         preferenceStore.getChannelsAsString()?.let { channels.addAll(it.split(',')) }
@@ -81,22 +109,39 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 viewPager.adapter = adapter
                 viewPager.reduceDragSensitivity()
                 viewPager.offscreenPageLimit = calculatePageLimit()
+                viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                    override fun onPageSelected(position: Int) {
+                        if (position in 0 until adapter.fragmentList.size) {
+                            currentChannel =
+                                adapter.titleList[position].toLowerCase(Locale.getDefault())
+                            viewModel.setActiveChannel(currentChannel)
+                        }
+                    }
+                })
                 tabLayoutMediator = TabLayoutMediator(tabs, viewPager) { tab, position ->
                     tab.text = adapter.titleList[position]
                 }
                 tabLayoutMediator.attach()
-                tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-                    override fun onTabReselected(tab: TabLayout.Tab?) = Unit
 
-                    override fun onTabSelected(tab: TabLayout.Tab?) = Unit
-
-                    override fun onTabUnselected(tab: TabLayout.Tab?) {
-                        val position = tab?.position ?: -1
-                        if (position in 0 until adapter.fragmentList.size) {
-                            adapter.fragmentList[position].clearInputFocus()
+                input.apply {
+                    setDropDownBackgroundResource(R.color.colorPrimary)
+                    setTokenizer(SpaceTokenizer())
+                    setOnEditorActionListener { _, actionId, _ ->
+                        return@setOnEditorActionListener when (actionId) {
+                            EditorInfo.IME_ACTION_SEND -> handleSendMessage()
+                            else -> false
                         }
                     }
-                })
+                    setOnKeyListener { _, keyCode, _ ->
+                        return@setOnKeyListener when (keyCode) {
+                            KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> if (!isPopupShowing) handleSendMessage() else false
+                            else -> false
+                        }
+                    }
+                }
+
+                inputLayout.setEndIconOnClickListener { handleSendMessage() }
+
                 showActionbarFab.setOnClickListener { viewModel.appbarEnabled.value = true }
             }
 
@@ -115,18 +160,32 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 file.delete()
             }
             appbarEnabled.observe(this@MainActivity) { changeActionBarVisibility(it) }
+            canType.observe(this@MainActivity) {
+                binding.input.isEnabled = it == "Start chatting"
+                binding.inputLayout.hint = it
+            }
+            emoteCodes.observe(this@MainActivity) {
+                val adapter = EmoteSuggestionsArrayAdapter(it)
+                binding.input.setAdapter(adapter)
+            }
+            bottomTextEnabled.observe(this@MainActivity) {
+                binding.inputLayout.isHelperTextEnabled = it
+            }
+            bottomText.observe(this@MainActivity) {
+                binding.inputLayout.helperText = null
+                binding.inputLayout.helperText = it
+            }
+
         }
 
         setSupportActionBar(binding.toolbar)
         updateViewPagerVisibility()
+        fetchStreamInformation()
     }
 
     override fun onPause() {
-        val position = binding.tabs.selectedTabPosition
-        if (position in 0 until adapter.fragmentList.size) {
-            adapter.fragmentList[position].clearInputFocus()
-        }
         super.onPause()
+        binding.input.clearFocus()
     }
 
     override fun onResume() {
@@ -331,8 +390,51 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         }
     }
 
-    fun handleSendMessage(channel: String, input: String) =
-        twitchService?.sendMessage(channel, input)
+    fun mentionUser(user: String) {
+        if (binding.input.isEnabled) {
+            val current = binding.input.text.trimEnd().toString()
+            val template =
+                preferences.getString(getString(R.string.preference_mention_format_key), "name")
+                    ?: "name"
+            val mention = template.replace("name", user)
+            val inputWithMention = if (current.isBlank()) "$mention " else "$current $mention "
+
+            binding.input.setText(inputWithMention)
+            binding.input.setSelection(inputWithMention.length)
+        }
+    }
+
+    private fun fetchStreamInformation() {
+        val key = getString(R.string.preference_streaminfo_key)
+        fetchJob?.cancel()
+
+        fetchJob = lifecycleScope.launchWhenCreated {
+            if (::preferences.isInitialized && preferences.getBoolean(key, true)) {
+                timer(STREAM_REFRESH_RATE) {
+                    val streamData = mutableMapOf<String, String>()
+                    channels.forEach { channel ->
+                        TwitchApi.getStream(channel)?.let {
+                            val text = resources.getQuantityString(
+                                R.plurals.viewers,
+                                it.viewers,
+                                it.viewers
+                            )
+                            streamData[channel] = text
+                        }
+                    }
+                    viewModel.setStreamData(streamData)
+                }
+            }
+        }
+    }
+
+    private fun handleSendMessage(): Boolean {
+        val msg = binding.input.text.toString()
+        twitchService?.sendMessage(currentChannel, msg)
+        binding.input.setText("")
+        return true
+    }
+
 
     private fun showNuulsUploadDialogIfNotAcknowledged(action: () -> Unit) {
         if (!preferenceStore.getNuulsAcknowledge()) {
@@ -442,10 +544,16 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         if (channels.size > 0) {
             viewPager.visibility = View.VISIBLE
             tabs.visibility = View.VISIBLE
+            inputLayout.visibility = View.VISIBLE
+            input.visibility = View.VISIBLE
+            divider.visibility = View.VISIBLE
             addChannelsText.visibility = View.GONE
         } else {
             viewPager.visibility = View.GONE
             tabs.visibility = View.GONE
+            inputLayout.visibility = View.GONE
+            input.visibility = View.GONE
+            divider.visibility = View.GONE
             addChannelsText.visibility = View.VISIBLE
         }
     }
@@ -529,11 +637,63 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         }
     }
 
+    private inner class EmoteSuggestionsArrayAdapter(list: List<GenericEmote>) :
+        ArrayAdapter<GenericEmote>(
+            this,
+            R.layout.emote_suggestion_item,
+            R.id.suggestion_text,
+            list
+        ) {
+        override fun getCount(): Int {
+            val count = super.getCount()
+            binding.input.apply {
+                dropDownHeight =
+                    (if (count > 2) binding.viewPager.measuredHeight / 2 else ViewGroup.LayoutParams.WRAP_CONTENT)
+                dropDownWidth = binding.viewPager.measuredWidth / 2
+            }
+
+            return count
+        }
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val view = super.getView(position, convertView, parent)
+            val textView = view.findViewById<TextView>(R.id.suggestion_text)
+            val imageView = view.findViewById<ImageView>(R.id.suggestion_image)
+            imageView.setImageDrawable(null)
+            Glide.with(imageView).clear(imageView)
+            getItem(position)?.let { emote ->
+                if (emote.isGif) Glide.with(imageView)
+                    .`as`(ByteArray::class.java)
+                    .override(textView.lineHeight)
+                    .centerInside()
+                    .load(emote.url)
+                    .placeholder(R.drawable.ic_missing_emote)
+                    .error(R.drawable.ic_missing_emote)
+                    .into(
+                        GifDrawableTarget(
+                            emote.keyword,
+                            false
+                        ) { imageView.setImageDrawable(it) })
+                else Glide.with(imageView)
+                    .asDrawable()
+                    .override(textView.lineHeight * 2)
+                    .centerInside()
+                    .load(emote.url)
+                    .placeholder(R.drawable.ic_missing_emote)
+                    .error(R.drawable.ic_missing_emote)
+                    .into(imageView)
+            }
+
+            return view
+        }
+    }
+
     companion object {
         private val TAG = MainActivity::class.java.simpleName
         private const val DIALOG_TAG = "add_channel_dialog"
         private const val LOGIN_REQUEST = 42
         private const val GALLERY_REQUEST = 69
         private const val CAPTURE_REQUEST = 420
+        private const val STREAM_REFRESH_RATE = 30_000L
     }
 }

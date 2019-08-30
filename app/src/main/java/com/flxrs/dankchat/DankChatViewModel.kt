@@ -1,28 +1,45 @@
 package com.flxrs.dankchat
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.service.TwitchRepository
-import com.flxrs.dankchat.service.twitch.emote.GenericEmote
-import com.flxrs.dankchat.service.twitch.message.TwitchMessage
-import com.flxrs.dankchat.utils.SingleLiveEvent
 import java.io.File
 
 class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewModel() {
 
-    val imageUploadedEvent: SingleLiveEvent<Pair<String, File>> = twitchRepository.imageUploadedEvent
-    val appbarEnabled = MutableLiveData<Boolean>(true)
+    private val activeChannel = MutableLiveData<String>()
+    private val streamInfoEnabled = MutableLiveData(true)
+    private val roomStateEnabled = MutableLiveData(true)
+    private val streamData: MutableLiveData<Map<String, String>> = MutableLiveData()
+    private val roomState = Transformations.switchMap(activeChannel) {
+        twitchRepository.getRoomState(it)
+    }
+    private val currentStreamInformation = MediatorLiveData<String>().apply {
+        addSource(activeChannel) { value = streamData.value?.get(it) ?: "" }
+        addSource(streamData) {
+            activeChannel.value?.let { channel ->
+                value = it[channel] ?: ""
+            }
+        }
+    }
 
+    val appbarEnabled = MutableLiveData<Boolean>(true)
+    val imageUploadedEvent = twitchRepository.imageUploadedEvent
+
+    val emoteCodes = Transformations.switchMap(activeChannel) { twitchRepository.getEmoteCodes(it) }
+    val canType = Transformations.switchMap(activeChannel) { twitchRepository.getCanType(it) }
+    val bottomText = MediatorLiveData<String>().apply {
+        addSource(roomStateEnabled) { value = buildBottomText() }
+        addSource(streamInfoEnabled) { value = buildBottomText() }
+        addSource(roomState) { value = buildBottomText() }
+        addSource(currentStreamInformation) { value = buildBottomText() }
+    }
+    val bottomTextEnabled = MediatorLiveData<Boolean>().apply {
+        addSource(roomStateEnabled) { value = it || streamInfoEnabled.value ?: true }
+        addSource(streamInfoEnabled) { value = it || roomStateEnabled.value ?: true }
+    }
 
     fun getChat(channel: String): LiveData<List<ChatItem>> = twitchRepository.getChat(channel)
-
-    fun getCanType(channel: String): LiveData<String> = twitchRepository.getCanType(channel)
-
-    fun getEmoteKeywords(channel: String): LiveData<List<GenericEmote>> = twitchRepository.getEmoteKeywords(channel)
-
-    fun getRoomState(channel: String): LiveData<TwitchMessage.Roomstate> = twitchRepository.getRoomState(channel)
 
     fun loadData(channel: String, oauth: String, id: Int, load3rdParty: Boolean, reAuth: Boolean) {
         if (channel.isNotBlank()) {
@@ -30,11 +47,49 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         }
     }
 
+    fun setActiveChannel(channel: String) {
+        activeChannel.value = channel
+    }
+
+    fun setStreamData(data: Map<String, String>) {
+        streamData.value = data
+    }
+
+    fun setStreamInfoEnabled(enabled: Boolean) {
+        streamInfoEnabled.value = enabled
+    }
+
+    fun setRoomStateEnabled(enabled: Boolean) {
+        roomStateEnabled.value = enabled
+    }
+
     fun removeChannelData(channel: String) = twitchRepository.removeChannelData(channel)
 
     fun clear(channel: String) = twitchRepository.clear(channel)
 
-    fun reloadEmotes(channel: String, oauth: String, id: Int) = twitchRepository.reloadEmotes(channel, oauth, id)
+    fun reloadEmotes(channel: String, oauth: String, id: Int) =
+        twitchRepository.reloadEmotes(channel, oauth, id)
 
     fun uploadImage(file: File) = twitchRepository.uploadImage(file)
+
+    private fun buildBottomText(): String {
+        val roomState = if (roomStateEnabled.value == true) {
+            roomState.value?.toString() ?: ""
+        } else ""
+        val streamInfo = if (streamInfoEnabled.value == true) {
+            currentStreamInformation.value ?: ""
+        } else ""
+
+        val stateNotBlank = roomState.isNotBlank()
+        val streamNotBlank = streamInfo.isNotBlank()
+
+        return when {
+            stateNotBlank && streamNotBlank -> "$roomState - $streamInfo"
+            stateNotBlank -> roomState
+            streamNotBlank -> streamInfo
+            else -> ""
+        }
+
+
+    }
 }
