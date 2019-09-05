@@ -191,6 +191,11 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         setSupportActionBar(binding.toolbar)
         updateViewPagerVisibility()
         fetchStreamInformation()
+        val oauth = preferenceStore.getOAuthKey()?.substringAfter("oauth:")
+        val id = preferenceStore.getUserId()
+        if (oauth != null && id != 0) {
+            viewModel.loadIgnores(oauth, id)
+        }
     }
 
     override fun onPause() {

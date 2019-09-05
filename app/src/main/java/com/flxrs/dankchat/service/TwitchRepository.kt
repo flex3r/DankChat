@@ -32,6 +32,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     private var loadedTwitchEmotes = false
     private var lastMessage = ""
 
+    private var ignoredList = mutableListOf<Int>()
+
     val imageUploadedEvent = SingleLiveEvent<Pair<String, File>>()
 
 
@@ -56,6 +58,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     fun loadData(channel: String, oAuth: String, id: Int, load3rdParty: Boolean, reAuth: Boolean) {
         if (reAuth) {
             loadedTwitchEmotes = false
+
         }
 
         scope.launch {
@@ -162,6 +165,9 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     }
 
     private fun handleMessage(msg: IrcMessage): List<ChatItem> {
+        msg.tags["user-id"]?.let { userId ->
+            if (ignoredList.any { it == userId.toInt() }) return emptyList()
+        }
         val parsed = TwitchMessage.parse(msg).map { ChatItem(it) }
         if (parsed.isNotEmpty()) {
             val channel = msg.params[0].substring(1)
@@ -219,9 +225,11 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
     private suspend fun loadRecentMessages(channel: String) = withContext(Dispatchers.Default) {
         TwitchApi.getRecentMessages(channel)
-            ?.messages?.map { TwitchMessage.parse(IrcMessage.parse(it)) }
+            ?.messages?.asSequence()?.map { IrcMessage.parse(it) }
+            ?.filter { msg -> !ignoredList.any { msg.tags["user-id"]?.toInt() == it } }
+            ?.map { TwitchMessage.parse(it) }
             ?.flatten()
-            ?.map { ChatItem(it) }
+            ?.map { ChatItem(it) }?.toList()
             ?.let {
                 val current = messages[channel]?.value ?: emptyList()
                 messages.getOrPut(channel, { MutableLiveData() })
@@ -232,5 +240,15 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     companion object {
         private val INVISIBLE_CHAR =
             String(ByteBuffer.allocate(4).putInt(0x000E0000).array(), Charsets.UTF_32)
+    }
+
+
+    fun loadIgnores(oAuth: String, id: Int) {
+        scope.launch {
+            val result = TwitchApi.getIgnores(oAuth, id)
+            if (result != null) {
+                ignoredList = result.blocks.map { it.user.id }.toMutableList()
+            }
+        }
     }
 }

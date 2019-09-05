@@ -187,4 +187,15 @@ object TwitchApi {
         }
         return@withContext null
     }
+
+    suspend fun getIgnores(oAuth: String, id: Int): UserEntities.KrakenUsersBlocks? =
+        withContext(Dispatchers.IO) {
+            try {
+                val response = service.getIgnores("OAuth $oAuth", id)
+                if (response.isSuccessful) return@withContext response.body()
+            } catch (t: Throwable) {
+                Log.e(TAG, Log.getStackTraceString(t))
+            }
+            return@withContext null
+        }
 }

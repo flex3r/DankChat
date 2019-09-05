@@ -90,4 +90,8 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
             else -> ""
         }
     }
+
+    fun loadIgnores(oAuth: String, id: Int) {
+        twitchRepository.loadIgnores(oAuth, id)
+    }
 }
