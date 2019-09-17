@@ -51,10 +51,10 @@ class ChatFragment : Fragment() {
             chat.setup(adapter, manager)
             chatLayout.layoutTransition.setAnimateParentHierarchy(false)
             scrollBottom.setOnClickListener {
+                scrollBottom.visibility = View.GONE
                 isAtBottom = true
                 binding.chat.stopScroll()
                 scrollToPosition(adapter.itemCount - 1)
-                scrollBottom.hide()
             }
         }
 
@@ -129,7 +129,7 @@ class ChatFragment : Fragment() {
                 binding.scrollBottom.show()
             } else if (dy > 0 && !isAtBottom && !recyclerView.canScrollVertically(1)) {
                 isAtBottom = true
-                binding.scrollBottom.hide()
+                binding.scrollBottom.visibility = View.GONE
             }
         }
     }
