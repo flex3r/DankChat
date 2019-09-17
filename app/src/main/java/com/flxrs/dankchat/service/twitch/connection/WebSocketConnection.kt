@@ -1,7 +1,7 @@
 package com.flxrs.dankchat.service.twitch.connection
 
 import com.flxrs.dankchat.service.irc.IrcMessage
-import com.flxrs.dankchat.utils.timer
+import com.flxrs.dankchat.utils.extensions.timer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import okhttp3.*

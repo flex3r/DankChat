@@ -8,12 +8,9 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.MediaStore
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.webkit.MimeTypeMap
-import android.widget.ArrayAdapter
-import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -27,18 +24,20 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
-import com.bumptech.glide.Glide
 import com.flxrs.dankchat.chat.ChatTabAdapter
+import com.flxrs.dankchat.chat.suggestion.EmoteSuggestionsArrayAdapter
+import com.flxrs.dankchat.chat.suggestion.SpaceTokenizer
 import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.SettingsActivity
 import com.flxrs.dankchat.service.TwitchService
 import com.flxrs.dankchat.service.api.TwitchApi
-import com.flxrs.dankchat.service.twitch.emote.GenericEmote
-import com.flxrs.dankchat.utils.*
+import com.flxrs.dankchat.utils.MediaUtils
 import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.AdvancedLoginDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.EditTextDialogFragment
+import com.flxrs.dankchat.utils.extensions.isServiceRunning
+import com.flxrs.dankchat.utils.extensions.timer
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
@@ -48,12 +47,13 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.IOException
 import java.util.*
+import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     AdvancedLoginDialogResultHandler {
     private val viewModel: DankChatViewModel by viewModel()
     private val channels = mutableListOf<String>()
-    private lateinit var preferenceStore: DankChatPreferenceStore
+    private lateinit var twitchPreferences: DankChatPreferenceStore
     private lateinit var preferenceListener: SharedPreferences.OnSharedPreferenceChangeListener
     private lateinit var preferences: SharedPreferences
     private lateinit var binding: MainActivityBinding
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        preferenceStore = DankChatPreferenceStore(this)
+        twitchPreferences = DankChatPreferenceStore(this)
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
             when (key) {
                 getString(R.string.preference_roomstate_key) -> viewModel.setRoomStateEnabled(
@@ -99,10 +99,10 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
 
 
         adapter = ChatTabAdapter(supportFragmentManager, lifecycle)
-        preferenceStore.getChannelsAsString()?.let { channels.addAll(it.split(',')) }
-            ?: preferenceStore.getChannels()?.let {
+        twitchPreferences.getChannelsAsString()?.let { channels.addAll(it.split(',')) }
+            ?: twitchPreferences.getChannels()?.let {
                 channels.addAll(it)
-                preferenceStore.setChannels(null)
+                twitchPreferences.setChannels(null)
             }
         channels.forEach { adapter.addFragment(it) }
 
@@ -167,7 +167,15 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 binding.inputLayout.hint = it
             }
             emoteCodes.observe(this@MainActivity) {
-                val adapter = EmoteSuggestionsArrayAdapter(it)
+                val adapter = EmoteSuggestionsArrayAdapter(this@MainActivity, it) { count ->
+                    binding.input.dropDownHeight = if (count > 2) {
+                        (binding.viewPager.measuredHeight / 1.3).roundToInt()
+                    } else {
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                    }
+                    binding.input.dropDownWidth = binding.viewPager.measuredWidth / 2
+                }
+
                 binding.input.setAdapter(adapter)
             }
             bottomTextEnabled.observe(this@MainActivity) {
@@ -212,8 +220,8 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         Intent(this, TwitchService::class.java).also {
             if (twitchService == null && !isServiceRunning(TwitchService::class.java)) {
                 ContextCompat.startForegroundService(this, it)
-                val oauth = preferenceStore.getOAuthKey() ?: ""
-                val name = preferenceStore.getUserName() ?: ""
+                val oauth = twitchPreferences.getOAuthKey() ?: ""
+                val name = twitchPreferences.getUserName() ?: ""
                 if (name.isNotBlank() && oauth.isNotBlank()) showSnackbar("Logged in as $name")
             }
             if (!isBound) bindService(it, twitchServiceConnection, 0)
@@ -239,7 +247,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         menu?.run {
-            val isLoggedIn = preferenceStore.isLoggedin()
+            val isLoggedIn = twitchPreferences.isLoggedin()
             findItem(R.id.menu_login)?.isVisible = !isLoggedIn
             findItem(R.id.menu_remove)?.isVisible = channels.isNotEmpty()
 
@@ -258,10 +266,9 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_reconnect -> reconnect(false)
-            R.id.menu_login_default -> Intent(
-                this,
-                LoginActivity::class.java
-            ).run { startActivityForResult(this, LOGIN_REQUEST) }
+            R.id.menu_login_default -> Intent(this, LoginActivity::class.java).run {
+                startActivityForResult(this, LOGIN_REQUEST)
+            }
             R.id.menu_login_advanced -> showAdvancedLoginDialog()
             R.id.menu_add -> addChannel()
             R.id.menu_remove -> removeChannel()
@@ -281,9 +288,9 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             LOGIN_REQUEST -> {
-                val oauth = preferenceStore.getOAuthKey()
-                val name = preferenceStore.getUserName()
-                val id = preferenceStore.getUserId()
+                val oauth = twitchPreferences.getOAuthKey()
+                val name = twitchPreferences.getUserName()
+                val id = twitchPreferences.getUserId()
 
                 if (resultCode == Activity.RESULT_OK && !oauth.isNullOrBlank() && !name.isNullOrBlank() && id != 0) {
                     twitchService?.close {
@@ -291,7 +298,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                         loadData(oauth, id)
                     }
 
-                    preferenceStore.setLoggedIn(true)
+                    twitchPreferences.setLoggedIn(true)
                     showSnackbar("Logged in as $name")
                 } else {
                     showSnackbar("Failed to login")
@@ -357,7 +364,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        if (requestCode == GALLERY_REQUEST && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == GALLERY_REQUEST && grantResults.getOrNull(0) == PackageManager.PERMISSION_GRANTED) {
             startGalleryPicker()
         }
     }
@@ -365,13 +372,13 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     override fun onAddChannelDialogResult(channel: String) {
         val lowerCaseChannel = channel.toLowerCase(Locale.getDefault())
         if (!channels.contains(lowerCaseChannel)) {
-            val oauth = preferenceStore.getOAuthKey() ?: ""
-            val id = preferenceStore.getUserId()
+            val oauth = twitchPreferences.getOAuthKey() ?: ""
+            val id = twitchPreferences.getUserId()
 
             twitchService?.joinChannel(lowerCaseChannel)
             viewModel.loadData(lowerCaseChannel, oauth, id, load3rdParty = true, reAuth = false)
             channels.add(lowerCaseChannel)
-            preferenceStore.setChannelsString(channels.joinToString(","))
+            twitchPreferences.setChannelsString(channels.joinToString(","))
 
             adapter.addFragment(lowerCaseChannel)
             binding.viewPager.offscreenPageLimit = calculatePageLimit()
@@ -391,7 +398,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         lifecycleScope.launch {
             TwitchApi.getUser(tokenWithoutSuffix)?.let {
                 if (it.name.isNotBlank()) {
-                    preferenceStore.apply {
+                    twitchPreferences.apply {
                         setOAuthKey("oauth:$tokenWithoutSuffix")
                         setUserName(it.name.toLowerCase(Locale.getDefault()))
                         setUserId(it.id)
@@ -422,6 +429,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     }
 
     private fun fetchStreamInformation() {
+        //TODO viewmodel
         val key = getString(R.string.preference_streaminfo_key)
         fetchJob?.cancel()
 
@@ -454,14 +462,14 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
 
 
     private fun showNuulsUploadDialogIfNotAcknowledged(action: () -> Unit) {
-        if (!preferenceStore.getNuulsAcknowledge()) {
+        if (!twitchPreferences.getNuulsAcknowledge()) {
             MaterialAlertDialogBuilder(this)
                 .setCancelable(false)
                 .setTitle(R.string.nuuls_upload_title)
                 .setMessage(R.string.nuuls_upload_disclaimer)
                 .setPositiveButton(R.string.dialog_positive_button) { dialog, _ ->
                     dialog.dismiss()
-                    preferenceStore.setNuulsAcknowledge(true)
+                    twitchPreferences.setNuulsAcknowledge(true)
                     action()
                 }
                 .show()
@@ -529,8 +537,8 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     private fun reloadEmotes() {
         val position = binding.tabs.selectedTabPosition
         if (position in 0 until adapter.titleList.size) {
-            val oauth = preferenceStore.getOAuthKey() ?: ""
-            val userId = preferenceStore.getUserId()
+            val oauth = twitchPreferences.getOAuthKey() ?: ""
+            val userId = twitchPreferences.getUserId()
             viewModel.reloadEmotes(adapter.titleList[position], oauth, userId)
         }
     }
@@ -549,8 +557,8 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     }
 
     private fun loadData(
-        oauth: String = preferenceStore.getOAuthKey() ?: "",
-        id: Int = preferenceStore.getUserId()
+        oauth: String = twitchPreferences.getOAuthKey() ?: "",
+        id: Int = twitchPreferences.getUserId()
     ) {
         if (channels.isEmpty()) {
             viewModel.loadData("", oauth, id, true, reAuth = true)
@@ -560,6 +568,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     }
 
     private fun updateViewPagerVisibility() = with(binding) {
+        //TODO databinding
         if (channels.size > 0) {
             viewPager.visibility = View.VISIBLE
             tabs.visibility = View.VISIBLE
@@ -589,10 +598,10 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         .setMessage(getString(R.string.confirm_logout_message))
         .setPositiveButton(getString(R.string.confirm_logout_positive_button)) { dialog, _ ->
             twitchService?.close { connectAndJoinChannels("", "") }
-            preferenceStore.setUserName("")
-            preferenceStore.setOAuthKey("")
-            preferenceStore.setUserId(0)
-            preferenceStore.setLoggedIn(false)
+            twitchPreferences.setUserName("")
+            twitchPreferences.setOAuthKey("")
+            twitchPreferences.setUserId(0)
+            twitchPreferences.setLoggedIn(false)
             dialog.dismiss()
         }
         .setNegativeButton(getString(R.string.confirm_logout_negative_button)) { dialog, _ -> dialog.dismiss() }
@@ -623,9 +632,9 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         viewModel.removeChannelData(channel)
 
         if (channels.size > 0) {
-            preferenceStore.setChannelsString(channels.joinToString(","))
+            twitchPreferences.setChannelsString(channels.joinToString(","))
             binding.viewPager.setCurrentItem(0, false)
-        } else preferenceStore.setChannelsString(null)
+        } else twitchPreferences.setChannelsString(null)
 
         binding.viewPager.offscreenPageLimit = calculatePageLimit()
         adapter.removeFragment(index)
@@ -644,65 +653,14 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             twitchService = binder.service
             isBound = true
 
-            val oauth = preferenceStore.getOAuthKey() ?: ""
-            val name = preferenceStore.getUserName() ?: ""
+            val oauth = twitchPreferences.getOAuthKey() ?: ""
+            val name = twitchPreferences.getUserName() ?: ""
             connectAndJoinChannels(name, oauth)
         }
 
         override fun onServiceDisconnected(className: ComponentName?) {
             twitchService = null
             isBound = false
-        }
-    }
-
-    private inner class EmoteSuggestionsArrayAdapter(list: List<GenericEmote>) :
-        ArrayAdapter<GenericEmote>(
-            this,
-            R.layout.emote_suggestion_item,
-            R.id.suggestion_text,
-            list
-        ) {
-        override fun getCount(): Int {
-            val count = super.getCount()
-            binding.input.apply {
-                dropDownHeight =
-                    (if (count > 2) binding.viewPager.measuredHeight / 2 else ViewGroup.LayoutParams.WRAP_CONTENT)
-                dropDownWidth = binding.viewPager.measuredWidth / 2
-            }
-
-            return count
-        }
-
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            val view = super.getView(position, convertView, parent)
-            val textView = view.findViewById<TextView>(R.id.suggestion_text)
-            val imageView = view.findViewById<ImageView>(R.id.suggestion_image)
-            imageView.setImageDrawable(null)
-            Glide.with(imageView).clear(imageView)
-            getItem(position)?.let { emote ->
-                if (emote.isGif) Glide.with(imageView)
-                    .`as`(ByteArray::class.java)
-                    .override(textView.lineHeight)
-                    .centerInside()
-                    .load(emote.url)
-                    .placeholder(R.drawable.ic_missing_emote)
-                    .error(R.drawable.ic_missing_emote)
-                    .into(
-                        GifDrawableTarget(
-                            emote.keyword,
-                            false
-                        ) { imageView.setImageDrawable(it) })
-                else Glide.with(imageView)
-                    .asDrawable()
-                    .override(textView.lineHeight * 2)
-                    .centerInside()
-                    .load(emote.url)
-                    .placeholder(R.drawable.ic_missing_emote)
-                    .error(R.drawable.ic_missing_emote)
-                    .into(imageView)
-            }
-
-            return view
         }
     }
 

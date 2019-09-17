@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.utils
+package com.flxrs.dankchat.chat.suggestion
 
 import android.text.SpannableString
 import android.text.Spanned

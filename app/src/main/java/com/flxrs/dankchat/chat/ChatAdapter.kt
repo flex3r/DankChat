@@ -32,7 +32,7 @@ import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.DrawableTarget
 import com.flxrs.dankchat.utils.EmoteDrawableTarget
 import com.flxrs.dankchat.utils.GifDrawableTarget
-import com.flxrs.dankchat.utils.normalizeColor
+import com.flxrs.dankchat.utils.extensions.normalizeColor
 import com.linkedin.urls.detection.UrlDetector
 import com.linkedin.urls.detection.UrlDetectorOptions
 import kotlinx.coroutines.CoroutineScope
@@ -161,7 +161,7 @@ class ChatAdapter(
                         })
                 }
 
-                val normalizedColor = normalizeColor(color)
+                val normalizedColor = color.normalizeColor()
                 spannable.bold { color(normalizedColor) { append(displayName) } }
 
                 if (isAction) {

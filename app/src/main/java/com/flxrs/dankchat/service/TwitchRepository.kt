@@ -9,8 +9,8 @@ import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import com.flxrs.dankchat.utils.SingleLiveEvent
-import com.flxrs.dankchat.utils.addAndLimit
-import com.flxrs.dankchat.utils.replaceWithTimeOuts
+import com.flxrs.dankchat.utils.extensions.addAndLimit
+import com.flxrs.dankchat.utils.extensions.replaceWithTimeOuts
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

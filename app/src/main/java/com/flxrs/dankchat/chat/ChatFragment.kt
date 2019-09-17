@@ -11,7 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.*
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.MainActivity
 import com.flxrs.dankchat.R
@@ -69,10 +70,9 @@ class ChatFragment : Fragment() {
 
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             when (key) {
-                getString(R.string.preference_timestamp_key) -> binding.chat.swapAdapter(
-                    adapter,
-                    false
-                )
+                getString(R.string.preference_timestamp_key) -> {
+                    binding.chat.swapAdapter(adapter, false)
+                }
             }
         }
         preferences = PreferenceManager.getDefaultSharedPreferences(requireContext()).apply {
