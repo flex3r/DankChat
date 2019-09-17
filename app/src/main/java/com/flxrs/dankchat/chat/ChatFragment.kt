@@ -11,9 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSmoothScroller
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.*
 import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.MainActivity
 import com.flxrs.dankchat.R

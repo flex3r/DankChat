@@ -36,11 +36,6 @@
     </item>
 
     <item
-        android:id="@+id/menu_logout"
-        android:title="@string/logout"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/menu_remove"
         android:title="@string/remove_channel"
         app:showAsAction="never" />
@@ -49,12 +44,6 @@
         android:id="@+id/menu_reload_emotes"
         android:title="@string/reload_emotes"
         app:showAsAction="never" />
-
-    <item
-        android:id="@+id/menu_reconnect"
-        android:title="@string/reconnect"
-        app:showAsAction="never" />
-
 
     <item
         android:id="@+id/menu_upload_image"
@@ -71,6 +60,11 @@
                 app:showAsAction="never" />
         </menu>
     </item>
+
+    <item
+        android:id="@+id/menu_reconnect"
+        android:title="@string/reconnect"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_clear"

@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.MediaStore
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.webkit.MimeTypeMap
@@ -240,7 +241,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         menu?.run {
             val isLoggedIn = preferenceStore.isLoggedin()
             findItem(R.id.menu_login)?.isVisible = !isLoggedIn
-            findItem(R.id.menu_logout)?.isVisible = isLoggedIn
             findItem(R.id.menu_remove)?.isVisible = channels.isNotEmpty()
 
             findItem(R.id.progress)?.run {
@@ -263,7 +263,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 LoginActivity::class.java
             ).run { startActivityForResult(this, LOGIN_REQUEST) }
             R.id.menu_login_advanced -> showAdvancedLoginDialog()
-            R.id.menu_logout -> showLogoutConfirmationDialog()
             R.id.menu_add -> addChannel()
             R.id.menu_remove -> removeChannel()
             R.id.menu_reload_emotes -> reloadEmotes()
@@ -272,7 +271,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             R.id.menu_hide -> viewModel.appbarEnabled.value = false
             R.id.menu_clear -> clear()
             R.id.menu_settings -> Intent(this, SettingsActivity::class.java).run {
-                startActivity(this)
+                startActivityForResult(this, SETTINGS_REQUEST)
             }
             else -> return false
         }
@@ -340,6 +339,13 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                         imageFile.delete()
                         showSnackbar("Error during upload")
                     }
+                }
+            }
+            SETTINGS_REQUEST -> {
+                if (resultCode == Activity.RESULT_OK
+                    && data?.getBooleanExtra(LOGOUT_REQUEST_KEY, false) == true
+                ) {
+                    showLogoutConfirmationDialog()
                 }
             }
         }
@@ -706,6 +712,9 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         private const val LOGIN_REQUEST = 42
         private const val GALLERY_REQUEST = 69
         private const val CAPTURE_REQUEST = 420
+        private const val SETTINGS_REQUEST = 777
         private const val STREAM_REFRESH_RATE = 30_000L
+
+        const val LOGOUT_REQUEST_KEY = "logout_key"
     }
 }

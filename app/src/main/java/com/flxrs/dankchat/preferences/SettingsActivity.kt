@@ -3,6 +3,7 @@ package com.flxrs.dankchat.preferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.preference.Preference
 import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.SettingsActivityBinding
