@@ -27,7 +27,6 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     private val roomStates = mutableMapOf<String, MutableLiveData<TwitchMessage.Roomstate>>()
     private var hasDisconnected = true
     private var loadedGlobalBadges = false
-
     private var loadedGlobalEmotes = false
     private var loadedTwitchEmotes = false
     private var lastMessage = ""

@@ -29,8 +29,8 @@ class TwitchService : Service(), KoinComponent {
     private val connection: WebSocketConnection = get { parametersOf(::onDisconnect, ::onMessage) }
     private lateinit var manager: NotificationManager
     private lateinit var sharedPreferences: SharedPreferences
-
     private var changingConfiguration = false
+
     private var nick = ""
     private var isBound = false
     var startedConnection = false
@@ -40,6 +40,7 @@ class TwitchService : Service(), KoinComponent {
         stopForeground(true)
         changingConfiguration = false
         isBound = true
+
         return binder
     }
 
@@ -53,35 +54,8 @@ class TwitchService : Service(), KoinComponent {
 
     override fun onUnbind(intent: Intent?): Boolean {
         if (!changingConfiguration) {
-            val title = getString(R.string.notification_title)
-            val message = getString(R.string.notification_message)
-
-            val pendingStartActivityIntent = Intent(this, MainActivity::class.java).let {
-                PendingIntent.getActivity(this, 0, it, 0)
-            }
-
-            val pendingStopIntent = Intent(this, TwitchService::class.java).let {
-                it.action = STOP_COMMAND
-                PendingIntent.getService(this, 0, it, 0)
-            }
-
-            val notification = NotificationCompat.Builder(this, CHANNEL_ID_LOW)
-                .setSound(null)
-                .setVibrate(null)
-                .setContentTitle(title)
-                .setContentText(message)
-                .addAction(
-                    R.drawable.ic_clear_24dp,
-                    getString(R.string.notification_stop),
-                    pendingStopIntent
-                )
-                .setStyle(MediaStyle().setShowActionsInCompactView(0))
-                .setContentIntent(pendingStartActivityIntent)
-                .setSmallIcon(R.mipmap.ic_launcher_foreground)
-                .build()
-
             isBound = false
-            startForeground(NOTIFICATION_ID, notification)
+            startForeground()
         }
 
         return true
@@ -125,7 +99,8 @@ class TwitchService : Service(), KoinComponent {
         if (intent?.action == STOP_COMMAND) {
             //manager.cancelAll()
             stopForeground(true)
-            stopSelf()
+        } else {
+            startForeground()
         }
 
         return START_NOT_STICKY
@@ -157,6 +132,37 @@ class TwitchService : Service(), KoinComponent {
     fun close(onClosed: () -> Unit) {
         startedConnection = false
         connection.close(onClosed)
+    }
+
+    private fun startForeground() {
+        val title = getString(R.string.notification_title)
+        val message = getString(R.string.notification_message)
+
+        val pendingStartActivityIntent = Intent(this, MainActivity::class.java).let {
+            PendingIntent.getActivity(this, 0, it, 0)
+        }
+
+        val pendingStopIntent = Intent(this, TwitchService::class.java).let {
+            it.action = STOP_COMMAND
+            PendingIntent.getService(this, 0, it, 0)
+        }
+
+        val notification = NotificationCompat.Builder(this, CHANNEL_ID_LOW)
+            .setSound(null)
+            .setVibrate(null)
+            .setContentTitle(title)
+            .setContentText(message)
+            .addAction(
+                R.drawable.ic_clear_24dp,
+                getString(R.string.notification_stop),
+                pendingStopIntent
+            )
+            .setStyle(MediaStyle().setShowActionsInCompactView(0))
+            .setContentIntent(pendingStartActivityIntent)
+            .setSmallIcon(R.mipmap.ic_launcher_foreground)
+            .build()
+
+        startForeground(NOTIFICATION_ID, notification)
     }
 
     private fun onMessage(message: IrcMessage) {

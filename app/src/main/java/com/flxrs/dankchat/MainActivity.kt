@@ -108,7 +108,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         binding = DataBindingUtil.setContentView<MainActivityBinding>(this, R.layout.main_activity)
             .apply {
                 viewPager.adapter = adapter
-                viewPager.reduceDragSensitivity()
                 viewPager.offscreenPageLimit = calculatePageLimit()
                 viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                     override fun onPageSelected(position: Int) {
@@ -188,6 +187,10 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
 
         }
 
+        if (savedInstanceState == null) {
+            loadData()
+        }
+
         setSupportActionBar(binding.toolbar)
         updateViewPagerVisibility()
         fetchStreamInformation()
@@ -206,8 +209,8 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     override fun onStart() {
         super.onStart()
         Intent(this, TwitchService::class.java).also {
-            if (!isServiceRunning(TwitchService::class.java)) {
-                startService(it)
+            if (twitchService == null && !isServiceRunning(TwitchService::class.java)) {
+                ContextCompat.startForegroundService(this, it)
                 val oauth = preferenceStore.getOAuthKey() ?: ""
                 val name = preferenceStore.getUserName() ?: ""
                 if (name.isNotBlank() && oauth.isNotBlank()) showSnackbar("Logged in as $name")
@@ -284,7 +287,10 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 val id = preferenceStore.getUserId()
 
                 if (resultCode == Activity.RESULT_OK && !oauth.isNullOrBlank() && !name.isNullOrBlank() && id != 0) {
-                    twitchService?.close { connectAndJoinChannels(name, oauth, id) }
+                    twitchService?.close {
+                        connectAndJoinChannels(name, oauth)
+                        loadData(oauth, id)
+                    }
 
                     preferenceStore.setLoggedIn(true)
                     showSnackbar("Logged in as $name")
@@ -386,11 +392,8 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                         setLoggedIn(true)
                     }
                     twitchService?.close {
-                        connectAndJoinChannels(
-                            it.name,
-                            "oauth:$tokenWithoutSuffix",
-                            it.id
-                        )
+                        connectAndJoinChannels(it.name, "oauth:$tokenWithoutSuffix")
+                        loadData("oauth:$tokenWithoutSuffix", it.id)
                     }
                     showSnackbar("Logged in as ${it.name}")
                 } else showSnackbar("Failed to login")
@@ -530,21 +533,23 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         twitchService?.reconnect(onlyIfNecessary)
     }
 
-    private fun connectAndJoinChannels(
-        name: String,
-        oauth: String,
-        id: Int,
-        load3rdParty: Boolean = false
-    ) {
+    private fun connectAndJoinChannels(name: String, oauth: String) {
         if (twitchService?.startedConnection == false) {
-            if (channels.isEmpty()) {
-                twitchService?.connect(name, oauth)
-                viewModel.loadData("", oauth, id, load3rdParty, true)
-            } else channels.forEachIndexed { i, channel ->
+            channels.forEachIndexed { i, channel ->
                 if (i == 0) twitchService?.connect(name, oauth)
                 twitchService?.joinChannel(channel)
-                viewModel.loadData(channel, oauth, id, load3rdParty, i == 0)
             }
+        }
+    }
+
+    private fun loadData(
+        oauth: String = preferenceStore.getOAuthKey() ?: "",
+        id: Int = preferenceStore.getUserId()
+    ) {
+        if (channels.isEmpty()) {
+            viewModel.loadData("", oauth, id, true, reAuth = true)
+        } else channels.forEachIndexed { i, channel ->
+            viewModel.loadData(channel, oauth, id, true, reAuth = i == 0)
         }
     }
 
@@ -577,7 +582,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         .setTitle(getString(R.string.confirm_logout_title))
         .setMessage(getString(R.string.confirm_logout_message))
         .setPositiveButton(getString(R.string.confirm_logout_positive_button)) { dialog, _ ->
-            twitchService?.close { connectAndJoinChannels("", "", 0) }
+            twitchService?.close { connectAndJoinChannels("", "") }
             preferenceStore.setUserName("")
             preferenceStore.setOAuthKey("")
             preferenceStore.setUserId(0)
@@ -632,11 +637,10 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             val binder = service as TwitchService.LocalBinder
             twitchService = binder.service
             isBound = true
-            val oauth = preferenceStore.getOAuthKey() ?: ""
 
+            val oauth = preferenceStore.getOAuthKey() ?: ""
             val name = preferenceStore.getUserName() ?: ""
-            val id = preferenceStore.getUserId()
-            connectAndJoinChannels(name, oauth, id, true)
+            connectAndJoinChannels(name, oauth)
         }
 
         override fun onServiceDisconnected(className: ComponentName?) {

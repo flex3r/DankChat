@@ -86,15 +86,3 @@ fun <T> Context.isServiceRunning(service: Class<T>) =
     (getSystemService(ACTIVITY_SERVICE) as ActivityManager)
         .getRunningServices(Integer.MAX_VALUE)
         .any { it.service.className == service.name }
-
-// from https://medium.com/@al.e.shevelev/how-to-reduce-scroll-sensitivity-of-viewpager2-widget-87797ad02414
-fun ViewPager2.reduceDragSensitivity() {
-    val recyclerView =
-        ViewPager2::class.java.getDeclaredField("mRecyclerView").apply { isAccessible = true }.get(
-            this
-        ) as RecyclerView
-    RecyclerView::class.java.getDeclaredField("mTouchSlop").apply {
-        isAccessible = true
-        set(recyclerView, (get(recyclerView) as Int) * 2)
-    }
-}
