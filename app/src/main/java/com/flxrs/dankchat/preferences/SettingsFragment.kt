@@ -12,15 +12,20 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings, rootKey)
-        findPreference<Preference>(getString(R.string.preference_logout_key))?.setOnPreferenceClickListener {
-            Intent().apply {
-                putExtra(MainActivity.LOGOUT_REQUEST_KEY, true)
-                requireActivity().let {
-                    it.setResult(Activity.RESULT_OK, this)
-                    it.finish()
+
+        val isLoggedIn = DankChatPreferenceStore(requireContext()).isLoggedin()
+        findPreference<Preference>(getString(R.string.preference_logout_key))?.apply {
+            isEnabled = isLoggedIn
+            setOnPreferenceClickListener {
+                Intent().apply {
+                    putExtra(MainActivity.LOGOUT_REQUEST_KEY, true)
+                    requireActivity().let {
+                        it.setResult(Activity.RESULT_OK, this)
+                        it.finish()
+                    }
                 }
+                true
             }
-            true
         }
     }
 }
