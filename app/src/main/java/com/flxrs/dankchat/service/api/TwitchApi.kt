@@ -36,7 +36,7 @@ object TwitchApi {
 
     private const val BASE_LOGIN_URL = "https://id.twitch.tv/oauth2/authorize?response_type=token"
     private const val REDIRECT_URL = "https://flxrs.com/dankchat"
-    private const val SCOPES = "chat:edit+chat:read+user_read+user_subscriptions+channel:moderate"
+    private const val SCOPES = "chat:edit+chat:read+user_read+user_subscriptions+channel:moderate+user_blocks_read+user_blocks_edit"
     const val CLIENT_ID = "xu7vd1i6tlr0ak45q1li2wdc0lrma8"
     const val LOGIN_URL =
         "$BASE_LOGIN_URL&client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URL&scope=$SCOPES"

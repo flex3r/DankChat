@@ -58,7 +58,6 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     fun loadData(channel: String, oAuth: String, id: Int, load3rdParty: Boolean, reAuth: Boolean) {
         if (reAuth) {
             loadedTwitchEmotes = false
-
         }
 
         scope.launch {

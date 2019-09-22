@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             val streamInfoKey = getString(R.string.preference_streaminfo_key)
             viewModel.setStreamInfoEnabled(getBoolean(streamInfoKey, true))
         }
-
+        val oauth = preferenceStore.getOAuthKey()?.substringAfter("oauth:")
 
         adapter = ChatTabAdapter(supportFragmentManager, lifecycle)
         preferenceStore.getChannelsAsString()?.let { channels.addAll(it.split(',')) }
@@ -191,7 +191,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         setSupportActionBar(binding.toolbar)
         updateViewPagerVisibility()
         fetchStreamInformation()
-        val oauth = preferenceStore.getOAuthKey()?.substringAfter("oauth:")
         val id = preferenceStore.getUserId()
         if (oauth != null && id != 0) {
             viewModel.loadIgnores(oauth, id)
