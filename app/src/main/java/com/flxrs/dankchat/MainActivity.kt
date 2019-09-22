@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             val streamInfoKey = getString(R.string.preference_streaminfo_key)
             viewModel.setStreamInfoEnabled(getBoolean(streamInfoKey, true))
         }
-
+        val oauth = preferenceStore.getOAuthKey()?.substringAfter("oauth:")
 
         adapter = ChatTabAdapter(supportFragmentManager, lifecycle)
         twitchPreferences.getChannelsAsString()?.let { channels.addAll(it.split(',')) }
@@ -203,6 +203,10 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         setSupportActionBar(binding.toolbar)
         updateViewPagerVisibility()
         fetchStreamInformation()
+        val id = preferenceStore.getUserId()
+        if (oauth != null && id != 0) {
+            viewModel.loadIgnores(oauth, id)
+        }
     }
 
     override fun onPause() {

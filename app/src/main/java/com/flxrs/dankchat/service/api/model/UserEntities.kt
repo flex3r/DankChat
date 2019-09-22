@@ -32,5 +32,7 @@ sealed class UserEntities {
         @field:Json(name = "view_count") val viewCount: Int
     )
 
+    data class KrakenUserEntry(@field:Json(name = "user") val user: KrakenUser)
+    data class KrakenUsersBlocks(@field:Json(name = "blocks") val blocks: List<KrakenUserEntry>)
     data class HelixUsers(@field:Json(name = "data") val data: List<HelixUser>)
 }
