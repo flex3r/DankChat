@@ -9,6 +9,11 @@ data class IrcMessage(
     val params: List<String> = listOf(),
     val tags: Map<String, String> = mapOf()
 ) {
+
+    fun isLoginFailed(): Boolean {
+        return command == "NOTICE" && params.getOrNull(0) == "*" && params.getOrNull(1) == "Login authentication failed"
+    }
+
     companion object {
 
         fun parse(message: String): IrcMessage {

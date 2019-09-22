@@ -167,14 +167,10 @@ class TwitchService : Service(), KoinComponent {
 
     private fun onMessage(message: IrcMessage) {
         val messages = repository.onMessage(message, connection.isJustinFan)
-        if (!isBound) messages?.filter { it.message.isMention(nick) }?.map {
-            if (sharedPreferences.getBoolean(
-                    getString(R.string.preference_notification_key),
-                    true
-                )
-            ) {
-                createMentionNotification(it.message.channel, it.message.name, it.message.message)
-            }
+        if (!isBound) messages?.filter { it.message.isMention(nick) }?.takeIf {
+            sharedPreferences.getBoolean(getString(R.string.preference_notification_key), true)
+        }?.map {
+            createMentionNotification(it.message.channel, it.message.name, it.message.message)
         }
     }
 

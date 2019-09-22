@@ -130,7 +130,7 @@ object TwitchApi {
         withContext(Dispatchers.IO) {
             try {
                 val response = service.getBTTVChannelEmotes("$BTTV_CHANNEL_BASE_URL$id")
-                if (response.isSuccessful) return@withContext response.body() else null
+                if (response.isSuccessful) return@withContext response.body()
             } catch (t: Throwable) {
                 Log.e(TAG, Log.getStackTraceString(t))
             }

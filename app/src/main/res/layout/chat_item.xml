@@ -6,7 +6,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="start"
-        android:padding="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
         android:textColorHighlight="@color/colorThatIsActuallyTransparent" />
 </layout>

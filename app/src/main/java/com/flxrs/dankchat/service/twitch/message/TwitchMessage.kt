@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.service.twitch.message
 
 import android.graphics.Color
+import android.util.Log
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.badge.Badge
 import com.flxrs.dankchat.service.twitch.emote.ChatEmote
@@ -57,7 +58,7 @@ data class TwitchMessage(
                     "USERNOTICE" -> parseUserNotice(message)
                     "CLEARCHAT" -> listOf(parseClearChat(message))
                     "CLEARMSG" -> listOf() //TODO
-                    "HOSTTARGET" -> listOf(parseHostTarget(message))
+                    //"HOSTTARGET" -> listOf(parseHostTarget(message))
                     else -> listOf()
                 }
             }
@@ -162,7 +163,7 @@ data class TwitchMessage(
         private fun parseNotice(message: IrcMessage): TwitchMessage = with(message) {
             val channel = params[0].substring(1)
             val notice = params[1]
-            val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
+            val ts = tags["rm-received-ts"]?.toLong() ?: System.currentTimeMillis()
             val time = TimeUtils.timestampToLocalTime(ts)
             val id = tags["id"] ?: System.nanoTime().toString()
 
@@ -172,7 +173,7 @@ data class TwitchMessage(
         private fun parseHostTarget(message: IrcMessage): TwitchMessage = with(message) {
             val target = params[1].substringBefore("-")
             val channel = params[0].substring(1)
-            val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
+            val ts = tags["rm-received-ts"]?.toLong() ?: System.currentTimeMillis()
             val time = TimeUtils.timestampToLocalTime(ts)
             val id = tags["id"] ?: System.nanoTime().toString()
 

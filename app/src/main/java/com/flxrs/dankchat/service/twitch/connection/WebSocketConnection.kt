@@ -4,6 +4,7 @@ import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.utils.extensions.timer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import okhttp3.*
 import java.util.concurrent.TimeUnit
 
@@ -159,7 +160,15 @@ class WebSocketConnection(
             splits.forEachIndexed { i, line ->
                 if (i != size - 1) {
                     val ircMessage = IrcMessage.parse(line)
+                    if (ircMessage.isLoginFailed()) {
+                        close(null)
+                    }
+
                     when (ircMessage.command) {
+                        "376" -> {
+                            readerWebSocket?.joinCurrentChannels()
+                            setupReaderPingInterval()
+                        }
                         "PING" -> webSocket.handlePing()
                         "PONG" -> readerPong = false
                         "RECONNECT" -> reconnect()
@@ -173,13 +182,11 @@ class WebSocketConnection(
             readerConnected = true
             connecting = false
             val auth = if (isJustinFan) "NaM" else oAuth
-            val nick = if (nick.isBlank() || auth == "NaM") "justinfan12781923" else nick
+            val nick = if (nick.isBlank() || isJustinFan) "justinfan12781923" else nick
 
             webSocket.sendMessage("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership")
             webSocket.sendMessage("PASS $auth")
             webSocket.sendMessage("NICK $nick")
-            webSocket.joinCurrentChannels()
-            setupReaderPingInterval()
         }
     }
 
@@ -201,6 +208,10 @@ class WebSocketConnection(
                 if (i != size - 1) {
                     val ircMessage = IrcMessage.parse(line)
                     when (ircMessage.command) {
+                        "376" -> {
+                            writerWebSocket?.joinCurrentChannels()
+                            setupWriterPingInterval()
+                        }
                         "PING" -> webSocket.handlePing()
                         "PONG" -> writerPong = false
                         "RECONNECT" -> reconnect()
@@ -214,13 +225,11 @@ class WebSocketConnection(
         override fun onOpen(webSocket: WebSocket, response: Response) {
             writerConnected = true
             val auth = if (isJustinFan) "NaM" else oAuth
-            val nick = if (nick.isBlank() || auth == "NaM") "justinfan12781923" else nick
+            val nick = if (nick.isBlank() || isJustinFan) "justinfan12781923" else nick
 
             webSocket.sendMessage("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership")
             webSocket.sendMessage("PASS $auth")
             webSocket.sendMessage("NICK $nick")
-            webSocket.joinCurrentChannels()
-            setupWriterPingInterval()
         }
     }
 }

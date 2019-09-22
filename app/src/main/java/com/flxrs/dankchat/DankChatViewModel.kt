@@ -3,6 +3,13 @@ package com.flxrs.dankchat
 import androidx.lifecycle.*
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.service.TwitchRepository
+import com.flxrs.dankchat.service.api.TwitchApi
+import com.flxrs.dankchat.service.api.model.UserEntities
+import com.flxrs.dankchat.utils.extensions.timer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewModel() {
@@ -23,7 +30,10 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         }
     }
 
+    private var fetchJob: Job? = null
+
     val appbarEnabled = MutableLiveData<Boolean>(true)
+    val shouldShowViewPager = MutableLiveData<Boolean>(false)
     val imageUploadedEvent = twitchRepository.imageUploadedEvent
 
     val emoteCodes = Transformations.switchMap(activeChannel) { twitchRepository.getEmoteCodes(it) }
@@ -51,10 +61,6 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         activeChannel.value = channel
     }
 
-    fun setStreamData(data: Map<String, String>) {
-        streamData.value = data
-    }
-
     fun setStreamInfoEnabled(enabled: Boolean) {
         streamInfoEnabled.value = enabled
     }
@@ -71,6 +77,23 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         twitchRepository.reloadEmotes(channel, oauth, id)
 
     fun uploadImage(file: File) = twitchRepository.uploadImage(file)
+
+    fun fetchStreamData(channels: List<String>, stringBuilder: (viewers: Int) -> String) {
+        fetchJob?.cancel()
+        fetchJob = viewModelScope.launch {
+            timer(STREAM_REFRESH_RATE) {
+                val data = mutableMapOf<String, String>()
+                channels.forEach { channel ->
+                    TwitchApi.getStream(channel)?.let {
+                        data[channel] = stringBuilder(it.viewers)
+                    }
+                }
+                streamData.value = data
+            }
+        }
+    }
+
+    fun clearIgnores() = twitchRepository.clearIgnores()
 
     private fun buildBottomText(): String {
         val roomState = if (roomStateEnabled.value == true) {
@@ -91,7 +114,7 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         }
     }
 
-    fun loadIgnores(oAuth: String, id: Int) {
-        twitchRepository.loadIgnores(oAuth, id)
+    companion object {
+        private const val STREAM_REFRESH_RATE = 30_000L
     }
 }
