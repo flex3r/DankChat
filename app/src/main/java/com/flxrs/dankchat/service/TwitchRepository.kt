@@ -26,7 +26,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     private val emoteSuggestions = mutableMapOf<String, MutableLiveData<List<GenericEmote>>>()
     private val canType = mutableMapOf<String, MutableLiveData<String>>()
     private val roomStates = mutableMapOf<String, MutableLiveData<TwitchMessage.Roomstate>>()
-    private var ignoredList = mutableListOf<Int>()
+    private val ignoredList = mutableListOf<Int>()
     private var hasDisconnected = true
     private var loadedGlobalBadges = false
     private var loadedGlobalEmotes = false
@@ -132,13 +132,14 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     }
 
     fun clearIgnores() {
-        ignoredList = mutableListOf()
+        ignoredList.clear()
     }
 
     private suspend fun loadIgnores(oAuth: String, id: Int) = withContext(Dispatchers.Default) {
         val result = TwitchApi.getIgnores(oAuth, id)
         if (result != null) {
-            ignoredList = result.blocks.map { it.user.id }.toMutableList()
+            ignoredList.clear()
+            ignoredList.addAll(result.blocks.map { it.user.id })
         }
     }
 

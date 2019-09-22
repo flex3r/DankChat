@@ -93,7 +93,9 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         }
     }
 
-    fun clearIgnores() = twitchRepository.clearIgnores()
+    fun clearIgnores() {
+        twitchRepository.clearIgnores()
+    }
 
     private fun buildBottomText(): String {
         val roomState = if (roomStateEnabled.value == true) {
