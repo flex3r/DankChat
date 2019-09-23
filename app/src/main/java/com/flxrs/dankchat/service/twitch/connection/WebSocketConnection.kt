@@ -1,12 +1,14 @@
 package com.flxrs.dankchat.service.twitch.connection
 
+import android.util.Log
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.utils.extensions.timer
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import okhttp3.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.floor
+import kotlin.math.max
+import kotlin.math.roundToLong
 
 class WebSocketConnection(
     private val scope: CoroutineScope,
@@ -36,6 +38,7 @@ class WebSocketConnection(
     private var readerPong = false
     private var writerPong = false
     private var connecting = false
+    private var reconnectAttempts = 0
 
     var isJustinFan = false
     private var onClosed: (() -> Unit)? = null
@@ -82,7 +85,7 @@ class WebSocketConnection(
     @Synchronized
     fun close(onClosed: (() -> Unit)?) {
         this.onClosed = onClosed
-        scope.coroutineContext.cancel()
+        //scope.coroutineContext.cancel()
         readerConnected = false
         writerConnected = false
 
@@ -91,9 +94,23 @@ class WebSocketConnection(
     }
 
     @Synchronized
-    fun reconnect(onlyIfNecessary: Boolean = false) {
+    fun reconnect(onlyIfNecessary: Boolean = false, forceConnect: Boolean = false) {
         if (!onlyIfNecessary || (!readerConnected && !writerConnected && !connecting)) {
-            close { connect(nick, oAuth) }
+            scope.launch {
+                var reconnectDelay = 150L
+                if (reconnectAttempts > 0) {
+                    val jitter = floor(Math.random() * (RECONNECT_JITTER + 1))
+                    reconnectDelay = ((RECONNECT_MULTIPLIER * reconnectAttempts) - RECONNECT_JITTER + jitter).roundToLong()
+                }
+                reconnectAttempts++
+                delay(max(reconnectDelay, 5000))
+
+                if (forceConnect) {
+                    connect(nick, oAuth, forceConnect)
+                } else {
+                    close { connect(nick, oAuth) }
+                }
+            }
         }
     }
 
@@ -138,19 +155,23 @@ class WebSocketConnection(
     }
 
     private inner class ReaderWebSocketListener : WebSocketListener() {
+        private var pingTimer: Job? = null
 
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
             readerConnected = false
             onDisconnect()
             onClosed?.invoke()
             onClosed = null
+            pingTimer?.cancel()
         }
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             readerConnected = false
-            scope.coroutineContext.cancel()
+            connecting = false
             onDisconnect()
-            connect(nick, oAuth, true)
+            pingTimer?.cancel()
+
+            reconnect(forceConnect = true)
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
@@ -167,7 +188,7 @@ class WebSocketConnection(
                     when (ircMessage.command) {
                         "376" -> {
                             readerWebSocket?.joinCurrentChannels()
-                            setupReaderPingInterval()
+                            pingTimer = setupReaderPingInterval()
                         }
                         "PING" -> webSocket.handlePing()
                         "PONG" -> readerPong = false
@@ -181,6 +202,7 @@ class WebSocketConnection(
         override fun onOpen(webSocket: WebSocket, response: Response) {
             readerConnected = true
             connecting = false
+            reconnectAttempts = 0
             val auth = if (isJustinFan) "NaM" else oAuth
             val nick = if (nick.isBlank() || isJustinFan) "justinfan12781923" else nick
 
@@ -191,13 +213,16 @@ class WebSocketConnection(
     }
 
     private inner class WriterWebSocketListener : WebSocketListener() {
+        private var pingTimer: Job? = null
 
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
             writerConnected = false
+            pingTimer?.cancel()
         }
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             writerConnected = false
+            pingTimer?.cancel()
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
@@ -210,7 +235,7 @@ class WebSocketConnection(
                     when (ircMessage.command) {
                         "376" -> {
                             writerWebSocket?.joinCurrentChannels()
-                            setupWriterPingInterval()
+                            pingTimer = setupWriterPingInterval()
                         }
                         "PING" -> webSocket.handlePing()
                         "PONG" -> writerPong = false
@@ -231,5 +256,10 @@ class WebSocketConnection(
             webSocket.sendMessage("PASS $auth")
             webSocket.sendMessage("NICK $nick")
         }
+    }
+
+    companion object {
+        private const val RECONNECT_MULTIPLIER = 250
+        private const val RECONNECT_JITTER = 100
     }
 }

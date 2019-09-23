@@ -4,12 +4,9 @@ import androidx.lifecycle.*
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.service.TwitchRepository
 import com.flxrs.dankchat.service.api.TwitchApi
-import com.flxrs.dankchat.service.api.model.UserEntities
 import com.flxrs.dankchat.utils.extensions.timer
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 
 class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewModel() {
@@ -98,20 +95,23 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
     }
 
     private fun buildBottomText(): String {
-        val roomState = if (roomStateEnabled.value == true) {
-            roomState.value?.toString() ?: ""
-        } else ""
-        val streamInfo = if (streamInfoEnabled.value == true) {
-            currentStreamInformation.value ?: ""
-        } else ""
+        var roomStateText = ""
+        var streamInfoText = ""
 
-        val stateNotBlank = roomState.isNotBlank()
-        val streamNotBlank = streamInfo.isNotBlank()
+        roomState.value?.let {
+            if (roomStateEnabled.value == true) roomStateText = it.toString()
+        }
+        currentStreamInformation.value?.let {
+            if (streamInfoEnabled.value == true) streamInfoText = it
+        }
+
+        val stateNotBlank = roomStateText.isNotBlank()
+        val streamNotBlank = streamInfoText.isNotBlank()
 
         return when {
-            stateNotBlank && streamNotBlank -> "$roomState - $streamInfo"
-            stateNotBlank -> roomState
-            streamNotBlank -> streamInfo
+            stateNotBlank && streamNotBlank -> "$roomStateText - $streamInfoText"
+            stateNotBlank -> roomStateText
+            streamNotBlank -> streamInfoText
             else -> ""
         }
     }

@@ -8,37 +8,6 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import com.flxrs.dankchat.chat.ChatItem
-import kotlinx.coroutines.*
-
-fun CoroutineScope.timer(interval: Long, action: suspend TimerScope.() -> Unit): Job {
-    return launch {
-        val scope = TimerScope()
-
-        while (true) {
-            try {
-                action(scope)
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-
-            if (scope.isCanceled) {
-                break
-            }
-
-            delay(interval)
-            yield()
-        }
-    }
-}
-
-class TimerScope {
-    var isCanceled: Boolean = false
-        private set
-
-    fun cancel() {
-        isCanceled = true
-    }
-}
 
 fun List<ChatItem>.replaceWithTimeOuts(name: String): MutableList<ChatItem> =
     toMutableList().apply {
