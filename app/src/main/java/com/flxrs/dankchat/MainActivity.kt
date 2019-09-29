@@ -39,7 +39,6 @@ import com.flxrs.dankchat.utils.MediaUtils
 import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.AdvancedLoginDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.EditTextDialogFragment
-import com.flxrs.dankchat.utils.extensions.isServiceRunning
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
@@ -62,12 +61,13 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     private lateinit var tabLayoutMediator: TabLayoutMediator
     private var currentImagePath = ""
     private var showProgressBar = false
+
     private var currentChannel: String? = null
-
     private var twitchService: TwitchService? = null
-    private var isBound = false
 
+    private var isBound = false
     private val twitchServiceConnection = TwitchServiceConnection()
+    private var isLoggingIn = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -139,8 +139,20 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             }
         }
 
-        if (savedInstanceState == null && twitchService?.startedConnection != true) {
-            loadData()
+
+
+        if (savedInstanceState == null && !isLoggingIn && twitchService?.startedConnection != true) {
+            val oauth = twitchPreferences.getOAuthKey() ?: ""
+            val name = twitchPreferences.getUserName() ?: ""
+            loadData(oAuth = oauth.substringAfter("oauth:"))
+
+            if (name.isNotBlank() && oauth.isNotBlank()) {
+                showSnackbar("Logging in as $name")
+            }
+            if (!isBound) Intent(this, TwitchService::class.java).also {
+                startService(it)
+                bindService(it, twitchServiceConnection, 0)
+            }
         }
 
         setSupportActionBar(binding.toolbar)
@@ -151,6 +163,10 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     override fun onDestroy() {
         super.onDestroy()
         preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
+
+        if (isBound) {
+            unbindService(twitchServiceConnection)
+        }
     }
 
     override fun onPause() {
@@ -160,27 +176,20 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
 
     override fun onResume() {
         super.onResume()
-        reconnect(true)
+        if (!isLoggingIn) {
+            reconnect(true)
+        }
     }
 
     override fun onStart() {
         super.onStart()
-        Intent(this, TwitchService::class.java).also {
-            if (twitchService == null && !isServiceRunning(TwitchService::class.java)) {
-                ContextCompat.startForegroundService(this, it)
-                val oauth = twitchPreferences.getOAuthKey() ?: ""
-                val name = twitchPreferences.getUserName() ?: ""
-                if (name.isNotBlank() && oauth.isNotBlank()) showSnackbar("Logged in as $name")
-            }
-            if (!isBound) bindService(it, twitchServiceConnection, 0)
-        }
+        twitchService?.shouldMention = false
     }
 
     override fun onStop() {
         super.onStop()
-        if (isBound) {
-            unbindService(twitchServiceConnection)
-            isBound = false
+        if (!isChangingConfigurations) {
+            twitchService?.shouldMention = true
         }
     }
 
@@ -215,6 +224,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         when (item.itemId) {
             R.id.menu_reconnect -> reconnect(false)
             R.id.menu_login_default -> Intent(this, LoginActivity::class.java).apply {
+                isLoggingIn = true
                 startActivityForResult(this, LOGIN_REQUEST)
             }
             R.id.menu_login_advanced -> showAdvancedLoginDialog()
@@ -349,6 +359,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     }
 
     private fun handleLoginRequest(resultCode: Int) {
+        isLoggingIn = true
         val oauth = twitchPreferences.getOAuthKey()
         val name = twitchPreferences.getUserName()
         val id = twitchPreferences.getUserId()
@@ -356,11 +367,11 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         if (resultCode == Activity.RESULT_OK && !oauth.isNullOrBlank() && !name.isNullOrBlank() && id != 0) {
             twitchService?.close {
                 connectAndJoinChannels(name, oauth)
-                loadData(oauth, id)
+                loadData(oauth.substringAfter("oauth:"), id)
             }
 
             twitchPreferences.setLoggedIn(true)
-            showSnackbar("Logged in as $name")
+            showSnackbar("Logging in as $name")
         } else {
             showSnackbar("Failed to login")
         }
