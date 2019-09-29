@@ -39,6 +39,7 @@ import com.flxrs.dankchat.utils.MediaUtils
 import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.AdvancedLoginDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.EditTextDialogFragment
+import com.flxrs.dankchat.utils.extensions.hideKeyboard
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
@@ -47,6 +48,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.IOException
 import java.util.*
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
@@ -98,17 +100,16 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             }
 
         window.decorView.setOnApplyWindowInsetsListener { _, insets ->
-            window.decorView.onApplyWindowInsets(insets)
-            val cutout = insets.stableInsetTop
-            if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
-                && binding.showActionbarFab.visibility == View.VISIBLE
-                && !binding.input.hasFocus()
-            ) {
-                binding.showActionbarFab.apply {
-                    y = cutout.toFloat()
-                    requestLayout()
+            binding.showActionbarFab.apply {
+                if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+                    && isVisible
+                ) {
+                    y = if (binding.input.hasFocus()) {
+                        max(insets.stableInsetTop.toFloat() - insets.systemWindowInsetTop, 0f)
+                    } else {
+                        insets.stableInsetTop.toFloat()
+                    }
                 }
-
             }
             insets
         }
@@ -490,16 +491,17 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     }
 
     private fun changeActionBarVisibility(enabled: Boolean) {
+        hideKeyboard(binding.input)
+        binding.input.clearFocus()
+
         if (enabled) {
-            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+            window.decorView.systemUiVisibility = (View.VISIBLE)
             supportActionBar?.show()
             binding.showActionbarFab.visibility = View.GONE
             binding.tabs.visibility = View.VISIBLE
         } else {
             window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                     or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                     or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                     or View.SYSTEM_UI_FLAG_FULLSCREEN)
@@ -507,10 +509,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             binding.tabs.visibility = View.GONE
             binding.showActionbarFab.visibility = View.VISIBLE
         }
-
-        if (binding.input.hasFocus()) {
-            binding.input.requestFocus()
-        }
+        window.decorView.requestApplyInsets()
     }
 
     private fun clear() {
@@ -582,6 +581,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     private fun showSnackbar(message: String) {
         Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).apply {
             view.setBackgroundResource(R.color.colorPrimary)
+            anchorView = binding.inputLayout
             setTextColor(Color.WHITE)
         }.show()
     }
@@ -685,14 +685,12 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             window.decorView.systemUiVisibility = when {
                 !hasFocus && binding.showActionbarFab.isVisible -> (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         or View.SYSTEM_UI_FLAG_FULLSCREEN)
-                !hasFocus && !binding.showActionbarFab.isVisible -> (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
-                else -> (View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
+                else -> (View.VISIBLE)
             }
+            window.decorView.requestApplyInsets()
         }
     }
 
