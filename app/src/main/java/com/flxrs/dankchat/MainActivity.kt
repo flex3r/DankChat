@@ -154,7 +154,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         if (savedInstanceState == null && !isLoggingIn && twitchService?.startedConnection != true) {
             val oauth = twitchPreferences.getOAuthKey() ?: ""
             val name = twitchPreferences.getUserName() ?: ""
-            loadData(oAuth = oauth.substringAfter("oauth:"))
+            loadData(oAuth = oauth)
 
             if (name.isNotBlank() && oauth.isNotBlank()) {
                 showSnackbar("Logging in as $name")
@@ -312,7 +312,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                     }
                     twitchService?.close {
                         connectAndJoinChannels(it.name, "oauth:$tokenWithoutSuffix")
-                        loadData("oauth:$tokenWithoutSuffix", it.id)
+                        loadData(tokenWithoutSuffix, it.id)
                     }
                     showSnackbar("Logged in as ${it.name}")
                 } else showSnackbar("Failed to login")
@@ -383,7 +383,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         if (resultCode == Activity.RESULT_OK && !oauth.isNullOrBlank() && !name.isNullOrBlank() && id != 0) {
             twitchService?.close {
                 connectAndJoinChannels(name, oauth)
-                loadData(oauth.substringAfter("oauth:"), id)
+                loadData(oauth, id)
             }
 
             twitchPreferences.setLoggedIn(true)
@@ -548,9 +548,13 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
 
     private fun connectAndJoinChannels(name: String, oauth: String) {
         if (twitchService?.startedConnection == false) {
-            channels.forEachIndexed { i, channel ->
-                if (i == 0) twitchService?.connect(name, oauth)
-                twitchService?.joinChannel(channel)
+            if (channels.isEmpty()) {
+                twitchService?.connect(name, oauth)
+            } else {
+                channels.forEachIndexed { i, channel ->
+                    if (i == 0) twitchService?.connect(name, oauth)
+                    twitchService?.joinChannel(channel)
+                }
             }
         }
     }

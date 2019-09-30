@@ -50,7 +50,11 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
 
     fun loadData(channel: String, oauth: String, id: Int, load3rdParty: Boolean, reAuth: Boolean) {
         if (channel.isNotBlank()) {
-            twitchRepository.loadData(channel, oauth, id, load3rdParty, reAuth)
+            val token = when {
+                oauth.startsWith("oauth:", true) -> oauth.substringAfter(':')
+                else -> oauth
+            }
+            twitchRepository.loadData(channel, token, id, load3rdParty, reAuth)
         }
     }
 

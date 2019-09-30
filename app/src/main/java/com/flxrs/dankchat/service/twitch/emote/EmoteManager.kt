@@ -110,6 +110,7 @@ object EmoteManager {
 
     suspend fun setTwitchEmotes(twitchResult: EmoteEntities.Twitch.Result) =
         withContext(Dispatchers.Default) {
+            twitchEmotes.clear()
             twitchResult.sets.forEach {
                 it.value.forEach { emoteResult ->
                     val emote = GenericEmote(
@@ -172,6 +173,7 @@ object EmoteManager {
         ffzEmotes[channel]?.let { result.addAll(it.values) }
         bttvEmotes[channel]?.let { result.addAll(it.values) }
         result.sort()
+        result.distinct()
         return result
     }
 
