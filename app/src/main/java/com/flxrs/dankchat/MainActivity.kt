@@ -23,6 +23,7 @@ import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.chat.ChatTabAdapter
@@ -61,6 +62,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     private lateinit var binding: MainActivityBinding
     private lateinit var tabAdapter: ChatTabAdapter
     private lateinit var tabLayoutMediator: TabLayoutMediator
+    private lateinit var broadcastReceiver: BroadcastReceiver
     private var currentImagePath = ""
     private var showProgressBar = false
 
@@ -75,6 +77,13 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         initPreferences()
+
+        broadcastReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) = handleShutDown()
+        }
+
+        val filter = IntentFilter(SHUTDOWN_REQUEST_FILTER)
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, filter)
 
         tabAdapter = ChatTabAdapter(supportFragmentManager, lifecycle)
         twitchPreferences.getChannelsAsString()?.let { channels.addAll(it.split(',')) }
@@ -151,8 +160,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 showSnackbar("Logging in as $name")
             }
             if (!isBound) Intent(this, TwitchService::class.java).also {
-                startService(it)
-                bindService(it, twitchServiceConnection, 0)
+                bindService(it, twitchServiceConnection, Context.BIND_AUTO_CREATE)
             }
         }
 
@@ -163,10 +171,8 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
 
     override fun onDestroy() {
         super.onDestroy()
-        preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
-
-        if (isBound) {
-            unbindService(twitchServiceConnection)
+        if (isBound && !isChangingConfigurations) {
+            handleShutDown()
         }
     }
 
@@ -326,6 +332,15 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             binding.input.setText(inputWithMention)
             binding.input.setSelection(inputWithMention.length)
         }
+    }
+
+    private fun handleShutDown() {
+        finishAndRemoveTask()
+        preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
+        unbindService(twitchServiceConnection)
+        stopService(Intent(this, TwitchService::class.java))
+        android.os.Process.killProcess(android.os.Process.myPid())
     }
 
     private fun fetchStreamInformation() {
@@ -720,5 +735,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         private const val SETTINGS_REQUEST = 777
 
         const val LOGOUT_REQUEST_KEY = "logout_key"
+        const val SHUTDOWN_REQUEST_FILTER = "shutdown_request_filter"
     }
 }

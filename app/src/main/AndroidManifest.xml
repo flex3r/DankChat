@@ -17,9 +17,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <service
-            android:name=".service.TwitchService"
-            android:stopWithTask="true" />
+        <service android:name=".service.TwitchService" />
 
         <activity
             android:name=".MainActivity"

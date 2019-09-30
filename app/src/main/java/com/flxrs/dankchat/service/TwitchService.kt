@@ -11,6 +11,8 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.MainActivity
 import com.flxrs.dankchat.R
@@ -38,25 +40,51 @@ class TwitchService : Service(), KoinComponent {
     override fun onBind(p0: Intent?): IBinder? = binder
 
     override fun onDestroy() {
-        super.onDestroy()
+        shouldMention = false
+        close { }
+        manager.cancelAll()
+
+        stopForeground(true)
         stopSelf()
     }
 
     override fun onCreate() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            val name = getString(R.string.app_name)
+            val channel = NotificationChannel(
+                CHANNEL_ID_LOW,
+                name,
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                enableVibration(false)
+                enableLights(false)
+                setShowBadge(false)
+            }
+
             val mentionChannel = NotificationChannel(
                 CHANNEL_ID_DEFAULT,
                 "Mentions",
                 NotificationManager.IMPORTANCE_DEFAULT
             )
             manager.createNotificationChannel(mentionChannel)
+            manager.createNotificationChannel(channel)
         }
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        startForeground()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.action == STOP_COMMAND) {
+            stopForeground(true)
+            stopSelf()
+            LocalBroadcastManager.getInstance(this)
+                .sendBroadcast(Intent(MainActivity.SHUTDOWN_REQUEST_FILTER))
+        } else {
+            startForeground()
+        }
         return START_NOT_STICKY
     }
 
@@ -86,6 +114,37 @@ class TwitchService : Service(), KoinComponent {
     fun close(onClosed: () -> Unit) {
         startedConnection = false
         connection.close(onClosed)
+    }
+
+    private fun startForeground() {
+        val title = getString(R.string.notification_title)
+        val message = getString(R.string.notification_message)
+
+        val pendingStartActivityIntent = Intent(this, MainActivity::class.java).let {
+            PendingIntent.getActivity(this, 0, it, 0)
+        }
+
+        val pendingStopIntent = Intent(this, TwitchService::class.java).let {
+            it.action = STOP_COMMAND
+            PendingIntent.getService(this, 0, it, 0)
+        }
+
+        val notification = NotificationCompat.Builder(this, CHANNEL_ID_LOW)
+            .setSound(null)
+            .setVibrate(null)
+            .setContentTitle(title)
+            .setContentText(message)
+            .addAction(
+                R.drawable.ic_clear_24dp,
+                getString(R.string.notification_stop),
+                pendingStopIntent
+            )
+            .setStyle(MediaStyle().setShowActionsInCompactView(0))
+            .setContentIntent(pendingStartActivityIntent)
+            .setSmallIcon(R.mipmap.ic_launcher_foreground)
+            .build()
+
+        startForeground(NOTIFICATION_ID, notification)
     }
 
     private fun onMessage(message: IrcMessage) {
@@ -127,9 +186,12 @@ class TwitchService : Service(), KoinComponent {
     private fun onDisconnect() = repository.handleDisconnect()
 
     companion object {
+        private const val CHANNEL_ID_LOW = "com.flxrs.dankchat.dank_id"
         private const val CHANNEL_ID_DEFAULT = "com.flxrs.dankchat.very_dank_id"
-        private const val MENTION_GROUP = "dank_group"
+        private const val NOTIFICATION_ID = 77777
         private const val SUMMARY_NOTIFICATION_ID = 12345
+        private const val MENTION_GROUP = "dank_group"
+        private const val STOP_COMMAND = "STOP_DANKING"
 
         private var notificationId = 42
             get() = field++
