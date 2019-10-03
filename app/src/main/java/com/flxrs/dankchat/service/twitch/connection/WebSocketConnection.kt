@@ -8,6 +8,7 @@ import okhttp3.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.floor
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToLong
 
 class WebSocketConnection(
@@ -103,7 +104,7 @@ class WebSocketConnection(
                     reconnectDelay = ((RECONNECT_MULTIPLIER * reconnectAttempts) - RECONNECT_JITTER + jitter).roundToLong()
                 }
                 reconnectAttempts++
-                delay(max(reconnectDelay, 5000))
+                delay(min(reconnectDelay, 5000))
 
                 if (forceConnect) {
                     connect(nick, oAuth, forceConnect)
