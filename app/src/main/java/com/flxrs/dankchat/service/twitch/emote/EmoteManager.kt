@@ -100,11 +100,12 @@ object EmoteManager {
     fun getGlobalBadgeUrl(set: String, version: String) =
         globalBadges[set]?.versions?.get(version)?.imageUrlHigh
 
-    fun setChannelBadges(channel: String, entity: BadgeEntities.Result) {
-        channelBadges[channel] = entity
-    }
+    suspend fun setChannelBadges(channel: String, entity: BadgeEntities.Result) =
+        withContext(Dispatchers.Default) {
+            channelBadges[channel] = entity
+        }
 
-    fun setGlobalBadges(entity: BadgeEntities.Result) {
+    suspend fun setGlobalBadges(entity: BadgeEntities.Result) = withContext(Dispatchers.Default) {
         globalBadges.putAll(entity.sets)
     }
 
@@ -165,17 +166,16 @@ object EmoteManager {
             }
         }
 
-    fun getEmotesForSuggestions(channel: String): List<GenericEmote> {
-        val result = mutableListOf<GenericEmote>()
-        result.addAll(twitchEmotes.values)
-        result.addAll(globalFFZEmotes.values)
-        result.addAll(globalBttvEmotes.values)
-        ffzEmotes[channel]?.let { result.addAll(it.values) }
-        bttvEmotes[channel]?.let { result.addAll(it.values) }
-        result.sort()
-        result.distinct()
-        return result
-    }
+    suspend fun getEmotesForSuggestions(channel: String): List<GenericEmote> =
+        withContext(Dispatchers.Default) {
+            val result = mutableListOf<GenericEmote>()
+            result.addAll(twitchEmotes.values)
+            result.addAll(globalFFZEmotes.values)
+            result.addAll(globalBttvEmotes.values)
+            ffzEmotes[channel]?.let { result.addAll(it.values) }
+            bttvEmotes[channel]?.let { result.addAll(it.values) }
+            return@withContext result.distinctBy { it.keyword }.sortedBy { it.keyword }
+        }
 
     private fun parseBTTVEmote(emote: EmoteEntities.BTTV.Emote): GenericEmote {
         val name = emote.code

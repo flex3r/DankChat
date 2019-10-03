@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.service
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.flxrs.dankchat.chat.ChatItem
@@ -205,20 +204,21 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         }
     }
 
-    private suspend fun loadBadges(channel: String, id: String) = withContext(Dispatchers.IO) {
-        if (!loadedGlobalBadges) TwitchApi.getGlobalBadges()?.let {
-            EmoteManager.setGlobalBadges(it)
+    private suspend fun loadBadges(channel: String, id: String) = withContext(Dispatchers.Default) {
+        if (!loadedGlobalBadges) {
             loadedGlobalBadges = true
+            TwitchApi.getGlobalBadges()?.let { EmoteManager.setGlobalBadges(it) }
         }
         TwitchApi.getChannelBadges(id)?.let { EmoteManager.setChannelBadges(channel, it) }
     }
 
-    private suspend fun loadTwitchEmotes(oAuth: String, id: Int) = withContext(Dispatchers.IO) {
-        if (!loadedTwitchEmotes) {
-            TwitchApi.getUserEmotes(oAuth, id)?.let { EmoteManager.setTwitchEmotes(it) }
-            loadedTwitchEmotes = true
+    private suspend fun loadTwitchEmotes(oAuth: String, id: Int) =
+        withContext(Dispatchers.Default) {
+            if (!loadedTwitchEmotes) {
+                TwitchApi.getUserEmotes(oAuth, id)?.let { EmoteManager.setTwitchEmotes(it) }
+                loadedTwitchEmotes = true
+            }
         }
-    }
 
     private suspend fun load3rdPartyEmotes(channel: String, id: String) =
         withContext(Dispatchers.IO) {
@@ -232,7 +232,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
             }
         }
 
-    private fun setSuggestions(channel: String) {
+    private suspend fun setSuggestions(channel: String) = withContext(Dispatchers.Default) {
         val keywords = EmoteManager.getEmotesForSuggestions(channel)
         emoteSuggestions.getOrPut(channel, { MutableLiveData() }).postValue(keywords)
     }

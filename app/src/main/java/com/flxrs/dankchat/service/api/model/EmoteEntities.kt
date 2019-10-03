@@ -34,36 +34,36 @@ sealed class EmoteEntities {
         )
 
         data class Emote(
-            @field:Json(name = "css") val css: String?,
-            @field:Json(name = "height") val height: Int,
-            @field:Json(name = "hidden") val isHidden: Boolean,
-            @field:Json(name = "id") val id: Int,
-            @field:Json(name = "margins") val margins: String?,
-            @field:Json(name = "modifier") val modifier: Boolean,
-            @field:Json(name = "name") val name: String,
-            @field:Json(name = "offset") val offset: String?,
-            @field:Json(name = "owner") val owner: EmoteOwner,
-            @field:Json(name = "public") val isPublic: Boolean,
+//            @field:Json(name = "css") val css: String?,
+//            @field:Json(name = "height") val height: Int,
+//            @field:Json(name = "hidden") val isHidden: Boolean,
+//            @field:Json(name = "margins") val margins: String?,
+//            @field:Json(name = "modifier") val modifier: Boolean,
+//            @field:Json(name = "offset") val offset: String?,
+//            @field:Json(name = "owner") val owner: EmoteOwner,
+//            @field:Json(name = "public") val isPublic: Boolean,
+//            @field:Json(name = "width") val width: Int,
             @field:Json(name = "urls") val urls: Map<String, String>,
-            @field:Json(name = "width") val width: Int
+            @field:Json(name = "name") val name: String,
+            @field:Json(name = "id") val id: Int
         )
 
         data class EmoteSet(
-            @field:Json(name = "_type") val type: Int,
-            @field:Json(name = "css") val css: String?,
-            @field:Json(name = "description") val description: String?,
+//            @field:Json(name = "_type") val type: Int,
+//            @field:Json(name = "css") val css: String?,
+//            @field:Json(name = "description") val description: String?,
             @field:Json(name = "emoticons") val emotes: List<Emote>
         )
 
         data class Result(
-            @field:Json(name = "room") val room: Room,
+            //@field:Json(name = "room") val room: Room,
             @field:Json(name = "sets") val sets: Map<String, EmoteSet>
         )
 
         data class GlobalResult(
-            @field:Json(name = "default_sets") val defaultSets: List<Int>,
-            @field:Json(name = "sets") val sets: Map<String, EmoteSet>,
-            @field:Json(name = "users") val users: Map<String, List<String>>
+            //@field:Json(name = "default_sets") val defaultSets: List<Int>,
+            //@field:Json(name = "users") val users: Map<String, List<String>>,
+            @field:Json(name = "sets") val sets: Map<String, EmoteSet>
         )
     }
 

@@ -41,7 +41,7 @@ class TwitchService : Service(), KoinComponent {
 
     override fun onDestroy() {
         shouldMention = false
-        close { }
+        close()
         manager.cancelAll()
 
         stopForeground(true)
@@ -111,7 +111,7 @@ class TwitchService : Service(), KoinComponent {
     }
 
     @Synchronized
-    fun close(onClosed: () -> Unit) {
+    fun close(onClosed: () -> Unit = { }) {
         startedConnection = false
         connection.close(onClosed)
     }
