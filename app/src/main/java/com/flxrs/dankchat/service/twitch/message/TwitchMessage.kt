@@ -1,12 +1,12 @@
 package com.flxrs.dankchat.service.twitch.message
 
 import android.graphics.Color
-import android.util.Log
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.badge.Badge
 import com.flxrs.dankchat.service.twitch.emote.ChatEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.TimeUtils
+import com.flxrs.dankchat.utils.extensions.isEmoji
 import java.util.regex.Pattern
 
 data class TwitchMessage(
@@ -80,6 +80,24 @@ data class TwitchMessage(
                     isAction = true
                     params[1].substring("\u0001ACTION ".length, params[1].length - "\u0001".length)
                 } else if (params.size > 1) params[1] else ""
+
+            // Adds extra space after every emoji group to support 3rd part emotes directly after emojis
+//            val fixedContentBuilder = StringBuilder()
+//            var previousEmoji = false
+//            val spaces = mutableListOf<Int>()
+//            content.forEachIndexed {i, c ->
+//                if (c.isEmoji()) {
+//                    previousEmoji = true
+//                } else if (previousEmoji) {
+//                    previousEmoji = false
+//                    if (!c.isWhitespace()) {
+//                        fixedContentBuilder.append(" ")
+//                        spaces.add(i)
+//                    }
+//                }
+//                fixedContentBuilder.append(c)
+//            }
+//            val fixedContent = fixedContentBuilder.toString()
 
             val channel = params[0].substring(1)
             val emoteTag = tags["emotes"] ?: ""

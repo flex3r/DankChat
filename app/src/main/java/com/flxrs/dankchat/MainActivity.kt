@@ -6,9 +6,12 @@ import android.content.*
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.MediaStore
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.webkit.MimeTypeMap
@@ -27,8 +30,11 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.chat.ChatTabAdapter
+import com.flxrs.dankchat.chat.menu.EmoteMenuAdapter
+import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.chat.suggestion.EmoteSuggestionsArrayAdapter
 import com.flxrs.dankchat.chat.suggestion.SpaceTokenizer
+import com.flxrs.dankchat.databinding.EmoteMenuBottomSheetDialogBinding
 import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.SettingsActivity
@@ -41,6 +47,7 @@ import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.AdvancedLoginDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.EditTextDialogFragment
 import com.flxrs.dankchat.utils.extensions.hideKeyboard
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
@@ -62,6 +69,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     private lateinit var binding: MainActivityBinding
     private lateinit var tabAdapter: ChatTabAdapter
     private lateinit var tabLayoutMediator: TabLayoutMediator
+    private lateinit var emoteMenuAdapter: EmoteMenuAdapter
     private lateinit var broadcastReceiver: BroadcastReceiver
     private var currentImagePath = ""
     private var showProgressBar = false
@@ -92,6 +100,8 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 twitchPreferences.setChannels(null)
             }
         channels.forEach { tabAdapter.addFragment(it) }
+
+        emoteMenuAdapter = EmoteMenuAdapter(::insertEmote)
 
         binding = DataBindingUtil.setContentView<MainActivityBinding>(this, R.layout.main_activity)
             .apply {
@@ -125,7 +135,8 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
 
         viewModel.apply {
             imageUploadedEvent.observe(this@MainActivity, ::handleImageUploadEvent)
-            emoteCodes.observe(this@MainActivity, ::setupSuggestionAdapter)
+            emoteSuggestions.observe(this@MainActivity, ::setupSuggestionAdapter)
+            emoteItems.observe(this@MainActivity, emoteMenuAdapter::submitList)
             appbarEnabled.observe(this@MainActivity) { changeActionBarVisibility(it) }
 
             canType.observe(this@MainActivity) {
@@ -160,7 +171,11 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 showSnackbar("Logging in as $name")
             }
             if (!isBound) Intent(this, TwitchService::class.java).also {
-                bindService(it, twitchServiceConnection, Context.BIND_AUTO_CREATE)
+                try {
+                    bindService(it, twitchServiceConnection, Context.BIND_AUTO_CREATE)
+                } catch (t: Throwable) {
+                    Log.e(TAG, Log.getStackTraceString(t))
+                }
             }
         }
 
@@ -281,7 +296,13 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             val id = twitchPreferences.getUserId()
 
             twitchService?.joinChannel(lowerCaseChannel)
-            viewModel.loadData(lowerCaseChannel, oauth, id, load3rdParty = true, reAuth = false)
+            viewModel.loadData(
+                listOf(lowerCaseChannel),
+                oauth,
+                id,
+                load3rdParty = true,
+                reAuth = false
+            )
             channels.add(lowerCaseChannel)
             twitchPreferences.setChannelsString(channels.joinToString(","))
 
@@ -334,12 +355,24 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         }
     }
 
+    private fun insertEmote(emote: String) {
+        val current = binding.input.text.toString()
+        val currentWithEmote = "$current$emote "
+        binding.input.setText(currentWithEmote)
+        binding.input.setSelection(currentWithEmote.length)
+    }
+
     private fun handleShutDown() {
         finishAndRemoveTask()
         preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
-        unbindService(twitchServiceConnection)
-        stopService(Intent(this, TwitchService::class.java))
+
+        try {
+            unbindService(twitchServiceConnection)
+        } catch (t: Throwable) {
+            Log.e(TAG, Log.getStackTraceString(t))
+        }
+
         android.os.Process.killProcess(android.os.Process.myPid())
     }
 
@@ -564,9 +597,9 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         id: Int = twitchPreferences.getUserId()
     ) {
         if (channels.isEmpty()) {
-            viewModel.loadData("", oAuth, id, true, reAuth = true)
-        } else channels.forEachIndexed { i, channel ->
-            viewModel.loadData(channel, oAuth, id, true, reAuth = i == 0)
+            viewModel.loadData(listOf(""), oAuth, id, true, reAuth = true)
+        } else {
+            viewModel.loadData(channels, oAuth, id, true, reAuth = true)
         }
     }
 
@@ -710,6 +743,63 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 else -> (View.VISIBLE)
             }
             window.decorView.requestApplyInsets()
+        }
+
+        setOnTouchListener { _, event ->
+            if (event.x <= (compoundPaddingLeft + compoundDrawables[0].bounds.width())) {
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        compoundDrawables[0].apply {
+                            colorFilter = PorterDuffColorFilter(
+                                ContextCompat.getColor(
+                                    context,
+                                    R.color.colorAccent
+                                ), PorterDuff.Mode.SRC_ATOP
+                            )
+                            invalidate()
+                        }
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        compoundDrawables[0].apply {
+                            clearColorFilter()
+                            invalidate()
+                        }
+
+                        if (emoteMenuAdapter.currentList.isEmpty()) return@setOnTouchListener false
+                        hideKeyboard(this)
+
+                        val emoteMenuBinding =
+                            DataBindingUtil.inflate<EmoteMenuBottomSheetDialogBinding>(
+                                LayoutInflater.from(context),
+                                R.layout.emote_menu_bottom_sheet_dialog,
+                                binding.root as ViewGroup,
+                                false
+                            ).apply {
+                                viewPager.adapter = emoteMenuAdapter
+                                viewPager.layoutParams.apply {
+                                    height = (resources.displayMetrics.heightPixels * 0.5).toInt()
+                                    viewPager.layoutParams = this
+                                }
+                                TabLayoutMediator(tabs, viewPager) { tab, pos ->
+                                    tab.text = EmoteMenuTab.values()[pos].tab
+                                }.attach()
+                            }
+
+                        BottomSheetDialog(context).apply {
+                            setContentView(emoteMenuBinding.root)
+                            show()
+                        }
+                        return@setOnTouchListener true
+                    }
+                    MotionEvent.ACTION_CANCEL -> {
+                        compoundDrawables[0].apply {
+                            clearColorFilter()
+                            invalidate()
+                        }
+                    }
+                }
+            }
+            false
         }
     }
 

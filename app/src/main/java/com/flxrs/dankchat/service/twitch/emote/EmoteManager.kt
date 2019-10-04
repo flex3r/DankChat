@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.service.twitch.emote
 
 import androidx.collection.LruCache
+import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.api.model.BadgeEntities
 import com.flxrs.dankchat.service.api.model.EmoteEntities
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +28,25 @@ object EmoteManager {
     private val channelBadges = ConcurrentHashMap<String, BadgeEntities.Result>()
     private val globalBadges = ConcurrentHashMap<String, BadgeEntities.BadgeSet>()
 
+    private val thirdPartyRegex = Regex("\\s")
+
+    private val emoteReplacements = mapOf(
+        "[oO](_|\\.)[oO]" to "O_o",
+        "\\&lt\\;3" to ":3",
+        "\\:-?(p|P)" to ":P",
+        "\\:-?[z|Z|\\|]" to ":Z",
+        "\\:-?\\)" to ":)",
+        "\\;-?(p|P)" to ";P",
+        "R-?\\)" to "R)",
+        "\\&gt\\;\\(" to ">( ",
+        "\\:-?(o|O)" to ":O",
+        "\\:-?[\\\\/]" to ":/",
+        "\\:-?\\(" to ":(",
+        "\\:-?D" to ":D",
+        "\\;-?\\)" to ";)",
+        "B-?\\)" to "B)"
+    )
+
     val gifCache = LruCache<String, GifDrawable>(4 * 1024 * 1024)
     val gifCallback = MultiCallback(true)
 
@@ -36,7 +56,7 @@ object EmoteManager {
         var index = 0
         while (offset < original.length) {
             val codepoint = original.codePointAt(offset)
-            if (codepoint > 65535) {
+            if (Character.isSupplementaryCodePoint(codepoint)) {
                 unicodeFixPositions.add(offset - index)
                 index++
             }
@@ -71,7 +91,7 @@ object EmoteManager {
         val availableFFz = ffzEmotes[channel] ?: hashMapOf()
         val availableBttv = bttvEmotes[channel] ?: hashMapOf()
         val total = availableFFz.plus(availableBttv).plus(globalBttvEmotes).plus(globalFFZEmotes)
-        val splits = message.split(Regex("\\s"))
+        val splits = message.split(thirdPartyRegex)
         val emotes = arrayListOf<ChatEmote>()
         total.forEach {
             var i = 0
@@ -112,14 +132,30 @@ object EmoteManager {
     suspend fun setTwitchEmotes(twitchResult: EmoteEntities.Twitch.Result) =
         withContext(Dispatchers.Default) {
             twitchEmotes.clear()
+            val setMapping = TwitchApi.getUserSets(twitchResult.sets.keys.toList())
+                ?.associateBy({ it.id }, { it.channelName })
+
             twitchResult.sets.forEach {
+                val set = it.key
+                val type = if (set == "0") {
+                    EmoteType.GlobalTwitchEmote
+                } else {
+                    val channel = setMapping?.get(set) ?: "Twitch"
+                    EmoteType.ChannelTwitchEmote(channel)
+                }
+
                 it.value.forEach { emoteResult ->
+                    val keyword = when (type) {
+                        is EmoteType.GlobalTwitchEmote -> emoteReplacements.getOrElse(emoteResult.name) { emoteResult.name }
+                        else -> emoteResult.name
+                    }
                     val emote = GenericEmote(
-                        emoteResult.name,
+                        keyword,
                         "$BASE_URL/${emoteResult.id}/$EMOTE_SIZE",
                         false,
                         "${emoteResult.id}",
-                        1
+                        1,
+                        type
                     )
                     twitchEmotes[emote.keyword] = emote
                 }
@@ -131,7 +167,7 @@ object EmoteManager {
             val emotes = hashMapOf<String, GenericEmote>()
             ffzResult.sets.forEach {
                 it.value.emotes.forEach { emote ->
-                    val parsedEmote = parseFFZEmote(emote)
+                    val parsedEmote = parseFFZEmote(emote, channel)
                     emotes[parsedEmote.keyword] = parsedEmote
                 }
             }
@@ -166,23 +202,22 @@ object EmoteManager {
             }
         }
 
-    suspend fun getEmotesForSuggestions(channel: String): List<GenericEmote> =
-        withContext(Dispatchers.Default) {
-            val result = mutableListOf<GenericEmote>()
-            result.addAll(twitchEmotes.values)
-            result.addAll(globalFFZEmotes.values)
-            result.addAll(globalBttvEmotes.values)
-            ffzEmotes[channel]?.let { result.addAll(it.values) }
-            bttvEmotes[channel]?.let { result.addAll(it.values) }
-            return@withContext result.distinctBy { it.keyword }.sortedBy { it.keyword }
-        }
+    suspend fun getEmotes(channel: String): List<GenericEmote> = withContext(Dispatchers.Default) {
+        val result = mutableListOf<GenericEmote>()
+        result.addAll(twitchEmotes.values)
+        result.addAll(globalFFZEmotes.values)
+        result.addAll(globalBttvEmotes.values)
+        ffzEmotes[channel]?.let { result.addAll(it.values) }
+        bttvEmotes[channel]?.let { result.addAll(it.values) }
+        return@withContext result.sortedBy { it.keyword }
+    }
 
     private fun parseBTTVEmote(emote: EmoteEntities.BTTV.Emote): GenericEmote {
         val name = emote.code
         val id = emote.id
         val type = emote.imageType == "gif"
         val url = "$BTTV_CDN_BASE_URL$id/3x"
-        return GenericEmote(name, url, type, id, 1)
+        return GenericEmote(name, url, type, id, 1, EmoteType.ChannelBTTVEmote)
     }
 
     private fun parseBTTVGlobalEmote(emote: EmoteEntities.BTTV.GlobalEmote): GenericEmote {
@@ -190,10 +225,10 @@ object EmoteManager {
         val id = emote.id
         val type = emote.imageType == "gif"
         val url = "$BTTV_CDN_BASE_URL$id/3x"
-        return GenericEmote(name, url, type, id, 1)
+        return GenericEmote(name, url, type, id, 1, EmoteType.GlobalBTTVEmote)
     }
 
-    private fun parseFFZEmote(emote: EmoteEntities.FFZ.Emote): GenericEmote {
+    private fun parseFFZEmote(emote: EmoteEntities.FFZ.Emote, channel: String = ""): GenericEmote {
         val name = emote.name
         val id = emote.id
         val (scale, url) = when {
@@ -201,6 +236,11 @@ object EmoteManager {
             emote.urls.containsKey("2") -> 2 to emote.urls.getValue("2")
             else -> 4 to emote.urls.getValue("1")
         }
-        return GenericEmote(name, "https:$url", false, "$id", scale)
+        val type = if (channel.isBlank()) {
+            EmoteType.GlobalFFZEmote
+        } else {
+            EmoteType.ChannelFFZEmote
+        }
+        return GenericEmote(name, "https:$url", false, "$id", scale, type)
     }
 }

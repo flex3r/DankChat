@@ -8,6 +8,8 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import com.flxrs.dankchat.chat.ChatItem
+import com.flxrs.dankchat.chat.menu.EmoteItem
+import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 
 fun List<ChatItem>.replaceWithTimeOuts(name: String): MutableList<ChatItem> =
     toMutableList().apply {
@@ -35,6 +37,21 @@ fun List<ChatItem>.addAndLimit(
             add(item)
         if (size > 500) removeAt(0)
     }
+}
+
+private val emojiRegex = Regex("\u00A9|\u00AE|[\u2000-\u3300]|[\uD83C\uD000-\uD83C\uDFFF]|[\uD83D\uD000-\uD83D\uDFFF]|[\uD83E\uD000-\uD83E\uDFFF]")
+
+fun Char.isEmoji(): Boolean {
+    return emojiRegex.matches("$this")
+}
+
+fun List<GenericEmote>?.toEmoteItems() : List<EmoteItem> {
+    return this?.groupBy { it.emoteType.title }
+        ?.mapValues {
+            val title = it.value.first().emoteType.title
+            listOf(EmoteItem.Header(title))
+                .plus(it.value.map { e -> EmoteItem.Emote(e) })
+        }?.flatMap { it.value } ?: listOf()
 }
 
 fun Fragment.hideKeyboard() {

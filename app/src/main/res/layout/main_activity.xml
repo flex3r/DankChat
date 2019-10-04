@@ -110,6 +110,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:completionThreshold="2"
+                    android:drawableStart="@drawable/ic_insert_emoticon_24dp"
+                    android:drawablePadding="10dp"
                     android:enabled="false"
                     android:imeOptions="actionSend|flagNoExtractUi"
                     android:inputType="text"

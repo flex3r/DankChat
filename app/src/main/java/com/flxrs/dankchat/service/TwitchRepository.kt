@@ -22,10 +22,11 @@ import java.nio.ByteBuffer
 class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
     private val messages = mutableMapOf<String, MutableLiveData<List<ChatItem>>>()
-    private val emoteSuggestions = mutableMapOf<String, MutableLiveData<List<GenericEmote>>>()
+    private val emotes = mutableMapOf<String, MutableLiveData<List<GenericEmote>>>()
     private val canType = mutableMapOf<String, MutableLiveData<String>>()
     private val roomStates = mutableMapOf<String, MutableLiveData<TwitchMessage.Roomstate>>()
     private val ignoredList = mutableListOf<Int>()
+
     private var hasDisconnected = true
     private var loadedGlobalBadges = false
     private var loadedGlobalEmotes = false
@@ -43,32 +44,41 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         MutableLiveData("Disconnected")
     }
 
-    fun getEmoteCodes(channel: String): LiveData<List<GenericEmote>> =
-        emoteSuggestions.getOrPut(channel) {
+    fun getEmotes(channel: String): LiveData<List<GenericEmote>> {
+        return emotes.getOrPut(channel) {
             MutableLiveData(emptyList())
         }
+    }
 
     fun getRoomState(channel: String): LiveData<TwitchMessage.Roomstate> =
         roomStates.getOrPut(channel) {
             MutableLiveData(TwitchMessage.Roomstate(channel))
         }
 
-    fun loadData(channel: String, oAuth: String, id: Int, load3rdParty: Boolean, reAuth: Boolean) {
+    fun loadData(
+        channels: List<String>,
+        oAuth: String,
+        id: Int,
+        load3rdParty: Boolean,
+        reAuth: Boolean
+    ) {
         scope.launch {
-            if (load3rdParty) {
-                TwitchApi.getUserIdFromName(channel)?.let {
-                    loadBadges(channel, it)
-                    load3rdPartyEmotes(channel, it)
+            channels.forEach { channel ->
+                if (load3rdParty) {
+                    TwitchApi.getUserIdFromName(channel)?.let {
+                        loadBadges(channel, it)
+                        load3rdPartyEmotes(channel, it)
+                    }
                 }
-            }
-            if (oAuth.isNotBlank() && reAuth) {
-                loadedTwitchEmotes = false
-                loadIgnores(oAuth, id)
-                loadTwitchEmotes(oAuth, id)
-            }
+                if (oAuth.isNotBlank() && reAuth && channel == channels.first()) {
+                    loadedTwitchEmotes = false
+                    loadIgnores(oAuth, id)
+                    loadTwitchEmotes(oAuth, id)
+                }
 
-            loadRecentMessages(channel)
-            setSuggestions(channel)
+                setSuggestions(channel)
+                loadRecentMessages(channel)
+            }
         }
     }
 
@@ -233,8 +243,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         }
 
     private suspend fun setSuggestions(channel: String) = withContext(Dispatchers.Default) {
-        val keywords = EmoteManager.getEmotesForSuggestions(channel)
-        emoteSuggestions.getOrPut(channel, { MutableLiveData() }).postValue(keywords)
+        emotes.getOrPut(channel, { MutableLiveData() }).postValue(EmoteManager.getEmotes(channel))
     }
 
     private suspend fun loadRecentMessages(channel: String) = withContext(Dispatchers.Default) {

@@ -11,6 +11,14 @@ sealed class EmoteEntities {
         )
 
         data class Result(@field:Json(name = "emoticon_sets") val sets: Map<String, List<Emote>>)
+
+        data class EmoteSet(
+            @field:Json(name = "set_id") val id: String,
+            @field:Json(name = "channel_name") val channelName: String,
+            @field:Json(name = "channel_id") val channelId: String,
+            @field:Json(name = "tier") val tier: Int
+
+        )
     }
 
     sealed class FFZ {

@@ -42,7 +42,9 @@ class TwitchService : Service(), KoinComponent {
     override fun onDestroy() {
         shouldMention = false
         close()
-        manager.cancelAll()
+        if (::manager.isInitialized) {
+            manager.cancelAll()
+        }
 
         stopForeground(true)
         stopSelf()

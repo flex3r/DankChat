@@ -5,7 +5,8 @@ data class GenericEmote(
     val url: String,
     val isGif: Boolean,
     val id: String,
-    val scale: Int
+    val scale: Int,
+    val emoteType: EmoteType
 ) :
     Comparable<GenericEmote> {
     override fun toString(): String {

@@ -34,6 +34,8 @@ object TwitchApi {
 
     private const val NUULS_UPLOAD_URL = "https://i.nuuls.com/upload"
 
+    private const val TWITCHEMOTES_SETS_URL = "https://api.twitchemotes.com/api/v4/sets?id="
+
     private const val BASE_LOGIN_URL = "https://id.twitch.tv/oauth2/authorize?response_type=token"
     private const val REDIRECT_URL = "https://flxrs.com/dankchat"
     private const val SCOPES =
@@ -72,6 +74,17 @@ object TwitchApi {
             }
             return@withContext null
         }
+
+    suspend fun getUserSets(sets: List<String>): List<EmoteEntities.Twitch.EmoteSet>? = withContext(Dispatchers.IO) {
+        try {
+            val ids = sets.joinToString(",")
+            val response = service.getSets("${TWITCHEMOTES_SETS_URL}$ids")
+            if (response.isSuccessful) return@withContext response.body()
+        } catch (t: Throwable) {
+            Log.e(TAG, Log.getStackTraceString(t))
+        }
+        return@withContext null
+    }
 
     suspend fun getStream(channel: String): StreamEntities.Stream? = withContext(Dispatchers.IO) {
         getUserIdFromName(channel)?.let {
@@ -191,6 +204,16 @@ object TwitchApi {
         try {
             val response = service.getUserHelix("${HELIX_BASE_URL}users?login=$name")
             if (response.isSuccessful) return@withContext response.body()?.data?.get(0)?.id
+        } catch (t: Throwable) {
+            Log.e(TAG, Log.getStackTraceString(t))
+        }
+        return@withContext null
+    }
+
+    suspend fun getNameFromUserId(id: Int): String? = withContext(Dispatchers.IO) {
+        try {
+            val response = service.getUserHelix("${HELIX_BASE_URL}users?id=$id")
+            if (response.isSuccessful) return@withContext response.body()?.data?.get(0)?.name
         } catch (t: Throwable) {
             Log.e(TAG, Log.getStackTraceString(t))
         }

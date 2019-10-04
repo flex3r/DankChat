@@ -25,6 +25,12 @@ interface TwitchApiService {
     suspend fun getUserEmotes(@Header("Authorization") oauth: String, @Path("id") userId: Int): Response<EmoteEntities.Twitch.Result>
 
     @Headers(
+        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
+    )
+    @GET
+    suspend fun getSets(@Url url: String): Response<List<EmoteEntities.Twitch.EmoteSet>>
+
+    @Headers(
         "Accept: application/vnd.twitchtv.v5+json",
         "Client-ID: ${TwitchApi.CLIENT_ID}",
         "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
