@@ -77,13 +77,13 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         oauth: String,
         id: Int,
         load3rdParty: Boolean,
-        reAuth: Boolean
+        loadTwitchData: Boolean
     ) {
         val token = when {
             oauth.startsWith("oauth:", true) -> oauth.substringAfter(':')
             else -> oauth
         }
-        twitchRepository.loadData(channels, token, id, load3rdParty, reAuth)
+        twitchRepository.loadData(channels, token, id, load3rdParty, loadTwitchData)
     }
 
     fun setActiveChannel(channel: String) {

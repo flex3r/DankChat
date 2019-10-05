@@ -10,12 +10,14 @@
     </data>
 
     <ImageView
+        android:id="@+id/emote_view"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:background="?selectableItemBackgroundBorderless"
         android:clickable="true"
+        android:contentDescription="@{emote.keyword}"
         android:focusable="true"
         android:paddingBottom="4dp"
-        app:url="@{emote.url}" />
+        app:url="@{emote.lowResUrl}" />
 
 </layout>

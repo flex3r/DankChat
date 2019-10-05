@@ -293,7 +293,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 oauth,
                 id,
                 load3rdParty = true,
-                reAuth = false
+                loadTwitchData = false
             )
             channels.add(lowerCaseChannel)
             twitchPreferences.setChannelsString(channels.joinToString(","))
@@ -585,9 +585,9 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         id: Int = twitchPreferences.getUserId()
     ) {
         if (channels.isEmpty()) {
-            viewModel.loadData(listOf(""), oAuth, id, true, reAuth = true)
+            viewModel.loadData(listOf(""), oAuth, id, true, loadTwitchData = true)
         } else {
-            viewModel.loadData(channels, oAuth, id, true, reAuth = true)
+            viewModel.loadData(channels, oAuth, id, true, loadTwitchData = true)
         }
     }
 

@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.flxrs.dankchat.databinding.EmoteHeaderItemBinding
 import com.flxrs.dankchat.databinding.EmoteItemBinding
 
@@ -34,6 +35,15 @@ class EmoteAdapter(private val onEmoteClick: (emote: String) -> Unit) :
             )
             else -> throw ClassCastException("Unknown viewType $viewType")
         }
+    }
+
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        if (holder is ViewHolder) {
+            val view = holder.binding.emoteView
+            Glide.with(view).clear(view)
+        }
+
+        super.onViewRecycled(holder)
     }
 
     @SuppressLint("DefaultLocale")

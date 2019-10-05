@@ -60,7 +60,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         oAuth: String,
         id: Int,
         load3rdParty: Boolean,
-        reAuth: Boolean
+        loadTwitchData: Boolean
     ) {
         scope.launch {
             channels.forEach { channel ->
@@ -70,7 +70,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
                         load3rdPartyEmotes(channel, it)
                     }
                 }
-                if (oAuth.isNotBlank() && reAuth && channel == channels.first()) {
+                if (oAuth.isNotBlank() && loadTwitchData && channel == channels.first()) {
                     loadedTwitchEmotes = false
                     loadIgnores(oAuth, id)
                     loadTwitchEmotes(oAuth, id)

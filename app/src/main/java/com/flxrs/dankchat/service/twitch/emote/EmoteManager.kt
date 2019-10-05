@@ -14,6 +14,7 @@ import java.util.regex.Pattern
 object EmoteManager {
     private const val BASE_URL = "https://static-cdn.jtvnw.net/emoticons/v1/"
     private const val EMOTE_SIZE = "3.0"
+    private const val LOW_RES_EMOTE_SIZE = "2.0"
     private val emotePattern = Pattern.compile("(\\d+):((?:\\d+-\\d+,?)+)")
 
     private val twitchEmotes = ConcurrentHashMap<String, GenericEmote>()
@@ -152,6 +153,7 @@ object EmoteManager {
                     val emote = GenericEmote(
                         keyword,
                         "$BASE_URL/${emoteResult.id}/$EMOTE_SIZE",
+                        "$BASE_URL/${emoteResult.id}/$LOW_RES_EMOTE_SIZE",
                         false,
                         "${emoteResult.id}",
                         1,
@@ -217,7 +219,8 @@ object EmoteManager {
         val id = emote.id
         val type = emote.imageType == "gif"
         val url = "$BTTV_CDN_BASE_URL$id/3x"
-        return GenericEmote(name, url, type, id, 1, EmoteType.ChannelBTTVEmote)
+        val lowResUrl = "$BTTV_CDN_BASE_URL$id/2x"
+        return GenericEmote(name, url, lowResUrl, type, id, 1, EmoteType.ChannelBTTVEmote)
     }
 
     private fun parseBTTVGlobalEmote(emote: EmoteEntities.BTTV.GlobalEmote): GenericEmote {
@@ -225,7 +228,8 @@ object EmoteManager {
         val id = emote.id
         val type = emote.imageType == "gif"
         val url = "$BTTV_CDN_BASE_URL$id/3x"
-        return GenericEmote(name, url, type, id, 1, EmoteType.GlobalBTTVEmote)
+        val lowResUrl = "$BTTV_CDN_BASE_URL$id/2x"
+        return GenericEmote(name, url, lowResUrl, type, id, 1, EmoteType.GlobalBTTVEmote)
     }
 
     private fun parseFFZEmote(emote: EmoteEntities.FFZ.Emote, channel: String = ""): GenericEmote {
@@ -236,11 +240,12 @@ object EmoteManager {
             emote.urls.containsKey("2") -> 2 to emote.urls.getValue("2")
             else -> 4 to emote.urls.getValue("1")
         }
+        val lowResUrl = emote.urls["2"] ?: emote.urls.getValue("1")
         val type = if (channel.isBlank()) {
             EmoteType.GlobalFFZEmote
         } else {
             EmoteType.ChannelFFZEmote
         }
-        return GenericEmote(name, "https:$url", false, "$id", scale, type)
+        return GenericEmote(name, "https:$url", "https:$lowResUrl", false, "$id", scale, type)
     }
 }
