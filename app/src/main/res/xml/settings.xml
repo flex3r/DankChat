@@ -1,41 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="@string/preference_timestamp_key"
-        android:title="@string/preference_timestamp_title" />
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/preference_general_header">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/preference_timestamp_key"
+            android:title="@string/preference_timestamp_title" />
 
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="@string/preference_roomstate_key"
-        android:summary="@string/preference_roomstate_summary"
-        android:title="@string/preference_roomstate_title" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/preference_roomstate_key"
+            android:summary="@string/preference_roomstate_summary"
+            android:title="@string/preference_roomstate_title" />
 
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="@string/preference_streaminfo_key"
-        android:summary="@string/preference_streaminfo_summary"
-        android:title="@string/preference_streaminfo_title" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/preference_streaminfo_key"
+            android:summary="@string/preference_streaminfo_summary"
+            android:title="@string/preference_streaminfo_title" />
 
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="@string/preference_notification_key"
-        android:summary="@string/preference_notification_summary"
-        android:title="@string/preference_notification_title" />
+        <ListPreference
+            android:defaultValue="name"
+            android:entries="@array/mention_formats"
+            android:entryValues="@array/mention_formats"
+            android:key="@string/preference_mention_format_key"
+            android:summary="@string/preference_mention_format_summary"
+            android:title="@string/preference_mention_format_title" />
 
-    <ListPreference
-        android:defaultValue="name"
-        android:entries="@array/mention_formats"
-        android:entryValues="@array/mention_formats"
-        android:key="@string/preference_mention_format_key"
-        android:summary="@string/preference_mention_format_summary"
-        android:title="@string/preference_mention_format_title"
-        app:allowDividerAbove="true" />
+        <Preference
+            android:key="@string/preference_logout_key"
+            android:title="@string/preference_logout_title" />
+    </PreferenceCategory>
 
-    <Preference
-        android:key="@string/preference_logout_key"
-        android:title="@string/preference_logout_title"
-        app:allowDividerAbove="true"
-        app:allowDividerBelow="true" />
+    <PreferenceCategory android:title="@string/preference_notification_header">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/preference_notification_key"
+            android:summary="@string/preference_notification_summary"
+            android:title="@string/preference_notification_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/preference_about_header">
+        <Preference
+            android:key="@string/preference_about_key"
+            android:selectable="false" />
+    </PreferenceCategory>
 </PreferenceScreen>
