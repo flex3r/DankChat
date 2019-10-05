@@ -12,10 +12,22 @@
         <import type="android.view.View" />
     </data>
 
-    <FrameLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/show_actionbar_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:layout_margin="8dp"
+            android:visibility="gone"
+            app:backgroundTint="@color/colorPrimary"
+            app:fabSize="mini"
+            app:srcCompat="@drawable/ic_keyboard_arrow_down_24dp"
+            app:tint="@android:color/white" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraint_layout"
@@ -23,19 +35,6 @@
             android:layout_height="match_parent"
             android:animateLayoutChanges="true"
             tools:context=".MainActivity">
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/show_actionbar_fab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:visibility="gone"
-                app:backgroundTint="@color/colorPrimary"
-                app:fabSize="mini"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_keyboard_arrow_down_24dp"
-                app:tint="@android:color/white" />
 
             <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/appbar_layout"
@@ -73,7 +72,7 @@
                 app:layout_constraintBottom_toTopOf="@id/divider"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/appbar_layout" />
 
             <View
                 android:id="@+id/divider"
@@ -132,5 +131,5 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </FrameLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

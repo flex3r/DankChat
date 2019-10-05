@@ -3,7 +3,6 @@ package com.flxrs.dankchat.utils
 import android.content.Context
 import android.util.AttributeSet
 import android.view.KeyEvent
-import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView
 
 class CustomMultiAutoCompleteTextView : AppCompatMultiAutoCompleteTextView {
@@ -17,7 +16,7 @@ class CustomMultiAutoCompleteTextView : AppCompatMultiAutoCompleteTextView {
     )
 
     override fun onKeyPreIme(keyCode: Int, event: KeyEvent?): Boolean {
-        //if (event?.keyCode == KeyEvent.KEYCODE_BACK) clearFocus()
+        if (event?.keyCode == KeyEvent.KEYCODE_BACK) clearFocus()
 
         return super.onKeyPreIme(keyCode, event)
     }

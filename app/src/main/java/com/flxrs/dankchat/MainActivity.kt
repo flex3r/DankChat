@@ -22,6 +22,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
@@ -193,7 +194,8 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         super.onStart()
         if (!isBound) Intent(this, TwitchService::class.java).also {
             try {
-                bindService(it, twitchServiceConnection, Context.BIND_AUTO_CREATE)
+                ContextCompat.startForegroundService(this, it)
+                bindService(it, twitchServiceConnection, 0)
             } catch (t: Throwable) {
                 Log.e(TAG, Log.getStackTraceString(t))
             }
@@ -202,8 +204,16 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
 
     override fun onStop() {
         super.onStop()
-        if (!isChangingConfigurations) {
-            twitchService?.shouldMention = true
+        if (isBound) {
+            isBound = false
+            try {
+                unbindService(twitchServiceConnection)
+            } catch (t: Throwable) {
+                Log.e(TAG, Log.getStackTraceString(t))
+            }
+            if (!isChangingConfigurations) {
+                twitchService?.shouldMention = true
+            }
         }
     }
 
@@ -358,12 +368,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         finishAndRemoveTask()
         preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
-
-        try {
-            unbindService(twitchServiceConnection)
-        } catch (t: Throwable) {
-            Log.e(TAG, Log.getStackTraceString(t))
-        }
 
         android.os.Process.killProcess(android.os.Process.myPid())
     }
@@ -721,14 +725,35 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             }
         }
 
+        var wasLandScapeNotFullscreen = false
         setOnFocusChangeListener { _, hasFocus ->
             window.decorView.systemUiVisibility = when {
-                !hasFocus && binding.showActionbarFab.isVisible -> (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_FULLSCREEN)
-                else -> (View.VISIBLE)
+                !hasFocus && wasLandScapeNotFullscreen && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE -> {
+                    wasLandScapeNotFullscreen = false
+                    supportActionBar?.show()
+                    binding.showActionbarFab.visibility = View.GONE
+                    binding.tabs.visibility = View.VISIBLE
+                    View.VISIBLE
+                }
+                !hasFocus && binding.showActionbarFab.isVisible -> {
+                    wasLandScapeNotFullscreen = false
+                    (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                            or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            or View.SYSTEM_UI_FLAG_FULLSCREEN)
+                }
+                hasFocus && !binding.showActionbarFab.isVisible && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE -> {
+                    wasLandScapeNotFullscreen = true
+                    supportActionBar?.hide()
+                    binding.showActionbarFab.visibility = View.VISIBLE
+                    binding.tabs.visibility = View.GONE
+                    View.VISIBLE
+                }
+                else -> {
+                    wasLandScapeNotFullscreen = false
+                    (View.VISIBLE)
+                }
             }
             window.decorView.requestApplyInsets()
         }
@@ -756,24 +781,35 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                         if (emoteMenuAdapter.currentList.isEmpty()) return@setOnTouchListener false
                         hideKeyboard(this)
 
+                        val heightScaleFactor = when (resources.configuration.orientation) {
+                            Configuration.ORIENTATION_PORTRAIT -> 0.5
+                            else -> 0.7
+                        }
                         val emoteMenuBinding =
                             DataBindingUtil.inflate<EmoteMenuBottomSheetDialogBinding>(
                                 LayoutInflater.from(context),
                                 R.layout.emote_menu_bottom_sheet_dialog,
-                                binding.root as ViewGroup,
+                                binding.coordinator,
                                 false
                             ).apply {
-                                viewPager.adapter = emoteMenuAdapter
-                                viewPager.layoutParams.apply {
-                                    height = (resources.displayMetrics.heightPixels * 0.5).toInt()
-                                    viewPager.layoutParams = this
+                                bottomSheetViewPager.adapter = emoteMenuAdapter
+                                bottomSheetViewPager.updateLayoutParams {
+                                    height =
+                                        (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
                                 }
-                                TabLayoutMediator(tabs, viewPager) { tab, pos ->
+                                TabLayoutMediator(
+                                    bottomSheetTabs,
+                                    bottomSheetViewPager
+                                ) { tab, pos ->
                                     tab.text = EmoteMenuTab.values()[pos].tab
                                 }.attach()
                             }
 
                         BottomSheetDialog(context).apply {
+                            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                                behavior.peekHeight =
+                                    (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
+                            }
                             setContentView(emoteMenuBinding.root)
                             show()
                         }
