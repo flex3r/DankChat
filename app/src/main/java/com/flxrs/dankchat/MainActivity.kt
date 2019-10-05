@@ -170,13 +170,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             if (name.isNotBlank() && oauth.isNotBlank()) {
                 showSnackbar("Logging in as $name")
             }
-            if (!isBound) Intent(this, TwitchService::class.java).also {
-                try {
-                    bindService(it, twitchServiceConnection, Context.BIND_AUTO_CREATE)
-                } catch (t: Throwable) {
-                    Log.e(TAG, Log.getStackTraceString(t))
-                }
-            }
         }
 
         setSupportActionBar(binding.toolbar)
@@ -196,16 +189,15 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         binding.input.clearFocus()
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (!isLoggingIn) {
-            reconnect(true)
-        }
-    }
-
     override fun onStart() {
         super.onStart()
-        twitchService?.shouldMention = false
+        if (!isBound) Intent(this, TwitchService::class.java).also {
+            try {
+                bindService(it, twitchServiceConnection, Context.BIND_AUTO_CREATE)
+            } catch (t: Throwable) {
+                Log.e(TAG, Log.getStackTraceString(t))
+            }
+        }
     }
 
     override fun onStop() {
@@ -244,7 +236,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_reconnect -> reconnect(false)
+            R.id.menu_reconnect -> twitchService?.reconnect(false)
             R.id.menu_login_default -> Intent(this, LoginActivity::class.java).apply {
                 isLoggingIn = true
                 startActivityForResult(this, LOGIN_REQUEST)
@@ -575,10 +567,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         }
     }
 
-    private fun reconnect(onlyIfNecessary: Boolean = false) {
-        twitchService?.reconnect(onlyIfNecessary)
-    }
-
     private fun connectAndJoinChannels(name: String, oauth: String) {
         if (twitchService?.startedConnection == false) {
             if (channels.isEmpty()) {
@@ -807,11 +795,22 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             val binder = service as TwitchService.LocalBinder
             twitchService = binder.service
+            twitchService?.shouldMention = false
             isBound = true
+            if (isLoggingIn) {
+                return
+            }
 
-            val oauth = twitchPreferences.getOAuthKey() ?: ""
-            val name = twitchPreferences.getUserName() ?: ""
-            connectAndJoinChannels(name, oauth)
+            if (twitchService?.startedConnection == true) {
+                if (!isChangingConfigurations) {
+                    twitchService?.reconnect(true)
+                }
+
+            } else {
+                val oauth = twitchPreferences.getOAuthKey() ?: ""
+                val name = twitchPreferences.getUserName() ?: ""
+                connectAndJoinChannels(name, oauth)
+            }
         }
 
         override fun onServiceDisconnected(className: ComponentName?) {
