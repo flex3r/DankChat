@@ -48,6 +48,7 @@ import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.AdvancedLoginDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.EditTextDialogFragment
 import com.flxrs.dankchat.utils.extensions.hideKeyboard
+import com.flxrs.dankchat.utils.extensions.setVisibility
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -180,7 +181,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
 
     override fun onDestroy() {
         super.onDestroy()
-        if (isBound && !isChangingConfigurations) {
+        if (!isChangingConfigurations) {
             handleShutDown()
         }
     }
@@ -368,6 +369,9 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         finishAndRemoveTask()
         preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
+        Intent(this, TwitchService::class.java).also {
+            stopService(it)
+        }
 
         android.os.Process.killProcess(android.os.Process.myPid())
     }
@@ -596,25 +600,27 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     }
 
     private fun initPreferences() {
+        val roomStateKey = getString(R.string.preference_roomstate_key)
+        val streamInfoKey = getString(R.string.preference_streaminfo_key)
+        val inputKey = getString(R.string.preference_show_input_key)
         twitchPreferences = DankChatPreferenceStore(this)
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
             when (key) {
-                getString(R.string.preference_roomstate_key) -> {
-                    viewModel.setRoomStateEnabled(p.getBoolean(key, true))
-                }
-                getString(R.string.preference_streaminfo_key) -> {
+                roomStateKey -> viewModel.setRoomStateEnabled(p.getBoolean(key, true))
+                streamInfoKey -> {
                     fetchStreamInformation()
                     viewModel.setStreamInfoEnabled(p.getBoolean(key, true))
                 }
+                inputKey -> viewModel.inputEnabled.value = p.getBoolean(key, true)
             }
         }
         preferences = PreferenceManager.getDefaultSharedPreferences(this).apply {
             registerOnSharedPreferenceChangeListener(preferenceListener)
-            val roomStateKey = getString(R.string.preference_roomstate_key)
-            viewModel.setRoomStateEnabled(getBoolean(roomStateKey, true))
-
-            val streamInfoKey = getString(R.string.preference_streaminfo_key)
-            viewModel.setStreamInfoEnabled(getBoolean(streamInfoKey, true))
+            viewModel.apply {
+                setRoomStateEnabled(getBoolean(roomStateKey, true))
+                setStreamInfoEnabled(getBoolean(streamInfoKey, true))
+                inputEnabled.value = getBoolean(inputKey, true)
+            }
         }
     }
 

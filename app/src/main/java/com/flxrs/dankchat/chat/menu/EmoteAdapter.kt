@@ -3,6 +3,7 @@ package com.flxrs.dankchat.chat.menu
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.widget.TooltipCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -51,6 +52,7 @@ class EmoteAdapter(private val onEmoteClick: (emote: String) -> Unit) :
         when (holder) {
             is ViewHolder -> {
                 val item = getItem(position) as EmoteItem.Emote
+                TooltipCompat.setTooltipText(holder.binding.emoteView, item.emote.keyword)
                 holder.binding.emote = item.emote
                 holder.binding.root.setOnClickListener { onEmoteClick(item.emote.keyword) }
             }

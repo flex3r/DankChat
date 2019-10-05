@@ -39,13 +39,14 @@ fun List<ChatItem>.addAndLimit(
     }
 }
 
-private val emojiRegex = Regex("\u00A9|\u00AE|[\u2000-\u3300]|[\uD83C\uD000-\uD83C\uDFFF]|[\uD83D\uD000-\uD83D\uDFFF]|[\uD83E\uD000-\uD83E\uDFFF]")
+private val emojiRegex =
+    Regex("\u00A9|\u00AE|[\u2000-\u3300]|[\uD83C\uD000-\uD83C\uDFFF]|[\uD83D\uD000-\uD83D\uDFFF]|[\uD83E\uD000-\uD83E\uDFFF]")
 
 fun Char.isEmoji(): Boolean {
     return emojiRegex.matches("$this")
 }
 
-fun List<GenericEmote>?.toEmoteItems() : List<EmoteItem> {
+fun List<GenericEmote>?.toEmoteItems(): List<EmoteItem> {
     return this?.groupBy { it.emoteType.title }
         ?.mapValues {
             val title = it.value.first().emoteType.title
@@ -61,6 +62,14 @@ fun Fragment.hideKeyboard() {
 fun Context.hideKeyboard(view: View) {
     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+}
+
+fun View.setVisibility(visible: Boolean) {
+    visibility = if (visible) {
+        View.VISIBLE
+    } else {
+        View.GONE
+    }
 }
 
 @Suppress("DEPRECATION") // Deprecated for third party Services.

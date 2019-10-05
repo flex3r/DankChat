@@ -32,8 +32,13 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         }
     }
 
-    val appbarEnabled = MutableLiveData<Boolean>(true)
-    val shouldShowViewPager = MutableLiveData<Boolean>(false)
+    val inputEnabled = MutableLiveData(true)
+    val appbarEnabled = MutableLiveData(true)
+    val shouldShowViewPager = MutableLiveData(false)
+    val shouldShowInput = MediatorLiveData<Boolean>().apply {
+        addSource(inputEnabled) { value = it && shouldShowViewPager.value ?: false }
+        addSource(shouldShowViewPager) { value = it && inputEnabled.value ?: true }
+    }
     val imageUploadedEvent = twitchRepository.imageUploadedEvent
     val canType = activeChannel.switchMap { twitchRepository.getCanType(it) }
     val bottomText = MediatorLiveData<String>().apply {

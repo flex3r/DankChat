@@ -63,6 +63,9 @@
     <string name="preference_about_header">About</string>
     <string name="preference_about_summary">DankChat %1$s made by @flex3rs and contributors\n\nTwitch emote data provided by twitchemotes.com</string>
     <string name="preference_about_key">about_key</string>
+    <string name="preference_show_input_key">show_input_key</string>
+    <string name="preference_show_input_title">Show input</string>
+    <string name="preference_show_input_summary">Displays the input field to send messages</string>
 
     <string name="settings">Settings</string>
     <string name="nuuls_upload_disclaimer">External hosting provided by https://nuuls.com/i, use at your own risk.</string>
