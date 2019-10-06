@@ -74,6 +74,7 @@
     <string name="notification_stop">Stop</string>
     <string name="notification_title">FeelsDankMan</string>
     <string name="notification_message">DankChat running in the background</string>
+    <string name="emote_menu_hint">Open the emote menu</string>
 
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>

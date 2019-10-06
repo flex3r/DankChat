@@ -8,5 +8,5 @@
         android:layout_margin="16dp"
         android:gravity="center_horizontal"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-        android:textColor="@color/material_outlined_icon_tint" />
+        android:textColor="@color/material_on_surface_emphasis_medium" />
 </layout>

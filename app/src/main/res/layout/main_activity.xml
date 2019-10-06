@@ -102,15 +102,15 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divider">
+                app:layout_constraintTop_toBottomOf="@id/divider"
+                app:startIconContentDescription="@string/emote_menu_hint"
+                app:startIconDrawable="@drawable/ic_insert_emoticon_24dp">
 
                 <com.flxrs.dankchat.utils.CustomMultiAutoCompleteTextView
                     android:id="@+id/input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:completionThreshold="2"
-                    android:drawableStart="@drawable/ic_insert_emoticon_24dp"
-                    android:drawablePadding="10dp"
                     android:enabled="false"
                     android:imeOptions="actionSend|flagNoExtractUi"
                     android:inputType="text"

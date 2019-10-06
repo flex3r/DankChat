@@ -6,8 +6,6 @@ import android.content.*
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.MediaStore
@@ -48,11 +46,11 @@ import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.AdvancedLoginDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.EditTextDialogFragment
 import com.flxrs.dankchat.utils.extensions.hideKeyboard
-import com.flxrs.dankchat.utils.extensions.setVisibility
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -111,12 +109,12 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 lifecycleOwner = this@MainActivity
                 viewPager.setup()
                 input.setup()
+                inputLayout.setup()
 
                 tabLayoutMediator = TabLayoutMediator(tabs, viewPager) { tab, position ->
                     tab.text = tabAdapter.titleList[position]
                 }.apply { attach() }
 
-                inputLayout.setEndIconOnClickListener { sendMessage() }
                 showActionbarFab.setOnClickListener { viewModel.appbarEnabled.value = true }
             }
 
@@ -713,6 +711,47 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         })
     }
 
+    private fun TextInputLayout.setup() {
+        setEndIconOnClickListener { sendMessage() }
+        setStartIconOnClickListener {
+            if (emoteMenuAdapter.currentList.isEmpty()) return@setStartIconOnClickListener
+            hideKeyboard(this)
+
+            val heightScaleFactor = when (resources.configuration.orientation) {
+                Configuration.ORIENTATION_PORTRAIT -> 0.5
+                else -> 0.7
+            }
+            val emoteMenuBinding =
+                DataBindingUtil.inflate<EmoteMenuBottomSheetDialogBinding>(
+                    LayoutInflater.from(context),
+                    R.layout.emote_menu_bottom_sheet_dialog,
+                    binding.coordinator,
+                    false
+                ).apply {
+                    bottomSheetViewPager.adapter = emoteMenuAdapter
+                    bottomSheetViewPager.updateLayoutParams {
+                        height =
+                            (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
+                    }
+                    TabLayoutMediator(
+                        bottomSheetTabs,
+                        bottomSheetViewPager
+                    ) { tab, pos ->
+                        tab.text = EmoteMenuTab.values()[pos].tab
+                    }.attach()
+                }
+
+            BottomSheetDialog(context).apply {
+                if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    behavior.peekHeight =
+                        (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
+                }
+                setContentView(emoteMenuBinding.root)
+                show()
+            }
+        }
+    }
+
     private fun CustomMultiAutoCompleteTextView.setup() {
         setDropDownBackgroundResource(R.color.colorPrimary)
         setTokenizer(SpaceTokenizer())
@@ -762,74 +801,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 }
             }
             window.decorView.requestApplyInsets()
-        }
-
-        setOnTouchListener { _, event ->
-            if (event.x <= (compoundPaddingLeft + compoundDrawables[0].bounds.width())) {
-                when (event.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        compoundDrawables[0].apply {
-                            colorFilter = PorterDuffColorFilter(
-                                ContextCompat.getColor(
-                                    context,
-                                    R.color.colorAccent
-                                ), PorterDuff.Mode.SRC_ATOP
-                            )
-                            invalidate()
-                        }
-                    }
-                    MotionEvent.ACTION_UP -> {
-                        compoundDrawables[0].apply {
-                            clearColorFilter()
-                            invalidate()
-                        }
-
-                        if (emoteMenuAdapter.currentList.isEmpty()) return@setOnTouchListener false
-                        hideKeyboard(this)
-
-                        val heightScaleFactor = when (resources.configuration.orientation) {
-                            Configuration.ORIENTATION_PORTRAIT -> 0.5
-                            else -> 0.7
-                        }
-                        val emoteMenuBinding =
-                            DataBindingUtil.inflate<EmoteMenuBottomSheetDialogBinding>(
-                                LayoutInflater.from(context),
-                                R.layout.emote_menu_bottom_sheet_dialog,
-                                binding.coordinator,
-                                false
-                            ).apply {
-                                bottomSheetViewPager.adapter = emoteMenuAdapter
-                                bottomSheetViewPager.updateLayoutParams {
-                                    height =
-                                        (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
-                                }
-                                TabLayoutMediator(
-                                    bottomSheetTabs,
-                                    bottomSheetViewPager
-                                ) { tab, pos ->
-                                    tab.text = EmoteMenuTab.values()[pos].tab
-                                }.attach()
-                            }
-
-                        BottomSheetDialog(context).apply {
-                            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                                behavior.peekHeight =
-                                    (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
-                            }
-                            setContentView(emoteMenuBinding.root)
-                            show()
-                        }
-                        return@setOnTouchListener true
-                    }
-                    MotionEvent.ACTION_CANCEL -> {
-                        compoundDrawables[0].apply {
-                            clearColorFilter()
-                            invalidate()
-                        }
-                    }
-                }
-            }
-            false
         }
     }
 
