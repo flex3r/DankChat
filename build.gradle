@@ -22,7 +22,7 @@ buildscript {
         browser_version = "1.0.0"
         gif_drawable_version = '1.2.18'
         viewpager2_version = '1.0.0-beta04'
-        okhttp_version = '4.2.0'
+        okhttp_version = '4.2.1'
         retrofit_version = '2.6.2'
         moshi_version = '2.6.2'
         url_detector_version = '0.1.21'

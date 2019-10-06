@@ -75,7 +75,6 @@ class TwitchService : Service(), KoinComponent {
         }
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        startForeground()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -143,7 +142,7 @@ class TwitchService : Service(), KoinComponent {
             )
             .setStyle(MediaStyle().setShowActionsInCompactView(0))
             .setContentIntent(pendingStartActivityIntent)
-            .setSmallIcon(R.mipmap.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.ic_notification_icon)
             .build()
 
         startForeground(NOTIFICATION_ID, notification)
