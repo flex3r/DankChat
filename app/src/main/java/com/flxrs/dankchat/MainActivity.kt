@@ -189,6 +189,11 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         binding.input.clearFocus()
     }
 
+    override fun onResume() {
+        super.onResume()
+        changeActionBarVisibility(viewModel.appbarEnabled.value ?: true)
+    }
+
     override fun onStart() {
         super.onStart()
         if (!isBound) Intent(this, TwitchService::class.java).also {
