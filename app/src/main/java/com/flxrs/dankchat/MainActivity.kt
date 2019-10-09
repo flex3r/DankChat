@@ -16,10 +16,12 @@ import android.webkit.MimeTypeMap
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
+import androidx.core.view.postDelayed
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
@@ -33,7 +35,6 @@ import com.flxrs.dankchat.chat.menu.EmoteMenuAdapter
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.chat.suggestion.EmoteSuggestionsArrayAdapter
 import com.flxrs.dankchat.chat.suggestion.SpaceTokenizer
-import com.flxrs.dankchat.databinding.EmoteMenuBottomSheetDialogBinding
 import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.SettingsActivity
@@ -46,7 +47,7 @@ import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.AdvancedLoginDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.EditTextDialogFragment
 import com.flxrs.dankchat.utils.extensions.hideKeyboard
-import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
@@ -71,6 +72,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     private lateinit var tabLayoutMediator: TabLayoutMediator
     private lateinit var emoteMenuAdapter: EmoteMenuAdapter
     private lateinit var broadcastReceiver: BroadcastReceiver
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
     private var currentImagePath = ""
     private var showProgressBar = false
 
@@ -110,6 +112,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 viewPager.setup()
                 input.setup()
                 inputLayout.setup()
+                bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
 
                 tabLayoutMediator = TabLayoutMediator(tabs, viewPager) { tab, position ->
                     tab.text = tabAdapter.titleList[position]
@@ -139,9 +142,14 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             emoteItems.observe(this@MainActivity, emoteMenuAdapter::submitList)
             appbarEnabled.observe(this@MainActivity) { changeActionBarVisibility(it) }
 
-            canType.observe(this@MainActivity) {
-                binding.input.isEnabled = it == "Start chatting"
-                binding.inputLayout.hint = it
+            canType.observe(this@MainActivity) { hint ->
+                (hint == "Start chatting").let {
+                    binding.input.isEnabled = it
+                    binding.inputLayout.isStartIconVisible = it
+                    binding.inputLayout.isEndIconVisible = it
+                }
+
+                binding.inputLayout.hint = hint
             }
 
             bottomTextEnabled.observe(this@MainActivity) {
@@ -191,6 +199,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
 
     override fun onResume() {
         super.onResume()
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         changeActionBarVisibility(viewModel.appbarEnabled.value ?: true)
     }
 
@@ -222,7 +231,13 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     }
 
     override fun onBackPressed() {
-        moveTaskToBack(true)
+        if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED
+            || bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED
+        ) {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        } else {
+            moveTaskToBack(true)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -719,40 +734,61 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     private fun TextInputLayout.setup() {
         setEndIconOnClickListener { sendMessage() }
         setStartIconOnClickListener {
-            if (emoteMenuAdapter.currentList.isEmpty()) return@setStartIconOnClickListener
-            hideKeyboard(this)
-
-            val heightScaleFactor = when (resources.configuration.orientation) {
-                Configuration.ORIENTATION_PORTRAIT -> 0.5
-                else -> 0.7
+            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED
+                || bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED
+                || emoteMenuAdapter.currentList.isEmpty()
+            ) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                return@setStartIconOnClickListener
             }
-            val emoteMenuBinding =
-                DataBindingUtil.inflate<EmoteMenuBottomSheetDialogBinding>(
-                    LayoutInflater.from(context),
-                    R.layout.emote_menu_bottom_sheet_dialog,
-                    binding.coordinator,
-                    false
-                ).apply {
-                    bottomSheetViewPager.adapter = emoteMenuAdapter
-                    bottomSheetViewPager.updateLayoutParams {
-                        height =
-                            (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
-                    }
-                    TabLayoutMediator(
-                        bottomSheetTabs,
-                        bottomSheetViewPager
-                    ) { tab, pos ->
-                        tab.text = EmoteMenuTab.values()[pos].tab
-                    }.attach()
-                }
 
-            BottomSheetDialog(context).apply {
-                if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    behavior.peekHeight =
+            val isLandscape =
+                resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+            if (isLandscape) {
+                hideKeyboard(this)
+            }
+
+            val heightScaleFactor = 0.5
+            binding.apply {
+                bottomSheetViewPager.adapter = emoteMenuAdapter
+                bottomSheetViewPager.updateLayoutParams {
+                    height =
                         (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
                 }
-                setContentView(emoteMenuBinding.root)
-                show()
+                TabLayoutMediator(
+                    bottomSheetTabs,
+                    bottomSheetViewPager
+                ) { tab, pos ->
+                    tab.text = EmoteMenuTab.values()[pos].tab
+                }.attach()
+            }
+
+            postDelayed(50) {
+                bottomSheetBehavior.apply {
+                    peekHeight =
+                        (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
+                    state = BottomSheetBehavior.STATE_EXPANDED
+                    bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+                        override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
+
+                        override fun onStateChanged(bottomSheet: View, newState: Int) {
+                            if (viewModel.appbarEnabled.value == true
+                                && isLandscape
+                            ) {
+                                when (newState) {
+                                    BottomSheetBehavior.STATE_EXPANDED, BottomSheetBehavior.STATE_COLLAPSED -> {
+                                        supportActionBar?.hide()
+                                        binding.tabs.visibility = View.GONE
+                                    }
+                                    else -> {
+                                        supportActionBar?.show()
+                                        binding.tabs.visibility = View.VISIBLE
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
