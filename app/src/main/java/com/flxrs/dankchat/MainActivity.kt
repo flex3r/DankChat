@@ -107,12 +107,12 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
 
         binding = DataBindingUtil.setContentView<MainActivityBinding>(this, R.layout.main_activity)
             .apply {
+                bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
                 vm = viewModel
                 lifecycleOwner = this@MainActivity
                 viewPager.setup()
                 input.setup()
                 inputLayout.setup()
-                bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
 
                 tabLayoutMediator = TabLayoutMediator(tabs, viewPager) { tab, position ->
                     tab.text = tabAdapter.titleList[position]
@@ -726,6 +726,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                     val newChannel = tabAdapter.titleList[position].toLowerCase(Locale.getDefault())
                     currentChannel = newChannel
                     viewModel.setActiveChannel(newChannel)
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
             }
         })
@@ -772,9 +773,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
 
                         override fun onStateChanged(bottomSheet: View, newState: Int) {
-                            if (viewModel.appbarEnabled.value == true
-                                && isLandscape
-                            ) {
+                            if (viewModel.appbarEnabled.value == true && isLandscape) {
                                 when (newState) {
                                     BottomSheetBehavior.STATE_EXPANDED, BottomSheetBehavior.STATE_COLLAPSED -> {
                                         supportActionBar?.hide()

@@ -18,6 +18,7 @@ import kotlinx.coroutines.withContext
 import org.koin.core.KoinComponent
 import java.io.File
 import java.nio.ByteBuffer
+import java.util.concurrent.ConcurrentLinkedQueue
 
 class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
@@ -63,7 +64,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         loadTwitchData: Boolean
     ) {
         scope.launch {
-            channels.forEach { channel ->
+            ConcurrentLinkedQueue(channels).forEach { channel ->
                 if (load3rdParty) {
                     TwitchApi.getUserIdFromName(channel)?.let {
                         loadBadges(channel, it)
