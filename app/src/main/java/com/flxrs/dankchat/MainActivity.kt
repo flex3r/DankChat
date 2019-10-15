@@ -769,7 +769,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                     peekHeight =
                         (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
                     state = BottomSheetBehavior.STATE_EXPANDED
-                    bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+                    addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
                         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
 
                         override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -786,7 +786,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                                 }
                             }
                         }
-                    }
+                    })
                 }
             }
         }

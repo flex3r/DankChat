@@ -75,6 +75,7 @@ class TwitchService : Service(), KoinComponent {
         }
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        startForeground()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -83,9 +84,8 @@ class TwitchService : Service(), KoinComponent {
             stopSelf()
             LocalBroadcastManager.getInstance(this)
                 .sendBroadcast(Intent(MainActivity.SHUTDOWN_REQUEST_FILTER))
-        } else {
-            startForeground()
         }
+
         return START_NOT_STICKY
     }
 
