@@ -1,13 +1,14 @@
 package com.flxrs.dankchat.service.twitch.connection
 
-import android.util.Log
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.utils.extensions.timer
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import okhttp3.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.floor
-import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToLong
 
@@ -97,20 +98,29 @@ class WebSocketConnection(
     @Synchronized
     fun reconnect(onlyIfNecessary: Boolean = false, forceConnect: Boolean = false) {
         if (!onlyIfNecessary || (!readerConnected && !writerConnected && !connecting)) {
-            scope.launch {
-                var reconnectDelay = 150L
-                if (reconnectAttempts > 0) {
-                    val jitter = floor(Math.random() * (RECONNECT_JITTER + 1))
-                    reconnectDelay = ((RECONNECT_MULTIPLIER * reconnectAttempts) - RECONNECT_JITTER + jitter).roundToLong()
-                }
-                reconnectAttempts++
-                delay(min(reconnectDelay, 5000))
+            reconnectAttempts = 0
+            attemptReconect(forceConnect)
+        }
+    }
 
-                if (forceConnect) {
-                    connect(nick, oAuth, forceConnect)
-                } else {
-                    close { connect(nick, oAuth) }
-                }
+    @Synchronized
+    private fun attemptReconect(forceConnect: Boolean = false) {
+        scope.launch {
+            var reconnectDelay = 150L
+            if (reconnectAttempts > 0) {
+                val jitter = floor(Math.random() * (RECONNECT_JITTER + 1))
+                reconnectDelay = (min(
+                    (RECONNECT_MULTIPLIER * reconnectAttempts) - RECONNECT_JITTER,
+                    5000
+                ) + jitter).roundToLong()
+            }
+            reconnectAttempts++
+            delay(reconnectDelay)
+
+            if (forceConnect) {
+                connect(nick, oAuth, forceConnect)
+            } else {
+                close { connect(nick, oAuth) }
             }
         }
     }
@@ -172,7 +182,7 @@ class WebSocketConnection(
             onDisconnect()
             pingTimer?.cancel()
 
-            reconnect(forceConnect = true)
+            attemptReconect(true)
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {

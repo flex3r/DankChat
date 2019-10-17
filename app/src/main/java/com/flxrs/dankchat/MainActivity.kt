@@ -208,7 +208,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         if (!isBound) Intent(this, TwitchService::class.java).also {
             try {
                 ContextCompat.startForegroundService(this, it)
-                bindService(it, twitchServiceConnection, 0)
+                bindService(it, twitchServiceConnection, Context.BIND_AUTO_CREATE)
             } catch (t: Throwable) {
                 Log.e(TAG, Log.getStackTraceString(t))
             }
@@ -384,9 +384,9 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     }
 
     private fun handleShutDown() {
-        finishAndRemoveTask()
         preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
+        finishAndRemoveTask()
         Intent(this, TwitchService::class.java).also {
             stopService(it)
         }
