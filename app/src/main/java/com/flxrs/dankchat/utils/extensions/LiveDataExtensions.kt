@@ -1,6 +1,6 @@
 package com.flxrs.dankchat.utils.extensions
 
-import androidx.lifecycle.LiveData
+import android.util.Log
 import kotlinx.coroutines.*
 
 fun CoroutineScope.timer(interval: Long, action: suspend TimerScope.() -> Unit): Job {
@@ -11,7 +11,7 @@ fun CoroutineScope.timer(interval: Long, action: suspend TimerScope.() -> Unit):
             try {
                 action(scope)
             } catch (ex: Exception) {
-                ex.printStackTrace()
+                Log.e("TimerScope", Log.getStackTraceString(ex))
             }
 
             if (scope.isCanceled) {

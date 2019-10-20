@@ -649,8 +649,10 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     private fun showSnackbar(message: String) {
         Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).apply {
             view.setBackgroundResource(R.color.colorPrimary)
-            anchorView = binding.inputLayout
             setTextColor(Color.WHITE)
+            if (binding.inputLayout.isVisible) {
+                anchorView = binding.inputLayout
+            }
         }.show()
     }
 

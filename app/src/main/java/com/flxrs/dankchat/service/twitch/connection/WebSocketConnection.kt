@@ -78,6 +78,8 @@ class WebSocketConnection(
             this.oAuth = oAuth
             isJustinFan = (oAuth.isBlank() || !oAuth.startsWith("oauth:"))
             connecting = true
+            readerPong = false
+            writerPong = false
 
             readerWebSocket = client.newWebSocket(request, ReaderWebSocketListener())
             writerWebSocket = client.newWebSocket(request, WriterWebSocketListener())
@@ -85,14 +87,14 @@ class WebSocketConnection(
     }
 
     @Synchronized
-    fun close(onClosed: (() -> Unit)?) {
+    fun close(onClosed: (() -> Unit)?): Boolean {
         this.onClosed = onClosed
-        //scope.coroutineContext.cancel()
         readerConnected = false
         writerConnected = false
 
-        writerWebSocket?.close(1000, null)
-        readerWebSocket?.close(1000, null)
+        val writer = writerWebSocket?.close(1000, null) ?: false
+        val reader = readerWebSocket?.close(1000, null) ?: false
+        return writer && reader
     }
 
     @Synchronized
@@ -120,7 +122,9 @@ class WebSocketConnection(
             if (forceConnect) {
                 connect(nick, oAuth, forceConnect)
             } else {
-                close { connect(nick, oAuth) }
+                if (!close { connect(nick, oAuth) }) {
+                    connect(nick, oAuth, true)
+                }
             }
         }
     }
@@ -147,8 +151,8 @@ class WebSocketConnection(
         }
 
         if (readerConnected) {
-            readerWebSocket?.sendMessage("PING")
             readerPong = true
+            readerWebSocket?.sendMessage("PING")
         }
     }
 
@@ -160,8 +164,8 @@ class WebSocketConnection(
         }
 
         if (writerConnected) {
-            writerWebSocket?.sendMessage("PING")
             writerPong = true
+            writerWebSocket?.sendMessage("PING")
         }
     }
 
@@ -186,26 +190,22 @@ class WebSocketConnection(
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
-            val splits = text.split("\r\n")
-            val size = splits.size
+            text.removeSuffix("\r\n").split("\r\n").forEach { line ->
+                val ircMessage = IrcMessage.parse(line)
+                if (ircMessage.isLoginFailed()) {
+                    close(null)
+                }
 
-            splits.forEachIndexed { i, line ->
-                if (i != size - 1) {
-                    val ircMessage = IrcMessage.parse(line)
-                    if (ircMessage.isLoginFailed()) {
-                        close(null)
+                when (ircMessage.command) {
+                    "376" -> {
+                        readerWebSocket?.joinCurrentChannels()
+                        pingTimer = setupReaderPingInterval()
                     }
-
-                    when (ircMessage.command) {
-                        "376" -> {
-                            readerWebSocket?.joinCurrentChannels()
-                            pingTimer = setupReaderPingInterval()
-                        }
-                        "PING" -> webSocket.handlePing()
-                        "PONG" -> readerPong = false
-                        "RECONNECT" -> reconnect()
-                        else -> onMessage(ircMessage)
-                    }
+                    "PING" -> webSocket.handlePing()
+                    "PONG" -> readerPong = false
+                    "RECONNECT" -> reconnect()
+                    "PRIVMSG" -> onMessage(ircMessage)
+                    else -> Unit
                 }
             }
         }
@@ -237,23 +237,18 @@ class WebSocketConnection(
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
-            val splits = text.split("\r\n")
-            val size = splits.size
-
-            splits.forEachIndexed { i, line ->
-                if (i != size - 1) {
-                    val ircMessage = IrcMessage.parse(line)
-                    when (ircMessage.command) {
-                        "376" -> {
-                            writerWebSocket?.joinCurrentChannels()
-                            pingTimer = setupWriterPingInterval()
-                        }
-                        "PING" -> webSocket.handlePing()
-                        "PONG" -> writerPong = false
-                        "RECONNECT" -> reconnect()
-                        else -> Unit
+            text.removeSuffix("\r\n").split("\r\n").forEach { line ->
+                val ircMessage = IrcMessage.parse(line)
+                when (ircMessage.command) {
+                    "376" -> {
+                        writerWebSocket?.joinCurrentChannels()
+                        pingTimer = setupWriterPingInterval()
                     }
-
+                    "PING" -> webSocket.handlePing()
+                    "PONG" -> writerPong = false
+                    "RECONNECT" -> reconnect()
+                    "PRIVMSG" -> Unit
+                    else -> onMessage(ircMessage)
                 }
             }
         }

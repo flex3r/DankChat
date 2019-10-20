@@ -274,7 +274,6 @@ class ChatAdapter(
                                 it.setBounds(0, 0, width, height)
 
                                 val imageSpan = ImageSpan(it, ImageSpan.ALIGN_BOTTOM)
-                                //Log.d("Debug", "$message ${e.code} $start $end")
                                 spannable.setSpan(
                                     imageSpan,
                                     start,

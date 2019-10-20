@@ -186,7 +186,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         }
         val parsed = TwitchMessage.parse(msg).map { ChatItem(it) }
         if (parsed.isNotEmpty()) {
-            if (msg.params[0] == "*") {
+            if (msg.params[0] == "*" || msg.command == "WHISPER") {
                 messages.forEach {
                     val currentChat = it.value.value ?: emptyList()
                     messages.getOrPut(it.key, { MutableLiveData() })

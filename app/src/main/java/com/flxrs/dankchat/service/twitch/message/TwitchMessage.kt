@@ -6,7 +6,6 @@ import com.flxrs.dankchat.service.twitch.badge.Badge
 import com.flxrs.dankchat.service.twitch.emote.ChatEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.TimeUtils
-import com.flxrs.dankchat.utils.extensions.isEmoji
 import java.util.regex.Pattern
 
 data class TwitchMessage(
@@ -58,6 +57,7 @@ data class TwitchMessage(
                     "USERNOTICE" -> parseUserNotice(message)
                     "CLEARCHAT" -> listOf(parseClearChat(message))
                     "CLEARMSG" -> listOf() //TODO
+                    "WHISPER" -> listOf(parseWhisper(message))
                     //"HOSTTARGET" -> listOf(parseHostTarget(message))
                     else -> listOf()
                 }
@@ -73,7 +73,6 @@ data class TwitchMessage(
 
             val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
             val time = TimeUtils.timestampToLocalTime(ts)
-
             var isAction = false
             val content =
                 if (params.size > 1 && params[1].startsWith("\u0001ACTION") && params[1].endsWith("\u0001")) {
@@ -105,32 +104,7 @@ data class TwitchMessage(
             val otherEmotes = EmoteManager.parse3rdPartyEmotes(content, channel)
             val id = tags["id"] ?: System.nanoTime().toString()
 
-            val badges = arrayListOf<Badge>()
-            tags["badges"]?.split(',')?.forEach { badge ->
-                val trimmed = badge.trim()
-                val badgeSet = trimmed.substringBefore('/')
-                val badgeVersion = trimmed.substringAfter('/')
-                when {
-                    badgeSet.startsWith("subscriber") -> EmoteManager.getSubBadgeUrl(
-                        channel,
-                        badgeSet,
-                        badgeVersion
-                    )?.let { badges += Badge(badgeSet, it) }
-                    badgeSet.startsWith("bits") -> EmoteManager.getSubBadgeUrl(
-                        channel,
-                        badgeSet,
-                        badgeVersion
-                    )
-                        ?: EmoteManager.getGlobalBadgeUrl(
-                            badgeSet,
-                            badgeVersion
-                        )?.let { badges += Badge(badgeSet, it) }
-                    else -> EmoteManager.getGlobalBadgeUrl(
-                        badgeSet,
-                        badgeVersion
-                    )?.let { badges.add(Badge(badgeSet, it)) }
-                }
-            }
+            val badges = parseBadges(tags["badges"], channel)
 
             return TwitchMessage(
                 time,
@@ -140,7 +114,7 @@ data class TwitchMessage(
                 content,
                 emotes.plus(otherEmotes),
                 isAction,
-                isNotify,
+                isNotify || tags["msg-id"] == "highlighted-message",
                 badges,
                 id
             )
@@ -210,6 +184,59 @@ data class TwitchMessage(
             val id = tags["id"] ?: System.nanoTime().toString()
 
             return makeSystemMessage(systemMessage, channel, time, id)
+        }
+
+        private fun parseWhisper(message: IrcMessage): TwitchMessage = with(message) {
+            val user = tags.getValue("display-name")
+            val colorTag = tags["color"]?.ifBlank { "#717171" } ?: "#717171"
+            val color = Color.parseColor(colorTag)
+            val content = params[1]
+
+            val time = "${TimeUtils.timestampToLocalTime(System.currentTimeMillis())} (Whisper)"
+            val badges = parseBadges(tags["badges"])
+            val emotes = EmoteManager.parseTwitchEmotes(tags["emotes"] ?: "", content)
+                .plus(EmoteManager.parse3rdPartyEmotes(content))
+
+            return TwitchMessage(
+                time,
+                "*",
+                user,
+                color,
+                content,
+                emotes,
+                badges = badges,
+                id = System.nanoTime().toString()
+            )
+        }
+
+        private fun parseBadges(badgeTag: String?, channel: String = ""): List<Badge> {
+            val result = mutableListOf<Badge>()
+            badgeTag?.split(',')?.forEach { badge ->
+                val trimmed = badge.trim()
+                val badgeSet = trimmed.substringBefore('/')
+                val badgeVersion = trimmed.substringAfter('/')
+                when {
+                    badgeSet.startsWith("subscriber") -> EmoteManager.getSubBadgeUrl(
+                        channel,
+                        badgeSet,
+                        badgeVersion
+                    )?.let { result += Badge(badgeSet, it) }
+                    badgeSet.startsWith("bits") -> EmoteManager.getSubBadgeUrl(
+                        channel,
+                        badgeSet,
+                        badgeVersion
+                    )
+                        ?: EmoteManager.getGlobalBadgeUrl(
+                            badgeSet,
+                            badgeVersion
+                        )?.let { result += Badge(badgeSet, it) }
+                    else -> EmoteManager.getGlobalBadgeUrl(
+                        badgeSet,
+                        badgeVersion
+                    )?.let { result += Badge(badgeSet, it) }
+                }
+            }
+            return result
         }
     }
 

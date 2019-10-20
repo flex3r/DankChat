@@ -9,13 +9,11 @@ import kotlinx.coroutines.withContext
 import pl.droidsonroids.gif.GifDrawable
 import pl.droidsonroids.gif.MultiCallback
 import java.util.concurrent.ConcurrentHashMap
-import java.util.regex.Pattern
 
 object EmoteManager {
     private const val BASE_URL = "https://static-cdn.jtvnw.net/emoticons/v1/"
     private const val EMOTE_SIZE = "3.0"
     private const val LOW_RES_EMOTE_SIZE = "2.0"
-    private val emotePattern = Pattern.compile("(\\d+):((?:\\d+-\\d+,?)+)")
 
     private val twitchEmotes = ConcurrentHashMap<String, GenericEmote>()
 
@@ -52,6 +50,10 @@ object EmoteManager {
     val gifCallback = MultiCallback(true)
 
     fun parseTwitchEmotes(emoteTag: String, original: String): List<ChatEmote> {
+        if (emoteTag.isEmpty()) {
+            return emptyList()
+        }
+
         val unicodeFixPositions = mutableListOf<Int>()
         var offset = 0
         var index = 0
@@ -65,18 +67,17 @@ object EmoteManager {
         }
 
         val emotes = arrayListOf<ChatEmote>()
-        val matcher = emotePattern.matcher(emoteTag)
-        while (matcher.find()) {
-            val id = matcher.group(1) ?: continue
-            val positions = matcher.group(2)?.split(',')?.map { pos ->
+        emoteTag.split('/').forEach { emote ->
+            val (id, positions) = emote.split(':')
+            val parsedPositons = positions.split(',').map { pos ->
                 val start = pos.substringBefore('-').toInt()
                 val end = pos.substringAfter('-').toInt()
                 val unicodeExtra = unicodeFixPositions.count { it < start }
                 return@map "${(start + unicodeExtra)}-${(end + unicodeExtra + 1)}"
-            } ?: continue
+            }
 
             emotes += ChatEmote(
-                positions,
+                parsedPositons,
                 "$BASE_URL/$id/$EMOTE_SIZE",
                 id,
                 "",
@@ -88,7 +89,7 @@ object EmoteManager {
         return emotes
     }
 
-    fun parse3rdPartyEmotes(message: String, channel: String): List<ChatEmote> {
+    fun parse3rdPartyEmotes(message: String, channel: String = ""): List<ChatEmote> {
         val availableFFz = ffzEmotes[channel] ?: hashMapOf()
         val availableBttv = bttvEmotes[channel] ?: hashMapOf()
         val total = availableFFz.plus(availableBttv).plus(globalBttvEmotes).plus(globalFFZEmotes)
