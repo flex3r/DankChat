@@ -112,7 +112,7 @@ data class TwitchMessage(
                 user,
                 color,
                 content,
-                emotes.plus(otherEmotes),
+                emotes.plus(otherEmotes).distinctBy { it.code },
                 isAction,
                 isNotify || tags["msg-id"] == "highlighted-message",
                 badges,

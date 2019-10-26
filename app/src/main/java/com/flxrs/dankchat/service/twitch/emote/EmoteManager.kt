@@ -72,15 +72,22 @@ object EmoteManager {
             val parsedPositons = positions.split(',').map { pos ->
                 val start = pos.substringBefore('-').toInt()
                 val end = pos.substringAfter('-').toInt()
-                val unicodeExtra = unicodeFixPositions.count { it < start }
-                return@map "${(start + unicodeExtra)}-${(end + unicodeExtra + 1)}"
+                return@map start to end + 1
             }
+            val fixedParsedPositions = parsedPositons.map { (start, end) ->
+                val extra = unicodeFixPositions.count { it < start }
+                return@map "${(start + extra)}-${(end + extra)}"
+            }
+            val code = original.substring(
+                parsedPositons.first().first,
+                parsedPositons.first().second
+            )
 
             emotes += ChatEmote(
-                parsedPositons,
+                fixedParsedPositions,
                 "$BASE_URL/$id/$EMOTE_SIZE",
                 id,
-                "",
+                code,
                 1,
                 false,
                 isTwitch = true
@@ -95,23 +102,25 @@ object EmoteManager {
         val total = availableFFz.plus(availableBttv).plus(globalBttvEmotes).plus(globalFFZEmotes)
         val splits = message.split(thirdPartyRegex)
         val emotes = arrayListOf<ChatEmote>()
-        total.forEach {
+        total.forEach { emote ->
             var i = 0
             val positions = mutableListOf<String>()
             splits.forEach { split ->
-                if (it.key == split.trim()) {
+                if (emote.key == split.trim()) {
                     positions.add("$i-${i + split.length}")
                 }
                 i += split.length + 1
             }
-            emotes += ChatEmote(
-                positions,
-                it.value.url,
-                it.value.id,
-                it.value.keyword,
-                it.value.scale,
-                it.value.isGif
-            )
+            if (positions.size > 0) {
+                emotes += ChatEmote(
+                    positions,
+                    emote.value.url,
+                    emote.value.id,
+                    emote.value.keyword,
+                    emote.value.scale,
+                    emote.value.isGif
+                )
+            }
         }
         return emotes
     }
