@@ -495,7 +495,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             } else {
                 ViewGroup.LayoutParams.WRAP_CONTENT
             }
-            binding.input.dropDownWidth = binding.viewPager.measuredWidth / 2
+            binding.input.dropDownWidth = (binding.viewPager.measuredWidth * 0.6).roundToInt()
         }
 
         binding.input.setAdapter(adapter)
