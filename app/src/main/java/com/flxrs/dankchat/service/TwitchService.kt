@@ -140,8 +140,11 @@ class TwitchService : Service(), KoinComponent {
                 R.drawable.ic_clear_24dp,
                 getString(R.string.notification_stop),
                 pendingStopIntent
-            )
-            .setStyle(MediaStyle().setShowActionsInCompactView(0))
+            ).apply {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    setStyle(MediaStyle().setShowActionsInCompactView(0))
+                }
+            }
             .setContentIntent(pendingStartActivityIntent)
             .setSmallIcon(R.drawable.ic_notification_icon)
             .build()
