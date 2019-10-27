@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.irc.IrcMessage
+import com.flxrs.dankchat.service.twitch.connection.ConnectionState
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
@@ -24,7 +25,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
     private val messages = mutableMapOf<String, MutableLiveData<List<ChatItem>>>()
     private val emotes = mutableMapOf<String, MutableLiveData<List<GenericEmote>>>()
-    private val canType = mutableMapOf<String, MutableLiveData<String>>()
+    private val canType = mutableMapOf<String, MutableLiveData<ConnectionState>>()
     private val roomStates = mutableMapOf<String, MutableLiveData<TwitchMessage.Roomstate>>()
     private val ignoredList = mutableListOf<Int>()
 
@@ -41,8 +42,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         MutableLiveData(emptyList())
     }
 
-    fun getCanType(channel: String): LiveData<String> = canType.getOrPut(channel) {
-        MutableLiveData("Disconnected")
+    fun getCanType(channel: String): LiveData<ConnectionState> = canType.getOrPut(channel) {
+        MutableLiveData(ConnectionState.DISCONNECTED)
     }
 
     fun getEmotes(channel: String): LiveData<List<GenericEmote>> {
@@ -102,7 +103,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         if (!hasDisconnected) {
             hasDisconnected = true
             canType.keys.forEach {
-                canType.getOrPut(it, { MutableLiveData() }).postValue("Disconnected")
+                canType.getOrPut(it, { MutableLiveData() }).postValue(ConnectionState.DISCONNECTED)
             }
             makeAndPostSystemMessage("Disconnected")
         }
@@ -157,7 +158,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         makeAndPostSystemMessage("Connected", setOf(channel))
         hasDisconnected = false
 
-        val hint = if (isJustinFan) "Not logged in" else "Start chatting"
+        val hint = if (isJustinFan) ConnectionState.NOT_LOGGED_IN else ConnectionState.CONNECTED
         canType.getOrPut(channel, { MutableLiveData() }).postValue(hint)
     }
 

@@ -40,6 +40,7 @@ import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.SettingsActivity
 import com.flxrs.dankchat.service.TwitchService
 import com.flxrs.dankchat.service.api.TwitchApi
+import com.flxrs.dankchat.service.twitch.connection.ConnectionState
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.utils.CustomMultiAutoCompleteTextView
 import com.flxrs.dankchat.utils.MediaUtils
@@ -143,13 +144,16 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             appbarEnabled.observe(this@MainActivity) { changeActionBarVisibility(it) }
 
             canType.observe(this@MainActivity) { hint ->
-                (hint == "Start chatting").let {
+                (hint == ConnectionState.CONNECTED).let {
                     binding.input.isEnabled = it
                     binding.inputLayout.isStartIconVisible = it
                     binding.inputLayout.isEndIconVisible = it
                 }
-
-                binding.inputLayout.hint = hint
+                binding.input.hint = when (hint) {
+                    ConnectionState.CONNECTED -> getString(R.string.hint_connected)
+                    ConnectionState.NOT_LOGGED_IN -> getString(R.string.hint_not_logged_int)
+                    ConnectionState.DISCONNECTED -> getString(R.string.hint_disconnected)
+                }
             }
 
             bottomTextEnabled.observe(this@MainActivity) {
@@ -176,7 +180,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             loadData(oAuth = oauth)
 
             if (name.isNotBlank() && oauth.isNotBlank()) {
-                showSnackbar("Logging in as $name")
+                showSnackbar(getString(R.string.snackbar_login, name))
             }
         }
 
@@ -356,9 +360,9 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                         connectAndJoinChannels(it.name, "oauth:$tokenWithoutSuffix")
                         loadData(tokenWithoutSuffix, it.id)
                     }
-                    showSnackbar("Logged in as ${it.name}")
-                } else showSnackbar("Failed to login")
-            } ?: showSnackbar("Invalid OAuth token")
+                    showSnackbar(getString(R.string.snackbar_login, it.name))
+                } else showSnackbar(getString(R.string.snackbar_login_failed))
+            } ?: showSnackbar(getString(R.string.snackbar_invalid_oauth))
         }
     }
 
@@ -416,8 +420,8 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         val message = result.first?.let {
             val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             clipboard.setPrimaryClip(ClipData.newPlainText("nuuls image url", it))
-            "Copied: $it"
-        } ?: "Error during upload"
+            getString(R.string.snackbar_image_uploaded, it)
+        } ?: getString(R.string.snackbar_upload_failed)
 
         showSnackbar(message)
         showProgressBar = false
@@ -438,9 +442,9 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             }
 
             twitchPreferences.setLoggedIn(true)
-            showSnackbar("Logging in as $name")
+            showSnackbar(getString(R.string.snackbar_login, name))
         } else {
-            showSnackbar("Failed to login")
+            showSnackbar(getString(R.string.snackbar_login_failed))
         }
     }
 
@@ -451,7 +455,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             val mimeTypeMap = MimeTypeMap.getSingleton()
             val extension = mimeTypeMap.getExtensionFromMimeType(mimeType)
             if (extension == null) {
-                showSnackbar("Error during upload")
+                showSnackbar(getString(R.string.snackbar_upload_failed))
                 return
             }
 
@@ -467,7 +471,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 invalidateOptionsMenu()
             } catch (t: Throwable) {
                 copy.delete()
-                showSnackbar("Error during upload")
+                showSnackbar(getString(R.string.snackbar_upload_failed))
             }
         }
     }
@@ -483,7 +487,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 invalidateOptionsMenu()
             } catch (e: IOException) {
                 imageFile.delete()
-                showSnackbar("Error during upload")
+                showSnackbar(getString(R.string.snackbar_upload_failed))
             }
         }
     }
@@ -676,7 +680,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         R.string.confirm_logout_negative_button,
         R.string.login,
         R.string.required_oauth_scopes,
-        "Token",
+        getString(R.string.advanced_login_hint),
         false
     ).show(supportFragmentManager, DIALOG_TAG)
 
@@ -684,7 +688,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         R.string.dialog_title,
         R.string.dialog_negative_button,
         R.string.dialog_positive_button,
-        textHint = "Channel",
+        textHint = getString(R.string.add_channel_hint),
         isAddChannel = true
     ).show(supportFragmentManager, DIALOG_TAG)
 
@@ -762,7 +766,11 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                     bottomSheetTabs,
                     bottomSheetViewPager
                 ) { tab, pos ->
-                    tab.text = EmoteMenuTab.values()[pos].tab
+                    tab.text = when (EmoteMenuTab.values()[pos]) {
+                        EmoteMenuTab.SUBS -> getString(R.string.emote_menu_tab_subs)
+                        EmoteMenuTab.CHANNEL -> getString(R.string.emote_menu_tab_channel)
+                        EmoteMenuTab.GLOBAL -> getString(R.string.emote_menu_tab_global)
+                    }
                 }.attach()
             }
 

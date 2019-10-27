@@ -13,7 +13,6 @@
     <string name="dialog_title">Add channel</string>
     <string name="dialog_positive_button">OK</string>
     <string name="dialog_negative_button">Cancel</string>
-    <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
     <string name="add_channel">Add channel</string>
     <string name="name">Name</string>
     <string name="remove_channel">Remove channel</string>
@@ -41,7 +40,32 @@
     <string name="paste_oauth_token">Paste OAuth token</string>
     <string name="login_with_oauth">Login with OAuth</string>
     <string name="required_oauth_scopes">Required scopes: chat:edit, chat:read, user_read, user_subscriptions, channel:moderate, user_blocks_read, user_blocks_edit</string>
+    <string name="settings">Settings</string>
+    <string name="nuuls_upload_disclaimer">External hosting provided by https://nuuls.com/i, use at your own risk.</string>
+    <string name="nuuls_upload_title">Custom image upload</string>
+    <string name="snackbar_message_copied">Message copied</string>
+    <string name="notification_stop">Stop</string>
+    <string name="notification_title">FeelsDankMan</string>
+    <string name="notification_message">DankChat running in the background</string>
+    <string name="emote_menu_hint">Open the emote menu</string>
+    <string name="login_title">Login to Twitch.tv</string>
+    <string name="hint_connected">Start chatting</string>
+    <string name="hint_disconnected">Disconnected</string>
+    <string name="hint_not_logged_int">Not logged in</string>
+    <string name="notification_new_mentions">You have new mentions</string>
+    <string name="notification_mention">%1$s just mentioned you in #%2$s</string>
+    <string name="snackbar_login">Logged in as %1$s</string>
+    <string name="snackbar_login_failed">Failed to login</string>
+    <string name="snackbar_invalid_oauth">Invalid OAuth token</string>
+    <string name="snackbar_image_uploaded">Copied: %1$s</string>
+    <string name="snackbar_upload_failed">Error during upload</string>
+    <string name="advanced_login_hint">Token</string>
+    <string name="add_channel_hint">Channel</string>
+    <string name="emote_menu_tab_subs">Subs</string>
+    <string name="emote_menu_tab_channel">Channel</string>
+    <string name="emote_menu_tab_global">Global</string>
 
+    <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
     <string name="preference_timestamp_title">Show timestamps</string>
     <string name="preference_timestamp_key">show_timestamp</string>
     <string name="preference_mention_format_title">Mention format</string>
@@ -66,15 +90,6 @@
     <string name="preference_show_input_key">show_input_key</string>
     <string name="preference_show_input_title">Show input</string>
     <string name="preference_show_input_summary">Displays the input field to send messages</string>
-
-    <string name="settings">Settings</string>
-    <string name="nuuls_upload_disclaimer">External hosting provided by https://nuuls.com/i, use at your own risk.</string>
-    <string name="nuuls_upload_title">Custom image upload</string>
-    <string name="snackbar_message_copied">Message copied</string>
-    <string name="notification_stop">Stop</string>
-    <string name="notification_title">FeelsDankMan</string>
-    <string name="notification_message">DankChat running in the background</string>
-    <string name="emote_menu_hint">Open the emote menu</string>
 
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>
