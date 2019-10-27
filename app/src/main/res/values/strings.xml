@@ -64,6 +64,8 @@
     <string name="emote_menu_tab_subs">Subs</string>
     <string name="emote_menu_tab_channel">Channel</string>
     <string name="emote_menu_tab_global">Global</string>
+    <string name="system_message_connected">Connected</string>
+    <string name="system_message_disconnected">Disconnected</string>
 
     <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
     <string name="preference_timestamp_title">Show timestamps</string>
