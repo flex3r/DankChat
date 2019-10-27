@@ -28,7 +28,7 @@
     <string name="upload_image">Upload image</string>
     <string name="take_picture">Take picture</string>
     <string name="choose_image">Choose image</string>
-    <string name="hide_actionbar">Hide toolbar</string>
+    <string name="hide_actionbar" translatable="false">Hide toolbar</string>
     <string name="resume_scroll">Resume scroll</string>
     <string name="uploading_image">Uploading image</string>
     <string name="change_mention_format">Change mention format</string>
@@ -69,27 +69,27 @@
 
     <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
     <string name="preference_timestamp_title">Show timestamps</string>
-    <string name="preference_timestamp_key">show_timestamp</string>
+    <string name="preference_timestamp_key" translatable="false">show_timestamp</string>
     <string name="preference_mention_format_title">Mention format</string>
     <string name="preference_mention_format_summary">Change the mention format when clicking an username</string>
-    <string name="preference_mention_format_key">mention_format</string>
-    <string name="preference_roomstate_key">show_roomstate</string>
+    <string name="preference_mention_format_key" translatable="false">mention_format</string>
+    <string name="preference_roomstate_key" translatable="false">show_roomstate</string>
     <string name="preference_roomstate_title">Show roomstate information</string>
     <string name="preference_roomstate_summary">Displays information about the current roomstate like subscribers only mode</string>
-    <string name="preference_streaminfo_key">show_streaminfo</string>
+    <string name="preference_streaminfo_key" translatable="false">show_streaminfo</string>
     <string name="preference_streaminfo_title">Show stream information</string>
     <string name="preference_streaminfo_summary">Displays live status and viewer count</string>
-    <string name="preference_notification_key">notification_key</string>
+    <string name="preference_notification_key" translatable="false">notification_key</string>
     <string name="preference_notification_title">Show mention notifications</string>
     <string name="preference_notification_summary">Creates notifications when mentioned while the app is in the background</string>
     <string name="preference_notification_header">Notifications</string>
-    <string name="preference_logout_key">logout_key</string>
+    <string name="preference_logout_key" translatable="false">logout_key</string>
     <string name="preference_logout_title">Logout</string>
     <string name="preference_general_header">General</string>
     <string name="preference_about_header">About</string>
     <string name="preference_about_summary">DankChat %1$s made by @flex3rs and contributors\n\nTwitch emote data provided by twitchemotes.com</string>
-    <string name="preference_about_key">about_key</string>
-    <string name="preference_show_input_key">show_input_key</string>
+    <string name="preference_about_key" translatable="false">about_key</string>
+    <string name="preference_show_input_key" translatable="false">show_input_key</string>
     <string name="preference_show_input_title">Show input</string>
     <string name="preference_show_input_summary">Displays the input field to send messages</string>
 
