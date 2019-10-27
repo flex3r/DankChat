@@ -167,7 +167,7 @@ class TwitchService : Service(), KoinComponent {
         }
 
         val summary = NotificationCompat.Builder(this, CHANNEL_ID_DEFAULT)
-            .setContentTitle("You have new Mentions")
+            .setContentTitle(getString(R.string.notification_new_mentions))
             .setContentText("")
             .setSmallIcon(R.drawable.ic_notification_icon)
             .setGroup(MENTION_GROUP)
@@ -176,7 +176,7 @@ class TwitchService : Service(), KoinComponent {
             .build()
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID_DEFAULT)
-            .setContentTitle("$user just mentioned you in #$channel")
+            .setContentTitle(getString(R.string.notification_mention, user, message))
             .setContentText(message)
             .setContentIntent(pendingStartActivityIntent)
             .setSmallIcon(R.drawable.ic_notification_icon)

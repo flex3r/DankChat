@@ -1,8 +1,8 @@
 package com.flxrs.dankchat.chat.menu
 
-enum class EmoteMenuTab(val tab: String) {
+enum class EmoteMenuTab() {
 
-    SUBS("Subs"),
-    CHANNEL("Channel"),
-    GLOBAL("Global")
+    SUBS,
+    CHANNEL,
+    GLOBAL
 }

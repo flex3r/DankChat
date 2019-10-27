@@ -25,7 +25,7 @@ class LoginActivity : AppCompatActivity() {
             setSupportActionBar(loginToolbar)
             supportActionBar?.apply {
                 setDisplayHomeAsUpEnabled(true)
-                title = "Login to Twitch.tv"
+                title = getString(R.string.login_title)
             }
 
             webview.apply {
