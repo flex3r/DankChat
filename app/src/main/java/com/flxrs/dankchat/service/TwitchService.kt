@@ -153,7 +153,11 @@ class TwitchService : Service(), KoinComponent {
     }
 
     private fun onMessage(message: IrcMessage) {
-        val messages = repository.onMessage(message, connection.isJustinFan)
+        val messages = repository.onMessage(
+            message,
+            connection.isJustinFan,
+            if (message.command == "366") getString(R.string.system_message_connected) else ""
+        )
         if (shouldMention) messages?.filter { it.message.isMention(nick) }?.takeIf {
             sharedPreferences.getBoolean(getString(R.string.preference_notification_key), true)
         }?.map {
@@ -176,7 +180,7 @@ class TwitchService : Service(), KoinComponent {
             .build()
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID_DEFAULT)
-            .setContentTitle(getString(R.string.notification_mention, user, message))
+            .setContentTitle(getString(R.string.notification_mention, user, channel))
             .setContentText(message)
             .setContentIntent(pendingStartActivityIntent)
             .setSmallIcon(R.drawable.ic_notification_icon)
@@ -188,7 +192,8 @@ class TwitchService : Service(), KoinComponent {
         manager.notify(SUMMARY_NOTIFICATION_ID, summary)
     }
 
-    private fun onDisconnect() = repository.handleDisconnect()
+    private fun onDisconnect() =
+        repository.handleDisconnect(getString(R.string.system_message_disconnected))
 
     companion object {
         private const val CHANNEL_ID_LOW = "com.flxrs.dankchat.dank_id"

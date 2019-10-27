@@ -8,6 +8,7 @@ import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.connection.ConnectionState
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
+import com.flxrs.dankchat.service.twitch.message.Roomstate
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import com.flxrs.dankchat.utils.SingleLiveEvent
 import com.flxrs.dankchat.utils.extensions.addAndLimit
@@ -26,7 +27,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     private val messages = mutableMapOf<String, MutableLiveData<List<ChatItem>>>()
     private val emotes = mutableMapOf<String, MutableLiveData<List<GenericEmote>>>()
     private val canType = mutableMapOf<String, MutableLiveData<ConnectionState>>()
-    private val roomStates = mutableMapOf<String, MutableLiveData<TwitchMessage.Roomstate>>()
+    private val roomStates = mutableMapOf<String, MutableLiveData<Roomstate>>()
     private val ignoredList = mutableListOf<Int>()
 
     private var hasDisconnected = true
@@ -52,9 +53,9 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         }
     }
 
-    fun getRoomState(channel: String): LiveData<TwitchMessage.Roomstate> =
+    fun getRoomState(channel: String): LiveData<Roomstate> =
         roomStates.getOrPut(channel) {
-            MutableLiveData(TwitchMessage.Roomstate(channel))
+            MutableLiveData(Roomstate(channel))
         }
 
     fun loadData(
@@ -99,13 +100,13 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     }
 
     @Synchronized
-    fun handleDisconnect() {
+    fun handleDisconnect(msg: String) {
         if (!hasDisconnected) {
             hasDisconnected = true
             canType.keys.forEach {
                 canType.getOrPut(it, { MutableLiveData() }).postValue(ConnectionState.DISCONNECTED)
             }
-            makeAndPostSystemMessage("Disconnected")
+            makeAndPostSystemMessage(msg)
         }
     }
 
@@ -132,9 +133,13 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         imageUploadedEvent.postValue(url to file)
     }
 
-    fun onMessage(msg: IrcMessage, isJustinFan: Boolean): List<ChatItem>? {
+    fun onMessage(
+        msg: IrcMessage,
+        isJustinFan: Boolean,
+        connectedMsg: String = "Connected"
+    ): List<ChatItem>? {
         when (msg.command) {
-            "366" -> handleConnected(msg.params[1].substring(1), isJustinFan)
+            "366" -> handleConnected(msg.params[1].substring(1), isJustinFan, connectedMsg)
             "CLEARCHAT" -> handleClearchat(msg)
             "ROOMSTATE" -> handleRoomstate(msg)
             else -> return handleMessage(msg)
@@ -154,8 +159,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         }
     }
 
-    private fun handleConnected(channel: String, isJustinFan: Boolean) {
-        makeAndPostSystemMessage("Connected", setOf(channel))
+    private fun handleConnected(channel: String, isJustinFan: Boolean, connectedMsg: String) {
+        makeAndPostSystemMessage(connectedMsg, setOf(channel))
         hasDisconnected = false
 
         val hint = if (isJustinFan) ConnectionState.NOT_LOGGED_IN else ConnectionState.CONNECTED
@@ -174,7 +179,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
     private fun handleRoomstate(msg: IrcMessage) {
         val channel = msg.params[0].substring(1)
-        val state = roomStates[channel]?.value ?: TwitchMessage.Roomstate(channel)
+        val state = roomStates[channel]?.value ?: Roomstate(channel)
         state.updateState(msg)
 
         roomStates.getOrPut(channel, { MutableLiveData() }).postValue(state)
