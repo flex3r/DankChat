@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation android:id="@+id/nav_graph"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:startDestination="@id/chat_fragment">
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/nav_graph"
+	app:startDestination="@id/chat_fragment">
 
-    <fragment
-        android:id="@+id/chat_fragment"
-        android:name="com.flxrs.dankchat.chat.ChatFragment"
-        android:label="@string/chat" />
+	<fragment
+		android:id="@+id/chat_fragment"
+		android:name="com.flxrs.dankchat.chat.ChatFragment"
+		android:label="@string/chat" />
 
 </navigation>

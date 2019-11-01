@@ -1,6 +1,6 @@
 package com.flxrs.dankchat.chat.menu
 
-enum class EmoteMenuTab() {
+enum class EmoteMenuTab {
 
     SUBS,
     CHANNEL,

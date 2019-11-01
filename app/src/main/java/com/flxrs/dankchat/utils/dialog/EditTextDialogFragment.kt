@@ -35,7 +35,7 @@ class EditTextDialogFragment : DialogFragment() {
         binding.dialogEdit.setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> getInputAndDismiss()
-                else -> false
+                else                       -> false
             }
         }
         return builder.create()

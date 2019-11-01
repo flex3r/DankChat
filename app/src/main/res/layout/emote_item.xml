@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+	xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
+	<data>
 
-        <variable
-            name="emote"
-            type="com.flxrs.dankchat.service.twitch.emote.GenericEmote" />
-    </data>
+		<variable
+			name="emote"
+			type="com.flxrs.dankchat.service.twitch.emote.GenericEmote" />
+	</data>
 
-    <ImageView
-        android:id="@+id/emote_view"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="?selectableItemBackgroundBorderless"
-        android:clickable="true"
-        android:contentDescription="@{emote.keyword}"
-        android:focusable="true"
-        android:paddingBottom="4dp"
-        app:url="@{emote.lowResUrl}" />
+	<ImageView
+		android:id="@+id/emote_view"
+		android:layout_width="48dp"
+		android:layout_height="48dp"
+		android:background="?selectableItemBackgroundBorderless"
+		android:clickable="true"
+		android:contentDescription="@{emote.keyword}"
+		android:focusable="true"
+		android:paddingBottom="4dp"
+		app:url="@{emote.lowResUrl}" />
 
 </layout>

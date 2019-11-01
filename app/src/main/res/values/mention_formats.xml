@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="mention_formats">
-        <item>name</item>
-        <item>name,</item>
-        <item>\@name</item>
-        <item>\@name,</item>
-    </string-array>
+	<string-array name="mention_formats">
+		<item>name</item>
+		<item>name,</item>
+		<item>\@name</item>
+		<item>\@name,</item>
+	</string-array>
 </resources>

@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.databinding.EmoteMenuTabBinding
-import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 
 class EmoteMenuAdapter(private val onEmoteClick: (emote: String) -> Unit) :
     ListAdapter<List<EmoteItem>, EmoteMenuAdapter.ViewHolder>(DetectDiff()) {
@@ -31,9 +30,9 @@ class EmoteMenuAdapter(private val onEmoteClick: (emote: String) -> Unit) :
                 emoteList.layoutManager = GridLayoutManager(parent.context, 6).apply {
                     spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                         override fun getSpanSize(position: Int): Int {
-                            return when(adapter.getItemViewType(position)) {
+                            return when (adapter.getItemViewType(position)) {
                                 EmoteAdapter.ITEM_VIEW_TYPE_HEADER -> 6
-                                else -> 1
+                                else                               -> 1
                             }
                         }
                     }

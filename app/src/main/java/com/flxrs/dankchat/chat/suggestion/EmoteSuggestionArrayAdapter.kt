@@ -8,7 +8,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.utils.GifDrawableTarget
 

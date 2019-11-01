@@ -1,6 +1,6 @@
 package com.flxrs.dankchat.service.twitch.connection
 
-enum class ConnectionState() {
+enum class ConnectionState {
 
     CONNECTED,
     DISCONNECTED,

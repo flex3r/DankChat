@@ -158,7 +158,7 @@ object EmoteManager {
                 it.value.forEach { emoteResult ->
                     val keyword = when (type) {
                         is EmoteType.GlobalTwitchEmote -> emoteReplacements.getOrElse(emoteResult.name) { emoteResult.name }
-                        else -> emoteResult.name
+                        else                           -> emoteResult.name
                     }
                     val emote = GenericEmote(
                         keyword,
@@ -248,7 +248,7 @@ object EmoteManager {
         val (scale, url) = when {
             emote.urls.containsKey("4") -> 1 to emote.urls.getValue("4")
             emote.urls.containsKey("2") -> 2 to emote.urls.getValue("2")
-            else -> 4 to emote.urls.getValue("1")
+            else                        -> 4 to emote.urls.getValue("1")
         }
         val lowResUrl = emote.urls["2"] ?: emote.urls.getValue("1")
         val type = if (channel.isBlank()) {
