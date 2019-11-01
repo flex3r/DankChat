@@ -90,10 +90,12 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         messages.remove(channel)
     }
 
-    fun sendMessage(channel: String, message: String, onResult: (msg: String) -> Unit) {
+    fun prepareMessage(channel: String, message: String, onResult: (msg: String) -> Unit) {
         if (message.isNotBlank()) {
-            val messageWithSuffix =
-                if (lastMessage == message) "$message $INVISIBLE_CHAR" else message
+            val messageWithSuffix = if (lastMessage == message) {
+                "$message $INVISIBLE_CHAR"
+            } else message
+
             lastMessage = messageWithSuffix
             onResult("PRIVMSG #$channel :$messageWithSuffix")
         }
@@ -133,16 +135,11 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         imageUploadedEvent.postValue(url to file)
     }
 
-    fun onMessage(
-        msg: IrcMessage,
-        isJustinFan: Boolean,
-        connectedMsg: String = "Connected"
-    ): List<ChatItem>? {
+    fun onMessage(msg: IrcMessage): List<ChatItem>? {
         when (msg.command) {
-            "366" -> handleConnected(msg.params[1].substring(1), isJustinFan, connectedMsg)
             "CLEARCHAT" -> handleClearchat(msg)
             "ROOMSTATE" -> handleRoomstate(msg)
-            else -> return handleMessage(msg)
+            else        -> return handleMessage(msg)
         }
         return null
     }
@@ -159,11 +156,11 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         }
     }
 
-    private fun handleConnected(channel: String, isJustinFan: Boolean, connectedMsg: String) {
+    fun handleConnected(channel: String, isAnonymous: Boolean, connectedMsg: String) {
         makeAndPostSystemMessage(connectedMsg, setOf(channel))
         hasDisconnected = false
 
-        val hint = if (isJustinFan) ConnectionState.NOT_LOGGED_IN else ConnectionState.CONNECTED
+        val hint = if (isAnonymous) ConnectionState.NOT_LOGGED_IN else ConnectionState.CONNECTED
         canType.getOrPut(channel, { MutableLiveData() }).postValue(hint)
     }
 

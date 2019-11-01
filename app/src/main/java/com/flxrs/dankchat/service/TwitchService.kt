@@ -18,15 +18,30 @@ import com.flxrs.dankchat.MainActivity
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import org.koin.core.parameter.parametersOf
+import java.util.concurrent.TimeUnit
 
 class TwitchService : Service(), KoinComponent {
 
+    private val client = OkHttpClient.Builder()
+        .retryOnConnectionFailure(true)
+        .connectTimeout(5, TimeUnit.SECONDS)
+        .readTimeout(5, TimeUnit.SECONDS)
+        .writeTimeout(5, TimeUnit.SECONDS)
+        .build()
+
+    private val request = Request.Builder()
+        .url("wss://irc-ws.chat.twitch.tv")
+        .build()
+
     private val binder = LocalBinder()
     private val repository: TwitchRepository = get()
-    private val connection: WebSocketConnection = get { parametersOf(::onDisconnect, ::onMessage) }
+    private val readConnection: WebSocketConnection = get { parametersOf(client, request, ::onDisconnect, ::onMessage) }
+    private val writeConnection: WebSocketConnection = get { parametersOf(client, request, null, ::onWriterMessage) }
     private lateinit var manager: NotificationManager
     private lateinit var sharedPreferences: SharedPreferences
     private var nick = ""
@@ -90,32 +105,38 @@ class TwitchService : Service(), KoinComponent {
         return START_NOT_STICKY
     }
 
-    @Synchronized
     fun connect(nick: String, oauth: String) {
         if (!startedConnection) {
-            connection.connect(nick, oauth)
+            readConnection.connect(nick, oauth)
+            writeConnection.connect(nick, oauth)
             startedConnection = true
             this.nick = nick
         }
     }
 
-    fun joinChannel(channel: String) = connection.joinChannel(channel)
-
-    fun partChannel(channel: String) = connection.partChannel(channel)
-
-    fun sendMessage(channel: String, input: String) = repository.sendMessage(channel, input) {
-        connection.sendMessage(it)
+    fun joinChannel(channel: String) {
+        readConnection.joinChannel(channel)
+        writeConnection.joinChannel(channel)
     }
 
-    @Synchronized
+    fun partChannel(channel: String) {
+        readConnection.partChannel(channel)
+        writeConnection.partChannel(channel)
+    }
+
+    fun sendMessage(channel: String, input: String) = repository.prepareMessage(channel, input) {
+        writeConnection.sendMessage(it)
+    }
+
     fun reconnect(onlyIfNecessary: Boolean) {
-        connection.reconnect(onlyIfNecessary)
+        readConnection.reconnect(onlyIfNecessary)
+        writeConnection.reconnect(onlyIfNecessary)
     }
 
-    @Synchronized
     fun close(onClosed: () -> Unit = { }) {
         startedConnection = false
-        connection.close(onClosed)
+        writeConnection.close(onClosed)
+        readConnection.close(onClosed)
     }
 
     private fun startForeground() {
@@ -153,15 +174,19 @@ class TwitchService : Service(), KoinComponent {
     }
 
     private fun onMessage(message: IrcMessage) {
-        val messages = repository.onMessage(
-            message,
-            connection.isJustinFan,
-            if (message.command == "366") getString(R.string.system_message_connected) else ""
-        )
+        val messages = repository.onMessage(message)
         if (shouldMention) messages?.filter { it.message.isMention(nick) }?.takeIf {
             sharedPreferences.getBoolean(getString(R.string.preference_notification_key), true)
         }?.map {
             createMentionNotification(it.message.channel, it.message.name, it.message.message)
+        }
+    }
+
+    private fun onWriterMessage(message: IrcMessage) {
+        when (message.command) {
+            "PRIVMSG" -> Unit
+            "366"     -> onConnect(message.params[1].substring(1), writeConnection.isAnonymous)
+            else      -> onMessage(message)
         }
     }
 
@@ -192,8 +217,9 @@ class TwitchService : Service(), KoinComponent {
         manager.notify(SUMMARY_NOTIFICATION_ID, summary)
     }
 
-    private fun onDisconnect() =
-        repository.handleDisconnect(getString(R.string.system_message_disconnected))
+    private fun onDisconnect() = repository.handleDisconnect(getString(R.string.system_message_disconnected))
+
+    private fun onConnect(channel: String, isAnonymous: Boolean) = repository.handleConnected(channel, isAnonymous, getString(R.string.system_message_connected))
 
     companion object {
         private const val CHANNEL_ID_LOW = "com.flxrs.dankchat.dank_id"

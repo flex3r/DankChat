@@ -7,56 +7,41 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.*
-import java.util.concurrent.TimeUnit
 import kotlin.math.floor
 import kotlin.math.min
 import kotlin.math.roundToLong
 
 class WebSocketConnection(
     private val scope: CoroutineScope,
-    private val onDisconnect: () -> Unit,
+    private val client: OkHttpClient,
+    private val request: Request,
+    private val onDisconnect: (() -> Unit)? = null,
     private val onMessage: (IrcMessage) -> Unit
 ) {
-
-    private val client = OkHttpClient.Builder()
-        .retryOnConnectionFailure(true)
-        .connectTimeout(5, TimeUnit.SECONDS)
-        .readTimeout(5, TimeUnit.SECONDS)
-        .writeTimeout(5, TimeUnit.SECONDS)
-        .build()
-
-    private val request = Request.Builder()
-        .url("wss://irc-ws.chat.twitch.tv")
-        .build()
-
     private var nick = ""
     private var oAuth = ""
     private val channels = mutableSetOf<String>()
 
-    private var readerWebSocket: WebSocket? = null
-    private var writerWebSocket: WebSocket? = null
-    private var readerConnected = false
-    private var writerConnected = false
-    private var readerPong = false
-    private var writerPong = false
+    private var socket: WebSocket? = null
+    private var connected = false
+    private var awaitingPong = false
     private var connecting = false
     private var reconnectAttempts = 0
-
-    var isJustinFan = false
     private var onClosed: (() -> Unit)? = null
 
+    var isAnonymous = false
+
     fun sendMessage(msg: String) {
-        if (readerConnected && writerConnected) {
-            writerWebSocket?.sendMessage(msg)
+        if (connected) {
+            socket?.sendMessage(msg)
         }
     }
 
     fun joinChannel(channel: String) {
         if (!channels.contains(channel)) {
             channels.add(channel)
-            if (readerConnected && writerConnected) {
-                writerWebSocket?.sendMessage("JOIN #$channel")
-                readerWebSocket?.sendMessage("JOIN #$channel")
+            if (connected) {
+                socket?.sendMessage("JOIN #$channel")
             }
         }
     }
@@ -64,49 +49,37 @@ class WebSocketConnection(
     fun partChannel(channel: String) {
         if (channels.contains(channel)) {
             channels.remove(channel)
-            if (readerConnected && writerConnected) {
-                writerWebSocket?.sendMessage("PART #$channel")
-                readerWebSocket?.sendMessage("PART #$channel")
+            if (connected) {
+                socket?.sendMessage("PART #$channel")
             }
         }
     }
 
-    @Synchronized
     fun connect(nick: String, oAuth: String, forceConnect: Boolean = false) {
-        if (forceConnect || (!readerConnected && !writerConnected && !connecting)) {
+        if (forceConnect || (!connected && !connecting)) {
             this.nick = nick
             this.oAuth = oAuth
-            isJustinFan = (oAuth.isBlank() || !oAuth.startsWith("oauth:"))
+            awaitingPong = false
             connecting = true
-            readerPong = false
-            writerPong = false
 
-            readerWebSocket = client.newWebSocket(request, ReaderWebSocketListener())
-            writerWebSocket = client.newWebSocket(request, WriterWebSocketListener())
+            socket = client.newWebSocket(request, TwitchWebSocketListener())
         }
     }
 
-    @Synchronized
     fun close(onClosed: (() -> Unit)?): Boolean {
         this.onClosed = onClosed
-        readerConnected = false
-        writerConnected = false
-
-        val writer = writerWebSocket?.close(1000, null) ?: false
-        val reader = readerWebSocket?.close(1000, null) ?: false
-        return writer && reader
+        connected = false
+        return socket?.close(1000, null) ?: false
     }
 
-    @Synchronized
     fun reconnect(onlyIfNecessary: Boolean = false, forceConnect: Boolean = false) {
-        if (!onlyIfNecessary || (!readerConnected && !writerConnected && !connecting)) {
+        if (!onlyIfNecessary || (!connected && !connecting)) {
             reconnectAttempts = 0
-            attemptReconect(forceConnect)
+            attemptReconnect(forceConnect)
         }
     }
 
-    @Synchronized
-    private fun attemptReconect(forceConnect: Boolean = false) {
+    private fun attemptReconnect(forceConnect: Boolean = false) {
         scope.launch {
             var reconnectDelay = 150L
             if (reconnectAttempts > 0) {
@@ -129,143 +102,74 @@ class WebSocketConnection(
         }
     }
 
-    private fun WebSocket.sendMessage(msg: String) {
-        send("${msg.trimEnd()}\r\n")
-    }
-
-    private fun WebSocket.joinCurrentChannels() {
-        for (channel in channels) {
-            sendMessage("JOIN #$channel")
-        }
-    }
-
-    private fun WebSocket.handlePing() {
-        sendMessage("PONG :tmi.twitch.tv")
-    }
-
-    private fun setupReaderPingInterval() = scope.timer(5 * 60 * 1000) {
-        if (readerPong) {
+    private fun setupPingInterval() = scope.timer(PING_INTERVAL) {
+        if (awaitingPong) {
             cancel()
             reconnect()
             return@timer
         }
 
-        if (readerConnected) {
-            readerPong = true
-            readerWebSocket?.sendMessage("PING")
+        if (connected) {
+            awaitingPong = true
+            socket?.sendMessage("PING")
         }
     }
 
-    private fun setupWriterPingInterval() = scope.timer(5 * 60 * 1000) {
-        if (writerPong) {
-            cancel()
-            reconnect()
-            return@timer
-        }
-
-        if (writerConnected) {
-            writerPong = true
-            writerWebSocket?.sendMessage("PING")
-        }
-    }
-
-    private inner class ReaderWebSocketListener : WebSocketListener() {
-        private var pingTimer: Job? = null
+    private inner class TwitchWebSocketListener : WebSocketListener() {
+        private var pingJob: Job? = null
 
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-            readerConnected = false
-            onDisconnect()
+            connected = false
+            onDisconnect?.invoke()
             onClosed?.invoke()
             onClosed = null
-            pingTimer?.cancel()
+            pingJob?.cancel()
         }
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-            readerConnected = false
+            connected = false
             connecting = false
-            onDisconnect()
-            pingTimer?.cancel()
+            onDisconnect?.invoke()
+            pingJob?.cancel()
 
-            attemptReconect(true)
-        }
-
-        override fun onMessage(webSocket: WebSocket, text: String) {
-            text.removeSuffix("\r\n").split("\r\n").forEach { line ->
-                val ircMessage = IrcMessage.parse(line)
-                if (ircMessage.isLoginFailed()) {
-                    close(null)
-                }
-
-                when (ircMessage.command) {
-                    "376" -> {
-                        readerWebSocket?.joinCurrentChannels()
-                        pingTimer = setupReaderPingInterval()
-                    }
-                    "PING" -> webSocket.handlePing()
-                    "PONG" -> readerPong = false
-                    "RECONNECT" -> reconnect()
-                    "PRIVMSG" -> onMessage(ircMessage)
-                    else -> Unit
-                }
-            }
+            attemptReconnect(true)
         }
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
-            readerConnected = true
+            connected = true
             connecting = false
             reconnectAttempts = 0
-            val auth = if (isJustinFan) "NaM" else oAuth
-            val nick = if (nick.isBlank() || isJustinFan) "justinfan12781923" else nick
+            isAnonymous = (oAuth.isBlank() || !oAuth.startsWith("oauth:"))
+
+            val auth = if (isAnonymous) "NaM" else oAuth
+            val nick = if (nick.isBlank() || isAnonymous) "justinfan12781923" else nick
 
             webSocket.sendMessage("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership")
             webSocket.sendMessage("PASS $auth")
             webSocket.sendMessage("NICK $nick")
-        }
-    }
-
-    private inner class WriterWebSocketListener : WebSocketListener() {
-        private var pingTimer: Job? = null
-
-        override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-            writerConnected = false
-            pingTimer?.cancel()
-        }
-
-        override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-            writerConnected = false
-            pingTimer?.cancel()
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             text.removeSuffix("\r\n").split("\r\n").forEach { line ->
                 val ircMessage = IrcMessage.parse(line)
                 when (ircMessage.command) {
-                    "376" -> {
-                        writerWebSocket?.joinCurrentChannels()
-                        pingTimer = setupWriterPingInterval()
+                    "376"       -> {
+                        socket?.joinChannels(channels)
+                        pingJob = setupPingInterval()
                     }
-                    "PING" -> webSocket.handlePing()
-                    "PONG" -> writerPong = false
+                    "PING"      -> webSocket.handlePing()
+                    "PONG"      -> awaitingPong = false
                     "RECONNECT" -> reconnect()
-                    "PRIVMSG" -> Unit
-                    else -> onMessage(ircMessage)
+                    else        -> onMessage(ircMessage)
                 }
             }
         }
-
-        override fun onOpen(webSocket: WebSocket, response: Response) {
-            writerConnected = true
-            val auth = if (isJustinFan) "NaM" else oAuth
-            val nick = if (nick.isBlank() || isJustinFan) "justinfan12781923" else nick
-
-            webSocket.sendMessage("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership")
-            webSocket.sendMessage("PASS $auth")
-            webSocket.sendMessage("NICK $nick")
-        }
     }
+
 
     companion object {
         private const val RECONNECT_MULTIPLIER = 250
         private const val RECONNECT_JITTER = 100
+        private const val PING_INTERVAL = 5 * 60 * 1000L
     }
 }

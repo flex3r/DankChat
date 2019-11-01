@@ -6,14 +6,18 @@ import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModules = module {
     factory { CoroutineScope(Dispatchers.IO + Job()) }
-    single { (onDisconnect: () -> Unit, onMessage: (IrcMessage) -> Unit) ->
+    factory { (client: OkHttpClient, request: Request, onDisconnect: (() -> Unit)?, onMessage: (IrcMessage) -> Unit) ->
         WebSocketConnection(
             get(),
+            client,
+            request,
             onDisconnect,
             onMessage
         )
@@ -21,4 +25,3 @@ val appModules = module {
     single { TwitchRepository(get()) }
     viewModel { DankChatViewModel(get()) }
 }
-
