@@ -5,6 +5,7 @@ import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.service.TwitchRepository
 import com.flxrs.dankchat.service.api.TwitchApi
+import com.flxrs.dankchat.service.twitch.connection.ConnectionState
 import com.flxrs.dankchat.service.twitch.emote.EmoteType
 import com.flxrs.dankchat.utils.extensions.timer
 import com.flxrs.dankchat.utils.extensions.toEmoteItems
@@ -40,7 +41,8 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         addSource(shouldShowViewPager) { value = it && inputEnabled.value ?: true }
     }
     val imageUploadedEvent = twitchRepository.imageUploadedEvent
-    val canType = activeChannel.switchMap { twitchRepository.getCanType(it) }
+    val connectionState = activeChannel.switchMap { twitchRepository.getConnectionState(it) }
+    val canType = connectionState.map { it == ConnectionState.CONNECTED }
     val bottomText = MediatorLiveData<String>().apply {
         addSource(roomStateEnabled) { value = buildBottomText() }
         addSource(streamInfoEnabled) { value = buildBottomText() }
@@ -60,9 +62,9 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         liveData(Dispatchers.Default) {
             val groupedByType = emotes.groupBy {
                 when (it.emoteType) {
-                    is EmoteType.ChannelTwitchEmote -> EmoteMenuTab.SUBS
+                    is EmoteType.ChannelTwitchEmote                             -> EmoteMenuTab.SUBS
                     is EmoteType.ChannelFFZEmote, is EmoteType.ChannelBTTVEmote -> EmoteMenuTab.CHANNEL
-                    else -> EmoteMenuTab.GLOBAL
+                    else                                                        -> EmoteMenuTab.GLOBAL
                 }
             }
 
@@ -86,7 +88,7 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
     ) {
         val token = when {
             oauth.startsWith("oauth:", true) -> oauth.substringAfter(':')
-            else -> oauth
+            else                             -> oauth
         }
         twitchRepository.loadData(channels, token, id, load3rdParty, loadTwitchData)
     }
@@ -147,9 +149,9 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
 
         return when {
             stateNotBlank && streamNotBlank -> "$roomStateText - $streamInfoText"
-            stateNotBlank -> roomStateText
-            streamNotBlank -> streamInfoText
-            else -> ""
+            stateNotBlank                   -> roomStateText
+            streamNotBlank                  -> streamInfoText
+            else                            -> ""
         }
     }
 

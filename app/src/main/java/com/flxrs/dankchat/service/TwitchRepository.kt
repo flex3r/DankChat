@@ -26,7 +26,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
     private val messages = mutableMapOf<String, MutableLiveData<List<ChatItem>>>()
     private val emotes = mutableMapOf<String, MutableLiveData<List<GenericEmote>>>()
-    private val canType = mutableMapOf<String, MutableLiveData<ConnectionState>>()
+    private val connectionState = mutableMapOf<String, MutableLiveData<ConnectionState>>()
     private val roomStates = mutableMapOf<String, MutableLiveData<Roomstate>>()
     private val ignoredList = mutableListOf<Int>()
 
@@ -43,7 +43,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         MutableLiveData(emptyList())
     }
 
-    fun getCanType(channel: String): LiveData<ConnectionState> = canType.getOrPut(channel) {
+    fun getConnectionState(channel: String): LiveData<ConnectionState> = connectionState.getOrPut(channel) {
         MutableLiveData(ConnectionState.DISCONNECTED)
     }
 
@@ -105,8 +105,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     fun handleDisconnect(msg: String) {
         if (!hasDisconnected) {
             hasDisconnected = true
-            canType.keys.forEach {
-                canType.getOrPut(it, { MutableLiveData() }).postValue(ConnectionState.DISCONNECTED)
+            connectionState.keys.forEach {
+                connectionState.getOrPut(it, { MutableLiveData() }).postValue(ConnectionState.DISCONNECTED)
             }
             makeAndPostSystemMessage(msg)
         }
@@ -161,7 +161,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         hasDisconnected = false
 
         val hint = if (isAnonymous) ConnectionState.NOT_LOGGED_IN else ConnectionState.CONNECTED
-        canType.getOrPut(channel, { MutableLiveData() }).postValue(hint)
+        connectionState.getOrPut(channel, { MutableLiveData() }).postValue(hint)
     }
 
     private fun handleClearchat(msg: IrcMessage) {

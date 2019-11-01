@@ -143,16 +143,11 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             emoteItems.observe(this@MainActivity, emoteMenuAdapter::submitList)
             appbarEnabled.observe(this@MainActivity) { changeActionBarVisibility(it) }
 
-            canType.observe(this@MainActivity) { hint ->
-                (hint == ConnectionState.CONNECTED).let {
-                    binding.input.isEnabled = it
-                    binding.inputLayout.isStartIconVisible = it
-                    binding.inputLayout.isEndIconVisible = it
-                }
-                binding.input.hint = when (hint) {
-                    ConnectionState.CONNECTED -> getString(R.string.hint_connected)
+            connectionState.observe(this@MainActivity) { hint ->
+                binding.inputLayout.hint = when (hint) {
+                    ConnectionState.CONNECTED     -> getString(R.string.hint_connected)
                     ConnectionState.NOT_LOGGED_IN -> getString(R.string.hint_not_logged_int)
-                    ConnectionState.DISCONNECTED -> getString(R.string.hint_disconnected)
+                    ConnectionState.DISCONNECTED  -> getString(R.string.hint_disconnected)
                 }
             }
 
@@ -269,32 +264,32 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_reconnect -> twitchService?.reconnect(false)
-            R.id.menu_login_default -> Intent(this, LoginActivity::class.java).apply {
+            R.id.menu_reconnect      -> twitchService?.reconnect(false)
+            R.id.menu_login_default  -> Intent(this, LoginActivity::class.java).apply {
                 isLoggingIn = true
                 startActivityForResult(this, LOGIN_REQUEST)
             }
             R.id.menu_login_advanced -> showAdvancedLoginDialog()
-            R.id.menu_add -> addChannel()
-            R.id.menu_remove -> removeChannel()
-            R.id.menu_reload_emotes -> reloadEmotes()
-            R.id.menu_choose_image -> checkPermissionForGallery()
-            R.id.menu_capture_image -> startCameraCapture()
-            R.id.menu_hide -> viewModel.appbarEnabled.value = false
-            R.id.menu_clear -> clear()
-            R.id.menu_settings -> Intent(this, SettingsActivity::class.java).apply {
+            R.id.menu_add            -> addChannel()
+            R.id.menu_remove         -> removeChannel()
+            R.id.menu_reload_emotes  -> reloadEmotes()
+            R.id.menu_choose_image   -> checkPermissionForGallery()
+            R.id.menu_capture_image  -> startCameraCapture()
+            R.id.menu_hide           -> viewModel.appbarEnabled.value = false
+            R.id.menu_clear          -> clear()
+            R.id.menu_settings       -> Intent(this, SettingsActivity::class.java).apply {
                 startActivityForResult(this, SETTINGS_REQUEST)
             }
-            else -> return false
+            else                     -> return false
         }
         return true
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            LOGIN_REQUEST -> handleLoginRequest(resultCode)
-            GALLERY_REQUEST -> handleGalleryRequest(resultCode, data)
-            CAPTURE_REQUEST -> handleCaptureRequest(resultCode)
+            LOGIN_REQUEST    -> handleLoginRequest(resultCode)
+            GALLERY_REQUEST  -> handleGalleryRequest(resultCode, data)
+            CAPTURE_REQUEST  -> handleCaptureRequest(resultCode)
             SETTINGS_REQUEST -> if (resultCode == Activity.RESULT_OK
                 && data?.getBooleanExtra(LOGOUT_REQUEST_KEY, false) == true
             ) {
@@ -344,7 +339,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     override fun onAdvancedLoginDialogResult(token: String) {
         val tokenWithoutSuffix = when {
             token.startsWith("oauth:", true) -> token.substringAfter(':')
-            else -> token
+            else                             -> token
         }
 
         lifecycleScope.launch {
@@ -628,12 +623,12 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         twitchPreferences = DankChatPreferenceStore(this)
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
             when (key) {
-                roomStateKey -> viewModel.setRoomStateEnabled(p.getBoolean(key, true))
+                roomStateKey  -> viewModel.setRoomStateEnabled(p.getBoolean(key, true))
                 streamInfoKey -> {
                     fetchStreamInformation()
                     viewModel.setStreamInfoEnabled(p.getBoolean(key, true))
                 }
-                inputKey -> viewModel.inputEnabled.value = p.getBoolean(key, true)
+                inputKey      -> viewModel.inputEnabled.value = p.getBoolean(key, true)
             }
         }
         preferences = PreferenceManager.getDefaultSharedPreferences(this).apply {
@@ -651,13 +646,15 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     }
 
     private fun showSnackbar(message: String) {
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).apply {
-            view.setBackgroundResource(R.color.colorPrimary)
-            setTextColor(Color.WHITE)
-            if (binding.inputLayout.isVisible) {
-                anchorView = binding.inputLayout
-            }
-        }.show()
+        binding.inputLayout.post {
+            Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).apply {
+                view.setBackgroundResource(R.color.colorPrimary)
+                setTextColor(Color.WHITE)
+                if (binding.inputLayout.isVisible) {
+                    anchorView = binding.inputLayout
+                }
+            }.show()
+        }
     }
 
     private fun showLogoutConfirmationDialog() = MaterialAlertDialogBuilder(this)
@@ -767,9 +764,9 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                     bottomSheetViewPager
                 ) { tab, pos ->
                     tab.text = when (EmoteMenuTab.values()[pos]) {
-                        EmoteMenuTab.SUBS -> getString(R.string.emote_menu_tab_subs)
+                        EmoteMenuTab.SUBS    -> getString(R.string.emote_menu_tab_subs)
                         EmoteMenuTab.CHANNEL -> getString(R.string.emote_menu_tab_channel)
-                        EmoteMenuTab.GLOBAL -> getString(R.string.emote_menu_tab_global)
+                        EmoteMenuTab.GLOBAL  -> getString(R.string.emote_menu_tab_global)
                     }
                 }.attach()
             }
@@ -789,7 +786,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                                         supportActionBar?.hide()
                                         binding.tabs.visibility = View.GONE
                                     }
-                                    else -> {
+                                    else                                                                    -> {
                                         supportActionBar?.show()
                                         binding.tabs.visibility = View.VISIBLE
                                     }
@@ -808,7 +805,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_SEND -> sendMessage()
-                else -> false
+                else                       -> false
             }
         }
         setOnKeyListener { _, keyCode, _ ->
@@ -816,21 +813,21 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> {
                     if (!isPopupShowing) sendMessage() else false
                 }
-                else -> false
+                else                                                  -> false
             }
         }
 
         var wasLandScapeNotFullscreen = false
         setOnFocusChangeListener { _, hasFocus ->
             window.decorView.systemUiVisibility = when {
-                !hasFocus && wasLandScapeNotFullscreen && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE -> {
+                !hasFocus && wasLandScapeNotFullscreen && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE          -> {
                     wasLandScapeNotFullscreen = false
                     supportActionBar?.show()
                     binding.showActionbarFab.visibility = View.GONE
                     binding.tabs.visibility = View.VISIBLE
                     View.VISIBLE
                 }
-                !hasFocus && binding.showActionbarFab.isVisible -> {
+                !hasFocus && binding.showActionbarFab.isVisible                                                                               -> {
                     wasLandScapeNotFullscreen = false
                     (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                             or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -845,7 +842,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                     binding.tabs.visibility = View.GONE
                     View.VISIBLE
                 }
-                else -> {
+                else                                                                                                                          -> {
                     wasLandScapeNotFullscreen = false
                     (View.VISIBLE)
                 }
