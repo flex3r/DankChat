@@ -11,7 +11,8 @@ import java.util.regex.Pattern
 data class TwitchMessage(
     val time: String,
     val channel: String,
-    val name: String,
+    val name: String = "",
+    val displayName: String = "",
     val color: Int,
     val message: String,
     val emotes: List<ChatEmote> = listOf(),
@@ -52,14 +53,14 @@ data class TwitchMessage(
         fun parse(message: IrcMessage): List<TwitchMessage> =
             with(message) {
                 return when (command) {
-                    "PRIVMSG" -> listOf(parsePrivMessage(message))
-                    "NOTICE" -> listOf(parseNotice(message))
+                    "PRIVMSG"    -> listOf(parsePrivMessage(message))
+                    "NOTICE"     -> listOf(parseNotice(message))
                     "USERNOTICE" -> parseUserNotice(message)
-                    "CLEARCHAT" -> listOf(parseClearChat(message))
-                    "CLEARMSG" -> listOf() //TODO
-                    "WHISPER" -> listOf(parseWhisper(message))
+                    "CLEARCHAT"  -> listOf(parseClearChat(message))
+                    "CLEARMSG"   -> listOf() //TODO
+                    "WHISPER"    -> listOf(parseWhisper(message))
                     //"HOSTTARGET" -> listOf(parseHostTarget(message))
-                    else -> listOf()
+                    else         -> listOf()
                 }
             }
 
@@ -67,7 +68,8 @@ data class TwitchMessage(
             ircMessage: IrcMessage,
             isNotify: Boolean = false
         ): TwitchMessage = with(ircMessage) {
-            val user = tags.getValue("display-name")
+            val displayName = tags.getValue("display-name")
+            val name = prefix.substringBefore('!')
             val colorTag = tags["color"]?.ifBlank { "#717171" } ?: "#717171"
             val color = Color.parseColor(colorTag)
 
@@ -109,7 +111,8 @@ data class TwitchMessage(
             return TwitchMessage(
                 time,
                 channel,
-                user,
+                name,
+                displayName,
                 color,
                 content,
                 emotes.plus(otherEmotes).distinctBy { it.code },
@@ -187,7 +190,8 @@ data class TwitchMessage(
         }
 
         private fun parseWhisper(message: IrcMessage): TwitchMessage = with(message) {
-            val user = tags.getValue("display-name")
+            val displayName = tags.getValue("display-name")
+            val name = prefix.substringBefore('!')
             val colorTag = tags["color"]?.ifBlank { "#717171" } ?: "#717171"
             val color = Color.parseColor(colorTag)
             val content = params[1]
@@ -200,7 +204,8 @@ data class TwitchMessage(
             return TwitchMessage(
                 time,
                 "*",
-                user,
+                name,
+                displayName,
                 color,
                 content,
                 emotes,
@@ -221,7 +226,7 @@ data class TwitchMessage(
                         badgeSet,
                         badgeVersion
                     )?.let { result += Badge(badgeSet, it) }
-                    badgeSet.startsWith("bits") -> EmoteManager.getSubBadgeUrl(
+                    badgeSet.startsWith("bits")       -> EmoteManager.getSubBadgeUrl(
                         channel,
                         badgeSet,
                         badgeVersion
@@ -230,7 +235,7 @@ data class TwitchMessage(
                             badgeSet,
                             badgeVersion
                         )?.let { result += Badge(badgeSet, it) }
-                    else -> EmoteManager.getGlobalBadgeUrl(
+                    else                              -> EmoteManager.getGlobalBadgeUrl(
                         badgeSet,
                         badgeVersion
                     )?.let { result += Badge(badgeSet, it) }

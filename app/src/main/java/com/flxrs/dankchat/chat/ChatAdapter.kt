@@ -113,13 +113,13 @@ class ChatAdapter(
                 }
 
                 val background = when {
-                    isNotify -> R.color.sub_background
+                    isNotify                   -> R.color.sub_background
                     isMention(currentUserName) -> R.color.highlight_background
-                    else -> android.R.color.transparent
+                    else                       -> android.R.color.transparent
                 }
                 this@with.setBackgroundResource(background)
 
-
+                val name = if (displayName.equals(name, true)) displayName else "$name($displayName)"
                 val displayName = if (isAction) "$name " else if (name.isBlank()) "" else "$name: "
                 var badgesLength = 0
                 val timestampPreferenceKey =
@@ -266,9 +266,9 @@ class ChatAdapter(
                             .into(EmoteDrawableTarget(e, context) {
                                 val ratio = it.intrinsicWidth / it.intrinsicHeight.toFloat()
                                 val height = when {
-                                    it.intrinsicHeight < 55 && e.code.isBlank() -> (70 * scaleFactor).roundToInt()
+                                    it.intrinsicHeight < 55 && e.code.isBlank()       -> (70 * scaleFactor).roundToInt()
                                     it.intrinsicHeight in 55..111 && e.code.isBlank() -> (112 * scaleFactor).roundToInt()
-                                    else -> (it.intrinsicHeight * scaleFactor).roundToInt()
+                                    else                                              -> (it.intrinsicHeight * scaleFactor).roundToInt()
                                 }
                                 val width = (height * ratio).roundToInt()
                                 it.setBounds(0, 0, width, height)
