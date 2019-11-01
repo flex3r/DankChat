@@ -1,45 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+	xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
+	<data>
 
-        <variable
-            name="vm"
-            type="com.flxrs.dankchat.DankChatViewModel" />
-    </data>
+		<variable
+			name="vm"
+			type="com.flxrs.dankchat.DankChatViewModel" />
+	</data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/chat_layout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:animateLayoutChanges="true">
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:id="@+id/chat_layout"
+		android:layout_width="0dp"
+		android:layout_height="0dp"
+		android:animateLayoutChanges="true">
 
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/scrollBottom"
-            style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton.Icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:text="@string/resume_scroll"
-            android:textColor="@android:color/white"
-            android:textSize="13sp"
-            android:visibility="gone"
-            app:backgroundTint="@color/colorPrimary"
-            app:icon="@drawable/ic_keyboard_arrow_down_24dp"
-            app:iconSize="16dp"
-            app:iconTint="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+		<com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+			android:id="@+id/scrollBottom"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_margin="4dp"
+			android:text="@string/resume_scroll"
+			android:textColor="?colorOnPrimary"
+			android:visibility="gone"
+			app:icon="@drawable/ic_keyboard_arrow_down_24dp"
+			app:iconTint="?colorOnPrimary"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/chat"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+		<androidx.recyclerview.widget.RecyclerView
+			android:id="@+id/chat"
+			android:layout_width="0dp"
+			android:layout_height="0dp"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+	</androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

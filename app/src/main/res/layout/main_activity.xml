@@ -33,10 +33,9 @@
 				android:layout_gravity="top|end"
 				android:layout_margin="8dp"
 				android:visibility="gone"
-				app:backgroundTint="@color/colorPrimary"
 				app:fabSize="mini"
 				app:srcCompat="@drawable/ic_keyboard_arrow_down_24dp"
-				app:tint="@android:color/white" />
+				app:tint="?colorOnPrimary" />
 
 			<androidx.constraintlayout.widget.ConstraintLayout
 				android:id="@+id/constraint_layout"
@@ -56,20 +55,17 @@
 
 					<com.google.android.material.appbar.MaterialToolbar
 						android:id="@+id/toolbar"
-						style="@style/AppTheme.AppBar"
+						style="?toolbarStyle"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content" />
 
 					<com.google.android.material.tabs.TabLayout
 						android:id="@+id/tabs"
-						style="@style/Widget.MaterialComponents.TabLayout"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
+						style="@style/Widget.MaterialComponents.TabLayout.PrimarySurface"
+						android:layout_width="match_parent"
+						android:layout_height="?actionBarSize"
 						android:layout_gravity="center_horizontal"
-						app:tabBackground="@color/colorPrimary"
-						app:tabGravity="fill"
-						app:tabMode="scrollable"
-						app:tabTextColor="@android:color/white" />
+						app:tabMode="auto" />
 				</com.google.android.material.appbar.AppBarLayout>
 
 
@@ -78,22 +74,10 @@
 					android:layout_width="0dp"
 					android:layout_height="0dp"
 					android:visibility="@{vm.shouldShowViewPager ? View.VISIBLE : View.GONE}"
-					app:layout_constraintBottom_toTopOf="@id/divider"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@id/appbar_layout" />
-
-				<View
-					android:id="@+id/divider"
-					android:layout_width="0dp"
-					android:layout_height="2dp"
-					android:background="@color/colorPrimary"
-					android:paddingBottom="1dp"
-					android:visibility="@{vm.shouldShowInput ? View.VISIBLE : View.GONE}"
 					app:layout_constraintBottom_toBottomOf="parent"
 					app:layout_constraintEnd_toEndOf="parent"
 					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@id/viewPager" />
+					app:layout_constraintTop_toBottomOf="@id/appbar_layout" />
 
 				<TextView
 					android:id="@+id/add_channels_text"
@@ -112,19 +96,18 @@
 				android:id="@+id/bottom_sheet"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:background="@color/colorPrimary"
+				android:background="?attr/colorBackgroundFloating"
 				app:behavior_hideable="true"
 				app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
 				<com.google.android.material.tabs.TabLayout
 					android:id="@+id/bottom_sheet_tabs"
+					style="@style/Widget.MaterialComponents.TabLayout.PrimarySurface"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:background="@color/colorPrimary"
 					app:layout_constraintEnd_toEndOf="parent"
 					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toTopOf="parent"
-					app:tabBackground="@color/colorPrimary" />
+					app:layout_constraintTop_toTopOf="parent" />
 
 				<androidx.viewpager2.widget.ViewPager2
 					android:id="@+id/bottom_sheet_viewPager"

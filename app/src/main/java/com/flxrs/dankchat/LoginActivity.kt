@@ -8,8 +8,10 @@ import android.os.Bundle
 import android.webkit.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
+import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.databinding.LoginActivityBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.api.TwitchApi
@@ -21,6 +23,10 @@ class LoginActivity : AppCompatActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val darkThemeKey = getString(R.string.preference_dark_theme_key)
+        PreferenceManager.getDefaultSharedPreferences(this).apply {
+            delegate.localNightMode = if (getBoolean(darkThemeKey, true)) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+        }
         DataBindingUtil.setContentView<LoginActivityBinding>(this, R.layout.login_activity).apply {
             setSupportActionBar(loginToolbar)
             supportActionBar?.apply {

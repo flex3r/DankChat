@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<attr name="alphaEmphasisHigh" format="float" />
+	<attr name="alphaEmphasisMedium" format="float" />
+	<attr name="alphaEmphasisDisabled" format="float" />
+
+	<!--Common attributes-->
+	<attr name="colorFillColor" format="color" />
+	<attr name="colorStrokeColor" format="color" />
+</resources>

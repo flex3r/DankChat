@@ -5,7 +5,7 @@ import android.app.Activity
 import android.content.*
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.MediaStore
@@ -16,6 +16,7 @@ import android.webkit.MimeTypeMap
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -142,7 +143,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             emoteSuggestions.observe(this@MainActivity, ::setupSuggestionAdapter)
             emoteItems.observe(this@MainActivity, emoteMenuAdapter::submitList)
             appbarEnabled.observe(this@MainActivity) { changeActionBarVisibility(it) }
-
+            canType.observe(this@MainActivity) { if (it) binding.inputLayout.setup() }
             connectionState.observe(this@MainActivity) { hint ->
                 binding.inputLayout.hint = when (hint) {
                     ConnectionState.CONNECTED     -> getString(R.string.hint_connected)
@@ -162,8 +163,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 }
             }
         }
-
-
 
         if (savedInstanceState == null && !isLoggingIn && twitchService?.startedConnection != true) {
             val oauth = twitchPreferences.getOAuthKey() ?: ""
@@ -554,9 +553,19 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     private fun changeActionBarVisibility(enabled: Boolean) {
         hideKeyboard(binding.input)
         binding.input.clearFocus()
+        val isDarkMode = preferences.getBoolean(getString(R.string.preference_dark_theme_key), true)
+        var lightModeFlags = 0
+        if (!isDarkMode) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                lightModeFlags = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                lightModeFlags = lightModeFlags or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+            }
+        }
 
         if (enabled) {
-            window.decorView.systemUiVisibility = (View.VISIBLE)
+            window.decorView.systemUiVisibility = View.VISIBLE or lightModeFlags
             supportActionBar?.show()
             binding.showActionbarFab.visibility = View.GONE
             binding.tabs.visibility = View.VISIBLE
@@ -565,7 +574,8 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                     or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_FULLSCREEN)
+                    or View.SYSTEM_UI_FLAG_FULLSCREEN
+                    or lightModeFlags)
             supportActionBar?.hide()
             binding.tabs.visibility = View.GONE
             binding.showActionbarFab.visibility = View.VISIBLE
@@ -616,6 +626,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         val roomStateKey = getString(R.string.preference_roomstate_key)
         val streamInfoKey = getString(R.string.preference_streaminfo_key)
         val inputKey = getString(R.string.preference_show_input_key)
+        val darkThemeKey = getString(R.string.preference_dark_theme_key)
         twitchPreferences = DankChatPreferenceStore(this)
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
             when (key) {
@@ -625,6 +636,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                     viewModel.setStreamInfoEnabled(p.getBoolean(key, true))
                 }
                 inputKey      -> viewModel.inputEnabled.value = p.getBoolean(key, true)
+                darkThemeKey  -> delegate.localNightMode = if (p.getBoolean(key, true)) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
             }
         }
         preferences = PreferenceManager.getDefaultSharedPreferences(this).apply {
@@ -633,6 +645,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 setRoomStateEnabled(getBoolean(roomStateKey, true))
                 setStreamInfoEnabled(getBoolean(streamInfoKey, true))
                 inputEnabled.value = getBoolean(inputKey, true)
+                delegate.localNightMode = if (getBoolean(darkThemeKey, true)) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
             }
         }
     }
@@ -644,8 +657,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     private fun showSnackbar(message: String) {
         binding.inputLayout.post {
             Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).apply {
-                view.setBackgroundResource(R.color.colorPrimary)
-                setTextColor(Color.WHITE)
                 if (binding.inputLayout.isVisible) {
                     anchorView = binding.inputLayout
                 }
@@ -796,7 +807,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     }
 
     private fun CustomMultiAutoCompleteTextView.setup() {
-        setDropDownBackgroundResource(R.color.colorPrimary)
+        //setDropDownBackgroundResource(R.color.colorPrimary)
         setTokenizer(SpaceTokenizer())
         setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
@@ -815,13 +826,24 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
 
         var wasLandScapeNotFullscreen = false
         setOnFocusChangeListener { _, hasFocus ->
+            val isDarkMode = preferences.getBoolean(getString(R.string.preference_dark_theme_key), true)
+            var lightModeFlags = 0
+            if (!isDarkMode) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    lightModeFlags = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                    lightModeFlags = lightModeFlags or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+                }
+            }
+
             window.decorView.systemUiVisibility = when {
                 !hasFocus && wasLandScapeNotFullscreen && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE          -> {
                     wasLandScapeNotFullscreen = false
                     supportActionBar?.show()
                     binding.showActionbarFab.visibility = View.GONE
                     binding.tabs.visibility = View.VISIBLE
-                    View.VISIBLE
+                    View.VISIBLE or lightModeFlags
                 }
                 !hasFocus && binding.showActionbarFab.isVisible                                                                               -> {
                     wasLandScapeNotFullscreen = false
@@ -829,18 +851,19 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                             or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                             or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                             or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            or View.SYSTEM_UI_FLAG_FULLSCREEN)
+                            or View.SYSTEM_UI_FLAG_FULLSCREEN
+                            or lightModeFlags)
                 }
                 hasFocus && !binding.showActionbarFab.isVisible && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE -> {
                     wasLandScapeNotFullscreen = true
                     supportActionBar?.hide()
                     binding.showActionbarFab.visibility = View.VISIBLE
                     binding.tabs.visibility = View.GONE
-                    View.VISIBLE
+                    View.VISIBLE or lightModeFlags
                 }
                 else                                                                                                                          -> {
                     wasLandScapeNotFullscreen = false
-                    (View.VISIBLE)
+                    View.VISIBLE or lightModeFlags
                 }
             }
             window.decorView.requestApplyInsets()

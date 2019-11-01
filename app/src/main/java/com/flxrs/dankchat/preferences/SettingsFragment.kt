@@ -3,8 +3,10 @@ package com.flxrs.dankchat.preferences
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
 import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.MainActivity
 import com.flxrs.dankchat.R
@@ -31,5 +33,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 true
             }
         }
+        findPreference<SwitchPreference>(getString(R.string.preference_dark_theme_key))?.apply {
+            setDarkMode(isChecked)
+            setOnPreferenceClickListener {
+                setDarkMode(isChecked)
+                true
+            }
+        }
+    }
+
+    private fun setDarkMode(darkMode: Boolean) {
+        (requireActivity() as SettingsActivity).delegate.localNightMode = if (darkMode) {
+            AppCompatDelegate.MODE_NIGHT_YES
+        } else AppCompatDelegate.MODE_NIGHT_NO
     }
 }

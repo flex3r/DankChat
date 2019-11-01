@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+		<com.google.android.material.appbar.AppBarLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
 
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/login_toolbar"
-                style="@style/AppTheme.AppBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.appbar.AppBarLayout>
+			<com.google.android.material.appbar.MaterialToolbar
+				android:id="@+id/login_toolbar"
+				style="?toolbarStyle"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" />
+		</com.google.android.material.appbar.AppBarLayout>
 
-        <WebView
-            android:id="@+id/webview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+		<WebView
+			android:id="@+id/webview"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent" />
+	</LinearLayout>
 </layout>

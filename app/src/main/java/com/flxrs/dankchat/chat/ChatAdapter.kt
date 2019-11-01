@@ -81,6 +81,9 @@ class ChatAdapter(
             text = ""
             movementMethod = LinkMovementMethod.getInstance()
             EmoteManager.gifCallback.addView(this)
+            val darkModePreferenceKey = this@with.context.getString(R.string.preference_dark_theme_key)
+            val preferences = PreferenceManager.getDefaultSharedPreferences(this@with.context)
+            val isDarkMode = preferences.getBoolean(darkModePreferenceKey, true)
 
             getItem(position).message.apply {
                 var ignoreClicks = false
@@ -107,14 +110,14 @@ class ChatAdapter(
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     val foregroundColor = if (timedOut) ContextCompat.getColor(
                         this@with.context,
-                        R.color.colorTimeOut
+                        if (isDarkMode) R.color.color_timed_out_dark else R.color.color_timed_out_light
                     ) else Color.TRANSPARENT
                     foreground = ColorDrawable(foregroundColor)
                 }
 
                 val background = when {
                     isNotify                   -> R.color.sub_background
-                    isMention(currentUserName) -> R.color.highlight_background
+                    isMention(currentUserName) -> if (isDarkMode) R.color.color_highlight_dark else R.color.color_highlight_light
                     else                       -> android.R.color.transparent
                 }
                 this@with.setBackgroundResource(background)
@@ -122,9 +125,7 @@ class ChatAdapter(
                 val name = if (displayName.equals(name, true)) displayName else "$name($displayName)"
                 val displayName = if (isAction) "$name " else if (name.isBlank()) "" else "$name: "
                 var badgesLength = 0
-                val timestampPreferenceKey =
-                    this@with.context.getString(R.string.preference_timestamp_key)
-                val preferences = PreferenceManager.getDefaultSharedPreferences(this@with.context)
+                val timestampPreferenceKey = this@with.context.getString(R.string.preference_timestamp_key)
                 val (prefixLength, spannable) = if (preferences.getBoolean(
                         timestampPreferenceKey,
                         true
@@ -161,7 +162,7 @@ class ChatAdapter(
                         })
                 }
 
-                val normalizedColor = color.normalizeColor()
+                val normalizedColor = color.normalizeColor(isDarkMode)
                 spannable.bold { color(normalizedColor) { append(displayName) } }
 
                 if (isAction) {
@@ -198,12 +199,6 @@ class ChatAdapter(
                                 if (!ignoreClicks)
                                     androidx.browser.customtabs.CustomTabsIntent.Builder()
                                         .addDefaultShareMenuItem()
-                                        .setToolbarColor(
-                                            ContextCompat.getColor(
-                                                v.context,
-                                                R.color.colorPrimary
-                                            )
-                                        )
                                         .setShowTitle(true)
                                         .build().launchUrl(v.context, Uri.parse(url.fullUrl))
                             } catch (e: ActivityNotFoundException) {
@@ -290,7 +285,7 @@ class ChatAdapter(
 
     private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
         override fun areItemsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
-            return oldItem == newItem
+            return !newItem.message.timedOut && oldItem == newItem
         }
 
         override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {

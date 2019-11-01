@@ -10,6 +10,6 @@
         android:paddingEnd="8dp"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
-        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         android:textColorHighlight="@color/colorThatIsActuallyTransparent" />
 </layout>

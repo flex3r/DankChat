@@ -1,7 +1,6 @@
 package com.flxrs.dankchat.chat
 
 import android.content.SharedPreferences
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -94,10 +93,7 @@ class ChatFragment : Fragment() {
         ) as android.content.ClipboardManager).apply {
             setPrimaryClip(android.content.ClipData.newPlainText("twitch message", message))
         }
-        Snackbar.make(binding.root, R.string.snackbar_message_copied, Snackbar.LENGTH_SHORT).apply {
-            view.setBackgroundResource(R.color.colorPrimary)
-            setTextColor(Color.WHITE)
-        }.show()
+        Snackbar.make(binding.root, R.string.snackbar_message_copied, Snackbar.LENGTH_SHORT).show()
     }
 
     private fun scrollToPosition(position: Int) {
