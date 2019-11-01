@@ -150,10 +150,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                     ConnectionState.DISCONNECTED  -> getString(R.string.hint_disconnected)
                 }
             }
-
-            bottomTextEnabled.observe(this@MainActivity) {
-                binding.inputLayout.isHelperTextEnabled = it
-            }
             bottomText.observe(this@MainActivity) {
                 binding.inputLayout.apply {
                     val helperId = com.google.android.material.R.id.textinput_helper_text

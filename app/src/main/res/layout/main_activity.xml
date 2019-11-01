@@ -149,6 +149,7 @@
 			app:endIconContentDescription="@string/send_hint"
 			app:endIconDrawable="@{vm.canType ? @drawable/ic_send_24dp : null}"
 			app:endIconMode="custom"
+			app:helperTextEnabled="@{vm.bottomTextEnabled}"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
