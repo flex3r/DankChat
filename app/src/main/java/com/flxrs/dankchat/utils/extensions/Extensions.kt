@@ -11,17 +11,24 @@ import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.chat.menu.EmoteItem
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 
-fun List<ChatItem>.replaceWithTimeOuts(name: String): MutableList<ChatItem> =
-    toMutableList().apply {
-        forEachIndexed { i, item ->
-            if (!item.message.isNotify
-                && (name.isBlank() || item.message.name.equals(name, true))
-            ) {
-                item.message.timedOut = true
-                this[i] = item
-            }
+fun List<ChatItem>.replaceWithTimeOuts(name: String): List<ChatItem> = apply {
+    forEach { item ->
+        if (!item.message.isNotify
+            && (name.isBlank() || item.message.name.equals(name, true))
+        ) {
+            item.message.timedOut = true
         }
     }
+}
+
+fun List<ChatItem>.replaceWithTimeOut(id: String): List<ChatItem> = toMutableList().apply {
+    forEach {
+        if (it.message.id == id) {
+            it.message.timedOut = true
+            return@apply
+        }
+    }
+}
 
 fun List<ChatItem>.addAndLimit(item: ChatItem): MutableList<ChatItem> = toMutableList().apply {
     add(item)

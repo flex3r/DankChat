@@ -57,7 +57,6 @@ data class TwitchMessage(
                     "NOTICE"     -> listOf(parseNotice(message))
                     "USERNOTICE" -> parseUserNotice(message)
                     "CLEARCHAT"  -> listOf(parseClearChat(message))
-                    "CLEARMSG"   -> listOf() //TODO
                     "WHISPER"    -> listOf(parseWhisper(message))
                     //"HOSTTARGET" -> listOf(parseHostTarget(message))
                     else         -> listOf()
@@ -69,7 +68,7 @@ data class TwitchMessage(
             isNotify: Boolean = false
         ): TwitchMessage = with(ircMessage) {
             val displayName = tags.getValue("display-name")
-            val name = prefix.substringBefore('!')
+            val name = if (ircMessage.command == "USERNOTICE") tags.getValue("login") else prefix.substringBefore('!')
             val colorTag = tags["color"]?.ifBlank { "#717171" } ?: "#717171"
             val color = Color.parseColor(colorTag)
 
@@ -119,7 +118,8 @@ data class TwitchMessage(
                 isAction,
                 isNotify || tags["msg-id"] == "highlighted-message",
                 badges,
-                id
+                id,
+                tags["rm-deleted"] == "1"
             )
         }
 

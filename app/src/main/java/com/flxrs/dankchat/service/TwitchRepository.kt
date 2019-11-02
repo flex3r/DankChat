@@ -12,6 +12,7 @@ import com.flxrs.dankchat.service.twitch.message.Roomstate
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import com.flxrs.dankchat.utils.SingleLiveEvent
 import com.flxrs.dankchat.utils.extensions.addAndLimit
+import com.flxrs.dankchat.utils.extensions.replaceWithTimeOut
 import com.flxrs.dankchat.utils.extensions.replaceWithTimeOuts
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -139,6 +140,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         when (msg.command) {
             "CLEARCHAT" -> handleClearchat(msg)
             "ROOMSTATE" -> handleRoomstate(msg)
+            "CLEARMSG"  -> handleClearmsg(msg)
             else        -> return handleMessage(msg)
         }
         return null
@@ -169,8 +171,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         val target = if (msg.params.size > 1) msg.params[1] else ""
         val channel = msg.params[0].substring(1)
 
-        messages[channel]?.value?.replaceWithTimeOuts(target)?.run {
-            messages[channel]?.postValue(addAndLimit(parsed[0]))
+        messages[channel]?.value?.replaceWithTimeOuts(target)?.also {
+            messages[channel]?.postValue(it.addAndLimit(parsed[0]))
         }
     }
 
@@ -181,6 +183,15 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
         roomStates.getOrPut(channel, { MutableLiveData() }).postValue(state)
 
+    }
+
+    private fun handleClearmsg(msg: IrcMessage) {
+        val channel = msg.params[0].substring(1)
+        val targetId = msg.tags["target-msg-id"] ?: return
+
+        messages[channel]?.value?.replaceWithTimeOut(targetId)?.also {
+            messages[channel]?.postValue(it)
+        }
     }
 
     private fun handleMessage(msg: IrcMessage): List<ChatItem> {
