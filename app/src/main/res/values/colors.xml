@@ -32,8 +32,6 @@
 	<color name="color_highlight_light">#B07AF2</color>
 	<color name="color_mention_dark">#4B282C</color>
 	<color name="color_mention_light">#B18E92</color>
-	<color name="color_timed_out_light">#BBFFFFFF</color>
-	<color name="color_timed_out_dark">#78000000</color>
 	<color name="colorThatIsActuallyTransparent">#00FFFFFF</color>
 	<!--<color name="colorAccent">#FFEB3B</color>-->
 </resources>

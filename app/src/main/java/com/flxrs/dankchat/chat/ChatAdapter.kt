@@ -2,10 +2,7 @@ package com.flxrs.dankchat.chat
 
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import android.os.Build
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.TextPaint
@@ -17,7 +14,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.core.text.color
 import androidx.preference.PreferenceManager
@@ -114,12 +110,8 @@ class ChatAdapter(
                 }
                 this@with.setBackgroundResource(background)
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    val foregroundColor = if (timedOut) ContextCompat.getColor(
-                        this@with.context,
-                        if (isDarkMode) R.color.color_timed_out_dark else R.color.color_timed_out_light
-                    ) else Color.TRANSPARENT
-                    foreground = ColorDrawable(foregroundColor)
+                if (timedOut) {
+                    alpha = 0.5f
                 }
 
                 val name = if (displayName.equals(name, true)) displayName else "$name($displayName)"
