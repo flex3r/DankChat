@@ -17,7 +17,6 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -50,6 +49,7 @@ import com.flxrs.dankchat.utils.dialog.AdvancedLoginDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.EditTextDialogFragment
 import com.flxrs.dankchat.utils.extensions.hideKeyboard
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     private lateinit var tabLayoutMediator: TabLayoutMediator
     private lateinit var emoteMenuAdapter: EmoteMenuAdapter
     private lateinit var broadcastReceiver: BroadcastReceiver
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<MaterialCardView>
     private var currentImagePath = ""
     private var showProgressBar = false
 

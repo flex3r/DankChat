@@ -107,6 +107,13 @@ class ChatAdapter(
                 val scaleFactor = lineHeight * 1.5 / 112
                 val currentUserName = DankChatPreferenceStore(this@with.context).getUserName() ?: ""
 
+                val background = when {
+                    isNotify                   -> if (isDarkMode) R.color.color_highlight_dark else R.color.color_highlight_light
+                    isMention(currentUserName) -> if (isDarkMode) R.color.color_mention_dark else R.color.color_mention_light
+                    else                       -> android.R.color.transparent
+                }
+                this@with.setBackgroundResource(background)
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     val foregroundColor = if (timedOut) ContextCompat.getColor(
                         this@with.context,
@@ -114,13 +121,6 @@ class ChatAdapter(
                     ) else Color.TRANSPARENT
                     foreground = ColorDrawable(foregroundColor)
                 }
-
-                val background = when {
-                    isNotify                   -> R.color.sub_background
-                    isMention(currentUserName) -> if (isDarkMode) R.color.color_highlight_dark else R.color.color_highlight_light
-                    else                       -> android.R.color.transparent
-                }
-                this@with.setBackgroundResource(background)
 
                 val name = if (displayName.equals(name, true)) displayName else "$name($displayName)"
                 val displayName = if (isAction) "$name " else if (name.isBlank()) "" else "$name: "

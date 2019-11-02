@@ -7,9 +7,9 @@
 		android:layout_height="wrap_content"
 		android:gravity="start"
 		android:paddingStart="8dp"
-		android:paddingTop="4dp"
+		android:paddingTop="1dp"
 		android:paddingEnd="8dp"
-		android:paddingBottom="4dp"
+		android:paddingBottom="1dp"
 		android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
 		android:textColorHighlight="@color/colorThatIsActuallyTransparent" />
 </layout>
