@@ -75,19 +75,24 @@ class ChatAdapter(
         with(holder.binding.itemText) {
             isClickable = false
             text = ""
+            alpha = 1.0f
             movementMethod = LinkMovementMethod.getInstance()
             val darkModePreferenceKey = context.getString(R.string.preference_dark_theme_key)
             val timedOutPreferenceKey = context.getString(R.string.preference_show_timed_out_messages_key)
+            val timestampPreferenceKey = this@with.context.getString(R.string.preference_timestamp_key)
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
             val isDarkMode = preferences.getBoolean(darkModePreferenceKey, true)
             val showTimedOutMessages = preferences.getBoolean(timedOutPreferenceKey, true)
+            val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
 
             getItem(position).message.apply {
                 if (timedOut) {
                     alpha = 0.5f
 
                     if (!showTimedOutMessages) {
-                        text = context.getString(R.string.timed_out_message)
+                        text = if (showTimeStamp) {
+                            "$time ${context.getString(R.string.timed_out_message)}"
+                        } else context.getString(R.string.timed_out_message)
                         return@with
                     }
                 }
@@ -123,12 +128,7 @@ class ChatAdapter(
                 val name = if (displayName.equals(name, true)) displayName else "$name($displayName)"
                 val displayName = if (isAction) "$name " else if (name.isBlank()) "" else "$name: "
                 var badgesLength = 0
-                val timestampPreferenceKey = this@with.context.getString(R.string.preference_timestamp_key)
-                val (prefixLength, spannable) = if (preferences.getBoolean(
-                        timestampPreferenceKey,
-                        true
-                    )
-                ) {
+                val (prefixLength, spannable) = if (showTimeStamp) {
                     time.length + 1 + displayName.length to SpannableStringBuilder().bold { append("$time ") }
                 } else {
                     displayName.length to SpannableStringBuilder()
