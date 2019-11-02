@@ -40,7 +40,7 @@ class TwitchService : Service(), KoinComponent {
 
     private val binder = LocalBinder()
     private val repository: TwitchRepository = get()
-    private val readConnection: WebSocketConnection = get { parametersOf(client, request, ::onDisconnect, ::onMessage) }
+    private val readConnection: WebSocketConnection = get { parametersOf(client, request, ::onDisconnect, ::onReaderMessage) }
     private val writeConnection: WebSocketConnection = get { parametersOf(client, request, null, ::onWriterMessage) }
     private lateinit var manager: NotificationManager
     private lateinit var sharedPreferences: SharedPreferences
@@ -187,6 +187,12 @@ class TwitchService : Service(), KoinComponent {
             "PRIVMSG" -> Unit
             "366"     -> onConnect(message.params[1].substring(1), writeConnection.isAnonymous)
             else      -> onMessage(message)
+        }
+    }
+
+    private fun onReaderMessage(message: IrcMessage) {
+        if (message.command == "PRIVMSG") {
+            onMessage(message)
         }
     }
 
