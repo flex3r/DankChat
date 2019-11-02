@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.chat.menu
 
+import android.content.res.Configuration
 import android.graphics.Rect
 import android.view.LayoutInflater
 import android.view.View
@@ -27,11 +28,13 @@ class EmoteMenuAdapter(private val onEmoteClick: (emote: String) -> Unit) :
                 parent,
                 false
             ).apply {
-                emoteList.layoutManager = GridLayoutManager(parent.context, 6).apply {
+                val isLandscape = parent.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+                val spanCount = if (isLandscape) 12 else 6
+                emoteList.layoutManager = GridLayoutManager(parent.context, spanCount).apply {
                     spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                         override fun getSpanSize(position: Int): Int {
                             return when (adapter.getItemViewType(position)) {
-                                EmoteAdapter.ITEM_VIEW_TYPE_HEADER -> 6
+                                EmoteAdapter.ITEM_VIEW_TYPE_HEADER -> spanCount
                                 else                               -> 1
                             }
                         }
