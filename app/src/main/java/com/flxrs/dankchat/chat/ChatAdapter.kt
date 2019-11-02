@@ -76,12 +76,22 @@ class ChatAdapter(
             isClickable = false
             text = ""
             movementMethod = LinkMovementMethod.getInstance()
-            EmoteManager.gifCallback.addView(this)
-            val darkModePreferenceKey = this@with.context.getString(R.string.preference_dark_theme_key)
-            val preferences = PreferenceManager.getDefaultSharedPreferences(this@with.context)
+            val darkModePreferenceKey = context.getString(R.string.preference_dark_theme_key)
+            val timedOutPreferenceKey = context.getString(R.string.preference_show_timed_out_messages_key)
+            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
             val isDarkMode = preferences.getBoolean(darkModePreferenceKey, true)
+            val showTimedOutMessages = preferences.getBoolean(timedOutPreferenceKey, true)
 
             getItem(position).message.apply {
+                if (timedOut) {
+                    alpha = 0.5f
+
+                    if (!showTimedOutMessages) {
+                        text = context.getString(R.string.timed_out_message)
+                        return@with
+                    }
+                }
+
                 var ignoreClicks = false
                 if (!this.isSystem) this@with.setOnLongClickListener {
                     ignoreClicks = true
@@ -109,10 +119,6 @@ class ChatAdapter(
                     else                       -> android.R.color.transparent
                 }
                 this@with.setBackgroundResource(background)
-
-                if (timedOut) {
-                    alpha = 0.5f
-                }
 
                 val name = if (displayName.equals(name, true)) displayName else "$name($displayName)"
                 val displayName = if (isAction) "$name " else if (name.isBlank()) "" else "$name: "
@@ -203,6 +209,10 @@ class ChatAdapter(
                     val end = start + url.originalUrl.length
                     spannable.setSpan(clickableSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                     text = spannable
+                }
+
+                if (emotes.filter { it.isGif }.count() > 0) {
+                    EmoteManager.gifCallback.addView(this@with)
                 }
 
                 emotes.forEach { e ->

@@ -66,6 +66,7 @@
 	<string name="emote_menu_tab_global">Global</string>
 	<string name="system_message_connected">Connected</string>
 	<string name="system_message_disconnected">Disconnected</string>
+	<string name="timed_out_message">&lt; Message deleted ></string>
 
 	<string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
 	<string name="preference_timestamp_title">Show timestamps</string>
@@ -92,8 +93,11 @@
 	<string name="preference_show_input_key" translatable="false">show_input_key</string>
 	<string name="preference_show_input_title">Show input</string>
 	<string name="preference_show_input_summary">Displays the input field to send messages</string>
-	<string name="preference_dark_theme_key">enable_dark_mode</string>
+	<string name="preference_dark_theme_key" translatable="false">enable_dark_mode</string>
 	<string name="preference_dark_theme_title">Enable dark theme</string>
+	<string name="preference_show_timed_out_messages_key" translatable="false">show_timed_out_messages_key</string>
+	<string name="preference_show_timed_out_messages_summary">Displays messages which are timed out</string>
+	<string name="preference_show_timed_out_messages_title">Show timed out messages</string>
 
 	<plurals name="viewers">
 		<item quantity="one">Live with %d viewer</item>

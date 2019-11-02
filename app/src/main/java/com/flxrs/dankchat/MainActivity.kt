@@ -763,8 +763,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             binding.apply {
                 bottomSheetViewPager.adapter = emoteMenuAdapter
                 bottomSheetViewPager.updateLayoutParams {
-                    height =
-                        (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
+                    height = (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
                 }
                 TabLayoutMediator(
                     bottomSheetTabs,

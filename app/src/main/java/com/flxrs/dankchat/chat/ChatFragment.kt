@@ -69,7 +69,8 @@ class ChatFragment : Fragment() {
 
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             when (key) {
-                getString(R.string.preference_timestamp_key) -> {
+                getString(R.string.preference_timestamp_key),
+                getString(R.string.preference_show_timed_out_messages_key) -> {
                     binding.chat.swapAdapter(adapter, false)
                 }
             }
