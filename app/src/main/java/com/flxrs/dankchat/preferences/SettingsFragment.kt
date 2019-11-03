@@ -56,7 +56,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 val entryStringSet = sharedPreferences.getStringSet(key, emptySet()) ?: emptySet()
                 val entries = entryStringSet.mapNotNull { adapter.fromJson(it) }.sortedBy { it.entry }.plus(MultiEntryItem.AddEntry)
 
-                val entryAdapter = MultiEntryAdapter().apply { submitList(entries) }
+                val entryAdapter = MultiEntryAdapter(entries.toMutableList())
                 val binding = MultiEntryBottomsheetBinding.inflate(LayoutInflater.from(requireContext())).apply {
                     multiEntryList.layoutManager = LinearLayoutManager(requireContext())
                     multiEntryList.adapter = entryAdapter
@@ -67,7 +67,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 BottomSheetDialog(requireContext()).apply {
                     setContentView(binding.root)
                     setOnDismissListener {
-                        val stringSet = entryAdapter.currentList
+                        val stringSet = entryAdapter.entries
                             .filterIsInstance<MultiEntryItem.Entry>()
                             .filter { it.entry.isNotBlank() }
                             .map { adapter.toJson(it) }

@@ -8,10 +8,32 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.databinding.MultiEntryAddItemBinding
 import com.flxrs.dankchat.databinding.MultiEntryItemBinding
 
-class MultiEntryAdapter : ListAdapter<MultiEntryItem, RecyclerView.ViewHolder>(DetectDiff()) {
+class MultiEntryAdapter(val entries: MutableList<MultiEntryItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    inner class EntryViewHolder(val binding: MultiEntryItemBinding) : RecyclerView.ViewHolder(binding.root)
-    inner class AddViewHolder(val binding: MultiEntryAddItemBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class EntryViewHolder(val binding: MultiEntryItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.multiEntryDelete.setOnClickListener {
+                entries.removeAt(adapterPosition)
+                notifyItemRemoved(adapterPosition)
+            }
+        }
+    }
+
+    inner class AddViewHolder(val binding: MultiEntryAddItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.multiEntryAdd.setOnClickListener {
+                val entry = MultiEntryItem.Entry("", false)
+                entries.add(entries.size - 1, entry)
+                notifyItemInserted(entries.size - 1)
+            }
+        }
+    }
+
+    override fun getItemCount(): Int {
+        return entries.size
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -22,50 +44,30 @@ class MultiEntryAdapter : ListAdapter<MultiEntryItem, RecyclerView.ViewHolder>(D
                     false
                 )
             )
-            ITEM_VIEW_TYPE_ADD   -> AddViewHolder(
+            ITEM_VIEW_TYPE_ADD -> AddViewHolder(
                 MultiEntryAddItemBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
                 )
             )
-            else                 -> throw ClassCastException("Unknown viewType $viewType")
+            else -> throw ClassCastException("Unknown viewType $viewType")
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is EntryViewHolder -> {
-                val entry = getItem(position) as MultiEntryItem.Entry
+                val entry = entries[position] as MultiEntryItem.Entry
                 holder.binding.entry = entry
-                holder.binding.multiEntryDelete.setOnClickListener {
-                    submitList(currentList.minus(entry))
-                }
-            }
-            is AddViewHolder   -> {
-                holder.binding.multiEntryAdd.setOnClickListener {
-                    val entry = MultiEntryItem.Entry("", false)
-                    submitList(currentList.dropLast(1).plus(entry).plus(currentList.last()))
-                }
             }
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (getItem(position)) {
-            is MultiEntryItem.Entry    -> ITEM_VIEW_TYPE_ENTRY
+        return when (entries[position]) {
+            is MultiEntryItem.Entry -> ITEM_VIEW_TYPE_ENTRY
             is MultiEntryItem.AddEntry -> ITEM_VIEW_TYPE_ADD
-        }
-    }
-
-    private class DetectDiff : DiffUtil.ItemCallback<MultiEntryItem>() {
-
-        override fun areItemsTheSame(oldItem: MultiEntryItem, newItem: MultiEntryItem): Boolean {
-            return oldItem == newItem
-        }
-
-        override fun areContentsTheSame(oldItem: MultiEntryItem, newItem: MultiEntryItem): Boolean {
-            return oldItem == newItem
         }
     }
 

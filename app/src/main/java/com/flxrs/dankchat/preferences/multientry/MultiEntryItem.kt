@@ -8,6 +8,11 @@ sealed class MultiEntryItem {
 
     override fun equals(other: Any?): Boolean {
         if (javaClass != other?.javaClass) return false
+        if (this is Entry && other is Entry) {
+            if (this.entry.isBlank() && other.entry.isBlank()) {
+                return false
+            }
+        }
         return this === other
     }
 
