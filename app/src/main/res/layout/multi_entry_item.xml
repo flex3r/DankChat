@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
+
+	<data>
+
+		<variable
+			name="entry"
+			type="com.flxrs.dankchat.preferences.multientry.MultiEntryItem.Entry" />
+	</data>
+
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:padding="4dp">
+
+		<com.google.android.material.textfield.TextInputLayout
+			android:id="@+id/multi_entry_input"
+			style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_margin="4dp"
+			android:hint="@string/multi_entry_hint"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toStartOf="@+id/multi_entry_checkbox"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent">
+
+			<com.google.android.material.textfield.TextInputEditText
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:inputType="text"
+				android:singleLine="true"
+				android:text="@={entry.entry}" />
+		</com.google.android.material.textfield.TextInputLayout>
+
+		<com.google.android.material.checkbox.MaterialCheckBox
+			android:id="@+id/multi_entry_checkbox"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_margin="4dp"
+			android:checked="@={entry.regex}"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toStartOf="@id/multi_entry_delete"
+			app:layout_constraintHorizontal_chainStyle="packed"
+			app:layout_constraintStart_toEndOf="@id/multi_entry_input"
+			app:layout_constraintTop_toTopOf="parent" />
+
+		<ImageView
+			android:id="@+id/multi_entry_delete"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_margin="4dp"
+			android:background="?selectableItemBackgroundBorderless"
+			android:contentDescription="@string/multi_entry_remove_content_description"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintHorizontal_chainStyle="packed"
+			app:layout_constraintStart_toEndOf="@id/multi_entry_checkbox"
+			app:layout_constraintTop_toTopOf="parent"
+			app:srcCompat="@drawable/ic_clear_24dp"
+			app:tint="?colorOnSurface" />
+
+	</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

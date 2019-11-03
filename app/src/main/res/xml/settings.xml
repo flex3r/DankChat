@@ -54,6 +54,11 @@
 			android:key="@string/preference_notification_key"
 			android:summary="@string/preference_notification_summary"
 			android:title="@string/preference_notification_title" />
+
+		<Preference
+			android:key="@string/preference_custom_mentions_key"
+			android:summary="@string/preference_custom_mentions_summary"
+			android:title="@string/preference_custom_mentions_title" />
 	</PreferenceCategory>
 
 	<PreferenceCategory android:title="@string/preference_about_header">

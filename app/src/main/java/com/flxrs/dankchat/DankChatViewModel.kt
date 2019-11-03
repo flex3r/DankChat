@@ -84,13 +84,14 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         oauth: String,
         id: Int,
         load3rdParty: Boolean,
-        loadTwitchData: Boolean
+        loadTwitchData: Boolean,
+        name: String
     ) {
         val token = when {
             oauth.startsWith("oauth:", true) -> oauth.substringAfter(':')
             else                             -> oauth
         }
-        twitchRepository.loadData(channels, token, id, load3rdParty, loadTwitchData)
+        twitchRepository.loadData(channels, token, id, load3rdParty, loadTwitchData, name)
     }
 
     fun setActiveChannel(channel: String) {
@@ -113,6 +114,8 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         twitchRepository.reloadEmotes(channel, oauth, id)
 
     fun uploadImage(file: File) = twitchRepository.uploadImage(file)
+
+    fun setMentionEntries(stringSet: Set<String>?) = twitchRepository.setMentionEntries(stringSet)
 
     fun fetchStreamData(channels: List<String>, stringBuilder: (viewers: Int) -> String) {
         fetchJob?.cancel()

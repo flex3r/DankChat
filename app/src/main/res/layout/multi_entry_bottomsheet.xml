@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools">
+
+	<com.google.android.material.card.MaterialCardView
+		style="?materialCardViewStyle"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<androidx.constraintlayout.widget.ConstraintLayout
+			android:id="@+id/multi_entry_sheet"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
+
+			<TextView
+				android:id="@+id/multi_entry_header_entry"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:padding="8dp"
+				android:text="@string/multi_entry_header_entry"
+				android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+				app:layout_constraintBottom_toTopOf="@id/barrier"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
+
+			<TextView
+				android:id="@+id/multi_entry_header_regex"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="38dp"
+				android:padding="8dp"
+				android:text="@string/multi_entry_header_regex"
+				android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+				app:layout_constraintBottom_toTopOf="@id/barrier"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
+
+			<androidx.constraintlayout.widget.Barrier
+				android:id="@+id/barrier"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				app:barrierDirection="bottom"
+				app:constraint_referenced_ids="multi_entry_header_entry,multi_entry_header_regex" />
+
+			<androidx.recyclerview.widget.RecyclerView
+				android:id="@+id/multi_entry_list"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/barrier"
+				tools:listitem="@layout/multi_entry_item" />
+
+		</androidx.constraintlayout.widget.ConstraintLayout>
+	</com.google.android.material.card.MaterialCardView>
+</layout>

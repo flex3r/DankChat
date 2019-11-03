@@ -3,6 +3,7 @@ package com.flxrs.dankchat.service
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.flxrs.dankchat.chat.ChatItem
+import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.connection.ConnectionState
@@ -14,6 +15,7 @@ import com.flxrs.dankchat.utils.SingleLiveEvent
 import com.flxrs.dankchat.utils.extensions.addAndLimit
 import com.flxrs.dankchat.utils.extensions.replaceWithTimeOut
 import com.flxrs.dankchat.utils.extensions.replaceWithTimeOuts
+import com.squareup.moshi.Moshi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,6 +38,11 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     private var loadedGlobalEmotes = false
     private var loadedTwitchEmotes = false
     private var lastMessage = ""
+
+    private var name: String = ""
+    private var customMentionEntries = listOf<MultiEntryItem.Entry>()
+    private val moshi = Moshi.Builder().build()
+    private val adapter = moshi.adapter(MultiEntryItem.Entry::class.java)
 
     val imageUploadedEvent = SingleLiveEvent<Pair<String?, File>>()
 
@@ -64,8 +71,10 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         oAuth: String,
         id: Int,
         load3rdParty: Boolean,
-        loadTwitchData: Boolean
+        loadTwitchData: Boolean,
+        name: String
     ) {
+        this.name = name
         scope.launch {
             ConcurrentLinkedQueue(channels).forEach { channel ->
                 if (load3rdParty) {
@@ -150,6 +159,12 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         ignoredList.clear()
     }
 
+    fun setMentionEntries(stringSet: Set<String>?) {
+        scope.launch(Dispatchers.Default) {
+            customMentionEntries = stringSet?.mapNotNull { adapter.fromJson(it) }.orEmpty()
+        }
+    }
+
     private suspend fun loadIgnores(oAuth: String, id: Int) = withContext(Dispatchers.Default) {
         val result = TwitchApi.getIgnores(oAuth, id)
         if (result != null) {
@@ -198,7 +213,10 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         msg.tags["user-id"]?.let { userId ->
             if (ignoredList.any { it == userId.toInt() }) return emptyList()
         }
-        val parsed = TwitchMessage.parse(msg).map { ChatItem(it) }
+        val parsed = TwitchMessage.parse(msg).map {
+            it.checkForMention(name, customMentionEntries)
+            ChatItem(it)
+        }
         if (parsed.isNotEmpty()) {
             if (msg.params[0] == "*" || msg.command == "WHISPER") {
                 messages.forEach {
@@ -267,7 +285,10 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
             ?.filter { msg -> !ignoredList.any { msg.tags["user-id"]?.toInt() == it } }
             ?.map { TwitchMessage.parse(it) }
             ?.flatten()
-            ?.map { ChatItem(it) }?.toList()
+            ?.map {
+                it.checkForMention(name, customMentionEntries)
+                ChatItem(it)
+            }?.toList()
             ?.let {
                 val current = messages[channel]?.value ?: emptyList()
                 messages.getOrPut(channel, { MutableLiveData() })

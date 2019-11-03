@@ -67,6 +67,11 @@
 	<string name="system_message_connected">Connected</string>
 	<string name="system_message_disconnected">Disconnected</string>
 	<string name="timed_out_message">&lt; Message deleted ></string>
+	<string name="multi_entry_header_entry">Entry</string>
+	<string name="multi_entry_header_regex">Regex</string>
+	<string name="multi_entry_add_entry">Add an entry</string>
+	<string name="multi_entry_remove_content_description">Remove the entry</string>
+	<string name="multi_entry_hint">Entry</string>
 
 	<string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
 	<string name="preference_timestamp_title">Show timestamps</string>
@@ -98,6 +103,9 @@
 	<string name="preference_show_timed_out_messages_key" translatable="false">show_timed_out_messages_key</string>
 	<string name="preference_show_timed_out_messages_summary">Displays messages which are timed out</string>
 	<string name="preference_show_timed_out_messages_title">Show timed out messages</string>
+	<string name="preference_custom_mentions_key" translatable="false">custom_mentions_key</string>
+	<string name="preference_custom_mentions_title">Custom mentions</string>
+	<string name="preference_custom_mentions_summary">Set custom phrases as mentions</string>
 
 	<plurals name="viewers">
 		<item quantity="one">Live with %d viewer</item>

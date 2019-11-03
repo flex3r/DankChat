@@ -167,7 +167,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         if (savedInstanceState == null && !isLoggingIn && twitchService?.startedConnection != true) {
             val oauth = twitchPreferences.getOAuthKey() ?: ""
             val name = twitchPreferences.getUserName() ?: ""
-            loadData(oAuth = oauth)
+            loadData(oAuth = oauth, name = name)
 
             if (name.isNotBlank() && oauth.isNotBlank()) {
                 showSnackbar(getString(R.string.snackbar_login, name))
@@ -219,7 +219,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 Log.e(TAG, Log.getStackTraceString(t))
             }
             if (!isChangingConfigurations) {
-                twitchService?.shouldMention = true
+                twitchService?.shouldNotifyOnMention = true
             }
         }
     }
@@ -309,6 +309,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         if (!channels.contains(lowerCaseChannel)) {
             val oauth = twitchPreferences.getOAuthKey() ?: ""
             val id = twitchPreferences.getUserId()
+            val name = twitchPreferences.getUserName() ?: ""
 
             twitchService?.joinChannel(lowerCaseChannel)
             viewModel.loadData(
@@ -316,7 +317,8 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 oauth,
                 id,
                 load3rdParty = true,
-                loadTwitchData = false
+                loadTwitchData = false,
+                name = name
             )
             channels.add(lowerCaseChannel)
             twitchPreferences.setChannelsString(channels.joinToString(","))
@@ -348,7 +350,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                     }
                     twitchService?.close {
                         connectAndJoinChannels(it.name, "oauth:$tokenWithoutSuffix")
-                        loadData(tokenWithoutSuffix, it.id)
+                        loadData(it.name, tokenWithoutSuffix, it.id)
                     }
                     showSnackbar(getString(R.string.snackbar_login, it.name))
                 } else showSnackbar(getString(R.string.snackbar_login_failed))
@@ -428,7 +430,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         if (resultCode == Activity.RESULT_OK && !oauth.isNullOrBlank() && !name.isNullOrBlank() && id != 0) {
             twitchService?.close {
                 connectAndJoinChannels(name, oauth)
-                loadData(oauth, id)
+                loadData(name, oauth, id)
             }
 
             twitchPreferences.setLoggedIn(true)
@@ -614,13 +616,14 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     }
 
     private fun loadData(
+        name: String,
         oAuth: String = twitchPreferences.getOAuthKey()?.substringAfter("oauth:") ?: "",
         id: Int = twitchPreferences.getUserId()
     ) {
         if (channels.isEmpty()) {
-            viewModel.loadData(listOf(""), oAuth, id, true, loadTwitchData = true)
+            viewModel.loadData(listOf(""), oAuth, id, true, loadTwitchData = true, name = name)
         } else {
-            viewModel.loadData(channels, oAuth, id, true, loadTwitchData = true)
+            viewModel.loadData(channels, oAuth, id, true, loadTwitchData = true, name = name)
         }
     }
 
@@ -629,16 +632,18 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         val streamInfoKey = getString(R.string.preference_streaminfo_key)
         val inputKey = getString(R.string.preference_show_input_key)
         val darkThemeKey = getString(R.string.preference_dark_theme_key)
+        val customMentionsKey = getString(R.string.preference_custom_mentions_key)
         twitchPreferences = DankChatPreferenceStore(this)
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
             when (key) {
-                roomStateKey  -> viewModel.setRoomStateEnabled(p.getBoolean(key, true))
-                streamInfoKey -> {
+                roomStateKey      -> viewModel.setRoomStateEnabled(p.getBoolean(key, true))
+                streamInfoKey     -> {
                     fetchStreamInformation()
                     viewModel.setStreamInfoEnabled(p.getBoolean(key, true))
                 }
-                inputKey      -> viewModel.inputEnabled.value = p.getBoolean(key, true)
-                darkThemeKey  -> delegate.localNightMode = if (p.getBoolean(key, true)) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+                inputKey          -> viewModel.inputEnabled.value = p.getBoolean(key, true)
+                darkThemeKey      -> delegate.localNightMode = if (p.getBoolean(key, true)) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+                customMentionsKey -> viewModel.setMentionEntries(p.getStringSet(key, emptySet()))
             }
         }
         preferences = PreferenceManager.getDefaultSharedPreferences(this).apply {
@@ -648,6 +653,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 setStreamInfoEnabled(getBoolean(streamInfoKey, true))
                 inputEnabled.value = getBoolean(inputKey, true)
                 delegate.localNightMode = if (getBoolean(darkThemeKey, true)) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+                setMentionEntries(getStringSet(customMentionsKey, emptySet()))
             }
         }
     }
@@ -877,7 +883,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             val binder = service as TwitchService.LocalBinder
             twitchService = binder.service
-            twitchService?.shouldMention = false
+            twitchService?.shouldNotifyOnMention = false
             isBound = true
             if (isLoggingIn) {
                 return

@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.service.twitch.message
 
 import android.graphics.Color
+import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.badge.Badge
 import com.flxrs.dankchat.service.twitch.emote.ChatEmote
@@ -21,13 +22,24 @@ data class TwitchMessage(
     val badges: List<Badge> = emptyList(),
     val id: String,
     var timedOut: Boolean = false,
-    val isSystem: Boolean = false
+    val isSystem: Boolean = false,
+    var isMention: Boolean = false
 ) {
 
-    fun isMention(username: String): Boolean {
+    fun checkForMention(username: String, patterns: List<MultiEntryItem.Entry>) {
         val regex = """\b$username\b""".toPattern(Pattern.CASE_INSENSITIVE).toRegex()
-        return username.isNotBlank() && !name.equals(username, true)
-                && !timedOut && !isSystem && regex.containsMatchIn(message)
+        val regexps = patterns.map {
+            if (it.isRegex) {
+                it.entry.toPattern(Pattern.CASE_INSENSITIVE).toRegex()
+            } else {
+                """\b${it.entry}\b""".toPattern(Pattern.CASE_INSENSITIVE).toRegex()
+            }
+        }.plus(regex)
+        if (!isMention && username.isNotBlank() && !name.equals(username, true)
+            && !timedOut && !isSystem && regexps.any { it.containsMatchIn(message) }
+        ) {
+            isMention = true
+        }
     }
 
     companion object {

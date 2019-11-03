@@ -46,7 +46,7 @@ class TwitchService : Service(), KoinComponent {
     private lateinit var sharedPreferences: SharedPreferences
     private var nick = ""
 
-    var shouldMention = false
+    var shouldNotifyOnMention = false
     var startedConnection = false
         private set
 
@@ -55,7 +55,7 @@ class TwitchService : Service(), KoinComponent {
     override fun onBind(p0: Intent?): IBinder? = binder
 
     override fun onDestroy() {
-        shouldMention = false
+        shouldNotifyOnMention = false
         close()
         if (::manager.isInitialized) {
             manager.cancelAll()
@@ -175,10 +175,13 @@ class TwitchService : Service(), KoinComponent {
 
     private fun onMessage(message: IrcMessage) {
         val messages = repository.onMessage(message)
-        if (shouldMention) messages?.filter { it.message.isMention(nick) }?.takeIf {
-            sharedPreferences.getBoolean(getString(R.string.preference_notification_key), true)
-        }?.map {
-            createMentionNotification(it.message.channel, it.message.name, it.message.message)
+        if (shouldNotifyOnMention) {
+            messages?.filter { it.message.isMention }
+                ?.takeIf {
+                    sharedPreferences.getBoolean(getString(R.string.preference_notification_key), true)
+                }?.map {
+                    createMentionNotification(it.message.channel, it.message.name, it.message.message)
+                }
         }
     }
 

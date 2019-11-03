@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatItemBinding
-import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.DrawableTarget
 import com.flxrs.dankchat.utils.EmoteDrawableTarget
@@ -79,7 +78,7 @@ class ChatAdapter(
             movementMethod = LinkMovementMethod.getInstance()
             val darkModePreferenceKey = context.getString(R.string.preference_dark_theme_key)
             val timedOutPreferenceKey = context.getString(R.string.preference_show_timed_out_messages_key)
-            val timestampPreferenceKey = this@with.context.getString(R.string.preference_timestamp_key)
+            val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
             val isDarkMode = preferences.getBoolean(darkModePreferenceKey, true)
             val showTimedOutMessages = preferences.getBoolean(timedOutPreferenceKey, true)
@@ -116,12 +115,11 @@ class ChatAdapter(
 
                 val lineHeight = this@with.lineHeight
                 val scaleFactor = lineHeight * 1.5 / 112
-                val currentUserName = DankChatPreferenceStore(this@with.context).getUserName() ?: ""
 
                 val background = when {
-                    isNotify                   -> if (isDarkMode) R.color.color_highlight_dark else R.color.color_highlight_light
-                    isMention(currentUserName) -> if (isDarkMode) R.color.color_mention_dark else R.color.color_mention_light
-                    else                       -> android.R.color.transparent
+                    isNotify  -> if (isDarkMode) R.color.color_highlight_dark else R.color.color_highlight_light
+                    isMention -> if (isDarkMode) R.color.color_mention_dark else R.color.color_mention_light
+                    else      -> android.R.color.transparent
                 }
                 this@with.setBackgroundResource(background)
 
@@ -287,7 +285,7 @@ class ChatAdapter(
 
     private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
         override fun areItemsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
-            return !newItem.message.timedOut && oldItem == newItem
+            return (!newItem.message.timedOut || !newItem.message.isMention) && oldItem == newItem
         }
 
         override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
