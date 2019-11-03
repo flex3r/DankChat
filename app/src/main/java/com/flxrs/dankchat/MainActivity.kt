@@ -572,7 +572,12 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             binding.showActionbarFab.visibility = View.GONE
             binding.tabs.visibility = View.VISIBLE
         } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !isInMultiWindowMode) {
+            var isMultiWindow = false
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                isMultiWindow = isInMultiWindowMode
+            }
+
+            if (!isMultiWindow) {
                 window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -857,7 +862,12 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 }
                 !hasFocus && binding.showActionbarFab.isVisible                                                                               -> {
                     wasLandScapeNotFullscreen = false
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !isInMultiWindowMode) {
+                    var isMultiWindow = false
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        isMultiWindow = isInMultiWindowMode
+                    }
+
+                    if (!isMultiWindow) {
                         (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                                 or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                                 or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
