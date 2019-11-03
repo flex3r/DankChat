@@ -9,7 +9,10 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.chat.menu.EmoteItem
+import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
+import com.squareup.moshi.JsonAdapter
+import java.util.regex.Pattern
 
 fun List<ChatItem>.replaceWithTimeOuts(name: String): List<ChatItem> = apply {
     forEach { item ->
@@ -60,6 +63,20 @@ fun List<GenericEmote>?.toEmoteItems(): List<EmoteItem> {
             listOf(EmoteItem.Header(title))
                 .plus(it.value.map { e -> EmoteItem.Emote(e) })
         }?.flatMap { it.value } ?: listOf()
+}
+
+fun List<MultiEntryItem.Entry>.mapToRegex(): List<Regex> {
+    return map {
+        if (it.isRegex) {
+            it.entry.toPattern(Pattern.CASE_INSENSITIVE).toRegex()
+        } else {
+            """\b${it.entry}\b""".toPattern(Pattern.CASE_INSENSITIVE).toRegex()
+        }
+    }
+}
+
+fun Set<String>?.mapToRegex(adapter: JsonAdapter<MultiEntryItem.Entry>): List<Regex> {
+    return this?.mapNotNull { adapter.fromJson(it) }?.mapToRegex().orEmpty()
 }
 
 fun Fragment.hideKeyboard() {

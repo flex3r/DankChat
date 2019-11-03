@@ -13,6 +13,7 @@ import com.flxrs.dankchat.service.twitch.message.Roomstate
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import com.flxrs.dankchat.utils.SingleLiveEvent
 import com.flxrs.dankchat.utils.extensions.addAndLimit
+import com.flxrs.dankchat.utils.extensions.mapToRegex
 import com.flxrs.dankchat.utils.extensions.replaceWithTimeOut
 import com.flxrs.dankchat.utils.extensions.replaceWithTimeOuts
 import com.squareup.moshi.Moshi
@@ -40,7 +41,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     private var lastMessage = ""
 
     private var name: String = ""
-    private var customMentionEntries = listOf<MultiEntryItem.Entry>()
+    private var customMentionEntries = listOf<Regex>()
+    private var blacklistEntries = listOf<Regex>()
     private val moshi = Moshi.Builder().build()
     private val adapter = moshi.adapter(MultiEntryItem.Entry::class.java)
 
@@ -51,9 +53,10 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         MutableLiveData(emptyList())
     }
 
-    fun getConnectionState(channel: String): LiveData<ConnectionState> = connectionState.getOrPut(channel) {
-        MutableLiveData(ConnectionState.DISCONNECTED)
-    }
+    fun getConnectionState(channel: String): LiveData<ConnectionState> =
+        connectionState.getOrPut(channel) {
+            MutableLiveData(ConnectionState.DISCONNECTED)
+        }
 
     fun getEmotes(channel: String): LiveData<List<GenericEmote>> {
         return emotes.getOrPut(channel) {
@@ -116,7 +119,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         if (!hasDisconnected) {
             hasDisconnected = true
             connectionState.keys.forEach {
-                connectionState.getOrPut(it, { MutableLiveData() }).postValue(ConnectionState.DISCONNECTED)
+                connectionState.getOrPut(it, { MutableLiveData() })
+                    .postValue(ConnectionState.DISCONNECTED)
             }
             makeAndPostSystemMessage(msg)
         }
@@ -149,8 +153,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         when (msg.command) {
             "CLEARCHAT" -> handleClearchat(msg)
             "ROOMSTATE" -> handleRoomstate(msg)
-            "CLEARMSG"  -> handleClearmsg(msg)
-            else        -> return handleMessage(msg)
+            "CLEARMSG" -> handleClearmsg(msg)
+            else -> return handleMessage(msg)
         }
         return null
     }
@@ -161,7 +165,13 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
     fun setMentionEntries(stringSet: Set<String>?) {
         scope.launch(Dispatchers.Default) {
-            customMentionEntries = stringSet?.mapNotNull { adapter.fromJson(it) }.orEmpty()
+            customMentionEntries = stringSet.mapToRegex(adapter)
+        }
+    }
+
+    fun setBlacklistEntries(stringSet: Set<String>?) {
+        scope.launch(Dispatchers.Default) {
+            blacklistEntries = stringSet.mapToRegex(adapter)
         }
     }
 
@@ -214,6 +224,11 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
             if (ignoredList.any { it == userId.toInt() }) return emptyList()
         }
         val parsed = TwitchMessage.parse(msg).map {
+            if (blacklistEntries.any { regex ->
+                    regex.containsMatchIn(it.message)
+                            || it.emotes.any { e -> regex.containsMatchIn(e.code) }
+                }) return emptyList()
+
             it.checkForMention(name, customMentionEntries)
             ChatItem(it)
         }
@@ -285,6 +300,11 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
             ?.filter { msg -> !ignoredList.any { msg.tags["user-id"]?.toInt() == it } }
             ?.map { TwitchMessage.parse(it) }
             ?.flatten()
+            ?.filter { msg ->
+                !blacklistEntries.any {
+                    it.containsMatchIn(msg.message) || msg.emotes.any { e -> it.containsMatchIn(e.code) }
+                }
+            }
             ?.map {
                 it.checkForMention(name, customMentionEntries)
                 ChatItem(it)

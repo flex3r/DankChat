@@ -7,6 +7,7 @@ import com.flxrs.dankchat.service.twitch.badge.Badge
 import com.flxrs.dankchat.service.twitch.emote.ChatEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.TimeUtils
+import com.flxrs.dankchat.utils.extensions.mapToRegex
 import java.util.regex.Pattern
 
 data class TwitchMessage(
@@ -26,17 +27,13 @@ data class TwitchMessage(
     var isMention: Boolean = false
 ) {
 
-    fun checkForMention(username: String, patterns: List<MultiEntryItem.Entry>) {
+    fun checkForMention(username: String, patterns: List<Regex>) {
         val regex = """\b$username\b""".toPattern(Pattern.CASE_INSENSITIVE).toRegex()
-        val regexps = patterns.map {
-            if (it.isRegex) {
-                it.entry.toPattern(Pattern.CASE_INSENSITIVE).toRegex()
-            } else {
-                """\b${it.entry}\b""".toPattern(Pattern.CASE_INSENSITIVE).toRegex()
-            }
-        }.plus(regex)
+        val regexps = patterns.plus(regex)
         if (!isMention && username.isNotBlank() && !name.equals(username, true)
-            && !timedOut && !isSystem && regexps.any { it.containsMatchIn(message) }
+            && !timedOut && !isSystem && regexps.any {
+                it.containsMatchIn(message) || emotes.any { e -> it.containsMatchIn(e.code) }
+            }
         ) {
             isMention = true
         }
@@ -65,13 +62,13 @@ data class TwitchMessage(
         fun parse(message: IrcMessage): List<TwitchMessage> =
             with(message) {
                 return when (command) {
-                    "PRIVMSG"    -> listOf(parsePrivMessage(message))
-                    "NOTICE"     -> listOf(parseNotice(message))
+                    "PRIVMSG" -> listOf(parsePrivMessage(message))
+                    "NOTICE" -> listOf(parseNotice(message))
                     "USERNOTICE" -> parseUserNotice(message)
-                    "CLEARCHAT"  -> listOf(parseClearChat(message))
-                    "WHISPER"    -> listOf(parseWhisper(message))
+                    "CLEARCHAT" -> listOf(parseClearChat(message))
+                    "WHISPER" -> listOf(parseWhisper(message))
                     //"HOSTTARGET" -> listOf(parseHostTarget(message))
-                    else         -> listOf()
+                    else -> listOf()
                 }
             }
 
@@ -80,7 +77,10 @@ data class TwitchMessage(
             isNotify: Boolean = false
         ): TwitchMessage = with(ircMessage) {
             val displayName = tags.getValue("display-name")
-            val name = if (ircMessage.command == "USERNOTICE") tags.getValue("login") else prefix.substringBefore('!')
+            val name =
+                if (ircMessage.command == "USERNOTICE") tags.getValue("login") else prefix.substringBefore(
+                    '!'
+                )
             val colorTag = tags["color"]?.ifBlank { "#717171" } ?: "#717171"
             val color = Color.parseColor(colorTag)
 
@@ -238,7 +238,7 @@ data class TwitchMessage(
                         badgeSet,
                         badgeVersion
                     )?.let { result += Badge(badgeSet, it) }
-                    badgeSet.startsWith("bits")       -> EmoteManager.getSubBadgeUrl(
+                    badgeSet.startsWith("bits") -> EmoteManager.getSubBadgeUrl(
                         channel,
                         badgeSet,
                         badgeVersion
@@ -247,7 +247,7 @@ data class TwitchMessage(
                             badgeSet,
                             badgeVersion
                         )?.let { result += Badge(badgeSet, it) }
-                    else                              -> EmoteManager.getGlobalBadgeUrl(
+                    else -> EmoteManager.getGlobalBadgeUrl(
                         badgeSet,
                         badgeVersion
                     )?.let { result += Badge(badgeSet, it) }

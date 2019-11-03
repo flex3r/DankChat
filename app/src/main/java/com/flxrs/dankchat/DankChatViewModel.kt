@@ -116,6 +116,7 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
     fun uploadImage(file: File) = twitchRepository.uploadImage(file)
 
     fun setMentionEntries(stringSet: Set<String>?) = twitchRepository.setMentionEntries(stringSet)
+    fun setBlacklistEntries(stringSet: Set<String>?) = twitchRepository.setBlacklistEntries(stringSet)
 
     fun fetchStreamData(channels: List<String>, stringBuilder: (viewers: Int) -> String) {
         fetchJob?.cancel()

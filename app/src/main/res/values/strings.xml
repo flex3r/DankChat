@@ -93,6 +93,7 @@
 	<string name="preference_logout_title">Logout</string>
 	<string name="preference_general_header">General</string>
 	<string name="preference_about_header">About</string>
+	<string name="preference_appearance_header">Appearance</string>
 	<string name="preference_about_summary">DankChat %1$s made by @flex3rs and contributors\n\nTwitch emote data provided by twitchemotes.com</string>
 	<string name="preference_about_key" translatable="false">about_key</string>
 	<string name="preference_show_input_key" translatable="false">show_input_key</string>
@@ -106,8 +107,11 @@
 	<string name="preference_custom_mentions_key" translatable="false">custom_mentions_key</string>
 	<string name="preference_custom_mentions_title">Custom mentions</string>
 	<string name="preference_custom_mentions_summary">Set custom phrases as mentions</string>
+	<string name="preference_blacklist_key" translatable="false">custom_blacklist_key</string>
+	<string name="preference_blacklist_title">Blacklist</string>
+	<string name="preference_blacklist_summary">Set custom phrases to hide</string>
 
-	<plurals name="viewers">
+    <plurals name="viewers">
 		<item quantity="one">Live with %d viewer</item>
 		<item quantity="other">Live with %d viewers</item>
 	</plurals>

@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-	<PreferenceCategory android:title="@string/preference_general_header">
+
+	<PreferenceCategory android:title="@string/preference_appearance_header">
 		<SwitchPreference
 			android:defaultValue="true"
 			android:key="@string/preference_dark_theme_key"
 			android:title="@string/preference_dark_theme_title" />
+		<SwitchPreference
+			android:defaultValue="true"
+			android:key="@string/preference_show_input_key"
+			android:summary="@string/preference_show_input_summary"
+			android:title="@string/preference_show_input_title" />
+	</PreferenceCategory>
 
+	<PreferenceCategory android:title="@string/preference_general_header">
 		<SwitchPreference
 			android:defaultValue="true"
 			android:key="@string/preference_timestamp_key"
@@ -25,12 +33,6 @@
 
 		<SwitchPreference
 			android:defaultValue="true"
-			android:key="@string/preference_show_input_key"
-			android:summary="@string/preference_show_input_summary"
-			android:title="@string/preference_show_input_title" />
-
-		<SwitchPreference
-			android:defaultValue="true"
 			android:key="@string/preference_show_timed_out_messages_key"
 			android:summary="@string/preference_show_timed_out_messages_summary"
 			android:title="@string/preference_show_timed_out_messages_title" />
@@ -44,6 +46,16 @@
 			android:title="@string/preference_mention_format_title" />
 
 		<Preference
+			android:key="@string/preference_custom_mentions_key"
+			android:summary="@string/preference_custom_mentions_summary"
+			android:title="@string/preference_custom_mentions_title" />
+
+		<Preference
+			android:key="@string/preference_blacklist_key"
+			android:summary="@string/preference_blacklist_summary"
+			android:title="@string/preference_blacklist_title" />
+
+		<Preference
 			android:key="@string/preference_logout_key"
 			android:title="@string/preference_logout_title" />
 	</PreferenceCategory>
@@ -54,11 +66,6 @@
 			android:key="@string/preference_notification_key"
 			android:summary="@string/preference_notification_summary"
 			android:title="@string/preference_notification_title" />
-
-		<Preference
-			android:key="@string/preference_custom_mentions_key"
-			android:summary="@string/preference_custom_mentions_summary"
-			android:title="@string/preference_custom_mentions_title" />
 	</PreferenceCategory>
 
 	<PreferenceCategory android:title="@string/preference_about_header">

@@ -633,6 +633,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         val inputKey = getString(R.string.preference_show_input_key)
         val darkThemeKey = getString(R.string.preference_dark_theme_key)
         val customMentionsKey = getString(R.string.preference_custom_mentions_key)
+        val blacklistKey = getString(R.string.preference_blacklist_key)
         twitchPreferences = DankChatPreferenceStore(this)
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
             when (key) {
@@ -644,6 +645,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 inputKey          -> viewModel.inputEnabled.value = p.getBoolean(key, true)
                 darkThemeKey      -> delegate.localNightMode = if (p.getBoolean(key, true)) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
                 customMentionsKey -> viewModel.setMentionEntries(p.getStringSet(key, emptySet()))
+                blacklistKey      -> viewModel.setBlacklistEntries(p.getStringSet(key, emptySet()))
             }
         }
         preferences = PreferenceManager.getDefaultSharedPreferences(this).apply {
@@ -654,6 +656,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 inputEnabled.value = getBoolean(inputKey, true)
                 delegate.localNightMode = if (getBoolean(darkThemeKey, true)) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
                 setMentionEntries(getStringSet(customMentionsKey, emptySet()))
+                setBlacklistEntries(getStringSet(blacklistKey, emptySet()))
             }
         }
     }
