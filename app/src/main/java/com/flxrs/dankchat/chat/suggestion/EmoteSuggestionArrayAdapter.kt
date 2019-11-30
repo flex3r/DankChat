@@ -9,7 +9,6 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
-import com.flxrs.dankchat.utils.GifDrawableTarget
 
 class EmoteSuggestionsArrayAdapter(
     context: Context,
@@ -33,27 +32,13 @@ class EmoteSuggestionsArrayAdapter(
         Glide.with(imageView).clear(imageView)
 
         getItem(position)?.let { emote ->
-            if (emote.isGif) {
-                Glide.with(imageView)
-                    .`as`(ByteArray::class.java)
-                    .override(textView.lineHeight)
-                    .centerInside()
-                    .load(emote.url)
-                    .placeholder(R.drawable.ic_missing_emote)
-                    .error(R.drawable.ic_missing_emote)
-                    .into(GifDrawableTarget(emote.keyword, false) {
-                        imageView.setImageDrawable(it)
-                    })
-            } else {
-                Glide.with(imageView)
-                    .asDrawable()
-                    .override(textView.lineHeight * 2)
-                    .centerInside()
-                    .load(emote.url)
-                    .placeholder(R.drawable.ic_missing_emote)
-                    .error(R.drawable.ic_missing_emote)
-                    .into(imageView)
-            }
+            Glide.with(imageView)
+                .load(emote.url)
+                .override(textView.lineHeight * 2)
+                .centerInside()
+                .placeholder(R.drawable.ic_missing_emote)
+                .error(R.drawable.ic_missing_emote)
+                .into(imageView)
         }
 
         return view

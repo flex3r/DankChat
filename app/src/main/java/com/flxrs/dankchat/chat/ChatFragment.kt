@@ -111,7 +111,6 @@ class ChatFragment : Fragment() {
     }
 
     private fun RecyclerView.setup(chatAdapter: ChatAdapter, manager: LinearLayoutManager) {
-        setItemViewCacheSize(30)
         adapter = chatAdapter
         layoutManager = manager
         itemAnimator = null

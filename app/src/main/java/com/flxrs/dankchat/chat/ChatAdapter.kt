@@ -2,6 +2,7 @@ package com.flxrs.dankchat.chat
 
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -14,19 +15,20 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.text.bold
 import androidx.core.text.color
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import coil.Coil
+import coil.api.load
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatItemBinding
+import com.flxrs.dankchat.service.api.TwitchApi
+import com.flxrs.dankchat.service.twitch.emote.ChatEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
-import com.flxrs.dankchat.utils.DrawableTarget
-import com.flxrs.dankchat.utils.EmoteDrawableTarget
-import com.flxrs.dankchat.utils.GifDrawableTarget
 import com.flxrs.dankchat.utils.extensions.normalizeColor
 import com.linkedin.urls.detection.UrlDetector
 import com.linkedin.urls.detection.UrlDetectorOptions
@@ -34,6 +36,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pl.droidsonroids.gif.GifDrawable
 import kotlin.math.roundToInt
 
 class ChatAdapter(
@@ -63,9 +66,6 @@ class ChatAdapter(
     override fun onViewRecycled(holder: ViewHolder) {
         val view = holder.binding.itemText
         EmoteManager.gifCallback.removeView(view)
-        holder.binding.executePendingBindings()
-        Glide.with(view).clear(view)
-
         super.onViewRecycled(holder)
     }
 
@@ -83,7 +83,6 @@ class ChatAdapter(
             val isDarkMode = preferences.getBoolean(darkModePreferenceKey, true)
             val showTimedOutMessages = preferences.getBoolean(timedOutPreferenceKey, true)
             val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
-
             getItem(position).message.apply {
                 if (timedOut) {
                     alpha = 0.5f
@@ -97,13 +96,13 @@ class ChatAdapter(
                 }
 
                 var ignoreClicks = false
-                if (!this.isSystem) this@with.setOnLongClickListener {
+                if (!this.isSystem) setOnLongClickListener {
                     ignoreClicks = true
                     onMessageLongClick(this.message)
                     true
                 }
 
-                this@with.setOnTouchListener { _, event ->
+                setOnTouchListener { _, event ->
                     if (event.action == MotionEvent.ACTION_UP) {
                         CoroutineScope(Dispatchers.Default).launch {
                             delay(200)
@@ -113,7 +112,7 @@ class ChatAdapter(
                     false
                 }
 
-                val lineHeight = this@with.lineHeight
+                val lineHeight = lineHeight
                 val scaleFactor = lineHeight * 1.5 / 112
 
                 val background = when {
@@ -121,41 +120,25 @@ class ChatAdapter(
                     isMention -> if (isDarkMode) R.color.color_mention_dark else R.color.color_mention_light
                     else      -> android.R.color.transparent
                 }
-                this@with.setBackgroundResource(background)
+                setBackgroundResource(background)
 
                 val name = if (displayName.equals(name, true)) displayName else "$name($displayName)"
                 val displayName = if (isAction) "$name " else if (name.isBlank()) "" else "$name: "
-                var badgesLength = 0
+                val badgesLength = badges.size * 2
                 val (prefixLength, spannable) = if (showTimeStamp) {
                     time.length + 1 + displayName.length to SpannableStringBuilder().bold { append("$time ") }
                 } else {
                     displayName.length to SpannableStringBuilder()
                 }
-
                 badges.forEach { badge ->
                     spannable.append("  ")
                     val start = spannable.length - 2
                     val end = spannable.length - 1
-                    badgesLength += 2
-                    Glide.with(this@with)
-                        .asDrawable()
-                        .load(badge.url)
-                        .placeholder(R.drawable.ic_missing_emote)
-                        .error(R.drawable.ic_missing_emote)
-                        .into(DrawableTarget {
-                            val width =
-                                (lineHeight * it.intrinsicWidth / it.intrinsicHeight.toFloat()).roundToInt()
-                            it.setBounds(0, 0, width, lineHeight)
-
-                            val imageSpan = ImageSpan(it, ImageSpan.ALIGN_BOTTOM)
-                            spannable.setSpan(
-                                imageSpan,
-                                start,
-                                end,
-                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                            )
-                            text = spannable
-                        })
+                    Coil.load(context, badge.url) {
+                        target {
+                            setBadgeImageSpan(it, this@with, spannable, lineHeight, start, end)
+                        }
+                    }
                 }
 
                 val normalizedColor = color.normalizeColor(isDarkMode)
@@ -206,90 +189,108 @@ class ChatAdapter(
                     val start = prefixLength + badgesLength + message.indexOf(url.originalUrl)
                     val end = start + url.originalUrl.length
                     spannable.setSpan(clickableSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                    text = spannable
                 }
+                text = spannable
 
                 if (emotes.filter { it.isGif }.count() > 0) {
                     EmoteManager.gifCallback.addView(this@with)
                 }
-
                 emotes.forEach { e ->
-                    e.positions.forEach { pos ->
-                        val split = pos.split('-')
-                        val start = split[0].toInt() + prefixLength + badgesLength
-                        val end = split[1].toInt() + prefixLength + badgesLength
-                        if (e.isGif) {
-                            val gifDrawable = EmoteManager.gifCache[e.code]
-                            if (gifDrawable != null) {
-                                val height =
-                                    (gifDrawable.intrinsicHeight * scaleFactor).roundToInt()
-                                val width = (gifDrawable.intrinsicWidth * scaleFactor).roundToInt()
-                                gifDrawable.setBounds(0, 0, width, height)
-
-                                val imageSpan = ImageSpan(gifDrawable, ImageSpan.ALIGN_BOTTOM)
-                                spannable.setSpan(
-                                    imageSpan,
-                                    start,
-                                    end,
-                                    Spannable.SPAN_EXCLUSIVE_INCLUSIVE
-                                )
-                                text = spannable
-                            } else Glide.with(this@with)
-                                .`as`(ByteArray::class.java)
-                                .load(e.url)
-                                .placeholder(R.drawable.ic_missing_emote)
-                                .error(R.drawable.ic_missing_emote)
-                                .into(GifDrawableTarget(e.code, true) {
-                                    val height = (it.intrinsicHeight * scaleFactor).roundToInt()
-                                    val width = (it.intrinsicWidth * scaleFactor).roundToInt()
-                                    it.setBounds(0, 0, width, height)
-
-                                    val imageSpan = ImageSpan(it, ImageSpan.ALIGN_BOTTOM)
-                                    spannable.setSpan(
-                                        imageSpan,
-                                        start,
-                                        end,
-                                        Spannable.SPAN_EXCLUSIVE_INCLUSIVE
-                                    )
-                                    text = spannable
-                                })
-                        } else Glide.with(this@with)
-                            .asBitmap()
-                            .load(e.url)
-                            .placeholder(R.drawable.ic_missing_emote)
-                            .error(R.drawable.ic_missing_emote)
-                            .into(EmoteDrawableTarget(e, context) {
-                                val ratio = it.intrinsicWidth / it.intrinsicHeight.toFloat()
-                                val height = when {
-                                    it.intrinsicHeight < 55 && e.code.isBlank()       -> (70 * scaleFactor).roundToInt()
-                                    it.intrinsicHeight in 55..111 && e.code.isBlank() -> (112 * scaleFactor).roundToInt()
-                                    else                                              -> (it.intrinsicHeight * scaleFactor).roundToInt()
+                    if (e.isGif) {
+                        val gifDrawable = EmoteManager.gifCache[e.code]
+                        if (gifDrawable != null) {
+                            transformEmoteDrawable(gifDrawable, scaleFactor, e) {
+                                e.positions.forEach { pos ->
+                                    val split = pos.split('-')
+                                    val start = split[0].toInt() + prefixLength + badgesLength
+                                    val end = split[1].toInt() + prefixLength + badgesLength
+                                    spannable.setSpan(ImageSpan(it), start, end, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
                                 }
-                                val width = (height * ratio).roundToInt()
-                                it.setBounds(0, 0, width, height)
-
-                                val imageSpan = ImageSpan(it, ImageSpan.ALIGN_BOTTOM)
-                                spannable.setSpan(
-                                    imageSpan,
-                                    start,
-                                    end,
-                                    Spannable.SPAN_EXCLUSIVE_INCLUSIVE
-                                )
                                 text = spannable
-                            })
+                            }
+                        } else {
+                            CoroutineScope(Dispatchers.Main.immediate).launch {
+                                try {
+                                    TwitchApi.getRawBytes(e.url)?.let { bytes ->
+                                        GifDrawable(bytes).apply {
+                                            callback = EmoteManager.gifCallback
+                                            EmoteManager.gifCache.put(e.code, this)
+                                            start()
+                                            transformEmoteDrawable(this, scaleFactor, e) {
+                                                e.positions.forEach { pos ->
+                                                    val split = pos.split('-')
+                                                    val start = split[0].toInt() + prefixLength + badgesLength
+                                                    val end = split[1].toInt() + prefixLength + badgesLength
+                                                    spannable.setSpan(ImageSpan(it), start, end, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+                                                }
+                                                text = spannable
+                                            }
+                                        }
+                                    }
+                                } catch (t: Throwable) {
+                                    Log.e("ViewBinding", Log.getStackTraceString(t))
+                                }
+                            }
+                        }
+                    } else Coil.load(context, e.url) {
+                        target {
+                            transformEmoteDrawable(it, scaleFactor, e) {
+                                e.positions.forEach { pos ->
+                                    val split = pos.split('-')
+                                    val start = split[0].toInt() + prefixLength + badgesLength
+                                    val end = split[1].toInt() + prefixLength + badgesLength
+                                    spannable.setSpan(ImageSpan(it), start, end, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+                                }
+                                text = spannable
+                            }
+                        }
                     }
                 }
-                text = spannable
             }
         }
 
-    private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
-        override fun areItemsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
-            return (!newItem.message.timedOut || !newItem.message.isMention) && oldItem == newItem
-        }
+    private fun setBadgeImageSpan(
+        drawable: Drawable?,
+        textView: TextView,
+        spannable: SpannableStringBuilder,
+        lineHeight: Int,
+        start: Int,
+        end: Int
+    ) {
+        if (drawable != null) {
+            val width = (lineHeight * drawable.intrinsicWidth / drawable.intrinsicHeight.toFloat()).roundToInt()
+            drawable.setBounds(0, 0, width, lineHeight)
 
-        override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
-            return oldItem.message == newItem.message
+            val imageSpan = ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM)
+            spannable.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            textView.text = spannable
         }
+    }
+
+    private fun transformEmoteDrawable(
+        drawable: Drawable,
+        scale: Double,
+        emote: ChatEmote,
+        block: (Drawable) -> Unit
+    ) {
+        val ratio = drawable.intrinsicWidth / drawable.intrinsicHeight.toFloat()
+        val height = when {
+            drawable.intrinsicHeight < 55 && emote.isTwitch -> (70 * scale).roundToInt()
+            drawable.intrinsicHeight in 55..111 && emote.isTwitch -> (112 * scale).roundToInt()
+            else -> (drawable.intrinsicHeight * scale).roundToInt()
+        }
+        val width = (height * ratio).roundToInt()
+        drawable.setBounds(0, 0, width * emote.scale, height * emote.scale)
+        block(drawable)
+    }
+}
+
+private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
+    override fun areItemsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
+        return (!newItem.message.timedOut || !newItem.message.isMention) || oldItem == newItem
+    }
+
+    override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
+        return oldItem.message == newItem.message
     }
 }

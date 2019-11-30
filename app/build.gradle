@@ -22,6 +22,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            manifestPlaceholders = [ applicationLabel: "@string/app_name"]
 
             applicationVariants.all { variant ->
                 variant.outputs.all {
@@ -31,11 +32,20 @@ android {
         }
 
         debug {
+            manifestPlaceholders = [ applicationLabel: "@string/app_name"]
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "$apkName-$variant.name-${versionName}.apk"
                 }
             }
+        }
+        dank {
+            initWith debug
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            manifestPlaceholders = [ applicationLabel: "@string/app_name_dank"]
+            applicationIdSuffix ".dank"
         }
     }
     compileOptions {
@@ -87,6 +97,8 @@ dependencies {
     implementation "org.koin:koin-androidx-viewmodel:$koin_version"
 
     implementation "com.github.bumptech.glide:glide:$glide_version"
+    implementation "io.coil-kt:coil:$coil_version"
+    implementation "io.coil-kt:coil-gif:$coil_version"
 
     implementation "pl.droidsonroids.gif:android-gif-drawable:$gif_drawable_version"
 

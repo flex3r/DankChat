@@ -11,7 +11,7 @@
 		android:name=".DankChatApplication"
 		android:allowBackup="true"
 		android:icon="@mipmap/ic_launcher"
-		android:label="@string/app_name"
+		android:label="${applicationLabel}"
 		android:roundIcon="@mipmap/ic_launcher_round"
 		android:supportsRtl="true"
 		android:theme="@style/MyTheme.DayNight"
@@ -37,7 +37,7 @@
 
 		<provider
 			android:name="androidx.core.content.FileProvider"
-			android:authorities="com.flxrs.dankchat.fileprovider"
+			android:authorities="${applicationId}.fileprovider"
 			android:exported="false"
 			android:grantUriPermissions="true">
 			<meta-data

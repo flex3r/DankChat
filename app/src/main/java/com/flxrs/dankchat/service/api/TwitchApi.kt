@@ -50,7 +50,7 @@ object TwitchApi {
         .build()
         .create(TwitchApiService::class.java)
 
-    private val nuulsUploadClient = OkHttpClient()
+    private val rawClient = OkHttpClient()
 
     private val loadedRecentsInChannels = mutableListOf<String>()
 
@@ -193,7 +193,7 @@ object TwitchApi {
             .post(body)
             .build()
         try {
-            val response = nuulsUploadClient.newCall(request).execute()
+            val response = rawClient.newCall(request).execute()
             if (response.isSuccessful) return@withContext response.body?.string()
         } catch (t: Throwable) {
             Log.e(TAG, Log.getStackTraceString(t))
@@ -231,4 +231,14 @@ object TwitchApi {
             }
             return@withContext null
         }
+
+    suspend fun getRawBytes(url: String): ByteArray? = withContext(Dispatchers.IO) {
+        try {
+            val request = Request.Builder().url(url).build()
+            return@withContext rawClient.newCall(request).execute().body?.bytes()
+        } catch (t: Throwable) {
+            Log.e(TAG, Log.getStackTraceString(t))
+        }
+        null
+    }
 }
