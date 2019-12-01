@@ -152,6 +152,9 @@ class WebSocketConnection(
         override fun onMessage(webSocket: WebSocket, text: String) {
             text.removeSuffix("\r\n").split("\r\n").forEach { line ->
                 val ircMessage = IrcMessage.parse(line)
+                if (ircMessage.isLoginFailed()) {
+                    close(null)
+                }
                 when (ircMessage.command) {
                     "376"       -> {
                         socket?.joinChannels(channels)
