@@ -1,12 +1,14 @@
 package com.flxrs.dankchat.service.twitch.message
 
 import android.graphics.Color
+import android.util.Log
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.badge.Badge
 import com.flxrs.dankchat.service.twitch.emote.ChatEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.TimeUtils
+import com.flxrs.dankchat.utils.extensions.isEmoji
 import com.flxrs.dankchat.utils.extensions.mapToRegex
 import java.util.regex.Pattern
 
@@ -93,28 +95,29 @@ data class TwitchMessage(
                     params[1].substring("\u0001ACTION ".length, params[1].length - "\u0001".length)
                 } else if (params.size > 1) params[1] else ""
 
+            //@badge-info=;badges=broadcaster/1,bits-charity/1;color=#00BCD4;display-name=flex3rs;emotes=521050:9-15,25-31;flags=;id=08649ff3-8fee-4200-8e06-c46bcdfb06e8;mod=0;room-id=73697410;subscriber=0;tmi-sent-ts=1575196101040;turbo=0;user-id=73697410;user-type= :flex3rs!flex3rs@flex3rs.tmi.twitch.tv PRIVMSG #flex3rs :🍓🍑🍊🍋🍍NaM forsenE 🍐🍏🐬🐳NaM forsenE
             // Adds extra space after every emoji group to support 3rd part emotes directly after emojis
-//            val fixedContentBuilder = StringBuilder()
-//            var previousEmoji = false
-//            val spaces = mutableListOf<Int>()
-//            content.forEachIndexed {i, c ->
-//                if (c.isEmoji()) {
-//                    previousEmoji = true
-//                } else if (previousEmoji) {
-//                    previousEmoji = false
-//                    if (!c.isWhitespace()) {
-//                        fixedContentBuilder.append(" ")
-//                        spaces.add(i)
-//                    }
-//                }
-//                fixedContentBuilder.append(c)
-//            }
-//            val fixedContent = fixedContentBuilder.toString()
+            val fixedContentBuilder = StringBuilder()
+            var previousEmoji = false
+            val spaces = mutableListOf<Int>()
+            content.forEachIndexed {i, c ->
+                if (c.isEmoji()) {
+                    previousEmoji = true
+                } else if (previousEmoji) {
+                    previousEmoji = false
+                    if (!c.isWhitespace()) {
+                        fixedContentBuilder.append(" ")
+                        spaces.add(i)
+                    }
+                }
+                fixedContentBuilder.append(c)
+            }
+            val fixedContent = fixedContentBuilder.toString()
 
             val channel = params[0].substring(1)
             val emoteTag = tags["emotes"] ?: ""
-            val emotes = EmoteManager.parseTwitchEmotes(emoteTag, content)
-            val otherEmotes = EmoteManager.parse3rdPartyEmotes(content, channel)
+            val emotes = EmoteManager.parseTwitchEmotes(emoteTag, fixedContent, spaces)
+            val otherEmotes = EmoteManager.parse3rdPartyEmotes(fixedContent, channel)
             val id = tags["id"] ?: System.nanoTime().toString()
 
             val badges = parseBadges(tags["badges"], channel)
@@ -125,7 +128,7 @@ data class TwitchMessage(
                 name,
                 displayName,
                 color,
-                content,
+                fixedContent,
                 emotes.plus(otherEmotes).distinctBy { it.code },
                 isAction,
                 isNotify || tags["msg-id"] == "highlighted-message",
@@ -208,10 +211,27 @@ data class TwitchMessage(
             val color = Color.parseColor(colorTag)
             val content = params[1]
 
+            val fixedContentBuilder = StringBuilder()
+            var previousEmoji = false
+            val spaces = mutableListOf<Int>()
+            content.forEachIndexed {i, c ->
+                if (c.isEmoji()) {
+                    previousEmoji = true
+                } else if (previousEmoji) {
+                    previousEmoji = false
+                    if (!c.isWhitespace()) {
+                        fixedContentBuilder.append(" ")
+                        spaces.add(i)
+                    }
+                }
+                fixedContentBuilder.append(c)
+            }
+            val fixedContent = fixedContentBuilder.toString()
+
             val time = "${TimeUtils.timestampToLocalTime(System.currentTimeMillis())} (Whisper)"
             val badges = parseBadges(tags["badges"])
-            val emotes = EmoteManager.parseTwitchEmotes(tags["emotes"] ?: "", content)
-                .plus(EmoteManager.parse3rdPartyEmotes(content))
+            val emotes = EmoteManager.parseTwitchEmotes(tags["emotes"] ?: "", fixedContent, spaces)
+                .plus(EmoteManager.parse3rdPartyEmotes(fixedContent))
 
             return TwitchMessage(
                 time,
@@ -219,7 +239,7 @@ data class TwitchMessage(
                 name,
                 displayName,
                 color,
-                content,
+                fixedContent,
                 emotes,
                 badges = badges,
                 id = System.nanoTime().toString()

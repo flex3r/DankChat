@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.service.twitch.emote
 
+import android.util.Log
 import androidx.collection.LruCache
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.api.model.BadgeEntities
@@ -49,7 +50,7 @@ object EmoteManager {
     val gifCache = LruCache<String, GifDrawable>(4 * 1024 * 1024)
     val gifCallback = MultiCallback(true)
 
-    fun parseTwitchEmotes(emoteTag: String, original: String): List<ChatEmote> {
+    fun parseTwitchEmotes(emoteTag: String, original: String, spaces: List<Int>): List<ChatEmote> {
         if (emoteTag.isEmpty()) {
             return emptyList()
         }
@@ -76,7 +77,8 @@ object EmoteManager {
             }
             val fixedParsedPositions = parsedPositons.map { (start, end) ->
                 val extra = unicodeFixPositions.count { it < start }
-                return@map "${(start + extra)}-${(end + extra)}"
+                val spaceExtra = spaces.count { it < start + extra }
+                return@map "${(start + extra + spaceExtra)}-${(end + extra + spaceExtra)}"
             }
             val code = original.substring(
                 parsedPositons.first().first,
