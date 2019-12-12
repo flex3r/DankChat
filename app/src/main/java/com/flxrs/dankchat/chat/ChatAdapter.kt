@@ -188,12 +188,14 @@ class ChatAdapter(
                             if (!ignoreClicks) onUserClicked(name)
                         }
                     }
-                    (text as Spannable).setSpan(
-                        userClickableSpan,
-                        prefixLength - displayName.length + badgesLength,
-                        prefixLength + badgesLength,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
+                    listOf(spannable, (text as Spannable)).forEach {
+                        it.setSpan(
+                            userClickableSpan,
+                            prefixLength - displayName.length + badgesLength,
+                            prefixLength + badgesLength,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+                    }
                 }
 
                 //links
@@ -209,17 +211,18 @@ class ChatAdapter(
                             } catch (e: ActivityNotFoundException) {
                                 Log.e("ViewBinding", Log.getStackTraceString(e))
                             }
-
                         }
                     }
                     val start = prefixLength + badgesLength + message.indexOf(url.originalUrl)
                     val end = start + url.originalUrl.length
-                    (text as Spannable).setSpan(
-                        clickableSpan,
-                        start,
-                        end,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
+                    listOf(spannable, (text as Spannable)).forEach {
+                        it.setSpan(
+                            clickableSpan,
+                            start,
+                            end,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+                    }
                 }
 
                 if (emotes.filter { it.isGif }.count() > 0) {
