@@ -14,7 +14,7 @@ import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.squareup.moshi.JsonAdapter
 import java.util.regex.Pattern
 
-fun List<ChatItem>.replaceWithTimeOuts(name: String): List<ChatItem> = toMutableList().apply {
+fun List<ChatItem>.replaceWithTimeOuts(name: String): List<ChatItem> = apply {
     forEach { item ->
         if (!item.message.isNotify
             && (name.isBlank() || item.message.name.equals(name, true))
@@ -24,7 +24,7 @@ fun List<ChatItem>.replaceWithTimeOuts(name: String): List<ChatItem> = toMutable
     }
 }
 
-fun List<ChatItem>.replaceWithTimeOut(id: String): List<ChatItem> = toMutableList().apply {
+fun List<ChatItem>.replaceWithTimeOut(id: String): List<ChatItem> = apply {
     forEach {
         if (it.message.id == id) {
             it.message.timedOut = true

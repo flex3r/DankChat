@@ -67,6 +67,8 @@ class ChatAdapter(
     override fun onViewRecycled(holder: ViewHolder) {
         val view = holder.binding.itemText
         EmoteManager.gifCallback.removeView(view)
+        Glide.with(view).clear(view)
+        holder.binding.executePendingBindings()
         super.onViewRecycled(holder)
     }
 
@@ -114,7 +116,6 @@ class ChatAdapter(
                     false
                 }
 
-                val lineHeight = lineHeight
                 val scaleFactor = lineHeight * 1.5 / 112
 
                 val background = when {
@@ -230,11 +231,19 @@ class ChatAdapter(
                     if (e.isGif) {
                         val gifDrawable = EmoteManager.gifCache[e.code]
                         if (gifDrawable != null) {
+                            gifDrawable.transformEmoteDrawable(scaleFactor)
                             setEmoteSpans(e, fullPrefix, gifDrawable)
                         } else Glide.with(this@with)
                             .`as`(ByteArray::class.java)
                             .load(e.url)
+                            .placeholder(R.drawable.ic_missing_emote)
                             .into(object : CustomTarget<ByteArray>() {
+                                override fun onLoadStarted(placeholder: Drawable?) {
+                                    if (placeholder != null) {
+                                        placeholder.transformEmoteDrawable(scaleFactor)
+                                        setEmoteSpans(e, fullPrefix, placeholder)
+                                    }
+                                }
                                 override fun onLoadCleared(placeholder: Drawable?) = Unit
                                 override fun onResourceReady(
                                     resource: ByteArray,
@@ -244,23 +253,28 @@ class ChatAdapter(
                                     drawable.callback = EmoteManager.gifCallback
                                     EmoteManager.gifCache.put(e.code, drawable)
                                     drawable.start()
-                                    transformEmoteDrawable(drawable, scaleFactor, e) {
-                                        setEmoteSpans(e, fullPrefix, it)
-                                    }
+                                    drawable.transformEmoteDrawable(scaleFactor)
+                                    setEmoteSpans(e, fullPrefix, drawable)
                                 }
                             })
                     } else Glide.with(this@with)
                         .asDrawable()
                         .load(e.url)
+                        .placeholder(R.drawable.ic_missing_emote)
                         .into(object : CustomTarget<Drawable>() {
+                            override fun onLoadStarted(placeholder: Drawable?) {
+                                if (placeholder != null) {
+                                    placeholder.transformEmoteDrawable(scaleFactor, e)
+                                    setEmoteSpans(e, fullPrefix, placeholder)
+                                }
+                            }
                             override fun onLoadCleared(placeholder: Drawable?) = Unit
                             override fun onResourceReady(
                                 resource: Drawable,
                                 transition: Transition<in Drawable>?
                             ) {
-                                transformEmoteDrawable(resource, scaleFactor, e) {
-                                    setEmoteSpans(e, fullPrefix, it)
-                                }
+                                resource.transformEmoteDrawable(scaleFactor, e)
+                                setEmoteSpans(e, fullPrefix, resource)
                             }
                         })
                 }
@@ -270,7 +284,7 @@ class ChatAdapter(
     private fun TextView.setEmoteSpans(
         e: ChatEmote,
         prefix: Int,
-        gifDrawable: Drawable
+        drawable: Drawable
     ) {
         e.positions.forEach { pos ->
             val split = pos.split('-')
@@ -278,7 +292,7 @@ class ChatAdapter(
             val end = split[1].toInt() + prefix
             try {
                 (text as SpannableString).setSpan(
-                    ImageSpan(gifDrawable),
+                    ImageSpan(drawable),
                     start,
                     end,
                     Spannable.SPAN_EXCLUSIVE_INCLUSIVE
@@ -289,21 +303,24 @@ class ChatAdapter(
         }
     }
 
-    private fun transformEmoteDrawable(
-        drawable: Drawable,
+    private fun Drawable.transformEmoteDrawable(scale: Double) {
+        val height = (intrinsicHeight * scale).roundToInt()
+        val width = (intrinsicWidth * scale).roundToInt()
+        setBounds(0, 0, width, height)
+    }
+
+    private fun Drawable.transformEmoteDrawable(
         scale: Double,
-        emote: ChatEmote,
-        block: (Drawable) -> Unit
+        emote: ChatEmote
     ) {
-        val ratio = drawable.intrinsicWidth / drawable.intrinsicHeight.toFloat()
+        val ratio = intrinsicWidth / intrinsicHeight.toFloat()
         val height = when {
-            drawable.intrinsicHeight < 55 && emote.isTwitch -> (70 * scale).roundToInt()
-            drawable.intrinsicHeight in 55..111 && emote.isTwitch -> (112 * scale).roundToInt()
-            else -> (drawable.intrinsicHeight * scale).roundToInt()
+            intrinsicHeight < 55 && emote.isTwitch -> (70 * scale).roundToInt()
+            intrinsicHeight in 55..111 && emote.isTwitch -> (112 * scale).roundToInt()
+            else -> (intrinsicHeight * scale).roundToInt()
         }
         val width = (height * ratio).roundToInt()
-        drawable.setBounds(0, 0, width * emote.scale, height * emote.scale)
-        block(drawable)
+        setBounds(0, 0, width * emote.scale, height * emote.scale)
     }
 }
 
