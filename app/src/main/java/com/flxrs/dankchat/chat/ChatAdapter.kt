@@ -23,18 +23,20 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import coil.Coil
-import coil.api.get
-import coil.api.load
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatItemBinding
-import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.twitch.emote.ChatEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.extensions.normalizeColor
 import com.linkedin.urls.detection.UrlDetector
 import com.linkedin.urls.detection.UrlDetectorOptions
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import pl.droidsonroids.gif.GifDrawable
 import kotlin.math.roundToInt
 
@@ -132,158 +134,158 @@ class ChatAdapter(
                     displayName.length to SpannableStringBuilder()
                 }
 
-                CoroutineScope(Dispatchers.Main.immediate).launch {
-                    badges.forEach { badge ->
-                        spannable.append("  ")
-                        val start = spannable.length - 2
-                        val end = spannable.length - 1
-                        val drawable = Coil.get(badge.url)
-                        setBadgeImageSpan(drawable, this@with, spannable, lineHeight, start, end)
-                    }
+                badges.forEach { badge ->
+                    spannable.append("  ")
+                    val start = spannable.length - 2
+                    val end = spannable.length - 1
+                    Glide.with(this@with)
+                        .asDrawable()
+                        .load(badge.url)
+                        .into(object : CustomTarget<Drawable>() {
+                            override fun onLoadCleared(placeholder: Drawable?) = Unit
 
-                    val normalizedColor = color.normalizeColor(isDarkMode)
-                    spannable.bold { color(normalizedColor) { append(displayName) } }
+                            override fun onResourceReady(
+                                resource: Drawable,
+                                transition: Transition<in Drawable>?
+                            ) {
+                                val width =
+                                    (lineHeight * resource.intrinsicWidth / resource.intrinsicHeight.toFloat()).roundToInt()
+                                resource.setBounds(0, 0, width, lineHeight)
 
-                    if (isAction) {
-                        spannable.color(normalizedColor) { append(message) }
-                    } else {
-                        spannable.append(message)
-                    }
-
-                    //clicking usernames
-                    if (name.isNotBlank()) {
-                        val userClickableSpan = object : ClickableSpan() {
-                            override fun updateDrawState(ds: TextPaint) {
-                                ds.isUnderlineText = false
-                                ds.color = normalizedColor
+                                val imageSpan = ImageSpan(resource, ImageSpan.ALIGN_BOTTOM)
+                                spannable.setSpan(
+                                    imageSpan,
+                                    start,
+                                    end,
+                                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                                )
+                                text = spannable
                             }
+                        })
+                }
 
-                            override fun onClick(v: View) {
-                                if (!ignoreClicks) onUserClicked(name)
-                            }
+                val normalizedColor = color.normalizeColor(isDarkMode)
+                spannable.bold { color(normalizedColor) { append(displayName) } }
+
+                if (isAction) {
+                    spannable.color(normalizedColor) { append(message) }
+                } else {
+                    spannable.append(message)
+                }
+
+                setText(spannable, TextView.BufferType.SPANNABLE)
+
+                //clicking usernames
+                if (name.isNotBlank()) {
+                    val userClickableSpan = object : ClickableSpan() {
+                        override fun updateDrawState(ds: TextPaint) {
+                            ds.isUnderlineText = false
+                            ds.color = normalizedColor
                         }
-                        spannable.setSpan(
-                            userClickableSpan,
-                            prefixLength - displayName.length + badgesLength,
-                            prefixLength + badgesLength,
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
-                    }
 
-                    //links
-                    UrlDetector(message, UrlDetectorOptions.Default).detect().forEach { url ->
-                        val clickableSpan = object : ClickableSpan() {
-                            override fun onClick(v: View) {
-                                try {
-                                    if (!ignoreClicks)
-                                        androidx.browser.customtabs.CustomTabsIntent.Builder()
-                                            .addDefaultShareMenuItem()
-                                            .setShowTitle(true)
-                                            .build().launchUrl(v.context, Uri.parse(url.fullUrl))
-                                } catch (e: ActivityNotFoundException) {
-                                    Log.e("ViewBinding", Log.getStackTraceString(e))
-                                }
-
-                            }
-                        }
-                        val start = prefixLength + badgesLength + message.indexOf(url.originalUrl)
-                        val end = start + url.originalUrl.length
-                        spannable.setSpan(
-                            clickableSpan,
-                            start,
-                            end,
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
-                    }
-
-                    setText(spannable, TextView.BufferType.SPANNABLE)
-
-                    if (emotes.filter { it.isGif }.count() > 0) {
-                        EmoteManager.gifCallback.addView(this@with)
-                    }
-                    emotes.forEach { e ->
-                        if (e.isGif) {
-                            val gifDrawable = EmoteManager.gifCache[e.code]
-                            if (gifDrawable != null) {
-                                transformEmoteDrawable(gifDrawable, scaleFactor, e) {
-                                    e.positions.forEach { pos ->
-                                        val split = pos.split('-')
-                                        val start = split[0].toInt() + prefixLength + badgesLength
-                                        val end = split[1].toInt() + prefixLength + badgesLength
-                                        (text as SpannableString).setSpan(
-                                            ImageSpan(it),
-                                            start,
-                                            end,
-                                            Spannable.SPAN_EXCLUSIVE_INCLUSIVE
-                                        )
-                                    }
-                                }
-                            } else {
-                                try {
-                                    TwitchApi.getRawBytes(e.url)?.let { bytes ->
-                                        val drawable = GifDrawable(bytes)
-                                        drawable.callback = EmoteManager.gifCallback
-                                        EmoteManager.gifCache.put(e.code, drawable)
-                                        drawable.start()
-                                        withContext(Dispatchers.Main.immediate) {
-                                            transformEmoteDrawable(drawable, scaleFactor, e) {
-                                                e.positions.forEach { pos ->
-                                                    val split = pos.split('-')
-                                                    val start =
-                                                        split[0].toInt() + prefixLength + badgesLength
-                                                    val end =
-                                                        split[1].toInt() + prefixLength + badgesLength
-                                                    (text as SpannableString).setSpan(
-                                                        ImageSpan(it),
-                                                        start,
-                                                        end,
-                                                        Spannable.SPAN_EXCLUSIVE_INCLUSIVE
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    }
-                                } catch (t: Throwable) {
-                                    Log.e("ViewBinding", Log.getStackTraceString(t))
-                                }
-                            }
-                        } else Coil.load(context, e.url) {
-                            target {
-                                transformEmoteDrawable(it, scaleFactor, e) {
-                                    e.positions.forEach { pos ->
-                                        val split = pos.split('-')
-                                        val start = split[0].toInt() + prefixLength + badgesLength
-                                        val end = split[1].toInt() + prefixLength + badgesLength
-                                        (text as SpannableString).setSpan(
-                                            ImageSpan(it),
-                                            start,
-                                            end,
-                                            Spannable.SPAN_EXCLUSIVE_INCLUSIVE
-                                        )
-                                    }
-                                }
-                            }
+                        override fun onClick(v: View) {
+                            if (!ignoreClicks) onUserClicked(name)
                         }
                     }
+                    (text as Spannable).setSpan(
+                        userClickableSpan,
+                        prefixLength - displayName.length + badgesLength,
+                        prefixLength + badgesLength,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
+
+                //links
+                UrlDetector(message, UrlDetectorOptions.Default).detect().forEach { url ->
+                    val clickableSpan = object : ClickableSpan() {
+                        override fun onClick(v: View) {
+                            try {
+                                if (!ignoreClicks)
+                                    androidx.browser.customtabs.CustomTabsIntent.Builder()
+                                        .addDefaultShareMenuItem()
+                                        .setShowTitle(true)
+                                        .build().launchUrl(v.context, Uri.parse(url.fullUrl))
+                            } catch (e: ActivityNotFoundException) {
+                                Log.e("ViewBinding", Log.getStackTraceString(e))
+                            }
+
+                        }
+                    }
+                    val start = prefixLength + badgesLength + message.indexOf(url.originalUrl)
+                    val end = start + url.originalUrl.length
+                    (text as Spannable).setSpan(
+                        clickableSpan,
+                        start,
+                        end,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
+
+                if (emotes.filter { it.isGif }.count() > 0) {
+                    EmoteManager.gifCallback.addView(this@with)
+                }
+
+                val fullPrefix = prefixLength + badgesLength
+                emotes.forEach { e ->
+                    if (e.isGif) {
+                        val gifDrawable = EmoteManager.gifCache[e.code]
+                        if (gifDrawable != null) {
+                            setEmoteSpans(e, fullPrefix, gifDrawable)
+                        } else Glide.with(this@with)
+                            .`as`(ByteArray::class.java)
+                            .load(e.url)
+                            .into(object : CustomTarget<ByteArray>() {
+                                override fun onLoadCleared(placeholder: Drawable?) = Unit
+                                override fun onResourceReady(
+                                    resource: ByteArray,
+                                    transition: Transition<in ByteArray>?
+                                ) {
+                                    val drawable = GifDrawable(resource)
+                                    drawable.callback = EmoteManager.gifCallback
+                                    EmoteManager.gifCache.put(e.code, drawable)
+                                    drawable.start()
+                                    transformEmoteDrawable(drawable, scaleFactor, e) {
+                                        setEmoteSpans(e, fullPrefix, it)
+                                    }
+                                }
+                            })
+                    } else Glide.with(this@with)
+                        .asDrawable()
+                        .load(e.url)
+                        .into(object : CustomTarget<Drawable>() {
+                            override fun onLoadCleared(placeholder: Drawable?) = Unit
+                            override fun onResourceReady(
+                                resource: Drawable,
+                                transition: Transition<in Drawable>?
+                            ) {
+                                transformEmoteDrawable(resource, scaleFactor, e) {
+                                    setEmoteSpans(e, fullPrefix, it)
+                                }
+                            }
+                        })
                 }
             }
         }
 
-    private fun setBadgeImageSpan(
-        drawable: Drawable?,
-        textView: TextView,
-        spannable: SpannableStringBuilder,
-        lineHeight: Int,
-        start: Int,
-        end: Int
+    private fun TextView.setEmoteSpans(
+        e: ChatEmote,
+        prefix: Int,
+        gifDrawable: Drawable
     ) {
-        if (drawable != null) {
-            val width =
-                (lineHeight * drawable.intrinsicWidth / drawable.intrinsicHeight.toFloat()).roundToInt()
-            drawable.setBounds(0, 0, width, lineHeight)
-
-            val imageSpan = ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM)
-            spannable.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        e.positions.forEach { pos ->
+            val split = pos.split('-')
+            val start = split[0].toInt() + prefix
+            val end = split[1].toInt() + prefix
+            try {
+                (text as SpannableString).setSpan(
+                    ImageSpan(gifDrawable),
+                    start,
+                    end,
+                    Spannable.SPAN_EXCLUSIVE_INCLUSIVE
+                )
+            } catch (t: Throwable) {
+                Log.e("ViewBinding", "$start $end ${e.code} ${(text as SpannableString).length}")
+            }
         }
     }
 
