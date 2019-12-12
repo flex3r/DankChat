@@ -326,7 +326,8 @@ class ChatAdapter(
 
 private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
     override fun areItemsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
-        return (!newItem.message.timedOut || !newItem.message.isMention) || oldItem == newItem
+        return if (newItem.message.timedOut || newItem.message.isMention) false
+        else oldItem == newItem
     }
 
     override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
