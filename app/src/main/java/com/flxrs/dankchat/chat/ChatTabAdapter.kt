@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.chat
 
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
@@ -10,9 +9,9 @@ class ChatTabAdapter(supportFragmentManager: FragmentManager, lifecycle: Lifecyc
     FragmentStateAdapter(supportFragmentManager, lifecycle) {
 
     val titleList = mutableListOf<String>()
-    val fragmentList = mutableListOf<ChatFragment>()
+    //val fragmentList = mutableListOf<ChatFragment>()
 
-    override fun createFragment(position: Int): Fragment = fragmentList[position]
+    override fun createFragment(position: Int) = ChatFragment.newInstance(titleList[position])
 
     override fun getItemCount(): Int = titleList.size
 
@@ -33,15 +32,17 @@ class ChatTabAdapter(supportFragmentManager: FragmentManager, lifecycle: Lifecyc
 
     fun addFragment(title: String) {
         titleList.add(title)
-        fragmentList.add(ChatFragment.newInstance(title))
-        notifyItemInserted(titleList.size - 1)
+        notifyDataSetChanged()
+        //fragmentList.add(ChatFragment.newInstance(title))
+        //notifyItemInserted(titleList.size - 1)
     }
 
     fun removeFragment(index: Int) {
         if (index < titleList.size) {
             titleList.removeAt(index)
-            notifyItemRemoved(index)
-            fragmentList.removeAt(index)
+            notifyDataSetChanged()
+            //fragmentList.removeAt(index)
+            //notifyItemRemoved(index)
         }
     }
 }

@@ -748,7 +748,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         offscreenPageLimit = calculatePageLimit()
         registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                if (position in 0 until tabAdapter.fragmentList.size) {
+                if (position in 0 until tabAdapter.titleList.size) {
                     val newChannel = tabAdapter.titleList[position].toLowerCase(Locale.getDefault())
                     currentChannel = newChannel
                     viewModel.setActiveChannel(newChannel)
