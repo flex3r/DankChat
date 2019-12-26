@@ -11,7 +11,7 @@ android {
         applicationId "com.flxrs.dankchat"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 95
+        versionCode 96
         versionName "1.6.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -55,7 +55,7 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    buildToolsVersion = '28.0.3'
+    buildToolsVersion = '29.0.2'
     packagingOptions {
         exclude 'META-INF/kotlinx-io.kotlin_module'
         exclude 'META-INF/atomicfu.kotlin_module'
