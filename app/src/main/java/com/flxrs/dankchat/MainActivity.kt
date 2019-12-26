@@ -14,7 +14,6 @@ import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.webkit.MimeTypeMap
 import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
@@ -23,7 +22,6 @@ import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.core.view.updateLayoutParams
-import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
@@ -146,9 +144,9 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             canType.observe(this@MainActivity) { if (it) binding.inputLayout.setup() }
             connectionState.observe(this@MainActivity) { hint ->
                 binding.inputLayout.hint = when (hint) {
-                    ConnectionState.CONNECTED     -> getString(R.string.hint_connected)
+                    ConnectionState.CONNECTED -> getString(R.string.hint_connected)
                     ConnectionState.NOT_LOGGED_IN -> getString(R.string.hint_not_logged_int)
-                    ConnectionState.DISCONNECTED  -> getString(R.string.hint_disconnected)
+                    ConnectionState.DISCONNECTED -> getString(R.string.hint_disconnected)
                 }
             }
             bottomText.observe(this@MainActivity) {
@@ -156,10 +154,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                     val helperId = com.google.android.material.R.id.textinput_helper_text
                     val previous = helperText
                     helperText = it
-
-                    if (previous?.isBlank() == false) findViewById<TextView>(helperId)?.run {
-                        updatePadding(top = 12) //TODO check if still needed
-                    }
                 }
             }
         }
@@ -259,32 +253,32 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_reconnect      -> twitchService?.reconnect(false)
-            R.id.menu_login_default  -> Intent(this, LoginActivity::class.java).apply {
+            R.id.menu_reconnect -> twitchService?.reconnect(false)
+            R.id.menu_login_default -> Intent(this, LoginActivity::class.java).apply {
                 isLoggingIn = true
                 startActivityForResult(this, LOGIN_REQUEST)
             }
             R.id.menu_login_advanced -> showAdvancedLoginDialog()
-            R.id.menu_add            -> addChannel()
-            R.id.menu_remove         -> removeChannel()
-            R.id.menu_reload_emotes  -> reloadEmotes()
-            R.id.menu_choose_image   -> checkPermissionForGallery()
-            R.id.menu_capture_image  -> startCameraCapture()
-            R.id.menu_hide           -> viewModel.appbarEnabled.value = false
-            R.id.menu_clear          -> clear()
-            R.id.menu_settings       -> Intent(this, SettingsActivity::class.java).apply {
+            R.id.menu_add -> addChannel()
+            R.id.menu_remove -> removeChannel()
+            R.id.menu_reload_emotes -> reloadEmotes()
+            R.id.menu_choose_image -> checkPermissionForGallery()
+            R.id.menu_capture_image -> startCameraCapture()
+            R.id.menu_hide -> viewModel.appbarEnabled.value = false
+            R.id.menu_clear -> clear()
+            R.id.menu_settings -> Intent(this, SettingsActivity::class.java).apply {
                 startActivityForResult(this, SETTINGS_REQUEST)
             }
-            else                     -> return false
+            else -> return false
         }
         return true
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            LOGIN_REQUEST    -> handleLoginRequest(resultCode)
-            GALLERY_REQUEST  -> handleGalleryRequest(resultCode, data)
-            CAPTURE_REQUEST  -> handleCaptureRequest(resultCode)
+            LOGIN_REQUEST -> handleLoginRequest(resultCode)
+            GALLERY_REQUEST -> handleGalleryRequest(resultCode, data)
+            CAPTURE_REQUEST -> handleCaptureRequest(resultCode)
             SETTINGS_REQUEST -> if (resultCode == Activity.RESULT_OK
                 && data?.getBooleanExtra(LOGOUT_REQUEST_KEY, false) == true
             ) {
@@ -336,7 +330,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     override fun onAdvancedLoginDialogResult(token: String) {
         val tokenWithoutSuffix = when {
             token.startsWith("oauth:", true) -> token.substringAfter(':')
-            else                             -> token
+            else -> token
         }
 
         lifecycleScope.launch {
@@ -642,15 +636,19 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         twitchPreferences = DankChatPreferenceStore(this)
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
             when (key) {
-                roomStateKey      -> viewModel.setRoomStateEnabled(p.getBoolean(key, true))
-                streamInfoKey     -> {
+                roomStateKey -> viewModel.setRoomStateEnabled(p.getBoolean(key, true))
+                streamInfoKey -> {
                     fetchStreamInformation()
                     viewModel.setStreamInfoEnabled(p.getBoolean(key, true))
                 }
-                inputKey          -> viewModel.inputEnabled.value = p.getBoolean(key, true)
-                darkThemeKey      -> delegate.localNightMode = if (p.getBoolean(key, true)) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+                inputKey -> viewModel.inputEnabled.value = p.getBoolean(key, true)
+                darkThemeKey -> delegate.localNightMode = if (p.getBoolean(
+                        key,
+                        true
+                    )
+                ) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
                 customMentionsKey -> viewModel.setMentionEntries(p.getStringSet(key, emptySet()))
-                blacklistKey      -> viewModel.setBlacklistEntries(p.getStringSet(key, emptySet()))
+                blacklistKey -> viewModel.setBlacklistEntries(p.getStringSet(key, emptySet()))
             }
         }
         preferences = PreferenceManager.getDefaultSharedPreferences(this).apply {
@@ -659,7 +657,11 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 setRoomStateEnabled(getBoolean(roomStateKey, true))
                 setStreamInfoEnabled(getBoolean(streamInfoKey, true))
                 inputEnabled.value = getBoolean(inputKey, true)
-                delegate.localNightMode = if (getBoolean(darkThemeKey, true)) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+                delegate.localNightMode = if (getBoolean(
+                        darkThemeKey,
+                        true
+                    )
+                ) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
                 setMentionEntries(getStringSet(customMentionsKey, emptySet()))
                 setBlacklistEntries(getStringSet(blacklistKey, emptySet()))
             }
@@ -786,9 +788,9 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                     bottomSheetViewPager
                 ) { tab, pos ->
                     tab.text = when (EmoteMenuTab.values()[pos]) {
-                        EmoteMenuTab.SUBS    -> getString(R.string.emote_menu_tab_subs)
+                        EmoteMenuTab.SUBS -> getString(R.string.emote_menu_tab_subs)
                         EmoteMenuTab.CHANNEL -> getString(R.string.emote_menu_tab_channel)
-                        EmoteMenuTab.GLOBAL  -> getString(R.string.emote_menu_tab_global)
+                        EmoteMenuTab.GLOBAL -> getString(R.string.emote_menu_tab_global)
                     }
                 }.attach()
             }
@@ -808,7 +810,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                                         supportActionBar?.hide()
                                         binding.tabs.visibility = View.GONE
                                     }
-                                    else                                                                    -> {
+                                    else -> {
                                         supportActionBar?.show()
                                         binding.tabs.visibility = View.VISIBLE
                                     }
@@ -827,7 +829,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_SEND -> sendMessage()
-                else                       -> false
+                else -> false
             }
         }
         setOnKeyListener { _, keyCode, _ ->
@@ -835,13 +837,14 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> {
                     if (!isPopupShowing) sendMessage() else false
                 }
-                else                                                  -> false
+                else -> false
             }
         }
 
         var wasLandScapeNotFullscreen = false
         setOnFocusChangeListener { _, hasFocus ->
-            val isDarkMode = preferences.getBoolean(getString(R.string.preference_dark_theme_key), true)
+            val isDarkMode =
+                preferences.getBoolean(getString(R.string.preference_dark_theme_key), true)
             var lightModeFlags = 0
             if (!isDarkMode) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -853,14 +856,14 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             }
 
             window.decorView.systemUiVisibility = when {
-                !hasFocus && wasLandScapeNotFullscreen && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE          -> {
+                !hasFocus && wasLandScapeNotFullscreen && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE -> {
                     wasLandScapeNotFullscreen = false
                     supportActionBar?.show()
                     binding.showActionbarFab.visibility = View.GONE
                     binding.tabs.visibility = View.VISIBLE
                     View.VISIBLE or lightModeFlags
                 }
-                !hasFocus && binding.showActionbarFab.isVisible                                                                               -> {
+                !hasFocus && binding.showActionbarFab.isVisible -> {
                     wasLandScapeNotFullscreen = false
                     var isMultiWindow = false
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -883,7 +886,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                     binding.tabs.visibility = View.GONE
                     View.VISIBLE or lightModeFlags
                 }
-                else                                                                                                                          -> {
+                else -> {
                     wasLandScapeNotFullscreen = false
                     View.VISIBLE or lightModeFlags
                 }
