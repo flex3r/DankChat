@@ -5,7 +5,6 @@ import android.content.ActivityNotFoundException
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.text.Spannable
-import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
@@ -174,8 +173,6 @@ class ChatAdapter(
                     spannable.append(message)
                 }
 
-                setText(spannable, TextView.BufferType.SPANNABLE)
-
                 //clicking usernames
                 if (name.isNotBlank()) {
                     val userClickableSpan = object : ClickableSpan() {
@@ -188,14 +185,12 @@ class ChatAdapter(
                             if (!ignoreClicks) onUserClicked(name)
                         }
                     }
-                    listOf(spannable, (text as Spannable)).forEach {
-                        it.setSpan(
-                            userClickableSpan,
-                            prefixLength - displayName.length + badgesLength,
-                            prefixLength + badgesLength,
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
-                    }
+                    spannable.setSpan(
+                        userClickableSpan,
+                        prefixLength - displayName.length + badgesLength,
+                        prefixLength + badgesLength,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
                 }
 
                 //links
@@ -215,14 +210,12 @@ class ChatAdapter(
                     }
                     val start = prefixLength + badgesLength + message.indexOf(url.originalUrl)
                     val end = start + url.originalUrl.length
-                    listOf(spannable, (text as Spannable)).forEach {
-                        it.setSpan(
-                            clickableSpan,
-                            start,
-                            end,
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
-                    }
+                    spannable.setSpan(
+                        clickableSpan,
+                        start,
+                        end,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
                 }
 
                 if (emotes.filter { it.isGif }.count() > 0) {
@@ -235,7 +228,7 @@ class ChatAdapter(
                         val gifDrawable = EmoteManager.gifCache[e.code]
                         if (gifDrawable != null) {
                             gifDrawable.transformEmoteDrawable(scaleFactor)
-                            setEmoteSpans(e, fullPrefix, gifDrawable)
+                            setEmoteSpans(spannable, e, fullPrefix, gifDrawable)
                         } else Glide.with(this@with)
                             .`as`(ByteArray::class.java)
                             .load(e.url)
@@ -244,9 +237,10 @@ class ChatAdapter(
                                 override fun onLoadStarted(placeholder: Drawable?) {
                                     if (placeholder != null) {
                                         placeholder.transformEmoteDrawable(scaleFactor)
-                                        setEmoteSpans(e, fullPrefix, placeholder)
+                                        setEmoteSpans(spannable, e, fullPrefix, placeholder)
                                     }
                                 }
+
                                 override fun onLoadCleared(placeholder: Drawable?) = Unit
                                 override fun onResourceReady(
                                     resource: ByteArray,
@@ -257,7 +251,7 @@ class ChatAdapter(
                                     EmoteManager.gifCache.put(e.code, drawable)
                                     drawable.start()
                                     drawable.transformEmoteDrawable(scaleFactor)
-                                    setEmoteSpans(e, fullPrefix, drawable)
+                                    setEmoteSpans(spannable, e, fullPrefix, drawable)
                                 }
                             })
                     } else Glide.with(this@with)
@@ -268,23 +262,26 @@ class ChatAdapter(
                             override fun onLoadStarted(placeholder: Drawable?) {
                                 if (placeholder != null) {
                                     placeholder.transformEmoteDrawable(scaleFactor, e)
-                                    setEmoteSpans(e, fullPrefix, placeholder)
+                                    setEmoteSpans(spannable, e, fullPrefix, placeholder)
                                 }
                             }
+
                             override fun onLoadCleared(placeholder: Drawable?) = Unit
                             override fun onResourceReady(
                                 resource: Drawable,
                                 transition: Transition<in Drawable>?
                             ) {
                                 resource.transformEmoteDrawable(scaleFactor, e)
-                                setEmoteSpans(e, fullPrefix, resource)
+                                setEmoteSpans(spannable, e, fullPrefix, resource)
                             }
                         })
                 }
+                text = spannable
             }
         }
 
     private fun TextView.setEmoteSpans(
+        spannableStringBuilder: SpannableStringBuilder,
         e: ChatEmote,
         prefix: Int,
         drawable: Drawable
@@ -294,14 +291,15 @@ class ChatAdapter(
             val start = split[0].toInt() + prefix
             val end = split[1].toInt() + prefix
             try {
-                (text as SpannableString).setSpan(
+                spannableStringBuilder.setSpan(
                     ImageSpan(drawable),
                     start,
                     end,
                     Spannable.SPAN_EXCLUSIVE_INCLUSIVE
                 )
+                text = spannableStringBuilder
             } catch (t: Throwable) {
-                Log.e("ViewBinding", "$start $end ${e.code} ${(text as SpannableString).length}")
+                Log.e("ViewBinding", "$start $end ${e.code} ${spannableStringBuilder.length}")
             }
         }
     }
