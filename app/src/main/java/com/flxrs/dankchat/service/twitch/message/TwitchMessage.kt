@@ -1,15 +1,12 @@
 package com.flxrs.dankchat.service.twitch.message
 
 import android.graphics.Color
-import android.util.Log
-import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.badge.Badge
 import com.flxrs.dankchat.service.twitch.emote.ChatEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.TimeUtils
 import com.flxrs.dankchat.utils.extensions.isEmoji
-import com.flxrs.dankchat.utils.extensions.mapToRegex
 import java.util.regex.Pattern
 
 data class TwitchMessage(
@@ -100,7 +97,7 @@ data class TwitchMessage(
             val fixedContentBuilder = StringBuilder()
             var previousEmoji = false
             val spaces = mutableListOf<Int>()
-            content.forEachIndexed {i, c ->
+            content.forEachIndexed { i, c ->
                 if (c.isEmoji()) {
                     previousEmoji = true
                 } else if (previousEmoji) {
@@ -214,7 +211,7 @@ data class TwitchMessage(
             val fixedContentBuilder = StringBuilder()
             var previousEmoji = false
             val spaces = mutableListOf<Int>()
-            content.forEachIndexed {i, c ->
+            content.forEachIndexed { i, c ->
                 if (c.isEmoji()) {
                     previousEmoji = true
                 } else if (previousEmoji) {
@@ -246,32 +243,21 @@ data class TwitchMessage(
             )
         }
 
-        private fun parseBadges(badgeTag: String?, channel: String = ""): List<Badge> {
+        private fun parseBadges(badgeTags: String?, channel: String = ""): List<Badge> {
             val result = mutableListOf<Badge>()
-            badgeTag?.split(',')?.forEach { badge ->
-                val trimmed = badge.trim()
+            badgeTags?.split(',')?.forEach { badgeTag ->
+                val trimmed = badgeTag.trim()
                 val badgeSet = trimmed.substringBefore('/')
                 val badgeVersion = trimmed.substringAfter('/')
-                when {
-                    badgeSet.startsWith("subscriber") -> EmoteManager.getSubBadgeUrl(
-                        channel,
-                        badgeSet,
-                        badgeVersion
-                    )?.let { result += Badge(badgeSet, it) }
-                    badgeSet.startsWith("bits") -> EmoteManager.getSubBadgeUrl(
-                        channel,
-                        badgeSet,
-                        badgeVersion
-                    )
-                        ?: EmoteManager.getGlobalBadgeUrl(
-                            badgeSet,
-                            badgeVersion
-                        )?.let { result += Badge(badgeSet, it) }
-                    else -> EmoteManager.getGlobalBadgeUrl(
-                        badgeSet,
-                        badgeVersion
-                    )?.let { result += Badge(badgeSet, it) }
+                val badge = when {
+                    badgeSet.startsWith("subscriber")
+                            || badgeSet.startsWith("bits") -> {
+                        EmoteManager.getSubBadgeUrl(channel, badgeSet, badgeVersion)
+                            ?: EmoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)
+                    }
+                    else -> EmoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)
                 }
+                badge?.let { result += Badge(badgeSet, it) }
             }
             return result
         }
