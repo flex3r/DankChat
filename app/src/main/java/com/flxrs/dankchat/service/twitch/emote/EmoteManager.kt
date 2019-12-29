@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.service.twitch.emote
 
-import android.util.Log
 import androidx.collection.LruCache
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.api.model.BadgeEntities
@@ -145,22 +144,24 @@ object EmoteManager {
     suspend fun setTwitchEmotes(twitchResult: EmoteEntities.Twitch.Result) =
         withContext(Dispatchers.Default) {
             twitchEmotes.clear()
-            val setMapping = TwitchApi.getUserSets(twitchResult.sets.keys.toList())
-                ?.associateBy({ it.id }, { it.channelName })
+            val setMapping = twitchResult.sets.keys.mapNotNull { TwitchApi.getUserSet(it) }
+                .associateBy({ it.id }, { it.channelName })
+            //val setMapping = TwitchApi.getUserSets(twitchResult.sets.keys.toList())
+            //    ?.associateBy({ it.id }, { it.channelName })
 
             twitchResult.sets.forEach {
                 val set = it.key
                 val type = if (set == "0") {
                     EmoteType.GlobalTwitchEmote
                 } else {
-                    val channel = setMapping?.get(set) ?: "Twitch"
+                    val channel = setMapping[set] ?: "Twitch"
                     EmoteType.ChannelTwitchEmote(channel)
                 }
 
                 it.value.forEach { emoteResult ->
                     val keyword = when (type) {
                         is EmoteType.GlobalTwitchEmote -> emoteReplacements.getOrElse(emoteResult.name) { emoteResult.name }
-                        else                           -> emoteResult.name
+                        else -> emoteResult.name
                     }
                     val emote = GenericEmote(
                         keyword,
@@ -250,7 +251,7 @@ object EmoteManager {
         val (scale, url) = when {
             emote.urls.containsKey("4") -> 1 to emote.urls.getValue("4")
             emote.urls.containsKey("2") -> 2 to emote.urls.getValue("2")
-            else                        -> 4 to emote.urls.getValue("1")
+            else -> 4 to emote.urls.getValue("1")
         }
         val lowResUrl = emote.urls["2"] ?: emote.urls.getValue("1")
         val type = if (channel.isBlank()) {

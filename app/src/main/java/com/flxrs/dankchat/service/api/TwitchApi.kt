@@ -40,7 +40,7 @@ object TwitchApi {
     private const val REDIRECT_URL = "https://flxrs.com/dankchat"
     private const val SCOPES = "chat:edit+chat:read+user_read+user_subscriptions" +
             "+channel:moderate+user_blocks_read+user_blocks_edit+whispers:read+whispers:edit" +
-            "channel_editor"
+            "+channel_editor"
     const val CLIENT_ID = "xu7vd1i6tlr0ak45q1li2wdc0lrma8"
     const val LOGIN_URL =
         "$BASE_LOGIN_URL&client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URL&scope=$SCOPES"
@@ -87,6 +87,16 @@ object TwitchApi {
             }
             return@withContext null
         }
+
+    suspend fun getUserSet(set: String): EmoteEntities.Twitch.EmoteSet? = withContext(Dispatchers.IO) {
+        try {
+            val response = service.getSet("https://flxrs.com/api/set/$set")
+            if (response.isSuccessful) return@withContext response.body()?.firstOrNull()
+        } catch (t: Throwable) {
+            Log.e(TAG, Log.getStackTraceString(t))
+        }
+        return@withContext null
+    }
 
     suspend fun getStream(channel: String): StreamEntities.Stream? = withContext(Dispatchers.IO) {
         getUserIdFromName(channel)?.let {
