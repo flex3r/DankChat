@@ -151,6 +151,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             }
             bottomText.observe(this@MainActivity) {
                 binding.inputLayout.helperText = it
+                binding.fullscreenHintText.text = it
             }
         }
 

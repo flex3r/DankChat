@@ -53,6 +53,14 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         addSource(roomStateEnabled) { value = it || streamInfoEnabled.value ?: true }
         addSource(streamInfoEnabled) { value = it || roomStateEnabled.value ?: true }
     }
+    val shouldShowFullscreenHelper = MediatorLiveData<Boolean>().apply {
+        addSource(shouldShowInput) { value = !it && bottomTextEnabled.value ?: true }
+        addSource(bottomTextEnabled) { value = it && shouldShowInput.value?.not() ?: false }
+        addSource(bottomText) {
+            value =
+                it.isNotBlank() && shouldShowInput.value?.not() ?: false && bottomTextEnabled.value ?: true
+        }
+    }
     val emoteSuggestions = emotes.switchMap { emotes ->
         liveData(Dispatchers.Default) {
             emit(emotes.distinctBy { it.keyword })

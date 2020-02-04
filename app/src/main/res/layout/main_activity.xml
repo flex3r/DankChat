@@ -21,7 +21,7 @@
 			android:id="@+id/coordinator"
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
-			app:layout_constraintBottom_toTopOf="@id/input_layout"
+			app:layout_constraintBottom_toTopOf="@id/bottom_barrier"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toTopOf="parent">
@@ -125,6 +125,14 @@
 
 		</androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+		<androidx.constraintlayout.widget.Barrier
+			android:id="@+id/bottom_barrier"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			app:barrierAllowsGoneWidgets="false"
+			app:barrierDirection="top"
+			app:constraint_referenced_ids="input_layout,fullscreen_hint_text" />
+
 		<com.google.android.material.textfield.TextInputLayout
 			android:id="@+id/input_layout"
 			style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -141,7 +149,7 @@
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/coordinator"
+			app:layout_constraintTop_toBottomOf="@id/bottom_barrier"
 			app:startIconContentDescription="@string/emote_menu_hint"
 			app:startIconDrawable="@{vm.canType ? @drawable/ic_insert_emoticon_24dp : null}">
 
@@ -157,5 +165,18 @@
 				android:paddingEnd="8dp"
 				android:singleLine="true" />
 		</com.google.android.material.textfield.TextInputLayout>
+
+		<TextView
+			android:id="@+id/fullscreen_hint_text"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:animateLayoutChanges="true"
+			android:textAppearance="?attr/textAppearanceCaption"
+			android:visibility="@{vm.shouldShowFullscreenHelper ? View.VISIBLE : View.GONE}"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/bottom_barrier" />
 	</androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
