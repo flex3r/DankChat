@@ -232,13 +232,11 @@ class ChatAdapter(
                     }
                     text = spannable
                 }
-                text = spannable
             }
         }
     }
 
-    private fun TextView.setEmoteSpans(
-        spannableStringBuilder: SpannableStringBuilder,
+    private fun setEmoteSpans(
         e: ChatEmote,
         prefix: Int,
         drawable: Drawable,
@@ -253,11 +251,10 @@ class ChatAdapter(
                     end,
                     Spannable.SPAN_EXCLUSIVE_INCLUSIVE
                 )
-                text = spannableStringBuilder
             } catch (t: Throwable) {
                 Log.e(
                     "ViewBinding",
-                    "$start $end ${e.code} ${(text as SpannableString).length}"
+                    "$start $end ${e.code} ${spannableStringBuilder.length}"
                 )
             }
         }

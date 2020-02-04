@@ -150,11 +150,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 }
             }
             bottomText.observe(this@MainActivity) {
-                binding.inputLayout.apply {
-                    val helperId = com.google.android.material.R.id.textinput_helper_text
-                    val previous = helperText
-                    helperText = it
-                }
+                binding.inputLayout.helperText = it
             }
         }
 
