@@ -95,13 +95,14 @@ class TwitchService : Service(), KoinComponent {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent?.action == STOP_COMMAND) {
-            LocalBroadcastManager.getInstance(this)
-                .sendBroadcast(Intent(MainActivity.SHUTDOWN_REQUEST_FILTER))
-            stopForeground(true)
-            stopSelf()
-        } else {
-            startForeground()
+        when (intent?.action) {
+            STOP_COMMAND -> {
+                LocalBroadcastManager.getInstance(this)
+                    .sendBroadcast(Intent(MainActivity.SHUTDOWN_REQUEST_FILTER))
+                stopForeground(true)
+                stopSelf()
+            }
+            else -> startForeground()
         }
 
         return START_NOT_STICKY

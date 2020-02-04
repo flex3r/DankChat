@@ -140,24 +140,19 @@ object EmoteManager {
 
     suspend fun setTwitchEmotes(twitchResult: EmoteEntities.Twitch.Result) =
         withContext(Dispatchers.Default) {
-            twitchEmotes.clear()
-            val setMapping = twitchResult.sets.keys.mapNotNull { TwitchApi.getUserSet(it) }
+            val setMapping = twitchResult.sets.keys
+                .mapNotNull { TwitchApi.getUserSet(it) }
                 .associateBy({ it.id }, { it.channelName })
-            //val setMapping = TwitchApi.getUserSets(twitchResult.sets.keys.toList())
-            //    ?.associateBy({ it.id }, { it.channelName })
 
+            twitchEmotes.clear()
             twitchResult.sets.forEach {
-                val set = it.key
-                val type = if (set == "0") {
-                    EmoteType.GlobalTwitchEmote
-                } else {
-                    val channel = setMapping[set] ?: "Twitch"
-                    EmoteType.ChannelTwitchEmote(channel)
+                val type = when (val set = it.key) {
+                    "0" -> EmoteType.GlobalTwitchEmote
+                    else -> EmoteType.ChannelTwitchEmote(setMapping[set] ?: "Twitch")
                 }
-
                 it.value.forEach { emoteResult ->
                     val keyword = when (type) {
-                        is EmoteType.GlobalTwitchEmote -> emoteReplacements.getOrElse(emoteResult.name) { emoteResult.name }
+                        is EmoteType.GlobalTwitchEmote -> emoteReplacements[emoteResult.name] ?: emoteResult.name
                         else -> emoteResult.name
                     }
                     val emote = GenericEmote(
@@ -188,6 +183,7 @@ object EmoteManager {
 
     suspend fun setFFZGlobalEmotes(ffzResult: EmoteEntities.FFZ.GlobalResult) =
         withContext(Dispatchers.Default) {
+            globalFFZEmotes.clear()
             ffzResult.sets.forEach {
                 it.value.emotes.forEach { emote ->
                     val parsedEmote = parseFFZEmote(emote)
@@ -208,6 +204,7 @@ object EmoteManager {
 
     suspend fun setBTTVGlobalEmotes(globalEmotes: List<EmoteEntities.BTTV.GlobalEmote>) =
         withContext(Dispatchers.Default) {
+            globalBttvEmotes.clear()
             globalEmotes.forEach {
                 val emote = parseBTTVGlobalEmote(it)
                 globalBttvEmotes[emote.keyword] = emote
@@ -251,10 +248,9 @@ object EmoteManager {
             else -> 4 to emote.urls.getValue("1")
         }
         val lowResUrl = emote.urls["2"] ?: emote.urls.getValue("1")
-        val type = if (channel.isBlank()) {
-            EmoteType.GlobalFFZEmote
-        } else {
-            EmoteType.ChannelFFZEmote
+        val type = when {
+            channel.isBlank() -> EmoteType.GlobalFFZEmote
+            else -> EmoteType.ChannelFFZEmote
         }
         return GenericEmote(name, "https:$url", "https:$lowResUrl", false, "$id", scale, type)
     }
