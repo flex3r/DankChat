@@ -16,7 +16,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.text.bold
 import androidx.core.text.color
 import androidx.preference.PreferenceManager
@@ -124,19 +123,26 @@ class ChatAdapter(
                     }
                     setBackgroundResource(background)
 
-                    val name =
-                        if (displayName.equals(name, true)) displayName else "$name($displayName)"
-                    val displayName =
-                        if (isAction) "$name " else if (name.isBlank()) "" else "$name: "
+                    val fullName = when {
+                        displayName.equals(name, true) -> displayName
+                        else -> "$name($displayName)"
+                    }
+
+                    val fullDisplayName = when {
+                        isAction -> "$fullName "
+                        fullName.isBlank() -> ""
+                        else -> "$fullName: "
+                    }
+
                     val badgesLength = badges.size * 2
                     val (prefixLength, spannable) = if (showTimeStamp) {
-                        time.length + 1 + displayName.length to SpannableStringBuilder().bold {
+                        time.length + 1 + fullDisplayName.length to SpannableStringBuilder().bold {
                             append(
                                 "$time "
                             )
                         }
                     } else {
-                        displayName.length to SpannableStringBuilder()
+                        fullDisplayName.length to SpannableStringBuilder()
                     }
 
                     badges.forEach { badge ->
@@ -159,7 +165,7 @@ class ChatAdapter(
                     }
 
                     val normalizedColor = color.normalizeColor(isDarkMode)
-                    spannable.bold { color(normalizedColor) { append(displayName) } }
+                    spannable.bold { color(normalizedColor) { append(fullDisplayName) } }
 
                     if (isAction) {
                         spannable.color(normalizedColor) { append(message) }
@@ -168,7 +174,7 @@ class ChatAdapter(
                     }
 
                     //clicking usernames
-                    if (name.isNotBlank()) {
+                    if (fullName.isNotBlank()) {
                         val userClickableSpan = object : ClickableSpan() {
                             override fun updateDrawState(ds: TextPaint) {
                                 ds.isUnderlineText = false
@@ -181,7 +187,7 @@ class ChatAdapter(
                         }
                         spannable.setSpan(
                             userClickableSpan,
-                            prefixLength - displayName.length + badgesLength,
+                            prefixLength - fullDisplayName.length + badgesLength,
                             prefixLength + badgesLength,
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                         )
