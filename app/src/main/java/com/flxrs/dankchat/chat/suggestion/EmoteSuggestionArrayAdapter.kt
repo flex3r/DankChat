@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
-import com.bumptech.glide.Glide
+import coil.api.load
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 
@@ -29,16 +29,13 @@ class EmoteSuggestionsArrayAdapter(
         val imageView = view.findViewById<ImageView>(R.id.suggestion_image)
 
         imageView.setImageDrawable(null)
-        Glide.with(imageView).clear(imageView)
 
         getItem(position)?.let { emote ->
-            Glide.with(imageView)
-                .load(emote.url)
-                .override(textView.lineHeight * 2)
-                .centerInside()
-                .placeholder(R.drawable.ic_missing_emote)
-                .error(R.drawable.ic_missing_emote)
-                .into(imageView)
+            imageView.load(emote.url) {
+                size(textView.lineHeight * 2)
+                placeholder(R.drawable.ic_missing_emote)
+                error(R.drawable.ic_missing_emote)
+            }
         }
 
         return view

@@ -7,7 +7,6 @@ import androidx.appcompat.widget.TooltipCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.flxrs.dankchat.databinding.EmoteHeaderItemBinding
 import com.flxrs.dankchat.databinding.EmoteItemBinding
 
@@ -27,30 +26,21 @@ class EmoteAdapter(private val onEmoteClick: (emote: String) -> Unit) :
                     false
                 )
             )
-            ITEM_VIEW_TYPE_ITEM   -> ViewHolder(
+            ITEM_VIEW_TYPE_ITEM -> ViewHolder(
                 EmoteItemBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
                 )
             )
-            else                  -> throw ClassCastException("Unknown viewType $viewType")
+            else -> throw ClassCastException("Unknown viewType $viewType")
         }
-    }
-
-    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
-        if (holder is ViewHolder) {
-            val view = holder.binding.emoteView
-            Glide.with(view).clear(view)
-        }
-
-        super.onViewRecycled(holder)
     }
 
     @SuppressLint("DefaultLocale")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is ViewHolder     -> {
+            is ViewHolder -> {
                 val item = getItem(position) as EmoteItem.Emote
                 TooltipCompat.setTooltipText(holder.binding.emoteView, item.emote.keyword)
                 holder.binding.emote = item.emote
@@ -66,7 +56,7 @@ class EmoteAdapter(private val onEmoteClick: (emote: String) -> Unit) :
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
             is EmoteItem.Header -> ITEM_VIEW_TYPE_HEADER
-            is EmoteItem.Emote  -> ITEM_VIEW_TYPE_ITEM
+            is EmoteItem.Emote -> ITEM_VIEW_TYPE_ITEM
         }
     }
 

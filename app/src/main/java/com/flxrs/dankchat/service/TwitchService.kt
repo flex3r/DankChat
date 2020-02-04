@@ -14,6 +14,8 @@ import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.preference.PreferenceManager
+import coil.Coil
+import coil.api.load
 import com.flxrs.dankchat.MainActivity
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.service.irc.IrcMessage
@@ -175,6 +177,9 @@ class TwitchService : Service(), KoinComponent {
 
     private fun onMessage(message: IrcMessage) {
         val messages = repository.onMessage(message)
+        // Preload emotes
+        messages?.forEach { msg -> msg.message.emotes.forEach { Coil.load(this, it.url) } }
+
         if (shouldNotifyOnMention) {
             messages?.filter { it.message.isMention }
                 ?.takeIf {

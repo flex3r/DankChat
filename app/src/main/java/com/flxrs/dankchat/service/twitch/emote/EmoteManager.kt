@@ -46,9 +46,6 @@ object EmoteManager {
         "B-?\\)" to "B)"
     )
 
-    val gifCache = LruCache<String, GifDrawable>(4 * 1024 * 1024)
-    val gifCallback = MultiCallback(true)
-
     fun parseTwitchEmotes(emoteTag: String, original: String, spaces: List<Int>): List<ChatEmote> {
         if (emoteTag.isEmpty()) {
             return emptyList()

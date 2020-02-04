@@ -96,7 +96,8 @@ dependencies {
     implementation "org.koin:koin-android:$koin_version"
     implementation "org.koin:koin-androidx-viewmodel:$koin_version"
 
-    implementation "com.github.bumptech.glide:glide:$glide_version"
+    implementation "io.coil-kt:coil:$coil_version"
+    implementation "io.coil-kt:coil-gif:$coil_version"
 
     implementation "pl.droidsonroids.gif:android-gif-drawable:$gif_drawable_version"
 
