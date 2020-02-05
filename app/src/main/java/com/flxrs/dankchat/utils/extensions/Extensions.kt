@@ -7,6 +7,7 @@ import android.content.Context.ACTIVITY_SERVICE
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.chat.menu.EmoteItem
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
@@ -48,6 +49,11 @@ fun List<ChatItem>.addAndLimit(
         if (size > 500) removeAt(0)
     }
 }
+
+fun <T> MutableMap<String, MutableLiveData<T>>.getAndSet(
+    key: String,
+    item: T? = null
+): MutableLiveData<T> = getOrPut(key) { item?.let { MutableLiveData(item) } ?: MutableLiveData() }
 
 private val emojiRegex =
     Regex("\u00A9|\u00AE|[\u2000-\u3300]|[\uD83C\uD000-\uD83C\uDFFF]|[\uD83D\uD000-\uD83D\uDFFF]|[\uD83E\uD000-\uD83E\uDFFF]")

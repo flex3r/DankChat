@@ -12,10 +12,7 @@ import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.service.twitch.message.Roomstate
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import com.flxrs.dankchat.utils.SingleLiveEvent
-import com.flxrs.dankchat.utils.extensions.addAndLimit
-import com.flxrs.dankchat.utils.extensions.mapToRegex
-import com.flxrs.dankchat.utils.extensions.replaceWithTimeOut
-import com.flxrs.dankchat.utils.extensions.replaceWithTimeOuts
+import com.flxrs.dankchat.utils.extensions.*
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -49,25 +46,17 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     val imageUploadedEvent = SingleLiveEvent<Pair<String?, File>>()
 
 
-    fun getChat(channel: String): LiveData<List<ChatItem>> = messages.getOrPut(channel) {
-        MutableLiveData(emptyList())
-    }
+    fun getChat(channel: String): LiveData<List<ChatItem>> =
+        messages.getAndSet(channel, emptyList())
 
     fun getConnectionState(channel: String): LiveData<ConnectionState> =
-        connectionState.getOrPut(channel) {
-            MutableLiveData(ConnectionState.DISCONNECTED)
-        }
+        connectionState.getAndSet(channel, ConnectionState.DISCONNECTED)
 
-    fun getEmotes(channel: String): LiveData<List<GenericEmote>> {
-        return emotes.getOrPut(channel) {
-            MutableLiveData(emptyList())
-        }
-    }
+    fun getEmotes(channel: String): LiveData<List<GenericEmote>> =
+        emotes.getAndSet(channel, emptyList())
 
     fun getRoomState(channel: String): LiveData<Roomstate> =
-        roomStates.getOrPut(channel) {
-            MutableLiveData(Roomstate(channel))
-        }
+        roomStates.getAndSet(channel, Roomstate(channel))
 
     fun loadData(
         channels: List<String>,
@@ -119,8 +108,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         if (!hasDisconnected) {
             hasDisconnected = true
             connectionState.keys.forEach {
-                connectionState.getOrPut(it, { MutableLiveData() })
-                    .postValue(ConnectionState.DISCONNECTED)
+                connectionState.getAndSet(it).postValue(ConnectionState.DISCONNECTED)
             }
             makeAndPostSystemMessage(msg)
         }
@@ -187,8 +175,11 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         makeAndPostSystemMessage(connectedMsg, setOf(channel))
         hasDisconnected = false
 
-        val hint = if (isAnonymous) ConnectionState.NOT_LOGGED_IN else ConnectionState.CONNECTED
-        connectionState.getOrPut(channel, { MutableLiveData() }).postValue(hint)
+        val hint = when {
+            isAnonymous -> ConnectionState.NOT_LOGGED_IN
+            else -> ConnectionState.CONNECTED
+        }
+        connectionState.getAndSet(channel).postValue(hint)
     }
 
     private fun handleClearchat(msg: IrcMessage) {
@@ -206,7 +197,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         val state = roomStates[channel]?.value ?: Roomstate(channel)
         state.updateState(msg)
 
-        roomStates.getOrPut(channel, { MutableLiveData() }).postValue(state)
+        roomStates.getAndSet(channel).postValue(state)
 
     }
 
@@ -236,14 +227,12 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
             if (msg.params[0] == "*" || msg.command == "WHISPER") {
                 messages.forEach {
                     val currentChat = it.value.value ?: emptyList()
-                    messages.getOrPut(it.key, { MutableLiveData() })
-                        .postValue(currentChat.addAndLimit(parsed))
+                    messages.getAndSet(it.key).postValue(currentChat.addAndLimit(parsed))
                 }
             } else {
                 val channel = msg.params[0].substring(1)
                 val currentChat = messages[channel]?.value ?: emptyList()
-                messages.getOrPut(channel, { MutableLiveData() })
-                    .postValue(currentChat.addAndLimit(parsed))
+                messages.getAndSet(channel).postValue(currentChat.addAndLimit(parsed))
             }
         }
 
@@ -256,7 +245,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     ) {
         channels.forEach {
             val currentChat = messages[it]?.value ?: emptyList()
-            messages.getOrPut(it, { MutableLiveData() }).postValue(
+            messages.getAndSet(it).postValue(
                 currentChat.addAndLimit(ChatItem(TwitchMessage.makeSystemMessage(message, it)))
             )
         }
@@ -291,7 +280,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         }
 
     private suspend fun setSuggestions(channel: String) = withContext(Dispatchers.Default) {
-        emotes.getOrPut(channel, { MutableLiveData() }).postValue(EmoteManager.getEmotes(channel))
+        emotes.getAndSet(channel).postValue(EmoteManager.getEmotes(channel))
     }
 
     private suspend fun loadRecentMessages(channel: String) = withContext(Dispatchers.Default) {
@@ -311,8 +300,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
             }?.toList()
             ?.let {
                 val current = messages[channel]?.value ?: emptyList()
-                messages.getOrPut(channel, { MutableLiveData() })
-                    .postValue(it.addAndLimit(current, true))
+                messages.getAndSet(channel).postValue(it.addAndLimit(current, true))
             }
     }
 
