@@ -3,6 +3,7 @@ package com.flxrs.dankchat
 import androidx.lifecycle.*
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
+import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.service.TwitchRepository
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.twitch.connection.ConnectionState
@@ -24,12 +25,23 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
     private val streamData: MutableLiveData<Map<String, String>> = MutableLiveData()
     private val roomState = activeChannel.switchMap { twitchRepository.getRoomState(it) }
     private val emotes = activeChannel.switchMap { twitchRepository.getEmotes(it) }
+    private val users = activeChannel.switchMap { twitchRepository.getUsers(it) }
     private val currentStreamInformation = MediatorLiveData<String>().apply {
         addSource(activeChannel) { value = streamData.value?.get(it) ?: "" }
         addSource(streamData) {
             activeChannel.value?.let { channel ->
                 value = it[channel] ?: ""
             }
+        }
+    }
+    private val emoteSuggestions = emotes.switchMap { emotes ->
+        liveData(Dispatchers.Default) {
+            emit(emotes.distinctBy { it.code }.map { Suggestion.EmoteSuggestion(it) })
+        }
+    }
+    private val userSuggestions = users.switchMap { users ->
+        liveData(Dispatchers.Default) {
+            emit(users.snapshot().keys.map { Suggestion.UserSuggestion(it) })
         }
     }
 
@@ -61,18 +73,19 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
                 it.isNotBlank() && shouldShowInput.value?.not() ?: false && bottomTextEnabled.value ?: true
         }
     }
-    val emoteSuggestions = emotes.switchMap { emotes ->
-        liveData(Dispatchers.Default) {
-            emit(emotes.distinctBy { it.code })
-        }
+
+    val emoteAndUserSuggestions = MediatorLiveData<List<Suggestion>>().apply {
+        addSource(emoteSuggestions) { value = (userSuggestions.value ?: emptyList()).plus(it) }
+        addSource(userSuggestions) { value = it.plus(emoteSuggestions.value ?: emptyList()) }
     }
+
     val emoteItems = emotes.switchMap { emotes ->
         liveData(Dispatchers.Default) {
             val groupedByType = emotes.groupBy {
                 when (it.emoteType) {
-                    is EmoteType.ChannelTwitchEmote                             -> EmoteMenuTab.SUBS
+                    is EmoteType.ChannelTwitchEmote -> EmoteMenuTab.SUBS
                     is EmoteType.ChannelFFZEmote, is EmoteType.ChannelBTTVEmote -> EmoteMenuTab.CHANNEL
-                    else                                                        -> EmoteMenuTab.GLOBAL
+                    else -> EmoteMenuTab.GLOBAL
                 }
             }
 
@@ -97,7 +110,7 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
     ) {
         val token = when {
             oauth.startsWith("oauth:", true) -> oauth.substringAfter(':')
-            else                             -> oauth
+            else -> oauth
         }
         twitchRepository.loadData(channels, token, id, load3rdParty, loadTwitchData, name)
     }
@@ -124,7 +137,8 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
     fun uploadImage(file: File) = twitchRepository.uploadImage(file)
 
     fun setMentionEntries(stringSet: Set<String>?) = twitchRepository.setMentionEntries(stringSet)
-    fun setBlacklistEntries(stringSet: Set<String>?) = twitchRepository.setBlacklistEntries(stringSet)
+    fun setBlacklistEntries(stringSet: Set<String>?) =
+        twitchRepository.setBlacklistEntries(stringSet)
 
     fun fetchStreamData(channels: List<String>, stringBuilder: (viewers: Int) -> String) {
         fetchJob?.cancel()
@@ -161,9 +175,9 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
 
         return when {
             stateNotBlank && streamNotBlank -> "$roomStateText - $streamInfoText"
-            stateNotBlank                   -> roomStateText
-            streamNotBlank                  -> streamInfoText
-            else                            -> ""
+            stateNotBlank -> roomStateText
+            streamNotBlank -> streamInfoText
+            else -> ""
         }
     }
 

@@ -6,21 +6,18 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import coil.api.clear
 import coil.api.load
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 
 class EmoteSuggestionsArrayAdapter(
     context: Context,
-    list: List<GenericEmote>,
     private val onCount: (count: Int) -> Unit
-) :
-    ArrayAdapter<GenericEmote>(
-        context,
-        R.layout.emote_suggestion_item,
-        R.id.suggestion_text,
-        list
-    ) {
+) : ArrayAdapter<Suggestion>(
+    context,
+    R.layout.emote_suggestion_item,
+    R.id.suggestion_text
+) {
     override fun getCount(): Int = super.getCount().also { onCount(it) }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -28,13 +25,18 @@ class EmoteSuggestionsArrayAdapter(
         val textView = view.findViewById<TextView>(R.id.suggestion_text)
         val imageView = view.findViewById<ImageView>(R.id.suggestion_image)
 
+        imageView.clear()
         imageView.setImageDrawable(null)
-
-        getItem(position)?.let { emote ->
-            imageView.load(emote.url) {
-                size(textView.lineHeight * 2)
-                placeholder(R.drawable.ic_missing_emote)
-                error(R.drawable.ic_missing_emote)
+        getItem(position)?.let { suggestion: Suggestion ->
+            when (suggestion) {
+                is Suggestion.EmoteSuggestion -> {
+                    imageView.load(suggestion.emote.url) {
+                        size(textView.lineHeight * 2)
+                        placeholder(R.drawable.ic_missing_emote)
+                        error(R.drawable.ic_missing_emote)
+                    }
+                }
+                is Suggestion.UserSuggestion -> imageView.setImageResource(R.drawable.ic_notification_icon)
             }
         }
 

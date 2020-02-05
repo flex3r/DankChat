@@ -33,13 +33,13 @@ import com.flxrs.dankchat.chat.menu.EmoteMenuAdapter
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.chat.suggestion.EmoteSuggestionsArrayAdapter
 import com.flxrs.dankchat.chat.suggestion.SpaceTokenizer
+import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.SettingsActivity
 import com.flxrs.dankchat.service.TwitchService
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.twitch.connection.ConnectionState
-import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.utils.CustomMultiAutoCompleteTextView
 import com.flxrs.dankchat.utils.MediaUtils
 import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
@@ -73,6 +73,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     private lateinit var emoteMenuAdapter: EmoteMenuAdapter
     private lateinit var broadcastReceiver: BroadcastReceiver
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<MaterialCardView>
+    private lateinit var suggestionAdapter: EmoteSuggestionsArrayAdapter
     private var currentImagePath = ""
     private var showProgressBar = false
 
@@ -110,8 +111,8 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
                 vm = viewModel
                 lifecycleOwner = this@MainActivity
-                viewPager.setup()
-                input.setup()
+                viewPager.setup(this)
+                input.setup(this)
                 inputLayout.setup()
 
                 tabLayoutMediator = TabLayoutMediator(tabs, viewPager) { tab, position ->
@@ -138,7 +139,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
 
         viewModel.apply {
             imageUploadedEvent.observe(this@MainActivity, ::handleImageUploadEvent)
-            emoteSuggestions.observe(this@MainActivity, ::setupSuggestionAdapter)
+            emoteAndUserSuggestions.observe(this@MainActivity, ::setSuggestions)
             emoteItems.observe(this@MainActivity, emoteMenuAdapter::submitList)
             appbarEnabled.observe(this@MainActivity) { changeActionBarVisibility(it) }
             canType.observe(this@MainActivity) { if (it) binding.inputLayout.setup() }
@@ -475,17 +476,11 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         }
     }
 
-    private fun setupSuggestionAdapter(suggestions: List<GenericEmote>) {
-        val adapter = EmoteSuggestionsArrayAdapter(this@MainActivity, suggestions) { count ->
-            binding.input.dropDownHeight = if (count > 2) {
-                (binding.viewPager.measuredHeight / 1.3).roundToInt()
-            } else {
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            }
-            binding.input.dropDownWidth = (binding.viewPager.measuredWidth * 0.6).roundToInt()
+    private fun setSuggestions(suggestions: List<Suggestion>) {
+        with(suggestionAdapter) {
+            clear()
+            addAll(suggestions)
         }
-
-        binding.input.setAdapter(adapter)
     }
 
     private fun showNuulsUploadDialogIfNotAcknowledged(action: () -> Unit) {
@@ -742,7 +737,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         }
     }
 
-    private fun ViewPager2.setup() {
+    private fun ViewPager2.setup(binding: MainActivityBinding) {
         adapter = tabAdapter
         offscreenPageLimit = calculatePageLimit()
         registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -752,6 +747,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                     currentChannel = newChannel
                     viewModel.setActiveChannel(newChannel)
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                    binding.input.dismissDropDown()
                 }
             }
         })
@@ -820,9 +816,20 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         }
     }
 
-    private fun CustomMultiAutoCompleteTextView.setup() {
+    private fun CustomMultiAutoCompleteTextView.setup(binding: MainActivityBinding) {
         //setDropDownBackgroundResource(R.color.colorPrimary)
         setTokenizer(SpaceTokenizer())
+        suggestionAdapter = EmoteSuggestionsArrayAdapter(this@MainActivity) { count ->
+            binding.input.dropDownHeight = if (count > 2) {
+                (binding.viewPager.measuredHeight / 1.3).roundToInt()
+            } else {
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            }
+            binding.input.dropDownWidth = (binding.viewPager.measuredWidth * 0.6).roundToInt()
+        }
+        suggestionAdapter.setNotifyOnChange(false)
+        binding.input.setAdapter(suggestionAdapter)
+
         setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_SEND -> sendMessage()

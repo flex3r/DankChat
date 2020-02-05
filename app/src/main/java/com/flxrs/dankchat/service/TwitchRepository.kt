@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.service
 
+import androidx.collection.LruCache
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.flxrs.dankchat.chat.ChatItem
@@ -21,7 +22,6 @@ import kotlinx.coroutines.withContext
 import org.koin.core.KoinComponent
 import java.io.File
 import java.nio.ByteBuffer
-import java.util.concurrent.ConcurrentLinkedQueue
 
 class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
@@ -29,6 +29,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     private val emotes = mutableMapOf<String, MutableLiveData<List<GenericEmote>>>()
     private val connectionState = mutableMapOf<String, MutableLiveData<ConnectionState>>()
     private val roomStates = mutableMapOf<String, MutableLiveData<Roomstate>>()
+    private val users = mutableMapOf<String, MutableLiveData<LruCache<String, Boolean>>>()
     private val ignoredList = mutableListOf<Int>()
 
     private var hasDisconnected = true
@@ -58,6 +59,9 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     fun getRoomState(channel: String): LiveData<Roomstate> =
         roomStates.getAndSet(channel, Roomstate(channel))
 
+    fun getUsers(channel: String): LiveData<LruCache<String, Boolean>> =
+        users.getAndSet(channel, createUserCache())
+
     fun loadData(
         channels: List<String>,
         oAuth: String,
@@ -68,7 +72,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     ) {
         this.name = name
         scope.launch {
-            ConcurrentLinkedQueue(channels).forEach { channel ->
+            for (channel in channels) {
                 if (load3rdParty) {
                     TwitchApi.getUserIdFromName(channel)?.let {
                         loadBadges(channel, it)
@@ -139,6 +143,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
     fun onMessage(msg: IrcMessage): List<ChatItem>? {
         when (msg.command) {
+            "353" -> handleNames(msg)
+            "JOIN" -> handleJoin(msg)
             "CLEARCHAT" -> handleClearchat(msg)
             "ROOMSTATE" -> handleRoomstate(msg)
             "CLEARMSG" -> handleClearmsg(msg)
@@ -198,7 +204,6 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         state.updateState(msg)
 
         roomStates.getAndSet(channel).postValue(state)
-
     }
 
     private fun handleClearmsg(msg: IrcMessage) {
@@ -221,6 +226,11 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
                 }) return emptyList()
 
             it.checkForMention(name, customMentionEntries)
+
+            val currentUsers = users[it.channel]?.value ?: createUserCache()
+            currentUsers.put(it.name, true)
+            users.getAndSet(it.channel).postValue(currentUsers)
+
             ChatItem(it)
         }
         if (parsed.isNotEmpty()) {
@@ -237,6 +247,26 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         }
 
         return parsed
+    }
+
+    private fun handleNames(msg: IrcMessage) {
+        val channel = msg.params.getOrNull(2)?.substring(1) ?: return
+        val names = msg.params.getOrNull(3)?.split(' ') ?: return
+        val currentUsers = users[channel]?.value ?: createUserCache()
+        names.forEach { currentUsers.put(it, true) }
+        users.getAndSet(channel).postValue(currentUsers)
+    }
+
+    private fun handleJoin(msg: IrcMessage) {
+        val channel = msg.params.getOrNull(0)?.substring(1) ?: return
+        val name = msg.prefix.substringBefore('!')
+        val currentUsers = users[channel]?.value ?: createUserCache()
+        currentUsers.put(name, true)
+        users.getAndSet(channel).postValue(currentUsers)
+    }
+
+    private fun createUserCache(): LruCache<String, Boolean> {
+        return LruCache(500)
     }
 
     private fun makeAndPostSystemMessage(
