@@ -63,7 +63,7 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
     }
     val emoteSuggestions = emotes.switchMap { emotes ->
         liveData(Dispatchers.Default) {
-            emit(emotes.distinctBy { it.keyword })
+            emit(emotes.distinctBy { it.code })
         }
     }
     val emoteItems = emotes.switchMap { emotes ->

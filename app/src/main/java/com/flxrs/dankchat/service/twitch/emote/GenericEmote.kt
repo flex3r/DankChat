@@ -1,7 +1,7 @@
 package com.flxrs.dankchat.service.twitch.emote
 
 data class GenericEmote(
-    val keyword: String,
+    val code: String,
     val url: String,
     val lowResUrl: String,
     val isGif: Boolean,
@@ -11,10 +11,10 @@ data class GenericEmote(
 ) :
     Comparable<GenericEmote> {
     override fun toString(): String {
-        return keyword
+        return code
     }
 
     override fun compareTo(other: GenericEmote): Int {
-        return keyword.compareTo(other.keyword)
+        return code.compareTo(other.code)
     }
 }

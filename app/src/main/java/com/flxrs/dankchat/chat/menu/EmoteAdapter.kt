@@ -42,9 +42,9 @@ class EmoteAdapter(private val onEmoteClick: (emote: String) -> Unit) :
         when (holder) {
             is ViewHolder -> {
                 val item = getItem(position) as EmoteItem.Emote
-                TooltipCompat.setTooltipText(holder.binding.emoteView, item.emote.keyword)
+                TooltipCompat.setTooltipText(holder.binding.emoteView, item.emote.code)
                 holder.binding.emote = item.emote
-                holder.binding.root.setOnClickListener { onEmoteClick(item.emote.keyword) }
+                holder.binding.root.setOnClickListener { onEmoteClick(item.emote.code) }
             }
             is TextViewHolder -> {
                 val item = getItem(position) as EmoteItem.Header

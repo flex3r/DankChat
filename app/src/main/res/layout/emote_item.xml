@@ -15,7 +15,7 @@
 		android:layout_height="48dp"
 		android:background="?selectableItemBackgroundBorderless"
 		android:clickable="true"
-		android:contentDescription="@{emote.keyword}"
+		android:contentDescription="@{emote.code}"
 		android:focusable="true"
 		android:paddingBottom="4dp"
 		app:url="@{emote.lowResUrl}" />

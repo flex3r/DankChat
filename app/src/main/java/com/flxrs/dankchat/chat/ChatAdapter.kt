@@ -26,7 +26,7 @@ import coil.Coil
 import coil.api.get
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatItemBinding
-import com.flxrs.dankchat.service.twitch.emote.ChatEmote
+import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.utils.extensions.normalizeColor
 import com.linkedin.urls.detection.UrlDetector
 import com.linkedin.urls.detection.UrlDetectorOptions
@@ -243,7 +243,7 @@ class ChatAdapter(
     }
 
     private fun setEmoteSpans(
-        e: ChatEmote,
+        e: ChatMessageEmote,
         prefix: Int,
         drawable: Drawable,
         spannableStringBuilder: SpannableStringBuilder
@@ -268,7 +268,7 @@ class ChatAdapter(
 
     private fun Drawable.transformEmoteDrawable(
         scale: Double,
-        emote: ChatEmote
+        emote: ChatMessageEmote
     ) {
         val ratio = intrinsicWidth / intrinsicHeight.toFloat()
         val height = when {

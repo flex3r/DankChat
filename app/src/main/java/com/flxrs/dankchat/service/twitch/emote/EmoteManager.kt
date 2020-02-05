@@ -1,13 +1,10 @@
 package com.flxrs.dankchat.service.twitch.emote
 
-import androidx.collection.LruCache
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.api.model.BadgeEntities
 import com.flxrs.dankchat.service.api.model.EmoteEntities
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import pl.droidsonroids.gif.GifDrawable
-import pl.droidsonroids.gif.MultiCallback
 import java.util.concurrent.ConcurrentHashMap
 
 object EmoteManager {
@@ -46,7 +43,7 @@ object EmoteManager {
         "B-?\\)" to "B)"
     )
 
-    fun parseTwitchEmotes(emoteTag: String, original: String, spaces: List<Int>): List<ChatEmote> {
+    fun parseTwitchEmotes(emoteTag: String, original: String, spaces: List<Int>): List<ChatMessageEmote> {
         if (emoteTag.isEmpty()) {
             return emptyList()
         }
@@ -63,7 +60,7 @@ object EmoteManager {
             offset += Character.charCount(codepoint)
         }
 
-        val emotes = arrayListOf<ChatEmote>()
+        val emotes = arrayListOf<ChatMessageEmote>()
         emoteTag.split('/').forEach { emote ->
             val (id, positions) = emote.split(':')
             val parsedPositons = positions.split(',').map { pos ->
@@ -81,7 +78,7 @@ object EmoteManager {
                 parsedPositons.first().second
             )
 
-            emotes += ChatEmote(
+            emotes += ChatMessageEmote(
                 fixedParsedPositions,
                 "$BASE_URL/$id/$EMOTE_SIZE",
                 id,
@@ -94,27 +91,27 @@ object EmoteManager {
         return emotes
     }
 
-    fun parse3rdPartyEmotes(message: String, channel: String = ""): List<ChatEmote> {
+    fun parse3rdPartyEmotes(message: String, channel: String = ""): List<ChatMessageEmote> {
         val availableFFz = ffzEmotes[channel] ?: hashMapOf()
         val availableBttv = bttvEmotes[channel] ?: hashMapOf()
         val total = availableFFz.plus(availableBttv).plus(globalBttvEmotes).plus(globalFFZEmotes)
         val splits = message.split(thirdPartyRegex)
-        val emotes = arrayListOf<ChatEmote>()
+        val emotes = arrayListOf<ChatMessageEmote>()
         total.forEach { emote ->
             var i = 0
             val positions = mutableListOf<String>()
             splits.forEach { split ->
                 if (emote.key == split.trim()) {
-                    positions.add("$i-${i + split.length}")
+                    positions += "$i-${i + split.length}"
                 }
                 i += split.length + 1
             }
             if (positions.size > 0) {
-                emotes += ChatEmote(
+                emotes += ChatMessageEmote(
                     positions,
                     emote.value.url,
                     emote.value.id,
-                    emote.value.keyword,
+                    emote.value.code,
                     emote.value.scale,
                     emote.value.isGif
                 )
@@ -151,12 +148,12 @@ object EmoteManager {
                     else -> EmoteType.ChannelTwitchEmote(setMapping[set] ?: "Twitch")
                 }
                 it.value.forEach { emoteResult ->
-                    val keyword = when (type) {
+                    val code = when (type) {
                         is EmoteType.GlobalTwitchEmote -> emoteReplacements[emoteResult.name] ?: emoteResult.name
                         else -> emoteResult.name
                     }
                     val emote = GenericEmote(
-                        keyword,
+                        code,
                         "$BASE_URL/${emoteResult.id}/$EMOTE_SIZE",
                         "$BASE_URL/${emoteResult.id}/$LOW_RES_EMOTE_SIZE",
                         false,
@@ -164,7 +161,7 @@ object EmoteManager {
                         1,
                         type
                     )
-                    twitchEmotes[emote.keyword] = emote
+                    twitchEmotes[emote.code] = emote
                 }
             }
         }
@@ -175,7 +172,7 @@ object EmoteManager {
             ffzResult.sets.forEach {
                 it.value.emotes.forEach { emote ->
                     val parsedEmote = parseFFZEmote(emote, channel)
-                    emotes[parsedEmote.keyword] = parsedEmote
+                    emotes[parsedEmote.code] = parsedEmote
                 }
             }
             ffzEmotes[channel] = emotes
@@ -187,7 +184,7 @@ object EmoteManager {
             ffzResult.sets.forEach {
                 it.value.emotes.forEach { emote ->
                     val parsedEmote = parseFFZEmote(emote)
-                    globalFFZEmotes[parsedEmote.keyword] = parsedEmote
+                    globalFFZEmotes[parsedEmote.code] = parsedEmote
                 }
             }
         }
@@ -197,7 +194,7 @@ object EmoteManager {
             val emotes = hashMapOf<String, GenericEmote>()
             bttvResult.emotes.plus(bttvResult.sharedEmotes).forEach {
                 val emote = parseBTTVEmote(it)
-                emotes[emote.keyword] = emote
+                emotes[emote.code] = emote
             }
             bttvEmotes[channel] = emotes
         }
@@ -207,7 +204,7 @@ object EmoteManager {
             globalBttvEmotes.clear()
             globalEmotes.forEach {
                 val emote = parseBTTVGlobalEmote(it)
-                globalBttvEmotes[emote.keyword] = emote
+                globalBttvEmotes[emote.code] = emote
             }
         }
 
@@ -218,7 +215,7 @@ object EmoteManager {
         result.addAll(globalBttvEmotes.values)
         ffzEmotes[channel]?.let { result.addAll(it.values) }
         bttvEmotes[channel]?.let { result.addAll(it.values) }
-        return@withContext result.sortedBy { it.keyword }
+        return@withContext result.sortedBy { it.code }
     }
 
     private fun parseBTTVEmote(emote: EmoteEntities.BTTV.Emote): GenericEmote {

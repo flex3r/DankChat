@@ -3,7 +3,7 @@ package com.flxrs.dankchat.service.twitch.message
 import android.graphics.Color
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.badge.Badge
-import com.flxrs.dankchat.service.twitch.emote.ChatEmote
+import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.TimeUtils
 import com.flxrs.dankchat.utils.extensions.isEmoji
@@ -16,7 +16,7 @@ data class TwitchMessage(
     val displayName: String = "",
     val color: Int,
     val message: String,
-    val emotes: List<ChatEmote> = listOf(),
+    val emotes: List<ChatMessageEmote> = listOf(),
     val isAction: Boolean = false,
     val isNotify: Boolean = false,
     val badges: List<Badge> = emptyList(),
