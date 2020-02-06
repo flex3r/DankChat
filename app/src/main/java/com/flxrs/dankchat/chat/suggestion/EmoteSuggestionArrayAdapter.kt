@@ -1,11 +1,15 @@
 package com.flxrs.dankchat.chat.suggestion
 
 import android.content.Context
+import android.content.res.Configuration
+import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import coil.api.clear
 import coil.api.load
 import com.flxrs.dankchat.R
@@ -36,7 +40,12 @@ class EmoteSuggestionsArrayAdapter(
                         error(R.drawable.ic_missing_emote)
                     }
                 }
-                is Suggestion.UserSuggestion -> imageView.setImageResource(R.drawable.ic_notification_icon)
+                is Suggestion.UserSuggestion -> {
+                    val drawable = context.getDrawable(R.drawable.ic_notification_icon)?.also {
+                        it.setTint(ContextCompat.getColor(context, R.color.color_on_surface))
+                    }
+                    imageView.setImageDrawable(drawable)
+                }
             }
         }
 

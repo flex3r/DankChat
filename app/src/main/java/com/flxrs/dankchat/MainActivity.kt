@@ -634,11 +634,10 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                     viewModel.setStreamInfoEnabled(p.getBoolean(key, true))
                 }
                 inputKey -> viewModel.inputEnabled.value = p.getBoolean(key, true)
-                darkThemeKey -> delegate.localNightMode = if (p.getBoolean(
-                        key,
-                        true
-                    )
-                ) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+                darkThemeKey -> delegate.localNightMode = when {
+                    p.getBoolean(key, true) -> AppCompatDelegate.MODE_NIGHT_YES
+                    else -> AppCompatDelegate.MODE_NIGHT_NO
+                }
                 customMentionsKey -> viewModel.setMentionEntries(p.getStringSet(key, emptySet()))
                 blacklistKey -> viewModel.setBlacklistEntries(p.getStringSet(key, emptySet()))
             }
