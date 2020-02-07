@@ -74,7 +74,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     ) {
         this.name = name
         scope.launch {
-            channels.toImmutableList().forEach { channel ->
+            ConcurrentLinkedQueue(channels).forEach { channel ->
                 if (load3rdParty) {
                     TwitchApi.getUserIdFromName(channel)?.let {
                         loadBadges(channel, it)
