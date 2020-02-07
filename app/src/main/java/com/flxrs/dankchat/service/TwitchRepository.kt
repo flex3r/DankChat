@@ -19,9 +19,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.internal.toImmutableList
 import org.koin.core.KoinComponent
 import java.io.File
 import java.nio.ByteBuffer
+import java.util.concurrent.ConcurrentLinkedQueue
 
 class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
@@ -72,7 +74,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     ) {
         this.name = name
         scope.launch {
-            for (channel in channels) {
+            channels.toImmutableList().forEach { channel ->
                 if (load3rdParty) {
                     TwitchApi.getUserIdFromName(channel)?.let {
                         loadBadges(channel, it)
