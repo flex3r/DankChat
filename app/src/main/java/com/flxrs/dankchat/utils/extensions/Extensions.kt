@@ -93,7 +93,7 @@ private val emojiCodePoints = listOf(
     IntRange(0x1F980, 0x1F9E0)
 )
 
-private fun Int.isEmoji(): Boolean = emojiCodePoints.any { it.contains(this) }
+private fun Int.isEmoji(): Boolean = emojiCodePoints.any { range -> this in range }
 
 // Adds extra space after every emoji group to support 3rd party emotes directly after emojis
 // @badge-info=;badges=broadcaster/1,bits-charity/1;color=#00BCD4;display-name=flex3rs;emotes=521050:9-15,25-31;flags=;id=08649ff3-8fee-4200-8e06-c46bcdfb06e8;mod=0;room-id=73697410;subscriber=0;tmi-sent-ts=1575196101040;turbo=0;user-id=73697410;user-type= :flex3rs!flex3rs@flex3rs.tmi.twitch.tv PRIVMSG #flex3rs :🍓🍑🍊🍋🍍NaM forsenE 🍐🍏🐬🐳NaM forsenE

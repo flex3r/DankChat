@@ -27,6 +27,7 @@ import coil.api.get
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatItemBinding
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
+import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.extensions.normalizeColor
 import com.linkedin.urls.detection.UrlDetector
 import com.linkedin.urls.detection.UrlDetectorOptions
@@ -166,6 +167,7 @@ class ChatAdapter(
 
                     val normalizedColor = color.normalizeColor(isDarkMode)
                     spannable.bold { color(normalizedColor) { append(fullDisplayName) } }
+                    text = spannable
 
                     if (isAction) {
                         spannable.color(normalizedColor) { append(message) }

@@ -94,6 +94,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     fun removeChannelData(channel: String) {
         messages[channel]?.postValue(emptyList())
         messages.remove(channel)
+        TwitchApi.clearChannelFromLoaded(channel)
     }
 
     fun prepareMessage(channel: String, message: String, onResult: (msg: String) -> Unit) {

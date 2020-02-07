@@ -25,7 +25,6 @@ object EmoteManager {
     private val globalBadges = ConcurrentHashMap<String, BadgeEntities.BadgeSet>()
 
     private val thirdPartyRegex = Regex("\\s")
-
     private val emoteReplacements = mapOf(
         "[oO](_|\\.)[oO]" to "O_o",
         "\\&lt\\;3" to ":3",
@@ -43,7 +42,11 @@ object EmoteManager {
         "B-?\\)" to "B)"
     )
 
-    fun parseTwitchEmotes(emoteTag: String, original: String, spaces: List<Int>): List<ChatMessageEmote> {
+    fun parseTwitchEmotes(
+        emoteTag: String,
+        original: String,
+        spaces: List<Int>
+    ): List<ChatMessageEmote> {
         if (emoteTag.isEmpty()) {
             return emptyList()
         }
@@ -149,7 +152,8 @@ object EmoteManager {
                 }
                 it.value.forEach { emoteResult ->
                     val code = when (type) {
-                        is EmoteType.GlobalTwitchEmote -> emoteReplacements[emoteResult.name] ?: emoteResult.name
+                        is EmoteType.GlobalTwitchEmote -> emoteReplacements[emoteResult.name]
+                            ?: emoteResult.name
                         else -> emoteResult.name
                     }
                     val emote = GenericEmote(

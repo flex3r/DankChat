@@ -252,4 +252,8 @@ object TwitchApi {
         }
         null
     }
+
+    fun clearChannelFromLoaded(channel: String) {
+        loadedRecentsInChannels.remove(channel)
+    }
 }
