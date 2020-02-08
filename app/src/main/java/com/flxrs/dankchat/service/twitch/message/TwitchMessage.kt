@@ -7,7 +7,6 @@ import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.TimeUtils
 import com.flxrs.dankchat.utils.extensions.appendSpacesAfterEmojiGroup
-import java.util.regex.Pattern
 
 data class TwitchMessage(
     val time: String,
@@ -26,16 +25,10 @@ data class TwitchMessage(
     var isMention: Boolean = false
 ) {
 
-    fun checkForMention(username: String, patterns: List<Regex>) {
-        val regex = """\b$username\b""".toPattern(Pattern.CASE_INSENSITIVE).toRegex()
-        val regexps = patterns.plus(regex)
-        if (!isMention && username.isNotBlank() && !name.equals(username, true)
-            && !timedOut && !isSystem && regexps.any {
-                it.containsMatchIn(message) || emotes.any { e -> it.containsMatchIn(e.code) }
-            }
-        ) {
-            isMention = true
-        }
+    fun checkForMention(username: String, mentions: List<Mention>) {
+        val mentionsWithUser = mentions.plus(Mention.Phrase(username))
+        isMention = !isMention && username.isNotBlank() && !name.equals(username, true)
+                && !timedOut && !isSystem  && mentionsWithUser.matches(message, emotes)
     }
 
     companion object {

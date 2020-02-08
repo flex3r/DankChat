@@ -12,6 +12,7 @@ import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.chat.menu.EmoteItem
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
+import com.flxrs.dankchat.service.twitch.message.Mention
 import com.squareup.moshi.JsonAdapter
 import java.util.regex.Pattern
 
@@ -146,18 +147,22 @@ fun List<GenericEmote>?.toEmoteItems(): List<EmoteItem> {
         }?.flatMap { it.value } ?: listOf()
 }
 
-fun List<MultiEntryItem.Entry>.mapToRegex(): List<Regex> {
-    return map {
+fun List<MultiEntryItem.Entry>.mapToMention(): List<Mention> {
+    return mapNotNull {
         if (it.isRegex) {
-            it.entry.toPattern(Pattern.CASE_INSENSITIVE).toRegex()
+            try {
+                Mention.RegexPhrase(it.entry.toPattern(Pattern.CASE_INSENSITIVE).toRegex())
+            } catch (t: Throwable) {
+                null
+            }
         } else {
-            """\b${it.entry}\b""".toPattern(Pattern.CASE_INSENSITIVE).toRegex()
+            Mention.Phrase(it.entry)
         }
     }
 }
 
-fun Set<String>?.mapToRegex(adapter: JsonAdapter<MultiEntryItem.Entry>): List<Regex> {
-    return this?.mapNotNull { adapter.fromJson(it) }?.mapToRegex().orEmpty()
+fun Set<String>?.mapToMention(adapter: JsonAdapter<MultiEntryItem.Entry>): List<Mention> {
+    return this?.mapNotNull { adapter.fromJson(it) }?.mapToMention().orEmpty()
 }
 
 fun Fragment.hideKeyboard() {
