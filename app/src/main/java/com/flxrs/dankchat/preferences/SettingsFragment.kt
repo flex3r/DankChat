@@ -3,6 +3,7 @@ package com.flxrs.dankchat.preferences
 import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatDelegate
@@ -19,6 +20,7 @@ import com.flxrs.dankchat.databinding.MultiEntryBottomsheetBinding
 import com.flxrs.dankchat.preferences.multientry.MultiEntryAdapter
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import com.squareup.moshi.Moshi
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -47,6 +49,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
         }
         findPreference<SwitchPreference>(getString(R.string.preference_dark_theme_key))?.apply {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1) {
+                if (!isChecked) {
+                    isChecked = true
+                }
+                isVisible = false
+            }
             setDarkMode(isChecked)
             setOnPreferenceClickListener {
                 setDarkMode(isChecked)

@@ -543,13 +543,9 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         binding.input.clearFocus()
         val isDarkMode = preferences.getBoolean(getString(R.string.preference_dark_theme_key), true)
         var lightModeFlags = 0
-        if (!isDarkMode) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                lightModeFlags = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-                lightModeFlags = lightModeFlags or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1 && !isDarkMode) {
+            lightModeFlags = (lightModeFlags or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+                    or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
         }
 
         if (enabled) {
@@ -648,11 +644,14 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 setRoomStateEnabled(getBoolean(roomStateKey, true))
                 setStreamInfoEnabled(getBoolean(streamInfoKey, true))
                 inputEnabled.value = getBoolean(inputKey, true)
-                delegate.localNightMode = if (getBoolean(
-                        darkThemeKey,
-                        true
-                    )
-                ) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+                delegate.localNightMode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                    if (getBoolean(
+                            darkThemeKey,
+                            true
+                        )
+                    ) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+                } else AppCompatDelegate.MODE_NIGHT_YES // Force dark theme on < Android 8.1 because of statusbar/navigationbar issues
+
                 setMentionEntries(getStringSet(customMentionsKey, emptySet()))
                 setBlacklistEntries(getStringSet(blacklistKey, emptySet()))
             }
@@ -849,13 +848,9 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             val isDarkMode =
                 preferences.getBoolean(getString(R.string.preference_dark_theme_key), true)
             var lightModeFlags = 0
-            if (!isDarkMode) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    lightModeFlags = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-                    lightModeFlags = lightModeFlags or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-                }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1 && !isDarkMode) {
+                lightModeFlags = (lightModeFlags or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+                        or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
             }
 
             window.decorView.systemUiVisibility = when {
