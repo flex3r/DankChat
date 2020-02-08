@@ -73,6 +73,7 @@
 	<string name="multi_entry_add_entry">Add an entry</string>
 	<string name="multi_entry_remove_content_description">Remove the entry</string>
 	<string name="multi_entry_hint">Entry</string>
+	<string name="login_expired">Login expired! Try logging in again.</string>
 
 	<string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
 	<string name="preference_timestamp_title">Show timestamps</string>
@@ -112,7 +113,7 @@
 	<string name="preference_blacklist_title">Blacklist</string>
 	<string name="preference_blacklist_summary">Set custom phrases to hide</string>
 
-    <plurals name="viewers">
+	<plurals name="viewers">
 		<item quantity="one">Live with %d viewer</item>
 		<item quantity="other">Live with %d viewers</item>
 	</plurals>
