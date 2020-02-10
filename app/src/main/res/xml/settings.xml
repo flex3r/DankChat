@@ -16,6 +16,11 @@
 	<PreferenceCategory android:title="@string/preference_general_header">
 		<SwitchPreference
 			android:defaultValue="true"
+			android:key="@string/preference_animate_gifs_key"
+			android:title="@string/preference_animate_gifs_title" />
+
+		<SwitchPreference
+			android:defaultValue="true"
 			android:key="@string/preference_timestamp_key"
 			android:title="@string/preference_timestamp_title" />
 

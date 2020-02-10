@@ -41,8 +41,8 @@ class ChatAdapter(
 ) : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
 
     private val gifCallback = MultiCallback(true)
-    private val coroutineHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
-
+    private val coroutineHandler = CoroutineExceptionHandler { _, throwable ->
+        Log.e(TAG, Log.getStackTraceString(throwable))
     }
 
     inner class ViewHolder(val binding: ChatItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -69,6 +69,7 @@ class ChatAdapter(
     override fun onViewRecycled(holder: ViewHolder) {
         holder.scope.coroutineContext.cancelChildren()
         holder.binding.executePendingBindings()
+        gifCallback.removeView(holder.binding.itemText)
         super.onViewRecycled(holder)
     }
 
@@ -84,10 +85,12 @@ class ChatAdapter(
                 val timedOutPreferenceKey =
                     context.getString(R.string.preference_show_timed_out_messages_key)
                 val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
+                val animateGifsKey = context.getString(R.string.preference_animate_gifs_key)
                 val preferences = PreferenceManager.getDefaultSharedPreferences(context)
                 val isDarkMode = preferences.getBoolean(darkModePreferenceKey, true)
                 val showTimedOutMessages = preferences.getBoolean(timedOutPreferenceKey, true)
                 val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
+                val animateGifs = preferences.getBoolean(animateGifsKey, true)
                 holder.scope.launch(coroutineHandler) {
                     if (timedOut) {
                         alpha = 0.5f
@@ -226,7 +229,7 @@ class ChatAdapter(
                         )
                     }
 
-                    if (emotes.filter { it.isGif }.count() > 0) {
+                    if (animateGifs && emotes.filter { it.isGif }.count() > 0) {
                         gifCallback.addView(holder.binding.itemText)
                     }
 
@@ -237,7 +240,7 @@ class ChatAdapter(
                     val fullPrefix = prefixLength + badgesLength
                     emotes.forEach { e ->
                         val emoteDrawable = Coil.get(e.url)
-                        if (emoteDrawable is Animatable) {
+                        if (emoteDrawable is Animatable && animateGifs) {
                             emoteDrawable.callback = gifCallback
                             emoteDrawable.start()
                         }
@@ -286,6 +289,10 @@ class ChatAdapter(
         }
         val width = (height * ratio).roundToInt()
         setBounds(0, 0, width * emote.scale, height * emote.scale)
+    }
+
+    companion object {
+        private val TAG = ChatAdapter::class.java.simpleName
     }
 }
 

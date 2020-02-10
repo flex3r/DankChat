@@ -112,6 +112,8 @@
 	<string name="preference_blacklist_key" translatable="false">custom_blacklist_key</string>
 	<string name="preference_blacklist_title">Blacklist</string>
 	<string name="preference_blacklist_summary">Set custom phrases to hide</string>
+	<string name="preference_animate_gifs_key" translatable="false">animate_gifs_key</string>
+	<string name="preference_animate_gifs_title">Animate gifs</string>
 
 	<plurals name="viewers">
 		<item quantity="one">Live with %d viewer</item>
