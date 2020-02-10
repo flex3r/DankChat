@@ -31,9 +31,9 @@ class TwitchService : Service(), KoinComponent {
 
     private val client = OkHttpClient.Builder()
         .retryOnConnectionFailure(true)
-        .connectTimeout(5, TimeUnit.SECONDS)
-        .readTimeout(5, TimeUnit.SECONDS)
-        .writeTimeout(5, TimeUnit.SECONDS)
+        .connectTimeout(100, TimeUnit.SECONDS)
+        .readTimeout(100, TimeUnit.SECONDS)
+        .writeTimeout(100, TimeUnit.SECONDS)
         .build()
 
     private val request = Request.Builder()

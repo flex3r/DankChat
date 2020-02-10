@@ -41,6 +41,9 @@ class ChatAdapter(
 ) : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
 
     private val gifCallback = MultiCallback(true)
+    private val coroutineHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+
+    }
 
     inner class ViewHolder(val binding: ChatItemBinding) : RecyclerView.ViewHolder(binding.root) {
         val scope = CoroutineScope(Dispatchers.Main.immediate)
@@ -85,7 +88,7 @@ class ChatAdapter(
                 val isDarkMode = preferences.getBoolean(darkModePreferenceKey, true)
                 val showTimedOutMessages = preferences.getBoolean(timedOutPreferenceKey, true)
                 val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
-                holder.scope.launch {
+                holder.scope.launch(coroutineHandler) {
                     if (timedOut) {
                         alpha = 0.5f
 
@@ -106,7 +109,7 @@ class ChatAdapter(
 
                     setOnTouchListener { _, event ->
                         if (event.action == MotionEvent.ACTION_UP) {
-                            CoroutineScope(Dispatchers.Default).launch {
+                            launch(Dispatchers.Default) {
                                 delay(200)
                                 ignoreClicks = false
                             }

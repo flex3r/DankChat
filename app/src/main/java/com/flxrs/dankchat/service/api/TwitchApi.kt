@@ -13,6 +13,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 object TwitchApi {
     private val TAG = TwitchApi::class.java.simpleName
@@ -45,13 +46,17 @@ object TwitchApi {
     const val LOGIN_URL =
         "$BASE_LOGIN_URL&client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URL&scope=$SCOPES"
 
+    private val client = OkHttpClient.Builder()
+        .connectTimeout(100, TimeUnit.SECONDS)
+        .readTimeout(100, TimeUnit.SECONDS)
+        .build()
+
     private val service = Retrofit.Builder()
         .baseUrl(KRAKEN_BASE_URL)
         .addConverterFactory(MoshiConverterFactory.create())
+        .client(client)
         .build()
         .create(TwitchApiService::class.java)
-
-    private val rawClient = OkHttpClient()
 
     private val loadedRecentsInChannels = mutableListOf<String>()
 
@@ -204,7 +209,7 @@ object TwitchApi {
             .post(body)
             .build()
         try {
-            val response = rawClient.newCall(request).execute()
+            val response = client.newCall(request).execute()
             if (response.isSuccessful) return@withContext response.body?.string()
         } catch (t: Throwable) {
             Log.e(TAG, Log.getStackTraceString(t))
@@ -246,7 +251,7 @@ object TwitchApi {
     suspend fun getRawBytes(url: String): ByteArray? = withContext(Dispatchers.IO) {
         try {
             val request = Request.Builder().url(url).build()
-            return@withContext rawClient.newCall(request).execute().body?.bytes()
+            return@withContext client.newCall(request).execute().body?.bytes()
         } catch (t: Throwable) {
             Log.e(TAG, Log.getStackTraceString(t))
         }
