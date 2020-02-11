@@ -5,11 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.DankChatViewModel
@@ -24,6 +26,7 @@ import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 class ChatFragment : Fragment() {
 
     private val viewModel: DankChatViewModel by sharedViewModel()
+    private lateinit var itemDecoration: DividerItemDecoration
     private lateinit var binding: ChatFragmentBinding
     private lateinit var adapter: ChatAdapter
     private lateinit var manager: LinearLayoutManager
@@ -66,18 +69,29 @@ class ChatFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        itemDecoration = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
 
-        preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { pref, key ->
             when (key) {
                 getString(R.string.preference_timestamp_key),
                 getString(R.string.preference_show_timed_out_messages_key),
                 getString(R.string.preference_animate_gifs_key) -> {
                     binding.chat.swapAdapter(adapter, false)
                 }
+                getString(R.string.preference_line_separator_key) -> {
+                    if (pref.getBoolean(key, false)) {
+                        binding.chat.addItemDecoration(itemDecoration)
+                    } else {
+                        binding.chat.removeItemDecoration(itemDecoration)
+                    }
+                }
             }
         }
         preferences = PreferenceManager.getDefaultSharedPreferences(requireContext()).apply {
             registerOnSharedPreferenceChangeListener(preferenceListener)
+            getBoolean(getString(R.string.preference_line_separator_key), false).let {
+                if (it) binding.chat.addItemDecoration(itemDecoration)
+            }
         }
     }
 

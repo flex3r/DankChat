@@ -114,6 +114,8 @@
 	<string name="preference_blacklist_summary">Set custom phrases to hide</string>
 	<string name="preference_animate_gifs_key" translatable="false">animate_gifs_key</string>
 	<string name="preference_animate_gifs_title">Animate gifs</string>
+	<string name="preference_line_separator_key" translatable="false">line_seperator_key</string>
+	<string name="preference_line_separator_title">Separate messages with lines</string>
 
 	<plurals name="viewers">
 		<item quantity="one">Live with %d viewer</item>

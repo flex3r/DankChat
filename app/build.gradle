@@ -11,8 +11,8 @@ android {
         applicationId "com.flxrs.dankchat"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 106
-        versionName "1.6.14"
+        versionCode 107
+        versionName "1.6.15"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
