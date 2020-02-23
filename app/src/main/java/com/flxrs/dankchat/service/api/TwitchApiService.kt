@@ -9,12 +9,10 @@ interface TwitchApiService {
 
 
     @Headers(
-        "Accept: application/vnd.twitchtv.v5+json",
-        "Client-ID: ${TwitchApi.CLIENT_ID}",
         "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
     )
-    @GET("user")
-    suspend fun getUser(@Header("Authorization") oauth: String): Response<UserEntities.KrakenUser>
+    @GET
+    suspend fun validateUser(@Url url: String, @Header("Authorization") oAuth: String): Response<UserEntities.ValidateUser>
 
     @Headers(
         "Accept: application/vnd.twitchtv.v5+json",

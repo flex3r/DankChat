@@ -332,19 +332,19 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         }
 
         lifecycleScope.launch {
-            TwitchApi.getUser(tokenWithoutSuffix)?.let {
-                if (it.name.isNotBlank()) {
+            TwitchApi.validateUser(tokenWithoutSuffix)?.let {
+                if (it.login.isNotBlank()) {
                     twitchPreferences.apply {
                         setOAuthKey("oauth:$tokenWithoutSuffix")
-                        setUserName(it.name.toLowerCase(Locale.getDefault()))
-                        setUserId(it.id)
+                        setUserName(it.login.toLowerCase(Locale.getDefault()))
+                        setUserId(it.userId)
                         setLoggedIn(true)
                     }
                     twitchService?.close {
-                        connectAndJoinChannels(it.name, "oauth:$tokenWithoutSuffix")
-                        loadData(it.name, tokenWithoutSuffix, it.id)
+                        connectAndJoinChannels(it.login, "oauth:$tokenWithoutSuffix")
+                        loadData(it.login, tokenWithoutSuffix, it.userId)
                     }
-                    showSnackbar(getString(R.string.snackbar_login, it.name))
+                    showSnackbar(getString(R.string.snackbar_login, it.login))
                 } else showSnackbar(getString(R.string.snackbar_login_failed))
             } ?: showSnackbar(getString(R.string.snackbar_invalid_oauth))
         }

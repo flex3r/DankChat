@@ -85,12 +85,12 @@ class LoginActivity : AppCompatActivity() {
             if (fragment.startsWith("access_token=")) {
                 val token = fragment.substringAfter("access_token=").substringBefore("&scope=")
                 lifecycleScope.launch {
-                    TwitchApi.getUser(token)?.let {
-                        if (it.name.isNotBlank()) {
+                    TwitchApi.validateUser(token)?.let {
+                        if (it.login.isNotBlank()) {
                             DankChatPreferenceStore(this@LoginActivity).apply {
                                 setOAuthKey("oauth:$token")
-                                setUserName(it.name.toLowerCase(Locale.getDefault()))
-                                setUserId(it.id)
+                                setUserName(it.login.toLowerCase(Locale.getDefault()))
+                                setUserId(it.userId)
                             }
                             setResult(Activity.RESULT_OK)
                             finish()

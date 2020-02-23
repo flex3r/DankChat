@@ -1,8 +1,10 @@
 package com.flxrs.dankchat.service
 
+import android.util.Log
 import androidx.collection.LruCache
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.service.api.TwitchApi
@@ -17,10 +19,7 @@ import com.flxrs.dankchat.service.twitch.message.matches
 import com.flxrs.dankchat.utils.SingleLiveEvent
 import com.flxrs.dankchat.utils.extensions.*
 import com.squareup.moshi.Moshi
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.koin.core.KoinComponent
 import java.io.File
 import java.nio.ByteBuffer
@@ -34,6 +33,9 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     private val roomStates = mutableMapOf<String, MutableLiveData<Roomstate>>()
     private val users = mutableMapOf<String, MutableLiveData<LruCache<String, Boolean>>>()
     private val ignoredList = mutableListOf<Int>()
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, t ->
+        Log.e(TAG, Log.getStackTraceString(t))
+    }
 
     private var hasDisconnected = true
     private var loadedGlobalBadges = false
@@ -74,7 +76,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         name: String
     ) {
         this.name = name
-        scope.launch {
+        scope.launch(coroutineExceptionHandler) {
             ConcurrentLinkedQueue(channels).forEach { channel ->
                 if (load3rdParty) {
                     TwitchApi.getUserIdFromName(channel)?.let {
@@ -126,7 +128,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         messages[channel]?.postValue(emptyList())
     }
 
-    fun reloadEmotes(channel: String, oAuth: String, id: Int) = scope.launch {
+    fun reloadEmotes(channel: String, oAuth: String, id: Int) = scope.launch(coroutineExceptionHandler) {
         loadedGlobalEmotes = false
         loadedTwitchEmotes = false
         TwitchApi.getUserIdFromName(channel)?.let {
@@ -140,7 +142,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         setSuggestions(channel)
     }
 
-    fun uploadImage(file: File) = scope.launch {
+    fun uploadImage(file: File) = scope.launch(coroutineExceptionHandler) {
         val url = TwitchApi.uploadImage(file)
         imageUploadedEvent.postValue(url to file)
     }
@@ -162,13 +164,13 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     }
 
     fun setMentionEntries(stringSet: Set<String>?) {
-        scope.launch(Dispatchers.Default) {
+        scope.launch(Dispatchers.Default + coroutineExceptionHandler) {
             customMentionEntries = stringSet.mapToMention(adapter)
         }
     }
 
     fun setBlacklistEntries(stringSet: Set<String>?) {
-        scope.launch(Dispatchers.Default) {
+        scope.launch(Dispatchers.Default + coroutineExceptionHandler) {
             blacklistEntries = stringSet.mapToMention(adapter)
         }
     }
@@ -332,6 +334,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     }
 
     companion object {
+        private val TAG = TwitchRepository::class.java.simpleName
         private val INVISIBLE_CHAR =
             String(ByteBuffer.allocate(4).putInt(0x000E0000).array(), Charsets.UTF_32)
     }

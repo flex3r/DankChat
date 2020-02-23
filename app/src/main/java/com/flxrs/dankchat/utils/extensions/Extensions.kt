@@ -147,22 +147,25 @@ fun List<GenericEmote>?.toEmoteItems(): List<EmoteItem> {
         }?.flatMap { it.value } ?: listOf()
 }
 
-fun List<MultiEntryItem.Entry>.mapToMention(): List<Mention> {
-    return mapNotNull {
-        if (it.isRegex) {
-            try {
-                Mention.RegexPhrase(it.entry.toPattern(Pattern.CASE_INSENSITIVE).toRegex())
-            } catch (t: Throwable) {
-                null
+fun List<MultiEntryItem.Entry?>.mapToMention(): List<Mention> {
+    return mapNotNull { entry ->
+        entry?.let {
+            if (it.isRegex) {
+                try {
+                    Mention.RegexPhrase(it.entry.toPattern(Pattern.CASE_INSENSITIVE).toRegex())
+                } catch (t: Throwable) {
+                    null
+                }
+            } else {
+                Mention.Phrase(it.entry)
             }
-        } else {
-            Mention.Phrase(it.entry)
         }
+
     }
 }
 
-fun Set<String>?.mapToMention(adapter: JsonAdapter<MultiEntryItem.Entry>): List<Mention> {
-    return this?.mapNotNull { adapter.fromJson(it) }?.mapToMention().orEmpty()
+fun Set<String>?.mapToMention(adapter: JsonAdapter<MultiEntryItem.Entry>?): List<Mention> {
+    return this?.mapNotNull { adapter?.fromJson(it) }?.mapToMention().orEmpty()
 }
 
 fun Fragment.hideKeyboard() {

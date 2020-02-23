@@ -1,5 +1,6 @@
 package com.flxrs.dankchat
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
@@ -10,6 +11,7 @@ import com.flxrs.dankchat.service.twitch.connection.ConnectionState
 import com.flxrs.dankchat.service.twitch.emote.EmoteType
 import com.flxrs.dankchat.utils.extensions.timer
 import com.flxrs.dankchat.utils.extensions.toEmoteItems
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -18,6 +20,10 @@ import java.io.File
 class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewModel() {
 
     private var fetchJob: Job? = null
+
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, t ->
+        Log.e(TAG, Log.getStackTraceString(t))
+    }
 
     private val activeChannel = MutableLiveData<String>()
     private val streamInfoEnabled = MutableLiveData(true)
@@ -142,7 +148,7 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
 
     fun fetchStreamData(channels: List<String>, stringBuilder: (viewers: Int) -> String) {
         fetchJob?.cancel()
-        fetchJob = viewModelScope.launch {
+        fetchJob = viewModelScope.launch(coroutineExceptionHandler) {
             timer(STREAM_REFRESH_RATE) {
                 val data = mutableMapOf<String, String>()
                 channels.forEach { channel ->
@@ -182,6 +188,7 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
     }
 
     companion object {
+        private val TAG = DankChatViewModel::class.java.simpleName
         private const val STREAM_REFRESH_RATE = 30_000L
     }
 }

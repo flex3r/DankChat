@@ -1,23 +1,15 @@
 package com.flxrs.dankchat.service.api.model
 
+import androidx.annotation.Keep
 import com.squareup.moshi.Json
 
 sealed class UserEntities {
 
-    data class KrakenUser(
-        @field:Json(name = "_id") val id: Int,
-        @field:Json(name = "bio") val bio: String,
-        @field:Json(name = "created_at") val createdAt: String,
-        @field:Json(name = "display_name") val displayName: String,
-        @field:Json(name = "email") val email: String,
-        @field:Json(name = "email_verified") val isEmailVerified: Boolean,
-        @field:Json(name = "logo") val logoUrl: String,
-        @field:Json(name = "name") val name: String,
-        @field:Json(name = "notifications") val notifications: Map<String, Boolean>,
-        @field:Json(name = "partnered") val isPartnered: Boolean,
-        @field:Json(name = "twitter_connected") val isTwitterConnected: Boolean,
-        @field:Json(name = "type") val type: String,
-        @field:Json(name = "updated_at") val lastUpdated: String
+    data class ValidateUser(
+        @field:Json(name = "client_id") val clientId: String,
+        @field:Json(name = "login") val login: String,
+        @field:Json(name = "scopes") val scopes: List<String>, // TODO Verify scopes
+        @field:Json(name = "user_id") val userId: Int
     )
 
     data class HelixUser(
@@ -32,6 +24,10 @@ sealed class UserEntities {
         @field:Json(name = "view_count") val viewCount: Int
     )
 
+    // R8 deletes this if annotation is not set NotLikeThis
+    @Keep
+    data class KrakenUser(@field:Json(name = "_id") val id: Int)
+    @Keep
     data class KrakenUserEntry(@field:Json(name = "user") val user: KrakenUser)
     data class KrakenUsersBlocks(@field:Json(name = "blocks") val blocks: List<KrakenUserEntry>)
     data class HelixUsers(@field:Json(name = "data") val data: List<HelixUser>)
