@@ -6,7 +6,7 @@ import java.util.regex.Pattern
 sealed class Mention {
     data class Phrase(val entry: String) : Mention()
     data class User(val name: String) : Mention() {
-        val regex = "@?$name,?".toPattern(Pattern.CASE_INSENSITIVE).toRegex()
+        val regex = """\b$name\b""".toPattern(Pattern.CASE_INSENSITIVE).toRegex()
     }
 
     data class RegexPhrase(val entry: Regex) : Mention()
@@ -14,7 +14,7 @@ sealed class Mention {
     fun matches(message: String): Boolean {
         val split = message.split(" ")
         return when (this) {
-            is User -> split.any { it.contains(regex) }
+            is User -> message.contains(regex)
             is Phrase -> split.any { it.equals(entry, true) }
             is RegexPhrase -> message.contains(entry)
         }
