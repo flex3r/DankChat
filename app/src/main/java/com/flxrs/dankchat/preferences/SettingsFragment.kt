@@ -55,7 +55,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 }
                 isVisible = false
             }
-            setDarkMode(isChecked)
             setOnPreferenceClickListener {
                 setDarkMode(isChecked)
                 true
@@ -70,9 +69,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun setDarkMode(darkMode: Boolean) {
-        (requireActivity() as SettingsActivity).delegate.localNightMode = if (darkMode) {
-            AppCompatDelegate.MODE_NIGHT_YES
-        } else AppCompatDelegate.MODE_NIGHT_NO
+        AppCompatDelegate.setDefaultNightMode(
+            when {
+                darkMode -> AppCompatDelegate.MODE_NIGHT_YES
+                else -> AppCompatDelegate.MODE_NIGHT_NO
+            }
+        )
     }
 
     private fun showMultiEntryPreference(key: String, sharedPreferences: SharedPreferences): Boolean {

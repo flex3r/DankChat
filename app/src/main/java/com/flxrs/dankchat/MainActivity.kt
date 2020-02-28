@@ -15,7 +15,6 @@ import android.view.inputmethod.EditorInfo
 import android.webkit.MimeTypeMap
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -193,6 +192,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         super.onStart()
         if (!isBound) Intent(this, TwitchService::class.java).also {
             try {
+                isBound = true
                 ContextCompat.startForegroundService(this, it)
                 bindService(it, twitchServiceConnection, Context.BIND_AUTO_CREATE)
             } catch (t: Throwable) {
@@ -618,7 +618,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         val roomStateKey = getString(R.string.preference_roomstate_key)
         val streamInfoKey = getString(R.string.preference_streaminfo_key)
         val inputKey = getString(R.string.preference_show_input_key)
-        val darkThemeKey = getString(R.string.preference_dark_theme_key)
         val customMentionsKey = getString(R.string.preference_custom_mentions_key)
         val blacklistKey = getString(R.string.preference_blacklist_key)
         twitchPreferences = DankChatPreferenceStore(this)
@@ -630,10 +629,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                     viewModel.setStreamInfoEnabled(p.getBoolean(key, true))
                 }
                 inputKey -> viewModel.inputEnabled.value = p.getBoolean(key, true)
-                darkThemeKey -> delegate.localNightMode = when {
-                    p.getBoolean(key, true) -> AppCompatDelegate.MODE_NIGHT_YES
-                    else -> AppCompatDelegate.MODE_NIGHT_NO
-                }
                 customMentionsKey -> viewModel.setMentionEntries(p.getStringSet(key, emptySet()))
                 blacklistKey -> viewModel.setBlacklistEntries(p.getStringSet(key, emptySet()))
             }
@@ -644,13 +639,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 setRoomStateEnabled(getBoolean(roomStateKey, true))
                 setStreamInfoEnabled(getBoolean(streamInfoKey, true))
                 inputEnabled.value = getBoolean(inputKey, true)
-                delegate.localNightMode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-                    if (getBoolean(
-                            darkThemeKey,
-                            true
-                        )
-                    ) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
-                } else AppCompatDelegate.MODE_NIGHT_YES // Force dark theme on < Android 8.1 because of statusbar/navigationbar issues
 
                 setMentionEntries(getStringSet(customMentionsKey, emptySet()))
                 setBlacklistEntries(getStringSet(blacklistKey, emptySet()))

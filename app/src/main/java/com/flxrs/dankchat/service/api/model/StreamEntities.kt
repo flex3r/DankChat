@@ -1,8 +1,10 @@
 package com.flxrs.dankchat.service.api.model
 
+import androidx.annotation.Keep
 import com.squareup.moshi.Json
 
 sealed class StreamEntities {
+    @Keep
     data class Stream(
         @field:Json(name = "_id") val id: Long,
         @field:Json(name = "game") val game: String,
@@ -15,6 +17,7 @@ sealed class StreamEntities {
         @field:Json(name = "viewers") val viewers: Int
     )
 
+    @Keep
     data class Result(
         @field:Json(name = "stream") val stream: Stream,
         @field:Json(name = "channel") val channel: Any

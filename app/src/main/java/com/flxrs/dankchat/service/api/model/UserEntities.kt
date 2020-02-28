@@ -5,6 +5,7 @@ import com.squareup.moshi.Json
 
 sealed class UserEntities {
 
+    @Keep
     data class ValidateUser(
         @field:Json(name = "client_id") val clientId: String,
         @field:Json(name = "login") val login: String,
@@ -12,6 +13,7 @@ sealed class UserEntities {
         @field:Json(name = "user_id") val userId: Int
     )
 
+    @Keep
     data class HelixUser(
         @field:Json(name = "id") val id: String,
         @field:Json(name = "login") val name: String,
@@ -29,6 +31,8 @@ sealed class UserEntities {
     data class KrakenUser(@field:Json(name = "_id") val id: Int)
     @Keep
     data class KrakenUserEntry(@field:Json(name = "user") val user: KrakenUser)
+    @Keep
     data class KrakenUsersBlocks(@field:Json(name = "blocks") val blocks: List<KrakenUserEntry>)
+    @Keep
     data class HelixUsers(@field:Json(name = "data") val data: List<HelixUser>)
 }

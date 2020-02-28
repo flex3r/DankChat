@@ -23,10 +23,6 @@ class LoginActivity : AppCompatActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val darkThemeKey = getString(R.string.preference_dark_theme_key)
-        PreferenceManager.getDefaultSharedPreferences(this).apply {
-            delegate.localNightMode = if (getBoolean(darkThemeKey, true)) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
-        }
         DataBindingUtil.setContentView<LoginActivityBinding>(this, R.layout.login_activity).apply {
             setSupportActionBar(loginToolbar)
             supportActionBar?.apply {
