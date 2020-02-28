@@ -478,6 +478,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
 
     private fun setSuggestions(suggestions: List<Suggestion>) {
         with(suggestionAdapter) {
+            setNotifyOnChange(false)
             clear()
             addAll(suggestions)
         }
