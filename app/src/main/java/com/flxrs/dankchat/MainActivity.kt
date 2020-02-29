@@ -74,7 +74,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<MaterialCardView>
     private lateinit var suggestionAdapter: EmoteSuggestionsArrayAdapter
     private var currentImagePath = ""
-    private var showProgressBar = false
 
     private var currentChannel: String? = null
     private var twitchService: TwitchService? = null
@@ -138,6 +137,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
 
         viewModel.apply {
             imageUploadedEvent.observe(this@MainActivity, ::handleImageUploadEvent)
+            showUploadProgress.observe(this@MainActivity) { invalidateOptionsMenu() }
             emoteAndUserSuggestions.observe(this@MainActivity, ::setSuggestions)
             emoteItems.observe(this@MainActivity, emoteMenuAdapter::submitList)
             appbarEnabled.observe(this@MainActivity) { changeActionBarVisibility(it) }
@@ -234,15 +234,16 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         menu?.apply {
             val isLoggedIn = twitchPreferences.isLoggedin()
+            val shouldShowProgress = viewModel.showUploadProgress.value ?: false
             findItem(R.id.menu_login)?.isVisible = !isLoggedIn
             findItem(R.id.menu_remove)?.isVisible = channels.isNotEmpty()
 
             findItem(R.id.progress)?.apply {
-                isVisible = showProgressBar
+                isVisible = shouldShowProgress
                 actionView = ProgressBar(this@MainActivity).apply {
                     indeterminateTintList =
                         ContextCompat.getColorStateList(this@MainActivity, android.R.color.white)
-                    isVisible = showProgressBar
+                    isVisible = shouldShowProgress
                 }
             }
         }
@@ -408,8 +409,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         } ?: getString(R.string.snackbar_upload_failed)
 
         showSnackbar(message)
-        showProgressBar = false
-        invalidateOptionsMenu()
+        viewModel.showUploadProgress.value = false
         result.second.delete()
     }
 
@@ -451,8 +451,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 }
 
                 viewModel.uploadImage(copy)
-                showProgressBar = true
-                invalidateOptionsMenu()
             } catch (t: Throwable) {
                 copy.delete()
                 showSnackbar(getString(R.string.snackbar_upload_failed))
@@ -467,8 +465,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 MediaUtils.removeExifAttributes(currentImagePath)
 
                 viewModel.uploadImage(imageFile)
-                showProgressBar = true
-                invalidateOptionsMenu()
             } catch (e: IOException) {
                 imageFile.delete()
                 showSnackbar(getString(R.string.snackbar_upload_failed))

@@ -59,6 +59,7 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         addSource(shouldShowViewPager) { value = it && inputEnabled.value ?: true }
     }
     val imageUploadedEvent = twitchRepository.imageUploadedEvent
+    val showUploadProgress = MutableLiveData(false)
     val connectionState = activeChannel.switchMap { twitchRepository.getConnectionState(it) }
     val canType = connectionState.map { it == ConnectionState.CONNECTED }
     val bottomText = MediatorLiveData<String>().apply {
@@ -140,7 +141,10 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
     fun reloadEmotes(channel: String, oauth: String, id: Int) =
         twitchRepository.reloadEmotes(channel, oauth, id)
 
-    fun uploadImage(file: File) = twitchRepository.uploadImage(file)
+    fun uploadImage(file: File): Job {
+        showUploadProgress.value = true
+        return twitchRepository.uploadImage(file)
+    }
 
     fun setMentionEntries(stringSet: Set<String>?) = twitchRepository.setMentionEntries(stringSet)
     fun setBlacklistEntries(stringSet: Set<String>?) =
