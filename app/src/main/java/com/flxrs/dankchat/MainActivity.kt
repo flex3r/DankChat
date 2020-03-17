@@ -46,6 +46,7 @@ import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.AdvancedLoginDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.EditTextDialogFragment
 import com.flxrs.dankchat.utils.extensions.hideKeyboard
+import com.flxrs.dankchat.utils.extensions.keepScreenOn
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -85,7 +86,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         initPreferences()
 
         broadcastReceiver = object : BroadcastReceiver() {
@@ -620,6 +620,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         val inputKey = getString(R.string.preference_show_input_key)
         val customMentionsKey = getString(R.string.preference_custom_mentions_key)
         val blacklistKey = getString(R.string.preference_blacklist_key)
+        val keepScreenOnKey = getString(R.string.preference_keep_screen_on_key)
         twitchPreferences = DankChatPreferenceStore(this)
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
             when (key) {
@@ -631,10 +632,12 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
                 inputKey -> viewModel.inputEnabled.value = p.getBoolean(key, true)
                 customMentionsKey -> viewModel.setMentionEntries(p.getStringSet(key, emptySet()))
                 blacklistKey -> viewModel.setBlacklistEntries(p.getStringSet(key, emptySet()))
+                keepScreenOnKey -> keepScreenOn(p.getBoolean(key, true))
             }
         }
         preferences = PreferenceManager.getDefaultSharedPreferences(this).apply {
             registerOnSharedPreferenceChangeListener(preferenceListener)
+            keepScreenOn(getBoolean(keepScreenOnKey, true))
             viewModel.apply {
                 setRoomStateEnabled(getBoolean(roomStateKey, true))
                 setStreamInfoEnabled(getBoolean(streamInfoKey, true))

@@ -5,7 +5,9 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
 import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import com.flxrs.dankchat.chat.ChatItem
@@ -182,6 +184,14 @@ fun View.setVisibility(visible: Boolean) {
         View.VISIBLE
     } else {
         View.GONE
+    }
+}
+
+fun AppCompatActivity.keepScreenOn(keep: Boolean) {
+    if (keep) {
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    } else {
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 }
 

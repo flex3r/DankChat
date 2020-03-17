@@ -117,6 +117,8 @@
 	<string name="preference_animate_gifs_title">Animate gifs</string>
 	<string name="preference_line_separator_key" translatable="false">line_seperator_key</string>
 	<string name="preference_line_separator_title">Separate messages with lines</string>
+	<string name="preference_keep_screen_on_key" translatable="false">keep_screen_on_key</string>
+	<string name="preference_keep_screen_on_title">Keep screen on</string>
 
 	<plurals name="viewers">
 		<item quantity="one">Live with %d viewer</item>
