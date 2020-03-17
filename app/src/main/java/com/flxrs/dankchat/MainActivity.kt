@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.*
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -237,6 +238,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             val shouldShowProgress = viewModel.showUploadProgress.value ?: false
             findItem(R.id.menu_login)?.isVisible = !isLoggedIn
             findItem(R.id.menu_remove)?.isVisible = channels.isNotEmpty()
+            findItem(R.id.menu_open)?.isVisible = channels.isNotEmpty()
 
             findItem(R.id.progress)?.apply {
                 isVisible = shouldShowProgress
@@ -259,6 +261,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
             }
             R.id.menu_login_advanced -> showAdvancedLoginDialog()
             R.id.menu_add -> addChannel()
+            R.id.menu_open -> openChannel()
             R.id.menu_remove -> removeChannel()
             R.id.menu_reload_emotes -> reloadEmotes()
             R.id.menu_choose_image -> checkPermissionForGallery()
@@ -688,6 +691,16 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         textHint = getString(R.string.add_channel_hint),
         isAddChannel = true
     ).show(supportFragmentManager, DIALOG_TAG)
+
+    private fun openChannel() {
+        val index = binding.viewPager.currentItem
+        val channel = channels[index]
+        val url = "https://twitch.tv/$channel"
+        Intent(Intent.ACTION_VIEW).also {
+            it.data = Uri.parse(url)
+            startActivity(it)
+        }
+    }
 
     private fun removeChannel() {
         val index = binding.viewPager.currentItem

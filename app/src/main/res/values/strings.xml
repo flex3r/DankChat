@@ -17,6 +17,7 @@
 	<string name="add_channel">Add channel</string>
 	<string name="name">Name</string>
 	<string name="remove_channel">Remove channel</string>
+	<string name="open_channel">Open channel</string>
 	<string name="no_channels_added">No channels added</string>
 	<string name="new_version_title">New version available</string>
 	<string name="new_version_positive_button">Install</string>

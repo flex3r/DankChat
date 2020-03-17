@@ -36,6 +36,11 @@
 	</item>
 
 	<item
+		android:id="@+id/menu_open"
+		android:title="@string/open_channel"
+		app:showAsAction="never" />
+
+	<item
 		android:id="@+id/menu_remove"
 		android:title="@string/remove_channel"
 		app:showAsAction="never" />
