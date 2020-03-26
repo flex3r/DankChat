@@ -104,8 +104,8 @@ object TwitchApi {
         return@withContext null
     }
 
-    suspend fun getStream(channel: String): StreamEntities.Stream? = withContext(Dispatchers.IO) {
-        getUserIdFromName(channel)?.let {
+    suspend fun getStream(oAuth: String, channel: String): StreamEntities.Stream? = withContext(Dispatchers.IO) {
+        getUserIdFromName(oAuth, channel)?.let {
             try {
                 val response = service.getStream(it.toInt())
                 return@withContext if (response.isSuccessful) response.body()?.stream else null
@@ -218,9 +218,9 @@ object TwitchApi {
         return@withContext null
     }
 
-    suspend fun getUserIdFromName(name: String): String? = withContext(Dispatchers.IO) {
+    suspend fun getUserIdFromName(oAuth: String, name: String): String? = withContext(Dispatchers.IO) {
         try {
-            val response = service.getUserHelix("${HELIX_BASE_URL}users?login=$name")
+            val response = service.getUserHelix("Bearer $oAuth", "${HELIX_BASE_URL}users?login=$name")
             if (response.isSuccessful) return@withContext response.body()?.data?.get(0)?.id
         } catch (t: Throwable) {
             Log.e(TAG, Log.getStackTraceString(t))
@@ -228,9 +228,9 @@ object TwitchApi {
         return@withContext null
     }
 
-    suspend fun getNameFromUserId(id: Int): String? = withContext(Dispatchers.IO) {
+    suspend fun getNameFromUserId(oAuth: String, id: Int): String? = withContext(Dispatchers.IO) {
         try {
-            val response = service.getUserHelix("${HELIX_BASE_URL}users?id=$id")
+            val response = service.getUserHelix("Bearer $oAuth", "${HELIX_BASE_URL}users?id=$id")
             if (response.isSuccessful) return@withContext response.body()?.data?.get(0)?.name
         } catch (t: Throwable) {
             Log.e(TAG, Log.getStackTraceString(t))

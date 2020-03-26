@@ -79,7 +79,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         scope.launch(coroutineExceptionHandler) {
             ConcurrentLinkedQueue(channels).forEach { channel ->
                 if (load3rdParty) {
-                    TwitchApi.getUserIdFromName(channel)?.let {
+                    TwitchApi.getUserIdFromName(oAuth, channel)?.let {
                         loadBadges(channel, it)
                         load3rdPartyEmotes(channel, it)
                     }
@@ -131,7 +131,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     fun reloadEmotes(channel: String, oAuth: String, id: Int) = scope.launch(coroutineExceptionHandler) {
         loadedGlobalEmotes = false
         loadedTwitchEmotes = false
-        TwitchApi.getUserIdFromName(channel)?.let {
+        TwitchApi.getUserIdFromName(oAuth, channel)?.let {
             load3rdPartyEmotes(channel, it)
         }
 

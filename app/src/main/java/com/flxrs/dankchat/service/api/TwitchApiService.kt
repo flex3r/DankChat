@@ -47,7 +47,7 @@ interface TwitchApiService {
         "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
     )
     @GET
-    suspend fun getUserHelix(@Url url: String): Response<UserEntities.HelixUsers>
+    suspend fun getUserHelix(@Header("Authorization") oAuth: String, @Url url: String): Response<UserEntities.HelixUsers>
 
     @Headers(
         "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"

@@ -255,11 +255,15 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_reconnect -> twitchService?.reconnect(false)
-            R.id.menu_login_default -> Intent(this, LoginActivity::class.java).apply {
+            R.id.menu_login -> Intent(this, LoginActivity::class.java).apply {
                 isLoggingIn = true
                 startActivityForResult(this, LOGIN_REQUEST)
             }
-            R.id.menu_login_advanced -> showAdvancedLoginDialog()
+//            R.id.menu_login_default -> Intent(this, LoginActivity::class.java).apply {
+//                isLoggingIn = true
+//                startActivityForResult(this, LOGIN_REQUEST)
+//            }
+//            R.id.menu_login_advanced -> showAdvancedLoginDialog()
             R.id.menu_add -> addChannel()
             R.id.menu_open -> openChannel()
             R.id.menu_remove -> removeChannel()
@@ -357,9 +361,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     fun mentionUser(user: String) {
         if (binding.input.isEnabled) {
             val current = binding.input.text.trimEnd().toString()
-            val template =
-                preferences.getString(getString(R.string.preference_mention_format_key), "name")
-                    ?: "name"
+            val template = preferences.getString(getString(R.string.preference_mention_format_key), "name") ?: "name"
             val mention = template.replace("name", user)
             val inputWithMention = if (current.isBlank()) "$mention " else "$current $mention "
 
@@ -389,7 +391,8 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     private fun fetchStreamInformation() {
         val key = getString(R.string.preference_streaminfo_key)
         if (::preferences.isInitialized && preferences.getBoolean(key, true)) {
-            viewModel.fetchStreamData(channels) {
+            val oAuth = twitchPreferences.getOAuthKey() ?: return
+            viewModel.fetchStreamData(oAuth, channels) {
                 resources.getQuantityString(R.plurals.viewers, it, it)
             }
         }
@@ -583,9 +586,9 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     private fun reloadEmotes() {
         val position = binding.tabs.selectedTabPosition
         if (position in 0 until tabAdapter.titleList.size) {
-            val oauth = twitchPreferences.getOAuthKey() ?: ""
+            val oAuth = twitchPreferences.getOAuthKey() ?: return
             val userId = twitchPreferences.getUserId()
-            viewModel.reloadEmotes(tabAdapter.titleList[position], oauth, userId)
+            viewModel.reloadEmotes(tabAdapter.titleList[position], oAuth, userId)
         }
     }
 

@@ -23,16 +23,16 @@
 		android:id="@+id/menu_login"
 		android:title="@string/login"
 		app:showAsAction="never">
-		<menu>
-			<item
-				android:id="@+id/menu_login_default"
-				android:title="@string/login_through_browser"
-				app:showAsAction="never" />
-			<item
-				android:id="@+id/menu_login_advanced"
-				android:title="@string/paste_oauth_token"
-				app:showAsAction="never" />
-		</menu>
+<!--		<menu>-->
+<!--			<item-->
+<!--				android:id="@+id/menu_login_default"-->
+<!--				android:title="@string/login_through_browser"-->
+<!--				app:showAsAction="never" />-->
+<!--			<item-->
+<!--				android:id="@+id/menu_login_advanced"-->
+<!--				android:title="@string/paste_oauth_token"-->
+<!--				app:showAsAction="never" />-->
+<!--		</menu>-->
 	</item>
 
 	<item

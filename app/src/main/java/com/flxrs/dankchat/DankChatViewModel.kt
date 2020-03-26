@@ -138,8 +138,13 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
 
     fun clear(channel: String) = twitchRepository.clear(channel)
 
-    fun reloadEmotes(channel: String, oauth: String, id: Int) =
-        twitchRepository.reloadEmotes(channel, oauth, id)
+    fun reloadEmotes(channel: String, oAuth: String, id: Int) {
+        val token = when {
+            oAuth.startsWith("oauth:", true) -> oAuth.substringAfter(':')
+            else -> oAuth
+        }
+        twitchRepository.reloadEmotes(channel, token, id)
+    }
 
     fun uploadImage(file: File): Job {
         showUploadProgress.value = true
@@ -150,13 +155,17 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
     fun setBlacklistEntries(stringSet: Set<String>?) =
         twitchRepository.setBlacklistEntries(stringSet)
 
-    fun fetchStreamData(channels: List<String>, stringBuilder: (viewers: Int) -> String) {
+    fun fetchStreamData(oAuth: String, channels: List<String>, stringBuilder: (viewers: Int) -> String) {
+        val token = when {
+            oAuth.startsWith("oauth:", true) -> oAuth.substringAfter(':')
+            else -> oAuth
+        }
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch(coroutineExceptionHandler) {
             timer(STREAM_REFRESH_RATE) {
                 val data = mutableMapOf<String, String>()
                 channels.forEach { channel ->
-                    TwitchApi.getStream(channel)?.let {
+                    TwitchApi.getStream(token, channel)?.let {
                         data[channel] = stringBuilder(it.viewers)
                     }
                 }
