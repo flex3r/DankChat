@@ -47,10 +47,7 @@ object TwitchApi {
     const val LOGIN_URL =
         "$BASE_LOGIN_URL&client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URL&scope=$SCOPES"
 
-    private val client = OkHttpClient.Builder()
-        .connectTimeout(100, TimeUnit.SECONDS)
-        .readTimeout(100, TimeUnit.SECONDS)
-        .build()
+    private val client = OkHttpClient.Builder().build()
 
     private val service = Retrofit.Builder()
         .baseUrl(KRAKEN_BASE_URL)
