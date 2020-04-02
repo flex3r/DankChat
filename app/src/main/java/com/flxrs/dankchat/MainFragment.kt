@@ -210,7 +210,11 @@ class MainFragment : Fragment() {
             if (channelToOpen.isNotBlank()) {
                 val index = viewModel.channels.value?.indexOf(channelToOpen)
                 if (index != null && index >= 0) {
-                    binding.viewPager.setCurrentItem(index, false)
+                    if (index == binding.viewPager.currentItem) {
+                        clearNotificationsOfChannel(channelToOpen)
+                    } else {
+                        binding.viewPager.setCurrentItem(index, false)
+                    }
                 }
                 channelToOpen = ""
             } else {
