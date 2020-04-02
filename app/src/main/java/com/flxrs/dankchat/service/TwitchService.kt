@@ -158,7 +158,7 @@ class TwitchService : Service(), KoinComponent, CoroutineScope {
     private fun createMentionNotification(channel: String, user: String, message: String) {
         val pendingStartActivityIntent = Intent(this, MainActivity::class.java).let {
             it.putExtra(MainActivity.OPEN_CHANNEL_KEY, channel)
-            PendingIntent.getActivity(this, 0, it, PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.getActivity(this, intentCode, it, PendingIntent.FLAG_UPDATE_CURRENT)
         }
 
         val summary = NotificationCompat.Builder(this, CHANNEL_ID_DEFAULT)
@@ -194,6 +194,8 @@ class TwitchService : Service(), KoinComponent, CoroutineScope {
         private const val STOP_COMMAND = "STOP_DANKING"
 
         private var notificationId = 42
+            get() = field++
+        private var intentCode = 420
             get() = field++
     }
 }
