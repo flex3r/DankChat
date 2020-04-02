@@ -15,12 +15,13 @@ import com.flxrs.dankchat.chat.menu.EmoteItem
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.service.twitch.message.Mention
+import com.flxrs.dankchat.service.twitch.message.Message
 import com.squareup.moshi.JsonAdapter
 import java.util.regex.Pattern
 
 fun List<ChatItem>.replaceWithTimeOuts(name: String): List<ChatItem> = apply {
     forEach { item ->
-        if (!item.message.isNotify
+        if (item.message is Message.TwitchMessage && !item.message.isNotify
             && (name.isBlank() || item.message.name.equals(name, true))
         ) {
             item.message.timedOut = true
@@ -30,7 +31,7 @@ fun List<ChatItem>.replaceWithTimeOuts(name: String): List<ChatItem> = apply {
 
 fun List<ChatItem>.replaceWithTimeOut(id: String): List<ChatItem> = apply {
     forEach {
-        if (it.message.id == id) {
+        if (it.message is Message.TwitchMessage && it.message.id == id) {
             it.message.timedOut = true
             return@apply
         }
@@ -193,6 +194,10 @@ fun AppCompatActivity.keepScreenOn(keep: Boolean) {
     } else {
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
+}
+
+fun Fragment.keepScreenOn(keep: Boolean) {
+    (activity as? AppCompatActivity)?.keepScreenOn(keep)
 }
 
 @Suppress("DEPRECATION") // Deprecated for third party Services.

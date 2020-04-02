@@ -1,5 +1,5 @@
 package com.flxrs.dankchat.chat
 
-import com.flxrs.dankchat.service.twitch.message.TwitchMessage
+import com.flxrs.dankchat.service.twitch.message.Message
 
-data class ChatItem(val message: TwitchMessage, val historic: Boolean = false)
+data class ChatItem(val message: Message, val historic: Boolean = false)

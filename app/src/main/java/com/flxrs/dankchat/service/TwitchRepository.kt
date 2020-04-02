@@ -4,26 +4,30 @@ import android.util.Log
 import androidx.collection.LruCache
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.connection.ConnectionState
+import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
-import com.flxrs.dankchat.service.twitch.message.Mention
-import com.flxrs.dankchat.service.twitch.message.Roomstate
-import com.flxrs.dankchat.service.twitch.message.TwitchMessage
-import com.flxrs.dankchat.service.twitch.message.matches
+import com.flxrs.dankchat.service.twitch.message.*
 import com.flxrs.dankchat.utils.SingleLiveEvent
 import com.flxrs.dankchat.utils.extensions.*
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
+import okhttp3.Connection
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.koin.core.KoinComponent
+import org.koin.core.get
+import org.koin.core.parameter.parametersOf
 import java.io.File
 import java.nio.ByteBuffer
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.TimeUnit
 
 class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
@@ -49,8 +53,22 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     private val moshi = Moshi.Builder().build()
     private val adapter = moshi.adapter(MultiEntryItem.Entry::class.java)
 
-    val imageUploadedEvent = SingleLiveEvent<Pair<String?, File>>()
+    private val client = OkHttpClient.Builder()
+        .retryOnConnectionFailure(true)
+        .build()
 
+    private val request = Request.Builder()
+        .url("wss://irc-ws.chat.twitch.tv")
+        .build()
+
+    private val readConnection: WebSocketConnection =
+        get { parametersOf(client, request, ::handleDisconnect, ::onReaderMessage) }
+    private val writeConnection: WebSocketConnection =
+        get { parametersOf(client, request, null, ::onWriterMessage) }
+
+    val imageUploadedEvent = SingleLiveEvent<Pair<String?, File>>()
+    val messageChannel = Channel<List<ChatItem>>()
+    var startedConnection = false
 
     fun getChat(channel: String): LiveData<List<ChatItem>> =
         messages.getAndSet(channel, emptyList())
@@ -102,7 +120,80 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         TwitchApi.clearChannelFromLoaded(channel)
     }
 
-    fun prepareMessage(channel: String, message: String, onResult: (msg: String) -> Unit) {
+    @Synchronized
+    fun handleDisconnect() {
+        if (!hasDisconnected) {
+            hasDisconnected = true
+            val state = ConnectionState.DISCONNECTED
+            connectionState.keys.forEach {
+                connectionState.getAndSet(it).postValue(state)
+            }
+            makeAndPostConnectionMessage(state)
+        }
+    }
+
+    fun clear(channel: String) {
+        messages[channel]?.postValue(emptyList())
+    }
+
+    fun reloadEmotes(channel: String, oAuth: String, id: Int) =
+        scope.launch(coroutineExceptionHandler) {
+            loadedGlobalEmotes = false
+            loadedTwitchEmotes = false
+            TwitchApi.getUserIdFromName(oAuth, channel)?.let {
+                load3rdPartyEmotes(channel, it)
+            }
+
+            if (id != 0 && oAuth.isNotBlank() && oAuth.startsWith("oauth:")) {
+                loadTwitchEmotes(oAuth.substringAfter("oauth:"), id)
+            }
+
+            setSuggestions(channel)
+        }
+
+    fun uploadImage(file: File) = scope.launch(coroutineExceptionHandler) {
+        val url = TwitchApi.uploadImage(file)
+        imageUploadedEvent.postValue(url to file)
+    }
+
+    fun close(onClosed: () -> Unit = { }) {
+        startedConnection = false
+        writeConnection.close(onClosed)
+        readConnection.close(onClosed)
+    }
+
+    fun reconnect(onlyIfNecessary: Boolean) {
+        readConnection.reconnect(onlyIfNecessary)
+        writeConnection.reconnect(onlyIfNecessary)
+    }
+
+    fun sendMessage(channel: String, input: String) = prepareMessage(channel, input) {
+        writeConnection.sendMessage(it)
+    }
+
+    fun connect(nick: String, oauth: String) {
+        if (!startedConnection) {
+            readConnection.connect(nick, oauth)
+            writeConnection.connect(nick, oauth)
+            startedConnection = true
+        }
+    }
+
+    fun joinChannel(channel: String) {
+        readConnection.joinChannel(channel)
+        writeConnection.joinChannel(channel)
+    }
+
+    fun partChannel(channel: String) {
+        readConnection.partChannel(channel)
+        writeConnection.partChannel(channel)
+    }
+
+    private inline fun prepareMessage(
+        channel: String,
+        message: String,
+        onResult: (msg: String) -> Unit
+    ) {
         if (message.isNotBlank()) {
             val messageWithSuffix = if (lastMessage == message) {
                 "$message $INVISIBLE_CHAR"
@@ -113,48 +204,28 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         }
     }
 
-    @Synchronized
-    fun handleDisconnect(msg: String) {
-        if (!hasDisconnected) {
-            hasDisconnected = true
-            connectionState.keys.forEach {
-                connectionState.getAndSet(it).postValue(ConnectionState.DISCONNECTED)
-            }
-            makeAndPostSystemMessage(msg)
+    private fun onWriterMessage(message: IrcMessage) {
+        when (message.command) {
+            "PRIVMSG" -> Unit
+            "366" -> handleConnected(message.params[1].substring(1), writeConnection.isAnonymous)
+            else -> onMessage(message)
         }
     }
 
-    fun clear(channel: String) {
-        messages[channel]?.postValue(emptyList())
-    }
-
-    fun reloadEmotes(channel: String, oAuth: String, id: Int) = scope.launch(coroutineExceptionHandler) {
-        loadedGlobalEmotes = false
-        loadedTwitchEmotes = false
-        TwitchApi.getUserIdFromName(oAuth, channel)?.let {
-            load3rdPartyEmotes(channel, it)
+    private fun onReaderMessage(message: IrcMessage) {
+        if (message.command == "PRIVMSG") {
+            onMessage(message)
         }
-
-        if (id != 0 && oAuth.isNotBlank() && oAuth.startsWith("oauth:")) {
-            loadTwitchEmotes(oAuth.substringAfter("oauth:"), id)
-        }
-
-        setSuggestions(channel)
     }
 
-    fun uploadImage(file: File) = scope.launch(coroutineExceptionHandler) {
-        val url = TwitchApi.uploadImage(file)
-        imageUploadedEvent.postValue(url to file)
-    }
-
-    fun onMessage(msg: IrcMessage): List<ChatItem>? {
+    private fun onMessage(msg: IrcMessage): List<ChatItem>? {
         when (msg.command) {
             "353" -> handleNames(msg)
             "JOIN" -> handleJoin(msg)
             "CLEARCHAT" -> handleClearchat(msg)
             "ROOMSTATE" -> handleRoomstate(msg)
             "CLEARMSG" -> handleClearmsg(msg)
-            else -> return handleMessage(msg)
+            else -> handleMessage(msg)
         }
         return null
     }
@@ -183,19 +254,23 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         }
     }
 
-    fun handleConnected(channel: String, isAnonymous: Boolean, connectedMsg: String) {
-        makeAndPostSystemMessage(connectedMsg, setOf(channel))
+    private fun handleConnected(
+        channel: String,
+        isAnonymous: Boolean
+    ) {
+
         hasDisconnected = false
 
         val hint = when {
             isAnonymous -> ConnectionState.NOT_LOGGED_IN
             else -> ConnectionState.CONNECTED
         }
+        makeAndPostConnectionMessage(hint, setOf(channel))
         connectionState.getAndSet(channel).postValue(hint)
     }
 
     private fun handleClearchat(msg: IrcMessage) {
-        val parsed = TwitchMessage.parse(msg).map { ChatItem(it) }
+        val parsed = Message.TwitchMessage.parse(msg).map { ChatItem(it) }
         val target = if (msg.params.size > 1) msg.params[1] else ""
         val channel = msg.params[0].substring(1)
 
@@ -221,15 +296,14 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         }
     }
 
-    private fun handleMessage(msg: IrcMessage): List<ChatItem> {
+    private fun handleMessage(msg: IrcMessage) {
         msg.tags["user-id"]?.let { userId ->
-            if (ignoredList.any { it == userId.toInt() }) return emptyList()
+            if (ignoredList.any { it == userId.toInt() }) return
         }
-        val parsed = TwitchMessage.parse(msg).map {
-            if (blacklistEntries.matches(it.message, it.emotes)) return emptyList()
+        val parsed = Message.TwitchMessage.parse(msg).map {
+            if (blacklistEntries.matches(it.message, it.emotes)) return
 
             it.checkForMention(name, customMentionEntries)
-
             val currentUsers = users[it.channel]?.value ?: createUserCache()
             currentUsers.put(it.name, true)
             users.getAndSet(it.channel).postValue(currentUsers)
@@ -246,10 +320,9 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
                 val channel = msg.params[0].substring(1)
                 val currentChat = messages[channel]?.value ?: emptyList()
                 messages.getAndSet(channel).postValue(currentChat.addAndLimit(parsed))
+                messageChannel.offer(parsed)
             }
         }
-
-        return parsed
     }
 
     private fun handleNames(msg: IrcMessage) {
@@ -272,14 +345,14 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         return LruCache(500)
     }
 
-    private fun makeAndPostSystemMessage(
-        message: String,
+    private fun makeAndPostConnectionMessage(
+        state: ConnectionState,
         channels: Set<String> = messages.keys
     ) {
         channels.forEach {
             val currentChat = messages[it]?.value ?: emptyList()
             messages.getAndSet(it).postValue(
-                currentChat.addAndLimit(ChatItem(TwitchMessage.makeSystemMessage(message, it)))
+                currentChat.addAndLimit(ChatItem(Message.ConnectionMessage(state = state)))
             )
         }
     }
@@ -320,7 +393,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         TwitchApi.getRecentMessages(channel)
             ?.messages?.asSequence()?.map { IrcMessage.parse(it) }
             ?.filter { msg -> !ignoredList.any { msg.tags["user-id"]?.toInt() == it } }
-            ?.map { TwitchMessage.parse(it) }
+            ?.map { Message.TwitchMessage.parse(it) }
             ?.flatten()
             ?.filter { !blacklistEntries.matches(it.message, it.emotes) }
             ?.map {

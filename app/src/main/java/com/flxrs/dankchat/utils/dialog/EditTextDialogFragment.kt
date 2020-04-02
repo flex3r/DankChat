@@ -45,12 +45,8 @@ class EditTextDialogFragment : DialogFragment() {
         val input = binding.dialogEdit.text.toString().trim()
         if (input.isNotBlank()) {
             val activity = this.activity
-            if (requireArguments().getBoolean(IS_ADD_CHANNEL) && activity is AddChannelDialogResultHandler) activity.onAddChannelDialogResult(
-                input
-            )
-            else if (activity is AdvancedLoginDialogResultHandler) activity.onAdvancedLoginDialogResult(
-                input
-            )
+            if (activity is AddChannelDialogResultHandler)
+                activity.onAddChannelDialogResult(input)
         }
         dismiss()
         return true
@@ -62,8 +58,7 @@ class EditTextDialogFragment : DialogFragment() {
             @StringRes negativeButtonText: Int,
             @StringRes positiveButtonText: Int,
             @StringRes message: Int = -1,
-            textHint: String,
-            isAddChannel: Boolean = true
+            textHint: String
         ): EditTextDialogFragment {
             val args = Bundle().apply {
                 putInt(TITLE_ARG, title)
@@ -71,7 +66,6 @@ class EditTextDialogFragment : DialogFragment() {
                 putInt(POSITIVE_BUTTON_ARG, positiveButtonText)
                 putInt(MESSAGE_ARG, message)
                 putString(HINT_ARG, textHint)
-                putBoolean(IS_ADD_CHANNEL, isAddChannel)
             }
 
             return EditTextDialogFragment().apply { arguments = args }
@@ -82,6 +76,5 @@ class EditTextDialogFragment : DialogFragment() {
         private const val POSITIVE_BUTTON_ARG = "positiveButton"
         private const val MESSAGE_ARG = "message"
         private const val HINT_ARG = "hint"
-        private const val IS_ADD_CHANNEL = "isAddChannel"
     }
 }

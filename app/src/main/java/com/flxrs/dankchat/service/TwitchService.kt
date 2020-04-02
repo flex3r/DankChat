@@ -18,47 +18,30 @@ import coil.Coil
 import coil.api.load
 import com.flxrs.dankchat.MainActivity
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.service.irc.IrcMessage
-import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import com.flxrs.dankchat.chat.ChatItem
+import com.flxrs.dankchat.service.twitch.message.Message
+import kotlinx.coroutines.*
 import org.koin.core.KoinComponent
 import org.koin.core.get
-import org.koin.core.parameter.parametersOf
-import java.util.concurrent.TimeUnit
+import kotlin.coroutines.CoroutineContext
 
-class TwitchService : Service(), KoinComponent {
-
-    private val client = OkHttpClient.Builder()
-        .retryOnConnectionFailure(true)
-        .connectTimeout(100, TimeUnit.SECONDS)
-        .readTimeout(100, TimeUnit.SECONDS)
-        .writeTimeout(100, TimeUnit.SECONDS)
-        .build()
-
-    private val request = Request.Builder()
-        .url("wss://irc-ws.chat.twitch.tv")
-        .build()
+class TwitchService : Service(), KoinComponent, CoroutineScope {
 
     private val binder = LocalBinder()
     private val repository: TwitchRepository = get()
-    private val readConnection: WebSocketConnection = get { parametersOf(client, request, ::onDisconnect, ::onReaderMessage) }
-    private val writeConnection: WebSocketConnection = get { parametersOf(client, request, null, ::onWriterMessage) }
     private lateinit var manager: NotificationManager
     private lateinit var sharedPreferences: SharedPreferences
-    private var nick = ""
-
     var shouldNotifyOnMention = false
-    var startedConnection = false
-        private set
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.IO + Job()
 
     inner class LocalBinder(val service: TwitchService = this@TwitchService) : Binder()
 
-    override fun onBind(p0: Intent?): IBinder? = binder
+    override fun onBind(intent: Intent?): IBinder? = binder
 
     override fun onDestroy() {
+        coroutineContext.cancel()
         shouldNotifyOnMention = false
-        close()
         if (::manager.isInitialized) {
             manager.cancelAll()
         }
@@ -108,40 +91,6 @@ class TwitchService : Service(), KoinComponent {
         return START_NOT_STICKY
     }
 
-    fun connect(nick: String, oauth: String) {
-        if (!startedConnection) {
-            readConnection.connect(nick, oauth)
-            writeConnection.connect(nick, oauth)
-            startedConnection = true
-            this.nick = nick
-        }
-    }
-
-    fun joinChannel(channel: String) {
-        readConnection.joinChannel(channel)
-        writeConnection.joinChannel(channel)
-    }
-
-    fun partChannel(channel: String) {
-        readConnection.partChannel(channel)
-        writeConnection.partChannel(channel)
-    }
-
-    fun sendMessage(channel: String, input: String) = repository.prepareMessage(channel, input) {
-        writeConnection.sendMessage(it)
-    }
-
-    fun reconnect(onlyIfNecessary: Boolean) {
-        readConnection.reconnect(onlyIfNecessary)
-        writeConnection.reconnect(onlyIfNecessary)
-    }
-
-    fun close(onClosed: () -> Unit = { }) {
-        startedConnection = false
-        writeConnection.close(onClosed)
-        readConnection.close(onClosed)
-    }
-
     private fun startForeground() {
         val title = getString(R.string.notification_title)
         val message = getString(R.string.notification_message)
@@ -174,34 +123,25 @@ class TwitchService : Service(), KoinComponent {
             .build()
 
         startForeground(NOTIFICATION_ID, notification)
+
+        launch {
+            for (item in repository.messageChannel) {
+                onMessage(item)
+            }
+        }
     }
 
-    private fun onMessage(message: IrcMessage) {
-        val messages = repository.onMessage(message)
+    private fun onMessage(items: List<ChatItem>) {
+        val notificationsEnabled =
+            sharedPreferences.getBoolean(getString(R.string.preference_notification_key), true)
         // Preload emotes
-        messages?.forEach { msg -> msg.message.emotes.forEach { Coil.load(this, it.url) } }
-
-        if (shouldNotifyOnMention) {
-            messages?.filter { it.message.isMention }
-                ?.takeIf {
-                    sharedPreferences.getBoolean(getString(R.string.preference_notification_key), true)
-                }?.map {
-                    createMentionNotification(it.message.channel, it.message.name, it.message.message)
+        items.forEach { item ->
+            with(item.message as Message.TwitchMessage) {
+                emotes.forEach { Coil.load(this@TwitchService, it.url) }
+                if (shouldNotifyOnMention && isMention && notificationsEnabled) {
+                    createMentionNotification(channel, name, message)
                 }
-        }
-    }
-
-    private fun onWriterMessage(message: IrcMessage) {
-        when (message.command) {
-            "PRIVMSG" -> Unit
-            "366"     -> onConnect(message.params[1].substring(1), writeConnection.isAnonymous)
-            else      -> onMessage(message)
-        }
-    }
-
-    private fun onReaderMessage(message: IrcMessage) {
-        if (message.command == "PRIVMSG") {
-            onMessage(message)
+            }
         }
     }
 
@@ -231,10 +171,6 @@ class TwitchService : Service(), KoinComponent {
         manager.notify(notificationId, notification)
         manager.notify(SUMMARY_NOTIFICATION_ID, summary)
     }
-
-    private fun onDisconnect() = repository.handleDisconnect(getString(R.string.system_message_disconnected))
-
-    private fun onConnect(channel: String, isAnonymous: Boolean) = repository.handleConnected(channel, isAnonymous, getString(R.string.system_message_connected))
 
     companion object {
         private const val CHANNEL_ID_LOW = "com.flxrs.dankchat.dank_id"

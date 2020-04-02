@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -15,7 +14,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.DankChatViewModel
-import com.flxrs.dankchat.MainActivity
+import com.flxrs.dankchat.MainFragment
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.google.android.material.snackbar.Snackbar
@@ -46,13 +45,13 @@ class ChatFragment : Fragment() {
         manager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false).apply {
             stackFromEnd = true
         }
-        adapter = ChatAdapter({ scrollToPosition(it) }, ::mentionUser, ::copyMessage)
+        adapter = ChatAdapter(::scrollToPosition, ::mentionUser, ::copyMessage)
 
         binding = ChatFragmentBinding.inflate(inflater, container, false).apply {
             lifecycleOwner = this@ChatFragment
             vm = viewModel
             chat.setup(adapter, manager)
-            chatLayout.layoutTransition.setAnimateParentHierarchy(false)
+            //chatLayout.layoutTransition.setAnimateParentHierarchy(false)
             scrollBottom.setOnClickListener {
                 scrollBottom.visibility = View.GONE
                 isAtBottom = true
@@ -67,8 +66,7 @@ class ChatFragment : Fragment() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         itemDecoration = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
 
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { pref, key ->
@@ -97,10 +95,14 @@ class ChatFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
+        if (::preferences.isInitialized) {
+            preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
+        }
     }
 
-    private fun mentionUser(user: String) = (requireActivity() as MainActivity).mentionUser(user)
+    private fun mentionUser(user: String) {
+        (requireParentFragment() as? MainFragment)?.mentionUser(user)
+    }
 
     private fun copyMessage(message: String) {
         (getSystemService(
@@ -148,12 +150,9 @@ class ChatFragment : Fragment() {
 
     companion object {
         fun newInstance(channel: String): ChatFragment {
-            val fragment = ChatFragment()
-            Bundle().apply {
-                putString(CHANNEL_ARG, channel)
-                fragment.arguments = this
+            return ChatFragment().apply {
+                arguments = Bundle().apply { putString(CHANNEL_ARG, channel) }
             }
-            return fragment
         }
 
         const val CHANNEL_ARG = "channel"

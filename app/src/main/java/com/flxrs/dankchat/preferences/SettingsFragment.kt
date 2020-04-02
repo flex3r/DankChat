@@ -1,32 +1,46 @@
 package com.flxrs.dankchat.preferences
 
-import android.app.Activity
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import androidx.core.view.updateLayoutParams
+import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.flxrs.dankchat.BuildConfig
-import com.flxrs.dankchat.MainActivity
+import com.flxrs.dankchat.MainFragment
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.MultiEntryBottomsheetBinding
 import com.flxrs.dankchat.preferences.multientry.MultiEntryAdapter
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.snackbar.Snackbar
 import com.squareup.moshi.Moshi
+import kotlinx.android.synthetic.main.settings_fragment.view.*
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
     private val moshi = Moshi.Builder().build()
     private val adapter = moshi.adapter(MultiEntryItem.Entry::class.java)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val toolbar = view.settings_toolbar
+        (requireActivity() as AppCompatActivity).apply {
+            setSupportActionBar(toolbar)
+            supportActionBar?.apply {
+                setDisplayHomeAsUpEnabled(true)
+                title = getString(R.string.settings)
+            }
+        }
+    }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings, rootKey)
@@ -38,12 +52,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference<Preference>(getString(R.string.preference_logout_key))?.apply {
             isEnabled = isLoggedIn
             setOnPreferenceClickListener {
-                Intent().apply {
-                    putExtra(MainActivity.LOGOUT_REQUEST_KEY, true)
-                    requireActivity().let {
-                        it.setResult(Activity.RESULT_OK, this)
-                        it.finish()
-                    }
+                with(findNavController()) {
+                    previousBackStackEntry?.savedStateHandle?.set(
+                        MainFragment.LOGOUT_REQUEST_KEY,
+                        true
+                    )
+                    navigateUp()
                 }
                 true
             }
@@ -77,18 +91,23 @@ class SettingsFragment : PreferenceFragmentCompat() {
         )
     }
 
-    private fun showMultiEntryPreference(key: String, sharedPreferences: SharedPreferences): Boolean {
+    private fun showMultiEntryPreference(
+        key: String,
+        sharedPreferences: SharedPreferences
+    ): Boolean {
         val entryStringSet = sharedPreferences.getStringSet(key, emptySet()) ?: emptySet()
-        val entries = entryStringSet.mapNotNull { adapter.fromJson(it) }.sortedBy { it.entry }.plus(MultiEntryItem.AddEntry)
+        val entries = entryStringSet.mapNotNull { adapter.fromJson(it) }.sortedBy { it.entry }
+            .plus(MultiEntryItem.AddEntry)
 
         val entryAdapter = MultiEntryAdapter(entries.toMutableList())
-        val binding = MultiEntryBottomsheetBinding.inflate(LayoutInflater.from(requireContext())).apply {
-            multiEntryList.layoutManager = LinearLayoutManager(requireContext())
-            multiEntryList.adapter = entryAdapter
-            multiEntrySheet.updateLayoutParams {
-                height = (resources.displayMetrics.heightPixels * 0.6f).toInt()
+        val binding =
+            MultiEntryBottomsheetBinding.inflate(LayoutInflater.from(requireContext())).apply {
+                multiEntryList.layoutManager = LinearLayoutManager(requireContext())
+                multiEntryList.adapter = entryAdapter
+                multiEntrySheet.updateLayoutParams {
+                    height = (resources.displayMetrics.heightPixels * 0.6f).toInt()
+                }
             }
-        }
         BottomSheetDialog(requireContext()).apply {
             setContentView(binding.root)
             setOnDismissListener {

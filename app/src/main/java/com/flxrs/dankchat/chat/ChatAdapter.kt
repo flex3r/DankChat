@@ -16,6 +16,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.text.bold
 import androidx.core.text.color
 import androidx.preference.PreferenceManager
@@ -26,7 +27,9 @@ import coil.Coil
 import coil.api.get
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatItemBinding
+import com.flxrs.dankchat.service.twitch.connection.ConnectionState
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
+import com.flxrs.dankchat.service.twitch.message.Message
 import com.flxrs.dankchat.utils.extensions.normalizeColor
 import com.linkedin.urls.detection.UrlDetector
 import com.linkedin.urls.detection.UrlDetectorOptions
@@ -76,180 +79,200 @@ class ChatAdapter(
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         with(holder.binding.itemText) {
-            with(getItem(position).message) {
-                isClickable = false
-                text = ""
-                alpha = 1.0f
-                movementMethod = LinkMovementMethod.getInstance()
-                val darkModePreferenceKey = context.getString(R.string.preference_dark_theme_key)
-                val timedOutPreferenceKey =
-                    context.getString(R.string.preference_show_timed_out_messages_key)
-                val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
-                val animateGifsKey = context.getString(R.string.preference_animate_gifs_key)
-                val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-                val isDarkMode = preferences.getBoolean(darkModePreferenceKey, true)
-                val showTimedOutMessages = preferences.getBoolean(timedOutPreferenceKey, true)
-                val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
-                val animateGifs = preferences.getBoolean(animateGifsKey, true)
-                holder.scope.launch(coroutineHandler) {
-                    if (timedOut) {
-                        alpha = 0.5f
+            when (val message = getItem(position).message) {
+                is Message.ConnectionMessage -> handleConnectionMessage(message)
+                is Message.TwitchMessage -> handleTwitchMessage(message, holder)
+            }
+        }
+    }
 
-                        if (!showTimedOutMessages) {
-                            text = if (showTimeStamp) {
-                                "$time ${context.getString(R.string.timed_out_message)}"
-                            } else context.getString(R.string.timed_out_message)
-                            return@launch
-                        }
-                    }
+    private fun TextView.handleConnectionMessage(message: Message.ConnectionMessage) {
+        alpha = 1.0f
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
+        val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
+        val connectionText = when (message.state) {
+            ConnectionState.DISCONNECTED -> context.getString(R.string.system_message_disconnected)
+            else -> context.getString(R.string.system_message_connected)
+        }
+        text = if (showTimeStamp) "${message.time} $connectionText" else connectionText
+    }
 
-                    var ignoreClicks = false
-                    if (!isSystem) setOnLongClickListener {
-                        ignoreClicks = true
-                        onMessageLongClick(message)
-                        true
-                    }
+    private fun TextView.handleTwitchMessage(
+        twitchMessage: Message.TwitchMessage,
+        holder: ChatAdapter.ViewHolder
+    ) = with(twitchMessage) {
+        isClickable = false
+        text = ""
+        alpha = 1.0f
+        movementMethod = LinkMovementMethod.getInstance()
+        val darkModePreferenceKey = context.getString(R.string.preference_dark_theme_key)
+        val timedOutPreferenceKey =
+            context.getString(R.string.preference_show_timed_out_messages_key)
+        val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
+        val animateGifsKey = context.getString(R.string.preference_animate_gifs_key)
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val isDarkMode = preferences.getBoolean(darkModePreferenceKey, true)
+        val showTimedOutMessages = preferences.getBoolean(timedOutPreferenceKey, true)
+        val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
+        val animateGifs = preferences.getBoolean(animateGifsKey, true)
+        holder.scope.launch(coroutineHandler) {
+            if (timedOut) {
+                alpha = 0.5f
 
-                    setOnTouchListener { _, event ->
-                        if (event.action == MotionEvent.ACTION_UP) {
-                            launch(Dispatchers.Default) {
-                                delay(200)
-                                ignoreClicks = false
-                            }
-                        }
-                        false
-                    }
-
-                    val scaleFactor = lineHeight * 1.5 / 112
-
-                    val background = when {
-                        isNotify -> if (isDarkMode) R.color.color_highlight_dark else R.color.color_highlight_light
-                        isMention -> if (isDarkMode) R.color.color_mention_dark else R.color.color_mention_light
-                        else -> android.R.color.transparent
-                    }
-                    setBackgroundResource(background)
-
-                    val fullName = when {
-                        displayName.equals(name, true) -> displayName
-                        else -> "$name($displayName)"
-                    }
-
-                    val fullDisplayName = when {
-                        isAction -> "$fullName "
-                        fullName.isBlank() -> ""
-                        else -> "$fullName: "
-                    }
-
-                    val badgesLength = badges.size * 2
-                    val (prefixLength, spannable) = if (showTimeStamp) {
-                        time.length + 1 + fullDisplayName.length to SpannableStringBuilder().bold {
-                            append(
-                                "$time "
-                            )
-                        }
-                    } else {
-                        fullDisplayName.length to SpannableStringBuilder()
-                    }
-
-                    badges.forEach { badge ->
-                        spannable.append("  ")
-                        val start = spannable.length - 2
-                        val end = spannable.length - 1
-                        Coil.get(badge.url).apply {
-                            val width =
-                                (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
-                            setBounds(0, 0, width, lineHeight)
-
-                            val imageSpan = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
-                            spannable.setSpan(
-                                imageSpan,
-                                start,
-                                end,
-                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                            )
-                        }
-                    }
-
-                    val normalizedColor = color.normalizeColor(isDarkMode)
-                    spannable.bold { color(normalizedColor) { append(fullDisplayName) } }
-                    text = spannable
-
-
-                    when {
-                        message.startsWith(
-                            "Login authentication",
-                            true
-                        ) -> spannable.append(context.getString(R.string.login_expired))
-                        isAction -> spannable.color(normalizedColor) { append(message) }
-                        else -> spannable.append(message)
-                    }
-
-                    //clicking usernames
-                    if (fullName.isNotBlank()) {
-                        val userClickableSpan = object : ClickableSpan() {
-                            override fun updateDrawState(ds: TextPaint) {
-                                ds.isUnderlineText = false
-                                ds.color = normalizedColor
-                            }
-
-                            override fun onClick(v: View) {
-                                if (!ignoreClicks) onUserClicked(name)
-                            }
-                        }
-                        spannable.setSpan(
-                            userClickableSpan,
-                            prefixLength - fullDisplayName.length + badgesLength,
-                            prefixLength + badgesLength,
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
-                    }
-
-                    //links
-                    UrlDetector(message, UrlDetectorOptions.Default).detect().forEach { url ->
-                        val clickableSpan = object : ClickableSpan() {
-                            override fun onClick(v: View) {
-                                try {
-                                    if (!ignoreClicks)
-                                        androidx.browser.customtabs.CustomTabsIntent.Builder()
-                                            .addDefaultShareMenuItem()
-                                            .setShowTitle(true)
-                                            .build().launchUrl(v.context, Uri.parse(url.fullUrl))
-                                } catch (e: ActivityNotFoundException) {
-                                    Log.e("ViewBinding", Log.getStackTraceString(e))
-                                }
-                            }
-                        }
-                        val start = prefixLength + badgesLength + message.indexOf(url.originalUrl)
-                        val end = start + url.originalUrl.length
-                        spannable.setSpan(
-                            clickableSpan,
-                            start,
-                            end,
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
-                    }
-
-                    if (animateGifs && emotes.filter { it.isGif }.count() > 0) {
-                        gifCallback.addView(holder.binding.itemText)
-                    }
-
-                    if (emotes.size > 5) {
-                        text = spannable
-                    }
-
-                    val fullPrefix = prefixLength + badgesLength
-                    emotes.forEach { e ->
-                        val emoteDrawable = Coil.get(e.url)
-                        if (emoteDrawable is Animatable && animateGifs) {
-                            emoteDrawable.callback = gifCallback
-                            emoteDrawable.start()
-                        }
-                        emoteDrawable.transformEmoteDrawable(scaleFactor, e)
-                        setEmoteSpans(e, fullPrefix, emoteDrawable, spannable)
-                    }
-                    text = spannable
+                if (!showTimedOutMessages) {
+                    text = if (showTimeStamp) {
+                        "$time ${context.getString(R.string.timed_out_message)}"
+                    } else context.getString(R.string.timed_out_message)
+                    return@launch
                 }
             }
+
+            var ignoreClicks = false
+            if (!isSystem) setOnLongClickListener {
+                ignoreClicks = true
+                onMessageLongClick(message)
+                true
+            }
+
+            setOnTouchListener { _, event ->
+                if (event.action == MotionEvent.ACTION_UP) {
+                    launch(Dispatchers.Default) {
+                        delay(200)
+                        ignoreClicks = false
+                    }
+                }
+                false
+            }
+
+            val scaleFactor = lineHeight * 1.5 / 112
+
+            val background = when {
+                isNotify -> if (isDarkMode) R.color.color_highlight_dark else R.color.color_highlight_light
+                isMention -> if (isDarkMode) R.color.color_mention_dark else R.color.color_mention_light
+                else -> android.R.color.transparent
+            }
+            setBackgroundResource(background)
+
+            val fullName = when {
+                displayName.equals(name, true) -> displayName
+                else -> "$name($displayName)"
+            }
+
+            val fullDisplayName = when {
+                isAction -> "$fullName "
+                fullName.isBlank() -> ""
+                else -> "$fullName: "
+            }
+
+            val badgesLength = badges.size * 2
+            val (prefixLength, spannable) = if (showTimeStamp) {
+                time.length + 1 + fullDisplayName.length to SpannableStringBuilder().bold {
+                    append(
+                        "$time "
+                    )
+                }
+            } else {
+                fullDisplayName.length to SpannableStringBuilder()
+            }
+
+            badges.forEach { badge ->
+                spannable.append("  ")
+                val start = spannable.length - 2
+                val end = spannable.length - 1
+                Coil.get(badge.url).apply {
+                    val width =
+                        (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
+                    setBounds(0, 0, width, lineHeight)
+
+                    val imageSpan = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
+                    spannable.setSpan(
+                        imageSpan,
+                        start,
+                        end,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
+            }
+
+            val normalizedColor = color.normalizeColor(isDarkMode)
+            spannable.bold { color(normalizedColor) { append(fullDisplayName) } }
+            text = spannable
+
+
+            when {
+                message.startsWith(
+                    "Login authentication",
+                    true
+                ) -> spannable.append(context.getString(R.string.login_expired))
+                isAction -> spannable.color(normalizedColor) { append(message) }
+                else -> spannable.append(message)
+            }
+
+            //clicking usernames
+            if (fullName.isNotBlank()) {
+                val userClickableSpan = object : ClickableSpan() {
+                    override fun updateDrawState(ds: TextPaint) {
+                        ds.isUnderlineText = false
+                        ds.color = normalizedColor
+                    }
+
+                    override fun onClick(v: View) {
+                        if (!ignoreClicks) onUserClicked(name)
+                    }
+                }
+                spannable.setSpan(
+                    userClickableSpan,
+                    prefixLength - fullDisplayName.length + badgesLength,
+                    prefixLength + badgesLength,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+
+            //links
+            UrlDetector(message, UrlDetectorOptions.Default).detect().forEach { url ->
+                val clickableSpan = object : ClickableSpan() {
+                    override fun onClick(v: View) {
+                        try {
+                            if (!ignoreClicks)
+                                androidx.browser.customtabs.CustomTabsIntent.Builder()
+                                    .addDefaultShareMenuItem()
+                                    .setShowTitle(true)
+                                    .build().launchUrl(v.context, Uri.parse(url.fullUrl))
+                        } catch (e: ActivityNotFoundException) {
+                            Log.e("ViewBinding", Log.getStackTraceString(e))
+                        }
+                    }
+                }
+                val start = prefixLength + badgesLength + message.indexOf(url.originalUrl)
+                val end = start + url.originalUrl.length
+                spannable.setSpan(
+                    clickableSpan,
+                    start,
+                    end,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+
+            if (animateGifs && emotes.filter { it.isGif }.count() > 0) {
+                gifCallback.addView(holder.binding.itemText)
+            }
+
+            if (emotes.size > 5) {
+                text = spannable
+            }
+
+            val fullPrefix = prefixLength + badgesLength
+            emotes.forEach { e ->
+                val emoteDrawable = Coil.get(e.url)
+                if (emoteDrawable is Animatable && animateGifs) {
+                    emoteDrawable.callback = gifCallback
+                    emoteDrawable.start()
+                }
+                emoteDrawable.transformEmoteDrawable(scaleFactor, e)
+                setEmoteSpans(e, fullPrefix, emoteDrawable, spannable)
+            }
+            text = spannable
         }
     }
 
@@ -298,7 +321,7 @@ class ChatAdapter(
 
 private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
     override fun areItemsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
-        return if (newItem.message.timedOut || newItem.message.isMention) false
+        return if (oldItem.message is Message.TwitchMessage && newItem.message is Message.TwitchMessage && (newItem.message.timedOut || newItem.message.isMention)) false
         else oldItem == newItem
     }
 

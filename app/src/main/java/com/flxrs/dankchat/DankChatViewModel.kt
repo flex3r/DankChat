@@ -25,7 +25,9 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         Log.e(TAG, Log.getStackTraceString(t))
     }
 
-    private val activeChannel = MutableLiveData<String>()
+    val activeChannel = MutableLiveData<String>()
+    val channels = MutableLiveData<List<String>>(emptyList())
+
     private val streamInfoEnabled = MutableLiveData(true)
     private val roomStateEnabled = MutableLiveData(true)
     private val streamData: MutableLiveData<Map<String, String>> = MutableLiveData()
@@ -51,9 +53,12 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         }
     }
 
+    var started = false
     val inputEnabled = MutableLiveData(true)
     val appbarEnabled = MutableLiveData(true)
-    val shouldShowViewPager = MutableLiveData(false)
+    val shouldShowViewPager = MediatorLiveData<Boolean>().apply {
+        addSource(channels) { value = it.isNotEmpty() }
+    }
     val shouldShowInput = MediatorLiveData<Boolean>().apply {
         addSource(inputEnabled) { value = it && shouldShowViewPager.value ?: false }
         addSource(shouldShowViewPager) { value = it && inputEnabled.value ?: true }
@@ -108,18 +113,18 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
     fun getChat(channel: String): LiveData<List<ChatItem>> = twitchRepository.getChat(channel)
 
     fun loadData(
-        channels: List<String>,
         oauth: String,
         id: Int,
         load3rdParty: Boolean,
         loadTwitchData: Boolean,
-        name: String
+        name: String,
+        channelList: List<String> = channels.value ?: emptyList()
     ) {
         val token = when {
             oauth.startsWith("oauth:", true) -> oauth.substringAfter(':')
             else -> oauth
         }
-        twitchRepository.loadData(channels, token, id, load3rdParty, loadTwitchData, name)
+        twitchRepository.loadData(channelList, token, id, load3rdParty, loadTwitchData, name)
     }
 
     fun setActiveChannel(channel: String) {
@@ -134,9 +139,43 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         roomStateEnabled.value = enabled
     }
 
-    fun removeChannelData(channel: String) = twitchRepository.removeChannelData(channel)
-
     fun clear(channel: String) = twitchRepository.clear(channel)
+    fun joinChannel(channel: String? = activeChannel.value): List<String>? {
+        if (channel == null) return null
+        val current = channels.value ?: emptyList()
+        val plus = current.plus(channel)
+
+        channels.value = current.plus(channel)
+        twitchRepository.joinChannel(channel)
+        return plus
+    }
+    fun partChannel(): List<String>? {
+        val channel = activeChannel.value ?: return null
+        val current = channels.value ?: emptyList()
+        val minus = current.minus(channel)
+
+        channels.value = minus
+        twitchRepository.partChannel(channel)
+        twitchRepository.removeChannelData(channel)
+        return minus
+    }
+    fun sendMessage(channel: String, message: String) = twitchRepository.sendMessage(channel, message)
+    fun reconnect(onlyIfNecessary: Boolean) = twitchRepository.reconnect(onlyIfNecessary)
+
+    fun close(name: String, oAuth: String, loadTwitchData: Boolean = false, userId: Int = 0) {
+        val channels = channels.value ?: emptyList()
+        twitchRepository.close {
+            connectAndJoinChannels(name, oAuth, channels)
+            if (loadTwitchData && userId > 0) loadData(
+                oauth = oAuth,
+                id = userId,
+                load3rdParty = true,
+                loadTwitchData = true,
+                name = name,
+                channelList = channels
+            )
+        }
+    }
 
     fun reloadEmotes(channel: String, oAuth: String, id: Int) {
         val token = when {
@@ -155,7 +194,8 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
     fun setBlacklistEntries(stringSet: Set<String>?) =
         twitchRepository.setBlacklistEntries(stringSet)
 
-    fun fetchStreamData(oAuth: String, channels: List<String>, stringBuilder: (viewers: Int) -> String) {
+    fun fetchStreamData(oAuth: String, stringBuilder: (viewers: Int) -> String) {
+        val channels = channels.value ?: return
         val token = when {
             oAuth.startsWith("oauth:", true) -> oAuth.substringAfter(':')
             else -> oAuth
@@ -176,6 +216,19 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
 
     fun clearIgnores() {
         twitchRepository.clearIgnores()
+    }
+
+    fun connectAndJoinChannels(name: String, oAuth: String, channelList: List<String>? = channels.value) {
+        if (!twitchRepository.startedConnection) {
+            if (channelList?.isEmpty() == true) {
+                twitchRepository.connect(name, oAuth)
+            } else {
+                channelList?.forEachIndexed { i, channel ->
+                    if (i == 0) twitchRepository.connect(name, oAuth)
+                    twitchRepository.joinChannel(channel)
+                }
+            }
+        }
     }
 
     private fun buildBottomText(): String {

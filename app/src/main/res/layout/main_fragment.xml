@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools">
+
+	<data>
+
+		<variable
+			name="vm"
+			type="com.flxrs.dankchat.DankChatViewModel" />
+
+		<import type="android.view.View" />
+	</data>
+
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+
+		<androidx.coordinatorlayout.widget.CoordinatorLayout
+			android:id="@+id/coordinator"
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			app:layout_constraintBottom_toTopOf="@id/bottom_barrier"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent">
+
+			<com.google.android.material.floatingactionbutton.FloatingActionButton
+				android:id="@+id/show_actionbar_fab"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="top|end"
+				android:layout_margin="8dp"
+				android:visibility="gone"
+				app:fabSize="mini"
+				app:srcCompat="@drawable/ic_keyboard_arrow_down_24dp"
+				app:tint="?colorOnPrimary" />
+
+			<androidx.constraintlayout.widget.ConstraintLayout
+				android:id="@+id/constraint_layout"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:animateLayoutChanges="true"
+				tools:context=".MainActivity">
+
+				<com.google.android.material.appbar.AppBarLayout
+					android:id="@+id/appbar_layout"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:fitsSystemWindows="true"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toTopOf="parent">
+
+					<com.google.android.material.appbar.MaterialToolbar
+						android:id="@+id/toolbar"
+						style="?toolbarStyle"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content" />
+
+					<com.google.android.material.tabs.TabLayout
+						android:id="@+id/tabs"
+						style="@style/Widget.MaterialComponents.TabLayout.PrimarySurface"
+						android:layout_width="match_parent"
+						android:layout_height="?actionBarSize"
+						android:layout_gravity="center_horizontal"
+						app:tabMode="auto" />
+				</com.google.android.material.appbar.AppBarLayout>
+
+
+				<androidx.viewpager2.widget.ViewPager2
+					android:id="@+id/viewPager"
+					android:layout_width="0dp"
+					android:layout_height="0dp"
+					android:visibility="@{vm.shouldShowViewPager ? View.VISIBLE : View.GONE}"
+					app:layout_constraintBottom_toBottomOf="parent"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@id/appbar_layout" />
+
+				<TextView
+					android:id="@+id/add_channels_text"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/no_channels_added"
+					android:visibility="@{vm.shouldShowViewPager ? View.GONE : View.VISIBLE}"
+					app:layout_constraintBottom_toBottomOf="parent"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toTopOf="parent" />
+
+			</androidx.constraintlayout.widget.ConstraintLayout>
+
+			<com.google.android.material.card.MaterialCardView
+				android:id="@+id/bottom_sheet"
+				style="@style/Widget.MaterialComponents.CardView"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				app:behavior_hideable="true"
+				app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+				<androidx.constraintlayout.widget.ConstraintLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+
+					<com.google.android.material.tabs.TabLayout
+						android:id="@+id/bottom_sheet_tabs"
+						style="@style/Widget.MaterialComponents.TabLayout.PrimarySurface"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintStart_toStartOf="parent"
+						app:layout_constraintTop_toTopOf="parent" />
+
+					<androidx.viewpager2.widget.ViewPager2
+						android:id="@+id/bottom_sheet_viewPager"
+						android:layout_width="match_parent"
+						android:layout_height="0dp"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintStart_toStartOf="parent"
+						app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_tabs" />
+				</androidx.constraintlayout.widget.ConstraintLayout>
+			</com.google.android.material.card.MaterialCardView>
+
+		</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+		<androidx.constraintlayout.widget.Barrier
+			android:id="@+id/bottom_barrier"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			app:barrierAllowsGoneWidgets="false"
+			app:barrierDirection="top"
+			app:constraint_referenced_ids="input_layout,fullscreen_hint_text" />
+
+		<com.google.android.material.textfield.TextInputLayout
+			android:id="@+id/input_layout"
+			style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="4dp"
+			android:layout_marginEnd="4dp"
+			android:animateLayoutChanges="true"
+			android:visibility="@{vm.shouldShowInput ? View.VISIBLE : View.GONE}"
+			app:endIconContentDescription="@string/send_hint"
+			app:endIconDrawable="@{vm.canType ? @drawable/ic_send_24dp : null}"
+			app:endIconMode="custom"
+			app:helperTextEnabled="@{vm.bottomTextEnabled}"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/bottom_barrier"
+			app:startIconContentDescription="@string/emote_menu_hint"
+			app:startIconDrawable="@{vm.canType ? @drawable/ic_insert_emoticon_24dp : null}">
+
+			<com.flxrs.dankchat.utils.CustomMultiAutoCompleteTextView
+				android:id="@+id/input"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:completionThreshold="2"
+				android:enabled="@{vm.canType}"
+				android:imeOptions="actionSend|flagNoExtractUi"
+				android:inputType="text"
+				android:paddingStart="12dp"
+				android:paddingEnd="8dp"
+				android:singleLine="true" />
+		</com.google.android.material.textfield.TextInputLayout>
+
+		<TextView
+			android:id="@+id/fullscreen_hint_text"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:animateLayoutChanges="true"
+			android:textAppearance="?attr/textAppearanceCaption"
+			android:visibility="@{vm.shouldShowFullscreenHelper ? View.VISIBLE : View.GONE}"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/bottom_barrier" />
+	</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -23,8 +23,10 @@
 		<item name="colorOnError">@color/color_on_error</item>
 
 		<!--Component styles-->
-		<item name="materialAlertDialogTheme">@style/ThemeOverlay.MaterialComponents.Dialog.Alert</item>
+		<item name="materialAlertDialogTheme">@style/ThemeOverlay.MaterialComponents.Dialog.Alert
+		</item>
 		<item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.PrimarySurface</item>
+		<item name="preferenceTheme">@style/PrefsTheme</item>
 	</style>
 
 	<style name="Base.MaterialThemeBuilder" parent="Theme.MaterialComponents.DayNight.NoActionBar">
@@ -38,5 +40,9 @@
 		<!--Remap legacy AppCompat attributes to MaterialComponent attributes-->
 		<item name="colorPrimaryDark">?colorPrimaryVariant</item>
 		<item name="colorAccent">?colorSecondary</item>
+	</style>
+
+	<style name="PrefsTheme" parent="PreferenceThemeOverlay">
+		<item name="android:layout">@layout/settings_fragment</item>
 	</style>
 </resources>

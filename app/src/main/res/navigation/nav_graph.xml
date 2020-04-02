@@ -2,11 +2,33 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:id="@+id/nav_graph"
-	app:startDestination="@id/chat_fragment">
+	app:startDestination="@id/mainFragment">
 
 	<fragment
-		android:id="@+id/chat_fragment"
-		android:name="com.flxrs.dankchat.chat.ChatFragment"
-		android:label="@string/chat" />
-
+		android:id="@+id/mainFragment"
+		android:name="com.flxrs.dankchat.MainFragment"
+		android:label="MainFragment">
+		<action
+			android:id="@+id/action_mainFragment_to_loginFragment"
+			app:destination="@id/loginFragment"
+			app:enterAnim="@anim/slide_in_right"
+			app:exitAnim="@anim/slide_out_left"
+			app:popEnterAnim="@android:anim/slide_in_left"
+			app:popExitAnim="@android:anim/slide_out_right" />
+		<action
+			android:id="@+id/action_mainFragment_to_settingsFragment"
+			app:destination="@id/settingsFragment"
+			app:enterAnim="@anim/slide_in_right"
+			app:exitAnim="@anim/slide_out_left"
+			app:popEnterAnim="@android:anim/slide_in_left"
+			app:popExitAnim="@android:anim/slide_out_right" />
+	</fragment>
+	<fragment
+		android:id="@+id/loginFragment"
+		android:name="com.flxrs.dankchat.login.LoginFragment"
+		android:label="LoginFragment" />
+	<fragment
+		android:id="@+id/settingsFragment"
+		android:name="com.flxrs.dankchat.preferences.SettingsFragment"
+		android:label="SettingsFragment" />
 </navigation>
