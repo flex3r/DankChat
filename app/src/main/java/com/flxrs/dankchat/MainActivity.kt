@@ -9,7 +9,6 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
-import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.TwitchService
@@ -20,15 +19,14 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler {
     private val channels = mutableListOf<String>()
     private val viewModel: DankChatViewModel by viewModel()
     private lateinit var twitchPreferences: DankChatPreferenceStore
-    private lateinit var preferences: SharedPreferences
-
-    //    private lateinit var preferenceListener: SharedPreferences.OnSharedPreferenceChangeListener
     private lateinit var binding: MainActivityBinding
     private lateinit var broadcastReceiver: BroadcastReceiver
     private var twitchService: TwitchService? = null
+    private val pendingChannelsToClear = mutableListOf<String>()
 
     private val twitchServiceConnection = TwitchServiceConnection()
     var isBound = false
+    var channelToOpen = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +39,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler {
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, filter)
         binding = DataBindingUtil.setContentView(this, R.layout.main_activity)
         twitchPreferences = DankChatPreferenceStore(this)
-        preferences = PreferenceManager.getDefaultSharedPreferences(this)
         twitchPreferences.getChannelsAsString()?.let { channels.addAll(it.split(',')) }
             ?: twitchPreferences.getChannels()?.let {
                 channels.addAll(it)
@@ -97,6 +94,20 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler {
         invalidateOptionsMenu()
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        val channelExtra = intent?.getStringExtra(OPEN_CHANNEL_KEY) ?: return
+        channelToOpen = channelExtra
+    }
+
+    fun clearNotificationsOfChannel(channel: String) {
+        if (isBound && twitchService != null) {
+            twitchService?.clearNotificationsOfChannel(channel)
+        } else {
+            pendingChannelsToClear += channel
+        }
+    }
+
     private fun handleShutDown() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
         finishAndRemoveTask()
@@ -113,9 +124,11 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler {
             twitchService = binder.service
             twitchService?.shouldNotifyOnMention = false
             isBound = true
-//            if (isLoggingIn) {
-//                return
-//            }
+
+            if (pendingChannelsToClear.isNotEmpty()) {
+                pendingChannelsToClear.forEach { twitchService?.clearNotificationsOfChannel(it) }
+                pendingChannelsToClear.clear()
+            }
 
             if (viewModel.started) {
                 if (!isChangingConfigurations) {
@@ -138,13 +151,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler {
 
     companion object {
         private val TAG = MainActivity::class.java.simpleName
-        private const val DIALOG_TAG = "add_channel_dialog"
-        private const val LOGIN_REQUEST = 42
-        private const val GALLERY_REQUEST = 69
-        private const val CAPTURE_REQUEST = 420
-        private const val SETTINGS_REQUEST = 777
-
-        const val LOGOUT_REQUEST_KEY = "logout_key"
         const val SHUTDOWN_REQUEST_FILTER = "shutdown_request_filter"
+        const val OPEN_CHANNEL_KEY = "open_channel"
     }
 }

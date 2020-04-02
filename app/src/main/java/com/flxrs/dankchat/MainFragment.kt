@@ -12,7 +12,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.webkit.MimeTypeMap
@@ -113,6 +112,9 @@ class MainFragment : Fragment() {
                 binding.inputLayout.helperText = it
                 binding.fullscreenHintText.text = it
             }
+            activeChannel.observe(viewLifecycleOwner) {
+                (activity as? MainActivity)?.clearNotificationsOfChannel(it)
+            }
         }
 
         fetchStreamInformation()
@@ -169,7 +171,6 @@ class MainFragment : Fragment() {
             }
 
             if (savedInstanceState == null && !viewModel.started) {
-                Log.d(TAG, "loadData")
                 val oAuth = twitchPreferences.getOAuthKey() ?: ""
                 val name = twitchPreferences.getUserName() ?: ""
                 val id = twitchPreferences.getUserId()
@@ -204,6 +205,19 @@ class MainFragment : Fragment() {
         super.onResume()
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         changeActionBarVisibility(viewModel.appbarEnabled.value ?: true)
+
+        (activity as? MainActivity)?.apply {
+            if (channelToOpen.isNotBlank()) {
+                val index = viewModel.channels.value?.indexOf(channelToOpen)
+                if (index != null && index >= 0) {
+                    binding.viewPager.setCurrentItem(index, false)
+                }
+                channelToOpen = ""
+            } else {
+                val activeChannel = viewModel.activeChannel.value ?: return
+                clearNotificationsOfChannel(activeChannel)
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -273,22 +287,24 @@ class MainFragment : Fragment() {
             val id = twitchPreferences.getUserId()
             val name = twitchPreferences.getUserName() ?: ""
 
-            viewModel.joinChannel(lowerCaseChannel)
-            viewModel.loadData(
-                oauth,
-                id,
-                load3rdParty = true,
-                loadTwitchData = false,
-                name = name
-            )
-            twitchPreferences.setChannelsString(channels.joinToString(","))
+            val updatedChannels = viewModel.joinChannel(lowerCaseChannel)
+            if (updatedChannels != null) {
+                viewModel.loadData(
+                    oauth,
+                    id,
+                    load3rdParty = true,
+                    loadTwitchData = false,
+                    name = name
+                )
+                twitchPreferences.setChannelsString(updatedChannels.joinToString(","))
 
-            tabAdapter.addFragment(lowerCaseChannel)
-            binding.viewPager.offscreenPageLimit = calculatePageLimit(channels.size + 1)
-            binding.viewPager.setCurrentItem(channels.size, false)
+                tabAdapter.addFragment(lowerCaseChannel)
+                binding.viewPager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
+                binding.viewPager.setCurrentItem(updatedChannels.size - 1, false)
 
-            fetchStreamInformation()
-            activity?.invalidateOptionsMenu()
+                fetchStreamInformation()
+                activity?.invalidateOptionsMenu()
+            }
         }
     }
 

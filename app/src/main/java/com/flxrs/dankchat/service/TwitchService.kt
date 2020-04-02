@@ -31,6 +31,7 @@ class TwitchService : Service(), KoinComponent, CoroutineScope {
     private val repository: TwitchRepository = get()
     private lateinit var manager: NotificationManager
     private lateinit var sharedPreferences: SharedPreferences
+    private val notifications = mutableMapOf<String, MutableList<Int>>()
     var shouldNotifyOnMention = false
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + Job()
@@ -91,6 +92,15 @@ class TwitchService : Service(), KoinComponent, CoroutineScope {
         return START_NOT_STICKY
     }
 
+    fun clearNotificationsOfChannel(channel: String) {
+        val ids = notifications.remove(channel)
+        ids?.forEach { manager.cancel(it) }
+
+        if (notifications.isEmpty()) {
+            manager.cancel(SUMMARY_NOTIFICATION_ID)
+        }
+    }
+
     private fun startForeground() {
         val title = getString(R.string.notification_title)
         val message = getString(R.string.notification_message)
@@ -147,7 +157,8 @@ class TwitchService : Service(), KoinComponent, CoroutineScope {
 
     private fun createMentionNotification(channel: String, user: String, message: String) {
         val pendingStartActivityIntent = Intent(this, MainActivity::class.java).let {
-            PendingIntent.getActivity(this, 0, it, 0)
+            it.putExtra(MainActivity.OPEN_CHANNEL_KEY, channel)
+            PendingIntent.getActivity(this, 0, it, PendingIntent.FLAG_UPDATE_CURRENT)
         }
 
         val summary = NotificationCompat.Builder(this, CHANNEL_ID_DEFAULT)
@@ -164,11 +175,13 @@ class TwitchService : Service(), KoinComponent, CoroutineScope {
             .setContentText(message)
             .setContentIntent(pendingStartActivityIntent)
             .setSmallIcon(R.drawable.ic_notification_icon)
-            .setAutoCancel(true)
             .setGroup(MENTION_GROUP)
             .build()
 
-        manager.notify(notificationId, notification)
+        val id = notificationId
+        notifications.getOrPut(channel) { mutableListOf() }.add(id)
+
+        manager.notify(id, notification)
         manager.notify(SUMMARY_NOTIFICATION_ID, summary)
     }
 
