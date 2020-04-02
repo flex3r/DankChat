@@ -326,6 +326,6 @@ private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
     }
 
     override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
-        return oldItem.message == newItem.message
+        return oldItem == newItem
     }
 }

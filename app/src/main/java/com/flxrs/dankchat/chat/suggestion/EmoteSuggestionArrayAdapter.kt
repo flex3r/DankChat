@@ -1,14 +1,11 @@
 package com.flxrs.dankchat.chat.suggestion
 
 import android.content.Context
-import android.content.res.Configuration
-import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import coil.api.clear
 import coil.api.load

@@ -17,8 +17,8 @@ data class Roomstate(
         return flags.filter { (it.key == "follow" && it.value >= 0) || it.value > 0 }.map {
             when (it.key) {
                 "follow" -> if (it.value == 0) "follow" else "follow(${it.value})"
-                "slow"   -> "slow(${it.value})"
-                else     -> it.key
+                "slow" -> "slow(${it.value})"
+                else -> it.key
             }
         }.joinToString()
     }
@@ -26,11 +26,11 @@ data class Roomstate(
     fun updateState(msg: IrcMessage) {
         msg.tags.entries.forEach {
             when (it.key) {
-                "emote-only"     -> flags["emote"] = it.value.toInt()
+                "emote-only" -> flags["emote"] = it.value.toInt()
                 "followers-only" -> flags["follow"] = it.value.toInt()
-                "r9k"            -> flags["r9k"] = it.value.toInt()
-                "slow"           -> flags["slow"] = it.value.toInt()
-                "subs-only"      -> flags["subs"] = it.value.toInt()
+                "r9k" -> flags["r9k"] = it.value.toInt()
+                "slow" -> flags["slow"] = it.value.toInt()
+                "subs-only" -> flags["subs"] = it.value.toInt()
             }
         }
     }

@@ -4,11 +4,8 @@ import android.content.*
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
-import android.view.Menu
-import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
@@ -17,7 +14,6 @@ import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.TwitchService
 import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler {
@@ -93,7 +89,8 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler {
     }
 
     override fun onAddChannelDialogResult(channel: String) {
-        val fragment = supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.first()
+        val fragment =
+            supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.first()
         if (fragment is MainFragment) {
             fragment.addChannel(channel)
         }

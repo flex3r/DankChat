@@ -2,20 +2,19 @@ package com.flxrs.dankchat.preferences.multientry
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.databinding.MultiEntryAddItemBinding
 import com.flxrs.dankchat.databinding.MultiEntryItemBinding
 
-class MultiEntryAdapter(val entries: MutableList<MultiEntryItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MultiEntryAdapter(val entries: MutableList<MultiEntryItem>) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     inner class EntryViewHolder(val binding: MultiEntryItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
             binding.multiEntryDelete.setOnClickListener {
-                entries.removeAt(adapterPosition)
-                notifyItemRemoved(adapterPosition)
+                entries.removeAt(bindingAdapterPosition)
+                notifyItemRemoved(bindingAdapterPosition)
             }
         }
     }

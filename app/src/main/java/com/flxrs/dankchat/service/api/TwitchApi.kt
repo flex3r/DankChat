@@ -13,7 +13,6 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.File
-import java.util.concurrent.TimeUnit
 
 object TwitchApi {
     private val TAG = TwitchApi::class.java.simpleName
@@ -58,15 +57,16 @@ object TwitchApi {
 
     private val loadedRecentsInChannels = mutableListOf<String>()
 
-    suspend fun validateUser(oAuth: String): UserEntities.ValidateUser? = withContext(Dispatchers.IO) {
-        try {
-            val response = service.validateUser(VALIDATE_URL, "OAuth $oAuth")
-            if (response.isSuccessful) return@withContext response.body()
-        } catch (t: Throwable) {
-            Log.e(TAG, Log.getStackTraceString(t))
+    suspend fun validateUser(oAuth: String): UserEntities.ValidateUser? =
+        withContext(Dispatchers.IO) {
+            try {
+                val response = service.validateUser(VALIDATE_URL, "OAuth $oAuth")
+                if (response.isSuccessful) return@withContext response.body()
+            } catch (t: Throwable) {
+                Log.e(TAG, Log.getStackTraceString(t))
+            }
+            return@withContext null
         }
-        return@withContext null
-    }
 
     suspend fun getUserEmotes(oAuth: String, id: Int): EmoteEntities.Twitch.Result? =
         withContext(Dispatchers.IO) {
@@ -91,27 +91,29 @@ object TwitchApi {
             return@withContext null
         }
 
-    suspend fun getUserSet(set: String): EmoteEntities.Twitch.EmoteSet? = withContext(Dispatchers.IO) {
-        try {
-            val response = service.getSet("https://flxrs.com/api/set/$set")
-            if (response.isSuccessful) return@withContext response.body()?.firstOrNull()
-        } catch (t: Throwable) {
-            Log.e(TAG, Log.getStackTraceString(t))
-        }
-        return@withContext null
-    }
-
-    suspend fun getStream(oAuth: String, channel: String): StreamEntities.Stream? = withContext(Dispatchers.IO) {
-        getUserIdFromName(oAuth, channel)?.let {
+    suspend fun getUserSet(set: String): EmoteEntities.Twitch.EmoteSet? =
+        withContext(Dispatchers.IO) {
             try {
-                val response = service.getStream(it.toInt())
-                return@withContext if (response.isSuccessful) response.body()?.stream else null
+                val response = service.getSet("https://flxrs.com/api/set/$set")
+                if (response.isSuccessful) return@withContext response.body()?.firstOrNull()
             } catch (t: Throwable) {
                 Log.e(TAG, Log.getStackTraceString(t))
             }
+            return@withContext null
         }
-        return@withContext null
-    }
+
+    suspend fun getStream(oAuth: String, channel: String): StreamEntities.Stream? =
+        withContext(Dispatchers.IO) {
+            getUserIdFromName(oAuth, channel)?.let {
+                try {
+                    val response = service.getStream(it.toInt())
+                    return@withContext if (response.isSuccessful) response.body()?.stream else null
+                } catch (t: Throwable) {
+                    Log.e(TAG, Log.getStackTraceString(t))
+                }
+            }
+            return@withContext null
+        }
 
     suspend fun getChannelBadges(id: String): BadgeEntities.Result? =
         withContext(Dispatchers.IO) {
@@ -215,15 +217,17 @@ object TwitchApi {
         return@withContext null
     }
 
-    suspend fun getUserIdFromName(oAuth: String, name: String): String? = withContext(Dispatchers.IO) {
-        try {
-            val response = service.getUserHelix("Bearer $oAuth", "${HELIX_BASE_URL}users?login=$name")
-            if (response.isSuccessful) return@withContext response.body()?.data?.get(0)?.id
-        } catch (t: Throwable) {
-            Log.e(TAG, Log.getStackTraceString(t))
+    suspend fun getUserIdFromName(oAuth: String, name: String): String? =
+        withContext(Dispatchers.IO) {
+            try {
+                val response =
+                    service.getUserHelix("Bearer $oAuth", "${HELIX_BASE_URL}users?login=$name")
+                if (response.isSuccessful) return@withContext response.body()?.data?.get(0)?.id
+            } catch (t: Throwable) {
+                Log.e(TAG, Log.getStackTraceString(t))
+            }
+            return@withContext null
         }
-        return@withContext null
-    }
 
     suspend fun getNameFromUserId(oAuth: String, id: Int): String? = withContext(Dispatchers.IO) {
         try {

@@ -17,7 +17,7 @@ sealed class Message(
         val state: ConnectionState,
         val time: String = TimeUtils.localTime(),
         override val id: String = System.nanoTime().toString()
-        ) : Message(id)
+    ) : Message(id)
 
     data class TwitchMessage(
         val time: String,

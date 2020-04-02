@@ -12,13 +12,15 @@ import com.flxrs.dankchat.service.twitch.connection.ConnectionState
 import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
-import com.flxrs.dankchat.service.twitch.message.*
+import com.flxrs.dankchat.service.twitch.message.Mention
+import com.flxrs.dankchat.service.twitch.message.Message
+import com.flxrs.dankchat.service.twitch.message.Roomstate
+import com.flxrs.dankchat.service.twitch.message.matches
 import com.flxrs.dankchat.utils.SingleLiveEvent
 import com.flxrs.dankchat.utils.extensions.*
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import okhttp3.Connection
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.koin.core.KoinComponent
@@ -27,7 +29,6 @@ import org.koin.core.parameter.parametersOf
 import java.io.File
 import java.nio.ByteBuffer
 import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.TimeUnit
 
 class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 

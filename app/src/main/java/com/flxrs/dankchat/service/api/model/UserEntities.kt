@@ -29,10 +29,13 @@ sealed class UserEntities {
     // R8 deletes this if annotation is not set NotLikeThis
     @Keep
     data class KrakenUser(@field:Json(name = "_id") val id: Int)
+
     @Keep
     data class KrakenUserEntry(@field:Json(name = "user") val user: KrakenUser)
+
     @Keep
     data class KrakenUsersBlocks(@field:Json(name = "blocks") val blocks: List<KrakenUserEntry>)
+
     @Keep
     data class HelixUsers(@field:Json(name = "data") val data: List<HelixUser>)
 }

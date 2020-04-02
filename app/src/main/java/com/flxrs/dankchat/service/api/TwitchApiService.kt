@@ -12,7 +12,10 @@ interface TwitchApiService {
         "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
     )
     @GET
-    suspend fun validateUser(@Url url: String, @Header("Authorization") oAuth: String): Response<UserEntities.ValidateUser>
+    suspend fun validateUser(
+        @Url url: String,
+        @Header("Authorization") oAuth: String
+    ): Response<UserEntities.ValidateUser>
 
     @Headers(
         "Accept: application/vnd.twitchtv.v5+json",
@@ -20,7 +23,10 @@ interface TwitchApiService {
         "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
     )
     @GET("users/{id}/emotes")
-    suspend fun getUserEmotes(@Header("Authorization") oauth: String, @Path("id") userId: Int): Response<EmoteEntities.Twitch.Result>
+    suspend fun getUserEmotes(
+        @Header("Authorization") oauth: String,
+        @Path("id") userId: Int
+    ): Response<EmoteEntities.Twitch.Result>
 
     @Headers(
         "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
@@ -47,7 +53,10 @@ interface TwitchApiService {
         "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
     )
     @GET
-    suspend fun getUserHelix(@Header("Authorization") oAuth: String, @Url url: String): Response<UserEntities.HelixUsers>
+    suspend fun getUserHelix(
+        @Header("Authorization") oAuth: String,
+        @Url url: String
+    ): Response<UserEntities.HelixUsers>
 
     @Headers(
         "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
@@ -91,5 +100,8 @@ interface TwitchApiService {
         "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
     )
     @GET("users/{id}/blocks")
-    suspend fun getIgnores(@Header("Authorization") oauth: String, @Path("id") userId: Int): Response<UserEntities.KrakenUsersBlocks>
+    suspend fun getIgnores(
+        @Header("Authorization") oauth: String,
+        @Path("id") userId: Int
+    ): Response<UserEntities.KrakenUsersBlocks>
 }

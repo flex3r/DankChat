@@ -149,6 +149,7 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         twitchRepository.joinChannel(channel)
         return plus
     }
+
     fun partChannel(): List<String>? {
         val channel = activeChannel.value ?: return null
         val current = channels.value ?: emptyList()
@@ -159,7 +160,10 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         twitchRepository.removeChannelData(channel)
         return minus
     }
-    fun sendMessage(channel: String, message: String) = twitchRepository.sendMessage(channel, message)
+
+    fun sendMessage(channel: String, message: String) =
+        twitchRepository.sendMessage(channel, message)
+
     fun reconnect(onlyIfNecessary: Boolean) = twitchRepository.reconnect(onlyIfNecessary)
 
     fun close(name: String, oAuth: String, loadTwitchData: Boolean = false, userId: Int = 0) {
@@ -218,7 +222,11 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         twitchRepository.clearIgnores()
     }
 
-    fun connectAndJoinChannels(name: String, oAuth: String, channelList: List<String>? = channels.value) {
+    fun connectAndJoinChannels(
+        name: String,
+        oAuth: String,
+        channelList: List<String>? = channels.value
+    ) {
         if (!twitchRepository.startedConnection) {
             if (channelList?.isEmpty() == true) {
                 twitchRepository.connect(name, oAuth)

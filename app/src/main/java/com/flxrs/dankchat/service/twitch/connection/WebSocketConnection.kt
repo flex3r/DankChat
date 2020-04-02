@@ -156,14 +156,14 @@ class WebSocketConnection(
                     close(null)
                 }
                 when (ircMessage.command) {
-                    "376"       -> {
+                    "376" -> {
                         socket?.joinChannels(channels)
                         pingJob = setupPingInterval()
                     }
-                    "PING"      -> webSocket.handlePing()
-                    "PONG"      -> awaitingPong = false
+                    "PING" -> webSocket.handlePing()
+                    "PONG" -> awaitingPong = false
                     "RECONNECT" -> reconnect()
-                    else        -> onMessage(ircMessage)
+                    else -> onMessage(ircMessage)
                 }
             }
         }
