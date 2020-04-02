@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        val channelExtra = intent?.getStringExtra(OPEN_CHANNEL_KEY) ?: return
+        val channelExtra = intent?.getStringExtra(OPEN_CHANNEL_KEY) ?: ""
         channelToOpen = channelExtra
     }
 

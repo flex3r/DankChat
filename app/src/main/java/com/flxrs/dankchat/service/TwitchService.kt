@@ -106,12 +106,12 @@ class TwitchService : Service(), KoinComponent, CoroutineScope {
         val message = getString(R.string.notification_message)
 
         val pendingStartActivityIntent = Intent(this, MainActivity::class.java).let {
-            PendingIntent.getActivity(this, 0, it, 0)
+            PendingIntent.getActivity(this, NOTIFICATION_START_INTENT_CODE, it, PendingIntent.FLAG_UPDATE_CURRENT)
         }
 
         val pendingStopIntent = Intent(this, TwitchService::class.java).let {
             it.action = STOP_COMMAND
-            PendingIntent.getService(this, 0, it, 0)
+            PendingIntent.getService(this, NOTIFICATION_STOP_INTENT_CODE, it, PendingIntent.FLAG_UPDATE_CURRENT)
         }
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID_LOW)
@@ -158,7 +158,7 @@ class TwitchService : Service(), KoinComponent, CoroutineScope {
     private fun createMentionNotification(channel: String, user: String, message: String) {
         val pendingStartActivityIntent = Intent(this, MainActivity::class.java).let {
             it.putExtra(MainActivity.OPEN_CHANNEL_KEY, channel)
-            PendingIntent.getActivity(this, intentCode, it, PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.getActivity(this, notificationIntentCode, it, PendingIntent.FLAG_UPDATE_CURRENT)
         }
 
         val summary = NotificationCompat.Builder(this, CHANNEL_ID_DEFAULT)
@@ -189,13 +189,15 @@ class TwitchService : Service(), KoinComponent, CoroutineScope {
         private const val CHANNEL_ID_LOW = "com.flxrs.dankchat.dank_id"
         private const val CHANNEL_ID_DEFAULT = "com.flxrs.dankchat.very_dank_id"
         private const val NOTIFICATION_ID = 77777
+        private const val NOTIFICATION_START_INTENT_CODE = 66666
+        private const val NOTIFICATION_STOP_INTENT_CODE = 55555
         private const val SUMMARY_NOTIFICATION_ID = 12345
         private const val MENTION_GROUP = "dank_group"
         private const val STOP_COMMAND = "STOP_DANKING"
 
         private var notificationId = 42
             get() = field++
-        private var intentCode = 420
+        private var notificationIntentCode = 420
             get() = field++
     }
 }
