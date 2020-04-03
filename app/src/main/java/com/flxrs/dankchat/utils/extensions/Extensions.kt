@@ -123,7 +123,7 @@ fun String.appendSpacesAfterEmojiGroup(): Pair<String, List<Int>> {
     return fixedContentBuilder.toString() to spaces
 }
 
-inline fun String.codePoints(crossinline block: (Int) -> Unit) {
+inline fun String.codePoints(block: (Int) -> Unit) {
     var i = 0
     while (i < length) {
         val c1: Char = get(i++)
