@@ -177,7 +177,6 @@ class MainFragment : Fragment() {
                 viewModel.loadData(
                     oauth = oAuth,
                     id = id,
-                    load3rdParty = true,
                     loadTwitchData = true,
                     name = name
                 )
@@ -296,7 +295,6 @@ class MainFragment : Fragment() {
                 viewModel.loadData(
                     oauth,
                     id,
-                    load3rdParty = true,
                     loadTwitchData = false,
                     name = name
                 )

@@ -90,18 +90,15 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         channels: List<String>,
         oAuth: String,
         id: Int,
-        load3rdParty: Boolean,
         loadTwitchData: Boolean,
         name: String
     ) {
         this.name = name
         scope.launch(coroutineExceptionHandler) {
             ConcurrentLinkedQueue(channels).forEach { channel ->
-                if (load3rdParty) {
-                    TwitchApi.getUserIdFromName(oAuth, channel)?.let {
-                        loadBadges(channel, it)
-                        load3rdPartyEmotes(channel, it)
-                    }
+                TwitchApi.getUserIdFromName(oAuth, channel)?.let {
+                    loadBadges(channel, it)
+                    load3rdPartyEmotes(channel, it)
                 }
                 if (oAuth.isNotBlank() && loadTwitchData && channel == channels.first()) {
                     loadedTwitchEmotes = false

@@ -43,25 +43,6 @@ sealed class Message(
         }
 
         companion object {
-
-            fun makeSystemMessage(
-                message: String,
-                channel: String,
-                timestamp: String = TimeUtils.localTime(),
-                id: String = System.nanoTime().toString()
-            ): TwitchMessage {
-                val color = Color.parseColor("#717171")
-                return TwitchMessage(
-                    timestamp,
-                    channel = channel,
-                    name = "",
-                    color = color,
-                    message = message,
-                    id = id,
-                    isSystem = true
-                )
-            }
-
             fun parse(message: IrcMessage): List<TwitchMessage> =
                 with(message) {
                     return when (command) {
@@ -124,6 +105,24 @@ sealed class Message(
                     badges,
                     id,
                     tags["rm-deleted"] == "1"
+                )
+            }
+
+            private fun makeSystemMessage(
+                message: String,
+                channel: String,
+                timestamp: String = TimeUtils.localTime(),
+                id: String = System.nanoTime().toString()
+            ): TwitchMessage {
+                val color = Color.parseColor("#717171")
+                return TwitchMessage(
+                    timestamp,
+                    channel = channel,
+                    name = "",
+                    color = color,
+                    message = message,
+                    id = id,
+                    isSystem = true
                 )
             }
 
