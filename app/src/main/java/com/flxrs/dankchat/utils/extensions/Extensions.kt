@@ -99,22 +99,32 @@ private val emojiCodePoints = listOf(
 
 private fun Int.isEmoji(): Boolean = emojiCodePoints.any { range -> this in range }
 
-// Adds extra space after every emoji group to support 3rd party emotes directly after emojis
+// Adds extra space between every emoji group to support 3rd party emotes directly before/after emojis
 // @badge-info=;badges=broadcaster/1,bits-charity/1;color=#00BCD4;display-name=flex3rs;emotes=521050:9-15,25-31;flags=;id=08649ff3-8fee-4200-8e06-c46bcdfb06e8;mod=0;room-id=73697410;subscriber=0;tmi-sent-ts=1575196101040;turbo=0;user-id=73697410;user-type= :flex3rs!flex3rs@flex3rs.tmi.twitch.tv PRIVMSG #flex3rs :🍓🍑🍊🍋🍍NaM forsenE 🍐🍏🐬🐳NaM forsenE
-fun String.appendSpacesAfterEmojiGroup(): Pair<String, List<Int>> {
+fun String.appendSpacesBetweenEmojiGroup(): Pair<String, List<Int>> {
     val fixedContentBuilder = StringBuilder()
     var previousEmoji = false
+    var previousCodepoint = 0
     val spaces = mutableListOf<Int>()
-    var charCount = 0
+    var totalCharCount = 0
     codePoints {
-        charCount += Character.charCount(it)
+        previousCodepoint = it
+        val charCount = Character.charCount(it)
+        totalCharCount += charCount
         if (it.isEmoji()) {
+            // emoji group starts
+            if (!previousEmoji) {
+                if (!Character.isWhitespace(previousCodepoint)) {
+                    fixedContentBuilder.append(" ")
+                    spaces.add(totalCharCount - charCount)
+                }
+            }
             previousEmoji = true
-        } else if (previousEmoji) {
+        } else if (previousEmoji) { //emoji group ends
             previousEmoji = false
             if (!Character.isWhitespace(it)) {
                 fixedContentBuilder.append(" ")
-                spaces.add(charCount)
+                spaces.add(totalCharCount)
             }
         }
         fixedContentBuilder.appendCodePoint(it)

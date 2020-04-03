@@ -7,7 +7,7 @@ import com.flxrs.dankchat.service.twitch.connection.ConnectionState
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.TimeUtils
-import com.flxrs.dankchat.utils.extensions.appendSpacesAfterEmojiGroup
+import com.flxrs.dankchat.utils.extensions.appendSpacesBetweenEmojiGroup
 
 sealed class Message(
     open val id: String
@@ -84,7 +84,7 @@ sealed class Message(
                     else -> ""
                 }
 
-                val (fixedContent, spaces) = content.appendSpacesAfterEmojiGroup()
+                val (fixedContent, spaces) = content.appendSpacesBetweenEmojiGroup()
                 val channel = params[0].substring(1)
                 val emoteTag = tags["emotes"] ?: ""
                 val emotes = EmoteManager.parseTwitchEmotes(emoteTag, fixedContent, spaces)
@@ -199,7 +199,7 @@ sealed class Message(
                 val name = prefix.substringBefore('!')
                 val colorTag = tags["color"]?.ifBlank { "#717171" } ?: "#717171"
                 val color = Color.parseColor(colorTag)
-                val (fixedContent, spaces) = params[1].appendSpacesAfterEmojiGroup()
+                val (fixedContent, spaces) = params[1].appendSpacesBetweenEmojiGroup()
                 val time = "${TimeUtils.timestampToLocalTime(System.currentTimeMillis())} (Whisper)"
                 val badges = parseBadges(tags["badges"])
                 val emotes = EmoteManager
