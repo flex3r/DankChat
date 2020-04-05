@@ -6,10 +6,8 @@ import android.os.IBinder
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
-import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.TwitchService
 import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
@@ -19,7 +17,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler {
     private val channels = mutableListOf<String>()
     private val viewModel: DankChatViewModel by viewModel()
     private lateinit var twitchPreferences: DankChatPreferenceStore
-    private lateinit var binding: MainActivityBinding
     private lateinit var broadcastReceiver: BroadcastReceiver
     private var twitchService: TwitchService? = null
     private val pendingChannelsToClear = mutableListOf<String>()
@@ -37,7 +34,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler {
 
         val filter = IntentFilter(SHUTDOWN_REQUEST_FILTER)
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, filter)
-        binding = DataBindingUtil.setContentView(this, R.layout.main_activity)
+        setContentView(R.layout.main_activity)
         twitchPreferences = DankChatPreferenceStore(this)
         twitchPreferences.getChannelsAsString()?.let { channels.addAll(it.split(',')) }
             ?: twitchPreferences.getChannels()?.let {
