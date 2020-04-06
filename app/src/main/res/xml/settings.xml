@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
 
 	<PreferenceCategory android:title="@string/preference_appearance_header">
 		<SwitchPreference
 			android:defaultValue="true"
 			android:key="@string/preference_dark_theme_key"
 			android:title="@string/preference_dark_theme_title" />
+
+		<SeekBarPreference
+			android:defaultValue="14"
+			android:key="@string/preference_font_size_key"
+			android:max="25"
+			android:title="@string/preference_font_size_title"
+			app:min="10"
+			app:showSeekBarValue="true"
+			app:updatesContinuously="true" />
 		<SwitchPreference
 			android:defaultValue="true"
 			android:key="@string/preference_show_input_key"

@@ -12,6 +12,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SeekBarPreference
 import androidx.preference.SwitchPreference
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.flxrs.dankchat.BuildConfig
@@ -79,6 +80,22 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
         findPreference<Preference>(getString(R.string.preference_blacklist_key))?.apply {
             setOnPreferenceClickListener { showMultiEntryPreference(key, sharedPreferences) }
+        }
+        findPreference<SeekBarPreference>(getString(R.string.preference_font_size_key))?.apply {
+            summary = getFontSizeSummary(value)
+            setOnPreferenceChangeListener { _, _ ->
+                summary = getFontSizeSummary(value)
+                true
+            }
+        }
+    }
+
+    private fun getFontSizeSummary(value: Int): String {
+        return when {
+            value < 13 -> getString(R.string.preference_font_size_summary_very_small)
+            value in 13..17 -> getString(R.string.preference_font_size_summary_small)
+            value in 18..22 -> getString(R.string.preference_font_size_summary_large)
+            else -> getString(R.string.preference_font_size_summary_very_large)
         }
     }
 

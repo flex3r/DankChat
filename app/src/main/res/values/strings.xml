@@ -119,6 +119,13 @@
 	<string name="preference_line_separator_title">Separate messages with lines</string>
 	<string name="preference_keep_screen_on_key" translatable="false">keep_screen_on_key</string>
 	<string name="preference_keep_screen_on_title">Keep screen on</string>
+	<string name="preference_font_size_key" translatable="false">font_size_key</string>
+	<string name="preference_font_size_title">Font size</string>
+	<string name="preference_font_size_summary_very_small">Very small</string>
+	<string name="preference_font_size_summary_small">Small</string>
+	<string name="preference_font_size_summary_medium">Medium</string>
+	<string name="preference_font_size_summary_large">Large</string>
+	<string name="preference_font_size_summary_very_large">Very large</string>
 
 	<plurals name="viewers">
 		<item quantity="one">Live with %d viewer</item>

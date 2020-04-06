@@ -12,6 +12,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.ImageSpan
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -90,12 +91,19 @@ class ChatAdapter(
         alpha = 1.0f
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
+        val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
         val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
+        val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
         val connectionText = when (message.state) {
             ConnectionState.DISCONNECTED -> context.getString(R.string.system_message_disconnected)
             else -> context.getString(R.string.system_message_connected)
         }
-        text = if (showTimeStamp) "${message.time} $connectionText" else connectionText
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
+        val withTime = when {
+            showTimeStamp -> "${message.time} $connectionText"
+            else -> connectionText
+        }
+        text = SpannableStringBuilder().bold { append(withTime) }
     }
 
     private fun TextView.handleTwitchMessage(
@@ -111,11 +119,14 @@ class ChatAdapter(
             context.getString(R.string.preference_show_timed_out_messages_key)
         val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
         val animateGifsKey = context.getString(R.string.preference_animate_gifs_key)
+        val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val isDarkMode = preferences.getBoolean(darkModePreferenceKey, true)
         val showTimedOutMessages = preferences.getBoolean(timedOutPreferenceKey, true)
         val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
         val animateGifs = preferences.getBoolean(animateGifsKey, true)
+        val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
         holder.scope.launch(coroutineHandler) {
             if (timedOut) {
                 alpha = 0.5f
