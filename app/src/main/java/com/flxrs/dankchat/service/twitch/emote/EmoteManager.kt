@@ -95,31 +95,14 @@ object EmoteManager {
     }
 
     fun parse3rdPartyEmotes(message: String, channel: String = ""): List<ChatMessageEmote> {
-        val availableFFz = ffzEmotes[channel] ?: hashMapOf()
-        val availableBttv = bttvEmotes[channel] ?: hashMapOf()
-        val total = availableFFz.plus(availableBttv).plus(globalBttvEmotes).plus(globalFFZEmotes)
         val splits = message.split(thirdPartyRegex)
         val emotes = arrayListOf<ChatMessageEmote>()
-        total.forEach { emote ->
-            var i = 0
-            val positions = mutableListOf<String>()
-            splits.forEach { split ->
-                if (emote.key == split.trim()) {
-                    positions += "$i-${i + split.length}"
-                }
-                i += split.length + 1
-            }
-            if (positions.size > 0) {
-                emotes += ChatMessageEmote(
-                    positions,
-                    emote.value.url,
-                    emote.value.id,
-                    emote.value.code,
-                    emote.value.scale,
-                    emote.value.isGif
-                )
-            }
-        }
+
+        ffzEmotes[channel]?.forEach { parseMessageForEmote(it.value, splits, emotes) }
+        bttvEmotes[channel]?.forEach { parseMessageForEmote(it.value, splits, emotes) }
+        globalBttvEmotes.forEach { parseMessageForEmote(it.value, splits, emotes) }
+        globalFFZEmotes.forEach { parseMessageForEmote(it.value, splits, emotes) }
+
         return emotes
     }
 
@@ -220,6 +203,27 @@ object EmoteManager {
         ffzEmotes[channel]?.let { result.addAll(it.values) }
         bttvEmotes[channel]?.let { result.addAll(it.values) }
         return@withContext result.sortedBy { it.code }
+    }
+
+    private fun parseMessageForEmote(emote: GenericEmote, messageSplits: List<String>, listToAdd: MutableList<ChatMessageEmote>) {
+        var i = 0
+        val positions = mutableListOf<String>()
+        messageSplits.forEach { split ->
+            if (emote.code == split.trim()) {
+                positions += "$i-${i + split.length}"
+            }
+            i += split.length + 1
+        }
+        if (positions.size > 0) {
+            listToAdd += ChatMessageEmote(
+                positions,
+                emote.url,
+                emote.id,
+                emote.code,
+                emote.scale,
+                emote.isGif
+            )
+        }
     }
 
     private fun parseBTTVEmote(emote: EmoteEntities.BTTV.Emote): GenericEmote {
