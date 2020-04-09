@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/preference_notification_header">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/preference_notification_key"
+            android:summary="@string/preference_notification_summary"
+            android:title="@string/preference_notification_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/preference_mentions_header">
+        <ListPreference
+            android:defaultValue="name"
+            android:entries="@array/mention_formats"
+            android:entryValues="@array/mention_formats"
+            android:key="@string/preference_mention_format_key"
+            android:summary="@string/preference_mention_format_summary"
+            android:title="@string/preference_mention_format_title" />
+
+        <Preference
+            android:key="@string/preference_custom_mentions_key"
+            android:summary="@string/preference_custom_mentions_summary"
+            android:title="@string/preference_custom_mentions_title" />
+
+        <Preference
+            android:key="@string/preference_blacklist_key"
+            android:summary="@string/preference_blacklist_summary"
+            android:title="@string/preference_blacklist_title" />
+    </PreferenceCategory>
+</PreferenceScreen>

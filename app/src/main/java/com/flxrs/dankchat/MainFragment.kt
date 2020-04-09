@@ -258,7 +258,7 @@ class MainFragment : Fragment() {
             R.id.menu_capture_image -> startCameraCapture()
             R.id.menu_hide -> viewModel.appbarEnabled.value = false
             R.id.menu_clear -> clear()
-            R.id.menu_settings -> findNavController().navigate(R.id.action_mainFragment_to_settingsFragment)
+            R.id.menu_settings -> findNavController().navigate(R.id.action_mainFragment_to_overviewSettingsFragment)
             else -> return false
         }
         return true

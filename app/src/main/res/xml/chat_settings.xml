@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="@string/preference_animate_gifs_key"
+        android:title="@string/preference_animate_gifs_title" />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="@string/preference_timestamp_key"
+        android:title="@string/preference_timestamp_title" />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="@string/preference_roomstate_key"
+        android:summary="@string/preference_roomstate_summary"
+        android:title="@string/preference_roomstate_title" />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="@string/preference_streaminfo_key"
+        android:summary="@string/preference_streaminfo_summary"
+        android:title="@string/preference_streaminfo_title" />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="@string/preference_show_timed_out_messages_key"
+        android:summary="@string/preference_show_timed_out_messages_summary"
+        android:title="@string/preference_show_timed_out_messages_title" />
+</PreferenceScreen>

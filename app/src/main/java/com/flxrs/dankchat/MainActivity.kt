@@ -8,12 +8,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import com.flxrs.dankchat.preferences.AppearanceSettingsFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.NotificationsSettingsFragment
+import com.flxrs.dankchat.preferences.ChatSettingsFragment
 import com.flxrs.dankchat.service.TwitchService
 import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler {
+class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
+    PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
     private val channels = mutableListOf<String>()
     private val viewModel: DankChatViewModel by viewModel()
     private lateinit var twitchPreferences: DankChatPreferenceStore
@@ -95,6 +101,20 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler {
         super.onNewIntent(intent)
         val channelExtra = intent?.getStringExtra(OPEN_CHANNEL_KEY) ?: ""
         channelToOpen = channelExtra
+    }
+
+    override fun onPreferenceStartFragment(
+        caller: PreferenceFragmentCompat,
+        pref: Preference
+    ): Boolean {
+        val navController = findNavController(R.id.main_content)
+        when (pref.fragment.substringAfterLast(".")) {
+            AppearanceSettingsFragment::class.java.simpleName -> navController.navigate(R.id.action_overviewSettingsFragment_to_appearanceSettingsFragment)
+            NotificationsSettingsFragment::class.java.simpleName -> navController.navigate(R.id.action_overviewSettingsFragment_to_notificationsSettingsFragment)
+            ChatSettingsFragment::class.java.simpleName -> navController.navigate(R.id.action_overviewSettingsFragment_to_chatSettingsFragment)
+            else -> return false
+        }
+        return true
     }
 
     fun clearNotificationsOfChannel(channel: String) {

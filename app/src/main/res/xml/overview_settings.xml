@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Preference
+        app:fragment="com.flxrs.dankchat.preferences.AppearanceSettingsFragment"
+        app:icon="@drawable/ic_palette_24dp"
+        app:key="@string/preference_appearance_key"
+        app:title="@string/preference_appearance_header" />
+
+    <Preference
+        app:fragment="com.flxrs.dankchat.preferences.NotificationsSettingsFragment"
+        app:icon="@drawable/ic_notifications_active_24dp"
+        app:key="@string/preference_notifications_mentions_key"
+        app:title="@string/preference_notifications_mentions_header" />
+
+    <Preference
+        app:fragment="com.flxrs.dankchat.preferences.ChatSettingsFragment"
+        app:icon="@drawable/ic_forum_24dp"
+        app:key="@string/preference_chat_key"
+        app:title="@string/preference_chat_header" />
+
+    <Preference
+        android:icon="@drawable/ic_exit_to_app_24dp"
+        android:key="@string/preference_logout_key"
+        android:title="@string/preference_logout_title" />
+
+    <PreferenceCategory android:title="@string/preference_about_header">
+        <Preference
+            android:key="@string/preference_about_key"
+            android:selectable="false" />
+    </PreferenceCategory>
+</PreferenceScreen>
