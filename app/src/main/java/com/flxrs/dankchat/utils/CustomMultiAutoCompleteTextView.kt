@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.KeyEvent
 import androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView
+import com.flxrs.dankchat.chat.suggestion.EmoteSuggestionsArrayAdapter
 
 class CustomMultiAutoCompleteTextView : AppCompatMultiAutoCompleteTextView {
 
@@ -19,5 +20,13 @@ class CustomMultiAutoCompleteTextView : AppCompatMultiAutoCompleteTextView {
         if (event?.keyCode == KeyEvent.KEYCODE_BACK) clearFocus()
 
         return super.onKeyPreIme(keyCode, event)
+    }
+
+    fun setSuggestionAdapter(enabled: Boolean, adapter: EmoteSuggestionsArrayAdapter) {
+        if (enabled) {
+            setAdapter(adapter)
+        } else {
+            setAdapter(null)
+        }
     }
 }

@@ -546,6 +546,7 @@ class MainFragment : Fragment() {
         val customMentionsKey = getString(R.string.preference_custom_mentions_key)
         val blacklistKey = getString(R.string.preference_blacklist_key)
         val keepScreenOnKey = getString(R.string.preference_keep_screen_on_key)
+        val suggestionsKey = getString(R.string.preference_suggestions_key)
         twitchPreferences = DankChatPreferenceStore(requireContext())
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
             when (key) {
@@ -558,6 +559,10 @@ class MainFragment : Fragment() {
                 customMentionsKey -> viewModel.setMentionEntries(p.getStringSet(key, emptySet()))
                 blacklistKey -> viewModel.setBlacklistEntries(p.getStringSet(key, emptySet()))
                 keepScreenOnKey -> keepScreenOn(p.getBoolean(key, true))
+                suggestionsKey -> binding.input.setSuggestionAdapter(
+                    p.getBoolean(key, true),
+                    suggestionAdapter
+                )
             }
         }
         preferences = PreferenceManager.getDefaultSharedPreferences(requireContext()).apply {
@@ -567,6 +572,10 @@ class MainFragment : Fragment() {
                 setRoomStateEnabled(getBoolean(roomStateKey, true))
                 setStreamInfoEnabled(getBoolean(streamInfoKey, true))
                 inputEnabled.value = getBoolean(inputKey, true)
+                binding.input.setSuggestionAdapter(
+                    getBoolean(suggestionsKey, true),
+                    suggestionAdapter
+                )
 
                 setMentionEntries(getStringSet(customMentionsKey, emptySet()))
                 setBlacklistEntries(getStringSet(blacklistKey, emptySet()))
@@ -728,7 +737,6 @@ class MainFragment : Fragment() {
             binding.input.dropDownWidth = (binding.viewPager.measuredWidth * 0.6).roundToInt()
         }
         suggestionAdapter.setNotifyOnChange(false)
-        binding.input.setAdapter(suggestionAdapter)
 
         setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {

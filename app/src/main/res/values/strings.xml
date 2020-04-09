@@ -132,6 +132,9 @@
     <string name="preference_font_size_summary_very_large">Very large</string>
     <string name="preference_notifications_mentions_header">Notifications and Mentions</string>
     <string name="preference_notifications_mentions_key" translatable="false">notifications_mentions_key</string>
+    <string name="preference_suggestions_key" translatable="false">suggestions_key</string>
+    <string name="preference_suggestions_title">Emote and user suggestions</string>
+    <string name="preference_suggestions_summary">Shows suggestions for emotes and active users while typing</string>
 
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>
