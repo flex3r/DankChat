@@ -117,7 +117,6 @@ class MainFragment : Fragment() {
             }
         }
 
-        fetchStreamInformation()
         return binding.root
     }
 
@@ -141,6 +140,7 @@ class MainFragment : Fragment() {
         val asList = channels?.toList() ?: emptyList()
         binding.viewPager.offscreenPageLimit = calculatePageLimit(asList.size)
         viewModel.channels.value = asList
+        fetchStreamInformation()
 
         (requireActivity() as AppCompatActivity).apply {
             setHasOptionsMenu(true)
@@ -333,7 +333,7 @@ class MainFragment : Fragment() {
 
     private fun fetchStreamInformation() {
         val key = getString(R.string.preference_streaminfo_key)
-        if (::preferences.isInitialized && preferences.getBoolean(key, true)) {
+        if (preferences.getBoolean(key, true)) {
             val oAuth = twitchPreferences.getOAuthKey() ?: return
             viewModel.fetchStreamData(oAuth) {
                 resources.getQuantityString(R.plurals.viewers, it, it)
