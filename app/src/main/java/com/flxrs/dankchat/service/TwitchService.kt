@@ -22,13 +22,13 @@ import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.service.twitch.message.Message
 import kotlinx.coroutines.*
 import org.koin.core.KoinComponent
-import org.koin.core.get
+import org.koin.core.inject
 import kotlin.coroutines.CoroutineContext
 
 class TwitchService : Service(), KoinComponent, CoroutineScope {
 
     private val binder = LocalBinder()
-    private val repository: TwitchRepository = get()
+    private val repository: TwitchRepository by inject()
     private lateinit var manager: NotificationManager
     private lateinit var sharedPreferences: SharedPreferences
     private val notifications = mutableMapOf<String, MutableList<Int>>()
