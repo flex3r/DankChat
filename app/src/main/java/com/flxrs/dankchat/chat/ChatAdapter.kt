@@ -89,21 +89,25 @@ class ChatAdapter(
 
     private fun TextView.handleConnectionMessage(message: Message.ConnectionMessage) {
         alpha = 1.0f
+        setBackgroundResource(android.R.color.transparent)
+
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
         val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
         val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
         val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
+
         val connectionText = when (message.state) {
             ConnectionState.DISCONNECTED -> context.getString(R.string.system_message_disconnected)
             else -> context.getString(R.string.system_message_connected)
         }
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
         val withTime = when {
-            showTimeStamp -> "${message.time} $connectionText"
-            else -> connectionText
+            showTimeStamp -> SpannableStringBuilder().bold { append("${message.time} ") }.append(connectionText)
+            else -> SpannableStringBuilder().append(connectionText)
         }
-        text = SpannableStringBuilder().bold { append(withTime) }
+
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
+        text = withTime
     }
 
     private fun TextView.handleTwitchMessage(
@@ -114,6 +118,7 @@ class ChatAdapter(
         text = ""
         alpha = 1.0f
         movementMethod = LinkMovementMethod.getInstance()
+
         val darkModePreferenceKey = context.getString(R.string.preference_dark_theme_key)
         val timedOutPreferenceKey =
             context.getString(R.string.preference_show_timed_out_messages_key)
