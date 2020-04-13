@@ -72,11 +72,7 @@ class MainFragment : Fragment() {
 
     private var currentChannel: String? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         tabAdapter = ChatTabAdapter(childFragmentManager, lifecycle)
         emoteMenuAdapter = EmoteMenuAdapter(::insertEmote)
         binding = MainFragmentBinding.inflate(inflater, container, false).apply {
@@ -134,8 +130,7 @@ class MainFragment : Fragment() {
         }
 
         initPreferences()
-        val channels = twitchPreferences.getChannelsAsString()?.split(',')
-            ?: twitchPreferences.getChannels()?.also { twitchPreferences.setChannels(null) }
+        val channels = twitchPreferences.getChannelsAsString()?.split(',') ?: twitchPreferences.getChannels()?.also { twitchPreferences.setChannels(null) }
         channels?.forEach { tabAdapter.addFragment(it) }
         val asList = channels?.toList() ?: emptyList()
         binding.viewPager.offscreenPageLimit = calculatePageLimit(asList.size)
@@ -146,9 +141,7 @@ class MainFragment : Fragment() {
             setHasOptionsMenu(true)
             setSupportActionBar(binding.toolbar)
             onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-                if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED
-                    || bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED
-                ) {
+                if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED || bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 } else {
                     navController.navigateUp()
@@ -157,9 +150,7 @@ class MainFragment : Fragment() {
 
             window.decorView.setOnApplyWindowInsetsListener { _, insets ->
                 binding.showActionbarFab.apply {
-                    if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
-                        && isVisible
-                    ) {
+                    if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT && isVisible) {
                         y = if (binding.input.hasFocus()) {
                             max(insets.stableInsetTop.toFloat() - insets.systemWindowInsetTop, 0f)
                         } else {
@@ -174,12 +165,7 @@ class MainFragment : Fragment() {
                 val oAuth = twitchPreferences.getOAuthKey() ?: ""
                 val name = twitchPreferences.getUserName() ?: ""
                 val id = twitchPreferences.getUserId()
-                viewModel.loadData(
-                    oauth = oAuth,
-                    id = id,
-                    loadTwitchData = true,
-                    name = name
-                )
+                viewModel.loadData(oauth = oAuth, id = id, loadTwitchData = true, name = name)
 
                 if (name.isNotBlank() && oAuth.isNotBlank()) {
                     showSnackbar(getString(R.string.snackbar_login, name))
@@ -238,8 +224,7 @@ class MainFragment : Fragment() {
             findItem(R.id.progress)?.apply {
                 isVisible = shouldShowProgress
                 actionView = ProgressBar(requireContext()).apply {
-                    indeterminateTintList =
-                        ContextCompat.getColorStateList(requireContext(), android.R.color.white)
+                    indeterminateTintList = ContextCompat.getColorStateList(requireContext(), android.R.color.white)
                     isVisible = shouldShowProgress
                 }
             }
@@ -272,11 +257,7 @@ class MainFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == GALLERY_REQUEST && grantResults.getOrNull(0) == PackageManager.PERMISSION_GRANTED) {
             startGalleryPicker()
         }
@@ -292,12 +273,7 @@ class MainFragment : Fragment() {
 
             val updatedChannels = viewModel.joinChannel(lowerCaseChannel)
             if (updatedChannels != null) {
-                viewModel.loadData(
-                    oauth,
-                    id,
-                    loadTwitchData = false,
-                    name = name
-                )
+                viewModel.loadData(oauth, id, loadTwitchData = false, name = name)
                 twitchPreferences.setChannelsString(updatedChannels.joinToString(","))
 
                 tabAdapter.addFragment(lowerCaseChannel)
@@ -313,9 +289,7 @@ class MainFragment : Fragment() {
     fun mentionUser(user: String) {
         if (binding.input.isEnabled) {
             val current = binding.input.text.trimEnd().toString()
-            val template =
-                preferences.getString(getString(R.string.preference_mention_format_key), "name")
-                    ?: "name"
+            val template = preferences.getString(getString(R.string.preference_mention_format_key), "name") ?: "name"
             val mention = template.replace("name", user)
             val inputWithMention = if (current.isBlank()) "$mention " else "$current $mention "
 
@@ -426,7 +400,7 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun showNuulsUploadDialogIfNotAcknowledged(action: () -> Unit) {
+    private inline fun showNuulsUploadDialogIfNotAcknowledged(crossinline action: () -> Unit) {
         if (!twitchPreferences.getNuulsAcknowledge()) {
             MaterialAlertDialogBuilder(requireContext())
                 .setCancelable(false)
@@ -443,16 +417,9 @@ class MainFragment : Fragment() {
 
     private fun checkPermissionForGallery() {
         showNuulsUploadDialogIfNotAcknowledged {
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ) != PackageManager.PERMISSION_GRANTED
-            )
-                requestPermissions(
-                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    GALLERY_REQUEST
-                )
-            else startGalleryPicker()
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), GALLERY_REQUEST)
+            } else startGalleryPicker()
         }
     }
 
@@ -463,16 +430,11 @@ class MainFragment : Fragment() {
             Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { captureIntent ->
                 captureIntent.resolveActivity(packageManager)?.also {
                     try {
-                        MediaUtils.createImageFile(requireContext())
-                            .apply { currentImagePath = absolutePath }
+                        MediaUtils.createImageFile(requireContext()).apply { currentImagePath = absolutePath }
                     } catch (ex: IOException) {
                         null
                     }?.also {
-                        val uri = FileProvider.getUriForFile(
-                            requireContext(),
-                            "$packageName.fileprovider",
-                            it
-                        )
+                        val uri = FileProvider.getUriForFile(requireContext(), "$packageName.fileprovider", it)
                         captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
                         startActivityForResult(captureIntent, CAPTURE_REQUEST)
                     }
@@ -494,8 +456,7 @@ class MainFragment : Fragment() {
         val isDarkMode = preferences.getBoolean(getString(R.string.preference_dark_theme_key), true)
         var lightModeFlags = 0
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1 && !isDarkMode) {
-            lightModeFlags = (lightModeFlags or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-                    or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
+            lightModeFlags = (lightModeFlags or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
         }
 
         if (enabled) {
@@ -559,10 +520,7 @@ class MainFragment : Fragment() {
                 customMentionsKey -> viewModel.setMentionEntries(p.getStringSet(key, emptySet()))
                 blacklistKey -> viewModel.setBlacklistEntries(p.getStringSet(key, emptySet()))
                 keepScreenOnKey -> keepScreenOn(p.getBoolean(key, true))
-                suggestionsKey -> binding.input.setSuggestionAdapter(
-                    p.getBoolean(key, true),
-                    suggestionAdapter
-                )
+                suggestionsKey -> binding.input.setSuggestionAdapter(p.getBoolean(key, true), suggestionAdapter)
             }
         }
         preferences = PreferenceManager.getDefaultSharedPreferences(requireContext()).apply {
@@ -572,10 +530,7 @@ class MainFragment : Fragment() {
                 setRoomStateEnabled(getBoolean(roomStateKey, true))
                 setStreamInfoEnabled(getBoolean(streamInfoKey, true))
                 inputEnabled.value = getBoolean(inputKey, true)
-                binding.input.setSuggestionAdapter(
-                    getBoolean(suggestionsKey, true),
-                    suggestionAdapter
-                )
+                binding.input.setSuggestionAdapter(getBoolean(suggestionsKey, true), suggestionAdapter)
 
                 setMentionEntries(getStringSet(customMentionsKey, emptySet()))
                 setBlacklistEntries(getStringSet(blacklistKey, emptySet()))
@@ -673,8 +628,7 @@ class MainFragment : Fragment() {
                 return@setStartIconOnClickListener
             }
 
-            val isLandscape =
-                resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+            val isLandscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
             if (isLandscape) {
                 hideKeyboard()
             }
@@ -685,10 +639,7 @@ class MainFragment : Fragment() {
                 bottomSheetViewPager.updateLayoutParams {
                     height = (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
                 }
-                TabLayoutMediator(
-                    bottomSheetTabs,
-                    bottomSheetViewPager
-                ) { tab, pos ->
+                TabLayoutMediator(bottomSheetTabs, bottomSheetViewPager) { tab, pos ->
                     tab.text = when (EmoteMenuTab.values()[pos]) {
                         EmoteMenuTab.SUBS -> getString(R.string.emote_menu_tab_subs)
                         EmoteMenuTab.CHANNEL -> getString(R.string.emote_menu_tab_channel)
@@ -699,9 +650,9 @@ class MainFragment : Fragment() {
 
             postDelayed(50) {
                 bottomSheetBehavior.apply {
-                    peekHeight =
-                        (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
+                    peekHeight = (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
                     state = BottomSheetBehavior.STATE_EXPANDED
+
                     addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
                         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
 
