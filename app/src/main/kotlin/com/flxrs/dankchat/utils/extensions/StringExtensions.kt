@@ -45,7 +45,7 @@ private fun Int.isEmoji(): Boolean = emojiCodePoints.any { range -> this in rang
 fun String.appendSpacesBetweenEmojiGroup(): Pair<String, List<Int>> {
     val fixedContentBuilder = StringBuilder()
     var previousEmoji = false
-    var previousCodepoint = 0
+    var previousCodepoint: Int
     val spaces = mutableListOf<Int>()
     var totalCharCount = 0
     codePoints {
