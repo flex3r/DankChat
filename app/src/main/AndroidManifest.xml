@@ -28,12 +28,6 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<activity
-			android:name=".LoginActivity"
-			android:parentActivityName=".MainActivity" />
-		<activity
-			android:name=".preferences.SettingsActivity"
-			android:parentActivityName=".MainActivity" />
 
 		<provider
 			android:name="androidx.core.content.FileProvider"
