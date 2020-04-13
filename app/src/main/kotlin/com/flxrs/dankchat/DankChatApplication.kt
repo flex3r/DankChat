@@ -39,10 +39,10 @@ class DankChatApplication : Application() {
 
         val nightMode = PreferenceManager.getDefaultSharedPreferences(this)
             .getBoolean(getString(R.string.preference_dark_theme_key), true)
-            .let {
+            .let { darkMode ->
                 when {
                     // Force dark theme on < Android 8.1 because of statusbar/navigationbar issues
-                    it || Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1 -> AppCompatDelegate.MODE_NIGHT_YES
+                    darkMode || Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1 -> AppCompatDelegate.MODE_NIGHT_YES
                     else -> AppCompatDelegate.MODE_NIGHT_NO
                 }
             }

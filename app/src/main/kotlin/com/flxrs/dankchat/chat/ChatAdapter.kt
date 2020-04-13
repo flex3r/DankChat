@@ -54,19 +54,10 @@ class ChatAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(
-            ChatItemBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-        )
+        return ViewHolder(ChatItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
-    override fun onCurrentListChanged(
-        previousList: MutableList<ChatItem>,
-        currentList: MutableList<ChatItem>
-    ) {
+    override fun onCurrentListChanged(previousList: MutableList<ChatItem>, currentList: MutableList<ChatItem>) {
         onListChanged(currentList.size - 1)
     }
 
@@ -110,18 +101,14 @@ class ChatAdapter(
         text = withTime
     }
 
-    private fun TextView.handleTwitchMessage(
-        twitchMessage: Message.TwitchMessage,
-        holder: ChatAdapter.ViewHolder
-    ) = with(twitchMessage) {
+    private fun TextView.handleTwitchMessage(twitchMessage: Message.TwitchMessage, holder: ChatAdapter.ViewHolder) = with(twitchMessage) {
         isClickable = false
         text = ""
         alpha = 1.0f
         movementMethod = LinkMovementMethod.getInstance()
 
         val darkModePreferenceKey = context.getString(R.string.preference_dark_theme_key)
-        val timedOutPreferenceKey =
-            context.getString(R.string.preference_show_timed_out_messages_key)
+        val timedOutPreferenceKey = context.getString(R.string.preference_show_timed_out_messages_key)
         val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
         val animateGifsKey = context.getString(R.string.preference_animate_gifs_key)
         val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
@@ -183,11 +170,7 @@ class ChatAdapter(
 
             val badgesLength = badges.size * 2
             val (prefixLength, spannable) = if (showTimeStamp) {
-                time.length + 1 + fullDisplayName.length to SpannableStringBuilder().bold {
-                    append(
-                        "$time "
-                    )
-                }
+                time.length + 1 + fullDisplayName.length to SpannableStringBuilder().bold { append("$time ") }
             } else {
                 fullDisplayName.length to SpannableStringBuilder()
             }
@@ -197,17 +180,11 @@ class ChatAdapter(
                 val start = spannable.length - 2
                 val end = spannable.length - 1
                 Coil.get(badge.url).apply {
-                    val width =
-                        (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
+                    val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
                     setBounds(0, 0, width, lineHeight)
 
                     val imageSpan = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
-                    spannable.setSpan(
-                        imageSpan,
-                        start,
-                        end,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
+                    spannable.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 }
             }
 
@@ -215,12 +192,8 @@ class ChatAdapter(
             spannable.bold { color(normalizedColor) { append(fullDisplayName) } }
             text = spannable
 
-
             when {
-                message.startsWith(
-                    "Login authentication",
-                    true
-                ) -> spannable.append(context.getString(R.string.login_expired))
+                message.startsWith("Login authentication", true) -> spannable.append(context.getString(R.string.login_expired))
                 isAction -> spannable.color(normalizedColor) { append(message) }
                 else -> spannable.append(message)
             }
@@ -237,12 +210,7 @@ class ChatAdapter(
                         if (!ignoreClicks) onUserClicked(name)
                     }
                 }
-                spannable.setSpan(
-                    userClickableSpan,
-                    prefixLength - fullDisplayName.length + badgesLength,
-                    prefixLength + badgesLength,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
+                spannable.setSpan(userClickableSpan, prefixLength - fullDisplayName.length + badgesLength, prefixLength + badgesLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
 
             //links
@@ -262,12 +230,7 @@ class ChatAdapter(
                 }
                 val start = prefixLength + badgesLength + message.indexOf(url.originalUrl)
                 val end = start + url.originalUrl.length
-                spannable.setSpan(
-                    clickableSpan,
-                    start,
-                    end,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
+                spannable.setSpan(clickableSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
 
             if (animateGifs && emotes.filter { it.isGif }.count() > 0) {
@@ -292,21 +255,11 @@ class ChatAdapter(
         }
     }
 
-    private fun setEmoteSpans(
-        e: ChatMessageEmote,
-        prefix: Int,
-        drawable: Drawable,
-        spannableStringBuilder: SpannableStringBuilder
-    ) {
+    private fun setEmoteSpans(e: ChatMessageEmote, prefix: Int, drawable: Drawable, spannableStringBuilder: SpannableStringBuilder) {
         e.positions.forEach { pos ->
             val (start, end) = pos.split('-').map { it.toInt() + prefix }
             try {
-                spannableStringBuilder.setSpan(
-                    ImageSpan(drawable),
-                    start,
-                    end,
-                    Spannable.SPAN_EXCLUSIVE_INCLUSIVE
-                )
+                spannableStringBuilder.setSpan(ImageSpan(drawable), start, end, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
             } catch (t: Throwable) {
                 Log.e(
                     "ViewBinding",
@@ -316,10 +269,7 @@ class ChatAdapter(
         }
     }
 
-    private fun Drawable.transformEmoteDrawable(
-        scale: Double,
-        emote: ChatMessageEmote
-    ) {
+    private fun Drawable.transformEmoteDrawable(scale: Double, emote: ChatMessageEmote) {
         val ratio = intrinsicWidth / intrinsicHeight.toFloat()
         val height = when {
             intrinsicHeight < 55 && emote.isTwitch -> (70 * scale).roundToInt()
@@ -341,7 +291,5 @@ private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
         else oldItem == newItem
     }
 
-    override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
-        return oldItem == newItem
-    }
+    override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean = oldItem == newItem
 }

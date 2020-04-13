@@ -33,8 +33,9 @@ class SpaceTokenizer : MultiAutoCompleteTextView.Tokenizer {
 
         while (i > 0 && text[i - 1] == separator) i--
 
-        return if (i > 0 && text[i - 1] == separator) text
-        else {
+        return if (i > 0 && text[i - 1] == separator) {
+            text
+        } else {
             if (text is Spanned) {
                 val sp = SpannableString(text.toString() + separator.toString())
                 TextUtils.copySpansFrom(text, 0, text.length, Any::class.java, sp, 0)

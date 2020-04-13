@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-	<!--	TODO change to FragmentContainerView when R8/Android Studio supports it better-->
-	<fragment
-		android:id="@+id/main_content"
-		android:name="androidx.navigation.fragment.NavHostFragment"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		app:defaultNavHost="true"
-		app:navGraph="@navigation/nav_graph"
-		tools:ignore="FragmentTagUsage" />
+    <!--	TODO change to FragmentContainerView when R8/Android Studio supports it better-->
+    <fragment
+        android:id="@+id/main_content"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nav_graph"
+        tools:ignore="FragmentTagUsage" />
 </LinearLayout>

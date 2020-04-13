@@ -14,26 +14,22 @@ fun List<GenericEmote>?.toEmoteItems(): List<EmoteItem> {
     return this?.groupBy { it.emoteType.title }
         ?.mapValues {
             val title = it.value.first().emoteType.title
-            listOf(EmoteItem.Header(title))
-                .plus(it.value.map { e -> EmoteItem.Emote(e) })
+            listOf(EmoteItem.Header(title)).plus(it.value.map { e -> EmoteItem.Emote(e) })
         }?.flatMap { it.value } ?: listOf()
 }
 
-fun List<MultiEntryItem.Entry?>.mapToMention(): List<Mention> {
-    return mapNotNull { entry ->
-        entry?.let {
-            if (it.isRegex) {
-                try {
-                    Mention.RegexPhrase(it.entry.toPattern(Pattern.CASE_INSENSITIVE).toRegex())
-                } catch (t: Throwable) {
-                    null
-                }
-            } else {
-                Mention.Phrase(it.entry)
+fun List<MultiEntryItem.Entry?>.mapToMention(): List<Mention> = mapNotNull { entry ->
+    entry?.let {
+        when {
+            it.isRegex -> try {
+                Mention.RegexPhrase(it.entry.toPattern(Pattern.CASE_INSENSITIVE).toRegex())
+            } catch (t: Throwable) {
+                null
             }
+            else -> Mention.Phrase(it.entry)
         }
-
     }
+
 }
 
 fun Set<String>?.mapToMention(adapter: JsonAdapter<MultiEntryItem.Entry>?): List<Mention> {

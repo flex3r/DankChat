@@ -9,15 +9,14 @@ import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.TimeUtils
 import com.flxrs.dankchat.utils.extensions.appendSpacesBetweenEmojiGroup
 
-sealed class Message(
-    open val id: String
-) {
+sealed class Message {
+    abstract val id: String
 
     data class ConnectionMessage(
         val state: ConnectionState,
         val time: String = TimeUtils.localTime(),
         override val id: String = System.nanoTime().toString()
-    ) : Message(id)
+    ) : Message()
 
     data class TwitchMessage(
         val time: String,
@@ -34,7 +33,7 @@ sealed class Message(
         var timedOut: Boolean = false,
         val isSystem: Boolean = false,
         var isMention: Boolean = false
-    ) : Message(id) {
+    ) : Message() {
 
         fun checkForMention(username: String, mentions: List<Mention>) {
             val mentionsWithUser = mentions.plus(Mention.User(username))
@@ -55,10 +54,7 @@ sealed class Message(
                 }
             }
 
-            private fun parsePrivMessage(
-                ircMessage: IrcMessage,
-                isNotify: Boolean = false
-            ): TwitchMessage = with(ircMessage) {
+            private fun parsePrivMessage(ircMessage: IrcMessage, isNotify: Boolean = false): TwitchMessage = with(ircMessage) {
                 val displayName = tags.getValue("display-name")
                 val name = when (ircMessage.command) {
                     "USERNOTICE" -> tags.getValue("login")
@@ -71,14 +67,9 @@ sealed class Message(
                 val time = TimeUtils.timestampToLocalTime(ts)
                 var isAction = false
                 val content = when {
-                    params.size > 1
-                            && params[1].startsWith("\u0001ACTION")
-                            && params[1].endsWith("\u0001") -> {
+                    params.size > 1 && params[1].startsWith("\u0001ACTION") && params[1].endsWith("\u0001") -> {
                         isAction = true
-                        params[1].substring(
-                            "\u0001ACTION ".length,
-                            params[1].length - "\u0001".length
-                        )
+                        params[1].substring("\u0001ACTION ".length, params[1].length - "\u0001".length)
                     }
                     params.size > 1 -> params[1]
                     else -> ""
@@ -94,30 +85,25 @@ sealed class Message(
                 val badges = parseBadges(tags["badges"], channel)
 
                 return TwitchMessage(
-                    time,
-                    channel,
-                    name,
-                    displayName,
-                    color,
-                    fixedContent,
-                    emotes.plus(otherEmotes).distinctBy { it.code },
-                    isAction,
-                    isNotify || tags["msg-id"] == "highlighted-message",
-                    badges,
-                    id,
-                    tags["rm-deleted"] == "1"
+                    time = time,
+                    channel = channel,
+                    name = name,
+                    displayName = displayName,
+                    color = color,
+                    message = fixedContent,
+                    emotes = emotes.plus(otherEmotes).distinctBy { it.code },
+                    isAction = isAction,
+                    isNotify = isNotify || tags["msg-id"] == "highlighted-message",
+                    badges = badges,
+                    id = id,
+                    timedOut = tags["rm-deleted"] == "1"
                 )
             }
 
-            private fun makeSystemMessage(
-                message: String,
-                channel: String,
-                timestamp: String = TimeUtils.localTime(),
-                id: String = System.nanoTime().toString()
-            ): TwitchMessage {
+            private fun makeSystemMessage(message: String, channel: String, timestamp: String = TimeUtils.localTime(), id: String = System.nanoTime().toString()): TwitchMessage {
                 val color = Color.parseColor("#717171")
                 return TwitchMessage(
-                    timestamp,
+                    time = timestamp,
                     channel = channel,
                     name = "",
                     color = color,
@@ -127,10 +113,7 @@ sealed class Message(
                 )
             }
 
-            private fun parseUserNotice(
-                message: IrcMessage,
-                historic: Boolean = false
-            ): List<TwitchMessage> = with(message) {
+            private fun parseUserNotice(message: IrcMessage, historic: Boolean = false): List<TwitchMessage> = with(message) {
                 val messages = mutableListOf<TwitchMessage>()
                 val msgId = tags["msg-id"]
                 val id = tags["id"] ?: System.nanoTime().toString()
@@ -146,7 +129,7 @@ sealed class Message(
                     if (subMsg.message.isNotBlank()) messages.add(subMsg)
                 }
                 val systemTwitchMessage = TwitchMessage(
-                    time,
+                    time = time,
                     channel = channel,
                     name = "",
                     color = color,
@@ -207,13 +190,13 @@ sealed class Message(
                     .plus(EmoteManager.parse3rdPartyEmotes(fixedContent))
 
                 return TwitchMessage(
-                    time,
-                    "*",
-                    name,
-                    displayName,
-                    color,
-                    fixedContent,
-                    emotes,
+                    time = time,
+                    channel = "*",
+                    name = name,
+                    displayName = displayName,
+                    color = color,
+                    message = fixedContent,
+                    emotes = emotes,
                     badges = badges,
                     id = System.nanoTime().toString()
                 )
@@ -226,11 +209,8 @@ sealed class Message(
                     val badgeSet = trimmed.substringBefore('/')
                     val badgeVersion = trimmed.substringAfter('/')
                     when {
-                        badgeSet.startsWith("subscriber")
-                                || badgeSet.startsWith("bits") -> {
-                            EmoteManager.getSubBadgeUrl(channel, badgeSet, badgeVersion)
-                                ?: EmoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)
-                        }
+                        badgeSet.startsWith("subscriber") || badgeSet.startsWith("bits") -> EmoteManager.getSubBadgeUrl(channel, badgeSet, badgeVersion)
+                            ?: EmoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)
                         else -> EmoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)
                     }?.let { result += Badge(badgeSet, it) }
                 }

@@ -15,11 +15,11 @@ val appModules = module {
     factory { CoroutineScope(Dispatchers.IO + Job()) }
     factory { (client: OkHttpClient, request: Request, onDisconnect: (() -> Unit)?, onMessage: (IrcMessage) -> Unit) ->
         WebSocketConnection(
-            get(),
-            client,
-            request,
-            onDisconnect,
-            onMessage
+            scope = get(),
+            client = client,
+            request = request,
+            onDisconnect = onDisconnect,
+            onMessage = onMessage
         )
     }
     single { TwitchRepository(get()) }

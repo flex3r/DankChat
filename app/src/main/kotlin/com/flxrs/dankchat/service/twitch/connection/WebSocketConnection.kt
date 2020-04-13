@@ -84,10 +84,7 @@ class WebSocketConnection(
             var reconnectDelay = 150L
             if (reconnectAttempts > 0) {
                 val jitter = floor(Math.random() * (RECONNECT_JITTER + 1))
-                reconnectDelay = (min(
-                    (RECONNECT_MULTIPLIER * reconnectAttempts) - RECONNECT_JITTER,
-                    5000
-                ) + jitter).roundToLong()
+                reconnectDelay = (min((RECONNECT_MULTIPLIER * reconnectAttempts) - RECONNECT_JITTER, 5000) + jitter).roundToLong()
             }
             reconnectAttempts++
             delay(reconnectDelay)

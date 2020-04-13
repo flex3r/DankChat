@@ -47,23 +47,18 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun showMultiEntryPreference(
-        key: String,
-        sharedPreferences: SharedPreferences
-    ): Boolean {
+    private fun showMultiEntryPreference(key: String, sharedPreferences: SharedPreferences): Boolean {
         val entryStringSet = sharedPreferences.getStringSet(key, emptySet()) ?: emptySet()
-        val entries = entryStringSet.mapNotNull { adapter.fromJson(it) }.sortedBy { it.entry }
-            .plus(MultiEntryItem.AddEntry)
+        val entries = entryStringSet.mapNotNull { adapter.fromJson(it) }.sortedBy { it.entry }.plus(MultiEntryItem.AddEntry)
 
         val entryAdapter = MultiEntryAdapter(entries.toMutableList())
-        val binding =
-            MultiEntryBottomsheetBinding.inflate(LayoutInflater.from(requireContext())).apply {
-                multiEntryList.layoutManager = LinearLayoutManager(requireContext())
-                multiEntryList.adapter = entryAdapter
-                multiEntrySheet.updateLayoutParams {
-                    height = (resources.displayMetrics.heightPixels * 0.6f).toInt()
-                }
+        val binding = MultiEntryBottomsheetBinding.inflate(LayoutInflater.from(requireContext())).apply {
+            multiEntryList.layoutManager = LinearLayoutManager(requireContext())
+            multiEntryList.adapter = entryAdapter
+            multiEntrySheet.updateLayoutParams {
+                height = (resources.displayMetrics.heightPixels * 0.6f).toInt()
             }
+        }
         BottomSheetDialog(requireContext()).apply {
             setContentView(binding.root)
             setOnDismissListener {

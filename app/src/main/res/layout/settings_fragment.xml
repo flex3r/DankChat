@@ -18,9 +18,9 @@
 
     <!-- Required ViewGroup for PreferenceFragmentCompat -->
     <FrameLayout
-        android:paddingTop="16dp"
         android:id="@android:id/list_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="16dp"
         tools:targetApi="n" />
 </LinearLayout>

@@ -28,23 +28,18 @@ class LoginFragment : Fragment() {
     lateinit var binding: LoginFragmentBinding
 
     @SuppressLint("SetJavaScriptEnabled")
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = LoginFragmentBinding.inflate(inflater, container, false).apply {
-            webview.apply {
-                with(settings) {
-                    javaScriptEnabled = true
-                    setSupportZoom(true)
-                }
-                CookieManager.getInstance().removeAllCookies(null)
-                clearCache(true)
-                clearFormData()
-                webViewClient = TwitchAuthClient()
-                loadUrl(TwitchApi.LOGIN_URL)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = LoginFragmentBinding.inflate(inflater, container, false)
+        binding.webview.apply {
+            with(settings) {
+                javaScriptEnabled = true
+                setSupportZoom(true)
             }
+            CookieManager.getInstance().removeAllCookies(null)
+            clearCache(true)
+            clearFormData()
+            webViewClient = TwitchAuthClient()
+            loadUrl(TwitchApi.LOGIN_URL)
         }
 
         return binding.root
@@ -63,23 +58,14 @@ class LoginFragment : Fragment() {
 
     private inner class TwitchAuthClient : WebViewClient() {
         @SuppressWarnings("DEPRECATION")
-        override fun onReceivedError(
-            view: WebView?,
-            errorCode: Int,
-            description: String?,
-            failingUrl: String?
-        ) {
+        override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
 
             Snackbar.make(binding.root, "Error $errorCode: $description", Snackbar.LENGTH_LONG)
             Log.e(TAG, "Error $errorCode in WebView: $description")
         }
 
         @RequiresApi(Build.VERSION_CODES.M)
-        override fun onReceivedError(
-            view: WebView?,
-            request: WebResourceRequest?,
-            error: WebResourceError?
-        ) {
+        override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
             val message = error?.description ?: return
             val code = error.errorCode
             Snackbar.make(binding.root, "Error $code: $message", Snackbar.LENGTH_LONG)
@@ -99,10 +85,7 @@ class LoginFragment : Fragment() {
         }
 
         @RequiresApi(Build.VERSION_CODES.N)
-        override fun shouldOverrideUrlLoading(
-            view: WebView?,
-            request: WebResourceRequest?
-        ): Boolean {
+        override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
             val fragment = request?.url?.fragment ?: ""
             parseOAuthToken(fragment)
             return false
@@ -123,10 +106,7 @@ class LoginFragment : Fragment() {
                         } else false
                     } ?: false
                     with(findNavController()) {
-                        previousBackStackEntry?.savedStateHandle?.set(
-                            MainFragment.LOGIN_REQUEST_KEY,
-                            result
-                        )
+                        previousBackStackEntry?.savedStateHandle?.set(MainFragment.LOGIN_REQUEST_KEY, result)
                         navigateUp()
                     }
                 }

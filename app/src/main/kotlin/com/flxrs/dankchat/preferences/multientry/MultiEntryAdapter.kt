@@ -6,11 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.databinding.MultiEntryAddItemBinding
 import com.flxrs.dankchat.databinding.MultiEntryItemBinding
 
-class MultiEntryAdapter(val entries: MutableList<MultiEntryItem>) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MultiEntryAdapter(val entries: MutableList<MultiEntryItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    inner class EntryViewHolder(val binding: MultiEntryItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class EntryViewHolder(val binding: MultiEntryItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.multiEntryDelete.setOnClickListener {
                 entries.removeAt(bindingAdapterPosition)
@@ -19,8 +17,7 @@ class MultiEntryAdapter(val entries: MutableList<MultiEntryItem>) :
         }
     }
 
-    inner class AddViewHolder(val binding: MultiEntryAddItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class AddViewHolder(val binding: MultiEntryAddItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.multiEntryAdd.setOnClickListener {
                 val entry = MultiEntryItem.Entry("", false)
@@ -36,20 +33,8 @@ class MultiEntryAdapter(val entries: MutableList<MultiEntryItem>) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            ITEM_VIEW_TYPE_ENTRY -> EntryViewHolder(
-                MultiEntryItemBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
-                )
-            )
-            ITEM_VIEW_TYPE_ADD -> AddViewHolder(
-                MultiEntryAddItemBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
-                )
-            )
+            ITEM_VIEW_TYPE_ENTRY -> EntryViewHolder(MultiEntryItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            ITEM_VIEW_TYPE_ADD -> AddViewHolder(MultiEntryAddItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
             else -> throw ClassCastException("Unknown viewType $viewType")
         }
     }

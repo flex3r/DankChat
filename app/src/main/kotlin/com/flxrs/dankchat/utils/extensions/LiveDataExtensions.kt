@@ -34,7 +34,6 @@ class TimerScope {
     }
 }
 
-fun <T> MutableMap<String, MutableLiveData<T>>.getAndSet(
-    key: String,
-    item: T? = null
-): MutableLiveData<T> = getOrPut(key) { item?.let { MutableLiveData(item) } ?: MutableLiveData() }
+fun <T> MutableMap<String, MutableLiveData<T>>.getAndSet(key: String, item: T? = null): MutableLiveData<T> {
+    return getOrPut(key) { item?.let { MutableLiveData(item) } ?: MutableLiveData() }
+}

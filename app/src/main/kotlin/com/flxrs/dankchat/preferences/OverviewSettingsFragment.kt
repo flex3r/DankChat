@@ -29,18 +29,14 @@ class OverviewSettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.overview_settings, rootKey)
 
-        findPreference<Preference>(getString(R.string.preference_about_key))
-            ?.summary = getString(R.string.preference_about_summary, BuildConfig.VERSION_NAME)
+        findPreference<Preference>(getString(R.string.preference_about_key))?.summary = getString(R.string.preference_about_summary, BuildConfig.VERSION_NAME)
 
         val isLoggedIn = DankChatPreferenceStore(requireContext()).isLoggedin()
         findPreference<Preference>(getString(R.string.preference_logout_key))?.apply {
             isEnabled = isLoggedIn
             setOnPreferenceClickListener {
                 with(findNavController()) {
-                    previousBackStackEntry?.savedStateHandle?.set(
-                        MainFragment.LOGOUT_REQUEST_KEY,
-                        true
-                    )
+                    previousBackStackEntry?.savedStateHandle?.set(MainFragment.LOGOUT_REQUEST_KEY, true)
                     navigateUp()
                 }
                 true

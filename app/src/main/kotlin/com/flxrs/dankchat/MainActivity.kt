@@ -11,15 +11,14 @@ import androidx.navigation.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.flxrs.dankchat.preferences.AppearanceSettingsFragment
+import com.flxrs.dankchat.preferences.ChatSettingsFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.NotificationsSettingsFragment
-import com.flxrs.dankchat.preferences.ChatSettingsFragment
 import com.flxrs.dankchat.service.TwitchService
 import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
-    PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
+class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
     private val channels = mutableListOf<String>()
     private val viewModel: DankChatViewModel by viewModel()
     private lateinit var twitchPreferences: DankChatPreferenceStore
@@ -89,8 +88,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
     }
 
     override fun onAddChannelDialogResult(channel: String) {
-        val fragment =
-            supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.first()
+        val fragment = supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.first()
         if (fragment is MainFragment) {
             fragment.addChannel(channel)
         }
@@ -103,10 +101,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler,
         channelToOpen = channelExtra
     }
 
-    override fun onPreferenceStartFragment(
-        caller: PreferenceFragmentCompat,
-        pref: Preference
-    ): Boolean {
+    override fun onPreferenceStartFragment(caller: PreferenceFragmentCompat, pref: Preference): Boolean {
         val navController = findNavController(R.id.main_content)
         when (pref.fragment.substringAfterLast(".")) {
             AppearanceSettingsFragment::class.java.simpleName -> navController.navigate(R.id.action_overviewSettingsFragment_to_appearanceSettingsFragment)

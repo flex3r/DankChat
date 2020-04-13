@@ -62,37 +62,24 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         .url("wss://irc-ws.chat.twitch.tv")
         .build()
 
-    private val readConnection: WebSocketConnection =
-        get { parametersOf(client, request, ::handleDisconnect, ::onReaderMessage) }
-    private val writeConnection: WebSocketConnection =
-        get { parametersOf(client, request, null, ::onWriterMessage) }
+    private val readConnection: WebSocketConnection = get { parametersOf(client, request, ::handleDisconnect, ::onReaderMessage) }
+    private val writeConnection: WebSocketConnection = get { parametersOf(client, request, null, ::onWriterMessage) }
 
     val imageUploadedEvent = SingleLiveEvent<Pair<String?, File>>()
     val messageChannel = Channel<List<ChatItem>>()
     var startedConnection = false
 
-    fun getChat(channel: String): LiveData<List<ChatItem>> =
-        messages.getAndSet(channel, emptyList())
+    fun getChat(channel: String): LiveData<List<ChatItem>> = messages.getAndSet(channel, emptyList())
 
-    fun getConnectionState(channel: String): LiveData<ConnectionState> =
-        connectionState.getAndSet(channel, ConnectionState.DISCONNECTED)
+    fun getConnectionState(channel: String): LiveData<ConnectionState> = connectionState.getAndSet(channel, ConnectionState.DISCONNECTED)
 
-    fun getEmotes(channel: String): LiveData<List<GenericEmote>> =
-        emotes.getAndSet(channel, emptyList())
+    fun getEmotes(channel: String): LiveData<List<GenericEmote>> = emotes.getAndSet(channel, emptyList())
 
-    fun getRoomState(channel: String): LiveData<Roomstate> =
-        roomStates.getAndSet(channel, Roomstate(channel))
+    fun getRoomState(channel: String): LiveData<Roomstate> = roomStates.getAndSet(channel, Roomstate(channel))
 
-    fun getUsers(channel: String): LiveData<LruCache<String, Boolean>> =
-        users.getAndSet(channel, createUserCache())
+    fun getUsers(channel: String): LiveData<LruCache<String, Boolean>> = users.getAndSet(channel, createUserCache())
 
-    fun loadData(
-        channels: List<String>,
-        oAuth: String,
-        id: Int,
-        loadTwitchData: Boolean,
-        name: String
-    ) {
+    fun loadData(channels: List<String>, oAuth: String, id: Int, loadTwitchData: Boolean, name: String) {
         this.name = name
         scope.launch(coroutineExceptionHandler) {
             ConcurrentLinkedQueue(channels).forEach { channel ->
@@ -187,15 +174,12 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         writeConnection.partChannel(channel)
     }
 
-    private inline fun prepareMessage(
-        channel: String,
-        message: String,
-        onResult: (msg: String) -> Unit
-    ) {
+    private inline fun prepareMessage(channel: String, message: String, onResult: (msg: String) -> Unit) {
         if (message.isNotBlank()) {
-            val messageWithSuffix = if (lastMessage == message) {
-                "$message $INVISIBLE_CHAR"
-            } else message
+            val messageWithSuffix = when (lastMessage) {
+                message -> "$message $INVISIBLE_CHAR"
+                else -> message
+            }
 
             lastMessage = messageWithSuffix
             onResult("PRIVMSG #$channel :$messageWithSuffix")
@@ -252,11 +236,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         }
     }
 
-    private fun handleConnected(
-        channel: String,
-        isAnonymous: Boolean
-    ) {
-
+    private fun handleConnected(channel: String, isAnonymous: Boolean) {
         hasDisconnected = false
 
         val hint = when {
@@ -343,10 +323,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         return LruCache(500)
     }
 
-    private fun makeAndPostConnectionMessage(
-        state: ConnectionState,
-        channels: Set<String> = messages.keys
-    ) {
+    private fun makeAndPostConnectionMessage(state: ConnectionState, channels: Set<String> = messages.keys) {
         channels.forEach {
             val currentChat = messages[it]?.value ?: emptyList()
             messages.getAndSet(it).postValue(
@@ -363,25 +340,23 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         TwitchApi.getChannelBadges(id)?.let { EmoteManager.setChannelBadges(channel, it) }
     }
 
-    private suspend fun loadTwitchEmotes(oAuth: String, id: Int) =
-        withContext(Dispatchers.Default) {
-            if (!loadedTwitchEmotes) {
-                TwitchApi.getUserEmotes(oAuth, id)?.let { EmoteManager.setTwitchEmotes(it) }
-                loadedTwitchEmotes = true
-            }
+    private suspend fun loadTwitchEmotes(oAuth: String, id: Int) = withContext(Dispatchers.Default) {
+        if (!loadedTwitchEmotes) {
+            TwitchApi.getUserEmotes(oAuth, id)?.let { EmoteManager.setTwitchEmotes(it) }
+            loadedTwitchEmotes = true
         }
+    }
 
-    private suspend fun load3rdPartyEmotes(channel: String, id: String) =
-        withContext(Dispatchers.IO) {
-            TwitchApi.getFFZChannelEmotes(id)?.let { EmoteManager.setFFZEmotes(channel, it) }
-            TwitchApi.getBTTVChannelEmotes(id)?.let { EmoteManager.setBTTVEmotes(channel, it) }
+    private suspend fun load3rdPartyEmotes(channel: String, id: String) = withContext(Dispatchers.IO) {
+        TwitchApi.getFFZChannelEmotes(id)?.let { EmoteManager.setFFZEmotes(channel, it) }
+        TwitchApi.getBTTVChannelEmotes(id)?.let { EmoteManager.setBTTVEmotes(channel, it) }
 
-            if (!loadedGlobalEmotes) {
-                TwitchApi.getFFZGlobalEmotes()?.let { EmoteManager.setFFZGlobalEmotes(it) }
-                TwitchApi.getBTTVGlobalEmotes()?.let { EmoteManager.setBTTVGlobalEmotes(it) }
-                loadedGlobalEmotes = true
-            }
+        if (!loadedGlobalEmotes) {
+            TwitchApi.getFFZGlobalEmotes()?.let { EmoteManager.setFFZGlobalEmotes(it) }
+            TwitchApi.getBTTVGlobalEmotes()?.let { EmoteManager.setBTTVGlobalEmotes(it) }
+            loadedGlobalEmotes = true
         }
+    }
 
     private suspend fun setSuggestions(channel: String) = withContext(Dispatchers.Default) {
         emotes.getAndSet(channel).postValue(EmoteManager.getEmotes(channel))

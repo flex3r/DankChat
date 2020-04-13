@@ -10,29 +10,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.databinding.EmoteHeaderItemBinding
 import com.flxrs.dankchat.databinding.EmoteItemBinding
 
-class EmoteAdapter(private val onEmoteClick: (emote: String) -> Unit) :
-    ListAdapter<EmoteItem, RecyclerView.ViewHolder>(DetectDiff()) {
+class EmoteAdapter(private val onEmoteClick: (emote: String) -> Unit) : ListAdapter<EmoteItem, RecyclerView.ViewHolder>(DetectDiff()) {
 
     inner class ViewHolder(val binding: EmoteItemBinding) : RecyclerView.ViewHolder(binding.root)
-    inner class TextViewHolder(val binding: EmoteHeaderItemBinding) :
-        RecyclerView.ViewHolder(binding.root)
+    inner class TextViewHolder(val binding: EmoteHeaderItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            ITEM_VIEW_TYPE_HEADER -> TextViewHolder(
-                EmoteHeaderItemBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
-                )
-            )
-            ITEM_VIEW_TYPE_ITEM -> ViewHolder(
-                EmoteItemBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
-                )
-            )
+            ITEM_VIEW_TYPE_HEADER -> TextViewHolder(EmoteHeaderItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            ITEM_VIEW_TYPE_ITEM -> ViewHolder(EmoteItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
             else -> throw ClassCastException("Unknown viewType $viewType")
         }
     }
@@ -61,13 +47,9 @@ class EmoteAdapter(private val onEmoteClick: (emote: String) -> Unit) :
     }
 
     private class DetectDiff : DiffUtil.ItemCallback<EmoteItem>() {
-        override fun areItemsTheSame(oldItem: EmoteItem, newItem: EmoteItem): Boolean {
-            return oldItem == newItem
-        }
+        override fun areItemsTheSame(oldItem: EmoteItem, newItem: EmoteItem): Boolean = oldItem == newItem
 
-        override fun areContentsTheSame(oldItem: EmoteItem, newItem: EmoteItem): Boolean {
-            return oldItem == newItem
-        }
+        override fun areContentsTheSame(oldItem: EmoteItem, newItem: EmoteItem): Boolean = oldItem == newItem
     }
 
     companion object {

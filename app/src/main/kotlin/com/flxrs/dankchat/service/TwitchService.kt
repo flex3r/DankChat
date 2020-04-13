@@ -56,21 +56,13 @@ class TwitchService : Service(), KoinComponent, CoroutineScope {
             manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
             val name = getString(R.string.app_name)
-            val channel = NotificationChannel(
-                CHANNEL_ID_LOW,
-                name,
-                NotificationManager.IMPORTANCE_LOW
-            ).apply {
+            val channel = NotificationChannel(CHANNEL_ID_LOW, name, NotificationManager.IMPORTANCE_LOW).apply {
                 enableVibration(false)
                 enableLights(false)
                 setShowBadge(false)
             }
 
-            val mentionChannel = NotificationChannel(
-                CHANNEL_ID_DEFAULT,
-                "Mentions",
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
+            val mentionChannel = NotificationChannel(CHANNEL_ID_DEFAULT, "Mentions", NotificationManager.IMPORTANCE_DEFAULT)
             manager.createNotificationChannel(mentionChannel)
             manager.createNotificationChannel(channel)
         }
@@ -81,8 +73,7 @@ class TwitchService : Service(), KoinComponent, CoroutineScope {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             STOP_COMMAND -> {
-                LocalBroadcastManager.getInstance(this)
-                    .sendBroadcast(Intent(MainActivity.SHUTDOWN_REQUEST_FILTER))
+                LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(MainActivity.SHUTDOWN_REQUEST_FILTER))
                 stopForeground(true)
                 stopSelf()
             }
@@ -119,11 +110,7 @@ class TwitchService : Service(), KoinComponent, CoroutineScope {
             .setVibrate(null)
             .setContentTitle(title)
             .setContentText(message)
-            .addAction(
-                R.drawable.ic_clear_24dp,
-                getString(R.string.notification_stop),
-                pendingStopIntent
-            ).apply {
+            .addAction(R.drawable.ic_clear_24dp, getString(R.string.notification_stop), pendingStopIntent).apply {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     setStyle(MediaStyle().setShowActionsInCompactView(0))
                 }
@@ -142,8 +129,7 @@ class TwitchService : Service(), KoinComponent, CoroutineScope {
     }
 
     private fun onMessage(items: List<ChatItem>) {
-        val notificationsEnabled =
-            sharedPreferences.getBoolean(getString(R.string.preference_notification_key), true)
+        val notificationsEnabled = sharedPreferences.getBoolean(getString(R.string.preference_notification_key), true)
         // Preload emotes
         items.forEach { item ->
             with(item.message as Message.TwitchMessage) {

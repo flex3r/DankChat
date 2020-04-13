@@ -35,16 +35,10 @@ class ChatFragment : Fragment() {
     private var isAtBottom = true
     private var channel: String = ""
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         channel = requireArguments().getString(CHANNEL_ARG, "")
 
-        manager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false).apply {
-            stackFromEnd = true
-        }
+        manager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false).apply { stackFromEnd = true }
         adapter = ChatAdapter(::scrollToPosition, ::mentionUser, ::copyMessage)
 
         binding = ChatFragmentBinding.inflate(inflater, container, false).apply {
@@ -60,8 +54,9 @@ class ChatFragment : Fragment() {
             }
         }
 
-        if (channel.isNotBlank())
+        if (channel.isNotBlank()) {
             viewModel.getChat(channel).observe(viewLifecycleOwner) { adapter.submitList(it) }
+        }
 
         return binding.root
     }
@@ -73,15 +68,11 @@ class ChatFragment : Fragment() {
             when (key) {
                 getString(R.string.preference_timestamp_key),
                 getString(R.string.preference_show_timed_out_messages_key),
-                getString(R.string.preference_animate_gifs_key) -> {
-                    binding.chat.swapAdapter(adapter, false)
-                }
-                getString(R.string.preference_line_separator_key) -> {
-                    if (pref.getBoolean(key, false)) {
-                        binding.chat.addItemDecoration(itemDecoration)
-                    } else {
-                        binding.chat.removeItemDecoration(itemDecoration)
-                    }
+                getString(R.string.preference_animate_gifs_key) -> binding.chat.swapAdapter(adapter, false)
+                getString(R.string.preference_line_separator_key) -> if (pref.getBoolean(key, false)) {
+                    binding.chat.addItemDecoration(itemDecoration)
+                } else {
+                    binding.chat.removeItemDecoration(itemDecoration)
                 }
             }
         }
@@ -105,12 +96,7 @@ class ChatFragment : Fragment() {
     }
 
     private fun copyMessage(message: String) {
-        (getSystemService(
-            requireContext(),
-            android.content.ClipboardManager::class.java
-        ) as android.content.ClipboardManager).apply {
-            setPrimaryClip(android.content.ClipData.newPlainText("twitch message", message))
-        }
+        getSystemService(requireContext(), android.content.ClipboardManager::class.java)?.setPrimaryClip(android.content.ClipData.newPlainText("twitch message", message))
         Snackbar.make(binding.root, R.string.snackbar_message_copied, Snackbar.LENGTH_SHORT).show()
     }
 

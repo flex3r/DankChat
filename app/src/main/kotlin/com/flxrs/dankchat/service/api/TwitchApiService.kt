@@ -8,9 +8,7 @@ import retrofit2.http.*
 interface TwitchApiService {
 
 
-    @Headers(
-        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
-    )
+    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
     @GET
     suspend fun validateUser(
         @Url url: String,
@@ -28,15 +26,11 @@ interface TwitchApiService {
         @Path("id") userId: Int
     ): Response<EmoteEntities.Twitch.Result>
 
-    @Headers(
-        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
-    )
+    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
     @GET
     suspend fun getSets(@Url url: String): Response<List<EmoteEntities.Twitch.EmoteSet>>
 
-    @Headers(
-        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
-    )
+    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
     @GET
     suspend fun getSet(@Url url: String): Response<List<EmoteEntities.Twitch.EmoteSet>>
 
@@ -58,39 +52,27 @@ interface TwitchApiService {
         @Url url: String
     ): Response<UserEntities.HelixUsers>
 
-    @Headers(
-        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
-    )
+    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
     @GET
     suspend fun getBadgeSets(@Url url: String): Response<BadgeEntities.Result>
 
-    @Headers(
-        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
-    )
+    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
     @GET
     suspend fun getFFZChannelEmotes(@Url url: String): Response<EmoteEntities.FFZ.Result>
 
-    @Headers(
-        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
-    )
+    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
     @GET
     suspend fun getFFZGlobalEmotes(@Url url: String): Response<EmoteEntities.FFZ.GlobalResult>
 
-    @Headers(
-        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
-    )
+    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
     @GET
     suspend fun getBTTVChannelEmotes(@Url url: String): Response<EmoteEntities.BTTV.Result>
 
-    @Headers(
-        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
-    )
+    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
     @GET
     suspend fun getBTTVGlobalEmotes(@Url url: String): Response<List<EmoteEntities.BTTV.GlobalEmote>>
 
-    @Headers(
-        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
-    )
+    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
     @GET
     suspend fun getRecentMessages(@Url url: String): Response<RecentMessages>
 

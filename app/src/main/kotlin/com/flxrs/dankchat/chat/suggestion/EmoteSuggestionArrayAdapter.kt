@@ -11,14 +11,7 @@ import coil.api.clear
 import coil.api.load
 import com.flxrs.dankchat.R
 
-class EmoteSuggestionsArrayAdapter(
-    context: Context,
-    private val onCount: (count: Int) -> Unit
-) : ArrayAdapter<Suggestion>(
-    context,
-    R.layout.emote_suggestion_item,
-    R.id.suggestion_text
-) {
+class EmoteSuggestionsArrayAdapter(context: Context, private val onCount: (count: Int) -> Unit) : ArrayAdapter<Suggestion>(context, R.layout.emote_suggestion_item, R.id.suggestion_text) {
     override fun getCount(): Int = super.getCount().also { onCount(it) }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {

@@ -5,8 +5,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
-class ChatTabAdapter(supportFragmentManager: FragmentManager, lifecycle: Lifecycle) :
-    FragmentStateAdapter(supportFragmentManager, lifecycle) {
+class ChatTabAdapter(supportFragmentManager: FragmentManager, lifecycle: Lifecycle) : FragmentStateAdapter(supportFragmentManager, lifecycle) {
 
     val titleList = mutableListOf<String>()
     //val fragmentList = mutableListOf<ChatFragment>()
@@ -15,12 +14,9 @@ class ChatTabAdapter(supportFragmentManager: FragmentManager, lifecycle: Lifecyc
 
     override fun getItemCount(): Int = titleList.size
 
-    override fun getItemId(position: Int): Long {
-        return if (position < titleList.size) {
-            titleList[position].hashCode().toLong()
-        } else {
-            RecyclerView.NO_ID
-        }
+    override fun getItemId(position: Int): Long = when {
+        position < titleList.size -> titleList[position].hashCode().toLong()
+        else -> RecyclerView.NO_ID
     }
 
     override fun containsItem(itemId: Long): Boolean {
