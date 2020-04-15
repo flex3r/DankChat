@@ -21,14 +21,14 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.service.twitch.message.Message
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import kotlin.coroutines.CoroutineContext
 
-class TwitchService : Service(), KoinComponent, CoroutineScope {
+class TwitchService : Service(), CoroutineScope {
 
     private val binder = LocalBinder()
-    private val repository: TwitchRepository by inject()
     private lateinit var manager: NotificationManager
     private lateinit var sharedPreferences: SharedPreferences
     private val notifications = mutableMapOf<String, MutableList<Int>>()
@@ -120,22 +120,19 @@ class TwitchService : Service(), KoinComponent, CoroutineScope {
             .build()
 
         startForeground(NOTIFICATION_ID, notification)
-
-        launch {
-            for (item in repository.messageChannel) {
-                onMessage(item)
-            }
-        }
     }
 
-    private fun onMessage(items: List<ChatItem>) {
+    fun checkForNotification(messageChannel: Channel<List<ChatItem>>) = launch {
         val notificationsEnabled = sharedPreferences.getBoolean(getString(R.string.preference_notification_key), true)
-        // Preload emotes
-        items.forEach { item ->
-            with(item.message as Message.TwitchMessage) {
-                emotes.forEach { Coil.load(this@TwitchService, it.url) }
-                if (shouldNotifyOnMention && isMention && notificationsEnabled) {
-                    createMentionNotification(channel, name, message)
+        for (items in messageChannel) {
+            items.forEach {item ->
+                with(item.message as Message.TwitchMessage) {
+                    // Preload emotes
+                    emotes.forEach { Coil.load(this@TwitchService, it.url) }
+
+                    if (shouldNotifyOnMention && isMention && notificationsEnabled) {
+                        createMentionNotification(channel, name, message)
+                    }
                 }
             }
         }

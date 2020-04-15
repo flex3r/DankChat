@@ -27,6 +27,7 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
 
     val activeChannel = MutableLiveData<String>()
     val channels = MutableLiveData<List<String>>(emptyList())
+    val messageChannel = twitchRepository.messageChannel
 
     private val streamInfoEnabled = MutableLiveData(true)
     private val roomStateEnabled = MutableLiveData(true)

@@ -153,6 +153,8 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Prefere
                 val name = twitchPreferences.getUserName() ?: ""
                 viewModel.connectAndJoinChannels(name, oauth)
             }
+
+            binder.service.checkForNotification(viewModel.messageChannel)
         }
 
         override fun onServiceDisconnected(className: ComponentName?) {
