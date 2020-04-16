@@ -33,6 +33,7 @@ class TwitchService : Service(), CoroutineScope {
     private lateinit var sharedPreferences: SharedPreferences
     private val notifications = mutableMapOf<String, MutableList<Int>>()
     var shouldNotifyOnMention = false
+    
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + Job()
 
@@ -122,16 +123,19 @@ class TwitchService : Service(), CoroutineScope {
         startForeground(NOTIFICATION_ID, notification)
     }
 
-    fun checkForNotification(messageChannel: Channel<List<ChatItem>>) = launch {
-        val notificationsEnabled = sharedPreferences.getBoolean(getString(R.string.preference_notification_key), true)
-        for (items in messageChannel) {
-            items.forEach {item ->
-                with(item.message as Message.TwitchMessage) {
-                    // Preload emotes
-                    emotes.forEach { Coil.load(this@TwitchService, it.url) }
+    fun checkForNotification(messageChannel: Channel<List<ChatItem>>) {
+        cancel()
+        launch {
+            val notificationsEnabled = sharedPreferences.getBoolean(getString(R.string.preference_notification_key), true)
+            for (items in messageChannel) {
+                items.forEach {item ->
+                    with(item.message as Message.TwitchMessage) {
+                        // Preload emotes
+                        emotes.forEach { Coil.load(this@TwitchService, it.url) }
 
-                    if (shouldNotifyOnMention && isMention && notificationsEnabled) {
-                        createMentionNotification(channel, name, message)
+                        if (shouldNotifyOnMention && isMention && notificationsEnabled) {
+                            createMentionNotification(channel, name, message)
+                        }
                     }
                 }
             }

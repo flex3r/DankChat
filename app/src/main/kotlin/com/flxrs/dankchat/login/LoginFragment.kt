@@ -79,14 +79,14 @@ class LoginFragment : Fragment() {
         @SuppressWarnings("DEPRECATION")
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
             val urlString = url ?: ""
-            val fragment = Uri.parse(urlString).fragment ?: ""
+            val fragment = Uri.parse(urlString).fragment ?: return false
             parseOAuthToken(fragment)
             return false
         }
 
         @RequiresApi(Build.VERSION_CODES.N)
         override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-            val fragment = request?.url?.fragment ?: ""
+            val fragment = request?.url?.fragment ?: return false
             parseOAuthToken(fragment)
             return false
         }
@@ -95,7 +95,7 @@ class LoginFragment : Fragment() {
             if (fragment.startsWith("access_token=")) {
                 val token = fragment.substringAfter("access_token=").substringBefore("&scope=")
                 lifecycleScope.launch {
-                    val result = TwitchApi.validateUser(token)?.let {
+                    val successful = TwitchApi.validateUser(token)?.let {
                         if (it.login.isNotBlank()) {
                             DankChatPreferenceStore(requireContext()).apply {
                                 setOAuthKey("oauth:$token")
@@ -106,7 +106,7 @@ class LoginFragment : Fragment() {
                         } else false
                     } ?: false
                     with(findNavController()) {
-                        previousBackStackEntry?.savedStateHandle?.set(MainFragment.LOGIN_REQUEST_KEY, result)
+                        previousBackStackEntry?.savedStateHandle?.set(MainFragment.LOGIN_REQUEST_KEY, successful)
                         navigateUp()
                     }
                 }
