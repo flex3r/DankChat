@@ -71,14 +71,15 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Prefere
     override fun onStop() {
         super.onStop()
         if (isBound) {
+            if (!isChangingConfigurations) {
+                twitchService?.shouldNotifyOnMention = true
+            }
+
             isBound = false
             try {
                 unbindService(twitchServiceConnection)
             } catch (t: Throwable) {
                 Log.e(TAG, Log.getStackTraceString(t))
-            }
-            if (!isChangingConfigurations) {
-                twitchService?.shouldNotifyOnMention = true
             }
         }
     }
