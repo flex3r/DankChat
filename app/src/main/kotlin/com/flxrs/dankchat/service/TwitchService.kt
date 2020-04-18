@@ -43,7 +43,6 @@ class TwitchService : Service(), CoroutineScope {
 
     override fun onDestroy() {
         coroutineContext.cancel()
-        shouldNotifyOnMention = false
         if (::manager.isInitialized) {
             manager.cancelAll()
         }

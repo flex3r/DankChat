@@ -135,7 +135,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Prefere
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             val binder = service as TwitchService.LocalBinder
             twitchService = binder.service
-            twitchService?.shouldNotifyOnMention = false
+            binder.service.shouldNotifyOnMention = false
             isBound = true
 
             if (pendingChannelsToClear.isNotEmpty()) {
