@@ -2,7 +2,11 @@ package com.flxrs.dankchat
 
 import android.app.Application
 import android.os.Build
+import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.provider.FontRequest
+import androidx.emoji.text.EmojiCompat
+import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.preference.PreferenceManager
 import coil.Coil
 import coil.ImageLoader
@@ -47,5 +51,27 @@ class DankChatApplication : Application() {
                 }
             }
         AppCompatDelegate.setDefaultNightMode(nightMode)
+
+        val fontRequest = FontRequest(
+            "com.google.android.gms.fonts",
+            "com.google.android.gms",
+            "Noto Color Emoji Compat",
+            R.array.com_google_android_gms_fonts_certs
+        )
+        val config = FontRequestEmojiCompatConfig(applicationContext, fontRequest)
+            .registerInitCallback(object : EmojiCompat.InitCallback() {
+                override fun onInitialized() {
+                    Log.i(TAG, "EmojiCompat initialized")
+                }
+
+                override fun onFailed(throwable: Throwable?) {
+                    Log.e(TAG, "EmojiCompat initialization failed", throwable)
+                }
+            })
+        EmojiCompat.init(config)
+    }
+
+    companion object {
+        private val TAG = DankChatApplication::class.java.simpleName
     }
 }

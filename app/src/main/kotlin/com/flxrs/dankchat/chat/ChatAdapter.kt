@@ -20,6 +20,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.text.bold
 import androidx.core.text.color
+import androidx.emoji.text.EmojiCompat
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -213,6 +214,14 @@ class ChatAdapter(
                 spannable.setSpan(userClickableSpan, prefixLength - fullDisplayName.length + badgesLength, prefixLength + badgesLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
 
+            val emojiCompat = EmojiCompat.get()
+            val messageStart = prefixLength + badgesLength
+            val messageEnd = messageStart + message.length
+            val spannableWithEmojis = when (emojiCompat.loadState) {
+                EmojiCompat.LOAD_STATE_SUCCEEDED -> emojiCompat.process(spannable, messageStart, messageEnd, Int.MAX_VALUE, EmojiCompat.REPLACE_STRATEGY_NON_EXISTENT)
+                else -> spannable
+            } as SpannableStringBuilder
+
             //links
             UrlDetector(message, UrlDetectorOptions.Default).detect().forEach { url ->
                 val clickableSpan = object : ClickableSpan() {
@@ -230,7 +239,7 @@ class ChatAdapter(
                 }
                 val start = prefixLength + badgesLength + message.indexOf(url.originalUrl)
                 val end = start + url.originalUrl.length
-                spannable.setSpan(clickableSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spannableWithEmojis.setSpan(clickableSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
 
             if (animateGifs && emotes.filter { it.isGif }.count() > 0) {
@@ -238,7 +247,7 @@ class ChatAdapter(
             }
 
             if (emotes.size > 5) {
-                text = spannable
+                text = spannableWithEmojis
             }
 
             val fullPrefix = prefixLength + badgesLength
@@ -249,9 +258,9 @@ class ChatAdapter(
                     emoteDrawable.start()
                 }
                 emoteDrawable.transformEmoteDrawable(scaleFactor, e)
-                setEmoteSpans(e, fullPrefix, emoteDrawable, spannable)
+                setEmoteSpans(e, fullPrefix, emoteDrawable, spannableWithEmojis)
             }
-            text = spannable
+            text = spannableWithEmojis
         }
     }
 

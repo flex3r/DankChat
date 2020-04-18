@@ -11,8 +11,8 @@ android {
         applicationId "com.flxrs.dankchat"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 123
-        versionName "1.8.8"
+        versionCode 124
+        versionName "1.8.9"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -97,6 +97,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0' // TODO Deprecated in newer version, switch to other observable pattern in the future
     implementation "com.google.android.material:material:$material_version"
+    implementation "androidx.emoji:emoji:$emoji_version"
 
     implementation "org.koin:koin-core:$koin_version"
     implementation "org.koin:koin-android:$koin_version"
