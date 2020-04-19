@@ -7,7 +7,7 @@ import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.service.TwitchRepository
 import com.flxrs.dankchat.service.api.TwitchApi
-import com.flxrs.dankchat.service.twitch.connection.ConnectionState
+import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.EmoteType
 import com.flxrs.dankchat.utils.extensions.timer
 import com.flxrs.dankchat.utils.extensions.toEmoteItems
@@ -67,7 +67,7 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
     val imageUploadedEvent = twitchRepository.imageUploadedEvent
     val showUploadProgress = MutableLiveData(false)
     val connectionState = activeChannel.switchMap { twitchRepository.getConnectionState(it) }
-    val canType = connectionState.map { it == ConnectionState.CONNECTED }
+    val canType = connectionState.map { it == SystemMessageType.CONNECTED }
     val bottomText = MediatorLiveData<String>().apply {
         addSource(roomStateEnabled) { value = buildBottomText() }
         addSource(streamInfoEnabled) { value = buildBottomText() }

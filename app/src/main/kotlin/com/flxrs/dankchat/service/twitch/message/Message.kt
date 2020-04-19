@@ -3,7 +3,7 @@ package com.flxrs.dankchat.service.twitch.message
 import android.graphics.Color
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.badge.Badge
-import com.flxrs.dankchat.service.twitch.connection.ConnectionState
+import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.TimeUtils
@@ -12,8 +12,8 @@ import com.flxrs.dankchat.utils.extensions.appendSpacesBetweenEmojiGroup
 sealed class Message {
     abstract val id: String
 
-    data class ConnectionMessage(
-        val state: ConnectionState,
+    data class SystemMessage(
+        val state: SystemMessageType,
         val time: String = TimeUtils.localTime(),
         override val id: String = System.nanoTime().toString()
     ) : Message()

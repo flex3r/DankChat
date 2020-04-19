@@ -42,7 +42,7 @@ import com.flxrs.dankchat.chat.suggestion.SpaceTokenizer
 import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.databinding.MainFragmentBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.service.twitch.connection.ConnectionState
+import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.utils.CustomMultiAutoCompleteTextView
 import com.flxrs.dankchat.utils.MediaUtils
 import com.flxrs.dankchat.utils.dialog.EditTextDialogFragment
@@ -105,9 +105,9 @@ class MainFragment : Fragment() {
             canType.observe(viewLifecycleOwner) { if (it) binding.inputLayout.setup() }
             connectionState.observe(viewLifecycleOwner) { hint ->
                 binding.inputLayout.hint = when (hint) {
-                    ConnectionState.CONNECTED -> getString(R.string.hint_connected)
-                    ConnectionState.NOT_LOGGED_IN -> getString(R.string.hint_not_logged_int)
-                    ConnectionState.DISCONNECTED -> getString(R.string.hint_disconnected)
+                    SystemMessageType.CONNECTED -> getString(R.string.hint_connected)
+                    SystemMessageType.NOT_LOGGED_IN -> getString(R.string.hint_not_logged_int)
+                    else -> getString(R.string.hint_disconnected)
                 }
             }
             bottomText.observe(viewLifecycleOwner) {
@@ -168,7 +168,7 @@ class MainFragment : Fragment() {
             }
 
             if (savedInstanceState == null && !viewModel.started) {
-                if (twitchPreferences.getMessageHistoryAcknowledge()) {
+                if (!twitchPreferences.getMessageHistoryAcknowledge()) {
                     MessageHistoryDisclaimerDialogFragment().show(parentFragmentManager, DISCLAIMER_TAG)
                 } else {
                     val oAuth = twitchPreferences.getOAuthKey() ?: ""
@@ -299,7 +299,7 @@ class MainFragment : Fragment() {
 
             val updatedChannels = viewModel.joinChannel(lowerCaseChannel)
             if (updatedChannels != null) {
-                viewModel.loadData(oauth, id, loadTwitchData = false, loadHistory = shouldLoadHistory, name = name)
+                viewModel.loadData(oauth, id, loadTwitchData = false, loadHistory = shouldLoadHistory, name = name, channelList = listOf(channel))
                 twitchPreferences.setChannelsString(updatedChannels.joinToString(","))
 
                 tabAdapter.addFragment(lowerCaseChannel)

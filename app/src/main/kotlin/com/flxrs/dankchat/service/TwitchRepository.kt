@@ -8,7 +8,7 @@ import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.irc.IrcMessage
-import com.flxrs.dankchat.service.twitch.connection.ConnectionState
+import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
@@ -34,7 +34,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
     private val messages = mutableMapOf<String, MutableLiveData<List<ChatItem>>>()
     private val emotes = mutableMapOf<String, MutableLiveData<List<GenericEmote>>>()
-    private val connectionState = mutableMapOf<String, MutableLiveData<ConnectionState>>()
+    private val connectionState = mutableMapOf<String, MutableLiveData<SystemMessageType>>()
     private val roomStates = mutableMapOf<String, MutableLiveData<Roomstate>>()
     private val users = mutableMapOf<String, MutableLiveData<LruCache<String, Boolean>>>()
     private val ignoredList = mutableListOf<Int>()
@@ -71,7 +71,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
     fun getChat(channel: String): LiveData<List<ChatItem>> = messages.getAndSet(channel, emptyList())
 
-    fun getConnectionState(channel: String): LiveData<ConnectionState> = connectionState.getAndSet(channel, ConnectionState.DISCONNECTED)
+    fun getConnectionState(channel: String): LiveData<SystemMessageType> = connectionState.getAndSet(channel, SystemMessageType.DISCONNECTED)
 
     fun getEmotes(channel: String): LiveData<List<GenericEmote>> = emotes.getAndSet(channel, emptyList())
 
@@ -97,6 +97,11 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
                 if (loadHistory) {
                     loadRecentMessages(channel)
+                } else {
+                    val currentChat = messages[channel]?.value ?: emptyList()
+                    messages.getAndSet(channel).postValue(
+                        listOf(ChatItem(Message.SystemMessage(state = SystemMessageType.NO_HISTORY_LOADED), false)).plus(currentChat)
+                    )
                 }
             }
         }
@@ -112,7 +117,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     fun handleDisconnect() {
         if (!hasDisconnected) {
             hasDisconnected = true
-            val state = ConnectionState.DISCONNECTED
+            val state = SystemMessageType.DISCONNECTED
             connectionState.keys.forEach {
                 connectionState.getAndSet(it).postValue(state)
             }
@@ -243,8 +248,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         hasDisconnected = false
 
         val hint = when {
-            isAnonymous -> ConnectionState.NOT_LOGGED_IN
-            else -> ConnectionState.CONNECTED
+            isAnonymous -> SystemMessageType.NOT_LOGGED_IN
+            else -> SystemMessageType.CONNECTED
         }
         makeAndPostConnectionMessage(hint, setOf(channel))
         connectionState.getAndSet(channel).postValue(hint)
@@ -326,11 +331,11 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         return LruCache(500)
     }
 
-    private fun makeAndPostConnectionMessage(state: ConnectionState, channels: Set<String> = messages.keys) {
+    private fun makeAndPostConnectionMessage(state: SystemMessageType, channels: Set<String> = messages.keys) {
         channels.forEach {
             val currentChat = messages[it]?.value ?: emptyList()
             messages.getAndSet(it).postValue(
-                currentChat.addAndLimit(ChatItem(Message.ConnectionMessage(state = state)))
+                currentChat.addAndLimit(ChatItem(Message.SystemMessage(state = state)))
             )
         }
     }

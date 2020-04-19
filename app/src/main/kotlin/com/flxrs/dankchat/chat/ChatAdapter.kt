@@ -29,7 +29,7 @@ import coil.Coil
 import coil.api.get
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatItemBinding
-import com.flxrs.dankchat.service.twitch.connection.ConnectionState
+import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.service.twitch.message.Message
 import com.flxrs.dankchat.utils.extensions.normalizeColor
@@ -73,13 +73,13 @@ class ChatAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         with(holder.binding.itemText) {
             when (val message = getItem(position).message) {
-                is Message.ConnectionMessage -> handleConnectionMessage(message)
+                is Message.SystemMessage -> handleSysteMessage(message)
                 is Message.TwitchMessage -> handleTwitchMessage(message, holder)
             }
         }
     }
 
-    private fun TextView.handleConnectionMessage(message: Message.ConnectionMessage) {
+    private fun TextView.handleSysteMessage(message: Message.SystemMessage) {
         alpha = 1.0f
         setBackgroundResource(android.R.color.transparent)
 
@@ -90,7 +90,8 @@ class ChatAdapter(
         val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
 
         val connectionText = when (message.state) {
-            ConnectionState.DISCONNECTED -> context.getString(R.string.system_message_disconnected)
+            SystemMessageType.DISCONNECTED -> context.getString(R.string.system_message_disconnected)
+            SystemMessageType.NO_HISTORY_LOADED -> context.getString(R.string.system_message_no_history)
             else -> context.getString(R.string.system_message_connected)
         }
         val withTime = when {

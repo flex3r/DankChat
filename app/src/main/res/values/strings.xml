@@ -68,6 +68,7 @@
     <string name="emote_menu_tab_global">Global</string>
     <string name="system_message_connected">Connected</string>
     <string name="system_message_disconnected">Disconnected</string>
+    <string name="system_message_no_history">You are not seeing any historical messages because you opted out of the recent-messages integration.</string>
     <string name="timed_out_message">&lt; Message deleted ></string>
     <string name="multi_entry_header_entry">Entry</string>
     <string name="multi_entry_header_regex">Regex</string>
@@ -76,7 +77,7 @@
     <string name="multi_entry_hint">Entry</string>
     <string name="login_expired">Login expired! Try logging in again.</string>
     <string name="message_history_disclaimer_title">Message history disclaimer</string>
-    <string name="message_history_disclaimer_message">DankChat loads messages from a 3rd party service and sends each channel\'s name you visit to this service.\nAs a result, channels you visited will have their messages stored.\n- You can opt-out of this service by following the instructions at https://www.twitch.tv/recent_messages.\n- You can also disable message history loading in the Settings.\n\nThe privacy statement of this service can be found here: https://recent-messages.robotty.de/privacy.</string>
+    <string name="message_history_disclaimer_message">DankChat loads historical messages from a third-party service on startup.\nTo get the messages, DankChat sends the names of the channels you have open to that service.\nThe service stores messages for channels you (and others) visit temporarily to provide the service.\n\n- To not use this feature, click Opt-Out below or disable message history loading in the settings later.\n- You can disable message history for your own channel by following the instructions at https://www.twitch.tv/recent_messages\n\nPrivacy statement: https://recent-messages.robotty.de/privacy</string>
     <string name="dialog_optin">Opt-in</string>
     <string name="dialog_optout">Opt-out</string>
 
