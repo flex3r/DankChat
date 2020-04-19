@@ -38,6 +38,10 @@ class DankChatPreferenceStore(context: Context) {
 
     fun setNuulsAcknowledge(ack: Boolean) = dankChatPreferences.edit { putBoolean(NUULS_ACK_KEY, ack) }
 
+    fun getMessageHistoryAcknowledge() = dankChatPreferences.getBoolean(MESSAGES_HISTORY_ACK_KEY, false)
+
+    fun setMessageHistoryAcknowledge(ack: Boolean) = dankChatPreferences.edit { putBoolean(MESSAGES_HISTORY_ACK_KEY, ack) }
+
     companion object {
         private const val LOGGED_IN_KEY = "loggedIn"
         private const val OAUTH_KEY = "oAuthKey"
@@ -46,5 +50,6 @@ class DankChatPreferenceStore(context: Context) {
         private const val CHANNELS_AS_STRING_KEY = "channelsAsStringKey"
         private const val ID_KEY = "idKey"
         private const val NUULS_ACK_KEY = "nuulsAckKey"
+        private const val MESSAGES_HISTORY_ACK_KEY = "messageHistoryAckKey"
     }
 }

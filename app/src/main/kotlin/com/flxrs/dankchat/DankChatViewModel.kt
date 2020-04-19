@@ -112,12 +112,12 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
 
     fun getChat(channel: String): LiveData<List<ChatItem>> = twitchRepository.getChat(channel)
 
-    fun loadData(oauth: String, id: Int, loadTwitchData: Boolean, name: String, channelList: List<String> = channels.value ?: emptyList()) {
+    fun loadData(oauth: String, id: Int, loadTwitchData: Boolean, loadHistory: Boolean, name: String, channelList: List<String> = channels.value ?: emptyList()) {
         val token = when {
             oauth.startsWith("oauth:", true) -> oauth.substringAfter(':')
             else -> oauth
         }
-        twitchRepository.loadData(channelList, token, id, loadTwitchData, name)
+        twitchRepository.loadData(channelList, token, id, loadTwitchData, loadHistory, name)
     }
 
     fun setActiveChannel(channel: String) {
@@ -159,7 +159,7 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
 
     fun reconnect(onlyIfNecessary: Boolean) = twitchRepository.reconnect(onlyIfNecessary)
 
-    fun close(name: String, oAuth: String, loadTwitchData: Boolean = false, userId: Int = 0) {
+    fun close(name: String, oAuth: String, loadTwitchData: Boolean = false,userId: Int = 0) {
         val channels = channels.value ?: emptyList()
         twitchRepository.close {
             connectAndJoinChannels(name, oAuth, channels)
@@ -167,6 +167,7 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
                 oauth = oAuth,
                 id = userId,
                 loadTwitchData = true,
+                loadHistory = false,
                 name = name,
                 channelList = channels
             )

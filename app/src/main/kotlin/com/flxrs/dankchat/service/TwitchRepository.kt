@@ -79,7 +79,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
     fun getUsers(channel: String): LiveData<LruCache<String, Boolean>> = users.getAndSet(channel, createUserCache())
 
-    fun loadData(channels: List<String>, oAuth: String, id: Int, loadTwitchData: Boolean, name: String) {
+    fun loadData(channels: List<String>, oAuth: String, id: Int, loadTwitchData: Boolean, loadHistory: Boolean, name: String) {
         this.name = name
         scope.launch(coroutineExceptionHandler) {
             ConcurrentLinkedQueue(channels).forEach { channel ->
@@ -94,7 +94,10 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
                 }
 
                 setSuggestions(channel)
-                loadRecentMessages(channel)
+
+                if (loadHistory) {
+                    loadRecentMessages(channel)
+                }
             }
         }
     }

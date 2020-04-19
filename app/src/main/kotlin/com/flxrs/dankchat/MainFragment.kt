@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.FileProvider
+import androidx.core.content.edit
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.core.view.updateLayoutParams
@@ -45,6 +46,7 @@ import com.flxrs.dankchat.service.twitch.connection.ConnectionState
 import com.flxrs.dankchat.utils.CustomMultiAutoCompleteTextView
 import com.flxrs.dankchat.utils.MediaUtils
 import com.flxrs.dankchat.utils.dialog.EditTextDialogFragment
+import com.flxrs.dankchat.utils.dialog.MessageHistoryDisclaimerDialogFragment
 import com.flxrs.dankchat.utils.extensions.hideKeyboard
 import com.flxrs.dankchat.utils.extensions.keepScreenOn
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -166,13 +168,18 @@ class MainFragment : Fragment() {
             }
 
             if (savedInstanceState == null && !viewModel.started) {
-                val oAuth = twitchPreferences.getOAuthKey() ?: ""
-                val name = twitchPreferences.getUserName() ?: ""
-                val id = twitchPreferences.getUserId()
-                viewModel.loadData(oauth = oAuth, id = id, loadTwitchData = true, name = name)
+                if (twitchPreferences.getMessageHistoryAcknowledge()) {
+                    MessageHistoryDisclaimerDialogFragment().show(parentFragmentManager, DISCLAIMER_TAG)
+                } else {
+                    val oAuth = twitchPreferences.getOAuthKey() ?: ""
+                    val name = twitchPreferences.getUserName() ?: ""
+                    val id = twitchPreferences.getUserId()
+                    val shouldLoadHistory = preferences.getBoolean(getString(R.string.preference_load_message_history_key), true)
+                    viewModel.loadData(oauth = oAuth, id = id, loadTwitchData = true, loadHistory = shouldLoadHistory, name = name)
 
-                if (name.isNotBlank() && oAuth.isNotBlank()) {
-                    showSnackbar(getString(R.string.snackbar_login, name))
+                    if (name.isNotBlank() && oAuth.isNotBlank()) {
+                        showSnackbar(getString(R.string.snackbar_login, name))
+                    }
                 }
             }
         }
@@ -267,6 +274,20 @@ class MainFragment : Fragment() {
         }
     }
 
+    fun onMessageHistoryDisclaimerResult(result: Boolean) {
+        twitchPreferences.setMessageHistoryAcknowledge(true)
+        preferences.edit { putBoolean(getString(R.string.preference_load_message_history_key), result) }
+
+        val oAuth = twitchPreferences.getOAuthKey() ?: ""
+        val name = twitchPreferences.getUserName() ?: ""
+        val id = twitchPreferences.getUserId()
+        viewModel.loadData(oauth = oAuth, id = id, loadTwitchData = true, loadHistory = result, name = name)
+
+        if (name.isNotBlank() && oAuth.isNotBlank()) {
+            showSnackbar(getString(R.string.snackbar_login, name))
+        }
+    }
+
     fun addChannel(channel: String) {
         val lowerCaseChannel = channel.toLowerCase(Locale.getDefault())
         val channels = viewModel.channels.value ?: emptyList()
@@ -274,10 +295,11 @@ class MainFragment : Fragment() {
             val oauth = twitchPreferences.getOAuthKey() ?: ""
             val id = twitchPreferences.getUserId()
             val name = twitchPreferences.getUserName() ?: ""
+            val shouldLoadHistory = preferences.getBoolean(getString(R.string.preference_load_message_history_key), true)
 
             val updatedChannels = viewModel.joinChannel(lowerCaseChannel)
             if (updatedChannels != null) {
-                viewModel.loadData(oauth, id, loadTwitchData = false, name = name)
+                viewModel.loadData(oauth, id, loadTwitchData = false, loadHistory = shouldLoadHistory, name = name)
                 twitchPreferences.setChannelsString(updatedChannels.joinToString(","))
 
                 tabAdapter.addFragment(lowerCaseChannel)
@@ -764,6 +786,7 @@ class MainFragment : Fragment() {
     companion object {
         private val TAG = MainFragment::class.java.simpleName
         private const val DIALOG_TAG = "add_channel_dialog"
+        private const val DISCLAIMER_TAG = "message_history_disclaimer_dialog"
         private const val GALLERY_REQUEST = 69
         private const val CAPTURE_REQUEST = 420
 

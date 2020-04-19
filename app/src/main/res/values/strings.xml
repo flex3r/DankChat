@@ -75,6 +75,10 @@
     <string name="multi_entry_remove_content_description">Remove the entry</string>
     <string name="multi_entry_hint">Entry</string>
     <string name="login_expired">Login expired! Try logging in again.</string>
+    <string name="message_history_disclaimer_title">Message history disclaimer</string>
+    <string name="message_history_disclaimer_message">DankChat loads messages from a 3rd party service and sends each channel\'s name you visit to this service.\nAs a result, channels you visited will have their messages stored.\n- You can opt-out of this service by following the instructions at https://www.twitch.tv/recent_messages.\n- You can also disable message history loading in the Settings.\n\nThe privacy statement of this service can be found here: https://recent-messages.robotty.de/privacy.</string>
+    <string name="dialog_optin">Opt-in</string>
+    <string name="dialog_optout">Opt-out</string>
 
     <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
     <string name="preference_timestamp_title">Show timestamps</string>
@@ -135,6 +139,8 @@
     <string name="preference_suggestions_key" translatable="false">suggestions_key</string>
     <string name="preference_suggestions_title">Emote and user suggestions</string>
     <string name="preference_suggestions_summary">Shows suggestions for emotes and active users while typing</string>
+    <string name="preference_load_message_history_title">Load message history on start</string>
+    <string name="preference_load_message_history_key" translatable="false">load_message_history_key</string>
 
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>

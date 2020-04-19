@@ -3,6 +3,7 @@ package com.flxrs.dankchat
 import android.content.*
 import android.os.Bundle
 import android.os.IBinder
+import android.os.Message
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -16,9 +17,10 @@ import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.NotificationsSettingsFragment
 import com.flxrs.dankchat.service.TwitchService
 import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
+import com.flxrs.dankchat.utils.dialog.MessageHistoryDisclaimerResultHandler
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
+class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, MessageHistoryDisclaimerResultHandler, PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
     private val channels = mutableListOf<String>()
     private val viewModel: DankChatViewModel by viewModel()
     private lateinit var twitchPreferences: DankChatPreferenceStore
@@ -94,6 +96,13 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Prefere
             fragment.addChannel(channel)
         }
         invalidateOptionsMenu()
+    }
+
+    override fun onDisclaimerResult(shouldLoadHistory: Boolean) {
+        val fragment = supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.first()
+        if (fragment is MainFragment) {
+            fragment.onMessageHistoryDisclaimerResult(shouldLoadHistory)
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
