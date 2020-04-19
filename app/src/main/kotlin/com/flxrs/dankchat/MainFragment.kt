@@ -410,6 +410,7 @@ class MainFragment : Fragment() {
             Linkify.addLinks(spannable, Linkify.WEB_URLS)
 
             MaterialAlertDialogBuilder(requireContext())
+                .setCancelable(false)
                 .setTitle(R.string.nuuls_upload_title)
                 .setMessage(spannable)
                 .setPositiveButton(R.string.dialog_positive_button) { dialog, _ ->
