@@ -12,10 +12,14 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.SpannableStringBuilder
+import android.text.method.LinkMovementMethod
+import android.text.util.Linkify
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.webkit.MimeTypeMap
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -402,16 +406,18 @@ class MainFragment : Fragment() {
 
     private inline fun showNuulsUploadDialogIfNotAcknowledged(crossinline action: () -> Unit) {
         if (!twitchPreferences.getNuulsAcknowledge()) {
+            val spannable = SpannableStringBuilder(getString(R.string.nuuls_upload_disclaimer))
+            Linkify.addLinks(spannable, Linkify.WEB_URLS)
+
             MaterialAlertDialogBuilder(requireContext())
-                .setCancelable(false)
                 .setTitle(R.string.nuuls_upload_title)
-                .setMessage(R.string.nuuls_upload_disclaimer)
+                .setMessage(spannable)
                 .setPositiveButton(R.string.dialog_positive_button) { dialog, _ ->
                     dialog.dismiss()
                     twitchPreferences.setNuulsAcknowledge(true)
                     action()
                 }
-                .show()
+                .show().also { it.findViewById<TextView>(android.R.id.message)?.movementMethod = LinkMovementMethod.getInstance() }
         } else action()
     }
 
