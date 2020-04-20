@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Message
         super.onStop()
         if (isBound) {
             if (!isChangingConfigurations) {
-                twitchService?.shouldNotifyOnMention = true
+                twitchService?.enableNotifications()
             }
 
             isBound = false
@@ -144,7 +144,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Message
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             val binder = service as TwitchService.LocalBinder
             twitchService = binder.service
-            binder.service.shouldNotifyOnMention = false
             isBound = true
 
             if (pendingChannelsToClear.isNotEmpty()) {
