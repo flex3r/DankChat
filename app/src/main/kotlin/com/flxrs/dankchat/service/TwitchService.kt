@@ -29,8 +29,8 @@ import kotlin.coroutines.CoroutineContext
 class TwitchService : Service(), CoroutineScope {
 
     private val binder = LocalBinder()
-    private lateinit var manager: NotificationManager
-    private lateinit var sharedPreferences: SharedPreferences
+    private val manager: NotificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
+    private val sharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
     private val notifications = mutableMapOf<String, MutableList<Int>>()
     private var shouldNotifyOnMention = false
     
@@ -43,9 +43,7 @@ class TwitchService : Service(), CoroutineScope {
 
     override fun onDestroy() {
         coroutineContext.cancel()
-        if (::manager.isInitialized) {
-            manager.cancelAll()
-        }
+        manager.cancelAll()
 
         stopForeground(true)
         stopSelf()
@@ -53,7 +51,6 @@ class TwitchService : Service(), CoroutineScope {
 
     override fun onCreate() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
             val name = getString(R.string.app_name)
             val channel = NotificationChannel(CHANNEL_ID_LOW, name, NotificationManager.IMPORTANCE_LOW).apply {
@@ -66,8 +63,6 @@ class TwitchService : Service(), CoroutineScope {
             manager.createNotificationChannel(mentionChannel)
             manager.createNotificationChannel(channel)
         }
-
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
