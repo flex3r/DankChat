@@ -2,7 +2,7 @@ package com.flxrs.dankchat.preferences.multientry
 
 sealed class MultiEntryItem {
 
-    data class Entry(var entry: String, var isRegex: Boolean) : MultiEntryItem()
+    data class Entry(var entry: String, var isRegex: Boolean, var matchUser: Boolean) : MultiEntryItem()
 
     object AddEntry : MultiEntryItem()
 

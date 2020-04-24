@@ -287,7 +287,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
             if (ignoredList.any { it == userId.toInt() }) return
         }
         val parsed = Message.TwitchMessage.parse(msg).map {
-            if (blacklistEntries.matches(it.message, it.emotes)) return
+            if (blacklistEntries.matches(it.message, it.name to it.displayName, it.emotes)) return
 
             it.checkForMention(name, customMentionEntries)
             val currentUsers = users[it.channel]?.value ?: createUserCache()
@@ -376,7 +376,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
             ?.filter { msg -> !ignoredList.any { msg.tags["user-id"]?.toInt() == it } }
             ?.map { Message.TwitchMessage.parse(it) }
             ?.flatten()
-            ?.filter { !blacklistEntries.matches(it.message, it.emotes) }
+            ?.filter { !blacklistEntries.matches(it.message, it.name to it.displayName, it.emotes) }
             ?.map {
                 it.checkForMention(name, customMentionEntries)
                 ChatItem(it)

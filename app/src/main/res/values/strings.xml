@@ -72,6 +72,7 @@
     <string name="timed_out_message">&lt; Message deleted ></string>
     <string name="multi_entry_header_entry">Entry</string>
     <string name="multi_entry_header_regex">Regex</string>
+    <string name="multi_entry_header_match_user">Match\nuser</string>
     <string name="multi_entry_add_entry">Add an entry</string>
     <string name="multi_entry_remove_content_description">Remove the entry</string>
     <string name="multi_entry_hint">Entry</string>

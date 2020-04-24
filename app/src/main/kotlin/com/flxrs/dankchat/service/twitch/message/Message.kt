@@ -36,9 +36,9 @@ sealed class Message {
     ) : Message() {
 
         fun checkForMention(username: String, mentions: List<Mention>) {
-            val mentionsWithUser = mentions.plus(Mention.User(username))
+            val mentionsWithUser = mentions.plus(Mention.User(username, false))
             isMention = !isMention && username.isNotBlank() && !name.equals(username, true)
-                    && !timedOut && !isSystem && mentionsWithUser.matches(message, emotes)
+                    && !timedOut && !isSystem && mentionsWithUser.matches(message, name to displayName, emotes)
         }
 
         companion object {

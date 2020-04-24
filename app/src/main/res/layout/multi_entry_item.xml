@@ -12,7 +12,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="4dp">
+        android:paddingBottom="4dp">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/multi_entry_input"
@@ -22,7 +22,7 @@
             android:layout_margin="4dp"
             android:hint="@string/multi_entry_hint"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/multi_entry_checkbox"
+            app:layout_constraintEnd_toStartOf="@+id/multi_entry_regex"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -36,15 +36,27 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/multi_entry_checkbox"
+            android:id="@+id/multi_entry_regex"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="4dp"
+            android:layout_marginStart="16dp"
             android:checked="@={entry.regex}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/multi_entry_match_user"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toEndOf="@id/multi_entry_input"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/multi_entry_match_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:checked="@={entry.matchUser}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/multi_entry_delete"
             app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toEndOf="@id/multi_entry_input"
+            app:layout_constraintStart_toEndOf="@id/multi_entry_regex"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
@@ -57,7 +69,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toEndOf="@id/multi_entry_checkbox"
+            app:layout_constraintStart_toEndOf="@id/multi_entry_match_user"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_clear_24dp"
             app:tint="?colorOnSurface" />

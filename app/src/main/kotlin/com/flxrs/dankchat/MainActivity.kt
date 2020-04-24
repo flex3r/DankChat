@@ -20,7 +20,7 @@ import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.MessageHistoryDisclaimerResultHandler
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, MessageHistoryDisclaimerResultHandler, PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
+class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialogResultHandler, MessageHistoryDisclaimerResultHandler, PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
     private val channels = mutableListOf<String>()
     private val viewModel: DankChatViewModel by viewModel()
     private lateinit var twitchPreferences: DankChatPreferenceStore
@@ -41,7 +41,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Message
 
         val filter = IntentFilter(SHUTDOWN_REQUEST_FILTER)
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, filter)
-        setContentView(R.layout.main_activity)
         twitchPreferences = DankChatPreferenceStore(this)
         twitchPreferences.getChannelsAsString()?.let { channels.addAll(it.split(',')) }
             ?: twitchPreferences.getChannels()?.let {

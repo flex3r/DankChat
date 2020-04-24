@@ -22,11 +22,11 @@ fun List<MultiEntryItem.Entry?>.mapToMention(): List<Mention> = mapNotNull { ent
     entry?.let {
         when {
             it.isRegex -> try {
-                Mention.RegexPhrase(it.entry.toPattern(Pattern.CASE_INSENSITIVE).toRegex())
+                Mention.RegexPhrase(it.entry.toPattern(Pattern.CASE_INSENSITIVE).toRegex(), it.matchUser)
             } catch (t: Throwable) {
                 null
             }
-            else -> Mention.Phrase(it.entry)
+            else -> Mention.Phrase(it.entry, it.matchUser)
         }
     }
 
