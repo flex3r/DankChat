@@ -8,6 +8,8 @@ import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
 
 object EmoteManager {
+    private val TAG = EmoteManager::class.java.simpleName
+
     private const val BASE_URL = "https://static-cdn.jtvnw.net/emoticons/v1/"
     private const val EMOTE_SIZE = "3.0"
     private const val LOW_RES_EMOTE_SIZE = "2.0"
@@ -113,7 +115,7 @@ object EmoteManager {
 
     suspend fun setTwitchEmotes(twitchResult: EmoteEntities.Twitch.Result) = withContext(Dispatchers.Default) {
         val setMapping = twitchResult.sets.keys
-            .mapNotNull { TwitchApi.getUserSet(it) }
+            .map { TwitchApi.getUserSet(it) ?: EmoteEntities.Twitch.EmoteSet(it, "", "", 1) }
             .associateBy({ it.id }, { it.channelName })
 
         twitchEmotes.clear()
