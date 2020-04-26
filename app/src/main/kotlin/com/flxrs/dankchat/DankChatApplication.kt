@@ -8,16 +8,18 @@ import androidx.core.provider.FontRequest
 import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.preference.PreferenceManager
-import coil.Coil
 import coil.ImageLoader
+import coil.ImageLoaderFactory
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import coil.util.CoilUtils
 import com.jakewharton.threetenabp.AndroidThreeTen
+import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 
-class DankChatApplication : Application() {
+class DankChatApplication : Application(), ImageLoaderFactory {
     override fun onCreate() {
         super.onCreate()
         startKoin {
@@ -25,18 +27,6 @@ class DankChatApplication : Application() {
             androidContext(applicationContext)
 
             modules(appModules)
-        }
-
-        Coil.setDefaultImageLoader {
-            ImageLoader(this) {
-                componentRegistry {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        add(ImageDecoderDecoder())
-                    } else {
-                        add(GifDecoder())
-                    }
-                }
-            }
         }
 
         AndroidThreeTen.init(this)
@@ -69,6 +59,23 @@ class DankChatApplication : Application() {
                 }
             })
         EmojiCompat.init(config)
+    }
+
+    override fun newImageLoader(): ImageLoader {
+        return ImageLoader.Builder(this)
+            .okHttpClient {
+                OkHttpClient.Builder()
+                    .cache(CoilUtils.createDefaultCache(this))
+                    .build()
+            }
+            .componentRegistry {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    add(ImageDecoderDecoder())
+                } else {
+                    add(GifDecoder())
+                }
+            }
+            .build()
     }
 
     companion object {

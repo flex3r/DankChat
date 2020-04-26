@@ -29,6 +29,7 @@ import org.koin.core.parameter.parametersOf
 import java.io.File
 import java.nio.ByteBuffer
 import java.util.concurrent.ConcurrentLinkedQueue
+import kotlin.system.measureTimeMillis
 
 class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
@@ -370,21 +371,24 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         emotes.getAndSet(channel).postValue(EmoteManager.getEmotes(channel))
     }
 
-    private suspend fun loadRecentMessages(channel: String) = withContext(Dispatchers.Default) {
-        TwitchApi.getRecentMessages(channel)
-            ?.messages?.asSequence()?.map { IrcMessage.parse(it) }
-            ?.filter { msg -> !ignoredList.any { msg.tags["user-id"]?.toInt() == it } }
-            ?.map { Message.TwitchMessage.parse(it) }
-            ?.flatten()
-            ?.filter { !blacklistEntries.matches(it.message, it.name to it.displayName, it.emotes) }
-            ?.map {
-                it.checkForMention(name, customMentionEntries)
-                ChatItem(it)
-            }?.toList()
-            ?.let {
-                val current = messages[channel]?.value ?: emptyList()
-                messages.getAndSet(channel).postValue(it.addAndLimit(current, true))
+    private suspend fun loadRecentMessages(channel: String): Unit? = withContext(Dispatchers.Default) {
+        val result = TwitchApi.getRecentMessages(channel) ?: return@withContext
+        val items = mutableListOf<ChatItem>()
+        measureTimeMillis {
+            for (message in result.messages) {
+                val parsedIrc = IrcMessage.parse(message)
+                if (ignoredList.any { parsedIrc.tags["user-id"]?.toInt() == it }) continue
+
+                for (msg in Message.TwitchMessage.parse(parsedIrc)) {
+                    if (!blacklistEntries.matches(msg.message, msg.name to msg.displayName, msg.emotes)) {
+                        items.add(ChatItem(msg))
+                    }
+                }
             }
+        }.let { Log.i(TAG, "Parsing message history for #$channel took $it ms") }
+
+        val current = messages[channel]?.value ?: emptyList()
+        messages.getAndSet(channel).postValue(items.addAndLimit(current, true))
     }
 
     companion object {

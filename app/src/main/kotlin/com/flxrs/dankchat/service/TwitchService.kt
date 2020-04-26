@@ -129,9 +129,6 @@ class TwitchService : Service(), CoroutineScope {
             for (items in messageChannel) {
                 items.forEach {item ->
                     with(item.message as Message.TwitchMessage) {
-                        // Preload emotes
-                        emotes.forEach { Coil.load(this@TwitchService, it.url) }
-
                         if (shouldNotifyOnMention && isMention && notificationsEnabled) {
                             createMentionNotification(channel, name, message)
                         }
