@@ -26,7 +26,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.Coil
-import coil.api.get
+import coil.request.GetRequest
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatItemBinding
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
@@ -181,7 +181,11 @@ class ChatAdapter(
                 spannable.append("  ")
                 val start = spannable.length - 2
                 val end = spannable.length - 1
-                Coil.get(badge.url).apply {
+                val request = GetRequest.Builder(context)
+                    .data(badge.url)
+                    .build()
+
+                Coil.execute(request).drawable?.apply {
                     val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
                     setBounds(0, 0, width, lineHeight)
 
@@ -253,13 +257,17 @@ class ChatAdapter(
 
             val fullPrefix = prefixLength + badgesLength
             emotes.forEach { e ->
-                val emoteDrawable = Coil.get(e.url)
-                if (emoteDrawable is Animatable && animateGifs) {
-                    emoteDrawable.callback = gifCallback
-                    emoteDrawable.start()
-                }
-                emoteDrawable.transformEmoteDrawable(scaleFactor, e)
-                setEmoteSpans(e, fullPrefix, emoteDrawable, spannableWithEmojis)
+                val request = GetRequest.Builder(context)
+                    .data(e.url)
+                    .build()
+                Coil.execute(request).drawable?.apply {
+                        if (this is Animatable && animateGifs) {
+                            callback = gifCallback
+                            start()
+                        }
+                        transformEmoteDrawable(scaleFactor, e)
+                        setEmoteSpans(e, fullPrefix, this, spannableWithEmojis)
+                    }
             }
             text = spannableWithEmojis
         }
