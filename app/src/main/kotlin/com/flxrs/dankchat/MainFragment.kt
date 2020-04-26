@@ -569,7 +569,7 @@ class MainFragment : Fragment() {
 
     private fun showSnackbar(message: String) {
         binding.inputLayout.post {
-            Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).apply {
+            Snackbar.make(binding.coordinator, message, Snackbar.LENGTH_SHORT).apply {
                 if (binding.inputLayout.isVisible) anchorView = binding.inputLayout
             }.show()
         }

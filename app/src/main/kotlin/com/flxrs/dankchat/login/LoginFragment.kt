@@ -60,7 +60,7 @@ class LoginFragment : Fragment() {
         @SuppressWarnings("DEPRECATION")
         override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
 
-            Snackbar.make(binding.root, "Error $errorCode: $description", Snackbar.LENGTH_LONG)
+            Snackbar.make(binding.loginLayout, "Error $errorCode: $description", Snackbar.LENGTH_LONG)
             Log.e(TAG, "Error $errorCode in WebView: $description")
         }
 
@@ -68,7 +68,7 @@ class LoginFragment : Fragment() {
         override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
             val message = error?.description ?: return
             val code = error.errorCode
-            Snackbar.make(binding.root, "Error $code: $message", Snackbar.LENGTH_LONG)
+            Snackbar.make(binding.loginLayout, "Error $code: $message", Snackbar.LENGTH_LONG)
             Log.e(TAG, "Error $code in WebView: $message")
 //            with(findNavController()) {
 //                previousBackStackEntry?.savedStateHandle?.set(MainFragment.LOGIN_REQUEST_KEY, false)
