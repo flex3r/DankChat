@@ -6,7 +6,6 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
@@ -14,26 +13,22 @@ import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.preference.PreferenceManager
-import coil.Coil
-import coil.api.load
 import com.flxrs.dankchat.MainActivity
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.service.twitch.message.Message
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
 import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.get
 import kotlin.coroutines.CoroutineContext
 
-class TwitchService : Service(), CoroutineScope {
+class TwitchService : Service(), CoroutineScope, KoinComponent {
 
     private val binder = LocalBinder()
     private val manager: NotificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
     private val sharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
     private val notifications = mutableMapOf<String, MutableList<Int>>()
-    private var shouldNotifyOnMention = false
-    
+    private val twitchRepository: TwitchRepository = get()
+    var shouldNotifyOnMention = false
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + Job()
 
@@ -117,17 +112,13 @@ class TwitchService : Service(), CoroutineScope {
         startForeground(NOTIFICATION_ID, notification)
     }
 
-    fun enableNotifications() {
-        shouldNotifyOnMention = true
-    }
-
-    fun checkForNotification(messageChannel: Channel<List<ChatItem>>) {
+    fun checkForNotification() {
         shouldNotifyOnMention = false
         cancel()
         launch {
             val notificationsEnabled = sharedPreferences.getBoolean(getString(R.string.preference_notification_key), true)
-            for (items in messageChannel) {
-                items.forEach {item ->
+            for (items in twitchRepository.messageChannel) {
+                items.forEach { item ->
                     with(item.message as Message.TwitchMessage) {
                         if (shouldNotifyOnMention && isMention && notificationsEnabled) {
                             createMentionNotification(channel, name, message)

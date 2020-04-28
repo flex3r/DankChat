@@ -26,7 +26,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.Coil
-import coil.request.GetRequest
+import coil.api.get
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatItemBinding
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
@@ -181,17 +181,17 @@ class ChatAdapter(
                 spannable.append("  ")
                 val start = spannable.length - 2
                 val end = spannable.length - 1
-                val request = GetRequest.Builder(context)
-                    .data(badge.url)
-                    .build()
 
-                Coil.execute(request).drawable?.apply {
+                Coil.get(badge.url).apply {
+//                val result = Coil.execute(GetRequest.Builder(context).data(badge.url).build())
+//                if (result is SuccessResult) {
+//                    result.drawable.apply {
                     val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
                     setBounds(0, 0, width, lineHeight)
-
                     val imageSpan = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
                     spannable.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 }
+                //}
             }
 
             val normalizedColor = color.normalizeColor(isDarkMode)
@@ -257,18 +257,20 @@ class ChatAdapter(
 
             val fullPrefix = prefixLength + badgesLength
             emotes.forEach { e ->
-                val request = GetRequest.Builder(context)
-                    .data(e.url)
-                    .build()
-                Coil.execute(request).drawable?.apply {
-                        if (this is Animatable && animateGifs) {
-                            callback = gifCallback
-                            start()
-                        }
-                        transformEmoteDrawable(scaleFactor, e)
-                        setEmoteSpans(e, fullPrefix, this, spannableWithEmojis)
+                Coil.get(e.url).apply {
+//                val result = Coil.execute(GetRequest.Builder(context).data(e.url).build())
+//                if (result is SuccessResult) {
+//                    result.drawable.apply {
+                    if (this is Animatable && animateGifs) {
+                        callback = gifCallback
+                        start()
                     }
+                    transformEmoteDrawable(scaleFactor, e)
+                    setEmoteSpans(e, fullPrefix, this, spannableWithEmojis)
+                }
             }
+            //}
+
             text = spannableWithEmojis
         }
     }

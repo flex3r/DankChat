@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialog
         super.onStop()
         if (isBound) {
             if (!isChangingConfigurations) {
-                twitchService?.enableNotifications()
+                twitchService?.shouldNotifyOnMention = true
             }
 
             isBound = false
@@ -162,7 +162,7 @@ class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialog
                 viewModel.connectAndJoinChannels(name, oauth)
             }
 
-            binder.service.checkForNotification(viewModel.messageChannel)
+            binder.service.checkForNotification()
         }
 
         override fun onServiceDisconnected(className: ComponentName?) {
