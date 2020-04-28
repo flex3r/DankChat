@@ -59,21 +59,16 @@ class LoginFragment : Fragment() {
     private inner class TwitchAuthClient : WebViewClient() {
         @SuppressWarnings("DEPRECATION")
         override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
-
-            Snackbar.make(binding.loginLayout, "Error $errorCode: $description", Snackbar.LENGTH_LONG)
+            showErrorSnackBar(errorCode, description)
             Log.e(TAG, "Error $errorCode in WebView: $description")
         }
 
         @RequiresApi(Build.VERSION_CODES.M)
         override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
-            val message = error?.description ?: return
-            val code = error.errorCode
-            Snackbar.make(binding.loginLayout, "Error $code: $message", Snackbar.LENGTH_LONG)
+            val message = error?.description
+            val code = error?.errorCode
+            showErrorSnackBar(code, message)
             Log.e(TAG, "Error $code in WebView: $message")
-//            with(findNavController()) {
-//                previousBackStackEntry?.savedStateHandle?.set(MainFragment.LOGIN_REQUEST_KEY, false)
-//                navigateUp()
-//            }
         }
 
         @SuppressWarnings("DEPRECATION")
@@ -111,6 +106,10 @@ class LoginFragment : Fragment() {
                     }
                 }
             }
+        }
+        private fun showErrorSnackBar(errorCode: Int?, errorDescription: CharSequence?) {
+            val rootView = activity?.findViewById<View>(android.R.id.content) ?: return
+            Snackbar.make(rootView, "Error $errorCode: $errorDescription", Snackbar.LENGTH_LONG).show()
         }
     }
 
