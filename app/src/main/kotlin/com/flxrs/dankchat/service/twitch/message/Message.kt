@@ -32,7 +32,8 @@ sealed class Message {
         override val id: String,
         var timedOut: Boolean = false,
         val isSystem: Boolean = false,
-        var isMention: Boolean = false
+        var isMention: Boolean = false,
+        var isReward: Boolean = false
     ) : Message() {
 
         fun checkForMention(username: String, mentions: List<Mention>) {
@@ -93,10 +94,11 @@ sealed class Message {
                     message = fixedContent,
                     emotes = emotes.plus(otherEmotes).distinctBy { it.code },
                     isAction = isAction,
-                    isNotify = isNotify || tags["msg-id"] == "highlighted-message",
+                    isNotify = isNotify,
                     badges = badges,
                     id = id,
-                    timedOut = tags["rm-deleted"] == "1"
+                    timedOut = tags["rm-deleted"] == "1",
+                    isReward = tags["msg-id"] == "highlighted-message"
                 )
             }
 

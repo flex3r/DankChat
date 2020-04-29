@@ -381,6 +381,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
                 for (msg in Message.TwitchMessage.parse(parsedIrc)) {
                     if (!blacklistEntries.matches(msg.message, msg.name to msg.displayName, msg.emotes)) {
+                        msg.checkForMention(name, customMentionEntries)
                         items.add(ChatItem(msg))
                     }
                 }
@@ -393,7 +394,6 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
     companion object {
         private val TAG = TwitchRepository::class.java.simpleName
-        private val INVISIBLE_CHAR =
-            String(ByteBuffer.allocate(4).putInt(0x000E0000).array(), Charsets.UTF_32)
+        private val INVISIBLE_CHAR = String(ByteBuffer.allocate(4).putInt(0x000E0000).array(), Charsets.UTF_32)
     }
 }

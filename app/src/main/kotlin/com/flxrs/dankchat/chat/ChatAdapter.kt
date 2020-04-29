@@ -73,13 +73,13 @@ class ChatAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         with(holder.binding.itemText) {
             when (val message = getItem(position).message) {
-                is Message.SystemMessage -> handleSysteMessage(message)
+                is Message.SystemMessage -> handleSystemMessage(message)
                 is Message.TwitchMessage -> handleTwitchMessage(message, holder)
             }
         }
     }
 
-    private fun TextView.handleSysteMessage(message: Message.SystemMessage) {
+    private fun TextView.handleSystemMessage(message: Message.SystemMessage) {
         alpha = 1.0f
         setBackgroundResource(android.R.color.transparent)
 
@@ -154,6 +154,7 @@ class ChatAdapter(
 
             val background = when {
                 isNotify -> if (isDarkMode) R.color.color_highlight_dark else R.color.color_highlight_light
+                isReward -> if (isDarkMode) R.color.color_reward_dark else R.color.color_reward_light
                 isMention -> if (isDarkMode) R.color.color_mention_dark else R.color.color_mention_light
                 else -> android.R.color.transparent
             }
