@@ -3,6 +3,7 @@ package com.flxrs.dankchat.utils.extensions
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
+import android.util.Log
 import com.flxrs.dankchat.chat.menu.EmoteItem
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
@@ -34,6 +35,21 @@ fun List<MultiEntryItem.Entry?>.mapToMention(): List<Mention> = mapNotNull { ent
 
 fun Set<String>?.mapToMention(adapter: JsonAdapter<MultiEntryItem.Entry>?): List<Mention> {
     return this?.mapNotNull { adapter?.fromJson(it) }?.mapToMention().orEmpty()
+}
+
+inline fun <V> measureTimeValue(block: () -> V): Pair<V, Long> {
+    val start = System.currentTimeMillis()
+    return block() to System.currentTimeMillis() - start
+}
+
+inline fun <V> measureTimeAndLog(tag: String, toLoad: String, block: () -> V): V {
+    val (result, time) = measureTimeValue(block)
+    if (result != null) {
+        Log.i(tag, "Loaded $toLoad in $time ms")
+    } else {
+        Log.i(tag, "Failed to load $toLoad ($time ms")
+    }
+    return result
 }
 
 @Suppress("DEPRECATION") // Deprecated for third party Services.

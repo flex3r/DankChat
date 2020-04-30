@@ -13,8 +13,9 @@ import org.koin.dsl.module
 
 val appModules = module {
     factory { CoroutineScope(Dispatchers.IO + Job()) }
-    factory { (client: OkHttpClient, request: Request, onDisconnect: (() -> Unit)?, onMessage: (IrcMessage) -> Unit) ->
+    factory { (connectionName: String, client: OkHttpClient, request: Request, onDisconnect: (() -> Unit)?, onMessage: (IrcMessage) -> Unit) ->
         WebSocketConnection(
+            connectionName = connectionName,
             scope = get(),
             client = client,
             request = request,

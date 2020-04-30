@@ -28,7 +28,6 @@ import org.koin.core.get
 import org.koin.core.parameter.parametersOf
 import java.io.File
 import java.nio.ByteBuffer
-import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.system.measureTimeMillis
 
 class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
@@ -63,8 +62,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         .url("wss://irc-ws.chat.twitch.tv")
         .build()
 
-    private val readConnection: WebSocketConnection = get { parametersOf(client, request, ::handleDisconnect, ::onReaderMessage) }
-    private val writeConnection: WebSocketConnection = get { parametersOf(client, request, null, ::onWriterMessage) }
+    private val readConnection: WebSocketConnection = get { parametersOf("reader", client, request, ::handleDisconnect, ::onReaderMessage) }
+    private val writeConnection: WebSocketConnection = get { parametersOf("writer", client, request, null, ::onWriterMessage) }
 
     val imageUploadedEvent = SingleLiveEvent<Pair<String?, File>>()
     val messageChannel = Channel<List<ChatItem>>()
@@ -83,26 +82,27 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     fun loadData(channels: List<String>, oAuth: String, id: Int, loadTwitchData: Boolean, loadHistory: Boolean, name: String) {
         this.name = name
         scope.launch(coroutineExceptionHandler) {
-            ConcurrentLinkedQueue(channels).forEach { channel ->
-                TwitchApi.getUserIdFromName(oAuth, channel)?.let {
-                    loadBadges(channel, it)
-                    load3rdPartyEmotes(channel, it)
-                }
-                if (oAuth.isNotBlank() && loadTwitchData && channel == channels.first()) {
-                    loadedTwitchEmotes = false
-                    loadIgnores(oAuth, id)
-                    loadTwitchEmotes(oAuth, id)
-                }
+            if (oAuth.isNotBlank() && loadTwitchData) {
+                loadedTwitchEmotes = false
+                loadIgnores(oAuth, id)
+                loadTwitchEmotes(oAuth, id)
+            }
+            channels.forEach { channel ->
+                launch {
+                    TwitchApi.getUserIdFromName(oAuth, channel)?.let {
+                        loadBadges(channel, it)
+                        load3rdPartyEmotes(channel, it)
+                    }
+                    setSuggestions(channel)
 
-                setSuggestions(channel)
-
-                if (loadHistory) {
-                    loadRecentMessages(channel)
-                } else {
-                    val currentChat = messages[channel]?.value ?: emptyList()
-                    messages.getAndSet(channel).postValue(
-                        listOf(ChatItem(Message.SystemMessage(state = SystemMessageType.NO_HISTORY_LOADED), false)).plus(currentChat)
-                    )
+                    if (loadHistory) {
+                        loadRecentMessages(channel)
+                    } else {
+                        val currentChat = messages[channel]?.value ?: emptyList()
+                        messages.getAndSet(channel).postValue(
+                            listOf(ChatItem(Message.SystemMessage(state = SystemMessageType.NO_HISTORY_LOADED), false)).plus(currentChat)
+                        )
+                    }
                 }
             }
         }
@@ -344,27 +344,35 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     private suspend fun loadBadges(channel: String, id: String) = withContext(Dispatchers.Default) {
         if (!loadedGlobalBadges) {
             loadedGlobalBadges = true
-            TwitchApi.getGlobalBadges()?.let { EmoteManager.setGlobalBadges(it) }
+            measureTimeAndLog(TAG, "global badges") {
+                TwitchApi.getGlobalBadges()?.also { EmoteManager.setGlobalBadges(it) }
+            }
         }
-        TwitchApi.getChannelBadges(id)?.let { EmoteManager.setChannelBadges(channel, it) }
+        measureTimeAndLog(TAG, "channel badges for #$id") {
+            TwitchApi.getChannelBadges(id)?.also { EmoteManager.setChannelBadges(channel, it) }
+        }
     }
 
     private suspend fun loadTwitchEmotes(oAuth: String, id: Int) = withContext(Dispatchers.Default) {
         if (!loadedTwitchEmotes) {
-            TwitchApi.getUserEmotes(oAuth, id)?.let { EmoteManager.setTwitchEmotes(it) }
             loadedTwitchEmotes = true
+            measureTimeAndLog(TAG, "twitch emotes for #$id") {
+                TwitchApi.getUserEmotes(oAuth, id)?.also { EmoteManager.setTwitchEmotes(it) }
+            }
         }
     }
 
     private suspend fun load3rdPartyEmotes(channel: String, id: String) = withContext(Dispatchers.IO) {
-        TwitchApi.getFFZChannelEmotes(id)?.let { EmoteManager.setFFZEmotes(channel, it) }
-        TwitchApi.getBTTVChannelEmotes(id)?.let { EmoteManager.setBTTVEmotes(channel, it) }
+        measureTimeMillis {
+            TwitchApi.getFFZChannelEmotes(id)?.let { EmoteManager.setFFZEmotes(channel, it) }
+            TwitchApi.getBTTVChannelEmotes(id)?.let { EmoteManager.setBTTVEmotes(channel, it) }
 
-        if (!loadedGlobalEmotes) {
-            TwitchApi.getFFZGlobalEmotes()?.let { EmoteManager.setFFZGlobalEmotes(it) }
-            TwitchApi.getBTTVGlobalEmotes()?.let { EmoteManager.setBTTVGlobalEmotes(it) }
-            loadedGlobalEmotes = true
-        }
+            if (!loadedGlobalEmotes) {
+                TwitchApi.getFFZGlobalEmotes()?.let { EmoteManager.setFFZGlobalEmotes(it) }
+                TwitchApi.getBTTVGlobalEmotes()?.let { EmoteManager.setBTTVGlobalEmotes(it) }
+                loadedGlobalEmotes = true
+            }
+        }.let { Log.i(TAG, "Loaded 3rd party emotes for #$channel in $it ms") }
     }
 
     private suspend fun setSuggestions(channel: String) = withContext(Dispatchers.Default) {

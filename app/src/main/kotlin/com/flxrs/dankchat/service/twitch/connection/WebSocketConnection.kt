@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.service.twitch.connection
 
+import android.util.Log
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.utils.extensions.timer
 import kotlinx.coroutines.CoroutineScope
@@ -12,6 +13,7 @@ import kotlin.math.min
 import kotlin.math.roundToLong
 
 class WebSocketConnection(
+    private val connectionName: String,
     private val scope: CoroutineScope,
     private val client: OkHttpClient,
     private val request: Request,
@@ -129,6 +131,7 @@ class WebSocketConnection(
             onDisconnect?.invoke()
             pingJob?.cancel()
 
+            Log.e(TAG, "[$connectionName] connection failed: ${t.message}, attempting to reconnect #${reconnectAttempts + 1}.. ")
             attemptReconnect(true)
         }
 
@@ -150,10 +153,12 @@ class WebSocketConnection(
             text.removeSuffix("\r\n").split("\r\n").forEach { line ->
                 val ircMessage = IrcMessage.parse(line)
                 if (ircMessage.isLoginFailed()) {
+                    Log.e(TAG, "[$connectionName] authentication failed with expired token, closing connection..")
                     close(null)
                 }
                 when (ircMessage.command) {
                     "376" -> {
+                        Log.i(TAG, "[$connectionName] connected to irc")
                         socket?.joinChannels(channels)
                         pingJob = setupPingInterval()
                     }
@@ -171,5 +176,6 @@ class WebSocketConnection(
         private const val RECONNECT_MULTIPLIER = 250
         private const val RECONNECT_JITTER = 100
         private const val PING_INTERVAL = 5 * 60 * 1000L
+        private val TAG = WebSocketConnection::class.java.simpleName
     }
 }
