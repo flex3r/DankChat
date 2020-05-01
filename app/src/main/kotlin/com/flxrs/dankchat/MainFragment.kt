@@ -104,6 +104,10 @@ class MainFragment : Fragment() {
             appbarEnabled.observe(viewLifecycleOwner) { changeActionBarVisibility(it) }
             canType.observe(viewLifecycleOwner) { if (it) binding.inputLayout.setup() }
             connectionState.observe(viewLifecycleOwner) { hint ->
+                if (hint == SystemMessageType.NOT_LOGGED_IN && twitchPreferences.getMessageHistoryAcknowledge()) {
+                    showApiChangeInformationIfNotAcknowledged()
+                }
+
                 binding.inputLayout.hint = when (hint) {
                     SystemMessageType.CONNECTED -> getString(R.string.hint_connected)
                     SystemMessageType.NOT_LOGGED_IN -> getString(R.string.hint_not_logged_int)
@@ -278,6 +282,10 @@ class MainFragment : Fragment() {
         twitchPreferences.setMessageHistoryAcknowledge(true)
         preferences.edit { putBoolean(getString(R.string.preference_load_message_history_key), result) }
 
+        if (viewModel.connectionState.value == SystemMessageType.NOT_LOGGED_IN) {
+            showApiChangeInformationIfNotAcknowledged()
+        }
+
         val oAuth = twitchPreferences.getOAuthKey() ?: ""
         val name = twitchPreferences.getUserName() ?: ""
         val id = twitchPreferences.getUserId()
@@ -423,6 +431,17 @@ class MainFragment : Fragment() {
             setNotifyOnChange(false)
             clear()
             addAll(suggestions)
+        }
+    }
+
+    private fun showApiChangeInformationIfNotAcknowledged() {
+        if (!twitchPreferences.getApiChangeAcknowledge()) {
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.anon_connection_disclaimer_title)
+                .setMessage(R.string.anon_connection_disclaimer_messsage)
+                .setPositiveButton(R.string.dialog_positive_button) {dialog, _ -> dialog.dismiss()}
+                .setOnDismissListener { twitchPreferences.setApiChangeAcknowledge(true) }
+                .show()
         }
     }
 
