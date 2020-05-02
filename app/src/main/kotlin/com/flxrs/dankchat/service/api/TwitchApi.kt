@@ -5,6 +5,7 @@ import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.service.api.model.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.CacheControl
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -13,6 +14,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.File
+import java.lang.IllegalArgumentException
 
 object TwitchApi {
     private val TAG = TwitchApi::class.java.simpleName
@@ -45,7 +47,17 @@ object TwitchApi {
     const val CLIENT_ID = "xu7vd1i6tlr0ak45q1li2wdc0lrma8"
     const val LOGIN_URL = "$BASE_LOGIN_URL&client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URL&scope=$SCOPES"
 
-    private val client = OkHttpClient.Builder().build()
+    private val client: OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor { chain ->
+            val request = chain.request()
+            try {
+                chain.proceed(request)
+            } catch (e: IllegalArgumentException) {
+                val new = request.newBuilder().cacheControl(CacheControl.FORCE_NETWORK).build()
+                chain.proceed(new)
+            }
+        }
+        .build()
 
     private val service = Retrofit.Builder()
         .baseUrl(KRAKEN_BASE_URL)

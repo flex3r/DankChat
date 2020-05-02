@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SeekBarPreference
 import androidx.preference.SwitchPreference
+import com.flxrs.dankchat.MainFragment
 import com.flxrs.dankchat.R
 import kotlinx.android.synthetic.main.settings_fragment.view.*
 
@@ -61,6 +63,7 @@ class AppearanceSettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun setDarkMode(darkMode: Boolean) {
+        findNavController().previousBackStackEntry?.savedStateHandle?.set(MainFragment.THEME_CHANGED_KEY, true)
         AppCompatDelegate.setDefaultNightMode(
             when {
                 darkMode -> AppCompatDelegate.MODE_NIGHT_YES

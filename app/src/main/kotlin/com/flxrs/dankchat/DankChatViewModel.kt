@@ -14,12 +14,10 @@ import com.flxrs.dankchat.utils.extensions.toEmoteItems
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewModel() {
-
-    private var fetchJob: Job? = null
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, t ->
         Log.e(TAG, Log.getStackTraceString(t))
@@ -157,7 +155,7 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
 
     fun reconnect(onlyIfNecessary: Boolean) = twitchRepository.reconnect(onlyIfNecessary)
 
-    fun close(name: String, oAuth: String, loadTwitchData: Boolean = false,userId: Int = 0) {
+    fun close(name: String, oAuth: String, loadTwitchData: Boolean = false, userId: Int = 0) {
         val channels = channels.value ?: emptyList()
         twitchRepository.close {
             connectAndJoinChannels(name, oAuth, channels)
@@ -189,23 +187,20 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
     fun setBlacklistEntries(stringSet: Set<String>?) =
         twitchRepository.setBlacklistEntries(stringSet)
 
-    fun fetchStreamData(oAuth: String, stringBuilder: (viewers: Int) -> String) {
-        val channels = channels.value ?: return
+    suspend fun fetchStreamData(oAuth: String, stringBuilder: (viewers: Int) -> String) = withContext(coroutineExceptionHandler) {
+        val channels = channels.value ?: return@withContext
         val token = when {
             oAuth.startsWith("oauth:", true) -> oAuth.substringAfter(':')
             else -> oAuth
         }
-        fetchJob?.cancel()
-        fetchJob = viewModelScope.launch(coroutineExceptionHandler) {
-            timer(STREAM_REFRESH_RATE) {
-                val data = mutableMapOf<String, String>()
-                channels.forEach { channel ->
-                    TwitchApi.getStream(token, channel)?.let {
-                        data[channel] = stringBuilder(it.viewers)
-                    }
+        timer(STREAM_REFRESH_RATE) {
+            val data = mutableMapOf<String, String>()
+            channels.forEach { channel ->
+                TwitchApi.getStream(token, channel)?.let {
+                    data[channel] = stringBuilder(it.viewers)
                 }
-                streamData.value = data
             }
+            streamData.value = data
         }
     }
 

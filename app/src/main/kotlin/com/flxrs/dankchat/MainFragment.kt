@@ -30,6 +30,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
@@ -136,6 +137,10 @@ class MainFragment : Fragment() {
             getLiveData<Boolean>(LOGOUT_REQUEST_KEY).observe(viewLifecycleOwner) {
                 showLogoutConfirmationDialog()
                 remove<Boolean>(LOGOUT_REQUEST_KEY)
+            }
+            getLiveData<Boolean>(THEME_CHANGED_KEY).observe(viewLifecycleOwner) {
+                remove<Boolean>(THEME_CHANGED_KEY)
+                binding.root.post { requireActivity().recreate() }
             }
         }
 
@@ -340,11 +345,13 @@ class MainFragment : Fragment() {
     }
 
     private fun fetchStreamInformation() {
-        val key = getString(R.string.preference_streaminfo_key)
-        if (preferences.getBoolean(key, true)) {
-            val oAuth = twitchPreferences.getOAuthKey() ?: return
-            viewModel.fetchStreamData(oAuth) {
-                resources.getQuantityString(R.plurals.viewers, it, it)
+        lifecycleScope.launchWhenResumed {
+            val key = getString(R.string.preference_streaminfo_key)
+            if (preferences.getBoolean(key, true)) {
+                val oAuth = twitchPreferences.getOAuthKey() ?: return@launchWhenResumed
+                viewModel.fetchStreamData(oAuth) {
+                    resources.getQuantityString(R.plurals.viewers, it, it)
+                }
             }
         }
     }
@@ -439,7 +446,7 @@ class MainFragment : Fragment() {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.anon_connection_disclaimer_title)
                 .setMessage(R.string.anon_connection_disclaimer_messsage)
-                .setPositiveButton(R.string.dialog_positive_button) {dialog, _ -> dialog.dismiss()}
+                .setPositiveButton(R.string.dialog_positive_button) { dialog, _ -> dialog.dismiss() }
                 .setOnDismissListener { twitchPreferences.setApiChangeAcknowledge(true) }
                 .show()
         }
@@ -811,5 +818,6 @@ class MainFragment : Fragment() {
 
         const val LOGOUT_REQUEST_KEY = "logout_key"
         const val LOGIN_REQUEST_KEY = "login_key"
+        const val THEME_CHANGED_KEY = "theme_changed_key"
     }
 }
