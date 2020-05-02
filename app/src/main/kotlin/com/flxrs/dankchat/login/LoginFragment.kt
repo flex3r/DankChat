@@ -20,7 +20,6 @@ import com.flxrs.dankchat.databinding.LoginFragmentBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.launch
 import java.util.*
 
 class LoginFragment : Fragment() {
@@ -89,7 +88,7 @@ class LoginFragment : Fragment() {
         private fun parseOAuthToken(fragment: String) {
             if (fragment.startsWith("access_token=")) {
                 val token = fragment.substringAfter("access_token=").substringBefore("&scope=")
-                lifecycleScope.launch {
+                lifecycleScope.launchWhenResumed {
                     val successful = TwitchApi.validateUser(token)?.let {
                         if (it.login.isNotBlank()) {
                             DankChatPreferenceStore(requireContext()).apply {
@@ -107,6 +106,7 @@ class LoginFragment : Fragment() {
                 }
             }
         }
+
         private fun showErrorSnackBar(errorCode: Int?, errorDescription: CharSequence?) {
             val rootView = activity?.findViewById<View>(android.R.id.content) ?: return
             Snackbar.make(rootView, "Error $errorCode: $errorDescription", Snackbar.LENGTH_LONG).show()

@@ -32,6 +32,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
+import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
@@ -66,6 +67,7 @@ import kotlin.math.roundToInt
 class MainFragment : Fragment() {
 
     private val viewModel: DankChatViewModel by sharedViewModel()
+    private val navController: NavController by lazy { findNavController() }
     private lateinit var twitchPreferences: DankChatPreferenceStore
     private lateinit var preferenceListener: SharedPreferences.OnSharedPreferenceChangeListener
     private lateinit var preferences: SharedPreferences
@@ -128,7 +130,6 @@ class MainFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val navController = findNavController()
         navController.currentBackStackEntry?.savedStateHandle?.apply {
             getLiveData<Boolean>(LOGIN_REQUEST_KEY).observe(viewLifecycleOwner) {
                 handleLoginRequest(it)
@@ -254,7 +255,7 @@ class MainFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_reconnect -> viewModel.reconnect(false)
-            R.id.menu_login -> findNavController().navigate(R.id.action_mainFragment_to_loginFragment)
+            R.id.menu_login -> navController.navigate(R.id.action_mainFragment_to_loginFragment)
             R.id.menu_add -> openAddChannelDialog()
             R.id.menu_open -> openChannel()
             R.id.menu_remove -> removeChannel()
@@ -263,7 +264,7 @@ class MainFragment : Fragment() {
             R.id.menu_capture_image -> startCameraCapture()
             R.id.menu_hide -> viewModel.appbarEnabled.value = false
             R.id.menu_clear -> clear()
-            R.id.menu_settings -> findNavController().navigate(R.id.action_mainFragment_to_overviewSettingsFragment)
+            R.id.menu_settings -> navController.navigate(R.id.action_mainFragment_to_overviewSettingsFragment)
             else -> return false
         }
         return true

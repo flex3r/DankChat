@@ -3,11 +3,11 @@ package com.flxrs.dankchat
 import android.content.*
 import android.os.Bundle
 import android.os.IBinder
-import android.os.Message
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialog
     private lateinit var broadcastReceiver: BroadcastReceiver
     private var twitchService: TwitchService? = null
     private val pendingChannelsToClear = mutableListOf<String>()
+    private val navController: NavController by lazy { findNavController(R.id.main_content) }
 
     private val twitchServiceConnection = TwitchServiceConnection()
     var isBound = false
@@ -86,7 +87,7 @@ class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialog
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return findNavController(R.id.main_content).navigateUp() || super.onSupportNavigateUp()
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
     override fun onAddChannelDialogResult(channel: String) {
@@ -111,7 +112,6 @@ class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialog
     }
 
     override fun onPreferenceStartFragment(caller: PreferenceFragmentCompat, pref: Preference): Boolean {
-        val navController = findNavController(R.id.main_content)
         when (pref.fragment.substringAfterLast(".")) {
             AppearanceSettingsFragment::class.java.simpleName -> navController.navigate(R.id.action_overviewSettingsFragment_to_appearanceSettingsFragment)
             NotificationsSettingsFragment::class.java.simpleName -> navController.navigate(R.id.action_overviewSettingsFragment_to_notificationsSettingsFragment)
