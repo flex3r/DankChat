@@ -25,7 +25,6 @@ import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 class ChatFragment : Fragment() {
 
     private val viewModel: DankChatViewModel by sharedViewModel()
-    private lateinit var itemDecoration: DividerItemDecoration
     private lateinit var binding: ChatFragmentBinding
     private lateinit var adapter: ChatAdapter
     private lateinit var manager: LinearLayoutManager
@@ -62,7 +61,7 @@ class ChatFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        itemDecoration = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
+        val itemDecoration = DividerItemDecoration(view.context, LinearLayoutManager.VERTICAL)
 
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { pref, key ->
             when (key) {
@@ -76,10 +75,10 @@ class ChatFragment : Fragment() {
                 }
             }
         }
-        preferences = PreferenceManager.getDefaultSharedPreferences(requireContext()).apply {
+        preferences = PreferenceManager.getDefaultSharedPreferences(view.context).apply {
             registerOnSharedPreferenceChangeListener(preferenceListener)
-            getBoolean(getString(R.string.preference_line_separator_key), false).let {
-                if (it) binding.chat.addItemDecoration(itemDecoration)
+            if (getBoolean(getString(R.string.preference_line_separator_key), false)) {
+                binding.chat.addItemDecoration(itemDecoration)
             }
         }
     }
