@@ -52,6 +52,8 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
     }
 
     var started = false
+    var lastMessage: Map<String, String> = twitchRepository.lastMessage
+
     val inputEnabled = MutableLiveData(true)
     val appbarEnabled = MutableLiveData(true)
     val shouldShowViewPager = MediatorLiveData<Boolean>().apply {

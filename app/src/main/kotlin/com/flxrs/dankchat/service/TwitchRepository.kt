@@ -46,7 +46,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     private var loadedGlobalBadges = false
     private var loadedGlobalEmotes = false
     private var loadedTwitchEmotes = false
-    private var lastMessage = ""
+    var lastMessage = mutableMapOf<String, String>()
 
     private var name: String = ""
     private var customMentionEntries = listOf<Mention>()
@@ -111,6 +111,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     fun removeChannelData(channel: String) {
         messages[channel]?.postValue(emptyList())
         messages.remove(channel)
+        lastMessage.remove(channel)
         TwitchApi.clearChannelFromLoaded(channel)
     }
 
@@ -185,12 +186,12 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
     private inline fun prepareMessage(channel: String, message: String, onResult: (msg: String) -> Unit) {
         if (message.isNotBlank()) {
-            val messageWithSuffix = when (lastMessage) {
+            val messageWithSuffix = when (lastMessage[channel] ?: "") {
                 message -> "$message $INVISIBLE_CHAR"
                 else -> message
             }
 
-            lastMessage = messageWithSuffix
+            lastMessage[channel] = messageWithSuffix
             onResult("PRIVMSG #$channel :$messageWithSuffix")
         }
     }

@@ -79,8 +79,6 @@ class MainFragment : Fragment() {
     private lateinit var suggestionAdapter: EmoteSuggestionsArrayAdapter
     private var currentImagePath = ""
 
-    private var currentChannel: String? = null
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         tabAdapter = ChatTabAdapter(childFragmentManager, lifecycle)
         emoteMenuAdapter = EmoteMenuAdapter(::insertEmote)
@@ -358,10 +356,18 @@ class MainFragment : Fragment() {
     }
 
     private fun sendMessage(): Boolean {
-        currentChannel?.let {
+        viewModel.activeChannel.value?.let {
             val msg = binding.input.text.toString()
             viewModel.sendMessage(it, msg)
             binding.input.setText("")
+        }
+        return true
+    }
+
+    private fun getLastMessage(): Boolean {
+        viewModel.activeChannel.value?.let {
+            val lastMessage = viewModel.lastMessage[it] ?: return false
+            binding.input.setText(lastMessage)
         }
         return true
     }
@@ -644,7 +650,6 @@ class MainFragment : Fragment() {
                 binding.viewPager.setCurrentItem(newPos, false)
             } else {
                 twitchPreferences.setChannelsString(null)
-                currentChannel = null
             }
 
             binding.viewPager.offscreenPageLimit = calculatePageLimit(channels.size)
@@ -664,7 +669,6 @@ class MainFragment : Fragment() {
             override fun onPageSelected(position: Int) {
                 if (position in 0 until tabAdapter.titleList.size) {
                     val newChannel = tabAdapter.titleList[position].toLowerCase(Locale.getDefault())
-                    currentChannel = newChannel
                     viewModel.setActiveChannel(newChannel)
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                     binding.input.dismissDropDown()
@@ -675,6 +679,7 @@ class MainFragment : Fragment() {
 
     private fun TextInputLayout.setup() {
         setEndIconOnClickListener { sendMessage() }
+        setEndIconOnLongClickListener { getLastMessage() }
         setStartIconOnClickListener {
             if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED
                 || bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED
