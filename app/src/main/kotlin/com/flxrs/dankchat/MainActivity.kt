@@ -18,6 +18,7 @@ import com.flxrs.dankchat.preferences.NotificationsSettingsFragment
 import com.flxrs.dankchat.service.TwitchService
 import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.MessageHistoryDisclaimerResultHandler
+import com.flxrs.dankchat.utils.extensions.navigateSafe
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialogResultHandler, MessageHistoryDisclaimerResultHandler, PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
@@ -113,9 +114,9 @@ class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialog
 
     override fun onPreferenceStartFragment(caller: PreferenceFragmentCompat, pref: Preference): Boolean {
         when (pref.fragment.substringAfterLast(".")) {
-            AppearanceSettingsFragment::class.java.simpleName -> navController.navigate(R.id.action_overviewSettingsFragment_to_appearanceSettingsFragment)
-            NotificationsSettingsFragment::class.java.simpleName -> navController.navigate(R.id.action_overviewSettingsFragment_to_notificationsSettingsFragment)
-            ChatSettingsFragment::class.java.simpleName -> navController.navigate(R.id.action_overviewSettingsFragment_to_chatSettingsFragment)
+            AppearanceSettingsFragment::class.java.simpleName -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_appearanceSettingsFragment)
+            NotificationsSettingsFragment::class.java.simpleName -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_notificationsSettingsFragment)
+            ChatSettingsFragment::class.java.simpleName -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_chatSettingsFragment)
             else -> return false
         }
         return true

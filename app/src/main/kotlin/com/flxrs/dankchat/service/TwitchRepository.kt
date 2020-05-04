@@ -191,7 +191,6 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
                 else -> message
             }
 
-            lastMessage[channel] = messageWithSuffix
             onResult("PRIVMSG #$channel :$messageWithSuffix")
         }
     }
@@ -289,6 +288,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
             if (ignoredList.any { it == userId.toInt() }) return
         }
         val parsed = Message.TwitchMessage.parse(msg).map {
+            if (it.name == name) lastMessage[it.channel] = it.message
             if (blacklistEntries.matches(it.message, it.name to it.displayName, it.emotes)) return
 
             it.checkForMention(name, customMentionEntries)

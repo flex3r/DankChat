@@ -51,6 +51,7 @@ import com.flxrs.dankchat.utils.dialog.EditTextDialogFragment
 import com.flxrs.dankchat.utils.dialog.MessageHistoryDisclaimerDialogFragment
 import com.flxrs.dankchat.utils.extensions.hideKeyboard
 import com.flxrs.dankchat.utils.extensions.keepScreenOn
+import com.flxrs.dankchat.utils.extensions.navigateSafe
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -253,7 +254,7 @@ class MainFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_reconnect -> viewModel.reconnect(false)
-            R.id.menu_login -> navController.navigate(R.id.action_mainFragment_to_loginFragment)
+            R.id.menu_login -> navigateSafe(R.id.action_mainFragment_to_loginFragment)
             R.id.menu_add -> openAddChannelDialog()
             R.id.menu_open -> openChannel()
             R.id.menu_remove -> removeChannel()
@@ -262,7 +263,7 @@ class MainFragment : Fragment() {
             R.id.menu_capture_image -> startCameraCapture()
             R.id.menu_hide -> viewModel.appbarEnabled.value = false
             R.id.menu_clear -> clear()
-            R.id.menu_settings -> navController.navigate(R.id.action_mainFragment_to_overviewSettingsFragment)
+            R.id.menu_settings -> navigateSafe(R.id.action_mainFragment_to_overviewSettingsFragment)
             else -> return false
         }
         return true
@@ -368,6 +369,7 @@ class MainFragment : Fragment() {
         viewModel.activeChannel.value?.let {
             val lastMessage = viewModel.lastMessage[it] ?: return false
             binding.input.setText(lastMessage)
+            binding.input.setSelection(lastMessage.length)
         }
         return true
     }
