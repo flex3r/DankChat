@@ -34,14 +34,9 @@ class OverviewSettingsFragment : PreferenceFragmentCompat() {
                 navController.previousBackStackEntry?.savedStateHandle?.set(MainFragment.THEME_CHANGED_KEY, true)
             })
         }
-    }
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.overview_settings, rootKey)
-
+        val isLoggedIn = DankChatPreferenceStore(view.context).isLoggedin()
         findPreference<Preference>(getString(R.string.preference_about_key))?.summary = getString(R.string.preference_about_summary, BuildConfig.VERSION_NAME)
-
-        val isLoggedIn = DankChatPreferenceStore(requireContext()).isLoggedin()
         findPreference<Preference>(getString(R.string.preference_logout_key))?.apply {
             isEnabled = isLoggedIn
             setOnPreferenceClickListener {
@@ -52,5 +47,9 @@ class OverviewSettingsFragment : PreferenceFragmentCompat() {
                 true
             }
         }
+    }
+
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        setPreferencesFromResource(R.xml.overview_settings, rootKey)
     }
 }

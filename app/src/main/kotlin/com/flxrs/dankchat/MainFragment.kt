@@ -2,10 +2,7 @@ package com.flxrs.dankchat
 
 import android.Manifest
 import android.app.Activity
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
@@ -144,7 +141,7 @@ class MainFragment : Fragment() {
             }
         }
 
-        initPreferences()
+        initPreferences(view.context)
         val channels = twitchPreferences.getChannelsAsString()?.split(',') ?: twitchPreferences.getChannels()?.also { twitchPreferences.setChannels(null) }
         channels?.forEach { tabAdapter.addFragment(it) }
         val asList = channels?.toList() ?: emptyList()
@@ -564,7 +561,7 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun initPreferences() {
+    private fun initPreferences(context: Context) {
         val roomStateKey = getString(R.string.preference_roomstate_key)
         val streamInfoKey = getString(R.string.preference_streaminfo_key)
         val inputKey = getString(R.string.preference_show_input_key)
@@ -572,7 +569,7 @@ class MainFragment : Fragment() {
         val blacklistKey = getString(R.string.preference_blacklist_key)
         val keepScreenOnKey = getString(R.string.preference_keep_screen_on_key)
         val suggestionsKey = getString(R.string.preference_suggestions_key)
-        twitchPreferences = DankChatPreferenceStore(requireContext())
+        twitchPreferences = DankChatPreferenceStore(context)
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
             when (key) {
                 roomStateKey -> viewModel.setRoomStateEnabled(p.getBoolean(key, true))
@@ -587,7 +584,7 @@ class MainFragment : Fragment() {
                 suggestionsKey -> binding.input.setSuggestionAdapter(p.getBoolean(key, true), suggestionAdapter)
             }
         }
-        preferences = PreferenceManager.getDefaultSharedPreferences(requireContext()).apply {
+        preferences = PreferenceManager.getDefaultSharedPreferences(context).apply {
             registerOnSharedPreferenceChangeListener(preferenceListener)
             keepScreenOn(getBoolean(keepScreenOnKey, true))
             viewModel.apply {

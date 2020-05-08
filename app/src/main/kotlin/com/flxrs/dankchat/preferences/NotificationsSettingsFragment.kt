@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.preferences
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,8 +21,7 @@ import kotlinx.android.synthetic.main.settings_fragment.view.*
 
 class NotificationsSettingsFragment : PreferenceFragmentCompat() {
 
-    private val moshi = Moshi.Builder().build()
-    private val adapter = moshi.adapter(MultiEntryItem.Entry::class.java)
+    private val adapter = Moshi.Builder().build().adapter(MultiEntryItem.Entry::class.java)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -34,32 +34,32 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat() {
                 title = getString(R.string.preference_notifications_mentions_header)
             }
         }
+
+        findPreference<Preference>(getString(R.string.preference_custom_mentions_key))?.apply {
+            setOnPreferenceClickListener { showMultiEntryPreference(view.context, key, sharedPreferences) }
+        }
+        findPreference<Preference>(getString(R.string.preference_blacklist_key))?.apply {
+            setOnPreferenceClickListener { showMultiEntryPreference(view.context, key, sharedPreferences) }
+        }
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.notifications_settings, rootKey)
-
-        findPreference<Preference>(getString(R.string.preference_custom_mentions_key))?.apply {
-            setOnPreferenceClickListener { showMultiEntryPreference(key, sharedPreferences) }
-        }
-        findPreference<Preference>(getString(R.string.preference_blacklist_key))?.apply {
-            setOnPreferenceClickListener { showMultiEntryPreference(key, sharedPreferences) }
-        }
     }
 
-    private fun showMultiEntryPreference(key: String, sharedPreferences: SharedPreferences): Boolean {
+    private fun showMultiEntryPreference(context: Context, key: String, sharedPreferences: SharedPreferences): Boolean {
         val entryStringSet = sharedPreferences.getStringSet(key, emptySet()) ?: emptySet()
         val entries = entryStringSet.mapNotNull { adapter.fromJson(it) }.sortedBy { it.entry }.plus(MultiEntryItem.AddEntry)
 
         val entryAdapter = MultiEntryAdapter(entries.toMutableList())
-        val binding = MultiEntryBottomsheetBinding.inflate(LayoutInflater.from(requireContext())).apply {
-            multiEntryList.layoutManager = LinearLayoutManager(requireContext())
+        val binding = MultiEntryBottomsheetBinding.inflate(LayoutInflater.from(context)).apply {
+            multiEntryList.layoutManager = LinearLayoutManager(context)
             multiEntryList.adapter = entryAdapter
             multiEntrySheet.updateLayoutParams {
                 height = (resources.displayMetrics.heightPixels * 0.6f).toInt()
             }
         }
-        BottomSheetDialog(requireContext()).apply {
+        BottomSheetDialog(context).apply {
             setContentView(binding.root)
             setOnDismissListener {
                 val stringSet = entryAdapter.entries

@@ -24,7 +24,8 @@ import java.util.*
 
 class LoginFragment : Fragment() {
 
-    lateinit var binding: LoginFragmentBinding
+    private lateinit var binding: LoginFragmentBinding
+    private lateinit var dankChatPreferenceStore: DankChatPreferenceStore
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -53,6 +54,7 @@ class LoginFragment : Fragment() {
                 title = getString(R.string.login_title)
             }
         }
+        dankChatPreferenceStore = DankChatPreferenceStore(view.context)
     }
 
     private inner class TwitchAuthClient : WebViewClient() {
@@ -91,7 +93,7 @@ class LoginFragment : Fragment() {
                 lifecycleScope.launchWhenResumed {
                     val successful = TwitchApi.validateUser(token)?.let {
                         if (it.login.isNotBlank()) {
-                            DankChatPreferenceStore(requireContext()).apply {
+                            dankChatPreferenceStore.apply {
                                 setOAuthKey("oauth:$token")
                                 setUserName(it.login.toLowerCase(Locale.getDefault()))
                                 setUserId(it.userId)

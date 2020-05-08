@@ -37,13 +37,11 @@ class ChatFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         channel = requireArguments().getString(CHANNEL_ARG, "")
 
-        manager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false).apply { stackFromEnd = true }
-        adapter = ChatAdapter(::scrollToPosition, ::mentionUser, ::copyMessage)
+
 
         binding = ChatFragmentBinding.inflate(inflater, container, false).apply {
             lifecycleOwner = this@ChatFragment
             vm = viewModel
-            chat.setup(adapter, manager)
             //chatLayout.layoutTransition.setAnimateParentHierarchy(false)
             scrollBottom.setOnClickListener {
                 scrollBottom.visibility = View.GONE
@@ -62,6 +60,9 @@ class ChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val itemDecoration = DividerItemDecoration(view.context, LinearLayoutManager.VERTICAL)
+        manager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false).apply { stackFromEnd = true }
+        adapter = ChatAdapter(::scrollToPosition, ::mentionUser, ::copyMessage)
+        binding.chat.setup(adapter, manager)
 
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { pref, key ->
             when (key) {
