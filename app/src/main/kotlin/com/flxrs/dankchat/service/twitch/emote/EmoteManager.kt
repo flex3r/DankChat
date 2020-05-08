@@ -3,6 +3,7 @@ package com.flxrs.dankchat.service.twitch.emote
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.api.model.BadgeEntities
 import com.flxrs.dankchat.service.api.model.EmoteEntities
+import com.flxrs.dankchat.utils.extensions.supplementaryCodePointPositions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
@@ -49,32 +50,22 @@ object EmoteManager {
             return emptyList()
         }
 
-        val unicodeFixPositions = mutableListOf<Int>()
-        var offset = 0
-        var index = 0
-        while (offset < original.length) {
-            val codepoint = original.codePointAt(offset)
-            if (Character.isSupplementaryCodePoint(codepoint)) {
-                unicodeFixPositions.add(offset - index)
-                index++
-            }
-            offset += Character.charCount(codepoint)
-        }
-
+        // Characters with supplementary codepoints have two chars and need to be considered into emote positioning
+        val supplementaryCodePointPositions = original.supplementaryCodePointPositions
         val emotes = arrayListOf<ChatMessageEmote>()
         emoteTag.split('/').forEach { emote ->
             val (id, positions) = emote.split(':')
-            val parsedPositons = positions.split(',').map { pos ->
+            val parsedPositions = positions.split(',').map { pos ->
                 val start = pos.substringBefore('-').toInt()
                 val end = pos.substringAfter('-').toInt()
                 return@map start to end + 1
             }
-            val fixedParsedPositions = parsedPositons.map { (start, end) ->
-                val extra = unicodeFixPositions.count { it < start }
+            val fixedParsedPositions = parsedPositions.map { (start, end) ->
+                val extra = supplementaryCodePointPositions.count { it < start }
                 val spaceExtra = spaces.count { it < start + extra }
                 return@map "${(start + extra + spaceExtra)}-${(end + extra + spaceExtra)}"
             }
-            val code = original.substring(parsedPositons.first().first, parsedPositons.first().second)
+            val code = original.substring(parsedPositions.first().first, parsedPositions.first().second)
 
             emotes += ChatMessageEmote(
                 positions = fixedParsedPositions,
