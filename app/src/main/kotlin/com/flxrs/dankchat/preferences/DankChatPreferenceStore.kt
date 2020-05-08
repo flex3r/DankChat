@@ -6,45 +6,43 @@ import androidx.core.content.edit
 import com.flxrs.dankchat.R
 
 class DankChatPreferenceStore(context: Context) {
-
-
     private val dankChatPreferences: SharedPreferences = context.getSharedPreferences(context.getString(R.string.shared_preference_key), Context.MODE_PRIVATE)
 
-    fun isLoggedin(): Boolean = dankChatPreferences.getBoolean(LOGGED_IN_KEY, false)
+    var isLoggedIn: Boolean
+        get() = dankChatPreferences.getBoolean(LOGGED_IN_KEY, false)
+        set(value) = dankChatPreferences.edit { putBoolean(LOGGED_IN_KEY, value) }
 
-    fun setLoggedIn(boolean: Boolean) = dankChatPreferences.edit { putBoolean(LOGGED_IN_KEY, boolean) }
+    var oAuthKey: String?
+        get() = dankChatPreferences.getString(OAUTH_KEY, null)
+        set(value) = dankChatPreferences.edit { putString(OAUTH_KEY, value) }
 
-    fun getOAuthKey(): String? = dankChatPreferences.getString(OAUTH_KEY, null)
+    var channelsString: String?
+        get() = dankChatPreferences.getString(CHANNELS_AS_STRING_KEY, null)
+        set(value) = dankChatPreferences.edit { putString(CHANNELS_AS_STRING_KEY, value) }
 
-    fun setOAuthKey(oauth: String) = dankChatPreferences.edit { putString(OAUTH_KEY, oauth) }
+    var channels: MutableSet<String>?
+        get() = dankChatPreferences.getStringSet(CHANNELS_KEY, setOf())
+        set(value) = dankChatPreferences.edit { putStringSet(CHANNELS_KEY, value) }
 
-    fun getChannelsAsString(): String? = dankChatPreferences.getString(CHANNELS_AS_STRING_KEY, null)
+    var userName: String?
+        get() = dankChatPreferences.getString(NAME_KEY, null)
+        set(value) = dankChatPreferences.edit { putString(NAME_KEY, value) }
 
-    fun setChannelsString(channels: String?) = dankChatPreferences.edit { putString(CHANNELS_AS_STRING_KEY, channels) }
+    var userId: Int
+        get() = dankChatPreferences.getInt(ID_KEY, 0)
+        set(value) = dankChatPreferences.edit { putInt(ID_KEY, value) }
 
-    fun getChannels(): MutableSet<String>? = dankChatPreferences.getStringSet(CHANNELS_KEY, setOf())
+    var hasNuulsAcknowledged: Boolean
+        get() = dankChatPreferences.getBoolean(NUULS_ACK_KEY, false)
+        set(value) = dankChatPreferences.edit { putBoolean(NUULS_ACK_KEY, value) }
 
-    fun setChannels(channels: MutableSet<String>?) = dankChatPreferences.edit { putStringSet(CHANNELS_KEY, channels) }
+    var hasMessageHistoryAcknowledged: Boolean
+        get() = dankChatPreferences.getBoolean(MESSAGES_HISTORY_ACK_KEY, false)
+        set(value) = dankChatPreferences.edit { putBoolean(MESSAGES_HISTORY_ACK_KEY, value) }
 
-    fun getUserName(): String? = dankChatPreferences.getString(NAME_KEY, null)
-
-    fun setUserName(name: String) = dankChatPreferences.edit { putString(NAME_KEY, name) }
-
-    fun getUserId(): Int = dankChatPreferences.getInt(ID_KEY, 0)
-
-    fun setUserId(id: Int) = dankChatPreferences.edit { putInt(ID_KEY, id) }
-
-    fun getNuulsAcknowledge() = dankChatPreferences.getBoolean(NUULS_ACK_KEY, false)
-
-    fun setNuulsAcknowledge(ack: Boolean) = dankChatPreferences.edit { putBoolean(NUULS_ACK_KEY, ack) }
-
-    fun getMessageHistoryAcknowledge() = dankChatPreferences.getBoolean(MESSAGES_HISTORY_ACK_KEY, false)
-
-    fun setMessageHistoryAcknowledge(ack: Boolean) = dankChatPreferences.edit { putBoolean(MESSAGES_HISTORY_ACK_KEY, ack) }
-
-    fun getApiChangeAcknowledge() = dankChatPreferences.getBoolean(API_CHANGE_ACK_KEY, false)
-
-    fun setApiChangeAcknowledge(ack: Boolean) = dankChatPreferences.edit { putBoolean(API_CHANGE_ACK_KEY, ack) }
+    var hasApiChangeAcknowledged: Boolean
+        get() = dankChatPreferences.getBoolean(API_CHANGE_ACK_KEY, false)
+        set(value) = dankChatPreferences.edit { putBoolean(API_CHANGE_ACK_KEY, value) }
 
     companion object {
         private const val LOGGED_IN_KEY = "loggedIn"

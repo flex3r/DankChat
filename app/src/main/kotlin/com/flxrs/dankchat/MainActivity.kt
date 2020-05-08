@@ -44,10 +44,10 @@ class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialog
         val filter = IntentFilter(SHUTDOWN_REQUEST_FILTER)
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, filter)
         twitchPreferences = DankChatPreferenceStore(this)
-        twitchPreferences.getChannelsAsString()?.let { channels.addAll(it.split(',')) }
-            ?: twitchPreferences.getChannels()?.let {
+        twitchPreferences.channelsString?.let { channels.addAll(it.split(',')) }
+            ?: twitchPreferences.channels?.let {
                 channels.addAll(it)
-                twitchPreferences.setChannels(null)
+                twitchPreferences.channels = null
             }
     }
 
@@ -158,8 +158,8 @@ class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialog
 
             } else {
                 viewModel.started = true
-                val oauth = twitchPreferences.getOAuthKey() ?: ""
-                val name = twitchPreferences.getUserName() ?: ""
+                val oauth = twitchPreferences.oAuthKey ?: ""
+                val name = twitchPreferences.userName ?: ""
                 viewModel.connectAndJoinChannels(name, oauth)
             }
 

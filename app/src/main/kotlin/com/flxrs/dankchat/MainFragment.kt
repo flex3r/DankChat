@@ -103,7 +103,7 @@ class MainFragment : Fragment() {
             appbarEnabled.observe(viewLifecycleOwner) { changeActionBarVisibility(it) }
             canType.observe(viewLifecycleOwner) { if (it) binding.inputLayout.setup() }
             connectionState.observe(viewLifecycleOwner) { hint ->
-                if (hint == SystemMessageType.NOT_LOGGED_IN && twitchPreferences.getMessageHistoryAcknowledge()) {
+                if (hint == SystemMessageType.NOT_LOGGED_IN && twitchPreferences.hasMessageHistoryAcknowledged) {
                     showApiChangeInformationIfNotAcknowledged()
                 }
 
@@ -142,7 +142,7 @@ class MainFragment : Fragment() {
         }
 
         initPreferences(view.context)
-        val channels = twitchPreferences.getChannelsAsString()?.split(',') ?: twitchPreferences.getChannels()?.also { twitchPreferences.setChannels(null) }
+        val channels = twitchPreferences.channelsString?.split(',') ?: twitchPreferences.channels?.also { twitchPreferences.channels = null }
         channels?.forEach { tabAdapter.addFragment(it) }
         val asList = channels?.toList() ?: emptyList()
         binding.viewPager.offscreenPageLimit = calculatePageLimit(asList.size)
@@ -174,12 +174,12 @@ class MainFragment : Fragment() {
             }
 
             if (savedInstanceState == null && !viewModel.started) {
-                if (!twitchPreferences.getMessageHistoryAcknowledge()) {
+                if (!twitchPreferences.hasMessageHistoryAcknowledged) {
                     MessageHistoryDisclaimerDialogFragment().show(parentFragmentManager, DISCLAIMER_TAG)
                 } else {
-                    val oAuth = twitchPreferences.getOAuthKey() ?: ""
-                    val name = twitchPreferences.getUserName() ?: ""
-                    val id = twitchPreferences.getUserId()
+                    val oAuth = twitchPreferences.oAuthKey ?: ""
+                    val name = twitchPreferences.userName ?: ""
+                    val id = twitchPreferences.userId
                     val shouldLoadHistory = preferences.getBoolean(getString(R.string.preference_load_message_history_key), true)
                     viewModel.loadData(oauth = oAuth, id = id, loadTwitchData = true, loadHistory = shouldLoadHistory, name = name)
 
@@ -232,7 +232,7 @@ class MainFragment : Fragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         with(menu) {
-            val isLoggedIn = twitchPreferences.isLoggedin()
+            val isLoggedIn = twitchPreferences.isLoggedIn
             val shouldShowProgress = viewModel.showUploadProgress.value ?: false
             findItem(R.id.menu_login)?.isVisible = !isLoggedIn
             findItem(R.id.menu_remove)?.isVisible = !viewModel.channels.value.isNullOrEmpty()
@@ -281,16 +281,16 @@ class MainFragment : Fragment() {
     }
 
     fun onMessageHistoryDisclaimerResult(result: Boolean) {
-        twitchPreferences.setMessageHistoryAcknowledge(true)
+        twitchPreferences.hasMessageHistoryAcknowledged = true
         preferences.edit { putBoolean(getString(R.string.preference_load_message_history_key), result) }
 
         if (viewModel.connectionState.value == SystemMessageType.NOT_LOGGED_IN) {
             showApiChangeInformationIfNotAcknowledged()
         }
 
-        val oAuth = twitchPreferences.getOAuthKey() ?: ""
-        val name = twitchPreferences.getUserName() ?: ""
-        val id = twitchPreferences.getUserId()
+        val oAuth = twitchPreferences.oAuthKey ?: ""
+        val name = twitchPreferences.userName ?: ""
+        val id = twitchPreferences.userId
         viewModel.loadData(oauth = oAuth, id = id, loadTwitchData = true, loadHistory = result, name = name)
 
         if (name.isNotBlank() && oAuth.isNotBlank()) {
@@ -302,15 +302,15 @@ class MainFragment : Fragment() {
         val lowerCaseChannel = channel.toLowerCase(Locale.getDefault())
         val channels = viewModel.channels.value ?: emptyList()
         if (!channels.contains(lowerCaseChannel)) {
-            val oauth = twitchPreferences.getOAuthKey() ?: ""
-            val id = twitchPreferences.getUserId()
-            val name = twitchPreferences.getUserName() ?: ""
+            val oauth = twitchPreferences.oAuthKey ?: ""
+            val id = twitchPreferences.userId
+            val name = twitchPreferences.userName ?: ""
             val shouldLoadHistory = preferences.getBoolean(getString(R.string.preference_load_message_history_key), true)
 
             val updatedChannels = viewModel.joinChannel(lowerCaseChannel)
             if (updatedChannels != null) {
                 viewModel.loadData(oauth, id, loadTwitchData = false, loadHistory = shouldLoadHistory, name = name, channelList = listOf(channel))
-                twitchPreferences.setChannelsString(updatedChannels.joinToString(","))
+                twitchPreferences.channelsString = updatedChannels.joinToString(",")
 
                 tabAdapter.addFragment(lowerCaseChannel)
                 binding.viewPager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
@@ -345,7 +345,7 @@ class MainFragment : Fragment() {
         lifecycleScope.launchWhenResumed {
             val key = getString(R.string.preference_streaminfo_key)
             if (preferences.getBoolean(key, true)) {
-                val oAuth = twitchPreferences.getOAuthKey() ?: return@launchWhenResumed
+                val oAuth = twitchPreferences.oAuthKey ?: return@launchWhenResumed
                 viewModel.fetchStreamData(oAuth) {
                     resources.getQuantityString(R.plurals.viewers, it, it)
                 }
@@ -384,13 +384,13 @@ class MainFragment : Fragment() {
     }
 
     private fun handleLoginRequest(success: Boolean) {
-        val oAuth = twitchPreferences.getOAuthKey()
-        val name = twitchPreferences.getUserName()
-        val id = twitchPreferences.getUserId()
+        val oAuth = twitchPreferences.oAuthKey
+        val name = twitchPreferences.userName
+        val id = twitchPreferences.userId
 
         if (success && !oAuth.isNullOrBlank() && !name.isNullOrBlank() && id != 0) {
             viewModel.close(name, oAuth, true, id)
-            twitchPreferences.setLoggedIn(true)
+            twitchPreferences.isLoggedIn = true
             showSnackbar(getString(R.string.snackbar_login, name))
         } else {
             showSnackbar(getString(R.string.snackbar_login_failed))
@@ -448,18 +448,18 @@ class MainFragment : Fragment() {
     }
 
     private fun showApiChangeInformationIfNotAcknowledged() {
-        if (!twitchPreferences.getApiChangeAcknowledge()) {
+        if (!twitchPreferences.hasApiChangeAcknowledged) {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.anon_connection_disclaimer_title)
                 .setMessage(R.string.anon_connection_disclaimer_messsage)
                 .setPositiveButton(R.string.dialog_positive_button) { dialog, _ -> dialog.dismiss() }
-                .setOnDismissListener { twitchPreferences.setApiChangeAcknowledge(true) }
+                .setOnDismissListener { twitchPreferences.hasApiChangeAcknowledged = true }
                 .show()
         }
     }
 
     private inline fun showNuulsUploadDialogIfNotAcknowledged(crossinline action: () -> Unit) {
-        if (!twitchPreferences.getNuulsAcknowledge()) {
+        if (!twitchPreferences.hasNuulsAcknowledged) {
             val spannable = SpannableStringBuilder(getString(R.string.nuuls_upload_disclaimer))
             Linkify.addLinks(spannable, Linkify.WEB_URLS)
 
@@ -469,7 +469,7 @@ class MainFragment : Fragment() {
                 .setMessage(spannable)
                 .setPositiveButton(R.string.dialog_positive_button) { dialog, _ ->
                     dialog.dismiss()
-                    twitchPreferences.setNuulsAcknowledge(true)
+                    twitchPreferences.hasNuulsAcknowledged = true
                     action()
                 }
                 .show().also { it.findViewById<TextView>(android.R.id.message)?.movementMethod = LinkMovementMethod.getInstance() }
@@ -555,8 +555,8 @@ class MainFragment : Fragment() {
     private fun reloadEmotes() {
         val position = binding.tabs.selectedTabPosition
         if (position in 0 until tabAdapter.titleList.size) {
-            val oAuth = twitchPreferences.getOAuthKey() ?: return
-            val userId = twitchPreferences.getUserId()
+            val oAuth = twitchPreferences.oAuthKey ?: return
+            val userId = twitchPreferences.userId
             viewModel.reloadEmotes(tabAdapter.titleList[position], oAuth, userId)
         }
     }
@@ -611,10 +611,10 @@ class MainFragment : Fragment() {
         .setTitle(getString(R.string.confirm_logout_title))
         .setMessage(getString(R.string.confirm_logout_message))
         .setPositiveButton(getString(R.string.confirm_logout_positive_button)) { dialog, _ ->
-            twitchPreferences.setUserName("")
-            twitchPreferences.setOAuthKey("")
-            twitchPreferences.setUserId(0)
-            twitchPreferences.setLoggedIn(false)
+            twitchPreferences.userName = ""
+            twitchPreferences.oAuthKey = ""
+            twitchPreferences.userId = 0
+            twitchPreferences.isLoggedIn = false
 
             viewModel.close("", "")
             viewModel.clearIgnores()
@@ -644,11 +644,11 @@ class MainFragment : Fragment() {
         if (channels != null) {
             val index = binding.viewPager.currentItem
             if (channels.isNotEmpty()) {
-                twitchPreferences.setChannelsString(channels.joinToString(","))
+                twitchPreferences.channelsString = channels.joinToString(",")
                 val newPos = (index - 1).coerceAtLeast(0)
                 binding.viewPager.setCurrentItem(newPos, false)
             } else {
-                twitchPreferences.setChannelsString(null)
+                twitchPreferences.channelsString = null
             }
 
             binding.viewPager.offscreenPageLimit = calculatePageLimit(channels.size)

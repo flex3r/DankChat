@@ -94,9 +94,9 @@ class LoginFragment : Fragment() {
                     val successful = TwitchApi.validateUser(token)?.let {
                         if (it.login.isNotBlank()) {
                             dankChatPreferenceStore.apply {
-                                setOAuthKey("oauth:$token")
-                                setUserName(it.login.toLowerCase(Locale.getDefault()))
-                                setUserId(it.userId)
+                                oAuthKey = "oauth:$token"
+                                userName = it.login.toLowerCase(Locale.getDefault())
+                                userId = it.userId
                             }
                             true
                         } else false

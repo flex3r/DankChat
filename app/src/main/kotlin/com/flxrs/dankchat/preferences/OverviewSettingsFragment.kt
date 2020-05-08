@@ -35,7 +35,7 @@ class OverviewSettingsFragment : PreferenceFragmentCompat() {
             })
         }
 
-        val isLoggedIn = DankChatPreferenceStore(view.context).isLoggedin()
+        val isLoggedIn = DankChatPreferenceStore(view.context).isLoggedIn
         findPreference<Preference>(getString(R.string.preference_about_key))?.summary = getString(R.string.preference_about_summary, BuildConfig.VERSION_NAME)
         findPreference<Preference>(getString(R.string.preference_logout_key))?.apply {
             isEnabled = isLoggedIn
