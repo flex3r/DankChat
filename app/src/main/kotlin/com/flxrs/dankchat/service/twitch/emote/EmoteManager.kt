@@ -64,7 +64,7 @@ object EmoteManager {
             if (pairs.isEmpty()) continue
 
             // skip over invalid parsed data
-            val parsedPositons = pairs.mapNotNull { pos ->
+            val parsedPositions = pairs.mapNotNull { pos ->
                 val pair = pos.split('-')
                 if (pair.size != 2) return@mapNotNull null
 
