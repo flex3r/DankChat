@@ -53,12 +53,24 @@ object EmoteManager {
         // Characters with supplementary codepoints have two chars and need to be considered into emote positioning
         val supplementaryCodePointPositions = original.supplementaryCodePointPositions
         val emotes = arrayListOf<ChatMessageEmote>()
-        emoteTag.split('/').forEach { emote ->
-            val (id, positions) = emote.split(':')
-            val parsedPositions = positions.split(',').map { pos ->
-                val start = pos.substringBefore('-').toInt()
-                val end = pos.substringAfter('-').toInt()
-                return@map start to end + 1
+        for (emote in emoteTag.split('/')) {
+            val split = emote.split(':')
+            // bad emote data :)
+            if (split.size != 2) continue
+
+            val (id, positions) = split
+            val pairs = positions.split(',')
+            // bad emote data :)
+            if (pairs.isEmpty()) continue
+
+            // skip over invalid parsed data
+            val parsedPositons = pairs.mapNotNull { pos ->
+                val pair = pos.split('-')
+                if (pair.size != 2) return@mapNotNull null
+
+                val start = pair[0].toIntOrNull() ?: return@mapNotNull null
+                val end = pair[1].toIntOrNull() ?: return@mapNotNull null
+                start to end + 1
             }
             val fixedParsedPositions = parsedPositions.map { (start, end) ->
                 val extra = supplementaryCodePointPositions.count { it < start }
