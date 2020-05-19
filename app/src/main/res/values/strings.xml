@@ -82,7 +82,7 @@
     <string name="dialog_optin">Opt-in</string>
     <string name="dialog_optout">Opt-out</string>
     <string name="anon_connection_disclaimer_title">Anonymous connection</string>
-    <string name="anon_connection_disclaimer_messsage">Due to recent changes to the official Twitch api, some data can now only be accessed when logged in.\nThis includes support for twitch badges and third party emotes.</string>
+    <string name="anon_connection_disclaimer_message">Due to recent changes to the official Twitch api, some data can now only be accessed when logged in.\nThis includes support for twitch badges and third party emotes.</string>
 
     <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
     <string name="preference_timestamp_title">Show timestamps</string>

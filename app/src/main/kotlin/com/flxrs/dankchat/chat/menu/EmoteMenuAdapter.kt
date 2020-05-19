@@ -13,7 +13,7 @@ import com.flxrs.dankchat.databinding.EmoteMenuTabBinding
 
 class EmoteMenuAdapter(private val onEmoteClick: (emote: String) -> Unit) : ListAdapter<List<EmoteItem>, EmoteMenuAdapter.ViewHolder>(DetectDiff()) {
 
-    inner class ViewHolder(val adapter: EmoteAdapter, val binding: EmoteMenuTabBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class ViewHolder(val adapter: EmoteAdapter, binding: EmoteMenuTabBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun getItemCount() = EmoteMenuTab.values().size
 

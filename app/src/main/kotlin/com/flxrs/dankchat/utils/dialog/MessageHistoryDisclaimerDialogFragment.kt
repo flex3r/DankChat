@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
-import android.view.View
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.flxrs.dankchat.R
