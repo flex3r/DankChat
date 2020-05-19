@@ -6,51 +6,43 @@ apply plugin: "kotlin-kapt"
 
 android {
     compileSdkVersion 29
-    dataBinding.enabled = true
+    buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "com.flxrs.dankchat"
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 142
         versionName "1.9.6"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
-
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            manifestPlaceholders = [ applicationLabel: "@string/app_name"]
-
-            applicationVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "$apkName-$variant.name-${versionName}.apk"
-                }
-            }
+            manifestPlaceholders = [applicationLabel: "@string/app_name"]
         }
-
         debug {
-            manifestPlaceholders = [ applicationLabel: "@string/app_name"]
-            applicationVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "$apkName-$variant.name-${versionName}.apk"
-                }
-            }
+            manifestPlaceholders = [applicationLabel: "@string/app_name"]
         }
         dank {
             initWith debug
 //            minifyEnabled true
 //            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            manifestPlaceholders = [ applicationLabel: "@string/app_name_dank"]
+            manifestPlaceholders = [applicationLabel: "@string/app_name_dank"]
             applicationIdSuffix ".dank"
         }
+    }
+    applicationVariants.all { variant ->
+        outputs.all {
+            outputFileName = "$apkName-$variant.name-${versionName}.apk"
+        }
+    }
+    dataBinding {
+        enabled = true
     }
     compileOptions {
         sourceCompatibility = '1.8'
@@ -59,7 +51,6 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    buildToolsVersion = '29.0.3'
     packagingOptions {
         exclude 'META-INF/kotlinx-io.kotlin_module'
         exclude 'META-INF/atomicfu.kotlin_module'
@@ -68,55 +59,55 @@ android {
     }
 }
 
-
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+// Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
-    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
-    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
-
+// AndroidX
     implementation "androidx.appcompat:appcompat:$appcompat_version"
+    implementation "androidx.browser:browser:$browser_version"
+    implementation "androidx.constraintlayout:constraintlayout:$constraint_version"
+    implementation "androidx.core:core-ktx:$core_version"
+    implementation "androidx.emoji:emoji:$emoji_version"
+    implementation "androidx.exifinterface:exifinterface:$exif_version"
     implementation "androidx.fragment:fragment:$fragment_version"
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
-    implementation "androidx.constraintlayout:constraintlayout:$constraint_version"
-    implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
-    implementation "androidx.viewpager2:viewpager2:$viewpager2_version"
-    implementation "androidx.core:core-ktx:$core_version"
-    implementation "androidx.media:media:$media_version"
-    implementation "androidx.browser:browser:$browser_version"
-    implementation "androidx.exifinterface:exifinterface:$exif_version"
-    implementation "androidx.preference:preference-ktx:$preference_version"
-
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0' // TODO Deprecated in newer version, switch to other observable pattern in the future
+    implementation "androidx.media:media:$media_version"
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+    implementation "androidx.preference:preference-ktx:$preference_version"
+    implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
+    implementation "androidx.viewpager2:viewpager2:$viewpager2_version"
     implementation "com.google.android.material:material:$material_version"
-    implementation "androidx.emoji:emoji:$emoji_version"
 
+// Dependency injection
     implementation "org.koin:koin-core:$koin_version"
     implementation "org.koin:koin-android:$koin_version"
     implementation "org.koin:koin-androidx-viewmodel:$koin_version"
 
+// Image loading
     implementation "io.coil-kt:coil:$coil_version"
     implementation "io.coil-kt:coil-gif:$coil_version"
 
+// GIF support
     implementation "pl.droidsonroids.gif:android-gif-drawable:$gif_drawable_version"
 
+// Dates
     implementation "com.jakewharton.threetenabp:threetenabp:$three_ten_abp_version"
 
+// Detect and normalize URLs in text
     implementation "io.github.url-detector:url-detector:$url_detector_version"
 
+// HTTP clients
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-moshi:$moshi_version"
-
-    testImplementation 'junit:junit:4.13'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
