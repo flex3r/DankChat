@@ -7,6 +7,7 @@ apply plugin: "kotlin-kapt"
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
+    ndkVersion "21.1.6352462"
     defaultConfig {
         applicationId "com.flxrs.dankchat"
         minSdkVersion 21
