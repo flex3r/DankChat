@@ -451,7 +451,7 @@ class MainFragment : Fragment() {
         if (!twitchPreferences.hasApiChangeAcknowledged) {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.anon_connection_disclaimer_title)
-                .setMessage(R.string.anon_connection_disclaimer_messsage)
+                .setMessage(R.string.anon_connection_disclaimer_message)
                 .setPositiveButton(R.string.dialog_positive_button) { dialog, _ -> dialog.dismiss() }
                 .setOnDismissListener { twitchPreferences.hasApiChangeAcknowledged = true }
                 .show()
