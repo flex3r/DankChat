@@ -62,7 +62,7 @@
     <string name="snackbar_image_uploaded">Copied: %1$s</string>
     <string name="snackbar_upload_failed">Error during upload</string>
     <string name="advanced_login_hint">Token</string>
-    <string name="add_channel_hint">Channel</string>
+    <string name="add_channel_hint">Channel name</string>
     <string name="emote_menu_tab_subs">Subs</string>
     <string name="emote_menu_tab_channel">Channel</string>
     <string name="emote_menu_tab_global">Global</string>
