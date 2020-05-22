@@ -7,7 +7,6 @@ buildscript {
         // Plugins
         gradle_build_tools_version = '3.6.3'
         kotlin_version = '1.3.72'
-        safe_args_version = '1.0.0-alpha09'
 
         // Kotlin
         coroutines_version = '1.3.7'
@@ -22,15 +21,15 @@ buildscript {
         fragment_version = '1.3.0-alpha04'
         lifecycle_version = '2.2.0'
         media_version = '1.1.0'
-        nav_version = '2.3.0-alpha06'
+        nav_version = '2.3.0-beta01'
         preference_version = '1.1.1'
         recyclerview_version = '1.2.0-alpha03'
         viewpager2_version = '1.1.0-alpha01'
         material_version = '1.2.0-alpha06'
 
         // Third-party
-        koin_version = '2.0.1'
-        coil_version = '0.9.5'
+        koin_version = '2.1.5'
+        coil_version = '0.9.5' // TODO investigate issue with hardware bitmaps caused by newer version
         gif_drawable_version = '1.2.20'
         three_ten_abp_version = '1.2.4'
         url_detector_version = '0.1.22'
@@ -46,7 +45,6 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:$gradle_build_tools_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "android.arch.navigation:navigation-safe-args-gradle-plugin:$safe_args_version"
     }
 }
 

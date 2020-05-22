@@ -12,7 +12,10 @@ import coil.Coil
 import coil.ImageLoader
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import coil.util.CoilUtils
 import com.jakewharton.threetenabp.AndroidThreeTen
+import okhttp3.CacheControl
+import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -29,6 +32,20 @@ class DankChatApplication : Application()/*, ImageLoaderFactory*/ {
 
         Coil.setDefaultImageLoader {
             ImageLoader(this) {
+                okHttpClient {
+                    OkHttpClient.Builder()
+                        .cache(CoilUtils.createDefaultCache(this@DankChatApplication))
+                        .addInterceptor { chain ->
+                            val request = chain.request()
+                            try {
+                                chain.proceed(request)
+                            } catch (e: IllegalArgumentException) {
+                                val new = request.newBuilder().cacheControl(CacheControl.FORCE_NETWORK).build()
+                                chain.proceed(new)
+                            }
+                        }
+                        .build()
+                }
                 componentRegistry {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                         add(ImageDecoderDecoder())
