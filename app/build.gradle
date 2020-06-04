@@ -17,6 +17,9 @@ android {
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
+    buildFeatures {
+        dataBinding = true
+    }
     buildTypes {
         release {
             minifyEnabled true
@@ -40,9 +43,6 @@ android {
         outputs.all {
             outputFileName = "$apkName-$variant.name-${versionName}.apk"
         }
-    }
-    dataBinding {
-        enabled = true
     }
     compileOptions {
         sourceCompatibility = '1.8'
