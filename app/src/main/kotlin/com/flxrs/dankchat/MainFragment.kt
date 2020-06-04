@@ -156,7 +156,7 @@ class MainFragment : Fragment() {
                 if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED || bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 } else {
-                    navController.navigateUp()
+                    finishAndRemoveTask()
                 }
             }
 
