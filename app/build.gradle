@@ -57,6 +57,9 @@ android {
         exclude 'META-INF/kotlinx-coroutines-io.kotlin_module'
         exclude 'META-INF/kotlinx-coroutines-core.kotlin_module'
     }
+    lintOptions {
+        disable "NullSafeMutableLiveData" //TODO lint fails without this??
+    }
 }
 
 dependencies {
