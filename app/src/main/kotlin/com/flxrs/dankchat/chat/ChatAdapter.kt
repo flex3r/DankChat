@@ -144,10 +144,8 @@ class ChatAdapter(
 
             setOnTouchListener { _, event ->
                 if (event.action == MotionEvent.ACTION_UP) {
-                    Log.d(TAG, "ignoreClicks $ignoreClicks")
                     postDelayed(200) {
                         ignoreClicks = false
-                        Log.d(TAG, "ignoreClicks $ignoreClicks")
                     }
                 }
                 false
