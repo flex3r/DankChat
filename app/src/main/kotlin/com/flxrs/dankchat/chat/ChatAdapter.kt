@@ -20,6 +20,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.text.bold
 import androidx.core.text.color
+import androidx.core.view.postDelayed
 import androidx.emoji.text.EmojiCompat
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
@@ -103,6 +104,7 @@ class ChatAdapter(
         text = withTime
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun TextView.handleTwitchMessage(twitchMessage: Message.TwitchMessage, holder: ChatAdapter.ViewHolder) = with(twitchMessage) {
         isClickable = false
         text = ""
@@ -134,7 +136,7 @@ class ChatAdapter(
             }
 
             var ignoreClicks = false
-            if (!isSystem) setOnLongClickListener {
+            setOnLongClickListener {
                 ignoreClicks = true
                 onMessageLongClick(message)
                 true
@@ -142,9 +144,10 @@ class ChatAdapter(
 
             setOnTouchListener { _, event ->
                 if (event.action == MotionEvent.ACTION_UP) {
-                    launch(Dispatchers.Default) {
-                        delay(200)
+                    Log.d(TAG, "ignoreClicks $ignoreClicks")
+                    postDelayed(200) {
                         ignoreClicks = false
+                        Log.d(TAG, "ignoreClicks $ignoreClicks")
                     }
                 }
                 false
