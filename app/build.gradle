@@ -6,7 +6,7 @@ apply plugin: "kotlin-kapt"
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
-    ndkVersion "21.1.6352462"
+    ndkVersion "21.2.6472646"
     defaultConfig {
         applicationId "com.flxrs.dankchat"
         minSdkVersion 21
@@ -57,9 +57,6 @@ android {
         exclude 'META-INF/kotlinx-coroutines-io.kotlin_module'
         exclude 'META-INF/kotlinx-coroutines-core.kotlin_module'
     }
-    lintOptions {
-        disable "NullSafeMutableLiveData" //TODO lint fails without this??
-    }
 }
 
 dependencies {
@@ -77,7 +74,6 @@ dependencies {
     implementation "androidx.exifinterface:exifinterface:$exif_version"
     implementation "androidx.fragment:fragment:$fragment_version"
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
