@@ -1,8 +1,8 @@
 package com.flxrs.dankchat.utils
 
-import org.threeten.bp.Instant
-import org.threeten.bp.ZonedDateTime
-import org.threeten.bp.format.DateTimeFormatter
+import java.time.Instant
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 object TimeUtils {
     private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")

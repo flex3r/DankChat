@@ -13,7 +13,6 @@ import coil.ImageLoader
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.util.CoilUtils
-import com.jakewharton.threetenabp.AndroidThreeTen
 import okhttp3.CacheControl
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
@@ -55,8 +54,6 @@ class DankChatApplication : Application()/*, ImageLoaderFactory*/ {
                 }
             }
         }
-
-        AndroidThreeTen.init(this)
 
         val nightMode = PreferenceManager.getDefaultSharedPreferences(this)
             .getBoolean(getString(R.string.preference_dark_theme_key), true)

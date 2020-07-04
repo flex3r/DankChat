@@ -45,6 +45,8 @@ android {
         }
     }
     compileOptions {
+        coreLibraryDesugaringEnabled true
+
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
     }
@@ -60,6 +62,9 @@ android {
 }
 
 dependencies {
+// D8 desugaring
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.9'
+
 // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
@@ -98,9 +103,6 @@ dependencies {
 
 // GIF support
     implementation "pl.droidsonroids.gif:android-gif-drawable:$gif_drawable_version"
-
-// Dates
-    implementation "com.jakewharton.threetenabp:threetenabp:$three_ten_abp_version"
 
 // Detect and normalize URLs in text
     implementation "io.github.url-detector:url-detector:$url_detector_version"
