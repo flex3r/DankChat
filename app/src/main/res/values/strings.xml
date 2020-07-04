@@ -11,9 +11,12 @@
     <string name="reload_emotes">Reload emotes</string>
     <string name="reconnect">Reconnect</string>
     <string name="clear_chat">Clear chat</string>
-    <string name="dialog_title">Add channel</string>
-    <string name="dialog_positive_button">OK</string>
-    <string name="dialog_negative_button">Cancel</string>
+    <string name="add_dialog_title">Add channel</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_dismiss">Dismiss</string>
+    <string name="error_dialog_copy">Copy</string>
+    <string name="error_dialog_title">Caught exception: %1$s</string>
     <string name="add_channel">Add channel</string>
     <string name="name">Name</string>
     <string name="remove_channel">Remove channel</string>
@@ -46,6 +49,7 @@
     <string name="nuuls_upload_disclaimer">External hosting provided by https://nuuls.com/i, use at your own risk.</string>
     <string name="nuuls_upload_title">Custom image upload</string>
     <string name="snackbar_message_copied">Message copied</string>
+    <string name="snackbar_error_copied">Error information copied</string>
     <string name="notification_stop">Stop</string>
     <string name="notification_title">FeelsDankMan</string>
     <string name="notification_message">DankChat running in the background</string>

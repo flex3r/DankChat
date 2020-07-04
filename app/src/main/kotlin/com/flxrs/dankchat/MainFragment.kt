@@ -452,7 +452,7 @@ class MainFragment : Fragment() {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.anon_connection_disclaimer_title)
                 .setMessage(R.string.anon_connection_disclaimer_message)
-                .setPositiveButton(R.string.dialog_positive_button) { dialog, _ -> dialog.dismiss() }
+                .setPositiveButton(R.string.dialog_ok) { dialog, _ -> dialog.dismiss() }
                 .setOnDismissListener { twitchPreferences.hasApiChangeAcknowledged = true }
                 .show()
         }
@@ -467,7 +467,7 @@ class MainFragment : Fragment() {
                 .setCancelable(false)
                 .setTitle(R.string.nuuls_upload_title)
                 .setMessage(spannable)
-                .setPositiveButton(R.string.dialog_positive_button) { dialog, _ ->
+                .setPositiveButton(R.string.dialog_ok) { dialog, _ ->
                     dialog.dismiss()
                     twitchPreferences.hasNuulsAcknowledged = true
                     action()
@@ -624,9 +624,9 @@ class MainFragment : Fragment() {
         .create().show()
 
     private fun openAddChannelDialog() = EditTextDialogFragment.create(
-        R.string.dialog_title,
-        R.string.dialog_negative_button,
-        R.string.dialog_positive_button,
+        R.string.add_dialog_title,
+        R.string.dialog_cancel,
+        R.string.dialog_ok,
         textHint = getString(R.string.add_channel_hint)
     ).show(parentFragmentManager, DIALOG_TAG)
 

@@ -35,6 +35,7 @@ import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.message.Message
 import com.flxrs.dankchat.utils.extensions.normalizeColor
 import com.flxrs.dankchat.utils.extensions.setRunning
+import com.flxrs.dankchat.utils.showErrorDialog
 import com.linkedin.urls.detection.UrlDetector
 import com.linkedin.urls.detection.UrlDetectorOptions
 import kotlinx.coroutines.*
@@ -46,11 +47,6 @@ class ChatAdapter(
     private val onUserClicked: (user: String) -> Unit,
     private val onMessageLongClick: (message: String) -> Unit
 ) : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
-
-    private val coroutineHandler = CoroutineExceptionHandler { _, throwable ->
-        Log.e(TAG, Log.getStackTraceString(throwable))
-    }
-
     inner class ViewHolder(val binding: ChatItemBinding) : RecyclerView.ViewHolder(binding.root) {
         val scope = CoroutineScope(Dispatchers.Main.immediate)
     }
@@ -117,13 +113,26 @@ class ChatAdapter(
         val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
         val animateGifsKey = context.getString(R.string.preference_animate_gifs_key)
         val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
+        val debugKey = context.getString(R.string.preference_debug_mode_key)
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val isDarkMode = preferences.getBoolean(darkModePreferenceKey, true)
+        val isDebugEnabled = preferences.getBoolean(debugKey, false)
         val showTimedOutMessages = preferences.getBoolean(timedOutPreferenceKey, true)
         val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
         val animateGifs = preferences.getBoolean(animateGifsKey, true)
         val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
         setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
+
+
+        val coroutineHandler = CoroutineExceptionHandler { _, throwable ->
+            val trace = Log.getStackTraceString(throwable)
+            Log.e(TAG, trace)
+
+            if (isDebugEnabled) {
+                showErrorDialog(throwable)
+            }
+        }
+
         holder.scope.launch(coroutineHandler) {
             if (timedOut) {
                 alpha = 0.5f
