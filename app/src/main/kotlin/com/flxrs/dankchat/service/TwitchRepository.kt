@@ -151,10 +151,9 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         imageUploadedEvent.postValue(url to file)
     }
 
-    fun close(onClosed: () -> Unit = { }) {
+    fun close(onClosed: () -> Unit = { }): Boolean {
         startedConnection = false
-        writeConnection.close(onClosed)
-        readConnection.close(onClosed)
+        return writeConnection.close(onClosed) && readConnection.close(onClosed)
     }
 
     fun reconnect(onlyIfNecessary: Boolean) {
@@ -166,10 +165,10 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         writeConnection.sendMessage(it)
     }
 
-    fun connect(nick: String, oauth: String) {
+    fun connect(nick: String, oauth: String, forceConnect: Boolean = false) {
         if (!startedConnection) {
-            readConnection.connect(nick, oauth)
-            writeConnection.connect(nick, oauth)
+            readConnection.connect(nick, oauth, forceConnect)
+            writeConnection.connect(nick, oauth, forceConnect)
             startedConnection = true
         }
     }
@@ -196,6 +195,9 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     }
 
     private fun onWriterMessage(message: IrcMessage) {
+        if (message.isLoginFailed()) {
+            startedConnection = false
+        }
         when (message.command) {
             "PRIVMSG" -> Unit
             "366" -> handleConnected(message.params[1].substring(1), writeConnection.isAnonymous)

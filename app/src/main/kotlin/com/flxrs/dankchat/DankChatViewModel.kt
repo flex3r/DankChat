@@ -159,17 +159,19 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
 
     fun close(name: String, oAuth: String, loadTwitchData: Boolean = false, userId: Int = 0) {
         val channels = channels.value ?: emptyList()
-        twitchRepository.close {
-            connectAndJoinChannels(name, oAuth, channels)
-            if (loadTwitchData && userId > 0) loadData(
-                oauth = oAuth,
-                id = userId,
-                loadTwitchData = true,
-                loadHistory = false,
-                name = name,
-                channelList = channels
-            )
+        val didClose = twitchRepository.close { connectAndJoinChannels(name, oAuth, channels) }
+        if (!didClose) {
+            connectAndJoinChannels(name, oAuth, channels, forceConnect = true)
         }
+
+        if (loadTwitchData && userId > 0) loadData(
+            oauth = oAuth,
+            id = userId,
+            loadTwitchData = true,
+            loadHistory = false,
+            name = name,
+            channelList = channels
+        )
     }
 
     fun reloadEmotes(channel: String, oAuth: String, id: Int) {
@@ -210,13 +212,13 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         twitchRepository.clearIgnores()
     }
 
-    fun connectAndJoinChannels(name: String, oAuth: String, channelList: List<String>? = channels.value) {
+    fun connectAndJoinChannels(name: String, oAuth: String, channelList: List<String>? = channels.value, forceConnect: Boolean = false) {
         if (!twitchRepository.startedConnection) {
             if (channelList?.isEmpty() == true) {
-                twitchRepository.connect(name, oAuth)
+                twitchRepository.connect(name, oAuth, forceConnect)
             } else {
                 channelList?.forEachIndexed { i, channel ->
-                    if (i == 0) twitchRepository.connect(name, oAuth)
+                    if (i == 0) twitchRepository.connect(name, oAuth, forceConnect)
                     twitchRepository.joinChannel(channel)
                 }
             }
