@@ -34,7 +34,7 @@
                 android:layout_margin="8dp"
                 android:visibility="gone"
                 app:fabSize="mini"
-                app:srcCompat="@drawable/ic_keyboard_arrow_down_24dp"
+                app:srcCompat="@drawable/ic_baseline_fullscreen_exit_24"
                 app:tint="?colorOnPrimary" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
