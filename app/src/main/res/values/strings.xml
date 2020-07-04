@@ -56,7 +56,7 @@
     <string name="hint_not_logged_int">Not logged in</string>
     <string name="notification_new_mentions">You have new mentions</string>
     <string name="notification_mention">%1$s just mentioned you in #%2$s</string>
-    <string name="snackbar_login">Logged in as %1$s</string>
+    <string name="snackbar_login">Logging in as %1$s</string>
     <string name="snackbar_login_failed">Failed to login</string>
     <string name="snackbar_invalid_oauth">Invalid OAuth token</string>
     <string name="snackbar_image_uploaded">Copied: %1$s</string>
