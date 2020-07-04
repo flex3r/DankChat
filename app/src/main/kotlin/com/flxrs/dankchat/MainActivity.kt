@@ -11,10 +11,7 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import com.flxrs.dankchat.preferences.AppearanceSettingsFragment
-import com.flxrs.dankchat.preferences.ChatSettingsFragment
-import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.preferences.NotificationsSettingsFragment
+import com.flxrs.dankchat.preferences.*
 import com.flxrs.dankchat.service.TwitchService
 import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.MessageHistoryDisclaimerResultHandler
@@ -117,6 +114,7 @@ class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialog
             AppearanceSettingsFragment::class.java.simpleName -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_appearanceSettingsFragment)
             NotificationsSettingsFragment::class.java.simpleName -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_notificationsSettingsFragment)
             ChatSettingsFragment::class.java.simpleName -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_chatSettingsFragment)
+            DeveloperSettingsFragment::class.java.simpleName -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_developerSettingsFragment)
             else -> return false
         }
         return true

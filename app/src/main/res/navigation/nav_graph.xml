@@ -34,24 +34,31 @@
         <action
             android:id="@+id/action_overviewSettingsFragment_to_appearanceSettingsFragment"
             app:destination="@id/appearanceSettingsFragment"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:exitAnim="@anim/fragment_close_exit"
-            app:popEnterAnim="@anim/fragment_open_enter"
-            app:popExitAnim="@anim/fragment_close_exit" />
+            app:enterAnim="@anim/open_enter"
+            app:exitAnim="@anim/close_exit"
+            app:popEnterAnim="@anim/open_enter"
+            app:popExitAnim="@anim/close_exit" />
         <action
             android:id="@+id/action_overviewSettingsFragment_to_notificationsSettingsFragment"
             app:destination="@id/notificationsSettingsFragment"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:exitAnim="@anim/fragment_close_exit"
-            app:popEnterAnim="@anim/fragment_open_enter"
-            app:popExitAnim="@anim/fragment_close_exit" />
+            app:enterAnim="@anim/open_enter"
+            app:exitAnim="@anim/close_exit"
+            app:popEnterAnim="@anim/open_enter"
+            app:popExitAnim="@anim/close_exit" />
         <action
             android:id="@+id/action_overviewSettingsFragment_to_chatSettingsFragment"
             app:destination="@id/chatSettingsFragment"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:exitAnim="@anim/fragment_close_exit"
-            app:popEnterAnim="@anim/fragment_open_enter"
-            app:popExitAnim="@anim/fragment_close_exit" />
+            app:enterAnim="@anim/open_enter"
+            app:exitAnim="@anim/close_exit"
+            app:popEnterAnim="@anim/open_enter"
+            app:popExitAnim="@anim/close_exit" />
+        <action
+            android:id="@+id/action_overviewSettingsFragment_to_developerSettingsFragment"
+            app:destination="@id/developerSettingsFragment"
+            app:enterAnim="@anim/open_enter"
+            app:exitAnim="@anim/close_exit"
+            app:popEnterAnim="@anim/open_enter"
+            app:popExitAnim="@anim/close_exit" />
     </fragment>
     <fragment
         android:id="@+id/appearanceSettingsFragment"
@@ -65,4 +72,8 @@
         android:id="@+id/chatSettingsFragment"
         android:name="com.flxrs.dankchat.preferences.ChatSettingsFragment"
         android:label="ChatSettingsFragment" />
+    <fragment
+        android:id="@+id/developerSettingsFragment"
+        android:name="com.flxrs.dankchat.preferences.DeveloperSettingsFragment"
+        android:label="DeveloperSettingsFragment" />
 </navigation>

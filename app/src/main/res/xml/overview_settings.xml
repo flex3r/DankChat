@@ -21,6 +21,12 @@
         app:title="@string/preference_chat_header" />
 
     <Preference
+        app:fragment="com.flxrs.dankchat.preferences.DeveloperSettingsFragment"
+        app:icon="@drawable/ic_baseline_developer_mode_24"
+        app:key="@string/preference_developer_key"
+        app:title="@string/preference_developer_header" />
+
+    <Preference
         android:icon="@drawable/ic_exit_to_app_24dp"
         android:key="@string/preference_logout_key"
         android:title="@string/preference_logout_title" />

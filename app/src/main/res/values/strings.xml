@@ -146,6 +146,11 @@
     <string name="preference_suggestions_summary">Shows suggestions for emotes and active users while typing</string>
     <string name="preference_load_message_history_title">Load message history on start</string>
     <string name="preference_load_message_history_key" translatable="false">load_message_history_key</string>
+    <string name="preference_developer_header" translatable="false">Developer options</string>
+    <string name="preference_developer_key" translatable="false">developer_key</string>
+    <string name="preference_debug_mode_key" translatable="false">debug_mode_key</string>
+    <string name="preference_debug_mode_title">Debug mode</string>
+    <string name="preference_debug_mode_summary">Provides information for any exceptions that have been caught</string>
 
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>
