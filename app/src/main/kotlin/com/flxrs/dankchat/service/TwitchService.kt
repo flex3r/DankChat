@@ -79,6 +79,7 @@ class TwitchService : Service(), CoroutineScope, KoinComponent {
 
         if (notifications.isEmpty()) {
             manager.cancel(SUMMARY_NOTIFICATION_ID)
+            manager.cancelAll()
         }
     }
 
