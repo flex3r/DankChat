@@ -2,7 +2,6 @@ package com.flxrs.dankchat.chat
 
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
-import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.text.Spannable
@@ -32,12 +31,14 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatItemBinding
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
+import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.message.Message
 import com.flxrs.dankchat.utils.extensions.normalizeColor
+import com.flxrs.dankchat.utils.extensions.setRunning
 import com.linkedin.urls.detection.UrlDetector
 import com.linkedin.urls.detection.UrlDetectorOptions
 import kotlinx.coroutines.*
-import pl.droidsonroids.gif.MultiCallback
+import pl.droidsonroids.gif.GifDrawable
 import kotlin.math.roundToInt
 
 class ChatAdapter(
@@ -46,7 +47,6 @@ class ChatAdapter(
     private val onMessageLongClick: (message: String) -> Unit
 ) : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
 
-    private val gifCallback = MultiCallback(true)
     private val coroutineHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(TAG, Log.getStackTraceString(throwable))
     }
@@ -66,7 +66,7 @@ class ChatAdapter(
     override fun onViewRecycled(holder: ViewHolder) {
         holder.scope.coroutineContext.cancelChildren()
         holder.binding.executePendingBindings()
-        gifCallback.removeView(holder.binding.itemText)
+        EmoteManager.gifCallback.removeView(holder.binding.itemText)
         super.onViewRecycled(holder)
     }
 
@@ -104,6 +104,7 @@ class ChatAdapter(
         text = withTime
     }
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     @SuppressLint("ClickableViewAccessibility")
     private fun TextView.handleTwitchMessage(twitchMessage: Message.TwitchMessage, holder: ChatAdapter.ViewHolder) = with(twitchMessage) {
         isClickable = false
@@ -250,7 +251,7 @@ class ChatAdapter(
             }
 
             if (animateGifs && emotes.filter { it.isGif }.count() > 0) {
-                gifCallback.addView(holder.binding.itemText)
+                EmoteManager.gifCallback.addView(holder.binding.itemText)
             }
 
             if (emotes.size > 5) {
@@ -259,19 +260,18 @@ class ChatAdapter(
 
             val fullPrefix = prefixLength + badgesLength
             emotes.forEach { e ->
-                Coil.get(e.url).apply {
-//                val result = Coil.execute(GetRequest.Builder(context).data(e.url).build())
-//                if (result is SuccessResult) {
-//                    result.drawable.apply {
-                    if (this is Animatable && animateGifs) {
-                        callback = gifCallback
-                        start()
+                val drawable = when {
+                    e.isGif -> EmoteManager.gifCache[e.url]?.also { it.setRunning(animateGifs) } ?: Coil.get(e.url).apply {
+                        this as GifDrawable
+                        setRunning(animateGifs)
+                        callback = EmoteManager.gifCallback
+                        EmoteManager.gifCache.put(e.url, this)
                     }
-                    transformEmoteDrawable(scaleFactor, e)
-                    setEmoteSpans(e, fullPrefix, this, spannableWithEmojis)
+                    else -> Coil.get(e.url)
                 }
+                drawable.transformEmoteDrawable(scaleFactor, e)
+                setEmoteSpans(e, fullPrefix, drawable, spannableWithEmojis)
             }
-            //}
 
             text = spannableWithEmojis
         }

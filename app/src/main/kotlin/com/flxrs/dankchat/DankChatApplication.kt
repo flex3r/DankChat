@@ -10,9 +10,8 @@ import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.preference.PreferenceManager
 import coil.Coil
 import coil.ImageLoader
-import coil.decode.GifDecoder
-import coil.decode.ImageDecoderDecoder
 import coil.util.CoilUtils
+import com.flxrs.dankchat.utils.GifDrawableDecoder
 import okhttp3.CacheControl
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
@@ -46,11 +45,7 @@ class DankChatApplication : Application()/*, ImageLoaderFactory*/ {
                         .build()
                 }
                 componentRegistry {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        add(ImageDecoderDecoder())
-                    } else {
-                        add(GifDecoder())
-                    }
+                    add(GifDrawableDecoder())
                 }
             }
         }

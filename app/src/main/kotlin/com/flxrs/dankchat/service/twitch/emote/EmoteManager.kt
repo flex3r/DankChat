@@ -1,11 +1,14 @@
 package com.flxrs.dankchat.service.twitch.emote
 
+import android.util.LruCache
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.api.model.BadgeEntities
 import com.flxrs.dankchat.service.api.model.EmoteEntities
 import com.flxrs.dankchat.utils.extensions.supplementaryCodePointPositions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import pl.droidsonroids.gif.GifDrawable
+import pl.droidsonroids.gif.MultiCallback
 import java.util.concurrent.ConcurrentHashMap
 
 object EmoteManager {
@@ -44,6 +47,9 @@ object EmoteManager {
         "\\;-?\\)" to ";)",
         "B-?\\)" to "B)"
     )
+
+    val gifCache = LruCache<String, GifDrawable>(128)
+    val gifCallback = MultiCallback(true)
 
     fun parseTwitchEmotes(emoteTag: String, original: String, spaces: List<Int>): List<ChatMessageEmote> {
         if (emoteTag.isEmpty()) {
