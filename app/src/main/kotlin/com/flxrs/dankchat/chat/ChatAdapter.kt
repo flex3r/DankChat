@@ -129,7 +129,7 @@ class ChatAdapter(
             Log.e(TAG, trace)
 
             if (isDebugEnabled) {
-                showErrorDialog(throwable)
+                showErrorDialog(throwable, stackTraceString = trace)
             }
         }
 
