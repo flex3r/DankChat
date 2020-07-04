@@ -122,7 +122,7 @@ class TwitchService : Service(), CoroutineScope, KoinComponent {
                 items.forEach { item ->
                     with(item.message as Message.TwitchMessage) {
                         if (shouldNotifyOnMention && isMention && notificationsEnabled) {
-                            createMentionNotification(channel, name, message)
+                            createMentionNotification(channel, name, message, isNotify)
                         }
                     }
                 }
@@ -130,7 +130,7 @@ class TwitchService : Service(), CoroutineScope, KoinComponent {
         }
     }
 
-    private fun createMentionNotification(channel: String, user: String, message: String) {
+    private fun createMentionNotification(channel: String, user: String, message: String, isNotify: Boolean) {
         val pendingStartActivityIntent = Intent(this, MainActivity::class.java).let {
             it.putExtra(MainActivity.OPEN_CHANNEL_KEY, channel)
             PendingIntent.getActivity(this, notificationIntentCode, it, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -145,8 +145,13 @@ class TwitchService : Service(), CoroutineScope, KoinComponent {
             .setAutoCancel(true)
             .build()
 
+        val title = when {
+            isNotify -> getString(R.string.notification_notify_mention, channel)
+            else -> getString(R.string.notification_mention, user, channel)
+        }
+
         val notification = NotificationCompat.Builder(this, CHANNEL_ID_DEFAULT)
-            .setContentTitle(getString(R.string.notification_mention, user, channel))
+            .setContentTitle(title)
             .setContentText(message)
             .setContentIntent(pendingStartActivityIntent)
             .setSmallIcon(R.drawable.ic_notification_icon)
