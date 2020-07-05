@@ -11,13 +11,13 @@
         android:id="@+id/menu_add"
         android:icon="@drawable/ic_add_box_24dp"
         android:title="@string/add_channel"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_hide"
         android:icon="@drawable/ic_baseline_fullscreen_24"
         android:title="@string/hide_actionbar"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_login"
