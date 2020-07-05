@@ -202,7 +202,6 @@ object TwitchApi {
     suspend fun uploadMedia(file: File): String? = withContext(Dispatchers.IO) {
         val extension = file.extension.ifBlank { "png" }
         val mimetype = URLConnection.guessContentTypeFromName(file.name)
-        Log.d(TAG, mimetype)
         val body = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
             .addFormDataPart("abc", "abc.$extension", file.asRequestBody(mimetype.toMediaType()))
