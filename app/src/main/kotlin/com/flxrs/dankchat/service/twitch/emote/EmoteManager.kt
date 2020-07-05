@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.service.twitch.emote
 
+import android.util.Log
 import android.util.LruCache
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.api.model.BadgeEntities
@@ -33,19 +34,24 @@ object EmoteManager {
     private val thirdPartyRegex = Regex("\\s")
     private val emoteReplacements = mapOf(
         "[oO](_|\\.)[oO]" to "O_o",
-        "\\&lt\\;3" to ":3",
+        "\\&lt\\;3" to "<3",
         "\\:-?(p|P)" to ":P",
         "\\:-?[z|Z|\\|]" to ":Z",
         "\\:-?\\)" to ":)",
         "\\;-?(p|P)" to ";P",
         "R-?\\)" to "R)",
-        "\\&gt\\;\\(" to ">( ",
+        "\\&gt\\;\\(" to ">(",
         "\\:-?(o|O)" to ":O",
         "\\:-?[\\\\/]" to ":/",
         "\\:-?\\(" to ":(",
         "\\:-?D" to ":D",
         "\\;-?\\)" to ";)",
-        "B-?\\)" to "B)"
+        "B-?\\)" to "B)",
+        "#-?[\\/]" to "#/",
+        ":-?(?:7|L)" to ":7",
+        "\\&lt\\;\\]" to "<]",
+        "\\:-?(S|s)" to ":s",
+        "\\:\\&gt\\;" to ":>"
     )
 
     val gifCache = LruCache<String, GifDrawable>(128)
@@ -129,8 +135,9 @@ object EmoteManager {
 
         twitchEmotes.clear()
         twitchResult.sets.forEach {
+            Log.d(TAG, "${it.key}: ${it.value}")
             val type = when (val set = it.key) {
-                "0" -> EmoteType.GlobalTwitchEmote
+                "0", "42" -> EmoteType.GlobalTwitchEmote // 42 == monkey emote set, move them to the global emote section
                 else -> EmoteType.ChannelTwitchEmote(setMapping[set] ?: "Twitch")
             }
             it.value.forEach { emoteResult ->
