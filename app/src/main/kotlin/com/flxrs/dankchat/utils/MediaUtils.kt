@@ -22,9 +22,9 @@ object MediaUtils {
     )
 
     @Throws(IOException::class)
-    fun createImageFile(context: Context, suffix: String = "jpg"): File {
+    fun createMediaFile(context: Context, suffix: String = "jpg"): File {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-        val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val storageDir = context.getExternalFilesDir("Media")
         return File.createTempFile(timeStamp, ".$suffix", storageDir)
     }
 

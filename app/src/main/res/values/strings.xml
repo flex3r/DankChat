@@ -30,9 +30,11 @@
     <string name="confirm_logout_message">Are you sure you want to logout?</string>
     <string name="confirm_logout_positive_button">Logout</string>
     <string name="confirm_logout_negative_button">Cancel</string>
-    <string name="upload_image">Upload image</string>
+    <string name="upload_media">Upload media</string>
     <string name="take_picture">Take picture</string>
+    <string name="record_video">Record video</string>
     <string name="choose_image">Choose image</string>
+    <string name="choose_video">Choose video</string>
     <string name="hide_actionbar" translatable="false">Hide toolbar</string>
     <string name="resume_scroll">Resume scroll</string>
     <string name="uploading_image">Uploading image</string>

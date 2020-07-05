@@ -42,7 +42,7 @@
 
     <item
         android:id="@+id/menu_upload_image"
-        android:title="@string/upload_image"
+        android:title="@string/upload_media"
         app:showAsAction="never">
         <menu>
             <item
@@ -50,8 +50,16 @@
                 android:title="@string/take_picture"
                 app:showAsAction="never" />
             <item
+                android:id="@+id/menu_capture_video"
+                android:title="@string/record_video"
+                app:showAsAction="never" />
+            <item
                 android:id="@+id/menu_choose_image"
                 android:title="@string/choose_image"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/menu_choose_video"
+                android:title="@string/choose_video"
                 app:showAsAction="never" />
         </menu>
     </item>

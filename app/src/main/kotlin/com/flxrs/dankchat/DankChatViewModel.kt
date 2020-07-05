@@ -197,9 +197,9 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         twitchRepository.reloadEmotes(channel, token, id)
     }
 
-    fun uploadImage(file: File): Job {
+    fun uploadMedia(file: File): Job {
         showUploadProgress.value = true
-        return twitchRepository.uploadImage(file)
+        return twitchRepository.uploadMedia(file)
     }
 
     fun setMentionEntries(stringSet: Set<String>?) = twitchRepository.setMentionEntries(stringSet)

@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.service.api
 
 import android.util.Log
+import androidx.core.net.toUri
 import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.service.api.model.*
 import kotlinx.coroutines.Dispatchers
@@ -14,6 +15,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.File
+import java.net.URLConnection
 
 object TwitchApi {
     private val TAG = TwitchApi::class.java.simpleName
@@ -197,10 +199,13 @@ object TwitchApi {
         return@withContext null
     }
 
-    suspend fun uploadImage(file: File): String? = withContext(Dispatchers.IO) {
+    suspend fun uploadMedia(file: File): String? = withContext(Dispatchers.IO) {
+        val extension = file.extension.ifBlank { "png" }
+        val mimetype = URLConnection.guessContentTypeFromName(file.name)
+        Log.d(TAG, mimetype)
         val body = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
-            .addFormDataPart("abc", "abc.png", file.asRequestBody("image/png".toMediaType()))
+            .addFormDataPart("abc", "abc.$extension", file.asRequestBody(mimetype.toMediaType()))
             .build()
         val request = Request.Builder()
             .url(NUULS_UPLOAD_URL)

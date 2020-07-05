@@ -2,5 +2,5 @@
 <paths>
     <external-path
         name="images"
-        path="Android/data/com.flxrs.dankchat/files/Pictures" />
+        path="Android/data/com.flxrs.dankchat/files/Media" />
 </paths>

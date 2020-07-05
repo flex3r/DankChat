@@ -162,9 +162,9 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         }
     }
 
-    fun uploadImage(file: File) = scope.launch(coroutineExceptionHandler) {
+    fun uploadMedia(file: File) = scope.launch(coroutineExceptionHandler) {
         imageUploadedEvent.postValue(ImageUploadState.Loading)
-        val url = TwitchApi.uploadImage(file)
+        val url = TwitchApi.uploadMedia(file)
         file.delete()
         val state = url?.let { ImageUploadState.Finished(it) } ?: ImageUploadState.Failed(null)
         imageUploadedEvent.postValue(state)
