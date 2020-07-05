@@ -135,7 +135,6 @@ object EmoteManager {
 
         twitchEmotes.clear()
         twitchResult.sets.forEach {
-            Log.d(TAG, "${it.key}: ${it.value}")
             val type = when (val set = it.key) {
                 "0", "42" -> EmoteType.GlobalTwitchEmote // 42 == monkey emote set, move them to the global emote section
                 else -> EmoteType.ChannelTwitchEmote(setMapping[set] ?: "Twitch")
