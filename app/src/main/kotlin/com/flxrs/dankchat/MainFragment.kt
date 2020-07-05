@@ -41,6 +41,8 @@ import com.flxrs.dankchat.chat.suggestion.SpaceTokenizer
 import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.databinding.MainFragmentBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.service.state.DataLoadingState
+import com.flxrs.dankchat.service.state.ImageUploadState
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.utils.CustomMultiAutoCompleteTextView
 import com.flxrs.dankchat.utils.MediaUtils
@@ -49,6 +51,7 @@ import com.flxrs.dankchat.utils.dialog.MessageHistoryDisclaimerDialogFragment
 import com.flxrs.dankchat.utils.extensions.hideKeyboard
 import com.flxrs.dankchat.utils.extensions.keepScreenOn
 import com.flxrs.dankchat.utils.extensions.navigateSafe
+import com.flxrs.dankchat.utils.showErrorDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -97,6 +100,7 @@ class MainFragment : Fragment() {
 
         viewModel.apply {
             imageUploadedEvent.observe(viewLifecycleOwner, ::handleImageUploadEvent)
+            dataLoadingEvent.observe(viewLifecycleOwner, ::handleDataLoadingEvent)
             showUploadProgress.observe(viewLifecycleOwner) { activity?.invalidateOptionsMenu() }
             emoteAndUserSuggestions.observe(viewLifecycleOwner, ::setSuggestions)
             emoteItems.observe(viewLifecycleOwner, emoteMenuAdapter::submitList)
@@ -119,6 +123,12 @@ class MainFragment : Fragment() {
             }
             activeChannel.observe(viewLifecycleOwner) {
                 (activity as? MainActivity)?.clearNotificationsOfChannel(it)
+            }
+
+            errorEvent.observe(viewLifecycleOwner) {
+                if (preferences.getBoolean(getString(R.string.preference_debug_mode_key), false)) {
+                    binding.root.showErrorDialog(it)
+                }
             }
         }
 
@@ -371,16 +381,24 @@ class MainFragment : Fragment() {
         return true
     }
 
-    private fun handleImageUploadEvent(result: Pair<String?, File>) {
-        val message = result.first?.let {
-            val clipboard = getSystemService(requireContext(), ClipboardManager::class.java)
-            clipboard?.setPrimaryClip(ClipData.newPlainText("nuuls image url", it))
-            getString(R.string.snackbar_image_uploaded, it)
-        } ?: getString(R.string.snackbar_upload_failed)
+    private fun handleImageUploadEvent(result: ImageUploadState) {
+        when (result) {
+            is ImageUploadState.Loading -> return
+            is ImageUploadState.Failed -> result.errorMessage?.let { showSnackbar(getString(R.string.snackbar_upload_failed_cause, it)) } ?: showSnackbar(getString(R.string.snackbar_upload_failed))
+            is ImageUploadState.Finished -> {
+                val clipboard = getSystemService(requireContext(), ClipboardManager::class.java)
+                clipboard?.setPrimaryClip(ClipData.newPlainText("nuuls image url", result.url))
+                showSnackbar(getString(R.string.snackbar_image_uploaded, result.url))
+            }
+        }
+    }
 
-        showSnackbar(message)
-        viewModel.showUploadProgress.value = false
-        result.second.delete()
+    private fun handleDataLoadingEvent(result: DataLoadingState) {
+        when (result) {
+            is DataLoadingState.Loading, DataLoadingState.Finished -> return
+            is DataLoadingState.Reloaded -> showSnackbar(getString(R.string.snackbar_data_reloaded))
+            is DataLoadingState.Failed -> showSnackbar(getString(R.string.snackbar_data_load_failed_cause, result.t.message))
+        }
     }
 
     private fun handleLoginRequest(success: Boolean) {

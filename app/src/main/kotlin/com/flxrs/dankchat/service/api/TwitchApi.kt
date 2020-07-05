@@ -213,6 +213,7 @@ object TwitchApi {
             if (response.isSuccessful) return@withContext response.body?.string()
         } catch (t: Throwable) {
             Log.e(TAG, Log.getStackTraceString(t))
+            throw t
         }
         return@withContext null
     }

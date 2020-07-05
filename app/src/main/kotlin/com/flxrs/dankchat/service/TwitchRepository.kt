@@ -8,6 +8,8 @@ import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.irc.IrcMessage
+import com.flxrs.dankchat.service.state.DataLoadingState
+import com.flxrs.dankchat.service.state.ImageUploadState
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
@@ -27,6 +29,7 @@ import org.koin.core.KoinComponent
 import org.koin.core.get
 import org.koin.core.parameter.parametersOf
 import java.io.File
+import java.lang.IllegalStateException
 import java.nio.ByteBuffer
 import kotlin.system.measureTimeMillis
 
@@ -40,6 +43,13 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     private val ignoredList = mutableListOf<Int>()
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, t ->
         Log.e(TAG, Log.getStackTraceString(t))
+        errorEvent.postValue(t)
+
+        if (dataLoadingEvent.value is DataLoadingState.Loading) {
+            dataLoadingEvent.postValue(DataLoadingState.Failed(t))
+        } else if (imageUploadedEvent.value is ImageUploadState.Loading) {
+            imageUploadedEvent.postValue(ImageUploadState.Failed(t.message))
+        }
     }
 
     private var hasDisconnected = true
@@ -65,7 +75,9 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     private val readConnection: WebSocketConnection = get { parametersOf("reader", client, request, ::handleDisconnect, ::onReaderMessage) }
     private val writeConnection: WebSocketConnection = get { parametersOf("writer", client, request, null, ::onWriterMessage) }
 
-    val imageUploadedEvent = SingleLiveEvent<Pair<String?, File>>()
+    val errorEvent = SingleLiveEvent<Throwable>()
+    val dataLoadingEvent = SingleLiveEvent<DataLoadingState>()
+    val imageUploadedEvent = SingleLiveEvent<ImageUploadState>()
     val messageChannel = Channel<List<ChatItem>>()
     var startedConnection = false
 
@@ -81,14 +93,15 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
     fun loadData(channels: List<String>, oAuth: String, id: Int, loadTwitchData: Boolean, loadHistory: Boolean, name: String) {
         this.name = name
+        dataLoadingEvent.postValue(DataLoadingState.Loading)
         scope.launch(coroutineExceptionHandler) {
             if (oAuth.isNotBlank() && loadTwitchData) {
                 loadedTwitchEmotes = false
                 loadIgnores(oAuth, id)
                 loadTwitchEmotes(oAuth, id)
             }
-            channels.forEach { channel ->
-                launch {
+            channels.map { channel ->
+                async {
                     TwitchApi.getUserIdFromName(oAuth, channel)?.let {
                         loadBadges(channel, it)
                         load3rdPartyEmotes(channel, it)
@@ -104,7 +117,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
                         )
                     }
                 }
-            }
+            }.awaitAll()
+            dataLoadingEvent.postValue(DataLoadingState.Finished)
         }
     }
 
@@ -131,7 +145,8 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         messages[channel]?.postValue(emptyList())
     }
 
-    fun reloadEmotes(channel: String, oAuth: String, id: Int) =
+    fun reloadEmotes(channel: String, oAuth: String, id: Int) {
+        dataLoadingEvent.postValue(DataLoadingState.Loading)
         scope.launch(coroutineExceptionHandler) {
             loadedGlobalEmotes = false
             loadedTwitchEmotes = false
@@ -144,11 +159,16 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
             }
 
             setSuggestions(channel)
+            dataLoadingEvent.postValue(DataLoadingState.Reloaded)
         }
+    }
 
     fun uploadImage(file: File) = scope.launch(coroutineExceptionHandler) {
+        imageUploadedEvent.postValue(ImageUploadState.Loading)
         val url = TwitchApi.uploadImage(file)
-        imageUploadedEvent.postValue(url to file)
+        file.delete()
+        val state = url?.let { ImageUploadState.Finished(it) } ?: ImageUploadState.Failed(null)
+        imageUploadedEvent.postValue(state)
     }
 
     fun close(onClosed: () -> Unit = { }): Boolean {

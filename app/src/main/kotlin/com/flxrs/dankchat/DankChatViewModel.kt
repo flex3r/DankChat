@@ -5,8 +5,10 @@ import androidx.lifecycle.*
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.chat.suggestion.Suggestion
+import com.flxrs.dankchat.service.state.DataLoadingState
 import com.flxrs.dankchat.service.TwitchRepository
 import com.flxrs.dankchat.service.api.TwitchApi
+import com.flxrs.dankchat.service.state.ImageUploadState
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.EmoteType
 import com.flxrs.dankchat.utils.extensions.timer
@@ -21,11 +23,15 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, t ->
         Log.e(TAG, Log.getStackTraceString(t))
+        _errorEvent.postValue(t)
     }
 
     val activeChannel = MutableLiveData<String>()
     val channels = MutableLiveData<List<String>>(emptyList())
 
+    private val _errorEvent = twitchRepository.errorEvent
+    private val _dataLoadingEvent = twitchRepository.dataLoadingEvent
+    private val _imageUploadedEvent = twitchRepository.imageUploadedEvent
     private val streamInfoEnabled = MutableLiveData(true)
     private val roomStateEnabled = MutableLiveData(true)
     private val streamData: MutableLiveData<Map<String, String>> = MutableLiveData()
@@ -54,6 +60,13 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
     var started = false
     var lastMessage: Map<String, String> = twitchRepository.lastMessage
 
+    val errorEvent: LiveData<Throwable>
+        get() = _errorEvent
+    val dataLoadingEvent: LiveData<DataLoadingState>
+        get() = _dataLoadingEvent
+    val imageUploadedEvent: LiveData<ImageUploadState>
+        get() = _imageUploadedEvent
+
     val inputEnabled = MutableLiveData(true)
     val appbarEnabled = MutableLiveData(true)
     val shouldShowViewPager = MediatorLiveData<Boolean>().apply {
@@ -63,8 +76,10 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         addSource(inputEnabled) { value = it && shouldShowViewPager.value ?: false }
         addSource(shouldShowViewPager) { value = it && inputEnabled.value ?: true }
     }
-    val imageUploadedEvent = twitchRepository.imageUploadedEvent
-    val showUploadProgress = MutableLiveData(false)
+    val showUploadProgress = MediatorLiveData<Boolean>().apply {
+        addSource(_imageUploadedEvent) { value = it is ImageUploadState.Loading || _dataLoadingEvent.value is DataLoadingState.Loading }
+        addSource(_dataLoadingEvent) { value = it is DataLoadingState.Loading || _imageUploadedEvent.value is ImageUploadState.Loading}
+    }
     val connectionState = activeChannel.switchMap { twitchRepository.getConnectionState(it) }
     val canType = connectionState.map { it == SystemMessageType.CONNECTED }
     val bottomText = MediatorLiveData<String>().apply {

@@ -66,6 +66,9 @@
     <string name="snackbar_invalid_oauth">Invalid OAuth token</string>
     <string name="snackbar_image_uploaded">Copied: %1$s</string>
     <string name="snackbar_upload_failed">Error during upload</string>
+    <string name="snackbar_upload_failed_cause">Error during upload: %1$s</string>
+    <string name="snackbar_data_reloaded">Emotes reloaded</string>
+    <string name="snackbar_data_load_failed_cause">Data loading failed: %1$s</string>
     <string name="advanced_login_hint">Token</string>
     <string name="add_channel_hint">Channel name</string>
     <string name="emote_menu_tab_subs">Subs</string>
