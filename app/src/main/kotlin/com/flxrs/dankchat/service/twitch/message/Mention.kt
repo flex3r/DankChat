@@ -5,6 +5,7 @@ import java.util.regex.Pattern
 
 sealed class Mention {
     abstract val matchUser: Boolean
+
     data class Phrase(val entry: String, override val matchUser: Boolean) : Mention()
     data class RegexPhrase(val entry: Regex, override val matchUser: Boolean) : Mention()
     data class User(val name: String, override val matchUser: Boolean = false) : Mention() {
@@ -22,7 +23,7 @@ sealed class Mention {
 
     fun matchUser(user: Pair<String, String>): Boolean {
         if (!matchUser) return false
-        return when(this) {
+        return when (this) {
             is Phrase -> entry.equals(user.first, true) || entry.equals(user.second, true)
             is RegexPhrase -> user.first.contains(entry) || user.second.contains(entry)
             else -> false

@@ -14,7 +14,6 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.File
-import java.lang.IllegalArgumentException
 
 object TwitchApi {
     private val TAG = TwitchApi::class.java.simpleName

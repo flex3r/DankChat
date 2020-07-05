@@ -5,9 +5,9 @@ import androidx.lifecycle.*
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.chat.suggestion.Suggestion
-import com.flxrs.dankchat.service.state.DataLoadingState
 import com.flxrs.dankchat.service.TwitchRepository
 import com.flxrs.dankchat.service.api.TwitchApi
+import com.flxrs.dankchat.service.state.DataLoadingState
 import com.flxrs.dankchat.service.state.ImageUploadState
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.EmoteType
@@ -78,7 +78,7 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
     }
     val showUploadProgress = MediatorLiveData<Boolean>().apply {
         addSource(_imageUploadedEvent) { value = it is ImageUploadState.Loading || _dataLoadingEvent.value is DataLoadingState.Loading }
-        addSource(_dataLoadingEvent) { value = it is DataLoadingState.Loading || _imageUploadedEvent.value is ImageUploadState.Loading}
+        addSource(_dataLoadingEvent) { value = it is DataLoadingState.Loading || _imageUploadedEvent.value is ImageUploadState.Loading }
     }
     val connectionState = activeChannel.switchMap { twitchRepository.getConnectionState(it) }
     val canType = connectionState.map { it == SystemMessageType.CONNECTED }
