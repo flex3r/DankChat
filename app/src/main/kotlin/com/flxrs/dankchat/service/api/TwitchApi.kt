@@ -190,11 +190,6 @@ object TwitchApi {
         null
     }
 
-    suspend fun getRawBytes(url: String): ByteArray? = withContext(Dispatchers.IO) {
-        val request = Request.Builder().url(url).build()
-        return@withContext client.newCall(request).execute().body?.bytes()
-    }
-
     fun clearChannelFromLoaded(channel: String) {
         loadedRecentsInChannels.remove(channel)
     }
