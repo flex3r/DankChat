@@ -558,12 +558,7 @@ class MainFragment : Fragment() {
             binding.showActionbarFab.visibility = View.GONE
             binding.tabs.visibility = View.VISIBLE
         } else {
-            var isMultiWindow = false
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                isMultiWindow = activity?.isInMultiWindowMode ?: false
-            }
-
-            if (!isMultiWindow) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && activity?.isInMultiWindowMode == false) {
                 binding.root.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -571,6 +566,7 @@ class MainFragment : Fragment() {
                         or View.SYSTEM_UI_FLAG_FULLSCREEN
                         or lightModeFlags)
             }
+
             (activity as? AppCompatActivity)?.supportActionBar?.hide()
             binding.tabs.visibility = View.GONE
             binding.showActionbarFab.visibility = View.VISIBLE
@@ -798,8 +794,7 @@ class MainFragment : Fragment() {
 
         var wasLandScapeNotFullscreen = false
         setOnFocusChangeListener { _, hasFocus ->
-            val isDarkMode =
-                preferences.getBoolean(getString(R.string.preference_dark_theme_key), true)
+            val isDarkMode = preferences.getBoolean(getString(R.string.preference_dark_theme_key), true)
             var lightModeFlags = 0
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1 && !isDarkMode) {
                 lightModeFlags = (lightModeFlags or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
@@ -816,19 +811,16 @@ class MainFragment : Fragment() {
                 }
                 !hasFocus && binding.showActionbarFab.isVisible -> {
                     wasLandScapeNotFullscreen = false
-                    var isMultiWindow = false
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        isMultiWindow = activity?.isInMultiWindowMode ?: false
-                    }
-
-                    if (!isMultiWindow) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && activity?.isInMultiWindowMode == true) {
+                        View.VISIBLE or lightModeFlags
+                    } else {
                         (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                                 or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                                 or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                                 or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                                 or View.SYSTEM_UI_FLAG_FULLSCREEN
                                 or lightModeFlags)
-                    } else View.VISIBLE or lightModeFlags
+                    }
                 }
                 hasFocus && !binding.showActionbarFab.isVisible && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE -> {
                     wasLandScapeNotFullscreen = true
