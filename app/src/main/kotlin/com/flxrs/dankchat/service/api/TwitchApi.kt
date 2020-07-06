@@ -1,7 +1,6 @@
 package com.flxrs.dankchat.service.api
 
 import android.util.Log
-import androidx.core.net.toUri
 import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.service.api.model.*
 import kotlinx.coroutines.Dispatchers
@@ -80,125 +79,81 @@ object TwitchApi {
     }
 
     suspend fun getUserEmotes(oAuth: String, id: Int): EmoteEntities.Twitch.Result? = withContext(Dispatchers.IO) {
-        try {
-            val response = service.getUserEmotes("OAuth $oAuth", id)
-            if (response.isSuccessful) return@withContext response.body()
-        } catch (t: Throwable) {
-            Log.e(TAG, Log.getStackTraceString(t))
-        }
-        return@withContext null
+        val response = service.getUserEmotes("OAuth $oAuth", id)
+        if (response.isSuccessful) return@withContext response.body()
+        null
     }
 
     suspend fun getUserSets(sets: List<String>): List<EmoteEntities.Twitch.EmoteSet>? = withContext(Dispatchers.IO) {
-        try {
-            val ids = sets.joinToString(",")
-            val response = service.getSets("${TWITCHEMOTES_SETS_URL}$ids")
-            if (response.isSuccessful) return@withContext response.body()
-        } catch (t: Throwable) {
-            Log.e(TAG, Log.getStackTraceString(t))
-        }
-        return@withContext null
+        val ids = sets.joinToString(",")
+        val response = service.getSets("${TWITCHEMOTES_SETS_URL}$ids")
+        if (response.isSuccessful) return@withContext response.body()
+        null
     }
 
     suspend fun getUserSet(set: String): EmoteEntities.Twitch.EmoteSet? = withContext(Dispatchers.IO) {
-        try {
-            val response = service.getSet("https://flxrs.com/api/set/$set")
-            if (response.isSuccessful) return@withContext response.body()?.firstOrNull()
-        } catch (t: Throwable) {
-            Log.e(TAG, Log.getStackTraceString(t))
-        }
-        return@withContext null
+        val response = service.getSet("https://flxrs.com/api/set/$set")
+        if (response.isSuccessful) return@withContext response.body()?.firstOrNull()
+        null
     }
 
     suspend fun getStream(oAuth: String, channel: String): StreamEntities.Stream? = withContext(Dispatchers.IO) {
         getUserIdFromName(oAuth, channel)?.let {
-            try {
-                val response = service.getStream(it.toInt())
-                return@withContext if (response.isSuccessful) response.body()?.stream else null
-            } catch (t: Throwable) {
-                Log.e(TAG, Log.getStackTraceString(t))
-            }
+            val response = service.getStream(it.toInt())
+            return@withContext if (response.isSuccessful) response.body()?.stream else null
         }
-        return@withContext null
+        null
     }
 
     suspend fun getChannelBadges(id: String): BadgeEntities.Result? = withContext(Dispatchers.IO) {
-        try {
-            val response =
-                service.getBadgeSets("$TWITCH_SUBBADGES_BASE_URL$id$TWITCH_SUBBADGES_SUFFIX")
-            return@withContext if (response.isSuccessful) response.body() else null
-        } catch (t: Throwable) {
-            Log.e(TAG, Log.getStackTraceString(t))
-        }
-        return@withContext null
+        val response = service.getBadgeSets("$TWITCH_SUBBADGES_BASE_URL$id$TWITCH_SUBBADGES_SUFFIX")
+        return@withContext if (response.isSuccessful) response.body() else null
     }
 
     suspend fun getGlobalBadges(): BadgeEntities.Result? = withContext(Dispatchers.IO) {
-        try {
-            val response = service.getBadgeSets(TWITCH_BADGES_URL)
-            if (response.isSuccessful) return@withContext response.body()
-        } catch (t: Throwable) {
-            Log.e(TAG, Log.getStackTraceString(t))
-        }
-        return@withContext null
+        val response = service.getBadgeSets(TWITCH_BADGES_URL)
+        if (response.isSuccessful) return@withContext response.body()
+        null
     }
 
     suspend fun getFFZChannelEmotes(id: String): EmoteEntities.FFZ.Result? = withContext(Dispatchers.IO) {
-        try {
-            val response = service.getFFZChannelEmotes("$FFZ_BASE_URL$id")
-            if (response.isSuccessful) return@withContext response.body()
-        } catch (t: Throwable) {
-            Log.e(TAG, Log.getStackTraceString(t))
-        }
-        return@withContext null
+        val response = service.getFFZChannelEmotes("$FFZ_BASE_URL$id")
+        if (response.isSuccessful) return@withContext response.body()
+        null
     }
 
     suspend fun getFFZGlobalEmotes(): EmoteEntities.FFZ.GlobalResult? = withContext(Dispatchers.IO) {
-        try {
-            val response = service.getFFZGlobalEmotes(FFZ_GLOBAL_URL)
-            if (response.isSuccessful) return@withContext response.body()
-        } catch (t: Throwable) {
-            Log.e(TAG, Log.getStackTraceString(t))
-        }
-        return@withContext null
+        val response = service.getFFZGlobalEmotes(FFZ_GLOBAL_URL)
+        if (response.isSuccessful) return@withContext response.body()
+        null
     }
 
     suspend fun getBTTVChannelEmotes(id: String): EmoteEntities.BTTV.Result? = withContext(Dispatchers.IO) {
-        try {
-            val response = service.getBTTVChannelEmotes("$BTTV_CHANNEL_BASE_URL$id")
-            if (response.isSuccessful) return@withContext response.body()
-        } catch (t: Throwable) {
-            Log.e(TAG, Log.getStackTraceString(t))
-        }
-        return@withContext null
+        val response = service.getBTTVChannelEmotes("$BTTV_CHANNEL_BASE_URL$id")
+        if (response.isSuccessful) return@withContext response.body()
+        null
     }
 
     suspend fun getBTTVGlobalEmotes(): List<EmoteEntities.BTTV.GlobalEmote>? = withContext(Dispatchers.IO) {
-        try {
-            val response = service.getBTTVGlobalEmotes(BTTV_GLOBAL_URL)
-            if (response.isSuccessful) return@withContext response.body()
-        } catch (t: Throwable) {
-            Log.e(TAG, Log.getStackTraceString(t))
-        }
-        return@withContext null
+        val response = service.getBTTVGlobalEmotes(BTTV_GLOBAL_URL)
+        if (response.isSuccessful) return@withContext response.body()
+        null
     }
 
     suspend fun getRecentMessages(channel: String): RecentMessages? = withContext(Dispatchers.IO) {
         if (loadedRecentsInChannels.contains(channel)) {
             return@withContext null
         }
-        try {
-            val response = service.getRecentMessages("$RECENT_MSG_URL$channel")
-            if (response.isSuccessful) {
-                loadedRecentsInChannels.add(channel)
-                return@withContext response.body()
-            }
-        } catch (t: Throwable) {
-            Log.e(TAG, Log.getStackTraceString(t))
+
+        val response = service.getRecentMessages("$RECENT_MSG_URL$channel")
+        if (response.isSuccessful) {
+            loadedRecentsInChannels.add(channel)
+            return@withContext response.body()
         }
-        return@withContext null
+        null
     }
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     suspend fun uploadMedia(file: File): String? = withContext(Dispatchers.IO) {
         val extension = file.extension.ifBlank { "png" }
         val mimetype = URLConnection.guessContentTypeFromName(file.name)
@@ -211,54 +166,33 @@ object TwitchApi {
             .header("User-Agent", "dankchat/${BuildConfig.VERSION_NAME}")
             .post(body)
             .build()
-        try {
-            val response = client.newCall(request).execute()
-            if (response.isSuccessful) return@withContext response.body?.string()
-        } catch (t: Throwable) {
-            Log.e(TAG, Log.getStackTraceString(t))
-            throw t
-        }
-        return@withContext null
+
+        val response = client.newCall(request).execute()
+        if (response.isSuccessful) return@withContext response.body?.string()
+        null
     }
 
     suspend fun getUserIdFromName(oAuth: String, name: String): String? = withContext(Dispatchers.IO) {
-        try {
-            val response = service.getUserHelix("Bearer $oAuth", "${HELIX_BASE_URL}users?login=$name")
-            if (response.isSuccessful) return@withContext response.body()?.data?.get(0)?.id
-        } catch (t: Throwable) {
-            Log.e(TAG, Log.getStackTraceString(t))
-        }
-        return@withContext null
+        val response = service.getUserHelix("Bearer $oAuth", "${HELIX_BASE_URL}users?login=$name")
+        if (response.isSuccessful) return@withContext response.body()?.data?.get(0)?.id
+        null
     }
 
     suspend fun getNameFromUserId(oAuth: String, id: Int): String? = withContext(Dispatchers.IO) {
-        try {
-            val response = service.getUserHelix("Bearer $oAuth", "${HELIX_BASE_URL}users?id=$id")
-            if (response.isSuccessful) return@withContext response.body()?.data?.get(0)?.name
-        } catch (t: Throwable) {
-            Log.e(TAG, Log.getStackTraceString(t))
-        }
-        return@withContext null
+        val response = service.getUserHelix("Bearer $oAuth", "${HELIX_BASE_URL}users?id=$id")
+        if (response.isSuccessful) return@withContext response.body()?.data?.get(0)?.name
+        null
     }
 
     suspend fun getIgnores(oAuth: String, id: Int): UserEntities.KrakenUsersBlocks? = withContext(Dispatchers.IO) {
-        try {
-            val response = service.getIgnores("OAuth $oAuth", id)
-            if (response.isSuccessful) return@withContext response.body()
-        } catch (t: Throwable) {
-            Log.e(TAG, Log.getStackTraceString(t))
-        }
-        return@withContext null
+        val response = service.getIgnores("OAuth $oAuth", id)
+        if (response.isSuccessful) return@withContext response.body()
+        null
     }
 
     suspend fun getRawBytes(url: String): ByteArray? = withContext(Dispatchers.IO) {
-        try {
-            val request = Request.Builder().url(url).build()
-            return@withContext client.newCall(request).execute().body?.bytes()
-        } catch (t: Throwable) {
-            Log.e(TAG, Log.getStackTraceString(t))
-        }
-        null
+        val request = Request.Builder().url(url).build()
+        return@withContext client.newCall(request).execute().body?.bytes()
     }
 
     fun clearChannelFromLoaded(channel: String) {
