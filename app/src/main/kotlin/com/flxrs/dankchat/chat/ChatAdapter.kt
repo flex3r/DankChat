@@ -33,6 +33,7 @@ import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.message.Message
+import com.flxrs.dankchat.utils.TimeUtils
 import com.flxrs.dankchat.utils.extensions.normalizeColor
 import com.flxrs.dankchat.utils.extensions.setRunning
 import com.flxrs.dankchat.utils.showErrorDialog
@@ -92,7 +93,7 @@ class ChatAdapter(
             else -> context.getString(R.string.system_message_connected)
         }
         val withTime = when {
-            showTimeStamp -> SpannableStringBuilder().bold { append("${message.time} ") }.append(connectionText)
+            showTimeStamp -> SpannableStringBuilder().bold { append("${TimeUtils.timestampToLocalTime(message.timestamp)} ") }.append(connectionText)
             else -> SpannableStringBuilder().append(connectionText)
         }
 
@@ -139,7 +140,7 @@ class ChatAdapter(
 
                 if (!showTimedOutMessages) {
                     text = if (showTimeStamp) {
-                        "$time ${context.getString(R.string.timed_out_message)}"
+                        "${TimeUtils.timestampToLocalTime(timestamp)} ${context.getString(R.string.timed_out_message)}"
                     } else context.getString(R.string.timed_out_message)
                     return@launch
                 }
@@ -183,8 +184,12 @@ class ChatAdapter(
             }
 
             val badgesLength = badges.size * 2
+            val timeWithWhisperNotice = when {
+                isWhisper -> "${TimeUtils.timestampToLocalTime(timestamp)} (Whisper)"
+                else -> TimeUtils.timestampToLocalTime(timestamp)
+            }
             val (prefixLength, spannable) = if (showTimeStamp) {
-                time.length + 1 + fullDisplayName.length to SpannableStringBuilder().bold { append("$time ") }
+                timeWithWhisperNotice.length + 1 + fullDisplayName.length to SpannableStringBuilder().bold { append("$timeWithWhisperNotice ") }
             } else {
                 fullDisplayName.length to SpannableStringBuilder()
             }

@@ -11,15 +11,16 @@ import com.flxrs.dankchat.utils.extensions.appendSpacesBetweenEmojiGroup
 
 sealed class Message {
     abstract val id: String
+    abstract val timestamp: Long
 
     data class SystemMessage(
         val state: SystemMessageType,
-        val time: String = TimeUtils.localTime(),
+        override val timestamp: Long = System.currentTimeMillis(),
         override val id: String = System.nanoTime().toString()
     ) : Message()
 
     data class TwitchMessage(
-        val time: String,
+        override val timestamp: Long,
         val channel: String,
         val name: String = "",
         val displayName: String = "",
@@ -33,7 +34,8 @@ sealed class Message {
         var timedOut: Boolean = false,
         val isSystem: Boolean = false,
         var isMention: Boolean = false,
-        var isReward: Boolean = false
+        var isReward: Boolean = false,
+        val isWhisper: Boolean = false
     ) : Message() {
 
         fun checkForMention(username: String, mentions: List<Mention>) {
@@ -65,7 +67,6 @@ sealed class Message {
                 val color = Color.parseColor(colorTag)
 
                 val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
-                val time = TimeUtils.timestampToLocalTime(ts)
                 var isAction = false
                 val content = when {
                     params.size > 1 && params[1].startsWith("\u0001ACTION") && params[1].endsWith("\u0001") -> {
@@ -86,7 +87,7 @@ sealed class Message {
                 val badges = parseBadges(tags["badges"], channel)
 
                 return TwitchMessage(
-                    time = time,
+                    timestamp = ts,
                     channel = channel,
                     name = name,
                     displayName = displayName,
@@ -102,10 +103,10 @@ sealed class Message {
                 )
             }
 
-            private fun makeSystemMessage(message: String, channel: String, timestamp: String = TimeUtils.localTime(), id: String = System.nanoTime().toString()): TwitchMessage {
+            private fun makeSystemMessage(message: String, channel: String, timestamp: Long = System.currentTimeMillis(), id: String = System.nanoTime().toString()): TwitchMessage {
                 val color = Color.parseColor("#717171")
                 return TwitchMessage(
-                    time = timestamp,
+                    timestamp = timestamp,
                     channel = channel,
                     name = "",
                     color = color,
@@ -124,14 +125,13 @@ sealed class Message {
                 val color = Color.parseColor("#717171")
 
                 val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
-                val time = TimeUtils.timestampToLocalTime(ts)
 
                 if (msgId != null && (msgId == "sub" || msgId == "resub")) {
                     val subMsg = parsePrivMessage(message, true)
                     if (subMsg.message.isNotBlank()) messages.add(subMsg)
                 }
                 val systemTwitchMessage = TwitchMessage(
-                    time = time,
+                    timestamp = ts,
                     channel = channel,
                     name = "",
                     color = color,
@@ -147,20 +147,18 @@ sealed class Message {
                 val channel = params[0].substring(1)
                 val notice = params[1]
                 val ts = tags["rm-received-ts"]?.toLong() ?: System.currentTimeMillis()
-                val time = TimeUtils.timestampToLocalTime(ts)
                 val id = tags["id"] ?: System.nanoTime().toString()
 
-                return makeSystemMessage(notice, channel, time, id)
+                return makeSystemMessage(notice, channel, ts, id)
             }
 
             private fun parseHostTarget(message: IrcMessage): TwitchMessage = with(message) {
                 val target = params[1].substringBefore("-")
                 val channel = params[0].substring(1)
                 val ts = tags["rm-received-ts"]?.toLong() ?: System.currentTimeMillis()
-                val time = TimeUtils.timestampToLocalTime(ts)
                 val id = tags["id"] ?: System.nanoTime().toString()
 
-                return makeSystemMessage("Now hosting $target", channel, time, id)
+                return makeSystemMessage("Now hosting $target", channel, ts, id)
             }
 
             private fun parseClearChat(message: IrcMessage): TwitchMessage = with(message) {
@@ -173,10 +171,9 @@ sealed class Message {
                     else -> "$target has been timed out for ${duration}s."
                 }
                 val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
-                val time = TimeUtils.timestampToLocalTime(ts)
                 val id = tags["id"] ?: System.nanoTime().toString()
 
-                return makeSystemMessage(systemMessage, channel, time, id)
+                return makeSystemMessage(systemMessage, channel, ts, id)
             }
 
             private fun parseWhisper(message: IrcMessage): TwitchMessage = with(message) {
@@ -185,14 +182,13 @@ sealed class Message {
                 val colorTag = tags["color"]?.ifBlank { "#717171" } ?: "#717171"
                 val color = Color.parseColor(colorTag)
                 val (fixedContent, spaces) = params[1].appendSpacesBetweenEmojiGroup()
-                val time = "${TimeUtils.timestampToLocalTime(System.currentTimeMillis())} (Whisper)"
                 val badges = parseBadges(tags["badges"])
                 val emotes = EmoteManager
                     .parseTwitchEmotes(tags["emotes"] ?: "", fixedContent, spaces)
                     .plus(EmoteManager.parse3rdPartyEmotes(fixedContent))
 
                 return TwitchMessage(
-                    time = time,
+                    timestamp = System.currentTimeMillis(),
                     channel = "*",
                     name = name,
                     displayName = displayName,
@@ -200,7 +196,8 @@ sealed class Message {
                     message = fixedContent,
                     emotes = emotes,
                     badges = badges,
-                    id = System.nanoTime().toString()
+                    id = System.nanoTime().toString(),
+                    isWhisper = true
                 )
             }
 

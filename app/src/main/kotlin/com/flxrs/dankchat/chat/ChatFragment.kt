@@ -68,6 +68,7 @@ class ChatFragment : Fragment() {
             context ?: return@OnSharedPreferenceChangeListener
             when (key) {
                 getString(R.string.preference_timestamp_key),
+                getString(R.string.preference_timestamp_format_key),
                 getString(R.string.preference_show_timed_out_messages_key),
                 getString(R.string.preference_animate_gifs_key) -> binding.chat.swapAdapter(adapter, false)
                 getString(R.string.preference_line_separator_key) -> if (pref.getBoolean(key, false)) {

@@ -46,6 +46,7 @@ import com.flxrs.dankchat.service.state.ImageUploadState
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.utils.CustomMultiAutoCompleteTextView
 import com.flxrs.dankchat.utils.MediaUtils
+import com.flxrs.dankchat.utils.TimeUtils
 import com.flxrs.dankchat.utils.dialog.EditTextDialogFragment
 import com.flxrs.dankchat.utils.dialog.MessageHistoryDisclaimerDialogFragment
 import com.flxrs.dankchat.utils.extensions.hideKeyboard
@@ -597,6 +598,7 @@ class MainFragment : Fragment() {
         val blacklistKey = getString(R.string.preference_blacklist_key)
         val keepScreenOnKey = getString(R.string.preference_keep_screen_on_key)
         val suggestionsKey = getString(R.string.preference_suggestions_key)
+        val timestampFormatKey = getString(R.string.preference_timestamp_format_key)
         twitchPreferences = DankChatPreferenceStore(context)
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
             when (key) {
@@ -615,6 +617,7 @@ class MainFragment : Fragment() {
         preferences = PreferenceManager.getDefaultSharedPreferences(context).apply {
             registerOnSharedPreferenceChangeListener(preferenceListener)
             keepScreenOn(getBoolean(keepScreenOnKey, true))
+            TimeUtils.setPattern(getString(timestampFormatKey, "HH:mm") ?: "HH:mm")
             viewModel.apply {
                 setRoomStateEnabled(getBoolean(roomStateKey, true))
                 setStreamInfoEnabled(getBoolean(streamInfoKey, true))

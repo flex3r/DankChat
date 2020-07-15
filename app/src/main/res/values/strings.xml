@@ -160,6 +160,8 @@
     <string name="preference_debug_mode_key" translatable="false">debug_mode_key</string>
     <string name="preference_debug_mode_title">Debug mode</string>
     <string name="preference_debug_mode_summary">Provides information for any exceptions that have been caught</string>
+    <string name="preference_timestamp_format_key" translatable="false">timestamp_format_key</string>
+    <string name="preference_timestamp_format_title">Timestamp format</string>
 
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>
