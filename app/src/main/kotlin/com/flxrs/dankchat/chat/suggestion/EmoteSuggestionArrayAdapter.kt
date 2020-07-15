@@ -7,6 +7,7 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import coil.api.clear
 import coil.api.load
 import com.flxrs.dankchat.R
@@ -31,8 +32,8 @@ class EmoteSuggestionsArrayAdapter(context: Context, private val onCount: (count
                     }
                 }
                 is Suggestion.UserSuggestion -> {
-                    val drawable = context.getDrawable(R.drawable.ic_notification_icon)?.also {
-                        it.setTint(ContextCompat.getColor(context, R.color.color_on_surface))
+                    val drawable = context.getDrawable(R.drawable.ic_notification_icon)?.apply {
+                        DrawableCompat.setTint(this, ContextCompat.getColor(context, R.color.color_on_surface))
                     }
                     imageView.setImageDrawable(drawable)
                 }
