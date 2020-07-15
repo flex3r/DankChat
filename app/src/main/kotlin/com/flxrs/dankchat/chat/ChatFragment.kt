@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
@@ -36,9 +37,6 @@ class ChatFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         channel = requireArguments().getString(CHANNEL_ARG, "")
-
-
-
         binding = ChatFragmentBinding.inflate(inflater, container, false).apply {
             lifecycleOwner = this@ChatFragment
             vm = viewModel
@@ -61,7 +59,7 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val itemDecoration = DividerItemDecoration(view.context, LinearLayoutManager.VERTICAL)
         manager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false).apply { stackFromEnd = true }
-        adapter = ChatAdapter(::scrollToPosition, ::mentionUser, ::copyMessage)
+        adapter = ChatAdapter(::scrollToPosition, ::mentionUser, ::copyMessage).apply { stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY }
         binding.chat.setup(adapter, manager)
 
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { pref, key ->
@@ -91,6 +89,19 @@ class ChatFragment : Fragment() {
         if (::preferences.isInitialized) {
             preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         }
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        savedInstanceState?.let {
+            isAtBottom = it.getBoolean(AT_BOTTOM_STATE)
+            binding.scrollBottom.isVisible = !isAtBottom
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(AT_BOTTOM_STATE, isAtBottom)
     }
 
     private fun mentionUser(user: String) {
@@ -144,5 +155,6 @@ class ChatFragment : Fragment() {
         }
 
         const val CHANNEL_ARG = "channel"
+        private const val AT_BOTTOM_STATE = "chat_at_bottom_state"
     }
 }
