@@ -39,7 +39,13 @@ sealed class EmoteEntities {
         )
 
         @Keep
+        data class Room(
+            @field:Json(name = "moderator_badge") val moderatorBadgeUrl: String?
+        )
+
+        @Keep
         data class Result(
+            @field:Json(name = "room") val room: Room,
             @field:Json(name = "sets") val sets: Map<String, EmoteSet>
         )
 

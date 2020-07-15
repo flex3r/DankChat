@@ -28,6 +28,7 @@ object EmoteManager {
     private val bttvEmotes = ConcurrentHashMap<String, HashMap<String, GenericEmote>>()
     private val globalBttvEmotes = ConcurrentHashMap<String, GenericEmote>()
 
+    private val ffzModBadges = ConcurrentHashMap<String, String>()
     private val channelBadges = ConcurrentHashMap<String, BadgeEntities.Result>()
     private val globalBadges = ConcurrentHashMap<String, BadgeEntities.BadgeSet>()
 
@@ -116,9 +117,11 @@ object EmoteManager {
         return emotes
     }
 
-    fun getSubBadgeUrl(channel: String, set: String, version: String) = channelBadges[channel]?.sets?.get(set)?.versions?.get(version)?.imageUrlHigh
+    fun getChannelBadgeUrl(channel: String, set: String, version: String) = channelBadges[channel]?.sets?.get(set)?.versions?.get(version)?.imageUrlHigh
 
     fun getGlobalBadgeUrl(set: String, version: String) = globalBadges[set]?.versions?.get(version)?.imageUrlHigh
+
+    fun getFFzModBadgeUrl(channel: String) = ffzModBadges[channel]
 
     suspend fun setChannelBadges(channel: String, entity: BadgeEntities.Result) = withContext(Dispatchers.Default) {
         channelBadges[channel] = entity
@@ -167,6 +170,7 @@ object EmoteManager {
             }
         }
         ffzEmotes[channel] = emotes
+        ffzResult.room.moderatorBadgeUrl?.let { ffzModBadges[channel] = "https:$it" }
     }
 
     suspend fun setFFZGlobalEmotes(ffzResult: EmoteEntities.FFZ.GlobalResult) = withContext(Dispatchers.Default) {

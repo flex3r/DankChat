@@ -1,3 +1,9 @@
 package com.flxrs.dankchat.service.twitch.badge
 
-data class Badge(val name: String, val url: String)
+sealed class Badge {
+    abstract val url: String
+
+    data class ChannelBadge(val name: String, override val url: String) : Badge()
+    data class GlobalBadge(val name: String, override val url: String) : Badge()
+    data class FFZModBadge(override val url: String) : Badge()
+}

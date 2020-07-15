@@ -6,7 +6,6 @@ import com.flxrs.dankchat.service.twitch.badge.Badge
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
-import com.flxrs.dankchat.utils.TimeUtils
 import com.flxrs.dankchat.utils.extensions.appendSpacesBetweenEmojiGroup
 
 sealed class Message {
@@ -202,18 +201,19 @@ sealed class Message {
             }
 
             private fun parseBadges(badgeTags: String?, channel: String = ""): List<Badge> {
-                val result = mutableListOf<Badge>()
-                badgeTags?.split(',')?.forEach { badgeTag ->
+                return badgeTags?.split(',')?.mapNotNull { badgeTag ->
                     val trimmed = badgeTag.trim()
                     val badgeSet = trimmed.substringBefore('/')
                     val badgeVersion = trimmed.substringAfter('/')
+                    val globalBadgeUrl = EmoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)
+                    val channelBadgeUrl = EmoteManager.getChannelBadgeUrl(channel, badgeSet, badgeVersion)
+                    val ffzModBadgeUrl = EmoteManager.getFFzModBadgeUrl(channel)
                     when {
-                        badgeSet.startsWith("subscriber") || badgeSet.startsWith("bits") -> EmoteManager.getSubBadgeUrl(channel, badgeSet, badgeVersion)
-                            ?: EmoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)
-                        else -> EmoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)
-                    }?.let { result += Badge(badgeSet, it) }
-                }
-                return result
+                        (badgeSet.startsWith("subscriber") || badgeSet.startsWith("bits")) && channelBadgeUrl != null -> Badge.ChannelBadge(badgeSet, channelBadgeUrl)
+                        badgeSet.startsWith("moderator") && ffzModBadgeUrl != null -> Badge.FFZModBadge(ffzModBadgeUrl)
+                        else -> globalBadgeUrl?.let { Badge.GlobalBadge(badgeSet, it) }
+                    }
+                } ?: emptyList()
             }
         }
 

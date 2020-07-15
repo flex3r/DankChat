@@ -2,6 +2,9 @@ package com.flxrs.dankchat.chat
 
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
+import android.graphics.ColorFilter
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.text.Spannable
@@ -17,6 +20,8 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.text.bold
 import androidx.core.text.color
 import androidx.core.view.postDelayed
@@ -29,6 +34,7 @@ import coil.Coil
 import coil.api.get
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatItemBinding
+import com.flxrs.dankchat.service.twitch.badge.Badge
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
@@ -200,6 +206,8 @@ class ChatAdapter(
                 val end = spannable.length - 1
 
                 Coil.get(badge.url).apply {
+                    if (badge is Badge.FFZModBadge)
+                        colorFilter = PorterDuffColorFilter(ContextCompat.getColor(context, R.color.color_ffz_mod), PorterDuff.Mode.DST_OVER)
 //                val result = Coil.execute(GetRequest.Builder(context).data(badge.url).build())
 //                if (result is SuccessResult) {
 //                    result.drawable.apply {
