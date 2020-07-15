@@ -174,8 +174,10 @@ object TwitchApi {
 
     suspend fun getUserIdFromName(oAuth: String, name: String): String? = withContext(Dispatchers.IO) {
         val response = service.getUserHelix("Bearer $oAuth", "${HELIX_BASE_URL}users?login=$name")
-        if (response.isSuccessful) return@withContext response.body()?.data?.get(0)?.id
-        null
+        when {
+            response.isSuccessful -> response.body()?.data?.getOrNull(0)?.id
+            else -> null
+        }
     }
 
     suspend fun getNameFromUserId(oAuth: String, id: Int): String? = withContext(Dispatchers.IO) {
