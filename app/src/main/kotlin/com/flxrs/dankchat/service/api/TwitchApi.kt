@@ -11,6 +11,7 @@ import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.File
@@ -80,77 +81,65 @@ object TwitchApi {
 
     suspend fun getUserEmotes(oAuth: String, id: Int): EmoteEntities.Twitch.Result? = withContext(Dispatchers.IO) {
         val response = service.getUserEmotes("OAuth $oAuth", id)
-        if (response.isSuccessful) return@withContext response.body()
-        null
+        response.bodyOrNull
     }
 
     suspend fun getUserSets(sets: List<String>): List<EmoteEntities.Twitch.EmoteSet>? = withContext(Dispatchers.IO) {
         val ids = sets.joinToString(",")
         val response = service.getSets("${TWITCHEMOTES_SETS_URL}$ids")
-        if (response.isSuccessful) return@withContext response.body()
-        null
+        response.bodyOrNull
     }
 
     suspend fun getUserSet(set: String): EmoteEntities.Twitch.EmoteSet? = withContext(Dispatchers.IO) {
         val response = service.getSet("https://flxrs.com/api/set/$set")
-        if (response.isSuccessful) return@withContext response.body()?.firstOrNull()
-        null
+        response.bodyOrNull?.firstOrNull()
     }
 
     suspend fun getStream(oAuth: String, channel: String): StreamEntities.Stream? = withContext(Dispatchers.IO) {
-        getUserIdFromName(oAuth, channel)?.let {
+        return@withContext getUserIdFromName(oAuth, channel)?.let {
             val response = service.getStream(it.toInt())
-            return@withContext if (response.isSuccessful) response.body()?.stream else null
+            response.bodyOrNull?.stream
         }
-        null
     }
 
     suspend fun getChannelBadges(id: String): BadgeEntities.Result? = withContext(Dispatchers.IO) {
         val response = service.getBadgeSets("$TWITCH_SUBBADGES_BASE_URL$id$TWITCH_SUBBADGES_SUFFIX")
-        return@withContext if (response.isSuccessful) response.body() else null
+        response.bodyOrNull
     }
 
     suspend fun getGlobalBadges(): BadgeEntities.Result? = withContext(Dispatchers.IO) {
         val response = service.getBadgeSets(TWITCH_BADGES_URL)
-        if (response.isSuccessful) return@withContext response.body()
-        null
+        response.bodyOrNull
     }
 
     suspend fun getFFZChannelEmotes(id: String): EmoteEntities.FFZ.Result? = withContext(Dispatchers.IO) {
         val response = service.getFFZChannelEmotes("$FFZ_BASE_URL$id")
-        if (response.isSuccessful) return@withContext response.body()
-        null
+        response.bodyOrNull
     }
 
     suspend fun getFFZGlobalEmotes(): EmoteEntities.FFZ.GlobalResult? = withContext(Dispatchers.IO) {
         val response = service.getFFZGlobalEmotes(FFZ_GLOBAL_URL)
-        if (response.isSuccessful) return@withContext response.body()
-        null
+        response.bodyOrNull
     }
 
     suspend fun getBTTVChannelEmotes(id: String): EmoteEntities.BTTV.Result? = withContext(Dispatchers.IO) {
         val response = service.getBTTVChannelEmotes("$BTTV_CHANNEL_BASE_URL$id")
-        if (response.isSuccessful) return@withContext response.body()
-        null
+        response.bodyOrNull
     }
 
     suspend fun getBTTVGlobalEmotes(): List<EmoteEntities.BTTV.GlobalEmote>? = withContext(Dispatchers.IO) {
         val response = service.getBTTVGlobalEmotes(BTTV_GLOBAL_URL)
-        if (response.isSuccessful) return@withContext response.body()
-        null
+        response.bodyOrNull
     }
 
     suspend fun getRecentMessages(channel: String): RecentMessages? = withContext(Dispatchers.IO) {
-        if (loadedRecentsInChannels.contains(channel)) {
-            return@withContext null
+        when {
+            loadedRecentsInChannels.contains(channel) -> null
+            else -> {
+                val response = service.getRecentMessages("$RECENT_MSG_URL$channel")
+                response.bodyOrNull?.also { loadedRecentsInChannels.add(channel) }
+            }
         }
-
-        val response = service.getRecentMessages("$RECENT_MSG_URL$channel")
-        if (response.isSuccessful) {
-            loadedRecentsInChannels.add(channel)
-            return@withContext response.body()
-        }
-        null
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
@@ -168,31 +157,34 @@ object TwitchApi {
             .build()
 
         val response = client.newCall(request).execute()
-        if (response.isSuccessful) return@withContext response.body?.string()
-        null
-    }
-
-    suspend fun getUserIdFromName(oAuth: String, name: String): String? = withContext(Dispatchers.IO) {
-        val response = service.getUserHelix("Bearer $oAuth", "${HELIX_BASE_URL}users?login=$name")
         when {
-            response.isSuccessful -> response.body()?.data?.getOrNull(0)?.id
+            response.isSuccessful -> response.body?.string()
             else -> null
         }
     }
 
+    suspend fun getUserIdFromName(oAuth: String, name: String): String? = withContext(Dispatchers.IO) {
+        val response = service.getUserHelix("Bearer $oAuth", "${HELIX_BASE_URL}users?login=$name")
+        response.bodyOrNull?.data?.getOrNull(0)?.id
+    }
+
     suspend fun getNameFromUserId(oAuth: String, id: Int): String? = withContext(Dispatchers.IO) {
         val response = service.getUserHelix("Bearer $oAuth", "${HELIX_BASE_URL}users?id=$id")
-        if (response.isSuccessful) return@withContext response.body()?.data?.get(0)?.name
-        null
+        response.bodyOrNull?.data?.getOrNull(0)?.name
     }
 
     suspend fun getIgnores(oAuth: String, id: Int): UserEntities.KrakenUsersBlocks? = withContext(Dispatchers.IO) {
         val response = service.getIgnores("OAuth $oAuth", id)
-        if (response.isSuccessful) return@withContext response.body()
-        null
+        response.bodyOrNull
     }
 
     fun clearChannelFromLoaded(channel: String) {
         loadedRecentsInChannels.remove(channel)
     }
 }
+
+private val <T> Response<T>.bodyOrNull
+    get() = when {
+        isSuccessful -> body()
+        else -> null
+    }
