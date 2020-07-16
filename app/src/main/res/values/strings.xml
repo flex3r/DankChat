@@ -33,8 +33,7 @@
     <string name="upload_media">Upload media</string>
     <string name="take_picture">Take picture</string>
     <string name="record_video">Record video</string>
-    <string name="choose_image">Choose image</string>
-    <string name="choose_video">Choose video</string>
+    <string name="choose_media">Choose existing media</string>
     <string name="hide_actionbar" translatable="false">Hide toolbar</string>
     <string name="resume_scroll">Resume scroll</string>
     <string name="uploading_image">Uploading image</string>

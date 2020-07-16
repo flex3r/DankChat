@@ -22,8 +22,7 @@
     <item
         android:id="@+id/menu_login"
         android:title="@string/login"
-        app:showAsAction="never">
-    </item>
+        app:showAsAction="never"></item>
 
     <item
         android:id="@+id/menu_open"
@@ -54,12 +53,8 @@
                 android:title="@string/record_video"
                 app:showAsAction="never" />
             <item
-                android:id="@+id/menu_choose_image"
-                android:title="@string/choose_image"
-                app:showAsAction="never" />
-            <item
-                android:id="@+id/menu_choose_video"
-                android:title="@string/choose_video"
+                android:id="@+id/menu_choose_media"
+                android:title="@string/choose_media"
                 app:showAsAction="never" />
         </menu>
     </item>

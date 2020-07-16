@@ -29,8 +29,8 @@ object MediaUtils {
     }
 
     @Throws(IOException::class)
-    fun removeExifAttributes(path: String) {
-        ExifInterface(path).run {
+    fun removeExifAttributes(file: File) {
+        ExifInterface(file).run {
             GPS_ATTRIBUTES.forEach { if (getAttribute(it) != null) setAttribute(it, null) }
             saveAttributes()
         }

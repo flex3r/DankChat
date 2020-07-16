@@ -19,11 +19,14 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
+import androidx.core.net.toFile
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.core.view.updateLayoutParams
@@ -45,15 +48,12 @@ import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.state.DataLoadingState
 import com.flxrs.dankchat.service.state.ImageUploadState
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
-import com.flxrs.dankchat.utils.CustomMultiAutoCompleteTextView
-import com.flxrs.dankchat.utils.MediaUtils
-import com.flxrs.dankchat.utils.TimeUtils
+import com.flxrs.dankchat.utils.*
 import com.flxrs.dankchat.utils.dialog.EditTextDialogFragment
 import com.flxrs.dankchat.utils.dialog.MessageHistoryDisclaimerDialogFragment
 import com.flxrs.dankchat.utils.extensions.hideKeyboard
 import com.flxrs.dankchat.utils.extensions.keepScreenOn
 import com.flxrs.dankchat.utils.extensions.navigateSafe
-import com.flxrs.dankchat.utils.showErrorDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -80,10 +80,36 @@ class MainFragment : Fragment() {
     private lateinit var emoteMenuAdapter: EmoteMenuAdapter
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<MaterialCardView>
     private lateinit var suggestionAdapter: EmoteSuggestionsArrayAdapter
-    private var currentMediaPath = ""
+    private var currentMediaUri = Uri.EMPTY
 
-    private val requestGalleryPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { if (it) startGalleryPicker() }
-    private val requestVideoGalleryPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { if (it) startGalleryPicker(pickVideo = true) }
+    private val requestGalleryPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { if (it) requestGalleryMedia.launch() }
+    private val requestImageCapture = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { if (it.resultCode == Activity.RESULT_OK) handleCaptureRequest(imageCapture = true) }
+    private val requestVideoCapture = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { if (it.resultCode == Activity.RESULT_OK) handleCaptureRequest() }
+    private val requestGalleryMedia = registerForActivityResult(GetImageOrVideoContract()) { uri ->
+        uri ?: return@registerForActivityResult
+        val contentResolver = activity?.contentResolver ?: return@registerForActivityResult
+        val context = context ?: return@registerForActivityResult
+        val mimeType = contentResolver.getType(uri)
+        val mimeTypeMap = MimeTypeMap.getSingleton()
+        val extension = mimeTypeMap.getExtensionFromMimeType(mimeType)
+        if (extension == null) {
+            showSnackbar(getString(R.string.snackbar_upload_failed))
+            return@registerForActivityResult
+        }
+
+        val copy = MediaUtils.createMediaFile(context, extension)
+        try {
+            contentResolver.openInputStream(uri)?.run { copy.outputStream().use { copyTo(it) } }
+            if (copy.extension == "jpg" || copy.extension == "jpeg") {
+                MediaUtils.removeExifAttributes(copy)
+            }
+
+            viewModel.uploadMedia(copy)
+        } catch (t: Throwable) {
+            copy.delete()
+            showSnackbar(getString(R.string.snackbar_upload_failed))
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         tabAdapter = ChatTabAdapter(childFragmentManager, lifecycle)
@@ -271,8 +297,7 @@ class MainFragment : Fragment() {
             R.id.menu_open -> openChannel()
             R.id.menu_remove -> removeChannel()
             R.id.menu_reload_emotes -> reloadEmotes()
-            R.id.menu_choose_image -> checkPermissionForGallery()
-            R.id.menu_choose_video -> checkPermissionForGallery(pickVideo = true)
+            R.id.menu_choose_media -> checkPermissionForGallery()
             R.id.menu_capture_image -> startCameraCapture()
             R.id.menu_capture_video -> startCameraCapture(captureVideo = true)
             R.id.menu_hide -> viewModel.appbarEnabled.value = false
@@ -281,14 +306,6 @@ class MainFragment : Fragment() {
             else -> return false
         }
         return true
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            GALLERY_REQUEST, GALLERY_REQUEST_VIDEO -> handleGalleryRequest(resultCode, data)
-            CAPTURE_REQUEST, CAPTURE_REQUEST_VIDEO -> handleCaptureRequest(requestCode, resultCode)
-        }
-        super.onActivityResult(requestCode, resultCode, data)
     }
 
     fun onMessageHistoryDisclaimerResult(result: Boolean) {
@@ -416,48 +433,23 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun handleGalleryRequest(resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK) {
-            val uri = data?.data ?: return
-            val contentResolver = activity?.contentResolver ?: return
-            val context = context ?: return
-            val mimeType = contentResolver.getType(uri)
-            val mimeTypeMap = MimeTypeMap.getSingleton()
-            val extension = mimeTypeMap.getExtensionFromMimeType(mimeType)
-            if (extension == null) {
-                showSnackbar(getString(R.string.snackbar_upload_failed))
-                return
+    private fun handleCaptureRequest(imageCapture: Boolean = false) {
+        if (currentMediaUri == Uri.EMPTY) return
+        var mediaFile: File? = null
+
+        try {
+            mediaFile = currentMediaUri.toFile()
+            currentMediaUri = Uri.EMPTY
+
+            // only remove exif data if an image was selected
+            if (imageCapture) {
+                MediaUtils.removeExifAttributes(mediaFile)
             }
 
-            val copy = MediaUtils.createMediaFile(context, extension)
-            try {
-                contentResolver.openInputStream(uri)?.run { copy.outputStream().use { copyTo(it) } }
-                if (copy.extension == "jpg" || copy.extension == "jpeg") {
-                    MediaUtils.removeExifAttributes(copy.absolutePath)
-                }
-
-                viewModel.uploadMedia(copy)
-            } catch (t: Throwable) {
-                copy.delete()
-                showSnackbar(getString(R.string.snackbar_upload_failed))
-            }
-        }
-    }
-
-    private fun handleCaptureRequest(requestCode: Int, resultCode: Int) {
-        if (resultCode == Activity.RESULT_OK) {
-            val mediaFile = File(currentMediaPath)
-            try {
-                // only remove exif data if an image was selected
-                if (requestCode == CAPTURE_REQUEST) {
-                    MediaUtils.removeExifAttributes(currentMediaPath)
-                }
-
-                viewModel.uploadMedia(mediaFile)
-            } catch (e: IOException) {
-                mediaFile.delete()
-                showSnackbar(getString(R.string.snackbar_upload_failed))
-            }
+            viewModel.uploadMedia(mediaFile)
+        } catch (e: IOException) {
+            mediaFile?.delete()
+            showSnackbar(getString(R.string.snackbar_upload_failed))
         }
     }
 
@@ -498,49 +490,39 @@ class MainFragment : Fragment() {
         } else action()
     }
 
-    private fun checkPermissionForGallery(pickVideo: Boolean = false) {
+    private fun checkPermissionForGallery() {
         showNuulsUploadDialogIfNotAcknowledged {
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                when {
-                    pickVideo -> requestVideoGalleryPermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    else -> requestGalleryPermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                }
-            } else startGalleryPicker(pickVideo)
+            when (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                PackageManager.PERMISSION_GRANTED -> requestGalleryPermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                else -> requestGalleryMedia.launch()
+            }
         }
     }
 
     private fun startCameraCapture(captureVideo: Boolean = false) {
         val packageManager = activity?.packageManager ?: return
         val packageName = activity?.packageName ?: return
-        val (action, extension, request) = when {
-            captureVideo -> Triple(MediaStore.ACTION_VIDEO_CAPTURE, "mp4", CAPTURE_REQUEST_VIDEO)
-            else -> Triple(MediaStore.ACTION_IMAGE_CAPTURE, "jpg", CAPTURE_REQUEST)
+        val (action, extension) = when {
+            captureVideo -> MediaStore.ACTION_VIDEO_CAPTURE to "mp4"
+            else -> MediaStore.ACTION_IMAGE_CAPTURE to "jpg"
         }
         showNuulsUploadDialogIfNotAcknowledged {
             Intent(action).also { captureIntent ->
                 captureIntent.resolveActivity(packageManager)?.also {
                     try {
-                        MediaUtils.createMediaFile(requireContext(), extension).apply { currentMediaPath = absolutePath }
+                        MediaUtils.createMediaFile(requireContext(), extension).apply { currentMediaUri = toUri() }
                     } catch (ex: IOException) {
                         null
                     }?.also {
                         val uri = FileProvider.getUriForFile(requireContext(), "$packageName.fileprovider", it)
                         captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-                        startActivityForResult(captureIntent, request)
+                        when {
+                            captureVideo -> requestVideoCapture.launch(captureIntent)
+                            else -> requestImageCapture.launch(captureIntent)
+                        }
                     }
                 }
             }
-        }
-    }
-
-    private fun startGalleryPicker(pickVideo: Boolean = false) {
-        val packageManager = activity?.packageManager ?: return
-        val (mediaStoreUri, requestCode) = when {
-            pickVideo -> MediaStore.Video.Media.EXTERNAL_CONTENT_URI to GALLERY_REQUEST_VIDEO
-            else -> MediaStore.Images.Media.EXTERNAL_CONTENT_URI to GALLERY_REQUEST
-        }
-        Intent(Intent.ACTION_PICK, mediaStoreUri).run {
-            resolveActivity(packageManager)?.also { startActivityForResult(this, requestCode) }
         }
     }
 
