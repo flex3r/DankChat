@@ -18,6 +18,7 @@ import android.webkit.MimeTypeMap
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.addCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
@@ -80,6 +81,9 @@ class MainFragment : Fragment() {
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<MaterialCardView>
     private lateinit var suggestionAdapter: EmoteSuggestionsArrayAdapter
     private var currentMediaPath = ""
+
+    private val requestGalleryPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { if (it) startGalleryPicker() }
+    private val requestVideoGalleryPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { if (it) startGalleryPicker(pickVideo = true) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         tabAdapter = ChatTabAdapter(childFragmentManager, lifecycle)
@@ -285,12 +289,6 @@ class MainFragment : Fragment() {
             CAPTURE_REQUEST, CAPTURE_REQUEST_VIDEO -> handleCaptureRequest(requestCode, resultCode)
         }
         super.onActivityResult(requestCode, resultCode, data)
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if ((requestCode == GALLERY_REQUEST || requestCode == GALLERY_REQUEST_VIDEO) && grantResults.getOrNull(0) == PackageManager.PERMISSION_GRANTED) {
-            startGalleryPicker(pickVideo = requestCode == GALLERY_REQUEST_VIDEO)
-        }
     }
 
     fun onMessageHistoryDisclaimerResult(result: Boolean) {
@@ -503,8 +501,10 @@ class MainFragment : Fragment() {
     private fun checkPermissionForGallery(pickVideo: Boolean = false) {
         showNuulsUploadDialogIfNotAcknowledged {
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                val requestCode = if (pickVideo) GALLERY_REQUEST_VIDEO else GALLERY_REQUEST
-                requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), requestCode)
+                when {
+                    pickVideo -> requestVideoGalleryPermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    else -> requestGalleryPermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                }
             } else startGalleryPicker(pickVideo)
         }
     }
