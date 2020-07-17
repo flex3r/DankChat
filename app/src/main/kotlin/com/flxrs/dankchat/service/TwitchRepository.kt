@@ -23,6 +23,7 @@ import com.flxrs.dankchat.utils.extensions.*
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import okhttp3.OkHttpClient
@@ -37,6 +38,7 @@ import kotlin.system.measureTimeMillis
 class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
     private val messages = mutableMapOf<String, MutableStateFlow<List<ChatItem>>>()
+    private val _notificationMessageChannel = Channel<List<ChatItem>>(10) // TODO replace with SharedFlow when available
     private val emotes = mutableMapOf<String, MutableLiveData<List<GenericEmote>>>()
     private val connectionState = mutableMapOf<String, MutableLiveData<SystemMessageType>>()
     private val roomStates = mutableMapOf<String, MutableLiveData<Roomstate>>()
@@ -79,17 +81,14 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     val errorEvent = SingleLiveEvent<Throwable>()
     val dataLoadingEvent = SingleLiveEvent<DataLoadingState>()
     val imageUploadedEvent = SingleLiveEvent<ImageUploadState>()
-    val messageChannel = Channel<List<ChatItem>>()
+    val notificationMessageChannel: ReceiveChannel<List<ChatItem>>
+        get() = _notificationMessageChannel
     var startedConnection = false
 
     fun getChat(channel: String): StateFlow<List<ChatItem>> = messages.getOrPut(channel) { MutableStateFlow(emptyList()) }
-
     fun getConnectionState(channel: String): LiveData<SystemMessageType> = connectionState.getAndSet(channel, SystemMessageType.DISCONNECTED)
-
     fun getEmotes(channel: String): LiveData<List<GenericEmote>> = emotes.getAndSet(channel, emptyList())
-
     fun getRoomState(channel: String): LiveData<Roomstate> = roomStates.getAndSet(channel, Roomstate(channel))
-
     fun getUsers(channel: String): LiveData<LruCache<String, Boolean>> = users.getAndSet(channel, createUserCache())
 
     fun loadData(channels: List<String>, oAuth: String, id: Int, loadTwitchData: Boolean, loadHistory: Boolean, name: String) {
@@ -193,7 +192,10 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     }
 
     fun joinChannel(channel: String) {
-        messages[channel] = MutableStateFlow(emptyList())
+        if (!messages.contains(channel)) {
+            messages[channel] = MutableStateFlow(emptyList())
+        }
+
         readConnection.joinChannel(channel)
         writeConnection.joinChannel(channel)
     }
@@ -330,7 +332,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
                 val channel = msg.params[0].substring(1)
                 val currentChat = messages[channel]?.value ?: emptyList()
                 messages[channel]?.value = currentChat.addAndLimit(parsed)
-                messageChannel.offer(parsed)
+                _notificationMessageChannel.offer(parsed)
             }
         }
     }

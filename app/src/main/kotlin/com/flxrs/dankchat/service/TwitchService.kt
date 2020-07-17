@@ -118,7 +118,7 @@ class TwitchService : Service(), CoroutineScope, KoinComponent {
         cancel()
         launch {
             val notificationsEnabled = sharedPreferences.getBoolean(getString(R.string.preference_notification_key), true)
-            for (items in twitchRepository.messageChannel) {
+            for (items in twitchRepository.notificationMessageChannel) {
                 items.forEach { item ->
                     with(item.message as Message.TwitchMessage) {
                         if (shouldNotifyOnMention && isMention && notificationsEnabled) {
