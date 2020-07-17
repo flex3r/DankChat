@@ -2,7 +2,6 @@ package com.flxrs.dankchat
 
 import android.util.Log
 import androidx.lifecycle.*
-import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.service.TwitchRepository
@@ -122,8 +121,6 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
             emit(groupedWithHeaders)
         }
     }
-
-    fun getChat(channel: String): LiveData<List<ChatItem>> = twitchRepository.getChat(channel)
 
     fun loadData(oauth: String, id: Int, loadTwitchData: Boolean, loadHistory: Boolean, name: String, channelList: List<String> = channels.value ?: emptyList()) {
         val token = when {

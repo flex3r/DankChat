@@ -1,5 +1,6 @@
 package com.flxrs.dankchat
 
+import com.flxrs.dankchat.chat.ChatViewModel
 import com.flxrs.dankchat.service.TwitchRepository
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
@@ -24,5 +25,6 @@ val appModules = module {
         )
     }
     single { TwitchRepository(get()) }
+    viewModel { (channel: String) -> ChatViewModel(get(), channel) }
     viewModel { DankChatViewModel(get()) }
 }

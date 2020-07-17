@@ -22,10 +22,12 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class ChatFragment : Fragment() {
 
-    private val viewModel: DankChatViewModel by sharedViewModel()
+    private val viewModel: ChatViewModel by viewModel { parametersOf(channel) }
     private lateinit var binding: ChatFragmentBinding
     private lateinit var adapter: ChatAdapter
     private lateinit var manager: LinearLayoutManager
@@ -39,8 +41,6 @@ class ChatFragment : Fragment() {
         channel = requireArguments().getString(CHANNEL_ARG, "")
         binding = ChatFragmentBinding.inflate(inflater, container, false).apply {
             lifecycleOwner = this@ChatFragment
-            vm = viewModel
-            //chatLayout.layoutTransition.setAnimateParentHierarchy(false)
             scrollBottom.setOnClickListener {
                 scrollBottom.visibility = View.GONE
                 isAtBottom = true
@@ -50,7 +50,7 @@ class ChatFragment : Fragment() {
         }
 
         if (channel.isNotBlank()) {
-            viewModel.getChat(channel).observe(viewLifecycleOwner) { adapter.submitList(it) }
+            viewModel.chat.observe(viewLifecycleOwner) { adapter.submitList(it) }
         }
 
         return binding.root
