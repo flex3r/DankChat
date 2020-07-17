@@ -223,7 +223,7 @@ class MainFragment : Fragment() {
                     val name = twitchPreferences.userName ?: ""
                     val id = twitchPreferences.userId
                     val shouldLoadHistory = preferences.getBoolean(getString(R.string.preference_load_message_history_key), true)
-                    viewModel.loadData(oauth = oAuth, id = id, loadTwitchData = true, loadHistory = shouldLoadHistory, name = name)
+                    viewModel.loadData(oAuth = oAuth, id = id, name = name, loadTwitchData = true, loadHistory = shouldLoadHistory)
 
                     if (name.isNotBlank() && oAuth.isNotBlank()) {
                         showSnackbar(getString(R.string.snackbar_login, name))
@@ -320,7 +320,7 @@ class MainFragment : Fragment() {
         val oAuth = twitchPreferences.oAuthKey ?: ""
         val name = twitchPreferences.userName ?: ""
         val id = twitchPreferences.userId
-        viewModel.loadData(oauth = oAuth, id = id, loadTwitchData = true, loadHistory = result, name = name)
+        viewModel.loadData(oAuth = oAuth, id = id, name = name, loadTwitchData = true, loadHistory = result)
 
         if (name.isNotBlank() && oAuth.isNotBlank()) {
             showSnackbar(getString(R.string.snackbar_login, name))
@@ -338,7 +338,7 @@ class MainFragment : Fragment() {
 
             val updatedChannels = viewModel.joinChannel(lowerCaseChannel)
             if (updatedChannels != null) {
-                viewModel.loadData(oauth, id, loadTwitchData = false, loadHistory = shouldLoadHistory, name = name, channelList = listOf(channel))
+                viewModel.loadData(oauth, id, name = name, channelList = listOf(channel), loadTwitchData = false, loadHistory = shouldLoadHistory)
                 twitchPreferences.channelsString = updatedChannels.joinToString(",")
 
                 tabAdapter.addFragment(lowerCaseChannel)
@@ -419,7 +419,14 @@ class MainFragment : Fragment() {
         when (result) {
             is DataLoadingState.Loading, DataLoadingState.Finished -> return
             is DataLoadingState.Reloaded -> showSnackbar(getString(R.string.snackbar_data_reloaded))
-            is DataLoadingState.Failed -> showSnackbar(getString(R.string.snackbar_data_load_failed_cause, result.t.message))
+            is DataLoadingState.Failed -> showSnackbar(
+                message = getString(R.string.snackbar_data_load_failed_cause, result.t.message),
+                action = getString(R.string.snackbar_retry) to {
+                    when {
+                        result.parameters.isReloadEmotes -> reloadEmotes(result.parameters.channels.first())
+                        else -> viewModel.loadData(result.parameters)
+                    }
+                })
         }
     }
 
@@ -567,8 +574,8 @@ class MainFragment : Fragment() {
             viewModel.clear(tabAdapter.titleList[position])
     }
 
-    private fun reloadEmotes() {
-        val position = binding.tabs.selectedTabPosition
+    private fun reloadEmotes(channel: String? = null) {
+        val position = channel?.let { tabAdapter.titleList.indexOf(it) } ?: binding.tabs.selectedTabPosition
         if (position in 0 until tabAdapter.titleList.size) {
             val oAuth = twitchPreferences.oAuthKey ?: return
             val userId = twitchPreferences.userId
@@ -628,7 +635,7 @@ class MainFragment : Fragment() {
                         }
                     }
                 })
-                action?.let { (msg, onAction) -> setAction(msg) { _ -> onAction() } }
+                action?.let { (msg, onAction) -> setAction(msg) { onAction() } }
             }.show()
         }
     }

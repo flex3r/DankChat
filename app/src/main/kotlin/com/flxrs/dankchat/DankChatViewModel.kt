@@ -29,7 +29,7 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
         val imageEvent = imageUploadedEvent.value
 
         if (dataEvent is DataLoadingState.Loading) {
-            _dataLoadingEvent.postValue(DataLoadingState.Failed(t))
+            _dataLoadingEvent.postValue(DataLoadingState.Failed(t, dataEvent.parameters))
         } else if (imageEvent is ImageUploadState.Loading) {
             _imageUploadedEvent.postValue(ImageUploadState.Failed(t.message, imageEvent.mediaFile))
         }
@@ -133,17 +133,37 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
         }
     }
 
-    fun loadData(oauth: String, id: Int, loadTwitchData: Boolean, loadHistory: Boolean, name: String, channelList: List<String> = channels.value ?: emptyList()) =
+    fun loadData(dataLoadingParameters: DataLoadingState.Parameters) = loadData(
+        oAuth = dataLoadingParameters.oAuth,
+        id = dataLoadingParameters.id,
+        name = dataLoadingParameters.name,
+        loadTwitchData = dataLoadingParameters.loadTwitchData,
+        loadHistory = dataLoadingParameters.loadTwitchData
+    )
+
+    fun loadData(oAuth: String, id: Int, name: String, channelList: List<String> = channels.value ?: emptyList(), loadTwitchData: Boolean, loadHistory: Boolean) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            _dataLoadingEvent.postValue(DataLoadingState.Loading)
+            _dataLoadingEvent.postValue(
+                DataLoadingState.Loading(
+                    DataLoadingState.Parameters(
+                        oAuth = oAuth,
+                        id = id,
+                        name = name,
+                        channels = channelList,
+                        loadTwitchData = loadTwitchData,
+                        loadHistory = loadHistory
+                    )
+                )
+            )
             val token = when {
-                oauth.startsWith("oauth:", true) -> oauth.substringAfter(':')
-                else -> oauth
+                oAuth.startsWith("oauth:", true) -> oAuth.substringAfter(':')
+                else -> oAuth
             }
             dataRepository.loadData(channelList, token, id, loadTwitchData)
             chatRepository.loadData(channelList, token, id, loadHistory, name)
             _dataLoadingEvent.postValue(DataLoadingState.Finished)
         }
+    }
 
     fun setActiveChannel(channel: String) {
         activeChannel.value = channel
@@ -192,17 +212,26 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
         }
 
         if (loadTwitchData && userId > 0) loadData(
-            oauth = oAuth,
+            oAuth = oAuth,
             id = userId,
-            loadTwitchData = true,
-            loadHistory = false,
             name = name,
-            channelList = channels
+            channelList = channels,
+            loadTwitchData = true,
+            loadHistory = false
         )
     }
 
     fun reloadEmotes(channel: String, oAuth: String, id: Int) = viewModelScope.launch(coroutineExceptionHandler) {
-        _dataLoadingEvent.postValue(DataLoadingState.Loading)
+        _dataLoadingEvent.postValue(
+            DataLoadingState.Loading(
+                DataLoadingState.Parameters(
+                    oAuth = oAuth,
+                    id = id,
+                    channels = listOf(channel),
+                    isReloadEmotes = true
+                )
+            )
+        )
         val token = when {
             oAuth.startsWith("oauth:", true) -> oAuth.substringAfter(':')
             else -> oAuth
