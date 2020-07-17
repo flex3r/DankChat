@@ -27,7 +27,7 @@ class NotificationService : Service(), CoroutineScope, KoinComponent {
     private val manager: NotificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
     private val sharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
     private val notifications = mutableMapOf<String, MutableList<Int>>()
-    private val twitchRepository: TwitchRepository = get()
+    private val chatRepository: ChatRepository = get()
     var shouldNotifyOnMention = false
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + Job()
@@ -118,7 +118,7 @@ class NotificationService : Service(), CoroutineScope, KoinComponent {
         cancel()
         launch {
             val notificationsEnabled = sharedPreferences.getBoolean(getString(R.string.preference_notification_key), true)
-            for (items in twitchRepository.notificationMessageChannel) {
+            for (items in chatRepository.notificationMessageChannel) {
                 items.forEach { item ->
                     with(item.message as Message.TwitchMessage) {
                         if (shouldNotifyOnMention && isMention && notificationsEnabled) {

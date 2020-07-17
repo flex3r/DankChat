@@ -1,7 +1,8 @@
 package com.flxrs.dankchat
 
 import com.flxrs.dankchat.chat.ChatViewModel
-import com.flxrs.dankchat.service.TwitchRepository
+import com.flxrs.dankchat.service.ChatRepository
+import com.flxrs.dankchat.service.DataRepository
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
 import kotlinx.coroutines.CoroutineScope
@@ -24,7 +25,8 @@ val appModules = module {
             onMessage = onMessage
         )
     }
-    single { TwitchRepository(get()) }
+    single { ChatRepository() }
+    single { DataRepository() }
     viewModel { (channel: String) -> ChatViewModel(get(), channel) }
-    viewModel { DankChatViewModel(get()) }
+    viewModel { DankChatViewModel(get(), get()) }
 }

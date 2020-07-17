@@ -4,39 +4,48 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.chat.suggestion.Suggestion
-import com.flxrs.dankchat.service.TwitchRepository
+import com.flxrs.dankchat.service.DataRepository
+import com.flxrs.dankchat.service.ChatRepository
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.state.DataLoadingState
 import com.flxrs.dankchat.service.state.ImageUploadState
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.EmoteType
+import com.flxrs.dankchat.utils.SingleLiveEvent
 import com.flxrs.dankchat.utils.extensions.timer
 import com.flxrs.dankchat.utils.extensions.toEmoteItems
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewModel() {
+class DankChatViewModel(private val chatRepository: ChatRepository, private val dataRepository: DataRepository) : ViewModel() {
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, t ->
         Log.e(TAG, Log.getStackTraceString(t))
         _errorEvent.postValue(t)
+
+        if (_dataLoadingEvent.value is DataLoadingState.Loading) {
+            _dataLoadingEvent.postValue(DataLoadingState.Failed(t))
+        } else if (_imageUploadedEvent.value is ImageUploadState.Loading) {
+            _imageUploadedEvent.postValue(ImageUploadState.Failed(t.message))
+        }
     }
 
     val activeChannel = MutableLiveData<String>()
     val channels = MutableLiveData<List<String>>(emptyList())
 
-    private val _errorEvent = twitchRepository.errorEvent
-    private val _dataLoadingEvent = twitchRepository.dataLoadingEvent
-    private val _imageUploadedEvent = twitchRepository.imageUploadedEvent
+    private val _errorEvent = SingleLiveEvent<Throwable>()
+    private val _dataLoadingEvent = SingleLiveEvent<DataLoadingState>()
+    private val _imageUploadedEvent = SingleLiveEvent<ImageUploadState>()
     private val streamInfoEnabled = MutableLiveData(true)
     private val roomStateEnabled = MutableLiveData(true)
     private val streamData: MutableLiveData<Map<String, String>> = MutableLiveData()
-    private val roomState = activeChannel.switchMap { twitchRepository.getRoomState(it).asLiveData(coroutineExceptionHandler) }
-    private val emotes = activeChannel.switchMap { twitchRepository.getEmotes(it).asLiveData(coroutineExceptionHandler) }
-    private val users = activeChannel.switchMap { twitchRepository.getUsers(it).asLiveData(coroutineExceptionHandler) }
+
+    private val emotes = activeChannel.switchMap { dataRepository.getEmotes(it).asLiveData(coroutineExceptionHandler) }
+    private val roomState = activeChannel.switchMap { chatRepository.getRoomState(it).asLiveData(coroutineExceptionHandler) }
+    private val users = activeChannel.switchMap { chatRepository.getUsers(it).asLiveData(coroutineExceptionHandler) }
     private val currentStreamInformation = MediatorLiveData<String>().apply {
         addSource(activeChannel) { value = streamData.value?.get(it) ?: "" }
         addSource(streamData) {
@@ -57,7 +66,7 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
     }
 
     var started = false
-    var lastMessage: Map<String, String> = twitchRepository.lastMessage
+    var lastMessage: Map<String, String> = chatRepository.lastMessage
 
     val errorEvent: LiveData<Throwable>
         get() = _errorEvent
@@ -79,7 +88,7 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         addSource(_imageUploadedEvent) { value = it is ImageUploadState.Loading || _dataLoadingEvent.value is DataLoadingState.Loading }
         addSource(_dataLoadingEvent) { value = it is DataLoadingState.Loading || _imageUploadedEvent.value is ImageUploadState.Loading }
     }
-    val connectionState = activeChannel.switchMap { twitchRepository.getConnectionState(it).asLiveData(coroutineExceptionHandler) }
+    val connectionState = activeChannel.switchMap { chatRepository.getConnectionState(it).asLiveData(coroutineExceptionHandler) }
     val canType = connectionState.map { it == SystemMessageType.CONNECTED }
     val bottomText = MediatorLiveData<String>().apply {
         addSource(roomStateEnabled) { value = buildBottomText() }
@@ -122,13 +131,17 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         }
     }
 
-    fun loadData(oauth: String, id: Int, loadTwitchData: Boolean, loadHistory: Boolean, name: String, channelList: List<String> = channels.value ?: emptyList()) {
-        val token = when {
-            oauth.startsWith("oauth:", true) -> oauth.substringAfter(':')
-            else -> oauth
+    fun loadData(oauth: String, id: Int, loadTwitchData: Boolean, loadHistory: Boolean, name: String, channelList: List<String> = channels.value ?: emptyList()) =
+        viewModelScope.launch(coroutineExceptionHandler) {
+            _dataLoadingEvent.postValue(DataLoadingState.Loading)
+            val token = when {
+                oauth.startsWith("oauth:", true) -> oauth.substringAfter(':')
+                else -> oauth
+            }
+            dataRepository.loadData(channelList, token, id, loadTwitchData)
+            chatRepository.loadData(channelList, token, id, loadHistory, name)
+            _dataLoadingEvent.postValue(DataLoadingState.Finished)
         }
-        twitchRepository.loadData(channelList, token, id, loadTwitchData, loadHistory, name)
-    }
 
     fun setActiveChannel(channel: String) {
         activeChannel.value = channel
@@ -142,14 +155,14 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         roomStateEnabled.value = enabled
     }
 
-    fun clear(channel: String) = twitchRepository.clear(channel)
+    fun clear(channel: String) = chatRepository.clear(channel)
     fun joinChannel(channel: String? = activeChannel.value): List<String>? {
         if (channel == null) return null
         val current = channels.value ?: emptyList()
         val plus = current.plus(channel)
 
         channels.value = current.plus(channel)
-        twitchRepository.joinChannel(channel)
+        chatRepository.joinChannel(channel)
         return plus
     }
 
@@ -159,19 +172,19 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         val minus = current.minus(channel)
 
         channels.value = minus
-        twitchRepository.partChannel(channel)
-        twitchRepository.removeChannelData(channel)
+        chatRepository.partChannel(channel)
+        chatRepository.removeChannelData(channel)
         return minus
     }
 
     fun sendMessage(channel: String, message: String) =
-        twitchRepository.sendMessage(channel, message)
+        chatRepository.sendMessage(channel, message)
 
-    fun reconnect(onlyIfNecessary: Boolean) = twitchRepository.reconnect(onlyIfNecessary)
+    fun reconnect(onlyIfNecessary: Boolean) = chatRepository.reconnect(onlyIfNecessary)
 
     fun close(name: String, oAuth: String, loadTwitchData: Boolean = false, userId: Int = 0) {
         val channels = channels.value ?: emptyList()
-        val didClose = twitchRepository.close { connectAndJoinChannels(name, oAuth, channels) }
+        val didClose = chatRepository.close { connectAndJoinChannels(name, oAuth, channels) }
         if (!didClose) {
             connectAndJoinChannels(name, oAuth, channels, forceConnect = true)
         }
@@ -186,22 +199,25 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         )
     }
 
-    fun reloadEmotes(channel: String, oAuth: String, id: Int) {
+    fun reloadEmotes(channel: String, oAuth: String, id: Int) = viewModelScope.launch(coroutineExceptionHandler) {
+        _dataLoadingEvent.postValue(DataLoadingState.Loading)
         val token = when {
             oAuth.startsWith("oauth:", true) -> oAuth.substringAfter(':')
             else -> oAuth
         }
-        twitchRepository.reloadEmotes(channel, token, id)
+        dataRepository.reloadEmotes(channel, token, id)
+        _dataLoadingEvent.postValue(DataLoadingState.Reloaded)
     }
 
-    fun uploadMedia(file: File): Job {
-        showUploadProgress.value = true
-        return twitchRepository.uploadMedia(file)
+    fun uploadMedia(file: File) = viewModelScope.launch(coroutineExceptionHandler) {
+        _imageUploadedEvent.postValue(ImageUploadState.Loading)
+        val url = dataRepository.uploadMedia(file)
+        val state = url?.let { ImageUploadState.Finished(it) } ?: ImageUploadState.Failed(null)
+        _imageUploadedEvent.postValue(state)
     }
 
-    fun setMentionEntries(stringSet: Set<String>?) = twitchRepository.setMentionEntries(stringSet)
-    fun setBlacklistEntries(stringSet: Set<String>?) =
-        twitchRepository.setBlacklistEntries(stringSet)
+    fun setMentionEntries(stringSet: Set<String>?) = viewModelScope.launch(coroutineExceptionHandler) { chatRepository.setMentionEntries(stringSet) }
+    fun setBlacklistEntries(stringSet: Set<String>?) = viewModelScope.launch(coroutineExceptionHandler) { chatRepository.setBlacklistEntries(stringSet) }
 
     suspend fun fetchStreamData(oAuth: String, stringBuilder: (viewers: Int) -> String) = withContext(coroutineExceptionHandler) {
         val channels = channels.value ?: return@withContext
@@ -221,17 +237,17 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
     }
 
     fun clearIgnores() {
-        twitchRepository.clearIgnores()
+        chatRepository.clearIgnores()
     }
 
     fun connectAndJoinChannels(name: String, oAuth: String, channelList: List<String>? = channels.value, forceConnect: Boolean = false) {
-        if (!twitchRepository.startedConnection) {
+        if (!chatRepository.startedConnection) {
             if (channelList?.isEmpty() == true) {
-                twitchRepository.connect(name, oAuth, forceConnect)
+                chatRepository.connect(name, oAuth, forceConnect)
             } else {
                 channelList?.forEachIndexed { i, channel ->
-                    if (i == 0) twitchRepository.connect(name, oAuth, forceConnect)
-                    twitchRepository.joinChannel(channel)
+                    if (i == 0) chatRepository.connect(name, oAuth, forceConnect)
+                    chatRepository.joinChannel(channel)
                 }
             }
         }

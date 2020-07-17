@@ -6,18 +6,16 @@ import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.irc.IrcMessage
-import com.flxrs.dankchat.service.state.DataLoadingState
-import com.flxrs.dankchat.service.state.ImageUploadState
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
-import com.flxrs.dankchat.service.twitch.emote.EmoteManager
-import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.service.twitch.message.Mention
 import com.flxrs.dankchat.service.twitch.message.Message
 import com.flxrs.dankchat.service.twitch.message.Roomstate
 import com.flxrs.dankchat.service.twitch.message.matches
-import com.flxrs.dankchat.utils.SingleLiveEvent
-import com.flxrs.dankchat.utils.extensions.*
+import com.flxrs.dankchat.utils.extensions.addAndLimit
+import com.flxrs.dankchat.utils.extensions.mapToMention
+import com.flxrs.dankchat.utils.extensions.replaceWithTimeOut
+import com.flxrs.dankchat.utils.extensions.replaceWithTimeOuts
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -29,93 +27,56 @@ import okhttp3.Request
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import org.koin.core.parameter.parametersOf
-import java.io.File
 import java.nio.ByteBuffer
 import kotlin.system.measureTimeMillis
 
-class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
+class ChatRepository : KoinComponent {
 
-    private val messages = mutableMapOf<String, MutableStateFlow<List<ChatItem>>>()
     private val _notificationMessageChannel = Channel<List<ChatItem>>(10) // TODO replace with SharedFlow when available
-    private val emotes = mutableMapOf<String, MutableStateFlow<List<GenericEmote>>>()
+    private val messages = mutableMapOf<String, MutableStateFlow<List<ChatItem>>>()
     private val connectionState = mutableMapOf<String, MutableStateFlow<SystemMessageType>>()
     private val roomStates = mutableMapOf<String, MutableStateFlow<Roomstate>>()
     private val users = mutableMapOf<String, MutableStateFlow<LruCache<String, Boolean>>>()
     private val ignoredList = mutableListOf<Int>()
-    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, t ->
-        Log.e(TAG, Log.getStackTraceString(t))
-        errorEvent.postValue(t)
 
-        if (dataLoadingEvent.value is DataLoadingState.Loading) {
-            dataLoadingEvent.postValue(DataLoadingState.Failed(t))
-        } else if (imageUploadedEvent.value is ImageUploadState.Loading) {
-            imageUploadedEvent.postValue(ImageUploadState.Failed(t.message))
-        }
-    }
-
-    private var hasDisconnected = true
-    private var loadedGlobalBadges = false
-    private var loadedGlobalEmotes = false
-    private var loadedTwitchEmotes = false
-    var lastMessage = mutableMapOf<String, String>()
-
-    private var name: String = ""
-    private var customMentionEntries = listOf<Mention>()
-    private var blacklistEntries = listOf<Mention>()
     private val moshi = Moshi.Builder().build()
     private val adapter = moshi.adapter(MultiEntryItem.Entry::class.java)
 
-    private val client = OkHttpClient.Builder()
-        .retryOnConnectionFailure(true)
-        .build()
-
-    private val request = Request.Builder()
-        .url("wss://irc-ws.chat.twitch.tv")
-        .build()
-
+    private val client = OkHttpClient.Builder().retryOnConnectionFailure(true).build()
+    private val request = Request.Builder().url("wss://irc-ws.chat.twitch.tv").build()
     private val readConnection: WebSocketConnection = get { parametersOf("reader", client, request, ::handleDisconnect, ::onReaderMessage) }
     private val writeConnection: WebSocketConnection = get { parametersOf("writer", client, request, null, ::onWriterMessage) }
 
-    val errorEvent = SingleLiveEvent<Throwable>()
-    val dataLoadingEvent = SingleLiveEvent<DataLoadingState>()
-    val imageUploadedEvent = SingleLiveEvent<ImageUploadState>()
+    private var name: String = ""
+    private var hasDisconnected = true
+    private var customMentionEntries = listOf<Mention>()
+    private var blacklistEntries = listOf<Mention>()
+
     val notificationMessageChannel: ReceiveChannel<List<ChatItem>>
         get() = _notificationMessageChannel
     var startedConnection = false
+    var lastMessage = mutableMapOf<String, String>()
 
     fun getChat(channel: String): StateFlow<List<ChatItem>> = messages.getOrPut(channel) { MutableStateFlow(emptyList()) }
     fun getConnectionState(channel: String): StateFlow<SystemMessageType> = connectionState.getOrPut(channel) { MutableStateFlow(SystemMessageType.DISCONNECTED) }
-    fun getEmotes(channel: String): StateFlow<List<GenericEmote>> = emotes.getOrPut(channel) { MutableStateFlow(emptyList()) }
     fun getRoomState(channel: String): StateFlow<Roomstate> = roomStates.getOrPut(channel) { MutableStateFlow(Roomstate(channel)) }
     fun getUsers(channel: String): StateFlow<LruCache<String, Boolean>> = users.getOrPut(channel) { MutableStateFlow(createUserCache()) }
 
-    fun loadData(channels: List<String>, oAuth: String, id: Int, loadTwitchData: Boolean, loadHistory: Boolean, name: String) {
-        this.name = name
-        dataLoadingEvent.postValue(DataLoadingState.Loading)
-        scope.launch(coroutineExceptionHandler) {
-            if (oAuth.isNotBlank() && loadTwitchData) {
-                loadedTwitchEmotes = false
-                loadIgnores(oAuth, id)
-                loadTwitchEmotes(oAuth, id)
-            }
-            channels.map { channel ->
-                async {
-                    TwitchApi.getUserIdFromName(oAuth, channel)?.let {
-                        loadBadges(channel, it)
-                        load3rdPartyEmotes(channel, it)
-                    }
-                    setEmotesForSuggestions(channel)
-
-                    if (loadHistory) {
-                        loadRecentMessages(channel)
-                    } else {
-                        val currentChat = messages[channel]?.value ?: emptyList()
-                        messages[channel]?.value = listOf(ChatItem(Message.SystemMessage(state = SystemMessageType.NO_HISTORY_LOADED), false)).plus(currentChat)
-                    }
-                }
-            }.awaitAll()
-            dataLoadingEvent.postValue(DataLoadingState.Finished)
+    suspend fun loadData(channels: List<String>, oAuth: String, id: Int, loadHistory: Boolean, name: String) = withContext(Dispatchers.IO) {
+        this@ChatRepository.name = name
+        if (oAuth.isNotBlank()) {
+            loadIgnores(oAuth, id)
         }
+        channels.map { channel ->
+            async {
+                if (loadHistory) {
+                    loadRecentMessages(channel)
+                } else {
+                    val currentChat = messages[channel]?.value ?: emptyList()
+                    messages[channel]?.value = listOf(ChatItem(Message.SystemMessage(state = SystemMessageType.NO_HISTORY_LOADED), false)).plus(currentChat)
+                }
+            }
+        }.awaitAll()
     }
 
     fun removeChannelData(channel: String) {
@@ -139,32 +100,6 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
     fun clear(channel: String) {
         messages[channel]?.value = emptyList()
-    }
-
-    fun reloadEmotes(channel: String, oAuth: String, id: Int) {
-        dataLoadingEvent.postValue(DataLoadingState.Loading)
-        scope.launch(coroutineExceptionHandler) {
-            loadedGlobalEmotes = false
-            loadedTwitchEmotes = false
-            TwitchApi.getUserIdFromName(oAuth, channel)?.let {
-                load3rdPartyEmotes(channel, it)
-            }
-
-            if (id != 0 && oAuth.isNotBlank() && oAuth.startsWith("oauth:")) {
-                loadTwitchEmotes(oAuth.substringAfter("oauth:"), id)
-            }
-
-            setEmotesForSuggestions(channel)
-            dataLoadingEvent.postValue(DataLoadingState.Reloaded)
-        }
-    }
-
-    fun uploadMedia(file: File) = scope.launch(coroutineExceptionHandler) {
-        imageUploadedEvent.postValue(ImageUploadState.Loading)
-        val url = TwitchApi.uploadMedia(file)
-        file.delete()
-        val state = url?.let { ImageUploadState.Finished(it) } ?: ImageUploadState.Failed(null)
-        imageUploadedEvent.postValue(state)
     }
 
     fun close(onClosed: () -> Unit = { }): Boolean {
@@ -202,7 +137,6 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
     private fun createFlowsIfNecessary(channel: String) {
         if (!messages.contains(channel)) messages[channel] = MutableStateFlow(emptyList())
-        if (!emotes.contains(channel)) emotes[channel] = MutableStateFlow(emptyList())
         if (!connectionState.contains(channel)) connectionState[channel] = MutableStateFlow(SystemMessageType.DISCONNECTED)
         if (!roomStates.contains(channel)) roomStates[channel] = MutableStateFlow(Roomstate(channel))
         if (!users.contains(channel)) users[channel] = MutableStateFlow(createUserCache())
@@ -252,16 +186,12 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         ignoredList.clear()
     }
 
-    fun setMentionEntries(stringSet: Set<String>?) {
-        scope.launch(Dispatchers.Default + coroutineExceptionHandler) {
-            customMentionEntries = stringSet.mapToMention(adapter)
-        }
+    suspend fun setMentionEntries(stringSet: Set<String>?) = withContext(Dispatchers.Default) {
+        customMentionEntries = stringSet.mapToMention(adapter)
     }
 
-    fun setBlacklistEntries(stringSet: Set<String>?) {
-        scope.launch(Dispatchers.Default + coroutineExceptionHandler) {
-            blacklistEntries = stringSet.mapToMention(adapter)
-        }
+    suspend fun setBlacklistEntries(stringSet: Set<String>?) = withContext(Dispatchers.Default) {
+        blacklistEntries = stringSet.mapToMention(adapter)
     }
 
     private suspend fun loadIgnores(oAuth: String, id: Int) = withContext(Dispatchers.Default) {
@@ -367,48 +297,6 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         }
     }
 
-    private suspend fun loadBadges(channel: String, id: String) = withContext(Dispatchers.Default) {
-        if (!loadedGlobalBadges) {
-            loadedGlobalBadges = true
-            measureTimeAndLog(TAG, "global badges") {
-                TwitchApi.getGlobalBadges()?.also { EmoteManager.setGlobalBadges(it) }
-            }
-        }
-        measureTimeAndLog(TAG, "channel badges for #$id") {
-            TwitchApi.getChannelBadges(id)?.also { EmoteManager.setChannelBadges(channel, it) }
-        }
-    }
-
-    private suspend fun loadTwitchEmotes(oAuth: String, id: Int) = withContext(Dispatchers.Default) {
-        if (!loadedTwitchEmotes) {
-            loadedTwitchEmotes = true
-            measureTimeAndLog(TAG, "twitch emotes for #$id") {
-                TwitchApi.getUserEmotes(oAuth, id)?.also { EmoteManager.setTwitchEmotes(it) }
-            }
-        }
-    }
-
-    private suspend fun load3rdPartyEmotes(channel: String, id: String) = withContext(Dispatchers.IO) {
-        measureTimeMillis {
-            TwitchApi.getFFZChannelEmotes(id)?.let { EmoteManager.setFFZEmotes(channel, it) }
-            TwitchApi.getBTTVChannelEmotes(id)?.let { EmoteManager.setBTTVEmotes(channel, it) }
-
-            if (!loadedGlobalEmotes) {
-                TwitchApi.getFFZGlobalEmotes()?.let { EmoteManager.setFFZGlobalEmotes(it) }
-                TwitchApi.getBTTVGlobalEmotes()?.let { EmoteManager.setBTTVGlobalEmotes(it) }
-                loadedGlobalEmotes = true
-            }
-        }.let { Log.i(TAG, "Loaded 3rd party emotes for #$channel in $it ms") }
-    }
-
-    private suspend fun setEmotesForSuggestions(channel: String) = withContext(Dispatchers.Default) {
-        if (!emotes.contains(channel)) {
-            emotes[channel] = MutableStateFlow(emptyList())
-        }
-
-        emotes[channel]?.value = EmoteManager.getEmotes(channel)
-    }
-
     private suspend fun loadRecentMessages(channel: String): Unit? = withContext(Dispatchers.Default) {
         val result = TwitchApi.getRecentMessages(channel) ?: return@withContext
         val items = mutableListOf<ChatItem>()
@@ -431,7 +319,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     }
 
     companion object {
-        private val TAG = TwitchRepository::class.java.simpleName
+        private val TAG = ChatRepository::class.java.simpleName
         private val INVISIBLE_CHAR = String(ByteBuffer.allocate(4).putInt(0x000E0000).array(), Charsets.UTF_32)
     }
 }

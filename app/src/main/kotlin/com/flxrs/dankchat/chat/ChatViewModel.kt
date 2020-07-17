@@ -4,10 +4,10 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
-import com.flxrs.dankchat.service.TwitchRepository
+import com.flxrs.dankchat.service.ChatRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
 
-class ChatViewModel(repository: TwitchRepository, channel: String) : ViewModel() {
+class ChatViewModel(repository: ChatRepository, channel: String) : ViewModel() {
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, t ->
         Log.e(TAG, Log.getStackTraceString(t))
     }
