@@ -23,6 +23,8 @@ import com.flxrs.dankchat.utils.extensions.*
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.koin.core.KoinComponent
@@ -34,7 +36,7 @@ import kotlin.system.measureTimeMillis
 
 class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
-    private val messages = mutableMapOf<String, MutableLiveData<List<ChatItem>>>()
+    private val messages = mutableMapOf<String, MutableStateFlow<List<ChatItem>>>()
     private val emotes = mutableMapOf<String, MutableLiveData<List<GenericEmote>>>()
     private val connectionState = mutableMapOf<String, MutableLiveData<SystemMessageType>>()
     private val roomStates = mutableMapOf<String, MutableLiveData<Roomstate>>()
@@ -80,7 +82,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     val messageChannel = Channel<List<ChatItem>>()
     var startedConnection = false
 
-    fun getChat(channel: String): LiveData<List<ChatItem>> = messages.getAndSet(channel, emptyList())
+    fun getChat(channel: String): StateFlow<List<ChatItem>> = messages.getOrPut(channel) { MutableStateFlow(emptyList()) }
 
     fun getConnectionState(channel: String): LiveData<SystemMessageType> = connectionState.getAndSet(channel, SystemMessageType.DISCONNECTED)
 
@@ -111,9 +113,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
                         loadRecentMessages(channel)
                     } else {
                         val currentChat = messages[channel]?.value ?: emptyList()
-                        messages.getAndSet(channel).postValue(
-                            listOf(ChatItem(Message.SystemMessage(state = SystemMessageType.NO_HISTORY_LOADED), false)).plus(currentChat)
-                        )
+                        messages[channel]?.value = listOf(ChatItem(Message.SystemMessage(state = SystemMessageType.NO_HISTORY_LOADED), false)).plus(currentChat)
                     }
                 }
             }.awaitAll()
@@ -122,7 +122,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     }
 
     fun removeChannelData(channel: String) {
-        messages[channel]?.postValue(emptyList())
+        messages[channel]?.value = emptyList()
         messages.remove(channel)
         lastMessage.remove(channel)
         TwitchApi.clearChannelFromLoaded(channel)
@@ -141,7 +141,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     }
 
     fun clear(channel: String) {
-        messages[channel]?.postValue(emptyList())
+        messages[channel]?.value = emptyList()
     }
 
     fun reloadEmotes(channel: String, oAuth: String, id: Int) {
@@ -193,6 +193,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     }
 
     fun joinChannel(channel: String) {
+        messages[channel] = MutableStateFlow(emptyList())
         readConnection.joinChannel(channel)
         writeConnection.joinChannel(channel)
     }
@@ -283,7 +284,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         val channel = msg.params[0].substring(1)
 
         messages[channel]?.value?.replaceWithTimeOuts(target)?.also {
-            messages[channel]?.postValue(it.addAndLimit(parsed[0]))
+            messages[channel]?.value = it.addAndLimit(parsed[0])
         }
     }
 
@@ -300,7 +301,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         val targetId = msg.tags["target-msg-id"] ?: return
 
         messages[channel]?.value?.replaceWithTimeOut(targetId)?.also {
-            messages[channel]?.postValue(it)
+            messages[channel]?.value = it
         }
     }
 
@@ -321,14 +322,14 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         }
         if (parsed.isNotEmpty()) {
             if (msg.params[0] == "*" || msg.command == "WHISPER") {
-                messages.forEach {
-                    val currentChat = it.value.value ?: emptyList()
-                    messages.getAndSet(it.key).postValue(currentChat.addAndLimit(parsed))
+                messages.keys.forEach {
+                    val currentChat = messages[it]?.value ?: emptyList()
+                    messages[it]?.value = currentChat.addAndLimit(parsed)
                 }
             } else {
                 val channel = msg.params[0].substring(1)
                 val currentChat = messages[channel]?.value ?: emptyList()
-                messages.getAndSet(channel).postValue(currentChat.addAndLimit(parsed))
+                messages[channel]?.value = currentChat.addAndLimit(parsed)
                 messageChannel.offer(parsed)
             }
         }
@@ -357,9 +358,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     private fun makeAndPostConnectionMessage(state: SystemMessageType, channels: Set<String> = messages.keys) {
         channels.forEach {
             val currentChat = messages[it]?.value ?: emptyList()
-            messages.getAndSet(it).postValue(
-                currentChat.addAndLimit(ChatItem(Message.SystemMessage(state = state)))
-            )
+            messages[it]?.value = currentChat.addAndLimit(ChatItem(Message.SystemMessage(state = state)))
         }
     }
 
@@ -419,7 +418,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         }.let { Log.i(TAG, "Parsing message history for #$channel took $it ms") }
 
         val current = messages[channel]?.value ?: emptyList()
-        messages.getAndSet(channel).postValue(items.addAndLimit(current, true))
+        messages[channel]?.value = items.addAndLimit(current, true)
     }
 
     companion object {
