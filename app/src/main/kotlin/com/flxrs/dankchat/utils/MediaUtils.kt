@@ -1,7 +1,6 @@
 package com.flxrs.dankchat.utils
 
 import android.content.Context
-import android.os.Environment
 import androidx.exifinterface.media.ExifInterface
 import java.io.File
 import java.io.IOException

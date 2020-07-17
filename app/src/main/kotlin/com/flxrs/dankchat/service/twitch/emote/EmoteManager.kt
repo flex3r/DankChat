@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.service.twitch.emote
 
-import android.util.Log
 import android.util.LruCache
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.api.model.BadgeEntities

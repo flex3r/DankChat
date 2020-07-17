@@ -34,9 +34,9 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
     private val streamInfoEnabled = MutableLiveData(true)
     private val roomStateEnabled = MutableLiveData(true)
     private val streamData: MutableLiveData<Map<String, String>> = MutableLiveData()
-    private val roomState = activeChannel.switchMap { twitchRepository.getRoomState(it) }
-    private val emotes = activeChannel.switchMap { twitchRepository.getEmotes(it) }
-    private val users = activeChannel.switchMap { twitchRepository.getUsers(it) }
+    private val roomState = activeChannel.switchMap { twitchRepository.getRoomState(it).asLiveData(coroutineExceptionHandler) }
+    private val emotes = activeChannel.switchMap { twitchRepository.getEmotes(it).asLiveData(coroutineExceptionHandler) }
+    private val users = activeChannel.switchMap { twitchRepository.getUsers(it).asLiveData(coroutineExceptionHandler) }
     private val currentStreamInformation = MediatorLiveData<String>().apply {
         addSource(activeChannel) { value = streamData.value?.get(it) ?: "" }
         addSource(streamData) {
@@ -79,7 +79,7 @@ class DankChatViewModel(private val twitchRepository: TwitchRepository) : ViewMo
         addSource(_imageUploadedEvent) { value = it is ImageUploadState.Loading || _dataLoadingEvent.value is DataLoadingState.Loading }
         addSource(_dataLoadingEvent) { value = it is DataLoadingState.Loading || _imageUploadedEvent.value is ImageUploadState.Loading }
     }
-    val connectionState = activeChannel.switchMap { twitchRepository.getConnectionState(it) }
+    val connectionState = activeChannel.switchMap { twitchRepository.getConnectionState(it).asLiveData(coroutineExceptionHandler) }
     val canType = connectionState.map { it == SystemMessageType.CONNECTED }
     val bottomText = MediatorLiveData<String>().apply {
         addSource(roomStateEnabled) { value = buildBottomText() }

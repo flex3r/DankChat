@@ -2,8 +2,6 @@ package com.flxrs.dankchat.service
 
 import android.util.Log
 import androidx.collection.LruCache
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.service.api.TwitchApi
@@ -39,10 +37,10 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
 
     private val messages = mutableMapOf<String, MutableStateFlow<List<ChatItem>>>()
     private val _notificationMessageChannel = Channel<List<ChatItem>>(10) // TODO replace with SharedFlow when available
-    private val emotes = mutableMapOf<String, MutableLiveData<List<GenericEmote>>>()
-    private val connectionState = mutableMapOf<String, MutableLiveData<SystemMessageType>>()
-    private val roomStates = mutableMapOf<String, MutableLiveData<Roomstate>>()
-    private val users = mutableMapOf<String, MutableLiveData<LruCache<String, Boolean>>>()
+    private val emotes = mutableMapOf<String, MutableStateFlow<List<GenericEmote>>>()
+    private val connectionState = mutableMapOf<String, MutableStateFlow<SystemMessageType>>()
+    private val roomStates = mutableMapOf<String, MutableStateFlow<Roomstate>>()
+    private val users = mutableMapOf<String, MutableStateFlow<LruCache<String, Boolean>>>()
     private val ignoredList = mutableListOf<Int>()
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, t ->
         Log.e(TAG, Log.getStackTraceString(t))
@@ -86,10 +84,10 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     var startedConnection = false
 
     fun getChat(channel: String): StateFlow<List<ChatItem>> = messages.getOrPut(channel) { MutableStateFlow(emptyList()) }
-    fun getConnectionState(channel: String): LiveData<SystemMessageType> = connectionState.getAndSet(channel, SystemMessageType.DISCONNECTED)
-    fun getEmotes(channel: String): LiveData<List<GenericEmote>> = emotes.getAndSet(channel, emptyList())
-    fun getRoomState(channel: String): LiveData<Roomstate> = roomStates.getAndSet(channel, Roomstate(channel))
-    fun getUsers(channel: String): LiveData<LruCache<String, Boolean>> = users.getAndSet(channel, createUserCache())
+    fun getConnectionState(channel: String): StateFlow<SystemMessageType> = connectionState.getOrPut(channel) { MutableStateFlow(SystemMessageType.DISCONNECTED) }
+    fun getEmotes(channel: String): StateFlow<List<GenericEmote>> = emotes.getOrPut(channel) { MutableStateFlow(emptyList()) }
+    fun getRoomState(channel: String): StateFlow<Roomstate> = roomStates.getOrPut(channel) { MutableStateFlow(Roomstate(channel)) }
+    fun getUsers(channel: String): StateFlow<LruCache<String, Boolean>> = users.getOrPut(channel) { MutableStateFlow(createUserCache()) }
 
     fun loadData(channels: List<String>, oAuth: String, id: Int, loadTwitchData: Boolean, loadHistory: Boolean, name: String) {
         this.name = name
@@ -106,7 +104,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
                         loadBadges(channel, it)
                         load3rdPartyEmotes(channel, it)
                     }
-                    setSuggestions(channel)
+                    setEmotesForSuggestions(channel)
 
                     if (loadHistory) {
                         loadRecentMessages(channel)
@@ -133,7 +131,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
             hasDisconnected = true
             val state = SystemMessageType.DISCONNECTED
             connectionState.keys.forEach {
-                connectionState.getAndSet(it).postValue(state)
+                connectionState[it]?.value = state
             }
             makeAndPostConnectionMessage(state)
         }
@@ -156,7 +154,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
                 loadTwitchEmotes(oAuth.substringAfter("oauth:"), id)
             }
 
-            setSuggestions(channel)
+            setEmotesForSuggestions(channel)
             dataLoadingEvent.postValue(DataLoadingState.Reloaded)
         }
     }
@@ -192,10 +190,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     }
 
     fun joinChannel(channel: String) {
-        if (!messages.contains(channel)) {
-            messages[channel] = MutableStateFlow(emptyList())
-        }
-
+        createFlowsIfNecessary(channel)
         readConnection.joinChannel(channel)
         writeConnection.joinChannel(channel)
     }
@@ -203,6 +198,14 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     fun partChannel(channel: String) {
         readConnection.partChannel(channel)
         writeConnection.partChannel(channel)
+    }
+
+    private fun createFlowsIfNecessary(channel: String) {
+        if (!messages.contains(channel)) messages[channel] = MutableStateFlow(emptyList())
+        if (!emotes.contains(channel)) emotes[channel] = MutableStateFlow(emptyList())
+        if (!connectionState.contains(channel)) connectionState[channel] = MutableStateFlow(SystemMessageType.DISCONNECTED)
+        if (!roomStates.contains(channel)) roomStates[channel] = MutableStateFlow(Roomstate(channel))
+        if (!users.contains(channel)) users[channel] = MutableStateFlow(createUserCache())
     }
 
     private inline fun prepareMessage(channel: String, message: String, onResult: (msg: String) -> Unit) {
@@ -272,12 +275,12 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
     private fun handleConnected(channel: String, isAnonymous: Boolean) {
         hasDisconnected = false
 
-        val hint = when {
+        val connection = when {
             isAnonymous -> SystemMessageType.NOT_LOGGED_IN
             else -> SystemMessageType.CONNECTED
         }
-        makeAndPostConnectionMessage(hint, setOf(channel))
-        connectionState.getAndSet(channel).postValue(hint)
+        makeAndPostConnectionMessage(connection, setOf(channel))
+        connectionState[channel]?.value = connection
     }
 
     private fun handleClearchat(msg: IrcMessage) {
@@ -295,7 +298,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         val state = roomStates[channel]?.value ?: Roomstate(channel)
         state.updateState(msg)
 
-        roomStates.getAndSet(channel).postValue(state)
+        roomStates[channel]?.value = state
     }
 
     private fun handleClearmsg(msg: IrcMessage) {
@@ -318,7 +321,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
             it.checkForMention(name, customMentionEntries)
             val currentUsers = users[it.channel]?.value ?: createUserCache()
             currentUsers.put(it.name, true)
-            users.getAndSet(it.channel).postValue(currentUsers)
+            users[it.channel]?.value = currentUsers
 
             ChatItem(it)
         }
@@ -342,7 +345,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         val names = msg.params.getOrNull(3)?.split(' ') ?: return
         val currentUsers = users[channel]?.value ?: createUserCache()
         names.forEach { currentUsers.put(it, true) }
-        users.getAndSet(channel).postValue(currentUsers)
+        users[channel]?.value = currentUsers
     }
 
     private fun handleJoin(msg: IrcMessage) {
@@ -350,7 +353,7 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         val name = msg.prefix.substringBefore('!')
         val currentUsers = users[channel]?.value ?: createUserCache()
         currentUsers.put(name, true)
-        users.getAndSet(channel).postValue(currentUsers)
+        users[channel]?.value = currentUsers
     }
 
     private fun createUserCache(): LruCache<String, Boolean> {
@@ -398,8 +401,12 @@ class TwitchRepository(private val scope: CoroutineScope) : KoinComponent {
         }.let { Log.i(TAG, "Loaded 3rd party emotes for #$channel in $it ms") }
     }
 
-    private suspend fun setSuggestions(channel: String) = withContext(Dispatchers.Default) {
-        emotes.getAndSet(channel).postValue(EmoteManager.getEmotes(channel))
+    private suspend fun setEmotesForSuggestions(channel: String) = withContext(Dispatchers.Default) {
+        if (!emotes.contains(channel)) {
+            emotes[channel] = MutableStateFlow(emptyList())
+        }
+
+        emotes[channel]?.value = EmoteManager.getEmotes(channel)
     }
 
     private suspend fun loadRecentMessages(channel: String): Unit? = withContext(Dispatchers.Default) {

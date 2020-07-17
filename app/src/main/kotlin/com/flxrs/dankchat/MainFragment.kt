@@ -370,10 +370,10 @@ class MainFragment : Fragment() {
     }
 
     private fun fetchStreamInformation() {
-        lifecycleScope.launchWhenResumed {
+        lifecycleScope.launchWhenStarted {
             val key = getString(R.string.preference_streaminfo_key)
             if (preferences.getBoolean(key, true)) {
-                val oAuth = twitchPreferences.oAuthKey ?: return@launchWhenResumed
+                val oAuth = twitchPreferences.oAuthKey ?: return@launchWhenStarted
                 viewModel.fetchStreamData(oAuth) {
                     resources.getQuantityString(R.plurals.viewers, it, it)
                 }
