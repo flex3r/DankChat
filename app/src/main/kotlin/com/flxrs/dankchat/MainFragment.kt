@@ -847,10 +847,6 @@ class MainFragment : Fragment() {
         private val TAG = MainFragment::class.java.simpleName
         private const val DIALOG_TAG = "add_channel_dialog"
         private const val DISCLAIMER_TAG = "message_history_disclaimer_dialog"
-        private const val GALLERY_REQUEST = 69
-        private const val GALLERY_REQUEST_VIDEO = 70
-        private const val CAPTURE_REQUEST = 420
-        private const val CAPTURE_REQUEST_VIDEO = 421
 
         const val LOGOUT_REQUEST_KEY = "logout_key"
         const val LOGIN_REQUEST_KEY = "login_key"
