@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.chat.suggestion.Suggestion
-import com.flxrs.dankchat.service.DataRepository
 import com.flxrs.dankchat.service.ChatRepository
+import com.flxrs.dankchat.service.DataRepository
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.state.DataLoadingState
 import com.flxrs.dankchat.service.state.ImageUploadState
@@ -25,11 +25,13 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, t ->
         Log.e(TAG, Log.getStackTraceString(t))
         _errorEvent.postValue(t)
+        val dataEvent = dataLoadingEvent.value
+        val imageEvent = imageUploadedEvent.value
 
-        if (_dataLoadingEvent.value is DataLoadingState.Loading) {
+        if (dataEvent is DataLoadingState.Loading) {
             _dataLoadingEvent.postValue(DataLoadingState.Failed(t))
-        } else if (_imageUploadedEvent.value is ImageUploadState.Loading) {
-            _imageUploadedEvent.postValue(ImageUploadState.Failed(t.message))
+        } else if (imageEvent is ImageUploadState.Loading) {
+            _imageUploadedEvent.postValue(ImageUploadState.Failed(t.message, imageEvent.mediaFile))
         }
     }
 
@@ -209,11 +211,16 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
         _dataLoadingEvent.postValue(DataLoadingState.Reloaded)
     }
 
-    fun uploadMedia(file: File) = viewModelScope.launch(coroutineExceptionHandler) {
-        _imageUploadedEvent.postValue(ImageUploadState.Loading)
-        val url = dataRepository.uploadMedia(file)
-        val state = url?.let { ImageUploadState.Finished(it) } ?: ImageUploadState.Failed(null)
-        _imageUploadedEvent.postValue(state)
+    fun uploadMedia(file: File) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            _imageUploadedEvent.postValue(ImageUploadState.Loading(file))
+            val url = dataRepository.uploadMedia(file)
+            val state = url?.let {
+                file.delete()
+                ImageUploadState.Finished(it)
+            } ?: ImageUploadState.Failed(null, file)
+            _imageUploadedEvent.postValue(state)
+        }
     }
 
     fun setMentionEntries(stringSet: Set<String>?) = viewModelScope.launch(coroutineExceptionHandler) { chatRepository.setMentionEntries(stringSet) }

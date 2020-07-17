@@ -57,6 +57,7 @@ import com.flxrs.dankchat.utils.extensions.navigateSafe
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.BaseTransientBottomBar.BaseCallback
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.textfield.TextInputLayout
@@ -402,7 +403,10 @@ class MainFragment : Fragment() {
     private fun handleImageUploadEvent(result: ImageUploadState) {
         when (result) {
             is ImageUploadState.Loading -> return
-            is ImageUploadState.Failed -> result.errorMessage?.let { showSnackbar(getString(R.string.snackbar_upload_failed_cause, it)) } ?: showSnackbar(getString(R.string.snackbar_upload_failed))
+            is ImageUploadState.Failed -> showSnackbar(
+                message = result.errorMessage?.let { getString(R.string.snackbar_upload_failed_cause, it) } ?: getString(R.string.snackbar_upload_failed),
+                onDismiss = { result.mediaFile.delete() },
+                action = getString(R.string.snackbar_retry) to { viewModel.uploadMedia(result.mediaFile) })
             is ImageUploadState.Finished -> {
                 val clipboard = getSystemService(requireContext(), ClipboardManager::class.java)
                 clipboard?.setPrimaryClip(ClipData.newPlainText("nuuls image url", result.url))
@@ -612,10 +616,19 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun showSnackbar(message: String) {
+    private fun showSnackbar(message: String, onDismiss: () -> Unit = {}, action: Pair<String, () -> Unit>? = null) {
         binding.inputLayout.post {
             Snackbar.make(binding.coordinator, message, Snackbar.LENGTH_SHORT).apply {
                 if (binding.inputLayout.isVisible) anchorView = binding.inputLayout
+                addCallback(object : Snackbar.Callback() {
+                    override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                        when (event) {
+                            BaseCallback.DISMISS_EVENT_CONSECUTIVE, BaseCallback.DISMISS_EVENT_TIMEOUT, BaseCallback.DISMISS_EVENT_SWIPE -> onDismiss()
+                            else -> return
+                        }
+                    }
+                })
+                action?.let { (msg, onAction) -> setAction(msg) { _ -> onAction() } }
             }.show()
         }
     }

@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.lang.IllegalStateException
 import kotlin.system.measureTimeMillis
 
 class DataRepository {
@@ -55,9 +54,7 @@ class DataRepository {
         setEmotesForSuggestions(channel)
     }
 
-    suspend fun uploadMedia(file: File): String? = withContext(Dispatchers.IO) {
-        TwitchApi.uploadMedia(file).also { file.delete() }
-    }
+    suspend fun uploadMedia(file: File): String? = withContext(Dispatchers.IO) { TwitchApi.uploadMedia(file) }
 
     private suspend fun loadBadges(channel: String, id: String) = withContext(Dispatchers.Default) {
         if (!loadedGlobalBadges) {
