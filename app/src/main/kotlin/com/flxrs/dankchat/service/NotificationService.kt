@@ -21,7 +21,7 @@ import org.koin.core.KoinComponent
 import org.koin.core.get
 import kotlin.coroutines.CoroutineContext
 
-class TwitchService : Service(), CoroutineScope, KoinComponent {
+class NotificationService : Service(), CoroutineScope, KoinComponent {
 
     private val binder = LocalBinder()
     private val manager: NotificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
@@ -32,7 +32,7 @@ class TwitchService : Service(), CoroutineScope, KoinComponent {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + Job()
 
-    inner class LocalBinder(val service: TwitchService = this@TwitchService) : Binder()
+    inner class LocalBinder(val service: NotificationService = this@NotificationService) : Binder()
 
     override fun onBind(intent: Intent?): IBinder? = binder
 
@@ -91,7 +91,7 @@ class TwitchService : Service(), CoroutineScope, KoinComponent {
             PendingIntent.getActivity(this, NOTIFICATION_START_INTENT_CODE, it, PendingIntent.FLAG_UPDATE_CURRENT)
         }
 
-        val pendingStopIntent = Intent(this, TwitchService::class.java).let {
+        val pendingStopIntent = Intent(this, NotificationService::class.java).let {
             it.action = STOP_COMMAND
             PendingIntent.getService(this, NOTIFICATION_STOP_INTENT_CODE, it, PendingIntent.FLAG_UPDATE_CURRENT)
         }
