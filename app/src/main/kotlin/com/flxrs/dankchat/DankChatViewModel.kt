@@ -138,7 +138,7 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
         id = dataLoadingParameters.id,
         name = dataLoadingParameters.name,
         loadTwitchData = dataLoadingParameters.loadTwitchData,
-        loadHistory = dataLoadingParameters.loadTwitchData
+        loadHistory = dataLoadingParameters.loadHistory
     )
 
     fun loadData(oAuth: String, id: Int, name: String, channelList: List<String> = channels.value ?: emptyList(), loadTwitchData: Boolean, loadHistory: Boolean) {
