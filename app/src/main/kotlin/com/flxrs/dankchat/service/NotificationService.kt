@@ -6,10 +6,13 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.speech.tts.TextToSpeech
 import androidx.core.app.NotificationCompat
+import androidx.core.content.edit
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.preference.PreferenceManager
@@ -19,6 +22,7 @@ import com.flxrs.dankchat.service.twitch.message.Message
 import kotlinx.coroutines.*
 import org.koin.core.KoinComponent
 import org.koin.core.get
+import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 class NotificationService : Service(), CoroutineScope, KoinComponent {
@@ -26,8 +30,25 @@ class NotificationService : Service(), CoroutineScope, KoinComponent {
     private val binder = LocalBinder()
     private val manager: NotificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
     private val sharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
+    private val preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        when (key) {
+            getString(R.string.preference_notification_key) -> notificationsEnabled = sharedPreferences.getBoolean(key, true)
+            getString(R.string.preference_tts_queue_key) -> ttsMessageQueue = sharedPreferences.getBoolean(key, true)
+            getString(R.string.preference_tts_message_format_key) -> combinedTTSFormat = sharedPreferences.getBoolean(key, true)
+        }
+    }
+
+    private var notificationsEnabled = false
+    private var combinedTTSFormat = false
+    private var ttsMessageQueue = false
+
     private val notifications = mutableMapOf<String, MutableList<Int>>()
     private val chatRepository: ChatRepository = get()
+
+    private var tts: TextToSpeech? = null
+    private var previousTTSUser: String? = null
+
+    var activeTTSChannel: String? = null
     var shouldNotifyOnMention = false
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + Job()
@@ -39,6 +60,8 @@ class NotificationService : Service(), CoroutineScope, KoinComponent {
     override fun onDestroy() {
         coroutineContext.cancel()
         manager.cancelAll()
+        shutdownTTS()
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
 
         stopForeground(true)
         stopSelf()
@@ -57,6 +80,13 @@ class NotificationService : Service(), CoroutineScope, KoinComponent {
             val mentionChannel = NotificationChannel(CHANNEL_ID_DEFAULT, "Mentions", NotificationManager.IMPORTANCE_DEFAULT)
             manager.createNotificationChannel(mentionChannel)
             manager.createNotificationChannel(channel)
+        }
+
+        sharedPreferences.apply {
+            notificationsEnabled = sharedPreferences.getBoolean(getString(R.string.preference_notification_key), true)
+            ttsMessageQueue = sharedPreferences.getBoolean(getString(R.string.preference_tts_queue_key), true)
+            combinedTTSFormat = sharedPreferences.getBoolean(getString(R.string.preference_tts_message_format_key), true)
+            registerOnSharedPreferenceChangeListener(preferenceListener)
         }
     }
 
@@ -81,6 +111,29 @@ class NotificationService : Service(), CoroutineScope, KoinComponent {
             manager.cancel(SUMMARY_NOTIFICATION_ID)
             manager.cancelAll()
         }
+    }
+
+    fun setTTSEnabled(enabled: Boolean) = when {
+        enabled -> initTTS()
+        else -> shutdownTTS()
+    }
+
+    private fun initTTS() {
+        tts = TextToSpeech(this) {
+            when (it) {
+                TextToSpeech.SUCCESS -> tts?.language = Locale.US
+                else -> {
+                    shutdownTTS()
+                    sharedPreferences.edit { putBoolean(getString(R.string.preference_tts_key), false) }
+                }
+            }
+        }
+    }
+
+    private fun shutdownTTS() {
+        tts?.shutdown()
+        tts = null
+        previousTTSUser = null
     }
 
     private fun startForeground() {
@@ -117,17 +170,36 @@ class NotificationService : Service(), CoroutineScope, KoinComponent {
         shouldNotifyOnMention = false
         cancel()
         launch {
-            val notificationsEnabled = sharedPreferences.getBoolean(getString(R.string.preference_notification_key), true)
             for (items in chatRepository.notificationMessageChannel) {
                 items.forEach { item ->
                     with(item.message as Message.TwitchMessage) {
                         if (shouldNotifyOnMention && isMention && notificationsEnabled) {
                             createMentionNotification(channel, name, message, isNotify)
                         }
+
+                        if (tts != null && channel == activeTTSChannel) {
+                            playTTSMessage()
+                        }
                     }
                 }
             }
         }
+    }
+
+    private fun Message.TwitchMessage.playTTSMessage() {
+        val messageFormat = when {
+            combinedTTSFormat -> "$name said $message"
+            else -> message
+        }
+        val queueMode = when {
+            ttsMessageQueue -> TextToSpeech.QUEUE_ADD
+            else -> TextToSpeech.QUEUE_FLUSH
+        }
+        val ttsMessage = when (name) {
+            previousTTSUser -> message
+            else -> messageFormat.also { previousTTSUser = name }
+        }
+        tts?.speak(ttsMessage, queueMode, null, null)
     }
 
     private fun createMentionNotification(channel: String, user: String, message: String, isNotify: Boolean) {
@@ -166,6 +238,8 @@ class NotificationService : Service(), CoroutineScope, KoinComponent {
     }
 
     companion object {
+        private val TAG = NotificationService::class.simpleName
+
         private const val CHANNEL_ID_LOW = "com.flxrs.dankchat.dank_id"
         private const val CHANNEL_ID_DEFAULT = "com.flxrs.dankchat.very_dank_id"
         private const val NOTIFICATION_ID = 77777

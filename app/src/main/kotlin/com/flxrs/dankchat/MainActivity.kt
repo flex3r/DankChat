@@ -6,11 +6,13 @@ import android.os.IBinder
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.observe
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.preferences.*
 import com.flxrs.dankchat.service.NotificationService
 import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
@@ -46,6 +48,8 @@ class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialog
                 channels.addAll(it)
                 twitchPreferences.channels = null
             }
+
+        viewModel.activeChannel.observe(this) { notificationService?.activeTTSChannel = it }
     }
 
     override fun onDestroy() {
@@ -120,13 +124,12 @@ class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialog
         return true
     }
 
-    fun clearNotificationsOfChannel(channel: String) {
-        if (isBound && notificationService != null) {
-            notificationService?.clearNotificationsOfChannel(channel)
-        } else {
-            pendingChannelsToClear += channel
-        }
+    fun clearNotificationsOfChannel(channel: String) = when {
+        isBound && notificationService != null -> notificationService?.clearNotificationsOfChannel(channel)
+        else -> pendingChannelsToClear += channel
     }
+
+    fun setTTSEnabled(enabled: Boolean) = notificationService?.setTTSEnabled(enabled)
 
     private fun handleShutDown() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
@@ -159,6 +162,9 @@ class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialog
                 val oauth = twitchPreferences.oAuthKey ?: ""
                 val name = twitchPreferences.userName ?: ""
                 viewModel.connectAndJoinChannels(name, oauth)
+
+                val ttsEnabled = PreferenceManager.getDefaultSharedPreferences(this@MainActivity).getBoolean(getString(R.string.preference_tts_key), false)
+                notificationService?.setTTSEnabled(ttsEnabled)
             }
 
             binder.service.checkForNotification()

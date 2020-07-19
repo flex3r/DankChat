@@ -162,6 +162,18 @@
     <string name="preference_debug_mode_summary">Provides information for any exceptions that have been caught</string>
     <string name="preference_timestamp_format_key" translatable="false">timestamp_format_key</string>
     <string name="preference_timestamp_format_title">Timestamp format</string>
+    <string name="preference_tts_key" translatable="false">tts_key</string>
+    <string name="preference_tts_title">Enable TTS</string>
+    <string name="preference_tts_summary">Reads out messages of the active channel</string>
+    <string name="preference_tts_queue_key" translatable="false">tts_queue_key</string>
+    <string name="preference_tts_queue_title">Message queue mode</string>
+    <string name="preference_tts_queue_add">Plays every message using a queue</string>
+    <string name="preference_tts_queue_flush">Plays only newest message</string>
+    <string name="preference_tts_message_format_message">Only reads out message</string>
+    <string name="preference_tts_message_format_combined">Reads out user and message</string>
+    <string name="preference_tts_message_format_key" translatable="false">tts_message_format_key</string>
+    <string name="preference_tts_message_format_title">Message format mode</string>
+    <string name="preference_tts_header">TTS</string>
 
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>
