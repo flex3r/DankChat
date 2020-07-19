@@ -20,8 +20,6 @@ class DeveloperSettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private var ttsSwitch: SwitchPreference? = null
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -33,7 +31,7 @@ class DeveloperSettingsFragment : PreferenceFragmentCompat() {
                 title = getString(R.string.preference_developer_header)
             }
 
-            ttsSwitch = findPreference<SwitchPreference>(getString(R.string.preference_tts_key))?.apply {
+            findPreference<SwitchPreference>(getString(R.string.preference_tts_key))?.apply {
                 setOnPreferenceChangeListener { _, value ->
                     when (value as Boolean) {
                         true -> requestCheckTTSData.launch(Intent(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA))
