@@ -7,6 +7,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.media.AudioManager
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
@@ -46,6 +47,7 @@ class NotificationService : Service(), CoroutineScope, KoinComponent {
     private val chatRepository: ChatRepository = get()
 
     private var tts: TextToSpeech? = null
+    private var audioManager: AudioManager? = null
     private var previousTTSUser: String? = null
 
     var activeTTSChannel: String? = null
@@ -128,12 +130,14 @@ class NotificationService : Service(), CoroutineScope, KoinComponent {
                 }
             }
         }
+        audioManager = getSystemService(Context.AUDIO_SERVICE) as? AudioManager
     }
 
     private fun shutdownTTS() {
         tts?.shutdown()
         tts = null
         previousTTSUser = null
+        audioManager = null
     }
 
     private fun startForeground() {
@@ -177,7 +181,7 @@ class NotificationService : Service(), CoroutineScope, KoinComponent {
                             createMentionNotification(channel, name, message, isNotify)
                         }
 
-                        if (tts != null && channel == activeTTSChannel) {
+                        if (tts != null && channel == activeTTSChannel && compareValues(audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC), 0) > 0) {
                             playTTSMessage()
                         }
                     }
