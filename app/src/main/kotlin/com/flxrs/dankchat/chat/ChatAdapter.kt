@@ -198,10 +198,17 @@ class ChatAdapter(
                 fullDisplayName.length to SpannableStringBuilder()
             }
 
-            badges.forEach { badge ->
+            val badgePositions = badges.map {
                 spannable.append("  ")
-                val start = spannable.length - 2
-                val end = spannable.length - 1
+                spannable.length - 2 to spannable.length - 1
+            }
+
+            val normalizedColor = color.normalizeColor(isDarkMode)
+            spannable.bold { color(normalizedColor) { append(fullDisplayName) } }
+            text = spannable
+
+            badges.forEachIndexed { idx, badge ->
+                val (start, end) = badgePositions[idx]
 
                 Coil.get(badge.url).apply {
                     if (badge is Badge.FFZModBadge)
@@ -217,8 +224,6 @@ class ChatAdapter(
                 //}
             }
 
-            val normalizedColor = color.normalizeColor(isDarkMode)
-            spannable.bold { color(normalizedColor) { append(fullDisplayName) } }
             text = spannable
 
             when {
