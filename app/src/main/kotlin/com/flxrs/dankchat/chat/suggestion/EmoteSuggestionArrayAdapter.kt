@@ -4,13 +4,14 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import coil.api.clear
 import coil.api.load
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.utils.extensions.dp
+import pl.droidsonroids.gif.GifImageView
 
 class EmoteSuggestionsArrayAdapter(context: Context, private val onCount: (count: Int) -> Unit) : ArrayAdapter<Suggestion>(context, R.layout.emote_suggestion_item, R.id.suggestion_text) {
     override fun getCount(): Int = super.getCount().also { onCount(it) }
@@ -18,7 +19,7 @@ class EmoteSuggestionsArrayAdapter(context: Context, private val onCount: (count
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = super.getView(position, convertView, parent)
         val textView = view.findViewById<TextView>(R.id.suggestion_text)
-        val imageView = view.findViewById<ImageView>(R.id.suggestion_image)
+        val imageView = view.findViewById<GifImageView>(R.id.suggestion_image)
 
         imageView.clear()
         imageView.setImageDrawable(null)
