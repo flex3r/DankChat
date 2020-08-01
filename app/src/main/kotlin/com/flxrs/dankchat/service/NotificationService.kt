@@ -121,8 +121,8 @@ class NotificationService : Service(), CoroutineScope, KoinComponent {
     }
 
     private fun initTTS() {
-        tts = TextToSpeech(this) {
-            when (it) {
+        tts = TextToSpeech(this) { status ->
+            when (status) {
                 TextToSpeech.SUCCESS -> tts?.language = Locale.US
                 else -> {
                     shutdownTTS()
