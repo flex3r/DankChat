@@ -293,7 +293,7 @@ class MainFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_reconnect -> viewModel.reconnect(false)
-            R.id.menu_login -> navigateSafe(R.id.action_mainFragment_to_loginFragment)
+            R.id.menu_login -> navigateSafe(R.id.action_mainFragment_to_loginFragment).also { hideKeyboard() }
             R.id.menu_add -> openAddChannelDialog()
             R.id.menu_open -> openChannel()
             R.id.menu_remove -> removeChannel()
@@ -303,7 +303,7 @@ class MainFragment : Fragment() {
             R.id.menu_capture_video -> startCameraCapture(captureVideo = true)
             R.id.menu_hide -> viewModel.appbarEnabled.value = false
             R.id.menu_clear -> clear()
-            R.id.menu_settings -> navigateSafe(R.id.action_mainFragment_to_overviewSettingsFragment)
+            R.id.menu_settings -> navigateSafe(R.id.action_mainFragment_to_overviewSettingsFragment).also { hideKeyboard() }
             else -> return false
         }
         return true
