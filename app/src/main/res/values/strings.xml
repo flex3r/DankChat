@@ -88,7 +88,7 @@
     <string name="multi_entry_hint">Entry</string>
     <string name="login_expired">Login expired! Try logging in again.</string>
     <string name="message_history_disclaimer_title">Message history disclaimer</string>
-    <string name="message_history_disclaimer_message">DankChat loads historical messages from a third-party service on startup.\nTo get the messages, DankChat sends the names of the channels you have open to that service.\nThe service temporarily stores messages for channels you (and others) visit to provide the service.\n\n- To not use this feature, click Opt-Out below or disable message history loading in the settings later.\n- You can disable message history for your own channel by following the instructions at https://www.twitch.tv/recent_messages\n\nPrivacy statement: https://recent-messages.robotty.de/privacy</string>
+    <string name="message_history_disclaimer_message">DankChat loads historical messages from a third-party service on startup.\nTo get the messages, DankChat sends the names of the channels you have open to that service.\nThe service temporarily stores messages for channels you (and others) visit to provide the service.\n\n- To not use this feature, click Opt-Out below or disable message history loading in the settings later.\n- You can learn more about the service and disable message history for your own channel by visiting https://recent-messages.robotty.de/</string>
     <string name="dialog_optin">Opt-in</string>
     <string name="dialog_optout">Opt-out</string>
     <string name="anon_connection_disclaimer_title">Anonymous connection</string>
