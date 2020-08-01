@@ -14,10 +14,7 @@ import com.flxrs.dankchat.service.twitch.emote.EmoteType
 import com.flxrs.dankchat.utils.SingleLiveEvent
 import com.flxrs.dankchat.utils.extensions.timer
 import com.flxrs.dankchat.utils.extensions.toEmoteItems
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.io.File
 
 class DankChatViewModel(private val chatRepository: ChatRepository, private val dataRepository: DataRepository) : ViewModel() {
@@ -34,6 +31,7 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
             _imageUploadedEvent.postValue(ImageUploadState.Failed(t.message, imageEvent.mediaFile))
         }
     }
+    private var fetchTimerJob: Job? = null
 
     val activeChannel = MutableLiveData<String>()
     val channels = MutableLiveData<List<String>>(emptyList())
@@ -178,6 +176,7 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
     }
 
     fun clear(channel: String) = chatRepository.clear(channel)
+
     fun joinChannel(channel: String? = activeChannel.value): List<String>? {
         if (channel == null) return null
         val current = channels.value ?: emptyList()
@@ -256,12 +255,13 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
     fun setBlacklistEntries(stringSet: Set<String>?) = viewModelScope.launch(coroutineExceptionHandler) { chatRepository.setBlacklistEntries(stringSet) }
 
     suspend fun fetchStreamData(oAuth: String, stringBuilder: (viewers: Int) -> String) = withContext(coroutineExceptionHandler) {
+        fetchTimerJob?.cancel()
         val channels = channels.value ?: return@withContext
         val token = when {
             oAuth.startsWith("oauth:", true) -> oAuth.substringAfter(':')
             else -> oAuth
         }
-        timer(STREAM_REFRESH_RATE) {
+        fetchTimerJob = timer(STREAM_REFRESH_RATE) {
             val data = mutableMapOf<String, String>()
             channels.forEach { channel ->
                 TwitchApi.getStream(token, channel)?.let {
