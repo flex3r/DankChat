@@ -156,7 +156,7 @@
     <string name="preference_load_message_history_title">Load message history on start</string>
     <string name="preference_load_message_history_key" translatable="false">load_message_history_key</string>
     <string name="preference_message_history_header">Message history</string>
-    <string name="preference_message_history_dashboard_title">Open Dashboard</string>
+    <string name="preference_message_history_dashboard_title">Open dashboard</string>
     <string name="preference_message_history_dashboard_key">message_history_dashboard_key</string>
     <string name="preference_message_history_dashboard_summary">Learn more about the service and disable message history for your own channel</string>
     <string name="preference_channel_data_header">Channel data</string>
