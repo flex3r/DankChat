@@ -205,26 +205,6 @@ class ChatAdapter(
 
             val normalizedColor = color.normalizeColor(isDarkMode)
             spannable.bold { color(normalizedColor) { append(fullDisplayName) } }
-            text = spannable
-
-            badges.forEachIndexed { idx, badge ->
-                val (start, end) = badgePositions[idx]
-
-                Coil.get(badge.url).apply {
-                    if (badge is Badge.FFZModBadge)
-                        colorFilter = PorterDuffColorFilter(ContextCompat.getColor(context, R.color.color_ffz_mod), PorterDuff.Mode.DST_OVER)
-//                val result = Coil.execute(GetRequest.Builder(context).data(badge.url).build())
-//                if (result is SuccessResult) {
-//                    result.drawable.apply {
-                    val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
-                    setBounds(0, 0, width, lineHeight)
-                    val imageSpan = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
-                    spannable.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                }
-                //}
-            }
-
-            text = spannable
 
             when {
                 message.startsWith("Login authentication", true) -> spannable.append(context.getString(R.string.login_expired))
@@ -279,8 +259,23 @@ class ChatAdapter(
                 EmoteManager.gifCallback.addView(holder.binding.itemText)
             }
 
-            if (emotes.size > 5) {
-                text = spannableWithEmojis
+            text = spannableWithEmojis
+
+            badges.forEachIndexed { idx, badge ->
+                val (start, end) = badgePositions[idx]
+
+                Coil.get(badge.url).apply {
+                    if (badge is Badge.FFZModBadge)
+                        colorFilter = PorterDuffColorFilter(ContextCompat.getColor(context, R.color.color_ffz_mod), PorterDuff.Mode.DST_OVER)
+//                val result = Coil.execute(GetRequest.Builder(context).data(badge.url).build())
+//                if (result is SuccessResult) {
+//                    result.drawable.apply {
+                    val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
+                    setBounds(0, 0, width, lineHeight)
+                    val imageSpan = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
+                    spannable.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                }
+                //}
             }
 
             val fullPrefix = prefixLength + badgesLength

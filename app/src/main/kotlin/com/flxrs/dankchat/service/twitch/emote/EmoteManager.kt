@@ -5,8 +5,7 @@ import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.api.model.BadgeEntities
 import com.flxrs.dankchat.service.api.model.EmoteEntities
 import com.flxrs.dankchat.utils.extensions.supplementaryCodePointPositions
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import pl.droidsonroids.gif.GifDrawable
 import pl.droidsonroids.gif.MultiCallback
 import java.util.concurrent.ConcurrentHashMap
@@ -132,7 +131,9 @@ object EmoteManager {
 
     suspend fun setTwitchEmotes(twitchResult: EmoteEntities.Twitch.Result) = withContext(Dispatchers.Default) {
         val setMapping = twitchResult.sets.keys
-            .map { TwitchApi.getUserSet(it) ?: EmoteEntities.Twitch.EmoteSet(it, "", "", 1) }
+            .map {
+                async { TwitchApi.getUserSet(it) ?: EmoteEntities.Twitch.EmoteSet(it, "", "", 1) }
+            }.awaitAll()
             .associateBy({ it.id }, { it.channelName })
 
         twitchEmotes.clear()
