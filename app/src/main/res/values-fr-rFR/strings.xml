@@ -148,6 +148,7 @@
     <string name="preference_tts_header">TTS</string>
     <string name="message_history_disclaimer_message">DankChat charge les anciens messages à partir d\'un service tiers au démarrage.\nPour charger ces messages, DankChat envoie le nom des chaines auquelles vous êtes connecté.\nLe service stocke temporairement les messages pour les chaines que vous (et les autres) visitez sur ce même service.\n\n- Pour ne pas utiliser cette fonction, appuyez sur "Ne pas participer" ou désactivez l\'option dans les réglages.\n- Vous pouvez en apprendre plus sur ce service et désactiver l\'historique pour votre chaine en visitant https://recent-messages.robotty.de/</string>
     <string name="preference_developer_header">Options pour les développeurs</string>
+    <string name="hide_actionbar">Masquer la barre d\'outils</string>
 
     <plurals name="viewers">
         <item quantity="one">Live avec %d spectateur</item>

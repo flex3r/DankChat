@@ -34,7 +34,7 @@
     <string name="take_picture">Take picture</string>
     <string name="record_video">Record video</string>
     <string name="choose_media">Choose existing media</string>
-    <string name="hide_actionbar" translatable="false">Hide toolbar</string>
+    <string name="hide_actionbar">Hide toolbar</string>
     <string name="resume_scroll">Resume scroll</string>
     <string name="uploading_image">Uploading image</string>
     <string name="change_mention_format">Change mention format</string>
