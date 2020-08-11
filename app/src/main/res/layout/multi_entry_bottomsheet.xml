@@ -3,75 +3,33 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <com.google.android.material.card.MaterialCardView
-        style="?materialCardViewStyle"
+    <LinearLayout
+        android:id="@+id/multi_entry_sheet"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/multi_entry_sheet"
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingTop="8dp"
+            app:srcCompat="@drawable/ic_baseline_maximize_24" />
+
+        <TextView
+            android:id="@+id/multi_entry_title"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text=""
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:textSize="18sp" />
 
-            <TextView
-                android:id="@+id/multi_entry_header_entry"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingTop="4dp"
-                android:paddingHorizontal="8dp"
-                android:text="@string/multi_entry_header_entry"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
-                app:layout_constraintBottom_toTopOf="@id/barrier"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/multi_entry_header_regex"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="94dp"
-                android:gravity="center"
-                android:paddingTop="4dp"
-                android:paddingHorizontal="8dp"
-                android:text="@string/multi_entry_header_regex"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
-                app:layout_constraintBottom_toTopOf="@id/barrier"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/multi_entry_header_match_user"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="28dp"
-                android:gravity="center"
-                android:paddingTop="4dp"
-                android:paddingHorizontal="8dp"
-                android:text="@string/multi_entry_header_match_user"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
-                app:layout_constraintBottom_toTopOf="@id/barrier"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
-
-            <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/barrier"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:barrierDirection="bottom"
-                app:constraint_referenced_ids="multi_entry_header_entry,multi_entry_header_regex,multi_entry_header_match_user" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/multi_entry_list"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/barrier"
-                tools:listitem="@layout/multi_entry_item" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/multi_entry_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="8dp"
+            tools:listitem="@layout/multi_entry_item" />
+    </LinearLayout>
 </layout>

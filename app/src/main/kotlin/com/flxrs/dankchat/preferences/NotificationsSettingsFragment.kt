@@ -1,10 +1,10 @@
 package com.flxrs.dankchat.preferences
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.view.updateLayoutParams
@@ -36,10 +36,10 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat() {
         }
 
         findPreference<Preference>(getString(R.string.preference_custom_mentions_key))?.apply {
-            setOnPreferenceClickListener { showMultiEntryPreference(view.context, key, sharedPreferences) }
+            setOnPreferenceClickListener { showMultiEntryPreference(view, key, sharedPreferences, title) }
         }
         findPreference<Preference>(getString(R.string.preference_blacklist_key))?.apply {
-            setOnPreferenceClickListener { showMultiEntryPreference(view.context, key, sharedPreferences) }
+            setOnPreferenceClickListener { showMultiEntryPreference(view, key, sharedPreferences, title) }
         }
     }
 
@@ -47,18 +47,21 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.notifications_settings, rootKey)
     }
 
-    private fun showMultiEntryPreference(context: Context, key: String, sharedPreferences: SharedPreferences): Boolean {
+    private fun showMultiEntryPreference(root: View, key: String, sharedPreferences: SharedPreferences, title: CharSequence): Boolean {
         val entryStringSet = sharedPreferences.getStringSet(key, emptySet()) ?: emptySet()
         val entries = entryStringSet.mapNotNull { adapter.fromJson(it) }.sortedBy { it.entry }.plus(MultiEntryItem.AddEntry)
+        val context = root.context
 
         val entryAdapter = MultiEntryAdapter(entries.toMutableList())
-        val binding = MultiEntryBottomsheetBinding.inflate(LayoutInflater.from(context)).apply {
+        val binding = MultiEntryBottomsheetBinding.inflate(LayoutInflater.from(context), root as? ViewGroup, false).apply {
+            multiEntryTitle.text = title
             multiEntryList.layoutManager = LinearLayoutManager(context)
             multiEntryList.adapter = entryAdapter
             multiEntrySheet.updateLayoutParams {
                 height = (resources.displayMetrics.heightPixels * 0.6f).toInt()
             }
         }
+
         BottomSheetDialog(context).apply {
             setContentView(binding.root)
             setOnDismissListener {
