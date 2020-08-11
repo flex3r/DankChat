@@ -3,6 +3,7 @@ package com.flxrs.dankchat.utils
 import android.content.Context
 import android.util.AttributeSet
 import android.view.KeyEvent
+import android.widget.AdapterView
 import androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView
 import com.flxrs.dankchat.chat.suggestion.EmoteSuggestionsArrayAdapter
 
@@ -25,4 +26,6 @@ class CustomMultiAutoCompleteTextView : AppCompatMultiAutoCompleteTextView {
             setAdapter(null)
         }
     }
+
+    fun isItemSelected() = this.listSelection != AdapterView.INVALID_POSITION
 }
