@@ -773,12 +773,12 @@ class MainFragment : Fragment() {
         //setDropDownBackgroundResource(R.color.colorPrimary)
         setTokenizer(SpaceTokenizer())
         suggestionAdapter = EmoteSuggestionsArrayAdapter(binding.input.context) { count ->
-            binding.input.dropDownHeight = if (count > 2) {
+            dropDownHeight = if (count > 2) {
                 (binding.viewPager.measuredHeight / 1.3).roundToInt()
             } else {
                 ViewGroup.LayoutParams.WRAP_CONTENT
             }
-            binding.input.dropDownWidth = (binding.viewPager.measuredWidth * 0.6).roundToInt()
+            dropDownWidth = (binding.viewPager.measuredWidth * 0.6).roundToInt()
         }
         suggestionAdapter.setNotifyOnChange(false)
 
@@ -791,7 +791,7 @@ class MainFragment : Fragment() {
         setOnKeyListener { _, keyCode, _ ->
             when (keyCode) {
                 KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> {
-                    if (!isPopupShowing) sendMessage() else false
+                    if (!isItemSelected()) sendMessage() else false
                 }
                 else -> false
             }
