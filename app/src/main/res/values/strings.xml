@@ -160,7 +160,7 @@
     <string name="preference_message_history_dashboard_key" translatable="false">message_history_dashboard_key</string>
     <string name="preference_message_history_dashboard_summary">Learn more about the service and disable message history for your own channel</string>
     <string name="preference_channel_data_header">Channel data</string>
-    <string name="preference_developer_header" translatable="false">Developer options</string>
+    <string name="preference_developer_header">Developer options</string>
     <string name="preference_developer_key" translatable="false">developer_key</string>
     <string name="preference_debug_mode_key" translatable="false">debug_mode_key</string>
     <string name="preference_debug_mode_title">Debug mode</string>
