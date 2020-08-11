@@ -98,20 +98,33 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:behavior_hideable="true"
+                app:cardElevation="8dp"
                 app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="?attr/colorSurface">
+
+                    <ImageView
+                        android:id="@+id/bottom_sheet_indicator"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="8dp"
+                        app:layout_constraintBottom_toTopOf="@id/bottom_sheet_tabs"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_baseline_maximize_24" />
 
                     <com.google.android.material.tabs.TabLayout
                         android:id="@+id/bottom_sheet_tabs"
-                        style="@style/Widget.MaterialComponents.TabLayout.PrimarySurface"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_indicator"
+                        app:tabBackground="?attr/colorSurface" />
 
                     <androidx.viewpager2.widget.ViewPager2
                         android:id="@+id/bottom_sheet_viewPager"
