@@ -2,7 +2,7 @@
     <string name="app_name">DankChat</string>
     <string name="app_name_dank">DankChat (Dank)</string>
     <string name="chat">Chat</string>
-    <string name="nam">NaM</string>
+    <string name="nam" translatable="false">NaM</string>
     <string name="loading_recent_messages">Loading recent messages</string>
     <string name="start_chatting">Start chatting</string>
     <string name="send_hint">Send a message</string>
@@ -34,7 +34,7 @@
     <string name="take_picture">Take picture</string>
     <string name="record_video">Record video</string>
     <string name="choose_media">Choose existing media</string>
-    <string name="hide_actionbar" translatable="false">Hide toolbar</string>
+    <string name="hide_actionbar">Hide toolbar</string>
     <string name="resume_scroll">Resume scroll</string>
     <string name="uploading_image">Uploading image</string>
     <string name="change_mention_format">Change mention format</string>
@@ -112,7 +112,7 @@
     <string name="preference_notification_header">Notifications</string>
     <string name="preference_mentions_header">Mentions</string>
     <string name="preference_chat_header">Chat</string>
-    <string name="preference_chat_key">chat_key</string>
+    <string name="preference_chat_key" translatable="false">chat_key</string>
     <string name="preference_logout_key" translatable="false">logout_key</string>
     <string name="preference_logout_title">Logout</string>
     <string name="preference_general_header">General</string>
@@ -157,10 +157,10 @@
     <string name="preference_load_message_history_key" translatable="false">load_message_history_key</string>
     <string name="preference_message_history_header">Message history</string>
     <string name="preference_message_history_dashboard_title">Open dashboard</string>
-    <string name="preference_message_history_dashboard_key">message_history_dashboard_key</string>
+    <string name="preference_message_history_dashboard_key" translatable="false">message_history_dashboard_key</string>
     <string name="preference_message_history_dashboard_summary">Learn more about the service and disable message history for your own channel</string>
     <string name="preference_channel_data_header">Channel data</string>
-    <string name="preference_developer_header" translatable="false">Developer options</string>
+    <string name="preference_developer_header">Developer options</string>
     <string name="preference_developer_key" translatable="false">developer_key</string>
     <string name="preference_debug_mode_key" translatable="false">debug_mode_key</string>
     <string name="preference_debug_mode_title">Debug mode</string>
