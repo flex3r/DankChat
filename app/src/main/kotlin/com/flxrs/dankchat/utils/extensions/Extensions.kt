@@ -57,3 +57,5 @@ fun <T> Context.isServiceRunning(service: Class<T>) =
     (getSystemService(ACTIVITY_SERVICE) as ActivityManager)
         .getRunningServices(Integer.MAX_VALUE)
         .any { it.service.className == service.name }
+
+fun Int.isEven() = (this % 2 == 0)

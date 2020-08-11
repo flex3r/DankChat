@@ -42,5 +42,6 @@
     <color name="color_ffz_mod">#34ae0a</color>
 
     <color name="colorThatIsActuallyTransparent">#00FFFFFF</color>
+    <color name="color_transparency_20">#22FFFFFF</color>
     <!--<color name="colorAccent">#FFEB3B</color>-->
 </resources>
