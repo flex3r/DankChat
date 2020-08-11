@@ -38,6 +38,7 @@ import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.message.Message
 import com.flxrs.dankchat.utils.TimeUtils
+import com.flxrs.dankchat.utils.extensions.isEven
 import com.flxrs.dankchat.utils.extensions.normalizeColor
 import com.flxrs.dankchat.utils.extensions.setRunning
 import com.flxrs.dankchat.utils.showErrorDialog
@@ -75,21 +76,27 @@ class ChatAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         with(holder.binding.itemText) {
             when (val message = getItem(position).message) {
-                is Message.SystemMessage -> handleSystemMessage(message)
+                is Message.SystemMessage -> handleSystemMessage(message, position)
                 is Message.TwitchMessage -> handleTwitchMessage(message, holder, position)
             }
         }
     }
 
-    private fun TextView.handleSystemMessage(message: Message.SystemMessage) {
+    private fun TextView.handleSystemMessage(message: Message.SystemMessage, position: Int) {
         alpha = 1.0f
         setBackgroundResource(android.R.color.transparent)
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
         val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
+        val checkeredKey = context.getString(R.string.checkered_messages_key)
         val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
         val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
+        val isCheckeredMode = preferences.getBoolean(checkeredKey, false)
+
+        val background = if (isCheckeredMode && position.isEven()) R.color.color_transparency_20
+            else android.R.color.transparent
+        setBackgroundResource(background)
 
         val connectionText = when (message.state) {
             SystemMessageType.DISCONNECTED -> context.getString(R.string.system_message_disconnected)
@@ -174,7 +181,7 @@ class ChatAdapter(
                 isNotify -> if (isDarkMode) R.color.color_highlight_dark else R.color.color_highlight_light
                 isReward -> if (isDarkMode) R.color.color_reward_dark else R.color.color_reward_light
                 isMention -> if (isDarkMode) R.color.color_mention_dark else R.color.color_mention_light
-                isCheckeredMode && position % 2 == 0 -> R.color.color_transparency_20
+                isCheckeredMode && position.isEven() -> R.color.color_transparency_20
                 else -> android.R.color.transparent
             }
             setBackgroundResource(background)
