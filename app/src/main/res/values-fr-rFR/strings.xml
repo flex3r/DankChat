@@ -81,7 +81,7 @@
     <string name="timed_out_message">&lt; Message supprimé ></string>
     <string name="multi_entry_header_entry">Entrée</string>
     <string name="multi_entry_header_regex">Regex</string>
-    <string name="multi_entry_header_match_user">Matcher l\'utilisateur</string>
+    <string name="multi_entry_header_match_user">Matcher\nl\'utilisateur</string>
     <string name="multi_entry_add_entry">Ajouter une entrée</string>
     <string name="multi_entry_remove_content_description">Supprimer l\'entrée</string>
     <string name="multi_entry_hint">Entrée</string>
@@ -107,7 +107,7 @@
     <string name="preference_general_header">Général</string>
     <string name="preference_about_header">A propos</string>
     <string name="preference_appearance_header">Apparence</string>
-    <string name="preference_about_summary">DankChat %1$s créé par @flex3rs et d\'autres contributeurs  Données des émotes par twitchemotes.com</string>
+    <string name="preference_about_summary">DankChat %1$s créé par @flex3rs et d\'autres contributeurs\n\nDonnées des émotes par twitchemotes.com</string>
     <string name="preference_show_input_title">Afficher la boite d\'entrée</string>
     <string name="preference_show_input_summary">Affiche la boite pour envoyer des messages</string>
     <string name="preference_dark_theme_title">Activer le thème sombre</string>
@@ -146,5 +146,5 @@
     <string name="preference_tts_message_format_combined">Lis le nom et le message</string>
     <string name="preference_tts_message_format_title">Mode de formattage du message</string>
     <string name="preference_tts_header">TTS</string>
-    <string name="message_history_disclaimer_message">DankChat charge les anciens messages à partir d\'un service tiers au démarrage. Pour charger ces messages, DankChat envoie le nom des chaines auquelles vous êtes connecté. Le service stocke temporairement les messages pour les chaines que vous (et les autres) visitez sur ce même service.  - Pour ne pas utiliser cette fonction, appuyez sur "Ne pas participer" ou désactivez l\'option dans les réglages. - Vous pouvez en apprendre plus sur ce service et désactiver l\'historique pour votre chaine en visitant https://recent-messages.robotty.de/</string>
+    <string name="message_history_disclaimer_message">DankChat charge les anciens messages à partir d\'un service tiers au démarrage.\nPour charger ces messages, DankChat envoie le nom des chaines auquelles vous êtes connecté.\nLe service stocke temporairement les messages pour les chaines que vous (et les autres) visitez sur ce même service.\n\n- Pour ne pas utiliser cette fonction, appuyez sur "Ne pas participer" ou désactivez l\'option dans les réglages.\n- Vous pouvez en apprendre plus sur ce service et désactiver l\'historique pour votre chaine en visitant https://recent-messages.robotty.de/</string>
 </resources>
