@@ -98,11 +98,11 @@ class MainFragment : Fragment() {
             return@registerForActivityResult
         }
 
-        val copy = MediaUtils.createMediaFile(context, extension)
+        val copy = createMediaFile(context, extension)
         try {
             contentResolver.openInputStream(uri)?.run { copy.outputStream().use { copyTo(it) } }
             if (copy.extension == "jpg" || copy.extension == "jpeg") {
-                MediaUtils.removeExifAttributes(copy)
+                copy.removeExifAttributes()
             }
 
             viewModel.uploadMedia(copy)
@@ -454,7 +454,7 @@ class MainFragment : Fragment() {
 
             // only remove exif data if an image was selected
             if (imageCapture) {
-                MediaUtils.removeExifAttributes(mediaFile)
+                mediaFile.removeExifAttributes()
             }
 
             viewModel.uploadMedia(mediaFile)
@@ -521,7 +521,7 @@ class MainFragment : Fragment() {
             Intent(action).also { captureIntent ->
                 captureIntent.resolveActivity(packageManager)?.also {
                     try {
-                        MediaUtils.createMediaFile(requireContext(), extension).apply { currentMediaUri = toUri() }
+                        createMediaFile(requireContext(), extension).apply { currentMediaUri = toUri() }
                     } catch (ex: IOException) {
                         null
                     }?.also {
