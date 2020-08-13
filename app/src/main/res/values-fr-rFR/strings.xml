@@ -156,4 +156,5 @@
     </plurals>
     <string name="preference_checkered_lines_title">Couleurs de lignes alternées</string>
     <string name="preference_checkered_lines_summary">Sépare chaque ligne par un fond de luminosité différente</string>
+    <string name="more">Plus</string>
 </resources>
