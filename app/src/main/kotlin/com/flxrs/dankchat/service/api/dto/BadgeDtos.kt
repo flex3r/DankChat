@@ -1,9 +1,9 @@
-package com.flxrs.dankchat.service.api.model
+package com.flxrs.dankchat.service.api.dto
 
 import androidx.annotation.Keep
 import com.squareup.moshi.Json
 
-sealed class BadgeEntities {
+sealed class BadgeDtos {
 
     @Keep
     data class Badge(
@@ -17,4 +17,7 @@ sealed class BadgeEntities {
 
     @Keep
     data class Result(@field:Json(name = "badge_sets") val sets: Map<String, BadgeSet>)
+
+    @Keep
+    data class DankChatBadge(@field:Json(name = "type") val type: String, @field:Json(name = "url") val url: String, @field:Json(name = "users") val users: List<String>)
 }

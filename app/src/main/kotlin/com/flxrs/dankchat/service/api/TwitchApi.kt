@@ -2,7 +2,7 @@ package com.flxrs.dankchat.service.api
 
 import android.util.Log
 import com.flxrs.dankchat.BuildConfig
-import com.flxrs.dankchat.service.api.model.*
+import com.flxrs.dankchat.service.api.dto.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.CacheControl
@@ -69,7 +69,7 @@ object TwitchApi {
 
     private val loadedRecentsInChannels = mutableListOf<String>()
 
-    suspend fun validateUser(oAuth: String): UserEntities.ValidateUser? = withContext(Dispatchers.IO) {
+    suspend fun validateUser(oAuth: String): UserDtos.ValidateUser? = withContext(Dispatchers.IO) {
         try {
             val response = service.validateUser(VALIDATE_URL, "OAuth $oAuth")
             if (response.isSuccessful) return@withContext response.body()
@@ -79,60 +79,65 @@ object TwitchApi {
         return@withContext null
     }
 
-    suspend fun getUserEmotes(oAuth: String, id: Int): EmoteEntities.Twitch.Result? = withContext(Dispatchers.IO) {
+    suspend fun getUserEmotes(oAuth: String, id: Int): EmoteDtos.Twitch.Result? = withContext(Dispatchers.IO) {
         val response = service.getUserEmotes("OAuth $oAuth", id)
         response.bodyOrNull
     }
 
-    suspend fun getUserSets(sets: List<String>): List<EmoteEntities.Twitch.EmoteSet>? = withContext(Dispatchers.IO) {
+    suspend fun getUserSets(sets: List<String>): List<EmoteDtos.Twitch.EmoteSet>? = withContext(Dispatchers.IO) {
         val ids = sets.joinToString(",")
         val response = service.getSets("${TWITCHEMOTES_SETS_URL}$ids")
         response.bodyOrNull
     }
 
-    suspend fun getUserSet(set: String): EmoteEntities.Twitch.EmoteSet? = withContext(Dispatchers.IO) {
+    suspend fun getUserSet(set: String): EmoteDtos.Twitch.EmoteSet? = withContext(Dispatchers.IO) {
         val response = service.getSet("https://flxrs.com/api/set/$set")
         response.bodyOrNull?.firstOrNull()
     }
 
-    suspend fun getStream(oAuth: String, channel: String): StreamEntities.Stream? = withContext(Dispatchers.IO) {
+    suspend fun getDankChatBadges(): List<BadgeDtos.DankChatBadge>? = withContext(Dispatchers.IO) {
+        val response = service.getDankChatBadges("https://flxrs.com/api/badges")
+        response.bodyOrNull
+    }
+
+    suspend fun getStream(oAuth: String, channel: String): StreamDtos.Stream? = withContext(Dispatchers.IO) {
         return@withContext getUserIdFromName(oAuth, channel)?.let {
             val response = service.getStream(it.toInt())
             response.bodyOrNull?.stream
         }
     }
 
-    suspend fun getChannelBadges(id: String): BadgeEntities.Result? = withContext(Dispatchers.IO) {
+    suspend fun getChannelBadges(id: String): BadgeDtos.Result? = withContext(Dispatchers.IO) {
         val response = service.getBadgeSets("$TWITCH_SUBBADGES_BASE_URL$id$TWITCH_SUBBADGES_SUFFIX")
         response.bodyOrNull
     }
 
-    suspend fun getGlobalBadges(): BadgeEntities.Result? = withContext(Dispatchers.IO) {
+    suspend fun getGlobalBadges(): BadgeDtos.Result? = withContext(Dispatchers.IO) {
         val response = service.getBadgeSets(TWITCH_BADGES_URL)
         response.bodyOrNull
     }
 
-    suspend fun getFFZChannelEmotes(id: String): EmoteEntities.FFZ.Result? = withContext(Dispatchers.IO) {
+    suspend fun getFFZChannelEmotes(id: String): EmoteDtos.FFZ.Result? = withContext(Dispatchers.IO) {
         val response = service.getFFZChannelEmotes("$FFZ_BASE_URL$id")
         response.bodyOrNull
     }
 
-    suspend fun getFFZGlobalEmotes(): EmoteEntities.FFZ.GlobalResult? = withContext(Dispatchers.IO) {
+    suspend fun getFFZGlobalEmotes(): EmoteDtos.FFZ.GlobalResult? = withContext(Dispatchers.IO) {
         val response = service.getFFZGlobalEmotes(FFZ_GLOBAL_URL)
         response.bodyOrNull
     }
 
-    suspend fun getBTTVChannelEmotes(id: String): EmoteEntities.BTTV.Result? = withContext(Dispatchers.IO) {
+    suspend fun getBTTVChannelEmotes(id: String): EmoteDtos.BTTV.Result? = withContext(Dispatchers.IO) {
         val response = service.getBTTVChannelEmotes("$BTTV_CHANNEL_BASE_URL$id")
         response.bodyOrNull
     }
 
-    suspend fun getBTTVGlobalEmotes(): List<EmoteEntities.BTTV.GlobalEmote>? = withContext(Dispatchers.IO) {
+    suspend fun getBTTVGlobalEmotes(): List<EmoteDtos.BTTV.GlobalEmote>? = withContext(Dispatchers.IO) {
         val response = service.getBTTVGlobalEmotes(BTTV_GLOBAL_URL)
         response.bodyOrNull
     }
 
-    suspend fun getRecentMessages(channel: String): RecentMessages? = withContext(Dispatchers.IO) {
+    suspend fun getRecentMessages(channel: String): RecentMessagesDto? = withContext(Dispatchers.IO) {
         when {
             loadedRecentsInChannels.contains(channel) -> null
             else -> {
@@ -173,7 +178,7 @@ object TwitchApi {
         response.bodyOrNull?.data?.getOrNull(0)?.name
     }
 
-    suspend fun getIgnores(oAuth: String, id: Int): UserEntities.KrakenUsersBlocks? = withContext(Dispatchers.IO) {
+    suspend fun getIgnores(oAuth: String, id: Int): UserDtos.KrakenUsersBlocks? = withContext(Dispatchers.IO) {
         val response = service.getIgnores("OAuth $oAuth", id)
         response.bodyOrNull
     }

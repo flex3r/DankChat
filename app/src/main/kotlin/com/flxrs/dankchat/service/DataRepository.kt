@@ -28,6 +28,9 @@ class DataRepository {
             loadedTwitchEmotes = false
             loadTwitchEmotes(oAuth, id)
         }
+
+        loadDankChatBadges()
+
         channels.map { channel ->
             if (!emotes.contains(channel)) emotes[channel] = MutableStateFlow(emptyList())
             async {
@@ -40,7 +43,7 @@ class DataRepository {
         }.awaitAll()
     }
 
-    suspend fun reloadEmotes(channel: String, oAuth: String, id: Int) = withContext(Dispatchers.IO) {
+    suspend fun reloadEmotes(channel: String, oAuth: String, id: Int) {
         loadedGlobalEmotes = false
         loadedTwitchEmotes = false
         TwitchApi.getUserIdFromName(oAuth, channel)?.let {
@@ -54,9 +57,9 @@ class DataRepository {
         setEmotesForSuggestions(channel)
     }
 
-    suspend fun uploadMedia(file: File): String? = withContext(Dispatchers.IO) { TwitchApi.uploadMedia(file) }
+    suspend fun uploadMedia(file: File): String? = TwitchApi.uploadMedia(file)
 
-    private suspend fun loadBadges(channel: String, id: String) = withContext(Dispatchers.Default) {
+    private suspend fun loadBadges(channel: String, id: String) {
         if (!loadedGlobalBadges) {
             loadedGlobalBadges = true
             measureTimeAndLog(TAG, "global badges") {
@@ -68,7 +71,7 @@ class DataRepository {
         }
     }
 
-    private suspend fun loadTwitchEmotes(oAuth: String, id: Int) = withContext(Dispatchers.Default) {
+    private suspend fun loadTwitchEmotes(oAuth: String, id: Int) {
         if (!loadedTwitchEmotes) {
             loadedTwitchEmotes = true
             measureTimeAndLog(TAG, "twitch emotes for #$id") {
@@ -77,7 +80,7 @@ class DataRepository {
         }
     }
 
-    private suspend fun load3rdPartyEmotes(channel: String, id: String) = withContext(Dispatchers.IO) {
+    private suspend fun load3rdPartyEmotes(channel: String, id: String) {
         measureTimeMillis {
             TwitchApi.getFFZChannelEmotes(id)?.let { EmoteManager.setFFZEmotes(channel, it) }
             TwitchApi.getBTTVChannelEmotes(id)?.let { EmoteManager.setBTTVEmotes(channel, it) }
@@ -88,6 +91,12 @@ class DataRepository {
                 loadedGlobalEmotes = true
             }
         }.let { Log.i(TAG, "Loaded 3rd party emotes for #$channel in $it ms") }
+    }
+
+    private suspend fun loadDankChatBadges() {
+        measureTimeMillis {
+            TwitchApi.getDankChatBadges()?.let { EmoteManager.setDankChatBadges(it) }
+        }.let { Log.i(TAG, "Loaded DankChat badges in $it ms") }
     }
 
     private suspend fun setEmotesForSuggestions(channel: String) = withContext(Dispatchers.Default) {

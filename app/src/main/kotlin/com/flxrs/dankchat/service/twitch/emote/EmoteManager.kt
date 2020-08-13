@@ -2,13 +2,14 @@ package com.flxrs.dankchat.service.twitch.emote
 
 import android.util.LruCache
 import com.flxrs.dankchat.service.api.TwitchApi
-import com.flxrs.dankchat.service.api.model.BadgeEntities
-import com.flxrs.dankchat.service.api.model.EmoteEntities
+import com.flxrs.dankchat.service.api.dto.BadgeDtos
+import com.flxrs.dankchat.service.api.dto.EmoteDtos
 import com.flxrs.dankchat.utils.extensions.supplementaryCodePointPositions
 import kotlinx.coroutines.*
 import pl.droidsonroids.gif.GifDrawable
 import pl.droidsonroids.gif.MultiCallback
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 
 object EmoteManager {
     private val TAG = EmoteManager::class.java.simpleName
@@ -27,8 +28,9 @@ object EmoteManager {
     private val globalBttvEmotes = ConcurrentHashMap<String, GenericEmote>()
 
     private val ffzModBadges = ConcurrentHashMap<String, String>()
-    private val channelBadges = ConcurrentHashMap<String, BadgeEntities.Result>()
-    private val globalBadges = ConcurrentHashMap<String, BadgeEntities.BadgeSet>()
+    private val channelBadges = ConcurrentHashMap<String, BadgeDtos.Result>()
+    private val globalBadges = ConcurrentHashMap<String, BadgeDtos.BadgeSet>()
+    private val dankChatBadges = CopyOnWriteArrayList<BadgeDtos.DankChatBadge>()
 
     private val thirdPartyRegex = Regex("\\s")
     private val emoteReplacements = mapOf(
@@ -121,18 +123,24 @@ object EmoteManager {
 
     fun getFFzModBadgeUrl(channel: String) = ffzModBadges[channel]
 
-    suspend fun setChannelBadges(channel: String, entity: BadgeEntities.Result) = withContext(Dispatchers.Default) {
-        channelBadges[channel] = entity
+    fun getDankChatBadgeUrl(userId: String?) = dankChatBadges.find { it.users.any { id -> id == userId } }?.let { it.type to it.url }
+
+    fun setChannelBadges(channel: String, dto: BadgeDtos.Result) {
+        channelBadges[channel] = dto
     }
 
-    suspend fun setGlobalBadges(entity: BadgeEntities.Result) = withContext(Dispatchers.Default) {
-        globalBadges.putAll(entity.sets)
+    fun setGlobalBadges(dto: BadgeDtos.Result) {
+        globalBadges.putAll(dto.sets)
     }
 
-    suspend fun setTwitchEmotes(twitchResult: EmoteEntities.Twitch.Result) = withContext(Dispatchers.Default) {
+    fun setDankChatBadges(dto: List<BadgeDtos.DankChatBadge>) {
+        dankChatBadges.addAll(dto)
+    }
+
+    suspend fun setTwitchEmotes(twitchResult: EmoteDtos.Twitch.Result) = withContext(Dispatchers.Default) {
         val setMapping = twitchResult.sets.keys
             .map {
-                async { TwitchApi.getUserSet(it) ?: EmoteEntities.Twitch.EmoteSet(it, "", "", 1) }
+                async { TwitchApi.getUserSet(it) ?: EmoteDtos.Twitch.EmoteSet(it, "", "", 1) }
             }.awaitAll()
             .associateBy({ it.id }, { it.channelName })
 
@@ -161,7 +169,7 @@ object EmoteManager {
         }
     }
 
-    suspend fun setFFZEmotes(channel: String, ffzResult: EmoteEntities.FFZ.Result) = withContext(Dispatchers.Default) {
+    suspend fun setFFZEmotes(channel: String, ffzResult: EmoteDtos.FFZ.Result) = withContext(Dispatchers.Default) {
         val emotes = hashMapOf<String, GenericEmote>()
         ffzResult.sets.forEach {
             it.value.emotes.forEach { emote ->
@@ -173,7 +181,7 @@ object EmoteManager {
         ffzResult.room.moderatorBadgeUrl?.let { ffzModBadges[channel] = "https:$it" }
     }
 
-    suspend fun setFFZGlobalEmotes(ffzResult: EmoteEntities.FFZ.GlobalResult) = withContext(Dispatchers.Default) {
+    suspend fun setFFZGlobalEmotes(ffzResult: EmoteDtos.FFZ.GlobalResult) = withContext(Dispatchers.Default) {
         globalFFZEmotes.clear()
         ffzResult.sets.forEach {
             it.value.emotes.forEach { emote ->
@@ -183,7 +191,7 @@ object EmoteManager {
         }
     }
 
-    suspend fun setBTTVEmotes(channel: String, bttvResult: EmoteEntities.BTTV.Result) = withContext(Dispatchers.Default) {
+    suspend fun setBTTVEmotes(channel: String, bttvResult: EmoteDtos.BTTV.Result) = withContext(Dispatchers.Default) {
         val emotes = hashMapOf<String, GenericEmote>()
         bttvResult.emotes.plus(bttvResult.sharedEmotes).forEach {
             val emote = parseBTTVEmote(it)
@@ -192,7 +200,7 @@ object EmoteManager {
         bttvEmotes[channel] = emotes
     }
 
-    suspend fun setBTTVGlobalEmotes(globalEmotes: List<EmoteEntities.BTTV.GlobalEmote>) = withContext(Dispatchers.Default) {
+    suspend fun setBTTVGlobalEmotes(globalEmotes: List<EmoteDtos.BTTV.GlobalEmote>) = withContext(Dispatchers.Default) {
         globalBttvEmotes.clear()
         globalEmotes.forEach {
             val emote = parseBTTVGlobalEmote(it)
@@ -231,7 +239,7 @@ object EmoteManager {
         }
     }
 
-    private fun parseBTTVEmote(emote: EmoteEntities.BTTV.Emote): GenericEmote {
+    private fun parseBTTVEmote(emote: EmoteDtos.BTTV.Emote): GenericEmote {
         val name = emote.code
         val id = emote.id
         val type = emote.imageType == "gif"
@@ -240,7 +248,7 @@ object EmoteManager {
         return GenericEmote(name, url, lowResUrl, type, id, 1, EmoteType.ChannelBTTVEmote)
     }
 
-    private fun parseBTTVGlobalEmote(emote: EmoteEntities.BTTV.GlobalEmote): GenericEmote {
+    private fun parseBTTVGlobalEmote(emote: EmoteDtos.BTTV.GlobalEmote): GenericEmote {
         val name = emote.code
         val id = emote.id
         val type = emote.imageType == "gif"
@@ -249,7 +257,7 @@ object EmoteManager {
         return GenericEmote(name, url, lowResUrl, type, id, 1, EmoteType.GlobalBTTVEmote)
     }
 
-    private fun parseFFZEmote(emote: EmoteEntities.FFZ.Emote, channel: String = ""): GenericEmote {
+    private fun parseFFZEmote(emote: EmoteDtos.FFZ.Emote, channel: String = ""): GenericEmote {
         val name = emote.name
         val id = emote.id
         val (scale, url) = when {

@@ -82,8 +82,7 @@ sealed class Message {
                 val emotes = EmoteManager.parseTwitchEmotes(emoteTag, fixedContent, spaces)
                 val otherEmotes = EmoteManager.parse3rdPartyEmotes(fixedContent, channel)
                 val id = tags["id"] ?: System.nanoTime().toString()
-
-                val badges = parseBadges(tags["badges"], channel)
+                val badges = parseBadges(tags["badges"], channel, tags["user-id"])
 
                 return TwitchMessage(
                     timestamp = ts,
@@ -122,7 +121,6 @@ sealed class Message {
                 val channel = params[0].substring(1)
                 val systemMsg = if (historic) params[1] else tags["system-msg"] ?: ""
                 val color = Color.parseColor("#717171")
-
                 val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
 
                 if (msgId != null && (msgId == "sub" || msgId == "resub")) {
@@ -181,7 +179,7 @@ sealed class Message {
                 val colorTag = tags["color"]?.ifBlank { "#717171" } ?: "#717171"
                 val color = Color.parseColor(colorTag)
                 val (fixedContent, spaces) = params[1].appendSpacesBetweenEmojiGroup()
-                val badges = parseBadges(tags["badges"])
+                val badges = parseBadges(tags["badges"], userId = tags["user-id"])
                 val emotes = EmoteManager
                     .parseTwitchEmotes(tags["emotes"] ?: "", fixedContent, spaces)
                     .plus(EmoteManager.parse3rdPartyEmotes(fixedContent))
@@ -200,8 +198,8 @@ sealed class Message {
                 )
             }
 
-            private fun parseBadges(badgeTags: String?, channel: String = ""): List<Badge> {
-                return badgeTags?.split(',')?.mapNotNull { badgeTag ->
+            private fun parseBadges(badgeTags: String?, channel: String = "", userId: String? = null): List<Badge> {
+                val badges = badgeTags?.split(',')?.mapNotNull { badgeTag ->
                     val trimmed = badgeTag.trim()
                     val badgeSet = trimmed.substringBefore('/')
                     val badgeVersion = trimmed.substringAfter('/')
@@ -214,6 +212,12 @@ sealed class Message {
                         else -> globalBadgeUrl?.let { Badge.GlobalBadge(badgeSet, it) }
                     }
                 } ?: emptyList()
+
+                userId ?: return badges
+                return when (val badge = EmoteManager.getDankChatBadgeUrl(userId)) {
+                    null -> badges
+                    else -> badges.plus(Badge.GlobalBadge(badge.first, badge.second))
+                }
             }
         }
 

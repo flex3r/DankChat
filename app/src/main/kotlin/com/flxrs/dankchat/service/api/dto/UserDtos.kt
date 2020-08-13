@@ -1,9 +1,9 @@
-package com.flxrs.dankchat.service.api.model
+package com.flxrs.dankchat.service.api.dto
 
 import androidx.annotation.Keep
 import com.squareup.moshi.Json
 
-sealed class UserEntities {
+sealed class UserDtos {
 
     @Keep
     data class ValidateUser(
