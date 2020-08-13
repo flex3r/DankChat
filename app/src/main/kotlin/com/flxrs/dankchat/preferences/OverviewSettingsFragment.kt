@@ -1,8 +1,12 @@
 package com.flxrs.dankchat.preferences
 
+import android.content.ActivityNotFoundException
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -36,7 +40,20 @@ class OverviewSettingsFragment : PreferenceFragmentCompat() {
         }
 
         val isLoggedIn = DankChatPreferenceStore(view.context).isLoggedIn
-        findPreference<Preference>(getString(R.string.preference_about_key))?.summary = getString(R.string.preference_about_summary, BuildConfig.VERSION_NAME)
+        findPreference<Preference>(getString(R.string.preference_about_key))?.apply {
+            summary = getString(R.string.preference_about_summary, BuildConfig.VERSION_NAME)
+            setOnPreferenceClickListener {
+                try {
+                        CustomTabsIntent.Builder()
+                            .addDefaultShareMenuItem()
+                            .setShowTitle(true)
+                            .build().launchUrl(view.context, Uri.parse(GITHUB_URL))
+                } catch (e: ActivityNotFoundException) {
+                    Log.e(TAG, Log.getStackTraceString(e))
+                }
+                true
+            }
+        }
         findPreference<Preference>(getString(R.string.preference_logout_key))?.apply {
             isEnabled = isLoggedIn
             setOnPreferenceClickListener {
@@ -51,5 +68,10 @@ class OverviewSettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.overview_settings, rootKey)
+    }
+
+    companion object {
+        private val TAG = OverviewSettingsFragment::class.java.simpleName
+        private const val GITHUB_URL = "https://github.com/flex3r/dankchat"
     }
 }
