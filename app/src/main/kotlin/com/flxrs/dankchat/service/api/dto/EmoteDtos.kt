@@ -1,9 +1,9 @@
-package com.flxrs.dankchat.service.api.model
+package com.flxrs.dankchat.service.api.dto
 
 import androidx.annotation.Keep
 import com.squareup.moshi.Json
 
-sealed class EmoteEntities {
+sealed class EmoteDtos {
 
     sealed class Twitch {
         @Keep

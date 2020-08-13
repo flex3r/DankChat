@@ -1,9 +1,9 @@
-package com.flxrs.dankchat.service.api.model
+package com.flxrs.dankchat.service.api.dto
 
 import androidx.annotation.Keep
 import com.squareup.moshi.Json
 
-sealed class StreamEntities {
+sealed class StreamDtos {
     @Keep
     data class Stream(
         @field:Json(name = "_id") val id: Long,

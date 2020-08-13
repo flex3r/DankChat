@@ -19,6 +19,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.core.text.color
@@ -251,7 +252,7 @@ class ChatAdapter(
                     override fun onClick(v: View) {
                         try {
                             if (!ignoreClicks)
-                                androidx.browser.customtabs.CustomTabsIntent.Builder()
+                                CustomTabsIntent.Builder()
                                     .addDefaultShareMenuItem()
                                     .setShowTitle(true)
                                     .build().launchUrl(v.context, Uri.parse(url.fullUrl))

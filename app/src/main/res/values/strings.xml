@@ -82,7 +82,7 @@
     <string name="timed_out_message">&lt; Message deleted ></string>
     <string name="multi_entry_header_entry">Entry</string>
     <string name="multi_entry_header_regex">Regex</string>
-    <string name="multi_entry_header_match_user">Match\nuser</string>
+    <string name="multi_entry_header_match_user">Match user</string>
     <string name="multi_entry_add_entry">Add an entry</string>
     <string name="multi_entry_remove_content_description">Remove the entry</string>
     <string name="multi_entry_hint">Entry</string>
@@ -93,6 +93,7 @@
     <string name="dialog_optout">Opt-out</string>
     <string name="anon_connection_disclaimer_title">Anonymous connection</string>
     <string name="anon_connection_disclaimer_message">Due to recent changes to the official Twitch api, some data can now only be accessed when logged in.\nThis includes support for twitch badges and third party emotes.</string>
+    <string name="more">More</string>
 
     <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
     <string name="preference_timestamp_title">Show timestamps</string>

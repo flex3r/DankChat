@@ -32,8 +32,6 @@
         android:title="@string/preference_logout_title" />
 
     <PreferenceCategory android:title="@string/preference_about_header">
-        <Preference
-            android:key="@string/preference_about_key"
-            android:selectable="false" />
+        <Preference android:key="@string/preference_about_key" />
     </PreferenceCategory>
 </PreferenceScreen>

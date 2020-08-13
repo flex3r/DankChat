@@ -22,21 +22,11 @@
     <item
         android:id="@+id/menu_login"
         android:title="@string/login"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/menu_open"
-        android:title="@string/open_channel"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_remove"
         android:title="@string/remove_channel"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/menu_reload_emotes"
-        android:title="@string/reload_emotes"
         app:showAsAction="never" />
 
     <item
@@ -60,14 +50,31 @@
     </item>
 
     <item
-        android:id="@+id/menu_reconnect"
-        android:title="@string/reconnect"
-        app:showAsAction="never" />
+        android:id="@+id/menu_more"
+        android:title="@string/more"
+        app:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/menu_open"
+                android:title="@string/open_channel"
+                app:showAsAction="never" />
 
-    <item
-        android:id="@+id/menu_clear"
-        android:title="@string/clear_chat"
-        app:showAsAction="never" />
+            <item
+                android:id="@+id/menu_reload_emotes"
+                android:title="@string/reload_emotes"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/menu_reconnect"
+                android:title="@string/reconnect"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/menu_clear"
+                android:title="@string/clear_chat"
+                app:showAsAction="never" />
+        </menu>
+    </item>
 
     <item
         android:id="@+id/menu_settings"
