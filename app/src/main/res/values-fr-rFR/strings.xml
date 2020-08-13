@@ -81,7 +81,7 @@
     <string name="timed_out_message">&lt; Message supprimé ></string>
     <string name="multi_entry_header_entry">Entrée</string>
     <string name="multi_entry_header_regex">Regex</string>
-    <string name="multi_entry_header_match_user">Matcher\nl\'utilisateur</string>
+    <string name="multi_entry_header_match_user">Matcher l\'utilisateur</string>
     <string name="multi_entry_add_entry">Ajouter une entrée</string>
     <string name="multi_entry_remove_content_description">Supprimer l\'entrée</string>
     <string name="multi_entry_hint">Entrée</string>
