@@ -38,7 +38,7 @@
     <string name="choose_media">Wähle aus vorhandenen Medien</string>
     <string name="hide_actionbar">Appleiste ausblenden</string>
     <string name="resume_scroll">Scrollen fortsetzen</string>
-    <string name="uploading_image">Bild hochladen</string>
+    <string name="uploading_image">Bild wird hochgeladen</string>
     <string name="change_mention_format">Mention Format ändern</string>
     <string name="mention_only_username">name</string>
     <string name="mention_with_comma">name,</string>
