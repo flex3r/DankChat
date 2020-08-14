@@ -19,6 +19,7 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.LoginFragmentBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.api.TwitchApi
+import com.flxrs.dankchat.service.api.dto.UserDtos
 import com.google.android.material.snackbar.Snackbar
 import java.util.*
 
@@ -91,20 +92,27 @@ class LoginFragment : Fragment() {
             if (fragment.startsWith("access_token=")) {
                 val token = fragment.substringAfter("access_token=").substringBefore("&scope=")
                 lifecycleScope.launchWhenResumed {
-                    val successful = TwitchApi.validateUser(token)?.let {
-                        if (it.login.isNotBlank()) {
-                            dankChatPreferenceStore.apply {
-                                oAuthKey = "oauth:$token"
-                                userName = it.login.toLowerCase(Locale.getDefault())
-                                userId = it.userId
-                            }
-                            true
-                        } else false
-                    } ?: false
+                    val result = TwitchApi.validateUser(token)
+                    val successful = saveLoginDetails(token, result)
+
                     with(findNavController()) {
                         previousBackStackEntry?.savedStateHandle?.set(MainFragment.LOGIN_REQUEST_KEY, successful)
                         navigateUp()
                     }
+                }
+            }
+        }
+
+        private fun saveLoginDetails(oAuth: String, validateDto: UserDtos.ValidateUser?): Boolean {
+            return when {
+                validateDto == null || validateDto.login.isBlank() -> false
+                else -> {
+                    dankChatPreferenceStore.apply {
+                        oAuthKey = "oauth:$oAuth"
+                        userName = validateDto.login.toLowerCase(Locale.getDefault())
+                        userId = validateDto.userId
+                    }
+                    true
                 }
             }
         }
