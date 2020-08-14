@@ -266,12 +266,7 @@ class ChatAdapter(
                 spannableWithEmojis.setSpan(clickableSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
 
-            if (animateGifs && emotes.filter { it.isGif }.count() > 0) {
-                EmoteManager.gifCallback.addView(holder.binding.itemText)
-            }
-
             text = spannableWithEmojis
-
             badges.forEachIndexed { idx, badge ->
                 val (start, end) = badgePositions[idx]
 
@@ -289,6 +284,9 @@ class ChatAdapter(
                 //}
             }
 
+            if (animateGifs && emotes.filter { it.isGif }.count() > 0) {
+                EmoteManager.gifCallback.addView(holder.binding.itemText)
+            }
             val fullPrefix = prefixLength + badgesLength
             emotes.forEach { e ->
                 val drawable = when {
