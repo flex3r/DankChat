@@ -225,6 +225,10 @@ class ChatAdapter(
 
             //clicking usernames
             if (fullName.isNotBlank()) {
+                val mention = when {
+                    name.equals(displayName, ignoreCase = true) -> displayName
+                    else -> name
+                }
                 val userClickableSpan = object : ClickableSpan() {
                     override fun updateDrawState(ds: TextPaint) {
                         ds.isUnderlineText = false
@@ -232,7 +236,7 @@ class ChatAdapter(
                     }
 
                     override fun onClick(v: View) {
-                        if (!ignoreClicks) onUserClicked(name)
+                        if (!ignoreClicks) onUserClicked(mention)
                     }
                 }
                 spannable.setSpan(userClickableSpan, prefixLength - fullDisplayName.length + badgesLength, prefixLength + badgesLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
