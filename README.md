@@ -6,3 +6,7 @@ Download the latest version manually: https://install.appcenter.ms/users/flex3r/
 Make sure to click "install anyway" when a Play Protect dialog shows during install.   
 
 <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/screen1.png" width="30%"/> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/screen2.png" width="30%"/> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/screen3.png" width="30%"/>
+
+## Donate
+Support the DankChat development and get a dank badge next to your name  
+https://streamelements.com/flex3rs/tip
