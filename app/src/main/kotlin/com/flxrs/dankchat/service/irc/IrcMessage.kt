@@ -21,7 +21,7 @@ data class IrcMessage(
             var nextSpace: Int
             var prefix = ""
             var command = ""
-            val params = arrayListOf<String>()
+            val params = mutableListOf<String>()
             val tags = mutableMapOf<String, String>()
 
             fun skipTrailingWhitespace() {
@@ -74,19 +74,19 @@ data class IrcMessage(
                     nextSpace = message.indexOf(' ', pos)
 
                     if (message[pos] == ':') {
-                        params.add(message.substring(pos + 1))
+                        params += message.substring(pos + 1)
                         break
                     }
 
                     if (nextSpace != -1) {
-                        params.add(message.substring(pos, nextSpace))
+                        params += message.substring(pos, nextSpace)
                         pos = nextSpace + 1
                         skipTrailingWhitespace()
                         continue
                     }
 
                     if (nextSpace == -1) {
-                        params.add(message.substring(pos))
+                        params += message.substring(pos)
                         break
                     }
                 }

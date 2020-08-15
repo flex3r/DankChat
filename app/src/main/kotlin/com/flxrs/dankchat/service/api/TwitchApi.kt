@@ -142,7 +142,7 @@ object TwitchApi {
             loadedRecentsInChannels.contains(channel) -> null
             else -> {
                 val response = service.getRecentMessages("$RECENT_MSG_URL$channel")
-                response.bodyOrNull?.also { loadedRecentsInChannels.add(channel) }
+                response.bodyOrNull?.also { loadedRecentsInChannels += channel }
             }
         }
     }

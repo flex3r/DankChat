@@ -65,7 +65,7 @@ object EmoteManager {
 
         // Characters with supplementary codepoints have two chars and need to be considered into emote positioning
         val supplementaryCodePointPositions = original.supplementaryCodePointPositions
-        val emotes = arrayListOf<ChatMessageEmote>()
+        val emotes = mutableListOf<ChatMessageEmote>()
         for (emote in emoteTag.split('/')) {
             val split = emote.split(':')
             // bad emote data :)
@@ -107,7 +107,7 @@ object EmoteManager {
 
     fun parse3rdPartyEmotes(message: String, channel: String = ""): List<ChatMessageEmote> {
         val splits = message.split(thirdPartyRegex)
-        val emotes = arrayListOf<ChatMessageEmote>()
+        val emotes = mutableListOf<ChatMessageEmote>()
 
         ffzEmotes[channel]?.forEach { parseMessageForEmote(it.value, splits, emotes) }
         bttvEmotes[channel]?.forEach { parseMessageForEmote(it.value, splits, emotes) }
@@ -193,7 +193,7 @@ object EmoteManager {
 
     suspend fun setBTTVEmotes(channel: String, bttvResult: EmoteDtos.BTTV.Result) = withContext(Dispatchers.Default) {
         val emotes = hashMapOf<String, GenericEmote>()
-        bttvResult.emotes.plus(bttvResult.sharedEmotes).forEach {
+        (bttvResult.emotes + bttvResult.sharedEmotes).forEach {
             val emote = parseBTTVEmote(it)
             emotes[emote.code] = emote
         }

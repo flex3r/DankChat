@@ -41,7 +41,7 @@ class WebSocketConnection(
 
     fun joinChannel(channel: String) {
         if (!channels.contains(channel)) {
-            channels.add(channel)
+            channels += channel
             if (connected) {
                 socket?.sendMessage("JOIN #$channel")
             }

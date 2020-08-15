@@ -109,8 +109,8 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
     }
 
     val emoteAndUserSuggestions = MediatorLiveData<List<Suggestion>>().apply {
-        addSource(emoteSuggestions) { value = (userSuggestions.value ?: emptyList()).plus(it) }
-        addSource(userSuggestions) { value = it.plus(emoteSuggestions.value ?: emptyList()) }
+        addSource(emoteSuggestions) { value = (userSuggestions.value ?: emptyList()) + it }
+        addSource(userSuggestions) { value = it + (emoteSuggestions.value ?: emptyList()) }
     }
 
     val emoteItems = emotes.switchMap { emotes ->
@@ -182,9 +182,9 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
     fun joinChannel(channel: String? = activeChannel.value): List<String>? {
         if (channel == null) return null
         val current = channels.value ?: emptyList()
-        val plus = current.plus(channel)
+        val plus = current + channel
 
-        channels.value = current.plus(channel)
+        channels.value = current + channel
         chatRepository.joinChannel(channel)
         return plus
     }
@@ -192,7 +192,7 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
     fun partChannel(): List<String>? {
         val channel = activeChannel.value ?: return null
         val current = channels.value ?: emptyList()
-        val minus = current.minus(channel)
+        val minus = current - channel
 
         channels.value = minus
         chatRepository.partChannel(channel)

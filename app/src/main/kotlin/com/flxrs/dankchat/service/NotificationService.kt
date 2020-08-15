@@ -235,7 +235,7 @@ class NotificationService : Service(), CoroutineScope, KoinComponent {
             .build()
 
         val id = notificationId
-        notifications.getOrPut(channel) { mutableListOf() }.add(id)
+        notifications.getOrPut(channel) { mutableListOf() } += id
 
         manager.notify(id, notification)
         manager.notify(SUMMARY_NOTIFICATION_ID, summary)

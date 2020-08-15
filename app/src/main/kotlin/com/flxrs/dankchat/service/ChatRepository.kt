@@ -73,7 +73,7 @@ class ChatRepository : KoinComponent {
                     loadRecentMessages(channel)
                 } else {
                     val currentChat = messages[channel]?.value ?: emptyList()
-                    messages[channel]?.value = listOf(ChatItem(Message.SystemMessage(state = SystemMessageType.NO_HISTORY_LOADED), false)).plus(currentChat)
+                    messages[channel]?.value = listOf(ChatItem(Message.SystemMessage(state = SystemMessageType.NO_HISTORY_LOADED), false)) + currentChat
                 }
             }
         }.awaitAll()
@@ -308,7 +308,7 @@ class ChatRepository : KoinComponent {
                 for (msg in Message.TwitchMessage.parse(parsedIrc)) {
                     if (!blacklistEntries.matches(msg.message, msg.name to msg.displayName, msg.emotes)) {
                         msg.checkForMention(name, customMentionEntries)
-                        items.add(ChatItem(msg))
+                        items += ChatItem(msg)
                     }
                 }
             }
