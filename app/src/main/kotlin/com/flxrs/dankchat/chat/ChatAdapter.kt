@@ -7,6 +7,7 @@ import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.text.Spannable
+import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
@@ -270,7 +271,7 @@ class ChatAdapter(
                 spannableWithEmojis.setSpan(clickableSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
 
-            text = spannableWithEmojis
+            setText(spannableWithEmojis, TextView.BufferType.SPANNABLE)
             badges.forEachIndexed { idx, badge ->
                 val (start, end) = badgePositions[idx]
 
@@ -283,7 +284,7 @@ class ChatAdapter(
                     val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
                     setBounds(0, 0, width, lineHeight)
                     val imageSpan = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
-                    spannable.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    (text as SpannableString).setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 }
                 //}
             }
@@ -303,22 +304,20 @@ class ChatAdapter(
                     else -> Coil.get(e.url)
                 }
                 drawable.transformEmoteDrawable(scaleFactor, e)
-                setEmoteSpans(e, fullPrefix, drawable, spannableWithEmojis)
+                setEmoteSpans(e, fullPrefix, drawable, text as SpannableString)
             }
-
-            text = spannableWithEmojis
         }
     }
 
-    private fun setEmoteSpans(e: ChatMessageEmote, prefix: Int, drawable: Drawable, spannableStringBuilder: SpannableStringBuilder) {
+    private fun setEmoteSpans(e: ChatMessageEmote, prefix: Int, drawable: Drawable, spannableString: SpannableString) {
         e.positions.forEach { pos ->
             val (start, end) = pos.split('-').map { it.toInt() + prefix }
             try {
-                spannableStringBuilder.setSpan(ImageSpan(drawable), start, end, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+                spannableString.setSpan(ImageSpan(drawable), start, end, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
             } catch (t: Throwable) {
                 Log.e(
                     "ViewBinding",
-                    "$start $end ${e.code} ${spannableStringBuilder.length}"
+                    "$start $end ${e.code} ${spannableString.length}"
                 )
             }
         }
