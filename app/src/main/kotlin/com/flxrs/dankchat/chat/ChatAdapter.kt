@@ -86,7 +86,6 @@ class ChatAdapter(
 
     private fun TextView.handleSystemMessage(message: Message.SystemMessage, position: Int) {
         alpha = 1.0f
-        setBackgroundResource(android.R.color.transparent)
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
@@ -96,8 +95,10 @@ class ChatAdapter(
         val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
         val isCheckeredMode = preferences.getBoolean(checkeredKey, false)
 
-        val background = if (isCheckeredMode && position.isEven()) R.color.color_transparency_20
-            else android.R.color.transparent
+        val background = when {
+            isCheckeredMode && position.isEven() -> R.color.color_transparency_20
+            else -> android.R.color.transparent
+        }
         setBackgroundResource(background)
 
         val connectionText = when (message.state) {
@@ -118,7 +119,6 @@ class ChatAdapter(
     @SuppressLint("ClickableViewAccessibility")
     private fun TextView.handleTwitchMessage(twitchMessage: Message.TwitchMessage, holder: ViewHolder, position: Int) = with(twitchMessage) {
         isClickable = false
-        text = ""
         alpha = 1.0f
         movementMethod = LinkMovementMethod.getInstance()
 
@@ -304,21 +304,18 @@ class ChatAdapter(
                     else -> Coil.get(e.url)
                 }
                 drawable.transformEmoteDrawable(scaleFactor, e)
-                setEmoteSpans(e, fullPrefix, drawable, text as SpannableString)
+                (text as SpannableString).setEmoteSpans(e, fullPrefix, drawable)
             }
         }
     }
 
-    private fun setEmoteSpans(e: ChatMessageEmote, prefix: Int, drawable: Drawable, spannableString: SpannableString) {
+    private fun SpannableString.setEmoteSpans(e: ChatMessageEmote, prefix: Int, drawable: Drawable) {
         e.positions.forEach { pos ->
             val (start, end) = pos.split('-').map { it.toInt() + prefix }
             try {
-                spannableString.setSpan(ImageSpan(drawable), start, end, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+                setSpan(ImageSpan(drawable), start, end, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
             } catch (t: Throwable) {
-                Log.e(
-                    "ViewBinding",
-                    "$start $end ${e.code} ${spannableString.length}"
-                )
+                Log.e("ViewBinding", "$start $end ${e.code} $length")
             }
         }
     }
