@@ -4,12 +4,8 @@
 
     <string name="app_name">DankChat</string>
     <string name="app_name_dank">DankChat (Dank)</string>
-    <string name="chat">Chat</string>
-    <string name="loading_recent_messages">Lädt neueste Nachrichten</string>
-    <string name="start_chatting">Schreib etwas</string>
     <string name="send_hint">Sende eine Nachricht</string>
     <string name="login">Anmelden</string>
-    <string name="logout">Abmelden</string>
     <string name="reload_emotes">Emotes neu laden</string>
     <string name="reconnect">Wiederverbinden</string>
     <string name="clear_chat">Chatverlauf löschen</string>
@@ -24,10 +20,6 @@
     <string name="remove_channel">Kanal entfernen</string>
     <string name="open_channel">Kanal öffnen</string>
     <string name="no_channels_added">Keine Kanäle hinzugefügt</string>
-    <string name="new_version_title">Neue Version verfügbar</string>
-    <string name="new_version_positive_button">Installieren</string>
-    <string name="new_version_negative_button">Ignorieren</string>
-    <string name="new_version_neutral_button">Aufschieben</string>
     <string name="confirm_logout_title">Abmeldung bestätigen</string>
     <string name="confirm_logout_message">Willst du dich wirklich abmelden?</string>
     <string name="confirm_logout_positive_button">Abmelden</string>
@@ -39,15 +31,6 @@
     <string name="hide_actionbar">Appleiste ausblenden</string>
     <string name="resume_scroll">Scrollen fortsetzen</string>
     <string name="uploading_image">Bild wird hochgeladen</string>
-    <string name="change_mention_format">Mention Format ändern</string>
-    <string name="mention_only_username">name</string>
-    <string name="mention_with_comma">name,</string>
-    <string name="mention_with_at">\@name</string>
-    <string name="mention_with_at_and_comma">\@name,</string>
-    <string name="login_through_browser">Anmeldung über Browser</string>
-    <string name="paste_oauth_token">OAuth Token hinzufügen</string>
-    <string name="login_with_oauth">Anmeldung mit OAuth Token</string>
-    <string name="required_oauth_scopes">Benötigte Berechtigungen: chat:edit, chat:read, user_read, user_subscriptions, channel:moderate, user_blocks_read, user_blocks_edit</string>
     <string name="settings">Einstellungen</string>
     <string name="nuuls_upload_disclaimer">Bilder werden gehostet auf https://nuuls.com/i. Benutzung auf eigene Gefahr</string>
     <string name="nuuls_upload_title">Hochladen eigener Bilder</string>
@@ -73,16 +56,13 @@
     <string name="emote_menu_tab_channel">Kanal</string>
     <string name="emote_menu_tab_subs">Subs</string>
     <string name="add_channel_hint">Kanal Name</string>
-    <string name="advanced_login_hint">Token</string>
     <string name="snackbar_data_load_failed_cause">Laden der Daten fehlgeschlagen: %1$s</string>
     <string name="snackbar_data_reloaded">Emotes neu geladen</string>
     <string name="snackbar_retry">Wiederholen</string>
-    <string name="snackbar_invalid_oauth">Ungültiges OAuth Token</string>
     <string name="snackbar_image_uploaded">Kopiert: %1$s</string>
     <string name="snackbar_upload_failed">Fehler beim Hochladen</string>
     <string name="snackbar_upload_failed_cause">Fehler beim Hochladen: %1$s</string>
     <string name="timed_out_message">&lt; Nachricht gelöscht ></string>
-    <string name="multi_entry_header_entry">Eintrag</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_header_match_user">Vergleiche Nutzer</string>
     <string name="multi_entry_add_entry">Füge Eintrag hinzu</string>
@@ -115,7 +95,6 @@
     <string name="preference_show_input_title">Eingabe anzeigen</string>
     <string name="preference_show_input_summary">Eingabefeld anzeigen um Nachrichten zu senden</string>
     <string name="preference_dark_theme_title">Aktiviere dunkles Design</string>
-    <string name="preference_show_timed_out_messages_summary">Zeige Nachrichten die Timed Out sind</string>
     <string name="preference_show_timed_out_messages_title">Zeige Nachrichten die Timed Out sind</string>
     <string name="preference_custom_mentions_title">Personalisierte Mentions</string>
     <string name="preference_custom_mentions_summary">Setze Ausdrücke als Mentions</string>
@@ -127,7 +106,6 @@
     <string name="preference_font_size_title">Schriftgröße</string>
     <string name="preference_font_size_summary_very_small">Sehr klein</string>
     <string name="preference_font_size_summary_small">Klein</string>
-    <string name="preference_font_size_summary_medium">Mittel</string>
     <string name="preference_font_size_summary_large">Groß</string>
     <string name="preference_font_size_summary_very_large">Sehr Groß</string>
     <string name="preference_notifications_mentions_header">Benachrichtigungen und Mentions</string>
