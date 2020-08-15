@@ -12,6 +12,7 @@ import com.flxrs.dankchat.service.state.ImageUploadState
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.EmoteType
 import com.flxrs.dankchat.utils.SingleLiveEvent
+import com.flxrs.dankchat.utils.extensions.moveToFront
 import com.flxrs.dankchat.utils.extensions.timer
 import com.flxrs.dankchat.utils.extensions.toEmoteItems
 import kotlinx.coroutines.*
@@ -122,8 +123,9 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
                 }
             }
 
+
             val groupedWithHeaders = mutableListOf(
-                groupedByType[EmoteMenuTab.SUBS].toEmoteItems(),
+                groupedByType[EmoteMenuTab.SUBS].moveToFront(activeChannel.value).toEmoteItems(),
                 groupedByType[EmoteMenuTab.CHANNEL].toEmoteItems(),
                 groupedByType[EmoteMenuTab.GLOBAL].toEmoteItems()
             )

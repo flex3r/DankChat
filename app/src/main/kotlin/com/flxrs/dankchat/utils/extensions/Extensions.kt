@@ -19,6 +19,8 @@ fun List<GenericEmote>?.toEmoteItems(): List<EmoteItem> {
         }?.flatMap { it.value } ?: listOf()
 }
 
+fun List<GenericEmote>?.moveToFront(channel: String?): List<GenericEmote>? = this?.partition { it.emoteType.title.equals(channel, ignoreCase = true) }.let { it?.first?.plus(it.second) }
+
 fun List<MultiEntryItem.Entry?>.mapToMention(): List<Mention> = mapNotNull { entry ->
     entry?.let {
         when {
