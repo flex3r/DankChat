@@ -121,7 +121,7 @@
     <string name="preference_timestamp_format_title">Формат временных меток</string>
     <string name="preference_tts_title">Включить синтезатор речи</string>
     <string name="preference_tts_summary">Зачитывает сообщения активного канала</string>
-    <string name="preference_tts_queue_title">Режим очереди сообщеий</string>
+    <string name="preference_tts_queue_title">Режим очереди сообщений</string>
     <string name="preference_tts_queue_add">Читает каждое сообщение, используя очередь</string>
     <string name="preference_tts_queue_flush">Читает только новое сообщение</string>
     <string name="preference_tts_message_format_message">Читает только сообщение</string>
