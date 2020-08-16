@@ -2,6 +2,7 @@ package com.flxrs.dankchat.utils.extensions
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -49,6 +50,8 @@ fun Fragment.mayNavigate(): Boolean {
 fun Fragment.hideKeyboard() {
     view?.let { activity?.hideKeyboard(it) }
 }
+
+fun Fragment.isLandscape() = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
 fun Fragment.keepScreenOn(keep: Boolean) {
     (activity as? AppCompatActivity)?.keepScreenOn(keep)
