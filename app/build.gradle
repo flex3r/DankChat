@@ -41,7 +41,7 @@ android {
     }
     applicationVariants.all { variant ->
         outputs.all {
-            outputFileName = "$apkName-$variant.name-${versionName}.apk"
+            outputFileName = "$apkName-${variant.name}.apk"
         }
     }
     compileOptions {
