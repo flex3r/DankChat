@@ -40,12 +40,12 @@ jobs:
           path: ${{ github.workspace }}/app/build/outputs/apk/debug/*.apk
 
       - name: Create debug release
-          if: github.ref == 'refs/heads/master
-          uses: underwindfall/create-release-with-debugapk@v2.0.0
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          with:
-            tag_name: debug
-            asset_path: app/build/outputs/apk/debug/*.apk
-            asset_name: dankchat-debug.apk
-            asset_content_type: application/zip
+        if: github.ref == 'refs/heads/master
+        uses: underwindfall/create-release-with-debugapk@v2.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: debug
+          asset_path: app/build/outputs/apk/debug/*.apk
+          asset_name: dankchat-debug.apk
+          asset_content_type: application/zip
