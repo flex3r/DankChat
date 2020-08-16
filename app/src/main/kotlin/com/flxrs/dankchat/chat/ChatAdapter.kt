@@ -55,7 +55,12 @@ class ChatAdapter(
     private val onUserClicked: (user: String) -> Unit,
     private val onMessageLongClick: (message: String) -> Unit
 ) : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
-    inner class ViewHolder(val binding: ChatItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    // Using position.isEven for determining which background to use in checkered mode doesn't work,
+    // since the LayoutManager uses stackFromEnd and every new message will be even. Instead, keep count of new messages separately.
+    private var messageCount = 0
+        get() = field++
+
+    class ViewHolder(val binding: ChatItemBinding) : RecyclerView.ViewHolder(binding.root) {
         val scope = CoroutineScope(Dispatchers.Main.immediate)
     }
 
@@ -75,16 +80,17 @@ class ChatAdapter(
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        with(holder.binding.itemText) {
-            when (val message = getItem(position).message) {
-                is Message.SystemMessage -> handleSystemMessage(message, position)
-                is Message.TwitchMessage -> handleTwitchMessage(message, holder, position)
-            }
-        }
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) = when (val message = getItem(position).message) {
+        is Message.SystemMessage -> holder.binding.itemText.handleSystemMessage(message, holder)
+        is Message.TwitchMessage -> holder.binding.itemText.handleTwitchMessage(message, holder)
     }
 
-    private fun TextView.handleSystemMessage(message: Message.SystemMessage, position: Int) {
+    private fun ViewHolder.isAlternateBackground() = when (bindingAdapterPosition) {
+        itemCount - 1 -> messageCount.isEven()
+        else -> (bindingAdapterPosition - itemCount - 1).isEven()
+    }
+
+    private fun TextView.handleSystemMessage(message: Message.SystemMessage, holder: ViewHolder) {
         alpha = 1.0f
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -96,7 +102,7 @@ class ChatAdapter(
         val isCheckeredMode = preferences.getBoolean(checkeredKey, false)
 
         val background = when {
-            isCheckeredMode && position.isEven() -> R.color.color_transparency_20
+            isCheckeredMode && holder.isAlternateBackground() -> R.color.color_transparency_20
             else -> android.R.color.transparent
         }
         setBackgroundResource(background)
@@ -117,7 +123,7 @@ class ChatAdapter(
 
     @Suppress("BlockingMethodInNonBlockingContext")
     @SuppressLint("ClickableViewAccessibility")
-    private fun TextView.handleTwitchMessage(twitchMessage: Message.TwitchMessage, holder: ViewHolder, position: Int) = with(twitchMessage) {
+    private fun TextView.handleTwitchMessage(twitchMessage: Message.TwitchMessage, holder: ViewHolder): Unit = with(twitchMessage) {
         isClickable = false
         alpha = 1.0f
         movementMethod = LinkMovementMethod.getInstance()
@@ -183,7 +189,7 @@ class ChatAdapter(
                 isNotify -> if (isDarkMode) R.color.color_highlight_dark else R.color.color_highlight_light
                 isReward -> if (isDarkMode) R.color.color_reward_dark else R.color.color_reward_light
                 isMention -> if (isDarkMode) R.color.color_mention_dark else R.color.color_mention_light
-                isCheckeredMode && position.isEven() -> R.color.color_transparency_20
+                isCheckeredMode && holder.isAlternateBackground() -> R.color.color_transparency_20
                 else -> android.R.color.transparent
             }
             setBackgroundResource(background)
