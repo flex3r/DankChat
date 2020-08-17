@@ -90,4 +90,12 @@ interface TwitchApiService {
         @Header("Authorization") oauth: String,
         @Path("id") userId: Int
     ): Response<UserDtos.KrakenUsersBlocks>
+
+    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
+    @GET
+    suspend fun getSupibotChannels(@Url url: String): Response<SupibotDtos.Channels>
+
+    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
+    @GET
+    suspend fun getSupibotCommands(@Url url: String): Response<SupibotDtos.Commands>
 }

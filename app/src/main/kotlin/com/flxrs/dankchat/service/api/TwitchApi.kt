@@ -40,6 +40,8 @@ object TwitchApi {
 
     private const val TWITCHEMOTES_SETS_URL = "https://api.twitchemotes.com/api/v4/sets?id="
 
+    private const val SUPIBOT_URL = "https://supinic.com/api"
+
     private const val BASE_LOGIN_URL = "https://id.twitch.tv/oauth2/authorize?response_type=token"
     private const val REDIRECT_URL = "https://flxrs.com/dankchat"
     private const val SCOPES = "chat:edit+chat:read+user_read+user_subscriptions" +
@@ -179,8 +181,16 @@ object TwitchApi {
     }
 
     suspend fun getIgnores(oAuth: String, id: Int): UserDtos.KrakenUsersBlocks? = withContext(Dispatchers.IO) {
-        val response = service.getIgnores("OAuth $oAuth", id)
-        response.bodyOrNull
+        service.getIgnores("OAuth $oAuth", id).bodyOrNull
+
+    }
+
+    suspend fun getSupibotCommands(): SupibotDtos.Commands? = withContext(Dispatchers.IO) {
+        service.getSupibotCommands("$SUPIBOT_URL/bot/command/list/").bodyOrNull
+    }
+
+    suspend fun getSupibotChannels(): SupibotDtos.Channels? = withContext(Dispatchers.IO) {
+        service.getSupibotChannels("$SUPIBOT_URL/bot/channel/list").bodyOrNull
     }
 
     fun clearChannelFromLoaded(channel: String) {

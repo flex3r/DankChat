@@ -135,7 +135,7 @@ class MainFragment : Fragment() {
             imageUploadedEvent.observe(viewLifecycleOwner, ::handleImageUploadEvent)
             dataLoadingEvent.observe(viewLifecycleOwner, ::handleDataLoadingEvent)
             showUploadProgress.observe(viewLifecycleOwner) { activity?.invalidateOptionsMenu() }
-            emoteAndUserSuggestions.observe(viewLifecycleOwner, ::setSuggestions)
+            suggestions.observe(viewLifecycleOwner, ::setSuggestions)
             emoteItems.observe(viewLifecycleOwner, emoteMenuAdapter::submitList)
             appbarEnabled.observe(viewLifecycleOwner) { changeActionBarVisibility(it) }
             canType.observe(viewLifecycleOwner) { if (it) binding.inputLayout.setup() }

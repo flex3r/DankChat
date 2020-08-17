@@ -6,55 +6,65 @@ import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.utils.extensions.measureTimeAndLog
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import kotlin.system.measureTimeMillis
 
 class DataRepository {
     private val emotes = mutableMapOf<String, MutableStateFlow<List<GenericEmote>>>()
+    private val supibotCommands = mutableMapOf<String, MutableStateFlow<List<String>>>()
+    private val supibotChannels = MutableStateFlow<List<String>>(emptyList())
 
-    private var loadedGlobalBadges = false
+    private var loadedGlobalData = false
     private var loadedGlobalEmotes = false
-    private var loadedTwitchEmotes = false
+    private var loadedGlobalBadges = false
 
     fun getEmotes(channel: String): StateFlow<List<GenericEmote>> = emotes.getOrPut(channel) { MutableStateFlow(emptyList()) }
 
+    fun getSupibotCommands(channel: String): StateFlow<List<String>> = supibotCommands.getOrPut(channel) { MutableStateFlow(emptyList()) }
+
     suspend fun loadData(channels: List<String>, oAuth: String, id: Int, loadTwitchData: Boolean) = withContext(Dispatchers.IO) {
         if (oAuth.isNotBlank() && loadTwitchData) {
-            loadedTwitchEmotes = false
-            loadTwitchEmotes(oAuth, id)
+            launch { loadTwitchEmotes(oAuth, id) }
         }
 
-        loadDankChatBadges()
+        if (!loadedGlobalData) {
+            loadedGlobalData = true
+            launch { loadDankChatBadges() }
+            launch { loadSupibotCommands() }
+        }
 
         channels.map { channel ->
             if (!emotes.contains(channel)) emotes[channel] = MutableStateFlow(emptyList())
-            async {
+            launch {
                 TwitchApi.getUserIdFromName(oAuth, channel)?.let {
                     loadBadges(channel, it)
                     load3rdPartyEmotes(channel, it)
                 }
                 setEmotesForSuggestions(channel)
             }
-        }.awaitAll()
+        }.joinAll()
     }
 
-    suspend fun reloadEmotes(channel: String, oAuth: String, id: Int) {
+    suspend fun reloadEmotes(channel: String, oAuth: String, id: Int) = withContext(Dispatchers.IO) {
         loadedGlobalEmotes = false
-        loadedTwitchEmotes = false
-        TwitchApi.getUserIdFromName(oAuth, channel)?.let {
-            load3rdPartyEmotes(channel, it)
+        launch {
+            TwitchApi.getUserIdFromName(oAuth, channel)?.let {
+                load3rdPartyEmotes(channel, it)
+            }
+
+            if (id != 0 && oAuth.isNotBlank()) {
+                loadTwitchEmotes(oAuth, id)
+            }
+            setEmotesForSuggestions(channel)
         }
 
-        if (id != 0 && oAuth.isNotBlank() && oAuth.startsWith("oauth:")) {
-            loadTwitchEmotes(oAuth.substringAfter("oauth:"), id)
-        }
-
-        setEmotesForSuggestions(channel)
+        launch { loadDankChatBadges() }
+        launch { loadSupibotCommands() }
     }
 
     suspend fun uploadMedia(file: File): String? = TwitchApi.uploadMedia(file)
@@ -72,11 +82,8 @@ class DataRepository {
     }
 
     private suspend fun loadTwitchEmotes(oAuth: String, id: Int) {
-        if (!loadedTwitchEmotes) {
-            loadedTwitchEmotes = true
-            measureTimeAndLog(TAG, "twitch emotes for #$id") {
-                TwitchApi.getUserEmotes(oAuth, id)?.also { EmoteManager.setTwitchEmotes(it) }
-            }
+        measureTimeAndLog(TAG, "twitch emotes for #$id") {
+            TwitchApi.getUserEmotes(oAuth, id)?.also { EmoteManager.setTwitchEmotes(it) }
         }
     }
 
@@ -97,6 +104,30 @@ class DataRepository {
         measureTimeMillis {
             TwitchApi.getDankChatBadges()?.let { EmoteManager.setDankChatBadges(it) }
         }.let { Log.i(TAG, "Loaded DankChat badges in $it ms") }
+    }
+
+    private suspend fun loadSupibotCommands() {
+        measureTimeMillis {
+            val channels = TwitchApi.getSupibotChannels()?.let { channels ->
+                channels.data
+                    .filter { it.platform == "Twitch" && it.isActive() }
+                    .map { it.name }
+            } ?: return@measureTimeMillis
+
+            TwitchApi.getSupibotCommands()?.let { commands ->
+                val commandsWithAliases = commands.data.map {
+                    listOf(it.name) + it.aliases
+                }.flatten()
+
+                channels.forEach {
+                    if (!supibotCommands.contains(it)) {
+                        supibotCommands[it] = MutableStateFlow(emptyList())
+                    }
+
+                    supibotCommands[it]?.value = commandsWithAliases
+                }
+            }
+        }.let { Log.i(TAG, "Loaded Supibot commands in $it ms") }
     }
 
     private suspend fun setEmotesForSuggestions(channel: String) = withContext(Dispatchers.Default) {

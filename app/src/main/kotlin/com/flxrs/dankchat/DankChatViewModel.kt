@@ -12,6 +12,7 @@ import com.flxrs.dankchat.service.state.ImageUploadState
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.EmoteType
 import com.flxrs.dankchat.utils.SingleLiveEvent
+import com.flxrs.dankchat.utils.extensions.asSuggestionOrEmpty
 import com.flxrs.dankchat.utils.extensions.moveToFront
 import com.flxrs.dankchat.utils.extensions.timer
 import com.flxrs.dankchat.utils.extensions.toEmoteItems
@@ -47,6 +48,7 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
     private val emotes = activeChannel.switchMap { dataRepository.getEmotes(it).asLiveData(coroutineExceptionHandler) }
     private val roomState = activeChannel.switchMap { chatRepository.getRoomState(it).asLiveData(coroutineExceptionHandler) }
     private val users = activeChannel.switchMap { chatRepository.getUsers(it).asLiveData(coroutineExceptionHandler) }
+    private val supibotCommands = activeChannel.switchMap { dataRepository.getSupibotCommands(it).asLiveData(coroutineExceptionHandler) }
     private val currentStreamInformation = MediatorLiveData<String>().apply {
         addSource(activeChannel) { value = streamData.value?.get(it) ?: "" }
         addSource(streamData) {
@@ -63,6 +65,12 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
     private val userSuggestions = users.switchMap { users ->
         liveData(Dispatchers.Default) {
             emit(users.snapshot().keys.map { Suggestion.UserSuggestion(it) })
+        }
+    }
+
+    private val supibotCommandSuggestions = supibotCommands.switchMap { commands ->
+        liveData(Dispatchers.Default) {
+            emit(commands.map { Suggestion.CommandSuggestion("$$it") })
         }
     }
 
@@ -108,9 +116,10 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
         addSource(shouldShowViewPager) { value = shouldShowFullscreenHint(showViewPager = it) }
     }
 
-    val emoteAndUserSuggestions = MediatorLiveData<List<Suggestion>>().apply {
-        addSource(emoteSuggestions) { value = (userSuggestions.value ?: emptyList()) + it }
-        addSource(userSuggestions) { value = it + (emoteSuggestions.value ?: emptyList()) }
+    val suggestions = MediatorLiveData<List<Suggestion>>().apply {
+        addSource(emoteSuggestions) { value = userSuggestions.asSuggestionOrEmpty + supibotCommandSuggestions.asSuggestionOrEmpty + it }
+        addSource(userSuggestions) { value = it + supibotCommandSuggestions.asSuggestionOrEmpty + emoteSuggestions.asSuggestionOrEmpty }
+        addSource(supibotCommandSuggestions) { value = userSuggestions.asSuggestionOrEmpty + it + emoteSuggestions.asSuggestionOrEmpty }
     }
 
     val emoteItems = emotes.switchMap { emotes ->
