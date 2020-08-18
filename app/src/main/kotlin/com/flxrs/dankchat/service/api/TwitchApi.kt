@@ -190,7 +190,7 @@ object TwitchApi {
     }
 
     suspend fun getSupibotChannels(): SupibotDtos.Channels? = withContext(Dispatchers.IO) {
-        service.getSupibotChannels("$SUPIBOT_URL/bot/channel/list").bodyOrNull
+        service.getSupibotChannels("$SUPIBOT_URL/bot/channel/list", "twitch").bodyOrNull
     }
 
     fun clearChannelFromLoaded(channel: String) {

@@ -15,7 +15,7 @@ sealed class SupibotDtos {
     data class Channels(@field:Json(name = "data") val data: List<Channel>)
 
     @Keep
-    data class Channel(@field:Json(name = "name") val name: String, @field:Json(name = "mode") val mode: String, @field:Json(name = "platformName") val platform: String) {
+    data class Channel(@field:Json(name = "name") val name: String, @field:Json(name = "mode") val mode: String) {
         fun isActive() = mode != "Last seen" && mode != "Read"
     }
 }

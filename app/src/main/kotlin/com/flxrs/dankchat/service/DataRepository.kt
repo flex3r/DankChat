@@ -110,7 +110,7 @@ class DataRepository {
         measureTimeMillis {
             val channels = TwitchApi.getSupibotChannels()?.let { channels ->
                 channels.data
-                    .filter { it.platform == "Twitch" && it.isActive() }
+                    .filter { it.isActive() }
                     .map { it.name }
             } ?: return@measureTimeMillis
 

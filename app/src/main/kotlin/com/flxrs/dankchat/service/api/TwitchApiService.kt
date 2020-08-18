@@ -93,7 +93,7 @@ interface TwitchApiService {
 
     @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
     @GET
-    suspend fun getSupibotChannels(@Url url: String): Response<SupibotDtos.Channels>
+    suspend fun getSupibotChannels(@Url url: String, @Query("platformName") platform: String): Response<SupibotDtos.Channels>
 
     @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
     @GET
