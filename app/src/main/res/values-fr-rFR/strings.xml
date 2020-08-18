@@ -105,7 +105,7 @@
     <string name="preference_font_size_summary_large">Grand</string>
     <string name="preference_font_size_summary_very_large">Très grand</string>
     <string name="preference_notifications_mentions_header">Notifications et Mentions</string>
-    <string name="preference_suggestions_title">Emotes et suggestions</string>
+    <string name="preference_suggestions_title">Suggestions d\'émoticônes et d\'utilisateurs</string>
     <string name="preference_suggestions_summary">Propose des suggestions de nom d\'émotes lorsque vous tappez</string>
     <string name="preference_load_message_history_title">Charger les anciens messages au démarrage</string>
     <string name="preference_message_history_header">Anciens messages</string>
@@ -127,6 +127,7 @@
     <string name="message_history_disclaimer_message">DankChat charge les anciens messages à partir d\'un service tiers au démarrage.\nPour charger ces messages, DankChat envoie le nom des chaines auquelles vous êtes connecté.\nLe service stocke temporairement les messages pour les chaines que vous (et les autres) visitez sur ce même service.\n\n- Pour ne pas utiliser cette fonction, appuyez sur "Ne pas participer" ou désactivez l\'option dans les réglages.\n- Vous pouvez en apprendre plus sur ce service et désactiver l\'historique pour votre chaine en visitant https://recent-messages.robotty.de/</string>
     <string name="preference_developer_header">Options pour les développeurs</string>
     <string name="hide_actionbar">Masquer la barre d\'outils</string>
+    <string name="preference_supibot_suggestions_title">Suggestions de commandes Supibot</string>
 
     <plurals name="viewers">
         <item quantity="one">Live avec %d spectateur</item>

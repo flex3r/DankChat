@@ -131,6 +131,7 @@
     <string name="preference_tts_header">TTS</string>
     <string name="preference_checkered_lines_title">Alternierende Farbe der Zeilen</string>
     <string name="preference_checkered_lines_summary">Teilt jede Zeile mit unterschiedlicher Helligkeit des Hintergrunds</string>
+    <string name="preference_supibot_suggestions_title">Supibot Befehl-Vorschläge</string>
 
 
     <plurals name="viewers">

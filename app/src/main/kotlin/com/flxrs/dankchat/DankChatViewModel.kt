@@ -147,10 +147,11 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
         id = dataLoadingParameters.id,
         name = dataLoadingParameters.name,
         loadTwitchData = dataLoadingParameters.loadTwitchData,
-        loadHistory = dataLoadingParameters.loadHistory
+        loadHistory = dataLoadingParameters.loadHistory,
+        loadSupibot = dataLoadingParameters.loadSupibot
     )
 
-    fun loadData(oAuth: String, id: Int, name: String, channelList: List<String> = channels.value ?: emptyList(), loadTwitchData: Boolean, loadHistory: Boolean) {
+    fun loadData(oAuth: String, id: Int, name: String, channelList: List<String> = channels.value ?: emptyList(), loadTwitchData: Boolean, loadHistory: Boolean, loadSupibot: Boolean) {
         viewModelScope.launch(coroutineExceptionHandler) {
             _dataLoadingEvent.postValue(
                 DataLoadingState.Loading(
@@ -160,7 +161,8 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
                         name = name,
                         channels = channelList,
                         loadTwitchData = loadTwitchData,
-                        loadHistory = loadHistory
+                        loadHistory = loadHistory,
+                        loadSupibot = loadSupibot
                     )
                 )
             )
@@ -168,9 +170,16 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
                 oAuth.startsWith("oauth:", true) -> oAuth.substringAfter(':')
                 else -> oAuth
             }
-            dataRepository.loadData(channelList, token, id, loadTwitchData)
+            dataRepository.loadData(channelList, token, id, loadTwitchData, loadSupibot)
             chatRepository.loadData(channelList, token, id, loadHistory, name)
             _dataLoadingEvent.postValue(DataLoadingState.Finished)
+        }
+    }
+
+    fun setSupibotSuggestions(enabled: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
+        when {
+            enabled -> dataRepository.loadSupibotCommands()
+            else -> dataRepository.clearSupibotCommands()
         }
     }
 
@@ -214,7 +223,7 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
 
     fun reconnect(onlyIfNecessary: Boolean) = chatRepository.reconnect(onlyIfNecessary)
 
-    fun close(name: String, oAuth: String, loadTwitchData: Boolean = false, userId: Int = 0) {
+    fun close(name: String, oAuth: String, userId: Int = 0, loadTwitchData: Boolean = false) {
         val channels = channels.value ?: emptyList()
         val didClose = chatRepository.close { connectAndJoinChannels(name, oAuth, channels) }
         if (!didClose) {
@@ -227,7 +236,8 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
             name = name,
             channelList = channels,
             loadTwitchData = true,
-            loadHistory = false
+            loadHistory = false,
+            loadSupibot = false
         )
     }
 

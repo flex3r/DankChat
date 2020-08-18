@@ -10,6 +10,11 @@
             android:title="@string/preference_suggestions_title" />
 
         <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/preference_supibot_suggestions_key"
+            android:title="@string/preference_supibot_suggestions_title" />
+
+        <SwitchPreference
             android:defaultValue="true"
             android:key="@string/preference_animate_gifs_key"
             android:title="@string/preference_animate_gifs_title" />

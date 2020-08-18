@@ -160,6 +160,8 @@
     <string name="checkered_messages_key" translatable="false">checkered_messages</string>
     <string name="preference_checkered_lines_title">Checkered Lines</string>
     <string name="preference_checkered_lines_summary">Separate each line with different background brightness</string>
+    <string name="preference_supibot_suggestions_key" translatable="false">supibot_suggestions_key</string>
+    <string name="preference_supibot_suggestions_title">Supibot command suggestions</string>
 
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>

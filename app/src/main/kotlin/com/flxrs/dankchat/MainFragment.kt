@@ -224,7 +224,8 @@ class MainFragment : Fragment() {
                     val name = twitchPreferences.userName ?: ""
                     val id = twitchPreferences.userId
                     val shouldLoadHistory = preferences.getBoolean(getString(R.string.preference_load_message_history_key), true)
-                    viewModel.loadData(oAuth = oAuth, id = id, name = name, loadTwitchData = true, loadHistory = shouldLoadHistory)
+                    val shouldLoadSupibot = preferences.getBoolean(getString(R.string.preference_supibot_suggestions_key), false)
+                    viewModel.loadData(oAuth = oAuth, id = id, name = name, loadTwitchData = true, loadHistory = shouldLoadHistory, loadSupibot = shouldLoadSupibot)
 
                     if (name.isNotBlank() && oAuth.isNotBlank()) {
                         showSnackbar(getString(R.string.snackbar_login, name))
@@ -313,6 +314,7 @@ class MainFragment : Fragment() {
     fun onMessageHistoryDisclaimerResult(result: Boolean) {
         twitchPreferences.hasMessageHistoryAcknowledged = true
         preferences.edit { putBoolean(getString(R.string.preference_load_message_history_key), result) }
+        val shouldLoadSupibot = preferences.getBoolean(getString(R.string.preference_supibot_suggestions_key), false)
 
         if (viewModel.connectionState.value == SystemMessageType.NOT_LOGGED_IN) {
             showApiChangeInformationIfNotAcknowledged()
@@ -321,7 +323,7 @@ class MainFragment : Fragment() {
         val oAuth = twitchPreferences.oAuthKey ?: ""
         val name = twitchPreferences.userName ?: ""
         val id = twitchPreferences.userId
-        viewModel.loadData(oAuth = oAuth, id = id, name = name, loadTwitchData = true, loadHistory = result)
+        viewModel.loadData(oAuth = oAuth, id = id, name = name, loadTwitchData = true, loadHistory = result, loadSupibot = shouldLoadSupibot)
 
         if (name.isNotBlank() && oAuth.isNotBlank()) {
             showSnackbar(getString(R.string.snackbar_login, name))
@@ -339,7 +341,7 @@ class MainFragment : Fragment() {
 
             val updatedChannels = viewModel.joinChannel(lowerCaseChannel)
             if (updatedChannels != null) {
-                viewModel.loadData(oauth, id, name = name, channelList = listOf(channel), loadTwitchData = false, loadHistory = shouldLoadHistory)
+                viewModel.loadData(oauth, id, name = name, channelList = listOf(channel), loadTwitchData = false, loadHistory = shouldLoadHistory, loadSupibot = false)
                 twitchPreferences.channelsString = updatedChannels.joinToString(",")
 
                 tabAdapter.addFragment(lowerCaseChannel)
@@ -437,7 +439,7 @@ class MainFragment : Fragment() {
         val id = twitchPreferences.userId
 
         if (success && !oAuth.isNullOrBlank() && !name.isNullOrBlank() && id != 0) {
-            viewModel.close(name, oAuth, true, id)
+            viewModel.close(name, oAuth, id, true)
             twitchPreferences.isLoggedIn = true
             showSnackbar(getString(R.string.snackbar_login, name))
         } else {
@@ -593,7 +595,10 @@ class MainFragment : Fragment() {
         val keepScreenOnKey = getString(R.string.preference_keep_screen_on_key)
         val suggestionsKey = getString(R.string.preference_suggestions_key)
         val timestampFormatKey = getString(R.string.preference_timestamp_format_key)
+        val loadSupibotKey = getString(R.string.preference_supibot_suggestions_key)
         twitchPreferences = DankChatPreferenceStore(context)
+        preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        if (::preferenceListener.isInitialized) preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
             when (key) {
                 roomStateKey -> viewModel.setRoomStateEnabled(p.getBoolean(key, true))
@@ -604,11 +609,12 @@ class MainFragment : Fragment() {
                 inputKey -> viewModel.inputEnabled.value = p.getBoolean(key, true)
                 customMentionsKey -> viewModel.setMentionEntries(p.getStringSet(key, emptySet()))
                 blacklistKey -> viewModel.setBlacklistEntries(p.getStringSet(key, emptySet()))
+                loadSupibotKey -> viewModel.setSupibotSuggestions(p.getBoolean(key, false))
                 keepScreenOnKey -> keepScreenOn(p.getBoolean(key, true))
                 suggestionsKey -> binding.input.setSuggestionAdapter(p.getBoolean(key, true), suggestionAdapter)
             }
         }
-        preferences = PreferenceManager.getDefaultSharedPreferences(context).apply {
+        preferences.apply {
             registerOnSharedPreferenceChangeListener(preferenceListener)
             keepScreenOn(getBoolean(keepScreenOnKey, true))
             TimeUtils.setPattern(getString(timestampFormatKey, "HH:mm") ?: "HH:mm")
