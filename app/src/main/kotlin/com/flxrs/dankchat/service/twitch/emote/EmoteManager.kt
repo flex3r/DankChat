@@ -5,7 +5,10 @@ import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.api.dto.BadgeDtos
 import com.flxrs.dankchat.service.api.dto.EmoteDtos
 import com.flxrs.dankchat.utils.extensions.supplementaryCodePointPositions
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.withContext
 import pl.droidsonroids.gif.GifDrawable
 import pl.droidsonroids.gif.MultiCallback
 import java.util.concurrent.ConcurrentHashMap

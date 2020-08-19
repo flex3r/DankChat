@@ -24,13 +24,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.koin.core.KoinComponent
-import org.koin.core.get
-import org.koin.core.parameter.parametersOf
 import java.nio.ByteBuffer
+import kotlin.collections.set
 import kotlin.system.measureTimeMillis
 
-class ChatRepository : KoinComponent {
+class ChatRepository {
 
     private val _notificationMessageChannel = Channel<List<ChatItem>>(10) // TODO replace with SharedFlow when available
     private val messages = mutableMapOf<String, MutableStateFlow<List<ChatItem>>>()
@@ -44,8 +42,8 @@ class ChatRepository : KoinComponent {
 
     private val client = OkHttpClient.Builder().retryOnConnectionFailure(true).build()
     private val request = Request.Builder().url("wss://irc-ws.chat.twitch.tv").build()
-    private val readConnection: WebSocketConnection = get { parametersOf("reader", client, request, ::handleDisconnect, ::onReaderMessage) }
-    private val writeConnection: WebSocketConnection = get { parametersOf("writer", client, request, null, ::onWriterMessage) }
+    private val readConnection = WebSocketConnection("reader", CoroutineScope(Dispatchers.IO + Job()), client, request, ::handleDisconnect, ::onReaderMessage)
+    private val writeConnection = WebSocketConnection("writer", CoroutineScope(Dispatchers.IO + Job()), client, request, null, ::onWriterMessage)
 
     private var name: String = ""
     private var hasDisconnected = true

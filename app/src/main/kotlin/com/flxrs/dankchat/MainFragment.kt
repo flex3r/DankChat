@@ -31,6 +31,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.navigation.NavController
@@ -62,16 +63,17 @@ import com.google.android.material.snackbar.BaseTransientBottomBar.BaseCallback
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.textfield.TextInputLayout
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.IOException
 import java.util.*
 import kotlin.math.max
 import kotlin.math.roundToInt
 
+@AndroidEntryPoint
 class MainFragment : Fragment() {
 
-    private val viewModel: DankChatViewModel by sharedViewModel()
+    private val viewModel: DankChatViewModel by activityViewModels()
     private val navController: NavController by lazy { findNavController() }
     private lateinit var twitchPreferences: DankChatPreferenceStore
     private lateinit var preferenceListener: SharedPreferences.OnSharedPreferenceChangeListener

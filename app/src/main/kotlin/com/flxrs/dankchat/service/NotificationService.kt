@@ -20,13 +20,14 @@ import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.MainActivity
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.service.twitch.message.Message
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import org.koin.core.KoinComponent
-import org.koin.core.get
 import java.util.*
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-class NotificationService : Service(), CoroutineScope, KoinComponent {
+@AndroidEntryPoint
+class NotificationService : Service(), CoroutineScope {
 
     private val binder = LocalBinder()
     private val manager: NotificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
@@ -44,7 +45,9 @@ class NotificationService : Service(), CoroutineScope, KoinComponent {
     private var ttsMessageQueue = false
 
     private val notifications = mutableMapOf<String, MutableList<Int>>()
-    private val chatRepository: ChatRepository = get()
+
+    @Inject
+    lateinit var chatRepository: ChatRepository
 
     private var tts: TextToSpeech? = null
     private var audioManager: AudioManager? = null
@@ -67,9 +70,11 @@ class NotificationService : Service(), CoroutineScope, KoinComponent {
 
         stopForeground(true)
         stopSelf()
+        super.onDestroy()
     }
 
     override fun onCreate() {
+        super.onCreate()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
             val name = getString(R.string.app_name)

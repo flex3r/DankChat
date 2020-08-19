@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
@@ -18,14 +19,14 @@ import com.flxrs.dankchat.MainFragment
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
+@AndroidEntryPoint
 class ChatFragment : Fragment() {
 
-    private val viewModel: ChatViewModel by viewModel { parametersOf(channel) }
+    private val viewModel: ChatViewModel by viewModels()
     private lateinit var binding: ChatFragmentBinding
     private lateinit var adapter: ChatAdapter
     private lateinit var manager: LinearLayoutManager

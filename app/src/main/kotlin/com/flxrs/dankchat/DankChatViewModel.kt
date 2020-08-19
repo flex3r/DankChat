@@ -1,6 +1,8 @@
 package com.flxrs.dankchat
 
 import android.util.Log
+import androidx.hilt.Assisted
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.chat.suggestion.Suggestion
@@ -19,7 +21,11 @@ import com.flxrs.dankchat.utils.extensions.toEmoteItems
 import kotlinx.coroutines.*
 import java.io.File
 
-class DankChatViewModel(private val chatRepository: ChatRepository, private val dataRepository: DataRepository) : ViewModel() {
+class DankChatViewModel @ViewModelInject constructor(
+    @Assisted savedStateHandle: SavedStateHandle,
+    private val chatRepository: ChatRepository,
+    private val dataRepository: DataRepository
+) : ViewModel() {
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, t ->
         Log.e(TAG, Log.getStackTraceString(t))

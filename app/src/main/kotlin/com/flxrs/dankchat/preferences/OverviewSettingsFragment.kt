@@ -44,10 +44,10 @@ class OverviewSettingsFragment : PreferenceFragmentCompat() {
             summary = getString(R.string.preference_about_summary, BuildConfig.VERSION_NAME)
             setOnPreferenceClickListener {
                 try {
-                        CustomTabsIntent.Builder()
-                            .addDefaultShareMenuItem()
-                            .setShowTitle(true)
-                            .build().launchUrl(view.context, Uri.parse(GITHUB_URL))
+                    CustomTabsIntent.Builder()
+                        .addDefaultShareMenuItem()
+                        .setShowTitle(true)
+                        .build().launchUrl(view.context, Uri.parse(GITHUB_URL))
                 } catch (e: ActivityNotFoundException) {
                     Log.e(TAG, Log.getStackTraceString(e))
                 }

@@ -12,22 +12,14 @@ import coil.Coil
 import coil.ImageLoader
 import coil.util.CoilUtils
 import com.flxrs.dankchat.utils.GifDrawableDecoder
+import dagger.hilt.android.HiltAndroidApp
 import okhttp3.CacheControl
 import okhttp3.OkHttpClient
-import org.koin.android.ext.koin.androidContext
-import org.koin.android.ext.koin.androidLogger
-import org.koin.core.context.startKoin
 
+@HiltAndroidApp
 class DankChatApplication : Application()/*, ImageLoaderFactory*/ {
     override fun onCreate() {
         super.onCreate()
-        startKoin {
-            androidLogger()
-            androidContext(applicationContext)
-
-            modules(appModules)
-        }
-
         Coil.setDefaultImageLoader {
             ImageLoader(this) {
                 okHttpClient {

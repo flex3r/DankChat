@@ -34,6 +34,7 @@ buildscript {
         url_detector_version = '0.1.23'
         okhttp_version = '4.8.0'
         retrofit_version = '2.9.0'
+        hilt_version = '2.28-alpha'
     }
 
     repositories {
@@ -44,6 +45,7 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:$gradle_build_tools_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
     }
 }
 
