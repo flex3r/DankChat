@@ -85,10 +85,11 @@ class ChatAdapter(
         is Message.TwitchMessage -> holder.binding.itemText.handleTwitchMessage(message, holder)
     }
 
-    private fun ViewHolder.isAlternateBackground() = when (bindingAdapterPosition) {
-        itemCount - 1 -> messageCount.isEven()
-        else -> (bindingAdapterPosition - itemCount - 1).isEven()
-    }
+    private val ViewHolder.isAlternateBackground
+        get() = when (bindingAdapterPosition) {
+            itemCount - 1 -> messageCount.isEven
+            else -> (bindingAdapterPosition - itemCount - 1).isEven
+        }
 
     private fun TextView.handleSystemMessage(message: Message.SystemMessage, holder: ViewHolder) {
         alpha = 1.0f
@@ -102,7 +103,7 @@ class ChatAdapter(
         val isCheckeredMode = preferences.getBoolean(checkeredKey, false)
 
         val background = when {
-            isCheckeredMode && holder.isAlternateBackground() -> R.color.color_transparency_20
+            isCheckeredMode && holder.isAlternateBackground -> R.color.color_transparency_20
             else -> android.R.color.transparent
         }
         setBackgroundResource(background)
@@ -189,7 +190,7 @@ class ChatAdapter(
                 isNotify -> if (isDarkMode) R.color.color_highlight_dark else R.color.color_highlight_light
                 isReward -> if (isDarkMode) R.color.color_reward_dark else R.color.color_reward_light
                 isMention -> if (isDarkMode) R.color.color_mention_dark else R.color.color_mention_light
-                isCheckeredMode && holder.isAlternateBackground() -> R.color.color_transparency_20
+                isCheckeredMode && holder.isAlternateBackground -> R.color.color_transparency_20
                 else -> android.R.color.transparent
             }
             setBackgroundResource(background)

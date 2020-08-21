@@ -66,7 +66,8 @@ fun <T> Context.isServiceRunning(service: Class<T>) =
         .getRunningServices(Integer.MAX_VALUE)
         .any { it.service.className == service.name }
 
-fun Int.isEven() = (this % 2 == 0)
+val Int.isEven
+    get() = (this % 2 == 0)
 
 fun Context.getDrawableAndSetSurfaceTint(@DrawableRes id: Int) = getDrawable(id)?.apply {
     DrawableCompat.setTint(this, ContextCompat.getColor(this@getDrawableAndSetSurfaceTint, R.color.color_on_surface))
