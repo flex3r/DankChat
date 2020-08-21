@@ -32,6 +32,10 @@ class DankChatPreferenceStore(context: Context) {
         get() = dankChatPreferences.getInt(ID_KEY, 0)
         set(value) = dankChatPreferences.edit { putInt(ID_KEY, value) }
 
+    var userIdString: String?
+        get() = dankChatPreferences.getString(ID_STRING_KEY, null)
+        set(value) = dankChatPreferences.edit { putString(ID_STRING_KEY, value) }
+
     var hasNuulsAcknowledged: Boolean
         get() = dankChatPreferences.getBoolean(NUULS_ACK_KEY, false)
         set(value) = dankChatPreferences.edit { putBoolean(NUULS_ACK_KEY, value) }
@@ -51,6 +55,7 @@ class DankChatPreferenceStore(context: Context) {
         private const val CHANNELS_KEY = "channelsKey"
         private const val CHANNELS_AS_STRING_KEY = "channelsAsStringKey"
         private const val ID_KEY = "idKey"
+        private const val ID_STRING_KEY = "idStringKey"
         private const val NUULS_ACK_KEY = "nuulsAckKey"
         private const val MESSAGES_HISTORY_ACK_KEY = "messageHistoryAckKey"
         private const val API_CHANGE_ACK_KEY = "apiChangeAckKey"

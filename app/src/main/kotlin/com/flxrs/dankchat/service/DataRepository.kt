@@ -26,7 +26,7 @@ class DataRepository {
 
     fun getSupibotCommands(channel: String): StateFlow<List<String>> = supibotCommands.getOrPut(channel) { MutableStateFlow(emptyList()) }
 
-    suspend fun loadData(channels: List<String>, oAuth: String, id: Int, loadTwitchData: Boolean, loadSupibot: Boolean) = withContext(Dispatchers.IO) {
+    suspend fun loadData(channels: List<String>, oAuth: String, id: String, loadTwitchData: Boolean, loadSupibot: Boolean) = withContext(Dispatchers.IO) {
         if (oAuth.isNotBlank() && loadTwitchData) {
             launch { loadTwitchEmotes(oAuth, id) }
         }
@@ -49,21 +49,20 @@ class DataRepository {
         }.joinAll()
     }
 
-    suspend fun reloadEmotes(channel: String, oAuth: String, id: Int) = withContext(Dispatchers.IO) {
+    suspend fun reloadEmotes(channel: String, oAuth: String, id: String) = withContext(Dispatchers.IO) {
         loadedGlobalEmotes = false
         launch {
-            TwitchApi.getUserIdFromName(oAuth, channel)?.let {
-                load3rdPartyEmotes(channel, it)
-            }
-
-            if (id != 0 && oAuth.isNotBlank()) {
+            if (id.isNotBlank() && oAuth.isNotBlank()) {
+                TwitchApi.getUserIdFromName(oAuth, channel)?.let {
+                    load3rdPartyEmotes(channel, it)
+                }
                 loadTwitchEmotes(oAuth, id)
             }
+
             setEmotesForSuggestions(channel)
         }
 
         launch { loadDankChatBadges() }
-        launch { loadSupibotCommands() }
     }
 
     suspend fun uploadMedia(file: File): String? = TwitchApi.uploadMedia(file)
@@ -106,7 +105,7 @@ class DataRepository {
         }
     }
 
-    private suspend fun loadTwitchEmotes(oAuth: String, id: Int) {
+    private suspend fun loadTwitchEmotes(oAuth: String, id: String) {
         measureTimeAndLog(TAG, "twitch emotes for #$id") {
             TwitchApi.getUserEmotes(oAuth, id)?.also { EmoteManager.setTwitchEmotes(it) }
         }

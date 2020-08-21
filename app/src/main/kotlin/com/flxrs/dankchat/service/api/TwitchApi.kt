@@ -81,7 +81,7 @@ object TwitchApi {
         return@withContext null
     }
 
-    suspend fun getUserEmotes(oAuth: String, id: Int): EmoteDtos.Twitch.Result? = withContext(Dispatchers.IO) {
+    suspend fun getUserEmotes(oAuth: String, id: String): EmoteDtos.Twitch.Result? = withContext(Dispatchers.IO) {
         val response = service.getUserEmotes("OAuth $oAuth", id)
         response.bodyOrNull
     }
@@ -175,12 +175,12 @@ object TwitchApi {
         response.bodyOrNull?.data?.getOrNull(0)?.id
     }
 
-    suspend fun getNameFromUserId(oAuth: String, id: Int): String? = withContext(Dispatchers.IO) {
+    suspend fun getNameFromUserId(oAuth: String, id: String): String? = withContext(Dispatchers.IO) {
         val response = service.getUserHelix("Bearer $oAuth", "${HELIX_BASE_URL}users?id=$id")
         response.bodyOrNull?.data?.getOrNull(0)?.name
     }
 
-    suspend fun getIgnores(oAuth: String, id: Int): UserDtos.KrakenUsersBlocks? = withContext(Dispatchers.IO) {
+    suspend fun getIgnores(oAuth: String, id: String): UserDtos.KrakenUsersBlocks? = withContext(Dispatchers.IO) {
         service.getIgnores("OAuth $oAuth", id).bodyOrNull
 
     }

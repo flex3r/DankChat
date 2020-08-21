@@ -9,7 +9,7 @@ sealed class DataLoadingState {
 
     data class Parameters(
         val oAuth: String = "",
-        val id: Int = 0,
+        val id: String = "",
         val name: String = "",
         val channels: List<String> = emptyList(),
         val isReloadEmotes: Boolean = false,

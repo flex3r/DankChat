@@ -66,7 +66,7 @@ class ChatRepository {
     fun getRoomState(channel: String): StateFlow<Roomstate> = roomStates.getOrPut(channel) { MutableStateFlow(Roomstate(channel)) }
     fun getUsers(channel: String): StateFlow<LruCache<String, Boolean>> = users.getOrPut(channel) { MutableStateFlow(createUserCache()) }
 
-    suspend fun loadData(channels: List<String>, oAuth: String, id: Int, loadHistory: Boolean, name: String) = withContext(Dispatchers.IO) {
+    suspend fun loadData(channels: List<String>, oAuth: String, id: String, loadHistory: Boolean, name: String) = withContext(Dispatchers.IO) {
         this@ChatRepository.name = name
         if (oAuth.isNotBlank()) {
             loadIgnores(oAuth, id)
@@ -203,7 +203,7 @@ class ChatRepository {
         blacklistEntries = stringSet.mapToMention(adapter)
     }
 
-    private suspend fun loadIgnores(oAuth: String, id: Int) = withContext(Dispatchers.Default) {
+    private suspend fun loadIgnores(oAuth: String, id: String) = withContext(Dispatchers.Default) {
         val result = TwitchApi.getIgnores(oAuth, id)
         if (result != null) {
             ignoredList.clear()

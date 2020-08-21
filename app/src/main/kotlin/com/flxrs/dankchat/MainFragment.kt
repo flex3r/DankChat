@@ -201,6 +201,10 @@ class MainFragment : Fragment() {
         }
 
         initPreferences(view.context)
+        if (twitchPreferences.isLoggedIn && twitchPreferences.userIdString == null) {
+            twitchPreferences.userIdString = "${twitchPreferences.userId}"
+        }
+
         val channels = twitchPreferences.channelsString?.split(',') ?: twitchPreferences.channels?.also { twitchPreferences.channels = null }
         channels?.forEach { tabAdapter.addFragment(it) }
         val asList = channels?.toList() ?: emptyList()
@@ -238,7 +242,7 @@ class MainFragment : Fragment() {
                 } else {
                     val oAuth = twitchPreferences.oAuthKey ?: ""
                     val name = twitchPreferences.userName ?: ""
-                    val id = twitchPreferences.userId
+                    val id = twitchPreferences.userIdString ?: ""
                     val shouldLoadHistory = preferences.getBoolean(getString(R.string.preference_load_message_history_key), true)
                     val shouldLoadSupibot = preferences.getBoolean(getString(R.string.preference_supibot_suggestions_key), false)
                     viewModel.loadData(oAuth = oAuth, id = id, name = name, loadTwitchData = true, loadHistory = shouldLoadHistory, loadSupibot = shouldLoadSupibot)
@@ -338,7 +342,7 @@ class MainFragment : Fragment() {
 
         val oAuth = twitchPreferences.oAuthKey ?: ""
         val name = twitchPreferences.userName ?: ""
-        val id = twitchPreferences.userId
+        val id = twitchPreferences.userIdString ?: ""
         viewModel.loadData(oAuth = oAuth, id = id, name = name, loadTwitchData = true, loadHistory = result, loadSupibot = shouldLoadSupibot)
 
         if (name.isNotBlank() && oAuth.isNotBlank()) {
@@ -351,7 +355,7 @@ class MainFragment : Fragment() {
         val channels = viewModel.channels.value ?: emptyList()
         if (!channels.contains(lowerCaseChannel)) {
             val oauth = twitchPreferences.oAuthKey ?: ""
-            val id = twitchPreferences.userId
+            val id = twitchPreferences.userIdString ?: ""
             val name = twitchPreferences.userName ?: ""
             val shouldLoadHistory = preferences.getBoolean(getString(R.string.preference_load_message_history_key), true)
 
@@ -452,9 +456,9 @@ class MainFragment : Fragment() {
     private fun handleLoginRequest(success: Boolean) {
         val oAuth = twitchPreferences.oAuthKey
         val name = twitchPreferences.userName
-        val id = twitchPreferences.userId
+        val id = twitchPreferences.userIdString
 
-        if (success && !oAuth.isNullOrBlank() && !name.isNullOrBlank() && id != 0) {
+        if (success && !oAuth.isNullOrBlank() && !name.isNullOrBlank() && !id.isNullOrBlank()) {
             viewModel.close(name, oAuth, id, true)
             twitchPreferences.isLoggedIn = true
             showSnackbar(getString(R.string.snackbar_login, name))
@@ -597,7 +601,7 @@ class MainFragment : Fragment() {
         val position = channel?.let { tabAdapter.titleList.indexOf(it) } ?: binding.tabs.selectedTabPosition
         if (position in 0 until tabAdapter.titleList.size) {
             val oAuth = twitchPreferences.oAuthKey ?: return
-            val userId = twitchPreferences.userId
+            val userId = twitchPreferences.userIdString ?: return
             viewModel.reloadEmotes(tabAdapter.titleList[position], oAuth, userId)
         }
     }
@@ -669,10 +673,10 @@ class MainFragment : Fragment() {
         .setPositiveButton(getString(R.string.confirm_logout_positive_button)) { dialog, _ ->
             twitchPreferences.userName = ""
             twitchPreferences.oAuthKey = ""
-            twitchPreferences.userId = 0
+            twitchPreferences.userIdString = ""
             twitchPreferences.isLoggedIn = false
 
-            viewModel.close("", "")
+            viewModel.close(name = "", oAuth = "", userId = "")
             viewModel.clearIgnores()
             dialog.dismiss()
         }

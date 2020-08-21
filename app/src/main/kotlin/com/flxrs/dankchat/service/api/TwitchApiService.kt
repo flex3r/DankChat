@@ -23,7 +23,7 @@ interface TwitchApiService {
     @GET("users/{id}/emotes")
     suspend fun getUserEmotes(
         @Header("Authorization") oauth: String,
-        @Path("id") userId: Int
+        @Path("id") userId: String
     ): Response<EmoteDtos.Twitch.Result>
 
     @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
@@ -88,7 +88,7 @@ interface TwitchApiService {
     @GET("users/{id}/blocks")
     suspend fun getIgnores(
         @Header("Authorization") oauth: String,
-        @Path("id") userId: Int
+        @Path("id") userId: String
     ): Response<UserDtos.KrakenUsersBlocks>
 
     @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")

@@ -158,7 +158,7 @@ class DankChatViewModel @ViewModelInject constructor(
         loadSupibot = dataLoadingParameters.loadSupibot
     )
 
-    fun loadData(oAuth: String, id: Int, name: String, channelList: List<String> = channels.value ?: emptyList(), loadTwitchData: Boolean, loadHistory: Boolean, loadSupibot: Boolean) {
+    fun loadData(oAuth: String, id: String, name: String, channelList: List<String> = channels.value ?: emptyList(), loadTwitchData: Boolean, loadHistory: Boolean, loadSupibot: Boolean) {
         viewModelScope.launch(coroutineExceptionHandler) {
             _dataLoadingEvent.postValue(
                 DataLoadingState.Loading(
@@ -232,14 +232,14 @@ class DankChatViewModel @ViewModelInject constructor(
 
     fun reconnect(onlyIfNecessary: Boolean) = chatRepository.reconnect(onlyIfNecessary)
 
-    fun close(name: String, oAuth: String, userId: Int = 0, loadTwitchData: Boolean = false) {
+    fun close(name: String, oAuth: String, userId: String, loadTwitchData: Boolean = false) {
         val channels = channels.value ?: emptyList()
         val didClose = chatRepository.close { connectAndJoinChannels(name, oAuth, channels) }
         if (!didClose) {
             connectAndJoinChannels(name, oAuth, channels, forceConnect = true)
         }
 
-        if (loadTwitchData && userId > 0) loadData(
+        if (loadTwitchData && oAuth.isNotBlank()) loadData(
             oAuth = oAuth,
             id = userId,
             name = name,
@@ -250,7 +250,7 @@ class DankChatViewModel @ViewModelInject constructor(
         )
     }
 
-    fun reloadEmotes(channel: String, oAuth: String, id: Int) = viewModelScope.launch(coroutineExceptionHandler) {
+    fun reloadEmotes(channel: String, oAuth: String, id: String) = viewModelScope.launch(coroutineExceptionHandler) {
         _dataLoadingEvent.postValue(
             DataLoadingState.Loading(
                 DataLoadingState.Parameters(

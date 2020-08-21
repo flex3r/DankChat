@@ -10,7 +10,7 @@ sealed class UserDtos {
         @field:Json(name = "client_id") val clientId: String,
         @field:Json(name = "login") val login: String,
         @field:Json(name = "scopes") val scopes: List<String>, // TODO Verify scopes
-        @field:Json(name = "user_id") val userId: Int
+        @field:Json(name = "user_id") val userId: String
     )
 
     @Keep
