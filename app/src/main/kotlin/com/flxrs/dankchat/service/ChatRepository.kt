@@ -19,9 +19,12 @@ import com.flxrs.dankchat.utils.extensions.replaceWithTimeOuts
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asFlow
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.nio.ByteBuffer
@@ -31,6 +34,7 @@ import kotlin.system.measureTimeMillis
 class ChatRepository {
 
     private val _notificationMessageChannel = Channel<List<ChatItem>>(10) // TODO replace with SharedFlow when available
+    private val _mentionCounts = ConflatedBroadcastChannel<MutableMap<String, Int>>(mutableMapOf())
     private val messages = mutableMapOf<String, MutableStateFlow<List<ChatItem>>>()
     private val connectionState = mutableMapOf<String, MutableStateFlow<SystemMessageType>>()
     private val roomStates = mutableMapOf<String, MutableStateFlow<Roomstate>>()
@@ -52,6 +56,8 @@ class ChatRepository {
 
     val notificationMessageChannel: ReceiveChannel<List<ChatItem>>
         get() = _notificationMessageChannel
+    val mentionCounts: Flow<Map<String, Int>>
+        get() = _mentionCounts.asFlow()
     var startedConnection = false
     var lastMessage = mutableMapOf<String, String>()
 
@@ -81,7 +87,12 @@ class ChatRepository {
         messages[channel]?.value = emptyList()
         messages.remove(channel)
         lastMessage.remove(channel)
+        _mentionCounts.value.remove(channel)
         TwitchApi.clearChannelFromLoaded(channel)
+    }
+
+    fun clearMentionCount(channel: String) = with(_mentionCounts) {
+        offer(value.apply { set(channel, 0) })
     }
 
     @Synchronized
@@ -250,6 +261,15 @@ class ChatRepository {
             val currentUsers = users[it.channel]?.value ?: createUserCache()
             currentUsers.put(it.name, true)
             users[it.channel]?.value = currentUsers
+
+            if (it.isMention) {
+                with(_mentionCounts) {
+                    offer(value.apply {
+                        val count = get(it.channel) ?: 0
+                        set(it.channel, count + 1)
+                    })
+                }
+            }
 
             ChatItem(it)
         }

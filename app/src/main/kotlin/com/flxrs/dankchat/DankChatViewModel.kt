@@ -43,6 +43,7 @@ class DankChatViewModel @ViewModelInject constructor(
 
     val activeChannel = MutableLiveData<String>()
     val channels = MutableLiveData<List<String>>(emptyList())
+    val mentionCounts = chatRepository.mentionCounts.asLiveData(coroutineExceptionHandler)
 
     private val _errorEvent = SingleLiveEvent<Throwable>()
     private val _dataLoadingEvent = SingleLiveEvent<DataLoadingState>()
@@ -63,6 +64,7 @@ class DankChatViewModel @ViewModelInject constructor(
             }
         }
     }
+
     private val emoteSuggestions = emotes.switchMap { emotes ->
         liveData(Dispatchers.Default) {
             emit(emotes.distinctBy { it.code }.map { Suggestion.EmoteSuggestion(it) })
@@ -73,7 +75,6 @@ class DankChatViewModel @ViewModelInject constructor(
             emit(users.snapshot().keys.map { Suggestion.UserSuggestion(it) })
         }
     }
-
     private val supibotCommandSuggestions = supibotCommands.switchMap { commands ->
         liveData(Dispatchers.Default) {
             emit(commands.map { Suggestion.CommandSuggestion("$$it") })
@@ -202,6 +203,8 @@ class DankChatViewModel @ViewModelInject constructor(
     }
 
     fun clear(channel: String) = chatRepository.clear(channel)
+
+    fun clearMentionCount(channel: String) = chatRepository.clearMentionCount(channel)
 
     fun joinChannel(channel: String? = activeChannel.value): List<String>? {
         if (channel == null) return null

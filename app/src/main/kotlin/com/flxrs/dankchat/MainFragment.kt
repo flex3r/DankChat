@@ -33,7 +33,6 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
@@ -129,6 +128,7 @@ class MainFragment : Fragment() {
             tabLayoutMediator = TabLayoutMediator(tabs, viewPager) { tab, position ->
                 tab.text = tabAdapter.titleList[position]
             }.apply { attach() }
+            tabs.getTabAt(tabs.selectedTabPosition)?.removeBadge()
 
             showActionbarFab.setOnClickListener { viewModel.appbarEnabled.value = true }
         }
@@ -158,11 +158,25 @@ class MainFragment : Fragment() {
             }
             activeChannel.observe(viewLifecycleOwner) {
                 (activity as? MainActivity)?.clearNotificationsOfChannel(it)
+                val index = tabAdapter.titleList.indexOf(it)
+                binding.tabs.getTabAt(index)?.removeBadge()
+                viewModel.clearMentionCount(it)
             }
 
             errorEvent.observe(viewLifecycleOwner) {
                 if (preferences.getBoolean(getString(R.string.preference_debug_mode_key), false)) {
                     binding.root.showErrorDialog(it)
+                }
+            }
+            mentionCounts.observe(viewLifecycleOwner) {
+                it.forEach { (channel, count) ->
+                    val index = tabAdapter.titleList.indexOf(channel)
+                    if (binding.tabs.selectedTabPosition != index && count > 0) {
+                        binding.tabs.getTabAt(index)?.apply {
+                            orCreateBadge
+                            //currentBadge.number = count
+                        }
+                    }
                 }
             }
         }
