@@ -55,6 +55,7 @@ class ChatRepository {
     private var hasDisconnected = true
     private var customMentionEntries = listOf<Mention>()
     private var blacklistEntries = listOf<Mention>()
+    private var name: String = ""
 
     val notificationMessageChannel: ReceiveChannel<List<ChatItem>>
         get() = _notificationMessageChannel
@@ -62,7 +63,6 @@ class ChatRepository {
         get() = _mentionCounts.asFlow()
     var startedConnection = false
     var lastMessage = mutableMapOf<String, String>()
-    var name: String = ""
 
     fun getChat(channel: String): StateFlow<List<ChatItem>> = messages.getOrPut(channel) { MutableStateFlow(emptyList()) }
     fun getConnectionState(channel: String): StateFlow<SystemMessageType> = connectionState.getOrPut(channel) { MutableStateFlow(SystemMessageType.DISCONNECTED) }
