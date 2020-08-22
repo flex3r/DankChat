@@ -17,7 +17,9 @@ import com.flxrs.dankchat.utils.extensions.mapToMention
 import com.flxrs.dankchat.utils.extensions.replaceWithTimeOut
 import com.flxrs.dankchat.utils.extensions.replaceWithTimeOuts
 import com.squareup.moshi.Moshi
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.ReceiveChannel
@@ -25,6 +27,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.nio.ByteBuffer
@@ -49,7 +52,6 @@ class ChatRepository {
     private val readConnection = WebSocketConnection("reader", CoroutineScope(Dispatchers.IO + Job()), client, request, ::handleDisconnect, ::onReaderMessage)
     private val writeConnection = WebSocketConnection("writer", CoroutineScope(Dispatchers.IO + Job()), client, request, null, ::onWriterMessage)
 
-    private var name: String = ""
     private var hasDisconnected = true
     private var customMentionEntries = listOf<Mention>()
     private var blacklistEntries = listOf<Mention>()
@@ -60,27 +62,29 @@ class ChatRepository {
         get() = _mentionCounts.asFlow()
     var startedConnection = false
     var lastMessage = mutableMapOf<String, String>()
+    var name: String = ""
 
     fun getChat(channel: String): StateFlow<List<ChatItem>> = messages.getOrPut(channel) { MutableStateFlow(emptyList()) }
     fun getConnectionState(channel: String): StateFlow<SystemMessageType> = connectionState.getOrPut(channel) { MutableStateFlow(SystemMessageType.DISCONNECTED) }
     fun getRoomState(channel: String): StateFlow<Roomstate> = roomStates.getOrPut(channel) { MutableStateFlow(Roomstate(channel)) }
     fun getUsers(channel: String): StateFlow<LruCache<String, Boolean>> = users.getOrPut(channel) { MutableStateFlow(createUserCache()) }
 
-    suspend fun loadData(channels: List<String>, oAuth: String, id: String, loadHistory: Boolean, name: String) = withContext(Dispatchers.IO) {
-        this@ChatRepository.name = name
-        if (oAuth.isNotBlank()) {
-            loadIgnores(oAuth, id)
+    suspend fun loadRecentMessages(channel: String, loadHistory: Boolean) {
+        if (loadHistory) {
+            loadRecentMessages(channel)
+        } else {
+            val currentChat = messages[channel]?.value ?: emptyList()
+            messages[channel]?.value = listOf(ChatItem(Message.SystemMessage(state = SystemMessageType.NO_HISTORY_LOADED), false)) + currentChat
         }
-        channels.map { channel ->
-            async {
-                if (loadHistory) {
-                    loadRecentMessages(channel)
-                } else {
-                    val currentChat = messages[channel]?.value ?: emptyList()
-                    messages[channel]?.value = listOf(ChatItem(Message.SystemMessage(state = SystemMessageType.NO_HISTORY_LOADED), false)) + currentChat
-                }
+    }
+
+    suspend fun loadIgnores(oAuth: String, id: String) {
+        if (oAuth.isNotBlank()) {
+            TwitchApi.getIgnores(oAuth, id)?.let { result ->
+                ignoredList.clear()
+                ignoredList.addAll(result.blocks.map { it.user.id })
             }
-        }.awaitAll()
+        }
     }
 
     fun removeChannelData(channel: String) {
@@ -127,6 +131,7 @@ class ChatRepository {
 
     fun connect(nick: String, oauth: String, forceConnect: Boolean = false) {
         if (!startedConnection) {
+            name = nick
             readConnection.connect(nick, oauth, forceConnect)
             writeConnection.connect(nick, oauth, forceConnect)
             startedConnection = true
@@ -201,14 +206,6 @@ class ChatRepository {
 
     suspend fun setBlacklistEntries(stringSet: Set<String>?) = withContext(Dispatchers.Default) {
         blacklistEntries = stringSet.mapToMention(adapter)
-    }
-
-    private suspend fun loadIgnores(oAuth: String, id: String) = withContext(Dispatchers.Default) {
-        val result = TwitchApi.getIgnores(oAuth, id)
-        if (result != null) {
-            ignoredList.clear()
-            ignoredList.addAll(result.blocks.map { it.user.id })
-        }
     }
 
     private fun handleConnected(channel: String, isAnonymous: Boolean) {

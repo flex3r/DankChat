@@ -159,7 +159,7 @@ class DankChatViewModel @ViewModelInject constructor(
     )
 
     fun loadData(oAuth: String, id: String, name: String, channelList: List<String> = channels.value ?: emptyList(), loadTwitchData: Boolean, loadHistory: Boolean, loadSupibot: Boolean) {
-        viewModelScope.launch(coroutineExceptionHandler) {
+        viewModelScope.launch {
             _dataLoadingEvent.postValue(
                 DataLoadingState.Loading(
                     DataLoadingState.Parameters(
@@ -177,9 +177,23 @@ class DankChatViewModel @ViewModelInject constructor(
                 oAuth.startsWith("oauth:", true) -> oAuth.substringAfter(':')
                 else -> oAuth
             }
-            dataRepository.loadData(channelList, token, id, loadTwitchData, loadSupibot)
-            chatRepository.loadData(channelList, token, id, loadHistory, name)
-            _dataLoadingEvent.postValue(DataLoadingState.Finished)
+            supervisorScope {
+                (listOf(
+                    launch(coroutineExceptionHandler) { dataRepository.loadDankChatBadges() },
+                    launch(coroutineExceptionHandler) { dataRepository.loadGlobalBadges() },
+                    launch(coroutineExceptionHandler) { if (loadTwitchData) dataRepository.loadTwitchEmotes(token, id) },
+                    launch(coroutineExceptionHandler) { if (loadSupibot) dataRepository.loadSupibotCommands() },
+                    launch(coroutineExceptionHandler) { chatRepository.loadIgnores(token, id) }
+                ) + channelList.map {
+                    launch(coroutineExceptionHandler) { dataRepository.loadChannelData(it, token) }
+                }).joinAll()
+
+                channelList.forEach {
+                    dataRepository.setEmotesForSuggestions(it)
+                    launch(coroutineExceptionHandler) { chatRepository.loadRecentMessages(it, loadHistory) }
+                }
+                _dataLoadingEvent.postValue(DataLoadingState.Finished)
+            }
         }
     }
 
@@ -250,7 +264,7 @@ class DankChatViewModel @ViewModelInject constructor(
         )
     }
 
-    fun reloadEmotes(channel: String, oAuth: String, id: String) = viewModelScope.launch(coroutineExceptionHandler) {
+    fun reloadEmotes(channel: String, oAuth: String, id: String) = viewModelScope.launch {
         _dataLoadingEvent.postValue(
             DataLoadingState.Loading(
                 DataLoadingState.Parameters(
@@ -265,7 +279,12 @@ class DankChatViewModel @ViewModelInject constructor(
             oAuth.startsWith("oauth:", true) -> oAuth.substringAfter(':')
             else -> oAuth
         }
-        dataRepository.reloadEmotes(channel, token, id)
+
+        listOf(
+            launch(coroutineExceptionHandler) { dataRepository.loadChannelData(channel, token, forceReload = true) },
+            launch(coroutineExceptionHandler) { dataRepository.loadTwitchEmotes(token, id) },
+            launch(coroutineExceptionHandler) { dataRepository.loadDankChatBadges() },
+        ).joinAll()
         _dataLoadingEvent.postValue(DataLoadingState.Reloaded)
     }
 
