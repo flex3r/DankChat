@@ -161,17 +161,7 @@ class DankChatViewModel @ViewModelInject constructor(
     fun loadData(oAuth: String, id: String, name: String, channelList: List<String> = channels.value ?: emptyList(), loadTwitchData: Boolean, loadHistory: Boolean, loadSupibot: Boolean) {
         viewModelScope.launch {
             _dataLoadingEvent.postValue(
-                DataLoadingState.Loading(
-                    DataLoadingState.Parameters(
-                        oAuth = oAuth,
-                        id = id,
-                        name = name,
-                        channels = channelList,
-                        loadTwitchData = loadTwitchData,
-                        loadHistory = loadHistory,
-                        loadSupibot = loadSupibot
-                    )
-                )
+                DataLoadingState.Loading(DataLoadingState.Parameters(oAuth, id, name, channelList, loadTwitchData = loadTwitchData, loadHistory = loadHistory, loadSupibot = loadSupibot))
             )
             val token = when {
                 oAuth.startsWith("oauth:", true) -> oAuth.substringAfter(':')
