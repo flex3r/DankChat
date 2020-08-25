@@ -14,6 +14,7 @@ import coil.util.CoilUtils
 import com.flxrs.dankchat.utils.GifDrawableDecoder
 import dagger.hilt.android.HiltAndroidApp
 import okhttp3.CacheControl
+import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 
 @HiltAndroidApp
@@ -25,6 +26,7 @@ class DankChatApplication : Application()/*, ImageLoaderFactory*/ {
                 okHttpClient {
                     OkHttpClient.Builder()
                         .cache(CoilUtils.createDefaultCache(this@DankChatApplication))
+                        .dispatcher(Dispatcher().apply { maxRequestsPerHost = 15 }) // increase from default 5
                         .addInterceptor { chain ->
                             val request = chain.request()
                             try {
