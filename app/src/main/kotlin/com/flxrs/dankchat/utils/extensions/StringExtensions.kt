@@ -111,3 +111,9 @@ val String.supplementaryCodePointPositions: List<Int>
 
         return positions
     }
+
+val String.removeOAuthSuffix: String
+    get() = when {
+        startsWith("oauth:", true) -> substringAfter(':')
+        else -> this
+    }
