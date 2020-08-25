@@ -178,10 +178,10 @@ class DankChatViewModel @ViewModelInject constructor(
                     launch(coroutineExceptionHandler) { dataRepository.loadChannelData(it, token) }
                 }).joinAll()
 
-                channelList.forEach {
+                channelList.map {
                     dataRepository.setEmotesForSuggestions(it)
                     launch(coroutineExceptionHandler) { chatRepository.loadRecentMessages(it, loadHistory) }
-                }
+                }.joinAll()
                 _dataLoadingEvent.postValue(DataLoadingState.Finished)
             }
         }
