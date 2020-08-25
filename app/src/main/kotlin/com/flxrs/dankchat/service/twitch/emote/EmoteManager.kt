@@ -86,7 +86,7 @@ object EmoteManager {
 
                 val start = pair[0].toIntOrNull() ?: return@mapNotNull null
                 val end = pair[1].toIntOrNull() ?: return@mapNotNull null
-                start to end + 1
+                start.coerceAtLeast(0) to (end + 1).coerceAtMost(original.length)
             }
             val fixedParsedPositions = parsedPositions.map { (start, end) ->
                 val extra = supplementaryCodePointPositions.count { it < start }
