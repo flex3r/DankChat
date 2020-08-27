@@ -1,7 +1,6 @@
 package com.flxrs.dankchat.service.twitch.message
 
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
-import java.util.regex.Pattern
 
 sealed class Mention {
     abstract val matchUser: Boolean
