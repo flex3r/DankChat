@@ -139,5 +139,6 @@
     <item quantity="other">Live mit %d Zuschauern</item>
 </plurals>
     <string name="more">Mehr</string>
+    <string name="preference_scrollback_length_title">Länge des Chatverlaufs</string>
 
 </resources>

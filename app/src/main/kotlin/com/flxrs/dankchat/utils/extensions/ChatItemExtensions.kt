@@ -22,18 +22,19 @@ fun List<ChatItem>.replaceWithTimeOut(id: String): List<ChatItem> = apply {
     }
 }
 
-fun List<ChatItem>.addAndLimit(item: ChatItem): MutableList<ChatItem> = toMutableList().apply {
+fun List<ChatItem>.addAndLimit(item: ChatItem, scrollBackLength: Int): MutableList<ChatItem> = toMutableList().apply {
     add(item)
-    if (size > 500) removeAt(0)
+    if (size > scrollBackLength) removeAt(0)
 }
 
 fun List<ChatItem>.addAndLimit(
     collection: Collection<ChatItem>,
+    scrollBackLength: Int,
     checkForDuplications: Boolean = false
-): MutableList<ChatItem> = toMutableList().apply {
+): MutableList<ChatItem> = take(scrollBackLength).toMutableList().apply {
     for (item in collection) {
         if (!checkForDuplications || !this.any { it.message.id == item.message.id })
             add(item)
-        if (size > 500) removeAt(0)
+        if (size > scrollBackLength) removeAt(0)
     }
 }

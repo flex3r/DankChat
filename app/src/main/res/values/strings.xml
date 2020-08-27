@@ -163,6 +163,8 @@
     <string name="preference_checkered_lines_summary">Separate each line with different background brightness</string>
     <string name="preference_supibot_suggestions_key" translatable="false">supibot_suggestions_key</string>
     <string name="preference_supibot_suggestions_title">Supibot command suggestions</string>
+    <string name="preference_scrollback_length_key" translatable="false">scrollback_length_key</string>
+    <string name="preference_scrollback_length_title">Message scrollback length</string>
 
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>

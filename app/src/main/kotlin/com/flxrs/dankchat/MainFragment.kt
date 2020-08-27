@@ -44,6 +44,7 @@ import com.flxrs.dankchat.chat.suggestion.EmoteSuggestionsArrayAdapter
 import com.flxrs.dankchat.chat.suggestion.SpaceTokenizer
 import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.databinding.MainFragmentBinding
+import com.flxrs.dankchat.preferences.ChatSettingsFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.state.DataLoadingState
 import com.flxrs.dankchat.service.state.ImageUploadState
@@ -245,7 +246,17 @@ class MainFragment : Fragment() {
                     val id = twitchPreferences.userIdString ?: ""
                     val shouldLoadHistory = preferences.getBoolean(getString(R.string.preference_load_message_history_key), true)
                     val shouldLoadSupibot = preferences.getBoolean(getString(R.string.preference_supibot_suggestions_key), false)
-                    viewModel.loadData(oAuth = oAuth, id = id, name = name, loadTwitchData = true, loadHistory = shouldLoadHistory, loadSupibot = shouldLoadSupibot)
+                    val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
+
+                    viewModel.loadData(
+                        oAuth = oAuth,
+                        id = id,
+                        name = name,
+                        loadTwitchData = true,
+                        loadHistory = shouldLoadHistory,
+                        loadSupibot = shouldLoadSupibot,
+                        scrollBackLength = scrollBackLength
+                    )
 
                     if (name.isNotBlank() && oAuth.isNotBlank()) {
                         showSnackbar(getString(R.string.snackbar_login, name))
@@ -335,6 +346,7 @@ class MainFragment : Fragment() {
         twitchPreferences.hasMessageHistoryAcknowledged = true
         preferences.edit { putBoolean(getString(R.string.preference_load_message_history_key), result) }
         val shouldLoadSupibot = preferences.getBoolean(getString(R.string.preference_supibot_suggestions_key), false)
+        val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
 
         if (viewModel.connectionState.value == SystemMessageType.NOT_LOGGED_IN) {
             showApiChangeInformationIfNotAcknowledged()
@@ -343,7 +355,7 @@ class MainFragment : Fragment() {
         val oAuth = twitchPreferences.oAuthKey ?: ""
         val name = twitchPreferences.userName ?: ""
         val id = twitchPreferences.userIdString ?: ""
-        viewModel.loadData(oAuth = oAuth, id = id, name = name, loadTwitchData = true, loadHistory = result, loadSupibot = shouldLoadSupibot)
+        viewModel.loadData(oAuth = oAuth, id = id, name = name, loadTwitchData = true, loadHistory = result, loadSupibot = shouldLoadSupibot, scrollBackLength = scrollBackLength)
 
         if (name.isNotBlank() && oAuth.isNotBlank()) {
             showSnackbar(getString(R.string.snackbar_login, name))
@@ -358,10 +370,11 @@ class MainFragment : Fragment() {
             val id = twitchPreferences.userIdString ?: ""
             val name = twitchPreferences.userName ?: ""
             val shouldLoadHistory = preferences.getBoolean(getString(R.string.preference_load_message_history_key), true)
+            val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
 
             val updatedChannels = viewModel.joinChannel(lowerCaseChannel)
             if (updatedChannels != null) {
-                viewModel.loadData(oauth, id, name = name, channelList = listOf(channel), loadTwitchData = false, loadHistory = shouldLoadHistory, loadSupibot = false)
+                viewModel.loadData(oauth, id, name = name, channelList = listOf(channel), loadTwitchData = false, loadHistory = shouldLoadHistory, loadSupibot = false, scrollBackLength)
                 twitchPreferences.channelsString = updatedChannels.joinToString(",")
 
                 tabAdapter.addFragment(lowerCaseChannel)
@@ -389,7 +402,7 @@ class MainFragment : Fragment() {
 
     private fun insertEmote(emote: String) {
         val current = binding.input.text.toString()
-        val  emoteWithSep = "$emote "
+        val emoteWithSep = "$emote "
         val index = binding.input.selectionStart.takeIf { it >= 0 } ?: current.length
         val builder = StringBuilder(current).insert(index, emoteWithSep)
 
@@ -620,6 +633,7 @@ class MainFragment : Fragment() {
         val suggestionsKey = getString(R.string.preference_suggestions_key)
         val timestampFormatKey = getString(R.string.preference_timestamp_format_key)
         val loadSupibotKey = getString(R.string.preference_supibot_suggestions_key)
+        val scrollBackLengthKey = getString(R.string.preference_scrollback_length_key)
         twitchPreferences = DankChatPreferenceStore(context)
         preferences = PreferenceManager.getDefaultSharedPreferences(context)
         if (::preferenceListener.isInitialized) preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
@@ -634,6 +648,7 @@ class MainFragment : Fragment() {
                 customMentionsKey -> viewModel.setMentionEntries(p.getStringSet(key, emptySet()))
                 blacklistKey -> viewModel.setBlacklistEntries(p.getStringSet(key, emptySet()))
                 loadSupibotKey -> viewModel.setSupibotSuggestions(p.getBoolean(key, false))
+                scrollBackLengthKey -> viewModel.setScrollbackLength(ChatSettingsFragment.correctScrollbackLength(p.getInt(scrollBackLengthKey, 10)))
                 keepScreenOnKey -> keepScreenOn(p.getBoolean(key, true))
                 suggestionsKey -> binding.input.setSuggestionAdapter(p.getBoolean(key, true), suggestionAdapter)
             }

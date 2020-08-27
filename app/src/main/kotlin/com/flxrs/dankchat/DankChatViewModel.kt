@@ -155,7 +155,18 @@ class DankChatViewModel @ViewModelInject constructor(
         loadSupibot = dataLoadingParameters.loadSupibot
     )
 
-    fun loadData(oAuth: String, id: String, name: String, channelList: List<String> = channels.value ?: emptyList(), loadTwitchData: Boolean, loadHistory: Boolean, loadSupibot: Boolean) {
+    fun loadData(
+        oAuth: String,
+        id: String,
+        name: String,
+        channelList: List<String> = channels.value ?: emptyList(),
+        loadTwitchData: Boolean,
+        loadHistory: Boolean,
+        loadSupibot: Boolean,
+        scrollBackLength: Int? = null
+    ) {
+        scrollBackLength?.let { chatRepository.scrollbackLength = it }
+
         viewModelScope.launch {
             _dataLoadingEvent.postValue(
                 DataLoadingState.Loading(DataLoadingState.Parameters(oAuth, id, name, channelList, loadTwitchData = loadTwitchData, loadHistory = loadHistory, loadSupibot = loadSupibot))
@@ -192,6 +203,10 @@ class DankChatViewModel @ViewModelInject constructor(
 
     fun setRoomStateEnabled(enabled: Boolean) {
         roomStateEnabled.value = enabled
+    }
+
+    fun setScrollbackLength(scrollBackLength: Int) {
+        chatRepository.scrollbackLength = scrollBackLength
     }
 
     fun clear(channel: String) = chatRepository.clear(channel)

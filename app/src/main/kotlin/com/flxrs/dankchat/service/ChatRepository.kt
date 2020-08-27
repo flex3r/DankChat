@@ -63,6 +63,15 @@ class ChatRepository {
         get() = _mentionCounts.asFlow()
     var startedConnection = false
     var lastMessage = mutableMapOf<String, String>()
+    var scrollbackLength = 500
+        set(value) {
+            messages.forEach { (_, messagesFlow) ->
+                if (messagesFlow.value.size > scrollbackLength) {
+                    messagesFlow.value = messagesFlow.value.take(value)
+                }
+            }
+            field = value
+        }
 
     fun getChat(channel: String): StateFlow<List<ChatItem>> = messages.getOrPut(channel) { MutableStateFlow(emptyList()) }
     fun getConnectionState(channel: String): StateFlow<SystemMessageType> = connectionState.getOrPut(channel) { MutableStateFlow(SystemMessageType.DISCONNECTED) }
@@ -225,7 +234,7 @@ class ChatRepository {
         val channel = msg.params[0].substring(1)
 
         messages[channel]?.value?.replaceWithTimeOuts(target)?.also {
-            messages[channel]?.value = it.addAndLimit(parsed[0])
+            messages[channel]?.value = it.addAndLimit(parsed[0], scrollbackLength)
         }
     }
 
@@ -274,12 +283,12 @@ class ChatRepository {
             if (msg.params[0] == "*" || msg.command == "WHISPER") {
                 messages.keys.forEach {
                     val currentChat = messages[it]?.value ?: emptyList()
-                    messages[it]?.value = currentChat.addAndLimit(parsed)
+                    messages[it]?.value = currentChat.addAndLimit(parsed, scrollbackLength)
                 }
             } else {
                 val channel = msg.params[0].substring(1)
                 val currentChat = messages[channel]?.value ?: emptyList()
-                messages[channel]?.value = currentChat.addAndLimit(parsed)
+                messages[channel]?.value = currentChat.addAndLimit(parsed, scrollbackLength)
                 _notificationMessageChannel.offer(parsed)
             }
         }
@@ -308,7 +317,7 @@ class ChatRepository {
     private fun makeAndPostConnectionMessage(state: SystemMessageType, channels: Set<String> = messages.keys) {
         channels.forEach {
             val currentChat = messages[it]?.value ?: emptyList()
-            messages[it]?.value = currentChat.addAndLimit(ChatItem(Message.SystemMessage(state = state)))
+            messages[it]?.value = currentChat.addAndLimit(ChatItem(Message.SystemMessage(state = state)), scrollbackLength)
         }
     }
 
@@ -330,7 +339,7 @@ class ChatRepository {
         }.let { Log.i(TAG, "Parsing message history for #$channel took $it ms") }
 
         val current = messages[channel]?.value ?: emptyList()
-        messages[channel]?.value = items.addAndLimit(current, true)
+        messages[channel]?.value = items.addAndLimit(current, scrollbackLength, checkForDuplications = true)
     }
 
     companion object {
