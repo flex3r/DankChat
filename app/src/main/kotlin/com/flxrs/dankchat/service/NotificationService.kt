@@ -197,8 +197,8 @@ class NotificationService : Service(), CoroutineScope {
 
     private fun Message.TwitchMessage.playTTSMessage() {
         val messageFormat = when {
-            combinedTTSFormat -> "$name said $message"
-            else -> message
+            isSystem || !combinedTTSFormat -> message
+            else -> "$name said $message"
         }
         val queueMode = when {
             ttsMessageQueue -> TextToSpeech.QUEUE_ADD
