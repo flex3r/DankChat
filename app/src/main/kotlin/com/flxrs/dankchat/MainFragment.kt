@@ -376,21 +376,25 @@ class MainFragment : Fragment() {
 
     fun mentionUser(user: String) {
         if (binding.input.isEnabled) {
-            val current = binding.input.text.trimEnd().toString()
+            val current = binding.input.text.toString()
             val template = preferences.getString(getString(R.string.preference_mention_format_key), "name") ?: "name"
-            val mention = template.replace("name", user)
-            val inputWithMention = if (current.isBlank()) "$mention " else "$current $mention "
+            val mention = "${template.replace("name", user)} "
+            val index = binding.input.selectionStart.takeIf { it >= 0 } ?: current.length
+            val builder = StringBuilder(current).insert(index, mention)
 
-            binding.input.setText(inputWithMention)
-            binding.input.setSelection(inputWithMention.length)
+            binding.input.setText(builder.toString())
+            binding.input.setSelection(index + mention.length)
         }
     }
 
     private fun insertEmote(emote: String) {
         val current = binding.input.text.toString()
-        val currentWithEmote = "$current$emote "
-        binding.input.setText(currentWithEmote)
-        binding.input.setSelection(currentWithEmote.length)
+        val  emoteWithSep = "$emote "
+        val index = binding.input.selectionStart.takeIf { it >= 0 } ?: current.length
+        val builder = StringBuilder(current).insert(index, emoteWithSep)
+
+        binding.input.setText(builder.toString())
+        binding.input.setSelection(index + emoteWithSep.length)
     }
 
     private fun fetchStreamInformation() {
