@@ -31,7 +31,7 @@ fun List<ChatItem>.addAndLimit(
     collection: Collection<ChatItem>,
     scrollBackLength: Int,
     checkForDuplications: Boolean = false
-): MutableList<ChatItem> = take(scrollBackLength).toMutableList().apply {
+): MutableList<ChatItem> = takeLast(scrollBackLength).toMutableList().apply {
     for (item in collection) {
         if (!checkForDuplications || !this.any { it.message.id == item.message.id })
             add(item)
