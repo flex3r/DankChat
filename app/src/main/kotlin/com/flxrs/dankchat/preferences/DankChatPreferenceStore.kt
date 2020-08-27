@@ -3,18 +3,35 @@ package com.flxrs.dankchat.preferences
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import com.flxrs.dankchat.R
 
 class DankChatPreferenceStore(context: Context) {
     private val dankChatPreferences: SharedPreferences = context.getSharedPreferences(context.getString(R.string.shared_preference_key), Context.MODE_PRIVATE)
+    private val secureDankChatPreferences = EncryptedSharedPreferences.create(
+        context,
+        context.getString(R.string.secure_shared_preference_key),
+        MasterKey.Builder(context).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build(),
+        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+    )
 
     var isLoggedIn: Boolean
         get() = dankChatPreferences.getBoolean(LOGGED_IN_KEY, false)
         set(value) = dankChatPreferences.edit { putBoolean(LOGGED_IN_KEY, value) }
 
     var oAuthKey: String?
-        get() = dankChatPreferences.getString(OAUTH_KEY, null)
-        set(value) = dankChatPreferences.edit { putString(OAUTH_KEY, value) }
+        get() {
+            if (dankChatPreferences.contains(OAUTH_KEY)) {
+                val oAuth = dankChatPreferences.getString(OAUTH_KEY, null)
+                secureDankChatPreferences.edit { putString(OAUTH_KEY, oAuth) }
+                dankChatPreferences.edit { remove(OAUTH_KEY) }
+                return oAuth
+            }
+            return secureDankChatPreferences.getString(OAUTH_KEY, null)
+        }
+        set(value) = secureDankChatPreferences.edit { putString(OAUTH_KEY, value) }
 
     var channelsString: String?
         get() = dankChatPreferences.getString(CHANNELS_AS_STRING_KEY, null)

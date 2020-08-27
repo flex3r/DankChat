@@ -75,6 +75,7 @@
     <string name="more">More</string>
 
     <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
+    <string name="secure_shared_preference_key" translatable="false">com.flxrs.dankchat_secure_preferences</string>
     <string name="preference_timestamp_title">Show timestamps</string>
     <string name="preference_timestamp_key" translatable="false">show_timestamp</string>
     <string name="preference_mention_format_title">Mention format</string>
