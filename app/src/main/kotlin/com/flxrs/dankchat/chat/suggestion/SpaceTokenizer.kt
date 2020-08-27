@@ -30,19 +30,14 @@ class SpaceTokenizer : MultiAutoCompleteTextView.Tokenizer {
 
     override fun terminateToken(text: CharSequence): CharSequence {
         var i = text.length
-
         while (i > 0 && text[i - 1] == separator) i--
 
-        return if (i > 0 && text[i - 1] == separator) {
-            text
-        } else {
-            if (text is Spanned) {
-                val sp = SpannableString(text.toString() + separator.toString())
-                TextUtils.copySpansFrom(text, 0, text.length, Any::class.java, sp, 0)
-                sp
-            } else {
-                text.toString() + separator
+        return when {
+            i > 0 && text[i - 1] == separator -> text
+            text is Spanned -> SpannableString(text.toString() + separator.toString()).apply {
+                TextUtils.copySpansFrom(text, 0, text.length, Any::class.java, this, 0)
             }
+            else  -> text.toString() + separator
         }
     }
 }
