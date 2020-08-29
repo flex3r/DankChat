@@ -130,9 +130,7 @@
     <string name="preference_tts_header">Синтезатор речи</string>
     <string name="preference_checkered_lines_title">Шахматные линии</string>
     <string name="preference_checkered_lines_summary">Разделяет каждую линию, используя цвета фона с разной яркостью</string>
-    <string name="preference_supibot_suggestions_key" translatable="false">supibot_suggestions_key</string>
     <string name="preference_supibot_suggestions_title">Подсказки команд бота Supibot</string>
-    <string name="preference_scrollback_length_key" translatable="false">scrollback_length_key</string>
     <string name="preference_scrollback_length_title">Длина прокрутки сообщений</string>
 
     <plurals name="viewers">
