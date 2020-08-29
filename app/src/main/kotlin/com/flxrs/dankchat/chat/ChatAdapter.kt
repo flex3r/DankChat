@@ -7,6 +7,7 @@ import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.text.Spannable
+import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
@@ -54,7 +55,12 @@ class ChatAdapter(
     private val onUserClicked: (user: String) -> Unit,
     private val onMessageLongClick: (message: String) -> Unit
 ) : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
-    inner class ViewHolder(val binding: ChatItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    // Using position.isEven for determining which background to use in checkered mode doesn't work,
+    // since the LayoutManager uses stackFromEnd and every new message will be even. Instead, keep count of new messages separately.
+    private var messageCount = 0
+        get() = field++
+
+    class ViewHolder(val binding: ChatItemBinding) : RecyclerView.ViewHolder(binding.root) {
         val scope = CoroutineScope(Dispatchers.Main.immediate)
     }
 
@@ -74,18 +80,19 @@ class ChatAdapter(
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        with(holder.binding.itemText) {
-            when (val message = getItem(position).message) {
-                is Message.SystemMessage -> handleSystemMessage(message, position)
-                is Message.TwitchMessage -> handleTwitchMessage(message, holder, position)
-            }
-        }
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) = when (val message = getItem(position).message) {
+        is Message.SystemMessage -> holder.binding.itemText.handleSystemMessage(message, holder)
+        is Message.TwitchMessage -> holder.binding.itemText.handleTwitchMessage(message, holder)
     }
 
-    private fun TextView.handleSystemMessage(message: Message.SystemMessage, position: Int) {
+    private val ViewHolder.isAlternateBackground
+        get() = when (bindingAdapterPosition) {
+            itemCount - 1 -> messageCount.isEven
+            else -> (bindingAdapterPosition - itemCount - 1).isEven
+        }
+
+    private fun TextView.handleSystemMessage(message: Message.SystemMessage, holder: ViewHolder) {
         alpha = 1.0f
-        setBackgroundResource(android.R.color.transparent)
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
@@ -95,8 +102,10 @@ class ChatAdapter(
         val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
         val isCheckeredMode = preferences.getBoolean(checkeredKey, false)
 
-        val background = if (isCheckeredMode && position.isEven()) R.color.color_transparency_20
-            else android.R.color.transparent
+        val background = when {
+            isCheckeredMode && holder.isAlternateBackground -> R.color.color_transparency_20
+            else -> android.R.color.transparent
+        }
         setBackgroundResource(background)
 
         val connectionText = when (message.state) {
@@ -115,9 +124,8 @@ class ChatAdapter(
 
     @Suppress("BlockingMethodInNonBlockingContext")
     @SuppressLint("ClickableViewAccessibility")
-    private fun TextView.handleTwitchMessage(twitchMessage: Message.TwitchMessage, holder: ViewHolder, position: Int) = with(twitchMessage) {
+    private fun TextView.handleTwitchMessage(twitchMessage: Message.TwitchMessage, holder: ViewHolder): Unit = with(twitchMessage) {
         isClickable = false
-        text = ""
         alpha = 1.0f
         movementMethod = LinkMovementMethod.getInstance()
 
@@ -182,7 +190,7 @@ class ChatAdapter(
                 isNotify -> if (isDarkMode) R.color.color_highlight_dark else R.color.color_highlight_light
                 isReward -> if (isDarkMode) R.color.color_reward_dark else R.color.color_reward_light
                 isMention -> if (isDarkMode) R.color.color_mention_dark else R.color.color_mention_light
-                isCheckeredMode && position.isEven() -> R.color.color_transparency_20
+                isCheckeredMode && holder.isAlternateBackground -> R.color.color_transparency_20
                 else -> android.R.color.transparent
             }
             setBackgroundResource(background)
@@ -270,7 +278,7 @@ class ChatAdapter(
                 spannableWithEmojis.setSpan(clickableSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
 
-            text = spannableWithEmojis
+            setText(spannableWithEmojis, TextView.BufferType.SPANNABLE)
             badges.forEachIndexed { idx, badge ->
                 val (start, end) = badgePositions[idx]
 
@@ -283,7 +291,7 @@ class ChatAdapter(
                     val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
                     setBounds(0, 0, width, lineHeight)
                     val imageSpan = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
-                    spannable.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    (text as SpannableString).setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 }
                 //}
             }
@@ -303,23 +311,18 @@ class ChatAdapter(
                     else -> Coil.get(e.url)
                 }
                 drawable.transformEmoteDrawable(scaleFactor, e)
-                setEmoteSpans(e, fullPrefix, drawable, spannableWithEmojis)
+                (text as SpannableString).setEmoteSpans(e, fullPrefix, drawable)
             }
-
-            text = spannableWithEmojis
         }
     }
 
-    private fun setEmoteSpans(e: ChatMessageEmote, prefix: Int, drawable: Drawable, spannableStringBuilder: SpannableStringBuilder) {
+    private fun SpannableString.setEmoteSpans(e: ChatMessageEmote, prefix: Int, drawable: Drawable) {
         e.positions.forEach { pos ->
             val (start, end) = pos.split('-').map { it.toInt() + prefix }
             try {
-                spannableStringBuilder.setSpan(ImageSpan(drawable), start, end, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+                setSpan(ImageSpan(drawable), start, end, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
             } catch (t: Throwable) {
-                Log.e(
-                    "ViewBinding",
-                    "$start $end ${e.code} ${spannableStringBuilder.length}"
-                )
+                Log.e("ViewBinding", "$start $end ${e.code} $length")
             }
         }
     }

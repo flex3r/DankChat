@@ -5,12 +5,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import coil.api.clear
 import coil.api.load
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.utils.extensions.dp
+import com.flxrs.dankchat.utils.extensions.getDrawableAndSetSurfaceTint
 import pl.droidsonroids.gif.GifImageView
 
 class EmoteSuggestionsArrayAdapter(context: Context, private val onCount: (count: Int) -> Unit) : ArrayAdapter<Suggestion>(context, R.layout.emote_suggestion_item, R.id.suggestion_text) {
@@ -32,12 +30,8 @@ class EmoteSuggestionsArrayAdapter(context: Context, private val onCount: (count
                         error(R.drawable.ic_missing_emote)
                     }
                 }
-                is Suggestion.UserSuggestion -> {
-                    val drawable = context.getDrawable(R.drawable.ic_notification_icon)?.apply {
-                        DrawableCompat.setTint(this, ContextCompat.getColor(context, R.color.color_on_surface))
-                    }
-                    imageView.setImageDrawable(drawable)
-                }
+                is Suggestion.UserSuggestion -> imageView.setImageDrawable(context.getDrawableAndSetSurfaceTint(R.drawable.ic_notification_icon))
+                is Suggestion.CommandSuggestion -> imageView.setImageDrawable(context.getDrawableAndSetSurfaceTint(R.drawable.ic_baseline_android_24))
             }
         }
 

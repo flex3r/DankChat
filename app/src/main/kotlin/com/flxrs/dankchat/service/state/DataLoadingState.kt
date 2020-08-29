@@ -9,11 +9,12 @@ sealed class DataLoadingState {
 
     data class Parameters(
         val oAuth: String = "",
-        val id: Int = 0,
+        val id: String = "",
         val name: String = "",
         val channels: List<String> = emptyList(),
         val isReloadEmotes: Boolean = false,
         val loadTwitchData: Boolean = false,
-        val loadHistory: Boolean = false
+        val loadHistory: Boolean = false,
+        val loadSupibot: Boolean = false
     )
 }

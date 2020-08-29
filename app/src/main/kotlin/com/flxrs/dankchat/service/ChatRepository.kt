@@ -17,22 +17,27 @@ import com.flxrs.dankchat.utils.extensions.mapToMention
 import com.flxrs.dankchat.utils.extensions.replaceWithTimeOut
 import com.flxrs.dankchat.utils.extensions.replaceWithTimeOuts
 import com.squareup.moshi.Moshi
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.koin.core.KoinComponent
-import org.koin.core.get
-import org.koin.core.parameter.parametersOf
 import java.nio.ByteBuffer
+import kotlin.collections.set
 import kotlin.system.measureTimeMillis
 
-class ChatRepository : KoinComponent {
+class ChatRepository {
 
     private val _notificationMessageChannel = Channel<List<ChatItem>>(10) // TODO replace with SharedFlow when available
+    private val _mentionCounts = ConflatedBroadcastChannel<MutableMap<String, Int>>(mutableMapOf())
     private val messages = mutableMapOf<String, MutableStateFlow<List<ChatItem>>>()
     private val connectionState = mutableMapOf<String, MutableStateFlow<SystemMessageType>>()
     private val roomStates = mutableMapOf<String, MutableStateFlow<Roomstate>>()
@@ -44,46 +49,63 @@ class ChatRepository : KoinComponent {
 
     private val client = OkHttpClient.Builder().retryOnConnectionFailure(true).build()
     private val request = Request.Builder().url("wss://irc-ws.chat.twitch.tv").build()
-    private val readConnection: WebSocketConnection = get { parametersOf("reader", client, request, ::handleDisconnect, ::onReaderMessage) }
-    private val writeConnection: WebSocketConnection = get { parametersOf("writer", client, request, null, ::onWriterMessage) }
+    private val readConnection = WebSocketConnection("reader", CoroutineScope(Dispatchers.IO + Job()), client, request, ::handleDisconnect, ::onReaderMessage)
+    private val writeConnection = WebSocketConnection("writer", CoroutineScope(Dispatchers.IO + Job()), client, request, null, ::onWriterMessage)
 
-    private var name: String = ""
     private var hasDisconnected = true
     private var customMentionEntries = listOf<Mention>()
     private var blacklistEntries = listOf<Mention>()
+    private var name: String = ""
 
     val notificationMessageChannel: ReceiveChannel<List<ChatItem>>
         get() = _notificationMessageChannel
+    val mentionCounts: Flow<Map<String, Int>>
+        get() = _mentionCounts.asFlow()
     var startedConnection = false
     var lastMessage = mutableMapOf<String, String>()
+    var scrollbackLength = 500
+        set(value) {
+            messages.forEach { (_, messagesFlow) ->
+                if (messagesFlow.value.size > scrollbackLength) {
+                    messagesFlow.value = messagesFlow.value.take(value)
+                }
+            }
+            field = value
+        }
 
     fun getChat(channel: String): StateFlow<List<ChatItem>> = messages.getOrPut(channel) { MutableStateFlow(emptyList()) }
     fun getConnectionState(channel: String): StateFlow<SystemMessageType> = connectionState.getOrPut(channel) { MutableStateFlow(SystemMessageType.DISCONNECTED) }
     fun getRoomState(channel: String): StateFlow<Roomstate> = roomStates.getOrPut(channel) { MutableStateFlow(Roomstate(channel)) }
     fun getUsers(channel: String): StateFlow<LruCache<String, Boolean>> = users.getOrPut(channel) { MutableStateFlow(createUserCache()) }
 
-    suspend fun loadData(channels: List<String>, oAuth: String, id: Int, loadHistory: Boolean, name: String) = withContext(Dispatchers.IO) {
-        this@ChatRepository.name = name
-        if (oAuth.isNotBlank()) {
-            loadIgnores(oAuth, id)
+    suspend fun loadRecentMessages(channel: String, loadHistory: Boolean) {
+        if (loadHistory) {
+            loadRecentMessages(channel)
+        } else {
+            val currentChat = messages[channel]?.value ?: emptyList()
+            messages[channel]?.value = listOf(ChatItem(Message.SystemMessage(state = SystemMessageType.NO_HISTORY_LOADED), false)) + currentChat
         }
-        channels.map { channel ->
-            async {
-                if (loadHistory) {
-                    loadRecentMessages(channel)
-                } else {
-                    val currentChat = messages[channel]?.value ?: emptyList()
-                    messages[channel]?.value = listOf(ChatItem(Message.SystemMessage(state = SystemMessageType.NO_HISTORY_LOADED), false)).plus(currentChat)
-                }
+    }
+
+    suspend fun loadIgnores(oAuth: String, id: String) {
+        if (oAuth.isNotBlank()) {
+            TwitchApi.getIgnores(oAuth, id)?.let { result ->
+                ignoredList.clear()
+                ignoredList.addAll(result.blocks.map { it.user.id })
             }
-        }.awaitAll()
+        }
     }
 
     fun removeChannelData(channel: String) {
         messages[channel]?.value = emptyList()
         messages.remove(channel)
         lastMessage.remove(channel)
+        _mentionCounts.value.remove(channel)
         TwitchApi.clearChannelFromLoaded(channel)
+    }
+
+    fun clearMentionCount(channel: String) = with(_mentionCounts) {
+        offer(value.apply { set(channel, 0) })
     }
 
     @Synchronized
@@ -118,6 +140,7 @@ class ChatRepository : KoinComponent {
 
     fun connect(nick: String, oauth: String, forceConnect: Boolean = false) {
         if (!startedConnection) {
+            name = nick
             readConnection.connect(nick, oauth, forceConnect)
             writeConnection.connect(nick, oauth, forceConnect)
             startedConnection = true
@@ -194,14 +217,6 @@ class ChatRepository : KoinComponent {
         blacklistEntries = stringSet.mapToMention(adapter)
     }
 
-    private suspend fun loadIgnores(oAuth: String, id: Int) = withContext(Dispatchers.Default) {
-        val result = TwitchApi.getIgnores(oAuth, id)
-        if (result != null) {
-            ignoredList.clear()
-            ignoredList.addAll(result.blocks.map { it.user.id })
-        }
-    }
-
     private fun handleConnected(channel: String, isAnonymous: Boolean) {
         hasDisconnected = false
 
@@ -219,7 +234,7 @@ class ChatRepository : KoinComponent {
         val channel = msg.params[0].substring(1)
 
         messages[channel]?.value?.replaceWithTimeOuts(target)?.also {
-            messages[channel]?.value = it.addAndLimit(parsed[0])
+            messages[channel]?.value = it.addAndLimit(parsed[0], scrollbackLength)
         }
     }
 
@@ -253,18 +268,27 @@ class ChatRepository : KoinComponent {
             currentUsers.put(it.name, true)
             users[it.channel]?.value = currentUsers
 
+            if (it.isMention) {
+                with(_mentionCounts) {
+                    offer(value.apply {
+                        val count = get(it.channel) ?: 0
+                        set(it.channel, count + 1)
+                    })
+                }
+            }
+
             ChatItem(it)
         }
         if (parsed.isNotEmpty()) {
             if (msg.params[0] == "*" || msg.command == "WHISPER") {
                 messages.keys.forEach {
                     val currentChat = messages[it]?.value ?: emptyList()
-                    messages[it]?.value = currentChat.addAndLimit(parsed)
+                    messages[it]?.value = currentChat.addAndLimit(parsed, scrollbackLength)
                 }
             } else {
                 val channel = msg.params[0].substring(1)
                 val currentChat = messages[channel]?.value ?: emptyList()
-                messages[channel]?.value = currentChat.addAndLimit(parsed)
+                messages[channel]?.value = currentChat.addAndLimit(parsed, scrollbackLength)
                 _notificationMessageChannel.offer(parsed)
             }
         }
@@ -293,7 +317,7 @@ class ChatRepository : KoinComponent {
     private fun makeAndPostConnectionMessage(state: SystemMessageType, channels: Set<String> = messages.keys) {
         channels.forEach {
             val currentChat = messages[it]?.value ?: emptyList()
-            messages[it]?.value = currentChat.addAndLimit(ChatItem(Message.SystemMessage(state = state)))
+            messages[it]?.value = currentChat.addAndLimit(ChatItem(Message.SystemMessage(state = state)), scrollbackLength)
         }
     }
 
@@ -308,14 +332,14 @@ class ChatRepository : KoinComponent {
                 for (msg in Message.TwitchMessage.parse(parsedIrc)) {
                     if (!blacklistEntries.matches(msg.message, msg.name to msg.displayName, msg.emotes)) {
                         msg.checkForMention(name, customMentionEntries)
-                        items.add(ChatItem(msg))
+                        items += ChatItem(msg)
                     }
                 }
             }
         }.let { Log.i(TAG, "Parsing message history for #$channel took $it ms") }
 
         val current = messages[channel]?.value ?: emptyList()
-        messages[channel]?.value = items.addAndLimit(current, true)
+        messages[channel]?.value = items.addAndLimit(current, scrollbackLength, checkForDuplications = true)
     }
 
     companion object {

@@ -31,8 +31,8 @@ import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
@@ -44,6 +44,7 @@ import com.flxrs.dankchat.chat.suggestion.EmoteSuggestionsArrayAdapter
 import com.flxrs.dankchat.chat.suggestion.SpaceTokenizer
 import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.databinding.MainFragmentBinding
+import com.flxrs.dankchat.preferences.ChatSettingsFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.state.DataLoadingState
 import com.flxrs.dankchat.service.state.ImageUploadState
@@ -52,6 +53,7 @@ import com.flxrs.dankchat.utils.*
 import com.flxrs.dankchat.utils.dialog.EditTextDialogFragment
 import com.flxrs.dankchat.utils.dialog.MessageHistoryDisclaimerDialogFragment
 import com.flxrs.dankchat.utils.extensions.hideKeyboard
+import com.flxrs.dankchat.utils.extensions.isLandscape
 import com.flxrs.dankchat.utils.extensions.keepScreenOn
 import com.flxrs.dankchat.utils.extensions.navigateSafe
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -61,16 +63,17 @@ import com.google.android.material.snackbar.BaseTransientBottomBar.BaseCallback
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.textfield.TextInputLayout
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.IOException
 import java.util.*
 import kotlin.math.max
 import kotlin.math.roundToInt
 
+@AndroidEntryPoint
 class MainFragment : Fragment() {
 
-    private val viewModel: DankChatViewModel by sharedViewModel()
+    private val viewModel: DankChatViewModel by activityViewModels()
     private val navController: NavController by lazy { findNavController() }
     private lateinit var twitchPreferences: DankChatPreferenceStore
     private lateinit var preferenceListener: SharedPreferences.OnSharedPreferenceChangeListener
@@ -126,6 +129,7 @@ class MainFragment : Fragment() {
             tabLayoutMediator = TabLayoutMediator(tabs, viewPager) { tab, position ->
                 tab.text = tabAdapter.titleList[position]
             }.apply { attach() }
+            tabs.getTabAt(tabs.selectedTabPosition)?.removeBadge()
 
             showActionbarFab.setOnClickListener { viewModel.appbarEnabled.value = true }
         }
@@ -134,7 +138,7 @@ class MainFragment : Fragment() {
             imageUploadedEvent.observe(viewLifecycleOwner, ::handleImageUploadEvent)
             dataLoadingEvent.observe(viewLifecycleOwner, ::handleDataLoadingEvent)
             showUploadProgress.observe(viewLifecycleOwner) { activity?.invalidateOptionsMenu() }
-            emoteAndUserSuggestions.observe(viewLifecycleOwner, ::setSuggestions)
+            suggestions.observe(viewLifecycleOwner, ::setSuggestions)
             emoteItems.observe(viewLifecycleOwner, emoteMenuAdapter::submitList)
             appbarEnabled.observe(viewLifecycleOwner) { changeActionBarVisibility(it) }
             canType.observe(viewLifecycleOwner) { if (it) binding.inputLayout.setup() }
@@ -155,11 +159,25 @@ class MainFragment : Fragment() {
             }
             activeChannel.observe(viewLifecycleOwner) {
                 (activity as? MainActivity)?.clearNotificationsOfChannel(it)
+                val index = tabAdapter.titleList.indexOf(it)
+                binding.tabs.getTabAt(index)?.removeBadge()
+                viewModel.clearMentionCount(it)
             }
 
             errorEvent.observe(viewLifecycleOwner) {
                 if (preferences.getBoolean(getString(R.string.preference_debug_mode_key), false)) {
                     binding.root.showErrorDialog(it)
+                }
+            }
+            mentionCounts.observe(viewLifecycleOwner) {
+                it.forEach { (channel, count) ->
+                    val index = tabAdapter.titleList.indexOf(channel)
+                    if (binding.tabs.selectedTabPosition != index && count > 0) {
+                        binding.tabs.getTabAt(index)?.apply {
+                            orCreateBadge
+                            //currentBadge.number = count
+                        }
+                    }
                 }
             }
         }
@@ -184,6 +202,10 @@ class MainFragment : Fragment() {
         }
 
         initPreferences(view.context)
+        if (twitchPreferences.isLoggedIn && twitchPreferences.userIdString == null) {
+            twitchPreferences.userIdString = "${twitchPreferences.userId}"
+        }
+
         val channels = twitchPreferences.channelsString?.split(',') ?: twitchPreferences.channels?.also { twitchPreferences.channels = null }
         channels?.forEach { tabAdapter.addFragment(it) }
         val asList = channels?.toList() ?: emptyList()
@@ -221,9 +243,20 @@ class MainFragment : Fragment() {
                 } else {
                     val oAuth = twitchPreferences.oAuthKey ?: ""
                     val name = twitchPreferences.userName ?: ""
-                    val id = twitchPreferences.userId
+                    val id = twitchPreferences.userIdString ?: ""
                     val shouldLoadHistory = preferences.getBoolean(getString(R.string.preference_load_message_history_key), true)
-                    viewModel.loadData(oAuth = oAuth, id = id, name = name, loadTwitchData = true, loadHistory = shouldLoadHistory)
+                    val shouldLoadSupibot = preferences.getBoolean(getString(R.string.preference_supibot_suggestions_key), false)
+                    val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
+
+                    viewModel.loadData(
+                        oAuth = oAuth,
+                        id = id,
+                        name = name,
+                        loadTwitchData = true,
+                        loadHistory = shouldLoadHistory,
+                        loadSupibot = shouldLoadSupibot,
+                        scrollBackLength = scrollBackLength
+                    )
 
                     if (name.isNotBlank() && oAuth.isNotBlank()) {
                         showSnackbar(getString(R.string.snackbar_login, name))
@@ -312,6 +345,8 @@ class MainFragment : Fragment() {
     fun onMessageHistoryDisclaimerResult(result: Boolean) {
         twitchPreferences.hasMessageHistoryAcknowledged = true
         preferences.edit { putBoolean(getString(R.string.preference_load_message_history_key), result) }
+        val shouldLoadSupibot = preferences.getBoolean(getString(R.string.preference_supibot_suggestions_key), false)
+        val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
 
         if (viewModel.connectionState.value == SystemMessageType.NOT_LOGGED_IN) {
             showApiChangeInformationIfNotAcknowledged()
@@ -319,8 +354,8 @@ class MainFragment : Fragment() {
 
         val oAuth = twitchPreferences.oAuthKey ?: ""
         val name = twitchPreferences.userName ?: ""
-        val id = twitchPreferences.userId
-        viewModel.loadData(oAuth = oAuth, id = id, name = name, loadTwitchData = true, loadHistory = result)
+        val id = twitchPreferences.userIdString ?: ""
+        viewModel.loadData(oAuth = oAuth, id = id, name = name, loadTwitchData = true, loadHistory = result, loadSupibot = shouldLoadSupibot, scrollBackLength = scrollBackLength)
 
         if (name.isNotBlank() && oAuth.isNotBlank()) {
             showSnackbar(getString(R.string.snackbar_login, name))
@@ -332,13 +367,14 @@ class MainFragment : Fragment() {
         val channels = viewModel.channels.value ?: emptyList()
         if (!channels.contains(lowerCaseChannel)) {
             val oauth = twitchPreferences.oAuthKey ?: ""
-            val id = twitchPreferences.userId
+            val id = twitchPreferences.userIdString ?: ""
             val name = twitchPreferences.userName ?: ""
             val shouldLoadHistory = preferences.getBoolean(getString(R.string.preference_load_message_history_key), true)
+            val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
 
             val updatedChannels = viewModel.joinChannel(lowerCaseChannel)
             if (updatedChannels != null) {
-                viewModel.loadData(oauth, id, name = name, channelList = listOf(channel), loadTwitchData = false, loadHistory = shouldLoadHistory)
+                viewModel.loadData(oauth, id, name = name, channelList = listOf(channel), loadTwitchData = false, loadHistory = shouldLoadHistory, loadSupibot = false, scrollBackLength)
                 twitchPreferences.channelsString = updatedChannels.joinToString(",")
 
                 tabAdapter.addFragment(lowerCaseChannel)
@@ -353,21 +389,25 @@ class MainFragment : Fragment() {
 
     fun mentionUser(user: String) {
         if (binding.input.isEnabled) {
-            val current = binding.input.text.trimEnd().toString()
+            val current = binding.input.text.toString()
             val template = preferences.getString(getString(R.string.preference_mention_format_key), "name") ?: "name"
-            val mention = template.replace("name", user)
-            val inputWithMention = if (current.isBlank()) "$mention " else "$current $mention "
+            val mention = "${template.replace("name", user)} "
+            val index = binding.input.selectionStart.takeIf { it >= 0 } ?: current.length
+            val builder = StringBuilder(current).insert(index, mention)
 
-            binding.input.setText(inputWithMention)
-            binding.input.setSelection(inputWithMention.length)
+            binding.input.setText(builder.toString())
+            binding.input.setSelection(index + mention.length)
         }
     }
 
     private fun insertEmote(emote: String) {
         val current = binding.input.text.toString()
-        val currentWithEmote = "$current$emote "
-        binding.input.setText(currentWithEmote)
-        binding.input.setSelection(currentWithEmote.length)
+        val emoteWithSep = "$emote "
+        val index = binding.input.selectionStart.takeIf { it >= 0 } ?: current.length
+        val builder = StringBuilder(current).insert(index, emoteWithSep)
+
+        binding.input.setText(builder.toString())
+        binding.input.setSelection(index + emoteWithSep.length)
     }
 
     private fun fetchStreamInformation() {
@@ -433,10 +473,10 @@ class MainFragment : Fragment() {
     private fun handleLoginRequest(success: Boolean) {
         val oAuth = twitchPreferences.oAuthKey
         val name = twitchPreferences.userName
-        val id = twitchPreferences.userId
+        val id = twitchPreferences.userIdString
 
-        if (success && !oAuth.isNullOrBlank() && !name.isNullOrBlank() && id != 0) {
-            viewModel.close(name, oAuth, true, id)
+        if (success && !oAuth.isNullOrBlank() && !name.isNullOrBlank() && !id.isNullOrBlank()) {
+            viewModel.close(name, oAuth, id, true)
             twitchPreferences.isLoggedIn = true
             showSnackbar(getString(R.string.snackbar_login, name))
         } else {
@@ -578,7 +618,7 @@ class MainFragment : Fragment() {
         val position = channel?.let { tabAdapter.titleList.indexOf(it) } ?: binding.tabs.selectedTabPosition
         if (position in 0 until tabAdapter.titleList.size) {
             val oAuth = twitchPreferences.oAuthKey ?: return
-            val userId = twitchPreferences.userId
+            val userId = twitchPreferences.userIdString ?: return
             viewModel.reloadEmotes(tabAdapter.titleList[position], oAuth, userId)
         }
     }
@@ -592,7 +632,11 @@ class MainFragment : Fragment() {
         val keepScreenOnKey = getString(R.string.preference_keep_screen_on_key)
         val suggestionsKey = getString(R.string.preference_suggestions_key)
         val timestampFormatKey = getString(R.string.preference_timestamp_format_key)
+        val loadSupibotKey = getString(R.string.preference_supibot_suggestions_key)
+        val scrollBackLengthKey = getString(R.string.preference_scrollback_length_key)
         twitchPreferences = DankChatPreferenceStore(context)
+        preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        if (::preferenceListener.isInitialized) preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
             when (key) {
                 roomStateKey -> viewModel.setRoomStateEnabled(p.getBoolean(key, true))
@@ -603,11 +647,13 @@ class MainFragment : Fragment() {
                 inputKey -> viewModel.inputEnabled.value = p.getBoolean(key, true)
                 customMentionsKey -> viewModel.setMentionEntries(p.getStringSet(key, emptySet()))
                 blacklistKey -> viewModel.setBlacklistEntries(p.getStringSet(key, emptySet()))
+                loadSupibotKey -> viewModel.setSupibotSuggestions(p.getBoolean(key, false))
+                scrollBackLengthKey -> viewModel.setScrollbackLength(ChatSettingsFragment.correctScrollbackLength(p.getInt(scrollBackLengthKey, 10)))
                 keepScreenOnKey -> keepScreenOn(p.getBoolean(key, true))
                 suggestionsKey -> binding.input.setSuggestionAdapter(p.getBoolean(key, true), suggestionAdapter)
             }
         }
-        preferences = PreferenceManager.getDefaultSharedPreferences(context).apply {
+        preferences.apply {
             registerOnSharedPreferenceChangeListener(preferenceListener)
             keepScreenOn(getBoolean(keepScreenOnKey, true))
             TimeUtils.setPattern(getString(timestampFormatKey, "HH:mm") ?: "HH:mm")
@@ -646,10 +692,10 @@ class MainFragment : Fragment() {
         .setPositiveButton(getString(R.string.confirm_logout_positive_button)) { dialog, _ ->
             twitchPreferences.userName = ""
             twitchPreferences.oAuthKey = ""
-            twitchPreferences.userId = 0
+            twitchPreferences.userIdString = ""
             twitchPreferences.isLoggedIn = false
 
-            viewModel.close("", "")
+            viewModel.close(name = "", oAuth = "", userId = "")
             viewModel.clearIgnores()
             dialog.dismiss()
         }
@@ -721,11 +767,7 @@ class MainFragment : Fragment() {
                 return@setStartIconOnClickListener
             }
 
-            val isLandscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-            if (isLandscape) {
-                hideKeyboard()
-            }
-
+            if (isLandscape()) hideKeyboard()
             val heightScaleFactor = 0.5
             binding.apply {
                 bottomSheetViewPager.adapter = emoteMenuAdapter
@@ -750,7 +792,7 @@ class MainFragment : Fragment() {
                         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
 
                         override fun onStateChanged(bottomSheet: View, newState: Int) {
-                            if (viewModel.appbarEnabled.value == true && isLandscape) {
+                            if (viewModel.appbarEnabled.value == true && isLandscape()) {
                                 when (newState) {
                                     BottomSheetBehavior.STATE_EXPANDED, BottomSheetBehavior.STATE_COLLAPSED -> {
                                         (activity as? AppCompatActivity)?.supportActionBar?.hide()

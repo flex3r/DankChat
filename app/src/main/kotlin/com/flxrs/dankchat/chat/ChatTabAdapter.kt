@@ -27,7 +27,7 @@ class ChatTabAdapter(supportFragmentManager: FragmentManager, lifecycle: Lifecyc
     }
 
     fun addFragment(title: String) {
-        titleList.add(title)
+        titleList += title
         notifyDataSetChanged()
         //fragmentList.add(ChatFragment.newInstance(title))
         //notifyItemInserted(titleList.size - 1)

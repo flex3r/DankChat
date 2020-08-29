@@ -109,7 +109,7 @@
     <string name="preference_font_size_summary_large">Groß</string>
     <string name="preference_font_size_summary_very_large">Sehr Groß</string>
     <string name="preference_notifications_mentions_header">Benachrichtigungen und Mentions</string>
-    <string name="preference_suggestions_title">Emotes und Vorschläge</string>
+    <string name="preference_suggestions_title">Emotes und Nutzer Vorschläge</string>
     <string name="preference_suggestions_summary">Zeige Vorschläge für Emotes und aktive Nutzer beim Schreiben</string>
     <string name="preference_load_message_history_title">Lade historischen Chatverlauf beim Start</string>
     <string name="preference_message_history_header">Historischer Chatverlauf</string>
@@ -131,6 +131,7 @@
     <string name="preference_tts_header">TTS</string>
     <string name="preference_checkered_lines_title">Alternierende Farbe der Zeilen</string>
     <string name="preference_checkered_lines_summary">Teilt jede Zeile mit unterschiedlicher Helligkeit des Hintergrunds</string>
+    <string name="preference_supibot_suggestions_title">Supibot Befehl-Vorschläge</string>
 
 
     <plurals name="viewers">
@@ -138,5 +139,6 @@
     <item quantity="other">Live mit %d Zuschauern</item>
 </plurals>
     <string name="more">Mehr</string>
+    <string name="preference_scrollback_length_title">Länge des Chatverlaufs</string>
 
 </resources>
