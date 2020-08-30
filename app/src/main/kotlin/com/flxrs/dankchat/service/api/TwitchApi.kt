@@ -50,17 +50,7 @@ object TwitchApi {
     const val CLIENT_ID = "xu7vd1i6tlr0ak45q1li2wdc0lrma8"
     const val LOGIN_URL = "$BASE_LOGIN_URL&client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URL&scope=$SCOPES"
 
-    private val client: OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor { chain ->
-            val request = chain.request()
-            try {
-                chain.proceed(request)
-            } catch (e: IllegalArgumentException) {
-                val new = request.newBuilder().cacheControl(CacheControl.FORCE_NETWORK).build()
-                chain.proceed(new)
-            }
-        }
-        .build()
+    private val client: OkHttpClient = OkHttpClient.Builder().build()
 
     private val service = Retrofit.Builder()
         .baseUrl(KRAKEN_BASE_URL)
