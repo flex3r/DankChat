@@ -163,6 +163,9 @@ class ChatRepository {
         if (!connectionState.contains(channel)) connectionState[channel] = MutableStateFlow(SystemMessageType.DISCONNECTED)
         if (!roomStates.contains(channel)) roomStates[channel] = MutableStateFlow(Roomstate(channel))
         if (!users.contains(channel)) users[channel] = MutableStateFlow(createUserCache())
+        with(_mentionCounts) {
+            if (!value.contains(channel)) offer(value.apply { set(channel, 0) })
+        }
     }
 
     private inline fun prepareMessage(channel: String, message: String, onResult: (msg: String) -> Unit) {
