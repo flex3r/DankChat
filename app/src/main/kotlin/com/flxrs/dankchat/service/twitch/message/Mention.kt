@@ -1,7 +1,6 @@
 package com.flxrs.dankchat.service.twitch.message
 
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
-import java.util.regex.Pattern
 
 sealed class Mention {
     abstract val matchUser: Boolean
@@ -9,7 +8,7 @@ sealed class Mention {
     data class Phrase(val entry: String, override val matchUser: Boolean) : Mention()
     data class RegexPhrase(val entry: Regex, override val matchUser: Boolean) : Mention()
     data class User(val name: String, override val matchUser: Boolean = false) : Mention() {
-        val regex = """\b$name\b""".toPattern(Pattern.CASE_INSENSITIVE).toRegex()
+        val regex = """\b$name\b""".toRegex(RegexOption.IGNORE_CASE)
     }
 
     fun matches(message: String): Boolean {

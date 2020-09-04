@@ -4,9 +4,9 @@ import android.content.*
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.observe
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -18,11 +18,12 @@ import com.flxrs.dankchat.service.NotificationService
 import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
 import com.flxrs.dankchat.utils.dialog.MessageHistoryDisclaimerResultHandler
 import com.flxrs.dankchat.utils.extensions.navigateSafe
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialogResultHandler, MessageHistoryDisclaimerResultHandler, PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
     private val channels = mutableListOf<String>()
-    private val viewModel: DankChatViewModel by viewModel()
+    private val viewModel: DankChatViewModel by viewModels()
     private lateinit var twitchPreferences: DankChatPreferenceStore
     private lateinit var broadcastReceiver: BroadcastReceiver
     private var notificationService: NotificationService? = null

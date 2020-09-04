@@ -13,7 +13,7 @@ fun View.showErrorDialog(throwable: Throwable, stackTraceString: String = Log.ge
 
     MaterialAlertDialogBuilder(context)
         .setTitle(title)
-        .setMessage(stackTraceString)
+        .setMessage("${throwable.message}\n$stackTraceString")
         .setPositiveButton(R.string.error_dialog_copy) { d, _ ->
             ContextCompat.getSystemService(context, ClipboardManager::class.java)?.setPrimaryClip(android.content.ClipData.newPlainText("error stacktrace", stackTraceString))
             Snackbar.make(rootView.findViewById(android.R.id.content), R.string.snackbar_error_copied, Snackbar.LENGTH_SHORT).show()

@@ -110,7 +110,7 @@ class LoginFragment : Fragment() {
                     dankChatPreferenceStore.apply {
                         oAuthKey = "oauth:$oAuth"
                         userName = validateDto.login.toLowerCase(Locale.getDefault())
-                        userId = validateDto.userId
+                        userIdString = validateDto.userId
                     }
                     true
                 }

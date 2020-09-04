@@ -38,7 +38,7 @@ sealed class Message {
     ) : Message() {
 
         fun checkForMention(username: String, mentions: List<Mention>) {
-            val mentionsWithUser = mentions.plus(Mention.User(username, false))
+            val mentionsWithUser = mentions + Mention.User(username, false)
             isMention = !isMention && username.isNotBlank() && !name.equals(username, true)
                     && !timedOut && !isSystem && mentionsWithUser.matches(message, name to displayName, emotes)
         }
@@ -91,7 +91,7 @@ sealed class Message {
                     displayName = displayName,
                     color = color,
                     message = fixedContent,
-                    emotes = emotes.plus(otherEmotes).distinctBy { it.code },
+                    emotes = (emotes + otherEmotes).distinctBy { it.code },
                     isAction = isAction,
                     isNotify = isNotify,
                     badges = badges,
@@ -125,7 +125,7 @@ sealed class Message {
 
                 if (msgId != null && (msgId == "sub" || msgId == "resub")) {
                     val subMsg = parsePrivMessage(message, true)
-                    if (subMsg.message.isNotBlank()) messages.add(subMsg)
+                    if (subMsg.message.isNotBlank()) messages += subMsg
                 }
                 val systemTwitchMessage = TwitchMessage(
                     timestamp = ts,
@@ -181,8 +181,7 @@ sealed class Message {
                 val (fixedContent, spaces) = params[1].appendSpacesBetweenEmojiGroup()
                 val badges = parseBadges(tags["badges"], userId = tags["user-id"])
                 val emotes = EmoteManager
-                    .parseTwitchEmotes(tags["emotes"] ?: "", fixedContent, spaces)
-                    .plus(EmoteManager.parse3rdPartyEmotes(fixedContent))
+                    .parseTwitchEmotes(tags["emotes"] ?: "", fixedContent, spaces) + EmoteManager.parse3rdPartyEmotes(fixedContent)
 
                 return TwitchMessage(
                     timestamp = System.currentTimeMillis(),
@@ -216,7 +215,7 @@ sealed class Message {
                 userId ?: return badges
                 return when (val badge = EmoteManager.getDankChatBadgeUrl(userId)) {
                     null -> badges
-                    else -> badges.plus(Badge.GlobalBadge(badge.first, badge.second))
+                    else -> badges + Badge.GlobalBadge(badge.first, badge.second)
                 }
             }
         }

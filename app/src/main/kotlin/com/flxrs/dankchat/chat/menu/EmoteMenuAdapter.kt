@@ -18,27 +18,28 @@ class EmoteMenuAdapter(private val onEmoteClick: (emote: String) -> Unit) : List
     override fun getItemCount() = EmoteMenuTab.values().size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val adapter = EmoteAdapter(onEmoteClick)
-        return ViewHolder(adapter, EmoteMenuTabBinding.inflate(LayoutInflater.from(parent.context), parent, false).apply {
+        val emoteAdapter = EmoteAdapter(onEmoteClick)
+        return ViewHolder(emoteAdapter, EmoteMenuTabBinding.inflate(LayoutInflater.from(parent.context), parent, false).apply {
             val isLandscape = parent.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
             val spanCount = if (isLandscape) 12 else 6
-
-            emoteList.layoutManager = GridLayoutManager(parent.context, spanCount).apply {
-                spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                    override fun getSpanSize(position: Int): Int {
-                        return when (adapter.getItemViewType(position)) {
-                            EmoteAdapter.ITEM_VIEW_TYPE_HEADER -> spanCount
-                            else -> 1
+            emoteList.apply {
+                layoutManager = GridLayoutManager(parent.context, spanCount).apply {
+                    spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                        override fun getSpanSize(position: Int): Int {
+                            return when (emoteAdapter.getItemViewType(position)) {
+                                EmoteAdapter.ITEM_VIEW_TYPE_HEADER -> spanCount
+                                else -> 1
+                            }
                         }
                     }
                 }
+                adapter = emoteAdapter
+                addItemDecoration(object : RecyclerView.ItemDecoration() {
+                    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                        outRect.setEmpty()
+                    }
+                })
             }
-            emoteList.adapter = adapter
-            emoteList.addItemDecoration(object : RecyclerView.ItemDecoration() {
-                override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-                    outRect.setEmpty()
-                }
-            })
         })
     }
 

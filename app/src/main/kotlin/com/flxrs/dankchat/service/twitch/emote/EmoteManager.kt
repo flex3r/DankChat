@@ -5,7 +5,10 @@ import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.api.dto.BadgeDtos
 import com.flxrs.dankchat.service.api.dto.EmoteDtos
 import com.flxrs.dankchat.utils.extensions.supplementaryCodePointPositions
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.withContext
 import pl.droidsonroids.gif.GifDrawable
 import pl.droidsonroids.gif.MultiCallback
 import java.util.concurrent.ConcurrentHashMap
@@ -65,7 +68,7 @@ object EmoteManager {
 
         // Characters with supplementary codepoints have two chars and need to be considered into emote positioning
         val supplementaryCodePointPositions = original.supplementaryCodePointPositions
-        val emotes = arrayListOf<ChatMessageEmote>()
+        val emotes = mutableListOf<ChatMessageEmote>()
         for (emote in emoteTag.split('/')) {
             val split = emote.split(':')
             // bad emote data :)
@@ -83,7 +86,7 @@ object EmoteManager {
 
                 val start = pair[0].toIntOrNull() ?: return@mapNotNull null
                 val end = pair[1].toIntOrNull() ?: return@mapNotNull null
-                start to end + 1
+                start.coerceAtLeast(0) to (end + 1).coerceAtMost(original.length)
             }
             val fixedParsedPositions = parsedPositions.map { (start, end) ->
                 val extra = supplementaryCodePointPositions.count { it < start }
@@ -107,7 +110,7 @@ object EmoteManager {
 
     fun parse3rdPartyEmotes(message: String, channel: String = ""): List<ChatMessageEmote> {
         val splits = message.split(thirdPartyRegex)
-        val emotes = arrayListOf<ChatMessageEmote>()
+        val emotes = mutableListOf<ChatMessageEmote>()
 
         ffzEmotes[channel]?.forEach { parseMessageForEmote(it.value, splits, emotes) }
         bttvEmotes[channel]?.forEach { parseMessageForEmote(it.value, splits, emotes) }
@@ -193,7 +196,7 @@ object EmoteManager {
 
     suspend fun setBTTVEmotes(channel: String, bttvResult: EmoteDtos.BTTV.Result) = withContext(Dispatchers.Default) {
         val emotes = hashMapOf<String, GenericEmote>()
-        bttvResult.emotes.plus(bttvResult.sharedEmotes).forEach {
+        (bttvResult.emotes + bttvResult.sharedEmotes).forEach {
             val emote = parseBTTVEmote(it)
             emotes[emote.code] = emote
         }

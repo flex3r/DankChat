@@ -49,7 +49,7 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat() {
 
     private fun showMultiEntryPreference(root: View, key: String, sharedPreferences: SharedPreferences, title: CharSequence): Boolean {
         val entryStringSet = sharedPreferences.getStringSet(key, emptySet()) ?: emptySet()
-        val entries = entryStringSet.mapNotNull { adapter.fromJson(it) }.sortedBy { it.entry }.plus(MultiEntryItem.AddEntry)
+        val entries = entryStringSet.mapNotNull { adapter.fromJson(it) }.sortedBy { it.entry } + MultiEntryItem.AddEntry
         val context = root.context
 
         val entryAdapter = MultiEntryAdapter(entries.toMutableList())

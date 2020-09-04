@@ -12,27 +12,21 @@ import coil.Coil
 import coil.ImageLoader
 import coil.util.CoilUtils
 import com.flxrs.dankchat.utils.GifDrawableDecoder
+import dagger.hilt.android.HiltAndroidApp
 import okhttp3.CacheControl
+import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
-import org.koin.android.ext.koin.androidContext
-import org.koin.android.ext.koin.androidLogger
-import org.koin.core.context.startKoin
 
+@HiltAndroidApp
 class DankChatApplication : Application()/*, ImageLoaderFactory*/ {
     override fun onCreate() {
         super.onCreate()
-        startKoin {
-            androidLogger()
-            androidContext(applicationContext)
-
-            modules(appModules)
-        }
-
         Coil.setDefaultImageLoader {
             ImageLoader(this) {
                 okHttpClient {
                     OkHttpClient.Builder()
                         .cache(CoilUtils.createDefaultCache(this@DankChatApplication))
+                        .dispatcher(Dispatcher().apply { maxRequestsPerHost = 15 }) // increase from default 5
                         .addInterceptor { chain ->
                             val request = chain.request()
                             try {

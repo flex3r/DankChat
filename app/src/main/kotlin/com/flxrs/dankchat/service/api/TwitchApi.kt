@@ -40,6 +40,8 @@ object TwitchApi {
 
     private const val TWITCHEMOTES_SETS_URL = "https://api.twitchemotes.com/api/v4/sets?id="
 
+    private const val SUPIBOT_URL = "https://supinic.com/api"
+
     private const val BASE_LOGIN_URL = "https://id.twitch.tv/oauth2/authorize?response_type=token"
     private const val REDIRECT_URL = "https://flxrs.com/dankchat"
     private const val SCOPES = "chat:edit+chat:read+user_read+user_subscriptions" +
@@ -48,17 +50,7 @@ object TwitchApi {
     const val CLIENT_ID = "xu7vd1i6tlr0ak45q1li2wdc0lrma8"
     const val LOGIN_URL = "$BASE_LOGIN_URL&client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URL&scope=$SCOPES"
 
-    private val client: OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor { chain ->
-            val request = chain.request()
-            try {
-                chain.proceed(request)
-            } catch (e: IllegalArgumentException) {
-                val new = request.newBuilder().cacheControl(CacheControl.FORCE_NETWORK).build()
-                chain.proceed(new)
-            }
-        }
-        .build()
+    private val client: OkHttpClient = OkHttpClient.Builder().build()
 
     private val service = Retrofit.Builder()
         .baseUrl(KRAKEN_BASE_URL)
@@ -79,7 +71,7 @@ object TwitchApi {
         return@withContext null
     }
 
-    suspend fun getUserEmotes(oAuth: String, id: Int): EmoteDtos.Twitch.Result? = withContext(Dispatchers.IO) {
+    suspend fun getUserEmotes(oAuth: String, id: String): EmoteDtos.Twitch.Result? = withContext(Dispatchers.IO) {
         val response = service.getUserEmotes("OAuth $oAuth", id)
         response.bodyOrNull
     }
@@ -142,7 +134,7 @@ object TwitchApi {
             loadedRecentsInChannels.contains(channel) -> null
             else -> {
                 val response = service.getRecentMessages("$RECENT_MSG_URL$channel")
-                response.bodyOrNull?.also { loadedRecentsInChannels.add(channel) }
+                response.bodyOrNull?.also { loadedRecentsInChannels += channel }
             }
         }
     }
@@ -173,14 +165,22 @@ object TwitchApi {
         response.bodyOrNull?.data?.getOrNull(0)?.id
     }
 
-    suspend fun getNameFromUserId(oAuth: String, id: Int): String? = withContext(Dispatchers.IO) {
+    suspend fun getNameFromUserId(oAuth: String, id: String): String? = withContext(Dispatchers.IO) {
         val response = service.getUserHelix("Bearer $oAuth", "${HELIX_BASE_URL}users?id=$id")
         response.bodyOrNull?.data?.getOrNull(0)?.name
     }
 
-    suspend fun getIgnores(oAuth: String, id: Int): UserDtos.KrakenUsersBlocks? = withContext(Dispatchers.IO) {
-        val response = service.getIgnores("OAuth $oAuth", id)
-        response.bodyOrNull
+    suspend fun getIgnores(oAuth: String, id: String): UserDtos.KrakenUsersBlocks? = withContext(Dispatchers.IO) {
+        service.getIgnores("OAuth $oAuth", id).bodyOrNull
+
+    }
+
+    suspend fun getSupibotCommands(): SupibotDtos.Commands? = withContext(Dispatchers.IO) {
+        service.getSupibotCommands("$SUPIBOT_URL/bot/command/list/").bodyOrNull
+    }
+
+    suspend fun getSupibotChannels(): SupibotDtos.Channels? = withContext(Dispatchers.IO) {
+        service.getSupibotChannels("$SUPIBOT_URL/bot/channel/list", "twitch").bodyOrNull
     }
 
     fun clearChannelFromLoaded(channel: String) {

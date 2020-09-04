@@ -1,6 +1,8 @@
 package com.flxrs.dankchat
 
 import android.util.Log
+import androidx.hilt.Assisted
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.chat.suggestion.Suggestion
@@ -12,12 +14,15 @@ import com.flxrs.dankchat.service.state.ImageUploadState
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.EmoteType
 import com.flxrs.dankchat.utils.SingleLiveEvent
-import com.flxrs.dankchat.utils.extensions.timer
-import com.flxrs.dankchat.utils.extensions.toEmoteItems
+import com.flxrs.dankchat.utils.extensions.*
 import kotlinx.coroutines.*
 import java.io.File
 
-class DankChatViewModel(private val chatRepository: ChatRepository, private val dataRepository: DataRepository) : ViewModel() {
+class DankChatViewModel @ViewModelInject constructor(
+    @Assisted savedStateHandle: SavedStateHandle,
+    private val chatRepository: ChatRepository,
+    private val dataRepository: DataRepository
+) : ViewModel() {
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, t ->
         Log.e(TAG, Log.getStackTraceString(t))
@@ -35,6 +40,7 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
 
     val activeChannel = MutableLiveData<String>()
     val channels = MutableLiveData<List<String>>(emptyList())
+    val mentionCounts = chatRepository.mentionCounts.asLiveData(coroutineExceptionHandler)
 
     private val _errorEvent = SingleLiveEvent<Throwable>()
     private val _dataLoadingEvent = SingleLiveEvent<DataLoadingState>()
@@ -46,6 +52,7 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
     private val emotes = activeChannel.switchMap { dataRepository.getEmotes(it).asLiveData(coroutineExceptionHandler) }
     private val roomState = activeChannel.switchMap { chatRepository.getRoomState(it).asLiveData(coroutineExceptionHandler) }
     private val users = activeChannel.switchMap { chatRepository.getUsers(it).asLiveData(coroutineExceptionHandler) }
+    private val supibotCommands = activeChannel.switchMap { dataRepository.getSupibotCommands(it).asLiveData(coroutineExceptionHandler) }
     private val currentStreamInformation = MediatorLiveData<String>().apply {
         addSource(activeChannel) { value = streamData.value?.get(it) ?: "" }
         addSource(streamData) {
@@ -54,6 +61,7 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
             }
         }
     }
+
     private val emoteSuggestions = emotes.switchMap { emotes ->
         liveData(Dispatchers.Default) {
             emit(emotes.distinctBy { it.code }.map { Suggestion.EmoteSuggestion(it) })
@@ -62,6 +70,11 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
     private val userSuggestions = users.switchMap { users ->
         liveData(Dispatchers.Default) {
             emit(users.snapshot().keys.map { Suggestion.UserSuggestion(it) })
+        }
+    }
+    private val supibotCommandSuggestions = supibotCommands.switchMap { commands ->
+        liveData(Dispatchers.Default) {
+            emit(commands.map { Suggestion.CommandSuggestion("$$it") })
         }
     }
 
@@ -107,9 +120,10 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
         addSource(shouldShowViewPager) { value = shouldShowFullscreenHint(showViewPager = it) }
     }
 
-    val emoteAndUserSuggestions = MediatorLiveData<List<Suggestion>>().apply {
-        addSource(emoteSuggestions) { value = (userSuggestions.value ?: emptyList()).plus(it) }
-        addSource(userSuggestions) { value = it.plus(emoteSuggestions.value ?: emptyList()) }
+    val suggestions = MediatorLiveData<List<Suggestion>>().apply {
+        addSource(emoteSuggestions) { value = userSuggestions.asSuggestionOrEmpty + supibotCommandSuggestions.asSuggestionOrEmpty + it }
+        addSource(userSuggestions) { value = it + supibotCommandSuggestions.asSuggestionOrEmpty + emoteSuggestions.asSuggestionOrEmpty }
+        addSource(supibotCommandSuggestions) { value = userSuggestions.asSuggestionOrEmpty + it + emoteSuggestions.asSuggestionOrEmpty }
     }
 
     val emoteItems = emotes.switchMap { emotes ->
@@ -122,8 +136,9 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
                 }
             }
 
+
             val groupedWithHeaders = mutableListOf(
-                groupedByType[EmoteMenuTab.SUBS].toEmoteItems(),
+                groupedByType[EmoteMenuTab.SUBS].moveToFront(activeChannel.value).toEmoteItems(),
                 groupedByType[EmoteMenuTab.CHANNEL].toEmoteItems(),
                 groupedByType[EmoteMenuTab.GLOBAL].toEmoteItems()
             )
@@ -136,30 +151,45 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
         id = dataLoadingParameters.id,
         name = dataLoadingParameters.name,
         loadTwitchData = dataLoadingParameters.loadTwitchData,
-        loadHistory = dataLoadingParameters.loadHistory
+        loadHistory = dataLoadingParameters.loadHistory,
+        loadSupibot = dataLoadingParameters.loadSupibot
     )
 
-    fun loadData(oAuth: String, id: Int, name: String, channelList: List<String> = channels.value ?: emptyList(), loadTwitchData: Boolean, loadHistory: Boolean) {
-        viewModelScope.launch(coroutineExceptionHandler) {
+    fun loadData(
+        oAuth: String,
+        id: String,
+        name: String,
+        channelList: List<String> = channels.value ?: emptyList(),
+        loadTwitchData: Boolean,
+        loadHistory: Boolean,
+        loadSupibot: Boolean,
+        scrollBackLength: Int? = null
+    ) {
+        scrollBackLength?.let { chatRepository.scrollbackLength = it }
+
+        viewModelScope.launch {
             _dataLoadingEvent.postValue(
-                DataLoadingState.Loading(
-                    DataLoadingState.Parameters(
-                        oAuth = oAuth,
-                        id = id,
-                        name = name,
-                        channels = channelList,
-                        loadTwitchData = loadTwitchData,
-                        loadHistory = loadHistory
-                    )
-                )
+                DataLoadingState.Loading(DataLoadingState.Parameters(oAuth, id, name, channelList, loadTwitchData = loadTwitchData, loadHistory = loadHistory, loadSupibot = loadSupibot))
             )
-            val token = when {
-                oAuth.startsWith("oauth:", true) -> oAuth.substringAfter(':')
-                else -> oAuth
+
+            supervisorScope {
+                loadInitialData(oAuth.removeOAuthSuffix, id, channelList, loadTwitchData, loadSupibot).joinAll()
+
+                // depends on previously loaded data
+                channelList.map {
+                    dataRepository.setEmotesForSuggestions(it)
+                    launch(coroutineExceptionHandler) { chatRepository.loadRecentMessages(it, loadHistory) }
+                }.joinAll()
+
+                _dataLoadingEvent.postValue(DataLoadingState.Finished)
             }
-            dataRepository.loadData(channelList, token, id, loadTwitchData)
-            chatRepository.loadData(channelList, token, id, loadHistory, name)
-            _dataLoadingEvent.postValue(DataLoadingState.Finished)
+        }
+    }
+
+    fun setSupibotSuggestions(enabled: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
+        when {
+            enabled -> dataRepository.loadSupibotCommands()
+            else -> dataRepository.clearSupibotCommands()
         }
     }
 
@@ -175,14 +205,20 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
         roomStateEnabled.value = enabled
     }
 
+    fun setScrollbackLength(scrollBackLength: Int) {
+        chatRepository.scrollbackLength = scrollBackLength
+    }
+
     fun clear(channel: String) = chatRepository.clear(channel)
+
+    fun clearMentionCount(channel: String) = chatRepository.clearMentionCount(channel)
 
     fun joinChannel(channel: String? = activeChannel.value): List<String>? {
         if (channel == null) return null
         val current = channels.value ?: emptyList()
-        val plus = current.plus(channel)
+        val plus = current + channel
 
-        channels.value = current.plus(channel)
+        channels.value = current + channel
         chatRepository.joinChannel(channel)
         return plus
     }
@@ -190,7 +226,7 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
     fun partChannel(): List<String>? {
         val channel = activeChannel.value ?: return null
         val current = channels.value ?: emptyList()
-        val minus = current.minus(channel)
+        val minus = current - channel
 
         channels.value = minus
         chatRepository.partChannel(channel)
@@ -203,24 +239,25 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
 
     fun reconnect(onlyIfNecessary: Boolean) = chatRepository.reconnect(onlyIfNecessary)
 
-    fun close(name: String, oAuth: String, loadTwitchData: Boolean = false, userId: Int = 0) {
+    fun close(name: String, oAuth: String, userId: String, loadTwitchData: Boolean = false) {
         val channels = channels.value ?: emptyList()
         val didClose = chatRepository.close { connectAndJoinChannels(name, oAuth, channels) }
         if (!didClose) {
             connectAndJoinChannels(name, oAuth, channels, forceConnect = true)
         }
 
-        if (loadTwitchData && userId > 0) loadData(
+        if (loadTwitchData && oAuth.isNotBlank()) loadData(
             oAuth = oAuth,
             id = userId,
             name = name,
             channelList = channels,
             loadTwitchData = true,
-            loadHistory = false
+            loadHistory = false,
+            loadSupibot = false
         )
     }
 
-    fun reloadEmotes(channel: String, oAuth: String, id: Int) = viewModelScope.launch(coroutineExceptionHandler) {
+    fun reloadEmotes(channel: String, oAuth: String, id: String) = viewModelScope.launch {
         _dataLoadingEvent.postValue(
             DataLoadingState.Loading(
                 DataLoadingState.Parameters(
@@ -231,11 +268,13 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
                 )
             )
         )
-        val token = when {
-            oAuth.startsWith("oauth:", true) -> oAuth.substringAfter(':')
-            else -> oAuth
-        }
-        dataRepository.reloadEmotes(channel, token, id)
+
+        val fixedOAuth = oAuth.removeOAuthSuffix
+        listOf(
+            launch(coroutineExceptionHandler) { dataRepository.loadChannelData(channel, fixedOAuth, forceReload = true) },
+            launch(coroutineExceptionHandler) { dataRepository.loadTwitchEmotes(fixedOAuth, id) },
+            launch(coroutineExceptionHandler) { dataRepository.loadDankChatBadges() },
+        ).joinAll()
         _dataLoadingEvent.postValue(DataLoadingState.Reloaded)
     }
 
@@ -257,14 +296,12 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
     suspend fun fetchStreamData(oAuth: String, stringBuilder: (viewers: Int) -> String) = withContext(coroutineExceptionHandler) {
         fetchTimerJob?.cancel()
         val channels = channels.value ?: return@withContext
-        val token = when {
-            oAuth.startsWith("oauth:", true) -> oAuth.substringAfter(':')
-            else -> oAuth
-        }
+        val fixedOAuth = oAuth.removeOAuthSuffix
+
         fetchTimerJob = timer(STREAM_REFRESH_RATE) {
             val data = mutableMapOf<String, String>()
             channels.forEach { channel ->
-                TwitchApi.getStream(token, channel)?.let {
+                TwitchApi.getStream(fixedOAuth, channel)?.let {
                     data[channel] = stringBuilder(it.viewers)
                 }
             }
@@ -272,20 +309,29 @@ class DankChatViewModel(private val chatRepository: ChatRepository, private val 
         }
     }
 
-    fun clearIgnores() {
-        chatRepository.clearIgnores()
-    }
+    fun clearIgnores() = chatRepository.clearIgnores()
 
     fun connectAndJoinChannels(name: String, oAuth: String, channelList: List<String>? = channels.value, forceConnect: Boolean = false) {
         if (!chatRepository.startedConnection) {
-            if (channelList?.isEmpty() == true) {
-                chatRepository.connect(name, oAuth, forceConnect)
-            } else {
-                channelList?.forEachIndexed { i, channel ->
+            when {
+                channelList.isNullOrEmpty() -> chatRepository.connect(name, oAuth, forceConnect)
+                else -> channelList.forEachIndexed { i, channel ->
                     if (i == 0) chatRepository.connect(name, oAuth, forceConnect)
                     chatRepository.joinChannel(channel)
                 }
             }
+        }
+    }
+
+    private fun CoroutineScope.loadInitialData(oAuth: String, id: String, channelList: List<String>, loadTwitchData: Boolean, loadSupibot: Boolean): List<Job> {
+        return listOf(
+            launch(coroutineExceptionHandler) { dataRepository.loadDankChatBadges() },
+            launch(coroutineExceptionHandler) { dataRepository.loadGlobalBadges() },
+            launch(coroutineExceptionHandler) { if (loadTwitchData) dataRepository.loadTwitchEmotes(oAuth, id) },
+            launch(coroutineExceptionHandler) { if (loadSupibot) dataRepository.loadSupibotCommands() },
+            launch(coroutineExceptionHandler) { chatRepository.loadIgnores(oAuth, id) }
+        ) + channelList.map {
+            launch(coroutineExceptionHandler) { dataRepository.loadChannelData(it, oAuth) }
         }
     }
 

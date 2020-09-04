@@ -55,7 +55,7 @@ fun String.appendSpacesBetweenEmojiGroup(): Pair<String, List<Int>> {
             // emoji group starts
             if (totalCharCount != 0 && !previousEmoji && !Character.isWhitespace(previousCodepoint)) {
                 fixedContentBuilder.append(" ")
-                addedSpacesPositions.add(totalCharCount)
+                addedSpacesPositions += totalCharCount
             }
 
             previousEmoji = true
@@ -63,7 +63,7 @@ fun String.appendSpacesBetweenEmojiGroup(): Pair<String, List<Int>> {
             //emoji group ends
             if (!Character.isWhitespace(codePoint)) {
                 fixedContentBuilder.append(" ")
-                addedSpacesPositions.add(totalCharCount)
+                addedSpacesPositions += totalCharCount
             }
 
             previousEmoji = false
@@ -103,11 +103,17 @@ val String.supplementaryCodePointPositions: List<Int>
         while (offset < length) {
             val codepoint = codePointAt(offset)
             if (Character.isSupplementaryCodePoint(codepoint)) {
-                positions.add(offset - index)
+                positions += offset - index
                 index++
             }
             offset += Character.charCount(codepoint)
         }
 
         return positions
+    }
+
+val String.removeOAuthSuffix: String
+    get() = when {
+        startsWith("oauth:", true) -> substringAfter(':')
+        else -> this
     }

@@ -5,6 +5,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SeekBarPreference
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.utils.TimeUtils
 import kotlinx.android.synthetic.main.settings_fragment.view.*
@@ -31,5 +32,17 @@ class ChatSettingsFragment : PreferenceFragmentCompat() {
             (newValue as? String)?.let { TimeUtils.setPattern(it) }
             true
         }
+        findPreference<SeekBarPreference>(getString(R.string.preference_scrollback_length_key))?.apply {
+            summary = correctScrollbackLength(value).toString()
+            setOnPreferenceChangeListener { _, newValue ->
+                (newValue as? Int)?.let { summary = correctScrollbackLength(it).toString() }
+                true
+            }
+        }
+    }
+
+    companion object {
+        private const val SCROLLBACK_LENGTH_STEP = 50
+        fun correctScrollbackLength(seekbarValue: Int): Int = seekbarValue * SCROLLBACK_LENGTH_STEP
     }
 }

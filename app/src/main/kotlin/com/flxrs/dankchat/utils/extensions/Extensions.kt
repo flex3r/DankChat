@@ -4,7 +4,13 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
 import android.util.Log
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.lifecycle.LiveData
+import com.flxrs.dankchat.R
 import com.flxrs.dankchat.chat.menu.EmoteItem
+import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.service.twitch.message.Mention
@@ -15,9 +21,11 @@ fun List<GenericEmote>?.toEmoteItems(): List<EmoteItem> {
     return this?.groupBy { it.emoteType.title }
         ?.mapValues {
             val title = it.value.first().emoteType.title
-            listOf(EmoteItem.Header(title)).plus(it.value.map { e -> EmoteItem.Emote(e) })
+            listOf(EmoteItem.Header(title)) + it.value.map { e -> EmoteItem.Emote(e) }
         }?.flatMap { it.value } ?: listOf()
 }
+
+fun List<GenericEmote>?.moveToFront(channel: String?): List<GenericEmote>? = this?.partition { it.emoteType.title.equals(channel, ignoreCase = true) }.let { it?.first?.plus(it.second) }
 
 fun List<MultiEntryItem.Entry?>.mapToMention(): List<Mention> = mapNotNull { entry ->
     entry?.let {
@@ -58,4 +66,12 @@ fun <T> Context.isServiceRunning(service: Class<T>) =
         .getRunningServices(Integer.MAX_VALUE)
         .any { it.service.className == service.name }
 
-fun Int.isEven() = (this % 2 == 0)
+val Int.isEven
+    get() = (this % 2 == 0)
+
+fun Context.getDrawableAndSetSurfaceTint(@DrawableRes id: Int) = getDrawable(id)?.apply {
+    DrawableCompat.setTint(this, ContextCompat.getColor(this@getDrawableAndSetSurfaceTint, R.color.color_on_surface))
+}
+
+val <T : Suggestion> LiveData<List<T>>.asSuggestionOrEmpty
+    get() = value.orEmpty() as List<Suggestion>
