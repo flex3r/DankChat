@@ -11,7 +11,7 @@
     <string name="dialog_cancel">Anuluj</string>
     <string name="dialog_dismiss">Zignoruj</string>
     <string name="error_dialog_copy">Kopiuj</string>
-    <string name="error_dialog_title">Złapany błąd: %1$s</string>
+    <string name="error_dialog_title">Wystąpił błąd: %1$s</string>
     <string name="add_channel">Dodaj kanał</string>
     <string name="name">Nazwa</string>
     <string name="remove_channel">Usuń kanał</string>
@@ -67,7 +67,7 @@
     <string name="multi_entry_hint">Wpis</string>
     <string name="login_expired">Logowanie wygasło! Spróbuj zalogować się ponownie.</string>
     <string name="message_history_disclaimer_title">Message history disclaimer</string>
-    <string name="message_history_disclaimer_message">Podczas startu aplikacji, DankChat ładuje historię wiadomości z zewnętrznego serwisu.\nBy pobrać wiadomości, DankChat wysyła nazwy otwartych kanałów do tego serwisu.\nAby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości odwiedzanych kanałów przez Ciebie (oraz innych).\n\n- Aby nie używać tej funkcji, kliknij Zrezygnuj ponizej lub później wyłącz ładowanie historii wiadomości w ustawieniach.\n- Aby dowiedzieć się więcej o usłudze i wyłączyć historię wiadomości dla Twojego kanału odwiedź https://recent-messages.robotty.de/</string>
+    <string name="message_history_disclaimer_message">Podczas startu aplikacji, DankChat ładuje historię wiadomości z zewnętrznego serwisu.\nAby pobrać wiadomości, DankChat wysyła nazwy otwartych kanałów do tego serwisu.\nAby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości odwiedzanych kanałów przez Ciebie (oraz innych).\n\n- Aby nie używać tej funkcji, kliknij Zrezygnuj ponizej lub później wyłącz ładowanie historii wiadomości w ustawieniach.\n- Aby dowiedzieć się więcej o usłudze i wyłączyć historię wiadomości dla Twojego kanału odwiedź https://recent-messages.robotty.de/</string>
     <string name="dialog_optin">Zaakceptuj</string>
     <string name="dialog_optout">Zrezygnuj</string>
     <string name="anon_connection_disclaimer_title">Anonimowe połączenie</string>
@@ -101,7 +101,7 @@
     <string name="preference_blacklist_summary">Ustaw niestandardowe wyrażenia do ukrycia</string>
     <string name="preference_animate_gifs_title">Animowane GIFy</string>
     <string name="preference_line_separator_title">Oddziel wiadomości liniami</string>
-    <string name="preference_keep_screen_on_title">Nie wyłączaj ekranu</string>
+    <string name="preference_keep_screen_on_title">Nie wygaszaj ekranu</string>
     <string name="preference_font_size_title">Rozmiar czcionki</string>
     <string name="preference_font_size_summary_very_small">Bardzo mały</string>
     <string name="preference_font_size_summary_small">Mały</string>
@@ -117,8 +117,8 @@
     <string name="preference_channel_data_header">Dane kanału</string>
     <string name="preference_developer_header">Opcje deweloperskie</string>
     <string name="preference_debug_mode_title">Tryb debugowania</string>
-    <string name="preference_debug_mode_summary">Dostarcza informacje o wszelkich złapanych wyjątkach</string>
-    <string name="preference_timestamp_format_title">Format znaczka czasu</string>
+    <string name="preference_debug_mode_summary">Dostarcza informacje o wszelkich wykrytych wyjątkach</string>
+    <string name="preference_timestamp_format_title">Format znacznika czasu</string>
     <string name="preference_tts_title">Włącz TTS</string>
     <string name="preference_tts_summary">Czyta na głos wiadomości aktywnego kanału</string>
     <string name="preference_tts_queue_title">Tryb kolejki</string>
