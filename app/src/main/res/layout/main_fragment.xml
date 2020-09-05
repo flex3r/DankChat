@@ -173,7 +173,7 @@
                 android:completionThreshold="2"
                 android:enabled="@{vm.canType}"
                 android:imeOptions="actionSend|flagNoExtractUi"
-                android:inputType="text"
+                android:inputType="text|textCapSentences"
                 android:paddingStart="12dp"
                 android:paddingEnd="8dp"
                 android:singleLine="true" />
