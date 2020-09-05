@@ -275,7 +275,7 @@ class ChatRepository {
                 with(_mentionCounts) {
                     offer(value.apply {
                         val count = get(it.channel) ?: 0
-                        set(it.channel, count + 1)
+                        put(it.channel, count + 1)
                     })
                 }
             }
