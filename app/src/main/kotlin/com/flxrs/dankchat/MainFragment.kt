@@ -171,9 +171,11 @@ class MainFragment : Fragment() {
             }
             mentionCounts.observe(viewLifecycleOwner) {
                 it.forEach { (channel, count) ->
-                    val index = tabAdapter.titleList.indexOf(channel)
-                    if (binding.tabs.selectedTabPosition != index && count > 0) {
-                        binding.tabs.getTabAt(index)?.apply { orCreateBadge }
+                    if (count > 0) {
+                        when (val index = tabAdapter.titleList.indexOf(channel)) {
+                            binding.tabs.selectedTabPosition -> viewModel.clearMentionCount(channel) // mention is in active channel
+                            else -> binding.tabs.getTabAt(index)?.apply { orCreateBadge }
+                        }
                     }
                 }
             }
