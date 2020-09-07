@@ -67,7 +67,7 @@ class ChatRepository {
         set(value) {
             messages.forEach { (_, messagesFlow) ->
                 if (messagesFlow.value.size > scrollbackLength) {
-                    messagesFlow.value = messagesFlow.value.take(value)
+                    messagesFlow.value = messagesFlow.value.takeLast(value)
                 }
             }
             field = value
