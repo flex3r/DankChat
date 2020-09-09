@@ -111,9 +111,6 @@ dependencies {
 // GIF support
     implementation "pl.droidsonroids.gif:android-gif-drawable:$gif_drawable_version"
 
-// Detect and normalize URLs in text
-    implementation "io.github.url-detector:url-detector:$url_detector_version"
-
 // HTTP clients
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"

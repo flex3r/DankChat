@@ -32,7 +32,6 @@ buildscript {
         koin_version = '2.1.5'
         coil_version = '0.9.5' // TODO investigate issue with hardware bitmaps caused by newer version
         gif_drawable_version = '1.2.20'
-        url_detector_version = '0.1.23'
         okhttp_version = '4.8.1'
         retrofit_version = '2.9.0'
         hilt_version = '2.28.3-alpha'
