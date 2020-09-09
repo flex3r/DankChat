@@ -13,6 +13,8 @@ import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.ImageSpan
+import android.text.style.URLSpan
+import android.text.util.Linkify
 import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -24,6 +26,8 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.core.text.color
+import androidx.core.text.getSpans
+import androidx.core.text.util.LinkifyCompat
 import androidx.core.view.postDelayed
 import androidx.emoji.text.EmojiCompat
 import androidx.preference.PreferenceManager
@@ -44,8 +48,6 @@ import com.flxrs.dankchat.utils.extensions.isEven
 import com.flxrs.dankchat.utils.extensions.normalizeColor
 import com.flxrs.dankchat.utils.extensions.setRunning
 import com.flxrs.dankchat.utils.showErrorDialog
-import com.linkedin.urls.detection.UrlDetector
-import com.linkedin.urls.detection.UrlDetectorOptions
 import kotlinx.coroutines.*
 import pl.droidsonroids.gif.GifDrawable
 import kotlin.math.roundToInt
@@ -259,7 +261,19 @@ class ChatAdapter(
             } as SpannableStringBuilder
 
             //links
-            UrlDetector(message, UrlDetectorOptions.Default).detect().forEach { url ->
+            LinkifyCompat.addLinks(spannableWithEmojis, Linkify.WEB_URLS)
+            spannableWithEmojis.getSpans<URLSpan>().forEach {
+                val (urlIndex, urlLength) = when (val idx = message.indexOf(it.url)) {
+                    -1 -> {
+                        val shortUrl = it.url.substringAfter("://") // linkify added protocol
+                        val shortUrlIdx = message.indexOf(shortUrl)
+                        shortUrlIdx to shortUrl.length
+                    }
+                    else -> idx to it.url.length
+                }
+                val start = prefixLength + badgesLength + urlIndex
+                val end = start + urlLength
+                spannableWithEmojis.removeSpan(it)
                 val clickableSpan = object : ClickableSpan() {
                     override fun onClick(v: View) {
                         try {
@@ -267,14 +281,12 @@ class ChatAdapter(
                                 CustomTabsIntent.Builder()
                                     .addDefaultShareMenuItem()
                                     .setShowTitle(true)
-                                    .build().launchUrl(v.context, Uri.parse(url.fullUrl))
+                                    .build().launchUrl(v.context, Uri.parse(it.url))
                         } catch (e: ActivityNotFoundException) {
                             Log.e("ViewBinding", Log.getStackTraceString(e))
                         }
                     }
                 }
-                val start = prefixLength + badgesLength + message.indexOf(url.originalUrl)
-                val end = start + url.originalUrl.length
                 spannableWithEmojis.setSpan(clickableSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
 
