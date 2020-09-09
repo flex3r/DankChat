@@ -6,6 +6,7 @@ import android.os.IBinder
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
@@ -134,11 +135,8 @@ class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialog
 
     private fun handleShutDown() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
+        stopService(Intent(this, NotificationService::class.java))
         finishAndRemoveTask()
-        Intent(this, NotificationService::class.java).also {
-            stopService(it)
-        }
-
         android.os.Process.killProcess(android.os.Process.myPid())
     }
 
