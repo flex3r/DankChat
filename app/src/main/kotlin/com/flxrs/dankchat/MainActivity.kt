@@ -14,6 +14,7 @@ import androidx.navigation.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import com.flxrs.dankchat.chat.mention.MentionViewModel
 import com.flxrs.dankchat.preferences.*
 import com.flxrs.dankchat.service.NotificationService
 import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
@@ -25,6 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialogResultHandler, MessageHistoryDisclaimerResultHandler, PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
     private val channels = mutableListOf<String>()
     private val viewModel: DankChatViewModel by viewModels()
+    private val mentionViewModel: MentionViewModel by viewModels()
     private lateinit var twitchPreferences: DankChatPreferenceStore
     private lateinit var broadcastReceiver: BroadcastReceiver
     private var notificationService: NotificationService? = null

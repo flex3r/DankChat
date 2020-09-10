@@ -70,7 +70,7 @@
 
 
                 <androidx.viewpager2.widget.ViewPager2
-                    android:id="@+id/viewPager"
+                    android:id="@+id/chat_viewpager"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:visibility="@{vm.shouldShowViewPager ? View.VISIBLE : View.GONE}"
@@ -93,7 +93,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/bottom_sheet"
+                android:id="@+id/emote_menu_bottom_sheet"
                 style="@style/Widget.MaterialComponents.CardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -135,6 +135,17 @@
                         app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_tabs" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
+            
+            <fragment
+                app:behavior_peekHeight="0dp"
+                app:behavior_skipCollapsed="true"
+                android:id="@+id/mention_fragment"
+                app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+                android:name="com.flxrs.dankchat.chat.mention.MentionFragment"
+                app:behavior_hideable="true"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

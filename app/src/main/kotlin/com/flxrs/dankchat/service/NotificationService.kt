@@ -180,7 +180,7 @@ class NotificationService : Service(), CoroutineScope {
                 items.forEach { item ->
                     with(item.message as Message.TwitchMessage) {
                         if (shouldNotifyOnMention && isMention && notificationsEnabled) {
-                            createMentionNotification(channel, name, message, isNotify)
+                            createMentionNotification()
                         }
 
                         if (tts != null && channel == activeTTSChannel && compareValues(audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC), 0) > 0) {
@@ -208,13 +208,13 @@ class NotificationService : Service(), CoroutineScope {
         tts?.speak(ttsMessage, queueMode, null, null)
     }
 
-    private fun createMentionNotification(channel: String, user: String, message: String, isNotify: Boolean) {
-        val pendingStartActivityIntent = Intent(this, MainActivity::class.java).let {
+    private fun Message.TwitchMessage.createMentionNotification() {
+        val pendingStartActivityIntent = Intent(this@NotificationService, MainActivity::class.java).let {
             it.putExtra(MainActivity.OPEN_CHANNEL_KEY, channel)
-            PendingIntent.getActivity(this, notificationIntentCode, it, PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.getActivity(this@NotificationService, notificationIntentCode, it, PendingIntent.FLAG_UPDATE_CURRENT)
         }
 
-        val summary = NotificationCompat.Builder(this, CHANNEL_ID_DEFAULT)
+        val summary = NotificationCompat.Builder(this@NotificationService, CHANNEL_ID_DEFAULT)
             .setContentTitle(getString(R.string.notification_new_mentions))
             .setContentText("")
             .setSmallIcon(R.drawable.ic_notification_icon)
@@ -224,11 +224,12 @@ class NotificationService : Service(), CoroutineScope {
             .build()
 
         val title = when {
+            isWhisper -> getString(R.string.notification_whisper_mention, name)
             isNotify -> getString(R.string.notification_notify_mention, channel)
-            else -> getString(R.string.notification_mention, user, channel)
+            else -> getString(R.string.notification_mention, name, channel)
         }
 
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID_DEFAULT)
+        val notification = NotificationCompat.Builder(this@NotificationService, CHANNEL_ID_DEFAULT)
             .setContentTitle(title)
             .setContentText(message)
             .setContentIntent(pendingStartActivityIntent)

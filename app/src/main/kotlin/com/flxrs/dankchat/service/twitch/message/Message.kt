@@ -19,22 +19,23 @@ sealed class Message {
     ) : Message()
 
     data class TwitchMessage(
-        override val timestamp: Long,
+        override val timestamp: Long = System.currentTimeMillis(),
         val channel: String,
         val name: String = "",
         val displayName: String = "",
-        val color: Int,
+        val color: Int = Color.parseColor("#717171"),
         val message: String,
         val emotes: List<ChatMessageEmote> = listOf(),
         val isAction: Boolean = false,
         val isNotify: Boolean = false,
         val badges: List<Badge> = emptyList(),
-        override val id: String,
+        override val id: String = System.nanoTime().toString(),
         var timedOut: Boolean = false,
         val isSystem: Boolean = false,
         var isMention: Boolean = false,
         var isReward: Boolean = false,
-        val isWhisper: Boolean = false
+        val isWhisper: Boolean = false,
+        var whisperRecipient: String = ""
     ) : Message() {
 
         fun checkForMention(username: String, mentions: List<Mention>) {

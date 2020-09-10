@@ -14,10 +14,16 @@
         app:showAsAction="always" />
 
     <item
+        android:id="@+id/menu_mentions"
+        android:icon="@drawable/ic_notifications_active_24dp_menu"
+        android:title="@string/mentions_title"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/menu_hide"
         android:icon="@drawable/ic_baseline_fullscreen_24"
         android:title="@string/hide_actionbar"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_login"

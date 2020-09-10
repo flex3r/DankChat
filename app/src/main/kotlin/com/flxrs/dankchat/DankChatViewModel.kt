@@ -40,13 +40,14 @@ class DankChatViewModel @ViewModelInject constructor(
 
     val activeChannel = MutableLiveData<String>()
     val channels = MutableLiveData<List<String>>(emptyList())
-    val mentionCounts = chatRepository.mentionCounts.asLiveData(coroutineExceptionHandler)
+    val channelMentionCount = chatRepository.channelMentionCount.asLiveData(coroutineExceptionHandler)
 
     private val _errorEvent = SingleLiveEvent<Throwable>()
     private val _dataLoadingEvent = SingleLiveEvent<DataLoadingState>()
     private val _imageUploadedEvent = SingleLiveEvent<ImageUploadState>()
     private val streamInfoEnabled = MutableLiveData(true)
     private val roomStateEnabled = MutableLiveData(true)
+    private val mentionSheetOpen = MutableLiveData(true)
     private val streamData: MutableLiveData<Map<String, String>> = MutableLiveData()
 
     private val emotes = activeChannel.switchMap { dataRepository.getEmotes(it).asLiveData(coroutineExceptionHandler) }
@@ -90,6 +91,7 @@ class DankChatViewModel @ViewModelInject constructor(
 
     val inputEnabled = MutableLiveData(true)
     val appbarEnabled = MutableLiveData(true)
+    val whisperTabSelected = MutableLiveData(false)
     val shouldShowViewPager = MediatorLiveData<Boolean>().apply {
         addSource(channels) { value = it.isNotEmpty() }
     }
@@ -102,7 +104,11 @@ class DankChatViewModel @ViewModelInject constructor(
         addSource(_dataLoadingEvent) { value = it is DataLoadingState.Loading || _imageUploadedEvent.value is ImageUploadState.Loading }
     }
     val connectionState = activeChannel.switchMap { chatRepository.getConnectionState(it).asLiveData(coroutineExceptionHandler) }
-    val canType = connectionState.map { it == SystemMessageType.CONNECTED }
+    val canType = MediatorLiveData<Boolean>().apply {
+        addSource(connectionState) { value = canType(connected = it == SystemMessageType.CONNECTED) }
+        addSource(mentionSheetOpen) { value = canType(mentionOpen = it) }
+        addSource(whisperTabSelected) { value = canType(whisperSelected = it) }
+    }
     val bottomText = MediatorLiveData<String>().apply {
         addSource(roomStateEnabled) { value = buildBottomText() }
         addSource(streamInfoEnabled) { value = buildBottomText() }
@@ -207,6 +213,15 @@ class DankChatViewModel @ViewModelInject constructor(
 
     fun setScrollbackLength(scrollBackLength: Int) {
         chatRepository.scrollbackLength = scrollBackLength
+    }
+
+    fun setMentionSheetOpen(enabled: Boolean) {
+        mentionSheetOpen.value = enabled
+        if (!enabled) whisperTabSelected.value = enabled
+    }
+
+    fun setWhisperTabOpen(open: Boolean) {
+        whisperTabSelected.value = open
     }
 
     fun clear(channel: String) = chatRepository.clear(channel)
@@ -356,6 +371,12 @@ class DankChatViewModel @ViewModelInject constructor(
             else -> ""
         }
     }
+
+    private fun canType(
+        mentionOpen: Boolean = mentionSheetOpen.value ?: false,
+        whisperSelected: Boolean = whisperTabSelected.value ?: false,
+        connected: Boolean = connectionState.value == SystemMessageType.CONNECTED
+        ): Boolean = (!mentionOpen && connected) || (whisperSelected && connected)
 
     private fun shouldShowFullscreenHint(
         showInput: Boolean = shouldShowInput.value ?: true,

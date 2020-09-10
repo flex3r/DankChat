@@ -82,9 +82,12 @@ class ChatAdapter(
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) = when (val message = getItem(position).message) {
-        is Message.SystemMessage -> holder.binding.itemText.handleSystemMessage(message, holder)
-        is Message.TwitchMessage -> holder.binding.itemText.handleTwitchMessage(message, holder)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = getItem(position)
+        when (val message = item.message) {
+            is Message.SystemMessage -> holder.binding.itemText.handleSystemMessage(message, holder)
+            is Message.TwitchMessage -> holder.binding.itemText.handleTwitchMessage(message, holder, item.isMentionTab)
+        }
     }
 
     private val ViewHolder.isAlternateBackground
@@ -126,7 +129,7 @@ class ChatAdapter(
 
     @Suppress("BlockingMethodInNonBlockingContext")
     @SuppressLint("ClickableViewAccessibility")
-    private fun TextView.handleTwitchMessage(twitchMessage: Message.TwitchMessage, holder: ViewHolder): Unit = with(twitchMessage) {
+    private fun TextView.handleTwitchMessage(twitchMessage: Message.TwitchMessage, holder: ViewHolder, isMentionTab: Boolean): Unit = with(twitchMessage) {
         isClickable = false
         alpha = 1.0f
         movementMethod = LinkMovementMethod.getInstance()
@@ -203,21 +206,21 @@ class ChatAdapter(
             }
 
             val fullDisplayName = when {
+                isWhisper && whisperRecipient.isNotBlank() -> "$fullName -> $whisperRecipient: "
                 isAction -> "$fullName "
                 fullName.isBlank() -> ""
                 else -> "$fullName: "
             }
 
             val badgesLength = badges.size * 2
-            val timeWithWhisperNotice = when {
-                isWhisper -> "${TimeUtils.timestampToLocalTime(timestamp)} (Whisper)"
-                else -> TimeUtils.timestampToLocalTime(timestamp)
+            val channelOrBlank = when {
+                isWhisper -> ""
+                else -> "#$channel"
             }
-            val (prefixLength, spannable) = if (showTimeStamp) {
-                timeWithWhisperNotice.length + 1 + fullDisplayName.length to SpannableStringBuilder().bold { append("$timeWithWhisperNotice ") }
-            } else {
-                fullDisplayName.length to SpannableStringBuilder()
-            }
+            val timeAndWhisperBuilder = StringBuilder()
+            if (isMentionTab && isMention) timeAndWhisperBuilder.append("$channelOrBlank ")
+            if (showTimeStamp) timeAndWhisperBuilder.append("${TimeUtils.timestampToLocalTime(timestamp)} ")
+            val (prefixLength, spannable) = timeAndWhisperBuilder.length + fullDisplayName.length to SpannableStringBuilder().bold { append(timeAndWhisperBuilder) }
 
             val badgePositions = badges.map {
                 spannable.append("  ")

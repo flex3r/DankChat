@@ -52,10 +52,7 @@ import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.utils.*
 import com.flxrs.dankchat.utils.dialog.EditTextDialogFragment
 import com.flxrs.dankchat.utils.dialog.MessageHistoryDisclaimerDialogFragment
-import com.flxrs.dankchat.utils.extensions.hideKeyboard
-import com.flxrs.dankchat.utils.extensions.isLandscape
-import com.flxrs.dankchat.utils.extensions.keepScreenOn
-import com.flxrs.dankchat.utils.extensions.navigateSafe
+import com.flxrs.dankchat.utils.extensions.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -82,7 +79,8 @@ class MainFragment : Fragment() {
     private lateinit var tabAdapter: ChatTabAdapter
     private lateinit var tabLayoutMediator: TabLayoutMediator
     private lateinit var emoteMenuAdapter: EmoteMenuAdapter
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<MaterialCardView>
+    private lateinit var emoteMenuBottomSheetBehavior: BottomSheetBehavior<MaterialCardView>
+    private lateinit var mentionBottomSheetBehavior: BottomSheetBehavior<View>
     private lateinit var suggestionAdapter: EmoteSuggestionsArrayAdapter
     private var currentMediaUri = Uri.EMPTY
 
@@ -116,17 +114,28 @@ class MainFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        tabAdapter = ChatTabAdapter(childFragmentManager, lifecycle)
+        tabAdapter = ChatTabAdapter(this)
         emoteMenuAdapter = EmoteMenuAdapter(::insertEmote)
         binding = MainFragmentBinding.inflate(inflater, container, false).apply {
-            bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+            emoteMenuBottomSheetBehavior = BottomSheetBehavior.from(emoteMenuBottomSheet)
             vm = viewModel
             lifecycleOwner = this@MainFragment
-            viewPager.setup(this)
+            chatViewpager.setup(this)
             input.setup(this)
             inputLayout.setup()
 
-            tabLayoutMediator = TabLayoutMediator(tabs, viewPager) { tab, position ->
+            childFragmentManager.findFragmentById(R.id.mention_fragment)?.let {
+                mentionBottomSheetBehavior = BottomSheetBehavior.from(it.requireView()).apply { hide() }.apply {
+                    addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                        override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
+                        override fun onStateChanged(bottomSheet: View, newState: Int) {
+                            viewModel.setMentionSheetOpen(mentionBottomSheetBehavior.isMoving || mentionBottomSheetBehavior.isVisible)
+                        }
+                    })
+                }
+            }
+
+            tabLayoutMediator = TabLayoutMediator(tabs, chatViewpager) { tab, position ->
                 tab.text = tabAdapter.titleList[position]
             }.apply { attach() }
             tabs.getTabAt(tabs.selectedTabPosition)?.removeBadge()
@@ -169,7 +178,7 @@ class MainFragment : Fragment() {
                     binding.root.showErrorDialog(it)
                 }
             }
-            mentionCounts.observe(viewLifecycleOwner) {
+            channelMentionCount.observe(viewLifecycleOwner) {
                 it.forEach { (channel, count) ->
                     if (count > 0) {
                         when (val index = tabAdapter.titleList.indexOf(channel)) {
@@ -208,7 +217,7 @@ class MainFragment : Fragment() {
         val channels = twitchPreferences.channelsString?.split(',') ?: twitchPreferences.channels?.also { twitchPreferences.channels = null }
         channels?.forEach { tabAdapter.addFragment(it) }
         val asList = channels?.toList() ?: emptyList()
-        binding.viewPager.offscreenPageLimit = calculatePageLimit(asList.size)
+        binding.chatViewpager.offscreenPageLimit = calculatePageLimit(asList.size)
         viewModel.channels.value = asList
         fetchStreamInformation()
 
@@ -216,20 +225,19 @@ class MainFragment : Fragment() {
             setHasOptionsMenu(true)
             setSupportActionBar(binding.toolbar)
             onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-                if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED || bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
-                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                } else {
-                    finishAndRemoveTask()
+                when {
+                    emoteMenuBottomSheetBehavior.isVisible -> emoteMenuBottomSheetBehavior.hide()
+                    mentionBottomSheetBehavior.isVisible -> mentionBottomSheetBehavior.hide()
+                    else -> finishAndRemoveTask()
                 }
             }
 
             window.decorView.setOnApplyWindowInsetsListener { _, insets ->
                 binding.showActionbarFab.apply {
                     if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT && isVisible) {
-                        y = if (binding.input.hasFocus()) {
-                            max(insets.stableInsetTop.toFloat() - insets.systemWindowInsetTop, 0f)
-                        } else {
-                            insets.stableInsetTop.toFloat()
+                        y = when {
+                            binding.input.hasFocus() -> max(insets.stableInsetTop.toFloat() - insets.systemWindowInsetTop, 0f)
+                            else -> insets.stableInsetTop.toFloat()
                         }
                     }
                 }
@@ -279,17 +287,18 @@ class MainFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        emoteMenuBottomSheetBehavior.hide()
+        mentionBottomSheetBehavior.hide()
         changeActionBarVisibility(viewModel.appbarEnabled.value ?: true)
 
         (activity as? MainActivity)?.apply {
             if (channelToOpen.isNotBlank()) {
                 val index = viewModel.channels.value?.indexOf(channelToOpen)
                 if (index != null && index >= 0) {
-                    if (index == binding.viewPager.currentItem) {
+                    if (index == binding.chatViewpager.currentItem) {
                         clearNotificationsOfChannel(channelToOpen)
                     } else {
-                        binding.viewPager.setCurrentItem(index, false)
+                        binding.chatViewpager.setCurrentItem(index, false)
                     }
                 }
                 channelToOpen = ""
@@ -311,6 +320,7 @@ class MainFragment : Fragment() {
             findItem(R.id.menu_login)?.isVisible = !isLoggedIn
             findItem(R.id.menu_remove)?.isVisible = !viewModel.channels.value.isNullOrEmpty()
             findItem(R.id.menu_open)?.isVisible = !viewModel.channels.value.isNullOrEmpty()
+            findItem(R.id.menu_mentions)?.isVisible = !viewModel.channels.value.isNullOrEmpty()
 
             findItem(R.id.progress)?.apply {
                 isVisible = shouldShowProgress
@@ -327,6 +337,7 @@ class MainFragment : Fragment() {
             R.id.menu_reconnect -> viewModel.reconnect(false)
             R.id.menu_login -> navigateSafe(R.id.action_mainFragment_to_loginFragment).also { hideKeyboard() }
             R.id.menu_add -> openAddChannelDialog()
+            R.id.menu_mentions -> mentionBottomSheetBehavior.expand()
             R.id.menu_open -> openChannel()
             R.id.menu_remove -> removeChannel()
             R.id.menu_reload_emotes -> reloadEmotes()
@@ -377,8 +388,8 @@ class MainFragment : Fragment() {
                 twitchPreferences.channelsString = updatedChannels.joinToString(",")
 
                 tabAdapter.addFragment(lowerCaseChannel)
-                binding.viewPager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
-                binding.viewPager.setCurrentItem(updatedChannels.size - 1, false)
+                binding.chatViewpager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
+                binding.chatViewpager.setCurrentItem(updatedChannels.size - 1, false)
 
                 fetchStreamInformation()
                 activity?.invalidateOptionsMenu()
@@ -396,6 +407,15 @@ class MainFragment : Fragment() {
 
             binding.input.setText(builder.toString())
             binding.input.setSelection(index + mention.length)
+        }
+    }
+
+    fun whisperUser(user: String) {
+        if (binding.input.isEnabled) {
+            val current = binding.input.text.toString()
+            val text = "/w $user $current"
+            binding.input.setText(text)
+            binding.input.setSelection(text.length)
         }
     }
 
@@ -424,6 +444,8 @@ class MainFragment : Fragment() {
     private fun sendMessage(): Boolean {
         viewModel.activeChannel.value?.let {
             val msg = binding.input.text.toString()
+            if (viewModel.whisperTabSelected.value == true && !msg.startsWith("/w ")) return true
+
             viewModel.sendMessage(it, msg)
             binding.input.setText("")
         }
@@ -720,16 +742,16 @@ class MainFragment : Fragment() {
     private fun removeChannel() {
         val channels = viewModel.partChannel()
         if (channels != null) {
-            val index = binding.viewPager.currentItem
+            val index = binding.chatViewpager.currentItem
             if (channels.isNotEmpty()) {
                 twitchPreferences.channelsString = channels.joinToString(",")
                 val newPos = (index - 1).coerceAtLeast(0)
-                binding.viewPager.setCurrentItem(newPos, false)
+                binding.chatViewpager.setCurrentItem(newPos, false)
             } else {
                 twitchPreferences.channelsString = null
             }
 
-            binding.viewPager.offscreenPageLimit = calculatePageLimit(channels.size)
+            binding.chatViewpager.offscreenPageLimit = calculatePageLimit(channels.size)
             tabAdapter.removeFragment(index)
             activity?.invalidateOptionsMenu()
         }
@@ -747,7 +769,7 @@ class MainFragment : Fragment() {
                 if (position in 0 until tabAdapter.titleList.size) {
                     val newChannel = tabAdapter.titleList[position].toLowerCase(Locale.getDefault())
                     viewModel.setActiveChannel(newChannel)
-                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                    emoteMenuBottomSheetBehavior.hide()
                     binding.input.dismissDropDown()
                 }
             }
@@ -758,11 +780,8 @@ class MainFragment : Fragment() {
         setEndIconOnClickListener { sendMessage() }
         setEndIconOnLongClickListener { getLastMessage() }
         setStartIconOnClickListener {
-            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED
-                || bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED
-                || emoteMenuAdapter.currentList.isEmpty()
-            ) {
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            if (emoteMenuBottomSheetBehavior.isVisible || emoteMenuAdapter.currentList.isEmpty()) {
+                emoteMenuBottomSheetBehavior.hide()
                 return@setStartIconOnClickListener
             }
 
@@ -783,9 +802,9 @@ class MainFragment : Fragment() {
             }
 
             postDelayed(50) {
-                bottomSheetBehavior.apply {
+                emoteMenuBottomSheetBehavior.apply {
                     peekHeight = (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
-                    state = BottomSheetBehavior.STATE_EXPANDED
+                    expand()
 
                     addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
                         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
@@ -815,11 +834,11 @@ class MainFragment : Fragment() {
         setTokenizer(SpaceTokenizer())
         suggestionAdapter = EmoteSuggestionsArrayAdapter(binding.input.context) { count ->
             dropDownHeight = if (count > 2) {
-                (binding.viewPager.measuredHeight / 1.3).roundToInt()
+                (binding.chatViewpager.measuredHeight / 1.3).roundToInt()
             } else {
                 ViewGroup.LayoutParams.WRAP_CONTENT
             }
-            dropDownWidth = (binding.viewPager.measuredWidth * 0.6).roundToInt()
+            dropDownWidth = (binding.chatViewpager.measuredWidth * 0.6).roundToInt()
         }
         suggestionAdapter.setNotifyOnChange(false)
 

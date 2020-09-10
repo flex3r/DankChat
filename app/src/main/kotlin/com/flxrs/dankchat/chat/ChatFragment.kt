@@ -23,16 +23,16 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ChatFragment : Fragment() {
+open class ChatFragment : Fragment() {
 
     private val viewModel: ChatViewModel by viewModels()
-    private lateinit var binding: ChatFragmentBinding
-    private lateinit var adapter: ChatAdapter
-    private lateinit var manager: LinearLayoutManager
-    private lateinit var preferenceListener: SharedPreferences.OnSharedPreferenceChangeListener
-    private lateinit var preferences: SharedPreferences
+    protected open lateinit var binding: ChatFragmentBinding
+    protected open lateinit var adapter: ChatAdapter
+    protected open lateinit var manager: LinearLayoutManager
+    protected open lateinit var preferenceListener: SharedPreferences.OnSharedPreferenceChangeListener
+    protected open lateinit var preferences: SharedPreferences
 
-    private var isAtBottom = true
+    protected open var isAtBottom = true
     private var channel: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -101,7 +101,7 @@ class ChatFragment : Fragment() {
         outState.putBoolean(AT_BOTTOM_STATE, isAtBottom)
     }
 
-    private fun mentionUser(user: String) {
+    protected open fun mentionUser(user: String) {
         (requireParentFragment() as? MainFragment)?.mentionUser(user)
     }
 
@@ -110,7 +110,7 @@ class ChatFragment : Fragment() {
         Snackbar.make(binding.root, R.string.snackbar_message_copied, Snackbar.LENGTH_SHORT).show()
     }
 
-    private fun scrollToPosition(position: Int) {
+    protected open fun scrollToPosition(position: Int) {
         if (position > 0 && isAtBottom) {
             binding.chat.stopScroll()
             binding.chat.scrollToPosition(position)

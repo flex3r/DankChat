@@ -108,7 +108,7 @@ object EmoteManager {
         return emotes
     }
 
-    fun parse3rdPartyEmotes(message: String, channel: String = ""): List<ChatMessageEmote> {
+    fun parse3rdPartyEmotes(message: String, channel: String = "", withTwitch: Boolean = false): List<ChatMessageEmote> {
         val splits = message.split(thirdPartyRegex)
         val emotes = mutableListOf<ChatMessageEmote>()
 
@@ -116,6 +116,7 @@ object EmoteManager {
         bttvEmotes[channel]?.forEach { parseMessageForEmote(it.value, splits, emotes) }
         globalBttvEmotes.forEach { parseMessageForEmote(it.value, splits, emotes) }
         globalFFZEmotes.forEach { parseMessageForEmote(it.value, splits, emotes) }
+        if (withTwitch) twitchEmotes.forEach { parseMessageForEmote(it.value, splits, emotes) }
 
         return emotes
     }

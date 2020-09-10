@@ -3,11 +3,13 @@ package com.flxrs.dankchat.service
 import android.util.Log
 import androidx.collection.LruCache
 import com.flxrs.dankchat.chat.ChatItem
+import com.flxrs.dankchat.chat.toMentionTabItems
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
+import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.message.Mention
 import com.flxrs.dankchat.service.twitch.message.Message
 import com.flxrs.dankchat.service.twitch.message.Roomstate
@@ -37,8 +39,10 @@ import kotlin.system.measureTimeMillis
 class ChatRepository {
 
     private val _notificationMessageChannel = Channel<List<ChatItem>>(10) // TODO replace with SharedFlow when available
-    private val _mentionCounts = ConflatedBroadcastChannel<MutableMap<String, Int>>(mutableMapOf())
+    private val _channelMentionCount = ConflatedBroadcastChannel<MutableMap<String, Int>>(mutableMapOf())
     private val messages = mutableMapOf<String, MutableStateFlow<List<ChatItem>>>()
+    private val _mentions = MutableStateFlow<List<ChatItem>>(emptyList())
+    private val _whispers = MutableStateFlow<List<ChatItem>>(emptyList())
     private val connectionState = mutableMapOf<String, MutableStateFlow<SystemMessageType>>()
     private val roomStates = mutableMapOf<String, MutableStateFlow<Roomstate>>()
     private val users = mutableMapOf<String, MutableStateFlow<LruCache<String, Boolean>>>()
@@ -59,8 +63,13 @@ class ChatRepository {
 
     val notificationMessageChannel: ReceiveChannel<List<ChatItem>>
         get() = _notificationMessageChannel
-    val mentionCounts: Flow<Map<String, Int>>
-        get() = _mentionCounts.asFlow()
+    val channelMentionCount: Flow<Map<String, Int>>
+        get() = _channelMentionCount.asFlow()
+    val mentions: StateFlow<List<ChatItem>>
+        get() = _mentions
+    val whispers: StateFlow<List<ChatItem>>
+        get() = _whispers
+
     var startedConnection = false
     var lastMessage = mutableMapOf<String, String>()
     var scrollbackLength = 500
@@ -100,11 +109,11 @@ class ChatRepository {
         messages[channel]?.value = emptyList()
         messages.remove(channel)
         lastMessage.remove(channel)
-        _mentionCounts.value.remove(channel)
+        _channelMentionCount.value.remove(channel)
         TwitchApi.clearChannelFromLoaded(channel)
     }
 
-    fun clearMentionCount(channel: String) = with(_mentionCounts) {
+    fun clearMentionCount(channel: String) = with(_channelMentionCount) {
         offer(value.apply { set(channel, 0) })
     }
 
@@ -134,8 +143,19 @@ class ChatRepository {
         writeConnection.reconnect(onlyIfNecessary)
     }
 
-    fun sendMessage(channel: String, input: String) = prepareMessage(channel, input) {
-        writeConnection.sendMessage(it)
+    fun sendMessage(channel: String, input: String) {
+        prepareMessage(channel, input) {
+            writeConnection.sendMessage(it)
+        }
+
+        val split = input.split(" ")
+        if (split.size > 2 && split[0] == "/w" && split[1].isNotBlank()) {
+            val message = input.substring(4 + split[1].length)
+            val emotes = EmoteManager.parse3rdPartyEmotes(message, withTwitch = true)
+            val fakeMessage = Message.TwitchMessage(channel = "", name = name, displayName = name, message = message, emotes = emotes, isWhisper = true, whisperRecipient = split[1])
+            val fakeItem = ChatItem(fakeMessage, isMentionTab = true)
+            _whispers.value = _whispers.value.addAndLimit(fakeItem, scrollbackLength)
+        }
     }
 
     fun connect(nick: String, oauth: String, forceConnect: Boolean = false) {
@@ -163,7 +183,7 @@ class ChatRepository {
         if (!connectionState.contains(channel)) connectionState[channel] = MutableStateFlow(SystemMessageType.DISCONNECTED)
         if (!roomStates.contains(channel)) roomStates[channel] = MutableStateFlow(Roomstate(channel))
         if (!users.contains(channel)) users[channel] = MutableStateFlow(createUserCache())
-        with(_mentionCounts) {
+        with(_channelMentionCount) {
             if (!value.contains(channel)) offer(value.apply { set(channel, 0) })
         }
     }
@@ -271,19 +291,10 @@ class ChatRepository {
             currentUsers.put(it.name, true)
             users[it.channel]?.value = currentUsers
 
-            if (it.isMention) {
-                with(_mentionCounts) {
-                    offer(value.apply {
-                        val count = get(it.channel) ?: 0
-                        put(it.channel, count + 1)
-                    })
-                }
-            }
-
             ChatItem(it)
         }
         if (parsed.isNotEmpty()) {
-            if (msg.params[0] == "*" || msg.command == "WHISPER") {
+            if (msg.params[0] == "*") {
                 messages.keys.forEach {
                     val currentChat = messages[it]?.value ?: emptyList()
                     messages[it]?.value = currentChat.addAndLimit(parsed, scrollbackLength)
@@ -293,6 +304,23 @@ class ChatRepository {
                 val currentChat = messages[channel]?.value ?: emptyList()
                 messages[channel]?.value = currentChat.addAndLimit(parsed, scrollbackLength)
                 _notificationMessageChannel.offer(parsed)
+
+                if (msg.command == "WHISPER") {
+                    (parsed[0].message as Message.TwitchMessage).whisperRecipient = name
+                    _whispers.value = _whispers.value.addAndLimit(parsed.toMentionTabItems(), scrollbackLength)
+                }
+
+                val mentions = parsed.filter { it.message is Message.TwitchMessage && it.message.isMention }.toMentionTabItems()
+                if (mentions.isNotEmpty()) {
+                    with(_channelMentionCount) {
+                        offer(value.apply {
+                            val count = get(channel) ?: 0
+                            put(channel, count + mentions.size)
+                        })
+                    }
+
+                    _mentions.value = _mentions.value.addAndLimit(mentions, scrollbackLength)
+                }
             }
         }
     }
@@ -348,5 +376,6 @@ class ChatRepository {
     companion object {
         private val TAG = ChatRepository::class.java.simpleName
         private val INVISIBLE_CHAR = String(ByteBuffer.allocate(4).putInt(0x000E0000).array(), Charsets.UTF_32)
+        const val MENTIONS_KEY = "mentions"
     }
 }
