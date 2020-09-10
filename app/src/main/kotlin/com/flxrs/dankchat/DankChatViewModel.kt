@@ -109,15 +109,17 @@ class DankChatViewModel @ViewModelInject constructor(
         addSource(mentionSheetOpen) { value = canType(mentionOpen = it) }
         addSource(whisperTabSelected) { value = canType(whisperSelected = it) }
     }
+    val bottomTextEnabled = MediatorLiveData<Boolean>().apply {
+        addSource(roomStateEnabled) { value = shouldShowBottomText(stateEnabled = it) }
+        addSource(streamInfoEnabled) { value = shouldShowBottomText(infoEnabled = it) }
+        addSource(mentionSheetOpen) { value = shouldShowBottomText(mentionOpen = it) }
+    }
     val bottomText = MediatorLiveData<String>().apply {
         addSource(roomStateEnabled) { value = buildBottomText() }
         addSource(streamInfoEnabled) { value = buildBottomText() }
         addSource(roomState) { value = buildBottomText() }
         addSource(currentStreamInformation) { value = buildBottomText() }
-    }
-    val bottomTextEnabled = MediatorLiveData<Boolean>().apply {
-        addSource(roomStateEnabled) { value = it || streamInfoEnabled.value ?: true }
-        addSource(streamInfoEnabled) { value = it || roomStateEnabled.value ?: true }
+        addSource(bottomTextEnabled) { value = buildBottomText() }
     }
     val shouldShowFullscreenHelper = MediatorLiveData<Boolean>().apply {
         addSource(shouldShowInput) { value = shouldShowFullscreenHint(showInput = it) }
@@ -383,6 +385,12 @@ class DankChatViewModel @ViewModelInject constructor(
         bottomTextEmpty: Boolean = bottomText.value?.isEmpty() ?: false,
         showViewPager: Boolean = shouldShowViewPager.value ?: true
     ): Boolean = !showInput && showBottomText && !bottomTextEmpty && showViewPager
+
+    private fun shouldShowBottomText(
+        stateEnabled: Boolean = roomStateEnabled.value ?: true,
+        infoEnabled: Boolean = streamInfoEnabled.value ?: true,
+        mentionOpen: Boolean = mentionSheetOpen.value ?: false
+    ): Boolean = (stateEnabled || infoEnabled) && !mentionOpen
 
     companion object {
         private val TAG = DankChatViewModel::class.java.simpleName
