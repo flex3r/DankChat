@@ -49,10 +49,11 @@ class DankChatViewModel @ViewModelInject constructor(
     private val roomStateEnabled = MutableLiveData(true)
     private val mentionSheetOpen = MutableLiveData(false)
     private val streamData: MutableLiveData<Map<String, String>> = MutableLiveData()
+    private val currentSuggestionChannel = MutableLiveData<String>()
 
-    private val emotes = activeChannel.switchMap { dataRepository.getEmotes(it).asLiveData(coroutineExceptionHandler) }
-    private val roomState = activeChannel.switchMap { chatRepository.getRoomState(it).asLiveData(coroutineExceptionHandler) }
-    private val users = activeChannel.switchMap { chatRepository.getUsers(it).asLiveData(coroutineExceptionHandler) }
+    private val emotes = currentSuggestionChannel.switchMap { dataRepository.getEmotes(it).asLiveData(coroutineExceptionHandler) }
+    private val roomState = currentSuggestionChannel.switchMap { chatRepository.getRoomState(it).asLiveData(coroutineExceptionHandler) }
+    private val users = currentSuggestionChannel.switchMap { chatRepository.getUsers(it).asLiveData(coroutineExceptionHandler) }
     private val supibotCommands = activeChannel.switchMap { dataRepository.getSupibotCommands(it).asLiveData(coroutineExceptionHandler) }
     private val currentStreamInformation = MediatorLiveData<String>().apply {
         addSource(activeChannel) { value = streamData.value?.get(it) ?: "" }
@@ -185,6 +186,7 @@ class DankChatViewModel @ViewModelInject constructor(
                 loadInitialData(oAuth.removeOAuthSuffix, id, channelList, loadTwitchData, loadSupibot).joinAll()
 
                 // depends on previously loaded data
+                dataRepository.setEmotesForSuggestions("w") // global emote suggestions for whisper tab
                 channelList.map {
                     dataRepository.setEmotesForSuggestions(it)
                     launch(coroutineExceptionHandler) { chatRepository.loadRecentMessages(it, loadHistory) }
@@ -204,6 +206,11 @@ class DankChatViewModel @ViewModelInject constructor(
 
     fun setActiveChannel(channel: String) {
         activeChannel.value = channel
+        currentSuggestionChannel.value = channel
+    }
+
+    fun setSuggestionChannel(channel: String) {
+        currentSuggestionChannel.value = channel
     }
 
     fun setStreamInfoEnabled(enabled: Boolean) {

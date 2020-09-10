@@ -130,6 +130,10 @@ class MainFragment : Fragment() {
                         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
                         override fun onStateChanged(bottomSheet: View, newState: Int) {
                             viewModel.setMentionSheetOpen(mentionBottomSheetBehavior.isMoving || mentionBottomSheetBehavior.isVisible)
+                            when {
+                                mentionBottomSheetBehavior.isExpanded -> viewModel.setSuggestionChannel("w")
+                                mentionBottomSheetBehavior.isHidden -> viewModel.setSuggestionChannel(tabAdapter.titleList[binding.chatViewpager.currentItem])
+                            }
                         }
                     })
                 }
