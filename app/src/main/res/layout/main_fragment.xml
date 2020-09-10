@@ -175,7 +175,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/bottom_barrier"
             app:startIconContentDescription="@string/emote_menu_hint"
-            app:startIconDrawable="@{vm.canType ? @drawable/ic_insert_emoticon_24dp : null}">
+            app:startIconDrawable="@{vm.canType &amp;&amp; !vm.mentionSheetOpen ? @drawable/ic_insert_emoticon_24dp : null}">
 
             <com.flxrs.dankchat.utils.CustomMultiAutoCompleteTextView
                 android:id="@+id/input"

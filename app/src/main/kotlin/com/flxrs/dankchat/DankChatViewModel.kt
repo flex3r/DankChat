@@ -47,7 +47,6 @@ class DankChatViewModel @ViewModelInject constructor(
     private val _imageUploadedEvent = SingleLiveEvent<ImageUploadState>()
     private val streamInfoEnabled = MutableLiveData(true)
     private val roomStateEnabled = MutableLiveData(true)
-    private val mentionSheetOpen = MutableLiveData(false)
     private val streamData: MutableLiveData<Map<String, String>> = MutableLiveData()
     private val currentSuggestionChannel = MutableLiveData<String>()
 
@@ -93,6 +92,7 @@ class DankChatViewModel @ViewModelInject constructor(
     val inputEnabled = MutableLiveData(true)
     val appbarEnabled = MutableLiveData(true)
     val whisperTabSelected = MutableLiveData(false)
+    val mentionSheetOpen = MutableLiveData(false)
     val shouldShowViewPager = MediatorLiveData<Boolean>().apply {
         addSource(channels) { value = it.isNotEmpty() }
     }
