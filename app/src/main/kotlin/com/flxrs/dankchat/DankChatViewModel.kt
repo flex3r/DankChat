@@ -109,17 +109,18 @@ class DankChatViewModel @ViewModelInject constructor(
         addSource(mentionSheetOpen) { value = canType(mentionOpen = it) }
         addSource(whisperTabSelected) { value = canType(whisperSelected = it) }
     }
-    val bottomTextEnabled = MediatorLiveData<Boolean>().apply {
-        addSource(roomStateEnabled) { value = shouldShowBottomText(stateEnabled = it) }
-        addSource(streamInfoEnabled) { value = shouldShowBottomText(infoEnabled = it) }
-        addSource(mentionSheetOpen) { value = shouldShowBottomText(mentionOpen = it) }
-    }
     val bottomText = MediatorLiveData<String>().apply {
         addSource(roomStateEnabled) { value = buildBottomText() }
         addSource(streamInfoEnabled) { value = buildBottomText() }
         addSource(roomState) { value = buildBottomText() }
         addSource(currentStreamInformation) { value = buildBottomText() }
-        addSource(bottomTextEnabled) { value = buildBottomText() }
+        addSource(mentionSheetOpen) { value = buildBottomText() }
+    }
+    val bottomTextEnabled = MediatorLiveData<Boolean>().apply {
+        addSource(roomStateEnabled) { value = shouldShowBottomText(stateEnabled = it) }
+        addSource(streamInfoEnabled) { value = shouldShowBottomText(infoEnabled = it) }
+        addSource(mentionSheetOpen) { value = shouldShowBottomText(mentionOpen = it) }
+        addSource(bottomText) { value = shouldShowBottomText(text = it) }
     }
     val shouldShowFullscreenHelper = MediatorLiveData<Boolean>().apply {
         addSource(shouldShowInput) { value = shouldShowFullscreenHint(showInput = it) }
@@ -389,8 +390,9 @@ class DankChatViewModel @ViewModelInject constructor(
     private fun shouldShowBottomText(
         stateEnabled: Boolean = roomStateEnabled.value ?: true,
         infoEnabled: Boolean = streamInfoEnabled.value ?: true,
-        mentionOpen: Boolean = mentionSheetOpen.value ?: false
-    ): Boolean = (stateEnabled || infoEnabled) && !mentionOpen
+        mentionOpen: Boolean = mentionSheetOpen.value ?: false,
+        text: String = bottomText.value ?: ""
+    ): Boolean = (stateEnabled || infoEnabled) && !mentionOpen && text.isNotBlank()
 
     companion object {
         private val TAG = DankChatViewModel::class.java.simpleName
