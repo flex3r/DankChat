@@ -165,6 +165,7 @@
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
             android:animateLayoutChanges="true"
+            android:enabled="@{vm.canType}"
             android:visibility="@{vm.shouldShowInput ? View.VISIBLE : View.GONE}"
             app:endIconContentDescription="@string/send_hint"
             app:endIconDrawable="@{vm.canType ? @drawable/ic_send_24dp : null}"
