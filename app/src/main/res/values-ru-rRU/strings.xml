@@ -133,7 +133,7 @@
     <string name="preference_scrollback_length_title">Длина прокрутки сообщений</string>
     <string name="notification_whisper_mention">Вам пришло сообщение от %1$s</string>
     <string name="mentions">Упоминания</string>
-    <string name="whispers">Личные Сообщения</string>
+    <string name="whispers">Личные сообщения</string>
     <string name="mentions_title">Упоминания / Личные сообщения</string>
 
     <plurals name="viewers">
