@@ -3,25 +3,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:shareInterpolator="false">
     <alpha
-        android:fromAlpha="0"
-        android:toAlpha="1.0"
-        android:fillEnabled="true"
-        android:fillBefore="true"
+        android:duration="50"
         android:fillAfter="true"
+        android:fillBefore="true"
+        android:fillEnabled="true"
+        android:fromAlpha="0"
         android:interpolator="@android:anim/linear_interpolator"
         android:startOffset="35"
-        android:duration="50"/>
+        android:toAlpha="1.0" />
     <scale
+        android:duration="300"
+        android:fillAfter="true"
+        android:fillBefore="true"
+        android:fillEnabled="true"
         android:fromXScale="0.85"
-        android:toXScale="1"
         android:fromYScale="0.85"
-        android:toYScale="1"
+        android:interpolator="@anim/fast_out_extra_slow_in"
         android:pivotX="50%"
         android:pivotY="50%"
-        android:fillEnabled="true"
-        android:fillBefore="true"
-        android:fillAfter="true"
-        android:interpolator="@anim/fast_out_extra_slow_in"
-        android:duration="300"
+        android:toXScale="1"
+        android:toYScale="1"
         tools:targetApi="lollipop" />
 </set>

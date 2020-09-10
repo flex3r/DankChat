@@ -12,7 +12,6 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.speech.tts.TextToSpeech
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.edit
 import androidx.localbroadcastmanager.content.LocalBroadcastManager

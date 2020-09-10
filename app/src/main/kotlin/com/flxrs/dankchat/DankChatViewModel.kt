@@ -375,7 +375,7 @@ class DankChatViewModel @ViewModelInject constructor(
         mentionOpen: Boolean = mentionSheetOpen.value ?: false,
         whisperSelected: Boolean = whisperTabSelected.value ?: false,
         connected: Boolean = connectionState.value == SystemMessageType.CONNECTED
-        ): Boolean = (!mentionOpen && connected) || (whisperSelected && connected)
+    ): Boolean = (!mentionOpen && connected) || (whisperSelected && connected)
 
     private fun shouldShowFullscreenHint(
         showInput: Boolean = shouldShowInput.value ?: true,

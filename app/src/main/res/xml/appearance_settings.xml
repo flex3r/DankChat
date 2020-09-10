@@ -34,6 +34,6 @@
     <SwitchPreference
         android:defaultValue="false"
         android:key="@string/checkered_messages_key"
-        android:title="@string/preference_checkered_lines_title"
-        android:summary="@string/preference_checkered_lines_summary" />
+        android:summary="@string/preference_checkered_lines_summary"
+        android:title="@string/preference_checkered_lines_title" />
 </PreferenceScreen>

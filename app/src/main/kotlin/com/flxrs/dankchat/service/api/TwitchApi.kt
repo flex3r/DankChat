@@ -5,7 +5,6 @@ import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.service.api.dto.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.CacheControl
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
