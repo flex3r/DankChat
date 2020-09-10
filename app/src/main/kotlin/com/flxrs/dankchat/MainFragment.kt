@@ -288,17 +288,15 @@ class MainFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         emoteMenuBottomSheetBehavior.hide()
-        mentionBottomSheetBehavior.hide()
         changeActionBarVisibility(viewModel.appbarEnabled.value ?: true)
 
         (activity as? MainActivity)?.apply {
             if (channelToOpen.isNotBlank()) {
-                val index = viewModel.channels.value?.indexOf(channelToOpen)
-                if (index != null && index >= 0) {
-                    if (index == binding.chatViewpager.currentItem) {
-                        clearNotificationsOfChannel(channelToOpen)
-                    } else {
-                        binding.chatViewpager.setCurrentItem(index, false)
+                val index = viewModel.channels.value?.indexOf(channelToOpen) ?: -1
+                if (index >= 0) {
+                    when (index) {
+                        binding.chatViewpager.currentItem -> clearNotificationsOfChannel(channelToOpen)
+                        else -> binding.chatViewpager.setCurrentItem(index, false)
                     }
                 }
                 channelToOpen = ""

@@ -37,8 +37,12 @@ class MentionFragment : Fragment() {
         offscreenPageLimit = 2
         registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                dankChatViewModel.setWhisperTabOpen(position == 1)
+                dankChatViewModel.setWhisperTabSelected(position == 1)
             }
         })
+    }
+
+    companion object {
+        private val TAG = MentionFragment::class.java.simpleName
     }
 }

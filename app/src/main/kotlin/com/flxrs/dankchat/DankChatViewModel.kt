@@ -47,7 +47,7 @@ class DankChatViewModel @ViewModelInject constructor(
     private val _imageUploadedEvent = SingleLiveEvent<ImageUploadState>()
     private val streamInfoEnabled = MutableLiveData(true)
     private val roomStateEnabled = MutableLiveData(true)
-    private val mentionSheetOpen = MutableLiveData(true)
+    private val mentionSheetOpen = MutableLiveData(false)
     private val streamData: MutableLiveData<Map<String, String>> = MutableLiveData()
 
     private val emotes = activeChannel.switchMap { dataRepository.getEmotes(it).asLiveData(coroutineExceptionHandler) }
@@ -217,10 +217,9 @@ class DankChatViewModel @ViewModelInject constructor(
 
     fun setMentionSheetOpen(enabled: Boolean) {
         mentionSheetOpen.value = enabled
-        if (!enabled) whisperTabSelected.value = enabled
     }
 
-    fun setWhisperTabOpen(open: Boolean) {
+    fun setWhisperTabSelected(open: Boolean) {
         whisperTabSelected.value = open
     }
 
