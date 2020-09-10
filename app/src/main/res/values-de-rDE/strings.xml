@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-    <resources>
+<resources>
 
     <string name="app_name">DankChat</string>
     <string name="app_name_dank">DankChat (Dank)</string>
@@ -85,7 +85,6 @@
     <string name="preference_notification_title">Benachrichtigung bei Mentions</string>
     <string name="preference_notification_summary">Benachrichtigung bei einer Mention, wenn die App im Hintergrund läuft.</string>
     <string name="preference_notification_header">Benachrichtigungen</string>
-    <string name="preference_mentions_header">Mentions</string>
     <string name="preference_chat_header">Chat</string>
     <string name="preference_logout_title">Abmelden</string>
     <string name="preference_general_header">Allgemein</string>
@@ -132,13 +131,15 @@
     <string name="preference_checkered_lines_title">Alternierende Farbe der Zeilen</string>
     <string name="preference_checkered_lines_summary">Teilt jede Zeile mit unterschiedlicher Helligkeit des Hintergrunds</string>
     <string name="preference_supibot_suggestions_title">Supibot Befehl-Vorschläge</string>
-
-
-    <plurals name="viewers">
-    <item quantity="one">Live mit %d Zuschauer</item>
-    <item quantity="other">Live mit %d Zuschauern</item>
-</plurals>
     <string name="more">Mehr</string>
     <string name="preference_scrollback_length_title">Länge des Chatverlaufs</string>
+    <string name="mentions">Mentions</string>
+    <string name="whispers">Privatnachrichten</string>
+    <string name="notification_whisper_mention">%1$s hat dir eine private Nachricht geschickt</string>
+    <string name="mentions_title">Mentions / Privatnachrichten</string>
 
+    <plurals name="viewers">
+        <item quantity="one">Live mit %d Zuschauer</item>
+        <item quantity="other">Live mit %d Zuschauern</item>
+    </plurals>
 </resources>

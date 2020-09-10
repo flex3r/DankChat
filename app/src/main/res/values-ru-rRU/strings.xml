@@ -84,7 +84,6 @@
     <string name="preference_notification_title">Отображать уведомления об упоминаниях</string>
     <string name="preference_notification_summary">Создаёт уведомления, если приложение работает в фоновом режиме</string>
     <string name="preference_notification_header">Уведомления</string>
-    <string name="preference_mentions_header">Упоминания</string>
     <string name="preference_chat_header">Чат</string>
     <string name="preference_logout_title">Выйти</string>
     <string name="preference_general_header">Общие</string>
@@ -132,6 +131,10 @@
     <string name="preference_checkered_lines_summary">Разделяет каждую линию, используя цвета фона с разной яркостью</string>
     <string name="preference_supibot_suggestions_title">Подсказки команд бота Supibot</string>
     <string name="preference_scrollback_length_title">Длина прокрутки сообщений</string>
+    <string name="notification_whisper_mention">Вам пришло сообщение от %1$s</string>
+    <string name="mentions">Упоминания</string>
+    <string name="whispers">Личные Сообщения</string>
+    <string name="mentions_title">Упоминания / Личные сообщения</string>
 
     <plurals name="viewers">
         <item quantity="one">В сети с %d зрителем</item>

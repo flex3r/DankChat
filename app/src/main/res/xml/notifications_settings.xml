@@ -10,7 +10,7 @@
             android:title="@string/preference_notification_title" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/preference_mentions_header">
+    <PreferenceCategory android:title="@string/mentions">
         <ListPreference
             android:defaultValue="name"
             android:entries="@array/mention_formats"

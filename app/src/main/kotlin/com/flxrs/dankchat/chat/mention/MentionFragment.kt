@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.DankChatViewModel
+import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.MentionFragmentBinding
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -24,8 +25,8 @@ class MentionFragment : Fragment() {
             mentionViewpager.setup()
             tabLayoutMediator = TabLayoutMediator(mentionTabs, mentionViewpager) { tab, position ->
                 tab.text = when (position) {
-                    0 -> "Mentions" // TODO extract
-                    else -> "Whispers"
+                    0 -> getString(R.string.mentions)
+                    else -> getString(R.string.whispers)
                 }
             }.apply { attach() }
         }.root

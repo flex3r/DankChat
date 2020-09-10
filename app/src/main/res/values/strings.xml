@@ -44,7 +44,6 @@
     <string name="notification_new_mentions">You have new mentions</string>
     <string name="notification_mention">%1$s just mentioned you in #%2$s</string>
     <string name="notification_notify_mention">You were mentioned in #%1$s</string>
-    <string name="notification_whisper_mention">You were whispered by %1$s</string>
     <string name="snackbar_login">Logging in as %1$s</string>
     <string name="snackbar_login_failed">Failed to login</string>
     <string name="snackbar_image_uploaded">Copied: %1$s</string>
@@ -75,6 +74,10 @@
     <string name="anon_connection_disclaimer_message">Due to recent changes to the official Twitch api, some data can now only be accessed when logged in.\nThis includes support for twitch badges and third party emotes.</string>
     <string name="more">More</string>
     <string name="mentions_title">Mentions / Whispers</string>
+    <string name="whispers">Whispers</string>
+    <string name="notification_whisper_mention">%1$s sent you a whisper</string>
+    <string name="mentions">Mentions</string>
+
 
     <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
     <string name="secure_shared_preference_key" translatable="false">com.flxrs.dankchat_secure_preferences</string>
@@ -93,7 +96,6 @@
     <string name="preference_notification_title">Show mention notifications</string>
     <string name="preference_notification_summary">Creates notifications when mentioned while the app is in the background</string>
     <string name="preference_notification_header">Notifications</string>
-    <string name="preference_mentions_header">Mentions</string>
     <string name="preference_chat_header">Chat</string>
     <string name="preference_chat_key" translatable="false">chat_key</string>
     <string name="preference_logout_key" translatable="false">logout_key</string>

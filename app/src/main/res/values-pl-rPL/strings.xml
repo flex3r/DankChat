@@ -84,7 +84,6 @@
     <string name="preference_notification_title">Pokazuj powiadomienia wzmianek</string>
     <string name="preference_notification_summary">Pokazuje powiadomienia wzmianek gdy aplikacja działa w tle</string>
     <string name="preference_notification_header">Powiadomienia</string>
-    <string name="preference_mentions_header">Wzmianki</string>
     <string name="preference_chat_header">Czat</string>
     <string name="preference_logout_title">Wyloguj</string>
     <string name="preference_general_header">Ogólne</string>
@@ -132,6 +131,10 @@
     <string name="preference_checkered_lines_summary">Oddziel każdą wiadomość inną jasnością tła</string>
     <string name="preference_supibot_suggestions_title">Sugestie komend Supibota</string>
     <string name="preference_scrollback_length_title">Długość przewijania wiadomości</string>
+    <string name="mentions">Wzmianki</string>
+    <string name="whispers">Szepty</string>
+    <string name="mentions_title">Wzmianki / Szepty</string>
+    <string name="notification_whisper_mention">%1$s wysłał Ci szept</string>
 
     <plurals name="viewers">
         <item quantity="one">Na żywo z %d widzem</item>
