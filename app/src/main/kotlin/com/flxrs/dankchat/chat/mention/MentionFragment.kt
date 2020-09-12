@@ -11,7 +11,9 @@ import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.MentionFragmentBinding
 import com.google.android.material.tabs.TabLayoutMediator
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MentionFragment : Fragment() {
 
     private lateinit var tabAdapter: MentionTabAdapter

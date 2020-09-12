@@ -12,12 +12,10 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MentionChatFragment : ChatFragment() {
-
     private val viewModel: MentionViewModel by activityViewModels()
-    private var isWhisperTab: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        isWhisperTab = requireArguments().getBoolean(WHISPER_ARG, false)
+        val isWhisperTab = requireArguments().getBoolean(WHISPER_ARG, false)
         binding = ChatFragmentBinding.inflate(inflater, container, false).apply {
             lifecycleOwner = this@MentionChatFragment
             scrollBottom.setOnClickListener {
