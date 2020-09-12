@@ -319,10 +319,11 @@ class MainFragment : Fragment() {
         with(menu) {
             val isLoggedIn = twitchPreferences.isLoggedIn
             val shouldShowProgress = viewModel.showUploadProgress.value ?: false
+            val hasChannels = !viewModel.channels.value.isNullOrEmpty()
             findItem(R.id.menu_login)?.isVisible = !isLoggedIn
-            findItem(R.id.menu_remove)?.isVisible = !viewModel.channels.value.isNullOrEmpty()
-            findItem(R.id.menu_open)?.isVisible = !viewModel.channels.value.isNullOrEmpty()
-            findItem(R.id.menu_mentions)?.isVisible = !viewModel.channels.value.isNullOrEmpty()
+            findItem(R.id.menu_remove)?.isVisible = hasChannels
+            findItem(R.id.menu_open)?.isVisible = hasChannels
+            findItem(R.id.menu_mentions)?.isVisible = hasChannels
 
             findItem(R.id.progress)?.apply {
                 isVisible = shouldShowProgress
@@ -400,28 +401,31 @@ class MainFragment : Fragment() {
     }
 
     fun mentionUser(user: String) {
-        if (binding.input.isEnabled) {
-            val current = binding.input.text.toString()
-            val template = preferences.getString(getString(R.string.preference_mention_format_key), "name") ?: "name"
-            val mention = "${template.replace("name", user)} "
-            val index = binding.input.selectionStart.takeIf { it >= 0 } ?: current.length
-            val builder = StringBuilder(current).insert(index, mention)
+        if (!binding.input.isEnabled) return
 
-            binding.input.setText(builder.toString())
-            binding.input.setSelection(index + mention.length)
-        }
+        val current = binding.input.text.toString()
+        val template = preferences.getString(getString(R.string.preference_mention_format_key), "name") ?: "name"
+        val mention = "${template.replace("name", user)} "
+        val index = binding.input.selectionStart.takeIf { it >= 0 } ?: current.length
+        val builder = StringBuilder(current).insert(index, mention)
+
+        binding.input.setText(builder.toString())
+        binding.input.setSelection(index + mention.length)
     }
 
     fun whisperUser(user: String) {
-        if (binding.input.isEnabled) {
-            val current = binding.input.text.toString()
-            val text = "/w $user $current"
-            binding.input.setText(text)
-            binding.input.setSelection(text.length)
-        }
+        if (!binding.input.isEnabled) return
+
+        val current = binding.input.text.toString()
+        val text = "/w $user $current"
+        binding.input.setText(text)
+        binding.input.setSelection(text.length)
+
     }
 
     private fun insertEmote(emote: String) {
+        if (!binding.input.isEnabled) return
+
         val current = binding.input.text.toString()
         val emoteWithSep = "$emote "
         val index = binding.input.selectionStart.takeIf { it >= 0 } ?: current.length
@@ -444,13 +448,13 @@ class MainFragment : Fragment() {
     }
 
     private fun sendMessage(): Boolean {
-        viewModel.activeChannel.value?.let {
-            val msg = binding.input.text.toString()
-            if (viewModel.whisperTabSelected.value == true && !msg.startsWith("/w ")) return true
+        val msg = binding.input.text.toString()
+        val activeChannel = viewModel.activeChannel.value ?: return true
+        if (viewModel.whisperTabSelected.value == true && !msg.startsWith("/w ")) return true
 
-            viewModel.sendMessage(it, msg)
-            binding.input.setText("")
-        }
+        viewModel.sendMessage(activeChannel, msg)
+        binding.input.setText("")
+
         return true
     }
 
