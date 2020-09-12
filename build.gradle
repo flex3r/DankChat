@@ -12,14 +12,14 @@ buildscript {
         coroutines_version = '1.3.9'
 
         // AndroidX
-        appcompat_version = '1.3.0-alpha01'
+        appcompat_version = '1.3.0-alpha02'
         browser_version = '1.2.0'
-        constraint_version = '2.0.0-rc1'
-        core_version = '1.5.0-alpha01'
+        constraint_version = '2.0.1'
+        core_version = '1.5.0-alpha02'
         emoji_version = '1.1.0'
         exif_version = '1.2.0'
         fragment_version = '1.3.0-alpha07'
-        lifecycle_version = '2.3.0-alpha06'
+        lifecycle_version = '2.3.0-alpha07'
         media_version = '1.1.0'
         nav_version = '2.3.0'
         preference_version = '1.1.1'
@@ -31,10 +31,10 @@ buildscript {
         // Third-party
         koin_version = '2.1.5'
         coil_version = '0.9.5' // TODO investigate issue with hardware bitmaps caused by newer version
-        gif_drawable_version = '1.2.20'
-        okhttp_version = '4.8.1'
+        gif_drawable_version = '1.2.21'
+        okhttp_version = '4.9.0'
         retrofit_version = '2.9.0'
-        hilt_version = '2.28.3-alpha'
+        hilt_version = '2.29.1-alpha'
     }
 
     repositories {
