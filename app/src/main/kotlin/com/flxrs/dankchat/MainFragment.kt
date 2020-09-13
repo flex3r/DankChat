@@ -143,7 +143,7 @@ class MainFragment : Fragment() {
             suggestions.observe(viewLifecycleOwner, ::setSuggestions)
             emoteItems.observe(viewLifecycleOwner, emoteMenuAdapter::submitList)
             appbarEnabled.observe(viewLifecycleOwner) { changeActionBarVisibility(it) }
-            canType.observe(viewLifecycleOwner) { if (it && !binding.inputLayout.isEnabled) binding.inputLayout.setup() }
+            canType.observe(viewLifecycleOwner) { if (it) binding.inputLayout.setup() }
             connectionState.observe(viewLifecycleOwner) { hint ->
                 if (hint == SystemMessageType.NOT_LOGGED_IN && twitchPreferences.hasMessageHistoryAcknowledged) {
                     showApiChangeInformationIfNotAcknowledged()
