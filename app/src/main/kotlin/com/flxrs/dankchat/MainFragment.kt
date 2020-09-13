@@ -125,18 +125,7 @@ class MainFragment : Fragment() {
             inputLayout.setup()
 
             childFragmentManager.findFragmentById(R.id.mention_fragment)?.let {
-                mentionBottomSheetBehavior = BottomSheetBehavior.from(it.requireView()).apply { hide() }.apply {
-                    addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-                        override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
-                        override fun onStateChanged(bottomSheet: View, newState: Int) {
-                            viewModel.setMentionSheetOpen(mentionBottomSheetBehavior.isMoving || mentionBottomSheetBehavior.isVisible)
-                            when {
-                                mentionBottomSheetBehavior.isExpanded -> viewModel.setSuggestionChannel("w")
-                                mentionBottomSheetBehavior.isHidden -> viewModel.setSuggestionChannel(tabAdapter.titleList[binding.chatViewpager.currentItem])
-                            }
-                        }
-                    })
-                }
+                mentionBottomSheetBehavior = BottomSheetBehavior.from(it.requireView()).apply { setupMentionSheet() }
             }
 
             tabLayoutMediator = TabLayoutMediator(tabs, chatViewpager) { tab, position ->
@@ -761,6 +750,20 @@ class MainFragment : Fragment() {
             tabAdapter.removeFragment(index)
             activity?.invalidateOptionsMenu()
         }
+    }
+
+    private fun BottomSheetBehavior<View>.setupMentionSheet() {
+        hide()
+        addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                viewModel.setMentionSheetOpen(mentionBottomSheetBehavior.isMoving || mentionBottomSheetBehavior.isVisible)
+                when {
+                    mentionBottomSheetBehavior.isExpanded -> viewModel.setSuggestionChannel("w")
+                    mentionBottomSheetBehavior.isHidden -> viewModel.setSuggestionChannel(tabAdapter.titleList[binding.chatViewpager.currentItem])
+                }
+            }
+        })
     }
 
     private fun calculatePageLimit(size: Int): Int = when {
