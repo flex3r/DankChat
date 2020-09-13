@@ -143,7 +143,7 @@ class MainFragment : Fragment() {
             suggestions.observe(viewLifecycleOwner, ::setSuggestions)
             emoteItems.observe(viewLifecycleOwner, emoteMenuAdapter::submitList)
             appbarEnabled.observe(viewLifecycleOwner) { changeActionBarVisibility(it) }
-            canType.observe(viewLifecycleOwner) { if (it) binding.inputLayout.setup() }
+            canType.observe(viewLifecycleOwner) { if (it && !binding.inputLayout.isEnabled) binding.inputLayout.setup() }
             connectionState.observe(viewLifecycleOwner) { hint ->
                 if (hint == SystemMessageType.NOT_LOGGED_IN && twitchPreferences.hasMessageHistoryAcknowledged) {
                     showApiChangeInformationIfNotAcknowledged()
@@ -439,7 +439,7 @@ class MainFragment : Fragment() {
     private fun sendMessage(): Boolean {
         val msg = binding.input.text.toString()
         val activeChannel = viewModel.activeChannel.value ?: return true
-        if (viewModel.whisperTabSelected.value == true && !msg.startsWith("/w ")) return true
+        if (viewModel.mentionSheetOpen.value == true && viewModel.whisperTabSelected.value == true && !msg.startsWith("/w ")) return true
 
         viewModel.sendMessage(activeChannel, msg)
         binding.input.setText("")
