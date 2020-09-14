@@ -41,13 +41,19 @@ class DankChatViewModel @ViewModelInject constructor(
     val activeChannel = MutableLiveData<String>()
     val channels = MutableLiveData<List<String>>(emptyList())
     val channelMentionCount = chatRepository.channelMentionCount.asLiveData(coroutineExceptionHandler)
+    val hasMentions = channelMentionCount.map { it.any { channel -> channel.key != "w" && channel.value > 0 } }
+    val hasWhispers = channelMentionCount.map { it.getOrDefault("w", 0) > 0 }
+    val shouldColorNotification = MediatorLiveData<Boolean>().apply {
+        addSource(hasMentions) { value = it || hasWhispers.value ?: false }
+        addSource(hasWhispers) { value = hasMentions.value ?: false || it }
+    }
 
     private val _errorEvent = SingleLiveEvent<Throwable>()
     private val _dataLoadingEvent = SingleLiveEvent<DataLoadingState>()
     private val _imageUploadedEvent = SingleLiveEvent<ImageUploadState>()
     private val streamInfoEnabled = MutableLiveData(true)
     private val roomStateEnabled = MutableLiveData(true)
-    private val streamData: MutableLiveData<Map<String, String>> = MutableLiveData()
+    private val streamData: MutableLiveData<Map<String, String>> = MutableLiveData(emptyMap())
     private val currentSuggestionChannel = MutableLiveData<String>()
 
     private val emotes = currentSuggestionChannel.switchMap { dataRepository.getEmotes(it).asLiveData(coroutineExceptionHandler) }
@@ -227,10 +233,20 @@ class DankChatViewModel @ViewModelInject constructor(
 
     fun setMentionSheetOpen(enabled: Boolean) {
         mentionSheetOpen.value = enabled
+        if (enabled) when (whisperTabSelected.value) {
+            true -> chatRepository.clearMentionCount("w")
+            else -> chatRepository.clearMentionCounts()
+        }
     }
 
     fun setWhisperTabSelected(open: Boolean) {
         whisperTabSelected.value = open
+        if (mentionSheetOpen.value == true) {
+            when {
+                open -> chatRepository.clearMentionCount("w")
+                else -> chatRepository.clearMentionCounts()
+            }
+        }
     }
 
     fun clear(channel: String) = chatRepository.clear(channel)

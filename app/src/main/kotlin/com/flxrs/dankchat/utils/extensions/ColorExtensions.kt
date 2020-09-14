@@ -1,6 +1,11 @@
 package com.flxrs.dankchat.utils.extensions
 
+import android.content.Context
+import android.content.res.ColorStateList
+import android.util.TypedValue
+import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import kotlin.math.sin
 
@@ -32,4 +37,9 @@ fun Int.normalizeColor(isDarkMode: Boolean): Int {
         }
         return ColorUtils.HSLToColor(hsl)
     }
+}
+
+fun Context.getThemeColor(@AttrRes attribute: Int): ColorStateList? = TypedValue().let {
+    theme.resolveAttribute(attribute, it, true);
+    ContextCompat.getColorStateList(this, it.resourceId)
 }

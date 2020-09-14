@@ -173,14 +173,18 @@ class MainFragment : Fragment() {
             }
             channelMentionCount.observe(viewLifecycleOwner) {
                 it.forEach { (channel, count) ->
+                    val index = tabAdapter.titleList.indexOf(channel)
                     if (count > 0) {
-                        when (val index = tabAdapter.titleList.indexOf(channel)) {
+                        when (index) {
                             binding.tabs.selectedTabPosition -> viewModel.clearMentionCount(channel) // mention is in active channel
                             else -> binding.tabs.getTabAt(index)?.apply { orCreateBadge }
                         }
+                    } else {
+                        binding.tabs.getTabAt(index)?.removeBadge()
                     }
                 }
             }
+            shouldColorNotification.observe(viewLifecycleOwner) { activity?.invalidateOptionsMenu() }
         }
 
         return binding.root
@@ -309,10 +313,19 @@ class MainFragment : Fragment() {
             val isLoggedIn = twitchPreferences.isLoggedIn
             val shouldShowProgress = viewModel.showUploadProgress.value ?: false
             val hasChannels = !viewModel.channels.value.isNullOrEmpty()
+            val mentionIconColor = when (viewModel.shouldColorNotification.value) {
+                true -> R.color.color_error
+                else -> android.R.color.white
+            }
             findItem(R.id.menu_login)?.isVisible = !isLoggedIn
             findItem(R.id.menu_remove)?.isVisible = hasChannels
             findItem(R.id.menu_open)?.isVisible = hasChannels
-            findItem(R.id.menu_mentions)?.isVisible = hasChannels
+            findItem(R.id.menu_mentions)?.apply {
+                isVisible = hasChannels
+                context?.let {
+                    icon.setTintList(ContextCompat.getColorStateList(it, mentionIconColor))
+                }
+            }
 
             findItem(R.id.progress)?.apply {
                 isVisible = shouldShowProgress

@@ -2,6 +2,12 @@ package com.flxrs.dankchat.utils.extensions
 
 import android.util.Log
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+
+fun ConflatedBroadcastChannel<MutableMap<String, Int>>.increment(key: String, amount: Int) = offer(value.apply {
+    val count = get(key) ?: 0
+    put(key, count + amount)
+})
 
 fun CoroutineScope.timer(interval: Long, action: suspend TimerScope.() -> Unit): Job {
     return launch {

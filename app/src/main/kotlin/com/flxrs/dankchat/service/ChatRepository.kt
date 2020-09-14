@@ -14,10 +14,7 @@ import com.flxrs.dankchat.service.twitch.message.Mention
 import com.flxrs.dankchat.service.twitch.message.Message
 import com.flxrs.dankchat.service.twitch.message.Roomstate
 import com.flxrs.dankchat.service.twitch.message.matches
-import com.flxrs.dankchat.utils.extensions.addAndLimit
-import com.flxrs.dankchat.utils.extensions.mapToMention
-import com.flxrs.dankchat.utils.extensions.replaceWithTimeOut
-import com.flxrs.dankchat.utils.extensions.replaceWithTimeOuts
+import com.flxrs.dankchat.utils.extensions.*
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -117,6 +114,10 @@ class ChatRepository {
         offer(value.apply { set(channel, 0) })
     }
 
+    fun clearMentionCounts() = with(_channelMentionCount) {
+        offer(value.apply { keys.forEach { if (it != "w") set(it, 0) } })
+    }
+
     @Synchronized
     fun handleDisconnect() {
         if (!hasDisconnected) {
@@ -184,6 +185,7 @@ class ChatRepository {
         if (!roomStates.contains(channel)) roomStates[channel] = MutableStateFlow(Roomstate(channel))
         if (!users.contains(channel)) users[channel] = MutableStateFlow(createUserCache())
         with(_channelMentionCount) {
+            if (!value.contains("w")) offer(value.apply { set(channel, 0) })
             if (!value.contains(channel)) offer(value.apply { set(channel, 0) })
         }
     }
@@ -308,17 +310,12 @@ class ChatRepository {
                 if (msg.command == "WHISPER") {
                     (parsed[0].message as Message.TwitchMessage).whisperRecipient = name
                     _whispers.value = _whispers.value.addAndLimit(parsed.toMentionTabItems(), scrollbackLength)
+                    _channelMentionCount.increment("w", 1)
                 }
 
-                val mentions = parsed.filter { it.message is Message.TwitchMessage && it.message.isMention }.toMentionTabItems()
+                val mentions = parsed.filter { it.message is Message.TwitchMessage && it.message.isMention && !it.message.isWhisper }.toMentionTabItems()
                 if (mentions.isNotEmpty()) {
-                    with(_channelMentionCount) {
-                        offer(value.apply {
-                            val count = get(channel) ?: 0
-                            put(channel, count + mentions.size)
-                        })
-                    }
-
+                    _channelMentionCount.increment(channel, mentions.size)
                     _mentions.value = _mentions.value.addAndLimit(mentions, scrollbackLength)
                 }
             }
