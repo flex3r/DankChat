@@ -349,7 +349,7 @@ class ChatRepository {
         }
     }
 
-    private suspend fun loadRecentMessages(channel: String): Unit? = withContext(Dispatchers.Default) {
+    private suspend fun loadRecentMessages(channel: String) = withContext(Dispatchers.Default) {
         val result = TwitchApi.getRecentMessages(channel) ?: return@withContext
         val items = mutableListOf<ChatItem>()
         measureTimeMillis {
@@ -368,6 +368,9 @@ class ChatRepository {
 
         val current = messages[channel]?.value ?: emptyList()
         messages[channel]?.value = items.addAndLimit(current, scrollbackLength, checkForDuplications = true)
+
+        val mentions = items.filter { (it.message as Message.TwitchMessage).isMention }.toMentionTabItems()
+        _mentions.value = (_mentions.value + mentions).sortedBy { it.message.timestamp }
     }
 
     companion object {
