@@ -11,7 +11,7 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.EdittextDialogBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-class EditTextDialogFragment : DialogFragment() {
+class AddChannelDialogFragment : DialogFragment() {
 
     private lateinit var binding: EdittextDialogBinding
 
@@ -38,7 +38,7 @@ class EditTextDialogFragment : DialogFragment() {
 
     private fun getInputAndDismiss(): Boolean {
         val input = binding.dialogEdit.text.toString().trim()
-        if (input.isNotBlank()) {
+        if (input.isNotBlank() && input.length > 2) {
             val activity = this.activity
             if (activity is AddChannelDialogResultHandler)
                 activity.onAddChannelDialogResult(input)
@@ -54,7 +54,7 @@ class EditTextDialogFragment : DialogFragment() {
             @StringRes positiveButtonText: Int,
             @StringRes message: Int = -1,
             textHint: String
-        ): EditTextDialogFragment {
+        ): AddChannelDialogFragment {
             val args = Bundle().apply {
                 putInt(TITLE_ARG, title)
                 putInt(NEGATIVE_BUTTON_ARG, negativeButtonText)
@@ -63,7 +63,7 @@ class EditTextDialogFragment : DialogFragment() {
                 putString(HINT_ARG, textHint)
             }
 
-            return EditTextDialogFragment().apply { arguments = args }
+            return AddChannelDialogFragment().apply { arguments = args }
         }
 
         private const val TITLE_ARG = "title"

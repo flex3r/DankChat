@@ -50,7 +50,7 @@ import com.flxrs.dankchat.service.state.DataLoadingState
 import com.flxrs.dankchat.service.state.ImageUploadState
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.utils.*
-import com.flxrs.dankchat.utils.dialog.EditTextDialogFragment
+import com.flxrs.dankchat.utils.dialog.AddChannelDialogFragment
 import com.flxrs.dankchat.utils.dialog.MessageHistoryDisclaimerDialogFragment
 import com.flxrs.dankchat.utils.extensions.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -731,7 +731,7 @@ class MainFragment : Fragment() {
         .setNegativeButton(getString(R.string.confirm_logout_negative_button)) { dialog, _ -> dialog.dismiss() }
         .create().show()
 
-    private fun openAddChannelDialog() = EditTextDialogFragment.create(
+    private fun openAddChannelDialog() = AddChannelDialogFragment.create(
         R.string.add_dialog_title,
         R.string.dialog_cancel,
         R.string.dialog_ok,
