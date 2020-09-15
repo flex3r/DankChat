@@ -17,10 +17,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.MainFragment
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
+import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 open class ChatFragment : Fragment() {
@@ -34,6 +36,9 @@ open class ChatFragment : Fragment() {
 
     protected open var isAtBottom = true
     private var channel: String = ""
+
+    @Inject
+    lateinit var emoteManager: EmoteManager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         channel = requireArguments().getString(CHANNEL_ARG, "")
@@ -57,7 +62,7 @@ open class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val itemDecoration = DividerItemDecoration(view.context, LinearLayoutManager.VERTICAL)
         manager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false).apply { stackFromEnd = true }
-        adapter = ChatAdapter(::scrollToPosition, ::mentionUser, ::copyMessage).apply { stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY }
+        adapter = ChatAdapter(emoteManager, ::scrollToPosition, ::mentionUser, ::copyMessage).apply { stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY }
         binding.chat.setup(adapter, manager)
 
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { pref, key ->

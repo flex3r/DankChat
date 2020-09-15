@@ -33,7 +33,7 @@ import java.nio.ByteBuffer
 import kotlin.collections.set
 import kotlin.system.measureTimeMillis
 
-class ChatRepository {
+class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager: EmoteManager) {
 
     private val _notificationMessageChannel = Channel<List<ChatItem>>(10) // TODO replace with SharedFlow when available
     private val _channelMentionCount = ConflatedBroadcastChannel<MutableMap<String, Int>>(mutableMapOf())
@@ -95,7 +95,7 @@ class ChatRepository {
 
     suspend fun loadIgnores(oAuth: String, id: String) {
         if (oAuth.isNotBlank()) {
-            TwitchApi.getIgnores(oAuth, id)?.let { result ->
+            twitchApi.getIgnores(oAuth, id)?.let { result ->
                 ignoredList.clear()
                 ignoredList.addAll(result.blocks.map { it.user.id })
             }
@@ -107,7 +107,7 @@ class ChatRepository {
         messages.remove(channel)
         lastMessage.remove(channel)
         _channelMentionCount.value.remove(channel)
-        TwitchApi.clearChannelFromLoaded(channel)
+        twitchApi.clearChannelFromLoaded(channel)
     }
 
     fun clearMentionCount(channel: String) = with(_channelMentionCount) {
@@ -152,7 +152,7 @@ class ChatRepository {
         val split = input.split(" ")
         if (split.size > 2 && split[0] == "/w" && split[1].isNotBlank()) {
             val message = input.substring(4 + split[1].length)
-            val emotes = EmoteManager.parse3rdPartyEmotes(message, withTwitch = true)
+            val emotes = emoteManager.parse3rdPartyEmotes(message, withTwitch = true)
             val fakeMessage = Message.TwitchMessage(channel = "", name = name, displayName = name, message = message, emotes = emotes, isWhisper = true, whisperRecipient = split[1])
             val fakeItem = ChatItem(fakeMessage, isMentionTab = true)
             _whispers.value = _whispers.value.addAndLimit(fakeItem, scrollbackLength)
@@ -254,7 +254,7 @@ class ChatRepository {
     }
 
     private fun handleClearchat(msg: IrcMessage) {
-        val parsed = Message.TwitchMessage.parse(msg).map { ChatItem(it) }
+        val parsed = Message.TwitchMessage.parse(msg, emoteManager).map { ChatItem(it) }
         val target = if (msg.params.size > 1) msg.params[1] else ""
         val channel = msg.params[0].substring(1)
 
@@ -284,7 +284,7 @@ class ChatRepository {
         msg.tags["user-id"]?.let { userId ->
             if (ignoredList.any { it == userId.toInt() }) return
         }
-        val parsed = Message.TwitchMessage.parse(msg).map {
+        val parsed = Message.TwitchMessage.parse(msg, emoteManager).map {
             if (it.name == name) lastMessage[it.channel] = it.message
             if (blacklistEntries.matches(it.message, it.name to it.displayName, it.emotes)) return
 
@@ -350,14 +350,14 @@ class ChatRepository {
     }
 
     private suspend fun loadRecentMessages(channel: String) = withContext(Dispatchers.Default) {
-        val result = TwitchApi.getRecentMessages(channel) ?: return@withContext
+        val result = twitchApi.getRecentMessages(channel) ?: return@withContext
         val items = mutableListOf<ChatItem>()
         measureTimeMillis {
             for (message in result.messages) {
                 val parsedIrc = IrcMessage.parse(message)
                 if (ignoredList.any { parsedIrc.tags["user-id"]?.toInt() == it }) continue
 
-                for (msg in Message.TwitchMessage.parse(parsedIrc)) {
+                for (msg in Message.TwitchMessage.parse(parsedIrc, emoteManager)) {
                     if (!blacklistEntries.matches(msg.message, msg.name to msg.displayName, msg.emotes)) {
                         msg.checkForMention(name, customMentionEntries)
                         items += ChatItem(msg)

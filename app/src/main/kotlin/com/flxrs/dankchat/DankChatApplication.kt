@@ -11,33 +11,25 @@ import androidx.preference.PreferenceManager
 import coil.Coil
 import coil.ImageLoader
 import coil.util.CoilUtils
+import com.flxrs.dankchat.di.EmoteOkHttpClient
 import com.flxrs.dankchat.utils.GifDrawableDecoder
 import dagger.hilt.android.HiltAndroidApp
 import okhttp3.CacheControl
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
+import javax.inject.Inject
 
 @HiltAndroidApp
 class DankChatApplication : Application()/*, ImageLoaderFactory*/ {
+    @Inject
+    @EmoteOkHttpClient
+    lateinit var client: OkHttpClient
+
     override fun onCreate() {
         super.onCreate()
         Coil.setDefaultImageLoader {
             ImageLoader(this) {
-                okHttpClient {
-                    OkHttpClient.Builder()
-                        .cache(CoilUtils.createDefaultCache(this@DankChatApplication))
-                        .dispatcher(Dispatcher().apply { maxRequestsPerHost = 15 }) // increase from default 5
-                        .addInterceptor { chain ->
-                            val request = chain.request()
-                            try {
-                                chain.proceed(request)
-                            } catch (e: IllegalArgumentException) {
-                                val new = request.newBuilder().cacheControl(CacheControl.FORCE_NETWORK).build()
-                                chain.proceed(new)
-                            }
-                        }
-                        .build()
-                }
+                okHttpClient { client }
                 componentRegistry {
                     add(GifDrawableDecoder())
                 }

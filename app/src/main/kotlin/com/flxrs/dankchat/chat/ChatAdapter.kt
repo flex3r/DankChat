@@ -53,6 +53,7 @@ import pl.droidsonroids.gif.GifDrawable
 import kotlin.math.roundToInt
 
 class ChatAdapter(
+    private val emoteManager: EmoteManager,
     private val onListChanged: (position: Int) -> Unit,
     private val onUserClicked: (user: String) -> Unit,
     private val onMessageLongClick: (message: String) -> Unit
@@ -77,7 +78,7 @@ class ChatAdapter(
     override fun onViewRecycled(holder: ViewHolder) {
         holder.scope.coroutineContext.cancelChildren()
         holder.binding.executePendingBindings()
-        EmoteManager.gifCallback.removeView(holder.binding.itemText)
+        emoteManager.gifCallback.removeView(holder.binding.itemText)
         super.onViewRecycled(holder)
     }
 
@@ -312,16 +313,16 @@ class ChatAdapter(
             }
 
             if (animateGifs && emotes.filter { it.isGif }.count() > 0) {
-                EmoteManager.gifCallback.addView(holder.binding.itemText)
+                emoteManager.gifCallback.addView(holder.binding.itemText)
             }
             val fullPrefix = prefixLength + badgesLength
             emotes.forEach { e ->
                 val drawable = when {
-                    e.isGif -> EmoteManager.gifCache[e.url]?.also { it.setRunning(animateGifs) } ?: Coil.get(e.url).apply {
+                    e.isGif -> emoteManager.gifCache[e.url]?.also { it.setRunning(animateGifs) } ?: Coil.get(e.url).apply {
                         this as GifDrawable
                         setRunning(animateGifs)
-                        callback = EmoteManager.gifCallback
-                        EmoteManager.gifCache.put(e.url, this)
+                        callback = emoteManager.gifCallback
+                        emoteManager.gifCache.put(e.url, this)
                     }
                     else -> Coil.get(e.url)
                 }

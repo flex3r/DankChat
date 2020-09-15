@@ -21,12 +21,18 @@ import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.api.dto.UserDtos
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class LoginFragment : Fragment() {
 
     private lateinit var binding: LoginFragmentBinding
     private lateinit var dankChatPreferenceStore: DankChatPreferenceStore
+
+    @Inject
+    lateinit var twitchApi: TwitchApi
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -92,7 +98,7 @@ class LoginFragment : Fragment() {
             if (fragment.startsWith("access_token=")) {
                 val token = fragment.substringAfter("access_token=").substringBefore("&scope=")
                 lifecycleScope.launchWhenResumed {
-                    val result = TwitchApi.validateUser(token)
+                    val result = twitchApi.validateUser(token)
                     val successful = saveLoginDetails(token, result)
 
                     with(findNavController()) {

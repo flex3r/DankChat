@@ -35,6 +35,10 @@ buildscript {
         okhttp_version = '4.9.0'
         retrofit_version = '2.9.0'
         hilt_version = '2.29.1-alpha'
+
+        // Debug
+        chucker_version = '3.2.0'
+        leakcanary_version = '2.4'
     }
 
     repositories {

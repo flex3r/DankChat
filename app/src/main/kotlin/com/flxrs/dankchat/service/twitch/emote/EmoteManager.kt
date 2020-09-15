@@ -13,20 +13,14 @@ import pl.droidsonroids.gif.GifDrawable
 import pl.droidsonroids.gif.MultiCallback
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
+import javax.inject.Inject
 
-object EmoteManager {
-    private val TAG = EmoteManager::class.java.simpleName
-
-    private const val BASE_URL = "https://static-cdn.jtvnw.net/emoticons/v1/"
-    private const val EMOTE_SIZE = "3.0"
-    private const val LOW_RES_EMOTE_SIZE = "2.0"
-
+class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
     private val twitchEmotes = ConcurrentHashMap<String, GenericEmote>()
 
     private val ffzEmotes = ConcurrentHashMap<String, HashMap<String, GenericEmote>>()
     private val globalFFZEmotes = ConcurrentHashMap<String, GenericEmote>()
 
-    private const val BTTV_CDN_BASE_URL = "https://cdn.betterttv.net/emote/"
     private val bttvEmotes = ConcurrentHashMap<String, HashMap<String, GenericEmote>>()
     private val globalBttvEmotes = ConcurrentHashMap<String, GenericEmote>()
 
@@ -144,7 +138,7 @@ object EmoteManager {
     suspend fun setTwitchEmotes(twitchResult: EmoteDtos.Twitch.Result) = withContext(Dispatchers.Default) {
         val setMapping = twitchResult.sets.keys
             .map {
-                async { TwitchApi.getUserSet(it) ?: EmoteDtos.Twitch.EmoteSet(it, "", "", 1) }
+                async { twitchApi.getUserSet(it) ?: EmoteDtos.Twitch.EmoteSet(it, "", "", 1) }
             }.awaitAll()
             .associateBy({ it.id }, { it.channelName })
 
@@ -275,5 +269,14 @@ object EmoteManager {
             else -> EmoteType.ChannelFFZEmote
         }
         return GenericEmote(name, "https:$url", "https:$lowResUrl", false, "$id", scale, type)
+    }
+
+    companion object {
+        private val TAG = EmoteManager::class.java.simpleName
+
+        private const val BASE_URL = "https://static-cdn.jtvnw.net/emoticons/v1/"
+        private const val EMOTE_SIZE = "3.0"
+        private const val LOW_RES_EMOTE_SIZE = "2.0"
+        private const val BTTV_CDN_BASE_URL = "https://cdn.betterttv.net/emote/"
     }
 }

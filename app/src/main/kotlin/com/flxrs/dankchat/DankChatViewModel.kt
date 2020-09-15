@@ -21,7 +21,8 @@ import java.io.File
 class DankChatViewModel @ViewModelInject constructor(
     @Assisted savedStateHandle: SavedStateHandle,
     private val chatRepository: ChatRepository,
-    private val dataRepository: DataRepository
+    private val dataRepository: DataRepository,
+    private val twitchApi: TwitchApi
 ) : ViewModel() {
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, t ->
@@ -341,7 +342,7 @@ class DankChatViewModel @ViewModelInject constructor(
         fetchTimerJob = timer(STREAM_REFRESH_RATE) {
             val data = mutableMapOf<String, String>()
             channels.forEach { channel ->
-                TwitchApi.getStream(fixedOAuth, channel)?.let {
+                twitchApi.getStream(fixedOAuth, channel)?.let {
                     data[channel] = stringBuilder(it.viewers)
                 }
             }

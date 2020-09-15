@@ -15,42 +15,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.File
 import java.net.URLConnection
+import javax.inject.Inject
 
-object TwitchApi {
-    private val TAG = TwitchApi::class.java.simpleName
-
-    private const val KRAKEN_BASE_URL = "https://api.twitch.tv/kraken/"
-    private const val HELIX_BASE_URL = "https://api.twitch.tv/helix/"
-    private const val VALIDATE_URL = "https://id.twitch.tv/oauth2/validate"
-
-    private const val TWITCH_SUBBADGES_BASE_URL = "https://badges.twitch.tv/v1/badges/channels/"
-    private const val TWITCH_SUBBADGES_SUFFIX = "/display"
-    private const val TWITCH_BADGES_URL = "https://badges.twitch.tv/v1/badges/global/display"
-
-    private const val FFZ_BASE_URL = "https://api.frankerfacez.com/v1/room/id/"
-    private const val FFZ_GLOBAL_URL = "https://api.frankerfacez.com/v1/set/global"
-
-    private const val BTTV_CHANNEL_BASE_URL = "https://api.betterttv.net/3/cached/users/twitch/"
-    private const val BTTV_GLOBAL_URL = "https://api.betterttv.net/3/cached/emotes/global"
-
-    private const val RECENT_MSG_URL = "https://recent-messages.robotty.de/api/v2/recent-messages/"
-
-    private const val NUULS_UPLOAD_URL = "https://i.nuuls.com/upload"
-
-    private const val TWITCHEMOTES_SETS_URL = "https://api.twitchemotes.com/api/v4/sets?id="
-
-    private const val SUPIBOT_URL = "https://supinic.com/api"
-
-    private const val BASE_LOGIN_URL = "https://id.twitch.tv/oauth2/authorize?response_type=token"
-    private const val REDIRECT_URL = "https://flxrs.com/dankchat"
-    private const val SCOPES = "chat:edit+chat:read+user_read+user_subscriptions" +
-            "+channel:moderate+user_blocks_read+user_blocks_edit+whispers:read+whispers:edit" +
-            "+channel_editor"
-    const val CLIENT_ID = "xu7vd1i6tlr0ak45q1li2wdc0lrma8"
-    const val LOGIN_URL = "$BASE_LOGIN_URL&client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URL&scope=$SCOPES"
-
-    private val client: OkHttpClient = OkHttpClient.Builder().build()
-
+class TwitchApi @Inject constructor(private val client: OkHttpClient) {
     private val service = Retrofit.Builder()
         .baseUrl(KRAKEN_BASE_URL)
         .addConverterFactory(MoshiConverterFactory.create())
@@ -184,6 +151,40 @@ object TwitchApi {
 
     fun clearChannelFromLoaded(channel: String) {
         loadedRecentsInChannels.remove(channel)
+    }
+
+    companion object {
+        private val TAG = TwitchApi::class.java.simpleName
+
+        private const val KRAKEN_BASE_URL = "https://api.twitch.tv/kraken/"
+        private const val HELIX_BASE_URL = "https://api.twitch.tv/helix/"
+        private const val VALIDATE_URL = "https://id.twitch.tv/oauth2/validate"
+
+        private const val TWITCH_SUBBADGES_BASE_URL = "https://badges.twitch.tv/v1/badges/channels/"
+        private const val TWITCH_SUBBADGES_SUFFIX = "/display"
+        private const val TWITCH_BADGES_URL = "https://badges.twitch.tv/v1/badges/global/display"
+
+        private const val FFZ_BASE_URL = "https://api.frankerfacez.com/v1/room/id/"
+        private const val FFZ_GLOBAL_URL = "https://api.frankerfacez.com/v1/set/global"
+
+        private const val BTTV_CHANNEL_BASE_URL = "https://api.betterttv.net/3/cached/users/twitch/"
+        private const val BTTV_GLOBAL_URL = "https://api.betterttv.net/3/cached/emotes/global"
+
+        private const val RECENT_MSG_URL = "https://recent-messages.robotty.de/api/v2/recent-messages/"
+
+        private const val NUULS_UPLOAD_URL = "https://i.nuuls.com/upload"
+
+        private const val TWITCHEMOTES_SETS_URL = "https://api.twitchemotes.com/api/v4/sets?id="
+
+        private const val SUPIBOT_URL = "https://supinic.com/api"
+
+        private const val BASE_LOGIN_URL = "https://id.twitch.tv/oauth2/authorize?response_type=token"
+        private const val REDIRECT_URL = "https://flxrs.com/dankchat"
+        private const val SCOPES = "chat:edit+chat:read+user_read+user_subscriptions" +
+                "+channel:moderate+user_blocks_read+user_blocks_edit+whispers:read+whispers:edit" +
+                "+channel_editor"
+        const val CLIENT_ID = "xu7vd1i6tlr0ak45q1li2wdc0lrma8"
+        const val LOGIN_URL = "$BASE_LOGIN_URL&client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URL&scope=$SCOPES"
     }
 }
 

@@ -45,19 +45,19 @@ sealed class Message {
         }
 
         companion object {
-            fun parse(message: IrcMessage): List<TwitchMessage> = with(message) {
+            fun parse(message: IrcMessage, emoteManager: EmoteManager): List<TwitchMessage> = with(message) {
                 return when (command) {
-                    "PRIVMSG" -> listOf(parsePrivMessage(message))
+                    "PRIVMSG" -> listOf(parsePrivMessage(message, emoteManager))
                     "NOTICE" -> listOf(parseNotice(message))
-                    "USERNOTICE" -> parseUserNotice(message)
+                    "USERNOTICE" -> parseUserNotice(message, emoteManager)
                     "CLEARCHAT" -> listOf(parseClearChat(message))
-                    "WHISPER" -> listOf(parseWhisper(message))
+                    "WHISPER" -> listOf(parseWhisper(message, emoteManager))
                     //"HOSTTARGET" -> listOf(parseHostTarget(message))
                     else -> listOf()
                 }
             }
 
-            private fun parsePrivMessage(ircMessage: IrcMessage, isNotify: Boolean = false): TwitchMessage = with(ircMessage) {
+            private fun parsePrivMessage(ircMessage: IrcMessage, emoteManager: EmoteManager, isNotify: Boolean = false): TwitchMessage = with(ircMessage) {
                 val displayName = tags.getValue("display-name")
                 val name = when (ircMessage.command) {
                     "USERNOTICE" -> tags.getValue("login")
@@ -80,10 +80,10 @@ sealed class Message {
                 val (fixedContent, spaces) = content.appendSpacesBetweenEmojiGroup()
                 val channel = params[0].substring(1)
                 val emoteTag = tags["emotes"] ?: ""
-                val emotes = EmoteManager.parseTwitchEmotes(emoteTag, fixedContent, spaces)
-                val otherEmotes = EmoteManager.parse3rdPartyEmotes(fixedContent, channel)
+                val emotes = emoteManager.parseTwitchEmotes(emoteTag, fixedContent, spaces)
+                val otherEmotes = emoteManager.parse3rdPartyEmotes(fixedContent, channel)
                 val id = tags["id"] ?: System.nanoTime().toString()
-                val badges = parseBadges(tags["badges"], channel, tags["user-id"])
+                val badges = parseBadges(emoteManager, tags["badges"], channel, tags["user-id"])
 
                 return TwitchMessage(
                     timestamp = ts,
@@ -115,7 +115,7 @@ sealed class Message {
                 )
             }
 
-            private fun parseUserNotice(message: IrcMessage, historic: Boolean = false): List<TwitchMessage> = with(message) {
+            private fun parseUserNotice(message: IrcMessage, emoteManager: EmoteManager, historic: Boolean = false): List<TwitchMessage> = with(message) {
                 val messages = mutableListOf<TwitchMessage>()
                 val msgId = tags["msg-id"]
                 val id = tags["id"] ?: System.nanoTime().toString()
@@ -125,7 +125,7 @@ sealed class Message {
                 val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
 
                 if (msgId != null && (msgId == "sub" || msgId == "resub")) {
-                    val subMsg = parsePrivMessage(message, true)
+                    val subMsg = parsePrivMessage(message, emoteManager, isNotify = true, )
                     if (subMsg.message.isNotBlank()) messages += subMsg
                 }
                 val systemTwitchMessage = TwitchMessage(
@@ -174,15 +174,14 @@ sealed class Message {
                 return makeSystemMessage(systemMessage, channel, ts, id)
             }
 
-            private fun parseWhisper(message: IrcMessage): TwitchMessage = with(message) {
+            private fun parseWhisper(message: IrcMessage, emoteManager: EmoteManager): TwitchMessage = with(message) {
                 val displayName = tags.getValue("display-name")
                 val name = prefix.substringBefore('!')
                 val colorTag = tags["color"]?.ifBlank { "#717171" } ?: "#717171"
                 val color = Color.parseColor(colorTag)
                 val (fixedContent, spaces) = params[1].appendSpacesBetweenEmojiGroup()
-                val badges = parseBadges(tags["badges"], userId = tags["user-id"])
-                val emotes = EmoteManager
-                    .parseTwitchEmotes(tags["emotes"] ?: "", fixedContent, spaces) + EmoteManager.parse3rdPartyEmotes(fixedContent)
+                val badges = parseBadges(emoteManager, tags["badges"], userId = tags["user-id"])
+                val emotes = emoteManager.parseTwitchEmotes(tags["emotes"] ?: "", fixedContent, spaces) + emoteManager.parse3rdPartyEmotes(fixedContent)
 
                 return TwitchMessage(
                     timestamp = System.currentTimeMillis(),
@@ -198,14 +197,14 @@ sealed class Message {
                 )
             }
 
-            private fun parseBadges(badgeTags: String?, channel: String = "", userId: String? = null): List<Badge> {
+            private fun parseBadges(emoteManager: EmoteManager, badgeTags: String?, channel: String = "", userId: String? = null): List<Badge> {
                 val badges = badgeTags?.split(',')?.mapNotNull { badgeTag ->
                     val trimmed = badgeTag.trim()
                     val badgeSet = trimmed.substringBefore('/')
                     val badgeVersion = trimmed.substringAfter('/')
-                    val globalBadgeUrl = EmoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)
-                    val channelBadgeUrl = EmoteManager.getChannelBadgeUrl(channel, badgeSet, badgeVersion)
-                    val ffzModBadgeUrl = EmoteManager.getFFzModBadgeUrl(channel)
+                    val globalBadgeUrl = emoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)
+                    val channelBadgeUrl = emoteManager.getChannelBadgeUrl(channel, badgeSet, badgeVersion)
+                    val ffzModBadgeUrl = emoteManager.getFFzModBadgeUrl(channel)
                     when {
                         (badgeSet.startsWith("subscriber") || badgeSet.startsWith("bits")) && channelBadgeUrl != null -> Badge.ChannelBadge(badgeSet, channelBadgeUrl)
                         badgeSet.startsWith("moderator") && ffzModBadgeUrl != null -> Badge.FFZModBadge(ffzModBadgeUrl)
@@ -214,7 +213,7 @@ sealed class Message {
                 } ?: emptyList()
 
                 userId ?: return badges
-                return when (val badge = EmoteManager.getDankChatBadgeUrl(userId)) {
+                return when (val badge = emoteManager.getDankChatBadgeUrl(userId)) {
                     null -> badges
                     else -> badges + Badge.GlobalBadge(badge.first, badge.second)
                 }

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 import kotlin.system.measureTimeMillis
 
-class DataRepository {
+class DataRepository(private val twitchApi: TwitchApi, private val emoteManager: EmoteManager) {
     private val emotes = mutableMapOf<String, MutableStateFlow<List<GenericEmote>>>()
     private val supibotCommands = mutableMapOf<String, MutableStateFlow<List<String>>>()
     private var loadedGlobalEmotes = false
@@ -21,23 +21,23 @@ class DataRepository {
 
     suspend fun loadChannelData(channel: String, oAuth: String, forceReload: Boolean = false) {
         if (!emotes.contains(channel)) emotes[channel] = MutableStateFlow(emptyList())
-        TwitchApi.getUserIdFromName(oAuth, channel)?.let {
+        twitchApi.getUserIdFromName(oAuth, channel)?.let {
             loadChannelBadges(channel, it)
             load3rdPartyEmotes(channel, it, forceReload)
         }
     }
 
-    suspend fun uploadMedia(file: File): String? = TwitchApi.uploadMedia(file)
+    suspend fun uploadMedia(file: File): String? = twitchApi.uploadMedia(file)
 
     suspend fun loadSupibotCommands() {
         measureTimeMillis {
-            val channels = TwitchApi.getSupibotChannels()?.let { channels ->
+            val channels = twitchApi.getSupibotChannels()?.let { channels ->
                 channels.data
                     .filter { it.isActive() }
                     .map { it.name }
             } ?: return
 
-            TwitchApi.getSupibotCommands()?.let { commands ->
+            twitchApi.getSupibotCommands()?.let { commands ->
                 val commandsWithAliases = commands.data.map {
                     listOf(it.name) + it.aliases
                 }.flatten()
@@ -55,21 +55,21 @@ class DataRepository {
 
     suspend fun loadGlobalBadges() {
         measureTimeAndLog(TAG, "global badges") {
-            TwitchApi.getGlobalBadges()?.also { EmoteManager.setGlobalBadges(it) }
+            twitchApi.getGlobalBadges()?.also { emoteManager.setGlobalBadges(it) }
         }
     }
 
     suspend fun loadTwitchEmotes(oAuth: String, id: String) {
         if (oAuth.isNotBlank()) {
             measureTimeAndLog(TAG, "twitch emotes for #$id") {
-                TwitchApi.getUserEmotes(oAuth, id)?.also { EmoteManager.setTwitchEmotes(it) }
+                twitchApi.getUserEmotes(oAuth, id)?.also { emoteManager.setTwitchEmotes(it) }
             }
         }
     }
 
     suspend fun loadDankChatBadges() {
         measureTimeMillis {
-            TwitchApi.getDankChatBadges()?.let { EmoteManager.setDankChatBadges(it) }
+            twitchApi.getDankChatBadges()?.let { emoteManager.setDankChatBadges(it) }
         }.let { Log.i(TAG, "Loaded DankChat badges in $it ms") }
     }
 
@@ -78,23 +78,23 @@ class DataRepository {
             emotes[channel] = MutableStateFlow(emptyList())
         }
 
-        emotes[channel]?.value = EmoteManager.getEmotes(channel)
+        emotes[channel]?.value = emoteManager.getEmotes(channel)
     }
 
     private suspend fun loadChannelBadges(channel: String, id: String) {
         measureTimeAndLog(TAG, "channel badges for #$id") {
-            TwitchApi.getChannelBadges(id)?.also { EmoteManager.setChannelBadges(channel, it) }
+            twitchApi.getChannelBadges(id)?.also { emoteManager.setChannelBadges(channel, it) }
         }
     }
 
     private suspend fun load3rdPartyEmotes(channel: String, id: String, forceReload: Boolean) {
         measureTimeMillis {
-            TwitchApi.getFFZChannelEmotes(id)?.let { EmoteManager.setFFZEmotes(channel, it) }
-            TwitchApi.getBTTVChannelEmotes(id)?.let { EmoteManager.setBTTVEmotes(channel, it) }
+            twitchApi.getFFZChannelEmotes(id)?.let { emoteManager.setFFZEmotes(channel, it) }
+            twitchApi.getBTTVChannelEmotes(id)?.let { emoteManager.setBTTVEmotes(channel, it) }
 
             if (forceReload || !loadedGlobalEmotes) {
-                TwitchApi.getFFZGlobalEmotes()?.let { EmoteManager.setFFZGlobalEmotes(it) }
-                TwitchApi.getBTTVGlobalEmotes()?.let { EmoteManager.setBTTVGlobalEmotes(it) }
+                twitchApi.getFFZGlobalEmotes()?.let { emoteManager.setFFZGlobalEmotes(it) }
+                twitchApi.getBTTVGlobalEmotes()?.let { emoteManager.setBTTVGlobalEmotes(it) }
                 loadedGlobalEmotes = true
             }
         }.let { Log.i(TAG, "Loaded 3rd party emotes for #$channel in $it ms") }
