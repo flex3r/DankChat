@@ -51,7 +51,8 @@ fun Fragment.hideKeyboard() {
     view?.let { activity?.hideKeyboard(it) }
 }
 
-fun Fragment.isLandscape() = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+val Fragment.isLandscape: Boolean
+        get() = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
 fun Fragment.keepScreenOn(keep: Boolean) {
     (activity as? AppCompatActivity)?.keepScreenOn(keep)

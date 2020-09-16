@@ -39,7 +39,7 @@ private val emojiCodePoints = listOf(
 )
 
 private val Int.isEmoji: Boolean
-    get() = emojiCodePoints.any { range -> this in range }
+    get() = emojiCodePoints.any { it.contains(this) }
 
 // Adds extra space between every emoji group to support 3rd party emotes directly before/after emojis
 // @badge-info=;badges=broadcaster/1,bits-charity/1;color=#00BCD4;display-name=flex3rs;emotes=521050:9-15,25-31;flags=;id=08649ff3-8fee-4200-8e06-c46bcdfb06e8;mod=0;room-id=73697410;subscriber=0;tmi-sent-ts=1575196101040;turbo=0;user-id=73697410;user-type= :flex3rs!flex3rs@flex3rs.tmi.twitch.tv PRIVMSG #flex3rs :🍓🍑🍊🍋🍍NaM forsenE 🍐🍏🐬🐳NaM forsenE
@@ -79,12 +79,12 @@ fun String.appendSpacesBetweenEmojiGroup(): Pair<String, List<Int>> {
 
 inline fun String.codePoints(block: (Int) -> Unit) {
     var i = 0
-    while (i < length) {
-        val c1: Char = get(i++)
-        if (!Character.isHighSurrogate(c1) || i >= length) {
+    while (i < this.length) {
+        val c1: Char = this[i++]
+        if (!Character.isHighSurrogate(c1) || i >= this.length) {
             block(c1.toInt())
         } else {
-            val c2: Char = get(i)
+            val c2: Char = this[i]
             if (Character.isLowSurrogate(c2)) {
                 i++
                 block(Character.toCodePoint(c1, c2))

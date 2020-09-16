@@ -80,6 +80,8 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
 
                 val start = pair[0].toIntOrNull() ?: return@mapNotNull null
                 val end = pair[1].toIntOrNull() ?: return@mapNotNull null
+
+                // be extra safe in case twitch sends invalid emote ranges :)
                 start.coerceAtLeast(0) to (end + 1).coerceAtMost(original.length)
             }
             val fixedParsedPositions = parsedPositions.map { (start, end) ->
@@ -87,7 +89,7 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
                 val spaceExtra = spaces.count { it < start + extra }
                 return@map "${(start + extra + spaceExtra)}-${(end + extra + spaceExtra)}"
             }
-            val code = original.substring(parsedPositions.first().first, parsedPositions.first().second)
+            val code = original.substring(parsedPositions[0].first, parsedPositions[0].second)
 
             emotes += ChatMessageEmote(
                 positions = fixedParsedPositions,

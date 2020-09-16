@@ -807,7 +807,7 @@ class MainFragment : Fragment() {
                 return@setStartIconOnClickListener
             }
 
-            if (isLandscape()) hideKeyboard()
+            if (isLandscape) hideKeyboard()
             val heightScaleFactor = 0.5
             binding.apply {
                 bottomSheetViewPager.adapter = emoteMenuAdapter
@@ -832,7 +832,7 @@ class MainFragment : Fragment() {
                         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
 
                         override fun onStateChanged(bottomSheet: View, newState: Int) {
-                            if (viewModel.appbarEnabled.value == true && isLandscape()) {
+                            if (viewModel.appbarEnabled.value == true && isLandscape) {
                                 when (newState) {
                                     BottomSheetBehavior.STATE_EXPANDED, BottomSheetBehavior.STATE_COLLAPSED -> {
                                         (activity as? AppCompatActivity)?.supportActionBar?.hide()
