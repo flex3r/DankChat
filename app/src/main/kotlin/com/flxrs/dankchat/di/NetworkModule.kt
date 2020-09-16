@@ -52,10 +52,3 @@ object NetworkModule {
     @Provides
     fun provideEmoteManager(twitchApi: TwitchApi): EmoteManager = EmoteManager(twitchApi)
 }
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class ApiOkHttpClient
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class EmoteOkHttpClient
