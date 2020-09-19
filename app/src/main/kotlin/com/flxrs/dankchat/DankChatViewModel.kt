@@ -196,6 +196,7 @@ class DankChatViewModel @ViewModelInject constructor(
                 dataRepository.setEmotesForSuggestions("w") // global emote suggestions for whisper tab
                 channelList.map {
                     dataRepository.setEmotesForSuggestions(it)
+                    launch(coroutineExceptionHandler) { chatRepository.loadChatters(it) }
                     launch(coroutineExceptionHandler) { chatRepository.loadRecentMessages(it, loadHistory) }
                 }.joinAll()
 

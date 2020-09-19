@@ -102,6 +102,26 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
         }
     }
 
+    suspend fun loadChatters(channel: String) = withContext(Dispatchers.Default) {
+        if (!users.contains(channel)) users[channel] = MutableStateFlow(createUserCache())
+
+        measureTimeMillis {
+            twitchApi.getChatters(channel)?.let { chatters ->
+                users[channel]?.value?.let { cache ->
+                    val size = chatters.total.size
+                    if (size > USER_CACHE_SIZE) {
+                        Log.i(TAG, "Resizing user cache for #$channel to $size")
+                        cache.resize(size)
+                    }
+
+                    chatters.total.forEach { cache.put(it, true) }
+                    users[channel]?.value = cache
+                }
+
+            }
+        }.let { Log.i(TAG, "Loading chatters for #$channel took $it ms") }
+    }
+
     fun removeChannelData(channel: String) {
         messages[channel]?.value = emptyList()
         messages.remove(channel)
@@ -220,8 +240,6 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
 
     private fun onMessage(msg: IrcMessage): List<ChatItem>? {
         when (msg.command) {
-            "353" -> handleNames(msg)
-            "JOIN" -> handleJoin(msg)
             "CLEARCHAT" -> handleClearchat(msg)
             "ROOMSTATE" -> handleRoomstate(msg)
             "CLEARMSG" -> handleClearmsg(msg)
@@ -322,24 +340,10 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
         }
     }
 
-    private fun handleNames(msg: IrcMessage) {
-        val channel = msg.params.getOrNull(2)?.substring(1) ?: return
-        val names = msg.params.getOrNull(3)?.split(' ') ?: return
-        val currentUsers = users[channel]?.value ?: createUserCache()
-        names.forEach { currentUsers.put(it, true) }
-        users[channel]?.value = currentUsers
-    }
-
-    private fun handleJoin(msg: IrcMessage) {
-        val channel = msg.params.getOrNull(0)?.substring(1) ?: return
-        val name = msg.prefix.substringBefore('!')
-        val currentUsers = users[channel]?.value ?: createUserCache()
-        currentUsers.put(name, true)
-        users[channel]?.value = currentUsers
-    }
-
     private fun createUserCache(): LruCache<String, Boolean> {
-        return LruCache(500)
+        return object : LruCache<String, Boolean>(USER_CACHE_SIZE) {
+            override fun equals(other: Any?): Boolean = false
+        }
     }
 
     private fun makeAndPostConnectionMessage(state: SystemMessageType, channels: Set<String> = messages.keys) {
@@ -376,6 +380,7 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
     companion object {
         private val TAG = ChatRepository::class.java.simpleName
         private val INVISIBLE_CHAR = String(ByteBuffer.allocate(4).putInt(0x000E0000).array(), Charsets.UTF_32)
+        private const val USER_CACHE_SIZE = 500
         const val MENTIONS_KEY = "mentions"
     }
 }

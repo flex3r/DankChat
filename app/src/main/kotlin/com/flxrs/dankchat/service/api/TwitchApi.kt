@@ -149,6 +149,10 @@ class TwitchApi @Inject constructor(private val client: OkHttpClient) {
         service.getSupibotChannels("$SUPIBOT_URL/bot/channel/list", "twitch").bodyOrNull
     }
 
+    suspend fun getChatters(channel: String): ChattersDto.Chatters? = withContext(Dispatchers.IO) {
+        service.getChatters("$CHATTERS_URL$channel$CHATTERS_URL_SUFFIX").bodyOrNull?.chatters
+    }
+
     fun clearChannelFromLoaded(channel: String) {
         loadedRecentsInChannels.remove(channel)
     }
@@ -159,6 +163,8 @@ class TwitchApi @Inject constructor(private val client: OkHttpClient) {
         private const val KRAKEN_BASE_URL = "https://api.twitch.tv/kraken/"
         private const val HELIX_BASE_URL = "https://api.twitch.tv/helix/"
         private const val VALIDATE_URL = "https://id.twitch.tv/oauth2/validate"
+        private const val CHATTERS_URL = "https://tmi.twitch.tv/group/user/"
+        private const val CHATTERS_URL_SUFFIX = "/chatters"
 
         private const val TWITCH_SUBBADGES_BASE_URL = "https://badges.twitch.tv/v1/badges/channels/"
         private const val TWITCH_SUBBADGES_SUFFIX = "/display"
