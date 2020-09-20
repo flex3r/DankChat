@@ -95,11 +95,6 @@ class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialog
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
-    override fun onBackPressed() = when {
-        isTaskRoot && supportFragmentManager.backStackEntryCount == 0 -> finishAfterTransition()
-        else -> super.onBackPressed()
-    }
-
     override fun onAddChannelDialogResult(channel: String) {
         val fragment = supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.first()
         if (fragment is MainFragment) {
