@@ -9,13 +9,14 @@ import com.flxrs.dankchat.R
 
 class DankChatPreferenceStore(context: Context) {
     private val dankChatPreferences: SharedPreferences = context.getSharedPreferences(context.getString(R.string.shared_preference_key), Context.MODE_PRIVATE)
-    private val secureDankChatPreferences = EncryptedSharedPreferences.create(
-        context,
-        context.getString(R.string.secure_shared_preference_key),
-        MasterKey.Builder(context).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build(),
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-    )
+    // TODO wait until tink/jetpack security fixes https://issuetracker.google.com/issues/164901843 / https://issuetracker.google.com/issues/158234058#comment48
+    //private val secureDankChatPreferences = EncryptedSharedPreferences.create(
+    //    context,
+    //    context.getString(R.string.secure_shared_preference_key),
+    //    MasterKey.Builder(context).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build(),
+    //    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+    //    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+    //)
 
     var isLoggedIn: Boolean
         get() = dankChatPreferences.getBoolean(LOGGED_IN_KEY, false)
@@ -23,15 +24,16 @@ class DankChatPreferenceStore(context: Context) {
 
     var oAuthKey: String?
         get() {
-            if (dankChatPreferences.contains(OAUTH_KEY)) {
-                val oAuth = dankChatPreferences.getString(OAUTH_KEY, null)
-                secureDankChatPreferences.edit { putString(OAUTH_KEY, oAuth) }
-                dankChatPreferences.edit { remove(OAUTH_KEY) }
-                return oAuth
-            }
-            return secureDankChatPreferences.getString(OAUTH_KEY, null)
+            //if (dankChatPreferences.contains(OAUTH_KEY)) {
+            //    val oAuth = dankChatPreferences.getString(OAUTH_KEY, null)
+            //    secureDankChatPreferences.edit { putString(OAUTH_KEY, oAuth) }
+            //    dankChatPreferences.edit { remove(OAUTH_KEY) }
+            //    return oAuth
+            //}
+            //return secureDankChatPreferences.getString(OAUTH_KEY, null)
+            return dankChatPreferences.getString(OAUTH_KEY, null)
         }
-        set(value) = secureDankChatPreferences.edit { putString(OAUTH_KEY, value) }
+        set(value) = dankChatPreferences.edit { putString(OAUTH_KEY, value) } //secureDankChatPreferences.edit { putString(OAUTH_KEY, value) }
 
     var channelsString: String?
         get() = dankChatPreferences.getString(CHANNELS_AS_STRING_KEY, null)
@@ -64,6 +66,13 @@ class DankChatPreferenceStore(context: Context) {
     var hasApiChangeAcknowledged: Boolean
         get() = dankChatPreferences.getBoolean(API_CHANGE_ACK_KEY, false)
         set(value) = dankChatPreferences.edit { putBoolean(API_CHANGE_ACK_KEY, value) }
+
+    fun clearLogin() = dankChatPreferences.edit {
+        putBoolean(LOGGED_IN_KEY, false)
+        putString(OAUTH_KEY, "")
+        putString(NAME_KEY, "")
+        putString(ID_STRING_KEY, "")
+    }
 
     companion object {
         private const val LOGGED_IN_KEY = "loggedIn"

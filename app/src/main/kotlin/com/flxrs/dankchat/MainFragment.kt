@@ -664,6 +664,10 @@ class MainFragment : Fragment() {
         val loadSupibotKey = getString(R.string.preference_supibot_suggestions_key)
         val scrollBackLengthKey = getString(R.string.preference_scrollback_length_key)
         twitchPreferences = DankChatPreferenceStore(context)
+        if (twitchPreferences.isLoggedIn && twitchPreferences.oAuthKey.isNullOrBlank()) {
+            twitchPreferences.clearLogin()
+        }
+
         preferences = PreferenceManager.getDefaultSharedPreferences(context)
         if (::preferenceListener.isInitialized) preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
@@ -719,11 +723,7 @@ class MainFragment : Fragment() {
         .setTitle(getString(R.string.confirm_logout_title))
         .setMessage(getString(R.string.confirm_logout_message))
         .setPositiveButton(getString(R.string.confirm_logout_positive_button)) { dialog, _ ->
-            twitchPreferences.userName = ""
-            twitchPreferences.oAuthKey = ""
-            twitchPreferences.userIdString = ""
-            twitchPreferences.isLoggedIn = false
-
+            twitchPreferences.clearLogin()
             viewModel.close(name = "", oAuth = "", userId = "")
             viewModel.clearIgnores()
             dialog.dismiss()

@@ -46,6 +46,10 @@ class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialog
         val filter = IntentFilter(SHUTDOWN_REQUEST_FILTER)
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, filter)
         twitchPreferences = DankChatPreferenceStore(this)
+        if (twitchPreferences.isLoggedIn && twitchPreferences.oAuthKey.isNullOrBlank()) {
+            twitchPreferences.clearLogin()
+        }
+
         twitchPreferences.channelsString?.let { channels.addAll(it.split(',')) }
             ?: twitchPreferences.channels?.let {
                 channels.addAll(it)
