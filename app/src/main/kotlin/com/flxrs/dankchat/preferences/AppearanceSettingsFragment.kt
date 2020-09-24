@@ -1,10 +1,15 @@
 package com.flxrs.dankchat.preferences
 
+import android.app.Application
+import android.app.UiModeManager
+import android.content.Context.UI_MODE_SERVICE
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SeekBarPreference
@@ -30,9 +35,13 @@ class AppearanceSettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.appearance_settings, rootKey)
+        val isTV = context?.let {
+            val uiModeManager = getSystemService(it, UiModeManager::class.java)
+            uiModeManager?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
+        } ?: false
 
         findPreference<SwitchPreference>(getString(R.string.preference_dark_theme_key))?.apply {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1 && !isTV) {
                 if (!isChecked) {
                     isChecked = true
                 }

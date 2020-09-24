@@ -1,6 +1,8 @@
 package com.flxrs.dankchat
 
 import android.app.Application
+import android.app.UiModeManager
+import android.content.res.Configuration
 import android.os.Build
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
@@ -36,12 +38,14 @@ class DankChatApplication : Application()/*, ImageLoaderFactory*/ {
             }
         }
 
+        val uiModeManager = getSystemService(UI_MODE_SERVICE) as UiModeManager
+        val isTv = uiModeManager.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
         val nightMode = PreferenceManager.getDefaultSharedPreferences(this)
             .getBoolean(getString(R.string.preference_dark_theme_key), true)
             .let { darkMode ->
                 when {
                     // Force dark theme on < Android 8.1 because of statusbar/navigationbar issues
-                    darkMode || Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1 -> AppCompatDelegate.MODE_NIGHT_YES
+                    darkMode || (Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1 && !isTv) -> AppCompatDelegate.MODE_NIGHT_YES
                     else -> AppCompatDelegate.MODE_NIGHT_NO
                 }
             }
