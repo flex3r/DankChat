@@ -80,7 +80,7 @@
 
     <string name="preference_timestamp_title">Показувати часові мітки</string>
     <string name="preference_mention_format_title">Формат згадок</string>
-    <string name="preference_mention_format_summary">Змінити формат згадок при натисканні на ім'я користувача</string>
+    <string name="preference_mention_format_summary">Змінити формат згадок при натисканні на ім\'я користувача</string>
     <string name="preference_roomstate_title">Показувати статус чату</string>
     <string name="preference_roomstate_summary">Показувати інформацію про статус чату (наприклад, режиму "Тільки для підписників")</string>
     <string name="preference_streaminfo_title">Показувати інформацію про стрім</string>
