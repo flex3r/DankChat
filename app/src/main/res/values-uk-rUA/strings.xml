@@ -44,7 +44,7 @@
     <string name="notification_new_mentions">У Вас є нові згадки</string>
     <string name="notification_mention">%1$s згадав Вас у #%2$s</string>
     <string name="notification_notify_mention">Вас згадали у #%1$s</string>
-    <string name="snackbar_login">Ви увійшли під ім'ям %1$s</string>
+    <string name="snackbar_login">Ви увійшли під ім\'ям %1$s</string>
     <string name="snackbar_login_failed">Помилка входу</string>
     <string name="snackbar_image_uploaded">Скопійовано: %1$s</string>
     <string name="snackbar_upload_failed">Помилка при завантаженні</string>
