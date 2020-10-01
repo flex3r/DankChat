@@ -73,7 +73,7 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
             // bad emote data :)
             if (pairs.isEmpty()) continue
 
-            // skip over invalid parsed data
+            // skip over invalid parsed data, adjust positions
             val parsedPositions = pairs.mapNotNull { pos ->
                 val pair = pos.split('-')
                 if (pair.size != 2) return@mapNotNull null
@@ -81,18 +81,18 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
                 val start = pair[0].toIntOrNull() ?: return@mapNotNull null
                 val end = pair[1].toIntOrNull() ?: return@mapNotNull null
 
-                // be extra safe in case twitch sends invalid emote ranges :)
-                start.coerceAtLeast(0) to (end + 1).coerceAtMost(original.length)
-            }
-            val fixedParsedPositions = parsedPositions.map { (start, end) ->
-                val extra = supplementaryCodePointPositions.count { it < start }
-                val spaceExtra = spaces.count { it < start + extra }
-                return@map "${(start + extra + spaceExtra)}-${(end + extra + spaceExtra)}"
-            }
-            val code = original.substring(parsedPositions[0].first, parsedPositions[0].second)
+                val unicodeExtra = supplementaryCodePointPositions.count { it < start }
+                val spaceExtra = spaces.count { it < start + unicodeExtra }
+                val fixedStart = start + unicodeExtra + spaceExtra
+                val fixedEnd = end + unicodeExtra + spaceExtra
 
+                // be extra safe in case twitch sends invalid emote ranges :)
+                fixedStart.coerceAtLeast(0) to (fixedEnd + 1).coerceAtMost(original.length)
+            }
+
+            val code = original.substring(parsedPositions[0].first, parsedPositions[0].second)
             emotes += ChatMessageEmote(
-                positions = fixedParsedPositions,
+                positions = parsedPositions,
                 url = "$BASE_URL/$id/$EMOTE_SIZE",
                 id = id,
                 code = code,
@@ -220,10 +220,10 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
 
     private fun parseMessageForEmote(emote: GenericEmote, messageSplits: List<String>, listToAdd: MutableList<ChatMessageEmote>) {
         var i = 0
-        val positions = mutableListOf<String>()
+        val positions = mutableListOf<Pair<Int, Int>>()
         messageSplits.forEach { split ->
             if (emote.code == split.trim()) {
-                positions += "$i-${i + split.length}"
+                positions += i to i + split.length
             }
             i += split.length + 1
         }

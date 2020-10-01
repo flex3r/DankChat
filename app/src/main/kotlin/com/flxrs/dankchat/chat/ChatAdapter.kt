@@ -333,12 +333,11 @@ class ChatAdapter(
     }
 
     private fun SpannableString.setEmoteSpans(e: ChatMessageEmote, prefix: Int, drawable: Drawable) {
-        e.positions.forEach { pos ->
-            val (start, end) = pos.split('-').map { it.toInt() + prefix }
+        e.positions.forEach { (start, end) ->
             try {
-                setSpan(ImageSpan(drawable), start, end, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+                setSpan(ImageSpan(drawable), start + prefix, end + prefix, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
             } catch (t: Throwable) {
-                Log.e("ViewBinding", "$start $end ${e.code} $length")
+                Log.e("ViewBinding", "${start + prefix} ${end + prefix} ${e.code} $length")
             }
         }
     }

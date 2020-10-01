@@ -1,7 +1,7 @@
 package com.flxrs.dankchat.service.twitch.emote
 
 data class ChatMessageEmote(
-    val positions: List<String>,
+    val positions: List<Pair<Int, Int>>,
     val url: String,
     val id: String,
     val code: String,
