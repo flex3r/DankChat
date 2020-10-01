@@ -119,7 +119,7 @@
     <string name="preference_message_history_dashboard_summary">Дізнатися більше про службу та відключити історію повідомлень для Вашого каналу</string>
     <string name="preference_channel_data_header">Дані каналу</string>
     <string name="preference_developer_header">Налаштування розробника</string>
-    <string name="preference_debug_mode_title">Режим відлагодження/string>
+    <string name="preference_debug_mode_title">Режим відлагодження</string>
     <string name="preference_debug_mode_summary">Надає інформацію про помилки</string>
     <string name="preference_timestamp_format_title">Формат часових міток</string>
     <string name="preference_tts_title">Увімкнути синтезатор мовлення</string>
