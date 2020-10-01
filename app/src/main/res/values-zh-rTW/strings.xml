@@ -82,6 +82,7 @@
     <string name="mentions">提及</string>
     <string name="preference_timestamp_title">顯示時間戳</string>
     <string name="preference_mention_format_title">提及格式</string>
+    <string name="preference_mention_format_summary">更改點選用戶名時所出現的提及字串樣式</string>
     <string name="preference_streaminfo_title">顯示直播訊息</string>
     <string name="preference_streaminfo_summary">顯示直播狀態及觀看人數</string>
     <string name="preference_notification_header">提醒</string>
@@ -134,4 +135,7 @@
     <string name="preference_scrollback_length_title">訊息回調長度</string>
     <string name="preference_roomstate_title">顯示聊天室狀態</string>
     <string name="preference_roomstate_summary">顯示目前聊天室狀態，如訂閱者聊天模式</string>
+    <plurals name="viewers">
+        <item quantity="other">Live 與 %d 個觀眾</item>
+    </plurals>
 </resources>
