@@ -52,7 +52,7 @@
     <string name="snackbar_retry">Повторити</string>
     <string name="snackbar_data_reloaded">Смайли оновлені</string>
     <string name="snackbar_data_load_failed_cause">Помилка завантаження даних: %1$s</string>
-    <string name="add_channel_hint">Ім'я каналу</string>
+    <string name="add_channel_hint">Ім\'я каналу</string>
     <string name="emote_menu_tab_subs">Підписки</string>
     <string name="emote_menu_tab_channel">Смайли каналу</string>
     <string name="emote_menu_tab_global">Глобальні смайли</string>
