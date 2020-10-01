@@ -4,7 +4,7 @@
     <string name="send_hint">Відправити повідомлення</string>
     <string name="login">Увійти</string>
     <string name="reload_emotes">Оновити смайли</string>
-    <string name="reconnect">Перепідключитися</string>
+    <string name="reconnect">Перез\'єднатися</string>
     <string name="clear_chat">Очистити чат</string>
     <string name="add_dialog_title">Додати канал</string>
     <string name="dialog_ok">ОК</string>
@@ -24,12 +24,12 @@
     <string name="upload_media">Завантажити медіа</string>
     <string name="take_picture">Зробити фото</string>
     <string name="record_video">Записати відео</string>
-    <string name="choose_media">Вибрати існуючі медіа</string>
+    <string name="choose_media">Вибрати існуючий файл</string>
     <string name="hide_actionbar">Сховати панель інструментів</string>
     <string name="resume_scroll">Відновити прокручування</string>
     <string name="uploading_image">Завантажується зображення</string>
     <string name="settings">Налаштування</string>
-    <string name="nuuls_upload_disclaimer">Зовнішній хостинг надано https://nuuls.com/i, використовуйте на Ваш розсуд.</string>
+    <string name="nuuls_upload_disclaimer">Зовнішній хостинг надано https://nuuls.com/i. Використовуйте на Ваш розсуд.</string>
     <string name="nuuls_upload_title">Завантаження власного зображення</string>
     <string name="snackbar_message_copied">Повідомлення скопійовано</string>
     <string name="snackbar_error_copied">Інформацію про помилку скопійовано</string>
@@ -39,7 +39,7 @@
     <string name="emote_menu_hint">Відкрити меню смайлів</string>
     <string name="login_title">Увійти в Twitch.tv</string>
     <string name="hint_connected">Розпочати чат</string>
-    <string name="hint_disconnected">Відключено</string>
+    <string name="hint_disconnected">Від\'єднано</string>
     <string name="hint_not_logged_int">Ви не ввійшли</string>
     <string name="notification_new_mentions">У Вас є нові згадки</string>
     <string name="notification_mention">%1$s згадав Вас у #%2$s</string>
@@ -57,7 +57,7 @@
     <string name="emote_menu_tab_channel">Смайли каналу</string>
     <string name="emote_menu_tab_global">Глобальні смайли</string>
     <string name="system_message_connected">Підключено</string>
-    <string name="system_message_disconnected">Відключено</string>
+    <string name="system_message_disconnected">Від\'єднано</string>
     <string name="system_message_no_history">Ви не бачите історію повідомлень, оскільки Ви відхилили інтеграцію нещодавніх повідомлень.</string>
     <string name="timed_out_message">&lt; Повідомлення видалено ></string>
     <string name="multi_entry_header_regex">Регулярний вираз (regex)</string>
@@ -71,7 +71,7 @@
     <string name="dialog_optin">Прийняти</string>
     <string name="dialog_optout">Відхилити</string>
     <string name="anon_connection_disclaimer_title">Анонімне підключення</string>
-    <string name="anon_connection_disclaimer_message">Через нещодавні зміни до офіційного API Twitch, деякі данні тепер можна отримати тільки після входу в систему. \nЦе стосується підтримки значків Twitch та сторонніх смайлів.</string>
+    <string name="anon_connection_disclaimer_message">Через нещодавні зміни до офіційного API Twitch, деякі данні можна отримати лише після входу в систему. \nЦе стосується підтримки значків Twitch та сторонніх смайлів.</string>
     <string name="more">Більше</string>
     <string name="mentions_title">Згадки / Особисті повідомлення</string>
     <string name="whispers">Особисті повідомлення</string>
@@ -82,9 +82,9 @@
     <string name="preference_mention_format_title">Формат згадок</string>
     <string name="preference_mention_format_summary">Змінити формат згадок при натисканні на ім\'я користувача</string>
     <string name="preference_roomstate_title">Показувати статус чату</string>
-    <string name="preference_roomstate_summary">Показувати інформацію про статус чату (наприклад, режиму "Тільки для підписників")</string>
+    <string name="preference_roomstate_summary">Показувати інформацію про статус чату (наприклад, режиму \"Тільки для підписників\")</string>
     <string name="preference_streaminfo_title">Показувати інформацію про стрім</string>
-    <string name="preference_streaminfo_summary">Показує статус в мережі та лічильник глядачів</string>
+    <string name="preference_streaminfo_summary">Показувати статус в мережі та лічильник глядачів</string>
     <string name="preference_notification_title">Показувати повідомлення про згадки</string>
     <string name="preference_notification_summary">Відображає повідомлення при згадках, працюючи у фоновому режимі</string>
     <string name="preference_notification_header">Повідомлення</string>
@@ -95,7 +95,7 @@
     <string name="preference_appearance_header">Зовнішній вигляд</string>
     <string name="preference_about_summary">DankChat %1$s зроблений @flex3rs та іншими учасниками\n\nДані про смайли Twitch надані twitchemotes.com</string>
     <string name="preference_show_input_title">Показувати поле введення</string>
-    <string name="preference_show_input_summary">Показує поле для введення тексту повідомлень</string>
+    <string name="preference_show_input_summary">Показувати поле для введення тексту повідомлень</string>
     <string name="preference_dark_theme_title">Увімкнути темну тему</string>
     <string name="preference_show_timed_out_messages_title">Показувати видалені повідомлення</string>
     <string name="preference_custom_mentions_title">Користувацькі згадки</string>
@@ -112,11 +112,11 @@
     <string name="preference_font_size_summary_very_large">Величезний</string>
     <string name="preference_notifications_mentions_header">Повідомлення та згадки</string>
     <string name="preference_suggestions_title">Підсказки імен користувачів та смайлів</string>
-    <string name="preference_suggestions_summary">Показує підсказки для імен користувачів та назв смайлів</string>
+    <string name="preference_suggestions_summary">Показувати підсказки для імен користувачів та назв смайлів</string>
     <string name="preference_load_message_history_title">Завантажувати історію повідомлень при запуску</string>
     <string name="preference_message_history_header">Історія повідомлень</string>
     <string name="preference_message_history_dashboard_title">Відкрити інформаційну панель</string>
-    <string name="preference_message_history_dashboard_summary">Дізнатися більше про службу та відключити історію повідомлень для Вашого каналу</string>
+    <string name="preference_message_history_dashboard_summary">Дізнатися більше про службу та відімкнути історію повідомлень для Вашого каналу</string>
     <string name="preference_channel_data_header">Дані каналу</string>
     <string name="preference_developer_header">Налаштування розробника</string>
     <string name="preference_debug_mode_title">Режим відлагодження</string>
