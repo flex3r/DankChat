@@ -128,7 +128,7 @@
     <string name="preference_tts_queue_add">Зачитує кожне повідомлення по черзі</string>
     <string name="preference_tts_queue_flush">Зачитує лише нові повідомлення</string>
     <string name="preference_tts_message_format_message">Зачитує тільки повідомлення</string>
-    <string name="preference_tts_message_format_combined">Зачитує ім'я користувача та повідомлення</string>
+    <string name="preference_tts_message_format_combined">Зачитує ім\'я користувача та повідомлення</string>
     <string name="preference_tts_message_format_title">Режим форматування повідомлень</string>
     <string name="preference_tts_header">Синтезатор мовлення</string>
     <string name="preference_checkered_lines_title">Строкаті лінії</string>
