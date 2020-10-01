@@ -13,7 +13,7 @@
     <string name="error_dialog_copy">Копіювати</string>
     <string name="error_dialog_title">Помилка: %1$s</string>
     <string name="add_channel">Додати канал</string>
-    <string name="name">Ім'я</string>
+    <string name="name">Ім\'я</string>
     <string name="remove_channel">Видалити канал</string>
     <string name="open_channel">Відкрити канал</string>
     <string name="no_channels_added">Немає доданих каналів</string>
