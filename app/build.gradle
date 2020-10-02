@@ -82,7 +82,6 @@ dependencies {
     implementation "androidx.core:core-ktx:$core_version"
     implementation "androidx.emoji:emoji:$emoji_version"
     implementation "androidx.exifinterface:exifinterface:$exif_version"
-    implementation "androidx.fragment:fragment:$fragment_version"
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"

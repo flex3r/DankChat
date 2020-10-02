@@ -20,7 +20,7 @@ object NetworkModule {
     @ApiOkHttpClient
     @Singleton
     @Provides
-    fun provideOkHttpClient(@ApplicationContext context: Context): OkHttpClient = OkHttpClient.Builder()
+    fun provideOkHttpClient(/*@ApplicationContext context: Context*/): OkHttpClient = OkHttpClient.Builder()
         //.addInterceptor(ChuckerInterceptor(context))
         .build()
 
