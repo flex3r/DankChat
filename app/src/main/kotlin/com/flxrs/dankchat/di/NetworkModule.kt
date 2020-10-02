@@ -2,7 +2,6 @@ package com.flxrs.dankchat.di
 
 import android.content.Context
 import coil.util.CoilUtils
-import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import dagger.Module
@@ -13,7 +12,6 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.CacheControl
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
-import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)

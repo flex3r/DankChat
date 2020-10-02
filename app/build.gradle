@@ -117,8 +117,8 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
 
 // Debug
-    dankImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary_version"
-    dankImplementation "com.github.chuckerteam.chucker:library:$chucker_version"
-    debugImplementation "com.github.chuckerteam.chucker:library-no-op:$chucker_version"
-    releaseImplementation "com.github.chuckerteam.chucker:library-no-op:$chucker_version"
+    //dankImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary_version"
+    //dankImplementation "com.github.chuckerteam.chucker:library:$chucker_version"
+    //debugImplementation "com.github.chuckerteam.chucker:library-no-op:$chucker_version"
+    //releaseImplementation "com.github.chuckerteam.chucker:library-no-op:$chucker_version"
 }
