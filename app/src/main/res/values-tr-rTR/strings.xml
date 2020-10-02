@@ -55,7 +55,7 @@
     <string name="system_message_disconnected">Bağlantı kesildi</string>
     <string name="timed_out_message">&lt; Mesaj silindi ></string>
     <string name="multi_entry_header_regex">Düzenli ifade</string>
-    <string name="login_expired">Giriş zaman aşımına uğradı! Tekrar giriş yapmayı deneyin.</string>
+    <string name="login_expired">Girişinizin süresi doldu! Tekrar giriş yapmayı deneyin.</string>
     <string name="message_history_disclaimer_title">Mesaj tarihi açıklaması</string>
     <string name="anon_connection_disclaimer_title">Anonim bağlantı</string>
     <string name="more">Daha fazla</string>
