@@ -40,6 +40,6 @@ fun Int.normalizeColor(isDarkMode: Boolean): Int {
 }
 
 fun Context.getThemeColor(@AttrRes attribute: Int): ColorStateList? = TypedValue().let {
-    theme.resolveAttribute(attribute, it, true);
+    theme.resolveAttribute(attribute, it, true)
     ContextCompat.getColorStateList(this, it.resourceId)
 }

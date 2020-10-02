@@ -1,8 +1,6 @@
 package com.flxrs.dankchat.preferences
 
-import android.app.Application
 import android.app.UiModeManager
-import android.content.Context.UI_MODE_SERVICE
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle

@@ -125,7 +125,7 @@ sealed class Message {
                 val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
 
                 if (msgId != null && (msgId == "sub" || msgId == "resub")) {
-                    val subMsg = parsePrivMessage(message, emoteManager, isNotify = true, )
+                    val subMsg = parsePrivMessage(message, emoteManager, isNotify = true)
                     if (subMsg.message.isNotBlank()) messages += subMsg
                 }
                 val systemTwitchMessage = TwitchMessage(

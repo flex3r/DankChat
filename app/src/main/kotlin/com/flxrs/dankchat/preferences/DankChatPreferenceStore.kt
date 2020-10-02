@@ -3,8 +3,6 @@ package com.flxrs.dankchat.preferences
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
 import com.flxrs.dankchat.R
 
 class DankChatPreferenceStore(context: Context) {

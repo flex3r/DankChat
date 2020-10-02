@@ -12,12 +12,9 @@ import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.preference.PreferenceManager
 import coil.Coil
 import coil.ImageLoader
-import coil.util.CoilUtils
 import com.flxrs.dankchat.di.EmoteOkHttpClient
 import com.flxrs.dankchat.utils.GifDrawableDecoder
 import dagger.hilt.android.HiltAndroidApp
-import okhttp3.CacheControl
-import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
