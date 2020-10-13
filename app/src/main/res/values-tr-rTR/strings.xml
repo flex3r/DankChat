@@ -109,7 +109,6 @@
     <string name="preference_custom_mentions_summary">Özel ifadeleri bahsetme olarak işaretle</string>
     <string name="preference_blacklist_summary">Gizlemek için özel ifadeler ayarla</string>
     <string name="preference_about_summary">DankChat %1$s @flex3rs ve katılımcılar tarafından yapıldı\n\nTwitch emote verisi twitchemotes.com\'dan sağlanmaktadır</string>
-    <string name="preference_mentions_header">Bahsetmeler</string>
     <string name="preference_notification_title">Bahsetme bildirimleri göster</string>
     <string name="preference_notification_summary">Uygulama arka plandayken sizden bahsedildiğinde bildirimler oluşturur</string>
     <string name="preference_roomstate_title">Kanal modu bilgisini göster</string>
@@ -132,6 +131,10 @@
     <string name="nuuls_upload_title">Özel resim yükleme</string>
     <string name="dialog_dismiss">Reddet</string>
     <string name="preference_notifications_mentions_header">Bildirimler ve Bahsetmeler</string>
+    <string name="mentions_title">Bahsetmeler / Fısıltılar</string>
+    <string name="whispers">Fısıltılar</string>
+    <string name="notification_whisper_mention">%1$s sana bir fısıltı gönderdi</string>
+    <string name="mentions">Bahsetmeler</string>
 
     <plurals name="viewers">
         <item quantity="one">%d izleyici ile canlı</item>
