@@ -311,15 +311,17 @@ class DankChatViewModel @ViewModelInject constructor(
             )
         )
 
-        val fixedOAuth = oAuth.removeOAuthSuffix
-        listOf(
-            launch(coroutineExceptionHandler) { dataRepository.loadChannelData(channel, fixedOAuth, forceReload = true) },
-            launch(coroutineExceptionHandler) { dataRepository.loadTwitchEmotes(fixedOAuth, id) },
-            launch(coroutineExceptionHandler) { dataRepository.loadDankChatBadges() },
-        ).joinAll()
-        dataRepository.setEmotesForSuggestions(channel)
+        supervisorScope {
+            val fixedOAuth = oAuth.removeOAuthSuffix
+            listOf(
+                launch(coroutineExceptionHandler) { dataRepository.loadChannelData(channel, fixedOAuth, forceReload = true) },
+                launch(coroutineExceptionHandler) { dataRepository.loadTwitchEmotes(fixedOAuth, id) },
+                launch(coroutineExceptionHandler) { dataRepository.loadDankChatBadges() },
+            ).joinAll()
+            dataRepository.setEmotesForSuggestions(channel)
 
-        _dataLoadingEvent.postValue(DataLoadingState.Reloaded)
+            _dataLoadingEvent.postValue(DataLoadingState.Reloaded)
+        }
     }
 
     fun uploadMedia(file: File) {
