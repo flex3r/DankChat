@@ -317,6 +317,8 @@ class DankChatViewModel @ViewModelInject constructor(
             launch(coroutineExceptionHandler) { dataRepository.loadTwitchEmotes(fixedOAuth, id) },
             launch(coroutineExceptionHandler) { dataRepository.loadDankChatBadges() },
         ).joinAll()
+        dataRepository.setEmotesForSuggestions(channel)
+
         _dataLoadingEvent.postValue(DataLoadingState.Reloaded)
     }
 
