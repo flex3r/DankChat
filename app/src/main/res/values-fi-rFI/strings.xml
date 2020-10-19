@@ -79,95 +79,62 @@
     <string name="mentions">Maininnat</string>
 
 
-    <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
-    <string name="secure_shared_preference_key" translatable="false">com.flxrs.dankchat_secure_preferences</string>
     <string name="preference_timestamp_title">Näytä aikaleimat</string>
-    <string name="preference_timestamp_key" translatable="false">show_timestamp</string>
     <string name="preference_mention_format_title">Maininan muoto</string>
     <string name="preference_mention_format_summary">Vaihda maininnan muoto napsauttamalla käyttäjänimeä</string>
-    <string name="preference_mention_format_key" translatable="false">mention_format</string>
-    <string name="preference_roomstate_key" translatable="false">show_roomstate</string>
     <string name="preference_roomstate_title">Näytä huonetilan tiedot</string>
     <string name="preference_roomstate_summary">Näyttää tiedot nykyisestä huonetilasta, kuten vain tilaajatila</string>
-    <string name="preference_streaminfo_key" translatable="false">show_streaminfo</string>
     <string name="preference_streaminfo_title">Näytä suoratoistotiedot</string>
     <string name="preference_streaminfo_summary">Näyttää reaaliaikaisen tilan ja katsojien määrän</string>
-    <string name="preference_notification_key" translatable="false">notification_key</string>
     <string name="preference_notification_title">Näytä maininta-ilmoitukset</string>
     <string name="preference_notification_summary">Luo ilmoituksia, kun sinut mainitaan, kun sovellus on taustalla</string>
     <string name="preference_notification_header">Ilmoitukset</string>
     <string name="preference_chat_header">Chatti</string>
-    <string name="preference_chat_key" translatable="false">chat_key</string>
-    <string name="preference_logout_key" translatable="false">logout_key</string>
     <string name="preference_logout_title">Kirjaudu ulos</string>
     <string name="preference_general_header">Yleinen</string>
     <string name="preference_about_header">Tietoja</string>
     <string name="preference_appearance_header">Ulkoasu</string>
-    <string name="preference_appearance_key" translatable="false">appearance_key</string>
     <string name="preference_about_summary">DankChat %1$s on tehnyt @flex3rs ja avustajat\n\nTwitch emoteiden tiedot tarjoaa twitchemotes.com</string>
-    <string name="preference_about_key" translatable="false">about_key</string>
-    <string name="preference_show_input_key" translatable="false">show_input_key</string>
     <string name="preference_show_input_title">Näytä syöttö</string>
     <string name="preference_show_input_summary">Näyttää viestien lähettämisen syöttökentän</string>
-    <string name="preference_dark_theme_key" translatable="false">enable_dark_mode</string>
     <string name="preference_dark_theme_title">Ota tumma teema käyttöön</string>
-    <string name="preference_show_timed_out_messages_key" translatable="false">show_timed_out_messages_key</string>
     <string name="preference_show_timed_out_messages_title">Näytä jäähyviestit</string>
-    <string name="preference_custom_mentions_key" translatable="false">custom_mentions_key</string>
     <string name="preference_custom_mentions_title">Mukautetut maininnat</string>
     <string name="preference_custom_mentions_summary">Aseta mukautetut lauseet maininnoiksi</string>
-    <string name="preference_blacklist_key" translatable="false">custom_blacklist_key</string>
     <string name="preference_blacklist_title">Estolista</string>
     <string name="preference_blacklist_summary">Aseta mukautetut lauseet piilotettavaksi</string>
-    <string name="preference_animate_gifs_key" translatable="false">animate_gifs_key</string>
     <string name="preference_animate_gifs_title">Animoi gifit</string>
-    <string name="preference_line_separator_key" translatable="false">line_seperator_key</string>
     <string name="preference_line_separator_title">Erota viestit riveillä</string>
-    <string name="preference_keep_screen_on_key" translatable="false">keep_screen_on_key</string>
     <string name="preference_keep_screen_on_title">Pidä näyttö päällä</string>
-    <string name="preference_font_size_key" translatable="false">font_size_key</string>
     <string name="preference_font_size_title">Fonttikoko</string>
     <string name="preference_font_size_summary_very_small">Hyvin pieni</string>
     <string name="preference_font_size_summary_small">Pieni</string>
     <string name="preference_font_size_summary_large">Suuri</string>
     <string name="preference_font_size_summary_very_large">Hyvin suuri</string>
     <string name="preference_notifications_mentions_header">Ilmoitukset ja maininnat</string>
-    <string name="preference_notifications_mentions_key" translatable="false">notifications_mentions_key</string>
-    <string name="preference_suggestions_key" translatable="false">suggestions_key</string>
     <string name="preference_suggestions_title">Emote ja käyttäjä ehdotukset</string>
     <string name="preference_suggestions_summary">Näyttää ehdotuksia emoteille ja aktiivisille käyttäjille kirjoittaessasi</string>
     <string name="preference_load_message_history_title">Lataa viestihistoria käynnistyessä</string>
-    <string name="preference_load_message_history_key" translatable="false">load_message_history_key</string>
     <string name="preference_message_history_header">Viestihistoria</string>
     <string name="preference_message_history_dashboard_title">Avaa kojelauta</string>
-    <string name="preference_message_history_dashboard_key" translatable="false">message_history_dashboard_key</string>
     <string name="preference_message_history_dashboard_summary">Lue lisää palvelusta ja poista viestihistoria käytöstä omalla kanavallasi</string>
     <string name="preference_channel_data_header">Kanavatiedot</string>
     <string name="preference_developer_header">Kehittäjävaihtoehdot</string>
-    <string name="preference_developer_key" translatable="false">developer_key</string>
-    <string name="preference_debug_mode_key" translatable="false">debug_mode_key</string>
     <string name="preference_debug_mode_title">Virheenkorjaustila</string>
     <string name="preference_debug_mode_summary">Antaa tietoa mahdollisista kiinni jääneistä poikkeuksista</string>
-    <string name="preference_timestamp_format_key" translatable="false">timestamp_format_key</string>
     <string name="preference_timestamp_format_title">Aikaleiman muoto</string>
-    <string name="preference_tts_key" translatable="false">tts_key</string>
     <string name="preference_tts_title">Ota TTS käyttöön</string>
     <string name="preference_tts_summary">Lukee ääneen aktiivisen kanavan viestit</string>
-    <string name="preference_tts_queue_key" translatable="false">tts_queue_key</string>
     <string name="preference_tts_queue_title">Viestijonotila</string>
     <string name="preference_tts_queue_add">Toistaa jokaisen viestin jonossa</string>
     <string name="preference_tts_queue_flush">Toistaa vain uusimman viestin</string>
     <string name="preference_tts_message_format_message">Lukee vain viestin ääneen</string>
     <string name="preference_tts_message_format_combined">Lukee käyttäjän ja viestin</string>
-    <string name="preference_tts_message_format_key" translatable="false">tts_message_format_key</string>
     <string name="preference_tts_message_format_title">Viestin muoto</string>
     <string name="preference_tts_header">TTS</string>
-    <string name="checkered_messages_key" translatable="false">checkered_messages</string>
     <string name="preference_checkered_lines_title">Ruudulliset viivat</string>
     <string name="preference_checkered_lines_summary">Erota kukin rivi erillaisella taustan kirkkaudella</string>
-    <string name="preference_supibot_suggestions_key" translatable="false">supibot_suggestions_key</string>
     <string name="preference_supibot_suggestions_title">Supibot komentoehdotuksia</string>
-    <string name="preference_scrollback_length_key" translatable="false">scrollback_length_key</string>
     <string name="preference_scrollback_length_title">Viestin vierityksen pituus</string>
 
     <plurals name="viewers">
