@@ -3,7 +3,7 @@
     <string name="app_name_dank">DankChat (Dank)</string>
     <string name="send_hint">Lähetä viesti</string>
     <string name="login">Kirjaudu</string>
-    <string name="reload_emotes">Lataa emotet</string>
+    <string name="reload_emotes">Lataa emotet uudelleen</string>
     <string name="reconnect">Yhdistä uudelleen</string>
     <string name="clear_chat">Puhdista chatti</string>
     <string name="add_dialog_title">Lisää kanava</string>
@@ -58,7 +58,7 @@
     <string name="emote_menu_tab_global">Globaali</string>
     <string name="system_message_connected">Yhdistetty</string>
     <string name="system_message_disconnected">Yhteys katkaistu</string>
-    <string name="system_message_no_history">Et näe historiallisia viestejä koska kieltäydyt niistä.</string>
+    <string name="system_message_no_history">Et näe historiallisia viestejä koska kieltäydyit niistä.</string>
     <string name="timed_out_message">&lt; Viesti poistettu ></string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_header_match_user">Yhdistä käyttäjä</string>
