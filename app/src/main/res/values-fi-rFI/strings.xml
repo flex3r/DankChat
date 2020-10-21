@@ -80,7 +80,7 @@
 
 
     <string name="preference_timestamp_title">Näytä aikaleimat</string>
-    <string name="preference_mention_format_title">Maininan muoto</string>
+    <string name="preference_mention_format_title">Maininnan muoto</string>
     <string name="preference_mention_format_summary">Vaihda maininnan muoto napsauttamalla käyttäjänimeä</string>
     <string name="preference_roomstate_title">Näytä huonetilan tiedot</string>
     <string name="preference_roomstate_summary">Näyttää tiedot nykyisestä huonetilasta, kuten vain tilaajatila</string>
