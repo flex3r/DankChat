@@ -11,8 +11,8 @@ android {
         applicationId "com.flxrs.dankchat"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 172
-        versionName "2.3.3"
+        versionCode 173
+        versionName "2.3.4"
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
