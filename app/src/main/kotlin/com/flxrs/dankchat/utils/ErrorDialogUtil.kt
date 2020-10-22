@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.utils
 
+import android.content.ClipData
 import android.content.ClipboardManager
 import android.util.Log
 import android.view.View
@@ -15,7 +16,7 @@ fun View.showErrorDialog(throwable: Throwable, stackTraceString: String = Log.ge
         .setTitle(title)
         .setMessage("${throwable.message}\n$stackTraceString")
         .setPositiveButton(R.string.error_dialog_copy) { d, _ ->
-            ContextCompat.getSystemService(context, ClipboardManager::class.java)?.setPrimaryClip(android.content.ClipData.newPlainText("error stacktrace", stackTraceString))
+            ContextCompat.getSystemService(context, ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("error stacktrace", stackTraceString))
             Snackbar.make(rootView.findViewById(android.R.id.content), R.string.snackbar_error_copied, Snackbar.LENGTH_SHORT).show()
             d.dismiss()
         }

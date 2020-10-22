@@ -644,7 +644,7 @@ class MainFragment : Fragment() {
     }
 
     private fun reloadEmotes(channel: String? = null) {
-        val position = channel?.let { tabAdapter.titleList.indexOf(it) } ?: binding.tabs.selectedTabPosition
+        val position = channel?.let(tabAdapter.titleList::indexOf) ?: binding.tabs.selectedTabPosition
         if (position in 0 until tabAdapter.titleList.size) {
             val oAuth = twitchPreferences.oAuthKey ?: return
             val userId = twitchPreferences.userIdString ?: return

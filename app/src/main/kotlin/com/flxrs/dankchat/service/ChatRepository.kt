@@ -95,9 +95,9 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
 
     suspend fun loadIgnores(oAuth: String, id: String) {
         if (oAuth.isNotBlank()) {
-            twitchApi.getIgnores(oAuth, id)?.let { result ->
+            twitchApi.getIgnores(oAuth, id)?.let { (blocks) ->
                 ignoredList.clear()
-                ignoredList.addAll(result.blocks.map { it.user.id })
+                ignoredList.addAll(blocks.map { it.user.id })
             }
         }
     }
@@ -165,9 +165,7 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
     }
 
     fun sendMessage(channel: String, input: String) {
-        prepareMessage(channel, input) {
-            writeConnection.sendMessage(it)
-        }
+        prepareMessage(channel, input, writeConnection::sendMessage)
 
         val split = input.split(" ")
         if (split.size > 2 && split[0] == "/w" && split[1].isNotBlank()) {

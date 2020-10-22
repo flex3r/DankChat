@@ -21,7 +21,7 @@ fun List<GenericEmote>?.toEmoteItems(): List<EmoteItem> {
     return this?.groupBy { it.emoteType.title }
         ?.mapValues {
             val title = it.value.first().emoteType.title
-            listOf(EmoteItem.Header(title)) + it.value.map { e -> EmoteItem.Emote(e) }
+            listOf(EmoteItem.Header(title)) + it.value.map(EmoteItem::Emote)
         }?.flatMap { it.value } ?: listOf()
 }
 

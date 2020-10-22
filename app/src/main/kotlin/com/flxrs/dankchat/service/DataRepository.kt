@@ -31,14 +31,14 @@ class DataRepository(private val twitchApi: TwitchApi, private val emoteManager:
 
     suspend fun loadSupibotCommands() {
         measureTimeMillis {
-            val channels = twitchApi.getSupibotChannels()?.let { channels ->
-                channels.data
+            val channels = twitchApi.getSupibotChannels()?.let { (data) ->
+                data
                     .filter { it.isActive() }
                     .map { it.name }
             } ?: return
 
-            twitchApi.getSupibotCommands()?.let { commands ->
-                val commandsWithAliases = commands.data.map {
+            twitchApi.getSupibotCommands()?.let { (data) ->
+                val commandsWithAliases = data.map {
                     listOf(it.name) + it.aliases
                 }.flatten()
 

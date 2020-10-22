@@ -176,8 +176,8 @@ class NotificationService : Service(), CoroutineScope {
         cancel()
         launch {
             for (items in chatRepository.notificationMessageChannel) {
-                items.forEach { item ->
-                    with(item.message as Message.TwitchMessage) {
+                items.forEach { (message) ->
+                    with(message as Message.TwitchMessage) {
                         if (shouldNotifyOnMention && isMention && notificationsEnabled) {
                             createMentionNotification()
                         }

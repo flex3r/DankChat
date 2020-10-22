@@ -312,7 +312,7 @@ class ChatAdapter(
                 //}
             }
 
-            if (animateGifs && emotes.filter { it.isGif }.count() > 0) {
+            if (animateGifs && emotes.any(ChatMessageEmote::isGif)) {
                 emoteManager.gifCallback.addView(holder.binding.itemText)
             }
             val fullPrefix = prefixLength + badgesLength
