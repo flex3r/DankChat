@@ -2,15 +2,20 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="@string/preference_notification_header">
+    <PreferenceCategory
+        android:title="@string/preference_notification_header"
+        app:iconSpaceReserved="false">
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="@string/preference_notification_key"
             android:summary="@string/preference_notification_summary"
-            android:title="@string/preference_notification_title" />
+            android:title="@string/preference_notification_title"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/mentions">
+    <PreferenceCategory
+        android:title="@string/mentions"
+        app:iconSpaceReserved="false">
         <ListPreference
             android:defaultValue="name"
             android:entries="@array/mention_formats"
@@ -18,16 +23,19 @@
             android:key="@string/preference_mention_format_key"
             android:summary="@string/preference_mention_format_summary"
             android:title="@string/preference_mention_format_title"
+            app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true" />
 
         <Preference
             android:key="@string/preference_custom_mentions_key"
             android:summary="@string/preference_custom_mentions_summary"
-            android:title="@string/preference_custom_mentions_title" />
+            android:title="@string/preference_custom_mentions_title"
+            app:iconSpaceReserved="false" />
 
         <Preference
             android:key="@string/preference_blacklist_key"
             android:summary="@string/preference_blacklist_summary"
-            android:title="@string/preference_blacklist_title" />
+            android:title="@string/preference_blacklist_title"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 </PreferenceScreen>
