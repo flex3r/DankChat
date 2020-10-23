@@ -29,7 +29,6 @@ buildscript {
         security_version = '1.1.0-alpha02'
 
         // Third-party
-        koin_version = '2.1.5'
         coil_version = '0.9.5' // TODO investigate issue with hardware bitmaps caused by newer version
         gif_drawable_version = '1.2.21'
         okhttp_version = '4.9.0'
