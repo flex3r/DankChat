@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import com.flxrs.dankchat.MainFragment
 import com.flxrs.dankchat.chat.ChatFragment
@@ -41,7 +42,7 @@ class MentionChatFragment : ChatFragment() {
     companion object {
         fun newInstance(isWhisperTab: Boolean = false): MentionChatFragment {
             return MentionChatFragment().apply {
-                arguments = Bundle().apply { putBoolean(WHISPER_ARG, isWhisperTab) }
+                arguments = bundleOf(WHISPER_ARG to isWhisperTab)
             }
         }
 

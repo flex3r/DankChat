@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.inputmethod.EditorInfo
 import androidx.annotation.StringRes
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.flxrs.dankchat.R
@@ -55,13 +56,13 @@ class AddChannelDialogFragment : DialogFragment() {
             @StringRes message: Int = -1,
             textHint: String
         ): AddChannelDialogFragment {
-            val args = Bundle().apply {
-                putInt(TITLE_ARG, title)
-                putInt(NEGATIVE_BUTTON_ARG, negativeButtonText)
-                putInt(POSITIVE_BUTTON_ARG, positiveButtonText)
-                putInt(MESSAGE_ARG, message)
-                putString(HINT_ARG, textHint)
-            }
+            val args = bundleOf(
+                TITLE_ARG to title,
+                NEGATIVE_BUTTON_ARG to negativeButtonText,
+                POSITIVE_BUTTON_ARG to positiveButtonText,
+                MESSAGE_ARG to message,
+                HINT_ARG to textHint
+            )
 
             return AddChannelDialogFragment().apply { arguments = args }
         }

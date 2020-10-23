@@ -1,12 +1,12 @@
 package com.flxrs.dankchat.preferences
 
 import android.content.ActivityNotFoundException
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.net.toUri
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -47,7 +47,7 @@ class OverviewSettingsFragment : PreferenceFragmentCompat() {
                     CustomTabsIntent.Builder()
                         .addDefaultShareMenuItem()
                         .setShowTitle(true)
-                        .build().launchUrl(view.context, Uri.parse(GITHUB_URL))
+                        .build().launchUrl(view.context, GITHUB_URL.toUri())
                 } catch (e: ActivityNotFoundException) {
                     Log.e(TAG, Log.getStackTraceString(e))
                 }

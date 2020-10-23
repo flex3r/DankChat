@@ -742,7 +742,7 @@ class MainFragment : Fragment() {
         val channel = viewModel.activeChannel.value ?: return
         val url = "https://twitch.tv/$channel"
         Intent(Intent.ACTION_VIEW).also {
-            it.data = Uri.parse(url)
+            it.data = url.toUri()
             startActivity(it)
         }
     }
