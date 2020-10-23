@@ -14,7 +14,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:paddingTop="8dp"
-            app:srcCompat="@drawable/ic_baseline_maximize_24" />
+            app:srcCompat="@drawable/ic_maximize" />
 
         <TextView
             android:id="@+id/multi_entry_title"

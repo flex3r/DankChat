@@ -159,7 +159,7 @@ class NotificationService : Service(), CoroutineScope {
             .setVibrate(null)
             .setContentTitle(title)
             .setContentText(message)
-            .addAction(R.drawable.ic_clear_24dp, getString(R.string.notification_stop), pendingStopIntent).apply {
+            .addAction(R.drawable.ic_clear, getString(R.string.notification_stop), pendingStopIntent).apply {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     setStyle(MediaStyle().setShowActionsInCompactView(0))
                 }

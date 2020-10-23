@@ -31,7 +31,7 @@ class EmoteSuggestionsArrayAdapter(context: Context, private val onCount: (count
                     }
                 }
                 is Suggestion.UserSuggestion -> imageView.setImageDrawable(context.getDrawableAndSetSurfaceTint(R.drawable.ic_notification_icon))
-                is Suggestion.CommandSuggestion -> imageView.setImageDrawable(context.getDrawableAndSetSurfaceTint(R.drawable.ic_baseline_android_24))
+                is Suggestion.CommandSuggestion -> imageView.setImageDrawable(context.getDrawableAndSetSurfaceTint(R.drawable.ic_android))
             }
         }
 
