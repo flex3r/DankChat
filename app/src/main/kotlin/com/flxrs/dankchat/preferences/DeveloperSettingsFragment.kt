@@ -6,7 +6,7 @@ import android.speech.tts.TextToSpeech
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
+import androidx.preference.SwitchPreferenceCompat
 import com.flxrs.dankchat.MainActivity
 import com.flxrs.dankchat.R
 import kotlinx.android.synthetic.main.settings_fragment.view.*
@@ -31,7 +31,7 @@ class DeveloperSettingsFragment : PreferenceFragmentCompat() {
                 title = getString(R.string.preference_developer_header)
             }
 
-            findPreference<SwitchPreference>(getString(R.string.preference_tts_key))?.apply {
+            findPreference<SwitchPreferenceCompat>(getString(R.string.preference_tts_key))?.apply {
                 setOnPreferenceChangeListener { _, value ->
                     when (value as Boolean) {
                         true -> requestCheckTTSData.launch(Intent(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA))
