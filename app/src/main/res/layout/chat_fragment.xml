@@ -16,7 +16,7 @@
             android:text="@string/resume_scroll"
             android:textColor="?colorOnPrimary"
             android:visibility="gone"
-            app:icon="@drawable/ic_keyboard_arrow_down_24dp"
+            app:icon="@drawable/ic_keyboard_arrow_down"
             app:iconTint="?colorOnPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

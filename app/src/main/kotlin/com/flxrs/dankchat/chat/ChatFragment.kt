@@ -1,11 +1,14 @@
 package com.flxrs.dankchat.chat
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -111,7 +114,7 @@ open class ChatFragment : Fragment() {
     }
 
     private fun copyMessage(message: String) {
-        getSystemService(requireContext(), android.content.ClipboardManager::class.java)?.setPrimaryClip(android.content.ClipData.newPlainText("twitch message", message))
+        getSystemService(requireContext(), ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("twitch message", message))
         Snackbar.make(binding.root, R.string.snackbar_message_copied, Snackbar.LENGTH_SHORT).show()
     }
 
@@ -152,7 +155,7 @@ open class ChatFragment : Fragment() {
     companion object {
         fun newInstance(channel: String): ChatFragment {
             return ChatFragment().apply {
-                arguments = Bundle().apply { putString(CHANNEL_ARG, channel) }
+                arguments = bundleOf(CHANNEL_ARG to channel)
             }
         }
 

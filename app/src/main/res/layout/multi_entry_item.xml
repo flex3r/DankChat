@@ -45,7 +45,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/multi_entry_input"
             app:layout_constraintTop_toTopOf="@id/multi_entry_input"
-            app:srcCompat="@drawable/ic_clear_24dp"
+            app:srcCompat="@drawable/ic_clear"
             app:tint="?colorOnSurface" />
 
         <com.google.android.material.checkbox.MaterialCheckBox

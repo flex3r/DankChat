@@ -4,11 +4,11 @@ import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.service.twitch.message.Message
 
 fun List<ChatItem>.replaceWithTimeOuts(name: String): List<ChatItem> = apply {
-    forEach { item ->
-        if (item.message is Message.TwitchMessage && !item.message.isNotify
-            && (name.isBlank() || item.message.name.equals(name, true))
+    forEach { (message) ->
+        if (message is Message.TwitchMessage && !message.isNotify
+            && (name.isBlank() || message.name.equals(name, true))
         ) {
-            item.message.timedOut = true
+            message.timedOut = true
         }
     }
 }

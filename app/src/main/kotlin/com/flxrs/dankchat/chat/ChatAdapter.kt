@@ -5,7 +5,6 @@ import android.content.ActivityNotFoundException
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
@@ -24,6 +23,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.text.bold
 import androidx.core.text.color
 import androidx.core.text.getSpans
@@ -285,7 +285,7 @@ class ChatAdapter(
                                 CustomTabsIntent.Builder()
                                     .addDefaultShareMenuItem()
                                     .setShowTitle(true)
-                                    .build().launchUrl(v.context, Uri.parse(it.url))
+                                    .build().launchUrl(v.context, it.url.toUri())
                         } catch (e: ActivityNotFoundException) {
                             Log.e("ViewBinding", Log.getStackTraceString(e))
                         }
@@ -312,7 +312,7 @@ class ChatAdapter(
                 //}
             }
 
-            if (animateGifs && emotes.filter { it.isGif }.count() > 0) {
+            if (animateGifs && emotes.any(ChatMessageEmote::isGif)) {
                 emoteManager.gifCallback.addView(holder.binding.itemText)
             }
             val fullPrefix = prefixLength + badgesLength

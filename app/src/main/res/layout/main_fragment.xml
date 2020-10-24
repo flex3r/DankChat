@@ -34,7 +34,7 @@
                 android:layout_margin="8dp"
                 android:visibility="gone"
                 app:fabSize="mini"
-                app:srcCompat="@drawable/ic_baseline_fullscreen_exit_24"
+                app:srcCompat="@drawable/ic_fullscreen_exit"
                 app:tint="?colorOnPrimary" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -115,7 +115,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_baseline_maximize_24" />
+                        app:srcCompat="@drawable/ic_maximize" />
 
                     <com.google.android.material.tabs.TabLayout
                         android:id="@+id/bottom_sheet_tabs"
@@ -168,7 +168,7 @@
             android:enabled="@{vm.canType}"
             android:visibility="@{vm.shouldShowInput ? View.VISIBLE : View.GONE}"
             app:endIconContentDescription="@string/send_hint"
-            app:endIconDrawable="@{vm.canType ? @drawable/ic_send_24dp : null}"
+            app:endIconDrawable="@{vm.canType ? @drawable/ic_send : null}"
             app:endIconMode="custom"
             app:helperTextEnabled="@{vm.bottomTextEnabled}"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -176,7 +176,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/bottom_barrier"
             app:startIconContentDescription="@string/emote_menu_hint"
-            app:startIconDrawable="@{vm.canType &amp;&amp; !vm.mentionSheetOpen ? @drawable/ic_insert_emoticon_24dp : null}">
+            app:startIconDrawable="@{vm.canType &amp;&amp; !vm.mentionSheetOpen ? @drawable/ic_insert_emoticon : null}">
 
             <com.flxrs.dankchat.utils.CustomMultiAutoCompleteTextView
                 android:id="@+id/input"

@@ -21,7 +21,7 @@
                 style="?toolbarStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:navigationIcon="@drawable/ic_baseline_close_24"
+                app:navigationIcon="@drawable/ic_clear"
                 app:title="@string/mentions_title" />
 
             <com.google.android.material.tabs.TabLayout

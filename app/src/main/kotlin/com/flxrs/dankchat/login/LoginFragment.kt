@@ -1,7 +1,6 @@
 package com.flxrs.dankchat.login
 
 import android.annotation.SuppressLint
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +10,7 @@ import android.view.ViewGroup
 import android.webkit.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -82,7 +82,7 @@ class LoginFragment : Fragment() {
         @SuppressWarnings("DEPRECATION")
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
             val urlString = url ?: ""
-            val fragment = Uri.parse(urlString).fragment ?: return false
+            val fragment = urlString.toUri().fragment ?: return false
             parseOAuthToken(fragment)
             return false
         }

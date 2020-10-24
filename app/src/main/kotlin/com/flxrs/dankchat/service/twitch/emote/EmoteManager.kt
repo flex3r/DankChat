@@ -150,17 +150,17 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
                 "0", "42" -> EmoteType.GlobalTwitchEmote // 42 == monkey emote set, move them to the global emote section
                 else -> EmoteType.ChannelTwitchEmote(setMapping[set] ?: "Twitch")
             }
-            it.value.forEach { emoteResult ->
+            it.value.forEach { (name: String, id: Int) ->
                 val code = when (type) {
-                    is EmoteType.GlobalTwitchEmote -> emoteReplacements[emoteResult.name] ?: emoteResult.name
-                    else -> emoteResult.name
+                    is EmoteType.GlobalTwitchEmote -> emoteReplacements[name] ?: name
+                    else -> name
                 }
                 val emote = GenericEmote(
                     code = code,
-                    url = "$BASE_URL/${emoteResult.id}/$EMOTE_SIZE",
-                    lowResUrl = "$BASE_URL/${emoteResult.id}/$LOW_RES_EMOTE_SIZE",
+                    url = "$BASE_URL/${id}/$EMOTE_SIZE",
+                    lowResUrl = "$BASE_URL/${id}/$LOW_RES_EMOTE_SIZE",
                     isGif = false,
-                    id = "${emoteResult.id}",
+                    id = "$id",
                     scale = 1,
                     emoteType = type
                 )

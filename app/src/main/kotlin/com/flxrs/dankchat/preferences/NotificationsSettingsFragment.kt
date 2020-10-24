@@ -68,7 +68,7 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat() {
                 val stringSet = entryAdapter.entries
                     .filterIsInstance<MultiEntryItem.Entry>()
                     .filter { it.entry.isNotBlank() }
-                    .map { adapter.toJson(it) }
+                    .map(adapter::toJson)
                     .toSet()
 
                 sharedPreferences.edit { putStringSet(key, stringSet) }

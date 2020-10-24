@@ -1,13 +1,12 @@
 package com.flxrs.dankchat.preferences
 
 import android.content.ActivityNotFoundException
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.lifecycle.Observer
+import androidx.core.net.toUri
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
@@ -33,7 +32,7 @@ class OverviewSettingsFragment : PreferenceFragmentCompat() {
             }
         }
         navController.currentBackStackEntry?.savedStateHandle?.apply {
-            getLiveData<Boolean>(MainFragment.THEME_CHANGED_KEY).observe(viewLifecycleOwner, Observer {
+            getLiveData<Boolean>(MainFragment.THEME_CHANGED_KEY).observe(viewLifecycleOwner, {
                 remove<Boolean>(MainFragment.THEME_CHANGED_KEY)
                 navController.previousBackStackEntry?.savedStateHandle?.set(MainFragment.THEME_CHANGED_KEY, true)
             })
@@ -47,7 +46,7 @@ class OverviewSettingsFragment : PreferenceFragmentCompat() {
                     CustomTabsIntent.Builder()
                         .addDefaultShareMenuItem()
                         .setShowTitle(true)
-                        .build().launchUrl(view.context, Uri.parse(GITHUB_URL))
+                        .build().launchUrl(view.context, GITHUB_URL.toUri())
                 } catch (e: ActivityNotFoundException) {
                     Log.e(TAG, Log.getStackTraceString(e))
                 }
