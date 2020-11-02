@@ -135,4 +135,10 @@
     <string name="preference_scrollback_length_title">Dužina pomicanja poruka</string>
     <string name="nuuls_upload_disclaimer">Spoljašni hosting pruža https://nuuls.com/i, korisite ga na sopstveni rizik</string>
     <string name="nuuls_upload_title">Prilagođeno slanje slika</string>
+
+    <plurals name="viewers">
+        <item quantity="one">Uživo sa %d gledaocem</item>
+        <item quantity="other">Uživo sa %d gledaoca</item>
+    </plurals>
+
 </resources>
