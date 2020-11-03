@@ -137,8 +137,8 @@
     <string name="nuuls_upload_title">Prilagođeno slanje slika</string>
 
     <plurals name="viewers">
-        <item quantity="one">Uživo sa %d gledaocem</item>
-        <item quantity="other">Uživo sa %d gledaoca</item>
+        <item quantity="one">Uživo (%d osoba gleda)</item>
+        <item quantity="other">Uživo (gleda %d ljudi)</item>
     </plurals>
 
 </resources>
