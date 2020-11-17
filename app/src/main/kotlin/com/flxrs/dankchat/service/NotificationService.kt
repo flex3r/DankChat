@@ -22,6 +22,7 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.service.twitch.message.Message
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
@@ -175,7 +176,7 @@ class NotificationService : Service(), CoroutineScope {
         shouldNotifyOnMention = false
         cancel()
         launch {
-            for (items in chatRepository.notificationMessageChannel) {
+            chatRepository.notificationsFlow.collect { items ->
                 items.forEach { (message) ->
                     with(message as Message.TwitchMessage) {
                         if (shouldNotifyOnMention && isMention && notificationsEnabled) {

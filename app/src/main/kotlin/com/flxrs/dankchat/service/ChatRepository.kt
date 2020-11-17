@@ -19,13 +19,8 @@ import com.squareup.moshi.Moshi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -35,8 +30,8 @@ import kotlin.system.measureTimeMillis
 
 class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager: EmoteManager) {
 
-    private val _notificationMessageChannel = Channel<List<ChatItem>>(10) // TODO replace with SharedFlow when available
-    private val _channelMentionCount = ConflatedBroadcastChannel<MutableMap<String, Int>>(mutableMapOf())
+    private val _notificationsFlow = MutableSharedFlow<List<ChatItem>>(0, extraBufferCapacity = 10)
+    private val _channelMentionCount = MutableSharedFlow<MutableMap<String, Int>>(1, onBufferOverflow = BufferOverflow.DROP_OLDEST).apply { tryEmit(mutableMapOf()) }
     private val messages = mutableMapOf<String, MutableStateFlow<List<ChatItem>>>()
     private val _mentions = MutableStateFlow<List<ChatItem>>(emptyList())
     private val _whispers = MutableStateFlow<List<ChatItem>>(emptyList())
@@ -58,10 +53,8 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
     private var blacklistEntries = listOf<Mention>()
     private var name: String = ""
 
-    val notificationMessageChannel: ReceiveChannel<List<ChatItem>>
-        get() = _notificationMessageChannel
-    val channelMentionCount: Flow<Map<String, Int>>
-        get() = _channelMentionCount.asFlow()
+    val notificationsFlow: SharedFlow<List<ChatItem>> = _notificationsFlow.asSharedFlow()
+    val channelMentionCount: SharedFlow<Map<String, Int>> = _channelMentionCount.asSharedFlow()
     val mentions: StateFlow<List<ChatItem>>
         get() = _mentions
     val whispers: StateFlow<List<ChatItem>>
@@ -126,16 +119,16 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
         messages[channel]?.value = emptyList()
         messages.remove(channel)
         lastMessage.remove(channel)
-        _channelMentionCount.value.remove(channel)
+        _channelMentionCount.firstValue.remove(channel)
         twitchApi.clearChannelFromLoaded(channel)
     }
 
     fun clearMentionCount(channel: String) = with(_channelMentionCount) {
-        offer(value.apply { set(channel, 0) })
+        tryEmit(firstValue.apply { set(channel, 0) })
     }
 
     fun clearMentionCounts() = with(_channelMentionCount) {
-        offer(value.apply { keys.forEach { if (it != "w") set(it, 0) } })
+        tryEmit(firstValue.apply { keys.forEach { if (it != "w") set(it, 0) } })
     }
 
     @Synchronized
@@ -203,8 +196,8 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
         if (!roomStates.contains(channel)) roomStates[channel] = MutableStateFlow(Roomstate(channel))
         if (!users.contains(channel)) users[channel] = MutableStateFlow(createUserCache())
         with(_channelMentionCount) {
-            if (!value.contains("w")) offer(value.apply { set(channel, 0) })
-            if (!value.contains(channel)) offer(value.apply { set(channel, 0) })
+            if (!firstValue.contains("w")) tryEmit(firstValue.apply { set(channel, 0) })
+            if (!firstValue.contains(channel)) tryEmit(firstValue.apply { set(channel, 0) })
         }
     }
 
@@ -321,7 +314,7 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
                 val channel = msg.params[0].substring(1)
                 val currentChat = messages[channel]?.value ?: emptyList()
                 messages[channel]?.value = currentChat.addAndLimit(parsed, scrollbackLength)
-                _notificationMessageChannel.offer(parsed)
+                _notificationsFlow.tryEmit(parsed)
 
                 if (msg.command == "WHISPER") {
                     (parsed[0].message as Message.TwitchMessage).whisperRecipient = name

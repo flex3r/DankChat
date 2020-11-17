@@ -2,9 +2,12 @@ package com.flxrs.dankchat.utils.extensions
 
 import android.util.Log
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.MutableSharedFlow
 
-fun ConflatedBroadcastChannel<MutableMap<String, Int>>.increment(key: String, amount: Int) = offer(value.apply {
+inline val <T> MutableSharedFlow<T>.firstValue: T
+    get() = replayCache.first()
+
+fun MutableSharedFlow<MutableMap<String, Int>>.increment(key: String, amount: Int) = tryEmit(firstValue.apply {
     val count = get(key) ?: 0
     put(key, count + amount)
 })
