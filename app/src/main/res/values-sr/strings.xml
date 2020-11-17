@@ -44,9 +44,9 @@
     <string name="notification_notify_mention">Spomenut si u #%1$s</string>
     <string name="snackbar_login">Prijavljen kao %1$s</string>
     <string name="snackbar_login_failed">Neuspešno prijavljivanje</string>
-    <string name="snackbar_image_uploaded">Kopirano: %1$</string>
+    <string name="snackbar_image_uploaded">Kopirano: %1$s</string>
     <string name="snackbar_upload_failed">Greška prilkom slanja</string>
-    <string name="snackbar_upload_failed_cause">Greška prilikom slanja: %1$</string>
+    <string name="snackbar_upload_failed_cause">Greška prilikom slanja: %1$s</string>
     <string name="snackbar_retry">Pokušaj ponovo</string>
     <string name="snackbar_data_load_failed_cause">Učitavanje podataka nije uspelo: %1$s</string>
     <string name="add_channel_hint">Naziv kanala</string>
