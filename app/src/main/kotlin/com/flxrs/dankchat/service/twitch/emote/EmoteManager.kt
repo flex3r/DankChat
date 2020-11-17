@@ -261,7 +261,6 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
     private fun parseFFZEmote(emote: EmoteDtos.FFZ.Emote, channel: String = ""): GenericEmote {
         val name = emote.name
         val id = emote.id
-        Log.d(TAG, emote.urls.toString())
         val (scale, url) = when {
             emote.urls.containsKey("4") && emote.urls["4"] != null-> 1 to emote.urls.getValue("4")
             emote.urls.containsKey("2") && emote.urls["2"] != null-> 2 to emote.urls.getValue("2")

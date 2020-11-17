@@ -152,8 +152,7 @@ class ChatAdapter(
         val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
         setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
 
-
-        val coroutineHandler = CoroutineExceptionHandler { _, throwable ->
+        fun handleException(throwable: Throwable) {
             val trace = Log.getStackTraceString(throwable)
             Log.e(TAG, trace)
 
@@ -161,6 +160,8 @@ class ChatAdapter(
                 showErrorDialog(throwable, stackTraceString = trace)
             }
         }
+
+        val coroutineHandler = CoroutineExceptionHandler { _, throwable -> handleException(throwable) }
 
         holder.scope.launch(coroutineHandler) {
             if (timedOut) {
@@ -296,20 +297,21 @@ class ChatAdapter(
 
             setText(spannableWithEmojis, TextView.BufferType.SPANNABLE)
             badges.forEachIndexed { idx, badge ->
-                val (start, end) = badgePositions[idx]
+                try {
+                    val (start, end) = badgePositions[idx]
+                    Coil.get(badge.url).apply {
+                        if (badge is Badge.FFZModBadge) {
+                            colorFilter = PorterDuffColorFilter(ContextCompat.getColor(context, R.color.color_ffz_mod), PorterDuff.Mode.DST_OVER)
+                        }
 
-                Coil.get(badge.url).apply {
-                    if (badge is Badge.FFZModBadge)
-                        colorFilter = PorterDuffColorFilter(ContextCompat.getColor(context, R.color.color_ffz_mod), PorterDuff.Mode.DST_OVER)
-//                val result = Coil.execute(GetRequest.Builder(context).data(badge.url).build())
-//                if (result is SuccessResult) {
-//                    result.drawable.apply {
-                    val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
-                    setBounds(0, 0, width, lineHeight)
-                    val imageSpan = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
-                    (text as SpannableString).setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
+                        setBounds(0, 0, width, lineHeight)
+                        val imageSpan = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
+                        (text as SpannableString).setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    }
+                } catch (t: Throwable) {
+                    handleException(t)
                 }
-                //}
             }
 
             if (animateGifs && emotes.any(ChatMessageEmote::isGif)) {
@@ -317,17 +319,22 @@ class ChatAdapter(
             }
             val fullPrefix = prefixLength + badgesLength
             emotes.forEach { e ->
-                val drawable = when {
-                    e.isGif -> emoteManager.gifCache[e.url]?.also { it.setRunning(animateGifs) } ?: Coil.get(e.url).apply {
-                        this as GifDrawable
-                        setRunning(animateGifs)
-                        callback = emoteManager.gifCallback
-                        emoteManager.gifCache.put(e.url, this)
+                try {
+                    Log.d(TAG, "${e.code} ${e.url}")
+                    val drawable = when {
+                        e.isGif -> emoteManager.gifCache[e.url]?.also { it.setRunning(animateGifs) } ?: Coil.get(e.url).apply {
+                            this as GifDrawable
+                            setRunning(animateGifs)
+                            callback = emoteManager.gifCallback
+                            emoteManager.gifCache.put(e.url, this)
+                        }
+                        else -> Coil.get(e.url)
                     }
-                    else -> Coil.get(e.url)
+                    drawable.transformEmoteDrawable(scaleFactor, e)
+                    (text as SpannableString).setEmoteSpans(e, fullPrefix, drawable)
+                } catch (t: Throwable) {
+                    handleException(t)
                 }
-                drawable.transformEmoteDrawable(scaleFactor, e)
-                (text as SpannableString).setEmoteSpans(e, fullPrefix, drawable)
             }
         }
     }
