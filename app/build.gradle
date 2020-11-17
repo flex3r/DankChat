@@ -54,14 +54,7 @@ android {
         jvmTarget = "1.8"
         freeCompilerArgs += [
                 "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-Xuse-experimental=kotlinx.coroutines.FlowPreview"
         ]
-    }
-    packagingOptions {
-        exclude 'META-INF/kotlinx-io.kotlin_module'
-        exclude 'META-INF/atomicfu.kotlin_module'
-        exclude 'META-INF/kotlinx-coroutines-io.kotlin_module'
-        exclude 'META-INF/kotlinx-coroutines-core.kotlin_module'
     }
 }
 

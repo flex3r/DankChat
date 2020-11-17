@@ -5,7 +5,7 @@ buildscript {
         apkName = "DankChat"
 
         // Plugins
-        gradle_build_tools_version = '4.1.0'
+        gradle_build_tools_version = '4.1.1'
         kotlin_version = '1.4.10'
 
         // Kotlin
