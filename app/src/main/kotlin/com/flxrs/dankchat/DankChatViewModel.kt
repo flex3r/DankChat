@@ -19,7 +19,6 @@ import kotlinx.coroutines.*
 import java.io.File
 
 class DankChatViewModel @ViewModelInject constructor(
-    @Assisted savedStateHandle: SavedStateHandle,
     private val chatRepository: ChatRepository,
     private val dataRepository: DataRepository,
     private val twitchApi: TwitchApi
