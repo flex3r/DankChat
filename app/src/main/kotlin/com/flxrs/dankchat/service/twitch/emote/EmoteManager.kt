@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.service.twitch.emote
 
+import android.util.Log
 import android.util.LruCache
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.api.dto.BadgeDtos
@@ -260,12 +261,13 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
     private fun parseFFZEmote(emote: EmoteDtos.FFZ.Emote, channel: String = ""): GenericEmote {
         val name = emote.name
         val id = emote.id
+        Log.d(TAG, emote.urls.toString())
         val (scale, url) = when {
-            emote.urls.containsKey("4") -> 1 to emote.urls.getValue("4")
-            emote.urls.containsKey("2") -> 2 to emote.urls.getValue("2")
-            else -> 4 to emote.urls.getValue("1")
+            emote.urls.containsKey("4") && emote.urls["4"] != null-> 1 to emote.urls.getValue("4")
+            emote.urls.containsKey("2") && emote.urls["2"] != null-> 2 to emote.urls.getValue("2")
+            else -> 4 to emote.urls["1"]
         }
-        val lowResUrl = emote.urls["2"] ?: emote.urls.getValue("1")
+        val lowResUrl = emote.urls["2"] ?: emote.urls["1"]
         val type = when {
             channel.isBlank() -> EmoteType.GlobalFFZEmote
             else -> EmoteType.ChannelFFZEmote

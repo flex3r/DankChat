@@ -28,7 +28,7 @@ sealed class EmoteDtos {
     sealed class FFZ {
         @Keep
         data class Emote(
-            @field:Json(name = "urls") val urls: Map<String, String>,
+            @field:Json(name = "urls") val urls: Map<String, String?>,
             @field:Json(name = "name") val name: String,
             @field:Json(name = "id") val id: Int
         )
