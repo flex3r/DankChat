@@ -320,7 +320,6 @@ class ChatAdapter(
             val fullPrefix = prefixLength + badgesLength
             emotes.forEach { e ->
                 try {
-                    Log.d(TAG, "${e.code} ${e.url}")
                     val drawable = when {
                         e.isGif -> emoteManager.gifCache[e.url]?.also { it.setRunning(animateGifs) } ?: Coil.get(e.url).apply {
                             this as GifDrawable
