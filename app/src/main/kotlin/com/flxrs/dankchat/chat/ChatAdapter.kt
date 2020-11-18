@@ -153,6 +153,8 @@ class ChatAdapter(
         setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
 
         fun handleException(throwable: Throwable) {
+            if (throwable is CancellationException) return // Ignore job cancellations
+
             val trace = Log.getStackTraceString(throwable)
             Log.e(TAG, trace)
 
