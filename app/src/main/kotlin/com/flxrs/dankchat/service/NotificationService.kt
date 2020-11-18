@@ -45,6 +45,8 @@ class NotificationService : Service(), CoroutineScope {
     private var combinedTTSFormat = false
     private var ttsMessageQueue = false
 
+    private var notificationsJob: Job? = null
+
     private val notifications = mutableMapOf<String, MutableList<Int>>()
 
     @Inject
@@ -64,7 +66,7 @@ class NotificationService : Service(), CoroutineScope {
     override fun onBind(intent: Intent?): IBinder? = binder
 
     override fun onDestroy() {
-        coroutineContext.cancel()
+        cancel()
         manager.cancelAll()
         shutdownTTS()
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
@@ -174,8 +176,9 @@ class NotificationService : Service(), CoroutineScope {
 
     fun checkForNotification() {
         shouldNotifyOnMention = false
-        cancel()
-        launch {
+
+        notificationsJob?.cancel()
+        notificationsJob = launch {
             chatRepository.notificationsFlow.collect { items ->
                 items.forEach { (message) ->
                     with(message as Message.TwitchMessage) {
