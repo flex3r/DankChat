@@ -21,6 +21,7 @@ import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.FileProvider
@@ -202,7 +203,7 @@ class MainFragment : Fragment() {
             }
             getLiveData<Boolean>(THEME_CHANGED_KEY).observe(viewLifecycleOwner) {
                 remove<Boolean>(THEME_CHANGED_KEY)
-                binding.root.post { requireActivity().recreate() }
+                binding.root.post { ActivityCompat.recreate(requireActivity()) }
             }
         }
 
