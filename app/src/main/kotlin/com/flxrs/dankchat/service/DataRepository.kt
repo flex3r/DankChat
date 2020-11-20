@@ -20,7 +20,7 @@ class DataRepository(private val twitchApi: TwitchApi, private val emoteManager:
     fun clearSupibotCommands() = supibotCommands.forEach { it.value.value = emptyList() }.also { supibotCommands.clear() }
 
     suspend fun loadChannelData(channel: String, oAuth: String, forceReload: Boolean = false) {
-        if (!emotes.contains(channel)) emotes[channel] = MutableStateFlow(emptyList())
+        emotes.putIfAbsent(channel, MutableStateFlow(emptyList()))
         twitchApi.getUserIdFromName(oAuth, channel)?.let {
             loadChannelBadges(channel, it)
             load3rdPartyEmotes(channel, it, forceReload)
@@ -43,10 +43,7 @@ class DataRepository(private val twitchApi: TwitchApi, private val emoteManager:
                 }.flatten()
 
                 channels.forEach {
-                    if (!supibotCommands.contains(it)) {
-                        supibotCommands[it] = MutableStateFlow(emptyList())
-                    }
-
+                    supibotCommands.putIfAbsent(it, MutableStateFlow(emptyList()))
                     supibotCommands[it]?.value = commandsWithAliases
                 }
             } ?: return
@@ -74,10 +71,7 @@ class DataRepository(private val twitchApi: TwitchApi, private val emoteManager:
     }
 
     suspend fun setEmotesForSuggestions(channel: String) {
-        if (!emotes.contains(channel)) {
-            emotes[channel] = MutableStateFlow(emptyList())
-        }
-
+        emotes.putIfAbsent(channel, MutableStateFlow(emptyList()))
         emotes[channel]?.value = emoteManager.getEmotes(channel)
     }
 

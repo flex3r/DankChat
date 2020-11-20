@@ -191,10 +191,11 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
     }
 
     private fun createFlowsIfNecessary(channel: String) {
-        if (!messages.contains(channel)) messages[channel] = MutableStateFlow(emptyList())
-        if (!connectionState.contains(channel)) connectionState[channel] = MutableStateFlow(SystemMessageType.DISCONNECTED)
-        if (!roomStates.contains(channel)) roomStates[channel] = MutableStateFlow(Roomstate(channel))
-        if (!users.contains(channel)) users[channel] = MutableStateFlow(createUserCache())
+        messages.putIfAbsent(channel, MutableStateFlow(emptyList()))
+        connectionState.putIfAbsent(channel, MutableStateFlow(SystemMessageType.DISCONNECTED))
+        roomStates.putIfAbsent(channel, MutableStateFlow(Roomstate(channel)))
+        users.putIfAbsent(channel, MutableStateFlow(createUserCache()))
+
         with(_channelMentionCount) {
             if (!firstValue.contains("w")) tryEmit(firstValue.apply { set(channel, 0) })
             if (!firstValue.contains(channel)) tryEmit(firstValue.apply { set(channel, 0) })
