@@ -131,18 +131,6 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
         tryEmit(firstValue.apply { keys.forEach { if (it != "w") set(it, 0) } })
     }
 
-    @Synchronized
-    fun handleDisconnect() {
-        if (!hasDisconnected) {
-            hasDisconnected = true
-            val state = SystemMessageType.DISCONNECTED
-            connectionState.keys.forEach {
-                connectionState[it]?.value = state
-            }
-            makeAndPostConnectionMessage(state)
-        }
-    }
-
     fun clear(channel: String) {
         messages[channel]?.value = emptyList()
     }
@@ -238,6 +226,17 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
             else -> handleMessage(msg)
         }
         return null
+    }
+
+    private fun handleDisconnect() {
+        if (!hasDisconnected) {
+            hasDisconnected = true
+            val state = SystemMessageType.DISCONNECTED
+            connectionState.keys.forEach {
+                connectionState[it]?.value = state
+            }
+            makeAndPostConnectionMessage(state)
+        }
     }
 
     fun clearIgnores() {
