@@ -9,7 +9,7 @@ buildscript {
         kotlin_version = '1.4.20'
 
         // Kotlin
-        coroutines_version = '1.4.1'
+        coroutines_version = '1.4.2'
 
         // AndroidX
         appcompat_version = '1.3.0-alpha02'
