@@ -270,16 +270,8 @@ class ChatAdapter(
             //links
             LinkifyCompat.addLinks(spannableWithEmojis, Linkify.WEB_URLS)
             spannableWithEmojis.getSpans<URLSpan>().forEach {
-                val (urlIndex, urlLength) = when (val idx = message.indexOf(it.url)) {
-                    -1 -> {
-                        val shortUrl = it.url.substringAfter("://") // linkify added protocol
-                        val shortUrlIdx = message.indexOf(shortUrl)
-                        shortUrlIdx to shortUrl.length
-                    }
-                    else -> idx to it.url.length
-                }
-                val start = prefixLength + badgesLength + urlIndex
-                val end = start + urlLength
+                val start = spannableWithEmojis.getSpanStart(it)
+                val end = spannableWithEmojis.getSpanEnd(it)
                 spannableWithEmojis.removeSpan(it)
                 val clickableSpan = object : ClickableSpan() {
                     override fun onClick(v: View) {
