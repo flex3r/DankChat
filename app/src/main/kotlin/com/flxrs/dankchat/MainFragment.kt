@@ -73,15 +73,18 @@ class MainFragment : Fragment() {
 
     private val viewModel: DankChatViewModel by activityViewModels()
     private val navController: NavController by lazy { findNavController() }
+    private var bindingRef: MainFragmentBinding? = null
+    private val binding get() = bindingRef!!
+    private var emoteMenuBottomSheetBehavior: BottomSheetBehavior<MaterialCardView>? = null
+    private var mentionBottomSheetBehavior: BottomSheetBehavior<View>? = null
+
+
     private lateinit var twitchPreferences: DankChatPreferenceStore
     private lateinit var preferenceListener: SharedPreferences.OnSharedPreferenceChangeListener
     private lateinit var preferences: SharedPreferences
-    private lateinit var binding: MainFragmentBinding
     private lateinit var tabAdapter: ChatTabAdapter
     private lateinit var tabLayoutMediator: TabLayoutMediator
     private lateinit var emoteMenuAdapter: EmoteMenuAdapter
-    private lateinit var emoteMenuBottomSheetBehavior: BottomSheetBehavior<MaterialCardView>
-    private lateinit var mentionBottomSheetBehavior: BottomSheetBehavior<View>
     private lateinit var suggestionAdapter: EmoteSuggestionsArrayAdapter
     private var currentMediaUri = Uri.EMPTY
 
@@ -117,7 +120,7 @@ class MainFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         tabAdapter = ChatTabAdapter(this)
         emoteMenuAdapter = EmoteMenuAdapter(::insertEmote)
-        binding = MainFragmentBinding.inflate(inflater, container, false).apply {
+        bindingRef = MainFragmentBinding.inflate(inflater, container, false).apply {
             emoteMenuBottomSheetBehavior = BottomSheetBehavior.from(emoteMenuBottomSheet)
             vm = viewModel
             lifecycleOwner = this@MainFragment
@@ -224,13 +227,13 @@ class MainFragment : Fragment() {
             setSupportActionBar(binding.toolbar)
             onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
                 when {
-                    emoteMenuBottomSheetBehavior.isVisible -> emoteMenuBottomSheetBehavior.hide()
-                    mentionBottomSheetBehavior.isVisible -> mentionBottomSheetBehavior.hide()
+                    emoteMenuBottomSheetBehavior?.isVisible == true -> emoteMenuBottomSheetBehavior?.hide()
+                    mentionBottomSheetBehavior?.isVisible == true -> mentionBottomSheetBehavior?.hide()
                     else -> finishAndRemoveTask()
                 }
             }
 
-            window.decorView.setOnApplyWindowInsetsListener { _, insets ->
+            binding.root.setOnApplyWindowInsetsListener { _, insets ->
                 binding.showActionbarFab.apply {
                     if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT && isVisible) {
                         y = when {
@@ -271,13 +274,6 @@ class MainFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        if (::preferences.isInitialized) {
-            preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
-        }
-        super.onDestroy()
-    }
-
     override fun onPause() {
         binding.input.clearFocus()
         super.onPause()
@@ -285,7 +281,7 @@ class MainFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        emoteMenuBottomSheetBehavior.hide()
+        emoteMenuBottomSheetBehavior?.hide()
         changeActionBarVisibility(viewModel.appbarEnabled.value ?: true)
 
         (activity as? MainActivity)?.apply {
@@ -302,6 +298,16 @@ class MainFragment : Fragment() {
                 val activeChannel = viewModel.activeChannel.value ?: return
                 clearNotificationsOfChannel(activeChannel)
             }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bindingRef = null
+        emoteMenuBottomSheetBehavior = null
+        mentionBottomSheetBehavior = null
+        if (::preferences.isInitialized) {
+            preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         }
     }
 
@@ -343,7 +349,7 @@ class MainFragment : Fragment() {
             R.id.menu_reconnect -> viewModel.reconnect(false)
             R.id.menu_login -> navigateSafe(R.id.action_mainFragment_to_loginFragment).also { hideKeyboard() }
             R.id.menu_add -> openAddChannelDialog()
-            R.id.menu_mentions -> mentionBottomSheetBehavior.expand()
+            R.id.menu_mentions -> mentionBottomSheetBehavior?.expand()
             R.id.menu_open -> openChannel()
             R.id.menu_remove -> removeChannel()
             R.id.menu_reload_emotes -> reloadEmotes()
@@ -771,10 +777,10 @@ class MainFragment : Fragment() {
         addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                viewModel.setMentionSheetOpen(mentionBottomSheetBehavior.isMoving || mentionBottomSheetBehavior.isVisible)
+                viewModel.setMentionSheetOpen(mentionBottomSheetBehavior?.isMoving == true || mentionBottomSheetBehavior?.isVisible == true)
                 when {
-                    mentionBottomSheetBehavior.isExpanded -> viewModel.setSuggestionChannel("w")
-                    mentionBottomSheetBehavior.isHidden -> viewModel.setSuggestionChannel(tabAdapter.titleList[binding.chatViewpager.currentItem])
+                    mentionBottomSheetBehavior?.isExpanded == true -> viewModel.setSuggestionChannel("w")
+                    mentionBottomSheetBehavior?.isHidden == true -> viewModel.setSuggestionChannel(tabAdapter.titleList[binding.chatViewpager.currentItem])
                 }
             }
         })
@@ -792,7 +798,7 @@ class MainFragment : Fragment() {
                 if (position in 0 until tabAdapter.titleList.size) {
                     val newChannel = tabAdapter.titleList[position].toLowerCase(Locale.getDefault())
                     viewModel.setActiveChannel(newChannel)
-                    emoteMenuBottomSheetBehavior.hide()
+                    emoteMenuBottomSheetBehavior?.hide()
                     binding.input.dismissDropDown()
                 }
             }
@@ -803,8 +809,8 @@ class MainFragment : Fragment() {
         setEndIconOnClickListener { sendMessage() }
         setEndIconOnLongClickListener { getLastMessage() }
         setStartIconOnClickListener {
-            if (emoteMenuBottomSheetBehavior.isVisible || emoteMenuAdapter.currentList.isEmpty()) {
-                emoteMenuBottomSheetBehavior.hide()
+            if (emoteMenuBottomSheetBehavior?.isVisible == true || emoteMenuAdapter.currentList.isEmpty()) {
+                emoteMenuBottomSheetBehavior?.hide()
                 return@setStartIconOnClickListener
             }
 
@@ -825,7 +831,7 @@ class MainFragment : Fragment() {
             }
 
             postDelayed(50) {
-                emoteMenuBottomSheetBehavior.apply {
+                emoteMenuBottomSheetBehavior?.apply {
                     peekHeight = (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
                     expand()
 

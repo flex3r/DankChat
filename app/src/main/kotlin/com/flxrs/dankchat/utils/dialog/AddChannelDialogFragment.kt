@@ -14,12 +14,13 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class AddChannelDialogFragment : DialogFragment() {
 
-    private lateinit var binding: EdittextDialogBinding
+    private var bindingRef: EdittextDialogBinding? = null
+    private val binding get() = bindingRef!!
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val args = requireArguments()
         val message = args.getInt(MESSAGE_ARG)
-        binding = DataBindingUtil.inflate(LayoutInflater.from(requireContext()), R.layout.edittext_dialog, null, false)
+        bindingRef = DataBindingUtil.inflate(LayoutInflater.from(requireContext()), R.layout.edittext_dialog, null, false)
         binding.dialogEdit.hint = args.getString(HINT_ARG)
         val builder = MaterialAlertDialogBuilder(requireContext())
             .setTitle(args.getInt(TITLE_ARG))
@@ -35,6 +36,11 @@ class AddChannelDialogFragment : DialogFragment() {
             }
         }
         return builder.create()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bindingRef = null
     }
 
     private fun getInputAndDismiss(): Boolean {

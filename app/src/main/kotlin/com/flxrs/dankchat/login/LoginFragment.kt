@@ -28,7 +28,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
 
-    private lateinit var binding: LoginFragmentBinding
+    private var bindingRef: LoginFragmentBinding? = null
+    private val binding get() = bindingRef!!
     private lateinit var dankChatPreferenceStore: DankChatPreferenceStore
 
     @Inject
@@ -36,7 +37,7 @@ class LoginFragment : Fragment() {
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = LoginFragmentBinding.inflate(inflater, container, false)
+        bindingRef = LoginFragmentBinding.inflate(inflater, container, false)
         binding.webview.apply {
             with(settings) {
                 javaScriptEnabled = true
@@ -62,6 +63,11 @@ class LoginFragment : Fragment() {
             }
         }
         dankChatPreferenceStore = DankChatPreferenceStore(view.context)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bindingRef = null
     }
 
     private inner class TwitchAuthClient : WebViewClient() {

@@ -31,7 +31,8 @@ import javax.inject.Inject
 open class ChatFragment : Fragment() {
 
     private val viewModel: ChatViewModel by viewModels()
-    protected open lateinit var binding: ChatFragmentBinding
+    protected var bindingRef: ChatFragmentBinding? = null
+    protected val binding get() = bindingRef!!
     protected open lateinit var adapter: ChatAdapter
     protected open lateinit var manager: LinearLayoutManager
     protected open lateinit var preferenceListener: SharedPreferences.OnSharedPreferenceChangeListener
@@ -45,7 +46,7 @@ open class ChatFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         channel = requireArguments().getString(CHANNEL_ARG, "")
-        binding = ChatFragmentBinding.inflate(inflater, container, false).apply {
+        bindingRef = ChatFragmentBinding.inflate(inflater, container, false).apply {
             lifecycleOwner = this@ChatFragment
             scrollBottom.setOnClickListener {
                 scrollBottom.visibility = View.GONE
@@ -89,8 +90,9 @@ open class ChatFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bindingRef = null
         if (::preferences.isInitialized) {
             preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         }

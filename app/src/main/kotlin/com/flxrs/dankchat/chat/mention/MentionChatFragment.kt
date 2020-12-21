@@ -17,7 +17,7 @@ class MentionChatFragment : ChatFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val isWhisperTab = requireArguments().getBoolean(WHISPER_ARG, false)
-        binding = ChatFragmentBinding.inflate(inflater, container, false).apply {
+        bindingRef = ChatFragmentBinding.inflate(inflater, container, false).apply {
             lifecycleOwner = this@MentionChatFragment
             scrollBottom.setOnClickListener {
                 scrollBottom.visibility = View.GONE

@@ -16,14 +16,15 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MentionFragment : Fragment() {
 
+    private val dankChatViewModel: DankChatViewModel by activityViewModels()
+    private var bindingRef: MentionFragmentBinding? = null
+    private val binding get() = bindingRef!!
     private lateinit var tabAdapter: MentionTabAdapter
     private lateinit var tabLayoutMediator: TabLayoutMediator
-    private lateinit var binding: MentionFragmentBinding
-    private val dankChatViewModel: DankChatViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         tabAdapter = MentionTabAdapter(this)
-        binding = MentionFragmentBinding.inflate(inflater, container, false).apply {
+        bindingRef = MentionFragmentBinding.inflate(inflater, container, false).apply {
             mentionsToolbar.setNavigationOnClickListener { activity?.onBackPressed() }
             mentionViewpager.setup()
             tabLayoutMediator = TabLayoutMediator(mentionTabs, mentionViewpager) { tab, position ->
@@ -51,6 +52,11 @@ class MentionFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bindingRef = null
     }
 
     private fun ViewPager2.setup() {
