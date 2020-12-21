@@ -13,11 +13,11 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.MultiEntryBottomsheetBinding
+import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.preferences.multientry.MultiEntryAdapter
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.squareup.moshi.Moshi
-import kotlinx.android.synthetic.main.settings_fragment.view.*
 
 class NotificationsSettingsFragment : PreferenceFragmentCompat() {
 
@@ -26,9 +26,9 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val toolbar = view.settings_toolbar
+        val binding = SettingsFragmentBinding.bind(view)
         (requireActivity() as AppCompatActivity).apply {
-            setSupportActionBar(toolbar)
+            setSupportActionBar(binding.settingsToolbar)
             supportActionBar?.apply {
                 setDisplayHomeAsUpEnabled(true)
                 title = getString(R.string.preference_notifications_mentions_header)

@@ -7,6 +7,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
+import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
@@ -14,7 +15,7 @@ import androidx.preference.PreferenceFragmentCompat
 import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.MainFragment
 import com.flxrs.dankchat.R
-import kotlinx.android.synthetic.main.settings_fragment.view.*
+import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 
 class OverviewSettingsFragment : PreferenceFragmentCompat() {
 
@@ -23,9 +24,9 @@ class OverviewSettingsFragment : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val toolbar = view.settings_toolbar
+        val binding = SettingsFragmentBinding.bind(view)
         (requireActivity() as AppCompatActivity).apply {
-            setSupportActionBar(toolbar)
+            setSupportActionBar(binding.settingsToolbar)
             supportActionBar?.apply {
                 setDisplayHomeAsUpEnabled(true)
                 title = getString(R.string.settings)

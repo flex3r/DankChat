@@ -14,16 +14,16 @@ import androidx.preference.SeekBarPreference
 import androidx.preference.SwitchPreferenceCompat
 import com.flxrs.dankchat.MainFragment
 import com.flxrs.dankchat.R
-import kotlinx.android.synthetic.main.settings_fragment.view.*
+import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 
 class AppearanceSettingsFragment : PreferenceFragmentCompat() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val toolbar = view.settings_toolbar
+        val binding = SettingsFragmentBinding.bind(view)
         (requireActivity() as AppCompatActivity).apply {
-            setSupportActionBar(toolbar)
+            setSupportActionBar(binding.settingsToolbar)
             supportActionBar?.apply {
                 setDisplayHomeAsUpEnabled(true)
                 title = getString(R.string.preference_appearance_header)
