@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.service.twitch.emote
 
-import android.util.Log
 import android.util.LruCache
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.api.dto.BadgeDtos
@@ -29,29 +28,6 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
     private val channelBadges = ConcurrentHashMap<String, BadgeDtos.Result>()
     private val globalBadges = ConcurrentHashMap<String, BadgeDtos.BadgeSet>()
     private val dankChatBadges = CopyOnWriteArrayList<BadgeDtos.DankChatBadge>()
-
-    private val thirdPartyRegex = Regex("\\s")
-    private val emoteReplacements = mapOf(
-        "[oO](_|\\.)[oO]" to "O_o",
-        "\\&lt\\;3" to "<3",
-        "\\:-?(p|P)" to ":P",
-        "\\:-?[z|Z|\\|]" to ":Z",
-        "\\:-?\\)" to ":)",
-        "\\;-?(p|P)" to ";P",
-        "R-?\\)" to "R)",
-        "\\&gt\\;\\(" to ">(",
-        "\\:-?(o|O)" to ":O",
-        "\\:-?[\\\\/]" to ":/",
-        "\\:-?\\(" to ":(",
-        "\\:-?D" to ":D",
-        "\\;-?\\)" to ";)",
-        "B-?\\)" to "B)",
-        "#-?[\\/]" to "#/",
-        ":-?(?:7|L)" to ":7",
-        "\\&lt\\;\\]" to "<]",
-        "\\:-?(S|s)" to ":s",
-        "\\:\\&gt\\;" to ":>"
-    )
 
     val gifCache = LruCache<String, GifDrawable>(128)
     val gifCallback = MultiCallback(true)
@@ -88,34 +64,44 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
                 val fixedEnd = end + unicodeExtra + spaceExtra
 
                 // be extra safe in case twitch sends invalid emote ranges :)
-                fixedStart.coerceAtLeast(0) to (fixedEnd + 1).coerceAtMost(original.length)
+                fixedStart.coerceAtLeast(0)..(fixedEnd + 1).coerceAtMost(original.length)
             }
 
-            val code = original.substring(parsedPositions[0].first, parsedPositions[0].second)
-            emotes += ChatMessageEmote(
-                positions = parsedPositions,
-                url = "$BASE_URL/$id/$EMOTE_SIZE",
-                id = id,
-                code = code,
-                scale = 1,
-                isGif = false,
-                isTwitch = true
-            )
+            val code = original.substring(parsedPositions[0].first, parsedPositions[0].last)
+            emotes.addAll(parsedPositions.map {
+                ChatMessageEmote(
+                    position = it,
+                    url = "$BASE_URL/$id/$EMOTE_SIZE",
+                    id = id,
+                    code = code,
+                    scale = 1,
+                    isGif = false,
+                    isTwitch = true
+                )
+            })
         }
         return emotes
     }
 
     fun parse3rdPartyEmotes(message: String, channel: String = "", withTwitch: Boolean = false): List<ChatMessageEmote> {
-        val splits = message.split(thirdPartyRegex)
+        val splits = message.split(WHITESPACE_REGEX)
         val emotes = mutableListOf<ChatMessageEmote>()
 
-        ffzEmotes[channel]?.forEach { parseMessageForEmote(it.value, splits, emotes) }
-        bttvEmotes[channel]?.forEach { parseMessageForEmote(it.value, splits, emotes) }
-        globalBttvEmotes.forEach { parseMessageForEmote(it.value, splits, emotes) }
-        globalFFZEmotes.forEach { parseMessageForEmote(it.value, splits, emotes) }
-        if (withTwitch) twitchEmotes.forEach { parseMessageForEmote(it.value, splits, emotes) }
+        ffzEmotes[channel]?.forEach { emotes.addAll(parseMessageForEmote(it.value, splits)) }
+        bttvEmotes[channel]?.forEach { emotes.addAll(parseMessageForEmote(it.value, splits)) }
+        globalBttvEmotes.forEach { emotes.addAll(parseMessageForEmote(it.value, splits)) }
+        globalFFZEmotes.forEach { emotes.addAll(parseMessageForEmote(it.value, splits)) }
+        if (withTwitch) twitchEmotes.forEach { emotes.addAll(parseMessageForEmote(it.value, splits)) }
 
         return emotes
+    }
+
+    fun parseEmotes(message: String, channel: String, emoteTag: String, extraSpacePositions: List<Int>): Pair<String, List<ChatMessageEmote>> {
+        val twitchEmotes = parseTwitchEmotes(emoteTag, message, extraSpacePositions)
+        val thirdPartyEmotes = parse3rdPartyEmotes(message, channel).filterNot { e -> twitchEmotes.any { it.code == e.code } }
+        val emotes = (twitchEmotes + thirdPartyEmotes)
+
+        return adjustOverlayEmotes(message, emotes)
     }
 
     fun getChannelBadgeUrl(channel: String, set: String, version: String) = channelBadges[channel]?.sets?.get(set)?.versions?.get(version)?.imageUrlHigh
@@ -153,7 +139,7 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
             }
             it.value.forEach { (name: String, id: Int) ->
                 val code = when (type) {
-                    is EmoteType.GlobalTwitchEmote -> emoteReplacements[name] ?: name
+                    is EmoteType.GlobalTwitchEmote -> EMOTE_REPLACEMENTS[name] ?: name
                     else -> name
                 }
                 val emote = GenericEmote(
@@ -219,25 +205,62 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
         return@withContext result.sortedBy { it.code }
     }
 
-    private fun parseMessageForEmote(emote: GenericEmote, messageSplits: List<String>, listToAdd: MutableList<ChatMessageEmote>) {
+    private fun adjustOverlayEmotes(message: String, emotes: List<ChatMessageEmote>): Pair<String, List<ChatMessageEmote>> {
+        var adjustedMessage = message
+        val adjustedEmotes = emotes.sortedByDescending { it.position.first } // sort by descending positions because overlay emotes apply on previous emotes
+
+        adjustedEmotes.onEachIndexed { i, emote ->
+            if (emote.code in OVERLAY_EMOTES) {
+                // first, iterate over previous emotes until a regular emote is found
+                for (j in i..adjustedEmotes.lastIndex) {
+                    val otherEmote = adjustedEmotes[j]
+                    if (otherEmote.code in OVERLAY_EMOTES) {
+                        continue
+                    }
+
+                    adjustedMessage = when (emote.position.last) {
+                        adjustedMessage.length -> adjustedMessage.substring(0, emote.position.first)
+                        else -> adjustedMessage.removeRange(emote.position)
+                    }
+                    emote.position = otherEmote.position
+                    break
+                }
+                // next, iterate forward to fix future emote positions
+                for (j in i - 1 downTo 0) {
+                    val otherEmote = adjustedEmotes[j]
+                    if (otherEmote.code in OVERLAY_EMOTES) {
+                        continue
+                    }
+
+                    val first = otherEmote.position.first - emote.code.length - 1
+                    val last = otherEmote.position.last - emote.code.length - 1
+                    otherEmote.position = first..last
+                }
+
+            }
+        }
+
+        return adjustedMessage to adjustedEmotes.reversed()
+    }
+
+    private fun parseMessageForEmote(emote: GenericEmote, messageSplits: List<String>): List<ChatMessageEmote> {
         var i = 0
-        val positions = mutableListOf<Pair<Int, Int>>()
+        val parsed = mutableListOf<ChatMessageEmote>()
         messageSplits.forEach { split ->
             if (emote.code == split.trim()) {
-                positions += i to i + split.length
+                parsed += ChatMessageEmote(
+                    position = i..i + split.length,
+                    url = emote.url,
+                    id = emote.id,
+                    code = emote.code,
+                    scale = emote.scale,
+                    isGif = emote.isGif
+                )
             }
             i += split.length + 1
         }
-        if (positions.size > 0) {
-            listToAdd += ChatMessageEmote(
-                positions = positions,
-                url = emote.url,
-                id = emote.id,
-                code = emote.code,
-                scale = emote.scale,
-                isGif = emote.isGif
-            )
-        }
+
+        return parsed
     }
 
     private fun parseBTTVEmote(emote: EmoteDtos.BTTV.Emote): GenericEmote {
@@ -262,8 +285,8 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
         val name = emote.name
         val id = emote.id
         val (scale, url) = when {
-            emote.urls.containsKey("4") && emote.urls["4"] != null-> 1 to emote.urls.getValue("4")
-            emote.urls.containsKey("2") && emote.urls["2"] != null-> 2 to emote.urls.getValue("2")
+            emote.urls.containsKey("4") && emote.urls["4"] != null -> 1 to emote.urls.getValue("4")
+            emote.urls.containsKey("2") && emote.urls["2"] != null -> 2 to emote.urls.getValue("2")
             else -> 4 to emote.urls["1"]
         }
         val lowResUrl = emote.urls["2"] ?: emote.urls["1"]
@@ -281,5 +304,32 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
         private const val EMOTE_SIZE = "3.0"
         private const val LOW_RES_EMOTE_SIZE = "2.0"
         private const val BTTV_CDN_BASE_URL = "https://cdn.betterttv.net/emote/"
+
+        private val WHITESPACE_REGEX = Regex("\\s")
+        private val EMOTE_REPLACEMENTS = mapOf(
+            "[oO](_|\\.)[oO]" to "O_o",
+            "\\&lt\\;3" to "<3",
+            "\\:-?(p|P)" to ":P",
+            "\\:-?[z|Z|\\|]" to ":Z",
+            "\\:-?\\)" to ":)",
+            "\\;-?(p|P)" to ";P",
+            "R-?\\)" to "R)",
+            "\\&gt\\;\\(" to ">(",
+            "\\:-?(o|O)" to ":O",
+            "\\:-?[\\\\/]" to ":/",
+            "\\:-?\\(" to ":(",
+            "\\:-?D" to ":D",
+            "\\;-?\\)" to ";)",
+            "B-?\\)" to "B)",
+            "#-?[\\/]" to "#/",
+            ":-?(?:7|L)" to ":7",
+            "\\&lt\\;\\]" to "<]",
+            "\\:-?(S|s)" to ":s",
+            "\\:\\&gt\\;" to ":>"
+        )
+        private val OVERLAY_EMOTES = listOf(
+            "SoSnowy", "IceCold", "SantaHat", "TopHat",
+            "ReinDeer", "CandyCane", "cvMask", "cvHazmat",
+        )
     }
 }

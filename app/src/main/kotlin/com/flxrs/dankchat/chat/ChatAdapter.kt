@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.LayerDrawable
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
@@ -16,10 +18,7 @@ import android.text.style.URLSpan
 import android.text.util.Linkify
 import android.util.Log
 import android.util.TypedValue
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.TextView
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
@@ -312,19 +311,13 @@ class ChatAdapter(
                 emoteManager.gifCallback.addView(holder.binding.itemText)
             }
             val fullPrefix = prefixLength + badgesLength
-            emotes.forEach { e ->
+            emotes.groupBy { it.position }.forEach { (_, emotes) ->
                 try {
-                    val drawable = when {
-                        e.isGif -> emoteManager.gifCache[e.url]?.also { it.setRunning(animateGifs) } ?: Coil.get(e.url).apply {
-                            this as GifDrawable
-                            setRunning(animateGifs)
-                            callback = emoteManager.gifCallback
-                            emoteManager.gifCache.put(e.url, this)
-                        }
-                        else -> Coil.get(e.url)
-                    }
-                    drawable.transformEmoteDrawable(scaleFactor, e)
-                    (text as SpannableString).setEmoteSpans(e, fullPrefix, drawable)
+                    val drawables = emotes.map { it.toDrawable(animateGifs).run { transformEmoteDrawable(scaleFactor, it) } }.toTypedArray()
+                    val bounds = drawables.map { it.bounds }
+                    val layerDrawable = drawables.toLayerDrawable(bounds, scaleFactor, emotes)
+
+                    (text as SpannableString).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
                 } catch (t: Throwable) {
                     handleException(t)
                 }
@@ -332,17 +325,38 @@ class ChatAdapter(
         }
     }
 
-    private fun SpannableString.setEmoteSpans(e: ChatMessageEmote, prefix: Int, drawable: Drawable) {
-        e.positions.forEach { (start, end) ->
-            try {
-                setSpan(ImageSpan(drawable), start + prefix, end + prefix, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
-            } catch (t: Throwable) {
-                Log.e("ViewBinding", "${start + prefix} ${end + prefix} ${e.code} $length")
-            }
+    private fun Array<Drawable>.toLayerDrawable(bounds: List<Rect>, scaleFactor: Double, emotes: List<ChatMessageEmote>): LayerDrawable = LayerDrawable(this).apply {
+        val maxWidth = bounds.maxOf { it.width() }
+        val maxHeight = bounds.maxOf { it.height() }
+        setBounds(0, 0, maxWidth, maxHeight)
+
+        // set bounds again but adjust by maximum width/height of stacked drawables
+        forEachIndexed { idx, dr -> dr.transformEmoteDrawable(scaleFactor, emotes[idx], maxWidth, maxHeight) }
+
+        if (emotes.any { it.isGif }) {
+            callback = emoteManager.gifCallback
         }
     }
 
-    private fun Drawable.transformEmoteDrawable(scale: Double, emote: ChatMessageEmote) {
+    private suspend fun ChatMessageEmote.toDrawable(animateGifs: Boolean) = when {
+        isGif -> emoteManager.gifCache[url]?.also { it.setRunning(animateGifs) } ?: Coil.get(url).apply {
+            this as GifDrawable
+            setRunning(animateGifs)
+            //callback = emoteManager.gifCallback
+            emoteManager.gifCache.put(url, this)
+        }
+        else -> Coil.get(url)
+    }
+
+    private fun SpannableString.setEmoteSpans(e: ChatMessageEmote, prefix: Int, drawable: Drawable) {
+        try {
+            setSpan(ImageSpan(drawable), e.position.first + prefix, e.position.last + prefix, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+        } catch (t: Throwable) {
+            Log.e("ViewBinding", "$t ${e.position.first + prefix} ${e.position.last + prefix} ${e.code} $length")
+        }
+    }
+
+    private fun Drawable.transformEmoteDrawable(scale: Double, emote: ChatMessageEmote, maxWidth: Int = 0, maxHeight: Int = 0): Drawable {
         val ratio = intrinsicWidth / intrinsicHeight.toFloat()
         val height = when {
             intrinsicHeight < 55 && emote.isTwitch -> (70 * scale).roundToInt()
@@ -350,7 +364,15 @@ class ChatAdapter(
             else -> (intrinsicHeight * scale).roundToInt()
         }
         val width = (height * ratio).roundToInt()
-        setBounds(0, 0, width * emote.scale, height * emote.scale)
+
+        val scaledWidth = width * emote.scale
+        val scaledHeight = height * emote.scale
+
+        val left = (maxWidth - scaledWidth).coerceAtLeast(0)
+        val top = (maxHeight - scaledHeight).coerceAtLeast(0)
+
+        setBounds(left, top, scaledWidth + left, scaledHeight + top)
+        return this
     }
 
     companion object {

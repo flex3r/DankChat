@@ -68,7 +68,7 @@ sealed class Message {
 
                 val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
                 var isAction = false
-                val content = when {
+                val message = when {
                     params.size > 1 && params[1].startsWith("\u0001ACTION") && params[1].endsWith("\u0001") -> {
                         isAction = true
                         params[1].substring("\u0001ACTION ".length, params[1].length - "\u0001".length)
@@ -76,14 +76,13 @@ sealed class Message {
                     params.size > 1 -> params[1]
                     else -> ""
                 }
-
-                val (fixedContent, spaces) = content.appendSpacesBetweenEmojiGroup()
                 val channel = params[0].substring(1)
                 val emoteTag = tags["emotes"] ?: ""
-                val emotes = emoteManager.parseTwitchEmotes(emoteTag, fixedContent, spaces)
-                val otherEmotes = emoteManager.parse3rdPartyEmotes(fixedContent, channel)
                 val id = tags["id"] ?: System.nanoTime().toString()
                 val badges = parseBadges(emoteManager, tags["badges"], channel, tags["user-id"])
+
+                val (spaceAdjustedMessage, spaces) = message.appendSpacesBetweenEmojiGroup()
+                val (overlayEmotesAdjustedMessage, emotes) = emoteManager.parseEmotes(spaceAdjustedMessage, channel, emoteTag, spaces)
 
                 return TwitchMessage(
                     timestamp = ts,
@@ -91,8 +90,8 @@ sealed class Message {
                     name = name,
                     displayName = displayName,
                     color = color,
-                    message = fixedContent,
-                    emotes = (emotes + otherEmotes).distinctBy { it.code },
+                    message = overlayEmotesAdjustedMessage,
+                    emotes = emotes,
                     isAction = isAction,
                     isNotify = isNotify,
                     badges = badges,
@@ -179,9 +178,11 @@ sealed class Message {
                 val name = prefix.substringBefore('!')
                 val colorTag = tags["color"]?.ifBlank { "#717171" } ?: "#717171"
                 val color = Color.parseColor(colorTag)
-                val (fixedContent, spaces) = params[1].appendSpacesBetweenEmojiGroup()
+                val emoteTag = tags["emotes"] ?: ""
                 val badges = parseBadges(emoteManager, tags["badges"], userId = tags["user-id"])
-                val emotes = emoteManager.parseTwitchEmotes(tags["emotes"] ?: "", fixedContent, spaces) + emoteManager.parse3rdPartyEmotes(fixedContent)
+
+                val (spaceAdjustedMessage, spaces) = params[1].appendSpacesBetweenEmojiGroup()
+                val (overlayEmotesAdjustedMessage, emotes) = emoteManager.parseEmotes(spaceAdjustedMessage, channel = "", emoteTag, spaces)
 
                 return TwitchMessage(
                     timestamp = System.currentTimeMillis(),
@@ -189,7 +190,7 @@ sealed class Message {
                     name = name,
                     displayName = displayName,
                     color = color,
-                    message = fixedContent,
+                    message = overlayEmotesAdjustedMessage,
                     emotes = emotes,
                     badges = badges,
                     id = System.nanoTime().toString(),
