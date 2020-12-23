@@ -79,95 +79,62 @@
     <string name="mentions">Zmínky</string>
 
 
-    <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
-    <string name="secure_shared_preference_key" translatable="false">com.flxrs.dankchat_secure_preferences</string>
     <string name="preference_timestamp_title">Zobrazit časová razítka</string>
-    <string name="preference_timestamp_key" translatable="false">show_timestamp</string>
     <string name="preference_mention_format_title">Formát zmínek</string>
     <string name="preference_mention_format_summary">Změnit formát zmínek, když kliknete na uživatelské jméno</string>
-    <string name="preference_mention_format_key" translatable="false">mention_format</string>
-    <string name="preference_roomstate_key" translatable="false">show_roomstate</string>
     <string name="preference_roomstate_title">Zobrazit informace o stavu místnosti</string>
     <string name="preference_roomstate_summary">Zobrazí informace o aktuálním stavu, jako je režim pouze pro předplatitele</string>
-    <string name="preference_streaminfo_key" translatable="false">show_streaminfo</string>
     <string name="preference_streaminfo_title">Zobrazit informace o streamu</string>
     <string name="preference_streaminfo_summary">Zobrazí stav a počet divákú</string>
-    <string name="preference_notification_key" translatable="false">notification_key</string>
     <string name="preference_notification_title">Zobrazit upozornění o zmínkách</string>
     <string name="preference_notification_summary">Vytváří notifikace, když jste zmíněn, pokud je aplikace na pozadí</string>
     <string name="preference_notification_header">Upozornění</string>
     <string name="preference_chat_header">Chat</string>
-    <string name="preference_chat_key" translatable="false">chat_key</string>
-    <string name="preference_logout_key" translatable="false">logout_key</string>
     <string name="preference_logout_title">Odhlásit se</string>
     <string name="preference_general_header">Obecné</string>
     <string name="preference_about_header">O aplikaci</string>
     <string name="preference_appearance_header">Vzhled</string>
-    <string name="preference_appearance_key" translatable="false">appearance_key</string>
     <string name="preference_about_summary">DankChat %1$s je vytvořen uživatelem @flex3rs a přispěvateli\n\nData o emotikonech poskytována stránkou twitchemotes.com</string>
-    <string name="preference_about_key" translatable="false">about_key</string>
-    <string name="preference_show_input_key" translatable="false">show_input_key</string>
     <string name="preference_show_input_title">Zobrazit vstup</string>
     <string name="preference_show_input_summary">Zobrazí vstupní pole pro odesílání zpráv</string>
-    <string name="preference_dark_theme_key" translatable="false">enable_dark_mode</string>
     <string name="preference_dark_theme_title">Povolit tmavý režim</string>
-    <string name="preference_show_timed_out_messages_key" translatable="false">show_timed_out_messages_key</string>
     <string name="preference_show_timed_out_messages_title">Zobrazit smazané zprávy</string>
-    <string name="preference_custom_mentions_key" translatable="false">custom_mentions_key</string>
     <string name="preference_custom_mentions_title">Vlastní zmínky</string>
     <string name="preference_custom_mentions_summary">Nastavte vlastní fráze jako zmínky</string>
-    <string name="preference_blacklist_key" translatable="false">custom_blacklist_key</string>
     <string name="preference_blacklist_title">Černá listina</string>
     <string name="preference_blacklist_summary">Nastavte vlastní fráze, které budou skryty</string>
-    <string name="preference_animate_gifs_key" translatable="false">animate_gifs_key</string>
     <string name="preference_animate_gifs_title">Animované gify</string>
-    <string name="preference_line_separator_key" translatable="false">line_seperator_key</string>
     <string name="preference_line_separator_title">Oddělit zprávy řádkem</string>
-    <string name="preference_keep_screen_on_key" translatable="false">keep_screen_on_key</string>
     <string name="preference_keep_screen_on_title">Udržovat obrazovku zapnutou</string>
-    <string name="preference_font_size_key" translatable="false">font_size_key</string>
     <string name="preference_font_size_title">Velikost písma</string>
     <string name="preference_font_size_summary_very_small">Velmi malé</string>
     <string name="preference_font_size_summary_small">Malé</string>
     <string name="preference_font_size_summary_large">Velké</string>
     <string name="preference_font_size_summary_very_large">Velmi velké</string>
     <string name="preference_notifications_mentions_header">Upozornění a Zmínky</string>
-    <string name="preference_notifications_mentions_key" translatable="false">notifications_mentions_key</string>
-    <string name="preference_suggestions_key" translatable="false">suggestions_key</string>
     <string name="preference_suggestions_title">Návrhy uživatelů a emotikon</string>
     <string name="preference_suggestions_summary">Zobrazí návrhy emotikon a uživatelských jmen při psaní</string>
     <string name="preference_load_message_history_title">Při zapnutí načíst historii zpráv</string>
-    <string name="preference_load_message_history_key" translatable="false">load_message_history_key</string>
     <string name="preference_message_history_header">Historie zpráv</string>
     <string name="preference_message_history_dashboard_title">Otevřít řídící panel</string>
-    <string name="preference_message_history_dashboard_key" translatable="false">message_history_dashboard_key</string>
     <string name="preference_message_history_dashboard_summary">Zjistěte více o službě a deaktivujte historii zpráv pro svůj vlastní kanál</string>
     <string name="preference_channel_data_header">Data kanálu</string>
     <string name="preference_developer_header">Nastavení vývojáře</string>
-    <string name="preference_developer_key" translatable="false">developer_key</string>
-    <string name="preference_debug_mode_key" translatable="false">debug_mode_key</string>
     <string name="preference_debug_mode_title">Režim ladění</string>
     <string name="preference_debug_mode_summary">Poskytuje informace o všech výjimkách, které byly zachyceny</string>
-    <string name="preference_timestamp_format_key" translatable="false">timestamp_format_key</string>
     <string name="preference_timestamp_format_title">Formát časových razítek</string>
-    <string name="preference_tts_key" translatable="false">tts_key</string>
     <string name="preference_tts_title">Povolit TTS</string>
     <string name="preference_tts_summary">Čte zprávy aktivního kanálu</string>
-    <string name="preference_tts_queue_key" translatable="false">tts_queue_key</string>
     <string name="preference_tts_queue_title">Režim fronty zpráv</string>
     <string name="preference_tts_queue_add">Hrát každou zprávu s použitím fronty</string>
     <string name="preference_tts_queue_flush">Hrát pouze nejnovější zprávu</string>
     <string name="preference_tts_message_format_message">Číst pouze zprávu</string>
     <string name="preference_tts_message_format_combined">Číst uživatele a zprávu</string>
-    <string name="preference_tts_message_format_key" translatable="false">tts_message_format_key</string>
     <string name="preference_tts_message_format_title">Formát režimu zpráv</string>
     <string name="preference_tts_header">TTS</string>
-    <string name="checkered_messages_key" translatable="false">checkered_messages</string>
     <string name="preference_checkered_lines_title">Kostkované Řádky</string>
     <string name="preference_checkered_lines_summary">Oddělit každý řádek odlišným jasem pozadí</string>
-    <string name="preference_supibot_suggestions_key" translatable="false">supibot_suggestions_key</string>
     <string name="preference_supibot_suggestions_title">Návrhy příkazů Supibota</string>
-    <string name="preference_scrollback_length_key" translatable="false">scrollback_length_key</string>
     <string name="preference_scrollback_length_title">Délka historie chatu</string>
 
     <plurals name="viewers">
