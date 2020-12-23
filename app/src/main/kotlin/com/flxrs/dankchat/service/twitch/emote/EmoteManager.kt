@@ -213,8 +213,8 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
             if (emote.code in OVERLAY_EMOTES) {
                 // first, iterate over previous emotes until a regular emote is found
                 for (j in i..adjustedEmotes.lastIndex) {
-                    val otherEmote = adjustedEmotes[j]
-                    if (otherEmote.code in OVERLAY_EMOTES) {
+                    val previousEmote = adjustedEmotes[j]
+                    if (previousEmote.code in OVERLAY_EMOTES) {
                         continue
                     }
 
@@ -222,21 +222,22 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
                         adjustedMessage.length -> adjustedMessage.substring(0, emote.position.first)
                         else -> adjustedMessage.removeRange(emote.position)
                     }
-                    emote.position = otherEmote.position
-                    break
-                }
-                // next, iterate forward to fix future emote positions
-                for (j in i - 1 downTo 0) {
-                    val otherEmote = adjustedEmotes[j]
-                    if (otherEmote.code in OVERLAY_EMOTES) {
-                        continue
+                    emote.position = previousEmote.position
+
+                    // next, iterate forward to fix future emote positions
+                    for (k in i - 1 downTo 0) {
+                        val nextEmote = adjustedEmotes[k]
+                        if (nextEmote.code in OVERLAY_EMOTES) {
+                            continue
+                        }
+
+                        val first = nextEmote.position.first - emote.code.length - 1
+                        val last = nextEmote.position.last - emote.code.length - 1
+                        nextEmote.position = first..last
                     }
 
-                    val first = otherEmote.position.first - emote.code.length - 1
-                    val last = otherEmote.position.last - emote.code.length - 1
-                    otherEmote.position = first..last
+                    break
                 }
-
             }
         }
 
