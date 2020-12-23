@@ -352,7 +352,7 @@ class ChatAdapter(
         try {
             setSpan(ImageSpan(drawable), e.position.first + prefix, e.position.last + prefix, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
         } catch (t: Throwable) {
-            Log.e("ViewBinding", "$t ${e.position.first + prefix} ${e.position.last + prefix} ${e.code} $length")
+            Log.e("ViewBinding", "$t $this ${e.position} ${e.code} $length")
         }
     }
 

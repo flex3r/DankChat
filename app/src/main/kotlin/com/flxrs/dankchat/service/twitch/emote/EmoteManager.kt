@@ -207,12 +207,15 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
 
     private fun adjustOverlayEmotes(message: String, emotes: List<ChatMessageEmote>): Pair<String, List<ChatMessageEmote>> {
         var adjustedMessage = message
-        val adjustedEmotes = emotes.sortedByDescending { it.position.first } // sort by descending positions because overlay emotes apply on previous emotes
+        val adjustedEmotes = emotes.sortedBy { it.position.first }
 
-        adjustedEmotes.onEachIndexed { i, emote ->
+        for (i in adjustedEmotes.lastIndex downTo 0) {
+            val emote = adjustedEmotes[i]
+
             if (emote.code in OVERLAY_EMOTES) {
+                var foundEmote = false
                 // first, iterate over previous emotes until a regular emote is found
-                for (j in i..adjustedEmotes.lastIndex) {
+                for (j in i - 1 downTo 0) {
                     val previousEmote = adjustedEmotes[j]
                     if (previousEmote.code in OVERLAY_EMOTES) {
                         continue
@@ -223,11 +226,16 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
                         else -> adjustedMessage.removeRange(emote.position)
                     }
                     emote.position = previousEmote.position
+                    foundEmote = true
 
-                    // next, iterate forward to fix future emote positions
-                    for (k in i - 1 downTo 0) {
+                    break
+                }
+
+                if (foundEmote) {
+                    // iterate forward to fix future emote positions
+                    for (k in i + 1..adjustedEmotes.lastIndex) {
                         val nextEmote = adjustedEmotes[k]
-                        if (nextEmote.code in OVERLAY_EMOTES) {
+                        if (emote.position.first >= nextEmote.position.first) {
                             continue
                         }
 
@@ -235,13 +243,11 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
                         val last = nextEmote.position.last - emote.code.length - 1
                         nextEmote.position = first..last
                     }
-
-                    break
                 }
             }
         }
-
-        return adjustedMessage to adjustedEmotes.reversed()
+        
+        return adjustedMessage to adjustedEmotes
     }
 
     private fun parseMessageForEmote(emote: GenericEmote, messageSplits: List<String>): List<ChatMessageEmote> {
