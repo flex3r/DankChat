@@ -144,7 +144,7 @@
 
 
 
-    <plurals name="viewers">
+    <plurals name="viewers" tools:ignore="MissingQuantity">
         <item quantity="one">Live with %d viewer</item>
         <item quantity="other">Live with %d viewers</item>
     </plurals>
