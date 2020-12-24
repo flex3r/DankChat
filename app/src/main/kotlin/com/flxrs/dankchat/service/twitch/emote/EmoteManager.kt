@@ -246,7 +246,7 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
                 }
             }
         }
-        
+
         return adjustedMessage to adjustedEmotes
     }
 

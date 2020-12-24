@@ -1,7 +1,6 @@
 package com.flxrs.dankchat
 
 import android.util.Log
-import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab

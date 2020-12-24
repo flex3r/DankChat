@@ -420,7 +420,7 @@ class MainFragment : Fragment() {
 
         val current = binding.input.text.toString()
         val text = "/w $user $current"
-        
+
         binding.input.setText(text)
         binding.input.setSelection(text.length)
     }
