@@ -140,4 +140,5 @@
         <item quantity="one">Live avec %d spectateur</item>
         <item quantity="other">Live avec %d spectateurs</item>
     </plurals>
+    <string name="snackbar_paste">Coller</string>
 </resources>

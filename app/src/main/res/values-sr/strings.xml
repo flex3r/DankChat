@@ -140,4 +140,5 @@
         <item quantity="one">Uživo (%d osoba gleda)</item>
         <item quantity="other">Uživo (gleda %d ljudi)</item>
     </plurals>
+    <string name="snackbar_paste">Paste</string>
 </resources>

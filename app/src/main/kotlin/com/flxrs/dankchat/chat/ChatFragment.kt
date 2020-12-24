@@ -21,6 +21,7 @@ import com.flxrs.dankchat.MainFragment
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
+import com.flxrs.dankchat.utils.extensions.showShortSnackbar
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -117,7 +118,9 @@ open class ChatFragment : Fragment() {
 
     private fun copyMessage(message: String) {
         getSystemService(requireContext(), ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("twitch message", message))
-        Snackbar.make(binding.root, R.string.snackbar_message_copied, Snackbar.LENGTH_SHORT).show()
+        binding.root.showShortSnackbar(getString(R.string.snackbar_message_copied)) {
+            setAction(R.string.snackbar_paste) { (parentFragment as? MainFragment)?.insertText(message) }
+        }
     }
 
     protected open fun scrollToPosition(position: Int) {

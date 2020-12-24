@@ -138,4 +138,5 @@
     <plurals name="viewers">
         <item quantity="other">Live 與 %d 個觀眾</item>
     </plurals>
+    <string name="snackbar_paste">粘贴</string>
 </resources>

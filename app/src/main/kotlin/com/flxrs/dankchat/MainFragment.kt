@@ -410,16 +410,9 @@ class MainFragment : Fragment() {
     }
 
     fun mentionUser(user: String) {
-        if (!binding.input.isEnabled) return
-
-        val current = binding.input.text.toString()
         val template = preferences.getString(getString(R.string.preference_mention_format_key), "name") ?: "name"
         val mention = "${template.replace("name", user)} "
-        val index = binding.input.selectionStart.takeIf { it >= 0 } ?: current.length
-        val builder = StringBuilder(current).insert(index, mention)
-
-        binding.input.setText(builder.toString())
-        binding.input.setSelection(index + mention.length)
+        insertText(mention)
     }
 
     fun whisperUser(user: String) {
@@ -427,22 +420,23 @@ class MainFragment : Fragment() {
 
         val current = binding.input.text.toString()
         val text = "/w $user $current"
+        
         binding.input.setText(text)
         binding.input.setSelection(text.length)
-
     }
 
-    private fun insertEmote(emote: String) {
+    fun insertText(text: String) {
         if (!binding.input.isEnabled) return
 
         val current = binding.input.text.toString()
-        val emoteWithSep = "$emote "
         val index = binding.input.selectionStart.takeIf { it >= 0 } ?: current.length
-        val builder = StringBuilder(current).insert(index, emoteWithSep)
+        val builder = StringBuilder(current).insert(index, text)
 
         binding.input.setText(builder.toString())
-        binding.input.setSelection(index + emoteWithSep.length)
+        binding.input.setSelection(index + text.length)
     }
+
+    private fun insertEmote(emote: String) = insertText("$emote ")
 
     private fun fetchStreamInformation() {
         lifecycleScope.launchWhenStarted {

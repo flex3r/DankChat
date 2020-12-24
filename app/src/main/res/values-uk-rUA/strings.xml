@@ -142,4 +142,5 @@
         <item quantity="many">Наживо з %d глядачами</item>
         <item quantity="other">Наживо з  %d глядачами</item>
     </plurals>
+    <string name="snackbar_paste">Вставити</string>
 </resources> 

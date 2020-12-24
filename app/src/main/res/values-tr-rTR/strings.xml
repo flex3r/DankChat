@@ -140,4 +140,5 @@
         <item quantity="one">%d izleyici ile canlı</item>
         <item quantity="other">%d izleyici ile canlı</item>
     </plurals>
+    <string name="snackbar_paste">yapıştır</string>
 </resources>
