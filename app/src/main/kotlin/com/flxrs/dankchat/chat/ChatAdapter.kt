@@ -339,7 +339,11 @@ class ChatAdapter(
     }
 
     private suspend fun ChatMessageEmote.toDrawable(animateGifs: Boolean) = when {
-        isGif -> emoteManager.gifCache[url]?.also { it.setRunning(animateGifs) } ?: Coil.get(url).apply {
+        // create mutable drawable from constant state so gifs are still synced but can have different bounds
+        isGif -> emoteManager.gifCache[url]?.constantState?.newDrawable()?.mutate()?.also {
+            it as GifDrawable
+            it.setRunning(animateGifs)
+        } ?: Coil.get(url).apply {
             this as GifDrawable
             setRunning(animateGifs)
             //callback = emoteManager.gifCallback
