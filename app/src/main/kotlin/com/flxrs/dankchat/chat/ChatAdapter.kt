@@ -348,8 +348,10 @@ class ChatAdapter(
                 else -> Coil.get(url).apply {
                     this as GifDrawable
                     // try to sync gif
-                    cached?.let { seekToFrame(it.currentFrameIndex) } ?: emoteManager.gifCache.put(url, this)
-                    setRunning(animateGifs)
+                    withContext(Dispatchers.Default) {
+                        cached?.let { seekToBlocking(it.currentPosition) } ?: emoteManager.gifCache.put(url, this@apply)
+                        setRunning(animateGifs)
+                    }
                 }
             }
         }
