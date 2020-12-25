@@ -10,10 +10,7 @@ import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
-import com.flxrs.dankchat.service.twitch.message.Mention
-import com.flxrs.dankchat.service.twitch.message.Message
-import com.flxrs.dankchat.service.twitch.message.Roomstate
-import com.flxrs.dankchat.service.twitch.message.matches
+import com.flxrs.dankchat.service.twitch.message.*
 import com.flxrs.dankchat.utils.extensions.*
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.CoroutineScope
@@ -82,7 +79,7 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
             loadRecentMessages(channel)
         } else {
             val currentChat = messages[channel]?.value ?: emptyList()
-            messages[channel]?.value = listOf(ChatItem(Message.SystemMessage(state = SystemMessageType.NO_HISTORY_LOADED), false)) + currentChat
+            messages[channel]?.value = listOf(ChatItem(SystemMessage(state = SystemMessageType.NO_HISTORY_LOADED), false)) + currentChat
         }
     }
 
@@ -152,7 +149,7 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
         if (split.size > 2 && split[0] == "/w" && split[1].isNotBlank()) {
             val message = input.substring(4 + split[1].length)
             val emotes = emoteManager.parse3rdPartyEmotes(message, withTwitch = true)
-            val fakeMessage = Message.TwitchMessage(channel = "", name = name, displayName = name, message = message, emotes = emotes, isWhisper = true, whisperRecipient = split[1])
+            val fakeMessage = TwitchMessage(channel = "", name = name, displayName = name, message = message, emotes = emotes, isWhisper = true, whisperRecipient = split[1])
             val fakeItem = ChatItem(fakeMessage, isMentionTab = true)
             _whispers.value = _whispers.value.addAndLimit(fakeItem, scrollbackLength)
         }
@@ -263,7 +260,7 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
     }
 
     private fun handleClearchat(msg: IrcMessage) {
-        val parsed = Message.TwitchMessage.parse(msg, emoteManager).map { ChatItem(it) }
+        val parsed = TwitchMessage.parse(msg, emoteManager).map { ChatItem(it) }
         val target = if (msg.params.size > 1) msg.params[1] else ""
         val channel = msg.params[0].substring(1)
 
@@ -293,7 +290,7 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
         msg.tags["user-id"]?.let { userId ->
             if (ignoredList.any { it == userId.toInt() }) return
         }
-        val parsed = Message.TwitchMessage.parse(msg, emoteManager).map {
+        val parsed = TwitchMessage.parse(msg, emoteManager).map {
             if (it.name == name) lastMessage[it.channel] = it.message
             if (blacklistEntries.matches(it.message, it.name to it.displayName, it.emotes)) return
 
@@ -317,12 +314,12 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
                 _notificationsFlow.tryEmit(parsed)
 
                 if (msg.command == "WHISPER") {
-                    (parsed[0].message as Message.TwitchMessage).whisperRecipient = name
+                    (parsed[0].message as TwitchMessage).whisperRecipient = name
                     _whispers.value = _whispers.value.addAndLimit(parsed.toMentionTabItems(), scrollbackLength)
                     _channelMentionCount.increment("w", 1)
                 }
 
-                val mentions = parsed.filter { it.message is Message.TwitchMessage && it.message.isMention && !it.message.isWhisper }.toMentionTabItems()
+                val mentions = parsed.filter { it.message is TwitchMessage && it.message.isMention && !it.message.isWhisper }.toMentionTabItems()
                 if (mentions.isNotEmpty()) {
                     _channelMentionCount.increment(channel, mentions.size)
                     _mentions.value = _mentions.value.addAndLimit(mentions, scrollbackLength)
@@ -340,7 +337,7 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
     private fun makeAndPostConnectionMessage(state: SystemMessageType, channels: Set<String> = messages.keys) {
         channels.forEach {
             val currentChat = messages[it]?.value ?: emptyList()
-            messages[it]?.value = currentChat.addAndLimit(ChatItem(Message.SystemMessage(state = state)), scrollbackLength)
+            messages[it]?.value = currentChat.addAndLimit(ChatItem(SystemMessage(state = state)), scrollbackLength)
         }
     }
 
@@ -352,7 +349,7 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
                 val parsedIrc = IrcMessage.parse(message)
                 if (ignoredList.any { parsedIrc.tags["user-id"]?.toInt() == it }) continue
 
-                for (msg in Message.TwitchMessage.parse(parsedIrc, emoteManager)) {
+                for (msg in TwitchMessage.parse(parsedIrc, emoteManager)) {
                     if (!blacklistEntries.matches(msg.message, msg.name to msg.displayName, msg.emotes)) {
                         msg.checkForMention(name, customMentionEntries)
                         items += ChatItem(msg)
@@ -364,7 +361,7 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
         val current = messages[channel]?.value ?: emptyList()
         messages[channel]?.value = items.addAndLimit(current, scrollbackLength, checkForDuplications = true)
 
-        val mentions = items.filter { (it.message as Message.TwitchMessage).isMention }.toMentionTabItems()
+        val mentions = items.filter { (it.message as TwitchMessage).isMention }.toMentionTabItems()
         _mentions.value = (_mentions.value + mentions).sortedBy { it.message.timestamp }
     }
 

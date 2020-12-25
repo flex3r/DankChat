@@ -42,6 +42,8 @@ import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.message.Message
+import com.flxrs.dankchat.service.twitch.message.SystemMessage
+import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import com.flxrs.dankchat.utils.TimeUtils
 import com.flxrs.dankchat.utils.extensions.isEven
 import com.flxrs.dankchat.utils.extensions.normalizeColor
@@ -85,8 +87,8 @@ class ChatAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
         when (val message = item.message) {
-            is Message.SystemMessage -> holder.binding.itemText.handleSystemMessage(message, holder)
-            is Message.TwitchMessage -> holder.binding.itemText.handleTwitchMessage(message, holder, item.isMentionTab)
+            is SystemMessage -> holder.binding.itemText.handleSystemMessage(message, holder)
+            is TwitchMessage -> holder.binding.itemText.handleTwitchMessage(message, holder, item.isMentionTab)
         }
     }
 
@@ -96,7 +98,7 @@ class ChatAdapter(
             else -> (bindingAdapterPosition - itemCount - 1).isEven
         }
 
-    private fun TextView.handleSystemMessage(message: Message.SystemMessage, holder: ViewHolder) {
+    private fun TextView.handleSystemMessage(message: SystemMessage, holder: ViewHolder) {
         alpha = 1.0f
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -129,7 +131,7 @@ class ChatAdapter(
 
     @Suppress("BlockingMethodInNonBlockingContext")
     @SuppressLint("ClickableViewAccessibility")
-    private fun TextView.handleTwitchMessage(twitchMessage: Message.TwitchMessage, holder: ViewHolder, isMentionTab: Boolean): Unit = with(twitchMessage) {
+    private fun TextView.handleTwitchMessage(twitchMessage: TwitchMessage, holder: ViewHolder, isMentionTab: Boolean): Unit = with(twitchMessage) {
         isClickable = false
         alpha = 1.0f
         movementMethod = LinkMovementMethod.getInstance()
@@ -386,7 +388,7 @@ class ChatAdapter(
 
 private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
     override fun areItemsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
-        return if (oldItem.message is Message.TwitchMessage && newItem.message is Message.TwitchMessage && (newItem.message.timedOut || newItem.message.isMention)) false
+        return if (oldItem.message is TwitchMessage && newItem.message is TwitchMessage && (newItem.message.timedOut || newItem.message.isMention)) false
         else oldItem == newItem
     }
 
