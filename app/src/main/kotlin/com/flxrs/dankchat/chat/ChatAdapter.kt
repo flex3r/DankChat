@@ -181,7 +181,7 @@ class ChatAdapter(
             var ignoreClicks = false
             setOnLongClickListener {
                 ignoreClicks = true
-                onMessageLongClick(message)
+                onMessageLongClick(originalMessage)
                 true
             }
 
