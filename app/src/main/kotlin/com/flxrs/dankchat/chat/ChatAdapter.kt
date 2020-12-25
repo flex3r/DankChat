@@ -41,7 +41,6 @@ import com.flxrs.dankchat.service.twitch.badge.Badge
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
-import com.flxrs.dankchat.service.twitch.message.Message
 import com.flxrs.dankchat.service.twitch.message.SystemMessage
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import com.flxrs.dankchat.utils.TimeUtils
@@ -315,7 +314,7 @@ class ChatAdapter(
             val fullPrefix = prefixLength + badgesLength
             emotes.groupBy { it.position }.forEach { (_, emotes) ->
                 try {
-                    val drawables = emotes.map { it.toDrawable(animateGifs).run { transformEmoteDrawable(scaleFactor, it) } }.toTypedArray()
+                    val drawables = emotes.map { it.toDrawable(animateGifs, useCache = emotes.size == 1).run { transformEmoteDrawable(scaleFactor, it) } }.toTypedArray()
                     val bounds = drawables.map { it.bounds }
                     val layerDrawable = drawables.toLayerDrawable(bounds, scaleFactor, emotes)
 
@@ -340,18 +339,20 @@ class ChatAdapter(
         }
     }
 
-    private suspend fun ChatMessageEmote.toDrawable(animateGifs: Boolean) = when {
-        // create mutable drawable from constant state so gifs are still synced but can have different bounds
-        isGif -> emoteManager.gifCache[url]?.constantState?.newDrawable()?.mutate()?.also {
-            it as GifDrawable
-            it.setRunning(animateGifs)
-        } ?: Coil.get(url).apply {
-            this as GifDrawable
-            setRunning(animateGifs)
-            //callback = emoteManager.gifCallback
-            emoteManager.gifCache.put(url, this)
+    private suspend fun ChatMessageEmote.toDrawable(animateGifs: Boolean, useCache: Boolean): Drawable = when {
+        !isGif -> Coil.get(url)
+        else -> {
+            val cached = emoteManager.gifCache[url]?.also { it.setRunning(animateGifs) }
+            when {
+                useCache && cached != null -> cached
+                else -> Coil.get(url).apply {
+                    this as GifDrawable
+                    // try to sync gif
+                    cached?.let { seekToFrame(it.currentFrameIndex) } ?: emoteManager.gifCache.put(url, this)
+                    setRunning(animateGifs)
+                }
+            }
         }
-        else -> Coil.get(url)
     }
 
     private fun SpannableString.setEmoteSpans(e: ChatMessageEmote, prefix: Int, drawable: Drawable) {
