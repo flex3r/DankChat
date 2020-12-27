@@ -335,7 +335,7 @@ class ChatAdapter(
         // set bounds again but adjust by maximum width/height of stacked drawables
         forEachIndexed { idx, dr -> dr.transformEmoteDrawable(scaleFactor, emotes[idx], maxWidth, maxHeight) }
 
-        if (emotes.any { it.isGif }) {
+        if (emotes.any(ChatMessageEmote::isGif)) {
             callback = emoteManager.gifCallback
         }
     }
@@ -350,7 +350,7 @@ class ChatAdapter(
                     this as GifDrawable
                     // try to sync gif
                     withContext(Dispatchers.Default) {
-                        cached?.let { seekToBlocking(it.currentPosition) } ?: emoteManager.gifCache.put(url, this@apply)
+                        cached?.let { seekToBlocking(it.currentPosition.coerceAtLeast(0)) } ?: emoteManager.gifCache.put(url, this@apply)
                         setRunning(animateGifs)
                     }
                 }
