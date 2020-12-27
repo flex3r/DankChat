@@ -63,6 +63,10 @@ class ChatAdapter(
     private var messageCount = 0
         get() = field++
 
+    private val customTabsIntent = CustomTabsIntent.Builder()
+        .setShowTitle(true)
+        .build()
+
     class ViewHolder(val binding: ChatItemBinding) : RecyclerView.ViewHolder(binding.root) {
         val scope = CoroutineScope(Dispatchers.Main.immediate)
     }
@@ -277,10 +281,7 @@ class ChatAdapter(
                     override fun onClick(v: View) {
                         try {
                             if (!ignoreClicks)
-                                CustomTabsIntent.Builder()
-                                    .addDefaultShareMenuItem()
-                                    .setShowTitle(true)
-                                    .build().launchUrl(v.context, it.url.toUri())
+                                customTabsIntent.launchUrl(v.context, it.url.toUri())
                         } catch (e: ActivityNotFoundException) {
                             Log.e("ViewBinding", Log.getStackTraceString(e))
                         }
