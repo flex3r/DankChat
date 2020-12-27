@@ -301,13 +301,13 @@ class MainFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         bindingRef = null
         emoteMenuBottomSheetBehavior = null
         mentionBottomSheetBehavior = null
         if (::preferences.isInitialized) {
             preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         }
+        super.onDestroyView()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

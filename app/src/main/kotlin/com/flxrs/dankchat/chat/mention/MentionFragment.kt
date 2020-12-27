@@ -65,7 +65,7 @@ class MentionFragment : Fragment() {
         registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 dankChatViewModel.setWhisperTabSelected(position == 1)
-                binding.mentionTabs.getTabAt(position)?.removeBadge()
+                bindingRef?.mentionTabs?.getTabAt(position)?.removeBadge()
             }
         })
     }
