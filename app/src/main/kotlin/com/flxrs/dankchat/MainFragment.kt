@@ -28,9 +28,7 @@ import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.core.net.toFile
 import androidx.core.net.toUri
-import androidx.core.view.isVisible
-import androidx.core.view.postDelayed
-import androidx.core.view.updateLayoutParams
+import androidx.core.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -233,15 +231,16 @@ class MainFragment : Fragment() {
                 }
             }
 
-            binding.root.setOnApplyWindowInsetsListener { _, insets ->
-                binding.showActionbarFab.apply {
-                    if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT && isVisible) {
-                        y = when {
-                            binding.input.hasFocus() -> max(insets.stableInsetTop.toFloat() - insets.systemWindowInsetTop, 0f)
-                            else -> insets.stableInsetTop.toFloat()
-                        }
+            ViewCompat.setOnApplyWindowInsetsListener(binding.showActionbarFab) { v, insets ->
+                if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT && v.isVisible) {
+                    v.y = when {
+                        binding.input.hasFocus() -> 0f
+                        else -> insets
+                            .getInsets(WindowInsetsCompat.Type.displayCutout())
+                            .top.toFloat()
                     }
                 }
+
                 insets
             }
 
