@@ -32,57 +32,6 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
     val gifCache = LruCache<String, GifDrawable>(128)
     val gifCallback = MultiCallback(true)
 
-    fun parseTwitchEmotes(emoteTag: String, original: String, spaces: List<Int>): List<ChatMessageEmote> {
-        if (emoteTag.isEmpty()) {
-            return emptyList()
-        }
-
-        // Characters with supplementary codepoints have two chars and need to be considered into emote positioning
-        val supplementaryCodePointPositions = original.supplementaryCodePointPositions
-        val emotes = mutableListOf<ChatMessageEmote>()
-        for (emote in emoteTag.split('/')) {
-            val split = emote.split(':')
-            // bad emote data :)
-            if (split.size != 2) continue
-
-            val (id, positions) = split
-            val pairs = positions.split(',')
-            // bad emote data :)
-            if (pairs.isEmpty()) continue
-
-            // skip over invalid parsed data, adjust positions
-            val parsedPositions = pairs.mapNotNull { pos ->
-                val pair = pos.split('-')
-                if (pair.size != 2) return@mapNotNull null
-
-                val start = pair[0].toIntOrNull() ?: return@mapNotNull null
-                val end = pair[1].toIntOrNull() ?: return@mapNotNull null
-
-                val unicodeExtra = supplementaryCodePointPositions.count { it < start }
-                val spaceExtra = spaces.count { it < start + unicodeExtra }
-                val fixedStart = start + unicodeExtra + spaceExtra
-                val fixedEnd = end + unicodeExtra + spaceExtra
-
-                // be extra safe in case twitch sends invalid emote ranges :)
-                fixedStart.coerceAtLeast(0)..(fixedEnd + 1).coerceAtMost(original.length)
-            }
-
-            val code = original.substring(parsedPositions[0].first, parsedPositions[0].last)
-            emotes.addAll(parsedPositions.map {
-                ChatMessageEmote(
-                    position = it,
-                    url = "$BASE_URL/$id/$EMOTE_SIZE",
-                    id = id,
-                    code = code,
-                    scale = 1,
-                    isGif = false,
-                    isTwitch = true
-                )
-            })
-        }
-        return emotes
-    }
-
     fun parse3rdPartyEmotes(message: String, channel: String = "", withTwitch: Boolean = false): List<ChatMessageEmote> {
         val splits = message.split(WHITESPACE_REGEX)
         val emotes = mutableListOf<ChatMessageEmote>()
@@ -268,6 +217,57 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
         }
 
         return parsed
+    }
+
+    private fun parseTwitchEmotes(emoteTag: String, original: String, spaces: List<Int>): List<ChatMessageEmote> {
+        if (emoteTag.isEmpty()) {
+            return emptyList()
+        }
+
+        // Characters with supplementary codepoints have two chars and need to be considered into emote positioning
+        val supplementaryCodePointPositions = original.supplementaryCodePointPositions
+        val emotes = mutableListOf<ChatMessageEmote>()
+        for (emote in emoteTag.split('/')) {
+            val split = emote.split(':')
+            // bad emote data :)
+            if (split.size != 2) continue
+
+            val (id, positions) = split
+            val pairs = positions.split(',')
+            // bad emote data :)
+            if (pairs.isEmpty()) continue
+
+            // skip over invalid parsed data, adjust positions
+            val parsedPositions = pairs.mapNotNull { pos ->
+                val pair = pos.split('-')
+                if (pair.size != 2) return@mapNotNull null
+
+                val start = pair[0].toIntOrNull() ?: return@mapNotNull null
+                val end = pair[1].toIntOrNull() ?: return@mapNotNull null
+
+                val unicodeExtra = supplementaryCodePointPositions.count { it < start }
+                val spaceExtra = spaces.count { it < start + unicodeExtra }
+                val fixedStart = start + unicodeExtra + spaceExtra
+                val fixedEnd = end + unicodeExtra + spaceExtra
+
+                // be extra safe in case twitch sends invalid emote ranges :)
+                fixedStart.coerceAtLeast(0)..(fixedEnd + 1).coerceAtMost(original.length)
+            }
+
+            val code = original.substring(parsedPositions[0].first, parsedPositions[0].last)
+            emotes.addAll(parsedPositions.map {
+                ChatMessageEmote(
+                    position = it,
+                    url = "$BASE_URL/$id/$EMOTE_SIZE",
+                    id = id,
+                    code = code,
+                    scale = 1,
+                    isGif = false,
+                    isTwitch = true
+                )
+            })
+        }
+        return emotes
     }
 
     private fun parseBTTVEmote(emote: EmoteDtos.BTTV.Emote): GenericEmote {
