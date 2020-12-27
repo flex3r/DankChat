@@ -703,7 +703,7 @@ class MainFragment : Fragment() {
     }
 
     private fun showSnackbar(message: String, onDismiss: () -> Unit = {}, action: Pair<String, () -> Unit>? = null) {
-        binding.inputLayout.post {
+        bindingRef?.inputLayout?.post {
             Snackbar.make(binding.coordinator, message, Snackbar.LENGTH_SHORT).apply {
                 if (binding.inputLayout.isVisible) anchorView = binding.inputLayout
                 addCallback(object : Snackbar.Callback() {
