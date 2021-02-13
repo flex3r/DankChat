@@ -44,7 +44,6 @@ class OverviewSettingsFragment : PreferenceFragmentCompat() {
             setOnPreferenceClickListener {
                 try {
                     CustomTabsIntent.Builder()
-                        .addDefaultShareMenuItem()
                         .setShowTitle(true)
                         .build().launchUrl(view.context, GITHUB_URL.toUri())
                 } catch (e: ActivityNotFoundException) {
