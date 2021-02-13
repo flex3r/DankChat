@@ -36,11 +36,11 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
         val splits = message.split(WHITESPACE_REGEX)
         val emotes = mutableListOf<ChatMessageEmote>()
 
-        ffzEmotes[channel]?.forEach { emotes.addAll(parseMessageForEmote(it.value, splits)) }
-        bttvEmotes[channel]?.forEach { emotes.addAll(parseMessageForEmote(it.value, splits)) }
-        globalBttvEmotes.forEach { emotes.addAll(parseMessageForEmote(it.value, splits)) }
-        globalFFZEmotes.forEach { emotes.addAll(parseMessageForEmote(it.value, splits)) }
         if (withTwitch) twitchEmotes.forEach { emotes.addAll(parseMessageForEmote(it.value, splits)) }
+        ffzEmotes[channel]?.forEach { emotes.addAll(parseMessageForEmote(it.value, splits, emotes)) }
+        bttvEmotes[channel]?.forEach { emotes.addAll(parseMessageForEmote(it.value, splits, emotes)) }
+        globalFFZEmotes.forEach { emotes.addAll(parseMessageForEmote(it.value, splits, emotes)) }
+        globalBttvEmotes.forEach { emotes.addAll(parseMessageForEmote(it.value, splits, emotes)) }
 
         return emotes
     }
@@ -147,10 +147,10 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
     suspend fun getEmotes(channel: String): List<GenericEmote> = withContext(Dispatchers.Default) {
         val result = mutableListOf<GenericEmote>()
         result.addAll(twitchEmotes.values)
-        result.addAll(globalFFZEmotes.values)
-        result.addAll(globalBttvEmotes.values)
         ffzEmotes[channel]?.let { result.addAll(it.values) }
         bttvEmotes[channel]?.let { result.addAll(it.values) }
+        result.addAll(globalFFZEmotes.values)
+        result.addAll(globalBttvEmotes.values)
         return@withContext result.sortedBy { it.code }
     }
 
@@ -199,11 +199,11 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
         return adjustedMessage to adjustedEmotes
     }
 
-    private fun parseMessageForEmote(emote: GenericEmote, messageSplits: List<String>): List<ChatMessageEmote> {
+    private fun parseMessageForEmote(emote: GenericEmote, messageSplits: List<String>, existing: List<ChatMessageEmote> = listOf()): List<ChatMessageEmote> {
         var i = 0
         val parsed = mutableListOf<ChatMessageEmote>()
         messageSplits.forEach { split ->
-            if (emote.code == split.trim()) {
+            if (emote.code == split.trim() && !existing.any { it.code == emote.code }) {
                 parsed += ChatMessageEmote(
                     position = i..i + split.length,
                     url = emote.url,
