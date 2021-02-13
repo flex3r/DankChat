@@ -703,19 +703,21 @@ class MainFragment : Fragment() {
     }
 
     private fun showSnackbar(message: String, onDismiss: () -> Unit = {}, action: Pair<String, () -> Unit>? = null) {
-        bindingRef?.inputLayout?.post {
-            Snackbar.make(binding.coordinator, message, Snackbar.LENGTH_SHORT).apply {
-                if (binding.inputLayout.isVisible) anchorView = binding.inputLayout
-                addCallback(object : Snackbar.Callback() {
-                    override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                        when (event) {
-                            BaseCallback.DISMISS_EVENT_CONSECUTIVE, BaseCallback.DISMISS_EVENT_TIMEOUT, BaseCallback.DISMISS_EVENT_SWIPE -> onDismiss()
-                            else -> return
+        bindingRef?.let { binding ->
+            binding.inputLayout.post {
+                Snackbar.make(binding.coordinator, message, Snackbar.LENGTH_SHORT).apply {
+                    if (binding.inputLayout.isVisible) anchorView = binding.inputLayout
+                    addCallback(object : Snackbar.Callback() {
+                        override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                            when (event) {
+                                BaseCallback.DISMISS_EVENT_CONSECUTIVE, BaseCallback.DISMISS_EVENT_TIMEOUT, BaseCallback.DISMISS_EVENT_SWIPE -> onDismiss()
+                                else -> return
+                            }
                         }
-                    }
-                })
-                action?.let { (msg, onAction) -> setAction(msg) { onAction() } }
-            }.show()
+                    })
+                    action?.let { (msg, onAction) -> setAction(msg) { onAction() } }
+                }.show()
+            }
         }
     }
 
