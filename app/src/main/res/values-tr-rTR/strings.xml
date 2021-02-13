@@ -135,10 +135,11 @@
     <string name="whispers">Fısıltılar</string>
     <string name="notification_whisper_mention">%1$s sana bir fısıltı gönderdi</string>
     <string name="mentions">Bahsetmeler</string>
+    <string name="snackbar_paste">yapıştır</string>
+    <string name="preference_show_username_title">Kullanıcı adını göster</string>
 
     <plurals name="viewers">
         <item quantity="one">%d izleyici ile canlı</item>
         <item quantity="other">%d izleyici ile canlı</item>
     </plurals>
-    <string name="snackbar_paste">yapıştır</string>
 </resources>

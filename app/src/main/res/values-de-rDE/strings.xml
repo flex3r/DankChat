@@ -137,10 +137,11 @@
     <string name="whispers">Privatnachrichten</string>
     <string name="notification_whisper_mention">%1$s hat dir eine private Nachricht geschickt</string>
     <string name="mentions_title">Mentions / Privatnachrichten</string>
+    <string name="preference_show_username_title">Nutzername anzeigen</string>
+    <string name="snackbar_paste">Einfügen</string>
 
     <plurals name="viewers">
         <item quantity="one">Live mit %d Zuschauer</item>
         <item quantity="other">Live mit %d Zuschauern</item>
     </plurals>
-    <string name="snackbar_paste">Einfügen</string>
 </resources>

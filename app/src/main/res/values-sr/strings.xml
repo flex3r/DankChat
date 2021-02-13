@@ -135,10 +135,11 @@
     <string name="preference_scrollback_length_title">Dužina pomicanja poruka</string>
     <string name="nuuls_upload_disclaimer">Spoljašni hosting pruža https://nuuls.com/i, korisite ga na sopstveni rizik</string>
     <string name="nuuls_upload_title">Prilagođeno slanje slika</string>
+    <string name="snackbar_paste">Paste</string>
+    <string name="preference_show_username_title">Прикажи корисничко име</string>
 
     <plurals name="viewers" tools:ignore="MissingQuantity">
         <item quantity="one">Uživo (%d osoba gleda)</item>
         <item quantity="other">Uživo (gleda %d ljudi)</item>
     </plurals>
-    <string name="snackbar_paste">Paste</string>
 </resources>

@@ -35,6 +35,12 @@
 
         <SwitchPreferenceCompat
             android:defaultValue="true"
+            android:key="@string/preference_show_username_key"
+            android:title="@string/preference_show_username_title"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
             android:key="@string/preference_show_timed_out_messages_key"
             android:title="@string/preference_show_timed_out_messages_title"
             app:iconSpaceReserved="false" />

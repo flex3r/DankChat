@@ -135,8 +135,10 @@
     <string name="preference_scrollback_length_title">訊息回調長度</string>
     <string name="preference_roomstate_title">顯示聊天室狀態</string>
     <string name="preference_roomstate_summary">顯示目前聊天室狀態，如訂閱者聊天模式</string>
+    <string name="snackbar_paste">粘贴</string>
+    <string name="preference_show_username_title">顯示用戶名</string>
+
     <plurals name="viewers">
         <item quantity="other">Live 與 %d 個觀眾</item>
     </plurals>
-    <string name="snackbar_paste">粘贴</string>
 </resources>

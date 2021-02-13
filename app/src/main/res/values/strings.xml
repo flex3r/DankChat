@@ -170,6 +170,8 @@
     <string name="preference_supibot_suggestions_title">Supibot command suggestions</string>
     <string name="preference_scrollback_length_key" translatable="false">scrollback_length_key</string>
     <string name="preference_scrollback_length_title">Message scrollback length</string>
+    <string name="preference_show_username_title">Show username</string>
+    <string name="preference_show_username_key" translatable="false">show_username_key</string>
 
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>

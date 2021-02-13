@@ -135,6 +135,8 @@
     <string name="whispers">Szepty</string>
     <string name="mentions_title">Wzmianki / Szepty</string>
     <string name="notification_whisper_mention">%1$s wysłał Ci szept</string>
+    <string name="snackbar_paste">Wklej</string>
+    <string name="preference_show_username_title">Pokazuj nazwy użytkowników</string>
 
     <plurals name="viewers">
         <item quantity="one">Na żywo z %d widzem</item>
@@ -142,5 +144,4 @@
         <item quantity="many">Na żywo z %d widzami</item>
         <item quantity="other">Na żywo z %d widzami</item>
     </plurals>
-    <string name="snackbar_paste">Wklej</string>
 </resources>

@@ -75,7 +75,8 @@ open class ChatFragment : Fragment() {
                 getString(R.string.preference_timestamp_key),
                 getString(R.string.preference_timestamp_format_key),
                 getString(R.string.preference_show_timed_out_messages_key),
-                getString(R.string.preference_animate_gifs_key) -> binding.chat.swapAdapter(adapter, false)
+                getString(R.string.preference_animate_gifs_key),
+                getString(R.string.preference_show_username_key) -> binding.chat.swapAdapter(adapter, false)
                 getString(R.string.preference_line_separator_key) -> when {
                     pref.getBoolean(key, false) -> binding.chat.addItemDecoration(itemDecoration)
                     else -> binding.chat.removeItemDecoration(itemDecoration)

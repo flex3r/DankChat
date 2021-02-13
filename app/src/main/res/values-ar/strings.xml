@@ -141,6 +141,7 @@
     <string name="preference_checkered_lines_summary">"افصل كل سطر بسطوع خلفية مختلف "</string>
     <string name="preference_supibot_suggestions_title">"اقتراحات أوامر Supibot "</string>
     <string name="preference_scrollback_length_title">"طول التمرير للرسالة "</string>
+    <string name="preference_show_username_title">"اظهر اسم المستخدم"</string>
 
 
 

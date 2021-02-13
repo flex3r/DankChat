@@ -142,6 +142,7 @@ class ChatAdapter(
         val darkModePreferenceKey = context.getString(R.string.preference_dark_theme_key)
         val timedOutPreferenceKey = context.getString(R.string.preference_show_timed_out_messages_key)
         val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
+        val usernamePreferenceKey = context.getString(R.string.preference_show_username_key)
         val animateGifsKey = context.getString(R.string.preference_animate_gifs_key)
         val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
         val debugKey = context.getString(R.string.preference_debug_mode_key)
@@ -152,6 +153,7 @@ class ChatAdapter(
         val isDebugEnabled = preferences.getBoolean(debugKey, false)
         val showTimedOutMessages = preferences.getBoolean(timedOutPreferenceKey, true)
         val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
+        val showUserName = preferences.getBoolean(usernamePreferenceKey, true)
         val animateGifs = preferences.getBoolean(animateGifsKey, true)
         val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
         setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
@@ -215,12 +217,16 @@ class ChatAdapter(
 
             val fullDisplayName = when {
                 isWhisper && whisperRecipient.isNotBlank() -> "$fullName -> $whisperRecipient: "
+                !showUserName -> ""
                 isAction -> "$fullName "
                 fullName.isBlank() -> ""
                 else -> "$fullName: "
             }
 
-            val badgesLength = badges.size * 2
+            val badgesLength =  when {
+                showUserName -> badges.size * 2
+                else -> 0
+            }
             val channelOrBlank = when {
                 isWhisper -> ""
                 else -> "#$channel"
@@ -230,9 +236,12 @@ class ChatAdapter(
             if (showTimeStamp) timeAndWhisperBuilder.append("${TimeUtils.timestampToLocalTime(timestamp)} ")
             val (prefixLength, spannable) = timeAndWhisperBuilder.length + fullDisplayName.length to SpannableStringBuilder().bold { append(timeAndWhisperBuilder) }
 
-            val badgePositions = badges.map {
-                spannable.append("  ")
-                spannable.length - 2 to spannable.length - 1
+            val badgePositions = when {
+                showUserName -> badges.map {
+                    spannable.append("  ")
+                    spannable.length - 2 to spannable.length - 1
+                }
+                else -> listOf()
             }
 
             val normalizedColor = color.normalizeColor(isDarkMode)
@@ -291,21 +300,23 @@ class ChatAdapter(
             }
 
             setText(spannableWithEmojis, TextView.BufferType.SPANNABLE)
-            badges.forEachIndexed { idx, badge ->
-                try {
-                    val (start, end) = badgePositions[idx]
-                    Coil.get(badge.url).apply {
-                        if (badge is Badge.FFZModBadge) {
-                            colorFilter = PorterDuffColorFilter(ContextCompat.getColor(context, R.color.color_ffz_mod), PorterDuff.Mode.DST_OVER)
-                        }
+            if (showUserName) {
+                badges.forEachIndexed { idx, badge ->
+                    try {
+                        val (start, end) = badgePositions[idx]
+                        Coil.get(badge.url).apply {
+                            if (badge is Badge.FFZModBadge) {
+                                colorFilter = PorterDuffColorFilter(ContextCompat.getColor(context, R.color.color_ffz_mod), PorterDuff.Mode.DST_OVER)
+                            }
 
-                        val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
-                        setBounds(0, 0, width, lineHeight)
-                        val imageSpan = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
-                        (text as SpannableString).setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
+                            setBounds(0, 0, width, lineHeight)
+                            val imageSpan = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
+                            (text as SpannableString).setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        }
+                    } catch (t: Throwable) {
+                        handleException(t)
                     }
-                } catch (t: Throwable) {
-                    handleException(t)
                 }
             }
 

@@ -136,10 +136,11 @@
     <string name="preference_checkered_lines_summary">Erota kukin rivi erillaisella taustan kirkkaudella</string>
     <string name="preference_supibot_suggestions_title">Supibot komentoehdotuksia</string>
     <string name="preference_scrollback_length_title">Viestin vierityksen pituus</string>
+    <string name="snackbar_paste">Liitä</string>
+    <string name="preference_show_username_title">Näytä käyttäjänimi</string>
 
     <plurals name="viewers">
         <item quantity="one">Live-tilassa %d katsojan kanssa</item>
         <item quantity="other">Live-tilassa %d katsojan kanssa</item>
     </plurals>
-    <string name="snackbar_paste">Liitä</string>
 </resources>

@@ -136,7 +136,7 @@
     <string name="preference_tts_queue_flush">Leggi solo gli utlimi messaggi</string>
     <string name="preference_tts_queue_add">Leggi tutti i messaggi usando una coda</string>
     <string name="message_history_disclaimer_title">Disclaimer messaggi passati</string>
-
+    <string name="preference_show_username_title">Mostra nome utente</string>
 
     <plurals name="viewers">
         <item quantity="one">Live con %d spettatore</item>

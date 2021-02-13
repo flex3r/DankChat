@@ -135,6 +135,8 @@
     <string name="preference_checkered_lines_summary">Відокремлювати кожну строку з різною яскравістю фону</string>
     <string name="preference_supibot_suggestions_title">Підсказки команд бота Supibot</string>
     <string name="preference_scrollback_length_title">Довжина прокручування повідомлень</string>
+    <string name="snackbar_paste">Вставити</string>
+    <string name="preference_show_username_title">Показати ім\'я</string>
 
     <plurals name="viewers">
         <item quantity="one">Наживо з %d глядачем</item>
@@ -142,5 +144,4 @@
         <item quantity="many">Наживо з %d глядачами</item>
         <item quantity="other">Наживо з  %d глядачами</item>
     </plurals>
-    <string name="snackbar_paste">Вставити</string>
 </resources> 
