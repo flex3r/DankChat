@@ -2,6 +2,7 @@ package com.flxrs.dankchat.di
 
 import android.content.Context
 import coil.util.CoilUtils
+import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.service.api.*
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import dagger.Module
@@ -33,8 +34,14 @@ object NetworkModule {
     @ApiOkHttpClient
     @Singleton
     @Provides
-    fun provideOkHttpClient(@ApplicationContext context: Context): OkHttpClient = OkHttpClient.Builder()
+    fun provideOkHttpClient(/*@ApplicationContext context: Context*/): OkHttpClient = OkHttpClient.Builder()
         //.addInterceptor(ChuckerInterceptor(context))
+        .addInterceptor { chain ->
+            chain.request().newBuilder()
+                .header("User-Agent", "dankchat/${BuildConfig.VERSION_NAME}")
+                .build()
+                .let { chain.proceed(it) }
+        }
         .build()
 
     @EmoteOkHttpClient

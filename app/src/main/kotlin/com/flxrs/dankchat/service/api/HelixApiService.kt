@@ -1,15 +1,14 @@
 package com.flxrs.dankchat.service.api
 
-import com.flxrs.dankchat.BuildConfig
-import com.flxrs.dankchat.service.api.dto.*
+import com.flxrs.dankchat.service.api.dto.UserDtos
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Headers
+import retrofit2.http.Query
 
 interface HelixApiService {
-    @Headers(
-        "Client-ID: ${ApiManager.CLIENT_ID}",
-        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
-    )
+    @Headers("Client-ID: ${ApiManager.CLIENT_ID}")
     @GET("users/")
     suspend fun getUser(
         @Header("Authorization") oAuth: String,
