@@ -20,6 +20,8 @@ import com.flxrs.dankchat.databinding.LoginFragmentBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.api.TwitchApi
 import com.flxrs.dankchat.service.api.dto.UserDtos
+import com.flxrs.dankchat.utils.extensions.showLongSnackbar
+import com.flxrs.dankchat.utils.extensions.showShortSnackbar
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
@@ -73,7 +75,7 @@ class LoginFragment : Fragment() {
     private inner class TwitchAuthClient : WebViewClient() {
         @SuppressWarnings("DEPRECATION")
         override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
-            showErrorSnackBar(errorCode, description)
+            bindingRef?.root?.showLongSnackbar("Error $errorCode: $description")
             Log.e(TAG, "Error $errorCode in WebView: $description")
         }
 
@@ -81,7 +83,7 @@ class LoginFragment : Fragment() {
         override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
             val message = error?.description
             val code = error?.errorCode
-            showErrorSnackBar(code, message)
+            bindingRef?.root?.showLongSnackbar("Error $code: $message")
             Log.e(TAG, "Error $code in WebView: $message")
         }
 
@@ -127,11 +129,6 @@ class LoginFragment : Fragment() {
                     true
                 }
             }
-        }
-
-        private fun showErrorSnackBar(errorCode: Int?, errorDescription: CharSequence?) {
-            val rootView = activity?.findViewById<View>(android.R.id.content) ?: return
-            Snackbar.make(rootView, "Error $errorCode: $errorDescription", Snackbar.LENGTH_LONG).show()
         }
     }
 

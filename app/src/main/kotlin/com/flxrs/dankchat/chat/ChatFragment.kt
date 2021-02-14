@@ -21,7 +21,7 @@ import com.flxrs.dankchat.MainFragment
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
-import com.google.android.material.snackbar.Snackbar
+import com.flxrs.dankchat.utils.extensions.showShortSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -75,7 +75,8 @@ open class ChatFragment : Fragment() {
                 getString(R.string.preference_timestamp_key),
                 getString(R.string.preference_timestamp_format_key),
                 getString(R.string.preference_show_timed_out_messages_key),
-                getString(R.string.preference_animate_gifs_key) -> binding.chat.swapAdapter(adapter, false)
+                getString(R.string.preference_animate_gifs_key),
+                getString(R.string.preference_show_username_key) -> binding.chat.swapAdapter(adapter, false)
                 getString(R.string.preference_line_separator_key) -> when {
                     pref.getBoolean(key, false) -> binding.chat.addItemDecoration(itemDecoration)
                     else -> binding.chat.removeItemDecoration(itemDecoration)
@@ -117,10 +118,13 @@ open class ChatFragment : Fragment() {
 
     private fun copyMessage(message: String) {
         getSystemService(requireContext(), ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("twitch message", message))
-        Snackbar.make(binding.root, R.string.snackbar_message_copied, Snackbar.LENGTH_SHORT).show()
+        binding.root.showShortSnackbar(getString(R.string.snackbar_message_copied)) {
+            setAction(R.string.snackbar_paste) { (parentFragment as? MainFragment)?.insertText(message) }
+        }
     }
 
     protected open fun scrollToPosition(position: Int) {
+        bindingRef ?: return
         if (position > 0 && isAtBottom) {
             binding.chat.stopScroll()
             binding.chat.scrollToPosition(position)
@@ -146,10 +150,10 @@ open class ChatFragment : Fragment() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             if (dy < 0) {
                 isAtBottom = false
-                binding.scrollBottom.show()
+                bindingRef?.scrollBottom?.show()
             } else if (dy > 0 && !isAtBottom && !recyclerView.canScrollVertically(1)) {
                 isAtBottom = true
-                binding.scrollBottom.visibility = View.GONE
+                bindingRef?.scrollBottom?.visibility = View.GONE
             }
         }
     }

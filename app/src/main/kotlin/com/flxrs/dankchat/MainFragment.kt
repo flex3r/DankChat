@@ -28,9 +28,7 @@ import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.core.net.toFile
 import androidx.core.net.toUri
-import androidx.core.view.isVisible
-import androidx.core.view.postDelayed
-import androidx.core.view.updateLayoutParams
+import androidx.core.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -233,15 +231,16 @@ class MainFragment : Fragment() {
                 }
             }
 
-            binding.root.setOnApplyWindowInsetsListener { _, insets ->
-                binding.showActionbarFab.apply {
-                    if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT && isVisible) {
-                        y = when {
-                            binding.input.hasFocus() -> max(insets.stableInsetTop.toFloat() - insets.systemWindowInsetTop, 0f)
-                            else -> insets.stableInsetTop.toFloat()
-                        }
+            ViewCompat.setOnApplyWindowInsetsListener(binding.showActionbarFab) { v, insets ->
+                if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT && v.isVisible) {
+                    v.y = when {
+                        binding.input.hasFocus() -> 0f
+                        else -> insets
+                            .getInsets(WindowInsetsCompat.Type.displayCutout())
+                            .top.toFloat()
                     }
                 }
+
                 insets
             }
 
@@ -302,13 +301,13 @@ class MainFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         bindingRef = null
         emoteMenuBottomSheetBehavior = null
         mentionBottomSheetBehavior = null
         if (::preferences.isInitialized) {
             preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         }
+        super.onDestroyView()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -410,16 +409,9 @@ class MainFragment : Fragment() {
     }
 
     fun mentionUser(user: String) {
-        if (!binding.input.isEnabled) return
-
-        val current = binding.input.text.toString()
         val template = preferences.getString(getString(R.string.preference_mention_format_key), "name") ?: "name"
         val mention = "${template.replace("name", user)} "
-        val index = binding.input.selectionStart.takeIf { it >= 0 } ?: current.length
-        val builder = StringBuilder(current).insert(index, mention)
-
-        binding.input.setText(builder.toString())
-        binding.input.setSelection(index + mention.length)
+        insertText(mention)
     }
 
     fun whisperUser(user: String) {
@@ -427,22 +419,23 @@ class MainFragment : Fragment() {
 
         val current = binding.input.text.toString()
         val text = "/w $user $current"
+
         binding.input.setText(text)
         binding.input.setSelection(text.length)
-
     }
 
-    private fun insertEmote(emote: String) {
+    fun insertText(text: String) {
         if (!binding.input.isEnabled) return
 
         val current = binding.input.text.toString()
-        val emoteWithSep = "$emote "
         val index = binding.input.selectionStart.takeIf { it >= 0 } ?: current.length
-        val builder = StringBuilder(current).insert(index, emoteWithSep)
+        val builder = StringBuilder(current).insert(index, text)
 
         binding.input.setText(builder.toString())
-        binding.input.setSelection(index + emoteWithSep.length)
+        binding.input.setSelection(index + text.length)
     }
+
+    private fun insertEmote(emote: String) = insertText("$emote ")
 
     private fun fetchStreamInformation() {
         lifecycleScope.launchWhenStarted {
@@ -710,19 +703,21 @@ class MainFragment : Fragment() {
     }
 
     private fun showSnackbar(message: String, onDismiss: () -> Unit = {}, action: Pair<String, () -> Unit>? = null) {
-        binding.inputLayout.post {
-            Snackbar.make(binding.coordinator, message, Snackbar.LENGTH_SHORT).apply {
-                if (binding.inputLayout.isVisible) anchorView = binding.inputLayout
-                addCallback(object : Snackbar.Callback() {
-                    override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                        when (event) {
-                            BaseCallback.DISMISS_EVENT_CONSECUTIVE, BaseCallback.DISMISS_EVENT_TIMEOUT, BaseCallback.DISMISS_EVENT_SWIPE -> onDismiss()
-                            else -> return
+        bindingRef?.let { binding ->
+            binding.inputLayout.post {
+                Snackbar.make(binding.coordinator, message, Snackbar.LENGTH_SHORT).apply {
+                    if (binding.inputLayout.isVisible) anchorView = binding.inputLayout
+                    addCallback(object : Snackbar.Callback() {
+                        override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                            when (event) {
+                                BaseCallback.DISMISS_EVENT_CONSECUTIVE, BaseCallback.DISMISS_EVENT_TIMEOUT, BaseCallback.DISMISS_EVENT_SWIPE -> onDismiss()
+                                else -> return
+                            }
                         }
-                    }
-                })
-                action?.let { (msg, onAction) -> setAction(msg) { onAction() } }
-            }.show()
+                    })
+                    action?.let { (msg, onAction) -> setAction(msg) { onAction() } }
+                }.show()
+            }
         }
     }
 

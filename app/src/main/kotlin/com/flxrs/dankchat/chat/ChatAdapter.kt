@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.LayerDrawable
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
@@ -16,10 +18,7 @@ import android.text.style.URLSpan
 import android.text.util.Linkify
 import android.util.Log
 import android.util.TypedValue
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.TextView
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
@@ -42,7 +41,8 @@ import com.flxrs.dankchat.service.twitch.badge.Badge
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
-import com.flxrs.dankchat.service.twitch.message.Message
+import com.flxrs.dankchat.service.twitch.message.SystemMessage
+import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import com.flxrs.dankchat.utils.TimeUtils
 import com.flxrs.dankchat.utils.extensions.isEven
 import com.flxrs.dankchat.utils.extensions.normalizeColor
@@ -62,6 +62,10 @@ class ChatAdapter(
     // since the LayoutManager uses stackFromEnd and every new message will be even. Instead, keep count of new messages separately.
     private var messageCount = 0
         get() = field++
+
+    private val customTabsIntent = CustomTabsIntent.Builder()
+        .setShowTitle(true)
+        .build()
 
     class ViewHolder(val binding: ChatItemBinding) : RecyclerView.ViewHolder(binding.root) {
         val scope = CoroutineScope(Dispatchers.Main.immediate)
@@ -86,8 +90,8 @@ class ChatAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
         when (val message = item.message) {
-            is Message.SystemMessage -> holder.binding.itemText.handleSystemMessage(message, holder)
-            is Message.TwitchMessage -> holder.binding.itemText.handleTwitchMessage(message, holder, item.isMentionTab)
+            is SystemMessage -> holder.binding.itemText.handleSystemMessage(message, holder)
+            is TwitchMessage -> holder.binding.itemText.handleTwitchMessage(message, holder, item.isMentionTab)
         }
     }
 
@@ -97,7 +101,7 @@ class ChatAdapter(
             else -> (bindingAdapterPosition - itemCount - 1).isEven
         }
 
-    private fun TextView.handleSystemMessage(message: Message.SystemMessage, holder: ViewHolder) {
+    private fun TextView.handleSystemMessage(message: SystemMessage, holder: ViewHolder) {
         alpha = 1.0f
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -130,7 +134,7 @@ class ChatAdapter(
 
     @Suppress("BlockingMethodInNonBlockingContext")
     @SuppressLint("ClickableViewAccessibility")
-    private fun TextView.handleTwitchMessage(twitchMessage: Message.TwitchMessage, holder: ViewHolder, isMentionTab: Boolean): Unit = with(twitchMessage) {
+    private fun TextView.handleTwitchMessage(twitchMessage: TwitchMessage, holder: ViewHolder, isMentionTab: Boolean): Unit = with(twitchMessage) {
         isClickable = false
         alpha = 1.0f
         movementMethod = LinkMovementMethod.getInstance()
@@ -138,6 +142,7 @@ class ChatAdapter(
         val darkModePreferenceKey = context.getString(R.string.preference_dark_theme_key)
         val timedOutPreferenceKey = context.getString(R.string.preference_show_timed_out_messages_key)
         val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
+        val usernamePreferenceKey = context.getString(R.string.preference_show_username_key)
         val animateGifsKey = context.getString(R.string.preference_animate_gifs_key)
         val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
         val debugKey = context.getString(R.string.preference_debug_mode_key)
@@ -148,6 +153,7 @@ class ChatAdapter(
         val isDebugEnabled = preferences.getBoolean(debugKey, false)
         val showTimedOutMessages = preferences.getBoolean(timedOutPreferenceKey, true)
         val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
+        val showUserName = preferences.getBoolean(usernamePreferenceKey, true)
         val animateGifs = preferences.getBoolean(animateGifsKey, true)
         val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
         setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
@@ -180,7 +186,7 @@ class ChatAdapter(
             var ignoreClicks = false
             setOnLongClickListener {
                 ignoreClicks = true
-                onMessageLongClick(message)
+                onMessageLongClick(originalMessage)
                 true
             }
 
@@ -211,12 +217,16 @@ class ChatAdapter(
 
             val fullDisplayName = when {
                 isWhisper && whisperRecipient.isNotBlank() -> "$fullName -> $whisperRecipient: "
+                !showUserName -> ""
                 isAction -> "$fullName "
                 fullName.isBlank() -> ""
                 else -> "$fullName: "
             }
 
-            val badgesLength = badges.size * 2
+            val badgesLength =  when {
+                showUserName -> badges.size * 2
+                else -> 0
+            }
             val channelOrBlank = when {
                 isWhisper -> ""
                 else -> "#$channel"
@@ -226,9 +236,12 @@ class ChatAdapter(
             if (showTimeStamp) timeAndWhisperBuilder.append("${TimeUtils.timestampToLocalTime(timestamp)} ")
             val (prefixLength, spannable) = timeAndWhisperBuilder.length + fullDisplayName.length to SpannableStringBuilder().bold { append(timeAndWhisperBuilder) }
 
-            val badgePositions = badges.map {
-                spannable.append("  ")
-                spannable.length - 2 to spannable.length - 1
+            val badgePositions = when {
+                showUserName -> badges.map {
+                    spannable.append("  ")
+                    spannable.length - 2 to spannable.length - 1
+                }
+                else -> listOf()
             }
 
             val normalizedColor = color.normalizeColor(isDarkMode)
@@ -277,10 +290,7 @@ class ChatAdapter(
                     override fun onClick(v: View) {
                         try {
                             if (!ignoreClicks)
-                                CustomTabsIntent.Builder()
-                                    .addDefaultShareMenuItem()
-                                    .setShowTitle(true)
-                                    .build().launchUrl(v.context, it.url.toUri())
+                                customTabsIntent.launchUrl(v.context, it.url.toUri())
                         } catch (e: ActivityNotFoundException) {
                             Log.e("ViewBinding", Log.getStackTraceString(e))
                         }
@@ -290,21 +300,23 @@ class ChatAdapter(
             }
 
             setText(spannableWithEmojis, TextView.BufferType.SPANNABLE)
-            badges.forEachIndexed { idx, badge ->
-                try {
-                    val (start, end) = badgePositions[idx]
-                    Coil.get(badge.url).apply {
-                        if (badge is Badge.FFZModBadge) {
-                            colorFilter = PorterDuffColorFilter(ContextCompat.getColor(context, R.color.color_ffz_mod), PorterDuff.Mode.DST_OVER)
-                        }
+            if (showUserName) {
+                badges.forEachIndexed { idx, badge ->
+                    try {
+                        val (start, end) = badgePositions[idx]
+                        Coil.get(badge.url).apply {
+                            if (badge is Badge.FFZModBadge) {
+                                colorFilter = PorterDuffColorFilter(ContextCompat.getColor(context, R.color.color_ffz_mod), PorterDuff.Mode.DST_OVER)
+                            }
 
-                        val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
-                        setBounds(0, 0, width, lineHeight)
-                        val imageSpan = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
-                        (text as SpannableString).setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
+                            setBounds(0, 0, width, lineHeight)
+                            val imageSpan = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
+                            (text as SpannableString).setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        }
+                    } catch (t: Throwable) {
+                        handleException(t)
                     }
-                } catch (t: Throwable) {
-                    handleException(t)
                 }
             }
 
@@ -312,19 +324,13 @@ class ChatAdapter(
                 emoteManager.gifCallback.addView(holder.binding.itemText)
             }
             val fullPrefix = prefixLength + badgesLength
-            emotes.forEach { e ->
+            emotes.groupBy { it.position }.forEach { (_, emotes) ->
                 try {
-                    val drawable = when {
-                        e.isGif -> emoteManager.gifCache[e.url]?.also { it.setRunning(animateGifs) } ?: Coil.get(e.url).apply {
-                            this as GifDrawable
-                            setRunning(animateGifs)
-                            callback = emoteManager.gifCallback
-                            emoteManager.gifCache.put(e.url, this)
-                        }
-                        else -> Coil.get(e.url)
-                    }
-                    drawable.transformEmoteDrawable(scaleFactor, e)
-                    (text as SpannableString).setEmoteSpans(e, fullPrefix, drawable)
+                    val drawables = emotes.map { it.toDrawable(animateGifs, useCache = emotes.size == 1).run { transformEmoteDrawable(scaleFactor, it) } }.toTypedArray()
+                    val bounds = drawables.map { it.bounds }
+                    val layerDrawable = drawables.toLayerDrawable(bounds, scaleFactor, emotes)
+
+                    (text as SpannableString).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
                 } catch (t: Throwable) {
                     handleException(t)
                 }
@@ -332,17 +338,46 @@ class ChatAdapter(
         }
     }
 
-    private fun SpannableString.setEmoteSpans(e: ChatMessageEmote, prefix: Int, drawable: Drawable) {
-        e.positions.forEach { (start, end) ->
-            try {
-                setSpan(ImageSpan(drawable), start + prefix, end + prefix, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
-            } catch (t: Throwable) {
-                Log.e("ViewBinding", "${start + prefix} ${end + prefix} ${e.code} $length")
+    private fun Array<Drawable>.toLayerDrawable(bounds: List<Rect>, scaleFactor: Double, emotes: List<ChatMessageEmote>): LayerDrawable = LayerDrawable(this).apply {
+        val maxWidth = bounds.maxOf { it.width() }
+        val maxHeight = bounds.maxOf { it.height() }
+        setBounds(0, 0, maxWidth, maxHeight)
+
+        // set bounds again but adjust by maximum width/height of stacked drawables
+        forEachIndexed { idx, dr -> dr.transformEmoteDrawable(scaleFactor, emotes[idx], maxWidth, maxHeight) }
+
+        if (emotes.any(ChatMessageEmote::isGif)) {
+            callback = emoteManager.gifCallback
+        }
+    }
+
+    private suspend fun ChatMessageEmote.toDrawable(animateGifs: Boolean, useCache: Boolean): Drawable = when {
+        !isGif -> Coil.get(url)
+        else -> {
+            val cached = emoteManager.gifCache[url]?.also { it.setRunning(animateGifs) }
+            when {
+                useCache && cached != null -> cached
+                else -> Coil.get(url).apply {
+                    this as GifDrawable
+                    // try to sync gif
+                    withContext(Dispatchers.Default) {
+                        cached?.let { seekToBlocking(it.currentPosition.coerceAtLeast(0)) } ?: emoteManager.gifCache.put(url, this@apply)
+                        setRunning(animateGifs)
+                    }
+                }
             }
         }
     }
 
-    private fun Drawable.transformEmoteDrawable(scale: Double, emote: ChatMessageEmote) {
+    private fun SpannableString.setEmoteSpans(e: ChatMessageEmote, prefix: Int, drawable: Drawable) {
+        try {
+            setSpan(ImageSpan(drawable), e.position.first + prefix, e.position.last + prefix, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+        } catch (t: Throwable) {
+            Log.e("ViewBinding", "$t $this ${e.position} ${e.code} $length")
+        }
+    }
+
+    private fun Drawable.transformEmoteDrawable(scale: Double, emote: ChatMessageEmote, maxWidth: Int = 0, maxHeight: Int = 0): Drawable {
         val ratio = intrinsicWidth / intrinsicHeight.toFloat()
         val height = when {
             intrinsicHeight < 55 && emote.isTwitch -> (70 * scale).roundToInt()
@@ -350,7 +385,15 @@ class ChatAdapter(
             else -> (intrinsicHeight * scale).roundToInt()
         }
         val width = (height * ratio).roundToInt()
-        setBounds(0, 0, width * emote.scale, height * emote.scale)
+
+        val scaledWidth = width * emote.scale
+        val scaledHeight = height * emote.scale
+
+        val left = (maxWidth - scaledWidth).coerceAtLeast(0)
+        val top = (maxHeight - scaledHeight).coerceAtLeast(0)
+
+        setBounds(left, top, scaledWidth + left, scaledHeight + top)
+        return this
     }
 
     companion object {
@@ -360,7 +403,7 @@ class ChatAdapter(
 
 private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
     override fun areItemsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
-        return if (oldItem.message is Message.TwitchMessage && newItem.message is Message.TwitchMessage && (newItem.message.timedOut || newItem.message.isMention)) false
+        return if (oldItem.message is TwitchMessage && newItem.message is TwitchMessage && (newItem.message.timedOut || newItem.message.isMention)) false
         else oldItem == newItem
     }
 

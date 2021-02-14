@@ -41,6 +41,9 @@ private val emojiCodePoints = listOf(
 private val Int.isEmoji: Boolean
     get() = emojiCodePoints.any { it.contains(this) }
 
+private val Int.isWhitespace: Boolean
+    get() = Character.isWhitespace(this) || this == 0x3164
+
 // Adds extra space between every emoji group to support 3rd party emotes directly before/after emojis
 // @badge-info=;badges=broadcaster/1,bits-charity/1;color=#00BCD4;display-name=flex3rs;emotes=521050:9-15,25-31;flags=;id=08649ff3-8fee-4200-8e06-c46bcdfb06e8;mod=0;room-id=73697410;subscriber=0;tmi-sent-ts=1575196101040;turbo=0;user-id=73697410;user-type= :flex3rs!flex3rs@flex3rs.tmi.twitch.tv PRIVMSG #flex3rs :🍓🍑🍊🍋🍍NaM forsenE 🍐🍏🐬🐳NaM forsenE
 fun String.appendSpacesBetweenEmojiGroup(): Pair<String, List<Int>> {
@@ -53,7 +56,7 @@ fun String.appendSpacesBetweenEmojiGroup(): Pair<String, List<Int>> {
     codePoints { codePoint ->
         if (codePoint.isEmoji) {
             // emoji group starts
-            if (totalCharCount != 0 && !previousEmoji && !Character.isWhitespace(previousCodepoint)) {
+            if (totalCharCount != 0 && !previousEmoji && !previousCodepoint.isWhitespace) {
                 fixedContentBuilder.append(" ")
                 addedSpacesPositions += totalCharCount
             }
@@ -61,7 +64,7 @@ fun String.appendSpacesBetweenEmojiGroup(): Pair<String, List<Int>> {
             previousEmoji = true
         } else if (previousEmoji) {
             //emoji group ends
-            if (!Character.isWhitespace(codePoint)) {
+            if (!codePoint.isWhitespace) {
                 fixedContentBuilder.append(" ")
                 addedSpacesPositions += totalCharCount
             }

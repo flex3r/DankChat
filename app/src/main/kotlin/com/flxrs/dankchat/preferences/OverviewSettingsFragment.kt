@@ -7,7 +7,6 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
-import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
@@ -45,7 +44,6 @@ class OverviewSettingsFragment : PreferenceFragmentCompat() {
             setOnPreferenceClickListener {
                 try {
                     CustomTabsIntent.Builder()
-                        .addDefaultShareMenuItem()
                         .setShowTitle(true)
                         .build().launchUrl(view.context, GITHUB_URL.toUri())
                 } catch (e: ActivityNotFoundException) {

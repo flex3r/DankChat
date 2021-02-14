@@ -1,15 +1,17 @@
 package com.flxrs.dankchat.chat.mention
 
 import android.util.Log
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.service.ChatRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import javax.inject.Inject
 
-class MentionViewModel @ViewModelInject constructor(chatRepository: ChatRepository) : ViewModel() {
+@HiltViewModel
+class MentionViewModel @Inject constructor(chatRepository: ChatRepository) : ViewModel() {
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, t ->
         Log.e(TAG, Log.getStackTraceString(t))
     }

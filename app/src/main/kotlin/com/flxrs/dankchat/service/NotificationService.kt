@@ -20,6 +20,7 @@ import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.MainActivity
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.service.twitch.message.Message
+import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
@@ -181,7 +182,7 @@ class NotificationService : Service(), CoroutineScope {
         notificationsJob = launch {
             chatRepository.notificationsFlow.collect { items ->
                 items.forEach { (message) ->
-                    with(message as Message.TwitchMessage) {
+                    with(message as TwitchMessage) {
                         if (shouldNotifyOnMention && isMention && notificationsEnabled) {
                             createMentionNotification()
                         }
@@ -195,7 +196,7 @@ class NotificationService : Service(), CoroutineScope {
         }
     }
 
-    private fun Message.TwitchMessage.playTTSMessage() {
+    private fun TwitchMessage.playTTSMessage() {
         val messageFormat = when {
             isSystem || !combinedTTSFormat -> message
             else -> "$name said $message"
@@ -211,7 +212,7 @@ class NotificationService : Service(), CoroutineScope {
         tts?.speak(ttsMessage, queueMode, null, null)
     }
 
-    private fun Message.TwitchMessage.createMentionNotification() {
+    private fun TwitchMessage.createMentionNotification() {
         val pendingStartActivityIntent = Intent(this@NotificationService, MainActivity::class.java).let {
             it.putExtra(MainActivity.OPEN_CHANNEL_KEY, channel)
             PendingIntent.getActivity(this@NotificationService, notificationIntentCode, it, PendingIntent.FLAG_UPDATE_CURRENT)
