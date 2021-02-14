@@ -2,7 +2,6 @@ package com.flxrs.dankchat.di
 
 import android.content.Context
 import coil.util.CoilUtils
-import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.flxrs.dankchat.service.api.*
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import dagger.Module
