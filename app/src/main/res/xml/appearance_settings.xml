@@ -10,7 +10,7 @@
     <SeekBarPreference
         android:defaultValue="14"
         android:key="@string/preference_font_size_key"
-        android:max="25"
+        android:max="40"
         android:title="@string/preference_font_size_title"
         app:iconSpaceReserved="false"
         app:min="10"
