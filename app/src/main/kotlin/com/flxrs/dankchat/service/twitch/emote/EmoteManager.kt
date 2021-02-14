@@ -1,7 +1,7 @@
 package com.flxrs.dankchat.service.twitch.emote
 
 import android.util.LruCache
-import com.flxrs.dankchat.service.api.TwitchApi
+import com.flxrs.dankchat.service.api.ApiManager
 import com.flxrs.dankchat.service.api.dto.BadgeDtos
 import com.flxrs.dankchat.service.api.dto.EmoteDtos
 import com.flxrs.dankchat.utils.extensions.supplementaryCodePointPositions
@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 import javax.inject.Inject
 
-class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
+class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
     private val twitchEmotes = ConcurrentHashMap<String, GenericEmote>()
 
     private val ffzEmotes = ConcurrentHashMap<String, HashMap<String, GenericEmote>>()
@@ -76,7 +76,7 @@ class EmoteManager @Inject constructor(private val twitchApi: TwitchApi) {
     suspend fun setTwitchEmotes(twitchResult: EmoteDtos.Twitch.Result) = withContext(Dispatchers.Default) {
         val setMapping = twitchResult.sets.keys
             .map {
-                async { twitchApi.getUserSet(it) ?: EmoteDtos.Twitch.EmoteSet(it, "", "", 1) }
+                async { apiManager.getUserSet(it) ?: EmoteDtos.Twitch.EmoteSet(it, "", "", 1) }
             }.awaitAll()
             .associateBy({ it.id }, { it.channelName })
 

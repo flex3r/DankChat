@@ -2,7 +2,7 @@ package com.flxrs.dankchat.di
 
 import com.flxrs.dankchat.service.ChatRepository
 import com.flxrs.dankchat.service.DataRepository
-import com.flxrs.dankchat.service.api.TwitchApi
+import com.flxrs.dankchat.service.api.ApiManager
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import dagger.Module
 import dagger.Provides
@@ -16,9 +16,9 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideDataRepository(twitchApi: TwitchApi, emoteManager: EmoteManager): DataRepository = DataRepository(twitchApi, emoteManager)
+    fun provideDataRepository(apiManager: ApiManager, emoteManager: EmoteManager): DataRepository = DataRepository(apiManager, emoteManager)
 
     @Singleton
     @Provides
-    fun provideChatRepository(twitchApi: TwitchApi, emoteManager: EmoteManager): ChatRepository = ChatRepository(twitchApi, emoteManager)
+    fun provideChatRepository(apiManager: ApiManager, emoteManager: EmoteManager): ChatRepository = ChatRepository(apiManager, emoteManager)
 }

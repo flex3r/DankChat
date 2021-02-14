@@ -5,7 +5,7 @@ import androidx.collection.LruCache
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.chat.toMentionTabItems
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
-import com.flxrs.dankchat.service.api.TwitchApi
+import com.flxrs.dankchat.service.api.ApiManager
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
@@ -25,7 +25,7 @@ import java.nio.ByteBuffer
 import kotlin.collections.set
 import kotlin.system.measureTimeMillis
 
-class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager: EmoteManager) {
+class ChatRepository(private val apiManager: ApiManager, private val emoteManager: EmoteManager) {
 
     private val _notificationsFlow = MutableSharedFlow<List<ChatItem>>(0, extraBufferCapacity = 10)
     private val _channelMentionCount = MutableSharedFlow<MutableMap<String, Int>>(1, onBufferOverflow = BufferOverflow.DROP_OLDEST).apply { tryEmit(mutableMapOf()) }
@@ -85,7 +85,7 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
 
     suspend fun loadIgnores(oAuth: String, id: String) {
         if (oAuth.isNotBlank()) {
-            twitchApi.getIgnores(oAuth, id)?.let { (blocks) ->
+            apiManager.getIgnores(oAuth, id)?.let { (blocks) ->
                 ignoredList.clear()
                 ignoredList.addAll(blocks.map { it.user.id })
             }
@@ -96,7 +96,7 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
         if (!users.contains(channel)) users[channel] = MutableStateFlow(createUserCache())
 
         measureTimeMillis {
-            twitchApi.getChatters(channel)?.let { chatters ->
+            apiManager.getChatters(channel)?.let { chatters ->
                 users[channel]?.value?.let { cache ->
                     val size = chatters.total.size
                     if (size > USER_CACHE_SIZE) {
@@ -117,7 +117,7 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
         messages.remove(channel)
         lastMessage.remove(channel)
         _channelMentionCount.firstValue.remove(channel)
-        twitchApi.clearChannelFromLoaded(channel)
+        apiManager.clearChannelFromLoaded(channel)
     }
 
     fun clearMentionCount(channel: String) = with(_channelMentionCount) {
@@ -342,7 +342,7 @@ class ChatRepository(private val twitchApi: TwitchApi, private val emoteManager:
     }
 
     private suspend fun loadRecentMessages(channel: String) = withContext(Dispatchers.Default) {
-        val result = twitchApi.getRecentMessages(channel) ?: return@withContext
+        val result = apiManager.getRecentMessages(channel) ?: return@withContext
         val items = mutableListOf<ChatItem>()
         measureTimeMillis {
             for (message in result.messages) {
