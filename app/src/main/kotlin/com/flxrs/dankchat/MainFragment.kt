@@ -63,7 +63,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.IOException
 import java.util.*
-import kotlin.math.max
 import kotlin.math.roundToInt
 
 @AndroidEntryPoint

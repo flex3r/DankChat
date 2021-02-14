@@ -223,7 +223,7 @@ class ChatAdapter(
                 else -> "$fullName: "
             }
 
-            val badgesLength =  when {
+            val badgesLength = when {
                 showUserName -> badges.size * 2
                 else -> 0
             }

@@ -1,7 +1,6 @@
 package com.flxrs.dankchat.utils.extensions
 
 import com.flxrs.dankchat.chat.ChatItem
-import com.flxrs.dankchat.service.twitch.message.Message
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 
 fun List<ChatItem>.replaceWithTimeOuts(name: String): List<ChatItem> = apply {
