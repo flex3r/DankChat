@@ -136,6 +136,8 @@
     <string name="preference_checkered_lines_summary">Oddělit každý řádek odlišným jasem pozadí</string>
     <string name="preference_supibot_suggestions_title">Návrhy příkazů Supibota</string>
     <string name="preference_scrollback_length_title">Délka historie chatu</string>
+    <string name="snackbar_paste">Vložit</string>
+    <string name="preference_show_username_title">Ukázat přezdívku</string>
 
     <plurals name="viewers">
         <item quantity="one">Živě s %d divákem</item>
