@@ -23,8 +23,7 @@ sealed class UserDtos {
         @field:Json(name = "description") val description: String,
         @field:Json(name = "profile_image_url") val avatarUrl: String,
         @field:Json(name = "offline_image_url") val offlineImageUrl: String,
-        @field:Json(name = "view_count") val viewCount: Int,
-        @field:Json(name = "created_at") val createdAt: String
+        @field:Json(name = "view_count") val viewCount: Int
     )
 
     // R8 deletes this if annotation is not set NotLikeThis

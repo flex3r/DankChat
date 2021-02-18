@@ -8,7 +8,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SeekBarPreference
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
-import com.flxrs.dankchat.utils.DateTimeUtils
+import com.flxrs.dankchat.utils.TimeUtils
 
 class ChatSettingsFragment : PreferenceFragmentCompat() {
 
@@ -29,7 +29,7 @@ class ChatSettingsFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.chat_settings, rootKey)
 
         findPreference<ListPreference>(getString(R.string.preference_timestamp_format_key))?.setOnPreferenceChangeListener { _, newValue ->
-            (newValue as? String)?.let { DateTimeUtils.setPattern(it) }
+            (newValue as? String)?.let { TimeUtils.setPattern(it) }
             true
         }
         findPreference<SeekBarPreference>(getString(R.string.preference_scrollback_length_key))?.apply {

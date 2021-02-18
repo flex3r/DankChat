@@ -5,7 +5,6 @@ import coil.util.CoilUtils
 import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.service.api.*
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
-import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,7 +15,6 @@ import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import java.util.*
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)

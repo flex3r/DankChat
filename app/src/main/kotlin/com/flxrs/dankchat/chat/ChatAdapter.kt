@@ -43,7 +43,7 @@ import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.message.SystemMessage
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
-import com.flxrs.dankchat.utils.DateTimeUtils
+import com.flxrs.dankchat.utils.TimeUtils
 import com.flxrs.dankchat.utils.extensions.isEven
 import com.flxrs.dankchat.utils.extensions.normalizeColor
 import com.flxrs.dankchat.utils.extensions.setRunning
@@ -55,7 +55,7 @@ import kotlin.math.roundToInt
 class ChatAdapter(
     private val emoteManager: EmoteManager,
     private val onListChanged: (position: Int) -> Unit,
-    private val onUserClicked: (userId: String?, channel: String, mentionName: String) -> Unit,
+    private val onUserClicked: (user: String) -> Unit,
     private val onMessageLongClick: (message: String) -> Unit
 ) : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
     // Using position.isEven for determining which background to use in checkered mode doesn't work,
@@ -124,7 +124,7 @@ class ChatAdapter(
             else -> context.getString(R.string.system_message_connected)
         }
         val withTime = when {
-            showTimeStamp -> SpannableStringBuilder().bold { append("${DateTimeUtils.timestampToLocalTime(message.timestamp)} ") }.append(connectionText)
+            showTimeStamp -> SpannableStringBuilder().bold { append("${TimeUtils.timestampToLocalTime(message.timestamp)} ") }.append(connectionText)
             else -> SpannableStringBuilder().append(connectionText)
         }
 
@@ -177,7 +177,7 @@ class ChatAdapter(
 
                 if (!showTimedOutMessages) {
                     text = if (showTimeStamp) {
-                        "${DateTimeUtils.timestampToLocalTime(timestamp)} ${context.getString(R.string.timed_out_message)}"
+                        "${TimeUtils.timestampToLocalTime(timestamp)} ${context.getString(R.string.timed_out_message)}"
                     } else context.getString(R.string.timed_out_message)
                     return@launch
                 }
@@ -233,7 +233,7 @@ class ChatAdapter(
             }
             val timeAndWhisperBuilder = StringBuilder()
             if (isMentionTab && isMention) timeAndWhisperBuilder.append("$channelOrBlank ")
-            if (showTimeStamp) timeAndWhisperBuilder.append("${DateTimeUtils.timestampToLocalTime(timestamp)} ")
+            if (showTimeStamp) timeAndWhisperBuilder.append("${TimeUtils.timestampToLocalTime(timestamp)} ")
             val (prefixLength, spannable) = timeAndWhisperBuilder.length + fullDisplayName.length to SpannableStringBuilder().bold { append(timeAndWhisperBuilder) }
 
             val badgePositions = when {
@@ -255,7 +255,7 @@ class ChatAdapter(
 
             //clicking usernames
             if (fullName.isNotBlank()) {
-                val mentionName = when {
+                val mention = when {
                     name.equals(displayName, ignoreCase = true) -> displayName
                     else -> name
                 }
@@ -266,7 +266,7 @@ class ChatAdapter(
                     }
 
                     override fun onClick(v: View) {
-                        if (!ignoreClicks) onUserClicked(userId, channel, mentionName)
+                        if (!ignoreClicks) onUserClicked(mention)
                     }
                 }
                 spannable.setSpan(userClickableSpan, prefixLength - fullDisplayName.length + badgesLength, prefixLength + badgesLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
