@@ -688,7 +688,7 @@ class MainFragment : Fragment() {
         preferences.apply {
             registerOnSharedPreferenceChangeListener(preferenceListener)
             keepScreenOn(getBoolean(keepScreenOnKey, true))
-            TimeUtils.setPattern(getString(timestampFormatKey, "HH:mm") ?: "HH:mm")
+            DateTimeUtils.setPattern(getString(timestampFormatKey, "HH:mm") ?: "HH:mm")
             viewModel.apply {
                 setRoomStateEnabled(getBoolean(roomStateKey, true))
                 setStreamInfoEnabled(getBoolean(streamInfoKey, true))

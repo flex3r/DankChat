@@ -41,7 +41,13 @@ class ApiManager @Inject constructor(
     }
 
     suspend fun getUserIdFromName(oAuth: String, name: String): String? =
-        helixApiService.getUser("Bearer $oAuth", name).bodyOrNull?.data?.getOrNull(0)?.id
+        helixApiService.getUserByName("Bearer $oAuth", name).bodyOrNull?.data?.getOrNull(0)?.id
+
+    suspend fun getUser(oAuth: String, userId: String): UserDtos.HelixUser? = helixApiService.getUserById("Bearer $oAuth", userId).bodyOrNull?.data?.getOrNull(0)
+    suspend fun getUsersFollows(oAuth: String, fromId: String, toId: String): UserFollowsDto? = helixApiService.getUsersFollows("Bearer $oAuth", fromId, toId).bodyOrNull
+    suspend fun followUser(oAuth: String, fromId: String, toId: String): Boolean =
+        helixApiService.createUserFollows("Bearer $oAuth", UserFollowRequestBody(fromId, toId)).isSuccessful
+    suspend fun unfollowUser(oAuth: String, fromId: String, toId: String): Boolean = helixApiService.deleteUserFollows("Bearer $oAuth", fromId, toId).isSuccessful
 
     suspend fun getUserEmotes(oAuth: String, id: String): EmoteDtos.Twitch.Result? = krakenApiService.getUserEmotes("OAuth $oAuth", id).bodyOrNull
     suspend fun getIgnores(oAuth: String, id: String): UserDtos.KrakenUsersBlocks? = krakenApiService.getIgnores("OAuth $oAuth", id).bodyOrNull
@@ -110,7 +116,7 @@ class ApiManager @Inject constructor(
         private const val REDIRECT_URL = "https://flxrs.com/dankchat"
         private const val SCOPES = "chat:edit+chat:read+user_read+user_subscriptions" +
                 "+channel:moderate+user_blocks_read+user_blocks_edit+whispers:read+whispers:edit" +
-                "+channel_editor"
+                "+channel_editor+user:edit:follows+user:read:blocked_users+user:manage:blocked_users"
         const val CLIENT_ID = "xu7vd1i6tlr0ak45q1li2wdc0lrma8"
         const val LOGIN_URL = "$BASE_LOGIN_URL&client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URL&scope=$SCOPES"
     }

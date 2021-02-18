@@ -19,8 +19,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.MainFragment
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.chat.user.UserPopupFragment
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
+import com.flxrs.dankchat.utils.extensions.removeOAuthSuffix
 import com.flxrs.dankchat.utils.extensions.showShortSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -31,9 +34,10 @@ import javax.inject.Inject
 open class ChatFragment : Fragment() {
 
     private val viewModel: ChatViewModel by viewModels()
+    private var dankChatPreferences: DankChatPreferenceStore? = null
     protected var bindingRef: ChatFragmentBinding? = null
     protected val binding get() = bindingRef!!
-    protected open lateinit var adapter: ChatAdapter
+    protected open lateinit var adapter: ChatAdapter // TODO memory leak lul
     protected open lateinit var manager: LinearLayoutManager
     protected open lateinit var preferenceListener: SharedPreferences.OnSharedPreferenceChangeListener
     protected open lateinit var preferences: SharedPreferences
@@ -66,9 +70,10 @@ open class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val itemDecoration = DividerItemDecoration(view.context, LinearLayoutManager.VERTICAL)
         manager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false).apply { stackFromEnd = true }
-        adapter = ChatAdapter(emoteManager, ::scrollToPosition, ::mentionUser, ::copyMessage).apply { stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY }
+        adapter = ChatAdapter(emoteManager, ::scrollToPosition, ::openUserPopup, ::copyMessage).apply { stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY }
         binding.chat.setup(adapter, manager)
 
+        dankChatPreferences = DankChatPreferenceStore(view.context)
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { pref, key ->
             context ?: return@OnSharedPreferenceChangeListener
             when (key) {
@@ -94,6 +99,7 @@ open class ChatFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         bindingRef = null
+        dankChatPreferences = null
         if (::preferences.isInitialized) {
             preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         }
@@ -112,8 +118,14 @@ open class ChatFragment : Fragment() {
         outState.putBoolean(AT_BOTTOM_STATE, isAtBottom)
     }
 
-    protected open fun mentionUser(user: String) {
-        (requireParentFragment() as? MainFragment)?.mentionUser(user)
+    protected open fun openUserPopup(userId: String?, channel: String, mentionName: String) {
+        userId ?: return
+        val oAuth = dankChatPreferences?.oAuthKey?.removeOAuthSuffix ?: return
+        val currentUser = dankChatPreferences?.userIdString ?: return
+
+        UserPopupFragment
+            .newInstance(currentUser, userId, channel, mentionName, oAuth)
+            .show(childFragmentManager, UserPopupFragment::class.java.simpleName)
     }
 
     private fun copyMessage(message: String) {

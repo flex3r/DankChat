@@ -35,9 +35,9 @@ class MentionChatFragment : ChatFragment() {
         return binding.root
     }
 
-    override fun mentionUser(user: String) {
-        (parentFragment?.parentFragment as? MainFragment)?.whisperUser(user)
-    }
+//    override fun openUserPopup(user: String) {
+//        (parentFragment?.parentFragment as? MainFragment)?.whisperUser(user)
+//    } TODO
 
     companion object {
         fun newInstance(isWhisperTab: Boolean = false): MentionChatFragment {
