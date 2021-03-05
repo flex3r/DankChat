@@ -40,7 +40,7 @@ sealed class EmoteDtos {
 
         @Keep
         data class Room(
-            @field:Json(name = "mod_urls") val modBadgeUrls: Map<String, String?>
+            @field:Json(name = "mod_urls") val modBadgeUrls: Map<String, String?>?
         )
 
         @Keep
