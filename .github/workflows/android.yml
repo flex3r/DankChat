@@ -44,7 +44,7 @@ jobs:
         uses: author/action-rollback@stable
         with:
           tag: 'debug'
-          always_delete_tag: true
+          delete_orphan_tag: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
