@@ -114,7 +114,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
             }
         }
         ffzEmotes[channel] = emotes
-        ffzResult.room.moderatorBadgeUrl?.let { ffzModBadges[channel] = "https:$it" }
+        ffzResult.room.modBadgeUrls?.let { ffzModBadges[channel] = "https:" + ( it["4"] ?: it["2"] ?: it["1"] ) }
     }
 
     suspend fun setFFZGlobalEmotes(ffzResult: EmoteDtos.FFZ.GlobalResult) = withContext(Dispatchers.Default) {
