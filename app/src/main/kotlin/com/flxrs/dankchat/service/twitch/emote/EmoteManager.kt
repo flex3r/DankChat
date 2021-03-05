@@ -45,8 +45,8 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         return emotes
     }
 
-    fun parseEmotes(message: String, channel: String, emoteTag: String, extraSpacePositions: List<Int>): Pair<String, List<ChatMessageEmote>> {
-        val twitchEmotes = parseTwitchEmotes(emoteTag, message, extraSpacePositions)
+    fun parseEmotes(message: String, channel: String, emoteTag: String, extraSpacePositions: List<Int>, removedSpacePositions: List<Int>): Pair<String, List<ChatMessageEmote>> {
+        val twitchEmotes = parseTwitchEmotes(emoteTag, message, extraSpacePositions, removedSpacePositions)
         val thirdPartyEmotes = parse3rdPartyEmotes(message, channel).filterNot { e -> twitchEmotes.any { it.code == e.code } }
         val emotes = (twitchEmotes + thirdPartyEmotes)
 
@@ -114,7 +114,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
             }
         }
         ffzEmotes[channel] = emotes
-        ffzResult.room.modBadgeUrls?.let { ffzModBadges[channel] = "https:" + ( it["4"] ?: it["2"] ?: it["1"] ) }
+        ffzResult.room.modBadgeUrls?.let { ffzModBadges[channel] = "https:" + (it["4"] ?: it["2"] ?: it["1"]) }
     }
 
     suspend fun setFFZGlobalEmotes(ffzResult: EmoteDtos.FFZ.GlobalResult) = withContext(Dispatchers.Default) {
@@ -219,7 +219,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         return parsed
     }
 
-    private fun parseTwitchEmotes(emoteTag: String, original: String, spaces: List<Int>): List<ChatMessageEmote> {
+    private fun parseTwitchEmotes(emoteTag: String, original: String, appendedSpaces: List<Int>, removedSpaces: List<Int>): List<ChatMessageEmote> {
         if (emoteTag.isEmpty()) {
             return emptyList()
         }
@@ -245,13 +245,14 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
                 val start = pair[0].toIntOrNull() ?: return@mapNotNull null
                 val end = pair[1].toIntOrNull() ?: return@mapNotNull null
 
-                val unicodeExtra = supplementaryCodePointPositions.count { it < start }
-                val spaceExtra = spaces.count { it < start + unicodeExtra }
-                val fixedStart = start + unicodeExtra + spaceExtra
-                val fixedEnd = end + unicodeExtra + spaceExtra
+                val removedSpaceExtra = removedSpaces.count { it < start }
+                val unicodeExtra = supplementaryCodePointPositions.count { it < start - removedSpaceExtra }
+                val spaceExtra = appendedSpaces.count { it < start + unicodeExtra }
+                val fixedStart = start + unicodeExtra + spaceExtra - removedSpaceExtra
+                val fixedEnd = end + unicodeExtra + spaceExtra - removedSpaceExtra
 
                 // be extra safe in case twitch sends invalid emote ranges :)
-                fixedStart.coerceAtLeast(0)..(fixedEnd + 1).coerceAtMost(original.length)
+                fixedStart.coerceAtLeast(minimumValue = 0)..(fixedEnd + 1).coerceAtMost(original.length)
             }
 
             val code = original.substring(parsedPositions[0].first, parsedPositions[0].last)

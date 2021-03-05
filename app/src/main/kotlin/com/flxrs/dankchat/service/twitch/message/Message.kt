@@ -7,6 +7,7 @@ import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.extensions.appendSpacesBetweenEmojiGroup
+import com.flxrs.dankchat.utils.extensions.removeDuplicateWhitespace
 
 sealed class Message {
     abstract val id: String
@@ -84,8 +85,9 @@ data class TwitchMessage(
             val id = tags["id"] ?: System.nanoTime().toString()
             val badges = parseBadges(emoteManager, tags["badges"], channel, tags["user-id"])
 
-            val (spaceAdjustedMessage, spaces) = message.appendSpacesBetweenEmojiGroup()
-            val (overlayEmotesAdjustedMessage, emotes) = emoteManager.parseEmotes(spaceAdjustedMessage, channel, emoteTag, spaces)
+            val (duplicateSpaceAdjustedMessage, removedSpaces) = message.removeDuplicateWhitespace()
+            val (appendedSpaceAdjustedMessage, appendedSpaces) = duplicateSpaceAdjustedMessage.appendSpacesBetweenEmojiGroup()
+            val (overlayEmotesAdjustedMessage, emotes) = emoteManager.parseEmotes(appendedSpaceAdjustedMessage, channel, emoteTag, appendedSpaces, removedSpaces)
 
             return TwitchMessage(
                 timestamp = ts,
@@ -94,7 +96,7 @@ data class TwitchMessage(
                 displayName = displayName,
                 color = color,
                 message = overlayEmotesAdjustedMessage,
-                originalMessage = spaceAdjustedMessage,
+                originalMessage = appendedSpaceAdjustedMessage,
                 emotes = emotes,
                 isAction = isAction,
                 isNotify = isNotify,
@@ -186,8 +188,9 @@ data class TwitchMessage(
             val emoteTag = tags["emotes"] ?: ""
             val badges = parseBadges(emoteManager, tags["badges"], userId = tags["user-id"])
 
-            val (spaceAdjustedMessage, spaces) = params[1].appendSpacesBetweenEmojiGroup()
-            val (overlayEmotesAdjustedMessage, emotes) = emoteManager.parseEmotes(spaceAdjustedMessage, channel = "", emoteTag, spaces)
+            val (duplicateSpaceAdjustedMessage, removedSpaces) = params[1].removeDuplicateWhitespace()
+            val (appendedSpaceAdjustedMessage, appendedSpaces) = duplicateSpaceAdjustedMessage.appendSpacesBetweenEmojiGroup()
+            val (overlayEmotesAdjustedMessage, emotes) = emoteManager.parseEmotes(appendedSpaceAdjustedMessage, channel = "", emoteTag, appendedSpaces, removedSpaces)
 
             return TwitchMessage(
                 timestamp = System.currentTimeMillis(),
@@ -196,7 +199,7 @@ data class TwitchMessage(
                 displayName = displayName,
                 color = color,
                 message = overlayEmotesAdjustedMessage,
-                originalMessage = spaceAdjustedMessage,
+                originalMessage = appendedSpaceAdjustedMessage,
                 emotes = emotes,
                 badges = badges,
                 id = System.nanoTime().toString(),

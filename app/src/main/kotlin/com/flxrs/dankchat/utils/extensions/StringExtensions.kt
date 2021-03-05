@@ -1,48 +1,50 @@
 package com.flxrs.dankchat.utils.extensions
 
+import android.util.Log
+
 private val emojiCodePoints = listOf(
-    IntRange(0x00A9, 0x00A9),
-    IntRange(0x00AE, 0x00AE),
-    IntRange(0x203C, 0x203C),
-    IntRange(0x2049, 0x2049),
-    IntRange(0x20E3, 0x20E3),
-    IntRange(0x2122, 0x2122),
-    IntRange(0x2139, 0x2139),
-    IntRange(0x2194, 0x2199),
-    IntRange(0x21A9, 0x21AA),
-    IntRange(0x231A, 0x231A),
-    IntRange(0x231B, 0x231B),
-    IntRange(0x2328, 0x2328),
-    IntRange(0x23CF, 0x23CF),
-    IntRange(0x23E9, 0x23F3),
-    IntRange(0x23F8, 0x23FA),
-    IntRange(0x24C2, 0x24C2),
-    IntRange(0x25AA, 0x25AA),
-    IntRange(0x25AB, 0x25AB),
-    IntRange(0x25B6, 0x25B6),
-    IntRange(0x25C0, 0x25C0),
-    IntRange(0x25FB, 0x25FE),
-    IntRange(0x2600, 0x27EF),
-    IntRange(0x2934, 0x2934),
-    IntRange(0x2935, 0x2935),
-    IntRange(0x2B00, 0x2BFF),
-    IntRange(0x3030, 0x3030),
-    IntRange(0x303D, 0x303D),
-    IntRange(0x3297, 0x3297),
-    IntRange(0x3299, 0x3299),
-    IntRange(0x1F000, 0x1F02F),
-    IntRange(0x1F0A0, 0x1F0FF),
-    IntRange(0x1F100, 0x1F64F),
-    IntRange(0x1F680, 0x1F6FF),
-    IntRange(0x1F910, 0x1F96B),
-    IntRange(0x1F980, 0x1F9E0)
+    IntRange(0x00A9, 0x00AE),
+    IntRange(0x200D, 0x3299),
+    IntRange(0xFE00, 0xFE0F),
+    IntRange(0x1F000, 0x1FAD6)
 )
 
 private val Int.isEmoji: Boolean
-    get() = emojiCodePoints.any { it.contains(this) }
+    get() = emojiCodePoints.any { it.contains(this) }.also {
+        Log.d("EmoteManager", "$this $it")
+    }
 
 private val Int.isWhitespace: Boolean
     get() = Character.isWhitespace(this) || this == 0x3164
+
+// Removes duplicate whitespace from the string and additionally returns the positions of every removed whitespace
+// "a  Kappa" -> 3-8 -> [2, 3]
+// "a Kappa"  -> 2-7
+
+fun String.removeDuplicateWhitespace(): Pair<String, List<Int>> {
+    val stringBuilder = StringBuilder()
+    var previousWhitespace = false
+    val removedSpacesPositions = mutableListOf<Int>()
+    var totalCharCount = 0
+
+    codePoints { codePoint ->
+        if (codePoint.isWhitespace) {
+            when {
+                previousWhitespace -> removedSpacesPositions += totalCharCount
+                else -> stringBuilder.appendCodePoint(codePoint)
+            }
+
+            previousWhitespace = true
+        } else {
+            previousWhitespace = false
+            stringBuilder.appendCodePoint(codePoint)
+        }
+
+        totalCharCount++
+    }
+
+    return stringBuilder.toString() to removedSpacesPositions
+}
 
 // Adds extra space between every emoji group to support 3rd party emotes directly before/after emojis
 // @badge-info=;badges=broadcaster/1,bits-charity/1;color=#00BCD4;display-name=flex3rs;emotes=521050:9-15,25-31;flags=;id=08649ff3-8fee-4200-8e06-c46bcdfb06e8;mod=0;room-id=73697410;subscriber=0;tmi-sent-ts=1575196101040;turbo=0;user-id=73697410;user-type= :flex3rs!flex3rs@flex3rs.tmi.twitch.tv PRIVMSG #flex3rs :🍓🍑🍊🍋🍍NaM forsenE 🍐🍏🐬🐳NaM forsenE
