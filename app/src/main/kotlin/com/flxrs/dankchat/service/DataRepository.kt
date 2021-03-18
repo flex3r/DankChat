@@ -75,6 +75,10 @@ class DataRepository(private val apiManager: ApiManager, private val emoteManage
         emotes[channel]?.value = emoteManager.getEmotes(channel)
     }
 
+    suspend fun filterAndSetBitEmotes(userStateEmoteSets: List<String>) {
+        emoteManager.filterAndSetBitEmotes(userStateEmoteSets)
+    }
+
     private suspend fun loadChannelBadges(channel: String, id: String) {
         measureTimeAndLog(TAG, "channel badges for #$id") {
             apiManager.getChannelBadges(id)?.also { emoteManager.setChannelBadges(channel, it) }

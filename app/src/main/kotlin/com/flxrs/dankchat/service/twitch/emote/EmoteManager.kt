@@ -17,6 +17,7 @@ import javax.inject.Inject
 
 class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
     private val twitchEmotes = ConcurrentHashMap<String, GenericEmote>()
+    private var krakenEmoteSets: List<String> = emptyList()
 
     private val ffzEmotes = ConcurrentHashMap<String, HashMap<String, GenericEmote>>()
     private val globalFFZEmotes = ConcurrentHashMap<String, GenericEmote>()
@@ -74,36 +75,59 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
     }
 
     suspend fun setTwitchEmotes(twitchResult: EmoteDtos.Twitch.Result) = withContext(Dispatchers.Default) {
+        krakenEmoteSets = twitchResult.sets.keys.toList()
+
         val setMapping = twitchResult.sets.keys
             .map {
-                async { apiManager.getUserSet(it) ?: EmoteDtos.Twitch.EmoteSet(it, "", "", 1) }
+                async { apiManager.getUserSet(it) ?: EmoteDtos.Twitch.EmoteSet(it, "", "", 1, null) }
             }.awaitAll()
             .associateBy({ it.id }, { it.channelName })
 
+        val existingBitEmotes = twitchEmotes.filterValues { it.emoteType is EmoteType.ChannelTwitchBitEmote }
         twitchEmotes.clear()
-        twitchResult.sets.forEach {
-            val type = when (val set = it.key) {
+        twitchEmotes.putAll(existingBitEmotes)
+
+        twitchResult.sets.forEach { (set, emotes) ->
+            val type = when (set) {
                 "0", "42" -> EmoteType.GlobalTwitchEmote // 42 == monkey emote set, move them to the global emote section
                 else -> EmoteType.ChannelTwitchEmote(setMapping[set] ?: "Twitch")
             }
-            it.value.forEach { (name: String, id: Int) ->
-                val code = when (type) {
-                    is EmoteType.GlobalTwitchEmote -> EMOTE_REPLACEMENTS[name] ?: name
-                    else -> name
-                }
-                val emote = GenericEmote(
-                    code = code,
-                    url = "$BASE_URL/${id}/$EMOTE_SIZE",
-                    lowResUrl = "$BASE_URL/${id}/$LOW_RES_EMOTE_SIZE",
-                    isGif = false,
-                    id = "$id",
-                    scale = 1,
-                    emoteType = type
-                )
-                twitchEmotes[emote.code] = emote
+
+            emotes.mapToGenericEmotes(type).forEach {
+                twitchEmotes[it.code] = it
             }
         }
     }
+
+    suspend fun filterAndSetBitEmotes(emoteSets: List<String>) = withContext(Dispatchers.Default) {
+        val filtered = emoteSets.filter { it !in krakenEmoteSets }
+        val emoteSetsResult = filtered.map {
+            async { apiManager.getUserSet(it) ?: EmoteDtos.Twitch.EmoteSet(it, "", "", 1, null) }
+        }.awaitAll()
+
+        emoteSetsResult.forEach { emoteSet ->
+            val type = EmoteType.ChannelTwitchBitEmote(emoteSet.channelName)
+            emoteSet.emotes.mapToGenericEmotes(type).forEach {
+                twitchEmotes[it.code] = it
+            }
+        }
+    }
+
+    private fun List<EmoteDtos.Twitch.Emote>?.mapToGenericEmotes(type: EmoteType): List<GenericEmote> = this?.map { (name, id) ->
+        val code = when (type) {
+            is EmoteType.GlobalTwitchEmote -> EMOTE_REPLACEMENTS[name] ?: name
+            else -> name
+        }
+        GenericEmote(
+            code = code,
+            url = "$BASE_URL/${id}/$EMOTE_SIZE",
+            lowResUrl = "$BASE_URL/${id}/$LOW_RES_EMOTE_SIZE",
+            isGif = false,
+            id = id,
+            scale = 1,
+            emoteType = type
+        )
+    } ?: emptyList()
 
     suspend fun setFFZEmotes(channel: String, ffzResult: EmoteDtos.FFZ.Result) = withContext(Dispatchers.Default) {
         val emotes = hashMapOf<String, GenericEmote>()

@@ -152,11 +152,33 @@ object NetworkModule {
         .build()
         .create(RecentMessagesApiService::class.java)
 
-    // @formatter:off
     @Singleton
     @Provides
-    fun provideApiManager(@ApiOkHttpClient client: OkHttpClient, bttvApiService: BTTVApiService, dankChatApiService: DankChatApiService, ffzApiService: FFZApiService, helixApiService: HelixApiService, krakenApiService: KrakenApiService, recentMessagesApiService: RecentMessagesApiService, supibotApiService: SupibotApiService, authApiService: AuthApiService, badgesApiService: BadgesApiService, tmiApiService: TmiApiService): ApiManager = ApiManager(client, bttvApiService, dankChatApiService, ffzApiService, helixApiService, krakenApiService, recentMessagesApiService, supibotApiService, authApiService, badgesApiService, tmiApiService)
-    // @formatter:on
+    fun provideApiManager(
+        @ApiOkHttpClient client: OkHttpClient,
+        bttvApiService: BTTVApiService,
+        dankChatApiService: DankChatApiService,
+        ffzApiService: FFZApiService,
+        helixApiService: HelixApiService,
+        krakenApiService: KrakenApiService,
+        recentMessagesApiService: RecentMessagesApiService,
+        supibotApiService: SupibotApiService,
+        authApiService: AuthApiService,
+        badgesApiService: BadgesApiService,
+        tmiApiService: TmiApiService
+    ): ApiManager = ApiManager(
+        client,
+        bttvApiService,
+        dankChatApiService,
+        ffzApiService,
+        helixApiService,
+        krakenApiService,
+        recentMessagesApiService,
+        supibotApiService,
+        authApiService,
+        badgesApiService,
+        tmiApiService
+    )
 
     @Singleton
     @Provides

@@ -15,6 +15,8 @@ import com.flxrs.dankchat.utils.SingleLiveEvent
 import com.flxrs.dankchat.utils.extensions.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.take
 import java.io.File
 import javax.inject.Inject
 
@@ -147,7 +149,7 @@ class DankChatViewModel @Inject constructor(
         liveData(Dispatchers.Default) {
             val groupedByType = emotes.groupBy {
                 when (it.emoteType) {
-                    is EmoteType.ChannelTwitchEmote -> EmoteMenuTab.SUBS
+                    is EmoteType.ChannelTwitchEmote, is EmoteType.ChannelTwitchBitEmote -> EmoteMenuTab.SUBS
                     is EmoteType.ChannelFFZEmote, is EmoteType.ChannelBTTVEmote -> EmoteMenuTab.CHANNEL
                     else -> EmoteMenuTab.GLOBAL
                 }
@@ -201,6 +203,13 @@ class DankChatViewModel @Inject constructor(
                 }.joinAll()
 
                 _dataLoadingEvent.postValue(DataLoadingState.Finished)
+
+                chatRepository.userState.take(1).collect { userState ->
+                    dataRepository.filterAndSetBitEmotes(userState.emoteSets)
+                    channelList.map {
+                        dataRepository.setEmotesForSuggestions(it)
+                    }
+                }
             }
         }
     }

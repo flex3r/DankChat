@@ -1,7 +1,5 @@
 package com.flxrs.dankchat.utils.extensions
 
-import android.util.Log
-
 private val emojiCodePoints = listOf(
     IntRange(0x00A9, 0x00AE),
     IntRange(0x200D, 0x3299),
@@ -10,9 +8,7 @@ private val emojiCodePoints = listOf(
 )
 
 private val Int.isEmoji: Boolean
-    get() = emojiCodePoints.any { it.contains(this) }.also {
-        Log.d("EmoteManager", "$this $it")
-    }
+    get() = emojiCodePoints.any { this in it }
 
 private val Int.isWhitespace: Boolean
     get() = Character.isWhitespace(this) || this == 0x3164

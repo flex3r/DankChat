@@ -19,9 +19,8 @@ import java.util.regex.Pattern
 
 fun List<GenericEmote>?.toEmoteItems(): List<EmoteItem> {
     return this?.groupBy { it.emoteType.title }
-        ?.mapValues {
-            val title = it.value.first().emoteType.title
-            listOf(EmoteItem.Header(title)) + it.value.map(EmoteItem::Emote)
+        ?.mapValues { (title, emotes) ->
+            listOf(EmoteItem.Header(title)) + emotes.map(EmoteItem::Emote).sorted()
         }?.flatMap { it.value } ?: listOf()
 }
 

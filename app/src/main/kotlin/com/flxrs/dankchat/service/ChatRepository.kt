@@ -27,6 +27,8 @@ import kotlin.system.measureTimeMillis
 
 class ChatRepository(private val apiManager: ApiManager, private val emoteManager: EmoteManager) {
 
+    data class UserState(val userId: String = "", val color: String? = null, val displayName: String = "", val emoteSets: List<String> = listOf())
+
     private val _notificationsFlow = MutableSharedFlow<List<ChatItem>>(0, extraBufferCapacity = 10)
     private val _channelMentionCount = MutableSharedFlow<MutableMap<String, Int>>(1, onBufferOverflow = BufferOverflow.DROP_OLDEST).apply { tryEmit(mutableMapOf()) }
     private val messages = mutableMapOf<String, MutableStateFlow<List<ChatItem>>>()
@@ -35,6 +37,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     private val connectionState = mutableMapOf<String, MutableStateFlow<SystemMessageType>>()
     private val roomStates = mutableMapOf<String, MutableStateFlow<Roomstate>>()
     private val users = mutableMapOf<String, MutableStateFlow<LruCache<String, Boolean>>>()
+    private val _userState = MutableStateFlow(UserState())
     private val ignoredList = mutableListOf<Int>()
 
     private val moshi = Moshi.Builder().build()
@@ -56,6 +59,9 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         get() = _mentions
     val whispers: StateFlow<List<ChatItem>>
         get() = _whispers
+
+    val userState: StateFlow<UserState>
+        get() = _userState.asStateFlow()
 
     var startedConnection = false
     var lastMessage = mutableMapOf<String, String>()
@@ -220,6 +226,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
             "CLEARCHAT" -> handleClearchat(msg)
             "ROOMSTATE" -> handleRoomstate(msg)
             "CLEARMSG" -> handleClearmsg(msg)
+            "USERSTATE" -> handleUserstate(msg)
             else -> handleMessage(msg)
         }
         return null
@@ -275,6 +282,17 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         state.updateState(msg)
 
         roomStates[channel]?.value = state
+    }
+
+    private fun handleUserstate(msg: IrcMessage) {
+        val id = msg.tags["user-id"] ?: ""
+        val emotesets = msg.tags["emote-sets"]?.split(",") ?: listOf()
+        val color = msg.tags["color"] ?: ""
+        val name = msg.tags["display-name"] ?: ""
+
+        Log.d(TAG, emotesets.toString())
+
+        _userState.value = UserState(id, color, name, emotesets)
     }
 
     private fun handleClearmsg(msg: IrcMessage) {

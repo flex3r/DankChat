@@ -9,7 +9,7 @@ sealed class EmoteDtos {
         @Keep
         data class Emote(
             @field:Json(name = "code") val name: String,
-            @field:Json(name = "id") val id: Int
+            @field:Json(name = "id") val id: String
         )
 
         @Keep
@@ -20,8 +20,8 @@ sealed class EmoteDtos {
             @field:Json(name = "set_id") val id: String,
             @field:Json(name = "channel_name") val channelName: String,
             @field:Json(name = "channel_id") val channelId: String,
-            @field:Json(name = "tier") val tier: Int
-
+            @field:Json(name = "tier") val tier: Int,
+            @field:Json(name = "emotes") val emotes: List<Emote>?
         )
     }
 
