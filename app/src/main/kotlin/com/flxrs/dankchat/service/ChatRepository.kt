@@ -290,8 +290,6 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         val color = msg.tags["color"] ?: ""
         val name = msg.tags["display-name"] ?: ""
 
-        Log.d(TAG, emotesets.toString())
-
         _userState.value = UserState(id, color, name, emotesets)
     }
 
