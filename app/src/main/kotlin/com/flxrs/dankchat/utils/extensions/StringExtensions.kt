@@ -124,7 +124,7 @@ fun String.trimEndSpecialChar(): String = trimEnd().run {
     when {
         length > 1 && Character.isLowSurrogate(this[lastIndex]) -> {
             when (Character.toCodePoint(this[lastIndex - 1], this[lastIndex])) {
-                0x000E0000 -> this.substring(0..lastIndex - 2)
+                0x000E0000 -> removeRange(range = lastIndex - 1..lastIndex)
                 else -> this
             }
         }
