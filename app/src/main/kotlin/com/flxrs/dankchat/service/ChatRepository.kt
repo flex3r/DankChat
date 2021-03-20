@@ -223,9 +223,9 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
     private fun onMessage(msg: IrcMessage): List<ChatItem>? {
         when (msg.command) {
-            "CLEARCHAT" -> handleClearchat(msg)
-            "ROOMSTATE" -> handleRoomstate(msg)
-            "CLEARMSG" -> handleClearmsg(msg)
+            "CLEARCHAT" -> handleClearChat(msg)
+            "ROOMSTATE" -> handleRoomState(msg)
+            "CLEARMSG" -> handleClearMsg(msg)
             "USERSTATE",
             "GLOBALUSERSTATE" -> handleUserState(msg)
             else -> handleMessage(msg)
@@ -267,7 +267,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         connectionState[channel]?.value = connection
     }
 
-    private fun handleClearchat(msg: IrcMessage) {
+    private fun handleClearChat(msg: IrcMessage) {
         val parsed = TwitchMessage.parse(msg, emoteManager).map { ChatItem(it) }
         val target = if (msg.params.size > 1) msg.params[1] else ""
         val channel = msg.params[0].substring(1)
@@ -277,7 +277,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         }
     }
 
-    private fun handleRoomstate(msg: IrcMessage) {
+    private fun handleRoomState(msg: IrcMessage) {
         val channel = msg.params[0].substring(1)
         val state = roomStates[channel]?.value ?: Roomstate(channel)
         state.updateState(msg)
@@ -301,7 +301,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         )
     }
 
-    private fun handleClearmsg(msg: IrcMessage) {
+    private fun handleClearMsg(msg: IrcMessage) {
         val channel = msg.params[0].substring(1)
         val targetId = msg.tags["target-msg-id"] ?: return
 
@@ -391,7 +391,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
     companion object {
         private val TAG = ChatRepository::class.java.simpleName
-        private val INVISIBLE_CHAR = String(ByteBuffer.allocate(4).putInt(0x000E0000).array(), Charsets.UTF_32)
+        private val INVISIBLE_CHAR = ByteBuffer.allocate(4).putInt(0x000E0000).array().toString(Charsets.UTF_32)
         private const val USER_CACHE_SIZE = 500
         const val MENTIONS_KEY = "mentions"
     }
