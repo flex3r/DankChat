@@ -118,3 +118,16 @@ val String.removeOAuthSuffix: String
         startsWith("oauth:", true) -> substringAfter(':')
         else -> this
     }
+
+
+fun String.trimEndSpecialChar(): String = trimEnd().run {
+    when {
+        length > 1 && Character.isLowSurrogate(this[lastIndex]) -> {
+            when (Character.toCodePoint(this[lastIndex - 1], this[lastIndex])) {
+                0x000E0000 -> this.substring(0..lastIndex - 2)
+                else -> this
+            }
+        }
+        else -> this
+    }.trimEnd()
+}

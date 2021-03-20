@@ -460,8 +460,8 @@ class MainFragment : Fragment() {
     }
 
     private fun getLastMessage(): Boolean {
-        viewModel.activeChannel.value?.let {
-            val lastMessage = viewModel.lastMessage[it] ?: return false
+        viewModel.activeChannel.value?.let { channel ->
+            val lastMessage = viewModel.lastMessage[channel]?.trimEndSpecialChar() ?: return false
             binding.input.setText(lastMessage)
             binding.input.setSelection(lastMessage.length)
         }
