@@ -195,6 +195,10 @@ class DankChatViewModel @Inject constructor(
                 loadInitialData(oAuth.removeOAuthSuffix, id, channelList, loadTwitchData, loadSupibot).joinAll()
 
                 // depends on previously loaded data
+                chatRepository.userState.take(1).collect { userState ->
+                    dataRepository.filterAndSetBitEmotes(userState.emoteSets)
+                }
+
                 dataRepository.setEmotesForSuggestions("w") // global emote suggestions for whisper tab
                 channelList.map {
                     dataRepository.setEmotesForSuggestions(it)
@@ -203,13 +207,6 @@ class DankChatViewModel @Inject constructor(
                 }.joinAll()
 
                 _dataLoadingEvent.postValue(DataLoadingState.Finished)
-
-                chatRepository.userState.take(1).collect { userState ->
-                    dataRepository.filterAndSetBitEmotes(userState.emoteSets)
-                    channelList.map {
-                        dataRepository.setEmotesForSuggestions(it)
-                    }
-                }
             }
         }
     }
@@ -321,14 +318,20 @@ class DankChatViewModel @Inject constructor(
         )
 
         supervisorScope {
+            chatRepository.joinChannel("jtv")
             val fixedOAuth = oAuth.removeOAuthSuffix
             listOf(
                 launch(coroutineExceptionHandler) { dataRepository.loadChannelData(channel, fixedOAuth, forceReload = true) },
                 launch(coroutineExceptionHandler) { dataRepository.loadTwitchEmotes(fixedOAuth, id) },
                 launch(coroutineExceptionHandler) { dataRepository.loadDankChatBadges() },
             ).joinAll()
-            dataRepository.setEmotesForSuggestions(channel)
 
+            chatRepository.userState.take(1).collect { userState ->
+                dataRepository.filterAndSetBitEmotes(userState.emoteSets)
+                dataRepository.setEmotesForSuggestions(channel)
+            }
+
+            chatRepository.partChannel("jtv")
             _dataLoadingEvent.postValue(DataLoadingState.Reloaded)
         }
     }

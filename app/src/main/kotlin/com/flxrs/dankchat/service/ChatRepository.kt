@@ -226,7 +226,8 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
             "CLEARCHAT" -> handleClearchat(msg)
             "ROOMSTATE" -> handleRoomstate(msg)
             "CLEARMSG" -> handleClearmsg(msg)
-            "USERSTATE" -> handleUserstate(msg)
+            "USERSTATE",
+            "GLOBALUSERSTATE" -> handleUserState(msg)
             else -> handleMessage(msg)
         }
         return null
@@ -284,13 +285,20 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         roomStates[channel]?.value = state
     }
 
-    private fun handleUserstate(msg: IrcMessage) {
-        val id = msg.tags["user-id"] ?: ""
-        val emotesets = msg.tags["emote-sets"]?.split(",") ?: listOf()
-        val color = msg.tags["color"] ?: ""
-        val name = msg.tags["display-name"] ?: ""
+    private fun handleUserState(msg: IrcMessage) {
+        val id = msg.tags["user-id"]
+        val sets = msg.tags["emote-sets"]?.split(",")
+        val color = msg.tags["color"]
+        val name = msg.tags["display-name"]
 
-        _userState.value = UserState(id, color, name, emotesets)
+        val current = userState.value
+        _userState.value = current.copy(
+            userId = id ?: current.userId,
+            color = color ?: current.color,
+            displayName = name ?: current.displayName,
+            emoteSets = sets ?: current.emoteSets
+
+        )
     }
 
     private fun handleClearmsg(msg: IrcMessage) {
