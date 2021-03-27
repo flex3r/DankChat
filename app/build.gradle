@@ -86,7 +86,6 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
     implementation "androidx.viewpager2:viewpager2:$viewpager2_version"
     implementation "com.google.android.material:material:$material_version"
-    implementation "androidx.security:security-crypto:$security_version"
 
 // Dependency injection
     implementation "com.google.dagger:hilt-android:$hilt_version"
