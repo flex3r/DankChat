@@ -24,7 +24,7 @@ fun List<ChatItem>.replaceWithTimeOut(id: String): List<ChatItem> = apply {
 
 fun List<ChatItem>.addAndLimit(item: ChatItem, scrollBackLength: Int): MutableList<ChatItem> = toMutableList().apply {
     add(item)
-    if (size > scrollBackLength) removeAt(0)
+    while (size > scrollBackLength) removeAt(0)
 }
 
 fun List<ChatItem>.addAndLimit(
