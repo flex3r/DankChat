@@ -1,10 +1,8 @@
 package com.flxrs.dankchat
 
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModel
 import com.flxrs.dankchat.service.ChatRepository
-import com.flxrs.dankchat.utils.extensions.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
 import javax.inject.Inject
 
 @HiltViewModel

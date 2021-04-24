@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.viewpager2.widget.ViewPager2
-import com.flxrs.dankchat.main.MainViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.MentionFragmentBinding
+import com.flxrs.dankchat.main.MainViewModel
 import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint

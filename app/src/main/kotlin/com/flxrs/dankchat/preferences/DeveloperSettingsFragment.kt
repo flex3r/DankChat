@@ -7,9 +7,9 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
-import com.flxrs.dankchat.main.MainActivity
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
+import com.flxrs.dankchat.main.MainActivity
 
 class DeveloperSettingsFragment : PreferenceFragmentCompat() {
 

@@ -17,8 +17,8 @@ import androidx.core.content.edit
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.preference.PreferenceManager
-import com.flxrs.dankchat.main.MainActivity
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.main.MainActivity
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*

@@ -7,7 +7,7 @@ sealed class EmoteType : Comparable<EmoteType> {
         override val title = channel
     }
 
-    data class ChannelTwitchBitEmote(val channel: String): EmoteType() {
+    data class ChannelTwitchBitEmote(val channel: String) : EmoteType() {
         override val title = channel
     }
 

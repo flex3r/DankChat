@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
-import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.chat.ChatFragment
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
+import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.utils.extensions.collectFlow
 import dagger.hilt.android.AndroidEntryPoint
 

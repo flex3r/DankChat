@@ -30,14 +30,12 @@ import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.core.view.*
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
-import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.chat.menu.EmoteMenuAdapter

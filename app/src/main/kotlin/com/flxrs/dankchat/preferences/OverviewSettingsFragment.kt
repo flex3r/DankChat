@@ -12,9 +12,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.flxrs.dankchat.BuildConfig
-import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
+import com.flxrs.dankchat.main.MainFragment
 
 class OverviewSettingsFragment : PreferenceFragmentCompat() {
 

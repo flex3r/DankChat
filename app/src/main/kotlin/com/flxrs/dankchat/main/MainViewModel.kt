@@ -1,7 +1,8 @@
 package com.flxrs.dankchat.main
 
 import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.chat.menu.EmoteItem
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.chat.suggestion.Suggestion
@@ -12,7 +13,6 @@ import com.flxrs.dankchat.service.state.DataLoadingState
 import com.flxrs.dankchat.service.state.ImageUploadState
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.EmoteType
-import com.flxrs.dankchat.utils.SingleLiveEvent
 import com.flxrs.dankchat.utils.extensions.moveToFront
 import com.flxrs.dankchat.utils.extensions.removeOAuthSuffix
 import com.flxrs.dankchat.utils.extensions.timer
@@ -69,6 +69,8 @@ class MainViewModel @Inject constructor(
     private val roomStateEnabled = MutableStateFlow(true)
     private val streamData = MutableStateFlow<List<StreamData>>(emptyList())
     private val currentSuggestionChannel = MutableStateFlow("")
+    private val whisperTabSelected = MutableStateFlow(false)
+    private val mentionSheetOpen = MutableStateFlow(false)
 
     private val emotes = currentSuggestionChannel.flatMapLatest { dataRepository.getEmotes(it) }
     private val roomState = currentSuggestionChannel.flatMapLatest { chatRepository.getRoomState(it) }
@@ -97,8 +99,6 @@ class MainViewModel @Inject constructor(
 
     val inputEnabled = MutableStateFlow(true)
     val appbarEnabled = MutableStateFlow(true)
-    private val whisperTabSelected = MutableStateFlow(false)
-    private val mentionSheetOpen = MutableStateFlow(false)
 
     val shouldShowViewPager: StateFlow<Boolean> = channels
         .mapLatest { it.isNotEmpty() }
@@ -158,7 +158,7 @@ class MainViewModel @Inject constructor(
     val emoteItems: Flow<List<List<EmoteItem>>> = emotes.map { emotes ->
         val groupedByType = emotes.groupBy {
             when (it.emoteType) {
-                is EmoteType.ChannelTwitchEmote -> EmoteMenuTab.SUBS
+                is EmoteType.ChannelTwitchEmote, is EmoteType.ChannelTwitchBitEmote -> EmoteMenuTab.SUBS
                 is EmoteType.ChannelFFZEmote, is EmoteType.ChannelBTTVEmote -> EmoteMenuTab.CHANNEL
                 else -> EmoteMenuTab.GLOBAL
             }
@@ -265,9 +265,8 @@ class MainViewModel @Inject constructor(
     }
 
     fun clear(channel: String) = chatRepository.clear(channel)
-
+    fun clearIgnores() = chatRepository.clearIgnores()
     fun clearMentionCount(channel: String) = chatRepository.clearMentionCount(channel)
-
     fun reconnect() = chatRepository.reconnect(false)
     fun joinChannel(channel: String): List<String> = chatRepository.joinChannel(channel)
     fun partChannel(): List<String> = chatRepository.partActiveChannel()
@@ -353,8 +352,6 @@ class MainViewModel @Inject constructor(
             streamData.value = data.awaitAll().filterNotNull()
         }
     }
-
-    fun clearIgnores() = chatRepository.clearIgnores()
 
     private fun CoroutineScope.loadInitialData(oAuth: String, id: String, channelList: List<String>, loadTwitchData: Boolean, loadSupibot: Boolean): List<Job> {
         return listOf(
