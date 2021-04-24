@@ -17,7 +17,7 @@ import androidx.core.content.edit
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.preference.PreferenceManager
-import com.flxrs.dankchat.MainActivity
+import com.flxrs.dankchat.main.MainActivity
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import dagger.hilt.android.AndroidEntryPoint
@@ -109,7 +109,8 @@ class NotificationService : Service(), CoroutineScope {
         return START_NOT_STICKY
     }
 
-    fun clearNotificationsOfChannel(channel: String) {
+    fun setActiveChannel(channel: String) {
+        activeTTSChannel = channel
         val ids = notifications.remove(channel)
         ids?.forEach { manager.cancel(it) }
 

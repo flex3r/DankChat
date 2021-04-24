@@ -5,7 +5,7 @@ apply plugin: 'dagger.hilt.android.plugin'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    buildToolsVersion "30.0.2"
     defaultConfig {
         applicationId "com.flxrs.dankchat"
         minSdkVersion 21
@@ -46,10 +46,11 @@ android {
     compileOptions {
         coreLibraryDesugaringEnabled true
 
-        sourceCompatibility = '1.8'
-        targetCompatibility = '1.8'
+        sourceCompatibility = "1.8"
+        targetCompatibility = "1.8"
     }
     kotlinOptions {
+        useIR = true
         jvmTarget = "1.8"
         freeCompilerArgs += [
                 "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
@@ -67,7 +68,6 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
 // AndroidX
-    implementation "androidx.appcompat:appcompat:$appcompat_version"
     implementation "androidx.browser:browser:$browser_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraint_version"
     implementation "androidx.core:core-ktx:$core_version"

@@ -13,7 +13,7 @@ class DankChatPreferenceStore(context: Context) {
 
     var oAuthKey: String?
         get() = dankChatPreferences.getString(OAUTH_KEY, null)
-        set(value) = dankChatPreferences.edit { putString(OAUTH_KEY, value) } //secureDankChatPreferences.edit { putString(OAUTH_KEY, value) }
+        set(value) = dankChatPreferences.edit { putString(OAUTH_KEY, value) }
 
     var channelsString: String?
         get() = dankChatPreferences.getString(CHANNELS_AS_STRING_KEY, null)
@@ -53,6 +53,8 @@ class DankChatPreferenceStore(context: Context) {
         putString(NAME_KEY, "")
         putString(ID_STRING_KEY, "")
     }
+
+    fun getChannels(): List<String> = channelsString?.split(',') ?: channels.also { channels = null }?.toList().orEmpty()
 
     companion object {
         private const val LOGGED_IN_KEY = "loggedIn"

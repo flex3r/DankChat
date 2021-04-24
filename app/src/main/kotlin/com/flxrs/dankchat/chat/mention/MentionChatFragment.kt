@@ -5,15 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.fragment.app.activityViewModels
-import com.flxrs.dankchat.MainFragment
+import androidx.fragment.app.viewModels
+import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.chat.ChatFragment
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
+import com.flxrs.dankchat.utils.extensions.collectFlow
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MentionChatFragment : ChatFragment() {
-    private val viewModel: MentionViewModel by activityViewModels()
+    private val mentionViewModel: MentionViewModel by viewModels(
+        ownerProducer = { requireParentFragment() }
+    )
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val isWhisperTab = requireArguments().getBoolean(WHISPER_ARG, false)
@@ -28,8 +31,8 @@ class MentionChatFragment : ChatFragment() {
         }
 
         when {
-            isWhisperTab -> viewModel.whispers.observe(viewLifecycleOwner) { adapter.submitList(it) }
-            else -> viewModel.mentions.observe(viewLifecycleOwner) { adapter.submitList(it) }
+            isWhisperTab -> collectFlow(mentionViewModel.whispers) { adapter.submitList(it) }
+            else -> collectFlow(mentionViewModel.mentions) { adapter.submitList(it) }
         }
 
         return binding.root

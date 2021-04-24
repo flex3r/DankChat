@@ -29,6 +29,10 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
     data class UserState(val userId: String = "", val color: String? = null, val displayName: String = "", val emoteSets: List<String> = listOf())
 
+    private val _activeChannel = MutableStateFlow<String>("")
+    private val _channels = MutableStateFlow<List<String>>(emptyList())
+
+
     private val _notificationsFlow = MutableSharedFlow<List<ChatItem>>(0, extraBufferCapacity = 10)
     private val _channelMentionCount = MutableSharedFlow<MutableMap<String, Int>>(1, onBufferOverflow = BufferOverflow.DROP_OLDEST).apply { tryEmit(mutableMapOf()) }
     private val messages = mutableMapOf<String, MutableStateFlow<List<ChatItem>>>()
@@ -52,19 +56,25 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     private var customMentionEntries = listOf<Mention>()
     private var blacklistEntries = listOf<Mention>()
     private var name: String = ""
+    private var lastMessage = mutableMapOf<String, String>()
 
     val notificationsFlow: SharedFlow<List<ChatItem>> = _notificationsFlow.asSharedFlow()
     val channelMentionCount: SharedFlow<Map<String, Int>> = _channelMentionCount.asSharedFlow()
+    val hasMentions = channelMentionCount.map { it.any { channel -> channel.key != "w" && channel.value > 0 } }
+    val hasWhispers = channelMentionCount.map { it.getOrDefault("w", 0) > 0 }
     val mentions: StateFlow<List<ChatItem>>
         get() = _mentions
     val whispers: StateFlow<List<ChatItem>>
         get() = _whispers
+    val activeChannel: StateFlow<String>
+        get() = _activeChannel.asStateFlow()
+    val channels: StateFlow<List<String>>
+        get() = _channels.asStateFlow()
 
     val userState: StateFlow<UserState>
         get() = _userState.asStateFlow()
 
     var startedConnection = false
-    var lastMessage = mutableMapOf<String, String>()
     var scrollbackLength = 500
         set(value) {
             messages.forEach { (_, messagesFlow) ->
@@ -118,12 +128,8 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         }.let { Log.i(TAG, "Loading chatters for #$channel took $it ms") }
     }
 
-    fun removeChannelData(channel: String) {
-        messages[channel]?.value = emptyList()
-        messages.remove(channel)
-        lastMessage.remove(channel)
-        _channelMentionCount.firstValue.remove(channel)
-        apiManager.clearChannelFromLoaded(channel)
+    fun setActiveChannel(channel: String) {
+        _activeChannel.value = channel
     }
 
     fun clearMentionCount(channel: String) = with(_channelMentionCount) {
@@ -138,9 +144,15 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         messages[channel]?.value = emptyList()
     }
 
-    fun close(onClosed: () -> Unit = { }): Boolean {
+    fun closeAndReconnect(name: String, oAuth: String) {
+        val channels = channels.value
         startedConnection = false
-        return writeConnection.close(onClosed) && readConnection.close(onClosed)
+        val onClosed = { connectAndJoin(name, oAuth, channels) }
+
+        val didClose = writeConnection.close(onClosed) && readConnection.close(onClosed)
+        if (!didClose) {
+            connectAndJoin(name, oAuth, channels, forceConnect = true)
+        }
     }
 
     fun reconnect(onlyIfNecessary: Boolean) {
@@ -148,7 +160,10 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         writeConnection.reconnect(onlyIfNecessary)
     }
 
-    fun sendMessage(channel: String, input: String) {
+    fun getLastMessage(): String? = lastMessage[activeChannel.value]?.trimEndSpecialChar()
+
+    fun sendMessage(input: String) {
+        val channel = activeChannel.value
         prepareMessage(channel, input, writeConnection::sendMessage)
 
         val split = input.split(" ")
@@ -161,7 +176,50 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         }
     }
 
-    fun connect(nick: String, oauth: String, forceConnect: Boolean = false) {
+    fun connectAndJoin(name: String, oAuth: String, channels: List<String>, forceConnect: Boolean = false) {
+        if (startedConnection) return
+
+        when {
+            channels.isNullOrEmpty() -> connect(name, oAuth, forceConnect)
+            else -> channels.forEachIndexed { i, channel ->
+                if (i == 0) {
+                    connect(name, oAuth, forceConnect)
+                }
+
+                joinChannel(channel)
+            }
+        }
+    }
+
+    fun joinChannel(channel: String): List<String> {
+        val channels = channels.value
+        if (channel in channels)
+            return channels
+
+        val updatedChannels = channels + channel
+        _channels.value = updatedChannels
+
+        createFlowsIfNecessary(channel)
+        readConnection.joinChannel(channel)
+        writeConnection.joinChannel(channel)
+
+        return updatedChannels
+    }
+
+    fun partChannel(channel: String): List<String> {
+        val updatedChannels = channels.value - channel
+        _channels.value = updatedChannels
+
+        removeChannelData(channel)
+        readConnection.partChannel(channel)
+        writeConnection.partChannel(channel)
+
+        return updatedChannels
+    }
+
+    fun partActiveChannel(): List<String> = partChannel(activeChannel.value)
+
+    private fun connect(nick: String, oauth: String, forceConnect: Boolean = false) {
         if (!startedConnection) {
             name = nick
             readConnection.connect(nick, oauth, forceConnect)
@@ -170,15 +228,12 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         }
     }
 
-    fun joinChannel(channel: String) {
-        createFlowsIfNecessary(channel)
-        readConnection.joinChannel(channel)
-        writeConnection.joinChannel(channel)
-    }
-
-    fun partChannel(channel: String) {
-        readConnection.partChannel(channel)
-        writeConnection.partChannel(channel)
+    private fun removeChannelData(channel: String) {
+        messages[channel]?.value = emptyList()
+        messages.remove(channel)
+        lastMessage.remove(channel)
+        _channelMentionCount.firstValue.remove(channel)
+        apiManager.clearChannelFromLoaded(channel)
     }
 
     private fun createFlowsIfNecessary(channel: String) {
@@ -297,7 +352,6 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
             color = color ?: current.color,
             displayName = name ?: current.displayName,
             emoteSets = sets ?: current.emoteSets
-
         )
     }
 

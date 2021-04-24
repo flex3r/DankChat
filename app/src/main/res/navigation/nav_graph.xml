@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.flxrs.dankchat.MainFragment"
+        android:name="com.flxrs.dankchat.main.MainFragment"
         android:label="MainFragment">
         <action
             android:id="@+id/action_mainFragment_to_loginFragment"

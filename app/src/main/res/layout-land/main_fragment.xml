@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="com.flxrs.dankchat.DankChatViewModel" />
+            type="com.flxrs.dankchat.main.MainViewModel" />
 
         <import type="android.view.View" />
     </data>
@@ -41,7 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:animateLayoutChanges="true"
-                tools:context=".MainActivity">
+                tools:context=".main.MainActivity">
 
                 <com.google.android.material.appbar.AppBarLayout
                     android:id="@+id/appbar_layout"
@@ -167,13 +167,13 @@
             app:endIconContentDescription="@string/send_hint"
             app:endIconDrawable="@{vm.canType ? @drawable/ic_send : null}"
             app:endIconMode="custom"
-            app:helperTextEnabled="@{vm.bottomTextEnabled}"
+            app:helperTextEnabled="@{vm.shouldShowBottomText}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/bottom_barrier"
             app:startIconContentDescription="@string/emote_menu_hint"
-            app:startIconDrawable="@{vm.canType &amp;&amp; !vm.mentionSheetOpen ? @drawable/ic_insert_emoticon : null}">
+            app:startIconDrawable="@{vm.shouldShowEmoteMenuIcon ? @drawable/ic_insert_emoticon : null}">
 
             <com.flxrs.dankchat.utils.CustomMultiAutoCompleteTextView
                 android:id="@+id/input"

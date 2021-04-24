@@ -1,22 +1,22 @@
 package com.flxrs.dankchat.chat.mention
 
-import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.service.ChatRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
 class MentionViewModel @Inject constructor(chatRepository: ChatRepository) : ViewModel() {
-    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, t ->
-        Log.e(TAG, Log.getStackTraceString(t))
-    }
-    val mentions: LiveData<List<ChatItem>> = chatRepository.mentions.asLiveData(coroutineExceptionHandler)
-    val whispers: LiveData<List<ChatItem>> = chatRepository.whispers.asLiveData(coroutineExceptionHandler)
+    val mentions: StateFlow<List<ChatItem>> = chatRepository.mentions
+    val whispers: StateFlow<List<ChatItem>> = chatRepository.whispers
+
+    val hasMentions: StateFlow<Boolean> = chatRepository.hasMentions.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+    val hasWhispers: StateFlow<Boolean> = chatRepository.hasWhispers.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
     companion object {
         private val TAG = MentionViewModel::class.java.simpleName

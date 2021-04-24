@@ -1,4 +1,4 @@
-package com.flxrs.dankchat
+package com.flxrs.dankchat.main
 
 import android.content.*
 import android.os.Bundle
@@ -13,7 +13,8 @@ import androidx.navigation.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
-import com.flxrs.dankchat.chat.mention.MentionViewModel
+import com.flxrs.dankchat.DankChatViewModel
+import com.flxrs.dankchat.R
 import com.flxrs.dankchat.preferences.*
 import com.flxrs.dankchat.service.NotificationService
 import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
@@ -23,16 +24,14 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialogResultHandler, MessageHistoryDisclaimerResultHandler, PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
-    private val channels = mutableListOf<String>()
     private val viewModel: DankChatViewModel by viewModels()
-    private val mentionViewModel: MentionViewModel by viewModels()
     private lateinit var twitchPreferences: DankChatPreferenceStore
     private lateinit var broadcastReceiver: BroadcastReceiver
-    private var notificationService: NotificationService? = null
     private val pendingChannelsToClear = mutableListOf<String>()
     private val navController: NavController by lazy { findNavController(R.id.main_content) }
 
     private val twitchServiceConnection = TwitchServiceConnection()
+    var notificationService: NotificationService? = null
     var isBound = false
     var channelToOpen = ""
 
@@ -49,14 +48,6 @@ class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialog
         if (twitchPreferences.isLoggedIn && twitchPreferences.oAuthKey.isNullOrBlank()) {
             twitchPreferences.clearLogin()
         }
-
-        twitchPreferences.channelsString?.let { channels.addAll(it.split(',')) }
-            ?: twitchPreferences.channels?.let {
-                channels.addAll(it)
-                twitchPreferences.channels = null
-            }
-
-        viewModel.activeChannel.observe(this) { notificationService?.activeTTSChannel = it }
     }
 
     override fun onDestroy() {
@@ -132,7 +123,7 @@ class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialog
     }
 
     fun clearNotificationsOfChannel(channel: String) = when {
-        isBound && notificationService != null -> notificationService?.clearNotificationsOfChannel(channel)
+        isBound && notificationService != null -> notificationService?.setActiveChannel(channel)
         else -> pendingChannelsToClear += channel
     }
 
@@ -152,22 +143,18 @@ class MainActivity : AppCompatActivity(R.layout.main_activity), AddChannelDialog
             isBound = true
 
             if (pendingChannelsToClear.isNotEmpty()) {
-                pendingChannelsToClear.forEach { notificationService?.clearNotificationsOfChannel(it) }
+                pendingChannelsToClear.forEach { notificationService?.setActiveChannel(it) }
                 pendingChannelsToClear.clear()
             }
 
-            if (viewModel.started) {
-                if (!isChangingConfigurations) {
-                    viewModel.reconnect(true)
-                }
+            val oauth = twitchPreferences.oAuthKey ?: ""
+            val name = twitchPreferences.userName ?: ""
+            val channels = twitchPreferences.getChannels()
+            viewModel.init(name, oauth, tryReconnect = !isChangingConfigurations, channels = channels)
 
-            } else {
-                viewModel.started = true
-                val oauth = twitchPreferences.oAuthKey ?: ""
-                val name = twitchPreferences.userName ?: ""
-                viewModel.connectAndJoinChannels(name, oauth)
-
-                val ttsEnabled = PreferenceManager.getDefaultSharedPreferences(this@MainActivity).getBoolean(getString(R.string.preference_tts_key), false)
+            if (!viewModel.started) {
+                val ttsEnabledKey = getString(R.string.preference_tts_key)
+                val ttsEnabled = PreferenceManager.getDefaultSharedPreferences(this@MainActivity).getBoolean(ttsEnabledKey, false)
                 notificationService?.setTTSEnabled(ttsEnabled)
             }
 

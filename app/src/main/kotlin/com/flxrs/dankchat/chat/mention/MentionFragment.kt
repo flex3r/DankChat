@@ -5,18 +5,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.viewpager2.widget.ViewPager2
-import com.flxrs.dankchat.DankChatViewModel
+import com.flxrs.dankchat.main.MainViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.MentionFragmentBinding
+import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MentionFragment : Fragment() {
 
-    private val dankChatViewModel: DankChatViewModel by activityViewModels()
+    private val mainViewModel: MainViewModel by viewModels(
+        ownerProducer = { requireParentFragment() }
+    )
+    private val mentionViewModel: MentionViewModel by viewModels()
     private var bindingRef: MentionFragmentBinding? = null
     private val binding get() = bindingRef!!
     private lateinit var tabAdapter: MentionTabAdapter
@@ -35,8 +39,8 @@ class MentionFragment : Fragment() {
             }.apply { attach() }
         }
 
-        dankChatViewModel.apply {
-            hasMentions.observe(viewLifecycleOwner) {
+        mentionViewModel.apply {
+            collectFlow(hasMentions) {
                 when {
                     it -> if (binding.mentionTabs.selectedTabPosition != 0) {
                         binding.mentionTabs.getTabAt(0)?.apply { orCreateBadge }
@@ -44,7 +48,7 @@ class MentionFragment : Fragment() {
                     else -> binding.mentionTabs.getTabAt(0)?.removeBadge()
                 }
             }
-            hasWhispers.observe(viewLifecycleOwner) {
+            collectFlow(hasWhispers) {
                 if (it && binding.mentionTabs.selectedTabPosition != 1) {
                     binding.mentionTabs.getTabAt(1)?.apply { orCreateBadge }
                 }
@@ -64,7 +68,7 @@ class MentionFragment : Fragment() {
         offscreenPageLimit = 2
         registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                dankChatViewModel.setWhisperTabSelected(position == 1)
+                mainViewModel.setWhisperTabSelected(position == 1)
                 bindingRef?.mentionTabs?.getTabAt(position)?.removeBadge()
             }
         })

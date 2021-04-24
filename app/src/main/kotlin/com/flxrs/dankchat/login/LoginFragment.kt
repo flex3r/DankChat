@@ -14,7 +14,7 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.flxrs.dankchat.MainFragment
+import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.LoginFragmentBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore

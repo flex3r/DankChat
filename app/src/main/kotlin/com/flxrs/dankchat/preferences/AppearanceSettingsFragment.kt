@@ -12,7 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SeekBarPreference
 import androidx.preference.SwitchPreferenceCompat
-import com.flxrs.dankchat.MainFragment
+import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 
