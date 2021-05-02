@@ -11,6 +11,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import androidx.navigation.fragment.findNavController
@@ -29,6 +30,10 @@ fun Fragment.navigateSafe(
         resId, args,
         navOptions, navigatorExtras
     )
+}
+
+fun Fragment.navigateSafe(direction: NavDirections) {
+    if (mayNavigate()) findNavController().navigate(direction)
 }
 
 fun Fragment.mayNavigate(): Boolean {

@@ -15,13 +15,12 @@
     <string name="error_dialog_title">例外訊息: %1$s</string>
     <string name="add_channel">新增頻道</string>
     <string name="name">名稱</string>
-    <string name="remove_channel">移除頻道</string>
+    <string name="manage_channels">移除頻道</string>
     <string name="open_channel">開啟頻道</string>
     <string name="no_channels_added">尚未新增頻道</string>
     <string name="confirm_logout_title">確認登出</string>
     <string name="confirm_logout_message">您確定要登出嗎?</string>
     <string name="confirm_logout_positive_button">登出</string>
-    <string name="confirm_logout_negative_button">取消</string>
     <string name="upload_media">上傳媒體</string>
     <string name="take_picture">拍照</string>
     <string name="record_video">錄製影片</string>

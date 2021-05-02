@@ -14,13 +14,12 @@
     <string name="error_dialog_title">Помилка: %1$s</string>
     <string name="add_channel">Додати канал</string>
     <string name="name">Ім\'я</string>
-    <string name="remove_channel">Видалити канал</string>
+    <string name="manage_channels">Видалити канал</string>
     <string name="open_channel">Відкрити канал</string>
     <string name="no_channels_added">Немає доданих каналів</string>
     <string name="confirm_logout_title">Підтвердити вихід</string>
     <string name="confirm_logout_message">Ви дійсно хочете вийти?</string>
     <string name="confirm_logout_positive_button">Вийти</string>
-    <string name="confirm_logout_negative_button">Відмінити</string>
     <string name="upload_media">Завантажити медіа</string>
     <string name="take_picture">Зробити фото</string>
     <string name="record_video">Записати відео</string>

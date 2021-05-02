@@ -6,7 +6,7 @@ sealed class DataLoadingState {
     object Finished : DataLoadingState()
     object Reloaded : DataLoadingState()
     data class Loading(val parameters: Parameters) : DataLoadingState()
-    data class Failed(val t: Throwable, val parameters: Parameters) : DataLoadingState()
+    data class Failed(val errorMessage: String, val parameters: Parameters) : DataLoadingState()
 
     data class Parameters(
         val oAuth: String = "",

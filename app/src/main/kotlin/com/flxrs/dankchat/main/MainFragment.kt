@@ -139,8 +139,8 @@ class MainFragment : Fragment() {
         }
 
         mainViewModel.apply {
-            collectFlow(imageUploadState, ::handleImageUploadState)
-            collectFlow(dataLoadingState, ::handleDataLoadingState)
+            collectFlow(imageUploadEventFlow, ::handleImageUploadState)
+            collectFlow(dataLoadingEventFlow, ::handleDataLoadingState)
             collectFlow(shouldShowUploadProgress) { activity?.invalidateOptionsMenu() }
             collectFlow(suggestions, ::setSuggestions)
             collectFlow(emoteItems, emoteMenuAdapter::submitList)
@@ -205,6 +205,9 @@ class MainFragment : Fragment() {
             getLiveData<Boolean>(THEME_CHANGED_KEY).observe(viewLifecycleOwner) {
                 remove<Boolean>(THEME_CHANGED_KEY)
                 binding.root.post { ActivityCompat.recreate(requireActivity()) }
+            }
+            getLiveData<Array<String>>(CHANNELS_REQUEST_KEY).observe(viewLifecycleOwner) {
+                updateChannels(it.toList())
             }
         }
 
@@ -324,7 +327,7 @@ class MainFragment : Fragment() {
                 else -> android.R.color.white
             }
             findItem(R.id.menu_login)?.isVisible = !isLoggedIn
-            findItem(R.id.menu_remove)?.isVisible = hasChannels
+            findItem(R.id.menu_manage)?.isVisible = hasChannels
             findItem(R.id.menu_open)?.isVisible = hasChannels
             findItem(R.id.menu_mentions)?.apply {
                 isVisible = hasChannels
@@ -350,7 +353,7 @@ class MainFragment : Fragment() {
             R.id.menu_add -> openAddChannelDialog()
             R.id.menu_mentions -> mentionBottomSheetBehavior?.expand()
             R.id.menu_open -> openChannel()
-            R.id.menu_remove -> removeChannel()
+            R.id.menu_manage -> openManageChannelsDialog()
             R.id.menu_reload_emotes -> reloadEmotes()
             R.id.menu_choose_media -> checkPermissionForGallery()
             R.id.menu_capture_image -> startCameraCapture()
@@ -412,6 +415,7 @@ class MainFragment : Fragment() {
             binding.chatViewpager.setCurrentItem(updatedChannels.size - 1, false)
 
             fetchStreamInformation()
+            mainViewModel.setActiveChannel(channel)
             activity?.invalidateOptionsMenu()
         }
     }
@@ -494,7 +498,7 @@ class MainFragment : Fragment() {
             is DataLoadingState.Loading, DataLoadingState.Finished, DataLoadingState.None -> return
             is DataLoadingState.Reloaded -> showSnackbar(getString(R.string.snackbar_data_reloaded))
             is DataLoadingState.Failed -> showSnackbar(
-                message = getString(R.string.snackbar_data_load_failed_cause, result.t.message),
+                message = getString(R.string.snackbar_data_load_failed_cause, ),
                 action = getString(R.string.snackbar_retry) to {
                     when {
                         result.parameters.isReloadEmotes -> reloadEmotes(result.parameters.channels.first())
@@ -741,13 +745,13 @@ class MainFragment : Fragment() {
             mainViewModel.clearIgnores()
             dialog.dismiss()
         }
-        .setNegativeButton(getString(R.string.confirm_logout_negative_button)) { dialog, _ -> dialog.dismiss() }
+        .setNegativeButton(getString(R.string.dialog_cancel)) { dialog, _ -> dialog.dismiss() }
         .create().show()
 
     private fun openAddChannelDialog() = AddChannelDialogFragment.create(
-        R.string.add_dialog_title,
-        R.string.dialog_cancel,
-        R.string.dialog_ok,
+        title = R.string.add_dialog_title,
+        negativeButtonText = R.string.dialog_cancel,
+        positiveButtonText = R.string.dialog_ok,
         textHint = getString(R.string.add_channel_hint)
     ).show(parentFragmentManager, DIALOG_TAG)
 
@@ -760,19 +764,32 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun removeChannel() {
-        val channels = mainViewModel.partChannel()
-        val index = binding.chatViewpager.currentItem
-        if (channels.isNotEmpty()) {
-            twitchPreferences.channelsString = channels.joinToString(",")
-            val newPos = (index - 1).coerceAtLeast(0)
-            binding.chatViewpager.setCurrentItem(newPos, false)
+    private fun openManageChannelsDialog() {
+        val direction = MainFragmentDirections.actionMainFragmentToChannelsDialogFragment(channels = mainViewModel.getChannels().toTypedArray())
+        navigateSafe(direction)
+    }
+
+    private fun updateChannels(updatedChannels: List<String>) {
+        val oldChannels = mainViewModel.getChannels()
+        val oldIndex = binding.chatViewpager.currentItem
+        val oldActiveChannel = oldChannels[oldIndex]
+
+        val index = updatedChannels.indexOf(oldActiveChannel).coerceAtLeast(0)
+        val activeChannel = updatedChannels.getOrNull(index) ?: ""
+
+        mainViewModel.updateChannels(updatedChannels)
+        mainViewModel.setActiveChannel(activeChannel)
+        tabAdapter.updateFragments(updatedChannels)
+
+        if (updatedChannels.isNotEmpty()) {
+            twitchPreferences.channelsString = updatedChannels.joinToString(",")
+            binding.chatViewpager.setCurrentItem(index, false)
         } else {
             twitchPreferences.channelsString = null
         }
 
-        binding.chatViewpager.offscreenPageLimit = calculatePageLimit(channels.size)
-        tabAdapter.removeFragment(index)
+        fetchStreamInformation()
+        binding.chatViewpager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
         activity?.invalidateOptionsMenu()
     }
 
@@ -939,10 +956,12 @@ class MainFragment : Fragment() {
     companion object {
         private val TAG = MainFragment::class.java.simpleName
         private const val DIALOG_TAG = "add_channel_dialog"
+        private const val CHANNELS_TAG = "manage_channels_sheet"
         private const val DISCLAIMER_TAG = "message_history_disclaimer_dialog"
 
         const val LOGOUT_REQUEST_KEY = "logout_key"
         const val LOGIN_REQUEST_KEY = "login_key"
         const val THEME_CHANGED_KEY = "theme_changed_key"
+        const val CHANNELS_REQUEST_KEY = "channels_key"
     }
 }

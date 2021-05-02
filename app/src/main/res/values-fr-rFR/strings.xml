@@ -15,13 +15,12 @@
     <string name="error_dialog_title">Exception capturée: %1$s</string>
     <string name="add_channel">Ajouter une chaine</string>
     <string name="name">Nom</string>
-    <string name="remove_channel">Supprimer la chaine</string>
+    <string name="manage_channels">Supprimer la chaine</string>
     <string name="open_channel">Ouvrir la chaine</string>
     <string name="no_channels_added">Aucune chaine ajoutée</string>
     <string name="confirm_logout_title">Confirmer la déconnexion</string>
     <string name="confirm_logout_message">Êtes vous sur de vouloir vous déconnecter ?</string>
     <string name="confirm_logout_positive_button">Se déconnecter</string>
-    <string name="confirm_logout_negative_button">Annuler</string>
     <string name="upload_media">Envoyer un média</string>
     <string name="take_picture">Prendre une photo</string>
     <string name="record_video">Prendre une vidéo</string>

@@ -14,13 +14,12 @@
     <string name="error_dialog_title">Wystąpił błąd: %1$s</string>
     <string name="add_channel">Dodaj kanał</string>
     <string name="name">Nazwa</string>
-    <string name="remove_channel">Usuń kanał</string>
+    <string name="manage_channels">Usuń kanał</string>
     <string name="open_channel">Otwórz czat</string>
     <string name="no_channels_added">Brak kanałów</string>
     <string name="confirm_logout_title">Potwierdź wylogowanie</string>
     <string name="confirm_logout_message">Czy na pewno chcesz się wylogować?</string>
     <string name="confirm_logout_positive_button">Wyloguj się</string>
-    <string name="confirm_logout_negative_button">Anuluj</string>
     <string name="upload_media">Prześlij pliki</string>
     <string name="take_picture">Zrób zdjęcie</string>
     <string name="record_video">Nagraj wideo</string>

@@ -14,13 +14,12 @@
     <string name="error_dialog_title">Hata yakalandı: %1$s</string>
     <string name="add_channel">Kanal ekle</string>
     <string name="name">Ad</string>
-    <string name="remove_channel">Kanalı kaldır</string>
+    <string name="manage_channels">Kanalı kaldır</string>
     <string name="open_channel">Kanalı aç</string>
     <string name="no_channels_added">Hiç kanal eklenmedi</string>
     <string name="confirm_logout_title">Çıkışı onayla</string>
     <string name="confirm_logout_message">Çıkış yapmak istediğinize emin misiniz?</string>
     <string name="confirm_logout_positive_button">Çıkış yap</string>
-    <string name="confirm_logout_negative_button">İptal</string>
     <string name="upload_media">Medya yükle</string>
     <string name="take_picture">Fotoğraf çek</string>
     <string name="record_video">Video çek</string>

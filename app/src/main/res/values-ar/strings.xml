@@ -14,13 +14,12 @@
     <string name="error_dialog_title">Caught exception: %1$s</string>
     <string name="add_channel">اضافة قناة</string>
     <string name="name">Name</string>
-    <string name="remove_channel">حذف القناة</string>
+    <string name="manage_channels">حذف القناة</string>
     <string name="open_channel">فتح القناة</string>
     <string name="no_channels_added">لا توجد قنوات مضافة</string>
     <string name="confirm_logout_title">تأكيد تسجيل الخروج</string>
     <string name="confirm_logout_message">"هل أنت متأكد أنك تريد تسجيل الخروج؟ "</string>
     <string name="confirm_logout_positive_button">تسجيل الخروج</string>
-    <string name="confirm_logout_negative_button">الغاء</string>
     <string name="upload_media">"تحميل الوسائط "</string>
     <string name="take_picture">التقاط صورة</string>
     <string name="record_video">"تسجيل فيديو "</string>

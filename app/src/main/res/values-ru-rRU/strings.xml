@@ -14,13 +14,12 @@
     <string name="error_dialog_title">Захваченное исключение: %1$s</string>
     <string name="add_channel">Добавить канал</string>
     <string name="name">Имя</string>
-    <string name="remove_channel">Удалить канал</string>
+    <string name="manage_channels">Удалить канал</string>
     <string name="open_channel">Открыть канал</string>
     <string name="no_channels_added">Нет добавленных каналов</string>
     <string name="confirm_logout_title">Подтверждение выхода</string>
     <string name="confirm_logout_message">Вы уверены, что хотите выйти?</string>
     <string name="confirm_logout_positive_button">Выйти</string>
-    <string name="confirm_logout_negative_button">Отмена</string>
     <string name="upload_media">Загрузить медиа</string>
     <string name="take_picture">Сделать снимок</string>
     <string name="record_video">Записать видео</string>

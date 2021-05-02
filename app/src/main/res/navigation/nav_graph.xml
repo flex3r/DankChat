@@ -22,6 +22,9 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_mainFragment_to_channelsDialogFragment"
+            app:destination="@id/channelsDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -60,6 +63,7 @@
             app:popEnterAnim="@anim/open_enter"
             app:popExitAnim="@anim/close_exit" />
     </fragment>
+
     <fragment
         android:id="@+id/appearanceSettingsFragment"
         android:name="com.flxrs.dankchat.preferences.AppearanceSettingsFragment"
@@ -76,4 +80,13 @@
         android:id="@+id/developerSettingsFragment"
         android:name="com.flxrs.dankchat.preferences.DeveloperSettingsFragment"
         android:label="DeveloperSettingsFragment" />
+
+    <dialog
+        android:id="@+id/channelsDialogFragment"
+        android:name="com.flxrs.dankchat.channels.ChannelsDialogFragment"
+        android:label="ChannelsDialogFragment">
+        <argument
+            android:name="channels"
+            app:argType="string[]" />
+    </dialog>
 </navigation>

@@ -32,8 +32,8 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_remove"
-        android:title="@string/remove_channel"
+        android:id="@+id/menu_manage"
+        android:title="@string/manage_channels"
         app:showAsAction="never" />
 
     <item

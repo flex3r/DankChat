@@ -14,13 +14,12 @@
     <string name="error_dialog_title">Izuzetak uhvaćen: %1$s</string>
     <string name="add_channel">Dodaj kanal</string>
     <string name="name">Ime</string>
-    <string name="remove_channel">Ukloni kanal</string>
+    <string name="manage_channels">Ukloni kanal</string>
     <string name="open_channel">Otvori kanal</string>
     <string name="no_channels_added">Nijedan kanal nije dodat</string>
     <string name="confirm_logout_title">Potvrdi odjavu</string>
     <string name="confirm_logout_message">Da li ste sigurni da želite da se odjavite?</string>
     <string name="confirm_logout_positive_button">Odjavi se</string>
-    <string name="confirm_logout_negative_button">Otkaži</string>
     <string name="upload_media">Pošalji sliku/video</string>
     <string name="take_picture">Slikaj</string>
     <string name="record_video">Snimi video</string>

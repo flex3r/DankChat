@@ -14,13 +14,12 @@
     <string name="error_dialog_title">Caught exception: %1$s</string>
     <string name="add_channel">Add channel</string>
     <string name="name">Name</string>
-    <string name="remove_channel">Remove channel</string>
+    <string name="manage_channels">Manage channels</string>
     <string name="open_channel">Open channel</string>
     <string name="no_channels_added">No channels added</string>
     <string name="confirm_logout_title">Confirm logout</string>
     <string name="confirm_logout_message">Are you sure you want to logout?</string>
     <string name="confirm_logout_positive_button">Logout</string>
-    <string name="confirm_logout_negative_button">Cancel</string>
     <string name="upload_media">Upload media</string>
     <string name="take_picture">Take picture</string>
     <string name="record_video">Record video</string>
@@ -78,6 +77,9 @@
     <string name="whispers">Whispers</string>
     <string name="notification_whisper_mention">%1$s sent you a whisper</string>
     <string name="mentions">Mentions</string>
+    <string name="confirm_channel_removal_title">Confirm channel removal</string>
+    <string name="confirm_channel_removal_message">Are you sure you want to remove this channel?</string>
+    <string name="confirm_channel_removal_positive_button">Remove</string>
 
 
     <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>

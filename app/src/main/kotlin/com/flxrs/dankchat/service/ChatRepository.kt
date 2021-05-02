@@ -29,7 +29,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
     data class UserState(val userId: String = "", val color: String? = null, val displayName: String = "", val emoteSets: List<String> = listOf())
 
-    private val _activeChannel = MutableStateFlow<String>("")
+    private val _activeChannel = MutableStateFlow("")
     private val _channels = MutableStateFlow<List<String>>(emptyList())
 
 
@@ -200,6 +200,9 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         _channels.value = updatedChannels
 
         createFlowsIfNecessary(channel)
+        messages[channel]?.value = emptyList()
+
+
         readConnection.joinChannel(channel)
         writeConnection.joinChannel(channel)
 
@@ -217,7 +220,16 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         return updatedChannels
     }
 
-    fun partActiveChannel(): List<String> = partChannel(activeChannel.value)
+    fun updateChannels(updatedChannels: List<String>) {
+        val currentChannels = channels.value
+        val removedChannels = currentChannels - updatedChannels
+
+        removedChannels.forEach {
+            partChannel(it)
+        }
+
+        _channels.value = updatedChannels
+    }
 
     private fun connect(nick: String, oauth: String, forceConnect: Boolean = false) {
         if (!startedConnection) {
@@ -230,9 +242,8 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
     private fun removeChannelData(channel: String) {
         messages[channel]?.value = emptyList()
-        messages.remove(channel)
         lastMessage.remove(channel)
-        _channelMentionCount.firstValue.remove(channel)
+        _channelMentionCount.clear(channel)
         apiManager.clearChannelFromLoaded(channel)
     }
 
