@@ -407,7 +407,7 @@ class MainFragment : Fragment() {
             val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
 
             val updatedChannels = mainViewModel.joinChannel(lowerCaseChannel)
-            mainViewModel.loadData(oauth, id, name = name, channelList = listOf(channel), loadTwitchData = false, loadHistory = shouldLoadHistory, loadSupibot = false, scrollBackLength)
+            mainViewModel.loadData(oauth, id, name = name, channelList = listOf(lowerCaseChannel), loadTwitchData = false, loadHistory = shouldLoadHistory, loadSupibot = false, scrollBackLength)
             twitchPreferences.channelsString = updatedChannels.joinToString(",")
 
             tabAdapter.addFragment(lowerCaseChannel)
