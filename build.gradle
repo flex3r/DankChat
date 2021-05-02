@@ -31,7 +31,7 @@ buildscript {
         gif_drawable_version = '1.2.23'
         okhttp_version = '5.0.0-alpha.2'
         retrofit_version = '2.9.0'
-        hilt_version = '2.35'
+        hilt_version = '2.35.1'
 
         // Debug
         chucker_version = '3.3.0'

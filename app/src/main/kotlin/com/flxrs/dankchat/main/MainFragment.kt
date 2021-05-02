@@ -498,7 +498,7 @@ class MainFragment : Fragment() {
             is DataLoadingState.Loading, DataLoadingState.Finished, DataLoadingState.None -> return
             is DataLoadingState.Reloaded -> showSnackbar(getString(R.string.snackbar_data_reloaded))
             is DataLoadingState.Failed -> showSnackbar(
-                message = getString(R.string.snackbar_data_load_failed_cause, ),
+                message = getString(R.string.snackbar_data_load_failed_cause, result.errorMessage),
                 action = getString(R.string.snackbar_retry) to {
                     when {
                         result.parameters.isReloadEmotes -> reloadEmotes(result.parameters.channels.first())
