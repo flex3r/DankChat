@@ -15,7 +15,6 @@
     <string name="error_dialog_title">例外訊息: %1$s</string>
     <string name="add_channel">新增頻道</string>
     <string name="name">名稱</string>
-    <string name="manage_channels">移除頻道</string>
     <string name="open_channel">開啟頻道</string>
     <string name="no_channels_added">尚未新增頻道</string>
     <string name="confirm_logout_title">確認登出</string>

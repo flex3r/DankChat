@@ -14,7 +14,6 @@
     <string name="error_dialog_title">Caught exception: %1$s</string>
     <string name="add_channel">اضافة قناة</string>
     <string name="name">Name</string>
-    <string name="manage_channels">حذف القناة</string>
     <string name="open_channel">فتح القناة</string>
     <string name="no_channels_added">لا توجد قنوات مضافة</string>
     <string name="confirm_logout_title">تأكيد تسجيل الخروج</string>

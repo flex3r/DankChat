@@ -14,7 +14,6 @@
     <string name="error_dialog_title">Zachycená chyba: %1$s</string>
     <string name="add_channel">Přidat kanál</string>
     <string name="name">Jméno</string>
-    <string name="manage_channels">Odebrat kanál</string>
     <string name="open_channel">Otevřít kanál</string>
     <string name="no_channels_added">Žádné kanály nebyly přidány</string>
     <string name="confirm_logout_title">Potvrdit odhlášení se</string>

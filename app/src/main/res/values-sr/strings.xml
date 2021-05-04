@@ -14,7 +14,6 @@
     <string name="error_dialog_title">Izuzetak uhvaćen: %1$s</string>
     <string name="add_channel">Dodaj kanal</string>
     <string name="name">Ime</string>
-    <string name="manage_channels">Ukloni kanal</string>
     <string name="open_channel">Otvori kanal</string>
     <string name="no_channels_added">Nijedan kanal nije dodat</string>
     <string name="confirm_logout_title">Potvrdi odjavu</string>

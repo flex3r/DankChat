@@ -14,7 +14,6 @@
     <string name="error_dialog_title">Wystąpił błąd: %1$s</string>
     <string name="add_channel">Dodaj kanał</string>
     <string name="name">Nazwa</string>
-    <string name="manage_channels">Usuń kanał</string>
     <string name="open_channel">Otwórz czat</string>
     <string name="no_channels_added">Brak kanałów</string>
     <string name="confirm_logout_title">Potwierdź wylogowanie</string>

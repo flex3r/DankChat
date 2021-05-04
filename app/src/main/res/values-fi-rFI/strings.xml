@@ -14,7 +14,6 @@
     <string name="error_dialog_title">Siepattu poikkeus: %1$s</string>
     <string name="add_channel">Lisää kanava</string>
     <string name="name">Nimi</string>
-    <string name="manage_channels">Poista kanava</string>
     <string name="open_channel">Avaa kanava</string>
     <string name="no_channels_added">Ei kanavia lisättynä</string>
     <string name="confirm_logout_title">Vahvista uloskirjautuminen</string>

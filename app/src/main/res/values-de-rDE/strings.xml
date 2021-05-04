@@ -17,7 +17,7 @@
     <string name="error_dialog_title">Fehler aufgetreten: %1$s</string>
     <string name="add_channel">Kanal hinzufügen</string>
     <string name="name">Name</string>
-    <string name="manage_channels">Kanal entfernen</string>
+    <string name="manage_channels">Kanäle bearbeiten</string>
     <string name="open_channel">Kanal öffnen</string>
     <string name="no_channels_added">Keine Kanäle hinzugefügt</string>
     <string name="confirm_logout_title">Abmeldung bestätigen</string>

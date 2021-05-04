@@ -15,7 +15,6 @@
     <string name="error_dialog_title">Exception capturée: %1$s</string>
     <string name="add_channel">Ajouter une chaine</string>
     <string name="name">Nom</string>
-    <string name="manage_channels">Supprimer la chaine</string>
     <string name="open_channel">Ouvrir la chaine</string>
     <string name="no_channels_added">Aucune chaine ajoutée</string>
     <string name="confirm_logout_title">Confirmer la déconnexion</string>
