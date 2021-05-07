@@ -190,7 +190,7 @@ class MainViewModel @Inject constructor(
             _dataLoadingState.emit(loadingState)
 
             val result = runCatching {
-                loadInitialData(oAuth.removeOAuthSuffix, id, channelList, loadTwitchData, loadSupibot).joinAll()
+                loadInitialData(oAuth.removeOAuthSuffix, id, channelList, loadTwitchData, loadSupibot)
 
                 // depends on previously loaded data
                 chatRepository.userState.take(1).collect { userState ->
@@ -306,11 +306,13 @@ class MainViewModel @Inject constructor(
         val result = runCatching {
             chatRepository.joinChannel("jtv")
             val fixedOAuth = oAuth.removeOAuthSuffix
-            listOf(
-                launch { dataRepository.loadChannelData(channel, fixedOAuth, forceReload = true) },
-                launch { dataRepository.loadTwitchEmotes(fixedOAuth, id) },
-                launch { dataRepository.loadDankChatBadges() },
-            ).joinAll()
+            coroutineScope {
+                listOf(
+                    launch { dataRepository.loadChannelData(channel, fixedOAuth, forceReload = true) },
+                    launch { dataRepository.loadTwitchEmotes(fixedOAuth, id) },
+                    launch { dataRepository.loadDankChatBadges() },
+                ).joinAll()
+            }
 
             chatRepository.userState.take(1).collect { userState ->
                 dataRepository.filterAndSetBitEmotes(userState.emoteSets)
@@ -358,7 +360,7 @@ class MainViewModel @Inject constructor(
         fetchTimerJob = timer(STREAM_REFRESH_RATE) {
             val data = channels.value.map { channel ->
                 async {
-                    apiManager.getStream(fixedOAuth, channel)?.let {
+                    runCatching { apiManager.getStream(fixedOAuth, channel) }.getOrNull()?.let {
                         StreamData(channel = channel, data = stringBuilder(it.viewers))
                     }
                 }
@@ -367,8 +369,8 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun CoroutineScope.loadInitialData(oAuth: String, id: String, channelList: List<String>, loadTwitchData: Boolean, loadSupibot: Boolean): List<Job> {
-        return listOf(
+    private suspend fun loadInitialData(oAuth: String, id: String, channelList: List<String>, loadTwitchData: Boolean, loadSupibot: Boolean) = coroutineScope {
+        listOf(
             launch { dataRepository.loadDankChatBadges() },
             launch { dataRepository.loadGlobalBadges() },
             launch { if (loadTwitchData) dataRepository.loadTwitchEmotes(oAuth, id) },
@@ -376,7 +378,7 @@ class MainViewModel @Inject constructor(
             launch { chatRepository.loadIgnores(oAuth, id) }
         ) + channelList.map {
             launch { dataRepository.loadChannelData(it, oAuth) }
-        }
+        }.joinAll()
     }
 
     companion object {

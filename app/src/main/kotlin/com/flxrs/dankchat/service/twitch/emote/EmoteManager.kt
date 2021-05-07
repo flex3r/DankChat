@@ -79,7 +79,9 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
 
         val setMapping = twitchResult.sets.keys
             .map {
-                async { apiManager.getUserSet(it) ?: EmoteDtos.Twitch.EmoteSet(it, "", "", 1, null) }
+                async {
+                    runCatching { apiManager.getUserSet(it) }.getOrNull() ?: EmoteDtos.Twitch.EmoteSet(it, "", "", 1, null)
+                }
             }.awaitAll()
             .associateBy({ it.id }, { it.channelName })
 
@@ -102,7 +104,9 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
     suspend fun filterAndSetBitEmotes(emoteSets: List<String>) = withContext(Dispatchers.Default) {
         val filtered = emoteSets.filter { it !in krakenEmoteSets }
         val emoteSetsResult = filtered.map {
-            async { apiManager.getUserSet(it) ?: EmoteDtos.Twitch.EmoteSet(it, "", "", 1, null) }
+            async {
+                runCatching { apiManager.getUserSet(it) }.getOrNull() ?: EmoteDtos.Twitch.EmoteSet(it, "", "", 1, null)
+            }
         }.awaitAll()
 
         emoteSetsResult.forEach { emoteSet ->
