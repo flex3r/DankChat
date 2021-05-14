@@ -1,13 +1,16 @@
-package com.flxrs.dankchat.utils.dialog
+package com.flxrs.dankchat.main.dialog
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
+import androidx.navigation.fragment.findNavController
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.main.MainFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class MessageHistoryDisclaimerDialogFragment : DialogFragment() {
@@ -33,8 +36,15 @@ class MessageHistoryDisclaimerDialogFragment : DialogFragment() {
         }
     }
 
+    override fun onDismiss(dialog: DialogInterface) {
+        findNavController().popBackStack(R.id.mainFragment, false)
+    }
+
     private fun dismissAndHandleResult(result: Boolean): Boolean {
-        (activity as? MessageHistoryDisclaimerResultHandler)?.onDisclaimerResult(result)
+        findNavController()
+            .previousBackStackEntry
+            ?.savedStateHandle
+            ?.set(MainFragment.HISTORY_DISCLAIMER_KEY, result)
         dismiss()
         return true
     }

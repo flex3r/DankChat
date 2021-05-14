@@ -25,6 +25,12 @@
         <action
             android:id="@+id/action_mainFragment_to_channelsDialogFragment"
             app:destination="@id/channelsDialogFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_addChannelDialogFragment"
+            app:destination="@id/addChannelDialogFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_messageHistoryDisclaimerDialogFragment"
+            app:destination="@id/messageHistoryDisclaimerDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -89,4 +95,14 @@
             android:name="channels"
             app:argType="string[]" />
     </dialog>
+
+    <dialog
+        android:id="@+id/addChannelDialogFragment"
+        android:name="com.flxrs.dankchat.main.dialog.AddChannelDialogFragment"
+        android:label="AddChannelDialogFragment"/>
+
+    <dialog
+        android:id="@+id/messageHistoryDisclaimerDialogFragment"
+        android:name="com.flxrs.dankchat.main.dialog.MessageHistoryDisclaimerDialogFragment"
+        android:label="MessageHistoryDisclaimerDialogFragment"/>
 </navigation>

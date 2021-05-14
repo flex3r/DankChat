@@ -24,13 +24,11 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.*
 import com.flxrs.dankchat.service.NotificationService
-import com.flxrs.dankchat.utils.dialog.AddChannelDialogResultHandler
-import com.flxrs.dankchat.utils.dialog.MessageHistoryDisclaimerResultHandler
 import com.flxrs.dankchat.utils.extensions.navigateSafe
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, MessageHistoryDisclaimerResultHandler, PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
+class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
     private val viewModel: DankChatViewModel by viewModels()
     private lateinit var twitchPreferences: DankChatPreferenceStore
     private lateinit var broadcastReceiver: BroadcastReceiver
@@ -100,21 +98,6 @@ class MainActivity : AppCompatActivity(), AddChannelDialogResultHandler, Message
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
-    }
-
-    override fun onAddChannelDialogResult(channel: String) {
-        val fragment = supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.first()
-        if (fragment is MainFragment) {
-            fragment.addChannel(channel)
-        }
-        invalidateOptionsMenu()
-    }
-
-    override fun onDisclaimerResult(shouldLoadHistory: Boolean) {
-        val fragment = supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.first()
-        if (fragment is MainFragment) {
-            fragment.onMessageHistoryDisclaimerResult(shouldLoadHistory)
-        }
     }
 
     override fun onNewIntent(intent: Intent?) {

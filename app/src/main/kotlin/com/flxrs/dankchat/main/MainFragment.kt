@@ -47,8 +47,6 @@ import com.flxrs.dankchat.service.state.DataLoadingState
 import com.flxrs.dankchat.service.state.ImageUploadState
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.utils.*
-import com.flxrs.dankchat.utils.dialog.AddChannelDialogFragment
-import com.flxrs.dankchat.utils.dialog.MessageHistoryDisclaimerDialogFragment
 import com.flxrs.dankchat.utils.extensions.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.card.MaterialCardView
@@ -205,6 +203,12 @@ class MainFragment : Fragment() {
             getLiveData<Array<String>>(CHANNELS_REQUEST_KEY).observe(viewLifecycleOwner) {
                 updateChannels(it.toList())
             }
+            getLiveData<String>(ADD_CHANNEL_REQUEST_KEY).observe(viewLifecycleOwner) {
+                addChannel(it)
+            }
+            getLiveData<Boolean>(HISTORY_DISCLAIMER_KEY).observe(viewLifecycleOwner) {
+                onMessageHistoryDisclaimerResult(it)
+            }
         }
 
         initPreferences(view.context)
@@ -247,7 +251,7 @@ class MainFragment : Fragment() {
             if (savedInstanceState == null && !mainViewModel.started) {
                 mainViewModel.started = true // TODO ???
                 if (!twitchPreferences.hasMessageHistoryAcknowledged) {
-                    MessageHistoryDisclaimerDialogFragment().show(parentFragmentManager, DISCLAIMER_TAG)
+                    navigateSafe(R.id.action_mainFragment_to_messageHistoryDisclaimerDialogFragment)
                 } else {
                     val oAuth = twitchPreferences.oAuthKey ?: ""
                     val name = twitchPreferences.userName ?: ""
@@ -349,7 +353,7 @@ class MainFragment : Fragment() {
         when (item.itemId) {
             R.id.menu_reconnect -> mainViewModel.reconnect()
             R.id.menu_login -> navigateSafe(R.id.action_mainFragment_to_loginFragment).also { hideKeyboard() }
-            R.id.menu_add -> openAddChannelDialog()
+            R.id.menu_add -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment)
             R.id.menu_mentions -> mentionBottomSheetBehavior?.expand()
             R.id.menu_open -> openChannel()
             R.id.menu_manage -> openManageChannelsDialog()
@@ -363,60 +367,6 @@ class MainFragment : Fragment() {
             else -> return false
         }
         return true
-    }
-
-    fun onMessageHistoryDisclaimerResult(result: Boolean) {
-        twitchPreferences.hasMessageHistoryAcknowledged = true
-        preferences.edit { putBoolean(getString(R.string.preference_load_message_history_key), result) }
-        val shouldLoadSupibot = preferences.getBoolean(getString(R.string.preference_supibot_suggestions_key), false)
-        val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
-
-        if (mainViewModel.connectionState.value == SystemMessageType.NOT_LOGGED_IN) {
-            showApiChangeInformationIfNotAcknowledged()
-        }
-
-        val oAuth = twitchPreferences.oAuthKey ?: ""
-        val name = twitchPreferences.userName ?: ""
-        val id = twitchPreferences.userIdString ?: ""
-        val channels = twitchPreferences.getChannels()
-        mainViewModel.loadData(
-            oAuth = oAuth,
-            id = id,
-            name = name,
-            channelList = channels,
-            loadTwitchData = true,
-            loadHistory = result,
-            loadSupibot = shouldLoadSupibot,
-            scrollBackLength = scrollBackLength
-        )
-
-        if (name.isNotBlank() && oAuth.isNotBlank()) {
-            showSnackbar(getString(R.string.snackbar_login, name))
-        }
-    }
-
-    fun addChannel(channel: String) {
-        val lowerCaseChannel = channel.lowercase(Locale.getDefault())
-        val channels = mainViewModel.getChannels()
-        if (!channels.contains(lowerCaseChannel)) {
-            val oauth = twitchPreferences.oAuthKey ?: ""
-            val id = twitchPreferences.userIdString ?: ""
-            val name = twitchPreferences.userName ?: ""
-            val shouldLoadHistory = preferences.getBoolean(getString(R.string.preference_load_message_history_key), true)
-            val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
-
-            val updatedChannels = mainViewModel.joinChannel(lowerCaseChannel)
-            mainViewModel.loadData(oauth, id, name = name, channelList = listOf(lowerCaseChannel), loadTwitchData = false, loadHistory = shouldLoadHistory, loadSupibot = false, scrollBackLength)
-            twitchPreferences.channelsString = updatedChannels.joinToString(",")
-
-            tabAdapter.addFragment(lowerCaseChannel)
-            binding.chatViewpager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
-            binding.chatViewpager.setCurrentItem(updatedChannels.size - 1, false)
-
-            fetchStreamInformation()
-            mainViewModel.setActiveChannel(channel)
-            activity?.invalidateOptionsMenu()
-        }
     }
 
     fun mentionUser(user: String) {
@@ -447,6 +397,60 @@ class MainFragment : Fragment() {
         binding.input.setSelection(index + text.length)
     }
 
+    private fun onMessageHistoryDisclaimerResult(result: Boolean) {
+        twitchPreferences.hasMessageHistoryAcknowledged = true
+        preferences.edit { putBoolean(getString(R.string.preference_load_message_history_key), result) }
+        val shouldLoadSupibot = preferences.getBoolean(getString(R.string.preference_supibot_suggestions_key), false)
+        val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
+
+        if (mainViewModel.connectionState.value == SystemMessageType.NOT_LOGGED_IN) {
+            showApiChangeInformationIfNotAcknowledged()
+        }
+
+        val oAuth = twitchPreferences.oAuthKey ?: ""
+        val name = twitchPreferences.userName ?: ""
+        val id = twitchPreferences.userIdString ?: ""
+        val channels = twitchPreferences.getChannels()
+        mainViewModel.loadData(
+            oAuth = oAuth,
+            id = id,
+            name = name,
+            channelList = channels,
+            loadTwitchData = true,
+            loadHistory = result,
+            loadSupibot = shouldLoadSupibot,
+            scrollBackLength = scrollBackLength
+        )
+
+        if (name.isNotBlank() && oAuth.isNotBlank()) {
+            showSnackbar(getString(R.string.snackbar_login, name))
+        }
+    }
+
+    private fun addChannel(channel: String) {
+        val lowerCaseChannel = channel.lowercase(Locale.getDefault())
+        val channels = mainViewModel.getChannels()
+        if (!channels.contains(lowerCaseChannel)) {
+            val oauth = twitchPreferences.oAuthKey ?: ""
+            val id = twitchPreferences.userIdString ?: ""
+            val name = twitchPreferences.userName ?: ""
+            val shouldLoadHistory = preferences.getBoolean(getString(R.string.preference_load_message_history_key), true)
+            val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
+
+            val updatedChannels = mainViewModel.joinChannel(lowerCaseChannel)
+            mainViewModel.loadData(oauth, id, name = name, channelList = listOf(lowerCaseChannel), loadTwitchData = false, loadHistory = shouldLoadHistory, loadSupibot = false, scrollBackLength)
+            twitchPreferences.channelsString = updatedChannels.joinToString(",")
+
+            tabAdapter.addFragment(lowerCaseChannel)
+            binding.chatViewpager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
+            binding.chatViewpager.setCurrentItem(updatedChannels.size - 1, false)
+
+            fetchStreamInformation()
+            mainViewModel.setActiveChannel(channel)
+            activity?.invalidateOptionsMenu()
+        }
+    }
+
     private fun insertEmote(emote: String) = insertText("$emote ")
 
     private fun fetchStreamInformation() {
@@ -462,7 +466,7 @@ class MainFragment : Fragment() {
     }
 
     private fun sendMessage(): Boolean {
-        val msg = binding.input.text.toString()
+        val msg = binding.input.text?.toString().orEmpty()
         mainViewModel.trySendMessage(msg)
         binding.input.setText("")
 
@@ -581,7 +585,9 @@ class MainFragment : Fragment() {
                     action()
                 }
                 .show().also { it.findViewById<TextView>(android.R.id.message)?.movementMethod = LinkMovementMethod.getInstance() }
-        } else action()
+        } else {
+            action()
+        }
     }
 
     private fun startCameraCapture(captureVideo: Boolean = false) {
@@ -718,13 +724,6 @@ class MainFragment : Fragment() {
         }
         .setNegativeButton(getString(R.string.dialog_cancel)) { dialog, _ -> dialog.dismiss() }
         .create().show()
-
-    private fun openAddChannelDialog() = AddChannelDialogFragment.create(
-        title = R.string.add_dialog_title,
-        negativeButtonText = R.string.dialog_cancel,
-        positiveButtonText = R.string.dialog_ok,
-        textHint = getString(R.string.add_channel_hint)
-    ).show(parentFragmentManager, DIALOG_TAG)
 
     private fun openChannel() {
         val channel = mainViewModel.activeChannel.value
@@ -916,13 +915,13 @@ class MainFragment : Fragment() {
 
     companion object {
         private val TAG = MainFragment::class.java.simpleName
-        private const val DIALOG_TAG = "add_channel_dialog"
-        private const val CHANNELS_TAG = "manage_channels_sheet"
         private const val DISCLAIMER_TAG = "message_history_disclaimer_dialog"
 
         const val LOGOUT_REQUEST_KEY = "logout_key"
         const val LOGIN_REQUEST_KEY = "login_key"
         const val THEME_CHANGED_KEY = "theme_changed_key"
         const val CHANNELS_REQUEST_KEY = "channels_key"
+        const val ADD_CHANNEL_REQUEST_KEY = "add_channel_key"
+        const val HISTORY_DISCLAIMER_KEY = "history_disclaimer_key"
     }
 }
