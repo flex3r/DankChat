@@ -5,8 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import coil.api.clear
-import coil.api.load
+import coil.clear
+import coil.load
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.utils.extensions.getDrawableAndSetSurfaceTint
 import pl.droidsonroids.gif.GifImageView

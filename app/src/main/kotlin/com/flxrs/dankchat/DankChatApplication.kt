@@ -12,6 +12,8 @@ import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.preference.PreferenceManager
 import coil.Coil
 import coil.ImageLoader
+import coil.ImageLoaderFactory
+import coil.util.CoilUtils
 import com.flxrs.dankchat.di.EmoteOkHttpClient
 import com.flxrs.dankchat.utils.GifDrawableDecoder
 import dagger.hilt.android.HiltAndroidApp
@@ -19,21 +21,13 @@ import okhttp3.OkHttpClient
 import javax.inject.Inject
 
 @HiltAndroidApp
-class DankChatApplication : Application()/*, ImageLoaderFactory*/ {
+class DankChatApplication : Application(), ImageLoaderFactory {
     @Inject
     @EmoteOkHttpClient
     lateinit var client: OkHttpClient
 
     override fun onCreate() {
         super.onCreate()
-        Coil.setDefaultImageLoader {
-            ImageLoader(this) {
-                okHttpClient { client }
-                componentRegistry {
-                    add(GifDrawableDecoder())
-                }
-            }
-        }
 
         val uiModeManager = getSystemService(UI_MODE_SERVICE) as UiModeManager
         val isTv = uiModeManager.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
@@ -67,22 +61,12 @@ class DankChatApplication : Application()/*, ImageLoaderFactory*/ {
         EmojiCompat.init(config)
     }
 
-//    override fun newImageLoader(): ImageLoader {
-//        return ImageLoader.Builder(this)
-//            .okHttpClient {
-//                OkHttpClient.Builder()
-//                    .cache(CoilUtils.createDefaultCache(this))
-//                    .build()
-//            }
-//            .componentRegistry {
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-//                    add(ImageDecoderDecoder())
-//                } else {
-//                    add(GifDecoder())
-//                }
-//            }
-//            .build()
-//    }
+    override fun newImageLoader(): ImageLoader {
+        return ImageLoader.Builder(this)
+            .okHttpClient { client }
+            .componentRegistry { add(GifDrawableDecoder()) }
+            .build()
+    }
 
     companion object {
         private val TAG = DankChatApplication::class.java.simpleName

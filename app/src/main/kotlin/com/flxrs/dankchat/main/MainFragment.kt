@@ -396,7 +396,7 @@ class MainFragment : Fragment() {
     }
 
     fun addChannel(channel: String) {
-        val lowerCaseChannel = channel.toLowerCase(Locale.getDefault())
+        val lowerCaseChannel = channel.lowercase(Locale.getDefault())
         val channels = mainViewModel.getChannels()
         if (!channels.contains(lowerCaseChannel)) {
             val oauth = twitchPreferences.oAuthKey ?: ""
@@ -788,7 +788,7 @@ class MainFragment : Fragment() {
         registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 if (position in 0 until tabAdapter.titleList.size) {
-                    val newChannel = tabAdapter.titleList[position].toLowerCase(Locale.getDefault())
+                    val newChannel = tabAdapter.titleList[position].lowercase(Locale.getDefault())
                     mainViewModel.setActiveChannel(newChannel)
                     emoteMenuBottomSheetBehavior?.hide()
                     binding.input.dismissDropDown()

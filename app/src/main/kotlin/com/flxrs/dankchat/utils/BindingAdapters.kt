@@ -2,7 +2,7 @@ package com.flxrs.dankchat.utils
 
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
-import coil.api.load
+import coil.load
 import com.flxrs.dankchat.R
 
 @BindingAdapter("url")

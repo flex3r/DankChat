@@ -5,21 +5,21 @@ buildscript {
         apkName = "DankChat"
 
         // Plugins
-        gradle_build_tools_version = '7.0.0-alpha14'
-        kotlin_version = '1.4.32'
+        gradle_build_tools_version = '7.0.0-alpha15'
+        kotlin_version = '1.5.0'
 
         // Kotlin
-        coroutines_version = '1.4.3'
+        coroutines_version = '1.5.0'
 
         // AndroidX
         browser_version = '1.3.0'
         constraint_version = '2.0.1'
-        core_version = '1.5.0-rc02'
+        core_version = '1.6.0-alpha03'
         emoji_version = '1.1.0'
         exif_version = '1.3.2'
         fragment_version = '1.3.3'
         lifecycle_version = '2.4.0-alpha01'
-        media_version = '1.3.0'
+        media_version = '1.3.1'
         nav_version = '2.3.5'
         preference_version = '1.1.1'
         recyclerview_version = '1.2.0'
@@ -27,7 +27,7 @@ buildscript {
         material_version = '1.3.0'
 
         // Third-party
-        coil_version = '0.9.5' // TODO investigate issue with hardware bitmaps caused by newer version
+        coil_version = '1.2.1'
         gif_drawable_version = '1.2.23'
         okhttp_version = '5.0.0-alpha.2'
         retrofit_version = '2.9.0'

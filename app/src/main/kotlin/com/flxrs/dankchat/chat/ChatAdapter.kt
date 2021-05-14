@@ -2,6 +2,7 @@ package com.flxrs.dankchat.chat
 
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.Rect
@@ -34,7 +35,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.Coil
-import coil.api.get
+import coil.request.ImageRequest
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatItemBinding
 import com.flxrs.dankchat.service.twitch.badge.Badge
@@ -304,7 +305,7 @@ class ChatAdapter(
                 badges.forEachIndexed { idx, badge ->
                     try {
                         val (start, end) = badgePositions[idx]
-                        Coil.get(badge.url).apply {
+                        Coil.execute(badge.url.toRequest(context)).drawable?.apply {
                             if (badge is Badge.FFZModBadge) {
                                 colorFilter = PorterDuffColorFilter(ContextCompat.getColor(context, R.color.color_ffz_mod), PorterDuff.Mode.DST_OVER)
                             }
@@ -326,7 +327,7 @@ class ChatAdapter(
             val fullPrefix = prefixLength + badgesLength
             emotes.groupBy { it.position }.forEach { (_, emotes) ->
                 try {
-                    val drawables = emotes.map { it.toDrawable(animateGifs, useCache = emotes.size == 1).run { transformEmoteDrawable(scaleFactor, it) } }.toTypedArray()
+                    val drawables = emotes.mapNotNull { it.toDrawable(context, animateGifs, useCache = emotes.size == 1)?.run { transformEmoteDrawable(scaleFactor, it) } }.toTypedArray()
                     val bounds = drawables.map { it.bounds }
                     val layerDrawable = drawables.toLayerDrawable(bounds, scaleFactor, emotes)
 
@@ -351,13 +352,13 @@ class ChatAdapter(
         }
     }
 
-    private suspend fun ChatMessageEmote.toDrawable(animateGifs: Boolean, useCache: Boolean): Drawable = when {
-        !isGif -> Coil.get(url)
+    private suspend fun ChatMessageEmote.toDrawable(context: Context, animateGifs: Boolean, useCache: Boolean): Drawable? = when {
+        !isGif -> Coil.execute(url.toRequest(context)).drawable
         else -> {
             val cached = emoteManager.gifCache[url]?.also { it.setRunning(animateGifs) }
             when {
                 useCache && cached != null -> cached
-                else -> Coil.get(url).apply {
+                else -> Coil.execute(url.toRequest(context)).drawable?.apply {
                     this as GifDrawable
                     // try to sync gif
                     withContext(Dispatchers.Default) {
@@ -395,6 +396,10 @@ class ChatAdapter(
         setBounds(left, top, scaledWidth + left, scaledHeight + top)
         return this
     }
+
+    private fun String.toRequest(context: Context): ImageRequest = ImageRequest.Builder(context)
+        .data(this)
+        .build()
 
     companion object {
         private val TAG = ChatAdapter::class.java.simpleName

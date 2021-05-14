@@ -83,14 +83,14 @@ inline fun String.codePoints(block: (Int) -> Unit) {
     while (i < this.length) {
         val c1: Char = this[i++]
         if (!Character.isHighSurrogate(c1) || i >= this.length) {
-            block(c1.toInt())
+            block(c1.code)
         } else {
             val c2: Char = this[i]
             if (Character.isLowSurrogate(c2)) {
                 i++
                 block(Character.toCodePoint(c1, c2))
             } else {
-                block(c1.toInt())
+                block(c1.code)
             }
         }
     }
