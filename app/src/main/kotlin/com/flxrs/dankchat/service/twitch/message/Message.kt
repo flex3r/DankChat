@@ -3,6 +3,7 @@ package com.flxrs.dankchat.service.twitch.message
 import android.graphics.Color
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.badge.Badge
+import com.flxrs.dankchat.service.twitch.badge.BadgeType
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
@@ -213,17 +214,18 @@ data class TwitchMessage(
                 val globalBadgeUrl = emoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)
                 val channelBadgeUrl = emoteManager.getChannelBadgeUrl(channel, badgeSet, badgeVersion)
                 val ffzModBadgeUrl = emoteManager.getFFzModBadgeUrl(channel)
+                val type = BadgeType.parseFromBadgeId(badgeSet)
                 when {
-                    (badgeSet.startsWith("subscriber") || badgeSet.startsWith("bits")) && channelBadgeUrl != null -> Badge.ChannelBadge(badgeSet, channelBadgeUrl)
-                    badgeSet.startsWith("moderator") && ffzModBadgeUrl != null -> Badge.FFZModBadge(ffzModBadgeUrl)
-                    else -> globalBadgeUrl?.let { Badge.GlobalBadge(badgeSet, it) }
+                    (badgeSet.startsWith("subscriber") || badgeSet.startsWith("bits")) && channelBadgeUrl != null -> Badge.ChannelBadge(badgeSet, channelBadgeUrl, type)
+                    badgeSet.startsWith("moderator") && ffzModBadgeUrl != null -> Badge.FFZModBadge(ffzModBadgeUrl, type)
+                    else -> globalBadgeUrl?.let { Badge.GlobalBadge(badgeSet, it, type) }
                 }
-            } ?: emptyList()
+            }.orEmpty()
 
             userId ?: return badges
             return when (val badge = emoteManager.getDankChatBadgeUrl(userId)) {
                 null -> badges
-                else -> badges + Badge.GlobalBadge(badge.first, badge.second)
+                else -> badges + Badge.GlobalBadge(badge.first, badge.second, BadgeType.DankChat)
             }
         }
     }

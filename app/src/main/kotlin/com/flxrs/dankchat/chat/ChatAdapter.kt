@@ -39,6 +39,7 @@ import coil.request.ImageRequest
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatItemBinding
 import com.flxrs.dankchat.service.twitch.badge.Badge
+import com.flxrs.dankchat.service.twitch.badge.BadgeType
 import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
@@ -148,6 +149,7 @@ class ChatAdapter(
         val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
         val debugKey = context.getString(R.string.preference_debug_mode_key)
         val checkeredKey = context.getString(R.string.checkered_messages_key)
+        val badgesKey = context.getString(R.string.preference_visible_badges_key)
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val isDarkMode = preferences.getBoolean(darkModePreferenceKey, true)
         val isCheckeredMode = preferences.getBoolean(checkeredKey, false)
@@ -157,6 +159,8 @@ class ChatAdapter(
         val showUserName = preferences.getBoolean(usernamePreferenceKey, true)
         val animateGifs = preferences.getBoolean(animateGifsKey, true)
         val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
+        val visibleBadges = preferences.getStringSet(badgesKey, resources.getStringArray(R.array.badges_entry_values).toSet()).orEmpty()
+        val visibleBadgeTypes = BadgeType.mapFromPreferenceSet(visibleBadges)
         setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
 
         fun handleException(throwable: Throwable) {
@@ -224,10 +228,9 @@ class ChatAdapter(
                 else -> "$fullName: "
             }
 
-            val badgesLength = when {
-                showUserName -> badges.size * 2
-                else -> 0
-            }
+            val allowedBadges = badges.filter { visibleBadgeTypes.contains(it.type) }
+            val badgesLength = allowedBadges.size * 2
+
             val channelOrBlank = when {
                 isWhisper -> ""
                 else -> "#$channel"
@@ -238,7 +241,7 @@ class ChatAdapter(
             val (prefixLength, spannable) = timeAndWhisperBuilder.length + fullDisplayName.length to SpannableStringBuilder().bold { append(timeAndWhisperBuilder) }
 
             val badgePositions = when {
-                showUserName -> badges.map {
+                showUserName -> allowedBadges.map {
                     spannable.append("  ")
                     spannable.length - 2 to spannable.length - 1
                 }
@@ -302,7 +305,7 @@ class ChatAdapter(
 
             setText(spannableWithEmojis, TextView.BufferType.SPANNABLE)
             if (showUserName) {
-                badges.forEachIndexed { idx, badge ->
+                allowedBadges.forEachIndexed { idx, badge ->
                     try {
                         val (start, end) = badgePositions[idx]
                         Coil.execute(badge.url.toRequest(context)).drawable?.apply {
