@@ -80,6 +80,18 @@
     <string name="confirm_channel_removal_title">Confirm channel removal</string>
     <string name="confirm_channel_removal_message">Are you sure you want to remove this channel?</string>
     <string name="confirm_channel_removal_positive_button">Remove</string>
+    <string name="user_popup_follow">Follow</string>
+    <string name="user_popup_unfollow">Unfollow</string>
+    <string name="user_popup_mention">Mention user</string>
+    <string name="user_popup_whisper">Whisper user</string>
+    <string name="user_popup_created">Created: %1$s</string>
+    <string name="user_popup_following_since">Following since %1$s</string>
+    <string name="user_popup_not_following">Not following</string>
+    <string name="user_popup_avatar_description">Profile avatar image</string>
+    <string name="user_popup_error">Failed to load user data: %1$s</string>
+    <string name="confirm_channel_unfollow_title">Confirm unfollow</string>
+    <string name="confirm_channel_unfollow_message">Are you sure you want to unfollow?</string>
+    <string name="confirm_channel_unfollow_positive_button">Unfollow</string>
 
 
     <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>

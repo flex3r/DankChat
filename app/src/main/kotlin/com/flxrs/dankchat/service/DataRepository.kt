@@ -2,6 +2,8 @@ package com.flxrs.dankchat.service
 
 import android.util.Log
 import com.flxrs.dankchat.service.api.ApiManager
+import com.flxrs.dankchat.service.api.dto.UserDtos
+import com.flxrs.dankchat.service.api.dto.UserFollowsDto
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.utils.extensions.measureTimeAndLog
@@ -26,6 +28,11 @@ class DataRepository(private val apiManager: ApiManager, private val emoteManage
             load3rdPartyEmotes(channel, it, forceReload)
         }
     }
+
+    suspend fun getUser(oAuth: String, userId: String): UserDtos.HelixUser? = apiManager.getUser(oAuth, userId)
+    suspend fun getUsersFollows(oAuth: String, fromId: String, toId: String): UserFollowsDto? = apiManager.getUsersFollows(oAuth, fromId, toId)
+    suspend fun followUser(oAuth: String, fromId: String, toId: String): Boolean = apiManager.followUser(oAuth, fromId, toId)
+    suspend fun unfollowUser(oAuth: String, fromId: String, toId: String): Boolean = apiManager.unfollowUser(oAuth, fromId, toId)
 
     suspend fun uploadMedia(file: File): String? = apiManager.uploadMedia(file)
 

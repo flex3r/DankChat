@@ -9,6 +9,7 @@ import android.provider.MediaStore
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.webkit.MimeTypeMap
@@ -40,6 +41,7 @@ import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.chat.suggestion.EmoteSuggestionsArrayAdapter
 import com.flxrs.dankchat.chat.suggestion.SpaceTokenizer
 import com.flxrs.dankchat.chat.suggestion.Suggestion
+import com.flxrs.dankchat.chat.user.UserPopupResult
 import com.flxrs.dankchat.databinding.MainFragmentBinding
 import com.flxrs.dankchat.preferences.ChatSettingsFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
@@ -72,7 +74,7 @@ class MainFragment : Fragment() {
     private var mentionBottomSheetBehavior: BottomSheetBehavior<View>? = null
 
 
-    private lateinit var twitchPreferences: DankChatPreferenceStore
+    private lateinit var dankChatPreferences: DankChatPreferenceStore
     private lateinit var preferenceListener: SharedPreferences.OnSharedPreferenceChangeListener
     private lateinit var preferences: SharedPreferences
     private lateinit var tabAdapter: ChatTabAdapter
@@ -141,7 +143,7 @@ class MainFragment : Fragment() {
             collectFlow(appbarEnabled) { changeActionBarVisibility(it) }
             collectFlow(canType) { if (it) binding.inputLayout.setup() }
             collectFlow(connectionState) { hint ->
-                if (hint == SystemMessageType.NOT_LOGGED_IN && twitchPreferences.hasMessageHistoryAcknowledged) {
+                if (hint == SystemMessageType.NOT_LOGGED_IN && dankChatPreferences.hasMessageHistoryAcknowledged) {
                     showApiChangeInformationIfNotAcknowledged()
                 }
 
@@ -207,16 +209,19 @@ class MainFragment : Fragment() {
                 addChannel(it)
             }
             getLiveData<Boolean>(HISTORY_DISCLAIMER_KEY).observe(viewLifecycleOwner) {
-                onMessageHistoryDisclaimerResult(it)
+                handleMessageHistoryDisclaimerResult(it)
+            }
+            getLiveData<UserPopupResult>(USER_POPUP_RESULT_KEY).observe(viewLifecycleOwner) {
+                handleUserPopupResult(it)
             }
         }
 
         initPreferences(view.context)
-        if (twitchPreferences.isLoggedIn && twitchPreferences.userIdString == null) {
-            twitchPreferences.userIdString = "${twitchPreferences.userId}"
+        if (dankChatPreferences.isLoggedIn && dankChatPreferences.userIdString == null) {
+            dankChatPreferences.userIdString = "${dankChatPreferences.userId}"
         }
 
-        val channels = twitchPreferences.getChannels()
+        val channels = dankChatPreferences.getChannels()
         channels.forEach { tabAdapter.addFragment(it) }
         binding.chatViewpager.offscreenPageLimit = calculatePageLimit(channels.size)
         fetchStreamInformation()
@@ -250,12 +255,12 @@ class MainFragment : Fragment() {
 
             if (savedInstanceState == null && !mainViewModel.started) {
                 mainViewModel.started = true // TODO ???
-                if (!twitchPreferences.hasMessageHistoryAcknowledged) {
+                if (!dankChatPreferences.hasMessageHistoryAcknowledged) {
                     navigateSafe(R.id.action_mainFragment_to_messageHistoryDisclaimerDialogFragment)
                 } else {
-                    val oAuth = twitchPreferences.oAuthKey ?: ""
-                    val name = twitchPreferences.userName ?: ""
-                    val id = twitchPreferences.userIdString ?: ""
+                    val oAuth = dankChatPreferences.oAuthKey ?: ""
+                    val name = dankChatPreferences.userName ?: ""
+                    val id = dankChatPreferences.userIdString ?: ""
                     val shouldLoadHistory = preferences.getBoolean(getString(R.string.preference_load_message_history_key), true)
                     val shouldLoadSupibot = preferences.getBoolean(getString(R.string.preference_supibot_suggestions_key), false)
                     val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
@@ -322,7 +327,7 @@ class MainFragment : Fragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         with(menu) {
-            val isLoggedIn = twitchPreferences.isLoggedIn
+            val isLoggedIn = dankChatPreferences.isLoggedIn
             val shouldShowProgress = mainViewModel.shouldShowUploadProgress.value
             val hasChannels = !mainViewModel.getChannels().isNullOrEmpty()
             val mentionIconColor = when (mainViewModel.shouldColorNotification.value) {
@@ -369,14 +374,20 @@ class MainFragment : Fragment() {
         return true
     }
 
-    fun mentionUser(user: String) {
+    fun openUserPopup(targetUserId: String, isWhisperPopup: Boolean = false) {
+        val oAuth = dankChatPreferences.oAuthKey?.removeOAuthSuffix ?: return
+        val currentUserId = dankChatPreferences.userIdString ?: return
+        val directions = MainFragmentDirections.actionMainFragmentToUserPopupDialogFragment(targetUserId, currentUserId, oAuth, isWhisperPopup)
+        navigateSafe(directions)
+    }
+
+    private fun mentionUser(user: String) {
         val template = preferences.getString(getString(R.string.preference_mention_format_key), "name") ?: "name"
         val mention = "${template.replace("name", user)} "
         insertText(mention)
     }
 
-    // TODO
-    fun whisperUser(user: String) {
+    private fun whisperUser(user: String) {
         if (!binding.input.isEnabled) return
 
         val current = binding.input.text.toString()
@@ -397,8 +408,8 @@ class MainFragment : Fragment() {
         binding.input.setSelection(index + text.length)
     }
 
-    private fun onMessageHistoryDisclaimerResult(result: Boolean) {
-        twitchPreferences.hasMessageHistoryAcknowledged = true
+    private fun handleMessageHistoryDisclaimerResult(result: Boolean) {
+        dankChatPreferences.hasMessageHistoryAcknowledged = true
         preferences.edit { putBoolean(getString(R.string.preference_load_message_history_key), result) }
         val shouldLoadSupibot = preferences.getBoolean(getString(R.string.preference_supibot_suggestions_key), false)
         val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
@@ -407,10 +418,10 @@ class MainFragment : Fragment() {
             showApiChangeInformationIfNotAcknowledged()
         }
 
-        val oAuth = twitchPreferences.oAuthKey ?: ""
-        val name = twitchPreferences.userName ?: ""
-        val id = twitchPreferences.userIdString ?: ""
-        val channels = twitchPreferences.getChannels()
+        val oAuth = dankChatPreferences.oAuthKey ?: ""
+        val name = dankChatPreferences.userName ?: ""
+        val id = dankChatPreferences.userIdString ?: ""
+        val channels = dankChatPreferences.getChannels()
         mainViewModel.loadData(
             oAuth = oAuth,
             id = id,
@@ -427,19 +438,25 @@ class MainFragment : Fragment() {
         }
     }
 
+    private fun handleUserPopupResult(result: UserPopupResult) = when (result) {
+        is UserPopupResult.Error -> binding.root.showShortSnackbar(getString(R.string.user_popup_error, result.throwable?.message.orEmpty()))
+        is UserPopupResult.Mention -> mentionUser(result.targetUser)
+        is UserPopupResult.Whisper -> whisperUser(result.targetUser)
+    }
+
     private fun addChannel(channel: String) {
         val lowerCaseChannel = channel.lowercase(Locale.getDefault())
         val channels = mainViewModel.getChannels()
         if (!channels.contains(lowerCaseChannel)) {
-            val oauth = twitchPreferences.oAuthKey ?: ""
-            val id = twitchPreferences.userIdString ?: ""
-            val name = twitchPreferences.userName ?: ""
+            val oauth = dankChatPreferences.oAuthKey ?: ""
+            val id = dankChatPreferences.userIdString ?: ""
+            val name = dankChatPreferences.userName ?: ""
             val shouldLoadHistory = preferences.getBoolean(getString(R.string.preference_load_message_history_key), true)
             val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
 
             val updatedChannels = mainViewModel.joinChannel(lowerCaseChannel)
             mainViewModel.loadData(oauth, id, name = name, channelList = listOf(lowerCaseChannel), loadTwitchData = false, loadHistory = shouldLoadHistory, loadSupibot = false, scrollBackLength)
-            twitchPreferences.channelsString = updatedChannels.joinToString(",")
+            dankChatPreferences.channelsString = updatedChannels.joinToString(",")
 
             tabAdapter.addFragment(lowerCaseChannel)
             binding.chatViewpager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
@@ -457,7 +474,7 @@ class MainFragment : Fragment() {
         lifecycleScope.launchWhenStarted {
             val key = getString(R.string.preference_streaminfo_key)
             if (preferences.getBoolean(key, true)) {
-                val oAuth = twitchPreferences.oAuthKey ?: return@launchWhenStarted
+                val oAuth = dankChatPreferences.oAuthKey ?: return@launchWhenStarted
                 mainViewModel.fetchStreamData(oAuth) {
                     resources.getQuantityString(R.plurals.viewers, it, it)
                 }
@@ -518,13 +535,13 @@ class MainFragment : Fragment() {
     }
 
     private fun handleLoginRequest(success: Boolean) {
-        val oAuth = twitchPreferences.oAuthKey
-        val name = twitchPreferences.userName
-        val id = twitchPreferences.userIdString
+        val oAuth = dankChatPreferences.oAuthKey
+        val name = dankChatPreferences.userName
+        val id = dankChatPreferences.userIdString
 
         if (success && !oAuth.isNullOrBlank() && !name.isNullOrBlank() && !id.isNullOrBlank()) {
             mainViewModel.closeAndReconnect(name, oAuth, id, loadTwitchData = true)
-            twitchPreferences.isLoggedIn = true
+            dankChatPreferences.isLoggedIn = true
             showSnackbar(getString(R.string.snackbar_login, name))
         } else {
             showSnackbar(getString(R.string.snackbar_login_failed))
@@ -560,18 +577,18 @@ class MainFragment : Fragment() {
     }
 
     private fun showApiChangeInformationIfNotAcknowledged() {
-        if (!twitchPreferences.hasApiChangeAcknowledged) {
+        if (!dankChatPreferences.hasApiChangeAcknowledged) {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.anon_connection_disclaimer_title)
                 .setMessage(R.string.anon_connection_disclaimer_message)
                 .setPositiveButton(R.string.dialog_ok) { dialog, _ -> dialog.dismiss() }
-                .setOnDismissListener { twitchPreferences.hasApiChangeAcknowledged = true }
+                .setOnDismissListener { dankChatPreferences.hasApiChangeAcknowledged = true }
                 .show()
         }
     }
 
     private inline fun showNuulsUploadDialogIfNotAcknowledged(crossinline action: () -> Unit) {
-        if (!twitchPreferences.hasNuulsAcknowledged) {
+        if (!dankChatPreferences.hasNuulsAcknowledged) {
             val spannable = SpannableStringBuilder(getString(R.string.nuuls_upload_disclaimer))
             Linkify.addLinks(spannable, Linkify.WEB_URLS)
 
@@ -581,7 +598,7 @@ class MainFragment : Fragment() {
                 .setMessage(spannable)
                 .setPositiveButton(R.string.dialog_ok) { dialog, _ ->
                     dialog.dismiss()
-                    twitchPreferences.hasNuulsAcknowledged = true
+                    dankChatPreferences.hasNuulsAcknowledged = true
                     action()
                 }
                 .show().also { it.findViewById<TextView>(android.R.id.message)?.movementMethod = LinkMovementMethod.getInstance() }
@@ -638,8 +655,8 @@ class MainFragment : Fragment() {
     private fun reloadEmotes(channel: String? = null) {
         val position = channel?.let(tabAdapter.titleList::indexOf) ?: binding.tabs.selectedTabPosition
         if (position in 0 until tabAdapter.titleList.size) {
-            val oAuth = twitchPreferences.oAuthKey ?: return
-            val userId = twitchPreferences.userIdString ?: return
+            val oAuth = dankChatPreferences.oAuthKey ?: return
+            val userId = dankChatPreferences.userIdString ?: return
             mainViewModel.reloadEmotes(tabAdapter.titleList[position], oAuth, userId)
         }
     }
@@ -655,9 +672,9 @@ class MainFragment : Fragment() {
         val timestampFormatKey = getString(R.string.preference_timestamp_format_key)
         val loadSupibotKey = getString(R.string.preference_supibot_suggestions_key)
         val scrollBackLengthKey = getString(R.string.preference_scrollback_length_key)
-        twitchPreferences = DankChatPreferenceStore(context)
-        if (twitchPreferences.isLoggedIn && twitchPreferences.oAuthKey.isNullOrBlank()) {
-            twitchPreferences.clearLogin()
+        dankChatPreferences = DankChatPreferenceStore(context)
+        if (dankChatPreferences.isLoggedIn && dankChatPreferences.oAuthKey.isNullOrBlank()) {
+            dankChatPreferences.clearLogin()
         }
 
         preferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -681,7 +698,7 @@ class MainFragment : Fragment() {
         preferences.apply {
             registerOnSharedPreferenceChangeListener(preferenceListener)
             keepScreenOn(getBoolean(keepScreenOnKey, true))
-            TimeUtils.setPattern(getString(timestampFormatKey, "HH:mm") ?: "HH:mm")
+            DateTimeUtils.setPattern(getString(timestampFormatKey, "HH:mm") ?: "HH:mm")
             mainViewModel.apply {
                 setRoomStateEnabled(getBoolean(roomStateKey, true))
                 setStreamInfoEnabled(getBoolean(streamInfoKey, true))
@@ -717,7 +734,7 @@ class MainFragment : Fragment() {
         .setTitle(getString(R.string.confirm_logout_title))
         .setMessage(getString(R.string.confirm_logout_message))
         .setPositiveButton(getString(R.string.confirm_logout_positive_button)) { dialog, _ ->
-            twitchPreferences.clearLogin()
+            dankChatPreferences.clearLogin()
             mainViewModel.closeAndReconnect(name = "", oAuth = "", userId = "")
             mainViewModel.clearIgnores()
             dialog.dismiss()
@@ -752,10 +769,10 @@ class MainFragment : Fragment() {
         tabAdapter.updateFragments(updatedChannels)
 
         if (updatedChannels.isNotEmpty()) {
-            twitchPreferences.channelsString = updatedChannels.joinToString(",")
+            dankChatPreferences.channelsString = updatedChannels.joinToString(",")
             binding.chatViewpager.setCurrentItem(index, false)
         } else {
-            twitchPreferences.channelsString = null
+            dankChatPreferences.channelsString = null
         }
 
         fetchStreamInformation()
@@ -923,5 +940,6 @@ class MainFragment : Fragment() {
         const val CHANNELS_REQUEST_KEY = "channels_key"
         const val ADD_CHANNEL_REQUEST_KEY = "add_channel_key"
         const val HISTORY_DISCLAIMER_KEY = "history_disclaimer_key"
+        const val USER_POPUP_RESULT_KEY = "user_popup_key"
     }
 }

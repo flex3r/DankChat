@@ -18,10 +18,13 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.chat.user.UserPopupDialogFragment
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.extensions.collectFlow
+import com.flxrs.dankchat.utils.extensions.removeOAuthSuffix
 import com.flxrs.dankchat.utils.extensions.showShortSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -67,7 +70,7 @@ open class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val itemDecoration = DividerItemDecoration(view.context, LinearLayoutManager.VERTICAL)
         manager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false).apply { stackFromEnd = true }
-        adapter = ChatAdapter(emoteManager, ::scrollToPosition, ::mentionUser, ::copyMessage).apply { stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY }
+        adapter = ChatAdapter(emoteManager, ::scrollToPosition, ::openUserPopup, ::copyMessage).apply { stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY }
         binding.chat.setup(adapter, manager)
 
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { pref, key ->
@@ -114,8 +117,9 @@ open class ChatFragment : Fragment() {
         outState.putBoolean(AT_BOTTOM_STATE, isAtBottom)
     }
 
-    protected open fun mentionUser(user: String) {
-        (requireParentFragment() as? MainFragment)?.mentionUser(user)
+    protected open fun openUserPopup(targetUserId: String?) {
+        targetUserId ?: return
+        (requireParentFragment() as? MainFragment)?.openUserPopup(targetUserId, isWhisperPopup = false)
     }
 
     private fun copyMessage(message: String) {

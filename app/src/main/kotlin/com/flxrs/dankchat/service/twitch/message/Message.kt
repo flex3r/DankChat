@@ -25,6 +25,7 @@ data class TwitchMessage(
     override val timestamp: Long = System.currentTimeMillis(),
     override val id: String = System.nanoTime().toString(),
     val channel: String,
+    val userId: String? = null,
     val name: String = "",
     val displayName: String = "",
     val color: Int = Color.parseColor("#717171"),
@@ -102,6 +103,7 @@ data class TwitchMessage(
                 isNotify = isNotify,
                 badges = badges,
                 id = id,
+                userId = tags["user-id"],
                 timedOut = tags["rm-deleted"] == "1",
                 isReward = tags["msg-id"] == "highlighted-message"
             )
@@ -202,6 +204,7 @@ data class TwitchMessage(
                 emotes = emotes,
                 badges = badges,
                 id = System.nanoTime().toString(),
+                userId = tags["user-id"],
                 isWhisper = true
             )
         }

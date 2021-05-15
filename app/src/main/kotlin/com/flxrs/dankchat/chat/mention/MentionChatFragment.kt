@@ -38,8 +38,9 @@ class MentionChatFragment : ChatFragment() {
         return binding.root
     }
 
-    override fun mentionUser(user: String) {
-        (parentFragment?.parentFragment as? MainFragment)?.whisperUser(user)
+    override fun openUserPopup(targetUserId: String?) {
+        targetUserId ?: return
+        (parentFragment?.parentFragment as? MainFragment)?.openUserPopup(targetUserId, isWhisperPopup = true)
     }
 
     companion object {

@@ -45,9 +45,9 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface) {
         with(findNavController()) {
-            previousBackStackEntry
-                ?.savedStateHandle
-                ?.set(MainFragment.CHANNELS_REQUEST_KEY, adapter.currentList.toTypedArray())
+            getBackStackEntry(R.id.mainFragment)
+                .savedStateHandle
+                .set(MainFragment.CHANNELS_REQUEST_KEY, adapter.currentList.toTypedArray())
             popBackStack(R.id.mainFragment, false)
         }
     }

@@ -31,6 +31,9 @@
         <action
             android:id="@+id/action_mainFragment_to_messageHistoryDisclaimerDialogFragment"
             app:destination="@id/messageHistoryDisclaimerDialogFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_userPopupDialogFragment"
+            app:destination="@id/userPopupDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -99,10 +102,27 @@
     <dialog
         android:id="@+id/addChannelDialogFragment"
         android:name="com.flxrs.dankchat.main.dialog.AddChannelDialogFragment"
-        android:label="AddChannelDialogFragment"/>
+        android:label="AddChannelDialogFragment" />
 
     <dialog
         android:id="@+id/messageHistoryDisclaimerDialogFragment"
         android:name="com.flxrs.dankchat.main.dialog.MessageHistoryDisclaimerDialogFragment"
-        android:label="MessageHistoryDisclaimerDialogFragment"/>
+        android:label="MessageHistoryDisclaimerDialogFragment" />
+    <dialog
+        android:id="@+id/userPopupDialogFragment"
+        android:name="com.flxrs.dankchat.chat.user.UserPopupDialogFragment"
+        android:label="UserPopupDialogFragment">
+        <argument
+            android:name="targetUserId"
+            app:argType="string" />
+        <argument
+            android:name="currentUserId"
+            app:argType="string" />
+        <argument
+            android:name="oAuth"
+            app:argType="string" />
+        <argument
+            android:name="isWhisperPopup"
+            app:argType="boolean" />
+    </dialog>
 </navigation>

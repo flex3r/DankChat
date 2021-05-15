@@ -42,9 +42,9 @@ class MessageHistoryDisclaimerDialogFragment : DialogFragment() {
 
     private fun dismissAndHandleResult(result: Boolean): Boolean {
         findNavController()
-            .previousBackStackEntry
-            ?.savedStateHandle
-            ?.set(MainFragment.HISTORY_DISCLAIMER_KEY, result)
+            .getBackStackEntry(R.id.mainFragment)
+            .savedStateHandle
+            .set(MainFragment.HISTORY_DISCLAIMER_KEY, result)
         dismiss()
         return true
     }

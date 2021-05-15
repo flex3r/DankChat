@@ -48,9 +48,9 @@ class AddChannelDialogFragment : DialogFragment() {
         val trimmedInput = input?.toString()?.trim().orEmpty()
         if (trimmedInput.isNotBlank() && trimmedInput.length > 2) {
             with(findNavController()) {
-                previousBackStackEntry
-                    ?.savedStateHandle
-                    ?.set(MainFragment.ADD_CHANNEL_REQUEST_KEY, trimmedInput)
+                getBackStackEntry(R.id.mainFragment)
+                    .savedStateHandle
+                    .set(MainFragment.ADD_CHANNEL_REQUEST_KEY, trimmedInput)
             }
         }
         dismiss()
