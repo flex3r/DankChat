@@ -6,8 +6,8 @@ enum class BadgeType {
     Channel,
     Subscriber,
     Vanity,
-    DankChat,
-    FrankerFaceZ;
+    DankChat;
+    //FrankerFaceZ;
 
     companion object {
         fun parseFromBadgeId(id: String): BadgeType = when (id) {
