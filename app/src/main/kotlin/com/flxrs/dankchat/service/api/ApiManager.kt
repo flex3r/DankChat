@@ -50,19 +50,19 @@ class ApiManager @Inject constructor(
     suspend fun blockUser(oAuth: String, targetUserId: String): Boolean = helixApiService.putUserBlock("Bearer $oAuth", targetUserId).isSuccessful
     suspend fun unblockUser(oAuth: String, targetUserId: String): Boolean = helixApiService.deleteUserBlock("Bearer $oAuth", targetUserId).isSuccessful
 
-    suspend fun getUserEmotes(oAuth: String, id: String): EmoteDtos.Twitch.Result? = krakenApiService.getUserEmotes("OAuth $oAuth", id).bodyOrNull
+    suspend fun getUserEmotes(oAuth: String, id: String): TwitchEmotesDto? = krakenApiService.getUserEmotes("OAuth $oAuth", id).bodyOrNull
 
-    suspend fun getUserSet(set: String): EmoteDtos.Twitch.EmoteSet? = dankChatApiService.getSet(set).bodyOrNull?.firstOrNull()
-    suspend fun getDankChatBadges(): List<BadgeDtos.DankChatBadge>? = dankChatApiService.getDankChatBadges().bodyOrNull
+    suspend fun getUserSet(set: String): TwitchEmoteSetDto? = dankChatApiService.getSet(set).bodyOrNull?.firstOrNull()
+    suspend fun getDankChatBadges(): List<DankChatBadgeDto>? = dankChatApiService.getDankChatBadges().bodyOrNull
 
-    suspend fun getChannelBadges(channelId: String): BadgeDtos.Result? = badgesApiService.getChannelBadges(channelId).bodyOrNull
-    suspend fun getGlobalBadges(): BadgeDtos.Result? = badgesApiService.getGlobalBadges().bodyOrNull
+    suspend fun getChannelBadges(channelId: String): TwitchBadgesDto? = badgesApiService.getChannelBadges(channelId).bodyOrNull
+    suspend fun getGlobalBadges(): TwitchBadgesDto? = badgesApiService.getGlobalBadges().bodyOrNull
 
-    suspend fun getFFZChannelEmotes(channelId: String): EmoteDtos.FFZ.Result? = ffzApiService.getChannelEmotes(channelId).bodyOrNull
-    suspend fun getFFZGlobalEmotes(): EmoteDtos.FFZ.GlobalResult? = ffzApiService.getGlobalEmotes().bodyOrNull
+    suspend fun getFFZChannelEmotes(channelId: String): FFZChannelDto? = ffzApiService.getChannelEmotes(channelId).bodyOrNull
+    suspend fun getFFZGlobalEmotes(): FFZGlobalDto? = ffzApiService.getGlobalEmotes().bodyOrNull
 
-    suspend fun getBTTVChannelEmotes(channelId: String): EmoteDtos.BTTV.Result? = bttvApiService.getChannelEmotes(channelId).bodyOrNull
-    suspend fun getBTTVGlobalEmotes(): List<EmoteDtos.BTTV.GlobalEmote>? = bttvApiService.getGlobalEmotes().bodyOrNull
+    suspend fun getBTTVChannelEmotes(channelId: String): BTTVChannelDto? = bttvApiService.getChannelEmotes(channelId).bodyOrNull
+    suspend fun getBTTVGlobalEmotes(): List<BTTVGlobalEmotesDto>? = bttvApiService.getGlobalEmotes().bodyOrNull
 
     suspend fun getRecentMessages(channel: String): RecentMessagesDto? {
         return when {
@@ -74,10 +74,10 @@ class ApiManager @Inject constructor(
         }
     }
 
-    suspend fun getSupibotCommands(): SupibotDtos.Commands? = supibotApiService.getCommands().bodyOrNull
-    suspend fun getSupibotChannels(): SupibotDtos.Channels? = supibotApiService.getChannels("twitch").bodyOrNull
+    suspend fun getSupibotCommands(): SupibotCommandsDto? = supibotApiService.getCommands().bodyOrNull
+    suspend fun getSupibotChannels(): SupibotChannelsDto? = supibotApiService.getChannels("twitch").bodyOrNull
 
-    suspend fun getChatters(channel: String): ChattersDto.Chatters? = tmiApiService.getChatters(channel).bodyOrNull?.chatters
+    suspend fun getChatters(channel: String): ChattersDto? = tmiApiService.getChatters(channel).bodyOrNull?.chatters
 
     @Suppress("BlockingMethodInNonBlockingContext")
     suspend fun uploadMedia(file: File): String? = withContext(Dispatchers.IO) {
