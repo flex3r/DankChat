@@ -183,6 +183,11 @@ class MainFragment : Fragment() {
                 }
             }
             collectFlow(shouldColorNotification) { activity?.invalidateOptionsMenu() }
+            collectFlow(channels) {
+                if (it.isNotEmpty()) {
+                    fetchStreamInformation()
+                }
+            }
         }
 
         return binding.root
@@ -224,7 +229,6 @@ class MainFragment : Fragment() {
         val channels = dankChatPreferences.getChannels()
         channels.forEach { tabAdapter.addFragment(it) }
         binding.chatViewpager.offscreenPageLimit = calculatePageLimit(channels.size)
-        fetchStreamInformation()
 
         (requireActivity() as AppCompatActivity).apply {
             setHasOptionsMenu(true)
@@ -462,7 +466,6 @@ class MainFragment : Fragment() {
             binding.chatViewpager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
             binding.chatViewpager.setCurrentItem(updatedChannels.size - 1, false)
 
-            fetchStreamInformation()
             mainViewModel.setActiveChannel(channel)
             activity?.invalidateOptionsMenu()
         }
@@ -775,7 +778,6 @@ class MainFragment : Fragment() {
             dankChatPreferences.channelsString = null
         }
 
-        fetchStreamInformation()
         binding.chatViewpager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
         activity?.invalidateOptionsMenu()
     }

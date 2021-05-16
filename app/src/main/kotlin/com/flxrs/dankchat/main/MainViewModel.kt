@@ -39,12 +39,11 @@ class MainViewModel @Inject constructor(
         }
     }
     private var fetchTimerJob: Job? = null
-    private val channels: StateFlow<List<String>> = chatRepository.channels
 
     var started = false
 
-    // TODO move shit to repo
     val activeChannel: StateFlow<String> = chatRepository.activeChannel
+    val channels: StateFlow<List<String>> = chatRepository.channels
     val channelMentionCount: Flow<Map<String, Int>> = chatRepository.channelMentionCount
     val shouldColorNotification: StateFlow<Boolean> = combine(chatRepository.hasMentions, chatRepository.hasWhispers) { hasMentions, hasWhispers ->
         hasMentions || hasWhispers

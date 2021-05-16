@@ -179,16 +179,8 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     fun connectAndJoin(name: String, oAuth: String, channels: List<String>, forceConnect: Boolean = false) {
         if (startedConnection) return
 
-        when {
-            channels.isNullOrEmpty() -> connect(name, oAuth, forceConnect)
-            else -> channels.forEachIndexed { i, channel ->
-                if (i == 0) {
-                    connect(name, oAuth, forceConnect)
-                }
-
-                joinChannel(channel)
-            }
-        }
+        connect(name, oAuth, forceConnect)
+        joinChannels(channels)
     }
 
     fun joinChannel(channel: String): List<String> {
@@ -238,6 +230,19 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
             writeConnection.connect(nick, oauth, forceConnect)
             startedConnection = true
         }
+    }
+
+    private fun joinChannels(channels: List<String>) {
+        if (channels.isEmpty()) return
+
+        channels.onEach {
+            createFlowsIfNecessary(it)
+            messages[it]?.value = emptyList()
+        }
+        _channels.value = channels
+
+        readConnection.joinChannels(channels)
+        writeConnection.joinChannels(channels)
     }
 
     private fun removeChannelData(channel: String) {

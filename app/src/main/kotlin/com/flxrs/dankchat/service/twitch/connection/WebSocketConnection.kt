@@ -39,6 +39,14 @@ class WebSocketConnection(
         }
     }
 
+    fun joinChannels(channelList: List<String>) {
+        val channelsToJoin = channelList - channels
+        channels.addAll(channelsToJoin)
+        if (connected) {
+            socket?.sendMessage("JOIN ${channels.joinToString { "#$it" }}")
+        }
+    }
+
     fun joinChannel(channel: String) {
         if (!channels.contains(channel)) {
             channels += channel
