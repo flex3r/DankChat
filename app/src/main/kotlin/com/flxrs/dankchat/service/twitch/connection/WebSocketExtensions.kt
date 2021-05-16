@@ -12,6 +12,6 @@ fun WebSocket.handlePing() {
 
 fun WebSocket.joinChannels(channels: Collection<String>) {
     if (channels.isNotEmpty()) {
-        sendMessage("JOIN ${channels.joinToString(",") { "#$it" }}")
+        sendMessage("JOIN ${channels.joinToString { "#$it" }}")
     }
 }
