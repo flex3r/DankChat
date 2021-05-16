@@ -90,12 +90,14 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     fun getRoomState(channel: String): StateFlow<Roomstate> = roomStates.getOrPut(channel) { MutableStateFlow(Roomstate(channel)) }
     fun getUsers(channel: String): StateFlow<LruCache<String, Boolean>> = users.getOrPut(channel) { MutableStateFlow(createUserCache()) }
 
-    suspend fun loadRecentMessages(channel: String, loadHistory: Boolean) {
-        if (loadHistory) {
-            loadRecentMessages(channel)
-        } else {
-            val currentChat = messages[channel]?.value ?: emptyList()
-            messages[channel]?.value = listOf(ChatItem(SystemMessage(state = SystemMessageType.NO_HISTORY_LOADED), false)) + currentChat
+    suspend fun loadRecentMessages(channel: String, loadHistory: Boolean, isUserChange: Boolean) {
+        when {
+            isUserChange -> return
+            loadHistory -> loadRecentMessages(channel)
+            else -> {
+                val currentChat = messages[channel]?.value ?: emptyList()
+                messages[channel]?.value = listOf(ChatItem(SystemMessage(state = SystemMessageType.NO_HISTORY_LOADED), false)) + currentChat
+            }
         }
     }
 
@@ -237,7 +239,9 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
         channels.onEach {
             createFlowsIfNecessary(it)
-            messages[it]?.value = emptyList()
+            if (messages[it]?.value == null) {
+                messages[it]?.value = emptyList()
+            }
         }
         _channels.value = channels
 

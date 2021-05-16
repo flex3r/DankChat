@@ -166,6 +166,7 @@ class MainViewModel @Inject constructor(
         oAuth = dataLoadingParameters.oAuth,
         id = dataLoadingParameters.id,
         name = dataLoadingParameters.name,
+        isUserChange = dataLoadingParameters.isUserChange,
         loadTwitchData = dataLoadingParameters.loadTwitchData,
         loadHistory = dataLoadingParameters.loadHistory,
         loadSupibot = dataLoadingParameters.loadSupibot
@@ -176,6 +177,7 @@ class MainViewModel @Inject constructor(
         id: String,
         name: String,
         channelList: List<String> = channels.value,
+        isUserChange: Boolean,
         loadTwitchData: Boolean,
         loadHistory: Boolean,
         loadSupibot: Boolean,
@@ -185,7 +187,7 @@ class MainViewModel @Inject constructor(
 
         viewModelScope.launch {
             val loadingState =
-                DataLoadingState.Loading(DataLoadingState.Parameters(oAuth, id, name, channelList, loadTwitchData = loadTwitchData, loadHistory = loadHistory, loadSupibot = loadSupibot))
+                DataLoadingState.Loading(DataLoadingState.Parameters(oAuth, id, name, channelList, isUserChange, loadTwitchData = loadTwitchData, loadHistory = loadHistory, loadSupibot = loadSupibot))
             _dataLoadingState.emit(loadingState)
 
             val result = runCatching {
@@ -199,7 +201,7 @@ class MainViewModel @Inject constructor(
                 channelList.map {
                     dataRepository.setEmotesForSuggestions(it)
                     launch { chatRepository.loadChatters(it) }
-                    launch { chatRepository.loadRecentMessages(it, loadHistory) }
+                    launch { chatRepository.loadRecentMessages(it, loadHistory, isUserChange) }
                 }.joinAll()
             }
 
@@ -287,6 +289,7 @@ class MainViewModel @Inject constructor(
             id = userId,
             name = name,
             channelList = channels.value,
+            isUserChange = true,
             loadTwitchData = true,
             loadHistory = false,
             loadSupibot = false

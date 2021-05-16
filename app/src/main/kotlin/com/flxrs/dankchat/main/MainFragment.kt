@@ -9,7 +9,6 @@ import android.provider.MediaStore
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.webkit.MimeTypeMap
@@ -274,6 +273,7 @@ class MainFragment : Fragment() {
                         id = id,
                         name = name,
                         channelList = channels,
+                        isUserChange = false,
                         loadTwitchData = true,
                         loadHistory = shouldLoadHistory,
                         loadSupibot = shouldLoadSupibot,
@@ -431,6 +431,7 @@ class MainFragment : Fragment() {
             id = id,
             name = name,
             channelList = channels,
+            isUserChange = false,
             loadTwitchData = true,
             loadHistory = result,
             loadSupibot = shouldLoadSupibot,
@@ -459,8 +460,18 @@ class MainFragment : Fragment() {
             val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
 
             val updatedChannels = mainViewModel.joinChannel(lowerCaseChannel)
-            mainViewModel.loadData(oauth, id, name = name, channelList = listOf(lowerCaseChannel), loadTwitchData = false, loadHistory = shouldLoadHistory, loadSupibot = false, scrollBackLength)
-            dankChatPreferences.channelsString = updatedChannels.joinToString(",")
+            mainViewModel.loadData(
+                oauth,
+                id,
+                name = name,
+                channelList = listOf(lowerCaseChannel),
+                isUserChange = false,
+                loadTwitchData = false,
+                loadHistory = shouldLoadHistory,
+                loadSupibot = false,
+                scrollBackLength
+            )
+            dankChatPreferences.channelsString = updatedChannels.joinToString(separator = ",")
 
             tabAdapter.addFragment(lowerCaseChannel)
             binding.chatViewpager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
