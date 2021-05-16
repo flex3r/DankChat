@@ -117,9 +117,9 @@ open class ChatFragment : Fragment() {
         outState.putBoolean(AT_BOTTOM_STATE, isAtBottom)
     }
 
-    protected open fun openUserPopup(targetUserId: String?) {
+    protected open fun openUserPopup(targetUserId: String?, channel: String) {
         targetUserId ?: return
-        (requireParentFragment() as? MainFragment)?.openUserPopup(targetUserId, isWhisperPopup = false)
+        (requireParentFragment() as? MainFragment)?.openUserPopup(targetUserId, channel, isWhisperPopup = false)
     }
 
     private fun copyMessage(message: String) {

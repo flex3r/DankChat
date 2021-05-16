@@ -24,6 +24,7 @@ class UserPopupViewModel @Inject constructor(
     private val targetUserId = savedStateHandle.get<String>(UserPopupDialogFragment.TARGET_USER_ID_ARG)
     private val currentUserId = savedStateHandle.get<String>(UserPopupDialogFragment.CURRENT_USER_ID_ARG)
     private val oAuth = savedStateHandle.get<String>(UserPopupDialogFragment.OAUTH_ARG)
+    private val channel = savedStateHandle.get<String>(UserPopupDialogFragment.CHANNEL_ARG)
 
     sealed class UserPopupState {
         object Loading : UserPopupState()
@@ -101,14 +102,15 @@ class UserPopupViewModel @Inject constructor(
         _userPopupState.value = UserPopupState.Loading
 
         val result = runCatching {
+            val channelId = channel?.let { dataRepository.getUserIdByName(oAuth, channel) }
+            val channelUserFollows = channelId?.let { dataRepository.getUserFollows(oAuth, targetUserId, channelId) }
             val user = dataRepository.getUser(oAuth, targetUserId)
-            val targetUserFollows = dataRepository.getUsersFollows(oAuth, targetUserId, currentUserId)
-            val currentUserFollows = dataRepository.getUsersFollows(oAuth, currentUserId, targetUserId)
+            val currentUserFollows = dataRepository.getUserFollows(oAuth, currentUserId, targetUserId)
             val isBlocked = chatRepository.isUserBlocked(targetUserId)
 
             mapToState(
                 user = user,
-                targetUserFollows = targetUserFollows,
+                channelUserFollows = channelUserFollows,
                 currentUserFollows = currentUserFollows,
                 isBlocked = isBlocked
             )
@@ -118,7 +120,7 @@ class UserPopupViewModel @Inject constructor(
         _userPopupState.value = state
     }
 
-    private fun mapToState(user: HelixUserDto?, targetUserFollows: UserFollowsDto?, currentUserFollows: UserFollowsDto?, isBlocked: Boolean): UserPopupState {
+    private fun mapToState(user: HelixUserDto?, channelUserFollows: UserFollowsDto?, currentUserFollows: UserFollowsDto?, isBlocked: Boolean): UserPopupState {
         user ?: return UserPopupState.Error()
 
         return UserPopupState.Success(
@@ -128,7 +130,7 @@ class UserPopupViewModel @Inject constructor(
             avatarUrl = user.avatarUrl,
             created = user.createdAt.asParsedZonedDateTime(),
             isFollowing = currentUserFollows?.total == 1,
-            followingSince = targetUserFollows?.data?.firstOrNull()?.followedAt?.asParsedZonedDateTime(),
+            followingSince = channelUserFollows?.data?.firstOrNull()?.followedAt?.asParsedZonedDateTime(),
             isBlocked = isBlocked
         )
     }

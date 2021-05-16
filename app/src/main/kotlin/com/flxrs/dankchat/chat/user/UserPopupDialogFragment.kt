@@ -123,5 +123,6 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
         const val TARGET_USER_ID_ARG = "targetUserId"
         const val CURRENT_USER_ID_ARG = "currentUserId"
         const val OAUTH_ARG = "oAuth"
+        const val CHANNEL_ARG = "channel"
     }
 }

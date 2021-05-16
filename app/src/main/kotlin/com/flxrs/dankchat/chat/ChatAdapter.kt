@@ -57,7 +57,7 @@ import kotlin.math.roundToInt
 class ChatAdapter(
     private val emoteManager: EmoteManager,
     private val onListChanged: (position: Int) -> Unit,
-    private val onUserClicked: (targetUserId: String?) -> Unit,
+    private val onUserClicked: (targetUserId: String?, channelName: String) -> Unit,
     private val onMessageLongClick: (message: String) -> Unit
 ) : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
     // Using position.isEven for determining which background to use in checkered mode doesn't work,
@@ -263,7 +263,7 @@ class ChatAdapter(
                     }
 
                     override fun onClick(v: View) {
-                        if (!ignoreClicks) onUserClicked(userId)
+                        if (!ignoreClicks) onUserClicked(userId, channel)
                     }
                 }
                 spannable.setSpan(userClickableSpan, prefixLength - fullDisplayName.length + badgesLength, prefixLength + badgesLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)

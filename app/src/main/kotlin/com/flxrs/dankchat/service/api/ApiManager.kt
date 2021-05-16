@@ -40,7 +40,7 @@ class ApiManager @Inject constructor(
         return null
     }
 
-    suspend fun getUserIdFromName(oAuth: String, name: String): String? = helixApiService.getUserByName("Bearer $oAuth", name).bodyOrNull?.data?.getOrNull(0)?.id
+    suspend fun getUserIdByName(oAuth: String, name: String): String? = helixApiService.getUserByName("Bearer $oAuth", name).bodyOrNull?.data?.getOrNull(0)?.id
     suspend fun getUser(oAuth: String, userId: String): HelixUserDto? = helixApiService.getUserById("Bearer $oAuth", userId).bodyOrNull?.data?.getOrNull(0)
     suspend fun getUsersFollows(oAuth: String, fromId: String, toId: String): UserFollowsDto? = helixApiService.getUsersFollows("Bearer $oAuth", fromId, toId).bodyOrNull
     suspend fun followUser(oAuth: String, fromId: String, toId: String): Boolean = helixApiService.putUserFollows("Bearer $oAuth", UserFollowRequestBody(fromId, toId)).isSuccessful

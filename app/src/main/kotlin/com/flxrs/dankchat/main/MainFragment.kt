@@ -379,10 +379,10 @@ class MainFragment : Fragment() {
         return true
     }
 
-    fun openUserPopup(targetUserId: String, isWhisperPopup: Boolean = false) {
+    fun openUserPopup(targetUserId: String, channel: String?, isWhisperPopup: Boolean = false) {
         val oAuth = dankChatPreferences.oAuthKey?.removeOAuthSuffix ?: return
         val currentUserId = dankChatPreferences.userIdString ?: return
-        val directions = MainFragmentDirections.actionMainFragmentToUserPopupDialogFragment(targetUserId, currentUserId, oAuth, isWhisperPopup)
+        val directions = MainFragmentDirections.actionMainFragmentToUserPopupDialogFragment(targetUserId, currentUserId, channel, oAuth, isWhisperPopup)
         navigateSafe(directions)
     }
 
