@@ -360,14 +360,15 @@ class MainViewModel @Inject constructor(
         val fixedOAuth = oAuth.removeOAuthSuffix
 
         fetchTimerJob = timer(STREAM_REFRESH_RATE) {
-            val data = channels.value.map { channel ->
-                async {
-                    runCatching { apiManager.getStream(fixedOAuth, channel) }.getOrNull()?.let {
-                        StreamData(channel = channel, data = stringBuilder(it.viewers))
-                    }
-                }
-            }
-            streamData.value = data.awaitAll().filterNotNull()
+            val streams = runCatching {
+                apiManager.getStreams(fixedOAuth, channels.value)
+            }.getOrNull()
+
+            val data = streams?.data?.map {
+                StreamData(channel = it.userLogin, data = stringBuilder(it.viewerCount))
+            }.orEmpty()
+
+            streamData.value = data
         }
     }
 

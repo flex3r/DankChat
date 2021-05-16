@@ -42,7 +42,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     private val roomStates = mutableMapOf<String, MutableStateFlow<Roomstate>>()
     private val users = mutableMapOf<String, MutableStateFlow<LruCache<String, Boolean>>>()
     private val _userState = MutableStateFlow(UserState())
-    private val ignoredList = mutableListOf<Int>()
+    private val blockList = mutableListOf<String>()
 
     private val moshi = Moshi.Builder().build()
     private val adapter = moshi.adapter(MultiEntryItem.Entry::class.java)
@@ -103,9 +103,9 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
     suspend fun loadIgnores(oAuth: String, id: String) {
         if (oAuth.isNotBlank()) {
-            apiManager.getIgnores(oAuth, id)?.let { (blocks) ->
-                ignoredList.clear()
-                ignoredList.addAll(blocks.map { it.user.id })
+            apiManager.getIgnores(oAuth, id)?.let { (data) ->
+                blockList.clear()
+                blockList.addAll(data.map { it.id })
             }
         }
     }
@@ -320,7 +320,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     }
 
     fun clearIgnores() {
-        ignoredList.clear()
+        blockList.clear()
     }
 
     suspend fun setMentionEntries(stringSet: Set<String>?) = withContext(Dispatchers.Default) {
@@ -386,7 +386,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
     private fun handleMessage(msg: IrcMessage) {
         msg.tags["user-id"]?.let { userId ->
-            if (ignoredList.any { it == userId.toInt() }) return
+            if (blockList.any { it == userId }) return
         }
         val parsed = TwitchMessage.parse(msg, emoteManager).map {
             if (it.name == name) lastMessage[it.channel] = it.message
@@ -445,7 +445,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         measureTimeMillis {
             for (message in result.messages) {
                 val parsedIrc = IrcMessage.parse(message)
-                if (ignoredList.any { parsedIrc.tags["user-id"]?.toInt() == it }) continue
+                if (blockList.any { parsedIrc.tags["user-id"] == it }) continue
 
                 for (msg in TwitchMessage.parse(parsedIrc, emoteManager)) {
                     if (!blacklistEntries.matches(msg.message, msg.name to msg.displayName, msg.emotes)) {

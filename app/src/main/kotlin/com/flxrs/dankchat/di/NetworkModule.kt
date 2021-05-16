@@ -13,6 +13,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.CacheControl
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
@@ -36,6 +37,7 @@ object NetworkModule {
     @Provides
     fun provideOkHttpClient(/*@ApplicationContext context: Context*/): OkHttpClient = OkHttpClient.Builder()
         //.addInterceptor(ChuckerInterceptor(context))
+        //.addInterceptor(HttpLoggingInterceptor().also { it.setLevel(HttpLoggingInterceptor.Level.BODY) })
         .addInterceptor { chain ->
             chain.request().newBuilder()
                 .header("User-Agent", "dankchat/${BuildConfig.VERSION_NAME}")

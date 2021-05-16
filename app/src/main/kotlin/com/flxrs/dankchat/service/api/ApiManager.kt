@@ -30,7 +30,7 @@ class ApiManager @Inject constructor(
 ) {
     private val loadedRecentsInChannels = mutableListOf<String>()
 
-    suspend fun validateUser(oAuth: String): UserDtos.ValidateUser? {
+    suspend fun validateUser(oAuth: String): ValidateUserDto? {
         try {
             val response = authApiService.validateUser("OAuth $oAuth")
             if (response.isSuccessful) return response.body()
@@ -41,17 +41,14 @@ class ApiManager @Inject constructor(
     }
 
     suspend fun getUserIdFromName(oAuth: String, name: String): String? = helixApiService.getUserByName("Bearer $oAuth", name).bodyOrNull?.data?.getOrNull(0)?.id
-    suspend fun getUser(oAuth: String, userId: String): UserDtos.HelixUser? = helixApiService.getUserById("Bearer $oAuth", userId).bodyOrNull?.data?.getOrNull(0)
+    suspend fun getUser(oAuth: String, userId: String): HelixUserDto? = helixApiService.getUserById("Bearer $oAuth", userId).bodyOrNull?.data?.getOrNull(0)
     suspend fun getUsersFollows(oAuth: String, fromId: String, toId: String): UserFollowsDto? = helixApiService.getUsersFollows("Bearer $oAuth", fromId, toId).bodyOrNull
     suspend fun followUser(oAuth: String, fromId: String, toId: String): Boolean = helixApiService.createUserFollows("Bearer $oAuth", UserFollowRequestBody(fromId, toId)).isSuccessful
     suspend fun unfollowUser(oAuth: String, fromId: String, toId: String): Boolean = helixApiService.deleteUserFollows("Bearer $oAuth", fromId, toId).isSuccessful
+    suspend fun getStreams(oAuth: String, channels: List<String>): StreamsDto? = helixApiService.getStreams("Bearer $oAuth", channels).bodyOrNull
+    suspend fun getIgnores(oAuth: String, userId: String): HelixUserBlockListDto? = helixApiService.getIgnores("Bearer $oAuth", userId).bodyOrNull
 
     suspend fun getUserEmotes(oAuth: String, id: String): EmoteDtos.Twitch.Result? = krakenApiService.getUserEmotes("OAuth $oAuth", id).bodyOrNull
-    suspend fun getIgnores(oAuth: String, id: String): UserDtos.KrakenUsersBlocks? = krakenApiService.getIgnores("OAuth $oAuth", id).bodyOrNull
-    suspend fun getStream(oAuth: String, channel: String): StreamDtos.Stream? =
-        getUserIdFromName(oAuth, channel)?.let {
-            krakenApiService.getStream(it.toInt()).bodyOrNull?.stream
-        }
 
     suspend fun getUserSet(set: String): EmoteDtos.Twitch.EmoteSet? = dankChatApiService.getSet(set).bodyOrNull?.firstOrNull()
     suspend fun getDankChatBadges(): List<BadgeDtos.DankChatBadge>? = dankChatApiService.getDankChatBadges().bodyOrNull

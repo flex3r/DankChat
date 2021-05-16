@@ -19,7 +19,7 @@ import com.flxrs.dankchat.databinding.LoginFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.api.ApiManager
-import com.flxrs.dankchat.service.api.dto.UserDtos
+import com.flxrs.dankchat.service.api.dto.ValidateUserDto
 import com.flxrs.dankchat.utils.extensions.showLongSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
@@ -115,7 +115,7 @@ class LoginFragment : Fragment() {
             }
         }
 
-        private fun saveLoginDetails(oAuth: String, validateDto: UserDtos.ValidateUser?): Boolean {
+        private fun saveLoginDetails(oAuth: String, validateDto: ValidateUserDto?): Boolean {
             return when {
                 validateDto == null || validateDto.login.isBlank() -> false
                 else -> {
