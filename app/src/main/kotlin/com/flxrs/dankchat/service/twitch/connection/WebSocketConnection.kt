@@ -160,7 +160,6 @@ class WebSocketConnection(
         override fun onMessage(webSocket: WebSocket, text: String) {
             text.removeSuffix("\r\n").split("\r\n").forEach { line ->
                 val ircMessage = IrcMessage.parse(line)
-                Log.d(TAG, ircMessage.raw)
                 if (ircMessage.isLoginFailed()) {
                     Log.e(TAG, "[$connectionName] authentication failed with expired token, closing connection..")
                     close(null)
