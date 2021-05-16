@@ -30,7 +30,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     data class UserState(val userId: String = "", val color: String? = null, val displayName: String = "", val emoteSets: List<String> = listOf())
 
     private val _activeChannel = MutableStateFlow("")
-    private val _channels = MutableStateFlow<List<String>>(emptyList())
+    private val _channels = MutableStateFlow<List<String>?>(null)
 
 
     private val _notificationsFlow = MutableSharedFlow<List<ChatItem>>(0, extraBufferCapacity = 10)
@@ -68,7 +68,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         get() = _whispers
     val activeChannel: StateFlow<String>
         get() = _activeChannel.asStateFlow()
-    val channels: StateFlow<List<String>>
+    val channels: StateFlow<List<String>?>
         get() = _channels.asStateFlow()
 
     val userState: StateFlow<UserState>
@@ -151,7 +151,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     }
 
     fun closeAndReconnect(name: String, oAuth: String) {
-        val channels = channels.value
+        val channels = channels.value.orEmpty()
         startedConnection = false
         val onClosed = { connectAndJoin(name, oAuth, channels) }
 
@@ -190,7 +190,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     }
 
     fun joinChannel(channel: String): List<String> {
-        val channels = channels.value
+        val channels = channels.value.orEmpty()
         if (channel in channels)
             return channels
 
@@ -208,7 +208,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     }
 
     fun partChannel(channel: String): List<String> {
-        val updatedChannels = channels.value - channel
+        val updatedChannels = channels.value.orEmpty() - channel
         _channels.value = updatedChannels
 
         removeChannelData(channel)
@@ -219,7 +219,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     }
 
     fun updateChannels(updatedChannels: List<String>) {
-        val currentChannels = channels.value
+        val currentChannels = channels.value.orEmpty()
         val removedChannels = currentChannels - updatedChannels
 
         removedChannels.forEach {
@@ -239,6 +239,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     }
 
     private fun joinChannels(channels: List<String>) {
+        _channels.value = channels
         if (channels.isEmpty()) return
 
         channels.onEach {
@@ -247,7 +248,6 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
                 messages[it]?.value = emptyList()
             }
         }
-        _channels.value = channels
 
         readConnection.joinChannels(channels)
         writeConnection.joinChannels(channels)

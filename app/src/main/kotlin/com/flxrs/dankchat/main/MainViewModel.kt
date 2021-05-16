@@ -43,7 +43,7 @@ class MainViewModel @Inject constructor(
     var started = false
 
     val activeChannel: StateFlow<String> = chatRepository.activeChannel
-    val channels: StateFlow<List<String>> = chatRepository.channels
+    val channels: StateFlow<List<String>?> = chatRepository.channels
     val channelMentionCount: Flow<Map<String, Int>> = chatRepository.channelMentionCount
     val shouldColorNotification: StateFlow<Boolean> = combine(chatRepository.hasMentions, chatRepository.hasWhispers) { hasMentions, hasWhispers ->
         hasMentions || hasWhispers
@@ -93,7 +93,7 @@ class MainViewModel @Inject constructor(
     val appbarEnabled = MutableStateFlow(true)
 
     val shouldShowViewPager: StateFlow<Boolean> = channels
-        .mapLatest { it.isNotEmpty() }
+        .mapLatest { it?.isNotEmpty() ?: true }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), true)
 
     val shouldShowInput: StateFlow<Boolean> = combine(inputEnabled, shouldShowViewPager) { inputEnabled, shouldShowViewPager ->
@@ -176,7 +176,7 @@ class MainViewModel @Inject constructor(
         oAuth: String,
         id: String,
         name: String,
-        channelList: List<String> = channels.value,
+        channelList: List<String> = channels.value.orEmpty(),
         isUserChange: Boolean,
         loadTwitchData: Boolean,
         loadHistory: Boolean,
@@ -218,7 +218,7 @@ class MainViewModel @Inject constructor(
 
     fun getLastMessage() = chatRepository.getLastMessage()
 
-    fun getChannels() = chatRepository.channels.value
+    fun getChannels() = channels.value.orEmpty()
 
     fun setSupibotSuggestions(enabled: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
         when {
@@ -288,7 +288,7 @@ class MainViewModel @Inject constructor(
             oAuth = oAuth,
             id = userId,
             name = name,
-            channelList = channels.value,
+            channelList = channels.value.orEmpty(),
             isUserChange = true,
             loadTwitchData = true,
             loadHistory = false,
@@ -357,11 +357,14 @@ class MainViewModel @Inject constructor(
 
     suspend fun fetchStreamData(oAuth: String, stringBuilder: (viewers: Int) -> String) = withContext(coroutineExceptionHandler) {
         fetchTimerJob?.cancel()
+        val channels = channels.value
+        if (channels.isNullOrEmpty()) return@withContext
+
         val fixedOAuth = oAuth.removeOAuthSuffix
 
         fetchTimerJob = timer(STREAM_REFRESH_RATE) {
             val streams = runCatching {
-                apiManager.getStreams(fixedOAuth, channels.value)
+                apiManager.getStreams(fixedOAuth, channels)
             }.getOrNull()
 
             val data = streams?.data?.map {

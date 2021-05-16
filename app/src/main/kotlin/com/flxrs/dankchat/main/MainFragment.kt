@@ -9,6 +9,7 @@ import android.provider.MediaStore
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.webkit.MimeTypeMap
@@ -183,7 +184,7 @@ class MainFragment : Fragment() {
             }
             collectFlow(shouldColorNotification) { activity?.invalidateOptionsMenu() }
             collectFlow(channels) {
-                if (it.isNotEmpty()) {
+                if (!it.isNullOrEmpty()) {
                     fetchStreamInformation()
                 }
             }
