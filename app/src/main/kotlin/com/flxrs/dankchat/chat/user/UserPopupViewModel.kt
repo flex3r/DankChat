@@ -3,6 +3,7 @@ package com.flxrs.dankchat.chat.user
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.flxrs.dankchat.service.ChatRepository
 import com.flxrs.dankchat.service.DataRepository
 import com.flxrs.dankchat.service.api.dto.HelixUserDto
 import com.flxrs.dankchat.service.api.dto.UserFollowsDto
@@ -17,6 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class UserPopupViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val chatRepository: ChatRepository,
     private val dataRepository: DataRepository
 ) : ViewModel() {
     private val targetUserId = savedStateHandle.get<String>(UserPopupDialogFragment.TARGET_USER_ID_ARG)
@@ -33,7 +35,8 @@ class UserPopupViewModel @Inject constructor(
             val created: String,
             val avatarUrl: String,
             val isFollowing: Boolean = false,
-            val followingSince: String? = null
+            val followingSince: String? = null,
+            val isBlocked: Boolean = false
         ) : UserPopupState()
     }
 
@@ -45,6 +48,11 @@ class UserPopupViewModel @Inject constructor(
             val state = userPopupState.value
             return state is UserPopupState.Success && state.isFollowing
         }
+    val isBlocked: Boolean
+        get() {
+            val state = userPopupState.value
+            return state is UserPopupState.Success && state.isBlocked
+        }
 
     val displayNameOrNull: String?
         get() = (userPopupState.value as? UserPopupState.Success)?.displayName
@@ -53,30 +61,31 @@ class UserPopupViewModel @Inject constructor(
         loadData()
     }
 
-    fun followUser() = viewModelScope.launch {
-        if (targetUserId == null || currentUserId == null || oAuth == null) {
-            _userPopupState.value = UserPopupState.Error()
-            return@launch
-        }
-
-        val result = runCatching {
-            dataRepository.followUser(oAuth, currentUserId, targetUserId)
-        }
-        when {
-            result.isFailure -> _userPopupState.value = UserPopupState.Error(result.exceptionOrNull())
-            else -> loadData()
-        }
+    fun followUser() = updateStateWith { targetUserId, currentUserId, oAuth ->
+        dataRepository.followUser(oAuth, currentUserId, targetUserId)
     }
 
-    fun unfollowUser() = viewModelScope.launch {
+    fun blockUser() = updateStateWith { targetUserId, _, oAuth ->
+        dataRepository.blockUser(oAuth, targetUserId)
+        chatRepository.addUserBlock(targetUserId)
+    }
+
+    fun unfollowUser() = updateStateWith { targetUserId, currentUserId, oAuth ->
+        dataRepository.unfollowUser(oAuth, currentUserId, targetUserId)
+    }
+
+    fun unblockUser() = updateStateWith { targetUserId, _, oAuth ->
+        dataRepository.unblockUser(oAuth, targetUserId)
+        chatRepository.removeUserBlock(targetUserId)
+    }
+
+    private inline fun updateStateWith(crossinline block: suspend (String, String, String) -> Unit) = viewModelScope.launch {
         if (targetUserId == null || currentUserId == null || oAuth == null) {
             _userPopupState.value = UserPopupState.Error()
             return@launch
         }
 
-        val result = runCatching {
-            dataRepository.unfollowUser(oAuth, currentUserId, targetUserId)
-        }
+        val result = runCatching { block(targetUserId, currentUserId, oAuth) }
         when {
             result.isFailure -> _userPopupState.value = UserPopupState.Error(result.exceptionOrNull())
             else -> loadData()
@@ -95,11 +104,13 @@ class UserPopupViewModel @Inject constructor(
             val user = dataRepository.getUser(oAuth, targetUserId)
             val targetUserFollows = dataRepository.getUsersFollows(oAuth, targetUserId, currentUserId)
             val currentUserFollows = dataRepository.getUsersFollows(oAuth, currentUserId, targetUserId)
+            val isBlocked = chatRepository.isUserBlocked(targetUserId)
 
             mapToState(
                 user = user,
                 targetUserFollows = targetUserFollows,
-                currentUserFollows = currentUserFollows
+                currentUserFollows = currentUserFollows,
+                isBlocked = isBlocked
             )
         }
 
@@ -107,7 +118,7 @@ class UserPopupViewModel @Inject constructor(
         _userPopupState.value = state
     }
 
-    private fun mapToState(user: HelixUserDto?, targetUserFollows: UserFollowsDto?, currentUserFollows: UserFollowsDto?): UserPopupState {
+    private fun mapToState(user: HelixUserDto?, targetUserFollows: UserFollowsDto?, currentUserFollows: UserFollowsDto?, isBlocked: Boolean): UserPopupState {
         user ?: return UserPopupState.Error()
 
         return UserPopupState.Success(
@@ -117,7 +128,8 @@ class UserPopupViewModel @Inject constructor(
             avatarUrl = user.avatarUrl,
             created = user.createdAt.asParsedZonedDateTime(),
             isFollowing = currentUserFollows?.total == 1,
-            followingSince = targetUserFollows?.data?.firstOrNull()?.followedAt?.asParsedZonedDateTime()
+            followingSince = targetUserFollows?.data?.firstOrNull()?.followedAt?.asParsedZonedDateTime(),
+            isBlocked = isBlocked
         )
     }
 }

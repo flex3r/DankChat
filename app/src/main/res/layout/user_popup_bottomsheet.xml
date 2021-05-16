@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="visible"
-            app:constraint_referenced_ids="user_avatar,user_name,user_created,user_followage,user_follow,user_mention" />
+            app:constraint_referenced_ids="user_avatar,user_name,user_created,user_followage,user_follow,user_mention,user_block" />
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/user_loading"
@@ -133,11 +133,24 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="16dp"
             android:text="@string/user_popup_follow"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/user_block"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/user_mention" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/user_block"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/user_popup_block"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/user_follow" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

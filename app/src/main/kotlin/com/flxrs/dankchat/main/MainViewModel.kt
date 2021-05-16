@@ -378,7 +378,7 @@ class MainViewModel @Inject constructor(
             launch { dataRepository.loadGlobalBadges() },
             launch { if (loadTwitchData) dataRepository.loadTwitchEmotes(oAuth, id) },
             launch { if (loadSupibot) dataRepository.loadSupibotCommands() },
-            launch { chatRepository.loadIgnores(oAuth, id) }
+            launch { chatRepository.loadUserBlocks(oAuth, id) }
         ) + channelList.map {
             launch { dataRepository.loadChannelData(it, oAuth) }
         }.joinAll()

@@ -42,7 +42,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     private val roomStates = mutableMapOf<String, MutableStateFlow<Roomstate>>()
     private val users = mutableMapOf<String, MutableStateFlow<LruCache<String, Boolean>>>()
     private val _userState = MutableStateFlow(UserState())
-    private val blockList = mutableListOf<String>()
+    private val blockList = mutableSetOf<String>()
 
     private val moshi = Moshi.Builder().build()
     private val adapter = moshi.adapter(MultiEntryItem.Entry::class.java)
@@ -101,14 +101,18 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         }
     }
 
-    suspend fun loadIgnores(oAuth: String, id: String) {
+    suspend fun loadUserBlocks(oAuth: String, id: String) {
         if (oAuth.isNotBlank()) {
-            apiManager.getIgnores(oAuth, id)?.let { (data) ->
+            apiManager.getUserBlocks(oAuth, id)?.let { (data) ->
                 blockList.clear()
                 blockList.addAll(data.map { it.id })
             }
         }
     }
+
+    fun isUserBlocked(targetUserId: String): Boolean = targetUserId in blockList
+    fun addUserBlock(targetUserId: String) = blockList.add(targetUserId)
+    fun removeUserBlock(targetUserId: String) = blockList.remove(targetUserId)
 
     suspend fun loadChatters(channel: String) = withContext(Dispatchers.Default) {
         if (!users.contains(channel)) users[channel] = MutableStateFlow(createUserCache())
@@ -386,7 +390,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
     private fun handleMessage(msg: IrcMessage) {
         msg.tags["user-id"]?.let { userId ->
-            if (blockList.any { it == userId }) return
+            if (userId in blockList) return
         }
         val parsed = TwitchMessage.parse(msg, emoteManager).map {
             if (it.name == name) lastMessage[it.channel] = it.message
@@ -445,7 +449,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         measureTimeMillis {
             for (message in result.messages) {
                 val parsedIrc = IrcMessage.parse(message)
-                if (blockList.any { parsedIrc.tags["user-id"] == it }) continue
+                if (parsedIrc.tags["user-id"] in blockList) continue
 
                 for (msg in TwitchMessage.parse(parsedIrc, emoteManager)) {
                     if (!blacklistEntries.matches(msg.message, msg.name to msg.displayName, msg.emotes)) {

@@ -9,11 +9,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.databinding.MainFragmentBinding
 import com.flxrs.dankchat.databinding.UserPopupBottomsheetBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.utils.extensions.collectFlow
-import com.flxrs.dankchat.utils.extensions.showShortSnackbar
 import com.flxrs.dankchat.utils.loadImage
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -50,14 +48,26 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
                 when {
                     viewModel.isFollowing -> {
                         MaterialAlertDialogBuilder(requireContext())
-                            .setTitle(R.string.confirm_channel_unfollow_title)
-                            .setMessage(R.string.confirm_channel_unfollow_message)
+                            .setTitle(R.string.confirm_user_unfollow_title)
+                            .setMessage(R.string.confirm_user_unfollow_message)
                             .setPositiveButton(R.string.confirm_channel_removal_positive_button) { _, _ -> viewModel.unfollowUser() }
                             .setNegativeButton(R.string.dialog_cancel) { d, _ -> d.dismiss() }
                             .show()
 
                     }
                     else -> viewModel.followUser()
+                }
+            }
+
+            userBlock.setOnClickListener {
+                when {
+                    viewModel.isBlocked -> viewModel.unblockUser()
+                    else -> MaterialAlertDialogBuilder(requireContext())
+                        .setTitle(R.string.confirm_user_block_title)
+                        .setMessage(R.string.confirm_user_block_message)
+                        .setPositiveButton(R.string.confirm_user_block_positive_button) { _, _ -> viewModel.blockUser() }
+                        .setNegativeButton(R.string.dialog_cancel) { d, _ -> d.dismiss() }
+                        .show()
                 }
             }
         }
@@ -83,6 +93,7 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun UserPopupBottomsheetBinding.updateUserData(userState: UserPopupViewModel.UserPopupState.Success) {
+        userAvatar.loadImage(userState.avatarUrl)
         userLoading.isVisible = false
         userGroup.isVisible = true
         userName.text = userState.displayName
@@ -94,7 +105,10 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
         userFollowage.text = userState.followingSince?.let {
             getString(R.string.user_popup_following_since, it)
         } ?: getString(R.string.user_popup_not_following)
-        userAvatar.loadImage(userState.avatarUrl)
+        userBlock.text = when {
+            userState.isBlocked -> getString(R.string.user_popup_unblock)
+            else -> getString(R.string.user_popup_block)
+        }
     }
 
     private fun setErrorResultAndDismiss(throwable: Throwable?) {

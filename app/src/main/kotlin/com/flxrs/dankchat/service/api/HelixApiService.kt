@@ -29,7 +29,7 @@ interface HelixApiService {
 
     @Headers("Client-ID: ${ApiManager.CLIENT_ID}")
     @POST("users/follows")
-    suspend fun createUserFollows(
+    suspend fun putUserFollows(
         @Header("Authorization") oAuth: String,
         @Body body: UserFollowRequestBody
     ): Response<Unit>
@@ -51,9 +51,23 @@ interface HelixApiService {
 
     @Headers("Client-ID: ${ApiManager.CLIENT_ID}")
     @GET("users/blocks/")
-    suspend fun getIgnores(
+    suspend fun getUserBlocks(
         @Header("Authorization") oAuth: String,
         @Query("broadcaster_id") userId: String,
         @Query("first") first: Int = 100
     ): Response<HelixUserBlockListDto>
+
+    @Headers("Client-ID: ${ApiManager.CLIENT_ID}")
+    @PUT("users/blocks/")
+    suspend fun putUserBlock(
+        @Header("Authorization") oAuth: String,
+        @Query("target_user_id") targetUserId: String
+    ): Response<Unit>
+
+    @Headers("Client-ID: ${ApiManager.CLIENT_ID}")
+    @DELETE("users/blocks/")
+    suspend fun deleteUserBlock(
+        @Header("Authorization") oAuth: String,
+        @Query("target_user_id") targetUserId: String
+    ): Response<Unit>
 }
