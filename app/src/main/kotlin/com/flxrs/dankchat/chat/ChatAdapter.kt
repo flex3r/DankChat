@@ -240,12 +240,9 @@ class ChatAdapter(
             if (showTimeStamp) timeAndWhisperBuilder.append("${DateTimeUtils.timestampToLocalTime(timestamp)} ")
             val (prefixLength, spannable) = timeAndWhisperBuilder.length + fullDisplayName.length to SpannableStringBuilder().bold { append(timeAndWhisperBuilder) }
 
-            val badgePositions = when {
-                showUserName -> allowedBadges.map {
-                    spannable.append("  ")
-                    spannable.length - 2 to spannable.length - 1
-                }
-                else -> listOf()
+            val badgePositions = allowedBadges.map {
+                spannable.append("  ")
+                spannable.length - 2 to spannable.length - 1
             }
 
             val normalizedColor = color.normalizeColor(isDarkMode)
@@ -300,23 +297,21 @@ class ChatAdapter(
             }
 
             setText(spannableWithEmojis, TextView.BufferType.SPANNABLE)
-            if (showUserName) {
-                allowedBadges.forEachIndexed { idx, badge ->
-                    try {
-                        val (start, end) = badgePositions[idx]
-                        Coil.execute(badge.url.toRequest(context)).drawable?.apply {
-                            if (badge is Badge.FFZModBadge) {
-                                colorFilter = PorterDuffColorFilter(ContextCompat.getColor(context, R.color.color_ffz_mod), PorterDuff.Mode.DST_OVER)
-                            }
-
-                            val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
-                            setBounds(0, 0, width, lineHeight)
-                            val imageSpan = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
-                            (text as SpannableString).setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            allowedBadges.forEachIndexed { idx, badge ->
+                try {
+                    val (start, end) = badgePositions[idx]
+                    Coil.execute(badge.url.toRequest(context)).drawable?.apply {
+                        if (badge is Badge.FFZModBadge) {
+                            colorFilter = PorterDuffColorFilter(ContextCompat.getColor(context, R.color.color_ffz_mod), PorterDuff.Mode.DST_OVER)
                         }
-                    } catch (t: Throwable) {
-                        handleException(t)
+
+                        val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
+                        setBounds(0, 0, width, lineHeight)
+                        val imageSpan = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
+                        (text as SpannableString).setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                     }
+                } catch (t: Throwable) {
+                    handleException(t)
                 }
             }
 
