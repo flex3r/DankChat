@@ -108,9 +108,25 @@ class ApiManager @Inject constructor(
 
         private const val BASE_LOGIN_URL = "https://id.twitch.tv/oauth2/authorize?response_type=token"
         private const val REDIRECT_URL = "https://flxrs.com/dankchat"
-        private const val SCOPES = "chat:edit+chat:read+user_read+user_subscriptions" +
-                "+channel:moderate+user_blocks_read+user_blocks_edit+whispers:read+whispers:edit" +
-                "+channel_editor+user:edit:follows+user:read:blocked_users+user:manage:blocked_users"
+        private const val SCOPES = "chat:edit" +
+                "+chat:read" +
+                "+whispers:read" +
+                "+whispers:edit" +
+                "+channel_editor" +
+                "+channel_commercial" +
+                "+channel:moderate" +
+                "+channel:edit:commercial" +
+                //"+channel:manage:broadcast" +
+                //"+channel:read:redemptions" +
+                //"+moderator:manage:automod" +
+                // "+clips:edit" +
+                "+user_read" +
+                "+user_subscriptions" +
+                "+user_blocks_read" +
+                "+user_blocks_edit" +
+                "+user:edit:follows" +
+                "+user:read:blocked_users" +
+                "+user:manage:blocked_users"
         const val CLIENT_ID = "xu7vd1i6tlr0ak45q1li2wdc0lrma8"
         const val LOGIN_URL = "$BASE_LOGIN_URL&client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URL&scope=$SCOPES"
     }
