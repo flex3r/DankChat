@@ -452,8 +452,8 @@ class MainFragment : Fragment() {
 
     private fun addChannel(channel: String) {
         val lowerCaseChannel = channel.lowercase(Locale.getDefault())
-        val channels = mainViewModel.getChannels()
-        if (!channels.contains(lowerCaseChannel)) {
+        var newTabIndex = mainViewModel.getChannels().indexOf(lowerCaseChannel)
+        if (newTabIndex == -1) {
             val oauth = dankChatPreferences.oAuthKey ?: ""
             val id = dankChatPreferences.userIdString ?: ""
             val name = dankChatPreferences.userName ?: ""
@@ -461,6 +461,7 @@ class MainFragment : Fragment() {
             val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
 
             val updatedChannels = mainViewModel.joinChannel(lowerCaseChannel)
+            newTabIndex = updatedChannels.size - 1
             mainViewModel.loadData(
                 oauth,
                 id,
@@ -476,11 +477,11 @@ class MainFragment : Fragment() {
 
             tabAdapter.addFragment(lowerCaseChannel)
             binding.chatViewpager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
-            binding.chatViewpager.setCurrentItem(updatedChannels.size - 1, false)
-
-            mainViewModel.setActiveChannel(channel)
-            activity?.invalidateOptionsMenu()
         }
+        binding.chatViewpager.setCurrentItem(newTabIndex, false)
+
+        mainViewModel.setActiveChannel(channel)
+        activity?.invalidateOptionsMenu()
     }
 
     private fun insertEmote(emote: String) = insertText("$emote ")
