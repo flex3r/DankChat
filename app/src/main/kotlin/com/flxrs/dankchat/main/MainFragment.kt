@@ -451,7 +451,7 @@ class MainFragment : Fragment() {
     }
 
     private fun addChannel(channel: String) {
-        val lowerCaseChannel = channel.lowercase(Locale.getDefault())
+        val lowerCaseChannel = channel.lowercase(Locale.getDefault()).removePrefix("#")
         var newTabIndex = mainViewModel.getChannels().indexOf(lowerCaseChannel)
         if (newTabIndex == -1) {
             val oauth = dankChatPreferences.oAuthKey ?: ""

@@ -50,7 +50,7 @@
     <string name="snackbar_upload_failed_cause">上傳失敗: %1$s</string>
     <string name="snackbar_retry">重試</string>
     <string name="snackbar_data_reloaded">已重整表情符號</string>
-    <string name="snackbar_data_load_failed_cause">讀取資料時失敗: %1$s</string>
+    <string name="snackbar_data_load_failed_cause">讀取資料失敗: %1$s</string>
     <string name="add_channel_hint">頻道名稱</string>
     <string name="emote_menu_tab_subs">訂閱</string>
     <string name="emote_menu_tab_channel">頻道</string>
@@ -133,10 +133,32 @@
     <string name="preference_scrollback_length_title">訊息回調長度</string>
     <string name="preference_roomstate_title">顯示聊天室狀態</string>
     <string name="preference_roomstate_summary">顯示目前聊天室狀態，如訂閱者聊天模式</string>
-    <string name="snackbar_paste">粘贴</string>
+    <string name="snackbar_paste">貼上</string>
     <string name="preference_show_username_title">顯示用戶名</string>
 
     <plurals name="viewers">
         <item quantity="other">Live 與 %d 個觀眾</item>
     </plurals>
+    <string name="manage_channels">管理頻道</string>
+    <string name="confirm_channel_removal_title">確認移除頻道</string>
+    <string name="confirm_channel_removal_message">您確定要將此頻道移除嗎？</string>
+    <string name="confirm_channel_removal_positive_button">移除</string>
+    <string name="user_popup_follow">追蹤</string>
+    <string name="user_popup_unfollow">退追</string>
+    <string name="user_popup_block">封鎖</string>
+    <string name="user_popup_unblock">移除封鎖</string>
+    <string name="user_popup_mention">提及用戶</string>
+    <string name="user_popup_whisper">與用戶悄悄話</string>
+    <string name="user_popup_created">建立於：%1$s</string>
+    <string name="user_popup_following_since">自 %1$s 起開始追蹤</string>
+    <string name="user_popup_not_following">目前尚未追蹤</string>
+    <string name="user_popup_avatar_description">個人檔案頭像</string>
+    <string name="user_popup_error">載入用戶失敗：%1$s</string>
+    <string name="confirm_user_unfollow_title">確定退追</string>
+    <string name="confirm_user_unfollow_message">您確定要退追此用戶嗎？</string>
+    <string name="confirm_user_unfollow_positive_button">退追</string>
+    <string name="confirm_user_block_title">確定封鎖</string>
+    <string name="confirm_user_block_message">您確定要封鎖此用戶嗎？</string>
+    <string name="confirm_user_block_positive_button">封鎖</string>
+    <string name="preference_visible_badges_title">顯示徽章</string>
 </resources>
