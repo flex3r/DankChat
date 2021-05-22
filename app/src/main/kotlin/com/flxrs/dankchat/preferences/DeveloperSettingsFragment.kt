@@ -6,10 +6,10 @@ import android.speech.tts.TextToSpeech
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
-import com.flxrs.dankchat.MainActivity
+import androidx.preference.SwitchPreferenceCompat
 import com.flxrs.dankchat.R
-import kotlinx.android.synthetic.main.settings_fragment.view.*
+import com.flxrs.dankchat.databinding.SettingsFragmentBinding
+import com.flxrs.dankchat.main.MainActivity
 
 class DeveloperSettingsFragment : PreferenceFragmentCompat() {
 
@@ -23,15 +23,15 @@ class DeveloperSettingsFragment : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val toolbar = view.settings_toolbar
+        val binding = SettingsFragmentBinding.bind(view)
         (requireActivity() as MainActivity).apply {
-            setSupportActionBar(toolbar)
+            setSupportActionBar(binding.settingsToolbar)
             supportActionBar?.apply {
                 setDisplayHomeAsUpEnabled(true)
                 title = getString(R.string.preference_developer_header)
             }
 
-            findPreference<SwitchPreference>(getString(R.string.preference_tts_key))?.apply {
+            findPreference<SwitchPreferenceCompat>(getString(R.string.preference_tts_key))?.apply {
                 setOnPreferenceChangeListener { _, value ->
                     when (value as Boolean) {
                         true -> requestCheckTTSData.launch(Intent(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA))

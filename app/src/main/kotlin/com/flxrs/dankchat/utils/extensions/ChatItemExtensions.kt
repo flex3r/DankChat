@@ -1,21 +1,21 @@
 package com.flxrs.dankchat.utils.extensions
 
 import com.flxrs.dankchat.chat.ChatItem
-import com.flxrs.dankchat.service.twitch.message.Message
+import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 
 fun List<ChatItem>.replaceWithTimeOuts(name: String): List<ChatItem> = apply {
-    forEach { item ->
-        if (item.message is Message.TwitchMessage && !item.message.isNotify
-            && (name.isBlank() || item.message.name.equals(name, true))
+    forEach { (message) ->
+        if (message is TwitchMessage && !message.isNotify
+            && (name.isBlank() || message.name.equals(name, true))
         ) {
-            item.message.timedOut = true
+            message.timedOut = true
         }
     }
 }
 
 fun List<ChatItem>.replaceWithTimeOut(id: String): List<ChatItem> = apply {
     forEach {
-        if (it.message is Message.TwitchMessage && it.message.id == id) {
+        if (it.message is TwitchMessage && it.message.id == id) {
             it.message.timedOut = true
             return@apply
         }
@@ -24,7 +24,7 @@ fun List<ChatItem>.replaceWithTimeOut(id: String): List<ChatItem> = apply {
 
 fun List<ChatItem>.addAndLimit(item: ChatItem, scrollBackLength: Int): MutableList<ChatItem> = toMutableList().apply {
     add(item)
-    if (size > scrollBackLength) removeAt(0)
+    while (size > scrollBackLength) removeAt(0)
 }
 
 fun List<ChatItem>.addAndLimit(

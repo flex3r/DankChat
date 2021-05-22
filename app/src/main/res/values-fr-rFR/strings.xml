@@ -15,13 +15,11 @@
     <string name="error_dialog_title">Exception capturée: %1$s</string>
     <string name="add_channel">Ajouter une chaine</string>
     <string name="name">Nom</string>
-    <string name="remove_channel">Supprimer la chaine</string>
     <string name="open_channel">Ouvrir la chaine</string>
     <string name="no_channels_added">Aucune chaine ajoutée</string>
     <string name="confirm_logout_title">Confirmer la déconnexion</string>
     <string name="confirm_logout_message">Êtes vous sur de vouloir vous déconnecter ?</string>
     <string name="confirm_logout_positive_button">Se déconnecter</string>
-    <string name="confirm_logout_negative_button">Annuler</string>
     <string name="upload_media">Envoyer un média</string>
     <string name="take_picture">Prendre une photo</string>
     <string name="record_video">Prendre une vidéo</string>
@@ -81,7 +79,6 @@
     <string name="preference_notification_title">Afficher les notifications de mentions</string>
     <string name="preference_notification_summary">Crée une notification si vous êtes mentionné et l\'application est en arrière plan</string>
     <string name="preference_notification_header">Notifications</string>
-    <string name="preference_mentions_header">Mentions</string>
     <string name="preference_chat_header">Chat</string>
     <string name="preference_logout_title">Déconnexion</string>
     <string name="preference_general_header">Général</string>
@@ -128,13 +125,19 @@
     <string name="preference_developer_header">Options pour les développeurs</string>
     <string name="hide_actionbar">Masquer la barre d\'outils</string>
     <string name="preference_supibot_suggestions_title">Suggestions de commandes Supibot</string>
+    <string name="preference_checkered_lines_title">Couleurs de lignes alternées</string>
+    <string name="preference_checkered_lines_summary">Sépare chaque ligne par un fond de luminosité différente</string>
+    <string name="more">Plus</string>
+    <string name="preference_scrollback_length_title">Longueur de l\'historique du chat</string>
+    <string name="mentions">Mentions</string>
+    <string name="whispers">"Messages privé "</string>
+    <string name="mentions_title">Mentions / Messages privé</string>
+    <string name="notification_whisper_mention">%1$s vous a envoyé un message privé</string>
+    <string name="snackbar_paste">Coller</string>
+    <string name="preference_show_username_title">Afficher le nom d\'utilisateur</string>
 
     <plurals name="viewers">
         <item quantity="one">Live avec %d spectateur</item>
         <item quantity="other">Live avec %d spectateurs</item>
     </plurals>
-    <string name="preference_checkered_lines_title">Couleurs de lignes alternées</string>
-    <string name="preference_checkered_lines_summary">Sépare chaque ligne par un fond de luminosité différente</string>
-    <string name="more">Plus</string>
-    <string name="preference_scrollback_length_title">Longueur de l\'historique du chat</string>
 </resources>

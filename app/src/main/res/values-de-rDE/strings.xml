@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-    <resources>
+<resources>
 
     <string name="app_name">DankChat</string>
     <string name="app_name_dank">DankChat (Dank)</string>
@@ -17,13 +17,12 @@
     <string name="error_dialog_title">Fehler aufgetreten: %1$s</string>
     <string name="add_channel">Kanal hinzufügen</string>
     <string name="name">Name</string>
-    <string name="remove_channel">Kanal entfernen</string>
+    <string name="manage_channels">Kanäle bearbeiten</string>
     <string name="open_channel">Kanal öffnen</string>
     <string name="no_channels_added">Keine Kanäle hinzugefügt</string>
     <string name="confirm_logout_title">Abmeldung bestätigen</string>
     <string name="confirm_logout_message">Willst du dich wirklich abmelden?</string>
     <string name="confirm_logout_positive_button">Abmelden</string>
-    <string name="confirm_logout_negative_button">Abbrechen</string>
     <string name="upload_media">Medien hochladen</string>
     <string name="take_picture">Ein Bild machen</string>
     <string name="record_video">Ein Video aufnehmen</string>
@@ -85,7 +84,6 @@
     <string name="preference_notification_title">Benachrichtigung bei Mentions</string>
     <string name="preference_notification_summary">Benachrichtigung bei einer Mention, wenn die App im Hintergrund läuft.</string>
     <string name="preference_notification_header">Benachrichtigungen</string>
-    <string name="preference_mentions_header">Mentions</string>
     <string name="preference_chat_header">Chat</string>
     <string name="preference_logout_title">Abmelden</string>
     <string name="preference_general_header">Allgemein</string>
@@ -132,13 +130,20 @@
     <string name="preference_checkered_lines_title">Alternierende Farbe der Zeilen</string>
     <string name="preference_checkered_lines_summary">Teilt jede Zeile mit unterschiedlicher Helligkeit des Hintergrunds</string>
     <string name="preference_supibot_suggestions_title">Supibot Befehl-Vorschläge</string>
-
-
-    <plurals name="viewers">
-    <item quantity="one">Live mit %d Zuschauer</item>
-    <item quantity="other">Live mit %d Zuschauern</item>
-</plurals>
     <string name="more">Mehr</string>
     <string name="preference_scrollback_length_title">Länge des Chatverlaufs</string>
+    <string name="mentions">Mentions</string>
+    <string name="whispers">Privatnachrichten</string>
+    <string name="notification_whisper_mention">%1$s hat dir eine private Nachricht geschickt</string>
+    <string name="mentions_title">Mentions / Privatnachrichten</string>
+    <string name="preference_show_username_title">Nutzername anzeigen</string>
+    <string name="snackbar_paste">Einfügen</string>
+    <string name="confirm_channel_removal_title">Kanalentfernung bestätigen</string>
+    <string name="confirm_channel_removal_message">Willst du diesen Kanal wirklich entfernen?</string>
+    <string name="confirm_channel_removal_positive_button">Entfernen</string>
 
+    <plurals name="viewers">
+        <item quantity="one">Live mit %d Zuschauer</item>
+        <item quantity="other">Live mit %d Zuschauern</item>
+    </plurals>
 </resources>

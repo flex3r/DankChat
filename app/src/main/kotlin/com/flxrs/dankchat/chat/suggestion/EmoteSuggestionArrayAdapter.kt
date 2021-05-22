@@ -5,8 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import coil.api.clear
-import coil.api.load
+import coil.clear
+import coil.load
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.utils.extensions.getDrawableAndSetSurfaceTint
 import pl.droidsonroids.gif.GifImageView
@@ -31,7 +31,7 @@ class EmoteSuggestionsArrayAdapter(context: Context, private val onCount: (count
                     }
                 }
                 is Suggestion.UserSuggestion -> imageView.setImageDrawable(context.getDrawableAndSetSurfaceTint(R.drawable.ic_notification_icon))
-                is Suggestion.CommandSuggestion -> imageView.setImageDrawable(context.getDrawableAndSetSurfaceTint(R.drawable.ic_baseline_android_24))
+                is Suggestion.CommandSuggestion -> imageView.setImageDrawable(context.getDrawableAndSetSurfaceTint(R.drawable.ic_android))
             }
         }
 

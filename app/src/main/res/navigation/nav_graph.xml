@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.flxrs.dankchat.MainFragment"
+        android:name="com.flxrs.dankchat.main.MainFragment"
         android:label="MainFragment">
         <action
             android:id="@+id/action_mainFragment_to_loginFragment"
@@ -22,6 +22,18 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_mainFragment_to_channelsDialogFragment"
+            app:destination="@id/channelsDialogFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_addChannelDialogFragment"
+            app:destination="@id/addChannelDialogFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_messageHistoryDisclaimerDialogFragment"
+            app:destination="@id/messageHistoryDisclaimerDialogFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_userPopupDialogFragment"
+            app:destination="@id/userPopupDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -60,6 +72,7 @@
             app:popEnterAnim="@anim/open_enter"
             app:popExitAnim="@anim/close_exit" />
     </fragment>
+
     <fragment
         android:id="@+id/appearanceSettingsFragment"
         android:name="com.flxrs.dankchat.preferences.AppearanceSettingsFragment"
@@ -76,4 +89,44 @@
         android:id="@+id/developerSettingsFragment"
         android:name="com.flxrs.dankchat.preferences.DeveloperSettingsFragment"
         android:label="DeveloperSettingsFragment" />
+
+    <dialog
+        android:id="@+id/channelsDialogFragment"
+        android:name="com.flxrs.dankchat.channels.ChannelsDialogFragment"
+        android:label="ChannelsDialogFragment">
+        <argument
+            android:name="channels"
+            app:argType="string[]" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/addChannelDialogFragment"
+        android:name="com.flxrs.dankchat.main.dialog.AddChannelDialogFragment"
+        android:label="AddChannelDialogFragment" />
+
+    <dialog
+        android:id="@+id/messageHistoryDisclaimerDialogFragment"
+        android:name="com.flxrs.dankchat.main.dialog.MessageHistoryDisclaimerDialogFragment"
+        android:label="MessageHistoryDisclaimerDialogFragment" />
+    <dialog
+        android:id="@+id/userPopupDialogFragment"
+        android:name="com.flxrs.dankchat.chat.user.UserPopupDialogFragment"
+        android:label="UserPopupDialogFragment">
+        <argument
+            android:name="targetUserId"
+            app:argType="string" />
+        <argument
+            android:name="currentUserId"
+            app:argType="string" />
+        <argument
+            android:name="channel"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="oAuth"
+            app:argType="string" />
+        <argument
+            android:name="isWhisperPopup"
+            app:argType="boolean" />
+    </dialog>
 </navigation>

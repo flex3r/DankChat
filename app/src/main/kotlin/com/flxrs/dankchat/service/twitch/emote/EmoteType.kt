@@ -1,9 +1,13 @@
 package com.flxrs.dankchat.service.twitch.emote
 
-sealed class EmoteType {
+sealed class EmoteType : Comparable<EmoteType> {
     abstract val title: String
 
     data class ChannelTwitchEmote(val channel: String) : EmoteType() {
+        override val title = channel
+    }
+
+    data class ChannelTwitchBitEmote(val channel: String) : EmoteType() {
         override val title = channel
     }
 
@@ -25,5 +29,16 @@ sealed class EmoteType {
 
     object GlobalBTTVEmote : EmoteType() {
         override val title = "BetterTTV"
+    }
+
+    override fun compareTo(other: EmoteType): Int = when {
+        this is ChannelTwitchBitEmote -> {
+            when (other) {
+                is ChannelTwitchBitEmote -> 0
+                else -> 1
+            }
+        }
+        other is ChannelTwitchBitEmote -> -1
+        else -> 0
     }
 }

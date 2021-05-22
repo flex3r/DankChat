@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.databinding.EmoteHeaderItemBinding
 import com.flxrs.dankchat.databinding.EmoteItemBinding
+import java.util.*
 
 class EmoteAdapter(private val onEmoteClick: (emote: String) -> Unit) : ListAdapter<EmoteItem, RecyclerView.ViewHolder>(DetectDiff()) {
 
@@ -23,7 +24,6 @@ class EmoteAdapter(private val onEmoteClick: (emote: String) -> Unit) : ListAdap
         }
     }
 
-    @SuppressLint("DefaultLocale")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is ViewHolder -> {
@@ -34,7 +34,7 @@ class EmoteAdapter(private val onEmoteClick: (emote: String) -> Unit) : ListAdap
             }
             is TextViewHolder -> {
                 val item = getItem(position) as EmoteItem.Header
-                holder.binding.text.text = item.title.capitalize()
+                holder.binding.text.text = item.title.replaceFirstChar { it.titlecase(Locale.getDefault()) }
             }
         }
     }

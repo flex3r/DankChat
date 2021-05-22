@@ -5,17 +5,24 @@
     <item
         android:id="@+id/progress"
         android:title="@string/uploading_image"
+        android:visible="false"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_add"
-        android:icon="@drawable/ic_add_box_24dp"
+        android:icon="@drawable/ic_add_box"
         android:title="@string/add_channel"
         app:showAsAction="always" />
 
     <item
+        android:id="@+id/menu_mentions"
+        android:icon="@drawable/ic_notifications_active"
+        android:title="@string/mentions_title"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/menu_hide"
-        android:icon="@drawable/ic_baseline_fullscreen_24"
+        android:icon="@drawable/ic_fullscreen"
         android:title="@string/hide_actionbar"
         app:showAsAction="ifRoom" />
 
@@ -25,8 +32,8 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_remove"
-        android:title="@string/remove_channel"
+        android:id="@+id/menu_manage"
+        android:title="@string/manage_channels"
         app:showAsAction="never" />
 
     <item

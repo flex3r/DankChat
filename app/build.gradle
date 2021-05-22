@@ -1,19 +1,19 @@
 apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
-apply plugin: "kotlin-android-extensions"
 apply plugin: "kotlin-kapt"
 apply plugin: 'dagger.hilt.android.plugin'
+apply plugin: "androidx.navigation.safeargs.kotlin"
+apply plugin: 'kotlin-parcelize'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
-    ndkVersion "21.3.6528147"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
     defaultConfig {
         applicationId "com.flxrs.dankchat"
         minSdkVersion 21
-        targetSdkVersion 29
-        versionCode 161
-        versionName "2.0.7"
+        targetSdkVersion 30
+        versionCode 188
+        versionName "2.7.5"
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -33,8 +33,8 @@ android {
         }
         dank {
             initWith debug
-//            minifyEnabled true
-//            shrinkResources true
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             manifestPlaceholders = [applicationLabel: "@string/app_name_dank"]
             applicationIdSuffix ".dank"
@@ -48,27 +48,22 @@ android {
     compileOptions {
         coreLibraryDesugaringEnabled true
 
-        sourceCompatibility = '1.8'
-        targetCompatibility = '1.8'
+        sourceCompatibility = "1.8"
+        targetCompatibility = "1.8"
     }
     kotlinOptions {
+        useIR = true
         jvmTarget = "1.8"
         freeCompilerArgs += [
                 "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-Xuse-experimental=kotlinx.coroutines.FlowPreview"
+                "-Xopt-in=kotlinx.coroutines.FlowPreview"
         ]
-    }
-    packagingOptions {
-        exclude 'META-INF/kotlinx-io.kotlin_module'
-        exclude 'META-INF/atomicfu.kotlin_module'
-        exclude 'META-INF/kotlinx-coroutines-io.kotlin_module'
-        exclude 'META-INF/kotlinx-coroutines-core.kotlin_module'
     }
 }
 
 dependencies {
 // D8 desugaring
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
 // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
@@ -76,13 +71,11 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
 // AndroidX
-    implementation "androidx.appcompat:appcompat:$appcompat_version"
     implementation "androidx.browser:browser:$browser_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraint_version"
     implementation "androidx.core:core-ktx:$core_version"
     implementation "androidx.emoji:emoji:$emoji_version"
     implementation "androidx.exifinterface:exifinterface:$exif_version"
-    implementation "androidx.fragment:fragment:$fragment_version"
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
@@ -96,14 +89,10 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
     implementation "androidx.viewpager2:viewpager2:$viewpager2_version"
     implementation "com.google.android.material:material:$material_version"
-    implementation "androidx.security:security-crypto:$security_version"
 
 // Dependency injection
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
-    implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha02'
-    implementation 'androidx.hilt:hilt-common:1.0.0-alpha02'
-    kapt 'androidx.hilt:hilt-compiler:1.0.0-alpha02'
 
 // Image loading
     implementation "io.coil-kt:coil:$coil_version"
@@ -111,11 +100,15 @@ dependencies {
 // GIF support
     implementation "pl.droidsonroids.gif:android-gif-drawable:$gif_drawable_version"
 
-// Detect and normalize URLs in text
-    implementation "io.github.url-detector:url-detector:$url_detector_version"
-
 // HTTP clients
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
+
+// Debug
+    //dankImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary_version"
+    //dankImplementation "com.github.chuckerteam.chucker:library:$chucker_version"
+    //debugImplementation "com.github.chuckerteam.chucker:library-no-op:$chucker_version"
+    //releaseImplementation "com.github.chuckerteam.chucker:library-no-op:$chucker_version"
 }

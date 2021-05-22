@@ -3,39 +3,39 @@ package com.flxrs.dankchat.service.api.dto
 import androidx.annotation.Keep
 import com.squareup.moshi.Json
 
-sealed class UserDtos {
+@Keep
+data class ValidateUserDto(
+    @field:Json(name = "client_id") val clientId: String,
+    @field:Json(name = "login") val login: String,
+    @field:Json(name = "scopes") val scopes: List<String>, // TODO Verify scopes
+    @field:Json(name = "user_id") val userId: String
+)
 
-    @Keep
-    data class ValidateUser(
-        @field:Json(name = "client_id") val clientId: String,
-        @field:Json(name = "login") val login: String,
-        @field:Json(name = "scopes") val scopes: List<String>, // TODO Verify scopes
-        @field:Json(name = "user_id") val userId: String
-    )
+@Keep
+data class HelixUsersDto(
+    @field:Json(name = "data") val data: List<HelixUserDto>
+)
 
-    @Keep
-    data class HelixUser(
-        @field:Json(name = "id") val id: String,
-        @field:Json(name = "login") val name: String,
-        @field:Json(name = "display_name") val displayName: String,
-        @field:Json(name = "type") val type: String,
-        @field:Json(name = "broadcaster_type") val broadcasterType: String,
-        @field:Json(name = "description") val description: String,
-        @field:Json(name = "profile_image_url") val avatarUrl: String,
-        @field:Json(name = "offline_image_url") val offlineImageUrl: String,
-        @field:Json(name = "view_count") val viewCount: Int
-    )
+@Keep
+data class HelixUserDto(
+    @field:Json(name = "id") val id: String,
+    @field:Json(name = "login") val name: String,
+    @field:Json(name = "display_name") val displayName: String,
+    @field:Json(name = "type") val type: String,
+    @field:Json(name = "broadcaster_type") val broadcasterType: String,
+    @field:Json(name = "description") val description: String,
+    @field:Json(name = "profile_image_url") val avatarUrl: String,
+    @field:Json(name = "offline_image_url") val offlineImageUrl: String,
+    @field:Json(name = "view_count") val viewCount: Int,
+    @field:Json(name = "created_at") val createdAt: String
+)
 
-    // R8 deletes this if annotation is not set NotLikeThis
-    @Keep
-    data class KrakenUser(@field:Json(name = "_id") val id: Int)
+@Keep
+data class HelixUserBlockListDto(
+    @field:Json(name = "data") val data: List<HelixUserBlockDto>
+)
 
-    @Keep
-    data class KrakenUserEntry(@field:Json(name = "user") val user: KrakenUser)
-
-    @Keep
-    data class KrakenUsersBlocks(@field:Json(name = "blocks") val blocks: List<KrakenUserEntry>)
-
-    @Keep
-    data class HelixUsers(@field:Json(name = "data") val data: List<HelixUser>)
-}
+@Keep
+data class HelixUserBlockDto(
+    @field:Json(name = "user_id") val id: String
+)

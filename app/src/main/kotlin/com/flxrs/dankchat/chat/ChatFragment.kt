@@ -1,11 +1,14 @@
 package com.flxrs.dankchat.chat
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,30 +17,40 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.flxrs.dankchat.MainFragment
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.chat.user.UserPopupDialogFragment
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
-import com.google.android.material.snackbar.Snackbar
+import com.flxrs.dankchat.main.MainFragment
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.service.twitch.emote.EmoteManager
+import com.flxrs.dankchat.utils.extensions.collectFlow
+import com.flxrs.dankchat.utils.extensions.removeOAuthSuffix
+import com.flxrs.dankchat.utils.extensions.showShortSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class ChatFragment : Fragment() {
+open class ChatFragment : Fragment() {
 
     private val viewModel: ChatViewModel by viewModels()
-    private lateinit var binding: ChatFragmentBinding
-    private lateinit var adapter: ChatAdapter
-    private lateinit var manager: LinearLayoutManager
-    private lateinit var preferenceListener: SharedPreferences.OnSharedPreferenceChangeListener
-    private lateinit var preferences: SharedPreferences
+    protected var bindingRef: ChatFragmentBinding? = null
+    protected val binding get() = bindingRef!!
+    protected open lateinit var adapter: ChatAdapter
+    protected open lateinit var manager: LinearLayoutManager
+    protected open lateinit var preferenceListener: SharedPreferences.OnSharedPreferenceChangeListener
+    protected open lateinit var preferences: SharedPreferences
 
-    private var isAtBottom = true
+    protected open var isAtBottom = true
     private var channel: String = ""
+
+    @Inject
+    lateinit var emoteManager: EmoteManager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         channel = requireArguments().getString(CHANNEL_ARG, "")
-        binding = ChatFragmentBinding.inflate(inflater, container, false).apply {
+        bindingRef = ChatFragmentBinding.inflate(inflater, container, false).apply {
             lifecycleOwner = this@ChatFragment
             scrollBottom.setOnClickListener {
                 scrollBottom.visibility = View.GONE
@@ -48,7 +61,7 @@ class ChatFragment : Fragment() {
         }
 
         if (channel.isNotBlank()) {
-            viewModel.chat.observe(viewLifecycleOwner) { adapter.submitList(it) }
+            collectFlow(viewModel.chat) { adapter.submitList(it) }
         }
 
         return binding.root
@@ -57,7 +70,7 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val itemDecoration = DividerItemDecoration(view.context, LinearLayoutManager.VERTICAL)
         manager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false).apply { stackFromEnd = true }
-        adapter = ChatAdapter(::scrollToPosition, ::mentionUser, ::copyMessage).apply { stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY }
+        adapter = ChatAdapter(emoteManager, ::scrollToPosition, ::openUserPopup, ::copyMessage).apply { stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY }
         binding.chat.setup(adapter, manager)
 
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { pref, key ->
@@ -66,7 +79,9 @@ class ChatFragment : Fragment() {
                 getString(R.string.preference_timestamp_key),
                 getString(R.string.preference_timestamp_format_key),
                 getString(R.string.preference_show_timed_out_messages_key),
-                getString(R.string.preference_animate_gifs_key) -> binding.chat.swapAdapter(adapter, false)
+                getString(R.string.preference_animate_gifs_key),
+                getString(R.string.preference_show_username_key),
+                getString(R.string.preference_visible_badges_key) -> binding.chat.swapAdapter(adapter, false)
                 getString(R.string.preference_line_separator_key) -> when {
                     pref.getBoolean(key, false) -> binding.chat.addItemDecoration(itemDecoration)
                     else -> binding.chat.removeItemDecoration(itemDecoration)
@@ -81,8 +96,9 @@ class ChatFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bindingRef = null
         if (::preferences.isInitialized) {
             preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         }
@@ -101,16 +117,20 @@ class ChatFragment : Fragment() {
         outState.putBoolean(AT_BOTTOM_STATE, isAtBottom)
     }
 
-    private fun mentionUser(user: String) {
-        (requireParentFragment() as? MainFragment)?.mentionUser(user)
+    protected open fun openUserPopup(targetUserId: String?, channel: String) {
+        targetUserId ?: return
+        (requireParentFragment() as? MainFragment)?.openUserPopup(targetUserId, channel, isWhisperPopup = false)
     }
 
     private fun copyMessage(message: String) {
-        getSystemService(requireContext(), android.content.ClipboardManager::class.java)?.setPrimaryClip(android.content.ClipData.newPlainText("twitch message", message))
-        Snackbar.make(binding.root, R.string.snackbar_message_copied, Snackbar.LENGTH_SHORT).show()
+        getSystemService(requireContext(), ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("twitch message", message))
+        binding.root.showShortSnackbar(getString(R.string.snackbar_message_copied)) {
+            setAction(R.string.snackbar_paste) { (parentFragment as? MainFragment)?.insertText(message) }
+        }
     }
 
-    private fun scrollToPosition(position: Int) {
+    protected open fun scrollToPosition(position: Int) {
+        bindingRef ?: return
         if (position > 0 && isAtBottom) {
             binding.chat.stopScroll()
             binding.chat.scrollToPosition(position)
@@ -136,10 +156,10 @@ class ChatFragment : Fragment() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             if (dy < 0) {
                 isAtBottom = false
-                binding.scrollBottom.show()
+                bindingRef?.scrollBottom?.show()
             } else if (dy > 0 && !isAtBottom && !recyclerView.canScrollVertically(1)) {
                 isAtBottom = true
-                binding.scrollBottom.visibility = View.GONE
+                bindingRef?.scrollBottom?.visibility = View.GONE
             }
         }
     }
@@ -147,7 +167,7 @@ class ChatFragment : Fragment() {
     companion object {
         fun newInstance(channel: String): ChatFragment {
             return ChatFragment().apply {
-                arguments = Bundle().apply { putString(CHANNEL_ARG, channel) }
+                arguments = bundleOf(CHANNEL_ARG to channel)
             }
         }
 

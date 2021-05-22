@@ -1,11 +1,11 @@
 package com.flxrs.dankchat.chat
 
-import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Lifecycle
+import android.annotation.SuppressLint
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
-class ChatTabAdapter(supportFragmentManager: FragmentManager, lifecycle: Lifecycle) : FragmentStateAdapter(supportFragmentManager, lifecycle) {
+class ChatTabAdapter(parentFragment: Fragment) : FragmentStateAdapter(parentFragment) {
 
     val titleList = mutableListOf<String>()
     //val fragmentList = mutableListOf<ChatFragment>()
@@ -28,17 +28,20 @@ class ChatTabAdapter(supportFragmentManager: FragmentManager, lifecycle: Lifecyc
 
     fun addFragment(title: String) {
         titleList += title
-        notifyDataSetChanged()
-        //fragmentList.add(ChatFragment.newInstance(title))
-        //notifyItemInserted(titleList.size - 1)
+        notifyItemInserted(titleList.lastIndex)
     }
 
     fun removeFragment(index: Int) {
         if (index < titleList.size) {
             titleList.removeAt(index)
-            notifyDataSetChanged()
-            //fragmentList.removeAt(index)
-            //notifyItemRemoved(index)
+            notifyItemRemoved(index)
         }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateFragments(titles: List<String>) {
+        titleList.clear()
+        titleList.addAll(titles)
+        notifyDataSetChanged()
     }
 }

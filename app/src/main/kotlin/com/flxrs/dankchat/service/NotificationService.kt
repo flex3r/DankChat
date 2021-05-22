@@ -17,11 +17,12 @@ import androidx.core.content.edit
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.preference.PreferenceManager
-import com.flxrs.dankchat.MainActivity
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.service.twitch.message.Message
+import com.flxrs.dankchat.main.MainActivity
+import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
@@ -44,6 +45,8 @@ class NotificationService : Service(), CoroutineScope {
     private var combinedTTSFormat = false
     private var ttsMessageQueue = false
 
+    private var notificationsJob: Job? = null
+
     private val notifications = mutableMapOf<String, MutableList<Int>>()
 
     @Inject
@@ -63,7 +66,7 @@ class NotificationService : Service(), CoroutineScope {
     override fun onBind(intent: Intent?): IBinder? = binder
 
     override fun onDestroy() {
-        coroutineContext.cancel()
+        cancel()
         manager.cancelAll()
         shutdownTTS()
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
@@ -99,18 +102,15 @@ class NotificationService : Service(), CoroutineScope {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            STOP_COMMAND -> {
-                LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(MainActivity.SHUTDOWN_REQUEST_FILTER))
-                stopForeground(true)
-                stopSelf()
-            }
+            STOP_COMMAND -> LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(MainActivity.SHUTDOWN_REQUEST_FILTER))
             else -> startForeground()
         }
 
         return START_NOT_STICKY
     }
 
-    fun clearNotificationsOfChannel(channel: String) {
+    fun setActiveChannel(channel: String) {
+        activeTTSChannel = channel
         val ids = notifications.remove(channel)
         ids?.forEach { manager.cancel(it) }
 
@@ -163,7 +163,7 @@ class NotificationService : Service(), CoroutineScope {
             .setVibrate(null)
             .setContentTitle(title)
             .setContentText(message)
-            .addAction(R.drawable.ic_clear_24dp, getString(R.string.notification_stop), pendingStopIntent).apply {
+            .addAction(R.drawable.ic_clear, getString(R.string.notification_stop), pendingStopIntent).apply {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     setStyle(MediaStyle().setShowActionsInCompactView(0))
                 }
@@ -177,13 +177,14 @@ class NotificationService : Service(), CoroutineScope {
 
     fun checkForNotification() {
         shouldNotifyOnMention = false
-        cancel()
-        launch {
-            for (items in chatRepository.notificationMessageChannel) {
-                items.forEach { item ->
-                    with(item.message as Message.TwitchMessage) {
+
+        notificationsJob?.cancel()
+        notificationsJob = launch {
+            chatRepository.notificationsFlow.collect { items ->
+                items.forEach { (message) ->
+                    with(message as TwitchMessage) {
                         if (shouldNotifyOnMention && isMention && notificationsEnabled) {
-                            createMentionNotification(channel, name, message, isNotify)
+                            createMentionNotification()
                         }
 
                         if (tts != null && channel == activeTTSChannel && compareValues(audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC), 0) > 0) {
@@ -195,7 +196,7 @@ class NotificationService : Service(), CoroutineScope {
         }
     }
 
-    private fun Message.TwitchMessage.playTTSMessage() {
+    private fun TwitchMessage.playTTSMessage() {
         val messageFormat = when {
             isSystem || !combinedTTSFormat -> message
             else -> "$name said $message"
@@ -211,13 +212,13 @@ class NotificationService : Service(), CoroutineScope {
         tts?.speak(ttsMessage, queueMode, null, null)
     }
 
-    private fun createMentionNotification(channel: String, user: String, message: String, isNotify: Boolean) {
-        val pendingStartActivityIntent = Intent(this, MainActivity::class.java).let {
+    private fun TwitchMessage.createMentionNotification() {
+        val pendingStartActivityIntent = Intent(this@NotificationService, MainActivity::class.java).let {
             it.putExtra(MainActivity.OPEN_CHANNEL_KEY, channel)
-            PendingIntent.getActivity(this, notificationIntentCode, it, PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.getActivity(this@NotificationService, notificationIntentCode, it, PendingIntent.FLAG_UPDATE_CURRENT)
         }
 
-        val summary = NotificationCompat.Builder(this, CHANNEL_ID_DEFAULT)
+        val summary = NotificationCompat.Builder(this@NotificationService, CHANNEL_ID_DEFAULT)
             .setContentTitle(getString(R.string.notification_new_mentions))
             .setContentText("")
             .setSmallIcon(R.drawable.ic_notification_icon)
@@ -227,11 +228,12 @@ class NotificationService : Service(), CoroutineScope {
             .build()
 
         val title = when {
+            isWhisper -> getString(R.string.notification_whisper_mention, name)
             isNotify -> getString(R.string.notification_notify_mention, channel)
-            else -> getString(R.string.notification_mention, user, channel)
+            else -> getString(R.string.notification_mention, name, channel)
         }
 
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID_DEFAULT)
+        val notification = NotificationCompat.Builder(this@NotificationService, CHANNEL_ID_DEFAULT)
             .setContentTitle(title)
             .setContentText(message)
             .setContentIntent(pendingStartActivityIntent)

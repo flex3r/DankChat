@@ -1,26 +1,29 @@
 package com.flxrs.dankchat.preferences
 
+import android.app.UiModeManager
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SeekBarPreference
-import androidx.preference.SwitchPreference
-import com.flxrs.dankchat.MainFragment
+import androidx.preference.SwitchPreferenceCompat
 import com.flxrs.dankchat.R
-import kotlinx.android.synthetic.main.settings_fragment.view.*
+import com.flxrs.dankchat.databinding.SettingsFragmentBinding
+import com.flxrs.dankchat.main.MainFragment
 
 class AppearanceSettingsFragment : PreferenceFragmentCompat() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val toolbar = view.settings_toolbar
+        val binding = SettingsFragmentBinding.bind(view)
         (requireActivity() as AppCompatActivity).apply {
-            setSupportActionBar(toolbar)
+            setSupportActionBar(binding.settingsToolbar)
             supportActionBar?.apply {
                 setDisplayHomeAsUpEnabled(true)
                 title = getString(R.string.preference_appearance_header)
@@ -30,9 +33,13 @@ class AppearanceSettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.appearance_settings, rootKey)
+        val isTV = context?.let {
+            val uiModeManager = getSystemService(it, UiModeManager::class.java)
+            uiModeManager?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
+        } ?: false
 
-        findPreference<SwitchPreference>(getString(R.string.preference_dark_theme_key))?.apply {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1) {
+        findPreference<SwitchPreferenceCompat>(getString(R.string.preference_dark_theme_key))?.apply {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1 && !isTV) {
                 if (!isChecked) {
                     isChecked = true
                 }

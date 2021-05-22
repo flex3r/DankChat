@@ -1,39 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <SwitchPreference
+    <SwitchPreferenceCompat
         android:defaultValue="true"
         android:key="@string/preference_dark_theme_key"
-        android:title="@string/preference_dark_theme_title" />
+        android:title="@string/preference_dark_theme_title"
+        app:iconSpaceReserved="false" />
 
     <SeekBarPreference
         android:defaultValue="14"
         android:key="@string/preference_font_size_key"
-        android:max="25"
+        android:max="40"
         android:title="@string/preference_font_size_title"
+        app:iconSpaceReserved="false"
         app:min="10"
         app:showSeekBarValue="true"
         app:updatesContinuously="true" />
 
-    <SwitchPreference
+    <SwitchPreferenceCompat
         android:defaultValue="true"
         android:key="@string/preference_keep_screen_on_key"
-        android:title="@string/preference_keep_screen_on_title" />
+        android:title="@string/preference_keep_screen_on_title"
+        app:iconSpaceReserved="false" />
 
-    <SwitchPreference
+    <SwitchPreferenceCompat
         android:defaultValue="true"
         android:key="@string/preference_show_input_key"
         android:summary="@string/preference_show_input_summary"
-        android:title="@string/preference_show_input_title" />
+        android:title="@string/preference_show_input_title"
+        app:iconSpaceReserved="false" />
 
-    <SwitchPreference
+    <SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="@string/preference_line_separator_key"
-        android:title="@string/preference_line_separator_title" />
+        android:title="@string/preference_line_separator_title"
+        app:iconSpaceReserved="false" />
 
-    <SwitchPreference
+    <SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="@string/checkered_messages_key"
+        android:summary="@string/preference_checkered_lines_summary"
         android:title="@string/preference_checkered_lines_title"
-        android:summary="@string/preference_checkered_lines_summary" />
+        app:iconSpaceReserved="false" />
 </PreferenceScreen>

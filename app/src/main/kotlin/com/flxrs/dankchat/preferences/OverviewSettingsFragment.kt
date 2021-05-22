@@ -1,21 +1,20 @@
 package com.flxrs.dankchat.preferences
 
 import android.content.ActivityNotFoundException
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.lifecycle.Observer
+import androidx.core.net.toUri
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.flxrs.dankchat.BuildConfig
-import com.flxrs.dankchat.MainFragment
 import com.flxrs.dankchat.R
-import kotlinx.android.synthetic.main.settings_fragment.view.*
+import com.flxrs.dankchat.databinding.SettingsFragmentBinding
+import com.flxrs.dankchat.main.MainFragment
 
 class OverviewSettingsFragment : PreferenceFragmentCompat() {
 
@@ -24,16 +23,16 @@ class OverviewSettingsFragment : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val toolbar = view.settings_toolbar
+        val binding = SettingsFragmentBinding.bind(view)
         (requireActivity() as AppCompatActivity).apply {
-            setSupportActionBar(toolbar)
+            setSupportActionBar(binding.settingsToolbar)
             supportActionBar?.apply {
                 setDisplayHomeAsUpEnabled(true)
                 title = getString(R.string.settings)
             }
         }
         navController.currentBackStackEntry?.savedStateHandle?.apply {
-            getLiveData<Boolean>(MainFragment.THEME_CHANGED_KEY).observe(viewLifecycleOwner, Observer {
+            getLiveData<Boolean>(MainFragment.THEME_CHANGED_KEY).observe(viewLifecycleOwner, {
                 remove<Boolean>(MainFragment.THEME_CHANGED_KEY)
                 navController.previousBackStackEntry?.savedStateHandle?.set(MainFragment.THEME_CHANGED_KEY, true)
             })
@@ -45,9 +44,8 @@ class OverviewSettingsFragment : PreferenceFragmentCompat() {
             setOnPreferenceClickListener {
                 try {
                     CustomTabsIntent.Builder()
-                        .addDefaultShareMenuItem()
                         .setShowTitle(true)
-                        .build().launchUrl(view.context, Uri.parse(GITHUB_URL))
+                        .build().launchUrl(view.context, GITHUB_URL.toUri())
                 } catch (e: ActivityNotFoundException) {
                     Log.e(TAG, Log.getStackTraceString(e))
                 }
