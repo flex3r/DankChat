@@ -197,12 +197,10 @@ class MainViewModel @Inject constructor(
                 chatRepository.userState.take(1).collect { userState ->
                     dataRepository.filterAndSetBitEmotes(userState.emoteSets)
                 }
-                dataRepository.setEmotesForSuggestions("w") // global emote suggestions for whisper tab
-                channelList.map {
-                    dataRepository.setEmotesForSuggestions(it)
-                    launch { chatRepository.loadChatters(it) }
-                    launch { chatRepository.loadRecentMessages(it, loadHistory, isUserChange) }
-                }.joinAll()
+                // global emote suggestions for whisper tab
+                dataRepository.setEmotesForSuggestions("w")
+
+                loadChattersAndMessages(channelList, loadHistory, isUserChange)
             }
 
             val state = when {
@@ -384,6 +382,14 @@ class MainViewModel @Inject constructor(
             launch { chatRepository.loadUserBlocks(oAuth, id) }
         ) + channelList.map {
             launch { dataRepository.loadChannelData(it, oAuth) }
+        }.joinAll()
+    }
+
+    private suspend fun loadChattersAndMessages(channelList: List<String>, loadHistory: Boolean, isUserChange: Boolean) = coroutineScope {
+        channelList.map {
+            dataRepository.setEmotesForSuggestions(it)
+            launch { chatRepository.loadChatters(it) }
+            launch { chatRepository.loadRecentMessages(it, loadHistory, isUserChange) }
         }.joinAll()
     }
 
