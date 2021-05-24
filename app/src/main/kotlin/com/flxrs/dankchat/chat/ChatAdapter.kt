@@ -29,7 +29,7 @@ import androidx.core.text.color
 import androidx.core.text.getSpans
 import androidx.core.text.util.LinkifyCompat
 import androidx.core.view.postDelayed
-import androidx.emoji.text.EmojiCompat
+import androidx.emoji2.text.EmojiCompat
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter

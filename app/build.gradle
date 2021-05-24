@@ -74,7 +74,7 @@ dependencies {
     implementation "androidx.browser:browser:$browser_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraint_version"
     implementation "androidx.core:core-ktx:$core_version"
-    implementation "androidx.emoji:emoji:$emoji_version"
+    implementation "androidx.emoji2:emoji2:$emoji_version"
     implementation "androidx.exifinterface:exifinterface:$exif_version"
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"

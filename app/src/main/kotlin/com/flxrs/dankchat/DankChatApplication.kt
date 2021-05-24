@@ -4,16 +4,10 @@ import android.app.Application
 import android.app.UiModeManager
 import android.content.res.Configuration
 import android.os.Build
-import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.provider.FontRequest
-import androidx.emoji.text.EmojiCompat
-import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.preference.PreferenceManager
-import coil.Coil
 import coil.ImageLoader
 import coil.ImageLoaderFactory
-import coil.util.CoilUtils
 import com.flxrs.dankchat.di.EmoteOkHttpClient
 import com.flxrs.dankchat.utils.GifDrawableDecoder
 import dagger.hilt.android.HiltAndroidApp
@@ -41,24 +35,6 @@ class DankChatApplication : Application(), ImageLoaderFactory {
                 }
             }
         AppCompatDelegate.setDefaultNightMode(nightMode)
-
-        val fontRequest = FontRequest(
-            "com.google.android.gms.fonts",
-            "com.google.android.gms",
-            "Noto Color Emoji Compat",
-            R.array.com_google_android_gms_fonts_certs
-        )
-        val config = FontRequestEmojiCompatConfig(applicationContext, fontRequest)
-            .registerInitCallback(object : EmojiCompat.InitCallback() {
-                override fun onInitialized() {
-                    Log.i(TAG, "EmojiCompat initialized")
-                }
-
-                override fun onFailed(throwable: Throwable?) {
-                    Log.e(TAG, "EmojiCompat initialization failed", throwable)
-                }
-            })
-        EmojiCompat.init(config)
     }
 
     override fun newImageLoader(): ImageLoader {
