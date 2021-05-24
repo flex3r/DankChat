@@ -6,7 +6,7 @@ buildscript {
 
         // Plugins
         gradle_build_tools_version = '7.0.0-beta02'
-        kotlin_version = '1.5.0'
+        kotlin_version = '1.5.10'
 
         // Kotlin
         coroutines_version = '1.5.0'
