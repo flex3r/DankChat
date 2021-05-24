@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <external-path
+    <external-files-path
         name="images"
-        path="Android/data/com.flxrs.dankchat/files/Media" />
+        path="Media/" />
 </paths>

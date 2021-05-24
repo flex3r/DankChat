@@ -9,7 +9,6 @@ import android.provider.MediaStore
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.webkit.MimeTypeMap
@@ -34,6 +33,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
+import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.chat.menu.EmoteMenuAdapter
@@ -625,7 +625,6 @@ class MainFragment : Fragment() {
 
     private fun startCameraCapture(captureVideo: Boolean = false) {
         val packageManager = activity?.packageManager ?: return
-        val packageName = activity?.packageName ?: return
         val (action, extension) = when {
             captureVideo -> MediaStore.ACTION_VIDEO_CAPTURE to "mp4"
             else -> MediaStore.ACTION_IMAGE_CAPTURE to "jpg"
@@ -638,7 +637,7 @@ class MainFragment : Fragment() {
                     } catch (ex: IOException) {
                         null
                     }?.also {
-                        val uri = FileProvider.getUriForFile(requireContext(), "$packageName.fileprovider", it)
+                        val uri = FileProvider.getUriForFile(requireContext(), "${BuildConfig.APPLICATION_ID}.fileprovider", it)
                         captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
                         when {
                             captureVideo -> requestVideoCapture.launch(captureIntent)
