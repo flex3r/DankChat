@@ -76,7 +76,7 @@
     <string name="notification_whisper_mention">%1$s lähetti sinulle kuiskauksen</string>
     <string name="mentions">Maininnat</string>
     <string name="manage_channels">Hallitse kanavia</string>
-    <string name="confirm_channel_removal_title">Vahvistus kanavan sulkemisesta</string>
+    <string name="confirm_channel_removal_title">Vahvista kanavan sulkeminen</string>
     <string name="confirm_channel_removal_message">Haluatko varmasti sulkea tämän kanavan?</string>
     <string name="confirm_channel_removal_positive_button">Sulje</string>
     <string name="user_popup_follow">Seuraa</string>
