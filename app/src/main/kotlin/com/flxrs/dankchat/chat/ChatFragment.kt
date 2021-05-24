@@ -3,7 +3,9 @@ package com.flxrs.dankchat.chat
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.SharedPreferences
+import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
+import android.text.style.ImageSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,17 +20,14 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.chat.user.UserPopupDialogFragment
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
-import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
-import com.flxrs.dankchat.utils.extensions.collectFlow
-import com.flxrs.dankchat.utils.extensions.removeOAuthSuffix
-import com.flxrs.dankchat.utils.extensions.showShortSnackbar
+import com.flxrs.dankchat.utils.extensions.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pl.droidsonroids.gif.GifDrawable
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -96,12 +95,33 @@ open class ChatFragment : Fragment() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        // Trigger a redraw of last 30 items to start gifs again
+        if (::preferences.isInitialized && preferences.getBoolean(getString(R.string.preference_animate_gifs_key), true)) {
+            val start = (adapter.itemCount - 30).coerceAtLeast(minimumValue = 0)
+            val itemCount = 30.coerceAtMost(maximumValue = adapter.itemCount)
+            adapter.notifyItemRangeChanged(start, itemCount)
+        }
+    }
+
     override fun onDestroyView() {
-        super.onDestroyView()
         bindingRef = null
         if (::preferences.isInitialized) {
             preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         }
+
+        super.onDestroyView()
+    }
+
+    override fun onStop() {
+        // Stop animated drawables and related invalidation callbacks
+        if (activity?.isChangingConfigurations == false && ::adapter.isInitialized) {
+            binding.chat.cleanupActiveDrawables(adapter.itemCount)
+        }
+
+        super.onStop()
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
@@ -163,6 +183,13 @@ open class ChatFragment : Fragment() {
             }
         }
     }
+
+    private fun RecyclerView.cleanupActiveDrawables(itemCount: Int) =
+        forEachViewHolder<ChatAdapter.ViewHolder>(itemCount) { holder ->
+            holder.binding.itemText.forEachSpan<ImageSpan> { imageSpan ->
+                (imageSpan.drawable as? LayerDrawable)?.forEachLayer(GifDrawable::stop)
+            }
+        }
 
     companion object {
         fun newInstance(channel: String): ChatFragment {
