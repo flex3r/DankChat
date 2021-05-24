@@ -75,7 +75,27 @@
     <string name="whispers">Kuiskaukset</string>
     <string name="notification_whisper_mention">%1$s lähetti sinulle kuiskauksen</string>
     <string name="mentions">Maininnat</string>
-
+    <string name="manage_channels">Hallitse kanavia</string>
+    <string name="confirm_channel_removal_title">Vahvistus kanavan sulkemisesta</string>
+    <string name="confirm_channel_removal_message">Haluatko varmasti sulkea tämän kanavan?</string>
+    <string name="confirm_channel_removal_positive_button">Sulje</string>
+    <string name="user_popup_follow">Seuraa</string>
+    <string name="user_popup_unfollow">Lopeta seuraaminen</string>
+    <string name="user_popup_block">Estä</string>
+    <string name="user_popup_unblock">Poista esto</string>
+    <string name="user_popup_mention">Mainitse käyttäjä</string>
+    <string name="user_popup_whisper">Kuiskaa käyttäjälle</string>
+    <string name="user_popup_created">Luotu: %1$s</string>
+    <string name="user_popup_following_since">Aloittanut seuraaman: %1$s</string>
+    <string name="user_popup_not_following">Ei seuraa</string>
+    <string name="user_popup_avatar_description">Profiilikuva</string>
+    <string name="user_popup_error">Käyttäjän tietoja ei pystytty hakea: %1$s</string>
+    <string name="confirm_user_unfollow_title">Seuraamisen lopettaminen</string>
+    <string name="confirm_user_unfollow_message">Haluatko varmasti lopettaa tämän käyttäjän seuraaminen?</string>
+    <string name="confirm_user_unfollow_positive_button">Lopeta seuraaminen</string>
+    <string name="confirm_user_block_title">Vahvista esto</string>
+    <string name="confirm_user_block_message">Oletko varma että haluat estää tämän käyttäjän?</string>
+    <string name="confirm_user_block_positive_button">Estä</string>
 
     <string name="preference_timestamp_title">Näytä aikaleimat</string>
     <string name="preference_mention_format_title">Maininnan muoto</string>
@@ -136,6 +156,7 @@
     <string name="preference_scrollback_length_title">Viestin vierityksen pituus</string>
     <string name="snackbar_paste">Liitä</string>
     <string name="preference_show_username_title">Näytä käyttäjänimi</string>
+    <string name="preference_visible_badges_title">Näkyvät badget</string>
 
     <plurals name="viewers">
         <item quantity="one">Live-tilassa %d katsojan kanssa</item>
