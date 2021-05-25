@@ -8,11 +8,12 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import coil.size.Scale
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.UserPopupBottomsheetBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.utils.extensions.collectFlow
-import com.flxrs.dankchat.utils.loadImage
+import com.flxrs.dankchat.utils.extensions.loadImage
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -93,7 +94,9 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun UserPopupBottomsheetBinding.updateUserData(userState: UserPopupViewModel.UserPopupState.Success) {
-        userAvatar.loadImage(userState.avatarUrl)
+        userAvatar.loadImage(userState.avatarUrl) {
+            scale(Scale.FILL)
+        }
         userLoading.isVisible = false
         userGroup.isVisible = true
         userName.text = userState.displayName

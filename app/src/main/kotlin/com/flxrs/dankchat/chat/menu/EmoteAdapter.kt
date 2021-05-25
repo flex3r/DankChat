@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.chat.menu
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.widget.TooltipCompat
@@ -9,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.databinding.EmoteHeaderItemBinding
 import com.flxrs.dankchat.databinding.EmoteItemBinding
+import com.flxrs.dankchat.utils.extensions.loadImage
 import java.util.*
 
 class EmoteAdapter(private val onEmoteClick: (emote: String) -> Unit) : ListAdapter<EmoteItem, RecyclerView.ViewHolder>(DetectDiff()) {
@@ -27,10 +27,14 @@ class EmoteAdapter(private val onEmoteClick: (emote: String) -> Unit) : ListAdap
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is ViewHolder -> {
-                val item = getItem(position) as EmoteItem.Emote
-                TooltipCompat.setTooltipText(holder.binding.emoteView, item.emote.code)
-                holder.binding.emote = item.emote
-                holder.binding.root.setOnClickListener { onEmoteClick(item.emote.code) }
+                val emoteItem = getItem(position) as EmoteItem.Emote
+                val emote = emoteItem.emote
+                holder.binding.root.setOnClickListener { onEmoteClick(emote.code) }
+                with(holder.binding.emoteView) {
+                    TooltipCompat.setTooltipText(this, emote.code)
+                    contentDescription = emote.code
+                    loadImage(emote.lowResUrl)
+                }
             }
             is TextViewHolder -> {
                 val item = getItem(position) as EmoteItem.Header

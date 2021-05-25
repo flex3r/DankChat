@@ -6,9 +6,10 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import coil.clear
-import coil.load
+import coil.size.Scale
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.utils.extensions.getDrawableAndSetSurfaceTint
+import com.flxrs.dankchat.utils.extensions.loadImage
 import pl.droidsonroids.gif.GifImageView
 
 class EmoteSuggestionsArrayAdapter(context: Context, private val onCount: (count: Int) -> Unit) : ArrayAdapter<Suggestion>(context, R.layout.emote_suggestion_item, R.id.suggestion_text) {
@@ -23,12 +24,9 @@ class EmoteSuggestionsArrayAdapter(context: Context, private val onCount: (count
         imageView.setImageDrawable(null)
         getItem(position)?.let { suggestion: Suggestion ->
             when (suggestion) {
-                is Suggestion.EmoteSuggestion -> {
-                    imageView.load(suggestion.emote.url) {
-                        size(textView.lineHeight * 2)
-                        placeholder(R.drawable.ic_missing_emote)
-                        error(R.drawable.ic_missing_emote)
-                    }
+                is Suggestion.EmoteSuggestion -> imageView.loadImage(suggestion.emote.url) {
+                    scale(Scale.FIT)
+                    size(textView.lineHeight * 2)
                 }
                 is Suggestion.UserSuggestion -> imageView.setImageDrawable(context.getDrawableAndSetSurfaceTint(R.drawable.ic_notification_icon))
                 is Suggestion.CommandSuggestion -> imageView.setImageDrawable(context.getDrawableAndSetSurfaceTint(R.drawable.ic_android))
