@@ -146,7 +146,7 @@
     <string name="user_popup_mention">Kullanıcıdan bahset</string>
     <string name="user_popup_whisper">Kullanıcıya fısılda</string>
     <string name="user_popup_created">Oluşturuldu: %1$s</string>
-    <string name="user_popup_following_since">%1$s'den beri takip ediyor</string>
+    <string name="user_popup_following_since">%1$s\'den beri takip ediyor</string>
     <string name="user_popup_not_following">Takip etmiyor</string>
     <string name="user_popup_avatar_description">Profil avatar resmi</string>
     <string name="user_popup_error">Kullanıcı verisi yüklenemedi: %1$s</string>
