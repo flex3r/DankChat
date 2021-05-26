@@ -75,7 +75,27 @@
     <string name="whispers">Šepot</string>
     <string name="notification_whisper_mention">%1$s vám odeslal soukromou zprávu</string>
     <string name="mentions">Zmínky</string>
-
+    <string name="manage_channels">Spravovat kanály</string>
+    <string name="confirm_channel_removal_title">"Potvrdit odebrání kanálu"</string>
+    <string name="confirm_channel_removal_message">Jste si jistí, že chcete tento kanál odebrat?"</string>
+    <string name="confirm_channel_removal_positive_button">Odebrat</string>
+    <string name="user_popup_follow">Sledovat</string>
+    <string name="user_popup_unfollow">Přestat sledovat</string>
+    <string name="user_popup_block">Zablokovat</string>
+    <string name="user_popup_unblock">Odblokovat</string>
+    <string name="user_popup_mention">Zmínit uživatele</string>
+    <string name="user_popup_whisper">Soukromá zpráva</string>
+    <string name="user_popup_created">Vytvořeno: %1$s</string>
+    <string name="user_popup_following_since">Sledování od %1$s</string>
+    <string name="user_popup_not_following">Nesleduje</string>
+    <string name="user_popup_avatar_description">Obrázek avataru</string>
+    <string name="user_popup_error">Chyba při načítání informaci o uživateli: %1$s</string>
+    <string name="confirm_user_unfollow_title">Potvrdit nesledování uživatele</string>
+    <string name="confirm_user_unfollow_message">Jste si jisti, že chcete přestat sledovat uživatele?</string>
+    <string name="confirm_user_unfollow_positive_button">Přestat sledovat</string>
+    <string name="confirm_user_block_title">Potvrzení zablokování</string>
+    <string name="confirm_user_block_message">Jste si jisti, že chcete zablokovat uživatele?</string>
+    <string name="confirm_user_block_positive_button">Zablokovat</string>
 
     <string name="preference_timestamp_title">Zobrazit časová razítka</string>
     <string name="preference_mention_format_title">Formát zmínek</string>
@@ -136,10 +156,11 @@
     <string name="preference_scrollback_length_title">Délka historie chatu</string>
     <string name="snackbar_paste">Vložit</string>
     <string name="preference_show_username_title">Ukázat přezdívku</string>
+    <string name="preference_visible_badges_title">Viditelné odznaky</string>
 
     <plurals name="viewers">
         <item quantity="one">Živě s %d divákem</item>
-		<item quantity="few">Živě se %d diváky</item>
+        <item quantity="few">Živě se %d diváky</item>
         <item quantity="other">Živě s %d diváky</item>
     </plurals>
 </resources>
