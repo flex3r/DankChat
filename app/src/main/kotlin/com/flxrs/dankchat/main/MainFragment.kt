@@ -28,6 +28,9 @@ import androidx.core.net.toUri
 import androidx.core.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -194,32 +197,34 @@ class MainFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        navController.currentBackStackEntry?.savedStateHandle?.apply {
-            getLiveData<Boolean>(LOGIN_REQUEST_KEY).observe(viewLifecycleOwner) {
-                handleLoginRequest(it)
-                remove<Boolean>(LOGIN_REQUEST_KEY)
-            }
-            getLiveData<Boolean>(LOGOUT_REQUEST_KEY).observe(viewLifecycleOwner) {
-                showLogoutConfirmationDialog()
-                remove<Boolean>(LOGOUT_REQUEST_KEY)
-            }
-            getLiveData<Boolean>(THEME_CHANGED_KEY).observe(viewLifecycleOwner) {
-                remove<Boolean>(THEME_CHANGED_KEY)
-                binding.root.post { ActivityCompat.recreate(requireActivity()) }
-            }
-            getLiveData<Array<String>>(CHANNELS_REQUEST_KEY).observe(viewLifecycleOwner) {
-                updateChannels(it.toList())
-            }
-            getLiveData<String>(ADD_CHANNEL_REQUEST_KEY).observe(viewLifecycleOwner) {
-                addChannel(it)
-            }
-            getLiveData<Boolean>(HISTORY_DISCLAIMER_KEY).observe(viewLifecycleOwner) {
-                handleMessageHistoryDisclaimerResult(it)
-            }
-            getLiveData<UserPopupResult>(USER_POPUP_RESULT_KEY).observe(viewLifecycleOwner) {
-                handleUserPopupResult(it)
+        val navBackStackEntry = navController.getBackStackEntry(R.id.mainFragment)
+        val handle = navBackStackEntry.savedStateHandle
+        val observer = LifecycleEventObserver { _, event ->
+            if (event != Lifecycle.Event.ON_RESUME) return@LifecycleEventObserver
+            handle.keys().forEach { key ->
+                when (key) {
+                    LOGIN_REQUEST_KEY -> handle.withData(key, ::handleLoginRequest)
+                    ADD_CHANNEL_REQUEST_KEY -> handle.withData(key, ::addChannel)
+                    HISTORY_DISCLAIMER_KEY -> handle.withData(key, ::handleMessageHistoryDisclaimerResult)
+                    USER_POPUP_RESULT_KEY -> handle.withData(key, ::handleUserPopupResult)
+                    LOGOUT_REQUEST_KEY -> handle.withData<Boolean>(key) {
+                        showLogoutConfirmationDialog()
+                    }
+                    THEME_CHANGED_KEY -> handle.withData<Boolean>(key) {
+                        binding.root.post { ActivityCompat.recreate(requireActivity()) }
+                    }
+                    CHANNELS_REQUEST_KEY -> handle.withData<Array<String>>(key) {
+                        updateChannels(it.toList())
+                    }
+                }
             }
         }
+        navBackStackEntry.lifecycle.addObserver(observer)
+        viewLifecycleOwner.lifecycle.addObserver(LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_DESTROY) {
+                navBackStackEntry.lifecycle.removeObserver(observer)
+            }
+        })
 
         initPreferences(view.context)
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.userIdString == null) {

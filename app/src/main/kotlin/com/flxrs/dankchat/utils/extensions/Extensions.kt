@@ -1,16 +1,13 @@
 package com.flxrs.dankchat.utils.extensions
 
-import android.app.ActivityManager
 import android.content.Context
-import android.content.Context.ACTIVITY_SERVICE
 import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.chat.menu.EmoteItem
-import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.service.twitch.message.Mention
@@ -59,12 +56,6 @@ inline fun <V> measureTimeAndLog(tag: String, toLoad: String, block: () -> V): V
     return result
 }
 
-@Suppress("DEPRECATION") // Deprecated for third party Services.
-fun <T> Context.isServiceRunning(service: Class<T>) =
-    (getSystemService(ACTIVITY_SERVICE) as ActivityManager)
-        .getRunningServices(Integer.MAX_VALUE)
-        .any { it.service.className == service.name }
-
 val Int.isEven
     get() = (this % 2 == 0)
 
@@ -72,5 +63,7 @@ fun Context.getDrawableAndSetSurfaceTint(@DrawableRes id: Int) = getDrawable(id)
     DrawableCompat.setTint(this, ContextCompat.getColor(this@getDrawableAndSetSurfaceTint, R.color.color_on_surface))
 }
 
-val <T : Suggestion> LiveData<List<T>>.asSuggestionOrEmpty
-    get() = value.orEmpty() as List<Suggestion>
+inline fun <reified T> SavedStateHandle.withData(key: String, block: (T) -> Unit) {
+    val data = remove<T>(key) ?: return
+    block(data)
+}
