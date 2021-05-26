@@ -71,6 +71,27 @@
     <string name="anon_connection_disclaimer_title">Анонимное соединение</string>
     <string name="anon_connection_disclaimer_message">Из-за недавних изменений в API Twitch, некоторые данные отображаются только при входе.\nОни включают в себя поддержку сторонних смайлов и значков Twitch.</string>
     <string name="more">Больше</string>
+    <string name="manage_channels">Управление каналами</string>
+    <string name="confirm_channel_removal_title">Подтверждение удаления канала</string>
+    <string name="confirm_channel_removal_message">Вы уверены, что хотите удалить канал?</string>
+    <string name="confirm_channel_removal_positive_button">Удалить</string>
+    <string name="user_popup_follow">Фолловить</string>
+    <string name="user_popup_unfollow">Отфолловить</string>
+    <string name="user_popup_block">Заблокировать</string>
+    <string name="user_popup_unblock">Разблокировать</string>
+    <string name="user_popup_mention">Упомянуть пользователя</string>
+    <string name="user_popup_whisper">Написать личное сообщение</string>
+    <string name="user_popup_created">Канал создан: %1$s</string>
+    <string name="user_popup_following_since">Фолловит с %1$s</string>
+    <string name="user_popup_not_following">Не фолловит</string>
+    <string name="user_popup_avatar_description">Аватар</string>
+    <string name="user_popup_error">Невозможно загрузить данные пользователя: %1$s</string>
+    <string name="confirm_user_unfollow_title">Подтверждение отфоллова</string>
+    <string name="confirm_user_unfollow_message">Вы уверены, что хотите отфолловить этого пользователя?</string>
+    <string name="confirm_user_unfollow_positive_button">Отфолловить</string>
+    <string name="confirm_user_block_title">Подтверждение блокировки</string>
+    <string name="confirm_user_block_message">Вы уверены, что хотите заблокировать этого пользователя?</string>
+    <string name="confirm_user_block_positive_button">Заблокировать</string>
 
     <string name="preference_timestamp_title">Отображать временные метки</string>
     <string name="preference_mention_format_title">Формат упоминаний</string>
@@ -135,6 +156,7 @@
     <string name="mentions_title">Упоминания / Личные сообщения</string>
     <string name="snackbar_paste">Вставить</string>
     <string name="preference_show_username_title">показать имя</string>
+    <string name="preference_visible_badges_title">Видимые значки</string>
 
     <plurals name="viewers">
         <item quantity="one">В сети с %d зрителем</item>
