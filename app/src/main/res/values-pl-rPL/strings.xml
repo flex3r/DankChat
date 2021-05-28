@@ -65,7 +65,7 @@
     <string name="multi_entry_hint">Wpis</string>
     <string name="login_expired">Logowanie wygasło! Spróbuj zalogować się ponownie.</string>
     <string name="message_history_disclaimer_title">Informacja o historii wiadomości</string>
-    <string name="message_history_disclaimer_message">Podczas startu aplikacji, DankChat ładuje historię wiadomości z zewnętrznego serwisu.\nAby pobrać wiadomości, DankChat wysyła nazwy otwartych kanałów do tego serwisu.\nAby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości odwiedzanych kanałów przez Ciebie (oraz innych).\n\n- Aby nie używać tej funkcji, kliknij Zrezygnuj ponizej lub później wyłącz ładowanie historii wiadomości w ustawieniach.\n- Aby dowiedzieć się więcej o usłudze i wyłączyć historię wiadomości dla Twojego kanału odwiedź https://recent-messages.robotty.de/</string>
+    <string name="message_history_disclaimer_message">Podczas startu aplikacji, DankChat ładuje historię wiadomości z zewnętrznego serwisu.\nAby pobrać wiadomości, DankChat wysyła nazwy otwartych kanałów do tego serwisu.\nAby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości odwiedzanych kanałów przez Ciebie (oraz innych).\n\n- Aby nie używać tej funkcji, kliknij Zrezygnuj poniżej lub później wyłącz ładowanie historii wiadomości w ustawieniach.\n- Aby dowiedzieć się więcej o usłudze i wyłączyć historię wiadomości dla Twojego kanału odwiedź https://recent-messages.robotty.de/</string>
     <string name="dialog_optin">Zaakceptuj</string>
     <string name="dialog_optout">Zrezygnuj</string>
     <string name="anon_connection_disclaimer_title">Anonimowe połączenie</string>
@@ -135,6 +135,28 @@
     <string name="notification_whisper_mention">%1$s wysłał Ci szept</string>
     <string name="snackbar_paste">Wklej</string>
     <string name="preference_show_username_title">Pokazuj nazwy użytkowników</string>
+    <string name="manage_channels">Zarządzaj kanałami</string>
+    <string name="confirm_channel_removal_title">Potwierdź usunięcie kanału</string>
+    <string name="confirm_channel_removal_message">Czy jesteś pewien, że chcesz usunąć ten kanał?</string>
+    <string name="confirm_channel_removal_positive_button">Usuń</string>
+    <string name="user_popup_follow">Obserwuj</string>
+    <string name="user_popup_unfollow">Przestań obserwować</string>
+    <string name="user_popup_block">Zablokuj</string>
+    <string name="user_popup_unblock">Odblokuj</string>
+    <string name="user_popup_mention">Wspomnij</string>
+    <string name="user_popup_whisper">Wyślij szept</string>
+    <string name="user_popup_created">Utworzono: %1$s</string>
+    <string name="user_popup_following_since">Obserwuje od %1$s</string>
+    <string name="user_popup_not_following">Nie obserwuje kanału</string>
+    <string name="user_popup_avatar_description">Zdjęcie profilowe</string>
+    <string name="user_popup_error">Błąd podczas ładowania danych użytkownika: %1$s</string>
+    <string name="confirm_user_unfollow_title">Przestań obserwować</string>
+    <string name="confirm_user_unfollow_message">Czy na pewno chcesz przestać obserwować tego użytkownika?</string>
+    <string name="confirm_user_unfollow_positive_button">Przestań obserwować</string>
+    <string name="confirm_user_block_title">Potwierdź zablokowanie</string>
+    <string name="confirm_user_block_message">Czy na pewno chcesz zablokować tego użytkownika?</string>
+    <string name="confirm_user_block_positive_button">Zablokuj</string>
+    <string name="preference_visible_badges_title">Widoczne odznaki</string>
 
     <plurals name="viewers">
         <item quantity="one">Na żywo z %d widzem</item>
