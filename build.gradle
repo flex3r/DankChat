@@ -5,7 +5,7 @@ buildscript {
         apkName = "DankChat"
 
         // Plugins
-        gradle_build_tools_version = '7.0.0-beta02'
+        gradle_build_tools_version = '7.0.0-beta03'
         kotlin_version = '1.5.10'
 
         // Kotlin
@@ -32,7 +32,7 @@ buildscript {
         gif_drawable_version = '1.2.23'
         okhttp_version = '5.0.0-alpha.2'
         retrofit_version = '2.9.0'
-        hilt_version = '2.35.1'
+        hilt_version = '2.36'
 
         // Debug
         chucker_version = '3.3.0'
