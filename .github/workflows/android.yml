@@ -8,6 +8,7 @@ on:
 
 jobs:
   test:
+    if: ${{ false }} # KKona
     name: Run Unit Tests
     runs-on: ubuntu-latest
 
