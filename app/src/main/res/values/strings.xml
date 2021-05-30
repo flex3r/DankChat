@@ -193,7 +193,7 @@
     <string name="preference_show_username_key" translatable="false">show_username_key</string>
     <string name="preference_visible_badges_title">Visible badges</string>
     <string name="preference_visible_badges_key" translatable="false">visible_badges_key</string>
-    <string name="preference_prefer_emote_suggestions_key translatable="false"">prefer_emote_suggestions_key</string>
+    <string name="preference_prefer_emote_suggestions_key" translatable="false">prefer_emote_suggestions_key</string>
     <string name="preference_prefer_emote_suggestions_title">Prefer emote suggestions</string>
     <string name="preference_prefer_emote_suggestions_summary">Prioritize emote suggestions over user suggestions</string>
 
