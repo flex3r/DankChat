@@ -692,6 +692,7 @@ class MainFragment : Fragment() {
         val timestampFormatKey = getString(R.string.preference_timestamp_format_key)
         val loadSupibotKey = getString(R.string.preference_supibot_suggestions_key)
         val scrollBackLengthKey = getString(R.string.preference_scrollback_length_key)
+        val preferEmotesSuggestionsKey = getString(R.string.preference_prefer_emote_suggestions_key)
         dankChatPreferences = DankChatPreferenceStore(context)
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.oAuthKey.isNullOrBlank()) {
             dankChatPreferences.clearLogin()
@@ -713,6 +714,7 @@ class MainFragment : Fragment() {
                 scrollBackLengthKey -> mainViewModel.setScrollbackLength(ChatSettingsFragment.correctScrollbackLength(p.getInt(scrollBackLengthKey, 10)))
                 keepScreenOnKey -> keepScreenOn(p.getBoolean(key, true))
                 suggestionsKey -> binding.input.setSuggestionAdapter(p.getBoolean(key, true), suggestionAdapter)
+                preferEmotesSuggestionsKey -> mainViewModel.setPreferEmotesSuggestions(p.getBoolean(key, false))
             }
         }
         preferences.apply {
@@ -723,6 +725,7 @@ class MainFragment : Fragment() {
                 setRoomStateEnabled(getBoolean(roomStateKey, true))
                 setStreamInfoEnabled(getBoolean(streamInfoKey, true))
                 inputEnabled.value = getBoolean(inputKey, true)
+                setPreferEmotesSuggestions(getBoolean(preferEmotesSuggestionsKey, false))
                 binding.input.setSuggestionAdapter(getBoolean(suggestionsKey, true), suggestionAdapter)
 
                 setMentionEntries(getStringSet(customMentionsKey, emptySet()))
