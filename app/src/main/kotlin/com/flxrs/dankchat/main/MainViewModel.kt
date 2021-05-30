@@ -82,6 +82,7 @@ class MainViewModel @Inject constructor(
     private val supibotCommandSuggestions = supibotCommands.mapLatest { commands ->
         commands.map { Suggestion.CommandSuggestion("$$it") }
     }
+    val preferEmoteSuggestions = MutableStateFlow(false)
 
     val events = eventChannel.receiveAsFlow()
 
@@ -144,7 +145,10 @@ class MainViewModel @Inject constructor(
 
     val suggestions: Flow<List<Suggestion>> =
         combine(emoteSuggestions, userSuggestions, supibotCommandSuggestions) { emoteSuggestions, userSuggestions, supibotCommandSuggestions ->
-            userSuggestions + supibotCommandSuggestions + emoteSuggestions
+            if (preferEmoteSuggestions.value)
+                    (emoteSuggestions + userSuggestions + supibotCommandSuggestions)
+            else
+                    (userSuggestions + emoteSuggestions + supibotCommandSuggestions)
         }
 
     val emoteItems: Flow<List<List<EmoteItem>>> = emotes.map { emotes ->

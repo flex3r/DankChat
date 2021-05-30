@@ -14,6 +14,13 @@
 
         <SwitchPreferenceCompat
             android:defaultValue="false"
+            android:key="@string/preference_prefer_emote_suggestions_key"
+            android:title="@string/preference_prefer_emote_suggestions_title"
+            android:summary="@string/preference_prefer_emote_suggestions_summary"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
             android:key="@string/preference_supibot_suggestions_key"
             android:title="@string/preference_supibot_suggestions_title"
             app:iconSpaceReserved="false" />
