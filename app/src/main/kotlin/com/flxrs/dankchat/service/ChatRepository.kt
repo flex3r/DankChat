@@ -393,7 +393,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
             if (userId in blockList) return
         }
         val parsed = TwitchMessage.parse(msg, emoteManager).map {
-            if (it.name == name) lastMessage[it.channel] = it.message
+            if (it.name == name) lastMessage[it.channel] = it.originalMessage
             if (blacklistEntries.matches(it.message, it.name to it.displayName, it.emotes)) return
 
             it.checkForMention(name, customMentionEntries)
