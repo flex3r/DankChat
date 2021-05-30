@@ -321,7 +321,7 @@ class ChatAdapter(
             val fullPrefix = prefixLength + badgesLength
             emotes.groupBy { it.position }.forEach { (_, emotes) ->
                 try {
-                    val drawables = emotes.mapNotNull { it.toDrawable(context, animateGifs, useCache = emotes.size == 1)?.run { transformEmoteDrawable(scaleFactor, it) } }.toTypedArray()
+                    val drawables = emotes.mapNotNull { it.toDrawable(context, animateGifs, useCache = !it.isOverlayEmote)?.run { transformEmoteDrawable(scaleFactor, it) } }.toTypedArray()
                     val bounds = drawables.map { it.bounds }
                     val layerDrawable = drawables.toLayerDrawable(bounds, scaleFactor, emotes)
 

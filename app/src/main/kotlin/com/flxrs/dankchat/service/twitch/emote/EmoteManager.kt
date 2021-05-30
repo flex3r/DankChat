@@ -188,12 +188,12 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         for (i in adjustedEmotes.lastIndex downTo 0) {
             val emote = adjustedEmotes[i]
 
-            if (emote.code in OVERLAY_EMOTES) {
+            if (emote.isOverlayEmote) {
                 var foundEmote = false
                 // first, iterate over previous emotes until a regular emote is found
                 for (j in i - 1 downTo 0) {
                     val previousEmote = adjustedEmotes[j]
-                    if (previousEmote.code in OVERLAY_EMOTES) {
+                    if (previousEmote.isOverlayEmote) {
                         continue
                     }
 
@@ -237,7 +237,8 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
                     id = emote.id,
                     code = emote.code,
                     scale = emote.scale,
-                    isGif = emote.isGif
+                    isGif = emote.isGif,
+                    isOverlayEmote = emote.code in OVERLAY_EMOTES
                 )
             }
             i += split.length + 1
