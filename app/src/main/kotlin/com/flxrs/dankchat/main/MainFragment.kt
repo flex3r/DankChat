@@ -714,7 +714,7 @@ class MainFragment : Fragment() {
                 scrollBackLengthKey -> mainViewModel.setScrollbackLength(ChatSettingsFragment.correctScrollbackLength(p.getInt(scrollBackLengthKey, 10)))
                 keepScreenOnKey -> keepScreenOn(p.getBoolean(key, true))
                 suggestionsKey -> binding.input.setSuggestionAdapter(p.getBoolean(key, true), suggestionAdapter)
-                preferEmotesSuggestionsKey -> mainViewModel.preferEmoteSuggestions.value = p.getBoolean(key, false)
+                preferEmotesSuggestionsKey -> mainViewModel.setPreferEmotesSuggestions(p.getBoolean(key, false))
             }
         }
         preferences.apply {
@@ -725,7 +725,7 @@ class MainFragment : Fragment() {
                 setRoomStateEnabled(getBoolean(roomStateKey, true))
                 setStreamInfoEnabled(getBoolean(streamInfoKey, true))
                 inputEnabled.value = getBoolean(inputKey, true)
-                preferEmoteSuggestions.value = getBoolean(preferEmotesSuggestionsKey, false)
+                setPreferEmotesSuggestions(getBoolean(preferEmotesSuggestionsKey, false))
                 binding.input.setSuggestionAdapter(getBoolean(suggestionsKey, true), suggestionAdapter)
 
                 setMentionEntries(getStringSet(customMentionsKey, emptySet()))

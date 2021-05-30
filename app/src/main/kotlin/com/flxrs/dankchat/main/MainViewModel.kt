@@ -82,7 +82,10 @@ class MainViewModel @Inject constructor(
     private val supibotCommandSuggestions = supibotCommands.mapLatest { commands ->
         commands.map { Suggestion.CommandSuggestion("$$it") }
     }
-    val preferEmoteSuggestions = MutableStateFlow(false)
+
+    private val _preferEmoteSuggestions = MutableStateFlow(false)
+    val preferEmoteSuggestions: StateFlow<Boolean> = _preferEmoteSuggestions.asStateFlow()
+
 
     val events = eventChannel.receiveAsFlow()
 
@@ -144,11 +147,11 @@ class MainViewModel @Inject constructor(
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
     val suggestions: Flow<List<Suggestion>> =
-        combine(emoteSuggestions, userSuggestions, supibotCommandSuggestions) { emoteSuggestions, userSuggestions, supibotCommandSuggestions ->
-            if (preferEmoteSuggestions.value)
-                    (emoteSuggestions + userSuggestions + supibotCommandSuggestions)
-            else
-                    (userSuggestions + emoteSuggestions + supibotCommandSuggestions)
+        combine(emoteSuggestions, userSuggestions, supibotCommandSuggestions, preferEmoteSuggestions) { emoteSuggestions, userSuggestions, supibotCommandSuggestions, preferEmoteSuggestions  ->
+            when {
+                preferEmoteSuggestions -> (emoteSuggestions + userSuggestions + supibotCommandSuggestions)
+                else -> (userSuggestions + emoteSuggestions + supibotCommandSuggestions)
+            }
         }
 
     val emoteItems: Flow<List<List<EmoteItem>>> = emotes.map { emotes ->
@@ -227,6 +230,10 @@ class MainViewModel @Inject constructor(
             enabled -> dataRepository.loadSupibotCommands()
             else -> dataRepository.clearSupibotCommands()
         }
+    }
+
+    fun setPreferEmotesSuggestions(enabled: Boolean) {
+        _preferEmoteSuggestions.value = enabled
     }
 
     fun setActiveChannel(channel: String) {
