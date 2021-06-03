@@ -2,7 +2,7 @@ package com.flxrs.dankchat.service.twitch.message
 
 import com.flxrs.dankchat.service.irc.IrcMessage
 
-data class Roomstate(
+data class RoomState(
     val channel: String,
     val flags: MutableMap<String, Int> = mutableMapOf(
         "emote" to 0,

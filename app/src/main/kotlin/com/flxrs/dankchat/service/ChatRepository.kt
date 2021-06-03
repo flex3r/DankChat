@@ -16,7 +16,6 @@ import com.squareup.moshi.Moshi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -34,12 +33,12 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
 
     private val _notificationsFlow = MutableSharedFlow<List<ChatItem>>(0, extraBufferCapacity = 10)
-    private val _channelMentionCount = MutableSharedFlow<MutableMap<String, Int>>(1, onBufferOverflow = BufferOverflow.DROP_OLDEST).apply { tryEmit(mutableMapOf()) }
+    private val _channelMentionCount = mutableSharedFlowOf(mutableMapOf<String, Int>())
     private val messages = mutableMapOf<String, MutableStateFlow<List<ChatItem>>>()
     private val _mentions = MutableStateFlow<List<ChatItem>>(emptyList())
     private val _whispers = MutableStateFlow<List<ChatItem>>(emptyList())
     private val connectionState = mutableMapOf<String, MutableStateFlow<SystemMessageType>>()
-    private val roomStates = mutableMapOf<String, MutableStateFlow<Roomstate>>()
+    private val roomStates = mutableMapOf<String, MutableSharedFlow<RoomState>>()
     private val users = mutableMapOf<String, MutableStateFlow<LruCache<String, Boolean>>>()
     private val _userState = MutableStateFlow(UserState())
     private val blockList = mutableSetOf<String>()
@@ -75,10 +74,10 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         get() = _userState.asStateFlow()
 
     var startedConnection = false
-    var scrollbackLength = 500
+    var scrollBackLength = 500
         set(value) {
             messages.forEach { (_, messagesFlow) ->
-                if (messagesFlow.value.size > scrollbackLength) {
+                if (messagesFlow.value.size > scrollBackLength) {
                     messagesFlow.value = messagesFlow.value.takeLast(value)
                 }
             }
@@ -87,7 +86,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
     fun getChat(channel: String): StateFlow<List<ChatItem>> = messages.getOrPut(channel) { MutableStateFlow(emptyList()) }
     fun getConnectionState(channel: String): StateFlow<SystemMessageType> = connectionState.getOrPut(channel) { MutableStateFlow(SystemMessageType.DISCONNECTED) }
-    fun getRoomState(channel: String): StateFlow<Roomstate> = roomStates.getOrPut(channel) { MutableStateFlow(Roomstate(channel)) }
+    fun getRoomState(channel: String): SharedFlow<RoomState> = roomStates.getOrPut(channel) { mutableSharedFlowOf(RoomState(channel)) }
     fun getUsers(channel: String): StateFlow<LruCache<String, Boolean>> = users.getOrPut(channel) { MutableStateFlow(createUserCache()) }
 
     suspend fun loadRecentMessages(channel: String, loadHistory: Boolean, isUserChange: Boolean) {
@@ -178,7 +177,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
             val emotes = emoteManager.parse3rdPartyEmotes(message, withTwitch = true)
             val fakeMessage = TwitchMessage(channel = "", name = name, displayName = name, message = message, emotes = emotes, isWhisper = true, whisperRecipient = split[1])
             val fakeItem = ChatItem(fakeMessage, isMentionTab = true)
-            _whispers.value = _whispers.value.addAndLimit(fakeItem, scrollbackLength)
+            _whispers.value = _whispers.value.addAndLimit(fakeItem, scrollBackLength)
         }
     }
 
@@ -263,7 +262,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     private fun createFlowsIfNecessary(channel: String) {
         messages.putIfAbsent(channel, MutableStateFlow(emptyList()))
         connectionState.putIfAbsent(channel, MutableStateFlow(SystemMessageType.DISCONNECTED))
-        roomStates.putIfAbsent(channel, MutableStateFlow(Roomstate(channel)))
+        roomStates.putIfAbsent(channel, mutableSharedFlowOf(RoomState(channel)))
         users.putIfAbsent(channel, MutableStateFlow(createUserCache()))
 
         with(_channelMentionCount) {
@@ -352,16 +351,16 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         val channel = msg.params[0].substring(1)
 
         messages[channel]?.value?.replaceWithTimeOuts(target)?.also {
-            messages[channel]?.value = it.addAndLimit(parsed[0], scrollbackLength)
+            messages[channel]?.value = it.addAndLimit(parsed[0], scrollBackLength)
         }
     }
 
     private fun handleRoomState(msg: IrcMessage) {
         val channel = msg.params[0].substring(1)
-        val state = roomStates[channel]?.value ?: Roomstate(channel)
+        val state = roomStates[channel]?.firstValue ?: RoomState(channel)
         state.updateState(msg)
 
-        roomStates[channel]?.value = state
+        roomStates[channel]?.tryEmit(state)
     }
 
     private fun handleUserState(msg: IrcMessage) {
@@ -407,24 +406,24 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
             if (msg.params[0] == "*") {
                 messages.keys.forEach {
                     val currentChat = messages[it]?.value ?: emptyList()
-                    messages[it]?.value = currentChat.addAndLimit(parsed, scrollbackLength)
+                    messages[it]?.value = currentChat.addAndLimit(parsed, scrollBackLength)
                 }
             } else {
                 val channel = msg.params[0].substring(1)
                 val currentChat = messages[channel]?.value ?: emptyList()
-                messages[channel]?.value = currentChat.addAndLimit(parsed, scrollbackLength)
+                messages[channel]?.value = currentChat.addAndLimit(parsed, scrollBackLength)
                 _notificationsFlow.tryEmit(parsed)
 
                 if (msg.command == "WHISPER") {
                     (parsed[0].message as TwitchMessage).whisperRecipient = name
-                    _whispers.value = _whispers.value.addAndLimit(parsed.toMentionTabItems(), scrollbackLength)
+                    _whispers.value = _whispers.value.addAndLimit(parsed.toMentionTabItems(), scrollBackLength)
                     _channelMentionCount.increment("w", 1)
                 }
 
                 val mentions = parsed.filter { it.message is TwitchMessage && it.message.isMention && !it.message.isWhisper }.toMentionTabItems()
                 if (mentions.isNotEmpty()) {
                     _channelMentionCount.increment(channel, mentions.size)
-                    _mentions.value = _mentions.value.addAndLimit(mentions, scrollbackLength)
+                    _mentions.value = _mentions.value.addAndLimit(mentions, scrollBackLength)
                 }
             }
         }
@@ -439,7 +438,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     private fun makeAndPostConnectionMessage(state: SystemMessageType, channels: Set<String> = messages.keys) {
         channels.forEach {
             val currentChat = messages[it]?.value ?: emptyList()
-            messages[it]?.value = currentChat.addAndLimit(ChatItem(SystemMessage(state = state)), scrollbackLength)
+            messages[it]?.value = currentChat.addAndLimit(ChatItem(SystemMessage(state = state)), scrollBackLength)
         }
     }
 
@@ -461,7 +460,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         }.let { Log.i(TAG, "Parsing message history for #$channel took $it ms") }
 
         val current = messages[channel]?.value ?: emptyList()
-        messages[channel]?.value = items.addAndLimit(current, scrollbackLength, checkForDuplications = true)
+        messages[channel]?.value = items.addAndLimit(current, scrollBackLength, checkForDuplications = true)
 
         val mentions = items.filter { (it.message as TwitchMessage).isMention }.toMentionTabItems()
         _mentions.value = (_mentions.value + mentions).sortedBy { it.message.timestamp }

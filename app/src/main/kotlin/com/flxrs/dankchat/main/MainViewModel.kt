@@ -180,7 +180,7 @@ class MainViewModel @Inject constructor(
         loadSupibot: Boolean,
         scrollBackLength: Int? = null
     ) {
-        scrollBackLength?.let { chatRepository.scrollbackLength = it }
+        scrollBackLength?.let { chatRepository.scrollBackLength = it }
 
         viewModelScope.launch {
             val loadingState =
@@ -244,7 +244,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun setScrollbackLength(scrollBackLength: Int) {
-        chatRepository.scrollbackLength = scrollBackLength
+        chatRepository.scrollBackLength = scrollBackLength
     }
 
     fun setMentionSheetOpen(enabled: Boolean) {
