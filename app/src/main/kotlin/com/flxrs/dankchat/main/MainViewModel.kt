@@ -63,13 +63,14 @@ class MainViewModel @Inject constructor(
     private val currentSuggestionChannel = MutableStateFlow("")
     private val whisperTabSelected = MutableStateFlow(false)
     private val mentionSheetOpen = MutableStateFlow(false)
+    private val preferEmoteSuggestions = MutableStateFlow(false)
 
     private val emotes = currentSuggestionChannel.flatMapLatest { dataRepository.getEmotes(it) }
-    private val roomState = currentSuggestionChannel.flatMapLatest { chatRepository.getRoomState(it) }
+    private val roomState = currentSuggestionChannel.flatMapLatest { chatRepository.getRoomState(it) }.map { it.toString().ifBlank { null } }
     private val users = currentSuggestionChannel.flatMapLatest { chatRepository.getUsers(it) }
     private val supibotCommands = activeChannel.flatMapLatest { dataRepository.getSupibotCommands(it) }
     private val currentStreamInformation = combine(activeChannel, streamData) { activeChannel, streamData ->
-        streamData.find { it.channel == activeChannel }?.data ?: ""
+        streamData.find { it.channel == activeChannel }?.data
     }
 
     private val emoteSuggestions = emotes.mapLatest { emotes ->
@@ -82,9 +83,6 @@ class MainViewModel @Inject constructor(
     private val supibotCommandSuggestions = supibotCommands.mapLatest { commands ->
         commands.map { Suggestion.CommandSuggestion("$$it") }
     }
-
-    private val _preferEmoteSuggestions = MutableStateFlow(false)
-    val preferEmoteSuggestions: StateFlow<Boolean> = _preferEmoteSuggestions.asStateFlow()
 
 
     val events = eventChannel.receiveAsFlow()
@@ -116,19 +114,11 @@ class MainViewModel @Inject constructor(
         (!mentionSheetOpen && connected) || (whisperTabSelected && connected)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
-    val currentBottomText: Flow<String> = combine(roomState, currentStreamInformation, mentionSheetOpen) { roomState, currentStreamInformation, _ ->
-        val roomStateText = roomState.toString()
-        val streamInfoText = currentStreamInformation
-
-        val stateNotBlank = roomStateText.isNotBlank()
-        val streamNotBlank = streamInfoText.isNotBlank()
-
-        when {
-            stateNotBlank && streamNotBlank -> "$roomStateText - $streamInfoText"
-            stateNotBlank -> roomStateText
-            streamNotBlank -> streamInfoText
-            else -> ""
-        }
+    val currentBottomText: Flow<String> = combine(roomState, currentStreamInformation, mentionSheetOpen) { roomState, streamInfo, mentionSheetOpen ->
+        listOfNotNull(roomState, streamInfo)
+            .takeUnless { mentionSheetOpen }
+            ?.joinToString(separator = " - ")
+            .orEmpty()
     }
 
     val shouldShowBottomText: StateFlow<Boolean> =
@@ -147,7 +137,7 @@ class MainViewModel @Inject constructor(
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
     val suggestions: Flow<List<Suggestion>> =
-        combine(emoteSuggestions, userSuggestions, supibotCommandSuggestions, preferEmoteSuggestions) { emoteSuggestions, userSuggestions, supibotCommandSuggestions, preferEmoteSuggestions  ->
+        combine(emoteSuggestions, userSuggestions, supibotCommandSuggestions, preferEmoteSuggestions) { emoteSuggestions, userSuggestions, supibotCommandSuggestions, preferEmoteSuggestions ->
             when {
                 preferEmoteSuggestions -> (emoteSuggestions + userSuggestions + supibotCommandSuggestions)
                 else -> (userSuggestions + emoteSuggestions + supibotCommandSuggestions)
@@ -233,7 +223,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun setPreferEmotesSuggestions(enabled: Boolean) {
-        _preferEmoteSuggestions.value = enabled
+        preferEmoteSuggestions.value = enabled
     }
 
     fun setActiveChannel(channel: String) {
