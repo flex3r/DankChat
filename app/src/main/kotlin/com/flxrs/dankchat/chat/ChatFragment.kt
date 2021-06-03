@@ -10,11 +10,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,8 +32,9 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 open class ChatFragment : Fragment() {
-
+    private val args: ChatFragmentArgs by navArgs()
     private val viewModel: ChatViewModel by viewModels()
+
     protected var bindingRef: ChatFragmentBinding? = null
     protected val binding get() = bindingRef!!
     protected open lateinit var adapter: ChatAdapter
@@ -42,13 +43,11 @@ open class ChatFragment : Fragment() {
     protected open lateinit var preferences: SharedPreferences
 
     protected open var isAtBottom = true
-    private var channel: String = ""
 
     @Inject
     lateinit var emoteManager: EmoteManager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        channel = requireArguments().getString(CHANNEL_ARG, "")
         bindingRef = ChatFragmentBinding.inflate(inflater, container, false).apply {
             lifecycleOwner = this@ChatFragment
             scrollBottom.setOnClickListener {
@@ -59,7 +58,7 @@ open class ChatFragment : Fragment() {
             }
         }
 
-        if (channel.isNotBlank()) {
+        if (args.channel.isNotBlank()) {
             collectFlow(viewModel.chat) { adapter.submitList(it) }
         }
 
@@ -192,13 +191,11 @@ open class ChatFragment : Fragment() {
         }
 
     companion object {
-        fun newInstance(channel: String): ChatFragment {
-            return ChatFragment().apply {
-                arguments = bundleOf(CHANNEL_ARG to channel)
-            }
+        private const val AT_BOTTOM_STATE = "chat_at_bottom_state"
+
+        fun newInstance(channel: String) = ChatFragment().apply {
+            arguments = ChatFragmentArgs(channel).toBundle()
         }
 
-        const val CHANNEL_ARG = "channel"
-        private const val AT_BOTTOM_STATE = "chat_at_bottom_state"
     }
 }

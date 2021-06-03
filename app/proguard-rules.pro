@@ -33,3 +33,8 @@
 -dontwarn "org.openjsse.javax.net.ssl.SSLSocket"
 -dontwarn "org.openjsse.net.ssl.OpenJSSE"
 
+# R8 thinks we don't need (Mention-)ChatFragmentArgs because we don't use it directly in Navigation and navArgs() is using reflection
+-if public class ** implements androidx.navigation.NavArgs
+-keepclassmembers public class <1> {
+    ** fromBundle(android.os.Bundle);
+}

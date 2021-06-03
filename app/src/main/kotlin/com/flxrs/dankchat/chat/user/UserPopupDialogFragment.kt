@@ -20,8 +20,8 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class UserPopupDialogFragment : BottomSheetDialogFragment() {
-    private val viewModel: UserPopupViewModel by viewModels()
     private val args: UserPopupDialogFragmentArgs by navArgs()
+    private val viewModel: UserPopupViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = UserPopupBottomsheetBinding.inflate(inflater, container, false).apply {
@@ -120,12 +120,5 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
             .savedStateHandle
             .set(MainFragment.USER_POPUP_RESULT_KEY, UserPopupResult.Error(throwable))
         dialog?.dismiss()
-    }
-
-    companion object {
-        const val TARGET_USER_ID_ARG = "targetUserId"
-        const val CURRENT_USER_ID_ARG = "currentUserId"
-        const val OAUTH_ARG = "oAuth"
-        const val CHANNEL_ARG = "channel"
     }
 }

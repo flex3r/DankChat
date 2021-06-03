@@ -19,7 +19,7 @@ class AddChannelDialogFragment : DialogFragment() {
     private val binding get() = bindingRef!!
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        bindingRef = AddChannelDialogBinding.inflate(LayoutInflater.from(requireContext()), null, false)
+        bindingRef = AddChannelDialogBinding.inflate(layoutInflater, null, false)
         val builder = MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.add_dialog_title)
             .setView(binding.root)
