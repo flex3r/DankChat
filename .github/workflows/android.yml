@@ -68,22 +68,13 @@ jobs:
           name: App
           path: ${{ github.workspace }}/app/build/outputs/apk/debug/*.apk
 
-      - name: Remove previous debug release
+      - name: Update debug release
         if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
-        uses: author/action-rollback@stable
+        uses: meeDamian/github-release@2.0
         with:
-          tag: 'debug'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create debug release
-        if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
-        uses: underwindfall/create-release-with-debugapk@v2.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: debug
-          release_name: Debug APK
-          asset_path: ${{ github.workspace }}/app/build/outputs/apk/debug/DankChat-debug.apk
-          asset_name: DankChat-debug.apk
-          asset_content_type: application/zip
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: debug
+          name: Debug APK
+          files: ${{ github.workspace }}/app/build/outputs/apk/debug/DankChat-debug.apk
+          gzip: false
+          allow_override: true
