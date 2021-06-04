@@ -20,7 +20,6 @@ sealed class EmoteItem {
         return true
     }
 
-    override fun hashCode(): Int {
-        return javaClass.hashCode()
-    }
+    override fun hashCode(): Int = javaClass.hashCode()
+    operator fun plus(list: List<EmoteItem>): List<EmoteItem> = listOf(this) + list
 }

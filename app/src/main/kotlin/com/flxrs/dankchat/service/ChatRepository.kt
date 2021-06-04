@@ -326,11 +326,11 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         blockList.clear()
     }
 
-    suspend fun setMentionEntries(stringSet: Set<String>?) = withContext(Dispatchers.Default) {
+    suspend fun setMentionEntries(stringSet: Set<String>) = withContext(Dispatchers.Default) {
         customMentionEntries = stringSet.mapToMention(adapter)
     }
 
-    suspend fun setBlacklistEntries(stringSet: Set<String>?) = withContext(Dispatchers.Default) {
+    suspend fun setBlacklistEntries(stringSet: Set<String>) = withContext(Dispatchers.Default) {
         blacklistEntries = stringSet.mapToMention(adapter)
     }
 

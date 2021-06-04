@@ -152,8 +152,8 @@ class MainViewModel @Inject constructor(
                 else -> EmoteMenuTab.GLOBAL
             }
         }
-        mutableListOf(
-            groupedByType[EmoteMenuTab.SUBS].moveToFront(activeChannel.value).toEmoteItems(),
+        listOf(
+            groupedByType[EmoteMenuTab.SUBS]?.moveToFront(activeChannel.value).toEmoteItems(),
             groupedByType[EmoteMenuTab.CHANNEL].toEmoteItems(),
             groupedByType[EmoteMenuTab.GLOBAL].toEmoteItems()
         )
@@ -351,8 +351,8 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun setMentionEntries(stringSet: Set<String>?) = viewModelScope.launch(coroutineExceptionHandler) { chatRepository.setMentionEntries(stringSet) }
-    fun setBlacklistEntries(stringSet: Set<String>?) = viewModelScope.launch(coroutineExceptionHandler) { chatRepository.setBlacklistEntries(stringSet) }
+    fun setMentionEntries(stringSet: Set<String>?) = viewModelScope.launch(coroutineExceptionHandler) { chatRepository.setMentionEntries(stringSet.orEmpty()) }
+    fun setBlacklistEntries(stringSet: Set<String>?) = viewModelScope.launch(coroutineExceptionHandler) { chatRepository.setBlacklistEntries(stringSet.orEmpty()) }
 
     suspend fun fetchStreamData(oAuth: String, stringBuilder: (viewers: Int) -> String) = withContext(coroutineExceptionHandler) {
         fetchTimerJob?.cancel()
