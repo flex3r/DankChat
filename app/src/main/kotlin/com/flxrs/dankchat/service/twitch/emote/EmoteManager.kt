@@ -123,8 +123,8 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         }
         GenericEmote(
             code = code,
-            url = "$BASE_URL/${id}/$EMOTE_SIZE",
-            lowResUrl = "$BASE_URL/${id}/$LOW_RES_EMOTE_SIZE",
+            url = TWITCH_EMOTE_TEMPLATE.format(id, TWITCH_EMOTE_SIZE),
+            lowResUrl = TWITCH_EMOTE_TEMPLATE.format(id, TWITCH_LOW_RES_EMOTE_SIZE),
             isGif = false,
             id = id,
             scale = 1,
@@ -287,7 +287,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
             emotes.addAll(parsedPositions.map {
                 ChatMessageEmote(
                     position = it,
-                    url = "$BASE_URL/$id/$EMOTE_SIZE",
+                    url = TWITCH_EMOTE_TEMPLATE.format(id, TWITCH_EMOTE_SIZE),
                     id = id,
                     code = code,
                     scale = 1,
@@ -303,8 +303,8 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         val name = emote.code
         val id = emote.id
         val type = emote.imageType == "gif"
-        val url = "$BTTV_CDN_BASE_URL$id/3x"
-        val lowResUrl = "$BTTV_CDN_BASE_URL$id/2x"
+        val url = BTTV_EMOTE_TEMPLATE.format(id, BTTV_EMOTE_SIZE)
+        val lowResUrl = BTTV_EMOTE_TEMPLATE.format(id, BTTV_LOW_RES_EMOTE_SIZE)
         return GenericEmote(name, url, lowResUrl, type, id, 1, EmoteType.ChannelBTTVEmote)
     }
 
@@ -312,8 +312,8 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         val name = emote.code
         val id = emote.id
         val type = emote.imageType == "gif"
-        val url = "$BTTV_CDN_BASE_URL$id/3x"
-        val lowResUrl = "$BTTV_CDN_BASE_URL$id/2x"
+        val url = BTTV_EMOTE_TEMPLATE.format(id, BTTV_EMOTE_SIZE)
+        val lowResUrl = BTTV_EMOTE_TEMPLATE.format(id, BTTV_LOW_RES_EMOTE_SIZE)
         return GenericEmote(name, url, lowResUrl, type, id, 1, EmoteType.GlobalBTTVEmote)
     }
 
@@ -336,12 +336,15 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
     companion object {
         private val TAG = EmoteManager::class.java.simpleName
 
-        private const val BASE_URL = "https://static-cdn.jtvnw.net/emoticons/v1/"
-        private const val EMOTE_SIZE = "3.0"
-        private const val LOW_RES_EMOTE_SIZE = "2.0"
-        private const val BTTV_CDN_BASE_URL = "https://cdn.betterttv.net/emote/"
+        private const val TWITCH_EMOTE_TEMPLATE = "https://static-cdn.jtvnw.net/emoticons/v2/%s/default/dark/%s"
+        private const val TWITCH_EMOTE_SIZE = "3.0"
+        private const val TWITCH_LOW_RES_EMOTE_SIZE = "2.0"
 
-        private val WHITESPACE_REGEX = Regex("\\s")
+        private const val BTTV_EMOTE_TEMPLATE = "https://cdn.betterttv.net/emote/%s/%s"
+        private const val BTTV_EMOTE_SIZE = "3x"
+        private const val BTTV_LOW_RES_EMOTE_SIZE = "2x"
+
+        private val WHITESPACE_REGEX = "\\s".toRegex()
         private val EMOTE_REPLACEMENTS = mapOf(
             "[oO](_|\\.)[oO]" to "O_o",
             "\\&lt\\;3" to "<3",
