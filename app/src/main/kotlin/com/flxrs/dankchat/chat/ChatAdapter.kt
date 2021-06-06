@@ -139,7 +139,7 @@ class ChatAdapter(
     private fun TextView.handleTwitchMessage(twitchMessage: TwitchMessage, holder: ViewHolder, isMentionTab: Boolean): Unit = with(twitchMessage) {
         isClickable = false
         alpha = 1.0f
-        movementMethod = LongClickLinkMovementMethod.instance
+        movementMethod = LongClickLinkMovementMethod
 
         val darkModePreferenceKey = context.getString(R.string.preference_dark_theme_key)
         val timedOutPreferenceKey = context.getString(R.string.preference_show_timed_out_messages_key)
