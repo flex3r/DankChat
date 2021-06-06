@@ -14,10 +14,7 @@ class LongClickLinkMovementMethod : LinkMovementMethod() {
     private var longClickHandler: Handler? = null
     private var isLongPressed = false
 
-    override fun onTouchEvent(
-        widget: TextView, buffer: Spannable,
-        event: MotionEvent
-    ): Boolean {
+    override fun onTouchEvent(widget: TextView, buffer: Spannable, event: MotionEvent): Boolean {
         when (val action = event.action) {
             MotionEvent.ACTION_CANCEL -> longClickHandler?.removeCallbacksAndMessages(null)
             MotionEvent.ACTION_UP, MotionEvent.ACTION_DOWN -> {

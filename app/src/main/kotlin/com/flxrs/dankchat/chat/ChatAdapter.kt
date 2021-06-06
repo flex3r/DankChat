@@ -251,17 +251,6 @@ class ChatAdapter(
                 spannable.setSpan(userClickableSpan, prefixLength - fullDisplayName.length + badgesLength, prefixLength + badgesLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
 
-            // clicking message
-            val messageClickableSpan = object : LongClickableSpan() {
-                override fun onClick(v: View) = Unit
-                override fun onLongClick(view: View) = onMessageLongClick(originalMessage)
-                override fun updateDrawState(ds: TextPaint) {
-                    ds.isUnderlineText = false
-                }
-
-            }
-            spannable.setSpan(messageClickableSpan, prefixLength + badgesLength, prefixLength + badgesLength + message.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-
             val emojiCompat = EmojiCompat.get()
             val messageStart = prefixLength + badgesLength
             val messageEnd = messageStart + message.length
@@ -270,16 +259,17 @@ class ChatAdapter(
                 else -> spannable
             } as SpannableStringBuilder
 
-            //links
+            // links
             LinkifyCompat.addLinks(spannableWithEmojis, Linkify.WEB_URLS)
             spannableWithEmojis.getSpans<URLSpan>().forEach {
                 val start = spannableWithEmojis.getSpanStart(it)
                 val end = spannableWithEmojis.getSpanEnd(it)
                 spannableWithEmojis.removeSpan(it)
-                val clickableSpan = object : ClickableSpan() {
+                val clickableSpan = object : LongClickableSpan() {
+                    override fun onLongClick(view: View) = onMessageLongClick(originalMessage)
                     override fun onClick(v: View) {
                         try {
-                            customTabsIntent.launchUrl(v.context, it.url.toUri())
+                            customTabsIntent.launchUrl(context, it.url.toUri())
                         } catch (e: ActivityNotFoundException) {
                             Log.e("ViewBinding", Log.getStackTraceString(e))
                         }
@@ -287,6 +277,17 @@ class ChatAdapter(
                 }
                 spannableWithEmojis.setSpan(clickableSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
+
+            // copying message
+            val messageClickableSpan = object : LongClickableSpan() {
+                override fun onClick(v: View) = Unit
+                override fun onLongClick(view: View) = onMessageLongClick(originalMessage)
+                override fun updateDrawState(ds: TextPaint) {
+                    ds.isUnderlineText = false
+                }
+
+            }
+            spannableWithEmojis.setSpan(messageClickableSpan, messageStart, messageEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
             setText(spannableWithEmojis, TextView.BufferType.SPANNABLE)
             allowedBadges.forEachIndexed { idx, badge ->
