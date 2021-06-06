@@ -196,6 +196,10 @@
     <string name="preference_prefer_emote_suggestions_key" translatable="false">prefer_emote_suggestions_key</string>
     <string name="preference_prefer_emote_suggestions_title">Prefer emote suggestions</string>
     <string name="preference_prefer_emote_suggestions_summary">Prioritize emote suggestions over user suggestions</string>
+    <string name="preference_user_long_click_key" translatable="false">preference_mention_long_click_key</string>
+    <string name="preference_user_long_click_title">User long click behaviour</string>
+    <string name="preference_user_long_click_summary_on">Regular click opens popup, long click mentions</string>
+    <string name="preference_user_long_click_summary_off">Regular click mentions, long click opens popup</string>
 
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>

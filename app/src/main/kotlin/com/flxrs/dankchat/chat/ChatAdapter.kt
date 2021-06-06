@@ -12,7 +12,6 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.TextPaint
-import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.ImageSpan
 import android.text.style.URLSpan
@@ -28,7 +27,6 @@ import androidx.core.text.bold
 import androidx.core.text.color
 import androidx.core.text.getSpans
 import androidx.core.text.util.LinkifyCompat
-import androidx.core.view.postDelayed
 import androidx.emoji2.text.EmojiCompat
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
@@ -50,6 +48,8 @@ import com.flxrs.dankchat.utils.extensions.isEven
 import com.flxrs.dankchat.utils.extensions.normalizeColor
 import com.flxrs.dankchat.utils.extensions.setRunning
 import com.flxrs.dankchat.utils.showErrorDialog
+import com.flxrs.dankchat.utils.span.LongClickLinkMovementMethod
+import com.flxrs.dankchat.utils.span.LongClickableSpan
 import kotlinx.coroutines.*
 import pl.droidsonroids.gif.GifDrawable
 import kotlin.math.roundToInt
@@ -57,7 +57,7 @@ import kotlin.math.roundToInt
 class ChatAdapter(
     private val emoteManager: EmoteManager,
     private val onListChanged: (position: Int) -> Unit,
-    private val onUserClicked: (targetUserId: String?, channelName: String) -> Unit,
+    private val onUserClicked: (targetUserId: String?, targetUsername: String, channelName: String, isLongPress: Boolean) -> Unit,
     private val onMessageLongClick: (message: String) -> Unit
 ) : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
     // Using position.isEven for determining which background to use in checkered mode doesn't work,
@@ -139,7 +139,7 @@ class ChatAdapter(
     private fun TextView.handleTwitchMessage(twitchMessage: TwitchMessage, holder: ViewHolder, isMentionTab: Boolean): Unit = with(twitchMessage) {
         isClickable = false
         alpha = 1.0f
-        movementMethod = LinkMovementMethod.getInstance()
+        movementMethod = LongClickLinkMovementMethod.instance
 
         val darkModePreferenceKey = context.getString(R.string.preference_dark_theme_key)
         val timedOutPreferenceKey = context.getString(R.string.preference_show_timed_out_messages_key)
@@ -186,22 +186,6 @@ class ChatAdapter(
                     } else context.getString(R.string.timed_out_message)
                     return@launch
                 }
-            }
-
-            var ignoreClicks = false
-            setOnLongClickListener {
-                ignoreClicks = true
-                onMessageLongClick(originalMessage)
-                true
-            }
-
-            setOnTouchListener { _, event ->
-                if (event.action == MotionEvent.ACTION_UP) {
-                    postDelayed(200) {
-                        ignoreClicks = false
-                    }
-                }
-                false
             }
 
             val scaleFactor = lineHeight * 1.5 / 112
@@ -254,20 +238,29 @@ class ChatAdapter(
                 else -> spannable.append(message)
             }
 
-            //clicking usernames
+            // clicking usernames
             if (fullName.isNotBlank()) {
-                val userClickableSpan = object : ClickableSpan() {
+                val userClickableSpan = object : LongClickableSpan() {
+                    override fun onClick(v: View) = onUserClicked(userId, displayName, channel, false)
+                    override fun onLongClick(view: View) = onUserClicked(userId, displayName, channel, true)
                     override fun updateDrawState(ds: TextPaint) {
                         ds.isUnderlineText = false
                         ds.color = normalizedColor
                     }
-
-                    override fun onClick(v: View) {
-                        if (!ignoreClicks) onUserClicked(userId, channel)
-                    }
                 }
                 spannable.setSpan(userClickableSpan, prefixLength - fullDisplayName.length + badgesLength, prefixLength + badgesLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
+
+            // clicking message
+            val messageClickableSpan = object : LongClickableSpan() {
+                override fun onClick(v: View) = Unit
+                override fun onLongClick(view: View) = onMessageLongClick(originalMessage)
+                override fun updateDrawState(ds: TextPaint) {
+                    ds.isUnderlineText = false
+                }
+
+            }
+            spannable.setSpan(messageClickableSpan, prefixLength + badgesLength, prefixLength + badgesLength + message.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
             val emojiCompat = EmojiCompat.get()
             val messageStart = prefixLength + badgesLength
@@ -286,8 +279,7 @@ class ChatAdapter(
                 val clickableSpan = object : ClickableSpan() {
                     override fun onClick(v: View) {
                         try {
-                            if (!ignoreClicks)
-                                customTabsIntent.launchUrl(v.context, it.url.toUri())
+                            customTabsIntent.launchUrl(v.context, it.url.toUri())
                         } catch (e: ActivityNotFoundException) {
                             Log.e("ViewBinding", Log.getStackTraceString(e))
                         }

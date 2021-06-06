@@ -68,7 +68,7 @@ open class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val itemDecoration = DividerItemDecoration(view.context, LinearLayoutManager.VERTICAL)
         manager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false).apply { stackFromEnd = true }
-        adapter = ChatAdapter(emoteManager, ::scrollToPosition, ::openUserPopup, ::copyMessage).apply { stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY }
+        adapter = ChatAdapter(emoteManager, ::scrollToPosition, ::onUserClick, ::copyMessage).apply { stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY }
         binding.chat.setup(adapter, manager)
 
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { pref, key ->
@@ -136,9 +136,15 @@ open class ChatFragment : Fragment() {
         outState.putBoolean(AT_BOTTOM_STATE, isAtBottom)
     }
 
-    protected open fun openUserPopup(targetUserId: String?, channel: String) {
+    protected open fun onUserClick(targetUserId: String?, targetUserName: String, channel: String, isLongPress: Boolean) {
         targetUserId ?: return
-        (requireParentFragment() as? MainFragment)?.openUserPopup(targetUserId, channel, isWhisperPopup = false)
+        val shouldLongClickMention = preferences.getBoolean(getString(R.string.preference_user_long_click_key), true)
+        val shouldMention = (isLongPress && shouldLongClickMention) || (!isLongPress && !shouldLongClickMention)
+
+        when {
+            shouldMention -> (parentFragment as? MainFragment)?.mentionUser(targetUserName)
+            else -> (parentFragment as? MainFragment)?.openUserPopup(targetUserId, channel, isWhisperPopup = false)
+        }
     }
 
     private fun copyMessage(message: String) {

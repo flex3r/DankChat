@@ -391,13 +391,13 @@ class MainFragment : Fragment() {
         navigateSafe(directions)
     }
 
-    private fun mentionUser(user: String) {
+    fun mentionUser(user: String) {
         val template = preferences.getString(getString(R.string.preference_mention_format_key), "name") ?: "name"
         val mention = "${template.replace("name", user)} "
         insertText(mention)
     }
 
-    private fun whisperUser(user: String) {
+    fun whisperUser(user: String) {
         if (!binding.input.isEnabled) return
 
         val current = binding.input.text.toString()
