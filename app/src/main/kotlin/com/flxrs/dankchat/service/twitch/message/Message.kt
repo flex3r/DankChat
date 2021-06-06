@@ -216,11 +216,13 @@ data class TwitchMessage(
                 val badgeVersion = trimmed.substringAfter('/')
                 val globalBadgeUrl = emoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)
                 val channelBadgeUrl = emoteManager.getChannelBadgeUrl(channel, badgeSet, badgeVersion)
-                val ffzModBadgeUrl = emoteManager.getFFzModBadgeUrl(channel)
+                val ffzModBadgeUrl = emoteManager.getFfzModBadgeUrl(channel)
+                val ffzVipBadgeUrl = emoteManager.getFfzVipBadgeUrl(channel)
                 val type = BadgeType.parseFromBadgeId(badgeSet)
                 when {
-                    (badgeSet.startsWith("subscriber") || badgeSet.startsWith("bits")) && channelBadgeUrl != null -> Badge.ChannelBadge(badgeSet, channelBadgeUrl, type)
                     badgeSet.startsWith("moderator") && ffzModBadgeUrl != null -> Badge.FFZModBadge(ffzModBadgeUrl, type)
+                    badgeSet.startsWith("vip") && ffzVipBadgeUrl != null -> Badge.FFZVipBadge(ffzVipBadgeUrl, type)
+                    (badgeSet.startsWith("subscriber") || badgeSet.startsWith("bits")) && channelBadgeUrl != null -> Badge.ChannelBadge(badgeSet, channelBadgeUrl, type)
                     else -> globalBadgeUrl?.let { Badge.GlobalBadge(badgeSet, it, type) }
                 }
             }.orEmpty()

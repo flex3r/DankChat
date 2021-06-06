@@ -25,6 +25,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
     private val globalBttvEmotes = ConcurrentHashMap<String, GenericEmote>()
 
     private val ffzModBadges = ConcurrentHashMap<String, String>()
+    private val ffzVipBadges = ConcurrentHashMap<String, String>()
     private val channelBadges = ConcurrentHashMap<String, TwitchBadgesDto>()
     private val globalBadges = ConcurrentHashMap<String, TwitchBadgeSetDto>()
     private val dankChatBadges = CopyOnWriteArrayList<DankChatBadgeDto>()
@@ -57,7 +58,9 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
 
     fun getGlobalBadgeUrl(set: String, version: String) = globalBadges[set]?.versions?.get(version)?.imageUrlHigh
 
-    fun getFFzModBadgeUrl(channel: String) = ffzModBadges[channel]
+    fun getFfzModBadgeUrl(channel: String): String? = ffzModBadges[channel]
+
+    fun getFfzVipBadgeUrl(channel: String): String? = ffzVipBadges[channel]
 
     fun getDankChatBadgeUrl(userId: String?) = dankChatBadges.find { it.users.any { id -> id == userId } }?.let { it.type to it.url }
 
@@ -142,6 +145,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         }
         ffzEmotes[channel] = emotes
         ffzResult.room.modBadgeUrls?.let { ffzModBadges[channel] = "https:" + (it["4"] ?: it["2"] ?: it["1"]) }
+        ffzResult.room.vipBadgeUrls?.let { ffzVipBadges[channel] = "https:" + (it["4"] ?: it["2"] ?: it["1"]) }
     }
 
     suspend fun setFFZGlobalEmotes(ffzResult: FFZGlobalDto) = withContext(Dispatchers.Default) {
