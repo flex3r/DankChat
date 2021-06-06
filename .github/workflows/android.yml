@@ -68,6 +68,14 @@ jobs:
           name: App
           path: ${{ github.workspace }}/app/build/outputs/apk/debug/*.apk
 
+      - name: Update debug tag
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
+        uses: richardsimko/update-tag@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: debug
+
       - name: Update debug release
         if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
         uses: meeDamian/github-release@2.0
