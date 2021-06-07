@@ -12,7 +12,6 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.TextPaint
-import android.text.style.ClickableSpan
 import android.text.style.ImageSpan
 import android.text.style.URLSpan
 import android.text.util.Linkify
@@ -38,7 +37,7 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatItemBinding
 import com.flxrs.dankchat.service.twitch.badge.Badge
 import com.flxrs.dankchat.service.twitch.badge.BadgeType
-import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
+import com.flxrs.dankchat.service.twitch.message.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.message.SystemMessage
@@ -120,14 +119,15 @@ class ChatAdapter(
         }
         setBackgroundResource(background)
 
-        val connectionText = when (message.state) {
+        val systemMessageText = when (message.type) {
             SystemMessageType.DISCONNECTED -> context.getString(R.string.system_message_disconnected)
             SystemMessageType.NO_HISTORY_LOADED -> context.getString(R.string.system_message_no_history)
-            else -> context.getString(R.string.system_message_connected)
+            SystemMessageType.CONNECTED -> context.getString(R.string.system_message_connected)
+            SystemMessageType.LOGIN_EXPIRED -> context.getString(R.string.login_expired)
         }
         val withTime = when {
-            showTimeStamp -> SpannableStringBuilder().bold { append("${DateTimeUtils.timestampToLocalTime(message.timestamp)} ") }.append(connectionText)
-            else -> SpannableStringBuilder().append(connectionText)
+            showTimeStamp -> SpannableStringBuilder().bold { append("${DateTimeUtils.timestampToLocalTime(message.timestamp)} ") }.append(systemMessageText)
+            else -> SpannableStringBuilder().append(systemMessageText)
         }
 
         setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
@@ -233,7 +233,6 @@ class ChatAdapter(
             spannable.bold { color(normalizedColor) { append(fullDisplayName) } }
 
             when {
-                message.startsWith("Login authentication", true) -> spannable.append(context.getString(R.string.login_expired))
                 isAction -> spannable.color(normalizedColor) { append(message) }
                 else -> spannable.append(message)
             }

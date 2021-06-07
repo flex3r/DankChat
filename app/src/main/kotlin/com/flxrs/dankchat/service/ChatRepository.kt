@@ -7,7 +7,7 @@ import com.flxrs.dankchat.chat.toMentionTabItems
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.service.api.ApiManager
 import com.flxrs.dankchat.service.irc.IrcMessage
-import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
+import com.flxrs.dankchat.service.twitch.connection.ConnectionState
 import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.message.*
@@ -37,7 +37,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     private val messages = mutableMapOf<String, MutableStateFlow<List<ChatItem>>>()
     private val _mentions = MutableStateFlow<List<ChatItem>>(emptyList())
     private val _whispers = MutableStateFlow<List<ChatItem>>(emptyList())
-    private val connectionState = mutableMapOf<String, MutableStateFlow<SystemMessageType>>()
+    private val connectionState = mutableMapOf<String, MutableStateFlow<ConnectionState>>()
     private val roomStates = mutableMapOf<String, MutableSharedFlow<RoomState>>()
     private val users = mutableMapOf<String, MutableStateFlow<LruCache<String, Boolean>>>()
     private val _userState = MutableStateFlow(UserState())
@@ -85,7 +85,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         }
 
     fun getChat(channel: String): StateFlow<List<ChatItem>> = messages.getOrPut(channel) { MutableStateFlow(emptyList()) }
-    fun getConnectionState(channel: String): StateFlow<SystemMessageType> = connectionState.getOrPut(channel) { MutableStateFlow(SystemMessageType.DISCONNECTED) }
+    fun getConnectionState(channel: String): StateFlow<ConnectionState> = connectionState.getOrPut(channel) { MutableStateFlow(ConnectionState.DISCONNECTED) }
     fun getRoomState(channel: String): SharedFlow<RoomState> = roomStates.getOrPut(channel) { mutableSharedFlowOf(RoomState(channel)) }
     fun getUsers(channel: String): StateFlow<LruCache<String, Boolean>> = users.getOrPut(channel) { MutableStateFlow(createUserCache()) }
 
@@ -95,7 +95,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
             loadHistory -> loadRecentMessages(channel)
             else -> {
                 val currentChat = messages[channel]?.value ?: emptyList()
-                messages[channel]?.value = listOf(ChatItem(SystemMessage(state = SystemMessageType.NO_HISTORY_LOADED), false)) + currentChat
+                messages[channel]?.value = listOf(ChatItem(SystemMessage(type = SystemMessageType.NO_HISTORY_LOADED), false)) + currentChat
             }
         }
     }
@@ -261,7 +261,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
     private fun createFlowsIfNecessary(channel: String) {
         messages.putIfAbsent(channel, MutableStateFlow(emptyList()))
-        connectionState.putIfAbsent(channel, MutableStateFlow(SystemMessageType.DISCONNECTED))
+        connectionState.putIfAbsent(channel, MutableStateFlow(ConnectionState.DISCONNECTED))
         roomStates.putIfAbsent(channel, mutableSharedFlowOf(RoomState(channel)))
         users.putIfAbsent(channel, MutableStateFlow(createUserCache()))
 
@@ -285,7 +285,10 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     private fun onWriterMessage(message: IrcMessage) {
         if (message.isLoginFailed()) {
             startedConnection = false
+            makeAndPostSystemMessage(SystemMessageType.LOGIN_EXPIRED)
+            return
         }
+
         when (message.command) {
             "PRIVMSG" -> Unit
             "366" -> handleConnected(message.params[1].substring(1), writeConnection.isAnonymous)
@@ -314,11 +317,11 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     private fun handleDisconnect() {
         if (!hasDisconnected) {
             hasDisconnected = true
-            val state = SystemMessageType.DISCONNECTED
+            val state = ConnectionState.DISCONNECTED
             connectionState.keys.forEach {
                 connectionState[it]?.value = state
             }
-            makeAndPostConnectionMessage(state)
+            makeAndPostSystemMessage(state.toSystemMessageType())
         }
     }
 
@@ -337,12 +340,12 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     private fun handleConnected(channel: String, isAnonymous: Boolean) {
         hasDisconnected = false
 
-        val connection = when {
-            isAnonymous -> SystemMessageType.NOT_LOGGED_IN
-            else -> SystemMessageType.CONNECTED
+        val state = when {
+            isAnonymous -> ConnectionState.CONNECTED_NOT_LOGGED_IN
+            else -> ConnectionState.CONNECTED
         }
-        makeAndPostConnectionMessage(connection, setOf(channel))
-        connectionState[channel]?.value = connection
+        makeAndPostSystemMessage(state.toSystemMessageType(), setOf(channel))
+        connectionState[channel]?.value = state
     }
 
     private fun handleClearChat(msg: IrcMessage) {
@@ -435,11 +438,17 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         }
     }
 
-    private fun makeAndPostConnectionMessage(state: SystemMessageType, channels: Set<String> = messages.keys) {
+    private fun makeAndPostSystemMessage(type: SystemMessageType, channels: Set<String> = messages.keys) {
         channels.forEach {
             val currentChat = messages[it]?.value ?: emptyList()
-            messages[it]?.value = currentChat.addAndLimit(ChatItem(SystemMessage(state = state)), scrollBackLength)
+            messages[it]?.value = currentChat.addAndLimit(ChatItem(SystemMessage(type)), scrollBackLength)
         }
+    }
+
+    private fun ConnectionState.toSystemMessageType(): SystemMessageType = when (this) {
+        ConnectionState.DISCONNECTED -> SystemMessageType.DISCONNECTED
+        ConnectionState.CONNECTED,
+        ConnectionState.CONNECTED_NOT_LOGGED_IN -> SystemMessageType.CONNECTED
     }
 
     private suspend fun loadRecentMessages(channel: String) = withContext(Dispatchers.Default) {

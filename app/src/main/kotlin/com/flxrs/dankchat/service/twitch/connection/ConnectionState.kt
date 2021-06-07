@@ -1,9 +1,7 @@
 package com.flxrs.dankchat.service.twitch.connection
 
-enum class SystemMessageType {
-
+enum class ConnectionState {
     CONNECTED,
+    CONNECTED_NOT_LOGGED_IN,
     DISCONNECTED,
-    NOT_LOGGED_IN,
-    NO_HISTORY_LOADED
 }

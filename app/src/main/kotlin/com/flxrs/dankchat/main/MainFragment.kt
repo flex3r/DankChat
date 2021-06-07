@@ -30,7 +30,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -50,7 +49,7 @@ import com.flxrs.dankchat.preferences.ChatSettingsFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.state.DataLoadingState
 import com.flxrs.dankchat.service.state.ImageUploadState
-import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
+import com.flxrs.dankchat.service.twitch.connection.ConnectionState
 import com.flxrs.dankchat.utils.*
 import com.flxrs.dankchat.utils.extensions.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -145,15 +144,15 @@ class MainFragment : Fragment() {
             collectFlow(emoteItems, emoteMenuAdapter::submitList)
             collectFlow(appbarEnabled) { changeActionBarVisibility(it) }
             collectFlow(canType) { if (it) binding.inputLayout.setup() }
-            collectFlow(connectionState) { hint ->
-                if (hint == SystemMessageType.NOT_LOGGED_IN && dankChatPreferences.hasMessageHistoryAcknowledged) {
+            collectFlow(connectionState) { state ->
+                if (state == ConnectionState.CONNECTED_NOT_LOGGED_IN && dankChatPreferences.hasMessageHistoryAcknowledged) {
                     showApiChangeInformationIfNotAcknowledged()
                 }
 
-                binding.inputLayout.hint = when (hint) {
-                    SystemMessageType.CONNECTED -> getString(R.string.hint_connected)
-                    SystemMessageType.NOT_LOGGED_IN -> getString(R.string.hint_not_logged_int)
-                    else -> getString(R.string.hint_disconnected)
+                binding.inputLayout.hint = when (state) {
+                    ConnectionState.CONNECTED -> getString(R.string.hint_connected)
+                    ConnectionState.CONNECTED_NOT_LOGGED_IN -> getString(R.string.hint_not_logged_int)
+                    ConnectionState.DISCONNECTED -> getString(R.string.hint_disconnected)
                 }
             }
             collectFlow(currentBottomText) {
@@ -424,7 +423,7 @@ class MainFragment : Fragment() {
         val shouldLoadSupibot = preferences.getBoolean(getString(R.string.preference_supibot_suggestions_key), false)
         val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
 
-        if (mainViewModel.connectionState.value == SystemMessageType.NOT_LOGGED_IN) {
+        if (mainViewModel.connectionState.value == ConnectionState.CONNECTED_NOT_LOGGED_IN) {
             showApiChangeInformationIfNotAcknowledged()
         }
 

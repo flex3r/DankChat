@@ -11,7 +11,7 @@ import com.flxrs.dankchat.service.DataRepository
 import com.flxrs.dankchat.service.api.ApiManager
 import com.flxrs.dankchat.service.state.DataLoadingState
 import com.flxrs.dankchat.service.state.ImageUploadState
-import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
+import com.flxrs.dankchat.service.twitch.connection.ConnectionState
 import com.flxrs.dankchat.service.twitch.emote.EmoteType
 import com.flxrs.dankchat.utils.extensions.moveToFront
 import com.flxrs.dankchat.utils.extensions.removeOAuthSuffix
@@ -108,9 +108,9 @@ class MainViewModel @Inject constructor(
 
     val connectionState = activeChannel
         .flatMapLatest { chatRepository.getConnectionState(it) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), SystemMessageType.DISCONNECTED)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ConnectionState.DISCONNECTED)
     val canType: StateFlow<Boolean> = combine(connectionState, mentionSheetOpen, whisperTabSelected) { connectionState, mentionSheetOpen, whisperTabSelected ->
-        val connected = connectionState == SystemMessageType.CONNECTED
+        val connected = connectionState == ConnectionState.CONNECTED
         (!mentionSheetOpen && connected) || (whisperTabSelected && connected)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 

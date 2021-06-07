@@ -4,7 +4,6 @@ import android.graphics.Color
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.badge.Badge
 import com.flxrs.dankchat.service.twitch.badge.BadgeType
-import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.extensions.appendSpacesBetweenEmojiGroup
@@ -16,7 +15,7 @@ sealed class Message {
 }
 
 data class SystemMessage(
-    val state: SystemMessageType,
+    val type: SystemMessageType,
     override val timestamp: Long = System.currentTimeMillis(),
     override val id: String = System.nanoTime().toString()
 ) : Message()
