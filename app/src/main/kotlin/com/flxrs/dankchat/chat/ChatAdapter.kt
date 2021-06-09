@@ -341,16 +341,16 @@ class ChatAdapter(
     private suspend fun ChatMessageEmote.toDrawable(context: Context, animateGifs: Boolean, useCache: Boolean): Drawable? = when {
         !isGif -> Coil.execute(url.toRequest(context)).drawable
         else -> {
-            val cached = emoteManager.gifCache[url]?.also { it.setRunning(animateGifs) }
+            val cached = emoteManager.gifCache[url]
             when {
-                useCache && cached != null -> cached
+                useCache && cached != null -> cached.also { it.setRunning(animateGifs) }
                 else -> Coil.execute(url.toRequest(context)).drawable?.apply {
                     this as GifDrawable
-                    // try to sync gif
-                    withContext(Dispatchers.Default) {
-                        cached?.let { seekToBlocking(it.currentPosition.coerceAtLeast(0)) } ?: emoteManager.gifCache.put(url, this@apply)
-                        setRunning(animateGifs)
+                    if (cached == null) {
+                        emoteManager.gifCache.put(url, this)
                     }
+
+                    setRunning(animateGifs)
                 }
             }
         }

@@ -97,10 +97,10 @@ open class ChatFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        // Trigger a redraw of last 30 items to start gifs again
-        if (::preferences.isInitialized && preferences.getBoolean(getString(R.string.preference_animate_gifs_key), true)) {
-            val start = (adapter.itemCount - 30).coerceAtLeast(minimumValue = 0)
-            val itemCount = 30.coerceAtMost(maximumValue = adapter.itemCount)
+        // Trigger a redraw of last 50 items to start gifs again
+        if (::preferences.isInitialized && preferences.getBoolean(getString(R.string.preference_animate_gifs_key), true)) binding.chat.post {
+            val start = (adapter.itemCount - MAX_MESSAGES_REDRAW_AMOUNT).coerceAtLeast(minimumValue = 0)
+            val itemCount = MAX_MESSAGES_REDRAW_AMOUNT.coerceAtMost(maximumValue = adapter.itemCount)
             adapter.notifyItemRangeChanged(start, itemCount)
         }
     }
@@ -198,6 +198,7 @@ open class ChatFragment : Fragment() {
 
     companion object {
         private const val AT_BOTTOM_STATE = "chat_at_bottom_state"
+        private const val MAX_MESSAGES_REDRAW_AMOUNT = 50
 
         fun newInstance(channel: String) = ChatFragment().apply {
             arguments = ChatFragmentArgs(channel).toBundle()
