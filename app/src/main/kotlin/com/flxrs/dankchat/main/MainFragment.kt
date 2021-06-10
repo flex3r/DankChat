@@ -528,7 +528,10 @@ class MainFragment : Fragment() {
             is ImageUploadState.Finished -> {
                 val clipboard = getSystemService(requireContext(), ClipboardManager::class.java)
                 clipboard?.setPrimaryClip(ClipData.newPlainText("nuuls image url", result.url))
-                showSnackbar(getString(R.string.snackbar_image_uploaded, result.url))
+                showSnackbar(
+                    message = getString(R.string.snackbar_image_uploaded, result.url),
+                    action = getString(R.string.snackbar_paste) to { insertText(result.url) }
+                )
             }
         }
     }
