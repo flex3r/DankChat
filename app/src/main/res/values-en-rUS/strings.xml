@@ -99,104 +99,67 @@
     <string name="confirm_user_block_positive_button">Block</string>
 
 
-    <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
-    <string name="secure_shared_preference_key" translatable="false">com.flxrs.dankchat_secure_preferences</string>
     <string name="preference_timestamp_title">Show timestamps</string>
-    <string name="preference_timestamp_key" translatable="false">show_timestamp</string>
     <string name="preference_mention_format_title">Mention format</string>
     <string name="preference_mention_format_summary">Change the mention format when clicking an username</string>
-    <string name="preference_mention_format_key" translatable="false">mention_format</string>
-    <string name="preference_roomstate_key" translatable="false">show_roomstate</string>
     <string name="preference_roomstate_title">Show roomstate information</string>
     <string name="preference_roomstate_summary">Displays information about the current roomstate like subscribers only mode</string>
-    <string name="preference_streaminfo_key" translatable="false">show_streaminfo</string>
     <string name="preference_streaminfo_title">Show stream information</string>
     <string name="preference_streaminfo_summary">Displays live status and viewer count</string>
-    <string name="preference_notification_key" translatable="false">notification_key</string>
     <string name="preference_notification_title">Show mention notifications</string>
     <string name="preference_notification_summary">Creates notifications when mentioned while the app is in the background</string>
     <string name="preference_notification_header">Notifications</string>
     <string name="preference_chat_header">Chat</string>
-    <string name="preference_chat_key" translatable="false">chat_key</string>
-    <string name="preference_logout_key" translatable="false">logout_key</string>
     <string name="preference_logout_title">Logout</string>
     <string name="preference_general_header">General</string>
     <string name="preference_about_header">About</string>
     <string name="preference_appearance_header">Appearance</string>
-    <string name="preference_appearance_key" translatable="false">appearance_key</string>
     <string name="preference_about_summary">DankChat %1$s made by @flex3rs and contributors\n\nTwitch emote data provided by twitchemotes.com</string>
-    <string name="preference_about_key" translatable="false">about_key</string>
-    <string name="preference_show_input_key" translatable="false">show_input_key</string>
     <string name="preference_show_input_title">Show input</string>
     <string name="preference_show_input_summary">Displays the input field to send messages</string>
-    <string name="preference_dark_theme_key" translatable="false">enable_dark_mode</string>
     <string name="preference_dark_theme_title">Enable dark theme</string>
-    <string name="preference_show_timed_out_messages_key" translatable="false">show_timed_out_messages_key</string>
     <string name="preference_show_timed_out_messages_title">Show timed out messages</string>
-    <string name="preference_custom_mentions_key" translatable="false">custom_mentions_key</string>
     <string name="preference_custom_mentions_title">Custom mentions</string>
     <string name="preference_custom_mentions_summary">Set custom phrases as mentions</string>
-    <string name="preference_blacklist_key" translatable="false">custom_blacklist_key</string>
     <string name="preference_blacklist_title">Blacklist</string>
     <string name="preference_blacklist_summary">Set custom phrases to hide</string>
-    <string name="preference_animate_gifs_key" translatable="false">animate_gifs_key</string>
     <string name="preference_animate_gifs_title">Animate gifs</string>
-    <string name="preference_line_separator_key" translatable="false">line_seperator_key</string>
     <string name="preference_line_separator_title">Separate messages with lines</string>
-    <string name="preference_keep_screen_on_key" translatable="false">keep_screen_on_key</string>
     <string name="preference_keep_screen_on_title">Keep screen on</string>
-    <string name="preference_font_size_key" translatable="false">font_size_key</string>
     <string name="preference_font_size_title">Font size</string>
     <string name="preference_font_size_summary_very_small">Very small</string>
     <string name="preference_font_size_summary_small">Small</string>
     <string name="preference_font_size_summary_large">Large</string>
     <string name="preference_font_size_summary_very_large">Very large</string>
     <string name="preference_notifications_mentions_header">Notifications and Mentions</string>
-    <string name="preference_notifications_mentions_key" translatable="false">notifications_mentions_key</string>
-    <string name="preference_suggestions_key" translatable="false">suggestions_key</string>
     <string name="preference_suggestions_title">Emote and user suggestions</string>
     <string name="preference_suggestions_summary">Shows suggestions for emotes and active users while typing</string>
     <string name="preference_load_message_history_title">Load message history on start</string>
-    <string name="preference_load_message_history_key" translatable="false">load_message_history_key</string>
     <string name="preference_message_history_header">Message history</string>
     <string name="preference_message_history_dashboard_title">Open dashboard</string>
-    <string name="preference_message_history_dashboard_key" translatable="false">message_history_dashboard_key</string>
     <string name="preference_message_history_dashboard_summary">Learn more about the service and disable message history for your own channel</string>
     <string name="preference_channel_data_header">Channel data</string>
     <string name="preference_developer_header">Developer options</string>
-    <string name="preference_developer_key" translatable="false">developer_key</string>
-    <string name="preference_debug_mode_key" translatable="false">debug_mode_key</string>
     <string name="preference_debug_mode_title">Debug mode</string>
     <string name="preference_debug_mode_summary">Provides information for any exceptions that have been caught</string>
-    <string name="preference_timestamp_format_key" translatable="false">timestamp_format_key</string>
     <string name="preference_timestamp_format_title">Timestamp format</string>
-    <string name="preference_tts_key" translatable="false">tts_key</string>
     <string name="preference_tts_title">Enable TTS</string>
     <string name="preference_tts_summary">Reads out messages of the active channel</string>
-    <string name="preference_tts_queue_key" translatable="false">tts_queue_key</string>
     <string name="preference_tts_queue_title">Message queue mode</string>
     <string name="preference_tts_queue_add">Plays every message using a queue</string>
     <string name="preference_tts_queue_flush">Plays only newest message</string>
     <string name="preference_tts_message_format_message">Only reads out message</string>
     <string name="preference_tts_message_format_combined">Reads out user and message</string>
-    <string name="preference_tts_message_format_key" translatable="false">tts_message_format_key</string>
     <string name="preference_tts_message_format_title">Message format mode</string>
     <string name="preference_tts_header">TTS</string>
-    <string name="checkered_messages_key" translatable="false">checkered_messages</string>
     <string name="preference_checkered_lines_title">Checkered Lines</string>
     <string name="preference_checkered_lines_summary">Separate each line with different background brightness</string>
-    <string name="preference_supibot_suggestions_key" translatable="false">supibot_suggestions_key</string>
     <string name="preference_supibot_suggestions_title">Supibot command suggestions</string>
-    <string name="preference_scrollback_length_key" translatable="false">scrollback_length_key</string>
     <string name="preference_scrollback_length_title">Message scrollback length</string>
     <string name="preference_show_username_title">Show username</string>
-    <string name="preference_show_username_key" translatable="false">show_username_key</string>
     <string name="preference_visible_badges_title">Visible badges</string>
-    <string name="preference_visible_badges_key" translatable="false">visible_badges_key</string>
-    <string name="preference_prefer_emote_suggestions_key" translatable="false">prefer_emote_suggestions_key</string>
     <string name="preference_prefer_emote_suggestions_title">Prefer emote suggestions</string>
     <string name="preference_prefer_emote_suggestions_summary">Prioritize emote suggestions over user suggestions</string>
-    <string name="preference_user_long_click_key" translatable="false">preference_mention_long_click_key</string>
     <string name="preference_user_long_click_title">User long click behavior</string>
     <string name="preference_user_long_click_summary_on">Regular click opens popup, long click mentions</string>
     <string name="preference_user_long_click_summary_off">Regular click mentions, long click opens popup</string>
