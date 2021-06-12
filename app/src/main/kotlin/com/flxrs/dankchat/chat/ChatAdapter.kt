@@ -264,6 +264,11 @@ class ChatAdapter(
                 val start = spannableWithEmojis.getSpanStart(it)
                 val end = spannableWithEmojis.getSpanEnd(it)
                 spannableWithEmojis.removeSpan(it)
+
+                // skip partial link matches
+                val previousChar = spannableWithEmojis.getOrNull(index = start - 1)
+                if (previousChar != null && !previousChar.isWhitespace()) return@forEach
+
                 val clickableSpan = object : LongClickableSpan() {
                     override fun onLongClick(view: View) = onMessageLongClick(originalMessage)
                     override fun onClick(v: View) {
