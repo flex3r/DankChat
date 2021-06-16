@@ -150,7 +150,15 @@ data class TwitchMessage(
 
         private fun parseNotice(message: IrcMessage): TwitchMessage = with(message) {
             val channel = params[0].substring(1)
-            val notice = params[1]
+
+            val notice = when {
+                tags["msg-id"] == "msg_timedout" -> {
+                    val duration = message.params[1].split(" ")[5]
+                    "You are timed out for ${DateTimeUtils.formatSeconds(duration)}."
+                }
+                else -> params[1]
+            }
+
             val ts = tags["rm-received-ts"]?.toLong() ?: System.currentTimeMillis()
             val id = tags["id"] ?: System.nanoTime().toString()
 
