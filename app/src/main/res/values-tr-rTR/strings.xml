@@ -13,7 +13,6 @@
     <string name="error_dialog_copy">Kopyala</string>
     <string name="error_dialog_title">Hata yakalandı: %1$s</string>
     <string name="add_channel">Kanal ekle</string>
-    <string name="name">Ad</string>
     <string name="open_channel">Kanalı aç</string>
     <string name="no_channels_added">Hiç kanal eklenmedi</string>
     <string name="confirm_logout_title">Çıkışı onayla</string>
@@ -55,7 +54,6 @@
     <string name="multi_entry_header_regex">Düzenli ifade</string>
     <string name="login_expired">Girişinizin süresi doldu! Tekrar giriş yapmayı deneyin.</string>
     <string name="message_history_disclaimer_title">Mesaj tarihi açıklaması</string>
-    <string name="anon_connection_disclaimer_title">Anonim bağlantı</string>
     <string name="more">Daha fazla</string>
     <string name="preference_timestamp_title">Zaman damgalarını göster</string>
     <string name="preference_streaminfo_title">Yayın bilgisini göster</string>
@@ -116,7 +114,6 @@
     <string name="message_history_disclaimer_message">DankChat başlangıçta üçüncü şahıs bir servisten tarihi mesajları yükler.\nMesajları almak için DankChat açtığınız kanalların adını bu servise gönderir.\nServis bu hizmeti verebilmek için sizin (ve başkalarının) ziyaret ettiği kanalları geçici olarak depolar.\n\n- Bu özelliği kullanmamak için aşağıda \"Reddet\"e basabilir ya da daha sonra mesaj tarihi yüklenmesini ayarlarda devre dışı bırakabilirsiniz.\n- https://recent-messages.robotty.de/ adresini ziyaret ederek bu servis hakkında daha çok öğrenebilir ya da kendi kanalınız içim mesaj tarihini devre dışı bırakabilirsiniz.</string>
     <string name="dialog_optin">Kabul et</string>
     <string name="dialog_optout">Reddet</string>
-    <string name="anon_connection_disclaimer_message">Resmi Twitch API\'ındaki değişiklikler yüzünden bazı verilere yalnızca giriş yapıldığında erişilinebiliyor.\nBu Twitch rozetleri ve üçüncü şahıs emote desteğini de içerir.</string>
     <string name="multi_entry_header_match_user">Kullanıcı eşle</string>
     <string name="multi_entry_add_entry">Girdi ekle</string>
     <string name="multi_entry_remove_content_description">Girdiyi kaldır</string>
@@ -152,7 +149,6 @@
     <string name="user_popup_error">Kullanıcı verisi yüklenemedi: %1$s</string>
     <string name="confirm_user_unfollow_title">Takibi bırakmayı onayla</string>
     <string name="confirm_user_unfollow_message">Takibi bırakmak istediğinizden emin misiniz?</string>
-    <string name="confirm_user_unfollow_positive_button">Takibi bırak</string>
     <string name="confirm_user_block_title">Engellemeyi onayla</string>
     <string name="confirm_user_block_message">Bu kullanıcıyı engellemek istediğinizden emin misiniz?</string>
     <string name="confirm_user_block_positive_button">Engelle</string>

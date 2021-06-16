@@ -14,7 +14,6 @@
     <string name="error_dialog_copy">複製</string>
     <string name="error_dialog_title">例外訊息: %1$s</string>
     <string name="add_channel">新增頻道</string>
-    <string name="name">名稱</string>
     <string name="open_channel">開啟頻道</string>
     <string name="no_channels_added">尚未新增頻道</string>
     <string name="confirm_logout_title">確認登出</string>
@@ -72,7 +71,6 @@
     <string name="login_expired">登入失敗！請再試一次。</string>
     <string name="dialog_optin">同意</string>
     <string name="dialog_optout">不同意</string>
-    <string name="anon_connection_disclaimer_title">匿名連線</string>
     <string name="more">更多</string>
     <string name="mentions_title">提及/悄悄話</string>
     <string name="whispers">悄悄話</string>
@@ -117,7 +115,6 @@
     <string name="preference_about_summary">DankChat %1$s 是由 @flex3rs 及其貢獻者所製\n\nTwitch 表情符號相關資訊為 twitchemotes.com 提供</string>
     <string name="preference_show_input_summary">顯示訊息輸入方框以便傳送訊息</string>
     <string name="preference_line_separator_title">透過格線分隔訊息</string>
-    <string name="anon_connection_disclaimer_message">由於近期 Twitch API 的變更，某些資訊僅能在登入後取得。 \n這些資訊包括 Twitch 徽章及第三方表情符號。</string>
     <string name="preference_blacklist_summary">設定特定字句隱藏</string>
     <string name="multi_entry_header_match_user">對應用戶</string>
     <string name="preference_notification_title">顯示訊息通知</string>
@@ -156,7 +153,6 @@
     <string name="user_popup_error">載入用戶失敗：%1$s</string>
     <string name="confirm_user_unfollow_title">確定退追</string>
     <string name="confirm_user_unfollow_message">您確定要退追此用戶嗎？</string>
-    <string name="confirm_user_unfollow_positive_button">退追</string>
     <string name="confirm_user_block_title">確定封鎖</string>
     <string name="confirm_user_block_message">您確定要封鎖此用戶嗎？</string>
     <string name="confirm_user_block_positive_button">封鎖</string>

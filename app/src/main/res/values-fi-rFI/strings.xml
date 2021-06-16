@@ -13,7 +13,6 @@
     <string name="error_dialog_copy">Kopioi</string>
     <string name="error_dialog_title">Siepattu poikkeus: %1$s</string>
     <string name="add_channel">Lisää kanava</string>
-    <string name="name">Nimi</string>
     <string name="open_channel">Avaa kanava</string>
     <string name="no_channels_added">Ei kanavia lisättynä</string>
     <string name="confirm_logout_title">Vahvista uloskirjautuminen</string>
@@ -68,8 +67,6 @@
     <string name="message_history_disclaimer_message">DankChat lataa historiallisia viestejä kolmannen osapuolen palvelusta käynnistyksen yhteydessä.\nViestien saamiseksi DankChat lähettää avaamiesi kanavien nimet kyseiselle palvelulle.\nPalvelu tallentaa väliaikaisesti viestejä kanavilta, joilla vierailet palvelun tarjoamiseksi.\n\nJos et halua käyttää tätä ominaisuutta, napsauta alla olevaa Kieltäydy -painiketta tai poista käytöstä myöhemmin asetuksista.\nVoit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kanavallasi käymällä osoitteessa https://recent-messages.robotty.de/</string>
     <string name="dialog_optin">Hyväksy</string>
     <string name="dialog_optout">Kieltäydy</string>
-    <string name="anon_connection_disclaimer_title">Anonyymi yhteys</string>
-    <string name="anon_connection_disclaimer_message">Virallisen Twitch-apin viimeaikaisten muutosten vuoksi joihinkin tietoihin pääsee nyt vain kirjautuneena.\nTämä sisältää tuen twitch-merkeille ja kolmansien osapuolten emoteille.</string>
     <string name="more">Lisää</string>
     <string name="mentions_title">Maininnat / kuiskaukset</string>
     <string name="whispers">Kuiskaukset</string>
@@ -92,7 +89,6 @@
     <string name="user_popup_error">Käyttäjän tietoja ei pystytty hakea: %1$s</string>
     <string name="confirm_user_unfollow_title">Seuraamisen lopettaminen</string>
     <string name="confirm_user_unfollow_message">Haluatko varmasti lopettaa tämän käyttäjän seuraaminen?</string>
-    <string name="confirm_user_unfollow_positive_button">Lopeta seuraaminen</string>
     <string name="confirm_user_block_title">Vahvista esto</string>
     <string name="confirm_user_block_message">Oletko varma että haluat estää tämän käyttäjän?</string>
     <string name="confirm_user_block_positive_button">Estä</string>

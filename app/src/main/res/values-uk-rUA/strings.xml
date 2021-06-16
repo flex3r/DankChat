@@ -13,7 +13,6 @@
     <string name="error_dialog_copy">Копіювати</string>
     <string name="error_dialog_title">Помилка: %1$s</string>
     <string name="add_channel">Додати канал</string>
-    <string name="name">Ім\'я</string>
     <string name="open_channel">Відкрити канал</string>
     <string name="no_channels_added">Немає доданих каналів</string>
     <string name="confirm_logout_title">Підтвердити вихід</string>
@@ -68,8 +67,6 @@
     <string name="message_history_disclaimer_message">DankChat завантажує історію повідомлень зі стороннього ресурсу при запуску додатка.\nЩоб отримувати повідомлення, DankChat надсилає імена відкритих каналів цьому ресурсу.\nРесурс тимчасово зберігає повідомлення каналів, які Ви (та інші користувачі) відсилаєте ресурсу.\n\n- Аби не використовувати цю функцію, натистніть "Відмінити", або виключіть історію повідомлень пізніше.\n- Докладніше про історію повідомлень, ресурс та як виключити Вашу історію повідомлень за цим посиланням (англійською): https://recent-messages.robotty.de/</string>
     <string name="dialog_optin">Прийняти</string>
     <string name="dialog_optout">Відхилити</string>
-    <string name="anon_connection_disclaimer_title">Анонімне підключення</string>
-    <string name="anon_connection_disclaimer_message">Через нещодавні зміни до офіційного API Twitch, деякі данні можна отримати лише після входу в систему. \nЦе стосується підтримки значків Twitch та сторонніх смайлів.</string>
     <string name="more">Більше</string>
     <string name="mentions_title">Згадки / Особисті повідомлення</string>
     <string name="whispers">Особисті повідомлення</string>

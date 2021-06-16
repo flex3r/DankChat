@@ -13,7 +13,6 @@
     <string name="error_dialog_copy">Kopirati</string>
     <string name="error_dialog_title">Izuzetak uhvaćen: %1$s</string>
     <string name="add_channel">Dodaj kanal</string>
-    <string name="name">Ime</string>
     <string name="open_channel">Otvori kanal</string>
     <string name="no_channels_added">Nijedan kanal nije dodat</string>
     <string name="confirm_logout_title">Potvrdi odjavu</string>
@@ -62,8 +61,6 @@
     <string name="multi_entry_hint">Unos</string>
     <string name="login_expired">Prijava istekla! Prijavite se ponovo.</string>
     <string name="message_history_disclaimer_title">Odricanje odgovornosti za istoriju poruka</string>
-    <string name="anon_connection_disclaimer_message">Zbog nedavnih promena na zvaničnom Twitch API, nekim podacima se može pristupati samo kada ste prijavljeni.\n Ovo uključuje podršku za twitch značke i third party emotove</string>
-    <string name="anon_connection_disclaimer_title">Anonimna konekcija</string>
     <string name="dialog_optout">Odustati</string>
     <string name="dialog_optin">Omogući</string>
     <string name="mentions">Pominjanja</string>
@@ -157,7 +154,6 @@
     <string name="user_popup_error">Neuspešno učitavanje korisničkih podataka: %1$s</string>
     <string name="confirm_user_unfollow_title">Potvrdi otpraćivanje</string>
     <string name="confirm_user_unfollow_message">Da li ste sigurni da želite da otpratite korisnika?</string>
-    <string name="confirm_user_unfollow_positive_button">Otprati</string>
     <string name="confirm_user_block_title">Potvrdi blokiranje</string>
     <string name="confirm_user_block_message">Da li ste sigurni da želite da blokirate korisnika?</string>
     <string name="confirm_user_block_positive_button">Blokiraj</string>
