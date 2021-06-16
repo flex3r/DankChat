@@ -21,8 +21,8 @@ object DateTimeUtils {
         var res = ""
         val totalSeconds = duration.toInt()
 
-        val seconds: Int = totalSeconds % 60
-        val timeoutMinutes: Int = totalSeconds / 60
+        val seconds = totalSeconds % 60
+        val timeoutMinutes = totalSeconds / 60
         val minutes = timeoutMinutes % 60
         val timeoutHours = timeoutMinutes / 60
         val hours = timeoutHours % 24
@@ -33,19 +33,19 @@ object DateTimeUtils {
         }
         if (hours > 0) {
             if (res.isNotEmpty()) {
-                res = res.plus(" ");
+                res = res.plus(" ")
             }
             res = res.plus(hours.toString() + "h")
         }
         if (minutes > 0) {
             if (res.isNotEmpty()) {
-                res = res.plus(" ");
+                res = res.plus(" ")
             }
             res = res.plus(minutes.toString() + "m")
         }
         if (seconds > 0) {
             if (res.isNotEmpty()) {
-                res = res.plus(" ");
+                res = res.plus(" ")
             }
             res = res.plus(seconds.toString() +  "s")
         }
