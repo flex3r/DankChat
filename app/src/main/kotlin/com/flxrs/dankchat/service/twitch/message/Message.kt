@@ -6,6 +6,7 @@ import com.flxrs.dankchat.service.twitch.badge.Badge
 import com.flxrs.dankchat.service.twitch.badge.BadgeType
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
+import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.extensions.appendSpacesBetweenEmojiGroup
 import com.flxrs.dankchat.utils.extensions.removeDuplicateWhitespace
 
@@ -172,7 +173,7 @@ data class TwitchMessage(
             val systemMessage = when {
                 target.isBlank() -> "Chat has been cleared by a moderator."
                 duration.isBlank() -> "$target has been permanently banned"
-                else -> "$target has been timed out for ${duration}s."
+                else -> "$target has been timed out for ${DateTimeUtils.formatSeconds(duration)}."
             }
             val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
             val id = tags["id"] ?: System.nanoTime().toString()
