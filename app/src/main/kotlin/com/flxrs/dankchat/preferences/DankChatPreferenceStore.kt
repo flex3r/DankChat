@@ -43,10 +43,6 @@ class DankChatPreferenceStore(context: Context) {
         get() = dankChatPreferences.getBoolean(MESSAGES_HISTORY_ACK_KEY, false)
         set(value) = dankChatPreferences.edit { putBoolean(MESSAGES_HISTORY_ACK_KEY, value) }
 
-    var hasApiChangeAcknowledged: Boolean
-        get() = dankChatPreferences.getBoolean(API_CHANGE_ACK_KEY, false)
-        set(value) = dankChatPreferences.edit { putBoolean(API_CHANGE_ACK_KEY, value) }
-
     fun clearLogin() = dankChatPreferences.edit {
         putBoolean(LOGGED_IN_KEY, false)
         putString(OAUTH_KEY, "")
@@ -66,6 +62,5 @@ class DankChatPreferenceStore(context: Context) {
         private const val ID_STRING_KEY = "idStringKey"
         private const val NUULS_ACK_KEY = "nuulsAckKey"
         private const val MESSAGES_HISTORY_ACK_KEY = "messageHistoryAckKey"
-        private const val API_CHANGE_ACK_KEY = "apiChangeAckKey"
     }
 }

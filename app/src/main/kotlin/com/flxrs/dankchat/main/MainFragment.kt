@@ -145,10 +145,6 @@ class MainFragment : Fragment() {
             collectFlow(appbarEnabled) { changeActionBarVisibility(it) }
             collectFlow(canType) { if (it) binding.inputLayout.setup() }
             collectFlow(connectionState) { state ->
-                if (state == ConnectionState.CONNECTED_NOT_LOGGED_IN && dankChatPreferences.hasMessageHistoryAcknowledged) {
-                    showApiChangeInformationIfNotAcknowledged()
-                }
-
                 binding.inputLayout.hint = when (state) {
                     ConnectionState.CONNECTED -> getString(R.string.hint_connected)
                     ConnectionState.CONNECTED_NOT_LOGGED_IN -> getString(R.string.hint_not_logged_int)
@@ -423,10 +419,6 @@ class MainFragment : Fragment() {
         val shouldLoadSupibot = preferences.getBoolean(getString(R.string.preference_supibot_suggestions_key), false)
         val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
 
-        if (mainViewModel.connectionState.value == ConnectionState.CONNECTED_NOT_LOGGED_IN) {
-            showApiChangeInformationIfNotAcknowledged()
-        }
-
         val oAuth = dankChatPreferences.oAuthKey ?: ""
         val name = dankChatPreferences.userName ?: ""
         val id = dankChatPreferences.userIdString ?: ""
@@ -596,17 +588,6 @@ class MainFragment : Fragment() {
             setNotifyOnChange(false)
             clear()
             addAll(suggestions)
-        }
-    }
-
-    private fun showApiChangeInformationIfNotAcknowledged() {
-        if (!dankChatPreferences.hasApiChangeAcknowledged) {
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.anon_connection_disclaimer_title)
-                .setMessage(R.string.anon_connection_disclaimer_message)
-                .setPositiveButton(R.string.dialog_ok) { dialog, _ -> dialog.dismiss() }
-                .setOnDismissListener { dankChatPreferences.hasApiChangeAcknowledged = true }
-                .show()
         }
     }
 
