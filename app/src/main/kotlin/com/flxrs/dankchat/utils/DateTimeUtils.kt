@@ -25,9 +25,11 @@ object DateTimeUtils {
         val minutes = timeoutMinutes % 60
         val timeoutHours = timeoutMinutes / 60
         val hours = timeoutHours % 24
-        val days = timeoutHours / 24
+        val timeoutDays = timeoutHours / 24
+        val days = timeoutDays % 7
+        val weeks = timeoutDays / 7
 
-        return listOf(days to "d", hours to "h", minutes to "m", seconds to "s")
+        return listOf(weeks to "w", days to "d", hours to "h", minutes to "m", seconds to "s")
             .filter { (time, _) -> time > 0 }
             .joinToString(" ") { (time, unit) -> "$time$unit" }
     }
