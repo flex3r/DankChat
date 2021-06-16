@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.utils
 
-import android.util.Log
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
