@@ -28,7 +28,7 @@ object DateTimeUtils {
         val days = timeoutHours / 24
 
         return listOf(days to "d", hours to "h", minutes to "m", seconds to "s")
-            .filter { it.first > 0 }
-            .joinToString(" ") { "${it.first}${it.second}" }
+            .filter { (time, _) -> time > 0 }
+            .joinToString(" ") { (time, unit) -> "$time$unit" }
     }
 }
