@@ -361,9 +361,9 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     private fun handleRoomState(msg: IrcMessage) {
         val channel = msg.params[0].substring(1)
         val state = roomStates[channel]?.firstValue ?: RoomState(channel)
-        state.updateState(msg)
+        val updated = state.copyFromIrcMessage(msg)
 
-        roomStates[channel]?.tryEmit(state)
+        roomStates[channel]?.tryEmit(updated)
     }
 
     private fun handleUserState(msg: IrcMessage) {

@@ -13,7 +13,6 @@
     <string name="error_dialog_copy">نسخ</string>
     <string name="error_dialog_title">Caught exception: %1$s</string>
     <string name="add_channel">اضافة قناة</string>
-    <string name="name">Name</string>
     <string name="open_channel">فتح القناة</string>
     <string name="no_channels_added">لا توجد قنوات مضافة</string>
     <string name="confirm_logout_title">تأكيد تسجيل الخروج</string>
@@ -69,8 +68,6 @@
     <string name="message_history_disclaimer_message">DankChat loads historical messages from a third-party service on startup.\nTo get the messages, DankChat sends the names of the channels you have open to that service.\nThe service temporarily stores messages for channels you (and others) visit to provide the service.\n\n- To not use this feature, click Opt-Out below or disable message history loading in the settings later.\n- You can learn more about the service and disable message history for your own channel by visiting https://recent-messages.robotty.de/</string>
     <string name="dialog_optin">Opt-in</string>
     <string name="dialog_optout">Opt-out</string>
-    <string name="anon_connection_disclaimer_title">"اتصال مجهول "</string>
-    <string name="anon_connection_disclaimer_message">Due to recent changes to the official Twitch api, some data can now only be accessed when logged in.\nThis includes support for twitch badges and third party emotes.</string>
     <string name="more">المزيد</string>
     <string name="mentions_title">الاشارات / الرسأل الخاصة</string>
     <string name="whispers">" الرسأل الخاصة"</string>
@@ -93,7 +90,6 @@
     <string name="user_popup_error">فشل تحميل بيانات المستخدم: %1$s</string>
     <string name="confirm_user_unfollow_title">تأكيد إلغاء المتابعة</string>
     <string name="confirm_user_unfollow_message">هل أنت متأكد أنك تريد إلغاء متابعة هذا المستخدم؟</string>
-    <string name="confirm_user_unfollow_positive_button">الغاء المتابعة</string>
     <string name="confirm_user_block_title">تأكيد الحظر</string>
     <string name="confirm_user_block_message">هل أنت متأكد أنك تريد حظر هذا المستخدم؟</string>
     <string name="confirm_user_block_positive_button">حظر</string>

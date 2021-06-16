@@ -66,7 +66,7 @@ class MainViewModel @Inject constructor(
     private val preferEmoteSuggestions = MutableStateFlow(false)
 
     private val emotes = currentSuggestionChannel.flatMapLatest { dataRepository.getEmotes(it) }
-    private val roomState = currentSuggestionChannel.flatMapLatest { chatRepository.getRoomState(it) }.map { it.toString().ifBlank { null } }
+    private val roomState = currentSuggestionChannel.flatMapLatest { chatRepository.getRoomState(it) }.map { it.toDisplayText().ifBlank { null } }
     private val users = currentSuggestionChannel.flatMapLatest { chatRepository.getUsers(it) }
     private val supibotCommands = activeChannel.flatMapLatest { dataRepository.getSupibotCommands(it) }
     private val currentStreamInformation = combine(activeChannel, streamData) { activeChannel, streamData ->
@@ -309,7 +309,10 @@ class MainViewModel @Inject constructor(
             val fixedOAuth = oAuth.removeOAuthSuffix
             coroutineScope {
                 listOf(
-                    launch { dataRepository.loadChannelData(channel, fixedOAuth, forceReload = true) },
+                    launch {
+                        val channelId = getRoomStateIdIfNeeded(oAuth, channel)
+                        dataRepository.loadChannelData(channel, fixedOAuth, channelId, forceReload = true)
+                    },
                     launch { dataRepository.loadTwitchEmotes(fixedOAuth, id) },
                     launch { dataRepository.loadDankChatBadges() },
                 ).joinAll()
@@ -382,7 +385,10 @@ class MainViewModel @Inject constructor(
             launch { if (loadSupibot) dataRepository.loadSupibotCommands() },
             launch { chatRepository.loadUserBlocks(oAuth, id) }
         ) + channelList.map {
-            launch { dataRepository.loadChannelData(it, oAuth) }
+            launch {
+                val channelId = getRoomStateIdIfNeeded(oAuth, it)
+                dataRepository.loadChannelData(it, oAuth, channelId)
+            }
         }.joinAll()
     }
 
@@ -394,8 +400,16 @@ class MainViewModel @Inject constructor(
         }.joinAll()
     }
 
+    private suspend fun getRoomStateIdIfNeeded(oAuth: String, channel: String): String? = when {
+        oAuth.isNotBlank() -> null
+        else -> withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
+            chatRepository.getRoomState(channel).first { it.channelId.isNotBlank() }.channelId
+        }
+    }
+
     companion object {
         private val TAG = MainViewModel::class.java.simpleName
         private const val STREAM_REFRESH_RATE = 30_000L
+        private const val IRC_TIMEOUT_DELAY = 10_000L
     }
 }

@@ -16,7 +16,6 @@
     <string name="error_dialog_copy">Kopieren</string>
     <string name="error_dialog_title">Fehler aufgetreten: %1$s</string>
     <string name="add_channel">Kanal hinzufügen</string>
-    <string name="name">Name</string>
     <string name="manage_channels">Kanäle bearbeiten</string>
     <string name="open_channel">Kanal öffnen</string>
     <string name="no_channels_added">Keine Kanäle hinzugefügt</string>
@@ -72,8 +71,6 @@
     <string name="message_history_disclaimer_message">DankChat lädt beim Start historische Nachrichten von einem Drittanbieter-Service.\n Um die Nachrichten zu erhalten sendet DankChat alle geöffneten Kanäle an den Service.\n Der Service speichert temporär Nachrichten der Kanäle und stellt diese den Nutzern zur Verfügung.\n\n- Um dieses Feature nicht zu nutzen, wähle Zustimmung verweigern oder deaktiviere historische Nachrichten in den Einstellungen.\n- Um mehr über den Service zu lernen, oder um zu sehen wie man diesen auf dem eigenen Kanal deaktiviert, besuche https://recent-messages.robotty.de/ </string>
     <string name="dialog_optin">Zustimmen</string>
     <string name="dialog_optout">Zustimmung verweigern</string>
-    <string name="anon_connection_disclaimer_title">Anonyme Verbindung</string>
-    <string name="anon_connection_disclaimer_message">Wegen Änderungen an der offiziellen Twitch API können auf manche Daten nur angemeldet zugegriffen werden. \nDas beinhaltet Unterstützung für Twitch Badges und Emotes von Drittanbietern.  </string>
     <string name="preference_timestamp_title">Zeige Zeitpunkte der Nachrichten</string>
     <string name="preference_mention_format_title">Formatiere Mentions</string>
     <string name="preference_mention_format_summary">Ändere das Format der Mentions beim Drücken eines Nutzernamens</string>

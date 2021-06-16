@@ -46,7 +46,7 @@ class AddChannelDialogFragment : DialogFragment() {
 
     private fun getInputAndDismiss(input: Editable?): Boolean {
         val trimmedInput = input?.toString()?.trim().orEmpty()
-        if (trimmedInput.isNotBlank() && trimmedInput.length > 2) {
+        if (trimmedInput.isNotBlank()) {
             with(findNavController()) {
                 getBackStackEntry(R.id.mainFragment)
                     .savedStateHandle

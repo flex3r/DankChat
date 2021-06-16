@@ -14,7 +14,6 @@
     <string name="error_dialog_copy">Copier</string>
     <string name="error_dialog_title">Exception capturée: %1$s</string>
     <string name="add_channel">Ajouter une chaine</string>
-    <string name="name">Nom</string>
     <string name="open_channel">Ouvrir la chaine</string>
     <string name="no_channels_added">Aucune chaine ajoutée</string>
     <string name="confirm_logout_title">Confirmer la déconnexion</string>
@@ -67,8 +66,6 @@
     <string name="message_history_disclaimer_title">Notice pour les anciens messages</string>
     <string name="dialog_optin">Participer</string>
     <string name="dialog_optout">Ne pas participer</string>
-    <string name="anon_connection_disclaimer_title">Connexion anonyme</string>
-    <string name="anon_connection_disclaimer_message">Suite à des changements dans l\'API Twitch, certaines données ne peuvent être accedées seulement en étant connecté; tels que les badges et les émotes externes</string>
     <string name="preference_timestamp_title">Afficher l\'horodatage</string>
     <string name="preference_mention_format_title">Format des mentions</string>
     <string name="preference_mention_format_summary">Change le format de mention quand vous appuyez sur un nom</string>

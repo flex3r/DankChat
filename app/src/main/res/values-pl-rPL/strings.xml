@@ -13,7 +13,6 @@
     <string name="error_dialog_copy">Kopiuj</string>
     <string name="error_dialog_title">Wystąpił błąd: %1$s</string>
     <string name="add_channel">Dodaj kanał</string>
-    <string name="name">Nazwa</string>
     <string name="open_channel">Otwórz czat</string>
     <string name="no_channels_added">Brak kanałów</string>
     <string name="confirm_logout_title">Potwierdź wylogowanie</string>
@@ -68,8 +67,6 @@
     <string name="message_history_disclaimer_message">Podczas startu aplikacji, DankChat ładuje historię wiadomości z zewnętrznego serwisu.\nAby pobrać wiadomości, DankChat wysyła nazwy otwartych kanałów do tego serwisu.\nAby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości odwiedzanych kanałów przez Ciebie (oraz innych).\n\n- Aby nie używać tej funkcji, kliknij Zrezygnuj poniżej lub później wyłącz ładowanie historii wiadomości w ustawieniach.\n- Aby dowiedzieć się więcej o usłudze i wyłączyć historię wiadomości dla Twojego kanału odwiedź https://recent-messages.robotty.de/</string>
     <string name="dialog_optin">Zaakceptuj</string>
     <string name="dialog_optout">Zrezygnuj</string>
-    <string name="anon_connection_disclaimer_title">Anonimowe połączenie</string>
-    <string name="anon_connection_disclaimer_message">Ze względu na ostatnie zmiany w oficjalnym API Twitcha, niektóre dane są dostępne tylko po zalogowaniu.\nObejmuje to odznaki Twitcha oraz zewnętrzne emotki.</string>
     <string name="more">Więcej</string>
 
     <string name="preference_timestamp_title">Pokazuj znaczniki czasu</string>
@@ -152,7 +149,6 @@
     <string name="user_popup_error">Błąd podczas ładowania danych użytkownika: %1$s</string>
     <string name="confirm_user_unfollow_title">Przestań obserwować</string>
     <string name="confirm_user_unfollow_message">Czy na pewno chcesz przestać obserwować tego użytkownika?</string>
-    <string name="confirm_user_unfollow_positive_button">Przestań obserwować</string>
     <string name="confirm_user_block_title">Potwierdź zablokowanie</string>
     <string name="confirm_user_block_message">Czy na pewno chcesz zablokować tego użytkownika?</string>
     <string name="confirm_user_block_positive_button">Zablokuj</string>
