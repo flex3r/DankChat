@@ -18,8 +18,7 @@ object DateTimeUtils {
     fun String.asParsedZonedDateTime(): String = ZonedDateTime.parse(this).format(DateTimeFormatter.ISO_LOCAL_DATE)
 
     fun formatSeconds(duration: String): String {
-        val res = StringBuilder()
-        val totalSeconds = duration.toInt()
+        val totalSeconds = duration.toIntOrNull() ?: return ""
 
         val seconds = totalSeconds % 60
         val timeoutMinutes = totalSeconds / 60
@@ -28,27 +27,8 @@ object DateTimeUtils {
         val hours = timeoutHours % 24
         val days = timeoutHours / 24
 
-        if (days > 0) {
-            res.append(days.toString() + "d")
-        }
-        if (hours > 0) {
-            if (res.isNotEmpty()) {
-                res.append(" ")
-            }
-            res.append(hours.toString() + "h")
-        }
-        if (minutes > 0) {
-            if (res.isNotEmpty()) {
-                res.append(" ")
-            }
-            res.append(minutes.toString() + "m")
-        }
-        if (seconds > 0) {
-            if (res.isNotEmpty()) {
-                res.append(" ")
-            }
-            res.append(seconds.toString() +  "s")
-        }
-        return res.toString()
+        return listOf(days to "d", hours to "h", minutes to "m", seconds to "s")
+            .filter { it.first > 0 }
+            .joinToString(" ") { "${it.first}${it.second}" }
     }
 }
