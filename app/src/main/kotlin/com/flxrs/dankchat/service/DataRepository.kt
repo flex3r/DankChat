@@ -21,12 +21,11 @@ class DataRepository(private val apiManager: ApiManager, private val emoteManage
     fun getSupibotCommands(channel: String): StateFlow<List<String>> = supibotCommands.getOrPut(channel) { MutableStateFlow(emptyList()) }
     fun clearSupibotCommands() = supibotCommands.forEach { it.value.value = emptyList() }.also { supibotCommands.clear() }
 
-    suspend fun loadChannelData(channel: String, oAuth: String, forceReload: Boolean = false) {
+    suspend fun loadChannelData(channel: String, oAuth: String, channelId: String? = null, forceReload: Boolean = false) {
         emotes.putIfAbsent(channel, MutableStateFlow(emptyList()))
-        apiManager.getUserIdByName(oAuth, channel)?.let {
-            loadChannelBadges(channel, it)
-            load3rdPartyEmotes(channel, it, forceReload)
-        }
+        val id = channelId ?: apiManager.getUserIdByName(oAuth, channel) ?: return
+        loadChannelBadges(channel, id)
+        load3rdPartyEmotes(channel, id, forceReload)
     }
 
     suspend fun getUser(oAuth: String, userId: String): HelixUserDto? = apiManager.getUser(oAuth, userId)
