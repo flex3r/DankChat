@@ -153,8 +153,9 @@ data class TwitchMessage(
 
             val notice = when {
                 tags["msg-id"] == "msg_timedout" -> {
-                    val duration = message.params[1].split(" ")[5]
-                    "You are timed out for ${DateTimeUtils.formatSeconds(duration)}."
+                    message.params[1].split(" ").getOrNull(5)?.let {
+                        "You are timed out for ${DateTimeUtils.formatSeconds(it)}."
+                    } ?: params[1]
                 }
                 else -> params[1]
             }
