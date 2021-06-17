@@ -25,7 +25,7 @@ buildscript {
         preference_version = '1.1.1'
         recyclerview_version = '1.2.1'
         viewpager2_version = '1.1.0-alpha01'
-        material_version = '1.4.0-rc1'
+        material_version = '1.4.0-rc01'
 
         // Third-party
         coil_version = '1.2.2'
