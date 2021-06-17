@@ -72,6 +72,26 @@
     <string name="whispers">Особисті повідомлення</string>
     <string name="notification_whisper_mention">%1$s надіслав особисте повідомлення</string>
     <string name="mentions">Згадки</string>
+    <string name="manage_channels">Керування каналами</string>
+    <string name="confirm_channel_removal_title">Підтвердити видалення каналу</string>
+    <string name="confirm_channel_removal_message">Ви дійсно хочете видалити цей канал?</string>
+    <string name="confirm_channel_removal_positive_button">Видалити</string>
+    <string name="user_popup_follow">Відстежувати</string>
+    <string name="user_popup_unfollow">Перестати відстежувати</string>
+    <string name="user_popup_block">Заблокувати</string>
+    <string name="user_popup_unblock">Розблокувати</string>
+    <string name="user_popup_mention">Згадати користувача</string>
+    <string name="user_popup_whisper">Відправити приватне повідомлення</string>
+    <string name="user_popup_created">Канал створений: %1$s</string>
+    <string name="user_popup_following_since">Відстежується з %1$s</string>
+    <string name="user_popup_not_following">Не відстежується</string>
+    <string name="user_popup_avatar_description">Аватар профіля</string>
+    <string name="user_popup_error">Не вдалося завантажити інформацію користувача: %1$s</string>
+    <string name="confirm_user_unfollow_title">Перестати відстежувати</string>
+    <string name="confirm_user_unfollow_message">Ви точно хочете перестати відстежувати цього користувача?</string>
+    <string name="confirm_user_block_title">Підтвердити блокування</string>
+    <string name="confirm_user_block_message">Ви точно хочете заблокувати цього користувача?</string>
+    <string name="confirm_user_block_positive_button">Заблокувати</string>
 
     <string name="preference_timestamp_title">Показувати часові мітки</string>
     <string name="preference_mention_format_title">Формат згадок</string>
@@ -132,6 +152,12 @@
     <string name="preference_scrollback_length_title">Довжина прокручування повідомлень</string>
     <string name="snackbar_paste">Вставити</string>
     <string name="preference_show_username_title">Показати ім\'я</string>
+    <string name="preference_visible_badges_title">Видимі значки</string>
+    <string name="preference_prefer_emote_suggestions_title">Надати перевагу підсказкам смайлів</string>
+    <string name="preference_prefer_emote_suggestions_summary">Надати перевагу підсказкам смайлів над підсказками імен користувачів</string>
+    <string name="preference_user_long_click_title">Поведінка при довгому натиску на ім\'я користувача</string>
+    <string name="preference_user_long_click_summary_on">Один натиск відкриває попап, довгий натиск відкриває згадування</string>
+    <string name="preference_user_long_click_summary_off">Один натиск відкриває згадування, довгий натиск відкриває попап</string>
 
     <plurals name="viewers">
         <item quantity="one">Наживо з %d глядачем</item>
