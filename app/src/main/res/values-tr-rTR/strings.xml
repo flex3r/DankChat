@@ -153,6 +153,11 @@
     <string name="confirm_user_block_message">Bu kullanıcıyı engellemek istediğinizden emin misiniz?</string>
     <string name="confirm_user_block_positive_button">Engelle</string>
     <string name="preference_visible_badges_title">Görünür rozetler</string>
+    <string name="preference_prefer_emote_suggestions_title">Emote önerilerini tercih et</string>
+    <string name="preference_prefer_emote_suggestions_summary">Kullanıcı önerileri yerine emote önerilerine öncelik ver</string>
+    <string name="preference_user_long_click_title">Kullanıcı adına uzunca tıklanıncaki davranış</string>
+    <string name="preference_user_long_click_summary_on">Normal tıklama pencereyi açar, uzunca tıklama bahseder</string>
+    <string name="preference_user_long_click_summary_off">Normal tıklama bahseder, uzunca tıklama pencereyi açar</string>
 
     <plurals name="viewers">
         <item quantity="one">%d izleyici ile canlı</item>
