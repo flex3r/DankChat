@@ -153,6 +153,11 @@
     <string name="snackbar_paste">Liitä</string>
     <string name="preference_show_username_title">Näytä käyttäjänimi</string>
     <string name="preference_visible_badges_title">Näkyvät badget</string>
+    <string name="preference_prefer_emote_suggestions_title">Suosi hymiöiden ehdottamista</string>
+    <string name="preference_prefer_emote_suggestions_summary">Priorisoi hymiöiden ehdottamista, käyttäjänimien sijasta</string>
+    <string name="preference_user_long_click_title">Käyttäjänimen pitkä painallus </string>
+    <string name="preference_user_long_click_summary_on">Tavallinen painallus popup-ikkuna ja pitkä painallus maininnat</string>
+    <string name="preference_user_long_click_summary_off">Tavallinen painallus maininnat ja pitkä painallus popup-ikkuna</string>
 
     <plurals name="viewers">
         <item quantity="one">Live-tilassa %d katsojan kanssa</item>
