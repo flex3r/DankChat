@@ -41,6 +41,13 @@ class DankChatApplication : Application(), ImageLoaderFactory {
         return ImageLoader.Builder(this)
             .okHttpClient { client }
             .componentRegistry { add(GifDrawableDecoder()) }
+            //.componentRegistry {
+            //    if (SDK_INT >= 28) {
+            //        add(ImageDecoderDecoder(this@DankChatApplication))
+            //    } else {
+            //        add(GifDecoder())
+            //    }
+            //}
             .build()
     }
 

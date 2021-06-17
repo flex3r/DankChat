@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.service.twitch.emote
 
+import android.graphics.drawable.Drawable
 import android.util.LruCache
 import com.flxrs.dankchat.service.api.ApiManager
 import com.flxrs.dankchat.service.api.dto.*
@@ -8,7 +9,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
-import pl.droidsonroids.gif.GifDrawable
 import pl.droidsonroids.gif.MultiCallback
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
@@ -30,7 +30,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
     private val globalBadges = ConcurrentHashMap<String, TwitchBadgeSetDto>()
     private val dankChatBadges = CopyOnWriteArrayList<DankChatBadgeDto>()
 
-    val gifCache = LruCache<String, GifDrawable>(64)
+    val gifCache = LruCache<String, Drawable>(64)
     val gifCallback = MultiCallback(true)
 
     fun parse3rdPartyEmotes(message: String, channel: String = "", withTwitch: Boolean = false): List<ChatMessageEmote> {

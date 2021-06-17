@@ -6,8 +6,7 @@ import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.Rect
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.LayerDrawable
+import android.graphics.drawable.*
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
@@ -37,10 +36,10 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatItemBinding
 import com.flxrs.dankchat.service.twitch.badge.Badge
 import com.flxrs.dankchat.service.twitch.badge.BadgeType
-import com.flxrs.dankchat.service.twitch.message.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.message.SystemMessage
+import com.flxrs.dankchat.service.twitch.message.SystemMessageType
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.extensions.isEven
@@ -50,7 +49,6 @@ import com.flxrs.dankchat.utils.showErrorDialog
 import com.flxrs.dankchat.utils.span.LongClickLinkMovementMethod
 import com.flxrs.dankchat.utils.span.LongClickableSpan
 import kotlinx.coroutines.*
-import pl.droidsonroids.gif.GifDrawable
 import kotlin.math.roundToInt
 
 class ChatAdapter(
@@ -312,9 +310,10 @@ class ChatAdapter(
                 }
             }
 
-            if (animateGifs && emotes.any(ChatMessageEmote::isGif)) {
+            if (animateGifs) {
                 emoteManager.gifCallback.addView(holder.binding.itemText)
             }
+
             val fullPrefix = prefixLength + badgesLength
             emotes.groupBy { it.position }.forEach { (_, emotes) ->
                 try {
@@ -338,23 +337,16 @@ class ChatAdapter(
         // set bounds again but adjust by maximum width/height of stacked drawables
         forEachIndexed { idx, dr -> dr.transformEmoteDrawable(scaleFactor, emotes[idx], maxWidth, maxHeight) }
 
-        if (emotes.any(ChatMessageEmote::isGif)) {
-            callback = emoteManager.gifCallback
-        }
+        callback = emoteManager.gifCallback
     }
 
-    private suspend fun ChatMessageEmote.toDrawable(context: Context, animateGifs: Boolean, useCache: Boolean): Drawable? = when {
-        !isGif -> Coil.execute(url.toRequest(context)).drawable
-        else -> {
-            val cached = emoteManager.gifCache[url]
-            when {
-                useCache && cached != null -> cached.also { it.setRunning(animateGifs) }
-                else -> Coil.execute(url.toRequest(context)).drawable?.apply {
-                    this as GifDrawable
-                    if (cached == null) {
-                        emoteManager.gifCache.put(url, this)
-                    }
-
+    private suspend fun ChatMessageEmote.toDrawable(context: Context, animateGifs: Boolean, useCache: Boolean): Drawable? {
+        val cached = emoteManager.gifCache[url]
+        return when {
+            useCache && cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
+            else -> Coil.execute(url.toRequest(context)).drawable?.apply {
+                if (this is Animatable && cached == null) {
+                    emoteManager.gifCache.put(url, this)
                     setRunning(animateGifs)
                 }
             }
