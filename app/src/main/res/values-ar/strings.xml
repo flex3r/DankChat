@@ -153,6 +153,11 @@
     <string name="preference_scrollback_length_title">"طول التمرير للرسالة "</string>
     <string name="preference_show_username_title">"اظهر اسم المستخدم"</string>
     <string name="preference_visible_badges_title">Visible badges</string>
+    <string name="preference_prefer_emote_suggestions_title">تفضيل اقتراحات الايموتات</string>
+    <string name="preference_prefer_emote_suggestions_summary">إعطاء الأولوية لأقتراحات الايموتات على اقتراحات المستخدم</string>
+    <string name="preference_user_long_click_title">انقر فوق اسم المستخدم لفترة طويلة</string>
+    <string name="preference_user_long_click_summary_on">النقر المنتظم يفتح نافذة منبثقة ، انقر طويلا يذكر اسم المستخدم</string>
+    <string name="preference_user_long_click_summary_off"> النقر المنتظم يذكر اسم المستخدم ، انقر طويلا يفتح نافذة منبثقة</string>
 
     <plurals name="viewers" tools:ignore="MissingQuantity">
         <item quantity="one">Live with %d viewer</item>
