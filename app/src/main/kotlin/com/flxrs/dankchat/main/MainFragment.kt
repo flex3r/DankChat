@@ -658,8 +658,8 @@ class MainFragment : Fragment() {
     private fun reloadEmotes(channel: String? = null) {
         val position = channel?.let(tabAdapter.titleList::indexOf) ?: binding.tabs.selectedTabPosition
         if (position in 0 until tabAdapter.titleList.size) {
-            val oAuth = dankChatPreferences.oAuthKey ?: return
-            val userId = dankChatPreferences.userIdString ?: return
+            val oAuth = dankChatPreferences.oAuthKey.orEmpty()
+            val userId = dankChatPreferences.userIdString.orEmpty()
             mainViewModel.reloadEmotes(tabAdapter.titleList[position], oAuth, userId)
         }
     }
