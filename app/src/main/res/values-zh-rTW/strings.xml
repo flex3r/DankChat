@@ -78,7 +78,7 @@
     <string name="mentions">提及</string>
     <string name="preference_timestamp_title">顯示時間戳</string>
     <string name="preference_mention_format_title">提及格式</string>
-    <string name="preference_mention_format_summary">更改點選用戶名時所出現的提及字串樣式</string>
+    <string name="preference_mention_format_summary">更改點選使用者名時所出現的提及字串樣式</string>
     <string name="preference_streaminfo_title">顯示直播訊息</string>
     <string name="preference_streaminfo_summary">顯示直播狀態及觀看人數</string>
     <string name="preference_notification_header">提醒</string>
@@ -116,12 +116,12 @@
     <string name="preference_show_input_summary">顯示訊息輸入方框以便傳送訊息</string>
     <string name="preference_line_separator_title">透過格線分隔訊息</string>
     <string name="preference_blacklist_summary">設定特定字句隱藏</string>
-    <string name="multi_entry_header_match_user">對應用戶</string>
+    <string name="multi_entry_header_match_user">對應使用者</string>
     <string name="preference_notification_title">顯示訊息通知</string>
     <string name="preference_notification_summary">於背景執行時，當被他人提及時顯示通知</string>
     <string name="preference_custom_mentions_summary">將自訂字句設為提及做為通知</string>
-    <string name="preference_suggestions_title">自動完成表情符號及用戶</string>
-    <string name="preference_suggestions_summary">於輸入訊息時，依照輸入字串顯示相關表情符號以及用戶名</string>
+    <string name="preference_suggestions_title">自動完成表情符號及使用者</string>
+    <string name="preference_suggestions_summary">於輸入訊息時，依照輸入字串顯示相關表情符號以及使用者名</string>
     <string name="preference_load_message_history_title">啟動時自動讀取聊天紀錄</string>
     <string name="timed_out_message">&lt; 訊息已被刪除 ></string>
     <string name="preference_checkered_lines_title">行列顏色調整</string>
@@ -131,7 +131,7 @@
     <string name="preference_roomstate_title">顯示聊天室狀態</string>
     <string name="preference_roomstate_summary">顯示目前聊天室狀態，如訂閱者聊天模式</string>
     <string name="snackbar_paste">貼上</string>
-    <string name="preference_show_username_title">顯示用戶名</string>
+    <string name="preference_show_username_title">顯示使用者名</string>
 
     <plurals name="viewers">
         <item quantity="other">Live 與 %d 個觀眾</item>
@@ -144,17 +144,22 @@
     <string name="user_popup_unfollow">退追</string>
     <string name="user_popup_block">封鎖</string>
     <string name="user_popup_unblock">移除封鎖</string>
-    <string name="user_popup_mention">提及用戶</string>
-    <string name="user_popup_whisper">與用戶悄悄話</string>
+    <string name="user_popup_mention">提及使用者</string>
+    <string name="user_popup_whisper">與使用者悄悄話</string>
     <string name="user_popup_created">建立於：%1$s</string>
     <string name="user_popup_following_since">自 %1$s 起開始追蹤</string>
     <string name="user_popup_not_following">目前尚未追蹤</string>
     <string name="user_popup_avatar_description">個人檔案頭像</string>
-    <string name="user_popup_error">載入用戶失敗：%1$s</string>
+    <string name="user_popup_error">載入使用者失敗：%1$s</string>
     <string name="confirm_user_unfollow_title">確定退追</string>
-    <string name="confirm_user_unfollow_message">您確定要退追此用戶嗎？</string>
+    <string name="confirm_user_unfollow_message">您確定要退追此使用者嗎？</string>
     <string name="confirm_user_block_title">確定封鎖</string>
-    <string name="confirm_user_block_message">您確定要封鎖此用戶嗎？</string>
+    <string name="confirm_user_block_message">您確定要封鎖此使用者嗎？</string>
     <string name="confirm_user_block_positive_button">封鎖</string>
     <string name="preference_visible_badges_title">顯示徽章</string>
+    <string name="preference_user_long_click_title">使用者長按行為</string>
+    <string name="preference_user_long_click_summary_on">輕觸開啟用戶資訊；長按提及用戶</string>
+    <string name="preference_user_long_click_summary_off">輕觸提及用戶；長按開啟用戶資訊</string>
+    <string name="preference_prefer_emote_suggestions_title">優先顯示表情符號建議</string>
+    <string name="preference_prefer_emote_suggestions_summary">優先建議符合關鍵字的表情符號，而非使用者名稱</string>
 </resources>
