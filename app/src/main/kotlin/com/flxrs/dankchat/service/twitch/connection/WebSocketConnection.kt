@@ -139,7 +139,7 @@ class WebSocketConnection(
             onDisconnect?.invoke()
             pingJob?.cancel()
 
-            Log.e(TAG, "[$connectionName] connection failed: ${t.message}, attempting to reconnect #${reconnectAttempts + 1}.. ")
+            Log.e(TAG, "[$connectionName] connection failed: ${t.stackTraceToString()}, attempting to reconnect #${reconnectAttempts + 1}.. ")
             attemptReconnect(true)
         }
 

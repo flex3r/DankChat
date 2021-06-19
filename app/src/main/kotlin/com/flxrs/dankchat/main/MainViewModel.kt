@@ -335,7 +335,7 @@ class MainViewModel @Inject constructor(
                     file.delete()
                     ImageUploadState.Finished(it)
                 } ?: ImageUploadState.Failed(null, file)
-                else -> ImageUploadState.Failed(result.exceptionOrNull()?.message, file)
+                else -> ImageUploadState.Failed(result.exceptionOrNull()?.stackTraceToString(), file)
             }
             _imageUploadedState.emit(state)
         }
