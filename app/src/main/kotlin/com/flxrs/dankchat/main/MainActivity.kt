@@ -165,17 +165,16 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
                 pendingChannelsToClear.clear()
             }
 
-            val oauth = twitchPreferences.oAuthKey ?: ""
-            val name = twitchPreferences.userName ?: ""
-            val channels = twitchPreferences.getChannels()
-            viewModel.init(name, oauth, tryReconnect = !isChangingConfigurations, channels = channels)
-
             if (!viewModel.started) {
                 val ttsEnabledKey = getString(R.string.preference_tts_key)
                 val ttsEnabled = PreferenceManager.getDefaultSharedPreferences(this@MainActivity).getBoolean(ttsEnabledKey, false)
-                notificationService?.setTTSEnabled(ttsEnabled)
+                binder.service.setTTSEnabled(ttsEnabled)
             }
 
+            val oauth = twitchPreferences.oAuthKey.orEmpty()
+            val name = twitchPreferences.userName.orEmpty()
+            val channels = twitchPreferences.getChannels()
+            viewModel.init(name, oauth, tryReconnect = !isChangingConfigurations, channels = channels)
             binder.service.checkForNotification()
         }
 
