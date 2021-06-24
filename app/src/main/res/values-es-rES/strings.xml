@@ -151,7 +151,7 @@
     <string name="preference_checkered_lines_title">Líneas alternadas</string>
     <string name="preference_checkered_lines_summary">Separar cada línea con diferente brillo de fondo</string>
     <string name="preference_supibot_suggestions_title">Sugerencias de comandos de Supibot</string>
-    <string name="preference_scrollback_length_title">Longitud desplazamiento hacia atrás de mensajes</string>
+    <string name="preference_scrollback_length_title">Número total de mensajes a mostrar al desplazarse</string>
     <string name="preference_show_username_title">Mostrar nombre de usuario</string>
     <string name="preference_visible_badges_title">Medallas visibles</string>
     <string name="preference_prefer_emote_suggestions_title">Preferir sugerencias de emoticonos</string>
