@@ -159,6 +159,8 @@
     <string name="preference_user_long_click_title">Comportamiento pulsación larga sobre un usuario</string>
     <string name="preference_user_long_click_summary_on">Un click normal abre popup, una pulsación larga menciona al usuario</string>
     <string name="preference_user_long_click_summary_off">Un click normal menciona al usuario, una pulsación larga abre popup</string>
+    <string name="preference_tts_force_english_title">Forzar inglés como idioma</string>
+    <string name="preference_tts_force_english_summary">Forzar el idioma de la voz TTS al inglés</string>
 
     <plurals name="viewers">
         <item quantity="one">En directo con %d espectador</item>
