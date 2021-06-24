@@ -66,7 +66,7 @@ class DataRepository(private val apiManager: ApiManager, private val emoteManage
         measureTimeAndLog(TAG, "global badges") {
             val badges = when {
                 oAuth.isBlank() -> apiManager.getGlobalBadgesFallback()?.toBadgeSets()
-                else -> apiManager.getGlobalBadges(oAuth)?.toBadgeSets()
+                else -> apiManager.getGlobalBadges(oAuth)?.toBadgeSets() ?: apiManager.getGlobalBadgesFallback()?.toBadgeSets()
             }
             badges?.let { emoteManager.setGlobalBadges(it) }
         }
@@ -99,7 +99,7 @@ class DataRepository(private val apiManager: ApiManager, private val emoteManage
         measureTimeAndLog(TAG, "channel badges for #$id") {
             val badges = when {
                 oAuth.isBlank() -> apiManager.getChannelBadgesFallback(id)?.toBadgeSets()
-                else -> apiManager.getChannelBadges(oAuth, id)?.toBadgeSets()
+                else -> apiManager.getChannelBadges(oAuth, id)?.toBadgeSets() ?: apiManager.getChannelBadgesFallback(id)?.toBadgeSets()
             }
             badges?.let { emoteManager.setChannelBadges(channel, it) }
         }
