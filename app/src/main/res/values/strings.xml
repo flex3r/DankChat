@@ -195,6 +195,9 @@
     <string name="preference_user_long_click_title">User long click behavior</string>
     <string name="preference_user_long_click_summary_on">Regular click opens popup, long click mentions</string>
     <string name="preference_user_long_click_summary_off">Regular click mentions, long click opens popup</string>
+    <string name="preference_tts_force_english_key" translatable="false">tts_force_english_key</string>
+    <string name="preference_tts_force_english_title">Force language to english</string>
+    <string name="preference_tts_force_english_summary">Force TTS voice language to english instead of system default</string>
 
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>
