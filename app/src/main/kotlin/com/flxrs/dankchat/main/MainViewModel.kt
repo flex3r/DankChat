@@ -367,7 +367,7 @@ class MainViewModel @Inject constructor(
     private suspend fun loadInitialData(oAuth: String, id: String, channelList: List<String>, loadTwitchData: Boolean, loadSupibot: Boolean, handler: CoroutineExceptionHandler) = supervisorScope {
         listOf(
             launch(handler) { dataRepository.loadDankChatBadges() },
-            launch(handler) { dataRepository.loadGlobalBadges() },
+            launch(handler) { dataRepository.loadGlobalBadges(oAuth) },
             launch(handler) { if (loadTwitchData) dataRepository.loadTwitchEmotes(oAuth, id) },
             launch(handler) { if (loadSupibot) dataRepository.loadSupibotCommands() },
             launch { chatRepository.loadUserBlocks(oAuth, id) }

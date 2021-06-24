@@ -70,4 +70,17 @@ interface HelixApiService {
         @Header("Authorization") oAuth: String,
         @Query("target_user_id") targetUserId: String
     ): Response<Unit>
+
+    @Headers("Client-ID: ${ApiManager.CLIENT_ID}")
+    @GET("chat/badges")
+    suspend fun getChannelBadges(
+        @Header("Authorization") oAuth: String,
+        @Query("broadcaster_id") userId: String
+    ): Response<HelixBadgesDto>
+
+    @Headers("Client-ID: ${ApiManager.CLIENT_ID}")
+    @GET("chat/badges/global")
+    suspend fun getGlobalBadges(
+        @Header("Authorization") oAuth: String
+    ): Response<HelixBadgesDto>
 }

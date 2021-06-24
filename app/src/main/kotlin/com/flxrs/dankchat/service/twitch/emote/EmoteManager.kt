@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import android.util.LruCache
 import com.flxrs.dankchat.service.api.ApiManager
 import com.flxrs.dankchat.service.api.dto.*
+import com.flxrs.dankchat.service.twitch.badge.BadgeSet
 import com.flxrs.dankchat.utils.extensions.supplementaryCodePointPositions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -26,8 +27,8 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
 
     private val ffzModBadges = ConcurrentHashMap<String, String>()
     private val ffzVipBadges = ConcurrentHashMap<String, String>()
-    private val channelBadges = ConcurrentHashMap<String, TwitchBadgesDto>()
-    private val globalBadges = ConcurrentHashMap<String, TwitchBadgeSetDto>()
+    private val channelBadges = ConcurrentHashMap<String, Map<String, BadgeSet>>()
+    private val globalBadges = ConcurrentHashMap<String, BadgeSet>()
     private val dankChatBadges = CopyOnWriteArrayList<DankChatBadgeDto>()
 
     val gifCache = LruCache<String, Drawable>(64)
@@ -54,7 +55,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         return adjustOverlayEmotes(message, emotes)
     }
 
-    fun getChannelBadgeUrl(channel: String, set: String, version: String) = channelBadges[channel]?.sets?.get(set)?.versions?.get(version)?.imageUrlHigh
+    fun getChannelBadgeUrl(channel: String, set: String, version: String) = channelBadges[channel]?.get(set)?.versions?.get(version)?.imageUrlHigh
 
     fun getGlobalBadgeUrl(set: String, version: String) = globalBadges[set]?.versions?.get(version)?.imageUrlHigh
 
@@ -64,12 +65,12 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
 
     fun getDankChatBadgeUrl(userId: String?) = dankChatBadges.find { it.users.any { id -> id == userId } }?.let { it.type to it.url }
 
-    fun setChannelBadges(channel: String, dto: TwitchBadgesDto) {
-        channelBadges[channel] = dto
+    fun setChannelBadges(channel: String, badges: Map<String, BadgeSet>) {
+        channelBadges[channel] = badges
     }
 
-    fun setGlobalBadges(dto: TwitchBadgesDto) {
-        globalBadges.putAll(dto.sets)
+    fun setGlobalBadges(badges: Map<String, BadgeSet>) {
+        globalBadges.putAll(badges)
     }
 
     fun setDankChatBadges(dto: List<DankChatBadgeDto>) {

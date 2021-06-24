@@ -4,11 +4,14 @@ import android.util.Log
 import com.flxrs.dankchat.service.api.ApiManager
 import com.flxrs.dankchat.service.api.dto.HelixUserDto
 import com.flxrs.dankchat.service.api.dto.UserFollowsDto
+import com.flxrs.dankchat.service.twitch.badge.toBadgeSets
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.utils.extensions.measureTimeAndLog
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.withContext
 import java.io.File
 import kotlin.system.measureTimeMillis
 
@@ -24,7 +27,7 @@ class DataRepository(private val apiManager: ApiManager, private val emoteManage
     suspend fun loadChannelData(channel: String, oAuth: String, channelId: String? = null, forceReload: Boolean = false) {
         emotes.putIfAbsent(channel, MutableStateFlow(emptyList()))
         val id = channelId ?: apiManager.getUserIdByName(oAuth, channel) ?: return
-        loadChannelBadges(channel, id)
+        loadChannelBadges(oAuth, channel, id)
         load3rdPartyEmotes(channel, id, forceReload)
     }
 
@@ -59,9 +62,13 @@ class DataRepository(private val apiManager: ApiManager, private val emoteManage
         }.let { Log.i(TAG, "Loaded Supibot commands in $it ms") }
     }
 
-    suspend fun loadGlobalBadges() {
+    suspend fun loadGlobalBadges(oAuth: String) = withContext(Dispatchers.Default) {
         measureTimeAndLog(TAG, "global badges") {
-            apiManager.getGlobalBadges()?.also { emoteManager.setGlobalBadges(it) }
+            val badges = when {
+                oAuth.isBlank() -> apiManager.getGlobalBadgesFallback()?.toBadgeSets()
+                else -> apiManager.getGlobalBadges(oAuth)?.toBadgeSets()
+            }
+            badges?.let { emoteManager.setGlobalBadges(it) }
         }
     }
 
@@ -88,9 +95,13 @@ class DataRepository(private val apiManager: ApiManager, private val emoteManage
         emoteManager.filterAndSetBitEmotes(userStateEmoteSets)
     }
 
-    private suspend fun loadChannelBadges(channel: String, id: String) {
+    private suspend fun loadChannelBadges(oAuth: String, channel: String, id: String) = withContext(Dispatchers.Default) {
         measureTimeAndLog(TAG, "channel badges for #$id") {
-            apiManager.getChannelBadges(id)?.also { emoteManager.setChannelBadges(channel, it) }
+            val badges = when {
+                oAuth.isBlank() -> apiManager.getChannelBadgesFallback(id)?.toBadgeSets()
+                else -> apiManager.getChannelBadges(oAuth, id)?.toBadgeSets()
+            }
+            badges?.let { emoteManager.setChannelBadges(channel, it) }
         }
     }
 
