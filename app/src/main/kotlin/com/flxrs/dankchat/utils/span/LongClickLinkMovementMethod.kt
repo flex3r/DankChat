@@ -5,7 +5,6 @@ import android.os.Looper
 import android.text.Selection
 import android.text.Spannable
 import android.text.method.LinkMovementMethod
-import android.text.method.MovementMethod
 import android.view.MotionEvent
 import android.widget.TextView
 import androidx.core.os.postDelayed
@@ -17,7 +16,7 @@ object LongClickLinkMovementMethod : LinkMovementMethod() {
 
     override fun onTouchEvent(widget: TextView, buffer: Spannable, event: MotionEvent): Boolean {
         when (val action = event.action) {
-            MotionEvent.ACTION_CANCEL -> longClickHandler.removeCallbacksAndMessages(null)
+            MotionEvent.ACTION_CANCEL                      -> longClickHandler.removeCallbacksAndMessages(null)
             MotionEvent.ACTION_UP, MotionEvent.ACTION_DOWN -> {
                 var x = event.x.toInt()
                 var y = event.y.toInt()

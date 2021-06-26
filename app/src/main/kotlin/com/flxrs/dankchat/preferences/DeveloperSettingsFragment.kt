@@ -16,7 +16,7 @@ class DeveloperSettingsFragment : PreferenceFragmentCompat() {
     private val requestCheckTTSData = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         when (it.resultCode) {
             TextToSpeech.Engine.CHECK_VOICE_DATA_PASS -> (activity as? MainActivity)?.setTTSEnabled(true)
-            else -> startActivity(Intent(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA))
+            else                                      -> startActivity(Intent(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA))
         }
     }
 

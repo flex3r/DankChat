@@ -36,10 +36,10 @@ class NotificationService : Service(), CoroutineScope {
     private val sharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
     private val preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
-            getString(R.string.preference_notification_key) -> notificationsEnabled = sharedPreferences.getBoolean(key, true)
-            getString(R.string.preference_tts_queue_key) -> ttsMessageQueue = sharedPreferences.getBoolean(key, true)
+            getString(R.string.preference_notification_key)       -> notificationsEnabled = sharedPreferences.getBoolean(key, true)
+            getString(R.string.preference_tts_queue_key)          -> ttsMessageQueue = sharedPreferences.getBoolean(key, true)
             getString(R.string.preference_tts_message_format_key) -> combinedTTSFormat = sharedPreferences.getBoolean(key, true)
-            getString(R.string.preference_tts_force_english_key) -> {
+            getString(R.string.preference_tts_force_english_key)  -> {
                 forceEnglishTTS = sharedPreferences.getBoolean(key, false)
                 setTTSVoice()
             }
@@ -63,7 +63,7 @@ class NotificationService : Service(), CoroutineScope {
 
     private val pendingIntentFlag: Int = when {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        else -> PendingIntent.FLAG_UPDATE_CURRENT
+        else                                           -> PendingIntent.FLAG_UPDATE_CURRENT
     }
 
     var activeTTSChannel: String? = null
@@ -113,7 +113,7 @@ class NotificationService : Service(), CoroutineScope {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             STOP_COMMAND -> LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(MainActivity.SHUTDOWN_REQUEST_FILTER))
-            else -> startForeground()
+            else         -> startForeground()
         }
 
         return START_NOT_STICKY
@@ -132,7 +132,7 @@ class NotificationService : Service(), CoroutineScope {
 
     fun setTTSEnabled(enabled: Boolean) = when {
         enabled -> initTTS()
-        else -> shutdownTTS()
+        else    -> shutdownTTS()
     }
 
     private fun initTTS() {
@@ -140,7 +140,7 @@ class NotificationService : Service(), CoroutineScope {
         tts = TextToSpeech(this) { status ->
             when (status) {
                 TextToSpeech.SUCCESS -> setTTSVoice()
-                else -> shutdownAndDisableTTS()
+                else                 -> shutdownAndDisableTTS()
             }
         }
     }
@@ -148,7 +148,7 @@ class NotificationService : Service(), CoroutineScope {
     private fun setTTSVoice() {
         val voice = when {
             forceEnglishTTS -> tts?.voices?.find { it.locale == Locale.US && !it.isNetworkConnectionRequired }
-            else -> tts?.defaultVoice
+            else            -> tts?.defaultVoice
         }
 
         voice?.takeUnless { tts?.setVoice(it) == TextToSpeech.ERROR } ?: shutdownAndDisableTTS()
@@ -220,17 +220,17 @@ class NotificationService : Service(), CoroutineScope {
 
     private fun TwitchMessage.playTTSMessage() {
         val messageFormat = when {
-            isSystem || !combinedTTSFormat -> message
+            isSystem || !combinedTTSFormat                          -> message
             tts?.voice?.locale?.language == Locale.ENGLISH.language -> "$name said $message"
-            else -> "$name. $message"
+            else                                                    -> "$name. $message"
         }
         val queueMode = when {
             ttsMessageQueue -> TextToSpeech.QUEUE_ADD
-            else -> TextToSpeech.QUEUE_FLUSH
+            else            -> TextToSpeech.QUEUE_FLUSH
         }
         val ttsMessage = when (name) {
             previousTTSUser -> message
-            else -> messageFormat.also { previousTTSUser = name }
+            else            -> messageFormat.also { previousTTSUser = name }
         }
         tts?.speak(ttsMessage, queueMode, null, null)
     }
@@ -252,8 +252,8 @@ class NotificationService : Service(), CoroutineScope {
 
         val title = when {
             isWhisper -> getString(R.string.notification_whisper_mention, name)
-            isNotify -> getString(R.string.notification_notify_mention, channel)
-            else -> getString(R.string.notification_mention, name, channel)
+            isNotify  -> getString(R.string.notification_notify_mention, channel)
+            else      -> getString(R.string.notification_mention, name, channel)
         }
 
         val notification = NotificationCompat.Builder(this@NotificationService, CHANNEL_ID_DEFAULT)

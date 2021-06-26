@@ -36,8 +36,8 @@ class DataRepository(private val apiManager: ApiManager, private val emoteManage
     suspend fun getUserFollows(oAuth: String, fromId: String, toId: String): UserFollowsDto? = apiManager.getUsersFollows(oAuth, fromId, toId)
     suspend fun followUser(oAuth: String, fromId: String, toId: String): Boolean = apiManager.followUser(oAuth, fromId, toId)
     suspend fun unfollowUser(oAuth: String, fromId: String, toId: String): Boolean = apiManager.unfollowUser(oAuth, fromId, toId)
-    suspend fun blockUser(oAuth: String, targetUserId: String): Boolean =  apiManager.blockUser(oAuth, targetUserId)
-    suspend fun unblockUser(oAuth: String, targetUserId: String): Boolean =  apiManager.unblockUser(oAuth, targetUserId)
+    suspend fun blockUser(oAuth: String, targetUserId: String): Boolean = apiManager.blockUser(oAuth, targetUserId)
+    suspend fun unblockUser(oAuth: String, targetUserId: String): Boolean = apiManager.unblockUser(oAuth, targetUserId)
 
     suspend fun uploadMedia(file: File): String? = apiManager.uploadMedia(file)
 
@@ -66,7 +66,7 @@ class DataRepository(private val apiManager: ApiManager, private val emoteManage
         measureTimeAndLog(TAG, "global badges") {
             val badges = when {
                 oAuth.isBlank() -> apiManager.getGlobalBadgesFallback()?.toBadgeSets()
-                else -> apiManager.getGlobalBadges(oAuth)?.toBadgeSets() ?: apiManager.getGlobalBadgesFallback()?.toBadgeSets()
+                else            -> apiManager.getGlobalBadges(oAuth)?.toBadgeSets() ?: apiManager.getGlobalBadgesFallback()?.toBadgeSets()
             }
             badges?.let { emoteManager.setGlobalBadges(it) }
         }
@@ -99,7 +99,7 @@ class DataRepository(private val apiManager: ApiManager, private val emoteManage
         measureTimeAndLog(TAG, "channel badges for #$id") {
             val badges = when {
                 oAuth.isBlank() -> apiManager.getChannelBadgesFallback(id)?.toBadgeSets()
-                else -> apiManager.getChannelBadges(oAuth, id)?.toBadgeSets() ?: apiManager.getChannelBadgesFallback(id)?.toBadgeSets()
+                else            -> apiManager.getChannelBadges(oAuth, id)?.toBadgeSets() ?: apiManager.getChannelBadgesFallback(id)?.toBadgeSets()
             }
             badges?.let { emoteManager.setChannelBadges(channel, it) }
         }

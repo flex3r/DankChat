@@ -108,18 +108,18 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
 
     override fun onPreferenceStartFragment(caller: PreferenceFragmentCompat, pref: Preference): Boolean {
         when (pref.fragment.substringAfterLast(".")) {
-            AppearanceSettingsFragment::class.java.simpleName -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_appearanceSettingsFragment)
+            AppearanceSettingsFragment::class.java.simpleName    -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_appearanceSettingsFragment)
             NotificationsSettingsFragment::class.java.simpleName -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_notificationsSettingsFragment)
-            ChatSettingsFragment::class.java.simpleName -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_chatSettingsFragment)
-            DeveloperSettingsFragment::class.java.simpleName -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_developerSettingsFragment)
-            else -> return false
+            ChatSettingsFragment::class.java.simpleName          -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_chatSettingsFragment)
+            DeveloperSettingsFragment::class.java.simpleName     -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_developerSettingsFragment)
+            else                                                 -> return false
         }
         return true
     }
 
     fun clearNotificationsOfChannel(channel: String) = when {
         isBound && notificationService != null -> notificationService?.setActiveChannel(channel)
-        else -> pendingChannelsToClear += channel
+        else                                   -> pendingChannelsToClear += channel
     }
 
     fun setTTSEnabled(enabled: Boolean) = notificationService?.setTTSEnabled(enabled)
@@ -138,7 +138,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
                     supportActionBar?.hide()
                 }
             }
-            else -> {
+            else    -> {
                 windowInsetsController?.show(WindowInsetsCompat.Type.systemBars())
                 if (changeActionBarVisibility) {
                     supportActionBar?.show()

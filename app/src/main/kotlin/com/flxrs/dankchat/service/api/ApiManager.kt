@@ -69,7 +69,7 @@ class ApiManager @Inject constructor(
     suspend fun getRecentMessages(channel: String): RecentMessagesDto? {
         return when {
             loadedRecentsInChannels.contains(channel) -> null
-            else -> {
+            else                                      -> {
                 val response = recentMessagesApiService.getRecentMessages(channel)
                 response.bodyOrNull?.also { loadedRecentsInChannels += channel }
             }
@@ -98,7 +98,7 @@ class ApiManager @Inject constructor(
         val response = client.newCall(request).execute()
         when {
             response.isSuccessful -> response.body?.string()
-            else -> null
+            else                  -> null
         }
     }
 
@@ -139,5 +139,5 @@ class ApiManager @Inject constructor(
 private val <T> Response<T>.bodyOrNull
     get() = when {
         isSuccessful -> body()
-        else -> null
+        else         -> null
     }

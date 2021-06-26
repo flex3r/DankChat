@@ -11,11 +11,11 @@ enum class BadgeType {
 
     companion object {
         fun parseFromBadgeId(id: String): BadgeType = when (id) {
-            "staff", "admin", "global_admin" -> Authority
-            "predictions" -> Predictions
+            "staff", "admin", "global_admin"  -> Authority
+            "predictions"                     -> Predictions
             "moderator", "vip", "broadcaster" -> Channel
-            "subscriber", "founder" -> Subscriber
-            else -> Vanity
+            "subscriber", "founder"           -> Subscriber
+            else                              -> Vanity
         }
 
         fun mapFromPreferenceSet(preferenceSet: Set<String>): Set<BadgeType> = preferenceSet.mapNotNull {

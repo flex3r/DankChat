@@ -82,7 +82,7 @@ open class ChatFragment : Fragment() {
                 getString(R.string.preference_visible_badges_key) -> binding.chat.swapAdapter(adapter, false)
                 getString(R.string.preference_line_separator_key) -> when {
                     pref.getBoolean(key, false) -> binding.chat.addItemDecoration(itemDecoration)
-                    else -> binding.chat.removeItemDecoration(itemDecoration)
+                    else                        -> binding.chat.removeItemDecoration(itemDecoration)
                 }
             }
         }
@@ -143,7 +143,7 @@ open class ChatFragment : Fragment() {
 
         when {
             shouldMention -> (parentFragment as? MainFragment)?.mentionUser(targetUserName)
-            else -> (parentFragment as? MainFragment)?.openUserPopup(targetUserId, channel, isWhisperPopup = false)
+            else          -> (parentFragment as? MainFragment)?.openUserPopup(targetUserId, channel, isWhisperPopup = false)
         }
     }
 

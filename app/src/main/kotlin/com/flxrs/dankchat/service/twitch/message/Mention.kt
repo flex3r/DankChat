@@ -14,8 +14,8 @@ sealed class Mention {
     fun matches(message: String): Boolean {
         val split = message.split(" ")
         return when (this) {
-            is User -> message.contains(regex)
-            is Phrase -> split.any { it.equals(entry, true) }
+            is User        -> message.contains(regex)
+            is Phrase      -> split.any { it.equals(entry, true) }
             is RegexPhrase -> message.contains(entry)
         }
     }
@@ -23,9 +23,9 @@ sealed class Mention {
     fun matchUser(user: Pair<String, String>): Boolean {
         if (!matchUser) return false
         return when (this) {
-            is Phrase -> entry.equals(user.first, true) || entry.equals(user.second, true)
+            is Phrase      -> entry.equals(user.first, true) || entry.equals(user.second, true)
             is RegexPhrase -> user.first.contains(entry) || user.second.contains(entry)
-            else -> false
+            else           -> false
         }
     }
 }

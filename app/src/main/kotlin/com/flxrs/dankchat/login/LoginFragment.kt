@@ -118,7 +118,7 @@ class LoginFragment : Fragment() {
         private fun saveLoginDetails(oAuth: String, validateDto: ValidateUserDto?): Boolean {
             return when {
                 validateDto == null || validateDto.login.isBlank() -> false
-                else -> {
+                else                                               -> {
                     dankChatPreferenceStore.apply {
                         oAuthKey = "oauth:$oAuth"
                         userName = validateDto.login.lowercase(Locale.getDefault())

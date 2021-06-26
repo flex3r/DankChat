@@ -28,7 +28,7 @@ class EmoteMenuAdapter(private val onEmoteClick: (emote: String) -> Unit) : List
                         override fun getSpanSize(position: Int): Int {
                             return when (emoteAdapter.getItemViewType(position)) {
                                 EmoteAdapter.ITEM_VIEW_TYPE_HEADER -> spanCount
-                                else -> 1
+                                else                               -> 1
                             }
                         }
                     }

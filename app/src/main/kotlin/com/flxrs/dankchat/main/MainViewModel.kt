@@ -140,7 +140,7 @@ class MainViewModel @Inject constructor(
         combine(emoteSuggestions, userSuggestions, supibotCommandSuggestions, preferEmoteSuggestions) { emoteSuggestions, userSuggestions, supibotCommandSuggestions, preferEmoteSuggestions ->
             when {
                 preferEmoteSuggestions -> (emoteSuggestions + userSuggestions + supibotCommandSuggestions)
-                else -> (userSuggestions + emoteSuggestions + supibotCommandSuggestions)
+                else                   -> (userSuggestions + emoteSuggestions + supibotCommandSuggestions)
             }
         }
 
@@ -148,8 +148,8 @@ class MainViewModel @Inject constructor(
         val groupedByType = emotes.groupBy {
             when (it.emoteType) {
                 is EmoteType.ChannelTwitchEmote, is EmoteType.ChannelTwitchBitEmote -> EmoteMenuTab.SUBS
-                is EmoteType.ChannelFFZEmote, is EmoteType.ChannelBTTVEmote -> EmoteMenuTab.CHANNEL
-                else -> EmoteMenuTab.GLOBAL
+                is EmoteType.ChannelFFZEmote, is EmoteType.ChannelBTTVEmote         -> EmoteMenuTab.CHANNEL
+                else                                                                -> EmoteMenuTab.GLOBAL
             }
         }
         listOf(
@@ -211,7 +211,7 @@ class MainViewModel @Inject constructor(
     fun setSupibotSuggestions(enabled: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
         when {
             enabled -> dataRepository.loadSupibotCommands()
-            else -> dataRepository.clearSupibotCommands()
+            else    -> dataRepository.clearSupibotCommands()
         }
     }
 
@@ -335,7 +335,7 @@ class MainViewModel @Inject constructor(
                     file.delete()
                     ImageUploadState.Finished(it)
                 } ?: ImageUploadState.Failed(null, file)
-                else -> ImageUploadState.Failed(result.exceptionOrNull()?.stackTraceToString(), file)
+                else             -> ImageUploadState.Failed(result.exceptionOrNull()?.stackTraceToString(), file)
             }
             _imageUploadedState.emit(state)
         }
@@ -389,7 +389,7 @@ class MainViewModel @Inject constructor(
 
     private suspend fun getRoomStateIdIfNeeded(oAuth: String, channel: String): String? = when {
         oAuth.isNotBlank() -> null
-        else -> withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
+        else               -> withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
             chatRepository.getRoomState(channel).first { it.channelId.isNotBlank() }.channelId
         }
     }
@@ -404,7 +404,7 @@ class MainViewModel @Inject constructor(
                 errorMessage = result.exceptionOrNull()?.stackTraceToString() ?: failure?.stackTraceToString().orEmpty(),
                 parameters = parameters
             )
-            else -> DataLoadingState.Finished
+            else                                -> DataLoadingState.Finished
         }
     }
 

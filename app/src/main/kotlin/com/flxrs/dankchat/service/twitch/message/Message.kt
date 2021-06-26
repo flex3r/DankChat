@@ -52,13 +52,13 @@ data class TwitchMessage(
     companion object {
         fun parse(message: IrcMessage, emoteManager: EmoteManager): List<TwitchMessage> = with(message) {
             return when (command) {
-                "PRIVMSG" -> listOf(parsePrivMessage(message, emoteManager))
-                "NOTICE" -> listOf(parseNotice(message))
+                "PRIVMSG"    -> listOf(parsePrivMessage(message, emoteManager))
+                "NOTICE"     -> listOf(parseNotice(message))
                 "USERNOTICE" -> parseUserNotice(message, emoteManager)
-                "CLEARCHAT" -> listOf(parseClearChat(message))
-                "WHISPER" -> listOf(parseWhisper(message, emoteManager))
+                "CLEARCHAT"  -> listOf(parseClearChat(message))
+                "WHISPER"    -> listOf(parseWhisper(message, emoteManager))
                 //"HOSTTARGET" -> listOf(parseHostTarget(message))
-                else -> listOf()
+                else         -> listOf()
             }
         }
 
@@ -66,7 +66,7 @@ data class TwitchMessage(
             val displayName = tags.getValue("display-name")
             val name = when (ircMessage.command) {
                 "USERNOTICE" -> tags.getValue("login")
-                else -> prefix.substringBefore('!')
+                else         -> prefix.substringBefore('!')
             }
             val colorTag = tags["color"]?.ifBlank { "#717171" } ?: "#717171"
             val color = Color.parseColor(colorTag)
@@ -78,8 +78,8 @@ data class TwitchMessage(
                     isAction = true
                     params[1].substring("\u0001ACTION ".length, params[1].length - "\u0001".length)
                 }
-                params.size > 1 -> params[1]
-                else -> ""
+                params.size > 1                                                                         -> params[1]
+                else                                                                                    -> ""
             }
             val channel = params[0].substring(1)
             val emoteTag = tags["emotes"] ?: ""
@@ -157,7 +157,7 @@ data class TwitchMessage(
                         "You are timed out for ${DateTimeUtils.formatSeconds(it)}."
                     } ?: params[1]
                 }
-                else -> params[1]
+                else                             -> params[1]
             }
 
             val ts = tags["rm-received-ts"]?.toLong() ?: System.currentTimeMillis()
@@ -180,9 +180,9 @@ data class TwitchMessage(
             val target = if (params.size > 1) params[1] else ""
             val duration = tags["ban-duration"] ?: ""
             val systemMessage = when {
-                target.isBlank() -> "Chat has been cleared by a moderator."
+                target.isBlank()   -> "Chat has been cleared by a moderator."
                 duration.isBlank() -> "$target has been permanently banned"
-                else -> "$target has been timed out for ${DateTimeUtils.formatSeconds(duration)}."
+                else               -> "$target has been timed out for ${DateTimeUtils.formatSeconds(duration)}."
             }
             val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
             val id = tags["id"] ?: System.nanoTime().toString()
@@ -229,10 +229,10 @@ data class TwitchMessage(
                 val ffzVipBadgeUrl = emoteManager.getFfzVipBadgeUrl(channel)
                 val type = BadgeType.parseFromBadgeId(badgeSet)
                 when {
-                    badgeSet.startsWith("moderator") && ffzModBadgeUrl != null -> Badge.FFZModBadge(ffzModBadgeUrl, type)
-                    badgeSet.startsWith("vip") && ffzVipBadgeUrl != null -> Badge.FFZVipBadge(ffzVipBadgeUrl, type)
+                    badgeSet.startsWith("moderator") && ffzModBadgeUrl != null                                    -> Badge.FFZModBadge(ffzModBadgeUrl, type)
+                    badgeSet.startsWith("vip") && ffzVipBadgeUrl != null                                          -> Badge.FFZVipBadge(ffzVipBadgeUrl, type)
                     (badgeSet.startsWith("subscriber") || badgeSet.startsWith("bits")) && channelBadgeUrl != null -> Badge.ChannelBadge(badgeSet, channelBadgeUrl, type)
-                    else -> globalBadgeUrl?.let { Badge.GlobalBadge(badgeSet, it, type) }
+                    else                                                                                          -> globalBadgeUrl?.let { Badge.GlobalBadge(badgeSet, it, type) }
                 }
             }.orEmpty()
 

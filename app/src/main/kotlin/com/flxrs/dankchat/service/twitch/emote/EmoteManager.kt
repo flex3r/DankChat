@@ -95,7 +95,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         twitchResult.sets.forEach { (set, emotes) ->
             val type = when (set) {
                 "0", "42" -> EmoteType.GlobalTwitchEmote // 42 == monkey emote set, move them to the global emote section
-                else -> EmoteType.ChannelTwitchEmote(setMapping[set] ?: "Twitch")
+                else      -> EmoteType.ChannelTwitchEmote(setMapping[set] ?: "Twitch")
             }
 
             emotes.mapToGenericEmotes(type).forEach {
@@ -123,7 +123,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
     private fun List<TwitchEmoteDto>?.mapToGenericEmotes(type: EmoteType): List<GenericEmote> = this?.map { (name, id) ->
         val code = when (type) {
             is EmoteType.GlobalTwitchEmote -> EMOTE_REPLACEMENTS[name] ?: name
-            else -> name
+            else                           -> name
         }
         GenericEmote(
             code = code,
@@ -204,7 +204,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
 
                     adjustedMessage = when (emote.position.last) {
                         adjustedMessage.length -> adjustedMessage.substring(0, emote.position.first)
-                        else -> adjustedMessage.removeRange(emote.position)
+                        else                   -> adjustedMessage.removeRange(emote.position)
                     }
                     emote.position = previousEmote.position
                     foundEmote = true
@@ -328,12 +328,12 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         val (scale, url) = when {
             emote.urls.containsKey("4") && emote.urls["4"] != null -> 1 to emote.urls.getValue("4")
             emote.urls.containsKey("2") && emote.urls["2"] != null -> 2 to emote.urls.getValue("2")
-            else -> 4 to emote.urls["1"]
+            else                                                   -> 4 to emote.urls["1"]
         }
         val lowResUrl = emote.urls["2"] ?: emote.urls["1"]
         val type = when {
             channel.isBlank() -> EmoteType.GlobalFFZEmote
-            else -> EmoteType.ChannelFFZEmote
+            else              -> EmoteType.ChannelFFZEmote
         }
         return GenericEmote(name, "https:$url", "https:$lowResUrl", false, "$id", scale, type)
     }

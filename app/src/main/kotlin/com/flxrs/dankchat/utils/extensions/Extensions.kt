@@ -26,7 +26,7 @@ fun List<GenericEmote>.moveToFront(channel: String?): List<GenericEmote> = this
 fun List<MultiEntryItem.Entry>.mapToMention(): List<Mention> = mapNotNull {
     when {
         it.isRegex -> runCatching { Mention.RegexPhrase(it.entry.toRegex(RegexOption.IGNORE_CASE), it.matchUser) }.getOrNull()
-        else -> Mention.Phrase(it.entry, it.matchUser)
+        else       -> Mention.Phrase(it.entry, it.matchUser)
     }
 }
 
@@ -43,7 +43,7 @@ inline fun <V> measureTimeAndLog(tag: String, toLoad: String, block: () -> V): V
     val (result, time) = measureTimeValue(block)
     when {
         result != null -> Log.i(tag, "Loaded $toLoad in $time ms")
-        else -> Log.i(tag, "Failed to load $toLoad ($time ms)")
+        else           -> Log.i(tag, "Failed to load $toLoad ($time ms)")
     }
 
     return result

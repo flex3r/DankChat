@@ -9,10 +9,10 @@ import com.flxrs.dankchat.service.api.dto.HelixUserDto
 import com.flxrs.dankchat.service.api.dto.UserFollowsDto
 import com.flxrs.dankchat.utils.DateTimeUtils.asParsedZonedDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -82,7 +82,7 @@ class UserPopupViewModel @Inject constructor(
         val result = runCatching { block(args.targetUserId, args.currentUserId, args.oAuth) }
         when {
             result.isFailure -> _userPopupState.value = UserPopupState.Error(result.exceptionOrNull())
-            else -> loadData()
+            else             -> loadData()
         }
     }
 

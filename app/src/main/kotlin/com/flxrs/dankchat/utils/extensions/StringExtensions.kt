@@ -27,7 +27,7 @@ fun String.removeDuplicateWhitespace(): Pair<String, List<Int>> {
         if (codePoint.isWhitespace) {
             when {
                 previousWhitespace -> removedSpacesPositions += totalCharCount
-                else -> stringBuilder.appendCodePoint(codePoint)
+                else               -> stringBuilder.appendCodePoint(codePoint)
             }
 
             previousWhitespace = true
@@ -116,7 +116,7 @@ val String.supplementaryCodePointPositions: List<Int>
 val String.removeOAuthSuffix: String
     get() = when {
         startsWith("oauth:", true) -> substringAfter(':')
-        else -> this
+        else                       -> this
     }
 
 
@@ -125,9 +125,9 @@ fun String.trimEndSpecialChar(): String = trimEnd().run {
         length > 1 && Character.isLowSurrogate(this[lastIndex]) -> {
             when (Character.toCodePoint(this[lastIndex - 1], this[lastIndex])) {
                 0x000E0000 -> removeRange(range = lastIndex - 1..lastIndex)
-                else -> this
+                else       -> this
             }
         }
-        else -> this
+        else                                                    -> this
     }.trimEnd()
 }

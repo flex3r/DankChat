@@ -47,7 +47,7 @@ object NetworkModule {
             } catch (t: Throwable) {
                 when (t) {
                     is IOException -> throw t
-                    else -> throw IOException(t)
+                    else           -> throw IOException(t)
                 }
             }
         }
@@ -70,7 +70,7 @@ object NetworkModule {
             } catch (t: Throwable) {
                 when (t) {
                     is IOException -> throw t
-                    else -> throw IOException(t)
+                    else           -> throw IOException(t)
                 }
             }
         }

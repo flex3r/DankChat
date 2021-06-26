@@ -31,7 +31,7 @@ class DankChatApplication : Application(), ImageLoaderFactory {
                 when {
                     // Force dark theme on < Android 8.1 because of statusbar/navigationbar issues
                     darkMode || (Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1 && !isTv) -> AppCompatDelegate.MODE_NIGHT_YES
-                    else -> AppCompatDelegate.MODE_NIGHT_NO
+                    else                                                                     -> AppCompatDelegate.MODE_NIGHT_NO
                 }
             }
         AppCompatDelegate.setDefaultNightMode(nightMode)

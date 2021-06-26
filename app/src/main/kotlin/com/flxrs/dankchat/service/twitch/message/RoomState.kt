@@ -18,8 +18,8 @@ data class RoomState(
         .map {
             when (it.key) {
                 RoomStateTag.FOLLOW -> if (it.value == 0) "follow" else "follow(${it.value})"
-                RoomStateTag.SLOW -> "slow(${it.value})"
-                else -> it.key.name.lowercase()
+                RoomStateTag.SLOW   -> "slow(${it.value})"
+                else                -> it.key.name.lowercase()
             }
         }.joinToString()
 

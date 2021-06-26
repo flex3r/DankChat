@@ -24,11 +24,11 @@ class EmoteSuggestionsArrayAdapter(context: Context, private val onCount: (count
         imageView.setImageDrawable(null)
         getItem(position)?.let { suggestion: Suggestion ->
             when (suggestion) {
-                is Suggestion.EmoteSuggestion -> imageView.loadImage(suggestion.emote.url) {
+                is Suggestion.EmoteSuggestion   -> imageView.loadImage(suggestion.emote.url) {
                     scale(Scale.FIT)
                     size(textView.lineHeight * 2)
                 }
-                is Suggestion.UserSuggestion -> imageView.setImageDrawable(context.getDrawableAndSetSurfaceTint(R.drawable.ic_notification_icon))
+                is Suggestion.UserSuggestion    -> imageView.setImageDrawable(context.getDrawableAndSetSurfaceTint(R.drawable.ic_notification_icon))
                 is Suggestion.CommandSuggestion -> imageView.setImageDrawable(context.getDrawableAndSetSurfaceTint(R.drawable.ic_android))
             }
         }

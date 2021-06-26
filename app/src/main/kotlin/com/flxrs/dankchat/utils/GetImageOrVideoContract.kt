@@ -16,6 +16,6 @@ class GetImageOrVideoContract : ActivityResultContract<Unit, Uri?>() {
 
     override fun parseResult(resultCode: Int, intent: Intent?): Uri? = when {
         intent == null || resultCode != Activity.RESULT_OK -> null
-        else -> intent.data
+        else                                               -> intent.data
     }
 }
