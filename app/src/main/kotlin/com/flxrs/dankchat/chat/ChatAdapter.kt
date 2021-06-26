@@ -81,7 +81,6 @@ class ChatAdapter(
     override fun onViewRecycled(holder: ViewHolder) {
         holder.scope.coroutineContext.cancelChildren()
         holder.binding.executePendingBindings()
-        emoteManager.gifCallback.removeView(holder.binding.itemText)
         super.onViewRecycled(holder)
     }
 
@@ -310,10 +309,6 @@ class ChatAdapter(
                 }
             }
 
-            if (animateGifs) {
-                emoteManager.gifCallback.addView(holder.binding.itemText)
-            }
-
             val fullPrefix = prefixLength + badgesLength
             emotes.groupBy { it.position }.forEach { (_, emotes) ->
                 try {
@@ -336,8 +331,6 @@ class ChatAdapter(
 
         // set bounds again but adjust by maximum width/height of stacked drawables
         forEachIndexed { idx, dr -> dr.transformEmoteDrawable(scaleFactor, emotes[idx], maxWidth, maxHeight) }
-
-        callback = emoteManager.gifCallback
     }
 
     private suspend fun ChatMessageEmote.toDrawable(context: Context, animateGifs: Boolean, useCache: Boolean): Drawable? {

@@ -8,8 +8,10 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import coil.ImageLoader
 import coil.ImageLoaderFactory
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
 import com.flxrs.dankchat.di.EmoteOkHttpClient
-import com.flxrs.dankchat.utils.GifDrawableDecoder
+import com.flxrs.dankchat.utils.DelegateGifDecoder
 import dagger.hilt.android.HiltAndroidApp
 import okhttp3.OkHttpClient
 import javax.inject.Inject
@@ -40,14 +42,13 @@ class DankChatApplication : Application(), ImageLoaderFactory {
     override fun newImageLoader(): ImageLoader {
         return ImageLoader.Builder(this)
             .okHttpClient { client }
-            .componentRegistry { add(GifDrawableDecoder()) }
-            //.componentRegistry {
-            //    if (SDK_INT >= 28) {
-            //        add(ImageDecoderDecoder(this@DankChatApplication))
-            //    } else {
-            //        add(GifDecoder())
-            //    }
-            //}
+            .componentRegistry {
+                if (Build.VERSION.SDK_INT >= 28) {
+                    add(DelegateGifDecoder(ImageDecoderDecoder(this@DankChatApplication)))
+                } else {
+                    add(DelegateGifDecoder(GifDecoder()))
+                }
+            }
             .build()
     }
 

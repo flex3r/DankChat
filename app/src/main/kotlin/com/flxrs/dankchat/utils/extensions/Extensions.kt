@@ -51,7 +51,7 @@ inline fun <V> measureTimeAndLog(tag: String, toLoad: String, block: () -> V): V
 
 val Int.isEven get() = (this % 2 == 0)
 
-fun Context.getDrawableAndSetSurfaceTint(@DrawableRes id: Int) = getDrawable(id)?.apply {
+fun Context.getDrawableAndSetSurfaceTint(@DrawableRes id: Int) = ContextCompat.getDrawable(this, id)?.apply {
     DrawableCompat.setTint(this, ContextCompat.getColor(this@getDrawableAndSetSurfaceTint, R.color.color_on_surface))
 }
 

@@ -3,9 +3,7 @@ package com.flxrs.dankchat.chat
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.SharedPreferences
-import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
-import android.text.style.ImageSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +25,6 @@ import com.flxrs.dankchat.utils.extensions.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import pl.droidsonroids.gif.GifDrawable
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -114,15 +111,6 @@ open class ChatFragment : Fragment() {
         super.onDestroyView()
     }
 
-    override fun onStop() {
-        // Stop animated drawables and related invalidation callbacks
-        if (activity?.isChangingConfigurations == false && ::adapter.isInitialized) {
-            binding.chat.cleanupActiveDrawables(adapter.itemCount)
-        }
-
-        super.onStop()
-    }
-
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
         savedInstanceState?.let {
@@ -188,13 +176,6 @@ open class ChatFragment : Fragment() {
             }
         }
     }
-
-    private fun RecyclerView.cleanupActiveDrawables(itemCount: Int) =
-        forEachViewHolder<ChatAdapter.ViewHolder>(itemCount) { holder ->
-            holder.binding.itemText.forEachSpan<ImageSpan> { imageSpan ->
-                (imageSpan.drawable as? LayerDrawable)?.forEachLayer(GifDrawable::stop)
-            }
-        }
 
     companion object {
         private const val AT_BOTTOM_STATE = "chat_at_bottom_state"
