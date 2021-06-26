@@ -154,7 +154,7 @@
     <string name="confirm_user_block_positive_button">Bloquer</string>
     <string name="preference_visible_badges_title">Badges visible</string>
     <string name="preference_prefer_emote_suggestions_title">Préférer les suggestions d\'emotes</string>
-    <string name="preference_prefer_emote_suggestions_summary">Prioritizer la suggestion d\'emotes par rapport aux suggestions de l'utilisateur</string>
+    <string name="preference_prefer_emote_suggestions_summary">Prioritizer la suggestion d\'emotes par rapport aux suggestions de l\'utilisateur</string>
     <string name="preference_user_long_click_title">Comportement lors d\'un long clic sur un utilisateur</string>
     <string name="preference_user_long_click_summary_on">Un clic normal ouvre un popup, un clic long mentionne l\'utilisateur</string>
     <string name="preference_user_long_click_summary_off">Un clic normal mentionne l\'utilisateur, un clic long ouvre un popup</string>
