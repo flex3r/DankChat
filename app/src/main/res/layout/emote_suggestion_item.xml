@@ -5,7 +5,7 @@
     android:maxHeight="64dp"
     android:orientation="horizontal">
 
-    <pl.droidsonroids.gif.GifImageView
+    <ImageView
         android:id="@+id/suggestion_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
