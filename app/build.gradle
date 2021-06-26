@@ -98,6 +98,7 @@ dependencies {
 // Image loading
     implementation "io.coil-kt:coil:$coil_version"
     implementation "io.coil-kt:coil-gif:$coil_version"
+    implementation "pl.droidsonroids.gif:android-gif-drawable:$gif_drawable_version"
 
 // HTTP clients
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"

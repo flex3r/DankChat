@@ -1,7 +1,7 @@
 // https://youtrack.jetbrains.com/issue/KTIJ-196
 @file:Suppress("SameParameterValue", "UnusedEquals", "UnusedUnaryOperator")
 
-package com.flxrs.dankchat.utils
+package com.flxrs.dankchat.utils.gifs
 
 import okio.Buffer
 import okio.ByteString
