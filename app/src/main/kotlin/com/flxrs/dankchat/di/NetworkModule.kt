@@ -15,6 +15,7 @@ import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.io.IOException
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -38,10 +39,17 @@ object NetworkModule {
         //.addInterceptor(ChuckerInterceptor(context))
         //.addInterceptor(HttpLoggingInterceptor().also { it.setLevel(HttpLoggingInterceptor.Level.BODY) })
         .addInterceptor { chain ->
-            chain.request().newBuilder()
-                .header("User-Agent", "dankchat/${BuildConfig.VERSION_NAME}")
-                .build()
-                .let { chain.proceed(it) }
+            try {
+                chain.request().newBuilder()
+                    .header("User-Agent", "dankchat/${BuildConfig.VERSION_NAME}")
+                    .build()
+                    .let { chain.proceed(it) }
+            } catch (t: Throwable) {
+                when (t) {
+                    is IOException -> throw t
+                    else -> throw IOException(t)
+                }
+            }
         }
         .build()
 
@@ -59,6 +67,11 @@ object NetworkModule {
             } catch (e: IllegalArgumentException) {
                 val new = request.newBuilder().cacheControl(CacheControl.FORCE_NETWORK).build()
                 chain.proceed(new)
+            } catch (t: Throwable) {
+                when (t) {
+                    is IOException -> throw t
+                    else -> throw IOException(t)
+                }
             }
         }
         .build()
