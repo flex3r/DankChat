@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.service.twitch.emote
 
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.util.LruCache
 import com.flxrs.dankchat.service.api.ApiManager
 import com.flxrs.dankchat.service.api.dto.*
@@ -104,7 +105,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         }
     }
 
-    suspend fun filterAndSetBitEmotes(emoteSets: List<String>) = withContext(Dispatchers.Default) {
+    suspend fun filterAndLoadUserStateEmotes(emoteSets: List<String>) = withContext(Dispatchers.Default) {
         val filtered = emoteSets.filter { it !in krakenEmoteSets }
         val emoteSetsResult = filtered.map {
             async {

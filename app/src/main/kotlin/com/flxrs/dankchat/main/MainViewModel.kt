@@ -191,9 +191,8 @@ class MainViewModel @Inject constructor(
                 loadInitialData(oAuth.removeOAuthSuffix, id, channelList, loadTwitchData, loadSupibot, handler)
 
                 withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
-                    chatRepository.userState.take(1).collect { userState ->
-                        dataRepository.filterAndSetBitEmotes(userState.emoteSets)
-                    }
+                    val userState = chatRepository.getLatestValidUserState()
+                    dataRepository.filterAndLoadUserStateEmotes(userState.emoteSets)
                 }
 
                 // global emote suggestions for whisper tab
@@ -312,10 +311,8 @@ class MainViewModel @Inject constructor(
             }
 
             withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
-                chatRepository.userState.take(1).collect { userState ->
-                    dataRepository.filterAndSetBitEmotes(userState.emoteSets)
-                    dataRepository.setEmotesForSuggestions(channel)
-                }
+                val userState = chatRepository.getLatestValidUserState()
+                dataRepository.filterAndLoadUserStateEmotes(userState.emoteSets)
             }
 
             chatRepository.partChannel("jtv")

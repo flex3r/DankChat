@@ -56,6 +56,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     private var blacklistEntries = listOf<Mention>()
     private var name: String = ""
     private var lastMessage = mutableMapOf<String, String>()
+    private var startedConnection = false
 
     val notificationsFlow: SharedFlow<List<ChatItem>> = _notificationsFlow.asSharedFlow()
     val channelMentionCount: SharedFlow<Map<String, Int>> = _channelMentionCount.asSharedFlow()
@@ -73,7 +74,6 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     val userState: StateFlow<UserState>
         get() = _userState.asStateFlow()
 
-    var startedConnection = false
     var scrollBackLength = 500
         set(value) {
             messages.forEach { (_, messagesFlow) ->
@@ -88,6 +88,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     fun getConnectionState(channel: String): StateFlow<ConnectionState> = connectionState.getOrPut(channel) { MutableStateFlow(ConnectionState.DISCONNECTED) }
     fun getRoomState(channel: String): SharedFlow<RoomState> = roomStates.getOrPut(channel) { mutableSharedFlowOf(RoomState(channel)) }
     fun getUsers(channel: String): StateFlow<LruCache<String, Boolean>> = users.getOrPut(channel) { MutableStateFlow(createUserCache()) }
+    suspend fun getLatestValidUserState(): UserState = userState.filter { it.userId.isNotBlank() }.take(count = 1).single()
 
     suspend fun loadRecentMessages(channel: String, loadHistory: Boolean, isUserChange: Boolean) {
         when {
