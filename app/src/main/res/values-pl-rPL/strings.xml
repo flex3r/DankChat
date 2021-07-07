@@ -158,6 +158,8 @@
     <string name="preference_user_long_click_title">Zachowanie po przytrzymaniu nazwy użytkownika</string>
     <string name="preference_user_long_click_summary_on">Dotknięcie otwiera informacje o użytkowniku, przytrzymanie wspomina użytkownika na czacie</string>
     <string name="preference_user_long_click_summary_off">Dotknięcie wspomina użytkownika na czacie, przytrzymanie otwiera informacje o użytkowniku</string>
+    <string name="preference_tts_force_english_title">Wymuś język angielski</string>
+    <string name="preference_tts_force_english_summary">Wymuś język wiadomości TTS na angielski zamiast domyślnego języka systemu</string>
 
     <plurals name="viewers">
         <item quantity="one">Na żywo z %d widzem</item>
