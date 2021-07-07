@@ -155,7 +155,7 @@
     <string name="preference_visible_badges_title">Widoczne odznaki</string>
     <string name="preference_prefer_emote_suggestions_title">Preferuj sugestie emotek</string>
     <string name="preference_prefer_emote_suggestions_summary">Nadaj wyższy priorytet sugestiom emotek niż sugestiom nazw użytkowników</string>
-    <string name="preference_user_long_click_title">Zachowanie przytrzymania nazwy użytkownika</string>
+    <string name="preference_user_long_click_title">Zachowanie po przytrzymaniu nazwy użytkownika</string>
     <string name="preference_user_long_click_summary_on">Dotknięcie otwiera informacje o użytkowniku, przytrzymanie wspomina użytkownika na czacie</string>
     <string name="preference_user_long_click_summary_off">Dotknięcie wspomina użytkownika na czacie, przytrzymanie otwiera informacje o użytkowniku</string>
 
