@@ -33,7 +33,7 @@ class MentionFragment : Fragment() {
             mentionViewpager.setup()
             tabLayoutMediator = TabLayoutMediator(mentionTabs, mentionViewpager) { tab, position ->
                 tab.text = when (position) {
-                    0 -> getString(R.string.mentions)
+                    0    -> getString(R.string.mentions)
                     else -> getString(R.string.whispers)
                 }
             }.apply { attach() }
@@ -42,7 +42,7 @@ class MentionFragment : Fragment() {
         mentionViewModel.apply {
             collectFlow(hasMentions) {
                 when {
-                    it -> if (binding.mentionTabs.selectedTabPosition != 0) {
+                    it   -> if (binding.mentionTabs.selectedTabPosition != 0) {
                         binding.mentionTabs.getTabAt(0)?.apply { orCreateBadge }
                     }
                     else -> binding.mentionTabs.getTabAt(0)?.removeBadge()

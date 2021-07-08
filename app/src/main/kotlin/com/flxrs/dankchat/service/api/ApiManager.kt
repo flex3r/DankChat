@@ -49,14 +49,16 @@ class ApiManager @Inject constructor(
     suspend fun getUserBlocks(oAuth: String, userId: String): HelixUserBlockListDto? = helixApiService.getUserBlocks("Bearer $oAuth", userId).bodyOrNull
     suspend fun blockUser(oAuth: String, targetUserId: String): Boolean = helixApiService.putUserBlock("Bearer $oAuth", targetUserId).isSuccessful
     suspend fun unblockUser(oAuth: String, targetUserId: String): Boolean = helixApiService.deleteUserBlock("Bearer $oAuth", targetUserId).isSuccessful
+    suspend fun getChannelBadges(oAuth: String, channelId: String): HelixBadgesDto? = helixApiService.getChannelBadges("Bearer $oAuth", channelId).bodyOrNull
+    suspend fun getGlobalBadges(oAuth: String): HelixBadgesDto? = helixApiService.getGlobalBadges("Bearer $oAuth").bodyOrNull
 
     suspend fun getUserEmotes(oAuth: String, id: String): TwitchEmotesDto? = krakenApiService.getUserEmotes("OAuth $oAuth", id).bodyOrNull
 
     suspend fun getUserSet(set: String): TwitchEmoteSetDto? = dankChatApiService.getSet(set).bodyOrNull?.firstOrNull()
     suspend fun getDankChatBadges(): List<DankChatBadgeDto>? = dankChatApiService.getDankChatBadges().bodyOrNull
 
-    suspend fun getChannelBadges(channelId: String): TwitchBadgesDto? = badgesApiService.getChannelBadges(channelId).bodyOrNull
-    suspend fun getGlobalBadges(): TwitchBadgesDto? = badgesApiService.getGlobalBadges().bodyOrNull
+    suspend fun getChannelBadgesFallback(channelId: String): TwitchBadgesDto? = badgesApiService.getChannelBadges(channelId).bodyOrNull
+    suspend fun getGlobalBadgesFallback(): TwitchBadgesDto? = badgesApiService.getGlobalBadges().bodyOrNull
 
     suspend fun getFFZChannelEmotes(channelId: String): FFZChannelDto? = ffzApiService.getChannelEmotes(channelId).bodyOrNull
     suspend fun getFFZGlobalEmotes(): FFZGlobalDto? = ffzApiService.getGlobalEmotes().bodyOrNull
@@ -67,7 +69,7 @@ class ApiManager @Inject constructor(
     suspend fun getRecentMessages(channel: String): RecentMessagesDto? {
         return when {
             loadedRecentsInChannels.contains(channel) -> null
-            else -> {
+            else                                      -> {
                 val response = recentMessagesApiService.getRecentMessages(channel)
                 response.bodyOrNull?.also { loadedRecentsInChannels += channel }
             }
@@ -96,7 +98,7 @@ class ApiManager @Inject constructor(
         val response = client.newCall(request).execute()
         when {
             response.isSuccessful -> response.body?.string()
-            else -> null
+            else                  -> null
         }
     }
 
@@ -137,5 +139,5 @@ class ApiManager @Inject constructor(
 private val <T> Response<T>.bodyOrNull
     get() = when {
         isSuccessful -> body()
-        else -> null
+        else         -> null
     }

@@ -6,8 +6,8 @@ import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.Rect
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.LayerDrawable
+import android.graphics.drawable.*
+import android.os.Build
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
@@ -37,10 +37,10 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatItemBinding
 import com.flxrs.dankchat.service.twitch.badge.Badge
 import com.flxrs.dankchat.service.twitch.badge.BadgeType
-import com.flxrs.dankchat.service.twitch.message.SystemMessageType
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.message.SystemMessage
+import com.flxrs.dankchat.service.twitch.message.SystemMessageType
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.extensions.isEven
@@ -50,7 +50,6 @@ import com.flxrs.dankchat.utils.showErrorDialog
 import com.flxrs.dankchat.utils.span.LongClickLinkMovementMethod
 import com.flxrs.dankchat.utils.span.LongClickableSpan
 import kotlinx.coroutines.*
-import pl.droidsonroids.gif.GifDrawable
 import kotlin.math.roundToInt
 
 class ChatAdapter(
@@ -83,7 +82,10 @@ class ChatAdapter(
     override fun onViewRecycled(holder: ViewHolder) {
         holder.scope.coroutineContext.cancelChildren()
         holder.binding.executePendingBindings()
-        emoteManager.gifCallback.removeView(holder.binding.itemText)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            emoteManager.gifCallback.removeView(holder.binding.itemText)
+        }
+
         super.onViewRecycled(holder)
     }
 
@@ -99,7 +101,7 @@ class ChatAdapter(
     private val ViewHolder.isAlternateBackground
         get() = when (bindingAdapterPosition) {
             itemCount - 1 -> messageCount.isEven
-            else -> (bindingAdapterPosition - itemCount - 1).isEven
+            else          -> (bindingAdapterPosition - itemCount - 1).isEven
         }
 
     private fun TextView.handleSystemMessage(message: SystemMessage, holder: ViewHolder) {
@@ -115,19 +117,19 @@ class ChatAdapter(
 
         val background = when {
             isCheckeredMode && holder.isAlternateBackground -> R.color.color_transparency_20
-            else -> android.R.color.transparent
+            else                                            -> android.R.color.transparent
         }
         setBackgroundResource(background)
 
         val systemMessageText = when (message.type) {
-            SystemMessageType.DISCONNECTED -> context.getString(R.string.system_message_disconnected)
+            SystemMessageType.DISCONNECTED      -> context.getString(R.string.system_message_disconnected)
             SystemMessageType.NO_HISTORY_LOADED -> context.getString(R.string.system_message_no_history)
-            SystemMessageType.CONNECTED -> context.getString(R.string.system_message_connected)
-            SystemMessageType.LOGIN_EXPIRED -> context.getString(R.string.login_expired)
+            SystemMessageType.CONNECTED         -> context.getString(R.string.system_message_connected)
+            SystemMessageType.LOGIN_EXPIRED     -> context.getString(R.string.login_expired)
         }
         val withTime = when {
             showTimeStamp -> SpannableStringBuilder().bold { append("${DateTimeUtils.timestampToLocalTime(message.timestamp)} ") }.append(systemMessageText)
-            else -> SpannableStringBuilder().append(systemMessageText)
+            else          -> SpannableStringBuilder().append(systemMessageText)
         }
 
         setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
@@ -191,25 +193,25 @@ class ChatAdapter(
             val scaleFactor = lineHeight * 1.5 / 112
 
             val background = when {
-                isNotify -> if (isDarkMode) R.color.color_highlight_dark else R.color.color_highlight_light
-                isReward -> if (isDarkMode) R.color.color_reward_dark else R.color.color_reward_light
-                isMention -> if (isDarkMode) R.color.color_mention_dark else R.color.color_mention_light
+                isNotify                                        -> if (isDarkMode) R.color.color_highlight_dark else R.color.color_highlight_light
+                isReward                                        -> if (isDarkMode) R.color.color_reward_dark else R.color.color_reward_light
+                isMention                                       -> if (isDarkMode) R.color.color_mention_dark else R.color.color_mention_light
                 isCheckeredMode && holder.isAlternateBackground -> R.color.color_transparency_20
-                else -> android.R.color.transparent
+                else                                            -> android.R.color.transparent
             }
             setBackgroundResource(background)
 
             val fullName = when {
                 displayName.equals(name, true) -> displayName
-                else -> "$name($displayName)"
+                else                           -> "$name($displayName)"
             }
 
             val fullDisplayName = when {
                 isWhisper && whisperRecipient.isNotBlank() -> "$fullName -> $whisperRecipient: "
-                !showUserName -> ""
-                isAction -> "$fullName "
-                fullName.isBlank() -> ""
-                else -> "$fullName: "
+                !showUserName                              -> ""
+                isAction                                   -> "$fullName "
+                fullName.isBlank()                         -> ""
+                else                                       -> "$fullName: "
             }
 
             val allowedBadges = badges.filter { visibleBadgeTypes.contains(it.type) }
@@ -217,7 +219,7 @@ class ChatAdapter(
 
             val channelOrBlank = when {
                 isWhisper -> ""
-                else -> "#$channel"
+                else      -> "#$channel"
             }
             val timeAndWhisperBuilder = StringBuilder()
             if (isMentionTab && isMention) timeAndWhisperBuilder.append("$channelOrBlank ")
@@ -234,7 +236,7 @@ class ChatAdapter(
 
             when {
                 isAction -> spannable.color(normalizedColor) { append(message) }
-                else -> spannable.append(message)
+                else     -> spannable.append(message)
             }
 
             // clicking usernames
@@ -255,7 +257,7 @@ class ChatAdapter(
             val messageEnd = messageStart + message.length
             val spannableWithEmojis = when (emojiCompat.loadState) {
                 EmojiCompat.LOAD_STATE_SUCCEEDED -> emojiCompat.process(spannable, messageStart, messageEnd, Int.MAX_VALUE, EmojiCompat.REPLACE_STRATEGY_NON_EXISTENT)
-                else -> spannable
+                else                             -> spannable
             } as SpannableStringBuilder
 
             // links
@@ -312,9 +314,10 @@ class ChatAdapter(
                 }
             }
 
-            if (animateGifs && emotes.any(ChatMessageEmote::isGif)) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && animateGifs) {
                 emoteManager.gifCallback.addView(holder.binding.itemText)
             }
+
             val fullPrefix = prefixLength + badgesLength
             emotes.groupBy { it.position }.forEach { (_, emotes) ->
                 try {
@@ -338,23 +341,18 @@ class ChatAdapter(
         // set bounds again but adjust by maximum width/height of stacked drawables
         forEachIndexed { idx, dr -> dr.transformEmoteDrawable(scaleFactor, emotes[idx], maxWidth, maxHeight) }
 
-        if (emotes.any(ChatMessageEmote::isGif)) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
             callback = emoteManager.gifCallback
         }
     }
 
-    private suspend fun ChatMessageEmote.toDrawable(context: Context, animateGifs: Boolean, useCache: Boolean): Drawable? = when {
-        !isGif -> Coil.execute(url.toRequest(context)).drawable
-        else -> {
-            val cached = emoteManager.gifCache[url]
-            when {
-                useCache && cached != null -> cached.also { it.setRunning(animateGifs) }
-                else -> Coil.execute(url.toRequest(context)).drawable?.apply {
-                    this as GifDrawable
-                    if (cached == null) {
-                        emoteManager.gifCache.put(url, this)
-                    }
-
+    private suspend fun ChatMessageEmote.toDrawable(context: Context, animateGifs: Boolean, useCache: Boolean): Drawable? {
+        val cached = emoteManager.gifCache[url]
+        return when {
+            useCache && cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
+            else                       -> Coil.execute(url.toRequest(context)).drawable?.apply {
+                if (this is Animatable && cached == null) {
+                    emoteManager.gifCache.put(url, this)
                     setRunning(animateGifs)
                 }
             }
@@ -372,9 +370,9 @@ class ChatAdapter(
     private fun Drawable.transformEmoteDrawable(scale: Double, emote: ChatMessageEmote, maxWidth: Int = 0, maxHeight: Int = 0): Drawable {
         val ratio = intrinsicWidth / intrinsicHeight.toFloat()
         val height = when {
-            intrinsicHeight < 55 && emote.isTwitch -> (70 * scale).roundToInt()
+            intrinsicHeight < 55 && emote.isTwitch       -> (70 * scale).roundToInt()
             intrinsicHeight in 55..111 && emote.isTwitch -> (112 * scale).roundToInt()
-            else -> (intrinsicHeight * scale).roundToInt()
+            else                                         -> (intrinsicHeight * scale).roundToInt()
         }
         val width = (height * ratio).roundToInt()
 

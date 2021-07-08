@@ -1,14 +1,16 @@
 package com.flxrs.dankchat.service.twitch.emote
 
+import android.graphics.drawable.Drawable
+import android.util.Log
 import android.util.LruCache
 import com.flxrs.dankchat.service.api.ApiManager
 import com.flxrs.dankchat.service.api.dto.*
+import com.flxrs.dankchat.service.twitch.badge.BadgeSet
 import com.flxrs.dankchat.utils.extensions.supplementaryCodePointPositions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
-import pl.droidsonroids.gif.GifDrawable
 import pl.droidsonroids.gif.MultiCallback
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
@@ -26,11 +28,11 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
 
     private val ffzModBadges = ConcurrentHashMap<String, String>()
     private val ffzVipBadges = ConcurrentHashMap<String, String>()
-    private val channelBadges = ConcurrentHashMap<String, TwitchBadgesDto>()
-    private val globalBadges = ConcurrentHashMap<String, TwitchBadgeSetDto>()
+    private val channelBadges = ConcurrentHashMap<String, Map<String, BadgeSet>>()
+    private val globalBadges = ConcurrentHashMap<String, BadgeSet>()
     private val dankChatBadges = CopyOnWriteArrayList<DankChatBadgeDto>()
 
-    val gifCache = LruCache<String, GifDrawable>(64)
+    val gifCache = LruCache<String, Drawable>(64)
     val gifCallback = MultiCallback(true)
 
     fun parse3rdPartyEmotes(message: String, channel: String = "", withTwitch: Boolean = false): List<ChatMessageEmote> {
@@ -54,7 +56,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         return adjustOverlayEmotes(message, emotes)
     }
 
-    fun getChannelBadgeUrl(channel: String, set: String, version: String) = channelBadges[channel]?.sets?.get(set)?.versions?.get(version)?.imageUrlHigh
+    fun getChannelBadgeUrl(channel: String, set: String, version: String) = channelBadges[channel]?.get(set)?.versions?.get(version)?.imageUrlHigh
 
     fun getGlobalBadgeUrl(set: String, version: String) = globalBadges[set]?.versions?.get(version)?.imageUrlHigh
 
@@ -64,12 +66,12 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
 
     fun getDankChatBadgeUrl(userId: String?) = dankChatBadges.find { it.users.any { id -> id == userId } }?.let { it.type to it.url }
 
-    fun setChannelBadges(channel: String, dto: TwitchBadgesDto) {
-        channelBadges[channel] = dto
+    fun setChannelBadges(channel: String, badges: Map<String, BadgeSet>) {
+        channelBadges[channel] = badges
     }
 
-    fun setGlobalBadges(dto: TwitchBadgesDto) {
-        globalBadges.putAll(dto.sets)
+    fun setGlobalBadges(badges: Map<String, BadgeSet>) {
+        globalBadges.putAll(badges)
     }
 
     fun setDankChatBadges(dto: List<DankChatBadgeDto>) {
@@ -94,7 +96,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         twitchResult.sets.forEach { (set, emotes) ->
             val type = when (set) {
                 "0", "42" -> EmoteType.GlobalTwitchEmote // 42 == monkey emote set, move them to the global emote section
-                else -> EmoteType.ChannelTwitchEmote(setMapping[set] ?: "Twitch")
+                else      -> EmoteType.ChannelTwitchEmote(setMapping[set] ?: "Twitch")
             }
 
             emotes.mapToGenericEmotes(type).forEach {
@@ -103,7 +105,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         }
     }
 
-    suspend fun filterAndSetBitEmotes(emoteSets: List<String>) = withContext(Dispatchers.Default) {
+    suspend fun filterAndLoadUserStateEmotes(emoteSets: List<String>) = withContext(Dispatchers.Default) {
         val filtered = emoteSets.filter { it !in krakenEmoteSets }
         val emoteSetsResult = filtered.map {
             async {
@@ -122,7 +124,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
     private fun List<TwitchEmoteDto>?.mapToGenericEmotes(type: EmoteType): List<GenericEmote> = this?.map { (name, id) ->
         val code = when (type) {
             is EmoteType.GlobalTwitchEmote -> EMOTE_REPLACEMENTS[name] ?: name
-            else -> name
+            else                           -> name
         }
         GenericEmote(
             code = code,
@@ -203,7 +205,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
 
                     adjustedMessage = when (emote.position.last) {
                         adjustedMessage.length -> adjustedMessage.substring(0, emote.position.first)
-                        else -> adjustedMessage.removeRange(emote.position)
+                        else                   -> adjustedMessage.removeRange(emote.position)
                     }
                     emote.position = previousEmote.position
                     foundEmote = true
@@ -327,12 +329,12 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         val (scale, url) = when {
             emote.urls.containsKey("4") && emote.urls["4"] != null -> 1 to emote.urls.getValue("4")
             emote.urls.containsKey("2") && emote.urls["2"] != null -> 2 to emote.urls.getValue("2")
-            else -> 4 to emote.urls["1"]
+            else                                                   -> 4 to emote.urls["1"]
         }
         val lowResUrl = emote.urls["2"] ?: emote.urls["1"]
         val type = when {
             channel.isBlank() -> EmoteType.GlobalFFZEmote
-            else -> EmoteType.ChannelFFZEmote
+            else              -> EmoteType.ChannelFFZEmote
         }
         return GenericEmote(name, "https:$url", "https:$lowResUrl", false, "$id", scale, type)
     }

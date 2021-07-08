@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.utils.extensions
 
-import pl.droidsonroids.gif.GifDrawable
+import android.graphics.drawable.Animatable
 
-fun GifDrawable.setRunning(running: Boolean) = if (running) start() else stop()
+
+fun Animatable.setRunning(running: Boolean) = if (running) start() else stop()

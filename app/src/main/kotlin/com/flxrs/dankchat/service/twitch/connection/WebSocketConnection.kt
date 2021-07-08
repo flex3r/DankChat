@@ -8,9 +8,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.*
-import kotlin.math.floor
-import kotlin.math.min
-import kotlin.math.roundToLong
+import kotlin.random.Random
+import kotlin.random.nextLong
 
 class WebSocketConnection(
     private val connectionName: String,
@@ -28,8 +27,17 @@ class WebSocketConnection(
     private var connected = false
     private var awaitingPong = false
     private var connecting = false
-    private var reconnectAttempts = 0
+    private var reconnectAttempts = 1
     private var onClosed: (() -> Unit)? = null
+
+    private val currentReconnectDelay: Long
+        get() {
+            val jitter = Random.nextLong(0L..RECONNECT_MAX_JITTER)
+            val reconnectDelay = RECONNECT_BASE_DELAY * (1 shl (reconnectAttempts - 1))
+            reconnectAttempts = (reconnectAttempts + 1).coerceAtMost(RECONNECT_MAX_ATTEMPTS)
+
+            return reconnectDelay + jitter
+        }
 
     var isAnonymous = false
 
@@ -84,20 +92,14 @@ class WebSocketConnection(
 
     fun reconnect(onlyIfNecessary: Boolean = false, forceConnect: Boolean = false) {
         if (!onlyIfNecessary || (!connected && !connecting)) {
-            reconnectAttempts = 0
+            reconnectAttempts = 1
             attemptReconnect(forceConnect)
         }
     }
 
     private fun attemptReconnect(forceConnect: Boolean = false) {
         scope.launch {
-            var reconnectDelay = 150L
-            if (reconnectAttempts > 0) {
-                val jitter = floor(Math.random() * (RECONNECT_JITTER + 1))
-                reconnectDelay = (min((RECONNECT_MULTIPLIER * reconnectAttempts) - RECONNECT_JITTER, 5000) + jitter).roundToLong()
-            }
-            reconnectAttempts++
-            delay(reconnectDelay)
+            delay(currentReconnectDelay)
 
             if (forceConnect) {
                 connect(nick, oAuth, forceConnect)
@@ -139,14 +141,14 @@ class WebSocketConnection(
             onDisconnect?.invoke()
             pingJob?.cancel()
 
-            Log.e(TAG, "[$connectionName] connection failed: ${t.message}, attempting to reconnect #${reconnectAttempts + 1}.. ")
+            Log.e(TAG, "[$connectionName] connection failed: ${t.stackTraceToString()}, attempting to reconnect #${reconnectAttempts}.. ")
             attemptReconnect(true)
         }
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
             connected = true
             connecting = false
-            reconnectAttempts = 0
+            reconnectAttempts = 1
             isAnonymous = (oAuth.isBlank() || !oAuth.startsWith("oauth:"))
 
             val auth = if (isAnonymous) "NaM" else oAuth
@@ -165,15 +167,15 @@ class WebSocketConnection(
                     close(null)
                 }
                 when (ircMessage.command) {
-                    "376" -> {
+                    "376"       -> {
                         Log.i(TAG, "[$connectionName] connected to irc")
                         socket?.joinChannels(channels)
                         pingJob = setupPingInterval()
                     }
-                    "PING" -> webSocket.handlePing()
-                    "PONG" -> awaitingPong = false
+                    "PING"      -> webSocket.handlePing()
+                    "PONG"      -> awaitingPong = false
                     "RECONNECT" -> reconnect()
-                    else -> onMessage(ircMessage)
+                    else        -> onMessage(ircMessage)
                 }
             }
         }
@@ -181,8 +183,9 @@ class WebSocketConnection(
 
 
     companion object {
-        private const val RECONNECT_MULTIPLIER = 250
-        private const val RECONNECT_JITTER = 100
+        private const val RECONNECT_BASE_DELAY = 1_000L
+        private const val RECONNECT_MAX_JITTER = 250L
+        private const val RECONNECT_MAX_ATTEMPTS = 4
         private const val PING_INTERVAL = 5 * 60 * 1000L
         private val TAG = WebSocketConnection::class.java.simpleName
     }

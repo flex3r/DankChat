@@ -33,7 +33,7 @@ class MentionChatFragment : ChatFragment() {
 
         when {
             args.isWhisperTab -> collectFlow(mentionViewModel.whispers) { adapter.submitList(it) }
-            else -> collectFlow(mentionViewModel.mentions) { adapter.submitList(it) }
+            else              -> collectFlow(mentionViewModel.mentions) { adapter.submitList(it) }
         }
 
         return binding.root
@@ -46,7 +46,7 @@ class MentionChatFragment : ChatFragment() {
 
         when {
             shouldMention -> (parentFragment as? MainFragment)?.whisperUser(targetUserName)
-            else -> (parentFragment as? MainFragment)?.openUserPopup(targetUserId, channel = null, isWhisperPopup = true)
+            else          -> (parentFragment as? MainFragment)?.openUserPopup(targetUserId, channel = null, isWhisperPopup = true)
         }
     }
 

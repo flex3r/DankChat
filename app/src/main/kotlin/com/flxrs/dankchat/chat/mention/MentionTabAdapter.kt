@@ -7,7 +7,7 @@ class MentionTabAdapter(parentFragment: Fragment) : FragmentStateAdapter(parentF
 
     override fun getItemCount(): Int = NUM_TABS
     override fun createFragment(position: Int): Fragment = when (position) {
-        0 -> MentionChatFragment.newInstance()
+        0    -> MentionChatFragment.newInstance()
         else -> MentionChatFragment.newInstance(isWhisperTab = true)
     }
 

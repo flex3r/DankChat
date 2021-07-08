@@ -56,6 +56,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     private var blacklistEntries = listOf<Mention>()
     private var name: String = ""
     private var lastMessage = mutableMapOf<String, String>()
+    private var startedConnection = false
 
     val notificationsFlow: SharedFlow<List<ChatItem>> = _notificationsFlow.asSharedFlow()
     val channelMentionCount: SharedFlow<Map<String, Int>> = _channelMentionCount.asSharedFlow()
@@ -73,7 +74,6 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     val userState: StateFlow<UserState>
         get() = _userState.asStateFlow()
 
-    var startedConnection = false
     var scrollBackLength = 500
         set(value) {
             messages.forEach { (_, messagesFlow) ->
@@ -88,12 +88,13 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     fun getConnectionState(channel: String): StateFlow<ConnectionState> = connectionState.getOrPut(channel) { MutableStateFlow(ConnectionState.DISCONNECTED) }
     fun getRoomState(channel: String): SharedFlow<RoomState> = roomStates.getOrPut(channel) { mutableSharedFlowOf(RoomState(channel)) }
     fun getUsers(channel: String): StateFlow<LruCache<String, Boolean>> = users.getOrPut(channel) { MutableStateFlow(createUserCache()) }
+    suspend fun getLatestValidUserState(): UserState = userState.filter { it.userId.isNotBlank() }.take(count = 1).single()
 
     suspend fun loadRecentMessages(channel: String, loadHistory: Boolean, isUserChange: Boolean) {
         when {
             isUserChange -> return
-            loadHistory -> loadRecentMessages(channel)
-            else -> {
+            loadHistory  -> loadRecentMessages(channel)
+            else         -> {
                 val currentChat = messages[channel]?.value ?: emptyList()
                 messages[channel]?.value = listOf(ChatItem(SystemMessage(type = SystemMessageType.NO_HISTORY_LOADED), false)) + currentChat
             }
@@ -275,7 +276,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         if (message.isNotBlank()) {
             val messageWithSuffix = when (lastMessage[channel] ?: "") {
                 message -> "$message $INVISIBLE_CHAR"
-                else -> message
+                else    -> message
             }
 
             onResult("PRIVMSG #$channel :$messageWithSuffix")
@@ -291,8 +292,8 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
         when (message.command) {
             "PRIVMSG" -> Unit
-            "366" -> handleConnected(message.params[1].substring(1), writeConnection.isAnonymous)
-            else -> onMessage(message)
+            "366"     -> handleConnected(message.params[1].substring(1), writeConnection.isAnonymous)
+            else      -> onMessage(message)
         }
     }
 
@@ -304,12 +305,12 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
     private fun onMessage(msg: IrcMessage): List<ChatItem>? {
         when (msg.command) {
-            "CLEARCHAT" -> handleClearChat(msg)
-            "ROOMSTATE" -> handleRoomState(msg)
-            "CLEARMSG" -> handleClearMsg(msg)
+            "CLEARCHAT"       -> handleClearChat(msg)
+            "ROOMSTATE"       -> handleRoomState(msg)
+            "CLEARMSG"        -> handleClearMsg(msg)
             "USERSTATE",
             "GLOBALUSERSTATE" -> handleUserState(msg)
-            else -> handleMessage(msg)
+            else              -> handleMessage(msg)
         }
         return null
     }
@@ -342,7 +343,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
         val state = when {
             isAnonymous -> ConnectionState.CONNECTED_NOT_LOGGED_IN
-            else -> ConnectionState.CONNECTED
+            else        -> ConnectionState.CONNECTED
         }
         makeAndPostSystemMessage(state.toSystemMessageType(), setOf(channel))
         connectionState[channel]?.value = state
@@ -446,7 +447,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     }
 
     private fun ConnectionState.toSystemMessageType(): SystemMessageType = when (this) {
-        ConnectionState.DISCONNECTED -> SystemMessageType.DISCONNECTED
+        ConnectionState.DISCONNECTED            -> SystemMessageType.DISCONNECTED
         ConnectionState.CONNECTED,
         ConnectionState.CONNECTED_NOT_LOGGED_IN -> SystemMessageType.CONNECTED
     }

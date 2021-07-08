@@ -153,6 +153,11 @@
     <string name="snackbar_paste">Vložit</string>
     <string name="preference_show_username_title">Ukázat přezdívku</string>
     <string name="preference_visible_badges_title">Viditelné odznaky</string>
+    <string name="preference_prefer_emote_suggestions_title">Preferovat emotikony</string>
+    <string name="preference_prefer_emote_suggestions_summary">Preferovat návrhy emotikonů než uzivatelů</string>
+    <string name="preference_user_long_click_title">Chování přidržení názvu uživatele</string>
+    <string name="preference_user_long_click_summary_on">Normální kliknutí otevře pop-up menu, dlouhé přidržení označí</string>
+    <string name="preference_user_long_click_summary_off">Normální kliknutí označí uživatele, dlouhé přidržení otevře pop-up menu</string>
 
     <plurals name="viewers">
         <item quantity="one">Živě s %d divákem</item>

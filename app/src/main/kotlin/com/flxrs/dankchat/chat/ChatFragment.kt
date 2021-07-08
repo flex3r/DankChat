@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.SharedPreferences
 import android.graphics.drawable.LayerDrawable
+import android.os.Build
 import android.os.Bundle
 import android.text.style.ImageSpan
 import android.view.LayoutInflater
@@ -82,7 +83,7 @@ open class ChatFragment : Fragment() {
                 getString(R.string.preference_visible_badges_key) -> binding.chat.swapAdapter(adapter, false)
                 getString(R.string.preference_line_separator_key) -> when {
                     pref.getBoolean(key, false) -> binding.chat.addItemDecoration(itemDecoration)
-                    else -> binding.chat.removeItemDecoration(itemDecoration)
+                    else                        -> binding.chat.removeItemDecoration(itemDecoration)
                 }
             }
         }
@@ -98,7 +99,7 @@ open class ChatFragment : Fragment() {
         super.onStart()
 
         // Trigger a redraw of last 50 items to start gifs again
-        if (::preferences.isInitialized && preferences.getBoolean(getString(R.string.preference_animate_gifs_key), true)) binding.chat.post {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && ::preferences.isInitialized && preferences.getBoolean(getString(R.string.preference_animate_gifs_key), true)) binding.chat.post {
             val start = (adapter.itemCount - MAX_MESSAGES_REDRAW_AMOUNT).coerceAtLeast(minimumValue = 0)
             val itemCount = MAX_MESSAGES_REDRAW_AMOUNT.coerceAtMost(maximumValue = adapter.itemCount)
             adapter.notifyItemRangeChanged(start, itemCount)
@@ -116,7 +117,7 @@ open class ChatFragment : Fragment() {
 
     override fun onStop() {
         // Stop animated drawables and related invalidation callbacks
-        if (activity?.isChangingConfigurations == false && ::adapter.isInitialized) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && activity?.isChangingConfigurations == false && ::adapter.isInitialized) {
             binding.chat.cleanupActiveDrawables(adapter.itemCount)
         }
 
@@ -143,7 +144,7 @@ open class ChatFragment : Fragment() {
 
         when {
             shouldMention -> (parentFragment as? MainFragment)?.mentionUser(targetUserName)
-            else -> (parentFragment as? MainFragment)?.openUserPopup(targetUserId, channel, isWhisperPopup = false)
+            else          -> (parentFragment as? MainFragment)?.openUserPopup(targetUserId, channel, isWhisperPopup = false)
         }
     }
 

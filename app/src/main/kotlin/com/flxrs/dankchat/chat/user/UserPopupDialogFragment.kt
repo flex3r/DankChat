@@ -28,14 +28,14 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
             lifecycleOwner = viewLifecycleOwner
             userMention.text = when {
                 args.isWhisperPopup -> getString(R.string.user_popup_whisper)
-                else -> getString(R.string.user_popup_mention)
+                else                -> getString(R.string.user_popup_mention)
             }
 
             userMention.setOnClickListener {
                 val displayName = viewModel.displayNameOrNull.orEmpty()
                 val result = when {
                     args.isWhisperPopup -> UserPopupResult.Whisper(displayName)
-                    else -> UserPopupResult.Mention(displayName)
+                    else                -> UserPopupResult.Mention(displayName)
                 }
 
                 findNavController()
@@ -56,14 +56,14 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
                             .show()
 
                     }
-                    else -> viewModel.followUser()
+                    else                  -> viewModel.followUser()
                 }
             }
 
             userBlock.setOnClickListener {
                 when {
                     viewModel.isBlocked -> viewModel.unblockUser()
-                    else -> MaterialAlertDialogBuilder(requireContext())
+                    else                -> MaterialAlertDialogBuilder(requireContext())
                         .setTitle(R.string.confirm_user_block_title)
                         .setMessage(R.string.confirm_user_block_message)
                         .setPositiveButton(R.string.confirm_user_block_positive_button) { _, _ -> viewModel.blockUser() }
@@ -77,7 +77,7 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
             when (it) {
                 is UserPopupViewModel.UserPopupState.Loading -> binding.showLoadingState()
                 is UserPopupViewModel.UserPopupState.Success -> binding.updateUserData(it)
-                is UserPopupViewModel.UserPopupState.Error -> setErrorResultAndDismiss(it.throwable)
+                is UserPopupViewModel.UserPopupState.Error   -> setErrorResultAndDismiss(it.throwable)
             }
         }
 
@@ -103,14 +103,14 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
         userCreated.text = getString(R.string.user_popup_created, userState.created)
         userFollow.text = when {
             userState.isFollowing -> getString(R.string.user_popup_unfollow)
-            else -> getString(R.string.user_popup_follow)
+            else                  -> getString(R.string.user_popup_follow)
         }
         userFollowage.text = userState.followingSince?.let {
             getString(R.string.user_popup_following_since, it)
         } ?: getString(R.string.user_popup_not_following)
         userBlock.text = when {
             userState.isBlocked -> getString(R.string.user_popup_unblock)
-            else -> getString(R.string.user_popup_block)
+            else                -> getString(R.string.user_popup_block)
         }
     }
 

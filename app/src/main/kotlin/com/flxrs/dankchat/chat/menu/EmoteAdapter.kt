@@ -19,14 +19,14 @@ class EmoteAdapter(private val onEmoteClick: (emote: String) -> Unit) : ListAdap
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             ITEM_VIEW_TYPE_HEADER -> TextViewHolder(EmoteHeaderItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-            ITEM_VIEW_TYPE_ITEM -> ViewHolder(EmoteItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-            else -> throw ClassCastException("Unknown viewType $viewType")
+            ITEM_VIEW_TYPE_ITEM   -> ViewHolder(EmoteItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            else                  -> throw ClassCastException("Unknown viewType $viewType")
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is ViewHolder -> {
+            is ViewHolder     -> {
                 val emoteItem = getItem(position) as EmoteItem.Emote
                 val emote = emoteItem.emote
                 holder.binding.root.setOnClickListener { onEmoteClick(emote.code) }
@@ -46,7 +46,7 @@ class EmoteAdapter(private val onEmoteClick: (emote: String) -> Unit) : ListAdap
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
             is EmoteItem.Header -> ITEM_VIEW_TYPE_HEADER
-            is EmoteItem.Emote -> ITEM_VIEW_TYPE_ITEM
+            is EmoteItem.Emote  -> ITEM_VIEW_TYPE_ITEM
         }
     }
 

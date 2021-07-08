@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.utils
+package com.flxrs.dankchat.utils.gifs
 
 import coil.bitmap.BitmapPool
 import coil.decode.DecodeResult

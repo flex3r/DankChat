@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
-import android.view.LayoutInflater
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
@@ -29,7 +28,7 @@ class AddChannelDialogFragment : DialogFragment() {
         binding.dialogEdit.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> getInputAndDismiss(binding.dialogEdit.text)
-                else -> false
+                else                       -> false
             }
         }
         return builder.create()
