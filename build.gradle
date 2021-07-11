@@ -9,7 +9,7 @@ buildscript {
         kotlin_version = '1.5.20'
 
         // Kotlin
-        coroutines_version = '1.5.0'
+        coroutines_version = '1.5.1'
 
         // AndroidX
         activity_version = '1.3.0-rc01'
@@ -28,7 +28,7 @@ buildscript {
         material_version = '1.4.0'
 
         // Third-party
-        coil_version = '1.2.2'
+        coil_version = '1.3.0'
         gif_drawable_version = '1.2.23'
         okhttp_version = '5.0.0-alpha.2'
         retrofit_version = '2.9.0'

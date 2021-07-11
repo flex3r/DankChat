@@ -420,14 +420,18 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
                 if (msg.command == "WHISPER") {
                     (parsed[0].message as TwitchMessage).whisperRecipient = name
-                    _whispers.value = _whispers.value.addAndLimit(parsed.toMentionTabItems(), scrollBackLength)
+                    _whispers.update {
+                        it.addAndLimit(parsed.toMentionTabItems(), scrollBackLength)
+                    }
                     _channelMentionCount.increment("w", 1)
                 }
 
                 val mentions = parsed.filter { it.message is TwitchMessage && it.message.isMention && !it.message.isWhisper }.toMentionTabItems()
                 if (mentions.isNotEmpty()) {
                     _channelMentionCount.increment(channel, mentions.size)
-                    _mentions.value = _mentions.value.addAndLimit(mentions, scrollBackLength)
+                    _mentions.update {
+                        it.addAndLimit(mentions, scrollBackLength)
+                    }
                 }
             }
         }
