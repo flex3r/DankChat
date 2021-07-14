@@ -45,8 +45,8 @@ class MentionChatFragment : ChatFragment() {
         val shouldMention = (isLongPress && shouldLongClickMention) || (!isLongPress && !shouldLongClickMention)
 
         when {
-            shouldMention -> (parentFragment as? MainFragment)?.whisperUser(targetUserName)
-            else          -> (parentFragment as? MainFragment)?.openUserPopup(targetUserId, channel = null, isWhisperPopup = true)
+            shouldMention -> (parentFragment?.parentFragment as? MainFragment)?.whisperUser(targetUserName)
+            else          -> (parentFragment?.parentFragment as? MainFragment)?.openUserPopup(targetUserId, channel = null, isWhisperPopup = true)
         }
     }
 
