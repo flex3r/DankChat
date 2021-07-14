@@ -307,12 +307,6 @@ class MainViewModel @Inject constructor(
         )
     }
 
-    fun reloadAllEmotes(oAuth: String, id: String, loadThirdPartyData: Set<ThirdPartyEmoteType>) = viewModelScope.launch {
-        channels.value?.forEach {
-            reloadEmotes(it, oAuth, id, loadThirdPartyData).join()
-        }
-    }
-
     fun reloadEmotes(channel: String, oAuth: String, id: String, loadThirdPartyData: Set<ThirdPartyEmoteType>) = viewModelScope.launch {
         val parameters = DataLoadingState.Parameters(
             oAuth = oAuth,
