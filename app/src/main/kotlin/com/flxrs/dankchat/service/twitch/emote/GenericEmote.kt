@@ -4,7 +4,6 @@ data class GenericEmote(
     val code: String,
     val url: String,
     val lowResUrl: String,
-    val isGif: Boolean,
     val id: String,
     val scale: Int,
     val emoteType: EmoteType

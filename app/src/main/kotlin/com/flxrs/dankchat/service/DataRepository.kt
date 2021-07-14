@@ -91,8 +91,8 @@ class DataRepository(private val apiManager: ApiManager, private val emoteManage
         emotes[channel]?.value = emoteManager.getEmotes(channel)
     }
 
-    suspend fun filterAndLoadUserStateEmotes(userStateEmoteSets: List<String>) {
-        emoteManager.filterAndLoadUserStateEmotes(userStateEmoteSets)
+    suspend fun loadUserStateEmotes(userStateEmoteSets: List<String>) {
+        emoteManager.loadUserStateEmotes(userStateEmoteSets)
     }
 
     private suspend fun loadChannelBadges(oAuth: String, channel: String, id: String) = withContext(Dispatchers.Default) {

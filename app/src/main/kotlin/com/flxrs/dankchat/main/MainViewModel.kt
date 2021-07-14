@@ -187,12 +187,16 @@ class MainViewModel @Inject constructor(
             val loadingState = DataLoadingState.Loading(parameters)
             _dataLoadingState.emit(loadingState)
 
+            val fixedOauth = oAuth.removeOAuthSuffix
             val state = runCatchingToState(parameters) { handler ->
-                loadInitialData(oAuth.removeOAuthSuffix, id, channelList, loadTwitchData, loadSupibot, handler)
+                loadInitialData(fixedOauth, id, channelList, loadSupibot, handler)
 
                 withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
                     val userState = chatRepository.getLatestValidUserState()
-                    dataRepository.filterAndLoadUserStateEmotes(userState.emoteSets)
+                    dataRepository.loadUserStateEmotes(userState.emoteSets)
+                }
+                supervisorScope {
+                    launch(handler) { dataRepository.loadTwitchEmotes(fixedOauth, id) }
                 }
 
                 // global emote suggestions for whisper tab
@@ -305,14 +309,16 @@ class MainViewModel @Inject constructor(
                         val channelId = getRoomStateIdIfNeeded(oAuth, channel)
                         dataRepository.loadChannelData(channel, fixedOAuth, channelId, forceReload = true)
                     },
-                    launch(handler) { dataRepository.loadTwitchEmotes(fixedOAuth, id) },
                     launch(handler) { dataRepository.loadDankChatBadges() },
                 ).joinAll()
             }
 
             withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
                 val userState = chatRepository.getLatestValidUserState()
-                dataRepository.filterAndLoadUserStateEmotes(userState.emoteSets)
+                dataRepository.loadUserStateEmotes(userState.emoteSets)
+            }
+            supervisorScope {
+                launch(handler) { dataRepository.loadTwitchEmotes(fixedOAuth, id) }
             }
 
             chatRepository.partChannel("jtv")
@@ -361,11 +367,10 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loadInitialData(oAuth: String, id: String, channelList: List<String>, loadTwitchData: Boolean, loadSupibot: Boolean, handler: CoroutineExceptionHandler) = supervisorScope {
+    private suspend fun loadInitialData(oAuth: String, id: String, channelList: List<String>, loadSupibot: Boolean, handler: CoroutineExceptionHandler) = supervisorScope {
         listOf(
             launch(handler) { dataRepository.loadDankChatBadges() },
             launch(handler) { dataRepository.loadGlobalBadges(oAuth) },
-            launch(handler) { if (loadTwitchData) dataRepository.loadTwitchEmotes(oAuth, id) },
             launch(handler) { if (loadSupibot) dataRepository.loadSupibotCommands() },
             launch { chatRepository.loadUserBlocks(oAuth, id) }
         ) + channelList.map {
