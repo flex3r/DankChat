@@ -7,6 +7,7 @@ import com.flxrs.dankchat.service.api.dto.UserFollowsDto
 import com.flxrs.dankchat.service.twitch.badge.toBadgeSets
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
+import com.flxrs.dankchat.service.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.utils.extensions.measureTimeAndLog
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,11 +24,11 @@ class DataRepository(private val apiManager: ApiManager, private val emoteManage
     fun getSupibotCommands(channel: String): StateFlow<List<String>> = supibotCommands.getOrPut(channel) { MutableStateFlow(emptyList()) }
     fun clearSupibotCommands() = supibotCommands.forEach { it.value.value = emptyList() }.also { supibotCommands.clear() }
 
-    suspend fun loadChannelData(channel: String, oAuth: String, channelId: String? = null, forceReload: Boolean = false) {
+    suspend fun loadChannelData(channel: String, oAuth: String, channelId: String? = null, loadThirdPartyData: Set<ThirdPartyEmoteType>, forceReload: Boolean = false) {
         emotes.putIfAbsent(channel, MutableStateFlow(emptyList()))
         val id = channelId ?: apiManager.getUserIdByName(oAuth, channel) ?: return
         loadChannelBadges(oAuth, channel, id)
-        load3rdPartyEmotes(channel, id, forceReload)
+        load3rdPartyEmotes(channel, id, loadThirdPartyData, forceReload)
     }
 
     suspend fun getUser(oAuth: String, userId: String): HelixUserDto? = apiManager.getUser(oAuth, userId)
@@ -104,27 +105,40 @@ class DataRepository(private val apiManager: ApiManager, private val emoteManage
         }
     }
 
-    private suspend fun load3rdPartyEmotes(channel: String, id: String, forceReload: Boolean) {
+    private suspend fun load3rdPartyEmotes(channel: String, id: String, loadThirdPartyData: Set<ThirdPartyEmoteType>, forceReload: Boolean) = coroutineScope {
         measureTimeMillis {
-            coroutineScope {
-                listOf(
-                    launch { apiManager.getFFZChannelEmotes(id)?.let { emoteManager.setFFZEmotes(channel, it) } },
-                    launch { apiManager.getBTTVChannelEmotes(id)?.let { emoteManager.setBTTVEmotes(channel, it) } },
-                    launch { apiManager.getSevenTVChannelEmotes(channel)?.let { emoteManager.setSevenTVEmotes(channel, it) } }
-                ).joinAll()
-            }
+            listOfNotNull(
+                launchWhenTypeOrNull(ThirdPartyEmoteType.FrankerFaceZ, loadThirdPartyData) {
+                    apiManager.getFFZChannelEmotes(id)?.let { emoteManager.setFFZEmotes(channel, it) }
+                } ?: emoteManager.clearFFZEmotes(),
+                launchWhenTypeOrNull(ThirdPartyEmoteType.BetterTTV, loadThirdPartyData) {
+                    apiManager.getBTTVChannelEmotes(id)?.let { emoteManager.setBTTVEmotes(channel, it) }
+                } ?: emoteManager.clearBTTVEmotes(),
+                launchWhenTypeOrNull(ThirdPartyEmoteType.SevenTV, loadThirdPartyData) {
+                    apiManager.getSevenTVChannelEmotes(channel)?.let { emoteManager.setSevenTVEmotes(channel, it) }
+                } ?: emoteManager.clearSevenTVEmotes(),
+            ).joinAll()
 
             if (forceReload || !loadedGlobalEmotes) {
-                coroutineScope {
-                    listOf(
-                        launch { apiManager.getFFZGlobalEmotes()?.let { emoteManager.setFFZGlobalEmotes(it) } },
-                        launch { apiManager.getBTTVGlobalEmotes()?.let { emoteManager.setBTTVGlobalEmotes(it) } },
-                        launch { apiManager.getSevenTVGlobalEmotes()?.let { emoteManager.setSevenTVGlobalEmotes(it) } }
-                    ).joinAll()
-                    loadedGlobalEmotes = true
-                }
+                listOfNotNull(
+                    launchWhenTypeOrNull(ThirdPartyEmoteType.FrankerFaceZ, loadThirdPartyData) {
+                        apiManager.getFFZGlobalEmotes()?.let { emoteManager.setFFZGlobalEmotes(it) }
+                    },
+                    launchWhenTypeOrNull(ThirdPartyEmoteType.BetterTTV, loadThirdPartyData) {
+                        apiManager.getBTTVGlobalEmotes()?.let { emoteManager.setBTTVGlobalEmotes(it) }
+                    },
+                    launchWhenTypeOrNull(ThirdPartyEmoteType.SevenTV, loadThirdPartyData) {
+                        apiManager.getSevenTVGlobalEmotes()?.let { emoteManager.setSevenTVGlobalEmotes(it) }
+                    },
+                ).joinAll()
             }
+            loadedGlobalEmotes = true
         }.let { Log.i(TAG, "Loaded 3rd party emotes for #$channel in $it ms") }
+    }
+
+    private fun CoroutineScope.launchWhenTypeOrNull(type: ThirdPartyEmoteType, loadThirdPartyData: Set<ThirdPartyEmoteType>, block: suspend () -> Unit): Job? = when (type) {
+        in loadThirdPartyData -> launch { block() }
+        else                  -> null
     }
 
     companion object {

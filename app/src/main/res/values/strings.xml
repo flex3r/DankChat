@@ -93,6 +93,8 @@
     <string name="confirm_user_block_title">Confirm block</string>
     <string name="confirm_user_block_message">Are you sure you want to block this user?</string>
     <string name="confirm_user_block_positive_button">Block</string>
+    <string name="restart_required">Restart required to apply changes</string>
+    <string name="restart">Restart</string>
 
 
     <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
@@ -198,6 +200,8 @@
     <string name="preference_tts_force_english_key" translatable="false">tts_force_english_key</string>
     <string name="preference_tts_force_english_title">Force language to english</string>
     <string name="preference_tts_force_english_summary">Force TTS voice language to english instead of system default</string>
+    <string name="preference_visible_emotes_title">Visible thirdy party emotes</string>
+    <string name="preference_visible_emotes_key" translatable="false">visible_emotes_key</string>
 
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>

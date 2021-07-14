@@ -13,6 +13,7 @@ import com.flxrs.dankchat.service.state.DataLoadingState
 import com.flxrs.dankchat.service.state.ImageUploadState
 import com.flxrs.dankchat.service.twitch.connection.ConnectionState
 import com.flxrs.dankchat.service.twitch.emote.EmoteType
+import com.flxrs.dankchat.service.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.utils.extensions.moveToFront
 import com.flxrs.dankchat.utils.extensions.removeOAuthSuffix
 import com.flxrs.dankchat.utils.extensions.timer
@@ -167,6 +168,7 @@ class MainViewModel @Inject constructor(
         name = dataLoadingParameters.name,
         isUserChange = dataLoadingParameters.isUserChange,
         loadTwitchData = dataLoadingParameters.loadTwitchData,
+        loadThirdPartyData = dataLoadingParameters.loadThirdPartyData,
         loadHistory = dataLoadingParameters.loadHistory,
         loadSupibot = dataLoadingParameters.loadSupibot
     )
@@ -178,6 +180,7 @@ class MainViewModel @Inject constructor(
         channelList: List<String> = channels.value.orEmpty(),
         isUserChange: Boolean,
         loadTwitchData: Boolean,
+        loadThirdPartyData: Set<ThirdPartyEmoteType>,
         loadHistory: Boolean,
         loadSupibot: Boolean,
         scrollBackLength: Int? = null
@@ -185,13 +188,23 @@ class MainViewModel @Inject constructor(
         scrollBackLength?.let { chatRepository.scrollBackLength = it }
 
         viewModelScope.launch {
-            val parameters = DataLoadingState.Parameters(oAuth, id, name, channelList, isUserChange, loadTwitchData = loadTwitchData, loadHistory = loadHistory, loadSupibot = loadSupibot)
+            val parameters = DataLoadingState.Parameters(
+                oAuth = oAuth,
+                id = id,
+                name = name,
+                channels = channelList,
+                isReloadEmotes = isUserChange,
+                loadTwitchData = loadTwitchData,
+                loadThirdPartyData = loadThirdPartyData,
+                loadHistory = loadHistory,
+                loadSupibot = loadSupibot
+            )
             val loadingState = DataLoadingState.Loading(parameters)
             _dataLoadingState.emit(loadingState)
 
             val fixedOauth = oAuth.removeOAuthSuffix
             val state = runCatchingToState(parameters) { handler ->
-                loadInitialData(fixedOauth, id, channelList, loadSupibot, handler)
+                loadInitialData(fixedOauth, id, channelList, loadSupibot, loadThirdPartyData, handler)
 
                 withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
                     val userState = chatRepository.getLatestValidUserState()
@@ -278,7 +291,7 @@ class MainViewModel @Inject constructor(
 
     fun updateChannels(channels: List<String>) = chatRepository.updateChannels(channels)
 
-    fun closeAndReconnect(name: String, oAuth: String, userId: String, loadTwitchData: Boolean = false) {
+    fun closeAndReconnect(name: String, oAuth: String, userId: String, loadTwitchData: Boolean = false, loadThirdPartyData: Set<ThirdPartyEmoteType>) {
         chatRepository.closeAndReconnect(name, oAuth)
 
         if (loadTwitchData && oAuth.isNotBlank()) loadData(
@@ -288,17 +301,25 @@ class MainViewModel @Inject constructor(
             channelList = channels.value.orEmpty(),
             isUserChange = true,
             loadTwitchData = true,
+            loadThirdPartyData = loadThirdPartyData,
             loadHistory = false,
             loadSupibot = false
         )
     }
 
-    fun reloadEmotes(channel: String, oAuth: String, id: String) = viewModelScope.launch {
+    fun reloadAllEmotes(oAuth: String, id: String, loadThirdPartyData: Set<ThirdPartyEmoteType>) = viewModelScope.launch {
+        channels.value?.forEach {
+            reloadEmotes(it, oAuth, id, loadThirdPartyData).join()
+        }
+    }
+
+    fun reloadEmotes(channel: String, oAuth: String, id: String, loadThirdPartyData: Set<ThirdPartyEmoteType>) = viewModelScope.launch {
         val parameters = DataLoadingState.Parameters(
             oAuth = oAuth,
             id = id,
             channels = listOf(channel),
-            isReloadEmotes = true
+            isReloadEmotes = true,
+            loadThirdPartyData = loadThirdPartyData,
         )
         _dataLoadingState.emit(DataLoadingState.Loading(parameters = parameters))
 
@@ -309,7 +330,7 @@ class MainViewModel @Inject constructor(
                 listOf(
                     launch(handler) {
                         val channelId = getRoomStateIdIfNeeded(oAuth, channel)
-                        dataRepository.loadChannelData(channel, fixedOAuth, channelId, forceReload = true)
+                        dataRepository.loadChannelData(channel, fixedOAuth, channelId, loadThirdPartyData, forceReload = true)
                     },
                     launch(handler) { dataRepository.loadDankChatBadges() },
                 ).joinAll()
@@ -324,6 +345,7 @@ class MainViewModel @Inject constructor(
             }
 
             chatRepository.partChannel("jtv")
+            dataRepository.setEmotesForSuggestions(channel)
         }
         _dataLoadingState.emit(state)
     }
@@ -369,7 +391,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loadInitialData(oAuth: String, id: String, channelList: List<String>, loadSupibot: Boolean, handler: CoroutineExceptionHandler) = supervisorScope {
+    private suspend fun loadInitialData(oAuth: String, id: String, channelList: List<String>, loadSupibot: Boolean, loadThirdPartyData: Set<ThirdPartyEmoteType>, handler: CoroutineExceptionHandler) = supervisorScope {
         listOf(
             launch(handler) { dataRepository.loadDankChatBadges() },
             launch(handler) { dataRepository.loadGlobalBadges(oAuth) },
@@ -378,7 +400,7 @@ class MainViewModel @Inject constructor(
         ) + channelList.map {
             launch(handler) {
                 val channelId = getRoomStateIdIfNeeded(oAuth, it)
-                dataRepository.loadChannelData(it, oAuth, channelId)
+                dataRepository.loadChannelData(it, oAuth, channelId, loadThirdPartyData)
             }
         }.joinAll()
     }

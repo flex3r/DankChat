@@ -6,10 +6,7 @@ import com.flxrs.dankchat.service.api.ApiManager
 import com.flxrs.dankchat.service.api.dto.*
 import com.flxrs.dankchat.service.twitch.badge.BadgeSet
 import com.flxrs.dankchat.utils.extensions.supplementaryCodePointPositions
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import pl.droidsonroids.gif.MultiCallback
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
@@ -198,6 +195,24 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
             .forEach { emote ->
                 globalSevenTVEmotes[emote.name] = parseSevenTVEmote(emote, EmoteType.GlobalSevenTVEmote)
             }
+    }
+
+    fun clearFFZEmotes(): Job? {
+        globalFFZEmotes.clear()
+        ffzEmotes.clear()
+        return null
+    }
+
+    fun clearBTTVEmotes(): Job? {
+        globalBttvEmotes.clear()
+        bttvEmotes.clear()
+        return null
+    }
+
+    fun clearSevenTVEmotes(): Job? {
+        globalSevenTVEmotes.clear()
+        sevenTVEmotes.clear()
+        return null
     }
 
     suspend fun getEmotes(channel: String): List<GenericEmote> = withContext(Dispatchers.Default) {

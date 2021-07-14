@@ -50,6 +50,7 @@ import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.state.DataLoadingState
 import com.flxrs.dankchat.service.state.ImageUploadState
 import com.flxrs.dankchat.service.twitch.connection.ConnectionState
+import com.flxrs.dankchat.service.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.utils.*
 import com.flxrs.dankchat.utils.extensions.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -268,6 +269,8 @@ class MainFragment : Fragment() {
                     val shouldLoadHistory = preferences.getBoolean(getString(R.string.preference_load_message_history_key), true)
                     val shouldLoadSupibot = preferences.getBoolean(getString(R.string.preference_supibot_suggestions_key), false)
                     val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
+                    val loadThirdPartyKeys = preferences.getStringSet(getString(R.string.preference_visible_emotes_key), resources.getStringArray(R.array.emotes_entry_values).toSet()).orEmpty()
+                    val loadThirdPartyData = ThirdPartyEmoteType.mapFromPreferenceSet(loadThirdPartyKeys)
 
                     mainViewModel.loadData(
                         oAuth = oAuth,
@@ -276,6 +279,7 @@ class MainFragment : Fragment() {
                         channelList = channels,
                         isUserChange = false,
                         loadTwitchData = true,
+                        loadThirdPartyData = loadThirdPartyData,
                         loadHistory = shouldLoadHistory,
                         loadSupibot = shouldLoadSupibot,
                         scrollBackLength = scrollBackLength
@@ -423,6 +427,9 @@ class MainFragment : Fragment() {
         val name = dankChatPreferences.userName ?: ""
         val id = dankChatPreferences.userIdString ?: ""
         val channels = dankChatPreferences.getChannels()
+        val loadThirdPartyKeys = preferences.getStringSet(getString(R.string.preference_visible_emotes_key), resources.getStringArray(R.array.emotes_entry_values).toSet()).orEmpty()
+        val loadThirdPartyData = ThirdPartyEmoteType.mapFromPreferenceSet(loadThirdPartyKeys)
+
         mainViewModel.loadData(
             oAuth = oAuth,
             id = id,
@@ -430,6 +437,7 @@ class MainFragment : Fragment() {
             channelList = channels,
             isUserChange = false,
             loadTwitchData = true,
+            loadThirdPartyData = loadThirdPartyData,
             loadHistory = result,
             loadSupibot = shouldLoadSupibot,
             scrollBackLength = scrollBackLength
@@ -455,6 +463,8 @@ class MainFragment : Fragment() {
             val name = dankChatPreferences.userName ?: ""
             val shouldLoadHistory = preferences.getBoolean(getString(R.string.preference_load_message_history_key), true)
             val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
+            val loadThirdPartyKeys = preferences.getStringSet(getString(R.string.preference_visible_emotes_key), resources.getStringArray(R.array.emotes_entry_values).toSet()).orEmpty()
+            val loadThirdPartyData = ThirdPartyEmoteType.mapFromPreferenceSet(loadThirdPartyKeys)
 
             val updatedChannels = mainViewModel.joinChannel(lowerCaseChannel)
             newTabIndex = updatedChannels.size - 1
@@ -465,6 +475,7 @@ class MainFragment : Fragment() {
                 channelList = listOf(lowerCaseChannel),
                 isUserChange = false,
                 loadTwitchData = false,
+                loadThirdPartyData = loadThirdPartyData,
                 loadHistory = shouldLoadHistory,
                 loadSupibot = false,
                 scrollBackLength
@@ -553,9 +564,11 @@ class MainFragment : Fragment() {
         val oAuth = dankChatPreferences.oAuthKey
         val name = dankChatPreferences.userName
         val id = dankChatPreferences.userIdString
+        val loadThirdPartyKeys = preferences.getStringSet(getString(R.string.preference_visible_emotes_key), resources.getStringArray(R.array.emotes_entry_values).toSet()).orEmpty()
+        val loadThirdPartyData = ThirdPartyEmoteType.mapFromPreferenceSet(loadThirdPartyKeys)
 
         if (success && !oAuth.isNullOrBlank() && !name.isNullOrBlank() && !id.isNullOrBlank()) {
-            mainViewModel.closeAndReconnect(name, oAuth, id, loadTwitchData = true)
+            mainViewModel.closeAndReconnect(name, oAuth, id, loadTwitchData = true, loadThirdPartyData = loadThirdPartyData)
             dankChatPreferences.isLoggedIn = true
             showSnackbar(getString(R.string.snackbar_login, name))
         } else {
@@ -660,7 +673,9 @@ class MainFragment : Fragment() {
         if (position in 0 until tabAdapter.titleList.size) {
             val oAuth = dankChatPreferences.oAuthKey.orEmpty()
             val userId = dankChatPreferences.userIdString.orEmpty()
-            mainViewModel.reloadEmotes(tabAdapter.titleList[position], oAuth, userId)
+            val loadThirdPartyKeys = preferences.getStringSet(getString(R.string.preference_visible_emotes_key), resources.getStringArray(R.array.emotes_entry_values).toSet()).orEmpty()
+            val loadThirdPartyData = ThirdPartyEmoteType.mapFromPreferenceSet(loadThirdPartyKeys)
+            mainViewModel.reloadEmotes(tabAdapter.titleList[position], oAuth, userId, loadThirdPartyData)
         }
     }
 
@@ -676,6 +691,7 @@ class MainFragment : Fragment() {
         val loadSupibotKey = getString(R.string.preference_supibot_suggestions_key)
         val scrollBackLengthKey = getString(R.string.preference_scrollback_length_key)
         val preferEmotesSuggestionsKey = getString(R.string.preference_prefer_emote_suggestions_key)
+        val loadThirdPartyEmoteData = getString(R.string.preference_visible_emotes_key)
         dankChatPreferences = DankChatPreferenceStore(context)
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.oAuthKey.isNullOrBlank()) {
             dankChatPreferences.clearLogin()
@@ -740,8 +756,10 @@ class MainFragment : Fragment() {
         .setTitle(getString(R.string.confirm_logout_title))
         .setMessage(getString(R.string.confirm_logout_message))
         .setPositiveButton(getString(R.string.confirm_logout_positive_button)) { dialog, _ ->
+            val loadThirdPartyKeys = preferences.getStringSet(getString(R.string.preference_visible_emotes_key), resources.getStringArray(R.array.emotes_entry_values).toSet()).orEmpty()
+            val loadThirdPartyData = ThirdPartyEmoteType.mapFromPreferenceSet(loadThirdPartyKeys)
             dankChatPreferences.clearLogin()
-            mainViewModel.closeAndReconnect(name = "", oAuth = "", userId = "")
+            mainViewModel.closeAndReconnect(name = "", oAuth = "", userId = "", loadThirdPartyData = loadThirdPartyData)
             mainViewModel.clearIgnores()
             dialog.dismiss()
         }
