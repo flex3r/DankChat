@@ -8,10 +8,9 @@ import com.flxrs.dankchat.service.twitch.badge.toBadgeSets
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.utils.extensions.measureTimeAndLog
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.withContext
 import java.io.File
 import kotlin.system.measureTimeMillis
 
@@ -107,15 +106,23 @@ class DataRepository(private val apiManager: ApiManager, private val emoteManage
 
     private suspend fun load3rdPartyEmotes(channel: String, id: String, forceReload: Boolean) {
         measureTimeMillis {
-            apiManager.getFFZChannelEmotes(id)?.let { emoteManager.setFFZEmotes(channel, it) }
-            apiManager.getBTTVChannelEmotes(id)?.let { emoteManager.setBTTVEmotes(channel, it) }
-            apiManager.getSevenTVChannelEmotes(channel)?.let { emoteManager.setSevenTVEmotes(channel, it) }
+            coroutineScope {
+                listOf(
+                    launch { apiManager.getFFZChannelEmotes(id)?.let { emoteManager.setFFZEmotes(channel, it) } },
+                    launch { apiManager.getBTTVChannelEmotes(id)?.let { emoteManager.setBTTVEmotes(channel, it) } },
+                    launch { apiManager.getSevenTVChannelEmotes(channel)?.let { emoteManager.setSevenTVEmotes(channel, it) } }
+                ).joinAll()
+            }
 
             if (forceReload || !loadedGlobalEmotes) {
-                apiManager.getFFZGlobalEmotes()?.let { emoteManager.setFFZGlobalEmotes(it) }
-                apiManager.getBTTVGlobalEmotes()?.let { emoteManager.setBTTVGlobalEmotes(it) }
-                apiManager.getSevenTVGlobalEmotes()?.let { emoteManager.setSevenTVGlobalEmotes(it) }
-                loadedGlobalEmotes = true
+                coroutineScope {
+                    listOf(
+                        launch { apiManager.getFFZGlobalEmotes()?.let { emoteManager.setFFZGlobalEmotes(it) } },
+                        launch { apiManager.getBTTVGlobalEmotes()?.let { emoteManager.setBTTVGlobalEmotes(it) } },
+                        launch { apiManager.getSevenTVGlobalEmotes()?.let { emoteManager.setSevenTVGlobalEmotes(it) } }
+                    ).joinAll()
+                    loadedGlobalEmotes = true
+                }
             }
         }.let { Log.i(TAG, "Loaded 3rd party emotes for #$channel in $it ms") }
     }
