@@ -109,10 +109,12 @@ class DataRepository(private val apiManager: ApiManager, private val emoteManage
         measureTimeMillis {
             apiManager.getFFZChannelEmotes(id)?.let { emoteManager.setFFZEmotes(channel, it) }
             apiManager.getBTTVChannelEmotes(id)?.let { emoteManager.setBTTVEmotes(channel, it) }
+            apiManager.getSevenTVChannelEmotes(channel)?.let { emoteManager.setSevenTVEmotes(channel, it) }
 
             if (forceReload || !loadedGlobalEmotes) {
                 apiManager.getFFZGlobalEmotes()?.let { emoteManager.setFFZGlobalEmotes(it) }
                 apiManager.getBTTVGlobalEmotes()?.let { emoteManager.setBTTVGlobalEmotes(it) }
+                apiManager.getSevenTVGlobalEmotes()?.let { emoteManager.setSevenTVGlobalEmotes(it) }
                 loadedGlobalEmotes = true
             }
         }.let { Log.i(TAG, "Loaded 3rd party emotes for #$channel in $it ms") }

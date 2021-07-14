@@ -26,7 +26,8 @@ class ApiManager @Inject constructor(
     private val supibotApiService: SupibotApiService,
     private val authApiService: AuthApiService,
     private val badgesApiService: BadgesApiService,
-    private val tmiApiService: TmiApiService
+    private val tmiApiService: TmiApiService,
+    private val sevenTVApiService: SevenTVApiService,
 ) {
     private val loadedRecentsInChannels = mutableListOf<String>()
 
@@ -65,6 +66,9 @@ class ApiManager @Inject constructor(
 
     suspend fun getBTTVChannelEmotes(channelId: String): BTTVChannelDto? = bttvApiService.getChannelEmotes(channelId).bodyOrNull
     suspend fun getBTTVGlobalEmotes(): List<BTTVGlobalEmotesDto>? = bttvApiService.getGlobalEmotes().bodyOrNull
+
+    suspend fun getSevenTVChannelEmotes(channel: String): List<SevenTVEmoteDto>? = sevenTVApiService.getChannelEmotes(channel).bodyOrNull
+    suspend fun getSevenTVGlobalEmotes(): List<SevenTVEmoteDto>? = sevenTVApiService.getGlobalEmotes().bodyOrNull
 
     suspend fun getRecentMessages(channel: String): RecentMessagesDto? {
         return when {

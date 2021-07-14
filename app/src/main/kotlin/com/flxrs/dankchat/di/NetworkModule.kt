@@ -31,6 +31,7 @@ object NetworkModule {
     private const val FFZ_BASE_URL = "https://api.frankerfacez.com/v1/"
     private const val BTTV_BASE_URL = "https://api.betterttv.net/3/cached/"
     private const val RECENT_MESSAGES_BASE_URL = "https://recent-messages.robotty.de/api/v2/"
+    private const val SEVENTV_BASE_URL = "https://api.7tv.app/v2/"
 
     @ApiOkHttpClient
     @Singleton
@@ -168,6 +169,15 @@ object NetworkModule {
 
     @Singleton
     @Provides
+    fun provideSevenTVApiService(@ApiOkHttpClient client: OkHttpClient): SevenTVApiService = Retrofit.Builder()
+        .baseUrl(SEVENTV_BASE_URL)
+        .addConverterFactory(MoshiConverterFactory.create())
+        .client(client)
+        .build()
+        .create(SevenTVApiService::class.java)
+
+    @Singleton
+    @Provides
     fun provideApiManager(
         @ApiOkHttpClient client: OkHttpClient,
         bttvApiService: BTTVApiService,
@@ -179,7 +189,8 @@ object NetworkModule {
         supibotApiService: SupibotApiService,
         authApiService: AuthApiService,
         badgesApiService: BadgesApiService,
-        tmiApiService: TmiApiService
+        tmiApiService: TmiApiService,
+        sevenTVApiService: SevenTVApiService,
     ): ApiManager = ApiManager(
         client,
         bttvApiService,
@@ -191,7 +202,8 @@ object NetworkModule {
         supibotApiService,
         authApiService,
         badgesApiService,
-        tmiApiService
+        tmiApiService,
+        sevenTVApiService
     )
 
     @Singleton

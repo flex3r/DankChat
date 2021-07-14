@@ -19,6 +19,10 @@ sealed class EmoteType : Comparable<EmoteType> {
         override val title = "BetterTTV"
     }
 
+    object ChannelSevenTVEmote: EmoteType() {
+        override val title = "SevenTV"
+    }
+
     object GlobalTwitchEmote : EmoteType() {
         override val title = "Twitch"
     }
@@ -29,6 +33,10 @@ sealed class EmoteType : Comparable<EmoteType> {
 
     object GlobalBTTVEmote : EmoteType() {
         override val title = "BetterTTV"
+    }
+
+    object GlobalSevenTVEmote: EmoteType() {
+        override val title = "SevenTV"
     }
 
     override fun compareTo(other: EmoteType): Int = when {

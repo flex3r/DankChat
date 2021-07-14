@@ -148,7 +148,9 @@ class MainViewModel @Inject constructor(
         val groupedByType = emotes.groupBy {
             when (it.emoteType) {
                 is EmoteType.ChannelTwitchEmote, is EmoteType.ChannelTwitchBitEmote -> EmoteMenuTab.SUBS
-                is EmoteType.ChannelFFZEmote, is EmoteType.ChannelBTTVEmote         -> EmoteMenuTab.CHANNEL
+                is EmoteType.ChannelFFZEmote,
+                is EmoteType.ChannelBTTVEmote,
+                is EmoteType.ChannelSevenTVEmote                                    -> EmoteMenuTab.CHANNEL
                 else                                                                -> EmoteMenuTab.GLOBAL
             }
         }
