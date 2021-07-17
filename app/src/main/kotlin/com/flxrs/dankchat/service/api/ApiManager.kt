@@ -29,7 +29,6 @@ class ApiManager @Inject constructor(
     private val tmiApiService: TmiApiService,
     private val sevenTVApiService: SevenTVApiService,
 ) {
-    private val loadedRecentsInChannels = mutableListOf<String>()
 
     suspend fun validateUser(oAuth: String): ValidateUserDto? {
         try {
