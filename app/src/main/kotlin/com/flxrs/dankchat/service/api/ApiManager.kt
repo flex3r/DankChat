@@ -98,10 +98,6 @@ class ApiManager @Inject constructor(
         }
     }
 
-    fun clearChannelFromLoaded(channel: String) {
-        loadedRecentsInChannels.remove(channel)
-    }
-
     companion object {
         private val TAG = ApiManager::class.java.simpleName
         private const val NUULS_UPLOAD_URL = "https://i.nuuls.com/upload"
