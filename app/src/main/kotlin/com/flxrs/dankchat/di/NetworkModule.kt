@@ -39,19 +39,6 @@ object NetworkModule {
     fun provideOkHttpClient(/*@ApplicationContext context: Context*/): OkHttpClient = OkHttpClient.Builder()
         //.addInterceptor(ChuckerInterceptor(context))
         //.addInterceptor(HttpLoggingInterceptor().also { it.setLevel(HttpLoggingInterceptor.Level.BODY) })
-        .addInterceptor { chain ->
-            try {
-                chain.request().newBuilder()
-                    .header("User-Agent", "dankchat/${BuildConfig.VERSION_NAME}")
-                    .build()
-                    .let { chain.proceed(it) }
-            } catch (t: Throwable) {
-                when (t) {
-                    is IOException -> throw t
-                    else           -> throw IOException(t)
-                }
-            }
-        }
         .build()
 
     @EmoteOkHttpClient
