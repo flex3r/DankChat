@@ -70,15 +70,7 @@ class ApiManager @Inject constructor(
     suspend fun getSevenTVChannelEmotes(channel: String): List<SevenTVEmoteDto>? = sevenTVApiService.getChannelEmotes(channel).bodyOrNull
     suspend fun getSevenTVGlobalEmotes(): List<SevenTVEmoteDto>? = sevenTVApiService.getGlobalEmotes().bodyOrNull
 
-    suspend fun getRecentMessages(channel: String): RecentMessagesDto? {
-        return when {
-            loadedRecentsInChannels.contains(channel) -> null
-            else                                      -> {
-                val response = recentMessagesApiService.getRecentMessages(channel)
-                response.bodyOrNull?.also { loadedRecentsInChannels += channel }
-            }
-        }
-    }
+    suspend fun getRecentMessages(channel: String): RecentMessagesDto? = recentMessagesApiService.getRecentMessages(channel).bodyOrNull
 
     suspend fun getSupibotCommands(): SupibotCommandsDto? = supibotApiService.getCommands().bodyOrNull
     suspend fun getSupibotChannels(): SupibotChannelsDto? = supibotApiService.getChannels("twitch").bodyOrNull

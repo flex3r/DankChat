@@ -57,6 +57,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     private var name: String = ""
     private var lastMessage = mutableMapOf<String, String>()
     private var startedConnection = false
+    private val loadedRecentsInChannels = mutableSetOf<String>()
 
     val notificationsFlow: SharedFlow<List<ChatItem>> = _notificationsFlow.asSharedFlow()
     val channelMentionCount: SharedFlow<Map<String, Int>> = _channelMentionCount.asSharedFlow()
@@ -257,7 +258,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         messages[channel]?.value = emptyList()
         lastMessage.remove(channel)
         _channelMentionCount.clear(channel)
-        apiManager.clearChannelFromLoaded(channel)
+        loadedRecentsInChannels.remove(channel)
     }
 
     private fun createFlowsIfNecessary(channel: String) {
@@ -457,10 +458,14 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     }
 
     private suspend fun loadRecentMessages(channel: String) = withContext(Dispatchers.Default) {
+        if (channel in loadedRecentsInChannels) return@withContext
         val result = apiManager.getRecentMessages(channel) ?: return@withContext
+        val recentMessages = result.messages ?: return@withContext
+
+        loadedRecentsInChannels += channel
         val items = mutableListOf<ChatItem>()
         measureTimeMillis {
-            for (message in result.messages) {
+            for (message in recentMessages) {
                 val parsedIrc = IrcMessage.parse(message)
                 if (parsedIrc.tags["user-id"] in blockList) continue
 
