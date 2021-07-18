@@ -193,6 +193,8 @@ class MainFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        initPreferences(view.context)
+
         val navBackStackEntry = navController.getBackStackEntry(R.id.mainFragment)
         val handle = navBackStackEntry.savedStateHandle
         val observer = LifecycleEventObserver { _, event ->
@@ -222,7 +224,6 @@ class MainFragment : Fragment() {
             }
         })
 
-        initPreferences(view.context)
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.userIdString == null) {
             dankChatPreferences.userIdString = "${dankChatPreferences.userId}"
         }
