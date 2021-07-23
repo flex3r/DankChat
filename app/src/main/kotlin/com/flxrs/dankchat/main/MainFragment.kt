@@ -692,7 +692,6 @@ class MainFragment : Fragment() {
         val loadSupibotKey = getString(R.string.preference_supibot_suggestions_key)
         val scrollBackLengthKey = getString(R.string.preference_scrollback_length_key)
         val preferEmotesSuggestionsKey = getString(R.string.preference_prefer_emote_suggestions_key)
-        val loadThirdPartyEmoteData = getString(R.string.preference_visible_emotes_key)
         dankChatPreferences = DankChatPreferenceStore(context)
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.oAuthKey.isNullOrBlank()) {
             dankChatPreferences.clearLogin()
