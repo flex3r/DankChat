@@ -75,7 +75,7 @@ class DataRepository(private val apiManager: ApiManager, private val emoteManage
     suspend fun loadTwitchEmotes(oAuth: String, id: String) {
         if (oAuth.isNotBlank()) {
             measureTimeAndLog(TAG, "twitch emotes for #$id") {
-                apiManager.getUserEmotes(oAuth, id)?.also { emoteManager.setTwitchEmotes(it) }
+                apiManager.getUserEmotes(oAuth, id)?.also { emoteManager.setTwitchEmotes(oAuth, it) }
             }
         }
     }

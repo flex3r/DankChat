@@ -51,10 +51,12 @@ class ApiManager @Inject constructor(
     suspend fun unblockUser(oAuth: String, targetUserId: String): Boolean = helixApiService.deleteUserBlock("Bearer $oAuth", targetUserId).isSuccessful
     suspend fun getChannelBadges(oAuth: String, channelId: String): HelixBadgesDto? = helixApiService.getChannelBadges("Bearer $oAuth", channelId).bodyOrNull
     suspend fun getGlobalBadges(oAuth: String): HelixBadgesDto? = helixApiService.getGlobalBadges("Bearer $oAuth").bodyOrNull
+    suspend fun getEmoteSets(oAuth: String, setIds: List<String>): HelixEmoteSetsDto? = helixApiService.getEmoteSets("Bearer $oAuth", setIds).bodyOrNull
 
     suspend fun getUserEmotes(oAuth: String, id: String): TwitchEmotesDto? = krakenApiService.getUserEmotes("OAuth $oAuth", id).bodyOrNull
 
-    suspend fun getUserSet(set: String): TwitchEmoteSetDto? = dankChatApiService.getSet(set).bodyOrNull?.firstOrNull()
+    suspend fun getUserSet(set: String): DankChatEmoteSetDto? = dankChatApiService.getSet(set).bodyOrNull?.firstOrNull()
+    suspend fun getUserSets(sets: List<String>): List<DankChatEmoteSetDto>? = dankChatApiService.getSets(sets.joinToString(separator = ",")).bodyOrNull
     suspend fun getDankChatBadges(): List<DankChatBadgeDto>? = dankChatApiService.getDankChatBadges().bodyOrNull
 
     suspend fun getChannelBadgesFallback(channelId: String): TwitchBadgesDto? = badgesApiService.getChannelBadges(channelId).bodyOrNull

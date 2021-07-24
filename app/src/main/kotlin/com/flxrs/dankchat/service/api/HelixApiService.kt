@@ -117,4 +117,14 @@ interface HelixApiService {
     suspend fun getGlobalBadges(
         @Header("Authorization") oAuth: String
     ): Response<HelixBadgesDto>
+
+    @Headers(
+        "Client-ID: ${ApiManager.CLIENT_ID}",
+        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
+    )
+    @GET("chat/emotes/set")
+    suspend fun getEmoteSets(
+        @Header("Authorization") oAuth: String,
+        @Query("emote_set_id") setIds: List<String>
+    ): Response<HelixEmoteSetsDto>
 }

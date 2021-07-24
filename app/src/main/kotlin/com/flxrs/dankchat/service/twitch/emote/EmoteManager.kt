@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.service.twitch.emote
 
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.util.LruCache
 import com.flxrs.dankchat.service.api.ApiManager
 import com.flxrs.dankchat.service.api.dto.*
@@ -79,41 +80,59 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         dankChatBadges.addAll(dto)
     }
 
-    suspend fun setTwitchEmotes(twitchResult: TwitchEmotesDto) = withContext(Dispatchers.Default) {
+    suspend fun setTwitchEmotes(oAuth: String, twitchResult: TwitchEmotesDto) = withContext(Dispatchers.Default) {
         val filtered = twitchResult.sets.filterNot { it.key in userstateEmotes }
-        val setMapping = filtered.keys
+        val sets = filtered.keys
+            .chunked(25)
             .map {
                 async {
-                    runCatching { apiManager.getUserSet(it) }.getOrNull() ?: TwitchEmoteSetDto(it, "", "", 1, null)
+                    runCatching { apiManager.getEmoteSets(oAuth, it) }.getOrNull()
                 }
-            }.awaitAll()
-            .associateBy({ it.id }, { it.channelName })
-
-        filtered.forEach { (set, emotes) ->
-            val type = when (set) {
-                "0", "42" -> EmoteType.GlobalTwitchEmote // 42 == monkey emote set, move them to the global emote section
-                else      -> EmoteType.ChannelTwitchEmote(setMapping[set] ?: "Twitch")
             }
+            .awaitAll()
+            .asSequence()
+            .filterNotNull()
+            .map { it.sets }
+            .flatten()
+            .distinctBy { it.setId }
+            .associate { it.setId to it.channelId }
 
-            emotes.mapToGenericEmotes(type).forEach {
-                twitchEmotes[it.code] = it
+        filtered.map { (id, emotes) ->
+            async {
+                val channelId = sets[id]
+                val type = when {
+                    id == "0" || id == "42" || channelId == "0" || channelId == "19194" -> EmoteType.GlobalTwitchEmote
+                    else                                                                -> {
+                        val channel = when {
+                            channelId.isNullOrBlank() -> "Twitch"
+                            else                      -> {
+                                apiManager.getUser(oAuth, channelId)?.displayName
+                                    .takeUnless { it.equals("qa_TW_Partner", ignoreCase = true) } ?: "Twitch"
+                            }
+                        }
+
+                        EmoteType.ChannelTwitchEmote(channel)
+                    }
+                }
+
+                emotes.mapToGenericEmotes(type)
             }
+        }.awaitAll().flatten().forEach {
+            twitchEmotes[it.code] = it
         }
     }
 
-    suspend fun loadUserStateEmotes(emoteSets: List<String>) = withContext(Dispatchers.Default) {
+    suspend fun loadUserStateEmotes(emoteSetIds: List<String>) = withContext(Dispatchers.Default) {
         twitchEmotes.clear()
-        val emoteSetsResult = emoteSets.map {
-            async {
-                runCatching { apiManager.getUserSet(it) }.getOrNull()
-            }
-        }.awaitAll().filterNotNull()
-        userstateEmotes = emoteSetsResult.map { it.id }
+        val sets = runCatching { apiManager.getUserSets(emoteSetIds) }
+            .getOrNull()
+            .orEmpty()
+        userstateEmotes = sets.map { it.id }
 
-        emoteSetsResult.forEach { emoteSet ->
+        sets.forEach { emoteSet ->
             val type = when (emoteSet.id) {
                 "0", "42" -> EmoteType.GlobalTwitchEmote // 42 == monkey emote set, move them to the global emote section
-                else      -> EmoteType.ChannelTwitchEmote(emoteSet.channelName)
+                else      -> EmoteType.ChannelTwitchEmote(emoteSet.channelName.takeUnless { it.equals("qa_TW_Partner", ignoreCase = true) } ?: "Twitch")
             }
             emoteSet.emotes.mapToGenericEmotes(type).forEach {
                 twitchEmotes[it.code] = it
