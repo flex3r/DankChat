@@ -299,14 +299,25 @@ class ChatAdapter(
             allowedBadges.forEachIndexed { idx, badge ->
                 try {
                     val (start, end) = badgePositions[idx]
-                    Coil.execute(badge.url.toRequest(context)).drawable?.apply {
-                        if (badge is Badge.FFZModBadge) {
-                            colorFilter = PorterDuffColorFilter(ContextCompat.getColor(context, R.color.color_ffz_mod), PorterDuff.Mode.DST_OVER)
-                        }
+                    val cached = emoteManager.gifCache[badge.url]
+                    val drawable = when {
+                        cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
+                        else           -> Coil.execute(badge.url.toRequest(context)).drawable?.apply {
+                            if (badge is Badge.FFZModBadge) {
+                                colorFilter = PorterDuffColorFilter(ContextCompat.getColor(context, R.color.color_ffz_mod), PorterDuff.Mode.DST_OVER)
+                            }
 
-                        val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
-                        setBounds(0, 0, width, lineHeight)
-                        val imageSpan = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
+                            val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
+                            setBounds(0, 0, width, lineHeight)
+                            if (this is Animatable) {
+                                emoteManager.gifCache.put(badge.url, this)
+                                setRunning(animateGifs)
+                            }
+                        }
+                    }
+
+                    if (drawable != null) {
+                        val imageSpan = ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM)
                         (text as SpannableString).setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                     }
                 } catch (t: Throwable) {
