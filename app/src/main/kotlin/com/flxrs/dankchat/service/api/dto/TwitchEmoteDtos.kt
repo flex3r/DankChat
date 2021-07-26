@@ -7,8 +7,8 @@ import com.squareup.moshi.Json
 data class TwitchEmoteDto(
     @field:Json(name = "code") val name: String,
     @field:Json(name = "id") val id: String,
-    @field:Json(name = "type") val type: TwitchEmoteType?,
-    @field:Json(name = "assetType") val assetType: TwitchEmoteAssetType?,
+    @field:Json(name = "type") val type: String?,
+    @field:Json(name = "assetType") val assetType: String?,
 )
 
 @Keep
@@ -22,19 +22,6 @@ data class DankChatEmoteSetDto(
     @field:Json(name = "tier") val tier: Int,
     @field:Json(name = "emotes") val emotes: List<TwitchEmoteDto>?
 )
-
-@Keep
-enum class TwitchEmoteAssetType {
-    STATIC,
-    ANIMATED,
-    UNKNOWN
-}
-
-@Keep
-enum class TwitchEmoteType {
-    FOLLOWER,
-    UNKNOWN
-}
 
 @Keep
 data class HelixEmoteSetsDto(

@@ -3,11 +3,7 @@ package com.flxrs.dankchat.di
 import android.content.Context
 import coil.util.CoilUtils
 import com.flxrs.dankchat.service.api.*
-import com.flxrs.dankchat.service.api.dto.TwitchEmoteAssetType
-import com.flxrs.dankchat.service.api.dto.TwitchEmoteType
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapters.EnumJsonAdapter
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,7 +12,6 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.CacheControl
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.IOException
@@ -90,14 +85,7 @@ object NetworkModule {
     @Provides
     fun provideDankChatApiService(@ApiOkHttpClient client: OkHttpClient): DankChatApiService = Retrofit.Builder()
         .baseUrl(DANKCHAT_BASE_URL)
-        .addConverterFactory(
-            MoshiConverterFactory.create(
-                Moshi.Builder()
-                    .add(TwitchEmoteAssetType::class.java, EnumJsonAdapter.create(TwitchEmoteAssetType::class.java).withUnknownFallback(TwitchEmoteAssetType.UNKNOWN))
-                    .add(TwitchEmoteType::class.java, EnumJsonAdapter.create(TwitchEmoteType::class.java).withUnknownFallback(TwitchEmoteType.UNKNOWN))
-                    .build()
-            )
-        )
+        .addConverterFactory(MoshiConverterFactory.create())
         .client(client)
         .build()
         .create(DankChatApiService::class.java)

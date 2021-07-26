@@ -29,6 +29,8 @@ android {
             manifestPlaceholders = [applicationLabel: "@string/app_name"]
         }
         debug {
+            minifyEnabled true
+            shrinkResources true
             manifestPlaceholders = [applicationLabel: "@string/app_name"]
         }
         dank {
@@ -113,8 +115,6 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
-    implementation "com.squareup.moshi:moshi:$moshi_version"
-    implementation "com.squareup.moshi:moshi-adapters:$moshi_version"
 
 
 // Debug
