@@ -9,7 +9,6 @@ import android.provider.MediaStore
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.webkit.MimeTypeMap
@@ -29,11 +28,14 @@ import androidx.core.net.toUri
 import androidx.core.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
+import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.chat.menu.EmoteMenuAdapter
@@ -47,7 +49,8 @@ import com.flxrs.dankchat.preferences.ChatSettingsFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.state.DataLoadingState
 import com.flxrs.dankchat.service.state.ImageUploadState
-import com.flxrs.dankchat.service.twitch.connection.SystemMessageType
+import com.flxrs.dankchat.service.twitch.connection.ConnectionState
+import com.flxrs.dankchat.service.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.utils.*
 import com.flxrs.dankchat.utils.extensions.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -142,15 +145,11 @@ class MainFragment : Fragment() {
             collectFlow(emoteItems, emoteMenuAdapter::submitList)
             collectFlow(appbarEnabled) { changeActionBarVisibility(it) }
             collectFlow(canType) { if (it) binding.inputLayout.setup() }
-            collectFlow(connectionState) { hint ->
-                if (hint == SystemMessageType.NOT_LOGGED_IN && dankChatPreferences.hasMessageHistoryAcknowledged) {
-                    showApiChangeInformationIfNotAcknowledged()
-                }
-
-                binding.inputLayout.hint = when (hint) {
-                    SystemMessageType.CONNECTED -> getString(R.string.hint_connected)
-                    SystemMessageType.NOT_LOGGED_IN -> getString(R.string.hint_not_logged_int)
-                    else -> getString(R.string.hint_disconnected)
+            collectFlow(connectionState) { state ->
+                binding.inputLayout.hint = when (state) {
+                    ConnectionState.CONNECTED               -> getString(R.string.hint_connected)
+                    ConnectionState.CONNECTED_NOT_LOGGED_IN -> getString(R.string.hint_not_logged_int)
+                    ConnectionState.DISCONNECTED            -> getString(R.string.hint_disconnected)
                 }
             }
             collectFlow(currentBottomText) {
@@ -175,7 +174,7 @@ class MainFragment : Fragment() {
                     if (count > 0) {
                         when (index) {
                             binding.tabs.selectedTabPosition -> mainViewModel.clearMentionCount(channel) // mention is in active channel
-                            else -> binding.tabs.getTabAt(index)?.apply { orCreateBadge }
+                            else                             -> binding.tabs.getTabAt(index)?.apply { orCreateBadge }
                         }
                     } else {
                         binding.tabs.getTabAt(index)?.removeBadge()
@@ -194,34 +193,37 @@ class MainFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        navController.currentBackStackEntry?.savedStateHandle?.apply {
-            getLiveData<Boolean>(LOGIN_REQUEST_KEY).observe(viewLifecycleOwner) {
-                handleLoginRequest(it)
-                remove<Boolean>(LOGIN_REQUEST_KEY)
-            }
-            getLiveData<Boolean>(LOGOUT_REQUEST_KEY).observe(viewLifecycleOwner) {
-                showLogoutConfirmationDialog()
-                remove<Boolean>(LOGOUT_REQUEST_KEY)
-            }
-            getLiveData<Boolean>(THEME_CHANGED_KEY).observe(viewLifecycleOwner) {
-                remove<Boolean>(THEME_CHANGED_KEY)
-                binding.root.post { ActivityCompat.recreate(requireActivity()) }
-            }
-            getLiveData<Array<String>>(CHANNELS_REQUEST_KEY).observe(viewLifecycleOwner) {
-                updateChannels(it.toList())
-            }
-            getLiveData<String>(ADD_CHANNEL_REQUEST_KEY).observe(viewLifecycleOwner) {
-                addChannel(it)
-            }
-            getLiveData<Boolean>(HISTORY_DISCLAIMER_KEY).observe(viewLifecycleOwner) {
-                handleMessageHistoryDisclaimerResult(it)
-            }
-            getLiveData<UserPopupResult>(USER_POPUP_RESULT_KEY).observe(viewLifecycleOwner) {
-                handleUserPopupResult(it)
+        initPreferences(view.context)
+
+        val navBackStackEntry = navController.getBackStackEntry(R.id.mainFragment)
+        val handle = navBackStackEntry.savedStateHandle
+        val observer = LifecycleEventObserver { _, event ->
+            if (event != Lifecycle.Event.ON_RESUME) return@LifecycleEventObserver
+            handle.keys().forEach { key ->
+                when (key) {
+                    LOGIN_REQUEST_KEY       -> handle.withData(key, ::handleLoginRequest)
+                    ADD_CHANNEL_REQUEST_KEY -> handle.withData(key, ::addChannel)
+                    HISTORY_DISCLAIMER_KEY  -> handle.withData(key, ::handleMessageHistoryDisclaimerResult)
+                    USER_POPUP_RESULT_KEY   -> handle.withData(key, ::handleUserPopupResult)
+                    LOGOUT_REQUEST_KEY      -> handle.withData<Boolean>(key) {
+                        showLogoutConfirmationDialog()
+                    }
+                    THEME_CHANGED_KEY       -> handle.withData<Boolean>(key) {
+                        binding.root.post { ActivityCompat.recreate(requireActivity()) }
+                    }
+                    CHANNELS_REQUEST_KEY    -> handle.withData<Array<String>>(key) {
+                        updateChannels(it.toList())
+                    }
+                }
             }
         }
+        navBackStackEntry.lifecycle.addObserver(observer)
+        viewLifecycleOwner.lifecycle.addObserver(LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_DESTROY) {
+                navBackStackEntry.lifecycle.removeObserver(observer)
+            }
+        })
 
-        initPreferences(view.context)
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.userIdString == null) {
             dankChatPreferences.userIdString = "${dankChatPreferences.userId}"
         }
@@ -236,8 +238,8 @@ class MainFragment : Fragment() {
             onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
                 when {
                     emoteMenuBottomSheetBehavior?.isVisible == true -> emoteMenuBottomSheetBehavior?.hide()
-                    mentionBottomSheetBehavior?.isVisible == true -> mentionBottomSheetBehavior?.hide()
-                    else -> finishAndRemoveTask()
+                    mentionBottomSheetBehavior?.isVisible == true   -> mentionBottomSheetBehavior?.hide()
+                    else                                            -> finishAndRemoveTask()
                 }
             }
 
@@ -245,7 +247,7 @@ class MainFragment : Fragment() {
                 if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT && v.isVisible) {
                     v.y = when {
                         binding.input.hasFocus() -> 0f
-                        else -> insets
+                        else                     -> insets
                             .getInsets(WindowInsetsCompat.Type.displayCutout())
                             .top.toFloat()
                     }
@@ -268,6 +270,8 @@ class MainFragment : Fragment() {
                     val shouldLoadHistory = preferences.getBoolean(getString(R.string.preference_load_message_history_key), true)
                     val shouldLoadSupibot = preferences.getBoolean(getString(R.string.preference_supibot_suggestions_key), false)
                     val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
+                    val loadThirdPartyKeys = preferences.getStringSet(getString(R.string.preference_visible_emotes_key), resources.getStringArray(R.array.emotes_entry_values).toSet()).orEmpty()
+                    val loadThirdPartyData = ThirdPartyEmoteType.mapFromPreferenceSet(loadThirdPartyKeys)
 
                     mainViewModel.loadData(
                         oAuth = oAuth,
@@ -276,6 +280,7 @@ class MainFragment : Fragment() {
                         channelList = channels,
                         isUserChange = false,
                         loadTwitchData = true,
+                        loadThirdPartyData = loadThirdPartyData,
                         loadHistory = shouldLoadHistory,
                         loadSupibot = shouldLoadSupibot,
                         scrollBackLength = scrollBackLength
@@ -305,7 +310,7 @@ class MainFragment : Fragment() {
                 if (index >= 0) {
                     when (index) {
                         binding.chatViewpager.currentItem -> clearNotificationsOfChannel(channelToOpen)
-                        else -> binding.chatViewpager.setCurrentItem(index, false)
+                        else                              -> binding.chatViewpager.setCurrentItem(index, false)
                     }
                 }
                 channelToOpen = ""
@@ -361,20 +366,20 @@ class MainFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_reconnect -> mainViewModel.reconnect()
-            R.id.menu_login -> navigateSafe(R.id.action_mainFragment_to_loginFragment).also { hideKeyboard() }
-            R.id.menu_add -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment)
-            R.id.menu_mentions -> mentionBottomSheetBehavior?.expand()
-            R.id.menu_open -> openChannel()
-            R.id.menu_manage -> openManageChannelsDialog()
+            R.id.menu_reconnect     -> mainViewModel.reconnect()
+            R.id.menu_login         -> navigateSafe(R.id.action_mainFragment_to_loginFragment).also { hideKeyboard() }
+            R.id.menu_add           -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment)
+            R.id.menu_mentions      -> mentionBottomSheetBehavior?.expand()
+            R.id.menu_open          -> openChannel()
+            R.id.menu_manage        -> openManageChannelsDialog()
             R.id.menu_reload_emotes -> reloadEmotes()
-            R.id.menu_choose_media -> showNuulsUploadDialogIfNotAcknowledged { requestGalleryMedia.launch() }
+            R.id.menu_choose_media  -> showNuulsUploadDialogIfNotAcknowledged { requestGalleryMedia.launch() }
             R.id.menu_capture_image -> startCameraCapture()
             R.id.menu_capture_video -> startCameraCapture(captureVideo = true)
-            R.id.menu_hide -> mainViewModel.appbarEnabled.value = false
-            R.id.menu_clear -> clear()
-            R.id.menu_settings -> navigateSafe(R.id.action_mainFragment_to_overviewSettingsFragment).also { hideKeyboard() }
-            else -> return false
+            R.id.menu_hide          -> mainViewModel.appbarEnabled.value = false
+            R.id.menu_clear         -> clear()
+            R.id.menu_settings      -> navigateSafe(R.id.action_mainFragment_to_overviewSettingsFragment).also { hideKeyboard() }
+            else                    -> return false
         }
         return true
     }
@@ -386,13 +391,13 @@ class MainFragment : Fragment() {
         navigateSafe(directions)
     }
 
-    private fun mentionUser(user: String) {
+    fun mentionUser(user: String) {
         val template = preferences.getString(getString(R.string.preference_mention_format_key), "name") ?: "name"
         val mention = "${template.replace("name", user)} "
         insertText(mention)
     }
 
-    private fun whisperUser(user: String) {
+    fun whisperUser(user: String) {
         if (!binding.input.isEnabled) return
 
         val current = binding.input.text.toString()
@@ -419,14 +424,13 @@ class MainFragment : Fragment() {
         val shouldLoadSupibot = preferences.getBoolean(getString(R.string.preference_supibot_suggestions_key), false)
         val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
 
-        if (mainViewModel.connectionState.value == SystemMessageType.NOT_LOGGED_IN) {
-            showApiChangeInformationIfNotAcknowledged()
-        }
-
         val oAuth = dankChatPreferences.oAuthKey ?: ""
         val name = dankChatPreferences.userName ?: ""
         val id = dankChatPreferences.userIdString ?: ""
         val channels = dankChatPreferences.getChannels()
+        val loadThirdPartyKeys = preferences.getStringSet(getString(R.string.preference_visible_emotes_key), resources.getStringArray(R.array.emotes_entry_values).toSet()).orEmpty()
+        val loadThirdPartyData = ThirdPartyEmoteType.mapFromPreferenceSet(loadThirdPartyKeys)
+
         mainViewModel.loadData(
             oAuth = oAuth,
             id = id,
@@ -434,6 +438,7 @@ class MainFragment : Fragment() {
             channelList = channels,
             isUserChange = false,
             loadTwitchData = true,
+            loadThirdPartyData = loadThirdPartyData,
             loadHistory = result,
             loadSupibot = shouldLoadSupibot,
             scrollBackLength = scrollBackLength
@@ -445,7 +450,7 @@ class MainFragment : Fragment() {
     }
 
     private fun handleUserPopupResult(result: UserPopupResult) = when (result) {
-        is UserPopupResult.Error -> binding.root.showShortSnackbar(getString(R.string.user_popup_error, result.throwable?.message.orEmpty()))
+        is UserPopupResult.Error   -> binding.root.showShortSnackbar(getString(R.string.user_popup_error, result.throwable?.message.orEmpty()))
         is UserPopupResult.Mention -> mentionUser(result.targetUser)
         is UserPopupResult.Whisper -> whisperUser(result.targetUser)
     }
@@ -459,6 +464,8 @@ class MainFragment : Fragment() {
             val name = dankChatPreferences.userName ?: ""
             val shouldLoadHistory = preferences.getBoolean(getString(R.string.preference_load_message_history_key), true)
             val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(preferences.getInt(getString(R.string.preference_scrollback_length_key), 10))
+            val loadThirdPartyKeys = preferences.getStringSet(getString(R.string.preference_visible_emotes_key), resources.getStringArray(R.array.emotes_entry_values).toSet()).orEmpty()
+            val loadThirdPartyData = ThirdPartyEmoteType.mapFromPreferenceSet(loadThirdPartyKeys)
 
             val updatedChannels = mainViewModel.joinChannel(lowerCaseChannel)
             newTabIndex = updatedChannels.size - 1
@@ -469,6 +476,7 @@ class MainFragment : Fragment() {
                 channelList = listOf(lowerCaseChannel),
                 isUserChange = false,
                 loadTwitchData = false,
+                loadThirdPartyData = loadThirdPartyData,
                 loadHistory = shouldLoadHistory,
                 loadSupibot = false,
                 scrollBackLength
@@ -517,14 +525,17 @@ class MainFragment : Fragment() {
     private fun handleImageUploadState(result: ImageUploadState) {
         when (result) {
             is ImageUploadState.Loading, ImageUploadState.None -> return
-            is ImageUploadState.Failed -> showSnackbar(
+            is ImageUploadState.Failed                         -> showSnackbar(
                 message = result.errorMessage?.let { getString(R.string.snackbar_upload_failed_cause, it) } ?: getString(R.string.snackbar_upload_failed),
                 onDismiss = { result.mediaFile.delete() },
                 action = getString(R.string.snackbar_retry) to { mainViewModel.uploadMedia(result.mediaFile) })
-            is ImageUploadState.Finished -> {
+            is ImageUploadState.Finished                       -> {
                 val clipboard = getSystemService(requireContext(), ClipboardManager::class.java)
                 clipboard?.setPrimaryClip(ClipData.newPlainText("nuuls image url", result.url))
-                showSnackbar(getString(R.string.snackbar_image_uploaded, result.url))
+                showSnackbar(
+                    message = getString(R.string.snackbar_image_uploaded, result.url),
+                    action = getString(R.string.snackbar_paste) to { insertText(result.url) }
+                )
             }
         }
     }
@@ -532,13 +543,13 @@ class MainFragment : Fragment() {
     private fun handleDataLoadingState(result: DataLoadingState) {
         when (result) {
             is DataLoadingState.Loading, DataLoadingState.Finished, DataLoadingState.None -> return
-            is DataLoadingState.Reloaded -> showSnackbar(getString(R.string.snackbar_data_reloaded))
-            is DataLoadingState.Failed -> showSnackbar(
+            is DataLoadingState.Reloaded                                                  -> showSnackbar(getString(R.string.snackbar_data_reloaded))
+            is DataLoadingState.Failed                                                    -> showSnackbar(
                 message = getString(R.string.snackbar_data_load_failed_cause, result.errorMessage),
                 action = getString(R.string.snackbar_retry) to {
                     when {
                         result.parameters.isReloadEmotes -> reloadEmotes(result.parameters.channels.first())
-                        else -> mainViewModel.loadData(result.parameters)
+                        else                             -> mainViewModel.loadData(result.parameters)
                     }
                 })
         }
@@ -554,9 +565,11 @@ class MainFragment : Fragment() {
         val oAuth = dankChatPreferences.oAuthKey
         val name = dankChatPreferences.userName
         val id = dankChatPreferences.userIdString
+        val loadThirdPartyKeys = preferences.getStringSet(getString(R.string.preference_visible_emotes_key), resources.getStringArray(R.array.emotes_entry_values).toSet()).orEmpty()
+        val loadThirdPartyData = ThirdPartyEmoteType.mapFromPreferenceSet(loadThirdPartyKeys)
 
         if (success && !oAuth.isNullOrBlank() && !name.isNullOrBlank() && !id.isNullOrBlank()) {
-            mainViewModel.closeAndReconnect(name, oAuth, id, loadTwitchData = true)
+            mainViewModel.closeAndReconnect(name, oAuth, id, loadTwitchData = true, loadThirdPartyData = loadThirdPartyData)
             dankChatPreferences.isLoggedIn = true
             showSnackbar(getString(R.string.snackbar_login, name))
         } else {
@@ -592,17 +605,6 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun showApiChangeInformationIfNotAcknowledged() {
-        if (!dankChatPreferences.hasApiChangeAcknowledged) {
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.anon_connection_disclaimer_title)
-                .setMessage(R.string.anon_connection_disclaimer_message)
-                .setPositiveButton(R.string.dialog_ok) { dialog, _ -> dialog.dismiss() }
-                .setOnDismissListener { dankChatPreferences.hasApiChangeAcknowledged = true }
-                .show()
-        }
-    }
-
     private inline fun showNuulsUploadDialogIfNotAcknowledged(crossinline action: () -> Unit) {
         if (!dankChatPreferences.hasNuulsAcknowledged) {
             val spannable = SpannableStringBuilder(getString(R.string.nuuls_upload_disclaimer))
@@ -625,10 +627,9 @@ class MainFragment : Fragment() {
 
     private fun startCameraCapture(captureVideo: Boolean = false) {
         val packageManager = activity?.packageManager ?: return
-        val packageName = activity?.packageName ?: return
         val (action, extension) = when {
             captureVideo -> MediaStore.ACTION_VIDEO_CAPTURE to "mp4"
-            else -> MediaStore.ACTION_IMAGE_CAPTURE to "jpg"
+            else         -> MediaStore.ACTION_IMAGE_CAPTURE to "jpg"
         }
         showNuulsUploadDialogIfNotAcknowledged {
             Intent(action).also { captureIntent ->
@@ -638,11 +639,11 @@ class MainFragment : Fragment() {
                     } catch (ex: IOException) {
                         null
                     }?.also {
-                        val uri = FileProvider.getUriForFile(requireContext(), "$packageName.fileprovider", it)
+                        val uri = FileProvider.getUriForFile(requireContext(), "${BuildConfig.APPLICATION_ID}.fileprovider", it)
                         captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
                         when {
                             captureVideo -> requestVideoCapture.launch(captureIntent)
-                            else -> requestImageCapture.launch(captureIntent)
+                            else         -> requestImageCapture.launch(captureIntent)
                         }
                     }
                 }
@@ -671,9 +672,11 @@ class MainFragment : Fragment() {
     private fun reloadEmotes(channel: String? = null) {
         val position = channel?.let(tabAdapter.titleList::indexOf) ?: binding.tabs.selectedTabPosition
         if (position in 0 until tabAdapter.titleList.size) {
-            val oAuth = dankChatPreferences.oAuthKey ?: return
-            val userId = dankChatPreferences.userIdString ?: return
-            mainViewModel.reloadEmotes(tabAdapter.titleList[position], oAuth, userId)
+            val oAuth = dankChatPreferences.oAuthKey.orEmpty()
+            val userId = dankChatPreferences.userIdString.orEmpty()
+            val loadThirdPartyKeys = preferences.getStringSet(getString(R.string.preference_visible_emotes_key), resources.getStringArray(R.array.emotes_entry_values).toSet()).orEmpty()
+            val loadThirdPartyData = ThirdPartyEmoteType.mapFromPreferenceSet(loadThirdPartyKeys)
+            mainViewModel.reloadEmotes(tabAdapter.titleList[position], oAuth, userId, loadThirdPartyData)
         }
     }
 
@@ -688,6 +691,7 @@ class MainFragment : Fragment() {
         val timestampFormatKey = getString(R.string.preference_timestamp_format_key)
         val loadSupibotKey = getString(R.string.preference_supibot_suggestions_key)
         val scrollBackLengthKey = getString(R.string.preference_scrollback_length_key)
+        val preferEmotesSuggestionsKey = getString(R.string.preference_prefer_emote_suggestions_key)
         dankChatPreferences = DankChatPreferenceStore(context)
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.oAuthKey.isNullOrBlank()) {
             dankChatPreferences.clearLogin()
@@ -697,18 +701,19 @@ class MainFragment : Fragment() {
         if (::preferenceListener.isInitialized) preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
             when (key) {
-                roomStateKey -> mainViewModel.setRoomStateEnabled(p.getBoolean(key, true))
-                streamInfoKey -> {
+                roomStateKey               -> mainViewModel.setRoomStateEnabled(p.getBoolean(key, true))
+                streamInfoKey              -> {
                     fetchStreamInformation()
                     mainViewModel.setStreamInfoEnabled(p.getBoolean(key, true))
                 }
-                inputKey -> mainViewModel.inputEnabled.value = p.getBoolean(key, true)
-                customMentionsKey -> mainViewModel.setMentionEntries(p.getStringSet(key, emptySet()))
-                blacklistKey -> mainViewModel.setBlacklistEntries(p.getStringSet(key, emptySet()))
-                loadSupibotKey -> mainViewModel.setSupibotSuggestions(p.getBoolean(key, false))
-                scrollBackLengthKey -> mainViewModel.setScrollbackLength(ChatSettingsFragment.correctScrollbackLength(p.getInt(scrollBackLengthKey, 10)))
-                keepScreenOnKey -> keepScreenOn(p.getBoolean(key, true))
-                suggestionsKey -> binding.input.setSuggestionAdapter(p.getBoolean(key, true), suggestionAdapter)
+                inputKey                   -> mainViewModel.inputEnabled.value = p.getBoolean(key, true)
+                customMentionsKey          -> mainViewModel.setMentionEntries(p.getStringSet(key, emptySet()))
+                blacklistKey               -> mainViewModel.setBlacklistEntries(p.getStringSet(key, emptySet()))
+                loadSupibotKey             -> mainViewModel.setSupibotSuggestions(p.getBoolean(key, false))
+                scrollBackLengthKey        -> mainViewModel.setScrollbackLength(ChatSettingsFragment.correctScrollbackLength(p.getInt(scrollBackLengthKey, 10)))
+                keepScreenOnKey            -> keepScreenOn(p.getBoolean(key, true))
+                suggestionsKey             -> binding.input.setSuggestionAdapter(p.getBoolean(key, true), suggestionAdapter)
+                preferEmotesSuggestionsKey -> mainViewModel.setPreferEmotesSuggestions(p.getBoolean(key, false))
             }
         }
         preferences.apply {
@@ -719,6 +724,7 @@ class MainFragment : Fragment() {
                 setRoomStateEnabled(getBoolean(roomStateKey, true))
                 setStreamInfoEnabled(getBoolean(streamInfoKey, true))
                 inputEnabled.value = getBoolean(inputKey, true)
+                setPreferEmotesSuggestions(getBoolean(preferEmotesSuggestionsKey, false))
                 binding.input.setSuggestionAdapter(getBoolean(suggestionsKey, true), suggestionAdapter)
 
                 setMentionEntries(getStringSet(customMentionsKey, emptySet()))
@@ -736,7 +742,7 @@ class MainFragment : Fragment() {
                         override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
                             when (event) {
                                 BaseCallback.DISMISS_EVENT_CONSECUTIVE, BaseCallback.DISMISS_EVENT_TIMEOUT, BaseCallback.DISMISS_EVENT_SWIPE -> onDismiss()
-                                else -> return
+                                else                                                                                                         -> return
                             }
                         }
                     })
@@ -750,8 +756,10 @@ class MainFragment : Fragment() {
         .setTitle(getString(R.string.confirm_logout_title))
         .setMessage(getString(R.string.confirm_logout_message))
         .setPositiveButton(getString(R.string.confirm_logout_positive_button)) { dialog, _ ->
+            val loadThirdPartyKeys = preferences.getStringSet(getString(R.string.preference_visible_emotes_key), resources.getStringArray(R.array.emotes_entry_values).toSet()).orEmpty()
+            val loadThirdPartyData = ThirdPartyEmoteType.mapFromPreferenceSet(loadThirdPartyKeys)
             dankChatPreferences.clearLogin()
-            mainViewModel.closeAndReconnect(name = "", oAuth = "", userId = "")
+            mainViewModel.closeAndReconnect(name = "", oAuth = "", userId = "", loadThirdPartyData = loadThirdPartyData)
             mainViewModel.clearIgnores()
             dialog.dismiss()
         }
@@ -803,7 +811,7 @@ class MainFragment : Fragment() {
                 mainViewModel.setMentionSheetOpen(mentionBottomSheetBehavior?.isMoving == true || mentionBottomSheetBehavior?.isVisible == true)
                 when {
                     mentionBottomSheetBehavior?.isExpanded == true -> mainViewModel.setSuggestionChannel("w")
-                    mentionBottomSheetBehavior?.isHidden == true -> mainViewModel.setSuggestionChannel(tabAdapter.titleList[binding.chatViewpager.currentItem])
+                    mentionBottomSheetBehavior?.isHidden == true   -> mainViewModel.setSuggestionChannel(tabAdapter.titleList[binding.chatViewpager.currentItem])
                 }
             }
         })
@@ -811,7 +819,7 @@ class MainFragment : Fragment() {
 
     private fun calculatePageLimit(size: Int): Int = when {
         size > 1 -> size - 1
-        else -> ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
+        else     -> ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
     }
 
     private fun ViewPager2.setup(binding: MainFragmentBinding) {
@@ -850,9 +858,9 @@ class MainFragment : Fragment() {
                 }
                 TabLayoutMediator(bottomSheetTabs, bottomSheetViewPager) { tab, pos ->
                     tab.text = when (EmoteMenuTab.values()[pos]) {
-                        EmoteMenuTab.SUBS -> getString(R.string.emote_menu_tab_subs)
+                        EmoteMenuTab.SUBS    -> getString(R.string.emote_menu_tab_subs)
                         EmoteMenuTab.CHANNEL -> getString(R.string.emote_menu_tab_channel)
-                        EmoteMenuTab.GLOBAL -> getString(R.string.emote_menu_tab_global)
+                        EmoteMenuTab.GLOBAL  -> getString(R.string.emote_menu_tab_global)
                     }
                 }.attach()
             }
@@ -872,7 +880,7 @@ class MainFragment : Fragment() {
                                         (activity as? AppCompatActivity)?.supportActionBar?.hide()
                                         binding.tabs.visibility = View.GONE
                                     }
-                                    else -> {
+                                    else                                                                    -> {
                                         (activity as? AppCompatActivity)?.supportActionBar?.show()
                                         binding.tabs.visibility = View.VISIBLE
                                     }
@@ -901,7 +909,7 @@ class MainFragment : Fragment() {
         setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_SEND -> sendMessage()
-                else -> false
+                else                       -> false
             }
         }
         setOnKeyListener { _, keyCode, _ ->
@@ -909,20 +917,20 @@ class MainFragment : Fragment() {
                 KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> {
                     if (!isItemSelected()) sendMessage() else false
                 }
-                else -> false
+                else                                                  -> false
             }
         }
 
         var wasLandScapeNotFullscreen = false
         setOnFocusChangeListener { _, hasFocus ->
             when {
-                !hasFocus && wasLandScapeNotFullscreen && isLandscape -> {
+                !hasFocus && wasLandScapeNotFullscreen && isLandscape          -> {
                     wasLandScapeNotFullscreen = false
                     binding.showActionbarFab.visibility = View.GONE
                     binding.tabs.visibility = View.VISIBLE
                     (activity as? MainActivity)?.setFullScreen(false)
                 }
-                !hasFocus && binding.showActionbarFab.isVisible -> {
+                !hasFocus && binding.showActionbarFab.isVisible                -> {
                     wasLandScapeNotFullscreen = false
                     (activity as? MainActivity)?.setFullScreen(true, changeActionBarVisibility = false)
                 }
@@ -936,7 +944,7 @@ class MainFragment : Fragment() {
                         supportActionBar?.hide()
                     }
                 }
-                else -> {
+                else                                                           -> {
                     wasLandScapeNotFullscreen = false
                     (activity as? MainActivity)?.setFullScreen(false, changeActionBarVisibility = false)
                 }

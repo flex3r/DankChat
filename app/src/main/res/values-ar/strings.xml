@@ -13,7 +13,6 @@
     <string name="error_dialog_copy">نسخ</string>
     <string name="error_dialog_title">Caught exception: %1$s</string>
     <string name="add_channel">اضافة قناة</string>
-    <string name="name">Name</string>
     <string name="open_channel">فتح القناة</string>
     <string name="no_channels_added">لا توجد قنوات مضافة</string>
     <string name="confirm_logout_title">تأكيد تسجيل الخروج</string>
@@ -69,18 +68,35 @@
     <string name="message_history_disclaimer_message">DankChat loads historical messages from a third-party service on startup.\nTo get the messages, DankChat sends the names of the channels you have open to that service.\nThe service temporarily stores messages for channels you (and others) visit to provide the service.\n\n- To not use this feature, click Opt-Out below or disable message history loading in the settings later.\n- You can learn more about the service and disable message history for your own channel by visiting https://recent-messages.robotty.de/</string>
     <string name="dialog_optin">Opt-in</string>
     <string name="dialog_optout">Opt-out</string>
-    <string name="anon_connection_disclaimer_title">"اتصال مجهول "</string>
-    <string name="anon_connection_disclaimer_message">Due to recent changes to the official Twitch api, some data can now only be accessed when logged in.\nThis includes support for twitch badges and third party emotes.</string>
     <string name="more">المزيد</string>
     <string name="mentions_title">الاشارات / الرسأل الخاصة</string>
     <string name="whispers">" الرسأل الخاصة"</string>
     <string name="notification_whisper_mention">%1$s أرسل لك  رسالة خاصة</string>
     <string name="mentions">الاشارات</string>
+    <string name="manage_channels">إدارة القنوات</string>
+    <string name="confirm_channel_removal_title">تأكيد إزالة القناة</string>
+    <string name="confirm_channel_removal_message">هل أنت متأكد أنك تريد إزالة هذه القناة؟</string>
+    <string name="confirm_channel_removal_positive_button">إزالة</string>
+    <string name="user_popup_follow">متابعة</string>
+    <string name="user_popup_unfollow">الغاء المتابعة</string>
+    <string name="user_popup_block">حظر</string>
+    <string name="user_popup_unblock">الغاء الحظر</string>
+    <string name="user_popup_mention">أذكر المستخدم</string>
+    <string name="user_popup_whisper">ارسال رسالة خاصة</string>
+    <string name="user_popup_created">Created: %1$s</string>
+    <string name="user_popup_following_since">متابع منذ %1$s</string>
+    <string name="user_popup_not_following">غير متابع</string>
+    <string name="user_popup_avatar_description">صورة الملف الشخصي</string>
+    <string name="user_popup_error">فشل تحميل بيانات المستخدم: %1$s</string>
+    <string name="confirm_user_unfollow_title">تأكيد إلغاء المتابعة</string>
+    <string name="confirm_user_unfollow_message">هل أنت متأكد أنك تريد إلغاء متابعة هذا المستخدم؟</string>
+    <string name="confirm_user_block_title">تأكيد الحظر</string>
+    <string name="confirm_user_block_message">هل أنت متأكد أنك تريد حظر هذا المستخدم؟</string>
+    <string name="confirm_user_block_positive_button">حظر</string>
 
     <string name="preference_timestamp_title">Show timestamps</string>
     <string name="preference_mention_format_title">" تنسيق الإشارة"</string>
     <string name="preference_mention_format_summary">قم بتغيير تنسيق الإشارة عند النقر فوق اسم مستخدم</string>
-
     <string name="preference_roomstate_title">Show roomstate information</string>
     <string name="preference_roomstate_summary">"يعرض معلومات حول الدردشة الحالية مثل وضع المشتركين فقط "</string>
     <string name="preference_streaminfo_title">"اظهار معلومات البث "</string>
@@ -93,13 +109,9 @@
     <string name="preference_general_header">عام</string>
     <string name="preference_about_header">حول</string>
     <string name="preference_appearance_header">المظهر</string>
-
     <string name="preference_about_summary">DankChat %1$s made by @flex3rs and contributors\n\nTwitch emote data provided by twitchemotes.com</string>
-
-
     <string name="preference_show_input_title">"إظهار المدخلات "</string>
     <string name="preference_show_input_summary">"يعرض حقل الإدخال لإرسال الرسائل "</string>
-
     <string name="preference_dark_theme_title">تفعيل المظهر الداكن</string>
     <string name="preference_show_timed_out_messages_title">Show timed out messages</string>
     <string name="preference_custom_mentions_title">الإشارات المخصصة</string>
@@ -140,8 +152,12 @@
     <string name="preference_supibot_suggestions_title">"اقتراحات أوامر Supibot "</string>
     <string name="preference_scrollback_length_title">"طول التمرير للرسالة "</string>
     <string name="preference_show_username_title">"اظهر اسم المستخدم"</string>
-
-
+    <string name="preference_visible_badges_title">Visible badges</string>
+    <string name="preference_prefer_emote_suggestions_title">تفضيل اقتراحات الايموتات</string>
+    <string name="preference_prefer_emote_suggestions_summary">إعطاء الأولوية لأقتراحات الايموتات على اقتراحات المستخدم</string>
+    <string name="preference_user_long_click_title">انقر فوق اسم المستخدم لفترة طويلة</string>
+    <string name="preference_user_long_click_summary_on">النقر المنتظم يفتح نافذة منبثقة ، انقر طويلا يذكر اسم المستخدم</string>
+    <string name="preference_user_long_click_summary_off"> النقر المنتظم يذكر اسم المستخدم ، انقر طويلا يفتح نافذة منبثقة</string>
 
     <plurals name="viewers" tools:ignore="MissingQuantity">
         <item quantity="one">Live with %d viewer</item>

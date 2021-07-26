@@ -9,10 +9,10 @@ import com.flxrs.dankchat.service.api.dto.HelixUserDto
 import com.flxrs.dankchat.service.api.dto.UserFollowsDto
 import com.flxrs.dankchat.utils.DateTimeUtils.asParsedZonedDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,10 +21,8 @@ class UserPopupViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
     private val dataRepository: DataRepository
 ) : ViewModel() {
-    private val targetUserId = savedStateHandle.get<String>(UserPopupDialogFragment.TARGET_USER_ID_ARG)
-    private val currentUserId = savedStateHandle.get<String>(UserPopupDialogFragment.CURRENT_USER_ID_ARG)
-    private val oAuth = savedStateHandle.get<String>(UserPopupDialogFragment.OAUTH_ARG)
-    private val channel = savedStateHandle.get<String>(UserPopupDialogFragment.CHANNEL_ARG)
+
+    private val args = UserPopupDialogFragmentArgs.fromSavedStateHandle(savedStateHandle)
 
     sealed class UserPopupState {
         object Loading : UserPopupState()
@@ -81,32 +79,22 @@ class UserPopupViewModel @Inject constructor(
     }
 
     private inline fun updateStateWith(crossinline block: suspend (String, String, String) -> Unit) = viewModelScope.launch {
-        if (targetUserId == null || currentUserId == null || oAuth == null) {
-            _userPopupState.value = UserPopupState.Error()
-            return@launch
-        }
-
-        val result = runCatching { block(targetUserId, currentUserId, oAuth) }
+        val result = runCatching { block(args.targetUserId, args.currentUserId, args.oAuth) }
         when {
             result.isFailure -> _userPopupState.value = UserPopupState.Error(result.exceptionOrNull())
-            else -> loadData()
+            else             -> loadData()
         }
     }
 
     private fun loadData() = viewModelScope.launch {
-        if (targetUserId == null || currentUserId == null || oAuth == null) {
-            _userPopupState.value = UserPopupState.Error()
-            return@launch
-        }
-
         _userPopupState.value = UserPopupState.Loading
 
         val result = runCatching {
-            val channelId = channel?.let { dataRepository.getUserIdByName(oAuth, channel) }
-            val channelUserFollows = channelId?.let { dataRepository.getUserFollows(oAuth, targetUserId, channelId) }
-            val user = dataRepository.getUser(oAuth, targetUserId)
-            val currentUserFollows = dataRepository.getUserFollows(oAuth, currentUserId, targetUserId)
-            val isBlocked = chatRepository.isUserBlocked(targetUserId)
+            val channelId = args.channel?.let { dataRepository.getUserIdByName(args.oAuth, it) }
+            val channelUserFollows = channelId?.let { dataRepository.getUserFollows(args.oAuth, args.targetUserId, channelId) }
+            val user = dataRepository.getUser(args.oAuth, args.targetUserId)
+            val currentUserFollows = dataRepository.getUserFollows(args.oAuth, args.currentUserId, args.targetUserId)
+            val isBlocked = chatRepository.isUserBlocked(args.targetUserId)
 
             mapToState(
                 user = user,

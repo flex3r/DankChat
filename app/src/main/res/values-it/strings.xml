@@ -13,7 +13,6 @@
     <string name="error_dialog_copy">Copia</string>
     <string name="error_dialog_title">Catturata eccezione: %1$s</string>
     <string name="add_channel">Aggiungi il canale</string>
-    <string name="name">Nome</string>
     <string name="open_channel">Apri il canale</string>
     <string name="no_channels_added">Nessun canale aggiunto</string>
     <string name="confirm_logout_title">Conferma la disconnessione</string>
@@ -66,8 +65,6 @@
     <string name="message_history_disclaimer_message">DankChat carica i messaggi passati da un servizio di terze parti all\'avvio.\nPer ottenere i messaggi DankChat manda i nomi dei canali che hai aperti al servizio.\nIl servizio immagazzina temporaneamente messaggi di canali che tu (e altri) visitate per fornire il servizio.\n\n- Per non usare questo servizio, clicca rifiuta qua sotto o disabilita il caricamento dei messaggi passati nelle impostazioni piu\' tardi.\n- Puoi saperne di piu\' sul servizio e disabilitare i messaggi passati del tuo canale visitando https://recent-messages.robotty.de/</string>
     <string name="dialog_optin">Acconsenti</string>
     <string name="dialog_optout">Rifiuta</string>
-    <string name="anon_connection_disclaimer_title">Connesione anonima</string>
-    <string name="anon_connection_disclaimer_message">A causa delle recenti modifiche all\' api ufficiale di Twitch, alcuni dati possono essere visualizzati solo una volta effetuato il login.\nQuesto include il supporto per emotes di terze parti e stemmi chat di Twitch.</string>
     <string name="more">Di piu\'</string>
     <string name="mentions_title">Menzioni / Messaggi privati</string>
     <string name="whispers">Messaggi privati</string>

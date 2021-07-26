@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="emotes_entries">
+        <item>FrankerFaceZ</item>
+        <item>BetterTTV</item>
+        <item>SevenTV</item>
+    </string-array>
+</resources>

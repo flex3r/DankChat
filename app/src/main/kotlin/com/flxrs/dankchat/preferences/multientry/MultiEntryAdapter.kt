@@ -34,8 +34,8 @@ class MultiEntryAdapter(val entries: MutableList<MultiEntryItem>) : RecyclerView
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             ITEM_VIEW_TYPE_ENTRY -> EntryViewHolder(MultiEntryItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-            ITEM_VIEW_TYPE_ADD -> AddViewHolder(MultiEntryAddItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-            else -> throw ClassCastException("Unknown viewType $viewType")
+            ITEM_VIEW_TYPE_ADD   -> AddViewHolder(MultiEntryAddItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            else                 -> throw ClassCastException("Unknown viewType $viewType")
         }
     }
 
@@ -50,7 +50,7 @@ class MultiEntryAdapter(val entries: MutableList<MultiEntryItem>) : RecyclerView
 
     override fun getItemViewType(position: Int): Int {
         return when (entries[position]) {
-            is MultiEntryItem.Entry -> ITEM_VIEW_TYPE_ENTRY
+            is MultiEntryItem.Entry    -> ITEM_VIEW_TYPE_ENTRY
             is MultiEntryItem.AddEntry -> ITEM_VIEW_TYPE_ADD
         }
     }

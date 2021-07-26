@@ -2,7 +2,8 @@ package com.flxrs.dankchat.utils.extensions
 
 private val emojiCodePoints = listOf(
     IntRange(0x00A9, 0x00AE),
-    IntRange(0x200D, 0x3299),
+    IntRange(0x200D, 0x2017),
+    IntRange(0x201a,0x3299),
     IntRange(0xFE00, 0xFE0F),
     IntRange(0x1F000, 0x1FAD6)
 )
@@ -27,7 +28,7 @@ fun String.removeDuplicateWhitespace(): Pair<String, List<Int>> {
         if (codePoint.isWhitespace) {
             when {
                 previousWhitespace -> removedSpacesPositions += totalCharCount
-                else -> stringBuilder.appendCodePoint(codePoint)
+                else               -> stringBuilder.appendCodePoint(codePoint)
             }
 
             previousWhitespace = true
@@ -116,7 +117,7 @@ val String.supplementaryCodePointPositions: List<Int>
 val String.removeOAuthSuffix: String
     get() = when {
         startsWith("oauth:", true) -> substringAfter(':')
-        else -> this
+        else                       -> this
     }
 
 
@@ -125,9 +126,9 @@ fun String.trimEndSpecialChar(): String = trimEnd().run {
         length > 1 && Character.isLowSurrogate(this[lastIndex]) -> {
             when (Character.toCodePoint(this[lastIndex - 1], this[lastIndex])) {
                 0x000E0000 -> removeRange(range = lastIndex - 1..lastIndex)
-                else -> this
+                else       -> this
             }
         }
-        else -> this
+        else                                                    -> this
     }.trimEnd()
 }

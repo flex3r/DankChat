@@ -1,14 +1,18 @@
 package com.flxrs.dankchat.preferences
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.ListPreference
+import androidx.preference.MultiSelectListPreference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SeekBarPreference
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
+import com.flxrs.dankchat.main.MainActivity
 import com.flxrs.dankchat.utils.DateTimeUtils
+import com.flxrs.dankchat.utils.extensions.showLongSnackbar
 
 class ChatSettingsFragment : PreferenceFragmentCompat() {
 
@@ -36,6 +40,21 @@ class ChatSettingsFragment : PreferenceFragmentCompat() {
             summary = correctScrollbackLength(value).toString()
             setOnPreferenceChangeListener { _, newValue ->
                 (newValue as? Int)?.let { summary = correctScrollbackLength(it).toString() }
+                true
+            }
+        }
+        findPreference<MultiSelectListPreference>(getString(R.string.preference_visible_emotes_key))?.apply {
+            setOnPreferenceChangeListener { _, _ ->
+                view?.showLongSnackbar(getString(R.string.restart_required)) {
+                    setAction(R.string.restart) {
+                        // KKona
+                        val restartIntent = Intent(context, MainActivity::class.java).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        }
+                        context.startActivity(restartIntent)
+                        Runtime.getRuntime().exit(0)
+                    }
+                }
                 true
             }
         }

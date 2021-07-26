@@ -8,6 +8,7 @@ on:
 
 jobs:
   test:
+    if: ${{ false }} # KKona
     name: Run Unit Tests
     runs-on: ubuntu-latest
 
@@ -67,22 +68,21 @@ jobs:
           name: App
           path: ${{ github.workspace }}/app/build/outputs/apk/debug/*.apk
 
-      - name: Remove previous debug release
+      - name: Update debug tag
         if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
-        uses: author/action-rollback@stable
-        with:
-          tag: 'debug'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create debug release
-        if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
-        uses: underwindfall/create-release-with-debugapk@v2.0.0
+        uses: richardsimko/update-tag@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: debug
-          release_name: Debug APK
-          asset_path: ${{ github.workspace }}/app/build/outputs/apk/debug/DankChat-debug.apk
-          asset_name: DankChat-debug.apk
-          asset_content_type: application/zip
+
+      - name: Update debug release
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
+        uses: meeDamian/github-release@2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: debug
+          name: Debug APK
+          files: ${{ github.workspace }}/app/build/outputs/apk/debug/DankChat-debug.apk
+          gzip: false
+          allow_override: true

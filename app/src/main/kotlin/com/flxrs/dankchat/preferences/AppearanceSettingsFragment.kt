@@ -62,10 +62,10 @@ class AppearanceSettingsFragment : PreferenceFragmentCompat() {
 
     private fun getFontSizeSummary(value: Int): String {
         return when {
-            value < 13 -> getString(R.string.preference_font_size_summary_very_small)
+            value < 13      -> getString(R.string.preference_font_size_summary_very_small)
             value in 13..17 -> getString(R.string.preference_font_size_summary_small)
             value in 18..22 -> getString(R.string.preference_font_size_summary_large)
-            else -> getString(R.string.preference_font_size_summary_very_large)
+            else            -> getString(R.string.preference_font_size_summary_very_large)
         }
     }
 
@@ -74,7 +74,7 @@ class AppearanceSettingsFragment : PreferenceFragmentCompat() {
         AppCompatDelegate.setDefaultNightMode(
             when {
                 darkMode -> AppCompatDelegate.MODE_NIGHT_YES
-                else -> AppCompatDelegate.MODE_NIGHT_NO
+                else     -> AppCompatDelegate.MODE_NIGHT_NO
             }
         )
     }

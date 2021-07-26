@@ -2,7 +2,6 @@ package com.flxrs.dankchat.di
 
 import android.content.Context
 import coil.util.CoilUtils
-import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.service.api.*
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import dagger.Module
@@ -15,6 +14,7 @@ import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.io.IOException
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -30,6 +30,7 @@ object NetworkModule {
     private const val FFZ_BASE_URL = "https://api.frankerfacez.com/v1/"
     private const val BTTV_BASE_URL = "https://api.betterttv.net/3/cached/"
     private const val RECENT_MESSAGES_BASE_URL = "https://recent-messages.robotty.de/api/v2/"
+    private const val SEVENTV_BASE_URL = "https://api.7tv.app/v2/"
 
     @ApiOkHttpClient
     @Singleton
@@ -37,12 +38,6 @@ object NetworkModule {
     fun provideOkHttpClient(/*@ApplicationContext context: Context*/): OkHttpClient = OkHttpClient.Builder()
         //.addInterceptor(ChuckerInterceptor(context))
         //.addInterceptor(HttpLoggingInterceptor().also { it.setLevel(HttpLoggingInterceptor.Level.BODY) })
-        .addInterceptor { chain ->
-            chain.request().newBuilder()
-                .header("User-Agent", "dankchat/${BuildConfig.VERSION_NAME}")
-                .build()
-                .let { chain.proceed(it) }
-        }
         .build()
 
     @EmoteOkHttpClient
@@ -59,6 +54,11 @@ object NetworkModule {
             } catch (e: IllegalArgumentException) {
                 val new = request.newBuilder().cacheControl(CacheControl.FORCE_NETWORK).build()
                 chain.proceed(new)
+            } catch (t: Throwable) {
+                when (t) {
+                    is IOException -> throw t
+                    else           -> throw IOException(t)
+                }
             }
         }
         .build()
@@ -155,6 +155,15 @@ object NetworkModule {
 
     @Singleton
     @Provides
+    fun provideSevenTVApiService(@ApiOkHttpClient client: OkHttpClient): SevenTVApiService = Retrofit.Builder()
+        .baseUrl(SEVENTV_BASE_URL)
+        .addConverterFactory(MoshiConverterFactory.create())
+        .client(client)
+        .build()
+        .create(SevenTVApiService::class.java)
+
+    @Singleton
+    @Provides
     fun provideApiManager(
         @ApiOkHttpClient client: OkHttpClient,
         bttvApiService: BTTVApiService,
@@ -166,7 +175,8 @@ object NetworkModule {
         supibotApiService: SupibotApiService,
         authApiService: AuthApiService,
         badgesApiService: BadgesApiService,
-        tmiApiService: TmiApiService
+        tmiApiService: TmiApiService,
+        sevenTVApiService: SevenTVApiService,
     ): ApiManager = ApiManager(
         client,
         bttvApiService,
@@ -178,7 +188,8 @@ object NetworkModule {
         supibotApiService,
         authApiService,
         badgesApiService,
-        tmiApiService
+        tmiApiService,
+        sevenTVApiService
     )
 
     @Singleton

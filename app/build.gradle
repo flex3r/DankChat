@@ -12,8 +12,8 @@ android {
         applicationId "com.flxrs.dankchat"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 188
-        versionName "2.7.5"
+        versionCode 204
+        versionName "2.8.4"
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -29,6 +29,8 @@ android {
             manifestPlaceholders = [applicationLabel: "@string/app_name"]
         }
         debug {
+            minifyEnabled true
+            shrinkResources true
             manifestPlaceholders = [applicationLabel: "@string/app_name"]
         }
         dank {
@@ -59,6 +61,14 @@ android {
                 "-Xopt-in=kotlinx.coroutines.FlowPreview"
         ]
     }
+    kapt {
+        javacOptions {
+            // These options are normally set automatically via the Hilt Gradle plugin, but we
+            // set them manually to workaround a bug in the Kotlin 1.5.20
+            option("-Adagger.fastInit=ENABLED")
+            option("-Adagger.hilt.android.internal.disableAndroidSuperclassValidation=true")
+        }
+    }
 }
 
 dependencies {
@@ -71,10 +81,11 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
 // AndroidX
+    implementation "androidx.activity:activity-ktx:$activity_version"
     implementation "androidx.browser:browser:$browser_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraint_version"
     implementation "androidx.core:core-ktx:$core_version"
-    implementation "androidx.emoji:emoji:$emoji_version"
+    implementation "androidx.emoji2:emoji2:$emoji_version"
     implementation "androidx.exifinterface:exifinterface:$exif_version"
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
@@ -96,8 +107,7 @@ dependencies {
 
 // Image loading
     implementation "io.coil-kt:coil:$coil_version"
-
-// GIF support
+    implementation "io.coil-kt:coil-gif:$coil_version"
     implementation "pl.droidsonroids.gif:android-gif-drawable:$gif_drawable_version"
 
 // HTTP clients
@@ -105,6 +115,7 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
+
 
 // Debug
     //dankImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary_version"

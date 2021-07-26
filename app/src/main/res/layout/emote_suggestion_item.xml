@@ -5,12 +5,11 @@
     android:maxHeight="64dp"
     android:orientation="horizontal">
 
-    <pl.droidsonroids.gif.GifImageView
+    <ImageView
         android:id="@+id/suggestion_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:scaleType="center" />
+        android:layout_gravity="center" />
 
     <TextView
         android:id="@+id/suggestion_text"

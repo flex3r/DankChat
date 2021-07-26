@@ -13,7 +13,6 @@
     <string name="error_dialog_copy">Kopioi</string>
     <string name="error_dialog_title">Siepattu poikkeus: %1$s</string>
     <string name="add_channel">Lisää kanava</string>
-    <string name="name">Nimi</string>
     <string name="open_channel">Avaa kanava</string>
     <string name="no_channels_added">Ei kanavia lisättynä</string>
     <string name="confirm_logout_title">Vahvista uloskirjautuminen</string>
@@ -68,14 +67,31 @@
     <string name="message_history_disclaimer_message">DankChat lataa historiallisia viestejä kolmannen osapuolen palvelusta käynnistyksen yhteydessä.\nViestien saamiseksi DankChat lähettää avaamiesi kanavien nimet kyseiselle palvelulle.\nPalvelu tallentaa väliaikaisesti viestejä kanavilta, joilla vierailet palvelun tarjoamiseksi.\n\nJos et halua käyttää tätä ominaisuutta, napsauta alla olevaa Kieltäydy -painiketta tai poista käytöstä myöhemmin asetuksista.\nVoit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kanavallasi käymällä osoitteessa https://recent-messages.robotty.de/</string>
     <string name="dialog_optin">Hyväksy</string>
     <string name="dialog_optout">Kieltäydy</string>
-    <string name="anon_connection_disclaimer_title">Anonyymi yhteys</string>
-    <string name="anon_connection_disclaimer_message">Virallisen Twitch-apin viimeaikaisten muutosten vuoksi joihinkin tietoihin pääsee nyt vain kirjautuneena.\nTämä sisältää tuen twitch-merkeille ja kolmansien osapuolten emoteille.</string>
     <string name="more">Lisää</string>
     <string name="mentions_title">Maininnat / kuiskaukset</string>
     <string name="whispers">Kuiskaukset</string>
     <string name="notification_whisper_mention">%1$s lähetti sinulle kuiskauksen</string>
     <string name="mentions">Maininnat</string>
-
+    <string name="manage_channels">Hallitse kanavia</string>
+    <string name="confirm_channel_removal_title">Vahvista kanavan sulkeminen</string>
+    <string name="confirm_channel_removal_message">Haluatko varmasti sulkea tämän kanavan?</string>
+    <string name="confirm_channel_removal_positive_button">Sulje</string>
+    <string name="user_popup_follow">Seuraa</string>
+    <string name="user_popup_unfollow">Lopeta seuraaminen</string>
+    <string name="user_popup_block">Estä</string>
+    <string name="user_popup_unblock">Poista esto</string>
+    <string name="user_popup_mention">Mainitse käyttäjä</string>
+    <string name="user_popup_whisper">Kuiskaa käyttäjälle</string>
+    <string name="user_popup_created">Luotu: %1$s</string>
+    <string name="user_popup_following_since">Aloittanut seuraaman: %1$s</string>
+    <string name="user_popup_not_following">Ei seuraa</string>
+    <string name="user_popup_avatar_description">Profiilikuva</string>
+    <string name="user_popup_error">Käyttäjän tietoja ei pystytty hakea: %1$s</string>
+    <string name="confirm_user_unfollow_title">Seuraamisen lopettaminen</string>
+    <string name="confirm_user_unfollow_message">Haluatko varmasti lopettaa tämän käyttäjän seuraaminen?</string>
+    <string name="confirm_user_block_title">Vahvista esto</string>
+    <string name="confirm_user_block_message">Oletko varma että haluat estää tämän käyttäjän?</string>
+    <string name="confirm_user_block_positive_button">Estä</string>
 
     <string name="preference_timestamp_title">Näytä aikaleimat</string>
     <string name="preference_mention_format_title">Maininnan muoto</string>
@@ -136,6 +152,12 @@
     <string name="preference_scrollback_length_title">Viestin vierityksen pituus</string>
     <string name="snackbar_paste">Liitä</string>
     <string name="preference_show_username_title">Näytä käyttäjänimi</string>
+    <string name="preference_visible_badges_title">Näkyvät badget</string>
+    <string name="preference_prefer_emote_suggestions_title">Suosi hymiöiden ehdottamista</string>
+    <string name="preference_prefer_emote_suggestions_summary">Priorisoi hymiöiden ehdottamista, käyttäjänimien sijasta</string>
+    <string name="preference_user_long_click_title">Käyttäjänimen pitkä painallus </string>
+    <string name="preference_user_long_click_summary_on">Tavallinen painallus popup-ikkuna ja pitkä painallus maininnat</string>
+    <string name="preference_user_long_click_summary_off">Tavallinen painallus maininnat ja pitkä painallus popup-ikkuna</string>
 
     <plurals name="viewers">
         <item quantity="one">Live-tilassa %d katsojan kanssa</item>

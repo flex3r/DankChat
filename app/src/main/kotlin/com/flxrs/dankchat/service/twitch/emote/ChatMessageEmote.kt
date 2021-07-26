@@ -6,6 +6,6 @@ data class ChatMessageEmote(
     val id: String,
     val code: String,
     val scale: Int,
-    val isGif: Boolean,
-    val isTwitch: Boolean = false
+    val isTwitch: Boolean = false,
+    val isOverlayEmote: Boolean = false
 )

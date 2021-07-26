@@ -13,7 +13,6 @@
     <string name="error_dialog_copy">Zkopírovat</string>
     <string name="error_dialog_title">Zachycená chyba: %1$s</string>
     <string name="add_channel">Přidat kanál</string>
-    <string name="name">Jméno</string>
     <string name="open_channel">Otevřít kanál</string>
     <string name="no_channels_added">Žádné kanály nebyly přidány</string>
     <string name="confirm_logout_title">Potvrdit odhlášení se</string>
@@ -68,14 +67,31 @@
     <string name="message_history_disclaimer_message">DankChat načítá minulé zprávy ze služby třetí strany při spuštění.\nChcete-li zprávy získat, odešle DankChat názvy kanálů, které jste otevřeli, této službě.\nSlužba dočasně ukládá zprávy pro kanály, které vy (a další) navštívíte, aby ji bylo možné využít.\n\n- Chcete-li tuto funkci nepoužívat, klikněte níže na Odhlásit se nebo můžete později deaktivovat načítání historie zpráv v nastavení.\n- Pokud si přejete o této službě dozvědět více a přejete se odhlásit z ukládání zpráv na Vašem kanálu, můžete zde https://recent-messages.robotty.de/</string>
     <string name="dialog_optin">Opt-in</string>
     <string name="dialog_optout">Opt-out</string>
-    <string name="anon_connection_disclaimer_title">Anonymní připojení</string>
-    <string name="anon_connection_disclaimer_message">Kvůli nedávným změnám v oficiálním Twitch api lze k některým datům přistupovat pouze po přihlášení.\nTo zahrnuje podporu Twitch odznaků a emotikonů třetích stran.</string>
     <string name="more">Více</string>
     <string name="mentions_title">Zmínky / Šepot</string>
     <string name="whispers">Šepot</string>
     <string name="notification_whisper_mention">%1$s vám odeslal soukromou zprávu</string>
     <string name="mentions">Zmínky</string>
-
+    <string name="manage_channels">Spravovat kanály</string>
+    <string name="confirm_channel_removal_title">"Potvrdit odebrání kanálu"</string>
+    <string name="confirm_channel_removal_message">Jste si jistí, že chcete tento kanál odebrat?"</string>
+    <string name="confirm_channel_removal_positive_button">Odebrat</string>
+    <string name="user_popup_follow">Sledovat</string>
+    <string name="user_popup_unfollow">Přestat sledovat</string>
+    <string name="user_popup_block">Zablokovat</string>
+    <string name="user_popup_unblock">Odblokovat</string>
+    <string name="user_popup_mention">Zmínit uživatele</string>
+    <string name="user_popup_whisper">Soukromá zpráva</string>
+    <string name="user_popup_created">Vytvořeno: %1$s</string>
+    <string name="user_popup_following_since">Sledování od %1$s</string>
+    <string name="user_popup_not_following">Nesleduje</string>
+    <string name="user_popup_avatar_description">Obrázek avataru</string>
+    <string name="user_popup_error">Chyba při načítání informaci o uživateli: %1$s</string>
+    <string name="confirm_user_unfollow_title">Potvrdit nesledování uživatele</string>
+    <string name="confirm_user_unfollow_message">Jste si jisti, že chcete přestat sledovat uživatele?</string>
+    <string name="confirm_user_block_title">Potvrzení zablokování</string>
+    <string name="confirm_user_block_message">Jste si jisti, že chcete zablokovat uživatele?</string>
+    <string name="confirm_user_block_positive_button">Zablokovat</string>
 
     <string name="preference_timestamp_title">Zobrazit časová razítka</string>
     <string name="preference_mention_format_title">Formát zmínek</string>
@@ -136,10 +152,16 @@
     <string name="preference_scrollback_length_title">Délka historie chatu</string>
     <string name="snackbar_paste">Vložit</string>
     <string name="preference_show_username_title">Ukázat přezdívku</string>
+    <string name="preference_visible_badges_title">Viditelné odznaky</string>
+    <string name="preference_prefer_emote_suggestions_title">Preferovat emotikony</string>
+    <string name="preference_prefer_emote_suggestions_summary">Preferovat návrhy emotikonů než uzivatelů</string>
+    <string name="preference_user_long_click_title">Chování přidržení názvu uživatele</string>
+    <string name="preference_user_long_click_summary_on">Normální kliknutí otevře pop-up menu, dlouhé přidržení označí</string>
+    <string name="preference_user_long_click_summary_off">Normální kliknutí označí uživatele, dlouhé přidržení otevře pop-up menu</string>
 
     <plurals name="viewers">
         <item quantity="one">Živě s %d divákem</item>
-		<item quantity="few">Živě se %d diváky</item>
+        <item quantity="few">Živě se %d diváky</item>
         <item quantity="other">Živě s %d diváky</item>
     </plurals>
 </resources>

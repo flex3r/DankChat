@@ -36,6 +36,22 @@
             app:destination="@id/userPopupDialogFragment" />
     </fragment>
     <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.flxrs.dankchat.chat.ChatFragment"
+        android:label="ChatFragment">
+        <argument
+            android:name="channel"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/mentionChatFragment"
+        android:name="com.flxrs.dankchat.chat.mention.MentionChatFragment"
+        android:label="MentionChatFragment">
+        <argument
+            android:name="isWhisperTab"
+            app:argType="boolean" />
+    </fragment>
+    <fragment
         android:id="@+id/loginFragment"
         android:name="com.flxrs.dankchat.login.LoginFragment"
         android:label="LoginFragment" />

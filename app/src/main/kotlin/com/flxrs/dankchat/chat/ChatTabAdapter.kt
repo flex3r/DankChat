@@ -16,7 +16,7 @@ class ChatTabAdapter(parentFragment: Fragment) : FragmentStateAdapter(parentFrag
 
     override fun getItemId(position: Int): Long = when {
         position < titleList.size -> titleList[position].hashCode().toLong()
-        else -> RecyclerView.NO_ID
+        else                      -> RecyclerView.NO_ID
     }
 
     override fun containsItem(itemId: Long): Boolean {

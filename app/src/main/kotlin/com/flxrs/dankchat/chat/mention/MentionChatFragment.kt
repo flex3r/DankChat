@@ -4,8 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
+import com.flxrs.dankchat.R
 import com.flxrs.dankchat.chat.ChatFragment
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
@@ -14,12 +15,12 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MentionChatFragment : ChatFragment() {
+    private val args: MentionChatFragmentArgs by navArgs()
     private val mentionViewModel: MentionViewModel by viewModels(
         ownerProducer = { requireParentFragment() }
     )
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val isWhisperTab = requireArguments().getBoolean(WHISPER_ARG, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bindingRef = ChatFragmentBinding.inflate(inflater, container, false).apply {
             lifecycleOwner = this@MentionChatFragment
             scrollBottom.setOnClickListener {
@@ -31,25 +32,27 @@ class MentionChatFragment : ChatFragment() {
         }
 
         when {
-            isWhisperTab -> collectFlow(mentionViewModel.whispers) { adapter.submitList(it) }
-            else -> collectFlow(mentionViewModel.mentions) { adapter.submitList(it) }
+            args.isWhisperTab -> collectFlow(mentionViewModel.whispers) { adapter.submitList(it) }
+            else              -> collectFlow(mentionViewModel.mentions) { adapter.submitList(it) }
         }
 
         return binding.root
     }
 
-    override fun openUserPopup(targetUserId: String?, channel: String) {
+    override fun onUserClick(targetUserId: String?, targetUserName: String, channel: String, isLongPress: Boolean) {
         targetUserId ?: return
-        (parentFragment?.parentFragment as? MainFragment)?.openUserPopup(targetUserId, channel = null, isWhisperPopup = true)
+        val shouldLongClickMention = preferences.getBoolean(getString(R.string.preference_user_long_click_key), true)
+        val shouldMention = (isLongPress && shouldLongClickMention) || (!isLongPress && !shouldLongClickMention)
+
+        when {
+            shouldMention -> (parentFragment?.parentFragment as? MainFragment)?.whisperUser(targetUserName)
+            else          -> (parentFragment?.parentFragment as? MainFragment)?.openUserPopup(targetUserId, channel = null, isWhisperPopup = true)
+        }
     }
 
     companion object {
-        fun newInstance(isWhisperTab: Boolean = false): MentionChatFragment {
-            return MentionChatFragment().apply {
-                arguments = bundleOf(WHISPER_ARG to isWhisperTab)
-            }
+        fun newInstance(isWhisperTab: Boolean = false) = MentionChatFragment().apply {
+            arguments = MentionChatFragmentArgs(isWhisperTab).toBundle()
         }
-
-        const val WHISPER_ARG = "whisper"
     }
 }
