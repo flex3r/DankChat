@@ -200,7 +200,7 @@
     <string name="preference_tts_force_english_key" translatable="false">tts_force_english_key</string>
     <string name="preference_tts_force_english_title">Force language to english</string>
     <string name="preference_tts_force_english_summary">Force TTS voice language to english instead of system default</string>
-    <string name="preference_visible_emotes_title">Visible thirdy party emotes</string>
+    <string name="preference_visible_emotes_title">Visible third party emotes</string>
     <string name="preference_visible_emotes_key" translatable="false">visible_emotes_key</string>
 
     <plurals name="viewers">
