@@ -362,8 +362,10 @@ class ChatAdapter(
         return when {
             useCache && cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
             else                       -> Coil.execute(url.toRequest(context)).drawable?.apply {
-                if (this is Animatable && cached == null) {
-                    emoteManager.gifCache.put(url, this)
+                if (this is Animatable) {
+                    if (useCache) {
+                        emoteManager.gifCache.put(url, this)
+                    }
                     setRunning(animateGifs)
                 }
             }

@@ -302,7 +302,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
                     id = emote.id,
                     code = emote.code,
                     scale = emote.scale,
-                    isOverlayEmote = emote.code in OVERLAY_EMOTES
+                    isOverlayEmote = emote.isOverlayEmote
                 )
             }
             i += split.length + 1
@@ -367,7 +367,15 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         val id = emote.id
         val url = BTTV_EMOTE_TEMPLATE.format(id, BTTV_EMOTE_SIZE)
         val lowResUrl = BTTV_EMOTE_TEMPLATE.format(id, BTTV_LOW_RES_EMOTE_SIZE)
-        return GenericEmote(name, url, lowResUrl, id, 1, EmoteType.ChannelBTTVEmote)
+        return GenericEmote(
+            code = name,
+            url = url,
+            lowResUrl = lowResUrl,
+            id = id,
+            scale = 1,
+            emoteType = EmoteType.ChannelBTTVEmote,
+            isOverlayEmote = name in OVERLAY_EMOTES,
+        )
     }
 
     private fun parseBTTVGlobalEmote(emote: BTTVGlobalEmotesDto): GenericEmote {
@@ -375,7 +383,15 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         val id = emote.id
         val url = BTTV_EMOTE_TEMPLATE.format(id, BTTV_EMOTE_SIZE)
         val lowResUrl = BTTV_EMOTE_TEMPLATE.format(id, BTTV_LOW_RES_EMOTE_SIZE)
-        return GenericEmote(name, url, lowResUrl, id, 1, EmoteType.GlobalBTTVEmote)
+        return GenericEmote(
+            code = name,
+            url = url,
+            lowResUrl = lowResUrl,
+            id = id,
+            scale = 1,
+            emoteType = EmoteType.GlobalBTTVEmote,
+            isOverlayEmote = name in OVERLAY_EMOTES,
+        )
     }
 
     private fun parseFFZEmote(emote: FFZEmoteDto, channel: String = ""): GenericEmote {
@@ -402,7 +418,8 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
             lowResUrl = urls.getValue("2"),
             id = emote.id,
             scale = 1,
-            emoteType = type
+            emoteType = type,
+            isOverlayEmote = SevenTVEmoteVisibility.ZERO_WIDTH in emote.visibility
         )
     }
 
