@@ -5,7 +5,10 @@ import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.utils.extensions.timer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 import okhttp3.*
 import kotlin.random.Random
@@ -22,6 +25,8 @@ class WebSocketConnection(
     private var nick = ""
     private var oAuth = ""
     private val channels = mutableSetOf<String>()
+    private val channelsToJoin = Channel<Collection<String>>(capacity = Channel.BUFFERED)
+    private val channelsToJoinFlow = channelsToJoin.consumeAsFlow()
 
     private var socket: WebSocket? = null
     private var connected = false
@@ -41,6 +46,22 @@ class WebSocketConnection(
 
     var isAnonymous = false
 
+
+    init {
+        scope.launch {
+            channelsToJoinFlow.collect { channelsToJoin ->
+                if (!connected) return@collect
+
+                channelsToJoin.filter { it in channels }
+                    .chunked(JOIN_CHUNK_SIZE)
+                    .forEach { chunk ->
+                        socket?.joinChannels(chunk)
+                        delay(timeMillis = chunk.size * JOIN_DELAY)
+                    }
+            }
+        }
+    }
+
     fun sendMessage(msg: String) {
         if (connected) {
             socket?.sendMessage(msg)
@@ -48,28 +69,33 @@ class WebSocketConnection(
     }
 
     fun joinChannels(channelList: List<String>) {
-        val channelsToJoin = channelList - channels
-        channels.addAll(channelsToJoin)
+        val newChannels = channelList - channels
+        channels.addAll(newChannels)
+
         if (connected) {
-            socket?.joinChannels(channels)
+            scope.launch {
+                channelsToJoin.send(newChannels)
+            }
         }
     }
 
     fun joinChannel(channel: String) {
-        if (!channels.contains(channel)) {
-            channels += channel
-            if (connected) {
-                socket?.sendMessage("JOIN #$channel")
+        if (channel in channels) return
+        channels += channel
+
+        if (connected) {
+            scope.launch {
+                channelsToJoin.send(listOf(channel))
             }
         }
     }
 
     fun partChannel(channel: String) {
-        if (channels.contains(channel)) {
-            channels.remove(channel)
-            if (connected) {
-                socket?.sendMessage("PART #$channel")
-            }
+        if (channel !in channels) return
+
+        channels.remove(channel)
+        if (connected) {
+            socket?.sendMessage("PART #$channel")
         }
     }
 
@@ -169,8 +195,11 @@ class WebSocketConnection(
                 when (ircMessage.command) {
                     "376"       -> {
                         Log.i(TAG, "[$connectionName] connected to irc")
-                        socket?.joinChannels(channels)
                         pingJob = setupPingInterval()
+
+                        scope.launch {
+                            channelsToJoin.send(channels)
+                        }
                     }
                     "PING"      -> webSocket.handlePing()
                     "PONG"      -> awaitingPong = false
@@ -187,6 +216,8 @@ class WebSocketConnection(
         private const val RECONNECT_MAX_JITTER = 250L
         private const val RECONNECT_MAX_ATTEMPTS = 4
         private const val PING_INTERVAL = 5 * 60 * 1000L
+        private const val JOIN_DELAY = 600L
+        private const val JOIN_CHUNK_SIZE = 5
         private val TAG = WebSocketConnection::class.java.simpleName
     }
 }

@@ -40,7 +40,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     private val connectionState = mutableMapOf<String, MutableStateFlow<ConnectionState>>()
     private val roomStates = mutableMapOf<String, MutableSharedFlow<RoomState>>()
     private val users = mutableMapOf<String, MutableStateFlow<LruCache<String, Boolean>>>()
-    private val _userState = MutableStateFlow(UserState())
+    private val userState = MutableStateFlow(UserState())
     private val blockList = mutableSetOf<String>()
 
     private val moshi = Moshi.Builder().build()
@@ -71,9 +71,6 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         get() = _activeChannel.asStateFlow()
     val channels: StateFlow<List<String>?>
         get() = _channels.asStateFlow()
-
-    val userState: StateFlow<UserState>
-        get() = _userState.asStateFlow()
 
     var scrollBackLength = 500
         set(value) {
@@ -203,8 +200,6 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
 
         readConnection.joinChannel(channel)
-        writeConnection.joinChannel(channel)
-
         return updatedChannels
     }
 
@@ -251,7 +246,6 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         }
 
         readConnection.joinChannels(channels)
-        writeConnection.joinChannels(channels)
     }
 
     private fun removeChannelData(channel: String) {
@@ -285,6 +279,14 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     }
 
     private fun onWriterMessage(message: IrcMessage) {
+        when (message.command) {
+            "USERSTATE",
+            "GLOBALUSERSTATE" -> handleUserState(message)
+            "NOTICE"          -> handleMessage(message)
+        }
+    }
+
+    private fun onReaderMessage(message: IrcMessage) {
         if (message.isLoginFailed()) {
             startedConnection = false
             makeAndPostSystemMessage(SystemMessageType.LOGIN_EXPIRED)
@@ -292,15 +294,8 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         }
 
         when (message.command) {
-            "PRIVMSG" -> Unit
-            "366"     -> handleConnected(message.params[1].substring(1), writeConnection.isAnonymous)
-            else      -> onMessage(message)
-        }
-    }
-
-    private fun onReaderMessage(message: IrcMessage) {
-        if (message.command == "PRIVMSG") {
-            onMessage(message)
+            "366" -> handleConnected(message.params[1].substring(1), writeConnection.isAnonymous)
+            else  -> onMessage(message)
         }
     }
 
@@ -375,7 +370,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         val name = msg.tags["display-name"]
 
         val current = userState.value
-        _userState.value = current.copy(
+        userState.value = current.copy(
             userId = id ?: current.userId,
             color = color ?: current.color,
             displayName = name ?: current.displayName,
