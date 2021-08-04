@@ -390,7 +390,7 @@ class MainViewModel @Inject constructor(
             launch(handler) { dataRepository.loadDankChatBadges() },
             launch(handler) { dataRepository.loadGlobalBadges(oAuth) },
             launch(handler) { if (loadSupibot) dataRepository.loadSupibotCommands() },
-            launch { chatRepository.loadUserBlocks(oAuth, id) }
+            launch(handler) { chatRepository.loadUserBlocks(oAuth, id) }
         ) + channelList.map {
             launch(handler) {
                 val channelId = getRoomStateIdIfNeeded(oAuth, it)
