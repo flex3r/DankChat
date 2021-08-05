@@ -135,6 +135,7 @@ class MainFragment : Fragment() {
             tabs.getTabAt(tabs.selectedTabPosition)?.removeBadge()
 
             showActionbarFab.setOnClickListener { mainViewModel.appbarEnabled.value = true }
+            addChannelsButton.setOnClickListener { navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment) }
         }
 
         mainViewModel.apply {

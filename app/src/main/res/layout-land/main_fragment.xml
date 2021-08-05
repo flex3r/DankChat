@@ -64,6 +64,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="?actionBarSize"
                         android:layout_gravity="center_horizontal"
+                        android:visibility="@{vm.shouldShowViewPager ? View.VISIBLE : View.GONE}"
                         app:tabMode="auto" />
                 </com.google.android.material.appbar.AppBarLayout>
 
@@ -84,10 +85,23 @@
                     android:layout_height="wrap_content"
                     android:text="@string/no_channels_added"
                     android:visibility="@{vm.shouldShowViewPager ? View.GONE : View.VISIBLE}"
+                    app:layout_constraintBottom_toTopOf="@id/add_channels_button"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/add_channels_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/add_channel"
+                    android:visibility="@{vm.shouldShowViewPager ? View.GONE : View.VISIBLE}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@id/add_channels_text" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.card.MaterialCardView
