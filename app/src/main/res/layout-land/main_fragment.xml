@@ -150,7 +150,7 @@
             android:id="@+id/bottom_barrier"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:barrierAllowsGoneWidgets="false"
+            app:barrierAllowsGoneWidgets="true"
             app:barrierDirection="top"
             app:constraint_referenced_ids="input_layout,fullscreen_hint_text" />
 
