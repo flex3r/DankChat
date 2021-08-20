@@ -150,7 +150,7 @@ class MainFragment : Fragment() {
 
                 override fun onTabSelected(tab: TabLayout.Tab?) {
                     val tv: TextView? = tab?.view?.get(1) as? TextView
-                    tv?.setTextColor(Color.parseColor("#99FFFFFF"))
+                    tv?.setTextColor(Color.parseColor("#BB86FC"))
                 }
             })
 
