@@ -3,6 +3,7 @@ package com.flxrs.dankchat.main
 import android.app.Activity
 import android.content.*
 import android.content.res.Configuration
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -58,6 +59,7 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar.BaseCallback
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,6 +67,7 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 import kotlin.math.roundToInt
+import kotlin.reflect.typeOf
 
 @AndroidEntryPoint
 class MainFragment : Fragment() {
@@ -117,6 +120,7 @@ class MainFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         tabAdapter = ChatTabAdapter(this)
         emoteMenuAdapter = EmoteMenuAdapter(::insertEmote)
+
         bindingRef = MainFragmentBinding.inflate(inflater, container, false).apply {
             emoteMenuBottomSheetBehavior = BottomSheetBehavior.from(emoteMenuBottomSheet)
             vm = mainViewModel
@@ -133,6 +137,22 @@ class MainFragment : Fragment() {
                 tab.text = tabAdapter.titleList[position]
             }.apply { attach() }
             tabs.getTabAt(tabs.selectedTabPosition)?.removeBadge()
+
+            tabs.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener{
+                override fun onTabUnselected(tab: TabLayout.Tab?) {
+                    val tv: TextView? = tab?.view?.get(1) as? TextView
+                    tv?.setTextColor(Color.parseColor("#99FFFFFF"))
+                }
+
+                override fun onTabReselected(tab: TabLayout.Tab?) {
+
+                }
+
+                override fun onTabSelected(tab: TabLayout.Tab?) {
+                    val tv: TextView? = tab?.view?.get(1) as? TextView
+                    tv?.setTextColor(Color.parseColor("#99FFFFFF"))
+                }
+            })
 
             showActionbarFab.setOnClickListener { mainViewModel.appbarEnabled.value = true }
             addChannelsButton.setOnClickListener { navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment) }
