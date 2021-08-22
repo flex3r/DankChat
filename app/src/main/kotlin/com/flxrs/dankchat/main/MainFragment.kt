@@ -102,7 +102,6 @@ class MainFragment : Fragment() {
             showSnackbar(getString(R.string.snackbar_upload_failed))
             return@registerForActivityResult
         }
-
         val copy = createMediaFile(context, extension)
         try {
             contentResolver.openInputStream(uri)?.run { copy.outputStream().use { copyTo(it) } }
@@ -196,6 +195,23 @@ class MainFragment : Fragment() {
                         when (index) {
                             binding.tabs.selectedTabPosition -> mainViewModel.clearMentionCount(channel) // mention is in active channel
                             else                             -> binding.tabs.getTabAt(index)?.apply { orCreateBadge }
+                        }
+                    } else {
+                        binding.tabs.getTabAt(index)?.removeBadge()
+                    }
+                }
+            }
+            collectFlow(newMessageCount) {
+                it.forEach { (channel, count) ->
+                    val index = tabAdapter.titleList.indexOf(channel)
+                    if (count > 0) {
+                        when (index) {
+                            binding.tabs.selectedTabPosition -> mainViewModel.clearNewMessageCount(channel) // mention is in active channel
+                            else                             -> {
+                                val tab = binding.tabs.getTabAt(index)
+                                val tv: TextView? = tab?.view?.get(1) as? TextView
+                                tv?.setTextColor(Color.parseColor("#FFFFFF"))
+                            }
                         }
                     } else {
                         binding.tabs.getTabAt(index)?.removeBadge()

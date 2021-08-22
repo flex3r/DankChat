@@ -34,6 +34,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
     private val _notificationsFlow = MutableSharedFlow<List<ChatItem>>(0, extraBufferCapacity = 10)
     private val _channelMentionCount = mutableSharedFlowOf(mutableMapOf<String, Int>())
+    private val _newMessageCount = mutableSharedFlowOf(mutableMapOf<String, Int>())
     private val messages = mutableMapOf<String, MutableStateFlow<List<ChatItem>>>()
     private val _mentions = MutableStateFlow<List<ChatItem>>(emptyList())
     private val _whispers = MutableStateFlow<List<ChatItem>>(emptyList())
@@ -61,6 +62,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
     val notificationsFlow: SharedFlow<List<ChatItem>> = _notificationsFlow.asSharedFlow()
     val channelMentionCount: SharedFlow<Map<String, Int>> = _channelMentionCount.asSharedFlow()
+    val newMessageCount: SharedFlow<Map<String, Int>> = _newMessageCount.asSharedFlow()
     val hasMentions = channelMentionCount.map { it.any { channel -> channel.key != "w" && channel.value > 0 } }
     val hasWhispers = channelMentionCount.map { it.getOrDefault("w", 0) > 0 }
     val mentions: StateFlow<List<ChatItem>>
@@ -142,6 +144,10 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
     fun clearMentionCounts() = with(_channelMentionCount) {
         tryEmit(firstValue.apply { keys.forEach { if (it != "w") set(it, 0) } })
+    }
+
+    fun clearNewMessageCount(channel: String) = with(_newMessageCount){
+        tryEmit(firstValue.apply { set(channel, 0) })
     }
 
     fun clear(channel: String) {
@@ -420,6 +426,8 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
                         it.addAndLimit(parsed.toMentionTabItems(), scrollBackLength)
                     }
                     _channelMentionCount.increment("w", 1)
+                }else{
+                    _newMessageCount.increment(channel, 1)
                 }
 
                 val mentions = parsed.filter { it.message is TwitchMessage && it.message.isMention && !it.message.isWhisper }.toMentionTabItems()
