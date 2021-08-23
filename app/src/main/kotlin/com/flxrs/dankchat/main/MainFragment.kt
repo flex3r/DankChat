@@ -102,6 +102,7 @@ class MainFragment : Fragment() {
             showSnackbar(getString(R.string.snackbar_upload_failed))
             return@registerForActivityResult
         }
+
         val copy = createMediaFile(context, extension)
         try {
             contentResolver.openInputStream(uri)?.run { copy.outputStream().use { copyTo(it) } }
@@ -213,8 +214,6 @@ class MainFragment : Fragment() {
                                 tv?.setTextColor(Color.parseColor("#FFFFFF"))
                             }
                         }
-                    } else {
-                        binding.tabs.getTabAt(index)?.removeBadge()
                     }
                 }
             }

@@ -426,7 +426,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
                         it.addAndLimit(parsed.toMentionTabItems(), scrollBackLength)
                     }
                     _channelMentionCount.increment("w", 1)
-                }else{
+                }else if(msg.command == "PRIVMSG" || msg.command == "USERNOTICE"){
                     _newMessageCount.increment(channel, 1)
                 }
 
