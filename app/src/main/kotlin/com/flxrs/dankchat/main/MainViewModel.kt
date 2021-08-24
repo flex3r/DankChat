@@ -46,7 +46,7 @@ class MainViewModel @Inject constructor(
     val activeChannel: StateFlow<String> = chatRepository.activeChannel
     val channels: StateFlow<List<String>?> = chatRepository.channels
     val channelMentionCount: Flow<Map<String, Int>> = chatRepository.channelMentionCount
-    val newMessageCount: Flow<Map<String, Int>> = chatRepository.newMessageCount
+    val unreadMessage: Flow<Map<String, Boolean>> = chatRepository.unreadMessage
     val shouldColorNotification: StateFlow<Boolean> = combine(chatRepository.hasMentions, chatRepository.hasWhispers) { hasMentions, hasWhispers ->
         hasMentions || hasWhispers
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
@@ -280,7 +280,7 @@ class MainViewModel @Inject constructor(
     fun clear(channel: String) = chatRepository.clear(channel)
     fun clearIgnores() = chatRepository.clearIgnores()
     fun clearMentionCount(channel: String) = chatRepository.clearMentionCount(channel)
-    fun clearNewMessageCount(channel: String) = chatRepository.clearNewMessageCount(channel)
+    fun clearUnreadMessage (channel: String) = chatRepository.clearUnreadMessage(channel)
     fun reconnect() = chatRepository.reconnect(false)
     fun joinChannel(channel: String): List<String> = chatRepository.joinChannel(channel)
     fun trySendMessage(message: String) {

@@ -34,7 +34,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
     private val _notificationsFlow = MutableSharedFlow<List<ChatItem>>(0, extraBufferCapacity = 10)
     private val _channelMentionCount = mutableSharedFlowOf(mutableMapOf<String, Int>())
-    private val _newMessageCount = mutableSharedFlowOf(mutableMapOf<String, Int>())
+    private val _unreadMessage = mutableSharedFlowOf(mutableMapOf<String, Boolean>())
     private val messages = mutableMapOf<String, MutableStateFlow<List<ChatItem>>>()
     private val _mentions = MutableStateFlow<List<ChatItem>>(emptyList())
     private val _whispers = MutableStateFlow<List<ChatItem>>(emptyList())
@@ -62,7 +62,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
     val notificationsFlow: SharedFlow<List<ChatItem>> = _notificationsFlow.asSharedFlow()
     val channelMentionCount: SharedFlow<Map<String, Int>> = _channelMentionCount.asSharedFlow()
-    val newMessageCount: SharedFlow<Map<String, Int>> = _newMessageCount.asSharedFlow()
+    val unreadMessage: SharedFlow<Map<String, Boolean>> = _unreadMessage.asSharedFlow()
     val hasMentions = channelMentionCount.map { it.any { channel -> channel.key != "w" && channel.value > 0 } }
     val hasWhispers = channelMentionCount.map { it.getOrDefault("w", 0) > 0 }
     val mentions: StateFlow<List<ChatItem>>
@@ -146,8 +146,8 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         tryEmit(firstValue.apply { keys.forEach { if (it != "w") set(it, 0) } })
     }
 
-    fun clearNewMessageCount(channel: String) = with(_newMessageCount){
-        tryEmit(firstValue.apply { set(channel, 0) })
+    fun clearUnreadMessage(channel: String) = with(_unreadMessage){
+        tryEmit(firstValue.apply { set(channel, false) })
     }
 
     fun clear(channel: String) {
@@ -427,7 +427,9 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
                     }
                     _channelMentionCount.increment("w", 1)
                 }else if(msg.command == "PRIVMSG" || msg.command == "USERNOTICE"){
-                    _newMessageCount.increment(channel, 1)
+                    when(_unreadMessage.firstValue.get(channel)){
+                        false, null -> _unreadMessage.assign(channel, true)
+                    }
                 }
 
                 val mentions = parsed.filter { it.message is TwitchMessage && it.message.isMention && !it.message.isWhisper }.toMentionTabItems()

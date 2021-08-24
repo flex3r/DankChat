@@ -67,7 +67,6 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 import kotlin.math.roundToInt
-import kotlin.reflect.typeOf
 
 @AndroidEntryPoint
 class MainFragment : Fragment() {
@@ -182,6 +181,7 @@ class MainFragment : Fragment() {
                 val index = tabAdapter.titleList.indexOf(channel)
                 binding.tabs.getTabAt(index)?.removeBadge()
                 mainViewModel.clearMentionCount(channel)
+                mainViewModel.clearUnreadMessage(channel)
             }
 
             collectFlow(events) {
@@ -202,12 +202,12 @@ class MainFragment : Fragment() {
                     }
                 }
             }
-            collectFlow(newMessageCount) {
+            collectFlow(unreadMessage) {
                 it.forEach { (channel, count) ->
                     val index = tabAdapter.titleList.indexOf(channel)
-                    if (count > 0) {
+                    if (count) {
                         when (index) {
-                            binding.tabs.selectedTabPosition -> mainViewModel.clearNewMessageCount(channel) // mention is in active channel
+                            binding.tabs.selectedTabPosition -> mainViewModel.clearUnreadMessage(channel) // mention is in active channel
                             else                             -> {
                                 val tab = binding.tabs.getTabAt(index)
                                 val tv: TextView? = tab?.view?.get(1) as? TextView
