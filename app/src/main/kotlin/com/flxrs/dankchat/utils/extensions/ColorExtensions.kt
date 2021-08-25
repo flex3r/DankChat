@@ -2,11 +2,16 @@ package com.flxrs.dankchat.utils.extensions
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.content.res.Resources
 import android.util.TypedValue
+import android.widget.TextView
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
+import androidx.core.view.get
+import com.google.android.material.tabs.TabLayout
 import kotlin.math.sin
 
 @ColorInt
@@ -41,4 +46,13 @@ fun Int.normalizeColor(isDarkMode: Boolean): Int {
 fun Context.getThemeColor(@AttrRes attribute: Int): ColorStateList? = TypedValue().let {
     theme.resolveAttribute(attribute, it, true)
     ContextCompat.getColorStateList(this, it.resourceId)
+}
+
+fun TabLayout.Tab.setTextColor(color: Int){
+    val tv: TextView = this.view?.get(1) as TextView
+    tv?.setTextColor(color)
+}
+
+fun getColorFromResource(resources: Resources, resource: Int): Int{
+    return ResourcesCompat.getColor(resources, resource, null)
 }

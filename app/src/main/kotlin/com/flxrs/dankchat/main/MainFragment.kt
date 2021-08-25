@@ -3,7 +3,6 @@ package com.flxrs.dankchat.main
 import android.app.Activity
 import android.content.*
 import android.content.res.Configuration
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -117,6 +116,10 @@ class MainFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val darkModePreferenceKey = requireContext().getString(R.string.preference_dark_theme_key)
+        val isDarkMode = preferences.getBoolean(darkModePreferenceKey, true)
+
         tabAdapter = ChatTabAdapter(this)
         emoteMenuAdapter = EmoteMenuAdapter(::insertEmote)
 
@@ -139,8 +142,7 @@ class MainFragment : Fragment() {
 
             tabs.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener{
                 override fun onTabUnselected(tab: TabLayout.Tab?) {
-                    val tv: TextView? = tab?.view?.get(1) as? TextView
-                    tv?.setTextColor(Color.parseColor("#99FFFFFF"))
+                    tab?.setTextColor(getColorFromResource(resources, R.color.color_tab_unselected))
                 }
 
                 override fun onTabReselected(tab: TabLayout.Tab?) {
@@ -148,8 +150,8 @@ class MainFragment : Fragment() {
                 }
 
                 override fun onTabSelected(tab: TabLayout.Tab?) {
-                    val tv: TextView? = tab?.view?.get(1) as? TextView
-                    tv?.setTextColor(Color.parseColor("#BB86FC"))
+                    if(isDarkMode) tab?.setTextColor(getColorFromResource(resources, R.color.color_tab_selected_dark))
+                    else tab?.setTextColor(getColorFromResource(resources, R.color.color_tab_selected_light))
                 }
             })
 
@@ -210,8 +212,8 @@ class MainFragment : Fragment() {
                             binding.tabs.selectedTabPosition -> mainViewModel.clearUnreadMessage(channel) // mention is in active channel
                             else                             -> {
                                 val tab = binding.tabs.getTabAt(index)
-                                val tv: TextView? = tab?.view?.get(1) as? TextView
-                                tv?.setTextColor(Color.parseColor("#FFFFFF"))
+                                if(isDarkMode)tab?.setTextColor(getColorFromResource(resources, R.color.color_tab_unread_dark))
+                                else tab?.setTextColor(getColorFromResource(resources, R.color.color_tab_unread_light))
                             }
                         }
                     }
