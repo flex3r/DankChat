@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/progress"
+        android:title="@string/uploading_image"
+        android:visible="false"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_add"
+        android:icon="@drawable/ic_add_box"
+        android:title="@string/add_channel"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_mentions"
+        android:icon="@drawable/ic_notifications_active"
+        android:title="@string/mentions_title"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_hide"
+        android:icon="@drawable/ic_fullscreen"
+        android:title="@string/hide_actionbar"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_login"
+        android:title="@string/login"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_manage"
+        android:title="@string/manage_channels"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_upload_image"
+        android:title="@string/upload_media"
+        app:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/menu_capture_image"
+                android:title="@string/take_picture"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/menu_capture_video"
+                android:title="@string/record_video"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/menu_choose_media"
+                android:title="@string/choose_media"
+                app:showAsAction="never" />
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/menu_more"
+        android:title="@string/more"
+        app:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/menu_open"
+                android:title="@string/open_channel"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/menu_reload_emotes"
+                android:title="@string/reload_emotes"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/menu_reconnect"
+                android:title="@string/reconnect"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/menu_clear"
+                android:title="@string/clear_chat"
+                app:showAsAction="never" />
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/menu_settings"
+        android:title="@string/settings"
+        app:showAsAction="never" />
+</menu>

@@ -29,7 +29,8 @@ android {
             manifestPlaceholders = [applicationLabel: "@string/app_name"]
         }
         debug {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             manifestPlaceholders = [applicationLabel: "@string/app_name"]
         }
         dank {

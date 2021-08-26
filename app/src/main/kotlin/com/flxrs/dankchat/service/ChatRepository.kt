@@ -146,8 +146,8 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         tryEmit(firstValue.apply { keys.forEach { if (it != "w") set(it, 0) } })
     }
 
-    fun clearUnreadMessage(channel: String) = with(_unreadMessage){
-        tryEmit(firstValue.apply { set(channel, false) })
+    fun clearUnreadMessage(channel: String){
+        _unreadMessage.assign(channel, false)
     }
 
     fun clear(channel: String) {
@@ -427,7 +427,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
                     }
                     _channelMentionCount.increment("w", 1)
                 }else if(msg.command == "PRIVMSG" || msg.command == "USERNOTICE"){
-                    when(_unreadMessage.firstValue.get(channel)){
+                    when(_unreadMessage.firstValue[channel]){
                         false, null -> _unreadMessage.assign(channel, true)
                     }
                 }

@@ -205,11 +205,11 @@ class MainFragment : Fragment() {
                 }
             }
             collectFlow(unreadMessage) {
-                it.forEach { (channel, count) ->
+                it.forEach { (channel, isUnread) ->
                     val index = tabAdapter.titleList.indexOf(channel)
-                    if (count) {
+                    if (isUnread) {
                         when (index) {
-                            binding.tabs.selectedTabPosition -> mainViewModel.clearUnreadMessage(channel) // mention is in active channel
+                            binding.tabs.selectedTabPosition -> mainViewModel.clearUnreadMessage(channel)
                             else                             -> {
                                 val tab = binding.tabs.getTabAt(index)
                                 if(isDarkMode)tab?.setTextColor(getColorFromResource(resources, R.color.color_tab_unread_dark))
