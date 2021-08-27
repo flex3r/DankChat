@@ -13,9 +13,10 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.io.File
+import javax.inject.Inject
 import kotlin.system.measureTimeMillis
 
-class DataRepository(private val apiManager: ApiManager, private val emoteManager: EmoteManager) {
+class DataRepository @Inject constructor(private val apiManager: ApiManager, private val emoteManager: EmoteManager) {
     private val emotes = mutableMapOf<String, MutableStateFlow<List<GenericEmote>>>()
     private val supibotCommands = mutableMapOf<String, MutableStateFlow<List<String>>>()
     private var loadedGlobalEmotes = false
@@ -44,8 +45,7 @@ class DataRepository(private val apiManager: ApiManager, private val emoteManage
     suspend fun loadSupibotCommands() {
         measureTimeMillis {
             val channels = apiManager.getSupibotChannels()?.let { (data) ->
-                data
-                    .filter { it.isActive() }
+                data.filter { it.isActive() }
                     .map { it.name }
             } ?: return
 

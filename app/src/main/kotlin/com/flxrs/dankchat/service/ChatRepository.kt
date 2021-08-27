@@ -7,24 +7,27 @@ import com.flxrs.dankchat.chat.toMentionTabItems
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.service.api.ApiManager
 import com.flxrs.dankchat.service.irc.IrcMessage
+import com.flxrs.dankchat.service.twitch.connection.ChatEvent
 import com.flxrs.dankchat.service.twitch.connection.ConnectionState
-import com.flxrs.dankchat.service.twitch.connection.WebSocketConnection
+import com.flxrs.dankchat.service.twitch.connection.WebSocketChatConnection
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.service.twitch.message.*
 import com.flxrs.dankchat.utils.extensions.*
 import com.squareup.moshi.Moshi
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import java.nio.ByteBuffer
+import javax.inject.Inject
 import kotlin.collections.set
 import kotlin.system.measureTimeMillis
 
-class ChatRepository(private val apiManager: ApiManager, private val emoteManager: EmoteManager) {
+class ChatRepository @Inject constructor(
+    private val apiManager: ApiManager,
+    private val emoteManager: EmoteManager,
+    private val readConnection: WebSocketChatConnection,
+    private val writeConnection: WebSocketChatConnection,
+    scope: CoroutineScope,
+) {
 
     data class UserState(val userId: String = "", val color: String? = null, val displayName: String = "", val emoteSets: List<String> = listOf())
 
@@ -46,18 +49,28 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     private val moshi = Moshi.Builder().build()
     private val adapter = moshi.adapter(MultiEntryItem.Entry::class.java)
 
-    private val client = OkHttpClient.Builder().retryOnConnectionFailure(true).build()
-    private val request = Request.Builder().url("wss://irc-ws.chat.twitch.tv").build()
-    private val readConnection = WebSocketConnection("reader", CoroutineScope(Dispatchers.IO + Job()), client, request, ::handleDisconnect, ::onReaderMessage)
-    private val writeConnection = WebSocketConnection("writer", CoroutineScope(Dispatchers.IO + Job()), client, request, null, ::onWriterMessage)
-
-    private var hasDisconnected = true
     private var customMentionEntries = listOf<Mention>()
     private var blacklistEntries = listOf<Mention>()
     private var name: String = ""
     private var lastMessage = mutableMapOf<String, String>()
-    private var startedConnection = false
     private val loadedRecentsInChannels = mutableSetOf<String>()
+
+    init {
+        scope.launch {
+            readConnection.messages.collect { event ->
+                when (event) {
+                    is ChatEvent.Connected                  -> handleConnected(event.channel, event.isAnonymous)
+                    is ChatEvent.Closed, is ChatEvent.Error -> handleDisconnect()
+                    is ChatEvent.LoginFailed                -> makeAndPostSystemMessage(SystemMessageType.LOGIN_EXPIRED)
+                    is ChatEvent.Message                    -> onMessage(event.message)
+                }
+            }
+            writeConnection.messages.collect { event ->
+                if (event !is ChatEvent.Message) return@collect
+                onWriterMessage(event.message)
+            }
+        }
+    }
 
     val notificationsFlow: SharedFlow<List<ChatItem>> = _notificationsFlow.asSharedFlow()
     val channelMentionCount: SharedFlow<Map<String, Int>> = _channelMentionCount.asSharedFlow()
@@ -150,25 +163,28 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
     fun closeAndReconnect(name: String, oAuth: String) {
         val channels = channels.value.orEmpty()
-        startedConnection = false
-        val onClosed = { connectAndJoin(name, oAuth, channels) }
 
-        val didClose = writeConnection.close(onClosed) && readConnection.close(onClosed)
-        if (!didClose) {
-            connectAndJoin(name, oAuth, channels, forceConnect = true)
-        }
+        readConnection.close()
+        writeConnection.close()
+        connectAndJoin(name, oAuth, channels)
     }
 
-    fun reconnect(onlyIfNecessary: Boolean) {
-        readConnection.reconnect(onlyIfNecessary)
-        writeConnection.reconnect(onlyIfNecessary)
+    fun reconnect() {
+        readConnection.reconnect()
+        writeConnection.reconnect()
+    }
+
+    fun reconnectIfNecessary() {
+        readConnection.reconnectIfNecessary()
+        writeConnection.reconnectIfNecessary()
     }
 
     fun getLastMessage(): String? = lastMessage[activeChannel.value]?.trimEndSpecialChar()
 
     fun sendMessage(input: String) {
         val channel = activeChannel.value
-        prepareMessage(channel, input, writeConnection::sendMessage)
+        val preparedMessage = prepareMessage(channel, input) ?: return
+        writeConnection.sendMessage(preparedMessage)
 
         val split = input.split(" ")
         if (split.size > 2 && split[0] == "/w" && split[1].isNotBlank()) {
@@ -180,10 +196,10 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         }
     }
 
-    fun connectAndJoin(name: String, oAuth: String, channels: List<String>, forceConnect: Boolean = false) {
-        if (startedConnection) return
+    fun connectAndJoin(name: String, oAuth: String, channels: List<String>) {
+        if (readConnection.connected) return
 
-        connect(name, oAuth, forceConnect)
+        connect(name, oAuth)
         joinChannels(channels)
     }
 
@@ -225,13 +241,11 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         _channels.value = updatedChannels
     }
 
-    private fun connect(nick: String, oauth: String, forceConnect: Boolean = false) {
-        if (!startedConnection) {
-            name = nick
-            readConnection.connect(nick, oauth, forceConnect)
-            writeConnection.connect(nick, oauth, forceConnect)
-            startedConnection = true
-        }
+    // TODO should be null if anon
+    private fun connect(userName: String, oauth: String) {
+        name = userName
+        readConnection.connect(userName, oauth)
+        writeConnection.connect(userName, oauth)
     }
 
     private fun joinChannels(channels: List<String>) {
@@ -267,36 +281,14 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         }
     }
 
-    private inline fun prepareMessage(channel: String, message: String, onResult: (msg: String) -> Unit) {
-        if (message.isNotBlank()) {
-            val messageWithSuffix = when (lastMessage[channel] ?: "") {
-                message -> "$message $INVISIBLE_CHAR"
-                else    -> message
-            }
+    private fun prepareMessage(channel: String, message: String): String? {
+        if (message.isBlank()) return null
 
-            onResult("PRIVMSG #$channel :$messageWithSuffix")
+        val messageWithSuffix = when (lastMessage[channel] ?: "") {
+            message -> "$message $INVISIBLE_CHAR"
+            else    -> message
         }
-    }
-
-    private fun onWriterMessage(message: IrcMessage) {
-        when (message.command) {
-            "USERSTATE",
-            "GLOBALUSERSTATE" -> handleUserState(message)
-            "NOTICE"          -> handleMessage(message)
-        }
-    }
-
-    private fun onReaderMessage(message: IrcMessage) {
-        if (message.isLoginFailed()) {
-            startedConnection = false
-            makeAndPostSystemMessage(SystemMessageType.LOGIN_EXPIRED)
-            return
-        }
-
-        when (message.command) {
-            "366" -> handleConnected(message.params[1].substring(1), writeConnection.isAnonymous)
-            else  -> onMessage(message)
-        }
+        return "PRIVMSG #$channel :$messageWithSuffix"
     }
 
     private fun onMessage(msg: IrcMessage): List<ChatItem>? {
@@ -311,15 +303,21 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         return null
     }
 
-    private fun handleDisconnect() {
-        if (!hasDisconnected) {
-            hasDisconnected = true
-            val state = ConnectionState.DISCONNECTED
-            connectionState.keys.forEach {
-                connectionState[it]?.value = state
-            }
-            makeAndPostSystemMessage(state.toSystemMessageType())
+    private fun onWriterMessage(message: IrcMessage) {
+        when (message.command) {
+            "USERSTATE",
+            "GLOBALUSERSTATE" -> handleUserState(message)
+            "NOTICE"          -> handleMessage(message)
         }
+    }
+
+    private fun handleDisconnect() {
+        val state = ConnectionState.DISCONNECTED
+        connectionState.keys.forEach {
+            connectionState[it]?.value = state
+        }
+        makeAndPostSystemMessage(state.toSystemMessageType())
+
     }
 
     fun clearIgnores() {
@@ -335,8 +333,6 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
     }
 
     private fun handleConnected(channel: String, isAnonymous: Boolean) {
-        hasDisconnected = false
-
         val state = when {
             isAnonymous -> ConnectionState.CONNECTED_NOT_LOGGED_IN
             else        -> ConnectionState.CONNECTED
