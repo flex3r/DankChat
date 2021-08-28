@@ -34,7 +34,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
     private val _notificationsFlow = MutableSharedFlow<List<ChatItem>>(0, extraBufferCapacity = 10)
     private val _channelMentionCount = mutableSharedFlowOf(mutableMapOf<String, Int>())
-    private val _unreadMessage = mutableSharedFlowOf(mutableMapOf<String, Boolean>())
+    private val _unreadMessagesMap = mutableSharedFlowOf(mutableMapOf<String, Boolean>())
     private val messages = mutableMapOf<String, MutableStateFlow<List<ChatItem>>>()
     private val _mentions = MutableStateFlow<List<ChatItem>>(emptyList())
     private val _whispers = MutableStateFlow<List<ChatItem>>(emptyList())
@@ -62,7 +62,7 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
 
     val notificationsFlow: SharedFlow<List<ChatItem>> = _notificationsFlow.asSharedFlow()
     val channelMentionCount: SharedFlow<Map<String, Int>> = _channelMentionCount.asSharedFlow()
-    val unreadMessage: SharedFlow<Map<String, Boolean>> = _unreadMessage.asSharedFlow()
+    val unreadMessagesMap: SharedFlow<Map<String, Boolean>> = _unreadMessagesMap.asSharedFlow()
     val hasMentions = channelMentionCount.map { it.any { channel -> channel.key != "w" && channel.value > 0 } }
     val hasWhispers = channelMentionCount.map { it.getOrDefault("w", 0) > 0 }
     val mentions: StateFlow<List<ChatItem>>
@@ -146,8 +146,8 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
         tryEmit(firstValue.apply { keys.forEach { if (it != "w") set(it, 0) } })
     }
 
-    fun clearUnreadMessage(channel: String){
-        _unreadMessage.assign(channel, false)
+    fun clearUnreadMessage(channel: String) {
+        _unreadMessagesMap.assign(channel, false)
     }
 
     fun clear(channel: String) {
@@ -426,9 +426,9 @@ class ChatRepository(private val apiManager: ApiManager, private val emoteManage
                         it.addAndLimit(parsed.toMentionTabItems(), scrollBackLength)
                     }
                     _channelMentionCount.increment("w", 1)
-                }else if(msg.command == "PRIVMSG" || msg.command == "USERNOTICE"){
-                    when(_unreadMessage.firstValue[channel]){
-                        false, null -> _unreadMessage.assign(channel, true)
+                } else if (msg.command == "PRIVMSG" || msg.command == "USERNOTICE") {
+                    when (_unreadMessagesMap.firstValue[channel]) {
+                        false, null -> _unreadMessagesMap.assign(channel, true)
                     }
                 }
 

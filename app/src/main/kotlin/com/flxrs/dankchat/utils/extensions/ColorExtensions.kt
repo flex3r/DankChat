@@ -47,12 +47,3 @@ fun Context.getThemeColor(@AttrRes attribute: Int): ColorStateList? = TypedValue
     theme.resolveAttribute(attribute, it, true)
     ContextCompat.getColorStateList(this, it.resourceId)
 }
-
-fun TabLayout.Tab.setTextColor(color: Int){
-    val tv: TextView = this.view[1] as TextView
-    tv.setTextColor(color)
-}
-
-fun getColorFromResource(resources: Resources, resource: Int): Int{
-    return ResourcesCompat.getColor(resources, resource, null)
-}

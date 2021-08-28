@@ -40,11 +40,9 @@
     <color name="color_reward_light">#64d8cb</color>
 
     <!--Colors for TabLayout-->
-    <color name="color_tab_selected_dark">#BB86FC</color>
-    <color name="color_tab_selected_light">#FFFFFF</color>
+    <color name="color_tab_selected">#FFFFFF</color>
     <color name="color_tab_unselected">#99FFFFFF</color>
-    <color name="color_tab_unread_dark">#FFFFFF</color>
-    <color name="color_tab_unread_light">#00FF99</color>
+    <color name="color_tab_unread">#CCFFFFFF</color>
 
     <color name="color_ffz_mod">#34ae0a</color>
 
