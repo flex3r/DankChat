@@ -42,7 +42,7 @@
     <!--Colors for TabLayout-->
     <color name="color_tab_selected">#FFFFFF</color>
     <color name="color_tab_unselected">#99FFFFFF</color>
-    <color name="color_tab_unread">#CCFFFFFF</color>
+    <color name="color_tab_unread">#D9FFFFFF</color>
 
     <color name="color_ffz_mod">#34ae0a</color>
 
