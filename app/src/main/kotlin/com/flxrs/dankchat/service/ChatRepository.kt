@@ -37,6 +37,7 @@ class ChatRepository @Inject constructor(
 
     private val _notificationsFlow = MutableSharedFlow<List<ChatItem>>(0, extraBufferCapacity = 10)
     private val _channelMentionCount = mutableSharedFlowOf(mutableMapOf<String, Int>())
+    private val _unreadMessagesMap = mutableSharedFlowOf(mutableMapOf<String, Boolean>())
     private val messages = mutableMapOf<String, MutableStateFlow<List<ChatItem>>>()
     private val _mentions = MutableStateFlow<List<ChatItem>>(emptyList())
     private val _whispers = MutableStateFlow<List<ChatItem>>(emptyList())
@@ -74,6 +75,7 @@ class ChatRepository @Inject constructor(
 
     val notificationsFlow: SharedFlow<List<ChatItem>> = _notificationsFlow.asSharedFlow()
     val channelMentionCount: SharedFlow<Map<String, Int>> = _channelMentionCount.asSharedFlow()
+    val unreadMessagesMap: SharedFlow<Map<String, Boolean>> = _unreadMessagesMap.asSharedFlow()
     val hasMentions = channelMentionCount.map { it.any { channel -> channel.key != "w" && channel.value > 0 } }
     val hasWhispers = channelMentionCount.map { it.getOrDefault("w", 0) > 0 }
     val mentions: StateFlow<List<ChatItem>>
@@ -155,6 +157,10 @@ class ChatRepository @Inject constructor(
 
     fun clearMentionCounts() = with(_channelMentionCount) {
         tryEmit(firstValue.apply { keys.forEach { if (it != "w") set(it, 0) } })
+    }
+
+    fun clearUnreadMessage(channel: String) {
+        _unreadMessagesMap.assign(channel, false)
     }
 
     fun clear(channel: String) {
@@ -416,6 +422,10 @@ class ChatRepository @Inject constructor(
                         it.addAndLimit(parsed.toMentionTabItems(), scrollBackLength)
                     }
                     _channelMentionCount.increment("w", 1)
+                } else if (msg.command == "PRIVMSG" || msg.command == "USERNOTICE") {
+                    when (_unreadMessagesMap.firstValue[channel]) {
+                        false, null -> _unreadMessagesMap.assign(channel, true)
+                    }
                 }
 
                 val mentions = parsed.filter { it.message is TwitchMessage && it.message.isMention && !it.message.isWhisper }.toMentionTabItems()
