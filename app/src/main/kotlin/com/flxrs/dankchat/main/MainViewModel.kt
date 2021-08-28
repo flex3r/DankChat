@@ -281,7 +281,8 @@ class MainViewModel @Inject constructor(
     fun clearIgnores() = chatRepository.clearIgnores()
     fun clearMentionCount(channel: String) = chatRepository.clearMentionCount(channel)
     fun clearUnreadMessage(channel: String) = chatRepository.clearUnreadMessage(channel)
-    fun reconnect() = chatRepository.reconnect(false)
+    fun reconnect() = chatRepository.reconnect()
+    fun reconnectIfNecessary() = chatRepository.reconnectIfNecessary()
     fun joinChannel(channel: String): List<String> = chatRepository.joinChannel(channel)
     fun trySendMessage(message: String) {
         if (mentionSheetOpen.value && whisperTabSelected.value && !message.startsWith("/w ")) {

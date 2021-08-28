@@ -3,38 +3,45 @@ package com.flxrs.dankchat.service.twitch.connection
 import android.util.Log
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.utils.extensions.timer
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.receiveAsFlow
 import okhttp3.*
+import javax.inject.Inject
 import kotlin.random.Random
 import kotlin.random.nextLong
 
-class WebSocketConnection(
-    private val connectionName: String,
-    private val scope: CoroutineScope,
+enum class ChatConnectionType {
+    Read,
+    Write
+}
+
+sealed class ChatEvent {
+    data class Message(val message: IrcMessage) : ChatEvent()
+    data class Connected(val channel: String, val isAnonymous: Boolean) : ChatEvent()
+    data class Error(val throwable: Throwable) : ChatEvent()
+    object LoginFailed : ChatEvent()
+    object Closed : ChatEvent()
+
+    val isDisconnected: Boolean
+        get() = this is Error || this is Closed
+}
+
+class WebSocketChatConnection @Inject constructor(
+    private val chatConnectionType: ChatConnectionType,
     private val client: OkHttpClient,
-    private val request: Request,
-    private val onDisconnect: (() -> Unit)? = null,
-    private val onMessage: (IrcMessage) -> Unit
+    private val scope: CoroutineScope
 ) {
-    private var nick = ""
-    private var oAuth = ""
-    private val channels = mutableSetOf<String>()
-    private val channelsToJoin = Channel<Collection<String>>(capacity = Channel.BUFFERED)
-    private val channelsToJoinFlow = channelsToJoin.consumeAsFlow()
-
     private var socket: WebSocket? = null
-    private var connected = false
-    private var awaitingPong = false
-    private var connecting = false
-    private var reconnectAttempts = 1
-    private var onClosed: (() -> Unit)? = null
+    private val request = Request.Builder().url("wss://irc-ws.chat.twitch.tv").build()
+    private val receiveChannel = Channel<ChatEvent>(capacity = Channel.BUFFERED)
 
+    private var connecting = false
+    private var awaitingPong = false
+    private var reconnectAttempts = 1
     private val currentReconnectDelay: Long
         get() {
             val jitter = Random.nextLong(0L..RECONNECT_MAX_JITTER)
@@ -44,12 +51,24 @@ class WebSocketConnection(
             return reconnectDelay + jitter
         }
 
-    var isAnonymous = false
 
+    private val channels = mutableSetOf<String>()
+    private val channelsToJoin = Channel<Collection<String>>(capacity = Channel.BUFFERED)
+    private var currentUserName: String? = null
+    private var currentOAuth: String? = null
+    private val isAnonymous: Boolean
+        get() = (currentUserName.isNullOrBlank() || currentOAuth.isNullOrBlank() || currentOAuth?.startsWith("oauth:") == false)
+
+    var connected = false
+        private set
+
+    val messages = receiveChannel.receiveAsFlow().distinctUntilChanged { old, new ->
+        (old.isDisconnected && new.isDisconnected) || old == new
+    }
 
     init {
         scope.launch {
-            channelsToJoinFlow.collect { channelsToJoin ->
+            channelsToJoin.consumeAsFlow().collect { channelsToJoin ->
                 if (!connected) return@collect
 
                 channelsToJoin.filter { it in channels }
@@ -99,41 +118,36 @@ class WebSocketConnection(
         }
     }
 
-    fun connect(nick: String, oAuth: String, forceConnect: Boolean = false) {
-        if (forceConnect || (!connected && !connecting)) {
-            this.nick = nick
-            this.oAuth = oAuth
-            awaitingPong = false
-            connecting = true
+    fun connect(userName: String? = null, oAuth: String? = null) {
+        if (connected || connecting) return
 
-            socket = client.newWebSocket(request, TwitchWebSocketListener())
-        }
+        currentUserName = userName
+        currentOAuth = oAuth
+        awaitingPong = false
+        connecting = true
+        socket = client.newWebSocket(request, TwitchWebSocketListener())
     }
 
-    fun close(onClosed: (() -> Unit)?): Boolean {
-        this.onClosed = onClosed
+    fun close() {
         connected = false
-        return socket?.close(1000, null) ?: false
+        socket?.close(1000, null) ?: socket?.cancel()
     }
 
-    fun reconnect(onlyIfNecessary: Boolean = false, forceConnect: Boolean = false) {
-        if (!onlyIfNecessary || (!connected && !connecting)) {
-            reconnectAttempts = 1
-            attemptReconnect(forceConnect)
-        }
+    fun reconnect() {
+        reconnectAttempts = 1
+        attemptReconnect()
     }
 
-    private fun attemptReconnect(forceConnect: Boolean = false) {
+    fun reconnectIfNecessary() {
+        if (connected || connecting) return
+        reconnect()
+    }
+
+    private fun attemptReconnect() {
         scope.launch {
             delay(currentReconnectDelay)
-
-            if (forceConnect) {
-                connect(nick, oAuth, forceConnect)
-            } else {
-                if (!close { connect(nick, oAuth) }) {
-                    connect(nick, oAuth, true)
-                }
-            }
+            close()
+            connect(currentUserName, currentOAuth)
         }
     }
 
@@ -155,30 +169,28 @@ class WebSocketConnection(
 
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
             connected = false
-            onDisconnect?.invoke()
-            onClosed?.invoke()
-            onClosed = null
             pingJob?.cancel()
+            scope.launch { receiveChannel.send(ChatEvent.Closed) }
         }
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+            Log.e(TAG, "[$chatConnectionType] connection failed: $t")
+            Log.e(TAG, "[$chatConnectionType] attempting to reconnect #${reconnectAttempts}..")
             connected = false
             connecting = false
-            onDisconnect?.invoke()
             pingJob?.cancel()
+            scope.launch { receiveChannel.send(ChatEvent.Closed) }
 
-            Log.e(TAG, "[$connectionName] connection failed: ${t.stackTraceToString()}, attempting to reconnect #${reconnectAttempts}.. ")
-            attemptReconnect(true)
+            attemptReconnect()
         }
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
             connected = true
             connecting = false
             reconnectAttempts = 1
-            isAnonymous = (oAuth.isBlank() || !oAuth.startsWith("oauth:"))
 
-            val auth = if (isAnonymous) "NaM" else oAuth
-            val nick = if (nick.isBlank() || isAnonymous) "justinfan12781923" else nick
+            val auth = currentOAuth?.takeIf { !isAnonymous } ?: "NaM"
+            val nick = currentUserName?.takeIf { !isAnonymous } ?: "justinfan12781923"
 
             webSocket.sendMessage("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership")
             webSocket.sendMessage("PASS $auth")
@@ -189,22 +201,24 @@ class WebSocketConnection(
             text.removeSuffix("\r\n").split("\r\n").forEach { line ->
                 val ircMessage = IrcMessage.parse(line)
                 if (ircMessage.isLoginFailed()) {
-                    Log.e(TAG, "[$connectionName] authentication failed with expired token, closing connection..")
-                    close(null)
+                    Log.e(TAG, "[$chatConnectionType] authentication failed with expired token, closing connection..")
+                    scope.launch { receiveChannel.send(ChatEvent.LoginFailed) }
+                    close()
                 }
                 when (ircMessage.command) {
                     "376"       -> {
-                        Log.i(TAG, "[$connectionName] connected to irc")
+                        Log.i(TAG, "[$chatConnectionType] connected to irc")
                         pingJob = setupPingInterval()
 
                         scope.launch {
                             channelsToJoin.send(channels)
                         }
                     }
+                    "366"       -> scope.launch { receiveChannel.send(ChatEvent.Connected(ircMessage.params[1].substring(1), isAnonymous)) }
                     "PING"      -> webSocket.handlePing()
                     "PONG"      -> awaitingPong = false
                     "RECONNECT" -> reconnect()
-                    else        -> onMessage(ircMessage)
+                    else        -> scope.launch { receiveChannel.send(ChatEvent.Message(ircMessage)) }
                 }
             }
         }
@@ -218,6 +232,6 @@ class WebSocketConnection(
         private const val PING_INTERVAL = 5 * 60 * 1000L
         private const val JOIN_DELAY = 600L
         private const val JOIN_CHUNK_SIZE = 5
-        private val TAG = WebSocketConnection::class.java.simpleName
+        private val TAG = WebSocketChatConnection::class.java.simpleName
     }
 }
