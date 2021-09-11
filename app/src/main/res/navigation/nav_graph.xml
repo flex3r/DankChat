@@ -110,6 +110,9 @@
         android:id="@+id/channelsDialogFragment"
         android:name="com.flxrs.dankchat.channels.ChannelsDialogFragment"
         android:label="ChannelsDialogFragment">
+        <action
+            android:id="@+id/action_channelsFragment_to_editChannelDialogFragment"
+            app:destination="@+id/editChannelDialogFragment"/>
         <argument
             android:name="channels"
             app:argType="string[]" />
@@ -119,7 +122,14 @@
         android:id="@+id/addChannelDialogFragment"
         android:name="com.flxrs.dankchat.main.dialog.AddChannelDialogFragment"
         android:label="AddChannelDialogFragment" />
-
+    <dialog
+        android:id="@+id/editChannelDialogFragment"
+        android:name="com.flxrs.dankchat.main.dialog.EditChannelDialogFragment"
+        android:label="EditChannelDialogFragment">
+        <argument
+            android:name="channel"
+            app:argType="string"/>
+    </dialog>
     <dialog
         android:id="@+id/messageHistoryDisclaimerDialogFragment"
         android:name="com.flxrs.dankchat.main.dialog.MessageHistoryDisclaimerDialogFragment"

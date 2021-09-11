@@ -19,6 +19,10 @@ class DankChatPreferenceStore(context: Context) {
         get() = dankChatPreferences.getString(CHANNELS_AS_STRING_KEY, null)
         set(value) = dankChatPreferences.edit { putString(CHANNELS_AS_STRING_KEY, value) }
 
+    var channelRenames: String?
+        get() = dankChatPreferences.getString(RENAME_KEY, null)
+        set(value) = dankChatPreferences.edit { putString(RENAME_KEY, value) }
+
     var channels: MutableSet<String>?
         get() = dankChatPreferences.getStringSet(CHANNELS_KEY, setOf())
         set(value) = dankChatPreferences.edit { putStringSet(CHANNELS_KEY, value) }
@@ -52,11 +56,24 @@ class DankChatPreferenceStore(context: Context) {
 
     fun getChannels(): List<String> = channelsString?.split(',') ?: channels.also { channels = null }?.toList().orEmpty()
 
+    fun getChannelRenames(): HashMap<String, String>? {
+        return channelRenames
+            ?.filter { it != '{' }
+            ?.filter { it != '}' }
+            ?.split(',')
+            ?.filter { it.split('=').size == 2}
+            ?.associateTo(HashMap()) {
+                val (left, right) = it.split('=')
+                left.filter { it!=' ' } to right.filter { it!=' ' }
+            }
+    }
+
     companion object {
         private const val LOGGED_IN_KEY = "loggedIn"
         private const val OAUTH_KEY = "oAuthKey"
         private const val NAME_KEY = "nameKey"
         private const val CHANNELS_KEY = "channelsKey"
+        private const val RENAME_KEY = "renameKey"
         private const val CHANNELS_AS_STRING_KEY = "channelsAsStringKey"
         private const val ID_KEY = "idKey"
         private const val ID_STRING_KEY = "idStringKey"

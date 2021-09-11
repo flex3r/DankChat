@@ -7,9 +7,16 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChannelsItemBinding
+import com.flxrs.dankchat.utils.extensions.assign
+import com.flxrs.dankchat.utils.extensions.mutableSharedFlowOf
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 
 class ChannelsAdapter : ListAdapter<String, ChannelsAdapter.ChannelViewHolder>(DetectDiff()) {
+
+    private val _rename = mutableSharedFlowOf(mutableMapOf<String,String>())
+    private val rename: SharedFlow<Map<String,String>> = _rename.asSharedFlow()
 
     class ChannelViewHolder(val binding: ChannelsItemBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -34,9 +41,16 @@ class ChannelsAdapter : ListAdapter<String, ChannelsAdapter.ChannelViewHolder>(D
                 .setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.dismiss() }
                 .create().show()
         }
+
+        channelEdit.setOnClickListener{
+            _rename.assign("channel", currentList[holder.bindingAdapterPosition])
+        }
+
     }
 
-
+    fun getRename(): SharedFlow<Map<String,String>>{
+        return rename
+    }
 }
 
 private class DetectDiff : DiffUtil.ItemCallback<String>() {
