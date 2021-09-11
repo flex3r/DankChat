@@ -54,37 +54,6 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        dankChatPreferences = DankChatPreferenceStore(view.context)
-        val navBackStackEntry = navController.getBackStackEntry(R.id.channelsDialogFragment)
-        val handle = navBackStackEntry.savedStateHandle
-        val observer = LifecycleEventObserver { _, event ->
-            if (event != Lifecycle.Event.ON_RESUME) return@LifecycleEventObserver
-            handle.keys().forEach { key ->
-                when (key) {
-                    RENAME_TAB_REQUEST_KEY -> handle.withData(key,::rename)
-                }
-            }
-        }
-        navBackStackEntry.lifecycle.addObserver(observer)
-        viewLifecycleOwner.lifecycle.addObserver(LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_DESTROY) {
-                navBackStackEntry.lifecycle.removeObserver(observer)
-            }
-        })
-    }
-
-    fun rename(rename: String){
-        //dankChatPreferences.channelRenames = ""
-        with(rename.split('=')){
-            val channel = this[0]
-            val name = this[1]
-            val renameMap = dankChatPreferences.getChannelRenames()
-            renameMap?.set(channel,name)
-            dankChatPreferences.channelRenames = renameMap?.toString()
-        }
-    }
-
     override fun onDestroy() {
         adapter.unregisterAdapterDataObserver(dataObserver)
         super.onDestroy()
@@ -122,7 +91,5 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
 
     companion object {
         private val TAG = ChannelsDialogFragment::class.java.simpleName
-
-        const val RENAME_TAB_REQUEST_KEY = "rename_channel_key"
     }
 }

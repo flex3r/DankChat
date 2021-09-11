@@ -9,8 +9,8 @@ import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.channels.ChannelsDialogFragment
 import com.flxrs.dankchat.databinding.EditChannelDialogBinding
+import com.flxrs.dankchat.main.MainFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class EditChannelDialogFragment : DialogFragment() {
@@ -49,9 +49,9 @@ class EditChannelDialogFragment : DialogFragment() {
         val trimmedInput = input?.toString()?.trim().orEmpty()
         if (trimmedInput.isNotBlank()) {
             with(findNavController()) {
-                getBackStackEntry(R.id.channelsDialogFragment)
+                getBackStackEntry(R.id.mainFragment)
                     .savedStateHandle
-                    .set(ChannelsDialogFragment.RENAME_TAB_REQUEST_KEY, "${args.channel}=$trimmedInput")
+                    .set(MainFragment.RENAME_TAB_REQUEST_KEY, "${args.channel}=$trimmedInput")
             }
         }
         dismiss()
