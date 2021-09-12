@@ -10,7 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.EditChannelDialogBinding
-import com.flxrs.dankchat.main.MainFragment
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class EditChannelDialogFragment : DialogFragment() {
@@ -18,9 +18,12 @@ class EditChannelDialogFragment : DialogFragment() {
     private val args: EditChannelDialogFragmentArgs by navArgs()
     private var bindingRef: EditChannelDialogBinding? = null
     private val binding get() = bindingRef!!
+    private lateinit var dankChatPreferences: DankChatPreferenceStore
+
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         bindingRef = EditChannelDialogBinding.inflate(layoutInflater, null, false)
+        dankChatPreferences = DankChatPreferenceStore(requireContext())
         val builder = MaterialAlertDialogBuilder(requireContext())
             .setTitle("")
             .setView(binding.root)
@@ -48,10 +51,9 @@ class EditChannelDialogFragment : DialogFragment() {
     private fun getInputAndDismiss(input: Editable?): Boolean {
         val trimmedInput = input?.toString()?.trim().orEmpty()
         if (trimmedInput.isNotBlank()) {
-            with(findNavController()) {
-                getBackStackEntry(R.id.mainFragment)
-                    .savedStateHandle
-                    .set(MainFragment.RENAME_TAB_REQUEST_KEY, "${args.channel}=$trimmedInput")
+            with(dankChatPreferences.getChannelRenamesMap()){
+                this?.set(args.channel, trimmedInput)
+                dankChatPreferences.channelRenames = this?.toString()
             }
         }
         dismiss()

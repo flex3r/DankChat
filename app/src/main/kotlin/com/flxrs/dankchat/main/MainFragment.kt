@@ -220,7 +220,6 @@ class MainFragment : Fragment() {
                 when (key) {
                     LOGIN_REQUEST_KEY       -> handle.withData(key, ::handleLoginRequest)
                     ADD_CHANNEL_REQUEST_KEY -> handle.withData(key, ::addChannel)
-                    RENAME_TAB_REQUEST_KEY  -> handle.withData(key, ::renameChannel)
                     HISTORY_DISCLAIMER_KEY  -> handle.withData(key, ::handleMessageHistoryDisclaimerResult)
                     USER_POPUP_RESULT_KEY   -> handle.withData(key, ::handleUserPopupResult)
                     LOGOUT_REQUEST_KEY      -> handle.withData<Boolean>(key) {
@@ -509,14 +508,6 @@ class MainFragment : Fragment() {
 
         mainViewModel.setActiveChannel(channel)
         activity?.invalidateOptionsMenu()
-    }
-
-    private fun renameChannel(rename: String){
-        val (channel, name) = rename.split('=')
-        with(dankChatPreferences.getChannelRenamesMap()){
-            this?.set(channel,name)
-            dankChatPreferences.channelRenames = this?.toString()
-        }
     }
 
     private fun insertEmote(emote: String) = insertText("$emote ")
@@ -1000,6 +991,5 @@ class MainFragment : Fragment() {
         const val ADD_CHANNEL_REQUEST_KEY = "add_channel_key"
         const val HISTORY_DISCLAIMER_KEY = "history_disclaimer_key"
         const val USER_POPUP_RESULT_KEY = "user_popup_key"
-        const val RENAME_TAB_REQUEST_KEY = "rename_channel_key"
     }
 }
