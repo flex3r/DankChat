@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChannelsItemBinding
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.assign
 import com.flxrs.dankchat.utils.extensions.mutableSharedFlowOf
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -17,6 +18,7 @@ class ChannelsAdapter : ListAdapter<String, ChannelsAdapter.ChannelViewHolder>(D
 
     private val _rename = mutableSharedFlowOf(mutableMapOf<String,String>())
     private val rename: SharedFlow<Map<String,String>> = _rename.asSharedFlow()
+    private lateinit var dankChatPreferences: DankChatPreferenceStore
 
     class ChannelViewHolder(val binding: ChannelsItemBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -25,7 +27,8 @@ class ChannelsAdapter : ListAdapter<String, ChannelsAdapter.ChannelViewHolder>(D
     }
 
     override fun onBindViewHolder(holder: ChannelViewHolder, position: Int) = with(holder.binding) {
-        channelText.text = getItem(position)
+        dankChatPreferences = DankChatPreferenceStore(holder.itemView.context)
+        channelText.text = dankChatPreferences.getChannelRenamesMap()?.get(getItem(position)) ?: getItem(position)
         channelDelete.setOnClickListener {
 
             MaterialAlertDialogBuilder(root.context)
@@ -41,7 +44,7 @@ class ChannelsAdapter : ListAdapter<String, ChannelsAdapter.ChannelViewHolder>(D
                 .setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.dismiss() }
                 .create().show()
         }
-
+        //TODO this is scuffed lule
         channelEdit.setOnClickListener{
             _rename.assign("channel", currentList[holder.bindingAdapterPosition])
         }

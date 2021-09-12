@@ -56,15 +56,15 @@ class DankChatPreferenceStore(context: Context) {
 
     fun getChannels(): List<String> = channelsString?.split(',') ?: channels.also { channels = null }?.toList().orEmpty()
 
-    fun getChannelRenames(): HashMap<String, String>? {
+    fun getChannelRenamesMap(): HashMap<String, String>? {
         return channelRenames
             ?.filter { it != '{' }
             ?.filter { it != '}' }
             ?.split(',')
-            ?.filter { it.split('=').size == 2}
+            ?.filter { it.split('=').size == 2 }
             ?.associateTo(HashMap()) {
                 val (left, right) = it.split('=')
-                left.filter { it!=' ' } to right.filter { it!=' ' }
+                left.filter { it != ' ' } to right.filter { it != ' ' }
             }
     }
 

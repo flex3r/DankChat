@@ -133,7 +133,7 @@ class MainFragment : Fragment() {
 
             tabLayoutMediator = TabLayoutMediator(tabs, chatViewpager) { tab, position ->
                 //tab.text = tabAdapter.titleList[position]
-                tab.text = dankChatPreferences.getChannelRenames()?.get(tabAdapter.titleList[position]) ?: tabAdapter.titleList[position]
+                tab.text = dankChatPreferences.getChannelRenamesMap()?.get(tabAdapter.titleList[position]) ?: tabAdapter.titleList[position]
             }.apply { attach() }
             tabs.getTabAt(tabs.selectedTabPosition)?.removeBadge()
             tabs.addOnTabSelectedListener(tabSelectionListener)
@@ -512,12 +512,10 @@ class MainFragment : Fragment() {
     }
 
     private fun renameChannel(rename: String){
-        with(rename.split('=')){
-            val channel = this[0]
-            val name = this[1]
-            val renameMap = dankChatPreferences.getChannelRenames()
-            renameMap?.set(channel,name)
-            dankChatPreferences.channelRenames = renameMap?.toString()
+        val (channel, name) = rename.split('=')
+        with(dankChatPreferences.getChannelRenamesMap()){
+            this?.set(channel,name)
+            dankChatPreferences.channelRenames = this?.toString()
         }
     }
 
@@ -823,7 +821,7 @@ class MainFragment : Fragment() {
         tabAdapter.updateFragments(updatedChannels)
 
         if (removedChannels.isNotEmpty()) {
-            val renameMap = dankChatPreferences.getChannelRenames()
+            val renameMap = dankChatPreferences.getChannelRenamesMap()
             for (channel in removedChannels) {
                 renameMap?.remove(channel)
             }
