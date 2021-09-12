@@ -30,6 +30,8 @@ class EditChannelDialogFragment : DialogFragment() {
             .setNegativeButton(R.string.dialog_cancel) { _, _ -> dismiss() }
             .setPositiveButton(R.string.dialog_ok) { _, _ -> getInputAndDismiss(binding.dialogEdit.text) }
 
+        binding.dialogEdit.hint = dankChatPreferences.getChannelRenamesMap()?.get(args.channel) ?: args.channel
+
         binding.dialogEdit.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> getInputAndDismiss(binding.dialogEdit.text)
