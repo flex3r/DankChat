@@ -29,7 +29,7 @@ class ChannelsAdapter : ListAdapter<String, ChannelsAdapter.ChannelViewHolder>(D
 
     override fun onBindViewHolder(holder: ChannelViewHolder, position: Int) = with(holder.binding) {
         dankChatPreferences = DankChatPreferenceStore(holder.itemView.context)
-        channelText.text = dankChatPreferences.getChannelRenamesMap()?.get(getItem(position)) ?: getItem(position)
+        channelText.text = dankChatPreferences.getChannelRenamesMap()[getItem(position)] ?: getItem(position)
         channelDelete.setOnClickListener {
 
             MaterialAlertDialogBuilder(root.context)

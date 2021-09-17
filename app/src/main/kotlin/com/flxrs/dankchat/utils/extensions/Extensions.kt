@@ -12,6 +12,8 @@ import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.service.twitch.message.Mention
 import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 
 fun List<GenericEmote>?.toEmoteItems(): List<EmoteItem> = this
     ?.groupBy { it.emoteType.title }
@@ -33,6 +35,12 @@ fun List<MultiEntryItem.Entry>.mapToMention(): List<Mention> = mapNotNull {
 fun Set<String>.mapToMention(adapter: JsonAdapter<MultiEntryItem.Entry>?): List<Mention> = mapNotNull {
     runCatching { adapter?.fromJson(it) }.getOrNull()
 }.mapToMention()
+
+fun MutableMap<String,String>.toJson(): String{
+    val type = Types.newParameterizedType(Map::class.java, String::class.java, String::class.java)
+    val adapter: JsonAdapter<Map<String,String>> = Moshi.Builder().build().adapter(type)
+    return adapter.toJson(this)
+}
 
 inline fun <V> measureTimeValue(block: () -> V): Pair<V, Long> {
     val start = System.currentTimeMillis()

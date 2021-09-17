@@ -18,6 +18,7 @@ import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.flxrs.dankchat.utils.extensions.navigateSafe
+import com.flxrs.dankchat.utils.extensions.toJson
 import com.flxrs.dankchat.utils.extensions.withData
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -90,8 +91,8 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
     private fun renameChannel(rename: String) {
         val (channel, name) = rename.split('=')
         with(dankChatPreferences.getChannelRenamesMap()) {
-            this?.set(channel, name)
-            dankChatPreferences.channelRenames = this?.toString()
+            this[channel] = name
+            dankChatPreferences.channelRenames = this.toJson()
         }
         adapter.updateList(args.channels.toList())
     }

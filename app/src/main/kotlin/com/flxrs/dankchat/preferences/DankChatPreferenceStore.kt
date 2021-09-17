@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.utils.extensions.toMutableMap
 
 class DankChatPreferenceStore(context: Context) {
     private val dankChatPreferences: SharedPreferences = context.getSharedPreferences(context.getString(R.string.shared_preference_key), Context.MODE_PRIVATE)
@@ -56,16 +57,7 @@ class DankChatPreferenceStore(context: Context) {
 
     fun getChannels(): List<String> = channelsString?.split(',') ?: channels.also { channels = null }?.toList().orEmpty()
 
-    fun getChannelRenamesMap(): HashMap<String, String>? {
-        return channelRenames
-            ?.drop(1)?.dropLast(1)
-            ?.split(',')
-            ?.filter { it.split('=').size == 2 }
-            ?.associateTo(HashMap()) {
-                val (left, right) = it.split('=')
-                left.filter { it != ' ' } to right.filter { it != ' ' }
-            }
-    }
+    fun getChannelRenamesMap(): MutableMap<String, String> = channelRenames?.toMutableMap() ?: mutableMapOf()
 
     companion object {
         private const val LOGGED_IN_KEY = "loggedIn"
