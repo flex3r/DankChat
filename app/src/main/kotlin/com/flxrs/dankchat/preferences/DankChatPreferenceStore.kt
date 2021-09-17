@@ -58,8 +58,7 @@ class DankChatPreferenceStore(context: Context) {
 
     fun getChannelRenamesMap(): HashMap<String, String>? {
         return channelRenames
-            ?.filter { it != '{' }
-            ?.filter { it != '}' }
+            ?.drop(1)?.dropLast(1)
             ?.split(',')
             ?.filter { it.split('=').size == 2 }
             ?.associateTo(HashMap()) {

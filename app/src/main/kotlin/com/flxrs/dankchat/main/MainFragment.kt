@@ -132,7 +132,6 @@ class MainFragment : Fragment() {
             }
 
             tabLayoutMediator = TabLayoutMediator(tabs, chatViewpager) { tab, position ->
-                //tab.text = tabAdapter.titleList[position]
                 tab.text = dankChatPreferences.getChannelRenamesMap()?.get(tabAdapter.titleList[position]) ?: tabAdapter.titleList[position]
             }.apply { attach() }
             tabs.getTabAt(tabs.selectedTabPosition)?.removeBadge()

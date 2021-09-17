@@ -9,6 +9,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.channels.ChannelsDialogFragment
 import com.flxrs.dankchat.databinding.EditChannelDialogBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -53,9 +54,10 @@ class EditChannelDialogFragment : DialogFragment() {
     private fun getInputAndDismiss(input: Editable?): Boolean {
         val trimmedInput = input?.toString()?.trim().orEmpty()
         if (trimmedInput.isNotBlank()) {
-            with(dankChatPreferences.getChannelRenamesMap()){
-                this?.set(args.channel, trimmedInput)
-                dankChatPreferences.channelRenames = this?.toString()
+            with(findNavController()) {
+                getBackStackEntry(R.id.channelsDialogFragment)
+                    .savedStateHandle
+                    .set(ChannelsDialogFragment.RENAME_TAB_REQUEST_KEY, "${args.channel}=$trimmedInput")
             }
         }
         dismiss()

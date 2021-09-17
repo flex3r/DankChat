@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.channels
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -45,6 +46,7 @@ class ChannelsAdapter : ListAdapter<String, ChannelsAdapter.ChannelViewHolder>(D
                 .create().show()
         }
         //TODO this is scuffed lule
+        //Problem: no access to navigation in here and in ChannlsDialogFragment no access to the onClick event
         channelEdit.setOnClickListener{
             _rename.assign("channel", currentList[holder.bindingAdapterPosition])
         }
@@ -53,6 +55,12 @@ class ChannelsAdapter : ListAdapter<String, ChannelsAdapter.ChannelViewHolder>(D
 
     fun getRename(): SharedFlow<Map<String,String>>{
         return rename
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateList(channels: List<String>) {
+        super.submitList(channels)
+        notifyDataSetChanged()
     }
 }
 
