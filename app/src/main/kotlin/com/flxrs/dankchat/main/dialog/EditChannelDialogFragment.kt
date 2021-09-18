@@ -19,19 +19,17 @@ class EditChannelDialogFragment : DialogFragment() {
     private val args: EditChannelDialogFragmentArgs by navArgs()
     private var bindingRef: EditChannelDialogBinding? = null
     private val binding get() = bindingRef!!
-    private lateinit var dankChatPreferences: DankChatPreferenceStore
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         bindingRef = EditChannelDialogBinding.inflate(layoutInflater, null, false)
-        dankChatPreferences = DankChatPreferenceStore(requireContext())
         val builder = MaterialAlertDialogBuilder(requireContext())
             .setTitle("")
             .setView(binding.root)
             .setNegativeButton(R.string.dialog_cancel) { _, _ -> dismiss() }
             .setPositiveButton(R.string.dialog_ok) { _, _ -> getInputAndDismiss(binding.dialogEdit.text) }
 
-        binding.dialogEdit.hint = dankChatPreferences.getChannelRenamesMap()[args.channel] ?: args.channel
+        binding.dialogEdit.hint = args.renaming ?: args.channel
 
         binding.dialogEdit.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
@@ -57,7 +55,7 @@ class EditChannelDialogFragment : DialogFragment() {
             with(findNavController()) {
                 getBackStackEntry(R.id.channelsDialogFragment)
                     .savedStateHandle
-                    .set(ChannelsDialogFragment.RENAME_TAB_REQUEST_KEY, "${args.channel}=$trimmedInput")
+                    .set(ChannelsDialogFragment.RENAME_TAB_REQUEST_KEY, args.channel to trimmedInput)
             }
         }
         dismiss()

@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.channels
 
+import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,9 +17,7 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChannelsFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.flxrs.dankchat.utils.extensions.navigateSafe
-import com.flxrs.dankchat.utils.extensions.toJson
 import com.flxrs.dankchat.utils.extensions.withData
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,7 +33,7 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val channels = args.channels.toList()
-        adapter = ChannelsAdapter().also {
+        adapter = ChannelsAdapter(::openRenameChannelDialog).also {
             it.submitList(channels)
             it.registerAdapterDataObserver(dataObserver)
         }
@@ -42,13 +41,6 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
             channelsList.adapter = adapter
             val helper = ItemTouchHelper(itemTouchHelperCallback)
             helper.attachToRecyclerView(channelsList)
-        }
-
-        collectFlow(adapter.getRename()){ rename ->
-            if (rename["channel"]!=null) {
-                val direction = ChannelsDialogFragmentDirections.actionChannelsFragmentToEditChannelDialogFragment(channel = rename["channel"] ?: "")
-                navigateSafe(direction)
-            }
         }
 
         return binding.root
@@ -62,7 +54,7 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
             if (event != Lifecycle.Event.ON_RESUME) return@LifecycleEventObserver
             handle.keys().forEach { key ->
                 when (key) {
-                    RENAME_TAB_REQUEST_KEY -> handle.withData(key,::renameChannel)
+                    RENAME_TAB_REQUEST_KEY -> handle.withData(key, ::renameChannel)
                 }
             }
         }
@@ -88,13 +80,16 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun renameChannel(rename: String) {
-        val (channel, name) = rename.split('=')
-        with(dankChatPreferences.getChannelRenamesMap()) {
-            this[channel] = name
-            dankChatPreferences.channelRenames = this.toJson()
-        }
-        adapter.updateList(args.channels.toList())
+    private fun openRenameChannelDialog(channel: String, renamedChannel: String?) {
+        val direction = ChannelsDialogFragmentDirections.actionChannelsFragmentToEditChannelDialogFragment(channel, renamedChannel)
+        navigateSafe(direction)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun renameChannel(rename: Pair<String, String>) {
+        val (channel, name) = rename
+        dankChatPreferences.setRenamedChannel(channel, name)
+        adapter.notifyDataSetChanged()
     }
 
     private val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {

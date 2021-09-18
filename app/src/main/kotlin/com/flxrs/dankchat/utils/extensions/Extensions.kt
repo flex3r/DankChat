@@ -36,12 +36,6 @@ fun Set<String>.mapToMention(adapter: JsonAdapter<MultiEntryItem.Entry>?): List<
     runCatching { adapter?.fromJson(it) }.getOrNull()
 }.mapToMention()
 
-fun MutableMap<String,String>.toJson(): String{
-    val type = Types.newParameterizedType(Map::class.java, String::class.java, String::class.java)
-    val adapter: JsonAdapter<Map<String,String>> = Moshi.Builder().build().adapter(type)
-    return adapter.toJson(this)
-}
-
 inline fun <V> measureTimeValue(block: () -> V): Pair<V, Long> {
     val start = System.currentTimeMillis()
     return block() to System.currentTimeMillis() - start

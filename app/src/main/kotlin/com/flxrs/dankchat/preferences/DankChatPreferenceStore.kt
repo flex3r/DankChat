@@ -4,10 +4,19 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.utils.extensions.toMutableMap
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 
 class DankChatPreferenceStore(context: Context) {
     private val dankChatPreferences: SharedPreferences = context.getSharedPreferences(context.getString(R.string.shared_preference_key), Context.MODE_PRIVATE)
+    private val adapterType = Types.newParameterizedType(Map::class.java, String::class.java, String::class.java)
+    private val moshiAdapter = Moshi.Builder().build().adapter<Map<String, String>>(adapterType)
+
+    private var channelRenames: String?
+        get() = dankChatPreferences.getString(RENAME_KEY, null)
+        set(value) = dankChatPreferences.edit { putString(RENAME_KEY, value) }
+
     var isLoggedIn: Boolean
         get() = dankChatPreferences.getBoolean(LOGGED_IN_KEY, false)
         set(value) = dankChatPreferences.edit { putBoolean(LOGGED_IN_KEY, value) }
@@ -19,10 +28,6 @@ class DankChatPreferenceStore(context: Context) {
     var channelsString: String?
         get() = dankChatPreferences.getString(CHANNELS_AS_STRING_KEY, null)
         set(value) = dankChatPreferences.edit { putString(CHANNELS_AS_STRING_KEY, value) }
-
-    var channelRenames: String?
-        get() = dankChatPreferences.getString(RENAME_KEY, null)
-        set(value) = dankChatPreferences.edit { putString(RENAME_KEY, value) }
 
     var channels: MutableSet<String>?
         get() = dankChatPreferences.getStringSet(CHANNELS_KEY, setOf())
@@ -57,7 +62,38 @@ class DankChatPreferenceStore(context: Context) {
 
     fun getChannels(): List<String> = channelsString?.split(',') ?: channels.also { channels = null }?.toList().orEmpty()
 
-    fun getChannelRenamesMap(): MutableMap<String, String> = channelRenames?.toMutableMap() ?: mutableMapOf()
+    fun getRenamedChannel(channel: String): String? {
+        val renameMap = channelRenames?.toMutableMap()
+        return renameMap?.get(channel)
+    }
+
+    fun setRenamedChannel(channel: String, renaming: String) {
+        withChannelRenames {
+            put(channel, renaming)
+        }
+    }
+
+    fun removeChannelRename(channel: String) {
+        withChannelRenames {
+            remove(channel)
+        }
+    }
+
+    private fun withChannelRenames(block: MutableMap<String, String>.() -> Unit) {
+        val renameMap = channelRenames?.toMutableMap() ?: mutableMapOf()
+        renameMap.block()
+        channelRenames = renameMap.toJson()
+    }
+
+    private fun String.toMutableMap(): MutableMap<String, String> {
+        return kotlin.runCatching {
+            moshiAdapter.fromJson(this) as MutableMap<String, String>
+        }.getOrElse {
+            mutableMapOf()
+        }
+    }
+
+    private fun Map<String,String>.toJson(): String = moshiAdapter.toJson(this)
 
     companion object {
         private const val LOGGED_IN_KEY = "loggedIn"

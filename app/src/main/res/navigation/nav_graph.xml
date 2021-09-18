@@ -129,6 +129,10 @@
         <argument
             android:name="channel"
             app:argType="string"/>
+        <argument
+            android:name="renaming"
+            app:argType="string"
+            app:nullable="true" />
     </dialog>
     <dialog
         android:id="@+id/messageHistoryDisclaimerDialogFragment"

@@ -136,14 +136,3 @@ fun String.trimEndSpecialChar(): String = trimEnd().run {
         else                                                    -> this
     }.trimEnd()
 }
-
-fun String.toMutableMap(): MutableMap<String,String>{
-    val adapter: JsonAdapter<Map<String, String>>
-    try {
-        val type = Types.newParameterizedType(Map::class.java, String::class.java, String::class.java)
-        adapter = Moshi.Builder().build().adapter(type)
-    }catch (e: Exception){
-        return mutableMapOf()
-    }
-    return adapter.fromJson(this) as MutableMap<String, String>
-}
