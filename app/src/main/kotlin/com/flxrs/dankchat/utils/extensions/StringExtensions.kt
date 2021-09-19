@@ -1,9 +1,5 @@
 package com.flxrs.dankchat.utils.extensions
 
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
-
 private val emojiCodePoints = listOf(
     IntRange(0x00A9, 0x00AE),
     IntRange(0x200D, 0x2017),

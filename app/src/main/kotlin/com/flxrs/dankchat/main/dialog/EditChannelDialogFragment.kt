@@ -24,7 +24,7 @@ class EditChannelDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         bindingRef = EditChannelDialogBinding.inflate(layoutInflater, null, false)
         val builder = MaterialAlertDialogBuilder(requireContext())
-            .setTitle("")
+            .setTitle(R.string.edit_dialog_title)
             .setView(binding.root)
             .setNegativeButton(R.string.dialog_cancel) { _, _ -> dismiss() }
             .setPositiveButton(R.string.dialog_ok) { _, _ -> getInputAndDismiss(binding.dialogEdit.text) }

@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.channels
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -22,7 +21,16 @@ class ChannelsAdapter(private val onEditChannel: (String, String?) -> Unit) : Li
         val dankChatPreferences = DankChatPreferenceStore(holder.itemView.context)
         val channel = getItem(position)
         val renamedChannel = dankChatPreferences.getRenamedChannel(channel)
-        channelText.text = renamedChannel ?: channel
+        when (renamedChannel) {
+            null, channel -> {
+                channelText.text = channel
+                ogChannelText.text = ""
+            }
+            else ->{
+                channelText.text = renamedChannel
+                ogChannelText.text = channel
+            }
+        }
         channelDelete.setOnClickListener {
             MaterialAlertDialogBuilder(root.context)
                 .setTitle(R.string.confirm_channel_removal_title)
@@ -38,7 +46,7 @@ class ChannelsAdapter(private val onEditChannel: (String, String?) -> Unit) : Li
                 .setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.dismiss() }
                 .create().show()
         }
-        channelEdit.setOnClickListener{
+        channelEdit.setOnClickListener {
             val currentChannel = currentList.getOrNull(holder.bindingAdapterPosition) ?: return@setOnClickListener
             onEditChannel(currentChannel, renamedChannel)
         }
