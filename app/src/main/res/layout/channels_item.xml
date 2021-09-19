@@ -30,26 +30,13 @@
 
             <TextView
                 android:id="@+id/channel_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/og_channel_text"
-                app:layout_constraintStart_toEndOf="@id/channel_drag_handle"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/og_channel_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                android:alpha="0.5"
-                android:textStyle="italic"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/channel_edit"
-                app:layout_constraintStart_toEndOf="@id/channel_text"
+                app:layout_constraintStart_toEndOf="@id/channel_drag_handle"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
@@ -62,7 +49,7 @@
                 android:focusable="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/channel_delete"
-                app:layout_constraintStart_toEndOf="@id/og_channel_text"
+                app:layout_constraintStart_toEndOf="@id/channel_text"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_edit"
                 app:tint="?colorOnSurface" />

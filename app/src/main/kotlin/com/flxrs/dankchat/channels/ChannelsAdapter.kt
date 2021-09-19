@@ -2,6 +2,10 @@ package com.flxrs.dankchat.channels
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.graphics.ColorUtils
+import androidx.core.text.buildSpannedString
+import androidx.core.text.color
+import androidx.core.text.italic
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -21,14 +25,11 @@ class ChannelsAdapter(private val onEditChannel: (String, String?) -> Unit) : Li
         val dankChatPreferences = DankChatPreferenceStore(holder.itemView.context)
         val channel = getItem(position)
         val renamedChannel = dankChatPreferences.getRenamedChannel(channel)
-        when (renamedChannel) {
-            null, channel -> {
-                channelText.text = channel
-                ogChannelText.text = ""
-            }
-            else ->{
-                channelText.text = renamedChannel
-                ogChannelText.text = channel
+        channelText.text = buildSpannedString {
+            append(renamedChannel ?: channel)
+            renamedChannel?.let {
+                val channelColor = ColorUtils.setAlphaComponent(channelText.currentTextColor, 128)
+                if (it != channel) color(channelColor) { italic { append(" $channel") } }
             }
         }
         channelDelete.setOnClickListener {
