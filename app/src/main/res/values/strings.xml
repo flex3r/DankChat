@@ -7,6 +7,7 @@
     <string name="reconnect">Reconnect</string>
     <string name="clear_chat">Clear chat</string>
     <string name="add_dialog_title">Add channel</string>
+    <string name="edit_dialog_title">Rename channel</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_dismiss">Dismiss</string>

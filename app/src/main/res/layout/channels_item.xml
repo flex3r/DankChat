@@ -35,9 +35,24 @@
                 android:layout_margin="4dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/channel_delete"
+                app:layout_constraintEnd_toStartOf="@id/channel_edit"
                 app:layout_constraintStart_toEndOf="@id/channel_drag_handle"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/channel_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/channel_delete"
+                app:layout_constraintStart_toEndOf="@id/channel_text"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_edit"
+                app:tint="?colorOnSurface" />
 
             <ImageView
                 android:id="@+id/channel_delete"
@@ -49,7 +64,7 @@
                 android:focusable="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/channel_text"
+                app:layout_constraintStart_toEndOf="@id/channel_edit"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_clear"
                 app:tint="?colorOnSurface" />
