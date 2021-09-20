@@ -27,10 +27,12 @@ class ChannelsAdapter(private val onEditChannel: (String, String?) -> Unit) : Li
         val renamedChannel = dankChatPreferences.getRenamedChannel(channel)
         channelText.text = buildSpannedString {
             append(renamedChannel ?: channel)
-            renamedChannel?.let {
-                val channelColor = ColorUtils.setAlphaComponent(channelText.currentTextColor, 128)
-                if (it != channel) color(channelColor) { italic { append(" $channel") } }
-            }
+            renamedChannel
+                ?.takeIf { it != channel }
+                ?.let {
+                    val channelColor = ColorUtils.setAlphaComponent(channelText.currentTextColor, 128)
+                    color(channelColor) { italic { append(" $channel") } }
+                }
         }
         channelDelete.setOnClickListener {
             MaterialAlertDialogBuilder(root.context)
