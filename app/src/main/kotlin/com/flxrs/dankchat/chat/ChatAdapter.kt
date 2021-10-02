@@ -176,20 +176,20 @@ class ChatAdapter(
             }
         }
 
-        val coroutineHandler = CoroutineExceptionHandler { _, throwable -> handleException(throwable) }
+        if (timedOut) {
+            alpha = 0.5f
 
-        holder.scope.launch(coroutineHandler) {
-            if (timedOut) {
-                alpha = 0.5f
-
-                if (!showTimedOutMessages) {
-                    text = if (showTimeStamp) {
-                        "${DateTimeUtils.timestampToLocalTime(timestamp)} ${context.getString(R.string.timed_out_message)}"
-                    } else context.getString(R.string.timed_out_message)
-                    return@launch
+            if (!showTimedOutMessages) {
+                text = when {
+                    showTimeStamp -> "${DateTimeUtils.timestampToLocalTime(timestamp)} ${context.getString(R.string.timed_out_message)}"
+                    else          -> context.getString(R.string.timed_out_message)
                 }
+                return
             }
+        }
 
+        val coroutineHandler = CoroutineExceptionHandler { _, throwable -> handleException(throwable) }
+        holder.scope.launch(coroutineHandler) {
             val scaleFactor = lineHeight * 1.5 / 112
 
             val background = when {
@@ -332,14 +332,27 @@ class ChatAdapter(
             val fullPrefix = prefixLength + badgesLength
             emotes.groupBy { it.position }.forEach { (_, emotes) ->
                 try {
-                    val drawables = emotes.mapNotNull { it.toDrawable(context, animateGifs, useCache = !it.isOverlayEmote)?.run { transformEmoteDrawable(scaleFactor, it) } }.toTypedArray()
-                    val bounds = drawables.map { it.bounds }
-                    val layerDrawable = drawables.toLayerDrawable(bounds, scaleFactor, emotes)
-
+                    val layerDrawable = emoteManager.layerCache[id] ?: calculateLayerDrawable(context, emotes, id, animateGifs, scaleFactor)
                     (text as SpannableString).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
                 } catch (t: Throwable) {
                     handleException(t)
                 }
+            }
+        }
+    }
+
+    private suspend fun calculateLayerDrawable(
+        context: Context,
+        emotes: List<ChatMessageEmote>,
+        messageId: String,
+        animateGifs: Boolean,
+        scaleFactor: Double,
+    ): LayerDrawable {
+        val drawables = emotes.mapNotNull { it.toDrawable(context, animateGifs, useCache = !it.isOverlayEmote)?.run { transformEmoteDrawable(scaleFactor, it) } }.toTypedArray()
+        val bounds = drawables.map { it.bounds }
+        return drawables.toLayerDrawable(bounds, scaleFactor, emotes).also {
+            if (emotes.size > 1) {
+                emoteManager.layerCache.put(messageId, it)
             }
         }
     }
@@ -410,9 +423,11 @@ class ChatAdapter(
 
 private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
     override fun areItemsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
-        return if (oldItem.message is TwitchMessage && newItem.message is TwitchMessage && (newItem.message.timedOut || newItem.message.isMention)) false
-        else oldItem == newItem
+        return oldItem.message.id == newItem.message.id
     }
 
-    override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean = oldItem == newItem
+    override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
+        return if (oldItem.message is TwitchMessage && newItem.message is TwitchMessage && (newItem.message.timedOut || newItem.message.isMention)) false
+        else oldItem.message == newItem.message
+    }
 }
