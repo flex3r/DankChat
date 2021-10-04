@@ -167,4 +167,8 @@
         <item quantity="many">Na żywo z %d widzami</item>
         <item quantity="other">Na żywo z %d widzami</item>
     </plurals>
+    <string name="edit_dialog_title">Zmień nazwę kanału</string>
+    <string name="restart_required">Aby zastosować zmiany, należy zrestartować aplikację</string>
+    <string name="restart">Restartuj</string>
+    <string name="preference_visible_emotes_title">Widoczne emotki z dotatków</string>
 </resources>
