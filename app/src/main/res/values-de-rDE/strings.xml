@@ -145,8 +145,8 @@
     <string name="user_popup_mention">Nutzer erwähnen</string>
     <string name="user_popup_whisper">Nutzer flüstern</string>
     <string name="user_popup_created">Erstellt: %1$s</string>
-    <string name="user_popup_following_since">Folgt dir seit %1$s</string>
-    <string name="user_popup_not_following">Folgt dir nicht</string>
+    <string name="user_popup_following_since">Folgt dem Channel seit %1$s</string>
+    <string name="user_popup_not_following">Folgt dem Channel nicht</string>
     <string name="user_popup_avatar_description">Profilavatar</string>
     <string name="user_popup_error">Fehler beim Laden der Nutzerdaten: %1$s</string>
     <string name="confirm_user_unfollow_title">Entfolgen bestätigen</string>
