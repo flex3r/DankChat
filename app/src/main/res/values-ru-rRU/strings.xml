@@ -151,13 +151,18 @@
     <string name="whispers">Личные сообщения</string>
     <string name="mentions_title">Упоминания / Личные сообщения</string>
     <string name="snackbar_paste">Вставить</string>
-    <string name="preference_show_username_title">показать имя</string>
+    <string name="preference_show_username_title">Показать имя</string>
     <string name="preference_visible_badges_title">Видимые значки</string>
     <string name="preference_prefer_emote_suggestions_title">Предпочитать подсказки смайлов</string>
     <string name="preference_prefer_emote_suggestions_summary">Предпочитать подсказки смайлов подсказкам пользователей</string>
     <string name="preference_user_long_click_title">Поведение при долгом нажатии на имя пользователя</string>
     <string name="preference_user_long_click_summary_on">Обычное нажатие открывает всплывающее окно с информацией о пользователе, долгое - открывает упоминания</string>
     <string name="preference_user_long_click_summary_off">Обычное нажатие открывает упоминания, долгое - открывает всплывающее окно с информацией о пользователе</string>
+    <string name="preference_tts_force_english_key" translatable="false">tts_force_english_key</string>
+    <string name="preference_tts_force_english_title">Переключить язык на английский</string>
+    <string name="preference_tts_force_english_summary">Переключить язык синтезатора речи с системного на английский</string>
+    <string name="preference_visible_emotes_title">Видимые сторонние смайлы</string>
+    <string name="preference_visible_emotes_key" translatable="false">visible_emotes_key</string>
 
     <plurals name="viewers">
         <item quantity="one">В сети с %d зрителем</item>
