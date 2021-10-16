@@ -6,7 +6,8 @@
     <string name="reload_emotes">Recargar emoticonos</string>
     <string name="reconnect">Reconectar</string>
     <string name="clear_chat">Limpiar chat</string>
-    <string name="add_dialog_title">Añadir chat</string>
+    <string name="add_dialog_title">Añadir canal</string>
+    <string name="edit_dialog_title">Renombrar canal</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancelar</string>
     <string name="dialog_dismiss">Descartar</string>
@@ -93,6 +94,8 @@
     <string name="confirm_user_block_title">Confirmar bloqueo</string>
     <string name="confirm_user_block_message">¿Estás seguro que quieres bloquear este usuario?</string>
     <string name="confirm_user_block_positive_button">Bloquear</string>
+    <string name="restart_required">Es necesario reiniciar para aplicar cambios</string>
+    <string name="restart">Reiniciar</string>
 
 
     <string name="preference_timestamp_title">Mostrar fecha</string>
@@ -161,6 +164,7 @@
     <string name="preference_user_long_click_summary_off">Un click normal menciona al usuario, una pulsación larga abre popup</string>
     <string name="preference_tts_force_english_title">Forzar inglés como idioma</string>
     <string name="preference_tts_force_english_summary">Forzar el idioma de la voz TTS al inglés</string>
+    <string name="preference_visible_emotes_title">Emoticonos de terceros visibles</string>
 
     <plurals name="viewers">
         <item quantity="one">En directo con %d espectador</item>
