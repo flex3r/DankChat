@@ -1,7 +1,7 @@
 package com.flxrs.dankchat.service.twitch.emote
 
 import android.graphics.drawable.Drawable
-import android.util.Log
+import android.graphics.drawable.LayerDrawable
 import android.util.LruCache
 import com.flxrs.dankchat.service.api.ApiManager
 import com.flxrs.dankchat.service.api.dto.*
@@ -33,6 +33,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
     private val dankChatBadges = CopyOnWriteArrayList<DankChatBadgeDto>()
 
     val gifCache = LruCache<String, Drawable>(64)
+    val layerCache = LruCache<String, LayerDrawable>(64)
     val gifCallback = MultiCallback(true)
 
     fun parse3rdPartyEmotes(message: String, channel: String = "", withTwitch: Boolean = false): List<ChatMessageEmote> {
@@ -100,18 +101,11 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         filtered.map { (id, emotes) ->
             async {
                 val channelId = sets[id]
-                val type = when {
-                    id == "0" || id == "42" || channelId == "0" || channelId == "19194" -> EmoteType.GlobalTwitchEmote
-                    else                                                                -> {
-                        val channel = when {
-                            channelId.isNullOrBlank() -> "Twitch"
-                            else                      -> {
-                                apiManager.getUser(oAuth, channelId)?.displayName
-                                    .takeUnless { it.equals("qa_TW_Partner", ignoreCase = true) } ?: "Twitch"
-                            }
-                        }
-
-                        EmoteType.ChannelTwitchEmote(channel)
+                val type = when (id) {
+                    "0", "42" -> EmoteType.GlobalTwitchEmote
+                    else      -> when (channelId) {
+                        null, "0", "19194" -> EmoteType.GlobalTwitchEmote
+                        else               -> apiManager.getUser(oAuth, channelId)?.displayName.twitchEmoteType
                     }
                 }
 
@@ -132,28 +126,13 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         sets.forEach { emoteSet ->
             val type = when (emoteSet.id) {
                 "0", "42" -> EmoteType.GlobalTwitchEmote // 42 == monkey emote set, move them to the global emote section
-                else      -> EmoteType.ChannelTwitchEmote(emoteSet.channelName.takeUnless { it.equals("qa_TW_Partner", ignoreCase = true) } ?: "Twitch")
+                else      -> emoteSet.channelName.twitchEmoteType
             }
             emoteSet.emotes.mapToGenericEmotes(type).forEach {
                 twitchEmotes[it.code] = it
             }
         }
     }
-
-    private fun List<TwitchEmoteDto>?.mapToGenericEmotes(type: EmoteType): List<GenericEmote> = this?.map { (name, id) ->
-        val code = when (type) {
-            is EmoteType.GlobalTwitchEmote -> EMOTE_REPLACEMENTS[name] ?: name
-            else                           -> name
-        }
-        GenericEmote(
-            code = code,
-            url = TWITCH_EMOTE_TEMPLATE.format(id, TWITCH_EMOTE_SIZE),
-            lowResUrl = TWITCH_EMOTE_TEMPLATE.format(id, TWITCH_LOW_RES_EMOTE_SIZE),
-            id = id,
-            scale = 1,
-            emoteType = type
-        )
-    } ?: emptyList()
 
     suspend fun setFFZEmotes(channel: String, ffzResult: FFZChannelDto) = withContext(Dispatchers.Default) {
         val emotes = hashMapOf<String, GenericEmote>()
@@ -246,6 +225,30 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         return@withContext result.sortedBy { it.code }
     }
 
+    private val String?.twitchEmoteType: EmoteType
+        get() = when {
+            this == null || isGlobalTwitchChannel -> EmoteType.GlobalTwitchEmote
+            else                                  -> EmoteType.ChannelTwitchEmote(this)
+        }
+
+    private val String.isGlobalTwitchChannel: Boolean
+        get() = equals("qa_TW_Partner", ignoreCase = true) || equals("Twitch", ignoreCase = true)
+
+    private fun List<TwitchEmoteDto>?.mapToGenericEmotes(type: EmoteType): List<GenericEmote> = this?.map { (name, id) ->
+        val code = when (type) {
+            is EmoteType.GlobalTwitchEmote -> EMOTE_REPLACEMENTS[name] ?: name
+            else                           -> name
+        }
+        GenericEmote(
+            code = code,
+            url = TWITCH_EMOTE_TEMPLATE.format(id, TWITCH_EMOTE_SIZE),
+            lowResUrl = TWITCH_EMOTE_TEMPLATE.format(id, TWITCH_LOW_RES_EMOTE_SIZE),
+            id = id,
+            scale = 1,
+            emoteType = type
+        )
+    }.orEmpty()
+
     private fun adjustOverlayEmotes(message: String, emotes: List<ChatMessageEmote>): Pair<String, List<ChatMessageEmote>> {
         var adjustedMessage = message
         val adjustedEmotes = emotes.sortedBy { it.position.first }
@@ -302,7 +305,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
                     id = emote.id,
                     code = emote.code,
                     scale = emote.scale,
-                    isOverlayEmote = emote.code in OVERLAY_EMOTES
+                    isOverlayEmote = emote.isOverlayEmote
                 )
             }
             i += split.length + 1
@@ -367,7 +370,15 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         val id = emote.id
         val url = BTTV_EMOTE_TEMPLATE.format(id, BTTV_EMOTE_SIZE)
         val lowResUrl = BTTV_EMOTE_TEMPLATE.format(id, BTTV_LOW_RES_EMOTE_SIZE)
-        return GenericEmote(name, url, lowResUrl, id, 1, EmoteType.ChannelBTTVEmote)
+        return GenericEmote(
+            code = name,
+            url = url,
+            lowResUrl = lowResUrl,
+            id = id,
+            scale = 1,
+            emoteType = EmoteType.ChannelBTTVEmote,
+            isOverlayEmote = name in OVERLAY_EMOTES,
+        )
     }
 
     private fun parseBTTVGlobalEmote(emote: BTTVGlobalEmotesDto): GenericEmote {
@@ -375,7 +386,15 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         val id = emote.id
         val url = BTTV_EMOTE_TEMPLATE.format(id, BTTV_EMOTE_SIZE)
         val lowResUrl = BTTV_EMOTE_TEMPLATE.format(id, BTTV_LOW_RES_EMOTE_SIZE)
-        return GenericEmote(name, url, lowResUrl, id, 1, EmoteType.GlobalBTTVEmote)
+        return GenericEmote(
+            code = name,
+            url = url,
+            lowResUrl = lowResUrl,
+            id = id,
+            scale = 1,
+            emoteType = EmoteType.GlobalBTTVEmote,
+            isOverlayEmote = name in OVERLAY_EMOTES,
+        )
     }
 
     private fun parseFFZEmote(emote: FFZEmoteDto, channel: String = ""): GenericEmote {
@@ -402,7 +421,8 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
             lowResUrl = urls.getValue("2"),
             id = emote.id,
             scale = 1,
-            emoteType = type
+            emoteType = type,
+            isOverlayEmote = SevenTVEmoteVisibility.ZERO_WIDTH in emote.visibility
         )
     }
 

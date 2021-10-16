@@ -2,15 +2,19 @@ package com.flxrs.dankchat.channels
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.graphics.ColorUtils
+import androidx.core.text.buildSpannedString
+import androidx.core.text.color
+import androidx.core.text.italic
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChannelsItemBinding
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-class ChannelsAdapter : ListAdapter<String, ChannelsAdapter.ChannelViewHolder>(DetectDiff()) {
-
+class ChannelsAdapter(private val onEditChannel: (String, String?) -> Unit) : ListAdapter<String, ChannelsAdapter.ChannelViewHolder>(DetectDiff()) {
     class ChannelViewHolder(val binding: ChannelsItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelViewHolder {
@@ -18,9 +22,19 @@ class ChannelsAdapter : ListAdapter<String, ChannelsAdapter.ChannelViewHolder>(D
     }
 
     override fun onBindViewHolder(holder: ChannelViewHolder, position: Int) = with(holder.binding) {
-        channelText.text = getItem(position)
+        val dankChatPreferences = DankChatPreferenceStore(holder.itemView.context)
+        val channel = getItem(position)
+        val renamedChannel = dankChatPreferences.getRenamedChannel(channel)
+        channelText.text = buildSpannedString {
+            append(renamedChannel ?: channel)
+            renamedChannel
+                ?.takeIf { it != channel }
+                ?.let {
+                    val channelColor = ColorUtils.setAlphaComponent(channelText.currentTextColor, 128)
+                    color(channelColor) { italic { append(" $channel") } }
+                }
+        }
         channelDelete.setOnClickListener {
-
             MaterialAlertDialogBuilder(root.context)
                 .setTitle(R.string.confirm_channel_removal_title)
                 .setMessage(R.string.confirm_channel_removal_message)
@@ -29,14 +43,17 @@ class ChannelsAdapter : ListAdapter<String, ChannelsAdapter.ChannelViewHolder>(D
                         it.removeAt(holder.bindingAdapterPosition)
                         submitList(it)
                     }
+                    dankChatPreferences.removeChannelRename(channel)
                     dialog.dismiss()
                 }
                 .setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.dismiss() }
                 .create().show()
         }
+        channelEdit.setOnClickListener {
+            val currentChannel = currentList.getOrNull(holder.bindingAdapterPosition) ?: return@setOnClickListener
+            onEditChannel(currentChannel, renamedChannel)
+        }
     }
-
-
 }
 
 private class DetectDiff : DiffUtil.ItemCallback<String>() {

@@ -85,6 +85,7 @@ class MainFragment : Fragment() {
     private lateinit var emoteMenuAdapter: EmoteMenuAdapter
     private lateinit var suggestionAdapter: EmoteSuggestionsArrayAdapter
     private var currentMediaUri = Uri.EMPTY
+    private val tabSelectionListener = TabSelectionListener()
 
     private val requestImageCapture = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { if (it.resultCode == Activity.RESULT_OK) handleCaptureRequest(imageCapture = true) }
     private val requestVideoCapture = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { if (it.resultCode == Activity.RESULT_OK) handleCaptureRequest() }
@@ -117,6 +118,7 @@ class MainFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         tabAdapter = ChatTabAdapter(this)
         emoteMenuAdapter = EmoteMenuAdapter(::insertEmote)
+
         bindingRef = MainFragmentBinding.inflate(inflater, container, false).apply {
             emoteMenuBottomSheetBehavior = BottomSheetBehavior.from(emoteMenuBottomSheet)
             vm = mainViewModel
@@ -130,11 +132,14 @@ class MainFragment : Fragment() {
             }
 
             tabLayoutMediator = TabLayoutMediator(tabs, chatViewpager) { tab, position ->
-                tab.text = tabAdapter.titleList[position]
+                val channelName = tabAdapter.titleList[position]
+                tab.text = dankChatPreferences.getRenamedChannel(channelName) ?: channelName
             }.apply { attach() }
             tabs.getTabAt(tabs.selectedTabPosition)?.removeBadge()
+            tabs.addOnTabSelectedListener(tabSelectionListener)
 
             showActionbarFab.setOnClickListener { mainViewModel.appbarEnabled.value = true }
+            addChannelsButton.setOnClickListener { navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment) }
         }
 
         mainViewModel.apply {
@@ -161,6 +166,7 @@ class MainFragment : Fragment() {
                 val index = tabAdapter.titleList.indexOf(channel)
                 binding.tabs.getTabAt(index)?.removeBadge()
                 mainViewModel.clearMentionCount(channel)
+                mainViewModel.clearUnreadMessage(channel)
             }
 
             collectFlow(events) {
@@ -168,8 +174,8 @@ class MainFragment : Fragment() {
                     is MainViewModel.Event.Error -> handleErrorEvent(it)
                 }
             }
-            collectFlow(channelMentionCount) {
-                it.forEach { (channel, count) ->
+            collectFlow(channelMentionCount) { channels ->
+                channels.forEach { (channel, count) ->
                     val index = tabAdapter.titleList.indexOf(channel)
                     if (count > 0) {
                         when (index) {
@@ -178,6 +184,17 @@ class MainFragment : Fragment() {
                         }
                     } else {
                         binding.tabs.getTabAt(index)?.removeBadge()
+                    }
+                }
+            }
+            collectFlow(unreadMessagesMap) { channels ->
+                channels.forEach { (channel, _) ->
+                    when (val index = tabAdapter.titleList.indexOf(channel)) {
+                        binding.tabs.selectedTabPosition -> mainViewModel.clearUnreadMessage(channel)
+                        else                             -> {
+                            val tab = binding.tabs.getTabAt(index)
+                            tab?.setTextColor(R.color.color_tab_unread)
+                        }
                     }
                 }
             }
@@ -322,6 +339,7 @@ class MainFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        bindingRef?.tabs?.removeOnTabSelectedListener(tabSelectionListener)
         bindingRef = null
         emoteMenuBottomSheetBehavior = null
         mentionBottomSheetBehavior = null

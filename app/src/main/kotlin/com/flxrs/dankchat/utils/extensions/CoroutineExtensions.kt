@@ -17,6 +17,10 @@ fun MutableSharedFlow<MutableMap<String, Int>>.clear(key: String) = tryEmit(firs
     put(key, 0)
 })
 
+fun <T> MutableSharedFlow<MutableMap<String, T>>.assign(key: String, value: T) = tryEmit(firstValue.apply {
+    put(key, value)
+})
+
 fun CoroutineScope.timer(interval: Long, action: suspend TimerScope.() -> Unit): Job {
     return launch {
         val scope = TimerScope()

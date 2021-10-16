@@ -15,7 +15,7 @@ class DankChatViewModel @Inject constructor(
 
     fun init(name: String, oAuth: String, channels: List<String>, tryReconnect: Boolean) {
         if (tryReconnect && started) {
-            chatRepository.reconnect(onlyIfNecessary = true)
+            chatRepository.reconnectIfNecessary()
         } else {
             started = true
             chatRepository.connectAndJoin(name, oAuth, channels)

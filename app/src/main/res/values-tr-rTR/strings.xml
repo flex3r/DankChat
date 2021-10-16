@@ -4,7 +4,7 @@
     <string name="app_name_dank">DankChat (Dank)</string>
     <string name="send_hint">Mesaj gönder</string>
     <string name="login">Giriş yap</string>
-    <string name="reload_emotes">Emote\'ları yenile</string>
+    <string name="reload_emotes">İfadeleri yenile</string>
     <string name="reconnect">Yeniden bağlan</string>
     <string name="clear_chat">Sohbeti temizle</string>
     <string name="add_dialog_title">Kanal ekle</string>
@@ -31,7 +31,7 @@
     <string name="notification_stop">Durdur</string>
     <string name="notification_title">FeelsDankMan</string>
     <string name="notification_message">DankChat arka planda çalışıyor</string>
-    <string name="emote_menu_hint">Emote menüsünü aç</string>
+    <string name="emote_menu_hint">İfade menüsünü aç</string>
     <string name="login_title">Twitch.tv\'ye giriş yap</string>
     <string name="hint_connected">Sohbet etmeye başla</string>
     <string name="hint_disconnected">Bağlantı kesildi</string>
@@ -42,7 +42,7 @@
     <string name="snackbar_upload_failed">Yükleme sırasında hata</string>
     <string name="snackbar_upload_failed_cause">Yükleme sırasında hata: %1$s</string>
     <string name="snackbar_retry">Yeniden dene</string>
-    <string name="snackbar_data_reloaded">Emote\'lar yenilendi</string>
+    <string name="snackbar_data_reloaded">İfadeler yenilendi</string>
     <string name="snackbar_data_load_failed_cause">Veri yüklenemedi: %1$s</string>
     <string name="add_channel_hint">Kanal adı</string>
     <string name="emote_menu_tab_subs">Abonelikler</string>
@@ -52,7 +52,7 @@
     <string name="system_message_disconnected">Bağlantı kesildi</string>
     <string name="timed_out_message">&lt; Mesaj silindi ></string>
     <string name="multi_entry_header_regex">Düzenli ifade</string>
-    <string name="login_expired">Girişinizin süresi doldu! Tekrar giriş yapmayı deneyin.</string>
+    <string name="login_expired">Giriş süresi doldu! Yeniden giriş yapmayı deneyin.</string>
     <string name="message_history_disclaimer_title">Mesaj tarihi açıklaması</string>
     <string name="more">Daha fazla</string>
     <string name="preference_timestamp_title">Zaman damgalarını göster</string>
@@ -77,15 +77,15 @@
     <string name="preference_font_size_summary_small">Küçük</string>
     <string name="preference_font_size_summary_large">Büyük</string>
     <string name="preference_font_size_summary_very_large">Çok büyük</string>
-    <string name="preference_suggestions_title">Emote ve kullanıcı önerileri</string>
-    <string name="preference_suggestions_summary">Yazarken emote ve etkin kullanıcılar için öneriler göster</string>
+    <string name="preference_suggestions_title">İfade ve kullanıcı önerileri</string>
+    <string name="preference_suggestions_summary">Yazarken ifadeler ve etkin kullanıcılar için öneriler göster</string>
     <string name="preference_load_message_history_title">Başlangıçta mesaj tarihini yükle</string>
     <string name="preference_message_history_header">Mesaj tarihi</string>
     <string name="preference_message_history_dashboard_title">Gösterge panelini aç</string>
     <string name="preference_message_history_dashboard_summary">Servis hakkında daha çok öğrenin ve kendi kanalınız için mesaj tarihini devre dışı bırakın</string>
     <string name="preference_channel_data_header">Kanal verisi</string>
     <string name="preference_developer_header">Geliştirici seçenekleri</string>
-    <string name="preference_debug_mode_title">Debug modu</string>
+    <string name="preference_debug_mode_title">Hata ayıklama modu</string>
     <string name="preference_debug_mode_summary">Yakalanan her hata hakkında bilgilendirir</string>
     <string name="preference_timestamp_format_title">Zaman damgası biçimi</string>
     <string name="preference_tts_title">TTS\'i etkinleştir</string>
@@ -111,7 +111,7 @@
     <string name="preference_roomstate_summary">Abonelere özel mod gibi şu anki kanal modu hakkında bilgi gösterir</string>
     <string name="preference_mention_format_title">Bahsetme biçimi</string>
     <string name="preference_mention_format_summary">Bir kullanıcı adına tıklandığındaki bahsetme biçimini değiştir</string>
-    <string name="message_history_disclaimer_message">DankChat başlangıçta üçüncü şahıs bir servisten tarihi mesajları yükler.\nMesajları almak için DankChat açtığınız kanalların adını bu servise gönderir.\nServis bu hizmeti verebilmek için sizin (ve başkalarının) ziyaret ettiği kanalları geçici olarak depolar.\n\n- Bu özelliği kullanmamak için aşağıda \"Reddet\"e basabilir ya da daha sonra mesaj tarihi yüklenmesini ayarlarda devre dışı bırakabilirsiniz.\n- https://recent-messages.robotty.de/ adresini ziyaret ederek bu servis hakkında daha çok öğrenebilir ya da kendi kanalınız içim mesaj tarihini devre dışı bırakabilirsiniz.</string>
+    <string name="message_history_disclaimer_message">DankChat başlangıçta bir üçüncü taraf servisten tarihi mesajları yükler.\nMesajları almak için DankChat açtığınız kanalların adını bu servise gönderir.\nServis bu hizmeti verebilmek için sizin (ve başkalarının) ziyaret ettiği kanalları geçici olarak depolar.\n\n- Bu özelliği kullanmamak için aşağıda \"Reddet\"e basabilir ya da daha sonra mesaj tarihi yüklenmesini ayarlarda devre dışı bırakabilirsiniz.\n- https://recent-messages.robotty.de/ adresini ziyaret ederek bu servis hakkında daha çok öğrenebilir ya da kendi kanalınız için mesaj tarihini devre dışı bırakabilirsiniz.</string>
     <string name="dialog_optin">Kabul et</string>
     <string name="dialog_optout">Reddet</string>
     <string name="multi_entry_header_match_user">Kullanıcı eşle</string>
@@ -122,7 +122,7 @@
     <string name="notification_new_mentions">Yeni bahsetmeleriniz var</string>
     <string name="notification_mention">%1$s sizden #%2$s\'de bahsetti</string>
     <string name="notification_notify_mention">#%1$s\'de sizden bahsedildi</string>
-    <string name="nuuls_upload_disclaimer">Dış barındırma https://nuuls.com/i tarafından sağlanmaktadır, kendi sorumluluğunuzda kullanın.</string>
+    <string name="nuuls_upload_disclaimer">Dış barındırma https://nuuls.com/i tarafından sağlanmaktadır, kendi sorumluluğunuzda kullanınız.</string>
     <string name="nuuls_upload_title">Özel resim yükleme</string>
     <string name="dialog_dismiss">Reddet</string>
     <string name="preference_notifications_mentions_header">Bildirimler ve Bahsetmeler</string>
@@ -145,7 +145,7 @@
     <string name="user_popup_created">Oluşturuldu: %1$s</string>
     <string name="user_popup_following_since">%1$s\'den beri takip ediyor</string>
     <string name="user_popup_not_following">Takip etmiyor</string>
-    <string name="user_popup_avatar_description">Profil avatar resmi</string>
+    <string name="user_popup_avatar_description">Profil resmi</string>
     <string name="user_popup_error">Kullanıcı verisi yüklenemedi: %1$s</string>
     <string name="confirm_user_unfollow_title">Takibi bırakmayı onayla</string>
     <string name="confirm_user_unfollow_message">Takibi bırakmak istediğinizden emin misiniz?</string>
@@ -153,14 +153,20 @@
     <string name="confirm_user_block_message">Bu kullanıcıyı engellemek istediğinizden emin misiniz?</string>
     <string name="confirm_user_block_positive_button">Engelle</string>
     <string name="preference_visible_badges_title">Görünür rozetler</string>
-    <string name="preference_prefer_emote_suggestions_title">Emote önerilerini tercih et</string>
-    <string name="preference_prefer_emote_suggestions_summary">Kullanıcı önerileri yerine emote önerilerine öncelik ver</string>
+    <string name="preference_prefer_emote_suggestions_title">İfade önerilerini yeğle</string>
+    <string name="preference_prefer_emote_suggestions_summary">Kullanıcı önerileri yerine ifade önerilerine öncelik ver</string>
     <string name="preference_user_long_click_title">Kullanıcı adına uzunca tıklanıncaki davranış</string>
-    <string name="preference_user_long_click_summary_on">Normal tıklama pencereyi açar, uzunca tıklama bahseder</string>
-    <string name="preference_user_long_click_summary_off">Normal tıklama bahseder, uzunca tıklama pencereyi açar</string>
+    <string name="preference_user_long_click_summary_on">Normal tıklama pencereyi açar, uzun tıklama bahseder</string>
+    <string name="preference_user_long_click_summary_off">Normal tıklama bahseder, uzun tıklama pencereyi açar</string>
 
     <plurals name="viewers">
         <item quantity="one">%d izleyici ile canlı</item>
         <item quantity="other">%d izleyici ile canlı</item>
     </plurals>
+    <string name="edit_dialog_title">Kanalın adını değiştir</string>
+    <string name="restart_required">Değişikliklerin uygulanması için yeniden başlatma gerekiyor</string>
+    <string name="restart">Yeniden başlat</string>
+    <string name="preference_tts_force_english_title">Dili İngilizceye zorla</string>
+    <string name="preference_tts_force_english_summary">TTS sesini sistem varsayılanı yerine İngilizceye zorla</string>
+    <string name="preference_visible_emotes_title">Görünür üçüncü taraf ifadeler</string>
 </resources>

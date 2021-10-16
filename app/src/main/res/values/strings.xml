@@ -7,6 +7,7 @@
     <string name="reconnect">Reconnect</string>
     <string name="clear_chat">Clear chat</string>
     <string name="add_dialog_title">Add channel</string>
+    <string name="edit_dialog_title">Rename channel</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_dismiss">Dismiss</string>
@@ -200,7 +201,7 @@
     <string name="preference_tts_force_english_key" translatable="false">tts_force_english_key</string>
     <string name="preference_tts_force_english_title">Force language to english</string>
     <string name="preference_tts_force_english_summary">Force TTS voice language to english instead of system default</string>
-    <string name="preference_visible_emotes_title">Visible thirdy party emotes</string>
+    <string name="preference_visible_emotes_title">Visible third party emotes</string>
     <string name="preference_visible_emotes_key" translatable="false">visible_emotes_key</string>
 
     <plurals name="viewers">

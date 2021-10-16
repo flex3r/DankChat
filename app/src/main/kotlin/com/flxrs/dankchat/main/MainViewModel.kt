@@ -46,6 +46,7 @@ class MainViewModel @Inject constructor(
     val activeChannel: StateFlow<String> = chatRepository.activeChannel
     val channels: StateFlow<List<String>?> = chatRepository.channels
     val channelMentionCount: Flow<Map<String, Int>> = chatRepository.channelMentionCount
+    val unreadMessagesMap: Flow<Map<String, Boolean>> = chatRepository.unreadMessagesMap.map { map -> map.filterValues { it } }
     val shouldColorNotification: StateFlow<Boolean> = combine(chatRepository.hasMentions, chatRepository.hasWhispers) { hasMentions, hasWhispers ->
         hasMentions || hasWhispers
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
@@ -279,7 +280,9 @@ class MainViewModel @Inject constructor(
     fun clear(channel: String) = chatRepository.clear(channel)
     fun clearIgnores() = chatRepository.clearIgnores()
     fun clearMentionCount(channel: String) = chatRepository.clearMentionCount(channel)
-    fun reconnect() = chatRepository.reconnect(false)
+    fun clearUnreadMessage(channel: String) = chatRepository.clearUnreadMessage(channel)
+    fun reconnect() = chatRepository.reconnect()
+    fun reconnectIfNecessary() = chatRepository.reconnectIfNecessary()
     fun joinChannel(channel: String): List<String> = chatRepository.joinChannel(channel)
     fun trySendMessage(message: String) {
         if (mentionSheetOpen.value && whisperTabSelected.value && !message.startsWith("/w ")) {
@@ -385,19 +388,20 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loadInitialData(oAuth: String, id: String, channelList: List<String>, loadSupibot: Boolean, loadThirdPartyData: Set<ThirdPartyEmoteType>, handler: CoroutineExceptionHandler) = supervisorScope {
-        listOf(
-            launch(handler) { dataRepository.loadDankChatBadges() },
-            launch(handler) { dataRepository.loadGlobalBadges(oAuth) },
-            launch(handler) { if (loadSupibot) dataRepository.loadSupibotCommands() },
-            launch { chatRepository.loadUserBlocks(oAuth, id) }
-        ) + channelList.map {
-            launch(handler) {
-                val channelId = getRoomStateIdIfNeeded(oAuth, it)
-                dataRepository.loadChannelData(it, oAuth, channelId, loadThirdPartyData)
-            }
-        }.joinAll()
-    }
+    private suspend fun loadInitialData(oAuth: String, id: String, channelList: List<String>, loadSupibot: Boolean, loadThirdPartyData: Set<ThirdPartyEmoteType>, handler: CoroutineExceptionHandler) =
+        supervisorScope {
+            listOf(
+                launch(handler) { dataRepository.loadDankChatBadges() },
+                launch(handler) { dataRepository.loadGlobalBadges(oAuth) },
+                launch(handler) { if (loadSupibot) dataRepository.loadSupibotCommands() },
+                launch(handler) { chatRepository.loadUserBlocks(oAuth, id) }
+            ) + channelList.map {
+                launch(handler) {
+                    val channelId = getRoomStateIdIfNeeded(oAuth, it)
+                    dataRepository.loadChannelData(it, oAuth, channelId, loadThirdPartyData)
+                }
+            }.joinAll()
+        }
 
     private suspend fun loadChattersAndMessages(channelList: List<String>, loadHistory: Boolean, isUserChange: Boolean, handler: CoroutineExceptionHandler) = supervisorScope {
         channelList.map {
