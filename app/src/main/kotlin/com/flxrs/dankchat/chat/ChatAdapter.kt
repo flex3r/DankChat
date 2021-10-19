@@ -332,7 +332,8 @@ class ChatAdapter(
             val fullPrefix = prefixLength + badgesLength
             emotes.groupBy { it.position }.forEach { (_, emotes) ->
                 try {
-                    val layerDrawable = emoteManager.layerCache[id] ?: calculateLayerDrawable(context, emotes, id, animateGifs, scaleFactor)
+                    val key = emotes.joinToString(separator = "-") { it.id }
+                    val layerDrawable = emoteManager.layerCache[key] ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
                     (text as SpannableString).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
                 } catch (t: Throwable) {
                     handleException(t)
@@ -344,7 +345,7 @@ class ChatAdapter(
     private suspend fun calculateLayerDrawable(
         context: Context,
         emotes: List<ChatMessageEmote>,
-        messageId: String,
+        cacheKey: String,
         animateGifs: Boolean,
         scaleFactor: Double,
     ): LayerDrawable {
@@ -352,7 +353,7 @@ class ChatAdapter(
         val bounds = drawables.map { it.bounds }
         return drawables.toLayerDrawable(bounds, scaleFactor, emotes).also {
             if (emotes.size > 1) {
-                emoteManager.layerCache.put(messageId, it)
+                emoteManager.layerCache.put(cacheKey, it)
             }
         }
     }
