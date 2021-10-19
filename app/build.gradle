@@ -56,6 +56,10 @@ android {
     kotlinOptions {
         useIR = true
         jvmTarget = "11"
+        freeCompilerArgs += [
+                "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-Xopt-in=kotlinx.coroutines.FlowPreview"
+        ]
     }
 }
 
