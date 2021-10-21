@@ -66,6 +66,8 @@ class ChatRepository @Inject constructor(
                     is ChatEvent.Message                    -> onMessage(event.message)
                 }
             }
+        }
+        scope.launch {
             writeConnection.messages.collect { event ->
                 if (event !is ChatEvent.Message) return@collect
                 onWriterMessage(event.message)
