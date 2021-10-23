@@ -63,22 +63,24 @@ data class TwitchMessage(
         }
 
         private fun parsePrivMessage(ircMessage: IrcMessage, emoteManager: EmoteManager, isNotify: Boolean = false): TwitchMessage = with(ircMessage) {
-            val displayName = tags.getValue("display-name")
             val name = when (ircMessage.command) {
                 "USERNOTICE" -> tags.getValue("login")
                 else         -> prefix.substringBefore('!')
             }
+
+            val displayName = tags["display-name"] ?: name
             val colorTag = tags["color"]?.ifBlank { "#717171" } ?: "#717171"
             val color = Color.parseColor(colorTag)
 
             val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
             var isAction = false
+            val messageParam = params[1]
             val message = when {
-                params.size > 1 && params[1].startsWith("\u0001ACTION") && params[1].endsWith("\u0001") -> {
+                params.size > 1 && messageParam.startsWith("\u0001ACTION") && messageParam.endsWith("\u0001") -> {
                     isAction = true
-                    params[1].substring("\u0001ACTION ".length, params[1].length - "\u0001".length)
+                    messageParam.substring("\u0001ACTION ".length, messageParam.length - "\u0001".length)
                 }
-                params.size > 1                                                                         -> params[1]
+                params.size > 1                                                                         -> messageParam
                 else                                                                                    -> ""
             }
             val channel = params[0].substring(1)
@@ -191,8 +193,8 @@ data class TwitchMessage(
         }
 
         private fun parseWhisper(message: IrcMessage, emoteManager: EmoteManager): TwitchMessage = with(message) {
-            val displayName = tags.getValue("display-name")
             val name = prefix.substringBefore('!')
+            val displayName = tags["display-name"] ?: name
             val colorTag = tags["color"]?.ifBlank { "#717171" } ?: "#717171"
             val color = Color.parseColor(colorTag)
             val emoteTag = tags["emotes"] ?: ""
