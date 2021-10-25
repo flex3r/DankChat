@@ -74,14 +74,13 @@ data class TwitchMessage(
 
             val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
             var isAction = false
-            val messageParam = params[1]
+            val messageParam = params.getOrElse(1) { "" }
             val message = when {
                 params.size > 1 && messageParam.startsWith("\u0001ACTION") && messageParam.endsWith("\u0001") -> {
                     isAction = true
                     messageParam.substring("\u0001ACTION ".length, messageParam.length - "\u0001".length)
                 }
-                params.size > 1                                                                         -> messageParam
-                else                                                                                    -> ""
+                else                                                                                          -> messageParam
             }
             val channel = params[0].substring(1)
             val emoteTag = tags["emotes"] ?: ""
@@ -192,15 +191,16 @@ data class TwitchMessage(
             return makeSystemMessage(systemMessage, channel, ts, id)
         }
 
-        private fun parseWhisper(message: IrcMessage, emoteManager: EmoteManager): TwitchMessage = with(message) {
+        private fun parseWhisper(ircMessage: IrcMessage, emoteManager: EmoteManager): TwitchMessage = with(ircMessage) {
             val name = prefix.substringBefore('!')
             val displayName = tags["display-name"] ?: name
             val colorTag = tags["color"]?.ifBlank { "#717171" } ?: "#717171"
             val color = Color.parseColor(colorTag)
             val emoteTag = tags["emotes"] ?: ""
             val badges = parseBadges(emoteManager, tags["badges"], userId = tags["user-id"])
+            val message = params.getOrElse(1) { "" }
 
-            val (duplicateSpaceAdjustedMessage, removedSpaces) = params[1].removeDuplicateWhitespace()
+            val (duplicateSpaceAdjustedMessage, removedSpaces) = message.removeDuplicateWhitespace()
             val (appendedSpaceAdjustedMessage, appendedSpaces) = duplicateSpaceAdjustedMessage.appendSpacesBetweenEmojiGroup()
             val (overlayEmotesAdjustedMessage, emotes) = emoteManager.parseEmotes(appendedSpaceAdjustedMessage, channel = "", emoteTag, appendedSpaces, removedSpaces)
 
