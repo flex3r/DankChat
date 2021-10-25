@@ -32,19 +32,26 @@ data class IrcMessage(
             if (message[pos] == '@') {
                 nextSpace = message.indexOf(' ')
 
-                if (nextSpace == -1) throw ParseException("Malformed IRC message", pos)
+                if (nextSpace == -1) {
+                    throw ParseException("Malformed IRC message", pos)
+                }
 
-                tags.putAll(message.substring(1, nextSpace).split(';').associate {
-                    val kv = it.split('=')
-                    val v = if (kv.size == 2) {
-                        kv[1].replace("\\:", ";")
-                            .replace("\\s", " ")
-                            .replace("\\\\", "\\")
-                    } else {
-                        "true"
-                    }
-                    kv[0] to v
-                })
+                tags.putAll(
+                    message
+                        .substring(1, nextSpace)
+                        .split(';')
+                        .associate {
+                            val kv = it.split('=')
+                            val v = when (kv.size) {
+                                2    -> kv[1].replace("\\:", ";")
+                                    .replace("\\s", " ")
+                                    .replace("\\r", "\r")
+                                    .replace("\\n", "\n")
+                                    .replace("\\\\", "\\")
+                                else -> "true"
+                            }
+                            kv[0] to v
+                        })
                 pos = nextSpace + 1
             }
 
@@ -54,7 +61,9 @@ data class IrcMessage(
             if (message[pos] == ':') {
                 nextSpace = message.indexOf(' ', pos)
 
-                if (nextSpace == -1) throw ParseException("Malformed IRC message", pos)
+                if (nextSpace == -1) {
+                    throw ParseException("Malformed IRC message", pos)
+                }
 
                 prefix = message.substring(pos + 1, nextSpace)
                 pos = nextSpace + 1
