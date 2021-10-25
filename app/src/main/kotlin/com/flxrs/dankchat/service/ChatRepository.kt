@@ -291,10 +291,11 @@ class ChatRepository @Inject constructor(
 
     private fun prepareMessage(channel: String, message: String): String? {
         if (message.isBlank()) return null
+        val trimmedMessage = message.trimEnd()
 
         val messageWithSuffix = when (lastMessage[channel] ?: "") {
-            message -> "$message $INVISIBLE_CHAR"
-            else    -> message
+            trimmedMessage -> "$trimmedMessage $INVISIBLE_CHAR"
+            else    -> trimmedMessage
         }
         return "PRIVMSG #$channel :$messageWithSuffix"
     }
