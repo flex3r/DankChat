@@ -295,7 +295,7 @@ class ChatRepository @Inject constructor(
 
         val messageWithSuffix = when (lastMessage[channel] ?: "") {
             trimmedMessage -> "$trimmedMessage $INVISIBLE_CHAR"
-            else    -> trimmedMessage
+            else           -> trimmedMessage
         }
         return "PRIVMSG #$channel :$messageWithSuffix"
     }

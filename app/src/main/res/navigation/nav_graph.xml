@@ -112,7 +112,7 @@
         android:label="ChannelsDialogFragment">
         <action
             android:id="@+id/action_channelsFragment_to_editChannelDialogFragment"
-            app:destination="@+id/editChannelDialogFragment"/>
+            app:destination="@+id/editChannelDialogFragment" />
         <argument
             android:name="channels"
             app:argType="string[]" />
@@ -128,7 +128,7 @@
         android:label="EditChannelDialogFragment">
         <argument
             android:name="channel"
-            app:argType="string"/>
+            app:argType="string" />
         <argument
             android:name="renaming"
             app:argType="string"
