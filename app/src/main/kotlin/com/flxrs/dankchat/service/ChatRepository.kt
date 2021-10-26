@@ -420,42 +420,43 @@ class ChatRepository @Inject constructor(
         }
 
         val mainMessage = items.first().message as TwitchMessage
-        when (val channel = mainMessage.channel) {
-            "*"  -> messages.keys.forEach {
+        val channel = mainMessage.channel
+        if (channel == "*" && !mainMessage.isWhisper) {
+            messages.keys.forEach {
                 val currentChat = messages[it]?.value ?: emptyList()
                 messages[it]?.value = currentChat.addAndLimit(items, scrollBackLength)
             }
-            else -> {
-                val currentChat = messages[channel]?.value ?: emptyList()
-                messages[channel]?.value = currentChat.addAndLimit(items, scrollBackLength)
-                _notificationsFlow.tryEmit(items)
+            return
+        } else if (!mainMessage.isWhisper) {
+            val currentChat = messages[channel]?.value ?: emptyList()
+            messages[channel]?.value = currentChat.addAndLimit(items, scrollBackLength)
+        }
 
-                when (ircMessage.command) {
-                    "WHISPER" -> {
-                        mainMessage.whisperRecipient = name
-                        _whispers.update {
-                            it.addAndLimit(items.toMentionTabItems(), scrollBackLength)
-                        }
-                        _channelMentionCount.increment("w", 1)
-                    }
-                    "PRIVMSG", "USERNOTICE" -> {
-                        val isUnread = _unreadMessagesMap.firstValue[channel]
-                        if (isUnread == null || isUnread == false) {
-                            _unreadMessagesMap.assign(channel, true)
-                        }
-                    }
+        _notificationsFlow.tryEmit(items)
+        when (ircMessage.command) {
+            "WHISPER"               -> {
+                mainMessage.whisperRecipient = name
+                _whispers.update {
+                    it.addAndLimit(items.toMentionTabItems(), scrollBackLength)
                 }
-
-                val mentions = items.filter {
-                    it.message is TwitchMessage && it.message.isMention && !it.message.isWhisper
-                }.toMentionTabItems()
-
-                if (mentions.isNotEmpty()) {
-                    _channelMentionCount.increment(channel, mentions.size)
-                    _mentions.update {
-                        it.addAndLimit(mentions, scrollBackLength)
-                    }
+                _channelMentionCount.increment("w", 1)
+            }
+            "PRIVMSG", "USERNOTICE" -> {
+                val isUnread = _unreadMessagesMap.firstValue[channel]
+                if (isUnread == null || isUnread == false) {
+                    _unreadMessagesMap.assign(channel, true)
                 }
+            }
+        }
+
+        val mentions = items.filter {
+            it.message is TwitchMessage && it.message.isMention && !it.message.isWhisper
+        }.toMentionTabItems()
+
+        if (mentions.isNotEmpty()) {
+            _channelMentionCount.increment(channel, mentions.size)
+            _mentions.update {
+                it.addAndLimit(mentions, scrollBackLength)
             }
         }
     }
