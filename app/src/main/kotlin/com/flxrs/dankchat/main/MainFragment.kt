@@ -258,7 +258,7 @@ class MainFragment : Fragment() {
                 when {
                     emoteMenuBottomSheetBehavior?.isVisible == true -> emoteMenuBottomSheetBehavior?.hide()
                     mentionBottomSheetBehavior?.isVisible == true   -> mentionBottomSheetBehavior?.hide()
-                    else                                            -> finishAndRemoveTask()
+                    else                                            -> finish()
                 }
             }
 

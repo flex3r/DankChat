@@ -150,7 +150,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
     private fun handleShutDown() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
         stopService(Intent(this, NotificationService::class.java))
-        finishAndRemoveTask()
+        finish()
         android.os.Process.killProcess(android.os.Process.myPid())
     }
 
