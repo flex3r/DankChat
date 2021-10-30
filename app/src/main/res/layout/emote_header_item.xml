@@ -7,5 +7,5 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
         android:gravity="center_horizontal"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
+        android:textAppearance="?attr/textAppearanceTitleMedium" />
 </layout>

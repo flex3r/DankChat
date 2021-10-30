@@ -9,15 +9,14 @@
         android:animateLayoutChanges="true">
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            style="@style/Widget.Material3.ExtendedFloatingActionButton.Secondary"
             android:id="@+id/scrollBottom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
             android:text="@string/resume_scroll"
-            android:textColor="?colorOnPrimary"
             android:visibility="gone"
             app:icon="@drawable/ic_keyboard_arrow_down"
-            app:iconTint="?colorOnPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

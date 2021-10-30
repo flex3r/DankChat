@@ -19,6 +19,7 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.widget.TextView
+import androidx.annotation.ColorInt
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -43,12 +44,11 @@ import com.flxrs.dankchat.service.twitch.message.SystemMessage
 import com.flxrs.dankchat.service.twitch.message.SystemMessageType
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import com.flxrs.dankchat.utils.DateTimeUtils
-import com.flxrs.dankchat.utils.extensions.isEven
-import com.flxrs.dankchat.utils.extensions.normalizeColor
-import com.flxrs.dankchat.utils.extensions.setRunning
+import com.flxrs.dankchat.utils.extensions.*
 import com.flxrs.dankchat.utils.showErrorDialog
 import com.flxrs.dankchat.utils.span.LongClickLinkMovementMethod
 import com.flxrs.dankchat.utils.span.LongClickableSpan
+import com.google.android.material.color.MaterialColors
 import kotlinx.coroutines.*
 import kotlin.math.roundToInt
 
@@ -116,10 +116,10 @@ class ChatAdapter(
         val isCheckeredMode = preferences.getBoolean(checkeredKey, false)
 
         val background = when {
-            isCheckeredMode && holder.isAlternateBackground -> R.color.color_transparency_20
-            else                                            -> android.R.color.transparent
+            isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(this, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
+            else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
         }
-        setBackgroundResource(background)
+        setBackgroundColor(background)
 
         val systemMessageText = when (message.type) {
             SystemMessageType.DISCONNECTED      -> context.getString(R.string.system_message_disconnected)
@@ -139,6 +139,7 @@ class ChatAdapter(
     @Suppress("BlockingMethodInNonBlockingContext")
     @SuppressLint("ClickableViewAccessibility")
     private fun TextView.handleTwitchMessage(twitchMessage: TwitchMessage, holder: ViewHolder, isMentionTab: Boolean): Unit = with(twitchMessage) {
+        val textView = this@handleTwitchMessage
         isClickable = false
         alpha = 1.0f
         movementMethod = LongClickLinkMovementMethod
@@ -176,30 +177,37 @@ class ChatAdapter(
             }
         }
 
-        if (timedOut) {
-            alpha = 0.5f
-
-            if (!showTimedOutMessages) {
-                text = when {
-                    showTimeStamp -> "${DateTimeUtils.timestampToLocalTime(timestamp)} ${context.getString(R.string.timed_out_message)}"
-                    else          -> context.getString(R.string.timed_out_message)
-                }
-                return
-            }
-        }
-
         val coroutineHandler = CoroutineExceptionHandler { _, throwable -> handleException(throwable) }
         holder.scope.launch(coroutineHandler) {
             val scaleFactor = lineHeight * 1.5 / 112
-
             val background = when {
-                isNotify                                        -> if (isDarkMode) R.color.color_highlight_dark else R.color.color_highlight_light
-                isReward                                        -> if (isDarkMode) R.color.color_reward_dark else R.color.color_reward_light
-                isMention                                       -> if (isDarkMode) R.color.color_mention_dark else R.color.color_mention_light
-                isCheckeredMode && holder.isAlternateBackground -> R.color.color_transparency_20
-                else                                            -> android.R.color.transparent
+                isNotify                                        -> ContextCompat.getColor(context, R.color.color_highlight).harmonize(context)
+                isReward                                        -> ContextCompat.getColor(context, R.color.color_reward).harmonize(context)
+                isMention                                       -> ContextCompat.getColor(context, R.color.color_mention).harmonize(context)
+                isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(textView, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
+                else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
             }
-            setBackgroundResource(background)
+            setBackgroundColor(background)
+
+            val textColor = when {
+                isNotify  -> MaterialColors.getColor(textView, R.attr.colorOnPrimaryContainer)
+                isReward  -> MaterialColors.getColor(textView, R.attr.colorOnTertiaryContainer)
+                isMention -> MaterialColors.getColor(textView, R.attr.colorOnSecondaryContainer)
+                else      -> MaterialColors.getColor(textView, R.attr.colorOnSurface)
+            }
+            setTextColor(textColor)
+
+            if (timedOut) {
+                alpha = 0.5f
+
+                if (!showTimedOutMessages) {
+                    text = when {
+                        showTimeStamp -> "${DateTimeUtils.timestampToLocalTime(timestamp)} ${context.getString(R.string.timed_out_message)}"
+                        else          -> context.getString(R.string.timed_out_message)
+                    }
+                    return@launch
+                }
+            }
 
             val fullName = when {
                 displayName.equals(name, true) -> displayName
@@ -304,7 +312,9 @@ class ChatAdapter(
                         cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
                         else           -> Coil.execute(badge.url.toRequest(context)).drawable?.apply {
                             if (badge is Badge.FFZModBadge) {
-                                colorFilter = PorterDuffColorFilter(ContextCompat.getColor(context, R.color.color_ffz_mod), PorterDuff.Mode.DST_OVER)
+                                val modColor = ContextCompat.getColor(context, R.color.color_ffz_mod)
+                                val harmonized = MaterialColors.harmonizeWithPrimary(context, modColor)
+                                colorFilter = PorterDuffColorFilter(harmonized, PorterDuff.Mode.DST_OVER)
                             }
 
                             val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()

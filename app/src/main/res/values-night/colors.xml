@@ -1,26 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--DARK COLOR THEME-->
-    <!--The same color values are defined for dark theme, but with values more appropriate for -->
-    <!--low-luminance UIs. These colors will be used by night/themes.xml.-->
+    <color name="md_theme_primary">#D0BCFF</color>
+    <color name="md_theme_onPrimary">#381E72</color>
+    <color name="md_theme_primaryContainer">#4F378B</color>
+    <color name="md_theme_onPrimaryContainer">#EADDFF</color>
+    <color name="md_theme_secondary">#CCC2DC</color>
+    <color name="md_theme_onSecondary">#332D41</color>
+    <color name="md_theme_secondaryContainer">#4A4458</color>
+    <color name="md_theme_onSecondaryContainer">#E8DEF8</color>
+    <color name="md_theme_tertiary">#EFB8C8</color>
+    <color name="md_theme_onTertiary">#492532</color>
+    <color name="md_theme_tertiaryContainer">#633B48</color>
+    <color name="md_theme_onTertiaryContainer">#FFD8E4</color>
+    <color name="md_theme_error">#F2B8B5</color>
+    <color name="md_theme_errorContainer">#8C1D18</color>
+    <color name="md_theme_onError">#601410</color>
+    <color name="md_theme_onErrorContainer">#F9DEDC</color>
+    <color name="md_theme_background">#1C1B1F</color>
+    <color name="md_theme_onBackground">#E6E1E5</color>
+    <color name="md_theme_surface">#1C1B1F</color>
+    <color name="md_theme_onSurface">#E6E1E5</color>
+    <color name="md_theme_surfaceVariant">#49454F</color>
+    <color name="md_theme_onSurfaceVariant">#CAC4D0</color>
+    <color name="md_theme_outline">#938F99</color>
+    <color name="md_theme_inverseOnSurface">#1C1B1F</color>
+    <color name="md_theme_inverseSurface">#E6E1E5</color>
+    <color name="md_theme_primaryInverse">#6750A4</color>
 
-    <color name="color_primary">#bb86fc</color>
-    <color name="color_primary_variant">#4b01d0</color>
-    <!--	<color name="color_secondary">#03dac6</color>-->
-    <!--	<color name="color_secondary_variant">#018786</color>-->
-    <color name="color_secondary">#bb86fc</color>
-    <color name="color_secondary_variant">#4b01d0</color>
-
-    <color name="color_background">#000000</color>
-    <color name="color_surface">#121212</color>
-    <color name="color_error">#cf6679</color>
-
-    <color name="color_on_primary">#000000</color>
-    <color name="color_on_secondary">#000000</color>
-    <color name="color_on_background">#ffffff</color>
-    <color name="color_on_surface">#ffffff</color>
-    <color name="color_on_error">#000000</color>
-
-    <!--Colors for TabLayout-->
-    <color name="color_tab_selected">@color/color_primary</color>
+    <color name="color_highlight">#4d2c91</color>
+    <color name="color_mention">#6e3737</color>
+    <color name="color_reward">#00766c</color>
 </resources>

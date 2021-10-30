@@ -11,6 +11,7 @@ import coil.ImageLoaderFactory
 import coil.decode.ImageDecoderDecoder
 import com.flxrs.dankchat.di.EmoteOkHttpClient
 import com.flxrs.dankchat.utils.gifs.GifDrawableDecoder
+import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.HiltAndroidApp
 import okhttp3.OkHttpClient
 import javax.inject.Inject
@@ -24,6 +25,7 @@ class DankChatApplication : Application(), ImageLoaderFactory {
     override fun onCreate() {
         super.onCreate()
 
+        DynamicColors.applyToActivitiesIfAvailable(this);
         val uiModeManager = getSystemService(UI_MODE_SERVICE) as UiModeManager
         val isTv = uiModeManager.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
         val nightMode = PreferenceManager.getDefaultSharedPreferences(this)

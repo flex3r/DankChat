@@ -54,10 +54,18 @@ inline fun <V> measureTimeAndLog(tag: String, toLoad: String, block: () -> V): V
 val Int.isEven get() = (this % 2 == 0)
 
 fun Context.getDrawableAndSetSurfaceTint(@DrawableRes id: Int) = ContextCompat.getDrawable(this, id)?.apply {
-    DrawableCompat.setTint(this, ContextCompat.getColor(this@getDrawableAndSetSurfaceTint, R.color.color_on_surface))
+    DrawableCompat.setTint(this, ContextCompat.getColor(this@getDrawableAndSetSurfaceTint, R.color.md_theme_onSurface))
 }
 
 inline fun <reified T> SavedStateHandle.withData(key: String, block: (T) -> Unit) {
     val data = remove<T>(key) ?: return
     block(data)
+}
+
+inline fun <T> T.doIf(predicate: Boolean, action: T.() -> T): T {
+    return if (predicate) {
+        action()
+    } else {
+        return this
+    }
 }

@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.get
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.tabs.TabLayout
 import kotlin.math.sin
 
@@ -43,7 +44,5 @@ fun Int.normalizeColor(isDarkMode: Boolean): Int {
     return ColorUtils.HSLToColor(hsl)
 }
 
-fun Context.getThemeColor(@AttrRes attribute: Int): ColorStateList? = TypedValue().let {
-    theme.resolveAttribute(attribute, it, true)
-    ContextCompat.getColorStateList(this, it.resourceId)
-}
+@ColorInt
+fun Int.harmonize(context: Context): Int = MaterialColors.harmonizeWithPrimary(context, this)
