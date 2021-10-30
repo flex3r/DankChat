@@ -94,7 +94,7 @@
     <string name="confirm_user_block_title">Confirmar bloqueo</string>
     <string name="confirm_user_block_message">¿Estás seguro que quieres bloquear a este usuario?</string>
     <string name="confirm_user_block_positive_button">Bloquear</string>
-    <string name="restart_required">Es necesario reiniciar para aplicar cambios</string>
+    <string name="restart_required">Es necesario reiniciar para aplicar los cambios</string>
     <string name="restart">Reiniciar</string>
 
 
