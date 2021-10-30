@@ -61,11 +61,11 @@
     <string name="system_message_no_history">El historial de mensajes no es visible porque has desactivado la integración con mensajes recientes.</string>
     <string name="timed_out_message">&lt; Mensaje eliminado></string>
     <string name="multi_entry_header_regex">Regex</string>
-    <string name="multi_entry_header_match_user">Coincidir con usuario</string>
+    <string name="multi_entry_header_match_user">Coincidir con el usuario</string>
     <string name="multi_entry_add_entry">Añadir entrada</string>
     <string name="multi_entry_remove_content_description">Eliminar entrada</string>
     <string name="multi_entry_hint">Entrada</string>
-    <string name="login_expired">Inicio de sesión ha expirado! Intenta iniciar sesión de nuevo.</string>
+    <string name="login_expired">El inicio de sesión ha expirado! Intenta iniciar sesión de nuevo.</string>
     <string name="message_history_disclaimer_title">Descargo de responsabilidad sobre mensajes recientes</string>
     <string name="message_history_disclaimer_message">DankChat carga al inicio un historial de mensajes desde un servicio de terceros.\nPara obtener los mensajes, DankChat envía los nombres de los canales que has abierto a dicho servicio.\nEl servicio temporalmente almacena mensajes para canales que tú (y otros) visitan para proporcionar el servicio.\n\n- Para no utilizar esta característica, haz click en Desactivar abajo o desactiva la carga del historial de mensajes después en los ajustes.\n- Puedes aprender más sobre el servicio y desactivar el historial de mensajes para tu propio canal visitando https://recent-messages.robotty.de/</string>
     <string name="dialog_optin">Activar</string>
@@ -75,7 +75,7 @@
     <string name="whispers">Susurros</string>
     <string name="notification_whisper_mention">%1$s te ha enviado un susurro</string>
     <string name="mentions">Menciones</string>
-    <string name="confirm_channel_removal_title">Confirmar eliminación canal</string>
+    <string name="confirm_channel_removal_title">Confirmar eliminación del canal</string>
     <string name="confirm_channel_removal_message">¿Estás seguro que quieres eliminar este canal?</string>
     <string name="confirm_channel_removal_positive_button">Eliminar</string>
     <string name="user_popup_follow">Seguir</string>
@@ -88,11 +88,11 @@
     <string name="user_popup_following_since">Siguiendo desde %1$s</string>
     <string name="user_popup_not_following">Dejar de seguir</string>
     <string name="user_popup_avatar_description">Imagen de perfil</string>
-    <string name="user_popup_error">Error al cargar datos del usuario: %1$s</string>
+    <string name="user_popup_error">Error al cargar los datos del usuario: %1$s</string>
     <string name="confirm_user_unfollow_title">Confirmar dejar de seguir</string>
     <string name="confirm_user_unfollow_message">¿Estás seguro que quieres dejar de seguir este usuario?</string>
     <string name="confirm_user_block_title">Confirmar bloqueo</string>
-    <string name="confirm_user_block_message">¿Estás seguro que quieres bloquear este usuario?</string>
+    <string name="confirm_user_block_message">¿Estás seguro que quieres bloquear a este usuario?</string>
     <string name="confirm_user_block_positive_button">Bloquear</string>
     <string name="restart_required">Es necesario reiniciar para aplicar cambios</string>
     <string name="restart">Reiniciar</string>
@@ -125,7 +125,7 @@
     <string name="preference_animate_gifs_title">Animar gifs</string>
     <string name="preference_line_separator_title">Separar mensajes con líneas</string>
     <string name="preference_keep_screen_on_title">Mantener pantalla encendida</string>
-    <string name="preference_font_size_title">Tamaño fuente</string>
+    <string name="preference_font_size_title">Tamaño de la fuente</string>
     <string name="preference_font_size_summary_very_small">Muy pequeña</string>
     <string name="preference_font_size_summary_small">Pequeña</string>
     <string name="preference_font_size_summary_large">Grande</string>
@@ -138,7 +138,7 @@
     <string name="preference_message_history_dashboard_title">Abrir panel</string>
     <string name="preference_message_history_dashboard_summary">Aprende más sobre el servicio y desactiva el historial de mensajes para tu propio canal</string>
     <string name="preference_channel_data_header">Datos del canal</string>
-    <string name="preference_developer_header">Opciones de desarrollo</string>
+    <string name="preference_developer_header">Opciones de desarrollador</string>
     <string name="preference_debug_mode_title">Modo depuración</string>
     <string name="preference_debug_mode_summary">Proporciona información para cualquier excepción que se encuentre</string>
     <string name="preference_timestamp_format_title">Formato del tiempo</string>
@@ -156,7 +156,7 @@
     <string name="preference_supibot_suggestions_title">Sugerencias de comandos de Supibot</string>
     <string name="preference_scrollback_length_title">Número total de mensajes a mostrar al desplazarse</string>
     <string name="preference_show_username_title">Mostrar nombre de usuario</string>
-    <string name="preference_visible_badges_title">Medallas visibles</string>
+    <string name="preference_visible_badges_title">Emblemas visibles</string>
     <string name="preference_prefer_emote_suggestions_title">Preferir sugerencias de emoticonos</string>
     <string name="preference_prefer_emote_suggestions_summary">Priorizar sugerencias de emoticonos por encima de sugerencias de usuarios</string>
     <string name="preference_user_long_click_title">Comportamiento pulsación larga sobre un usuario</string>
@@ -168,6 +168,6 @@
 
     <plurals name="viewers">
         <item quantity="one">En directo con %d espectador</item>
-        <item quantity="other">En directo con %d espactadores</item>
+        <item quantity="other">En directo con %d espectadores</item>
     </plurals>
 </resources>
