@@ -72,9 +72,10 @@
     <string name="whispers">Особисті повідомлення</string>
     <string name="notification_whisper_mention">%1$s надіслав особисте повідомлення</string>
     <string name="mentions">Згадки</string>
+    <string name="edit_dialog_title">Перейменувати канал</string>
     <string name="manage_channels">Керування каналами</string>
     <string name="confirm_channel_removal_title">Підтвердити видалення каналу</string>
-    <string name="confirm_channel_removal_message">Ви дійсно хочете видалити цей канал?</string>
+    <string name="confirm_channel_removal_message">Ви дійсно хочете видалити канал?</string>
     <string name="confirm_channel_removal_positive_button">Видалити</string>
     <string name="user_popup_follow">Відстежувати</string>
     <string name="user_popup_unfollow">Перестати відстежувати</string>
@@ -88,10 +89,12 @@
     <string name="user_popup_avatar_description">Аватар профіля</string>
     <string name="user_popup_error">Не вдалося завантажити інформацію користувача: %1$s</string>
     <string name="confirm_user_unfollow_title">Перестати відстежувати</string>
-    <string name="confirm_user_unfollow_message">Ви точно хочете перестати відстежувати цього користувача?</string>
+    <string name="confirm_user_unfollow_message">Ви дійсно хочете перестати відстежувати цього користувача?</string>
     <string name="confirm_user_block_title">Підтвердити блокування</string>
-    <string name="confirm_user_block_message">Ви точно хочете заблокувати цього користувача?</string>
+    <string name="confirm_user_block_message">Ви дійсно хочете заблокувати цього користувача?</string>
     <string name="confirm_user_block_positive_button">Заблокувати</string>
+    <string name="restart_required">Необхідно перезапустити програму для застосування змін</string>
+    <string name="restart">Перезапустити</string>
 
     <string name="preference_timestamp_title">Показувати часові мітки</string>
     <string name="preference_mention_format_title">Формат згадок</string>
@@ -158,6 +161,15 @@
     <string name="preference_user_long_click_title">Поведінка при довгому натиску на ім\'я користувача</string>
     <string name="preference_user_long_click_summary_on">Один натиск відкриває попап, довгий натиск відкриває згадування</string>
     <string name="preference_user_long_click_summary_off">Один натиск відкриває згадування, довгий натиск відкриває попап</string>
+    <string name="preference_light_theme_title">Увімкнути світлу тему</string>
+    <string name="preference_dark_mode_group_title">Темний режим</string>
+    <string name="preference_follow_system_title">За замовчуванням системи</string>
+    <string name="preference_true_dark_theme_title">Чорна тема</string>
+    <string name="preference_true_dark_theme_summary">Змінює колір фону чату на чорний</string>
+    <string name="preference_display_group_title">Дисплей</string>
+    <string name="preference_tts_force_english_title">Зробити англійську мовою синтезатора</string>
+    <string name="preference_tts_force_english_summary">Використання англійської мови для синтезу мовлення замість мови системи</string>
+    <string name="preference_visible_emotes_title">Видимі сторонні смайли</string>
 
     <plurals name="viewers">
         <item quantity="one">Наживо з %d глядачем</item>
