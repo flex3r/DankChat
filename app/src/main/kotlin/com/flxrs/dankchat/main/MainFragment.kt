@@ -2,6 +2,7 @@ package com.flxrs.dankchat.main
 
 import android.app.Activity
 import android.content.*
+import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
@@ -55,6 +56,7 @@ import com.flxrs.dankchat.utils.*
 import com.flxrs.dankchat.utils.extensions.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar.BaseCallback
 import com.google.android.material.snackbar.Snackbar
@@ -193,7 +195,7 @@ class MainFragment : Fragment() {
                         binding.tabs.selectedTabPosition -> mainViewModel.clearUnreadMessage(channel)
                         else                             -> {
                             val tab = binding.tabs.getTabAt(index)
-                            tab?.setTextColor(R.color.color_tab_unread)
+                            tab?.setTextColor(R.attr.colorOnSurface)
                         }
                     }
                 }
@@ -256,7 +258,7 @@ class MainFragment : Fragment() {
                 when {
                     emoteMenuBottomSheetBehavior?.isVisible == true -> emoteMenuBottomSheetBehavior?.hide()
                     mentionBottomSheetBehavior?.isVisible == true   -> mentionBottomSheetBehavior?.hide()
-                    else                                            -> finishAndRemoveTask()
+                    else                                            -> finish()
                 }
             }
 
@@ -359,8 +361,8 @@ class MainFragment : Fragment() {
             val shouldShowProgress = mainViewModel.shouldShowUploadProgress.value
             val hasChannels = !mainViewModel.getChannels().isNullOrEmpty()
             val mentionIconColor = when (mainViewModel.shouldColorNotification.value) {
-                true -> R.color.color_error
-                else -> android.R.color.white
+                true -> R.attr.colorError
+                else -> R.attr.colorControlHighlight
             }
             findItem(R.id.menu_login)?.isVisible = !isLoggedIn
             findItem(R.id.menu_manage)?.isVisible = hasChannels
@@ -368,14 +370,16 @@ class MainFragment : Fragment() {
             findItem(R.id.menu_mentions)?.apply {
                 isVisible = hasChannels
                 context?.let {
-                    icon.setTintList(ContextCompat.getColorStateList(it, mentionIconColor))
+                    val fallback = ContextCompat.getColor(it, android.R.color.white)
+                    val color = MaterialColors.getColor(it, mentionIconColor, fallback)
+                    icon.setTintList(ColorStateList.valueOf(color))
                 }
             }
 
             findItem(R.id.progress)?.apply {
                 isVisible = shouldShowProgress
                 actionView = ProgressBar(requireContext()).apply {
-                    indeterminateTintList = ContextCompat.getColorStateList(requireContext(), android.R.color.white)
+                    indeterminateTintList = ColorStateList.valueOf(MaterialColors.getColor(this, R.attr.colorOnSurfaceVariant))
                     isVisible = shouldShowProgress
                 }
             }

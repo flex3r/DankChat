@@ -10,6 +10,7 @@ import android.text.style.ImageSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -25,6 +26,7 @@ import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.extensions.*
+import com.google.android.material.color.MaterialColors
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -92,6 +94,13 @@ open class ChatFragment : Fragment() {
             if (getBoolean(getString(R.string.preference_line_separator_key), false)) {
                 binding.chat.addItemDecoration(itemDecoration)
             }
+
+            val background = if (getBoolean(getString(R.string.preference_true_dark_theme_key), false) && !isSystemLightMode) {
+                ContextCompat.getColor(view.context, android.R.color.black)
+            } else {
+                MaterialColors.getColor(view, R.attr.colorSurface)
+            }
+            view.setBackgroundColor(background)
         }
     }
 

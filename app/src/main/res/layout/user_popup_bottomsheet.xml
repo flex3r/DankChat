@@ -65,7 +65,7 @@
 
         <TextView
             android:id="@+id/user_name"
-            style="@style/TextAppearance.MaterialComponents.Headline6"
+            style="?attr/textAppearanceTitleLarge"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
@@ -80,7 +80,7 @@
 
         <TextView
             android:id="@+id/user_created"
-            style="@style/TextAppearance.MaterialComponents.Body1"
+            style="?attr/textAppearanceBodyLarge"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
@@ -95,7 +95,7 @@
 
         <TextView
             android:id="@+id/user_followage"
-            style="@style/TextAppearance.MaterialComponents.Body1"
+            style="?attr/textAppearanceBodyLarge"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
@@ -116,7 +116,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/user_mention"
-            style="@style/Widget.MaterialComponents.Button"
+            style="@style/Widget.Material3.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
@@ -128,7 +128,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/user_follow"
-            style="@style/Widget.MaterialComponents.Button"
+            style="@style/Widget.Material3.Button"
             android:visibility="gone"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -142,7 +142,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/user_block"
-            style="@style/Widget.MaterialComponents.Button"
+            style="@style/Widget.Material3.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"

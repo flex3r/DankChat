@@ -22,8 +22,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:text=""
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-            android:textSize="18sp" />
+            android:textAppearance="?attr/textAppearanceTitleMedium" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/multi_entry_list"

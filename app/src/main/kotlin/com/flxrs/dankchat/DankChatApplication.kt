@@ -11,6 +11,7 @@ import coil.ImageLoaderFactory
 import coil.decode.ImageDecoderDecoder
 import com.flxrs.dankchat.di.EmoteOkHttpClient
 import com.flxrs.dankchat.utils.gifs.GifDrawableDecoder
+import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.HiltAndroidApp
 import okhttp3.OkHttpClient
 import javax.inject.Inject
@@ -24,16 +25,18 @@ class DankChatApplication : Application(), ImageLoaderFactory {
     override fun onCreate() {
         super.onCreate()
 
+        DynamicColors.applyToActivitiesIfAvailable(this);
         val uiModeManager = getSystemService(UI_MODE_SERVICE) as UiModeManager
         val isTv = uiModeManager.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
-        val nightMode = PreferenceManager.getDefaultSharedPreferences(this)
-            .getBoolean(getString(R.string.preference_dark_theme_key), true)
-            .let { darkMode ->
-                when {
-                    // Force dark theme on < Android 8.1 because of statusbar/navigationbar issues
-                    darkMode || (Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1 && !isTv) -> AppCompatDelegate.MODE_NIGHT_YES
-                    else                                                                     -> AppCompatDelegate.MODE_NIGHT_NO
-                }
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val followSystem = preferences.getBoolean(getString(R.string.preference_follow_system_key), true)
+        val darkMode = preferences.getBoolean(getString(R.string.preference_dark_theme_key), false)
+        val nightMode =
+            when {
+                // Force dark theme on < Android 8.1 because of statusbar/navigationbar issues
+                darkMode || (Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1 && !isTv) -> AppCompatDelegate.MODE_NIGHT_YES
+                followSystem                                                             -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+                else                                                                     -> AppCompatDelegate.MODE_NIGHT_NO
             }
         AppCompatDelegate.setDefaultNightMode(nightMode)
     }

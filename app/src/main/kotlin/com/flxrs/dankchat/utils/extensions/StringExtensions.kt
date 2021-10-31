@@ -3,7 +3,7 @@ package com.flxrs.dankchat.utils.extensions
 private val emojiCodePoints = listOf(
     IntRange(0x00A9, 0x00AE),
     IntRange(0x200D, 0x2017),
-    IntRange(0x201a,0x3299),
+    IntRange(0x201a, 0x3299),
     IntRange(0xFE00, 0xFE0F),
     IntRange(0x1F000, 0x1FAD6)
 )

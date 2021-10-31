@@ -1,52 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--LIGHT COLOR THEME-->
-
-    <!--colorPrimary colors map to components and elements, such as app bars and buttons. -->
-    <!--colorSecondary colors are most often used as accents on components, such as FABs and -->
-    <!--selection controls.-->
-    <color name="color_primary">#6200ee</color>
-    <color name="color_primary_variant">#3700b3</color>
-    <!--	<color name="color_secondary">#03dac6</color>-->
-    <!--	<color name="color_secondary_variant">#018786</color>-->
-    <color name="color_secondary">#6200ee</color>
-    <color name="color_secondary_variant">#3700b3</color>
-
-    <!--colorBackground appears behind scrollable content and is used for the default window-->
-    <!--background. colorSurface is mapped to the surface of components such as cards, sheets-->
-    <!--and menus. colorError is used to indicate an error state for components such as-->
-    <!--text fields.-->
-    <color name="color_background">#ffffff</color>
-    <color name="color_surface">#ffffff</color>
-    <color name="color_error">#b00020</color>
-
-    <!--"On" colors define how text, icons and strokes are colored in relation to the surface-->
-    <!--on which they appear.-->
-    <color name="color_on_primary">#ffffff</color>
-    <color name="color_on_secondary">#000000</color>
-    <color name="color_on_background">#000000</color>
-    <color name="color_on_surface">#000000</color>
-    <color name="color_on_error">#ffffff</color>
-
-    <!--Deep Purple 500 P-Dark/Light-->
-    <color name="color_highlight_dark">#4d2c91</color>
-    <color name="color_highlight_light">#b085f5</color>
-
-    <color name="color_mention_dark">#6e3737</color> <!-- Darker Red 200 P-Dark-->
-    <color name="color_mention_light">#ef9a9a</color> <!--Red 200 P-->
-
-    <!--Teal 400 P-Dark/Light-->
-    <color name="color_reward_dark">#00766c</color>
-    <color name="color_reward_light">#64d8cb</color>
-
-    <!--Colors for TabLayout-->
-    <color name="color_tab_selected">#FFFFFF</color>
-    <color name="color_tab_unselected">#99FFFFFF</color>
-    <color name="color_tab_unread">#D9FFFFFF</color>
+    <color name="md_theme_primary">#6750A4</color>
+    <color name="md_theme_onPrimary">#FFFFFF</color>
+    <color name="md_theme_primaryContainer">#EADDFF</color>
+    <color name="md_theme_onPrimaryContainer">#21005D</color>
+    <color name="md_theme_secondary">#625B71</color>
+    <color name="md_theme_onSecondary">#FFFFFF</color>
+    <color name="md_theme_secondaryContainer">#E8DEF8</color>
+    <color name="md_theme_onSecondaryContainer">#1D192B</color>
+    <color name="md_theme_tertiary">#7D5260</color>
+    <color name="md_theme_onTertiary">#FFFFFF</color>
+    <color name="md_theme_tertiaryContainer">#FFD8E4</color>
+    <color name="md_theme_onTertiaryContainer">#31111D</color>
+    <color name="md_theme_error">#B3261E</color>
+    <color name="md_theme_errorContainer">#F9DEDC</color>
+    <color name="md_theme_onError">#FFFFFF</color>
+    <color name="md_theme_onErrorContainer">#410E0B</color>
+    <color name="md_theme_background">#FFFBFE</color>
+    <color name="md_theme_onBackground">#1C1B1F</color>
+    <color name="md_theme_surface">#FFFBFE</color>
+    <color name="md_theme_onSurface">#1C1B1F</color>
+    <color name="md_theme_surfaceVariant">#E7E0EC</color>
+    <color name="md_theme_onSurfaceVariant">#49454F</color>
+    <color name="md_theme_outline">#79747E</color>
+    <color name="md_theme_inverseOnSurface">#F4EFF4</color>
+    <color name="md_theme_inverseSurface">#313033</color>
+    <color name="md_theme_primaryInverse">#D0BCFF</color>
+    <color name="seed">#6750A4</color>
+    <color name="error">#B3261E</color>
 
     <color name="color_ffz_mod">#34ae0a</color>
 
     <color name="colorThatIsActuallyTransparent">#00FFFFFF</color>
-    <color name="color_transparency_20">#22FFFFFF</color>
-    <!--<color name="colorAccent">#FFEB3B</color>-->
+
+    <!-- Deep Purple 500-->
+    <color name="color_highlight">#b085f5</color>
+
+    <!-- (Darker) Red 200-->
+    <color name="color_mention">#ef9a9a</color> <!--Red 200 P-->
+
+    <!-- Teal 400-->
+    <color name="color_reward">#64d8cb</color>
 </resources>

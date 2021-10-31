@@ -9,6 +9,7 @@ import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.extensions.appendSpacesBetweenEmojiGroup
 import com.flxrs.dankchat.utils.extensions.removeDuplicateWhitespace
+import kotlin.random.Random
 
 sealed class Message {
     abstract val id: String
@@ -63,23 +64,24 @@ data class TwitchMessage(
         }
 
         private fun parsePrivMessage(ircMessage: IrcMessage, emoteManager: EmoteManager, isNotify: Boolean = false): TwitchMessage = with(ircMessage) {
-            val displayName = tags.getValue("display-name")
             val name = when (ircMessage.command) {
                 "USERNOTICE" -> tags.getValue("login")
                 else         -> prefix.substringBefore('!')
             }
+
+            val displayName = tags["display-name"] ?: name
             val colorTag = tags["color"]?.ifBlank { "#717171" } ?: "#717171"
             val color = Color.parseColor(colorTag)
 
             val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
             var isAction = false
+            val messageParam = params.getOrElse(1) { "" }
             val message = when {
-                params.size > 1 && params[1].startsWith("\u0001ACTION") && params[1].endsWith("\u0001") -> {
+                params.size > 1 && messageParam.startsWith("\u0001ACTION") && messageParam.endsWith("\u0001") -> {
                     isAction = true
-                    params[1].substring("\u0001ACTION ".length, params[1].length - "\u0001".length)
+                    messageParam.substring("\u0001ACTION ".length, messageParam.length - "\u0001".length)
                 }
-                params.size > 1                                                                         -> params[1]
-                else                                                                                    -> ""
+                else                                                                                          -> messageParam
             }
             val channel = params[0].substring(1)
             val emoteTag = tags["emotes"] ?: ""
@@ -190,15 +192,16 @@ data class TwitchMessage(
             return makeSystemMessage(systemMessage, channel, ts, id)
         }
 
-        private fun parseWhisper(message: IrcMessage, emoteManager: EmoteManager): TwitchMessage = with(message) {
-            val displayName = tags.getValue("display-name")
+        private fun parseWhisper(ircMessage: IrcMessage, emoteManager: EmoteManager): TwitchMessage = with(ircMessage) {
             val name = prefix.substringBefore('!')
+            val displayName = tags["display-name"] ?: name
             val colorTag = tags["color"]?.ifBlank { "#717171" } ?: "#717171"
             val color = Color.parseColor(colorTag)
             val emoteTag = tags["emotes"] ?: ""
             val badges = parseBadges(emoteManager, tags["badges"], userId = tags["user-id"])
+            val message = params.getOrElse(1) { "" }
 
-            val (duplicateSpaceAdjustedMessage, removedSpaces) = params[1].removeDuplicateWhitespace()
+            val (duplicateSpaceAdjustedMessage, removedSpaces) = message.removeDuplicateWhitespace()
             val (appendedSpaceAdjustedMessage, appendedSpaces) = duplicateSpaceAdjustedMessage.appendSpacesBetweenEmojiGroup()
             val (overlayEmotesAdjustedMessage, emotes) = emoteManager.parseEmotes(appendedSpaceAdjustedMessage, channel = "", emoteTag, appendedSpaces, removedSpaces)
 
