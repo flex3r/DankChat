@@ -161,7 +161,6 @@
     <string name="preference_tts_force_english_title">Переключить язык на английский</string>
     <string name="preference_tts_force_english_summary">Переключить язык синтезатора речи с системного на английский</string>
     <string name="preference_visible_emotes_title">Видимые сторонние смайлы</string>
-    <string name="preference_dark_theme_title">Включить тёмное оформление</string>
     <string name="preference_light_theme_title">Включить светлое оформление</string>
     <string name="preference_dark_mode_group_title">Тёмное оформление</string>
     <string name="preference_follow_system_title">Система фолловов</string>
