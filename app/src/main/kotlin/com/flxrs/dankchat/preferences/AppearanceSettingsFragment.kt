@@ -55,11 +55,20 @@ class AppearanceSettingsFragment : PreferenceFragmentCompat() {
             }
         }
 
-        // Force dark mode below 8.1
-        if (!darkModePreference.isChecked && Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1 && !isTV) {
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1 && !isTV) {
+            // Force dark mode below 8.1
             followSystemModePreference.isEnabled = false
             lightModePreference.isEnabled = false
             updateThemeSwitches(darkMode = true)
+        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            // System dark mode was introduced in Android 10
+            followSystemModePreference.isEnabled = false
+
+            // Default value is true, set manual dark mode instead
+            if (followSystemModePreference.isChecked) {
+                updateThemeSwitches(darkMode = true)
+            }
         }
 
         // Disable true dark mode switch when light mode is active
