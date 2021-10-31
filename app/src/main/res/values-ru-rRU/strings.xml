@@ -11,7 +11,7 @@
     <string name="dialog_cancel">Отмена</string>
     <string name="dialog_dismiss">Закрыть</string>
     <string name="error_dialog_copy">Копировать</string>
-    <string name="error_dialog_title">Захваченное исключение: %1$s</string>
+    <string name="error_dialog_title">Записанное исключение: %1$s</string>
     <string name="add_channel">Добавить канал</string>
     <string name="open_channel">Открыть канал</string>
     <string name="no_channels_added">Нет добавленных каналов</string>
@@ -161,6 +161,12 @@
     <string name="preference_tts_force_english_title">Переключить язык на английский</string>
     <string name="preference_tts_force_english_summary">Переключить язык синтезатора речи с системного на английский</string>
     <string name="preference_visible_emotes_title">Видимые сторонние смайлы</string>
+    <string name="preference_light_theme_title">Включить светлое оформление</string>
+    <string name="preference_dark_mode_group_title">Тёмное оформление</string>
+    <string name="preference_follow_system_title">Система фолловов</string>
+    <string name="preference_true_dark_theme_title">Истинно-тёмное оформление</string>
+    <string name="preference_true_dark_theme_summary">Переключает цвет заднего фона чата на чёрный</string>
+    <string name="preference_display_group_title">Отображение</string>
 
     <plurals name="viewers">
         <item quantity="one">В сети с %d зрителем</item>
