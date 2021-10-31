@@ -15,6 +15,7 @@ import androidx.preference.SwitchPreferenceCompat
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
+import com.flxrs.dankchat.utils.extensions.isSystemLightMode
 
 class AppearanceSettingsFragment : PreferenceFragmentCompat() {
 
@@ -38,17 +39,61 @@ class AppearanceSettingsFragment : PreferenceFragmentCompat() {
             uiModeManager?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
         } ?: false
 
-        findPreference<SwitchPreferenceCompat>(getString(R.string.preference_dark_theme_key))?.apply {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1 && !isTV) {
-                if (!isChecked) {
-                    isChecked = true
-                }
-                isVisible = false
+        val followSystemModePreference = findPreference<SwitchPreferenceCompat>(getString(R.string.preference_follow_system_key)) ?: return
+        val darkModePreference = findPreference<SwitchPreferenceCompat>(getString(R.string.preference_dark_theme_key)) ?: return
+        val trueDarkModePreference = findPreference<SwitchPreferenceCompat>(getString(R.string.preference_true_dark_theme_key)) ?: return
+        val lightModePreference = findPreference<SwitchPreferenceCompat>(getString(R.string.preference_light_theme_key)) ?: return
+
+        fun updateThemeSwitches(followSystem: Boolean = false, darkMode: Boolean = false, lightMode: Boolean = false) {
+            followSystemModePreference.isChecked = followSystem
+            darkModePreference.isChecked = darkMode
+            lightModePreference.isChecked = lightMode
+
+            if (lightMode || isSystemLightMode) {
+                trueDarkModePreference.isChecked = false
+                trueDarkModePreference.isEnabled = false
             }
-            setOnPreferenceClickListener {
-                setDarkMode(isChecked)
-                true
+        }
+
+        // Force dark mode below 8.1
+        if (!darkModePreference.isChecked && Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1 && !isTV) {
+            followSystemModePreference.isEnabled = false
+            lightModePreference.isEnabled = false
+            updateThemeSwitches(darkMode = true)
+        }
+
+        // Disable true dark mode switch when light mode is active
+        if (lightModePreference.isChecked || isSystemLightMode) {
+            trueDarkModePreference.isChecked = false
+            trueDarkModePreference.isEnabled = false
+        }
+
+        followSystemModePreference.setOnPreferenceChangeListener { _,_ ->
+            if (followSystemModePreference.isChecked) {
+                return@setOnPreferenceChangeListener false
             }
+
+            setDarkMode(followSystem = true)
+            updateThemeSwitches(followSystem = true)
+            true
+        }
+        darkModePreference.setOnPreferenceChangeListener { _, _ ->
+            if (darkModePreference.isChecked) {
+                return@setOnPreferenceChangeListener false
+            }
+
+            setDarkMode()
+            updateThemeSwitches(darkMode = true)
+            true
+        }
+        lightModePreference.setOnPreferenceChangeListener { _,_ ->
+            if (lightModePreference.isChecked) {
+                return@setOnPreferenceChangeListener false
+            }
+
+            setDarkMode(darkMode = false)
+            updateThemeSwitches(lightMode = true)
+            true
         }
 
         findPreference<SeekBarPreference>(getString(R.string.preference_font_size_key))?.apply {
@@ -69,12 +114,13 @@ class AppearanceSettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun setDarkMode(darkMode: Boolean) {
+    private fun setDarkMode(darkMode: Boolean = true, followSystem: Boolean = false) {
         findNavController().previousBackStackEntry?.savedStateHandle?.set(MainFragment.THEME_CHANGED_KEY, true)
         AppCompatDelegate.setDefaultNightMode(
             when {
-                darkMode -> AppCompatDelegate.MODE_NIGHT_YES
-                else     -> AppCompatDelegate.MODE_NIGHT_NO
+                followSystem -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+                darkMode     -> AppCompatDelegate.MODE_NIGHT_YES
+                else         -> AppCompatDelegate.MODE_NIGHT_NO
             }
         )
     }

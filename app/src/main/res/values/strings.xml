@@ -129,6 +129,15 @@
     <string name="preference_show_input_summary">Displays the input field to send messages</string>
     <string name="preference_dark_theme_key" translatable="false">enable_dark_mode</string>
     <string name="preference_dark_theme_title">Enable dark theme</string>
+    <string name="preference_light_theme_key" translatable="false">enable_light_mode</string>
+    <string name="preference_light_theme_title">Enable light theme</string>
+    <string name="preference_dark_mode_group_title">Dark mode</string>
+    <string name="preference_follow_system_key" translatable="false">follow_system_mode</string>
+    <string name="preference_follow_system_title">Follow system</string>
+    <string name="preference_true_dark_theme_key" translatable="false">true_dark_mode</string>
+    <string name="preference_true_dark_theme_title">True dark theme</string>
+    <string name="preference_true_dark_theme_summary">Forces chat background color to black</string>
+    <string name="preference_display_group_title">Display</string>
     <string name="preference_show_timed_out_messages_key" translatable="false">show_timed_out_messages_key</string>
     <string name="preference_show_timed_out_messages_title">Show timed out messages</string>
     <string name="preference_custom_mentions_key" translatable="false">custom_mentions_key</string>

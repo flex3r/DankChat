@@ -1,45 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <SwitchPreferenceCompat
-        android:defaultValue="true"
-        android:key="@string/preference_dark_theme_key"
-        android:title="@string/preference_dark_theme_title"
-        app:iconSpaceReserved="false" />
+    <PreferenceCategory
+        android:title="@string/preference_dark_mode_group_title"
+        app:iconSpaceReserved="false">
 
-    <SeekBarPreference
-        android:defaultValue="14"
-        android:key="@string/preference_font_size_key"
-        android:max="40"
-        android:title="@string/preference_font_size_title"
-        app:iconSpaceReserved="false"
-        app:min="10"
-        app:showSeekBarValue="true"
-        app:updatesContinuously="true" />
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="@string/preference_follow_system_key"
+            android:title="@string/preference_follow_system_title"
+            app:iconSpaceReserved="false" />
 
-    <SwitchPreferenceCompat
-        android:defaultValue="true"
-        android:key="@string/preference_keep_screen_on_key"
-        android:title="@string/preference_keep_screen_on_title"
-        app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="@string/preference_dark_theme_key"
+            android:title="@string/preference_dark_theme_title"
+            app:iconSpaceReserved="false" />
 
-    <SwitchPreferenceCompat
-        android:defaultValue="true"
-        android:key="@string/preference_show_input_key"
-        android:summary="@string/preference_show_input_summary"
-        android:title="@string/preference_show_input_title"
-        app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="@string/preference_true_dark_theme_key"
+            android:title="@string/preference_true_dark_theme_title"
+            android:summary="@string/preference_true_dark_theme_summary"
+            app:iconSpaceReserved="false" />
 
-    <SwitchPreferenceCompat
-        android:defaultValue="false"
-        android:key="@string/preference_line_separator_key"
-        android:title="@string/preference_line_separator_title"
-        app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="@string/preference_light_theme_key"
+            android:title="@string/preference_light_theme_title"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
 
-    <SwitchPreferenceCompat
-        android:defaultValue="false"
-        android:key="@string/checkered_messages_key"
-        android:summary="@string/preference_checkered_lines_summary"
-        android:title="@string/preference_checkered_lines_title"
-        app:iconSpaceReserved="false" />
+    <PreferenceCategory
+        android:title="@string/preference_display_group_title"
+        app:iconSpaceReserved="false">
+
+        <SeekBarPreference
+            android:defaultValue="14"
+            android:key="@string/preference_font_size_key"
+            android:max="40"
+            android:title="@string/preference_font_size_title"
+            app:iconSpaceReserved="false"
+            app:min="10"
+            app:showSeekBarValue="true"
+            app:updatesContinuously="true" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="@string/preference_keep_screen_on_key"
+            android:title="@string/preference_keep_screen_on_title"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="@string/preference_show_input_key"
+            android:summary="@string/preference_show_input_summary"
+            android:title="@string/preference_show_input_title"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="@string/preference_line_separator_key"
+            android:title="@string/preference_line_separator_title"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="@string/checkered_messages_key"
+            android:summary="@string/preference_checkered_lines_summary"
+            android:title="@string/preference_checkered_lines_title"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
 </PreferenceScreen>
