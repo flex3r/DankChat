@@ -19,7 +19,6 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.widget.TextView
-import androidx.annotation.ColorInt
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -154,7 +153,7 @@ class ChatAdapter(
         val checkeredKey = context.getString(R.string.checkered_messages_key)
         val badgesKey = context.getString(R.string.preference_visible_badges_key)
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val isDarkMode = preferences.getBoolean(darkModePreferenceKey, true)
+        val isDarkMode = resources.isSystemNightMode || preferences.getBoolean(darkModePreferenceKey, false)
         val isCheckeredMode = preferences.getBoolean(checkeredKey, false)
         val isDebugEnabled = preferences.getBoolean(debugKey, false)
         val showTimedOutMessages = preferences.getBoolean(timedOutPreferenceKey, true)
