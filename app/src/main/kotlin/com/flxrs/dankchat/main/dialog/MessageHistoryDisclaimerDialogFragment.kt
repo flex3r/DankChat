@@ -36,10 +36,6 @@ class MessageHistoryDisclaimerDialogFragment : DialogFragment() {
         }
     }
 
-    override fun onDismiss(dialog: DialogInterface) {
-        findNavController().popBackStack(R.id.mainFragment, false)
-    }
-
     private fun dismissAndHandleResult(result: Boolean): Boolean {
         findNavController()
             .getBackStackEntry(R.id.mainFragment)

@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.chat.user
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -82,10 +83,6 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
         }
 
         return binding.root
-    }
-
-    override fun dismiss() {
-        findNavController().popBackStack(R.id.mainFragment, false)
     }
 
     private fun UserPopupBottomsheetBinding.showLoadingState() {

@@ -1,7 +1,6 @@
 package com.flxrs.dankchat.channels
 
 import android.annotation.SuppressLint
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -71,13 +70,13 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
         super.onDestroy()
     }
 
-    override fun onDismiss(dialog: DialogInterface) {
+    override fun dismiss() {
         with(findNavController()) {
             getBackStackEntry(R.id.mainFragment)
                 .savedStateHandle
                 .set(MainFragment.CHANNELS_REQUEST_KEY, adapter.currentList.toTypedArray())
-            popBackStack(R.id.mainFragment, false)
         }
+        super.dismiss()
     }
 
     private fun openRenameChannelDialog(channel: String, renamedChannel: String?) {
