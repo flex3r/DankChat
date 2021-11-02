@@ -37,6 +37,8 @@
         <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="27">shortEdges</item>
     </style>
 
+    <style name="AppTheme.Overlay" parent="ThemeOverlay.Material3.DynamicColors.Light" />
+
     <style name="PrefsTheme" parent="PreferenceThemeOverlay">
         <item name="android:layout">@layout/settings_fragment</item>
     </style>
