@@ -45,10 +45,6 @@ class EditChannelDialogFragment : DialogFragment() {
         bindingRef = null
     }
 
-    override fun onDismiss(dialog: DialogInterface) {
-        findNavController().popBackStack(R.id.channelsDialogFragment, false)
-    }
-
     private fun getInputAndDismiss(input: Editable?): Boolean {
         val trimmedInput = input?.toString()?.trim().orEmpty()
         if (trimmedInput.isNotBlank()) {

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
@@ -16,6 +17,7 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.utils.extensions.isSystemLightMode
+import com.google.android.material.color.DynamicColors
 
 class AppearanceSettingsFragment : PreferenceFragmentCompat() {
 
@@ -55,11 +57,26 @@ class AppearanceSettingsFragment : PreferenceFragmentCompat() {
             }
         }
 
-        // Force dark mode below 8.1
-        if (!darkModePreference.isChecked && Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1 && !isTV) {
-            followSystemModePreference.isEnabled = false
-            lightModePreference.isEnabled = false
-            updateThemeSwitches(darkMode = true)
+
+        when {
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1 && !isTV           -> {
+                // Force dark mode below 8.1
+                followSystemModePreference.isEnabled = false
+                lightModePreference.isEnabled = false
+                updateThemeSwitches(darkMode = true)
+            }
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.Q                        -> {
+                // System dark mode was introduced in Android 10
+                followSystemModePreference.isEnabled = false
+
+                // Default value is true, set manual dark mode instead
+                if (followSystemModePreference.isChecked) {
+                    updateThemeSwitches(darkMode = true)
+                }
+            }
+            followSystemModePreference.isChecked && darkModePreference.isChecked -> {
+                updateThemeSwitches(followSystem = true)
+            }
         }
 
         // Disable true dark mode switch when light mode is active
@@ -93,6 +110,19 @@ class AppearanceSettingsFragment : PreferenceFragmentCompat() {
 
             setDarkMode(darkMode = false)
             updateThemeSwitches(lightMode = true)
+            true
+        }
+
+        trueDarkModePreference.setOnPreferenceChangeListener { _, newValue ->
+            val activity = activity ?: return@setOnPreferenceChangeListener false
+            val isChecked = newValue as? Boolean ?: return@setOnPreferenceChangeListener false
+            if (isChecked) {
+                DynamicColors.applyIfAvailable(activity, R.style.AppTheme_Overlay)
+            } else {
+                DynamicColors.applyIfAvailable(activity)
+            }
+            view?.post { ActivityCompat.recreate(activity) }
+
             true
         }
 

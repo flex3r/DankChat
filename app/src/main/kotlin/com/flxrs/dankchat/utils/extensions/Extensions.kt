@@ -61,11 +61,3 @@ inline fun <reified T> SavedStateHandle.withData(key: String, block: (T) -> Unit
     val data = remove<T>(key) ?: return
     block(data)
 }
-
-inline fun <T> T.doIf(predicate: Boolean, action: T.() -> T): T {
-    return if (predicate) {
-        action()
-    } else {
-        return this
-    }
-}

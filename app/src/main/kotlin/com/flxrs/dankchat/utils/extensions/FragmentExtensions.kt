@@ -3,6 +3,7 @@ package com.flxrs.dankchat.utils.extensions
 import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -59,8 +60,14 @@ fun Fragment.hideKeyboard() {
 val Fragment.isLandscape: Boolean
     get() = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
+val Resources.isSystemNightMode: Boolean
+    get() = configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+
+val Resources.isSystemLightMode: Boolean
+    get() = !isSystemNightMode
+
 val Fragment.isSystemLightMode: Boolean
-    get() = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_NO
+    get() = resources.isSystemLightMode
 
 fun Fragment.keepScreenOn(keep: Boolean) {
     (activity as? AppCompatActivity)?.keepScreenOn(keep)
