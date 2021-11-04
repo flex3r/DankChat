@@ -85,7 +85,7 @@ class AppearanceSettingsFragment : PreferenceFragmentCompat() {
             trueDarkModePreference.isEnabled = false
         }
 
-        followSystemModePreference.setOnPreferenceChangeListener { _,_ ->
+        followSystemModePreference.setOnPreferenceChangeListener { _, _ ->
             if (followSystemModePreference.isChecked) {
                 return@setOnPreferenceChangeListener false
             }
@@ -103,7 +103,7 @@ class AppearanceSettingsFragment : PreferenceFragmentCompat() {
             updateThemeSwitches(darkMode = true)
             true
         }
-        lightModePreference.setOnPreferenceChangeListener { _,_ ->
+        lightModePreference.setOnPreferenceChangeListener { _, _ ->
             if (lightModePreference.isChecked) {
                 return@setOnPreferenceChangeListener false
             }
@@ -113,16 +113,10 @@ class AppearanceSettingsFragment : PreferenceFragmentCompat() {
             true
         }
 
-        trueDarkModePreference.setOnPreferenceChangeListener { _, newValue ->
+        trueDarkModePreference.setOnPreferenceChangeListener { _, _ ->
             val activity = activity ?: return@setOnPreferenceChangeListener false
-            val isChecked = newValue as? Boolean ?: return@setOnPreferenceChangeListener false
-            if (isChecked) {
-                DynamicColors.applyIfAvailable(activity, R.style.AppTheme_Overlay)
-            } else {
-                DynamicColors.applyIfAvailable(activity)
-            }
-            view?.post { ActivityCompat.recreate(activity) }
 
+            view?.post { ActivityCompat.recreate(activity) }
             true
         }
 

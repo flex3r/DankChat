@@ -25,6 +25,7 @@ import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.*
 import com.flxrs.dankchat.service.NotificationService
 import com.flxrs.dankchat.utils.extensions.navigateSafe
+import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -45,6 +46,15 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val isTrueDarkModeEnabled = preferences.getBoolean(getString(R.string.preference_true_dark_theme_key), false)
+        val isDynamicColorAvailable = DynamicColors.isDynamicColorAvailable()
+        when {
+            isTrueDarkModeEnabled && isDynamicColorAvailable -> DynamicColors.applyIfAvailable(this, R.style.AppTheme_TrueDarkOverlay)
+            isTrueDarkModeEnabled                            -> setTheme(R.style.AppTheme_TrueDarkTheme)
+            else                                             -> DynamicColors.applyIfAvailable(this)
+        }
 
         bindingRef = DataBindingUtil.setContentView(this, R.layout.main_activity)
         broadcastReceiver = object : BroadcastReceiver() {

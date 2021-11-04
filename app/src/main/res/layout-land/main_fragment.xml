@@ -26,8 +26,8 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                style="?attr/floatingActionButtonSecondaryStyle"
                 android:id="@+id/show_actionbar_fab"
+                style="?attr/floatingActionButtonSecondaryStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top|end"
@@ -60,7 +60,7 @@
                     <com.google.android.material.tabs.TabLayout
                         android:id="@+id/tabs"
                         android:layout_width="match_parent"
-                        android:layout_height="?actionBarSize"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:visibility="@{vm.shouldShowViewPager ? View.VISIBLE : View.GONE}"
                         app:tabMode="auto" />

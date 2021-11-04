@@ -26,8 +26,8 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                style="?attr/floatingActionButtonSecondaryStyle"
                 android:id="@+id/show_actionbar_fab"
+                style="?attr/floatingActionButtonSecondaryStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top|end"
@@ -126,8 +126,8 @@
                         app:srcCompat="@drawable/ic_maximize" />
 
                     <com.google.android.material.tabs.TabLayout
-                        style="@style/Widget.Material3.TabLayout.OnSurface"
                         android:id="@+id/bottom_sheet_tabs"
+                        style="@style/Widget.Material3.TabLayout.OnSurface"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:layout_constraintEnd_toEndOf="parent"
