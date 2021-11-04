@@ -163,7 +163,7 @@
     <string name="preference_visible_emotes_title">Видимые сторонние смайлы</string>
     <string name="preference_light_theme_title">Включить светлое оформление</string>
     <string name="preference_dark_mode_group_title">Тёмное оформление</string>
-    <string name="preference_follow_system_title">Система фолловов</string>
+    <string name="preference_follow_system_title">В соответствии с системой</string>
     <string name="preference_true_dark_theme_title">Истинно-тёмное оформление</string>
     <string name="preference_true_dark_theme_summary">Переключает цвет заднего фона чата на чёрный</string>
     <string name="preference_display_group_title">Отображение</string>
