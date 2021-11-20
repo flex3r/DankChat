@@ -30,7 +30,9 @@ class LoginFragment : Fragment() {
 
     private var bindingRef: LoginFragmentBinding? = null
     private val binding get() = bindingRef!!
-    private lateinit var dankChatPreferenceStore: DankChatPreferenceStore
+
+    @Inject
+    lateinit var dankChatPreferences: DankChatPreferenceStore
 
     @Inject
     lateinit var apiManager: ApiManager
@@ -62,7 +64,6 @@ class LoginFragment : Fragment() {
                 title = getString(R.string.login_title)
             }
         }
-        dankChatPreferenceStore = DankChatPreferenceStore(view.context)
     }
 
     override fun onDestroyView() {
@@ -119,7 +120,7 @@ class LoginFragment : Fragment() {
             return when {
                 validateDto == null || validateDto.login.isBlank() -> false
                 else                                               -> {
-                    dankChatPreferenceStore.apply {
+                    dankChatPreferences.apply {
                         oAuthKey = "oauth:$oAuth"
                         userName = validateDto.login.lowercase(Locale.getDefault())
                         userIdString = validateDto.userId

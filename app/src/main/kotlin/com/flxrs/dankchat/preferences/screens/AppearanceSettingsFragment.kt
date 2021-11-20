@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.preferences
+package com.flxrs.dankchat.preferences.screens
 
 import android.app.UiModeManager
 import android.content.res.Configuration
@@ -17,7 +17,6 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.utils.extensions.isSystemLightMode
-import com.google.android.material.color.DynamicColors
 
 class AppearanceSettingsFragment : PreferenceFragmentCompat() {
 

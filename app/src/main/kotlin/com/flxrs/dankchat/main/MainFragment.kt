@@ -46,7 +46,7 @@ import com.flxrs.dankchat.chat.suggestion.SpaceTokenizer
 import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.chat.user.UserPopupResult
 import com.flxrs.dankchat.databinding.MainFragmentBinding
-import com.flxrs.dankchat.preferences.ChatSettingsFragment
+import com.flxrs.dankchat.preferences.screens.ChatSettingsFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.state.DataLoadingState
 import com.flxrs.dankchat.service.state.ImageUploadState
@@ -66,6 +66,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.IOException
 import java.util.*
+import javax.inject.Inject
 import kotlin.math.roundToInt
 
 @AndroidEntryPoint
@@ -79,7 +80,9 @@ class MainFragment : Fragment() {
     private var mentionBottomSheetBehavior: BottomSheetBehavior<View>? = null
 
 
-    private lateinit var dankChatPreferences: DankChatPreferenceStore
+    @Inject
+    lateinit var dankChatPreferences: DankChatPreferenceStore
+
     private lateinit var preferenceListener: SharedPreferences.OnSharedPreferenceChangeListener
     private lateinit var preferences: SharedPreferences
     private lateinit var tabAdapter: ChatTabAdapter
@@ -714,7 +717,6 @@ class MainFragment : Fragment() {
         val loadSupibotKey = getString(R.string.preference_supibot_suggestions_key)
         val scrollBackLengthKey = getString(R.string.preference_scrollback_length_key)
         val preferEmotesSuggestionsKey = getString(R.string.preference_prefer_emote_suggestions_key)
-        dankChatPreferences = DankChatPreferenceStore(context)
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.oAuthKey.isNullOrBlank()) {
             dankChatPreferences.clearLogin()
         }

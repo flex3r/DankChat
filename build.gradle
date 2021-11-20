@@ -6,7 +6,7 @@ buildscript {
 
         // Plugins
         agp_version = '7.1.0-alpha05'
-        kotlin_version = '1.5.31'
+        kotlin_version = '1.6.0'
 
         // Kotlin
         coroutines_version = '1.5.2'

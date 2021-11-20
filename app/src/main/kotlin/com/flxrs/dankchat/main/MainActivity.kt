@@ -23,15 +23,23 @@ import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.*
+import com.flxrs.dankchat.preferences.screens.AppearanceSettingsFragment
+import com.flxrs.dankchat.preferences.screens.ChatSettingsFragment
+import com.flxrs.dankchat.preferences.screens.DeveloperSettingsFragment
+import com.flxrs.dankchat.preferences.screens.NotificationsSettingsFragment
 import com.flxrs.dankchat.service.NotificationService
 import com.flxrs.dankchat.utils.extensions.navigateSafe
 import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
+
+    @Inject
+    lateinit var dankChatPreferences: DankChatPreferenceStore
+
     private val viewModel: DankChatViewModel by viewModels()
-    private lateinit var twitchPreferences: DankChatPreferenceStore
     private lateinit var broadcastReceiver: BroadcastReceiver
     private val pendingChannelsToClear = mutableListOf<String>()
     private val navController: NavController by lazy { findNavController(R.id.main_content) }
@@ -63,9 +71,8 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
 
         val filter = IntentFilter(SHUTDOWN_REQUEST_FILTER)
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, filter)
-        twitchPreferences = DankChatPreferenceStore(this)
-        if (twitchPreferences.isLoggedIn && twitchPreferences.oAuthKey.isNullOrBlank()) {
-            twitchPreferences.clearLogin()
+        if (dankChatPreferences.isLoggedIn && dankChatPreferences.oAuthKey.isNullOrBlank()) {
+            dankChatPreferences.clearLogin()
         }
     }
 
@@ -181,9 +188,9 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
                 binder.service.setTTSEnabled(ttsEnabled)
             }
 
-            val oauth = twitchPreferences.oAuthKey.orEmpty()
-            val name = twitchPreferences.userName.orEmpty()
-            val channels = twitchPreferences.getChannels()
+            val oauth = dankChatPreferences.oAuthKey.orEmpty()
+            val name = dankChatPreferences.userName.orEmpty()
+            val channels = dankChatPreferences.getChannels()
             viewModel.init(name, oauth, tryReconnect = !isChangingConfigurations, channels = channels)
             binder.service.checkForNotification()
         }

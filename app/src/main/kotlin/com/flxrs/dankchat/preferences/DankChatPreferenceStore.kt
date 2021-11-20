@@ -7,8 +7,9 @@ import com.flxrs.dankchat.R
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import javax.inject.Inject
 
-class DankChatPreferenceStore(context: Context) {
+class DankChatPreferenceStore @Inject constructor(context: Context) {
     private val dankChatPreferences: SharedPreferences = context.getSharedPreferences(context.getString(R.string.shared_preference_key), Context.MODE_PRIVATE)
     private val adapterType = Types.newParameterizedType(Map::class.java, String::class.java, String::class.java)
     private val moshiAdapter = Moshi.Builder().build().adapter<Map<String, String>>(adapterType)

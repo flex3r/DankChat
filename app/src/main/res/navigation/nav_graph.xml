@@ -57,7 +57,7 @@
         android:label="LoginFragment" />
     <fragment
         android:id="@+id/overviewSettingsFragment"
-        android:name="com.flxrs.dankchat.preferences.OverviewSettingsFragment"
+        android:name="com.flxrs.dankchat.preferences.screens.OverviewSettingsFragment"
         android:label="OverviewSettingsFragment">
         <action
             android:id="@+id/action_overviewSettingsFragment_to_appearanceSettingsFragment"
@@ -91,19 +91,19 @@
 
     <fragment
         android:id="@+id/appearanceSettingsFragment"
-        android:name="com.flxrs.dankchat.preferences.AppearanceSettingsFragment"
+        android:name="com.flxrs.dankchat.preferences.screens.AppearanceSettingsFragment"
         android:label="AppearanceSettingsFragment" />
     <fragment
         android:id="@+id/notificationsSettingsFragment"
-        android:name="com.flxrs.dankchat.preferences.NotificationsSettingsFragment"
+        android:name="com.flxrs.dankchat.preferences.screens.NotificationsSettingsFragment"
         android:label="NotificationsSettingsFragment" />
     <fragment
         android:id="@+id/chatSettingsFragment"
-        android:name="com.flxrs.dankchat.preferences.ChatSettingsFragment"
+        android:name="com.flxrs.dankchat.preferences.screens.ChatSettingsFragment"
         android:label="ChatSettingsFragment" />
     <fragment
         android:id="@+id/developerSettingsFragment"
-        android:name="com.flxrs.dankchat.preferences.DeveloperSettingsFragment"
+        android:name="com.flxrs.dankchat.preferences.screens.DeveloperSettingsFragment"
         android:label="DeveloperSettingsFragment" />
 
     <dialog

@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.preferences
+package com.flxrs.dankchat.preferences.screens
 
 import android.content.ActivityNotFoundException
 import android.os.Bundle
@@ -15,10 +15,15 @@ import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import javax.inject.Inject
 
 class OverviewSettingsFragment : PreferenceFragmentCompat() {
 
     private val navController: NavController by lazy { findNavController() }
+
+    @Inject
+    lateinit var dankChatPreferences: DankChatPreferenceStore
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -38,7 +43,7 @@ class OverviewSettingsFragment : PreferenceFragmentCompat() {
             })
         }
 
-        val isLoggedIn = DankChatPreferenceStore(view.context).isLoggedIn
+        val isLoggedIn = dankChatPreferences.isLoggedIn
         findPreference<Preference>(getString(R.string.preference_about_key))?.apply {
             summary = getString(R.string.preference_about_summary, BuildConfig.VERSION_NAME)
             setOnPreferenceClickListener {

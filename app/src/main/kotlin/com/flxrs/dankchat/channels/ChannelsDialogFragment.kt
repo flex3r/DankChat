@@ -21,18 +21,21 @@ import com.flxrs.dankchat.utils.extensions.withData
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ChannelsDialogFragment : BottomSheetDialogFragment() {
 
+    @Inject
+    lateinit var dankChatPreferences: DankChatPreferenceStore
+
     private lateinit var adapter: ChannelsAdapter
     private val args: ChannelsDialogFragmentArgs by navArgs()
-    private lateinit var dankChatPreferences: DankChatPreferenceStore
     private val navController: NavController by lazy { findNavController() }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val channels = args.channels.toList()
-        adapter = ChannelsAdapter(::openRenameChannelDialog).also {
+        adapter = ChannelsAdapter(dankChatPreferences, ::openRenameChannelDialog).also {
             it.submitList(channels)
             it.registerAdapterDataObserver(dataObserver)
         }
@@ -46,7 +49,6 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        dankChatPreferences = DankChatPreferenceStore(view.context)
         val navBackStackEntry = navController.getBackStackEntry(R.id.channelsDialogFragment)
         val handle = navBackStackEntry.savedStateHandle
         val observer = LifecycleEventObserver { _, event ->

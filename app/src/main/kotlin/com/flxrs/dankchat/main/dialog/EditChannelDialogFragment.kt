@@ -11,7 +11,6 @@ import androidx.navigation.fragment.navArgs
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.channels.ChannelsDialogFragment
 import com.flxrs.dankchat.databinding.EditChannelDialogBinding
-import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class EditChannelDialogFragment : DialogFragment() {
