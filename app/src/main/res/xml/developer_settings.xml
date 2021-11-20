@@ -9,6 +9,11 @@
         android:title="@string/preference_debug_mode_title"
         app:iconSpaceReserved="false" />
 
+    <Preference
+        android:key="@string/preference_uploader_key"
+        android:title="@string/preference_uploader_title"
+        app:iconSpaceReserved="false" />
+
     <PreferenceCategory
         android:title="@string/preference_tts_header"
         app:iconSpaceReserved="false">

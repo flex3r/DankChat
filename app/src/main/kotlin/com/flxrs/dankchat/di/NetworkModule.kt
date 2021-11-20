@@ -2,6 +2,7 @@ package com.flxrs.dankchat.di
 
 import android.content.Context
 import coil.util.CoilUtils
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.api.*
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import dagger.Module
@@ -177,6 +178,7 @@ object NetworkModule {
         badgesApiService: BadgesApiService,
         tmiApiService: TmiApiService,
         sevenTVApiService: SevenTVApiService,
+        dankChatPreferenceStore: DankChatPreferenceStore
     ): ApiManager = ApiManager(
         client,
         bttvApiService,
@@ -189,7 +191,8 @@ object NetworkModule {
         authApiService,
         badgesApiService,
         tmiApiService,
-        sevenTVApiService
+        sevenTVApiService,
+        dankChatPreferenceStore
     )
 
     @Singleton

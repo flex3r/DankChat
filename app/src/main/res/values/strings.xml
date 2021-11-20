@@ -96,7 +96,17 @@
     <string name="confirm_user_block_positive_button">Block</string>
     <string name="restart_required">Restart required to apply changes</string>
     <string name="restart">Restart</string>
-
+    <string name="uploader_add_header">Add header</string>
+    <string name="uploader_add_header_name">Name</string>
+    <string name="uploader_add_header_value">Value</string>
+    <string name="uploader_title">Custom image uploader</string>
+    <string name="uploader_reset">Reset to defaults</string>
+    <string name="uploader_url">Upload url</string>
+    <string name="uploader_field">Form field</string>
+    <string name="uploader_headers">Headers</string>
+    <string name="uploader_image_link">Image link pattern</string>
+    <string name="uploader_deletion_link">Deletion link pattern</string>
+    <string name="uploader_description">You can set a custom host for uploading images, like imgur.com or s-ul.eu. DankChat uses the same configuration format as Chatterino.\nCheck this guide for help: https://wiki.chatterino.com/Image%20Uploader/</string>
 
     <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
     <string name="preference_timestamp_title">Show timestamps</string>
@@ -212,6 +222,8 @@
     <string name="preference_tts_force_english_summary">Force TTS voice language to english instead of system default</string>
     <string name="preference_visible_emotes_title">Visible third party emotes</string>
     <string name="preference_visible_emotes_key" translatable="false">visible_emotes_key</string>
+    <string name="preference_uploader_title">Custom image uploader</string>
+    <string name="preference_uploader_key" translatable="false">uploader_key</string>
 
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>

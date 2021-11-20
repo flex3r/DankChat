@@ -16,8 +16,10 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class OverviewSettingsFragment : PreferenceFragmentCompat() {
 
     private val navController: NavController by lazy { findNavController() }

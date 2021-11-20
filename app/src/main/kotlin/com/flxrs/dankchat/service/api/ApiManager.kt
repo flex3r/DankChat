@@ -2,14 +2,14 @@ package com.flxrs.dankchat.service.api
 
 import android.util.Log
 import com.flxrs.dankchat.BuildConfig
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.api.dto.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
+import org.json.JSONObject
 import retrofit2.Response
 import java.io.File
 import java.net.URLConnection
@@ -28,6 +28,7 @@ class ApiManager @Inject constructor(
     private val badgesApiService: BadgesApiService,
     private val tmiApiService: TmiApiService,
     private val sevenTVApiService: SevenTVApiService,
+    private val dankChatPreferenceStore: DankChatPreferenceStore
 ) {
 
     suspend fun validateUser(oAuth: String): ValidateUserDto? {
@@ -80,28 +81,90 @@ class ApiManager @Inject constructor(
 
     @Suppress("BlockingMethodInNonBlockingContext")
     suspend fun uploadMedia(file: File): String? = withContext(Dispatchers.IO) {
+        val uploader = dankChatPreferenceStore.customImageUploader
         val extension = file.extension.ifBlank { "png" }
         val mimetype = URLConnection.guessContentTypeFromName(file.name)
         val body = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
-            .addFormDataPart("abc", "abc.$extension", file.asRequestBody(mimetype.toMediaType()))
+            .addFormDataPart(uploader.formField, filename = "${uploader.formField}.$extension", body = file.asRequestBody(mimetype.toMediaType()))
             .build()
+
         val request = Request.Builder()
-            .url(NUULS_UPLOAD_URL)
+            .url(uploader.uploadUrl)
             .header("User-Agent", "dankchat/${BuildConfig.VERSION_NAME}")
+            .apply {
+                uploader.parsedHeaders.forEach { (name, value) ->
+                    header(name, value)
+                }
+            }
             .post(body)
             .build()
 
         val response = client.newCall(request).execute()
         when {
-            response.isSuccessful -> response.body?.string()
+            response.isSuccessful -> {
+                val imageLinkPattern = uploader.imageLinkPattern
+                val deletionLinkPattern = uploader.deletionLinkPattern
+
+                if (imageLinkPattern == null) {
+                    return@withContext response.bodyOrNull
+                }
+
+                val json = response.jsonObjectOrNull ?: return@withContext null
+                if (deletionLinkPattern != null) {
+                    val deletionLink = json.extractLink(deletionLinkPattern)
+                    dankChatPreferenceStore.lastUploadedDeletionLink = deletionLink
+                }
+
+                json.extractLink(imageLinkPattern)
+            }
             else                  -> null
         }
     }
 
+    @Suppress("RegExpRedundantEscape")
+    private suspend fun JSONObject.extractLink(linkPattern: String): String = withContext(Dispatchers.Default) {
+        var imageLink: String = linkPattern
+
+        val regex = "\\{(.+)\\}".toRegex()
+        regex.findAll(linkPattern).forEach {
+            val jsonValue = getValue(it.groupValues[1])
+            if (jsonValue != null) {
+                imageLink = imageLink.replace(it.groupValues[0], jsonValue)
+            }
+        }
+        imageLink
+    }
+
+    private val okhttp3.Response.bodyOrNull: String?
+        get() = runCatching {
+            body?.string()
+        }.getOrNull()
+
+    private val okhttp3.Response.jsonObjectOrNull: JSONObject?
+        get() = runCatching {
+            val bodyString = bodyOrNull ?: return@runCatching null
+            JSONObject(bodyString)
+        }.getOrNull()
+
+    private fun JSONObject.getValue(pattern: String): String? {
+        return runCatching {
+            pattern
+                .split(".")
+                .fold(this) { acc, key ->
+                    val value = acc.get(key)
+                    if (value !is JSONObject) {
+                        return value.toString()
+                    }
+
+                    value
+                }
+            null
+        }.getOrNull()
+    }
+
     companion object {
         private val TAG = ApiManager::class.java.simpleName
-        private const val NUULS_UPLOAD_URL = "https://i.nuuls.com/upload"
 
         private const val BASE_LOGIN_URL = "https://id.twitch.tv/oauth2/authorize?response_type=token"
         private const val REDIRECT_URL = "https://flxrs.com/dankchat"

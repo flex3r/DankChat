@@ -27,9 +27,7 @@ class MultiEntryAdapter(val entries: MutableList<MultiEntryItem>) : RecyclerView
         }
     }
 
-    override fun getItemCount(): Int {
-        return entries.size
-    }
+    override fun getItemCount(): Int = entries.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
