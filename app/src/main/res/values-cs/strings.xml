@@ -92,6 +92,9 @@
     <string name="confirm_user_block_title">Potvrzení zablokování</string>
     <string name="confirm_user_block_message">Jste si jisti, že chcete zablokovat uživatele?</string>
     <string name="confirm_user_block_positive_button">Zablokovat</string>
+    <string name="edit_dialog_title">Přejmenovat kanál</string>
+    <string name="restart_required">Je potřeba restart k potvrzení změn</string>
+    <string name="restart">Restartování</string>
 
     <string name="preference_timestamp_title">Zobrazit časová razítka</string>
     <string name="preference_mention_format_title">Formát zmínek</string>
@@ -158,6 +161,15 @@
     <string name="preference_user_long_click_title">Chování přidržení názvu uživatele</string>
     <string name="preference_user_long_click_summary_on">Normální kliknutí otevře pop-up menu, dlouhé přidržení označí</string>
     <string name="preference_user_long_click_summary_off">Normální kliknutí označí uživatele, dlouhé přidržení otevře pop-up menu</string>
+    <string name="preference_light_theme_title">Zapnout světlý mód</string>
+    <string name="preference_dark_mode_group_title">Tmavý mód</string>
+    <string name="preference_follow_system_title">Stejný jako mód systému</string>
+    <string name="preference_true_dark_theme_title">Pravý tmavý mód</string>
+    <string name="preference_true_dark_theme_summary">Přinutit pravý tmavý mód</string>
+    <string name="preference_display_group_title">Displej</string>
+    <string name="preference_tts_force_english_title">Vnutit anglický jazyk</string>
+    <string name="preference_tts_force_english_summary">Vnutit jazyk TTS do angličtiny místo systémového jazyku</string>
+    <string name="preference_visible_emotes_title">Viditelné emotikony třetích stran</string>
 
     <plurals name="viewers">
         <item quantity="one">Živě s %d divákem</item>
