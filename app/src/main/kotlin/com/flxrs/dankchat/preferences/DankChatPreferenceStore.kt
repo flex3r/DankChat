@@ -121,7 +121,7 @@ class DankChatPreferenceStore @Inject constructor(context: Context) {
         return ImageUploader(UPLOADER_URL_DEFAULT, UPLOADER_FORM_FIELD_DEFAULT, null, null, null)
     }
 
-    private fun withChannelRenames(block: MutableMap<String, String>.() -> Unit) {
+    private inline fun withChannelRenames(block: MutableMap<String, String>.() -> Unit) {
         val renameMap = channelRenames?.toMutableMap() ?: mutableMapOf()
         renameMap.block()
         channelRenames = renameMap.toJson()
@@ -129,10 +129,8 @@ class DankChatPreferenceStore @Inject constructor(context: Context) {
 
     private fun String.toMutableMap(): MutableMap<String, String> {
         return kotlin.runCatching {
-            moshiAdapter.fromJson(this) as MutableMap<String, String>
-        }.getOrElse {
-            mutableMapOf()
-        }
+            moshiAdapter.fromJson(this)?.toMutableMap() ?: mutableMapOf()
+        }.getOrDefault(mutableMapOf())
     }
 
     private fun Map<String, String>.toJson(): String = moshiAdapter.toJson(this)
