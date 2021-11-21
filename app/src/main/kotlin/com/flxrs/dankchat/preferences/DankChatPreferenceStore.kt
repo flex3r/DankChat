@@ -110,15 +110,13 @@ class DankChatPreferenceStore @Inject constructor(context: Context) {
     }
 
     fun resetImageUploader(): ImageUploader {
-        dankChatPreferences.edit {
-            putString(UPLOADER_URL, UPLOADER_URL_DEFAULT)
-            putString(UPLOADER_FORM_FIELD, UPLOADER_FORM_FIELD_DEFAULT)
-            putString(UPLOADER_HEADERS, null)
-            putString(UPLOADER_IMAGE_LINK, null)
-            putString(UPLOADER_DELETION_LINK, null)
-        }
-
-        return ImageUploader(UPLOADER_URL_DEFAULT, UPLOADER_FORM_FIELD_DEFAULT, null, null, null)
+        return ImageUploader(
+            uploadUrl = UPLOADER_URL_DEFAULT,
+            formField = UPLOADER_FORM_FIELD_DEFAULT,
+            headers = null,
+            imageLinkPattern = null,
+            deletionLinkPattern = null
+        ).apply { customImageUploader = this }
     }
 
     private inline fun withChannelRenames(block: MutableMap<String, String>.() -> Unit) {
