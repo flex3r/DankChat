@@ -74,7 +74,7 @@ class MainViewModel @Inject constructor(
     private val mentionSheetOpen = MutableStateFlow(false)
     private val preferEmoteSuggestions = MutableStateFlow(false)
     private val currentStreamedChannel = MutableStateFlow("")
-    private val _isFullscreen = MutableStateFlow(true)
+    private val _isFullscreen = MutableStateFlow(false)
     private val canShowStream = MutableStateFlow(true)
     private val inputEnabled = MutableStateFlow(true)
 
@@ -422,7 +422,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun toggleFullscreen() {
-        val fullscreen = _isFullscreen.value
+        val fullscreen = isFullscreen.value
         _isFullscreen.value = !fullscreen
     }
 

@@ -685,13 +685,13 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun changeActionBarVisibility(enabled: Boolean) {
+    private fun changeActionBarVisibility(isFullscreen: Boolean) {
         hideKeyboard()
-        (activity as? MainActivity)?.setFullScreen(!enabled)
+        (activity as? MainActivity)?.setFullScreen(isFullscreen)
 
         with(binding) {
             input.clearFocus()
-            tabs.isVisible = enabled
+            tabs.isVisible = !isFullscreen
             root.requestApplyInsets()
         }
     }
@@ -970,34 +970,23 @@ class MainFragment : Fragment() {
             }
         }
 
-        var wasLandScapeNotFullscreen = false
         setOnFocusChangeListener { _, hasFocus ->
-            when {
-                !hasFocus && wasLandScapeNotFullscreen && isLandscape          -> {
-                    wasLandScapeNotFullscreen = false
-                    binding.toggleFullscreen.visibility = View.GONE
-                    binding.tabs.visibility = View.VISIBLE
-                    (activity as? MainActivity)?.setFullScreen(false)
-                }
-                !hasFocus && binding.toggleFullscreen.isVisible                -> {
-                    wasLandScapeNotFullscreen = false
-                    (activity as? MainActivity)?.setFullScreen(true, changeActionBarVisibility = false)
-                }
-                hasFocus && !binding.toggleFullscreen.isVisible && isLandscape -> {
-                    wasLandScapeNotFullscreen = true
-                    (activity as? AppCompatActivity)?.supportActionBar?.hide()
-                    binding.toggleFullscreen.visibility = View.VISIBLE
-                    binding.tabs.visibility = View.GONE
-                    (activity as? MainActivity)?.apply {
-                        setFullScreen(false, changeActionBarVisibility = false)
-                        supportActionBar?.hide()
-                    }
-                }
-                else                                                           -> {
-                    wasLandScapeNotFullscreen = false
-                    (activity as? MainActivity)?.setFullScreen(false, changeActionBarVisibility = false)
-                }
+            if (!isLandscape) {
+                return@setOnFocusChangeListener
             }
+
+            val isFullscreen = mainViewModel.isFullscreen.value
+            binding.tabs.isVisible = !hasFocus && !isFullscreen
+            binding.streamWebview.isVisible = !hasFocus
+
+            when {
+                hasFocus -> (activity as? MainActivity)?.apply {
+                    supportActionBar?.hide()
+                    setFullScreen(false, changeActionBarVisibility = false)
+                }
+                else     -> (activity as? MainActivity)?.setFullScreen(isFullscreen)
+            }
+
             binding.root.requestApplyInsets()
         }
     }
