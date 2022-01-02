@@ -63,7 +63,7 @@ class StreamWebView @JvmOverloads constructor(
                 return true
             }
 
-            return ALLOWED_PATHS.any { url.startsWith(it) }
+            return ALLOWED_PATHS.none { url.startsWith(it) }
         }
 
         override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
@@ -72,7 +72,7 @@ class StreamWebView @JvmOverloads constructor(
                 return true
             }
 
-            return ALLOWED_PATHS.any { url.startsWith(it) }
+            return ALLOWED_PATHS.none { url.startsWith(it) }
         }
     }
 
