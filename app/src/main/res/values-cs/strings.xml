@@ -107,7 +107,7 @@
     <string name="preference_notification_summary">Vytváří notifikace, když jste zmíněn, pokud je aplikace na pozadí</string>
     <string name="preference_notification_header">Notifikace</string>
     <string name="preference_chat_header">Chat</string>
-    <string name="preference_logout_title">Odhlásit se</string>
+    <string name="logout">Odhlásit se</string>
     <string name="preference_general_header">Obecné</string>
     <string name="preference_about_header">O aplikaci</string>
     <string name="preference_appearance_header">Vzhled</string>

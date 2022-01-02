@@ -100,7 +100,7 @@
     <string name="preference_notification_summary">Создаёт уведомления, если приложение работает в фоновом режиме</string>
     <string name="preference_notification_header">Уведомления</string>
     <string name="preference_chat_header">Чат</string>
-    <string name="preference_logout_title">Выйти</string>
+    <string name="logout">Выйти</string>
     <string name="preference_general_header">Общие</string>
     <string name="preference_about_header">О программе</string>
     <string name="preference_appearance_header">Внешний вид</string>

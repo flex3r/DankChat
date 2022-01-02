@@ -109,6 +109,9 @@
     <string name="uploader_description">You can set a custom host for uploading images, like imgur.com or s-ul.eu. DankChat uses the same configuration format as Chatterino.\nCheck this guide for help: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="toggle_fullscreen">Toggle fullscreen</string>
     <string name="toggle_stream">Toggle stream</string>
+    <string name="account">Account</string>
+    <string name="relogin">Login again</string>
+    <string name="logout">Logout</string>
 
     <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
     <string name="preference_timestamp_title">Show timestamps</string>
@@ -129,7 +132,6 @@
     <string name="preference_chat_header">Chat</string>
     <string name="preference_chat_key" translatable="false">chat_key</string>
     <string name="preference_logout_key" translatable="false">logout_key</string>
-    <string name="preference_logout_title">Logout</string>
     <string name="preference_general_header">General</string>
     <string name="preference_about_header">About</string>
     <string name="preference_appearance_header">Appearance</string>

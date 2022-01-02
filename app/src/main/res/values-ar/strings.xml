@@ -105,7 +105,7 @@
     <string name="preference_notification_summary">ينشئ إشعارات عند ذكرك أثناء وجود التطبيق في الخلفية</string>
     <string name="preference_notification_header">إشعارات</string>
     <string name="preference_chat_header">دردشة</string>
-    <string name="preference_logout_title">"تسجيل خروج "</string>
+    <string name="logout">"تسجيل خروج "</string>
     <string name="preference_general_header">عام</string>
     <string name="preference_about_header">حول</string>
     <string name="preference_appearance_header">المظهر</string>

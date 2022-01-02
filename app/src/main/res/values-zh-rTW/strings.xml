@@ -92,7 +92,7 @@
     <string name="preference_keep_screen_on_title">保持螢幕恆開</string>
     <string name="preference_line_separator_title">透過格線分隔訊息</string>
     <string name="preference_load_message_history_title">啟動時自動讀取聊天紀錄</string>
-    <string name="preference_logout_title">登出</string>
+    <string name="logout">登出</string>
     <string name="preference_mention_format_summary">更改點選使用者名時所出現的提及字串樣式</string>
     <string name="preference_mention_format_title">提及格式</string>
     <string name="preference_message_history_dashboard_summary">進一步了解此服務，並選擇是否要替您的頻道關閉聊天紀錄</string>

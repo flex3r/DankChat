@@ -29,7 +29,7 @@
     <Preference
         android:icon="@drawable/ic_exit_to_app"
         android:key="@string/preference_logout_key"
-        android:title="@string/preference_logout_title" />
+        android:title="@string/logout" />
 
     <PreferenceCategory
         android:title="@string/preference_about_header"

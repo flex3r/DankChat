@@ -93,7 +93,7 @@
     <string name="preference_keep_screen_on_title">Držati ekran upaljen</string>
     <string name="preference_line_separator_title">Odvojite poruke linijama</string>
     <string name="preference_load_message_history_title">Učitaj istoriju poruka na početku</string>
-    <string name="preference_logout_title">Odjavi se</string>
+    <string name="logout">Odjavi se</string>
     <string name="preference_mention_format_summary">Promenite format pominjanja kada kliknete na korisničko ime</string>
     <string name="preference_mention_format_title">Format pominjanja</string>
     <string name="preference_message_history_dashboard_summary">Saznajte više o usluzi i onemogućite istoriju poruka za svoj kanal</string>

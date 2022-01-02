@@ -77,7 +77,7 @@
     <string name="preference_notification_summary">Crée une notification si vous êtes mentionné et l\'application est en arrière plan</string>
     <string name="preference_notification_header">Notifications</string>
     <string name="preference_chat_header">Chat</string>
-    <string name="preference_logout_title">Déconnexion</string>
+    <string name="logout">Déconnexion</string>
     <string name="preference_general_header">Général</string>
     <string name="preference_about_header">À propos</string>
     <string name="preference_appearance_header">Apparence</string>

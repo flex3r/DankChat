@@ -79,7 +79,7 @@
     <string name="preference_notification_summary">Crea notifiche quando menzionato mentre l\'app e\' in esecuzione in background</string>
     <string name="preference_notification_header">Notifiche</string>
     <string name="preference_chat_header">Chat</string>
-    <string name="preference_logout_title">Disconnetiti</string>
+    <string name="logout">Disconnetiti</string>
     <string name="preference_general_header">Generale</string>
     <string name="preference_about_header">Riguardo</string>
     <string name="preference_appearance_header">Apparenza</string>

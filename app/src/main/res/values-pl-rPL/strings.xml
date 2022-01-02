@@ -80,7 +80,7 @@
     <string name="preference_notification_summary">Pokazuje powiadomienia wzmianek gdy aplikacja działa w tle</string>
     <string name="preference_notification_header">Powiadomienia</string>
     <string name="preference_chat_header">Czat</string>
-    <string name="preference_logout_title">Wyloguj</string>
+    <string name="logout">Wyloguj</string>
     <string name="preference_general_header">Ogólne</string>
     <string name="preference_about_header">O aplikacji</string>
     <string name="preference_appearance_header">Wygląd</string>

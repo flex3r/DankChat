@@ -82,7 +82,7 @@
     <string name="preference_notification_summary">Benachrichtigung bei einer Mention, wenn die App im Hintergrund läuft.</string>
     <string name="preference_notification_header">Benachrichtigungen</string>
     <string name="preference_chat_header">Chat</string>
-    <string name="preference_logout_title">Abmelden</string>
+    <string name="logout">Abmelden</string>
     <string name="preference_general_header">Allgemein</string>
     <string name="preference_about_header">Über</string>
     <string name="preference_appearance_header">Aussehen</string>

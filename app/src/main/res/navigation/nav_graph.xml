@@ -54,7 +54,12 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.flxrs.dankchat.login.LoginFragment"
-        android:label="LoginFragment" />
+        android:label="LoginFragment">
+        <argument
+            android:name="isRelogin"
+            android:defaultValue="false"
+            app:argType="boolean" />
+    </fragment>
     <fragment
         android:id="@+id/overviewSettingsFragment"
         android:name="com.flxrs.dankchat.preferences.screens.OverviewSettingsFragment"

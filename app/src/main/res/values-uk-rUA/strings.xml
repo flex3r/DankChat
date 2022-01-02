@@ -107,7 +107,7 @@
     <string name="preference_notification_summary">Відображає повідомлення при згадках, працюючи у фоновому режимі</string>
     <string name="preference_notification_header">Повідомлення</string>
     <string name="preference_chat_header">Чат</string>
-    <string name="preference_logout_title">Вийти</string>
+    <string name="logout">Вийти</string>
     <string name="preference_general_header">Загальні</string>
     <string name="preference_about_header">Про додаток</string>
     <string name="preference_appearance_header">Зовнішній вигляд</string>

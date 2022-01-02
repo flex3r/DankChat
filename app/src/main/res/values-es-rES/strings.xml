@@ -109,7 +109,7 @@
     <string name="preference_notification_summary">Crea notificaciones al ser mencionado mientras la aplicación está en segundo plano</string>
     <string name="preference_notification_header">Notificaciones</string>
     <string name="preference_chat_header">Chat</string>
-    <string name="preference_logout_title">Cerrar sesión</string>
+    <string name="logout">Cerrar sesión</string>
     <string name="preference_general_header">General</string>
     <string name="preference_about_header">Acerca de</string>
     <string name="preference_appearance_header">Apariencia</string>

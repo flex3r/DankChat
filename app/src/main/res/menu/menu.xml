@@ -31,6 +31,23 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_account"
+        android:title="@string/account"
+        app:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/menu_relogin"
+                android:title="@string/relogin"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/menu_logout"
+                android:title="@string/logout"
+                app:showAsAction="never" />
+        </menu>
+    </item>
+
+
+    <item
         android:id="@+id/menu_upload_image"
         android:title="@string/upload_media"
         app:showAsAction="never">

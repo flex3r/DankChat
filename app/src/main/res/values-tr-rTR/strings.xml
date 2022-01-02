@@ -60,7 +60,7 @@
     <string name="preference_streaminfo_summary">Canlılık durumunu ve izleyici sayısını gösterir</string>
     <string name="preference_notification_header">Bildirimler</string>
     <string name="preference_chat_header">Sohbet</string>
-    <string name="preference_logout_title">Çıkış</string>
+    <string name="logout">Çıkış</string>
     <string name="preference_general_header">Genel</string>
     <string name="preference_about_header">Hakkında</string>
     <string name="preference_appearance_header">Görünüm</string>

@@ -106,7 +106,7 @@
     <string name="preference_notification_summary">Creates notifications when mentioned while the app is in the background</string>
     <string name="preference_notification_header">Notifications</string>
     <string name="preference_chat_header">Chat</string>
-    <string name="preference_logout_title">Logout</string>
+    <string name="logout">Logout</string>
     <string name="preference_general_header">General</string>
     <string name="preference_about_header">About</string>
     <string name="preference_appearance_header">Appearance</string>

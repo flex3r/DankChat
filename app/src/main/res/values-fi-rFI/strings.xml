@@ -104,7 +104,7 @@
     <string name="preference_notification_summary">Luo ilmoituksia, kun sinut mainitaan, kun sovellus on taustalla</string>
     <string name="preference_notification_header">Ilmoitukset</string>
     <string name="preference_chat_header">Chatti</string>
-    <string name="preference_logout_title">Kirjaudu ulos</string>
+    <string name="logout">Kirjaudu ulos</string>
     <string name="preference_general_header">Yleinen</string>
     <string name="preference_about_header">Tietoja</string>
     <string name="preference_appearance_header">Ulkoasu</string>

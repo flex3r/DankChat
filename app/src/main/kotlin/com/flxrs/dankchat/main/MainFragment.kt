@@ -376,6 +376,7 @@ class MainFragment : Fragment() {
                 else -> R.attr.colorControlHighlight
             }
             findItem(R.id.menu_login)?.isVisible = !isLoggedIn
+            findItem(R.id.menu_account)?.isVisible = isLoggedIn
             findItem(R.id.menu_manage)?.isVisible = hasChannels
             findItem(R.id.menu_open)?.isVisible = hasChannels
             findItem(R.id.menu_mentions)?.apply {
@@ -400,7 +401,9 @@ class MainFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_reconnect     -> mainViewModel.reconnect()
-            R.id.menu_login         -> navigateSafe(R.id.action_mainFragment_to_loginFragment).also { hideKeyboard() }
+            R.id.menu_login         -> openLogin()
+            R.id.menu_relogin       -> openLogin(isRelogin = true)
+            R.id.menu_logout        -> showLogoutConfirmationDialog()
             R.id.menu_add           -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment)
             R.id.menu_mentions      -> mentionBottomSheetBehavior?.expand()
             R.id.menu_open          -> openChannel()
@@ -421,6 +424,12 @@ class MainFragment : Fragment() {
         val currentUserId = dankChatPreferences.userIdString ?: return
         val directions = MainFragmentDirections.actionMainFragmentToUserPopupDialogFragment(targetUserId, currentUserId, channel, oAuth, isWhisperPopup)
         navigateSafe(directions)
+    }
+
+    fun openLogin(isRelogin: Boolean = false) {
+        val directions = MainFragmentDirections.actionMainFragmentToLoginFragment(isRelogin)
+        navigateSafe(directions)
+        hideKeyboard()
     }
 
     fun mentionUser(user: String) {

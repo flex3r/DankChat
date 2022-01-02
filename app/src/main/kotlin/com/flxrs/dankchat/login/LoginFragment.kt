@@ -14,6 +14,7 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.LoginFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
@@ -22,6 +23,7 @@ import com.flxrs.dankchat.service.api.ApiManager
 import com.flxrs.dankchat.service.api.dto.ValidateUserDto
 import com.flxrs.dankchat.utils.extensions.showLongSnackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
@@ -30,6 +32,7 @@ class LoginFragment : Fragment() {
 
     private var bindingRef: LoginFragmentBinding? = null
     private val binding get() = bindingRef!!
+    private val args: LoginFragmentArgs by navArgs()
 
     @Inject
     lateinit var dankChatPreferences: DankChatPreferenceStore
@@ -45,9 +48,13 @@ class LoginFragment : Fragment() {
                 javaScriptEnabled = true
                 setSupportZoom(true)
             }
-            CookieManager.getInstance().removeAllCookies(null)
-            clearCache(true)
-            clearFormData()
+
+            if (!args.isRelogin) {
+                CookieManager.getInstance().removeAllCookies(null)
+                clearCache(true)
+                clearFormData()
+            }
+
             webViewClient = TwitchAuthClient()
             loadUrl(ApiManager.LOGIN_URL)
         }
@@ -104,7 +111,7 @@ class LoginFragment : Fragment() {
         private fun parseOAuthToken(fragment: String) {
             if (fragment.startsWith("access_token=")) {
                 val token = fragment.substringAfter("access_token=").substringBefore("&scope=")
-                lifecycleScope.launchWhenResumed {
+                lifecycleScope.launch {
                     val result = apiManager.validateUser(token)
                     val successful = saveLoginDetails(token, result)
 
