@@ -22,7 +22,6 @@ class StreamWebView @JvmOverloads constructor(
     defStyleAttr: Int = android.R.attr.webViewStyle,
     defStyleRes: Int = 0
 ) : WebView(context, attrs, defStyleAttr, defStyleRes) {
-    private var currentUrl = ""
 
     init {
         with(settings) {
@@ -49,11 +48,7 @@ class StreamWebView @JvmOverloads constructor(
                         }
                         else          -> BLANK_URL
                     }
-                    if (currentUrl == url) {
-                        return@onEach
-                    }
 
-                    currentUrl = url
                     stopLoading()
                     loadUrl(url)
                 }
@@ -62,12 +57,13 @@ class StreamWebView @JvmOverloads constructor(
     }
 
     private inner class StreamWebViewClient : WebViewClient() {
+
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
             if (url.isNullOrBlank()) {
                 return true
             }
 
-            return url != BLANK_URL && url != currentUrl
+            return ALLOWED_PATHS.any { url.startsWith(it) }
         }
 
         override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
@@ -76,11 +72,17 @@ class StreamWebView @JvmOverloads constructor(
                 return true
             }
 
-            return url != BLANK_URL && url != currentUrl
+            return ALLOWED_PATHS.any { url.startsWith(it) }
         }
     }
 
     private companion object {
         private const val BLANK_URL = "about:blank"
+        private val ALLOWED_PATHS = listOf(
+            BLANK_URL,
+            "https://id.twitch.tv/",
+            "https://www.twitch.tv/passport-callback",
+            "https://player.twitch.tv/",
+        )
     }
 }
