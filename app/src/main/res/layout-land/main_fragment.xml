@@ -36,7 +36,7 @@
                     android:id="@+id/appbar_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fitsSystemWindows="true"
+                    app:layout_constrainedHeight="true"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
@@ -55,18 +55,18 @@
                         app:tabMode="auto" />
                 </com.google.android.material.appbar.AppBarLayout>
 
+
                 <com.flxrs.dankchat.main.stream.StreamWebView
                     android:id="@+id/stream_webview"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintDimensionRatio="W,16:9"
+                    app:layout_constraintDimensionRatio="H,16:9"
                     app:layout_constraintEnd_toStartOf="@id/chat_viewpager"
-                    app:layout_constraintHorizontal_chainStyle="spread"
-                    app:layout_constraintHorizontal_weight="1"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/appbar_layout" />
+                    app:layout_constraintTop_toBottomOf="@id/appbar_layout"
+                    tools:visibility="visible" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/toggle_fullscreen"
@@ -100,6 +100,7 @@
                     android:visibility="@{vm.shouldShowViewPager ? View.VISIBLE : View.GONE}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_weight="1"
                     app:layout_constraintStart_toEndOf="@id/stream_webview"
                     app:layout_constraintTop_toBottomOf="@id/appbar_layout" />
 
