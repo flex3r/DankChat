@@ -176,7 +176,7 @@ class MainViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
     val shouldShowStreamToggle: StateFlow<Boolean> =
         combine(canShowStream, activeChannel, currentStreamedChannel, currentStreamInformation) { canShowStream, activeChannel, currentStream, currentStreamData ->
-            canShowStream && (activeChannel == currentStream || currentStream.isBlank() && currentStreamData != null)
+            canShowStream && activeChannel.isNotBlank() && (activeChannel == currentStream || currentStream.isBlank() && currentStreamData != null)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
     val isFullscreen: StateFlow<Boolean> = _isFullscreen.asStateFlow()
 
