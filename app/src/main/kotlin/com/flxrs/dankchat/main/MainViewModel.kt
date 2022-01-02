@@ -462,10 +462,16 @@ class MainViewModel @Inject constructor(
         val result = runCatching { block(handler) }
 
         return when {
-            result.isFailure || failure != null -> DataLoadingState.Failed(
-                errorMessage = result.exceptionOrNull()?.stackTraceToString() ?: failure?.stackTraceToString().orEmpty(),
-                parameters = parameters
-            )
+            result.isFailure || failure != null -> {
+                val resultOrFailure = result.exceptionOrNull() ?: failure
+                Log.e(TAG, resultOrFailure?.stackTraceToString().orEmpty())
+
+                val message = resultOrFailure?.toString().orEmpty()
+                DataLoadingState.Failed(
+                    errorMessage = message,
+                    parameters = parameters
+                )
+            }
             else                                -> DataLoadingState.Finished
         }
     }

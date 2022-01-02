@@ -58,6 +58,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.BaseTransientBottomBar.BaseCallback
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
@@ -102,7 +103,7 @@ class MainFragment : Fragment() {
         val mimeTypeMap = MimeTypeMap.getSingleton()
         val extension = mimeTypeMap.getExtensionFromMimeType(mimeType)
         if (extension == null) {
-            showSnackbar(getString(R.string.snackbar_upload_failed))
+            showSnackBar(getString(R.string.snackbar_upload_failed))
             return@registerForActivityResult
         }
 
@@ -116,7 +117,7 @@ class MainFragment : Fragment() {
             mainViewModel.uploadMedia(copy)
         } catch (t: Throwable) {
             copy.delete()
-            showSnackbar(getString(R.string.snackbar_upload_failed))
+            showSnackBar(getString(R.string.snackbar_upload_failed))
         }
     }
 
@@ -316,7 +317,7 @@ class MainFragment : Fragment() {
                     )
 
                     if (name.isNotBlank() && oAuth.isNotBlank()) {
-                        showSnackbar(getString(R.string.snackbar_login, name))
+                        showSnackBar(getString(R.string.snackbar_login, name))
                     }
                 }
             }
@@ -476,7 +477,7 @@ class MainFragment : Fragment() {
         )
 
         if (name.isNotBlank() && oAuth.isNotBlank()) {
-            showSnackbar(getString(R.string.snackbar_login, name))
+            showSnackBar(getString(R.string.snackbar_login, name))
         }
     }
 
@@ -556,14 +557,14 @@ class MainFragment : Fragment() {
     private fun handleImageUploadState(result: ImageUploadState) {
         when (result) {
             is ImageUploadState.Loading, ImageUploadState.None -> return
-            is ImageUploadState.Failed                         -> showSnackbar(
+            is ImageUploadState.Failed                         -> showSnackBar(
                 message = result.errorMessage?.let { getString(R.string.snackbar_upload_failed_cause, it) } ?: getString(R.string.snackbar_upload_failed),
                 onDismiss = { result.mediaFile.delete() },
                 action = getString(R.string.snackbar_retry) to { mainViewModel.uploadMedia(result.mediaFile) })
             is ImageUploadState.Finished                       -> {
                 val clipboard = getSystemService(requireContext(), ClipboardManager::class.java)
                 clipboard?.setPrimaryClip(ClipData.newPlainText("nuuls image url", result.url))
-                showSnackbar(
+                showSnackBar(
                     message = getString(R.string.snackbar_image_uploaded, result.url),
                     action = getString(R.string.snackbar_paste) to { insertText(result.url) }
                 )
@@ -574,9 +575,11 @@ class MainFragment : Fragment() {
     private fun handleDataLoadingState(result: DataLoadingState) {
         when (result) {
             is DataLoadingState.Loading, DataLoadingState.Finished, DataLoadingState.None -> return
-            is DataLoadingState.Reloaded                                                  -> showSnackbar(getString(R.string.snackbar_data_reloaded))
-            is DataLoadingState.Failed                                                    -> showSnackbar(
+            is DataLoadingState.Reloaded                                                  -> showSnackBar(getString(R.string.snackbar_data_reloaded))
+            is DataLoadingState.Failed                                                    -> showSnackBar(
                 message = getString(R.string.snackbar_data_load_failed_cause, result.errorMessage),
+                multiLine = true,
+                duration = Snackbar.LENGTH_LONG,
                 action = getString(R.string.snackbar_retry) to {
                     when {
                         result.parameters.isReloadEmotes -> reloadEmotes(result.parameters.channels.first())
@@ -602,9 +605,9 @@ class MainFragment : Fragment() {
         if (success && !oAuth.isNullOrBlank() && !name.isNullOrBlank() && !id.isNullOrBlank()) {
             mainViewModel.closeAndReconnect(name, oAuth, id, loadTwitchData = true, loadThirdPartyData = loadThirdPartyData)
             dankChatPreferences.isLoggedIn = true
-            showSnackbar(getString(R.string.snackbar_login, name))
+            showSnackBar(getString(R.string.snackbar_login, name))
         } else {
-            showSnackbar(getString(R.string.snackbar_login_failed))
+            showSnackBar(getString(R.string.snackbar_login_failed))
         }
     }
 
@@ -624,7 +627,7 @@ class MainFragment : Fragment() {
             mainViewModel.uploadMedia(mediaFile)
         } catch (e: IOException) {
             mediaFile?.delete()
-            showSnackbar(getString(R.string.snackbar_upload_failed))
+            showSnackBar(getString(R.string.snackbar_upload_failed))
         }
     }
 
@@ -766,11 +769,23 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun showSnackbar(message: String, onDismiss: () -> Unit = {}, action: Pair<String, () -> Unit>? = null) {
+    private fun showSnackBar(
+        message: String,
+        multiLine: Boolean = false,
+        @BaseTransientBottomBar.Duration duration: Int = Snackbar.LENGTH_SHORT,
+        onDismiss: () -> Unit = {},
+        action: Pair<String, () -> Unit>? = null
+    ) {
         bindingRef?.let { binding ->
             binding.inputLayout.post {
-                Snackbar.make(binding.coordinator, message, Snackbar.LENGTH_SHORT).apply {
-                    if (binding.inputLayout.isVisible) anchorView = binding.inputLayout
+                Snackbar.make(binding.coordinator, message, duration).apply {
+                    if (binding.inputLayout.isVisible) {
+                        anchorView = binding.inputLayout
+                    }
+                    if (multiLine) {
+                        (view.findViewById<View?>(com.google.android.material.R.id.snackbar_text) as? TextView?)?.isSingleLine = false
+                    }
+
                     addCallback(object : Snackbar.Callback() {
                         override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
                             when (event) {
@@ -780,6 +795,7 @@ class MainFragment : Fragment() {
                         }
                     })
                     action?.let { (msg, onAction) -> setAction(msg) { onAction() } }
+
                 }.show()
             }
         }
