@@ -9,7 +9,7 @@ buildscript {
         kotlin_version = '1.6.10'
 
         // Kotlin
-        coroutines_version = '1.5.2'
+        coroutines_version = '1.6.0'
 
         // AndroidX
         activity_version = '1.4.0'

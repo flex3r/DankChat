@@ -20,8 +20,8 @@
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="@string/preference_true_dark_theme_key"
-            android:title="@string/preference_true_dark_theme_title"
             android:summary="@string/preference_true_dark_theme_summary"
+            android:title="@string/preference_true_dark_theme_title"
             app:iconSpaceReserved="false" />
 
         <SwitchPreferenceCompat
@@ -56,6 +56,13 @@
             android:key="@string/preference_show_input_key"
             android:summary="@string/preference_show_input_summary"
             android:title="@string/preference_show_input_title"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="@string/preference_show_stream_key"
+            android:summary="@string/preference_show_stream_summary"
+            android:title="@string/preference_show_stream_title"
             app:iconSpaceReserved="false" />
 
         <SwitchPreferenceCompat

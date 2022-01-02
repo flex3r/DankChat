@@ -60,6 +60,9 @@ fun Fragment.hideKeyboard() {
 val Fragment.isLandscape: Boolean
     get() = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
+val Fragment.isPortrait: Boolean
+    get() = resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+
 val Resources.isSystemNightMode: Boolean
     get() = configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
 

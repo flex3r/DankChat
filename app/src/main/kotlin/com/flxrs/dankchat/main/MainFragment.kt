@@ -3,7 +3,6 @@ package com.flxrs.dankchat.main
 import android.app.Activity
 import android.content.*
 import android.content.res.ColorStateList
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -19,6 +18,7 @@ import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
@@ -46,8 +46,8 @@ import com.flxrs.dankchat.chat.suggestion.SpaceTokenizer
 import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.chat.user.UserPopupResult
 import com.flxrs.dankchat.databinding.MainFragmentBinding
-import com.flxrs.dankchat.preferences.screens.ChatSettingsFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.screens.ChatSettingsFragment
 import com.flxrs.dankchat.service.state.DataLoadingState
 import com.flxrs.dankchat.service.state.ImageUploadState
 import com.flxrs.dankchat.service.twitch.connection.ConnectionState
@@ -120,7 +120,7 @@ class MainFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         tabAdapter = ChatTabAdapter(this)
         emoteMenuAdapter = EmoteMenuAdapter(::insertEmote)
 
@@ -143,8 +143,12 @@ class MainFragment : Fragment() {
             tabs.getTabAt(tabs.selectedTabPosition)?.removeBadge()
             tabs.addOnTabSelectedListener(tabSelectionListener)
 
-            showActionbarFab.setOnClickListener { mainViewModel.appbarEnabled.value = true }
             addChannelsButton.setOnClickListener { navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment) }
+            toggleFullscreen.setOnClickListener { mainViewModel.toggleFullscreen() }
+            toggleStream.setOnClickListener {
+                mainViewModel.toggleStream()
+                root.requestApplyInsets()
+            }
         }
 
         mainViewModel.apply {
@@ -153,7 +157,7 @@ class MainFragment : Fragment() {
             collectFlow(shouldShowUploadProgress) { activity?.invalidateOptionsMenu() }
             collectFlow(suggestions, ::setSuggestions)
             collectFlow(emoteItems, emoteMenuAdapter::submitList)
-            collectFlow(appbarEnabled) { changeActionBarVisibility(it) }
+            collectFlow(isFullscreen) { changeActionBarVisibility(it) }
             collectFlow(canType) { if (it) binding.inputLayout.setup() }
             collectFlow(connectionState) { state ->
                 binding.inputLayout.hint = when (state) {
@@ -265,14 +269,17 @@ class MainFragment : Fragment() {
                 }
             }
 
-            ViewCompat.setOnApplyWindowInsetsListener(binding.showActionbarFab) { v, insets ->
-                if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT && v.isVisible) {
-                    v.y = when {
-                        binding.input.hasFocus() -> 0f
-                        else                     -> insets
-                            .getInsets(WindowInsetsCompat.Type.displayCutout())
-                            .top.toFloat()
-                    }
+            ViewCompat.setOnApplyWindowInsetsListener(binding.toggleFullscreen) { v, insets ->
+                if (!isPortrait) {
+                    return@setOnApplyWindowInsetsListener WindowInsetsCompat.CONSUMED
+                }
+
+                val extraMargin = when {
+                    binding.streamWebview.isVisible -> 0
+                    else                            -> insets.getInsets(WindowInsetsCompat.Type.displayCutout()).top
+                }
+                v.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                    topMargin = 8.dp + extraMargin
                 }
                 WindowInsetsCompat.CONSUMED
             }
@@ -324,7 +331,7 @@ class MainFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         emoteMenuBottomSheetBehavior?.hide()
-        changeActionBarVisibility(mainViewModel.appbarEnabled.value)
+        changeActionBarVisibility(mainViewModel.isFullscreen.value)
 
         (activity as? MainActivity)?.apply {
             if (channelToOpen.isNotBlank()) {
@@ -401,7 +408,6 @@ class MainFragment : Fragment() {
             R.id.menu_choose_media  -> showNuulsUploadDialogIfNotAcknowledged { requestGalleryMedia.launch() }
             R.id.menu_capture_image -> startCameraCapture()
             R.id.menu_capture_video -> startCameraCapture(captureVideo = true)
-            R.id.menu_hide          -> mainViewModel.appbarEnabled.value = false
             R.id.menu_clear         -> clear()
             R.id.menu_settings      -> navigateSafe(R.id.action_mainFragment_to_overviewSettingsFragment).also { hideKeyboard() }
             else                    -> return false
@@ -682,7 +688,6 @@ class MainFragment : Fragment() {
 
         with(binding) {
             input.clearFocus()
-            showActionbarFab.isVisible = !enabled
             tabs.isVisible = enabled
             root.requestApplyInsets()
         }
@@ -705,6 +710,7 @@ class MainFragment : Fragment() {
         }
     }
 
+    // TODO extract and make preferences injectable
     private fun initPreferences(context: Context) {
         val roomStateKey = getString(R.string.preference_roomstate_key)
         val streamInfoKey = getString(R.string.preference_streaminfo_key)
@@ -717,6 +723,7 @@ class MainFragment : Fragment() {
         val loadSupibotKey = getString(R.string.preference_supibot_suggestions_key)
         val scrollBackLengthKey = getString(R.string.preference_scrollback_length_key)
         val preferEmotesSuggestionsKey = getString(R.string.preference_prefer_emote_suggestions_key)
+        val showStreamToggleKey = getString(R.string.preference_show_stream_key)
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.oAuthKey.isNullOrBlank()) {
             dankChatPreferences.clearLogin()
         }
@@ -730,7 +737,7 @@ class MainFragment : Fragment() {
                     fetchStreamInformation()
                     mainViewModel.setStreamInfoEnabled(p.getBoolean(key, true))
                 }
-                inputKey                   -> mainViewModel.inputEnabled.value = p.getBoolean(key, true)
+                inputKey                   -> mainViewModel.setInputEnabled(p.getBoolean(key, true))
                 customMentionsKey          -> mainViewModel.setMentionEntries(p.getStringSet(key, emptySet()))
                 blacklistKey               -> mainViewModel.setBlacklistEntries(p.getStringSet(key, emptySet()))
                 loadSupibotKey             -> mainViewModel.setSupibotSuggestions(p.getBoolean(key, false))
@@ -738,6 +745,7 @@ class MainFragment : Fragment() {
                 keepScreenOnKey            -> keepScreenOn(p.getBoolean(key, true))
                 suggestionsKey             -> binding.input.setSuggestionAdapter(p.getBoolean(key, true), suggestionAdapter)
                 preferEmotesSuggestionsKey -> mainViewModel.setPreferEmotesSuggestions(p.getBoolean(key, false))
+                showStreamToggleKey        -> mainViewModel.setCanShowStream(p.getBoolean(key, true))
             }
         }
         preferences.apply {
@@ -747,7 +755,8 @@ class MainFragment : Fragment() {
             mainViewModel.apply {
                 setRoomStateEnabled(getBoolean(roomStateKey, true))
                 setStreamInfoEnabled(getBoolean(streamInfoKey, true))
-                inputEnabled.value = getBoolean(inputKey, true)
+                setInputEnabled(getBoolean(inputKey, true))
+                setCanShowStream(getBoolean(showStreamToggleKey, true))
                 setPreferEmotesSuggestions(getBoolean(preferEmotesSuggestionsKey, false))
                 binding.input.setSuggestionAdapter(getBoolean(suggestionsKey, true), suggestionAdapter)
 
@@ -898,7 +907,7 @@ class MainFragment : Fragment() {
                         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
 
                         override fun onStateChanged(bottomSheet: View, newState: Int) {
-                            if (mainViewModel.appbarEnabled.value && isLandscape) {
+                            if (mainViewModel.isFullscreen.value && isLandscape) {
                                 when (newState) {
                                     BottomSheetBehavior.STATE_EXPANDED, BottomSheetBehavior.STATE_COLLAPSED -> {
                                         (activity as? AppCompatActivity)?.supportActionBar?.hide()
@@ -950,18 +959,18 @@ class MainFragment : Fragment() {
             when {
                 !hasFocus && wasLandScapeNotFullscreen && isLandscape          -> {
                     wasLandScapeNotFullscreen = false
-                    binding.showActionbarFab.visibility = View.GONE
+                    binding.toggleFullscreen.visibility = View.GONE
                     binding.tabs.visibility = View.VISIBLE
                     (activity as? MainActivity)?.setFullScreen(false)
                 }
-                !hasFocus && binding.showActionbarFab.isVisible                -> {
+                !hasFocus && binding.toggleFullscreen.isVisible                -> {
                     wasLandScapeNotFullscreen = false
                     (activity as? MainActivity)?.setFullScreen(true, changeActionBarVisibility = false)
                 }
-                hasFocus && !binding.showActionbarFab.isVisible && isLandscape -> {
+                hasFocus && !binding.toggleFullscreen.isVisible && isLandscape -> {
                     wasLandScapeNotFullscreen = true
                     (activity as? AppCompatActivity)?.supportActionBar?.hide()
-                    binding.showActionbarFab.visibility = View.VISIBLE
+                    binding.toggleFullscreen.visibility = View.VISIBLE
                     binding.tabs.visibility = View.GONE
                     (activity as? MainActivity)?.apply {
                         setFullScreen(false, changeActionBarVisibility = false)
