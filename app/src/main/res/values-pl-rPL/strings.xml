@@ -171,4 +171,22 @@
     <string name="restart_required">Aby zastosować zmiany, należy zrestartować aplikację</string>
     <string name="restart">Restartuj</string>
     <string name="preference_visible_emotes_title">Widoczne emotki z dotatków</string>
+    <string name="preference_light_theme_title">Włącz jasny motyw</string>
+    <string name="preference_dark_mode_group_title">Ciemny motyw</string>
+    <string name="preference_follow_system_title">System</string>
+    <string name="preference_true_dark_theme_title">Prawdziwy ciemny motyw</string>
+    <string name="uploader_add_header">Dodaj nagłówek</string>
+    <string name="uploader_add_header_name">Nazwa</string>
+    <string name="uploader_add_header_value">Wartość</string>
+    <string name="uploader_title">Niestandardowy host</string>
+    <string name="uploader_reset">Przywróć ustawienia domyślne</string>
+    <string name="uploader_url">URL zapytania</string>
+    <string name="uploader_field">Pole formularza</string>
+    <string name="uploader_headers">Nagłówki</string>
+    <string name="uploader_image_link">Wzór linku obrazka</string>
+    <string name="uploader_deletion_link">Wzór linku usuwającego</string>
+    <string name="uploader_description">Możesz ustawić niestandardowy host (n.p. imgur.com lub s-ul.eu) do przesyłania zdjęć. DankChat używa takich samych ustawień jak Chatterino. Po więcej informacji, sprawdź poradnik: https://wiki.chatterino.com/Image%20Uploader/</string>
+    <string name="preference_true_dark_theme_summary">Wymusza czarne tło czatu</string>
+    <string name="preference_display_group_title">Wyświetl</string>
+    <string name="preference_uploader_title">Niestandardowy host przesyłania obrazów</string>
 </resources>
