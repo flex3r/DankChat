@@ -27,7 +27,7 @@ fun List<GenericEmote>.moveToFront(channel: String?): List<GenericEmote> = this
 
 fun List<MultiEntryItem.Entry>.mapToMention(): List<Mention> = mapNotNull {
     when {
-        it.isRegex -> runCatching { Mention.RegexPhrase(it.entry.toRegex(RegexOption.IGNORE_CASE), it.matchUser) }.getOrNull()
+        it.isRegex -> runCatching { Mention.RegexPhrase(it.entry.toRegex(), it.matchUser) }.getOrNull()
         else       -> Mention.Phrase(it.entry, it.matchUser)
     }
 }
