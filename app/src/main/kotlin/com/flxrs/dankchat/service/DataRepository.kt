@@ -91,8 +91,8 @@ class DataRepository @Inject constructor(private val apiManager: ApiManager, pri
         emotes[channel]?.value = emoteManager.getEmotes(channel)
     }
 
-    suspend fun loadUserStateEmotes(userStateEmoteSets: List<String>) {
-        emoteManager.loadUserStateEmotes(userStateEmoteSets)
+    suspend fun loadUserStateEmotes(globalEmoteSetIds: List<String>, followerEmoteSetIds: Map<String, List<String>>) {
+        emoteManager.loadUserStateEmotes(globalEmoteSetIds, followerEmoteSetIds)
     }
 
     private suspend fun loadChannelBadges(oAuth: String, channel: String, id: String) = withContext(Dispatchers.Default) {

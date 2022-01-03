@@ -29,11 +29,17 @@ class ChatRepository @Inject constructor(
     scope: CoroutineScope,
 ) {
 
-    data class UserState(val userId: String = "", val color: String? = null, val displayName: String = "", val emoteSets: List<String> = listOf())
+    data class UserState(
+        val userId: String = "",
+        val color: String? = null,
+        val displayName: String = "",
+        val globalEmoteSets: List<String> = listOf(),
+        val followerEmoteSets: Map<String, List<String>> = emptyMap(),
+        val moderationChannels: List<String> = emptyList(),
+    )
 
     private val _activeChannel = MutableStateFlow("")
     private val _channels = MutableStateFlow<List<String>?>(null)
-
 
     private val _notificationsFlow = MutableSharedFlow<List<ChatItem>>(0, extraBufferCapacity = 10)
     private val _channelMentionCount = mutableSharedFlowOf(mutableMapOf<String, Int>())
@@ -103,7 +109,10 @@ class ChatRepository @Inject constructor(
     fun getConnectionState(channel: String): StateFlow<ConnectionState> = connectionState.getOrPut(channel) { MutableStateFlow(ConnectionState.DISCONNECTED) }
     fun getRoomState(channel: String): SharedFlow<RoomState> = roomStates.getOrPut(channel) { mutableSharedFlowOf(RoomState(channel)) }
     fun getUsers(channel: String): StateFlow<LruCache<String, Boolean>> = users.getOrPut(channel) { MutableStateFlow(createUserCache()) }
-    suspend fun getLatestValidUserState(): UserState = userState.filter { it.userId.isNotBlank() }.take(count = 1).single()
+    suspend fun getLatestValidUserState(minChannelsSize: Int = 0): UserState = userState
+        .filter {
+            it.userId.isNotBlank() && it.followerEmoteSets.size >= minChannelsSize
+        }.take(count = 1).single()
 
     suspend fun loadRecentMessages(channel: String, loadHistory: Boolean, isUserChange: Boolean) {
         when {
@@ -304,8 +313,8 @@ class ChatRepository @Inject constructor(
             "CLEARCHAT"       -> handleClearChat(msg)
             "ROOMSTATE"       -> handleRoomState(msg)
             "CLEARMSG"        -> handleClearMsg(msg)
-            "USERSTATE",
-            "GLOBALUSERSTATE" -> handleUserState(msg)
+            "USERSTATE"       -> handleUserState(msg)
+            "GLOBALUSERSTATE" -> handleGlobalUserState(msg)
             else              -> handleMessage(msg)
         }
         return null
@@ -313,8 +322,8 @@ class ChatRepository @Inject constructor(
 
     private fun onWriterMessage(message: IrcMessage) {
         when (message.command) {
-            "USERSTATE",
-            "GLOBALUSERSTATE" -> handleUserState(message)
+            "USERSTATE"       -> handleUserState(message)
+            "GLOBALUSERSTATE" -> handleGlobalUserState(message)
             "NOTICE"          -> handleMessage(message)
         }
     }
@@ -365,19 +374,50 @@ class ChatRepository @Inject constructor(
         roomStates[channel]?.tryEmit(updated)
     }
 
-    private fun handleUserState(msg: IrcMessage) {
+    private fun handleGlobalUserState(msg: IrcMessage) {
         val id = msg.tags["user-id"]
         val sets = msg.tags["emote-sets"]?.split(",")
         val color = msg.tags["color"]
         val name = msg.tags["display-name"]
+        userState.update { current ->
+            current.copy(
+                userId = id ?: current.userId,
+                color = color ?: current.color,
+                displayName = name ?: current.displayName,
+                globalEmoteSets = sets ?: current.globalEmoteSets
+            )
+        }
+    }
 
-        val current = userState.value
-        userState.value = current.copy(
-            userId = id ?: current.userId,
-            color = color ?: current.color,
-            displayName = name ?: current.displayName,
-            emoteSets = sets ?: current.emoteSets
-        )
+    private fun handleUserState(msg: IrcMessage) {
+        val channel = msg.params[0].substring(1)
+        val id = msg.tags["user-id"]
+        val sets = msg.tags["emote-sets"]?.split(",").orEmpty()
+        val color = msg.tags["color"]
+        val name = msg.tags["display-name"]
+        val badges = msg.tags["badges"]?.split(",")
+        val hasModeration = badges?.any { it.contains("broadcaster") || it.contains("moderator") } ?: false
+        userState.update { current ->
+            val followerEmotes = when {
+                current.globalEmoteSets.isNotEmpty() -> sets - current.globalEmoteSets.toSet()
+                else                                 -> emptyList()
+            }
+            val newFollowerEmoteSets = current.followerEmoteSets.toMutableMap()
+            newFollowerEmoteSets[channel] = followerEmotes
+
+            val newModerationChannels = when {
+                hasModeration -> current.moderationChannels + channel
+                else          -> current.moderationChannels
+            }
+
+            current.copy(
+                userId = id ?: current.userId,
+                color = color ?: current.color,
+                displayName = name ?: current.displayName,
+                followerEmoteSets = newFollowerEmoteSets,
+                moderationChannels = newModerationChannels
+            )
+        }
     }
 
     private fun handleClearMsg(msg: IrcMessage) {

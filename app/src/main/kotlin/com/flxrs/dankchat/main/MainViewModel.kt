@@ -224,10 +224,19 @@ class MainViewModel @Inject constructor(
             val state = runCatchingToState(parameters) { handler ->
                 loadInitialData(fixedOauth, id, channelList, loadSupibot, loadThirdPartyData, handler)
 
-                withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
-                    val userState = chatRepository.getLatestValidUserState()
-                    dataRepository.loadUserStateEmotes(userState.emoteSets)
+                val strictUserStateResult = withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
+                    val userState = chatRepository.getLatestValidUserState(minChannelsSize = channelList.size)
+                    dataRepository.loadUserStateEmotes(userState.globalEmoteSets, userState.followerEmoteSets)
                 }
+
+                if (strictUserStateResult == null) {
+                    // try again but potentially without follower emote data
+                    withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
+                        val userState = chatRepository.getLatestValidUserState(minChannelsSize = 0)
+                        dataRepository.loadUserStateEmotes(userState.globalEmoteSets, userState.followerEmoteSets)
+                    }
+                }
+
                 supervisorScope {
                     launch(handler) { dataRepository.loadTwitchEmotes(fixedOauth, id) }
                 }
@@ -352,7 +361,7 @@ class MainViewModel @Inject constructor(
 
             withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
                 val userState = chatRepository.getLatestValidUserState()
-                dataRepository.loadUserStateEmotes(userState.emoteSets)
+                dataRepository.loadUserStateEmotes(userState.globalEmoteSets, userState.followerEmoteSets)
             }
             supervisorScope {
                 launch(handler) { dataRepository.loadTwitchEmotes(fixedOAuth, id) }

@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
     private val twitchEmotes = ConcurrentHashMap<String, GenericEmote>()
-    private var userstateEmotes: List<String> = emptyList()
+    private var userStateEmoteSetIds: List<String> = emptyList()
 
     private val ffzEmotes = ConcurrentHashMap<String, HashMap<String, GenericEmote>>()
     private val globalFFZEmotes = ConcurrentHashMap<String, GenericEmote>()
@@ -82,7 +82,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
     }
 
     suspend fun setTwitchEmotes(oAuth: String, twitchResult: TwitchEmotesDto) = withContext(Dispatchers.Default) {
-        val filtered = twitchResult.sets.filterNot { it.key in userstateEmotes }
+        val filtered = twitchResult.sets.filterNot { it.key in userStateEmoteSetIds }
         val sets = filtered.keys
             .chunked(25)
             .map {
@@ -116,12 +116,13 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         }
     }
 
-    suspend fun loadUserStateEmotes(emoteSetIds: List<String>) = withContext(Dispatchers.Default) {
+    suspend fun loadUserStateEmotes(globalEmoteSetIds: List<String>, followerEmoteSetIds: Map<String, List<String>>) = withContext(Dispatchers.Default) {
         twitchEmotes.clear()
-        val sets = runCatching { apiManager.getUserSets(emoteSetIds) }
+        val combined = (globalEmoteSetIds + followerEmoteSetIds.values.flatten()).distinct()
+        val sets = runCatching { apiManager.getUserSets(combined) }
             .getOrNull()
             .orEmpty()
-        userstateEmotes = sets.map { it.id }
+        userStateEmoteSetIds = sets.map { it.id }
 
         sets.forEach { emoteSet ->
             val type = when (emoteSet.id) {
