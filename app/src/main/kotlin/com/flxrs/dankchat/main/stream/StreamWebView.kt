@@ -56,8 +56,7 @@ class StreamWebView @JvmOverloads constructor(
         }
     }
 
-    private inner class StreamWebViewClient : WebViewClient() {
-
+    private class StreamWebViewClient : WebViewClient() {
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
             if (url.isNullOrBlank()) {
                 return true

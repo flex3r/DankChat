@@ -109,9 +109,8 @@ class ChatRepository @Inject constructor(
         when {
             isUserChange -> return
             loadHistory  -> loadRecentMessages(channel)
-            else         -> {
-                val currentChat = messages[channel]?.value ?: emptyList()
-                messages[channel]?.value = listOf(ChatItem(SystemMessage(type = SystemMessageType.NO_HISTORY_LOADED), false)) + currentChat
+            else         -> messages[channel]?.update { current ->
+                listOf(ChatItem(SystemMessage(type = SystemMessageType.NO_HISTORY_LOADED), false)) + current
             }
         }
     }
@@ -351,12 +350,10 @@ class ChatRepository @Inject constructor(
     }
 
     private fun handleClearChat(msg: IrcMessage) {
-        val parsed = TwitchMessage.parse(msg, emoteManager).map { ChatItem(it) }
-        val target = if (msg.params.size > 1) msg.params[1] else ""
-        val channel = msg.params[0].substring(1)
+        val parsed = ClearChatMessage.parseClearChat(msg)
 
-        messages[channel]?.value?.replaceWithTimeOuts(target)?.also {
-            messages[channel]?.value = it.addAndLimit(parsed[0], scrollBackLength)
+        messages[parsed.channel]?.update { current ->
+            current.replaceWithTimeOuts(parsed, scrollBackLength)
         }
     }
 
@@ -387,8 +384,8 @@ class ChatRepository @Inject constructor(
         val channel = msg.params[0].substring(1)
         val targetId = msg.tags["target-msg-id"] ?: return
 
-        messages[channel]?.value?.replaceWithTimeOut(targetId)?.also {
-            messages[channel]?.value = it
+        messages[channel]?.update { current ->
+            current.replaceWithTimeOut(targetId)
         }
     }
 
@@ -398,7 +395,8 @@ class ChatRepository @Inject constructor(
             return
         }
 
-        val items = TwitchMessage.parse(ircMessage, emoteManager).map {
+        val items = Message.parse(ircMessage, emoteManager, name).map {
+            it as TwitchMessage // TODO
             if (it.name == name) {
                 lastMessage[it.channel] = it.originalMessage
             }
@@ -407,37 +405,38 @@ class ChatRepository @Inject constructor(
                 return
             }
 
-            it.checkForMention(name, customMentionEntries)
-            val currentUsers = users[it.channel]?.value ?: createUserCache()
-            currentUsers.put(it.name, true)
-            users[it.channel]?.value = currentUsers
+            val withMentions = it.checkForMention(name, customMentionEntries)
+            val currentUsers = users[withMentions.channel]?.value ?: createUserCache()
+            currentUsers.put(withMentions.name, true)
+            users[withMentions.channel]?.value = currentUsers
 
-            ChatItem(it)
+            ChatItem(withMentions)
         }
 
         if (items.isEmpty()) {
             return
         }
 
-        val mainMessage = items.first().message as TwitchMessage
+        val mainMessage = items.first().message as TwitchMessage // TODO ugh
         val channel = mainMessage.channel
         if (channel == "*" && !mainMessage.isWhisper) {
             messages.keys.forEach {
-                val currentChat = messages[it]?.value ?: emptyList()
-                messages[it]?.value = currentChat.addAndLimit(items, scrollBackLength)
+                messages[it]?.update { current ->
+                    current.addAndLimit(items, scrollBackLength)
+                }
             }
             return
         } else if (!mainMessage.isWhisper) {
-            val currentChat = messages[channel]?.value ?: emptyList()
-            messages[channel]?.value = currentChat.addAndLimit(items, scrollBackLength)
+            messages[channel]?.update { current ->
+                current.addAndLimit(items, scrollBackLength)
+            }
         }
 
         _notificationsFlow.tryEmit(items)
         when (ircMessage.command) {
             "WHISPER"               -> {
-                mainMessage.whisperRecipient = name
-                _whispers.update {
-                    it.addAndLimit(items.toMentionTabItems(), scrollBackLength)
+                _whispers.update { current ->
+                    current.addAndLimit(items.toMentionTabItems(), scrollBackLength)
                 }
                 _channelMentionCount.increment("w", 1)
             }
@@ -455,8 +454,8 @@ class ChatRepository @Inject constructor(
 
         if (mentions.isNotEmpty()) {
             _channelMentionCount.increment(channel, mentions.size)
-            _mentions.update {
-                it.addAndLimit(mentions, scrollBackLength)
+            _mentions.update { current ->
+                current.addAndLimit(mentions, scrollBackLength)
             }
         }
     }
@@ -468,9 +467,10 @@ class ChatRepository @Inject constructor(
     }
 
     private fun makeAndPostSystemMessage(type: SystemMessageType, channels: Set<String> = messages.keys) {
-        channels.forEach {
-            val currentChat = messages[it]?.value ?: emptyList()
-            messages[it]?.value = currentChat.addAndLimit(ChatItem(SystemMessage(type)), scrollBackLength)
+        channels.forEach { channel ->
+            messages[channel]?.update { current ->
+                current.addAndLimit(ChatItem(SystemMessage(type)), scrollBackLength)
+            }
         }
     }
 
@@ -492,20 +492,30 @@ class ChatRepository @Inject constructor(
                 val parsedIrc = IrcMessage.parse(message)
                 if (parsedIrc.tags["user-id"] in blockList) continue
 
-                for (msg in TwitchMessage.parse(parsedIrc, emoteManager)) {
-                    if (!blacklistEntries.matches(msg.message, msg.name to msg.displayName, msg.emotes)) {
-                        msg.checkForMention(name, customMentionEntries)
-                        items += ChatItem(msg)
+                loop@ for (msg in Message.parse(parsedIrc, emoteManager, name)) {
+                    val withMention = when (msg) {
+                        is TwitchMessage -> {
+                            if (blacklistEntries.matches(msg.message, msg.name to msg.displayName, msg.emotes)) {
+                                continue@loop
+                            }
+                            msg.checkForMention(name, customMentionEntries)
+                        }
+                        else             -> msg
                     }
+
+                    items += ChatItem(withMention)
                 }
             }
         }.let { Log.i(TAG, "Parsing message history for #$channel took $it ms") }
 
-        val current = messages[channel]?.value ?: emptyList()
-        messages[channel]?.value = items.addAndLimit(current, scrollBackLength, checkForDuplications = true)
+        messages[channel]?.update { current ->
+            items.addAndLimit(current, scrollBackLength, checkForDuplications = true)
+        }
 
-        val mentions = items.filter { (it.message as TwitchMessage).isMention }.toMentionTabItems()
-        _mentions.value = (_mentions.value + mentions).sortedBy { it.message.timestamp }
+        val mentions = items.filter { (it.message as? TwitchMessage)?.isMention == true }.toMentionTabItems()
+        _mentions.update { current ->
+            (current + mentions).sortedBy { it.message.timestamp }
+        }
     }
 
     companion object {

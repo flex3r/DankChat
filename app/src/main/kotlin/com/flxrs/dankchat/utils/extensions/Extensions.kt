@@ -12,8 +12,6 @@ import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.service.twitch.message.Mention
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
 
 fun List<GenericEmote>?.toEmoteItems(): List<EmoteItem> = this
     ?.groupBy { it.emoteType.title }

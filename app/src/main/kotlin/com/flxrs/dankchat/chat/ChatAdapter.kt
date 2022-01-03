@@ -39,6 +39,7 @@ import com.flxrs.dankchat.service.twitch.badge.Badge
 import com.flxrs.dankchat.service.twitch.badge.BadgeType
 import com.flxrs.dankchat.service.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
+import com.flxrs.dankchat.service.twitch.message.ClearChatMessage
 import com.flxrs.dankchat.service.twitch.message.SystemMessage
 import com.flxrs.dankchat.service.twitch.message.SystemMessageType
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
@@ -92,8 +93,9 @@ class ChatAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
         when (val message = item.message) {
-            is SystemMessage -> holder.binding.itemText.handleSystemMessage(message, holder)
-            is TwitchMessage -> holder.binding.itemText.handleTwitchMessage(message, holder, item.isMentionTab)
+            is SystemMessage    -> holder.binding.itemText.handleSystemMessage(message, holder)
+            is TwitchMessage    -> holder.binding.itemText.handleTwitchMessage(message, holder, item.isMentionTab)
+            is ClearChatMessage -> holder.binding.itemText.handleClearChatMessage(message, holder)
         }
     }
 
@@ -125,6 +127,42 @@ class ChatAdapter(
             SystemMessageType.NO_HISTORY_LOADED -> context.getString(R.string.system_message_no_history)
             SystemMessageType.CONNECTED         -> context.getString(R.string.system_message_connected)
             SystemMessageType.LOGIN_EXPIRED     -> context.getString(R.string.login_expired)
+        }
+        val withTime = when {
+            showTimeStamp -> SpannableStringBuilder().bold { append("${DateTimeUtils.timestampToLocalTime(message.timestamp)} ") }.append(systemMessageText)
+            else          -> SpannableStringBuilder().append(systemMessageText)
+        }
+
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
+        text = withTime
+    }
+
+    private fun TextView.handleClearChatMessage(message: ClearChatMessage, holder: ViewHolder) {
+        alpha = 1.0f
+
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
+        val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
+        val checkeredKey = context.getString(R.string.checkered_messages_key)
+        val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
+        val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
+        val isCheckeredMode = preferences.getBoolean(checkeredKey, false)
+
+        val background = when {
+            isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(this, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
+            else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
+        }
+        setBackgroundColor(background)
+
+        val count = message.count
+        // TODO localize
+        val systemMessageText = when {
+            message.isBan           -> "${message.targetUser} has been permanently banned"
+            message.isFullChatClear -> "Chat has been cleared by a moderator."
+            else                    -> {
+                val countOrBlank = if (count > 1) " ($count times)" else ""
+                "${message.targetUser} has been timed out for ${DateTimeUtils.formatSeconds(message.duration)}.$countOrBlank"
+            }
         }
         val withTime = when {
             showTimeStamp -> SpannableStringBuilder().bold { append("${DateTimeUtils.timestampToLocalTime(message.timestamp)} ") }.append(systemMessageText)

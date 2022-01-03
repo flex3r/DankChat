@@ -23,7 +23,6 @@ import com.flxrs.dankchat.main.MainActivity
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
 import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
@@ -203,15 +202,14 @@ class NotificationService : Service(), CoroutineScope {
         notificationsJob = launch {
             chatRepository.notificationsFlow.collect { items ->
                 items.forEach { (message) ->
-                    with(message as TwitchMessage) {
-                        if (shouldNotifyOnMention && isMention && notificationsEnabled) {
-                            createMentionNotification()
-                        }
+                    if (message !is TwitchMessage) return@forEach
+                    if (shouldNotifyOnMention && message.isMention && notificationsEnabled) {
+                        message.createMentionNotification()
+                    }
 
-                        val volume = audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC) ?: 0
-                        if (tts != null && channel == activeTTSChannel && volume > 0) {
-                            playTTSMessage()
-                        }
+                    val volume = audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC) ?: 0
+                    if (tts != null && message.channel == activeTTSChannel && volume > 0) {
+                        message.playTTSMessage()
                     }
                 }
             }
