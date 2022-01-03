@@ -1,7 +1,6 @@
 package com.flxrs.dankchat.main.dialog
 
 import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.view.inputmethod.EditorInfo
@@ -10,18 +9,18 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.channels.ChannelsDialogFragment
-import com.flxrs.dankchat.databinding.EditChannelDialogBinding
+import com.flxrs.dankchat.databinding.EditDialogBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class EditChannelDialogFragment : DialogFragment() {
 
     private val args: EditChannelDialogFragmentArgs by navArgs()
-    private var bindingRef: EditChannelDialogBinding? = null
+    private var bindingRef: EditDialogBinding? = null
     private val binding get() = bindingRef!!
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        bindingRef = EditChannelDialogBinding.inflate(layoutInflater, null, false)
+        bindingRef = EditDialogBinding.inflate(layoutInflater, null, false)
         val builder = MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.edit_dialog_title)
             .setView(binding.root)

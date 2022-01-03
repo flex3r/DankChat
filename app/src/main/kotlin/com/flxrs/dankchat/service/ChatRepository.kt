@@ -84,6 +84,7 @@ class ChatRepository @Inject constructor(
     val notificationsFlow: SharedFlow<List<ChatItem>> = _notificationsFlow.asSharedFlow()
     val channelMentionCount: SharedFlow<Map<String, Int>> = _channelMentionCount.asSharedFlow()
     val unreadMessagesMap: SharedFlow<Map<String, Boolean>> = _unreadMessagesMap.asSharedFlow()
+    val userStateFlow: StateFlow<UserState> = userState.asStateFlow()
     val hasMentions = channelMentionCount.map { it.any { channel -> channel.key != "w" && channel.value > 0 } }
     val hasWhispers = channelMentionCount.map { it.getOrDefault("w", 0) > 0 }
     val mentions: StateFlow<List<ChatItem>>

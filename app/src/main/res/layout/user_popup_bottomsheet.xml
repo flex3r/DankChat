@@ -19,17 +19,21 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@id/user_avatar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintVertical_chainStyle="packed"
             app:srcCompat="@drawable/ic_maximize" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/user_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="visible"
-            app:constraint_referenced_ids="user_avatar,user_name,user_created,user_followage,user_mention,user_block" />
+            android:visibility="gone"
+            app:constraint_referenced_ids="user_avatar,user_name,user_created,user_followage,buttons_layout"
+            tools:visibility="visible" />
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/user_loading"
@@ -41,7 +45,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
 
         <ImageView
             android:id="@+id/user_avatar"
@@ -75,6 +80,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/avatar_guideline"
             app:layout_constraintTop_toBottomOf="@id/bottomsheet_handle"
+            app:layout_constraintVertical_bias="0"
             app:layout_constraintVertical_chainStyle="packed"
             tools:text="@tools:sample/full_names" />
 
@@ -105,7 +111,8 @@
             app:layout_constraintBottom_toTopOf="@id/top_barrier"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/avatar_guideline"
-            app:layout_constraintTop_toBottomOf="@id/user_created" />
+            app:layout_constraintTop_toBottomOf="@id/user_created"
+            tools:text="@tools:sample/lorem" />
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/top_barrier"
@@ -114,44 +121,122 @@
             app:barrierDirection="bottom"
             app:constraint_referenced_ids="user_avatar,user_followage" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/user_mention"
-            style="@style/Widget.Material3.Button"
-            android:layout_width="0dp"
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/buttons_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/user_popup_mention"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/top_barrier" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/user_follow"
-            style="@style/Widget.Material3.Button"
-            android:visibility="gone"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginTop="4dp"
-            android:text="@string/user_popup_follow"
-            app:layout_constraintBottom_toTopOf="@id/user_block"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/user_mention" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/user_block"
-            style="@style/Widget.Material3.Button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="16dp"
-            android:text="@string/user_popup_block"
+            android:layout_marginVertical="16dp"
+            app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/user_follow" />
+            app:layout_constraintTop_toBottomOf="@id/top_barrier"
+            app:layout_constraintVertical_bias="0">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/user_mention"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    android:text="@string/user_popup_mention"
+                    app:layout_constraintBottom_toTopOf="@id/user_follow"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/user_follow"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/user_popup_follow"
+                    app:layout_constraintBottom_toTopOf="@id/user_block"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/user_mention" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/user_block"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/user_popup_block"
+                    app:layout_constraintBottom_toTopOf="@id/mod_barrier"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/user_follow" />
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/mod_barrier"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:barrierAllowsGoneWidgets="true"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="user_block" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/moderation_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:constraint_referenced_ids="user_timeout,user_ban,user_unban"
+                    tools:visibility="visible" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/user_timeout"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/user_popup_timeout"
+                    app:layout_constraintBottom_toTopOf="@id/user_unban"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/mod_barrier"
+                    app:layout_constraintVertical_bias="0"
+                    app:layout_constraintVertical_chainStyle="packed" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/user_ban"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/user_popup_ban"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/user_unban"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/user_timeout"
+                    app:layout_constraintVertical_bias="0"
+                    app:layout_constraintVertical_chainStyle="packed" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/user_unban"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/user_popup_unban"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/user_ban"
+                    app:layout_constraintTop_toBottomOf="@id/user_timeout" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

@@ -14,10 +14,8 @@ import com.flxrs.dankchat.service.state.ImageUploadState
 import com.flxrs.dankchat.service.twitch.connection.ConnectionState
 import com.flxrs.dankchat.service.twitch.emote.EmoteType
 import com.flxrs.dankchat.service.twitch.emote.ThirdPartyEmoteType
-import com.flxrs.dankchat.utils.extensions.moveToFront
-import com.flxrs.dankchat.utils.extensions.removeOAuthSuffix
-import com.flxrs.dankchat.utils.extensions.timer
-import com.flxrs.dankchat.utils.extensions.toEmoteItems
+import com.flxrs.dankchat.service.twitch.message.RoomState
+import com.flxrs.dankchat.utils.extensions.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -79,7 +77,9 @@ class MainViewModel @Inject constructor(
     private val inputEnabled = MutableStateFlow(true)
 
     private val emotes = currentSuggestionChannel.flatMapLatest { dataRepository.getEmotes(it) }
-    private val roomState = currentSuggestionChannel.flatMapLatest { chatRepository.getRoomState(it) }.map { it.toDisplayText().ifBlank { null } }
+    private val roomStateText = currentSuggestionChannel
+        .flatMapLatest { chatRepository.getRoomState(it) }
+        .map { it.toDisplayText().ifBlank { null } }
     private val users = currentSuggestionChannel.flatMapLatest { chatRepository.getUsers(it) }
     private val supibotCommands = activeChannel.flatMapLatest { dataRepository.getSupibotCommands(it) }
     private val currentStreamInformation = combine(activeChannel, streamData) { activeChannel, streamData ->
@@ -124,7 +124,7 @@ class MainViewModel @Inject constructor(
         (!mentionSheetOpen && connected) || (whisperTabSelected && connected)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
-    val currentBottomText: Flow<String> = combine(roomState, currentStreamInformation, mentionSheetOpen) { roomState, streamInfo, mentionSheetOpen ->
+    val currentBottomText: Flow<String> = combine(roomStateText, currentStreamInformation, mentionSheetOpen) { roomState, streamInfo, mentionSheetOpen ->
         listOfNotNull(roomState, streamInfo)
             .takeUnless { mentionSheetOpen }
             ?.joinToString(separator = " - ")
@@ -174,11 +174,20 @@ class MainViewModel @Inject constructor(
     val streamEnabled: StateFlow<Boolean> = currentStreamedChannel
         .map { it.isNotBlank() }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+
     val shouldShowStreamToggle: StateFlow<Boolean> =
         combine(canShowStream, activeChannel, currentStreamedChannel, currentStreamInformation) { canShowStream, activeChannel, currentStream, currentStreamData ->
             canShowStream && activeChannel.isNotBlank() && (activeChannel == currentStream || currentStream.isBlank() && currentStreamData != null)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+
     val isFullscreen: StateFlow<Boolean> = _isFullscreen.asStateFlow()
+
+    val hasModInChannel: StateFlow<Boolean> = combine(activeChannel, chatRepository.userStateFlow) { channel, userState ->
+        channel.isNotBlank() && channel in userState.moderationChannels
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+
+    val currentRoomState: RoomState
+        get() = chatRepository.getRoomState(currentSuggestionChannel.value).firstValue
 
     fun loadData(dataLoadingParameters: DataLoadingState.Parameters) = loadData(
         oAuth = dataLoadingParameters.oAuth,
@@ -433,6 +442,30 @@ class MainViewModel @Inject constructor(
     fun toggleFullscreen() {
         val fullscreen = isFullscreen.value
         _isFullscreen.value = !fullscreen
+    }
+
+    fun changeRoomState(index: Int, enabled: Boolean, time: String = "") {
+        val base = when (index) {
+            0 -> ".emoteonly"
+            1 -> ".subscribers"
+            2 -> ".slow"
+            3 -> ".r9kbeta"
+            else -> ".followers"
+        }
+
+        val command = buildString {
+            append(base)
+
+            if (!enabled) {
+                append("off")
+            }
+
+            if (time.isNotBlank()) {
+                append(" $time")
+            }
+        }
+
+        chatRepository.sendMessage(command)
     }
 
     private suspend fun loadInitialData(oAuth: String, id: String, channelList: List<String>, loadSupibot: Boolean, loadThirdPartyData: Set<ThirdPartyEmoteType>, handler: CoroutineExceptionHandler) =
