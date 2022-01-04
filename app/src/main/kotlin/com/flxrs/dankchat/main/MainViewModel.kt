@@ -7,6 +7,7 @@ import com.flxrs.dankchat.chat.menu.EmoteItem
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.service.ChatRepository
+import com.flxrs.dankchat.service.CommandRepository
 import com.flxrs.dankchat.service.DataRepository
 import com.flxrs.dankchat.service.api.ApiManager
 import com.flxrs.dankchat.service.state.DataLoadingState
@@ -28,6 +29,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
     private val dataRepository: DataRepository,
+    private val commandRepository: CommandRepository,
     private val apiManager: ApiManager
 ) : ViewModel() {
 
@@ -81,7 +83,7 @@ class MainViewModel @Inject constructor(
         .flatMapLatest { chatRepository.getRoomState(it) }
         .map { it.toDisplayText().ifBlank { null } }
     private val users = currentSuggestionChannel.flatMapLatest { chatRepository.getUsers(it) }
-    private val supibotCommands = activeChannel.flatMapLatest { dataRepository.getSupibotCommands(it) }
+    private val supibotCommands = activeChannel.flatMapLatest { commandRepository.getSupibotCommands(it) }
     private val currentStreamInformation = combine(activeChannel, streamData) { activeChannel, streamData ->
         streamData.find { it.channel == activeChannel }?.data
     }
@@ -95,6 +97,9 @@ class MainViewModel @Inject constructor(
     }
     private val supibotCommandSuggestions = supibotCommands.mapLatest { commands ->
         commands.map { Suggestion.CommandSuggestion("$$it") }
+    }
+    private val defaultCommandSuggestions = commandRepository.commands.map { commands ->
+        commands.map { Suggestion.CommandSuggestion(it) }
     }
 
 
@@ -147,10 +152,16 @@ class MainViewModel @Inject constructor(
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
     val suggestions: Flow<List<Suggestion>> =
-        combine(emoteSuggestions, userSuggestions, supibotCommandSuggestions, preferEmoteSuggestions) { emoteSuggestions, userSuggestions, supibotCommandSuggestions, preferEmoteSuggestions ->
+        combine(
+            emoteSuggestions,
+            userSuggestions,
+            supibotCommandSuggestions,
+            defaultCommandSuggestions,
+            preferEmoteSuggestions
+        ) { emotes, users, supibotCommands, defaultCommands, preferEmoteSuggestions ->
             when {
-                preferEmoteSuggestions -> (emoteSuggestions + userSuggestions + supibotCommandSuggestions)
-                else                   -> (userSuggestions + emoteSuggestions + supibotCommandSuggestions)
+                preferEmoteSuggestions -> (emotes + users + defaultCommands + supibotCommands)
+                else                   -> (users + emotes + defaultCommands + supibotCommands)
             }
         }
 
@@ -264,8 +275,8 @@ class MainViewModel @Inject constructor(
 
     fun setSupibotSuggestions(enabled: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
         when {
-            enabled -> dataRepository.loadSupibotCommands()
-            else    -> dataRepository.clearSupibotCommands()
+            enabled -> commandRepository.loadSupibotCommands()
+            else    -> commandRepository.clearSupibotCommands()
         }
     }
 
@@ -319,12 +330,24 @@ class MainViewModel @Inject constructor(
     fun reconnect() = chatRepository.reconnect()
     fun reconnectIfNecessary() = chatRepository.reconnectIfNecessary()
     fun joinChannel(channel: String): List<String> = chatRepository.joinChannel(channel)
-    fun trySendMessage(message: String) {
+    fun trySendMessage(message: String) = viewModelScope.launch {
         if (mentionSheetOpen.value && whisperTabSelected.value && !message.startsWith("/w ")) {
-            return
+            return@launch
         }
 
-        chatRepository.sendMessage(message)
+        val channel = currentSuggestionChannel.value
+        val commandResult = runCatching {
+            commandRepository.checkForCommands(message, channel)
+        }.getOrElse {
+            eventChannel.send(Event.Error(it))
+            return@launch
+        }
+
+        when (commandResult) {
+            is CommandRepository.CommandResult.Accepted -> chatRepository.makeAndPostCustomSystemMessage(commandResult.response, channel)
+            is CommandRepository.CommandResult.Message  -> chatRepository.sendMessage(commandResult.message)
+            is CommandRepository.CommandResult.NotFound -> chatRepository.sendMessage(message)
+        }
     }
 
     fun updateChannels(channels: List<String>) = chatRepository.updateChannels(channels)
@@ -473,7 +496,7 @@ class MainViewModel @Inject constructor(
             listOf(
                 launch(handler) { dataRepository.loadDankChatBadges() },
                 launch(handler) { dataRepository.loadGlobalBadges(oAuth) },
-                launch(handler) { if (loadSupibot) dataRepository.loadSupibotCommands() },
+                launch(handler) { if (loadSupibot) commandRepository.loadSupibotCommands() },
                 launch(handler) { chatRepository.loadUserBlocks(oAuth, id) }
             ) + channelList.map {
                 launch(handler) {

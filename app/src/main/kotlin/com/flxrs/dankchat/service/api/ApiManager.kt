@@ -78,6 +78,7 @@ class ApiManager @Inject constructor(
     suspend fun getSupibotChannels(): SupibotChannelsDto? = supibotApiService.getChannels("twitch").bodyOrNull
 
     suspend fun getChatters(channel: String): ChattersDto? = tmiApiService.getChatters(channel).bodyOrNull?.chatters
+    suspend fun getChatterCount(channel: String): Int? = tmiApiService.getChatterCount(channel).bodyOrNull?.chatterCount
 
     @Suppress("BlockingMethodInNonBlockingContext")
     suspend fun uploadMedia(file: File): String? = withContext(Dispatchers.IO) {

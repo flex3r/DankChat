@@ -129,6 +129,11 @@
     <string name="roomstate_follow">Followers mode</string>
     <string name="seconds">Seconds</string>
     <string name="minutes">Minutes</string>
+    <string name="add_command">Add a command</string>
+    <string name="remove_command">Remove the command</string>
+    <string name="command_trigger_hint">Trigger</string>
+    <string name="command__hint">Command</string>
+    <string name="commands_title">Custom commands"</string>
 
     <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
     <string name="preference_timestamp_title">Show timestamps</string>
@@ -248,6 +253,8 @@
     <string name="preference_show_stream_title">Show stream toggle</string>
     <string name="preference_show_stream_key" translatable="false">show_stream_key</string>
     <string name="preference_show_stream_summary">Displays a toggle for embedding streams of live channels</string>
+    <string name="preference_commands_title" translatable="false">@string/commands_title</string>
+    <string name="preference_commands_key" translatable="false">custom_commands_key</string>
 
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>

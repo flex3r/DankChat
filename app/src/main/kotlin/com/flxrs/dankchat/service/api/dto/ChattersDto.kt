@@ -16,3 +16,6 @@ data class ChattersDto(
 
 @Keep
 data class ChattersResultDto(@field:Json(name = "chatters") val chatters: ChattersDto)
+
+@Keep
+data class ChatterCountDto(@field:Json(name = "chatter_count") val chatterCount: Int)

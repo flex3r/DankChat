@@ -1,20 +1,30 @@
 package com.flxrs.dankchat.preferences.screens
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.ListPreference
-import androidx.preference.MultiSelectListPreference
-import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SeekBarPreference
+import androidx.core.content.edit
+import androidx.core.view.updateLayoutParams
+import androidx.preference.*
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.databinding.CommandsBottomsheetBinding
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.main.MainActivity
+import com.flxrs.dankchat.preferences.command.CommandAdapter
+import com.flxrs.dankchat.preferences.command.CommandItem
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.extensions.showLongSnackbar
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.squareup.moshi.Moshi
 
 class ChatSettingsFragment : PreferenceFragmentCompat() {
+
+    private val jsonAdapter = Moshi.Builder().build().adapter(CommandItem.Entry::class.java)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -26,6 +36,10 @@ class ChatSettingsFragment : PreferenceFragmentCompat() {
                 setDisplayHomeAsUpEnabled(true)
                 title = getString(R.string.preference_chat_header)
             }
+        }
+
+        findPreference<Preference>(getString(R.string.preference_commands_key))?.apply {
+            setOnPreferenceClickListener { showCommandsPreference(view, key, sharedPreferences) }
         }
     }
 
@@ -58,6 +72,43 @@ class ChatSettingsFragment : PreferenceFragmentCompat() {
                 true
             }
         }
+    }
+
+    private fun showCommandsPreference(root: View, key: String, sharedPreferences: SharedPreferences): Boolean {
+        val context = root.context
+        val sheetHeight = (resources.displayMetrics.heightPixels * 0.6f).toInt()
+        val commands = runCatching {
+            sharedPreferences
+                .getStringSet(key, emptySet())
+                .orEmpty()
+                .mapNotNull { jsonAdapter.fromJson(it) }
+                .plus(CommandItem.AddEntry)
+        }.getOrDefault(emptyList())
+
+        val commandAdapter = CommandAdapter(commands.toMutableList())
+        val binding = CommandsBottomsheetBinding.inflate(LayoutInflater.from(context), root as? ViewGroup, false).apply {
+            commandsList.adapter = commandAdapter
+            commandsSheet.updateLayoutParams {
+                height = sheetHeight
+            }
+        }
+
+        BottomSheetDialog(context).apply {
+            setContentView(binding.root)
+            setOnDismissListener {
+                val stringSet = commandAdapter.commands
+                    .filterIsInstance<CommandItem.Entry>()
+                    .filter { it.trigger.isNotBlank() && it.command.isNotBlank() }
+                    .map(jsonAdapter::toJson)
+                    .toSet()
+
+                sharedPreferences.edit { putStringSet(key, stringSet) }
+            }
+            behavior.peekHeight = sheetHeight
+            show()
+        }
+
+        return true
     }
 
     companion object {

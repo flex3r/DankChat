@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
-        android:id="@+id/multi_entry_sheet"
+        android:id="@+id/commands_sheet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -17,19 +17,18 @@
             app:srcCompat="@drawable/ic_maximize" />
 
         <TextView
-            android:id="@+id/multi_entry_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text=""
+            android:text="@string/commands_title"
             android:textAppearance="?attr/textAppearanceTitleMedium" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/multi_entry_list"
+            android:id="@+id/commands_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingTop="8dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/multi_entry_item" />
+            tools:listitem="@layout/command_item" />
     </LinearLayout>
 </layout>
