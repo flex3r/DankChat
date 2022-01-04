@@ -331,7 +331,7 @@ class MainViewModel @Inject constructor(
     fun reconnectIfNecessary() = chatRepository.reconnectIfNecessary()
     fun joinChannel(channel: String): List<String> = chatRepository.joinChannel(channel)
     fun trySendMessage(message: String) = viewModelScope.launch {
-        if (mentionSheetOpen.value && whisperTabSelected.value && !message.startsWith("/w ")) {
+        if (mentionSheetOpen.value && whisperTabSelected.value && !(message.startsWith("/w ") || message.startsWith(".w"))) {
             return@launch
         }
 
