@@ -48,7 +48,7 @@ class UserPopupViewModel @Inject constructor(
     val displayNameOrNull: String?
         get() = (userPopupState.value as? UserPopupState.Success)?.displayName
 
-    private val userNameOrNull: String?
+    val userNameOrNull: String?
         get() = (userPopupState.value as? UserPopupState.Success)?.userName
 
     init {

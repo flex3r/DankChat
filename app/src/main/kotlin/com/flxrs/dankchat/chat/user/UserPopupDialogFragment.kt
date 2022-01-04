@@ -1,9 +1,11 @@
 package com.flxrs.dankchat.chat.user
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -77,6 +79,14 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
             userUnban.setOnClickListener {
                 viewModel.unbanUser()
                 dialog?.dismiss()
+            }
+            userAvatarCard.setOnClickListener {
+                val userName = viewModel.userNameOrNull ?: return@setOnClickListener
+                val url = "https://twitch.tv/$userName"
+                Intent(Intent.ACTION_VIEW).also {
+                    it.data = url.toUri()
+                    startActivity(it)
+                }
             }
         }
 
