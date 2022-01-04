@@ -1031,18 +1031,19 @@ class MainFragment : Fragment() {
         }
 
         setOnFocusChangeListener { _, hasFocus ->
+            val isFullscreen = mainViewModel.isFullscreen.value
             if (!isLandscape) {
+                (activity as? MainActivity)?.setFullScreen(enabled = !hasFocus && isFullscreen, changeActionBarVisibility = false)
                 return@setOnFocusChangeListener
             }
 
-            val isFullscreen = mainViewModel.isFullscreen.value
             binding.tabs.isVisible = !hasFocus && !isFullscreen
             binding.streamWebview.isVisible = !hasFocus
 
             when {
                 hasFocus -> (activity as? MainActivity)?.apply {
                     supportActionBar?.hide()
-                    setFullScreen(false, changeActionBarVisibility = false)
+                    setFullScreen(enabled = false, changeActionBarVisibility = false)
                 }
                 else     -> (activity as? MainActivity)?.setFullScreen(isFullscreen)
             }
