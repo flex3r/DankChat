@@ -301,7 +301,7 @@ class MainViewModel @Inject constructor(
         roomStateEnabled.value = enabled
     }
 
-    fun setScrollbackLength(scrollBackLength: Int) {
+    fun setScrollBackLength(scrollBackLength: Int) {
         chatRepository.scrollBackLength = scrollBackLength
     }
 

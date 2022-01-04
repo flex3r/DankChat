@@ -485,7 +485,7 @@ class ChatRepository @Inject constructor(
             }
             "PRIVMSG", "USERNOTICE" -> {
                 val isUnread = _unreadMessagesMap.firstValue[channel]
-                if (isUnread == null || isUnread == false) {
+                if (channel != activeChannel.value && (isUnread == null || isUnread == false)) {
                     _unreadMessagesMap.assign(channel, true)
                 }
             }
