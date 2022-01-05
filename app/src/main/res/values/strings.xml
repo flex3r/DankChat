@@ -115,13 +115,13 @@
     <string name="user_popup_timeout">Timeout</string>
     <string name="user_popup_ban">Ban</string>
     <string name="user_popup_unban">Unban</string>
-    <string name="change_roomstate">Room state</string>
+    <string name="change_roomstate">Chat modes</string>
     <string name="confirm_user_ban_title">Confirm ban</string>
     <string name="confirm_user_ban_message">Are you sure you want to ban this user?</string>
     <string name="confirm_user_ban_positive_button">Ban</string>
     <string name="confirm_user_timeout_title">Confirm timeout</string>
     <string name="confirm_user_timeout_positive_button">Timeout</string>
-    <string name="confirm_user_roomstate_title">Update room state</string>
+    <string name="confirm_user_roomstate_title">Update chat modes</string>
     <string name="roomstate_emote">Emote only</string>
     <string name="roomstate_subs">Subscriber only</string>
     <string name="roomstate_slow">Slow mode</string>
@@ -142,8 +142,8 @@
     <string name="preference_mention_format_summary">Change the mention format when clicking an username</string>
     <string name="preference_mention_format_key" translatable="false">mention_format</string>
     <string name="preference_roomstate_key" translatable="false">show_roomstate</string>
-    <string name="preference_roomstate_title">Show roomstate information</string>
-    <string name="preference_roomstate_summary">Displays information about the current roomstate like subscribers only mode</string>
+    <string name="preference_roomstate_title">Show chat modes information</string>
+    <string name="preference_roomstate_summary">Displays information about the current chat modes like subscribers only mode</string>
     <string name="preference_streaminfo_key" translatable="false">show_streaminfo</string>
     <string name="preference_streaminfo_title">Show stream information</string>
     <string name="preference_streaminfo_summary">Displays live status and viewer count</string>
