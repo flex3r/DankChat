@@ -849,7 +849,7 @@ class MainFragment : Fragment() {
 
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.confirm_user_roomstate_title)
-            .setNeutralButton(R.string.dialog_dismiss) { d, _ -> d.dismiss() }
+            .setPositiveButton(R.string.dialog_ok) { d, _ -> d.dismiss() }
             .setMultiChoiceItems(choices, activeStates) { d, index, isChecked ->
                 if (!isChecked) {
                     mainViewModel.changeRoomState(index, enabled = false)
