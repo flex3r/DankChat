@@ -10,7 +10,6 @@ import androidx.core.content.edit
 import androidx.core.view.updateLayoutParams
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.MultiEntryBottomsheetBinding
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
@@ -21,7 +20,7 @@ import com.squareup.moshi.Moshi
 
 class NotificationsSettingsFragment : PreferenceFragmentCompat() {
 
-    private val adapter = Moshi.Builder().build().adapter(MultiEntryItem.Entry::class.java)
+    private val jsonAdapter = Moshi.Builder().build().adapter(MultiEntryItem.Entry::class.java)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -48,17 +47,23 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun showMultiEntryPreference(root: View, key: String, sharedPreferences: SharedPreferences, title: CharSequence): Boolean {
-        val entryStringSet = sharedPreferences.getStringSet(key, emptySet()) ?: emptySet()
-        val entries = entryStringSet.mapNotNull { adapter.fromJson(it) }.sortedBy { it.entry } + MultiEntryItem.AddEntry
         val context = root.context
+        val sheetHeight = (resources.displayMetrics.heightPixels * 0.6f).toInt()
+        val entries = runCatching {
+            sharedPreferences
+                .getStringSet(key, emptySet())
+                .orEmpty()
+                .mapNotNull { jsonAdapter.fromJson(it) }
+                .sortedBy { it.entry }
+                .plus(MultiEntryItem.AddEntry)
+        }.getOrDefault(emptyList())
 
         val entryAdapter = MultiEntryAdapter(entries.toMutableList())
         val binding = MultiEntryBottomsheetBinding.inflate(LayoutInflater.from(context), root as? ViewGroup, false).apply {
             multiEntryTitle.text = title
-            multiEntryList.layoutManager = LinearLayoutManager(context)
             multiEntryList.adapter = entryAdapter
             multiEntrySheet.updateLayoutParams {
-                height = (resources.displayMetrics.heightPixels * 0.6f).toInt()
+                height = sheetHeight
             }
         }
 
@@ -68,14 +73,15 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat() {
                 val stringSet = entryAdapter.entries
                     .filterIsInstance<MultiEntryItem.Entry>()
                     .filter { it.entry.isNotBlank() }
-                    .map(adapter::toJson)
+                    .map(jsonAdapter::toJson)
                     .toSet()
 
                 sharedPreferences.edit { putStringSet(key, stringSet) }
             }
-            behavior.peekHeight = (resources.displayMetrics.heightPixels * 0.6f).toInt()
+            behavior.peekHeight = sheetHeight
             show()
         }
+
         return true
     }
 }

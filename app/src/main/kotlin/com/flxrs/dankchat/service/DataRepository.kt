@@ -18,12 +18,9 @@ import kotlin.system.measureTimeMillis
 
 class DataRepository @Inject constructor(private val apiManager: ApiManager, private val emoteManager: EmoteManager) {
     private val emotes = mutableMapOf<String, MutableStateFlow<List<GenericEmote>>>()
-    private val supibotCommands = mutableMapOf<String, MutableStateFlow<List<String>>>()
     private var loadedGlobalEmotes = false
 
     fun getEmotes(channel: String): StateFlow<List<GenericEmote>> = emotes.getOrPut(channel) { MutableStateFlow(emptyList()) }
-    fun getSupibotCommands(channel: String): StateFlow<List<String>> = supibotCommands.getOrPut(channel) { MutableStateFlow(emptyList()) }
-    fun clearSupibotCommands() = supibotCommands.forEach { it.value.value = emptyList() }.also { supibotCommands.clear() }
 
     suspend fun loadChannelData(channel: String, oAuth: String, channelId: String? = null, loadThirdPartyData: Set<ThirdPartyEmoteType>, forceReload: Boolean = false) {
         emotes.putIfAbsent(channel, MutableStateFlow(emptyList()))
@@ -41,26 +38,6 @@ class DataRepository @Inject constructor(private val apiManager: ApiManager, pri
     suspend fun unblockUser(oAuth: String, targetUserId: String): Boolean = apiManager.unblockUser(oAuth, targetUserId)
 
     suspend fun uploadMedia(file: File): String? = apiManager.uploadMedia(file)
-
-    suspend fun loadSupibotCommands() {
-        measureTimeMillis {
-            val channels = apiManager.getSupibotChannels()?.let { (data) ->
-                data.filter { it.isActive() }
-                    .map { it.name }
-            } ?: return
-
-            apiManager.getSupibotCommands()?.let { (data) ->
-                val commandsWithAliases = data.map {
-                    listOf(it.name) + it.aliases
-                }.flatten()
-
-                channels.forEach {
-                    supibotCommands.putIfAbsent(it, MutableStateFlow(emptyList()))
-                    supibotCommands[it]?.value = commandsWithAliases
-                }
-            } ?: return
-        }.let { Log.i(TAG, "Loaded Supibot commands in $it ms") }
-    }
 
     suspend fun loadGlobalBadges(oAuth: String) = withContext(Dispatchers.Default) {
         measureTimeAndLog(TAG, "global badges") {

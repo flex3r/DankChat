@@ -53,7 +53,6 @@ import com.flxrs.dankchat.service.state.DataLoadingState
 import com.flxrs.dankchat.service.state.ImageUploadState
 import com.flxrs.dankchat.service.twitch.connection.ConnectionState
 import com.flxrs.dankchat.service.twitch.emote.ThirdPartyEmoteType
-import com.flxrs.dankchat.service.twitch.message.RoomStateTag
 import com.flxrs.dankchat.utils.*
 import com.flxrs.dankchat.utils.extensions.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -142,7 +141,9 @@ class MainFragment : Fragment() {
             tabLayoutMediator = TabLayoutMediator(tabs, chatViewpager) { tab, position ->
                 val channelName = tabAdapter.titleList[position]
                 tab.text = dankChatPreferences.getRenamedChannel(channelName) ?: channelName
+                tab.setInitialColor()
             }.apply { attach() }
+
             tabs.getTabAt(tabs.selectedTabPosition)?.removeBadge()
             tabs.addOnTabSelectedListener(tabSelectionListener)
 
@@ -756,7 +757,7 @@ class MainFragment : Fragment() {
                 customMentionsKey          -> mainViewModel.setMentionEntries(p.getStringSet(key, emptySet()))
                 blacklistKey               -> mainViewModel.setBlacklistEntries(p.getStringSet(key, emptySet()))
                 loadSupibotKey             -> mainViewModel.setSupibotSuggestions(p.getBoolean(key, false))
-                scrollBackLengthKey        -> mainViewModel.setScrollbackLength(ChatSettingsFragment.correctScrollbackLength(p.getInt(scrollBackLengthKey, 10)))
+                scrollBackLengthKey        -> mainViewModel.setScrollBackLength(ChatSettingsFragment.correctScrollbackLength(p.getInt(scrollBackLengthKey, 10)))
                 keepScreenOnKey            -> keepScreenOn(p.getBoolean(key, true))
                 suggestionsKey             -> binding.input.setSuggestionAdapter(p.getBoolean(key, true), suggestionAdapter)
                 preferEmotesSuggestionsKey -> mainViewModel.setPreferEmotesSuggestions(p.getBoolean(key, false))
@@ -848,7 +849,7 @@ class MainFragment : Fragment() {
 
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.confirm_user_roomstate_title)
-            .setNeutralButton(R.string.dialog_dismiss) { d, _ -> d.dismiss() }
+            .setPositiveButton(R.string.dialog_ok) { d, _ -> d.dismiss() }
             .setMultiChoiceItems(choices, activeStates) { d, index, isChecked ->
                 if (!isChecked) {
                     mainViewModel.changeRoomState(index, enabled = false)

@@ -51,7 +51,7 @@ class ChatRepository @Inject constructor(
     private val roomStates = mutableMapOf<String, MutableSharedFlow<RoomState>>()
     private val users = mutableMapOf<String, MutableStateFlow<LruCache<String, Boolean>>>()
     private val userState = MutableStateFlow(UserState())
-    private val blockList = mutableSetOf<String>()
+    private val blockList = mutableSetOf<String>() // TODO extract out of repo to common data source
 
     private val moshi = Moshi.Builder().build()
     private val adapter = moshi.adapter(MultiEntryItem.Entry::class.java)
@@ -66,10 +66,11 @@ class ChatRepository @Inject constructor(
         scope.launch {
             readConnection.messages.collect { event ->
                 when (event) {
-                    is ChatEvent.Connected                  -> handleConnected(event.channel, event.isAnonymous)
-                    is ChatEvent.Closed, is ChatEvent.Error -> handleDisconnect()
-                    is ChatEvent.LoginFailed                -> makeAndPostSystemMessage(SystemMessageType.LOGIN_EXPIRED)
-                    is ChatEvent.Message                    -> onMessage(event.message)
+                    is ChatEvent.Connected   -> handleConnected(event.channel, event.isAnonymous)
+                    is ChatEvent.Closed      -> handleDisconnect()
+                    is ChatEvent.LoginFailed -> makeAndPostSystemMessage(SystemMessageType.LoginExpired)
+                    is ChatEvent.Message     -> onMessage(event.message)
+                    is ChatEvent.Error       -> handleDisconnect()
                 }
             }
         }
@@ -110,6 +111,7 @@ class ChatRepository @Inject constructor(
     fun getConnectionState(channel: String): StateFlow<ConnectionState> = connectionState.getOrPut(channel) { MutableStateFlow(ConnectionState.DISCONNECTED) }
     fun getRoomState(channel: String): SharedFlow<RoomState> = roomStates.getOrPut(channel) { mutableSharedFlowOf(RoomState(channel)) }
     fun getUsers(channel: String): StateFlow<LruCache<String, Boolean>> = users.getOrPut(channel) { MutableStateFlow(createUserCache()) }
+
     suspend fun getLatestValidUserState(minChannelsSize: Int = 0): UserState = userState
         .filter {
             it.userId.isNotBlank() && it.followerEmoteSets.size >= minChannelsSize
@@ -120,7 +122,7 @@ class ChatRepository @Inject constructor(
             isUserChange -> return
             loadHistory  -> loadRecentMessages(channel)
             else         -> messages[channel]?.update { current ->
-                listOf(ChatItem(SystemMessage(type = SystemMessageType.NO_HISTORY_LOADED), false)) + current
+                listOf(ChatItem(SystemMessage(type = SystemMessageType.NoHistoryLoaded), false)) + current
             }
         }
     }
@@ -483,7 +485,7 @@ class ChatRepository @Inject constructor(
             }
             "PRIVMSG", "USERNOTICE" -> {
                 val isUnread = _unreadMessagesMap.firstValue[channel]
-                if (isUnread == null || isUnread == false) {
+                if (channel != activeChannel.value && (isUnread == null || isUnread == false)) {
                     _unreadMessagesMap.assign(channel, true)
                 }
             }
@@ -507,6 +509,12 @@ class ChatRepository @Inject constructor(
         }
     }
 
+    fun makeAndPostCustomSystemMessage(message: String, channel: String) {
+        messages[channel]?.update {
+            it.addAndLimit(ChatItem(SystemMessage(SystemMessageType.Custom(message))), scrollBackLength)
+        }
+    }
+
     private fun makeAndPostSystemMessage(type: SystemMessageType, channels: Set<String> = messages.keys) {
         channels.forEach { channel ->
             messages[channel]?.update { current ->
@@ -516,9 +524,9 @@ class ChatRepository @Inject constructor(
     }
 
     private fun ConnectionState.toSystemMessageType(): SystemMessageType = when (this) {
-        ConnectionState.DISCONNECTED            -> SystemMessageType.DISCONNECTED
+        ConnectionState.DISCONNECTED            -> SystemMessageType.Disconnected
         ConnectionState.CONNECTED,
-        ConnectionState.CONNECTED_NOT_LOGGED_IN -> SystemMessageType.CONNECTED
+        ConnectionState.CONNECTED_NOT_LOGGED_IN -> SystemMessageType.Connected
     }
 
     private suspend fun loadRecentMessages(channel: String) = withContext(Dispatchers.Default) {
