@@ -103,8 +103,8 @@
     <string name="whispers">Šaputanja</string>
     <string name="reload_emotes">Osveži emotove</string>
     <string name="preference_timestamp_title">Prikaži vremensku markicu</string>
-    <string name="preference_roomstate_title">Prikaži informacije o stanju sobe</string>
-    <string name="preference_roomstate_summary">Prikazuje informacije o trenutnom stanju sobe, poput režima samo za pretplatnike</string>
+    <string name="preference_roomstate_title">Prikaži informacije o režimu sobe</string>
+    <string name="preference_roomstate_summary">Prikazuje informacije o trenutnom režimu sobe, poput režima samo za pretplatnike</string>
     <string name="preference_streaminfo_title">Prikaži informacije o strimu</string>
     <string name="preference_streaminfo_summary">Prikazuje da li je strim aktivan i broj gledalaca</string>
     <string name="preference_notification_title">Prikaži obaveštenja o pominjanju</string>
@@ -182,10 +182,10 @@
     <string name="confirm_user_ban_title">Potvrditi banovanje</string>
     <string name="confirm_user_ban_message">Da li ste sigurni da želite da banujete ovog korisnika</string>
     <string name="confirm_user_ban_positive_button">Ban</string>
-    <string name="change_roomstate">Stanje sobe</string>
+    <string name="change_roomstate">Režim sobe</string>
     <string name="confirm_user_timeout_title">Potvrditi timeout</string>
     <string name="confirm_user_timeout_positive_button">timeout</string>
-    <string name="confirm_user_roomstate_title">Ažurirati stanje sobe</string>
+    <string name="confirm_user_roomstate_title">Ažuriraj režim sobe</string>
     <string name="roomstate_emote">Samo emotovi</string>
     <string name="roomstate_subs">Mod pretplatnika</string>
     <string name="roomstate_slow">Spor mod</string>
