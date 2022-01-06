@@ -21,8 +21,9 @@ class MultiEntryAdapter(val entries: MutableList<MultiEntryItem>) : RecyclerView
         init {
             binding.multiEntryAdd.setOnClickListener {
                 val entry = MultiEntryItem.Entry(entry = "", isRegex = false, matchUser = false)
-                entries.add(entries.size - 1, entry)
-                notifyItemInserted(entries.size - 1)
+                val position = entries.size - 1
+                entries.add(position, entry)
+                notifyItemInserted(position)
             }
         }
     }

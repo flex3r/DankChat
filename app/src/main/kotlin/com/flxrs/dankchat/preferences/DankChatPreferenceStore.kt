@@ -3,16 +3,23 @@ package com.flxrs.dankchat.preferences
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.preferences.command.CommandItem
 import com.flxrs.dankchat.preferences.upload.ImageUploader
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
-class DankChatPreferenceStore @Inject constructor(context: Context) {
+class DankChatPreferenceStore @Inject constructor(private val context: Context) {
     private val dankChatPreferences: SharedPreferences = context.getSharedPreferences(context.getString(R.string.shared_preference_key), Context.MODE_PRIVATE)
+    private val defaultPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     private val adapterType = Types.newParameterizedType(Map::class.java, String::class.java, String::class.java)
-    private val moshiAdapter = Moshi.Builder().build().adapter<Map<String, String>>(adapterType)
+    private val jsonMapAdapter = Moshi.Builder().build().adapter<Map<String, String>>(adapterType)
+    private val jsonCommandAdapter = Moshi.Builder().build().adapter(CommandItem.Entry::class.java)
 
     private var channelRenames: String?
         get() = dankChatPreferences.getString(RENAME_KEY, null)
@@ -83,6 +90,20 @@ class DankChatPreferenceStore @Inject constructor(context: Context) {
         get() = dankChatPreferences.getString(UPLOADER_LAST_IMAGE_DELETION, null)
         set(value) = dankChatPreferences.edit { putString(UPLOADER_LAST_IMAGE_DELETION, value) }
 
+    val commandsAsFlow: Flow<List<CommandItem.Entry>> = callbackFlow {
+        val commandsKey = context.getString(R.string.preference_commands_key)
+        send(getCommandsFromPreferences(commandsKey))
+
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            if (key == commandsKey) {
+                trySend(getCommandsFromPreferences(key))
+            }
+        }
+
+        defaultPreferences.registerOnSharedPreferenceChangeListener(listener)
+        awaitClose { defaultPreferences.unregisterOnSharedPreferenceChangeListener(listener) }
+    }
+
     fun clearLogin() = dankChatPreferences.edit {
         putBoolean(LOGGED_IN_KEY, false)
         putString(OAUTH_KEY, "")
@@ -119,6 +140,11 @@ class DankChatPreferenceStore @Inject constructor(context: Context) {
         ).apply { customImageUploader = this }
     }
 
+    fun getCommands(): List<CommandItem.Entry> {
+        val key = context.getString(R.string.preference_commands_key)
+        return getCommandsFromPreferences(key)
+    }
+
     private inline fun withChannelRenames(block: MutableMap<String, String>.() -> Unit) {
         val renameMap = channelRenames?.toMutableMap() ?: mutableMapOf()
         renameMap.block()
@@ -127,11 +153,20 @@ class DankChatPreferenceStore @Inject constructor(context: Context) {
 
     private fun String.toMutableMap(): MutableMap<String, String> {
         return kotlin.runCatching {
-            moshiAdapter.fromJson(this)?.toMutableMap() ?: mutableMapOf()
+            jsonMapAdapter.fromJson(this)?.toMutableMap() ?: mutableMapOf()
         }.getOrDefault(mutableMapOf())
     }
 
-    private fun Map<String, String>.toJson(): String = moshiAdapter.toJson(this)
+    private fun getCommandsFromPreferences(key: String): List<CommandItem.Entry> {
+        return kotlin.runCatching {
+            defaultPreferences
+                .getStringSet(key, emptySet())
+                .orEmpty()
+                .mapNotNull { jsonCommandAdapter.fromJson(it) }
+        }.getOrDefault(emptyList())
+    }
+
+    private fun Map<String, String>.toJson(): String = jsonMapAdapter.toJson(this)
 
     companion object {
         private const val LOGGED_IN_KEY = "loggedIn"

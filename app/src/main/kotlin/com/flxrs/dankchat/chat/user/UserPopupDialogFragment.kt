@@ -1,16 +1,18 @@
 package com.flxrs.dankchat.chat.user
 
-import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.size.Scale
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.databinding.TimeoutDialogBinding
 import com.flxrs.dankchat.databinding.UserPopupBottomsheetBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.utils.extensions.collectFlow
@@ -72,14 +74,32 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
                         .show()
                 }
             }
+            userTimeout.setOnClickListener { showTimeoutDialog() }
+            userBan.setOnClickListener { showBanDialog() }
+            userUnban.setOnClickListener {
+                viewModel.unbanUser()
+                dialog?.dismiss()
+            }
+            userAvatarCard.setOnClickListener {
+                val userName = viewModel.userNameOrNull ?: return@setOnClickListener
+                val url = "https://twitch.tv/$userName"
+                Intent(Intent.ACTION_VIEW).also {
+                    it.data = url.toUri()
+                    startActivity(it)
+                }
+            }
         }
 
         collectFlow(viewModel.userPopupState) {
             when (it) {
-                is UserPopupViewModel.UserPopupState.Loading -> binding.showLoadingState()
-                is UserPopupViewModel.UserPopupState.Success -> binding.updateUserData(it)
-                is UserPopupViewModel.UserPopupState.Error   -> setErrorResultAndDismiss(it.throwable)
+                is UserPopupState.Loading -> binding.showLoadingState()
+                is UserPopupState.Success -> binding.updateUserData(it)
+                is UserPopupState.Error   -> setErrorResultAndDismiss(it.throwable)
             }
+        }
+
+        collectFlow(viewModel.canShowModeration) {
+            binding.moderationGroup.isVisible = it
         }
 
         return binding.root
@@ -90,7 +110,7 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
         userLoading.isVisible = true
     }
 
-    private fun UserPopupBottomsheetBinding.updateUserData(userState: UserPopupViewModel.UserPopupState.Success) {
+    private fun UserPopupBottomsheetBinding.updateUserData(userState: UserPopupState.Success) {
         userAvatar.loadImage(userState.avatarUrl) {
             scale(Scale.FILL)
         }
@@ -117,5 +137,39 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
             .savedStateHandle
             .set(MainFragment.USER_POPUP_RESULT_KEY, UserPopupResult.Error(throwable))
         dialog?.dismiss()
+    }
+
+    private fun showTimeoutDialog() {
+        var currentItem = 0
+        val choices = resources.getStringArray(R.array.timeout_entries)
+        val dialogContent = TimeoutDialogBinding.inflate(LayoutInflater.from(requireContext()), null, false).apply {
+            timeoutSlider.setLabelFormatter { choices[it.toInt()] }
+            timeoutSlider.addOnChangeListener { _, value, _ ->
+                currentItem = value.toInt()
+                timeoutValue.text = choices[value.toInt()]
+            }
+        }
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.confirm_user_timeout_title)
+            .setView(dialogContent.root)
+            .setPositiveButton(R.string.confirm_user_timeout_positive_button) { _, _ ->
+                viewModel.timeoutUser(currentItem)
+                dialog?.dismiss()
+            }
+            .setNegativeButton(R.string.dialog_cancel) { d, _ -> d.dismiss() }
+            .show()
+    }
+
+    private fun showBanDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.confirm_user_ban_title)
+            .setMessage(R.string.confirm_user_ban_message)
+            .setPositiveButton(R.string.confirm_user_ban_positive_button) { _, _ ->
+                viewModel.banUser()
+                dialog?.dismiss()
+            }
+            .setNegativeButton(R.string.dialog_cancel) { d, _ -> d.dismiss() }
+            .show()
     }
 }

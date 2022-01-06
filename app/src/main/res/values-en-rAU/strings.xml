@@ -98,8 +98,8 @@
     <string name="preference_timestamp_title">Show timestamps</string>
     <string name="preference_mention_format_title">Mention format</string>
     <string name="preference_mention_format_summary">Change the mention format when clicking an username</string>
-    <string name="preference_roomstate_title">Show roomstate information</string>
-    <string name="preference_roomstate_summary">Displays information about the current roomstate like subscribers only mode</string>
+    <string name="preference_roomstate_title">Show chat modes information</string>
+    <string name="preference_roomstate_summary">Displays information about the current chat modes like subscribers only mode</string>
     <string name="preference_streaminfo_title">Show stream information</string>
     <string name="preference_streaminfo_summary">Displays live status and viewer count</string>
     <string name="preference_notification_title">Show mention notifications</string>

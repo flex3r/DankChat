@@ -7,6 +7,7 @@ import com.flxrs.dankchat.chat.menu.EmoteItem
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.service.ChatRepository
+import com.flxrs.dankchat.service.CommandRepository
 import com.flxrs.dankchat.service.DataRepository
 import com.flxrs.dankchat.service.api.ApiManager
 import com.flxrs.dankchat.service.state.DataLoadingState
@@ -14,10 +15,8 @@ import com.flxrs.dankchat.service.state.ImageUploadState
 import com.flxrs.dankchat.service.twitch.connection.ConnectionState
 import com.flxrs.dankchat.service.twitch.emote.EmoteType
 import com.flxrs.dankchat.service.twitch.emote.ThirdPartyEmoteType
-import com.flxrs.dankchat.utils.extensions.moveToFront
-import com.flxrs.dankchat.utils.extensions.removeOAuthSuffix
-import com.flxrs.dankchat.utils.extensions.timer
-import com.flxrs.dankchat.utils.extensions.toEmoteItems
+import com.flxrs.dankchat.service.twitch.message.RoomState
+import com.flxrs.dankchat.utils.extensions.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -30,6 +29,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
     private val dataRepository: DataRepository,
+    private val commandRepository: CommandRepository,
     private val apiManager: ApiManager
 ) : ViewModel() {
 
@@ -79,9 +79,11 @@ class MainViewModel @Inject constructor(
     private val inputEnabled = MutableStateFlow(true)
 
     private val emotes = currentSuggestionChannel.flatMapLatest { dataRepository.getEmotes(it) }
-    private val roomState = currentSuggestionChannel.flatMapLatest { chatRepository.getRoomState(it) }.map { it.toDisplayText().ifBlank { null } }
+    private val roomStateText = currentSuggestionChannel
+        .flatMapLatest { chatRepository.getRoomState(it) }
+        .map { it.toDisplayText().ifBlank { null } }
     private val users = currentSuggestionChannel.flatMapLatest { chatRepository.getUsers(it) }
-    private val supibotCommands = activeChannel.flatMapLatest { dataRepository.getSupibotCommands(it) }
+    private val supibotCommands = activeChannel.flatMapLatest { commandRepository.getSupibotCommands(it) }
     private val currentStreamInformation = combine(activeChannel, streamData) { activeChannel, streamData ->
         streamData.find { it.channel == activeChannel }?.data
     }
@@ -95,6 +97,9 @@ class MainViewModel @Inject constructor(
     }
     private val supibotCommandSuggestions = supibotCommands.mapLatest { commands ->
         commands.map { Suggestion.CommandSuggestion("$$it") }
+    }
+    private val defaultCommandSuggestions = commandRepository.commands.map { commands ->
+        commands.map { Suggestion.CommandSuggestion(it) }
     }
 
 
@@ -124,7 +129,7 @@ class MainViewModel @Inject constructor(
         (!mentionSheetOpen && connected) || (whisperTabSelected && connected)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
-    val currentBottomText: Flow<String> = combine(roomState, currentStreamInformation, mentionSheetOpen) { roomState, streamInfo, mentionSheetOpen ->
+    val currentBottomText: Flow<String> = combine(roomStateText, currentStreamInformation, mentionSheetOpen) { roomState, streamInfo, mentionSheetOpen ->
         listOfNotNull(roomState, streamInfo)
             .takeUnless { mentionSheetOpen }
             ?.joinToString(separator = " - ")
@@ -147,10 +152,16 @@ class MainViewModel @Inject constructor(
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
     val suggestions: Flow<List<Suggestion>> =
-        combine(emoteSuggestions, userSuggestions, supibotCommandSuggestions, preferEmoteSuggestions) { emoteSuggestions, userSuggestions, supibotCommandSuggestions, preferEmoteSuggestions ->
+        combine(
+            emoteSuggestions,
+            userSuggestions,
+            supibotCommandSuggestions,
+            defaultCommandSuggestions,
+            preferEmoteSuggestions
+        ) { emotes, users, supibotCommands, defaultCommands, preferEmoteSuggestions ->
             when {
-                preferEmoteSuggestions -> (emoteSuggestions + userSuggestions + supibotCommandSuggestions)
-                else                   -> (userSuggestions + emoteSuggestions + supibotCommandSuggestions)
+                preferEmoteSuggestions -> (emotes + users + defaultCommands + supibotCommands)
+                else                   -> (users + emotes + defaultCommands + supibotCommands)
             }
         }
 
@@ -174,11 +185,20 @@ class MainViewModel @Inject constructor(
     val streamEnabled: StateFlow<Boolean> = currentStreamedChannel
         .map { it.isNotBlank() }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+
     val shouldShowStreamToggle: StateFlow<Boolean> =
         combine(canShowStream, activeChannel, currentStreamedChannel, currentStreamInformation) { canShowStream, activeChannel, currentStream, currentStreamData ->
             canShowStream && activeChannel.isNotBlank() && (activeChannel == currentStream || currentStream.isBlank() && currentStreamData != null)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+
     val isFullscreen: StateFlow<Boolean> = _isFullscreen.asStateFlow()
+
+    val hasModInChannel: StateFlow<Boolean> = combine(activeChannel, chatRepository.userStateFlow) { channel, userState ->
+        channel.isNotBlank() && channel in userState.moderationChannels
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+
+    val currentRoomState: RoomState
+        get() = chatRepository.getRoomState(currentSuggestionChannel.value).firstValue
 
     fun loadData(dataLoadingParameters: DataLoadingState.Parameters) = loadData(
         oAuth = dataLoadingParameters.oAuth,
@@ -224,10 +244,19 @@ class MainViewModel @Inject constructor(
             val state = runCatchingToState(parameters) { handler ->
                 loadInitialData(fixedOauth, id, channelList, loadSupibot, loadThirdPartyData, handler)
 
-                withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
-                    val userState = chatRepository.getLatestValidUserState()
-                    dataRepository.loadUserStateEmotes(userState.emoteSets)
+                val strictUserStateResult = withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
+                    val userState = chatRepository.getLatestValidUserState(minChannelsSize = channelList.size)
+                    dataRepository.loadUserStateEmotes(userState.globalEmoteSets, userState.followerEmoteSets)
                 }
+
+                if (strictUserStateResult == null) {
+                    // try again but potentially without follower emote data
+                    withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
+                        val userState = chatRepository.getLatestValidUserState(minChannelsSize = 0)
+                        dataRepository.loadUserStateEmotes(userState.globalEmoteSets, userState.followerEmoteSets)
+                    }
+                }
+
                 supervisorScope {
                     launch(handler) { dataRepository.loadTwitchEmotes(fixedOauth, id) }
                 }
@@ -246,8 +275,8 @@ class MainViewModel @Inject constructor(
 
     fun setSupibotSuggestions(enabled: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
         when {
-            enabled -> dataRepository.loadSupibotCommands()
-            else    -> dataRepository.clearSupibotCommands()
+            enabled -> commandRepository.loadSupibotCommands()
+            else    -> commandRepository.clearSupibotCommands()
         }
     }
 
@@ -272,7 +301,7 @@ class MainViewModel @Inject constructor(
         roomStateEnabled.value = enabled
     }
 
-    fun setScrollbackLength(scrollBackLength: Int) {
+    fun setScrollBackLength(scrollBackLength: Int) {
         chatRepository.scrollBackLength = scrollBackLength
     }
 
@@ -301,12 +330,24 @@ class MainViewModel @Inject constructor(
     fun reconnect() = chatRepository.reconnect()
     fun reconnectIfNecessary() = chatRepository.reconnectIfNecessary()
     fun joinChannel(channel: String): List<String> = chatRepository.joinChannel(channel)
-    fun trySendMessage(message: String) {
-        if (mentionSheetOpen.value && whisperTabSelected.value && !message.startsWith("/w ")) {
-            return
+    fun trySendMessage(message: String) = viewModelScope.launch {
+        if (mentionSheetOpen.value && whisperTabSelected.value && !(message.startsWith("/w ") || message.startsWith(".w"))) {
+            return@launch
         }
 
-        chatRepository.sendMessage(message)
+        val channel = currentSuggestionChannel.value
+        val commandResult = runCatching {
+            commandRepository.checkForCommands(message, channel)
+        }.getOrElse {
+            eventChannel.send(Event.Error(it))
+            return@launch
+        }
+
+        when (commandResult) {
+            is CommandRepository.CommandResult.Accepted -> chatRepository.makeAndPostCustomSystemMessage(commandResult.response, channel)
+            is CommandRepository.CommandResult.Message  -> chatRepository.sendMessage(commandResult.message)
+            is CommandRepository.CommandResult.NotFound -> chatRepository.sendMessage(message)
+        }
     }
 
     fun updateChannels(channels: List<String>) = chatRepository.updateChannels(channels)
@@ -352,7 +393,7 @@ class MainViewModel @Inject constructor(
 
             withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
                 val userState = chatRepository.getLatestValidUserState()
-                dataRepository.loadUserStateEmotes(userState.emoteSets)
+                dataRepository.loadUserStateEmotes(userState.globalEmoteSets, userState.followerEmoteSets)
             }
             supervisorScope {
                 launch(handler) { dataRepository.loadTwitchEmotes(fixedOAuth, id) }
@@ -426,12 +467,36 @@ class MainViewModel @Inject constructor(
         _isFullscreen.value = !fullscreen
     }
 
+    fun changeRoomState(index: Int, enabled: Boolean, time: String = "") {
+        val base = when (index) {
+            0 -> ".emoteonly"
+            1 -> ".subscribers"
+            2 -> ".slow"
+            3 -> ".r9kbeta"
+            else -> ".followers"
+        }
+
+        val command = buildString {
+            append(base)
+
+            if (!enabled) {
+                append("off")
+            }
+
+            if (time.isNotBlank()) {
+                append(" $time")
+            }
+        }
+
+        chatRepository.sendMessage(command)
+    }
+
     private suspend fun loadInitialData(oAuth: String, id: String, channelList: List<String>, loadSupibot: Boolean, loadThirdPartyData: Set<ThirdPartyEmoteType>, handler: CoroutineExceptionHandler) =
         supervisorScope {
             listOf(
                 launch(handler) { dataRepository.loadDankChatBadges() },
                 launch(handler) { dataRepository.loadGlobalBadges(oAuth) },
-                launch(handler) { if (loadSupibot) dataRepository.loadSupibotCommands() },
+                launch(handler) { if (loadSupibot) commandRepository.loadSupibotCommands() },
                 launch(handler) { chatRepository.loadUserBlocks(oAuth, id) }
             ) + channelList.map {
                 launch(handler) {

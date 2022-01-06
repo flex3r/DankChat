@@ -29,11 +29,17 @@ class ChatRepository @Inject constructor(
     scope: CoroutineScope,
 ) {
 
-    data class UserState(val userId: String = "", val color: String? = null, val displayName: String = "", val emoteSets: List<String> = listOf())
+    data class UserState(
+        val userId: String = "",
+        val color: String? = null,
+        val displayName: String = "",
+        val globalEmoteSets: List<String> = listOf(),
+        val followerEmoteSets: Map<String, List<String>> = emptyMap(),
+        val moderationChannels: List<String> = emptyList(),
+    )
 
     private val _activeChannel = MutableStateFlow("")
     private val _channels = MutableStateFlow<List<String>?>(null)
-
 
     private val _notificationsFlow = MutableSharedFlow<List<ChatItem>>(0, extraBufferCapacity = 10)
     private val _channelMentionCount = mutableSharedFlowOf(mutableMapOf<String, Int>())
@@ -45,7 +51,7 @@ class ChatRepository @Inject constructor(
     private val roomStates = mutableMapOf<String, MutableSharedFlow<RoomState>>()
     private val users = mutableMapOf<String, MutableStateFlow<LruCache<String, Boolean>>>()
     private val userState = MutableStateFlow(UserState())
-    private val blockList = mutableSetOf<String>()
+    private val blockList = mutableSetOf<String>() // TODO extract out of repo to common data source
 
     private val moshi = Moshi.Builder().build()
     private val adapter = moshi.adapter(MultiEntryItem.Entry::class.java)
@@ -60,10 +66,11 @@ class ChatRepository @Inject constructor(
         scope.launch {
             readConnection.messages.collect { event ->
                 when (event) {
-                    is ChatEvent.Connected                  -> handleConnected(event.channel, event.isAnonymous)
-                    is ChatEvent.Closed, is ChatEvent.Error -> handleDisconnect()
-                    is ChatEvent.LoginFailed                -> makeAndPostSystemMessage(SystemMessageType.LOGIN_EXPIRED)
-                    is ChatEvent.Message                    -> onMessage(event.message)
+                    is ChatEvent.Connected   -> handleConnected(event.channel, event.isAnonymous)
+                    is ChatEvent.Closed      -> handleDisconnect()
+                    is ChatEvent.LoginFailed -> makeAndPostSystemMessage(SystemMessageType.LoginExpired)
+                    is ChatEvent.Message     -> onMessage(event.message)
+                    is ChatEvent.Error       -> handleDisconnect()
                 }
             }
         }
@@ -78,6 +85,7 @@ class ChatRepository @Inject constructor(
     val notificationsFlow: SharedFlow<List<ChatItem>> = _notificationsFlow.asSharedFlow()
     val channelMentionCount: SharedFlow<Map<String, Int>> = _channelMentionCount.asSharedFlow()
     val unreadMessagesMap: SharedFlow<Map<String, Boolean>> = _unreadMessagesMap.asSharedFlow()
+    val userStateFlow: StateFlow<UserState> = userState.asStateFlow()
     val hasMentions = channelMentionCount.map { it.any { channel -> channel.key != "w" && channel.value > 0 } }
     val hasWhispers = channelMentionCount.map { it.getOrDefault("w", 0) > 0 }
     val mentions: StateFlow<List<ChatItem>>
@@ -103,15 +111,18 @@ class ChatRepository @Inject constructor(
     fun getConnectionState(channel: String): StateFlow<ConnectionState> = connectionState.getOrPut(channel) { MutableStateFlow(ConnectionState.DISCONNECTED) }
     fun getRoomState(channel: String): SharedFlow<RoomState> = roomStates.getOrPut(channel) { mutableSharedFlowOf(RoomState(channel)) }
     fun getUsers(channel: String): StateFlow<LruCache<String, Boolean>> = users.getOrPut(channel) { MutableStateFlow(createUserCache()) }
-    suspend fun getLatestValidUserState(): UserState = userState.filter { it.userId.isNotBlank() }.take(count = 1).single()
+
+    suspend fun getLatestValidUserState(minChannelsSize: Int = 0): UserState = userState
+        .filter {
+            it.userId.isNotBlank() && it.followerEmoteSets.size >= minChannelsSize
+        }.take(count = 1).single()
 
     suspend fun loadRecentMessages(channel: String, loadHistory: Boolean, isUserChange: Boolean) {
         when {
             isUserChange -> return
             loadHistory  -> loadRecentMessages(channel)
-            else         -> {
-                val currentChat = messages[channel]?.value ?: emptyList()
-                messages[channel]?.value = listOf(ChatItem(SystemMessage(type = SystemMessageType.NO_HISTORY_LOADED), false)) + currentChat
+            else         -> messages[channel]?.update { current ->
+                listOf(ChatItem(SystemMessage(type = SystemMessageType.NoHistoryLoaded), false)) + current
             }
         }
     }
@@ -305,8 +316,8 @@ class ChatRepository @Inject constructor(
             "CLEARCHAT"       -> handleClearChat(msg)
             "ROOMSTATE"       -> handleRoomState(msg)
             "CLEARMSG"        -> handleClearMsg(msg)
-            "USERSTATE",
-            "GLOBALUSERSTATE" -> handleUserState(msg)
+            "USERSTATE"       -> handleUserState(msg)
+            "GLOBALUSERSTATE" -> handleGlobalUserState(msg)
             else              -> handleMessage(msg)
         }
         return null
@@ -314,8 +325,8 @@ class ChatRepository @Inject constructor(
 
     private fun onWriterMessage(message: IrcMessage) {
         when (message.command) {
-            "USERSTATE",
-            "GLOBALUSERSTATE" -> handleUserState(message)
+            "USERSTATE"       -> handleUserState(message)
+            "GLOBALUSERSTATE" -> handleGlobalUserState(message)
             "NOTICE"          -> handleMessage(message)
         }
     }
@@ -351,12 +362,10 @@ class ChatRepository @Inject constructor(
     }
 
     private fun handleClearChat(msg: IrcMessage) {
-        val parsed = TwitchMessage.parse(msg, emoteManager).map { ChatItem(it) }
-        val target = if (msg.params.size > 1) msg.params[1] else ""
-        val channel = msg.params[0].substring(1)
+        val parsed = ClearChatMessage.parseClearChat(msg)
 
-        messages[channel]?.value?.replaceWithTimeOuts(target)?.also {
-            messages[channel]?.value = it.addAndLimit(parsed[0], scrollBackLength)
+        messages[parsed.channel]?.update { current ->
+            current.replaceWithTimeOuts(parsed, scrollBackLength)
         }
     }
 
@@ -368,27 +377,58 @@ class ChatRepository @Inject constructor(
         roomStates[channel]?.tryEmit(updated)
     }
 
-    private fun handleUserState(msg: IrcMessage) {
+    private fun handleGlobalUserState(msg: IrcMessage) {
         val id = msg.tags["user-id"]
         val sets = msg.tags["emote-sets"]?.split(",")
         val color = msg.tags["color"]
         val name = msg.tags["display-name"]
+        userState.update { current ->
+            current.copy(
+                userId = id ?: current.userId,
+                color = color ?: current.color,
+                displayName = name ?: current.displayName,
+                globalEmoteSets = sets ?: current.globalEmoteSets
+            )
+        }
+    }
 
-        val current = userState.value
-        userState.value = current.copy(
-            userId = id ?: current.userId,
-            color = color ?: current.color,
-            displayName = name ?: current.displayName,
-            emoteSets = sets ?: current.emoteSets
-        )
+    private fun handleUserState(msg: IrcMessage) {
+        val channel = msg.params[0].substring(1)
+        val id = msg.tags["user-id"]
+        val sets = msg.tags["emote-sets"]?.split(",").orEmpty()
+        val color = msg.tags["color"]
+        val name = msg.tags["display-name"]
+        val badges = msg.tags["badges"]?.split(",")
+        val hasModeration = badges?.any { it.contains("broadcaster") || it.contains("moderator") } ?: false
+        userState.update { current ->
+            val followerEmotes = when {
+                current.globalEmoteSets.isNotEmpty() -> sets - current.globalEmoteSets.toSet()
+                else                                 -> emptyList()
+            }
+            val newFollowerEmoteSets = current.followerEmoteSets.toMutableMap()
+            newFollowerEmoteSets[channel] = followerEmotes
+
+            val newModerationChannels = when {
+                hasModeration -> current.moderationChannels + channel
+                else          -> current.moderationChannels
+            }
+
+            current.copy(
+                userId = id ?: current.userId,
+                color = color ?: current.color,
+                displayName = name ?: current.displayName,
+                followerEmoteSets = newFollowerEmoteSets,
+                moderationChannels = newModerationChannels
+            )
+        }
     }
 
     private fun handleClearMsg(msg: IrcMessage) {
         val channel = msg.params[0].substring(1)
         val targetId = msg.tags["target-msg-id"] ?: return
 
-        messages[channel]?.value?.replaceWithTimeOut(targetId)?.also {
-            messages[channel]?.value = it
+        messages[channel]?.update { current ->
+            current.replaceWithTimeOut(targetId)
         }
     }
 
@@ -398,7 +438,8 @@ class ChatRepository @Inject constructor(
             return
         }
 
-        val items = TwitchMessage.parse(ircMessage, emoteManager).map {
+        val items = Message.parse(ircMessage, emoteManager, name).map {
+            it as TwitchMessage // TODO
             if (it.name == name) {
                 lastMessage[it.channel] = it.originalMessage
             }
@@ -407,43 +448,44 @@ class ChatRepository @Inject constructor(
                 return
             }
 
-            it.checkForMention(name, customMentionEntries)
-            val currentUsers = users[it.channel]?.value ?: createUserCache()
-            currentUsers.put(it.name, true)
-            users[it.channel]?.value = currentUsers
+            val withMentions = it.checkForMention(name, customMentionEntries)
+            val currentUsers = users[withMentions.channel]?.value ?: createUserCache()
+            currentUsers.put(withMentions.name, true)
+            users[withMentions.channel]?.value = currentUsers
 
-            ChatItem(it)
+            ChatItem(withMentions)
         }
 
         if (items.isEmpty()) {
             return
         }
 
-        val mainMessage = items.first().message as TwitchMessage
+        val mainMessage = items.first().message as TwitchMessage // TODO ugh
         val channel = mainMessage.channel
         if (channel == "*" && !mainMessage.isWhisper) {
             messages.keys.forEach {
-                val currentChat = messages[it]?.value ?: emptyList()
-                messages[it]?.value = currentChat.addAndLimit(items, scrollBackLength)
+                messages[it]?.update { current ->
+                    current.addAndLimit(items, scrollBackLength)
+                }
             }
             return
         } else if (!mainMessage.isWhisper) {
-            val currentChat = messages[channel]?.value ?: emptyList()
-            messages[channel]?.value = currentChat.addAndLimit(items, scrollBackLength)
+            messages[channel]?.update { current ->
+                current.addAndLimit(items, scrollBackLength)
+            }
         }
 
         _notificationsFlow.tryEmit(items)
         when (ircMessage.command) {
             "WHISPER"               -> {
-                mainMessage.whisperRecipient = name
-                _whispers.update {
-                    it.addAndLimit(items.toMentionTabItems(), scrollBackLength)
+                _whispers.update { current ->
+                    current.addAndLimit(items.toMentionTabItems(), scrollBackLength)
                 }
                 _channelMentionCount.increment("w", 1)
             }
             "PRIVMSG", "USERNOTICE" -> {
                 val isUnread = _unreadMessagesMap.firstValue[channel]
-                if (isUnread == null || isUnread == false) {
+                if (channel != activeChannel.value && (isUnread == null || isUnread == false)) {
                     _unreadMessagesMap.assign(channel, true)
                 }
             }
@@ -455,8 +497,8 @@ class ChatRepository @Inject constructor(
 
         if (mentions.isNotEmpty()) {
             _channelMentionCount.increment(channel, mentions.size)
-            _mentions.update {
-                it.addAndLimit(mentions, scrollBackLength)
+            _mentions.update { current ->
+                current.addAndLimit(mentions, scrollBackLength)
             }
         }
     }
@@ -467,17 +509,24 @@ class ChatRepository @Inject constructor(
         }
     }
 
+    fun makeAndPostCustomSystemMessage(message: String, channel: String) {
+        messages[channel]?.update {
+            it.addAndLimit(ChatItem(SystemMessage(SystemMessageType.Custom(message))), scrollBackLength)
+        }
+    }
+
     private fun makeAndPostSystemMessage(type: SystemMessageType, channels: Set<String> = messages.keys) {
-        channels.forEach {
-            val currentChat = messages[it]?.value ?: emptyList()
-            messages[it]?.value = currentChat.addAndLimit(ChatItem(SystemMessage(type)), scrollBackLength)
+        channels.forEach { channel ->
+            messages[channel]?.update { current ->
+                current.addAndLimit(ChatItem(SystemMessage(type)), scrollBackLength)
+            }
         }
     }
 
     private fun ConnectionState.toSystemMessageType(): SystemMessageType = when (this) {
-        ConnectionState.DISCONNECTED            -> SystemMessageType.DISCONNECTED
+        ConnectionState.DISCONNECTED            -> SystemMessageType.Disconnected
         ConnectionState.CONNECTED,
-        ConnectionState.CONNECTED_NOT_LOGGED_IN -> SystemMessageType.CONNECTED
+        ConnectionState.CONNECTED_NOT_LOGGED_IN -> SystemMessageType.Connected
     }
 
     private suspend fun loadRecentMessages(channel: String) = withContext(Dispatchers.Default) {
@@ -492,20 +541,30 @@ class ChatRepository @Inject constructor(
                 val parsedIrc = IrcMessage.parse(message)
                 if (parsedIrc.tags["user-id"] in blockList) continue
 
-                for (msg in TwitchMessage.parse(parsedIrc, emoteManager)) {
-                    if (!blacklistEntries.matches(msg.message, msg.name to msg.displayName, msg.emotes)) {
-                        msg.checkForMention(name, customMentionEntries)
-                        items += ChatItem(msg)
+                loop@ for (msg in Message.parse(parsedIrc, emoteManager, name)) {
+                    val withMention = when (msg) {
+                        is TwitchMessage -> {
+                            if (blacklistEntries.matches(msg.message, msg.name to msg.displayName, msg.emotes)) {
+                                continue@loop
+                            }
+                            msg.checkForMention(name, customMentionEntries)
+                        }
+                        else             -> msg
                     }
+
+                    items += ChatItem(withMention)
                 }
             }
         }.let { Log.i(TAG, "Parsing message history for #$channel took $it ms") }
 
-        val current = messages[channel]?.value ?: emptyList()
-        messages[channel]?.value = items.addAndLimit(current, scrollBackLength, checkForDuplications = true)
+        messages[channel]?.update { current ->
+            items.addAndLimit(current, scrollBackLength, checkForDuplications = true)
+        }
 
-        val mentions = items.filter { (it.message as TwitchMessage).isMention }.toMentionTabItems()
-        _mentions.value = (_mentions.value + mentions).sortedBy { it.message.timestamp }
+        val mentions = items.filter { (it.message as? TwitchMessage)?.isMention == true }.toMentionTabItems()
+        _mentions.update { current ->
+            (current + mentions).sortedBy { it.message.timestamp }
+        }
     }
 
     companion object {

@@ -25,6 +25,11 @@
             android:title="@string/preference_supibot_suggestions_title"
             app:iconSpaceReserved="false" />
 
+        <Preference
+            android:key="@string/preference_commands_key"
+            android:title="@string/commands_title"
+            app:iconSpaceReserved="false" />
+
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="@string/preference_animate_gifs_key"

@@ -12,8 +12,6 @@ import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.service.twitch.message.Mention
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
 
 fun List<GenericEmote>?.toEmoteItems(): List<EmoteItem> = this
     ?.groupBy { it.emoteType.title }
@@ -27,7 +25,7 @@ fun List<GenericEmote>.moveToFront(channel: String?): List<GenericEmote> = this
 
 fun List<MultiEntryItem.Entry>.mapToMention(): List<Mention> = mapNotNull {
     when {
-        it.isRegex -> runCatching { Mention.RegexPhrase(it.entry.toRegex(RegexOption.IGNORE_CASE), it.matchUser) }.getOrNull()
+        it.isRegex -> runCatching { Mention.RegexPhrase(it.entry.toRegex(), it.matchUser) }.getOrNull()
         else       -> Mention.Phrase(it.entry, it.matchUser)
     }
 }

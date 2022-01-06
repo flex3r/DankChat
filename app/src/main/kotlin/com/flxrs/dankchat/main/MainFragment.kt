@@ -45,6 +45,7 @@ import com.flxrs.dankchat.chat.suggestion.EmoteSuggestionsArrayAdapter
 import com.flxrs.dankchat.chat.suggestion.SpaceTokenizer
 import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.chat.user.UserPopupResult
+import com.flxrs.dankchat.databinding.EditDialogBinding
 import com.flxrs.dankchat.databinding.MainFragmentBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.screens.ChatSettingsFragment
@@ -140,7 +141,9 @@ class MainFragment : Fragment() {
             tabLayoutMediator = TabLayoutMediator(tabs, chatViewpager) { tab, position ->
                 val channelName = tabAdapter.titleList[position]
                 tab.text = dankChatPreferences.getRenamedChannel(channelName) ?: channelName
+                tab.setInitialColor()
             }.apply { attach() }
+
             tabs.getTabAt(tabs.selectedTabPosition)?.removeBadge()
             tabs.addOnTabSelectedListener(tabSelectionListener)
 
@@ -150,6 +153,7 @@ class MainFragment : Fragment() {
                 mainViewModel.toggleStream()
                 root.requestApplyInsets()
             }
+            changeRoomstate.setOnClickListener { showRoomStateDialog() }
         }
 
         mainViewModel.apply {
@@ -753,7 +757,7 @@ class MainFragment : Fragment() {
                 customMentionsKey          -> mainViewModel.setMentionEntries(p.getStringSet(key, emptySet()))
                 blacklistKey               -> mainViewModel.setBlacklistEntries(p.getStringSet(key, emptySet()))
                 loadSupibotKey             -> mainViewModel.setSupibotSuggestions(p.getBoolean(key, false))
-                scrollBackLengthKey        -> mainViewModel.setScrollbackLength(ChatSettingsFragment.correctScrollbackLength(p.getInt(scrollBackLengthKey, 10)))
+                scrollBackLengthKey        -> mainViewModel.setScrollBackLength(ChatSettingsFragment.correctScrollbackLength(p.getInt(scrollBackLengthKey, 10)))
                 keepScreenOnKey            -> keepScreenOn(p.getBoolean(key, true))
                 suggestionsKey             -> binding.input.setSuggestionAdapter(p.getBoolean(key, true), suggestionAdapter)
                 preferEmotesSuggestionsKey -> mainViewModel.setPreferEmotesSuggestions(p.getBoolean(key, false))
@@ -836,6 +840,54 @@ class MainFragment : Fragment() {
     private fun openManageChannelsDialog() {
         val direction = MainFragmentDirections.actionMainFragmentToChannelsDialogFragment(channels = mainViewModel.getChannels().toTypedArray())
         navigateSafe(direction)
+    }
+
+    private fun showRoomStateDialog() {
+        val currentRoomState = mainViewModel.currentRoomState
+        val activeStates = currentRoomState.activeStates
+        val choices = resources.getStringArray(R.array.roomstate_entries)
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.confirm_user_roomstate_title)
+            .setPositiveButton(R.string.dialog_ok) { d, _ -> d.dismiss() }
+            .setMultiChoiceItems(choices, activeStates) { d, index, isChecked ->
+                if (!isChecked) {
+                    mainViewModel.changeRoomState(index, enabled = false)
+                    d.dismiss()
+                    return@setMultiChoiceItems
+                }
+
+                when (index) {
+                    0, 1, 3 -> {
+                        mainViewModel.changeRoomState(index, enabled = true)
+                        d.dismiss()
+                    }
+                    else    -> {
+                        val title = choices[index]
+                        val hint = if (index == 2) R.string.seconds else R.string.minutes
+                        val content = EditDialogBinding.inflate(LayoutInflater.from(requireContext()), null, false).apply {
+                            dialogEdit.setText(10.toString())
+                            dialogEdit.inputType = EditorInfo.TYPE_CLASS_NUMBER
+                            dialogEditLayout.setHint(hint)
+                        }
+
+                        d.dismiss()
+                        MaterialAlertDialogBuilder(requireContext())
+                            .setTitle(title)
+                            .setView(content.root)
+                            .setPositiveButton(R.string.dialog_ok) { editDialog, _ ->
+                                val input = content.dialogEdit.text?.toString().orEmpty()
+                                mainViewModel.changeRoomState(index, enabled = true, time = input)
+                                editDialog.dismiss()
+                            }
+                            .setNegativeButton(R.string.dialog_cancel) { editDialog, _ ->
+                                editDialog.dismiss()
+                            }
+                            .show()
+                    }
+                }
+            }
+            .show()
     }
 
     private fun updateChannels(updatedChannels: List<String>) {
@@ -980,18 +1032,19 @@ class MainFragment : Fragment() {
         }
 
         setOnFocusChangeListener { _, hasFocus ->
+            val isFullscreen = mainViewModel.isFullscreen.value
             if (!isLandscape) {
+                (activity as? MainActivity)?.setFullScreen(enabled = !hasFocus && isFullscreen, changeActionBarVisibility = false)
                 return@setOnFocusChangeListener
             }
 
-            val isFullscreen = mainViewModel.isFullscreen.value
             binding.tabs.isVisible = !hasFocus && !isFullscreen
             binding.streamWebview.isVisible = !hasFocus
 
             when {
                 hasFocus -> (activity as? MainActivity)?.apply {
                     supportActionBar?.hide()
-                    setFullScreen(false, changeActionBarVisibility = false)
+                    setFullScreen(enabled = false, changeActionBarVisibility = false)
                 }
                 else     -> (activity as? MainActivity)?.setFullScreen(isFullscreen)
             }

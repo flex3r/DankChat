@@ -19,6 +19,16 @@ class TabSelectionListener : TabLayout.OnTabSelectedListener {
     }
 }
 
+fun TabLayout.Tab.setInitialColor() {
+    val textView = this.view[1] as? TextView ?: return
+    val attr = when {
+        isSelected -> R.attr.colorPrimary
+        else       -> R.attr.colorOnSurfaceVariant
+    }
+    val textColor = MaterialColors.getColor(textView, attr)
+    textView.setTextColor(textColor)
+}
+
 fun TabLayout.Tab.setTextColor(@AttrRes id: Int, layerWithOnSurface: Boolean = false) {
     val textView = this.view[1] as? TextView ?: return
     val textColor = MaterialColors.getColor(textView, id).let { color ->

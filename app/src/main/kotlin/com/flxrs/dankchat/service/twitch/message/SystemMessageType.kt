@@ -1,8 +1,9 @@
 package com.flxrs.dankchat.service.twitch.message
 
-enum class SystemMessageType {
-    CONNECTED,
-    DISCONNECTED,
-    NO_HISTORY_LOADED,
-    LOGIN_EXPIRED
+sealed class SystemMessageType {
+    object Connected : SystemMessageType()
+    object Disconnected : SystemMessageType()
+    object NoHistoryLoaded : SystemMessageType()
+    object LoginExpired : SystemMessageType()
+    data class Custom(val message: String) : SystemMessageType()
 }

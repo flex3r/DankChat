@@ -9,18 +9,64 @@ import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.extensions.appendSpacesBetweenEmojiGroup
 import com.flxrs.dankchat.utils.extensions.removeDuplicateWhitespace
-import kotlin.random.Random
 
 sealed class Message {
     abstract val id: String
     abstract val timestamp: Long
+
+    companion object {
+        fun parse(message: IrcMessage, emoteManager: EmoteManager, currentUserName: String): List<Message> = with(message) {
+            return when (command) {
+                "PRIVMSG"    -> listOf(TwitchMessage.parsePrivMessage(message, emoteManager))
+                "NOTICE"     -> listOf(TwitchMessage.parseNotice(message))
+                "USERNOTICE" -> TwitchMessage.parseUserNotice(message, emoteManager)
+                "CLEARCHAT"  -> listOf(ClearChatMessage.parseClearChat(message))
+                "WHISPER"    -> listOf(TwitchMessage.parseWhisper(message, emoteManager, currentUserName))
+                //"HOSTTARGET" -> listOf(parseHostTarget(message))
+                else         -> listOf()
+            }
+        }
+    }
 }
+
 
 data class SystemMessage(
     val type: SystemMessageType,
     override val timestamp: Long = System.currentTimeMillis(),
     override val id: String = System.nanoTime().toString()
 ) : Message()
+
+data class ClearChatMessage(
+    override val timestamp: Long = System.currentTimeMillis(),
+    override val id: String = System.nanoTime().toString(),
+    val channel: String,
+    val targetUser: String? = null,
+    val duration: String = "",
+    val count: Int = 0,
+) : Message() {
+    val isBan = duration.isBlank()
+    val isFullChatClear = targetUser == null
+    val isTimeout = !isBan && !isFullChatClear
+
+    companion object {
+        fun parseClearChat(message: IrcMessage): ClearChatMessage = with(message) {
+            val channel = params[0].substring(1)
+            val target = params.getOrNull(1)
+            val duration = tags["ban-duration"] ?: ""
+            val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
+            val id = tags["id"] ?: System.nanoTime().toString()
+
+            return ClearChatMessage(
+                timestamp = ts,
+                id = id,
+                channel = channel,
+                targetUser = target,
+                duration = duration,
+                count = if (target != null && duration.isNotBlank()) 1 else 0
+            )
+        }
+    }
+}
 
 data class TwitchMessage(
     override val timestamp: Long = System.currentTimeMillis(),
@@ -36,34 +82,23 @@ data class TwitchMessage(
     val isAction: Boolean = false,
     val isNotify: Boolean = false,
     val badges: List<Badge> = emptyList(),
-    var timedOut: Boolean = false,
+    val timedOut: Boolean = false,
     val isSystem: Boolean = false,
-    var isMention: Boolean = false,
-    var isReward: Boolean = false,
+    val isMention: Boolean = false,
+    val isReward: Boolean = false,
     val isWhisper: Boolean = false,
-    var whisperRecipient: String = ""
+    val whisperRecipient: String = ""
 ) : Message() {
 
-    fun checkForMention(username: String, mentions: List<Mention>) {
+    fun checkForMention(username: String, mentions: List<Mention>): TwitchMessage {
         val mentionsWithUser = mentions + Mention.User(username, false)
-        isMention = !isMention && username.isNotBlank() && !name.equals(username, true)
+        val isMention = !isMention && username.isNotBlank() && !name.equals(username, true)
                 && !timedOut && !isSystem && mentionsWithUser.matches(message, name to displayName, emotes)
+        return copy(isMention = isMention)
     }
 
     companion object {
-        fun parse(message: IrcMessage, emoteManager: EmoteManager): List<TwitchMessage> = with(message) {
-            return when (command) {
-                "PRIVMSG"    -> listOf(parsePrivMessage(message, emoteManager))
-                "NOTICE"     -> listOf(parseNotice(message))
-                "USERNOTICE" -> parseUserNotice(message, emoteManager)
-                "CLEARCHAT"  -> listOf(parseClearChat(message))
-                "WHISPER"    -> listOf(parseWhisper(message, emoteManager))
-                //"HOSTTARGET" -> listOf(parseHostTarget(message))
-                else         -> listOf()
-            }
-        }
-
-        private fun parsePrivMessage(ircMessage: IrcMessage, emoteManager: EmoteManager, isNotify: Boolean = false): TwitchMessage = with(ircMessage) {
+        fun parsePrivMessage(ircMessage: IrcMessage, emoteManager: EmoteManager, isNotify: Boolean = false): TwitchMessage = with(ircMessage) {
             val name = when (ircMessage.command) {
                 "USERNOTICE" -> tags.getValue("login")
                 else         -> prefix.substringBefore('!')
@@ -111,7 +146,7 @@ data class TwitchMessage(
             )
         }
 
-        private fun makeSystemMessage(message: String, channel: String, timestamp: Long = System.currentTimeMillis(), id: String = System.nanoTime().toString()): TwitchMessage {
+        fun makeSystemMessage(message: String, channel: String, timestamp: Long = System.currentTimeMillis(), id: String = System.nanoTime().toString()): TwitchMessage {
             val color = Color.parseColor("#717171")
             return TwitchMessage(
                 timestamp = timestamp,
@@ -124,7 +159,7 @@ data class TwitchMessage(
             )
         }
 
-        private fun parseUserNotice(message: IrcMessage, emoteManager: EmoteManager, historic: Boolean = false): List<TwitchMessage> = with(message) {
+        fun parseUserNotice(message: IrcMessage, emoteManager: EmoteManager, historic: Boolean = false): List<TwitchMessage> = with(message) {
             val messages = mutableListOf<TwitchMessage>()
             val msgId = tags["msg-id"]
             val id = tags["id"] ?: System.nanoTime().toString()
@@ -150,7 +185,7 @@ data class TwitchMessage(
             return messages
         }
 
-        private fun parseNotice(message: IrcMessage): TwitchMessage = with(message) {
+        fun parseNotice(message: IrcMessage): TwitchMessage = with(message) {
             val channel = params[0].substring(1)
 
             val notice = when {
@@ -168,7 +203,7 @@ data class TwitchMessage(
             return makeSystemMessage(notice, channel, ts, id)
         }
 
-        private fun parseHostTarget(message: IrcMessage): TwitchMessage = with(message) {
+        fun parseHostTarget(message: IrcMessage): TwitchMessage = with(message) {
             val target = params[1].substringBefore("-")
             val channel = params[0].substring(1)
             val ts = tags["rm-received-ts"]?.toLong() ?: System.currentTimeMillis()
@@ -177,22 +212,7 @@ data class TwitchMessage(
             return makeSystemMessage("Now hosting $target", channel, ts, id)
         }
 
-        private fun parseClearChat(message: IrcMessage): TwitchMessage = with(message) {
-            val channel = params[0].substring(1)
-            val target = if (params.size > 1) params[1] else ""
-            val duration = tags["ban-duration"] ?: ""
-            val systemMessage = when {
-                target.isBlank()   -> "Chat has been cleared by a moderator."
-                duration.isBlank() -> "$target has been permanently banned"
-                else               -> "$target has been timed out for ${DateTimeUtils.formatSeconds(duration)}."
-            }
-            val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
-            val id = tags["id"] ?: System.nanoTime().toString()
-
-            return makeSystemMessage(systemMessage, channel, ts, id)
-        }
-
-        private fun parseWhisper(ircMessage: IrcMessage, emoteManager: EmoteManager): TwitchMessage = with(ircMessage) {
+        fun parseWhisper(ircMessage: IrcMessage, emoteManager: EmoteManager, currentUserName: String): TwitchMessage = with(ircMessage) {
             val name = prefix.substringBefore('!')
             val displayName = tags["display-name"] ?: name
             val colorTag = tags["color"]?.ifBlank { "#717171" } ?: "#717171"
@@ -217,11 +237,12 @@ data class TwitchMessage(
                 badges = badges,
                 id = System.nanoTime().toString(),
                 userId = tags["user-id"],
-                isWhisper = true
+                isWhisper = true,
+                whisperRecipient = currentUserName,
             )
         }
 
-        private fun parseBadges(emoteManager: EmoteManager, badgeTags: String?, channel: String = "", userId: String? = null): List<Badge> {
+        fun parseBadges(emoteManager: EmoteManager, badgeTags: String?, channel: String = "", userId: String? = null): List<Badge> {
             val badges = badgeTags?.split(',')?.mapNotNull { badgeTag ->
                 val trimmed = badgeTag.trim()
                 val badgeSet = trimmed.substringBefore('/')

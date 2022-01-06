@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.utils
 
 import java.time.Instant
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -12,7 +13,7 @@ object DateTimeUtils {
     }
 
     fun timestampToLocalTime(ts: Long): String {
-        return Instant.ofEpochMilli(ts).atZone(ZonedDateTime.now().zone).format(timeFormatter)
+        return Instant.ofEpochMilli(ts).atZone(ZoneId.systemDefault()).format(timeFormatter)
     }
 
     fun String.asParsedZonedDateTime(): String = ZonedDateTime.parse(this).format(DateTimeFormatter.ISO_LOCAL_DATE)
