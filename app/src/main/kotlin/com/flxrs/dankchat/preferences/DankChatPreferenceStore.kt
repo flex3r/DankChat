@@ -184,7 +184,7 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
         private const val UPLOADER_FORM_FIELD = "uploaderFormField"
         private const val UPLOADER_HEADERS = "uploaderHeaders"
         private const val UPLOADER_IMAGE_LINK = "uploaderImageLink"
-        private const val UPLOADER_DELETION_LINK = "uploaderImageLink"
+        private const val UPLOADER_DELETION_LINK = "uploaderDeletionLink"
         private const val UPLOADER_LAST_IMAGE_DELETION = "uploaderImageLastDeletion"
 
         private const val UPLOADER_URL_DEFAULT = "https://i.nuuls.com/upload"
