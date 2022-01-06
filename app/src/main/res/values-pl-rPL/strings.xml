@@ -216,4 +216,5 @@
     <string name="commands_title">Niestandardowe komendy</string>
     <string name="preference_show_stream_summary">Pokazuje przycisk do osadzania streamów kanałów na żywo</string>
     <string name="preference_show_stream_title">Pokazuj przełącznik streamów</string>
+    <string name="command_trigger_hint">Polecenie</string>
 </resources>
