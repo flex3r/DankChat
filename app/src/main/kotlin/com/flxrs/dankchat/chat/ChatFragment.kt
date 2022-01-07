@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
+import com.flxrs.dankchat.main.MainViewModel
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.extensions.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,6 +36,7 @@ import javax.inject.Inject
 open class ChatFragment : Fragment() {
     private val args: ChatFragmentArgs by navArgs()
     private val viewModel: ChatViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels({ requireParentFragment() })
 
     protected var bindingRef: ChatFragmentBinding? = null
     protected val binding get() = bindingRef!!
@@ -53,6 +55,7 @@ open class ChatFragment : Fragment() {
             lifecycleOwner = this@ChatFragment
             scrollBottom.setOnClickListener {
                 scrollBottom.visibility = View.GONE
+                mainViewModel.setCanShowChips(true)
                 isAtBottom = true
                 binding.chat.stopScroll()
                 scrollToPosition(adapter.itemCount - 1)
@@ -180,6 +183,8 @@ open class ChatFragment : Fragment() {
 
     private inner class ChatScrollListener : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            mainViewModel.setCanShowChips(dy >= 0)
+
             if (dy < 0) {
                 isAtBottom = false
                 bindingRef?.scrollBottom?.show()

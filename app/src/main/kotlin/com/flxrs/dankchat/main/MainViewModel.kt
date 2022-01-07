@@ -77,6 +77,7 @@ class MainViewModel @Inject constructor(
     private val _isFullscreen = MutableStateFlow(false)
     private val canShowStream = MutableStateFlow(true)
     private val inputEnabled = MutableStateFlow(true)
+    private val _canShowChips = MutableStateFlow(true)
 
     private val emotes = currentSuggestionChannel.flatMapLatest { dataRepository.getEmotes(it) }
     private val roomStateText = currentSuggestionChannel
@@ -186,16 +187,18 @@ class MainViewModel @Inject constructor(
         .map { it.isNotBlank() }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
+    val isFullscreen: StateFlow<Boolean> = _isFullscreen.asStateFlow()
+    val canShowChips: StateFlow<Boolean> = _canShowChips.asStateFlow()
+
     val shouldShowStreamToggle: StateFlow<Boolean> =
-        combine(canShowStream, activeChannel, currentStreamedChannel, currentStreamInformation) { canShowStream, activeChannel, currentStream, currentStreamData ->
-            canShowStream && activeChannel.isNotBlank() && (activeChannel == currentStream || currentStream.isBlank() && currentStreamData != null)
+        combine(canShowChips, canShowStream, activeChannel, currentStreamedChannel, currentStreamInformation) { canShowChips, canShowStream, activeChannel, currentStream, currentStreamData ->
+            canShowChips && canShowStream && activeChannel.isNotBlank() && (activeChannel == currentStream || currentStream.isBlank() && currentStreamData != null)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
-    val isFullscreen: StateFlow<Boolean> = _isFullscreen.asStateFlow()
-
-    val hasModInChannel: StateFlow<Boolean> = combine(activeChannel, chatRepository.userStateFlow) { channel, userState ->
-        channel.isNotBlank() && channel in userState.moderationChannels
+    val hasModInChannel: StateFlow<Boolean> = combine(canShowChips, activeChannel, chatRepository.userStateFlow) { canShowChips, channel, userState ->
+        canShowChips && channel.isNotBlank() && channel in userState.moderationChannels
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+
 
     val currentRoomState: RoomState
         get() = chatRepository.getRoomState(currentSuggestionChannel.value).firstValue
@@ -465,6 +468,10 @@ class MainViewModel @Inject constructor(
     fun toggleFullscreen() {
         val fullscreen = isFullscreen.value
         _isFullscreen.value = !fullscreen
+    }
+
+    fun setCanShowChips(value: Boolean) {
+        _canShowChips.value = value
     }
 
     fun changeRoomState(index: Int, enabled: Boolean, time: String = "") {

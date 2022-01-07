@@ -76,6 +76,7 @@
                     android:checkable="false"
                     android:elevation="4dp"
                     android:text="@string/toggle_fullscreen"
+                    android:visibility="@{vm.canShowChips ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/stream_webview" />
 
