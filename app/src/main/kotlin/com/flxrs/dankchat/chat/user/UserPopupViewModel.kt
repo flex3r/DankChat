@@ -3,11 +3,13 @@ package com.flxrs.dankchat.chat.user
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.ChatRepository
 import com.flxrs.dankchat.service.DataRepository
 import com.flxrs.dankchat.service.api.dto.HelixUserDto
 import com.flxrs.dankchat.service.api.dto.UserFollowsDto
 import com.flxrs.dankchat.utils.DateTimeUtils.asParsedZonedDateTime
+import com.flxrs.dankchat.utils.extensions.removeOAuthSuffix
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -17,7 +19,8 @@ import javax.inject.Inject
 class UserPopupViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val chatRepository: ChatRepository,
-    private val dataRepository: DataRepository
+    private val dataRepository: DataRepository,
+    private val preferenceStore: DankChatPreferenceStore,
 ) : ViewModel() {
 
     private val args = UserPopupDialogFragmentArgs.fromSavedStateHandle(savedStateHandle)
@@ -89,8 +92,14 @@ class UserPopupViewModel @Inject constructor(
         chatRepository.sendMessage(".unban $userName")
     }
 
+    fun deleteMessage() {
+        val messageId = args.messageId
+        chatRepository.sendMessage(".delete $messageId")
+    }
+
     private inline fun updateStateWith(crossinline block: suspend (String, String, String) -> Unit) = viewModelScope.launch {
-        val result = runCatching { block(args.targetUserId, args.currentUserId, args.oAuth) }
+        val oAuth = preferenceStore.oAuthKey?.removeOAuthSuffix ?: return@launch
+        val result = runCatching { block(args.targetUserId, args.currentUserId, oAuth) }
         when {
             result.isFailure -> _userPopupState.value = UserPopupState.Error(result.exceptionOrNull())
             else             -> loadData()
@@ -99,12 +108,17 @@ class UserPopupViewModel @Inject constructor(
 
     private fun loadData() = viewModelScope.launch {
         _userPopupState.value = UserPopupState.Loading
+        val oAuth = preferenceStore.oAuthKey?.removeOAuthSuffix
+        if (oAuth == null) {
+            _userPopupState.value = UserPopupState.Error()
+            return@launch
+        }
 
         val result = runCatching {
-            val channelId = args.channel?.let { dataRepository.getUserIdByName(args.oAuth, it) }
-            val channelUserFollows = channelId?.let { dataRepository.getUserFollows(args.oAuth, args.targetUserId, channelId) }
-            val user = dataRepository.getUser(args.oAuth, args.targetUserId)
-            val currentUserFollows = dataRepository.getUserFollows(args.oAuth, args.currentUserId, args.targetUserId)
+            val channelId = args.channel?.let { dataRepository.getUserIdByName(oAuth, it) }
+            val channelUserFollows = channelId?.let { dataRepository.getUserFollows(oAuth, args.targetUserId, channelId) }
+            val user = dataRepository.getUser(oAuth, args.targetUserId)
+            val currentUserFollows = dataRepository.getUserFollows(oAuth, args.currentUserId, args.targetUserId)
             val isBlocked = chatRepository.isUserBlocked(args.targetUserId)
 
             mapToState(

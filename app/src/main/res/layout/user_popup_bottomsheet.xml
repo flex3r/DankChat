@@ -197,7 +197,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
-                    app:constraint_referenced_ids="user_timeout,user_ban,user_unban"
+                    app:constraint_referenced_ids="user_timeout,user_delete,user_ban,user_unban"
                     tools:visibility="visible" />
 
                 <com.google.android.material.button.MaterialButton
@@ -208,10 +208,25 @@
                     android:layout_marginHorizontal="8dp"
                     android:layout_marginTop="4dp"
                     android:text="@string/user_popup_timeout"
-                    app:layout_constraintBottom_toTopOf="@id/user_unban"
+                    app:layout_constraintBottom_toTopOf="@id/user_delete"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/mod_barrier"
+                    app:layout_constraintVertical_bias="0"
+                    app:layout_constraintVertical_chainStyle="packed" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/user_delete"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/user_popup_delete"
+                    app:layout_constraintBottom_toTopOf="@id/user_ban"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/user_timeout"
                     app:layout_constraintVertical_bias="0"
                     app:layout_constraintVertical_chainStyle="packed" />
 
@@ -226,7 +241,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/user_unban"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/user_timeout"
+                    app:layout_constraintTop_toBottomOf="@id/user_delete"
                     app:layout_constraintVertical_bias="0"
                     app:layout_constraintVertical_chainStyle="packed" />
 
@@ -242,7 +257,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/user_ban"
-                    app:layout_constraintTop_toBottomOf="@id/user_timeout" />
+                    app:layout_constraintTop_toBottomOf="@id/user_delete" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>

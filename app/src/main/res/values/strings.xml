@@ -113,6 +113,7 @@
     <string name="relogin">Login again</string>
     <string name="logout">Logout</string>
     <string name="user_popup_timeout">Timeout</string>
+    <string name="user_popup_delete">Delete message</string>
     <string name="user_popup_ban">Ban</string>
     <string name="user_popup_unban">Unban</string>
     <string name="change_roomstate">Chat modes</string>
@@ -121,6 +122,9 @@
     <string name="confirm_user_ban_positive_button">Ban</string>
     <string name="confirm_user_timeout_title">Confirm timeout</string>
     <string name="confirm_user_timeout_positive_button">Timeout</string>
+    <string name="confirm_user_delete_title">Confirm message deletion</string>
+    <string name="confirm_user_delete_message">Are you sure you want to delete this message?</string>
+    <string name="confirm_user_delete_positive_button">Delete</string>
     <string name="confirm_user_roomstate_title">Update chat modes</string>
     <string name="roomstate_emote">Emote only</string>
     <string name="roomstate_subs">Subscriber only</string>

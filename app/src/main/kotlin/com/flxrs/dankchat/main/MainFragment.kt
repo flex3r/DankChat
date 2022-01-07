@@ -423,17 +423,14 @@ class MainFragment : Fragment() {
         return true
     }
 
-    fun openUserPopup(targetUserId: String, channel: String?, isWhisperPopup: Boolean = false) {
-        val oAuth = dankChatPreferences.oAuthKey?.removeOAuthSuffix ?: return
+    fun openUserPopup(targetUserId: String, messageId: String, channel: String?, isWhisperPopup: Boolean = false) {
         val currentUserId = dankChatPreferences.userIdString ?: return
-        val directions = MainFragmentDirections.actionMainFragmentToUserPopupDialogFragment(targetUserId, currentUserId, channel, oAuth, isWhisperPopup)
-        navigateSafe(directions)
-    }
+        if (!dankChatPreferences.isLoggedIn) {
+            return
+        }
 
-    fun openLogin(isRelogin: Boolean = false) {
-        val directions = MainFragmentDirections.actionMainFragmentToLoginFragment(isRelogin)
+        val directions = MainFragmentDirections.actionMainFragmentToUserPopupDialogFragment(targetUserId, currentUserId, messageId, channel, isWhisperPopup)
         navigateSafe(directions)
-        hideKeyboard()
     }
 
     fun mentionUser(user: String) {
@@ -461,6 +458,12 @@ class MainFragment : Fragment() {
 
         binding.input.setText(builder.toString())
         binding.input.setSelection(index + text.length)
+    }
+
+    private fun openLogin(isRelogin: Boolean = false) {
+        val directions = MainFragmentDirections.actionMainFragmentToLoginFragment(isRelogin)
+        navigateSafe(directions)
+        hideKeyboard()
     }
 
     private fun handleMessageHistoryDisclaimerResult(result: Boolean) {

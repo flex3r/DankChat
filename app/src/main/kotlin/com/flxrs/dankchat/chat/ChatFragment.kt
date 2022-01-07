@@ -140,14 +140,14 @@ open class ChatFragment : Fragment() {
         outState.putBoolean(AT_BOTTOM_STATE, isAtBottom)
     }
 
-    protected open fun onUserClick(targetUserId: String?, targetUserName: String, channel: String, isLongPress: Boolean) {
+    protected open fun onUserClick(targetUserId: String?, targetUserName: String, messageId: String, channel: String, isLongPress: Boolean) {
         targetUserId ?: return
         val shouldLongClickMention = preferences.getBoolean(getString(R.string.preference_user_long_click_key), true)
         val shouldMention = (isLongPress && shouldLongClickMention) || (!isLongPress && !shouldLongClickMention)
 
         when {
             shouldMention -> (parentFragment as? MainFragment)?.mentionUser(targetUserName)
-            else          -> (parentFragment as? MainFragment)?.openUserPopup(targetUserId, channel, isWhisperPopup = false)
+            else          -> (parentFragment as? MainFragment)?.openUserPopup(targetUserId, messageId, channel, isWhisperPopup = false)
         }
     }
 
