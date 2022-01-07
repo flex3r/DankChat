@@ -39,16 +39,14 @@ class StreamWebView @JvmOverloads constructor(
             val lifecycleOwner = findViewTreeLifecycleOwner() ?: return@doOnAttach
             val mainViewModel = ViewModelProvider(viewModelStoreOwner)[MainViewModel::class.java]
 
-            mainViewModel.streamEnabled
+            mainViewModel.currentStreamedChannel
                 .flowWithLifecycle(lifecycleOwner.lifecycle)
-                .onEach { streamEnabled ->
-                    isVisible = streamEnabled
+                .onEach { channel ->
+                    val isActive = channel.isNotBlank()
+                    isVisible = isActive
                     val url = when {
-                        streamEnabled -> {
-                            val channel = mainViewModel.activeChannel.value
-                            "https://player.twitch.tv/?channel=$channel&enableExtensions=true&muted=false&parent=flxrs.com"
-                        }
-                        else          -> BLANK_URL
+                        isActive -> "https://player.twitch.tv/?channel=$channel&enableExtensions=true&muted=false&parent=twitch.tv"
+                        else     -> BLANK_URL
                     }
 
                     stopLoading()
