@@ -215,4 +215,8 @@
     <string name="command__hint">Komanda</string>
     <string name="commands_title">Prilagođene komande</string>
     <string name="command_trigger_hint">Okidać</string>
+    <string name="user_popup_delete">Obriši poruku</string>
+    <string name="confirm_user_delete_message">Da li ste sigurni da želite da obrišete poruku?</string>
+    <string name="confirm_user_delete_positive_button">Obriši</string>
+    <string name="confirm_user_delete_title">Potvrdite brisanje poruke</string>
 </resources>
