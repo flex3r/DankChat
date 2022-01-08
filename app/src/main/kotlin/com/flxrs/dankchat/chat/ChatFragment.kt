@@ -182,9 +182,11 @@ open class ChatFragment : Fragment() {
     }
 
     private inner class ChatScrollListener : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            mainViewModel.setCanShowChips(dy >= 0)
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            mainViewModel.setCanShowChips(newState == RecyclerView.SCROLL_STATE_IDLE)
+        }
 
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             if (dy < 0) {
                 isAtBottom = false
                 bindingRef?.scrollBottom?.show()
