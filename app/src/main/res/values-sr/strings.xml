@@ -210,4 +210,9 @@
     <string name="preference_uploader_title">Servis za uplodovanje slika</string>
     <string name="preference_show_stream_summary">Prikaži prekidač za ugrađene strimove koji su uživo</string>
     <string name="preference_show_stream_title">Prikaži prekidač strimova</string>
+    <string name="add_command">Dodaj komandu</string>
+    <string name="remove_command">Obriši komandu</string>
+    <string name="command__hint">Komanda</string>
+    <string name="commands_title">Prilagođene komande</string>
+    <string name="command_trigger_hint">Okidać</string>
 </resources>
