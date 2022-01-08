@@ -22,9 +22,7 @@ import android.widget.TextView
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
-import androidx.core.text.bold
-import androidx.core.text.color
-import androidx.core.text.getSpans
+import androidx.core.text.*
 import androidx.core.text.util.LinkifyCompat
 import androidx.emoji2.text.EmojiCompat
 import androidx.preference.PreferenceManager
@@ -69,6 +67,7 @@ class ChatAdapter(
 
     class ViewHolder(val binding: ChatItemBinding) : RecyclerView.ViewHolder(binding.root) {
         val scope = CoroutineScope(Dispatchers.Main.immediate)
+        val coroutineHandler = CoroutineExceptionHandler { _, throwable -> binding.itemText.handleException(throwable) }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -81,7 +80,6 @@ class ChatAdapter(
 
     override fun onViewRecycled(holder: ViewHolder) {
         holder.scope.coroutineContext.cancelChildren()
-        holder.binding.executePendingBindings()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
             emoteManager.gifCallback.removeView(holder.binding.itemText)
         }
@@ -127,7 +125,7 @@ class ChatAdapter(
             is SystemMessageType.NoHistoryLoaded -> context.getString(R.string.system_message_no_history)
             is SystemMessageType.Connected       -> context.getString(R.string.system_message_connected)
             is SystemMessageType.LoginExpired    -> context.getString(R.string.login_expired)
-            is SystemMessageType.Custom       -> message.type.message
+            is SystemMessageType.Custom          -> message.type.message
         }
         val withTime = when {
             showTimeStamp -> SpannableStringBuilder().bold { append("${DateTimeUtils.timestampToLocalTime(message.timestamp)} ") }.append(systemMessageText)
@@ -181,6 +179,7 @@ class ChatAdapter(
         isClickable = false
         alpha = 1.0f
         movementMethod = LongClickLinkMovementMethod
+        (text as? Spannable)?.clearSpans()
 
         val darkModePreferenceKey = context.getString(R.string.preference_dark_theme_key)
         val timedOutPreferenceKey = context.getString(R.string.preference_show_timed_out_messages_key)
@@ -188,13 +187,11 @@ class ChatAdapter(
         val usernamePreferenceKey = context.getString(R.string.preference_show_username_key)
         val animateGifsKey = context.getString(R.string.preference_animate_gifs_key)
         val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
-        val debugKey = context.getString(R.string.preference_debug_mode_key)
         val checkeredKey = context.getString(R.string.checkered_messages_key)
         val badgesKey = context.getString(R.string.preference_visible_badges_key)
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val isDarkMode = resources.isSystemNightMode || preferences.getBoolean(darkModePreferenceKey, false)
         val isCheckeredMode = preferences.getBoolean(checkeredKey, false)
-        val isDebugEnabled = preferences.getBoolean(debugKey, false)
         val showTimedOutMessages = preferences.getBoolean(timedOutPreferenceKey, true)
         val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
         val showUserName = preferences.getBoolean(usernamePreferenceKey, true)
@@ -204,144 +201,132 @@ class ChatAdapter(
         val visibleBadgeTypes = BadgeType.mapFromPreferenceSet(visibleBadges)
         setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
 
-        fun handleException(throwable: Throwable) {
-            if (throwable is CancellationException) return // Ignore job cancellations
+        val scaleFactor = lineHeight * 1.5 / 112
+        val background = when {
+            isNotify                                        -> ContextCompat.getColor(context, R.color.color_highlight).harmonize(context)
+            isReward                                        -> ContextCompat.getColor(context, R.color.color_reward).harmonize(context)
+            isMention                                       -> ContextCompat.getColor(context, R.color.color_mention).harmonize(context)
+            isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(textView, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
+            else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
+        }
+        setBackgroundColor(background)
 
-            val trace = Log.getStackTraceString(throwable)
-            Log.e(TAG, trace)
+        val textColor = when {
+            isNotify  -> MaterialColors.getColor(textView, R.attr.colorOnPrimaryContainer)
+            isReward  -> MaterialColors.getColor(textView, R.attr.colorOnTertiaryContainer)
+            isMention -> MaterialColors.getColor(textView, R.attr.colorOnSecondaryContainer)
+            else      -> MaterialColors.getColor(textView, R.attr.colorOnSurface)
+        }
+        setTextColor(textColor)
 
-            if (isDebugEnabled) {
-                showErrorDialog(throwable, stackTraceString = trace)
+        if (timedOut) {
+            alpha = 0.5f
+
+            if (!showTimedOutMessages) {
+                text = when {
+                    showTimeStamp -> "${DateTimeUtils.timestampToLocalTime(timestamp)} ${context.getString(R.string.timed_out_message)}"
+                    else          -> context.getString(R.string.timed_out_message)
+                }
+                return
             }
         }
 
-        val coroutineHandler = CoroutineExceptionHandler { _, throwable -> handleException(throwable) }
-        holder.scope.launch(coroutineHandler) {
-            val scaleFactor = lineHeight * 1.5 / 112
-            val background = when {
-                isNotify                                        -> ContextCompat.getColor(context, R.color.color_highlight).harmonize(context)
-                isReward                                        -> ContextCompat.getColor(context, R.color.color_reward).harmonize(context)
-                isMention                                       -> ContextCompat.getColor(context, R.color.color_mention).harmonize(context)
-                isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(textView, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
-                else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
-            }
-            setBackgroundColor(background)
+        val fullName = when {
+            displayName.equals(name, true) -> displayName
+            else                           -> "$name($displayName)"
+        }
 
-            val textColor = when {
-                isNotify  -> MaterialColors.getColor(textView, R.attr.colorOnPrimaryContainer)
-                isReward  -> MaterialColors.getColor(textView, R.attr.colorOnTertiaryContainer)
-                isMention -> MaterialColors.getColor(textView, R.attr.colorOnSecondaryContainer)
-                else      -> MaterialColors.getColor(textView, R.attr.colorOnSurface)
-            }
-            setTextColor(textColor)
+        val fullDisplayName = when {
+            isWhisper && whisperRecipient.isNotBlank() -> "$fullName -> $whisperRecipient: "
+            !showUserName                              -> ""
+            isAction                                   -> "$fullName "
+            fullName.isBlank()                         -> ""
+            else                                       -> "$fullName: "
+        }
 
-            if (timedOut) {
-                alpha = 0.5f
+        val allowedBadges = badges.filter { visibleBadgeTypes.contains(it.type) }
+        val badgesLength = allowedBadges.size * 2
 
-                if (!showTimedOutMessages) {
-                    text = when {
-                        showTimeStamp -> "${DateTimeUtils.timestampToLocalTime(timestamp)} ${context.getString(R.string.timed_out_message)}"
-                        else          -> context.getString(R.string.timed_out_message)
-                    }
-                    return@launch
-                }
-            }
+        val channelOrBlank = when {
+            isWhisper -> ""
+            else      -> "#$channel"
+        }
+        val timeAndWhisperBuilder = StringBuilder()
+        if (isMentionTab && isMention) timeAndWhisperBuilder.append("$channelOrBlank ")
+        if (showTimeStamp) timeAndWhisperBuilder.append("${DateTimeUtils.timestampToLocalTime(timestamp)} ")
+        val (prefixLength, spannable) = timeAndWhisperBuilder.length + fullDisplayName.length to SpannableStringBuilder().bold { append(timeAndWhisperBuilder) }
 
-            val fullName = when {
-                displayName.equals(name, true) -> displayName
-                else                           -> "$name($displayName)"
-            }
+        val badgePositions = allowedBadges.map {
+            spannable.append("  ")
+            spannable.length - 2 to spannable.length - 1
+        }
 
-            val fullDisplayName = when {
-                isWhisper && whisperRecipient.isNotBlank() -> "$fullName -> $whisperRecipient: "
-                !showUserName                              -> ""
-                isAction                                   -> "$fullName "
-                fullName.isBlank()                         -> ""
-                else                                       -> "$fullName: "
-            }
+        val normalizedColor = color.normalizeColor(isDarkMode)
+        spannable.bold { color(normalizedColor) { append(fullDisplayName) } }
 
-            val allowedBadges = badges.filter { visibleBadgeTypes.contains(it.type) }
-            val badgesLength = allowedBadges.size * 2
+        when {
+            isAction -> spannable.color(normalizedColor) { append(message) }
+            else     -> spannable.append(message)
+        }
 
-            val channelOrBlank = when {
-                isWhisper -> ""
-                else      -> "#$channel"
-            }
-            val timeAndWhisperBuilder = StringBuilder()
-            if (isMentionTab && isMention) timeAndWhisperBuilder.append("$channelOrBlank ")
-            if (showTimeStamp) timeAndWhisperBuilder.append("${DateTimeUtils.timestampToLocalTime(timestamp)} ")
-            val (prefixLength, spannable) = timeAndWhisperBuilder.length + fullDisplayName.length to SpannableStringBuilder().bold { append(timeAndWhisperBuilder) }
-
-            val badgePositions = allowedBadges.map {
-                spannable.append("  ")
-                spannable.length - 2 to spannable.length - 1
-            }
-
-            val normalizedColor = color.normalizeColor(isDarkMode)
-            spannable.bold { color(normalizedColor) { append(fullDisplayName) } }
-
-            when {
-                isAction -> spannable.color(normalizedColor) { append(message) }
-                else     -> spannable.append(message)
-            }
-
-            // clicking usernames
-            if (fullName.isNotBlank()) {
-                val userClickableSpan = object : LongClickableSpan() {
-                    override fun onClick(v: View) = onUserClicked(userId, displayName, id, channel, false)
-                    override fun onLongClick(view: View) = onUserClicked(userId, displayName, id, channel, true)
-                    override fun updateDrawState(ds: TextPaint) {
-                        ds.isUnderlineText = false
-                        ds.color = normalizedColor
-                    }
-                }
-                spannable.setSpan(userClickableSpan, prefixLength - fullDisplayName.length + badgesLength, prefixLength + badgesLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
-
-            val emojiCompat = EmojiCompat.get()
-            val messageStart = prefixLength + badgesLength
-            val messageEnd = messageStart + message.length
-            val spannableWithEmojis = when (emojiCompat.loadState) {
-                EmojiCompat.LOAD_STATE_SUCCEEDED -> emojiCompat.process(spannable, messageStart, messageEnd, Int.MAX_VALUE, EmojiCompat.REPLACE_STRATEGY_NON_EXISTENT)
-                else                             -> spannable
-            } as SpannableStringBuilder
-
-            // links
-            LinkifyCompat.addLinks(spannableWithEmojis, Linkify.WEB_URLS)
-            spannableWithEmojis.getSpans<URLSpan>().forEach {
-                val start = spannableWithEmojis.getSpanStart(it)
-                val end = spannableWithEmojis.getSpanEnd(it)
-                spannableWithEmojis.removeSpan(it)
-
-                // skip partial link matches
-                val previousChar = spannableWithEmojis.getOrNull(index = start - 1)
-                if (previousChar != null && !previousChar.isWhitespace()) return@forEach
-
-                val clickableSpan = object : LongClickableSpan() {
-                    override fun onLongClick(view: View) = onMessageLongClick(originalMessage)
-                    override fun onClick(v: View) {
-                        try {
-                            customTabsIntent.launchUrl(context, it.url.toUri())
-                        } catch (e: ActivityNotFoundException) {
-                            Log.e("ViewBinding", Log.getStackTraceString(e))
-                        }
-                    }
-                }
-                spannableWithEmojis.setSpan(clickableSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
-
-            // copying message
-            val messageClickableSpan = object : LongClickableSpan() {
-                override fun onClick(v: View) = Unit
-                override fun onLongClick(view: View) = onMessageLongClick(originalMessage)
+        // clicking usernames
+        if (fullName.isNotBlank()) {
+            val userClickableSpan = object : LongClickableSpan() {
+                override fun onClick(v: View) = onUserClicked(userId, displayName, id, channel, false)
+                override fun onLongClick(view: View) = onUserClicked(userId, displayName, id, channel, true)
                 override fun updateDrawState(ds: TextPaint) {
                     ds.isUnderlineText = false
+                    ds.color = normalizedColor
                 }
-
             }
-            spannableWithEmojis.setSpan(messageClickableSpan, messageStart, messageEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spannable.setSpan(userClickableSpan, prefixLength - fullDisplayName.length + badgesLength, prefixLength + badgesLength, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+        }
 
-            setText(spannableWithEmojis, TextView.BufferType.SPANNABLE)
+        val emojiCompat = EmojiCompat.get()
+        val messageStart = prefixLength + badgesLength
+        val messageEnd = messageStart + message.length
+        val spannableWithEmojis = when (emojiCompat.loadState) {
+            EmojiCompat.LOAD_STATE_SUCCEEDED -> emojiCompat.process(spannable, messageStart, messageEnd, Int.MAX_VALUE, EmojiCompat.REPLACE_STRATEGY_NON_EXISTENT)
+            else                             -> spannable
+        } as SpannableStringBuilder
+
+        // links
+        LinkifyCompat.addLinks(spannableWithEmojis, Linkify.WEB_URLS)
+        spannableWithEmojis.getSpans<URLSpan>().forEach {
+            val start = spannableWithEmojis.getSpanStart(it)
+            val end = spannableWithEmojis.getSpanEnd(it)
+            spannableWithEmojis.removeSpan(it)
+
+            // skip partial link matches
+            val previousChar = spannableWithEmojis.getOrNull(index = start - 1)
+            if (previousChar != null && !previousChar.isWhitespace()) return@forEach
+
+            val clickableSpan = object : LongClickableSpan() {
+                override fun onLongClick(view: View) = onMessageLongClick(originalMessage)
+                override fun onClick(v: View) {
+                    try {
+                        customTabsIntent.launchUrl(context, it.url.toUri())
+                    } catch (e: ActivityNotFoundException) {
+                        Log.e("ViewBinding", Log.getStackTraceString(e))
+                    }
+                }
+            }
+            spannableWithEmojis.setSpan(clickableSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+        }
+
+        // copying message
+        val messageClickableSpan = object : LongClickableSpan() {
+            override fun onClick(v: View) = Unit
+            override fun onLongClick(view: View) = onMessageLongClick(originalMessage)
+            override fun updateDrawState(ds: TextPaint) {
+                ds.isUnderlineText = false
+            }
+
+        }
+        spannableWithEmojis.setSpan(messageClickableSpan, messageStart, messageEnd, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+        setText(spannableWithEmojis, TextView.BufferType.SPANNABLE)
+
+        holder.scope.launch(holder.coroutineHandler) {
             allowedBadges.forEachIndexed { idx, badge ->
                 try {
                     val (start, end) = badgePositions[idx]
@@ -366,7 +351,7 @@ class ChatAdapter(
 
                     if (drawable != null) {
                         val imageSpan = ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM)
-                        (text as SpannableString).setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        (text as SpannableString).setSpan(imageSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
                     }
                 } catch (t: Throwable) {
                     handleException(t)
@@ -377,15 +362,20 @@ class ChatAdapter(
                 emoteManager.gifCallback.addView(holder.binding.itemText)
             }
 
+
             val fullPrefix = prefixLength + badgesLength
-            emotes.groupBy { it.position }.forEach { (_, emotes) ->
-                try {
-                    val key = emotes.joinToString(separator = "-") { it.id }
-                    val layerDrawable = emoteManager.layerCache[key] ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
-                    (text as SpannableString).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
-                } catch (t: Throwable) {
-                    handleException(t)
-                }
+            try {
+                emotes
+                    .groupBy { it.position }
+                    .forEach { (_, emotes) ->
+                        val key = emotes.joinToString(separator = "-") { it.id }
+                        // fast path, backed by lru cache
+                        val layerDrawable = emoteManager.layerCache[key] ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
+
+                        (text as SpannableString).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
+                    }
+            } catch (t: Throwable) {
+                handleException(t)
             }
         }
     }
@@ -397,12 +387,13 @@ class ChatAdapter(
         animateGifs: Boolean,
         scaleFactor: Double,
     ): LayerDrawable {
-        val drawables = emotes.mapNotNull { it.toDrawable(context, animateGifs, useCache = !it.isOverlayEmote)?.run { transformEmoteDrawable(scaleFactor, it) } }.toTypedArray()
+        val drawables = emotes.mapNotNull {
+            it.loadAndTransformToDrawable(context, animateGifs, useCache = !it.isOverlayEmote)?.transformEmoteDrawable(scaleFactor, it)
+        }.toTypedArray()
+
         val bounds = drawables.map { it.bounds }
         return drawables.toLayerDrawable(bounds, scaleFactor, emotes).also {
-            if (emotes.size > 1) {
-                emoteManager.layerCache.put(cacheKey, it)
-            }
+            emoteManager.layerCache.put(cacheKey, it)
         }
     }
 
@@ -419,16 +410,21 @@ class ChatAdapter(
         }
     }
 
-    private suspend fun ChatMessageEmote.toDrawable(context: Context, animateGifs: Boolean, useCache: Boolean): Drawable? {
+    private suspend fun ChatMessageEmote.loadAndTransformToDrawable(context: Context, animateGifs: Boolean, useCache: Boolean): Drawable? {
         val cached = emoteManager.gifCache[url]
         return when {
-            useCache && cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
-            else                       -> Coil.execute(url.toRequest(context)).drawable?.apply {
-                if (this is Animatable) {
-                    if (useCache) {
-                        emoteManager.gifCache.put(url, this)
+            useCache && cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) } // fast path
+
+            // slow path, reduce load on main thread by switching coroutine to thread pool
+            else                       -> withContext(Dispatchers.Default) {
+                Coil.execute(url.toRequest(context)).drawable?.apply {
+                    if (this is Animatable) {
+                        if (useCache) {
+                            emoteManager.gifCache.put(url, this)
+                        }
+                        // start animation after adding to cache, very important!
+                        setRunning(animateGifs)
                     }
-                    setRunning(animateGifs)
                 }
             }
         }
@@ -436,7 +432,7 @@ class ChatAdapter(
 
     private fun SpannableString.setEmoteSpans(e: ChatMessageEmote, prefix: Int, drawable: Drawable) {
         try {
-            setSpan(ImageSpan(drawable), e.position.first + prefix, e.position.last + prefix, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+            setSpan(ImageSpan(drawable), e.position.first + prefix, e.position.last + prefix, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
         } catch (t: Throwable) {
             Log.e("ViewBinding", "$t $this ${e.position} ${e.code} $length")
         }
@@ -476,7 +472,25 @@ private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
     }
 
     override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
-        return if (oldItem.message is TwitchMessage && newItem.message is TwitchMessage && (newItem.message.timedOut || newItem.message.isMention)) false
-        else oldItem.message == newItem.message
+        return when {
+            oldItem.message is TwitchMessage && newItem.message is TwitchMessage &&
+                    ((!oldItem.message.timedOut && newItem.message.timedOut) || newItem.message.isMention) -> false
+            else                                                                                           -> oldItem.message == newItem.message
+        }
+    }
+}
+
+private fun TextView.handleException(throwable: Throwable) {
+    if (throwable is CancellationException) return // Ignore job cancellations
+
+    val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+    val debugKey = context.getString(R.string.preference_debug_mode_key)
+    val isDebugEnabled = preferences.getBoolean(debugKey, false)
+
+    val trace = Log.getStackTraceString(throwable)
+    Log.e("DankChat-Rendering", trace)
+
+    if (isDebugEnabled) {
+        showErrorDialog(throwable, stackTraceString = trace)
     }
 }
