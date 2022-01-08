@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.service.twitch.message
 
 import android.graphics.Color
+import com.flxrs.dankchat.service.ChatRepository
 import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.service.twitch.badge.Badge
 import com.flxrs.dankchat.service.twitch.badge.BadgeType
@@ -123,7 +124,8 @@ data class TwitchMessage(
             val id = tags["id"] ?: System.nanoTime().toString()
             val badges = parseBadges(emoteManager, tags["badges"], channel, tags["user-id"])
 
-            val (duplicateSpaceAdjustedMessage, removedSpaces) = message.removeDuplicateWhitespace()
+            val withEmojiFix = message.replace(ChatRepository.ESCAPE_TAG_REGEX, ChatRepository.ZERO_WIDTH_JOINER)
+            val (duplicateSpaceAdjustedMessage, removedSpaces) = withEmojiFix.removeDuplicateWhitespace()
             val (appendedSpaceAdjustedMessage, appendedSpaces) = duplicateSpaceAdjustedMessage.appendSpacesBetweenEmojiGroup()
             val (overlayEmotesAdjustedMessage, emotes) = emoteManager.parseEmotes(appendedSpaceAdjustedMessage, channel, emoteTag, appendedSpaces, removedSpaces)
 
@@ -221,7 +223,8 @@ data class TwitchMessage(
             val badges = parseBadges(emoteManager, tags["badges"], userId = tags["user-id"])
             val message = params.getOrElse(1) { "" }
 
-            val (duplicateSpaceAdjustedMessage, removedSpaces) = message.removeDuplicateWhitespace()
+            val withEmojiFix = message.replace(ChatRepository.ESCAPE_TAG_REGEX, ChatRepository.ZERO_WIDTH_JOINER)
+            val (duplicateSpaceAdjustedMessage, removedSpaces) = withEmojiFix.removeDuplicateWhitespace()
             val (appendedSpaceAdjustedMessage, appendedSpaces) = duplicateSpaceAdjustedMessage.appendSpacesBetweenEmojiGroup()
             val (overlayEmotesAdjustedMessage, emotes) = emoteManager.parseEmotes(appendedSpaceAdjustedMessage, channel = "", emoteTag, appendedSpaces, removedSpaces)
 

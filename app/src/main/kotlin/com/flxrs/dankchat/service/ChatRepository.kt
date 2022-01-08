@@ -308,7 +308,9 @@ class ChatRepository @Inject constructor(
             trimmedMessage -> "$trimmedMessage $INVISIBLE_CHAR"
             else           -> trimmedMessage
         }
-        return "PRIVMSG #$channel :$messageWithSuffix"
+
+        val messageWithEmojiFix = messageWithSuffix.replace(ZERO_WIDTH_JOINER, ESCAPE_TAG)
+        return "PRIVMSG #$channel :$messageWithEmojiFix"
     }
 
     private fun onMessage(msg: IrcMessage): List<ChatItem>? {
@@ -570,6 +572,9 @@ class ChatRepository @Inject constructor(
     companion object {
         private val TAG = ChatRepository::class.java.simpleName
         private val INVISIBLE_CHAR = ByteBuffer.allocate(4).putInt(0x000E0000).array().toString(Charsets.UTF_32)
+        private val ESCAPE_TAG = ByteBuffer.allocate(4).putInt(0x000E0002).array().toString(Charsets.UTF_32)
+        const val ZERO_WIDTH_JOINER = 0x200D.toChar().toString()
+        val ESCAPE_TAG_REGEX = "(?<!$ESCAPE_TAG)$ESCAPE_TAG".toRegex()
         private const val USER_CACHE_SIZE = 500
         const val MENTIONS_KEY = "mentions"
     }
