@@ -33,7 +33,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
     private val dankChatBadges = CopyOnWriteArrayList<DankChatBadgeDto>()
 
     val gifCache = LruCache<String, Drawable>(64)
-    val layerCache = LruCache<String, LayerDrawable>(64)
+    val layerCache = LruCache<String, LayerDrawable>(256)
     val gifCallback = MultiCallback(true)
 
     fun parse3rdPartyEmotes(message: String, channel: String = "", withTwitch: Boolean = false): List<ChatMessageEmote> {

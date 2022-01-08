@@ -43,25 +43,12 @@ class MainViewModel @Inject constructor(
 
     var started = false
 
-    val activeChannel: StateFlow<String> = chatRepository.activeChannel
-    val channels: StateFlow<List<String>?> = chatRepository.channels
-        .onEach { channels ->
-            if (channels != null && currentStreamedChannel.value !in channels) {
-                currentStreamedChannel.value = ""
-            }
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
-
-    val channelMentionCount: Flow<Map<String, Int>> = chatRepository.channelMentionCount
-    val unreadMessagesMap: Flow<Map<String, Boolean>> = chatRepository.unreadMessagesMap.map { map -> map.filterValues { it } }
-    val shouldColorNotification: StateFlow<Boolean> = combine(chatRepository.hasMentions, chatRepository.hasWhispers) { hasMentions, hasWhispers ->
-        hasMentions || hasWhispers
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
-
     data class StreamData(val channel: String, val data: String)
     sealed class Event {
         data class Error(val throwable: Throwable) : Event()
     }
+
+    val activeChannel: StateFlow<String> = chatRepository.activeChannel
 
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
     private val _dataLoadingState = MutableStateFlow<DataLoadingState>(DataLoadingState.None)
@@ -73,10 +60,11 @@ class MainViewModel @Inject constructor(
     private val whisperTabSelected = MutableStateFlow(false)
     private val mentionSheetOpen = MutableStateFlow(false)
     private val preferEmoteSuggestions = MutableStateFlow(false)
-    private val currentStreamedChannel = MutableStateFlow("")
+    private val _currentStreamedChannel = MutableStateFlow("")
     private val _isFullscreen = MutableStateFlow(false)
     private val canShowStream = MutableStateFlow(true)
     private val inputEnabled = MutableStateFlow(true)
+    private val _canShowChips = MutableStateFlow(true)
 
     private val emotes = currentSuggestionChannel.flatMapLatest { dataRepository.getEmotes(it) }
     private val roomStateText = currentSuggestionChannel
@@ -105,9 +93,24 @@ class MainViewModel @Inject constructor(
 
     val events = eventChannel.receiveAsFlow()
 
+    val channels: StateFlow<List<String>?> = chatRepository.channels
+        .onEach { channels ->
+            if (channels != null && _currentStreamedChannel.value !in channels) {
+                _currentStreamedChannel.value = ""
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+
+    val channelMentionCount: Flow<Map<String, Int>> = chatRepository.channelMentionCount
+    val unreadMessagesMap: Flow<Map<String, Boolean>> = chatRepository.unreadMessagesMap.map { map -> map.filterValues { it } }
+
     // StateFlow -> Channel -> Flow 4HEad xd
     val imageUploadEventFlow: Flow<ImageUploadState> = _imageUploadedState.produceIn(viewModelScope).receiveAsFlow()
     val dataLoadingEventFlow: Flow<DataLoadingState> = _dataLoadingState.produceIn(viewModelScope).receiveAsFlow()
+
+    val shouldColorNotification: StateFlow<Boolean> = combine(chatRepository.hasMentions, chatRepository.hasWhispers) { hasMentions, hasWhispers ->
+        hasMentions || hasWhispers
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
     val shouldShowViewPager: StateFlow<Boolean> = channels
         .mapLatest { it?.isNotEmpty() ?: true }
@@ -182,20 +185,19 @@ class MainViewModel @Inject constructor(
         )
     }.flowOn(Dispatchers.Default)
 
-    val streamEnabled: StateFlow<Boolean> = currentStreamedChannel
-        .map { it.isNotBlank() }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+    val isFullscreen: StateFlow<Boolean> = _isFullscreen.asStateFlow()
+    val canShowChips: StateFlow<Boolean> = _canShowChips.asStateFlow()
 
     val shouldShowStreamToggle: StateFlow<Boolean> =
-        combine(canShowStream, activeChannel, currentStreamedChannel, currentStreamInformation) { canShowStream, activeChannel, currentStream, currentStreamData ->
-            canShowStream && activeChannel.isNotBlank() && (activeChannel == currentStream || currentStream.isBlank() && currentStreamData != null)
+        combine(canShowChips, canShowStream, activeChannel, _currentStreamedChannel, currentStreamInformation) { canShowChips, canShowStream, activeChannel, currentStream, currentStreamData ->
+            canShowChips && canShowStream && activeChannel.isNotBlank() && (activeChannel == currentStream || currentStream.isBlank() && currentStreamData != null)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
-    val isFullscreen: StateFlow<Boolean> = _isFullscreen.asStateFlow()
-
-    val hasModInChannel: StateFlow<Boolean> = combine(activeChannel, chatRepository.userStateFlow) { channel, userState ->
-        channel.isNotBlank() && channel in userState.moderationChannels
+    val hasModInChannel: StateFlow<Boolean> = combine(canShowChips, activeChannel, chatRepository.userStateFlow) { canShowChips, channel, userState ->
+        canShowChips && channel.isNotBlank() && channel in userState.moderationChannels
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+
+    val currentStreamedChannel: StateFlow<String> = _currentStreamedChannel.asStateFlow()
 
     val currentRoomState: RoomState
         get() = chatRepository.getRoomState(currentSuggestionChannel.value).firstValue
@@ -447,10 +449,11 @@ class MainViewModel @Inject constructor(
     }
 
     fun toggleStream() {
-        val enabled = streamEnabled.value
-        currentStreamedChannel.value = when {
-            enabled -> ""
-            else    -> activeChannel.value
+        _currentStreamedChannel.update {
+            when {
+                it.isBlank() -> activeChannel.value
+                else -> ""
+            }
         }
     }
 
@@ -465,6 +468,10 @@ class MainViewModel @Inject constructor(
     fun toggleFullscreen() {
         val fullscreen = isFullscreen.value
         _isFullscreen.value = !fullscreen
+    }
+
+    fun setCanShowChips(value: Boolean) {
+        _canShowChips.value = value
     }
 
     fun changeRoomState(index: Int, enabled: Boolean, time: String = "") {

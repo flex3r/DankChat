@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.login
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -15,12 +16,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.webkit.WebSettingsCompat
+import androidx.webkit.WebSettingsCompat.*
+import androidx.webkit.WebViewFeature
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.LoginFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.service.api.ApiManager
 import com.flxrs.dankchat.service.api.dto.ValidateUserDto
+import com.flxrs.dankchat.utils.extensions.setupDarkTheme
 import com.flxrs.dankchat.utils.extensions.showLongSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -41,12 +46,13 @@ class LoginFragment : Fragment() {
     lateinit var apiManager: ApiManager
 
     @SuppressLint("SetJavaScriptEnabled")
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bindingRef = LoginFragmentBinding.inflate(inflater, container, false)
         binding.webview.apply {
             with(settings) {
                 javaScriptEnabled = true
                 setSupportZoom(true)
+                setupDarkTheme(resources)
             }
 
             if (!args.isRelogin) {

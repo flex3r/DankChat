@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
+import com.flxrs.dankchat.main.MainViewModel
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.extensions.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,6 +36,7 @@ import javax.inject.Inject
 open class ChatFragment : Fragment() {
     private val args: ChatFragmentArgs by navArgs()
     private val viewModel: ChatViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels({ requireParentFragment() })
 
     protected var bindingRef: ChatFragmentBinding? = null
     protected val binding get() = bindingRef!!
@@ -53,6 +55,7 @@ open class ChatFragment : Fragment() {
             lifecycleOwner = this@ChatFragment
             scrollBottom.setOnClickListener {
                 scrollBottom.visibility = View.GONE
+                mainViewModel.setCanShowChips(true)
                 isAtBottom = true
                 binding.chat.stopScroll()
                 scrollToPosition(adapter.itemCount - 1)
@@ -137,14 +140,14 @@ open class ChatFragment : Fragment() {
         outState.putBoolean(AT_BOTTOM_STATE, isAtBottom)
     }
 
-    protected open fun onUserClick(targetUserId: String?, targetUserName: String, channel: String, isLongPress: Boolean) {
+    protected open fun onUserClick(targetUserId: String?, targetUserName: String, messageId: String, channel: String, isLongPress: Boolean) {
         targetUserId ?: return
         val shouldLongClickMention = preferences.getBoolean(getString(R.string.preference_user_long_click_key), true)
         val shouldMention = (isLongPress && shouldLongClickMention) || (!isLongPress && !shouldLongClickMention)
 
         when {
             shouldMention -> (parentFragment as? MainFragment)?.mentionUser(targetUserName)
-            else          -> (parentFragment as? MainFragment)?.openUserPopup(targetUserId, channel, isWhisperPopup = false)
+            else          -> (parentFragment as? MainFragment)?.openUserPopup(targetUserId, messageId, channel, isWhisperPopup = false)
         }
     }
 
@@ -179,6 +182,10 @@ open class ChatFragment : Fragment() {
     }
 
     private inner class ChatScrollListener : RecyclerView.OnScrollListener() {
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            mainViewModel.setCanShowChips(newState == RecyclerView.SCROLL_STATE_IDLE)
+        }
+
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             if (dy < 0) {
                 isAtBottom = false

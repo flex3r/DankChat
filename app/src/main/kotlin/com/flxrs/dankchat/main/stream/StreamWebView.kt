@@ -10,6 +10,7 @@ import androidx.core.view.doOnAttach
 import androidx.core.view.isVisible
 import androidx.lifecycle.*
 import com.flxrs.dankchat.main.MainViewModel
+import com.flxrs.dankchat.utils.extensions.setupDarkTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -28,6 +29,7 @@ class StreamWebView @JvmOverloads constructor(
             javaScriptEnabled = true
             setSupportZoom(false)
             mediaPlaybackRequiresUserGesture = false
+            setupDarkTheme(resources)
         }
         webViewClient = StreamWebViewClient()
 
@@ -37,16 +39,14 @@ class StreamWebView @JvmOverloads constructor(
             val lifecycleOwner = findViewTreeLifecycleOwner() ?: return@doOnAttach
             val mainViewModel = ViewModelProvider(viewModelStoreOwner)[MainViewModel::class.java]
 
-            mainViewModel.streamEnabled
+            mainViewModel.currentStreamedChannel
                 .flowWithLifecycle(lifecycleOwner.lifecycle)
-                .onEach { streamEnabled ->
-                    isVisible = streamEnabled
+                .onEach { channel ->
+                    val isActive = channel.isNotBlank()
+                    isVisible = isActive
                     val url = when {
-                        streamEnabled -> {
-                            val channel = mainViewModel.activeChannel.value
-                            "https://player.twitch.tv/?channel=$channel&enableExtensions=true&muted=false&parent=flxrs.com"
-                        }
-                        else          -> BLANK_URL
+                        isActive -> "https://player.twitch.tv/?channel=$channel&enableExtensions=true&muted=false&parent=twitch.tv"
+                        else     -> BLANK_URL
                     }
 
                     stopLoading()

@@ -75,6 +75,7 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
                 }
             }
             userTimeout.setOnClickListener { showTimeoutDialog() }
+            userDelete.setOnClickListener { showDeleteDialog() }
             userBan.setOnClickListener { showBanDialog() }
             userUnban.setOnClickListener {
                 viewModel.unbanUser()
@@ -167,6 +168,18 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
             .setMessage(R.string.confirm_user_ban_message)
             .setPositiveButton(R.string.confirm_user_ban_positive_button) { _, _ ->
                 viewModel.banUser()
+                dialog?.dismiss()
+            }
+            .setNegativeButton(R.string.dialog_cancel) { d, _ -> d.dismiss() }
+            .show()
+    }
+
+    private fun showDeleteDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.confirm_user_delete_title)
+            .setMessage(R.string.confirm_user_delete_message)
+            .setPositiveButton(R.string.confirm_user_delete_positive_button) { _, _ ->
+                viewModel.deleteMessage()
                 dialog?.dismiss()
             }
             .setNegativeButton(R.string.dialog_cancel) { d, _ -> d.dismiss() }

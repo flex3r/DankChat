@@ -154,12 +154,12 @@
             android:name="currentUserId"
             app:argType="string" />
         <argument
+            android:name="messageId"
+            app:argType="string" />
+        <argument
             android:name="channel"
             app:argType="string"
             app:nullable="true" />
-        <argument
-            android:name="oAuth"
-            app:argType="string" />
         <argument
             android:name="isWhisperPopup"
             app:argType="boolean" />
