@@ -261,7 +261,7 @@ class MainFragment : Fragment() {
 
         val channels = dankChatPreferences.getChannels()
         channels.forEach { tabAdapter.addFragment(it) }
-        binding.chatViewpager.offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
+        binding.chatViewpager.offscreenPageLimit = calculatePageLimit(channels.size)
 
         (requireActivity() as AppCompatActivity).apply {
             setHasOptionsMenu(true)
@@ -532,6 +532,7 @@ class MainFragment : Fragment() {
             dankChatPreferences.channelsString = updatedChannels.joinToString(separator = ",")
 
             tabAdapter.addFragment(lowerCaseChannel)
+            binding.chatViewpager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
         }
         binding.chatViewpager.setCurrentItem(newTabIndex, false)
 
@@ -911,6 +912,7 @@ class MainFragment : Fragment() {
             dankChatPreferences.channelsString = null
         }
 
+        binding.chatViewpager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
         activity?.invalidateOptionsMenu()
     }
 
@@ -926,6 +928,11 @@ class MainFragment : Fragment() {
                 }
             }
         })
+    }
+
+    private fun calculatePageLimit(size: Int): Int = when {
+        size > 1 -> size - 1
+        else     -> ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
     }
 
     private fun ViewPager2.setup(binding: MainFragmentBinding) {
