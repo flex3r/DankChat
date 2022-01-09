@@ -10,6 +10,7 @@ import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.extensions.appendSpacesBetweenEmojiGroup
 import com.flxrs.dankchat.utils.extensions.removeDuplicateWhitespace
+import java.util.*
 
 sealed class Message {
     abstract val id: String
@@ -34,12 +35,12 @@ sealed class Message {
 data class SystemMessage(
     val type: SystemMessageType,
     override val timestamp: Long = System.currentTimeMillis(),
-    override val id: String = System.nanoTime().toString()
+    override val id: String = UUID.randomUUID().toString()
 ) : Message()
 
 data class ClearChatMessage(
     override val timestamp: Long = System.currentTimeMillis(),
-    override val id: String = System.nanoTime().toString(),
+    override val id: String = UUID.randomUUID().toString(),
     val channel: String,
     val targetUser: String? = null,
     val duration: String = "",
@@ -47,7 +48,6 @@ data class ClearChatMessage(
 ) : Message() {
     val isBan = duration.isBlank()
     val isFullChatClear = targetUser == null
-    val isTimeout = !isBan && !isFullChatClear
 
     companion object {
         fun parseClearChat(message: IrcMessage): ClearChatMessage = with(message) {
@@ -55,7 +55,7 @@ data class ClearChatMessage(
             val target = params.getOrNull(1)
             val duration = tags["ban-duration"] ?: ""
             val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
-            val id = tags["id"] ?: System.nanoTime().toString()
+            val id = tags["id"] ?: UUID.randomUUID().toString()
 
             return ClearChatMessage(
                 timestamp = ts,
@@ -71,7 +71,7 @@ data class ClearChatMessage(
 
 data class TwitchMessage(
     override val timestamp: Long = System.currentTimeMillis(),
-    override val id: String = System.nanoTime().toString(),
+    override val id: String = UUID.randomUUID().toString(),
     val channel: String,
     val userId: String? = null,
     val name: String = "",
@@ -121,7 +121,7 @@ data class TwitchMessage(
             }
             val channel = params[0].substring(1)
             val emoteTag = tags["emotes"] ?: ""
-            val id = tags["id"] ?: System.nanoTime().toString()
+            val id = tags["id"] ?: UUID.randomUUID().toString()
             val badges = parseBadges(emoteManager, tags["badges"], channel, tags["user-id"])
 
             val withEmojiFix = message.replace(ChatRepository.ESCAPE_TAG_REGEX, ChatRepository.ZERO_WIDTH_JOINER)
@@ -148,23 +148,10 @@ data class TwitchMessage(
             )
         }
 
-        fun makeSystemMessage(message: String, channel: String, timestamp: Long = System.currentTimeMillis(), id: String = System.nanoTime().toString()): TwitchMessage {
-            val color = Color.parseColor("#717171")
-            return TwitchMessage(
-                timestamp = timestamp,
-                channel = channel,
-                name = "",
-                color = color,
-                message = message,
-                id = id,
-                isSystem = true
-            )
-        }
-
         fun parseUserNotice(message: IrcMessage, emoteManager: EmoteManager, historic: Boolean = false): List<TwitchMessage> = with(message) {
             val messages = mutableListOf<TwitchMessage>()
             val msgId = tags["msg-id"]
-            val id = tags["id"] ?: System.nanoTime().toString()
+            val id = tags["id"] ?: UUID.randomUUID().toString()
             val channel = params[0].substring(1)
             val systemMsg = if (historic) params[1] else tags["system-msg"] ?: ""
             val color = Color.parseColor("#717171")
@@ -200,18 +187,9 @@ data class TwitchMessage(
             }
 
             val ts = tags["rm-received-ts"]?.toLong() ?: System.currentTimeMillis()
-            val id = tags["id"] ?: System.nanoTime().toString()
+            val id = tags["id"] ?: UUID.randomUUID().toString()
 
             return makeSystemMessage(notice, channel, ts, id)
-        }
-
-        fun parseHostTarget(message: IrcMessage): TwitchMessage = with(message) {
-            val target = params[1].substringBefore("-")
-            val channel = params[0].substring(1)
-            val ts = tags["rm-received-ts"]?.toLong() ?: System.currentTimeMillis()
-            val id = tags["id"] ?: System.nanoTime().toString()
-
-            return makeSystemMessage("Now hosting $target", channel, ts, id)
         }
 
         fun parseWhisper(ircMessage: IrcMessage, emoteManager: EmoteManager, currentUserName: String): TwitchMessage = with(ircMessage) {
@@ -238,14 +216,27 @@ data class TwitchMessage(
                 originalMessage = appendedSpaceAdjustedMessage,
                 emotes = emotes,
                 badges = badges,
-                id = System.nanoTime().toString(),
+                id = UUID.randomUUID().toString(),
                 userId = tags["user-id"],
                 isWhisper = true,
                 whisperRecipient = currentUserName,
             )
         }
 
-        fun parseBadges(emoteManager: EmoteManager, badgeTags: String?, channel: String = "", userId: String? = null): List<Badge> {
+        private fun makeSystemMessage(message: String, channel: String, timestamp: Long = System.currentTimeMillis(), id: String = UUID.randomUUID().toString()): TwitchMessage {
+            val color = Color.parseColor("#717171")
+            return TwitchMessage(
+                timestamp = timestamp,
+                channel = channel,
+                name = "",
+                color = color,
+                message = message,
+                id = id,
+                isSystem = true
+            )
+        }
+
+        private fun parseBadges(emoteManager: EmoteManager, badgeTags: String?, channel: String = "", userId: String? = null): List<Badge> {
             val badges = badgeTags?.split(',')?.mapNotNull { badgeTag ->
                 val trimmed = badgeTag.trim()
                 val badgeSet = trimmed.substringBefore('/')
