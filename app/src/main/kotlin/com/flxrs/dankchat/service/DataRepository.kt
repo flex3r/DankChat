@@ -52,7 +52,12 @@ class DataRepository @Inject constructor(private val apiManager: ApiManager, pri
     suspend fun loadTwitchEmotes(oAuth: String, id: String) {
         if (oAuth.isNotBlank()) {
             measureTimeAndLog(TAG, "twitch emotes for #$id") {
-                apiManager.getUserEmotes(oAuth, id)?.also { emoteManager.setTwitchEmotes(oAuth, it) }
+                // kraken shutdown inc, so don't handle errors
+                val emotes = runCatching {
+                    apiManager.getUserEmotes(oAuth, id)
+                }.getOrNull()
+
+                emotes?.let { emoteManager.setTwitchEmotes(oAuth, it) }
             }
         }
     }
