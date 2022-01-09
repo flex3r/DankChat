@@ -279,7 +279,9 @@ class ChatAdapter(
                     ds.color = normalizedColor
                 }
             }
-            spannable.setSpan(userClickableSpan, prefixLength - fullDisplayName.length + badgesLength, prefixLength + badgesLength, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+            val start = prefixLength - fullDisplayName.length + badgesLength
+            val end = prefixLength + badgesLength
+            spannable[start..end] = userClickableSpan
         }
 
         val emojiCompat = EmojiCompat.get()
@@ -311,7 +313,7 @@ class ChatAdapter(
                     }
                 }
             }
-            spannableWithEmojis.setSpan(clickableSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+            spannableWithEmojis[start..end] = clickableSpan
         }
 
         // copying message
@@ -323,7 +325,7 @@ class ChatAdapter(
             }
 
         }
-        spannableWithEmojis.setSpan(messageClickableSpan, messageStart, messageEnd, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+        spannableWithEmojis[messageStart..messageEnd] = messageClickableSpan
         setText(spannableWithEmojis, TextView.BufferType.SPANNABLE)
 
         holder.scope.launch(holder.coroutineHandler) {
@@ -351,7 +353,7 @@ class ChatAdapter(
 
                     if (drawable != null) {
                         val imageSpan = ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM)
-                        (text as SpannableString).setSpan(imageSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+                        (text as SpannableString)[start..end] = imageSpan
                     }
                 } catch (t: Throwable) {
                     handleException(t)
@@ -432,7 +434,9 @@ class ChatAdapter(
 
     private fun SpannableString.setEmoteSpans(e: ChatMessageEmote, prefix: Int, drawable: Drawable) {
         try {
-            setSpan(ImageSpan(drawable), e.position.first + prefix, e.position.last + prefix, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+            val start = e.position.first + prefix
+            val end = e.position.last + prefix
+            this[start..end] = ImageSpan(drawable)
         } catch (t: Throwable) {
             Log.e("ViewBinding", "$t $this ${e.position} ${e.code} $length")
         }
