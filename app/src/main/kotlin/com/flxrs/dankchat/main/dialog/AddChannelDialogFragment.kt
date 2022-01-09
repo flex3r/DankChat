@@ -1,7 +1,6 @@
 package com.flxrs.dankchat.main.dialog
 
 import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.view.inputmethod.EditorInfo

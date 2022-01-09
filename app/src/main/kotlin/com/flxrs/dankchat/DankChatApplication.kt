@@ -1,11 +1,9 @@
 package com.flxrs.dankchat
 
-import android.app.Activity
 import android.app.Application
 import android.app.UiModeManager
 import android.content.res.Configuration
 import android.os.Build
-import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import androidx.core.content.getSystemService
@@ -15,7 +13,6 @@ import coil.ImageLoaderFactory
 import coil.decode.ImageDecoderDecoder
 import com.flxrs.dankchat.di.EmoteOkHttpClient
 import com.flxrs.dankchat.utils.gifs.GifDrawableDecoder
-import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.HiltAndroidApp
 import okhttp3.OkHttpClient
 import javax.inject.Inject
@@ -66,9 +63,5 @@ class DankChatApplication : Application(), ImageLoaderFactory {
                 }
             }
             .build()
-    }
-
-    companion object {
-        private val TAG = DankChatApplication::class.java.simpleName
     }
 }

@@ -43,7 +43,7 @@ data class IrcMessage(
                         .associate {
                             val kv = it.split('=')
                             val v = when (kv.size) {
-                                2    -> kv[1].replace("\\:", ";")
+                                2 -> kv[1].replace("\\:", ";")
                                     .replace("\\s", " ")
                                     .replace("\\r", "\r")
                                     .replace("\\n", "\n")

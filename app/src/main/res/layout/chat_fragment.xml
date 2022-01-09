@@ -9,8 +9,8 @@
         android:animateLayoutChanges="true">
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            style="@style/Widget.Material3.ExtendedFloatingActionButton.Secondary"
             android:id="@+id/scrollBottom"
+            style="@style/Widget.Material3.ExtendedFloatingActionButton.Secondary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"

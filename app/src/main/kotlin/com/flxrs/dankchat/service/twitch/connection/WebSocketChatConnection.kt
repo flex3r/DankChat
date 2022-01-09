@@ -5,7 +5,6 @@ import com.flxrs.dankchat.service.irc.IrcMessage
 import com.flxrs.dankchat.utils.extensions.timer
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.receiveAsFlow

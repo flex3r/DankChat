@@ -38,6 +38,7 @@
     </style>
 
     <style name="AppTheme.TrueDarkTheme" parent="AppTheme" />
+
     <style name="AppTheme.TrueDarkOverlay" parent="ThemeOverlay.Material3.DynamicColors.Light" />
 
     <style name="PrefsTheme" parent="PreferenceThemeOverlay">

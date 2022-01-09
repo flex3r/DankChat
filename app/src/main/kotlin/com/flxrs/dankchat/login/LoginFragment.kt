@@ -1,7 +1,6 @@
 package com.flxrs.dankchat.login
 
 import android.annotation.SuppressLint
-import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -16,9 +15,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.webkit.WebSettingsCompat
-import androidx.webkit.WebSettingsCompat.*
-import androidx.webkit.WebViewFeature
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.LoginFragmentBinding
 import com.flxrs.dankchat.main.MainFragment

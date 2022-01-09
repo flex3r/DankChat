@@ -452,7 +452,7 @@ class MainViewModel @Inject constructor(
         _currentStreamedChannel.update {
             when {
                 it.isBlank() -> activeChannel.value
-                else -> ""
+                else         -> ""
             }
         }
     }
