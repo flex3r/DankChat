@@ -6,6 +6,7 @@ import android.text.SpannableString
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.DrawableRes
 import androidx.core.text.getSpans
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
@@ -21,11 +22,23 @@ fun View.showLongSnackbar(text: String, block: Snackbar.() -> Unit = {}) = Snack
     .apply(block)
     .show()
 
-inline fun ImageView.loadImage(url: String, block: ImageRequest.Builder.() -> Unit = {}) {
+inline fun ImageView.loadImage(
+    url: String,
+    @DrawableRes placeholder: Int? = R.drawable.ic_missing_emote,
+    noinline afterLoad: (() -> Unit)? = null,
+    block: ImageRequest.Builder.() -> Unit = {}
+) {
     load(url) {
-        block()
-        placeholder(R.drawable.ic_missing_emote)
         error(R.drawable.ic_missing_emote)
+        placeholder?.let { placeholder(it) }
+        afterLoad?.let {
+            listener(
+                onCancel = { it() },
+                onSuccess = { _, _ -> it() },
+                onError = { _, _ -> it() }
+            )
+        }
+        block()
     }
 }
 

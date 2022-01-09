@@ -112,7 +112,11 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun UserPopupBottomsheetBinding.updateUserData(userState: UserPopupState.Success) {
-        userAvatar.loadImage(userState.avatarUrl) {
+        val showImage = {
+            userAvatarLoading.isVisible = false
+            userAvatarCard.isVisible = true
+        }
+        userAvatar.loadImage(userState.avatarUrl, placeholder = null, afterLoad = showImage) {
             scale(Scale.FILL)
         }
         userLoading.isVisible = false

@@ -43,7 +43,7 @@ class CommandRepository @Inject constructor(private val chatRepository: ChatRepo
             Command.UNBLOCK  -> unblockUserCommand(oAuth, words.drop(1))
             Command.CHATTERS -> chattersCommand(channel)
             Command.UPTIME   -> uptimeCommand(oAuth, channel)
-            else             -> checkUserCommands(trigger, words.drop(1))
+            else             -> checkUserCommands(trigger)
         }
     }
 
@@ -137,7 +137,7 @@ class CommandRepository @Inject constructor(private val chatRepository: ChatRepo
         return CommandResult.Accepted("Uptime: $uptime")
     }
 
-    private fun checkUserCommands(trigger: String, args: List<String>): CommandResult {
+    private fun checkUserCommands(trigger: String): CommandResult {
         val commands = preferenceStore.getCommands()
         val foundCommand = commands.find { it.trigger == trigger } ?: return CommandResult.NotFound
 
