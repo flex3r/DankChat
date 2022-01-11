@@ -987,7 +987,7 @@ class MainFragment : Fragment() {
                         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
 
                         override fun onStateChanged(bottomSheet: View, newState: Int) {
-                            if (mainViewModel.isFullscreen.value && isLandscape) {
+                            if (!mainViewModel.isFullscreen.value && isLandscape) {
                                 when (newState) {
                                     BottomSheetBehavior.STATE_EXPANDED, BottomSheetBehavior.STATE_COLLAPSED -> {
                                         (activity as? AppCompatActivity)?.supportActionBar?.hide()
