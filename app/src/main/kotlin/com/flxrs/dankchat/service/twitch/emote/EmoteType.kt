@@ -11,6 +11,10 @@ sealed class EmoteType : Comparable<EmoteType> {
         override val title = channel
     }
 
+    data class ChannelTwitchFollowerEmote(val channel: String) : EmoteType() {
+        override val title = channel
+    }
+
     object ChannelFFZEmote : EmoteType() {
         override val title = "FrankerFaceZ"
     }
@@ -40,13 +44,14 @@ sealed class EmoteType : Comparable<EmoteType> {
     }
 
     override fun compareTo(other: EmoteType): Int = when {
-        this is ChannelTwitchBitEmote  -> {
+        this is ChannelTwitchBitEmote || this is ChannelTwitchFollowerEmote   -> {
             when (other) {
-                is ChannelTwitchBitEmote -> 0
-                else                     -> 1
+                is ChannelTwitchBitEmote,
+                is ChannelTwitchFollowerEmote -> 0
+                else                          -> 1
             }
         }
-        other is ChannelTwitchBitEmote -> -1
-        else                           -> 0
+        other is ChannelTwitchBitEmote || other is ChannelTwitchFollowerEmote -> -1
+        else                                                                  -> 0
     }
 }

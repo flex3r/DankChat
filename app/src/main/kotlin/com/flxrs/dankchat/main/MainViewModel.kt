@@ -77,6 +77,7 @@ class MainViewModel @Inject constructor(
     }
 
     private val emoteSuggestions = emotes.mapLatest { emotes ->
+        // TODO additional distinct needed?
         emotes.distinctBy { it.code }
             .map { Suggestion.EmoteSuggestion(it) }
     }
@@ -171,11 +172,13 @@ class MainViewModel @Inject constructor(
     val emoteItems: Flow<List<List<EmoteItem>>> = emotes.map { emotes ->
         val groupedByType = emotes.groupBy {
             when (it.emoteType) {
-                is EmoteType.ChannelTwitchEmote, is EmoteType.ChannelTwitchBitEmote -> EmoteMenuTab.SUBS
+                is EmoteType.ChannelTwitchEmote,
+                is EmoteType.ChannelTwitchBitEmote,
+                is EmoteType.ChannelTwitchFollowerEmote -> EmoteMenuTab.SUBS
                 is EmoteType.ChannelFFZEmote,
                 is EmoteType.ChannelBTTVEmote,
-                is EmoteType.ChannelSevenTVEmote                                    -> EmoteMenuTab.CHANNEL
-                else                                                                -> EmoteMenuTab.GLOBAL
+                is EmoteType.ChannelSevenTVEmote        -> EmoteMenuTab.CHANNEL
+                else                                    -> EmoteMenuTab.GLOBAL
             }
         }
         listOf(

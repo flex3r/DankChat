@@ -68,6 +68,7 @@ class DataRepository @Inject constructor(private val apiManager: ApiManager, pri
         }.let { Log.i(TAG, "Loaded DankChat badges in $it ms") }
     }
 
+    // TODO refactor to flow/observe pattern
     suspend fun setEmotesForSuggestions(channel: String) {
         emotes.putIfAbsent(channel, MutableStateFlow(emptyList()))
         emotes[channel]?.value = emoteManager.getEmotes(channel)

@@ -125,9 +125,16 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         userStateEmoteSetIds = sets.map { it.id }
 
         sets.forEach { emoteSet ->
-            val type = when (emoteSet.id) {
+            val type = when (val set = emoteSet.id) {
                 "0", "42" -> EmoteType.GlobalTwitchEmote // 42 == monkey emote set, move them to the global emote section
-                else      -> emoteSet.channelName.twitchEmoteType
+                else      -> {
+                    followerEmoteSetIds.entries
+                        .find { (_, sets) ->
+                            set in sets
+                        }
+                        ?.let { EmoteType.ChannelTwitchFollowerEmote(it.key) }
+                        ?: emoteSet.channelName.twitchEmoteType
+                }
             }
             emoteSet.emotes.mapToGenericEmotes(type).forEach {
                 twitchEmotes[it.code] = it
@@ -215,15 +222,19 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
     }
 
     suspend fun getEmotes(channel: String): List<GenericEmote> = withContext(Dispatchers.Default) {
-        val result = mutableListOf<GenericEmote>()
-        result.addAll(twitchEmotes.values)
-        ffzEmotes[channel]?.let { result.addAll(it.values) }
-        bttvEmotes[channel]?.let { result.addAll(it.values) }
-        sevenTVEmotes[channel]?.let { result.addAll(it.values) }
-        result.addAll(globalFFZEmotes.values)
-        result.addAll(globalBttvEmotes.values)
-        result.addAll(globalSevenTVEmotes.values)
-        return@withContext result.sortedBy { it.code }
+        buildList {
+            twitchEmotes.values.filterNot {
+                it.emoteType is EmoteType.ChannelTwitchFollowerEmote && it.emoteType.channel != channel
+            }.let { addAll(it) }
+
+            ffzEmotes[channel]?.let { addAll(it.values) }
+            bttvEmotes[channel]?.let { addAll(it.values) }
+            sevenTVEmotes[channel]?.let { addAll(it.values) }
+
+            addAll(globalFFZEmotes.values)
+            addAll(globalBttvEmotes.values)
+            addAll(globalSevenTVEmotes.values)
+        }.sortedBy { it.code }
     }
 
     private val String?.twitchEmoteType: EmoteType
