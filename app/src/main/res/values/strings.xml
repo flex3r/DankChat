@@ -162,7 +162,7 @@
     <string name="preference_about_header">About</string>
     <string name="preference_appearance_header">Appearance</string>
     <string name="preference_appearance_key" translatable="false">appearance_key</string>
-    <string name="preference_about_summary">DankChat %1$s made by @flex3rs and contributors\n\nTwitch emote data provided by twitchemotes.com</string>
+    <string name="preference_about_summary">DankChat %1$s made by @flex3rs and contributors</string>
     <string name="preference_about_key" translatable="false">about_key</string>
     <string name="preference_show_input_key" translatable="false">show_input_key</string>
     <string name="preference_show_input_title">Show input</string>
@@ -259,6 +259,7 @@
     <string name="preference_show_stream_summary">Displays a toggle for embedding streams of live channels</string>
     <string name="preference_commands_title" translatable="false">@string/commands_title</string>
     <string name="preference_commands_key" translatable="false">custom_commands_key</string>
+    <string name="preference_about_tos">Twitch terms of service &amp; user policy:</string>
 
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>

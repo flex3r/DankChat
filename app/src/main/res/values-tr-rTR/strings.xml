@@ -104,7 +104,7 @@
     <string name="preference_custom_mentions_title">Özel bahsetmeler</string>
     <string name="preference_custom_mentions_summary">Özel ifadeleri bahsetme olarak işaretle</string>
     <string name="preference_blacklist_summary">Gizlemek için özel ifadeler ayarla</string>
-    <string name="preference_about_summary">DankChat %1$s @flex3rs ve katılımcılar tarafından yapıldı\n\nTwitch emote verisi twitchemotes.com\'dan sağlanmaktadır</string>
+    <string name="preference_about_summary">DankChat %1$s @flex3rs ve katılımcılar tarafından yapıldı</string>
     <string name="preference_notification_title">Bahsetme bildirimleri göster</string>
     <string name="preference_notification_summary">Uygulama arka plandayken sizden bahsedildiğinde bildirimler oluşturur</string>
     <string name="preference_roomstate_title">Kanal modu bilgisini göster</string>

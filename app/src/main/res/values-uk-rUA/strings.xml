@@ -111,7 +111,7 @@
     <string name="preference_general_header">Загальні</string>
     <string name="preference_about_header">Про додаток</string>
     <string name="preference_appearance_header">Зовнішній вигляд</string>
-    <string name="preference_about_summary">DankChat %1$s зроблений @flex3rs та іншими учасниками\n\nДані про смайли Twitch надані twitchemotes.com</string>
+    <string name="preference_about_summary">DankChat %1$s зроблений @flex3rs та іншими учасниками</string>
     <string name="preference_show_input_title">Показувати поле введення</string>
     <string name="preference_show_input_summary">Показувати поле для введення тексту повідомлень</string>
     <string name="preference_dark_theme_title">Увімкнути темну тему</string>

@@ -108,7 +108,7 @@
     <string name="preference_general_header">Yleinen</string>
     <string name="preference_about_header">Tietoja</string>
     <string name="preference_appearance_header">Ulkoasu</string>
-    <string name="preference_about_summary">DankChat %1$s on tehnyt @flex3rs ja avustajat\n\nTwitch emoteiden tiedot tarjoaa twitchemotes.com</string>
+    <string name="preference_about_summary">DankChat %1$s on tehnyt @flex3rs ja avustajat</string>
     <string name="preference_show_input_title">Näytä syöttö</string>
     <string name="preference_show_input_summary">Näyttää viestien lähettämisen syöttökentän</string>
     <string name="preference_dark_theme_title">Ota tumma teema käyttöön</string>

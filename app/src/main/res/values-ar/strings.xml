@@ -109,7 +109,7 @@
     <string name="preference_general_header">عام</string>
     <string name="preference_about_header">حول</string>
     <string name="preference_appearance_header">المظهر</string>
-    <string name="preference_about_summary">DankChat %1$s made by @flex3rs and contributors\n\nTwitch emote data provided by twitchemotes.com</string>
+    <string name="preference_about_summary">DankChat %1$s made by @flex3rs and contributors</string>
     <string name="preference_show_input_title">"إظهار المدخلات "</string>
     <string name="preference_show_input_summary">"يعرض حقل الإدخال لإرسال الرسائل "</string>
     <string name="preference_dark_theme_title">تفعيل المظهر الداكن</string>

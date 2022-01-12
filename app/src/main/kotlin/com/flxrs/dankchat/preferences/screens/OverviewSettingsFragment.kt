@@ -1,12 +1,11 @@
 package com.flxrs.dankchat.preferences.screens
 
-import android.content.ActivityNotFoundException
 import android.os.Bundle
-import android.util.Log
+import android.text.util.Linkify
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.browser.customtabs.CustomTabsIntent
-import androidx.core.net.toUri
+import androidx.core.text.toSpannable
+import androidx.core.text.util.LinkifyCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
@@ -47,18 +46,19 @@ class OverviewSettingsFragment : PreferenceFragmentCompat() {
 
         val isLoggedIn = dankChatPreferences.isLoggedIn
         findPreference<Preference>(getString(R.string.preference_about_key))?.apply {
-            summary = getString(R.string.preference_about_summary, BuildConfig.VERSION_NAME)
-            setOnPreferenceClickListener {
-                try {
-                    CustomTabsIntent.Builder()
-                        .setShowTitle(true)
-                        .build().launchUrl(view.context, GITHUB_URL.toUri())
-                } catch (e: ActivityNotFoundException) {
-                    Log.e(TAG, Log.getStackTraceString(e))
-                }
-                true
-            }
+            val spannable = buildString {
+                append(context.getString(R.string.preference_about_summary, BuildConfig.VERSION_NAME))
+                append("\n")
+                append(GITHUB_URL)
+                append("\n\n")
+                append(context.getString(R.string.preference_about_tos))
+                append("\n")
+                append(TWITCH_TOS_URL)
+            }.toSpannable()
+            LinkifyCompat.addLinks(spannable, Linkify.WEB_URLS)
+            summary = spannable
         }
+
         findPreference<Preference>(getString(R.string.preference_logout_key))?.apply {
             isEnabled = isLoggedIn
             setOnPreferenceClickListener {
@@ -76,7 +76,7 @@ class OverviewSettingsFragment : PreferenceFragmentCompat() {
     }
 
     companion object {
-        private val TAG = OverviewSettingsFragment::class.java.simpleName
         private const val GITHUB_URL = "https://github.com/flex3r/dankchat"
+        private const val TWITCH_TOS_URL = "https://www.twitch.tv/p/terms-of-service"
     }
 }

@@ -110,7 +110,7 @@
     <string name="preference_general_header">General</string>
     <string name="preference_about_header">About</string>
     <string name="preference_appearance_header">Appearance</string>
-    <string name="preference_about_summary">DankChat %1$s made by @flex3rs and contributors\n\nTwitch emote data provided by twitchemotes.com</string>
+    <string name="preference_about_summary">DankChat %1$s made by @flex3rs and contributors</string>
     <string name="preference_show_input_title">Show input</string>
     <string name="preference_show_input_summary">Displays the input field to send messages</string>
     <string name="preference_dark_theme_title">Enable dark theme</string>

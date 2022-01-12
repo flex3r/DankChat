@@ -86,7 +86,7 @@
     <string name="preference_general_header">Allgemein</string>
     <string name="preference_about_header">Über</string>
     <string name="preference_appearance_header">Aussehen</string>
-    <string name="preference_about_summary">DankChat %1$s gemacht von @flex3rs und Mitwirkenden\n\nTwitch Emote Daten zur Verfügung gestellt von twitchemotes.com</string>
+    <string name="preference_about_summary">DankChat %1$s gemacht von @flex3rs und Mitwirkenden</string>
     <string name="preference_show_input_title">Eingabe anzeigen</string>
     <string name="preference_show_input_summary">Eingabefeld anzeigen um Nachrichten zu senden</string>
     <string name="preference_dark_theme_title">Aktiviere dunkles Design</string>

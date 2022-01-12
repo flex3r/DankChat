@@ -84,7 +84,7 @@
     <string name="preference_general_header">Ogólne</string>
     <string name="preference_about_header">O aplikacji</string>
     <string name="preference_appearance_header">Wygląd</string>
-    <string name="preference_about_summary">DankChat %1$s stworzony przez @flex3rs i kontrybutorów\n\nDane emotek Twitch dostarcza twitchemotes.com</string>
+    <string name="preference_about_summary">DankChat %1$s stworzony przez @flex3rs i kontrybutorów</string>
     <string name="preference_show_input_title">Pokazuj pole czatu</string>
     <string name="preference_show_input_summary">Pokazuje pole czatu do wysyłania wiadomości</string>
     <string name="preference_dark_theme_title">Włącz ciemny motyw</string>

@@ -34,8 +34,10 @@
     <PreferenceCategory
         android:title="@string/preference_about_header"
         app:iconSpaceReserved="false">
-        <Preference
+
+        <com.flxrs.dankchat.preferences.screens.AboutPreference
             android:key="@string/preference_about_key"
-            app:iconSpaceReserved="false" />
+            app:iconSpaceReserved="false"
+            app:selectable="false" />
     </PreferenceCategory>
 </PreferenceScreen>

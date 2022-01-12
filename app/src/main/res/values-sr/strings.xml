@@ -69,7 +69,7 @@
     <string name="more">Još</string>
     <string name="notification_whisper_mention">%1$s vam je šapnuo</string>
     <string name="preference_about_header">Dodatne informacije</string>
-    <string name="preference_about_summary">DankChat %1$s je napravljen od @flex3rs i saradnicima \n\nTwitch emote data pruža twitchemotes.com</string>
+    <string name="preference_about_summary">DankChat %1$s je napravljen od @flex3rs i saradnicima</string>
     <string name="preference_animate_gifs_title">Animirani gifovi</string>
     <string name="preference_appearance_header">Izgled</string>
     <string name="preference_blacklist_summary">Podesite fraze koje će da se sakriju</string>

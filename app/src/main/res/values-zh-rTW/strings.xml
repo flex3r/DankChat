@@ -68,7 +68,7 @@
     <string name="nuuls_upload_title">上傳自訂圖片</string>
     <string name="open_channel">開啟頻道</string>
     <string name="preference_about_header">關於</string>
-    <string name="preference_about_summary">DankChat %1$s 是由 @flex3rs 及其貢獻者所製\n\nTwitch 表情符號相關資訊為 twitchemotes.com 提供</string>
+    <string name="preference_about_summary">DankChat %1$s 是由 @flex3rs 及其貢獻者所製</string>
     <string name="preference_animate_gifs_title">顯示動圖 (GIF)</string>
     <string name="preference_appearance_header">樣式</string>
     <string name="preference_blacklist_summary">設定特定字句隱藏</string>
