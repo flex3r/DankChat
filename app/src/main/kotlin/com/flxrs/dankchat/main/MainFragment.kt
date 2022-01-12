@@ -423,13 +423,14 @@ class MainFragment : Fragment() {
         return true
     }
 
-    fun openUserPopup(targetUserId: String, messageId: String, channel: String?, isWhisperPopup: Boolean = false) {
-        val currentUserId = dankChatPreferences.userIdString ?: return
-        if (!dankChatPreferences.isLoggedIn) {
-            return
-        }
-
-        val directions = MainFragmentDirections.actionMainFragmentToUserPopupDialogFragment(targetUserId, currentUserId, messageId, channel, isWhisperPopup)
+    fun openUserPopup(targetUserId: String, targetUserName: String, messageId: String, channel: String?, isWhisperPopup: Boolean = false) {
+        val directions = MainFragmentDirections.actionMainFragmentToUserPopupDialogFragment(
+            targetUserId = targetUserId,
+            targetUserName = targetUserName,
+            messageId = messageId,
+            channel = channel,
+            isWhisperPopup = isWhisperPopup
+        )
         navigateSafe(directions)
     }
 

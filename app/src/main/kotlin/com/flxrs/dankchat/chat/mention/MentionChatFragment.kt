@@ -44,7 +44,13 @@ class MentionChatFragment : ChatFragment() {
 
         when {
             shouldMention -> (parentFragment?.parentFragment as? MainFragment)?.whisperUser(targetUserName)
-            else          -> (parentFragment?.parentFragment as? MainFragment)?.openUserPopup(targetUserId, messageId, channel = null, isWhisperPopup = true)
+            else          -> (parentFragment?.parentFragment as? MainFragment)?.openUserPopup(
+                targetUserId = targetUserId,
+                targetUserName = targetUserName,
+                messageId = messageId,
+                channel = null,
+                isWhisperPopup = true
+            )
         }
     }
 

@@ -13,4 +13,5 @@ sealed class UserPopupState {
         val followingSince: String? = null,
         val isBlocked: Boolean = false
     ) : UserPopupState()
+    data class NotLoggedIn(val userName: String) : UserPopupState()
 }

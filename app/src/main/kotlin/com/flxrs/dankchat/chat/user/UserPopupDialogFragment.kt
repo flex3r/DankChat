@@ -10,13 +10,17 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import coil.load
 import coil.size.Scale
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.TimeoutDialogBinding
 import com.flxrs.dankchat.databinding.UserPopupBottomsheetBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.utils.extensions.collectFlow
+import com.flxrs.dankchat.utils.extensions.isLandscape
 import com.flxrs.dankchat.utils.extensions.loadImage
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -82,8 +86,16 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
                 dialog?.dismiss()
             }
             userAvatarCard.setOnClickListener {
-                val userName = viewModel.userNameOrNull ?: return@setOnClickListener
+                val userName = viewModel.userNameOrNull ?: args.targetUserName
                 val url = "https://twitch.tv/$userName"
+                Intent(Intent.ACTION_VIEW).also {
+                    it.data = url.toUri()
+                    startActivity(it)
+                }
+            }
+            userReport.setOnClickListener {
+                val userName = viewModel.userNameOrNull ?: args.targetUserName
+                val url = "https://twitch.tv/$userName/report"
                 Intent(Intent.ACTION_VIEW).also {
                     it.data = url.toUri()
                     startActivity(it)
@@ -93,9 +105,10 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
 
         collectFlow(viewModel.userPopupState) {
             when (it) {
-                is UserPopupState.Loading -> binding.showLoadingState()
-                is UserPopupState.Success -> binding.updateUserData(it)
-                is UserPopupState.Error   -> setErrorResultAndDismiss(it.throwable)
+                is UserPopupState.Loading     -> binding.showLoadingState()
+                is UserPopupState.NotLoggedIn -> binding.showNotLoggedInState(it)
+                is UserPopupState.Success     -> binding.updateUserData(it)
+                is UserPopupState.Error       -> setErrorResultAndDismiss(it.throwable)
             }
         }
 
@@ -104,6 +117,15 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
         }
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        dialog?.takeIf { isLandscape }?.let {
+            val sheet = it as BottomSheetDialog
+            sheet.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
     }
 
     private fun UserPopupBottomsheetBinding.showLoadingState() {
@@ -121,6 +143,7 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
         }
         userLoading.isVisible = false
         userGroup.isVisible = true
+        userAvatarLoading.isVisible = true
         userName.text = userState.displayName
         userCreated.text = getString(R.string.user_popup_created, userState.created)
         userFollow.text = when {
@@ -134,6 +157,22 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
             userState.isBlocked -> getString(R.string.user_popup_unblock)
             else                -> getString(R.string.user_popup_block)
         }
+    }
+
+    private fun UserPopupBottomsheetBinding.showNotLoggedInState(state: UserPopupState.NotLoggedIn) {
+        userLoading.isVisible = false
+        userGroup.isVisible = true
+        userAvatarLoading.isVisible = false
+        userAvatarCard.isVisible = true
+        userAvatar.load(R.drawable.ic_person) {
+            scale(Scale.FIT)
+        }
+
+        userName.text = state.userName
+
+        userMention.isEnabled = false
+        userFollow.isEnabled = false
+        userBlock.isEnabled = false
     }
 
     private fun setErrorResultAndDismiss(throwable: Throwable?) {

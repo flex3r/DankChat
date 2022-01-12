@@ -149,7 +149,13 @@ open class ChatFragment : Fragment() {
 
         when {
             shouldMention -> (parentFragment as? MainFragment)?.mentionUser(targetUserName)
-            else          -> (parentFragment as? MainFragment)?.openUserPopup(targetUserId, messageId, channel, isWhisperPopup = false)
+            else          -> (parentFragment as? MainFragment)?.openUserPopup(
+                targetUserId = targetUserId,
+                targetUserName = targetUserName,
+                messageId = messageId,
+                channel = channel,
+                isWhisperPopup = false
+            )
         }
     }
 

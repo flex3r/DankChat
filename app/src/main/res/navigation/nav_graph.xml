@@ -151,7 +151,7 @@
             android:name="targetUserId"
             app:argType="string" />
         <argument
-            android:name="currentUserId"
+            android:name="targetUserName"
             app:argType="string" />
         <argument
             android:name="messageId"

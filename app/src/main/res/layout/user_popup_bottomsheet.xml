@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:constraint_referenced_ids="user_avatar_loading,user_name,user_created,user_followage,buttons_layout"
+            app:constraint_referenced_ids="user_name,user_created,user_followage,buttons_layout"
             tools:visibility="visible" />
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
@@ -54,6 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:indeterminate="true"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/top_barrier"
             app:layout_constraintEnd_toEndOf="@id/avatar_guideline"
             app:layout_constraintStart_toStartOf="parent"
@@ -63,10 +64,12 @@
             android:id="@+id/user_avatar_card"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_marginHorizontal="8dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp"
             android:visibility="invisible"
             app:layout_constrainedWidth="true"
             app:layout_constraintBottom_toTopOf="@id/top_barrier"
+            app:layout_constraintDimensionRatio="W,1:1"
             app:layout_constraintEnd_toEndOf="@id/avatar_guideline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/bottomsheet_handle"
@@ -190,12 +193,25 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="8dp"
                     android:layout_marginTop="4dp"
-                    android:layout_marginBottom="8dp"
                     android:text="@string/user_popup_block"
-                    app:layout_constraintBottom_toTopOf="@id/mod_barrier"
+                    app:layout_constraintBottom_toTopOf="@id/user_report"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/user_follow" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/user_report"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/user_popup_report"
+                    app:layout_constraintBottom_toTopOf="@id/mod_barrier"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/user_block" />
 
                 <androidx.constraintlayout.widget.Barrier
                     android:id="@+id/mod_barrier"
@@ -203,7 +219,7 @@
                     android:layout_height="wrap_content"
                     app:barrierAllowsGoneWidgets="true"
                     app:barrierDirection="bottom"
-                    app:constraint_referenced_ids="user_block" />
+                    app:constraint_referenced_ids="user_report" />
 
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/moderation_group"

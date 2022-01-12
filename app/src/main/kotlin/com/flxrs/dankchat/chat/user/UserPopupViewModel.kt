@@ -26,11 +26,12 @@ class UserPopupViewModel @Inject constructor(
     private val args = UserPopupDialogFragmentArgs.fromSavedStateHandle(savedStateHandle)
 
     private val _userPopupState = MutableStateFlow<UserPopupState>(UserPopupState.Loading)
-    val userPopupState: StateFlow<UserPopupState> = _userPopupState.asStateFlow()
 
     private val hasModInChannel: StateFlow<Boolean> = chatRepository.userStateFlow
         .map { args.channel != null && args.channel in it.moderationChannels }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+
+    val userPopupState: StateFlow<UserPopupState> = _userPopupState.asStateFlow()
 
     val canShowModeration: StateFlow<Boolean> =
         combine(userPopupState, hasModInChannel) { state, hasMod ->
@@ -99,7 +100,8 @@ class UserPopupViewModel @Inject constructor(
 
     private inline fun updateStateWith(crossinline block: suspend (String, String, String) -> Unit) = viewModelScope.launch {
         val oAuth = preferenceStore.oAuthKey?.removeOAuthSuffix ?: return@launch
-        val result = runCatching { block(args.targetUserId, args.currentUserId, oAuth) }
+        val currentUserId = preferenceStore.userIdString ?: return@launch
+        val result = runCatching { block(args.targetUserId, currentUserId, oAuth) }
         when {
             result.isFailure -> _userPopupState.value = UserPopupState.Error(result.exceptionOrNull())
             else             -> loadData()
@@ -107,9 +109,15 @@ class UserPopupViewModel @Inject constructor(
     }
 
     private fun loadData() = viewModelScope.launch {
+        if (!preferenceStore.isLoggedIn) {
+            _userPopupState.value = UserPopupState.NotLoggedIn(args.targetUserName)
+            return@launch
+        }
+
         _userPopupState.value = UserPopupState.Loading
         val oAuth = preferenceStore.oAuthKey?.removeOAuthSuffix
-        if (oAuth == null) {
+        val currentUserId = preferenceStore.userIdString
+        if (oAuth == null || currentUserId == null) {
             _userPopupState.value = UserPopupState.Error()
             return@launch
         }
@@ -118,7 +126,7 @@ class UserPopupViewModel @Inject constructor(
             val channelId = args.channel?.let { dataRepository.getUserIdByName(oAuth, it) }
             val channelUserFollows = channelId?.let { dataRepository.getUserFollows(oAuth, args.targetUserId, channelId) }
             val user = dataRepository.getUser(oAuth, args.targetUserId)
-            val currentUserFollows = dataRepository.getUserFollows(oAuth, args.currentUserId, args.targetUserId)
+            val currentUserFollows = dataRepository.getUserFollows(oAuth, currentUserId, args.targetUserId)
             val isBlocked = chatRepository.isUserBlocked(args.targetUserId)
 
             mapToState(
