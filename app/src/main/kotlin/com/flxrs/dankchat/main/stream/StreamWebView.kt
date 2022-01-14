@@ -29,7 +29,6 @@ class StreamWebView @JvmOverloads constructor(
             javaScriptEnabled = true
             setSupportZoom(false)
             mediaPlaybackRequiresUserGesture = false
-            setupDarkTheme(resources)
         }
         webViewClient = StreamWebViewClient()
 
