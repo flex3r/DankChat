@@ -68,8 +68,8 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:imeOptions="actionDone"
-                        android:inputType="text"
+                        android:imeOptions="actionNext"
+                        android:inputType="textNoSuggestions"
                         android:singleLine="true"
                         android:text="@={uploader.uploadUrl}" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -85,8 +85,8 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:imeOptions="actionDone"
-                        android:inputType="text"
+                        android:imeOptions="actionNext"
+                        android:inputType="textNoSuggestions"
                         android:singleLine="true"
                         android:text="@={uploader.formField}" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -102,8 +102,8 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:imeOptions="actionDone"
-                        android:inputType="text"
+                        android:imeOptions="actionNext"
+                        android:inputType="textNoSuggestions"
                         android:singleLine="true"
                         android:text="@={uploader.headers}" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -119,8 +119,8 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:imeOptions="actionDone"
-                        android:inputType="text"
+                        android:imeOptions="actionNext"
+                        android:inputType="textNoSuggestions"
                         android:singleLine="true"
                         android:text="@={uploader.imageLinkPattern}" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -137,7 +137,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:imeOptions="actionDone"
-                        android:inputType="text"
+                        android:inputType="textNoSuggestions"
                         android:singleLine="true"
                         android:text="@={uploader.deletionLinkPattern}" />
                 </com.google.android.material.textfield.TextInputLayout>
