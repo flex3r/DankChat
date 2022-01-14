@@ -43,6 +43,10 @@ sealed class EmoteType : Comparable<EmoteType> {
         override val title = "SevenTV"
     }
 
+    object RecentUsageEmote : EmoteType() {
+        override val title = ""
+    }
+
     override fun compareTo(other: EmoteType): Int = when {
         this is ChannelTwitchBitEmote || this is ChannelTwitchFollowerEmote   -> {
             when (other) {

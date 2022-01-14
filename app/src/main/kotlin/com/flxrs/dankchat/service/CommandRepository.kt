@@ -16,7 +16,11 @@ import javax.inject.Inject
 import kotlin.system.measureTimeMillis
 import kotlin.time.Duration.Companion.seconds
 
-class CommandRepository @Inject constructor(private val chatRepository: ChatRepository, private val apiManager: ApiManager, private val preferenceStore: DankChatPreferenceStore) {
+class CommandRepository @Inject constructor(
+    private val chatRepository: ChatRepository,
+    private val apiManager: ApiManager,
+    private val preferenceStore: DankChatPreferenceStore
+) {
     private val customCommands: Flow<List<CommandItem.Entry>> = preferenceStore.commandsAsFlow
     private val supibotCommands = mutableMapOf<String, MutableStateFlow<List<String>>>()
 

@@ -8,10 +8,11 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.databinding.EmoteHeaderItemBinding
 import com.flxrs.dankchat.databinding.EmoteItemBinding
+import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.utils.extensions.loadImage
 import java.util.*
 
-class EmoteAdapter(private val onEmoteClick: (emote: String) -> Unit) : ListAdapter<EmoteItem, RecyclerView.ViewHolder>(DetectDiff()) {
+class EmoteAdapter(private val onEmoteClick: (emote: GenericEmote) -> Unit) : ListAdapter<EmoteItem, RecyclerView.ViewHolder>(DetectDiff()) {
 
     inner class ViewHolder(val binding: EmoteItemBinding) : RecyclerView.ViewHolder(binding.root)
     inner class TextViewHolder(val binding: EmoteHeaderItemBinding) : RecyclerView.ViewHolder(binding.root)
@@ -29,7 +30,7 @@ class EmoteAdapter(private val onEmoteClick: (emote: String) -> Unit) : ListAdap
             is ViewHolder     -> {
                 val emoteItem = getItem(position) as EmoteItem.Emote
                 val emote = emoteItem.emote
-                holder.binding.root.setOnClickListener { onEmoteClick(emote.code) }
+                holder.binding.root.setOnClickListener { onEmoteClick(emote) }
                 with(holder.binding.emoteView) {
                     TooltipCompat.setTooltipText(this, emote.code)
                     contentDescription = emote.code

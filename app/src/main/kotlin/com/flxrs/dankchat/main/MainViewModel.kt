@@ -9,11 +9,13 @@ import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.service.ChatRepository
 import com.flxrs.dankchat.service.CommandRepository
 import com.flxrs.dankchat.service.DataRepository
+import com.flxrs.dankchat.service.EmoteUsageRepository
 import com.flxrs.dankchat.service.api.ApiManager
 import com.flxrs.dankchat.service.state.DataLoadingState
 import com.flxrs.dankchat.service.state.ImageUploadState
 import com.flxrs.dankchat.service.twitch.connection.ConnectionState
 import com.flxrs.dankchat.service.twitch.emote.EmoteType
+import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.service.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.service.twitch.message.RoomState
 import com.flxrs.dankchat.utils.extensions.*
@@ -30,6 +32,7 @@ class MainViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
     private val dataRepository: DataRepository,
     private val commandRepository: CommandRepository,
+    private val emoteUsageRepository: EmoteUsageRepository,
     private val apiManager: ApiManager
 ) : ViewModel() {
 
@@ -67,6 +70,7 @@ class MainViewModel @Inject constructor(
     private val _canShowChips = MutableStateFlow(true)
 
     private val emotes = currentSuggestionChannel.flatMapLatest { dataRepository.getEmotes(it) }
+    private val recentEmotes = emoteUsageRepository.getRecentUsages()
     private val roomStateText = currentSuggestionChannel
         .flatMapLatest { chatRepository.getRoomState(it) }
         .map { it.toDisplayText().ifBlank { null } }
@@ -155,7 +159,7 @@ class MainViewModel @Inject constructor(
             canType && !mentionSheetOpen
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
-    val suggestions: Flow<List<Suggestion>> =
+    val suggestions: StateFlow<List<Suggestion>> =
         combine(
             emoteSuggestions,
             userSuggestions,
@@ -167,9 +171,17 @@ class MainViewModel @Inject constructor(
                 preferEmoteSuggestions -> (emotes + users + defaultCommands + supibotCommands)
                 else                   -> (users + emotes + defaultCommands + supibotCommands)
             }
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
+    val emoteItems: Flow<List<List<EmoteItem>>> = combine(emotes, recentEmotes) { emotes, recentEmotes ->
+        val availableRecents = recentEmotes.mapNotNull { usage ->
+            emotes
+                .firstOrNull { it.id == usage.emoteId }
+                ?.copy(emoteType = EmoteType.RecentUsageEmote)
         }
 
-    val emoteItems: Flow<List<List<EmoteItem>>> = emotes.map { emotes ->
+        Log.d("ASD", "available ${availableRecents.map { it.code }}")
+
         val groupedByType = emotes.groupBy {
             when (it.emoteType) {
                 is EmoteType.ChannelTwitchEmote,
@@ -182,6 +194,7 @@ class MainViewModel @Inject constructor(
             }
         }
         listOf(
+            availableRecents.toEmoteItems(),
             groupedByType[EmoteMenuTab.SUBS]?.moveToFront(activeChannel.value).toEmoteItems(),
             groupedByType[EmoteMenuTab.CHANNEL].toEmoteItems(),
             groupedByType[EmoteMenuTab.GLOBAL].toEmoteItems()
@@ -498,6 +511,25 @@ class MainViewModel @Inject constructor(
         }
 
         chatRepository.sendMessage(command)
+    }
+
+    fun addEmoteUsage(emote: GenericEmote) = viewModelScope.launch {
+        Log.d("ASD", "adding ${emote.code} ${emote.id}")
+        emoteUsageRepository.addEmoteUsage(emote.id)
+    }
+
+    fun addEmoteSuggestionUsage(position: Int) = viewModelScope.launch {
+        val suggestion = suggestions.value.getOrNull(position) ?: return@launch
+        if (suggestion !is Suggestion.EmoteSuggestion) {
+            return@launch
+        }
+
+        Log.d("ASD", "adding ${suggestion.emote.code} ${suggestion.emote.id}")
+        emoteUsageRepository.addEmoteUsage(suggestion.emote.id)
+    }
+
+    fun clearEmoteUsages() = viewModelScope.launch {
+        emoteUsageRepository.clearUsages()
     }
 
     private suspend fun loadInitialData(oAuth: String, id: String, channelList: List<String>, loadSupibot: Boolean, loadThirdPartyData: Set<ThirdPartyEmoteType>, handler: CoroutineExceptionHandler) =

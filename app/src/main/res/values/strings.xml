@@ -139,6 +139,7 @@
     <string name="command__hint">Command</string>
     <string name="commands_title">Custom commands"</string>
     <string name="user_popup_report">Report</string>
+    <string name="emote_menu_tab_recent">Recent</string>
 
     <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
     <string name="preference_timestamp_title">Show timestamps</string>

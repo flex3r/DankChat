@@ -52,6 +52,7 @@ import com.flxrs.dankchat.preferences.screens.ChatSettingsFragment
 import com.flxrs.dankchat.service.state.DataLoadingState
 import com.flxrs.dankchat.service.state.ImageUploadState
 import com.flxrs.dankchat.service.twitch.connection.ConnectionState
+import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.service.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.utils.*
 import com.flxrs.dankchat.utils.extensions.*
@@ -539,7 +540,10 @@ class MainFragment : Fragment() {
         activity?.invalidateOptionsMenu()
     }
 
-    private fun insertEmote(emote: String) = insertText("$emote ")
+    private fun insertEmote(emote: GenericEmote) {
+        insertText("${emote.code} ")
+        mainViewModel.addEmoteUsage(emote)
+    }
 
     private fun fetchStreamInformation() {
         lifecycleScope.launchWhenStarted {
@@ -822,9 +826,11 @@ class MainFragment : Fragment() {
         .setPositiveButton(getString(R.string.confirm_logout_positive_button)) { dialog, _ ->
             val loadThirdPartyKeys = preferences.getStringSet(getString(R.string.preference_visible_emotes_key), resources.getStringArray(R.array.emotes_entry_values).toSet()).orEmpty()
             val loadThirdPartyData = ThirdPartyEmoteType.mapFromPreferenceSet(loadThirdPartyKeys)
+            // TODO refactor to single viewmodel method
             dankChatPreferences.clearLogin()
             mainViewModel.closeAndReconnect(name = "", oAuth = "", userId = "", loadThirdPartyData = loadThirdPartyData)
             mainViewModel.clearIgnores()
+            mainViewModel.clearEmoteUsages()
             dialog.dismiss()
         }
         .setNegativeButton(getString(R.string.dialog_cancel)) { dialog, _ -> dialog.dismiss() }
@@ -969,10 +975,12 @@ class MainFragment : Fragment() {
                     height = (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
                 }
                 TabLayoutMediator(bottomSheetTabs, bottomSheetViewPager) { tab, pos ->
-                    tab.text = when (EmoteMenuTab.values()[pos]) {
+                    val menuTab = EmoteMenuTab.values()[pos]
+                    tab.text = when (menuTab) {
                         EmoteMenuTab.SUBS    -> getString(R.string.emote_menu_tab_subs)
                         EmoteMenuTab.CHANNEL -> getString(R.string.emote_menu_tab_channel)
                         EmoteMenuTab.GLOBAL  -> getString(R.string.emote_menu_tab_global)
+                        EmoteMenuTab.RECENT  -> getString(R.string.emote_menu_tab_recent)
                     }
                 }.attach()
             }
@@ -1006,7 +1014,6 @@ class MainFragment : Fragment() {
     }
 
     private fun CustomMultiAutoCompleteTextView.setup(binding: MainFragmentBinding) {
-        //setDropDownBackgroundResource(R.color.colorPrimary)
         setTokenizer(SpaceTokenizer())
         suggestionAdapter = EmoteSuggestionsArrayAdapter(binding.input.context) { count ->
             dropDownHeight = if (count > 2) {
@@ -1017,6 +1024,13 @@ class MainFragment : Fragment() {
             dropDownWidth = (binding.chatViewpager.measuredWidth * 0.6).roundToInt()
         }
         suggestionAdapter.setNotifyOnChange(false)
+
+        setOnItemClickListener { parent, _, position, _ ->
+            val suggestion = parent.getItemAtPosition(position)
+            if (suggestion is Suggestion.EmoteSuggestion) {
+                mainViewModel.addEmoteUsage(suggestion.emote)
+            }
+        }
 
         setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
