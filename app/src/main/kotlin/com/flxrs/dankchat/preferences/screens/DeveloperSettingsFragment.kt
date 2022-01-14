@@ -67,11 +67,10 @@ class DeveloperSettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun showImageUploaderPreference(root: View): Boolean {
-        val customUploader = dankChatPreferenceStore.customImageUploader
         val context = root.context
 
         val binding = UploaderBottomsheetBinding.inflate(LayoutInflater.from(context), root as? ViewGroup, false).apply {
-            uploader = customUploader
+            uploader = dankChatPreferenceStore.customImageUploader
             uploaderReset.setOnClickListener {
                 uploader = dankChatPreferenceStore.resetImageUploader()
             }
@@ -84,12 +83,12 @@ class DeveloperSettingsFragment : PreferenceFragmentCompat() {
         BottomSheetDialog(context).apply {
             setContentView(binding.root)
             setOnDismissListener {
-                val copy = customUploader.copy(
-                    headers = customUploader.headers?.takeIf { it.isNotBlank() },
-                    imageLinkPattern = customUploader.imageLinkPattern?.takeIf { it.isNotBlank() },
-                    deletionLinkPattern = customUploader.deletionLinkPattern?.takeIf { it.isNotBlank() },
+                val uploader = binding.uploader ?: DankChatPreferenceStore.DEFAULT_UPLOADER
+                dankChatPreferenceStore.customImageUploader = uploader.copy(
+                    headers = uploader.headers?.takeIf { it.isNotBlank() },
+                    imageLinkPattern = uploader.imageLinkPattern?.takeIf { it.isNotBlank() },
+                    deletionLinkPattern = uploader.deletionLinkPattern?.takeIf { it.isNotBlank() },
                 )
-                dankChatPreferenceStore.customImageUploader = copy
             }
             behavior.peekHeight = (resources.displayMetrics.heightPixels * 0.6f).toInt()
             show()
