@@ -193,7 +193,7 @@ class MainViewModel @Inject constructor(
 
     val shouldShowStreamToggle: StateFlow<Boolean> =
         combine(canShowChips, canShowStream, activeChannel, _currentStreamedChannel, currentStreamInformation) { canShowChips, canShowStream, activeChannel, currentStream, currentStreamData ->
-            canShowChips && canShowStream && activeChannel.isNotBlank() && (activeChannel == currentStream || currentStream.isBlank() && currentStreamData != null)
+            canShowChips && canShowStream && activeChannel.isNotBlank() && (currentStream.isNotBlank() || currentStreamData != null)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
     val hasModInChannel: StateFlow<Boolean> = combine(canShowChips, activeChannel, chatRepository.userStateFlow) { canShowChips, channel, userState ->
