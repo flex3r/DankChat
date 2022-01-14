@@ -13,7 +13,9 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.databinding.DataBindingUtil
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.preference.Preference
@@ -27,10 +29,13 @@ import com.flxrs.dankchat.preferences.screens.AppearanceSettingsFragment
 import com.flxrs.dankchat.preferences.screens.ChatSettingsFragment
 import com.flxrs.dankchat.preferences.screens.DeveloperSettingsFragment
 import com.flxrs.dankchat.preferences.screens.NotificationsSettingsFragment
+import com.flxrs.dankchat.service.DataRepository
 import com.flxrs.dankchat.service.NotificationService
 import com.flxrs.dankchat.utils.extensions.navigateSafe
 import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -40,7 +45,6 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
     lateinit var dankChatPreferences: DankChatPreferenceStore
 
     private val viewModel: DankChatViewModel by viewModels()
-    private lateinit var broadcastReceiver: BroadcastReceiver
     private val pendingChannelsToClear = mutableListOf<String>()
     private val navController: NavController by lazy { findNavController(R.id.main_content) }
     private val windowInsetsController: WindowInsetsControllerCompat? by lazy { ViewCompat.getWindowInsetsController(binding.root) }
@@ -65,15 +69,19 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
         }
 
         bindingRef = DataBindingUtil.setContentView(this, R.layout.main_activity)
-        broadcastReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) = handleShutDown()
-        }
 
-        val filter = IntentFilter(SHUTDOWN_REQUEST_FILTER)
-        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, filter)
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.oAuthKey.isNullOrBlank()) {
             dankChatPreferences.clearLogin()
         }
+
+        viewModel.commands
+            .flowWithLifecycle(lifecycle, minActiveState = Lifecycle.State.CREATED)
+            .onEach {
+                when (it) {
+                    DataRepository.ServiceEvent.Shutdown -> handleShutDown()
+                }
+            }
+            .launchIn(lifecycleScope)
     }
 
     override fun onDestroy() {
@@ -165,7 +173,6 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
     }
 
     private fun handleShutDown() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
         stopService(Intent(this, NotificationService::class.java))
         finish()
         android.os.Process.killProcess(android.os.Process.myPid())
@@ -203,7 +210,6 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
 
     companion object {
         private val TAG = MainActivity::class.java.simpleName
-        const val SHUTDOWN_REQUEST_FILTER = "shutdown_request_filter"
         const val OPEN_CHANNEL_KEY = "open_channel"
     }
 }

@@ -15,14 +15,17 @@ import android.speech.tts.TextToSpeech
 import androidx.core.app.NotificationCompat
 import androidx.core.content.edit
 import androidx.core.content.getSystemService
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.preference.PreferenceManager
+import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.main.MainActivity
+import com.flxrs.dankchat.main.MainViewModel
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
@@ -56,6 +59,9 @@ class NotificationService : Service(), CoroutineScope {
     @Inject
     lateinit var chatRepository: ChatRepository
 
+    @Inject
+    lateinit var dataRepository: DataRepository
+
     private var tts: TextToSpeech? = null
     private var audioManager: AudioManager? = null
     private var previousTTSUser: String? = null
@@ -67,6 +73,7 @@ class NotificationService : Service(), CoroutineScope {
 
     var activeTTSChannel: String? = null
     var shouldNotifyOnMention = false
+
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + Job()
 
@@ -111,7 +118,7 @@ class NotificationService : Service(), CoroutineScope {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            STOP_COMMAND -> LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(MainActivity.SHUTDOWN_REQUEST_FILTER))
+            STOP_COMMAND -> launch { dataRepository.sendShutdownCommand() }
             else         -> startForeground()
         }
 

@@ -10,8 +10,10 @@ import com.flxrs.dankchat.service.twitch.emote.GenericEmote
 import com.flxrs.dankchat.service.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.utils.extensions.measureTimeAndLog
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import java.io.File
 import javax.inject.Inject
 import kotlin.system.measureTimeMillis
@@ -19,6 +21,13 @@ import kotlin.system.measureTimeMillis
 class DataRepository @Inject constructor(private val apiManager: ApiManager, private val emoteManager: EmoteManager) {
     private val emotes = mutableMapOf<String, MutableStateFlow<List<GenericEmote>>>()
     private var loadedGlobalEmotes = false
+
+    sealed class ServiceEvent {
+        object Shutdown : ServiceEvent()
+    }
+
+    private val commandsChannel = Channel<ServiceEvent>(Channel.BUFFERED)
+    val commands = commandsChannel.receiveAsFlow()
 
     fun getEmotes(channel: String): StateFlow<List<GenericEmote>> = emotes.getOrPut(channel) { MutableStateFlow(emptyList()) }
 
@@ -74,6 +83,10 @@ class DataRepository @Inject constructor(private val apiManager: ApiManager, pri
 
     suspend fun loadUserStateEmotes(globalEmoteSetIds: List<String>, followerEmoteSetIds: Map<String, List<String>>) {
         emoteManager.loadUserStateEmotes(globalEmoteSetIds, followerEmoteSetIds)
+    }
+
+    suspend fun sendShutdownCommand() {
+        commandsChannel.send(ServiceEvent.Shutdown)
     }
 
     private suspend fun loadChannelBadges(oAuth: String, channel: String, id: String) = withContext(Dispatchers.Default) {
