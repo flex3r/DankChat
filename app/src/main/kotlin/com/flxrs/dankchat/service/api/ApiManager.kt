@@ -44,8 +44,6 @@ class ApiManager @Inject constructor(
     suspend fun getUserIdByName(oAuth: String, name: String): String? = helixApiService.getUserByName("Bearer $oAuth", name).bodyOrNull?.data?.getOrNull(0)?.id
     suspend fun getUser(oAuth: String, userId: String): HelixUserDto? = helixApiService.getUserById("Bearer $oAuth", userId).bodyOrNull?.data?.getOrNull(0)
     suspend fun getUsersFollows(oAuth: String, fromId: String, toId: String): UserFollowsDto? = helixApiService.getUsersFollows("Bearer $oAuth", fromId, toId).bodyOrNull
-    suspend fun followUser(oAuth: String, fromId: String, toId: String): Boolean = helixApiService.putUserFollows("Bearer $oAuth", UserFollowRequestBody(fromId, toId)).isSuccessful
-    suspend fun unfollowUser(oAuth: String, fromId: String, toId: String): Boolean = helixApiService.deleteUserFollows("Bearer $oAuth", fromId, toId).isSuccessful
     suspend fun getStreams(oAuth: String, channels: List<String>): StreamsDto? = helixApiService.getStreams("Bearer $oAuth", channels).bodyOrNull
     suspend fun getUserBlocks(oAuth: String, userId: String): HelixUserBlockListDto? = helixApiService.getUserBlocks("Bearer $oAuth", userId).bodyOrNull
     suspend fun blockUser(oAuth: String, targetUserId: String): Boolean = helixApiService.putUserBlock("Bearer $oAuth", targetUserId).isSuccessful

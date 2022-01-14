@@ -41,27 +41,6 @@ interface HelixApiService {
         "Client-ID: ${ApiManager.CLIENT_ID}",
         "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
     )
-    @POST("users/follows")
-    suspend fun putUserFollows(
-        @Header("Authorization") oAuth: String,
-        @Body body: UserFollowRequestBody
-    ): Response<Unit>
-
-    @Headers(
-        "Client-ID: ${ApiManager.CLIENT_ID}",
-        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
-    )
-    @DELETE("users/follows")
-    suspend fun deleteUserFollows(
-        @Header("Authorization") oAuth: String,
-        @Query("from_id") fromId: String,
-        @Query("to_id") toId: String,
-    ): Response<Unit>
-
-    @Headers(
-        "Client-ID: ${ApiManager.CLIENT_ID}",
-        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
-    )
     @GET("streams/")
     suspend fun getStreams(
         @Header("Authorization") oAuth: String,

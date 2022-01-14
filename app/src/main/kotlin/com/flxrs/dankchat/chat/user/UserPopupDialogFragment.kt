@@ -52,21 +52,6 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
                 dialog?.dismiss()
             }
 
-            userFollow.setOnClickListener {
-                when {
-                    viewModel.isFollowing -> {
-                        MaterialAlertDialogBuilder(requireContext())
-                            .setTitle(R.string.confirm_user_unfollow_title)
-                            .setMessage(R.string.confirm_user_unfollow_message)
-                            .setPositiveButton(R.string.confirm_channel_removal_positive_button) { _, _ -> viewModel.unfollowUser() }
-                            .setNegativeButton(R.string.dialog_cancel) { d, _ -> d.dismiss() }
-                            .show()
-
-                    }
-                    else                  -> viewModel.followUser()
-                }
-            }
-
             userBlock.setOnClickListener {
                 when {
                     viewModel.isBlocked -> viewModel.unblockUser()
@@ -146,10 +131,6 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
         userAvatarLoading.isVisible = true
         userName.text = userState.displayName
         userCreated.text = getString(R.string.user_popup_created, userState.created)
-        userFollow.text = when {
-            userState.isFollowing -> getString(R.string.user_popup_unfollow)
-            else                  -> getString(R.string.user_popup_follow)
-        }
         userFollowage.text = userState.followingSince?.let {
             getString(R.string.user_popup_following_since, it)
         } ?: getString(R.string.user_popup_not_following)
@@ -171,7 +152,6 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
         userName.text = state.userName
 
         userMention.isEnabled = false
-        userFollow.isEnabled = false
         userBlock.isEnabled = false
     }
 

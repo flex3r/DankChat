@@ -32,8 +32,6 @@ class DataRepository @Inject constructor(private val apiManager: ApiManager, pri
     suspend fun getUser(oAuth: String, userId: String): HelixUserDto? = apiManager.getUser(oAuth, userId)
     suspend fun getUserIdByName(oAuth: String, name: String): String? = apiManager.getUserIdByName(oAuth, name)
     suspend fun getUserFollows(oAuth: String, fromId: String, toId: String): UserFollowsDto? = apiManager.getUsersFollows(oAuth, fromId, toId)
-    suspend fun followUser(oAuth: String, fromId: String, toId: String): Boolean = apiManager.followUser(oAuth, fromId, toId)
-    suspend fun unfollowUser(oAuth: String, fromId: String, toId: String): Boolean = apiManager.unfollowUser(oAuth, fromId, toId)
     suspend fun blockUser(oAuth: String, targetUserId: String): Boolean = apiManager.blockUser(oAuth, targetUserId)
     suspend fun unblockUser(oAuth: String, targetUserId: String): Boolean = apiManager.unblockUser(oAuth, targetUserId)
 

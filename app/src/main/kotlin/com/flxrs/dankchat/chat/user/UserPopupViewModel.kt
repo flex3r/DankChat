@@ -38,11 +38,6 @@ class UserPopupViewModel @Inject constructor(
             state is UserPopupState.Success && hasMod
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
-    val isFollowing: Boolean
-        get() {
-            val state = userPopupState.value
-            return state is UserPopupState.Success && state.isFollowing
-        }
     val isBlocked: Boolean
         get() {
             val state = userPopupState.value
@@ -59,17 +54,9 @@ class UserPopupViewModel @Inject constructor(
         loadData()
     }
 
-    fun followUser() = updateStateWith { targetUserId, currentUserId, oAuth ->
-        dataRepository.followUser(oAuth, currentUserId, targetUserId)
-    }
-
     fun blockUser() = updateStateWith { targetUserId, _, oAuth ->
         dataRepository.blockUser(oAuth, targetUserId)
         chatRepository.addUserBlock(targetUserId)
-    }
-
-    fun unfollowUser() = updateStateWith { targetUserId, currentUserId, oAuth ->
-        dataRepository.unfollowUser(oAuth, currentUserId, targetUserId)
     }
 
     fun unblockUser() = updateStateWith { targetUserId, _, oAuth ->

@@ -168,23 +168,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="8dp"
                     android:text="@string/user_popup_mention"
-                    app:layout_constraintBottom_toTopOf="@id/user_follow"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/user_follow"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
-                    android:layout_marginTop="4dp"
-                    android:text="@string/user_popup_follow"
                     app:layout_constraintBottom_toTopOf="@id/user_block"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/user_mention" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/user_block"
@@ -197,7 +184,7 @@
                     app:layout_constraintBottom_toTopOf="@id/user_report"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/user_follow" />
+                    app:layout_constraintTop_toBottomOf="@id/user_mention" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/user_report"
