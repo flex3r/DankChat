@@ -159,7 +159,7 @@
     <string name="confirm_user_block_positive_button">Blokiraj</string>
     <string name="preference_visible_badges_title">Vidljivi bedževi</string>
     <string name="edit_dialog_title">Preimenuj kanal</string>
-    <string name="restart_required">"Potrebno je restartovati aplikaciju da biste promenili promene "</string>
+    <string name="restart_required">Potrebno je restartovati aplikaciju da bi bile prihvaćene promene</string>
     <string name="restart">Restart</string>
     <string name="uploader_add_header">Dodaj heder</string>
     <string name="uploader_add_header_name">Naziv</string>
@@ -169,7 +169,7 @@
     <string name="uploader_headers">Hederi</string>
     <string name="uploader_image_link">Obrazac za link slike</string>
     <string name="uploader_deletion_link">Obrazac za brisanje slike</string>
-    <string name="uploader_description">"Možete da podestie host za "</string>
+    <string name="uploader_description">Možete da podestie host za uplodovanje slika, kao sto je imgur.com ili s-ul.eu. DankChat koristi isti format za konfiguraciju kao chatteriono. Pogledajte ovaj guide za pomoć  https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="uploader_url">Link za upload</string>
     <string name="uploader_field">Iz polja</string>
     <string name="toggle_fullscreen">Režim celog ekrana</string>
