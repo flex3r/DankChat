@@ -169,7 +169,7 @@
     <string name="uploader_headers">Hederi</string>
     <string name="uploader_image_link">Obrazac za link slike</string>
     <string name="uploader_deletion_link">Obrazac za brisanje slike</string>
-    <string name="uploader_description">Možete da podestie host za uplodovanje slika, kao sto je imgur.com ili s-ul.eu. DankChat koristi isti format za konfiguraciju kao chatteriono. Pogledajte ovaj guide za pomoć  https://wiki.chatterino.com/Image%20Uploader/</string>
+    <string name="uploader_description">Možete da podestie host za uplodovanje slika, kao sto je imgur.com ili s-ul.eu. DankChat koristi isti format za konfiguraciju kao chatteriono.\nPogledajte ovaj guide za pomoć  https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="uploader_url">Link za upload</string>
     <string name="uploader_field">Iz polja</string>
     <string name="toggle_fullscreen">Režim celog ekrana</string>
