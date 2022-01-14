@@ -275,16 +275,14 @@ class MainFragment : Fragment() {
             }
 
             ViewCompat.setOnApplyWindowInsetsListener(binding.toggleFullscreen) { v, insets ->
-                if (!isPortrait) {
-                    return@setOnApplyWindowInsetsListener WindowInsetsCompat.CONSUMED
+                val needsExtraMargin = binding.streamWebview.isVisible || !isPortrait || !mainViewModel.isFullscreen.value
+                val extraMargin = when {
+                    needsExtraMargin -> 0
+                    else             -> insets.getInsets(WindowInsetsCompat.Type.displayCutout()).top
                 }
 
-                val extraMargin = when {
-                    binding.streamWebview.isVisible -> 0
-                    else                            -> insets.getInsets(WindowInsetsCompat.Type.displayCutout()).top
-                }
                 v.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                    topMargin = 8.dp + extraMargin
+                    topMargin = 8.px + extraMargin
                 }
                 WindowInsetsCompat.CONSUMED
             }
