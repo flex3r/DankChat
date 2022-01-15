@@ -417,16 +417,13 @@ class ChatAdapter(
         return when {
             useCache && cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) } // fast path
 
-            // slow path, reduce load on main thread by switching coroutine to thread pool
-            else                       -> withContext(Dispatchers.Default) {
-                Coil.execute(url.toRequest(context)).drawable?.apply {
-                    if (this is Animatable) {
-                        if (useCache) {
-                            emoteManager.gifCache.put(url, this)
-                        }
-                        // start animation after adding to cache, very important!
-                        setRunning(animateGifs)
+            else                       -> Coil.execute(url.toRequest(context)).drawable?.apply {
+                if (this is Animatable) {
+                    if (useCache) {
+                        emoteManager.gifCache.put(url, this)
                     }
+                    // start animation after adding to cache, very important!
+                    setRunning(animateGifs)
                 }
             }
         }
