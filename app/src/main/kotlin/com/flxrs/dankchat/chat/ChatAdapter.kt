@@ -75,7 +75,7 @@ class ChatAdapter(
     }
 
     override fun onCurrentListChanged(previousList: MutableList<ChatItem>, currentList: MutableList<ChatItem>) {
-        onListChanged(currentList.size - 1)
+        onListChanged(currentList.lastIndex)
     }
 
     override fun onViewRecycled(holder: ViewHolder) {

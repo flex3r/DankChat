@@ -517,7 +517,7 @@ class MainFragment : Fragment() {
             val loadThirdPartyData = ThirdPartyEmoteType.mapFromPreferenceSet(loadThirdPartyKeys)
 
             val updatedChannels = mainViewModel.joinChannel(lowerCaseChannel)
-            newTabIndex = updatedChannels.size - 1
+            newTabIndex = updatedChannels.lastIndex
             mainViewModel.loadData(
                 oauth,
                 id,
