@@ -33,9 +33,8 @@ class ToolsSettingsFragment : PreferenceFragmentCompat() {
     lateinit var dankChatPreferenceStore: DankChatPreferenceStore
 
     private val requestCheckTTSData = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        when (it.resultCode) {
-            TextToSpeech.Engine.CHECK_VOICE_DATA_PASS -> (activity as? MainActivity)?.setTTSEnabled(true)
-            else                                      -> startActivity(Intent(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA))
+        if (it.resultCode != TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
+            startActivity(Intent(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA))
         }
     }
 
@@ -52,10 +51,10 @@ class ToolsSettingsFragment : PreferenceFragmentCompat() {
 
             findPreference<SwitchPreferenceCompat>(getString(R.string.preference_tts_key))?.apply {
                 setOnPreferenceChangeListener { _, value ->
-                    when (value as Boolean) {
-                        true -> requestCheckTTSData.launch(Intent(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA))
-                        else -> setTTSEnabled(false)
+                    if (value as Boolean) {
+                        requestCheckTTSData.launch(Intent(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA))
                     }
+
                     true
                 }
             }

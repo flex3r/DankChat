@@ -37,6 +37,7 @@ class NotificationService : Service(), CoroutineScope {
             getString(R.string.preference_notification_key)         -> notificationsEnabled = sharedPreferences.getBoolean(key, true)
             getString(R.string.preference_tts_queue_key)            -> ttsMessageQueue = sharedPreferences.getBoolean(key, true)
             getString(R.string.preference_tts_message_format_key)   -> combinedTTSFormat = sharedPreferences.getBoolean(key, true)
+            getString(R.string.preference_tts_key)                  -> ttsEnabled = sharedPreferences.getBoolean(key, false).also { setTTSEnabled(it) }
             getString(R.string.preference_tts_user_ignore_list_key) -> ignoredTtsUsers = sharedPreferences.getStringSet(key, emptySet()).orEmpty()
             getString(R.string.preference_tts_force_english_key)    -> {
                 forceEnglishTTS = sharedPreferences.getBoolean(key, false)
@@ -46,6 +47,7 @@ class NotificationService : Service(), CoroutineScope {
     }
 
     private var notificationsEnabled = false
+    private var ttsEnabled = false
     private var combinedTTSFormat = false
     private var ttsMessageQueue = false
     private var forceEnglishTTS = false
@@ -110,6 +112,7 @@ class NotificationService : Service(), CoroutineScope {
             ttsMessageQueue = sharedPreferences.getBoolean(getString(R.string.preference_tts_queue_key), true)
             combinedTTSFormat = sharedPreferences.getBoolean(getString(R.string.preference_tts_message_format_key), true)
             forceEnglishTTS = sharedPreferences.getBoolean(getString(R.string.preference_tts_force_english_key), false)
+            ttsEnabled = sharedPreferences.getBoolean(getString(R.string.preference_tts_key), false).also { setTTSEnabled(it) }
             ignoredTtsUsers = sharedPreferences.getStringSet(getString(R.string.preference_tts_user_ignore_list_key), emptySet()).orEmpty()
             registerOnSharedPreferenceChangeListener(preferenceListener)
         }
@@ -135,7 +138,7 @@ class NotificationService : Service(), CoroutineScope {
         }
     }
 
-    fun setTTSEnabled(enabled: Boolean) = when {
+    private fun setTTSEnabled(enabled: Boolean) = when {
         enabled -> initTTS()
         else    -> shutdownTTS()
     }
@@ -216,13 +219,15 @@ class NotificationService : Service(), CoroutineScope {
                         message.createMentionNotification()
                     }
 
+
                     val volume = audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC) ?: 0
-                    if (tts == null) {
-                        initTTS()
+
+                    if (!ttsEnabled || message.channel != activeTTSChannel || volume <= 0) {
+                        return@forEach
                     }
 
-                    if (message.channel != activeTTSChannel || volume <= 0) {
-                        return@forEach
+                    if (tts == null) {
+                        initTTS()
                     }
 
                     if (ignoredTtsUsers.any { it.equals(message.name, ignoreCase = true) || it.equals(message.displayName, ignoreCase = true) }) {

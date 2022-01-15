@@ -145,8 +145,6 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
         else                                   -> pendingChannelsToClear += channel
     }
 
-    fun setTTSEnabled(enabled: Boolean) = notificationService?.setTTSEnabled(enabled)
-
     fun setFullScreen(enabled: Boolean, changeActionBarVisibility: Boolean = true) {
         WindowCompat.setDecorFitsSystemWindows(window, !enabled)
         when {
@@ -185,12 +183,6 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
             if (pendingChannelsToClear.isNotEmpty()) {
                 pendingChannelsToClear.forEach { notificationService?.setActiveChannel(it) }
                 pendingChannelsToClear.clear()
-            }
-
-            if (!viewModel.started) {
-                val ttsEnabledKey = getString(R.string.preference_tts_key)
-                val ttsEnabled = PreferenceManager.getDefaultSharedPreferences(this@MainActivity).getBoolean(ttsEnabledKey, false)
-                binder.service.setTTSEnabled(ttsEnabled)
             }
 
             val oauth = dankChatPreferences.oAuthKey.orEmpty()
