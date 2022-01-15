@@ -21,6 +21,12 @@
         app:title="@string/preference_chat_header" />
 
     <Preference
+        app:fragment="com.flxrs.dankchat.preferences.ToolsSettingsFragment"
+        app:icon="@drawable/ic_construction"
+        app:key="@string/preference_tools_key"
+        app:title="@string/preference_tools_header" />
+
+    <Preference
         app:fragment="com.flxrs.dankchat.preferences.DeveloperSettingsFragment"
         app:icon="@drawable/ic_developer_mode"
         app:key="@string/preference_developer_key"
