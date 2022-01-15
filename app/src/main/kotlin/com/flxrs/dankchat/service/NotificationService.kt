@@ -17,15 +17,11 @@ import androidx.core.content.edit
 import androidx.core.content.getSystemService
 import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.preference.PreferenceManager
-import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.main.MainActivity
-import com.flxrs.dankchat.main.MainViewModel
 import com.flxrs.dankchat.service.twitch.message.TwitchMessage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
 import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
@@ -38,10 +34,11 @@ class NotificationService : Service(), CoroutineScope {
     private val sharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
     private val preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
-            getString(R.string.preference_notification_key)       -> notificationsEnabled = sharedPreferences.getBoolean(key, true)
-            getString(R.string.preference_tts_queue_key)          -> ttsMessageQueue = sharedPreferences.getBoolean(key, true)
-            getString(R.string.preference_tts_message_format_key) -> combinedTTSFormat = sharedPreferences.getBoolean(key, true)
-            getString(R.string.preference_tts_force_english_key)  -> {
+            getString(R.string.preference_notification_key)         -> notificationsEnabled = sharedPreferences.getBoolean(key, true)
+            getString(R.string.preference_tts_queue_key)            -> ttsMessageQueue = sharedPreferences.getBoolean(key, true)
+            getString(R.string.preference_tts_message_format_key)   -> combinedTTSFormat = sharedPreferences.getBoolean(key, true)
+            getString(R.string.preference_tts_user_ignore_list_key) -> ignoredTtsUsers = sharedPreferences.getStringSet(key, emptySet()).orEmpty()
+            getString(R.string.preference_tts_force_english_key)    -> {
                 forceEnglishTTS = sharedPreferences.getBoolean(key, false)
                 setTTSVoice()
             }
@@ -52,6 +49,7 @@ class NotificationService : Service(), CoroutineScope {
     private var combinedTTSFormat = false
     private var ttsMessageQueue = false
     private var forceEnglishTTS = false
+    private var ignoredTtsUsers = emptySet<String>()
 
     private var notificationsJob: Job? = null
     private val notifications = mutableMapOf<String, MutableList<Int>>()
@@ -112,6 +110,7 @@ class NotificationService : Service(), CoroutineScope {
             ttsMessageQueue = sharedPreferences.getBoolean(getString(R.string.preference_tts_queue_key), true)
             combinedTTSFormat = sharedPreferences.getBoolean(getString(R.string.preference_tts_message_format_key), true)
             forceEnglishTTS = sharedPreferences.getBoolean(getString(R.string.preference_tts_force_english_key), false)
+            ignoredTtsUsers = sharedPreferences.getStringSet(getString(R.string.preference_tts_user_ignore_list_key), emptySet()).orEmpty()
             registerOnSharedPreferenceChangeListener(preferenceListener)
         }
     }
@@ -209,15 +208,28 @@ class NotificationService : Service(), CoroutineScope {
         notificationsJob = launch {
             chatRepository.notificationsFlow.collect { items ->
                 items.forEach { (message) ->
-                    if (message !is TwitchMessage) return@forEach
+                    if (message !is TwitchMessage) {
+                        return@forEach
+                    }
+
                     if (shouldNotifyOnMention && message.isMention && notificationsEnabled) {
                         message.createMentionNotification()
                     }
 
                     val volume = audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC) ?: 0
-                    if (tts != null && message.channel == activeTTSChannel && volume > 0) {
-                        message.playTTSMessage()
+                    if (tts == null) {
+                        initTTS()
                     }
+
+                    if (message.channel != activeTTSChannel || volume <= 0) {
+                        return@forEach
+                    }
+
+                    if (ignoredTtsUsers.any { it.equals(message.name, ignoreCase = true) || it.equals(message.displayName, ignoreCase = true) }) {
+                        return@forEach
+                    }
+
+                    message.playTTSMessage()
                 }
             }
         }

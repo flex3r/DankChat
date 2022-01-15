@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.preferences.screens
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.text.util.Linkify
@@ -8,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.edit
 import androidx.core.text.util.LinkifyCompat
 import androidx.core.view.updateLayoutParams
 import androidx.preference.Preference
@@ -15,9 +17,12 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
+import com.flxrs.dankchat.databinding.TtsIgnoreListBottomsheetBinding
 import com.flxrs.dankchat.databinding.UploaderBottomsheetBinding
 import com.flxrs.dankchat.main.MainActivity
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.tts.TtsIgnoreItem
+import com.flxrs.dankchat.preferences.tts.TtsIgnoreListAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -59,6 +64,10 @@ class ToolsSettingsFragment : PreferenceFragmentCompat() {
         findPreference<Preference>(getString(R.string.preference_uploader_key))?.apply {
             setOnPreferenceClickListener { showImageUploaderPreference(view) }
         }
+
+        findPreference<Preference>(getString(R.string.preference_tts_user_ignore_list_key))?.apply {
+            setOnPreferenceClickListener { showTtsIgnoreListPreference(view, key, sharedPreferences) }
+        }
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -90,6 +99,43 @@ class ToolsSettingsFragment : PreferenceFragmentCompat() {
                 )
             }
             behavior.peekHeight = (resources.displayMetrics.heightPixels * 0.6f).toInt()
+            show()
+        }
+
+        return true
+    }
+
+    private fun showTtsIgnoreListPreference(root: View, key: String, sharedPreferences: SharedPreferences): Boolean {
+        val context = root.context
+        val sheetHeight = (resources.displayMetrics.heightPixels * 0.6f).toInt()
+        val items = runCatching {
+            sharedPreferences
+                .getStringSet(key, emptySet())
+                .orEmpty()
+                .map { TtsIgnoreItem.Entry(it) }
+                .plus(TtsIgnoreItem.AddEntry)
+        }.getOrDefault(emptyList())
+
+        val ttsIgnoreListAdapter = TtsIgnoreListAdapter(items.toMutableList())
+        val binding = TtsIgnoreListBottomsheetBinding.inflate(LayoutInflater.from(context), root as? ViewGroup, false).apply {
+            ttsIgnoreList.adapter = ttsIgnoreListAdapter
+            ttsIgnoreListSheet.updateLayoutParams {
+                height = sheetHeight
+            }
+        }
+
+        BottomSheetDialog(context).apply {
+            setContentView(binding.root)
+            setOnDismissListener {
+                val stringSet = ttsIgnoreListAdapter.items
+                    .filterIsInstance<TtsIgnoreItem.Entry>()
+                    .filter { it.user.isNotBlank() }
+                    .map { it.user }
+                    .toSet()
+
+                sharedPreferences.edit { putStringSet(key, stringSet) }
+            }
+            behavior.peekHeight = sheetHeight
             show()
         }
 
