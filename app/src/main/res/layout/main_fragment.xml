@@ -174,7 +174,7 @@
                         android:id="@+id/bottom_sheet_indicator"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingTop="8dp"
+                        android:layout_marginVertical="8dp"
                         app:layout_constraintBottom_toTopOf="@id/bottom_sheet_tabs"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
