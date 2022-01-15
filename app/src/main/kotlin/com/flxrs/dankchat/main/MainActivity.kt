@@ -25,10 +25,7 @@ import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.*
-import com.flxrs.dankchat.preferences.screens.AppearanceSettingsFragment
-import com.flxrs.dankchat.preferences.screens.ChatSettingsFragment
-import com.flxrs.dankchat.preferences.screens.DeveloperSettingsFragment
-import com.flxrs.dankchat.preferences.screens.NotificationsSettingsFragment
+import com.flxrs.dankchat.preferences.screens.*
 import com.flxrs.dankchat.service.DataRepository
 import com.flxrs.dankchat.service.NotificationService
 import com.flxrs.dankchat.utils.extensions.navigateSafe
@@ -136,6 +133,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
             AppearanceSettingsFragment::class.java.simpleName    -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_appearanceSettingsFragment)
             NotificationsSettingsFragment::class.java.simpleName -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_notificationsSettingsFragment)
             ChatSettingsFragment::class.java.simpleName          -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_chatSettingsFragment)
+            ToolsSettingsFragment::class.java.simpleName         -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_toolsSettingsFragment)
             DeveloperSettingsFragment::class.java.simpleName     -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_developerSettingsFragment)
             else                                                 -> return false
         }

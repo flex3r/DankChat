@@ -35,6 +35,7 @@
         <item name="android:navigationBarColor">?android:colorBackground</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
         <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="27">shortEdges</item>
+        <item name="chipStyle">@style/Widget.App.Chip</item>
     </style>
 
     <style name="AppTheme.TrueDarkTheme" parent="AppTheme" />
@@ -43,5 +44,10 @@
 
     <style name="PrefsTheme" parent="PreferenceThemeOverlay">
         <item name="android:layout">@layout/settings_fragment</item>
+    </style>
+
+    <style name="Widget.App.Chip" parent="Widget.Material3.Chip.Assist.Elevated">
+        <item name="android:checkable">false</item>
+        <item name="android:elevation">4dp</item>
     </style>
 </resources>
