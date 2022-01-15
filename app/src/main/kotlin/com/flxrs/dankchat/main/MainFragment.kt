@@ -746,7 +746,7 @@ class MainFragment : Fragment() {
         val loadSupibotKey = getString(R.string.preference_supibot_suggestions_key)
         val scrollBackLengthKey = getString(R.string.preference_scrollback_length_key)
         val preferEmotesSuggestionsKey = getString(R.string.preference_prefer_emote_suggestions_key)
-        val hideChipsKey = getString(R.string.preference_hide_chip_actions_key)
+        val showChipsKey = getString(R.string.preference_show_chip_actions_key)
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.oAuthKey.isNullOrBlank()) {
             dankChatPreferences.clearLogin()
         }
@@ -768,7 +768,7 @@ class MainFragment : Fragment() {
                 keepScreenOnKey            -> keepScreenOn(p.getBoolean(key, true))
                 suggestionsKey             -> binding.input.setSuggestionAdapter(p.getBoolean(key, true), suggestionAdapter)
                 preferEmotesSuggestionsKey -> mainViewModel.setPreferEmotesSuggestions(p.getBoolean(key, false))
-                hideChipsKey               -> mainViewModel.setHideChips(p.getBoolean(key, false))
+                showChipsKey               -> mainViewModel.setShowChips(p.getBoolean(key, true))
             }
         }
         preferences.apply {
@@ -779,7 +779,7 @@ class MainFragment : Fragment() {
                 setRoomStateEnabled(getBoolean(roomStateKey, true))
                 setStreamInfoEnabled(getBoolean(streamInfoKey, true))
                 setInputEnabled(getBoolean(inputKey, true))
-                setHideChips(getBoolean(hideChipsKey, false))
+                setShowChips(getBoolean(showChipsKey, true))
                 setPreferEmotesSuggestions(getBoolean(preferEmotesSuggestionsKey, false))
                 binding.input.setSuggestionAdapter(getBoolean(suggestionsKey, true), suggestionAdapter)
 

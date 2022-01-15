@@ -486,8 +486,8 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun setHideChips(value: Boolean) {
-        shouldShowChips.value = !value // xd
+    fun setShowChips(value: Boolean) {
+        shouldShowChips.value = value
     }
 
     fun setInputEnabled(value: Boolean) {
