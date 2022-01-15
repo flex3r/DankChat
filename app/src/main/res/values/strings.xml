@@ -143,6 +143,8 @@
     <string name="tts_ignore_list_add_user">Add a user</string>
     <string name="tts_ignore_list_remove_user">Remove the user</string>
     <string name="tts_ignore_list_user_hint">User</string>
+    <string name="recent_upload_deletion_link">Deletion link:\n%1$s</string>
+    <string name="recent_uploads_clear">Clear uploads</string>
 
     <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
     <string name="preference_timestamp_title">Show timestamps</string>

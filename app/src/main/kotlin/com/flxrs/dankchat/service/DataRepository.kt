@@ -18,7 +18,11 @@ import java.io.File
 import javax.inject.Inject
 import kotlin.system.measureTimeMillis
 
-class DataRepository @Inject constructor(private val apiManager: ApiManager, private val emoteManager: EmoteManager) {
+class DataRepository @Inject constructor(
+    private val apiManager: ApiManager,
+    private val emoteManager: EmoteManager,
+    private val recentUploadsRepository: RecentUploadsRepository,
+) {
     private val emotes = mutableMapOf<String, MutableStateFlow<List<GenericEmote>>>()
     private var loadedGlobalEmotes = false
 
@@ -44,7 +48,14 @@ class DataRepository @Inject constructor(private val apiManager: ApiManager, pri
     suspend fun blockUser(oAuth: String, targetUserId: String): Boolean = apiManager.blockUser(oAuth, targetUserId)
     suspend fun unblockUser(oAuth: String, targetUserId: String): Boolean = apiManager.unblockUser(oAuth, targetUserId)
 
-    suspend fun uploadMedia(file: File): String? = apiManager.uploadMedia(file)
+    suspend fun uploadMedia(file: File): String? {
+        val upload = apiManager.uploadMedia(file)
+        if (upload != null) {
+            recentUploadsRepository.addUpload(upload)
+        }
+
+        return upload?.imageLink
+    }
 
     suspend fun loadGlobalBadges(oAuth: String) = withContext(Dispatchers.Default) {
         measureTimeAndLog(TAG, "global badges") {

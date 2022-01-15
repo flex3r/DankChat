@@ -1,10 +1,10 @@
 package com.flxrs.dankchat.di
 
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.service.ChatRepository
-import com.flxrs.dankchat.service.CommandRepository
-import com.flxrs.dankchat.service.DataRepository
+import com.flxrs.dankchat.service.*
 import com.flxrs.dankchat.service.api.ApiManager
+import com.flxrs.dankchat.service.database.EmoteUsageDao
+import com.flxrs.dankchat.service.database.RecentUploadsDao
 import com.flxrs.dankchat.service.twitch.connection.WebSocketChatConnection
 import com.flxrs.dankchat.service.twitch.emote.EmoteManager
 import dagger.Module
@@ -22,8 +22,9 @@ object RepositoryModule {
     @Provides
     fun provideDataRepository(
         apiManager: ApiManager,
-        emoteManager: EmoteManager
-    ): DataRepository = DataRepository(apiManager, emoteManager)
+        emoteManager: EmoteManager,
+        recentUploadsRepository: RecentUploadsRepository
+    ): DataRepository = DataRepository(apiManager, emoteManager, recentUploadsRepository)
 
     @Singleton
     @Provides
@@ -42,4 +43,16 @@ object RepositoryModule {
         apiManager: ApiManager,
         preferenceStore: DankChatPreferenceStore
     ) = CommandRepository(chatRepository, apiManager, preferenceStore)
+
+    @Singleton
+    @Provides
+    fun provideEmoteUsageRepository(
+        emoteDao: EmoteUsageDao
+    ) = EmoteUsageRepository(emoteDao)
+
+    @Singleton
+    @Provides
+    fun provideRecentUploadsRepository(
+        recentUploadsDao: RecentUploadsDao
+    ) = RecentUploadsRepository(recentUploadsDao)
 }

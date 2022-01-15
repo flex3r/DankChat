@@ -13,6 +13,7 @@ import org.json.JSONObject
 import retrofit2.Response
 import java.io.File
 import java.net.URLConnection
+import java.time.Instant
 import javax.inject.Inject
 
 class ApiManager @Inject constructor(
@@ -79,7 +80,7 @@ class ApiManager @Inject constructor(
     suspend fun getChatterCount(channel: String): Int? = tmiApiService.getChatterCount(channel).bodyOrNull?.chatterCount
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    suspend fun uploadMedia(file: File): String? = withContext(Dispatchers.IO) {
+    suspend fun uploadMedia(file: File): UploadDto? = withContext(Dispatchers.IO) {
         val uploader = dankChatPreferenceStore.customImageUploader
         val extension = file.extension.ifBlank { "png" }
         val mimetype = URLConnection.guessContentTypeFromName(file.name)
@@ -106,16 +107,24 @@ class ApiManager @Inject constructor(
                 val deletionLinkPattern = uploader.deletionLinkPattern
 
                 if (imageLinkPattern == null) {
-                    return@withContext response.bodyOrNull
+                    return@withContext response.bodyOrNull?.let {
+                        UploadDto(
+                            imageLink = it,
+                            deleteLink = null,
+                            timestamp = Instant.now()
+                        )
+                    }
                 }
 
                 val json = response.jsonObjectOrNull ?: return@withContext null
-                if (deletionLinkPattern != null) {
-                    val deletionLink = json.extractLink(deletionLinkPattern)
-                    dankChatPreferenceStore.lastUploadedDeletionLink = deletionLink
-                }
+                val deleteLink = deletionLinkPattern?.let { json.extractLink(it) }
+                val imageLink = json.extractLink(imageLinkPattern)
 
-                json.extractLink(imageLinkPattern)
+                UploadDto(
+                    imageLink = imageLink,
+                    deleteLink = deleteLink,
+                    timestamp = Instant.now()
+                )
             }
             else                  -> null
         }

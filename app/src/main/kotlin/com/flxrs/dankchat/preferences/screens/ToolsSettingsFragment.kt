@@ -12,10 +12,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.edit
 import androidx.core.text.util.LinkifyCompat
 import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.databinding.RecentUploadsBottomsheetBinding
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.databinding.TtsIgnoreListBottomsheetBinding
 import com.flxrs.dankchat.databinding.UploaderBottomsheetBinding
@@ -23,20 +27,25 @@ import com.flxrs.dankchat.main.MainActivity
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.tts.TtsIgnoreItem
 import com.flxrs.dankchat.preferences.tts.TtsIgnoreListAdapter
+import com.flxrs.dankchat.preferences.upload.RecentUploadsAdapter
+import com.flxrs.dankchat.preferences.upload.RecentUploadsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class ToolsSettingsFragment : PreferenceFragmentCompat() {
-    @Inject
-    lateinit var dankChatPreferenceStore: DankChatPreferenceStore
-
     private val requestCheckTTSData = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode != TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
             startActivity(Intent(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA))
         }
     }
+
+    private val viewModel: RecentUploadsViewModel by viewModels()
+
+    @Inject
+    lateinit var dankChatPreferenceStore: DankChatPreferenceStore
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -66,6 +75,10 @@ class ToolsSettingsFragment : PreferenceFragmentCompat() {
 
         findPreference<Preference>(getString(R.string.preference_tts_user_ignore_list_key))?.apply {
             setOnPreferenceClickListener { showTtsIgnoreListPreference(view, key, sharedPreferences) }
+        }
+
+        findPreference<Preference>(getString(R.string.preference_uploader_recent_uploads_key))?.apply {
+            setOnPreferenceClickListener { showRecentUploads(view) }
         }
     }
 
@@ -134,6 +147,40 @@ class ToolsSettingsFragment : PreferenceFragmentCompat() {
 
                 sharedPreferences.edit { putStringSet(key, stringSet) }
             }
+            behavior.peekHeight = sheetHeight
+            show()
+        }
+
+        return true
+    }
+
+    private fun showRecentUploads(root: View): Boolean {
+        val context = root.context
+        val sheetHeight = (resources.displayMetrics.heightPixels * 0.6f).toInt()
+
+        val adapter = RecentUploadsAdapter()
+        val binding = RecentUploadsBottomsheetBinding.inflate(LayoutInflater.from(context), view as? ViewGroup, false).apply {
+            uploadsList.adapter = adapter
+            uploadsSheet.updateLayoutParams {
+                height = sheetHeight
+            }
+            clearUploads.setOnClickListener {
+                viewModel.clearUploads()
+            }
+        }
+
+        val collectJob = lifecycleScope.launchWhenStarted {
+            viewModel.getRecentUploads()
+                .flowWithLifecycle(lifecycle)
+                .collect {
+                    binding.clearUploads.isEnabled = it.isNotEmpty()
+                    adapter.submitList(it)
+                }
+        }
+
+        BottomSheetDialog(context).apply {
+            setContentView(binding.root)
+            setOnDismissListener { collectJob.cancel() }
             behavior.peekHeight = sheetHeight
             show()
         }

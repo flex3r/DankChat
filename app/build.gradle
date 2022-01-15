@@ -14,6 +14,12 @@ android {
         targetSdkVersion 31
         versionCode 225
         versionName "3.0.4"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'

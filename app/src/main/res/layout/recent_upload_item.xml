@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="upload"
+            type="com.flxrs.dankchat.preferences.upload.RecentUpload" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        style="?attr/materialCardViewStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:autoLink="web"
+                android:linksClickable="true"
+                android:text="@{upload.imageUrl}"
+                tools:text="https://i.flxrs.com/kyg6nppv.png" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoLink="web"
+                android:linksClickable="true"
+                android:text="@{@string/recent_upload_deletion_link(upload.deleteUrl)}"
+                android:visibility="@{upload.deleteUrl != null ? View.VISIBLE : View.GONE}"
+                tools:text="Deletion link:\nhttps://i.flxrs.com/kyg6nppv.png" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:text="@{upload.formattedUploadTime}"
+                tools:text="@tools:sample/date/hhmmss" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>
