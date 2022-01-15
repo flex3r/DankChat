@@ -5,6 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
+import coil.size.Scale
 import com.flxrs.dankchat.databinding.RecentUploadItemBinding
 
 class RecentUploadsAdapter : ListAdapter<RecentUpload, RecentUploadsAdapter.UploadViewHolder>(DetectDiff()) {
@@ -16,7 +18,13 @@ class RecentUploadsAdapter : ListAdapter<RecentUpload, RecentUploadsAdapter.Uplo
     }
 
     override fun onBindViewHolder(holder: UploadViewHolder, position: Int) {
-        holder.binding.upload = getItem(position)
+        val item = getItem(position)
+        with(holder.binding) {
+            upload = item
+            image.load(item.imageUrl) {
+                scale(Scale.FILL)
+            }
+        }
     }
 
 }
