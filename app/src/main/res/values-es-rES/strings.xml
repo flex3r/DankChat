@@ -265,6 +265,16 @@
     <string name="preference_show_chip_actions_title">Mostrar acciones chip</string>
     <string name="preference_show_chip_actions_key" translatable="false">show_chip_actions_key</string>
     <string name="preference_show_chip_actions_summary">Mostrar chips para acceder a pantalla completa, streams y ajustar modos de chat</string>
+    <string name="preference_uploader_header">Subidor de imágenes</string>
+    <string name="preference_uploader_configure_title">Configure subidor</string>
+    <string name="preference_uploader_recent_uploads_title">Subidas recientes</string>
+    <string name="preference_uploader_recent_uploads_key">uploader_recent_uploads_key</string>
+    <string name="preference_tts_user_ignore_list_title">Lista de ignorados</string>
+    <string name="preference_tts_user_ignore_list_key" translatable="false">tts_user_ignore_list_key</string>
+    <string name="preference_tts_user_ignore_list_summary">Lista de usuarios/cuentas que serán ignorados</string>
+    <string name="preference_tools_key">tools_key</string>
+    <string name="preference_tools_header">Herramientas</string>
+
 
     <plurals name="viewers">
         <item quantity="one">En directo con %d espectador</item>
