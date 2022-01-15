@@ -8,15 +8,23 @@
         <item name="android:navigationBarColor">?android:colorBackground</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
         <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="27">shortEdges</item>
+        <item name="chipStyle">@style/Widget.App.Chip</item>
     </style>
 
     <style name="AppTheme.TrueDarkTheme" parent="AppTheme">
         <item name="colorSurface">@android:color/black</item>
         <item name="android:colorBackground">@android:color/black</item>
+        <item name="chipStyle">@style/Widget.App.Chip.TrueDark</item>
     </style>
 
     <style name="AppTheme.TrueDarkOverlay" parent="ThemeOverlay.Material3.DynamicColors.Dark">
         <item name="colorSurface">@android:color/black</item>
         <item name="android:colorBackground">@android:color/black</item>
+        <item name="chipStyle">@style/Widget.App.Chip.TrueDark</item>
+    </style>
+
+    <style name="Widget.App.Chip.TrueDark" parent="Widget.Material3.Chip.Assist.Elevated">
+        <item name="android:checkable">false</item>
+        <item name="chipBackgroundColor">?attr/colorSecondaryContainer</item>
     </style>
 </resources>

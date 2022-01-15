@@ -69,12 +69,9 @@
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/show_chips"
-                    style="@style/Widget.Material3.Chip.Assist.Elevated"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:checkable="false"
-                    android:elevation="4dp"
                     android:visibility="@{vm.shouldShowChipToggle ? View.VISIBLE : View.GONE}"
                     app:chipIcon="@{vm.areChipsExpanded ? @drawable/ic_keyboard_arrow_up : @drawable/ic_keyboard_arrow_down}"
                     app:iconEndPadding="0dp"
@@ -85,12 +82,9 @@
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/toggle_fullscreen"
-                    style="@style/Widget.Material3.Chip.Suggestion.Elevated"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:checkable="false"
-                    android:elevation="4dp"
                     android:text="@string/toggle_fullscreen"
                     android:visibility="@{vm.shouldShowExpandedChips ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -98,12 +92,9 @@
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/toggle_stream"
-                    style="@style/Widget.Material3.Chip.Suggestion.Elevated"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:checkable="false"
-                    android:elevation="4dp"
                     android:text="@string/toggle_stream"
                     android:visibility="@{vm.shouldShowStreamToggle ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -111,12 +102,9 @@
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/change_roomstate"
-                    style="@style/Widget.Material3.Chip.Suggestion.Elevated"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:checkable="false"
-                    android:elevation="4dp"
                     android:text="@string/change_roomstate"
                     android:visibility="@{vm.hasModInChannel ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toEndOf="parent"
