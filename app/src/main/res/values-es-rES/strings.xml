@@ -96,75 +96,175 @@
     <string name="confirm_user_block_positive_button">Bloquear</string>
     <string name="restart_required">Es necesario reiniciar para aplicar los cambios</string>
     <string name="restart">Reiniciar</string>
+    <string name="uploader_add_header">Añadir cabezal</string>
+    <string name="uploader_add_header_name">Nombre</string>
+    <string name="uploader_add_header_value">Valor</string>
+    <string name="uploader_title">Subidor de imágenes personalizado</string>
+    <string name="uploader_reset">Resetear a valores por defecto</string>
+    <string name="uploader_url">Subir url</string>
+    <string name="uploader_field">Campo de formulario</string>
+    <string name="uploader_headers">Cabezales</string>
+    <string name="uploader_image_link">Patrón link imagen</string>
+    <string name="uploader_deletion_link">Patrón eliminación link</string>
+    <string name="uploader_description">Puedes usar un host personalizado para subir imágenes, como imgur.com o s-ul.eu. DankChat usa el mismo formato de configuración que Chatterino.\nMira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</string>
+    <string name="toggle_fullscreen">Alternar pantalla completa</string>
+    <string name="toggle_stream">Alternar stream</string>
+    <string name="account">Cuenta</string>
+    <string name="relogin">Iniciar sesión de nuevo</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="user_popup_timeout">Timeout</string>
+    <string name="user_popup_delete">Eliminar mensaje</string>
+    <string name="user_popup_ban">Ban</string>
+    <string name="user_popup_unban">Unban</string>
+    <string name="change_roomstate">Modos de chat</string>
+    <string name="confirm_user_ban_title">Confirmar ban</string>
+    <string name="confirm_user_ban_message">Estás seguro que quieres banear este usuario?</string>
+    <string name="confirm_user_ban_positive_button">Ban</string>
+    <string name="confirm_user_timeout_title">Confirmar timeout</string>
+    <string name="confirm_user_timeout_positive_button">Timeout</string>
+    <string name="confirm_user_delete_title">Confirmar eliminación de mensaje</string>
+    <string name="confirm_user_delete_message">Estás seguro que quieres eliminar este mensaje?</string>
+    <string name="confirm_user_delete_positive_button">Eliminar</string>
+    <string name="confirm_user_roomstate_title">Actualizar modos de chat</string>
+    <string name="roomstate_emote">Solo emotes</string>
+    <string name="roomstate_subs">Solo suscriptores</string>
+    <string name="roomstate_slow">Modo lento</string>
+    <string name="roomstate_r9k">Modo R9K</string>
+    <string name="roomstate_follow">Modo seguidores</string>
+    <string name="seconds">Segundos</string>
+    <string name="minutes">Minutos</string>
+    <string name="add_command">Añadir un comando</string>
+    <string name="remove_command">Eliminar el comando</string>
+    <string name="command_trigger_hint">Trigger</string>
+    <string name="command__hint">Comando</string>
+    <string name="commands_title">Comandos personalizados</string>
+    <string name="user_popup_report">Reportar</string>
+    <string name="emote_menu_tab_recent">Reciente</string>
 
-
+    <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
     <string name="preference_timestamp_title">Mostrar fecha</string>
+    <string name="preference_timestamp_key" translatable="false">show_timestamp</string>
     <string name="preference_mention_format_title">Formato de la mención</string>
     <string name="preference_mention_format_summary">Cambiar formato de la mención al hacer click en un usuario</string>
+    <string name="preference_mention_format_key" translatable="false">mention_format</string>
+    <string name="preference_roomstate_key" translatable="false">show_roomstate</string>
     <string name="preference_roomstate_title">Mostrar información sobre el estado del canal</string>
     <string name="preference_roomstate_summary">Mostrar información sobre el actual estado del canal (e.g. Modo solo suscriptores)</string>
+    <string name="preference_streaminfo_key" translatable="false">show_streaminfo</string>
     <string name="preference_streaminfo_title">Mostrar información del stream</string>
     <string name="preference_streaminfo_summary">Muestra estado del stream y recuento de espectadores</string>
+    <string name="preference_notification_key" translatable="false">notification_key</string>
     <string name="preference_notification_title">Mostrar notificaciones de mención</string>
     <string name="preference_notification_summary">Crea notificaciones al ser mencionado mientras la aplicación está en segundo plano</string>
     <string name="preference_notification_header">Notificaciones</string>
     <string name="preference_chat_header">Chat</string>
-    <string name="logout">Cerrar sesión</string>
+    <string name="preference_chat_key" translatable="false">chat_key</string>
+    <string name="preference_logout_key" translatable="false">logout_key</string>
     <string name="preference_general_header">General</string>
     <string name="preference_about_header">Acerca de</string>
     <string name="preference_appearance_header">Apariencia</string>
+    <string name="preference_appearance_key" translatable="false">appearance_key</string>
     <string name="preference_about_summary">DankChat %1$s creado por @flex3rs y contribuidores</string>
+    <string name="preference_about_key" translatable="false">about_key</string>
+    <string name="preference_show_input_key" translatable="false">show_input_key</string>
     <string name="preference_show_input_title">Mostrar entrada</string>
     <string name="preference_show_input_summary">Muestra el campo de entrada para enviar mensajes</string>
+    <string name="preference_dark_theme_key" translatable="false">enable_dark_mode</string>
     <string name="preference_dark_theme_title">Activar tema oscuro</string>
+    <string name="preference_light_theme_key" translatable="false">enable_light_mode</string>
+    <string name="preference_light_theme_title">Activar tema claro</string>
+    <string name="preference_dark_mode_group_title">Modo oscuro</string>
+    <string name="preference_follow_system_key" translatable="false">follow_system_mode</string>
+    <string name="preference_follow_system_title">Seguir opciones del sistema</string>
+    <string name="preference_true_dark_theme_key" translatable="false">true_dark_mode</string>
+    <string name="preference_true_dark_theme_title">Modo oscuro verdadero</string>
+    <string name="preference_true_dark_theme_summary">Fuerza que el color de fondo del chat sea negro</string>
+    <string name="preference_display_group_title">Mostrar</string>
+    <string name="preference_show_timed_out_messages_key" translatable="false">show_timed_out_messages_key</string>
     <string name="preference_show_timed_out_messages_title">Mostrar mensajes eliminados</string>
+    <string name="preference_custom_mentions_key" translatable="false">custom_mentions_key</string>
     <string name="preference_custom_mentions_title">Menciones personalizadas</string>
     <string name="preference_custom_mentions_summary">Añadir frases personalizadas como menciones</string>
+    <string name="preference_blacklist_key" translatable="false">custom_blacklist_key</string>
     <string name="preference_blacklist_title">Lista negra</string>
     <string name="preference_blacklist_summary">Añadir frases personalizadas a ocultar</string>
+    <string name="preference_animate_gifs_key" translatable="false">animate_gifs_key</string>
     <string name="preference_animate_gifs_title">Animar gifs</string>
+    <string name="preference_line_separator_key" translatable="false">line_seperator_key</string>
     <string name="preference_line_separator_title">Separar mensajes con líneas</string>
+    <string name="preference_keep_screen_on_key" translatable="false">keep_screen_on_key</string>
     <string name="preference_keep_screen_on_title">Mantener pantalla encendida</string>
+    <string name="preference_font_size_key" translatable="false">font_size_key</string>
     <string name="preference_font_size_title">Tamaño de la fuente</string>
     <string name="preference_font_size_summary_very_small">Muy pequeña</string>
     <string name="preference_font_size_summary_small">Pequeña</string>
     <string name="preference_font_size_summary_large">Grande</string>
     <string name="preference_font_size_summary_very_large">Muy grande</string>
     <string name="preference_notifications_mentions_header">Notificaciones y menciones</string>
+    <string name="preference_notifications_mentions_key" translatable="false">notifications_mentions_key</string>
+    <string name="preference_suggestions_key" translatable="false">suggestions_key</string>
     <string name="preference_suggestions_title">Sugerencias de emoticonos y usuarios</string>
     <string name="preference_suggestions_summary">Muestra sugerencias para emoticonos y usuarios activos al escribir</string>
     <string name="preference_load_message_history_title">Cargar historial de mensajes al inicio</string>
+    <string name="preference_load_message_history_key" translatable="false">load_message_history_key</string>
     <string name="preference_message_history_header">Historial de mensajes</string>
     <string name="preference_message_history_dashboard_title">Abrir panel</string>
+    <string name="preference_message_history_dashboard_key" translatable="false">message_history_dashboard_key</string>
     <string name="preference_message_history_dashboard_summary">Aprende más sobre el servicio y desactiva el historial de mensajes para tu propio canal</string>
     <string name="preference_channel_data_header">Datos del canal</string>
     <string name="preference_developer_header">Opciones de desarrollador</string>
+    <string name="preference_developer_key" translatable="false">developer_key</string>
+    <string name="preference_debug_mode_key" translatable="false">debug_mode_key</string>
     <string name="preference_debug_mode_title">Modo depuración</string>
     <string name="preference_debug_mode_summary">Proporciona información para cualquier excepción que se encuentre</string>
+    <string name="preference_timestamp_format_key" translatable="false">timestamp_format_key</string>
     <string name="preference_timestamp_format_title">Formato del tiempo</string>
+    <string name="preference_tts_key" translatable="false">tts_key</string>
     <string name="preference_tts_title">Activar TTS</string>
     <string name="preference_tts_summary">Lee en voz alta mensajes del canal activo</string>
+    <string name="preference_tts_queue_key" translatable="false">tts_queue_key</string>
     <string name="preference_tts_queue_title">Modo cola de mensajes</string>
     <string name="preference_tts_queue_add">Reproducir todos los mensajes utilizando una cola</string>
     <string name="preference_tts_queue_flush">Reproducir solo el mensaje más reciente</string>
     <string name="preference_tts_message_format_message">Solo leer en voz alta el mensaje</string>
     <string name="preference_tts_message_format_combined">Leer en voz alta usuario y mensaje</string>
+    <string name="preference_tts_message_format_key" translatable="false">tts_message_format_key</string>
     <string name="preference_tts_message_format_title">Modo de formato del mensaje</string>
     <string name="preference_tts_header">TTS (Síntesis de voz)</string>
+    <string name="checkered_messages_key" translatable="false">checkered_messages</string>
     <string name="preference_checkered_lines_title">Líneas alternadas</string>
     <string name="preference_checkered_lines_summary">Separar cada línea con diferente brillo de fondo</string>
+    <string name="preference_supibot_suggestions_key" translatable="false">supibot_suggestions_key</string>
     <string name="preference_supibot_suggestions_title">Sugerencias de comandos de Supibot</string>
+    <string name="preference_scrollback_length_key" translatable="false">scrollback_length_key</string>
     <string name="preference_scrollback_length_title">Número total de mensajes a mostrar al desplazarse</string>
     <string name="preference_show_username_title">Mostrar nombre de usuario</string>
+    <string name="preference_show_username_key" translatable="false">show_username_key</string>
     <string name="preference_visible_badges_title">Emblemas visibles</string>
+    <string name="preference_visible_badges_key" translatable="false">visible_badges_key</string>
+    <string name="preference_prefer_emote_suggestions_key" translatable="false">prefer_emote_suggestions_key</string>
     <string name="preference_prefer_emote_suggestions_title">Preferir sugerencias de emoticonos</string>
     <string name="preference_prefer_emote_suggestions_summary">Priorizar sugerencias de emoticonos por encima de sugerencias de usuarios</string>
+    <string name="preference_user_long_click_key" translatable="false">preference_mention_long_click_key</string>
     <string name="preference_user_long_click_title">Comportamiento pulsación larga sobre un usuario</string>
     <string name="preference_user_long_click_summary_on">Un click normal abre popup, una pulsación larga menciona al usuario</string>
     <string name="preference_user_long_click_summary_off">Un click normal menciona al usuario, una pulsación larga abre popup</string>
+    <string name="preference_tts_force_english_key" translatable="false">tts_force_english_key</string>
     <string name="preference_tts_force_english_title">Forzar inglés como idioma</string>
     <string name="preference_tts_force_english_summary">Forzar el idioma de la voz TTS al inglés</string>
     <string name="preference_visible_emotes_title">Emoticonos de terceros visibles</string>
+    <string name="preference_visible_emotes_key" translatable="false">visible_emotes_key</string>
+    <string name="preference_uploader_title">Subidor de imágenes personalizado</string>
+    <string name="preference_uploader_key" translatable="false">uploader_key</string>
+    <string name="preference_show_stream_title">Mostrar botón stream</string>
+    <string name="preference_show_stream_key" translatable="false">show_stream_key</string>
+    <string name="preference_show_stream_summary">Muestra un botón para visualizar streams de canales en vivo</string>
+    <string name="preference_commands_title" translatable="false">@string/commands_title</string>
+    <string name="preference_commands_key" translatable="false">custom_commands_key</string>
+    <string name="preference_about_tos">Twitch términos de servicio &amp; política de usuarios</string>
+    <string name="preference_show_chip_actions_title">Mostrar acciones chip</string>
+    <string name="preference_show_chip_actions_key" translatable="false">show_chip_actions_key</string>
+    <string name="preference_show_chip_actions_summary">Mostrar chips para acceder a pantalla completa, streams y ajustar modos de chat</string>
 
     <plurals name="viewers">
         <item quantity="one">En directo con %d espectador</item>
