@@ -155,6 +155,7 @@ class MainFragment : Fragment() {
                 root.requestApplyInsets()
             }
             changeRoomstate.setOnClickListener { showRoomStateDialog() }
+            showChips.setOnClickListener { mainViewModel.toggleChipsExpanded() }
         }
 
         mainViewModel.apply {
@@ -275,7 +276,7 @@ class MainFragment : Fragment() {
                 }
             }
 
-            ViewCompat.setOnApplyWindowInsetsListener(binding.toggleFullscreen) { v, insets ->
+            ViewCompat.setOnApplyWindowInsetsListener(binding.showChips) { v, insets ->
                 val needsExtraMargin = binding.streamWebview.isVisible || !isPortrait || !mainViewModel.isFullscreen.value
                 val extraMargin = when {
                     needsExtraMargin -> 0
@@ -745,7 +746,7 @@ class MainFragment : Fragment() {
         val loadSupibotKey = getString(R.string.preference_supibot_suggestions_key)
         val scrollBackLengthKey = getString(R.string.preference_scrollback_length_key)
         val preferEmotesSuggestionsKey = getString(R.string.preference_prefer_emote_suggestions_key)
-        val showStreamToggleKey = getString(R.string.preference_show_stream_key)
+        val hideChipsKey = getString(R.string.preference_hide_chip_actions_key)
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.oAuthKey.isNullOrBlank()) {
             dankChatPreferences.clearLogin()
         }
@@ -767,7 +768,7 @@ class MainFragment : Fragment() {
                 keepScreenOnKey            -> keepScreenOn(p.getBoolean(key, true))
                 suggestionsKey             -> binding.input.setSuggestionAdapter(p.getBoolean(key, true), suggestionAdapter)
                 preferEmotesSuggestionsKey -> mainViewModel.setPreferEmotesSuggestions(p.getBoolean(key, false))
-                showStreamToggleKey        -> mainViewModel.setCanShowStream(p.getBoolean(key, true))
+                hideChipsKey               -> mainViewModel.setHideChips(p.getBoolean(key, false))
             }
         }
         preferences.apply {
@@ -778,7 +779,7 @@ class MainFragment : Fragment() {
                 setRoomStateEnabled(getBoolean(roomStateKey, true))
                 setStreamInfoEnabled(getBoolean(streamInfoKey, true))
                 setInputEnabled(getBoolean(inputKey, true))
-                setCanShowStream(getBoolean(showStreamToggleKey, true))
+                setHideChips(getBoolean(hideChipsKey, false))
                 setPreferEmotesSuggestions(getBoolean(preferEmotesSuggestionsKey, false))
                 binding.input.setSuggestionAdapter(getBoolean(suggestionsKey, true), suggestionAdapter)
 

@@ -65,9 +65,10 @@ class MainViewModel @Inject constructor(
     private val preferEmoteSuggestions = MutableStateFlow(false)
     private val _currentStreamedChannel = MutableStateFlow("")
     private val _isFullscreen = MutableStateFlow(false)
-    private val canShowStream = MutableStateFlow(true)
+    private val shouldShowChips = MutableStateFlow(true)
     private val inputEnabled = MutableStateFlow(true)
-    private val _canShowChips = MutableStateFlow(true)
+    private val isScrolling = MutableStateFlow(false)
+    private val chipsExpanded = MutableStateFlow(false)
 
     private val emotes = currentSuggestionChannel.flatMapLatest { dataRepository.getEmotes(it) }
     private val recentEmotes = emoteUsageRepository.getRecentUsages()
@@ -180,8 +181,6 @@ class MainViewModel @Inject constructor(
                 ?.copy(emoteType = EmoteType.RecentUsageEmote)
         }
 
-        Log.d("ASD", "available ${availableRecents.map { it.code }}")
-
         val groupedByType = emotes.groupBy {
             when (it.emoteType) {
                 is EmoteType.ChannelTwitchEmote,
@@ -202,14 +201,28 @@ class MainViewModel @Inject constructor(
     }.flowOn(Dispatchers.Default)
 
     val isFullscreen: StateFlow<Boolean> = _isFullscreen.asStateFlow()
-    val canShowChips: StateFlow<Boolean> = _canShowChips.asStateFlow()
+    val areChipsExpanded: StateFlow<Boolean> = chipsExpanded.asStateFlow()
+
+    val shouldShowChipToggle: StateFlow<Boolean> = combine(shouldShowChips, isScrolling) { shouldShowChips, isScrolling ->
+        shouldShowChips && !isScrolling
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), true)
+
+    val shouldShowExpandedChips: StateFlow<Boolean> = combine(shouldShowChipToggle, chipsExpanded) { shouldShowChips, chipsExpanded ->
+        shouldShowChips && chipsExpanded
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+
 
     val shouldShowStreamToggle: StateFlow<Boolean> =
-        combine(canShowChips, canShowStream, activeChannel, _currentStreamedChannel, currentStreamInformation) { canShowChips, canShowStream, activeChannel, currentStream, currentStreamData ->
-            canShowChips && canShowStream && activeChannel.isNotBlank() && (currentStream.isNotBlank() || currentStreamData != null)
+        combine(
+            shouldShowExpandedChips,
+            activeChannel,
+            _currentStreamedChannel,
+            currentStreamInformation
+        ) { canShowChips, activeChannel, currentStream, currentStreamData ->
+            canShowChips && activeChannel.isNotBlank() && (currentStream.isNotBlank() || currentStreamData != null)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
-    val hasModInChannel: StateFlow<Boolean> = combine(canShowChips, activeChannel, chatRepository.userStateFlow) { canShowChips, channel, userState ->
+    val hasModInChannel: StateFlow<Boolean> = combine(shouldShowExpandedChips, activeChannel, chatRepository.userStateFlow) { canShowChips, channel, userState ->
         canShowChips && channel.isNotBlank() && channel in userState.moderationChannels
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
@@ -464,6 +477,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun toggleStream() {
+        chipsExpanded.update { false }
         _currentStreamedChannel.update {
             when {
                 it.isBlank() -> activeChannel.value
@@ -472,8 +486,8 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun setCanShowStream(value: Boolean) {
-        canShowStream.value = value
+    fun setHideChips(value: Boolean) {
+        shouldShowChips.value = !value // xd
     }
 
     fun setInputEnabled(value: Boolean) {
@@ -481,12 +495,16 @@ class MainViewModel @Inject constructor(
     }
 
     fun toggleFullscreen() {
-        val fullscreen = isFullscreen.value
-        _isFullscreen.value = !fullscreen
+        chipsExpanded.update { false }
+        _isFullscreen.update { !it }
     }
 
-    fun setCanShowChips(value: Boolean) {
-        _canShowChips.value = value
+    fun isScrolling(value: Boolean) {
+        isScrolling.value = value
+    }
+
+    fun toggleChipsExpanded() {
+        chipsExpanded.update { !it }
     }
 
     fun changeRoomState(index: Int, enabled: Boolean, time: String = "") {
@@ -514,18 +532,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun addEmoteUsage(emote: GenericEmote) = viewModelScope.launch {
-        Log.d("ASD", "adding ${emote.code} ${emote.id}")
         emoteUsageRepository.addEmoteUsage(emote.id)
-    }
-
-    fun addEmoteSuggestionUsage(position: Int) = viewModelScope.launch {
-        val suggestion = suggestions.value.getOrNull(position) ?: return@launch
-        if (suggestion !is Suggestion.EmoteSuggestion) {
-            return@launch
-        }
-
-        Log.d("ASD", "adding ${suggestion.emote.code} ${suggestion.emote.id}")
-        emoteUsageRepository.addEmoteUsage(suggestion.emote.id)
     }
 
     fun clearEmoteUsages() = viewModelScope.launch {

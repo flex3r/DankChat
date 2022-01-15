@@ -262,6 +262,9 @@
     <string name="preference_commands_title" translatable="false">@string/commands_title</string>
     <string name="preference_commands_key" translatable="false">custom_commands_key</string>
     <string name="preference_about_tos">Twitch terms of service &amp; user policy:</string>
+    <string name="preference_hide_chip_actions_title">Hide chip actions</string>
+    <string name="preference_hide_chip_actions_key" translatable="false">hide_chip_actions_key</string>
+    <string name="preference_hide_chip_actions_summary">Displays chips for toggling fullscreen, streams and adjusting chat modes</string>
 
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>
