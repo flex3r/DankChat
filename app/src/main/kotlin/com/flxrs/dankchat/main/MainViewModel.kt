@@ -114,9 +114,10 @@ class MainViewModel @Inject constructor(
     val imageUploadEventFlow: Flow<ImageUploadState> = _imageUploadedState.produceIn(viewModelScope).receiveAsFlow()
     val dataLoadingEventFlow: Flow<DataLoadingState> = _dataLoadingState.produceIn(viewModelScope).receiveAsFlow()
 
-    val shouldColorNotification: StateFlow<Boolean> = combine(chatRepository.hasMentions, chatRepository.hasWhispers) { hasMentions, hasWhispers ->
-        hasMentions || hasWhispers
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+    val shouldColorNotification: StateFlow<Boolean> =
+        combine(chatRepository.hasMentions, chatRepository.hasWhispers) { hasMentions, hasWhispers ->
+            hasMentions || hasWhispers
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
     val shouldShowViewPager: StateFlow<Boolean> = channels
         .mapLatest { it?.isNotEmpty() ?: true }
@@ -133,25 +134,37 @@ class MainViewModel @Inject constructor(
     val connectionState = activeChannel
         .flatMapLatest { chatRepository.getConnectionState(it) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ConnectionState.DISCONNECTED)
-    val canType: StateFlow<Boolean> = combine(connectionState, mentionSheetOpen, whisperTabSelected) { connectionState, mentionSheetOpen, whisperTabSelected ->
-        val connected = connectionState == ConnectionState.CONNECTED
-        (!mentionSheetOpen && connected) || (whisperTabSelected && connected)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+    val canType: StateFlow<Boolean> =
+        combine(connectionState, mentionSheetOpen, whisperTabSelected) { connectionState, mentionSheetOpen, whisperTabSelected ->
+            val connected = connectionState == ConnectionState.CONNECTED
+            (!mentionSheetOpen && connected) || (whisperTabSelected && connected)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
-    val currentBottomText: Flow<String> = combine(roomStateText, currentStreamInformation, mentionSheetOpen) { roomState, streamInfo, mentionSheetOpen ->
-        listOfNotNull(roomState, streamInfo)
-            .takeUnless { mentionSheetOpen }
-            ?.joinToString(separator = " - ")
-            .orEmpty()
-    }
+    val currentBottomText: Flow<String> =
+        combine(roomStateText, currentStreamInformation, mentionSheetOpen) { roomState, streamInfo, mentionSheetOpen ->
+            listOfNotNull(roomState, streamInfo)
+                .takeUnless { mentionSheetOpen }
+                ?.joinToString(separator = " - ")
+                .orEmpty()
+        }
 
     val shouldShowBottomText: StateFlow<Boolean> =
-        combine(roomStateEnabled, streamInfoEnabled, mentionSheetOpen, currentBottomText) { roomStateEnabled, streamInfoEnabled, mentionSheetOpen, bottomText ->
+        combine(
+            roomStateEnabled,
+            streamInfoEnabled,
+            mentionSheetOpen,
+            currentBottomText
+        ) { roomStateEnabled, streamInfoEnabled, mentionSheetOpen, bottomText ->
             (roomStateEnabled || streamInfoEnabled) && !mentionSheetOpen && bottomText.isNotBlank()
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), true)
 
     val shouldShowFullscreenHelper: StateFlow<Boolean> =
-        combine(shouldShowInput, shouldShowBottomText, currentBottomText, shouldShowViewPager) { shouldShowInput, shouldShowBottomText, bottomText, shouldShowViewPager ->
+        combine(
+            shouldShowInput,
+            shouldShowBottomText,
+            currentBottomText,
+            shouldShowViewPager
+        ) { shouldShowInput, shouldShowBottomText, bottomText, shouldShowViewPager ->
             !shouldShowInput && shouldShowBottomText && bottomText.isNotBlank() && shouldShowViewPager
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
@@ -222,9 +235,10 @@ class MainViewModel @Inject constructor(
             canShowChips && activeChannel.isNotBlank() && (currentStream.isNotBlank() || currentStreamData != null)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
-    val hasModInChannel: StateFlow<Boolean> = combine(shouldShowExpandedChips, activeChannel, chatRepository.userStateFlow) { canShowChips, channel, userState ->
-        canShowChips && channel.isNotBlank() && channel in userState.moderationChannels
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+    val hasModInChannel: StateFlow<Boolean> =
+        combine(shouldShowExpandedChips, activeChannel, chatRepository.userStateFlow) { canShowChips, channel, userState ->
+            canShowChips && channel.isNotBlank() && channel in userState.moderationChannels
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
     val currentStreamedChannel: StateFlow<String> = _currentStreamedChannel.asStateFlow()
 

@@ -32,7 +32,7 @@ fun CoroutineScope.timer(interval: Long, action: suspend TimerScope.() -> Unit):
                 Log.e("TimerScope", Log.getStackTraceString(ex))
             }
 
-            if (scope.isCanceled) {
+            if (scope.isCancelled) {
                 break
             }
 
@@ -43,10 +43,10 @@ fun CoroutineScope.timer(interval: Long, action: suspend TimerScope.() -> Unit):
 }
 
 class TimerScope {
-    var isCanceled: Boolean = false
+    var isCancelled: Boolean = false
         private set
 
     fun cancel() {
-        isCanceled = true
+        isCancelled = true
     }
 }

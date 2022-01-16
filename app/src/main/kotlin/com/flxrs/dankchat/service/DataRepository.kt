@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import kotlin.system.measureTimeMillis
 
@@ -23,7 +24,7 @@ class DataRepository @Inject constructor(
     private val emoteManager: EmoteManager,
     private val recentUploadsRepository: RecentUploadsRepository,
 ) {
-    private val emotes = mutableMapOf<String, MutableStateFlow<List<GenericEmote>>>()
+    private val emotes = ConcurrentHashMap<String, MutableStateFlow<List<GenericEmote>>>()
     private var loadedGlobalEmotes = false
 
     sealed class ServiceEvent {

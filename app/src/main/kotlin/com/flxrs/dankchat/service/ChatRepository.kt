@@ -17,6 +17,7 @@ import com.squareup.moshi.Moshi
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.nio.ByteBuffer
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import kotlin.collections.set
 import kotlin.system.measureTimeMillis
@@ -44,12 +45,12 @@ class ChatRepository @Inject constructor(
     private val _notificationsFlow = MutableSharedFlow<List<ChatItem>>(0, extraBufferCapacity = 10)
     private val _channelMentionCount = mutableSharedFlowOf(mutableMapOf<String, Int>())
     private val _unreadMessagesMap = mutableSharedFlowOf(mutableMapOf<String, Boolean>())
-    private val messages = mutableMapOf<String, MutableStateFlow<List<ChatItem>>>()
+    private val messages = ConcurrentHashMap<String, MutableStateFlow<List<ChatItem>>>()
     private val _mentions = MutableStateFlow<List<ChatItem>>(emptyList())
     private val _whispers = MutableStateFlow<List<ChatItem>>(emptyList())
-    private val connectionState = mutableMapOf<String, MutableStateFlow<ConnectionState>>()
-    private val roomStates = mutableMapOf<String, MutableSharedFlow<RoomState>>()
-    private val users = mutableMapOf<String, MutableStateFlow<LruCache<String, Boolean>>>()
+    private val connectionState = ConcurrentHashMap<String, MutableStateFlow<ConnectionState>>()
+    private val roomStates = ConcurrentHashMap<String, MutableSharedFlow<RoomState>>()
+    private val users = ConcurrentHashMap<String, MutableStateFlow<LruCache<String, Boolean>>>()
     private val userState = MutableStateFlow(UserState())
     private val blockList = mutableSetOf<String>() // TODO extract out of repo to common data source
 
