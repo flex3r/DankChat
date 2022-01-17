@@ -718,13 +718,13 @@ class MainFragment : Fragment() {
 
     private fun clear() {
         val position = binding.tabs.selectedTabPosition
-        if (position in 0 until tabAdapter.titleList.size)
+        if (position in tabAdapter.titleList.indices)
             mainViewModel.clear(tabAdapter.titleList[position])
     }
 
     private fun reloadEmotes(channel: String? = null) {
         val position = channel?.let(tabAdapter.titleList::indexOf) ?: binding.tabs.selectedTabPosition
-        if (position in 0 until tabAdapter.titleList.size) {
+        if (position in tabAdapter.titleList.indices) {
             val oAuth = dankChatPreferences.oAuthKey.orEmpty()
             val userId = dankChatPreferences.userIdString.orEmpty()
             val loadThirdPartyKeys = preferences.getStringSet(getString(R.string.preference_visible_emotes_key), resources.getStringArray(R.array.emotes_entry_values).toSet()).orEmpty()
@@ -943,9 +943,10 @@ class MainFragment : Fragment() {
 
     private fun ViewPager2.setup(binding: MainFragmentBinding) {
         adapter = tabAdapter
+        reduceDragSensitivity()
         registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                if (position in 0 until tabAdapter.titleList.size) {
+                if (position in tabAdapter.titleList.indices) {
                     val newChannel = tabAdapter.titleList[position].lowercase(Locale.getDefault())
                     mainViewModel.setActiveChannel(newChannel)
                     emoteMenuBottomSheetBehavior?.hide()

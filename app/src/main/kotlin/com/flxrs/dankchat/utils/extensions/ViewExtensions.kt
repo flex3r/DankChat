@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.core.text.getSpans
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import coil.load
 import coil.request.ImageRequest
 import com.flxrs.dankchat.R
@@ -65,4 +66,16 @@ inline fun <reified T : Drawable> LayerDrawable.forEachLayer(action: (T) -> Unit
             action(drawable)
         }
     }
+}
+
+fun ViewPager2.reduceDragSensitivity() {
+    val viewPager = this
+    val recyclerView = ViewPager2::class.java.getDeclaredField("mRecyclerView").run {
+        isAccessible = true
+        get(viewPager) as RecyclerView
+    }
+
+    val touchSlopField = RecyclerView::class.java.getDeclaredField("mTouchSlop").apply { isAccessible = true }
+    val touchSlop = touchSlopField.get(recyclerView) as Int
+    touchSlopField.set(recyclerView, touchSlop * 2)
 }
