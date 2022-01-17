@@ -140,6 +140,11 @@
     <string name="commands_title">Comandos personalizados</string>
     <string name="user_popup_report">Reportar</string>
     <string name="emote_menu_tab_recent">Reciente</string>
+    <string name="tts_ignore_list_add_user">Añadir usuario</string>
+    <string name="tts_ignore_list_remove_user">Eliminar usuario</string>
+    <string name="tts_ignore_list_user_hint">Usuario</string>
+    <string name="recent_upload_deletion_link">Link para eliminar:\n%1$s</string>
+    <string name="recent_uploads_clear">Vaciar subidas</string>
 
     <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
     <string name="preference_timestamp_title">Mostrar fecha</string>
@@ -265,6 +270,16 @@
     <string name="preference_show_chip_actions_title">Mostrar acciones chip</string>
     <string name="preference_show_chip_actions_key" translatable="false">show_chip_actions_key</string>
     <string name="preference_show_chip_actions_summary">Mostrar chips para acceder a pantalla completa, streams y ajustar modos de chat</string>
+    <string name="preference_uploader_header">Subidor de imágenes</string>
+    <string name="preference_uploader_configure_title">Configure subidor</string>
+    <string name="preference_uploader_recent_uploads_title">Subidas recientes</string>
+    <string name="preference_uploader_recent_uploads_key" translatable="false">uploader_recent_uploads_key</string>
+    <string name="preference_tts_user_ignore_list_title">Lista de ignorados</string>
+    <string name="preference_tts_user_ignore_list_key" translatable="false">tts_user_ignore_list_key</string>
+    <string name="preference_tts_user_ignore_list_summary">Lista de usuarios/cuentas que serán ignorados</string>
+    <string name="preference_tools_key" translatable="false">tools_key</string>
+    <string name="preference_tools_header">Herramientas</string>
+
 
     <plurals name="viewers">
         <item quantity="one">En directo con %d espectador</item>
