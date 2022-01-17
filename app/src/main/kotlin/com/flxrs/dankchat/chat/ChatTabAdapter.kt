@@ -7,41 +7,29 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 
 class ChatTabAdapter(parentFragment: Fragment) : FragmentStateAdapter(parentFragment) {
 
-    val titleList = mutableListOf<String>()
-    //val fragmentList = mutableListOf<ChatFragment>()
+    private val _titleList = mutableListOf<String>()
+    val titleList: List<String> = _titleList
 
-    override fun createFragment(position: Int) = ChatFragment.newInstance(titleList[position])
+    override fun createFragment(position: Int) = ChatFragment.newInstance(_titleList[position])
 
-    override fun getItemCount(): Int = titleList.size
+    override fun getItemCount(): Int = _titleList.size
 
     override fun getItemId(position: Int): Long = when {
-        position < titleList.size -> titleList[position].hashCode().toLong()
-        else                      -> RecyclerView.NO_ID
+        position < _titleList.size -> _titleList[position].hashCode().toLong()
+        else                       -> RecyclerView.NO_ID
     }
 
-    override fun containsItem(itemId: Long): Boolean {
-        titleList.forEach {
-            if (it.hashCode().toLong() == itemId) return true
-        }
-        return false
-    }
+    override fun containsItem(itemId: Long): Boolean = _titleList.any { it.hashCode().toLong() == itemId }
 
     fun addFragment(title: String) {
-        titleList += title
-        notifyItemInserted(titleList.lastIndex)
-    }
-
-    fun removeFragment(index: Int) {
-        if (index < titleList.size) {
-            titleList.removeAt(index)
-            notifyItemRemoved(index)
-        }
+        _titleList += title
+        notifyItemInserted(_titleList.lastIndex)
     }
 
     @SuppressLint("NotifyDataSetChanged")
     fun updateFragments(titles: List<String>) {
-        titleList.clear()
-        titleList.addAll(titles)
+        _titleList.clear()
+        _titleList.addAll(titles)
         notifyDataSetChanged()
     }
 }
