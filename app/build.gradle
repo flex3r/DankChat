@@ -12,8 +12,14 @@ android {
         applicationId "com.flxrs.dankchat"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 225
-        versionName "3.0.4"
+        versionCode 226
+        versionName "3.0.5"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'

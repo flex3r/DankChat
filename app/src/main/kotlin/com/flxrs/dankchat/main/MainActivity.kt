@@ -1,6 +1,9 @@
 package com.flxrs.dankchat.main
 
-import android.content.*
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -24,7 +27,7 @@ import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.MainActivityBinding
-import com.flxrs.dankchat.preferences.*
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.screens.*
 import com.flxrs.dankchat.service.DataRepository
 import com.flxrs.dankchat.service.NotificationService
@@ -145,8 +148,6 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
         else                                   -> pendingChannelsToClear += channel
     }
 
-    fun setTTSEnabled(enabled: Boolean) = notificationService?.setTTSEnabled(enabled)
-
     fun setFullScreen(enabled: Boolean, changeActionBarVisibility: Boolean = true) {
         WindowCompat.setDecorFitsSystemWindows(window, !enabled)
         when {
@@ -185,12 +186,6 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
             if (pendingChannelsToClear.isNotEmpty()) {
                 pendingChannelsToClear.forEach { notificationService?.setActiveChannel(it) }
                 pendingChannelsToClear.clear()
-            }
-
-            if (!viewModel.started) {
-                val ttsEnabledKey = getString(R.string.preference_tts_key)
-                val ttsEnabled = PreferenceManager.getDefaultSharedPreferences(this@MainActivity).getBoolean(ttsEnabledKey, false)
-                binder.service.setTTSEnabled(ttsEnabled)
             }
 
             val oauth = dankChatPreferences.oAuthKey.orEmpty()

@@ -10,7 +10,6 @@ import androidx.core.view.doOnAttach
 import androidx.core.view.isVisible
 import androidx.lifecycle.*
 import com.flxrs.dankchat.main.MainViewModel
-import com.flxrs.dankchat.utils.extensions.setupDarkTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

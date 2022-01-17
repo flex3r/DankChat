@@ -21,7 +21,7 @@ class CommandAdapter(val commands: MutableList<CommandItem>) : RecyclerView.Adap
         init {
             binding.commandAdd.setOnClickListener {
                 val command = CommandItem.Entry(trigger = "", command = "")
-                val position = commands.size - 1
+                val position = commands.lastIndex
                 commands.add(position, command)
                 notifyItemInserted(position)
             }

@@ -46,7 +46,7 @@
         <item name="android:layout">@layout/settings_fragment</item>
     </style>
 
-    <style name="Widget.App.Chip" parent="Widget.Material3.Chip.Assist.Elevated">
+    <style name="Widget.App.Chip" parent="Widget.Material3.Chip.Assist">
         <item name="android:checkable">false</item>
         <item name="android:elevation">4dp</item>
     </style>
