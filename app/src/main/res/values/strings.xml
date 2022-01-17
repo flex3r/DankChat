@@ -273,11 +273,11 @@
     <string name="preference_uploader_header">Image uploader</string>
     <string name="preference_uploader_configure_title">Configure uploader</string>
     <string name="preference_uploader_recent_uploads_title">Recent uploads</string>
-    <string name="preference_uploader_recent_uploads_key">uploader_recent_uploads_key</string>
+    <string name="preference_uploader_recent_uploads_key" translatable="false">uploader_recent_uploads_key</string>
     <string name="preference_tts_user_ignore_list_title">User ignore list</string>
     <string name="preference_tts_user_ignore_list_key" translatable="false">tts_user_ignore_list_key</string>
     <string name="preference_tts_user_ignore_list_summary">List of users/accounts that will be ignored</string>
-    <string name="preference_tools_key">tools_key</string>
+    <string name="preference_tools_key" translatable="false">tools_key</string>
     <string name="preference_tools_header">Tools</string>
 
 
