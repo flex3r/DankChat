@@ -241,6 +241,9 @@ class MainViewModel @Inject constructor(
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
     val currentStreamedChannel: StateFlow<String> = _currentStreamedChannel.asStateFlow()
+    val isStreamActive: Boolean
+        get() = currentStreamedChannel.value.isNotBlank()
+
 
     val currentRoomState: RoomState
         get() = chatRepository.getRoomState(currentSuggestionChannel.value).firstValue

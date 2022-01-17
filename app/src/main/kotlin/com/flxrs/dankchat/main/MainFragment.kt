@@ -1056,7 +1056,7 @@ class MainFragment : Fragment() {
             }
 
             binding.tabs.isVisible = !hasFocus && !isFullscreen
-            binding.streamWebview.isVisible = !hasFocus
+            binding.streamWebview.isVisible = !hasFocus && mainViewModel.isStreamActive
 
             when {
                 hasFocus -> (activity as? MainActivity)?.apply {
@@ -1071,9 +1071,6 @@ class MainFragment : Fragment() {
     }
 
     companion object {
-        private val TAG = MainFragment::class.java.simpleName
-        private const val DISCLAIMER_TAG = "message_history_disclaimer_dialog"
-
         const val LOGOUT_REQUEST_KEY = "logout_key"
         const val LOGIN_REQUEST_KEY = "login_key"
         const val THEME_CHANGED_KEY = "theme_changed_key"
