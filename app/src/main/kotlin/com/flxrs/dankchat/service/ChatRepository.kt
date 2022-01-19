@@ -365,7 +365,11 @@ class ChatRepository @Inject constructor(
     }
 
     private fun handleClearChat(msg: IrcMessage) {
-        val parsed = ClearChatMessage.parseClearChat(msg)
+        val parsed = runCatching {
+            ClearChatMessage.parseClearChat(msg)
+        }.getOrElse {
+            return
+        }
 
         messages[parsed.channel]?.update { current ->
             current.replaceWithTimeOuts(parsed, scrollBackLength)
@@ -373,7 +377,7 @@ class ChatRepository @Inject constructor(
     }
 
     private fun handleRoomState(msg: IrcMessage) {
-        val channel = msg.params[0].substring(1)
+        val channel = msg.params.getOrNull(0)?.substring(1) ?: return
         val state = roomStates[channel]?.firstValue ?: RoomState(channel)
         val updated = state.copyFromIrcMessage(msg)
 
@@ -396,7 +400,7 @@ class ChatRepository @Inject constructor(
     }
 
     private fun handleUserState(msg: IrcMessage) {
-        val channel = msg.params[0].substring(1)
+        val channel = msg.params.getOrNull(0)?.substring(1) ?: return
         val id = msg.tags["user-id"]
         val sets = msg.tags["emote-sets"]?.split(",").orEmpty()
         val color = msg.tags["color"]
@@ -427,7 +431,7 @@ class ChatRepository @Inject constructor(
     }
 
     private fun handleClearMsg(msg: IrcMessage) {
-        val channel = msg.params[0].substring(1)
+        val channel = msg.params.getOrNull(0)?.substring(1) ?: return
         val targetId = msg.tags["target-msg-id"] ?: return
 
         messages[channel]?.update { current ->
@@ -441,25 +445,27 @@ class ChatRepository @Inject constructor(
             return
         }
 
-        val items = Message.parse(ircMessage, emoteManager, name).map {
-            it as TwitchMessage // TODO
-            if (it.name == name) {
-                lastMessage[it.channel] = it.originalMessage
+        val items = runCatching { Message.parse(ircMessage, emoteManager, name) }
+            .getOrNull()
+            ?.map {
+                it as TwitchMessage // TODO
+                if (it.name == name) {
+                    lastMessage[it.channel] = it.originalMessage
+                }
+
+                if (blacklistEntries.matches(it.message, it.name to it.displayName, it.emotes)) {
+                    return
+                }
+
+                val withMentions = it.checkForMention(name, customMentionEntries)
+                val currentUsers = users[withMentions.channel]?.value ?: createUserCache()
+                currentUsers.put(withMentions.name, true)
+                users[withMentions.channel]?.value = currentUsers
+
+                ChatItem(withMentions)
             }
 
-            if (blacklistEntries.matches(it.message, it.name to it.displayName, it.emotes)) {
-                return
-            }
-
-            val withMentions = it.checkForMention(name, customMentionEntries)
-            val currentUsers = users[withMentions.channel]?.value ?: createUserCache()
-            currentUsers.put(withMentions.name, true)
-            users[withMentions.channel]?.value = currentUsers
-
-            ChatItem(withMentions)
-        }
-
-        if (items.isEmpty()) {
+        if (items.isNullOrEmpty()) {
             return
         }
 
@@ -542,14 +548,21 @@ class ChatRepository @Inject constructor(
         measureTimeMillis {
             for (message in recentMessages) {
                 val parsedIrc = IrcMessage.parse(message)
-                if (parsedIrc.tags["user-id"] in blockList) continue
+                if (parsedIrc.tags["user-id"] in blockList) {
+                    continue
+                }
 
-                loop@ for (msg in Message.parse(parsedIrc, emoteManager, name)) {
+                val messages = runCatching {
+                    Message.parse(parsedIrc, emoteManager, name)
+                }.getOrNull() ?: continue
+
+                loop@ for (msg in messages) {
                     val withMention = when (msg) {
                         is TwitchMessage -> {
                             if (blacklistEntries.matches(msg.message, msg.name to msg.displayName, msg.emotes)) {
                                 continue@loop
                             }
+
                             msg.checkForMention(name, customMentionEntries)
                         }
                         else             -> msg
