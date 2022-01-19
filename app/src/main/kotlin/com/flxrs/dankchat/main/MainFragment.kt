@@ -164,7 +164,7 @@ class MainFragment : Fragment() {
             collectFlow(shouldShowUploadProgress) { activity?.invalidateOptionsMenu() }
             collectFlow(suggestions, ::setSuggestions)
             collectFlow(emoteItems, emoteMenuAdapter::submitList)
-            collectFlow(isFullscreen) { changeActionBarVisibility(it) }
+            collectFlow(isFullscreenFlow) { changeActionBarVisibility(it) }
             collectFlow(canType) { if (it) binding.inputLayout.setup() }
             collectFlow(connectionState) { state ->
                 binding.inputLayout.hint = when (state) {
@@ -272,12 +272,13 @@ class MainFragment : Fragment() {
                 when {
                     emoteMenuBottomSheetBehavior?.isVisible == true -> emoteMenuBottomSheetBehavior?.hide()
                     mentionBottomSheetBehavior?.isVisible == true   -> mentionBottomSheetBehavior?.hide()
+                    mainViewModel.isFullscreen                      -> mainViewModel.toggleFullscreen()
                     else                                            -> finish()
                 }
             }
 
             ViewCompat.setOnApplyWindowInsetsListener(binding.showChips) { v, insets ->
-                val needsExtraMargin = binding.streamWebview.isVisible || !isPortrait || !mainViewModel.isFullscreen.value
+                val needsExtraMargin = binding.streamWebview.isVisible || !isPortrait || !mainViewModel.isFullscreenFlow.value
                 val extraMargin = when {
                     needsExtraMargin -> 0
                     else             -> insets.getInsets(WindowInsetsCompat.Type.displayCutout()).top
@@ -336,7 +337,7 @@ class MainFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         emoteMenuBottomSheetBehavior?.hide()
-        changeActionBarVisibility(mainViewModel.isFullscreen.value)
+        changeActionBarVisibility(mainViewModel.isFullscreenFlow.value)
 
         (activity as? MainActivity)?.apply {
             if (channelToOpen.isNotBlank()) {
@@ -996,7 +997,7 @@ class MainFragment : Fragment() {
                         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
 
                         override fun onStateChanged(bottomSheet: View, newState: Int) {
-                            if (!mainViewModel.isFullscreen.value && isLandscape) {
+                            if (!mainViewModel.isFullscreenFlow.value && isLandscape) {
                                 when (newState) {
                                     BottomSheetBehavior.STATE_EXPANDED, BottomSheetBehavior.STATE_COLLAPSED -> {
                                         (activity as? AppCompatActivity)?.supportActionBar?.hide()
@@ -1050,7 +1051,7 @@ class MainFragment : Fragment() {
         }
 
         setOnFocusChangeListener { _, hasFocus ->
-            val isFullscreen = mainViewModel.isFullscreen.value
+            val isFullscreen = mainViewModel.isFullscreenFlow.value
             if (!isLandscape) {
                 (activity as? MainActivity)?.setFullScreen(enabled = !hasFocus && isFullscreen, changeActionBarVisibility = false)
                 return@setOnFocusChangeListener

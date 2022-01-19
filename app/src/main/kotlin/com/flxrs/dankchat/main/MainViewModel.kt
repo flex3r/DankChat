@@ -213,7 +213,7 @@ class MainViewModel @Inject constructor(
         )
     }.flowOn(Dispatchers.Default)
 
-    val isFullscreen: StateFlow<Boolean> = _isFullscreen.asStateFlow()
+    val isFullscreenFlow: StateFlow<Boolean> = _isFullscreen.asStateFlow()
     val areChipsExpanded: StateFlow<Boolean> = chipsExpanded.asStateFlow()
 
     val shouldShowChipToggle: StateFlow<Boolean> = combine(shouldShowChips, isScrolling) { shouldShowChips, isScrolling ->
@@ -243,6 +243,8 @@ class MainViewModel @Inject constructor(
     val currentStreamedChannel: StateFlow<String> = _currentStreamedChannel.asStateFlow()
     val isStreamActive: Boolean
         get() = currentStreamedChannel.value.isNotBlank()
+    val isFullscreen: Boolean
+        get() = isFullscreenFlow.value
 
 
     val currentRoomState: RoomState
