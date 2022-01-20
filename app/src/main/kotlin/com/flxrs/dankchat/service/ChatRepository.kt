@@ -207,7 +207,7 @@ class ChatRepository @Inject constructor(
         writeConnection.sendMessage(preparedMessage)
 
         val split = input.split(" ")
-        if (split.size > 2 && split[0] == "/w" && split[1].isNotBlank()) {
+        if (split.size > 2 && (split[0] == "/w" || split[0] == ".w") && split[1].isNotBlank()) {
             val message = input.substring(4 + split[1].length)
             val emotes = emoteManager.parse3rdPartyEmotes(message, withTwitch = true)
             val fakeMessage = TwitchMessage(channel = "", name = name, displayName = name, message = message, emotes = emotes, isWhisper = true, whisperRecipient = split[1])
