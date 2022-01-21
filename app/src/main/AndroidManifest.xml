@@ -24,7 +24,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
-        <service android:name=".service.NotificationService" />
+        <service android:name=".data.NotificationService" />
 
         <activity
             android:name=".main.MainActivity"

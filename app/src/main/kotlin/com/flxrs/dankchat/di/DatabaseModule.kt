@@ -2,9 +2,9 @@ package com.flxrs.dankchat.di
 
 import android.content.Context
 import androidx.room.Room
-import com.flxrs.dankchat.service.database.DankChatDatabase
-import com.flxrs.dankchat.service.database.EmoteUsageDao
-import com.flxrs.dankchat.service.database.RecentUploadsDao
+import com.flxrs.dankchat.data.database.DankChatDatabase
+import com.flxrs.dankchat.data.database.EmoteUsageDao
+import com.flxrs.dankchat.data.database.RecentUploadsDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,6 +1,6 @@
 package com.flxrs.dankchat.chat.suggestion
 
-import com.flxrs.dankchat.service.twitch.emote.GenericEmote
+import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 
 sealed class Suggestion {
     data class EmoteSuggestion(val emote: GenericEmote) : Suggestion(), Comparable<Suggestion> {

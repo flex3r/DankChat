@@ -1,8 +1,8 @@
 package com.flxrs.dankchat
 
 import androidx.lifecycle.ViewModel
-import com.flxrs.dankchat.service.ChatRepository
-import com.flxrs.dankchat.service.DataRepository
+import com.flxrs.dankchat.data.ChatRepository
+import com.flxrs.dankchat.data.DataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

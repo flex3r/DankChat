@@ -1,12 +1,12 @@
 package com.flxrs.dankchat.di
 
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.service.*
-import com.flxrs.dankchat.service.api.ApiManager
-import com.flxrs.dankchat.service.database.EmoteUsageDao
-import com.flxrs.dankchat.service.database.RecentUploadsDao
-import com.flxrs.dankchat.service.twitch.connection.WebSocketChatConnection
-import com.flxrs.dankchat.service.twitch.emote.EmoteManager
+import com.flxrs.dankchat.data.*
+import com.flxrs.dankchat.data.api.ApiManager
+import com.flxrs.dankchat.data.database.EmoteUsageDao
+import com.flxrs.dankchat.data.database.RecentUploadsDao
+import com.flxrs.dankchat.data.twitch.connection.WebSocketChatConnection
+import com.flxrs.dankchat.data.twitch.emote.EmoteManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

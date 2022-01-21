@@ -1,7 +1,7 @@
 package com.flxrs.dankchat.di
 
-import com.flxrs.dankchat.service.twitch.connection.ChatConnectionType
-import com.flxrs.dankchat.service.twitch.connection.WebSocketChatConnection
+import com.flxrs.dankchat.data.twitch.connection.ChatConnectionType
+import com.flxrs.dankchat.data.twitch.connection.WebSocketChatConnection
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

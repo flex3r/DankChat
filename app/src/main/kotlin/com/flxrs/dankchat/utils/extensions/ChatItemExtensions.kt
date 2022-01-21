@@ -1,8 +1,8 @@
 package com.flxrs.dankchat.utils.extensions
 
 import com.flxrs.dankchat.chat.ChatItem
-import com.flxrs.dankchat.service.twitch.message.ClearChatMessage
-import com.flxrs.dankchat.service.twitch.message.TwitchMessage
+import com.flxrs.dankchat.data.twitch.message.ClearChatMessage
+import com.flxrs.dankchat.data.twitch.message.TwitchMessage
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 

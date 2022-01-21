@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.databinding.EmoteHeaderItemBinding
 import com.flxrs.dankchat.databinding.EmoteItemBinding
-import com.flxrs.dankchat.service.twitch.emote.GenericEmote
+import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.utils.extensions.loadImage
 import java.util.*
 
