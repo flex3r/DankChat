@@ -10,7 +10,7 @@ import retrofit2.http.Path
 interface SevenTVApiService {
     @GET("users/{user}/emotes")
     @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
-    suspend fun getChannelEmotes(@Path("user") channel: String): Response<List<SevenTVEmoteDto>>
+    suspend fun getChannelEmotes(@Path("user") channelId: String): Response<List<SevenTVEmoteDto>>
 
     @GET("emotes/global")
     @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")

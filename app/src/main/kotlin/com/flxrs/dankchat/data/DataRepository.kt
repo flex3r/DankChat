@@ -121,7 +121,7 @@ class DataRepository @Inject constructor(
                     apiManager.getBTTVChannelEmotes(id)?.let { emoteManager.setBTTVEmotes(channel, it) }
                 } ?: emoteManager.clearBTTVEmotes(),
                 launchWhenTypeOrNull(ThirdPartyEmoteType.SevenTV, loadThirdPartyData) {
-                    apiManager.getSevenTVChannelEmotes(channel)?.let { emoteManager.setSevenTVEmotes(channel, it) }
+                    apiManager.getSevenTVChannelEmotes(id)?.let { emoteManager.setSevenTVEmotes(channel, it) }
                 } ?: emoteManager.clearSevenTVEmotes(),
             ).joinAll()
 

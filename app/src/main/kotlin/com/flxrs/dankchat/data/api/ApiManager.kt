@@ -68,7 +68,7 @@ class ApiManager @Inject constructor(
     suspend fun getBTTVChannelEmotes(channelId: String): BTTVChannelDto? = bttvApiService.getChannelEmotes(channelId).bodyOrNull
     suspend fun getBTTVGlobalEmotes(): List<BTTVGlobalEmotesDto>? = bttvApiService.getGlobalEmotes().bodyOrNull
 
-    suspend fun getSevenTVChannelEmotes(channel: String): List<SevenTVEmoteDto>? = sevenTVApiService.getChannelEmotes(channel).bodyOrNull
+    suspend fun getSevenTVChannelEmotes(channelId: String): List<SevenTVEmoteDto>? = sevenTVApiService.getChannelEmotes(channelId).bodyOrNull
     suspend fun getSevenTVGlobalEmotes(): List<SevenTVEmoteDto>? = sevenTVApiService.getGlobalEmotes().bodyOrNull
 
     suspend fun getRecentMessages(channel: String): RecentMessagesDto? = recentMessagesApiService.getRecentMessages(channel).bodyOrNull
