@@ -88,6 +88,8 @@ class PubSubConnection(
         private set
     val hasTopics: Boolean
         get() = topics.isNotEmpty()
+    val hasWhisperTopic: Boolean
+        get() = topics.any { it.topic.startsWith("whispers.") }
 
     val events = receiveChannel.receiveAsFlow().distinctUntilChanged { old, new ->
         (old.isDisconnected && new.isDisconnected) || old == new

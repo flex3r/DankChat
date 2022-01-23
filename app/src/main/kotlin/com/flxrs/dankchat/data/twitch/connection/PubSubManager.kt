@@ -28,6 +28,9 @@ class PubSubManager @Inject constructor(
     val connected: Boolean
         get() = connections.any { it.connected }
 
+    val connectedAndHasWhisperTopic: Boolean
+        get() = connections.any { it.connected && it.hasWhisperTopic }
+
     fun start() {
         val oAuth = preferenceStore.oAuthKey?.withoutOAuthSuffix ?: return
         val userId = preferenceStore.userIdString ?: return

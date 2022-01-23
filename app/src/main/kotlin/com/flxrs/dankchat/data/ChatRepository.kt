@@ -251,7 +251,7 @@ class ChatRepository @Inject constructor(
         writeConnection.sendMessage(preparedMessage)
 
 
-        if (pubSubManager.connected) {
+        if (pubSubManager.connectedAndHasWhisperTopic) {
             return
         }
         // fake whisper handling
@@ -518,7 +518,7 @@ class ChatRepository @Inject constructor(
     }
 
     private fun handleWhisper(ircMessage: IrcMessage) {
-        if (pubSubManager.connected) {
+        if (pubSubManager.connectedAndHasWhisperTopic) {
             return
         }
 
