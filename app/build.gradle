@@ -13,8 +13,8 @@ android {
         applicationId "com.flxrs.dankchat"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 228
-        versionName "3.0.7"
+        versionCode 229
+        versionName "3.0.8"
 
         javaCompileOptions {
             annotationProcessorOptions {
