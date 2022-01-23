@@ -3,11 +3,11 @@ package com.flxrs.dankchat.chat.user
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.data.ChatRepository
 import com.flxrs.dankchat.data.DataRepository
 import com.flxrs.dankchat.data.api.dto.HelixUserDto
 import com.flxrs.dankchat.data.api.dto.UserFollowsDto
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.DateTimeUtils.asParsedZonedDateTime
 import com.flxrs.dankchat.utils.extensions.withoutOAuthSuffix
 import dagger.hilt.android.lifecycle.HiltViewModel

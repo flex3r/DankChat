@@ -2,9 +2,9 @@ package com.flxrs.dankchat.di
 
 import android.content.Context
 import coil.util.CoilUtils
-import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.data.api.*
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

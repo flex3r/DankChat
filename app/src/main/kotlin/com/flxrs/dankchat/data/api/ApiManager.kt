@@ -2,8 +2,8 @@ package com.flxrs.dankchat.data.api
 
 import android.util.Log
 import com.flxrs.dankchat.BuildConfig
-import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.data.api.dto.*
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.*

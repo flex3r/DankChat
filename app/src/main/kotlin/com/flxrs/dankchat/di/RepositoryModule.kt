@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.di
 
-import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.data.*
 import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.data.database.EmoteUsageDao
@@ -8,6 +7,7 @@ import com.flxrs.dankchat.data.database.RecentUploadsDao
 import com.flxrs.dankchat.data.twitch.connection.ChatConnection
 import com.flxrs.dankchat.data.twitch.connection.PubSubManager
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

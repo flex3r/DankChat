@@ -1,9 +1,9 @@
 package com.flxrs.dankchat.data
 
 import android.util.Log
+import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.command.CommandItem
-import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.utils.extensions.withoutOAuthSuffix
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
