@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.data
 
+import android.graphics.Color
 import android.util.Log
 import androidx.collection.LruCache
 import com.flxrs.dankchat.chat.ChatItem
@@ -83,16 +84,42 @@ class ChatRepository @Inject constructor(
         }
         scope.launch {
             pubSubManager.messages.collect { message ->
-                if (message !is PubSubMessage.PointRedemption) return@collect
-                if (message.data.user.id in blockList) return@collect
-                knownRewards[message.data.id] = message
+                when (message) {
+                    is PubSubMessage.PointRedemption -> {
+                        if (message.data.user.id in blockList) return@collect
+                        knownRewards[message.data.id] = message
 
-                if (!message.data.reward.requiresUserInput) {
-                    val parsed = PointRedemptionMessage.parsePointReward(message.timestamp, message.data)
-                    messages[message.channelName]?.update {
-                        it.addAndLimit(ChatItem(parsed), scrollBackLength)
+                        if (!message.data.reward.requiresUserInput) {
+                            val parsed = PointRedemptionMessage.parsePointReward(message.timestamp, message.data)
+                            messages[message.channelName]?.update {
+                                it.addAndLimit(ChatItem(parsed), scrollBackLength)
+                            }
+                        }
+                    }
+                    is PubSubMessage.Whisper         -> {
+                        if (message.data.userId in blockList) return@collect
+
+                        val parsed = runCatching {
+                            WhisperMessage.fromPubsub(message.data, emoteManager)
+                        }.getOrElse { return@collect }
+
+                        val item = ChatItem(parsed, isMentionTab = true)
+                        _whispers.update { current ->
+                            current.addAndLimit(item, scrollBackLength)
+                        }
+
+                        if (message.data.userId == userState.value.userId) {
+                            return@collect
+                        }
+
+                        val currentUsers = users["*"]?.value ?: createUserCache()
+                        currentUsers.put(parsed.name, true)
+                        users["*"]?.value = currentUsers
+                        _channelMentionCount.increment("w", 1)
+                        _notificationsFlow.tryEmit(listOf(item))
                     }
                 }
+
             }
         }
     }
@@ -223,13 +250,33 @@ class ChatRepository @Inject constructor(
         val preparedMessage = prepareMessage(channel, input) ?: return
         writeConnection.sendMessage(preparedMessage)
 
+
+        if (pubSubManager.connected) {
+            return
+        }
+        // fake whisper handling
         val split = input.split(" ")
         if (split.size > 2 && (split[0] == "/w" || split[0] == ".w") && split[1].isNotBlank()) {
             val message = input.substring(4 + split[1].length)
             val emotes = emoteManager.parse3rdPartyEmotes(message, withTwitch = true)
-            val fakeMessage = TwitchMessage(channel = "", name = name, displayName = name, message = message, emotes = emotes, isWhisper = true, whisperRecipient = split[1])
+            val userState = userState.value
+            val fakeMessage = WhisperMessage(
+                userId = userState.userId,
+                name = name,
+                displayName = userState.displayName,
+                color = Color.parseColor(userState.color ?: Message.DEFAULT_COLOR),
+                recipientId = null,
+                recipientColor = Color.parseColor(Message.DEFAULT_COLOR),
+                recipientName = split[1],
+                recipientDisplayName = split[1],
+                message = message,
+                originalMessage = message,
+                emotes = emotes,
+            )
             val fakeItem = ChatItem(fakeMessage, isMentionTab = true)
-            _whispers.value = _whispers.value.addAndLimit(fakeItem, scrollBackLength)
+            _whispers.update {
+                it.addAndLimit(fakeItem, scrollBackLength)
+            }
         }
     }
 
@@ -351,6 +398,7 @@ class ChatRepository @Inject constructor(
             "CLEARMSG"        -> handleClearMsg(msg)
             "USERSTATE"       -> handleUserState(msg)
             "GLOBALUSERSTATE" -> handleGlobalUserState(msg)
+            "WHISPER"         -> handleWhisper(msg)
             else              -> handleMessage(msg)
         }
         return null
@@ -469,6 +517,32 @@ class ChatRepository @Inject constructor(
         }
     }
 
+    private fun handleWhisper(ircMessage: IrcMessage) {
+        if (pubSubManager.connected) {
+            return
+        }
+
+        val userId = ircMessage.tags["user-id"]
+        if (userId in blockList) {
+            return
+        }
+
+        val userState = userState.value
+        val parsed = runCatching {
+            WhisperMessage.parseFromIrc(ircMessage, emoteManager, userState.displayName, userState.color)
+        }.getOrElse { return }
+
+        val currentUsers = users["*"]?.value ?: createUserCache()
+        currentUsers.put(parsed.name, true)
+        users["*"]?.value = currentUsers
+
+        val item = ChatItem(parsed, isMentionTab = true)
+        _whispers.update { current ->
+            current.addAndLimit(item, scrollBackLength)
+        }
+        _channelMentionCount.increment("w", 1)
+    }
+
     private fun handleMessage(ircMessage: IrcMessage) = scope.launch {
         val userId = ircMessage.tags["user-id"]
         if (userId in blockList) {
@@ -497,7 +571,7 @@ class ChatRepository @Inject constructor(
         }
 
 
-        val items = runCatching { Message.parse(ircMessage, emoteManager, name) }
+        val items = runCatching { Message.parse(ircMessage, emoteManager) }
             .getOrNull()
             ?.map {
                 it as TwitchMessage // TODO
@@ -523,27 +597,21 @@ class ChatRepository @Inject constructor(
 
         val mainMessage = items.first().message as TwitchMessage // TODO ugh
         val channel = mainMessage.channel
-        if (channel == "*" && !mainMessage.isWhisper) {
+        if (channel == "*") {
             messages.keys.forEach {
                 messages[it]?.update { current ->
                     current.addAndLimit(items, scrollBackLength)
                 }
             }
             return@launch
-        } else if (!mainMessage.isWhisper) {
-            messages[channel]?.update { current ->
-                current.addAndLimit(additionalMessages + items, scrollBackLength)
-            }
+        }
+
+        messages[channel]?.update { current ->
+            current.addAndLimit(additionalMessages + items, scrollBackLength)
         }
 
         _notificationsFlow.tryEmit(items)
         when (ircMessage.command) {
-            "WHISPER"               -> {
-                _whispers.update { current ->
-                    current.addAndLimit(items.toMentionTabItems(), scrollBackLength)
-                }
-                _channelMentionCount.increment("w", 1)
-            }
             "PRIVMSG", "USERNOTICE" -> {
                 val isUnread = _unreadMessagesMap.firstValue[channel]
                 if (channel != activeChannel.value && (isUnread == null || isUnread == false)) {
@@ -553,7 +621,7 @@ class ChatRepository @Inject constructor(
         }
 
         val mentions = items.filter {
-            it.message is TwitchMessage && it.message.isMention && !it.message.isWhisper
+            it.message is TwitchMessage && it.message.isMention
         }.toMentionTabItems()
 
         if (mentions.isNotEmpty()) {
@@ -605,7 +673,7 @@ class ChatRepository @Inject constructor(
                 }
 
                 val messages = runCatching {
-                    Message.parse(parsedIrc, emoteManager, name)
+                    Message.parse(parsedIrc, emoteManager)
                 }.getOrNull() ?: continue
 
                 loop@ for (msg in messages) {

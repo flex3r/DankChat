@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PointRedemption(
-    val redemption: PointRedemptionData?,
+    val redemption: PointRedemptionData,
     val timestamp: String,
 )
 

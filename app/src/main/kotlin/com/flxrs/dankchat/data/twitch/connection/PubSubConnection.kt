@@ -6,6 +6,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -39,6 +40,12 @@ data class PubSubDataMessage<T>(
     val data: T
 )
 
+@Serializable
+data class PubSubDataObjectMessage<T>(
+    val type: String,
+    @SerialName("data_object") val data: T
+)
+
 sealed class PubSubMessage {
     data class PointRedemption(
         val timestamp: Instant,
@@ -47,7 +54,7 @@ sealed class PubSubMessage {
         val data: PointRedemptionData
     ) : PubSubMessage()
 
-    data class Whisper(val raw: String) : PubSubMessage()
+    data class Whisper(val data: WhisperData) : PubSubMessage()
 }
 
 class PubSubConnection(
@@ -205,7 +212,6 @@ class PubSubConnection(
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
-            //Log.d(TAG, text)
             val json = JSONObject(text)
             val type = json.optString("type").ifBlank { return }
             when (type) {
@@ -216,17 +222,30 @@ class PubSubConnection(
                     val data = json.optJSONObject("data") ?: return
                     val topic = data.optString("topic").ifBlank { return }
                     val message = data.optString("message").ifBlank { return }
+                    val messageObject = JSONObject(message)
+                    val messageTopic = messageObject.optString("type")
                     val match = topics.find { topic == it.topic } ?: return
                     val pubSubMessage = when (match) {
-                        is PubSubTopic.Whispers         -> PubSubMessage.Whisper(message)
-                        is PubSubTopic.PointRedemptions -> {
-                            val parsedMessage = runCatching {
-                                jsonFormat.decodeFromString<PubSubDataMessage<PointRedemption>>(message)
-                            }.getOrElse {
-                                //Log.d(TAG, "failure: $it")
+                        is PubSubTopic.Whispers         -> {
+                            if (messageTopic !in listOf("whisper_sent", "whisper_received")) {
                                 return
                             }
-                            parsedMessage.data.redemption ?: return
+
+                            val parsedMessage = runCatching {
+                                jsonFormat.decodeFromString<PubSubDataObjectMessage<WhisperData>>(message)
+                            }.getOrElse { return }
+
+                            PubSubMessage.Whisper(parsedMessage.data)
+                        }
+                        is PubSubTopic.PointRedemptions -> {
+                            if (messageTopic != "reward-redeemed") {
+                                return
+                            }
+
+                            val parsedMessage = runCatching {
+                                jsonFormat.decodeFromString<PubSubDataMessage<PointRedemption>>(message)
+                            }.getOrElse { return }
+
                             PubSubMessage.PointRedemption(
                                 timestamp = Instant.parse(parsedMessage.data.timestamp),
                                 channelName = match.channelName,
@@ -270,6 +289,9 @@ class PubSubConnection(
         private const val PING_INTERVAL = 5 * 60 * 1000L
         private const val PING_PAYLOAD = "{\"type\":\"PING\"}"
         private val TAG = PubSubConnection::class.java.simpleName
-        private val jsonFormat = Json { ignoreUnknownKeys = true }
+        private val jsonFormat = Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+        }
     }
 }

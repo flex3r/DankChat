@@ -1,11 +1,13 @@
 package com.flxrs.dankchat.data.twitch.message
 
 import android.graphics.Color
+import android.util.Log
 import com.flxrs.dankchat.data.ChatRepository
 import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.badge.BadgeType
 import com.flxrs.dankchat.data.twitch.connection.PointRedemptionData
+import com.flxrs.dankchat.data.twitch.connection.WhisperData
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.DateTimeUtils
@@ -20,15 +22,39 @@ sealed class Message {
     abstract val timestamp: Long
 
     companion object {
-        fun parse(message: IrcMessage, emoteManager: EmoteManager, currentUserName: String): List<Message> = with(message) {
+        const val DEFAULT_COLOR = "#717171"
+        fun parse(message: IrcMessage, emoteManager: EmoteManager): List<Message> = with(message) {
             return when (command) {
                 "PRIVMSG"    -> listOf(TwitchMessage.parsePrivMessage(message, emoteManager))
                 "NOTICE"     -> listOf(TwitchMessage.parseNotice(message))
                 "USERNOTICE" -> TwitchMessage.parseUserNotice(message, emoteManager)
                 "CLEARCHAT"  -> listOf(ClearChatMessage.parseClearChat(message))
-                "WHISPER"    -> listOf(TwitchMessage.parseWhisper(message, emoteManager, currentUserName))
-                //"HOSTTARGET" -> listOf(parseHostTarget(message))
-                else         -> listOf()
+                else         -> emptyList()
+            }
+        }
+
+        fun parseBadges(emoteManager: EmoteManager, badgeTags: String?, channel: String = "", userId: String? = null): List<Badge> {
+            val badges = badgeTags?.split(',')?.mapNotNull { badgeTag ->
+                val trimmed = badgeTag.trim()
+                val badgeSet = trimmed.substringBefore('/')
+                val badgeVersion = trimmed.substringAfter('/')
+                val globalBadgeUrl = emoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)
+                val channelBadgeUrl = emoteManager.getChannelBadgeUrl(channel, badgeSet, badgeVersion)
+                val ffzModBadgeUrl = emoteManager.getFfzModBadgeUrl(channel)
+                val ffzVipBadgeUrl = emoteManager.getFfzVipBadgeUrl(channel)
+                val type = BadgeType.parseFromBadgeId(badgeSet)
+                when {
+                    badgeSet.startsWith("moderator") && ffzModBadgeUrl != null                                    -> Badge.FFZModBadge(ffzModBadgeUrl, type)
+                    badgeSet.startsWith("vip") && ffzVipBadgeUrl != null                                          -> Badge.FFZVipBadge(ffzVipBadgeUrl, type)
+                    (badgeSet.startsWith("subscriber") || badgeSet.startsWith("bits")) && channelBadgeUrl != null -> Badge.ChannelBadge(badgeSet, channelBadgeUrl, type)
+                    else                                                                                          -> globalBadgeUrl?.let { Badge.GlobalBadge(badgeSet, it, type) }
+                }
+            }.orEmpty()
+
+            userId ?: return badges
+            return when (val badge = emoteManager.getDankChatBadgeUrl(userId)) {
+                null -> badges
+                else -> badges + Badge.GlobalBadge(badge.first, badge.second, BadgeType.DankChat)
             }
         }
     }
@@ -57,7 +83,7 @@ data class ClearChatMessage(
             val channel = params[0].substring(1)
             val target = params.getOrNull(1)
             val duration = tags["ban-duration"] ?: ""
-            val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
+            val ts = tags["tmi-sent-ts"]?.toLongOrNull() ?: System.currentTimeMillis()
             val id = tags["id"] ?: UUID.randomUUID().toString()
 
             return ClearChatMessage(
@@ -99,6 +125,93 @@ data class PointRedemptionMessage(
     }
 }
 
+data class WhisperMessage(
+    override val timestamp: Long = System.currentTimeMillis(),
+    override val id: String = UUID.randomUUID().toString(),
+    val userId: String?,
+    val name: String,
+    val displayName: String,
+    val color: Int = Color.parseColor(DEFAULT_COLOR),
+    val recipientId: String?,
+    val recipientName: String,
+    val recipientDisplayName: String,
+    val recipientColor: Int = Color.parseColor(DEFAULT_COLOR),
+    val message: String,
+    val originalMessage: String,
+    val emotes: List<ChatMessageEmote> = emptyList(),
+    val badges: List<Badge> = emptyList(),
+) : Message() {
+    companion object {
+        fun parseFromIrc(ircMessage: IrcMessage, emoteManager: EmoteManager, recipientName: String, recipientColor: String?): WhisperMessage = with(ircMessage) {
+            val name = prefix.substringBefore('!')
+            val displayName = tags["display-name"] ?: name
+            val colorTag = tags["color"]?.ifBlank { DEFAULT_COLOR } ?: DEFAULT_COLOR
+            val color = Color.parseColor(colorTag)
+            val recipientColorTag = recipientColor ?: DEFAULT_COLOR
+            val emoteTag = tags["emotes"] ?: ""
+            val badges = parseBadges(emoteManager, tags["badges"], userId = tags["user-id"])
+            val message = params.getOrElse(1) { "" }
+
+            val withEmojiFix = message.replace(ChatRepository.ESCAPE_TAG_REGEX, ChatRepository.ZERO_WIDTH_JOINER)
+            val (duplicateSpaceAdjustedMessage, removedSpaces) = withEmojiFix.removeDuplicateWhitespace()
+            val (appendedSpaceAdjustedMessage, appendedSpaces) = duplicateSpaceAdjustedMessage.appendSpacesBetweenEmojiGroup()
+            val (overlayEmotesAdjustedMessage, emotes) = emoteManager.parseEmotes(appendedSpaceAdjustedMessage, channel = "", emoteTag, appendedSpaces, removedSpaces)
+
+            return WhisperMessage(
+                timestamp = tags["tmi-sent-ts"]?.toLongOrNull() ?: System.currentTimeMillis(),
+                id = tags["id"] ?: UUID.randomUUID().toString(),
+                userId = tags["user-id"],
+                name = name,
+                displayName = displayName,
+                color = color,
+                recipientId = null,
+                recipientName = recipientName,
+                recipientDisplayName = recipientName,
+                recipientColor = Color.parseColor(recipientColorTag),
+                message = overlayEmotesAdjustedMessage,
+                originalMessage = appendedSpaceAdjustedMessage,
+                emotes = emotes,
+                badges = badges,
+            )
+        }
+
+        fun fromPubsub(data: WhisperData, emoteManager: EmoteManager): WhisperMessage = with(data) {
+            val colorTag = data.tags.color.ifBlank { DEFAULT_COLOR }
+            val color = Color.parseColor(colorTag)
+            val recipientColorTag = data.recipient.color.ifBlank { DEFAULT_COLOR }
+            val badgeTag = data.tags.badges.joinToString(",") { "${it.id}/${it.version}" }
+            val emotesTag = data.tags.emotes
+                .groupBy { it.id }
+                .entries
+                .joinToString("/") { entry ->
+                    "${entry.key}:" + entry.value.joinToString(",") { "${it.start}-${it.end}" }
+                }
+
+            val badges = parseBadges(emoteManager, badgeTag, userId = data.userId)
+            val withEmojiFix = message.replace(ChatRepository.ESCAPE_TAG_REGEX, ChatRepository.ZERO_WIDTH_JOINER)
+            val (duplicateSpaceAdjustedMessage, removedSpaces) = withEmojiFix.removeDuplicateWhitespace()
+            val (appendedSpaceAdjustedMessage, appendedSpaces) = duplicateSpaceAdjustedMessage.appendSpacesBetweenEmojiGroup()
+            val (overlayEmotesAdjustedMessage, emotes) = emoteManager.parseEmotes(appendedSpaceAdjustedMessage, channel = "", emotesTag, appendedSpaces, removedSpaces)
+
+            return WhisperMessage(
+                timestamp = data.timestamp,
+                id = data.messageId,
+                userId = data.userId,
+                name = data.tags.name,
+                displayName = data.tags.displayName,
+                color = color,
+                recipientId = data.recipient.id,
+                recipientName = data.recipient.name,
+                recipientDisplayName = data.recipient.displayName,
+                recipientColor = Color.parseColor(recipientColorTag),
+                message = appendedSpaceAdjustedMessage,
+                originalMessage = overlayEmotesAdjustedMessage,
+                emotes = emotes,
+                badges = badges,
+            )
+        }
+    }
+}
 
 data class TwitchMessage(
     override val timestamp: Long = System.currentTimeMillis(),
@@ -107,10 +220,10 @@ data class TwitchMessage(
     val userId: String? = null,
     val name: String = "",
     val displayName: String = "",
-    val color: Int = Color.parseColor("#717171"),
+    val color: Int = Color.parseColor(DEFAULT_COLOR),
     val message: String,
     val originalMessage: String = message,
-    val emotes: List<ChatMessageEmote> = listOf(),
+    val emotes: List<ChatMessageEmote> = emptyList(),
     val isAction: Boolean = false,
     val isNotify: Boolean = false,
     val badges: List<Badge> = emptyList(),
@@ -118,8 +231,6 @@ data class TwitchMessage(
     val isSystem: Boolean = false,
     val isMention: Boolean = false,
     val isReward: Boolean = false,
-    val isWhisper: Boolean = false,
-    val whisperRecipient: String = ""
 ) : Message() {
 
     fun checkForMention(username: String, mentions: List<Mention>): TwitchMessage {
@@ -137,10 +248,10 @@ data class TwitchMessage(
             }
 
             val displayName = tags["display-name"] ?: name
-            val colorTag = tags["color"]?.ifBlank { "#717171" } ?: "#717171"
+            val colorTag = tags["color"]?.ifBlank { DEFAULT_COLOR } ?: DEFAULT_COLOR
             val color = Color.parseColor(colorTag)
 
-            val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
+            val ts = tags["tmi-sent-ts"]?.toLongOrNull() ?: System.currentTimeMillis()
             var isAction = false
             val messageParam = params.getOrElse(1) { "" }
             val message = when {
@@ -185,8 +296,8 @@ data class TwitchMessage(
             val id = tags["id"] ?: UUID.randomUUID().toString()
             val channel = params[0].substring(1)
             val systemMsg = if (historic) params[1] else tags["system-msg"] ?: ""
-            val color = Color.parseColor("#717171")
-            val ts = tags["tmi-sent-ts"]?.toLong() ?: System.currentTimeMillis()
+            val color = Color.parseColor(DEFAULT_COLOR)
+            val ts = tags["tmi-sent-ts"]?.toLongOrNull() ?: System.currentTimeMillis()
 
             if (msgId != null && (msgId == "sub" || msgId == "resub")) {
                 val subMsg = parsePrivMessage(message, emoteManager, isNotify = true)
@@ -217,45 +328,14 @@ data class TwitchMessage(
                 else                             -> params[1]
             }
 
-            val ts = tags["rm-received-ts"]?.toLong() ?: System.currentTimeMillis()
+            val ts = tags["rm-received-ts"]?.toLongOrNull() ?: System.currentTimeMillis()
             val id = tags["id"] ?: UUID.randomUUID().toString()
 
             return makeSystemMessage(notice, channel, ts, id)
         }
 
-        fun parseWhisper(ircMessage: IrcMessage, emoteManager: EmoteManager, currentUserName: String): TwitchMessage = with(ircMessage) {
-            val name = prefix.substringBefore('!')
-            val displayName = tags["display-name"] ?: name
-            val colorTag = tags["color"]?.ifBlank { "#717171" } ?: "#717171"
-            val color = Color.parseColor(colorTag)
-            val emoteTag = tags["emotes"] ?: ""
-            val badges = parseBadges(emoteManager, tags["badges"], userId = tags["user-id"])
-            val message = params.getOrElse(1) { "" }
-
-            val withEmojiFix = message.replace(ChatRepository.ESCAPE_TAG_REGEX, ChatRepository.ZERO_WIDTH_JOINER)
-            val (duplicateSpaceAdjustedMessage, removedSpaces) = withEmojiFix.removeDuplicateWhitespace()
-            val (appendedSpaceAdjustedMessage, appendedSpaces) = duplicateSpaceAdjustedMessage.appendSpacesBetweenEmojiGroup()
-            val (overlayEmotesAdjustedMessage, emotes) = emoteManager.parseEmotes(appendedSpaceAdjustedMessage, channel = "", emoteTag, appendedSpaces, removedSpaces)
-
-            return TwitchMessage(
-                timestamp = System.currentTimeMillis(),
-                channel = "*",
-                name = name,
-                displayName = displayName,
-                color = color,
-                message = overlayEmotesAdjustedMessage,
-                originalMessage = appendedSpaceAdjustedMessage,
-                emotes = emotes,
-                badges = badges,
-                id = UUID.randomUUID().toString(),
-                userId = tags["user-id"],
-                isWhisper = true,
-                whisperRecipient = currentUserName,
-            )
-        }
-
         private fun makeSystemMessage(message: String, channel: String, timestamp: Long = System.currentTimeMillis(), id: String = UUID.randomUUID().toString()): TwitchMessage {
-            val color = Color.parseColor("#717171")
+            val color = Color.parseColor(DEFAULT_COLOR)
             return TwitchMessage(
                 timestamp = timestamp,
                 channel = channel,
@@ -265,31 +345,6 @@ data class TwitchMessage(
                 id = id,
                 isSystem = true
             )
-        }
-
-        private fun parseBadges(emoteManager: EmoteManager, badgeTags: String?, channel: String = "", userId: String? = null): List<Badge> {
-            val badges = badgeTags?.split(',')?.mapNotNull { badgeTag ->
-                val trimmed = badgeTag.trim()
-                val badgeSet = trimmed.substringBefore('/')
-                val badgeVersion = trimmed.substringAfter('/')
-                val globalBadgeUrl = emoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)
-                val channelBadgeUrl = emoteManager.getChannelBadgeUrl(channel, badgeSet, badgeVersion)
-                val ffzModBadgeUrl = emoteManager.getFfzModBadgeUrl(channel)
-                val ffzVipBadgeUrl = emoteManager.getFfzVipBadgeUrl(channel)
-                val type = BadgeType.parseFromBadgeId(badgeSet)
-                when {
-                    badgeSet.startsWith("moderator") && ffzModBadgeUrl != null                                    -> Badge.FFZModBadge(ffzModBadgeUrl, type)
-                    badgeSet.startsWith("vip") && ffzVipBadgeUrl != null                                          -> Badge.FFZVipBadge(ffzVipBadgeUrl, type)
-                    (badgeSet.startsWith("subscriber") || badgeSet.startsWith("bits")) && channelBadgeUrl != null -> Badge.ChannelBadge(badgeSet, channelBadgeUrl, type)
-                    else                                                                                          -> globalBadgeUrl?.let { Badge.GlobalBadge(badgeSet, it, type) }
-                }
-            }.orEmpty()
-
-            userId ?: return badges
-            return when (val badge = emoteManager.getDankChatBadgeUrl(userId)) {
-                null -> badges
-                else -> badges + Badge.GlobalBadge(badge.first, badge.second, BadgeType.DankChat)
-            }
         }
     }
 }

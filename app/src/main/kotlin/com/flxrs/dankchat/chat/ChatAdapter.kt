@@ -29,13 +29,12 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.Coil
 import coil.request.ImageRequest
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.databinding.ChatItemBinding
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.badge.BadgeType
-import com.flxrs.dankchat.data.twitch.connection.PubSubMessage
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager
 import com.flxrs.dankchat.data.twitch.message.*
+import com.flxrs.dankchat.databinding.ChatItemBinding
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.extensions.*
 import com.flxrs.dankchat.utils.showErrorDialog
@@ -86,10 +85,11 @@ class ChatAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
         when (val message = item.message) {
-            is SystemMessage    -> holder.binding.itemText.handleSystemMessage(message, holder)
-            is TwitchMessage    -> holder.binding.itemText.handleTwitchMessage(message, holder, item.isMentionTab)
-            is ClearChatMessage -> holder.binding.itemText.handleClearChatMessage(message, holder)
-            is PointRedemptionMessage    -> holder.binding.itemText.handlePointRedemptionMessage(message, holder)
+            is SystemMessage          -> holder.binding.itemText.handleSystemMessage(message, holder)
+            is TwitchMessage          -> holder.binding.itemText.handleTwitchMessage(message, holder, item.isMentionTab)
+            is ClearChatMessage       -> holder.binding.itemText.handleClearChatMessage(message, holder)
+            is PointRedemptionMessage -> holder.binding.itemText.handlePointRedemptionMessage(message, holder)
+            is WhisperMessage         -> holder.binding.itemText.handleWhisperMessage(message, holder)
         }
     }
 
@@ -211,6 +211,184 @@ class ChatAdapter(
         }
     }
 
+    private fun TextView.handleWhisperMessage(whisperMessage: WhisperMessage, holder: ViewHolder) = with(whisperMessage) {
+        val textView = this@handleWhisperMessage
+        isClickable = false
+        alpha = 1.0f
+        movementMethod = LongClickLinkMovementMethod
+        (text as? Spannable)?.clearSpans()
+
+        val darkModePreferenceKey = context.getString(R.string.preference_dark_theme_key)
+        val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
+        val animateGifsKey = context.getString(R.string.preference_animate_gifs_key)
+        val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
+        val checkeredKey = context.getString(R.string.checkered_messages_key)
+        val badgesKey = context.getString(R.string.preference_visible_badges_key)
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val isDarkMode = resources.isSystemNightMode || preferences.getBoolean(darkModePreferenceKey, false)
+        val isCheckeredMode = preferences.getBoolean(checkeredKey, false)
+        val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
+        val animateGifs = preferences.getBoolean(animateGifsKey, true)
+        val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
+        val visibleBadges = preferences.getStringSet(badgesKey, resources.getStringArray(R.array.badges_entry_values).toSet()).orEmpty()
+        val visibleBadgeTypes = BadgeType.mapFromPreferenceSet(visibleBadges)
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
+        val textColor = MaterialColors.getColor(textView, R.attr.colorOnSurface)
+        setTextColor(textColor)
+
+        val scaleFactor = lineHeight * 1.5 / 112
+        val background = when {
+            isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(textView, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
+            else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
+        }
+        setBackgroundColor(background)
+
+        val fullName = when {
+            displayName.equals(name, true) -> displayName
+            else                           -> "$name($displayName)"
+        }
+
+        val fullRecipientName = when {
+            recipientDisplayName.equals(recipientName, true) -> recipientDisplayName
+            else                                             -> "$recipientName($recipientDisplayName)"
+        }
+
+        val allowedBadges = badges.filter { visibleBadgeTypes.contains(it.type) }
+        val badgesLength = allowedBadges.size * 2
+
+        val spannable = SpannableStringBuilder(StringBuilder())
+        if (showTimeStamp) {
+            spannable.bold { append("${DateTimeUtils.timestampToLocalTime(timestamp)} ") }
+        }
+
+        val nameGroupLength = fullName.length + 4 + fullRecipientName.length + 2
+        val prefixLength = spannable.length + nameGroupLength
+        val badgePositions = allowedBadges.map {
+            spannable.append("  ")
+            spannable.length - 2 to spannable.length - 1
+        }
+
+        val normalizedColor = color.normalizeColor(isDarkMode)
+        spannable.bold { color(normalizedColor) { append(fullName) } }
+        spannable.append(" -> ")
+
+        val normalizedRecipientColor = recipientColor.normalizeColor(isDarkMode)
+        spannable.bold { color(normalizedRecipientColor) { append(fullRecipientName) } }
+        spannable.append(": ")
+        spannable.append(message)
+
+        val userClickableSpan = object : LongClickableSpan() {
+            override fun onClick(v: View) = onUserClicked(userId, displayName, id, "", false)
+            override fun onLongClick(view: View) = onUserClicked(userId, displayName, id, "", true)
+            override fun updateDrawState(ds: TextPaint) {
+                ds.isUnderlineText = false
+                ds.color = normalizedColor
+            }
+        }
+        val userStart = prefixLength + badgesLength - nameGroupLength
+        val userEnd = userStart + fullName.length
+        spannable[userStart..userEnd] = userClickableSpan
+
+        val emojiCompat = EmojiCompat.get()
+        val messageStart = prefixLength + badgesLength
+        val messageEnd = messageStart + message.length
+        val spannableWithEmojis = when (emojiCompat.loadState) {
+            EmojiCompat.LOAD_STATE_SUCCEEDED -> emojiCompat.process(spannable, messageStart, messageEnd, Int.MAX_VALUE, EmojiCompat.REPLACE_STRATEGY_NON_EXISTENT)
+            else                             -> spannable
+        } as SpannableStringBuilder
+
+        // TODO extract common
+        // links
+        LinkifyCompat.addLinks(spannableWithEmojis, Linkify.WEB_URLS)
+        spannableWithEmojis.getSpans<URLSpan>().forEach {
+            val start = spannableWithEmojis.getSpanStart(it)
+            val end = spannableWithEmojis.getSpanEnd(it)
+            spannableWithEmojis.removeSpan(it)
+
+            // skip partial link matches
+            val previousChar = spannableWithEmojis.getOrNull(index = start - 1)
+            if (previousChar != null && !previousChar.isWhitespace()) return@forEach
+
+            val clickableSpan = object : LongClickableSpan() {
+                override fun onLongClick(view: View) = onMessageLongClick(originalMessage)
+                override fun onClick(v: View) {
+                    try {
+                        customTabsIntent.launchUrl(context, it.url.toUri())
+                    } catch (e: ActivityNotFoundException) {
+                        Log.e("ViewBinding", Log.getStackTraceString(e))
+                    }
+                }
+            }
+            spannableWithEmojis[start..end] = clickableSpan
+        }
+
+        // copying message
+        val messageClickableSpan = object : LongClickableSpan() {
+            override fun onClick(v: View) = Unit
+            override fun onLongClick(view: View) = onMessageLongClick(originalMessage)
+            override fun updateDrawState(ds: TextPaint) {
+                ds.isUnderlineText = false
+            }
+
+        }
+        spannableWithEmojis[messageStart..messageEnd] = messageClickableSpan
+        setText(spannableWithEmojis, TextView.BufferType.SPANNABLE)
+
+        // todo extract common badges + emote handling
+        holder.scope.launch(holder.coroutineHandler) {
+            allowedBadges.forEachIndexed { idx, badge ->
+                try {
+                    val (start, end) = badgePositions[idx]
+                    val cached = emoteManager.gifCache[badge.url]
+                    val drawable = when {
+                        cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
+                        else           -> Coil.execute(badge.url.toRequest(context)).drawable?.apply {
+                            if (badge is Badge.FFZModBadge) {
+                                val modColor = ContextCompat.getColor(context, R.color.color_ffz_mod)
+                                val harmonized = MaterialColors.harmonizeWithPrimary(context, modColor)
+                                colorFilter = PorterDuffColorFilter(harmonized, PorterDuff.Mode.DST_OVER)
+                            }
+
+                            val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
+                            setBounds(0, 0, width, lineHeight)
+                            if (this is Animatable) {
+                                emoteManager.gifCache.put(badge.url, this)
+                                setRunning(animateGifs)
+                            }
+                        }
+                    }
+
+                    if (drawable != null) {
+                        val imageSpan = ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM)
+                        (text as SpannableString)[start..end] = imageSpan
+                    }
+                } catch (t: Throwable) {
+                    handleException(t)
+                }
+            }
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && animateGifs) {
+                emoteManager.gifCallback.addView(holder.binding.itemText)
+            }
+
+
+            val fullPrefix = prefixLength + badgesLength
+            try {
+                emotes
+                    .groupBy { it.position }
+                    .forEach { (_, emotes) ->
+                        val key = emotes.joinToString(separator = "-") { it.id }
+                        // fast path, backed by lru cache
+                        val layerDrawable = emoteManager.layerCache[key] ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
+
+                        (text as SpannableString).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
+                    }
+            } catch (t: Throwable) {
+                handleException(t)
+            }
+        }
+    }
+
     @Suppress("BlockingMethodInNonBlockingContext")
     @SuppressLint("ClickableViewAccessibility")
     private fun TextView.handleTwitchMessage(twitchMessage: TwitchMessage, holder: ViewHolder, isMentionTab: Boolean): Unit = with(twitchMessage) {
@@ -276,22 +454,17 @@ class ChatAdapter(
         }
 
         val fullDisplayName = when {
-            isWhisper && whisperRecipient.isNotBlank() -> "$fullName -> $whisperRecipient: "
-            !showUserName                              -> ""
-            isAction                                   -> "$fullName "
-            fullName.isBlank()                         -> ""
-            else                                       -> "$fullName: "
+            !showUserName      -> ""
+            isAction           -> "$fullName "
+            fullName.isBlank() -> ""
+            else               -> "$fullName: "
         }
 
         val allowedBadges = badges.filter { visibleBadgeTypes.contains(it.type) }
         val badgesLength = allowedBadges.size * 2
 
-        val channelOrBlank = when {
-            isWhisper -> ""
-            else      -> "#$channel"
-        }
         val timeAndWhisperBuilder = StringBuilder()
-        if (isMentionTab && isMention) timeAndWhisperBuilder.append("$channelOrBlank ")
+        if (isMentionTab && isMention) timeAndWhisperBuilder.append("#$channel ")
         if (showTimeStamp) timeAndWhisperBuilder.append("${DateTimeUtils.timestampToLocalTime(timestamp)} ")
         val (prefixLength, spannable) = timeAndWhisperBuilder.length + fullDisplayName.length to SpannableStringBuilder().bold { append(timeAndWhisperBuilder) }
 

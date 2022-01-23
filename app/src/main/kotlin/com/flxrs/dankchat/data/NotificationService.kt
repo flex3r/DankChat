@@ -18,8 +18,9 @@ import androidx.core.content.getSystemService
 import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.data.NotificationService.NotificationData.Companion.toNotificationData
+import com.flxrs.dankchat.data.twitch.message.*
 import com.flxrs.dankchat.main.MainActivity
-import com.flxrs.dankchat.data.twitch.message.TwitchMessage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import java.util.*
@@ -211,14 +212,14 @@ class NotificationService : Service(), CoroutineScope {
         notificationsJob = launch {
             chatRepository.notificationsFlow.collect { items ->
                 items.forEach { (message) ->
+                    if (shouldNotifyOnMention && notificationsEnabled) {
+                        val data = message.toNotificationData()
+                        data?.createMentionNotification()
+                    }
+
                     if (message !is TwitchMessage) {
                         return@forEach
                     }
-
-                    if (shouldNotifyOnMention && message.isMention && notificationsEnabled) {
-                        message.createMentionNotification()
-                    }
-
 
                     val volume = audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC) ?: 0
 
@@ -257,7 +258,29 @@ class NotificationService : Service(), CoroutineScope {
         tts?.speak(ttsMessage, queueMode, null, null)
     }
 
-    private fun TwitchMessage.createMentionNotification() {
+
+    private data class NotificationData(
+        val channel: String,
+        val name: String,
+        val message: String,
+        val isWhisper: Boolean = false,
+        val isNotify: Boolean = false,
+    ) {
+        companion object {
+            fun Message.toNotificationData(): NotificationData? = when (this) {
+                is TwitchMessage  -> if (isMention) NotificationData(channel, name, originalMessage, isNotify = isNotify) else null
+                is WhisperMessage -> NotificationData(
+                    channel = "",
+                    name = name,
+                    message = originalMessage,
+                    isWhisper = true,
+                )
+                else              -> null
+            }
+        }
+    }
+
+    private fun NotificationData.createMentionNotification() {
         val pendingStartActivityIntent = Intent(this@NotificationService, MainActivity::class.java).let {
             it.putExtra(MainActivity.OPEN_CHANNEL_KEY, channel)
             PendingIntent.getActivity(this@NotificationService, notificationIntentCode, it, pendingIntentFlag)
