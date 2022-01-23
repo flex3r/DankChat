@@ -9,7 +9,7 @@ import com.flxrs.dankchat.data.DataRepository
 import com.flxrs.dankchat.data.api.dto.HelixUserDto
 import com.flxrs.dankchat.data.api.dto.UserFollowsDto
 import com.flxrs.dankchat.utils.DateTimeUtils.asParsedZonedDateTime
-import com.flxrs.dankchat.utils.extensions.removeOAuthSuffix
+import com.flxrs.dankchat.utils.extensions.withoutOAuthSuffix
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -86,7 +86,7 @@ class UserPopupViewModel @Inject constructor(
     }
 
     private inline fun updateStateWith(crossinline block: suspend (String, String, String) -> Unit) = viewModelScope.launch {
-        val oAuth = preferenceStore.oAuthKey?.removeOAuthSuffix ?: return@launch
+        val oAuth = preferenceStore.oAuthKey?.withoutOAuthSuffix ?: return@launch
         val currentUserId = preferenceStore.userIdString ?: return@launch
         val result = runCatching { block(args.targetUserId, currentUserId, oAuth) }
         when {
@@ -102,7 +102,7 @@ class UserPopupViewModel @Inject constructor(
         }
 
         _userPopupState.value = UserPopupState.Loading
-        val oAuth = preferenceStore.oAuthKey?.removeOAuthSuffix
+        val oAuth = preferenceStore.oAuthKey?.withoutOAuthSuffix
         val currentUserId = preferenceStore.userIdString
         if (oAuth == null || currentUserId == null) {
             _userPopupState.value = UserPopupState.Error()

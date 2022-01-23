@@ -42,7 +42,8 @@ class ApiManager @Inject constructor(
         return null
     }
 
-    suspend fun getUserIdByName(oAuth: String, name: String): String? = helixApiService.getUserByName("Bearer $oAuth", name).bodyOrNull?.data?.getOrNull(0)?.id
+    suspend fun getUserIdByName(oAuth: String, name: String): String? = helixApiService.getUserByName("Bearer $oAuth", listOf(name)).bodyOrNull?.data?.getOrNull(0)?.id
+    suspend fun getUsersByNames(oAuth: String, names: List<String>): List<HelixUserDto>? = helixApiService.getUserByName("Bearer $oAuth", names).bodyOrNull?.data
     suspend fun getUser(oAuth: String, userId: String): HelixUserDto? = helixApiService.getUserById("Bearer $oAuth", userId).bodyOrNull?.data?.getOrNull(0)
     suspend fun getUsersFollows(oAuth: String, fromId: String, toId: String): UserFollowsDto? = helixApiService.getUsersFollows("Bearer $oAuth", fromId, toId).bodyOrNull
     suspend fun getStreams(oAuth: String, channels: List<String>): StreamsDto? = helixApiService.getStreams("Bearer $oAuth", channels).bodyOrNull
@@ -185,7 +186,7 @@ class ApiManager @Inject constructor(
                 "+channel:moderate" +
                 "+channel:edit:commercial" +
                 //"+channel:manage:broadcast" +
-                //"+channel:read:redemptions" +
+                "+channel:read:redemptions" +
                 //"+moderator:manage:automod" +
                 // "+clips:edit" +
                 "+user_read" +

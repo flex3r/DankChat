@@ -4,14 +4,12 @@ import android.util.Log
 import androidx.collection.LruCache
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.chat.toMentionTabItems
-import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.data.irc.IrcMessage
-import com.flxrs.dankchat.data.twitch.connection.ChatEvent
-import com.flxrs.dankchat.data.twitch.connection.ConnectionState
-import com.flxrs.dankchat.data.twitch.connection.WebSocketChatConnection
+import com.flxrs.dankchat.data.twitch.connection.*
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager
 import com.flxrs.dankchat.data.twitch.message.*
+import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.utils.extensions.*
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.*
@@ -25,9 +23,10 @@ import kotlin.system.measureTimeMillis
 class ChatRepository @Inject constructor(
     private val apiManager: ApiManager,
     private val emoteManager: EmoteManager,
-    private val readConnection: WebSocketChatConnection,
-    private val writeConnection: WebSocketChatConnection,
-    scope: CoroutineScope,
+    private val readConnection: ChatConnection,
+    private val writeConnection: ChatConnection,
+    private val pubSubManager: PubSubManager,
+    private val scope: CoroutineScope,
 ) {
 
     data class UserState(
@@ -62,6 +61,7 @@ class ChatRepository @Inject constructor(
     private var name: String = ""
     private var lastMessage = mutableMapOf<String, String>()
     private val loadedRecentsInChannels = mutableSetOf<String>()
+    private val knownRewards = ConcurrentHashMap<String, PubSubMessage.PointRedemption>()
 
     init {
         scope.launch {
@@ -79,6 +79,20 @@ class ChatRepository @Inject constructor(
             writeConnection.messages.collect { event ->
                 if (event !is ChatEvent.Message) return@collect
                 onWriterMessage(event.message)
+            }
+        }
+        scope.launch {
+            pubSubManager.messages.collect { message ->
+                if (message !is PubSubMessage.PointRedemption) return@collect
+                if (message.data.user.id in blockList) return@collect
+                knownRewards[message.data.id] = message
+
+                if (!message.data.reward.requiresUserInput) {
+                    val parsed = PointRedemptionMessage.parsePointReward(message.timestamp, message.data)
+                    messages[message.channelName]?.update {
+                        it.addAndLimit(ChatItem(parsed), scrollBackLength)
+                    }
+                }
             }
         }
     }
@@ -186,17 +200,20 @@ class ChatRepository @Inject constructor(
 
         readConnection.close()
         writeConnection.close()
+        pubSubManager.close()
         connectAndJoin(name, oAuth, channels)
     }
 
     fun reconnect() {
         readConnection.reconnect()
         writeConnection.reconnect()
+        pubSubManager.reconnect()
     }
 
     fun reconnectIfNecessary() {
         readConnection.reconnectIfNecessary()
         writeConnection.reconnectIfNecessary()
+        pubSubManager.reconnectIfNecessary()
     }
 
     fun getLastMessage(): String? = lastMessage[activeChannel.value]?.trimEndSpecialChar()
@@ -217,13 +234,17 @@ class ChatRepository @Inject constructor(
     }
 
     fun connectAndJoin(name: String, oAuth: String, channels: List<String>) {
-        if (readConnection.connected) return
+        if (!pubSubManager.connected) {
+            pubSubManager.start()
+        }
 
-        connect(name, oAuth)
-        joinChannels(channels)
+        if (!readConnection.connected) {
+            connect(name, oAuth)
+            joinChannels(channels)
+        }
     }
 
-    fun joinChannel(channel: String): List<String> {
+    fun joinChannel(channel: String, listenToPubSub: Boolean = true): List<String> {
         val channels = channels.value.orEmpty()
         if (channel in channels)
             return channels
@@ -236,10 +257,15 @@ class ChatRepository @Inject constructor(
 
 
         readConnection.joinChannel(channel)
+
+        if (listenToPubSub) {
+            pubSubManager.addChannel(channel)
+        }
+
         return updatedChannels
     }
 
-    fun partChannel(channel: String): List<String> {
+    fun partChannel(channel: String, unListenFromPubSub: Boolean = true): List<String> {
         val updatedChannels = channels.value.orEmpty() - channel
         _channels.value = updatedChannels
 
@@ -247,12 +273,16 @@ class ChatRepository @Inject constructor(
         readConnection.partChannel(channel)
         writeConnection.partChannel(channel)
 
+        if (unListenFromPubSub) {
+            pubSubManager.removeChannel(channel)
+        }
+
         return updatedChannels
     }
 
     fun updateChannels(updatedChannels: List<String>) {
         val currentChannels = channels.value.orEmpty()
-        val removedChannels = currentChannels - updatedChannels
+        val removedChannels = currentChannels - updatedChannels.toSet()
 
         removedChannels.forEach {
             partChannel(it)
@@ -439,11 +469,33 @@ class ChatRepository @Inject constructor(
         }
     }
 
-    private fun handleMessage(ircMessage: IrcMessage) {
+    private fun handleMessage(ircMessage: IrcMessage) = scope.launch {
         val userId = ircMessage.tags["user-id"]
         if (userId in blockList) {
-            return
+            return@launch
         }
+
+        val rewardId = ircMessage.tags["custom-reward-id"]
+        val additionalMessages = when {
+            rewardId != null -> {
+                val reward = knownRewards[rewardId]
+                    ?.also { knownRewards.remove(rewardId) }
+                    ?: run {
+                        withTimeoutOrNull(PUBSUB_TIMEOUT) {
+                            val redemption = pubSubManager.messages.first {
+                                it is PubSubMessage.PointRedemption && it.data.reward.id == rewardId
+                            } as PubSubMessage.PointRedemption
+                            redemption
+                        }
+                    }
+
+                reward?.let {
+                    listOf(ChatItem(PointRedemptionMessage.parsePointReward(it.timestamp, it.data)))
+                }.orEmpty()
+            }
+            else             -> emptyList()
+        }
+
 
         val items = runCatching { Message.parse(ircMessage, emoteManager, name) }
             .getOrNull()
@@ -454,7 +506,7 @@ class ChatRepository @Inject constructor(
                 }
 
                 if (blacklistEntries.matches(it.message, it.name to it.displayName, it.emotes)) {
-                    return
+                    return@launch
                 }
 
                 val withMentions = it.checkForMention(name, customMentionEntries)
@@ -466,7 +518,7 @@ class ChatRepository @Inject constructor(
             }
 
         if (items.isNullOrEmpty()) {
-            return
+            return@launch
         }
 
         val mainMessage = items.first().message as TwitchMessage // TODO ugh
@@ -477,10 +529,10 @@ class ChatRepository @Inject constructor(
                     current.addAndLimit(items, scrollBackLength)
                 }
             }
-            return
+            return@launch
         } else if (!mainMessage.isWhisper) {
             messages[channel]?.update { current ->
-                current.addAndLimit(items, scrollBackLength)
+                current.addAndLimit(additionalMessages + items, scrollBackLength)
             }
         }
 
@@ -587,9 +639,10 @@ class ChatRepository @Inject constructor(
         private val TAG = ChatRepository::class.java.simpleName
         private val INVISIBLE_CHAR = ByteBuffer.allocate(4).putInt(0x000E0000).array().toString(Charsets.UTF_32)
         private val ESCAPE_TAG = ByteBuffer.allocate(4).putInt(0x000E0002).array().toString(Charsets.UTF_32)
-        const val ZERO_WIDTH_JOINER = 0x200D.toChar().toString()
-        val ESCAPE_TAG_REGEX = "(?<!$ESCAPE_TAG)$ESCAPE_TAG".toRegex()
         private const val USER_CACHE_SIZE = 500
-        const val MENTIONS_KEY = "mentions"
+        private const val PUBSUB_TIMEOUT = 5 * 1000L
+
+        val ESCAPE_TAG_REGEX = "(?<!$ESCAPE_TAG)$ESCAPE_TAG".toRegex()
+        const val ZERO_WIDTH_JOINER = 0x200D.toChar().toString()
     }
 }

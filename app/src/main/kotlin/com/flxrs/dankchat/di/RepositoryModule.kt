@@ -5,7 +5,8 @@ import com.flxrs.dankchat.data.*
 import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.data.database.EmoteUsageDao
 import com.flxrs.dankchat.data.database.RecentUploadsDao
-import com.flxrs.dankchat.data.twitch.connection.WebSocketChatConnection
+import com.flxrs.dankchat.data.twitch.connection.ChatConnection
+import com.flxrs.dankchat.data.twitch.connection.PubSubManager
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager
 import dagger.Module
 import dagger.Provides
@@ -31,10 +32,11 @@ object RepositoryModule {
     fun provideChatRepository(
         apiManager: ApiManager,
         emoteManager: EmoteManager,
-        @ReadConnection readConnection: WebSocketChatConnection,
-        @WriteConnection writeConnection: WebSocketChatConnection,
+        @ReadConnection readConnection: ChatConnection,
+        @WriteConnection writeConnection: ChatConnection,
+        pubSubManager: PubSubManager,
         @ApplicationScope scope: CoroutineScope,
-    ): ChatRepository = ChatRepository(apiManager, emoteManager, readConnection, writeConnection, scope)
+    ): ChatRepository = ChatRepository(apiManager, emoteManager, readConnection, writeConnection, pubSubManager, scope)
 
     @Singleton
     @Provides

@@ -13,7 +13,7 @@ interface HelixApiService {
     @GET("users/")
     suspend fun getUserByName(
         @Header("Authorization") oAuth: String,
-        @Query("login") login: String
+        @Query("login") logins: List<String>
     ): Response<HelixUsersDto>
 
     @Headers(

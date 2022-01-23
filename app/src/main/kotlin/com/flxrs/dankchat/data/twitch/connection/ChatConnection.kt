@@ -29,7 +29,7 @@ sealed class ChatEvent {
         get() = this is Error || this is Closed
 }
 
-class WebSocketChatConnection @Inject constructor(
+class ChatConnection @Inject constructor(
     private val chatConnectionType: ChatConnectionType,
     private val client: OkHttpClient,
     private val scope: CoroutineScope
@@ -43,7 +43,7 @@ class WebSocketChatConnection @Inject constructor(
     private var reconnectAttempts = 1
     private val currentReconnectDelay: Long
         get() {
-            val jitter = Random.nextLong(0L..RECONNECT_MAX_JITTER)
+            val jitter = Random.nextLong(0L..MAX_JITTER)
             val reconnectDelay = RECONNECT_BASE_DELAY * (1 shl (reconnectAttempts - 1))
             reconnectAttempts = (reconnectAttempts + 1).coerceAtMost(RECONNECT_MAX_ATTEMPTS)
 
@@ -150,8 +150,9 @@ class WebSocketChatConnection @Inject constructor(
         }
     }
 
-    private fun setupPingInterval() = scope.timer(PING_INTERVAL) {
-        if (awaitingPong) {
+    private fun setupPingInterval() = scope.timer(interval = PING_INTERVAL - Random.nextLong(range = 0L..MAX_JITTER)) {
+        val webSocket = socket
+        if (awaitingPong || webSocket == null) {
             cancel()
             reconnect()
             return@timer
@@ -159,7 +160,7 @@ class WebSocketChatConnection @Inject constructor(
 
         if (connected) {
             awaitingPong = true
-            socket?.sendMessage("PING")
+            webSocket.sendMessage("PING")
         }
     }
 
@@ -223,14 +224,28 @@ class WebSocketChatConnection @Inject constructor(
         }
     }
 
+    private fun WebSocket.sendMessage(msg: String) {
+        send("${msg.trimEnd()}\r\n")
+    }
+
+    private fun WebSocket.handlePing() {
+        sendMessage("PONG :tmi.twitch.tv")
+    }
+
+    private fun WebSocket.joinChannels(channels: Collection<String>) {
+        if (channels.isNotEmpty()) {
+            sendMessage("JOIN ${channels.joinToString(separator = ",") { "#$it" }}")
+        }
+    }
+
 
     companion object {
+        private const val MAX_JITTER = 250L
         private const val RECONNECT_BASE_DELAY = 1_000L
-        private const val RECONNECT_MAX_JITTER = 250L
         private const val RECONNECT_MAX_ATTEMPTS = 4
         private const val PING_INTERVAL = 5 * 60 * 1000L
         private const val JOIN_DELAY = 600L
         private const val JOIN_CHUNK_SIZE = 5
-        private val TAG = WebSocketChatConnection::class.java.simpleName
+        private val TAG = ChatConnection::class.java.simpleName
     }
 }

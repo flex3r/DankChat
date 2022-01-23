@@ -32,6 +32,8 @@
 -dontwarn "org.openjsse.javax.net.ssl.SSLParameters"
 -dontwarn "org.openjsse.javax.net.ssl.SSLSocket"
 -dontwarn "org.openjsse.net.ssl.OpenJSSE"
+-dontshrink
+-dontobfuscate
 
 # Keep `Companion` object fields of serializable classes.
 # This avoids serializer lookup through `getDeclaredClasses` as done for named companion objects.

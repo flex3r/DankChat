@@ -5,11 +5,14 @@ import com.flxrs.dankchat.data.ChatRepository
 import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.badge.BadgeType
+import com.flxrs.dankchat.data.twitch.connection.PointRedemptionData
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.extensions.appendSpacesBetweenEmojiGroup
 import com.flxrs.dankchat.utils.extensions.removeDuplicateWhitespace
+import java.time.Instant
+import java.time.ZoneId
 import java.util.*
 
 sealed class Message {
@@ -68,6 +71,34 @@ data class ClearChatMessage(
         }
     }
 }
+
+data class PointRedemptionMessage(
+    override val timestamp: Long = System.currentTimeMillis(),
+    override val id: String = UUID.randomUUID().toString(),
+    val name: String,
+    val displayName: String,
+    val title: String,
+    val rewardImageUrl: String,
+    val cost: Int,
+    val requiresUserInput: Boolean,
+) : Message() {
+
+    companion object {
+        fun parsePointReward(timestamp: Instant, data: PointRedemptionData): PointRedemptionMessage {
+            return PointRedemptionMessage(
+                timestamp = timestamp.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                id = data.id,
+                name = data.user.name,
+                displayName = data.user.displayName,
+                title = data.reward.title,
+                rewardImageUrl = data.reward.images?.imageLarge ?: data.reward.defaultImages.imageLarge,
+                cost = data.reward.cost,
+                requiresUserInput = data.reward.requiresUserInput,
+            )
+        }
+    }
+}
+
 
 data class TwitchMessage(
     override val timestamp: Long = System.currentTimeMillis(),
@@ -144,7 +175,7 @@ data class TwitchMessage(
                 id = id,
                 userId = tags["user-id"],
                 timedOut = tags["rm-deleted"] == "1",
-                isReward = tags["msg-id"] == "highlighted-message"
+                isReward = tags["msg-id"] == "highlighted-message" || tags["custom-reward-id"] != null
             )
         }
 

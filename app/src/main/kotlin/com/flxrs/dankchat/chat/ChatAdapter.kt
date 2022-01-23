@@ -8,10 +8,7 @@ import android.graphics.PorterDuffColorFilter
 import android.graphics.Rect
 import android.graphics.drawable.*
 import android.os.Build
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.SpannableStringBuilder
-import android.text.TextPaint
+import android.text.*
 import android.text.style.ImageSpan
 import android.text.style.URLSpan
 import android.text.util.Linkify
@@ -35,12 +32,10 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChatItemBinding
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.badge.BadgeType
+import com.flxrs.dankchat.data.twitch.connection.PubSubMessage
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager
-import com.flxrs.dankchat.data.twitch.message.ClearChatMessage
-import com.flxrs.dankchat.data.twitch.message.SystemMessage
-import com.flxrs.dankchat.data.twitch.message.SystemMessageType
-import com.flxrs.dankchat.data.twitch.message.TwitchMessage
+import com.flxrs.dankchat.data.twitch.message.*
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.extensions.*
 import com.flxrs.dankchat.utils.showErrorDialog
@@ -94,6 +89,7 @@ class ChatAdapter(
             is SystemMessage    -> holder.binding.itemText.handleSystemMessage(message, holder)
             is TwitchMessage    -> holder.binding.itemText.handleTwitchMessage(message, holder, item.isMentionTab)
             is ClearChatMessage -> holder.binding.itemText.handleClearChatMessage(message, holder)
+            is PointRedemptionMessage    -> holder.binding.itemText.handlePointRedemptionMessage(message, holder)
         }
     }
 
@@ -172,6 +168,49 @@ class ChatAdapter(
         text = withTime
     }
 
+    private fun TextView.handlePointRedemptionMessage(message: PointRedemptionMessage, holder: ViewHolder) {
+        alpha = 1.0f
+
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
+        val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
+        val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
+        val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
+
+        val background = ContextCompat.getColor(context, R.color.color_reward).harmonize(context)
+        setBackgroundColor(background)
+
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
+        holder.scope.launch(holder.coroutineHandler) {
+
+            val spannable = buildSpannedString {
+                if (showTimeStamp) {
+                    bold { append("${DateTimeUtils.timestampToLocalTime(message.timestamp)} ") }
+                }
+
+                when {
+                    message.requiresUserInput -> append("Redeemed ")
+                    else                      -> {
+                        bold { append(message.displayName) }
+                        append(" redeemed ")
+                    }
+                }
+
+                bold { append(message.title) }
+                append("  ")
+                append(" ${message.cost}")
+            }
+            setText(spannable, TextView.BufferType.SPANNABLE)
+
+            val imageStart = spannable.lastIndexOf(' ') - 1
+            Coil.execute(message.rewardImageUrl.toRequest(context)).drawable?.apply {
+                val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
+                setBounds(0, 0, width, lineHeight)
+                (text as SpannableString)[imageStart..imageStart + 1] = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
+            }
+        }
+    }
+
     @Suppress("BlockingMethodInNonBlockingContext")
     @SuppressLint("ClickableViewAccessibility")
     private fun TextView.handleTwitchMessage(twitchMessage: TwitchMessage, holder: ViewHolder, isMentionTab: Boolean): Unit = with(twitchMessage) {
@@ -213,7 +252,7 @@ class ChatAdapter(
 
         val textColor = when {
             isNotify  -> MaterialColors.getColor(textView, R.attr.colorOnPrimaryContainer)
-            isReward  -> MaterialColors.getColor(textView, R.attr.colorOnTertiaryContainer)
+            //isReward  -> MaterialColors.getColor(textView, R.attr.colorOnTertiaryContainer)
             isMention -> MaterialColors.getColor(textView, R.attr.colorOnSecondaryContainer)
             else      -> MaterialColors.getColor(textView, R.attr.colorOnSurface)
         }

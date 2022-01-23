@@ -1,7 +1,10 @@
 package com.flxrs.dankchat.di
 
+import com.flxrs.dankchat.data.api.ApiManager
+import com.flxrs.dankchat.data.twitch.connection.ChatConnection
 import com.flxrs.dankchat.data.twitch.connection.ChatConnectionType
-import com.flxrs.dankchat.data.twitch.connection.WebSocketChatConnection
+import com.flxrs.dankchat.data.twitch.connection.PubSubManager
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,7 +34,7 @@ object ChatConnectionModule {
     fun provideReadConnection(
         @ApiOkHttpClient client: OkHttpClient,
         @ApplicationScope scope: CoroutineScope,
-    ): WebSocketChatConnection = WebSocketChatConnection(ChatConnectionType.Read, client, scope)
+    ): ChatConnection = ChatConnection(ChatConnectionType.Read, client, scope)
 
     @Singleton
     @WriteConnection
@@ -39,5 +42,14 @@ object ChatConnectionModule {
     fun provideWriteConnection(
         @ApiOkHttpClient client: OkHttpClient,
         @ApplicationScope scope: CoroutineScope,
-    ): WebSocketChatConnection = WebSocketChatConnection(ChatConnectionType.Write, client, scope)
+    ): ChatConnection = ChatConnection(ChatConnectionType.Write, client, scope)
+
+    @Singleton
+    @Provides
+    fun providePubSubManager(
+        @ApiOkHttpClient client: OkHttpClient,
+        @ApplicationScope scope: CoroutineScope,
+        preferenceStore: DankChatPreferenceStore,
+        apiManager: ApiManager,
+    ): PubSubManager = PubSubManager(apiManager, preferenceStore, client, scope)
 }

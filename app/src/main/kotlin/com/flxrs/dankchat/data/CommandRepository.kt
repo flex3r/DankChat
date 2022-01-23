@@ -4,7 +4,7 @@ import android.util.Log
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.command.CommandItem
 import com.flxrs.dankchat.data.api.ApiManager
-import com.flxrs.dankchat.utils.extensions.removeOAuthSuffix
+import com.flxrs.dankchat.utils.extensions.withoutOAuthSuffix
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,7 +35,7 @@ class CommandRepository @Inject constructor(
     fun clearSupibotCommands() = supibotCommands.forEach { it.value.value = emptyList() }.also { supibotCommands.clear() }
 
     suspend fun checkForCommands(message: String, channel: String): CommandResult {
-        val oAuth = preferenceStore.oAuthKey?.removeOAuthSuffix ?: return CommandResult.NotFound
+        val oAuth = preferenceStore.oAuthKey?.withoutOAuthSuffix ?: return CommandResult.NotFound
         val words = message.split(" ")
         if (words.isEmpty()) {
             return CommandResult.NotFound

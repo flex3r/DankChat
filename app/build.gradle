@@ -4,6 +4,7 @@ apply plugin: "kotlin-kapt"
 apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: 'kotlin-parcelize'
+apply plugin: 'kotlinx-serialization'
 
 android {
     compileSdkVersion 31
@@ -43,7 +44,7 @@ android {
             initWith debug
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules-dank.pro'
             manifestPlaceholders = [applicationLabel: "@string/app_name_dank"]
             applicationIdSuffix ".dank"
         }
@@ -77,6 +78,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version"
 
 // AndroidX
     implementation "androidx.activity:activity-ktx:$activity_version"

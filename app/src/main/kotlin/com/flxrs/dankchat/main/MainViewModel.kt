@@ -290,7 +290,7 @@ class MainViewModel @Inject constructor(
             val loadingState = DataLoadingState.Loading(parameters)
             _dataLoadingState.emit(loadingState)
 
-            val fixedOauth = oAuth.removeOAuthSuffix
+            val fixedOauth = oAuth.withoutOAuthSuffix
             val state = runCatchingToState(parameters) { handler ->
                 loadInitialData(fixedOauth, id, channelList, loadSupibot, loadThirdPartyData, handler)
 
@@ -428,8 +428,8 @@ class MainViewModel @Inject constructor(
         _dataLoadingState.emit(DataLoadingState.Loading(parameters = parameters))
 
         val state = runCatchingToState(parameters) { handler ->
-            chatRepository.joinChannel("jtv")
-            val fixedOAuth = oAuth.removeOAuthSuffix
+            chatRepository.joinChannel(channel = "jtv", listenToPubSub = false)
+            val fixedOAuth = oAuth.withoutOAuthSuffix
             supervisorScope {
                 listOf(
                     launch(handler) {
@@ -448,7 +448,7 @@ class MainViewModel @Inject constructor(
                 launch(handler) { dataRepository.loadTwitchEmotes(fixedOAuth, id) }
             }
 
-            chatRepository.partChannel("jtv")
+            chatRepository.partChannel(channel = "jtv", unListenFromPubSub = false)
             dataRepository.setEmotesForSuggestions(channel)
         }
         _dataLoadingState.emit(state)
@@ -480,7 +480,7 @@ class MainViewModel @Inject constructor(
         val channels = channels.value
         if (channels.isNullOrEmpty()) return@withContext
 
-        val fixedOAuth = oAuth.removeOAuthSuffix
+        val fixedOAuth = oAuth.withoutOAuthSuffix
 
         fetchTimerJob = timer(STREAM_REFRESH_RATE) {
             val streams = runCatching {
