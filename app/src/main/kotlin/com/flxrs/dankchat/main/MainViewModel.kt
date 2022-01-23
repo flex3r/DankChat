@@ -72,13 +72,15 @@ class MainViewModel @Inject constructor(
 
     private val emotes = currentSuggestionChannel.flatMapLatest { dataRepository.getEmotes(it) }
     private val recentEmotes = emoteUsageRepository.getRecentUsages()
-    private val roomStateText = currentSuggestionChannel
-        .flatMapLatest { chatRepository.getRoomState(it) }
-        .map { it.toDisplayText().ifBlank { null } }
+    private val roomStateText =
+        combine(roomStateEnabled, currentSuggestionChannel) { roomStateEnabled, channel -> roomStateEnabled to channel }
+            .flatMapLatest { if (it.first) chatRepository.getRoomState(it.second) else flowOf(null) }
+            .map { it?.toDisplayText()?.ifBlank { null } }
+
     private val users = currentSuggestionChannel.flatMapLatest { chatRepository.getUsers(it) }
     private val supibotCommands = activeChannel.flatMapLatest { commandRepository.getSupibotCommands(it) }
-    private val currentStreamInformation = combine(activeChannel, streamData) { activeChannel, streamData ->
-        streamData.find { it.channel == activeChannel }?.data
+    private val currentStreamInformation = combine(streamInfoEnabled, activeChannel, streamData) { streamInfoEnabled, activeChannel, streamData ->
+        streamData.find { it.channel == activeChannel }?.data?.takeIf { streamInfoEnabled }
     }
 
     private val emoteSuggestions = emotes.mapLatest { emotes ->
