@@ -1019,12 +1019,12 @@ class MainFragment : Fragment() {
     private fun CustomMultiAutoCompleteTextView.setup(binding: MainFragmentBinding) {
         setTokenizer(SpaceTokenizer())
         suggestionAdapter = EmoteSuggestionsArrayAdapter(binding.input.context) { count ->
-            dropDownHeight = if (count > 2) {
-                (binding.chatViewpager.measuredHeight / 1.3).roundToInt()
+            dropDownHeight = if (count > 4) {
+                (binding.root.measuredHeight / 2.0).roundToInt()
             } else {
                 ViewGroup.LayoutParams.WRAP_CONTENT
             }
-            dropDownWidth = (binding.chatViewpager.measuredWidth * 0.6).roundToInt()
+            dropDownWidth = (binding.root.measuredWidth * 0.6).roundToInt()
         }
         suggestionAdapter.setNotifyOnChange(false)
 
