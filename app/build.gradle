@@ -8,7 +8,8 @@ apply plugin: 'kotlinx-serialization'
 
 android {
     compileSdkVersion 31
-    buildToolsVersion "32.1.0-rc1"
+    //noinspection GradleDependency
+    buildToolsVersion "32.0.0"
     defaultConfig {
         applicationId "com.flxrs.dankchat"
         minSdkVersion 21
