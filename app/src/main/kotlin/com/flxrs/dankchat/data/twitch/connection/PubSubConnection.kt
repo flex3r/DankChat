@@ -287,7 +287,7 @@ class PubSubConnection(
         const val MAX_CONNECTIONS = 10
         private const val MAX_JITTER = 250L
         private const val RECONNECT_BASE_DELAY = 1_000L
-        private const val RECONNECT_MAX_ATTEMPTS = 8
+        private const val RECONNECT_MAX_ATTEMPTS = 6
         private const val PING_INTERVAL = 5 * 60 * 1000L
         private const val PING_PAYLOAD = "{\"type\":\"PING\"}"
         private val TAG = PubSubConnection::class.java.simpleName

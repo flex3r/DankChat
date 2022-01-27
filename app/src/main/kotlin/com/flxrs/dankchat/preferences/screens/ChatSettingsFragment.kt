@@ -37,8 +37,11 @@ class ChatSettingsFragment : PreferenceFragmentCompat() {
             }
         }
 
+        val preferences = PreferenceManager.getDefaultSharedPreferences(view.context)
         findPreference<Preference>(getString(R.string.preference_commands_key))?.apply {
-            setOnPreferenceClickListener { showCommandsPreference(view, key, sharedPreferences) }
+            setOnPreferenceClickListener {
+                showCommandsPreference(view, key, preferences)
+            }
         }
     }
 

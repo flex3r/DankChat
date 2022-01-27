@@ -13,10 +13,10 @@ class AboutPreference @JvmOverloads constructor(
     defStyleAttr: Int = android.R.attr.preferenceStyle,
     defStyleRes: Int = 0
 ) : Preference(context, attrs, defStyleAttr, defStyleRes) {
-    override fun onBindViewHolder(holder: PreferenceViewHolder?) {
+    override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
 
-        val summaryView = holder?.findViewById(android.R.id.summary) as? TextView ?: return
+        val summaryView = holder.findViewById(android.R.id.summary) as? TextView ?: return
         summaryView.movementMethod = LinkMovementMethod.getInstance()
     }
 }

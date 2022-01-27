@@ -17,6 +17,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreferenceCompat
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.RecentUploadsBottomsheetBinding
@@ -69,12 +70,13 @@ class ToolsSettingsFragment : PreferenceFragmentCompat() {
             }
         }
 
+        val preferences = PreferenceManager.getDefaultSharedPreferences(view.context)
         findPreference<Preference>(getString(R.string.preference_uploader_key))?.apply {
             setOnPreferenceClickListener { showImageUploaderPreference(view) }
         }
 
         findPreference<Preference>(getString(R.string.preference_tts_user_ignore_list_key))?.apply {
-            setOnPreferenceClickListener { showTtsIgnoreListPreference(view, key, sharedPreferences) }
+            setOnPreferenceClickListener { showTtsIgnoreListPreference(view, key, preferences) }
         }
 
         findPreference<Preference>(getString(R.string.preference_uploader_recent_uploads_key))?.apply {

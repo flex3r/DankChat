@@ -10,6 +10,7 @@ import androidx.core.content.edit
 import androidx.core.view.updateLayoutParams
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.MultiEntryBottomsheetBinding
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
@@ -34,11 +35,12 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat() {
             }
         }
 
+        val preferences = PreferenceManager.getDefaultSharedPreferences(view.context)
         findPreference<Preference>(getString(R.string.preference_custom_mentions_key))?.apply {
-            setOnPreferenceClickListener { showMultiEntryPreference(view, key, sharedPreferences, title) }
+            setOnPreferenceClickListener { showMultiEntryPreference(view, key, preferences, title) }
         }
         findPreference<Preference>(getString(R.string.preference_blacklist_key))?.apply {
-            setOnPreferenceClickListener { showMultiEntryPreference(view, key, sharedPreferences, title) }
+            setOnPreferenceClickListener { showMultiEntryPreference(view, key, preferences, title) }
         }
     }
 
@@ -46,7 +48,7 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.notifications_settings, rootKey)
     }
 
-    private fun showMultiEntryPreference(root: View, key: String, sharedPreferences: SharedPreferences, title: CharSequence): Boolean {
+    private fun showMultiEntryPreference(root: View, key: String, sharedPreferences: SharedPreferences, title: CharSequence?): Boolean {
         val context = root.context
         val sheetHeight = (resources.displayMetrics.heightPixels * 0.6f).toInt()
         val entries = runCatching {
@@ -60,7 +62,7 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat() {
 
         val entryAdapter = MultiEntryAdapter(entries.toMutableList())
         val binding = MultiEntryBottomsheetBinding.inflate(LayoutInflater.from(context), root as? ViewGroup, false).apply {
-            multiEntryTitle.text = title
+            multiEntryTitle.text = title ?: ""
             multiEntryList.adapter = entryAdapter
             multiEntrySheet.updateLayoutParams {
                 height = sheetHeight
