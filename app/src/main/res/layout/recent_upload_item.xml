@@ -26,14 +26,12 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/image_card"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
                 android:layout_marginHorizontal="8dp"
                 android:layout_marginVertical="8dp"
-                app:layout_constrainedWidth="true"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintDimensionRatio="W,1:1"
-                app:layout_constraintEnd_toStartOf="@id/image_guideline"
+                app:layout_constraintEnd_toStartOf="@id/image_text"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="visible">
@@ -45,13 +43,6 @@
                     android:scaleType="centerInside" />
             </com.google.android.material.card.MaterialCardView>
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/image_guideline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.25" />
-
             <TextView
                 android:id="@+id/image_text"
                 android:layout_width="0dp"
@@ -62,7 +53,7 @@
                 android:text="@{upload.imageUrl}"
                 app:layout_constraintBottom_toTopOf="@id/delete_text"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/image_guideline"
+                app:layout_constraintStart_toEndOf="@id/image_card"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="spread_inside"
                 tools:text="https://i.flxrs.com/kyg6nppv.png" />
@@ -78,7 +69,7 @@
                 android:visibility="@{upload.deleteUrl != null ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toTopOf="@id/time_text"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/image_guideline"
+                app:layout_constraintStart_toStartOf="@id/image_text"
                 app:layout_constraintTop_toBottomOf="@id/image_text"
                 tools:text="Deletion link:\nhttps://i.flxrs.com/kyg6nppv.png" />
 
@@ -91,7 +82,7 @@
                 android:text="@{upload.formattedUploadTime}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/image_guideline"
+                app:layout_constraintStart_toStartOf="@id/image_text"
                 app:layout_constraintTop_toBottomOf="@id/delete_text"
                 tools:text="@tools:sample/date/hhmmss" />
         </androidx.constraintlayout.widget.ConstraintLayout>
