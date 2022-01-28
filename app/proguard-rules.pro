@@ -32,6 +32,9 @@
 -dontwarn "org.openjsse.javax.net.ssl.SSLParameters"
 -dontwarn "org.openjsse.javax.net.ssl.SSLSocket"
 -dontwarn "org.openjsse.net.ssl.OpenJSSE"
+-dontwarn com.oracle.svm.core.annotate.Delete
+-dontwarn com.oracle.svm.core.annotate.Substitute
+-dontwarn com.oracle.svm.core.annotate.TargetClass
 
 # Keep `Companion` object fields of serializable classes.
 # This avoids serializer lookup through `getDeclaredClasses` as done for named companion objects.
