@@ -62,8 +62,8 @@
                     android:layout_height="0dp"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintDimensionRatio="H,16:9"
                     app:layout_constraintEnd_toStartOf="@id/chat_viewpager"
+                    app:layout_constraintHorizontal_weight="1.3"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/appbar_layout"
                     tools:visibility="visible" />
@@ -197,7 +197,8 @@
                 app:behavior_hideable="true"
                 app:behavior_peekHeight="0dp"
                 app:behavior_skipCollapsed="true"
-                app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
+                app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+                tools:layout="@layout/chat_fragment" />
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <androidx.constraintlayout.widget.Barrier

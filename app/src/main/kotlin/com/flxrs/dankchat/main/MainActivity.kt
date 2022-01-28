@@ -47,7 +47,6 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
     private val viewModel: DankChatViewModel by viewModels()
     private val pendingChannelsToClear = mutableListOf<String>()
     private val navController: NavController by lazy { findNavController(R.id.main_content) }
-    private val windowInsetsController: WindowInsetsControllerCompat? by lazy { ViewCompat.getWindowInsetsController(binding.root) }
     private var bindingRef: MainActivityBinding? = null
     private val binding get() = bindingRef!!
 
@@ -151,10 +150,11 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
 
     fun setFullScreen(enabled: Boolean, changeActionBarVisibility: Boolean = true) {
         WindowCompat.setDecorFitsSystemWindows(window, !enabled)
+        val windowInsetsController = ViewCompat.getWindowInsetsController(binding.root) ?: return
         when {
             enabled -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !isInMultiWindowMode) {
-                    windowInsetsController?.apply {
+                    windowInsetsController.apply {
                         systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
                         hide(WindowInsetsCompat.Type.systemBars())
                     }
@@ -164,7 +164,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
                 }
             }
             else    -> {
-                windowInsetsController?.show(WindowInsetsCompat.Type.systemBars())
+                windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
                 if (changeActionBarVisibility) {
                     supportActionBar?.show()
                 }
