@@ -163,7 +163,7 @@ class MainFragment : Fragment() {
             collectFlow(dataLoadingEventFlow, ::handleDataLoadingState)
             collectFlow(shouldShowUploadProgress) { activity?.invalidateOptionsMenu() }
             collectFlow(suggestions, ::setSuggestions)
-            collectFlow(emoteItems, emoteMenuAdapter::submitList)
+            collectFlow(emoteTabItems, emoteMenuAdapter::submitList)
             collectFlow(isFullscreenFlow) { changeActionBarVisibility(it) }
             collectFlow(canType) { if (it) binding.inputLayout.setup() }
             collectFlow(connectionState) { state ->

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.chat.menu.EmoteItem
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
+import com.flxrs.dankchat.chat.menu.EmoteMenuTabItem
 import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.data.ChatRepository
 import com.flxrs.dankchat.data.CommandRepository
@@ -189,7 +190,7 @@ class MainViewModel @Inject constructor(
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-    val emoteItems: Flow<List<List<EmoteItem>>> = combine(emotes, recentEmotes) { emotes, recentEmotes ->
+    val emoteTabItems: Flow<List<EmoteMenuTabItem>> = combine(emotes, recentEmotes) { emotes, recentEmotes ->
         val availableRecents = recentEmotes.mapNotNull { usage ->
             emotes
                 .firstOrNull { it.id == usage.emoteId }
@@ -208,10 +209,10 @@ class MainViewModel @Inject constructor(
             }
         }
         listOf(
-            availableRecents.toEmoteItems(),
-            groupedByType[EmoteMenuTab.SUBS]?.moveToFront(activeChannel.value).toEmoteItems(),
-            groupedByType[EmoteMenuTab.CHANNEL].toEmoteItems(),
-            groupedByType[EmoteMenuTab.GLOBAL].toEmoteItems()
+            EmoteMenuTabItem(EmoteMenuTab.RECENT, availableRecents.toEmoteItems()),
+            EmoteMenuTabItem(EmoteMenuTab.SUBS, groupedByType[EmoteMenuTab.SUBS]?.moveToFront(activeChannel.value).toEmoteItems()),
+            EmoteMenuTabItem(EmoteMenuTab.CHANNEL, groupedByType[EmoteMenuTab.CHANNEL].toEmoteItems()),
+            EmoteMenuTabItem(EmoteMenuTab.GLOBAL, groupedByType[EmoteMenuTab.GLOBAL].toEmoteItems())
         )
     }.flowOn(Dispatchers.Default)
 

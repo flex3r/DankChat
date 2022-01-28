@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.databinding.EmoteMenuTabBinding
 
-class EmoteMenuAdapter(private val onEmoteClick: (emote: GenericEmote) -> Unit) : ListAdapter<List<EmoteItem>, EmoteMenuAdapter.ViewHolder>(DetectDiff()) {
+class EmoteMenuAdapter(private val onEmoteClick: (emote: GenericEmote) -> Unit) : ListAdapter<EmoteMenuTabItem, EmoteMenuAdapter.ViewHolder>(DetectDiff()) {
 
     inner class ViewHolder(val adapter: EmoteAdapter, binding: EmoteMenuTabBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -45,13 +45,13 @@ class EmoteMenuAdapter(private val onEmoteClick: (emote: GenericEmote) -> Unit) 
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val emotes = getItem(position)
+        val emotes = getItem(position).items
         holder.adapter.submitList(emotes)
     }
 
-    private class DetectDiff : DiffUtil.ItemCallback<List<EmoteItem>>() {
-        override fun areItemsTheSame(oldItem: List<EmoteItem>, newItem: List<EmoteItem>): Boolean = oldItem == newItem
+    private class DetectDiff : DiffUtil.ItemCallback<EmoteMenuTabItem>() {
+        override fun areItemsTheSame(oldItem: EmoteMenuTabItem, newItem: EmoteMenuTabItem): Boolean = oldItem.type == newItem.type
 
-        override fun areContentsTheSame(oldItem: List<EmoteItem>, newItem: List<EmoteItem>): Boolean = oldItem == newItem
+        override fun areContentsTheSame(oldItem: EmoteMenuTabItem, newItem: EmoteMenuTabItem): Boolean = oldItem == newItem
     }
 }
