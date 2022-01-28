@@ -30,7 +30,7 @@ import com.flxrs.dankchat.data.DataRepository
 import com.flxrs.dankchat.data.NotificationService
 import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.preferences.screens.*
+import com.flxrs.dankchat.preferences.ui.*
 import com.flxrs.dankchat.utils.extensions.navigateSafe
 import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.AndroidEntryPoint

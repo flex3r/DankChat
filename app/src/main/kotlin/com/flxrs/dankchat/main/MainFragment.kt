@@ -53,7 +53,7 @@ import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.databinding.EditDialogBinding
 import com.flxrs.dankchat.databinding.MainFragmentBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.preferences.screens.ChatSettingsFragment
+import com.flxrs.dankchat.preferences.ui.ChatSettingsFragment
 import com.flxrs.dankchat.utils.*
 import com.flxrs.dankchat.utils.extensions.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior

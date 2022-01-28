@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.preferences.screens
+package com.flxrs.dankchat.preferences.ui
 
 import android.content.Intent
 import android.content.SharedPreferences

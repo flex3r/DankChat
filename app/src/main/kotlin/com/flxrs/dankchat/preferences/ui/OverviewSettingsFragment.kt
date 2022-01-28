@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.preferences.screens
+package com.flxrs.dankchat.preferences.ui
 
 import android.os.Bundle
 import android.text.util.Linkify

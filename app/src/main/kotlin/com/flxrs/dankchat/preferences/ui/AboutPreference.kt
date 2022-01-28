@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.preferences.screens
+package com.flxrs.dankchat.preferences.ui
 
 import android.content.Context
 import android.text.method.LinkMovementMethod
