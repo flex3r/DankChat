@@ -10,15 +10,13 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.navigation.fragment.findNavController
-import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SeekBarPreference
-import androidx.preference.SwitchPreferenceCompat
+import androidx.preference.*
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.utils.extensions.isSystemLightMode
 
-class AppearanceSettingsFragment : PreferenceFragmentCompat() {
+class AppearanceSettingsFragment : MaterialPreferenceFragmentCompat() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -40,75 +38,59 @@ class AppearanceSettingsFragment : PreferenceFragmentCompat() {
             uiModeManager?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
         } ?: false
 
-        val followSystemModePreference = findPreference<SwitchPreferenceCompat>(getString(R.string.preference_follow_system_key)) ?: return
-        val darkModePreference = findPreference<SwitchPreferenceCompat>(getString(R.string.preference_dark_theme_key)) ?: return
+        val themeModePreference = findPreference<ListPreference>(getString(R.string.preference_theme_key)) ?: return
         val trueDarkModePreference = findPreference<SwitchPreferenceCompat>(getString(R.string.preference_true_dark_theme_key)) ?: return
-        val lightModePreference = findPreference<SwitchPreferenceCompat>(getString(R.string.preference_light_theme_key)) ?: return
-
-        fun updateThemeSwitches(followSystem: Boolean = false, darkMode: Boolean = false, lightMode: Boolean = false) {
-            followSystemModePreference.isChecked = followSystem
-            darkModePreference.isChecked = darkMode
-            lightModePreference.isChecked = lightMode
-
-            if (lightMode || isSystemLightMode) {
-                trueDarkModePreference.isChecked = false
-                trueDarkModePreference.isEnabled = false
-            }
-        }
-
+        val darkModeKey = getString(R.string.preference_dark_theme_key)
+        val lightModeKey = getString(R.string.preference_light_theme_key)
+        val followSystemKey = getString(R.string.preference_follow_system_key)
 
         when {
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1 && !isTV           -> {
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1 && !isTV                                    -> {
                 // Force dark mode below 8.1
-                followSystemModePreference.isEnabled = false
-                lightModePreference.isEnabled = false
-                updateThemeSwitches(darkMode = true)
+                themeModePreference.isEnabled = false
+                themeModePreference.value = darkModeKey
             }
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.Q                        -> {
-                // System dark mode was introduced in Android 10
-                followSystemModePreference.isEnabled = false
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.Q -> {
+                themeModePreference.entries = arrayOf(
+                    getString(R.string.preference_dark_theme_entry_title),
+                    getString(R.string.preference_light_theme_entry_title)
+                )
+                themeModePreference.entryValues = arrayOf(
+                    darkModeKey,
+                    lightModeKey
+                )
 
-                // Default value is true, set manual dark mode instead
-                if (followSystemModePreference.isChecked) {
-                    updateThemeSwitches(darkMode = true)
+                // System dark mode was introduced in Android 10
+                if (themeModePreference.value == followSystemKey) {
+                    themeModePreference.value = darkModeKey
                 }
-            }
-            followSystemModePreference.isChecked && darkModePreference.isChecked -> {
-                updateThemeSwitches(followSystem = true)
             }
         }
 
         // Disable true dark mode switch when light mode is active
-        if (lightModePreference.isChecked || isSystemLightMode) {
+        if (themeModePreference.value == lightModeKey || isSystemLightMode) {
             trueDarkModePreference.isChecked = false
             trueDarkModePreference.isEnabled = false
         }
 
-        followSystemModePreference.setOnPreferenceChangeListener { _, _ ->
-            if (followSystemModePreference.isChecked) {
-                return@setOnPreferenceChangeListener false
+        themeModePreference.setSummaryProvider {
+            when (themeModePreference.value) {
+                getString(R.string.preference_follow_system_key) -> getString(R.string.preference_follow_system_title)
+                getString(R.string.preference_dark_theme_key)    -> getString(R.string.preference_dark_theme_entry_title)
+                getString(R.string.preference_light_theme_key)   -> getString(R.string.preference_light_theme_entry_title)
+                else                                             -> ""
             }
-
-            setDarkMode(followSystem = true)
-            updateThemeSwitches(followSystem = true)
-            true
         }
-        darkModePreference.setOnPreferenceChangeListener { _, _ ->
-            if (darkModePreference.isChecked) {
-                return@setOnPreferenceChangeListener false
+        themeModePreference.setOnPreferenceChangeListener { _, newValue ->
+            if (newValue == lightModeKey || isSystemLightMode) {
+                trueDarkModePreference.isChecked = false
+                trueDarkModePreference.isEnabled = false
             }
 
-            setDarkMode()
-            updateThemeSwitches(darkMode = true)
-            true
-        }
-        lightModePreference.setOnPreferenceChangeListener { _, _ ->
-            if (lightModePreference.isChecked) {
-                return@setOnPreferenceChangeListener false
-            }
-
-            setDarkMode(darkMode = false)
-            updateThemeSwitches(lightMode = true)
+            setDarkMode(
+                darkMode = newValue == darkModeKey,
+                followSystem = newValue == followSystemKey
+            )
             true
         }
 

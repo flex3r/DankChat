@@ -21,7 +21,7 @@ import com.flxrs.dankchat.utils.extensions.showLongSnackbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.squareup.moshi.Moshi
 
-class ChatSettingsFragment : PreferenceFragmentCompat() {
+class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
 
     private val jsonAdapter = Moshi.Builder().build().adapter(CommandItem.Entry::class.java)
 

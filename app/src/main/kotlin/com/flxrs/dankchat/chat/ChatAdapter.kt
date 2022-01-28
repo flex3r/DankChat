@@ -218,14 +218,15 @@ class ChatAdapter(
         movementMethod = LongClickLinkMovementMethod
         (text as? Spannable)?.clearSpans()
 
-        val darkModePreferenceKey = context.getString(R.string.preference_dark_theme_key)
+        val darkModeKey = context.getString(R.string.preference_dark_theme_key)
+        val themePreferenceKey = context.getString(R.string.preference_theme_key)
         val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
         val animateGifsKey = context.getString(R.string.preference_animate_gifs_key)
         val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
         val checkeredKey = context.getString(R.string.checkered_messages_key)
         val badgesKey = context.getString(R.string.preference_visible_badges_key)
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val isDarkMode = resources.isSystemNightMode || preferences.getBoolean(darkModePreferenceKey, false)
+        val isDarkMode = resources.isSystemNightMode || preferences.getString(themePreferenceKey, darkModeKey) == darkModeKey
         val isCheckeredMode = preferences.getBoolean(checkeredKey, false)
         val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
         val animateGifs = preferences.getBoolean(animateGifsKey, true)
@@ -398,7 +399,8 @@ class ChatAdapter(
         movementMethod = LongClickLinkMovementMethod
         (text as? Spannable)?.clearSpans()
 
-        val darkModePreferenceKey = context.getString(R.string.preference_dark_theme_key)
+        val darkModeKey = context.getString(R.string.preference_dark_theme_key)
+        val themePreferenceKey = context.getString(R.string.preference_theme_key)
         val timedOutPreferenceKey = context.getString(R.string.preference_show_timed_out_messages_key)
         val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
         val usernamePreferenceKey = context.getString(R.string.preference_show_username_key)
@@ -407,7 +409,7 @@ class ChatAdapter(
         val checkeredKey = context.getString(R.string.checkered_messages_key)
         val badgesKey = context.getString(R.string.preference_visible_badges_key)
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val isDarkMode = resources.isSystemNightMode || preferences.getBoolean(darkModePreferenceKey, false)
+        val isDarkMode = resources.isSystemNightMode || preferences.getString(themePreferenceKey, darkModeKey) == darkModeKey
         val isCheckeredMode = preferences.getBoolean(checkeredKey, false)
         val showTimedOutMessages = preferences.getBoolean(timedOutPreferenceKey, true)
         val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)

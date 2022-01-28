@@ -35,7 +35,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ToolsSettingsFragment : PreferenceFragmentCompat() {
+class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
     private val requestCheckTTSData = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode != TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
             startActivity(Intent(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA))

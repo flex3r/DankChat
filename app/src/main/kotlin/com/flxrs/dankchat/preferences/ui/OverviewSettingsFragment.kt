@@ -19,7 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class OverviewSettingsFragment : PreferenceFragmentCompat() {
+class OverviewSettingsFragment : MaterialPreferenceFragmentCompat() {
 
     private val navController: NavController by lazy { findNavController() }
 

@@ -5,7 +5,6 @@ import android.app.UiModeManager
 import android.content.res.Configuration
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.edit
 import androidx.core.content.getSystemService
 import androidx.preference.PreferenceManager
 import coil.ImageLoader
@@ -29,25 +28,19 @@ class DankChatApplication : Application(), ImageLoaderFactory {
         val uiModeManager = getSystemService<UiModeManager>()
         val isTv = uiModeManager?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val followSystem = preferences.getBoolean(getString(R.string.preference_follow_system_key), true)
-        val darkMode = preferences.getBoolean(getString(R.string.preference_dark_theme_key), false).run {
-            when {
-                followSystem && this -> {
-                    // migrate to new default
-                    preferences.edit { putBoolean(getString(R.string.preference_dark_theme_key), false) }
-                    false
-                }
-                else                 -> this
-            }
-        }
+        val followSystemKey = getString(R.string.preference_follow_system_key)
+        val darkModeKey = getString(R.string.preference_dark_theme_key)
+        val themeKey = getString(R.string.preference_theme_key)
+        val theme = preferences.getString(themeKey, followSystemKey) ?: followSystemKey
+
         val supportsLightMode = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1 || isTv
         val supportsSystemDarkMode = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 
         val nightMode = when {
             // Force dark theme on < Android 8.1 because of statusbar/navigationbar issues, or if system dark mode is not supported
-            darkMode || !supportsLightMode || (followSystem && !supportsSystemDarkMode) -> AppCompatDelegate.MODE_NIGHT_YES
-            followSystem                                                                -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-            else                                                                        -> AppCompatDelegate.MODE_NIGHT_NO
+            theme == darkModeKey || !supportsLightMode || (theme == followSystemKey && !supportsSystemDarkMode) -> AppCompatDelegate.MODE_NIGHT_YES
+            theme == followSystemKey                                                                            -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+            else                                                                                                -> AppCompatDelegate.MODE_NIGHT_NO
         }
         AppCompatDelegate.setDefaultNightMode(nightMode)
     }

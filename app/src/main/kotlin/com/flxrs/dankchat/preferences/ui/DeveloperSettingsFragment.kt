@@ -7,7 +7,7 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.main.MainActivity
 
-class DeveloperSettingsFragment : PreferenceFragmentCompat() {
+class DeveloperSettingsFragment : MaterialPreferenceFragmentCompat() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

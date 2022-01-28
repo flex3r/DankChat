@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="theme_entry_values">
+        <item>@string/preference_follow_system_key</item>
+        <item>@string/preference_dark_theme_key</item>
+        <item>@string/preference_light_theme_key</item>
+    </string-array>
+</resources>

@@ -19,7 +19,7 @@ import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.squareup.moshi.Moshi
 
-class NotificationsSettingsFragment : PreferenceFragmentCompat() {
+class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
 
     private val jsonAdapter = Moshi.Builder().build().adapter(MultiEntryItem.Entry::class.java)
 

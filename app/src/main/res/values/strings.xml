@@ -279,7 +279,10 @@
     <string name="preference_tts_user_ignore_list_summary">List of users/accounts that will be ignored</string>
     <string name="preference_tools_key" translatable="false">tools_key</string>
     <string name="preference_tools_header">Tools</string>
-
+    <string name="preference_theme_key" translatable="false">theme_key</string>
+    <string name="preference_theme_title">Theme</string>
+    <string name="preference_dark_theme_entry_title">Dark theme</string>
+    <string name="preference_light_theme_entry_title">Light theme</string>
 
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>
