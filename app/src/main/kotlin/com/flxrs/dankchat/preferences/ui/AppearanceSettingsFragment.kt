@@ -10,7 +10,9 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.navigation.fragment.findNavController
-import androidx.preference.*
+import androidx.preference.ListPreference
+import androidx.preference.SeekBarPreference
+import androidx.preference.SwitchPreferenceCompat
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
@@ -45,12 +47,12 @@ class AppearanceSettingsFragment : MaterialPreferenceFragmentCompat() {
         val followSystemKey = getString(R.string.preference_follow_system_key)
 
         when {
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1 && !isTV                                    -> {
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1 && !isTV -> {
                 // Force dark mode below 8.1
                 themeModePreference.isEnabled = false
                 themeModePreference.value = darkModeKey
             }
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.Q -> {
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.Q              -> {
                 themeModePreference.entries = arrayOf(
                     getString(R.string.preference_dark_theme_entry_title),
                     getString(R.string.preference_light_theme_entry_title)

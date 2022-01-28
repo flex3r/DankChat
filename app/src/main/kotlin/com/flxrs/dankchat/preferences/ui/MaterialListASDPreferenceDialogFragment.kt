@@ -3,7 +3,9 @@ package com.flxrs.dankchat.preferences.ui
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import androidx.preference.*
+import androidx.preference.MultiSelectListPreference
+import androidx.preference.MultiSelectListPreferenceDialogFragmentCompat
+import androidx.preference.PreferenceFragmentCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class MaterialMultiSelectListPreferenceDialogFragment : MultiSelectListPreferenceDialogFragmentCompat() {

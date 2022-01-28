@@ -3,11 +3,14 @@ package com.flxrs.dankchat.data.twitch.connection
 import android.util.Log
 import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.utils.extensions.timer
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import okhttp3.*
 import javax.inject.Inject
 import kotlin.random.Random

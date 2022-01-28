@@ -6,15 +6,22 @@ import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.Rect
-import android.graphics.drawable.*
+import android.graphics.drawable.Animatable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.LayerDrawable
 import android.os.Build
-import android.text.*
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.TextPaint
 import android.text.style.ImageSpan
 import android.text.style.URLSpan
 import android.text.util.Linkify
 import android.util.Log
 import android.util.TypedValue
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
@@ -44,6 +51,7 @@ import com.google.android.material.color.MaterialColors
 import kotlinx.coroutines.*
 import kotlin.math.roundToInt
 
+@SuppressLint("PrivateResource")
 class ChatAdapter(
     private val emoteManager: EmoteManager,
     private val onListChanged: (position: Int) -> Unit,
@@ -675,10 +683,6 @@ class ChatAdapter(
     private fun String.toRequest(context: Context): ImageRequest = ImageRequest.Builder(context)
         .data(this)
         .build()
-
-    companion object {
-        private val TAG = ChatAdapter::class.java.simpleName
-    }
 }
 
 private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {

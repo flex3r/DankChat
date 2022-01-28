@@ -2,7 +2,6 @@ package com.flxrs.dankchat.preferences.ui
 
 import android.os.Bundle
 import android.view.View
-import androidx.preference.PreferenceFragmentCompat
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.main.MainActivity
