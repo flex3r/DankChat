@@ -50,6 +50,11 @@ android {
         }
         free {
             dimension "localization"
+            tasks.whenTaskAdded { task ->
+                if (task.name.contains("localazy")) {
+                    task.enabled = false
+                }
+            }
         }
     }
     buildTypes {
