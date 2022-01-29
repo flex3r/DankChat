@@ -38,13 +38,15 @@ android {
                 properties.load(rootProject.file("local.properties").newDataInputStream())
             }
 
-            apply plugin: 'com.localazy.gradle'
-            localazy {
-                readKey properties.getProperty("localazy.readKey", "")
-                writeKey properties.getProperty("localazy.writeKey", "")
+            if (project.hasProperty("localazy")) {
+                apply plugin: 'com.localazy.gradle'
+                localazy {
+                    readKey properties.getProperty("localazy.readKey", "")
+                    writeKey properties.getProperty("localazy.writeKey", "")
 
-                injection {
-                    loyalUsersOnly()
+                    injection {
+                        loyalUsersOnly()
+                    }
                 }
             }
         }
@@ -53,6 +55,22 @@ android {
             tasks.whenTaskAdded { task ->
                 if (task.name.contains("localazy")) {
                     task.enabled = false
+                }
+            }
+            if (project.hasProperty("localazy")) {
+                localazy {
+                    download {
+                        enabledForRelease = false
+                        enabledForDebug = false
+                    }
+                    injection {
+                        enabledForRelease = false
+                        enabledForDebug = false
+                    }
+                    resources {
+                        enabledForRelease = false
+                        enabledForDebug = false
+                    }
                 }
             }
         }
