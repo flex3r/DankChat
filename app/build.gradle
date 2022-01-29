@@ -33,48 +33,9 @@ android {
     productFlavors {
         localized {
             dimension "localization"
-            Properties properties = new Properties()
-            if (rootProject.file("local.properties").exists()) {
-                properties.load(rootProject.file("local.properties").newDataInputStream())
-            }
-
-            try {
-                apply plugin: 'com.localazy.gradle'
-                localazy {
-                    readKey properties.getProperty("localazy.readKey", "")
-                    writeKey properties.getProperty("localazy.writeKey", "")
-
-                    injection {
-                        loyalUsersOnly()
-                    }
-                }
-            } catch (ignored) {
-            }
         }
         free {
             dimension "localization"
-            tasks.whenTaskAdded { task ->
-                if (task.name.contains("localazy")) {
-                    task.enabled = false
-                }
-            }
-            try {
-                localazy {
-                    download {
-                        enabledForRelease = false
-                        enabledForDebug = false
-                    }
-                    injection {
-                        enabledForRelease = false
-                        enabledForDebug = false
-                    }
-                    resources {
-                        enabledForRelease = false
-                        enabledForDebug = false
-                    }
-                }
-            } catch (ignored) {
-            }
         }
     }
     buildTypes {
@@ -120,6 +81,32 @@ android {
     }
 }
 
+Properties properties = new Properties()
+if (rootProject.file("local.properties").exists()) {
+    properties.load(rootProject.file("local.properties").newDataInputStream())
+}
+
+try {
+    def read = properties.getProperty("localazy.readKey", "")
+    def write = properties.getProperty("localazy.writeKey", "")
+    if (!read.isEmpty() && !write.isEmpty()) {
+        apply plugin: 'com.localazy.gradle'
+        localazy {
+            readKey read
+            writeKey write
+
+            injection {
+                loyalUsersOnly()
+            }
+        }
+    }
+} catch (ignored) {
+}
+tasks.all { task ->
+    if (task.name.toLowerCase().contains("localazy") && task.name.toLowerCase().contains("free")) {
+        task.enabled = false
+    }
+}
 
 dependencies {
 // D8 desugaring
