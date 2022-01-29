@@ -26,10 +26,10 @@
     <string name="choose_media">Choose existing media</string>
     <string name="hide_actionbar">Hide toolbar</string>
     <string name="resume_scroll">Resume scroll</string>
-    <string name="uploading_image">Uploading image</string>
+    <string name="uploading_image">Uploading file</string>
     <string name="settings">Settings</string>
     <string name="nuuls_upload_disclaimer">External hosting provided by https://nuuls.com/i, use at your own risk.</string>
-    <string name="nuuls_upload_title">Custom image upload</string>
+    <string name="nuuls_upload_title">Custom media upload</string>
     <string name="snackbar_message_copied">Message copied</string>
     <string name="snackbar_error_copied">Error information copied</string>
     <string name="notification_stop">Stop</string>
@@ -53,6 +53,7 @@
     <string name="snackbar_data_load_failed_cause">Data loading failed: %1$s</string>
     <string name="snackbar_paste">Paste</string>
     <string name="add_channel_hint">Channel name</string>
+    <string name="emote_menu_tab_recent">Recent</string>
     <string name="emote_menu_tab_subs">Subs</string>
     <string name="emote_menu_tab_channel">Channel</string>
     <string name="emote_menu_tab_global">Global</string>
@@ -99,14 +100,14 @@
     <string name="uploader_add_header">Add header</string>
     <string name="uploader_add_header_name">Name</string>
     <string name="uploader_add_header_value">Value</string>
-    <string name="uploader_title">Custom image uploader</string>
+    <string name="uploader_title">Custom media uploader</string>
     <string name="uploader_reset">Reset to defaults</string>
     <string name="uploader_url">Upload url</string>
     <string name="uploader_field">Form field</string>
     <string name="uploader_headers">Headers</string>
-    <string name="uploader_image_link">Image link pattern</string>
+    <string name="uploader_image_link">Media link pattern</string>
     <string name="uploader_deletion_link">Deletion link pattern</string>
-    <string name="uploader_description">You can set a custom host for uploading images, like imgur.com or s-ul.eu. DankChat uses the same configuration format as Chatterino.\nCheck this guide for help: https://wiki.chatterino.com/Image%20Uploader/</string>
+    <string name="uploader_description">You can set a custom host for uploading media, like imgur.com or s-ul.eu. DankChat uses the same configuration format as Chatterino.\nCheck this guide for help: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="toggle_fullscreen">Toggle fullscreen</string>
     <string name="toggle_stream">Toggle stream</string>
     <string name="account">Account</string>
@@ -139,7 +140,6 @@
     <string name="command__hint">Command</string>
     <string name="commands_title">Custom commands"</string>
     <string name="user_popup_report">Report</string>
-    <string name="emote_menu_tab_recent">Recent</string>
     <string name="tts_ignore_list_add_user">Add a user</string>
     <string name="tts_ignore_list_remove_user">Remove the user</string>
     <string name="tts_ignore_list_user_hint">User</string>
@@ -180,7 +180,7 @@
     <string name="preference_light_theme_title">Enable light theme</string>
     <string name="preference_dark_mode_group_title">Dark mode</string>
     <string name="preference_follow_system_key" translatable="false">follow_system_mode</string>
-    <string name="preference_follow_system_title">Follow system</string>
+    <string name="preference_follow_system_title">Follow system default</string>
     <string name="preference_true_dark_theme_key" translatable="false">true_dark_mode</string>
     <string name="preference_true_dark_theme_title">True dark theme</string>
     <string name="preference_true_dark_theme_summary">Forces chat background color to black</string>
@@ -243,7 +243,7 @@
     <string name="preference_supibot_suggestions_title">Supibot command suggestions</string>
     <string name="preference_scrollback_length_key" translatable="false">scrollback_length_key</string>
     <string name="preference_scrollback_length_title">Message scrollback length</string>
-    <string name="preference_show_username_title">Show username</string>
+    <string name="preference_show_username_title">Show usernames</string>
     <string name="preference_show_username_key" translatable="false">show_username_key</string>
     <string name="preference_visible_badges_title">Visible badges</string>
     <string name="preference_visible_badges_key" translatable="false">visible_badges_key</string>
@@ -255,11 +255,11 @@
     <string name="preference_user_long_click_summary_on">Regular click opens popup, long click mentions</string>
     <string name="preference_user_long_click_summary_off">Regular click mentions, long click opens popup</string>
     <string name="preference_tts_force_english_key" translatable="false">tts_force_english_key</string>
-    <string name="preference_tts_force_english_title">Force language to english</string>
-    <string name="preference_tts_force_english_summary">Force TTS voice language to english instead of system default</string>
+    <string name="preference_tts_force_english_title">Force language to English</string>
+    <string name="preference_tts_force_english_summary">Force TTS voice language to English instead of system default</string>
     <string name="preference_visible_emotes_title">Visible third party emotes</string>
     <string name="preference_visible_emotes_key" translatable="false">visible_emotes_key</string>
-    <string name="preference_uploader_title">Custom image uploader</string>
+    <string name="preference_uploader_title">Custom media uploader</string>
     <string name="preference_uploader_key" translatable="false">uploader_key</string>
     <string name="preference_show_stream_title">Show stream toggle</string>
     <string name="preference_show_stream_key" translatable="false">show_stream_key</string>
@@ -270,7 +270,7 @@
     <string name="preference_show_chip_actions_title">Show chip actions</string>
     <string name="preference_show_chip_actions_key" translatable="false">show_chip_actions_key</string>
     <string name="preference_show_chip_actions_summary">Displays chips for toggling fullscreen, streams and adjusting chat modes</string>
-    <string name="preference_uploader_header">Image uploader</string>
+    <string name="preference_uploader_header">Media uploader</string>
     <string name="preference_uploader_configure_title">Configure uploader</string>
     <string name="preference_uploader_recent_uploads_title">Recent uploads</string>
     <string name="preference_uploader_recent_uploads_key" translatable="false">uploader_recent_uploads_key</string>
