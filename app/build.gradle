@@ -38,7 +38,7 @@ android {
                 properties.load(rootProject.file("local.properties").newDataInputStream())
             }
 
-            if (project.hasProperty("localazy")) {
+            try {
                 apply plugin: 'com.localazy.gradle'
                 localazy {
                     readKey properties.getProperty("localazy.readKey", "")
@@ -48,6 +48,7 @@ android {
                         loyalUsersOnly()
                     }
                 }
+            } catch (ignored) {
             }
         }
         free {
@@ -57,7 +58,7 @@ android {
                     task.enabled = false
                 }
             }
-            if (project.hasProperty("localazy")) {
+            try {
                 localazy {
                     download {
                         enabledForRelease = false
@@ -72,6 +73,7 @@ android {
                         enabledForDebug = false
                     }
                 }
+            } catch (ignored) {
             }
         }
     }
