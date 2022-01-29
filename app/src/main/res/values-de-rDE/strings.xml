@@ -156,7 +156,7 @@
     <string name="preference_streaminfo_title">Streaminfo anzeigen</string>
     <string name="preference_streaminfo_summary">Zeigt Live-Status und Zuschauerzahl</string>
     <string name="preference_notification_title">Benachrichtigungen bei Erwähnungen</string>
-    <string name="preference_notification_summary">Benachrichtigungen bei Erwähnungen erzeugen, wenn die App im Hintergrund läuft.</string>
+    <string name="preference_notification_summary">Benachrichtigungen bei Erwähnungen erzeugen, während die App im Hintergrund läuft.</string>
     <string name="preference_notification_header">Benachrichtigungen</string>
     <string name="preference_chat_header">Chat</string>
     <string name="preference_general_header">Allgemein</string>
