@@ -7,6 +7,10 @@ Make sure to click "install anyway" when a Play Protect dialog shows during inst
 
 <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/screen1.png" width="30%"/> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/screen2.png" width="30%"/> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/screen3.png" width="30%"/>
 
+## Localization
+DankChat uses localazy for translations. Except for strings in the base language, resource strings don't need to be edited anymore.  
+If you want to contribute, request access to be a translator here: https://localazy.com/p/dankchat
+
 ## Donate
 Support the DankChat development and get a dank badge next to your name  
 https://streamelements.com/flex3rs/tip
