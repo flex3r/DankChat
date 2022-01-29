@@ -24,7 +24,7 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
       - name: Unit tests
-        run: bash ./gradlew test --stacktrace
+        run: bash ./gradlew testFreeDebug --stacktrace
 
   lint:
     name: Run Lint
@@ -42,7 +42,7 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
       - name: Lint
-        run: bash ./gradlew lintVitalRelease
+        run: bash ./gradlew lintVitalFreeRelease
 
   build:
     name: Generate APK
@@ -60,13 +60,13 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
       - name: Build Debug APK
-        run: bash ./gradlew :app:assembleDebug
+        run: bash ./gradlew :app:assembleFreeDebug
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v2
         with:
           name: App
-          path: ${{ github.workspace }}/app/build/outputs/apk/debug/*.apk
+          path: ${{ github.workspace }}/app/build/outputs/apk/free/debug/*.apk
 
       - name: Update debug tag
         if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
@@ -83,6 +83,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: debug
           name: Debug APK
-          files: ${{ github.workspace }}/app/build/outputs/apk/debug/DankChat-debug.apk
+          files: ${{ github.workspace }}/app/build/outputs/apk/free/debug/DankChat-freeDebug.apk
           gzip: false
           allow_override: true

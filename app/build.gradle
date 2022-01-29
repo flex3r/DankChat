@@ -29,6 +29,29 @@ android {
     buildFeatures {
         dataBinding = true
     }
+    flavorDimensions "localization"
+    productFlavors {
+        localized {
+            dimension "localization"
+            Properties properties = new Properties()
+            if (rootProject.file("local.properties").exists()) {
+                properties.load(rootProject.file("local.properties").newDataInputStream())
+            }
+
+            apply plugin: 'com.localazy.gradle'
+            localazy {
+                readKey properties.getProperty("localazy.readKey", "")
+                writeKey properties.getProperty("localazy.writeKey", "")
+
+                injection {
+                    loyalUsersOnly()
+                }
+            }
+        }
+        free {
+            dimension "localization"
+        }
+    }
     buildTypes {
         release {
             minifyEnabled true
@@ -71,20 +94,7 @@ android {
         ]
     }
 }
-Properties properties = new Properties()
-if (rootProject.file("local.properties").exists()) {
-    properties.load(rootProject.file("local.properties").newDataInputStream())
-}
 
-apply plugin: 'com.localazy.gradle'
-localazy {
-    readKey properties.getProperty("localazy.readKey", "")
-    writeKey properties.getProperty("localazy.writeKey", "")
-
-    injection {
-        loyalUsersOnly()
-    }
-}
 
 dependencies {
 // D8 desugaring
