@@ -11,10 +11,7 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -148,9 +145,9 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
         else                                   -> pendingChannelsToClear += channel
     }
 
-    fun setFullScreen(enabled: Boolean, changeActionBarVisibility: Boolean = true) {
+    fun setFullScreen(enabled: Boolean, changeActionBarVisibility: Boolean = true) = binding.root.doOnAttach {
         WindowCompat.setDecorFitsSystemWindows(window, !enabled)
-        val windowInsetsController = ViewCompat.getWindowInsetsController(binding.root) ?: return
+        val windowInsetsController = ViewCompat.getWindowInsetsController(binding.root) ?: return@doOnAttach
         when {
             enabled -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !isInMultiWindowMode) {
