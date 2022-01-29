@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="badges_entry_values">
+    <string-array name="badges_entry_values" translatable="false">
         <item>authority</item>
         <item>predictions</item>
         <item>channel</item>

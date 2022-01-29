@@ -71,6 +71,20 @@ android {
         ]
     }
 }
+Properties properties = new Properties()
+if (rootProject.file("local.properties").exists()) {
+    properties.load(rootProject.file("local.properties").newDataInputStream())
+}
+
+apply plugin: 'com.localazy.gradle'
+localazy {
+    readKey properties.getProperty("localazy.readKey", "")
+    writeKey properties.getProperty("localazy.writeKey", "")
+
+    injection {
+        loyalUsersOnly()
+    }
+}
 
 dependencies {
 // D8 desugaring

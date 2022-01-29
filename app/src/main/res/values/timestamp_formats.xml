@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="timestamp_formats">
+    <string-array name="timestamp_formats" translatable="false">
         <item>H:mm</item>
         <item>HH:mm</item>
         <item>h:mm a</item>

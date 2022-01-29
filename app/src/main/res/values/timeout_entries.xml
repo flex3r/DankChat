@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="timeout_entries">
+    <string-array name="timeout_entries" translatable="false">
         <item>1s</item>
         <item>30s</item>
         <item>1m</item>

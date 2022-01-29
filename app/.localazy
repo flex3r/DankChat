@@ -1,0 +1,7 @@
+[packages]
+com.flxrs.dankchat = raa
+
+[localazy]
+allStringsUploaded = true
+showWelcomeMessage = false
+

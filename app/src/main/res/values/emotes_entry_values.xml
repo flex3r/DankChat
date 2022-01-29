@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="emotes_entry_values">
+    <string-array name="emotes_entry_values" translatable="false">
         <item>frankerfacez</item>
         <item>betterttv</item>
         <item>seventv</item>

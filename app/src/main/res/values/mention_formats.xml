@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="mention_formats">
+    <string-array name="mention_formats" translatable="false">
         <item>name</item>
         <item>name,</item>
         <item>\@name</item>
