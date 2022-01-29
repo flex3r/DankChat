@@ -201,7 +201,7 @@
     <string name="preference_tts_message_format_combined">Nutzernamen und Nachrichten vorlesen</string>
     <string name="preference_tts_message_format_title">Nachrichtenformat</string>
     <string name="preference_tts_header">TTS</string>
-    <string name="preference_channel_data_header">Kanal Informationen</string>
+    <string name="preference_channel_data_header">Kanalinformationen</string>
     <string name="preference_checkered_lines_title">Zebramuster</string>
     <string name="preference_checkered_lines_summary">Nachrichten werden mit abwechselnder Hintergrundfarbe dargestellt</string>
     <string name="preference_supibot_suggestions_title">Supibot Befehl-Vorschläge</string>
