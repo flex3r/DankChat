@@ -155,8 +155,8 @@
     <string name="preference_roomstate_summary">Zeigt Informationen über den momentanen Chatmodus, wie \"Subscriber-Only\"</string>
     <string name="preference_streaminfo_title">Streaminfo anzeigen</string>
     <string name="preference_streaminfo_summary">Zeigt Live-Status und Zuschauerzahl</string>
-    <string name="preference_notification_title">Benachrichtigung bei Erwähnungen</string>
-    <string name="preference_notification_summary">Benachrichtigung für Erwähnung auch erzeugen, wenn die App im Hintergrund läuft.</string>
+    <string name="preference_notification_title">Benachrichtigungen bei Erwähnungen</string>
+    <string name="preference_notification_summary">Benachrichtigungen bei Erwähnungen erzeugen, wenn die App im Hintergrund läuft.</string>
     <string name="preference_notification_header">Benachrichtigungen</string>
     <string name="preference_chat_header">Chat</string>
     <string name="preference_general_header">Allgemein</string>
