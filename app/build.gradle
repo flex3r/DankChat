@@ -81,27 +81,28 @@ android {
     }
 }
 
-Properties properties = new Properties()
-if (rootProject.file("local.properties").exists()) {
-    properties.load(rootProject.file("local.properties").newDataInputStream())
-}
-
-try {
-    def read = properties.getProperty("localazy.readKey", "")
-    def write = properties.getProperty("localazy.writeKey", "")
-    if (!read.isEmpty() && !write.isEmpty()) {
-        apply plugin: 'com.localazy.gradle'
-        localazy {
-            readKey read
-            writeKey write
-
-            injection {
-                loyalUsersOnly()
-            }
-        }
-    }
-} catch (ignored) {
-}
+//Properties properties = new Properties()
+//if (rootProject.file("local.properties").exists()) {
+//    properties.load(rootProject.file("local.properties").newDataInputStream())
+//}
+//
+//try {
+//    def read = properties.getProperty("localazy.readKey", "")
+//    def write = properties.getProperty("localazy.writeKey", "")
+//    if (!read.isEmpty() && !write.isEmpty()) {
+//        apply plugin: 'com.localazy.gradle'
+//        localazy {
+//            readKey read
+//            writeKey write
+//
+//            injection {
+//                exclude "**.**"
+//                loyalUsersOnly()
+//            }
+//        }
+//    }
+//} catch (ignored) {
+//}
 tasks.all { task ->
     if (task.name.toLowerCase().contains("localazy") && task.name.toLowerCase().contains("free")) {
         task.enabled = false
