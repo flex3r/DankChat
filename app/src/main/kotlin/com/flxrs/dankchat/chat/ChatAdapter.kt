@@ -348,7 +348,7 @@ class ChatAdapter(
             allowedBadges.forEachIndexed { idx, badge ->
                 try {
                     val (start, end) = badgePositions[idx]
-                    val cached = emoteManager.gifCache[badge.url]
+                    val cached = emoteManager.badgeCache[badge.url]
                     val drawable = when {
                         cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
                         else           -> Coil.execute(badge.url.toRequest(context)).drawable?.apply {
@@ -361,7 +361,7 @@ class ChatAdapter(
                             val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
                             setBounds(0, 0, width, lineHeight)
                             if (this is Animatable) {
-                                emoteManager.gifCache.put(badge.url, this)
+                                emoteManager.badgeCache.put(badge.url, this)
                                 setRunning(animateGifs)
                             }
                         }
@@ -554,7 +554,7 @@ class ChatAdapter(
             allowedBadges.forEachIndexed { idx, badge ->
                 try {
                     val (start, end) = badgePositions[idx]
-                    val cached = emoteManager.gifCache[badge.url]
+                    val cached = emoteManager.badgeCache[badge.url]
                     val drawable = when {
                         cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
                         else           -> Coil.execute(badge.url.toRequest(context)).drawable?.apply {
@@ -567,7 +567,7 @@ class ChatAdapter(
                             val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
                             setBounds(0, 0, width, lineHeight)
                             if (this is Animatable) {
-                                emoteManager.gifCache.put(badge.url, this)
+                                emoteManager.badgeCache.put(badge.url, this)
                                 setRunning(animateGifs)
                             }
                         }
@@ -594,7 +594,9 @@ class ChatAdapter(
                     .forEach { (_, emotes) ->
                         val key = emotes.joinToString(separator = "-") { it.id }
                         // fast path, backed by lru cache
-                        val layerDrawable = emoteManager.layerCache[key] ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
+                        val layerDrawable = emoteManager.layerCache[key]?.also {
+                            it.forEachLayer<Animatable> { animatable -> animatable.setRunning(animateGifs) }
+                        } ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
 
                         (text as SpannableString).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
                     }
@@ -612,12 +614,13 @@ class ChatAdapter(
         scaleFactor: Double,
     ): LayerDrawable {
         val drawables = emotes.mapNotNull {
-            it.loadAndTransformToDrawable(context, animateGifs, useCache = !it.isOverlayEmote)?.transformEmoteDrawable(scaleFactor, it)
+            Coil.execute(it.url.toRequest(context)).drawable?.transformEmoteDrawable(scaleFactor, it)
         }.toTypedArray()
 
         val bounds = drawables.map { it.bounds }
         return drawables.toLayerDrawable(bounds, scaleFactor, emotes).also {
             emoteManager.layerCache.put(cacheKey, it)
+            it.forEachLayer<Animatable> { animatable -> animatable.setRunning(animateGifs) }
         }
     }
 
@@ -631,23 +634,6 @@ class ChatAdapter(
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
             callback = emoteManager.gifCallback
-        }
-    }
-
-    private suspend fun ChatMessageEmote.loadAndTransformToDrawable(context: Context, animateGifs: Boolean, useCache: Boolean): Drawable? {
-        val cached = emoteManager.gifCache[url]
-        return when {
-            useCache && cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) } // fast path
-
-            else                       -> Coil.execute(url.toRequest(context)).drawable?.apply {
-                if (this is Animatable) {
-                    if (useCache) {
-                        emoteManager.gifCache.put(url, this)
-                    }
-                    // start animation after adding to cache, very important!
-                    setRunning(animateGifs)
-                }
-            }
         }
     }
 

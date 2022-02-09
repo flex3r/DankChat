@@ -32,7 +32,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
     private val globalBadges = ConcurrentHashMap<String, BadgeSet>()
     private val dankChatBadges = CopyOnWriteArrayList<DankChatBadgeDto>()
 
-    val gifCache = LruCache<String, Drawable>(64)
+    val badgeCache = LruCache<String, Drawable>(64)
     val layerCache = LruCache<String, LayerDrawable>(256)
     val gifCallback = MultiCallback(true)
 

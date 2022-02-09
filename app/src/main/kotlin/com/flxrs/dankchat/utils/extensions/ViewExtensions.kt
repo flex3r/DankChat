@@ -59,7 +59,7 @@ inline fun <reified T : Any> TextView.forEachSpan(action: (T) -> Unit) {
         .forEach(action)
 }
 
-inline fun <reified T : Drawable> LayerDrawable.forEachLayer(action: (T) -> Unit) {
+inline fun <reified T : Any> LayerDrawable.forEachLayer(action: (T) -> Unit) {
     for (i in 0 until numberOfLayers) {
         val drawable = getDrawable(i)
         if (drawable is T) {
