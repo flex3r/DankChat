@@ -6,6 +6,8 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.milliseconds
 
 private val GPS_ATTRIBUTES = listOf(
     ExifInterface.TAG_GPS_LATITUDE,
@@ -26,9 +28,10 @@ fun createMediaFile(context: Context, suffix: String = "jpg"): File {
 }
 
 fun tryClearEmptyFiles(context: Context) = runCatching {
+    val cutoff = System.currentTimeMillis().milliseconds - 1.days
     context.getExternalFilesDir("Media")
         ?.listFiles()
-        ?.filter { it.isFile && it.length() == 0L }
+        ?.filter { it.isFile && it.lastModified().milliseconds < cutoff }
         ?.onEach { it.delete() }
 }
 
