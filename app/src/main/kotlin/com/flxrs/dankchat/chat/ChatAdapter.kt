@@ -160,8 +160,8 @@ class ChatAdapter(
         val count = message.count
         // TODO localize
         val systemMessageText = when {
-            message.isBan           -> "${message.targetUser} has been permanently banned"
             message.isFullChatClear -> "Chat has been cleared by a moderator."
+            message.isBan           -> "${message.targetUser} has been permanently banned"
             else                    -> {
                 val countOrBlank = if (count > 1) " ($count times)" else ""
                 "${message.targetUser} has been timed out for ${DateTimeUtils.formatSeconds(message.duration)}.$countOrBlank"
