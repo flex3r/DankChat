@@ -100,6 +100,7 @@ El servicio temporalmente almacena mensajes para canales que tú (y otros) visit
   <string name="preference_custom_mentions_summary">"Añadir frases personalizadas como menciones"</string>
   <string name="preference_custom_mentions_title">"Menciones personalizadas"</string>
   <string name="preference_dark_mode_group_title">"Modo oscuro"</string>
+  <string name="preference_dark_theme_entry_title">"Tema oscuro"</string>
   <string name="preference_dark_theme_title">"Activar tema oscuro"</string>
   <string name="preference_debug_mode_summary">"Proporciona información para cualquier excepción que se encuentre"</string>
   <string name="preference_debug_mode_title">"Modo depuración"</string>
@@ -113,6 +114,7 @@ El servicio temporalmente almacena mensajes para canales que tú (y otros) visit
   <string name="preference_font_size_title">"Tamaño de la fuente"</string>
   <string name="preference_general_header">"General"</string>
   <string name="preference_keep_screen_on_title">"Mantener pantalla encendida"</string>
+  <string name="preference_light_theme_entry_title">"Tema claro"</string>
   <string name="preference_light_theme_title">"Activar tema claro"</string>
   <string name="preference_line_separator_title">"Separar mensajes con líneas"</string>
   <string name="preference_load_message_history_title">"Cargar historial de mensajes al inicio"</string>
@@ -143,6 +145,7 @@ El servicio temporalmente almacena mensajes para canales que tú (y otros) visit
   <string name="preference_suggestions_summary">"Muestra sugerencias para emoticonos y usuarios activos al escribir"</string>
   <string name="preference_suggestions_title">"Sugerencias de emoticonos y usuarios"</string>
   <string name="preference_supibot_suggestions_title">"Sugerencias de comandos de Supibot"</string>
+  <string name="preference_theme_title">"Tema"</string>
   <string name="preference_timestamp_format_title">"Formato del tiempo"</string>
   <string name="preference_timestamp_title">"Mostrar fecha"</string>
   <string name="preference_tools_header">"Herramientas"</string>

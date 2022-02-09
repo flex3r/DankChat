@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string-array name="badges_entries">
+    <item>"Autoritat (personal, admin)"</item>
+    <item>"Prediccions"</item>
+    <item>"Canal (emissor, moderador)"</item>
+    <item>"Subscriptor"</item>
+    <item>"Vanitat (prime, bits, regalador de suscriptors)"</item>
+    <item>"DankChat"</item>
+  </string-array>
+</resources>
