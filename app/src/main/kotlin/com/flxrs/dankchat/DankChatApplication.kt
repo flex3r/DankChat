@@ -10,9 +10,15 @@ import androidx.preference.PreferenceManager
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.decode.ImageDecoderDecoder
+import com.flxrs.dankchat.di.ApplicationScope
 import com.flxrs.dankchat.di.EmoteOkHttpClient
 import com.flxrs.dankchat.utils.gifs.GifDrawableDecoder
+import com.flxrs.dankchat.utils.tryClearEmptyFiles
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
@@ -21,6 +27,10 @@ class DankChatApplication : Application(), ImageLoaderFactory {
     @Inject
     @EmoteOkHttpClient
     lateinit var client: OkHttpClient
+
+    @Inject
+    @ApplicationScope
+    lateinit var scope: CoroutineScope
 
     override fun onCreate() {
         super.onCreate()
@@ -43,6 +53,10 @@ class DankChatApplication : Application(), ImageLoaderFactory {
             else                                                                                                -> AppCompatDelegate.MODE_NIGHT_NO
         }
         AppCompatDelegate.setDefaultNightMode(nightMode)
+
+        scope.launch(Dispatchers.IO) {
+            tryClearEmptyFiles(this@DankChatApplication)
+        }
     }
 
     override fun newImageLoader(): ImageLoader {

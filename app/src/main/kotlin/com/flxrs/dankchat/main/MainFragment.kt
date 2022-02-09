@@ -647,6 +647,7 @@ class MainFragment : Fragment() {
 
             mainViewModel.uploadMedia(mediaFile)
         } catch (e: IOException) {
+            currentMediaUri = Uri.EMPTY
             mediaFile?.delete()
             showSnackBar(getString(R.string.snackbar_upload_failed))
         }

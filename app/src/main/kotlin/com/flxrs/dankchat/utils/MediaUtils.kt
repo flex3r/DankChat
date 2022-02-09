@@ -25,6 +25,13 @@ fun createMediaFile(context: Context, suffix: String = "jpg"): File {
     return File.createTempFile(timeStamp, ".$suffix", storageDir)
 }
 
+fun tryClearEmptyFiles(context: Context) = runCatching {
+    context.getExternalFilesDir("Media")
+        ?.listFiles()
+        ?.filter { it.isFile && it.length() == 0L }
+        ?.onEach { it.delete() }
+}
+
 @Throws(IOException::class)
 fun File.removeExifAttributes() = ExifInterface(this).run {
     GPS_ATTRIBUTES.forEach { if (getAttribute(it) != null) setAttribute(it, null) }
