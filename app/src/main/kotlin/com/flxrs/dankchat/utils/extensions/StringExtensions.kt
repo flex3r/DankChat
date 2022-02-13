@@ -14,10 +14,12 @@ private val Int.isEmoji: Boolean
 private val Int.isWhitespace: Boolean
     get() = Character.isWhitespace(this) || this == 0x3164
 
+val Int.codePointAsString: String
+    get() = String(Character.toChars(this))
+
 // Removes duplicate whitespace from the string and additionally returns the positions of every removed whitespace
 // "a  Kappa" -> 3-8 -> [2, 3]
 // "a Kappa"  -> 2-7
-
 fun String.removeDuplicateWhitespace(): Pair<String, List<Int>> {
     val stringBuilder = StringBuilder()
     var previousWhitespace = false

@@ -15,7 +15,6 @@ import com.flxrs.dankchat.utils.extensions.*
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import java.nio.ByteBuffer
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import kotlin.collections.set
@@ -705,8 +704,8 @@ class ChatRepository @Inject constructor(
 
     companion object {
         private val TAG = ChatRepository::class.java.simpleName
-        private val INVISIBLE_CHAR = ByteBuffer.allocate(4).putInt(0x000E0000).array().toString(Charsets.UTF_32)
-        private val ESCAPE_TAG = ByteBuffer.allocate(4).putInt(0x000E0002).array().toString(Charsets.UTF_32)
+        private val INVISIBLE_CHAR = 0x000E0000.codePointAsString
+        private val ESCAPE_TAG = 0x000E0002.codePointAsString
         private const val USER_CACHE_SIZE = 500
         private const val PUBSUB_TIMEOUT = 5 * 1000L
 
