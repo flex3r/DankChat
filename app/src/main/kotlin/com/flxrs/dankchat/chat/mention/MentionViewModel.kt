@@ -15,8 +15,8 @@ class MentionViewModel @Inject constructor(chatRepository: ChatRepository) : Vie
     val mentions: StateFlow<List<ChatItem>> = chatRepository.mentions
     val whispers: StateFlow<List<ChatItem>> = chatRepository.whispers
 
-    val hasMentions: StateFlow<Boolean> = chatRepository.hasMentions.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
-    val hasWhispers: StateFlow<Boolean> = chatRepository.hasWhispers.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+    val hasMentions: StateFlow<Boolean> = chatRepository.hasMentions.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), false)
+    val hasWhispers: StateFlow<Boolean> = chatRepository.hasWhispers.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), false)
 
     companion object {
         private val TAG = MentionViewModel::class.java.simpleName

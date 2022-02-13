@@ -29,14 +29,14 @@ class UserPopupViewModel @Inject constructor(
 
     private val hasModInChannel: StateFlow<Boolean> = chatRepository.userStateFlow
         .map { args.channel != null && args.channel in it.moderationChannels }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), false)
 
     val userPopupState: StateFlow<UserPopupState> = _userPopupState.asStateFlow()
 
     val canShowModeration: StateFlow<Boolean> =
         combine(userPopupState, hasModInChannel) { state, hasMod ->
             state is UserPopupState.Success && hasMod
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), false)
 
     val isBlocked: Boolean
         get() {

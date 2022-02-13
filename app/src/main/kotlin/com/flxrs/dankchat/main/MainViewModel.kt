@@ -88,12 +88,15 @@ class MainViewModel @Inject constructor(
         emotes.distinctBy { it.code }
             .map { Suggestion.EmoteSuggestion(it) }
     }
+
     private val userSuggestions = users.mapLatest { users ->
         users.snapshot().keys.map { Suggestion.UserSuggestion(it) }
     }
+
     private val supibotCommandSuggestions = supibotCommands.mapLatest { commands ->
         commands.map { Suggestion.CommandSuggestion("$$it") }
     }
+
     private val defaultCommandSuggestions = commandRepository.commands.map { commands ->
         commands.map { Suggestion.CommandSuggestion(it) }
     }
@@ -107,7 +110,7 @@ class MainViewModel @Inject constructor(
                 _currentStreamedChannel.value = ""
             }
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), null)
 
     val channelMentionCount: Flow<Map<String, Int>> = chatRepository.channelMentionCount
     val unreadMessagesMap: Flow<Map<String, Boolean>> = chatRepository.unreadMessagesMap.map { map -> map.filterValues { it } }
@@ -119,28 +122,28 @@ class MainViewModel @Inject constructor(
     val shouldColorNotification: StateFlow<Boolean> =
         combine(chatRepository.hasMentions, chatRepository.hasWhispers) { hasMentions, hasWhispers ->
             hasMentions || hasWhispers
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), false)
 
     val shouldShowViewPager: StateFlow<Boolean> = channels
         .mapLatest { it?.isNotEmpty() ?: true }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), true)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), true)
 
     val shouldShowInput: StateFlow<Boolean> = combine(inputEnabled, shouldShowViewPager) { inputEnabled, shouldShowViewPager ->
         inputEnabled && shouldShowViewPager
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), true)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), true)
 
     val shouldShowUploadProgress = combine(_imageUploadedState, _dataLoadingState) { imageUploadState, dataLoadingState ->
         imageUploadState is ImageUploadState.Loading || dataLoadingState is DataLoadingState.Loading
-    }.stateIn(viewModelScope, started = SharingStarted.WhileSubscribed(), false)
+    }.stateIn(viewModelScope, started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), false)
 
     val connectionState = activeChannel
         .flatMapLatest { chatRepository.getConnectionState(it) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ConnectionState.DISCONNECTED)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), ConnectionState.DISCONNECTED)
     val canType: StateFlow<Boolean> =
         combine(connectionState, mentionSheetOpen, whisperTabSelected) { connectionState, mentionSheetOpen, whisperTabSelected ->
             val connected = connectionState == ConnectionState.CONNECTED
             (!mentionSheetOpen && connected) || (whisperTabSelected && connected)
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), false)
 
     val currentBottomText: Flow<String> =
         combine(roomStateText, currentStreamInformation, mentionSheetOpen) { roomState, streamInfo, mentionSheetOpen ->
@@ -158,7 +161,7 @@ class MainViewModel @Inject constructor(
             currentBottomText
         ) { roomStateEnabled, streamInfoEnabled, mentionSheetOpen, bottomText ->
             (roomStateEnabled || streamInfoEnabled) && !mentionSheetOpen && bottomText.isNotBlank()
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), true)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), true)
 
     val shouldShowFullscreenHelper: StateFlow<Boolean> =
         combine(
@@ -168,12 +171,12 @@ class MainViewModel @Inject constructor(
             shouldShowViewPager
         ) { shouldShowInput, shouldShowBottomText, bottomText, shouldShowViewPager ->
             !shouldShowInput && shouldShowBottomText && bottomText.isNotBlank() && shouldShowViewPager
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), false)
 
     val shouldShowEmoteMenuIcon: StateFlow<Boolean> =
         combine(canType, mentionSheetOpen) { canType, mentionSheetOpen ->
             canType && !mentionSheetOpen
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), false)
 
     val suggestions: StateFlow<List<Suggestion>> =
         combine(
@@ -187,44 +190,46 @@ class MainViewModel @Inject constructor(
                 preferEmoteSuggestions -> (emotes + users + defaultCommands + supibotCommands)
                 else                   -> (users + emotes + defaultCommands + supibotCommands)
             }
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), emptyList())
 
     val emoteTabItems: Flow<List<EmoteMenuTabItem>> = combine(emotes, recentEmotes) { emotes, recentEmotes ->
-        val availableRecents = recentEmotes.mapNotNull { usage ->
-            emotes
-                .firstOrNull { it.id == usage.emoteId }
-                ?.copy(emoteType = EmoteType.RecentUsageEmote)
-        }
-
-        val groupedByType = emotes.groupBy {
-            when (it.emoteType) {
-                is EmoteType.ChannelTwitchEmote,
-                is EmoteType.ChannelTwitchBitEmote,
-                is EmoteType.ChannelTwitchFollowerEmote -> EmoteMenuTab.SUBS
-                is EmoteType.ChannelFFZEmote,
-                is EmoteType.ChannelBTTVEmote,
-                is EmoteType.ChannelSevenTVEmote        -> EmoteMenuTab.CHANNEL
-                else                                    -> EmoteMenuTab.GLOBAL
+        withContext(Dispatchers.Default) {
+            val availableRecents = recentEmotes.mapNotNull { usage ->
+                emotes
+                    .firstOrNull { it.id == usage.emoteId }
+                    ?.copy(emoteType = EmoteType.RecentUsageEmote)
             }
+
+            val groupedByType = emotes.groupBy {
+                when (it.emoteType) {
+                    is EmoteType.ChannelTwitchEmote,
+                    is EmoteType.ChannelTwitchBitEmote,
+                    is EmoteType.ChannelTwitchFollowerEmote -> EmoteMenuTab.SUBS
+                    is EmoteType.ChannelFFZEmote,
+                    is EmoteType.ChannelBTTVEmote,
+                    is EmoteType.ChannelSevenTVEmote        -> EmoteMenuTab.CHANNEL
+                    else                                    -> EmoteMenuTab.GLOBAL
+                }
+            }
+            listOf(
+                async { EmoteMenuTabItem(EmoteMenuTab.RECENT, availableRecents.toEmoteItems()) },
+                async { EmoteMenuTabItem(EmoteMenuTab.SUBS, groupedByType[EmoteMenuTab.SUBS]?.moveToFront(activeChannel.value).toEmoteItems()) },
+                async { EmoteMenuTabItem(EmoteMenuTab.CHANNEL, groupedByType[EmoteMenuTab.CHANNEL].toEmoteItems()) },
+                async { EmoteMenuTabItem(EmoteMenuTab.GLOBAL, groupedByType[EmoteMenuTab.GLOBAL].toEmoteItems()) }
+            ).awaitAll()
         }
-        listOf(
-            EmoteMenuTabItem(EmoteMenuTab.RECENT, availableRecents.toEmoteItems()),
-            EmoteMenuTabItem(EmoteMenuTab.SUBS, groupedByType[EmoteMenuTab.SUBS]?.moveToFront(activeChannel.value).toEmoteItems()),
-            EmoteMenuTabItem(EmoteMenuTab.CHANNEL, groupedByType[EmoteMenuTab.CHANNEL].toEmoteItems()),
-            EmoteMenuTabItem(EmoteMenuTab.GLOBAL, groupedByType[EmoteMenuTab.GLOBAL].toEmoteItems())
-        )
-    }.flowOn(Dispatchers.Default)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), emptyList())
 
     val isFullscreenFlow: StateFlow<Boolean> = _isFullscreen.asStateFlow()
     val areChipsExpanded: StateFlow<Boolean> = chipsExpanded.asStateFlow()
 
     val shouldShowChipToggle: StateFlow<Boolean> = combine(shouldShowChips, isScrolling) { shouldShowChips, isScrolling ->
         shouldShowChips && !isScrolling
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), true)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), true)
 
     val shouldShowExpandedChips: StateFlow<Boolean> = combine(shouldShowChipToggle, chipsExpanded) { shouldShowChips, chipsExpanded ->
         shouldShowChips && chipsExpanded
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), false)
 
 
     val shouldShowStreamToggle: StateFlow<Boolean> =
@@ -235,12 +240,12 @@ class MainViewModel @Inject constructor(
             currentStreamInformation
         ) { canShowChips, activeChannel, currentStream, currentStreamData ->
             canShowChips && activeChannel.isNotBlank() && (currentStream.isNotBlank() || currentStreamData != null)
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), false)
 
     val hasModInChannel: StateFlow<Boolean> =
         combine(shouldShowExpandedChips, activeChannel, chatRepository.userStateFlow) { canShowChips, channel, userState ->
             canShowChips && channel.isNotBlank() && channel in userState.moderationChannels
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), false)
 
     val currentStreamedChannel: StateFlow<String> = _currentStreamedChannel.asStateFlow()
     val isStreamActive: Boolean
