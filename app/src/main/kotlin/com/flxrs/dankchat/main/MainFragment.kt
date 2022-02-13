@@ -173,9 +173,10 @@ class MainFragment : Fragment() {
                     ConnectionState.DISCONNECTED            -> getString(R.string.hint_disconnected)
                 }
             }
-            collectFlow(currentBottomText) {
-                binding.inputLayout.helperText = it
-                binding.fullscreenHintText.text = it
+            collectFlow(bottomTextState) { (enabled, text) ->
+                binding.inputLayout.helperText = text
+                binding.inputLayout.isHelperTextEnabled = enabled
+                binding.fullscreenHintText.text = text
             }
             collectFlow(activeChannel) { channel ->
                 (activity as? MainActivity)?.notificationService?.setActiveChannel(channel) // TODO move

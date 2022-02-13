@@ -25,6 +25,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import java.io.File
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 
 @HiltViewModel
@@ -100,6 +101,23 @@ class MainViewModel @Inject constructor(
         commands.map { Suggestion.CommandSuggestion(it) }
     }
 
+    private val currentBottomText: Flow<String> =
+        combine(roomStateText, currentStreamInformation, mentionSheetOpen) { roomState, streamInfo, mentionSheetOpen ->
+            listOfNotNull(roomState, streamInfo)
+                .takeUnless { mentionSheetOpen }
+                ?.joinToString(separator = " - ")
+                .orEmpty()
+        }
+
+    private val shouldShowBottomText: Flow<Boolean> =
+        combine(
+            roomStateEnabled,
+            streamInfoEnabled,
+            mentionSheetOpen,
+            currentBottomText
+        ) { roomStateEnabled, streamInfoEnabled, mentionSheetOpen, bottomText ->
+            (roomStateEnabled || streamInfoEnabled) && !mentionSheetOpen && bottomText.isNotBlank()
+        }
 
     val events = eventChannel.receiveAsFlow()
 
@@ -144,23 +162,11 @@ class MainViewModel @Inject constructor(
             (!mentionSheetOpen && connected) || (whisperTabSelected && connected)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), false)
 
-    val currentBottomText: Flow<String> =
-        combine(roomStateText, currentStreamInformation, mentionSheetOpen) { roomState, streamInfo, mentionSheetOpen ->
-            listOfNotNull(roomState, streamInfo)
-                .takeUnless { mentionSheetOpen }
-                ?.joinToString(separator = " - ")
-                .orEmpty()
-        }
+    data class BottomTextState(val enabled: Boolean = true, val text: String = "")
 
-    val shouldShowBottomText: StateFlow<Boolean> =
-        combine(
-            roomStateEnabled,
-            streamInfoEnabled,
-            mentionSheetOpen,
-            currentBottomText
-        ) { roomStateEnabled, streamInfoEnabled, mentionSheetOpen, bottomText ->
-            (roomStateEnabled || streamInfoEnabled) && !mentionSheetOpen && bottomText.isNotBlank()
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), true)
+    val bottomTextState: StateFlow<BottomTextState> = shouldShowBottomText.combine(currentBottomText) { enabled, text ->
+        BottomTextState(enabled, text)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), BottomTextState())
 
     val shouldShowFullscreenHelper: StateFlow<Boolean> =
         combine(

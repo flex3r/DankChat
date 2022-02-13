@@ -220,7 +220,6 @@
             app:endIconContentDescription="@string/send_hint"
             app:endIconDrawable="@{vm.canType ? @drawable/ic_send : null}"
             app:endIconMode="custom"
-            app:helperTextEnabled="@{vm.shouldShowBottomText}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
