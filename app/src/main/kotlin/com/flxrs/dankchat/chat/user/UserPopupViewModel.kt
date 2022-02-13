@@ -14,6 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class UserPopupViewModel @Inject constructor(
@@ -29,14 +30,14 @@ class UserPopupViewModel @Inject constructor(
 
     private val hasModInChannel: StateFlow<Boolean> = chatRepository.userStateFlow
         .map { args.channel != null && args.channel in it.moderationChannels }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), false)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
     val userPopupState: StateFlow<UserPopupState> = _userPopupState.asStateFlow()
 
     val canShowModeration: StateFlow<Boolean> =
         combine(userPopupState, hasModInChannel) { state, hasMod ->
             state is UserPopupState.Success && hasMod
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), false)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
     val isBlocked: Boolean
         get() {
