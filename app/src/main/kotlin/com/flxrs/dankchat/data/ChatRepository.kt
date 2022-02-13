@@ -187,12 +187,6 @@ class ChatRepository @Inject constructor(
         measureTimeMillis {
             apiManager.getChatters(channel)?.let { chatters ->
                 users[channel]?.value?.let { cache ->
-                    val size = chatters.total.size
-                    if (size > USER_CACHE_SIZE) {
-                        Log.i(TAG, "Resizing user cache for #$channel to $size")
-                        cache.resize(size)
-                    }
-
                     chatters.total.forEach { cache.put(it, true) }
                     users[channel]?.value = cache
                 }
