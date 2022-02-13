@@ -84,7 +84,6 @@ class MainViewModel @Inject constructor(
     }
 
     private val emoteSuggestions = emotes.mapLatest { emotes ->
-        // TODO additional distinct needed?
         emotes.distinctBy { it.code }
             .map { Suggestion.EmoteSuggestion(it) }
     }
@@ -113,7 +112,7 @@ class MainViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), null)
 
     val channelMentionCount: Flow<Map<String, Int>> = chatRepository.channelMentionCount
-    val unreadMessagesMap: Flow<Map<String, Boolean>> = chatRepository.unreadMessagesMap.map { map -> map.filterValues { it } }
+    val unreadMessagesMap: Flow<Map<String, Boolean>> = chatRepository.unreadMessagesMap.mapLatest { map -> map.filterValues { it } }
 
     // StateFlow -> Channel -> Flow 4HEad xd
     val imageUploadEventFlow: Flow<ImageUploadState> = _imageUploadedState.produceIn(viewModelScope).receiveAsFlow()
