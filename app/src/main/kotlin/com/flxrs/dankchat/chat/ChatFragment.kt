@@ -181,7 +181,7 @@ open class ChatFragment : Fragment() {
     }
 
     private fun RecyclerView.setup(chatAdapter: ChatAdapter, manager: LinearLayoutManager) {
-        setItemViewCacheSize(30)
+        setItemViewCacheSize(OFFSCREEN_VIEW_CACHE_SIZE)
         adapter = chatAdapter
         layoutManager = manager
         itemAnimator = null
@@ -215,6 +215,7 @@ open class ChatFragment : Fragment() {
     companion object {
         private const val AT_BOTTOM_STATE = "chat_at_bottom_state"
         private const val MAX_MESSAGES_REDRAW_AMOUNT = 50
+        private const val OFFSCREEN_VIEW_CACHE_SIZE = 10
 
         fun newInstance(channel: String) = ChatFragment().apply {
             arguments = ChatFragmentArgs(channel).toBundle()
