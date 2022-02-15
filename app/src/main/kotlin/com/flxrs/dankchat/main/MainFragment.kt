@@ -133,7 +133,6 @@ class MainFragment : Fragment() {
             lifecycleOwner = this@MainFragment
             chatViewpager.setup(this)
             input.setup(this)
-            inputLayout.setup()
 
             childFragmentManager.findFragmentById(R.id.mention_fragment)?.let {
                 mentionBottomSheetBehavior = BottomSheetBehavior.from(it.requireView()).apply { setupMentionSheet() }
@@ -165,7 +164,16 @@ class MainFragment : Fragment() {
             collectFlow(suggestions, ::setSuggestions)
             collectFlow(emoteTabItems, emoteMenuAdapter::submitList)
             collectFlow(isFullscreenFlow) { changeActionBarVisibility(it) }
-            collectFlow(canType) { if (it) binding.inputLayout.setup() }
+            collectFlow(canType) {
+                when {
+                    it   -> binding.inputLayout.setup()
+                    else -> with(binding.inputLayout) {
+                        setEndIconOnClickListener(null)
+                        setEndIconOnLongClickListener(null)
+                        setStartIconOnClickListener(null)
+                    }
+                }
+            }
             collectFlow(connectionState) { state ->
                 binding.inputLayout.hint = when (state) {
                     ConnectionState.CONNECTED               -> getString(R.string.hint_connected)
@@ -279,7 +287,7 @@ class MainFragment : Fragment() {
             }
 
             ViewCompat.setOnApplyWindowInsetsListener(binding.showChips) { v, insets ->
-                val needsExtraMargin = binding.streamWebview.isVisible || !isPortrait || !mainViewModel.isFullscreenFlow.value
+                val needsExtraMargin = binding.streamWebview.isVisible || isLandscape || !mainViewModel.isFullscreenFlow.value
                 val extraMargin = when {
                     needsExtraMargin -> 0
                     else             -> insets.getInsets(WindowInsetsCompat.Type.displayCutout()).top
@@ -1054,7 +1062,7 @@ class MainFragment : Fragment() {
 
         setOnFocusChangeListener { _, hasFocus ->
             val isFullscreen = mainViewModel.isFullscreenFlow.value
-            if (!isLandscape) {
+            if (isPortrait) {
                 (activity as? MainActivity)?.setFullScreen(enabled = !hasFocus && isFullscreen, changeActionBarVisibility = false)
                 return@setOnFocusChangeListener
             }
