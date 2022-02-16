@@ -382,6 +382,7 @@ class MainFragment : Fragment() {
         inflater.inflate(R.menu.menu, menu)
     }
 
+    @SuppressLint("PrivateResource")
     override fun onPrepareOptionsMenu(menu: Menu) {
         with(menu) {
             val isLoggedIn = dankChatPreferences.isLoggedIn
@@ -1064,6 +1065,8 @@ class MainFragment : Fragment() {
 
         setOnFocusChangeListener { _, hasFocus ->
             val isFullscreen = mainViewModel.isFullscreenFlow.value
+            mainViewModel.setShowChips(!hasFocus)
+
             if (isPortrait) {
                 (activity as? MainActivity)?.setFullScreen(enabled = !hasFocus && isFullscreen, changeActionBarVisibility = false)
                 return@setOnFocusChangeListener
