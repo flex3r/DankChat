@@ -37,10 +37,10 @@ class OverviewSettingsFragment : MaterialPreferenceFragmentCompat() {
             }
         }
         navController.currentBackStackEntry?.savedStateHandle?.apply {
-            getLiveData<Boolean>(MainFragment.THEME_CHANGED_KEY).observe(viewLifecycleOwner, {
+            getLiveData<Boolean>(MainFragment.THEME_CHANGED_KEY).observe(viewLifecycleOwner) {
                 remove<Boolean>(MainFragment.THEME_CHANGED_KEY)
                 navController.previousBackStackEntry?.savedStateHandle?.set(MainFragment.THEME_CHANGED_KEY, true)
-            })
+            }
         }
 
         val isLoggedIn = dankChatPreferences.isLoggedIn

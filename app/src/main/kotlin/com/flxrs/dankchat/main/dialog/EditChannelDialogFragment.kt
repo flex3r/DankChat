@@ -48,8 +48,7 @@ class EditChannelDialogFragment : DialogFragment() {
         if (trimmedInput.isNotBlank()) {
             with(findNavController()) {
                 getBackStackEntry(R.id.channelsDialogFragment)
-                    .savedStateHandle
-                    .set(ChannelsDialogFragment.RENAME_TAB_REQUEST_KEY, args.channel to trimmedInput)
+                    .savedStateHandle[ChannelsDialogFragment.RENAME_TAB_REQUEST_KEY] = args.channel to trimmedInput
             }
         }
         dismiss()

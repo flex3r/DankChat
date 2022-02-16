@@ -43,8 +43,7 @@ class AddChannelDialogFragment : DialogFragment() {
         if (trimmedInput.isNotBlank()) {
             with(findNavController()) {
                 getBackStackEntry(R.id.mainFragment)
-                    .savedStateHandle
-                    .set(MainFragment.ADD_CHANNEL_REQUEST_KEY, trimmedInput)
+                    .savedStateHandle[MainFragment.ADD_CHANNEL_REQUEST_KEY] = trimmedInput
             }
         }
         dismiss()

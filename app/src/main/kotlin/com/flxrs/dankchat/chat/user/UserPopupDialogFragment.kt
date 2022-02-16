@@ -47,8 +47,7 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
 
                 findNavController()
                     .getBackStackEntry(R.id.mainFragment)
-                    .savedStateHandle
-                    .set(MainFragment.USER_POPUP_RESULT_KEY, result)
+                    .savedStateHandle[MainFragment.USER_POPUP_RESULT_KEY] = result
                 dialog?.dismiss()
             }
 
@@ -156,8 +155,7 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
     private fun setErrorResultAndDismiss(throwable: Throwable?) {
         findNavController()
             .getBackStackEntry(R.id.mainFragment)
-            .savedStateHandle
-            .set(MainFragment.USER_POPUP_RESULT_KEY, UserPopupResult.Error(throwable))
+            .savedStateHandle[MainFragment.USER_POPUP_RESULT_KEY] = UserPopupResult.Error(throwable)
         dialog?.dismiss()
     }
 
