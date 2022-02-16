@@ -150,10 +150,11 @@ class UserPopupViewModel @Inject constructor(
             1 to "30",
             2 to "60",
             3 to "300",
-            4 to "1800",
-            5 to "3600",
-            6 to "86400",
-            7 to "604800",
+            4 to "600",
+            5 to "1800",
+            6 to "3600",
+            7 to "86400",
+            8 to "604800",
         )
     }
 }

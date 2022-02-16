@@ -16,7 +16,7 @@
             android:stepSize="1"
             android:value="0"
             android:valueFrom="0"
-            android:valueTo="7"
+            android:valueTo="8"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/timeout_card"
             app:layout_constraintHorizontal_weight="1"
