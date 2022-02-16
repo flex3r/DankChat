@@ -123,9 +123,7 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
             userAvatarLoading.isVisible = false
             userAvatarCard.isVisible = true
         }
-        userAvatar.loadImage(userState.avatarUrl, placeholder = null, afterLoad = showImage) {
-            scale(Scale.FILL)
-        }
+        userAvatar.loadImage(userState.avatarUrl, placeholder = null, afterLoad = showImage)
         userLoading.isVisible = false
         userGroup.isVisible = true
         userAvatarLoading.isVisible = true
