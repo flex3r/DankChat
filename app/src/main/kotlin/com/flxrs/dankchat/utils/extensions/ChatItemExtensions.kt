@@ -17,7 +17,8 @@ fun List<ChatItem>.replaceWithTimeOuts(clearChatMessage: ClearChatMessage, scrol
         }
 
         if ((clearChatMessage.timestamp - message.timestamp).milliseconds < 5.seconds) {
-            this[idx] = item.copy(message = message.copy(count = message.count + 1))
+            val stackedMessage = message.copy(count = message.count + 1, timestamp = clearChatMessage.timestamp)
+            this[idx] = item.copy(message = stackedMessage)
             addClearChat = false
             break
         }
