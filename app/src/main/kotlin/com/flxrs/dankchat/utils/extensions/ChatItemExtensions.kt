@@ -12,7 +12,7 @@ fun List<ChatItem>.replaceWithTimeOuts(clearChatMessage: ClearChatMessage, scrol
     for (idx in lastIndex downTo end) {
         val item = this[idx]
         val message = item.message
-        if (message !is ClearChatMessage) {
+        if (message !is ClearChatMessage || message.targetUser != clearChatMessage.targetUser) {
             continue
         }
 
