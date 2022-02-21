@@ -72,7 +72,10 @@ class MainViewModel @Inject constructor(
     private val chipsExpanded = MutableStateFlow(false)
 
     private val emotes = currentSuggestionChannel.flatMapLatest { dataRepository.getEmotes(it) }
-    private val recentEmotes = emoteUsageRepository.getRecentUsages()
+    private val recentEmotes = emoteUsageRepository
+        .getRecentUsages()
+        .distinctUntilChanged { old, new -> new.all { newEmote -> old.any { it.emoteId == newEmote.emoteId } } }
+
     private val roomStateText =
         combine(roomStateEnabled, currentSuggestionChannel) { roomStateEnabled, channel -> roomStateEnabled to channel }
             .flatMapLatest { if (it.first) chatRepository.getRoomState(it.second) else flowOf(null) }
