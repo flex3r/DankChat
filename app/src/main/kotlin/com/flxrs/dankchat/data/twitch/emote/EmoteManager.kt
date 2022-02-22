@@ -81,41 +81,6 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         dankChatBadges.addAll(dto)
     }
 
-    suspend fun setTwitchEmotes(oAuth: String, twitchResult: TwitchEmotesDto) = withContext(Dispatchers.Default) {
-        val filtered = twitchResult.sets.filterNot { it.key in userStateEmoteSetIds }
-        val sets = filtered.keys
-            .chunked(25)
-            .map {
-                async {
-                    runCatching { apiManager.getEmoteSets(oAuth, it) }.getOrNull()
-                }
-            }
-            .awaitAll()
-            .asSequence()
-            .filterNotNull()
-            .map { it.sets }
-            .flatten()
-            .distinctBy { it.setId }
-            .associate { it.setId to it.channelId }
-
-        filtered.map { (id, emotes) ->
-            async {
-                val channelId = sets[id]
-                val type = when (id) {
-                    "0", "42" -> EmoteType.GlobalTwitchEmote
-                    else      -> when (channelId) {
-                        null, "0", "19194" -> EmoteType.GlobalTwitchEmote
-                        else               -> apiManager.getUser(oAuth, channelId)?.displayName.twitchEmoteType
-                    }
-                }
-
-                emotes.mapToGenericEmotes(type)
-            }
-        }.awaitAll().flatten().forEach {
-            twitchEmotes[it.code] = it
-        }
-    }
-
     suspend fun loadUserStateEmotes(globalEmoteSetIds: List<String>, followerEmoteSetIds: Map<String, List<String>>) = withContext(Dispatchers.Default) {
         twitchEmotes.clear()
         val combined = (globalEmoteSetIds + followerEmoteSetIds.values.flatten()).distinct()

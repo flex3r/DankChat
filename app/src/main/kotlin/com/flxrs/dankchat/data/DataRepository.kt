@@ -68,19 +68,6 @@ class DataRepository @Inject constructor(
         }
     }
 
-    suspend fun loadTwitchEmotes(oAuth: String, id: String) {
-        if (oAuth.isNotBlank()) {
-            measureTimeAndLog(TAG, "twitch emotes for #$id") {
-                // kraken shutdown inc, so don't handle errors
-                val emotes = runCatching {
-                    apiManager.getUserEmotes(oAuth, id)
-                }.getOrNull()
-
-                emotes?.let { emoteManager.setTwitchEmotes(oAuth, it) }
-            }
-        }
-    }
-
     suspend fun loadDankChatBadges() {
         measureTimeMillis {
             apiManager.getDankChatBadges()?.let { emoteManager.setDankChatBadges(it) }

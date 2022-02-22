@@ -21,7 +21,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 object NetworkModule {
-    private const val KRAKEN_BASE_URL = "https://api.twitch.tv/kraken/"
     private const val SUPIBOT_BASE_URL = "https://supinic.com/api/"
     private const val HELIX_BASE_URL = "https://api.twitch.tv/helix/"
     private const val AUTH_BASE_URL = "https://id.twitch.tv/oauth2/"
@@ -63,15 +62,6 @@ object NetworkModule {
             }
         }
         .build()
-
-    @Singleton
-    @Provides
-    fun provideKrakenApiService(@ApiOkHttpClient client: OkHttpClient): KrakenApiService = Retrofit.Builder()
-        .baseUrl(KRAKEN_BASE_URL)
-        .addConverterFactory(MoshiConverterFactory.create())
-        .client(client)
-        .build()
-        .create(KrakenApiService::class.java)
 
     @Singleton
     @Provides
@@ -171,7 +161,6 @@ object NetworkModule {
         dankChatApiService: DankChatApiService,
         ffzApiService: FFZApiService,
         helixApiService: HelixApiService,
-        krakenApiService: KrakenApiService,
         recentMessagesApiService: RecentMessagesApiService,
         supibotApiService: SupibotApiService,
         authApiService: AuthApiService,
@@ -185,7 +174,6 @@ object NetworkModule {
         dankChatApiService,
         ffzApiService,
         helixApiService,
-        krakenApiService,
         recentMessagesApiService,
         supibotApiService,
         authApiService,

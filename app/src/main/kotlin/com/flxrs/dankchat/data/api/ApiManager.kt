@@ -24,7 +24,6 @@ class ApiManager @Inject constructor(
     private val dankChatApiService: DankChatApiService,
     private val ffzApiService: FFZApiService,
     private val helixApiService: HelixApiService,
-    private val krakenApiService: KrakenApiService,
     private val recentMessagesApiService: RecentMessagesApiService,
     private val supibotApiService: SupibotApiService,
     private val authApiService: AuthApiService,
@@ -56,9 +55,6 @@ class ApiManager @Inject constructor(
     suspend fun getGlobalBadges(oAuth: String): HelixBadgesDto? = helixApiService.getGlobalBadges("Bearer $oAuth").bodyOrNull
     suspend fun getEmoteSets(oAuth: String, setIds: List<String>): HelixEmoteSetsDto? = helixApiService.getEmoteSets("Bearer $oAuth", setIds).bodyOrNull
 
-    suspend fun getUserEmotes(oAuth: String, id: String): TwitchEmotesDto? = krakenApiService.getUserEmotes("OAuth $oAuth", id).bodyOrNull
-
-    suspend fun getUserSet(set: String): DankChatEmoteSetDto? = dankChatApiService.getSet(set).bodyOrNull?.firstOrNull()
     suspend fun getUserSets(sets: List<String>): List<DankChatEmoteSetDto>? = dankChatApiService.getSets(sets.joinToString(separator = ",")).bodyOrNull
     suspend fun getDankChatBadges(): List<DankChatBadgeDto>? = dankChatApiService.getDankChatBadges().bodyOrNull
 

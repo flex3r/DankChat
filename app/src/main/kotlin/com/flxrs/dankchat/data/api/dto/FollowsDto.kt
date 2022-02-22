@@ -13,6 +13,3 @@ data class UserFollowsDto(
 data class UserFollowsDataDto(
     @field:Json(name = "followed_at") val followedAt: String
 )
-
-@Keep
-data class UserFollowRequestBody(val from_id: String, val to_id: String)

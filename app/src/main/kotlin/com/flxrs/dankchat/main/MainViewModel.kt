@@ -322,10 +322,6 @@ class MainViewModel @Inject constructor(
                     }
                 }
 
-                supervisorScope {
-                    launch(handler) { dataRepository.loadTwitchEmotes(fixedOauth, id) }
-                }
-
                 // global emote suggestions for whisper tab
                 dataRepository.setEmotesForSuggestions("w")
                 loadChattersAndMessages(channelList, loadHistory, isUserChange, handler)
@@ -458,9 +454,6 @@ class MainViewModel @Inject constructor(
             withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
                 val userState = chatRepository.getLatestValidUserState()
                 dataRepository.loadUserStateEmotes(userState.globalEmoteSets, userState.followerEmoteSets)
-            }
-            supervisorScope {
-                launch(handler) { dataRepository.loadTwitchEmotes(fixedOAuth, id) }
             }
 
             chatRepository.partChannel(channel = "jtv", unListenFromPubSub = false)
