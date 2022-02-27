@@ -193,7 +193,7 @@ data class WhisperMessage(
             val (overlayEmotesAdjustedMessage, emotes) = emoteManager.parseEmotes(appendedSpaceAdjustedMessage, channel = "", emotesTag, appendedSpaces, removedSpaces)
 
             return WhisperMessage(
-                timestamp = data.timestamp,
+                timestamp = data.timestamp * 1_000L, // PubSub uses seconds instead of millis, nice
                 id = data.messageId,
                 userId = data.userId,
                 name = data.tags.name,
