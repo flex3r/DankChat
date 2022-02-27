@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.utils.extensions
 
-import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.text.SpannableString
 import android.view.View

@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.main
 
-import android.annotation.SuppressLint
 import android.widget.TextView
 import androidx.annotation.AttrRes
 import androidx.core.view.get
@@ -8,7 +7,6 @@ import com.flxrs.dankchat.R
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.tabs.TabLayout
 
-@SuppressLint("PrivateResource")
 class TabSelectionListener : TabLayout.OnTabSelectedListener {
     override fun onTabReselected(tab: TabLayout.Tab?) = Unit
 
@@ -21,7 +19,6 @@ class TabSelectionListener : TabLayout.OnTabSelectedListener {
     }
 }
 
-@SuppressLint("PrivateResource")
 fun TabLayout.Tab.setInitialColor() {
     val textView = this.view[1] as? TextView ?: return
     val attr = when {

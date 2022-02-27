@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.main
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.*
 import android.content.res.ColorStateList
@@ -124,7 +123,6 @@ class MainFragment : Fragment() {
         }
     }
 
-    @SuppressLint("PrivateResource")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         tabAdapter = ChatTabAdapter(this)
         emoteMenuAdapter = EmoteMenuAdapter(::insertEmote)
@@ -382,7 +380,6 @@ class MainFragment : Fragment() {
         inflater.inflate(R.menu.menu, menu)
     }
 
-    @SuppressLint("PrivateResource")
     override fun onPrepareOptionsMenu(menu: Menu) {
         with(menu) {
             val isLoggedIn = dankChatPreferences.isLoggedIn

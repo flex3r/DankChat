@@ -51,7 +51,6 @@ import com.google.android.material.color.MaterialColors
 import kotlinx.coroutines.*
 import kotlin.math.roundToInt
 
-@SuppressLint("PrivateResource")
 class ChatAdapter(
     private val emoteManager: EmoteManager,
     private val onListChanged: (position: Int) -> Unit,
