@@ -39,10 +39,10 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
             }
 
             userMention.setOnClickListener {
-                val displayName = viewModel.displayNameOrNull.orEmpty()
+                val targetUser = viewModel.userNameOrNull ?: args.targetUserName
                 val result = when {
-                    args.isWhisperPopup -> UserPopupResult.Whisper(displayName)
-                    else                -> UserPopupResult.Mention(displayName)
+                    args.isWhisperPopup -> UserPopupResult.Whisper(targetUser)
+                    else                -> UserPopupResult.Mention(targetUser)
                 }
 
                 findNavController()

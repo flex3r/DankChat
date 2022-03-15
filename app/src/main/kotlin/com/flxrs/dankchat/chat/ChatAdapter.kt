@@ -286,8 +286,13 @@ class ChatAdapter(
         spannable.append(message)
 
         val userClickableSpan = object : LongClickableSpan() {
-            override fun onClick(v: View) = onUserClicked(userId, displayName, id, "", false)
-            override fun onLongClick(view: View) = onUserClicked(userId, displayName, id, "", true)
+            val mentionName = when {
+                name.equals(displayName, ignoreCase = true) -> displayName
+                else -> name
+            }
+
+            override fun onClick(v: View) = onUserClicked(userId, mentionName, id, "", false)
+            override fun onLongClick(view: View) = onUserClicked(userId, mentionName, id, "", true)
             override fun updateDrawState(ds: TextPaint) {
                 ds.isUnderlineText = false
                 ds.color = normalizedColor
@@ -493,8 +498,13 @@ class ChatAdapter(
         // clicking usernames
         if (fullName.isNotBlank()) {
             val userClickableSpan = object : LongClickableSpan() {
-                override fun onClick(v: View) = onUserClicked(userId, displayName, id, channel, false)
-                override fun onLongClick(view: View) = onUserClicked(userId, displayName, id, channel, true)
+                val mentionName = when {
+                    name.equals(displayName, ignoreCase = true) -> displayName
+                    else -> name
+                }
+
+                override fun onClick(v: View) = onUserClicked(userId, mentionName, id, "", false)
+                override fun onLongClick(view: View) = onUserClicked(userId, mentionName, id, "", true)
                 override fun updateDrawState(ds: TextPaint) {
                     ds.isUnderlineText = false
                     ds.color = normalizedColor
