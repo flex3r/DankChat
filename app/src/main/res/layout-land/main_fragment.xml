@@ -62,8 +62,7 @@
                     android:layout_height="0dp"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/chat_viewpager"
-                    app:layout_constraintHorizontal_weight="1.3"
+                    app:layout_constraintEnd_toStartOf="@id/split_guideline"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/appbar_layout"
                     tools:visibility="visible" />
@@ -111,6 +110,29 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/toggle_stream" />
 
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/split_guideline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.5" />
+
+                <ImageView
+                    android:id="@+id/split_thumb"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:elevation="4dp"
+                    android:rotation="90"
+                    android:scaleType="center"
+                    android:scaleX="1.5"
+                    android:scaleY="1.5"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/chat_viewpager"
+                    app:layout_constraintStart_toEndOf="@id/stream_webview"
+                    app:layout_constraintTop_toBottomOf="@id/appbar_layout"
+                    app:srcCompat="@drawable/ic_drag_handle"
+                    app:tint="?attr/colorPrimary" />
+
                 <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/chat_viewpager"
                     android:layout_width="0dp"
@@ -118,8 +140,7 @@
                     android:visibility="@{vm.shouldShowViewPager ? View.VISIBLE : View.GONE}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_weight="1"
-                    app:layout_constraintStart_toEndOf="@id/stream_webview"
+                    app:layout_constraintStart_toEndOf="@id/split_guideline"
                     app:layout_constraintTop_toBottomOf="@id/appbar_layout" />
 
                 <TextView

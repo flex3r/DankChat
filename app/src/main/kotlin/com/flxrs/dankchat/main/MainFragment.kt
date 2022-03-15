@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.main
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.*
 import android.content.res.ColorStateList
@@ -123,6 +124,7 @@ class MainFragment : Fragment() {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         tabAdapter = ChatTabAdapter(this)
         emoteMenuAdapter = EmoteMenuAdapter(::insertEmote)
@@ -155,6 +157,20 @@ class MainFragment : Fragment() {
             }
             changeRoomstate.setOnClickListener { showRoomStateDialog() }
             showChips.setOnClickListener { mainViewModel.toggleChipsExpanded() }
+            splitThumb?.setOnTouchListener { _, event ->
+                val guideline = splitGuideline ?: return@setOnTouchListener false
+                when (event.actionMasked) {
+                    MotionEvent.ACTION_MOVE -> {
+                        val width = resources.displayMetrics.widthPixels
+                        guideline.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                            guidePercent = (event.rawX / width).coerceIn(MIN_GUIDELINE_PERCENT, MAX_GUIDELINE_PERCENT)
+                        }
+                        true
+                    }
+                    MotionEvent.ACTION_DOWN -> true
+                    else                    -> false
+                }
+            }
         }
 
         mainViewModel.apply {
@@ -227,6 +243,19 @@ class MainFragment : Fragment() {
             collectFlow(channels) {
                 if (!it.isNullOrEmpty()) {
                     fetchStreamInformation()
+                }
+            }
+            collectFlow(currentStreamedChannel) {
+                if (!isLandscape) {
+                    return@collectFlow
+                }
+
+                binding.splitThumb?.isVisible = it.isNotBlank()
+                binding.splitGuideline?.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                    guidePercent = when {
+                        it.isBlank() -> DISABLED_GUIDELINE_PERCENT
+                        else         -> DEFAULT_GUIDELINE_PERCENT
+                    }
                 }
             }
         }
@@ -1085,6 +1114,11 @@ class MainFragment : Fragment() {
     }
 
     companion object {
+        private const val DISABLED_GUIDELINE_PERCENT = 0f
+        private const val DEFAULT_GUIDELINE_PERCENT = 0.6f
+        private const val MAX_GUIDELINE_PERCENT = 0.8f
+        private const val MIN_GUIDELINE_PERCENT = 0.2f
+
         const val LOGOUT_REQUEST_KEY = "logout_key"
         const val LOGIN_REQUEST_KEY = "login_key"
         const val THEME_CHANGED_KEY = "theme_changed_key"
