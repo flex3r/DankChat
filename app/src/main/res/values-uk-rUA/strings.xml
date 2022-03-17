@@ -159,6 +159,11 @@
   <string name="restart">"Перезапустити"</string>
   <string name="restart_required">"Необхідно перезапустити програму для застосування змін"</string>
   <string name="resume_scroll">"Відновити прокручування"</string>
+  <string name="roomstate_emote">"Тільки смайлики"</string>
+  <string name="roomstate_follow">"Тільки фоловери"</string>
+  <string name="roomstate_r9k">"Режим R9K"</string>
+  <string name="roomstate_slow">"Повільний режим"</string>
+  <string name="roomstate_subs">"Тільки підписники"</string>
   <string name="send_hint">"Відправити повідомлення"</string>
   <string name="settings">"Налаштування"</string>
   <string name="snackbar_data_load_failed_cause">"Помилка завантаження даних: %1$s"</string>

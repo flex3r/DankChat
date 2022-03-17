@@ -23,6 +23,8 @@
   <string name="confirm_user_delete_message">"Bu mesajı silmek istediğinizden emin misiniz?"</string>
   <string name="confirm_user_delete_positive_button">"Sil"</string>
   <string name="confirm_user_delete_title">"Mesaj silmeyi onayla"</string>
+  <string name="confirm_user_roomstate_title">"Sohbet modlarını güncelle"</string>
+  <string name="confirm_user_timeout_title">"Zaman aşımını onayla"</string>
   <string name="confirm_user_unfollow_message">"Takibi bırakmak istediğinizden emin misiniz?"</string>
   <string name="confirm_user_unfollow_title">"Takibi bırakmayı onayla"</string>
   <string name="dialog_cancel">"İptal"</string>
@@ -34,6 +36,7 @@
   <string name="emote_menu_hint">"İfade menüsünü aç"</string>
   <string name="emote_menu_tab_channel">"Kanal"</string>
   <string name="emote_menu_tab_global">"Küresel"</string>
+  <string name="emote_menu_tab_recent">"Son kullanılanlar"</string>
   <string name="emote_menu_tab_subs">"Abonelikler"</string>
   <string name="error_dialog_copy">"Kopyala"</string>
   <string name="error_dialog_title">"Hata yakalandı: %1$s"</string>
@@ -78,6 +81,7 @@ Servis bu hizmeti verebilmek için sizin (ve başkalarının) ziyaret ettiği ka
   </plurals>
   <string name="preference_about_header">"Hakkında"</string>
   <string name="preference_about_summary">"DankChat %1$s @flex3rs ve katılımcılar tarafından yapıldı"</string>
+  <string name="preference_about_tos">"Twitch hizmet şartları ile kullanıcı politikası:"</string>
   <string name="preference_animate_gifs_title">"GIF\'leri hareketlendir"</string>
   <string name="preference_appearance_header">"Görünüm"</string>
   <string name="preference_blacklist_summary">"Gizlemek için özel ifadeler ayarla"</string>
@@ -148,6 +152,8 @@ Servis bu hizmeti verebilmek için sizin (ve başkalarının) ziyaret ettiği ka
   <string name="preference_tts_title">"TTS\'i etkinleştir"</string>
   <string name="preference_uploader_configure_title">"Yükleyiciyi ayarla"</string>
   <string name="preference_uploader_header">"Medya yükleyici"</string>
+  <string name="preference_uploader_recent_uploads_title">"Son yüklemeler"</string>
+  <string name="preference_uploader_title">"Özel medya yükleyici"</string>
   <string name="preference_user_long_click_summary_off">"Normal tıklama bahseder, uzun tıklama pencereyi açar"</string>
   <string name="preference_user_long_click_summary_on">"Normal tıklama pencereyi açar, uzun tıklama bahseder"</string>
   <string name="preference_user_long_click_title">"Kullanıcı adına uzunca tıklanıncaki davranış"</string>
@@ -155,6 +161,7 @@ Servis bu hizmeti verebilmek için sizin (ve başkalarının) ziyaret ettiği ka
   <string name="preference_visible_emotes_title">"Görünür üçüncü taraf ifadeler"</string>
   <string name="recent_upload_deletion_link">"Silme bağlantısı:
 %1$s"</string>
+  <string name="recent_uploads_clear">"Yüklemeleri temizle"</string>
   <string name="reconnect">"Yeniden bağlan"</string>
   <string name="record_video">"Video çek"</string>
   <string name="reload_emotes">"İfadeleri yenile"</string>
@@ -190,7 +197,11 @@ Servis bu hizmeti verebilmek için sizin (ve başkalarının) ziyaret ettiği ka
   <string name="tts_ignore_list_remove_user">"Kullanıcıyı kaldır"</string>
   <string name="tts_ignore_list_user_hint">"Kullanıcı"</string>
   <string name="upload_media">"Medya yükle"</string>
+  <string name="uploader_add_header_name">"Ad"</string>
+  <string name="uploader_add_header_value">"Değer"</string>
   <string name="uploader_reset">"Varsayılanlara sıfırla"</string>
+  <string name="uploader_title">"Özel medya yükleyici"</string>
+  <string name="uploader_url">"Yükleme URL\'i"</string>
   <string name="uploading_image">"Resim yükleniyor"</string>
   <string name="user_popup_avatar_description">"Profil resmi"</string>
   <string name="user_popup_block">"Engelle"</string>
