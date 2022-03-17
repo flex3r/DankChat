@@ -384,7 +384,7 @@ class ChatRepository @Inject constructor(
         return "PRIVMSG #$channel :$messageWithEmojiFix"
     }
 
-    private fun onMessage(msg: IrcMessage): List<ChatItem>? {
+    private suspend fun onMessage(msg: IrcMessage): List<ChatItem>? {
         when (msg.command) {
             "CLEARCHAT"       -> handleClearChat(msg)
             "ROOMSTATE"       -> handleRoomState(msg)
@@ -397,7 +397,7 @@ class ChatRepository @Inject constructor(
         return null
     }
 
-    private fun onWriterMessage(message: IrcMessage) {
+    private suspend fun onWriterMessage(message: IrcMessage) {
         when (message.command) {
             "USERSTATE"       -> handleUserState(message)
             "GLOBALUSERSTATE" -> handleGlobalUserState(message)
@@ -536,10 +536,10 @@ class ChatRepository @Inject constructor(
         _channelMentionCount.increment("w", 1)
     }
 
-    private fun handleMessage(ircMessage: IrcMessage) = scope.launch {
+    private suspend fun handleMessage(ircMessage: IrcMessage) {
         val userId = ircMessage.tags["user-id"]
         if (userId in blockList) {
-            return@launch
+            return
         }
 
         val rewardId = ircMessage.tags["custom-reward-id"]
@@ -549,10 +549,9 @@ class ChatRepository @Inject constructor(
                     ?.also { knownRewards.remove(rewardId) }
                     ?: run {
                         withTimeoutOrNull(PUBSUB_TIMEOUT) {
-                            val redemption = pubSubManager.messages.first {
+                            pubSubManager.messages.first {
                                 it is PubSubMessage.PointRedemption && it.data.reward.id == rewardId
                             } as PubSubMessage.PointRedemption
-                            redemption
                         }
                     }
 
@@ -573,7 +572,7 @@ class ChatRepository @Inject constructor(
                 }
 
                 if (blacklistEntries.matches(it.message, it.name to it.displayName, it.emotes)) {
-                    return@launch
+                    return
                 }
 
                 val withMentions = it.checkForMention(name, customMentionEntries)
@@ -585,7 +584,7 @@ class ChatRepository @Inject constructor(
             }
 
         if (items.isNullOrEmpty()) {
-            return@launch
+            return
         }
 
         val mainMessage = items.first().message as TwitchMessage // TODO ugh
@@ -596,7 +595,7 @@ class ChatRepository @Inject constructor(
                     current.addAndLimit(items, scrollBackLength)
                 }
             }
-            return@launch
+            return
         }
 
         messages[channel]?.update { current ->
@@ -701,7 +700,7 @@ class ChatRepository @Inject constructor(
         private val INVISIBLE_CHAR = 0x000E0000.codePointAsString
         private val ESCAPE_TAG = 0x000E0002.codePointAsString
         private const val USER_CACHE_SIZE = 500
-        private const val PUBSUB_TIMEOUT = 5 * 1000L
+        private const val PUBSUB_TIMEOUT = 1000L
 
         val ESCAPE_TAG_REGEX = "(?<!$ESCAPE_TAG)$ESCAPE_TAG".toRegex()
         const val ZERO_WIDTH_JOINER = 0x200D.toChar().toString()

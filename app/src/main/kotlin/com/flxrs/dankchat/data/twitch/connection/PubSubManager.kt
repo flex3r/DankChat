@@ -130,7 +130,7 @@ class PubSubManager @Inject constructor(
         events.collect {
             when (it) {
                 is PubSubEvent.Message -> receiveChannel.send(it.message)
-                else                   -> {}
+                else                   -> Unit
             }
         }
     }
