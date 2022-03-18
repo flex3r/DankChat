@@ -133,6 +133,7 @@ class LoginFragment : Fragment() {
                         oAuthKey = "oauth:$oAuth"
                         userName = validateDto.login.lowercase(Locale.getDefault())
                         userIdString = validateDto.userId
+                        isLoggedIn = true
                     }
                     true
                 }

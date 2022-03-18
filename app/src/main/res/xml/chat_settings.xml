@@ -60,7 +60,7 @@
             app:iconSpaceReserved="false" />
 
         <MultiSelectListPreference
-            android:defaultValue="@array/emotes_entry_values"
+            android:defaultValue="@array/emotes_entry_values_default"
             android:entries="@array/emotes_entries"
             android:entryValues="@array/emotes_entry_values"
             android:key="@string/preference_visible_emotes_key"

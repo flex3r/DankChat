@@ -1,7 +1,5 @@
 package com.flxrs.dankchat.data.state
 
-import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
-
 sealed class DataLoadingState {
 
     object None : DataLoadingState()
@@ -11,15 +9,10 @@ sealed class DataLoadingState {
     data class Failed(val errorMessage: String, val parameters: Parameters) : DataLoadingState()
 
     data class Parameters(
-        val oAuth: String = "",
-        val id: String = "",
-        val name: String = "",
         val channels: List<String> = emptyList(),
         val isReloadEmotes: Boolean = false,
         val isUserChange: Boolean = false,
         val loadTwitchData: Boolean = false,
-        val loadThirdPartyData: Set<ThirdPartyEmoteType> = emptySet(),
-        val loadHistory: Boolean = false,
         val loadSupibot: Boolean = false
     )
 }

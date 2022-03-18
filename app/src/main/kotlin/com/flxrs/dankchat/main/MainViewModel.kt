@@ -18,6 +18,8 @@ import com.flxrs.dankchat.data.twitch.emote.EmoteType
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.data.twitch.message.RoomState
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.ui.ChatSettingsFragment
 import com.flxrs.dankchat.utils.extensions.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -34,7 +36,8 @@ class MainViewModel @Inject constructor(
     private val dataRepository: DataRepository,
     private val commandRepository: CommandRepository,
     private val emoteUsageRepository: EmoteUsageRepository,
-    private val apiManager: ApiManager
+    private val apiManager: ApiManager,
+    private val dankChatPreferenceStore: DankChatPreferenceStore,
 ) : ViewModel() {
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, t ->
@@ -266,40 +269,29 @@ class MainViewModel @Inject constructor(
         get() = chatRepository.getRoomState(currentSuggestionChannel.value).firstValue
 
     fun loadData(dataLoadingParameters: DataLoadingState.Parameters) = loadData(
-        oAuth = dataLoadingParameters.oAuth,
-        id = dataLoadingParameters.id,
-        name = dataLoadingParameters.name,
         isUserChange = dataLoadingParameters.isUserChange,
         loadTwitchData = dataLoadingParameters.loadTwitchData,
-        loadThirdPartyData = dataLoadingParameters.loadThirdPartyData,
-        loadHistory = dataLoadingParameters.loadHistory,
         loadSupibot = dataLoadingParameters.loadSupibot
     )
 
     fun loadData(
-        oAuth: String,
-        id: String,
-        name: String,
         channelList: List<String> = channels.value.orEmpty(),
         isUserChange: Boolean,
         loadTwitchData: Boolean,
-        loadThirdPartyData: Set<ThirdPartyEmoteType>,
-        loadHistory: Boolean,
-        loadSupibot: Boolean,
-        scrollBackLength: Int? = null
+        loadSupibot: Boolean = dankChatPreferenceStore.shouldLoadSupibot,
+        loadHistory: Boolean = dankChatPreferenceStore.shouldLoadHistory
     ) {
-        scrollBackLength?.let { chatRepository.scrollBackLength = it }
+        val oAuth = dankChatPreferenceStore.oAuthKey.orEmpty()
+        val id = dankChatPreferenceStore.userIdString.orEmpty()
+        val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(dankChatPreferenceStore.scrollbackLength)
+        val loadThirdPartyData = dankChatPreferenceStore.visibleThirdPartyEmotes
+        scrollBackLength.let { chatRepository.scrollBackLength = it }
 
         viewModelScope.launch {
             val parameters = DataLoadingState.Parameters(
-                oAuth = oAuth,
-                id = id,
-                name = name,
                 channels = channelList,
                 isReloadEmotes = isUserChange,
                 loadTwitchData = loadTwitchData,
-                loadThirdPartyData = loadThirdPartyData,
-                loadHistory = loadHistory,
                 loadSupibot = loadSupibot
             )
             val loadingState = DataLoadingState.Loading(parameters)
@@ -412,29 +404,27 @@ class MainViewModel @Inject constructor(
 
     fun updateChannels(channels: List<String>) = chatRepository.updateChannels(channels)
 
-    fun closeAndReconnect(name: String, oAuth: String, userId: String, loadTwitchData: Boolean = false, loadThirdPartyData: Set<ThirdPartyEmoteType>) {
-        chatRepository.closeAndReconnect(name, oAuth)
+    fun closeAndReconnect(loadTwitchData: Boolean = false) {
+        val name = dankChatPreferenceStore.userName.orEmpty()
+        val oAuth = dankChatPreferenceStore.oAuthKey.orEmpty()
 
-        if (loadTwitchData && oAuth.isNotBlank()) loadData(
-            oAuth = oAuth,
-            id = userId,
-            name = name,
-            channelList = channels.value.orEmpty(),
-            isUserChange = true,
-            loadTwitchData = true,
-            loadThirdPartyData = loadThirdPartyData,
-            loadHistory = false,
-            loadSupibot = false
-        )
+        chatRepository.closeAndReconnect(name, oAuth)
+        if (loadTwitchData && oAuth.isNotBlank()) {
+            loadData(
+                isUserChange = true,
+                loadTwitchData = true,
+                loadHistory = false,
+                loadSupibot = false
+            )
+        }
     }
 
-    fun reloadEmotes(channel: String, oAuth: String, id: String, loadThirdPartyData: Set<ThirdPartyEmoteType>) = viewModelScope.launch {
+    fun reloadEmotes(channel: String) = viewModelScope.launch {
+        val oAuth = dankChatPreferenceStore.oAuthKey.orEmpty()
+        val loadThirdPartyData = dankChatPreferenceStore.visibleThirdPartyEmotes
         val parameters = DataLoadingState.Parameters(
-            oAuth = oAuth,
-            id = id,
             channels = listOf(channel),
             isReloadEmotes = true,
-            loadThirdPartyData = loadThirdPartyData,
         )
         _dataLoadingState.emit(DataLoadingState.Loading(parameters = parameters))
 

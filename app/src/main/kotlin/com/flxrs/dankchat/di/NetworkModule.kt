@@ -185,5 +185,5 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideEmoteManager(apiManager: ApiManager): EmoteManager = EmoteManager(apiManager)
+    fun provideEmoteManager(apiManager: ApiManager, preferenceStore: DankChatPreferenceStore): EmoteManager = EmoteManager(apiManager, preferenceStore)
 }

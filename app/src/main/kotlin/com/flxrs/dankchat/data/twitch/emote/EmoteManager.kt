@@ -6,14 +6,17 @@ import android.util.LruCache
 import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.data.api.dto.*
 import com.flxrs.dankchat.data.twitch.badge.BadgeSet
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.supplementaryCodePointPositions
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.withContext
 import pl.droidsonroids.gif.MultiCallback
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 import javax.inject.Inject
 
-class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
+class EmoteManager @Inject constructor(private val apiManager: ApiManager, private val preferences: DankChatPreferenceStore) {
     private val twitchEmotes = ConcurrentHashMap<String, GenericEmote>()
     private var userStateEmoteSetIds: List<String> = emptyList()
 
@@ -151,10 +154,10 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
         if (sevenTvResult.isEmpty()) return@withContext
 
         sevenTVEmotes[channel] = sevenTvResult
-            .filterNot { SevenTVEmoteVisibility.UNLISTED in it.visibility }
-            .map { emote ->
+            .filterUnlistedIfEnabled()
+            .associate { emote ->
                 emote.name to parseSevenTVEmote(emote, EmoteType.ChannelSevenTVEmote)
-            }.toMap()
+            }
     }
 
     suspend fun setSevenTVGlobalEmotes(sevenTvResult: List<SevenTVEmoteDto>) = withContext(Dispatchers.Default) {
@@ -162,7 +165,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
 
         globalSevenTVEmotes.clear()
         sevenTvResult
-            .filterNot { SevenTVEmoteVisibility.UNLISTED in it.visibility }
+            .filterUnlistedIfEnabled()
             .forEach { emote ->
                 globalSevenTVEmotes[emote.name] = parseSevenTVEmote(emote, EmoteType.GlobalSevenTVEmote)
             }
@@ -391,7 +394,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
     }
 
     private fun parseSevenTVEmote(emote: SevenTVEmoteDto, type: EmoteType): GenericEmote {
-        val urls = emote.urls.map { (size, url) -> size to url }.toMap()
+        val urls = emote.urls.associate { (size, url) -> size to url }
         return GenericEmote(
             code = emote.name,
             url = urls.getValue("4"),
@@ -401,6 +404,11 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager) {
             emoteType = type,
             isOverlayEmote = SevenTVEmoteVisibility.ZERO_WIDTH in emote.visibility
         )
+    }
+
+    private fun List<SevenTVEmoteDto>.filterUnlistedIfEnabled(): List<SevenTVEmoteDto> = when {
+        preferences.unlistedSevenTVEmotesEnabled -> this
+        else                                     -> filterNot { SevenTVEmoteVisibility.UNLISTED in it.visibility }
     }
 
     companion object {

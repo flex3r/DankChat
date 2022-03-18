@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.preferences.command.CommandItem
 import com.flxrs.dankchat.preferences.upload.ImageUploader
 import com.squareup.moshi.Moshi
@@ -86,9 +87,6 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
                 putString(UPLOADER_DELETION_LINK, value.deletionLinkPattern)
             }
         }
-    var lastUploadedDeletionLink: String?
-        get() = dankChatPreferences.getString(UPLOADER_LAST_IMAGE_DELETION, null)
-        set(value) = dankChatPreferences.edit { putString(UPLOADER_LAST_IMAGE_DELETION, value) }
 
     val commandsAsFlow: Flow<List<CommandItem.Entry>> = callbackFlow {
         val commandsKey = context.getString(R.string.preference_commands_key)
@@ -103,6 +101,27 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
         defaultPreferences.registerOnSharedPreferenceChangeListener(listener)
         awaitClose { defaultPreferences.unregisterOnSharedPreferenceChangeListener(listener) }
     }
+
+    val visibleThirdPartyEmotes: Set<ThirdPartyEmoteType>
+        get() {
+            val entries = defaultPreferences.getStringSet(
+                context.getString(R.string.preference_visible_emotes_key),
+                context.resources.getStringArray(R.array.emotes_entry_values).toSet()
+            ).orEmpty()
+            return ThirdPartyEmoteType.mapFromPreferenceSet(entries)
+        }
+
+    val unlistedSevenTVEmotesEnabled: Boolean
+        get() = ThirdPartyEmoteType.UnlistedSevenTV in visibleThirdPartyEmotes
+
+    val shouldLoadHistory: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_load_message_history_key), true)
+
+    val shouldLoadSupibot: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_supibot_suggestions_key), false)
+
+    val scrollbackLength: Int
+        get() = defaultPreferences.getInt(context.getString(R.string.preference_scrollback_length_key), 10)
 
     fun clearLogin() = dankChatPreferences.edit {
         putBoolean(LOGGED_IN_KEY, false)
