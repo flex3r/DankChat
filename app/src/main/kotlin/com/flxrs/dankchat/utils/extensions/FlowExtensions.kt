@@ -1,18 +1,20 @@
 package com.flxrs.dankchat.utils.extensions
 
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 inline fun <T> Fragment.collectFlow(flow: Flow<T>, crossinline action: (T) -> Unit) {
-    flow.flowWithLifecycle(lifecycle)
-        .onEach { action(it) }
-        .launchIn(lifecycleScope)
+    viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            flow.collect { action(it) }
+        }
+    }
 }
 
 fun <T> mutableSharedFlowOf(
