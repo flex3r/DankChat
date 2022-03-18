@@ -39,6 +39,10 @@ class MentionFragment : Fragment() {
             }.apply { attach() }
         }
 
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mentionViewModel.apply {
             collectFlow(hasMentions) {
                 when {
@@ -54,8 +58,6 @@ class MentionFragment : Fragment() {
                 }
             }
         }
-
-        return binding.root
     }
 
     override fun onDestroyView() {

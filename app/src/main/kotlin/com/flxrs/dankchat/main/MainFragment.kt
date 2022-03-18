@@ -32,7 +32,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
@@ -172,6 +171,12 @@ class MainFragment : Fragment() {
             }
         }
 
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        initPreferences(view.context)
+
         mainViewModel.apply {
             collectFlow(imageUploadEventFlow, ::handleImageUploadState)
             collectFlow(dataLoadingEventFlow, ::handleDataLoadingState)
@@ -258,12 +263,6 @@ class MainFragment : Fragment() {
                 }
             }
         }
-
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        initPreferences(view.context)
 
         val navBackStackEntry = navController.getBackStackEntry(R.id.mainFragment)
         val handle = navBackStackEntry.savedStateHandle

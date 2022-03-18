@@ -29,9 +29,11 @@ import dagger.hilt.android.AndroidEntryPoint
 class UserPopupDialogFragment : BottomSheetDialogFragment() {
     private val args: UserPopupDialogFragmentArgs by navArgs()
     private val viewModel: UserPopupViewModel by viewModels()
+    private var bindingRef: UserPopupBottomsheetBinding? = null
+    private val binding get() = bindingRef!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val binding = UserPopupBottomsheetBinding.inflate(inflater, container, false).apply {
+        bindingRef = UserPopupBottomsheetBinding.inflate(inflater, container, false).apply {
             lifecycleOwner = viewLifecycleOwner
             userMention.text = when {
                 args.isWhisperPopup -> getString(R.string.user_popup_whisper)
@@ -87,6 +89,10 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
             }
         }
 
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         collectFlow(viewModel.userPopupState) {
             when (it) {
                 is UserPopupState.Loading     -> binding.showLoadingState()
@@ -100,16 +106,15 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
             binding.moderationGroup.isVisible = it
         }
 
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
         dialog?.takeIf { isLandscape }?.let {
             val sheet = it as BottomSheetDialog
             sheet.behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bindingRef = null
     }
 
     private fun UserPopupBottomsheetBinding.showLoadingState() {
