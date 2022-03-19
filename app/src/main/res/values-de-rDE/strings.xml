@@ -164,6 +164,8 @@
   <string name="preference_tts_title">"TTS aktivieren"</string>
   <string name="preference_tts_user_ignore_list_summary">"Liste von Nutzern/Konten, die ignoriert werden"</string>
   <string name="preference_tts_user_ignore_list_title">"Ignorierte Nutzer"</string>
+  <string name="preference_unlisted_emotes_summary">"Deaktiviert das Filtern von nicht genehmigten oder nicht gelisteten Emotes"</string>
+  <string name="preference_unlisted_emotes_title">"Zeige nicht gelistete Emotes"</string>
   <string name="preference_uploader_configure_title">"Upload konfigurieren"</string>
   <string name="preference_uploader_header">"Medienupload"</string>
   <string name="preference_uploader_recent_uploads_title">"Letzte Uploads"</string>
