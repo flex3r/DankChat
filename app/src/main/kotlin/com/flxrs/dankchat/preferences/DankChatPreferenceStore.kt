@@ -112,7 +112,7 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
         }
 
     val unlistedSevenTVEmotesEnabled: Boolean
-        get() = ThirdPartyEmoteType.UnlistedSevenTV in visibleThirdPartyEmotes
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_unlisted_emotes_key), false)
 
     val shouldLoadHistory: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_load_message_history_key), true)
@@ -278,7 +278,6 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
         private const val UPLOADER_HEADERS = "uploaderHeaders"
         private const val UPLOADER_IMAGE_LINK = "uploaderImageLink"
         private const val UPLOADER_DELETION_LINK = "uploaderDeletionLink"
-        private const val UPLOADER_LAST_IMAGE_DELETION = "uploaderImageLastDeletion"
 
         private const val UPLOADER_URL_DEFAULT = "https://i.nuuls.com/upload"
         private const val UPLOADER_FORM_FIELD_DEFAULT = "file"

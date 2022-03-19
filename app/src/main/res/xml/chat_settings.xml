@@ -60,11 +60,18 @@
             app:iconSpaceReserved="false" />
 
         <MultiSelectListPreference
-            android:defaultValue="@array/emotes_entry_values_default"
+            android:defaultValue="@array/emotes_entry_values"
             android:entries="@array/emotes_entries"
             android:entryValues="@array/emotes_entry_values"
             android:key="@string/preference_visible_emotes_key"
             android:title="@string/preference_visible_emotes_title"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="@string/preference_unlisted_emotes_key"
+            android:summary="@string/preference_unlisted_emotes_summary"
+            android:title="@string/preference_unlisted_emotes_title"
             app:iconSpaceReserved="false" />
 
         <SwitchPreferenceCompat

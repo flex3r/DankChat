@@ -283,6 +283,9 @@
     <string name="preference_theme_title">Theme</string>
     <string name="preference_dark_theme_entry_title">Dark theme</string>
     <string name="preference_light_theme_entry_title">Light theme</string>
+    <string name="preference_unlisted_emotes_key" translatable="false">unlisted_emotes_key</string>
+    <string name="preference_unlisted_emotes_title">Allow unlisted emotes</string>
+    <string name="preference_unlisted_emotes_summary">Disables filtering of unapproved or unlisted emotes</string>
 
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>

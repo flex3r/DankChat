@@ -3,17 +3,16 @@ package com.flxrs.dankchat.preferences.ui
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.view.updateLayoutParams
-import androidx.preference.MultiSelectListPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceManager
-import androidx.preference.SeekBarPreference
+import androidx.preference.*
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.databinding.CommandsBottomsheetBinding
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.main.MainActivity
@@ -47,6 +46,7 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.chat_settings, rootKey)
         findPreference<SeekBarPreference>(getString(R.string.preference_scrollback_length_key))?.apply {
@@ -56,19 +56,35 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
                 true
             }
         }
-        findPreference<MultiSelectListPreference>(getString(R.string.preference_visible_emotes_key))?.apply {
+        val allowUnlistedEmotesPreference = findPreference<SwitchPreferenceCompat>(getString(R.string.preference_unlisted_emotes_key))?.apply {
             setOnPreferenceChangeListener { _, _ ->
-                view?.showLongSnackbar(getString(R.string.restart_required)) {
-                    setAction(R.string.restart) {
-                        // KKona
-                        val restartIntent = Intent(context, MainActivity::class.java).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                        }
-                        context.startActivity(restartIntent)
-                        Runtime.getRuntime().exit(0)
-                    }
-                }
+                restartRequired()
                 true
+            }
+        }
+        findPreference<MultiSelectListPreference>(getString(R.string.preference_visible_emotes_key))?.apply {
+            fun updateUnlistedVisibility(values: Set<String>) {
+                val sevenTvEnabled = ThirdPartyEmoteType.SevenTV in ThirdPartyEmoteType.mapFromPreferenceSet(values)
+                allowUnlistedEmotesPreference?.isEnabled = sevenTvEnabled
+            }
+            updateUnlistedVisibility(values)
+            setOnPreferenceChangeListener { _, values ->
+                updateUnlistedVisibility(values as Set<String>)
+                restartRequired()
+                true
+            }
+        }
+    }
+
+    private fun restartRequired() {
+        view?.showLongSnackbar(getString(R.string.restart_required)) {
+            setAction(R.string.restart) {
+                // KKona
+                val restartIntent = Intent(context, MainActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                }
+                context.startActivity(restartIntent)
+                Runtime.getRuntime().exit(0)
             }
         }
     }

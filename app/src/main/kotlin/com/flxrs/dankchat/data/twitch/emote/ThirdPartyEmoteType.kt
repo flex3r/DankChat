@@ -3,8 +3,7 @@ package com.flxrs.dankchat.data.twitch.emote
 enum class ThirdPartyEmoteType {
     FrankerFaceZ,
     BetterTTV,
-    SevenTV,
-    UnlistedSevenTV;
+    SevenTV;
 
     companion object {
         fun mapFromPreferenceSet(preferenceSet: Set<String>): Set<ThirdPartyEmoteType> = preferenceSet.mapNotNull {
