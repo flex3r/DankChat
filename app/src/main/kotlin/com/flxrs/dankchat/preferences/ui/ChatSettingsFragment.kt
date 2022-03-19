@@ -9,14 +9,16 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.view.updateLayoutParams
-import androidx.preference.*
+import androidx.preference.MultiSelectListPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceManager
+import androidx.preference.SeekBarPreference
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.CommandsBottomsheetBinding
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.main.MainActivity
 import com.flxrs.dankchat.preferences.command.CommandAdapter
 import com.flxrs.dankchat.preferences.command.CommandItem
-import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.extensions.showLongSnackbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.squareup.moshi.Moshi
@@ -47,11 +49,6 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.chat_settings, rootKey)
-
-        findPreference<ListPreference>(getString(R.string.preference_timestamp_format_key))?.setOnPreferenceChangeListener { _, newValue ->
-            (newValue as? String)?.let { DateTimeUtils.setPattern(it) }
-            true
-        }
         findPreference<SeekBarPreference>(getString(R.string.preference_scrollback_length_key))?.apply {
             summary = correctScrollbackLength(value).toString()
             setOnPreferenceChangeListener { _, newValue ->

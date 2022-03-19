@@ -52,7 +52,6 @@ import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.databinding.EditDialogBinding
 import com.flxrs.dankchat.databinding.MainFragmentBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.preferences.ui.ChatSettingsFragment
 import com.flxrs.dankchat.utils.*
 import com.flxrs.dankchat.utils.extensions.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -246,7 +245,7 @@ class MainFragment : Fragment() {
             collectFlow(shouldColorNotification) { activity?.invalidateOptionsMenu() }
             collectFlow(channels) {
                 if (!it.isNullOrEmpty()) {
-                    fetchStreamInformation()
+                    mainViewModel.fetchStreamData()
                 }
             }
             collectFlow(currentStreamedChannel) {
@@ -351,6 +350,7 @@ class MainFragment : Fragment() {
 
     override fun onPause() {
         binding.input.clearFocus()
+        mainViewModel.cancelStreamDataTimer()
         super.onPause()
     }
 
@@ -536,18 +536,6 @@ class MainFragment : Fragment() {
         mainViewModel.addEmoteUsage(emote)
     }
 
-    private fun fetchStreamInformation() {
-        lifecycleScope.launchWhenStarted {
-            val key = getString(R.string.preference_streaminfo_key)
-            if (preferences.getBoolean(key, true)) {
-                val oAuth = dankChatPreferences.oAuthKey ?: return@launchWhenStarted
-                mainViewModel.fetchStreamData(oAuth) {
-                    resources.getQuantityString(R.plurals.viewers, it, it)
-                }
-            }
-        }
-    }
-
     private fun sendMessage(): Boolean {
         val msg = binding.input.text?.toString().orEmpty()
         mainViewModel.trySendMessage(msg)
@@ -715,59 +703,28 @@ class MainFragment : Fragment() {
         }
     }
 
-    // TODO extract and make preferences injectable
     private fun initPreferences(context: Context) {
-        val roomStateKey = getString(R.string.preference_roomstate_key)
-        val streamInfoKey = getString(R.string.preference_streaminfo_key)
-        val inputKey = getString(R.string.preference_show_input_key)
-        val customMentionsKey = getString(R.string.preference_custom_mentions_key)
-        val blacklistKey = getString(R.string.preference_blacklist_key)
         val keepScreenOnKey = getString(R.string.preference_keep_screen_on_key)
         val suggestionsKey = getString(R.string.preference_suggestions_key)
-        val timestampFormatKey = getString(R.string.preference_timestamp_format_key)
-        val loadSupibotKey = getString(R.string.preference_supibot_suggestions_key)
-        val scrollBackLengthKey = getString(R.string.preference_scrollback_length_key)
-        val preferEmotesSuggestionsKey = getString(R.string.preference_prefer_emote_suggestions_key)
-        val showChipsKey = getString(R.string.preference_show_chip_actions_key)
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.oAuthKey.isNullOrBlank()) {
             dankChatPreferences.clearLogin()
         }
 
         preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        if (::preferenceListener.isInitialized) preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
+        if (::preferenceListener.isInitialized) {
+            preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
+        }
+
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
             when (key) {
-                roomStateKey               -> mainViewModel.setRoomStateEnabled(p.getBoolean(key, true))
-                streamInfoKey              -> {
-                    fetchStreamInformation()
-                    mainViewModel.setStreamInfoEnabled(p.getBoolean(key, true))
-                }
-                inputKey                   -> mainViewModel.setInputEnabled(p.getBoolean(key, true))
-                customMentionsKey          -> mainViewModel.setMentionEntries(p.getStringSet(key, emptySet()))
-                blacklistKey               -> mainViewModel.setBlacklistEntries(p.getStringSet(key, emptySet()))
-                loadSupibotKey             -> mainViewModel.setSupibotSuggestions(p.getBoolean(key, false))
-                scrollBackLengthKey        -> mainViewModel.setScrollBackLength(ChatSettingsFragment.correctScrollbackLength(p.getInt(scrollBackLengthKey, 10)))
-                keepScreenOnKey            -> keepScreenOn(p.getBoolean(key, true))
-                suggestionsKey             -> binding.input.setSuggestionAdapter(p.getBoolean(key, true), suggestionAdapter)
-                preferEmotesSuggestionsKey -> mainViewModel.setPreferEmotesSuggestions(p.getBoolean(key, false))
-                showChipsKey               -> mainViewModel.setShowChips(p.getBoolean(key, true))
+                keepScreenOnKey -> keepScreenOn(p.getBoolean(key, true))
+                suggestionsKey  -> binding.input.setSuggestionAdapter(p.getBoolean(key, true), suggestionAdapter)
             }
         }
         preferences.apply {
             registerOnSharedPreferenceChangeListener(preferenceListener)
             keepScreenOn(getBoolean(keepScreenOnKey, true))
-            DateTimeUtils.setPattern(getString(timestampFormatKey, "HH:mm") ?: "HH:mm")
-            mainViewModel.apply {
-                setRoomStateEnabled(getBoolean(roomStateKey, true))
-                setStreamInfoEnabled(getBoolean(streamInfoKey, true))
-                setInputEnabled(getBoolean(inputKey, true))
-                setShowChips(getBoolean(showChipsKey, true))
-                setPreferEmotesSuggestions(getBoolean(preferEmotesSuggestionsKey, false))
-                binding.input.setSuggestionAdapter(getBoolean(suggestionsKey, true), suggestionAdapter)
-
-                setMentionEntries(getStringSet(customMentionsKey, emptySet()))
-                setBlacklistEntries(getStringSet(blacklistKey, emptySet()))
-            }
+            binding.input.setSuggestionAdapter(getBoolean(suggestionsKey, true), suggestionAdapter)
         }
     }
 

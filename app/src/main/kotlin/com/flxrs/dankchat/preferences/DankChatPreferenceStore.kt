@@ -123,6 +123,59 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
     val scrollbackLength: Int
         get() = defaultPreferences.getInt(context.getString(R.string.preference_scrollback_length_key), 10)
 
+    val streamInfoEnabled: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_streaminfo_key), true)
+
+    val preferenceFlow: Flow<Preference> = callbackFlow {
+        with(context) {
+            val roomStateKey = getString(R.string.preference_roomstate_key)
+            val streamInfoKey = getString(R.string.preference_streaminfo_key)
+            val inputKey = getString(R.string.preference_show_input_key)
+            val customMentionsKey = getString(R.string.preference_custom_mentions_key)
+            val blacklistKey = getString(R.string.preference_blacklist_key)
+            val loadSupibotKey = getString(R.string.preference_supibot_suggestions_key)
+            val scrollBackLengthKey = getString(R.string.preference_scrollback_length_key)
+            val preferEmotesSuggestionsKey = getString(R.string.preference_prefer_emote_suggestions_key)
+            val showChipsKey = getString(R.string.preference_show_chip_actions_key)
+            val timestampFormatKey = getString(R.string.preference_timestamp_format_key)
+
+            send(Preference.RoomState(roomStateEnabled))
+            send(Preference.StreamInfo(streamInfoEnabled, updateTimer = false))
+            send(Preference.Input(inputEnabled))
+            send(Preference.CustomMentions(mentionEntries))
+            send(Preference.BlackList(blackListEntries))
+            send(Preference.SupibotSuggestions(shouldLoadSupibot))
+            send(Preference.ScrollBack(scrollbackLength))
+            send(Preference.PreferEmoteSuggestions(shouldPreferEmoteSuggestions))
+            send(Preference.Chips(shouldShowChips))
+            send(Preference.TimeStampFormat(timestampFormat))
+
+            val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+                val preference = when (key) {
+                    roomStateKey               -> Preference.RoomState(roomStateEnabled)
+                    streamInfoKey              -> Preference.StreamInfo(streamInfoEnabled, updateTimer = true)
+                    inputKey                   -> Preference.Input(inputEnabled)
+                    customMentionsKey          -> Preference.CustomMentions(mentionEntries)
+                    blacklistKey               -> Preference.BlackList(blackListEntries)
+                    loadSupibotKey             -> Preference.SupibotSuggestions(shouldLoadSupibot)
+                    scrollBackLengthKey        -> Preference.ScrollBack(scrollbackLength)
+                    preferEmotesSuggestionsKey -> Preference.PreferEmoteSuggestions(shouldPreferEmoteSuggestions)
+                    showChipsKey               -> Preference.Chips(shouldShowChips)
+                    timestampFormatKey         -> Preference.TimeStampFormat(timestampFormat)
+                    else                       -> null
+                }
+                if (preference != null) {
+                    trySend(preference)
+                }
+            }
+
+            defaultPreferences.registerOnSharedPreferenceChangeListener(listener)
+            awaitClose { defaultPreferences.unregisterOnSharedPreferenceChangeListener(listener) }
+        }
+    }
+
+    fun formatViewersString(viewers: Int): String = context.resources.getQuantityString(R.plurals.viewers, viewers, viewers)
+
     fun clearLogin() = dankChatPreferences.edit {
         putBoolean(LOGGED_IN_KEY, false)
         putString(OAUTH_KEY, "")
@@ -186,6 +239,27 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
     }
 
     private fun Map<String, String>.toJson(): String = jsonMapAdapter.toJson(this)
+
+    private val timestampFormat: String
+        get() = defaultPreferences.getString(context.getString(R.string.preference_timestamp_format_key), "HH:mm") ?: "HH:mm"
+
+    private val roomStateEnabled: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_roomstate_key), true)
+
+    private val inputEnabled: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_show_input_key), true)
+
+    private val shouldShowChips: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_show_chip_actions_key), true)
+
+    private val shouldPreferEmoteSuggestions: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_prefer_emote_suggestions_key), false)
+
+    private val mentionEntries: Set<String>
+        get() = defaultPreferences.getStringSet(context.getString(R.string.preference_custom_mentions_key), emptySet()).orEmpty()
+
+    private val blackListEntries: Set<String>
+        get() = defaultPreferences.getStringSet(context.getString(R.string.preference_blacklist_key), emptySet()).orEmpty()
 
     companion object {
         private const val LOGGED_IN_KEY = "loggedIn"

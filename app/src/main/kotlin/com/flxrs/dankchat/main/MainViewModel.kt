@@ -19,7 +19,9 @@ import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.data.twitch.message.RoomState
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.Preference
 import com.flxrs.dankchat.preferences.ui.ChatSettingsFragment
+import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.extensions.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -124,6 +126,25 @@ class MainViewModel @Inject constructor(
         ) { roomStateEnabled, streamInfoEnabled, mentionSheetOpen, bottomText ->
             (roomStateEnabled || streamInfoEnabled) && !mentionSheetOpen && bottomText.isNotBlank()
         }
+
+    init {
+        viewModelScope.launch {
+            dankChatPreferenceStore.preferenceFlow.collect {
+                when (it) {
+                    is Preference.RoomState              -> roomStateEnabled.value = it.enabled
+                    is Preference.StreamInfo             -> streamInfoEnabled.value = it.enabled
+                    is Preference.Input                  -> inputEnabled.value = it.enabled
+                    is Preference.CustomMentions         -> setMentionEntries(it.entries)
+                    is Preference.BlackList              -> setBlacklistEntries(it.entries)
+                    is Preference.SupibotSuggestions     -> setSupibotSuggestions(it.enabled)
+                    is Preference.ScrollBack             -> chatRepository.scrollBackLength = it.length
+                    is Preference.PreferEmoteSuggestions -> preferEmoteSuggestions.value = it.enabled
+                    is Preference.Chips                  -> shouldShowChips.value = it.enabled
+                    is Preference.TimeStampFormat        -> DateTimeUtils.setPattern(it.pattern)
+                }
+            }
+        }
+    }
 
     val events = eventChannel.receiveAsFlow()
 
@@ -326,17 +347,6 @@ class MainViewModel @Inject constructor(
 
     fun getChannels() = channels.value.orEmpty()
 
-    fun setSupibotSuggestions(enabled: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
-        when {
-            enabled -> commandRepository.loadSupibotCommands()
-            else    -> commandRepository.clearSupibotCommands()
-        }
-    }
-
-    fun setPreferEmotesSuggestions(enabled: Boolean) {
-        preferEmoteSuggestions.value = enabled
-    }
-
     fun setActiveChannel(channel: String) {
         chatRepository.setActiveChannel(channel)
         currentSuggestionChannel.value = channel
@@ -344,18 +354,6 @@ class MainViewModel @Inject constructor(
 
     fun setSuggestionChannel(channel: String) {
         currentSuggestionChannel.value = channel
-    }
-
-    fun setStreamInfoEnabled(enabled: Boolean) {
-        streamInfoEnabled.value = enabled
-    }
-
-    fun setRoomStateEnabled(enabled: Boolean) {
-        roomStateEnabled.value = enabled
-    }
-
-    fun setScrollBackLength(scrollBackLength: Int) {
-        chatRepository.scrollBackLength = scrollBackLength
     }
 
     fun setMentionSheetOpen(enabled: Boolean) {
@@ -470,27 +468,35 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun setMentionEntries(stringSet: Set<String>?) = viewModelScope.launch(coroutineExceptionHandler) { chatRepository.setMentionEntries(stringSet.orEmpty()) }
-    fun setBlacklistEntries(stringSet: Set<String>?) = viewModelScope.launch(coroutineExceptionHandler) { chatRepository.setBlacklistEntries(stringSet.orEmpty()) }
-
-    suspend fun fetchStreamData(oAuth: String, stringBuilder: (viewers: Int) -> String) = withContext(coroutineExceptionHandler) {
+    fun fetchStreamData() {
         fetchTimerJob?.cancel()
-        val channels = channels.value
-        if (channels.isNullOrEmpty()) return@withContext
+        val channels = dankChatPreferenceStore.getChannels()
+        val oAuth = dankChatPreferenceStore.oAuthKey
+        val streamInfoEnabled = dankChatPreferenceStore.streamInfoEnabled
+        if (channels.isNullOrEmpty() || oAuth.isNullOrBlank() || !streamInfoEnabled) {
+            return
+        }
 
         val fixedOAuth = oAuth.withoutOAuthSuffix
+        viewModelScope.launch(coroutineExceptionHandler) {
+            fetchTimerJob = timer(STREAM_REFRESH_RATE) {
+                val streams = runCatching {
+                    apiManager.getStreams(fixedOAuth, channels)
+                }.getOrNull()
 
-        fetchTimerJob = timer(STREAM_REFRESH_RATE) {
-            val streams = runCatching {
-                apiManager.getStreams(fixedOAuth, channels)
-            }.getOrNull()
+                val data = streams?.data?.map {
+                    val formatted = dankChatPreferenceStore.formatViewersString(it.viewerCount)
+                    StreamData(channel = it.userLogin, data = formatted)
+                }.orEmpty()
 
-            val data = streams?.data?.map {
-                StreamData(channel = it.userLogin, data = stringBuilder(it.viewerCount))
-            }.orEmpty()
-
-            streamData.value = data
+                streamData.value = data
+            }
         }
+    }
+
+    fun cancelStreamDataTimer() {
+        fetchTimerJob?.cancel()
+        fetchTimerJob = null
     }
 
     fun toggleStream() {
@@ -505,10 +511,6 @@ class MainViewModel @Inject constructor(
 
     fun setShowChips(value: Boolean) {
         shouldShowChips.value = value
-    }
-
-    fun setInputEnabled(value: Boolean) {
-        inputEnabled.value = value
     }
 
     fun toggleFullscreen() {
@@ -526,10 +528,10 @@ class MainViewModel @Inject constructor(
 
     fun changeRoomState(index: Int, enabled: Boolean, time: String = "") {
         val base = when (index) {
-            0 -> ".emoteonly"
-            1 -> ".subscribers"
-            2 -> ".slow"
-            3 -> ".r9kbeta"
+            0    -> ".emoteonly"
+            1    -> ".subscribers"
+            2    -> ".slow"
+            3    -> ".r9kbeta"
             else -> ".followers"
         }
 
@@ -554,6 +556,21 @@ class MainViewModel @Inject constructor(
 
     fun clearEmoteUsages() = viewModelScope.launch {
         emoteUsageRepository.clearUsages()
+    }
+
+    private fun setMentionEntries(entries: Set<String>) = viewModelScope.launch(coroutineExceptionHandler) {
+        chatRepository.setMentionEntries(entries)
+    }
+
+    private fun setBlacklistEntries(entries: Set<String>) = viewModelScope.launch(coroutineExceptionHandler) {
+        chatRepository.setBlacklistEntries(entries)
+    }
+
+    private fun setSupibotSuggestions(enabled: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
+        when {
+            enabled -> commandRepository.loadSupibotCommands()
+            else    -> commandRepository.clearSupibotCommands()
+        }
     }
 
     private suspend fun loadInitialData(oAuth: String, id: String, channelList: List<String>, loadSupibot: Boolean, loadThirdPartyData: Set<ThirdPartyEmoteType>, handler: CoroutineExceptionHandler) =
