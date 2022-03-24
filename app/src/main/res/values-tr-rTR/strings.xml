@@ -11,6 +11,7 @@
   <string name="choose_media">"Galeriden seç"</string>
   <string name="clear_chat">"Sohbeti temizle"</string>
   <string name="command__hint">"Komut"</string>
+  <string name="commands_title">"Özel komutlar"</string>
   <string name="confirm_channel_removal_message">"Bu kanalı kaldırmak istediğinizden emin misiniz?"</string>
   <string name="confirm_channel_removal_positive_button">"Kaldır"</string>
   <string name="confirm_channel_removal_title">"Kanalı kaldırmayı onayla"</string>
@@ -212,6 +213,7 @@ Servis bu hizmeti verebilmek için sizin (ve başkalarının) ziyaret ettiği ka
   <string name="user_popup_following_since">"%1$s\'den beri takip ediyor"</string>
   <string name="user_popup_mention">"Kullanıcıdan bahset"</string>
   <string name="user_popup_not_following">"Takip etmiyor"</string>
+  <string name="user_popup_report">"Şikayet et"</string>
   <string name="user_popup_unblock">"Engeli kaldır"</string>
   <string name="user_popup_unfollow">"Takibi bırak"</string>
   <string name="user_popup_whisper">"Kullanıcıya fısılda"</string>
