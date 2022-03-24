@@ -175,11 +175,69 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initPreferences(view.context)
+        activity?.addMenuProvider(object : MenuProvider {
+            override fun onPrepareMenu(menu: Menu) {
+                with(menu) {
+                    val isLoggedIn = dankChatPreferences.isLoggedIn
+                    val shouldShowProgress = mainViewModel.shouldShowUploadProgress.value
+                    val hasChannels = !mainViewModel.getChannels().isNullOrEmpty()
+                    val mentionIconColor = when (mainViewModel.shouldColorNotification.value) {
+                        true -> R.attr.colorError
+                        else -> R.attr.colorControlHighlight
+                    }
+                    findItem(R.id.menu_login)?.isVisible = !isLoggedIn
+                    findItem(R.id.menu_account)?.isVisible = isLoggedIn
+                    findItem(R.id.menu_manage)?.isVisible = hasChannels
+                    findItem(R.id.menu_open)?.isVisible = hasChannels
+                    findItem(R.id.menu_mentions)?.apply {
+                        isVisible = hasChannels
+                        context?.let {
+                            val fallback = ContextCompat.getColor(it, android.R.color.white)
+                            val color = MaterialColors.getColor(it, mentionIconColor, fallback)
+                            icon.setTintList(ColorStateList.valueOf(color))
+                        }
+                    }
+
+                    findItem(R.id.progress)?.apply {
+                        isVisible = shouldShowProgress
+                        actionView = ProgressBar(requireContext()).apply {
+                            indeterminateTintList = ColorStateList.valueOf(MaterialColors.getColor(this, R.attr.colorOnSurfaceVariant))
+                            isVisible = shouldShowProgress
+                        }
+                    }
+                }
+            }
+
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                when (menuItem.itemId) {
+                    R.id.menu_reconnect     -> mainViewModel.reconnect()
+                    R.id.menu_login         -> openLogin()
+                    R.id.menu_relogin       -> openLogin(isRelogin = true)
+                    R.id.menu_logout        -> showLogoutConfirmationDialog()
+                    R.id.menu_add           -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment)
+                    R.id.menu_mentions      -> mentionBottomSheetBehavior?.expand()
+                    R.id.menu_open          -> openChannel()
+                    R.id.menu_manage        -> openManageChannelsDialog()
+                    R.id.menu_reload_emotes -> reloadEmotes()
+                    R.id.menu_choose_media  -> showNuulsUploadDialogIfNotAcknowledged { requestGalleryMedia.launch() }
+                    R.id.menu_capture_image -> startCameraCapture()
+                    R.id.menu_capture_video -> startCameraCapture(captureVideo = true)
+                    R.id.menu_clear         -> clear()
+                    R.id.menu_settings      -> navigateSafe(R.id.action_mainFragment_to_overviewSettingsFragment).also { hideKeyboard() }
+                    else                    -> return false
+                }
+                return true
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         mainViewModel.apply {
             collectFlow(imageUploadEventFlow, ::handleImageUploadState)
             collectFlow(dataLoadingEventFlow, ::handleDataLoadingState)
-            collectFlow(shouldShowUploadProgress) { activity?.invalidateOptionsMenu() }
+            collectFlow(shouldShowUploadProgress) { activity?.invalidateMenu() }
             collectFlow(suggestions, ::setSuggestions)
             collectFlow(emoteTabItems, emoteMenuAdapter::submitList)
             collectFlow(isFullscreenFlow) { changeActionBarVisibility(it) }
@@ -242,7 +300,7 @@ class MainFragment : Fragment() {
                     }
                 }
             }
-            collectFlow(shouldColorNotification) { activity?.invalidateOptionsMenu() }
+            collectFlow(shouldColorNotification) { activity?.invalidateMenu() }
             collectFlow(channels) {
                 if (!it.isNullOrEmpty()) {
                     mainViewModel.fetchStreamData()
@@ -301,7 +359,6 @@ class MainFragment : Fragment() {
         binding.chatViewpager.offscreenPageLimit = calculatePageLimit(channels.size)
 
         (requireActivity() as AppCompatActivity).apply {
-            setHasOptionsMenu(true)
             setSupportActionBar(binding.toolbar)
             onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
                 when {
@@ -385,63 +442,6 @@ class MainFragment : Fragment() {
             preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         }
         super.onDestroyView()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu, menu)
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        with(menu) {
-            val isLoggedIn = dankChatPreferences.isLoggedIn
-            val shouldShowProgress = mainViewModel.shouldShowUploadProgress.value
-            val hasChannels = !mainViewModel.getChannels().isNullOrEmpty()
-            val mentionIconColor = when (mainViewModel.shouldColorNotification.value) {
-                true -> R.attr.colorError
-                else -> R.attr.colorControlHighlight
-            }
-            findItem(R.id.menu_login)?.isVisible = !isLoggedIn
-            findItem(R.id.menu_account)?.isVisible = isLoggedIn
-            findItem(R.id.menu_manage)?.isVisible = hasChannels
-            findItem(R.id.menu_open)?.isVisible = hasChannels
-            findItem(R.id.menu_mentions)?.apply {
-                isVisible = hasChannels
-                context?.let {
-                    val fallback = ContextCompat.getColor(it, android.R.color.white)
-                    val color = MaterialColors.getColor(it, mentionIconColor, fallback)
-                    icon.setTintList(ColorStateList.valueOf(color))
-                }
-            }
-
-            findItem(R.id.progress)?.apply {
-                isVisible = shouldShowProgress
-                actionView = ProgressBar(requireContext()).apply {
-                    indeterminateTintList = ColorStateList.valueOf(MaterialColors.getColor(this, R.attr.colorOnSurfaceVariant))
-                    isVisible = shouldShowProgress
-                }
-            }
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.menu_reconnect     -> mainViewModel.reconnect()
-            R.id.menu_login         -> openLogin()
-            R.id.menu_relogin       -> openLogin(isRelogin = true)
-            R.id.menu_logout        -> showLogoutConfirmationDialog()
-            R.id.menu_add           -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment)
-            R.id.menu_mentions      -> mentionBottomSheetBehavior?.expand()
-            R.id.menu_open          -> openChannel()
-            R.id.menu_manage        -> openManageChannelsDialog()
-            R.id.menu_reload_emotes -> reloadEmotes()
-            R.id.menu_choose_media  -> showNuulsUploadDialogIfNotAcknowledged { requestGalleryMedia.launch() }
-            R.id.menu_capture_image -> startCameraCapture()
-            R.id.menu_capture_video -> startCameraCapture(captureVideo = true)
-            R.id.menu_clear         -> clear()
-            R.id.menu_settings      -> navigateSafe(R.id.action_mainFragment_to_overviewSettingsFragment).also { hideKeyboard() }
-            else                    -> return false
-        }
-        return true
     }
 
     fun openUserPopup(targetUserId: String, targetUserName: String, messageId: String, channel: String?, isWhisperPopup: Boolean = false) {
@@ -528,7 +528,7 @@ class MainFragment : Fragment() {
         binding.chatViewpager.setCurrentItem(newTabIndex, false)
 
         mainViewModel.setActiveChannel(channel)
-        activity?.invalidateOptionsMenu()
+        activity?.invalidateMenu()
     }
 
     private fun insertEmote(emote: GenericEmote) {
@@ -856,7 +856,7 @@ class MainFragment : Fragment() {
         }
 
         binding.chatViewpager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
-        activity?.invalidateOptionsMenu()
+        activity?.invalidateMenu()
     }
 
     private fun BottomSheetBehavior<View>.setupMentionSheet() {

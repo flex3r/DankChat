@@ -65,7 +65,6 @@ class LoginFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setHasOptionsMenu(true)
         (requireActivity() as AppCompatActivity).apply {
             setSupportActionBar(binding.loginToolbar)
             supportActionBar?.apply {

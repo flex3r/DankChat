@@ -13,20 +13,20 @@ buildscript {
         serialization_version = '1.3.2'
 
         // AndroidX
-        activity_version = '1.5.0-alpha03'
+        activity_version = '1.5.0-alpha04'
         browser_version = '1.4.0'
         constraint_version = '2.1.3'
-        core_version = '1.8.0-alpha05'
-        emoji_version = '1.2.0-alpha01'
+        core_version = '1.8.0-alpha06'
+        emoji_version = '1.2.0-alpha02'
         exif_version = '1.3.3'
-        fragment_version = '1.5.0-alpha03'
-        lifecycle_version = '2.5.0-alpha04'
+        fragment_version = '1.5.0-alpha03' // TODO alpha04 breaks true dark mode??
+        lifecycle_version = '2.5.0-alpha05'
         media_version = '1.5.0'
         nav_version = '2.5.0-alpha03'
         preference_version = '1.2.0'
         recyclerview_version = '1.2.1'
         viewpager2_version = '1.1.0-beta01'
-        material_version = '1.6.0-alpha03'
+        material_version = '1.6.0-beta01'
         webkit_version = '1.4.0'
         room_version = '2.4.2'
 

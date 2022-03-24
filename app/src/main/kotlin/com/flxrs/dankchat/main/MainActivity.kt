@@ -11,7 +11,10 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.*
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.doOnAttach
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -30,6 +33,7 @@ import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.ui.*
 import com.flxrs.dankchat.utils.extensions.navigateSafe
 import com.google.android.material.color.DynamicColors
+import com.google.android.material.color.DynamicColorsOptions
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -59,9 +63,17 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
         val isTrueDarkModeEnabled = preferences.getBoolean(getString(R.string.preference_true_dark_theme_key), false)
         val isDynamicColorAvailable = DynamicColors.isDynamicColorAvailable()
         when {
-            isTrueDarkModeEnabled && isDynamicColorAvailable -> DynamicColors.applyIfAvailable(this, R.style.AppTheme_TrueDarkOverlay)
-            isTrueDarkModeEnabled                            -> setTheme(R.style.AppTheme_TrueDarkTheme)
-            else                                             -> DynamicColors.applyIfAvailable(this)
+            isTrueDarkModeEnabled && isDynamicColorAvailable -> {
+                val dynamicColorsOptions = DynamicColorsOptions.Builder()
+                    .setThemeOverlay(R.style.AppTheme_TrueDarkOverlay)
+                    .build()
+                DynamicColors.applyToActivityIfAvailable(this, dynamicColorsOptions)
+            }
+            isTrueDarkModeEnabled                            -> {
+                theme.applyStyle(R.style.AppTheme_TrueDarkTheme, true)
+                window.peekDecorView()?.context?.theme?.applyStyle(R.style.AppTheme_TrueDarkTheme, true)
+            }
+            else                                             -> DynamicColors.applyToActivityIfAvailable(this)
         }
 
         bindingRef = DataBindingUtil.setContentView(this, R.layout.main_activity)
@@ -147,7 +159,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
 
     fun setFullScreen(enabled: Boolean, changeActionBarVisibility: Boolean = true) = binding.root.doOnAttach {
         WindowCompat.setDecorFitsSystemWindows(window, !enabled)
-        val windowInsetsController = ViewCompat.getWindowInsetsController(binding.root) ?: return@doOnAttach
+        val windowInsetsController = WindowCompat.getInsetsController(window, it)
         when {
             enabled -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !isInMultiWindowMode) {
