@@ -503,8 +503,8 @@ class ChatAdapter(
                     else -> name
                 }
 
-                override fun onClick(v: View) = onUserClicked(userId, mentionName, id, "", false)
-                override fun onLongClick(view: View) = onUserClicked(userId, mentionName, id, "", true)
+                override fun onClick(v: View) = onUserClicked(userId, mentionName, id, channel, false)
+                override fun onLongClick(view: View) = onUserClicked(userId, mentionName, id, channel, true)
                 override fun updateDrawState(ds: TextPaint) {
                     ds.isUnderlineText = false
                     ds.color = normalizedColor
