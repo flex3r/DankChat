@@ -40,6 +40,7 @@ import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.badge.BadgeType
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager
+import com.flxrs.dankchat.data.twitch.emote.EmoteManager.Companion.cacheKey
 import com.flxrs.dankchat.data.twitch.message.*
 import com.flxrs.dankchat.databinding.ChatItemBinding
 import com.flxrs.dankchat.utils.DateTimeUtils
@@ -352,7 +353,8 @@ class ChatAdapter(
             allowedBadges.forEachIndexed { idx, badge ->
                 try {
                     val (start, end) = badgePositions[idx]
-                    val cached = emoteManager.badgeCache[badge.url]
+                    val cacheKey = badge.cacheKey(lineHeight)
+                    val cached = emoteManager.badgeCache[cacheKey]
                     val drawable = when {
                         cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
                         else           -> Coil.execute(badge.url.toRequest(context)).drawable?.apply {
@@ -365,14 +367,14 @@ class ChatAdapter(
                             val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
                             setBounds(0, 0, width, lineHeight)
                             if (this is Animatable) {
-                                emoteManager.badgeCache.put(badge.url, this)
+                                emoteManager.badgeCache.put(cacheKey, this)
                                 setRunning(animateGifs)
                             }
                         }
                     }
 
                     if (drawable != null) {
-                        val imageSpan = ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM)
+                        val imageSpan = ImageSpan(drawable)
                         (text as SpannableString)[start..end] = imageSpan
                     }
                 } catch (t: Throwable) {
@@ -390,7 +392,7 @@ class ChatAdapter(
                 emotes
                     .groupBy { it.position }
                     .forEach { (_, emotes) ->
-                        val key = emotes.joinToString(separator = "-") { it.id }
+                        val key = emotes.cacheKey(lineHeight)
                         // fast path, backed by lru cache
                         val layerDrawable = emoteManager.layerCache[key] ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
 
@@ -563,7 +565,8 @@ class ChatAdapter(
             allowedBadges.forEachIndexed { idx, badge ->
                 try {
                     val (start, end) = badgePositions[idx]
-                    val cached = emoteManager.badgeCache[badge.url]
+                    val cacheKey = badge.cacheKey(lineHeight)
+                    val cached = emoteManager.badgeCache[cacheKey]
                     val drawable = when {
                         cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
                         else           -> Coil.execute(badge.url.toRequest(context)).drawable?.apply {
@@ -576,14 +579,14 @@ class ChatAdapter(
                             val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
                             setBounds(0, 0, width, lineHeight)
                             if (this is Animatable) {
-                                emoteManager.badgeCache.put(badge.url, this)
+                                emoteManager.badgeCache.put(cacheKey, this)
                                 setRunning(animateGifs)
                             }
                         }
                     }
 
                     if (drawable != null) {
-                        val imageSpan = ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM)
+                        val imageSpan = ImageSpan(drawable)
                         (text as SpannableString)[start..end] = imageSpan
                     }
                 } catch (t: Throwable) {
@@ -601,7 +604,7 @@ class ChatAdapter(
                 emotes
                     .groupBy { it.position }
                     .forEach { (_, emotes) ->
-                        val key = emotes.joinToString(separator = "-") { it.id }
+                        val key = emotes.cacheKey(lineHeight)
                         // fast path, backed by lru cache
                         val layerDrawable = emoteManager.layerCache[key]?.also {
                             it.forEachLayer<Animatable> { animatable -> animatable.setRunning(animateGifs) }

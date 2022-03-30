@@ -5,6 +5,7 @@ import android.graphics.drawable.LayerDrawable
 import android.util.LruCache
 import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.data.api.dto.*
+import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.badge.BadgeSet
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.supplementaryCodePointPositions
@@ -412,6 +413,9 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager, priva
     }
 
     companion object {
+        fun Badge.cacheKey(baseHeight: Int): String = "$url-$baseHeight"
+        fun List<ChatMessageEmote>.cacheKey(baseHeight: Int): String = joinToString(separator = "-") { it.id } + "-$baseHeight"
+
         private val TAG = EmoteManager::class.java.simpleName
 
         private const val TWITCH_EMOTE_TEMPLATE = "https://static-cdn.jtvnw.net/emoticons/v2/%s/default/dark/%s"
