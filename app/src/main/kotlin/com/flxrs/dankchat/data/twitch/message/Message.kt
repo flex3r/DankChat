@@ -290,8 +290,12 @@ data class TwitchMessage(
         }
 
         fun parseUserNotice(message: IrcMessage, emoteManager: EmoteManager, historic: Boolean = false): List<TwitchMessage> = with(message) {
-            val messages = mutableListOf<TwitchMessage>()
             val msgId = tags["msg-id"]
+            if (msgId == "announcement") {
+                return listOf(parsePrivMessage(message, emoteManager, isNotify = true))
+            }
+
+            val messages = mutableListOf<TwitchMessage>()
             val id = tags["id"] ?: UUID.randomUUID().toString()
             val channel = params[0].substring(1)
             val systemMsg = if (historic) params[1] else tags["system-msg"] ?: ""
