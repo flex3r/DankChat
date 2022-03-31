@@ -304,6 +304,7 @@ class MainViewModel @Inject constructor(
     ) {
         val oAuth = dankChatPreferenceStore.oAuthKey.orEmpty()
         val id = dankChatPreferenceStore.userIdString.orEmpty()
+        val isLoggedIn = dankChatPreferenceStore.isLoggedIn
         val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(dankChatPreferenceStore.scrollbackLength)
         val loadThirdPartyData = dankChatPreferenceStore.visibleThirdPartyEmotes
         scrollBackLength.let { chatRepository.scrollBackLength = it }
@@ -321,6 +322,11 @@ class MainViewModel @Inject constructor(
             val fixedOauth = oAuth.withoutOAuthSuffix
             val state = runCatchingToState(parameters) { handler ->
                 loadInitialData(fixedOauth, id, channelList, loadSupibot, loadThirdPartyData, handler)
+
+                if (!isLoggedIn) {
+                    loadChattersAndMessages(channelList, loadHistory, isUserChange, handler)
+                    return@runCatchingToState
+                }
 
                 val strictUserStateResult = withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
                     val userState = chatRepository.getLatestValidUserState(minChannelsSize = channelList.size)
@@ -419,6 +425,7 @@ class MainViewModel @Inject constructor(
 
     fun reloadEmotes(channel: String) = viewModelScope.launch {
         val oAuth = dankChatPreferenceStore.oAuthKey.orEmpty()
+        val isLoggedIn = dankChatPreferenceStore.isLoggedIn
         val loadThirdPartyData = dankChatPreferenceStore.visibleThirdPartyEmotes
         val parameters = DataLoadingState.Parameters(
             channels = listOf(channel),
@@ -427,7 +434,11 @@ class MainViewModel @Inject constructor(
         _dataLoadingState.emit(DataLoadingState.Loading(parameters = parameters))
 
         val state = runCatchingToState(parameters) { handler ->
-            chatRepository.joinChannel(channel = "jtv", listenToPubSub = false)
+            if (isLoggedIn) {
+                // join a channel to try to get an up-to-date USERSTATE
+                chatRepository.joinChannel(channel = "jtv", listenToPubSub = false)
+            }
+
             val fixedOAuth = oAuth.withoutOAuthSuffix
             supervisorScope {
                 listOf(
@@ -437,6 +448,10 @@ class MainViewModel @Inject constructor(
                     },
                     launch(handler) { dataRepository.loadDankChatBadges() },
                 ).joinAll()
+            }
+
+            if (!isLoggedIn) {
+                return@runCatchingToState
             }
 
             withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
@@ -626,6 +641,6 @@ class MainViewModel @Inject constructor(
     companion object {
         private val TAG = MainViewModel::class.java.simpleName
         private const val STREAM_REFRESH_RATE = 30_000L
-        private const val IRC_TIMEOUT_DELAY = 10_000L
+        private const val IRC_TIMEOUT_DELAY = 5_000L
     }
 }
