@@ -23,6 +23,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.Px
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -62,6 +63,12 @@ class ChatAdapter(
     // since the LayoutManager uses stackFromEnd and every new message will be even. Instead, keep count of new messages separately.
     private var messageCount = 0
         get() = field++
+
+    companion object {
+        private const val SCALE_FACTOR_CONSTANT = 1.5 / 112
+        private const val BASE_HEIGHT_CONSTANT = 1.173
+        private fun getBaseHeight(@Px textSize: Float): Int = (textSize * BASE_HEIGHT_CONSTANT).roundToInt()
+    }
 
     private val customTabsIntent = CustomTabsIntent.Builder()
         .setShowTitle(true)
@@ -189,6 +196,8 @@ class ChatAdapter(
         setBackgroundColor(background)
 
         setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
+        val baseHeight = getBaseHeight(textSize)
+
         holder.scope.launch(holder.coroutineHandler) {
 
             val spannable = buildSpannedString {
@@ -212,8 +221,8 @@ class ChatAdapter(
 
             val imageStart = spannable.lastIndexOf(' ') - 1
             Coil.execute(message.rewardImageUrl.toRequest(context)).drawable?.apply {
-                val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
-                setBounds(0, 0, width, lineHeight)
+                val width = (baseHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
+                setBounds(0, 0, width, baseHeight)
                 (text as SpannableString)[imageStart..imageStart + 1] = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
             }
         }
@@ -245,7 +254,8 @@ class ChatAdapter(
         val textColor = MaterialColors.getColor(textView, R.attr.colorOnSurface)
         setTextColor(textColor)
 
-        val scaleFactor = lineHeight * 1.5 / 112
+        val baseHeight = getBaseHeight(textSize)
+        val scaleFactor = baseHeight * SCALE_FACTOR_CONSTANT
         val background = when {
             isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(textView, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
             else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
@@ -289,7 +299,7 @@ class ChatAdapter(
         val userClickableSpan = object : LongClickableSpan() {
             val mentionName = when {
                 name.equals(displayName, ignoreCase = true) -> displayName
-                else -> name
+                else                                        -> name
             }
 
             override fun onClick(v: View) = onUserClicked(userId, mentionName, id, "", false)
@@ -353,7 +363,7 @@ class ChatAdapter(
             allowedBadges.forEachIndexed { idx, badge ->
                 try {
                     val (start, end) = badgePositions[idx]
-                    val cacheKey = badge.cacheKey(lineHeight)
+                    val cacheKey = badge.cacheKey(baseHeight)
                     val cached = emoteManager.badgeCache[cacheKey]
                     val drawable = when {
                         cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
@@ -364,8 +374,8 @@ class ChatAdapter(
                                 colorFilter = PorterDuffColorFilter(harmonized, PorterDuff.Mode.DST_OVER)
                             }
 
-                            val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
-                            setBounds(0, 0, width, lineHeight)
+                            val width = (baseHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
+                            setBounds(0, 0, width, baseHeight)
                             if (this is Animatable) {
                                 emoteManager.badgeCache.put(cacheKey, this)
                                 setRunning(animateGifs)
@@ -392,7 +402,7 @@ class ChatAdapter(
                 emotes
                     .groupBy { it.position }
                     .forEach { (_, emotes) ->
-                        val key = emotes.cacheKey(lineHeight)
+                        val key = emotes.cacheKey(baseHeight)
                         // fast path, backed by lru cache
                         val layerDrawable = emoteManager.layerCache[key] ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
 
@@ -434,7 +444,8 @@ class ChatAdapter(
         val visibleBadgeTypes = BadgeType.mapFromPreferenceSet(visibleBadges)
         setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
 
-        val scaleFactor = lineHeight * 1.5 / 112
+        val baseHeight = getBaseHeight(textSize)
+        val scaleFactor = baseHeight * SCALE_FACTOR_CONSTANT
         val background = when {
             isNotify                                        -> ContextCompat.getColor(context, R.color.color_highlight).harmonize(context)
             isReward                                        -> ContextCompat.getColor(context, R.color.color_reward).harmonize(context)
@@ -502,7 +513,7 @@ class ChatAdapter(
             val userClickableSpan = object : LongClickableSpan() {
                 val mentionName = when {
                     name.equals(displayName, ignoreCase = true) -> displayName
-                    else -> name
+                    else                                        -> name
                 }
 
                 override fun onClick(v: View) = onUserClicked(userId, mentionName, id, channel, false)
@@ -565,7 +576,7 @@ class ChatAdapter(
             allowedBadges.forEachIndexed { idx, badge ->
                 try {
                     val (start, end) = badgePositions[idx]
-                    val cacheKey = badge.cacheKey(lineHeight)
+                    val cacheKey = badge.cacheKey(baseHeight)
                     val cached = emoteManager.badgeCache[cacheKey]
                     val drawable = when {
                         cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
@@ -576,8 +587,8 @@ class ChatAdapter(
                                 colorFilter = PorterDuffColorFilter(harmonized, PorterDuff.Mode.DST_OVER)
                             }
 
-                            val width = (lineHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
-                            setBounds(0, 0, width, lineHeight)
+                            val width = (baseHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
+                            setBounds(0, 0, width, baseHeight)
                             if (this is Animatable) {
                                 emoteManager.badgeCache.put(cacheKey, this)
                                 setRunning(animateGifs)
@@ -604,7 +615,7 @@ class ChatAdapter(
                 emotes
                     .groupBy { it.position }
                     .forEach { (_, emotes) ->
-                        val key = emotes.cacheKey(lineHeight)
+                        val key = emotes.cacheKey(baseHeight)
                         // fast path, backed by lru cache
                         val layerDrawable = emoteManager.layerCache[key]?.also {
                             it.forEachLayer<Animatable> { animatable -> animatable.setRunning(animateGifs) }
