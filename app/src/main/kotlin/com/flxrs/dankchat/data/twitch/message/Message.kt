@@ -291,21 +291,15 @@ data class TwitchMessage(
 
         fun parseUserNotice(message: IrcMessage, emoteManager: EmoteManager, historic: Boolean = false): List<TwitchMessage> = with(message) {
             val msgId = tags["msg-id"]
-            if (msgId == "announcement") {
-                return listOf(parsePrivMessage(message, emoteManager, isNotify = true))
-            }
-
-            val messages = mutableListOf<TwitchMessage>()
             val id = tags["id"] ?: UUID.randomUUID().toString()
             val channel = params[0].substring(1)
-            val systemMsg = if (historic) params[1] else tags["system-msg"] ?: ""
+            val systemMsg = when {
+                msgId == "announcement" -> "Announcement "
+                historic                -> params[1]
+                else                    -> tags["system-msg"] ?: ""
+            }
             val color = Color.parseColor(DEFAULT_COLOR)
             val ts = tags["tmi-sent-ts"]?.toLongOrNull() ?: System.currentTimeMillis()
-
-            if (msgId != null && (msgId == "sub" || msgId == "resub")) {
-                val subMsg = parsePrivMessage(message, emoteManager, isNotify = true)
-                if (subMsg.message.isNotBlank()) messages += subMsg
-            }
             val systemTwitchMessage = TwitchMessage(
                 timestamp = ts,
                 channel = channel,
@@ -315,8 +309,16 @@ data class TwitchMessage(
                 isNotify = true,
                 id = id
             )
-            messages += systemTwitchMessage
-            return messages
+
+            val subMsg = when (msgId) {
+                "sub", "resub", "announcement" -> parsePrivMessage(message, emoteManager, isNotify = true).takeIf { it.message.isNotBlank() }
+                else                           -> null
+            }
+
+            return when (msgId) {
+                "sub", "resub", "announcement" -> listOfNotNull(subMsg, systemTwitchMessage)
+                else           -> listOf(systemTwitchMessage)
+            }
         }
 
         fun parseNotice(message: IrcMessage): TwitchMessage = with(message) {
