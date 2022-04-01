@@ -483,12 +483,12 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun fetchStreamData() {
-        fetchTimerJob?.cancel()
-        val channels = dankChatPreferenceStore.getChannels()
+    fun fetchStreamData(channels: List<String>) {
+        cancelStreamDataTimer()
+
         val oAuth = dankChatPreferenceStore.oAuthKey
         val streamInfoEnabled = dankChatPreferenceStore.streamInfoEnabled
-        if (channels.isNullOrEmpty() || oAuth.isNullOrBlank() || !streamInfoEnabled) {
+        if (oAuth.isNullOrBlank() || !streamInfoEnabled) {
             return
         }
 

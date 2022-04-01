@@ -303,7 +303,7 @@ class MainFragment : Fragment() {
             collectFlow(shouldColorNotification) { activity?.invalidateMenu() }
             collectFlow(channels) {
                 if (!it.isNullOrEmpty()) {
-                    mainViewModel.fetchStreamData()
+                    mainViewModel.fetchStreamData(it)
                 }
             }
             collectFlow(currentStreamedChannel) {
