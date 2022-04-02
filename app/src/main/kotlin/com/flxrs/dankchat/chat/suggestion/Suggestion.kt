@@ -13,8 +13,8 @@ sealed class Suggestion {
         }
     }
 
-    data class UserSuggestion(val name: String) : Suggestion(), Comparable<Suggestion> {
-        override fun toString() = name
+    data class UserSuggestion(val name: String, val withLeadingAt: Boolean = false) : Suggestion(), Comparable<Suggestion> {
+        override fun toString() = if (withLeadingAt) "@$name" else name
         override fun compareTo(other: Suggestion): Int {
             return when (other) {
                 is UserSuggestion    -> name.compareTo(other.name)

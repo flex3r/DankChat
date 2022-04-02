@@ -626,11 +626,7 @@ class MainFragment : Fragment() {
     }
 
     private fun setSuggestions(suggestions: List<Suggestion>) {
-        with(suggestionAdapter) {
-            setNotifyOnChange(false)
-            clear()
-            addAll(suggestions)
-        }
+        suggestionAdapter.setSuggestions(suggestions)
     }
 
     private inline fun showNuulsUploadDialogIfNotAcknowledged(crossinline action: () -> Unit) {
