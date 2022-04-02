@@ -2,13 +2,16 @@ package com.flxrs.dankchat.data
 
 import android.util.Log
 import com.flxrs.dankchat.data.api.ApiManager
+import com.flxrs.dankchat.data.api.dto.SupibotChannelDto
+import com.flxrs.dankchat.data.api.dto.SupibotCommandDto
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.command.CommandItem
 import com.flxrs.dankchat.utils.extensions.withoutOAuthSuffix
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.withContext
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -51,24 +54,46 @@ class CommandRepository @Inject constructor(
         }
     }
 
-    suspend fun loadSupibotCommands() {
+    suspend fun loadSupibotCommands() = withContext(Dispatchers.IO) {
         measureTimeMillis {
-            val channels = apiManager.getSupibotChannels()?.let { (data) ->
-                data.filter { it.isActive() }
-                    .map { it.name }
-            } ?: return
+            val channelsDeferred = async { getSupibotChannels() }
+            val commandsDeferred = async { getSupibotCommands() }
+            val aliasesDeferred = async { getSupibotUserAliases() }
 
-            apiManager.getSupibotCommands()?.let { (data) ->
-                val commandsWithAliases = data.map {
-                    listOf(it.name) + it.aliases
-                }.flatten()
+            val channels = channelsDeferred.await()
+            val commands = commandsDeferred.await()
+            val aliases = aliasesDeferred.await()
 
-                channels.forEach {
-                    supibotCommands.putIfAbsent(it, MutableStateFlow(emptyList()))
-                    supibotCommands[it]?.value = commandsWithAliases
-                }
-            } ?: return
+            channels.forEach {
+                supibotCommands
+                    .getOrPut(it) { MutableStateFlow(emptyList()) }
+                    .update { commands + aliases }
+            }
         }.let { Log.i(TAG, "Loaded Supibot commands in $it ms") }
+    }
+
+    private suspend fun getSupibotChannels(): List<String> {
+        return apiManager.getSupibotChannels()?.let { (data) ->
+            data.filter { it.isActive }
+                .map { it.name }
+        }.orEmpty()
+    }
+
+    private suspend fun getSupibotCommands(): List<String> {
+        return apiManager.getSupibotCommands()?.let { (data) ->
+            data.map { command ->
+                listOf("$${command.name}") + command.aliases.map { "$$it" }
+            }.flatten()
+        }.orEmpty()
+    }
+
+    private suspend fun getSupibotUserAliases(): List<String> {
+        val user = preferenceStore.userName ?: return emptyList()
+        return apiManager.getSupibotUserAliases(user)?.let { (data) ->
+            data.map { alias ->
+                "$$${alias.name}"
+            }
+        }.orEmpty()
     }
 
     private suspend fun blockUserCommand(oAuth: String, args: List<String>): CommandResult.Accepted {

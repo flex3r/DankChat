@@ -74,6 +74,7 @@ class ApiManager @Inject constructor(
 
     suspend fun getSupibotCommands(): SupibotCommandsDto? = supibotApiService.getCommands().bodyOrNull
     suspend fun getSupibotChannels(): SupibotChannelsDto? = supibotApiService.getChannels("twitch").bodyOrNull
+    suspend fun getSupibotUserAliases(user: String) = supibotApiService.getUserAliases(user).bodyOrNull
 
     suspend fun getChatters(channel: String): ChattersDto? = tmiApiService.getChatters(channel).bodyOrNull?.chatters
     suspend fun getChatterCount(channel: String): Int? = tmiApiService.getChatterCount(channel).bodyOrNull?.chatterCount

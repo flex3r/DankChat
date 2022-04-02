@@ -14,5 +14,12 @@ data class SupibotChannelsDto(@field:Json(name = "data") val data: List<SupibotC
 
 @Keep
 data class SupibotChannelDto(@field:Json(name = "name") val name: String, @field:Json(name = "mode") val mode: String) {
-    fun isActive() = mode != "Last seen" && mode != "Read"
+    val isActive: Boolean
+        get() = mode != "Last seen" && mode != "Read"
 }
+
+@Keep
+data class SupibotUserAliasesDto(@field:Json(name = "data") val data: List<SupibotUserAliasDto>)
+
+@Keep
+data class SupibotUserAliasDto(@field:Json(name = "name") val name: String)

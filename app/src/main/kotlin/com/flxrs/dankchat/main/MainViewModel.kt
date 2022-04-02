@@ -87,7 +87,7 @@ class MainViewModel @Inject constructor(
             .map { it?.toDisplayText()?.ifBlank { null } }
 
     private val users = currentSuggestionChannel.flatMapLatest { chatRepository.getUsers(it) }
-    private val supibotCommands = activeChannel.flatMapLatest { commandRepository.getSupibotCommands(it) }
+    private val supibotCommands = currentSuggestionChannel.flatMapLatest { commandRepository.getSupibotCommands(it) }
     private val currentStreamInformation = combine(streamInfoEnabled, activeChannel, streamData) { streamInfoEnabled, activeChannel, streamData ->
         streamData.find { it.channel == activeChannel }?.data?.takeIf { streamInfoEnabled }
     }
@@ -102,7 +102,7 @@ class MainViewModel @Inject constructor(
     }
 
     private val supibotCommandSuggestions = supibotCommands.mapLatest { commands ->
-        commands.map { Suggestion.CommandSuggestion("$$it") }
+        commands.map { Suggestion.CommandSuggestion(it) }
     }
 
     private val defaultCommandSuggestions = commandRepository.commands.map { commands ->
@@ -418,7 +418,6 @@ class MainViewModel @Inject constructor(
                 isUserChange = true,
                 loadTwitchData = true,
                 loadHistory = false,
-                loadSupibot = false
             )
         }
     }
