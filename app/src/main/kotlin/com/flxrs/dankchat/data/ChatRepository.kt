@@ -26,7 +26,7 @@ class ChatRepository @Inject constructor(
     private val readConnection: ChatConnection,
     private val writeConnection: ChatConnection,
     private val pubSubManager: PubSubManager,
-    private val scope: CoroutineScope,
+    scope: CoroutineScope,
 ) {
 
     data class UserState(
@@ -49,7 +49,8 @@ class ChatRepository @Inject constructor(
     private val _whispers = MutableStateFlow<List<ChatItem>>(emptyList())
     private val connectionState = ConcurrentHashMap<String, MutableStateFlow<ConnectionState>>()
     private val roomStates = ConcurrentHashMap<String, MutableSharedFlow<RoomState>>()
-    private val users = ConcurrentHashMap<String, MutableStateFlow<LruCache<String, Boolean>>>()
+    private val users = ConcurrentHashMap<String, LruCache<String, Boolean>>()
+    private val usersFlows = ConcurrentHashMap<String, MutableStateFlow<Set<String>>>()
     private val userState = MutableStateFlow(UserState())
     private val blockList = mutableSetOf<String>() // TODO extract out of repo to common data source
 
@@ -111,9 +112,11 @@ class ChatRepository @Inject constructor(
                             return@collect
                         }
 
-                        val currentUsers = users["*"]?.value ?: createUserCache()
+                        val currentUsers = users["*"] ?: createUserCache()
                         currentUsers.put(parsed.name, true)
-                        users["*"]?.value = currentUsers
+                        usersFlows["*"]?.update {
+                            currentUsers.snapshot().keys
+                        }
                         _channelMentionCount.increment("w", 1)
                         _notificationsFlow.tryEmit(listOf(item))
                     }
@@ -151,7 +154,7 @@ class ChatRepository @Inject constructor(
     fun getChat(channel: String): StateFlow<List<ChatItem>> = messages.getOrPut(channel) { MutableStateFlow(emptyList()) }
     fun getConnectionState(channel: String): StateFlow<ConnectionState> = connectionState.getOrPut(channel) { MutableStateFlow(ConnectionState.DISCONNECTED) }
     fun getRoomState(channel: String): SharedFlow<RoomState> = roomStates.getOrPut(channel) { mutableSharedFlowOf(RoomState(channel)) }
-    fun getUsers(channel: String): StateFlow<LruCache<String, Boolean>> = users.getOrPut(channel) { MutableStateFlow(createUserCache()) }
+    fun getUsers(channel: String): StateFlow<Set<String>> = usersFlows.getOrPut(channel) { MutableStateFlow(emptySet()) }
 
     suspend fun getLatestValidUserState(minChannelsSize: Int = 0): UserState = userState
         .filter {
@@ -182,15 +185,18 @@ class ChatRepository @Inject constructor(
     fun removeUserBlock(targetUserId: String) = blockList.remove(targetUserId)
 
     suspend fun loadChatters(channel: String) = withContext(Dispatchers.Default) {
-        if (!users.contains(channel)) users[channel] = MutableStateFlow(createUserCache())
 
         measureTimeMillis {
             apiManager.getChatters(channel)?.let { chatters ->
-                users[channel]?.value?.let { cache ->
-                    chatters.total.forEach { cache.put(it, true) }
-                    users[channel]?.value = cache
-                }
+                val currentUsers = users
+                    .getOrPut(channel) { createUserCache() }
+                    .also { cache ->
+                        chatters.total.forEach { cache.put(it, true) }
+                    }
 
+                usersFlows
+                    .getOrPut(channel) { MutableStateFlow(emptySet()) }
+                    .update { currentUsers.snapshot().keys }
             }
         }.let { Log.i(TAG, "Loading chatters for #$channel took $it ms") }
     }
@@ -353,7 +359,10 @@ class ChatRepository @Inject constructor(
     }
 
     private fun removeChannelData(channel: String) {
-        messages[channel]?.value = emptyList()
+        messages.remove(channel)
+        messages.remove(channel)
+        usersFlows.remove(channel)
+        users.remove(channel)
         lastMessage.remove(channel)
         _channelMentionCount.clear(channel)
         loadedRecentsInChannels.remove(channel)
@@ -363,7 +372,8 @@ class ChatRepository @Inject constructor(
         messages.putIfAbsent(channel, MutableStateFlow(emptyList()))
         connectionState.putIfAbsent(channel, MutableStateFlow(ConnectionState.DISCONNECTED))
         roomStates.putIfAbsent(channel, mutableSharedFlowOf(RoomState(channel)))
-        users.putIfAbsent(channel, MutableStateFlow(createUserCache()))
+        users.putIfAbsent(channel, createUserCache())
+        usersFlows.putIfAbsent(channel, MutableStateFlow(emptySet()))
 
         with(_channelMentionCount) {
             if (!firstValue.contains("w")) tryEmit(firstValue.apply { set(channel, 0) })
@@ -525,9 +535,13 @@ class ChatRepository @Inject constructor(
             WhisperMessage.parseFromIrc(ircMessage, emoteManager, userState.displayName, userState.color)
         }.getOrElse { return }
 
-        val currentUsers = users["*"]?.value ?: createUserCache()
-        currentUsers.put(parsed.name, true)
-        users["*"]?.value = currentUsers
+        val currentUsers = users
+            .getOrPut("*") { createUserCache() }
+            .also { it.put(parsed.name, true) }
+
+        usersFlows
+            .getOrPut("*") { MutableStateFlow(emptySet()) }
+            .update { currentUsers.snapshot().keys }
 
         val item = ChatItem(parsed, isMentionTab = true)
         _whispers.update { current ->
@@ -576,9 +590,12 @@ class ChatRepository @Inject constructor(
                 }
 
                 val withMentions = it.checkForMention(name, customMentionEntries)
-                val currentUsers = users[withMentions.channel]?.value ?: createUserCache()
-                currentUsers.put(withMentions.name, true)
-                users[withMentions.channel]?.value = currentUsers
+                val currentUsers = users
+                    .getOrPut(withMentions.channel) { createUserCache() }
+                    .also { cache -> cache.put(withMentions.name, true) }
+                usersFlows
+                    .getOrPut(withMentions.channel) { MutableStateFlow(emptySet()) }
+                    .update { currentUsers.snapshot().keys }
 
                 ChatItem(withMentions)
             }
@@ -624,11 +641,7 @@ class ChatRepository @Inject constructor(
         }
     }
 
-    private fun createUserCache(): LruCache<String, Boolean> {
-        return object : LruCache<String, Boolean>(USER_CACHE_SIZE) {
-            override fun equals(other: Any?): Boolean = false
-        }
-    }
+    private fun createUserCache(): LruCache<String, Boolean> = LruCache(USER_CACHE_SIZE)
 
     fun makeAndPostCustomSystemMessage(message: String, channel: String) {
         messages[channel]?.update {
@@ -699,7 +712,7 @@ class ChatRepository @Inject constructor(
         private val TAG = ChatRepository::class.java.simpleName
         private val INVISIBLE_CHAR = 0x000E0000.codePointAsString
         private val ESCAPE_TAG = 0x000E0002.codePointAsString
-        private const val USER_CACHE_SIZE = 500
+        private const val USER_CACHE_SIZE = 5000
         private const val PUBSUB_TIMEOUT = 1000L
 
         val ESCAPE_TAG_REGEX = "(?<!$ESCAPE_TAG)$ESCAPE_TAG".toRegex()

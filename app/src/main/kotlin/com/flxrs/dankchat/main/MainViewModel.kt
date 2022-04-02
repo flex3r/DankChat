@@ -98,7 +98,7 @@ class MainViewModel @Inject constructor(
     }
 
     private val userSuggestions = users.mapLatest { users ->
-        users.snapshot().keys.map { Suggestion.UserSuggestion(it) }
+        users.map { Suggestion.UserSuggestion(it) }
     }
 
     private val supibotCommandSuggestions = supibotCommands.mapLatest { commands ->
