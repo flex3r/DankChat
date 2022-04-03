@@ -221,6 +221,7 @@ class CommandRepository @Inject constructor(
             "raid",
             "unraid",
             "delete",
+            "announce",
         )
     }
 }
