@@ -15,7 +15,12 @@
     <string name="error_dialog_title">Caught exception: %1$s</string>
     <string name="add_channel">Add channel</string>
     <string name="manage_channels">Manage channels</string>
+    <string name="report_channel">Report channel</string>
+    <string name="block_channel">Block channel</string>
+    <string name="channel">Channel</string>
     <string name="open_channel">Open channel</string>
+    <string name="remove_channel">Remove channel</string>
+    <string name="channel_blocked_message">Channel blocked</string>
     <string name="no_channels_added">No channels added</string>
     <string name="confirm_logout_title">Confirm logout</string>
     <string name="confirm_logout_message">Are you sure you want to logout?</string>

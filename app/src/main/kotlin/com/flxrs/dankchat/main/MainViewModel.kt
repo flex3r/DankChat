@@ -353,6 +353,18 @@ class MainViewModel @Inject constructor(
 
     fun getChannels() = channels.value.orEmpty()
 
+    fun getActiveChannel() = activeChannel.value.ifEmpty { null }
+
+    fun blockUser() = viewModelScope.launch {
+        runCatching {
+            val activeChannel = getActiveChannel() ?: return@launch
+            val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return@launch
+            val channelId = dataRepository.getUserIdByName(oAuth, activeChannel) ?: return@launch
+            dataRepository.blockUser(oAuth, channelId)
+            chatRepository.addUserBlock(channelId)
+        }
+    }
+
     fun setActiveChannel(channel: String) {
         chatRepository.setActiveChannel(channel)
         currentSuggestionChannel.value = channel

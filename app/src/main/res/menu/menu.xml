@@ -31,6 +31,30 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_channel"
+        android:title="@string/channel"
+        app:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/menu_open_channel"
+                android:title="@string/open_channel"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/menu_remove_channel"
+                android:title="@string/remove_channel"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/menu_report_channel"
+                android:title="@string/report_channel"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/menu_block_channel"
+                android:title="@string/block_channel"
+                app:showAsAction="never" />
+        </menu>
+    </item>
+
+    <item
         android:id="@+id/menu_account"
         android:title="@string/account"
         app:showAsAction="never">
@@ -72,11 +96,6 @@
         android:title="@string/more"
         app:showAsAction="never">
         <menu>
-            <item
-                android:id="@+id/menu_open"
-                android:title="@string/open_channel"
-                app:showAsAction="never" />
-
             <item
                 android:id="@+id/menu_reload_emotes"
                 android:title="@string/reload_emotes"

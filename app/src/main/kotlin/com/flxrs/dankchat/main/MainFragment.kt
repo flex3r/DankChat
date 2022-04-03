@@ -188,7 +188,9 @@ class MainFragment : Fragment() {
                     findItem(R.id.menu_login)?.isVisible = !isLoggedIn
                     findItem(R.id.menu_account)?.isVisible = isLoggedIn
                     findItem(R.id.menu_manage)?.isVisible = hasChannels
-                    findItem(R.id.menu_open)?.isVisible = hasChannels
+                    findItem(R.id.menu_channel)?.isVisible = hasChannels
+                    findItem(R.id.menu_open_channel)?.isVisible = hasChannels
+                    findItem(R.id.menu_block_channel)?.isVisible = isLoggedIn
                     findItem(R.id.menu_mentions)?.apply {
                         isVisible = hasChannels
                         context?.let {
@@ -214,21 +216,24 @@ class MainFragment : Fragment() {
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 when (menuItem.itemId) {
-                    R.id.menu_reconnect     -> mainViewModel.reconnect()
-                    R.id.menu_login         -> openLogin()
-                    R.id.menu_relogin       -> openLogin(isRelogin = true)
-                    R.id.menu_logout        -> showLogoutConfirmationDialog()
-                    R.id.menu_add           -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment)
-                    R.id.menu_mentions      -> mentionBottomSheetBehavior?.expand()
-                    R.id.menu_open          -> openChannel()
-                    R.id.menu_manage        -> openManageChannelsDialog()
-                    R.id.menu_reload_emotes -> reloadEmotes()
-                    R.id.menu_choose_media  -> showNuulsUploadDialogIfNotAcknowledged { requestGalleryMedia.launch() }
-                    R.id.menu_capture_image -> startCameraCapture()
-                    R.id.menu_capture_video -> startCameraCapture(captureVideo = true)
-                    R.id.menu_clear         -> clear()
-                    R.id.menu_settings      -> navigateSafe(R.id.action_mainFragment_to_overviewSettingsFragment).also { hideKeyboard() }
-                    else                    -> return false
+                    R.id.menu_reconnect      -> mainViewModel.reconnect()
+                    R.id.menu_login          -> openLogin()
+                    R.id.menu_relogin        -> openLogin(isRelogin = true)
+                    R.id.menu_logout         -> showLogoutConfirmationDialog()
+                    R.id.menu_add            -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment)
+                    R.id.menu_mentions       -> mentionBottomSheetBehavior?.expand()
+                    R.id.menu_open_channel   -> openChannel()
+                    R.id.menu_remove_channel -> removeChannel()
+                    R.id.menu_report_channel -> reportChannel()
+                    R.id.menu_block_channel  -> blockChannel()
+                    R.id.menu_manage         -> openManageChannelsDialog()
+                    R.id.menu_reload_emotes  -> reloadEmotes()
+                    R.id.menu_choose_media   -> showNuulsUploadDialogIfNotAcknowledged { requestGalleryMedia.launch() }
+                    R.id.menu_capture_image  -> startCameraCapture()
+                    R.id.menu_capture_video  -> startCameraCapture(captureVideo = true)
+                    R.id.menu_clear          -> clear()
+                    R.id.menu_settings       -> navigateSafe(R.id.action_mainFragment_to_overviewSettingsFragment).also { hideKeyboard() }
+                    else                     -> return false
                 }
                 return true
             }
@@ -771,12 +776,41 @@ class MainFragment : Fragment() {
         .create().show()
 
     private fun openChannel() {
-        val channel = mainViewModel.activeChannel.value
+        val channel = mainViewModel.getActiveChannel() ?: return
         val url = "https://twitch.tv/$channel"
         Intent(Intent.ACTION_VIEW).also {
             it.data = url.toUri()
             startActivity(it)
         }
+    }
+
+    private fun reportChannel() {
+        val activeChannel = mainViewModel.getActiveChannel() ?: return
+        val url = "https://twitch.tv/$activeChannel/report"
+        Intent(Intent.ACTION_VIEW).also {
+            it.data = url.toUri()
+            startActivity(it)
+        }
+    }
+
+    private fun blockChannel() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.confirm_user_block_title)
+            .setMessage(R.string.confirm_user_block_message)
+            .setPositiveButton(R.string.confirm_user_block_positive_button) { _, _ ->
+                mainViewModel.blockUser()
+                removeChannel()
+                showSnackBar(getString(R.string.channel_blocked_message))
+            }
+            .setNegativeButton(R.string.dialog_cancel) { d, _ -> d.dismiss() }
+            .show()
+    }
+
+    private fun removeChannel() {
+        val activeChannel = mainViewModel.getActiveChannel() ?: return
+        val channels = mainViewModel.getChannels().ifEmpty { return }
+        val updatedChannels = channels - activeChannel
+        updateChannels(updatedChannels)
     }
 
     private fun openManageChannelsDialog() {
