@@ -173,7 +173,7 @@ class ChatConnection @Inject constructor(
 
     private fun setupJoinCheckInterval(channelsToCheck: List<String>) = scope.launch {
         Log.d(TAG, "[$chatConnectionType] setting up join check for $channelsToCheck")
-        // only send a ChannelNonExistent Message if we are actually connected or there are attempted joins
+        // only send a ChannelNonExistent event if we are actually connected or there are attempted joins
         if (socket == null || !connected || channelsAttemptedToJoin.isEmpty()) {
             return@launch
         }
@@ -242,7 +242,13 @@ class ChatConnection @Inject constructor(
                     "PING"      -> webSocket.handlePing()
                     "PONG"      -> awaitingPong = false
                     "RECONNECT" -> reconnect()
-                    else        -> scope.launch { receiveChannel.send(ChatEvent.Message(ircMessage)) }
+                    else        -> {
+                        if (ircMessage.command == "NOTICE" && ircMessage.tags["msg-id"] == "msg_channel_suspended") {
+                            channelsAttemptedToJoin.remove(ircMessage.params[0].substring(1))
+                        }
+
+                        scope.launch { receiveChannel.send(ChatEvent.Message(ircMessage)) }
+                    }
                 }
             }
         }
