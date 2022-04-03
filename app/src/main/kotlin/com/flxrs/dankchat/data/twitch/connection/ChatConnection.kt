@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import okhttp3.*
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import kotlin.random.Random
 import kotlin.random.nextLong
@@ -24,6 +25,7 @@ enum class ChatConnectionType {
 sealed class ChatEvent {
     data class Message(val message: IrcMessage) : ChatEvent()
     data class Connected(val channel: String, val isAnonymous: Boolean) : ChatEvent()
+    data class ChannelNonExistent(val channel: String) : ChatEvent()
     data class Error(val throwable: Throwable) : ChatEvent()
     object LoginFailed : ChatEvent()
     object Closed : ChatEvent()
@@ -53,8 +55,8 @@ class ChatConnection @Inject constructor(
             return reconnectDelay + jitter
         }
 
-
     private val channels = mutableSetOf<String>()
+    private val channelsAttemptedToJoin = ConcurrentHashMap.newKeySet<String>()
     private val channelsToJoin = Channel<Collection<String>>(capacity = Channel.BUFFERED)
     private var currentUserName: String? = null
     private var currentOAuth: String? = null
@@ -77,6 +79,8 @@ class ChatConnection @Inject constructor(
                     .chunked(JOIN_CHUNK_SIZE)
                     .forEach { chunk ->
                         socket?.joinChannels(chunk)
+                        setupJoinCheckInterval(chunk)
+                        channelsAttemptedToJoin.addAll(chunk)
                         delay(timeMillis = chunk.size * JOIN_DELAY)
                     }
             }
@@ -167,6 +171,22 @@ class ChatConnection @Inject constructor(
         }
     }
 
+    private fun setupJoinCheckInterval(channelsToCheck: List<String>) = scope.launch {
+        Log.d(TAG, "[$chatConnectionType] setting up join check for $channelsToCheck")
+        // only send a ChannelNonExistent Message if we are actually connected or there are attempted joins
+        if (socket == null || !connected || channelsAttemptedToJoin.isEmpty()) {
+            return@launch
+        }
+
+        delay(JOIN_CHECK_DELAY)
+        channelsToCheck.forEach {
+            if (it in channelsAttemptedToJoin) {
+                channelsAttemptedToJoin.remove(it)
+                receiveChannel.send(ChatEvent.ChannelNonExistent(it))
+            }
+        }
+    }
+
     private inner class TwitchWebSocketListener : WebSocketListener() {
         private var pingJob: Job? = null
 
@@ -217,6 +237,7 @@ class ChatConnection @Inject constructor(
                             channelsToJoin.send(channels)
                         }
                     }
+                    "JOIN"      -> channelsAttemptedToJoin.remove(ircMessage.params[0].substring(1))
                     "366"       -> scope.launch { receiveChannel.send(ChatEvent.Connected(ircMessage.params[1].substring(1), isAnonymous)) }
                     "PING"      -> webSocket.handlePing()
                     "PONG"      -> awaitingPong = false
@@ -247,6 +268,7 @@ class ChatConnection @Inject constructor(
         private const val RECONNECT_BASE_DELAY = 1_000L
         private const val RECONNECT_MAX_ATTEMPTS = 4
         private const val PING_INTERVAL = 5 * 60 * 1000L
+        private const val JOIN_CHECK_DELAY = 10 * 1000L
         private const val JOIN_DELAY = 600L
         private const val JOIN_CHUNK_SIZE = 5
         private val TAG = ChatConnection::class.java.simpleName

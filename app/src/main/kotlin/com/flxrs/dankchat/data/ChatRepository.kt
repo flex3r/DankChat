@@ -68,11 +68,12 @@ class ChatRepository @Inject constructor(
         scope.launch {
             readConnection.messages.collect { event ->
                 when (event) {
-                    is ChatEvent.Connected   -> handleConnected(event.channel, event.isAnonymous)
-                    is ChatEvent.Closed      -> handleDisconnect()
-                    is ChatEvent.LoginFailed -> makeAndPostSystemMessage(SystemMessageType.LoginExpired)
-                    is ChatEvent.Message     -> onMessage(event.message)
-                    is ChatEvent.Error       -> handleDisconnect()
+                    is ChatEvent.Connected          -> handleConnected(event.channel, event.isAnonymous)
+                    is ChatEvent.Closed             -> handleDisconnect()
+                    is ChatEvent.ChannelNonExistent -> makeAndPostSystemMessage(SystemMessageType.ChannelNonExistent(event.channel), setOf(event.channel))
+                    is ChatEvent.LoginFailed        -> makeAndPostSystemMessage(SystemMessageType.LoginExpired)
+                    is ChatEvent.Message            -> onMessage(event.message)
+                    is ChatEvent.Error              -> handleDisconnect()
                 }
             }
         }

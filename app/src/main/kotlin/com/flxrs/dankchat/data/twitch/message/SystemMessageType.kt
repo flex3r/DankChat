@@ -5,5 +5,6 @@ sealed class SystemMessageType {
     object Disconnected : SystemMessageType()
     object NoHistoryLoaded : SystemMessageType()
     object LoginExpired : SystemMessageType()
+    data class ChannelNonExistent(val channel: String) : SystemMessageType()
     data class Custom(val message: String) : SystemMessageType()
 }

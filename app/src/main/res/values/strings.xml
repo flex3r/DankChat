@@ -58,6 +58,7 @@
     <string name="emote_menu_tab_channel">Channel</string>
     <string name="emote_menu_tab_global">Global</string>
     <string name="system_message_connected">Connected</string>
+    <string name="system_message_channel_non_existent">This channel does not exist</string>
     <string name="system_message_disconnected">Disconnected</string>
     <string name="system_message_no_history">You are not seeing any historical messages because you opted out of the recent-messages integration.</string>
     <string name="timed_out_message">&lt; Message deleted ></string>
