@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import okhttp3.*
-import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import kotlin.random.Random
 import kotlin.random.nextLong
@@ -56,7 +55,7 @@ class ChatConnection @Inject constructor(
         }
 
     private val channels = mutableSetOf<String>()
-    private val channelsAttemptedToJoin = ConcurrentHashMap.newKeySet<String>()
+    private val channelsAttemptedToJoin = mutableSetOf<String>()
     private val channelsToJoin = Channel<Collection<String>>(capacity = Channel.BUFFERED)
     private var currentUserName: String? = null
     private var currentOAuth: String? = null
