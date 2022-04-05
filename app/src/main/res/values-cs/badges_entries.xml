@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string-array name="badges_entries">
+    <item>"Autorita (personál, admin)"</item>
+    <item>"Předpovědi"</item>
+    <item>"Kanál (vysílající uživatel, moderátor)"</item>
+    <item>"Předplatitel"</item>
+    <item>"Marnost (prime, bity, dárci předplatného)"</item>
+    <item>"DankChat"</item>
+  </string-array>
+</resources>

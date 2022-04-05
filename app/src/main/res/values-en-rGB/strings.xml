@@ -164,6 +164,8 @@ The service temporarily stores messages for channels you (and others) visit to p
   <string name="preference_tts_title">"Enable TTS"</string>
   <string name="preference_tts_user_ignore_list_summary">"List of users/accounts that will be ignored"</string>
   <string name="preference_tts_user_ignore_list_title">"User ignore list"</string>
+  <string name="preference_unlisted_emotes_summary">"Disables filtering of unapproved or unlisted emotes"</string>
+  <string name="preference_unlisted_emotes_title">"Allow unlisted emotes"</string>
   <string name="preference_uploader_configure_title">"Configure uploader"</string>
   <string name="preference_uploader_header">"Media uploader"</string>
   <string name="preference_uploader_recent_uploads_title">"Recent uploads"</string>

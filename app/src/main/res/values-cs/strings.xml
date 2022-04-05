@@ -29,7 +29,7 @@
   <string name="confirm_user_delete_positive_button">"Smazat"</string>
   <string name="confirm_user_delete_title">"Potvrdit smazání zprávy"</string>
   <string name="confirm_user_roomstate_title">"Změnit režim místnosti"</string>
-  <string name="confirm_user_timeout_positive_button">"Časový ban"</string>
+  <string name="confirm_user_timeout_positive_button">"Timeout"</string>
   <string name="confirm_user_timeout_title">"Potvrdit timeout"</string>
   <string name="confirm_user_unfollow_message">"Jste si jistí, že chcete přestat sledovat tohoto uživatele?"</string>
   <string name="confirm_user_unfollow_title">"Potvrdit zrušení sledování uživatele"</string>
@@ -208,8 +208,8 @@ Služba dočasně ukládá zprávy pro kanály, které vy (a další) navštív�
   <string name="system_message_no_history">"Nevidíte žádné minulé zprávy, protože jste se odhlásili z načítání minulých zpráv."</string>
   <string name="take_picture">"Pořídit obrázek"</string>
   <string name="timed_out_message">"&lt; Zpráva smazána >"</string>
-  <string name="toggle_fullscreen">"Zapnou plnou obrazovku"</string>
-  <string name="toggle_stream">"Zapnout stream"</string>
+  <string name="toggle_fullscreen">"Přepnout režim celé obrazovky"</string>
+  <string name="toggle_stream">"Zapnout zapnutí streamu"</string>
   <string name="tts_ignore_list_add_user">"Přidat uživatele"</string>
   <string name="tts_ignore_list_remove_user">"Odebrat uživatele"</string>
   <string name="tts_ignore_list_user_hint">"Uživatel"</string>
@@ -238,7 +238,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
   <string name="user_popup_mention">"Zmínit uživatele"</string>
   <string name="user_popup_not_following">"Nesleduje"</string>
   <string name="user_popup_report">"Nahlásit"</string>
-  <string name="user_popup_timeout">"Časový ban"</string>
+  <string name="user_popup_timeout">"Timeout"</string>
   <string name="user_popup_unban">"Odbanovat"</string>
   <string name="user_popup_unblock">"Odblokovat"</string>
   <string name="user_popup_unfollow">"Přestat sledovat"</string>
