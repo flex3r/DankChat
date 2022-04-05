@@ -6,10 +6,10 @@ buildscript {
 
         // Plugins
         agp_version = '7.1.2'
-        kotlin_version = '1.6.10'
+        kotlin_version = '1.6.20'
 
         // Kotlin
-        coroutines_version = '1.6.0'
+        coroutines_version = '1.6.1'
         serialization_version = '1.3.2'
 
         // AndroidX
