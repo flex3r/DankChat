@@ -155,9 +155,9 @@ class MainFragment : Fragment() {
             changeRoomstate.setOnClickListener { showRoomStateDialog() }
             showChips.setOnClickListener { mainViewModel.toggleChipsExpanded() }
             splitThumb?.setOnTouchListener { _, event ->
-                val guideline = splitGuideline ?: return@setOnTouchListener false
                 when (event.actionMasked) {
                     MotionEvent.ACTION_MOVE -> {
+                        val guideline = splitGuideline ?: return@setOnTouchListener false
                         val width = resources.displayMetrics.widthPixels
                         guideline.updateLayoutParams<ConstraintLayout.LayoutParams> {
                             guidePercent = (event.rawX / width).coerceIn(MIN_GUIDELINE_PERCENT, MAX_GUIDELINE_PERCENT)
@@ -175,6 +175,7 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initPreferences(view.context)
+        binding.splitThumb?.background?.alpha = 150
         activity?.addMenuProvider(object : MenuProvider {
             override fun onPrepareMenu(menu: Menu) {
                 with(menu) {
