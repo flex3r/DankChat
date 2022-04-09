@@ -121,7 +121,7 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_supibot_suggestions_key), false)
 
     val scrollbackLength: Int
-        get() = defaultPreferences.getInt(context.getString(R.string.preference_scrollback_length_key), 10)
+        get() = correctScrollbackLength(defaultPreferences.getInt(context.getString(R.string.preference_scrollback_length_key), 10))
 
     val streamInfoEnabled: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_streaminfo_key), true)
@@ -281,6 +281,9 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
 
         private const val UPLOADER_URL_DEFAULT = "https://i.nuuls.com/upload"
         private const val UPLOADER_FORM_FIELD_DEFAULT = "file"
+
+        private const val SCROLLBACK_LENGTH_STEP = 50
+        fun correctScrollbackLength(seekbarValue: Int): Int = seekbarValue * SCROLLBACK_LENGTH_STEP
 
         val DEFAULT_UPLOADER = ImageUploader(
             uploadUrl = UPLOADER_URL_DEFAULT,

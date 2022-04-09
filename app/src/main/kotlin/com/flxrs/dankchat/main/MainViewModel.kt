@@ -305,9 +305,9 @@ class MainViewModel @Inject constructor(
         val oAuth = dankChatPreferenceStore.oAuthKey.orEmpty()
         val id = dankChatPreferenceStore.userIdString.orEmpty()
         val isLoggedIn = dankChatPreferenceStore.isLoggedIn
-        val scrollBackLength = ChatSettingsFragment.correctScrollbackLength(dankChatPreferenceStore.scrollbackLength)
+        val scrollBackLength = dankChatPreferenceStore.scrollbackLength
         val loadThirdPartyData = dankChatPreferenceStore.visibleThirdPartyEmotes
-        scrollBackLength.let { chatRepository.scrollBackLength = it }
+        chatRepository.scrollBackLength = scrollBackLength
 
         viewModelScope.launch {
             val parameters = DataLoadingState.Parameters(

@@ -15,6 +15,7 @@ import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.databinding.CommandsBottomsheetBinding
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.main.MainActivity
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.command.CommandAdapter
 import com.flxrs.dankchat.preferences.command.CommandItem
 import com.flxrs.dankchat.utils.extensions.showLongSnackbar
@@ -49,9 +50,9 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.chat_settings, rootKey)
         findPreference<SeekBarPreference>(getString(R.string.preference_scrollback_length_key))?.apply {
-            summary = correctScrollbackLength(value).toString()
+            summary = DankChatPreferenceStore.correctScrollbackLength(value).toString()
             setOnPreferenceChangeListener { _, newValue ->
-                (newValue as? Int)?.let { summary = correctScrollbackLength(it).toString() }
+                (newValue as? Int)?.let { summary = DankChatPreferenceStore.correctScrollbackLength(it).toString() }
                 true
             }
         }
@@ -123,10 +124,5 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
         }
 
         return true
-    }
-
-    companion object {
-        private const val SCROLLBACK_LENGTH_STEP = 50
-        fun correctScrollbackLength(seekbarValue: Int): Int = seekbarValue * SCROLLBACK_LENGTH_STEP
     }
 }
