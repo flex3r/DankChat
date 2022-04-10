@@ -407,7 +407,9 @@ class ChatAdapter(
                         // fast path, backed by lru cache
                         val layerDrawable = emoteManager.layerCache[key] ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
 
-                        (text as SpannableString).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
+                        if (layerDrawable != null) {
+                            (text as SpannableString).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
+                        }
                     }
             } catch (t: Throwable) {
                 handleException(t)
@@ -622,7 +624,9 @@ class ChatAdapter(
                             it.forEachLayer<Animatable> { animatable -> animatable.setRunning(animateGifs) }
                         } ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
 
-                        (text as SpannableString).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
+                        if (layerDrawable != null) {
+                            (text as SpannableString).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
+                        }
                     }
             } catch (t: Throwable) {
                 handleException(t)
@@ -636,12 +640,16 @@ class ChatAdapter(
         cacheKey: String,
         animateGifs: Boolean,
         scaleFactor: Double,
-    ): LayerDrawable {
+    ): LayerDrawable? {
         val drawables = emotes.mapNotNull {
             Coil.execute(it.url.toRequest(context)).drawable?.transformEmoteDrawable(scaleFactor, it)
         }.toTypedArray()
 
         val bounds = drawables.map { it.bounds }
+        if (bounds.isEmpty()) {
+            return null
+        }
+
         return drawables.toLayerDrawable(bounds, scaleFactor, emotes).also {
             emoteManager.layerCache.put(cacheKey, it)
             it.forEachLayer<Animatable> { animatable -> animatable.setRunning(animateGifs) }
