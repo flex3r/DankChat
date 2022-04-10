@@ -458,12 +458,7 @@ class ChatAdapter(
         }
         setBackgroundColor(background)
 
-        val textColor = when {
-            isNotify  -> MaterialColors.getColor(textView, R.attr.colorOnPrimaryContainer)
-            //isReward  -> MaterialColors.getColor(textView, R.attr.colorOnTertiaryContainer)
-            isMention -> MaterialColors.getColor(textView, R.attr.colorOnSecondaryContainer)
-            else      -> MaterialColors.getColor(textView, R.attr.colorOnSurface)
-        }
+        val textColor = MaterialColors.getColor(textView, R.attr.colorOnSurface)
         setTextColor(textColor)
 
         if (timedOut) {
