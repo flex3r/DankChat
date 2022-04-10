@@ -14,16 +14,18 @@ import com.flxrs.dankchat.utils.extensions.getDrawableAndSetSurfaceTint
 import com.flxrs.dankchat.utils.extensions.loadImage
 import com.flxrs.dankchat.utils.extensions.replaceAll
 
-class EmoteSuggestionsArrayAdapter(
+class SuggestionsArrayAdapter(
     context: Context,
     private val onCount: (count: Int) -> Unit
 ) : ArrayAdapter<Suggestion>(context, R.layout.emote_suggestion_item, R.id.suggestion_text) {
     private val items = mutableListOf<Suggestion>()
+    private val lock = Object()
 
     fun setSuggestions(list: List<Suggestion>) {
-        setNotifyOnChange(false)
-        items.replaceAll(list)
-        replaceAll(list)
+        synchronized(lock) {
+            items.replaceAll(list)
+            replaceAll(list)
+        }
     }
 
     override fun getCount(): Int = super.getCount().also { onCount(it) }
@@ -81,13 +83,10 @@ class EmoteSuggestionsArrayAdapter(
         @Suppress("UNCHECKED_CAST")
         override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
             val resultList = (results?.values as? List<Suggestion>).orEmpty()
-            replaceAll(resultList)
-
-            if (resultList.isEmpty()) {
-                notifyDataSetInvalidated()
-            } else {
-                notifyDataSetChanged()
+            synchronized(lock) {
+                replaceAll(resultList)
             }
+            notifyDataSetChanged()
         }
     }
 

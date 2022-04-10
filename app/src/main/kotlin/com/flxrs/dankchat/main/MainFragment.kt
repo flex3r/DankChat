@@ -41,7 +41,7 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.chat.menu.EmoteMenuAdapter
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
-import com.flxrs.dankchat.chat.suggestion.EmoteSuggestionsArrayAdapter
+import com.flxrs.dankchat.chat.suggestion.SuggestionsArrayAdapter
 import com.flxrs.dankchat.chat.suggestion.SpaceTokenizer
 import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.chat.user.UserPopupResult
@@ -89,7 +89,7 @@ class MainFragment : Fragment() {
     private lateinit var tabAdapter: ChatTabAdapter
     private lateinit var tabLayoutMediator: TabLayoutMediator
     private lateinit var emoteMenuAdapter: EmoteMenuAdapter
-    private lateinit var suggestionAdapter: EmoteSuggestionsArrayAdapter
+    private lateinit var suggestionAdapter: SuggestionsArrayAdapter
     private var currentMediaUri = Uri.EMPTY
     private val tabSelectionListener = TabSelectionListener()
 
@@ -985,7 +985,7 @@ class MainFragment : Fragment() {
 
     private fun CustomMultiAutoCompleteTextView.setup(binding: MainFragmentBinding) {
         setTokenizer(SpaceTokenizer())
-        suggestionAdapter = EmoteSuggestionsArrayAdapter(binding.input.context) { count ->
+        suggestionAdapter = SuggestionsArrayAdapter(binding.input.context) { count ->
             dropDownHeight = if (count > 4) {
                 (binding.root.measuredHeight / 2.0).roundToInt()
             } else {
@@ -993,7 +993,6 @@ class MainFragment : Fragment() {
             }
             dropDownWidth = (binding.root.measuredWidth * 0.6).roundToInt()
         }
-        suggestionAdapter.setNotifyOnChange(false)
 
         setOnItemClickListener { parent, _, position, _ ->
             val suggestion = parent.getItemAtPosition(position)
