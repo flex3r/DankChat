@@ -632,6 +632,10 @@ class MainFragment : Fragment() {
     }
 
     private fun setSuggestions(suggestions: List<Suggestion>) {
+        if (binding.input.isPopupShowing) {
+            return
+        }
+
         suggestionAdapter.setSuggestions(suggestions)
     }
 
