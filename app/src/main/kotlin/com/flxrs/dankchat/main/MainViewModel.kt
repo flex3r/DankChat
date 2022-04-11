@@ -20,7 +20,6 @@ import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.data.twitch.message.RoomState
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.Preference
-import com.flxrs.dankchat.preferences.ui.ChatSettingsFragment
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.extensions.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -328,17 +327,12 @@ class MainViewModel @Inject constructor(
                     return@runCatchingToState
                 }
 
-                val strictUserStateResult = withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
-                    val userState = chatRepository.getLatestValidUserState(minChannelsSize = channelList.size)
-                    dataRepository.loadUserStateEmotes(userState.globalEmoteSets, userState.followerEmoteSets)
-                }
+                val userState =
+                    withTimeoutOrNull(IRC_TIMEOUT_DELAY) { chatRepository.getLatestValidUserState(minChannelsSize = channelList.size) }
+                        ?: withTimeoutOrNull(IRC_TIMEOUT_SHORT_DELAY) { chatRepository.getLatestValidUserState(minChannelsSize = 0) }
 
-                if (strictUserStateResult == null) {
-                    // try again but potentially without follower emote data
-                    withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
-                        val userState = chatRepository.getLatestValidUserState(minChannelsSize = 0)
-                        dataRepository.loadUserStateEmotes(userState.globalEmoteSets, userState.followerEmoteSets)
-                    }
+                userState?.let {
+                    dataRepository.loadUserStateEmotes(userState.globalEmoteSets, userState.followerEmoteSets)
                 }
 
                 // global emote suggestions for whisper tab
@@ -653,5 +647,6 @@ class MainViewModel @Inject constructor(
         private val TAG = MainViewModel::class.java.simpleName
         private const val STREAM_REFRESH_RATE = 30_000L
         private const val IRC_TIMEOUT_DELAY = 5_000L
+        private const val IRC_TIMEOUT_SHORT_DELAY = 1_000L
     }
 }

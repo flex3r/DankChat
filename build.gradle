@@ -41,7 +41,7 @@ buildscript {
         localazy_version = '1.5.3'
 
         // Debug
-        chucker_version = '3.3.0'
+        chucker_version = '3.5.2'
         leakcanary_version = '2.5'
     }
 
