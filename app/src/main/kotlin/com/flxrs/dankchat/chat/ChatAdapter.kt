@@ -193,7 +193,7 @@ class ChatAdapter(
         val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
         val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
 
-        val background = ContextCompat.getColor(context, R.color.color_reward).harmonize(context)
+        val background = ContextCompat.getColor(context, R.color.color_reward)
         setBackgroundColor(background)
 
         setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
@@ -371,8 +371,7 @@ class ChatAdapter(
                         else           -> Coil.execute(badge.url.toRequest(context)).drawable?.apply {
                             if (badge is Badge.FFZModBadge) {
                                 val modColor = ContextCompat.getColor(context, R.color.color_ffz_mod)
-                                val harmonized = MaterialColors.harmonizeWithPrimary(context, modColor)
-                                colorFilter = PorterDuffColorFilter(harmonized, PorterDuff.Mode.DST_OVER)
+                                colorFilter = PorterDuffColorFilter(modColor, PorterDuff.Mode.DST_OVER)
                             }
 
                             val width = (baseHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
@@ -450,9 +449,9 @@ class ChatAdapter(
         val baseHeight = getBaseHeight(textSize)
         val scaleFactor = baseHeight * SCALE_FACTOR_CONSTANT
         val background = when {
-            isNotify                                        -> ContextCompat.getColor(context, R.color.color_highlight).harmonize(context)
-            isReward                                        -> ContextCompat.getColor(context, R.color.color_reward).harmonize(context)
-            isMention                                       -> ContextCompat.getColor(context, R.color.color_mention).harmonize(context)
+            isNotify                                        -> ContextCompat.getColor(context, R.color.color_highlight)
+            isReward                                        -> ContextCompat.getColor(context, R.color.color_reward)
+            isMention                                       -> ContextCompat.getColor(context, R.color.color_mention)
             isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(textView, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
             else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
         }
@@ -581,8 +580,7 @@ class ChatAdapter(
                         else           -> Coil.execute(badge.url.toRequest(context)).drawable?.apply {
                             if (badge is Badge.FFZModBadge) {
                                 val modColor = ContextCompat.getColor(context, R.color.color_ffz_mod)
-                                val harmonized = MaterialColors.harmonizeWithPrimary(context, modColor)
-                                colorFilter = PorterDuffColorFilter(harmonized, PorterDuff.Mode.DST_OVER)
+                                colorFilter = PorterDuffColorFilter(modColor, PorterDuff.Mode.DST_OVER)
                             }
 
                             val width = (baseHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()

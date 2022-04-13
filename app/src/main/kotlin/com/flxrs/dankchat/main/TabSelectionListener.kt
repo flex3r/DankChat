@@ -11,7 +11,7 @@ class TabSelectionListener : TabLayout.OnTabSelectedListener {
     override fun onTabReselected(tab: TabLayout.Tab?) = Unit
 
     override fun onTabUnselected(tab: TabLayout.Tab?) {
-        tab?.setTextColor(R.attr.colorOnSurfaceVariant)
+        tab?.setTextColor(R.attr.colorOnSurfaceVariant, layerWithSurface = true)
     }
 
     override fun onTabSelected(tab: TabLayout.Tab?) {
@@ -20,25 +20,25 @@ class TabSelectionListener : TabLayout.OnTabSelectedListener {
 }
 
 fun TabLayout.Tab.setInitialColor() {
-    val textView = this.view[1] as? TextView ?: return
     val attr = when {
         isSelected -> R.attr.colorPrimary
         else       -> R.attr.colorOnSurfaceVariant
     }
-    val textColor = MaterialColors.getColor(textView, attr)
-    textView.setTextColor(textColor)
+    setTextColor(attr, !isSelected)
 }
 
-fun TabLayout.Tab.setTextColor(@AttrRes id: Int, layerWithOnSurface: Boolean = false) {
+fun TabLayout.Tab.setTextColor(@AttrRes id: Int, layerWithSurface: Boolean = false) {
     val textView = this.view[1] as? TextView ?: return
     val textColor = MaterialColors.getColor(textView, id).let { color ->
         when {
-            layerWithOnSurface -> {
-                val onSurface = MaterialColors.getColor(textView, R.attr.colorOnSurface)
-                MaterialColors.layer(color, onSurface)
+            layerWithSurface -> {
+                val surface = MaterialColors.getColor(textView, R.attr.colorSurface)
+                MaterialColors.layer(color, surface, UNSELECTED_TAB_OVERLAY_ALPHA)
             }
-            else               -> color
+            else             -> color
         }
     }
     textView.setTextColor(textColor)
 }
+
+private const val UNSELECTED_TAB_OVERLAY_ALPHA = 0.25f

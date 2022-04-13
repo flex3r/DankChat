@@ -11,6 +11,7 @@ import com.flxrs.dankchat.chat.menu.EmoteItem
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.data.twitch.message.Mention
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
+import com.google.android.material.color.MaterialColors
 import com.squareup.moshi.JsonAdapter
 
 fun List<GenericEmote>?.toEmoteItems(): List<EmoteItem> = this
@@ -52,7 +53,8 @@ inline fun <V> measureTimeAndLog(tag: String, toLoad: String, block: () -> V): V
 val Int.isEven get() = (this % 2 == 0)
 
 fun Context.getDrawableAndSetSurfaceTint(@DrawableRes id: Int) = ContextCompat.getDrawable(this, id)?.apply {
-    DrawableCompat.setTint(this, ContextCompat.getColor(this@getDrawableAndSetSurfaceTint, R.color.md_theme_onSurface))
+    val color = MaterialColors.getColor(this@getDrawableAndSetSurfaceTint, R.attr.colorOnSurface, "DankChat")
+    DrawableCompat.setTint(this, color)
 }
 
 inline fun <reified T> SavedStateHandle.withData(key: String, block: (T) -> Unit) {

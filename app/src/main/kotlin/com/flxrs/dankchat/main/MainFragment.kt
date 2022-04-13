@@ -301,7 +301,7 @@ class MainFragment : Fragment() {
                         binding.tabs.selectedTabPosition -> mainViewModel.clearUnreadMessage(channel)
                         else                             -> {
                             val tab = binding.tabs.getTabAt(index)
-                            tab?.setTextColor(R.attr.colorOnSecondaryContainer, layerWithOnSurface = true)
+                            tab?.setTextColor(R.attr.colorOnSurface)
                         }
                     }
                 }
