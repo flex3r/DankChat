@@ -421,7 +421,7 @@ class ChatAdapter(
     private fun TextView.handleTwitchMessage(twitchMessage: TwitchMessage, holder: ViewHolder, isMentionTab: Boolean): Unit = with(twitchMessage) {
         val textView = this@handleTwitchMessage
         isClickable = false
-        alpha = 1.0f
+        alpha = if (timedOut) .5f else 1f
         movementMethod = LongClickLinkMovementMethod
         (text as? Spannable)?.clearSpans()
 
@@ -449,6 +449,7 @@ class ChatAdapter(
         val baseHeight = getBaseHeight(textSize)
         val scaleFactor = baseHeight * SCALE_FACTOR_CONSTANT
         val background = when {
+            timedOut && !showTimedOutMessages               -> ContextCompat.getColor(context, android.R.color.transparent)
             isNotify                                        -> ContextCompat.getColor(context, R.color.color_highlight)
             isReward                                        -> ContextCompat.getColor(context, R.color.color_reward)
             isMention                                       -> ContextCompat.getColor(context, R.color.color_mention)
@@ -460,16 +461,12 @@ class ChatAdapter(
         val textColor = MaterialColors.getColor(textView, R.attr.colorOnSurface)
         setTextColor(textColor)
 
-        if (timedOut) {
-            alpha = 0.5f
-
-            if (!showTimedOutMessages) {
-                text = when {
-                    showTimeStamp -> "${DateTimeUtils.timestampToLocalTime(timestamp)} ${context.getString(R.string.timed_out_message)}"
-                    else          -> context.getString(R.string.timed_out_message)
-                }
-                return
+        if (timedOut && !showTimedOutMessages) {
+            text = when {
+                showTimeStamp -> "${DateTimeUtils.timestampToLocalTime(timestamp)} ${context.getString(R.string.timed_out_message)}"
+                else          -> context.getString(R.string.timed_out_message)
             }
+            return
         }
 
         val fullName = when {

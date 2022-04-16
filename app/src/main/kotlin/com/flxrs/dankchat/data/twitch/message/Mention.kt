@@ -20,16 +20,16 @@ sealed class Mention {
         }
     }
 
-    fun matchUser(user: Pair<String, String>): Boolean {
+    fun matchUser(user: String, displayName: String): Boolean {
         if (!matchUser) return false
         return when (this) {
-            is Phrase      -> entry.equals(user.first, true) || entry.equals(user.second, true)
-            is RegexPhrase -> user.first.contains(entry) || user.second.contains(entry)
+            is Phrase      -> entry.equals(user, true) || entry.equals(displayName, true)
+            is RegexPhrase -> user.contains(entry) || displayName.contains(entry)
             else           -> false
         }
     }
 }
 
-fun List<Mention>.matches(message: String, user: Pair<String, String>, emotes: List<ChatMessageEmote>): Boolean = any {
-    it.matches(message) || it.matchUser(user) || emotes.any { e -> it.matches(e.code) }
+fun List<Mention>.matches(message: TwitchMessage): Boolean = any {
+    it.matches(message.message) || it.matchUser(message.name, message.displayName) || message.emotes.any { e -> it.matches(e.code) }
 }

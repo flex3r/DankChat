@@ -234,8 +234,11 @@ data class TwitchMessage(
 
     fun checkForMention(username: String, mentions: List<Mention>): TwitchMessage {
         val mentionsWithUser = mentions + Mention.User(username, false)
-        val isMention = !isMention && username.isNotBlank() && !name.equals(username, true)
-                && !timedOut && !isSystem && mentionsWithUser.matches(message, name to displayName, emotes)
+        if (isMention || isSystem || username.isBlank() || name.equals(username, ignoreCase = true)) {
+            return this
+        }
+
+        val isMention = mentionsWithUser.matches(this)
         return copy(isMention = isMention)
     }
 

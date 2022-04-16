@@ -586,7 +586,7 @@ class ChatRepository @Inject constructor(
                     lastMessage[it.channel] = it.originalMessage
                 }
 
-                if (blacklistEntries.matches(it.message, it.name to it.displayName, it.emotes)) {
+                if (blacklistEntries.matches(it)) {
                     return
                 }
 
@@ -685,7 +685,7 @@ class ChatRepository @Inject constructor(
                 loop@ for (msg in messages) {
                     val withMention = when (msg) {
                         is TwitchMessage -> {
-                            if (blacklistEntries.matches(msg.message, msg.name to msg.displayName, msg.emotes)) {
+                            if (blacklistEntries.matches(msg)) {
                                 continue@loop
                             }
 
