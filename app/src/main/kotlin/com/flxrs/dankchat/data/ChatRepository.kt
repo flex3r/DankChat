@@ -172,7 +172,7 @@ class ChatRepository @Inject constructor(
         }
     }
 
-    suspend fun loadUserBlocks(oAuth: String, id: String) {
+    suspend fun loadUserBlocks(oAuth: String, id: String) = withContext(Dispatchers.Default) {
         if (oAuth.isNotBlank()) {
             apiManager.getUserBlocks(oAuth, id)?.let { (data) ->
                 blockList.clear()
@@ -186,7 +186,6 @@ class ChatRepository @Inject constructor(
     fun removeUserBlock(targetUserId: String) = blockList.remove(targetUserId)
 
     suspend fun loadChatters(channel: String) = withContext(Dispatchers.Default) {
-
         measureTimeMillis {
             apiManager.getChatters(channel)?.let { chatters ->
                 val currentUsers = users

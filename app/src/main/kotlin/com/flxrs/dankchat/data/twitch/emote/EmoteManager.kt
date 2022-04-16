@@ -10,7 +10,6 @@ import com.flxrs.dankchat.data.twitch.badge.BadgeSet
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.supplementaryCodePointPositions
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import pl.droidsonroids.gif.MultiCallback
 import java.util.concurrent.ConcurrentHashMap
@@ -172,22 +171,19 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager, priva
             }
     }
 
-    fun clearFFZEmotes(): Job? {
+    fun clearFFZEmotes() {
         globalFFZEmotes.clear()
         ffzEmotes.clear()
-        return null
     }
 
-    fun clearBTTVEmotes(): Job? {
+    fun clearBTTVEmotes() {
         globalBttvEmotes.clear()
         bttvEmotes.clear()
-        return null
     }
 
-    fun clearSevenTVEmotes(): Job? {
+    fun clearSevenTVEmotes() {
         globalSevenTVEmotes.clear()
         sevenTVEmotes.clear()
-        return null
     }
 
     suspend fun getEmotes(channel: String): List<GenericEmote> = withContext(Dispatchers.Default) {

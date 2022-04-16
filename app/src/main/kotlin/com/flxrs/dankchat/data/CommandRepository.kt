@@ -54,7 +54,7 @@ class CommandRepository @Inject constructor(
         }
     }
 
-    suspend fun loadSupibotCommands() = withContext(Dispatchers.IO) {
+    suspend fun loadSupibotCommands() = withContext(Dispatchers.Default) {
         measureTimeMillis {
             val channelsDeferred = async { getSupibotChannels() }
             val commandsDeferred = async { getSupibotCommands() }
