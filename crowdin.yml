@@ -1,3 +1,8 @@
 files:
   - source: /app/src/main/res/values/*.xml
+    ignore:
+      - /**/attrs.xml
+      - /**/colors.xml
+      - /**/dimens.xml
+      - /**/ic_*.xml
     translation: /app/src/main/res/values-%android_code%/%original_file_name%
