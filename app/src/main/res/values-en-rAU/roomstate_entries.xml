@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="roomstate_entries">
+        <item>@string/roomstate_emote</item>
+        <item>@string/roomstate_subs</item>
+        <item>@string/roomstate_slow</item>
+        <item>@string/roomstate_r9k</item>
+        <item>@string/roomstate_follow</item>
+    </string-array>
+</resources>
