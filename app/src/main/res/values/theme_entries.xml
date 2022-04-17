@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="theme_entries">
+    <string-array name="theme_entries" translatable="false">
         <item>@string/preference_follow_system_title</item>
         <item>@string/preference_dark_theme_entry_title</item>
         <item>@string/preference_light_theme_entry_title</item>
