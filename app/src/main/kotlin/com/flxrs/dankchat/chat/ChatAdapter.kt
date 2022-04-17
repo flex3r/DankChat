@@ -11,7 +11,6 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.os.Build
 import android.text.Spannable
-import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.TextPaint
 import android.text.style.ImageSpan
@@ -224,7 +223,7 @@ class ChatAdapter(
             Coil.execute(message.rewardImageUrl.toRequest(context)).drawable?.apply {
                 val width = (baseHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
                 setBounds(0, 0, width, baseHeight)
-                (text as SpannableString)[imageStart..imageStart + 1] = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
+                (text as Spannable)[imageStart..imageStart + 1] = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
             }
         }
     }
@@ -385,7 +384,7 @@ class ChatAdapter(
 
                     if (drawable != null) {
                         val imageSpan = ImageSpan(drawable)
-                        (text as SpannableString)[start..end] = imageSpan
+                        (text as Spannable)[start..end] = imageSpan
                     }
                 } catch (t: Throwable) {
                     handleException(t)
@@ -407,7 +406,7 @@ class ChatAdapter(
                         val layerDrawable = emoteManager.layerCache[key] ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
 
                         if (layerDrawable != null) {
-                            (text as SpannableString).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
+                            (text as Spannable).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
                         }
                     }
             } catch (t: Throwable) {
@@ -591,7 +590,7 @@ class ChatAdapter(
 
                     if (drawable != null) {
                         val imageSpan = ImageSpan(drawable)
-                        (text as SpannableString)[start..end] = imageSpan
+                        (text as Spannable)[start..end] = imageSpan
                     }
                 } catch (t: Throwable) {
                     handleException(t)
@@ -615,7 +614,7 @@ class ChatAdapter(
                         } ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
 
                         if (layerDrawable != null) {
-                            (text as SpannableString).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
+                            (text as Spannable).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
                         }
                     }
             } catch (t: Throwable) {
@@ -659,7 +658,7 @@ class ChatAdapter(
         }
     }
 
-    private fun SpannableString.setEmoteSpans(e: ChatMessageEmote, prefix: Int, drawable: Drawable) {
+    private fun Spannable.setEmoteSpans(e: ChatMessageEmote, prefix: Int, drawable: Drawable) {
         try {
             val start = e.position.first + prefix
             val end = e.position.last + prefix

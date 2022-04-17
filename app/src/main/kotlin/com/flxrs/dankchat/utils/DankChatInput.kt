@@ -7,7 +7,7 @@ import android.widget.AdapterView
 import androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView
 import com.flxrs.dankchat.chat.suggestion.SuggestionsArrayAdapter
 
-class CustomMultiAutoCompleteTextView : AppCompatMultiAutoCompleteTextView {
+class DankChatInput : AppCompatMultiAutoCompleteTextView {
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)

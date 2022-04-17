@@ -248,7 +248,7 @@
             app:startIconContentDescription="@string/emote_menu_hint"
             app:startIconDrawable="@{vm.shouldShowEmoteMenuIcon ? @drawable/ic_insert_emoticon : null}">
 
-            <com.flxrs.dankchat.utils.CustomMultiAutoCompleteTextView
+            <com.flxrs.dankchat.utils.DankChatInput
                 android:id="@+id/input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

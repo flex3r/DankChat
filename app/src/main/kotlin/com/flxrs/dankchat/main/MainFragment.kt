@@ -36,14 +36,15 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
+import com.crowdin.platform.util.inflateWithCrowdin
 import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.chat.menu.EmoteMenuAdapter
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
-import com.flxrs.dankchat.chat.suggestion.SuggestionsArrayAdapter
 import com.flxrs.dankchat.chat.suggestion.SpaceTokenizer
 import com.flxrs.dankchat.chat.suggestion.Suggestion
+import com.flxrs.dankchat.chat.suggestion.SuggestionsArrayAdapter
 import com.flxrs.dankchat.chat.user.UserPopupResult
 import com.flxrs.dankchat.data.state.DataLoadingState
 import com.flxrs.dankchat.data.state.ImageUploadState
@@ -212,7 +213,7 @@ class MainFragment : Fragment() {
             }
 
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu, menu)
+                menuInflater.inflateWithCrowdin(R.menu.menu, menu, resources)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -987,7 +988,7 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun CustomMultiAutoCompleteTextView.setup(binding: MainFragmentBinding) {
+    private fun DankChatInput.setup(binding: MainFragmentBinding) {
         setTokenizer(SpaceTokenizer())
         suggestionAdapter = SuggestionsArrayAdapter(binding.input.context) { count ->
             dropDownHeight = if (count > 4) {

@@ -4,12 +4,16 @@ import android.app.Application
 import android.app.UiModeManager
 import android.content.res.Configuration
 import android.os.Build
+import android.webkit.WebView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.getSystemService
 import androidx.preference.PreferenceManager
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.decode.ImageDecoderDecoder
+import com.crowdin.platform.Crowdin
+import com.crowdin.platform.CrowdinConfig
+import com.crowdin.platform.data.remote.NetworkType
 import com.flxrs.dankchat.di.ApplicationScope
 import com.flxrs.dankchat.di.EmoteOkHttpClient
 import com.flxrs.dankchat.utils.gifs.GifDrawableDecoder
@@ -18,7 +22,6 @@ import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
@@ -34,6 +37,18 @@ class DankChatApplication : Application(), ImageLoaderFactory {
 
     override fun onCreate() {
         super.onCreate()
+
+        // eagerly initialize webview to give it access to original resources before crowdin wraps them
+        // otherwise some web content will cause a native crash
+        // https://issuetracker.google.com/issues/77246450
+        WebView(this)
+
+        val config = CrowdinConfig.Builder()
+            .withDistributionHash(CROWD_IN_DISTRIBUTION_HASH)
+            .withNetworkType(NetworkType.WIFI)
+            .withUpdateInterval(CROWD_IN_UPDATE_INTERVAL)
+            .build()
+        Crowdin.init(applicationContext, config)
 
         val uiModeManager = getSystemService<UiModeManager>()
         val isTv = uiModeManager?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
@@ -70,5 +85,10 @@ class DankChatApplication : Application(), ImageLoaderFactory {
                 }
             }
             .build()
+    }
+
+    companion object {
+        private const val CROWD_IN_DISTRIBUTION_HASH = "a3ba4d9c6a89d1aa991bc492jem"
+        private const val CROWD_IN_UPDATE_INTERVAL = 120L * 60 // 2 hours
     }
 }
