@@ -7,7 +7,10 @@
   <string name="add_dialog_title">"Přidat kanál"</string>
   <string name="app_name">"DankChat"</string>
   <string name="app_name_dank">"DankChat (Dank)"</string>
+  <string name="block_channel">"Zablokovat kanál"</string>
   <string name="change_roomstate">"Režimy místnosti"</string>
+  <string name="channel">"Kanál"</string>
+  <string name="channel_blocked_message">"Kanál byl zablokován"</string>
   <string name="choose_media">"Vybrat z existujících médií"</string>
   <string name="clear_chat">"Vyčistit chat"</string>
   <string name="command__hint">"Přikaz"</string>
@@ -29,7 +32,7 @@
   <string name="confirm_user_delete_positive_button">"Smazat"</string>
   <string name="confirm_user_delete_title">"Potvrdit smazání zprávy"</string>
   <string name="confirm_user_roomstate_title">"Změnit režim místnosti"</string>
-  <string name="confirm_user_timeout_positive_button">"Timeout"</string>
+  <string name="confirm_user_timeout_positive_button">"Dočasný zákaz"</string>
   <string name="confirm_user_timeout_title">"Potvrdit timeout"</string>
   <string name="confirm_user_unfollow_message">"Jste si jistí, že chcete přestat sledovat tohoto uživatele?"</string>
   <string name="confirm_user_unfollow_title">"Potvrdit zrušení sledování uživatele"</string>
@@ -89,6 +92,7 @@ Služba dočasně ukládá zprávy pro kanály, které vy (a další) navštív�
   </plurals>
   <string name="preference_about_header">"O aplikaci"</string>
   <string name="preference_about_summary">"DankChat %1$s je vytvořen uživatelem @flex3rs a přispěvateli"</string>
+  <string name="preference_about_tos">"Uživatelské zásady a Podmínky služby Twitch:"</string>
   <string name="preference_animate_gifs_title">"Animované gify"</string>
   <string name="preference_appearance_header">"Vzhled"</string>
   <string name="preference_blacklist_summary">"Nastavte vlastní fráze, které budou skryty"</string>
@@ -132,6 +136,8 @@ Služba dočasně ukládá zprávy pro kanály, které vy (a další) navštív�
   <string name="preference_roomstate_summary">"Zobrazí informaci o současném režimu místnosti jako například pouze pro předplatitele"</string>
   <string name="preference_roomstate_title">"Zobrazit informaci o režimu místnosti"</string>
   <string name="preference_scrollback_length_title">"Délka historie chatu"</string>
+  <string name="preference_show_chip_actions_summary">"Zobrazí šipku s nastavením pro zobrazení chatu na celou obrazovku, zobrazení streamu nebo úpravy režimů v chatu"</string>
+  <string name="preference_show_chip_actions_title">"Zobrazit rychlé přepínače"</string>
   <string name="preference_show_input_summary">"Zobrazí vstupní pole pro odesílání zpráv"</string>
   <string name="preference_show_input_title">"Zobrazit vstup"</string>
   <string name="preference_show_stream_summary">"Zobrazí tlačitko pro vložení streamů živých kanálů"</string>
@@ -180,7 +186,9 @@ Služba dočasně ukládá zprávy pro kanály, které vy (a další) navštív�
   <string name="record_video">"Nahrát video"</string>
   <string name="reload_emotes">"Znovu načíst emotikony"</string>
   <string name="relogin">"Znovu se přihlásit"</string>
+  <string name="remove_channel">"Odebrat kanál"</string>
   <string name="remove_command">"Odebrat přikaz"</string>
+  <string name="report_channel">"Nahlásit kanál"</string>
   <string name="restart">"Restartovat"</string>
   <string name="restart_required">"K potvrzení změn je potřeba restart"</string>
   <string name="resume_scroll">"Obnovit posouvání chatu"</string>
@@ -203,13 +211,14 @@ Služba dočasně ukládá zprávy pro kanály, které vy (a další) navštív�
   <string name="snackbar_retry">"Opakovat"</string>
   <string name="snackbar_upload_failed">"Chyba při nahrávání"</string>
   <string name="snackbar_upload_failed_cause">"Chyba při nahrávání: %1$s"</string>
+  <string name="system_message_channel_non_existent">"Tento kanál neexistuje"</string>
   <string name="system_message_connected">"Připojeno"</string>
   <string name="system_message_disconnected">"Odpojeno"</string>
   <string name="system_message_no_history">"Nevidíte žádné minulé zprávy, protože jste se odhlásili z načítání minulých zpráv."</string>
   <string name="take_picture">"Pořídit obrázek"</string>
   <string name="timed_out_message">"&lt; Zpráva smazána >"</string>
-  <string name="toggle_fullscreen">"Přepnout režim celé obrazovky"</string>
-  <string name="toggle_stream">"Zapnout zapnutí streamu"</string>
+  <string name="toggle_fullscreen">"Zapnou plnou obrazovku"</string>
+  <string name="toggle_stream">"Zapnout stream"</string>
   <string name="tts_ignore_list_add_user">"Přidat uživatele"</string>
   <string name="tts_ignore_list_remove_user">"Odebrat uživatele"</string>
   <string name="tts_ignore_list_user_hint">"Uživatel"</string>
@@ -224,7 +233,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
   <string name="uploader_headers">"Hlavičky"</string>
   <string name="uploader_image_link">"Vzor odkazu pro obrázek"</string>
   <string name="uploader_reset">"Tovární nastavení"</string>
-  <string name="uploader_title">"Vlastní nahrávač obrázků"</string>
+  <string name="uploader_title">"Vlastní nahrávač médií"</string>
   <string name="uploader_url">"Nahrávací URL"</string>
   <string name="uploading_image">"Nahrávání souboru"</string>
   <string name="user_popup_avatar_description">"Obrázek avataru"</string>

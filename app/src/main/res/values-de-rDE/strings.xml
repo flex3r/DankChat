@@ -7,7 +7,10 @@
   <string name="add_dialog_title">"Kanal hinzufügen"</string>
   <string name="app_name">"DankChat"</string>
   <string name="app_name_dank">"DankChat (Dank)"</string>
+  <string name="block_channel">"Kanal blockieren"</string>
   <string name="change_roomstate">"Chatmodi"</string>
+  <string name="channel">"Kanal"</string>
+  <string name="channel_blocked_message">"Kanal blockiert"</string>
   <string name="choose_media">"Aus vorhandenen Medien wählen"</string>
   <string name="clear_chat">"Chatverlauf löschen"</string>
   <string name="command__hint">"Befehl"</string>
@@ -182,7 +185,9 @@
   <string name="record_video">"Ein Video aufnehmen"</string>
   <string name="reload_emotes">"Emotes neu laden"</string>
   <string name="relogin">"Erneut anmelden"</string>
+  <string name="remove_channel">"Kanal entfernen"</string>
   <string name="remove_command">"Befehl entfernen"</string>
+  <string name="report_channel">"Kanal melden"</string>
   <string name="restart">"Neustarten"</string>
   <string name="restart_required">"Neustart erforderlich, um Änderungen zu Übernehmen"</string>
   <string name="resume_scroll">"Scrollen fortsetzen"</string>
@@ -205,6 +210,7 @@
   <string name="snackbar_retry">"Wiederholen"</string>
   <string name="snackbar_upload_failed">"Fehler beim Hochladen"</string>
   <string name="snackbar_upload_failed_cause">"Fehler beim Hochladen: %1$s"</string>
+  <string name="system_message_channel_non_existent">"Dieser Kanal existiert nicht"</string>
   <string name="system_message_connected">"Verbunden"</string>
   <string name="system_message_disconnected">"Verbindung getrennt"</string>
   <string name="system_message_no_history">"Der historische Chatverlauf wird nicht angezeigt, da dessen Integration nicht zugestimmt wurde."</string>

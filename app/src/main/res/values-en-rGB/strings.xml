@@ -7,7 +7,10 @@
   <string name="add_dialog_title">"Add channel"</string>
   <string name="app_name">"DankChat"</string>
   <string name="app_name_dank">"DankChat (Dank)"</string>
+  <string name="block_channel">"Block channel"</string>
   <string name="change_roomstate">"Chat modes"</string>
+  <string name="channel">"Channel"</string>
+  <string name="channel_blocked_message">"Channel blocked"</string>
   <string name="choose_media">"Choose existing media"</string>
   <string name="clear_chat">"Clear chat"</string>
   <string name="command__hint">"Command"</string>
@@ -182,7 +185,9 @@ The service temporarily stores messages for channels you (and others) visit to p
   <string name="record_video">"Record video"</string>
   <string name="reload_emotes">"Reload emotes"</string>
   <string name="relogin">"Login again"</string>
+  <string name="remove_channel">"Remove channel"</string>
   <string name="remove_command">"Remove the command"</string>
+  <string name="report_channel">"Report channel"</string>
   <string name="restart">"Restart"</string>
   <string name="restart_required">"Restart required to apply changes"</string>
   <string name="resume_scroll">"Resume scroll"</string>
@@ -205,6 +210,7 @@ The service temporarily stores messages for channels you (and others) visit to p
   <string name="snackbar_retry">"Retry"</string>
   <string name="snackbar_upload_failed">"Error during upload"</string>
   <string name="snackbar_upload_failed_cause">"Error during upload: %1$s"</string>
+  <string name="system_message_channel_non_existent">"This channel does not exist"</string>
   <string name="system_message_connected">"Connected"</string>
   <string name="system_message_disconnected">"Disconnected"</string>
   <string name="system_message_no_history">"You are not seeing any historical messages because you opted out of the recent-messages integration."</string>

@@ -7,16 +7,20 @@
   <string name="add_dialog_title">"Kanal ekle"</string>
   <string name="app_name">"DankChat"</string>
   <string name="app_name_dank">"DankChat (Dank)"</string>
+  <string name="block_channel">"Kanalı engelle"</string>
   <string name="change_roomstate">"Sohbet modları"</string>
+  <string name="channel">"Kanal"</string>
+  <string name="channel_blocked_message">"Kanal engellendi"</string>
   <string name="choose_media">"Galeriden seç"</string>
   <string name="clear_chat">"Sohbeti temizle"</string>
   <string name="command__hint">"Komut"</string>
+  <string name="command_trigger_hint">"Tetik"</string>
   <string name="commands_title">"Özel komutlar"</string>
   <string name="confirm_channel_removal_message">"Bu kanalı kaldırmak istediğinizden emin misiniz?"</string>
   <string name="confirm_channel_removal_positive_button">"Kaldır"</string>
   <string name="confirm_channel_removal_title">"Kanalı kaldırmayı onayla"</string>
   <string name="confirm_logout_message">"Çıkış yapmak istediğinize emin misiniz?"</string>
-  <string name="confirm_logout_positive_button">"Çıkış yap"</string>
+  <string name="confirm_logout_positive_button">"Çıkış"</string>
   <string name="confirm_logout_title">"Çıkışı onayla"</string>
   <string name="confirm_user_block_message">"Bu kullanıcıyı engellemek istediğinizden emin misiniz?"</string>
   <string name="confirm_user_block_positive_button">"Engelle"</string>
@@ -48,7 +52,7 @@
   <string name="login">"Giriş yap"</string>
   <string name="login_expired">"Giriş süresi doldu! Yeniden giriş yapmayı deneyin."</string>
   <string name="login_title">"Twitch.tv\'ye giriş yap"</string>
-  <string name="logout">"Çıkış"</string>
+  <string name="logout">"Çıkış yap"</string>
   <string name="manage_channels">"Kanalları yönet"</string>
   <string name="mentions">"Bahsetmeler"</string>
   <string name="mentions_title">"Bahsetmeler / Fısıltılar"</string>
@@ -59,6 +63,7 @@ Servis bu hizmeti verebilmek için sizin (ve başkalarının) ziyaret ettiği ka
 - Bu özelliği kullanmamak için aşağıda \"Reddet\"e basabilir ya da daha sonra mesaj tarihi yüklenmesini ayarlarda devre dışı bırakabilirsiniz.
 - https://recent-messages.robotty.de/ adresini ziyaret ederek bu servis hakkında daha çok öğrenebilir ya da kendi kanalınız için mesaj tarihini devre dışı bırakabilirsiniz."</string>
   <string name="message_history_disclaimer_title">"Mesaj tarihi açıklaması"</string>
+  <string name="minutes">"Dakika"</string>
   <string name="more">"Daha fazla"</string>
   <string name="multi_entry_add_entry">"Girdi ekle"</string>
   <string name="multi_entry_header_match_user">"Kullanıcı eşle"</string>
@@ -99,6 +104,7 @@ Servis bu hizmeti verebilmek için sizin (ve başkalarının) ziyaret ettiği ka
   <string name="preference_debug_mode_summary">"Yakalanan her hata hakkında bilgilendirir"</string>
   <string name="preference_debug_mode_title">"Hata ayıklama modu"</string>
   <string name="preference_developer_header">"Geliştirici seçenekleri"</string>
+  <string name="preference_display_group_title">"Görünüm"</string>
   <string name="preference_follow_system_title">"Sistem varsayılanını izle"</string>
   <string name="preference_font_size_summary_large">"Büyük"</string>
   <string name="preference_font_size_summary_small">"Küçük"</string>
@@ -167,6 +173,7 @@ Servis bu hizmeti verebilmek için sizin (ve başkalarının) ziyaret ettiği ka
   <string name="record_video">"Video çek"</string>
   <string name="reload_emotes">"İfadeleri yenile"</string>
   <string name="relogin">"Yeniden giriş yap"</string>
+  <string name="remove_channel">"Kanalı kaldır"</string>
   <string name="remove_command">"Komutu sil"</string>
   <string name="restart">"Yeniden başlat"</string>
   <string name="restart_required">"Değişikliklerin uygulanması için yeniden başlatma gerekiyor"</string>
@@ -176,6 +183,7 @@ Servis bu hizmeti verebilmek için sizin (ve başkalarının) ziyaret ettiği ka
   <string name="roomstate_r9k">"R9K modu"</string>
   <string name="roomstate_slow">"Yavaş mod"</string>
   <string name="roomstate_subs">"Sadece aboneler"</string>
+  <string name="seconds">"Saniye"</string>
   <string name="send_hint">"Mesaj gönder"</string>
   <string name="settings">"Ayarlar"</string>
   <string name="snackbar_data_load_failed_cause">"Veri yüklenemedi: %1$s"</string>
@@ -189,6 +197,7 @@ Servis bu hizmeti verebilmek için sizin (ve başkalarının) ziyaret ettiği ka
   <string name="snackbar_retry">"Yeniden dene"</string>
   <string name="snackbar_upload_failed">"Yükleme sırasında hata"</string>
   <string name="snackbar_upload_failed_cause">"Yükleme sırasında hata: %1$s"</string>
+  <string name="system_message_channel_non_existent">"Bu kanal yok"</string>
   <string name="system_message_connected">"Bağlanıldı"</string>
   <string name="system_message_disconnected">"Bağlantı kesildi"</string>
   <string name="system_message_no_history">"Tarihi mesajları görmüyorsunuz çünkü son mesajlar entegrasyonunu reddettiniz."</string>
