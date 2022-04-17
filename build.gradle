@@ -37,9 +37,6 @@ buildscript {
         retrofit_version = '2.9.0'
         hilt_version = '2.41'
 
-        // Localization
-        localazy_version = '1.5.3'
-
         // Debug
         chucker_version = '3.5.2'
         leakcanary_version = '2.5'
@@ -48,7 +45,6 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven { url "https://maven.localazy.com/repository/release/" }
     }
 
     dependencies {
@@ -57,7 +53,6 @@ buildscript {
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
-        classpath "com.localazy:gradle:$localazy_version"
     }
 }
 
