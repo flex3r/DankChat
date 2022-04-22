@@ -36,12 +36,6 @@ class OverviewSettingsFragment : MaterialPreferenceFragmentCompat() {
                 title = getString(R.string.settings)
             }
         }
-        navController.currentBackStackEntry?.savedStateHandle?.apply {
-            getLiveData<Boolean>(MainFragment.THEME_CHANGED_KEY).observe(viewLifecycleOwner) {
-                remove<Boolean>(MainFragment.THEME_CHANGED_KEY)
-                navController.previousBackStackEntry?.savedStateHandle?.set(MainFragment.THEME_CHANGED_KEY, true)
-            }
-        }
 
         val isLoggedIn = dankChatPreferences.isLoggedIn
         findPreference<Preference>(getString(R.string.preference_about_key))?.apply {

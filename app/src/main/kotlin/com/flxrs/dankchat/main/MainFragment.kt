@@ -341,9 +341,6 @@ class MainFragment : Fragment() {
                     LOGOUT_REQUEST_KEY      -> handle.withData<Boolean>(key) {
                         showLogoutConfirmationDialog()
                     }
-                    THEME_CHANGED_KEY       -> handle.withData<Boolean>(key) {
-                        binding.root.post { ActivityCompat.recreate(requireActivity()) }
-                    }
                     CHANNELS_REQUEST_KEY    -> handle.withData<Array<String>>(key) {
                         updateChannels(it.toList())
                     }
@@ -1053,7 +1050,6 @@ class MainFragment : Fragment() {
 
         const val LOGOUT_REQUEST_KEY = "logout_key"
         const val LOGIN_REQUEST_KEY = "login_key"
-        const val THEME_CHANGED_KEY = "theme_changed_key"
         const val CHANNELS_REQUEST_KEY = "channels_key"
         const val ADD_CHANNEL_REQUEST_KEY = "add_channel_key"
         const val HISTORY_DISCLAIMER_KEY = "history_disclaimer_key"

@@ -60,8 +60,6 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
     override fun getDelegate() = BaseContextWrappingDelegate(super.getDelegate())
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         val isTrueDarkModeEnabled = preferences.getBoolean(getString(R.string.preference_true_dark_theme_key), false)
         val isDynamicColorAvailable = DynamicColors.isDynamicColorAvailable()
@@ -79,6 +77,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
             else                                             -> DynamicColors.applyToActivityIfAvailable(this)
         }
 
+        super.onCreate(savedInstanceState)
         bindingRef = DataBindingUtil.setContentView(this, R.layout.main_activity)
 
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.oAuthKey.isNullOrBlank()) {

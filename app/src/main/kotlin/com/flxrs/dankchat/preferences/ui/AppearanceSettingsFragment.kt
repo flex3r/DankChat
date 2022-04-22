@@ -122,7 +122,6 @@ class AppearanceSettingsFragment : MaterialPreferenceFragmentCompat() {
     }
 
     private fun setDarkMode(darkMode: Boolean = true, followSystem: Boolean = false) {
-        findNavController().previousBackStackEntry?.savedStateHandle?.set(MainFragment.THEME_CHANGED_KEY, true)
         AppCompatDelegate.setDefaultNightMode(
             when {
                 followSystem -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
@@ -130,5 +129,7 @@ class AppearanceSettingsFragment : MaterialPreferenceFragmentCompat() {
                 else         -> AppCompatDelegate.MODE_NIGHT_NO
             }
         )
+        val activity = activity ?: return
+        ActivityCompat.recreate(activity)
     }
 }
