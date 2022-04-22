@@ -132,7 +132,7 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
 
 // Localization
-    implementation "com.github.crowdin.mobile-sdk-android:sdk:$crowdin_version"
+//    implementation "com.github.crowdin.mobile-sdk-android:sdk:$crowdin_version"
 
 // Debug
     //dankImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary_version"

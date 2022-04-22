@@ -4,16 +4,12 @@ import android.app.Application
 import android.app.UiModeManager
 import android.content.res.Configuration
 import android.os.Build
-import android.webkit.WebView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.getSystemService
 import androidx.preference.PreferenceManager
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.decode.ImageDecoderDecoder
-import com.crowdin.platform.Crowdin
-import com.crowdin.platform.CrowdinConfig
-import com.crowdin.platform.data.remote.NetworkType
 import com.flxrs.dankchat.di.ApplicationScope
 import com.flxrs.dankchat.di.EmoteOkHttpClient
 import com.flxrs.dankchat.utils.gifs.GifDrawableDecoder
@@ -38,17 +34,17 @@ class DankChatApplication : Application(), ImageLoaderFactory {
     override fun onCreate() {
         super.onCreate()
 
-        // eagerly initialize webview to give it access to original resources before crowdin wraps them
-        // otherwise some web content will cause a native crash
-        // https://issuetracker.google.com/issues/77246450
-        WebView(this)
-
-        val config = CrowdinConfig.Builder()
-            .withDistributionHash(CROWD_IN_DISTRIBUTION_HASH)
-            .withNetworkType(NetworkType.WIFI)
-            .withUpdateInterval(CROWD_IN_UPDATE_INTERVAL)
-            .build()
-        Crowdin.init(applicationContext, config)
+//        // eagerly initialize webview to give it access to original resources before crowdin wraps them
+//        // otherwise some web content will cause a native crash
+//        // https://issuetracker.google.com/issues/77246450
+//        WebView(this)
+//
+//        val config = CrowdinConfig.Builder()
+//            .withDistributionHash(CROWD_IN_DISTRIBUTION_HASH)
+//            .withNetworkType(NetworkType.WIFI)
+//            .withUpdateInterval(CROWD_IN_UPDATE_INTERVAL)
+//            .build()
+//        Crowdin.init(applicationContext, config)
 
         val uiModeManager = getSystemService<UiModeManager>()
         val isTv = uiModeManager?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION

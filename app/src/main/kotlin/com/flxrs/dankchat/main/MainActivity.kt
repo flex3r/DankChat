@@ -10,7 +10,6 @@ import android.os.IBinder
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.BaseContextWrappingDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -57,7 +56,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
     var isBound = false
     var channelToOpen = ""
 
-    override fun getDelegate() = BaseContextWrappingDelegate(super.getDelegate())
+//    override fun getDelegate() = BaseContextWrappingDelegate(super.getDelegate())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)

@@ -35,7 +35,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
-import com.crowdin.platform.util.inflateWithCrowdin
 import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.chat.ChatTabAdapter
@@ -212,7 +211,8 @@ class MainFragment : Fragment() {
             }
 
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflateWithCrowdin(R.menu.menu, menu, resources)
+                menuInflater.inflate(R.menu.menu, menu)
+//                menuInflater.inflateWithCrowdin(R.menu.menu, menu, resources)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -1029,7 +1029,7 @@ class MainFragment : Fragment() {
 
                 mentionsView
                     .takeIf { mentionBottomSheetBehavior?.isVisible == false }
-                    ?.isInvisible =  true
+                    ?.isInvisible = true
 
                 binding.root.post {
                     (activity as? MainActivity)?.setFullScreen(enabled = !hasFocus && isFullscreen, changeActionBarVisibility = false)
