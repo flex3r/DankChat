@@ -20,7 +20,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.FileProvider
@@ -1023,7 +1022,20 @@ class MainFragment : Fragment() {
             mainViewModel.setShowChips(!hasFocus)
 
             if (isPortrait) {
-                (activity as? MainActivity)?.setFullScreen(enabled = !hasFocus && isFullscreen, changeActionBarVisibility = false)
+                val mentionsView = childFragmentManager.findFragmentById(R.id.mention_fragment)?.view
+                binding.emoteMenuBottomSheet
+                    .takeIf { emoteMenuBottomSheetBehavior?.isVisible == false }
+                    ?.isInvisible = true
+
+                mentionsView
+                    .takeIf { mentionBottomSheetBehavior?.isVisible == false }
+                    ?.isInvisible =  true
+
+                binding.root.post {
+                    (activity as? MainActivity)?.setFullScreen(enabled = !hasFocus && isFullscreen, changeActionBarVisibility = false)
+                    binding.emoteMenuBottomSheet.isInvisible = false
+                    mentionsView?.isInvisible = false
+                }
                 return@setOnFocusChangeListener
             }
 
