@@ -67,7 +67,6 @@ class MainViewModel @Inject constructor(
     private val currentSuggestionChannel = MutableStateFlow("")
     private val whisperTabSelected = MutableStateFlow(false)
     private val mentionSheetOpen = MutableStateFlow(false)
-    private val preferEmoteSuggestions = MutableStateFlow(false)
     private val _currentStreamedChannel = MutableStateFlow("")
     private val _isFullscreen = MutableStateFlow(false)
     private val shouldShowChips = MutableStateFlow(true)
@@ -130,16 +129,15 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             dankChatPreferenceStore.preferenceFlow.collect {
                 when (it) {
-                    is Preference.RoomState              -> roomStateEnabled.value = it.enabled
-                    is Preference.StreamInfo             -> streamInfoEnabled.value = it.enabled
-                    is Preference.Input                  -> inputEnabled.value = it.enabled
-                    is Preference.CustomMentions         -> setMentionEntries(it.entries)
-                    is Preference.BlackList              -> setBlacklistEntries(it.entries)
-                    is Preference.SupibotSuggestions     -> setSupibotSuggestions(it.enabled)
-                    is Preference.ScrollBack             -> chatRepository.scrollBackLength = it.length
-                    is Preference.PreferEmoteSuggestions -> preferEmoteSuggestions.value = it.enabled
-                    is Preference.Chips                  -> shouldShowChips.value = it.enabled
-                    is Preference.TimeStampFormat        -> DateTimeUtils.setPattern(it.pattern)
+                    is Preference.RoomState          -> roomStateEnabled.value = it.enabled
+                    is Preference.StreamInfo         -> streamInfoEnabled.value = it.enabled
+                    is Preference.Input              -> inputEnabled.value = it.enabled
+                    is Preference.CustomMentions     -> setMentionEntries(it.entries)
+                    is Preference.BlackList          -> setBlacklistEntries(it.entries)
+                    is Preference.SupibotSuggestions -> setSupibotSuggestions(it.enabled)
+                    is Preference.ScrollBack         -> chatRepository.scrollBackLength = it.length
+                    is Preference.Chips              -> shouldShowChips.value = it.enabled
+                    is Preference.TimeStampFormat    -> DateTimeUtils.setPattern(it.pattern)
                 }
             }
         }
@@ -209,19 +207,15 @@ class MainViewModel @Inject constructor(
             canType && !mentionSheetOpen
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
-    val suggestions: StateFlow<List<Suggestion>> =
-        combine(
-            emoteSuggestions,
-            userSuggestions,
-            supibotCommandSuggestions,
-            defaultCommandSuggestions,
-            preferEmoteSuggestions
-        ) { emotes, users, supibotCommands, defaultCommands, preferEmoteSuggestions ->
-            when {
-                preferEmoteSuggestions -> (emotes + users + defaultCommands + supibotCommands)
-                else                   -> (users + emotes + defaultCommands + supibotCommands)
-            }
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), emptyList())
+    val suggestions: StateFlow<Triple<List<Suggestion.UserSuggestion>, List<Suggestion.EmoteSuggestion>, List<Suggestion.CommandSuggestion>>> = combine(
+        emoteSuggestions,
+        userSuggestions,
+        supibotCommandSuggestions,
+        defaultCommandSuggestions,
+    ) { emotes, users, supibotCommands, defaultCommands ->
+        Triple(users, emotes, defaultCommands + supibotCommands)
+    }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), Triple(emptyList(), emptyList(), emptyList()))
 
     val emoteTabItems: Flow<List<EmoteMenuTabItem>> = combine(emotes, recentEmotes) { emotes, recentEmotes ->
         withContext(Dispatchers.Default) {

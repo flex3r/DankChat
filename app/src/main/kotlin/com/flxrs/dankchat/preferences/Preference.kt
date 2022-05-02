@@ -8,7 +8,6 @@ sealed class Preference {
     data class BlackList(val entries: Set<String>) : Preference()
     data class SupibotSuggestions(val enabled: Boolean) : Preference()
     data class ScrollBack(val length: Int) : Preference()
-    data class PreferEmoteSuggestions(val enabled: Boolean) : Preference()
     data class Chips(val enabled: Boolean) : Preference()
     data class TimeStampFormat(val pattern: String) : Preference()
 }

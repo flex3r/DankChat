@@ -628,7 +628,7 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun setSuggestions(suggestions: List<Suggestion>) {
+    private fun setSuggestions(suggestions: Triple<List<Suggestion.UserSuggestion>, List<Suggestion.EmoteSuggestion>, List<Suggestion.CommandSuggestion>>) {
         if (binding.input.isPopupShowing) {
             return
         }
@@ -986,7 +986,7 @@ class MainFragment : Fragment() {
 
     private fun DankChatInput.setup(binding: MainFragmentBinding) {
         setTokenizer(SpaceTokenizer())
-        suggestionAdapter = SuggestionsArrayAdapter(binding.input.context) { count ->
+        suggestionAdapter = SuggestionsArrayAdapter(binding.input.context, dankChatPreferences) { count ->
             dropDownHeight = if (count > 4) {
                 (binding.root.measuredHeight / 2.0).roundToInt()
             } else {

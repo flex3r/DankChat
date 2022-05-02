@@ -10,21 +10,28 @@ import android.widget.TextView
 import coil.clear
 import coil.size.Scale
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.getDrawableAndSetSurfaceTint
 import com.flxrs.dankchat.utils.extensions.loadImage
 import com.flxrs.dankchat.utils.extensions.replaceAll
 
 class SuggestionsArrayAdapter(
     context: Context,
+    private val preferenceStore: DankChatPreferenceStore,
     private val onCount: (count: Int) -> Unit
 ) : ArrayAdapter<Suggestion>(context, R.layout.emote_suggestion_item, R.id.suggestion_text) {
-    private val items = mutableListOf<Suggestion>()
+    private val emotes = mutableListOf<Suggestion.EmoteSuggestion>()
+    private val users = mutableListOf<Suggestion.UserSuggestion>()
+    private val commands = mutableListOf<Suggestion.CommandSuggestion>()
     private val lock = Object()
 
-    fun setSuggestions(list: List<Suggestion>) {
+    fun setSuggestions(suggestions: Triple<List<Suggestion.UserSuggestion>, List<Suggestion.EmoteSuggestion>, List<Suggestion.CommandSuggestion>>) {
         synchronized(lock) {
-            items.replaceAll(list)
-            replaceAll(list)
+            users.replaceAll(suggestions.first)
+            emotes.replaceAll(suggestions.second)
+            commands.replaceAll(suggestions.third)
+            val all = suggestions.first + suggestions.second + suggestions.third
+            replaceAll(all)
         }
     }
 
@@ -60,20 +67,15 @@ class SuggestionsArrayAdapter(
         override fun performFiltering(constraint: CharSequence?): FilterResults {
             constraint ?: return FilterResults()
             val constraintString = constraint.toString()
-            val suggestions = items.mapNotNull { suggestion ->
-                when (suggestion) {
-                    is Suggestion.CommandSuggestion -> suggestion.takeIf { it.command.startsWith(constraintString, ignoreCase = true) }
-                    is Suggestion.EmoteSuggestion   -> suggestion.takeIf { it.emote.code.contains(constraintString, ignoreCase = true) }
-                    is Suggestion.UserSuggestion    -> {
-                        val (userSuggestion, userConstraint) = when {
-                            constraintString.startsWith('@') -> suggestion.copy(withLeadingAt = true) to constraintString.substringAfter('@')
-                            else                             -> suggestion to constraintString
-                        }
+            val userSuggestions = users.filterUsers(constraintString)
+            val emoteSuggestions = emotes.filterEmotes(constraintString)
+            val commandsSuggestions = commands.filterCommands(constraintString)
 
-                        userSuggestion.takeIf { it.name.startsWith(userConstraint, ignoreCase = true) }
-                    }
-                }
+            val suggestions = when {
+                preferenceStore.shouldPreferEmoteSuggestions -> emoteSuggestions + userSuggestions + commandsSuggestions
+                else                                         -> userSuggestions + emoteSuggestions + commandsSuggestions
             }
+
             return FilterResults().apply {
                 values = suggestions
                 count = suggestions.size
@@ -82,7 +84,7 @@ class SuggestionsArrayAdapter(
 
         @Suppress("UNCHECKED_CAST")
         override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-            val resultList = (results?.values as? List<Suggestion>).orEmpty()
+            val resultList = (results?.values as? Collection<Suggestion>).orEmpty()
             synchronized(lock) {
                 replaceAll(resultList)
             }
@@ -90,7 +92,28 @@ class SuggestionsArrayAdapter(
         }
     }
 
-    private fun replaceAll(list: List<Suggestion>) {
+    private fun List<Suggestion.UserSuggestion>.filterUsers(constraint: String): List<Suggestion.UserSuggestion> {
+        return filter {
+            val (userSuggestion, userConstraint) = when {
+                constraint.startsWith('@') -> it.copy(withLeadingAt = true) to constraint.substringAfter('@')
+                else                       -> it to constraint
+            }
+
+            userSuggestion.name.startsWith(userConstraint, ignoreCase = true)
+        }
+    }
+
+    private fun List<Suggestion.EmoteSuggestion>.filterEmotes(constraint: String): List<Suggestion.EmoteSuggestion> {
+        val exactSuggestions = filter { it.emote.code.contains(constraint) }
+        val caseInsensitiveSuggestions = (this - exactSuggestions).filter { it.emote.code.contains(constraint, ignoreCase = true) }
+        return exactSuggestions + caseInsensitiveSuggestions
+    }
+
+    private fun List<Suggestion.CommandSuggestion>.filterCommands(constraint: String): List<Suggestion.CommandSuggestion> {
+        return filter { it.command.startsWith(constraint, ignoreCase = true) }
+    }
+
+    private fun replaceAll(list: Collection<Suggestion>) {
         clear()
         addAll(list)
     }
