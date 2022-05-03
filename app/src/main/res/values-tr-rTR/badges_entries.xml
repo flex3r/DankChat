@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="badges_entries">
-        <item>Authority (staff, admin)</item>
+        <item>Otorite (personel, yönetici)</item>
         <item>Tahminler</item>
-        <item>Channel (broadcaster, moderator)</item>
+        <item>Kanal (yayıncı, moderatör)</item>
         <item>Abone</item>
         <item>Vanity (prime, bits, subgifter)</item>
         <item>DankChat</item>
