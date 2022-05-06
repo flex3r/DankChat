@@ -47,7 +47,7 @@
     <string name="hint_disconnected">Odpojeno</string>
     <string name="hint_not_logged_int">Nejste přihlášen</string>
     <string name="notification_new_mentions">Máte nové zmínky</string>
-    <string name="notification_mention">%1$s vás pávě zmínil v #%2$s</string>
+    <string name="notification_mention">%1$s vás právě zmínil v #%2$s</string>
     <string name="notification_notify_mention">Byli jste zmíněni v #%1$s</string>
     <string name="snackbar_login">Přihlášení jako %1$s</string>
     <string name="snackbar_login_failed">Přihlášení se nezdařilo</string>
