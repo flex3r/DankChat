@@ -6,6 +6,8 @@ import androidx.collection.LruCache
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.chat.toMentionTabItems
 import com.flxrs.dankchat.data.api.ApiManager
+import com.flxrs.dankchat.data.api.bodyOrElse
+import com.flxrs.dankchat.data.api.dto.RecentMessagesDto
 import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.twitch.connection.*
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager
@@ -15,6 +17,7 @@ import com.flxrs.dankchat.utils.extensions.*
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import java.net.SocketTimeoutException
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import kotlin.collections.set
@@ -664,10 +667,28 @@ class ChatRepository @Inject constructor(
     }
 
     private suspend fun loadRecentMessages(channel: String) = withContext(Dispatchers.Default) {
-        if (channel in loadedRecentsInChannels) return@withContext
-        val result = apiManager.getRecentMessages(channel) ?: return@withContext
-        val recentMessages = result.messages ?: return@withContext
+        fun addMessageHistory(items: List<ChatItem>) {
+            messages[channel]?.update { current ->
+                items.addAndLimit(current, scrollBackLength, checkForDuplications = true)
+            }
+        }
 
+        if (channel in loadedRecentsInChannels) return@withContext
+        val response = runCatching {
+            apiManager.getRecentMessages(channel)
+        }.getOrElse {
+            val item = SystemMessageType.MessageHistoryUnavailable(status = null).toChatItem()
+            addMessageHistory(listOf(item))
+            return@withContext
+        }
+
+        val result = response.bodyOrElse {
+            val item = SystemMessageType.MessageHistoryUnavailable(status = code().toString()).toChatItem()
+            addMessageHistory(listOf(item))
+            return@withContext
+        }
+
+        val recentMessages = result?.messages.orEmpty()
         loadedRecentsInChannels += channel
         val items = mutableListOf<ChatItem>()
         measureTimeMillis {
@@ -696,12 +717,13 @@ class ChatRepository @Inject constructor(
                     items += ChatItem(withMention)
                 }
             }
+
+            if (recentMessages.isNotEmpty() && result?.errorCode == RecentMessagesDto.ERROR_CHANNEL_NOT_JOINED) {
+                items += ChatItem(SystemMessage(SystemMessageType.MessageHistoryIncomplete))
+            }
         }.let { Log.i(TAG, "Parsing message history for #$channel took $it ms") }
 
-        messages[channel]?.update { current ->
-            items.addAndLimit(current, scrollBackLength, checkForDuplications = true)
-        }
-
+        addMessageHistory(items)
         val mentions = items.filter { (it.message as? TwitchMessage)?.isMention == true }.toMentionTabItems()
         _mentions.update { current ->
             (current + mentions).sortedBy { it.message.timestamp }

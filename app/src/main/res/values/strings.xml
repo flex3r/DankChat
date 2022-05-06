@@ -65,6 +65,9 @@
     <string name="system_message_connected">Connected</string>
     <string name="system_message_channel_non_existent">This channel does not exist</string>
     <string name="system_message_disconnected">Disconnected</string>
+    <string name="system_message_history_unavailable_detailed">Message history service unavailable (Error %1$s)</string>
+    <string name="system_message_history_unavailable">Message history service unavailable</string>
+    <string name="system_message_history_recovering">Message history service recovering, there may be gaps in the message history.</string>
     <string name="system_message_no_history">You are not seeing any historical messages because you opted out of the recent-messages integration.</string>
     <string name="timed_out_message">&lt; Message deleted ></string>
     <string name="multi_entry_header_regex">Regex</string>

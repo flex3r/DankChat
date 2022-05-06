@@ -70,7 +70,7 @@ class ApiManager @Inject constructor(
     suspend fun getSevenTVChannelEmotes(channelId: String): List<SevenTVEmoteDto>? = sevenTVApiService.getChannelEmotes(channelId).bodyOrNull
     suspend fun getSevenTVGlobalEmotes(): List<SevenTVEmoteDto>? = sevenTVApiService.getGlobalEmotes().bodyOrNull
 
-    suspend fun getRecentMessages(channel: String): RecentMessagesDto? = recentMessagesApiService.getRecentMessages(channel).bodyOrNull
+    suspend fun getRecentMessages(channel: String): Response<RecentMessagesDto> = recentMessagesApiService.getRecentMessages(channel)
 
     suspend fun getSupibotCommands(): SupibotCommandsDto? = supibotApiService.getCommands().bodyOrNull
     suspend fun getSupibotChannels(): SupibotChannelsDto? = supibotApiService.getChannels("twitch").bodyOrNull
@@ -200,8 +200,16 @@ class ApiManager @Inject constructor(
     }
 }
 
-private val <T> Response<T>.bodyOrNull
+private val <T> Response<T>.bodyOrNull: T?
     get() = when {
         isSuccessful -> body()
         else         -> null
     }
+
+inline fun <T> Response<T>.bodyOrElse(block: Response<T>.() -> T): T? {
+    if (isSuccessful) {
+        return body()
+    }
+
+    return block()
+}
