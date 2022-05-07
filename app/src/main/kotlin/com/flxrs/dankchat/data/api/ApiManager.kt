@@ -6,6 +6,9 @@ import com.flxrs.dankchat.data.api.dto.*
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -206,10 +209,15 @@ private val <T> Response<T>.bodyOrNull: T?
         else         -> null
     }
 
-inline fun <T> Response<T>.bodyOrElse(block: Response<T>.() -> T): T? {
-    if (isSuccessful) {
-        return body()
-    }
+val jsonFormat = Json {
+    explicitNulls = false
+    ignoreUnknownKeys = true
+    isLenient = true
+}
 
-    return block()
+inline fun <reified T> Response<T>.errorBodyOrNull(): T? {
+    return runCatching {
+        val errorStream = errorBody()?.byteStream() ?: return null
+        jsonFormat.decodeFromStream<T>(errorStream)
+    }.getOrNull()
 }

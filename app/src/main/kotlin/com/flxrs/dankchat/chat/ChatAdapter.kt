@@ -140,6 +140,7 @@ class ChatAdapter(
                 null -> context.getString(R.string.system_message_history_unavailable)
                 else -> context.getString(R.string.system_message_history_unavailable_detailed, message.type.status)
             }
+            is SystemMessageType.MessageHistoryIgnored     -> context.getString(R.string.system_message_history_ignored)
             is SystemMessageType.MessageHistoryIncomplete  -> context.getString(R.string.system_message_history_recovering)
             is SystemMessageType.Custom                    -> message.type.message
         }

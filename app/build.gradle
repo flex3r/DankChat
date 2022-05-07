@@ -76,7 +76,8 @@ android {
         jvmTarget = "11"
         freeCompilerArgs += [
                 "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-Xopt-in=kotlinx.coroutines.FlowPreview"
+                "-Xopt-in=kotlinx.coroutines.FlowPreview",
+                "-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi"
         ]
     }
 }

@@ -6,8 +6,8 @@ import androidx.collection.LruCache
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.chat.toMentionTabItems
 import com.flxrs.dankchat.data.api.ApiManager
-import com.flxrs.dankchat.data.api.bodyOrElse
 import com.flxrs.dankchat.data.api.dto.RecentMessagesDto
+import com.flxrs.dankchat.data.api.errorBodyOrNull
 import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.twitch.connection.*
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager
@@ -17,7 +17,6 @@ import com.flxrs.dankchat.utils.extensions.*
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import java.net.SocketTimeoutException
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import kotlin.collections.set
@@ -170,7 +169,8 @@ class ChatRepository @Inject constructor(
             isUserChange -> return
             loadHistory  -> loadRecentMessages(channel)
             else         -> messages[channel]?.update { current ->
-                listOf(ChatItem(SystemMessage(type = SystemMessageType.NoHistoryLoaded), false)) + current
+                val message = SystemMessageType.NoHistoryLoaded.toChatItem()
+                listOf(message).addAndLimit(current, scrollBackLength, checkForDuplications = true)
             }
         }
     }
@@ -667,13 +667,16 @@ class ChatRepository @Inject constructor(
     }
 
     private suspend fun loadRecentMessages(channel: String) = withContext(Dispatchers.Default) {
+        if (channel in loadedRecentsInChannels) {
+            return@withContext
+        }
+
         fun addMessageHistory(items: List<ChatItem>) {
             messages[channel]?.update { current ->
                 items.addAndLimit(current, scrollBackLength, checkForDuplications = true)
             }
         }
 
-        if (channel in loadedRecentsInChannels) return@withContext
         val response = runCatching {
             apiManager.getRecentMessages(channel)
         }.getOrElse {
@@ -682,14 +685,22 @@ class ChatRepository @Inject constructor(
             return@withContext
         }
 
-        val result = response.bodyOrElse {
-            val item = SystemMessageType.MessageHistoryUnavailable(status = code().toString()).toChatItem()
+        if (!response.isSuccessful) {
+            val body = response.errorBodyOrNull()
+            val item = when (body?.errorCode) {
+                RecentMessagesDto.ERROR_CHANNEL_IGNORED -> {
+                    loadedRecentsInChannels += channel // not a temporary error, so we don't want to retry
+                    SystemMessageType.MessageHistoryIgnored.toChatItem()
+                }
+                else                                    -> SystemMessageType.MessageHistoryUnavailable(status = response.code().toString()).toChatItem()
+            }
             addMessageHistory(listOf(item))
             return@withContext
         }
 
-        val recentMessages = result?.messages.orEmpty()
         loadedRecentsInChannels += channel
+        val result = response.body()
+        val recentMessages = result?.messages.orEmpty()
         val items = mutableListOf<ChatItem>()
         measureTimeMillis {
             for (message in recentMessages) {

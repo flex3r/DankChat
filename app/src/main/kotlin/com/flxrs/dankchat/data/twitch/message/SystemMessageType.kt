@@ -8,6 +8,7 @@ sealed class SystemMessageType {
     object NoHistoryLoaded : SystemMessageType()
     object LoginExpired : SystemMessageType()
     object MessageHistoryIncomplete : SystemMessageType()
+    object MessageHistoryIgnored : SystemMessageType()
     data class MessageHistoryUnavailable(val status: String?) : SystemMessageType()
     data class ChannelNonExistent(val channel: String) : SystemMessageType()
     data class Custom(val message: String) : SystemMessageType()

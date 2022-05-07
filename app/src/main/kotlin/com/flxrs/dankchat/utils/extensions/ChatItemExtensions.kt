@@ -2,6 +2,7 @@ package com.flxrs.dankchat.utils.extensions
 
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.data.twitch.message.ClearChatMessage
+import com.flxrs.dankchat.data.twitch.message.SystemMessage
 import com.flxrs.dankchat.data.twitch.message.TwitchMessage
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
@@ -62,7 +63,10 @@ fun List<ChatItem>.addAndLimit(
     checkForDuplications: Boolean = false
 ): MutableList<ChatItem> = takeLast(scrollBackLength).toMutableList().apply {
     for (item in collection) {
-        if (!checkForDuplications || !any { it.message.id == item.message.id }) {
+        if (!checkForDuplications || !any {
+                it.message.id == item.message.id || (it.message as? SystemMessage)?.type == (item.message as? SystemMessage)?.type
+            }
+        ) {
             add(item)
         }
 
