@@ -60,8 +60,8 @@ class ApiManager @Inject constructor(
     suspend fun getGlobalBadges(oAuth: String): HelixBadgesDto? = helixApiService.getGlobalBadges("Bearer $oAuth").bodyOrNull
     suspend fun getEmoteSets(oAuth: String, setIds: List<String>): HelixEmoteSetsDto? = helixApiService.getEmoteSets("Bearer $oAuth", setIds).bodyOrNull
 
-    suspend fun getUserSets(sets: List<String>): List<DankChatEmoteSetDto>? = dankChatApiService.getSets(sets.joinToString(separator = ",")).bodyOrNull
-    suspend fun getDankChatBadges(): List<DankChatBadgeDto>? = dankChatApiService.getDankChatBadges().bodyOrNull
+    suspend fun getUserSets(sets: List<String>): List<DankChatEmoteSetDto>? = dankChatApiService.getSets(sets.joinToString(separator = ",")).bodyOrNull()
+    suspend fun getDankChatBadges(): List<DankChatBadgeDto>? = dankChatApiService.getDankChatBadges().bodyOrNull()
 
     suspend fun getChannelBadgesFallback(channelId: String): TwitchBadgesDto? = badgesApiService.getChannelBadges(channelId).bodyOrNull
     suspend fun getGlobalBadgesFallback(): TwitchBadgesDto? = badgesApiService.getGlobalBadges().bodyOrNull

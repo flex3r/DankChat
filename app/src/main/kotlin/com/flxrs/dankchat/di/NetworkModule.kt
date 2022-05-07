@@ -113,12 +113,11 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideDankChatApiService(@ApiOkHttpClient client: OkHttpClient): DankChatApiService = Retrofit.Builder()
-        .baseUrl(DANKCHAT_BASE_URL)
-        .addConverterFactory(MoshiConverterFactory.create())
-        .client(client)
-        .build()
-        .create(DankChatApiService::class.java)
+    fun provideDankChatApiService(ktorClient: HttpClient): DankChatApiService = DankChatApiService(ktorClient.config {
+        defaultRequest {
+            url(DANKCHAT_BASE_URL)
+        }
+    })
 
     @Singleton
     @Provides
@@ -177,7 +176,7 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideRecentMessagesApiService(client: HttpClient): RecentMessagesApiService = RecentMessagesApiService(client.config {
-        install(DefaultRequest) {
+        defaultRequest {
             url(RECENT_MESSAGES_BASE_URL)
         }
     })

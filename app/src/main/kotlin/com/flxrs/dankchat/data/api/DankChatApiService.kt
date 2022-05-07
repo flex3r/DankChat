@@ -1,24 +1,13 @@
 package com.flxrs.dankchat.data.api
 
-import com.flxrs.dankchat.BuildConfig
-import com.flxrs.dankchat.data.api.dto.DankChatBadgeDto
-import com.flxrs.dankchat.data.api.dto.DankChatEmoteSetDto
-import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.Path
-import retrofit2.http.Query
+import io.ktor.client.*
+import io.ktor.client.request.*
 
-interface DankChatApiService {
-    @GET("set/{setId}")
-    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
-    suspend fun getSet(@Path("setId") setId: String): Response<List<DankChatEmoteSetDto>>
+class DankChatApiService(private val ktorClient: HttpClient) {
 
-    @GET("sets")
-    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
-    suspend fun getSets(@Query("id") ids: String): Response<List<DankChatEmoteSetDto>>
+    suspend fun getSets(ids: String) = ktorClient.get("sets") {
+        parameter("id", ids)
+    }
 
-    @GET("badges")
-    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
-    suspend fun getDankChatBadges(): Response<List<DankChatBadgeDto>>
+    suspend fun getDankChatBadges() = ktorClient.get("badges")
 }
