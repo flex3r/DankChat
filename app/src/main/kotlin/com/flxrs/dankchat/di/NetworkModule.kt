@@ -76,6 +76,11 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideKtorClient(): HttpClient = HttpClient(CIO) {
+        engine {
+            endpoint {
+                connectTimeout = 10000
+            }
+        }
         install(Logging) {
             level = LogLevel.INFO
             logger = object : Logger {

@@ -673,30 +673,23 @@ class ChatRepository @Inject constructor(
             return@withContext
         }
 
-        fun addMessageHistory(items: List<ChatItem>) {
-            messages[channel]?.update { current ->
-                items.addAndLimit(current, scrollBackLength, checkForDuplications = true)
-            }
-        }
-
         val response = runCatching {
             apiManager.getRecentMessages(channel)
         }.getOrElse {
-            val item = SystemMessageType.MessageHistoryUnavailable(status = null).toChatItem()
-            addMessageHistory(listOf(item))
+            makeAndPostSystemMessage(SystemMessageType.MessageHistoryUnavailable(status = null), setOf(channel))
             return@withContext
         }
 
         if (!response.status.isSuccess()) {
             val body = response.bodyOrNull<RecentMessagesDto>()
-            val item = when (body?.errorCode) {
+            val type = when (body?.errorCode) {
                 RecentMessagesDto.ERROR_CHANNEL_IGNORED -> {
                     loadedRecentsInChannels += channel // not a temporary error, so we don't want to retry
-                    SystemMessageType.MessageHistoryIgnored.toChatItem()
+                    SystemMessageType.MessageHistoryIgnored
                 }
-                else                                    -> SystemMessageType.MessageHistoryUnavailable(status = response.status.value.toString()).toChatItem()
+                else                                    -> SystemMessageType.MessageHistoryUnavailable(status = response.status.value.toString())
             }
-            addMessageHistory(listOf(item))
+            makeAndPostSystemMessage(type, setOf(channel))
             return@withContext
         }
 
@@ -730,13 +723,18 @@ class ChatRepository @Inject constructor(
                     items += ChatItem(withMention)
                 }
             }
-
-            if (recentMessages.isNotEmpty() && result?.errorCode == RecentMessagesDto.ERROR_CHANNEL_NOT_JOINED) {
-                items += ChatItem(SystemMessage(SystemMessageType.MessageHistoryIncomplete))
-            }
         }.let { Log.i(TAG, "Parsing message history for #$channel took $it ms") }
 
-        addMessageHistory(items)
+        messages[channel]?.update { current ->
+            val withIncompleteWarning = when {
+                recentMessages.isNotEmpty() && result?.errorCode == RecentMessagesDto.ERROR_CHANNEL_NOT_JOINED -> {
+                    current + ChatItem(SystemMessage(SystemMessageType.MessageHistoryIncomplete))
+                }
+                else -> current
+            }
+            items.addAndLimit(withIncompleteWarning, scrollBackLength, checkForDuplications = true)
+        }
+
         val mentions = items.filter { (it.message as? TwitchMessage)?.isMention == true }.toMentionTabItems()
         _mentions.update { current ->
             (current + mentions).sortedBy { it.message.timestamp }
