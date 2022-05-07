@@ -18,6 +18,7 @@ import io.ktor.client.plugins.*
 import io.ktor.client.plugins.cache.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
+import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import okhttp3.CacheControl
@@ -81,14 +82,14 @@ object NetworkModule {
                 connectTimeout = 10000
             }
         }
-        install(Logging) {
-            level = LogLevel.INFO
-            logger = object : Logger {
-                override fun log(message: String) {
-                    Log.d("HttpClient", message)
-                }
-            }
-        }
+//        install(Logging) {
+//            level = LogLevel.INFO
+//            logger = object : Logger {
+//                override fun log(message: String) {
+//                    Log.d("HttpClient", message)
+//                }
+//            }
+//        }
         install(HttpCache)
         install(UserAgent) {
             agent = "dankchat/${BuildConfig.VERSION_NAME}"
@@ -113,7 +114,7 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideDankChatApiService(ktorClient: HttpClient): DankChatApiService = DankChatApiService(ktorClient.config {
+    fun provideDankChatApiService(ktorClient: HttpClient) = DankChatApiService(ktorClient.config {
         defaultRequest {
             url(DANKCHAT_BASE_URL)
         }
@@ -130,21 +131,28 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideHelixApiService(@ApiOkHttpClient client: OkHttpClient): HelixApiService = Retrofit.Builder()
-        .baseUrl(HELIX_BASE_URL)
-        .addConverterFactory(MoshiConverterFactory.create())
-        .client(client)
-        .build()
-        .create(HelixApiService::class.java)
+    fun provideHelixApiService(ktorClient: HttpClient, preferenceStore: DankChatPreferenceStore) = HelixApiService(ktorClient.config {
+        defaultRequest {
+            url(HELIX_BASE_URL)
+            header("Client-ID", ApiManager.CLIENT_ID)
+        }
+        install(Logging) {
+            level = LogLevel.INFO
+            logger = object : Logger {
+                override fun log(message: String) {
+                    Log.d("HttpClient", message)
+                }
+            }
+        }
+    }, preferenceStore)
 
     @Singleton
     @Provides
-    fun provideTmiApiService(@ApiOkHttpClient client: OkHttpClient): TmiApiService = Retrofit.Builder()
-        .baseUrl(TMI_BASE_URL)
-        .addConverterFactory(MoshiConverterFactory.create())
-        .client(client)
-        .build()
-        .create(TmiApiService::class.java)
+    fun provideTmiApiService(ktorClient: HttpClient) = TmiApiService(ktorClient.config {
+        defaultRequest {
+            url(TMI_BASE_URL)
+        }
+    })
 
     @Singleton
     @Provides
@@ -175,7 +183,7 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideRecentMessagesApiService(client: HttpClient): RecentMessagesApiService = RecentMessagesApiService(client.config {
+    fun provideRecentMessagesApiService(client: HttpClient) = RecentMessagesApiService(client.config {
         defaultRequest {
             url(RECENT_MESSAGES_BASE_URL)
         }

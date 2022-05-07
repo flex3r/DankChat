@@ -1,19 +1,9 @@
 package com.flxrs.dankchat.data.api
 
-import com.flxrs.dankchat.BuildConfig
-import com.flxrs.dankchat.data.api.dto.ChatterCountDto
-import com.flxrs.dankchat.data.api.dto.ChattersResultDto
-import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.Path
+import io.ktor.client.*
+import io.ktor.client.request.*
 
-interface TmiApiService {
-    @GET("group/user/{channel}/chatters")
-    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
-    suspend fun getChatters(@Path("channel") channel: String): Response<ChattersResultDto>
+class TmiApiService(private val ktorClient: HttpClient) {
 
-    @GET("group/user/{channel}/chatters")
-    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
-    suspend fun getChatterCount(@Path("channel") channel: String): Response<ChatterCountDto>
+    suspend fun getChatters(channel: String) = ktorClient.get("group/user/$channel/chatters")
 }

@@ -1,15 +1,18 @@
 package com.flxrs.dankchat.data.api.dto
 
 import androidx.annotation.Keep
-import com.squareup.moshi.Json
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Keep
+@Serializable
 data class UserFollowsDto(
-    @field:Json(name = "total") val total: Int,
-    @field:Json(name = "data") val data: List<UserFollowsDataDto>
+    @SerialName(value = "total") val total: Int,
+    @SerialName(value = "data") val data: List<UserFollowsDataDto>
 )
 
 @Keep
+@Serializable
 data class UserFollowsDataDto(
-    @field:Json(name = "followed_at") val followedAt: String
+    @SerialName(value = "followed_at") val followedAt: String
 )

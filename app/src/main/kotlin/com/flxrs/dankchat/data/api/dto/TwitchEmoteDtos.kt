@@ -1,7 +1,6 @@
 package com.flxrs.dankchat.data.api.dto
 
 import androidx.annotation.Keep
-import com.squareup.moshi.Json
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -22,15 +21,4 @@ data class DankChatEmoteSetDto(
     @SerialName(value = "channel_id") val channelId: String,
     @SerialName(value = "tier") val tier: Int,
     @SerialName(value = "emotes") val emotes: List<TwitchEmoteDto>?
-)
-
-@Keep
-data class HelixEmoteSetsDto(
-    @field:Json(name = "data") val sets: List<HelixEmoteSetDto>
-)
-
-@Keep
-data class HelixEmoteSetDto(
-    @field:Json(name = "emote_set_id") val setId: String,
-    @field:Json(name = "owner_id") val channelId: String,
 )

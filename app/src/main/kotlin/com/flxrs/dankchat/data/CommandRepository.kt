@@ -38,7 +38,10 @@ class CommandRepository @Inject constructor(
     fun clearSupibotCommands() = supibotCommands.forEach { it.value.value = emptyList() }.also { supibotCommands.clear() }
 
     suspend fun checkForCommands(message: String, channel: String): CommandResult {
-        val oAuth = preferenceStore.oAuthKey?.withoutOAuthSuffix ?: return CommandResult.NotFound
+        if (!preferenceStore.isLoggedIn) {
+            return CommandResult.NotFound
+        }
+
         val words = message.split(" ")
         if (words.isEmpty()) {
             return CommandResult.NotFound
@@ -46,10 +49,10 @@ class CommandRepository @Inject constructor(
 
         val trigger = words.first()
         return when (Command.values().find { it.trigger == trigger }) {
-            Command.BLOCK    -> blockUserCommand(oAuth, words.drop(1))
-            Command.UNBLOCK  -> unblockUserCommand(oAuth, words.drop(1))
+            Command.BLOCK    -> blockUserCommand(words.drop(1))
+            Command.UNBLOCK  -> unblockUserCommand(words.drop(1))
             Command.CHATTERS -> chattersCommand(channel)
-            Command.UPTIME   -> uptimeCommand(oAuth, channel)
+            Command.UPTIME   -> uptimeCommand(channel)
             else             -> checkUserCommands(trigger)
         }
     }
@@ -96,17 +99,17 @@ class CommandRepository @Inject constructor(
         }.orEmpty()
     }
 
-    private suspend fun blockUserCommand(oAuth: String, args: List<String>): CommandResult.Accepted {
+    private suspend fun blockUserCommand(args: List<String>): CommandResult.Accepted {
         if (args.isEmpty() || args.first().isBlank()) {
             return CommandResult.Accepted("Usage: /block <user>")
         }
 
         val target = args.first()
         val targetId = runCatching {
-            apiManager.getUserIdByName(oAuth, target)
+            apiManager.getUserIdByName(target)
         }.getOrNull() ?: return CommandResult.Accepted("User $target couldn't be blocked, no user with that name found!")
 
-        val result = runCatching { apiManager.blockUser(oAuth, targetId) }
+        val result = runCatching { apiManager.blockUser(targetId) }
         return when {
             result.isSuccess -> {
                 chatRepository.addUserBlock(targetId)
@@ -116,17 +119,17 @@ class CommandRepository @Inject constructor(
         }
     }
 
-    private suspend fun unblockUserCommand(oAuth: String, args: List<String>): CommandResult.Accepted {
+    private suspend fun unblockUserCommand(args: List<String>): CommandResult.Accepted {
         if (args.isEmpty() || args.first().isBlank()) {
             return CommandResult.Accepted("Usage: /unblock <user>")
         }
 
         val target = args.first()
         val targetId = runCatching {
-            apiManager.getUserIdByName(oAuth, target)
+            apiManager.getUserIdByName(target)
         }.getOrNull() ?: return CommandResult.Accepted("User $target couldn't be unblocked, no user with that name found!")
 
-        val result = runCatching { apiManager.unblockUser(oAuth, targetId) }
+        val result = runCatching { apiManager.unblockUser(targetId) }
         return when {
             result.isSuccess -> {
                 chatRepository.removeUserBlock(targetId)
@@ -144,9 +147,9 @@ class CommandRepository @Inject constructor(
         return CommandResult.Accepted("Chatter count: $result")
     }
 
-    private suspend fun uptimeCommand(oAuth: String, channel: String): CommandResult.Accepted {
+    private suspend fun uptimeCommand(channel: String): CommandResult.Accepted {
         val result = runCatching {
-            apiManager.getStreams(oAuth, listOf(channel))
+            apiManager.getStreams(listOf(channel))
         }.getOrNull()
             ?.data
             ?.getOrNull(0) ?: return CommandResult.Accepted("Channel is not live.")

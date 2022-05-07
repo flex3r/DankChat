@@ -6,11 +6,9 @@ import com.flxrs.dankchat.data.api.dto.*
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import io.ktor.client.call.*
 import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromStream
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -48,17 +46,49 @@ class ApiManager @Inject constructor(
         return null
     }
 
-    suspend fun getUserIdByName(oAuth: String, name: String): String? = helixApiService.getUserByName("Bearer $oAuth", listOf(name)).bodyOrNull?.data?.getOrNull(0)?.id
-    suspend fun getUsersByNames(oAuth: String, names: List<String>): List<HelixUserDto>? = helixApiService.getUserByName("Bearer $oAuth", names).bodyOrNull?.data
-    suspend fun getUser(oAuth: String, userId: String): HelixUserDto? = helixApiService.getUserById("Bearer $oAuth", userId).bodyOrNull?.data?.getOrNull(0)
-    suspend fun getUsersFollows(oAuth: String, fromId: String, toId: String): UserFollowsDto? = helixApiService.getUsersFollows("Bearer $oAuth", fromId, toId).bodyOrNull
-    suspend fun getStreams(oAuth: String, channels: List<String>): StreamsDto? = helixApiService.getStreams("Bearer $oAuth", channels).bodyOrNull
-    suspend fun getUserBlocks(oAuth: String, userId: String): HelixUserBlockListDto? = helixApiService.getUserBlocks("Bearer $oAuth", userId).bodyOrNull
-    suspend fun blockUser(oAuth: String, targetUserId: String): Boolean = helixApiService.putUserBlock("Bearer $oAuth", targetUserId).isSuccessful
-    suspend fun unblockUser(oAuth: String, targetUserId: String): Boolean = helixApiService.deleteUserBlock("Bearer $oAuth", targetUserId).isSuccessful
-    suspend fun getChannelBadges(oAuth: String, channelId: String): HelixBadgesDto? = helixApiService.getChannelBadges("Bearer $oAuth", channelId).bodyOrNull
-    suspend fun getGlobalBadges(oAuth: String): HelixBadgesDto? = helixApiService.getGlobalBadges("Bearer $oAuth").bodyOrNull
-    suspend fun getEmoteSets(oAuth: String, setIds: List<String>): HelixEmoteSetsDto? = helixApiService.getEmoteSets("Bearer $oAuth", setIds).bodyOrNull
+    suspend fun getUserIdByName(name: String): String? {
+        return helixApiService.getUserByName(listOf(name))
+            ?.bodyOrNull<HelixUsersDto>()
+            ?.data?.firstOrNull()?.id
+    }
+    suspend fun getUsersByNames(names: List<String>): List<HelixUserDto>? {
+        return helixApiService.getUserByName(names)
+            ?.bodyOrNull<HelixUsersDto>()
+            ?.data
+    }
+    suspend fun getUser(userId: String): HelixUserDto? {
+        return helixApiService.getUserById(userId)
+            ?.bodyOrNull<HelixUsersDto>()
+            ?.data?.firstOrNull()
+    }
+    suspend fun getUsersFollows(fromId: String, toId: String): UserFollowsDto? {
+        return helixApiService.getUsersFollows(fromId, toId)
+            ?.bodyOrNull()
+    }
+    suspend fun getStreams(channels: List<String>): StreamsDto? {
+        return helixApiService.getStreams(channels)
+            ?.bodyOrNull()
+    }
+    suspend fun getUserBlocks(userId: String): HelixUserBlockListDto? {
+        return helixApiService.getUserBlocks(userId)
+            ?.bodyOrNull()
+    }
+    suspend fun blockUser(targetUserId: String): Boolean {
+        return helixApiService.putUserBlock(targetUserId)
+            ?.status?.isSuccess() ?: false
+    }
+    suspend fun unblockUser(targetUserId: String): Boolean {
+        return helixApiService.deleteUserBlock(targetUserId)
+            ?.status?.isSuccess() ?: false
+    }
+    suspend fun getChannelBadges(channelId: String): HelixBadgesDto? {
+        return helixApiService.getChannelBadges(channelId)
+            ?.bodyOrNull()
+    }
+    suspend fun getGlobalBadges(): HelixBadgesDto? {
+        return helixApiService.getGlobalBadges()
+            ?.bodyOrNull()
+    }
 
     suspend fun getUserSets(sets: List<String>): List<DankChatEmoteSetDto>? = dankChatApiService.getSets(sets.joinToString(separator = ",")).bodyOrNull()
     suspend fun getDankChatBadges(): List<DankChatBadgeDto>? = dankChatApiService.getDankChatBadges().bodyOrNull()
@@ -81,8 +111,8 @@ class ApiManager @Inject constructor(
     suspend fun getSupibotChannels(): SupibotChannelsDto? = supibotApiService.getChannels("twitch").bodyOrNull
     suspend fun getSupibotUserAliases(user: String) = supibotApiService.getUserAliases(user).bodyOrNull
 
-    suspend fun getChatters(channel: String): ChattersDto? = tmiApiService.getChatters(channel).bodyOrNull?.chatters
-    suspend fun getChatterCount(channel: String): Int? = tmiApiService.getChatterCount(channel).bodyOrNull?.chatterCount
+    suspend fun getChatters(channel: String): ChattersDto? = tmiApiService.getChatters(channel).bodyOrNull<ChattersResultDto>()?.chatters
+    suspend fun getChatterCount(channel: String): Int? = tmiApiService.getChatters(channel).bodyOrNull<ChatterCountDto>()?.chatterCount
 
     @Suppress("BlockingMethodInNonBlockingContext")
     suspend fun uploadMedia(file: File): UploadDto? = withContext(Dispatchers.IO) {

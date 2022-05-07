@@ -1,17 +1,20 @@
 package com.flxrs.dankchat.data.api.dto
 
 import androidx.annotation.Keep
-import com.squareup.moshi.Json
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Keep
+@Serializable
 data class StreamsDto(
-    @field:Json(name = "data") val data: List<StreamDataDto>
+    @SerialName(value = "data") val data: List<StreamDataDto>
 )
 
 
 @Keep
+@Serializable
 data class StreamDataDto(
-    @field:Json(name = "viewer_count") val viewerCount: Int,
-    @field:Json(name = "user_login") val userLogin: String,
-    @field:Json(name = "started_at") val startedAt: String,
+    @SerialName(value = "viewer_count") val viewerCount: Int,
+    @SerialName(value = "user_login") val userLogin: String,
+    @SerialName(value = "started_at") val startedAt: String,
 )

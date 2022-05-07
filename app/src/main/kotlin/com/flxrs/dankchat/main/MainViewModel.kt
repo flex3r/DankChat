@@ -21,7 +21,10 @@ import com.flxrs.dankchat.data.twitch.message.RoomState
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.Preference
 import com.flxrs.dankchat.utils.DateTimeUtils
-import com.flxrs.dankchat.utils.extensions.*
+import com.flxrs.dankchat.utils.extensions.firstValue
+import com.flxrs.dankchat.utils.extensions.moveToFront
+import com.flxrs.dankchat.utils.extensions.timer
+import com.flxrs.dankchat.utils.extensions.toEmoteItems
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -312,18 +315,19 @@ class MainViewModel @Inject constructor(
             val loadingState = DataLoadingState.Loading(parameters)
             _dataLoadingState.emit(loadingState)
 
-            val fixedOauth = oAuth.withoutOAuthSuffix
             val state = runCatchingToState(parameters) { handler ->
-                loadInitialData(fixedOauth, id, channelList, loadSupibot, loadThirdPartyData, handler)
+                loadInitialData(id, channelList, loadSupibot, loadThirdPartyData, handler)
 
                 if (!isLoggedIn) {
                     loadChattersAndMessages(channelList, loadHistory, isUserChange, handler)
                     return@runCatchingToState
                 }
 
-                val userState =
-                    withTimeoutOrNull(IRC_TIMEOUT_DELAY) { chatRepository.getLatestValidUserState(minChannelsSize = channelList.size) }
-                        ?: withTimeoutOrNull(IRC_TIMEOUT_SHORT_DELAY) { chatRepository.getLatestValidUserState(minChannelsSize = 0) }
+                val userState = withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
+                    chatRepository.getLatestValidUserState(minChannelsSize = channelList.size)
+                } ?: withTimeoutOrNull(IRC_TIMEOUT_SHORT_DELAY) {
+                    chatRepository.getLatestValidUserState(minChannelsSize = 0)
+                }
 
                 userState?.let {
                     dataRepository.loadUserStateEmotes(userState.globalEmoteSets, userState.followerEmoteSets)
@@ -345,10 +349,13 @@ class MainViewModel @Inject constructor(
 
     fun blockUser() = viewModelScope.launch {
         runCatching {
+            if (!dankChatPreferenceStore.isLoggedIn) {
+                return@launch
+            }
+
             val activeChannel = getActiveChannel() ?: return@launch
-            val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return@launch
-            val channelId = dataRepository.getUserIdByName(oAuth, activeChannel) ?: return@launch
-            dataRepository.blockUser(oAuth, channelId)
+            val channelId = dataRepository.getUserIdByName(activeChannel) ?: return@launch
+            dataRepository.blockUser(channelId)
             chatRepository.addUserBlock(channelId)
         }
     }
@@ -438,12 +445,11 @@ class MainViewModel @Inject constructor(
                 chatRepository.joinChannel(channel = "jtv", listenToPubSub = false)
             }
 
-            val fixedOAuth = oAuth.withoutOAuthSuffix
             supervisorScope {
                 listOf(
                     launch(handler) {
-                        val channelId = getRoomStateIdIfNeeded(oAuth, channel)
-                        dataRepository.loadChannelData(channel, fixedOAuth, channelId, loadThirdPartyData, forceReload = true)
+                        val channelId = getRoomStateIdIfNeeded(channel)
+                        dataRepository.loadChannelData(channel, channelId, loadThirdPartyData, forceReload = true)
                     },
                     launch(handler) { dataRepository.loadDankChatBadges() },
                 ).joinAll()
@@ -485,17 +491,15 @@ class MainViewModel @Inject constructor(
     fun fetchStreamData(channels: List<String>) {
         cancelStreamDataTimer()
 
-        val oAuth = dankChatPreferenceStore.oAuthKey
         val streamInfoEnabled = dankChatPreferenceStore.streamInfoEnabled
-        if (oAuth.isNullOrBlank() || !streamInfoEnabled) {
+        if (!dankChatPreferenceStore.isLoggedIn || !streamInfoEnabled) {
             return
         }
 
-        val fixedOAuth = oAuth.withoutOAuthSuffix
         viewModelScope.launch(coroutineExceptionHandler) {
             fetchTimerJob = timer(STREAM_REFRESH_RATE) {
                 val streams = runCatching {
-                    apiManager.getStreams(fixedOAuth, channels)
+                    apiManager.getStreams(channels)
                 }.getOrNull()
 
                 val data = streams?.data?.map {
@@ -587,17 +591,17 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loadInitialData(oAuth: String, id: String, channelList: List<String>, loadSupibot: Boolean, loadThirdPartyData: Set<ThirdPartyEmoteType>, handler: CoroutineExceptionHandler) =
+    private suspend fun loadInitialData(id: String, channelList: List<String>, loadSupibot: Boolean, loadThirdPartyData: Set<ThirdPartyEmoteType>, handler: CoroutineExceptionHandler) =
         supervisorScope {
             listOf(
                 launch(handler) { dataRepository.loadDankChatBadges() },
-                launch(handler) { dataRepository.loadGlobalBadges(oAuth) },
+                launch(handler) { dataRepository.loadGlobalBadges() },
                 launch(handler) { if (loadSupibot) commandRepository.loadSupibotCommands() },
-                launch(handler) { chatRepository.loadUserBlocks(oAuth, id) }
+                launch(handler) { chatRepository.loadUserBlocks(id) }
             ) + channelList.map {
                 launch(handler) {
-                    val channelId = getRoomStateIdIfNeeded(oAuth, it)
-                    dataRepository.loadChannelData(it, oAuth, channelId, loadThirdPartyData)
+                    val channelId = getRoomStateIdIfNeeded(it)
+                    dataRepository.loadChannelData(it, channelId, loadThirdPartyData)
                 }
             }.joinAll()
         }
@@ -610,9 +614,9 @@ class MainViewModel @Inject constructor(
         }.joinAll()
     }
 
-    private suspend fun getRoomStateIdIfNeeded(oAuth: String, channel: String): String? = when {
-        oAuth.isNotBlank() -> null
-        else               -> withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
+    private suspend fun getRoomStateIdIfNeeded(channel: String): String? = when {
+        !dankChatPreferenceStore.isLoggedIn -> null
+        else                                -> withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
             chatRepository.getRoomState(channel).first { it.channelId.isNotBlank() }.channelId
         }
     }

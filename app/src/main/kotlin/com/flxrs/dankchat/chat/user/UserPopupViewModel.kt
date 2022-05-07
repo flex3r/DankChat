@@ -45,9 +45,6 @@ class UserPopupViewModel @Inject constructor(
             return state is UserPopupState.Success && state.isBlocked
         }
 
-    val displayNameOrNull: String?
-        get() = (userPopupState.value as? UserPopupState.Success)?.displayName
-
     val userNameOrNull: String?
         get() = (userPopupState.value as? UserPopupState.Success)?.userName
 
@@ -55,13 +52,13 @@ class UserPopupViewModel @Inject constructor(
         loadData()
     }
 
-    fun blockUser() = updateStateWith { targetUserId, _, oAuth ->
-        dataRepository.blockUser(oAuth, targetUserId)
+    fun blockUser() = updateStateWith { targetUserId, _ ->
+        dataRepository.blockUser(targetUserId)
         chatRepository.addUserBlock(targetUserId)
     }
 
-    fun unblockUser() = updateStateWith { targetUserId, _, oAuth ->
-        dataRepository.unblockUser(oAuth, targetUserId)
+    fun unblockUser() = updateStateWith { targetUserId, _ ->
+        dataRepository.unblockUser(targetUserId)
         chatRepository.removeUserBlock(targetUserId)
     }
 
@@ -86,10 +83,12 @@ class UserPopupViewModel @Inject constructor(
         chatRepository.sendMessage(".delete $messageId")
     }
 
-    private inline fun updateStateWith(crossinline block: suspend (String, String, String) -> Unit) = viewModelScope.launch {
-        val oAuth = preferenceStore.oAuthKey?.withoutOAuthSuffix ?: return@launch
+    private inline fun updateStateWith(crossinline block: suspend (String, String) -> Unit) = viewModelScope.launch {
+        if (!preferenceStore.isLoggedIn) {
+            return@launch
+        }
         val currentUserId = preferenceStore.userIdString ?: return@launch
-        val result = runCatching { block(args.targetUserId, currentUserId, oAuth) }
+        val result = runCatching { block(args.targetUserId, currentUserId) }
         when {
             result.isFailure -> _userPopupState.value = UserPopupState.Error(result.exceptionOrNull())
             else             -> loadData()
@@ -103,18 +102,17 @@ class UserPopupViewModel @Inject constructor(
         }
 
         _userPopupState.value = UserPopupState.Loading
-        val oAuth = preferenceStore.oAuthKey?.withoutOAuthSuffix
         val currentUserId = preferenceStore.userIdString
-        if (oAuth == null || currentUserId == null) {
+        if (!preferenceStore.isLoggedIn || currentUserId == null) {
             _userPopupState.value = UserPopupState.Error()
             return@launch
         }
 
         val result = runCatching {
-            val channelId = args.channel?.let { dataRepository.getUserIdByName(oAuth, it) }
-            val channelUserFollows = channelId?.let { dataRepository.getUserFollows(oAuth, args.targetUserId, channelId) }
-            val user = dataRepository.getUser(oAuth, args.targetUserId)
-            val currentUserFollows = dataRepository.getUserFollows(oAuth, currentUserId, args.targetUserId)
+            val channelId = args.channel?.let { dataRepository.getUserIdByName(it) }
+            val channelUserFollows = channelId?.let { dataRepository.getUserFollows(args.targetUserId, channelId) }
+            val user = dataRepository.getUser(args.targetUserId)
+            val currentUserFollows = dataRepository.getUserFollows(currentUserId, args.targetUserId)
             val isBlocked = chatRepository.isUserBlocked(args.targetUserId)
 
             mapToState(

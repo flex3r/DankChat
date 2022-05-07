@@ -32,13 +32,16 @@ class PubSubManager @Inject constructor(
         get() = connections.any { it.connected && it.hasWhisperTopic }
 
     fun start() {
-        val oAuth = preferenceStore.oAuthKey?.withoutOAuthSuffix ?: return
+        if (!preferenceStore.isLoggedIn) {
+            return
+        }
+
         val userId = preferenceStore.userIdString ?: return
         val channels = preferenceStore.getChannels()
 
         scope.launch {
             val helixChannels = runCatching {
-                apiManager.getUsersByNames(oAuth, channels)
+                apiManager.getUsersByNames(channels)
             }.getOrNull() ?: return@launch
 
             val topics = buildSet {
@@ -62,9 +65,12 @@ class PubSubManager @Inject constructor(
     }
 
     fun addChannel(channel: String) = scope.launch {
-        val oAuth = preferenceStore.oAuthKey?.withoutOAuthSuffix ?: return@launch
+        if (!preferenceStore.isLoggedIn) {
+            return@launch
+        }
+
         val channelId = runCatching {
-            apiManager.getUserIdByName(oAuth, channel)
+            apiManager.getUserIdByName(channel)
         }.getOrNull() ?: return@launch
 
         val topic = PubSubTopic.PointRedemptions(channelId, channel)

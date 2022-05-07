@@ -12,10 +12,10 @@ import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.twitch.connection.*
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager
 import com.flxrs.dankchat.data.twitch.message.*
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.utils.extensions.*
 import com.squareup.moshi.Moshi
-import io.ktor.client.call.*
 import io.ktor.http.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -30,6 +30,7 @@ class ChatRepository @Inject constructor(
     private val readConnection: ChatConnection,
     private val writeConnection: ChatConnection,
     private val pubSubManager: PubSubManager,
+    private val dankChatPreferenceStore: DankChatPreferenceStore,
     scope: CoroutineScope,
 ) {
 
@@ -177,12 +178,14 @@ class ChatRepository @Inject constructor(
         }
     }
 
-    suspend fun loadUserBlocks(oAuth: String, id: String) = withContext(Dispatchers.Default) {
-        if (oAuth.isNotBlank()) {
-            apiManager.getUserBlocks(oAuth, id)?.let { (data) ->
-                blockList.clear()
-                blockList.addAll(data.map { it.id })
-            }
+    suspend fun loadUserBlocks(id: String) = withContext(Dispatchers.Default) {
+        if (!dankChatPreferenceStore.isLoggedIn) {
+            return@withContext
+        }
+
+        apiManager.getUserBlocks(id)?.let { (data) ->
+            blockList.clear()
+            blockList.addAll(data.map { it.id })
         }
     }
 
@@ -730,7 +733,7 @@ class ChatRepository @Inject constructor(
                 recentMessages.isNotEmpty() && result?.errorCode == RecentMessagesDto.ERROR_CHANNEL_NOT_JOINED -> {
                     current + ChatItem(SystemMessage(SystemMessageType.MessageHistoryIncomplete))
                 }
-                else -> current
+                else                                                                                           -> current
             }
             items.addAndLimit(withIncompleteWarning, scrollBackLength, checkForDuplications = true)
         }

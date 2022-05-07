@@ -24,8 +24,9 @@ object RepositoryModule {
     fun provideDataRepository(
         apiManager: ApiManager,
         emoteManager: EmoteManager,
-        recentUploadsRepository: RecentUploadsRepository
-    ): DataRepository = DataRepository(apiManager, emoteManager, recentUploadsRepository)
+        recentUploadsRepository: RecentUploadsRepository,
+        dankChatPreferenceStore: DankChatPreferenceStore,
+    ): DataRepository = DataRepository(apiManager, emoteManager, recentUploadsRepository, dankChatPreferenceStore)
 
     @Singleton
     @Provides
@@ -36,7 +37,8 @@ object RepositoryModule {
         @WriteConnection writeConnection: ChatConnection,
         pubSubManager: PubSubManager,
         @ApplicationScope scope: CoroutineScope,
-    ): ChatRepository = ChatRepository(apiManager, emoteManager, readConnection, writeConnection, pubSubManager, scope)
+        dankChatPreferenceStore: DankChatPreferenceStore,
+    ): ChatRepository = ChatRepository(apiManager, emoteManager, readConnection, writeConnection, pubSubManager, dankChatPreferenceStore, scope)
 
     @Singleton
     @Provides

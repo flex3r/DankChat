@@ -2,40 +2,47 @@ package com.flxrs.dankchat.data.api.dto
 
 import androidx.annotation.Keep
 import com.squareup.moshi.Json
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Keep
+@Serializable
 data class ValidateUserDto(
-    @field:Json(name = "client_id") val clientId: String,
-    @field:Json(name = "login") val login: String,
-    @field:Json(name = "scopes") val scopes: List<String>, // TODO Verify scopes
-    @field:Json(name = "user_id") val userId: String
+    @SerialName(value = "client_id") val clientId: String,
+    @SerialName(value = "login") val login: String,
+    @SerialName(value = "scopes") val scopes: List<String>, // TODO Verify scopes
+    @SerialName(value = "user_id") val userId: String
 )
 
 @Keep
+@Serializable
 data class HelixUsersDto(
-    @field:Json(name = "data") val data: List<HelixUserDto>
+    @SerialName(value = "data") val data: List<HelixUserDto>
 )
 
 @Keep
+@Serializable
 data class HelixUserDto(
-    @field:Json(name = "id") val id: String,
-    @field:Json(name = "login") val name: String,
-    @field:Json(name = "display_name") val displayName: String,
-    @field:Json(name = "type") val type: String,
-    @field:Json(name = "broadcaster_type") val broadcasterType: String,
-    @field:Json(name = "description") val description: String,
-    @field:Json(name = "profile_image_url") val avatarUrl: String,
-    @field:Json(name = "offline_image_url") val offlineImageUrl: String,
-    @field:Json(name = "view_count") val viewCount: Int,
-    @field:Json(name = "created_at") val createdAt: String
+    @SerialName(value = "id") val id: String,
+    @SerialName(value = "login") val name: String,
+    @SerialName(value = "display_name") val displayName: String,
+    @SerialName(value = "type") val type: String,
+    @SerialName(value = "broadcaster_type") val broadcasterType: String,
+    @SerialName(value = "description") val description: String,
+    @SerialName(value = "profile_image_url") val avatarUrl: String,
+    @SerialName(value = "offline_image_url") val offlineImageUrl: String,
+    @SerialName(value = "view_count") val viewCount: Int,
+    @SerialName(value = "created_at") val createdAt: String
 )
 
 @Keep
+@Serializable
 data class HelixUserBlockListDto(
-    @field:Json(name = "data") val data: List<HelixUserBlockDto>
+    @SerialName(value = "data") val data: List<HelixUserBlockDto>
 )
 
 @Keep
+@Serializable
 data class HelixUserBlockDto(
-    @field:Json(name = "user_id") val id: String
+    @SerialName(value = "user_id") val id: String
 )

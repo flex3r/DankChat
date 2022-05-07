@@ -1,109 +1,71 @@
 package com.flxrs.dankchat.data.api
 
-import com.flxrs.dankchat.BuildConfig
-import com.flxrs.dankchat.data.api.dto.*
-import retrofit2.Response
-import retrofit2.http.*
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.utils.extensions.withoutOAuthSuffix
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import retrofit2.http.GET
 
-interface HelixApiService {
-    @Headers(
-        "Client-ID: ${ApiManager.CLIENT_ID}",
-        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
-    )
-    @GET("users/")
-    suspend fun getUserByName(
-        @Header("Authorization") oAuth: String,
-        @Query("login") logins: List<String>
-    ): Response<HelixUsersDto>
+class HelixApiService(private val ktorClient: HttpClient, private val dankChatPreferenceStore: DankChatPreferenceStore) {
 
-    @Headers(
-        "Client-ID: ${ApiManager.CLIENT_ID}",
-        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
-    )
-    @GET("users/")
-    suspend fun getUserById(
-        @Header("Authorization") oAuth: String,
-        @Query("id") userId: String
-    ): Response<HelixUsersDto>
+    suspend fun getUserByName(logins: List<String>): HttpResponse? = ktorClient.get("users/") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        logins.forEach {
+            parameter("login", it)
+        }
+    }
 
-    @Headers(
-        "Client-ID: ${ApiManager.CLIENT_ID}",
-        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
-    )
-    @GET("users/follows")
-    suspend fun getUsersFollows(
-        @Header("Authorization") oAuth: String,
-        @Query("from_id") fromId: String,
-        @Query("to_id") toId: String,
-    ): Response<UserFollowsDto>
+    suspend fun getUserById(userId: String): HttpResponse? = ktorClient.get("users/") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        parameter("id", userId)
+    }
 
-    @Headers(
-        "Client-ID: ${ApiManager.CLIENT_ID}",
-        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
-    )
-    @GET("streams/")
-    suspend fun getStreams(
-        @Header("Authorization") oAuth: String,
-        @Query("user_login") channels: List<String>
-    ): Response<StreamsDto>
+    suspend fun getUsersFollows(fromId: String, toId: String): HttpResponse? = ktorClient.get("users/follows") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        parameter("from_id", fromId)
+        parameter("to_id", toId)
+    }
 
-    @Headers(
-        "Client-ID: ${ApiManager.CLIENT_ID}",
-        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
-    )
-    @GET("users/blocks/")
-    suspend fun getUserBlocks(
-        @Header("Authorization") oAuth: String,
-        @Query("broadcaster_id") userId: String,
-        @Query("first") first: Int = 100
-    ): Response<HelixUserBlockListDto>
+    suspend fun getStreams(channels: List<String>): HttpResponse? = ktorClient.get("streams/") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        channels.forEach {
+            parameter("user_login", it)
+        }
+    }
 
-    @Headers(
-        "Client-ID: ${ApiManager.CLIENT_ID}",
-        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
-    )
-    @PUT("users/blocks/")
-    suspend fun putUserBlock(
-        @Header("Authorization") oAuth: String,
-        @Query("target_user_id") targetUserId: String
-    ): Response<Unit>
+    suspend fun getUserBlocks(userId: String, first: Int = 100): HttpResponse? = ktorClient.get("users/blocks/") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        parameter("broadcaster_id", userId)
+        parameter("first", first)
+    }
 
-    @Headers(
-        "Client-ID: ${ApiManager.CLIENT_ID}",
-        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
-    )
-    @DELETE("users/blocks/")
-    suspend fun deleteUserBlock(
-        @Header("Authorization") oAuth: String,
-        @Query("target_user_id") targetUserId: String
-    ): Response<Unit>
+    suspend fun putUserBlock(targetUserId: String): HttpResponse? = ktorClient.put("users/blocks/") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        parameter("target_user_id", targetUserId)
+    }
 
-    @Headers(
-        "Client-ID: ${ApiManager.CLIENT_ID}",
-        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
-    )
-    @GET("chat/badges")
-    suspend fun getChannelBadges(
-        @Header("Authorization") oAuth: String,
-        @Query("broadcaster_id") userId: String
-    ): Response<HelixBadgesDto>
+    suspend fun deleteUserBlock(targetUserId: String): HttpResponse? = ktorClient.delete("users/blocks/") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        parameter("target_user_id", targetUserId)
+    }
 
-    @Headers(
-        "Client-ID: ${ApiManager.CLIENT_ID}",
-        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
-    )
-    @GET("chat/badges/global")
-    suspend fun getGlobalBadges(
-        @Header("Authorization") oAuth: String
-    ): Response<HelixBadgesDto>
+    suspend fun getChannelBadges(userId: String): HttpResponse? = ktorClient.get("chat/badges") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        parameter("broadcaster_id", userId)
+    }
 
-    @Headers(
-        "Client-ID: ${ApiManager.CLIENT_ID}",
-        "User-Agent: dankchat/${BuildConfig.VERSION_NAME}"
-    )
-    @GET("chat/emotes/set")
-    suspend fun getEmoteSets(
-        @Header("Authorization") oAuth: String,
-        @Query("emote_set_id") setIds: List<String>
-    ): Response<HelixEmoteSetsDto>
+    suspend fun getGlobalBadges(): HttpResponse? = ktorClient.get("chat/badges/global") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+    }
 }

@@ -27,18 +27,21 @@ data class DankChatBadgeDto(
 )
 
 @Keep
-data class HelixBadgesDto(@field:Json(name = "data") val sets: List<HelixBadgeSetDto>)
+@Serializable
+data class HelixBadgesDto(@SerialName(value = "data") val sets: List<HelixBadgeSetDto>)
 
 @Keep
+@Serializable
 data class HelixBadgeSetDto(
-    @field:Json(name = "set_id") val setId: String,
-    @field:Json(name = "versions") val versions: List<HelixBadgeDto>
+    @SerialName(value = "set_id") val setId: String,
+    @SerialName(value = "versions") val versions: List<HelixBadgeDto>
 )
 
 @Keep
+@Serializable
 data class HelixBadgeDto(
-    @field:Json(name = "id") val badgeId: String,
-    @field:Json(name = "image_url_1x") val imageUrlLow: String,
-    @field:Json(name = "image_url_2x") val imageUrlMedium: String,
-    @field:Json(name = "image_url_4x") val imageUrlHigh: String
+    @SerialName(value = "id") val badgeId: String,
+    @SerialName(value = "image_url_1x") val imageUrlLow: String,
+    @SerialName(value = "image_url_2x") val imageUrlMedium: String,
+    @SerialName(value = "image_url_4x") val imageUrlHigh: String
 )

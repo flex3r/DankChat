@@ -8,6 +8,7 @@ import com.flxrs.dankchat.data.twitch.badge.toBadgeSets
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.measureTimeAndLog
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -23,6 +24,7 @@ class DataRepository @Inject constructor(
     private val apiManager: ApiManager,
     private val emoteManager: EmoteManager,
     private val recentUploadsRepository: RecentUploadsRepository,
+    private val dankChatPreferenceStore: DankChatPreferenceStore,
 ) {
     private val emotes = ConcurrentHashMap<String, MutableStateFlow<List<GenericEmote>>>()
     private var loadedGlobalEmotes = false
@@ -36,11 +38,11 @@ class DataRepository @Inject constructor(
 
     fun getEmotes(channel: String): StateFlow<List<GenericEmote>> = emotes.getOrPut(channel) { MutableStateFlow(emptyList()) }
 
-    suspend fun loadChannelData(channel: String, oAuth: String, channelId: String? = null, loadThirdPartyData: Set<ThirdPartyEmoteType>, forceReload: Boolean = false) {
+    suspend fun loadChannelData(channel: String, channelId: String? = null, loadThirdPartyData: Set<ThirdPartyEmoteType>, forceReload: Boolean = false) {
         return withContext(Dispatchers.Default) {
             emotes.putIfAbsent(channel, MutableStateFlow(emptyList()))
-            val id = channelId ?: apiManager.getUserIdByName(oAuth, channel) ?: return@withContext
-            launch { loadChannelBadges(oAuth, channel, id) }
+            val id = channelId ?: apiManager.getUserIdByName(channel) ?: return@withContext
+            launch { loadChannelBadges(channel, id) }
             launch {
                 measureTimeMillis {
                     load3rdPartyEmotes(channel, id, loadThirdPartyData, forceReload)
@@ -49,11 +51,11 @@ class DataRepository @Inject constructor(
         }
     }
 
-    suspend fun getUser(oAuth: String, userId: String): HelixUserDto? = apiManager.getUser(oAuth, userId)
-    suspend fun getUserIdByName(oAuth: String, name: String): String? = apiManager.getUserIdByName(oAuth, name)
-    suspend fun getUserFollows(oAuth: String, fromId: String, toId: String): UserFollowsDto? = apiManager.getUsersFollows(oAuth, fromId, toId)
-    suspend fun blockUser(oAuth: String, targetUserId: String): Boolean = apiManager.blockUser(oAuth, targetUserId)
-    suspend fun unblockUser(oAuth: String, targetUserId: String): Boolean = apiManager.unblockUser(oAuth, targetUserId)
+    suspend fun getUser(userId: String): HelixUserDto? = apiManager.getUser(userId)
+    suspend fun getUserIdByName(name: String): String? = apiManager.getUserIdByName(name)
+    suspend fun getUserFollows(fromId: String, toId: String): UserFollowsDto? = apiManager.getUsersFollows(fromId, toId)
+    suspend fun blockUser(targetUserId: String): Boolean = apiManager.blockUser(targetUserId)
+    suspend fun unblockUser(targetUserId: String): Boolean = apiManager.unblockUser(targetUserId)
 
     suspend fun uploadMedia(file: File): String? {
         val upload = apiManager.uploadMedia(file)
@@ -64,11 +66,11 @@ class DataRepository @Inject constructor(
         return upload?.imageLink
     }
 
-    suspend fun loadGlobalBadges(oAuth: String) = withContext(Dispatchers.Default) {
+    suspend fun loadGlobalBadges() = withContext(Dispatchers.Default) {
         measureTimeAndLog(TAG, "global badges") {
             val badges = when {
-                oAuth.isBlank() -> apiManager.getGlobalBadgesFallback()?.toBadgeSets()
-                else            -> apiManager.getGlobalBadges(oAuth)?.toBadgeSets() ?: apiManager.getGlobalBadgesFallback()?.toBadgeSets()
+                !dankChatPreferenceStore.isLoggedIn -> apiManager.getGlobalBadgesFallback()?.toBadgeSets()
+                else                                -> apiManager.getGlobalBadges()?.toBadgeSets() ?: apiManager.getGlobalBadgesFallback()?.toBadgeSets()
             }
             badges?.let { emoteManager.setGlobalBadges(it) }
         }
@@ -94,11 +96,11 @@ class DataRepository @Inject constructor(
         commandsChannel.send(ServiceEvent.Shutdown)
     }
 
-    private suspend fun loadChannelBadges(oAuth: String, channel: String, id: String) {
+    private suspend fun loadChannelBadges(channel: String, id: String) {
         measureTimeAndLog(TAG, "channel badges for #$id") {
             val badges = when {
-                oAuth.isBlank() -> apiManager.getChannelBadgesFallback(id)?.toBadgeSets()
-                else            -> apiManager.getChannelBadges(oAuth, id)?.toBadgeSets() ?: apiManager.getChannelBadgesFallback(id)?.toBadgeSets()
+                !dankChatPreferenceStore.isLoggedIn -> apiManager.getChannelBadgesFallback(id)?.toBadgeSets()
+                else                                -> apiManager.getChannelBadges(id)?.toBadgeSets() ?: apiManager.getChannelBadgesFallback(id)?.toBadgeSets()
             }
             badges?.let { emoteManager.setChannelBadges(channel, it) }
         }
