@@ -1,14 +1,10 @@
 package com.flxrs.dankchat.data.api
 
-import com.flxrs.dankchat.BuildConfig
-import com.flxrs.dankchat.data.api.dto.RecentMessagesDto
-import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.Path
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 
-interface RecentMessagesApiService {
-    @GET("recent-messages/{channel}")
-    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
-    suspend fun getRecentMessages(@Path("channel") channel: String): Response<RecentMessagesDto>
+class RecentMessagesApiService(private val ktorClient: HttpClient) {
+
+    suspend fun getRecentMessages(channel: String): HttpResponse = ktorClient.get("recent-messages/$channel")
 }

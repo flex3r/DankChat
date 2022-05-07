@@ -6,8 +6,8 @@ import androidx.collection.LruCache
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.chat.toMentionTabItems
 import com.flxrs.dankchat.data.api.ApiManager
+import com.flxrs.dankchat.data.api.bodyOrNull
 import com.flxrs.dankchat.data.api.dto.RecentMessagesDto
-import com.flxrs.dankchat.data.api.errorBodyOrNull
 import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.twitch.connection.*
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager
@@ -15,6 +15,8 @@ import com.flxrs.dankchat.data.twitch.message.*
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.utils.extensions.*
 import com.squareup.moshi.Moshi
+import io.ktor.client.call.*
+import io.ktor.http.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.util.concurrent.ConcurrentHashMap
@@ -685,21 +687,21 @@ class ChatRepository @Inject constructor(
             return@withContext
         }
 
-        if (!response.isSuccessful) {
-            val body = response.errorBodyOrNull()
+        if (!response.status.isSuccess()) {
+            val body = response.bodyOrNull<RecentMessagesDto>()
             val item = when (body?.errorCode) {
                 RecentMessagesDto.ERROR_CHANNEL_IGNORED -> {
                     loadedRecentsInChannels += channel // not a temporary error, so we don't want to retry
                     SystemMessageType.MessageHistoryIgnored.toChatItem()
                 }
-                else                                    -> SystemMessageType.MessageHistoryUnavailable(status = response.code().toString()).toChatItem()
+                else                                    -> SystemMessageType.MessageHistoryUnavailable(status = response.status.value.toString()).toChatItem()
             }
             addMessageHistory(listOf(item))
             return@withContext
         }
 
         loadedRecentsInChannels += channel
-        val result = response.body()
+        val result = response.bodyOrNull<RecentMessagesDto>()
         val recentMessages = result?.messages.orEmpty()
         val items = mutableListOf<ChatItem>()
         measureTimeMillis {

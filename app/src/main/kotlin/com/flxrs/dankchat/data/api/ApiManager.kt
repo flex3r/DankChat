@@ -4,6 +4,8 @@ import android.util.Log
 import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.data.api.dto.*
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import io.ktor.client.call.*
+import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
@@ -73,7 +75,7 @@ class ApiManager @Inject constructor(
     suspend fun getSevenTVChannelEmotes(channelId: String): List<SevenTVEmoteDto>? = sevenTVApiService.getChannelEmotes(channelId).bodyOrNull
     suspend fun getSevenTVGlobalEmotes(): List<SevenTVEmoteDto>? = sevenTVApiService.getGlobalEmotes().bodyOrNull
 
-    suspend fun getRecentMessages(channel: String): Response<RecentMessagesDto> = recentMessagesApiService.getRecentMessages(channel)
+    suspend fun getRecentMessages(channel: String) = recentMessagesApiService.getRecentMessages(channel)
 
     suspend fun getSupibotCommands(): SupibotCommandsDto? = supibotApiService.getCommands().bodyOrNull
     suspend fun getSupibotChannels(): SupibotChannelsDto? = supibotApiService.getChannels("twitch").bodyOrNull
@@ -209,15 +211,4 @@ private val <T> Response<T>.bodyOrNull: T?
         else         -> null
     }
 
-val jsonFormat = Json {
-    explicitNulls = false
-    ignoreUnknownKeys = true
-    isLenient = true
-}
-
-inline fun <reified T> Response<T>.errorBodyOrNull(): T? {
-    return runCatching {
-        val errorStream = errorBody()?.byteStream() ?: return null
-        jsonFormat.decodeFromStream<T>(errorStream)
-    }.getOrNull()
-}
+suspend inline fun <reified T> HttpResponse.bodyOrNull(): T? = runCatching { body<T>() }.getOrNull()

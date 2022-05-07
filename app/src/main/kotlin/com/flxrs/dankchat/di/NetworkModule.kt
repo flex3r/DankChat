@@ -1,7 +1,9 @@
 package com.flxrs.dankchat.di
 
 import android.content.Context
+import android.util.Log
 import coil.util.CoilUtils
+import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.data.api.*
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
@@ -10,6 +12,14 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.cache.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.logging.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.json.Json
 import okhttp3.CacheControl
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
@@ -62,6 +72,30 @@ object NetworkModule {
             }
         }
         .build()
+
+    @Singleton
+    @Provides
+    fun provideKtorClient(): HttpClient = HttpClient(CIO) {
+        install(Logging) {
+            level = LogLevel.INFO
+            logger = object : Logger {
+                override fun log(message: String) {
+                    Log.d("HttpClient", message)
+                }
+            }
+        }
+        install(HttpCache)
+        install(UserAgent) {
+            agent = "dankchat/${BuildConfig.VERSION_NAME}"
+        }
+        install(ContentNegotiation) {
+            json(Json {
+                explicitNulls = false
+                ignoreUnknownKeys = true
+                isLenient = true
+            })
+        }
+    }
 
     @Singleton
     @Provides
@@ -137,12 +171,11 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideRecentMessagesApiService(@ApiOkHttpClient client: OkHttpClient): RecentMessagesApiService = Retrofit.Builder()
-        .baseUrl(RECENT_MESSAGES_BASE_URL)
-        .addConverterFactory(MoshiConverterFactory.create())
-        .client(client)
-        .build()
-        .create(RecentMessagesApiService::class.java)
+    fun provideRecentMessagesApiService(client: HttpClient): RecentMessagesApiService = RecentMessagesApiService(client.config {
+        install(DefaultRequest) {
+            url(RECENT_MESSAGES_BASE_URL)
+        }
+    })
 
     @Singleton
     @Provides
