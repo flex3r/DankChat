@@ -23,7 +23,7 @@
     <string name="remove_channel">Odebrat kanál</string>
     <string name="channel_blocked_message">Kanál byl zablokován</string>
     <string name="no_channels_added">Žádné kanály nebyly přidány</string>
-    <string name="confirm_logout_title">Potvrdit odhlášení se</string>
+    <string name="confirm_logout_title">Potvrdit odhlášení</string>
     <string name="confirm_logout_message">Jste si jistí, že se chcete odhlásit?</string>
     <string name="confirm_logout_positive_button">Odhlásit se</string>
     <string name="upload_media">Nahrát média</string>
@@ -49,7 +49,7 @@
     <string name="notification_new_mentions">Máte nové zmínky</string>
     <string name="notification_mention">%1$s vás právě zmínil v #%2$s</string>
     <string name="notification_notify_mention">Byli jste zmíněni v #%1$s</string>
-    <string name="snackbar_login">Přihlášení jako %1$s</string>
+    <string name="snackbar_login">Přihlašování jako %1$s</string>
     <string name="snackbar_login_failed">Přihlášení se nezdařilo</string>
     <string name="snackbar_image_uploaded">Zkopírováno: %1$s</string>
     <string name="snackbar_upload_failed">Chyba při nahrávání</string>
