@@ -66,6 +66,10 @@
     <string name="system_message_connected">Připojeno</string>
     <string name="system_message_channel_non_existent">Tento kanál neexistuje</string>
     <string name="system_message_disconnected">Odpojeno</string>
+    <string name="system_message_history_unavailable_detailed">Služba pro historii zpráv není dostupná (Chyba: %1$s)</string>
+    <string name="system_message_history_unavailable">Služba pro historii zpráv není dostupná</string>
+    <string name="system_message_history_recovering">Služba pro historii zpráv se obnovuje, v historii zpráv můžou některé zprávy chybět.</string>
+    <string name="system_message_history_ignored">Služba pro historii zpráv není dostupná, jelikož tento kanál se z této služby odhlásil.</string>
     <string name="system_message_no_history">Nevidíte žádné minulé zprávy, protože jste se odhlásili z načítání minulých zpráv.</string>
     <string name="timed_out_message">&lt; Zpráva smazána &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
