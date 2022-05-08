@@ -66,6 +66,10 @@
     <string name="system_message_connected">Verbunden</string>
     <string name="system_message_channel_non_existent">Dieser Kanal existiert nicht</string>
     <string name="system_message_disconnected">Verbindung getrennt</string>
+    <string name="system_message_history_unavailable_detailed">Nachrichtenhistorie nicht verfügbar (Fehler %1$s)</string>
+    <string name="system_message_history_unavailable">Nachrichtenhistorie nicht verfügbar</string>
+    <string name="system_message_history_recovering">Der Nachrichtenhistorie-Dienst wird wiederhergestellt, möglicherweise gibt es Lücken in der Historie.</string>
+    <string name="system_message_history_ignored">Nachrichtenhistorie nicht verfügbar, da dieser Kanal vom Dienst ausgeschlossen ist.</string>
     <string name="system_message_no_history">Der historische Chatverlauf wird nicht angezeigt, da dessen Integration nicht zugestimmt wurde.</string>
     <string name="timed_out_message">&lt; Nachricht gelöscht &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
