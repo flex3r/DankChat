@@ -1,27 +1,24 @@
 package com.flxrs.dankchat.data.api
 
-import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.data.api.dto.*
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import io.ktor.client.*
 import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.asRequestBody
 import org.json.JSONObject
-import retrofit2.Response
 import java.io.File
 import java.net.URLConnection
 import java.time.Instant
 import javax.inject.Inject
 
 class ApiManager @Inject constructor(
-    private val client: OkHttpClient,
+    private val client: HttpClient,
     private val bttvApiService: BTTVApiService,
     private val dankChatApiService: DankChatApiService,
     private val ffzApiService: FFZApiService,
@@ -114,35 +111,28 @@ class ApiManager @Inject constructor(
     suspend fun getChatters(channel: String): ChattersDto? = tmiApiService.getChatters(channel).bodyOrNull<ChattersResultDto>()?.chatters
     suspend fun getChatterCount(channel: String): Int? = tmiApiService.getChatters(channel).bodyOrNull<ChatterCountDto>()?.chatterCount
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     suspend fun uploadMedia(file: File): UploadDto? = withContext(Dispatchers.IO) {
         val uploader = dankChatPreferenceStore.customImageUploader
         val extension = file.extension.ifBlank { "png" }
         val mimetype = URLConnection.guessContentTypeFromName(file.name)
-        val body = MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
-            .addFormDataPart(uploader.formField, filename = "${uploader.formField}.$extension", body = file.asRequestBody(mimetype.toMediaType()))
-            .build()
-
-        val request = Request.Builder()
-            .url(uploader.uploadUrl)
-            .header("User-Agent", "dankchat/${BuildConfig.VERSION_NAME}")
-            .apply {
-                uploader.parsedHeaders.forEach { (name, value) ->
-                    header(name, value)
-                }
+        val formData = formData {
+            append(uploader.formField, file.readBytes(), Headers.build {
+                append(HttpHeaders.ContentType, mimetype.toMediaType().toString())
+                append(HttpHeaders.ContentDisposition, "filename=${uploader.formField}.$extension")
+            })
+        }
+        val response = client.submitFormWithBinaryData(url = uploader.uploadUrl, formData = formData) {
+            uploader.parsedHeaders.forEach { (key, value) ->
+                header(key, value)
             }
-            .post(body)
-            .build()
-
-        val response = client.newCall(request).execute()
+        }
         when {
-            response.isSuccessful -> {
+            response.status.isSuccess() -> {
                 val imageLinkPattern = uploader.imageLinkPattern
                 val deletionLinkPattern = uploader.deletionLinkPattern
 
                 if (imageLinkPattern == null) {
-                    return@withContext response.bodyOrNull?.let {
+                    return@withContext response.bodyOrNull<String>()?.let {
                         UploadDto(
                             imageLink = it,
                             deleteLink = null,
@@ -151,7 +141,7 @@ class ApiManager @Inject constructor(
                     }
                 }
 
-                val json = response.jsonObjectOrNull ?: return@withContext null
+                val json = response.jsonObjectOrNull() ?: return@withContext null
                 val deleteLink = deletionLinkPattern?.let { json.extractLink(it) }
                 val imageLink = json.extractLink(imageLinkPattern)
 
@@ -161,7 +151,7 @@ class ApiManager @Inject constructor(
                     timestamp = Instant.now()
                 )
             }
-            else                  -> null
+            else                        -> null
         }
     }
 
@@ -179,16 +169,10 @@ class ApiManager @Inject constructor(
         imageLink
     }
 
-    private val okhttp3.Response.bodyOrNull: String?
-        get() = runCatching {
-            body?.string()
-        }.getOrNull()
-
-    private val okhttp3.Response.jsonObjectOrNull: JSONObject?
-        get() = runCatching {
-            val bodyString = bodyOrNull ?: return@runCatching null
-            JSONObject(bodyString)
-        }.getOrNull()
+    private suspend fun HttpResponse.jsonObjectOrNull(): JSONObject? = runCatching {
+        val bodyString = bodyOrNull<String>() ?: return@runCatching null
+        JSONObject(bodyString)
+    }.getOrNull()
 
     private fun JSONObject.getValue(pattern: String): String? {
         return runCatching {
@@ -234,11 +218,5 @@ class ApiManager @Inject constructor(
         const val LOGIN_URL = "$BASE_LOGIN_URL&client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URL&scope=$SCOPES"
     }
 }
-
-private val <T> Response<T>.bodyOrNull: T?
-    get() = when {
-        isSuccessful -> body()
-        else         -> null
-    }
 
 suspend inline fun <reified T> HttpResponse.bodyOrNull(): T? = runCatching { body<T>() }.getOrNull()

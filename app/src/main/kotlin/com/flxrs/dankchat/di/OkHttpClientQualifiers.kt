@@ -4,7 +4,7 @@ import javax.inject.Qualifier
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class ApiOkHttpClient
+annotation class WebSocketOkHttpClient
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)

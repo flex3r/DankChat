@@ -24,8 +24,6 @@ import kotlinx.serialization.json.Json
 import okhttp3.CacheControl
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.IOException
 import javax.inject.Singleton
 
@@ -43,12 +41,10 @@ object NetworkModule {
     private const val RECENT_MESSAGES_BASE_URL = "https://recent-messages.robotty.de/api/v2/"
     private const val SEVENTV_BASE_URL = "https://api.7tv.app/v2/"
 
-    @ApiOkHttpClient
+    @WebSocketOkHttpClient
     @Singleton
     @Provides
-    fun provideOkHttpClient(/*@ApplicationContext context: Context*/): OkHttpClient = OkHttpClient.Builder()
-        //.addInterceptor(ChuckerInterceptor(context))
-        //.addInterceptor(HttpLoggingInterceptor().also { it.setLevel(HttpLoggingInterceptor.Level.BODY) })
+    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
         .build()
 
     @EmoteOkHttpClient
@@ -57,7 +53,6 @@ object NetworkModule {
     fun provideEmoteOkHttpClient(@ApplicationContext context: Context): OkHttpClient = OkHttpClient.Builder()
         .cache(CoilUtils.createDefaultCache(context))
         .dispatcher(Dispatcher().apply { maxRequestsPerHost = 15 }) // increase from default 5
-        //.addInterceptor(ChuckerInterceptor(context))
         .addInterceptor { chain ->
             val request = chain.request()
             try {
@@ -187,7 +182,7 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideApiManager(
-        @ApiOkHttpClient client: OkHttpClient,
+        ktorClient: HttpClient,
         bttvApiService: BTTVApiService,
         dankChatApiService: DankChatApiService,
         ffzApiService: FFZApiService,
@@ -200,7 +195,7 @@ object NetworkModule {
         sevenTVApiService: SevenTVApiService,
         dankChatPreferenceStore: DankChatPreferenceStore
     ): ApiManager = ApiManager(
-        client,
+        ktorClient,
         bttvApiService,
         dankChatApiService,
         ffzApiService,

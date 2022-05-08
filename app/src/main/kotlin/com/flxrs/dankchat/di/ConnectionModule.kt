@@ -32,7 +32,7 @@ object ChatConnectionModule {
     @ReadConnection
     @Provides
     fun provideReadConnection(
-        @ApiOkHttpClient client: OkHttpClient,
+        @WebSocketOkHttpClient client: OkHttpClient,
         @ApplicationScope scope: CoroutineScope,
     ): ChatConnection = ChatConnection(ChatConnectionType.Read, client, scope)
 
@@ -40,14 +40,14 @@ object ChatConnectionModule {
     @WriteConnection
     @Provides
     fun provideWriteConnection(
-        @ApiOkHttpClient client: OkHttpClient,
+        @WebSocketOkHttpClient client: OkHttpClient,
         @ApplicationScope scope: CoroutineScope,
     ): ChatConnection = ChatConnection(ChatConnectionType.Write, client, scope)
 
     @Singleton
     @Provides
     fun providePubSubManager(
-        @ApiOkHttpClient client: OkHttpClient,
+        @WebSocketOkHttpClient client: OkHttpClient,
         @ApplicationScope scope: CoroutineScope,
         preferenceStore: DankChatPreferenceStore,
         apiManager: ApiManager,
