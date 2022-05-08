@@ -82,14 +82,14 @@ object NetworkModule {
                 connectTimeout = 10000
             }
         }
-//        install(Logging) {
-//            level = LogLevel.INFO
-//            logger = object : Logger {
-//                override fun log(message: String) {
-//                    Log.d("HttpClient", message)
-//                }
-//            }
-//        }
+        install(Logging) {
+            level = LogLevel.INFO
+            logger = object : Logger {
+                override fun log(message: String) {
+                    Log.v("HttpClient", message)
+                }
+            }
+        }
         install(HttpCache)
         install(UserAgent) {
             agent = "dankchat/${BuildConfig.VERSION_NAME}"
@@ -105,12 +105,11 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideAuthApiService(@ApiOkHttpClient client: OkHttpClient): AuthApiService = Retrofit.Builder()
-        .baseUrl(AUTH_BASE_URL)
-        .addConverterFactory(MoshiConverterFactory.create())
-        .client(client)
-        .build()
-        .create(AuthApiService::class.java)
+    fun provideAuthApiService(ktorClient: HttpClient): AuthApiService = AuthApiService(ktorClient.config {
+        defaultRequest {
+            url(AUTH_BASE_URL)
+        }
+    })
 
     @Singleton
     @Provides
@@ -135,14 +134,6 @@ object NetworkModule {
         defaultRequest {
             url(HELIX_BASE_URL)
             header("Client-ID", ApiManager.CLIENT_ID)
-        }
-        install(Logging) {
-            level = LogLevel.INFO
-            logger = object : Logger {
-                override fun log(message: String) {
-                    Log.d("HttpClient", message)
-                }
-            }
         }
     }, preferenceStore)
 

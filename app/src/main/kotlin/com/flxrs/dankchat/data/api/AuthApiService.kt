@@ -1,16 +1,11 @@
 package com.flxrs.dankchat.data.api
 
-import com.flxrs.dankchat.BuildConfig
-import com.flxrs.dankchat.data.api.dto.ValidateUserDto
-import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Headers
+import io.ktor.client.*
+import io.ktor.client.request.*
 
-interface AuthApiService {
-    @GET("validate")
-    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
-    suspend fun validateUser(
-        @Header("Authorization") oAuth: String
-    ): Response<ValidateUserDto>
+class AuthApiService(private val ktorClient: HttpClient) {
+
+    suspend fun validateUser(token: String) = ktorClient.get("validate") {
+        bearerAuth(token)
+    }
 }

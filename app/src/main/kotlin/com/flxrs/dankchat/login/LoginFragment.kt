@@ -12,6 +12,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -21,6 +22,7 @@ import com.flxrs.dankchat.data.api.dto.ValidateUserDto
 import com.flxrs.dankchat.databinding.LoginFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.flxrs.dankchat.utils.extensions.setupDarkTheme
 import com.flxrs.dankchat.utils.extensions.showLongSnackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,6 +36,7 @@ class LoginFragment : Fragment() {
     private var bindingRef: LoginFragmentBinding? = null
     private val binding get() = bindingRef!!
     private val args: LoginFragmentArgs by navArgs()
+    private val loginViewModel: LoginViewModel by viewModels()
 
     @Inject
     lateinit var dankChatPreferences: DankChatPreferenceStore
@@ -72,6 +75,15 @@ class LoginFragment : Fragment() {
                 title = getString(R.string.login_title)
             }
         }
+        collectFlow(loginViewModel.events) { (successful) ->
+            with(findNavController()) {
+                runCatching {
+                    val handle = previousBackStackEntry?.savedStateHandle ?: return@collectFlow
+                    handle[MainFragment.LOGIN_REQUEST_KEY] = successful
+                }
+                navigateUp()
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -98,45 +110,15 @@ class LoginFragment : Fragment() {
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
             val urlString = url ?: ""
             val fragment = urlString.toUri().fragment ?: return false
-            parseOAuthToken(fragment)
+            loginViewModel.parseToken(fragment)
             return false
         }
 
         @RequiresApi(Build.VERSION_CODES.N)
         override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
             val fragment = request?.url?.fragment ?: return false
-            parseOAuthToken(fragment)
+            loginViewModel.parseToken(fragment)
             return false
-        }
-
-        private fun parseOAuthToken(fragment: String) {
-            if (fragment.startsWith("access_token=")) {
-                val token = fragment.substringAfter("access_token=").substringBefore("&scope=")
-                lifecycleScope.launch {
-                    val result = apiManager.validateUser(token)
-                    val successful = saveLoginDetails(token, result)
-
-                    with(findNavController()) {
-                        previousBackStackEntry?.savedStateHandle?.set(MainFragment.LOGIN_REQUEST_KEY, successful)
-                        navigateUp()
-                    }
-                }
-            }
-        }
-
-        private fun saveLoginDetails(oAuth: String, validateDto: ValidateUserDto?): Boolean {
-            return when {
-                validateDto == null || validateDto.login.isBlank() -> false
-                else                                               -> {
-                    dankChatPreferences.apply {
-                        oAuthKey = "oauth:$oAuth"
-                        userName = validateDto.login.lowercase(Locale.getDefault())
-                        userIdString = validateDto.userId
-                        isLoggedIn = true
-                    }
-                    true
-                }
-            }
         }
     }
 
