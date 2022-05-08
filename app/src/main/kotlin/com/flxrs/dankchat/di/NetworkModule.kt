@@ -105,7 +105,7 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideAuthApiService(ktorClient: HttpClient): AuthApiService = AuthApiService(ktorClient.config {
+    fun provideAuthApiService(ktorClient: HttpClient) = AuthApiService(ktorClient.config {
         defaultRequest {
             url(AUTH_BASE_URL)
         }
@@ -121,12 +121,11 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideSupibotApiService(@ApiOkHttpClient client: OkHttpClient): SupibotApiService = Retrofit.Builder()
-        .baseUrl(SUPIBOT_BASE_URL)
-        .addConverterFactory(MoshiConverterFactory.create())
-        .client(client)
-        .build()
-        .create(SupibotApiService::class.java)
+    fun provideSupibotApiService(ktorClient: HttpClient) = SupibotApiService(ktorClient.config {
+        defaultRequest {
+            url(SUPIBOT_BASE_URL)
+        }
+    })
 
     @Singleton
     @Provides

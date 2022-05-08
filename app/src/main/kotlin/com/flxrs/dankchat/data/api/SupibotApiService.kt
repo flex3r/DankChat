@@ -1,25 +1,14 @@
 package com.flxrs.dankchat.data.api
 
-import com.flxrs.dankchat.BuildConfig
-import com.flxrs.dankchat.data.api.dto.SupibotChannelsDto
-import com.flxrs.dankchat.data.api.dto.SupibotCommandsDto
-import com.flxrs.dankchat.data.api.dto.SupibotUserAliasesDto
-import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.Path
-import retrofit2.http.Query
+import io.ktor.client.*
+import io.ktor.client.request.*
 
-interface SupibotApiService {
-    @GET("bot/channel/list")
-    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
-    suspend fun getChannels(@Query("platformName") platformName: String): Response<SupibotChannelsDto>
+class SupibotApiService(private val ktorClient: HttpClient) {
+    suspend fun getChannels(platformName: String = "twitch") = ktorClient.get("bot/channel/list") {
+        parameter("platformName", platformName)
+    }
 
-    @GET("bot/command/list/")
-    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
-    suspend fun getCommands(): Response<SupibotCommandsDto>
+    suspend fun getCommands() = ktorClient.get("bot/command/list/")
 
-    @GET("bot/user/{user}/alias/list/")
-    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
-    suspend fun getUserAliases(@Path("user") user: String): Response<SupibotUserAliasesDto>
+    suspend fun getUserAliases(user: String) = ktorClient.get("bot/user/$user/alias/list/")
 }

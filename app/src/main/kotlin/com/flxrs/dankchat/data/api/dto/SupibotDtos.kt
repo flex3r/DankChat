@@ -1,25 +1,32 @@
 package com.flxrs.dankchat.data.api.dto
 
 import androidx.annotation.Keep
-import com.squareup.moshi.Json
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Keep
-data class SupibotCommandsDto(@field:Json(name = "data") val data: List<SupibotCommandDto>)
+@Serializable
+data class SupibotCommandsDto(@SerialName(value = "data") val data: List<SupibotCommandDto>)
 
 @Keep
-data class SupibotCommandDto(@field:Json(name = "name") val name: String, @field:Json(name = "aliases") val aliases: List<String>)
+@Serializable
+data class SupibotCommandDto(@SerialName(value = "name") val name: String, @SerialName(value = "aliases") val aliases: List<String>)
 
 @Keep
-data class SupibotChannelsDto(@field:Json(name = "data") val data: List<SupibotChannelDto>)
+@Serializable
+data class SupibotChannelsDto(@SerialName(value = "data") val data: List<SupibotChannelDto>)
 
 @Keep
-data class SupibotChannelDto(@field:Json(name = "name") val name: String, @field:Json(name = "mode") val mode: String) {
+@Serializable
+data class SupibotChannelDto(@SerialName(value = "name") val name: String, @SerialName(value = "mode") val mode: String) {
     val isActive: Boolean
         get() = mode != "Last seen" && mode != "Read"
 }
 
 @Keep
-data class SupibotUserAliasesDto(@field:Json(name = "data") val data: List<SupibotUserAliasDto>)
+@Serializable
+data class SupibotUserAliasesDto(@SerialName(value = "data") val data: List<SupibotUserAliasDto>)
 
 @Keep
-data class SupibotUserAliasDto(@field:Json(name = "name") val name: String)
+@Serializable
+data class SupibotUserAliasDto(@SerialName(value = "name") val name: String)

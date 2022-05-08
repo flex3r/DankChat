@@ -99,9 +99,9 @@ class ApiManager @Inject constructor(
 
     suspend fun getRecentMessages(channel: String) = recentMessagesApiService.getRecentMessages(channel)
 
-    suspend fun getSupibotCommands(): SupibotCommandsDto? = supibotApiService.getCommands().bodyOrNull
-    suspend fun getSupibotChannels(): SupibotChannelsDto? = supibotApiService.getChannels("twitch").bodyOrNull
-    suspend fun getSupibotUserAliases(user: String) = supibotApiService.getUserAliases(user).bodyOrNull
+    suspend fun getSupibotCommands(): SupibotCommandsDto? = supibotApiService.getCommands().bodyOrNull()
+    suspend fun getSupibotChannels(): SupibotChannelsDto? = supibotApiService.getChannels().bodyOrNull()
+    suspend fun getSupibotUserAliases(user: String): SupibotUserAliasesDto? = supibotApiService.getUserAliases(user).bodyOrNull()
 
     suspend fun getChatters(channel: String): ChattersDto? = tmiApiService.getChatters(channel).bodyOrNull<ChattersResultDto>()?.chatters
     suspend fun getChatterCount(channel: String): Int? = tmiApiService.getChatters(channel).bodyOrNull<ChatterCountDto>()?.chatterCount
