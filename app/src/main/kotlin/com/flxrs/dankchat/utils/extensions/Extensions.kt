@@ -12,7 +12,8 @@ import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.data.twitch.message.Mention
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.google.android.material.color.MaterialColors
-import com.squareup.moshi.JsonAdapter
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 fun List<GenericEmote>?.toEmoteItems(): List<EmoteItem> = this
     ?.groupBy { it.emoteType.title }
@@ -23,17 +24,6 @@ fun List<GenericEmote>?.toEmoteItems(): List<EmoteItem> = this
 fun List<GenericEmote>.moveToFront(channel: String?): List<GenericEmote> = this
     .partition { it.emoteType.title.equals(channel, ignoreCase = true) }
     .run { first + second }
-
-fun List<MultiEntryItem.Entry>.mapToMention(): List<Mention> = mapNotNull {
-    when {
-        it.isRegex -> runCatching { Mention.RegexPhrase(it.entry.toRegex(), it.matchUser) }.getOrNull()
-        else       -> Mention.Phrase(it.entry, it.matchUser)
-    }
-}
-
-fun Set<String>.mapToMention(adapter: JsonAdapter<MultiEntryItem.Entry>?): List<Mention> = mapNotNull {
-    runCatching { adapter?.fromJson(it) }.getOrNull()
-}.mapToMention()
 
 inline fun <V> measureTimeValue(block: () -> V): Pair<V, Long> {
     val start = System.currentTimeMillis()
@@ -49,6 +39,10 @@ inline fun <V> measureTimeAndLog(tag: String, toLoad: String, block: () -> V): V
 
     return result
 }
+
+inline fun <reified T> Json.decodeOrNull(json: String): T? = runCatching {
+    decodeFromString<T>(json)
+}.getOrNull()
 
 val Int.isEven get() = (this % 2 == 0)
 

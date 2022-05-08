@@ -8,19 +8,17 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.preferences.command.CommandItem
 import com.flxrs.dankchat.preferences.upload.ImageUploader
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
+import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class DankChatPreferenceStore @Inject constructor(private val context: Context) {
     private val dankChatPreferences: SharedPreferences = context.getSharedPreferences(context.getString(R.string.shared_preference_key), Context.MODE_PRIVATE)
     private val defaultPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-    private val adapterType = Types.newParameterizedType(Map::class.java, String::class.java, String::class.java)
-    private val jsonMapAdapter = Moshi.Builder().build().adapter<Map<String, String>>(adapterType)
-    private val jsonCommandAdapter = Moshi.Builder().build().adapter(CommandItem.Entry::class.java)
 
     private var channelRenames: String?
         get() = dankChatPreferences.getString(RENAME_KEY, null)
@@ -223,21 +221,17 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
     }
 
     private fun String.toMutableMap(): MutableMap<String, String> {
-        return kotlin.runCatching {
-            jsonMapAdapter.fromJson(this)?.toMutableMap() ?: mutableMapOf()
-        }.getOrDefault(mutableMapOf())
+        return Json.decodeOrNull<Map<String, String>>(this).orEmpty().toMutableMap()
     }
 
     private fun getCommandsFromPreferences(key: String): List<CommandItem.Entry> {
-        return kotlin.runCatching {
-            defaultPreferences
-                .getStringSet(key, emptySet())
-                .orEmpty()
-                .mapNotNull { jsonCommandAdapter.fromJson(it) }
-        }.getOrDefault(emptyList())
+        return defaultPreferences
+            .getStringSet(key, emptySet())
+            .orEmpty()
+            .mapNotNull { Json.decodeOrNull(it) }
     }
 
-    private fun Map<String, String>.toJson(): String = jsonMapAdapter.toJson(this)
+    private fun Map<String, String>.toJson(): String = Json.encodeToString(this)
 
     private val timestampFormat: String
         get() = defaultPreferences.getString(context.getString(R.string.preference_timestamp_format_key), "HH:mm") ?: "HH:mm"

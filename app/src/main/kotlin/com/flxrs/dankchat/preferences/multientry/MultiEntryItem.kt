@@ -1,7 +1,10 @@
 package com.flxrs.dankchat.preferences.multientry
 
+import kotlinx.serialization.Serializable
+
 sealed class MultiEntryItem {
 
+    @Serializable
     data class Entry(var entry: String, var isRegex: Boolean, var matchUser: Boolean) : MultiEntryItem()
 
     object AddEntry : MultiEntryItem()

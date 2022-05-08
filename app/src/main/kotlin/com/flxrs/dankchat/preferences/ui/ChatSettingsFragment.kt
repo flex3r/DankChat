@@ -18,13 +18,13 @@ import com.flxrs.dankchat.main.MainActivity
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.command.CommandAdapter
 import com.flxrs.dankchat.preferences.command.CommandItem
+import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import com.flxrs.dankchat.utils.extensions.showLongSnackbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.squareup.moshi.Moshi
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
-
-    private val jsonAdapter = Moshi.Builder().build().adapter(CommandItem.Entry::class.java)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -96,7 +96,7 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
             sharedPreferences
                 .getStringSet(key, emptySet())
                 .orEmpty()
-                .mapNotNull { jsonAdapter.fromJson(it) }
+                .mapNotNull { Json.decodeOrNull<CommandItem.Entry>(it) }
                 .plus(CommandItem.AddEntry)
         }.getOrDefault(emptyList())
 
@@ -114,7 +114,7 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
                 val stringSet = commandAdapter.commands
                     .filterIsInstance<CommandItem.Entry>()
                     .filter { it.trigger.isNotBlank() && it.command.isNotBlank() }
-                    .map(jsonAdapter::toJson)
+                    .map { Json.encodeToString(it) }
                     .toSet()
 
                 sharedPreferences.edit { putStringSet(key, stringSet) }

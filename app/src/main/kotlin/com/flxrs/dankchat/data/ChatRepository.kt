@@ -15,10 +15,10 @@ import com.flxrs.dankchat.data.twitch.message.*
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.utils.extensions.*
-import com.squareup.moshi.Moshi
 import io.ktor.http.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlinx.serialization.json.Json
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import kotlin.collections.set
@@ -58,9 +58,6 @@ class ChatRepository @Inject constructor(
     private val usersFlows = ConcurrentHashMap<String, MutableStateFlow<Set<String>>>()
     private val userState = MutableStateFlow(UserState())
     private val blockList = mutableSetOf<String>() // TODO extract out of repo to common data source
-
-    private val moshi = Moshi.Builder().build()
-    private val adapter = moshi.adapter(MultiEntryItem.Entry::class.java)
 
     private var customMentionEntries = listOf<Mention>()
     private var blacklistEntries = listOf<Mention>()
@@ -345,6 +342,18 @@ class ChatRepository @Inject constructor(
         _channels.value = updatedChannels
     }
 
+    fun clearIgnores() {
+        blockList.clear()
+    }
+
+    suspend fun setMentionEntries(stringSet: Set<String>) = withContext(Dispatchers.Default) {
+        customMentionEntries = stringSet.mapToMention()
+    }
+
+    suspend fun setBlacklistEntries(stringSet: Set<String>) = withContext(Dispatchers.Default) {
+        blacklistEntries = stringSet.mapToMention()
+    }
+
     // TODO should be null if anon
     private fun connect(userName: String, oauth: String) {
         name = userName
@@ -432,17 +441,16 @@ class ChatRepository @Inject constructor(
 
     }
 
-    fun clearIgnores() {
-        blockList.clear()
+    private fun List<MultiEntryItem.Entry>.mapToMention(): List<Mention> = mapNotNull {
+        when {
+            it.isRegex -> runCatching { Mention.RegexPhrase(it.entry.toRegex(), it.matchUser) }.getOrNull()
+            else       -> Mention.Phrase(it.entry, it.matchUser)
+        }
     }
 
-    suspend fun setMentionEntries(stringSet: Set<String>) = withContext(Dispatchers.Default) {
-        customMentionEntries = stringSet.mapToMention(adapter)
-    }
-
-    suspend fun setBlacklistEntries(stringSet: Set<String>) = withContext(Dispatchers.Default) {
-        blacklistEntries = stringSet.mapToMention(adapter)
-    }
+    private fun Set<String>.mapToMention(): List<Mention> = mapNotNull {
+        Json.decodeOrNull<MultiEntryItem.Entry>(it)
+    }.mapToMention()
 
     private fun handleConnected(channel: String, isAnonymous: Boolean) {
         val state = when {
