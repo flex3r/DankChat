@@ -27,7 +27,6 @@ class DataRepository @Inject constructor(
     private val dankChatPreferenceStore: DankChatPreferenceStore,
 ) {
     private val emotes = ConcurrentHashMap<String, MutableStateFlow<List<GenericEmote>>>()
-    private var loadedGlobalEmotes = false
 
     sealed class ServiceEvent {
         object Shutdown : ServiceEvent()
@@ -38,17 +37,21 @@ class DataRepository @Inject constructor(
 
     fun getEmotes(channel: String): StateFlow<List<GenericEmote>> = emotes.getOrPut(channel) { MutableStateFlow(emptyList()) }
 
-    suspend fun loadChannelData(channel: String, channelId: String? = null, loadThirdPartyData: Set<ThirdPartyEmoteType>, forceReload: Boolean = false) {
-        return withContext(Dispatchers.Default) {
-            emotes.putIfAbsent(channel, MutableStateFlow(emptyList()))
-            val id = channelId ?: apiManager.getUserIdByName(channel) ?: return@withContext
-            launch { loadChannelBadges(channel, id) }
-            launch {
-                measureTimeMillis {
-                    load3rdPartyEmotes(channel, id, loadThirdPartyData, forceReload)
-                }.let { Log.i(TAG, "Loaded 3rd party emotes for #$channel in $it ms") }
-            }
+    suspend fun loadChannelData(channel: String, channelId: String? = null, loadThirdPartyData: Set<ThirdPartyEmoteType>) = withContext(Dispatchers.Default) {
+        emotes.putIfAbsent(channel, MutableStateFlow(emptyList()))
+        val id = channelId ?: apiManager.getUserIdByName(channel) ?: return@withContext
+        launch { loadChannelBadges(channel, id) }
+        launch {
+            measureTimeMillis {
+                load3rdPartyChannelEmotes(channel, id, loadThirdPartyData)
+            }.let { Log.i(TAG, "Loaded 3rd party emotes for #$channel in $it ms") }
         }
+    }
+
+    suspend fun loadGlobalData(loadThirdPartyData: Set<ThirdPartyEmoteType>) = withContext(Dispatchers.Default) {
+        measureTimeMillis {
+            load3rdPartyGlobalEmotes(loadThirdPartyData)
+        }.let { Log.i(TAG, "Loaded 3rd party global emotes in $it ms") }
     }
 
     suspend fun getUser(userId: String): HelixUserDto? = apiManager.getUser(userId)
@@ -106,7 +109,7 @@ class DataRepository @Inject constructor(
         }
     }
 
-    private suspend fun load3rdPartyEmotes(channel: String, id: String, loadThirdPartyData: Set<ThirdPartyEmoteType>, forceReload: Boolean) = coroutineScope {
+    private suspend fun load3rdPartyChannelEmotes(channel: String, id: String, loadThirdPartyData: Set<ThirdPartyEmoteType>) = coroutineScope {
         launchWhenEnabled(ThirdPartyEmoteType.FrankerFaceZ, loadThirdPartyData) {
             apiManager.getFFZChannelEmotes(id)?.let { emoteManager.setFFZEmotes(channel, it) }
         } ?: emoteManager.clearFFZEmotes()
@@ -116,20 +119,18 @@ class DataRepository @Inject constructor(
         launchWhenEnabled(ThirdPartyEmoteType.SevenTV, loadThirdPartyData) {
             apiManager.getSevenTVChannelEmotes(id)?.let { emoteManager.setSevenTVEmotes(channel, it) }
         } ?: emoteManager.clearSevenTVEmotes()
+    }
 
-        if (forceReload || !loadedGlobalEmotes) {
-            launchWhenEnabled(ThirdPartyEmoteType.FrankerFaceZ, loadThirdPartyData) {
-                apiManager.getFFZGlobalEmotes()?.let { emoteManager.setFFZGlobalEmotes(it) }
-            }
-            launchWhenEnabled(ThirdPartyEmoteType.BetterTTV, loadThirdPartyData) {
-                apiManager.getBTTVGlobalEmotes()?.let { emoteManager.setBTTVGlobalEmotes(it) }
-            }
-            launchWhenEnabled(ThirdPartyEmoteType.SevenTV, loadThirdPartyData) {
-                apiManager.getSevenTVGlobalEmotes()?.let { emoteManager.setSevenTVGlobalEmotes(it) }
-            }
+    private suspend fun load3rdPartyGlobalEmotes(loadThirdPartyData: Set<ThirdPartyEmoteType>) = coroutineScope {
+        launchWhenEnabled(ThirdPartyEmoteType.FrankerFaceZ, loadThirdPartyData) {
+            apiManager.getFFZGlobalEmotes()?.let { emoteManager.setFFZGlobalEmotes(it) }
         }
-
-        loadedGlobalEmotes = true
+        launchWhenEnabled(ThirdPartyEmoteType.BetterTTV, loadThirdPartyData) {
+            apiManager.getBTTVGlobalEmotes()?.let { emoteManager.setBTTVGlobalEmotes(it) }
+        }
+        launchWhenEnabled(ThirdPartyEmoteType.SevenTV, loadThirdPartyData) {
+            apiManager.getSevenTVGlobalEmotes()?.let { emoteManager.setSevenTVGlobalEmotes(it) }
+        }
     }
 
     private fun CoroutineScope.launchWhenEnabled(type: ThirdPartyEmoteType, loadThirdPartyData: Set<ThirdPartyEmoteType>, block: suspend () -> Unit): Job? = when (type) {

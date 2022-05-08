@@ -1,19 +1,11 @@
 package com.flxrs.dankchat.data.api
 
-import com.flxrs.dankchat.BuildConfig
-import com.flxrs.dankchat.data.api.dto.FFZChannelDto
-import com.flxrs.dankchat.data.api.dto.FFZGlobalDto
-import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.Path
+import io.ktor.client.*
+import io.ktor.client.request.*
 
-interface FFZApiService {
-    @GET("room/id/{channelId}")
-    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
-    suspend fun getChannelEmotes(@Path("channelId") channelId: String): Response<FFZChannelDto>
+class FFZApiService(private val ktorClient: HttpClient) {
 
-    @GET("set/global")
-    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
-    suspend fun getGlobalEmotes(): Response<FFZGlobalDto>
+    suspend fun getChannelEmotes(channelId: String) = ktorClient.get("room/id/$channelId")
+
+    suspend fun getGlobalEmotes() = ktorClient.get("set/global")
 }

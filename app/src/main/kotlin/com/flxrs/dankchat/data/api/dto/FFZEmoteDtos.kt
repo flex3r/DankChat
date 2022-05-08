@@ -1,33 +1,35 @@
 package com.flxrs.dankchat.data.api.dto
 
 import androidx.annotation.Keep
-import com.squareup.moshi.Json
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Keep
+@Serializable
 data class FFZEmoteDto(
-    @field:Json(name = "urls") val urls: Map<String, String?>,
-    @field:Json(name = "name") val name: String,
-    @field:Json(name = "id") val id: Int
+    @SerialName(value = "urls") val urls: Map<String, String?>,
+    @SerialName(value = "name") val name: String,
+    @SerialName(value = "id") val id: Int
 )
 
 @Keep
-data class FFZEmoteSetDto(
-    @field:Json(name = "emoticons") val emotes: List<FFZEmoteDto>
-)
+@Serializable
+data class FFZEmoteSetDto(@SerialName(value = "emoticons") val emotes: List<FFZEmoteDto>)
 
 @Keep
+@Serializable
 data class FFZRoomDto(
-    @field:Json(name = "mod_urls") val modBadgeUrls: Map<String, String?>?,
-    @field:Json(name = "vip_badge") val vipBadgeUrls: Map<String, String?>?,
+    @SerialName(value = "mod_urls") val modBadgeUrls: Map<String, String?>?,
+    @SerialName(value = "vip_badge") val vipBadgeUrls: Map<String, String?>?,
 )
 
 @Keep
+@Serializable
 data class FFZChannelDto(
-    @field:Json(name = "room") val room: FFZRoomDto,
-    @field:Json(name = "sets") val sets: Map<String, FFZEmoteSetDto>
+    @SerialName(value = "room") val room: FFZRoomDto,
+    @SerialName(value = "sets") val sets: Map<String, FFZEmoteSetDto>
 )
 
 @Keep
-data class FFZGlobalDto(
-    @field:Json(name = "sets") val sets: Map<String, FFZEmoteSetDto>
-)
+@Serializable
+data class FFZGlobalDto(@SerialName(value = "sets") val sets: Map<String, FFZEmoteSetDto>)

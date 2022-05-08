@@ -2,14 +2,17 @@ package com.flxrs.dankchat.data.api.dto
 
 import androidx.annotation.Keep
 import com.squareup.moshi.Json
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Keep
+@Serializable
 data class SevenTVEmoteDto(
-    @field:Json(name = "name") val name: String,
-    @field:Json(name = "urls") val urls: List<List<String>>,
-    @field:Json(name = "id") val id: String,
-    @field:Json(name = "mime") val mime: String,
-    @field:Json(name = "visibility_simple") val visibility: List<SevenTVEmoteVisibility?>
+    @SerialName(value = "name") val name: String,
+    @SerialName(value = "urls") val urls: List<List<String>>,
+    @SerialName(value = "id") val id: String,
+    @SerialName(value = "mime") val mime: String,
+    @SerialName(value = "visibility_simple") val visibility: List<SevenTVEmoteVisibility?>
 )
 
 @Keep

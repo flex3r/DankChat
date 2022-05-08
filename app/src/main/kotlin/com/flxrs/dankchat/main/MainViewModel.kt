@@ -449,9 +449,10 @@ class MainViewModel @Inject constructor(
                 listOf(
                     launch(handler) {
                         val channelId = getRoomStateIdIfNeeded(channel)
-                        dataRepository.loadChannelData(channel, channelId, loadThirdPartyData, forceReload = true)
+                        dataRepository.loadChannelData(channel, channelId, loadThirdPartyData)
                     },
                     launch(handler) { dataRepository.loadDankChatBadges() },
+                    launch(handler) { dataRepository.loadGlobalData(loadThirdPartyData) }
                 ).joinAll()
             }
 
@@ -597,7 +598,8 @@ class MainViewModel @Inject constructor(
                 launch(handler) { dataRepository.loadDankChatBadges() },
                 launch(handler) { dataRepository.loadGlobalBadges() },
                 launch(handler) { if (loadSupibot) commandRepository.loadSupibotCommands() },
-                launch(handler) { chatRepository.loadUserBlocks(id) }
+                launch(handler) { chatRepository.loadUserBlocks(id) },
+                launch(handler) { dataRepository.loadGlobalData(loadThirdPartyData) }
             ) + channelList.map {
                 launch(handler) {
                     val channelId = getRoomStateIdIfNeeded(it)

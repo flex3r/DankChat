@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.data.api
 
-import android.util.Log
 import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.data.api.dto.*
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
@@ -43,40 +42,49 @@ class ApiManager @Inject constructor(
             ?.bodyOrNull<HelixUsersDto>()
             ?.data?.firstOrNull()?.id
     }
+
     suspend fun getUsersByNames(names: List<String>): List<HelixUserDto>? {
         return helixApiService.getUserByName(names)
             ?.bodyOrNull<HelixUsersDto>()
             ?.data
     }
+
     suspend fun getUser(userId: String): HelixUserDto? {
         return helixApiService.getUserById(userId)
             ?.bodyOrNull<HelixUsersDto>()
             ?.data?.firstOrNull()
     }
+
     suspend fun getUsersFollows(fromId: String, toId: String): UserFollowsDto? {
         return helixApiService.getUsersFollows(fromId, toId)
             ?.bodyOrNull()
     }
+
     suspend fun getStreams(channels: List<String>): StreamsDto? {
         return helixApiService.getStreams(channels)
             ?.bodyOrNull()
     }
+
     suspend fun getUserBlocks(userId: String): HelixUserBlockListDto? {
         return helixApiService.getUserBlocks(userId)
             ?.bodyOrNull()
     }
+
     suspend fun blockUser(targetUserId: String): Boolean {
         return helixApiService.putUserBlock(targetUserId)
             ?.status?.isSuccess() ?: false
     }
+
     suspend fun unblockUser(targetUserId: String): Boolean {
         return helixApiService.deleteUserBlock(targetUserId)
             ?.status?.isSuccess() ?: false
     }
+
     suspend fun getChannelBadges(channelId: String): HelixBadgesDto? {
         return helixApiService.getChannelBadges(channelId)
             ?.bodyOrNull()
     }
+
     suspend fun getGlobalBadges(): HelixBadgesDto? {
         return helixApiService.getGlobalBadges()
             ?.bodyOrNull()
@@ -88,14 +96,14 @@ class ApiManager @Inject constructor(
     suspend fun getChannelBadgesFallback(channelId: String): TwitchBadgesDto? = badgesApiService.getChannelBadges(channelId).bodyOrNull()
     suspend fun getGlobalBadgesFallback(): TwitchBadgesDto? = badgesApiService.getGlobalBadges().bodyOrNull()
 
-    suspend fun getFFZChannelEmotes(channelId: String): FFZChannelDto? = ffzApiService.getChannelEmotes(channelId).bodyOrNull
-    suspend fun getFFZGlobalEmotes(): FFZGlobalDto? = ffzApiService.getGlobalEmotes().bodyOrNull
+    suspend fun getFFZChannelEmotes(channelId: String): FFZChannelDto? = ffzApiService.getChannelEmotes(channelId).bodyOrNull()
+    suspend fun getFFZGlobalEmotes(): FFZGlobalDto? = ffzApiService.getGlobalEmotes().bodyOrNull()
 
-    suspend fun getBTTVChannelEmotes(channelId: String): BTTVChannelDto? = bttvApiService.getChannelEmotes(channelId).bodyOrNull
-    suspend fun getBTTVGlobalEmotes(): List<BTTVGlobalEmotesDto>? = bttvApiService.getGlobalEmotes().bodyOrNull
+    suspend fun getBTTVChannelEmotes(channelId: String): BTTVChannelDto? = bttvApiService.getChannelEmotes(channelId).bodyOrNull()
+    suspend fun getBTTVGlobalEmotes(): List<BTTVGlobalEmotesDto>? = bttvApiService.getGlobalEmotes().bodyOrNull()
 
-    suspend fun getSevenTVChannelEmotes(channelId: String): List<SevenTVEmoteDto>? = sevenTVApiService.getChannelEmotes(channelId).bodyOrNull
-    suspend fun getSevenTVGlobalEmotes(): List<SevenTVEmoteDto>? = sevenTVApiService.getGlobalEmotes().bodyOrNull
+    suspend fun getSevenTVChannelEmotes(channelId: String): List<SevenTVEmoteDto>? = sevenTVApiService.getChannelEmotes(channelId).bodyOrNull()
+    suspend fun getSevenTVGlobalEmotes(): List<SevenTVEmoteDto>? = sevenTVApiService.getGlobalEmotes().bodyOrNull()
 
     suspend fun getRecentMessages(channel: String) = recentMessagesApiService.getRecentMessages(channel)
 

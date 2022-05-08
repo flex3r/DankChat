@@ -154,21 +154,19 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideFFZApiService(@ApiOkHttpClient client: OkHttpClient): FFZApiService = Retrofit.Builder()
-        .baseUrl(FFZ_BASE_URL)
-        .addConverterFactory(MoshiConverterFactory.create())
-        .client(client)
-        .build()
-        .create(FFZApiService::class.java)
+    fun provideFFZApiService(ktorClient: HttpClient) = FFZApiService(ktorClient.config {
+        defaultRequest {
+            url(FFZ_BASE_URL)
+        }
+    })
 
     @Singleton
     @Provides
-    fun provideBTTVApiService(@ApiOkHttpClient client: OkHttpClient): BTTVApiService = Retrofit.Builder()
-        .baseUrl(BTTV_BASE_URL)
-        .addConverterFactory(MoshiConverterFactory.create())
-        .client(client)
-        .build()
-        .create(BTTVApiService::class.java)
+    fun provideBTTVApiService(ktorClient: HttpClient) = BTTVApiService(ktorClient.config {
+        defaultRequest {
+            url(BTTV_BASE_URL)
+        }
+    })
 
     @Singleton
     @Provides
@@ -180,12 +178,11 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideSevenTVApiService(@ApiOkHttpClient client: OkHttpClient): SevenTVApiService = Retrofit.Builder()
-        .baseUrl(SEVENTV_BASE_URL)
-        .addConverterFactory(MoshiConverterFactory.create())
-        .client(client)
-        .build()
-        .create(SevenTVApiService::class.java)
+    fun provideSevenTVApiService(ktorClient: HttpClient) = SevenTVApiService(ktorClient.config {
+        defaultRequest {
+            url(SEVENTV_BASE_URL)
+        }
+    })
 
     @Singleton
     @Provides
