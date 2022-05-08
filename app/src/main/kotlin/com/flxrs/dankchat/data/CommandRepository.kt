@@ -2,14 +2,10 @@ package com.flxrs.dankchat.data
 
 import android.util.Log
 import com.flxrs.dankchat.data.api.ApiManager
-import com.flxrs.dankchat.data.api.dto.SupibotChannelDto
-import com.flxrs.dankchat.data.api.dto.SupibotCommandDto
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.command.CommandItem
-import com.flxrs.dankchat.utils.extensions.withoutOAuthSuffix
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import java.time.Instant
@@ -58,6 +54,10 @@ class CommandRepository @Inject constructor(
     }
 
     suspend fun loadSupibotCommands() = withContext(Dispatchers.Default) {
+        if (!preferenceStore.isLoggedIn) {
+            return@withContext
+        }
+
         measureTimeMillis {
             val channelsDeferred = async { getSupibotChannels() }
             val commandsDeferred = async { getSupibotCommands() }
@@ -91,7 +91,7 @@ class CommandRepository @Inject constructor(
     }
 
     private suspend fun getSupibotUserAliases(): List<String> {
-        val user = preferenceStore.userName ?: return emptyList()
+        val user = preferenceStore.userName?.ifBlank { null } ?: return emptyList()
         return apiManager.getSupibotUserAliases(user)?.let { (data) ->
             data.map { alias ->
                 "$$${alias.name}"
