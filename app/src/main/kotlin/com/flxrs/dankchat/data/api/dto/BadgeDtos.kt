@@ -1,22 +1,24 @@
 package com.flxrs.dankchat.data.api.dto
 
 import androidx.annotation.Keep
-import com.squareup.moshi.Json
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Keep
+@Serializable
 data class TwitchBadgeDto(
-    @field:Json(name = "image_url_1x") val imageUrlLow: String,
-    @field:Json(name = "image_url_2x") val imageUrlMedium: String,
-    @field:Json(name = "image_url_4x") val imageUrlHigh: String
+    @SerialName(value = "image_url_1x") val imageUrlLow: String,
+    @SerialName(value = "image_url_2x") val imageUrlMedium: String,
+    @SerialName(value = "image_url_4x") val imageUrlHigh: String
 )
 
 @Keep
-data class TwitchBadgeSetDto(@field:Json(name = "versions") val versions: Map<String, TwitchBadgeDto>)
+@Serializable
+data class TwitchBadgeSetDto(@SerialName(value = "versions") val versions: Map<String, TwitchBadgeDto>)
 
 @Keep
-data class TwitchBadgesDto(@field:Json(name = "badge_sets") val sets: Map<String, TwitchBadgeSetDto>)
+@Serializable
+data class TwitchBadgesDto(@SerialName(value = "badge_sets") val sets: Map<String, TwitchBadgeSetDto>)
 
 @Keep
 @Serializable

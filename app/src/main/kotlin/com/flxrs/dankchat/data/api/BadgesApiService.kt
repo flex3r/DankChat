@@ -1,18 +1,11 @@
 package com.flxrs.dankchat.data.api
 
-import com.flxrs.dankchat.BuildConfig
-import com.flxrs.dankchat.data.api.dto.TwitchBadgesDto
-import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.Path
+import io.ktor.client.*
+import io.ktor.client.request.*
 
-interface BadgesApiService {
-    @GET("global/display")
-    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
-    suspend fun getGlobalBadges(): Response<TwitchBadgesDto>
+class BadgesApiService(private val ktorClient: HttpClient) {
 
-    @GET("channels/{channelId}/display")
-    @Headers("User-Agent: dankchat/${BuildConfig.VERSION_NAME}")
-    suspend fun getChannelBadges(@Path("channelId") channelId: String): Response<TwitchBadgesDto>
+    suspend fun getGlobalBadges() = ktorClient.get("global/display")
+
+    suspend fun getChannelBadges(channelId: String) = ktorClient.get("channels/$channelId/display")
 }

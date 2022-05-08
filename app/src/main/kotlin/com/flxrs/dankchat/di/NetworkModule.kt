@@ -146,12 +146,11 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideBadgesApiService(@ApiOkHttpClient client: OkHttpClient): BadgesApiService = Retrofit.Builder()
-        .baseUrl(BADGES_BASE_URL)
-        .addConverterFactory(MoshiConverterFactory.create())
-        .client(client)
-        .build()
-        .create(BadgesApiService::class.java)
+    fun provideBadgesApiService(ktorClient: HttpClient) = BadgesApiService(ktorClient.config {
+        defaultRequest {
+            url(BADGES_BASE_URL)
+        }
+    })
 
     @Singleton
     @Provides

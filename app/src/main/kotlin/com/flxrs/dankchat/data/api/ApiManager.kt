@@ -85,8 +85,8 @@ class ApiManager @Inject constructor(
     suspend fun getUserSets(sets: List<String>): List<DankChatEmoteSetDto>? = dankChatApiService.getSets(sets.joinToString(separator = ",")).bodyOrNull()
     suspend fun getDankChatBadges(): List<DankChatBadgeDto>? = dankChatApiService.getDankChatBadges().bodyOrNull()
 
-    suspend fun getChannelBadgesFallback(channelId: String): TwitchBadgesDto? = badgesApiService.getChannelBadges(channelId).bodyOrNull
-    suspend fun getGlobalBadgesFallback(): TwitchBadgesDto? = badgesApiService.getGlobalBadges().bodyOrNull
+    suspend fun getChannelBadgesFallback(channelId: String): TwitchBadgesDto? = badgesApiService.getChannelBadges(channelId).bodyOrNull()
+    suspend fun getGlobalBadgesFallback(): TwitchBadgesDto? = badgesApiService.getGlobalBadges().bodyOrNull()
 
     suspend fun getFFZChannelEmotes(channelId: String): FFZChannelDto? = ffzApiService.getChannelEmotes(channelId).bodyOrNull
     suspend fun getFFZGlobalEmotes(): FFZGlobalDto? = ffzApiService.getGlobalEmotes().bodyOrNull
