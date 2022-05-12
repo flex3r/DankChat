@@ -34,7 +34,6 @@ buildscript {
         coil_version = '1.4.0'
         gif_drawable_version = '1.2.24'
         okhttp_version = '5.0.0-alpha.6'
-        retrofit_version = '2.9.0'
         hilt_version = '2.41'
         ktor_version = '2.0.1'
 

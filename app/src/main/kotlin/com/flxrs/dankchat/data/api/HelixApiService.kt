@@ -5,8 +5,6 @@ import com.flxrs.dankchat.utils.extensions.withoutOAuthSuffix
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import io.ktor.http.*
-import retrofit2.http.GET
 
 class HelixApiService(private val ktorClient: HttpClient, private val dankChatPreferenceStore: DankChatPreferenceStore) {
 
