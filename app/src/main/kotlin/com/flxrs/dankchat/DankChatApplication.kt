@@ -9,7 +9,9 @@ import androidx.core.content.getSystemService
 import androidx.preference.PreferenceManager
 import coil.ImageLoader
 import coil.ImageLoaderFactory
+import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import coil.disk.DiskCache
 import com.flxrs.dankchat.di.ApplicationScope
 import com.flxrs.dankchat.di.EmoteOkHttpClient
 import com.flxrs.dankchat.utils.gifs.GifDrawableDecoder
@@ -25,7 +27,7 @@ import javax.inject.Inject
 class DankChatApplication : Application(), ImageLoaderFactory {
     @Inject
     @EmoteOkHttpClient
-    lateinit var client: OkHttpClient
+    lateinit var emoteClient: OkHttpClient
 
     @Inject
     @ApplicationScope
@@ -73,18 +75,24 @@ class DankChatApplication : Application(), ImageLoaderFactory {
     override fun newImageLoader(): ImageLoader {
         return ImageLoader.Builder(this)
             //.logger(DebugLogger())
-            .okHttpClient { client }
-            .componentRegistry {
-                when {
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.P -> add(ImageDecoderDecoder(context = this@DankChatApplication, enforceMinimumFrameDelay = true))
-                    else                                           -> add(GifDrawableDecoder())
+            .okHttpClient(emoteClient)
+            .diskCache {
+                DiskCache.Builder()
+                    .directory(this.cacheDir.resolve("image_cache"))
+                    .build()
+            }
+            .components {
+                val decoder = when {
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.P -> ImageDecoderDecoder.Factory()
+                    else                                           -> GifDecoder.Factory() //GifDrawableDecoder.Factory()
                 }
+                add(decoder)
             }
             .build()
     }
 
     companion object {
-        private const val CROWD_IN_DISTRIBUTION_HASH = "a3ba4d9c6a89d1aa991bc492jem"
-        private const val CROWD_IN_UPDATE_INTERVAL = 120L * 60 // 2 hours
+//        private const val CROWD_IN_DISTRIBUTION_HASH = "a3ba4d9c6a89d1aa991bc492jem"
+//        private const val CROWD_IN_UPDATE_INTERVAL = 120L * 60 // 2 hours
     }
 }

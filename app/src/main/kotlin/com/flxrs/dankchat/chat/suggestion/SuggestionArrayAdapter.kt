@@ -7,7 +7,7 @@ import android.widget.ArrayAdapter
 import android.widget.Filter
 import android.widget.ImageView
 import android.widget.TextView
-import coil.clear
+import coil.dispose
 import coil.size.Scale
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
@@ -42,7 +42,7 @@ class SuggestionsArrayAdapter(
         val textView = view.findViewById<TextView>(R.id.suggestion_text)
         val imageView = view.findViewById<ImageView>(R.id.suggestion_image)
 
-        imageView.clear()
+        imageView.dispose()
         imageView.setImageDrawable(null)
         getItem(position)?.let { suggestion: Suggestion ->
             when (suggestion) {
@@ -105,7 +105,9 @@ class SuggestionsArrayAdapter(
 
     private fun List<Suggestion.EmoteSuggestion>.filterEmotes(constraint: String): List<Suggestion.EmoteSuggestion> {
         val exactSuggestions = filter { it.emote.code.contains(constraint) }
-        val caseInsensitiveSuggestions = (this - exactSuggestions).filter { it.emote.code.contains(constraint, ignoreCase = true) }
+        val caseInsensitiveSuggestions = (this - exactSuggestions.toSet()).filter {
+            it.emote.code.contains(constraint, ignoreCase = true)
+        }
         return exactSuggestions + caseInsensitiveSuggestions
     }
 

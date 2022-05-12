@@ -33,7 +33,7 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import coil.Coil
+import coil.imageLoader
 import coil.request.ImageRequest
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.twitch.badge.Badge
@@ -226,11 +226,13 @@ class ChatAdapter(
             setText(spannable, TextView.BufferType.SPANNABLE)
 
             val imageStart = spannable.lastIndexOf(' ') - 1
-            Coil.execute(message.rewardImageUrl.toRequest(context)).drawable?.apply {
-                val width = (baseHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
-                setBounds(0, 0, width, baseHeight)
-                (text as Spannable)[imageStart..imageStart + 1] = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
-            }
+            context.imageLoader
+                .execute(message.rewardImageUrl.toRequest(context))
+                .drawable?.apply {
+                    val width = (baseHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
+                    setBounds(0, 0, width, baseHeight)
+                    (text as Spannable)[imageStart..imageStart + 1] = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
+                }
         }
     }
 
@@ -373,19 +375,21 @@ class ChatAdapter(
                     val cached = emoteManager.badgeCache[cacheKey]
                     val drawable = when {
                         cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
-                        else           -> Coil.execute(badge.url.toRequest(context)).drawable?.apply {
-                            if (badge is Badge.FFZModBadge) {
-                                val modColor = ContextCompat.getColor(context, R.color.color_ffz_mod)
-                                colorFilter = PorterDuffColorFilter(modColor, PorterDuff.Mode.DST_OVER)
-                            }
+                        else           -> context.imageLoader
+                            .execute(badge.url.toRequest(context))
+                            .drawable?.apply {
+                                if (badge is Badge.FFZModBadge) {
+                                    val modColor = ContextCompat.getColor(context, R.color.color_ffz_mod)
+                                    colorFilter = PorterDuffColorFilter(modColor, PorterDuff.Mode.DST_OVER)
+                                }
 
-                            val width = (baseHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
-                            setBounds(0, 0, width, baseHeight)
-                            if (this is Animatable) {
-                                emoteManager.badgeCache.put(cacheKey, this)
-                                setRunning(animateGifs)
+                                val width = (baseHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
+                                setBounds(0, 0, width, baseHeight)
+                                if (this is Animatable) {
+                                    emoteManager.badgeCache.put(cacheKey, this)
+                                    setRunning(animateGifs)
+                                }
                             }
-                        }
                     }
 
                     if (drawable != null) {
@@ -579,19 +583,21 @@ class ChatAdapter(
                     val cached = emoteManager.badgeCache[cacheKey]
                     val drawable = when {
                         cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
-                        else           -> Coil.execute(badge.url.toRequest(context)).drawable?.apply {
-                            if (badge is Badge.FFZModBadge) {
-                                val modColor = ContextCompat.getColor(context, R.color.color_ffz_mod)
-                                colorFilter = PorterDuffColorFilter(modColor, PorterDuff.Mode.DST_OVER)
-                            }
+                        else           -> context.imageLoader
+                            .execute(badge.url.toRequest(context))
+                            .drawable?.apply {
+                                if (badge is Badge.FFZModBadge) {
+                                    val modColor = ContextCompat.getColor(context, R.color.color_ffz_mod)
+                                    colorFilter = PorterDuffColorFilter(modColor, PorterDuff.Mode.DST_OVER)
+                                }
 
-                            val width = (baseHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
-                            setBounds(0, 0, width, baseHeight)
-                            if (this is Animatable) {
-                                emoteManager.badgeCache.put(cacheKey, this)
-                                setRunning(animateGifs)
+                                val width = (baseHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
+                                setBounds(0, 0, width, baseHeight)
+                                if (this is Animatable) {
+                                    emoteManager.badgeCache.put(cacheKey, this)
+                                    setRunning(animateGifs)
+                                }
                             }
-                        }
                     }
 
                     if (drawable != null) {
@@ -637,7 +643,11 @@ class ChatAdapter(
         scaleFactor: Double,
     ): LayerDrawable? {
         val drawables = emotes.mapNotNull {
-            Coil.execute(it.url.toRequest(context)).drawable?.transformEmoteDrawable(scaleFactor, it)
+            val request = it.url.toRequest(context)
+            context.imageLoader
+                .execute(request)
+                .drawable
+                ?.transformEmoteDrawable(scaleFactor, it)
         }.toTypedArray()
 
         val bounds = drawables.map { it.bounds }

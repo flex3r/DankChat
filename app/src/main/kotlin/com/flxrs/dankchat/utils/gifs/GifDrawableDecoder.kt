@@ -1,30 +1,34 @@
 package com.flxrs.dankchat.utils.gifs
 
-import coil.bitmap.BitmapPool
-import coil.decode.DecodeResult
-import coil.decode.DecodeUtils
-import coil.decode.Decoder
-import coil.decode.Options
-import coil.size.Size
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import okio.BufferedSource
+import coil.ImageLoader
+import coil.decode.*
+import coil.fetch.SourceResult
+import coil.request.Options
+
 import pl.droidsonroids.gif.GifDrawable
 
-class GifDrawableDecoder : Decoder {
+class GifDrawableDecoder(private val source: ImageSource,) : Decoder {
 
-    override fun handles(source: BufferedSource, mimeType: String?): Boolean {
-        return DecodeUtils.isGif(source)
-    }
-
-    override suspend fun decode(pool: BitmapPool, source: BufferedSource, size: Size, options: Options): DecodeResult = withContext(Dispatchers.Default) {
+    override suspend fun decode(): DecodeResult {
         val drawable = source.use {
-            GifDrawable(it.readByteArray())
+            GifDrawable(it.source().readByteArray())
         }
 
-        DecodeResult(
+        return DecodeResult(
             drawable = drawable,
             isSampled = false
         )
+    }
+
+    class Factory: Decoder.Factory {
+
+        override fun create(result: SourceResult, options: Options, imageLoader: ImageLoader): Decoder? {
+            if (!DecodeUtils.isGif(result.source.source())) return null
+            return GifDrawableDecoder(result.source)
+        }
+
+        override fun equals(other: Any?) = other is Factory
+
+        override fun hashCode() = javaClass.hashCode()
     }
 }

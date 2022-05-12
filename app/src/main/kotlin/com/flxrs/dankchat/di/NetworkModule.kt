@@ -50,23 +50,8 @@ object NetworkModule {
     @EmoteOkHttpClient
     @Singleton
     @Provides
-    fun provideEmoteOkHttpClient(@ApplicationContext context: Context): OkHttpClient = OkHttpClient.Builder()
-        .cache(CoilUtils.createDefaultCache(context))
-        .dispatcher(Dispatcher().apply { maxRequestsPerHost = 15 }) // increase from default 5
-        .addInterceptor { chain ->
-            val request = chain.request()
-            try {
-                chain.proceed(request)
-            } catch (e: IllegalArgumentException) {
-                val new = request.newBuilder().cacheControl(CacheControl.FORCE_NETWORK).build()
-                chain.proceed(new)
-            } catch (t: Throwable) {
-                when (t) {
-                    is IOException -> throw t
-                    else           -> throw IOException(t)
-                }
-            }
-        }
+    fun provideEmoteOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
+        .dispatcher(Dispatcher().apply { maxRequestsPerHost = 20 }) // increase from default 5
         .build()
 
     @Singleton
