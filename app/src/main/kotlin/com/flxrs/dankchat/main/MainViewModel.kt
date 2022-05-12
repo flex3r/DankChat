@@ -298,7 +298,6 @@ class MainViewModel @Inject constructor(
         loadSupibot: Boolean = dankChatPreferenceStore.shouldLoadSupibot,
         loadHistory: Boolean = dankChatPreferenceStore.shouldLoadHistory
     ) {
-        val oAuth = dankChatPreferenceStore.oAuthKey.orEmpty()
         val id = dankChatPreferenceStore.userIdString.orEmpty()
         val isLoggedIn = dankChatPreferenceStore.isLoggedIn
         val scrollBackLength = dankChatPreferenceStore.scrollbackLength
