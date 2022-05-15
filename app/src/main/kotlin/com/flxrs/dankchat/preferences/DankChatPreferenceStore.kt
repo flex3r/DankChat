@@ -86,6 +86,13 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
             }
         }
 
+    var customRmHost: String
+        get() = defaultPreferences.getString(context.getString(R.string.preference_rm_host_key), RM_HOST_DEFAULT) ?: RM_HOST_DEFAULT
+        set(value) {
+            val hostOrDefault = value.ifBlank { RM_HOST_DEFAULT }
+            defaultPreferences.edit { putString(context.getString(R.string.preference_rm_host_key), hostOrDefault) }
+        }
+
     val commandsAsFlow: Flow<List<CommandItem.Entry>> = callbackFlow {
         val commandsKey = context.getString(R.string.preference_commands_key)
         send(getCommandsFromPreferences(commandsKey))
@@ -209,6 +216,11 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
         ).apply { customImageUploader = this }
     }
 
+    fun resetRmHost(): String {
+        customRmHost = RM_HOST_DEFAULT
+        return RM_HOST_DEFAULT
+    }
+
     fun getCommands(): List<CommandItem.Entry> {
         val key = context.getString(R.string.preference_commands_key)
         return getCommandsFromPreferences(key)
@@ -271,6 +283,8 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
 
         private const val UPLOADER_URL_DEFAULT = "https://i.nuuls.com/upload"
         private const val UPLOADER_FORM_FIELD_DEFAULT = "file"
+
+        private const val RM_HOST_DEFAULT = "https://recent-messages.robotty.de/api/v2/"
 
         private const val SCROLLBACK_LENGTH_STEP = 50
         fun correctScrollbackLength(seekbarValue: Int): Int = seekbarValue * SCROLLBACK_LENGTH_STEP

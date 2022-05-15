@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.preferences.ui
 
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,12 +13,11 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.databinding.CommandsBottomsheetBinding
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
-import com.flxrs.dankchat.main.MainActivity
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.command.CommandAdapter
 import com.flxrs.dankchat.preferences.command.CommandItem
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
-import com.flxrs.dankchat.utils.extensions.showLongSnackbar
+import com.flxrs.dankchat.utils.extensions.showRestartRequired
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -58,7 +56,7 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
         }
         val allowUnlistedEmotesPreference = findPreference<SwitchPreferenceCompat>(getString(R.string.preference_unlisted_emotes_key))?.apply {
             setOnPreferenceChangeListener { _, _ ->
-                restartRequired()
+                view?.showRestartRequired()
                 true
             }
         }
@@ -70,21 +68,8 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
             updateUnlistedVisibility(values)
             setOnPreferenceChangeListener { _, values ->
                 updateUnlistedVisibility(values as Set<String>)
-                restartRequired()
+                view?.showRestartRequired()
                 true
-            }
-        }
-    }
-
-    private fun restartRequired() {
-        view?.showLongSnackbar(getString(R.string.restart_required)) {
-            setAction(R.string.restart) {
-                // KKona
-                val restartIntent = Intent(context, MainActivity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                }
-                context.startActivity(restartIntent)
-                Runtime.getRuntime().exit(0)
             }
         }
     }

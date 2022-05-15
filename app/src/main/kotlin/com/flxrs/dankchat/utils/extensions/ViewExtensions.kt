@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.utils.extensions
 
+import android.content.Intent
 import android.graphics.drawable.LayerDrawable
 import android.text.SpannableString
 import android.view.View
@@ -12,6 +13,7 @@ import androidx.viewpager2.widget.ViewPager2
 import coil.load
 import coil.request.ImageRequest
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.main.MainActivity
 import com.google.android.material.snackbar.Snackbar
 
 fun View.showShortSnackbar(text: String, block: Snackbar.() -> Unit = {}) = Snackbar.make(this, text, Snackbar.LENGTH_SHORT)
@@ -21,6 +23,19 @@ fun View.showShortSnackbar(text: String, block: Snackbar.() -> Unit = {}) = Snac
 fun View.showLongSnackbar(text: String, block: Snackbar.() -> Unit = {}) = Snackbar.make(this, text, Snackbar.LENGTH_LONG)
     .apply(block)
     .show()
+
+fun View.showRestartRequired() {
+    showLongSnackbar(context.getString(R.string.restart_required)) {
+        setAction(R.string.restart) {
+            // KKona
+            val restartIntent = Intent(context, MainActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            }
+            context.startActivity(restartIntent)
+            Runtime.getRuntime().exit(0)
+        }
+    }
+}
 
 inline fun ImageView.loadImage(
     url: String,
