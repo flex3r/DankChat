@@ -163,6 +163,8 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="recent_upload_deletion_link">Odkaz pro smazání:
 %1$s</string>
     <string name="recent_uploads_clear">Vyčistit nahrání</string>
+    <string name="host">Hostitel</string>
+    <string name="reset">Obnovit</string>
     <string name="preference_timestamp_title">Zobrazit časová razítka</string>
     <string name="preference_mention_format_title">Formát zmínek</string>
     <string name="preference_mention_format_summary">Změnit formát zmínek, když kliknete na uživatelské jméno</string>
@@ -252,6 +254,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_light_theme_entry_title">Světlý režim</string>
     <string name="preference_unlisted_emotes_title">Povolit neuvedené emotikony</string>
     <string name="preference_unlisted_emotes_summary">Zakáže filtrování neschválených nebo neuvedených emotikonů</string>
+    <string name="preference_rm_host_title">Vlastní hostitel pro nedávné zprávy</string>
     <plurals name="viewers">
         <item quantity="one">Živě s %d divákem</item>
         <item quantity="few">Živě se %d diváky</item>
