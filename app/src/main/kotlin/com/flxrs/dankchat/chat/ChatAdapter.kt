@@ -55,7 +55,7 @@ import kotlin.math.roundToInt
 class ChatAdapter(
     private val emoteManager: EmoteManager,
     private val onListChanged: (position: Int) -> Unit,
-    private val onUserClicked: (targetUserId: String?, targetUsername: String, messageId: String, channelName: String, isLongPress: Boolean) -> Unit,
+    private val onUserClicked: (targetUserId: String?, targetUsername: String, messageId: String, channelName: String, badges: List<Badge>, isLongPress: Boolean) -> Unit,
     private val onMessageLongClick: (message: String) -> Unit
 ) : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
     // Using position.isEven for determining which background to use in checkered mode doesn't work,
@@ -310,8 +310,8 @@ class ChatAdapter(
                 else                                        -> name
             }
 
-            override fun onClick(v: View) = onUserClicked(userId, mentionName, id, "", false)
-            override fun onLongClick(view: View) = onUserClicked(userId, mentionName, id, "", true)
+            override fun onClick(v: View) = onUserClicked(userId, mentionName, id, "", badges, false)
+            override fun onLongClick(view: View) = onUserClicked(userId, mentionName, id, "", badges, true)
             override fun updateDrawState(ds: TextPaint) {
                 ds.isUnderlineText = false
                 ds.color = normalizedColor
@@ -519,8 +519,8 @@ class ChatAdapter(
                     else                                        -> name
                 }
 
-                override fun onClick(v: View) = onUserClicked(userId, mentionName, id, channel, false)
-                override fun onLongClick(view: View) = onUserClicked(userId, mentionName, id, channel, true)
+                override fun onClick(v: View) = onUserClicked(userId, mentionName, id, channel, badges, false)
+                override fun onLongClick(view: View) = onUserClicked(userId, mentionName, id, channel, badges, true)
                 override fun updateDrawState(ds: TextPaint) {
                     ds.isUnderlineText = false
                     ds.color = normalizedColor

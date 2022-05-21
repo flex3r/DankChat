@@ -71,10 +71,7 @@ class DataRepository @Inject constructor(
 
     suspend fun loadGlobalBadges() = withContext(Dispatchers.Default) {
         measureTimeAndLog(TAG, "global badges") {
-            val badges = when {
-                !dankChatPreferenceStore.isLoggedIn -> apiManager.getGlobalBadgesFallback()?.toBadgeSets()
-                else                                -> apiManager.getGlobalBadges()?.toBadgeSets() ?: apiManager.getGlobalBadgesFallback()?.toBadgeSets()
-            }
+            val badges = apiManager.getGlobalBadges()?.toBadgeSets()
             badges?.let { emoteManager.setGlobalBadges(it) }
         }
     }
@@ -101,10 +98,7 @@ class DataRepository @Inject constructor(
 
     private suspend fun loadChannelBadges(channel: String, id: String) {
         measureTimeAndLog(TAG, "channel badges for #$id") {
-            val badges = when {
-                !dankChatPreferenceStore.isLoggedIn -> apiManager.getChannelBadgesFallback(id)?.toBadgeSets()
-                else                                -> apiManager.getChannelBadges(id)?.toBadgeSets() ?: apiManager.getChannelBadgesFallback(id)?.toBadgeSets()
-            }
+            val badges = apiManager.getChannelBadges(id)?.toBadgeSets()
             badges?.let { emoteManager.setChannelBadges(channel, it) }
         }
     }

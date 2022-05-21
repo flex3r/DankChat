@@ -66,11 +66,16 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager, priva
 
     fun getGlobalBadgeUrl(set: String, version: String) = globalBadges[set]?.versions?.get(version)?.imageUrlHigh
 
+    fun getBadgeTitle(channel: String, set: String, version: String): String? {
+        return channelBadges[channel]?.get(set)?.versions?.get(version)?.title
+            ?: globalBadges[set]?.versions?.get(version)?.title
+    }
+
     fun getFfzModBadgeUrl(channel: String): String? = ffzModBadges[channel]
 
     fun getFfzVipBadgeUrl(channel: String): String? = ffzVipBadges[channel]
 
-    fun getDankChatBadgeUrl(userId: String?) = dankChatBadges.find { it.users.any { id -> id == userId } }?.let { it.type to it.url }
+    fun getDankChatBadgeTitleAndUrl(userId: String?): Pair<String, String>? = dankChatBadges.find { it.users.any { id -> id == userId } }?.let { it.type to it.url }
 
     fun setChannelBadges(channel: String, badges: Map<String, BadgeSet>) {
         channelBadges[channel] = badges

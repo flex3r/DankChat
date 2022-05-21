@@ -46,6 +46,7 @@ import com.flxrs.dankchat.chat.suggestion.SuggestionsArrayAdapter
 import com.flxrs.dankchat.chat.user.UserPopupResult
 import com.flxrs.dankchat.data.state.DataLoadingState
 import com.flxrs.dankchat.data.state.ImageUploadState
+import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.connection.ConnectionState
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.databinding.EditDialogBinding
@@ -447,13 +448,14 @@ class MainFragment : Fragment() {
         super.onDestroyView()
     }
 
-    fun openUserPopup(targetUserId: String, targetUserName: String, messageId: String, channel: String?, isWhisperPopup: Boolean = false) {
+    fun openUserPopup(targetUserId: String, targetUserName: String, messageId: String, channel: String?, badges: List<Badge>, isWhisperPopup: Boolean = false) {
         val directions = MainFragmentDirections.actionMainFragmentToUserPopupDialogFragment(
             targetUserId = targetUserId,
             targetUserName = targetUserName,
             messageId = messageId,
             channel = channel,
-            isWhisperPopup = isWhisperPopup
+            isWhisperPopup = isWhisperPopup,
+            badges = badges.toTypedArray(),
         )
         navigateSafe(directions)
     }

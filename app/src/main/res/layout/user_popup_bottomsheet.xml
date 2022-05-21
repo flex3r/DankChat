@@ -76,13 +76,32 @@
             android:layout_marginEnd="8dp"
             android:gravity="center_horizontal"
             android:text=""
-            app:layout_constraintBottom_toTopOf="@id/user_created"
+            app:layout_constraintBottom_toTopOf="@id/user_badges_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/user_avatar_card"
             app:layout_constraintTop_toBottomOf="@id/bottomsheet_handle"
             app:layout_constraintVertical_bias="0"
             app:layout_constraintVertical_chainStyle="packed"
             tools:text="@tools:sample/full_names" />
+
+        <LinearLayout
+            android:id="@+id/user_badges_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@id/user_created"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/user_name"
+            app:layout_constraintTop_toBottomOf="@id/user_name">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/user_badges"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:itemCount="1"
+                tools:listitem="@layout/user_popup_badge_item" />
+        </LinearLayout>
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/user_loading"
@@ -94,7 +113,7 @@
             app:layout_constraintEnd_toEndOf="@id/user_name"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@id/user_name"
-            app:layout_constraintTop_toBottomOf="@id/user_name"
+            app:layout_constraintTop_toBottomOf="@id/user_badges_layout"
             tools:visibility="gone" />
 
         <TextView
@@ -109,7 +128,7 @@
             app:layout_constraintBottom_toTopOf="@id/user_followage"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/user_name"
-            app:layout_constraintTop_toBottomOf="@id/user_name"
+            app:layout_constraintTop_toBottomOf="@id/user_badges_layout"
             tools:text="@tools:sample/lorem" />
 
         <TextView

@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
@@ -143,7 +144,7 @@ open class ChatFragment : Fragment() {
         outState.putBoolean(AT_BOTTOM_STATE, isAtBottom)
     }
 
-    protected open fun onUserClick(targetUserId: String?, targetUserName: String, messageId: String, channel: String, isLongPress: Boolean) {
+    protected open fun onUserClick(targetUserId: String?, targetUserName: String, messageId: String, channel: String, badges: List<Badge>, isLongPress: Boolean) {
         targetUserId ?: return
         val shouldLongClickMention = preferences.getBoolean(getString(R.string.preference_user_long_click_key), true)
         val shouldMention = (isLongPress && shouldLongClickMention) || (!isLongPress && !shouldLongClickMention)
@@ -155,6 +156,7 @@ open class ChatFragment : Fragment() {
                 targetUserName = targetUserName,
                 messageId = messageId,
                 channel = channel,
+                badges = badges,
                 isWhisperPopup = false
             )
         }

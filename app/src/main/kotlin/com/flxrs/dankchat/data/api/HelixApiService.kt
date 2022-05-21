@@ -55,15 +55,4 @@ class HelixApiService(private val ktorClient: HttpClient, private val dankChatPr
         bearerAuth(oAuth)
         parameter("target_user_id", targetUserId)
     }
-
-    suspend fun getChannelBadges(userId: String): HttpResponse? = ktorClient.get("chat/badges") {
-        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
-        bearerAuth(oAuth)
-        parameter("broadcaster_id", userId)
-    }
-
-    suspend fun getGlobalBadges(): HttpResponse? = ktorClient.get("chat/badges/global") {
-        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
-        bearerAuth(oAuth)
-    }
 }

@@ -32,28 +32,60 @@ sealed class Message {
             }
         }
 
-        fun parseBadges(emoteManager: EmoteManager, badgeTags: String?, channel: String = "", userId: String? = null): List<Badge> {
+        fun parseBadges(emoteManager: EmoteManager, badgeTags: String?, badgeInfoTags: String?, channel: String = "", userId: String? = null): List<Badge> {
+            val badgeInfos = badgeInfoTags?.split(",")?.mapNotNull {
+                val parts = it.split("/")
+                when (parts.size) {
+                    2    -> parts[0].trim() to parts[1].trim()
+                    else -> null
+                }
+            }?.toMap().orEmpty()
+
             val badges = badgeTags?.split(',')?.mapNotNull { badgeTag ->
-                val trimmed = badgeTag.trim()
-                val badgeSet = trimmed.substringBefore('/')
-                val badgeVersion = trimmed.substringAfter('/')
+                val trimmedTag = badgeTag.trim()
+                val badgeSet = trimmedTag.substringBefore('/')
+                val badgeVersion = trimmedTag.substringAfter('/')
+                val badgeInfo = badgeInfos[badgeSet]
                 val globalBadgeUrl = emoteManager.getGlobalBadgeUrl(badgeSet, badgeVersion)
                 val channelBadgeUrl = emoteManager.getChannelBadgeUrl(channel, badgeSet, badgeVersion)
                 val ffzModBadgeUrl = emoteManager.getFfzModBadgeUrl(channel)
                 val ffzVipBadgeUrl = emoteManager.getFfzVipBadgeUrl(channel)
+                val title = emoteManager.getBadgeTitle(channel, badgeSet, badgeVersion)
                 val type = BadgeType.parseFromBadgeId(badgeSet)
                 when {
-                    badgeSet.startsWith("moderator") && ffzModBadgeUrl != null                                    -> Badge.FFZModBadge(ffzModBadgeUrl, type)
-                    badgeSet.startsWith("vip") && ffzVipBadgeUrl != null                                          -> Badge.FFZVipBadge(ffzVipBadgeUrl, type)
-                    (badgeSet.startsWith("subscriber") || badgeSet.startsWith("bits")) && channelBadgeUrl != null -> Badge.ChannelBadge(badgeSet, channelBadgeUrl, type)
-                    else                                                                                          -> globalBadgeUrl?.let { Badge.GlobalBadge(badgeSet, it, type) }
+                    badgeSet.startsWith("moderator") && ffzModBadgeUrl != null -> Badge.FFZModBadge(
+                        title = title,
+                        badgeTag = trimmedTag,
+                        badgeInfo = badgeInfo,
+                        url = ffzModBadgeUrl,
+                        type = type
+                    )
+                    badgeSet.startsWith("vip") && ffzVipBadgeUrl != null       -> Badge.FFZVipBadge(
+                        title = title,
+                        badgeTag = trimmedTag,
+                        badgeInfo = badgeInfo,
+                        url = ffzVipBadgeUrl,
+                        type = type
+                    )
+                    (badgeSet.startsWith("subscriber") || badgeSet.startsWith("bits"))
+                            && channelBadgeUrl != null                         -> Badge.ChannelBadge(
+                        title = title,
+                        badgeTag = trimmedTag,
+                        badgeInfo = badgeInfo,
+                        url = channelBadgeUrl,
+                        type = type
+                    )
+                    else                                                       -> globalBadgeUrl?.let { Badge.GlobalBadge(title, trimmedTag, badgeInfo, it, type) }
                 }
             }.orEmpty()
 
             userId ?: return badges
-            return when (val badge = emoteManager.getDankChatBadgeUrl(userId)) {
+            return when (val badge = emoteManager.getDankChatBadgeTitleAndUrl(userId)) {
                 null -> badges
-                else -> badges + Badge.GlobalBadge(badge.first, badge.second, BadgeType.DankChat)
+                else -> {
+                    val (title, url) = badge
+                    badges + Badge.DankChatBadge(title = title, badgeTag = null, badgeInfo = null, url = url, type = BadgeType.DankChat)
+                }
             }
         }
     }
@@ -148,7 +180,7 @@ data class WhisperMessage(
             val color = Color.parseColor(colorTag)
             val recipientColorTag = recipientColor ?: DEFAULT_COLOR
             val emoteTag = tags["emotes"] ?: ""
-            val badges = parseBadges(emoteManager, tags["badges"], userId = tags["user-id"])
+            val badges = parseBadges(emoteManager, tags["badges"], badgeInfoTags = tags["badge-info"], userId = tags["user-id"])
             val message = params.getOrElse(1) { "" }
 
             val withEmojiFix = message.replace(ChatRepository.ESCAPE_TAG_REGEX, ChatRepository.ZERO_WIDTH_JOINER)
@@ -186,7 +218,8 @@ data class WhisperMessage(
                     "${entry.key}:" + entry.value.joinToString(",") { "${it.start}-${it.end}" }
                 }
 
-            val badges = parseBadges(emoteManager, badgeTag, userId = data.userId)
+
+            val badges = parseBadges(emoteManager, badgeTag, badgeInfoTags = null, userId = data.userId)
             val withEmojiFix = message.replace(ChatRepository.ESCAPE_TAG_REGEX, ChatRepository.ZERO_WIDTH_JOINER)
             val (duplicateSpaceAdjustedMessage, removedSpaces) = withEmojiFix.removeDuplicateWhitespace()
             val (appendedSpaceAdjustedMessage, appendedSpaces) = duplicateSpaceAdjustedMessage.appendSpacesBetweenEmojiGroup()
@@ -266,7 +299,7 @@ data class TwitchMessage(
             val channel = params[0].substring(1)
             val emoteTag = tags["emotes"] ?: ""
             val id = tags["id"] ?: UUID.randomUUID().toString()
-            val badges = parseBadges(emoteManager, tags["badges"], channel, tags["user-id"])
+            val badges = parseBadges(emoteManager, tags["badges"], tags["badge-info"], channel, tags["user-id"])
 
             val withEmojiFix = message.replace(ChatRepository.ESCAPE_TAG_REGEX, ChatRepository.ZERO_WIDTH_JOINER)
             val (duplicateSpaceAdjustedMessage, removedSpaces) = withEmojiFix.removeDuplicateWhitespace()
@@ -320,7 +353,7 @@ data class TwitchMessage(
 
             return when (msgId) {
                 "sub", "resub", "announcement" -> listOfNotNull(subMsg, systemTwitchMessage)
-                else           -> listOf(systemTwitchMessage)
+                else                           -> listOf(systemTwitchMessage)
             }
         }
 

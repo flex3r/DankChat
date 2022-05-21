@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import coil.size.Scale
 import com.flxrs.dankchat.R
@@ -87,12 +88,18 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
                     startActivity(it)
                 }
             }
+            userBadges.apply {
+                layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+                val adapter = UserPopupBadgeAdapter().also { adapter = it }
+                adapter.submitList(args.badges.toList())
+            }
         }
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
         collectFlow(viewModel.userPopupState) {
             when (it) {
                 is UserPopupState.Loading     -> binding.showLoadingState(it)

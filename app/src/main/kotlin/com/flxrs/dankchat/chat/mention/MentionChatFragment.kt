@@ -8,6 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.chat.ChatFragment
+import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.utils.extensions.collectFlow
@@ -37,7 +38,7 @@ class MentionChatFragment : ChatFragment() {
         return binding.root
     }
 
-    override fun onUserClick(targetUserId: String?, targetUserName: String, messageId: String, channel: String, isLongPress: Boolean) {
+    override fun onUserClick(targetUserId: String?, targetUserName: String, messageId: String, channel: String, badges: List<Badge>, isLongPress: Boolean) {
         targetUserId ?: return
         val shouldLongClickMention = preferences.getBoolean(getString(R.string.preference_user_long_click_key), true)
         val shouldMention = (isLongPress && shouldLongClickMention) || (!isLongPress && !shouldLongClickMention)
@@ -49,6 +50,7 @@ class MentionChatFragment : ChatFragment() {
                 targetUserName = targetUserName,
                 messageId = messageId,
                 channel = null,
+                badges = badges,
                 isWhisperPopup = true
             )
         }
