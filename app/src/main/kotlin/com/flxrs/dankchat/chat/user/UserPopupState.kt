@@ -1,7 +1,7 @@
 package com.flxrs.dankchat.chat.user
 
 sealed class UserPopupState {
-    object Loading : UserPopupState()
+    data class Loading(val userName: String) : UserPopupState()
     data class Error(val throwable: Throwable? = null) : UserPopupState()
     data class Success(
         val userId: String,

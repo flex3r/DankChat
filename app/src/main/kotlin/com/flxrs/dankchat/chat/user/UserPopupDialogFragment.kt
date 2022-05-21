@@ -41,7 +41,7 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
             }
 
             userMention.setOnClickListener {
-                val targetUser = viewModel.userNameOrNull ?: args.targetUserName
+                val targetUser = viewModel.userName
                 val result = when {
                     args.isWhisperPopup -> UserPopupResult.Whisper(targetUser)
                     else                -> UserPopupResult.Mention(targetUser)
@@ -72,7 +72,7 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
                 dialog?.dismiss()
             }
             userAvatarCard.setOnClickListener {
-                val userName = viewModel.userNameOrNull ?: args.targetUserName
+                val userName = viewModel.userName
                 val url = "https://twitch.tv/$userName"
                 Intent(Intent.ACTION_VIEW).also {
                     it.data = url.toUri()
@@ -80,7 +80,7 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
                 }
             }
             userReport.setOnClickListener {
-                val userName = viewModel.userNameOrNull ?: args.targetUserName
+                val userName = viewModel.userName
                 val url = "https://twitch.tv/$userName/report"
                 Intent(Intent.ACTION_VIEW).also {
                     it.data = url.toUri()
@@ -95,7 +95,7 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         collectFlow(viewModel.userPopupState) {
             when (it) {
-                is UserPopupState.Loading     -> binding.showLoadingState()
+                is UserPopupState.Loading     -> binding.showLoadingState(it)
                 is UserPopupState.NotLoggedIn -> binding.showNotLoggedInState(it)
                 is UserPopupState.Success     -> binding.updateUserData(it)
                 is UserPopupState.Error       -> setErrorResultAndDismiss(it.throwable)
@@ -117,20 +117,18 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
         bindingRef = null
     }
 
-    private fun UserPopupBottomsheetBinding.showLoadingState() {
+    private fun UserPopupBottomsheetBinding.showLoadingState(state: UserPopupState.Loading) {
         userGroup.isVisible = false
         userLoading.isVisible = true
+        userBlock.isEnabled = false
+        userName.text = state.userName
     }
 
     private fun UserPopupBottomsheetBinding.updateUserData(userState: UserPopupState.Success) {
-        val showImage = {
-            userAvatarLoading.isVisible = false
-            userAvatarCard.isVisible = true
-        }
-        userAvatar.loadImage(userState.avatarUrl, placeholder = null, afterLoad = showImage)
+        userAvatar.loadImage(userState.avatarUrl, placeholder = null, afterLoad = { userAvatarLoading.isVisible = false })
         userLoading.isVisible = false
         userGroup.isVisible = true
-        userAvatarLoading.isVisible = true
+        userBlock.isEnabled = true
         userName.text = userState.displayName
         userCreated.text = getString(R.string.user_popup_created, userState.created)
         userFollowage.text = userState.followingSince?.let {
@@ -146,7 +144,6 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
         userLoading.isVisible = false
         userGroup.isVisible = true
         userAvatarLoading.isVisible = false
-        userAvatarCard.isVisible = true
         userAvatar.load(R.drawable.ic_person) {
             scale(Scale.FIT)
         }

@@ -9,7 +9,6 @@ import com.flxrs.dankchat.data.api.dto.HelixUserDto
 import com.flxrs.dankchat.data.api.dto.UserFollowsDto
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.DateTimeUtils.asParsedZonedDateTime
-import com.flxrs.dankchat.utils.extensions.withoutOAuthSuffix
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -26,18 +25,13 @@ class UserPopupViewModel @Inject constructor(
 
     private val args = UserPopupDialogFragmentArgs.fromSavedStateHandle(savedStateHandle)
 
-    private val _userPopupState = MutableStateFlow<UserPopupState>(UserPopupState.Loading)
+    private val _userPopupState = MutableStateFlow<UserPopupState>(UserPopupState.Loading(args.targetUserName))
 
-    private val hasModInChannel: StateFlow<Boolean> = chatRepository.userStateFlow
+    val canShowModeration: StateFlow<Boolean> = chatRepository.userStateFlow
         .map { args.channel != null && args.channel in it.moderationChannels }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
     val userPopupState: StateFlow<UserPopupState> = _userPopupState.asStateFlow()
-
-    val canShowModeration: StateFlow<Boolean> =
-        combine(userPopupState, hasModInChannel) { state, hasMod ->
-            state is UserPopupState.Success && hasMod
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
     val isBlocked: Boolean
         get() {
@@ -45,8 +39,8 @@ class UserPopupViewModel @Inject constructor(
             return state is UserPopupState.Success && state.isBlocked
         }
 
-    val userNameOrNull: String?
-        get() = (userPopupState.value as? UserPopupState.Success)?.userName
+    val userName: String
+        get() = (userPopupState.value as? UserPopupState.Success)?.userName ?: args.targetUserName
 
     init {
         loadData()
@@ -63,18 +57,18 @@ class UserPopupViewModel @Inject constructor(
     }
 
     fun timeoutUser(index: Int) {
-        val userName = userNameOrNull ?: return
+        val userName = userName
         val duration = TIMEOUT_MAP[index] ?: return
         chatRepository.sendMessage(".timeout $userName $duration")
     }
 
     fun banUser() {
-        val userName = userNameOrNull ?: return
+        val userName = userName
         chatRepository.sendMessage(".ban $userName")
     }
 
     fun unbanUser() {
-        val userName = userNameOrNull ?: return
+        val userName = userName
         chatRepository.sendMessage(".unban $userName")
     }
 
@@ -101,7 +95,7 @@ class UserPopupViewModel @Inject constructor(
             return@launch
         }
 
-        _userPopupState.value = UserPopupState.Loading
+        _userPopupState.value = UserPopupState.Loading(args.targetUserName)
         val currentUserId = preferenceStore.userIdString
         if (!preferenceStore.isLoggedIn || currentUserId == null) {
             _userPopupState.value = UserPopupState.Error()

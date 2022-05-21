@@ -45,6 +45,7 @@ open class ChatFragment : Fragment() {
     protected open lateinit var preferenceListener: SharedPreferences.OnSharedPreferenceChangeListener
     protected open lateinit var preferences: SharedPreferences
 
+    // TODO move to viewmodel?
     protected open var isAtBottom = true
 
     @Inject
