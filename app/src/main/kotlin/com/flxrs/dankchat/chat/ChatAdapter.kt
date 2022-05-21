@@ -601,7 +601,7 @@ class ChatAdapter(
                     }
 
                     if (drawable != null) {
-                        val imageSpan = ImageSpan(drawable)
+                        val imageSpan = ImageSpan(drawable, ImageSpan.ALIGN_BASELINE)
                         (text as Spannable)[start..end] = imageSpan
                     }
                 } catch (t: Throwable) {
