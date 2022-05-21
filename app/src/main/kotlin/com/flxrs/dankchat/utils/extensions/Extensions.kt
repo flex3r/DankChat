@@ -9,8 +9,6 @@ import androidx.lifecycle.SavedStateHandle
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.chat.menu.EmoteItem
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
-import com.flxrs.dankchat.data.twitch.message.Mention
-import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.google.android.material.color.MaterialColors
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json

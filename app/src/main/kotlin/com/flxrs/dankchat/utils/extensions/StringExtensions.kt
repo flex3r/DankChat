@@ -125,7 +125,7 @@ val String.withoutOAuthSuffix: String
 val String.withTrailingSlash: String
     get() = when {
         endsWith('/') -> this
-        else -> "$this/"
+        else          -> "$this/"
     }
 
 fun String.trimEndSpecialChar(): String = trimEnd().run {

@@ -9,13 +9,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.getSystemService
-import androidx.navigation.fragment.findNavController
 import androidx.preference.ListPreference
 import androidx.preference.SeekBarPreference
 import androidx.preference.SwitchPreferenceCompat
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
-import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.utils.extensions.isSystemLightMode
 
 class AppearanceSettingsFragment : MaterialPreferenceFragmentCompat() {

@@ -1,7 +1,5 @@
 package com.flxrs.dankchat.data.twitch.message
 
-import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
-
 sealed class Mention {
     abstract val matchUser: Boolean
 

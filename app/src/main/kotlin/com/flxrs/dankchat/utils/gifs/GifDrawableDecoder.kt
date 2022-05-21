@@ -7,7 +7,7 @@ import coil.request.Options
 
 import pl.droidsonroids.gif.GifDrawable
 
-class GifDrawableDecoder(private val source: ImageSource,) : Decoder {
+class GifDrawableDecoder(private val source: ImageSource) : Decoder {
 
     override suspend fun decode(): DecodeResult {
         val drawable = source.use {
@@ -20,7 +20,7 @@ class GifDrawableDecoder(private val source: ImageSource,) : Decoder {
         )
     }
 
-    class Factory: Decoder.Factory {
+    class Factory : Decoder.Factory {
 
         override fun create(result: SourceResult, options: Options, imageLoader: ImageLoader): Decoder? {
             if (!DecodeUtils.isGif(result.source.source())) return null

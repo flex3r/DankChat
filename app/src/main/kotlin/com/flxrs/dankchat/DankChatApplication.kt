@@ -14,7 +14,6 @@ import coil.decode.ImageDecoderDecoder
 import coil.disk.DiskCache
 import com.flxrs.dankchat.di.ApplicationScope
 import com.flxrs.dankchat.di.EmoteOkHttpClient
-import com.flxrs.dankchat.utils.gifs.GifDrawableDecoder
 import com.flxrs.dankchat.utils.tryClearEmptyFiles
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
