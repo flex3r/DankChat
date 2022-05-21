@@ -46,18 +46,17 @@ class UserPopupBadgeAdapter : ListAdapter<Badge, UserPopupBadgeAdapter.BadgeView
         val tag = badgeTag ?: return title.orEmpty()
         val parts = tag.split("/")
         val key = parts.firstOrNull() ?: return title.orEmpty()
-        val value = parts.getOrNull(1).orEmpty()
-        val info = badgeInfo
+        val value = parts.getOrNull(1) ?: return title.orEmpty()
         return when (key) {
             "bits"                  -> context.getString(R.string.badge_tooltip_bits, value)
             "moderator"             -> context.getString(R.string.badge_tooltip_moderator)
             "vip"                   -> context.getString(R.string.badge_tooltip_vip)
             "predictions"           -> {
-                info ?: return title.orEmpty()
+                val info = badgeInfo ?: return title.orEmpty()
                 context.getString(R.string.badge_tooltip_predictions, info.replace("⸝", ","))
             }
             "subscriber", "founder" -> {
-                info ?: return title.orEmpty()
+                val info = badgeInfo ?: return title.orEmpty()
                 val subTier = if (value.length > 3) value.first() else "1"
                 val months = info.toIntOrNull()?.let {
                     context.resources.getQuantityString(R.plurals.months, it, it)
