@@ -64,3 +64,5 @@
 
 # @Serializable and @Polymorphic are used at runtime for polymorphic serialization.
 -keepattributes RuntimeVisibleAnnotations,AnnotationDefault
+-keepnames class * extends android.os.Parcelable
+-keepnames class * extends java.io.Serializable
