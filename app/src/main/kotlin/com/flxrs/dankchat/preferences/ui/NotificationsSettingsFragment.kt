@@ -14,6 +14,9 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.MultiEntryBottomsheetBinding
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.preferences.multientry.MultiEntryAdapter
+import com.flxrs.dankchat.preferences.multientry.MultiEntryDto
+import com.flxrs.dankchat.preferences.multientry.MultiEntryDto.Companion.toDto
+import com.flxrs.dankchat.preferences.multientry.MultiEntryDto.Companion.toEntryItem
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -54,7 +57,8 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
             sharedPreferences
                 .getStringSet(key, emptySet())
                 .orEmpty()
-                .mapNotNull { Json.decodeOrNull<MultiEntryItem.Entry>(it) }
+                .mapNotNull { Json.decodeOrNull<MultiEntryDto>(it) }
+                .map { it.toEntryItem() }
                 .sortedBy { it.entry }
                 .plus(MultiEntryItem.AddEntry)
         }.getOrDefault(emptyList())
@@ -74,7 +78,7 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
                 val stringSet = entryAdapter.entries
                     .filterIsInstance<MultiEntryItem.Entry>()
                     .filter { it.entry.isNotBlank() }
-                    .map { Json.encodeToString(it) }
+                    .map { Json.encodeToString(it.toDto()) }
                     .toSet()
 
                 sharedPreferences.edit { putStringSet(key, stringSet) }

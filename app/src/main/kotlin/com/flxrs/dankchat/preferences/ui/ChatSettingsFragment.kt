@@ -15,6 +15,9 @@ import com.flxrs.dankchat.databinding.CommandsBottomsheetBinding
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.command.CommandAdapter
+import com.flxrs.dankchat.preferences.command.CommandDto
+import com.flxrs.dankchat.preferences.command.CommandDto.Companion.toDto
+import com.flxrs.dankchat.preferences.command.CommandDto.Companion.toEntryItem
 import com.flxrs.dankchat.preferences.command.CommandItem
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import com.flxrs.dankchat.utils.extensions.showRestartRequired
@@ -81,7 +84,7 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
             sharedPreferences
                 .getStringSet(key, emptySet())
                 .orEmpty()
-                .mapNotNull { Json.decodeOrNull<CommandItem.Entry>(it) }
+                .mapNotNull { Json.decodeOrNull<CommandDto>(it)?.toEntryItem() }
                 .plus(CommandItem.AddEntry)
         }.getOrDefault(emptyList())
 
@@ -99,7 +102,7 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
                 val stringSet = commandAdapter.commands
                     .filterIsInstance<CommandItem.Entry>()
                     .filter { it.trigger.isNotBlank() && it.command.isNotBlank() }
-                    .map { Json.encodeToString(it) }
+                    .map { Json.encodeToString(it.toDto()) }
                     .toSet()
 
                 sharedPreferences.edit { putStringSet(key, stringSet) }

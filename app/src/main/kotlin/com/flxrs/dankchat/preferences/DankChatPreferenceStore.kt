@@ -6,6 +6,8 @@ import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
+import com.flxrs.dankchat.preferences.command.CommandDto
+import com.flxrs.dankchat.preferences.command.CommandDto.Companion.toEntryItem
 import com.flxrs.dankchat.preferences.command.CommandItem
 import com.flxrs.dankchat.preferences.upload.ImageUploader
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
@@ -240,7 +242,7 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
         return defaultPreferences
             .getStringSet(key, emptySet())
             .orEmpty()
-            .mapNotNull { Json.decodeOrNull(it) }
+            .mapNotNull { Json.decodeOrNull<CommandDto>(it)?.toEntryItem() }
     }
 
     private fun Map<String, String>.toJson(): String = Json.encodeToString(this)

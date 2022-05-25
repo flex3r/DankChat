@@ -13,6 +13,8 @@ import com.flxrs.dankchat.data.twitch.connection.*
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager
 import com.flxrs.dankchat.data.twitch.message.*
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.multientry.MultiEntryDto
+import com.flxrs.dankchat.preferences.multientry.MultiEntryDto.Companion.toEntryItem
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.utils.extensions.*
 import io.ktor.http.*
@@ -449,7 +451,7 @@ class ChatRepository @Inject constructor(
     }
 
     private fun Set<String>.mapToMention(): List<Mention> = mapNotNull {
-        Json.decodeOrNull<MultiEntryItem.Entry>(it)
+        Json.decodeOrNull<MultiEntryDto>(it)?.toEntryItem()
     }.mapToMention()
 
     private fun handleConnected(channel: String, isAnonymous: Boolean) {
