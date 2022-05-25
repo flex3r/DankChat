@@ -7,13 +7,13 @@ apply plugin: 'kotlin-parcelize'
 apply plugin: 'kotlinx-serialization'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 32
     //noinspection GradleDependency
     buildToolsVersion "32.0.0"
     defaultConfig {
         applicationId "com.flxrs.dankchat"
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 32
         versionCode 255
         versionName "3.2.1"
 
