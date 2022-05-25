@@ -154,8 +154,8 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="add_command">Přidat příkaz</string>
     <string name="remove_command">Odebrat přikaz</string>
     <string name="command_trigger_hint">Spouštěč</string>
-    <string name="command__hint">Přikaz</string>
-    <string name="commands_title">Vlastní přikazy</string>
+    <string name="command__hint">Příkaz</string>
+    <string name="commands_title">Vlastní příkazy</string>
     <string name="user_popup_report">Nahlásit</string>
     <string name="tts_ignore_list_add_user">Přidat uživatele</string>
     <string name="tts_ignore_list_remove_user">Odebrat uživatele</string>
@@ -165,6 +165,9 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="recent_uploads_clear">Vyčistit nahrání</string>
     <string name="host">Hostitel</string>
     <string name="reset">Obnovit</string>
+    <string name="badge_tooltip_moderator">Moderátor</string>
+    <string name="badge_tooltip_predictions">Předpovězeno: \"%1$s\"</string>
+    <string name="badge_tooltip_sub_tier">Úroveň %1$s</string>
     <string name="preference_timestamp_title">Zobrazit časová razítka</string>
     <string name="preference_mention_format_title">Formát zmínek</string>
     <string name="preference_mention_format_summary">Změnit formát zmínek, když kliknete na uživatelské jméno</string>
@@ -188,7 +191,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_follow_system_title">Stejný jako režim systému</string>
     <string name="preference_true_dark_theme_title">Pravý tmavý režim</string>
     <string name="preference_true_dark_theme_summary">Vynutí černou barvu pozadí chatu</string>
-    <string name="preference_display_group_title">Displej</string>
+    <string name="preference_display_group_title">Zobrazení</string>
     <string name="preference_show_timed_out_messages_title">Zobrazit smazané zprávy</string>
     <string name="preference_custom_mentions_title">Vlastní zmínky</string>
     <string name="preference_custom_mentions_summary">Nastavte vlastní fráze jako zmínky</string>
@@ -260,5 +263,11 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
         <item quantity="few">Živě se %d diváky</item>
         <item quantity="many">Živě s %d diváky</item>
         <item quantity="other">Živě s %d diváky</item>
+    </plurals>
+    <plurals name="months">
+        <item quantity="one">%d měsíc</item>
+        <item quantity="few">%d měsíce </item>
+        <item quantity="many">%d měsíců</item>
+        <item quantity="other">%d měsíců</item>
     </plurals>
 </resources>
