@@ -163,6 +163,11 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="recent_upload_deletion_link">Löschlink:
 %1$s</string>
     <string name="recent_uploads_clear">Liste leeren</string>
+    <string name="host">Host</string>
+    <string name="reset">Zurücksetzen</string>
+    <string name="badge_tooltip_moderator">Moderator</string>
+    <string name="badge_tooltip_predictions">Vorhersage: \"%1$s\"</string>
+    <string name="badge_tooltip_sub_tier">Stufe %1$s</string>
     <string name="preference_timestamp_title">Zeitstempel anzeigen</string>
     <string name="preference_mention_format_title">Erwähnungsformat</string>
     <string name="preference_mention_format_summary">Ändere das Erwähnungsformat beim Anklicken eines Nutzernamens</string>
@@ -252,8 +257,13 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_light_theme_entry_title">Helles Design</string>
     <string name="preference_unlisted_emotes_title">Zeige nicht gelistete Emotes</string>
     <string name="preference_unlisted_emotes_summary">Deaktiviert das Filtern von nicht genehmigten oder nicht gelisteten Emotes</string>
+    <string name="preference_rm_host_title">Benutzerdefinierter Host für Nachrichtenhistorie</string>
     <plurals name="viewers">
         <item quantity="one">Live mit %d Zuschauer</item>
         <item quantity="other">Live mit %d Zuschauern</item>
+    </plurals>
+    <plurals name="months">
+        <item quantity="one">Monat</item>
+        <item quantity="other">Monate</item>
     </plurals>
 </resources>
