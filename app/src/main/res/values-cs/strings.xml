@@ -152,7 +152,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="seconds">Sekundy</string>
     <string name="minutes">Minuty</string>
     <string name="add_command">Přidat příkaz</string>
-    <string name="remove_command">Odebrat přikaz</string>
+    <string name="remove_command">Odebrat příkaz</string>
     <string name="command_trigger_hint">Spouštěč</string>
     <string name="command__hint">Příkaz</string>
     <string name="commands_title">Vlastní příkazy</string>
