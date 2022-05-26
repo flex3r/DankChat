@@ -44,9 +44,8 @@ class UserPopupBadgeAdapter : ListAdapter<Badge, UserPopupBadgeAdapter.BadgeView
         }
 
         val tag = badgeTag ?: return title.orEmpty()
-        val parts = tag.split("/")
-        val key = parts.firstOrNull() ?: return title.orEmpty()
-        val value = parts.getOrNull(1) ?: return title.orEmpty()
+        val key = tag.substringBefore('/').ifBlank { return title.orEmpty() }
+        val value = tag.substringAfter('/').ifBlank { return title.orEmpty() }
         return when (key) {
             "bits"                  -> context.getString(R.string.badge_tooltip_bits, value)
             "moderator"             -> context.getString(R.string.badge_tooltip_moderator)
