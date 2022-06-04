@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <PreferenceCategory app:iconSpaceReserved="false">
+    <PreferenceCategory
+        android:title="@string/preference_theme_title"
+        app:iconSpaceReserved="false">
 
         <ListPreference
             android:defaultValue="@string/preference_follow_system_key"
@@ -40,20 +42,6 @@
             app:iconSpaceReserved="false" />
 
         <SwitchPreferenceCompat
-            android:defaultValue="true"
-            android:key="@string/preference_show_input_key"
-            android:summary="@string/preference_show_input_summary"
-            android:title="@string/preference_show_input_title"
-            app:iconSpaceReserved="false" />
-
-        <SwitchPreferenceCompat
-            android:defaultValue="true"
-            android:key="@string/preference_show_chip_actions_key"
-            android:summary="@string/preference_show_chip_actions_summary"
-            android:title="@string/preference_show_chip_actions_title"
-            app:iconSpaceReserved="false" />
-
-        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="@string/preference_line_separator_key"
             android:title="@string/preference_line_separator_title"
@@ -64,6 +52,32 @@
             android:key="@string/checkered_messages_key"
             android:summary="@string/preference_checkered_lines_summary"
             android:title="@string/preference_checkered_lines_title"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/preference_components_group_title"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="@string/preference_show_input_key"
+            android:summary="@string/preference_show_input_summary"
+            android:title="@string/preference_show_input_title"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:dependency="@string/preference_show_input_key"
+            android:key="@string/preference_auto_disable_input_key"
+            android:title="@string/preference_auto_disable_input_title"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="@string/preference_show_chip_actions_key"
+            android:summary="@string/preference_show_chip_actions_summary"
+            android:title="@string/preference_show_chip_actions_title"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
 </PreferenceScreen>

@@ -136,6 +136,9 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
     val shouldPreferEmoteSuggestions: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_prefer_emote_suggestions_key), false)
 
+    val autoDisableInput: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_auto_disable_input_key), true)
+
     val preferenceFlow: Flow<Preference> = callbackFlow {
         with(context) {
             val roomStateKey = getString(R.string.preference_roomstate_key)

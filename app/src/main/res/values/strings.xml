@@ -202,6 +202,7 @@
     <string name="preference_true_dark_theme_title">True dark theme</string>
     <string name="preference_true_dark_theme_summary">Forces chat background color to black</string>
     <string name="preference_display_group_title">Display</string>
+    <string name="preference_components_group_title">Components</string>
     <string name="preference_show_timed_out_messages_key" translatable="false">show_timed_out_messages_key</string>
     <string name="preference_show_timed_out_messages_title">Show timed out messages</string>
     <string name="preference_custom_mentions_key" translatable="false">custom_mentions_key</string>
@@ -308,6 +309,8 @@
     <string name="preference_fetch_streams_key" translatable="false">fetch_streams_key</string>
     <string name="preference_fetch_streams_title">Fetch stream information</string>
     <string name="preference_fetch_streams_summary">Periodically fetches stream information of open channels. Required to start embedded stream.</string>
+    <string name="preference_auto_disable_input_key" translatable="false">auto_disable_input_key</string>
+    <string name="preference_auto_disable_input_title">Disable input if not connected to chat</string>
 
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>

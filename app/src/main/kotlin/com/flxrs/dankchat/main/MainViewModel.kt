@@ -184,10 +184,10 @@ class MainViewModel @Inject constructor(
     val connectionState = activeChannel
         .flatMapLatest { chatRepository.getConnectionState(it) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), ConnectionState.DISCONNECTED)
-    val canType: StateFlow<Boolean> =
-        combine(connectionState, mentionSheetOpen, whisperTabSelected) { connectionState, mentionSheetOpen, whisperTabSelected ->
-            val connected = connectionState == ConnectionState.CONNECTED
-            (!mentionSheetOpen && connected) || (whisperTabSelected && connected)
+
+    val canType: StateFlow<Boolean> = combine(connectionState, mentionSheetOpen, whisperTabSelected) { connectionState, mentionSheetOpen, whisperTabSelected ->
+            val canTypeInConnectionState = connectionState == ConnectionState.CONNECTED || !dankChatPreferenceStore.autoDisableInput
+            (!mentionSheetOpen && canTypeInConnectionState) || (whisperTabSelected && canTypeInConnectionState)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
     data class BottomTextState(val enabled: Boolean = true, val text: String = "")
@@ -430,7 +430,6 @@ class MainViewModel @Inject constructor(
     }
 
     fun reloadEmotes(channel: String) = viewModelScope.launch {
-        val oAuth = dankChatPreferenceStore.oAuthKey.orEmpty()
         val isLoggedIn = dankChatPreferenceStore.isLoggedIn
         val loadThirdPartyData = dankChatPreferenceStore.visibleThirdPartyEmotes
         val parameters = DataLoadingState.Parameters(
