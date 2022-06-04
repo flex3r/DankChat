@@ -17,10 +17,10 @@ import com.flxrs.dankchat.databinding.ChannelsFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.navigateSafe
+import com.flxrs.dankchat.utils.extensions.swap
 import com.flxrs.dankchat.utils.extensions.withData
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -96,7 +96,7 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
 
         override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
             adapter.currentList.toMutableList().let {
-                Collections.swap(it, viewHolder.bindingAdapterPosition, target.bindingAdapterPosition)
+                it.swap(viewHolder.bindingAdapterPosition, target.bindingAdapterPosition)
                 adapter.submitList(it)
             }
             return true

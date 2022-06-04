@@ -105,13 +105,14 @@ class ApiManager @Inject constructor(
         val uploader = dankChatPreferenceStore.customImageUploader
         val extension = file.extension.ifBlank { "png" }
         val mimetype = URLConnection.guessContentTypeFromName(file.name)
-        val formData = formData {
-            append(uploader.formField, file.readBytes(), Headers.build {
-                append(HttpHeaders.ContentType, mimetype.toMediaType().toString())
-                append(HttpHeaders.ContentDisposition, "filename=${uploader.formField}.$extension")
-            })
+        val headers = Headers.build {
+            append(HttpHeaders.ContentType, mimetype.toMediaType().toString())
+            append(HttpHeaders.ContentDisposition, "filename=${uploader.formField}.$extension")
         }
-        val response = client.submitFormWithBinaryData(url = uploader.uploadUrl, formData = formData) {
+        val formData = formData {
+            append(uploader.formField, file.readBytes(), headers)
+        }
+        val response = client.submitFormWithBinaryData(uploader.uploadUrl, formData) {
             uploader.parsedHeaders.forEach { (key, value) ->
                 header(key, value)
             }
