@@ -307,7 +307,7 @@
     <string name="preference_rm_host_title">Custom recent messages host</string>
     <string name="preference_fetch_streams_key" translatable="false">fetch_streams_key</string>
     <string name="preference_fetch_streams_title">Fetch stream information</string>
-    <string name="preference_fetch_streams_summary">Regularly fetches stream information of all channels. Required to start embedded stream.</string>
+    <string name="preference_fetch_streams_summary">Periodically fetches stream information of open channels. Required to start embedded stream.</string>
 
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>
