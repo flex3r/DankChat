@@ -54,7 +54,7 @@ class MainViewModel @Inject constructor(
 
     var started = false
 
-    data class StreamData(val channel: String, val data: String)
+    data class StreamData(val channel: String, val formattedData: String)
     sealed class Event {
         data class Error(val throwable: Throwable) : Event()
     }
@@ -90,7 +90,7 @@ class MainViewModel @Inject constructor(
     private val users = currentSuggestionChannel.flatMapLatest { chatRepository.getUsers(it) }
     private val supibotCommands = currentSuggestionChannel.flatMapLatest { commandRepository.getSupibotCommands(it) }
     private val currentStreamInformation = combine(streamInfoEnabled, activeChannel, streamData) { streamInfoEnabled, activeChannel, streamData ->
-        streamData.find { it.channel == activeChannel }?.data?.takeIf { streamInfoEnabled }
+        streamData.find { it.channel == activeChannel }?.formattedData?.takeIf { streamInfoEnabled }
     }
 
     private val emoteSuggestions = emotes.mapLatest { emotes ->
@@ -141,6 +141,7 @@ class MainViewModel @Inject constructor(
                     is Preference.ScrollBack         -> chatRepository.scrollBackLength = it.length
                     is Preference.Chips              -> shouldShowChips.value = it.enabled
                     is Preference.TimeStampFormat    -> DateTimeUtils.setPattern(it.pattern)
+                    is Preference.FetchStreams       -> fetchStreamData(channels.value.orEmpty())
                 }
             }
         }
@@ -265,9 +266,9 @@ class MainViewModel @Inject constructor(
             shouldShowExpandedChips,
             activeChannel,
             _currentStreamedChannel,
-            currentStreamInformation
-        ) { canShowChips, activeChannel, currentStream, currentStreamData ->
-            canShowChips && activeChannel.isNotBlank() && (currentStream.isNotBlank() || currentStreamData != null)
+            streamData
+        ) { canShowChips, activeChannel, currentStream, streamData ->
+            canShowChips && activeChannel.isNotBlank() && (currentStream.isNotBlank() || streamData.find { it.channel == activeChannel } != null)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
     val hasModInChannel: StateFlow<Boolean> =
@@ -489,10 +490,10 @@ class MainViewModel @Inject constructor(
     }
 
     fun fetchStreamData(channels: List<String>) {
-        cancelStreamDataTimer()
+        cancelStreamData()
 
-        val streamInfoEnabled = dankChatPreferenceStore.streamInfoEnabled
-        if (!dankChatPreferenceStore.isLoggedIn || !streamInfoEnabled) {
+        val fetchingEnabled = dankChatPreferenceStore.fetchStreamInfoEnabled
+        if (!dankChatPreferenceStore.isLoggedIn || !fetchingEnabled) {
             return
         }
 
@@ -504,7 +505,7 @@ class MainViewModel @Inject constructor(
 
                 val data = streams?.data?.map {
                     val formatted = dankChatPreferenceStore.formatViewersString(it.viewerCount)
-                    StreamData(channel = it.userLogin, data = formatted)
+                    StreamData(channel = it.userLogin, formattedData = formatted)
                 }.orEmpty()
 
                 streamData.value = data
@@ -512,9 +513,10 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun cancelStreamDataTimer() {
+    fun cancelStreamData() {
         fetchTimerJob?.cancel()
         fetchTimerJob = null
+        streamData.value = emptyList()
     }
 
     fun toggleStream() {

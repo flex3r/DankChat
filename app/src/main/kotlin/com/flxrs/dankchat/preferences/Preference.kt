@@ -2,6 +2,7 @@ package com.flxrs.dankchat.preferences
 
 sealed class Preference {
     data class RoomState(val enabled: Boolean) : Preference()
+    data class FetchStreams(val enabled: Boolean) : Preference()
     data class StreamInfo(val enabled: Boolean, val updateTimer: Boolean) : Preference()
     data class Input(val enabled: Boolean) : Preference()
     data class CustomMentions(val entries: Set<String>) : Preference()

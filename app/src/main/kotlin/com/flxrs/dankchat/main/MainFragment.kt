@@ -411,7 +411,7 @@ class MainFragment : Fragment() {
 
     override fun onPause() {
         binding.input.clearFocus()
-        mainViewModel.cancelStreamDataTimer()
+        mainViewModel.cancelStreamData()
         super.onPause()
     }
 

@@ -130,8 +130,8 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
     val scrollbackLength: Int
         get() = correctScrollbackLength(defaultPreferences.getInt(context.getString(R.string.preference_scrollback_length_key), 10))
 
-    val streamInfoEnabled: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_streaminfo_key), true)
+    val fetchStreamInfoEnabled: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_fetch_streams_key), true)
 
     val shouldPreferEmoteSuggestions: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_prefer_emote_suggestions_key), false)
@@ -147,9 +147,11 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
             val scrollBackLengthKey = getString(R.string.preference_scrollback_length_key)
             val showChipsKey = getString(R.string.preference_show_chip_actions_key)
             val timestampFormatKey = getString(R.string.preference_timestamp_format_key)
+            val fetchStreamsKey = getString(R.string.preference_fetch_streams_key)
 
             send(Preference.RoomState(roomStateEnabled))
-            send(Preference.StreamInfo(streamInfoEnabled, updateTimer = false))
+            //send(Preference.FetchStreams(fetchStreamInfoEnabled))
+            send(Preference.StreamInfo(showStreamInfoEnabled, updateTimer = false))
             send(Preference.Input(inputEnabled))
             send(Preference.CustomMentions(mentionEntries))
             send(Preference.BlackList(blackListEntries))
@@ -160,7 +162,7 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
             val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
                 val preference = when (key) {
                     roomStateKey        -> Preference.RoomState(roomStateEnabled)
-                    streamInfoKey       -> Preference.StreamInfo(streamInfoEnabled, updateTimer = true)
+                    streamInfoKey       -> Preference.StreamInfo(showStreamInfoEnabled, updateTimer = true)
                     inputKey            -> Preference.Input(inputEnabled)
                     customMentionsKey   -> Preference.CustomMentions(mentionEntries)
                     blacklistKey        -> Preference.BlackList(blackListEntries)
@@ -168,6 +170,7 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
                     scrollBackLengthKey -> Preference.ScrollBack(scrollbackLength)
                     showChipsKey        -> Preference.Chips(shouldShowChips)
                     timestampFormatKey  -> Preference.TimeStampFormat(timestampFormat)
+                    fetchStreamsKey     -> Preference.FetchStreams(fetchStreamInfoEnabled)
                     else                -> null
                 }
                 if (preference != null) {
@@ -264,6 +267,9 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
 
     private val blackListEntries: Set<String>
         get() = defaultPreferences.getStringSet(context.getString(R.string.preference_blacklist_key), emptySet()).orEmpty()
+
+    private val showStreamInfoEnabled: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_streaminfo_key), true)
 
     companion object {
         private const val LOGGED_IN_KEY = "loggedIn"

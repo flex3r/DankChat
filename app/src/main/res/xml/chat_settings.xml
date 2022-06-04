@@ -128,6 +128,13 @@
         app:iconSpaceReserved="false">
         <SwitchPreferenceCompat
             android:defaultValue="true"
+            android:key="@string/preference_fetch_streams_key"
+            android:summary="@string/preference_fetch_streams_summary"
+            android:title="@string/preference_fetch_streams_title"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
             android:key="@string/preference_roomstate_key"
             android:summary="@string/preference_roomstate_summary"
             android:title="@string/preference_roomstate_title"
@@ -135,6 +142,7 @@
 
         <SwitchPreferenceCompat
             android:defaultValue="true"
+            android:dependency="@string/preference_fetch_streams_key"
             android:key="@string/preference_streaminfo_key"
             android:summary="@string/preference_streaminfo_summary"
             android:title="@string/preference_streaminfo_title"
