@@ -192,6 +192,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_true_dark_theme_title">Echtes dunkles Design</string>
     <string name="preference_true_dark_theme_summary">Macht den Chathintergrund schwarz</string>
     <string name="preference_display_group_title">Bildschirm</string>
+    <string name="preference_components_group_title">Komponenten</string>
     <string name="preference_show_timed_out_messages_title">Entfernte Nachrichten anzeigen</string>
     <string name="preference_custom_mentions_title">Benutzerdefinierte Erwähnungen</string>
     <string name="preference_custom_mentions_summary">Benutzerdefinierte Ausdrücke für Erwähnungen einstellen</string>
@@ -258,6 +259,9 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_unlisted_emotes_title">Zeige nicht gelistete Emotes</string>
     <string name="preference_unlisted_emotes_summary">Deaktiviert das Filtern von nicht genehmigten oder nicht gelisteten Emotes</string>
     <string name="preference_rm_host_title">Benutzerdefinierter Host für Nachrichtenhistorie</string>
+    <string name="preference_fetch_streams_title">Abrufen von Stream-Informationen</string>
+    <string name="preference_fetch_streams_summary">Aktiviert regelmäßiges Abrufen von Stream-Informationen. Erforderlich zum Starten des eingebetteten Streams.</string>
+    <string name="preference_auto_disable_input_title">Deaktiviere Eingabefeld bei fehlender Chat Verbindung</string>
     <plurals name="viewers">
         <item quantity="one">Live mit %d Zuschauer</item>
         <item quantity="other">Live mit %d Zuschauern</item>
