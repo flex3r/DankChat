@@ -192,6 +192,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_true_dark_theme_title">Pravý tmavý režim</string>
     <string name="preference_true_dark_theme_summary">Vynutí černou barvu pozadí chatu</string>
     <string name="preference_display_group_title">Zobrazení</string>
+    <string name="preference_components_group_title">Nástroje</string>
     <string name="preference_show_timed_out_messages_title">Zobrazit smazané zprávy</string>
     <string name="preference_custom_mentions_title">Vlastní zmínky</string>
     <string name="preference_custom_mentions_summary">Nastavte vlastní fráze jako zmínky</string>
@@ -258,6 +259,9 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_unlisted_emotes_title">Povolit neuvedené emotikony</string>
     <string name="preference_unlisted_emotes_summary">Zakáže filtrování neschválených nebo neuvedených emotikonů</string>
     <string name="preference_rm_host_title">Vlastní hostitel pro nedávné zprávy</string>
+    <string name="preference_fetch_streams_title">Načítat informace o streamu</string>
+    <string name="preference_fetch_streams_summary">Pravidelně načítá informace o streamech přidaných kanálů. Nutné pro spuštění vloženého streamu.</string>
+    <string name="preference_auto_disable_input_title">Zakázat vstupní pole, pokud není navázáno připojení k chatu</string>
     <plurals name="viewers">
         <item quantity="one">Živě s %d divákem</item>
         <item quantity="few">Živě se %d diváky</item>
