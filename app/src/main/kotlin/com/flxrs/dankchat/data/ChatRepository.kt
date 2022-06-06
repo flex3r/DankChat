@@ -42,8 +42,22 @@ class ChatRepository @Inject constructor(
         val displayName: String = "",
         val globalEmoteSets: List<String> = listOf(),
         val followerEmoteSets: Map<String, List<String>> = emptyMap(),
-        val moderationChannels: List<String> = emptyList(),
-    )
+        val moderationChannels: Set<String> = emptySet(),
+        val vipChannels: Set<String> = emptySet(),
+    ) {
+
+        fun getSendDelay(channel: String): Long = when {
+            hasHighRateLimit(channel) -> LOW_SEND_DELAY_MS
+            else                      -> REGULAR_SEND_DELAY_MS
+        }
+
+        private fun hasHighRateLimit(channel: String): Boolean = channel in moderationChannels || channel in vipChannels
+
+        companion object {
+            private const val REGULAR_SEND_DELAY_MS = 1200L
+            private const val LOW_SEND_DELAY_MS = 150L
+        }
+    }
 
     private val _activeChannel = MutableStateFlow("")
     private val _channels = MutableStateFlow<List<String>?>(null)
@@ -64,7 +78,7 @@ class ChatRepository @Inject constructor(
     private var customMentionEntries = listOf<Mention>()
     private var blacklistEntries = listOf<Mention>()
     private var name: String = ""
-    private var lastMessage = mutableMapOf<String, String>()
+    private var lastMessage = ConcurrentHashMap<String, String>()
     private val loadedRecentsInChannels = mutableSetOf<String>()
     private val knownRewards = ConcurrentHashMap<String, PubSubMessage.PointRedemption>()
 
@@ -256,7 +270,6 @@ class ChatRepository @Inject constructor(
         val preparedMessage = prepareMessage(channel, input) ?: return
         writeConnection.sendMessage(preparedMessage)
 
-
         if (pubSubManager.connectedAndHasWhisperTopic) {
             return
         }
@@ -410,6 +423,7 @@ class ChatRepository @Inject constructor(
         }
 
         val messageWithEmojiFix = messageWithSuffix.replace(ZERO_WIDTH_JOINER, ESCAPE_TAG)
+        lastMessage[channel] = messageWithEmojiFix
         return "PRIVMSG #$channel :$messageWithEmojiFix"
     }
 
@@ -601,6 +615,15 @@ class ChatRepository @Inject constructor(
                 it as TwitchMessage // TODO
                 if (it.name == name) {
                     lastMessage[it.channel] = it.originalMessage
+                    val hasVip = it.badges.any { badge -> badge.badgeTag?.startsWith("vip") == true }
+                    userState.update { userState ->
+                        val updatedVipChannels = when {
+                            hasVip -> userState.vipChannels + it.channel
+                            else   -> userState.vipChannels - it.channel
+
+                        }
+                        userState.copy(vipChannels = updatedVipChannels)
+                    }
                 }
 
                 if (blacklistEntries.matches(it)) {

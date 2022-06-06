@@ -33,7 +33,7 @@ class CommandRepository @Inject constructor(
     fun getSupibotCommands(channel: String): StateFlow<List<String>> = supibotCommands.getOrPut(channel) { MutableStateFlow(emptyList()) }
     fun clearSupibotCommands() = supibotCommands.forEach { it.value.value = emptyList() }.also { supibotCommands.clear() }
 
-    suspend fun checkForCommands(message: String, channel: String): CommandResult {
+    suspend fun checkForCommands(message: String, channel: String, skipSuspendingCommands: Boolean = false): CommandResult {
         if (!preferenceStore.isLoggedIn) {
             return CommandResult.NotFound
         }

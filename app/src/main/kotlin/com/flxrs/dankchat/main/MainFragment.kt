@@ -52,8 +52,11 @@ import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.databinding.EditDialogBinding
 import com.flxrs.dankchat.databinding.MainFragmentBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.utils.*
+import com.flxrs.dankchat.utils.GetImageOrVideoContract
+import com.flxrs.dankchat.utils.createMediaFile
 import com.flxrs.dankchat.utils.extensions.*
+import com.flxrs.dankchat.utils.removeExifAttributes
+import com.flxrs.dankchat.utils.showErrorDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.color.MaterialColors
@@ -62,7 +65,6 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.BaseTransientBottomBar.BaseCallback
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
-import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.IOException
@@ -181,7 +183,7 @@ class MainFragment : Fragment() {
                 with(menu) {
                     val isLoggedIn = dankChatPreferences.isLoggedIn
                     val shouldShowProgress = mainViewModel.shouldShowUploadProgress.value
-                    val hasChannels = !mainViewModel.getChannels().isNullOrEmpty()
+                    val hasChannels = mainViewModel.getChannels().isNotEmpty()
                     val mentionIconColor = when (mainViewModel.shouldColorNotification.value) {
                         true -> R.attr.colorError
                         else -> R.attr.colorControlHighlight
@@ -543,13 +545,22 @@ class MainFragment : Fragment() {
 
     private fun sendMessage(): Boolean {
         val msg = binding.input.text?.toString().orEmpty()
-        mainViewModel.trySendMessage(msg)
+        mainViewModel.trySendMessageOrCommand(msg)
         binding.input.setText("")
 
         return true
     }
 
+    private fun repeatSendMessage(event: DankChatInputLayout.TouchEvent) {
+        val input = binding.input.text.toString().ifBlank { return }
+        mainViewModel.setRepeatedSend(event == DankChatInputLayout.TouchEvent.HOLD_START, input)
+    }
+
     private fun getLastMessage(): Boolean {
+        if (binding.input.text.isNotBlank()) {
+            return false
+        }
+
         val lastMessage = mainViewModel.getLastMessage() ?: return false
         binding.input.setText(lastMessage)
         binding.input.setSelection(lastMessage.length)
@@ -927,9 +938,23 @@ class MainFragment : Fragment() {
         })
     }
 
-    private fun TextInputLayout.setup() {
-        setEndIconOnClickListener { sendMessage() }
-        setEndIconOnLongClickListener { getLastMessage() }
+    private fun DankChatInputLayout.setup() {
+        val touchListenerAdded = when {
+            dankChatPreferences.repeatedSendingEnabled -> setEndIconTouchListener { holdTouchEvent ->
+                when (holdTouchEvent) {
+                    DankChatInputLayout.TouchEvent.CLICK      -> sendMessage()
+                    DankChatInputLayout.TouchEvent.LONG_CLICK -> getLastMessage()
+                    else                                      -> repeatSendMessage(holdTouchEvent)
+                }
+            }
+            else                                       -> false
+        }
+
+        if (!touchListenerAdded) {
+            setEndIconOnClickListener { sendMessage() }
+            setEndIconOnLongClickListener { getLastMessage() }
+        }
+
         setStartIconOnClickListener {
             if (emoteMenuBottomSheetBehavior?.isVisible == true || emoteMenuAdapter.currentList.isEmpty()) {
                 emoteMenuBottomSheetBehavior?.hide()

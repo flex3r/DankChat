@@ -311,6 +311,9 @@
     <string name="preference_fetch_streams_summary">Periodically fetches stream information of open channels. Required to start embedded stream.</string>
     <string name="preference_auto_disable_input_key" translatable="false">auto_disable_input_key</string>
     <string name="preference_auto_disable_input_title">Disable input if not connected to chat</string>
+    <string name="preference_repeated_sending_key" translatable="false">repeated_sending_key</string>
+    <string name="preference_repeated_sending_title">Enable repeated sending</string>
+    <string name="preference_repeated_sending_summary">Enables continuous message sending while send button is held</string>
 
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>

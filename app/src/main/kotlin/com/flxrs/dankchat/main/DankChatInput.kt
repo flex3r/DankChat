@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.utils
+package com.flxrs.dankchat.main
 
 import android.content.Context
 import android.util.AttributeSet

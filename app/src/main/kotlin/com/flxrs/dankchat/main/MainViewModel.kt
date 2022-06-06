@@ -55,6 +55,7 @@ class MainViewModel @Inject constructor(
     var started = false
 
     data class StreamData(val channel: String, val formattedData: String)
+    data class RepeatedSendData(val enabled: Boolean, val message: String)
     sealed class Event {
         data class Error(val throwable: Throwable) : Event()
     }
@@ -76,6 +77,7 @@ class MainViewModel @Inject constructor(
     private val inputEnabled = MutableStateFlow(true)
     private val isScrolling = MutableStateFlow(false)
     private val chipsExpanded = MutableStateFlow(false)
+    private val repeatedSend = MutableStateFlow(RepeatedSendData(enabled = false, message = ""))
 
     private val emotes = currentSuggestionChannel.flatMapLatest { dataRepository.getEmotes(it) }
     private val recentEmotes = emoteUsageRepository
@@ -145,6 +147,19 @@ class MainViewModel @Inject constructor(
                 }
             }
         }
+
+        viewModelScope.launch {
+            repeatedSend.collectLatest {
+                if (it.enabled && it.message.isNotBlank()) {
+                    while (isActive) {
+                        val activeChannel = activeChannel.value
+                        val delay = chatRepository.userStateFlow.value.getSendDelay(activeChannel)
+                        trySendMessageOrCommand(it.message, skipSuspendingCommands = true)
+                        delay(delay)
+                    }
+                }
+            }
+        }
     }
 
     val events = eventChannel.receiveAsFlow()
@@ -186,9 +201,9 @@ class MainViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), ConnectionState.DISCONNECTED)
 
     val canType: StateFlow<Boolean> = combine(connectionState, mentionSheetOpen, whisperTabSelected) { connectionState, mentionSheetOpen, whisperTabSelected ->
-            val canTypeInConnectionState = connectionState == ConnectionState.CONNECTED || !dankChatPreferenceStore.autoDisableInput
-            (!mentionSheetOpen && canTypeInConnectionState) || (whisperTabSelected && canTypeInConnectionState)
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
+        val canTypeInConnectionState = connectionState == ConnectionState.CONNECTED || !dankChatPreferenceStore.autoDisableInput
+        (!mentionSheetOpen && canTypeInConnectionState) || (whisperTabSelected && canTypeInConnectionState)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
     data class BottomTextState(val enabled: Boolean = true, val text: String = "")
 
@@ -361,6 +376,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun setActiveChannel(channel: String) {
+        repeatedSend.update { it.copy(enabled = false) }
         chatRepository.setActiveChannel(channel)
         currentSuggestionChannel.value = channel
     }
@@ -370,6 +386,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun setMentionSheetOpen(enabled: Boolean) {
+        repeatedSend.update { it.copy(enabled = false) }
         mentionSheetOpen.value = enabled
         if (enabled) when (whisperTabSelected.value) {
             true -> chatRepository.clearMentionCount("w")
@@ -378,6 +395,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun setWhisperTabSelected(open: Boolean) {
+        repeatedSend.update { it.copy(enabled = false) }
         whisperTabSelected.value = open
         if (mentionSheetOpen.value) {
             when {
@@ -393,14 +411,14 @@ class MainViewModel @Inject constructor(
     fun clearUnreadMessage(channel: String) = chatRepository.clearUnreadMessage(channel)
     fun reconnect() = chatRepository.reconnect()
     fun joinChannel(channel: String): List<String> = chatRepository.joinChannel(channel)
-    fun trySendMessage(message: String) = viewModelScope.launch {
+    fun trySendMessageOrCommand(message: String, skipSuspendingCommands: Boolean = false) = viewModelScope.launch {
         if (mentionSheetOpen.value && whisperTabSelected.value && !(message.startsWith("/w ") || message.startsWith(".w"))) {
             return@launch
         }
 
         val channel = currentSuggestionChannel.value
         val commandResult = runCatching {
-            commandRepository.checkForCommands(message, channel)
+            commandRepository.checkForCommands(message, channel, skipSuspendingCommands)
         }.getOrElse {
             eventChannel.send(Event.Error(it))
             return@launch
@@ -411,6 +429,10 @@ class MainViewModel @Inject constructor(
             is CommandRepository.CommandResult.Message  -> chatRepository.sendMessage(commandResult.message)
             is CommandRepository.CommandResult.NotFound -> chatRepository.sendMessage(message)
         }
+    }
+
+    fun setRepeatedSend(enabled: Boolean, message: String) = repeatedSend.update {
+        RepeatedSendData(enabled, message)
     }
 
     fun updateChannels(channels: List<String>) = chatRepository.updateChannels(channels)

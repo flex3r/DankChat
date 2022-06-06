@@ -228,7 +228,7 @@
             app:barrierDirection="top"
             app:constraint_referenced_ids="input_layout,fullscreen_hint_text" />
 
-        <com.google.android.material.textfield.TextInputLayout
+        <com.flxrs.dankchat.main.DankChatInputLayout
             android:id="@+id/input_layout"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
@@ -248,7 +248,7 @@
             app:startIconContentDescription="@string/emote_menu_hint"
             app:startIconDrawable="@{vm.shouldShowEmoteMenuIcon ? @drawable/ic_insert_emoticon : null}">
 
-            <com.flxrs.dankchat.utils.DankChatInput
+            <com.flxrs.dankchat.main.DankChatInput
                 android:id="@+id/input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -259,7 +259,7 @@
                 android:paddingStart="12dp"
                 android:paddingEnd="8dp"
                 android:singleLine="true" />
-        </com.google.android.material.textfield.TextInputLayout>
+        </com.flxrs.dankchat.main.DankChatInputLayout>
 
         <TextView
             android:id="@+id/fullscreen_hint_text"
