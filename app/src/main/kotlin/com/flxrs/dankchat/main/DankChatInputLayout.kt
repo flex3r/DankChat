@@ -45,8 +45,8 @@ class DankChatInputLayout @JvmOverloads constructor(
             return false
         }
 
-
         endIconTouchListener = touchListener
+
         if (touchListener == null) {
             imageButton.setOnTouchListener(null)
             return true
@@ -54,7 +54,6 @@ class DankChatInputLayout @JvmOverloads constructor(
 
         imageButton.isFocusable = true
         imageButton.isClickable = true
-        imageButton.isPressed = true
 
         var firstFingerIndex = INVALID_FINGER_INDEX
         var isHolding = false

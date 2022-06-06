@@ -254,6 +254,7 @@ class MainFragment : Fragment() {
                 when {
                     it   -> binding.inputLayout.setup()
                     else -> with(binding.inputLayout) {
+                        setEndIconTouchListener(null)
                         setEndIconOnClickListener(null)
                         setEndIconOnLongClickListener(null)
                         setStartIconOnClickListener(null)
@@ -940,11 +941,14 @@ class MainFragment : Fragment() {
 
     private fun DankChatInputLayout.setup() {
         val touchListenerAdded = when {
-            dankChatPreferences.repeatedSendingEnabled -> setEndIconTouchListener { holdTouchEvent ->
-                when (holdTouchEvent) {
-                    DankChatInputLayout.TouchEvent.CLICK      -> sendMessage()
-                    DankChatInputLayout.TouchEvent.LONG_CLICK -> getLastMessage()
-                    else                                      -> repeatSendMessage(holdTouchEvent)
+            dankChatPreferences.repeatedSendingEnabled -> {
+                setEndIconOnClickListener {  } // for ripple effects
+                setEndIconTouchListener { holdTouchEvent ->
+                    when (holdTouchEvent) {
+                        DankChatInputLayout.TouchEvent.CLICK      -> sendMessage()
+                        DankChatInputLayout.TouchEvent.LONG_CLICK -> getLastMessage()
+                        else                                      -> repeatSendMessage(holdTouchEvent)
+                    }
                 }
             }
             else                                       -> false
