@@ -262,6 +262,8 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_fetch_streams_title">Abrufen von Stream-Informationen</string>
     <string name="preference_fetch_streams_summary">Aktiviert regelmäßiges Abrufen von Stream-Informationen. Erforderlich zum Starten des eingebetteten Streams.</string>
     <string name="preference_auto_disable_input_title">Deaktiviere Eingabefeld bei fehlender Chat Verbindung</string>
+    <string name="preference_repeated_sending_title">Aktiviere kontinuierliches Senden</string>
+    <string name="preference_repeated_sending_summary">Erlaubt kontinuierliches Senden von Nachrichten, während Senden gehalten wird</string>
     <plurals name="viewers">
         <item quantity="one">Live mit %d Zuschauer</item>
         <item quantity="other">Live mit %d Zuschauern</item>

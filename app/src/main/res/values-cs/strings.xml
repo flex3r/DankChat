@@ -262,6 +262,8 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_fetch_streams_title">Načítat informace o streamu</string>
     <string name="preference_fetch_streams_summary">Pravidelně načítá informace o streamech přidaných kanálů. Nutné pro spuštění vloženého streamu.</string>
     <string name="preference_auto_disable_input_title">Zakázat vstupní pole, pokud není navázáno připojení k chatu</string>
+    <string name="preference_repeated_sending_title">Povolit opakované odesílání</string>
+    <string name="preference_repeated_sending_summary">Umožňuje nepřetržité odesílání zpráv při podržení tlačítka odeslání.</string>
     <plurals name="viewers">
         <item quantity="one">Živě s %d divákem</item>
         <item quantity="few">Živě se %d diváky</item>
