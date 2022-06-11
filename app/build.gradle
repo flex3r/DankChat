@@ -29,15 +29,6 @@ android {
     buildFeatures {
         dataBinding = true
     }
-    flavorDimensions "localization"
-    productFlavors {
-        localized {
-            dimension "localization"
-        }
-        free {
-            dimension "localization"
-        }
-    }
     buildTypes {
         release {
             minifyEnabled true
