@@ -114,7 +114,7 @@ jobs:
           encodedString: ${{ secrets.SIGNING_KEY }}
 
       - name: Build signed release apk
-        run: bash ./gradlew app:bundleRelease
+        run: bash ./gradlew app:assembleRelease
         env:
           SIGNING_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
