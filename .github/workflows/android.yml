@@ -9,7 +9,7 @@ on:
 jobs:
   test:
     if: ${{ false }} # KKona
-    name: Run Unit Tests
+    name: Run unit tests
     runs-on: ubuntu-latest
 
     steps:
@@ -24,10 +24,10 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
       - name: Unit tests
-        run: bash ./gradlew testFreeDebug --stacktrace
+        run: bash ./gradlew testDebug --stacktrace
 
   lint:
-    name: Run Lint
+    name: Run lint
     runs-on: ubuntu-latest
 
     steps:
@@ -42,10 +42,10 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
       - name: Lint
-        run: bash ./gradlew lintVitalFreeRelease
+        run: bash ./gradlew lintVitalRelease
 
   build:
-    name: Generate APK
+    name: Generate apk
     runs-on: ubuntu-latest
 
     steps:
@@ -60,13 +60,13 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
       - name: Build Debug APK
-        run: bash ./gradlew :app:assembleFreeDebug
+        run: bash ./gradlew :app:assembleDebug
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v2
         with:
-          name: App
-          path: ${{ github.workspace }}/app/build/outputs/apk/free/debug/*.apk
+          name: debug apk
+          path: ${{ github.workspace }}/app/build/outputs/apk/debug/*.apk
 
       - name: Update debug tag
         if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
@@ -83,6 +83,59 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: debug
           name: Debug APK
-          files: ${{ github.workspace }}/app/build/outputs/apk/free/debug/DankChat-freeDebug.apk
+          files: ${{ github.workspace }}/app/build/outputs/apk/debug/DankChat-debug.apk
+          gzip: false
+          allow_override: true
+
+  build-release:
+    name: Generate signed release apk
+    runs-on: ubuntu-latest
+    environment: release
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: gradle-${{ runner.os }}-${{ hashFiles('**.gradle', '**/**.gradle', '**/gradle/wrapper/gradle-wrapper.properties') }}
+      - name: set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      - uses: r0adkll/sign-android-release@v1
+        name: Sign app APK
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: "32.0.0"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: Signed release apk
+          path: ${{steps.sign_app.outputs.signedReleaseFile}}
+
+      - name: Update release tag
+        uses: richardsimko/update-tag@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: release
+
+      - name: Update signed release
+        uses: meeDamian/github-release@2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: release
+          name: Signed release APK
+          files: ${{steps.sign_app.outputs.signedReleaseFile}}
           gzip: false
           allow_override: true
