@@ -59,7 +59,8 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '11'
-      - name: Build Debug APK
+
+      - name: Build debug apk
         run: bash ./gradlew :app:assembleDebug
 
       - name: Upload APK artifact
@@ -105,23 +106,25 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
 
-      - uses: r0adkll/sign-android-release@v1
-        name: Sign app APK
-        id: sign_app
+      - name: Decode Keystore
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1
         with:
-          releaseDirectory: app/build/outputs/apk/release
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          alias: ${{ secrets.KEY_ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
+          fileName: 'keystore/DankChat.jks'
+          encodedString: ${{ secrets.SIGNING_KEY }}
+
+      - name: Build signed release apk
+        run: bash ./gradlew app:bundleRelease
         env:
-          BUILD_TOOLS_VERSION: "32.0.0"
+          SIGNING_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v2
         with:
           name: Signed release apk
-          path: ${{steps.sign_app.outputs.signedReleaseFile}}
+          path: ${{ github.workspace }}/app/build/outputs/apk/release/*.apk
 
       - name: Update release tag
         uses: richardsimko/update-tag@v1
@@ -136,6 +139,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: release
           name: Signed release APK
-          files: ${{steps.sign_app.outputs.signedReleaseFile}}
+          files: ${{ github.workspace }}/app/build/outputs/apk/release/*.apk
           gzip: false
           allow_override: true
