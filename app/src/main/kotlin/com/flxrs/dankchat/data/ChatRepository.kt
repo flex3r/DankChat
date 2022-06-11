@@ -614,7 +614,11 @@ class ChatRepository @Inject constructor(
             ?.map {
                 it as TwitchMessage // TODO
                 if (it.name == name) {
-                    lastMessage[it.channel] = it.originalMessage
+                    val previousLastMessage = lastMessage[it.channel]?.trimEndSpecialChar()
+                    if (previousLastMessage != it.originalMessage.trimEndSpecialChar()) {
+                        lastMessage[it.channel] = it.originalMessage
+                    }
+
                     val hasVip = it.badges.any { badge -> badge.badgeTag?.startsWith("vip") == true }
                     userState.update { userState ->
                         val updatedVipChannels = when {
