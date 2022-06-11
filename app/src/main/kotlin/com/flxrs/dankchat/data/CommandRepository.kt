@@ -43,7 +43,12 @@ class CommandRepository @Inject constructor(
             return CommandResult.NotFound
         }
 
+
         val trigger = words.first()
+        if (skipSuspendingCommands) {
+            return checkUserCommands(trigger)
+        }
+
         return when (Command.values().find { it.trigger == trigger }) {
             Command.BLOCK    -> blockUserCommand(words.drop(1))
             Command.UNBLOCK  -> unblockUserCommand(words.drop(1))
