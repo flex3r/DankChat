@@ -4,6 +4,7 @@ import com.flxrs.dankchat.data.api.dto.*
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import io.ktor.client.*
 import io.ktor.client.call.*
+import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
@@ -31,6 +32,14 @@ class ApiManager @Inject constructor(
     private val sevenTVApiService: SevenTVApiService,
     private val dankChatPreferenceStore: DankChatPreferenceStore
 ) {
+
+    @Suppress("UNCHECKED_CAST")
+    private val uploadClient = client.config {
+        this as HttpClientConfig<CIOEngineConfig>
+        engine {
+            requestTimeout = 60_000
+        }
+    }
 
     suspend fun validateUser(token: String): ValidateUserDto? = authApiService.validateUser(token).bodyOrNull()
 
@@ -112,7 +121,7 @@ class ApiManager @Inject constructor(
         val formData = formData {
             append(uploader.formField, file.readBytes(), headers)
         }
-        val response = client.submitFormWithBinaryData(uploader.uploadUrl, formData) {
+        val response = uploadClient.submitFormWithBinaryData(uploader.uploadUrl, formData) {
             uploader.parsedHeaders.forEach { (key, value) ->
                 header(key, value)
             }
