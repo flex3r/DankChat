@@ -8,8 +8,7 @@ apply plugin: 'kotlinx-serialization'
 
 android {
     compileSdkVersion 32
-    //noinspection GradleDependency
-    buildToolsVersion "32.0.0"
+    buildToolsVersion "33.0.0"
     defaultConfig {
         applicationId "com.flxrs.dankchat"
         minSdkVersion 21
@@ -81,7 +80,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        useIR = true
         jvmTarget = "11"
         freeCompilerArgs += [
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
