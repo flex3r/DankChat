@@ -269,7 +269,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
         <item quantity="other">Live mit %d Zuschauern</item>
     </plurals>
     <plurals name="months">
-        <item quantity="one">Monat</item>
-        <item quantity="other">Monate</item>
+        <item quantity="one">%d Monat</item>
+        <item quantity="other">%d Monate</item>
     </plurals>
 </resources>
