@@ -117,13 +117,13 @@ Služba dočasně ukládá zprávy pro kanály, které vy (a další) navštív�
     <string name="uploader_add_header_name">Název</string>
     <string name="uploader_add_header_value">Hodnota</string>
     <string name="uploader_title">Vlastní nahrávač médií</string>
-    <string name="uploader_reset">Tovární nastavení</string>
+    <string name="uploader_reset">Obnovit nastavení</string>
     <string name="uploader_url">Nahrávací URL</string>
     <string name="uploader_field">Pole formuláře</string>
     <string name="uploader_headers">Hlavičky</string>
     <string name="uploader_image_link">Vzor odkazu pro obrázek</string>
     <string name="uploader_deletion_link">Vzor odkazu pro smazání</string>
-    <string name="uploader_description">Můžete nastavit vlastního hostitele pro nahrávání obrázku, jako jsou imgur.com nebo s-ul.eu. DankChat používá stejný konfigurační menu jako Chatterino.
+    <string name="uploader_description">Můžete nastavit vlastního hostitele pro nahrávání médií, jako je imgur.com nebo s-ul.eu. DankChat používá stejný formát nastavení jako Chatterino.
 Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploader</string>
     <string name="toggle_fullscreen">Zapnou plnou obrazovku</string>
     <string name="toggle_stream">Zapnout stream</string>
