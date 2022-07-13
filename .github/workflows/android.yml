@@ -108,9 +108,10 @@ jobs:
 
       - name: Decode Keystore
         id: decode_keystore
-        uses: timheuer/base64-to-file@v1
+        uses: timheuer/base64-to-file@v1.1
         with:
-          fileName: 'DankChat/app/keystore/DankChat.jks'
+          fileName: '/app/keystore/DankChat.jks'
+          fileDir: ${{ github.workspace }}
           encodedString: ${{ secrets.SIGNING_KEY }}
 
       - name: Build signed release apk
