@@ -52,6 +52,7 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             manifestPlaceholders = [applicationLabel: "@string/app_name"]
+            signingConfig signingConfigs.release
         }
         debug {
             minifyEnabled true
