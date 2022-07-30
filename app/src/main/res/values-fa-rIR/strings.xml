@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DankChat</string>
+    <string name="app_name_dank">DankChat (Dank)</string>
+    <string name="send_hint">ارسال پیام</string>
+    <string name="login">وارد شدن</string>
+    <string name="reload_emotes">بارگذاری مجدد ایموت ها</string>
+    <string name="reconnect">اتصال مجدد</string>
+    <string name="clear_chat">پاک کردن چت</string>
+    <string name="add_dialog_title">افزودن کانال</string>
+    <string name="edit_dialog_title">تغییر نام کانال</string>
+    <string name="dialog_ok">تایید</string>
+    <string name="dialog_cancel">انصراف</string>
+    <string name="dialog_dismiss">معاف کردن</string>
+    <string name="error_dialog_copy">رونوشت</string>
+    <string name="error_dialog_title">Caught exception: %1$s</string>
+    <string name="add_channel">افزودن کانال</string>
+    <string name="manage_channels">مدیریت کانال ها</string>
+    <string name="report_channel">گزارش تخلف کانال</string>
+    <string name="block_channel">مسدود کردن کانال</string>
+    <string name="channel">کانال</string>
+    <string name="open_channel">باز کردن کانال</string>
+    <string name="remove_channel">حذف کانال</string>
+    <string name="channel_blocked_message">کانال مسدود شد</string>
+    <string name="no_channels_added">هیچ کانالی اضافه نشده</string>
+    <string name="confirm_logout_title">تایید خروج</string>
+    <string name="confirm_logout_message">آیا مطمئن هستید که می خواهید خارج شوید؟</string>
+    <string name="confirm_logout_positive_button">خروج</string>
+    <string name="upload_media">بارگذاری رسانه</string>
+    <string name="take_picture">عکس گرفتن</string>
+    <string name="record_video">ضبط ویدئو</string>
+    <string name="choose_media">رسانه موجود را انتخاب کنید</string>
+    <string name="hide_actionbar">مخفی کردن نوار ابزار</string>
+    <string name="resume_scroll">از سر گرفتن چرخش</string>
+    <string name="uploading_image">در حال بارگذاری پرونده</string>
+    <string name="settings">تنظیمات</string>
+    <string name="nuuls_upload_disclaimer">میزبانی خارجی ارائه شده توسط https://nuuls.com/i، با مسئولیت خودتان استفاده کنید.</string>
+    <string name="nuuls_upload_title">بارگذاری رسانه های سفارشی</string>
+</resources>
