@@ -6,4 +6,11 @@ files:
       - /**/dimens.xml
       - /**/ic_*.xml
       - /**/themes*.xml
+      - /**/emotes_*.xml
+      - /**/theme_*.xml
+      - /**/timeout_*.xml
+      - /**/timestamp_*.xml
+      - /**/roomstate_*.xml
+      - /**/mention_*.xml
+      - /**/badges_entry_values.xml
     translation: /%original_path%-%android_code%/%original_file_name%
