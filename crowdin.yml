@@ -6,4 +6,4 @@ files:
       - /**/dimens.xml
       - /**/ic_*.xml
       - /**/themes*.xml
-    translation: /app/src/main/res/values-%android_code%/%original_file_name%
+    translation: /%original_path%-%android_code%/%original_file_name%
