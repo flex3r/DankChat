@@ -7,3 +7,6 @@ files:
       - /**/ic_*.xml
       - /**/themes*.xml
     translation: /app/src/main/res/values-%android_code%/%original_file_name%
+    translate_content: 0
+    translate_attributes: 0
+    content_segmentation: 0
