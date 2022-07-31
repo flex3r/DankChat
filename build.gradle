@@ -6,35 +6,35 @@ buildscript {
 
         // Plugins
         agp_version = '7.2.1'
-        kotlin_version = '1.7.0'
+        kotlin_version = '1.7.10'
 
         // Kotlin
-        coroutines_version = '1.6.3'
+        coroutines_version = '1.6.4'
         serialization_version = '1.3.3'
 
         // AndroidX
-        activity_version = '1.5.0'
+        activity_version = '1.5.1'
         browser_version = '1.4.0'
         constraint_version = '2.1.4'
         core_version = '1.8.0'
-        emoji_version = '1.2.0-alpha04'
+        emoji_version = '1.2.0-rc01'
         exif_version = '1.3.3'
-        fragment_version = '1.5.0'
-        lifecycle_version = '2.5.0'
+        fragment_version = '1.5.1'
+        lifecycle_version = '2.5.1'
         media_version = '1.6.0'
-        nav_version = '2.5.0'
+        nav_version = '2.5.1'
         preference_version = '1.2.0'
         recyclerview_version = '1.2.1'
         viewpager2_version = '1.1.0-beta01'
-        material_version = '1.7.0-alpha02'
+        material_version = '1.7.0-alpha03'
         webkit_version = '1.4.0'
-        room_version = '2.4.2'
+        room_version = '2.4.3'
 
         // Third-party
         coil_version = '2.1.0'
         gif_drawable_version = '1.2.24'
         okhttp_version = '5.0.0-alpha.7'
-        hilt_version = '2.42'
+        hilt_version = '2.43.1'
         ktor_version = '2.0.3'
 
         // Localization
