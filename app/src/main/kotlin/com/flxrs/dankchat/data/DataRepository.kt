@@ -60,13 +60,12 @@ class DataRepository @Inject constructor(
     suspend fun blockUser(targetUserId: String): Boolean = apiManager.blockUser(targetUserId)
     suspend fun unblockUser(targetUserId: String): Boolean = apiManager.unblockUser(targetUserId)
 
-    suspend fun uploadMedia(file: File): String? {
-        val upload = apiManager.uploadMedia(file)
-        if (upload != null) {
-            recentUploadsRepository.addUpload(upload)
+    suspend fun uploadMedia(file: File): Result<String> {
+        val uploadResult = apiManager.uploadMedia(file)
+        return uploadResult.mapCatching {
+            recentUploadsRepository.addUpload(it)
+            it.imageLink
         }
-
-        return upload?.imageLink
     }
 
     suspend fun loadGlobalBadges() = withContext(Dispatchers.Default) {

@@ -14,7 +14,7 @@ data class ImageUploader(
                 val splits = it.split(":", limit = 2)
                 when {
                     splits.size != 2 -> null
-                    else             -> Pair(splits[0], splits[1])
+                    else             -> Pair(splits[0].trim(), splits[1].trim())
                 }
             }.orEmpty()
 }

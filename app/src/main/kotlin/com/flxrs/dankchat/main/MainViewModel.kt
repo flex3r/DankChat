@@ -10,6 +10,7 @@ import com.flxrs.dankchat.data.ChatRepository
 import com.flxrs.dankchat.data.CommandRepository
 import com.flxrs.dankchat.data.DataRepository
 import com.flxrs.dankchat.data.EmoteUsageRepository
+import com.flxrs.dankchat.data.api.ApiException
 import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.data.state.DataLoadingState
 import com.flxrs.dankchat.data.state.ImageUploadState
@@ -495,17 +496,20 @@ class MainViewModel @Inject constructor(
     fun uploadMedia(file: File) {
         viewModelScope.launch {
             _imageUploadedState.emit(ImageUploadState.Loading(file))
-            val result = runCatching {
-                dataRepository.uploadMedia(file)
-            }
-
-            val state = when {
-                result.isSuccess -> result.getOrNull()?.let {
+            val result = dataRepository.uploadMedia(file)
+            val state = result.fold(
+                onSuccess = {
                     file.delete()
                     ImageUploadState.Finished(it)
-                } ?: ImageUploadState.Failed(null, file)
-                else             -> ImageUploadState.Failed(result.exceptionOrNull()?.stackTraceToString(), file)
-            }
+                },
+                onFailure = {
+                   val message =  when (it) {
+                        is ApiException -> "${it.status} ${it.message}"
+                        else -> it.stackTraceToString()
+                    }
+                    ImageUploadState.Failed(message, file)
+                }
+            )
             _imageUploadedState.emit(state)
         }
     }

@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.data.api
 
+import android.util.Log
 import com.flxrs.dankchat.data.api.dto.*
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import io.ktor.client.*
@@ -110,7 +111,7 @@ class ApiManager @Inject constructor(
     suspend fun getChatters(channel: String): ChattersDto? = tmiApiService.getChatters(channel).bodyOrNull<ChattersResultDto>()?.chatters
     suspend fun getChatterCount(channel: String): Int? = tmiApiService.getChatters(channel).bodyOrNull<ChatterCountDto>()?.chatterCount
 
-    suspend fun uploadMedia(file: File): UploadDto? = withContext(Dispatchers.IO) {
+    suspend fun uploadMedia(file: File): Result<UploadDto> = withContext(Dispatchers.IO) {
         val uploader = dankChatPreferenceStore.customImageUploader
         val extension = file.extension.ifBlank { "png" }
         val mimetype = URLConnection.guessContentTypeFromName(file.name)
@@ -132,26 +133,32 @@ class ApiManager @Inject constructor(
                 val deletionLinkPattern = uploader.deletionLinkPattern
 
                 if (imageLinkPattern == null) {
-                    return@withContext response.bodyOrNull<String>()?.let {
+                    return@withContext runCatching {
+                        val body = response.bodyAsText()
                         UploadDto(
-                            imageLink = it,
+                            imageLink = body,
                             deleteLink = null,
                             timestamp = Instant.now()
                         )
                     }
                 }
 
-                val json = response.jsonObjectOrNull() ?: return@withContext null
-                val deleteLink = deletionLinkPattern?.let { json.extractLink(it) }
-                val imageLink = json.extractLink(imageLinkPattern)
+                val jsonResult = response.asJsonObject()
+                jsonResult.mapCatching { json ->
+                    val deleteLink = deletionLinkPattern?.let { json.extractLink(it) }
+                    val imageLink = json.extractLink(imageLinkPattern)
+                    UploadDto(
+                        imageLink = imageLink,
+                        deleteLink = deleteLink,
+                        timestamp = Instant.now()
+                    )
+                }
 
-                UploadDto(
-                    imageLink = imageLink,
-                    deleteLink = deleteLink,
-                    timestamp = Instant.now()
-                )
             }
-            else                        -> null
+            else                        -> {
+                Log.d("ApiManager", "Upload failed with ${response.status} ${response.bodyAsText()}")
+                Result.failure(ApiException(response.status.value, response.status.description))
+            }
         }
     }
 
@@ -169,10 +176,12 @@ class ApiManager @Inject constructor(
         imageLink
     }
 
-    private suspend fun HttpResponse.jsonObjectOrNull(): JSONObject? = runCatching {
-        val bodyString = bodyOrNull<String>() ?: return@runCatching null
+    private suspend fun HttpResponse.asJsonObject(): Result<JSONObject> = runCatching {
+        val bodyString = bodyAsText()
         JSONObject(bodyString)
-    }.getOrNull()
+    }.onFailure {
+        Log.d("ApiManager", "Error creating JsonObject from response: ", it)
+    }
 
     private fun JSONObject.getValue(pattern: String): String? {
         return runCatching {
@@ -219,4 +228,8 @@ class ApiManager @Inject constructor(
     }
 }
 
-suspend inline fun <reified T> HttpResponse.bodyOrNull(): T? = runCatching { body<T>() }.getOrNull()
+// TODO Should return Result<T>
+suspend inline fun <reified T> HttpResponse.bodyOrNull(): T? = runCatching { body<T>() }.getOrElse {
+    Log.d("ApiManager", "Failed to parse body as ${T::class.java}: ", it)
+    null
+}
