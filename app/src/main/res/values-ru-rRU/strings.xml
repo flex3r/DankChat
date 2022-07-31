@@ -113,10 +113,19 @@
     <string name="confirm_user_block_positive_button">Заблокировать</string>
     <string name="restart_required">Чтобы изменения вступили в силу, требуется перезагрузка</string>
     <string name="restart">Перезапустить</string>
+    <string name="uploader_add_header">Добавить заголовок</string>
     <string name="uploader_add_header_name">Имя</string>
     <string name="uploader_add_header_value">Значение</string>
+    <string name="uploader_title">Пользовательский загрузчик медиа</string>
+    <string name="uploader_reset">Сбросить по умолчанию</string>
+    <string name="uploader_url">Загрузить URL</string>
+    <string name="uploader_field">Форма поля</string>
+    <string name="uploader_headers">Заголовок</string>
+    <string name="uploader_image_link">Шаблон медиа ссылки</string>
+    <string name="uploader_deletion_link">Шаблон для удаления ссылки</string>
     <string name="uploader_description">Вы можете настроить собственный хостинг для загрузки медиа, например imgur.com или s-ul.eu. DankChat использует схожий с Chatterino формат настройки.\nПосмотрите здесь, если хотите узнать подробнее (на английском): https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="toggle_fullscreen">Полноэкранный режим</string>
+    <string name="toggle_stream">Отображать трансляцию </string>
     <string name="account">Аккаунт</string>
     <string name="relogin">Войти снова</string>
     <string name="logout">Выйти</string>
@@ -143,13 +152,20 @@
     <string name="minutes">Минуты</string>
     <string name="add_command">Добавить команду</string>
     <string name="remove_command">Удалить команду</string>
+    <string name="command_trigger_hint">Триггер</string>
     <string name="command__hint">Команда</string>
     <string name="commands_title">Пользовательские команды</string>
     <string name="user_popup_report">Пожаловаться</string>
     <string name="tts_ignore_list_add_user">Добавить пользователя</string>
     <string name="tts_ignore_list_remove_user">Удалить пользователя</string>
     <string name="tts_ignore_list_user_hint">Пользователь</string>
+    <string name="recent_upload_deletion_link">Ссылка для удаления:\n%1$s</string>
     <string name="recent_uploads_clear">Очистить загрузки</string>
+    <string name="host">Хост</string>
+    <string name="reset">Перезагрузить</string>
+    <string name="badge_tooltip_moderator">Модератор</string>
+    <string name="badge_tooltip_predictions">Прогноз \"%1$s\"</string>
+    <string name="badge_tooltip_sub_tier">Уровень %1$s</string>
     <string name="preference_timestamp_title">Отображать временные метки</string>
     <string name="preference_mention_format_title">Формат упоминаний</string>
     <string name="preference_mention_format_summary">Изменить формат упоминания при нажатии на имя пользователя</string>
@@ -174,6 +190,7 @@
     <string name="preference_true_dark_theme_title">Истинно-тёмное оформление</string>
     <string name="preference_true_dark_theme_summary">Переключает цвет заднего фона чата на чёрный</string>
     <string name="preference_display_group_title">Отображение</string>
+    <string name="preference_components_group_title">Компоненты</string>
     <string name="preference_show_timed_out_messages_title">Отображать удалённые сообщения</string>
     <string name="preference_custom_mentions_title">Пользовательские упоминания</string>
     <string name="preference_custom_mentions_summary">Добавить собственные фразы в качестве упоминаний</string>
@@ -223,7 +240,11 @@
     <string name="preference_tts_force_english_summary">Переключить язык синтезатора речи с системного на английский</string>
     <string name="preference_visible_emotes_title">Видимые сторонние смайлы</string>
     <string name="preference_uploader_title">Пользовательский загрузчик медиа</string>
+    <string name="preference_show_stream_title">Отображать переключатель трансляции</string>
+    <string name="preference_show_stream_summary">Отображать переключатель для встраивания активных трансляций</string>
     <string name="preference_about_tos">Условия пользования и политика пользователя Twitch:</string>
+    <string name="preference_show_chip_actions_title">Отображать быстрые переключатели</string>
+    <string name="preference_show_chip_actions_summary">Отображать переключатели для полноэкранного режима, трансляций и настройки режимов чата</string>
     <string name="preference_uploader_header">Загрузчик медиа</string>
     <string name="preference_uploader_configure_title">Настроить загрузчик</string>
     <string name="preference_uploader_recent_uploads_title">Недавние загрузки</string>
@@ -233,10 +254,24 @@
     <string name="preference_theme_title">Оформление</string>
     <string name="preference_dark_theme_entry_title">Тёмное оформление</string>
     <string name="preference_light_theme_entry_title">Светлое оформление</string>
+    <string name="preference_unlisted_emotes_title">Разрешить незарегистрированные смайлы</string>
+    <string name="preference_unlisted_emotes_summary">Отключить фильтрацию неутвержденных или незарегистрированных смайлов</string>
+    <string name="preference_rm_host_title">Пользовательский узел последних сообщений</string>
+    <string name="preference_fetch_streams_title">Отображать информацию о трансляции</string>
+    <string name="preference_fetch_streams_summary">Периодически извлекать потоковую информацию об открытых каналах. Требуется для запуска встроенной трансляции.</string>
+    <string name="preference_auto_disable_input_title">Отключить ввод, если нет подключения к чату</string>
+    <string name="preference_repeated_sending_title">Включить повторную отправку</string>
+    <string name="preference_repeated_sending_summary">Включить непрерывную отправку сообщений, пока удерживается кнопка отправки</string>
     <plurals name="viewers">
         <item quantity="one">В сети с %d зрителем</item>
         <item quantity="few">В сети с %d зрителями</item>
         <item quantity="many">В сети с %d зрителями</item>
         <item quantity="other">В сети с %d зрителями</item>
+    </plurals>
+    <plurals name="months">
+        <item quantity="one">%d месяц</item>
+        <item quantity="few">%d месяца</item>
+        <item quantity="many">%d месяцев</item>
+        <item quantity="other">%d месяца</item>
     </plurals>
 </resources>
