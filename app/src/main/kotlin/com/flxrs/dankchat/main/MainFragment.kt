@@ -15,6 +15,7 @@ import android.view.inputmethod.EditorInfo
 import android.webkit.MimeTypeMap
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
@@ -85,7 +86,15 @@ class MainFragment : Fragment() {
     private val binding get() = bindingRef!!
     private var emoteMenuBottomSheetBehavior: BottomSheetBehavior<MaterialCardView>? = null
     private var mentionBottomSheetBehavior: BottomSheetBehavior<View>? = null
-
+    private val onBackPressedCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            when {
+                emoteMenuBottomSheetBehavior?.isVisible == true -> emoteMenuBottomSheetBehavior?.hide()
+                mentionBottomSheetBehavior?.isVisible == true   -> mentionBottomSheetBehavior?.hide()
+                mainViewModel.isFullscreen                      -> mainViewModel.toggleFullscreen()
+            }
+        }
+    }
 
     @Inject
     lateinit var dankChatPreferences: DankChatPreferenceStore
@@ -203,7 +212,7 @@ class MainFragment : Fragment() {
                         context?.let {
                             val fallback = ContextCompat.getColor(it, android.R.color.white)
                             val color = MaterialColors.getColor(it, mentionIconColor, fallback)
-                            icon.setTintList(ColorStateList.valueOf(color))
+                            icon?.setTintList(ColorStateList.valueOf(color))
                         }
                     }
 
@@ -333,6 +342,7 @@ class MainFragment : Fragment() {
                     }
                 }
             }
+            collectFlow(useCustomBackHandling) { onBackPressedCallback.isEnabled = it }
             collectFlow(dankChatViewModel.validationResult) {
                 when (it) {
                     // wait for username to be validated before showing snackbar
@@ -386,14 +396,7 @@ class MainFragment : Fragment() {
 
         (requireActivity() as AppCompatActivity).apply {
             setSupportActionBar(binding.toolbar)
-            onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-                when {
-                    emoteMenuBottomSheetBehavior?.isVisible == true -> emoteMenuBottomSheetBehavior?.hide()
-                    mentionBottomSheetBehavior?.isVisible == true   -> mentionBottomSheetBehavior?.hide()
-                    mainViewModel.isFullscreen                      -> mainViewModel.toggleFullscreen()
-                    else                                            -> finish()
-                }
-            }
+            onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackPressedCallback)
 
             ViewCompat.setOnApplyWindowInsetsListener(binding.showChips) { v, insets ->
                 val needsExtraMargin = binding.streamWebview.isVisible || isLandscape || !mainViewModel.isFullscreenFlow.value
@@ -1005,6 +1008,7 @@ class MainFragment : Fragment() {
                         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
 
                         override fun onStateChanged(bottomSheet: View, newState: Int) {
+                            mainViewModel.setEmoteSheetOpen(emoteMenuBottomSheetBehavior?.isMoving == true || emoteMenuBottomSheetBehavior?.isVisible == true)
                             if (!mainViewModel.isFullscreenFlow.value && isLandscape) {
                                 when (newState) {
                                     BottomSheetBehavior.STATE_EXPANDED, BottomSheetBehavior.STATE_COLLAPSED -> {
