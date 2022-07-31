@@ -22,6 +22,7 @@ import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlin.math.roundToInt
 
 class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
 
@@ -52,7 +53,8 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
 
     private fun showMultiEntryPreference(root: View, key: String, sharedPreferences: SharedPreferences, title: CharSequence?): Boolean {
         val context = root.context
-        val sheetHeight = (resources.displayMetrics.heightPixels * 0.6f).toInt()
+        val windowHeight = resources.displayMetrics.heightPixels
+        val peekHeight = (windowHeight * 0.6).roundToInt()
         val entries = runCatching {
             sharedPreferences
                 .getStringSet(key, emptySet())
@@ -68,7 +70,7 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
             multiEntryTitle.text = title ?: ""
             multiEntryList.adapter = entryAdapter
             multiEntrySheet.updateLayoutParams {
-                height = sheetHeight
+                height = windowHeight
             }
         }
 
@@ -83,7 +85,8 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
 
                 sharedPreferences.edit { putStringSet(key, stringSet) }
             }
-            behavior.peekHeight = sheetHeight
+            behavior.isFitToContents = false
+            behavior.peekHeight = peekHeight
             show()
         }
 

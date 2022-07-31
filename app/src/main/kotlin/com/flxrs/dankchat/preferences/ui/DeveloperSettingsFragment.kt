@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.updateLayoutParams
 import androidx.preference.Preference
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.RmHostBottomsheetBinding
@@ -15,6 +16,7 @@ import com.flxrs.dankchat.utils.extensions.withTrailingSlash
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class DeveloperSettingsFragment : MaterialPreferenceFragmentCompat() {
@@ -45,11 +47,16 @@ class DeveloperSettingsFragment : MaterialPreferenceFragmentCompat() {
 
     private fun showRmHostPreference(root: View): Boolean {
         val context = root.context
+        val windowHeight = resources.displayMetrics.heightPixels
+        val peekHeight = (windowHeight * 0.6).roundToInt()
         val currentHost = dankChatPreferenceStore.customRmHost
         val binding = RmHostBottomsheetBinding.inflate(LayoutInflater.from(context), root as? ViewGroup, false).apply {
             rmHostInput.setText(currentHost)
             hostReset.setOnClickListener {
                 rmHostInput.setText(dankChatPreferenceStore.resetRmHost())
+            }
+            rmHostSheet.updateLayoutParams {
+                height = windowHeight
             }
         }
 
@@ -65,7 +72,8 @@ class DeveloperSettingsFragment : MaterialPreferenceFragmentCompat() {
                     view?.showRestartRequired()
                 }
             }
-            behavior.peekHeight = (resources.displayMetrics.heightPixels * 0.6f).toInt()
+            behavior.isFitToContents = false
+            behavior.peekHeight = peekHeight
             show()
         }
 

@@ -24,6 +24,7 @@ import com.flxrs.dankchat.utils.extensions.showRestartRequired
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlin.math.roundToInt
 
 class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
 
@@ -79,7 +80,8 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
 
     private fun showCommandsPreference(root: View, key: String, sharedPreferences: SharedPreferences): Boolean {
         val context = root.context
-        val sheetHeight = (resources.displayMetrics.heightPixels * 0.6f).toInt()
+        val windowHeight = resources.displayMetrics.heightPixels
+        val peekHeight = (windowHeight * 0.6).roundToInt()
         val commands = runCatching {
             sharedPreferences
                 .getStringSet(key, emptySet())
@@ -92,7 +94,7 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
         val binding = CommandsBottomsheetBinding.inflate(LayoutInflater.from(context), root as? ViewGroup, false).apply {
             commandsList.adapter = commandAdapter
             commandsSheet.updateLayoutParams {
-                height = sheetHeight
+                height = windowHeight
             }
         }
 
@@ -107,7 +109,8 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
 
                 sharedPreferences.edit { putStringSet(key, stringSet) }
             }
-            behavior.peekHeight = sheetHeight
+            behavior.isFitToContents = false
+            behavior.peekHeight = peekHeight
             show()
         }
 

@@ -32,6 +32,7 @@ import com.flxrs.dankchat.preferences.upload.RecentUploadsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
@@ -89,14 +90,15 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
 
     private fun showImageUploaderPreference(root: View): Boolean {
         val context = root.context
-
+        val windowHeight = resources.displayMetrics.heightPixels
+        val peekHeight = (windowHeight * 0.6).roundToInt()
         val binding = UploaderBottomsheetBinding.inflate(LayoutInflater.from(context), root as? ViewGroup, false).apply {
             uploader = dankChatPreferenceStore.customImageUploader
             uploaderReset.setOnClickListener {
                 uploader = dankChatPreferenceStore.resetImageUploader()
             }
             uploaderSheet.updateLayoutParams {
-                height = (resources.displayMetrics.heightPixels * 0.6f).toInt()
+                height = windowHeight
             }
             LinkifyCompat.addLinks(uploaderDescription, Linkify.WEB_URLS)
         }
@@ -111,7 +113,8 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
                     deletionLinkPattern = uploader.deletionLinkPattern?.takeIf { it.isNotBlank() },
                 )
             }
-            behavior.peekHeight = (resources.displayMetrics.heightPixels * 0.6f).toInt()
+            behavior.isFitToContents = false
+            behavior.peekHeight = peekHeight
             show()
         }
 
@@ -120,7 +123,8 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
 
     private fun showTtsIgnoreListPreference(root: View, key: String, sharedPreferences: SharedPreferences): Boolean {
         val context = root.context
-        val sheetHeight = (resources.displayMetrics.heightPixels * 0.6f).toInt()
+        val windowHeight = resources.displayMetrics.heightPixels
+        val peekHeight = (windowHeight * 0.6).roundToInt()
         val items = runCatching {
             sharedPreferences
                 .getStringSet(key, emptySet())
@@ -133,7 +137,7 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
         val binding = TtsIgnoreListBottomsheetBinding.inflate(LayoutInflater.from(context), root as? ViewGroup, false).apply {
             ttsIgnoreList.adapter = ttsIgnoreListAdapter
             ttsIgnoreListSheet.updateLayoutParams {
-                height = sheetHeight
+                height = windowHeight
             }
         }
 
@@ -148,7 +152,8 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
 
                 sharedPreferences.edit { putStringSet(key, stringSet) }
             }
-            behavior.peekHeight = sheetHeight
+            behavior.isFitToContents = false
+            behavior.peekHeight = peekHeight
             show()
         }
 
@@ -157,13 +162,14 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
 
     private fun showRecentUploads(root: View): Boolean {
         val context = root.context
-        val sheetHeight = (resources.displayMetrics.heightPixels * 0.6f).toInt()
+        val windowHeight = resources.displayMetrics.heightPixels
+        val peekHeight = (windowHeight * 0.6).roundToInt()
 
         val adapter = RecentUploadsAdapter()
         val binding = RecentUploadsBottomsheetBinding.inflate(LayoutInflater.from(context), view as? ViewGroup, false).apply {
             uploadsList.adapter = adapter
             uploadsSheet.updateLayoutParams {
-                height = sheetHeight
+                height = windowHeight
             }
             clearUploads.setOnClickListener {
                 viewModel.clearUploads()
@@ -182,7 +188,8 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
         BottomSheetDialog(context).apply {
             setContentView(binding.root)
             setOnDismissListener { collectJob.cancel() }
-            behavior.peekHeight = sheetHeight
+            behavior.isFitToContents = false
+            behavior.peekHeight = peekHeight
             show()
         }
 

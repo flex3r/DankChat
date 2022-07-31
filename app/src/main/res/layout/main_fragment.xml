@@ -159,16 +159,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <ImageView
+                    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
                         android:id="@+id/bottom_sheet_indicator"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="8dp"
                         app:layout_constraintBottom_toTopOf="@id/bottom_sheet_tabs"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_maximize" />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <com.google.android.material.tabs.TabLayout
                         android:id="@+id/bottom_sheet_tabs"
