@@ -1,6 +1,8 @@
 package com.flxrs.dankchat.utils.extensions
 
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
@@ -53,3 +55,7 @@ inline fun <reified T> SavedStateHandle.withData(key: String, block: (T) -> Unit
     val data = remove<T>(key) ?: return
     block(data)
 }
+
+val isAtLeastTiramisu: Boolean by lazy { Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU }
+
+fun Context.hasPermission(permission: String): Boolean = ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED
