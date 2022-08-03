@@ -257,7 +257,7 @@
     <string name="preference_unlisted_emotes_title">Разрешить незарегистрированные смайлы</string>
     <string name="preference_unlisted_emotes_summary">Отключить фильтрацию неутвержденных или незарегистрированных смайлов</string>
     <string name="preference_rm_host_title">Пользовательский узел последних сообщений</string>
-    <string name="preference_fetch_streams_title">Отображать информацию о трансляции</string>
+    <string name="preference_fetch_streams_title">Получать информацию о трансляции</string>
     <string name="preference_fetch_streams_summary">Периодически извлекать потоковую информацию об открытых каналах. Требуется для запуска встроенной трансляции.</string>
     <string name="preference_auto_disable_input_title">Отключить ввод, если нет подключения к чату</string>
     <string name="preference_repeated_sending_title">Включить повторную отправку</string>
