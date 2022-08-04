@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.IBinder
 import android.speech.tts.TextToSpeech
 import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
 import androidx.core.content.edit
 import androidx.core.content.getSystemService
 import androidx.media.app.NotificationCompat.MediaStyle
@@ -85,12 +86,12 @@ class NotificationService : Service(), CoroutineScope {
     override fun onBind(intent: Intent?): IBinder = binder
 
     override fun onDestroy() {
-        cancel()
+        coroutineContext.cancelChildren()
         manager.cancelAll()
         shutdownTTS()
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
 
-        stopForeground(true)
+        ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
         stopSelf()
         super.onDestroy()
     }
