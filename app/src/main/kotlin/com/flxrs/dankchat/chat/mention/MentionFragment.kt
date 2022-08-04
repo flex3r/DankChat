@@ -26,10 +26,10 @@ class MentionFragment : Fragment() {
     private lateinit var tabAdapter: MentionTabAdapter
     private lateinit var tabLayoutMediator: TabLayoutMediator
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         tabAdapter = MentionTabAdapter(this)
         bindingRef = MentionFragmentBinding.inflate(inflater, container, false).apply {
-            mentionsToolbar.setNavigationOnClickListener { activity?.onBackPressed() }
+            mentionsToolbar.setNavigationOnClickListener { activity?.onBackPressedDispatcher?.onBackPressed() }
             mentionViewpager.setup()
             tabLayoutMediator = TabLayoutMediator(mentionTabs, mentionViewpager) { tab, position ->
                 tab.text = when (position) {
