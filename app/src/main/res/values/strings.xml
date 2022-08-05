@@ -158,7 +158,7 @@
     <string name="host">Host</string>
     <string name="reset">Reset</string>
     <string name="badge_tooltip_moderator">Moderator</string>
-    <string name="badge_tooltip_vip"  translatable="false">VIP</string>
+    <string name="badge_tooltip_vip" translatable="false">VIP</string>
     <string name="badge_tooltip_bits" translatable="false">Twitch cheer %1$s</string>
     <string name="badge_tooltip_predictions">Predicted "%1$s"</string>
     <string name="badge_tooltip_sub_tier">Tier %1$s</string>

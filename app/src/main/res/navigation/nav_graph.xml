@@ -178,6 +178,6 @@
             app:argType="boolean" />
         <argument
             android:name="badges"
-            app:argType="com.flxrs.dankchat.data.twitch.badge.Badge[]"/>
+            app:argType="com.flxrs.dankchat.data.twitch.badge.Badge[]" />
     </dialog>
 </navigation>
