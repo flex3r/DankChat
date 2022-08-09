@@ -6,6 +6,7 @@ import com.flxrs.dankchat.data.ChatRepository
 import com.flxrs.dankchat.data.DataRepository
 import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.utils.extensions.withoutOAuthSuffix
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,7 +35,7 @@ class DankChatViewModel @Inject constructor(
         } else {
             started = true
             viewModelScope.launch {
-                val token = oAuth.substring(6) // remove the "oauth:" prefix
+                val token = oAuth.withoutOAuthSuffix
                 val result = apiManager.validateUser(token)
                 val nameToUpdate = result?.login ?: name // fallback to old name if oAuth fail
                 _currentUserName.value = nameToUpdate
