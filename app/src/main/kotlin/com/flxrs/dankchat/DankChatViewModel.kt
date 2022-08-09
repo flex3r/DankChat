@@ -7,6 +7,9 @@ import com.flxrs.dankchat.data.DataRepository
 import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,6 +25,9 @@ class DankChatViewModel @Inject constructor(
     var started = false
         private set
 
+    private val _currentUserName = MutableStateFlow<String?>(null)
+    val currentUserName: StateFlow<String?> get() = _currentUserName.asStateFlow()
+
     fun init(name: String, oAuth: String, channels: List<String>, tryReconnect: Boolean) {
         if (tryReconnect && started) {
             chatRepository.reconnectIfNecessary()
@@ -31,6 +37,7 @@ class DankChatViewModel @Inject constructor(
                 val token = oAuth.substring(6) // remove the "oauth:" prefix
                 val result = apiManager.validateUser(token)
                 val nameToUpdate = result?.login ?: name // fallback to old name if oAuth fail
+                _currentUserName.value = nameToUpdate
                 dankChatPreferenceStore.userName = nameToUpdate
                 chatRepository.connectAndJoin(nameToUpdate, oAuth, channels)
             }

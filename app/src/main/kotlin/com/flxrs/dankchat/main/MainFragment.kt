@@ -28,6 +28,7 @@ import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.core.view.*
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -36,6 +37,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.BuildConfig
+import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.chat.menu.EmoteMenuAdapter
@@ -76,6 +78,7 @@ import kotlin.math.roundToInt
 class MainFragment : Fragment() {
 
     private val mainViewModel: MainViewModel by viewModels()
+    private val dankChatViewModel: DankChatViewModel by activityViewModels()
     private val navController: NavController by lazy { findNavController() }
     private var bindingRef: MainFragmentBinding? = null
     private val binding get() = bindingRef!!
@@ -403,9 +406,11 @@ class MainFragment : Fragment() {
                         isUserChange = false,
                         loadTwitchData = true,
                     )
-                    val name = dankChatPreferences.userName
-                    if (dankChatPreferences.isLoggedIn && name != null) {
-                        showSnackBar(getString(R.string.snackbar_login, name))
+                    // wait for username to be validated before showing snackbar
+                    collectFlow(dankChatViewModel.currentUserName) {
+                        if (dankChatPreferences.isLoggedIn && it != null) {
+                            showSnackBar(getString(R.string.snackbar_login, it))
+                        }
                     }
                 }
             }
@@ -703,7 +708,6 @@ class MainFragment : Fragment() {
         with(binding) {
             input.clearFocus()
             tabs.isVisible = !isFullscreen
-            root.requestApplyInsets()
         }
     }
 
