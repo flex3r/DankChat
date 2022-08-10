@@ -9,7 +9,6 @@ import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.withoutOAuthSuffix
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -40,30 +39,24 @@ class DankChatViewModel @Inject constructor(
             viewModelScope.launch {
                 val token = oAuth.withoutOAuthSuffix
 
-                var finished = false
-                while (!finished) {
-                    runCatching {
-                        apiManager.validateUser(token)
-                    }.fold({ result ->
-                        _currentUserName.value = result?.login // don't fallback for currentUserName, so we don't show logging in snackbar
-                        val nameToUpdate = result?.login ?: name // fallback to old name if oAuth fail, so app still "mostly" works
-                        dankChatPreferenceStore.userName = nameToUpdate
-                        chatRepository.connectAndJoin(nameToUpdate, oAuth, channels)
-
-                        // oAuth failed (invalid or non existent token)
-                        if (result == null) {
-                            // invalid token
-                            if (token.isNotEmpty()) {
-                                _validationError.emit(OAuthValidationError.OAuthTokenInvalid)
-                            }
+                var nameToUpdate = name // fallback to old name
+                runCatching {
+                    apiManager.validateUser(token)
+                }.fold({ result ->
+                    nameToUpdate = result?.login ?: name // update name to new name if result success otherwise, stay old name
+                    if (result == null) {
+                        // oAuth failed, show error message
+                        if (token.isNotEmpty()) {
+                            _validationError.emit(OAuthValidationError.OAuthTokenInvalid)
                         }
-                        finished = true
-                    }) {
-                        // Connection failure
-                        _validationError.emit(OAuthValidationError.OAuthValidationFailure)
-                        delay(5000)
                     }
+                }) {
+                    // Connection failure
+                    _validationError.emit(OAuthValidationError.OAuthValidationFailure)
                 }
+                _currentUserName.value = nameToUpdate
+                dankChatPreferenceStore.userName = nameToUpdate
+                chatRepository.connectAndJoin(nameToUpdate, oAuth, channels)
             }
         }
     }
