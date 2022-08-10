@@ -421,13 +421,13 @@ class MainFragment : Fragment() {
                     OAuthValidationError.OAuthTokenInvalid      -> {
                         // I'm too donk to create a Fragment or something sorry
                         MaterialAlertDialogBuilder(requireContext())
-                            .setTitle("Login Expired!")
-                            .setMessage("Your OAuth token is expired! Please login again.")
-                            .setPositiveButton("Login Again") { _, _ -> navigateSafe(R.id.action_mainFragment_to_loginFragment) }
-                            .setNegativeButton("Later") { _, _ -> } // default action is dismissing anyway
+                            .setTitle(getString(R.string.oauth_expired_title))
+                            .setMessage(getString(R.string.oauth_expired_message))
+                            .setPositiveButton(getString(R.string.oauth_expired_login_again)) { _, _ -> navigateSafe(R.id.action_mainFragment_to_loginFragment) }
+                            .setNegativeButton(getString(R.string.oauth_expired_dismiss)) { _, _ -> } // default action is dismissing anyway
                             .create().show()
                     }
-                    OAuthValidationError.OAuthValidationFailure -> showSnackBar("Failed to verify OAuth token, check your connection")
+                    OAuthValidationError.OAuthValidationFailure -> showSnackBar(getString(R.string.oauth_verify_failed))
                 }
 
             }
