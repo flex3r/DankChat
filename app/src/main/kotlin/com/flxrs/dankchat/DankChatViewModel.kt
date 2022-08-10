@@ -45,8 +45,8 @@ class DankChatViewModel @Inject constructor(
                     runCatching {
                         apiManager.validateUser(token)
                     }.fold({ result ->
-                        val nameToUpdate = result?.login ?: name // fallback to old name if oAuth fail
-                        _currentUserName.value = nameToUpdate
+                        _currentUserName.value = result?.login // don't fallback for currentUserName, so we don't show logging in snackbar
+                        val nameToUpdate = result?.login ?: name // fallback to old name if oAuth fail, so app still "mostly" works
                         dankChatPreferenceStore.userName = nameToUpdate
                         chatRepository.connectAndJoin(nameToUpdate, oAuth, channels)
 

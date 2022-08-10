@@ -415,12 +415,19 @@ class MainFragment : Fragment() {
                     }
                 }
             }
-
             // handle oAuth validation error
             collectFlow(dankChatViewModel.validationError) {
                 when (it) {
-                    OAuthValidationError.OAuthTokenInvalid      -> showSnackBar("Invalid or expired token, try logging in again")
-                    OAuthValidationError.OAuthValidationFailure -> showSnackBar("Cannot verify OAuth Token, check your connection")
+                    OAuthValidationError.OAuthTokenInvalid      -> {
+                        // I'm too donk to create a Fragment or something sorry
+                        MaterialAlertDialogBuilder(requireContext())
+                            .setTitle("Login Expired!")
+                            .setMessage("Your OAuth token is expired! Please login again to send chat messages. You can still read chat messages.")
+                            .setPositiveButton("Login Again") { _, _ -> navigateSafe(R.id.action_mainFragment_to_loginFragment) }
+                            .setNegativeButton("Later") { _, _ -> } // default action is dismissing any
+                            .create().show()
+                    }
+                    OAuthValidationError.OAuthValidationFailure -> showSnackBar("Failed to verify OAuth token, check your connection")
                 }
 
             }
@@ -956,7 +963,7 @@ class MainFragment : Fragment() {
     private fun DankChatInputLayout.setup() {
         val touchListenerAdded = when {
             dankChatPreferences.repeatedSendingEnabled -> {
-                setEndIconOnClickListener {  } // for ripple effects
+                setEndIconOnClickListener { } // for ripple effects
                 setEndIconTouchListener { holdTouchEvent ->
                     when (holdTouchEvent) {
                         DankChatInputLayout.TouchEvent.CLICK      -> sendMessage()
