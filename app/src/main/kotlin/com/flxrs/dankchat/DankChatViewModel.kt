@@ -8,9 +8,9 @@ import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.withoutOAuthSuffix
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,6 +29,9 @@ class DankChatViewModel @Inject constructor(
     private val _currentUserName = MutableStateFlow<String?>(null)
     val currentUserName: StateFlow<String?> get() = _currentUserName.asStateFlow()
 
+    private val _validationError = MutableSharedFlow<OAuthValidationError>(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    val validationError get() = _validationError.asSharedFlow()
+
     fun init(name: String, oAuth: String, channels: List<String>, tryReconnect: Boolean) {
         if (tryReconnect && started) {
             chatRepository.reconnectIfNecessary()
@@ -36,11 +39,31 @@ class DankChatViewModel @Inject constructor(
             started = true
             viewModelScope.launch {
                 val token = oAuth.withoutOAuthSuffix
-                val result = apiManager.validateUser(token)
-                val nameToUpdate = result?.login ?: name // fallback to old name if oAuth fail
-                _currentUserName.value = nameToUpdate
-                dankChatPreferenceStore.userName = nameToUpdate
-                chatRepository.connectAndJoin(nameToUpdate, oAuth, channels)
+
+                var finished = false
+                while (!finished) {
+                    runCatching {
+                        apiManager.validateUser(token)
+                    }.fold({ result ->
+                        val nameToUpdate = result?.login ?: name // fallback to old name if oAuth fail
+                        _currentUserName.value = nameToUpdate
+                        dankChatPreferenceStore.userName = nameToUpdate
+                        chatRepository.connectAndJoin(nameToUpdate, oAuth, channels)
+
+                        // oAuth failed (invalid or non existent token)
+                        if (result == null) {
+                            // invalid token
+                            if (token.isNotEmpty()) {
+                                _validationError.emit(OAuthValidationError.OAuthTokenInvalid)
+                            }
+                        }
+                        finished = true
+                    }) {
+                        // Connection failure
+                        _validationError.emit(OAuthValidationError.OAuthValidationFailure)
+                        delay(5000)
+                    }
+                }
             }
         }
     }

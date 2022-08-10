@@ -38,6 +38,7 @@ import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.DankChatViewModel
+import com.flxrs.dankchat.OAuthValidationError
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.chat.menu.EmoteMenuAdapter
@@ -413,6 +414,15 @@ class MainFragment : Fragment() {
                         }
                     }
                 }
+            }
+
+            // handle oAuth validation error
+            collectFlow(dankChatViewModel.validationError) {
+                when (it) {
+                    OAuthValidationError.OAuthTokenInvalid      -> showSnackBar("Invalid or expired token, try logging in again")
+                    OAuthValidationError.OAuthValidationFailure -> showSnackBar("Cannot verify OAuth Token, check your connection")
+                }
+
             }
         }
     }
