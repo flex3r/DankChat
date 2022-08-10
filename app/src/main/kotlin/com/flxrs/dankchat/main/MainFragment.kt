@@ -422,9 +422,9 @@ class MainFragment : Fragment() {
                         // I'm too donk to create a Fragment or something sorry
                         MaterialAlertDialogBuilder(requireContext())
                             .setTitle("Login Expired!")
-                            .setMessage("Your OAuth token is expired! Please login again to send chat messages. You can still read chat messages.")
+                            .setMessage("Your OAuth token is expired! Please login again.")
                             .setPositiveButton("Login Again") { _, _ -> navigateSafe(R.id.action_mainFragment_to_loginFragment) }
-                            .setNegativeButton("Later") { _, _ -> } // default action is dismissing any
+                            .setNegativeButton("Later") { _, _ -> } // default action is dismissing anyway
                             .create().show()
                     }
                     OAuthValidationError.OAuthValidationFailure -> showSnackBar("Failed to verify OAuth token, check your connection")
