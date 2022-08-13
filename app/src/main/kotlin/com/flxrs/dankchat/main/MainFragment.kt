@@ -424,7 +424,7 @@ class MainFragment : Fragment() {
                             .setTitle(getString(R.string.oauth_expired_title))
                             .setMessage(getString(R.string.oauth_expired_message))
                             .setPositiveButton(getString(R.string.oauth_expired_login_again)) { _, _ -> navigateSafe(R.id.action_mainFragment_to_loginFragment) }
-                            .setNegativeButton(getString(R.string.oauth_expired_dismiss)) { _, _ -> } // default action is dismissing anyway
+                            .setNegativeButton(getString(R.string.dialog_dismiss)) { _, _ -> } // default action is dismissing anyway
                             .create().show()
                     }
                     OAuthValidationError.OAuthValidationFailure -> showSnackBar(getString(R.string.oauth_verify_failed))
