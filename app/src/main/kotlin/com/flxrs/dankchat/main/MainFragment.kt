@@ -419,7 +419,6 @@ class MainFragment : Fragment() {
             collectFlow(dankChatViewModel.validationError) {
                 when (it) {
                     OAuthValidationError.OAuthTokenInvalid      -> {
-                        // I'm too donk to create a Fragment or something sorry
                         MaterialAlertDialogBuilder(requireContext())
                             .setTitle(getString(R.string.oauth_expired_title))
                             .setMessage(getString(R.string.oauth_expired_message))
