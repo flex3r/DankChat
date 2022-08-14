@@ -38,8 +38,8 @@ import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.DankChatViewModel
-import com.flxrs.dankchat.OAuthResult
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.ValidationResult
 import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.chat.menu.EmoteMenuAdapter
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
@@ -410,8 +410,8 @@ class MainFragment : Fragment() {
                     // wait for username to be validated before showing snackbar
                     collectFlow(dankChatViewModel.oAuthResult) {
                         when (it) {
-                            is OAuthResult.UserName            -> showSnackBar(getString(R.string.snackbar_login, it.username))
-                            OAuthResult.OAuthTokenInvalid      -> {
+                            is ValidationResult.User      -> showSnackBar(getString(R.string.snackbar_login, it.username))
+                            ValidationResult.TokenInvalid -> {
                                 MaterialAlertDialogBuilder(requireContext())
                                     .setTitle(getString(R.string.oauth_expired_title))
                                     .setMessage(getString(R.string.oauth_expired_message))
@@ -419,7 +419,7 @@ class MainFragment : Fragment() {
                                     .setNegativeButton(getString(R.string.dialog_dismiss)) { _, _ -> } // default action is dismissing anyway
                                     .create().show()
                             }
-                            OAuthResult.OAuthValidationFailure -> showSnackBar(getString(R.string.oauth_verify_failed))
+                            ValidationResult.Failure      -> showSnackBar(getString(R.string.oauth_verify_failed))
                         }
                     }
                 }

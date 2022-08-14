@@ -26,7 +26,7 @@ class DankChatViewModel @Inject constructor(
     var started = false
         private set
 
-    private val _oauthResult = MutableSharedFlow<OAuthResult>(extraBufferCapacity = 2, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    private val _oauthResult = MutableSharedFlow<ValidationResult>(extraBufferCapacity = 2, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     val oAuthResult get() = _oauthResult.asSharedFlow()
 
     fun init(name: String, oAuth: String, channels: List<String>, tryReconnect: Boolean) {
@@ -38,17 +38,21 @@ class DankChatViewModel @Inject constructor(
                 val token = oAuth.withoutOAuthSuffix
                 val nameToUse = runCatching {
                     val result = apiManager.validateUser(token)
-                    if (result == null && token.isNotEmpty()) {
-                        _oauthResult.emit(OAuthResult.OAuthTokenInvalid)
+                    if (result == null) { // true when no token, or invalid token
+                        if (token.isNotEmpty()) {
+                            // only display message when invalid token
+                            _oauthResult.emit(ValidationResult.TokenInvalid)
+                        }
+                        return@runCatching null
                     }
-                    val nameWithFallback = result?.login ?: name
-                    _oauthResult.emit(OAuthResult.UserName(nameWithFallback)) // show username, only if not connection error
-                    nameWithFallback
+                    // show Logging in as <user> only when success
+                    _oauthResult.emit(ValidationResult.User(result.login))
+                    result.login
                 }.getOrElse {
                     // Connection failure
-                    _oauthResult.emit(OAuthResult.OAuthValidationFailure)
-                    name // fallback to old name
-                }
+                    _oauthResult.emit(ValidationResult.Failure)
+                    null
+                } ?: name
                 dankChatPreferenceStore.userName = nameToUse
                 chatRepository.connectAndJoin(nameToUse, oAuth, channels)
             }
