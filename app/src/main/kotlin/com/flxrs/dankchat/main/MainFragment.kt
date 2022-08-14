@@ -38,7 +38,7 @@ import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.DankChatViewModel
-import com.flxrs.dankchat.OAuthValidationError
+import com.flxrs.dankchat.OAuthResult
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.chat.menu.EmoteMenuAdapter
@@ -408,27 +408,21 @@ class MainFragment : Fragment() {
                         loadTwitchData = true,
                     )
                     // wait for username to be validated before showing snackbar
-                    collectFlow(dankChatViewModel.currentUserName) {
-                        if (dankChatPreferences.isLoggedIn && it != null) {
-                            showSnackBar(getString(R.string.snackbar_login, it))
+                    collectFlow(dankChatViewModel.oAuthResult) {
+                        when (it) {
+                            is OAuthResult.UserName            -> showSnackBar(getString(R.string.snackbar_login, it.username))
+                            OAuthResult.OAuthTokenInvalid      -> {
+                                MaterialAlertDialogBuilder(requireContext())
+                                    .setTitle(getString(R.string.oauth_expired_title))
+                                    .setMessage(getString(R.string.oauth_expired_message))
+                                    .setPositiveButton(getString(R.string.oauth_expired_login_again)) { _, _ -> navigateSafe(R.id.action_mainFragment_to_loginFragment) }
+                                    .setNegativeButton(getString(R.string.dialog_dismiss)) { _, _ -> } // default action is dismissing anyway
+                                    .create().show()
+                            }
+                            OAuthResult.OAuthValidationFailure -> showSnackBar(getString(R.string.oauth_verify_failed))
                         }
                     }
                 }
-            }
-            // handle oAuth validation error
-            collectFlow(dankChatViewModel.validationError) {
-                when (it) {
-                    OAuthValidationError.OAuthTokenInvalid      -> {
-                        MaterialAlertDialogBuilder(requireContext())
-                            .setTitle(getString(R.string.oauth_expired_title))
-                            .setMessage(getString(R.string.oauth_expired_message))
-                            .setPositiveButton(getString(R.string.oauth_expired_login_again)) { _, _ -> navigateSafe(R.id.action_mainFragment_to_loginFragment) }
-                            .setNegativeButton(getString(R.string.dialog_dismiss)) { _, _ -> } // default action is dismissing anyway
-                            .create().show()
-                    }
-                    OAuthValidationError.OAuthValidationFailure -> showSnackBar(getString(R.string.oauth_verify_failed))
-                }
-
             }
         }
     }
