@@ -130,12 +130,14 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager, priva
 
     suspend fun setFFZGlobalEmotes(ffzResult: FFZGlobalDto) = withContext(Dispatchers.Default) {
         globalFFZEmotes.clear()
-        ffzResult.sets.forEach {
-            it.value.emotes.forEach { emote ->
-                val parsedEmote = parseFFZEmote(emote)
-                globalFFZEmotes[parsedEmote.code] = parsedEmote
+        ffzResult.sets
+            .filter { it.key in ffzResult.defaultSets }
+            .forEach { (_, emoteSet) ->
+                emoteSet.emotes.forEach { emote ->
+                    val parsedEmote = parseFFZEmote(emote)
+                    globalFFZEmotes[parsedEmote.code] = parsedEmote
+                }
             }
-        }
     }
 
     suspend fun setBTTVEmotes(channel: String, bttvResult: BTTVChannelDto) = withContext(Dispatchers.Default) {

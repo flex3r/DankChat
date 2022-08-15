@@ -32,4 +32,7 @@ data class FFZChannelDto(
 
 @Keep
 @Serializable
-data class FFZGlobalDto(@SerialName(value = "sets") val sets: Map<String, FFZEmoteSetDto>)
+data class FFZGlobalDto(
+    @SerialName(value = "default_sets") val defaultSets: List<String>,
+    @SerialName(value = "sets") val sets: Map<String, FFZEmoteSetDto>
+)
