@@ -264,6 +264,10 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_auto_disable_input_title">Deaktiviere Eingabefeld bei fehlender Chat Verbindung</string>
     <string name="preference_repeated_sending_title">Aktiviere kontinuierliches Senden</string>
     <string name="preference_repeated_sending_summary">Erlaubt kontinuierliches Senden von Nachrichten, während Senden gehalten wird</string>
+    <string name="oauth_expired_title">Login abgelaufen!</string>
+    <string name="oauth_expired_message">Dein Login-Token ist abgelaufen! Bitte melde dich erneut an.</string>
+    <string name="oauth_expired_login_again">Erneut anmelden</string>
+    <string name="oauth_verify_failed">Login-Token konnte nicht verifiziert werden, überprüfe deine Verbindung.</string>
     <plurals name="viewers">
         <item quantity="one">Live mit %d Zuschauer</item>
         <item quantity="other">Live mit %d Zuschauern</item>
