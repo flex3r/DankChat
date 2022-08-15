@@ -34,7 +34,7 @@ class DankChatViewModel @Inject constructor(
             chatRepository.reconnectIfNecessary()
         } else {
             started = true
-            if (oAuth.isNotEmpty()) {
+            if (dankChatPreferenceStore.isLoggedIn) {
                 viewModelScope.launch {
                     val token = oAuth.withoutOAuthSuffix
                     val nameToUse = runCatching {
