@@ -518,11 +518,6 @@ class MainFragment : Fragment() {
             isUserChange = false,
             loadTwitchData = true,
         )
-
-        val name = dankChatPreferences.userName
-        if (dankChatPreferences.isLoggedIn && name != null) {
-            showSnackBar(getString(R.string.snackbar_login, name))
-        }
     }
 
     private fun handleUserPopupResult(result: UserPopupResult) = when (result) {
