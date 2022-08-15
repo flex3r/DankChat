@@ -34,27 +34,26 @@ class DankChatViewModel @Inject constructor(
             chatRepository.reconnectIfNecessary()
         } else {
             started = true
-            viewModelScope.launch {
-                val token = oAuth.withoutOAuthSuffix
-                val nameToUse = runCatching {
-                    val result = apiManager.validateUser(token)
-                    if (result == null) { // true when no token, or invalid token
-                        if (token.isNotEmpty()) {
-                            // only display message when invalid token
+            if (oAuth.isNotEmpty()) {
+                viewModelScope.launch {
+                    val token = oAuth.withoutOAuthSuffix
+                    val nameToUse = runCatching {
+                        val result = apiManager.validateUser(token)
+                        if (result == null) {
                             _oauthResult.send(ValidationResult.TokenInvalid)
+                            return@runCatching null
                         }
-                        return@runCatching null
-                    }
-                    // show Logging in as <user> only when success
-                    _oauthResult.send(ValidationResult.User(result.login))
-                    result.login
-                }.getOrElse {
-                    // Connection failure
-                    _oauthResult.send(ValidationResult.Failure)
-                    null
-                } ?: name
-                dankChatPreferenceStore.userName = nameToUse
-                chatRepository.connectAndJoin(nameToUse, oAuth, channels)
+                        // show Logging in as <user> only when success
+                        _oauthResult.send(ValidationResult.User(result.login))
+                        result.login
+                    }.getOrElse {
+                        // Connection failure
+                        _oauthResult.send(ValidationResult.Failure)
+                        null
+                    } ?: name
+                    dankChatPreferenceStore.userName = nameToUse
+                    chatRepository.connectAndJoin(nameToUse, oAuth, channels)
+                }
             }
         }
     }
