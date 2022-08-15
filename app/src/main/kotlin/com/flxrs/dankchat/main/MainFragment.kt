@@ -341,7 +341,7 @@ class MainFragment : Fragment() {
                         MaterialAlertDialogBuilder(requireContext())
                             .setTitle(getString(R.string.oauth_expired_title))
                             .setMessage(getString(R.string.oauth_expired_message))
-                            .setPositiveButton(getString(R.string.oauth_expired_login_again)) { _, _ -> navigateSafe(R.id.action_mainFragment_to_loginFragment) }
+                            .setPositiveButton(getString(R.string.oauth_expired_login_again)) { _, _ -> openLogin(true) }
                             .setNegativeButton(getString(R.string.dialog_dismiss)) { _, _ -> } // default action is dismissing anyway
                             .create().show()
                     }
