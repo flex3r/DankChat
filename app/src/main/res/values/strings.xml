@@ -315,7 +315,7 @@
     <string name="preference_repeated_sending_title">Enable repeated sending</string>
     <string name="preference_repeated_sending_summary">Enables continuous message sending while send button is held</string>
     <string name="oauth_expired_title">Login Expired!</string>
-    <string name="oauth_expired_message">Your login token is expired! Please login again.</string>
+    <string name="oauth_expired_message">Your login token has expired! Please login again.</string>
     <string name="oauth_expired_login_again">Login Again</string>
     <string name="oauth_verify_failed">Failed to verify the login token, check your connection</string>
 
