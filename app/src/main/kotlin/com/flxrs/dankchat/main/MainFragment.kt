@@ -333,7 +333,7 @@ class MainFragment : Fragment() {
                     }
                 }
             }
-            collectFlow(dankChatViewModel.oAuthResult) {
+            collectFlow(dankChatViewModel.validationResult) {
                 when (it) {
                     // wait for username to be validated before showing snackbar
                     is ValidationResult.User      -> showSnackBar(getString(R.string.snackbar_login, it.username))

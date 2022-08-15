@@ -1,6 +1,7 @@
 package com.flxrs.dankchat
 
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.data.ChatRepository
@@ -26,40 +27,42 @@ class DankChatViewModel @Inject constructor(
     var started = false
         private set
 
-    private val _oauthResult = Channel<ValidationResult>(Channel.BUFFERED)
-    val oAuthResult get() = _oauthResult.receiveAsFlow()
+    private val _validationResult = Channel<ValidationResult>(Channel.BUFFERED)
+    val validationResult get() = _validationResult.receiveAsFlow()
 
-    fun init(name: String, oAuth: String, channels: List<String>, tryReconnect: Boolean) {
+    fun init(tryReconnect: Boolean) {
         if (tryReconnect && started) {
             chatRepository.reconnectIfNecessary()
         } else {
             started = true
+
             viewModelScope.launch {
-                val nameToUse = validateUser(oAuth.withoutOAuthSuffix) ?: name
-                dankChatPreferenceStore.userName = nameToUse
-                chatRepository.connectAndJoin(nameToUse, oAuth, channels)
+                if (dankChatPreferenceStore.isLoggedIn) {
+                    validateUser()
+                }
+
+                chatRepository.connectAndJoin()
             }
         }
     }
 
-    // validate name, NOTE: returning `null` to allow fallback, returning "" to not allow fallback
-    private suspend fun validateUser(token: String): String? {
-        if (!dankChatPreferenceStore.isLoggedIn) {
-            return ""
-        }
-        return runCatching {
+    private suspend fun validateUser() {
+        // no token = nothing to validate 4head
+        val token = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return
+
+        runCatching {
             val result = apiManager.validateUser(token)
             if (result == null) {
-                _oauthResult.send(ValidationResult.TokenInvalid)
-                return@runCatching null
+                _validationResult.send(ValidationResult.TokenInvalid)
+                dankChatPreferenceStore.clearLogin()
+                return@runCatching
             }
-            // show Logging in as <user> only when success
-            _oauthResult.send(ValidationResult.User(result.login))
-            result.login
+
+            _validationResult.send(ValidationResult.User(result.login))
+            dankChatPreferenceStore.userName = result.login
         }.getOrElse {
-            // Connection failure
-            _oauthResult.send(ValidationResult.Failure)
-            null
+            Log.e(TAG, "Failed to validate token:", it)
+            _validationResult.send(ValidationResult.Failure)
         }
     }
 

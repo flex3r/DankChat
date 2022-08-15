@@ -242,13 +242,13 @@ class ChatRepository @Inject constructor(
         messages[channel]?.value = emptyList()
     }
 
-    fun closeAndReconnect(name: String, oAuth: String) {
+    fun closeAndReconnect() {
         val channels = channels.value.orEmpty()
 
         readConnection.close()
         writeConnection.close()
         pubSubManager.close()
-        connectAndJoin(name, oAuth, channels)
+        connectAndJoin(channels)
     }
 
     fun reconnect() {
@@ -299,12 +299,14 @@ class ChatRepository @Inject constructor(
         }
     }
 
-    fun connectAndJoin(name: String, oAuth: String, channels: List<String>) {
+    fun connectAndJoin(channels: List<String> = dankChatPreferenceStore.getChannels()) {
         if (!pubSubManager.connected) {
             pubSubManager.start()
         }
 
         if (!readConnection.connected) {
+            val oAuth = dankChatPreferenceStore.oAuthKey.orEmpty()
+            val name = dankChatPreferenceStore.userName.orEmpty()
             connect(name, oAuth)
             joinChannels(channels)
         }

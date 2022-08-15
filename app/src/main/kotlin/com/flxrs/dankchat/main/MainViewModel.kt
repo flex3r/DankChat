@@ -439,11 +439,8 @@ class MainViewModel @Inject constructor(
     fun updateChannels(channels: List<String>) = chatRepository.updateChannels(channels)
 
     fun closeAndReconnect(loadTwitchData: Boolean = false) {
-        val name = dankChatPreferenceStore.userName.orEmpty()
-        val oAuth = dankChatPreferenceStore.oAuthKey.orEmpty()
-
-        chatRepository.closeAndReconnect(name, oAuth)
-        if (loadTwitchData && oAuth.isNotBlank()) {
+        chatRepository.closeAndReconnect()
+        if (loadTwitchData && dankChatPreferenceStore.isLoggedIn) {
             loadData(
                 isUserChange = true,
                 loadTwitchData = true,

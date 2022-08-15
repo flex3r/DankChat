@@ -199,10 +199,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
                 pendingChannelsToClear.clear()
             }
 
-            val oauth = dankChatPreferences.oAuthKey.orEmpty()
-            val name = dankChatPreferences.userName.orEmpty()
-            val channels = dankChatPreferences.getChannels()
-            viewModel.init(name, oauth, tryReconnect = !isChangingConfigurations, channels = channels)
+            viewModel.init(tryReconnect = !isChangingConfigurations)
             binder.service.checkForNotification()
         }
 
