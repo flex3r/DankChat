@@ -71,6 +71,7 @@ class MainViewModel @Inject constructor(
     private val streamData = MutableStateFlow<List<StreamData>>(emptyList())
     private val currentSuggestionChannel = MutableStateFlow("")
     private val whisperTabSelected = MutableStateFlow(false)
+    private val emoteSheetOpen = MutableStateFlow(false)
     private val mentionSheetOpen = MutableStateFlow(false)
     private val _currentStreamedChannel = MutableStateFlow("")
     private val _isFullscreen = MutableStateFlow(false)
@@ -292,6 +293,10 @@ class MainViewModel @Inject constructor(
             canShowChips && channel.isNotBlank() && channel in userState.moderationChannels
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
+    val useCustomBackHandling: StateFlow<Boolean> = combine(isFullscreenFlow, emoteSheetOpen, mentionSheetOpen) { isFullscreen, emoteSheetOpen, mentionSheetOpen ->
+        isFullscreen || emoteSheetOpen || mentionSheetOpen
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
+
     val currentStreamedChannel: StateFlow<String> = _currentStreamedChannel.asStateFlow()
     val isStreamActive: Boolean
         get() = currentStreamedChannel.value.isNotBlank()
@@ -393,6 +398,10 @@ class MainViewModel @Inject constructor(
             true -> chatRepository.clearMentionCount("w")
             else -> chatRepository.clearMentionCounts()
         }
+    }
+
+    fun setEmoteSheetOpen(enabled: Boolean) {
+        emoteSheetOpen.update { enabled }
     }
 
     fun setWhisperTabSelected(open: Boolean) {

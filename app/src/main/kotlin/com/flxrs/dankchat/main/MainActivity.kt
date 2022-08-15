@@ -1,5 +1,7 @@
 package com.flxrs.dankchat.main
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -8,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -31,6 +34,8 @@ import com.flxrs.dankchat.data.NotificationService
 import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.ui.*
+import com.flxrs.dankchat.utils.extensions.hasPermission
+import com.flxrs.dankchat.utils.extensions.isAtLeastTiramisu
 import com.flxrs.dankchat.utils.extensions.navigateSafe
 import com.google.android.material.color.DynamicColors
 import com.google.android.material.color.DynamicColorsOptions
@@ -50,6 +55,11 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
     private val navController: NavController by lazy { findNavController(R.id.main_content) }
     private var bindingRef: MainActivityBinding? = null
     private val binding get() = bindingRef!!
+
+    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+        // just start the service, we don't care if the permission has been granted or not xd
+        startService()
+    }
 
     private val twitchServiceConnection = TwitchServiceConnection()
     var notificationService: NotificationService? = null
@@ -101,8 +111,19 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
         }
     }
 
+
+    @SuppressLint("InlinedApi")
     override fun onStart() {
         super.onStart()
+        val needsNotificationPermission = isAtLeastTiramisu && hasPermission(Manifest.permission.POST_NOTIFICATIONS)
+        when {
+            needsNotificationPermission -> requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            // start service without notification permission
+            else                        -> startService()
+        }
+    }
+
+    private fun startService() {
         if (!isBound) Intent(this, NotificationService::class.java).also {
             try {
                 isBound = true

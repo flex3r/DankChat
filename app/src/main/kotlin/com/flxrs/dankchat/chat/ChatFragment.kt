@@ -52,7 +52,7 @@ open class ChatFragment : Fragment() {
     @Inject
     lateinit var emoteManager: EmoteManager
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bindingRef = ChatFragmentBinding.inflate(inflater, container, false).apply {
             lifecycleOwner = this@ChatFragment
             scrollBottom.setOnClickListener {
@@ -60,7 +60,7 @@ open class ChatFragment : Fragment() {
                 mainViewModel.isScrolling(false)
                 isAtBottom = true
                 binding.chat.stopScroll()
-                scrollToPosition(adapter.itemCount - 1)
+                scrollToPosition(position = adapter.itemCount - 1)
             }
         }
 
