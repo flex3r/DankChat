@@ -333,6 +333,21 @@ class MainFragment : Fragment() {
                     }
                 }
             }
+            collectFlow(dankChatViewModel.oAuthResult) {
+                when (it) {
+                    // wait for username to be validated before showing snackbar
+                    is ValidationResult.User      -> showSnackBar(getString(R.string.snackbar_login, it.username))
+                    ValidationResult.TokenInvalid -> {
+                        MaterialAlertDialogBuilder(requireContext())
+                            .setTitle(getString(R.string.oauth_expired_title))
+                            .setMessage(getString(R.string.oauth_expired_message))
+                            .setPositiveButton(getString(R.string.oauth_expired_login_again)) { _, _ -> navigateSafe(R.id.action_mainFragment_to_loginFragment) }
+                            .setNegativeButton(getString(R.string.dialog_dismiss)) { _, _ -> } // default action is dismissing anyway
+                            .create().show()
+                    }
+                    ValidationResult.Failure      -> showSnackBar(getString(R.string.oauth_verify_failed))
+                }
+            }
         }
 
         val navBackStackEntry = navController.getBackStackEntry(R.id.mainFragment)
@@ -407,21 +422,6 @@ class MainFragment : Fragment() {
                         isUserChange = false,
                         loadTwitchData = true,
                     )
-                    // wait for username to be validated before showing snackbar
-                    collectFlow(dankChatViewModel.oAuthResult) {
-                        when (it) {
-                            is ValidationResult.User      -> showSnackBar(getString(R.string.snackbar_login, it.username))
-                            ValidationResult.TokenInvalid -> {
-                                MaterialAlertDialogBuilder(requireContext())
-                                    .setTitle(getString(R.string.oauth_expired_title))
-                                    .setMessage(getString(R.string.oauth_expired_message))
-                                    .setPositiveButton(getString(R.string.oauth_expired_login_again)) { _, _ -> navigateSafe(R.id.action_mainFragment_to_loginFragment) }
-                                    .setNegativeButton(getString(R.string.dialog_dismiss)) { _, _ -> } // default action is dismissing anyway
-                                    .create().show()
-                            }
-                            ValidationResult.Failure      -> showSnackBar(getString(R.string.oauth_verify_failed))
-                        }
-                    }
                 }
             }
         }
