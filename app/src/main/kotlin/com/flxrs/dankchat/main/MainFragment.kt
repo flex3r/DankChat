@@ -28,6 +28,7 @@ import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.core.view.*
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -36,7 +37,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.BuildConfig
+import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.ValidationResult
 import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.chat.menu.EmoteMenuAdapter
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
@@ -76,6 +79,7 @@ import kotlin.math.roundToInt
 class MainFragment : Fragment() {
 
     private val mainViewModel: MainViewModel by viewModels()
+    private val dankChatViewModel: DankChatViewModel by activityViewModels()
     private val navController: NavController by lazy { findNavController() }
     private var bindingRef: MainFragmentBinding? = null
     private val binding get() = bindingRef!!
@@ -329,6 +333,21 @@ class MainFragment : Fragment() {
                     }
                 }
             }
+            collectFlow(dankChatViewModel.oAuthResult) {
+                when (it) {
+                    // wait for username to be validated before showing snackbar
+                    is ValidationResult.User      -> showSnackBar(getString(R.string.snackbar_login, it.username))
+                    ValidationResult.TokenInvalid -> {
+                        MaterialAlertDialogBuilder(requireContext())
+                            .setTitle(getString(R.string.oauth_expired_title))
+                            .setMessage(getString(R.string.oauth_expired_message))
+                            .setPositiveButton(getString(R.string.oauth_expired_login_again)) { _, _ -> openLogin(true) }
+                            .setNegativeButton(getString(R.string.dialog_dismiss)) { _, _ -> } // default action is dismissing anyway
+                            .create().show()
+                    }
+                    ValidationResult.Failure      -> showSnackBar(getString(R.string.oauth_verify_failed))
+                }
+            }
         }
 
         val navBackStackEntry = navController.getBackStackEntry(R.id.mainFragment)
@@ -403,10 +422,6 @@ class MainFragment : Fragment() {
                         isUserChange = false,
                         loadTwitchData = true,
                     )
-                    val name = dankChatPreferences.userName
-                    if (dankChatPreferences.isLoggedIn && name != null) {
-                        showSnackBar(getString(R.string.snackbar_login, name))
-                    }
                 }
             }
         }
@@ -703,7 +718,6 @@ class MainFragment : Fragment() {
         with(binding) {
             input.clearFocus()
             tabs.isVisible = !isFullscreen
-            root.requestApplyInsets()
         }
     }
 
@@ -942,7 +956,7 @@ class MainFragment : Fragment() {
     private fun DankChatInputLayout.setup() {
         val touchListenerAdded = when {
             dankChatPreferences.repeatedSendingEnabled -> {
-                setEndIconOnClickListener {  } // for ripple effects
+                setEndIconOnClickListener { } // for ripple effects
                 setEndIconTouchListener { holdTouchEvent ->
                     when (holdTouchEvent) {
                         DankChatInputLayout.TouchEvent.CLICK      -> sendMessage()
