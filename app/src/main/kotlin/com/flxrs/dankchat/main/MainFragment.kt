@@ -588,7 +588,7 @@ class MainFragment : Fragment() {
                 action = getString(R.string.snackbar_retry) to { mainViewModel.uploadMedia(result.mediaFile) })
             is ImageUploadState.Finished                       -> {
                 val clipboard = getSystemService(requireContext(), ClipboardManager::class.java)
-                clipboard?.setPrimaryClip(ClipData.newPlainText("nuuls image url", result.url))
+                clipboard?.setPrimaryClip(ClipData.newPlainText(CLIPBOARD_LABEL, result.url))
                 showSnackBar(
                     message = getString(R.string.snackbar_image_uploaded, result.url),
                     action = getString(R.string.snackbar_paste) to { insertText(result.url) }
@@ -1099,6 +1099,7 @@ class MainFragment : Fragment() {
         private const val DEFAULT_GUIDELINE_PERCENT = 0.6f
         private const val MAX_GUIDELINE_PERCENT = 0.8f
         private const val MIN_GUIDELINE_PERCENT = 0.2f
+        private const val CLIPBOARD_LABEL = "dankchat_media_url"
 
         const val LOGOUT_REQUEST_KEY = "logout_key"
         const val LOGIN_REQUEST_KEY = "login_key"
