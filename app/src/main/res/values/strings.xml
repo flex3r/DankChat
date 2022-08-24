@@ -253,6 +253,10 @@
     <string name="preference_tts_message_format_combined">Reads out user and message</string>
     <string name="preference_tts_message_format_key" translatable="false">tts_message_format_key</string>
     <string name="preference_tts_message_format_title">Message format mode</string>
+    <string name="preference_tts_message_filter_url_message">Reads out URLs</string>
+    <string name="preference_tts_message_filter_url_message_filter">Removes URLs from TTS</string>
+    <string name="preference_tts_message_filter_url_key" translatable="false">tts_message_filter_url</string>
+    <string name="preference_tts_message_filter_url_title">Filter URLs</string>
     <string name="preference_tts_header">TTS</string>
     <string name="checkered_messages_key" translatable="false">checkered_messages</string>
     <string name="preference_checkered_lines_title">Checkered Lines</string>

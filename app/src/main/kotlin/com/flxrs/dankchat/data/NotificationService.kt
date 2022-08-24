@@ -27,6 +27,8 @@ import com.flxrs.dankchat.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import java.util.*
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -38,12 +40,13 @@ class NotificationService : Service(), CoroutineScope {
     private val sharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
     private val preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
-            getString(R.string.preference_notification_key)         -> notificationsEnabled = sharedPreferences.getBoolean(key, true)
-            getString(R.string.preference_tts_queue_key)            -> ttsMessageQueue = sharedPreferences.getBoolean(key, true)
-            getString(R.string.preference_tts_message_format_key)   -> combinedTTSFormat = sharedPreferences.getBoolean(key, true)
-            getString(R.string.preference_tts_key)                  -> ttsEnabled = sharedPreferences.getBoolean(key, false).also { setTTSEnabled(it) }
-            getString(R.string.preference_tts_user_ignore_list_key) -> ignoredTtsUsers = sharedPreferences.getStringSet(key, emptySet()).orEmpty()
-            getString(R.string.preference_tts_force_english_key)    -> {
+            getString(R.string.preference_notification_key)           -> notificationsEnabled = sharedPreferences.getBoolean(key, true)
+            getString(R.string.preference_tts_queue_key)              -> ttsMessageQueue = sharedPreferences.getBoolean(key, true)
+            getString(R.string.preference_tts_message_format_key)     -> combinedTTSFormat = sharedPreferences.getBoolean(key, true)
+            getString(R.string.preference_tts_key)                    -> ttsEnabled = sharedPreferences.getBoolean(key, false).also { setTTSEnabled(it) }
+            getString(R.string.preference_tts_message_filter_url_key) -> removeURL = sharedPreferences.getBoolean(key, false)
+            getString(R.string.preference_tts_user_ignore_list_key)   -> ignoredTtsUsers = sharedPreferences.getStringSet(key, emptySet()).orEmpty()
+            getString(R.string.preference_tts_force_english_key)      -> {
                 forceEnglishTTS = sharedPreferences.getBoolean(key, false)
                 setTTSVoice()
             }
@@ -55,6 +58,7 @@ class NotificationService : Service(), CoroutineScope {
     private var combinedTTSFormat = false
     private var ttsMessageQueue = false
     private var forceEnglishTTS = false
+    private var removeURL = false
     private var ignoredTtsUsers = emptySet<String>()
 
     private var notificationsJob: Job? = null
@@ -117,6 +121,7 @@ class NotificationService : Service(), CoroutineScope {
             combinedTTSFormat = sharedPreferences.getBoolean(getString(R.string.preference_tts_message_format_key), true)
             forceEnglishTTS = sharedPreferences.getBoolean(getString(R.string.preference_tts_force_english_key), false)
             ttsEnabled = sharedPreferences.getBoolean(getString(R.string.preference_tts_key), false).also { setTTSEnabled(it) }
+            removeURL = sharedPreferences.getBoolean(getString(R.string.preference_tts_message_filter_url_key), false)
             ignoredTtsUsers = sharedPreferences.getStringSet(getString(R.string.preference_tts_user_ignore_list_key), emptySet()).orEmpty()
             registerOnSharedPreferenceChangeListener(preferenceListener)
         }
@@ -254,9 +259,23 @@ class NotificationService : Service(), CoroutineScope {
             ttsMessageQueue -> TextToSpeech.QUEUE_ADD
             else            -> TextToSpeech.QUEUE_FLUSH
         }
-        val ttsMessage = when (name) {
+        var ttsMessage = when (name) {
             previousTTSUser -> message
             else            -> messageFormat.also { previousTTSUser = name }
+        }
+        ttsMessage = when {
+            removeURL -> {
+                val urlPattern = "((https?|ftp|gopher|telnet|file|Unsure|http):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)"
+                val p: Pattern = Pattern.compile(urlPattern, Pattern.CASE_INSENSITIVE)
+                val m: Matcher = p.matcher(ttsMessage)
+                var i = 0
+                while (m.find()) {
+                    ttsMessage = ttsMessage.replace(m.group(i), "").trim()
+                    i++
+                }
+                ttsMessage
+            }
+            else -> ttsMessage
         }
         tts?.speak(ttsMessage, queueMode, null, null)
     }

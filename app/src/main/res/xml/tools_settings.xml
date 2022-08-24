@@ -50,6 +50,17 @@
             android:title="@string/preference_tts_force_english_title"
             app:iconSpaceReserved="false" />
 
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:dependency="@string/preference_tts_key"
+            android:key="@string/preference_tts_message_filter_url_key"
+            android:summaryOff="@string/preference_tts_message_filter_url_message"
+            android:summaryOn="@string/preference_tts_message_filter_url_message_filter"
+            android:title="@string/preference_tts_message_filter_url_title"
+            app:iconSpaceReserved="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/switchPreferenceCompat" />
         <Preference
             android:dependency="@string/preference_tts_key"
             android:key="@string/preference_tts_user_ignore_list_key"
