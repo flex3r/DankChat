@@ -793,11 +793,7 @@ class MainFragment : Fragment() {
         .setTitle(getString(R.string.confirm_logout_title))
         .setMessage(getString(R.string.confirm_logout_message))
         .setPositiveButton(getString(R.string.confirm_logout_positive_button)) { dialog, _ ->
-            // TODO refactor to single viewmodel method
-            dankChatPreferences.clearLogin()
-            mainViewModel.closeAndReconnect()
-            mainViewModel.clearIgnores()
-            mainViewModel.clearEmoteUsages()
+            mainViewModel.clearDataForLogout()
             dialog.dismiss()
         }
         .setNegativeButton(getString(R.string.dialog_cancel)) { dialog, _ -> dialog.dismiss() }

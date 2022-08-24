@@ -1,6 +1,8 @@
 package com.flxrs.dankchat.main
 
 import android.util.Log
+import android.webkit.CookieManager
+import android.webkit.WebStorage
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
@@ -673,6 +675,17 @@ class MainViewModel @Inject constructor(
             }
             else                                -> DataLoadingState.Finished
         }
+    }
+
+    fun clearDataForLogout() {
+        CookieManager.getInstance().removeAllCookies(null)
+        WebStorage.getInstance().deleteAllData()
+
+        dankChatPreferenceStore.clearLogin()
+
+        closeAndReconnect()
+        clearIgnores()
+        clearEmoteUsages()
     }
 
     companion object {

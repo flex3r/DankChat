@@ -50,11 +50,8 @@ class LoginFragment : Fragment() {
                 setupDarkTheme(resources)
             }
 
-            if (!args.isRelogin) {
-                CookieManager.getInstance().removeAllCookies(null)
-                clearCache(true)
-                clearFormData()
-            }
+            clearCache(true)
+            clearFormData()
 
             webViewClient = TwitchAuthClient()
             loadUrl(ApiManager.LOGIN_URL)
