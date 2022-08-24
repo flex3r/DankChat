@@ -42,6 +42,8 @@ class NotificationService : Service(), CoroutineScope {
             getString(R.string.preference_tts_queue_key)            -> ttsMessageQueue = sharedPreferences.getBoolean(key, true)
             getString(R.string.preference_tts_message_format_key)   -> combinedTTSFormat = sharedPreferences.getBoolean(key, true)
             getString(R.string.preference_tts_key)                  -> ttsEnabled = sharedPreferences.getBoolean(key, false).also { setTTSEnabled(it) }
+            getString(R.string.preference_tts_read_emote_key) -> readEmotes = sharedPreferences.getBoolean(key, true)
+            getString(R.string.preference_tts_read_url_key) -> readUrls = sharedPreferences.getBoolean(key, true)
             getString(R.string.preference_tts_user_ignore_list_key) -> ignoredTtsUsers = sharedPreferences.getStringSet(key, emptySet()).orEmpty()
             getString(R.string.preference_tts_force_english_key)    -> {
                 forceEnglishTTS = sharedPreferences.getBoolean(key, false)
@@ -54,6 +56,8 @@ class NotificationService : Service(), CoroutineScope {
     private var ttsEnabled = false
     private var combinedTTSFormat = false
     private var ttsMessageQueue = false
+    private var readEmotes = false
+    private var readUrls = false
     private var forceEnglishTTS = false
     private var ignoredTtsUsers = emptySet<String>()
 
@@ -254,10 +258,26 @@ class NotificationService : Service(), CoroutineScope {
             ttsMessageQueue -> TextToSpeech.QUEUE_ADD
             else            -> TextToSpeech.QUEUE_FLUSH
         }
-        val ttsMessage = when (name) {
+        var ttsMessage = when (name) {
             previousTTSUser -> message
             else            -> messageFormat.also { previousTTSUser = name }
         }
+
+        if (!readUrls) {
+            // Replace HTTP/HTTPS URLs
+            ttsMessage = ttsMessage.replace("https?:\\/\\/\\S*".toRegex(), "")
+        }
+
+        if (!readEmotes) {
+            // Replace emotes listed in message
+            this.emotes.forEach {
+                ttsMessage = ttsMessage.replace(it.code, "")
+            }
+
+            // Replace most special characters (includes unicode emotes)
+            ttsMessage = ttsMessage.replace("[^a-zA-Z0-9 \\.\\,\\!\\?]".toRegex(), "")
+        }
+
         tts?.speak(ttsMessage, queueMode, null, null)
     }
 

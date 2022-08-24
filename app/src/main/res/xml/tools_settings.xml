@@ -41,6 +41,22 @@
             android:summaryOn="@string/preference_tts_message_format_combined"
             android:title="@string/preference_tts_message_format_title"
             app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:dependency="@string/preference_tts_key"
+            android:key="@string/preference_tts_read_emote_key"
+            android:summaryOff="@string/preference_tts_read_emote_ignore"
+            android:summaryOn="@string/preference_tts_read_emote_read"
+            android:title="@string/preference_tts_read_emote_title"
+            app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:dependency="@string/preference_tts_key"
+            android:key="@string/preference_tts_read_url_key"
+            android:summaryOff="@string/preference_tts_read_url_ignore"
+            android:summaryOn="@string/preference_tts_read_url_read"
+            android:title="@string/preference_tts_read_url_title"
+            app:iconSpaceReserved="false" />
 
         <SwitchPreferenceCompat
             android:defaultValue="false"

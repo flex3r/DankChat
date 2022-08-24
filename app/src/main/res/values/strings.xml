@@ -327,4 +327,12 @@
         <item quantity="one">%d month</item>
         <item quantity="other">%d months</item>
     </plurals>
+    <string name="preference_tts_read_url_title">HTTP/HTTPS URLs</string>
+    <string name="preference_tts_read_url_read">Reads HTTP/HTTPS URLs</string>
+    <string name="preference_tts_read_url_ignore">Ignores HTTP/HTTPS URLs</string>
+    <string name="preference_tts_read_emote_title">Emotes</string>
+    <string name="preference_tts_read_emote_read">Reads emotes</string>
+    <string name="preference_tts_read_emote_ignore">Ignores emotes</string>
+    <string name="preference_tts_read_emote_key" translatable="false">tts_message_emote_read_key</string>
+    <string name="preference_tts_read_url_key" translatable="false">tts_message_url_read_key</string>
 </resources>
