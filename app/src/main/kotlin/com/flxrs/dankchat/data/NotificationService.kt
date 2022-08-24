@@ -265,14 +265,8 @@ class NotificationService : Service(), CoroutineScope {
         }
         ttsMessage = when {
             removeURL -> {
-                val urlPattern = "((https?|ftp|gopher|telnet|file|Unsure|http):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)"
-                val p: Pattern = Pattern.compile(urlPattern, Pattern.CASE_INSENSITIVE)
-                val m: Matcher = p.matcher(ttsMessage)
-                var i = 0
-                while (m.find()) {
-                    ttsMessage = ttsMessage.replace(m.group(i), "").trim()
-                    i++
-                }
+                val urlPattern = Pattern.compile("((https?|ftp|gopher|telnet|file|Unsure|http):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)", Pattern.CASE_INSENSITIVE)
+                ttsMessage = ttsMessage.replace(urlPattern.toRegex(), "").trim()
                 ttsMessage
             }
             else -> ttsMessage
