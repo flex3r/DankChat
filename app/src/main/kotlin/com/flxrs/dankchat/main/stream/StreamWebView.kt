@@ -28,6 +28,7 @@ class StreamWebView @JvmOverloads constructor(
             javaScriptEnabled = true
             setSupportZoom(false)
             mediaPlaybackRequiresUserGesture = false
+            domStorageEnabled = true
         }
         webViewClient = StreamWebViewClient()
 

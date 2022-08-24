@@ -31,7 +31,6 @@ class LoginFragment : Fragment() {
 
     private var bindingRef: LoginFragmentBinding? = null
     private val binding get() = bindingRef!!
-    private val args: LoginFragmentArgs by navArgs()
     private val loginViewModel: LoginViewModel by viewModels()
 
     @Inject
@@ -50,11 +49,8 @@ class LoginFragment : Fragment() {
                 setupDarkTheme(resources)
             }
 
-            if (!args.isRelogin) {
-                CookieManager.getInstance().removeAllCookies(null)
-                clearCache(true)
-                clearFormData()
-            }
+            clearCache(true)
+            clearFormData()
 
             webViewClient = TwitchAuthClient()
             loadUrl(ApiManager.LOGIN_URL)
