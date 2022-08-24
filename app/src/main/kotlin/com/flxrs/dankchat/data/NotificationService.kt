@@ -267,26 +267,17 @@ class NotificationService : Service(), CoroutineScope {
             previousTTSUser -> message
             else            -> messageFormat.also { previousTTSUser = name }
         }
-        ttsMessage = when {
-            removeURL -> {
-                val urlPattern = Pattern.compile("((https?|ftp|gopher|telnet|file|Unsure|http):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)", Pattern.CASE_INSENSITIVE)
-                ttsMessage = ttsMessage.replace(urlPattern.toRegex(), "").trim()
-                ttsMessage
-            }
-            else -> ttsMessage
+        if (removeURL) {
+            val urlPattern = Pattern.compile("((https?|ftp|gopher|telnet|file|Unsure|http):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)", Pattern.CASE_INSENSITIVE)
+            ttsMessage = ttsMessage.replace(urlPattern.toRegex(), "").trim()
         }
-        ttsMessage = when {
-            removeEmote -> {
-                val emotes = dataRepository.getEmotes(channel)
-                for (emote in emotes.value) {
-                    println(emote.code)
-                    if (ttsMessage.contains(emote.code, ignoreCase = true)) {
-                        ttsMessage = ttsMessage.replace(emote.code, "", ignoreCase = true)
-                    }
+        if (removeEmote) {
+            for (emote in this.emotes) {
+                println(emote.code)
+                if (ttsMessage.contains(emote.code, ignoreCase = true)) {
+                    ttsMessage = ttsMessage.replace(emote.code, "", ignoreCase = true)
                 }
-                ttsMessage
             }
-            else -> ttsMessage
         }
         tts?.speak(ttsMessage, queueMode, null, null)
     }
