@@ -31,7 +31,6 @@ class LoginFragment : Fragment() {
 
     private var bindingRef: LoginFragmentBinding? = null
     private val binding get() = bindingRef!!
-    private val args: LoginFragmentArgs by navArgs()
     private val loginViewModel: LoginViewModel by viewModels()
 
     @Inject

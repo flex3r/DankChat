@@ -235,7 +235,7 @@ class MainFragment : Fragment() {
                 when (menuItem.itemId) {
                     R.id.menu_reconnect      -> mainViewModel.reconnect()
                     R.id.menu_login          -> openLogin()
-                    R.id.menu_relogin        -> openLogin(isRelogin = true)
+                    R.id.menu_relogin        -> openLogin()
                     R.id.menu_logout         -> showLogoutConfirmationDialog()
                     R.id.menu_add            -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment)
                     R.id.menu_mentions       -> mentionBottomSheetBehavior?.expand()
@@ -351,7 +351,7 @@ class MainFragment : Fragment() {
                         MaterialAlertDialogBuilder(requireContext())
                             .setTitle(getString(R.string.oauth_expired_title))
                             .setMessage(getString(R.string.oauth_expired_message))
-                            .setPositiveButton(getString(R.string.oauth_expired_login_again)) { _, _ -> openLogin(true) }
+                            .setPositiveButton(getString(R.string.oauth_expired_login_again)) { _, _ -> openLogin() }
                             .setNegativeButton(getString(R.string.dialog_dismiss)) { _, _ -> } // default action is dismissing anyway
                             .create().show()
                     }
@@ -508,8 +508,8 @@ class MainFragment : Fragment() {
         binding.input.setSelection(index + text.length)
     }
 
-    private fun openLogin(isRelogin: Boolean = false) {
-        val directions = MainFragmentDirections.actionMainFragmentToLoginFragment(isRelogin)
+    private fun openLogin() {
+        val directions = MainFragmentDirections.actionMainFragmentToLoginFragment()
         navigateSafe(directions)
         hideKeyboard()
     }
