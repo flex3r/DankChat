@@ -273,7 +273,6 @@ class NotificationService : Service(), CoroutineScope {
         }
         if (removeEmote) {
             for (emote in this.emotes) {
-                println(emote.code)
                 if (ttsMessage.contains(emote.code, ignoreCase = true)) {
                     ttsMessage = ttsMessage.replace(emote.code, "", ignoreCase = true)
                 }
