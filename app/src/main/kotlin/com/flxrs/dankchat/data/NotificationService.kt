@@ -26,6 +26,7 @@ import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.forEach
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -40,13 +41,14 @@ class NotificationService : Service(), CoroutineScope {
     private val sharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
     private val preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
-            getString(R.string.preference_notification_key)           -> notificationsEnabled = sharedPreferences.getBoolean(key, true)
-            getString(R.string.preference_tts_queue_key)              -> ttsMessageQueue = sharedPreferences.getBoolean(key, true)
-            getString(R.string.preference_tts_message_format_key)     -> combinedTTSFormat = sharedPreferences.getBoolean(key, true)
-            getString(R.string.preference_tts_key)                    -> ttsEnabled = sharedPreferences.getBoolean(key, false).also { setTTSEnabled(it) }
-            getString(R.string.preference_tts_message_filter_url_key) -> removeURL = sharedPreferences.getBoolean(key, false)
-            getString(R.string.preference_tts_user_ignore_list_key)   -> ignoredTtsUsers = sharedPreferences.getStringSet(key, emptySet()).orEmpty()
-            getString(R.string.preference_tts_force_english_key)      -> {
+            getString(R.string.preference_notification_key)             -> notificationsEnabled = sharedPreferences.getBoolean(key, true)
+            getString(R.string.preference_tts_queue_key)                -> ttsMessageQueue = sharedPreferences.getBoolean(key, true)
+            getString(R.string.preference_tts_message_format_key)       -> combinedTTSFormat = sharedPreferences.getBoolean(key, true)
+            getString(R.string.preference_tts_key)                      -> ttsEnabled = sharedPreferences.getBoolean(key, false).also { setTTSEnabled(it) }
+            getString(R.string.preference_tts_message_filter_url_key)   -> removeURL = sharedPreferences.getBoolean(key, false)
+            getString(R.string.preference_tts_message_filter_emote_key) -> removeEmote = sharedPreferences.getBoolean(key, false)
+            getString(R.string.preference_tts_user_ignore_list_key)     -> ignoredTtsUsers = sharedPreferences.getStringSet(key, emptySet()).orEmpty()
+            getString(R.string.preference_tts_force_english_key)        -> {
                 forceEnglishTTS = sharedPreferences.getBoolean(key, false)
                 setTTSVoice()
             }
@@ -59,6 +61,7 @@ class NotificationService : Service(), CoroutineScope {
     private var ttsMessageQueue = false
     private var forceEnglishTTS = false
     private var removeURL = false
+    private var removeEmote = false
     private var ignoredTtsUsers = emptySet<String>()
 
     private var notificationsJob: Job? = null
@@ -122,6 +125,7 @@ class NotificationService : Service(), CoroutineScope {
             forceEnglishTTS = sharedPreferences.getBoolean(getString(R.string.preference_tts_force_english_key), false)
             ttsEnabled = sharedPreferences.getBoolean(getString(R.string.preference_tts_key), false).also { setTTSEnabled(it) }
             removeURL = sharedPreferences.getBoolean(getString(R.string.preference_tts_message_filter_url_key), false)
+            removeEmote = sharedPreferences.getBoolean(getString(R.string.preference_tts_message_filter_emote_key), false)
             ignoredTtsUsers = sharedPreferences.getStringSet(getString(R.string.preference_tts_user_ignore_list_key), emptySet()).orEmpty()
             registerOnSharedPreferenceChangeListener(preferenceListener)
         }
@@ -267,6 +271,19 @@ class NotificationService : Service(), CoroutineScope {
             removeURL -> {
                 val urlPattern = Pattern.compile("((https?|ftp|gopher|telnet|file|Unsure|http):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)", Pattern.CASE_INSENSITIVE)
                 ttsMessage = ttsMessage.replace(urlPattern.toRegex(), "").trim()
+                ttsMessage
+            }
+            else -> ttsMessage
+        }
+        ttsMessage = when {
+            removeEmote -> {
+                val emotes = dataRepository.getEmotes(channel)
+                for (emote in emotes.value) {
+                    println(emote.code)
+                    if (ttsMessage.contains(emote.code, ignoreCase = true)) {
+                        ttsMessage = ttsMessage.replace(emote.code, "", ignoreCase = true)
+                    }
+                }
                 ttsMessage
             }
             else -> ttsMessage
