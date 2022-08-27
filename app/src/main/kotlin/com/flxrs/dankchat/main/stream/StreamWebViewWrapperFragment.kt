@@ -56,7 +56,4 @@ class StreamWebViewWrapperFragment : Fragment() {
         insertion.removeView(mainAndroidViewModel.streamWebView)
         super.onStop()
     }
-
-
-
 }
