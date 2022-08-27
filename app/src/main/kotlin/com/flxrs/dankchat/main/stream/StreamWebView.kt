@@ -3,6 +3,7 @@ package com.flxrs.dankchat.main.stream
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -15,13 +16,13 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @SuppressLint("SetJavaScriptEnabled")
-@AndroidEntryPoint
 class StreamWebView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = android.R.attr.webViewStyle,
     defStyleRes: Int = 0
 ) : WebView(context, attrs, defStyleAttr, defStyleRes) {
+    var lastChannel = ""
 
     init {
         with(settings) {
@@ -31,28 +32,22 @@ class StreamWebView @JvmOverloads constructor(
             domStorageEnabled = true
         }
         webViewClient = StreamWebViewClient()
+    }
 
-        // ViewModelStoreOwner & LifecycleOwner are only available after attach
-        doOnAttach {
-            val viewModelStoreOwner = findViewTreeViewModelStoreOwner() ?: return@doOnAttach
-            val lifecycleOwner = findViewTreeLifecycleOwner() ?: return@doOnAttach
-            val mainViewModel = ViewModelProvider(viewModelStoreOwner)[MainViewModel::class.java]
+    fun setStream(channel: String) {
+        if (channel == lastChannel) { return }
+        lastChannel = channel
 
-            mainViewModel.currentStreamedChannel
-                .flowWithLifecycle(lifecycleOwner.lifecycle)
-                .onEach { channel ->
-                    val isActive = channel.isNotBlank()
-                    isVisible = isActive
-                    val url = when {
-                        isActive -> "https://player.twitch.tv/?channel=$channel&enableExtensions=true&muted=false&parent=twitch.tv"
-                        else     -> BLANK_URL
-                    }
-
-                    stopLoading()
-                    loadUrl(url)
-                }
-                .launchIn(lifecycleOwner.lifecycleScope)
+        val isActive = channel.isNotBlank()
+        isVisible = isActive
+        val url = when {
+            isActive -> "https://player.twitch.tv/?channel=$channel&enableExtensions=true&muted=false&parent=twitch.tv"
+            else     -> BLANK_URL
         }
+
+        Log.d("DANK", "gonig to $url")
+        stopLoading()
+        loadUrl(url)
     }
 
     private class StreamWebViewClient : WebViewClient() {
@@ -74,6 +69,11 @@ class StreamWebView @JvmOverloads constructor(
         }
     }
 
+    override fun destroy() {
+        super.destroy()
+        Log.d("DANK", "Stream view was destroyed")
+    }
+
     private companion object {
         private const val BLANK_URL = "about:blank"
         private val ALLOWED_PATHS = listOf(
@@ -83,4 +83,5 @@ class StreamWebView @JvmOverloads constructor(
             "https://player.twitch.tv/",
         )
     }
+
 }
