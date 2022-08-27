@@ -34,7 +34,12 @@ class StreamWebView @JvmOverloads constructor(
         webViewClient = StreamWebViewClient()
     }
 
+    // called by StreamWebViewWrapperFragment to set the currently displayed stream
     fun setStream(channel: String) {
+        // it's possible that setChannel being called by same channel twice, when fragment is destroyed and recreated again (e.g.
+        // when screen rotates) the "collectFlow" will run again with previous value
+        // trying to navigate to same page again would cause the stream to be interrupted (defeating the purpose of trying
+        // to preserve the webview)
         if (channel == lastChannel) { return }
         lastChannel = channel
 
@@ -45,7 +50,6 @@ class StreamWebView @JvmOverloads constructor(
             else     -> BLANK_URL
         }
 
-        Log.d("DANK", "gonig to $url")
         stopLoading()
         loadUrl(url)
     }
@@ -67,11 +71,6 @@ class StreamWebView @JvmOverloads constructor(
 
             return ALLOWED_PATHS.none { url.startsWith(it) }
         }
-    }
-
-    override fun destroy() {
-        super.destroy()
-        Log.d("DANK", "Stream view was destroyed")
     }
 
     private companion object {

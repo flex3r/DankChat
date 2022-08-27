@@ -17,6 +17,8 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class StreamWebViewWrapperFragment : Fragment() {
+    // This fragment's purpose is to manage the life cycle of WebView inside it
+    // it remove webview before fragment is destroyed to prevent WebView from being destroyed along with it
     private lateinit var insertion: FrameLayout
     private val mainViewModel: MainViewModel by viewModels({ requireParentFragment() })
     private val mainAndroidViewModel: MainAndroidViewModel by viewModels({ requireParentFragment() })
@@ -35,7 +37,6 @@ class StreamWebViewWrapperFragment : Fragment() {
     }
 
     override fun onStart() {
-        Log.d("DANK", "add view")
         insertion.addView(
             mainAndroidViewModel.streamWebView,
             ViewGroup.LayoutParams(
@@ -43,19 +44,15 @@ class StreamWebViewWrapperFragment : Fragment() {
                 ViewGroup.LayoutParams.MATCH_PARENT,
             )
         )
-        Log.d("DANK", "launching")
         lifecycleScope.launch {
             mainViewModel.currentStreamedChannel.collect {
-                Log.d("DANK", "channel $it")
                 mainAndroidViewModel.streamWebView.setStream(it)
             }
         }
-        Log.d("DANK", "launched")
         super.onStart()
     }
 
     override fun onStop() {
-        Log.d("DANK", "remove view")
         insertion.removeView(mainAndroidViewModel.streamWebView)
         super.onStop()
     }

@@ -55,18 +55,6 @@
                         app:tabMode="auto" />
                 </com.google.android.material.appbar.AppBarLayout>
 
-<!--                <com.flxrs.dankchat.main.stream.StreamWebView-->
-<!--                    android:id="@+id/stream_webview"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="0dp"-->
-<!--                    android:visibility="gone"-->
-<!--                    app:layout_constraintBottom_toTopOf="@id/chat_viewpager"-->
-<!--                    app:layout_constraintDimensionRatio="H,16:9"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toBottomOf="@id/appbar_layout"-->
-<!--                    app:layout_constraintVertical_chainStyle="spread" />-->
-
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/stream_webview_wrapper"
                     android:layout_width="0dp"

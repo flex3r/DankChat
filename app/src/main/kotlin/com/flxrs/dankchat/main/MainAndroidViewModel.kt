@@ -9,6 +9,6 @@ import javax.inject.Inject
 @HiltViewModel
 class MainAndroidViewModel @Inject constructor(application: Application): AndroidViewModel(application) {
 
-    val streamWebView: StreamWebView  = StreamWebView(application) // how do I pass attrs and stuffs? FeelsDankMan
+    val streamWebView: StreamWebView  = StreamWebView(application)
 
 }
