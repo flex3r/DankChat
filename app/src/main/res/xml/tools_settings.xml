@@ -53,17 +53,17 @@
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:dependency="@string/preference_tts_key"
-            android:key="@string/preference_tts_message_filter_url_key"
-            android:title="@string/preference_tts_message_filter_url_title"
+            android:key="@string/preference_tts_message_ignore_url_key"
+            android:title="@string/preference_tts_message_ignore_url_title"
             app:iconSpaceReserved="false"
-            android:summary="@string/preference_tts_message_filter_url_message" />
+            android:summary="@string/preference_tts_message_ignore_url_message" />
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:dependency="@string/preference_tts_key"
-            android:key="@string/preference_tts_message_filter_emote_key"
-            android:title="@string/preference_tts_message_filter_emote_title"
+            android:key="@string/preference_tts_message_ignore_emote_key"
+            android:title="@string/preference_tts_message_ignore_emote_title"
             app:iconSpaceReserved="false"
-            android:summary="@string/preference_tts_message_filter_emote_message" />
+            android:summary="@string/preference_tts_message_ignore_emote_message" />
         <Preference
             android:dependency="@string/preference_tts_key"
             android:key="@string/preference_tts_user_ignore_list_key"
