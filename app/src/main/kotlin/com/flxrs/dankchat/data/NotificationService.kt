@@ -12,15 +12,10 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.speech.tts.TextToSpeech
-import androidx.appcompat.widget.EmojiCompatConfigurationView
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.edit
 import androidx.core.content.getSystemService
-import androidx.emoji2.text.EmojiCompat
-import androidx.emoji2.text.EmojiCompatInitializer
-import androidx.emoji2.text.EmojiDefaults
-import androidx.emoji2.text.EmojiMetadata
 import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.R
@@ -31,7 +26,6 @@ import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import java.io.Console
 import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
