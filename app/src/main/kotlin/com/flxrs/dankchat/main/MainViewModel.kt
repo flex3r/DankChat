@@ -77,6 +77,9 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.SerializationException
 import java.io.File
+import java.time.Duration
+import java.time.Instant
+import java.util.*
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
@@ -674,7 +677,17 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             fetchTimerJob = timer(STREAM_REFRESH_RATE) {
                 val data = dataRepository.getStreams(channels)?.map {
-                    val formatted = dankChatPreferenceStore.formatViewersString(it.viewerCount)
+                    var formatted = dankChatPreferenceStore.formatViewersString(it.viewerCount)
+
+                    try {
+                        // Try to calculate and show stream uptime
+                        val now = Date()
+                        val started = Instant.parse(it.startedAt)
+                        val difference = Duration.between(started, now.toInstant())
+                        val seconds = difference.seconds
+                        formatted += " for ${seconds / 3600}h ${(seconds % 3600) / 60}m"
+                    } catch(e: Exception) {}
+
                     StreamData(channel = it.userLogin, formattedData = formatted)
                 }.orEmpty()
 
