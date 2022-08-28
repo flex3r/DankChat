@@ -268,8 +268,7 @@ class NotificationService : Service(), CoroutineScope {
             else            -> messageFormat.also { previousTTSUser = name }
         }
         if (removeURL) {
-            val urlPattern = Pattern.compile("((https?|ftp|gopher|telnet|file|Unsure|http):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)", Pattern.CASE_INSENSITIVE)
-            ttsMessage = ttsMessage.replace(urlPattern.toRegex(), "").trim()
+            ttsMessage = ttsMessage.replace("[(http(s)?):\\/\\/(www\\.)?a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)".toRegex(RegexOption.IGNORE_CASE), "")
         }
         if (removeEmote) {
             for (emote in this.emotes) {
