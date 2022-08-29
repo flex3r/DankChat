@@ -38,12 +38,14 @@ class NotificationService : Service(), CoroutineScope {
     private val sharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
     private val preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
-            getString(R.string.preference_notification_key)         -> notificationsEnabled = sharedPreferences.getBoolean(key, true)
-            getString(R.string.preference_tts_queue_key)            -> ttsMessageQueue = sharedPreferences.getBoolean(key, true)
-            getString(R.string.preference_tts_message_format_key)   -> combinedTTSFormat = sharedPreferences.getBoolean(key, true)
-            getString(R.string.preference_tts_key)                  -> ttsEnabled = sharedPreferences.getBoolean(key, false).also { setTTSEnabled(it) }
-            getString(R.string.preference_tts_user_ignore_list_key) -> ignoredTtsUsers = sharedPreferences.getStringSet(key, emptySet()).orEmpty()
-            getString(R.string.preference_tts_force_english_key)    -> {
+            getString(R.string.preference_notification_key)             -> notificationsEnabled = sharedPreferences.getBoolean(key, true)
+            getString(R.string.preference_tts_queue_key)                -> ttsMessageQueue = sharedPreferences.getBoolean(key, true)
+            getString(R.string.preference_tts_message_format_key)       -> combinedTTSFormat = sharedPreferences.getBoolean(key, true)
+            getString(R.string.preference_tts_key)                      -> ttsEnabled = sharedPreferences.getBoolean(key, false).also { setTTSEnabled(it) }
+            getString(R.string.preference_tts_message_ignore_url_key)   -> removeURL = sharedPreferences.getBoolean(key, false)
+            getString(R.string.preference_tts_message_ignore_emote_key) -> removeEmote = sharedPreferences.getBoolean(key, false)
+            getString(R.string.preference_tts_user_ignore_list_key)     -> ignoredTtsUsers = sharedPreferences.getStringSet(key, emptySet()).orEmpty()
+            getString(R.string.preference_tts_force_english_key)        -> {
                 forceEnglishTTS = sharedPreferences.getBoolean(key, false)
                 setTTSVoice()
             }
@@ -55,6 +57,8 @@ class NotificationService : Service(), CoroutineScope {
     private var combinedTTSFormat = false
     private var ttsMessageQueue = false
     private var forceEnglishTTS = false
+    private var removeURL = false
+    private var removeEmote = false
     private var ignoredTtsUsers = emptySet<String>()
 
     private var notificationsJob: Job? = null
@@ -117,6 +121,8 @@ class NotificationService : Service(), CoroutineScope {
             combinedTTSFormat = sharedPreferences.getBoolean(getString(R.string.preference_tts_message_format_key), true)
             forceEnglishTTS = sharedPreferences.getBoolean(getString(R.string.preference_tts_force_english_key), false)
             ttsEnabled = sharedPreferences.getBoolean(getString(R.string.preference_tts_key), false).also { setTTSEnabled(it) }
+            removeURL = sharedPreferences.getBoolean(getString(R.string.preference_tts_message_ignore_url_key), false)
+            removeEmote = sharedPreferences.getBoolean(getString(R.string.preference_tts_message_ignore_emote_key), false)
             ignoredTtsUsers = sharedPreferences.getStringSet(getString(R.string.preference_tts_user_ignore_list_key), emptySet()).orEmpty()
             registerOnSharedPreferenceChangeListener(preferenceListener)
         }
@@ -254,10 +260,22 @@ class NotificationService : Service(), CoroutineScope {
             ttsMessageQueue -> TextToSpeech.QUEUE_ADD
             else            -> TextToSpeech.QUEUE_FLUSH
         }
-        val ttsMessage = when (name) {
+        var ttsMessage = when (name) {
             previousTTSUser -> message
             else            -> messageFormat.also { previousTTSUser = name }
         }
+        if (removeURL) {
+            ttsMessage = ttsMessage.replace("[(http(s)?):\\/\\/(www\\.)?a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)".toRegex(RegexOption.IGNORE_CASE), "")
+        }
+        if (removeEmote) {
+            for (emote in this.emotes) {
+                ttsMessage = ttsMessage.replace(emote.code, "", ignoreCase = true)
+            }
+            //Replaces all unicode character that are: So - Symbol Other, Sc - Symbol Currency, Sm - Symbol Math, Cn - Unassigned.
+            //This will not filter out non latin script (Arabic and Japanese for example works fine.)
+            ttsMessage = ttsMessage.replace("\\p{So}|\\p{Sc}|\\p{Sm}|\\p{Cn}".toRegex(), "")
+        }
+
         tts?.speak(ttsMessage, queueMode, null, null)
     }
 
