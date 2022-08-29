@@ -3,17 +3,10 @@ package com.flxrs.dankchat.main.stream
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.core.view.doOnAttach
 import androidx.core.view.isVisible
-import androidx.lifecycle.*
-import com.flxrs.dankchat.main.MainViewModel
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 
 @SuppressLint("SetJavaScriptEnabled")
 class StreamWebView @JvmOverloads constructor(
@@ -22,8 +15,6 @@ class StreamWebView @JvmOverloads constructor(
     defStyleAttr: Int = android.R.attr.webViewStyle,
     defStyleRes: Int = 0
 ) : WebView(context, attrs, defStyleAttr, defStyleRes) {
-    var lastChannel = ""
-
     init {
         with(settings) {
             javaScriptEnabled = true
@@ -34,15 +25,7 @@ class StreamWebView @JvmOverloads constructor(
         webViewClient = StreamWebViewClient()
     }
 
-    // called by StreamWebViewWrapperFragment to set the currently displayed stream
     fun setStream(channel: String) {
-        // it's possible that setChannel being called by same channel twice, when fragment is destroyed and recreated again (e.g.
-        // when screen rotates) the "collectFlow" will run again with previous value
-        // trying to navigate to same page again would cause the stream to be interrupted (defeating the purpose of trying
-        // to preserve the webview)
-        if (channel == lastChannel) { return }
-        lastChannel = channel
-
         val isActive = channel.isNotBlank()
         isVisible = isActive
         val url = when {
@@ -55,6 +38,7 @@ class StreamWebView @JvmOverloads constructor(
     }
 
     private class StreamWebViewClient : WebViewClient() {
+        @Deprecated("Deprecated in Java")
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
             if (url.isNullOrBlank()) {
                 return true
@@ -73,7 +57,7 @@ class StreamWebView @JvmOverloads constructor(
         }
     }
 
-    private companion object {
+    companion object {
         private const val BLANK_URL = "about:blank"
         private val ALLOWED_PATHS = listOf(
             BLANK_URL,

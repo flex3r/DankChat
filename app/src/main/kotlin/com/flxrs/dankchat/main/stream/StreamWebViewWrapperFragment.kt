@@ -1,59 +1,51 @@
 package com.flxrs.dankchat.main.stream
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import com.flxrs.dankchat.R
-import com.flxrs.dankchat.main.MainAndroidViewModel
+import com.flxrs.dankchat.databinding.FragmentStreamWebViewWrapperBinding
 import com.flxrs.dankchat.main.MainViewModel
+import com.flxrs.dankchat.main.StreamWebViewModel
+import com.flxrs.dankchat.utils.extensions.collectFlow
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
+/**
+This fragment's purpose is to manage the lifecycle of the WebView inside it
+it removes the StreamWebView before the fragment is destroyed to prevent the WebView from being destroyed along with it.
+ */
 @AndroidEntryPoint
 class StreamWebViewWrapperFragment : Fragment() {
-    // This fragment's purpose is to manage the life cycle of WebView inside it
-    // it remove webview before fragment is destroyed to prevent WebView from being destroyed along with it
-    private lateinit var insertion: FrameLayout
     private val mainViewModel: MainViewModel by viewModels({ requireParentFragment() })
-    private val mainAndroidViewModel: MainAndroidViewModel by viewModels({ requireParentFragment() })
+    private val streamWebViewModel: StreamWebViewModel by viewModels({ requireParentFragment() })
+    private var bindingRef: FragmentStreamWebViewWrapperBinding? = null
+    private val binding get() = bindingRef!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_stream_web_view_wrapper, container, false)
-    }
+    ): View = FragmentStreamWebViewWrapperBinding.inflate(inflater, container, false).also {
+        bindingRef = it
+    }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        insertion = view.findViewById(R.id.stream_wrapper)
-    }
-
-    override fun onStart() {
-        insertion.addView(
-            mainAndroidViewModel.streamWebView,
+        binding.streamWrapper.addView(
+            streamWebViewModel.getOrCreateStreamWebView(),
             ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
             )
         )
-        lifecycleScope.launch {
-            mainViewModel.currentStreamedChannel.collect {
-                mainAndroidViewModel.streamWebView.setStream(it)
-            }
+        collectFlow(mainViewModel.currentStreamedChannel) {
+            streamWebViewModel.setStream(it)
         }
-        super.onStart()
     }
 
-    override fun onStop() {
-        insertion.removeView(mainAndroidViewModel.streamWebView)
-        super.onStop()
+    override fun onDestroyView() {
+        binding.streamWrapper.removeAllViews()
+        bindingRef = null
+        super.onDestroyView()
     }
 }
