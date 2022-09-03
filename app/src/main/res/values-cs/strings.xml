@@ -60,7 +60,7 @@
     <string name="snackbar_paste">Vložit</string>
     <string name="add_channel_hint">Název kanálu</string>
     <string name="emote_menu_tab_recent">Nedávné</string>
-    <string name="emote_menu_tab_subs">Placené</string>
+    <string name="emote_menu_tab_subs">Předplatitelské</string>
     <string name="emote_menu_tab_channel">Kanál</string>
     <string name="emote_menu_tab_global">Globální</string>
     <string name="system_message_connected">Připojeno</string>
@@ -199,14 +199,14 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_blacklist_title">Černá listina</string>
     <string name="preference_blacklist_summary">Nastavte vlastní fráze, které budou skryty</string>
     <string name="preference_animate_gifs_title">Animované gify</string>
-    <string name="preference_line_separator_title">Oddělit zprávy řádkem</string>
+    <string name="preference_line_separator_title">Oddělit zprávy řádky</string>
     <string name="preference_keep_screen_on_title">Udržovat obrazovku zapnutou</string>
     <string name="preference_font_size_title">Velikost písma</string>
     <string name="preference_font_size_summary_very_small">Velmi malé</string>
     <string name="preference_font_size_summary_small">Malé</string>
     <string name="preference_font_size_summary_large">Velké</string>
     <string name="preference_font_size_summary_very_large">Velmi velké</string>
-    <string name="preference_notifications_mentions_header">Upozornění a Zmínky</string>
+    <string name="preference_notifications_mentions_header">Upozornění a zmínky</string>
     <string name="preference_suggestions_title">Návrhy uživatelů a emotikon</string>
     <string name="preference_suggestions_summary">Zobrazí návrhy emotikonů a uživatelských jmen při psaní</string>
     <string name="preference_load_message_history_title">Při zapnutí načíst historii zpráv</string>
@@ -226,6 +226,10 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_tts_message_format_message">Číst pouze zprávu</string>
     <string name="preference_tts_message_format_combined">Číst uživatele a zprávu</string>
     <string name="preference_tts_message_format_title">Formát režimu zpráv</string>
+    <string name="preference_tts_message_ignore_url_message">Ignoruje odkazy při používání TTS</string>
+    <string name="preference_tts_message_ignore_url_title">Ignorovat odkazy</string>
+    <string name="preference_tts_message_ignore_emote_message">Ignoruje emotikony při používání TTS</string>
+    <string name="preference_tts_message_ignore_emote_title">Ignorovat emotikony</string>
     <string name="preference_tts_header">TTS</string>
     <string name="preference_checkered_lines_title">Kostkované řádky</string>
     <string name="preference_checkered_lines_summary">Oddělit každý řádek odlišným jasem pozadí</string>
@@ -264,6 +268,10 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_auto_disable_input_title">Zakázat vstupní pole, pokud není navázáno připojení k chatu</string>
     <string name="preference_repeated_sending_title">Povolit opakované odesílání</string>
     <string name="preference_repeated_sending_summary">Umožňuje nepřetržité odesílání zpráv při podržení tlačítka odeslání.</string>
+    <string name="oauth_expired_title">Přihlášení vypršelo!</string>
+    <string name="oauth_expired_message">Váš přihlašovací token vypršel! Přihlašte se prosím znovu.</string>
+    <string name="oauth_expired_login_again">Znovu se přihlásit</string>
+    <string name="oauth_verify_failed">Nepodařilo se ověřit přihlašovací token, zkontrolujte připojení k internetu.</string>
     <plurals name="viewers">
         <item quantity="one">Živě s %d divákem</item>
         <item quantity="few">Živě se %d diváky</item>
