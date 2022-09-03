@@ -226,6 +226,10 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_tts_message_format_message">Nur Nachrichten vorlesen</string>
     <string name="preference_tts_message_format_combined">Nutzernamen und Nachrichten vorlesen</string>
     <string name="preference_tts_message_format_title">Nachrichtenformat</string>
+    <string name="preference_tts_message_ignore_url_message">Ignoriert URLs in TTS</string>
+    <string name="preference_tts_message_ignore_url_title">URLs Ignorieren</string>
+    <string name="preference_tts_message_ignore_emote_message">Ignoriert Emotes und Emojis in TTS</string>
+    <string name="preference_tts_message_ignore_emote_title">Emotes ignorieren</string>
     <string name="preference_tts_header">TTS</string>
     <string name="preference_checkered_lines_title">Zebramuster</string>
     <string name="preference_checkered_lines_summary">Nachrichten werden mit abwechselnder Hintergrundfarbe dargestellt</string>
@@ -268,6 +272,8 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="oauth_expired_message">Dein Login-Token ist abgelaufen! Bitte melde dich erneut an.</string>
     <string name="oauth_expired_login_again">Erneut anmelden</string>
     <string name="oauth_verify_failed">Login-Token konnte nicht verifiziert werden, überprüfe deine Verbindung.</string>
+    <string name="preference_retain_webview_title">Neuladen des Streams verhindern</string>
+    <string name="preference_retain_webview_summary">Aktiviert experimentelles Verhindern vom Neuladen des Streams, nachdem sich die Orientierung ändert oder DankChat neu geöffnet wird.</string>
     <plurals name="viewers">
         <item quantity="one">Live mit %d Zuschauer</item>
         <item quantity="other">Live mit %d Zuschauern</item>
