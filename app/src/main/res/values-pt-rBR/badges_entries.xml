@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="badges_entries">
+        <item>Autoridade (funcionário, administrador)</item>
+        <item>Palpites</item>
+        <item>Canal (streamer, moderador)</item>
+        <item>Inscrito</item>
+        <item>Vaidade (prime, bits, presenteador)</item>
+        <item>DankChat</item>
+        <!--        <item>FrankerFaceZ (Bot, FFZ Supporter, FFZ Developer)</item>-->
+    </string-array>
+</resources>
