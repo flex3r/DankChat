@@ -31,15 +31,16 @@ class StreamWebViewWrapperFragment : Fragment() {
     }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val streamWebView = streamWebViewModel.getOrCreateStreamWebView()
         binding.streamWrapper.addView(
-            streamWebViewModel.getOrCreateStreamWebView(),
+            streamWebView,
             ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
             )
         )
         collectFlow(mainViewModel.currentStreamedChannel) {
-            streamWebViewModel.setStream(it)
+            streamWebViewModel.setStream(it, streamWebView)
         }
     }
 
