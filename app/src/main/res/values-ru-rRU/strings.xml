@@ -224,6 +224,10 @@
     <string name="preference_tts_message_format_message">Читает только сообщение</string>
     <string name="preference_tts_message_format_combined">Читает имя пользователя и сообщение</string>
     <string name="preference_tts_message_format_title">Режим форматирования сообщений</string>
+    <string name="preference_tts_message_ignore_url_message">Игнорировать URL в синтезаторе речи</string>
+    <string name="preference_tts_message_ignore_url_title">Игнорировать URL</string>
+    <string name="preference_tts_message_ignore_emote_message">Игнорировать смайлы и смайлики в синтезаторе речи </string>
+    <string name="preference_tts_message_ignore_emote_title">Игнорировать смайлы </string>
     <string name="preference_tts_header">Синтезатор речи</string>
     <string name="preference_checkered_lines_title">Шахматные линии</string>
     <string name="preference_checkered_lines_summary">Разделяет каждую линию, используя цвета фона с разной яркостью</string>
@@ -262,6 +266,12 @@
     <string name="preference_auto_disable_input_title">Отключить ввод, если нет подключения к чату</string>
     <string name="preference_repeated_sending_title">Включить повторную отправку</string>
     <string name="preference_repeated_sending_summary">Включить непрерывную отправку сообщений, пока удерживается кнопка отправки</string>
+    <string name="oauth_expired_title">Время входа истекло!</string>
+    <string name="oauth_expired_message">Срок действия вашего токена входа истек! Пожалуйста, войдите снова.</string>
+    <string name="oauth_expired_login_again">Войти снова</string>
+    <string name="oauth_verify_failed">Не удалось проверить токен входа, проверьте подключение.</string>
+    <string name="preference_retain_webview_title">Предотвратить перезагрузку трансляции</string>
+    <string name="preference_retain_webview_summary">Включить экспериментальное предотвращение перезагрузки трансляции после изменения ориентации или повторного открытия DankChat.</string>
     <plurals name="viewers">
         <item quantity="one">В сети с %d зрителем</item>
         <item quantity="few">В сети с %d зрителями</item>
