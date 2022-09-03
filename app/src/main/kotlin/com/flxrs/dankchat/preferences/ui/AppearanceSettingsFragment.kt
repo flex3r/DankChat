@@ -103,8 +103,8 @@ class AppearanceSettingsFragment : MaterialPreferenceFragmentCompat() {
 
         findPreference<SeekBarPreference>(getString(R.string.preference_font_size_key))?.apply {
             summary = getFontSizeSummary(value)
-            setOnPreferenceChangeListener { _, _ ->
-                summary = getFontSizeSummary(value)
+            setOnPreferenceChangeListener { _, newValue ->
+                summary = getFontSizeSummary(newValue as Int)
                 true
             }
         }
