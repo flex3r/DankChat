@@ -4,7 +4,7 @@
     <string name="app_name_dank">DankChat (Dank)</string>
     <string name="send_hint">Envía un mensaje</string>
     <string name="login">Iniciar sesión</string>
-    <string name="reload_emotes">Recargar emoticonos</string>
+    <string name="reload_emotes">Recargar emotes</string>
     <string name="reconnect">Reconectar</string>
     <string name="clear_chat">Limpiar chat</string>
     <string name="add_dialog_title">Añadir canal</string>
@@ -22,7 +22,7 @@
     <string name="open_channel">Abrir canal</string>
     <string name="remove_channel">Remover</string>
     <string name="channel_blocked_message">Canal bloqueado</string>
-    <string name="no_channels_added">No se añadieron canales</string>
+    <string name="no_channels_added">No hay canales agregados</string>
     <string name="confirm_logout_title">Confirmar cierre de sesión</string>
     <string name="confirm_logout_message">¿Estás seguro que quieres cerrar sesión?</string>
     <string name="confirm_logout_positive_button">Cerrar sesión</string>
@@ -41,7 +41,7 @@
     <string name="notification_stop">Parar</string>
     <string name="notification_title">FeelsDankMan</string>
     <string name="notification_message">DankChat ejecutándose en segundo plano</string>
-    <string name="emote_menu_hint">Abrir menú de emoticonos</string>
+    <string name="emote_menu_hint">Abrir menú de emotes</string>
     <string name="login_title">Iniciar sesíon en Twitch.tv</string>
     <string name="hint_connected">Comenzar a conversar</string>
     <string name="hint_disconnected">Desconectado</string>
@@ -118,7 +118,7 @@ El servicio temporalmente almacena mensajes para canales que tú (y otros) visit
     <string name="uploader_add_header_value">Valor</string>
     <string name="uploader_title">Subidor de imágenes personalizado</string>
     <string name="uploader_reset">Resetear a valores por defecto</string>
-    <string name="uploader_url">Subir url</string>
+    <string name="uploader_url">URL de subida</string>
     <string name="uploader_field">Campo de formulario</string>
     <string name="uploader_headers">Cabezales</string>
     <string name="uploader_image_link">Patrón link imagen</string>
@@ -248,7 +248,7 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="preference_show_chip_actions_title">Mostrar acciones chip</string>
     <string name="preference_show_chip_actions_summary">Mostrar chips para acceder a pantalla completa, streams y ajustar modos de chat</string>
     <string name="preference_uploader_header">Subidor de imágenes</string>
-    <string name="preference_uploader_configure_title">Configure subidor</string>
+    <string name="preference_uploader_configure_title">Configurar subidor</string>
     <string name="preference_uploader_recent_uploads_title">Subidas recientes</string>
     <string name="preference_tts_user_ignore_list_title">Lista de ignorados</string>
     <string name="preference_tts_user_ignore_list_summary">Lista de usuarios/cuentas que serán ignorados</string>
@@ -264,6 +264,10 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="preference_auto_disable_input_title">Desactivar entrada si no se conecta al chat</string>
     <string name="preference_repeated_sending_title">Activar envía mensajes repetidos</string>
     <string name="preference_repeated_sending_summary">Activar el envío continuo de mensajes mientras se mantiene el botón de envío</string>
+    <string name="oauth_expired_title">¡Inicio de sesión caducado!</string>
+    <string name="oauth_expired_message">¡Su clave de acceso ha caducado! Por favor, inicia sesión de nuevo.</string>
+    <string name="oauth_expired_login_again">Iniciar sesión de nuevo</string>
+    <string name="oauth_verify_failed">No se ha podido verificar el token de acceso, comprueba tu conexión.</string>
     <plurals name="viewers">
         <item quantity="one">En directo con %d espectador</item>
         <item quantity="other">En directo con %d espectadores</item>
