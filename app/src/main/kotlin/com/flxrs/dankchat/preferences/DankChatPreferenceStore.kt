@@ -142,6 +142,9 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
     val repeatedSendingEnabled: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_repeated_sending_key), false)
 
+    val retainWebViewEnabled: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_retain_webview_key), false)
+
     val preferenceFlow: Flow<Preference> = callbackFlow {
         with(context) {
             val roomStateKey = getString(R.string.preference_roomstate_key)

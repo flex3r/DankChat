@@ -55,11 +55,11 @@
                         app:tabMode="auto" />
                 </com.google.android.material.appbar.AppBarLayout>
 
-                <com.flxrs.dankchat.main.stream.StreamWebView
-                    android:id="@+id/stream_webview"
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/stream_webview_wrapper"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:visibility="gone"
+                    android:name="com.flxrs.dankchat.main.stream.StreamWebViewWrapperFragment"
                     app:layout_constraintBottom_toTopOf="@id/chat_viewpager"
                     app:layout_constraintDimensionRatio="H,16:9"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -76,7 +76,7 @@
                     app:chipIcon="@{vm.areChipsExpanded ? @drawable/ic_keyboard_arrow_up : @drawable/ic_keyboard_arrow_down}"
                     app:iconEndPadding="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/stream_webview"
+                    app:layout_constraintTop_toBottomOf="@id/stream_webview_wrapper"
                     app:textEndPadding="0dp"
                     app:textStartPadding="0dp" />
 
@@ -119,7 +119,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHeight_min="64dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/stream_webview"
+                    app:layout_constraintTop_toBottomOf="@id/stream_webview_wrapper"
                     app:layout_constraintVertical_weight="1" />
 
                 <TextView

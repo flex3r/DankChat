@@ -330,6 +330,7 @@ class MainFragment : Fragment() {
                 }
             }
             collectFlow(currentStreamedChannel) {
+                binding.streamWebviewWrapper.isVisible = it.isNotBlank()
                 if (!isLandscape) {
                     return@collectFlow
                 }
@@ -399,7 +400,7 @@ class MainFragment : Fragment() {
             onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackPressedCallback)
 
             ViewCompat.setOnApplyWindowInsetsListener(binding.showChips) { v, insets ->
-                val needsExtraMargin = binding.streamWebview.isVisible || isLandscape || !mainViewModel.isFullscreenFlow.value
+                val needsExtraMargin = binding.streamWebviewWrapper.isVisible || isLandscape || !mainViewModel.isFullscreenFlow.value
                 val extraMargin = when {
                     needsExtraMargin -> 0
                     else             -> insets.getInsets(WindowInsetsCompat.Type.displayCutout()).top
@@ -1080,7 +1081,7 @@ class MainFragment : Fragment() {
             }
 
             binding.tabs.isVisible = !hasFocus && !isFullscreen
-            binding.streamWebview.isVisible = !hasFocus && mainViewModel.isStreamActive
+            binding.streamWebviewWrapper.isVisible = !hasFocus && mainViewModel.isStreamActive
 
             when {
                 hasFocus -> (activity as? MainActivity)?.apply {
