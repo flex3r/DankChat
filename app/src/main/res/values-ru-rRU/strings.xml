@@ -233,7 +233,7 @@
     <string name="preference_checkered_lines_summary">Разделяет каждую линию, используя цвета фона с разной яркостью</string>
     <string name="preference_supibot_suggestions_title">Подсказки команд бота Supibot</string>
     <string name="preference_scrollback_length_title">Длина прокрутки сообщений</string>
-    <string name="preference_show_username_title">Показать имя</string>
+    <string name="preference_show_username_title">Отображать имена пользователей</string>
     <string name="preference_visible_badges_title">Видимые значки</string>
     <string name="preference_prefer_emote_suggestions_title">Предпочитать подсказки смайлов</string>
     <string name="preference_prefer_emote_suggestions_summary">Предпочитать подсказки смайлов подсказкам пользователей</string>
