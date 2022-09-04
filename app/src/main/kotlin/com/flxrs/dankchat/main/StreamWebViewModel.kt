@@ -2,7 +2,6 @@ package com.flxrs.dankchat.main
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import com.flxrs.dankchat.main.stream.StreamWebView
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore

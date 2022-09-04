@@ -511,9 +511,9 @@ class MainViewModel @Inject constructor(
                     ImageUploadState.Finished(it)
                 },
                 onFailure = {
-                   val message =  when (it) {
+                    val message = when (it) {
                         is ApiException -> "${it.status} ${it.message}"
-                        else -> it.stackTraceToString()
+                        else            -> it.stackTraceToString()
                     }
                     ImageUploadState.Failed(message, file)
                 }
