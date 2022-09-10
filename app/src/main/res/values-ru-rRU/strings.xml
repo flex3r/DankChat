@@ -183,7 +183,7 @@
     <string name="preference_about_summary">DankChat %1$s сделан @flex3rs и другими участниками</string>
     <string name="preference_show_input_title">Отображать строку ввода</string>
     <string name="preference_show_input_summary">Отображает строку для ввода сообщений</string>
-    <string name="preference_dark_theme_title">Включить тёмное оформление</string>
+    <string name="preference_dark_theme_title">Включить тёмную тему</string>
     <string name="preference_light_theme_title">Включить светлое оформление</string>
     <string name="preference_dark_mode_group_title">Тёмный режим</string>
     <string name="preference_follow_system_title">В соответствии с системой</string>
@@ -219,7 +219,7 @@
     <string name="preference_tts_title">Включить синтезатор речи</string>
     <string name="preference_tts_summary">Зачитывает сообщения активного канала</string>
     <string name="preference_tts_queue_title">Режим очереди сообщений</string>
-    <string name="preference_tts_queue_add">Читает каждое сообщение, используя очередь</string>
+    <string name="preference_tts_queue_add">Читать каждое сообщение, используя очередь</string>
     <string name="preference_tts_queue_flush">Читает только новое сообщение</string>
     <string name="preference_tts_message_format_message">Читает только сообщение</string>
     <string name="preference_tts_message_format_combined">Читает имя пользователя и сообщение</string>
@@ -253,7 +253,7 @@
     <string name="preference_uploader_configure_title">Настроить загрузчик</string>
     <string name="preference_uploader_recent_uploads_title">Недавние загрузки</string>
     <string name="preference_tts_user_ignore_list_title">Список игнорируемых пользователей</string>
-    <string name="preference_tts_user_ignore_list_summary">Список пользователей/аккаунтов, которые будут игнорированы</string>
+    <string name="preference_tts_user_ignore_list_summary">Список пользователей/аккаунтов, которые будут игнорироваться</string>
     <string name="preference_tools_header">Инструменты</string>
     <string name="preference_theme_title">Оформление</string>
     <string name="preference_dark_theme_entry_title">Тёмное оформление</string>
