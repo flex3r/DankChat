@@ -1,2 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">DankChat</string>
+    <string name="app_name_dank">DankChat (Dank)</string>
+    <string name="send_hint">Üzenet küldése</string>
+    <string name="login">Bejelentkezés</string>
+    <string name="add_dialog_title">Csatorna hozzáadása</string>
+    <string name="edit_dialog_title">Csatorna átnevezése</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">Mégse</string>
+    <string name="error_dialog_copy">Másolás</string>
+    <string name="add_channel">Csatorna hozzáadása</string>
+    <string name="manage_channels">Csatornák kezelése</string>
+    <string name="report_channel">Csatorna jelentése</string>
+    <string name="block_channel">Csatorna letiltása</string>
+    <string name="channel">Csatorna</string>
+    <string name="open_channel">Csatorna megnyitása</string>
+    <string name="remove_channel">Csatorna eltávolítása</string>
+    <string name="confirm_logout_positive_button">Kijelentkezés</string>
+    <string name="upload_media">Média feltöltése</string>
+    <string name="uploading_image">Fájl feltöltése</string>
+    <string name="settings">Beállítások</string>
+    <string name="user_popup_follow">Követés</string>
+    <string name="preference_message_history_dashboard_title">Irányítópult megnyitása</string>
+    <string name="preference_tts_title">TTS engedélyezése</string>
+    <string name="preference_tts_header">TTS</string>
+    <plurals name="months">
+        <item quantity="one">%d hónap</item>
+        <item quantity="other">%d hónap</item>
+    </plurals>
+</resources>
