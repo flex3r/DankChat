@@ -11,7 +11,7 @@ android {
     buildToolsVersion "33.0.0"
     defaultConfig {
         applicationId "com.flxrs.dankchat"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 33
         versionCode 260
         versionName "3.3.1"
