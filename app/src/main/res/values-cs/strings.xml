@@ -272,6 +272,8 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="oauth_expired_message">Váš přihlašovací token vypršel! Přihlašte se prosím znovu.</string>
     <string name="oauth_expired_login_again">Znovu se přihlásit</string>
     <string name="oauth_verify_failed">Nepodařilo se ověřit přihlašovací token, zkontrolujte připojení k internetu.</string>
+    <string name="preference_retain_webview_title">Zabránit opětovnému načítání streamu</string>
+    <string name="preference_retain_webview_summary">Zapne experimentální funkci zabránění opětovnému načtení streamu po změně orientace obrazovky nebo opětovném otevření DankChatu.</string>
     <plurals name="viewers">
         <item quantity="one">Živě s %d divákem</item>
         <item quantity="few">Živě se %d diváky</item>

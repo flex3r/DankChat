@@ -226,6 +226,10 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="preference_tts_message_format_message">Solo leer en voz alta el mensaje</string>
     <string name="preference_tts_message_format_combined">Leer en voz alta usuario y mensaje</string>
     <string name="preference_tts_message_format_title">Modo de formato del mensaje</string>
+    <string name="preference_tts_message_ignore_url_message">Ignorar URLs en los TTS</string>
+    <string name="preference_tts_message_ignore_url_title">Ignorar URLs</string>
+    <string name="preference_tts_message_ignore_emote_message">Ignorar emotes y emojis en los TTS</string>
+    <string name="preference_tts_message_ignore_emote_title">Ignorar emotes</string>
     <string name="preference_tts_header">TTS (Síntesis de voz)</string>
     <string name="preference_checkered_lines_title">Líneas alternadas</string>
     <string name="preference_checkered_lines_summary">Separar cada línea con diferente brillo de fondo</string>
@@ -268,6 +272,8 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="oauth_expired_message">¡Su clave de acceso ha caducado! Por favor, inicia sesión de nuevo.</string>
     <string name="oauth_expired_login_again">Iniciar sesión de nuevo</string>
     <string name="oauth_verify_failed">No se ha podido verificar el token de acceso, comprueba tu conexión.</string>
+    <string name="preference_retain_webview_title">Evitar la recarga de las transmisiones</string>
+    <string name="preference_retain_webview_summary">Activa la prevención experimental de recargas de las transmisiones después de cambios de orientación o al volver a abrir DankChat.</string>
     <plurals name="viewers">
         <item quantity="one">En directo con %d espectador</item>
         <item quantity="other">En directo con %d espectadores</item>

@@ -2,7 +2,7 @@
 <resources>
     <string-array name="badges_entries">
         <item>Уполномоченные (персонал, администратор)</item>
-        <item>Предсказания</item>
+        <item>Прогнозы</item>
         <item>Канал (владелец, модератор)</item>
         <item>Подписчик</item>
         <item>Платный контент (prime, bits, пользователь, подаривший подписку)</item>
