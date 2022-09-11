@@ -10,6 +10,7 @@ import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.utils.io.streams.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
@@ -113,20 +114,27 @@ class ApiManager @Inject constructor(
 
     suspend fun uploadMedia(file: File): Result<UploadDto> = withContext(Dispatchers.IO) {
         val uploader = dankChatPreferenceStore.customImageUploader
-        val extension = file.extension.ifBlank { "png" }
         val mimetype = URLConnection.guessContentTypeFromName(file.name)
         val headers = Headers.build {
             append(HttpHeaders.ContentType, mimetype.toMediaType().toString())
-            append(HttpHeaders.ContentDisposition, "filename=${uploader.formField}.$extension")
+            append(HttpHeaders.ContentDisposition, ContentDisposition.File.withParameter(ContentDisposition.Parameters.FileName, file.name))
         }
         val formData = formData {
-            append(uploader.formField, file.readBytes(), headers)
+            appendInput(
+                key = uploader.formField,
+                headers = headers,
+                size = file.length()
+            ) { file.inputStream().asInput() }
         }
-        val response = uploadClient.submitFormWithBinaryData(uploader.uploadUrl, formData) {
-            uploader.parsedHeaders.forEach { (key, value) ->
-                header(key, value)
+
+        val response = runCatching {
+            uploadClient.submitFormWithBinaryData(uploader.uploadUrl, formData) {
+                uploader.parsedHeaders.forEach { (key, value) -> header(key, value) }
             }
+        }.getOrElse {
+            return@withContext Result.failure(it)
         }
+
         when {
             response.status.isSuccess() -> {
                 val imageLinkPattern = uploader.imageLinkPattern
