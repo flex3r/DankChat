@@ -184,10 +184,10 @@
     <string name="preference_show_input_title">Отображать строку ввода</string>
     <string name="preference_show_input_summary">Отображает строку для ввода сообщений</string>
     <string name="preference_dark_theme_title">Включить тёмную тему</string>
-    <string name="preference_light_theme_title">Включить светлое оформление</string>
+    <string name="preference_light_theme_title">Включить светлую тему</string>
     <string name="preference_dark_mode_group_title">Тёмный режим</string>
     <string name="preference_follow_system_title">В соответствии с системой</string>
-    <string name="preference_true_dark_theme_title">Истинно-тёмное оформление</string>
+    <string name="preference_true_dark_theme_title">Истинно тёмная тема</string>
     <string name="preference_true_dark_theme_summary">Переключает цвет заднего фона чата на чёрный</string>
     <string name="preference_display_group_title">Отображение</string>
     <string name="preference_components_group_title">Компоненты</string>
@@ -226,7 +226,6 @@
     <string name="preference_tts_message_format_title">Режим форматирования сообщений</string>
     <string name="preference_tts_message_ignore_url_message">Игнорировать URL в синтезаторе речи</string>
     <string name="preference_tts_message_ignore_url_title">Игнорировать URL</string>
-    <string name="preference_tts_message_ignore_emote_message">Игнорировать смайлы и смайлики в синтезаторе речи </string>
     <string name="preference_tts_message_ignore_emote_title">Игнорировать смайлы </string>
     <string name="preference_tts_header">Синтезатор речи</string>
     <string name="preference_checkered_lines_title">Шахматные линии</string>
@@ -255,9 +254,9 @@
     <string name="preference_tts_user_ignore_list_title">Список игнорируемых пользователей</string>
     <string name="preference_tts_user_ignore_list_summary">Список пользователей/аккаунтов, которые будут игнорироваться</string>
     <string name="preference_tools_header">Инструменты</string>
-    <string name="preference_theme_title">Оформление</string>
-    <string name="preference_dark_theme_entry_title">Тёмное оформление</string>
-    <string name="preference_light_theme_entry_title">Светлое оформление</string>
+    <string name="preference_theme_title">Тема</string>
+    <string name="preference_dark_theme_entry_title">Тёмная тема</string>
+    <string name="preference_light_theme_entry_title">Светлая тема</string>
     <string name="preference_unlisted_emotes_title">Разрешить незарегистрированные смайлы</string>
     <string name="preference_unlisted_emotes_summary">Отключить фильтрацию неутвержденных или незарегистрированных смайлов</string>
     <string name="preference_rm_host_title">Пользовательский узел последних сообщений</string>
