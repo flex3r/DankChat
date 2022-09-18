@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">DankChat</string>
     <string name="app_name_dank">DankChat (Dank)</string>
@@ -70,7 +71,7 @@
     <string name="system_message_history_recovering">Message history service recovering, there may be gaps in the message history.</string>
     <string name="system_message_history_ignored">Message history unavailable because this channel is excluded from the service.</string>
     <string name="system_message_no_history">You are not seeing any historical messages because you opted out of the recent-messages integration.</string>
-    <string name="timed_out_message">&lt; Message deleted ></string>
+    <string name="timed_out_message">&lt; Message deleted &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_header_match_user">Match user</string>
     <string name="multi_entry_add_entry">Add an entry</string>
@@ -148,7 +149,7 @@
     <string name="remove_command">Remove the command</string>
     <string name="command_trigger_hint">Trigger</string>
     <string name="command__hint">Command</string>
-    <string name="commands_title">Custom commands"</string>
+    <string name="commands_title">Custom commands</string>
     <string name="user_popup_report">Report</string>
     <string name="tts_ignore_list_add_user">Add a user</string>
     <string name="tts_ignore_list_remove_user">Remove the user</string>
@@ -162,7 +163,6 @@
     <string name="badge_tooltip_bits" translatable="false">Twitch cheer %1$s</string>
     <string name="badge_tooltip_predictions">Predicted "%1$s"</string>
     <string name="badge_tooltip_sub_tier">Tier %1$s</string>
-
     <string name="shared_preference_key" translatable="false">com.flxrs.dankchat_preferences</string>
     <string name="preference_timestamp_title">Show timestamps</string>
     <string name="preference_timestamp_key" translatable="false">show_timestamp</string>
@@ -327,7 +327,6 @@
     <string name="preference_retain_webview_key" translatable="false">retain_webview_key</string>
     <string name="preference_retain_webview_title">Prevent stream reloads</string>
     <string name="preference_retain_webview_summary">Enables experimental prevention of stream reloads after orientation changes or re-opening DankChat.</string>
-
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>
         <item quantity="other">Live with %d viewers</item>
