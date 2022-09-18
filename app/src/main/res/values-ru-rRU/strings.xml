@@ -180,7 +180,7 @@
     <string name="preference_general_header">Общие</string>
     <string name="preference_about_header">О программе</string>
     <string name="preference_appearance_header">Внешний вид</string>
-    <string name="preference_about_summary">DankChat %1$s сделан @flex3rs и другими участниками</string>
+    <string name="preference_about_summary">DankChat %1$s создан @flex3rs и другими участниками</string>
     <string name="preference_show_input_title">Отображать строку ввода</string>
     <string name="preference_show_input_summary">Отображает строку для ввода сообщений</string>
     <string name="preference_dark_theme_title">Включить тёмную тему</string>
@@ -226,6 +226,7 @@
     <string name="preference_tts_message_format_title">Режим форматирования сообщений</string>
     <string name="preference_tts_message_ignore_url_message">Игнорировать URL в синтезаторе речи</string>
     <string name="preference_tts_message_ignore_url_title">Игнорировать URL</string>
+    <string name="preference_tts_message_ignore_emote_message">Игнорировать смайлы и эмодзи в синтезаторе речи </string>
     <string name="preference_tts_message_ignore_emote_title">Игнорировать смайлы </string>
     <string name="preference_tts_header">Синтезатор речи</string>
     <string name="preference_checkered_lines_title">Шахматные линии</string>
