@@ -21,6 +21,8 @@ import kotlinx.serialization.json.Json
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toJavaDuration
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -39,6 +41,13 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
+        .build()
+
+    @UploadOkHttpClient
+    @Singleton
+    @Provides
+    fun provideUploadOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
+        .callTimeout(60.seconds.toJavaDuration())
         .build()
 
     @EmoteOkHttpClient
@@ -161,7 +170,7 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideApiManager(
-        ktorClient: HttpClient,
+        @UploadOkHttpClient okHttpClient: OkHttpClient,
         bttvApiService: BTTVApiService,
         dankChatApiService: DankChatApiService,
         ffzApiService: FFZApiService,
@@ -174,7 +183,7 @@ object NetworkModule {
         sevenTVApiService: SevenTVApiService,
         dankChatPreferenceStore: DankChatPreferenceStore
     ): ApiManager = ApiManager(
-        ktorClient,
+        okHttpClient,
         bttvApiService,
         dankChatApiService,
         ffzApiService,
