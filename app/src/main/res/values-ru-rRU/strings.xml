@@ -236,7 +236,7 @@
     <string name="preference_show_username_title">Отображать имена пользователей</string>
     <string name="preference_visible_badges_title">Видимые значки</string>
     <string name="preference_prefer_emote_suggestions_title">Предпочитать подсказки смайлов</string>
-    <string name="preference_prefer_emote_suggestions_summary">Предпочитать подсказки смайлов подсказкам пользователей</string>
+    <string name="preference_prefer_emote_suggestions_summary">Предпочитать подсказки смайлов над подсказками пользователей</string>
     <string name="preference_user_long_click_title">Поведение при долгом нажатии на имя пользователя</string>
     <string name="preference_user_long_click_summary_on">Обычное нажатие открывает всплывающее окно с информацией о пользователе, долгое - открывает упоминания</string>
     <string name="preference_user_long_click_summary_off">Обычное нажатие открывает упоминания, долгое - открывает всплывающее окно с информацией о пользователе</string>
