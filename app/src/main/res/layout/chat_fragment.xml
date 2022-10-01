@@ -8,17 +8,17 @@
         android:layout_height="0dp"
         android:animateLayoutChanges="true">
 
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/scrollBottom"
-            style="@style/Widget.Material3.ExtendedFloatingActionButton.Secondary"
+            style="@style/Widget.Material3.FloatingActionButton.Secondary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:text="@string/resume_scroll"
+            android:layout_margin="16dp"
+            android:contentDescription="@string/resume_scroll"
             android:visibility="gone"
-            app:icon="@drawable/ic_keyboard_arrow_down"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_keyboard_arrow_down" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chat"
