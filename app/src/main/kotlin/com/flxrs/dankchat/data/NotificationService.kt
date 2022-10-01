@@ -20,6 +20,8 @@ import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.NotificationService.NotificationData.Companion.toNotificationData
+import com.flxrs.dankchat.data.repo.ChatRepository
+import com.flxrs.dankchat.data.repo.DataRepository
 import com.flxrs.dankchat.data.twitch.message.Message
 import com.flxrs.dankchat.data.twitch.message.TwitchMessage
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage

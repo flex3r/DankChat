@@ -1,9 +1,13 @@
 package com.flxrs.dankchat.di
 
-import com.flxrs.dankchat.data.*
 import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.data.database.EmoteUsageDao
 import com.flxrs.dankchat.data.database.RecentUploadsDao
+import com.flxrs.dankchat.data.repo.ChatRepository
+import com.flxrs.dankchat.data.repo.CommandRepository
+import com.flxrs.dankchat.data.repo.DataRepository
+import com.flxrs.dankchat.data.repo.EmoteUsageRepository
+import com.flxrs.dankchat.data.repo.RecentUploadsRepository
 import com.flxrs.dankchat.data.twitch.connection.ChatConnection
 import com.flxrs.dankchat.data.twitch.connection.PubSubManager
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager

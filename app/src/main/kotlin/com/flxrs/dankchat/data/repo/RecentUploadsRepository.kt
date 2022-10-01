@@ -1,8 +1,8 @@
-package com.flxrs.dankchat.data
+package com.flxrs.dankchat.data.repo
 
 import com.flxrs.dankchat.data.api.dto.UploadDto
 import com.flxrs.dankchat.data.database.RecentUploadsDao
-import com.flxrs.dankchat.data.database.UploadEntity
+import com.flxrs.dankchat.data.database.entity.UploadEntity
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

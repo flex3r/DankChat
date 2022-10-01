@@ -8,10 +8,10 @@ import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.chat.menu.EmoteMenuTabItem
 import com.flxrs.dankchat.chat.suggestion.Suggestion
-import com.flxrs.dankchat.data.ChatRepository
-import com.flxrs.dankchat.data.CommandRepository
-import com.flxrs.dankchat.data.DataRepository
-import com.flxrs.dankchat.data.EmoteUsageRepository
+import com.flxrs.dankchat.data.repo.ChatRepository
+import com.flxrs.dankchat.data.repo.CommandRepository
+import com.flxrs.dankchat.data.repo.DataRepository
+import com.flxrs.dankchat.data.repo.EmoteUsageRepository
 import com.flxrs.dankchat.data.api.ApiException
 import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.data.state.DataLoadingState

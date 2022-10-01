@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.data
+package com.flxrs.dankchat.data.repo
 
 import android.graphics.Color
 import android.util.Log

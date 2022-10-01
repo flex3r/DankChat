@@ -3,6 +3,7 @@ package com.flxrs.dankchat.data.database
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import com.flxrs.dankchat.data.database.entity.UploadEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

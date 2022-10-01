@@ -4,8 +4,8 @@ package com.flxrs.dankchat
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flxrs.dankchat.data.ChatRepository
-import com.flxrs.dankchat.data.DataRepository
+import com.flxrs.dankchat.data.repo.ChatRepository
+import com.flxrs.dankchat.data.repo.DataRepository
 import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.data.api.dto.ValidateResultDto
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore

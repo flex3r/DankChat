@@ -1,7 +1,7 @@
 package com.flxrs.dankchat.data.twitch.message
 
 import android.graphics.Color
-import com.flxrs.dankchat.data.ChatRepository
+import com.flxrs.dankchat.data.repo.ChatRepository
 import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.badge.BadgeType
