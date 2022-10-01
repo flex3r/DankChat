@@ -16,7 +16,9 @@ import android.webkit.MimeTypeMap
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.*
 import androidx.activity.result.launch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -107,9 +109,9 @@ class MainFragment : Fragment() {
     private var currentMediaUri = Uri.EMPTY
     private val tabSelectionListener = TabSelectionListener()
 
-    private val requestImageCapture = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { if (it.resultCode == Activity.RESULT_OK) handleCaptureRequest(imageCapture = true) }
-    private val requestVideoCapture = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { if (it.resultCode == Activity.RESULT_OK) handleCaptureRequest() }
-    private val requestGalleryMedia = registerForActivityResult(GetImageOrVideoContract()) { uri ->
+    private val requestImageCapture = registerForActivityResult(StartActivityForResult()) { if (it.resultCode == Activity.RESULT_OK) handleCaptureRequest(imageCapture = true) }
+    private val requestVideoCapture = registerForActivityResult(StartActivityForResult()) { if (it.resultCode == Activity.RESULT_OK) handleCaptureRequest() }
+    private val requestGalleryMedia = registerForActivityResult(PickVisualMedia()) { uri ->
         uri ?: return@registerForActivityResult
         val contentResolver = activity?.contentResolver ?: return@registerForActivityResult
         val context = context ?: return@registerForActivityResult
@@ -244,7 +246,7 @@ class MainFragment : Fragment() {
                     R.id.menu_block_channel  -> blockChannel()
                     R.id.menu_manage         -> openManageChannelsDialog()
                     R.id.menu_reload_emotes  -> reloadEmotes()
-                    R.id.menu_choose_media   -> showNuulsUploadDialogIfNotAcknowledged { requestGalleryMedia.launch() }
+                    R.id.menu_choose_media   -> showNuulsUploadDialogIfNotAcknowledged { requestGalleryMedia.launch(PickVisualMediaRequest(PickVisualMedia.ImageAndVideo)) }
                     R.id.menu_capture_image  -> startCameraCapture()
                     R.id.menu_capture_video  -> startCameraCapture(captureVideo = true)
                     R.id.menu_clear          -> clear()
