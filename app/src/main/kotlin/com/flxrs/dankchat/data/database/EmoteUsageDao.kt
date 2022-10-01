@@ -3,6 +3,7 @@ package com.flxrs.dankchat.data.database
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
+import com.flxrs.dankchat.data.database.entity.EmoteUsageEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

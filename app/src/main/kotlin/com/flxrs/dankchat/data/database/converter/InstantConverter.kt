@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.data.database
+package com.flxrs.dankchat.data.database.converter
 
 import androidx.room.TypeConverter
 import java.time.Instant
