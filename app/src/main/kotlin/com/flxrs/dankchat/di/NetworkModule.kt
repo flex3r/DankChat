@@ -10,7 +10,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.*
-import io.ktor.client.engine.cio.*
+import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.cache.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -59,12 +59,7 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideKtorClient(): HttpClient = HttpClient(CIO) {
-        engine {
-            endpoint {
-                connectTimeout = 10000
-            }
-        }
+    fun provideKtorClient(): HttpClient = HttpClient(OkHttp) {
         install(Logging) {
             level = LogLevel.INFO
             logger = object : Logger {
