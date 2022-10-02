@@ -1,6 +1,6 @@
 package com.flxrs.dankchat.data.repo
 
-import com.flxrs.dankchat.data.database.EmoteUsageDao
+import com.flxrs.dankchat.data.database.dao.EmoteUsageDao
 import com.flxrs.dankchat.data.database.entity.EmoteUsageEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "blacklisted_user")
-data class BlacklistedUserEntity(
+data class UserIgnoreEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
     val enabled: Boolean,

@@ -9,6 +9,7 @@ import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.preferences.command.CommandDto
 import com.flxrs.dankchat.preferences.command.CommandDto.Companion.toEntryItem
 import com.flxrs.dankchat.preferences.command.CommandItem
+import com.flxrs.dankchat.preferences.multientry.MultiEntryDto
 import com.flxrs.dankchat.preferences.upload.ImageUploader
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import kotlinx.coroutines.channels.awaitClose
@@ -98,6 +99,14 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
             val hostOrDefault = value.ifBlank { RM_HOST_DEFAULT }
             defaultPreferences.edit { putString(context.getString(R.string.preference_rm_host_key), hostOrDefault) }
         }
+
+    var customMentions: List<MultiEntryDto>
+        get() = getMultiEntriesFromPreferences(context.getString(R.string.preference_custom_mentions_key))
+        set(value) = setMultiEntries(context.getString(R.string.preference_custom_mentions_key), value)
+
+    var customBlacklist: List<MultiEntryDto>
+        get() = getMultiEntriesFromPreferences(context.getString(R.string.preference_blacklist_key))
+        set(value) = setMultiEntries(context.getString(R.string.preference_blacklist_key), value)
 
     val commandsAsFlow: Flow<List<CommandItem.Entry>> = callbackFlow {
         val commandsKey = context.getString(R.string.preference_commands_key)
@@ -247,6 +256,21 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
 
     private fun String.toMutableMap(): MutableMap<String, String> {
         return Json.decodeOrNull<Map<String, String>>(this).orEmpty().toMutableMap()
+    }
+
+    private fun getMultiEntriesFromPreferences(key: String): List<MultiEntryDto> {
+        return defaultPreferences
+            .getStringSet(key, emptySet())
+            .orEmpty()
+            .mapNotNull { Json.decodeOrNull<MultiEntryDto>(it) }
+    }
+
+    private fun setMultiEntries(key: String, entries: List<MultiEntryDto>) {
+        entries.map { Json.encodeToString(it) }
+            .toSet()
+            .let {
+                defaultPreferences.edit { putStringSet(key, it) }
+            }
     }
 
     private fun getCommandsFromPreferences(key: String): List<CommandItem.Entry> {

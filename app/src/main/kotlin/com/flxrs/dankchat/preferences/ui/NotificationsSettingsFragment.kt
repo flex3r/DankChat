@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.viewModels
 import androidx.preference.Preference
 import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.R
@@ -20,11 +21,15 @@ import com.flxrs.dankchat.preferences.multientry.MultiEntryDto.Companion.toEntry
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.math.roundToInt
 
+@AndroidEntryPoint
 class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
+
+    private val viewModel: HighlightsViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -13,11 +13,11 @@ data class MessageHighlightEntity(
     val pattern: String,
 
     @ColumnInfo(name = "is_regex")
-    val isRegex: Boolean,
+    val isRegex: Boolean = false,
     @ColumnInfo(name = "is_case_sensitive")
-    val isCaseSensitive: Boolean,
+    val isCaseSensitive: Boolean = false,
     @ColumnInfo(name = "custom_color")
-    val customColor: Int?
+    val customColor: Int? = null
 )
 
 enum class MessageHighlightType {

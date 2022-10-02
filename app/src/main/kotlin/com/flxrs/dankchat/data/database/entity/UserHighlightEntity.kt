@@ -12,5 +12,5 @@ data class UserHighlightEntity(
     val username: String,
 
     @ColumnInfo(name = "custom_color")
-    val customColor: Int?
+    val customColor: Int? = null
 )

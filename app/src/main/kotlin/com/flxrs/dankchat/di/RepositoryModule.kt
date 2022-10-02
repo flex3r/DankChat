@@ -1,8 +1,8 @@
 package com.flxrs.dankchat.di
 
 import com.flxrs.dankchat.data.api.ApiManager
-import com.flxrs.dankchat.data.database.EmoteUsageDao
-import com.flxrs.dankchat.data.database.RecentUploadsDao
+import com.flxrs.dankchat.data.database.dao.EmoteUsageDao
+import com.flxrs.dankchat.data.database.dao.RecentUploadsDao
 import com.flxrs.dankchat.data.repo.ChatRepository
 import com.flxrs.dankchat.data.repo.CommandRepository
 import com.flxrs.dankchat.data.repo.DataRepository

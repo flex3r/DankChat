@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.data.database
+package com.flxrs.dankchat.data.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert

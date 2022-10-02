@@ -12,8 +12,8 @@ data class MessageIgnoreEntity(
     val pattern: String,
 
     @ColumnInfo(name = "is_regex")
-    val isRegex: Boolean,
+    val isRegex: Boolean = false,
     @ColumnInfo(name = "is_case_sensitive")
-    val isCaseSensitive: Boolean,
-    val replacement: String?
+    val isCaseSensitive: Boolean = false,
+    val replacement: String? = null,
 )
