@@ -9,7 +9,7 @@ import androidx.room.TypeConverters
     version = 2,
     entities = [EmoteUsageEntity::class, UploadEntity::class],
     autoMigrations = [
-        AutoMigration(from = 1, to = 2)
+        AutoMigration(from = 1, to = 2),
     ],
     exportSchema = true,
 )

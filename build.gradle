@@ -28,7 +28,7 @@ buildscript {
         viewpager2_version = '1.1.0-beta01'
         material_version = '1.8.0-alpha01'
         webkit_version = '1.5.0'
-        room_version = '2.4.3'
+        room_version = '2.5.0-alpha03'
 
         // Third-party
         coil_version = '2.2.1'

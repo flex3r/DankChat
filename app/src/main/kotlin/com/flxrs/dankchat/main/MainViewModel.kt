@@ -607,7 +607,7 @@ class MainViewModel @Inject constructor(
         emoteUsageRepository.addEmoteUsage(emote.id)
     }
 
-    fun clearEmoteUsages() = viewModelScope.launch {
+    private fun clearEmoteUsages() = viewModelScope.launch {
         emoteUsageRepository.clearUsages()
     }
 

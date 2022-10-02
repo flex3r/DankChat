@@ -51,8 +51,9 @@ object RepositoryModule {
     @Singleton
     @Provides
     fun provideEmoteUsageRepository(
-        emoteDao: EmoteUsageDao
-    ) = EmoteUsageRepository(emoteDao)
+        emoteDao: EmoteUsageDao,
+        @ApplicationScope scope: CoroutineScope,
+    ) = EmoteUsageRepository(emoteDao, scope)
 
     @Singleton
     @Provides
