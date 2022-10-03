@@ -6,10 +6,14 @@ import com.flxrs.dankchat.data.database.dao.UserHighlightDao
 import com.flxrs.dankchat.data.database.entity.MessageHighlightEntity
 import com.flxrs.dankchat.data.database.entity.MessageHighlightType
 import com.flxrs.dankchat.data.database.entity.UserHighlightEntity
+import com.flxrs.dankchat.data.twitch.message.*
 import com.flxrs.dankchat.di.ApplicationScope
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.multientry.MultiEntryDto
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -21,6 +25,109 @@ class HighlightsRepository @Inject constructor(
     private val preferences: DankChatPreferenceStore,
     @ApplicationScope private val coroutineScope: CoroutineScope
 ) {
+
+    private val messageHighlights = messageHighlightDao.getMessageHighlightsFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+    private val userHighlights = userHighlightDao.getUserHighlightsFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+    private val currentUserNameRegex = preferences.currentUserNameFlow
+        .map { it?.let { """\b$it\b""".toRegex(RegexOption.IGNORE_CASE) } }
+        .stateIn(coroutineScope, SharingStarted.Eagerly, null)
+
+    fun calculateHighlightState(message: Message): Message {
+        return when (message) {
+            is UserNoticeMessage      -> message.calculateHighlightState()
+            is PointRedemptionMessage -> message.calculateHighlightState()
+            is PrivMessage            -> message.calculateHighlightState()
+            else                      -> message
+        }
+    }
+
+    private fun UserNoticeMessage.calculateHighlightState(): UserNoticeMessage {
+        messageHighlights.value
+            .firstOrNull { it.enabled && it.type == MessageHighlightType.Subscription }
+            ?: return this
+
+        val highlightState = HighlightState(HighlightType.Subscription)
+        return copy(
+            highlightState = highlightState,
+            childMessage = childMessage?.copy(highlightState = highlightState)
+        )
+    }
+
+    private fun PointRedemptionMessage.calculateHighlightState(): PointRedemptionMessage {
+        messageHighlights.value
+            .firstOrNull { it.enabled && it.type == MessageHighlightType.ChannelPointRedemption }
+            ?: return this
+
+        val highlightState = HighlightState(HighlightType.ChannelPointRedemption)
+        return copy(highlightState = highlightState)
+    }
+
+    private fun PrivMessage.calculateHighlightState(): PrivMessage {
+        val enabledUserHighlights = userHighlights.value.filter { it.enabled }
+        val enabledMessageHighlights = messageHighlights.value.filter { it.enabled }
+
+        if (enabledMessageHighlights.areRewardsEnabled && isReward) {
+            return copy(highlightState = HighlightState(HighlightType.ChannelPointRedemption))
+        }
+
+        if (enabledMessageHighlights.areFirstMessagesEnabled && isFirstMessage) {
+            return copy(highlightState = HighlightState(HighlightType.FirstMessage))
+        }
+
+        // Username
+        // TODO also match DisplayName?
+        if (enabledMessageHighlights.isOwnUserNameEnabled && containsCurrentUserName) {
+            return copy(highlightState = HighlightState(HighlightType.Username))
+        }
+
+        // User highlights
+        enabledUserHighlights.forEach {
+            if (it.username.equals(name, ignoreCase = true) || it.username.equals(displayName, ignoreCase = true)) {
+                return copy(highlightState = HighlightState(HighlightType.Custom))
+            }
+        }
+
+        // custom message highlights
+        enabledMessageHighlights
+            .filter { it.type == MessageHighlightType.Custom }
+            .forEach {
+                val hasMatch = when {
+                    it.isRegex -> it.regex?.let { regex -> originalMessage.matches(regex) } ?: false
+                    else -> originalMessage.split(" ").any { word -> word.contains(it.pattern, ignoreCase = it.isCaseSensitive) }
+                }
+
+                if (hasMatch) {
+                    return copy(highlightState = HighlightState(HighlightType.Custom))
+                }
+            }
+
+        return this
+    }
+
+    private val List<MessageHighlightEntity>.areRewardsEnabled: Boolean
+        get() = isMessageHighlightTypeEnabled(MessageHighlightType.ChannelPointRedemption)
+
+    private val List<MessageHighlightEntity>.areFirstMessagesEnabled: Boolean
+        get() = isMessageHighlightTypeEnabled(MessageHighlightType.FirstMessage)
+
+    private val List<MessageHighlightEntity>.isOwnUserNameEnabled: Boolean
+        get() = isMessageHighlightTypeEnabled(MessageHighlightType.Username)
+
+    private fun List<MessageHighlightEntity>.isMessageHighlightTypeEnabled(type: MessageHighlightType): Boolean {
+        return any { it.type == type }
+    }
+
+    private val PrivMessage.isReward: Boolean
+        get() = tags["msg-id"] == "highlighted-message" || tags["custom-reward-id"] != null
+
+    private val PrivMessage.isFirstMessage: Boolean
+        get() = tags["first-msg"] == "1"
+
+    private val PrivMessage.containsCurrentUserName: Boolean
+        get() {
+            val regex = currentUserNameRegex.value ?: return false
+            return message.contains(regex)
+        }
 
     fun runMigrationsIfNeeded() = coroutineScope.launch {
         runCatching {

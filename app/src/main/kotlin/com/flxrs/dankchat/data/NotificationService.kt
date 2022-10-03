@@ -22,9 +22,7 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.NotificationService.NotificationData.Companion.toNotificationData
 import com.flxrs.dankchat.data.repo.ChatRepository
 import com.flxrs.dankchat.data.repo.DataRepository
-import com.flxrs.dankchat.data.twitch.message.Message
-import com.flxrs.dankchat.data.twitch.message.TwitchMessage
-import com.flxrs.dankchat.data.twitch.message.WhisperMessage
+import com.flxrs.dankchat.data.twitch.message.*
 import com.flxrs.dankchat.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -228,13 +226,20 @@ class NotificationService : Service(), CoroutineScope {
                         data?.createMentionNotification()
                     }
 
-                    if (message !is TwitchMessage) {
+                    if (!message.shouldPlayTTS()) {
                         return@forEach
+                    }
+
+                    val channel = when (message) {
+                        is PrivMessage       -> message.channel
+                        is UserNoticeMessage -> message.channel
+                        is NoticeMessage     -> message.channel
+                        else                 -> return@forEach
                     }
 
                     val volume = audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC) ?: 0
 
-                    if (!ttsEnabled || message.channel != activeTTSChannel || volume <= 0) {
+                    if (!ttsEnabled || channel != activeTTSChannel || volume <= 0) {
                         return@forEach
                     }
 
@@ -242,7 +247,7 @@ class NotificationService : Service(), CoroutineScope {
                         initTTS()
                     }
 
-                    if (ignoredTtsUsers.any { it.equals(message.name, ignoreCase = true) || it.equals(message.displayName, ignoreCase = true) }) {
+                    if (message is PrivMessage && ignoredTtsUsers.any { it.equals(message.name, ignoreCase = true) || it.equals(message.displayName, ignoreCase = true) }) {
                         return@forEach
                     }
 
@@ -252,32 +257,42 @@ class NotificationService : Service(), CoroutineScope {
         }
     }
 
-    private fun TwitchMessage.playTTSMessage() {
-        val messageFormat = when {
-            isSystem || !combinedTTSFormat                          -> message
-            tts?.voice?.locale?.language == Locale.ENGLISH.language -> "$name said $message"
-            else                                                    -> "$name. $message"
+    private fun Message.shouldPlayTTS(): Boolean = this is PrivMessage || this is NoticeMessage || this is UserNoticeMessage
+
+    private fun Message.playTTSMessage() {
+        val baseMessage = when (this) {
+            is UserNoticeMessage -> message
+            is NoticeMessage     -> message
+            else                 -> {
+                if (this !is PrivMessage) return
+                val filteredMessage = when {
+                    removeEmote -> emotes.fold(message) { acc, emote ->
+                        acc.replace(emote.code, newValue = "", ignoreCase = true)
+                    }.run {
+                        //Replaces all unicode character that are: So - Symbol Other, Sc - Symbol Currency, Sm - Symbol Math, Cn - Unassigned.
+                        //This will not filter out non latin script (Arabic and Japanese for example works fine.)
+                        replace(UNICODE_SYMBOL_REGEX, replacement = "")
+                    }
+
+                    else        -> message
+                }
+                when {
+                    !combinedTTSFormat || name == previousTTSUser           -> filteredMessage
+                    tts?.voice?.locale?.language == Locale.ENGLISH.language -> "$name said $filteredMessage"
+                    else                                                    -> "$name. $filteredMessage".also { previousTTSUser = name }
+                }
+            }
         }
+
+        var ttsMessage = baseMessage
+        if (removeURL) {
+            ttsMessage = ttsMessage.replace(URL_REGEX, replacement = "")
+        }
+
         val queueMode = when {
             ttsMessageQueue -> TextToSpeech.QUEUE_ADD
             else            -> TextToSpeech.QUEUE_FLUSH
         }
-        var ttsMessage = when (name) {
-            previousTTSUser -> message
-            else            -> messageFormat.also { previousTTSUser = name }
-        }
-        if (removeURL) {
-            ttsMessage = ttsMessage.replace("[(http(s)?):\\/\\/(www\\.)?a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)".toRegex(RegexOption.IGNORE_CASE), "")
-        }
-        if (removeEmote) {
-            for (emote in this.emotes) {
-                ttsMessage = ttsMessage.replace(emote.code, "", ignoreCase = true)
-            }
-            //Replaces all unicode character that are: So - Symbol Other, Sc - Symbol Currency, Sm - Symbol Math, Cn - Unassigned.
-            //This will not filter out non latin script (Arabic and Japanese for example works fine.)
-            ttsMessage = ttsMessage.replace("\\p{So}|\\p{Sc}|\\p{Sm}|\\p{Cn}".toRegex(), "")
-        }
-
         tts?.speak(ttsMessage, queueMode, null, null)
     }
 
@@ -291,14 +306,17 @@ class NotificationService : Service(), CoroutineScope {
     ) {
         companion object {
             fun Message.toNotificationData(): NotificationData? = when (this) {
-                is TwitchMessage  -> if (isMention) NotificationData(channel, name, originalMessage, isNotify = isNotify) else null
+                is PrivMessage    -> if (highlightState?.isMention == true) NotificationData(channel, name, originalMessage) else null
                 is WhisperMessage -> NotificationData(
                     channel = "",
                     name = name,
                     message = originalMessage,
                     isWhisper = true,
                 )
-                else              -> null
+
+                else              -> {
+                    null
+                }
             }
         }
     }
@@ -350,6 +368,9 @@ class NotificationService : Service(), CoroutineScope {
         private const val SUMMARY_NOTIFICATION_ID = 12345
         private const val MENTION_GROUP = "dank_group"
         private const val STOP_COMMAND = "STOP_DANKING"
+
+        private val UNICODE_SYMBOL_REGEX = "\\p{So}|\\p{Sc}|\\p{Sm}|\\p{Cn}".toRegex()
+        private val URL_REGEX = "[(http(s)?):\\/\\/(www\\.)?a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)".toRegex(RegexOption.IGNORE_CASE)
 
         private var notificationId = 42
             get() = field++

@@ -158,6 +158,18 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
     val retainWebViewEnabled: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_retain_webview_key), false)
 
+    val currentUserNameFlow: Flow<String?> = callbackFlow {
+        send(userName?.ifBlank { null })
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            if (key == NAME_KEY) {
+                trySend(userName)
+            }
+        }
+
+        dankChatPreferences.registerOnSharedPreferenceChangeListener(listener)
+        awaitClose { dankChatPreferences.unregisterOnSharedPreferenceChangeListener(listener) }
+    }
+
     val preferenceFlow: Flow<Preference> = callbackFlow {
         with(context) {
             val roomStateKey = getString(R.string.preference_roomstate_key)

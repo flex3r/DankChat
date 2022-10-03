@@ -3,11 +3,7 @@ package com.flxrs.dankchat.di
 import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.data.database.dao.EmoteUsageDao
 import com.flxrs.dankchat.data.database.dao.RecentUploadsDao
-import com.flxrs.dankchat.data.repo.ChatRepository
-import com.flxrs.dankchat.data.repo.CommandRepository
-import com.flxrs.dankchat.data.repo.DataRepository
-import com.flxrs.dankchat.data.repo.EmoteUsageRepository
-import com.flxrs.dankchat.data.repo.RecentUploadsRepository
+import com.flxrs.dankchat.data.repo.*
 import com.flxrs.dankchat.data.twitch.connection.ChatConnection
 import com.flxrs.dankchat.data.twitch.connection.PubSubManager
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager
@@ -42,7 +38,17 @@ object RepositoryModule {
         pubSubManager: PubSubManager,
         @ApplicationScope scope: CoroutineScope,
         dankChatPreferenceStore: DankChatPreferenceStore,
-    ): ChatRepository = ChatRepository(apiManager, emoteManager, readConnection, writeConnection, pubSubManager, dankChatPreferenceStore, scope)
+        highlightsRepository: HighlightsRepository,
+    ): ChatRepository = ChatRepository(
+        apiManager = apiManager,
+        emoteManager = emoteManager,
+        readConnection = readConnection,
+        writeConnection = writeConnection,
+        pubSubManager = pubSubManager,
+        dankChatPreferenceStore = dankChatPreferenceStore,
+        highlightsRepository = highlightsRepository,
+        scope = scope
+    )
 
     @Singleton
     @Provides

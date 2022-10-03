@@ -28,6 +28,6 @@ sealed class Mention {
     }
 }
 
-fun List<Mention>.matches(message: TwitchMessage): Boolean = any {
+fun List<Mention>.matches(message: PrivMessage): Boolean = any {
     it.matches(message.message) || it.matchUser(message.name, message.displayName) || message.emotes.any { e -> it.matches(e.code) }
 }

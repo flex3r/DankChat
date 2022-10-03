@@ -104,7 +104,9 @@ class ChatAdapter(
         val item = getItem(position)
         when (val message = item.message) {
             is SystemMessage          -> holder.binding.itemText.handleSystemMessage(message, holder)
-            is TwitchMessage          -> holder.binding.itemText.handleTwitchMessage(message, holder, item.isMentionTab)
+            is NoticeMessage          -> holder.binding.itemText.handleNoticeMessage(message, holder)
+            is UserNoticeMessage      -> holder.binding.itemText.handleUserNoticeMessage(message, holder)
+            is PrivMessage            -> holder.binding.itemText.handleTwitchMessage(message, holder, item.isMentionTab)
             is ClearChatMessage       -> holder.binding.itemText.handleClearChatMessage(message, holder)
             is PointRedemptionMessage -> holder.binding.itemText.handlePointRedemptionMessage(message, holder)
             is WhisperMessage         -> holder.binding.itemText.handleWhisperMessage(message, holder)
@@ -116,6 +118,63 @@ class ChatAdapter(
             itemCount - 1 -> messageCount.isEven
             else          -> (bindingAdapterPosition - itemCount - 1).isEven
         }
+
+    private fun TextView.handleNoticeMessage(message: NoticeMessage, holder: ViewHolder) {
+        alpha = 1.0f
+
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
+        val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
+        val checkeredKey = context.getString(R.string.checkered_messages_key)
+        val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
+        val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
+        val isCheckeredMode = preferences.getBoolean(checkeredKey, false)
+
+        val background = when {
+            isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(this, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
+            else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
+        }
+        setBackgroundColor(background)
+        val withTime = when {
+            showTimeStamp -> SpannableStringBuilder()
+                .bold { append("${DateTimeUtils.timestampToLocalTime(message.timestamp)} ") }
+                .append(message.message)
+
+            else          -> SpannableStringBuilder().append(message.message)
+        }
+
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
+        text = withTime
+    }
+
+    private fun TextView.handleUserNoticeMessage(message: UserNoticeMessage, holder: ViewHolder) {
+        alpha = 1.0f
+
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
+        val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
+        val checkeredKey = context.getString(R.string.checkered_messages_key)
+        val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
+        val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
+        val isCheckeredMode = preferences.getBoolean(checkeredKey, false)
+
+        val background = when {
+            message.highlightState?.type == HighlightType.Subscription -> ContextCompat.getColor(context, R.color.color_highlight)
+            isCheckeredMode && holder.isAlternateBackground            -> MaterialColors.layer(this, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
+            else                                                       -> ContextCompat.getColor(context, android.R.color.transparent)
+        }
+        setBackgroundColor(background)
+        val withTime = when {
+            showTimeStamp -> SpannableStringBuilder()
+                .bold { append("${DateTimeUtils.timestampToLocalTime(message.timestamp)} ") }
+                .append(message.message)
+
+            else          -> SpannableStringBuilder().append(message.message)
+        }
+
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
+        text = withTime
+    }
 
     private fun TextView.handleSystemMessage(message: SystemMessage, holder: ViewHolder) {
         alpha = 1.0f
@@ -430,9 +489,8 @@ class ChatAdapter(
         }
     }
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     @SuppressLint("ClickableViewAccessibility")
-    private fun TextView.handleTwitchMessage(twitchMessage: TwitchMessage, holder: ViewHolder, isMentionTab: Boolean): Unit = with(twitchMessage) {
+    private fun TextView.handleTwitchMessage(privMessage: PrivMessage, holder: ViewHolder, isMentionTab: Boolean): Unit = with(privMessage) {
         val textView = this@handleTwitchMessage
         isClickable = false
         alpha = if (timedOut) .5f else 1f
@@ -464,9 +522,7 @@ class ChatAdapter(
         val scaleFactor = baseHeight * SCALE_FACTOR_CONSTANT
         val bgColor = when {
             timedOut && !showTimedOutMessages               -> ContextCompat.getColor(context, android.R.color.transparent)
-            isNotify                                        -> ContextCompat.getColor(context, R.color.color_highlight)
-            isReward                                        -> ContextCompat.getColor(context, R.color.color_reward)
-            isMention                                       -> ContextCompat.getColor(context, R.color.color_mention)
+            highlightState != null                          -> highlightState.toBackgroundColor(context)
             isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(textView, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
             else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
         }
@@ -499,8 +555,13 @@ class ChatAdapter(
         val badgesLength = allowedBadges.size * 2
 
         val timeAndWhisperBuilder = StringBuilder()
-        if (isMentionTab && isMention) timeAndWhisperBuilder.append("#$channel ")
-        if (showTimeStamp) timeAndWhisperBuilder.append(DateTimeUtils.timestampToLocalTime(timestamp))
+        if (isMentionTab && highlightState?.isMention == true) {
+            timeAndWhisperBuilder.append("#$channel ")
+        }
+        if (showTimeStamp) {
+            timeAndWhisperBuilder.append(DateTimeUtils.timestampToLocalTime(timestamp))
+        }
+
 
         val spannable = SpannableStringBuilder().timestampFont(context) { append(timeAndWhisperBuilder) }
         val prefixLength = spannable.length + fullDisplayName.length // spannable.length is timestamp's length (plus some extra length from extra methods call above)
@@ -739,6 +800,18 @@ class ChatAdapter(
             setBackgroundColor(backgroundColor)
         }
     }
+
+    @ColorInt
+    private fun HighlightState.toBackgroundColor(context: Context): Int {
+        return when (type) {
+            HighlightType.Subscription           -> ContextCompat.getColor(context, R.color.color_highlight)
+            HighlightType.ChannelPointRedemption -> ContextCompat.getColor(context, R.color.color_reward)
+            // TODO diff color
+            HighlightType.FirstMessage           -> ContextCompat.getColor(context, R.color.color_reward)
+            HighlightType.Username               -> ContextCompat.getColor(context, R.color.color_mention)
+            HighlightType.Custom                 -> ContextCompat.getColor(context, R.color.color_mention)
+        }
+    }
 }
 
 private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
@@ -748,11 +821,18 @@ private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
 
     override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
         return when {
-            oldItem.message is TwitchMessage && newItem.message is TwitchMessage &&
-                    ((!oldItem.message.timedOut && newItem.message.timedOut) || newItem.message.isMention) -> false
+            newItem.message.highlightState?.isMention == true || isNewItemTimedout(oldItem, newItem) -> false
 
-            else                                                                                           -> oldItem.message == newItem.message
+            else                                                                                     -> oldItem.message == newItem.message
         }
+    }
+
+    private fun isNewItemTimedout(oldItem: ChatItem, newItem: ChatItem): Boolean {
+        if (oldItem.message !is PrivMessage || newItem.message !is PrivMessage) {
+            return false
+        }
+
+        return !oldItem.message.timedOut && newItem.message.timedOut
     }
 }
 

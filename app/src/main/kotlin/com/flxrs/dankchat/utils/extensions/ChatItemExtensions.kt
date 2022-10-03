@@ -2,8 +2,8 @@ package com.flxrs.dankchat.utils.extensions
 
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.data.twitch.message.ClearChatMessage
+import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.SystemMessage
-import com.flxrs.dankchat.data.twitch.message.TwitchMessage
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
@@ -27,7 +27,8 @@ fun List<ChatItem>.replaceWithTimeOuts(clearChatMessage: ClearChatMessage, scrol
 
     for (idx in indices) {
         val item = this[idx]
-        if (item.message is TwitchMessage && !item.message.isNotify
+        // TODO check isNotify
+        if (item.message is PrivMessage // && !item.message.isNotify
             && (clearChatMessage.isFullChatClear || clearChatMessage.targetUser.equals(item.message.name, true))
         ) {
             this[idx] = item.copy(message = item.message.copy(timedOut = true))
@@ -43,7 +44,7 @@ fun List<ChatItem>.replaceWithTimeOuts(clearChatMessage: ClearChatMessage, scrol
 fun List<ChatItem>.replaceWithTimeOut(id: String): MutableList<ChatItem> = toMutableList().apply {
     for (idx in indices) {
         val item = this[idx]
-        if (item.message is TwitchMessage && item.message.id == id) {
+        if (item.message is PrivMessage && item.message.id == id) {
             this[idx] = item.copy(message = item.message.copy(timedOut = true))
             break
         }

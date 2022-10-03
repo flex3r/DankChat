@@ -33,6 +33,7 @@ class ChatRepository @Inject constructor(
     private val writeConnection: ChatConnection,
     private val pubSubManager: PubSubManager,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
+    private val highlightsRepository: HighlightsRepository,
     scope: CoroutineScope,
 ) {
 
@@ -115,11 +116,12 @@ class ChatRepository @Inject constructor(
                             }
                         }
                     }
+
                     is PubSubMessage.Whisper         -> {
                         if (message.data.userId in blockList) return@collect
 
                         val parsed = runCatching {
-                            WhisperMessage.fromPubsub(message.data, emoteManager)
+                            WhisperMessage.fromPubSub(message.data, emoteManager)
                         }.getOrElse { return@collect }
 
                         val item = ChatItem(parsed, isMentionTab = true)
@@ -607,59 +609,66 @@ class ChatRepository @Inject constructor(
                     listOf(ChatItem(PointRedemptionMessage.parsePointReward(it.timestamp, it.data)))
                 }.orEmpty()
             }
+
             else             -> emptyList()
         }
 
+        val message = runCatching { Message.parse(ircMessage, emoteManager) }
+            .getOrElse {
+                Log.e(TAG, "Failed to parse message", it)
+                return
+            } ?: return
 
-        val items = runCatching { Message.parse(ircMessage, emoteManager) }
-            .getOrNull()
-            ?.map {
-                it as TwitchMessage // TODO
-                if (it.name == name) {
-                    val previousLastMessage = lastMessage[it.channel]?.trimEndSpecialChar()
-                    if (previousLastMessage != it.originalMessage.trimEndSpecialChar()) {
-                        lastMessage[it.channel] = it.originalMessage
-                    }
-
-                    val hasVip = it.badges.any { badge -> badge.badgeTag?.startsWith("vip") == true }
-                    userState.update { userState ->
-                        val updatedVipChannels = when {
-                            hasVip -> userState.vipChannels + it.channel
-                            else   -> userState.vipChannels - it.channel
-
-                        }
-                        userState.copy(vipChannels = updatedVipChannels)
-                    }
+        // TODO ignores
+        val messageWithHighlight = highlightsRepository.calculateHighlightState(message)
+        Log.d(TAG, "State: ${messageWithHighlight.highlightState}")
+        if (messageWithHighlight is NoticeMessage && messageWithHighlight.channel == "*") {
+            messages.keys.forEach {
+                messages[it]?.update { current ->
+                    current.addAndLimit(ChatItem(messageWithHighlight), scrollBackLength)
                 }
-
-                if (blacklistEntries.matches(it)) {
-                    return
-                }
-
-                val withMentions = it.checkForMention(name, customMentionEntries)
-                val currentUsers = users
-                    .getOrPut(withMentions.channel) { createUserCache() }
-                    .also { cache -> cache.put(withMentions.name, true) }
-                usersFlows
-                    .getOrPut(withMentions.channel) { MutableStateFlow(emptySet()) }
-                    .update { currentUsers.snapshot().keys }
-
-                ChatItem(withMentions)
             }
-
-        if (items.isNullOrEmpty()) {
             return
         }
 
-        val mainMessage = items.first().message as TwitchMessage // TODO ugh
-        val channel = mainMessage.channel
-        if (channel == "*") {
-            messages.keys.forEach {
-                messages[it]?.update { current ->
-                    current.addAndLimit(items, scrollBackLength)
+        if (messageWithHighlight is PrivMessage) {
+            if (messageWithHighlight.name == name) {
+                val previousLastMessage = lastMessage[messageWithHighlight.channel]?.trimEndSpecialChar()
+                if (previousLastMessage != messageWithHighlight.originalMessage.trimEndSpecialChar()) {
+                    lastMessage[messageWithHighlight.channel] = messageWithHighlight.originalMessage
+                }
+
+                val hasVip = messageWithHighlight.badges.any { badge -> badge.badgeTag?.startsWith("vip") == true }
+                userState.update { userState ->
+                    val updatedVipChannels = when {
+                        hasVip -> userState.vipChannels + messageWithHighlight.channel
+                        else   -> userState.vipChannels - messageWithHighlight.channel
+
+                    }
+                    userState.copy(vipChannels = updatedVipChannels)
                 }
             }
-            return
+
+            val currentUsers = users
+                .getOrPut(messageWithHighlight.channel) { createUserCache() }
+                .also { cache -> cache.put(messageWithHighlight.name, true) }
+            usersFlows
+                .getOrPut(messageWithHighlight.channel) { MutableStateFlow(emptySet()) }
+                .update { currentUsers.snapshot().keys }
+        }
+
+        val items = buildList {
+            add(ChatItem(messageWithHighlight))
+            if (messageWithHighlight is UserNoticeMessage && messageWithHighlight.childMessage != null) {
+                add(ChatItem(messageWithHighlight.childMessage))
+            }
+        }
+
+        val channel = when (message) {
+            is PrivMessage       -> message.channel
+            is UserNoticeMessage -> message.channel
+            is NoticeMessage     -> message.channel
+            else                 -> return
         }
 
         messages[channel]?.update { current ->
@@ -676,9 +685,9 @@ class ChatRepository @Inject constructor(
             }
         }
 
-        val mentions = items.filter {
-            it.message is TwitchMessage && it.message.isMention
-        }.toMentionTabItems()
+        val mentions = items
+            .filter { it.message.highlightState?.isMention == true }
+            .toMentionTabItems()
 
         if (mentions.isNotEmpty()) {
             _channelMentionCount.increment(channel, mentions.size)
@@ -729,6 +738,7 @@ class ChatRepository @Inject constructor(
                     loadedRecentsInChannels += channel // not a temporary error, so we don't want to retry
                     SystemMessageType.MessageHistoryIgnored
                 }
+
                 else                                    -> SystemMessageType.MessageHistoryUnavailable(status = response.status.value.toString())
             }
             makeAndPostSystemMessage(type, setOf(channel))
@@ -746,23 +756,16 @@ class ChatRepository @Inject constructor(
                     continue
                 }
 
-                val messages = runCatching {
+                val mappedMessage = runCatching {
                     Message.parse(parsedIrc, emoteManager)
                 }.getOrNull() ?: continue
 
-                loop@ for (msg in messages) {
-                    val withMention = when (msg) {
-                        is TwitchMessage -> {
-                            if (blacklistEntries.matches(msg)) {
-                                continue@loop
-                            }
+                // TODO ignores
 
-                            msg.checkForMention(name, customMentionEntries)
-                        }
-                        else             -> msg
-                    }
-
-                    items += ChatItem(withMention)
+                val messageWithHighlight = highlightsRepository.calculateHighlightState(mappedMessage)
+                items += ChatItem(messageWithHighlight)
+                if (messageWithHighlight is UserNoticeMessage && messageWithHighlight.childMessage != null) {
+                    items += ChatItem(messageWithHighlight.childMessage)
                 }
             }
         }.let { Log.i(TAG, "Parsing message history for #$channel took $it ms") }
@@ -772,12 +775,13 @@ class ChatRepository @Inject constructor(
                 recentMessages.isNotEmpty() && result?.errorCode == RecentMessagesDto.ERROR_CHANNEL_NOT_JOINED -> {
                     current + ChatItem(SystemMessage(SystemMessageType.MessageHistoryIncomplete))
                 }
+
                 else                                                                                           -> current
             }
             items.addAndLimit(withIncompleteWarning, scrollBackLength, checkForDuplications = true)
         }
 
-        val mentions = items.filter { (it.message as? TwitchMessage)?.isMention == true }.toMentionTabItems()
+        val mentions = items.filter { (it.message.highlightState?.isMention == true) }.toMentionTabItems()
         _mentions.update { current ->
             (current + mentions).sortedBy { it.message.timestamp }
         }
