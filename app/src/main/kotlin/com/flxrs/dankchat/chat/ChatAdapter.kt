@@ -159,9 +159,15 @@ class ChatAdapter(
         val isCheckeredMode = preferences.getBoolean(checkeredKey, false)
 
         val background = when {
-            message.highlightState?.type == HighlightType.Subscription -> ContextCompat.getColor(context, R.color.color_highlight)
-            isCheckeredMode && holder.isAlternateBackground            -> MaterialColors.layer(this, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
-            else                                                       -> ContextCompat.getColor(context, android.R.color.transparent)
+            message.highlights.firstOrNull()?.type == HighlightType.Subscription -> ContextCompat.getColor(context, R.color.color_highlight)
+            isCheckeredMode && holder.isAlternateBackground                      -> MaterialColors.layer(
+                this,
+                android.R.attr.colorBackground,
+                R.attr.colorSurfaceInverse,
+                MaterialColors.ALPHA_DISABLED_LOW
+            )
+
+            else                                                                 -> ContextCompat.getColor(context, android.R.color.transparent)
         }
         setBackgroundColor(background)
         val withTime = when {
@@ -522,7 +528,7 @@ class ChatAdapter(
         val scaleFactor = baseHeight * SCALE_FACTOR_CONSTANT
         val bgColor = when {
             timedOut && !showTimedOutMessages               -> ContextCompat.getColor(context, android.R.color.transparent)
-            highlightState != null                          -> highlightState.toBackgroundColor(context)
+            highlights.isNotEmpty()                         -> highlights.toBackgroundColor(context)
             isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(textView, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
             else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
         }
@@ -555,7 +561,7 @@ class ChatAdapter(
         val badgesLength = allowedBadges.size * 2
 
         val timeAndWhisperBuilder = StringBuilder()
-        if (isMentionTab && highlightState?.isMention == true) {
+        if (isMentionTab && highlights.hasMention()) {
             timeAndWhisperBuilder.append("#$channel ")
         }
         if (showTimeStamp) {
@@ -802,8 +808,9 @@ class ChatAdapter(
     }
 
     @ColorInt
-    private fun HighlightState.toBackgroundColor(context: Context): Int {
-        return when (type) {
+    private fun List<Highlight>.toBackgroundColor(context: Context): Int {
+
+        return when (first().type) {
             HighlightType.Subscription           -> ContextCompat.getColor(context, R.color.color_highlight)
             HighlightType.ChannelPointRedemption -> ContextCompat.getColor(context, R.color.color_reward)
             // TODO diff color
@@ -821,9 +828,9 @@ private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
 
     override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
         return when {
-            newItem.message.highlightState?.isMention == true || isNewItemTimedout(oldItem, newItem) -> false
+            newItem.message.highlights.hasMention() || isNewItemTimedout(oldItem, newItem) -> false
 
-            else                                                                                     -> oldItem.message == newItem.message
+            else                                                                           -> oldItem.message == newItem.message
         }
     }
 

@@ -42,66 +42,74 @@ class HighlightsRepository @Inject constructor(
     }
 
     private fun UserNoticeMessage.calculateHighlightState(): UserNoticeMessage {
-        messageHighlights.value
-            .firstOrNull { it.enabled && it.type == MessageHighlightType.Subscription }
-            ?: return this
+        val subscriptionEnabled = messageHighlights.value
+            .any { it.enabled && it.type == MessageHighlightType.Subscription }
 
-        val highlightState = HighlightState(HighlightType.Subscription)
+        val highlights = when {
+            subscriptionEnabled -> listOf(Highlight(HighlightType.Subscription))
+            else                -> emptyList()
+        }
+
         return copy(
-            highlightState = highlightState,
-            childMessage = childMessage?.copy(highlightState = highlightState)
+            highlights = highlights,
+            childMessage = childMessage?.calculateHighlightState()
         )
     }
 
     private fun PointRedemptionMessage.calculateHighlightState(): PointRedemptionMessage {
-        messageHighlights.value
-            .firstOrNull { it.enabled && it.type == MessageHighlightType.ChannelPointRedemption }
-            ?: return this
+        val enabledMessageHighlights = messageHighlights.value.filter { it.enabled }
+        val highlights = buildList {
+            if (enabledMessageHighlights.areRewardsEnabled) {
+                add(Highlight(HighlightType.ChannelPointRedemption))
+            }
+            // TODO custom message highlights?
+        }
 
-        val highlightState = HighlightState(HighlightType.ChannelPointRedemption)
-        return copy(highlightState = highlightState)
+        return copy(highlights = highlights)
     }
 
     private fun PrivMessage.calculateHighlightState(): PrivMessage {
         val enabledUserHighlights = userHighlights.value.filter { it.enabled }
         val enabledMessageHighlights = messageHighlights.value.filter { it.enabled }
-
-        if (enabledMessageHighlights.areRewardsEnabled && isReward) {
-            return copy(highlightState = HighlightState(HighlightType.ChannelPointRedemption))
-        }
-
-        if (enabledMessageHighlights.areFirstMessagesEnabled && isFirstMessage) {
-            return copy(highlightState = HighlightState(HighlightType.FirstMessage))
-        }
-
-        // Username
-        // TODO also match DisplayName?
-        if (enabledMessageHighlights.isOwnUserNameEnabled && containsCurrentUserName) {
-            return copy(highlightState = HighlightState(HighlightType.Username))
-        }
-
-        // User highlights
-        enabledUserHighlights.forEach {
-            if (it.username.equals(name, ignoreCase = true) || it.username.equals(displayName, ignoreCase = true)) {
-                return copy(highlightState = HighlightState(HighlightType.Custom))
+        val highlights = buildList {
+            if (enabledMessageHighlights.areRewardsEnabled && isReward) {
+                add(Highlight(HighlightType.ChannelPointRedemption))
             }
-        }
 
-        // custom message highlights
-        enabledMessageHighlights
-            .filter { it.type == MessageHighlightType.Custom }
-            .forEach {
-                val hasMatch = when {
-                    it.isRegex -> it.regex?.let { regex -> originalMessage.matches(regex) } ?: false
-                    else -> originalMessage.split(" ").any { word -> word.contains(it.pattern, ignoreCase = it.isCaseSensitive) }
-                }
+            if (enabledMessageHighlights.areFirstMessagesEnabled && isFirstMessage) {
+                add(Highlight(HighlightType.FirstMessage))
+            }
 
-                if (hasMatch) {
-                    return copy(highlightState = HighlightState(HighlightType.Custom))
+            // Username
+            // TODO also match DisplayName?
+            if (enabledMessageHighlights.isOwnUserNameEnabled && containsCurrentUserName) {
+                add(Highlight(HighlightType.Username))
+            }
+
+            // User highlights
+            enabledUserHighlights.forEach {
+                if (it.username.equals(name, ignoreCase = true) || it.username.equals(displayName, ignoreCase = true)) {
+                    add(Highlight(HighlightType.Custom))
                 }
             }
 
-        return this
+            // custom message highlights
+            enabledMessageHighlights
+                .filter { it.type == MessageHighlightType.Custom }
+                .forEach {
+                    val hasMatch = when {
+                        it.isRegex -> it.regex?.let { regex -> originalMessage.matches(regex) } ?: false
+                        else       -> originalMessage.split(" ").any { word -> word.contains(it.pattern, ignoreCase = it.isCaseSensitive) }
+                    }
+
+                    if (hasMatch) {
+                        add(Highlight(HighlightType.Custom))
+                    }
+                }
+
+        }
+
+        return copy(highlights = highlights)
     }
 
     private val List<MessageHighlightEntity>.areRewardsEnabled: Boolean

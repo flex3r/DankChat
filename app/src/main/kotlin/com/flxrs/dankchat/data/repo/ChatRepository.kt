@@ -13,14 +13,10 @@ import com.flxrs.dankchat.data.twitch.connection.*
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager
 import com.flxrs.dankchat.data.twitch.message.*
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.preferences.multientry.MultiEntryDto
-import com.flxrs.dankchat.preferences.multientry.MultiEntryDto.Companion.toEntryItem
-import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
 import com.flxrs.dankchat.utils.extensions.*
 import io.ktor.http.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.serialization.json.Json
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import kotlin.collections.set
@@ -76,9 +72,6 @@ class ChatRepository @Inject constructor(
     private val userState = MutableStateFlow(UserState())
     private val blockList = mutableSetOf<String>() // TODO extract out of repo to common data source
 
-    private var customMentionEntries = listOf<Mention>()
-    private var blacklistEntries = listOf<Mention>()
-    private var name: String = ""
     private var lastMessage = ConcurrentHashMap<String, String>()
     private val loadedRecentsInChannels = mutableSetOf<String>()
     private val knownRewards = ConcurrentHashMap<String, PubSubMessage.PointRedemption>()
@@ -283,7 +276,7 @@ class ChatRepository @Inject constructor(
             val userState = userState.value
             val fakeMessage = WhisperMessage(
                 userId = userState.userId,
-                name = name,
+                name = dankChatPreferenceStore.userName.orEmpty(),
                 displayName = userState.displayName,
                 color = Color.parseColor(userState.color ?: Message.DEFAULT_COLOR),
                 recipientId = null,
@@ -365,17 +358,8 @@ class ChatRepository @Inject constructor(
         blockList.clear()
     }
 
-    suspend fun setMentionEntries(stringSet: Set<String>) = withContext(Dispatchers.Default) {
-        customMentionEntries = stringSet.mapToMention()
-    }
-
-    suspend fun setBlacklistEntries(stringSet: Set<String>) = withContext(Dispatchers.Default) {
-        blacklistEntries = stringSet.mapToMention()
-    }
-
     // TODO should be null if anon
     private fun connect(userName: String, oauth: String) {
-        name = userName
         readConnection.connect(userName, oauth)
         writeConnection.connect(userName, oauth)
     }
@@ -460,17 +444,6 @@ class ChatRepository @Inject constructor(
         makeAndPostSystemMessage(state.toSystemMessageType())
 
     }
-
-    private fun List<MultiEntryItem.Entry>.mapToMention(): List<Mention> = mapNotNull {
-        when {
-            it.isRegex -> runCatching { Mention.RegexPhrase(it.entry.toRegex(), it.matchUser) }.getOrNull()
-            else       -> Mention.Phrase(it.entry, it.matchUser)
-        }
-    }
-
-    private fun Set<String>.mapToMention(): List<Mention> = mapNotNull {
-        Json.decodeOrNull<MultiEntryDto>(it)?.toEntryItem()
-    }.mapToMention()
 
     private fun handleConnected(channel: String, isAnonymous: Boolean) {
         val state = when {
@@ -621,7 +594,7 @@ class ChatRepository @Inject constructor(
 
         // TODO ignores
         val messageWithHighlight = highlightsRepository.calculateHighlightState(message)
-        Log.d(TAG, "State: ${messageWithHighlight.highlightState}")
+        Log.d(TAG, "State: ${messageWithHighlight.highlights}")
         if (messageWithHighlight is NoticeMessage && messageWithHighlight.channel == "*") {
             messages.keys.forEach {
                 messages[it]?.update { current ->
@@ -632,7 +605,7 @@ class ChatRepository @Inject constructor(
         }
 
         if (messageWithHighlight is PrivMessage) {
-            if (messageWithHighlight.name == name) {
+            if (messageWithHighlight.name == dankChatPreferenceStore.userName) {
                 val previousLastMessage = lastMessage[messageWithHighlight.channel]?.trimEndSpecialChar()
                 if (previousLastMessage != messageWithHighlight.originalMessage.trimEndSpecialChar()) {
                     lastMessage[messageWithHighlight.channel] = messageWithHighlight.originalMessage
@@ -686,7 +659,7 @@ class ChatRepository @Inject constructor(
         }
 
         val mentions = items
-            .filter { it.message.highlightState?.isMention == true }
+            .filter { it.message.highlights.hasMention() }
             .toMentionTabItems()
 
         if (mentions.isNotEmpty()) {
@@ -781,7 +754,7 @@ class ChatRepository @Inject constructor(
             items.addAndLimit(withIncompleteWarning, scrollBackLength, checkForDuplications = true)
         }
 
-        val mentions = items.filter { (it.message.highlightState?.isMention == true) }.toMentionTabItems()
+        val mentions = items.filter { (it.message.highlights.hasMention()) }.toMentionTabItems()
         _mentions.update { current ->
             (current + mentions).sortedBy { it.message.timestamp }
         }

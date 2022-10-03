@@ -141,8 +141,8 @@ class MainViewModel @Inject constructor(
                     is Preference.RoomState          -> roomStateEnabled.value = it.enabled
                     is Preference.StreamInfo         -> streamInfoEnabled.value = it.enabled
                     is Preference.Input              -> inputEnabled.value = it.enabled
-                    is Preference.CustomMentions     -> setMentionEntries(it.entries)
-                    is Preference.BlackList          -> setBlacklistEntries(it.entries)
+                    is Preference.CustomMentions     -> Unit //setMentionEntries(it.entries)
+                    is Preference.BlackList          -> Unit //setBlacklistEntries(it.entries)
                     is Preference.SupibotSuggestions -> setSupibotSuggestions(it.enabled)
                     is Preference.ScrollBack         -> chatRepository.scrollBackLength = it.length
                     is Preference.Chips              -> shouldShowChips.value = it.enabled
@@ -423,7 +423,6 @@ class MainViewModel @Inject constructor(
     }
 
     fun clear(channel: String) = chatRepository.clear(channel)
-    fun clearIgnores() = chatRepository.clearIgnores()
     fun clearMentionCount(channel: String) = chatRepository.clearMentionCount(channel)
     fun clearUnreadMessage(channel: String) = chatRepository.clearUnreadMessage(channel)
     fun reconnect() = chatRepository.reconnect()
@@ -616,14 +615,6 @@ class MainViewModel @Inject constructor(
         emoteUsageRepository.clearUsages()
     }
 
-    private fun setMentionEntries(entries: Set<String>) = viewModelScope.launch(coroutineExceptionHandler) {
-        chatRepository.setMentionEntries(entries)
-    }
-
-    private fun setBlacklistEntries(entries: Set<String>) = viewModelScope.launch(coroutineExceptionHandler) {
-        chatRepository.setBlacklistEntries(entries)
-    }
-
     private fun setSupibotSuggestions(enabled: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
         when {
             enabled -> commandRepository.loadSupibotCommands()
@@ -682,6 +673,8 @@ class MainViewModel @Inject constructor(
             else                                -> DataLoadingState.Finished
         }
     }
+
+    private fun clearIgnores() = chatRepository.clearIgnores()
 
     fun clearDataForLogout() {
         CookieManager.getInstance().removeAllCookies(null)
