@@ -7,7 +7,6 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.Rect
 import android.graphics.Typeface
-import android.graphics.Typeface.BOLD
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
@@ -18,7 +17,6 @@ import android.text.TextPaint
 import android.text.style.CharacterStyle
 import android.text.style.ImageSpan
 import android.text.style.RelativeSizeSpan
-import android.text.style.ScaleXSpan
 import android.text.style.StyleSpan
 import android.text.style.TextAppearanceSpan
 import android.text.style.TypefaceSpan
@@ -153,7 +151,7 @@ class ChatAdapter(
             is SystemMessageType.Custom                    -> message.type.message
         }
         val withTime = when {
-            showTimeStamp -> SpannableStringBuilder().inSpans(*this@ChatAdapter.getTimestampSpanStyles(context)) { append("${DateTimeUtils.timestampToLocalTime(message.timestamp)} ") }.append(systemMessageText)
+            showTimeStamp -> SpannableStringBuilder().inSpans(*this@ChatAdapter.makeTimestampSpanStyles(context)) { append("${DateTimeUtils.timestampToLocalTime(message.timestamp)} ") }.append(systemMessageText)
             else          -> SpannableStringBuilder().append(systemMessageText)
         }
 
@@ -189,7 +187,7 @@ class ChatAdapter(
             }
         }
         val withTime = when {
-            showTimeStamp -> SpannableStringBuilder().inSpans(*this@ChatAdapter.getTimestampSpanStyles(context)) { append("${DateTimeUtils.timestampToLocalTime(message.timestamp)} ") }.append(systemMessageText)
+            showTimeStamp -> SpannableStringBuilder().inSpans(*this@ChatAdapter.makeTimestampSpanStyles(context)) { append("${DateTimeUtils.timestampToLocalTime(message.timestamp)} ") }.append(systemMessageText)
             else          -> SpannableStringBuilder().append(systemMessageText)
         }
 
@@ -216,7 +214,7 @@ class ChatAdapter(
 
             val spannable = buildSpannedString {
                 if (showTimeStamp) {
-                    inSpans(*this@ChatAdapter.getTimestampSpanStyles(context)) { append("${DateTimeUtils.timestampToLocalTime(message.timestamp)} ") }
+                    inSpans(*this@ChatAdapter.makeTimestampSpanStyles(context)) { append("${DateTimeUtils.timestampToLocalTime(message.timestamp)} ") }
                 }
 
                 when {
@@ -293,7 +291,7 @@ class ChatAdapter(
 
         val spannable = SpannableStringBuilder(StringBuilder())
         if (showTimeStamp) {
-            spannable.inSpans(*this@ChatAdapter.getTimestampSpanStyles(context)) { append("${DateTimeUtils.timestampToLocalTime(timestamp)} ") }
+            spannable.inSpans(*this@ChatAdapter.makeTimestampSpanStyles(context)) { append("${DateTimeUtils.timestampToLocalTime(timestamp)} ") }
         }
 
         val nameGroupLength = fullName.length + 4 + fullRecipientName.length + 2
@@ -506,7 +504,7 @@ class ChatAdapter(
         if (showTimeStamp) timeAndWhisperBuilder.append("${DateTimeUtils.timestampToLocalTime(timestamp)} ")
 
         val prefixLength = timeAndWhisperBuilder.length + fullDisplayName.length
-        val spannable = SpannableStringBuilder().inSpans(*this@ChatAdapter.getTimestampSpanStyles(context)) { append(timeAndWhisperBuilder) }
+        val spannable = SpannableStringBuilder().inSpans(*this@ChatAdapter.makeTimestampSpanStyles(context)) { append(timeAndWhisperBuilder) }
 
         val badgePositions = allowedBadges.map {
             spannable.append("  ")
@@ -648,13 +646,13 @@ class ChatAdapter(
     /** make common styles for timestamp part of the message
      * @param context: used for retreiving style resources (just pass view's context)
      */
-    private fun getTimestampSpanStyles(context: Context): Array<CharacterStyle> {
+    private fun makeTimestampSpanStyles(context: Context): Array<CharacterStyle> {
         return arrayOf(
             TypefaceSpan("monospace"),
             StyleSpan(Typeface.BOLD),
-            // style adjustments to make the monospaced text looks better
-            RelativeSizeSpan(0.9f),
-            TextAppearanceSpan(context, R.style.timestamp_and_whisper), // set letter spacing using this
+            // style adjustments to make the monospaced text looks "same size" as the normal text
+            RelativeSizeSpan(0.85f),
+            TextAppearanceSpan(context, R.style.timestamp_and_whisper), // set letter spacing using this, can't set directly in code
         )
     }
 
