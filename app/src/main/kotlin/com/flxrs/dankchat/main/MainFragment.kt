@@ -835,7 +835,7 @@ class MainFragment : Fragment() {
         val channels = mainViewModel.getChannels().ifEmpty { return }
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.confirm_channel_removal_title)
-            .setMessage(R.string.confirm_channel_removal_message)
+            .setMessage(getString(R.string.confirm_channel_removal_message_named, activeChannel))
             .setPositiveButton(R.string.confirm_channel_removal_positive_button) { dialog, _ ->
                 val updatedChannels = channels - activeChannel
                 updateChannels(updatedChannels)
