@@ -97,9 +97,9 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
             uploader = dankChatPreferenceStore.customImageUploader
             uploaderReset.setOnClickListener {
                 MaterialAlertDialogBuilder(context)
-                    .setTitle(R.string.reset_image_uploader_dialog_title)
-                    .setMessage(R.string.reset_image_uploader_dialog_message)
-                    .setPositiveButton(R.string.reset_image_uploader_dialog_positive) { _, _ -> uploader = dankChatPreferenceStore.resetImageUploader()}
+                    .setTitle(R.string.reset_media_uploader_dialog_title)
+                    .setMessage(R.string.reset_media_uploader_dialog_message)
+                    .setPositiveButton(R.string.reset_media_uploader_dialog_positive) { _, _ -> uploader = dankChatPreferenceStore.resetImageUploader()}
                     .setNegativeButton(R.string.dialog_cancel) {_, _ -> }
                     .create().show()
             }
