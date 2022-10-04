@@ -224,7 +224,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_tts_message_format_message">Odczytuje tylko wiadomość</string>
     <string name="preference_tts_message_format_combined">Odczytuje nazwę autora i wiadomość</string>
     <string name="preference_tts_message_format_title">Format wiadomości</string>
-    <string name="preference_tts_message_ignore_url_message">Ignoruje linki podczas korzystania z TTS</string>
+    <string name="preference_tts_message_ignore_url_message">Ignoruje URLs podczas korzystania z TTS</string>
     <string name="preference_tts_message_ignore_url_title">Ignoruj URLs</string>
     <string name="preference_tts_message_ignore_emote_message">Ignoruje emotki i emotikony podczas korzystania z TTS</string>
     <string name="preference_tts_message_ignore_emote_title">Ignoruj emotki</string>
