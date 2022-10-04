@@ -89,7 +89,7 @@
     <string name="mentions">Mentions</string>
     <string name="confirm_channel_removal_title">Confirm channel removal</string>
     <string name="confirm_channel_removal_message">Are you sure you want to remove this channel?</string>
-    <string name="confirm_channel_removal_message_named">Are you sure you want to remove channel "%1$s"?</string>
+    <string name="confirm_channel_removal_message_named">Are you sure you want to remove channel \"%1$s\"?</string>
     <string name="confirm_channel_removal_positive_button">Remove</string>
     <string name="user_popup_follow">Follow</string>
     <string name="user_popup_unfollow">Unfollow</string>

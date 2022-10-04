@@ -835,6 +835,7 @@ class MainFragment : Fragment() {
         val channels = mainViewModel.getChannels().ifEmpty { return }
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.confirm_channel_removal_title)
+            // should give user more info that it's gonna delete the currently active channel (unlike when clicking delete from manage channels list, where is very obvious)
             .setMessage(getString(R.string.confirm_channel_removal_message_named, activeChannel))
             .setPositiveButton(R.string.confirm_channel_removal_positive_button) { dialog, _ ->
                 val updatedChannels = channels - activeChannel
