@@ -34,8 +34,8 @@
     <string name="resume_scroll">Kaydırmaya devam et</string>
     <string name="uploading_image">Resim yükleniyor</string>
     <string name="settings">Ayarlar</string>
-    <string name="nuuls_upload_disclaimer">Dış barındırma https://nuuls.com/i tarafından sağlanmaktadır, kendi sorumluluğunuzda kullanınız.</string>
-    <string name="nuuls_upload_title">Özel resim yükleme</string>
+    <string name="external_upload_disclaimer">Dış barındırma https://nuuls.com/i tarafından sağlanmaktadır, kendi sorumluluğunuzda kullanınız.</string>
+    <string name="external_upload_title">Özel resim yükleme</string>
     <string name="snackbar_message_copied">Mesaj kopyalandı</string>
     <string name="snackbar_error_copied">Hata bilgisi kopyalandı</string>
     <string name="notification_stop">Durdur</string>

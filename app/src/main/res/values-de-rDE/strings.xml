@@ -34,8 +34,8 @@
     <string name="resume_scroll">Scrollen fortsetzen</string>
     <string name="uploading_image">Datei wird hochgeladen</string>
     <string name="settings">Einstellungen</string>
-    <string name="nuuls_upload_disclaimer">Medien werden auf https://nuuls.com/i gehostet. Benutzung auf eigene Gefahr</string>
-    <string name="nuuls_upload_title">Benutzerdefinierter Medienupload</string>
+    <string name="external_upload_disclaimer">Medien werden auf https://nuuls.com/i gehostet. Benutzung auf eigene Gefahr</string>
+    <string name="external_upload_title">Benutzerdefinierter Medienupload</string>
     <string name="snackbar_message_copied">Nachricht kopiert</string>
     <string name="snackbar_error_copied">Inhalt der Fehlernachricht kopiert</string>
     <string name="notification_stop">Stop</string>

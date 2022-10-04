@@ -17,9 +17,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.*
-import androidx.activity.result.launch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -57,7 +55,6 @@ import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.databinding.EditDialogBinding
 import com.flxrs.dankchat.databinding.MainFragmentBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.utils.GetImageOrVideoContract
 import com.flxrs.dankchat.utils.createMediaFile
 import com.flxrs.dankchat.utils.extensions.*
 import com.flxrs.dankchat.utils.removeExifAttributes
@@ -667,12 +664,18 @@ class MainFragment : Fragment() {
 
     private inline fun showNuulsUploadDialogIfNotAcknowledged(crossinline action: () -> Unit) {
         if (!dankChatPreferences.hasNuulsAcknowledged) {
-            val spannable = SpannableStringBuilder(getString(R.string.nuuls_upload_disclaimer))
+            // have URL without query string to make it looks nicer (e.g. s-ul.eu upload have api key in query string!)
+            val uploadUrlWithoutQuery = dankChatPreferences.customImageUploader.uploadUrl.let{
+                if (!it.contains('?')) it
+                else it.substring(0, it.indexOf('?'))
+            }
+
+            val spannable = SpannableStringBuilder(getString(R.string.external_upload_disclaimer, uploadUrlWithoutQuery))
             Linkify.addLinks(spannable, Linkify.WEB_URLS)
 
             MaterialAlertDialogBuilder(requireContext())
                 .setCancelable(false)
-                .setTitle(R.string.nuuls_upload_title)
+                .setTitle(R.string.external_upload_title)
                 .setMessage(spannable)
                 .setPositiveButton(R.string.dialog_ok) { dialog, _ ->
                     dialog.dismiss()
