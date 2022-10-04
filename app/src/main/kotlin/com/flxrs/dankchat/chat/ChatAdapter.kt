@@ -651,7 +651,7 @@ class ChatAdapter(
             TypefaceSpan("monospace"),
             StyleSpan(Typeface.BOLD),
             // style adjustments to make the monospaced text looks "same size" as the normal text
-            RelativeSizeSpan(0.85f),
+            RelativeSizeSpan(0.95f),
             TextAppearanceSpan(context, R.style.timestamp_and_whisper), // set letter spacing using this, can't set directly in code
         )
     }
