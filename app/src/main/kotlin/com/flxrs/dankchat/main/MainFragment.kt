@@ -17,9 +17,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.contract.ActivityResultContracts.*
-import androidx.activity.result.launch
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -57,7 +56,6 @@ import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.databinding.EditDialogBinding
 import com.flxrs.dankchat.databinding.MainFragmentBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.utils.GetImageOrVideoContract
 import com.flxrs.dankchat.utils.createMediaFile
 import com.flxrs.dankchat.utils.extensions.*
 import com.flxrs.dankchat.utils.removeExifAttributes
@@ -835,8 +833,15 @@ class MainFragment : Fragment() {
     private fun removeChannel() {
         val activeChannel = mainViewModel.getActiveChannel() ?: return
         val channels = mainViewModel.getChannels().ifEmpty { return }
-        val updatedChannels = channels - activeChannel
-        updateChannels(updatedChannels)
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.confirm_channel_removal_title)
+            .setMessage(R.string.confirm_channel_removal_message)
+            .setPositiveButton(R.string.confirm_channel_removal_positive_button) { dialog, _ ->
+                val updatedChannels = channels - activeChannel
+                updateChannels(updatedChannels)
+            }
+            .setNegativeButton(R.string.dialog_cancel) { _, _ -> }
+            .create().show()
     }
 
     private fun openManageChannelsDialog() {
