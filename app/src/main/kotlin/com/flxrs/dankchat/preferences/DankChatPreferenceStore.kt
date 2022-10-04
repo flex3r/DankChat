@@ -54,9 +54,9 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
         get() = dankChatPreferences.getString(ID_STRING_KEY, null)
         set(value) = dankChatPreferences.edit { putString(ID_STRING_KEY, value) }
 
-    var hasNuulsAcknowledged: Boolean
-        get() = dankChatPreferences.getBoolean(NUULS_ACK_KEY, false)
-        set(value) = dankChatPreferences.edit { putBoolean(NUULS_ACK_KEY, value) }
+    var hasExternalHostingAcknowledged: Boolean
+        get() = dankChatPreferences.getBoolean(EXTERNAL_HOSTING_ACK_KEY, false)
+        set(value) = dankChatPreferences.edit { putBoolean(EXTERNAL_HOSTING_ACK_KEY, value) }
 
     var hasMessageHistoryAcknowledged: Boolean
         get() = dankChatPreferences.getBoolean(MESSAGES_HISTORY_ACK_KEY, false)
@@ -289,7 +289,7 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
         private const val CHANNELS_AS_STRING_KEY = "channelsAsStringKey"
         private const val ID_KEY = "idKey"
         private const val ID_STRING_KEY = "idStringKey"
-        private const val NUULS_ACK_KEY = "nuulsAckKey"
+        private const val EXTERNAL_HOSTING_ACK_KEY = "externalHostingAckKey"
         private const val MESSAGES_HISTORY_ACK_KEY = "messageHistoryAckKey"
 
         private const val UPLOADER_URL = "uploaderUrl"
