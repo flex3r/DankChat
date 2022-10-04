@@ -97,10 +97,10 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
             uploader = dankChatPreferenceStore.customImageUploader
             uploaderReset.setOnClickListener {
                 MaterialAlertDialogBuilder(context)
-                    .setTitle(getString(R.string.reset_image_uploader_dialog_title))
-                    .setMessage(getString(R.string.reset_image_uploader_dialog_message))
-                    .setPositiveButton(getString(R.string.reset_image_uploader_dialog_positive)) { _, _ -> uploader = dankChatPreferenceStore.resetImageUploader()}
-                    .setNegativeButton(getString(R.string.dialog_cancel)) {_, _ -> }
+                    .setTitle(R.string.reset_image_uploader_dialog_title)
+                    .setMessage(R.string.reset_image_uploader_dialog_message)
+                    .setPositiveButton(R.string.reset_image_uploader_dialog_positive) { _, _ -> uploader = dankChatPreferenceStore.resetImageUploader()}
+                    .setNegativeButton(R.string.dialog_cancel) {_, _ -> }
                     .create().show()
             }
             uploaderSheet.updateLayoutParams {
@@ -179,10 +179,10 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
             }
             clearUploads.setOnClickListener {
                 MaterialAlertDialogBuilder(context)
-                    .setTitle(getString(R.string.clear_recent_uploads_dialog_title))
-                    .setMessage(getString(R.string.clear_recent_uploads_dialog_message))
-                    .setPositiveButton(getString(R.string.clear_recent_uploads_dialog_positive)) { _, _ -> viewModel.clearUploads()}
-                    .setNegativeButton(getString(R.string.dialog_cancel)){_, _ -> }
+                    .setTitle(R.string.clear_recent_uploads_dialog_title)
+                    .setMessage(R.string.clear_recent_uploads_dialog_message)
+                    .setPositiveButton(R.string.clear_recent_uploads_dialog_positive) { _, _ -> viewModel.clearUploads()}
+                    .setNegativeButton(R.string.dialog_cancel){_, _ -> }
                     .create().show()
             }
         }
