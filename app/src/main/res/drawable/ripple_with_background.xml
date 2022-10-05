@@ -2,7 +2,7 @@
 
 <!-- color must not be white or black for it to work with both dark and light background -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="#44808080">
+    android:color="#66808080">
     <!-- this layer will be replaced programmatically to change color -->
     <item android:drawable="@color/colorThatIsActuallyTransparent" android:id="@+id/ripple_color_layer"/>
 

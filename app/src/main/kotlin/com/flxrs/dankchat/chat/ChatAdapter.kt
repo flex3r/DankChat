@@ -70,6 +70,8 @@ class ChatAdapter(
         private const val SCALE_FACTOR_CONSTANT = 1.5 / 112
         private const val BASE_HEIGHT_CONSTANT = 1.173
         private fun getBaseHeight(@Px textSize: Float): Int = (textSize * BASE_HEIGHT_CONSTANT).roundToInt()
+        val MASK_FULL = ColorDrawable(Color.argb(255, 0, 0, 0))
+        val MASK_NONE = ColorDrawable(Color.argb(0, 0, 0, 0))
     }
 
     private val customTabsIntent = CustomTabsIntent.Builder()
@@ -714,8 +716,7 @@ class ChatAdapter(
     private fun TextView.setRippleBackground(backgroundColor: Int, enableRipple: Boolean = false) {
         (background as RippleDrawable).apply {
             setDrawableByLayerId(R.id.ripple_color_layer, ColorDrawable(backgroundColor))
-            // enable/disable ripple using mask
-            (findDrawableByLayerId(android.R.id.mask) as ColorDrawable).color = Color.argb(if (enableRipple) 255 else 0, 0, 0, 0)
+            setDrawableByLayerId(android.R.id.mask, if (enableRipple) MASK_FULL else MASK_NONE)
         }
     }
 }
