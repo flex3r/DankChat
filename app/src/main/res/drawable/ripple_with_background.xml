@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- color must not be white or black for it to work with both dark and light background -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="#44808080">
     <!-- this layer will be replaced programmatically to change color -->
