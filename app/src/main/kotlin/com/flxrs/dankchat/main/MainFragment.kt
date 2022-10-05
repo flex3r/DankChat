@@ -70,6 +70,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.IOException
+import java.net.URL
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.roundToInt
@@ -663,14 +664,23 @@ class MainFragment : Fragment() {
     }
 
     private inline fun showExternalHostingUploadDialogIfNotAcknowledged(crossinline action: () -> Unit) {
-        if (!dankChatPreferences.hasExternalHostingAcknowledged) {
-            // have URL without query string to make it looks nicer (e.g. s-ul.eu upload have api key in query string!)
-            val uploadUrlWithoutQuery = dankChatPreferences.customImageUploader.uploadUrl.let{
-                if (!it.contains('?')) it
-                else it.substring(0, it.indexOf('?'))
-            }
+        // show host name in dialog, another nice thing we get is it also detect some invalid URLs
+        val host = runCatching {
+            URL(dankChatPreferences.customImageUploader.uploadUrl).host
+        } .getOrElse { "" }
 
-            val spannable = SpannableStringBuilder(getString(R.string.nuuls_upload_disclaimer, uploadUrlWithoutQuery))
+        if (host.isEmpty()) {
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.invalid_media_url_title)
+                .setMessage(getString(R.string.invalid_media_url_message, dankChatPreferences.customImageUploader.uploadUrl))
+                .setPositiveButton(R.string.dialog_ok) { _, _ -> }
+                .create()
+                .show()
+            return
+        }
+
+        if (!dankChatPreferences.hasExternalHostingAcknowledged) {
+            val spannable = SpannableStringBuilder(getString(R.string.nuuls_upload_disclaimer, host))
             Linkify.addLinks(spannable, Linkify.WEB_URLS)
 
             MaterialAlertDialogBuilder(requireContext())
