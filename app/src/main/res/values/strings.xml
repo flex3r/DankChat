@@ -119,7 +119,7 @@
     <string name="uploader_headers">Headers</string>
     <string name="uploader_image_link">Media link pattern</string>
     <string name="uploader_deletion_link">Deletion link pattern</string>
-    <string name="uploader_description">You can set a custom host for uploading media, like imgur.com or s-ul.eu. DankChat uses the same configuration format as Chatterino.\nCheck this guide for help: https://wiki.chatterino.com/image%20Uploader/</string>
+    <string name="uploader_description">You can set a custom host for uploading media, like imgur.com or s-ul.eu. DankChat uses the same configuration format as Chatterino.\nCheck this guide for help: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="toggle_fullscreen">Toggle fullscreen</string>
     <string name="toggle_stream">Toggle stream</string>
     <string name="account">Account</string>
