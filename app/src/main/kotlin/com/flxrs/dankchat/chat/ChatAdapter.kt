@@ -3,12 +3,15 @@ package com.flxrs.dankchat.chat
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.Rect
 import android.graphics.drawable.Animatable
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
+import android.graphics.drawable.RippleDrawable
 import android.os.Build
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -128,7 +131,7 @@ class ChatAdapter(
             isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(this, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
             else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
         }
-        setBackgroundColor(background)
+        setRippleBackground(background, false)
 
         val systemMessageText = when (message.type) {
             is SystemMessageType.Disconnected              -> context.getString(R.string.system_message_disconnected)
@@ -168,7 +171,7 @@ class ChatAdapter(
             isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(this, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
             else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
         }
-        setBackgroundColor(background)
+        setRippleBackground(background, false)
 
         val count = message.count
         // TODO localize
@@ -199,7 +202,7 @@ class ChatAdapter(
         val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
 
         val background = ContextCompat.getColor(context, R.color.color_reward)
-        setBackgroundColor(background)
+        setRippleBackground(background, false)
 
         setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
         val baseHeight = getBaseHeight(textSize)
@@ -268,7 +271,7 @@ class ChatAdapter(
             isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(textView, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
             else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
         }
-        setBackgroundColor(background)
+        setRippleBackground(background, true)
 
         val fullName = when {
             displayName.equals(name, true) -> displayName
@@ -457,7 +460,7 @@ class ChatAdapter(
 
         val baseHeight = getBaseHeight(textSize)
         val scaleFactor = baseHeight * SCALE_FACTOR_CONSTANT
-        val background = when {
+        val bgColor = when {
             timedOut && !showTimedOutMessages               -> ContextCompat.getColor(context, android.R.color.transparent)
             isNotify                                        -> ContextCompat.getColor(context, R.color.color_highlight)
             isReward                                        -> ContextCompat.getColor(context, R.color.color_reward)
@@ -465,7 +468,7 @@ class ChatAdapter(
             isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(textView, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
             else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
         }
-        setBackgroundColor(background)
+        setRippleBackground(bgColor, true)
 
         val textColor = MaterialColors.getColor(textView, R.attr.colorOnSurface)
         setTextColor(textColor)
@@ -706,6 +709,15 @@ class ChatAdapter(
     private fun String.toRequest(context: Context): ImageRequest = ImageRequest.Builder(context)
         .data(this)
         .build()
+
+    /** set background color, and enable/disable ripple (whether enable or disable should match the "clickablity" of that message */
+    private fun TextView.setRippleBackground(backgroundColor: Int, enableRipple: Boolean = false) {
+        (background as RippleDrawable).apply {
+            setDrawableByLayerId(R.id.ripple_color_layer, ColorDrawable(backgroundColor))
+            // enable/disable ripple using mask
+            (findDrawableByLayerId(android.R.id.mask) as ColorDrawable).color = Color.argb(if (enableRipple) 255 else 0, 0, 0, 0)
+        }
+    }
 }
 
 private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {

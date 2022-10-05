@@ -11,7 +11,7 @@
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:paddingBottom="2dp"
-        android:foreground="?android:attr/selectableItemBackground"
+        android:background="@drawable/ripple_with_background"
         android:textAppearance="?attr/textAppearanceBodyMedium"
         android:textColorHighlight="@color/colorThatIsActuallyTransparent" />
 </layout>
