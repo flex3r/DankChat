@@ -670,12 +670,12 @@ class MainFragment : Fragment() {
                 else it.substring(0, it.indexOf('?'))
             }
 
-            val spannable = SpannableStringBuilder(getString(R.string.external_upload_disclaimer, uploadUrlWithoutQuery))
+            val spannable = SpannableStringBuilder(getString(R.string.nuuls_upload_disclaimer, uploadUrlWithoutQuery))
             Linkify.addLinks(spannable, Linkify.WEB_URLS)
 
             MaterialAlertDialogBuilder(requireContext())
                 .setCancelable(false)
-                .setTitle(R.string.external_upload_title)
+                .setTitle(R.string.nuuls_upload_title)
                 .setMessage(spannable)
                 .setPositiveButton(R.string.dialog_ok) { dialog, _ ->
                     dialog.dismiss()
