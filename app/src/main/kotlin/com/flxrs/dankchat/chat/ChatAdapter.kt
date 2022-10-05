@@ -712,7 +712,7 @@ class ChatAdapter(
         .data(this)
         .build()
 
-    /** set background color, and enable/disable ripple (whether enable or disable should match the "clickablity" of that message */
+    /** set background color, and enable/disable ripple (whether enable or disable should match the "clickability" of that message */
     private fun TextView.setRippleBackground(backgroundColor: Int, enableRipple: Boolean = false) {
         (background as RippleDrawable).apply {
             setDrawableByLayerId(R.id.ripple_color_layer, ColorDrawable(backgroundColor))

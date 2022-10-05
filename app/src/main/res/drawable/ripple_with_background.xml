@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- color must not be white or black for it to work with both dark and light background -->
+<!-- have different ripple color on light/dark theme so it's well visible on both -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="#66808080">
+    android:color="#cca0a0a0">
     <!-- this layer will be replaced programmatically to change color -->
     <item android:drawable="@color/colorThatIsActuallyTransparent" android:id="@+id/ripple_color_layer"/>
 
