@@ -289,7 +289,7 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
         private const val CHANNELS_AS_STRING_KEY = "channelsAsStringKey"
         private const val ID_KEY = "idKey"
         private const val ID_STRING_KEY = "idStringKey"
-        private const val EXTERNAL_HOSTING_ACK_KEY = "externalHostingAckKey"
+        private const val EXTERNAL_HOSTING_ACK_KEY = "nuulsAckKey" // the key is old key to prevent triggering the dialog for existing users
         private const val MESSAGES_HISTORY_ACK_KEY = "messageHistoryAckKey"
 
         private const val UPLOADER_URL = "uploaderUrl"
