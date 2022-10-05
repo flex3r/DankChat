@@ -34,7 +34,8 @@
     <string name="resume_scroll">Возобновить прокрутку</string>
     <string name="uploading_image">Загружается файл</string>
     <string name="settings">Настройки</string>
-    <string name="nuuls_upload_disclaimer">Сторонний хостинг предоставлен %1$s, используйте на ваше усмотрение.</string>
+    <string name="nuuls_upload_disclaimer">Сторонний хостинг предоставлен https://nuuls.com/i, используйте на ваше усмотрение.</string>
+    <string name="external_upload_disclaimer">Сторонний хостинг предоставлен %1$s, используйте на ваше усмотрение.</string>
     <string name="nuuls_upload_title">Загрузка собственного изображения</string>
     <string name="snackbar_message_copied">Сообщение скопировано</string>
     <string name="snackbar_error_copied">Информация об ошибке скопирована</string>

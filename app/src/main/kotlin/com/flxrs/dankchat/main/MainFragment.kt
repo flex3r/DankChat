@@ -680,7 +680,7 @@ class MainFragment : Fragment() {
         }
 
         if (!dankChatPreferences.hasExternalHostingAcknowledged) {
-            val spannable = SpannableStringBuilder(getString(R.string.nuuls_upload_disclaimer, host))
+            val spannable = SpannableStringBuilder(getString(R.string.external_upload_disclaimer, host))
             Linkify.addLinks(spannable, Linkify.WEB_URLS)
 
             MaterialAlertDialogBuilder(requireContext())
