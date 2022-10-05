@@ -451,7 +451,7 @@ class MainViewModel @Inject constructor(
 
     fun closeAndReconnect(loadTwitchData: Boolean = false) {
         chatRepository.closeAndReconnect()
-        if (loadTwitchData && dankChatPreferenceStore.isLoggedIn) {
+        if (loadTwitchData) {
             loadData(
                 isUserChange = true,
                 loadTwitchData = true,
@@ -651,8 +651,8 @@ class MainViewModel @Inject constructor(
     }
 
     private suspend fun getRoomStateIdIfNeeded(channel: String): String? = when {
-        !dankChatPreferenceStore.isLoggedIn -> null
-        else                                -> withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
+        dankChatPreferenceStore.isLoggedIn -> null
+        else                               -> withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
             chatRepository.getRoomState(channel).first { it.channelId.isNotBlank() }.channelId
         }
     }
