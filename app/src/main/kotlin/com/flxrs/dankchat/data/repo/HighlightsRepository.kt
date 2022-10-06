@@ -97,12 +97,9 @@ class HighlightsRepository @Inject constructor(
             enabledMessageHighlights
                 .filter { it.type == MessageHighlightType.Custom }
                 .forEach {
-                    val hasMatch = when {
-                        it.isRegex -> it.regex?.let { regex -> originalMessage.matches(regex) } ?: false
-                        else       -> originalMessage.split(" ").any { word -> word.contains(it.pattern, ignoreCase = it.isCaseSensitive) }
-                    }
+                    val regex = it.regex ?: return@forEach
 
-                    if (hasMatch) {
+                    if (message.contains(regex)) {
                         add(Highlight(HighlightType.Custom))
                     }
                 }

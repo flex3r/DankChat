@@ -39,8 +39,8 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.badge.BadgeType
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
-import com.flxrs.dankchat.data.twitch.emote.EmoteManager
-import com.flxrs.dankchat.data.twitch.emote.EmoteManager.Companion.cacheKey
+import com.flxrs.dankchat.data.repo.EmoteRepository
+import com.flxrs.dankchat.data.repo.EmoteRepository.Companion.cacheKey
 import com.flxrs.dankchat.data.twitch.message.*
 import com.flxrs.dankchat.databinding.ChatItemBinding
 import com.flxrs.dankchat.utils.DateTimeUtils
@@ -54,7 +54,7 @@ import kotlin.math.roundToInt
 
 
 class ChatAdapter(
-    private val emoteManager: EmoteManager,
+    private val emoteRepository: EmoteRepository,
     private val onListChanged: (position: Int) -> Unit,
     private val onUserClicked: (targetUserId: String?, targetUsername: String, messageId: String, channelName: String, badges: List<Badge>, isLongPress: Boolean) -> Unit,
     private val onMessageLongClick: (message: String) -> Unit
@@ -93,7 +93,7 @@ class ChatAdapter(
     override fun onViewRecycled(holder: ViewHolder) {
         holder.scope.coroutineContext.cancelChildren()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
-            emoteManager.gifCallback.removeView(holder.binding.itemText)
+            emoteRepository.gifCallback.removeView(holder.binding.itemText)
         }
 
         super.onViewRecycled(holder)
@@ -442,7 +442,7 @@ class ChatAdapter(
                 try {
                     val (start, end) = badgePositions[idx]
                     val cacheKey = badge.cacheKey(baseHeight)
-                    val cached = emoteManager.badgeCache[cacheKey]
+                    val cached = emoteRepository.badgeCache[cacheKey]
                     val drawable = when {
                         cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
                         else           -> context.imageLoader
@@ -456,7 +456,7 @@ class ChatAdapter(
                                 val width = (baseHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
                                 setBounds(0, 0, width, baseHeight)
                                 if (this is Animatable) {
-                                    emoteManager.badgeCache.put(cacheKey, this)
+                                    emoteRepository.badgeCache.put(cacheKey, this)
                                     setRunning(animateGifs)
                                 }
                             }
@@ -472,7 +472,7 @@ class ChatAdapter(
             }
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && animateGifs) {
-                emoteManager.gifCallback.addView(holder.binding.itemText)
+                emoteRepository.gifCallback.addView(holder.binding.itemText)
             }
 
 
@@ -483,7 +483,7 @@ class ChatAdapter(
                     .forEach { (_, emotes) ->
                         val key = emotes.cacheKey(baseHeight)
                         // fast path, backed by lru cache
-                        val layerDrawable = emoteManager.layerCache[key] ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
+                        val layerDrawable = emoteRepository.layerCache[key] ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
 
                         if (layerDrawable != null) {
                             (text as Spannable).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
@@ -654,7 +654,7 @@ class ChatAdapter(
                 try {
                     val (start, end) = badgePositions[idx]
                     val cacheKey = badge.cacheKey(baseHeight)
-                    val cached = emoteManager.badgeCache[cacheKey]
+                    val cached = emoteRepository.badgeCache[cacheKey]
                     val drawable = when {
                         cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
                         else           -> context.imageLoader
@@ -668,7 +668,7 @@ class ChatAdapter(
                                 val width = (baseHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
                                 setBounds(0, 0, width, baseHeight)
                                 if (this is Animatable) {
-                                    emoteManager.badgeCache.put(cacheKey, this)
+                                    emoteRepository.badgeCache.put(cacheKey, this)
                                     setRunning(animateGifs)
                                 }
                             }
@@ -684,7 +684,7 @@ class ChatAdapter(
             }
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && animateGifs) {
-                emoteManager.gifCallback.addView(holder.binding.itemText)
+                emoteRepository.gifCallback.addView(holder.binding.itemText)
             }
 
 
@@ -695,7 +695,7 @@ class ChatAdapter(
                     .forEach { (_, emotes) ->
                         val key = emotes.cacheKey(baseHeight)
                         // fast path, backed by lru cache
-                        val layerDrawable = emoteManager.layerCache[key]?.also {
+                        val layerDrawable = emoteRepository.layerCache[key]?.also {
                             it.forEachLayer<Animatable> { animatable -> animatable.setRunning(animateGifs) }
                         } ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
 
@@ -730,7 +730,7 @@ class ChatAdapter(
         }
 
         return drawables.toLayerDrawable(bounds, scaleFactor, emotes).also {
-            emoteManager.layerCache.put(cacheKey, it)
+            emoteRepository.layerCache.put(cacheKey, it)
             it.forEachLayer<Animatable> { animatable -> animatable.setRunning(animateGifs) }
         }
     }
@@ -744,7 +744,7 @@ class ChatAdapter(
         forEachIndexed { idx, dr -> dr.transformEmoteDrawable(scaleFactor, emotes[idx], maxWidth, maxHeight) }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
-            callback = emoteManager.gifCallback
+            callback = emoteRepository.gifCallback
         }
     }
 

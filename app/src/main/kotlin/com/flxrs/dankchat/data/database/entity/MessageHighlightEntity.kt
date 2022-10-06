@@ -27,9 +27,13 @@ data class MessageHighlightEntity(
         runCatching {
             val options = when {
                 isCaseSensitive -> setOf(RegexOption.IGNORE_CASE)
-                else -> emptySet()
+                else            -> emptySet()
             }
-            pattern.toRegex(options)
+            when {
+                isRegex -> pattern.toRegex(options)
+                else    -> Regex("\\b$pattern\\b")
+            }
+
         }.getOrElse {
             Log.e(TAG, "Failed to create regex for pattern $pattern", it)
             null

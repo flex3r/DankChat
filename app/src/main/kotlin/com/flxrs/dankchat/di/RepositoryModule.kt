@@ -6,7 +6,7 @@ import com.flxrs.dankchat.data.database.dao.RecentUploadsDao
 import com.flxrs.dankchat.data.repo.*
 import com.flxrs.dankchat.data.twitch.connection.ChatConnection
 import com.flxrs.dankchat.data.twitch.connection.PubSubManager
-import com.flxrs.dankchat.data.twitch.emote.EmoteManager
+import com.flxrs.dankchat.data.repo.EmoteRepository
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import dagger.Module
 import dagger.Provides
@@ -15,6 +15,7 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
+// TODO remove
 @InstallIn(SingletonComponent::class)
 @Module
 object RepositoryModule {
@@ -23,31 +24,33 @@ object RepositoryModule {
     @Provides
     fun provideDataRepository(
         apiManager: ApiManager,
-        emoteManager: EmoteManager,
+        emoteRepository: EmoteRepository,
         recentUploadsRepository: RecentUploadsRepository,
         dankChatPreferenceStore: DankChatPreferenceStore,
-    ): DataRepository = DataRepository(apiManager, emoteManager, recentUploadsRepository, dankChatPreferenceStore)
+    ): DataRepository = DataRepository(apiManager, emoteRepository, recentUploadsRepository, dankChatPreferenceStore)
 
     @Singleton
     @Provides
     fun provideChatRepository(
         apiManager: ApiManager,
-        emoteManager: EmoteManager,
+        emoteRepository: EmoteRepository,
         @ReadConnection readConnection: ChatConnection,
         @WriteConnection writeConnection: ChatConnection,
         pubSubManager: PubSubManager,
         @ApplicationScope scope: CoroutineScope,
         dankChatPreferenceStore: DankChatPreferenceStore,
         highlightsRepository: HighlightsRepository,
+        ignoresRepository: IgnoresRepository,
     ): ChatRepository = ChatRepository(
         apiManager = apiManager,
-        emoteManager = emoteManager,
+        emoteRepository = emoteRepository,
         readConnection = readConnection,
         writeConnection = writeConnection,
         pubSubManager = pubSubManager,
         dankChatPreferenceStore = dankChatPreferenceStore,
         highlightsRepository = highlightsRepository,
-        scope = scope
+        ignoresRepository = ignoresRepository,
+        scope = scope,
     )
 
     @Singleton

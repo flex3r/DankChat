@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.data.twitch.emote
+package com.flxrs.dankchat.data.repo
 
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
@@ -7,7 +7,17 @@ import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.data.api.dto.*
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.badge.BadgeSet
+import com.flxrs.dankchat.data.twitch.badge.BadgeType
+import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
+import com.flxrs.dankchat.data.twitch.emote.EmoteType
+import com.flxrs.dankchat.data.twitch.emote.GenericEmote
+import com.flxrs.dankchat.data.twitch.message.Message
+import com.flxrs.dankchat.data.twitch.message.PrivMessage
+import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
+import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.utils.extensions.appendSpacesBetweenEmojiGroup
+import com.flxrs.dankchat.utils.extensions.removeDuplicateWhitespace
 import com.flxrs.dankchat.utils.extensions.supplementaryCodePointPositions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -16,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 import javax.inject.Inject
 
-class EmoteManager @Inject constructor(private val apiManager: ApiManager, private val preferences: DankChatPreferenceStore) {
+class EmoteRepository @Inject constructor(private val apiManager: ApiManager, private val preferences: DankChatPreferenceStore) {
     private val twitchEmotes = ConcurrentHashMap<String, GenericEmote>()
     private var userStateEmoteSetIds: List<String> = emptyList()
 
@@ -54,28 +64,152 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager, priva
         return emotes
     }
 
-    fun parseEmotes(message: String, channel: String, emoteTag: String, extraSpacePositions: List<Int>, removedSpacePositions: List<Int>): Pair<String, List<ChatMessageEmote>> {
-        val twitchEmotes = parseTwitchEmotes(emoteTag, message, extraSpacePositions, removedSpacePositions)
-        val thirdPartyEmotes = parse3rdPartyEmotes(message, channel).filterNot { e -> twitchEmotes.any { it.code == e.code } }
+    fun parseEmotesAndBadges(message: Message): Message {
+        if (message !is PrivMessage && message !is WhisperMessage && message !is UserNoticeMessage) {
+            return message
+        }
+
+        val (messageString, channel, emoteTag) = when (message) {
+            is PrivMessage       -> Triple(message.message, message.channel, message.tags["emotes"].orEmpty())
+            is WhisperMessage    -> Triple(message.message, "", message.rawEmotes)
+            is UserNoticeMessage -> message.childMessage?.let { Triple(it.message, it.channel, it.tags["emotes"].orEmpty()) } ?: return message
+        }
+
+        val withEmojiFix = messageString.replace(
+            ChatRepository.ESCAPE_TAG_REGEX,
+            ChatRepository.ZERO_WIDTH_JOINER
+        )
+        val (duplicateSpaceAdjustedMessage, removedSpaces) = withEmojiFix.removeDuplicateWhitespace()
+        val (appendedSpaceAdjustedMessage, appendedSpaces) = duplicateSpaceAdjustedMessage.appendSpacesBetweenEmojiGroup()
+
+        val twitchEmotes = parseTwitchEmotes(emoteTag, appendedSpaceAdjustedMessage, appendedSpaces, removedSpaces)
+        val thirdPartyEmotes = parse3rdPartyEmotes(appendedSpaceAdjustedMessage, channel).filterNot { e -> twitchEmotes.any { it.code == e.code } }
         val emotes = (twitchEmotes + thirdPartyEmotes)
 
-        return adjustOverlayEmotes(message, emotes)
+        val (adjustedMessage, adjustedEmotes) = adjustOverlayEmotes(appendedSpaceAdjustedMessage, emotes)
+        val messageWithEmotes = when (message) {
+            is PrivMessage       -> message.copy(message = adjustedMessage, originalMessage = appendedSpaceAdjustedMessage, emotes = adjustedEmotes)
+            is WhisperMessage    -> message.copy(message = adjustedMessage, originalMessage = appendedSpaceAdjustedMessage, emotes = adjustedEmotes)
+            is UserNoticeMessage -> message.copy(
+                childMessage = message.childMessage?.copy(
+                    message = adjustedMessage,
+                    originalMessage = appendedSpaceAdjustedMessage,
+                    emotes = adjustedEmotes
+                )
+            )
+        }
+
+        return parseBadges(messageWithEmotes)
     }
 
-    fun getChannelBadgeUrl(channel: String, set: String, version: String) = channelBadges[channel]?.get(set)?.versions?.get(version)?.imageUrlHigh
+    private fun parseBadges(message: Message): Message {
+        if (message !is PrivMessage && message !is WhisperMessage && message !is UserNoticeMessage) {
+            return message
+        }
 
-    fun getGlobalBadgeUrl(set: String, version: String) = globalBadges[set]?.versions?.get(version)?.imageUrlHigh
+        val channel = when (message) {
+            is PrivMessage       -> message.channel
+            is WhisperMessage    -> ""
+            is UserNoticeMessage -> message.childMessage?.channel ?: return message
+        }
 
-    fun getBadgeTitle(channel: String, set: String, version: String): String? {
+        val (badgeTag, badgeInfoTag, userId) = when (message) {
+            is PrivMessage       -> Triple(message.tags["badges"], message.tags["badge-info"], message.userId)
+            is WhisperMessage    -> Triple(message.rawBadges, message.rawBadgeInfo, message.userId)
+            is UserNoticeMessage -> message.childMessage?.let { Triple(it.tags["badges"], it.tags["badge-info"], it.userId) } ?: return message
+        }
+
+        val badgeInfos = badgeInfoTag
+            ?.parseTagList()
+            ?.associate { it.key to it.value }
+            .orEmpty()
+
+        val badges = badgeTag
+            ?.parseTagList()
+            ?.mapNotNull { (badgeKey, badgeValue, tag) ->
+                val badgeInfo = badgeInfos[badgeKey]
+
+                val globalBadgeUrl = getGlobalBadgeUrl(badgeKey, badgeValue)
+                val channelBadgeUrl = getChannelBadgeUrl(channel, badgeKey, badgeValue)
+                val ffzModBadgeUrl = getFfzModBadgeUrl(channel)
+                val ffzVipBadgeUrl = getFfzVipBadgeUrl(channel)
+
+                val title = getBadgeTitle(channel, badgeKey, badgeValue)
+                val type = BadgeType.parseFromBadgeId(badgeKey)
+                when {
+                    badgeKey.startsWith("moderator") && ffzModBadgeUrl != null -> Badge.FFZModBadge(
+                        title = title,
+                        badgeTag = tag,
+                        badgeInfo = badgeInfo,
+                        url = ffzModBadgeUrl,
+                        type = type
+                    )
+
+                    badgeKey.startsWith("vip") && ffzVipBadgeUrl != null       -> Badge.FFZVipBadge(
+                        title = title,
+                        badgeTag = tag,
+                        badgeInfo = badgeInfo,
+                        url = ffzVipBadgeUrl,
+                        type = type
+                    )
+
+                    (badgeKey.startsWith("subscriber") || badgeKey.startsWith("bits"))
+                            && channelBadgeUrl != null                         -> Badge.ChannelBadge(
+                        title = title,
+                        badgeTag = tag,
+                        badgeInfo = badgeInfo,
+                        url = channelBadgeUrl,
+                        type = type
+                    )
+
+                    else                                                       -> globalBadgeUrl?.let { Badge.GlobalBadge(title, tag, badgeInfo, it, type) }
+                }
+            }.orEmpty()
+
+        val badgesWithDankChatBadge = buildList {
+            addAll(badges)
+            val badge = getDankChatBadgeTitleAndUrl(userId)
+            if (badge != null) {
+                add(Badge.DankChatBadge(title = badge.first, badgeTag = null, badgeInfo = null, url = badge.second, type = BadgeType.DankChat))
+            }
+        }
+
+        return when (message) {
+            is PrivMessage       -> message.copy(badges = badgesWithDankChatBadge)
+            is WhisperMessage    -> message.copy(badges = badgesWithDankChatBadge)
+            is UserNoticeMessage -> message.copy(
+                childMessage = message.childMessage?.copy(badges = badgesWithDankChatBadge)
+            )
+        }
+    }
+
+    data class TagListEntry(val key: String, val value: String, val tag: String)
+
+    private fun String.parseTagList(): List<TagListEntry> = split(',')
+        .mapNotNull {
+            if (!it.contains('/')) {
+                return@mapNotNull null
+            }
+
+            val key = it.substringBefore('/')
+            val value = it.substringAfter('/')
+            TagListEntry(key, value, it)
+        }
+
+    private fun getChannelBadgeUrl(channel: String, set: String, version: String) = channelBadges[channel]?.get(set)?.versions?.get(version)?.imageUrlHigh
+
+    private fun getGlobalBadgeUrl(set: String, version: String) = globalBadges[set]?.versions?.get(version)?.imageUrlHigh
+
+    private fun getBadgeTitle(channel: String, set: String, version: String): String? {
         return channelBadges[channel]?.get(set)?.versions?.get(version)?.title
             ?: globalBadges[set]?.versions?.get(version)?.title
     }
 
-    fun getFfzModBadgeUrl(channel: String): String? = ffzModBadges[channel]
+    private fun getFfzModBadgeUrl(channel: String): String? = ffzModBadges[channel]
 
-    fun getFfzVipBadgeUrl(channel: String): String? = ffzVipBadges[channel]
+    private fun getFfzVipBadgeUrl(channel: String): String? = ffzVipBadges[channel]
 
-    fun getDankChatBadgeTitleAndUrl(userId: String?): Pair<String, String>? = dankChatBadges.find { it.users.any { id -> id == userId } }?.let { it.type to it.url }
+    private fun getDankChatBadgeTitleAndUrl(userId: String?): Pair<String, String>? = dankChatBadges.find { it.users.any { id -> id == userId } }?.let { it.type to it.url }
 
     fun setChannelBadges(channel: String, badges: Map<String, BadgeSet>) {
         channelBadges[channel] = badges
@@ -253,6 +387,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager, priva
                         adjustedMessage.length -> adjustedMessage.substring(0, emote.position.first)
                         else                   -> adjustedMessage.removeRange(emote.position)
                     }
+                    // TODO
                     emote.position = previousEmote.position
                     foundEmote = true
 
@@ -419,7 +554,7 @@ class EmoteManager @Inject constructor(private val apiManager: ApiManager, priva
         fun Badge.cacheKey(baseHeight: Int): String = "$url-$baseHeight"
         fun List<ChatMessageEmote>.cacheKey(baseHeight: Int): String = joinToString(separator = "-") { it.id } + "-$baseHeight"
 
-        private val TAG = EmoteManager::class.java.simpleName
+        private val TAG = EmoteRepository::class.java.simpleName
 
         private const val TWITCH_EMOTE_TEMPLATE = "https://static-cdn.jtvnw.net/emoticons/v2/%s/default/dark/%s"
         private const val TWITCH_EMOTE_SIZE = "3.0"

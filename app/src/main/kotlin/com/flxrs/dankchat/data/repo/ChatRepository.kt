@@ -10,7 +10,6 @@ import com.flxrs.dankchat.data.api.bodyOrNull
 import com.flxrs.dankchat.data.api.dto.RecentMessagesDto
 import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.twitch.connection.*
-import com.flxrs.dankchat.data.twitch.emote.EmoteManager
 import com.flxrs.dankchat.data.twitch.message.*
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.*
@@ -24,12 +23,13 @@ import kotlin.system.measureTimeMillis
 
 class ChatRepository @Inject constructor(
     private val apiManager: ApiManager,
-    private val emoteManager: EmoteManager,
+    private val emoteRepository: EmoteRepository,
     private val readConnection: ChatConnection,
     private val writeConnection: ChatConnection,
     private val pubSubManager: PubSubManager,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
     private val highlightsRepository: HighlightsRepository,
+    private val ignoresRepository: IgnoresRepository,
     scope: CoroutineScope,
 ) {
 
@@ -96,38 +96,42 @@ class ChatRepository @Inject constructor(
             }
         }
         scope.launch {
-            pubSubManager.messages.collect { message ->
-                when (message) {
+            pubSubManager.messages.collect { pubSubMessage ->
+                when (pubSubMessage) {
                     is PubSubMessage.PointRedemption -> {
-                        if (message.data.user.id in blockList) return@collect
-                        knownRewards[message.data.id] = message
+                        if (pubSubMessage.data.user.id in blockList) return@collect
+                        knownRewards[pubSubMessage.data.id] = pubSubMessage
 
-                        if (!message.data.reward.requiresUserInput) {
-                            val parsed = PointRedemptionMessage.parsePointReward(message.timestamp, message.data)
-                            messages[message.channelName]?.update {
+                        if (!pubSubMessage.data.reward.requiresUserInput) {
+                            val parsed = PointRedemptionMessage.parsePointReward(pubSubMessage.timestamp, pubSubMessage.data)
+                            messages[pubSubMessage.channelName]?.update {
                                 it.addAndLimit(ChatItem(parsed), scrollBackLength)
                             }
                         }
                     }
 
                     is PubSubMessage.Whisper         -> {
-                        if (message.data.userId in blockList) return@collect
+                        if (pubSubMessage.data.userId in blockList) return@collect
 
                         val parsed = runCatching {
-                            WhisperMessage.fromPubSub(message.data, emoteManager)
+                            WhisperMessage.fromPubSub(pubSubMessage.data)
                         }.getOrElse { return@collect }
 
-                        val item = ChatItem(parsed, isMentionTab = true)
+                        val messageWithIgnores = ignoresRepository.applyIgnores(parsed) ?: return@collect
+                        val messageWithHighlights = highlightsRepository.calculateHighlightState(messageWithIgnores)
+                        val message = emoteRepository.parseEmotesAndBadges(messageWithHighlights) as WhisperMessage
+
+                        val item = ChatItem(message, isMentionTab = true)
                         _whispers.update { current ->
                             current.addAndLimit(item, scrollBackLength)
                         }
 
-                        if (message.data.userId == userState.value.userId) {
+                        if (pubSubMessage.data.userId == userState.value.userId) {
                             return@collect
                         }
 
                         val currentUsers = users["*"] ?: createUserCache()
-                        currentUsers.put(parsed.name, true)
+                        currentUsers.put(message.name, true)
                         usersFlows["*"]?.update {
                             currentUsers.snapshot().keys
                         }
@@ -272,7 +276,7 @@ class ChatRepository @Inject constructor(
         val split = input.split(" ")
         if (split.size > 2 && (split[0] == "/w" || split[0] == ".w") && split[1].isNotBlank()) {
             val message = input.substring(4 + split[1].length)
-            val emotes = emoteManager.parse3rdPartyEmotes(message, withTwitch = true)
+            val emotes = emoteRepository.parse3rdPartyEmotes(message, withTwitch = true)
             val userState = userState.value
             val fakeMessage = WhisperMessage(
                 userId = userState.userId,
@@ -284,7 +288,8 @@ class ChatRepository @Inject constructor(
                 recipientName = split[1],
                 recipientDisplayName = split[1],
                 message = message,
-                originalMessage = message,
+                rawEmotes = "",
+                rawBadges = "",
                 emotes = emotes,
             )
             val fakeItem = ChatItem(fakeMessage, isMentionTab = true)
@@ -534,6 +539,7 @@ class ChatRepository @Inject constructor(
             return
         }
 
+        // TODO
         val userId = ircMessage.tags["user-id"]
         if (userId in blockList) {
             return
@@ -541,18 +547,22 @@ class ChatRepository @Inject constructor(
 
         val userState = userState.value
         val parsed = runCatching {
-            WhisperMessage.parseFromIrc(ircMessage, emoteManager, userState.displayName, userState.color)
+            WhisperMessage.parseFromIrc(ircMessage, userState.displayName, userState.color)
         }.getOrElse { return }
+
+        val messageWithIgnores = ignoresRepository.applyIgnores(parsed) ?: return
+        val messageWithHighlights = highlightsRepository.calculateHighlightState(messageWithIgnores)
+        val message = emoteRepository.parseEmotesAndBadges(messageWithHighlights) as WhisperMessage
 
         val currentUsers = users
             .getOrPut("*") { createUserCache() }
-            .also { it.put(parsed.name, true) }
+            .also { it.put(message.name, true) }
 
         usersFlows
             .getOrPut("*") { MutableStateFlow(emptySet()) }
             .update { currentUsers.snapshot().keys }
 
-        val item = ChatItem(parsed, isMentionTab = true)
+        val item = ChatItem(message, isMentionTab = true)
         _whispers.update { current ->
             current.addAndLimit(item, scrollBackLength)
         }
@@ -560,6 +570,7 @@ class ChatRepository @Inject constructor(
     }
 
     private suspend fun handleMessage(ircMessage: IrcMessage) {
+        // TODO
         val userId = ircMessage.tags["user-id"]
         if (userId in blockList) {
             return
@@ -586,36 +597,37 @@ class ChatRepository @Inject constructor(
             else             -> emptyList()
         }
 
-        val message = runCatching { Message.parse(ircMessage, emoteManager) }
+        val rawMessage = runCatching { Message.parse(ircMessage) }
             .getOrElse {
                 Log.e(TAG, "Failed to parse message", it)
                 return
             } ?: return
 
-        // TODO ignores
-        val messageWithHighlight = highlightsRepository.calculateHighlightState(message)
-        Log.d(TAG, "State: ${messageWithHighlight.highlights}")
-        if (messageWithHighlight is NoticeMessage && messageWithHighlight.channel == "*") {
+        val messageWithIgnores = ignoresRepository.applyIgnores(rawMessage) ?: return
+        val messageWithHighlights = highlightsRepository.calculateHighlightState(messageWithIgnores)
+        val message = emoteRepository.parseEmotesAndBadges(messageWithHighlights)
+
+        if (message is NoticeMessage && message.channel == "*") {
             messages.keys.forEach {
                 messages[it]?.update { current ->
-                    current.addAndLimit(ChatItem(messageWithHighlight), scrollBackLength)
+                    current.addAndLimit(ChatItem(message), scrollBackLength)
                 }
             }
             return
         }
 
-        if (messageWithHighlight is PrivMessage) {
-            if (messageWithHighlight.name == dankChatPreferenceStore.userName) {
-                val previousLastMessage = lastMessage[messageWithHighlight.channel]?.trimEndSpecialChar()
-                if (previousLastMessage != messageWithHighlight.originalMessage.trimEndSpecialChar()) {
-                    lastMessage[messageWithHighlight.channel] = messageWithHighlight.originalMessage
+        if (message is PrivMessage) {
+            if (message.name == dankChatPreferenceStore.userName) {
+                val previousLastMessage = lastMessage[message.channel]?.trimEndSpecialChar()
+                if (previousLastMessage != message.originalMessage.trimEndSpecialChar()) {
+                    lastMessage[message.channel] = message.originalMessage
                 }
 
-                val hasVip = messageWithHighlight.badges.any { badge -> badge.badgeTag?.startsWith("vip") == true }
+                val hasVip = message.badges.any { badge -> badge.badgeTag?.startsWith("vip") == true }
                 userState.update { userState ->
                     val updatedVipChannels = when {
-                        hasVip -> userState.vipChannels + messageWithHighlight.channel
-                        else   -> userState.vipChannels - messageWithHighlight.channel
+                        hasVip -> userState.vipChannels + message.channel
+                        else   -> userState.vipChannels - message.channel
 
                     }
                     userState.copy(vipChannels = updatedVipChannels)
@@ -623,24 +635,24 @@ class ChatRepository @Inject constructor(
             }
 
             val currentUsers = users
-                .getOrPut(messageWithHighlight.channel) { createUserCache() }
-                .also { cache -> cache.put(messageWithHighlight.name, true) }
+                .getOrPut(message.channel) { createUserCache() }
+                .also { cache -> cache.put(message.name, true) }
             usersFlows
-                .getOrPut(messageWithHighlight.channel) { MutableStateFlow(emptySet()) }
+                .getOrPut(message.channel) { MutableStateFlow(emptySet()) }
                 .update { currentUsers.snapshot().keys }
         }
 
         val items = buildList {
-            add(ChatItem(messageWithHighlight))
-            if (messageWithHighlight is UserNoticeMessage && messageWithHighlight.childMessage != null) {
-                add(ChatItem(messageWithHighlight.childMessage))
+            add(ChatItem(message))
+            if (message is UserNoticeMessage && message.childMessage != null) {
+                add(ChatItem(message.childMessage))
             }
         }
 
-        val channel = when (message) {
-            is PrivMessage       -> message.channel
-            is UserNoticeMessage -> message.channel
-            is NoticeMessage     -> message.channel
+        val channel = when (rawMessage) {
+            is PrivMessage       -> rawMessage.channel
+            is UserNoticeMessage -> rawMessage.channel
+            is NoticeMessage     -> rawMessage.channel
             else                 -> return
         }
 
@@ -723,22 +735,24 @@ class ChatRepository @Inject constructor(
         val recentMessages = result?.messages.orEmpty()
         val items = mutableListOf<ChatItem>()
         measureTimeMillis {
-            for (message in recentMessages) {
-                val parsedIrc = IrcMessage.parse(message)
+            for (recentMessage in recentMessages) {
+                val parsedIrc = IrcMessage.parse(recentMessage)
                 if (parsedIrc.tags["user-id"] in blockList) {
                     continue
                 }
 
-                val mappedMessage = runCatching {
-                    Message.parse(parsedIrc, emoteManager)
+                val rawMessage = runCatching {
+                    Message.parse(parsedIrc)
                 }.getOrNull() ?: continue
 
-                // TODO ignores
+                val messageWithIgnores = ignoresRepository.applyIgnores(rawMessage) ?: continue
+                val messageWithHighlights = highlightsRepository.calculateHighlightState(messageWithIgnores)
+                val message = emoteRepository.parseEmotesAndBadges(messageWithHighlights)
 
-                val messageWithHighlight = highlightsRepository.calculateHighlightState(mappedMessage)
-                items += ChatItem(messageWithHighlight)
-                if (messageWithHighlight is UserNoticeMessage && messageWithHighlight.childMessage != null) {
-                    items += ChatItem(messageWithHighlight.childMessage)
+
+                items += ChatItem(message)
+                if (message is UserNoticeMessage && message.childMessage != null) {
+                    items += ChatItem(message.childMessage)
                 }
             }
         }.let { Log.i(TAG, "Parsing message history for #$channel took $it ms") }

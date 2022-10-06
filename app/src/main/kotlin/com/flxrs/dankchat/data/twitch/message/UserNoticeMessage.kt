@@ -1,8 +1,7 @@
 package com.flxrs.dankchat.data.twitch.message
 
 import com.flxrs.dankchat.data.irc.IrcMessage
-import com.flxrs.dankchat.data.twitch.emote.EmoteManager
-import java.util.UUID
+import java.util.*
 
 data class UserNoticeMessage(
     override val timestamp: Long = System.currentTimeMillis(),
@@ -13,7 +12,7 @@ data class UserNoticeMessage(
     val childMessage: PrivMessage?
 ) : Message() {
     companion object {
-        fun parseUserNotice(message: IrcMessage, emoteManager: EmoteManager, historic: Boolean = false): UserNoticeMessage = with(message) {
+        fun parseUserNotice(message: IrcMessage, historic: Boolean = false): UserNoticeMessage = with(message) {
             val msgId = tags["msg-id"]
             val id = tags["id"] ?: UUID.randomUUID().toString()
             val channel = params[0].substring(1)
@@ -25,10 +24,7 @@ data class UserNoticeMessage(
             val ts = tags["tmi-sent-ts"]?.toLongOrNull() ?: System.currentTimeMillis()
 
             val childMessage = when (msgId) {
-                "sub", "resub", "announcement" -> PrivMessage.parsePrivMessage(
-                    message,
-                    emoteManager
-                )
+                "sub", "resub", "announcement" -> PrivMessage.parsePrivMessage(message)
                 else                           -> null
             }
 

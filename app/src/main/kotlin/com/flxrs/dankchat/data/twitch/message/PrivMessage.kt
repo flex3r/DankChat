@@ -2,13 +2,9 @@ package com.flxrs.dankchat.data.twitch.message
 
 import android.graphics.Color
 import com.flxrs.dankchat.data.irc.IrcMessage
-import com.flxrs.dankchat.data.repo.ChatRepository
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
-import com.flxrs.dankchat.data.twitch.emote.EmoteManager
-import com.flxrs.dankchat.utils.extensions.appendSpacesBetweenEmojiGroup
-import com.flxrs.dankchat.utils.extensions.removeDuplicateWhitespace
-import java.util.UUID
+import java.util.*
 
 data class PrivMessage(
     override val timestamp: Long = System.currentTimeMillis(),
@@ -29,7 +25,7 @@ data class PrivMessage(
 ) : Message() {
 
     companion object {
-        fun parsePrivMessage(ircMessage: IrcMessage, emoteManager: EmoteManager): PrivMessage = with(ircMessage) {
+        fun parsePrivMessage(ircMessage: IrcMessage): PrivMessage = with(ircMessage) {
             val name = when (ircMessage.command) {
                 "USERNOTICE" -> tags.getValue("login")
                 else         -> prefix.substringBefore('!')
@@ -51,23 +47,7 @@ data class PrivMessage(
                 else                                                                                          -> messageParam
             }
             val channel = params[0].substring(1)
-            val emoteTag = tags["emotes"] ?: ""
             val id = tags["id"] ?: UUID.randomUUID().toString()
-            val badges = parseBadges(
-                emoteManager,
-                tags["badges"],
-                tags["badge-info"],
-                channel,
-                tags["user-id"]
-            )
-
-            val withEmojiFix = message.replace(
-                regex = ChatRepository.ESCAPE_TAG_REGEX,
-                replacement = ChatRepository.ZERO_WIDTH_JOINER
-            )
-            val (duplicateSpaceAdjustedMessage, removedSpaces) = withEmojiFix.removeDuplicateWhitespace()
-            val (appendedSpaceAdjustedMessage, appendedSpaces) = duplicateSpaceAdjustedMessage.appendSpacesBetweenEmojiGroup()
-            val (overlayEmotesAdjustedMessage, emotes) = emoteManager.parseEmotes(appendedSpaceAdjustedMessage, channel, emoteTag, appendedSpaces, removedSpaces)
 
             return PrivMessage(
                 timestamp = ts,
@@ -75,11 +55,8 @@ data class PrivMessage(
                 name = name,
                 displayName = displayName,
                 color = color,
-                message = overlayEmotesAdjustedMessage,
-                originalMessage = appendedSpaceAdjustedMessage,
-                emotes = emotes,
+                message = message,
                 isAction = isAction,
-                badges = badges,
                 id = id,
                 userId = tags["user-id"],
                 timedOut = tags["rm-deleted"] == "1",

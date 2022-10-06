@@ -3,7 +3,7 @@ package com.flxrs.dankchat.di
 import android.util.Log
 import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.data.api.*
-import com.flxrs.dankchat.data.twitch.emote.EmoteManager
+import com.flxrs.dankchat.data.repo.EmoteRepository
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import dagger.Module
 import dagger.Provides
@@ -194,5 +194,5 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideEmoteManager(apiManager: ApiManager, preferenceStore: DankChatPreferenceStore): EmoteManager = EmoteManager(apiManager, preferenceStore)
+    fun provideEmoteManager(apiManager: ApiManager, preferenceStore: DankChatPreferenceStore): EmoteRepository = EmoteRepository(apiManager, preferenceStore)
 }

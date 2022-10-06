@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.twitch.badge.Badge
-import com.flxrs.dankchat.data.twitch.emote.EmoteManager
+import com.flxrs.dankchat.data.repo.EmoteRepository
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.main.MainViewModel
@@ -50,7 +50,7 @@ open class ChatFragment : Fragment() {
     protected open var isAtBottom = true
 
     @Inject
-    lateinit var emoteManager: EmoteManager
+    lateinit var emoteRepository: EmoteRepository
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bindingRef = ChatFragmentBinding.inflate(inflater, container, false).apply {
@@ -74,7 +74,7 @@ open class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val itemDecoration = DividerItemDecoration(view.context, LinearLayoutManager.VERTICAL)
         manager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false).apply { stackFromEnd = true }
-        adapter = ChatAdapter(emoteManager, ::scrollToPosition, ::onUserClick, ::copyMessage).apply { stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY }
+        adapter = ChatAdapter(emoteRepository, ::scrollToPosition, ::onUserClick, ::copyMessage).apply { stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY }
         binding.chat.setup(adapter, manager)
 
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { pref, key ->
