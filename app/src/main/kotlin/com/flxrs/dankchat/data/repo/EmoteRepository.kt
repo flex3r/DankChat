@@ -73,6 +73,7 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
             is PrivMessage       -> Triple(message.message, message.channel, message.tags["emotes"].orEmpty())
             is WhisperMessage    -> Triple(message.message, "", message.rawEmotes)
             is UserNoticeMessage -> message.childMessage?.let { Triple(it.message, it.channel, it.tags["emotes"].orEmpty()) } ?: return message
+            else                 -> return message
         }
 
         val withEmojiFix = messageString.replace(
@@ -97,6 +98,8 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
                     emotes = adjustedEmotes
                 )
             )
+
+            else                 -> message
         }
 
         return parseBadges(messageWithEmotes)
@@ -111,12 +114,14 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
             is PrivMessage       -> message.channel
             is WhisperMessage    -> ""
             is UserNoticeMessage -> message.childMessage?.channel ?: return message
+            else                 -> return message
         }
 
         val (badgeTag, badgeInfoTag, userId) = when (message) {
             is PrivMessage       -> Triple(message.tags["badges"], message.tags["badge-info"], message.userId)
             is WhisperMessage    -> Triple(message.rawBadges, message.rawBadgeInfo, message.userId)
             is UserNoticeMessage -> message.childMessage?.let { Triple(it.tags["badges"], it.tags["badge-info"], it.userId) } ?: return message
+            else                 -> return message
         }
 
         val badgeInfos = badgeInfoTag
@@ -180,6 +185,8 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
             is UserNoticeMessage -> message.copy(
                 childMessage = message.childMessage?.copy(badges = badgesWithDankChatBadge)
             )
+
+            else                 -> message
         }
     }
 

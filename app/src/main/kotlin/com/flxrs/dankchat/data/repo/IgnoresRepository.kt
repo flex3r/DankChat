@@ -65,7 +65,8 @@ class IgnoresRepository @Inject constructor(
             }
         }
 
-        (messageIgnores.value + MessageIgnoreEntity(999, true, "FeelsDankMan", replacement = "asdf")).forEach {
+        // TODO
+        (messageIgnores.value/* + MessageIgnoreEntity(999, true, "FeelsDankMan", replacement = "asdf")*/).forEach {
             val regex = it.regex ?: return@forEach
 
             if (message.contains(regex)) {
