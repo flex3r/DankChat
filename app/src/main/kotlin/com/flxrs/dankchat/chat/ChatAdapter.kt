@@ -25,6 +25,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
@@ -70,8 +71,8 @@ class ChatAdapter(
         private const val SCALE_FACTOR_CONSTANT = 1.5 / 112
         private const val BASE_HEIGHT_CONSTANT = 1.173
         private fun getBaseHeight(@Px textSize: Float): Int = (textSize * BASE_HEIGHT_CONSTANT).roundToInt()
-        val MASK_FULL = ColorDrawable(Color.argb(255, 0, 0, 0))
-        val MASK_NONE = ColorDrawable(Color.argb(0, 0, 0, 0))
+        private val MASK_FULL = ColorDrawable(Color.argb(255, 0, 0, 0))
+        private val MASK_NONE = ColorDrawable(Color.argb(0, 0, 0, 0))
     }
 
     private val customTabsIntent = CustomTabsIntent.Builder()
@@ -133,7 +134,7 @@ class ChatAdapter(
             isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(this, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
             else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
         }
-        setRippleBackground(background, false)
+        setRippleBackground(background, enableRipple = false)
 
         val systemMessageText = when (message.type) {
             is SystemMessageType.Disconnected              -> context.getString(R.string.system_message_disconnected)
@@ -173,7 +174,7 @@ class ChatAdapter(
             isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(this, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
             else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
         }
-        setRippleBackground(background, false)
+        setRippleBackground(background, enableRipple = false)
 
         val count = message.count
         // TODO localize
@@ -204,7 +205,7 @@ class ChatAdapter(
         val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
 
         val background = ContextCompat.getColor(context, R.color.color_reward)
-        setRippleBackground(background, false)
+        setRippleBackground(background, enableRipple = false)
 
         setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
         val baseHeight = getBaseHeight(textSize)
@@ -273,7 +274,7 @@ class ChatAdapter(
             isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(textView, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
             else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
         }
-        setRippleBackground(background, true)
+        setRippleBackground(background, enableRipple = true)
 
         val fullName = when {
             displayName.equals(name, true) -> displayName
@@ -470,7 +471,7 @@ class ChatAdapter(
             isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(textView, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
             else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
         }
-        setRippleBackground(bgColor, true)
+        setRippleBackground(bgColor, enableRipple = true)
 
         val textColor = MaterialColors.getColor(textView, R.attr.colorOnSurface)
         setTextColor(textColor)
@@ -713,7 +714,8 @@ class ChatAdapter(
         .build()
 
     /** set background color, and enable/disable ripple (whether enable or disable should match the "clickability" of that message */
-    private fun TextView.setRippleBackground(backgroundColor: Int, enableRipple: Boolean = false) {
+    private fun TextView.setRippleBackground(@ColorInt backgroundColor: Int, enableRipple: Boolean = false) {
+        // background is set to RippleDrawable via XML layout
         (background as RippleDrawable).apply {
             setDrawableByLayerId(R.id.ripple_color_layer, ColorDrawable(backgroundColor))
             setDrawableByLayerId(android.R.id.mask, if (enableRipple) MASK_FULL else MASK_NONE)
