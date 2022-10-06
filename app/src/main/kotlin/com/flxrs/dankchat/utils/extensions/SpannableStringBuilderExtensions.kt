@@ -21,3 +21,6 @@ inline fun SpannableStringBuilder.timestampFont(
     TextAppearanceSpan(context, R.style.timestamp_and_whisper), // set letter spacing using this, can't set directly in code
     builderAction = builderAction
 )
+
+/** adds a spacing to the span (currently just single space character), useful to extract since we might change the spacing later */
+fun SpannableStringBuilder.addSpacing(): SpannableStringBuilder = append(" ")
