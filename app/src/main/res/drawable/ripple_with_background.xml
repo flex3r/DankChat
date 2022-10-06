@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="#cca0a0a0">
+    android:color="@color/ripple_color">
     <!-- these two items will actually be replaced programmatically to change color / enable ripple -->
     <!-- background layer (ripple will draw on it) -->
     <item android:drawable="@color/colorThatIsActuallyTransparent" android:id="@+id/ripple_color_layer"/>
