@@ -2,6 +2,6 @@
 <resources>
     <style name="timestamp_and_whisper">
         <!-- only things that cannot be set using span class are here -->
-        <item name="android:letterSpacing">-0.03</item>
+        <item name="android:letterSpacing">-0.035</item>
     </style>
 </resources>
