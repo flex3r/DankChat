@@ -30,6 +30,7 @@ import com.flxrs.dankchat.preferences.tts.TtsIgnoreListAdapter
 import com.flxrs.dankchat.preferences.upload.RecentUploadsAdapter
 import com.flxrs.dankchat.preferences.upload.RecentUploadsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.math.roundToInt
@@ -95,7 +96,12 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
         val binding = UploaderBottomsheetBinding.inflate(LayoutInflater.from(context), root as? ViewGroup, false).apply {
             uploader = dankChatPreferenceStore.customImageUploader
             uploaderReset.setOnClickListener {
-                uploader = dankChatPreferenceStore.resetImageUploader()
+                MaterialAlertDialogBuilder(context)
+                    .setTitle(R.string.reset_media_uploader_dialog_title)
+                    .setMessage(R.string.reset_media_uploader_dialog_message)
+                    .setPositiveButton(R.string.reset_media_uploader_dialog_positive) { _, _ -> uploader = dankChatPreferenceStore.resetImageUploader()}
+                    .setNegativeButton(R.string.dialog_cancel) {_, _ -> }
+                    .create().show()
             }
             uploaderSheet.updateLayoutParams {
                 height = windowHeight
@@ -172,7 +178,12 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
                 height = windowHeight
             }
             clearUploads.setOnClickListener {
-                viewModel.clearUploads()
+                MaterialAlertDialogBuilder(context)
+                    .setTitle(R.string.clear_recent_uploads_dialog_title)
+                    .setMessage(R.string.clear_recent_uploads_dialog_message)
+                    .setPositiveButton(R.string.clear_recent_uploads_dialog_positive) { _, _ -> viewModel.clearUploads()}
+                    .setNegativeButton(R.string.dialog_cancel){_, _ -> }
+                    .create().show()
             }
         }
 

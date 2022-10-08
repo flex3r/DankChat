@@ -90,6 +90,7 @@
     <string name="mentions">Mentions</string>
     <string name="confirm_channel_removal_title">Confirm channel removal</string>
     <string name="confirm_channel_removal_message">Are you sure you want to remove this channel?</string>
+    <string name="confirm_channel_removal_message_named">Are you sure you want to remove channel \"%1$s\"?</string>
     <string name="confirm_channel_removal_positive_button">Remove</string>
     <string name="user_popup_follow">Follow</string>
     <string name="user_popup_unfollow">Unfollow</string>
@@ -330,6 +331,12 @@
     <string name="preference_retain_webview_summary">Enables experimental prevention of stream reloads after orientation changes or re-opening DankChat.</string>
     <string name="invalid_media_url_title">Invalid Media Uploader Configuration</string>
     <string name="invalid_media_url_message">Your Upload URL (%1$s) appears to be invalid, configure it correctly to use this feature.</string>
+    <string name="reset_media_uploader_dialog_title">Reset Media Uploader Settings</string>
+    <string name="reset_media_uploader_dialog_message">Are you sure you want to reset the media uploader settings to default?</string>
+    <string name="reset_media_uploader_dialog_positive">Reset</string>
+    <string name="clear_recent_uploads_dialog_title">Clear Recent Uploads</string>
+    <string name="clear_recent_uploads_dialog_message">Are you sure you want to clear the upload history? Your uploaded files won\'t be deleted.</string>
+    <string name="clear_recent_uploads_dialog_positive">Clear</string>
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>
         <item quantity="other">Live with %d viewers</item>
