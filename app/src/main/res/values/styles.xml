@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="timestamp_and_whisper">
+        <!-- only things that cannot be set using span class are here -->
+        <item name="android:letterSpacing">-0.03</item>
+    </style>
+</resources>

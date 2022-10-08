@@ -147,7 +147,7 @@ class ChatAdapter(
             is SystemMessageType.Custom                    -> message.type.message
         }
         val withTime = when {
-            showTimeStamp -> SpannableStringBuilder().timestampFont{ append(DateTimeUtils.timestampToLocalTime(message.timestamp)) }.append(systemMessageText)
+            showTimeStamp -> SpannableStringBuilder().timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp)) }.append(systemMessageText)
             else          -> SpannableStringBuilder().append(systemMessageText)
         }
 
@@ -183,7 +183,7 @@ class ChatAdapter(
             }
         }
         val withTime = when {
-            showTimeStamp -> SpannableStringBuilder().timestampFont { append(DateTimeUtils.timestampToLocalTime(message.timestamp)) }.append(systemMessageText)
+            showTimeStamp -> SpannableStringBuilder().timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp)) }.append(systemMessageText)
             else          -> SpannableStringBuilder().append(systemMessageText)
         }
 
@@ -210,7 +210,7 @@ class ChatAdapter(
 
             val spannable = buildSpannedString {
                 if (showTimeStamp) {
-                    timestampFont { append(DateTimeUtils.timestampToLocalTime(message.timestamp)) }
+                    timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp)) }
                 }
 
                 when {
@@ -287,7 +287,7 @@ class ChatAdapter(
 
         val spannable = SpannableStringBuilder(StringBuilder())
         if (showTimeStamp) {
-            spannable.timestampFont { append(DateTimeUtils.timestampToLocalTime(timestamp)) }
+            spannable.timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(timestamp)) }
         }
 
         val nameGroupLength = fullName.length + 4 + fullRecipientName.length + 2
@@ -499,7 +499,7 @@ class ChatAdapter(
         if (isMentionTab && isMention) timeAndWhisperBuilder.append("#$channel ")
         if (showTimeStamp) timeAndWhisperBuilder.append(DateTimeUtils.timestampToLocalTime(timestamp))
 
-        val spannable = SpannableStringBuilder().timestampFont { append(timeAndWhisperBuilder) }
+        val spannable = SpannableStringBuilder().timestampFont(context) { append(timeAndWhisperBuilder) }
         val prefixLength = spannable.length + fullDisplayName.length // spannable.length is timestamp's length (plus some extra length from extra methods call above)
 
         val badgePositions = allowedBadges.map {
@@ -713,11 +713,14 @@ class ChatAdapter(
 
     /** make the font monospaced, also add an extra space after it */
     private inline fun SpannableStringBuilder.timestampFont(
+        context: Context, // this is required just because we need to retreive the R.style stuff
         builderAction: SpannableStringBuilder.() -> Unit
     ): SpannableStringBuilder = inSpans(
         TypefaceSpan("monospace"),
         StyleSpan(Typeface.BOLD),
+        // style adjustments to make the monospaced text looks "same size" as the normal text
         RelativeSizeSpan(MONOSPACE_FONT_PROPORTION),
+        TextAppearanceSpan(context, R.style.timestamp_and_whisper), // set letter spacing using this, can't set directly in code
         builderAction = builderAction
     ).append(" ")
 }
