@@ -89,7 +89,10 @@
     <string name="mentions">Menções</string>
     <string name="confirm_channel_removal_title">Confirmar remoção do canal</string>
     <string name="confirm_channel_removal_message">Tem certeza que quer remover este canal?</string>
+    <string name="confirm_channel_removal_message_named">Tem certeza que quer remover este canal \"%1$s\"?</string>
     <string name="confirm_channel_removal_positive_button">Remover</string>
+    <string name="confirm_channel_block_title">Confirmar bloqueio do canal</string>
+    <string name="confirm_channel_block_message_named">Tem certeza que quer bloquear este canal \"%1$s\"?</string>
     <string name="user_popup_follow">Seguir</string>
     <string name="user_popup_unfollow">Deixar de seguir</string>
     <string name="user_popup_block">Bloquear</string>

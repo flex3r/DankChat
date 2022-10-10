@@ -818,9 +818,10 @@ class MainFragment : Fragment() {
     }
 
     private fun blockChannel() {
+        val activeChannel = mainViewModel.getActiveChannel() ?: return
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.confirm_user_block_title)
-            .setMessage(R.string.confirm_user_block_message)
+            .setTitle(R.string.confirm_channel_block_title)
+            .setMessage(getString(R.string.confirm_channel_block_message_named, activeChannel))
             .setPositiveButton(R.string.confirm_user_block_positive_button) { _, _ ->
                 mainViewModel.blockUser()
                 removeChannel()
