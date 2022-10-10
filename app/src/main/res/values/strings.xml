@@ -91,6 +91,8 @@
     <string name="confirm_channel_removal_message">Are you sure you want to remove this channel?</string>
     <string name="confirm_channel_removal_message_named">Are you sure you want to remove channel \"%1$s\"?</string>
     <string name="confirm_channel_removal_positive_button">Remove</string>
+    <string name="confirm_channel_block_title">Confirm channel block</string>
+    <string name="confirm_channel_block_message_named">Are you sure you want to block channel \"%1$s\"?</string>
     <string name="user_popup_follow">Follow</string>
     <string name="user_popup_unfollow">Unfollow</string>
     <string name="user_popup_block">Block</string>
