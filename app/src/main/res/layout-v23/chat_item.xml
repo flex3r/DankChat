@@ -5,13 +5,13 @@
         android:id="@+id/item_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/ripple_with_background"
         android:breakStrategy="simple"
         android:gravity="start"
         android:letterSpacing="0.005"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:paddingBottom="2dp"
-        android:background="@drawable/ripple_with_background"
         android:textAppearance="?attr/textAppearanceBodyMedium"
         android:textColorHighlight="@color/colorThatIsActuallyTransparent" />
 </layout>

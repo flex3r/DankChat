@@ -7,11 +7,7 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.Rect
-import android.graphics.drawable.Animatable
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.LayerDrawable
-import android.graphics.drawable.RippleDrawable
+import android.graphics.drawable.*
 import android.os.Build
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -146,6 +142,7 @@ class ChatAdapter(
                 null -> context.getString(R.string.system_message_history_unavailable)
                 else -> context.getString(R.string.system_message_history_unavailable_detailed, message.type.status)
             }
+
             is SystemMessageType.MessageHistoryIgnored     -> context.getString(R.string.system_message_history_ignored)
             is SystemMessageType.MessageHistoryIncomplete  -> context.getString(R.string.system_message_history_recovering)
             is SystemMessageType.Custom                    -> message.type.message
@@ -736,6 +733,7 @@ private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
         return when {
             oldItem.message is TwitchMessage && newItem.message is TwitchMessage &&
                     ((!oldItem.message.timedOut && newItem.message.timedOut) || newItem.message.isMention) -> false
+
             else                                                                                           -> oldItem.message == newItem.message
         }
     }
