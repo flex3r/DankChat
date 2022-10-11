@@ -670,17 +670,8 @@ class MainFragment : Fragment() {
             URL(dankChatPreferences.customImageUploader.uploadUrl).host
         } .getOrElse { "" }
 
-        if (host.isEmpty()) {
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.invalid_media_url_title)
-                .setMessage(getString(R.string.invalid_media_url_message, dankChatPreferences.customImageUploader.uploadUrl))
-                .setPositiveButton(R.string.dialog_ok) { _, _ -> }
-                .create()
-                .show()
-            return
-        }
-
-        if (!dankChatPreferences.hasExternalHostingAcknowledged) {
+        // if config is invalid, just let the error handled by HTTP client
+        if (host != "" && !dankChatPreferences.hasExternalHostingAcknowledged) {
             val spannable = SpannableStringBuilder(getString(R.string.external_upload_disclaimer, host))
             Linkify.addLinks(spannable, Linkify.WEB_URLS)
 
