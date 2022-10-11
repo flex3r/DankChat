@@ -715,13 +715,11 @@ class ChatAdapter(
 
     /** set background color, and enable/disable ripple (whether enable or disable should match the "clickability" of that message */
     private fun TextView.setRippleBackground(@ColorInt backgroundColor: Int, enableRipple: Boolean = false) {
-        // The weird cast down here is because I can't write like
-        // if (background is RippleDrawable) { ... } else { ... }
-        // the compiler complains background is mutable and may have changed by the time it's accessed
         val rippleBg = background as? RippleDrawable
-        if (rippleBg != null){ // background is expected set to RippleDrawable via XML layout
+        if (rippleBg != null) { // background is expected set to RippleDrawable via XML layout
             rippleBg.setDrawableByLayerId(R.id.ripple_color_layer, ColorDrawable(backgroundColor))
-            rippleBg.setDrawableByLayerId(android.R.id.mask, if (enableRipple) MASK_FULL else MASK_NONE)
+            val rippleMask = if (enableRipple) MASK_FULL else MASK_NONE
+            rippleBg.setDrawableByLayerId(android.R.id.mask, rippleMask)
         } else {
             // handle some unexpected case
             setBackgroundColor(backgroundColor)
