@@ -3,13 +3,12 @@ package com.flxrs.dankchat.chat
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.Rect
 import android.graphics.Typeface
-import android.graphics.drawable.Animatable
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.LayerDrawable
+import android.graphics.drawable.*
 import android.os.Build
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -22,6 +21,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
@@ -67,8 +67,10 @@ class ChatAdapter(
     companion object {
         private const val SCALE_FACTOR_CONSTANT = 1.5 / 112
         private const val BASE_HEIGHT_CONSTANT = 1.173
-        private fun getBaseHeight(@Px textSize: Float): Int = (textSize * BASE_HEIGHT_CONSTANT).roundToInt()
         private const val MONOSPACE_FONT_PROPORTION = 0.95f // make monospace font a bit smaller to make looks same sized as normal text
+        private val MASK_FULL = ColorDrawable(Color.argb(255, 0, 0, 0))
+        private val MASK_NONE = ColorDrawable(Color.argb(0, 0, 0, 0))
+        private fun getBaseHeight(@Px textSize: Float): Int = (textSize * BASE_HEIGHT_CONSTANT).roundToInt()
     }
 
     private val customTabsIntent = CustomTabsIntent.Builder()
@@ -130,7 +132,7 @@ class ChatAdapter(
             isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(this, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
             else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
         }
-        setBackgroundColor(background)
+        setRippleBackground(background, enableRipple = false)
 
         val systemMessageText = when (message.type) {
             is SystemMessageType.Disconnected              -> context.getString(R.string.system_message_disconnected)
@@ -142,6 +144,7 @@ class ChatAdapter(
                 null -> context.getString(R.string.system_message_history_unavailable)
                 else -> context.getString(R.string.system_message_history_unavailable_detailed, message.type.status)
             }
+
             is SystemMessageType.MessageHistoryIgnored     -> context.getString(R.string.system_message_history_ignored)
             is SystemMessageType.MessageHistoryIncomplete  -> context.getString(R.string.system_message_history_recovering)
             is SystemMessageType.Custom                    -> message.type.message
@@ -170,7 +173,7 @@ class ChatAdapter(
             isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(this, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
             else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
         }
-        setBackgroundColor(background)
+        setRippleBackground(background, enableRipple = false)
 
         val count = message.count
         // TODO localize
@@ -201,7 +204,7 @@ class ChatAdapter(
         val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
 
         val background = ContextCompat.getColor(context, R.color.color_reward)
-        setBackgroundColor(background)
+        setRippleBackground(background, enableRipple = false)
 
         setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
         val baseHeight = getBaseHeight(textSize)
@@ -270,7 +273,7 @@ class ChatAdapter(
             isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(textView, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
             else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
         }
-        setBackgroundColor(background)
+        setRippleBackground(background, enableRipple = true)
 
         val fullName = when {
             displayName.equals(name, true) -> displayName
@@ -459,7 +462,7 @@ class ChatAdapter(
 
         val baseHeight = getBaseHeight(textSize)
         val scaleFactor = baseHeight * SCALE_FACTOR_CONSTANT
-        val background = when {
+        val bgColor = when {
             timedOut && !showTimedOutMessages               -> ContextCompat.getColor(context, android.R.color.transparent)
             isNotify                                        -> ContextCompat.getColor(context, R.color.color_highlight)
             isReward                                        -> ContextCompat.getColor(context, R.color.color_reward)
@@ -467,7 +470,7 @@ class ChatAdapter(
             isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(textView, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
             else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
         }
-        setBackgroundColor(background)
+        setRippleBackground(bgColor, enableRipple = true)
 
         val textColor = MaterialColors.getColor(textView, R.attr.colorOnSurface)
         setTextColor(textColor)
@@ -713,7 +716,7 @@ class ChatAdapter(
 
     /** make the font monospaced, also add an extra space after it */
     private inline fun SpannableStringBuilder.timestampFont(
-        context: Context, // this is required just because we need to retreive the R.style stuff
+        context: Context, // this is required just because we need to retrieve the R.style stuff
         builderAction: SpannableStringBuilder.() -> Unit
     ): SpannableStringBuilder = inSpans(
         TypefaceSpan("monospace"),
@@ -723,6 +726,19 @@ class ChatAdapter(
         TextAppearanceSpan(context, R.style.timestamp_and_whisper), // set letter spacing using this, can't set directly in code
         builderAction = builderAction
     ).append(" ")
+
+    /** set background color, and enable/disable ripple (whether enable or disable should match the "clickability" of that message */
+    private fun TextView.setRippleBackground(@ColorInt backgroundColor: Int, enableRipple: Boolean = false) {
+        val rippleBg = background as? RippleDrawable
+        if (rippleBg != null) { // background is expected set to RippleDrawable via XML layout
+            rippleBg.setDrawableByLayerId(R.id.ripple_color_layer, ColorDrawable(backgroundColor))
+            val rippleMask = if (enableRipple) MASK_FULL else MASK_NONE
+            rippleBg.setDrawableByLayerId(android.R.id.mask, rippleMask)
+        } else {
+            // handle some unexpected case
+            setBackgroundColor(backgroundColor)
+        }
+    }
 }
 
 private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
@@ -734,6 +750,7 @@ private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
         return when {
             oldItem.message is TwitchMessage && newItem.message is TwitchMessage &&
                     ((!oldItem.message.timedOut && newItem.message.timedOut) || newItem.message.isMention) -> false
+
             else                                                                                           -> oldItem.message == newItem.message
         }
     }

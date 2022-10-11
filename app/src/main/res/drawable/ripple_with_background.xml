@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/ripple_color">
+    <!-- these two items will actually be replaced programmatically to change color / enable ripple -->
+    <!-- background layer (ripple will draw on it) -->
+    <item
+        android:id="@+id/ripple_color_layer"
+        android:drawable="@color/colorThatIsActuallyTransparent" />
+    <!-- mask: determine whether ripple will be visible (opaque = visible, transparent = not) -->
+    <item
+        android:id="@android:id/mask"
+        android:drawable="@android:color/white" />
+</ripple>
+

@@ -3,6 +3,7 @@
     <color name="color_ffz_mod">#34ae0a</color>
 
     <color name="colorThatIsActuallyTransparent">#00FFFFFF</color>
+    <color name="ripple_color">#cca0a0a0</color>
 
     <!-- Deep Purple 500-->
     <color name="color_highlight">#b085f5</color>
