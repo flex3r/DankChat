@@ -94,6 +94,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="mentions">Wzmianki</string>
     <string name="confirm_channel_removal_title">Potwierdź usunięcie kanału</string>
     <string name="confirm_channel_removal_message">Czy jesteś pewien, że chcesz usunąć ten kanał?</string>
+    <string name="confirm_channel_removal_message_named">Czy jesteś pewien, że chcesz usunąć kanał \"%1$s\"?</string>
     <string name="confirm_channel_removal_positive_button">Usuń</string>
     <string name="user_popup_follow">Obserwuj</string>
     <string name="user_popup_unfollow">Przestań obserwować</string>
@@ -224,7 +225,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_tts_message_format_message">Odczytuje tylko wiadomość</string>
     <string name="preference_tts_message_format_combined">Odczytuje nazwę autora i wiadomość</string>
     <string name="preference_tts_message_format_title">Format wiadomości</string>
-    <string name="preference_tts_message_ignore_url_message">Ignoruje linki podczas korzystania z TTS</string>
+    <string name="preference_tts_message_ignore_url_message">Ignoruje URLs podczas korzystania z TTS</string>
     <string name="preference_tts_message_ignore_url_title">Ignoruj URLs</string>
     <string name="preference_tts_message_ignore_emote_message">Ignoruje emotki i emotikony podczas korzystania z TTS</string>
     <string name="preference_tts_message_ignore_emote_title">Ignoruj emotki</string>
@@ -272,6 +273,12 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="oauth_verify_failed">Nie udało się zweryfikować tokena logowania, sprawdź swoje połączenie internetowe.</string>
     <string name="preference_retain_webview_title">Zapobiegaj przeładowaniu transmisji</string>
     <string name="preference_retain_webview_summary">Umożliwia eksperymentalne zapobieganie przeładowaniu transmisji po zmianie ustawień lub ponownym otwarciu DankChat.</string>
+    <string name="reset_media_uploader_dialog_title">Zresetuj ustawienia przesłania media</string>
+    <string name="reset_media_uploader_dialog_message">Czy jesteś pewien, że chcesz zresetować ustawienia przesłania media do domyślnych?</string>
+    <string name="reset_media_uploader_dialog_positive">Zresetuj</string>
+    <string name="clear_recent_uploads_dialog_title">Wyczyść ostatnio przesłane</string>
+    <string name="clear_recent_uploads_dialog_message">Czy jesteś pewien, że chcesz wyczyścić historie przesłania? Twoje przesłane pliki nie będą usunięte.</string>
+    <string name="clear_recent_uploads_dialog_positive">Wyczyść</string>
     <plurals name="viewers">
         <item quantity="one">Na żywo z %d widzem</item>
         <item quantity="few">Na żywo z %d widzami</item>

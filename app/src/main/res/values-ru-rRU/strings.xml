@@ -94,7 +94,10 @@
     <string name="mentions">Упоминания</string>
     <string name="confirm_channel_removal_title">Подтверждение удаления канала</string>
     <string name="confirm_channel_removal_message">Вы уверены, что хотите удалить канал?</string>
+    <string name="confirm_channel_removal_message_named">Вы уверены, что хотите удалить канал \"%1$s\"?</string>
     <string name="confirm_channel_removal_positive_button">Удалить</string>
+    <string name="confirm_channel_block_title">Подтверждение блокировки канала</string>
+    <string name="confirm_channel_block_message_named">Вы уверены, что хотите заблокировать канал \"%1$s\"?</string>
     <string name="user_popup_follow">Фолловить</string>
     <string name="user_popup_unfollow">Отфолловить</string>
     <string name="user_popup_block">Заблокировать</string>
@@ -272,6 +275,12 @@
     <string name="oauth_verify_failed">Не удалось проверить токен входа, проверьте подключение.</string>
     <string name="preference_retain_webview_title">Предотвратить перезагрузку трансляции</string>
     <string name="preference_retain_webview_summary">Включить экспериментальное предотвращение перезагрузки трансляции после изменения ориентации или повторного открытия DankChat.</string>
+    <string name="reset_media_uploader_dialog_title">Сбросить настройки загрузчика медиа</string>
+    <string name="reset_media_uploader_dialog_message">Вы уверены, что хотите сбросить настройки загрузчика медиа по умолчанию?</string>
+    <string name="reset_media_uploader_dialog_positive">Сбросить</string>
+    <string name="clear_recent_uploads_dialog_title">Отчистить недавние загрузки</string>
+    <string name="clear_recent_uploads_dialog_message">Вы уверены, что хотите отчистить историю загрузок? Ваши загруженные файлы не будут удалены.</string>
+    <string name="clear_recent_uploads_dialog_positive">Отчистить</string>
     <plurals name="viewers">
         <item quantity="one">В сети с %d зрителем</item>
         <item quantity="few">В сети с %d зрителями</item>

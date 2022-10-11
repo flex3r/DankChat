@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="timestamp_and_whisper">
+        <item name="android:letterSpacing">@dimen/monospace_letter_spacing_adjustment</item>
+    </style>
+</resources>

@@ -17,9 +17,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.contract.ActivityResultContracts.*
-import androidx.activity.result.launch
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -57,7 +56,6 @@ import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.databinding.EditDialogBinding
 import com.flxrs.dankchat.databinding.MainFragmentBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.utils.GetImageOrVideoContract
 import com.flxrs.dankchat.utils.createMediaFile
 import com.flxrs.dankchat.utils.extensions.*
 import com.flxrs.dankchat.utils.removeExifAttributes
@@ -820,9 +818,10 @@ class MainFragment : Fragment() {
     }
 
     private fun blockChannel() {
+        val activeChannel = mainViewModel.getActiveChannel() ?: return
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.confirm_user_block_title)
-            .setMessage(R.string.confirm_user_block_message)
+            .setTitle(R.string.confirm_channel_block_title)
+            .setMessage(getString(R.string.confirm_channel_block_message_named, activeChannel))
             .setPositiveButton(R.string.confirm_user_block_positive_button) { _, _ ->
                 mainViewModel.blockUser()
                 removeChannel()
@@ -835,8 +834,16 @@ class MainFragment : Fragment() {
     private fun removeChannel() {
         val activeChannel = mainViewModel.getActiveChannel() ?: return
         val channels = mainViewModel.getChannels().ifEmpty { return }
-        val updatedChannels = channels - activeChannel
-        updateChannels(updatedChannels)
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.confirm_channel_removal_title)
+            // should give user more info that it's gonna delete the currently active channel (unlike when clicking delete from manage channels list, where is very obvious)
+            .setMessage(getString(R.string.confirm_channel_removal_message_named, activeChannel))
+            .setPositiveButton(R.string.confirm_channel_removal_positive_button) { dialog, _ ->
+                val updatedChannels = channels - activeChannel
+                updateChannels(updatedChannels)
+            }
+            .setNegativeButton(R.string.dialog_cancel) { _, _ -> }
+            .create().show()
     }
 
     private fun openManageChannelsDialog() {

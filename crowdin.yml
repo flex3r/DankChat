@@ -13,4 +13,5 @@ files:
       - /**/roomstate_*.xml
       - /**/mention_*.xml
       - /**/badges_entry_values.xml
+      - /**/styles.xml
     translation: /%original_path%-%android_code%/%original_file_name%

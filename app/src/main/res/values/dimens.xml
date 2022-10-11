@@ -5,4 +5,6 @@
     <dimen name="alpha_emphasis_high">@dimen/material_emphasis_high_type</dimen>
     <dimen name="alpha_emphasis_medium">@dimen/material_emphasis_medium</dimen>
     <dimen name="alpha_emphasis_disabled">@dimen/material_emphasis_disabled</dimen>
+
+    <item name="monospace_letter_spacing_adjustment" type="dimen" format="float">-0.03</item>
 </resources>

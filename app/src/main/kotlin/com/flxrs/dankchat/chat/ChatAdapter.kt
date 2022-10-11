@@ -7,13 +7,13 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.Rect
+import android.graphics.Typeface
 import android.graphics.drawable.*
 import android.os.Build
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.TextPaint
-import android.text.style.ImageSpan
-import android.text.style.URLSpan
+import android.text.style.*
 import android.text.util.Linkify
 import android.util.Log
 import android.util.TypedValue
@@ -52,6 +52,7 @@ import com.google.android.material.color.MaterialColors
 import kotlinx.coroutines.*
 import kotlin.math.roundToInt
 
+
 class ChatAdapter(
     private val emoteManager: EmoteManager,
     private val onListChanged: (position: Int) -> Unit,
@@ -66,9 +67,10 @@ class ChatAdapter(
     companion object {
         private const val SCALE_FACTOR_CONSTANT = 1.5 / 112
         private const val BASE_HEIGHT_CONSTANT = 1.173
-        private fun getBaseHeight(@Px textSize: Float): Int = (textSize * BASE_HEIGHT_CONSTANT).roundToInt()
+        private const val MONOSPACE_FONT_PROPORTION = 0.95f // make monospace font a bit smaller to make looks same sized as normal text
         private val MASK_FULL = ColorDrawable(Color.argb(255, 0, 0, 0))
         private val MASK_NONE = ColorDrawable(Color.argb(0, 0, 0, 0))
+        private fun getBaseHeight(@Px textSize: Float): Int = (textSize * BASE_HEIGHT_CONSTANT).roundToInt()
     }
 
     private val customTabsIntent = CustomTabsIntent.Builder()
@@ -148,7 +150,7 @@ class ChatAdapter(
             is SystemMessageType.Custom                    -> message.type.message
         }
         val withTime = when {
-            showTimeStamp -> SpannableStringBuilder().bold { append("${DateTimeUtils.timestampToLocalTime(message.timestamp)} ") }.append(systemMessageText)
+            showTimeStamp -> SpannableStringBuilder().timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp)) }.append(systemMessageText)
             else          -> SpannableStringBuilder().append(systemMessageText)
         }
 
@@ -184,7 +186,7 @@ class ChatAdapter(
             }
         }
         val withTime = when {
-            showTimeStamp -> SpannableStringBuilder().bold { append("${DateTimeUtils.timestampToLocalTime(message.timestamp)} ") }.append(systemMessageText)
+            showTimeStamp -> SpannableStringBuilder().timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp)) }.append(systemMessageText)
             else          -> SpannableStringBuilder().append(systemMessageText)
         }
 
@@ -211,7 +213,7 @@ class ChatAdapter(
 
             val spannable = buildSpannedString {
                 if (showTimeStamp) {
-                    bold { append("${DateTimeUtils.timestampToLocalTime(message.timestamp)} ") }
+                    timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp)) }
                 }
 
                 when {
@@ -288,7 +290,7 @@ class ChatAdapter(
 
         val spannable = SpannableStringBuilder(StringBuilder())
         if (showTimeStamp) {
-            spannable.bold { append("${DateTimeUtils.timestampToLocalTime(timestamp)} ") }
+            spannable.timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(timestamp)) }
         }
 
         val nameGroupLength = fullName.length + 4 + fullRecipientName.length + 2
@@ -498,8 +500,10 @@ class ChatAdapter(
 
         val timeAndWhisperBuilder = StringBuilder()
         if (isMentionTab && isMention) timeAndWhisperBuilder.append("#$channel ")
-        if (showTimeStamp) timeAndWhisperBuilder.append("${DateTimeUtils.timestampToLocalTime(timestamp)} ")
-        val (prefixLength, spannable) = timeAndWhisperBuilder.length + fullDisplayName.length to SpannableStringBuilder().bold { append(timeAndWhisperBuilder) }
+        if (showTimeStamp) timeAndWhisperBuilder.append(DateTimeUtils.timestampToLocalTime(timestamp))
+
+        val spannable = SpannableStringBuilder().timestampFont(context) { append(timeAndWhisperBuilder) }
+        val prefixLength = spannable.length + fullDisplayName.length // spannable.length is timestamp's length (plus some extra length from extra methods call above)
 
         val badgePositions = allowedBadges.map {
             spannable.append("  ")
@@ -709,6 +713,19 @@ class ChatAdapter(
     private fun String.toRequest(context: Context): ImageRequest = ImageRequest.Builder(context)
         .data(this)
         .build()
+
+    /** make the font monospaced, also add an extra space after it */
+    private inline fun SpannableStringBuilder.timestampFont(
+        context: Context, // this is required just because we need to retrieve the R.style stuff
+        builderAction: SpannableStringBuilder.() -> Unit
+    ): SpannableStringBuilder = inSpans(
+        TypefaceSpan("monospace"),
+        StyleSpan(Typeface.BOLD),
+        // style adjustments to make the monospaced text looks "same size" as the normal text
+        RelativeSizeSpan(MONOSPACE_FONT_PROPORTION),
+        TextAppearanceSpan(context, R.style.timestamp_and_whisper), // set letter spacing using this, can't set directly in code
+        builderAction = builderAction
+    ).append(" ")
 
     /** set background color, and enable/disable ripple (whether enable or disable should match the "clickability" of that message */
     private fun TextView.setRippleBackground(@ColorInt backgroundColor: Int, enableRipple: Boolean = false) {
