@@ -94,6 +94,7 @@ Služba dočasně ukládá zprávy pro kanály, které vy (a další) navštív�
     <string name="mentions">Zmínky</string>
     <string name="confirm_channel_removal_title">Potvrdit odebrání kanálu</string>
     <string name="confirm_channel_removal_message">Jste si jistí, že chcete tento kanál odebrat?</string>
+    <string name="confirm_channel_removal_message_named">Jste si jistí, že chcete smazat kanál \"%1$s\"?</string>
     <string name="confirm_channel_removal_positive_button">Odebrat</string>
     <string name="user_popup_follow">Sledovat</string>
     <string name="user_popup_unfollow">Přestat sledovat</string>
@@ -274,6 +275,12 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="oauth_verify_failed">Nepodařilo se ověřit přihlašovací token, zkontrolujte připojení k internetu.</string>
     <string name="preference_retain_webview_title">Zabránit opětovnému načítání streamu</string>
     <string name="preference_retain_webview_summary">Zapne experimentální funkci zabránění opětovnému načtení streamu po změně orientace obrazovky nebo opětovném otevření DankChatu.</string>
+    <string name="reset_media_uploader_dialog_title">Obnovit nastavení nahrávače médií</string>
+    <string name="reset_media_uploader_dialog_message">Jste si jístí, že chcete obnovit výchozí nastavení nahrávače médií?</string>
+    <string name="reset_media_uploader_dialog_positive">Obnovit</string>
+    <string name="clear_recent_uploads_dialog_title">Vymazat nedávná nahrání</string>
+    <string name="clear_recent_uploads_dialog_message">Jste si jistí, že chcete smazat historii nahrávání? Vaše nahrané soubory nebudou smazány.</string>
+    <string name="clear_recent_uploads_dialog_positive">Vymazat</string>
     <plurals name="viewers">
         <item quantity="one">Živě s %d divákem</item>
         <item quantity="few">Živě se %d diváky</item>
