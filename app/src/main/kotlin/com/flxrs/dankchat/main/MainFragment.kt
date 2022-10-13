@@ -671,7 +671,7 @@ class MainFragment : Fragment() {
         } .getOrElse { "" }
 
         // if config is invalid, just let the error handled by HTTP client
-        if (host != "" && !dankChatPreferences.hasExternalHostingAcknowledged) {
+        if (host.isNotBlank() && !dankChatPreferences.hasExternalHostingAcknowledged) {
             val spannable = SpannableStringBuilder(getString(R.string.external_upload_disclaimer, host))
             Linkify.addLinks(spannable, Linkify.WEB_URLS)
 
