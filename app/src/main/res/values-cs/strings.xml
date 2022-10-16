@@ -96,6 +96,8 @@ Služba dočasně ukládá zprávy pro kanály, které vy (a další) navštív�
     <string name="confirm_channel_removal_message">Jste si jistí, že chcete tento kanál odebrat?</string>
     <string name="confirm_channel_removal_message_named">Jste si jistí, že chcete smazat kanál \"%1$s\"?</string>
     <string name="confirm_channel_removal_positive_button">Odebrat</string>
+    <string name="confirm_channel_block_title">Potvrdit zablokování kanálu</string>
+    <string name="confirm_channel_block_message_named">Jste si jistí, že si chcete zablokovat kanál \"%1$s\"?</string>
     <string name="user_popup_follow">Sledovat</string>
     <string name="user_popup_unfollow">Přestat sledovat</string>
     <string name="user_popup_block">Zablokovat</string>
