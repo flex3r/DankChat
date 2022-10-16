@@ -28,6 +28,7 @@
     <string name="uploading_image">Caricando un\'immagine</string>
     <string name="settings">Impostazioni</string>
     <string name="nuuls_upload_disclaimer">Hosting esterno fornito da https://nuuls.com/i, a vostro rischio e pericolo</string>
+    <string name="external_upload_disclaimer">Hosting esterno fornito da %1$s, a vostro rischio e pericolo</string>
     <string name="nuuls_upload_title">Caricatore di immagini personalizzato</string>
     <string name="snackbar_message_copied">Messaggio copiato</string>
     <string name="snackbar_error_copied">Informazione d\'errore copiata</string>

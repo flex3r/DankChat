@@ -15,6 +15,7 @@
     <string name="hide_actionbar">Ocultar barra d\'eines</string>
     <string name="resume_scroll">Reanudar scroll</string>
     <string name="nuuls_upload_disclaimer">Hosting extern proporcionat per https://nuuls.com/i, fes-lo servir sota el teu propi risc.</string>
+    <string name="external_upload_disclaimer">Hosting extern proporcionat per %1$s, fes-lo servir sota el teu propi risc.</string>
     <string name="nuuls_upload_title">Pujada de media personalitzat</string>
     <string name="snackbar_error_copied">Error informació copiada</string>
     <string name="notification_title">FeelsDankMan</string>

@@ -29,6 +29,7 @@
     <string name="uploading_image">Envoi de l\'image</string>
     <string name="settings">Réglages</string>
     <string name="nuuls_upload_disclaimer">Stockage fourni par https://nuuls.com/i, à vos risques et périls.</string>
+    <string name="external_upload_disclaimer">Stockage fourni par %1$s, à vos risques et périls.</string>
     <string name="nuuls_upload_title">Envoi d\'une image personalisée</string>
     <string name="snackbar_message_copied">Message copié</string>
     <string name="snackbar_error_copied">Info sur l\'erreur copiée</string>

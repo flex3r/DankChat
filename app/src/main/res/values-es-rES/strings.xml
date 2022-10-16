@@ -35,6 +35,7 @@
     <string name="uploading_image">Subiendo imagen</string>
     <string name="settings">Ajustes</string>
     <string name="nuuls_upload_disclaimer">Hosting externo proporcionado por https://nuuls.com/i, utilízalo bajo tu propio riesgo.</string>
+    <string name="external_upload_disclaimer">Hosting externo proporcionado por %1$s, utilízalo bajo tu propio riesgo.</string>
     <string name="nuuls_upload_title">Subida de imagen personalizada</string>
     <string name="snackbar_message_copied">Mensaje copiado</string>
     <string name="snackbar_error_copied">Error al copiar</string>

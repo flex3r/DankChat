@@ -35,5 +35,6 @@
     <string name="uploading_image">در حال بارگذاری پرونده</string>
     <string name="settings">تنظیمات</string>
     <string name="nuuls_upload_disclaimer">میزبانی خارجی ارائه شده توسط https://nuuls.com/i، با مسئولیت خودتان استفاده کنید.</string>
+    <string name="external_upload_disclaimer">میزبانی خارجی ارائه شده توسط %1$s، با مسئولیت خودتان استفاده کنید.</string>
     <string name="nuuls_upload_title">بارگذاری رسانه های سفارشی</string>
 </resources>

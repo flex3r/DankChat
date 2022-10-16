@@ -29,6 +29,7 @@
     <string name="resume_scroll">Jatka vieritystä</string>
     <string name="settings">Asetukset</string>
     <string name="nuuls_upload_disclaimer">Kolmannen osapuolen ylläpidon tarjoaa https://nuuls.com/i, käytä omalla vastuullasi.</string>
+    <string name="external_upload_disclaimer">Kolmannen osapuolen ylläpidon tarjoaa %1$s, käytä omalla vastuullasi.</string>
     <string name="nuuls_upload_title">Mukautettu kuvan lataus</string>
     <string name="snackbar_message_copied">Viesti kopioitu</string>
     <string name="snackbar_error_copied">Virhetiedot kopioitu</string>

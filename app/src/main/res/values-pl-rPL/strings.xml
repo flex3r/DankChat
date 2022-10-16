@@ -35,6 +35,7 @@
     <string name="uploading_image">Prześlij zdjęcie</string>
     <string name="settings">Ustawienia</string>
     <string name="nuuls_upload_disclaimer">Zewnętrzny hosting dostarczony przez https://nuuls.com/i, używaj na własną odpowiedzialność.</string>
+    <string name="external_upload_disclaimer">Zewnętrzny hosting dostarczony przez %1$s, używaj na własną odpowiedzialność.</string>
     <string name="nuuls_upload_title">Niestandardowe przesyłanie plików</string>
     <string name="snackbar_message_copied">Skopiowano wiadomość</string>
     <string name="snackbar_error_copied">Skopiowano wiadomość błędu</string>

@@ -35,6 +35,7 @@
     <string name="uploading_image">Файл завантажується</string>
     <string name="settings">Налаштування</string>
     <string name="nuuls_upload_disclaimer">Зовнішній хостинг надано https://nuuls.com/i. Використовуйте на Ваш розсуд.</string>
+    <string name="external_upload_disclaimer">Зовнішній хостинг надано %1$s. Використовуйте на Ваш розсуд.</string>
     <string name="nuuls_upload_title">Завантаження власного зображення</string>
     <string name="snackbar_message_copied">Повідомлення скопійовано</string>
     <string name="snackbar_error_copied">Інформацію про помилку скопійовано</string>

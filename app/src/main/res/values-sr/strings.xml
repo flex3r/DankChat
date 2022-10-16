@@ -30,6 +30,7 @@
     <string name="uploading_image">Slika se šalje</string>
     <string name="settings">Podešavanja</string>
     <string name="nuuls_upload_disclaimer">Spoljašni hosting pruža https://nuuls.com/i, korisite ga na sopstveni rizik</string>
+    <string name="external_upload_disclaimer">Spoljašni hosting pruža %1$s, korisite ga na sopstveni rizik</string>
     <string name="nuuls_upload_title">Prilagođeno slanje slika</string>
     <string name="snackbar_message_copied">Poruka kopirana</string>
     <string name="snackbar_error_copied">Informacije o grešci kopirane</string>

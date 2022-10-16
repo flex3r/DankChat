@@ -71,6 +71,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.IOException
+import java.net.URL
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.roundToInt
@@ -244,7 +245,7 @@ class MainFragment : Fragment() {
                     R.id.menu_block_channel  -> blockChannel()
                     R.id.menu_manage         -> openManageChannelsDialog()
                     R.id.menu_reload_emotes  -> reloadEmotes()
-                    R.id.menu_choose_media   -> showNuulsUploadDialogIfNotAcknowledged { requestGalleryMedia.launch(PickVisualMediaRequest(PickVisualMedia.ImageAndVideo)) }
+                    R.id.menu_choose_media   -> showExternalHostingUploadDialogIfNotAcknowledged { requestGalleryMedia.launch(PickVisualMediaRequest(PickVisualMedia.ImageAndVideo)) }
                     R.id.menu_capture_image  -> startCameraCapture()
                     R.id.menu_capture_video  -> startCameraCapture(captureVideo = true)
                     R.id.menu_clear          -> clear()
@@ -663,9 +664,15 @@ class MainFragment : Fragment() {
         suggestionAdapter.setSuggestions(suggestions)
     }
 
-    private inline fun showNuulsUploadDialogIfNotAcknowledged(crossinline action: () -> Unit) {
-        if (!dankChatPreferences.hasNuulsAcknowledged) {
-            val spannable = SpannableStringBuilder(getString(R.string.nuuls_upload_disclaimer))
+    private inline fun showExternalHostingUploadDialogIfNotAcknowledged(crossinline action: () -> Unit) {
+        // show host name in dialog, another nice thing we get is it also detect some invalid URLs
+        val host = runCatching {
+            URL(dankChatPreferences.customImageUploader.uploadUrl).host
+        } .getOrElse { "" }
+
+        // if config is invalid, just let the error handled by HTTP client
+        if (host.isNotBlank() && !dankChatPreferences.hasExternalHostingAcknowledged) {
+            val spannable = SpannableStringBuilder(getString(R.string.external_upload_disclaimer, host))
             Linkify.addLinks(spannable, Linkify.WEB_URLS)
 
             MaterialAlertDialogBuilder(requireContext())
@@ -674,7 +681,7 @@ class MainFragment : Fragment() {
                 .setMessage(spannable)
                 .setPositiveButton(R.string.dialog_ok) { dialog, _ ->
                     dialog.dismiss()
-                    dankChatPreferences.hasNuulsAcknowledged = true
+                    dankChatPreferences.hasExternalHostingAcknowledged = true
                     action()
                 }
                 .show().also { it.findViewById<TextView>(android.R.id.message)?.movementMethod = LinkMovementMethod.getInstance() }
@@ -689,7 +696,7 @@ class MainFragment : Fragment() {
             captureVideo -> MediaStore.ACTION_VIDEO_CAPTURE to "mp4"
             else         -> MediaStore.ACTION_IMAGE_CAPTURE to "jpg"
         }
-        showNuulsUploadDialogIfNotAcknowledged {
+        showExternalHostingUploadDialogIfNotAcknowledged {
             Intent(action).also { captureIntent ->
                 captureIntent.resolveActivity(packageManager)?.also {
                     try {

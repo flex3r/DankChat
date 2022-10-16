@@ -30,6 +30,7 @@
     <string name="uploading_image">上傳圖片中</string>
     <string name="settings">設定</string>
     <string name="nuuls_upload_disclaimer">多媒體檔案上傳由 https://nuuls.com/i 提供，請自行承擔風險</string>
+    <string name="external_upload_disclaimer">多媒體檔案上傳由 %1$s 提供，請自行承擔風險</string>
     <string name="nuuls_upload_title">上傳自訂圖片</string>
     <string name="snackbar_message_copied">已複製訊息</string>
     <string name="snackbar_error_copied">已複製錯誤訊息</string>

@@ -29,6 +29,7 @@
     <string name="uploading_image">تحميل الصورة</string>
     <string name="settings">إلاعدادات</string>
     <string name="nuuls_upload_disclaimer">لاستضافة الخارجية مقدمة من https://nuuls.com/i ، استخدمها على مسؤوليتك الخاصة.</string>
+    <string name="external_upload_disclaimer">لاستضافة الخارجية مقدمة من %1$s ، استخدمها على مسؤوليتك الخاصة.</string>
     <string name="nuuls_upload_title">تحميل صورة مخصصة</string>
     <string name="snackbar_message_copied">تم نسخ الرسالة</string>
     <string name="snackbar_error_copied">Error information copied</string>
