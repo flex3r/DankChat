@@ -35,7 +35,6 @@
     <string name="uploading_image">Nahrávání souboru</string>
     <string name="settings">Nastavení</string>
     <string name="nuuls_upload_disclaimer">Externí hostování poskytované https://nuuls.com/i ,používejte na vlastní riziko.</string>
-    <string name="external_upload_disclaimer">Externí hostování poskytované %1$s ,používejte na vlastní riziko.</string>
     <string name="nuuls_upload_title">Nahrání vlastního obrázku</string>
     <string name="snackbar_message_copied">Zpráva zkopírována</string>
     <string name="snackbar_error_copied">Informace o chybě zkopírovány</string>
