@@ -35,7 +35,6 @@
     <string name="uploading_image">Enviando arquivo</string>
     <string name="settings">Configurações</string>
     <string name="nuuls_upload_disclaimer">Hospedagem externa fornecida por https://nuuls.com/i, use por sua conta e risco.</string>
-    <string name="external_upload_disclaimer">Hospedagem externa fornecida por %1$s, use por sua conta e risco.</string>
     <string name="nuuls_upload_title">Envio de mídia personalizado</string>
     <string name="snackbar_message_copied">Mensagem copiada</string>
     <string name="snackbar_error_copied">Informação de erro copiada</string>
