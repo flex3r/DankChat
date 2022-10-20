@@ -88,17 +88,13 @@
                 tools:text="@tools:sample/date/hhmmss" />
 
             <com.google.android.material.button.MaterialButton
-                style="?attr/materialIconButtonStyle"
                 android:id="@+id/copy_button"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:icon="@drawable/ic_copy"
-                tools:layout_editor_absoluteX="341dp"
-                tools:layout_editor_absoluteY="6dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginEnd="8dp"
-                android:layout_marginTop="8dp" />
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>
