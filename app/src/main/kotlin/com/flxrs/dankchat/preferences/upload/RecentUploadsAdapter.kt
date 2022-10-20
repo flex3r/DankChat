@@ -1,17 +1,23 @@
 package com.flxrs.dankchat.preferences.upload
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.content.getSystemService
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.size.Scale
+import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.RecentUploadItemBinding
 
 class RecentUploadsAdapter : ListAdapter<RecentUpload, RecentUploadsAdapter.UploadViewHolder>(DetectDiff()) {
 
-    inner class UploadViewHolder(val binding: RecentUploadItemBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class UploadViewHolder(val binding: com.flxrs.dankchat.databinding.RecentUploadItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UploadViewHolder {
         return UploadViewHolder(RecentUploadItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -23,6 +29,16 @@ class RecentUploadsAdapter : ListAdapter<RecentUpload, RecentUploadsAdapter.Uplo
             upload = item
             image.load(item.imageUrl) {
                 scale(Scale.FILL)
+            }
+            with(copyButton) {
+                setOnClickListener {
+                    val clipData = ClipData.newPlainText("Image URL", item.imageUrl)
+                    context.getSystemService<ClipboardManager>()?.setPrimaryClip(clipData)
+                    // show copied toast only on Android < 13
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S_V2) {
+                        Toast.makeText(context, context.getString(R.string.copied_image_url), Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }
