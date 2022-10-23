@@ -221,13 +221,8 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
     }
 
     fun resetImageUploader(): ImageUploader {
-        return ImageUploader(
-            uploadUrl = UPLOADER_URL_DEFAULT,
-            formField = UPLOADER_FORM_FIELD_DEFAULT,
-            headers = null,
-            imageLinkPattern = null,
-            deletionLinkPattern = null
-        ).apply { customImageUploader = this }
+        customImageUploader = DEFAULT_UPLOADER
+        return DEFAULT_UPLOADER
     }
 
     fun resetRmHost(): String {
@@ -298,8 +293,11 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
         private const val UPLOADER_IMAGE_LINK = "uploaderImageLink"
         private const val UPLOADER_DELETION_LINK = "uploaderDeletionLink"
 
-        private const val UPLOADER_URL_DEFAULT = "https://i.nuuls.com/upload"
+        private const val UPLOADER_URL_DEFAULT = "https://kappa.lol/api/upload"
         private const val UPLOADER_FORM_FIELD_DEFAULT = "file"
+        private const val UPLOADER_IMAGE_LINK_DEFAULT = "{link}"
+        private const val UPLOADER_DELETE_LINK_DEFAULT = "{delete}"
+
 
         private const val RM_HOST_DEFAULT = "https://recent-messages.robotty.de/api/v2/"
 
@@ -310,8 +308,8 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
             uploadUrl = UPLOADER_URL_DEFAULT,
             formField = UPLOADER_FORM_FIELD_DEFAULT,
             headers = null,
-            imageLinkPattern = null,
-            deletionLinkPattern = null,
+            imageLinkPattern = UPLOADER_IMAGE_LINK_DEFAULT,
+            deletionLinkPattern = UPLOADER_DELETE_LINK_DEFAULT,
         )
     }
 }

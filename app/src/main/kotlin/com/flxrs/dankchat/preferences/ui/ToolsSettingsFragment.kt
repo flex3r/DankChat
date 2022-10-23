@@ -99,8 +99,8 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
                 MaterialAlertDialogBuilder(context)
                     .setTitle(R.string.reset_media_uploader_dialog_title)
                     .setMessage(R.string.reset_media_uploader_dialog_message)
-                    .setPositiveButton(R.string.reset_media_uploader_dialog_positive) { _, _ -> uploader = dankChatPreferenceStore.resetImageUploader()}
-                    .setNegativeButton(R.string.dialog_cancel) {_, _ -> }
+                    .setPositiveButton(R.string.reset_media_uploader_dialog_positive) { _, _ -> uploader = dankChatPreferenceStore.resetImageUploader() }
+                    .setNegativeButton(R.string.dialog_cancel) { _, _ -> }
                     .create().show()
             }
             uploaderSheet.updateLayoutParams {
@@ -112,12 +112,14 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
         BottomSheetDialog(context).apply {
             setContentView(binding.root)
             setOnDismissListener {
-                val uploader = binding.uploader ?: DankChatPreferenceStore.DEFAULT_UPLOADER
-                dankChatPreferenceStore.customImageUploader = uploader.copy(
-                    headers = uploader.headers?.takeIf { it.isNotBlank() },
-                    imageLinkPattern = uploader.imageLinkPattern?.takeIf { it.isNotBlank() },
-                    deletionLinkPattern = uploader.deletionLinkPattern?.takeIf { it.isNotBlank() },
-                )
+                binding.uploader?.let { uploader ->
+                    val validated = uploader.copy(
+                        headers = uploader.headers?.takeIf { it.isNotBlank() },
+                        imageLinkPattern = uploader.imageLinkPattern?.takeIf { it.isNotBlank() },
+                        deletionLinkPattern = uploader.deletionLinkPattern?.takeIf { it.isNotBlank() },
+                    )
+                    dankChatPreferenceStore.customImageUploader = validated
+                } ?: dankChatPreferenceStore.resetImageUploader()
             }
             behavior.isFitToContents = false
             behavior.peekHeight = peekHeight
@@ -181,8 +183,8 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
                 MaterialAlertDialogBuilder(context)
                     .setTitle(R.string.clear_recent_uploads_dialog_title)
                     .setMessage(R.string.clear_recent_uploads_dialog_message)
-                    .setPositiveButton(R.string.clear_recent_uploads_dialog_positive) { _, _ -> viewModel.clearUploads()}
-                    .setNegativeButton(R.string.dialog_cancel){_, _ -> }
+                    .setPositiveButton(R.string.clear_recent_uploads_dialog_positive) { _, _ -> viewModel.clearUploads() }
+                    .setNegativeButton(R.string.dialog_cancel) { _, _ -> }
                     .create().show()
             }
         }
