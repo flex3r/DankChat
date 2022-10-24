@@ -30,16 +30,17 @@ class RecentUploadsAdapter : ListAdapter<RecentUpload, RecentUploadsAdapter.Uplo
             image.load(item.imageUrl) {
                 scale(Scale.FILL)
             }
-            with(copyButton) {
-                setOnClickListener {
-                    val clipData = ClipData.newPlainText("Image URL", item.imageUrl)
-                    context.getSystemService<ClipboardManager>()?.setPrimaryClip(clipData)
-                    // show copied toast only on Android < 13
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S_V2) {
-                        Toast.makeText(context, context.getString(R.string.copied_image_url), Toast.LENGTH_SHORT).show()
-                    }
+
+            copyButton.setOnClickListener {
+                val clipData = ClipData.newPlainText("Image URL", item.imageUrl)
+                val context = it.context
+                context.getSystemService<ClipboardManager>()?.setPrimaryClip(clipData)
+                // show copied toast only on Android < 13
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S_V2) {
+                    Toast.makeText(context, context.getString(R.string.copied_image_url), Toast.LENGTH_SHORT).show()
                 }
             }
+
         }
     }
 
