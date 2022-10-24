@@ -17,7 +17,7 @@ import com.flxrs.dankchat.databinding.RecentUploadItemBinding
 
 class RecentUploadsAdapter : ListAdapter<RecentUpload, RecentUploadsAdapter.UploadViewHolder>(DetectDiff()) {
 
-    inner class UploadViewHolder(val binding: com.flxrs.dankchat.databinding.RecentUploadItemBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class UploadViewHolder(val binding: RecentUploadItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UploadViewHolder {
         return UploadViewHolder(RecentUploadItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
