@@ -282,6 +282,7 @@
     <string name="clear_recent_uploads_dialog_title">Отчистить недавние загрузки</string>
     <string name="clear_recent_uploads_dialog_message">Вы уверены, что хотите отчистить историю загрузок? Ваши загруженные файлы не будут удалены.</string>
     <string name="clear_recent_uploads_dialog_positive">Отчистить</string>
+    <string name="copied_image_url">Ссылка скопирована</string>
     <plurals name="viewers">
         <item quantity="one">В сети с %d зрителем</item>
         <item quantity="few">В сети с %d зрителями</item>
