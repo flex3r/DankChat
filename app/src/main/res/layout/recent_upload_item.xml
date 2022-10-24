@@ -48,11 +48,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
                 android:autoLink="web"
                 android:linksClickable="true"
                 android:text="@{upload.imageUrl}"
                 app:layout_constraintBottom_toTopOf="@id/delete_text"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/copy_button"
                 app:layout_constraintStart_toEndOf="@id/image_card"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="spread_inside"
@@ -85,6 +86,17 @@
                 app:layout_constraintStart_toStartOf="@id/image_text"
                 app:layout_constraintTop_toBottomOf="@id/delete_text"
                 tools:text="@tools:sample/date/hhmmss" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/copy_button"
+                style="?attr/materialIconButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/ic_copy"
+                app:layout_constraintBottom_toBottomOf="@id/image_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/image_text"
+                app:layout_constraintTop_toTopOf="@id/image_text" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>
