@@ -337,6 +337,7 @@
     <string name="clear_recent_uploads_dialog_title">Clear Recent Uploads</string>
     <string name="clear_recent_uploads_dialog_message">Are you sure you want to clear the upload history? Your uploaded files won\'t be deleted.</string>
     <string name="clear_recent_uploads_dialog_positive">Clear</string>
+    <string name="copied_image_url">Copied Image URL</string>
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>
         <item quantity="other">Live with %d viewers</item>
