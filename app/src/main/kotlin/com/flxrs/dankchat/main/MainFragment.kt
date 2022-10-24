@@ -399,6 +399,20 @@ class MainFragment : Fragment() {
             setSupportActionBar(binding.toolbar)
             onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackPressedCallback)
 
+            var wasKeyboardOpen = false
+            ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+                val isKeyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+                if (wasKeyboardOpen == isKeyboardVisible) {
+                    return@setOnApplyWindowInsetsListener insets
+                }
+
+                wasKeyboardOpen = isKeyboardVisible
+                if (binding.input.isFocused && !isKeyboardVisible) {
+                    binding.input.clearFocus()
+                }
+
+                insets
+            }
             ViewCompat.setOnApplyWindowInsetsListener(binding.showChips) { v, insets ->
                 val needsExtraMargin = binding.streamWebviewWrapper.isVisible || isLandscape || !mainViewModel.isFullscreenFlow.value
                 val extraMargin = when {
