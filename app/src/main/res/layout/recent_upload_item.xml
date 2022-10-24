@@ -43,7 +43,6 @@
                     android:scaleType="centerInside" />
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- adds aaaaaaaaaaa to the URLs to make sure it looks right when URL is long -->
             <TextView
                 android:id="@+id/image_text"
                 android:layout_width="0dp"
@@ -58,7 +57,7 @@
                 app:layout_constraintStart_toEndOf="@id/image_card"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="spread_inside"
-                tools:text="https://i.flxrs.com/kyg6nppv.png?aaaaaaaaaaaaaaaaaaaaaa" />
+                tools:text="https://i.flxrs.com/kyg6nppv.png" />
 
             <TextView
                 android:id="@+id/delete_text"
@@ -73,7 +72,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/image_text"
                 app:layout_constraintTop_toBottomOf="@id/image_text"
-                tools:text="Deletion link:\nhttps://i.flxrs.com/kyg6nppv.png?aaaaaaaaaaaaaaaaaaaaa" />
+                tools:text="Deletion link:\nhttps://i.flxrs.com/kyg6nppv.png" />
 
             <TextView
                 android:id="@+id/time_text"
