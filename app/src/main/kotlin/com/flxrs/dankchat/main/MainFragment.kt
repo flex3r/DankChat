@@ -179,6 +179,7 @@ class MainFragment : Fragment() {
                         }
                         true
                     }
+
                     MotionEvent.ACTION_DOWN -> true
                     else                    -> false
                 }
@@ -356,6 +357,7 @@ class MainFragment : Fragment() {
                             .setNegativeButton(getString(R.string.dialog_dismiss)) { _, _ -> } // default action is dismissing anyway
                             .create().show()
                     }
+
                     ValidationResult.Failure      -> showSnackBar(getString(R.string.oauth_verify_failed))
                 }
             }
@@ -374,6 +376,7 @@ class MainFragment : Fragment() {
                     LOGOUT_REQUEST_KEY      -> handle.withData<Boolean>(key) {
                         showLogoutConfirmationDialog()
                     }
+
                     CHANNELS_REQUEST_KEY    -> handle.withData<Array<String>>(key) {
                         updateChannels(it.toList())
                     }
@@ -604,6 +607,7 @@ class MainFragment : Fragment() {
                 message = result.errorMessage?.let { getString(R.string.snackbar_upload_failed_cause, it) } ?: getString(R.string.snackbar_upload_failed),
                 onDismiss = { result.mediaFile.delete() },
                 action = getString(R.string.snackbar_retry) to { mainViewModel.uploadMedia(result.mediaFile) })
+
             is ImageUploadState.Finished                       -> {
                 val clipboard = getSystemService(requireContext(), ClipboardManager::class.java)
                 clipboard?.setPrimaryClip(ClipData.newPlainText(CLIPBOARD_LABEL, result.url))
@@ -682,7 +686,7 @@ class MainFragment : Fragment() {
         // show host name in dialog, another nice thing we get is it also detect some invalid URLs
         val host = runCatching {
             URL(dankChatPreferences.customImageUploader.uploadUrl).host
-        } .getOrElse { "" }
+        }.getOrElse { "" }
 
         // if config is invalid, just let the error handled by HTTP client
         if (host.isNotBlank() && !dankChatPreferences.hasExternalHostingAcknowledged) {
@@ -859,7 +863,7 @@ class MainFragment : Fragment() {
             .setTitle(R.string.confirm_channel_removal_title)
             // should give user more info that it's gonna delete the currently active channel (unlike when clicking delete from manage channels list, where is very obvious)
             .setMessage(getString(R.string.confirm_channel_removal_message_named, activeChannel))
-            .setPositiveButton(R.string.confirm_channel_removal_positive_button) { dialog, _ ->
+            .setPositiveButton(R.string.confirm_channel_removal_positive_button) { _, _ ->
                 val updatedChannels = channels - activeChannel
                 updateChannels(updatedChannels)
             }
@@ -892,6 +896,7 @@ class MainFragment : Fragment() {
                         mainViewModel.changeRoomState(index, enabled = true)
                         d.dismiss()
                     }
+
                     else    -> {
                         val title = choices[index]
                         val hint = if (index == 2) R.string.seconds else R.string.minutes
@@ -989,6 +994,7 @@ class MainFragment : Fragment() {
                     }
                 }
             }
+
             else                                       -> false
         }
 
@@ -1041,6 +1047,7 @@ class MainFragment : Fragment() {
                                         (activity as? AppCompatActivity)?.supportActionBar?.hide()
                                         binding.tabs.visibility = View.GONE
                                     }
+
                                     else                                                                    -> {
                                         (activity as? AppCompatActivity)?.supportActionBar?.show()
                                         binding.tabs.visibility = View.VISIBLE
@@ -1083,6 +1090,7 @@ class MainFragment : Fragment() {
                 KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> {
                     if (!isItemSelected()) sendMessage() else false
                 }
+
                 else                                                  -> false
             }
         }
@@ -1117,6 +1125,7 @@ class MainFragment : Fragment() {
                     supportActionBar?.hide()
                     setFullScreen(enabled = false, changeActionBarVisibility = false)
                 }
+
                 else     -> (activity as? MainActivity)?.setFullScreen(isFullscreen)
             }
 
