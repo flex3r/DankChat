@@ -51,7 +51,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:visibility="@{vm.shouldShowViewPager ? View.VISIBLE : View.GONE}"
+                        android:visibility="@{vm.shouldShowTabs ? View.VISIBLE : View.GONE}"
                         app:tabMode="auto" />
                 </com.google.android.material.appbar.AppBarLayout>
 

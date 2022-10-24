@@ -188,9 +188,12 @@ class MainViewModel @Inject constructor(
             hasMentions || hasWhispers
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
-    val shouldShowViewPager: StateFlow<Boolean> = channels
-        .mapLatest { it?.isNotEmpty() ?: true }
+    val shouldShowViewPager: StateFlow<Boolean> = channels.mapLatest { it?.isNotEmpty() ?: true }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), true)
+
+    val shouldShowTabs: StateFlow<Boolean> = shouldShowViewPager.combine(_isFullscreen) { shouldShowViewPager, isFullscreen ->
+        shouldShowViewPager && !isFullscreen
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), true)
 
     val shouldShowInput: StateFlow<Boolean> = combine(inputEnabled, shouldShowViewPager) { inputEnabled, shouldShowViewPager ->
         inputEnabled && shouldShowViewPager
@@ -253,9 +256,11 @@ class MainViewModel @Inject constructor(
                     is EmoteType.ChannelTwitchEmote,
                     is EmoteType.ChannelTwitchBitEmote,
                     is EmoteType.ChannelTwitchFollowerEmote -> EmoteMenuTab.SUBS
+
                     is EmoteType.ChannelFFZEmote,
                     is EmoteType.ChannelBTTVEmote,
                     is EmoteType.ChannelSevenTVEmote        -> EmoteMenuTab.CHANNEL
+
                     else                                    -> EmoteMenuTab.GLOBAL
                 }
             }
@@ -673,6 +678,7 @@ class MainViewModel @Inject constructor(
                     parameters = parameters
                 )
             }
+
             else                                -> DataLoadingState.Finished
         }
     }

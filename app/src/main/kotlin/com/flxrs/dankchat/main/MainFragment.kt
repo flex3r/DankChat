@@ -737,11 +737,6 @@ class MainFragment : Fragment() {
     private fun changeActionBarVisibility(isFullscreen: Boolean) {
         hideKeyboard()
         (activity as? MainActivity)?.setFullScreen(isFullscreen)
-
-        with(binding) {
-            input.clearFocus()
-            tabs.isVisible = !isFullscreen
-        }
     }
 
     private fun clear() {
