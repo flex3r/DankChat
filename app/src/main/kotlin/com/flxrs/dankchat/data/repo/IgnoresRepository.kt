@@ -29,28 +29,18 @@ class IgnoresRepository @Inject constructor(
 
     fun applyIgnores(message: Message): Message? {
         return when (message) {
-            is NoticeMessage          -> message.applyIgnores()
-            is PointRedemptionMessage -> message.applyIgnores()
-            is PrivMessage            -> message.applyIgnores()
-            is UserNoticeMessage      -> message.applyIgnores()
-            is WhisperMessage         -> message.applyIgnores()
-            else                      -> message
+            is NoticeMessage, is PointRedemptionMessage -> message
+            is PrivMessage                           -> message.applyIgnores()
+            is UserNoticeMessage                     -> message.applyIgnores()
+            is WhisperMessage                        -> message.applyIgnores()
+            else                                     -> message
         }
     }
 
-    private fun NoticeMessage.applyIgnores(): NoticeMessage? {
-        // TODO
-        return this
-    }
-
-    private fun UserNoticeMessage.applyIgnores(): UserNoticeMessage? {
-        // TODO
-        return this
-    }
-
-    private fun PointRedemptionMessage.applyIgnores(): PointRedemptionMessage? {
-        // TODO
-        return this
+    private fun UserNoticeMessage.applyIgnores(): UserNoticeMessage {
+        return copy(
+            childMessage = childMessage?.applyIgnores()
+        )
     }
 
     private fun PrivMessage.applyIgnores(): PrivMessage? {
@@ -83,7 +73,31 @@ class IgnoresRepository @Inject constructor(
     }
 
     private fun WhisperMessage.applyIgnores(): WhisperMessage? {
+        userIgnores.value.forEach {
+            val hasMatch = when {
+                it.isRegex -> it.regex?.let { regex -> name.matches(regex) || displayName.matches(regex) } ?: false
+                else       -> name == it.username || displayName == it.username // TODO check
+            }
+
+            if (hasMatch) {
+                return null
+            }
+        }
+
         // TODO
+        (messageIgnores.value/* + MessageIgnoreEntity(999, true, "FeelsDankMan", replacement = "asdf")*/).forEach {
+            val regex = it.regex ?: return@forEach
+
+            if (message.contains(regex)) {
+                if (it.replacement != null) {
+                    val filteredMessage = message.replace(regex, it.replacement)
+                    return copy(message = filteredMessage)
+                }
+
+                return null
+            }
+        }
+
         return this
     }
 
