@@ -62,7 +62,6 @@ class HighlightsRepository @Inject constructor(
             if (enabledMessageHighlights.areRewardsEnabled) {
                 add(Highlight(HighlightType.ChannelPointRedemption))
             }
-            // TODO custom message highlights?
         }
 
         return copy(highlights = highlights)
@@ -78,6 +77,10 @@ class HighlightsRepository @Inject constructor(
 
             if (enabledMessageHighlights.areFirstMessagesEnabled && isFirstMessage) {
                 add(Highlight(HighlightType.FirstMessage))
+            }
+
+            if (enabledMessageHighlights.areElevatedMessagesEnabled && isElevatedMessage) {
+                add(Highlight(HighlightType.ElevatedMessage))
             }
 
             // Username
@@ -115,6 +118,9 @@ class HighlightsRepository @Inject constructor(
     private val List<MessageHighlightEntity>.areFirstMessagesEnabled: Boolean
         get() = isMessageHighlightTypeEnabled(MessageHighlightType.FirstMessage)
 
+    private val List<MessageHighlightEntity>.areElevatedMessagesEnabled: Boolean
+        get() = isMessageHighlightTypeEnabled(MessageHighlightType.ElevatedMessage)
+
     private val List<MessageHighlightEntity>.isOwnUserNameEnabled: Boolean
         get() = isMessageHighlightTypeEnabled(MessageHighlightType.Username)
 
@@ -127,6 +133,9 @@ class HighlightsRepository @Inject constructor(
 
     private val PrivMessage.isFirstMessage: Boolean
         get() = tags["first-msg"] == "1"
+
+    private val PrivMessage.isElevatedMessage: Boolean
+        get() = tags["pinned-chat-paid-amount"] != null
 
     private val PrivMessage.containsCurrentUserName: Boolean
         get() {
@@ -196,7 +205,8 @@ class HighlightsRepository @Inject constructor(
             MessageHighlightEntity(id = 1, enabled = true, type = MessageHighlightType.Username, pattern = ""),
             MessageHighlightEntity(id = 2, enabled = true, type = MessageHighlightType.Subscription, pattern = ""),
             MessageHighlightEntity(id = 3, enabled = true, type = MessageHighlightType.ChannelPointRedemption, pattern = ""),
-            MessageHighlightEntity(id = 4, enabled = true, type = MessageHighlightType.FirstMessage, pattern = "")
+            MessageHighlightEntity(id = 4, enabled = true, type = MessageHighlightType.FirstMessage, pattern = ""),
+            MessageHighlightEntity(id = 5, enabled = true, type = MessageHighlightType.ElevatedMessage, pattern = ""),
         )
     }
 }

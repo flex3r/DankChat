@@ -814,6 +814,7 @@ class ChatAdapter(
             HighlightType.Subscription           -> ContextCompat.getColor(context, R.color.color_highlight)
             HighlightType.ChannelPointRedemption -> ContextCompat.getColor(context, R.color.color_reward)
             // TODO diff color
+            HighlightType.ElevatedMessage        -> ContextCompat.getColor(context, R.color.color_reward)
             HighlightType.FirstMessage           -> ContextCompat.getColor(context, R.color.color_reward)
             HighlightType.Username               -> ContextCompat.getColor(context, R.color.color_mention)
             HighlightType.Custom                 -> ContextCompat.getColor(context, R.color.color_mention)

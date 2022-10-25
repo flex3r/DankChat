@@ -14,5 +14,6 @@ enum class HighlightType {
     Subscription,
     ChannelPointRedemption,
     FirstMessage,
+    ElevatedMessage,
     Custom
 }
