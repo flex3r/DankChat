@@ -84,14 +84,13 @@ class HighlightsRepository @Inject constructor(
             }
 
             // Username
-            // TODO also match DisplayName?
             if (enabledMessageHighlights.isOwnUserNameEnabled && containsCurrentUserName) {
                 add(Highlight(HighlightType.Username))
             }
 
             // User highlights
             enabledUserHighlights.forEach {
-                if (it.username.equals(name, ignoreCase = true) || it.username.equals(displayName, ignoreCase = true)) {
+                if (it.username.equals(name, ignoreCase = true)) {
                     add(Highlight(HighlightType.Custom))
                 }
             }

@@ -5,7 +5,12 @@ import com.flxrs.dankchat.data.database.dao.MessageIgnoreDao
 import com.flxrs.dankchat.data.database.dao.UserIgnoreDao
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntity
 import com.flxrs.dankchat.data.database.entity.UserIgnoreEntity
-import com.flxrs.dankchat.data.twitch.message.*
+import com.flxrs.dankchat.data.twitch.message.Message
+import com.flxrs.dankchat.data.twitch.message.NoticeMessage
+import com.flxrs.dankchat.data.twitch.message.PointRedemptionMessage
+import com.flxrs.dankchat.data.twitch.message.PrivMessage
+import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
+import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.di.ApplicationScope
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.multientry.MultiEntryDto
@@ -26,14 +31,15 @@ class IgnoresRepository @Inject constructor(
 
     private val messageIgnores = messageIgnoreDao.getMessageIgnoresFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
     private val userIgnores = userIgnoreDao.getUserIgnoresFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+    // TODO twitch ignores
 
     fun applyIgnores(message: Message): Message? {
         return when (message) {
             is NoticeMessage, is PointRedemptionMessage -> message
-            is PrivMessage                           -> message.applyIgnores()
-            is UserNoticeMessage                     -> message.applyIgnores()
-            is WhisperMessage                        -> message.applyIgnores()
-            else                                     -> message
+            is PrivMessage                              -> message.applyIgnores()
+            is UserNoticeMessage                        -> message.applyIgnores()
+            is WhisperMessage                           -> message.applyIgnores()
+            else                                        -> message
         }
     }
 
@@ -44,61 +50,62 @@ class IgnoresRepository @Inject constructor(
     }
 
     private fun PrivMessage.applyIgnores(): PrivMessage? {
-        userIgnores.value.forEach {
-            val hasMatch = when {
-                it.isRegex -> it.regex?.let { regex -> name.matches(regex) || displayName.matches(regex) } ?: false
-                else       -> name == it.username || displayName == it.username // TODO check
-            }
-
-            if (hasMatch) {
-                return null
-            }
+        if (isIgnoredUsername(name)) {
+            return null
         }
 
-        // TODO
-        (messageIgnores.value/* + MessageIgnoreEntity(999, true, "FeelsDankMan", replacement = "asdf")*/).forEach {
-            val regex = it.regex ?: return@forEach
-
-            if (message.contains(regex)) {
-                if (it.replacement != null) {
-                    val filteredMessage = message.replace(regex, it.replacement)
-                    return copy(message = filteredMessage)
-                }
-
-                return null
-            }
+        isIgnoredMessageWithReplacement(message) { replacement ->
+            return replacement?.let { copy(message = it) }
         }
 
         return this
     }
 
     private fun WhisperMessage.applyIgnores(): WhisperMessage? {
-        userIgnores.value.forEach {
-            val hasMatch = when {
-                it.isRegex -> it.regex?.let { regex -> name.matches(regex) || displayName.matches(regex) } ?: false
-                else       -> name == it.username || displayName == it.username // TODO check
-            }
+        if (isIgnoredUsername(name)) {
+            return null
+        }
 
-            if (hasMatch) {
-                return null
+        isIgnoredMessageWithReplacement(message) { replacement ->
+            return when (replacement) {
+                null -> null
+                else -> copy(message = replacement)
             }
         }
 
+        return this
+    }
+
+    private fun isIgnoredUsername(name: String): Boolean {
+        userIgnores.value.forEach {
+            val hasMatch = when {
+                it.isRegex -> it.regex?.let { regex -> name.matches(regex) } ?: false
+                else       -> name == it.username
+
+            }
+
+            if (hasMatch) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    private inline fun isIgnoredMessageWithReplacement(message: String, replacement: (String?) -> Unit) {
         // TODO
-        (messageIgnores.value/* + MessageIgnoreEntity(999, true, "FeelsDankMan", replacement = "asdf")*/).forEach {
+        (messageIgnores.value + MessageIgnoreEntity(999, true, "FeelsDankMan", replacement = "asdf")).forEach {
             val regex = it.regex ?: return@forEach
 
             if (message.contains(regex)) {
                 if (it.replacement != null) {
                     val filteredMessage = message.replace(regex, it.replacement)
-                    return copy(message = filteredMessage)
+                    return replacement(filteredMessage)
                 }
 
-                return null
+                return replacement(null)
             }
         }
-
-        return this
     }
 
     fun runMigrationsIfNeeded() = coroutineScope.launch {
