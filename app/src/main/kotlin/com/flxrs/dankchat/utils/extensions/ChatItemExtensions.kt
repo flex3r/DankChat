@@ -3,11 +3,10 @@ package com.flxrs.dankchat.utils.extensions
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.data.twitch.message.ClearChatMessage
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
-import com.flxrs.dankchat.data.twitch.message.SystemMessage
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-fun List<ChatItem>.replaceWithTimeOuts(clearChatMessage: ClearChatMessage, scrollBackLength: Int): MutableList<ChatItem> = toMutableList().apply {
+fun List<ChatItem>.replaceWithTimeOuts(clearChatMessage: ClearChatMessage, scrollBackLength: Int): List<ChatItem> = toMutableList().apply {
     var addClearChat = true
     val end = (lastIndex - 20).coerceAtLeast(0)
     for (idx in lastIndex downTo end) {
@@ -41,7 +40,7 @@ fun List<ChatItem>.replaceWithTimeOuts(clearChatMessage: ClearChatMessage, scrol
     }
 }
 
-fun List<ChatItem>.replaceWithTimeOut(id: String): MutableList<ChatItem> = toMutableList().apply {
+fun List<ChatItem>.replaceWithTimeOut(id: String): List<ChatItem> = toMutableList().apply {
     for (idx in indices) {
         val item = this[idx]
         if (item.message is PrivMessage && item.message.id == id) {
@@ -51,7 +50,7 @@ fun List<ChatItem>.replaceWithTimeOut(id: String): MutableList<ChatItem> = toMut
     }
 }
 
-fun List<ChatItem>.addAndLimit(item: ChatItem, scrollBackLength: Int): MutableList<ChatItem> = toMutableList().apply {
+fun List<ChatItem>.addAndLimit(item: ChatItem, scrollBackLength: Int): List<ChatItem> = toMutableList().apply {
     add(item)
     while (size > scrollBackLength) {
         removeAt(0)
@@ -59,19 +58,18 @@ fun List<ChatItem>.addAndLimit(item: ChatItem, scrollBackLength: Int): MutableLi
 }
 
 fun List<ChatItem>.addAndLimit(
-    collection: Collection<ChatItem>,
+    items: Collection<ChatItem>,
     scrollBackLength: Int,
     checkForDuplications: Boolean = false
-): MutableList<ChatItem> = takeLast(scrollBackLength).toMutableList().apply {
-    for (item in collection) {
-        if (!checkForDuplications || !any {
-                it.message.id == item.message.id || (it.message as? SystemMessage)?.type == (item.message as? SystemMessage)?.type
-            }
-        ) {
-            add(item)
-        }
+): List<ChatItem> = when {
+    checkForDuplications -> plus(items)
+        .distinctBy { it.message.id }
+        .sortedBy { it.message.timestamp }
+        .takeLast(scrollBackLength)
 
-        if (size > scrollBackLength) {
+    else                 -> toMutableList().apply {
+        addAll(items)
+        while (size > scrollBackLength) {
             removeAt(0)
         }
     }
