@@ -8,12 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.chat.menu.EmoteMenuTabItem
 import com.flxrs.dankchat.chat.suggestion.Suggestion
-import com.flxrs.dankchat.data.repo.ChatRepository
-import com.flxrs.dankchat.data.repo.CommandRepository
-import com.flxrs.dankchat.data.repo.DataRepository
-import com.flxrs.dankchat.data.repo.EmoteUsageRepository
 import com.flxrs.dankchat.data.api.ApiException
 import com.flxrs.dankchat.data.api.ApiManager
+import com.flxrs.dankchat.data.repo.*
 import com.flxrs.dankchat.data.state.DataLoadingState
 import com.flxrs.dankchat.data.state.ImageUploadState
 import com.flxrs.dankchat.data.twitch.connection.ConnectionState
@@ -43,6 +40,7 @@ class MainViewModel @Inject constructor(
     private val dataRepository: DataRepository,
     private val commandRepository: CommandRepository,
     private val emoteUsageRepository: EmoteUsageRepository,
+    private val ignoresRepository: IgnoresRepository,
     private val apiManager: ApiManager,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
 ) : ViewModel() {
@@ -384,7 +382,7 @@ class MainViewModel @Inject constructor(
             val activeChannel = getActiveChannel() ?: return@launch
             val channelId = dataRepository.getUserIdByName(activeChannel) ?: return@launch
             dataRepository.blockUser(channelId)
-            chatRepository.addUserBlock(channelId)
+            ignoresRepository.addUserBlock(channelId)
         }
     }
 
@@ -628,7 +626,7 @@ class MainViewModel @Inject constructor(
                 launch(handler) { dataRepository.loadDankChatBadges() },
                 launch(handler) { dataRepository.loadGlobalBadges() },
                 launch(handler) { if (loadSupibot) commandRepository.loadSupibotCommands() },
-                launch(handler) { chatRepository.loadUserBlocks(id) },
+                launch(handler) { ignoresRepository.loadUserBlocks(id) },
                 launch(handler) { dataRepository.loadGlobalData(loadThirdPartyData) }
             ) + channelList.map {
                 launch(handler) {
@@ -674,7 +672,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun clearIgnores() = chatRepository.clearIgnores()
+    private fun clearIgnores() = ignoresRepository.clearIgnores()
 
     fun clearDataForLogout() {
         CookieManager.getInstance().removeAllCookies(null)

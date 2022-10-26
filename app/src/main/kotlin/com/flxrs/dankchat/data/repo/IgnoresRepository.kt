@@ -1,28 +1,29 @@
 package com.flxrs.dankchat.data.repo
 
 import android.util.Log
+import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.data.database.dao.MessageIgnoreDao
 import com.flxrs.dankchat.data.database.dao.UserIgnoreDao
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntity
 import com.flxrs.dankchat.data.database.entity.UserIgnoreEntity
-import com.flxrs.dankchat.data.twitch.message.Message
-import com.flxrs.dankchat.data.twitch.message.NoticeMessage
-import com.flxrs.dankchat.data.twitch.message.PointRedemptionMessage
-import com.flxrs.dankchat.data.twitch.message.PrivMessage
-import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
-import com.flxrs.dankchat.data.twitch.message.WhisperMessage
+import com.flxrs.dankchat.data.twitch.message.*
 import com.flxrs.dankchat.di.ApplicationScope
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.multientry.MultiEntryDto
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class IgnoresRepository @Inject constructor(
+    private val apiManager: ApiManager,
     private val messageIgnoreDao: MessageIgnoreDao,
     private val userIgnoreDao: UserIgnoreDao,
     private val preferences: DankChatPreferenceStore,
@@ -31,7 +32,7 @@ class IgnoresRepository @Inject constructor(
 
     private val messageIgnores = messageIgnoreDao.getMessageIgnoresFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
     private val userIgnores = userIgnoreDao.getUserIgnoresFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
-    // TODO twitch ignores
+    private val _userBlocks = MutableStateFlow(emptySet<String>())
 
     fun applyIgnores(message: Message): Message? {
         return when (message) {
@@ -42,6 +43,28 @@ class IgnoresRepository @Inject constructor(
             else                                        -> message
         }
     }
+
+    fun isUserBlocked(userId: String?): Boolean {
+        return userId in _userBlocks.value
+    }
+
+    suspend fun loadUserBlocks(id: String) = withContext(Dispatchers.Default) {
+        if (!preferences.isLoggedIn) {
+            return@withContext
+        }
+
+        runCatching {
+            val blocks = apiManager.getUserBlocks(id) ?: return@withContext
+            val userIds = blocks.data.map { it.id }
+            _userBlocks.update { userIds.toSet() }
+        }.getOrElse {
+            Log.d(TAG, "Failed to load user blocks for $id", it)
+        }
+    }
+
+    fun addUserBlock(targetUserId: String) = _userBlocks.update { it + targetUserId }
+    fun removeUserBlock(targetUserId: String) = _userBlocks.update { it - targetUserId }
+    fun clearIgnores() = _userBlocks.update { emptySet() }
 
     private fun UserNoticeMessage.applyIgnores(): UserNoticeMessage {
         return copy(
@@ -93,8 +116,7 @@ class IgnoresRepository @Inject constructor(
     }
 
     private inline fun isIgnoredMessageWithReplacement(message: String, replacement: (String?) -> Unit) {
-        // TODO
-        (messageIgnores.value + MessageIgnoreEntity(999, true, "FeelsDankMan", replacement = "asdf")).forEach {
+        messageIgnores.value.forEach {
             val regex = it.regex ?: return@forEach
 
             if (message.contains(regex)) {

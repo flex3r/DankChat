@@ -5,7 +5,9 @@ import com.flxrs.dankchat.data.database.dao.RecentUploadsDao
 import com.flxrs.dankchat.data.database.entity.UploadEntity
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class RecentUploadsRepository @Inject constructor(
     private val recentUploadsDao: RecentUploadsDao
 ) {

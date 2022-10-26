@@ -11,6 +11,9 @@ import com.flxrs.dankchat.data.api.dto.RecentMessagesDto
 import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.twitch.connection.*
 import com.flxrs.dankchat.data.twitch.message.*
+import com.flxrs.dankchat.di.ApplicationScope
+import com.flxrs.dankchat.di.ReadConnection
+import com.flxrs.dankchat.di.WriteConnection
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.*
 import io.ktor.http.*
@@ -18,19 +21,21 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.collections.set
 import kotlin.system.measureTimeMillis
 
+@Singleton
 class ChatRepository @Inject constructor(
     private val apiManager: ApiManager,
     private val emoteRepository: EmoteRepository,
-    private val readConnection: ChatConnection,
-    private val writeConnection: ChatConnection,
     private val pubSubManager: PubSubManager,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
     private val highlightsRepository: HighlightsRepository,
     private val ignoresRepository: IgnoresRepository,
-    scope: CoroutineScope,
+    @ReadConnection private val readConnection: ChatConnection,
+    @WriteConnection private val writeConnection: ChatConnection,
+    @ApplicationScope scope: CoroutineScope,
 ) {
 
     data class UserState(
@@ -70,7 +75,6 @@ class ChatRepository @Inject constructor(
     private val users = ConcurrentHashMap<String, LruCache<String, Boolean>>()
     private val usersFlows = ConcurrentHashMap<String, MutableStateFlow<Set<String>>>()
     private val userState = MutableStateFlow(UserState())
-    private val blockList = mutableSetOf<String>() // TODO extract out of repo to common data source
 
     private var lastMessage = ConcurrentHashMap<String, String>()
     private val loadedRecentsInChannels = mutableSetOf<String>()
@@ -99,19 +103,26 @@ class ChatRepository @Inject constructor(
             pubSubManager.messages.collect { pubSubMessage ->
                 when (pubSubMessage) {
                     is PubSubMessage.PointRedemption -> {
-                        if (pubSubMessage.data.user.id in blockList) return@collect
+                        if (ignoresRepository.isUserBlocked(pubSubMessage.data.user.id)) {
+                            return@collect
+                        }
+
                         knownRewards[pubSubMessage.data.id] = pubSubMessage
 
                         if (!pubSubMessage.data.reward.requiresUserInput) {
                             val parsed = PointRedemptionMessage.parsePointReward(pubSubMessage.timestamp, pubSubMessage.data)
+                            val messageWithIgnores = ignoresRepository.applyIgnores(parsed) ?: return@collect
+                            val messageWithHighlights = highlightsRepository.calculateHighlightState(messageWithIgnores)
                             messages[pubSubMessage.channelName]?.update {
-                                it.addAndLimit(ChatItem(parsed), scrollBackLength)
+                                it.addAndLimit(ChatItem(messageWithHighlights), scrollBackLength)
                             }
                         }
                     }
 
                     is PubSubMessage.Whisper         -> {
-                        if (pubSubMessage.data.userId in blockList) return@collect
+                        if (ignoresRepository.isUserBlocked(pubSubMessage.data.userId)) {
+                            return@collect
+                        }
 
                         val parsed = runCatching {
                             WhisperMessage.fromPubSub(pubSubMessage.data)
@@ -189,21 +200,6 @@ class ChatRepository @Inject constructor(
             }
         }
     }
-
-    suspend fun loadUserBlocks(id: String) = withContext(Dispatchers.Default) {
-        if (!dankChatPreferenceStore.isLoggedIn) {
-            return@withContext
-        }
-
-        apiManager.getUserBlocks(id)?.let { (data) ->
-            blockList.clear()
-            blockList.addAll(data.map { it.id })
-        }
-    }
-
-    fun isUserBlocked(targetUserId: String): Boolean = targetUserId in blockList
-    fun addUserBlock(targetUserId: String) = blockList.add(targetUserId)
-    fun removeUserBlock(targetUserId: String) = blockList.remove(targetUserId)
 
     suspend fun loadChatters(channel: String) = withContext(Dispatchers.Default) {
         measureTimeMillis {
@@ -359,9 +355,6 @@ class ChatRepository @Inject constructor(
         _channels.value = updatedChannels
     }
 
-    fun clearIgnores() {
-        blockList.clear()
-    }
 
     // TODO should be null if anon
     private fun connect(userName: String, oauth: String) {
@@ -539,9 +532,8 @@ class ChatRepository @Inject constructor(
             return
         }
 
-        // TODO
         val userId = ircMessage.tags["user-id"]
-        if (userId in blockList) {
+        if (ignoresRepository.isUserBlocked(userId)) {
             return
         }
 
@@ -572,7 +564,7 @@ class ChatRepository @Inject constructor(
     private suspend fun handleMessage(ircMessage: IrcMessage) {
         // TODO
         val userId = ircMessage.tags["user-id"]
-        if (userId in blockList) {
+        if (ignoresRepository.isUserBlocked(userId)) {
             return
         }
 
@@ -737,7 +729,7 @@ class ChatRepository @Inject constructor(
         measureTimeMillis {
             for (recentMessage in recentMessages) {
                 val parsedIrc = IrcMessage.parse(recentMessage)
-                if (parsedIrc.tags["user-id"] in blockList) {
+                if (ignoresRepository.isUserBlocked(parsedIrc.tags["user-id"])) {
                     continue
                 }
 

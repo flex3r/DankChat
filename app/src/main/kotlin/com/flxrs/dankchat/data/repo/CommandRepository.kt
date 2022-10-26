@@ -12,11 +12,13 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.system.measureTimeMillis
 import kotlin.time.Duration.Companion.seconds
 
+@Singleton
 class CommandRepository @Inject constructor(
-    private val chatRepository: ChatRepository,
+    private val ignoresRepository: IgnoresRepository,
     private val apiManager: ApiManager,
     private val preferenceStore: DankChatPreferenceStore
 ) {
@@ -117,9 +119,10 @@ class CommandRepository @Inject constructor(
         val result = runCatching { apiManager.blockUser(targetId) }
         return when {
             result.isSuccess -> {
-                chatRepository.addUserBlock(targetId)
+                ignoresRepository.addUserBlock(targetId)
                 CommandResult.Accepted("You successfully blocked user $target")
             }
+
             else             -> CommandResult.Accepted("User $target couldn't be blocked, an unknown error occurred!")
         }
     }
@@ -137,9 +140,10 @@ class CommandRepository @Inject constructor(
         val result = runCatching { apiManager.unblockUser(targetId) }
         return when {
             result.isSuccess -> {
-                chatRepository.removeUserBlock(targetId)
+                ignoresRepository.removeUserBlock(targetId)
                 CommandResult.Accepted("You successfully unblocked user $target")
             }
+
             else             -> CommandResult.Accepted("User $target couldn't be unblocked, an unknown error occurred!")
         }
     }

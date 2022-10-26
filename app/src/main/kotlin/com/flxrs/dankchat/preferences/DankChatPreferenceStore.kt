@@ -12,14 +12,19 @@ import com.flxrs.dankchat.preferences.command.CommandItem
 import com.flxrs.dankchat.preferences.multientry.MultiEntryDto
 import com.flxrs.dankchat.preferences.upload.ImageUploader
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class DankChatPreferenceStore @Inject constructor(private val context: Context) {
+@Singleton
+class DankChatPreferenceStore @Inject constructor(
+    @ApplicationContext private val context: Context
+) {
     private val dankChatPreferences: SharedPreferences = context.getSharedPreferences(context.getString(R.string.shared_preference_key), Context.MODE_PRIVATE)
     private val defaultPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 

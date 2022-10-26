@@ -3,10 +3,11 @@ package com.flxrs.dankchat.chat.user
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flxrs.dankchat.data.repo.ChatRepository
-import com.flxrs.dankchat.data.repo.DataRepository
 import com.flxrs.dankchat.data.api.dto.HelixUserDto
 import com.flxrs.dankchat.data.api.dto.UserFollowsDto
+import com.flxrs.dankchat.data.repo.ChatRepository
+import com.flxrs.dankchat.data.repo.DataRepository
+import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.DateTimeUtils.asParsedZonedDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +21,7 @@ class UserPopupViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val chatRepository: ChatRepository,
     private val dataRepository: DataRepository,
+    private val ignoresRepository: IgnoresRepository,
     private val preferenceStore: DankChatPreferenceStore,
 ) : ViewModel() {
 
@@ -48,12 +50,12 @@ class UserPopupViewModel @Inject constructor(
 
     fun blockUser() = updateStateWith { targetUserId, _ ->
         dataRepository.blockUser(targetUserId)
-        chatRepository.addUserBlock(targetUserId)
+        ignoresRepository.addUserBlock(targetUserId)
     }
 
     fun unblockUser() = updateStateWith { targetUserId, _ ->
         dataRepository.unblockUser(targetUserId)
-        chatRepository.removeUserBlock(targetUserId)
+        ignoresRepository.removeUserBlock(targetUserId)
     }
 
     fun timeoutUser(index: Int) {
@@ -107,7 +109,7 @@ class UserPopupViewModel @Inject constructor(
             val channelUserFollows = channelId?.let { dataRepository.getUserFollows(args.targetUserId, channelId) }
             val user = dataRepository.getUser(args.targetUserId)
             val currentUserFollows = dataRepository.getUserFollows(currentUserId, args.targetUserId)
-            val isBlocked = chatRepository.isUserBlocked(args.targetUserId)
+            val isBlocked = ignoresRepository.isUserBlocked(args.targetUserId)
 
             mapToState(
                 user = user,

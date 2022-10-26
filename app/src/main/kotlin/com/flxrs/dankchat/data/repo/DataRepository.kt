@@ -17,13 +17,14 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.system.measureTimeMillis
 
+@Singleton
 class DataRepository @Inject constructor(
     private val apiManager: ApiManager,
     private val emoteRepository: EmoteRepository,
     private val recentUploadsRepository: RecentUploadsRepository,
-    private val dankChatPreferenceStore: DankChatPreferenceStore,
 ) {
     private val emotes = ConcurrentHashMap<String, MutableStateFlow<List<GenericEmote>>>()
 
