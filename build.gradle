@@ -30,6 +30,10 @@ buildscript {
         webkit_version = '1.5.0'
         room_version = '2.5.0-beta01'
 
+        // Compose
+        compose_bom_version = '2022.10.00'
+        mdc_compose_adapter_version = '1.0.21'
+
         // Third-party
         coil_version = '2.2.2'
         gif_drawable_version = '1.2.25'
