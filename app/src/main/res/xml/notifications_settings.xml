@@ -28,8 +28,8 @@
 
         <Preference
             android:key="@string/preference_custom_mentions_key"
-            android:summary="@string/preference_custom_mentions_summary"
-            android:title="@string/preference_custom_mentions_title"
+            android:summary="@string/preference_highlights_summary"
+            android:title="@string/highlights"
             app:iconSpaceReserved="false" />
 
         <Preference

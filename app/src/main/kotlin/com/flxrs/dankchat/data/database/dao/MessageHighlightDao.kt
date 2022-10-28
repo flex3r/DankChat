@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MessageHighlightDao {
 
+    @Query("SELECT * FROM message_highlight WHERE id = :id")
+    suspend fun getMessageHighlight(id: Long): MessageHighlightEntity
+
     @Query("SELECT * FROM message_highlight")
     suspend fun getMessageHighlights(): List<MessageHighlightEntity>
 
@@ -17,7 +20,7 @@ interface MessageHighlightDao {
     fun getMessageHighlightsFlow(): Flow<List<MessageHighlightEntity>>
 
     @Upsert
-    suspend fun addHighlight(highlight: MessageHighlightEntity)
+    suspend fun addHighlight(highlight: MessageHighlightEntity): Long
 
     @Upsert
     suspend fun addHighlights(highlights: List<MessageHighlightEntity>)

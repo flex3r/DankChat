@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.flxrs.dankchat.preferences.ui.highlights.MessageHighlightItem" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        style="?attr/materialCardViewStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardCornerRadius="4dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                app:layout_constraintBottom_toTopOf="@id/pattern"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/pattern"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toStartOf="@id/delete"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/title">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/pattern_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:text="@={item.pattern}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/delete"
+                style="?attr/materialIconButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/ic_clear"
+                app:layout_constraintBottom_toBottomOf="@id/pattern"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/pattern"
+                app:layout_constraintTop_toTopOf="@id/pattern" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/enabled"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:checked="@={item.enabled}"
+                android:text="@string/enabled"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/is_regex"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/pattern" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/is_regex"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:checked="@={item.regex}"
+                android:text="@string/multi_entry_header_regex"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/is_case_sensitive"
+                app:layout_constraintStart_toEndOf="@id/enabled"
+                app:layout_constraintTop_toBottomOf="@id/pattern" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/is_case_sensitive"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:checked="@={item.caseSensitive}"
+                android:text="@string/case_sensitive"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/is_regex"
+                app:layout_constraintTop_toBottomOf="@id/pattern" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>

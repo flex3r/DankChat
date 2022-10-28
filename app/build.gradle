@@ -45,10 +45,6 @@ android {
     }
     buildFeatures {
         dataBinding = true
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.3.2"
     }
     buildTypes {
         release {
@@ -130,18 +126,6 @@ dependencies {
 
 // Material
     implementation "com.google.android.material:material:$material_version"
-    implementation "com.google.android.material:compose-theme-adapter-3:$mdc_compose_adapter_version"
-
-// Compose
-    def composeBom = platform("androidx.compose:compose-bom:$compose_bom_version")
-    implementation composeBom
-    androidTestImplementation composeBom
-    implementation "androidx.compose.material3:material3"
-    implementation "androidx.compose.material:material"
-    implementation "androidx.compose.ui:ui-tooling-preview"
-    debugImplementation "androidx.compose.ui:ui-tooling"
-    implementation "androidx.activity:activity-compose:$activity_version"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
 
 
 // Dependency injection

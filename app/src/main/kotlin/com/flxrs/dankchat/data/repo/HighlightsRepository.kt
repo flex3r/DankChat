@@ -4,7 +4,7 @@ import android.util.Log
 import com.flxrs.dankchat.data.database.dao.MessageHighlightDao
 import com.flxrs.dankchat.data.database.dao.UserHighlightDao
 import com.flxrs.dankchat.data.database.entity.MessageHighlightEntity
-import com.flxrs.dankchat.data.database.entity.MessageHighlightType
+import com.flxrs.dankchat.data.database.entity.MessageHighlightEntityType
 import com.flxrs.dankchat.data.database.entity.UserHighlightEntity
 import com.flxrs.dankchat.data.twitch.message.*
 import com.flxrs.dankchat.di.ApplicationScope
@@ -26,8 +26,8 @@ class HighlightsRepository @Inject constructor(
     @ApplicationScope private val coroutineScope: CoroutineScope
 ) {
 
-    private val messageHighlights = messageHighlightDao.getMessageHighlightsFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
-    private val userHighlights = userHighlightDao.getUserHighlightsFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+    val messageHighlights = messageHighlightDao.getMessageHighlightsFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+    val userHighlights = userHighlightDao.getUserHighlightsFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
     private val currentUserNameRegex = preferences.currentUserNameFlow
         .map { it?.let { """\b$it\b""".toRegex(RegexOption.IGNORE_CASE) } }
         .stateIn(coroutineScope, SharingStarted.Eagerly, null)
@@ -41,9 +41,46 @@ class HighlightsRepository @Inject constructor(
         }
     }
 
+    suspend fun addMessageHighlight(): MessageHighlightEntity {
+        val entity = MessageHighlightEntity(
+            id = 0,
+            enabled = true,
+            type = MessageHighlightEntityType.Custom,
+            pattern = ""
+        )
+        val id = messageHighlightDao.addHighlight(entity)
+        return messageHighlightDao.getMessageHighlight(id)
+    }
+
+    suspend fun removeMessageHighlight(entity: MessageHighlightEntity) {
+        messageHighlightDao.deleteHighlight(entity)
+    }
+
+    suspend fun updateMessageHighlights(entities: List<MessageHighlightEntity>) {
+        messageHighlightDao.addHighlights(entities)
+    }
+
+    suspend fun addUserHighlight(): UserHighlightEntity {
+        val entity = UserHighlightEntity(
+            id = 0,
+            enabled = true,
+            username = ""
+        )
+        val id = userHighlightDao.addHighlight(entity)
+        return userHighlightDao.getUserHighlight(id)
+    }
+
+    suspend fun removeUserHighlight(entity: UserHighlightEntity) {
+        userHighlightDao.deleteHighlight(entity)
+    }
+
+    suspend fun updateUserHighlights(entities: List<UserHighlightEntity>) {
+        userHighlightDao.addHighlights(entities)
+    }
+
     private fun UserNoticeMessage.calculateHighlightState(): UserNoticeMessage {
         val subscriptionEnabled = messageHighlights.value
-            .any { it.enabled && it.type == MessageHighlightType.Subscription }
+            .any { it.enabled && it.type == MessageHighlightEntityType.Subscription }
 
         val highlights = when {
             subscriptionEnabled -> listOf(Highlight(HighlightType.Subscription))
@@ -97,7 +134,7 @@ class HighlightsRepository @Inject constructor(
 
             // custom message highlights
             enabledMessageHighlights
-                .filter { it.type == MessageHighlightType.Custom }
+                .filter { it.type == MessageHighlightEntityType.Custom }
                 .forEach {
                     val regex = it.regex ?: return@forEach
 
@@ -112,18 +149,18 @@ class HighlightsRepository @Inject constructor(
     }
 
     private val List<MessageHighlightEntity>.areRewardsEnabled: Boolean
-        get() = isMessageHighlightTypeEnabled(MessageHighlightType.ChannelPointRedemption)
+        get() = isMessageHighlightTypeEnabled(MessageHighlightEntityType.ChannelPointRedemption)
 
     private val List<MessageHighlightEntity>.areFirstMessagesEnabled: Boolean
-        get() = isMessageHighlightTypeEnabled(MessageHighlightType.FirstMessage)
+        get() = isMessageHighlightTypeEnabled(MessageHighlightEntityType.FirstMessage)
 
     private val List<MessageHighlightEntity>.areElevatedMessagesEnabled: Boolean
-        get() = isMessageHighlightTypeEnabled(MessageHighlightType.ElevatedMessage)
+        get() = isMessageHighlightTypeEnabled(MessageHighlightEntityType.ElevatedMessage)
 
     private val List<MessageHighlightEntity>.isOwnUserNameEnabled: Boolean
-        get() = isMessageHighlightTypeEnabled(MessageHighlightType.Username)
+        get() = isMessageHighlightTypeEnabled(MessageHighlightEntityType.Username)
 
-    private fun List<MessageHighlightEntity>.isMessageHighlightTypeEnabled(type: MessageHighlightType): Boolean {
+    private fun List<MessageHighlightEntity>.isMessageHighlightTypeEnabled(type: MessageHighlightEntityType): Boolean {
         return any { it.type == type }
     }
 
@@ -180,7 +217,7 @@ class HighlightsRepository @Inject constructor(
             MessageHighlightEntity(
                 id = 0,
                 enabled = true,
-                type = MessageHighlightType.Custom,
+                type = MessageHighlightEntityType.Custom,
                 pattern = it.entry,
                 isRegex = it.isRegex
             )
@@ -201,11 +238,11 @@ class HighlightsRepository @Inject constructor(
     companion object {
         private val TAG = HighlightsRepository::class.java.simpleName
         private val DEFAULT_HIGHLIGHTS = listOf(
-            MessageHighlightEntity(id = 1, enabled = true, type = MessageHighlightType.Username, pattern = ""),
-            MessageHighlightEntity(id = 2, enabled = true, type = MessageHighlightType.Subscription, pattern = ""),
-            MessageHighlightEntity(id = 3, enabled = true, type = MessageHighlightType.ChannelPointRedemption, pattern = ""),
-            MessageHighlightEntity(id = 4, enabled = true, type = MessageHighlightType.FirstMessage, pattern = ""),
-            MessageHighlightEntity(id = 5, enabled = true, type = MessageHighlightType.ElevatedMessage, pattern = ""),
+            MessageHighlightEntity(id = 1, enabled = true, type = MessageHighlightEntityType.Username, pattern = ""),
+            MessageHighlightEntity(id = 2, enabled = true, type = MessageHighlightEntityType.Subscription, pattern = ""),
+            MessageHighlightEntity(id = 3, enabled = true, type = MessageHighlightEntityType.ChannelPointRedemption, pattern = ""),
+            MessageHighlightEntity(id = 4, enabled = true, type = MessageHighlightEntityType.FirstMessage, pattern = ""),
+            MessageHighlightEntity(id = 5, enabled = true, type = MessageHighlightEntityType.ElevatedMessage, pattern = ""),
         )
     }
 }

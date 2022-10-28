@@ -11,7 +11,7 @@ data class MessageHighlightEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
     val enabled: Boolean,
-    val type: MessageHighlightType,
+    val type: MessageHighlightEntityType,
     val pattern: String,
 
     @ColumnInfo(name = "is_regex")
@@ -46,7 +46,7 @@ data class MessageHighlightEntity(
 }
 
 // TODO webchat detection
-enum class MessageHighlightType {
+enum class MessageHighlightEntityType {
     Username,
     Subscription,
     ChannelPointRedemption,

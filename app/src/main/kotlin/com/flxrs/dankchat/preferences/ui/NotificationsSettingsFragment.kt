@@ -9,9 +9,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.preference.Preference
 import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.databinding.HighlightsBottomsheetBinding
 import com.flxrs.dankchat.databinding.MultiEntryBottomsheetBinding
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.preferences.multientry.MultiEntryAdapter
@@ -19,9 +23,15 @@ import com.flxrs.dankchat.preferences.multientry.MultiEntryDto
 import com.flxrs.dankchat.preferences.multientry.MultiEntryDto.Companion.toDto
 import com.flxrs.dankchat.preferences.multientry.MultiEntryDto.Companion.toEntryItem
 import com.flxrs.dankchat.preferences.multientry.MultiEntryItem
+import com.flxrs.dankchat.preferences.ui.highlights.HighlightsMenuAdapter
+import com.flxrs.dankchat.preferences.ui.highlights.HighlightsMenuTab
+import com.flxrs.dankchat.preferences.ui.highlights.HighlightsViewModel
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
+import com.flxrs.dankchat.utils.extensions.expand
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.math.roundToInt
@@ -45,7 +55,10 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(view.context)
         findPreference<Preference>(getString(R.string.preference_custom_mentions_key))?.apply {
-            setOnPreferenceClickListener { showMultiEntryPreference(view, key, preferences, title) }
+            setOnPreferenceClickListener {
+                showHighlightsSheet(view)
+                true
+            }
         }
         findPreference<Preference>(getString(R.string.preference_blacklist_key))?.apply {
             setOnPreferenceClickListener { showMultiEntryPreference(view, key, preferences, title) }
@@ -54,6 +67,48 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.notifications_settings, rootKey)
+    }
+
+    private fun showHighlightsSheet(root: View) {
+        val context = root.context
+        val binding = HighlightsBottomsheetBinding.inflate(LayoutInflater.from(context), root as? ViewGroup, false).apply {
+            highlightsSheet.updateLayoutParams {
+                height = resources.displayMetrics.heightPixels
+            }
+        }
+        val adapter = HighlightsMenuAdapter(
+            addItem = { viewModel.addHighlight(HighlightsMenuTab.values()[binding.highlightsTabs.selectedTabPosition]) },
+            deleteItem = viewModel::removeHighlight,
+        )
+        with(binding) {
+            highlightsViewPager.adapter = adapter
+            TabLayoutMediator(highlightsTabs, highlightsViewPager) { tab, pos ->
+                val highlightTab = HighlightsMenuTab.values()[pos]
+                tab.text = when (highlightTab) {
+                    // TODO
+                    HighlightsMenuTab.Messages -> "Messages"
+                    HighlightsMenuTab.Users    -> "Users"
+                }
+            }.attach()
+        }
+        BottomSheetDialog(context).apply {
+            viewModel.fetchHighlights()
+            lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    viewModel.highlightTabs.collect {
+                        adapter.submitList(it)
+                    }
+                }
+            }
+            setOnDismissListener {
+                viewModel.updateHighlights(adapter.currentList)
+            }
+            setContentView(binding.root)
+            behavior.skipCollapsed = true
+            behavior.isFitToContents = false
+            behavior.expand()
+            show()
+        }
     }
 
     private fun showMultiEntryPreference(root: View, key: String, sharedPreferences: SharedPreferences, title: CharSequence?): Boolean {
