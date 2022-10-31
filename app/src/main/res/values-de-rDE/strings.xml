@@ -95,7 +95,10 @@
     <string name="mentions">Erwähnungen</string>
     <string name="confirm_channel_removal_title">Kanalentfernung bestätigen</string>
     <string name="confirm_channel_removal_message">Willst du diesen Kanal wirklich entfernen?</string>
+    <string name="confirm_channel_removal_message_named">Willst du den Kanal \"%1$s\" wirklich entfernen?</string>
     <string name="confirm_channel_removal_positive_button">Entfernen</string>
+    <string name="confirm_channel_block_title">Kanal-Blockieren bestätigen</string>
+    <string name="confirm_channel_block_message_named">Willst du den Kanal \"%1$s\" wirklich blockieren?</string>
     <string name="user_popup_follow">Folgen</string>
     <string name="user_popup_unfollow">Entfolgen</string>
     <string name="user_popup_block">Blockieren</string>
@@ -275,6 +278,13 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="oauth_verify_failed">Login-Token konnte nicht verifiziert werden, überprüfe deine Verbindung.</string>
     <string name="preference_retain_webview_title">Neuladen des Streams verhindern</string>
     <string name="preference_retain_webview_summary">Aktiviert experimentelles Verhindern vom Neuladen des Streams, nachdem sich die Orientierung ändert oder DankChat neu geöffnet wird.</string>
+    <string name="reset_media_uploader_dialog_title">Medienuploader zurücksetzen</string>
+    <string name="reset_media_uploader_dialog_message">Willst du die Einstellungen des Uploaders wirklich zurücksetzen?</string>
+    <string name="reset_media_uploader_dialog_positive">Zurücksetzen</string>
+    <string name="clear_recent_uploads_dialog_title">Upload-Verlauf löschen</string>
+    <string name="clear_recent_uploads_dialog_message">Willst du den Upload-Verlauf wirklich löschen? Deine hochgeladenen Dateien werden nicht gelöscht.</string>
+    <string name="clear_recent_uploads_dialog_positive">Löschen</string>
+    <string name="copied_image_url">Bild-URL kopiert</string>
     <plurals name="viewers">
         <item quantity="one">Live mit %d Zuschauer</item>
         <item quantity="other">Live mit %d Zuschauern</item>
