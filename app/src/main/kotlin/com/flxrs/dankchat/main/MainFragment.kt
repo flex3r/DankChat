@@ -156,7 +156,7 @@ class MainFragment : Fragment() {
                 val channelName = tabAdapter.titleList[position]
                 tab.text = dankChatPreferences.getRenamedChannel(channelName) ?: channelName
                 tab.setInitialColor()
-            }.apply { attach() }
+            }
 
             tabs.getTabAt(tabs.selectedTabPosition)?.removeBadge()
             tabs.addOnTabSelectedListener(tabSelectionListener)
@@ -395,8 +395,9 @@ class MainFragment : Fragment() {
         }
 
         val channels = dankChatPreferences.getChannels()
-        channels.forEach { tabAdapter.addFragment(it) }
+        tabAdapter.updateFragments(channels)
         binding.chatViewpager.offscreenPageLimit = calculatePageLimit(channels.size)
+        tabLayoutMediator.attach()
 
         (requireActivity() as AppCompatActivity).apply {
             setSupportActionBar(binding.toolbar)
