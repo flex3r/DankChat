@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.data.repo.IgnoresRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,7 +18,9 @@ class IgnoresViewModel @Inject constructor(
     private val messageIgnoresTab = MutableStateFlow(IgnoresTabItem(IgnoresTab.Messages, listOf(AddItem)))
     private val userIgnoresTab = MutableStateFlow(IgnoresTabItem(IgnoresTab.Users, listOf(AddItem)))
     private val twitchBlocksTab = MutableStateFlow(IgnoresTabItem(IgnoresTab.Twitch, emptyList()))
+    private val eventChannel = Channel<IgnoreEvent>(Channel.CONFLATED)
 
+    val events = eventChannel.receiveAsFlow()
     val ignoreTabs = combine(messageIgnoresTab, userIgnoresTab, twitchBlocksTab) { messageIgnoresTab, userIgnoresTab, twitchBlocksTab ->
         listOf(messageIgnoresTab, userIgnoresTab, twitchBlocksTab)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), INITIAL_STATE)
@@ -52,25 +55,67 @@ class IgnoresViewModel @Inject constructor(
         }
     }
 
-    fun removeIgnore(item: IgnoreItem) = viewModelScope.launch {
+    fun addIgnoreItem(item: IgnoreItem, position: Int) = viewModelScope.launch {
         when (item) {
             is MessageIgnoreItem -> {
-                ignoresRepository.removeMessageIgnore(item.toEntity())
-                messageIgnoresTab.update { it.copy(items = it.items - item) }
+                ignoresRepository.updateMessageIgnore(item.toEntity())
+                messageIgnoresTab.update {
+                    val mutableItems = it.items.toMutableList()
+                    mutableItems.add(position, item)
+                    it.copy(items = mutableItems)
+                }
             }
 
             is UserIgnoreItem    -> {
-                ignoresRepository.removeUserIgnore(item.toEntity())
-                userIgnoresTab.update { it.copy(items = it.items - item) }
+                ignoresRepository.updateUserIgnore(item.toEntity())
+                userIgnoresTab.update {
+                    val mutableItems = it.items.toMutableList()
+                    mutableItems.add(position, item)
+                    it.copy(items = mutableItems)
+                }
             }
 
             is TwitchBlockItem   -> {
                 runCatching {
+                    ignoresRepository.addUserBlock(item.userId, item.username)
+                    twitchBlocksTab.update {
+                        val mutableItems = it.items.toMutableList()
+                        mutableItems.add(position, item)
+                        it.copy(items = mutableItems)
+                    }
+                }.getOrElse {
+                    eventChannel.trySend(IgnoreEvent.BlockError(item))
+                }
+            }
+
+            else                 -> Unit
+        }
+    }
+
+    fun removeIgnore(item: IgnoreItem) = viewModelScope.launch {
+        when (item) {
+            is MessageIgnoreItem -> {
+                val position = messageIgnoresTab.value.items.indexOf(item)
+                ignoresRepository.removeMessageIgnore(item.toEntity())
+                messageIgnoresTab.update { it.copy(items = it.items - item) }
+                eventChannel.trySend(IgnoreEvent.ItemRemoved(item, position))
+            }
+
+            is UserIgnoreItem    -> {
+                val position = userIgnoresTab.value.items.indexOf(item)
+                ignoresRepository.removeUserIgnore(item.toEntity())
+                userIgnoresTab.update { it.copy(items = it.items - item) }
+                eventChannel.trySend(IgnoreEvent.ItemRemoved(item, position))
+            }
+
+            is TwitchBlockItem   -> {
+                runCatching {
+                    val position = twitchBlocksTab.value.items.indexOf(item)
                     ignoresRepository.removeUserBlock(item.userId, item.username)
                     twitchBlocksTab.update { it.copy(items = it.items - item) }
-                    // TODO snackbar event
+                    eventChannel.trySend(IgnoreEvent.ItemRemoved(item, position))
                 }.getOrElse {
-                    // TODO snackbar event
+                    eventChannel.trySend(IgnoreEvent.UnblockError(item))
                 }
             }
 

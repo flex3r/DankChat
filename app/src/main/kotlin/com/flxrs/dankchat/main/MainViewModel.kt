@@ -63,7 +63,7 @@ class MainViewModel @Inject constructor(
 
     val activeChannel: StateFlow<String> = chatRepository.activeChannel
 
-    private val eventChannel = Channel<Event>(Channel.BUFFERED)
+    private val eventChannel = Channel<Event>(Channel.CONFLATED)
     private val _dataLoadingState = MutableStateFlow<DataLoadingState>(DataLoadingState.None)
     private val _imageUploadedState = MutableStateFlow<ImageUploadState>(ImageUploadState.None)
     private val streamInfoEnabled = MutableStateFlow(true)

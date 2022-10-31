@@ -83,6 +83,10 @@ class HighlightsRepository @Inject constructor(
         return messageHighlightDao.getMessageHighlight(id)
     }
 
+    suspend fun updateMessageHighlight(entity: MessageHighlightEntity) {
+        messageHighlightDao.addHighlight(entity)
+    }
+
     suspend fun removeMessageHighlight(entity: MessageHighlightEntity) {
         messageHighlightDao.deleteHighlight(entity)
     }
@@ -99,6 +103,10 @@ class HighlightsRepository @Inject constructor(
         )
         val id = userHighlightDao.addHighlight(entity)
         return userHighlightDao.getUserHighlight(id)
+    }
+
+    suspend fun updateUserHighlight(entity: UserHighlightEntity) {
+        userHighlightDao.addHighlight(entity)
     }
 
     suspend fun removeUserHighlight(entity: UserHighlightEntity) {

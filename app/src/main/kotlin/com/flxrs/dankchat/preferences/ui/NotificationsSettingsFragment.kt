@@ -14,13 +14,13 @@ import androidx.preference.Preference
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.HighlightsIgnoresBottomsheetBinding
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
+import com.flxrs.dankchat.preferences.ui.highlights.HighlightEvent
 import com.flxrs.dankchat.preferences.ui.highlights.HighlightsTab
 import com.flxrs.dankchat.preferences.ui.highlights.HighlightsTabAdapter
 import com.flxrs.dankchat.preferences.ui.highlights.HighlightsViewModel
-import com.flxrs.dankchat.preferences.ui.ignores.IgnoresTab
-import com.flxrs.dankchat.preferences.ui.ignores.IgnoresTabAdapter
-import com.flxrs.dankchat.preferences.ui.ignores.IgnoresViewModel
+import com.flxrs.dankchat.preferences.ui.ignores.*
 import com.flxrs.dankchat.utils.extensions.expand
+import com.flxrs.dankchat.utils.extensions.showShortSnackbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -93,6 +93,20 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
                     }
                 }
             }
+            lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    highlightsViewModel.events.collect { event ->
+                        when (event) {
+                            is HighlightEvent.ItemRemoved -> {
+                                // TODO
+                                binding.root.showShortSnackbar("Item removed") {
+                                    setAction("Undo") { highlightsViewModel.addHighlightItem(event.item, event.position) }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             setOnDismissListener {
                 highlightsViewModel.updateHighlights(adapter.currentList)
             }
@@ -133,6 +147,26 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
                 repeatOnLifecycle(Lifecycle.State.STARTED) {
                     ignoresViewModel.ignoreTabs.collect {
                         adapter.submitList(it)
+                    }
+                }
+            }
+            lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    ignoresViewModel.events.collect { event ->
+                        when (event) {
+                            // TODO
+                            is IgnoreEvent.UnblockError -> binding.root.showShortSnackbar("Failed to unblock user ${event.item.username}")
+                            is IgnoreEvent.BlockError   -> binding.root.showShortSnackbar("Failed to block user ${event.item.username}")
+                            is IgnoreEvent.ItemRemoved  -> {
+                                val snackBarText = when (event.item) {
+                                    is TwitchBlockItem -> "Unblocked user ${event.item.username}"
+                                    else               -> "Item removed"
+                                }
+                                binding.root.showShortSnackbar(snackBarText) {
+                                    setAction("Undo") { ignoresViewModel.addIgnoreItem(event.item, event.position) }
+                                }
+                            }
+                        }
                     }
                 }
             }

@@ -138,6 +138,10 @@ class IgnoresRepository @Inject constructor(
         return messageIgnoreDao.getMessageIgnore(id)
     }
 
+    suspend fun updateMessageIgnore(entity: MessageIgnoreEntity) {
+        messageIgnoreDao.addIgnore(entity)
+    }
+
     suspend fun removeMessageIgnore(entity: MessageIgnoreEntity) {
         messageIgnoreDao.deleteIgnore(entity)
     }
@@ -154,6 +158,10 @@ class IgnoresRepository @Inject constructor(
         )
         val id = userIgnoreDao.addIgnore(entity)
         return userIgnoreDao.getUserIgnore(id)
+    }
+
+    suspend fun updateUserIgnore(entity: UserIgnoreEntity) {
+        userIgnoreDao.addIgnore(entity)
     }
 
     suspend fun removeUserIgnore(entity: UserIgnoreEntity) {

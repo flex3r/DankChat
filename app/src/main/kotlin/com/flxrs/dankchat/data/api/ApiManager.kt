@@ -174,7 +174,7 @@ class ApiManager @Inject constructor(
             }
 
             else                  -> {
-                Log.d("ApiManager", "Upload failed with ${response.code} ${response.message}")
+                Log.e("ApiManager", "Upload failed with ${response.code} ${response.message}")
                 Result.failure(ApiException(response.code, response.message))
             }
         }

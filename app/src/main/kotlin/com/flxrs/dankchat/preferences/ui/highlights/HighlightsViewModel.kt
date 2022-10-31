@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.data.database.entity.MessageHighlightEntityType
 import com.flxrs.dankchat.data.repo.HighlightsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,7 +18,9 @@ class HighlightsViewModel @Inject constructor(
 
     private val messageHighlightsTab = MutableStateFlow(HighlightsTabItem(HighlightsTab.Messages, listOf(AddItem)))
     private val userHighlightsTab = MutableStateFlow(HighlightsTabItem(HighlightsTab.Users, listOf(AddItem)))
+    private val eventChannel = Channel<HighlightEvent>(Channel.CONFLATED)
 
+    val events = eventChannel.receiveAsFlow()
     val highlightTabs = combine(messageHighlightsTab, userHighlightsTab) { messageHighlights, userHighlights ->
         listOf(messageHighlights, userHighlights)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), INITIAL_STATE)
@@ -48,16 +51,44 @@ class HighlightsViewModel @Inject constructor(
         }
     }
 
-    fun removeHighlight(item: HighlightItem) = viewModelScope.launch {
+    fun addHighlightItem(item: HighlightItem, position: Int) = viewModelScope.launch {
         when (item) {
             is MessageHighlightItem -> {
-                highlightsRepository.removeMessageHighlight(item.toEntity())
-                messageHighlightsTab.update { it.copy(items = it.items - item) }
+                highlightsRepository.updateMessageHighlight(item.toEntity())
+                messageHighlightsTab.update {
+                    val mutableItems = it.items.toMutableList()
+                    mutableItems.add(position, item)
+                    it.copy(items = mutableItems)
+                }
             }
 
             is UserHighlightItem    -> {
+                highlightsRepository.updateUserHighlight(item.toEntity())
+                userHighlightsTab.update {
+                    val mutableItems = it.items.toMutableList()
+                    mutableItems.add(position, item)
+                    it.copy(items = mutableItems)
+                }
+            }
+
+            else                    -> Unit
+        }
+    }
+
+    fun removeHighlight(item: HighlightItem) = viewModelScope.launch {
+        when (item) {
+            is MessageHighlightItem -> {
+                val position = messageHighlightsTab.value.items.indexOf(item)
+                highlightsRepository.removeMessageHighlight(item.toEntity())
+                messageHighlightsTab.update { it.copy(items = it.items - item) }
+                eventChannel.trySend(HighlightEvent.ItemRemoved(item, position))
+            }
+
+            is UserHighlightItem    -> {
+                val position = userHighlightsTab.value.items.indexOf(item)
                 highlightsRepository.removeUserHighlight(item.toEntity())
                 userHighlightsTab.update { it.copy(items = it.items - item) }
+                eventChannel.trySend(HighlightEvent.ItemRemoved(item, position))
             }
 
             else                    -> Unit
