@@ -64,11 +64,11 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
 
     var customImageUploader: ImageUploader
         get() {
-            val url = dankChatPreferences.getString(UPLOADER_URL, UPLOADER_URL_DEFAULT) ?: UPLOADER_URL_DEFAULT
+            val url = dankChatPreferences.getString(UPLOADER_URL, null) ?: return DEFAULT_UPLOADER
             val formField = dankChatPreferences.getString(UPLOADER_FORM_FIELD, UPLOADER_FORM_FIELD_DEFAULT) ?: UPLOADER_FORM_FIELD_DEFAULT
             val headers = dankChatPreferences.getString(UPLOADER_HEADERS, null)
-            val imageLinkPattern = dankChatPreferences.getString(UPLOADER_IMAGE_LINK, UPLOADER_IMAGE_LINK_DEFAULT) ?: UPLOADER_IMAGE_LINK_DEFAULT
-            val deletionLinkPattern = dankChatPreferences.getString(UPLOADER_DELETION_LINK, UPLOADER_DELETE_LINK_DEFAULT) ?: UPLOADER_DELETE_LINK_DEFAULT
+            val imageLinkPattern = dankChatPreferences.getString(UPLOADER_IMAGE_LINK, null)
+            val deletionLinkPattern = dankChatPreferences.getString(UPLOADER_DELETION_LINK, null)
 
             return ImageUploader(
                 uploadUrl = url,
