@@ -58,6 +58,12 @@ class ApiManager @Inject constructor(
             ?.data
     }
 
+    suspend fun getUsersByIds(ids: List<String>): List<HelixUserDto>? {
+        return helixApiService.getUsersByIds(ids)
+            ?.bodyOrNull<HelixUsersDto>()
+            ?.data
+    }
+
     suspend fun getUser(userId: String): HelixUserDto? {
         return helixApiService.getUserById(userId)
             ?.bodyOrNull<HelixUsersDto>()

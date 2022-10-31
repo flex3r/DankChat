@@ -73,13 +73,13 @@ fun MessageHighlightEntityType.toItemType(): MessageHighlightItem.Type = when (t
     MessageHighlightEntityType.Custom                 -> MessageHighlightItem.Type.Custom
 }
 
-fun UserHighlightEntity.toItem(): UserHighlightItem = UserHighlightItem(
+fun UserHighlightEntity.toItem() = UserHighlightItem(
     id = id,
     enabled = enabled,
     username = username
 )
 
-fun UserHighlightItem.toEntity(): UserHighlightEntity = UserHighlightEntity(
+fun UserHighlightItem.toEntity() = UserHighlightEntity(
     id = id,
     enabled = enabled,
     username = username

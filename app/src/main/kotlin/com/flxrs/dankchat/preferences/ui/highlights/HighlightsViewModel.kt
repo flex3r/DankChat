@@ -15,8 +15,8 @@ class HighlightsViewModel @Inject constructor(
     private val highlightsRepository: HighlightsRepository
 ) : ViewModel() {
 
-    private val messageHighlightsTab = MutableStateFlow(HighlightsTabItem(HighlightsMenuTab.Messages, listOf(AddItem)))
-    private val userHighlightsTab = MutableStateFlow(HighlightsTabItem(HighlightsMenuTab.Users, listOf(AddItem)))
+    private val messageHighlightsTab = MutableStateFlow(HighlightsTabItem(HighlightsTab.Messages, listOf(AddItem)))
+    private val userHighlightsTab = MutableStateFlow(HighlightsTabItem(HighlightsTab.Users, listOf(AddItem)))
 
     val highlightTabs = combine(messageHighlightsTab, userHighlightsTab) { messageHighlights, userHighlights ->
         listOf(messageHighlights, userHighlights)
@@ -25,20 +25,21 @@ class HighlightsViewModel @Inject constructor(
     fun fetchHighlights() {
         val messageHighlights = highlightsRepository.messageHighlights.value.map { it.toItem() }
         val userHighlights = highlightsRepository.userHighlights.value.map { it.toItem() }
+
         messageHighlightsTab.update { it.copy(items = listOf(AddItem) + messageHighlights) }
         userHighlightsTab.update { it.copy(items = listOf(AddItem) + userHighlights) }
     }
 
-    fun addHighlight(tab: HighlightsMenuTab) = viewModelScope.launch {
+    fun addHighlight(tab: HighlightsTab) = viewModelScope.launch {
         when (tab) {
-            HighlightsMenuTab.Messages -> {
+            HighlightsTab.Messages -> {
                 val entity = highlightsRepository.addMessageHighlight()
                 messageHighlightsTab.update {
                     it.copy(items = it.items + entity.toItem())
                 }
             }
 
-            HighlightsMenuTab.Users    -> {
+            HighlightsTab.Users    -> {
                 val entity = highlightsRepository.addUserHighlight()
                 userHighlightsTab.update {
                     it.copy(items = it.items + entity.toItem())
@@ -65,8 +66,8 @@ class HighlightsViewModel @Inject constructor(
 
     fun updateHighlights(tabItems: List<HighlightsTabItem>) = viewModelScope.launch {
         tabItems.forEach { tab ->
-            when (tab.type) {
-                HighlightsMenuTab.Messages -> {
+            when (tab.tab) {
+                HighlightsTab.Messages -> {
                     val (blankEntities, entities) = tab.items
                         .filterIsInstance<MessageHighlightItem>()
                         .map { it.toEntity() }
@@ -76,7 +77,7 @@ class HighlightsViewModel @Inject constructor(
                     blankEntities.forEach { highlightsRepository.removeMessageHighlight(it) }
                 }
 
-                HighlightsMenuTab.Users    -> {
+                HighlightsTab.Users    -> {
                     val (blankEntities, entities) = tab.items
                         .filterIsInstance<UserHighlightItem>()
                         .map { it.toEntity() }
@@ -91,8 +92,8 @@ class HighlightsViewModel @Inject constructor(
 
     companion object {
         private val INITIAL_STATE = listOf(
-            HighlightsTabItem(HighlightsMenuTab.Messages, listOf(AddItem)),
-            HighlightsTabItem(HighlightsMenuTab.Users, listOf(AddItem)),
+            HighlightsTabItem(HighlightsTab.Messages, listOf(AddItem)),
+            HighlightsTabItem(HighlightsTab.Users, listOf(AddItem)),
         )
     }
 }

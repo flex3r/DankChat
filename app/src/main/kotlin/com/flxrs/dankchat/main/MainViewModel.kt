@@ -139,8 +139,6 @@ class MainViewModel @Inject constructor(
                     is Preference.RoomState          -> roomStateEnabled.value = it.enabled
                     is Preference.StreamInfo         -> streamInfoEnabled.value = it.enabled
                     is Preference.Input              -> inputEnabled.value = it.enabled
-                    is Preference.CustomMentions     -> Unit //setMentionEntries(it.entries)
-                    is Preference.BlackList          -> Unit //setBlacklistEntries(it.entries)
                     is Preference.SupibotSuggestions -> setSupibotSuggestions(it.enabled)
                     is Preference.ScrollBack         -> chatRepository.scrollBackLength = it.length
                     is Preference.Chips              -> shouldShowChips.value = it.enabled
@@ -381,8 +379,7 @@ class MainViewModel @Inject constructor(
 
             val activeChannel = getActiveChannel() ?: return@launch
             val channelId = dataRepository.getUserIdByName(activeChannel) ?: return@launch
-            dataRepository.blockUser(channelId)
-            ignoresRepository.addUserBlock(channelId)
+            ignoresRepository.addUserBlock(channelId, activeChannel)
         }
     }
 

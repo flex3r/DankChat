@@ -14,13 +14,18 @@ data class UserIgnoreEntity(
     val username: String,
 
     @ColumnInfo(name = "is_regex")
-    val isRegex: Boolean
+    val isRegex: Boolean = false,
+    @ColumnInfo(name = "is_case_sensitive", defaultValue = "0")
+    val isCaseSensitive: Boolean = false,
 ) {
     @delegate:Ignore
     val regex: Regex? by lazy {
         runCatching {
-            // TODO check
-            username.toRegex(RegexOption.IGNORE_CASE)
+            val options = when {
+                isCaseSensitive -> emptySet()
+                else            -> setOf(RegexOption.IGNORE_CASE)
+            }
+            username.toRegex(options)
         }.getOrElse {
             Log.e(TAG, "Failed to create regex for username $username", it)
             null

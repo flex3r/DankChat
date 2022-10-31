@@ -306,7 +306,10 @@ class NotificationService : Service(), CoroutineScope {
     ) {
         companion object {
             fun Message.toNotificationData(): NotificationData? = when (this) {
-                is PrivMessage    -> if (highlights.hasMention()) NotificationData(channel, name, originalMessage) else null
+                is PrivMessage    -> when {
+                    highlights.hasMention() -> NotificationData(channel, name, originalMessage)
+                    else                    -> null
+                }
                 is WhisperMessage -> NotificationData(
                     channel = "",
                     name = name,

@@ -48,14 +48,12 @@ class UserPopupViewModel @Inject constructor(
         loadData()
     }
 
-    fun blockUser() = updateStateWith { targetUserId, _ ->
-        dataRepository.blockUser(targetUserId)
-        ignoresRepository.addUserBlock(targetUserId)
+    fun blockUser() = updateStateWith { targetUserId, targetUsername ->
+        ignoresRepository.addUserBlock(targetUserId, targetUsername)
     }
 
-    fun unblockUser() = updateStateWith { targetUserId, _ ->
-        dataRepository.unblockUser(targetUserId)
-        ignoresRepository.removeUserBlock(targetUserId)
+    fun unblockUser() = updateStateWith { targetUserId, targetUsername ->
+        ignoresRepository.removeUserBlock(targetUserId, targetUsername)
     }
 
     fun timeoutUser(index: Int) {
@@ -79,7 +77,7 @@ class UserPopupViewModel @Inject constructor(
         chatRepository.sendMessage(".delete $messageId")
     }
 
-    private inline fun updateStateWith(crossinline block: suspend (String, String) -> Unit) = viewModelScope.launch {
+    private inline fun updateStateWith(crossinline block: suspend (targetUserId: String, targetUsername: String) -> Unit) = viewModelScope.launch {
         if (!preferenceStore.isLoggedIn) {
             return@launch
         }

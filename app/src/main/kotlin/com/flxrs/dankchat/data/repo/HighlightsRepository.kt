@@ -26,11 +26,12 @@ class HighlightsRepository @Inject constructor(
     @ApplicationScope private val coroutineScope: CoroutineScope
 ) {
 
-    val messageHighlights = messageHighlightDao.getMessageHighlightsFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
-    val userHighlights = userHighlightDao.getUserHighlightsFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
     private val currentUserNameRegex = preferences.currentUserNameFlow
         .map { it?.let { """\b$it\b""".toRegex(RegexOption.IGNORE_CASE) } }
         .stateIn(coroutineScope, SharingStarted.Eagerly, null)
+
+    val messageHighlights = messageHighlightDao.getMessageHighlightsFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+    val userHighlights = userHighlightDao.getUserHighlightsFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
 
     fun calculateHighlightState(message: Message): Message {
         return when (message) {
@@ -43,8 +44,7 @@ class HighlightsRepository @Inject constructor(
 
     fun runMigrationsIfNeeded() = coroutineScope.launch {
         runCatching {
-            if (messageHighlightDao.getMessageHighlights().isNotEmpty()) {
-                // Assume nothing needs to be done, if there is at least one highlight in the db
+            if (preferences.mentionEntries.isEmpty() || messageHighlightDao.getMessageHighlights().isNotEmpty()) {
                 return@launch
             }
 

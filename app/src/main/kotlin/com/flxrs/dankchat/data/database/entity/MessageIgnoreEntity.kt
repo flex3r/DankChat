@@ -17,18 +17,20 @@ data class MessageIgnoreEntity(
     val isRegex: Boolean = false,
     @ColumnInfo(name = "is_case_sensitive")
     val isCaseSensitive: Boolean = false,
+    @ColumnInfo(name = "is_block_message", defaultValue = "0")
+    val isBlockMessage: Boolean = false,
     val replacement: String? = null,
 ) {
     @delegate:Ignore
     val regex: Regex? by lazy {
         runCatching {
             val options = when {
-                isCaseSensitive -> setOf(RegexOption.IGNORE_CASE)
-                else            -> emptySet()
+                isCaseSensitive -> emptySet()
+                else            -> setOf(RegexOption.IGNORE_CASE)
             }
             when {
                 isRegex -> pattern.toRegex(options)
-                else    -> Regex("\\b$pattern\\b")
+                else    -> "\\b$pattern\\b".toRegex(options)
             }
         }.getOrElse {
             Log.e(TAG, "Failed to create regex for pattern $pattern", it)

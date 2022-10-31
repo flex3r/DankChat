@@ -57,8 +57,6 @@ class DataRepository @Inject constructor(
     suspend fun getUser(userId: String): HelixUserDto? = apiManager.getUser(userId)
     suspend fun getUserIdByName(name: String): String? = apiManager.getUserIdByName(name)
     suspend fun getUserFollows(fromId: String, toId: String): UserFollowsDto? = apiManager.getUsersFollows(fromId, toId)
-    suspend fun blockUser(targetUserId: String): Boolean = apiManager.blockUser(targetUserId)
-    suspend fun unblockUser(targetUserId: String): Boolean = apiManager.unblockUser(targetUserId)
 
     suspend fun uploadMedia(file: File): Result<String> {
         val uploadResult = apiManager.uploadMedia(file)

@@ -26,12 +26,12 @@ data class MessageHighlightEntity(
     val regex: Regex? by lazy {
         runCatching {
             val options = when {
-                isCaseSensitive -> setOf(RegexOption.IGNORE_CASE)
-                else            -> emptySet()
+                isCaseSensitive -> emptySet()
+                else            -> setOf(RegexOption.IGNORE_CASE)
             }
             when {
                 isRegex -> pattern.toRegex(options)
-                else    -> Regex("\\b$pattern\\b")
+                else    -> "\\b$pattern\\b".toRegex(options)
             }
 
         }.getOrElse {

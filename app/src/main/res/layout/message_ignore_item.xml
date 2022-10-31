@@ -6,7 +6,9 @@
 
         <variable
             name="item"
-            type="com.flxrs.dankchat.preferences.ui.highlights.MessageHighlightItem" />
+            type="com.flxrs.dankchat.preferences.ui.ignores.MessageIgnoreItem" />
+
+        <import type="android.view.View" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
@@ -19,6 +21,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
             android:padding="8dp">
 
             <TextView
@@ -69,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:checked="@={item.enabled}"
                 android:text="@string/enabled"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/replacement"
                 app:layout_constraintEnd_toStartOf="@id/is_regex"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/pattern" />
@@ -80,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:checked="@={item.regex}"
                 android:text="@string/multi_entry_header_regex"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/replacement"
                 app:layout_constraintEnd_toStartOf="@id/is_case_sensitive"
                 app:layout_constraintStart_toEndOf="@id/enabled"
                 app:layout_constraintTop_toBottomOf="@id/pattern" />
@@ -91,10 +94,42 @@
                 android:layout_height="wrap_content"
                 android:checked="@={item.caseSensitive}"
                 android:text="@string/case_sensitive"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/replacement"
+                app:layout_constraintEnd_toStartOf="@id/is_block_message"
                 app:layout_constraintStart_toEndOf="@id/is_regex"
                 app:layout_constraintTop_toBottomOf="@id/pattern" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/is_block_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:text="@string/block_message"
+                app:layout_constraintBottom_toTopOf="@id/replacement"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/is_case_sensitive"
+                app:layout_constraintTop_toBottomOf="@id/pattern" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/replacement"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/replacement"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/enabled">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/replacement_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:text="@={item.replacement}" />
+            </com.google.android.material.textfield.TextInputLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>

@@ -16,11 +16,16 @@ class HelixApiService(private val ktorClient: HttpClient, private val dankChatPr
         }
     }
 
-    suspend fun getUserById(userId: String): HttpResponse? = ktorClient.get("users/") {
+    suspend fun getUsersByIds(ids: List<String>): HttpResponse? = ktorClient.get("users/") {
         val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
         bearerAuth(oAuth)
-        parameter("id", userId)
+        ids.forEach {
+            parameter("id", it)
+        }
+
     }
+
+    suspend fun getUserById(userId: String): HttpResponse? = getUsersByIds(listOf(userId))
 
     suspend fun getUsersFollows(fromId: String, toId: String): HttpResponse? = ktorClient.get("users/follows") {
         val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null

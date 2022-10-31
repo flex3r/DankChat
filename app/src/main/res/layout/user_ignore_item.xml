@@ -6,7 +6,7 @@
 
         <variable
             name="item"
-            type="com.flxrs.dankchat.preferences.ui.highlights.MessageHighlightItem" />
+            type="com.flxrs.dankchat.preferences.ui.ignores.UserIgnoreItem" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
@@ -21,26 +21,15 @@
             android:layout_height="wrap_content"
             android:padding="8dp">
 
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textAppearance="?attr/textAppearanceBodyLarge"
-                app:layout_constraintBottom_toTopOf="@id/pattern"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/pattern"
+                android:id="@+id/username"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="@string/pattern"
+                android:hint="@string/username"
                 app:layout_constraintEnd_toStartOf="@id/delete"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/title">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/pattern_input"
@@ -49,7 +38,7 @@
                     android:imeOptions="actionDone"
                     android:inputType="text"
                     android:singleLine="true"
-                    android:text="@={item.pattern}" />
+                    android:text="@={item.username}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
@@ -58,10 +47,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:icon="@drawable/ic_clear"
-                app:layout_constraintBottom_toBottomOf="@id/pattern"
+                app:layout_constraintBottom_toBottomOf="@id/username"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/pattern"
-                app:layout_constraintTop_toTopOf="@id/pattern" />
+                app:layout_constraintStart_toEndOf="@id/username"
+                app:layout_constraintTop_toTopOf="@id/username" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/enabled"
@@ -72,7 +61,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/is_regex"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/pattern" />
+                app:layout_constraintTop_toBottomOf="@id/username" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/is_regex"
@@ -83,7 +72,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/is_case_sensitive"
                 app:layout_constraintStart_toEndOf="@id/enabled"
-                app:layout_constraintTop_toBottomOf="@id/pattern" />
+                app:layout_constraintTop_toBottomOf="@id/username" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/is_case_sensitive"
@@ -94,7 +83,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/is_regex"
-                app:layout_constraintTop_toBottomOf="@id/pattern" />
+                app:layout_constraintTop_toBottomOf="@id/username" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>

@@ -163,6 +163,12 @@ class DankChatPreferenceStore @Inject constructor(
     val retainWebViewEnabled: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_retain_webview_key), false)
 
+    val mentionEntries: Set<String>
+        get() = defaultPreferences.getStringSet(context.getString(R.string.preference_custom_mentions_key), emptySet()).orEmpty()
+
+    val blackListEntries: Set<String>
+        get() = defaultPreferences.getStringSet(context.getString(R.string.preference_blacklist_key), emptySet()).orEmpty()
+
     val currentUserNameFlow: Flow<String?> = callbackFlow {
         send(userName?.ifBlank { null })
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
@@ -180,8 +186,6 @@ class DankChatPreferenceStore @Inject constructor(
             val roomStateKey = getString(R.string.preference_roomstate_key)
             val streamInfoKey = getString(R.string.preference_streaminfo_key)
             val inputKey = getString(R.string.preference_show_input_key)
-            val customMentionsKey = getString(R.string.preference_custom_mentions_key)
-            val blacklistKey = getString(R.string.preference_blacklist_key)
             val loadSupibotKey = getString(R.string.preference_supibot_suggestions_key)
             val scrollBackLengthKey = getString(R.string.preference_scrollback_length_key)
             val showChipsKey = getString(R.string.preference_show_chip_actions_key)
@@ -192,8 +196,6 @@ class DankChatPreferenceStore @Inject constructor(
             //send(Preference.FetchStreams(fetchStreamInfoEnabled))
             send(Preference.StreamInfo(showStreamInfoEnabled, updateTimer = false))
             send(Preference.Input(inputEnabled))
-            send(Preference.CustomMentions(mentionEntries))
-            send(Preference.BlackList(blackListEntries))
             send(Preference.ScrollBack(scrollbackLength))
             send(Preference.Chips(shouldShowChips))
             send(Preference.TimeStampFormat(timestampFormat))
@@ -203,8 +205,6 @@ class DankChatPreferenceStore @Inject constructor(
                     roomStateKey        -> Preference.RoomState(roomStateEnabled)
                     streamInfoKey       -> Preference.StreamInfo(showStreamInfoEnabled, updateTimer = true)
                     inputKey            -> Preference.Input(inputEnabled)
-                    customMentionsKey   -> Preference.CustomMentions(mentionEntries)
-                    blacklistKey        -> Preference.BlackList(blackListEntries)
                     loadSupibotKey      -> Preference.SupibotSuggestions(shouldLoadSupibot)
                     scrollBackLengthKey -> Preference.ScrollBack(scrollbackLength)
                     showChipsKey        -> Preference.Chips(shouldShowChips)
@@ -310,12 +310,6 @@ class DankChatPreferenceStore @Inject constructor(
 
     private val shouldShowChips: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_show_chip_actions_key), true)
-
-    private val mentionEntries: Set<String>
-        get() = defaultPreferences.getStringSet(context.getString(R.string.preference_custom_mentions_key), emptySet()).orEmpty()
-
-    private val blackListEntries: Set<String>
-        get() = defaultPreferences.getStringSet(context.getString(R.string.preference_blacklist_key), emptySet()).orEmpty()
 
     private val showStreamInfoEnabled: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_streaminfo_key), true)

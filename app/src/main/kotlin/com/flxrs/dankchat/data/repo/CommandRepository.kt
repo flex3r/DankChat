@@ -119,7 +119,7 @@ class CommandRepository @Inject constructor(
         val result = runCatching { apiManager.blockUser(targetId) }
         return when {
             result.isSuccess -> {
-                ignoresRepository.addUserBlock(targetId)
+                ignoresRepository.addUserBlock(targetId, target)
                 CommandResult.Accepted("You successfully blocked user $target")
             }
 
@@ -137,14 +137,13 @@ class CommandRepository @Inject constructor(
             apiManager.getUserIdByName(target)
         }.getOrNull() ?: return CommandResult.Accepted("User $target couldn't be unblocked, no user with that name found!")
 
-        val result = runCatching { apiManager.unblockUser(targetId) }
-        return when {
-            result.isSuccess -> {
-                ignoresRepository.removeUserBlock(targetId)
-                CommandResult.Accepted("You successfully unblocked user $target")
-            }
+        val result = runCatching {
+            ignoresRepository.removeUserBlock(targetId, target)
+            CommandResult.Accepted("You successfully unblocked user $target")
+        }
 
-            else             -> CommandResult.Accepted("User $target couldn't be unblocked, an unknown error occurred!")
+        return result.getOrElse {
+            CommandResult.Accepted("User $target couldn't be unblocked, an unknown error occurred!")
         }
     }
 

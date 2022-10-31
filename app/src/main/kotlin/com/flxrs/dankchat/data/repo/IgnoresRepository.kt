@@ -12,10 +12,7 @@ import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.multientry.MultiEntryDto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -30,9 +27,13 @@ class IgnoresRepository @Inject constructor(
     @ApplicationScope private val coroutineScope: CoroutineScope
 ) {
 
-    private val messageIgnores = messageIgnoreDao.getMessageIgnoresFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
-    private val userIgnores = userIgnoreDao.getUserIgnoresFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
-    private val _userBlocks = MutableStateFlow(emptySet<String>())
+    data class TwitchBlock(val id: String, val name: String)
+
+    private val _twitchBlocks = MutableStateFlow(emptySet<TwitchBlock>())
+
+    val messageIgnores = messageIgnoreDao.getMessageIgnoresFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+    val userIgnores = userIgnoreDao.getUserIgnoresFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+    val twitchBlocks = _twitchBlocks.asStateFlow()
 
     fun applyIgnores(message: Message): Message? {
         return when (message) {
@@ -44,8 +45,37 @@ class IgnoresRepository @Inject constructor(
         }
     }
 
+    fun runMigrationsIfNeeded() = coroutineScope.launch {
+        runCatching {
+            if (preferences.blackListEntries.isEmpty()) {
+                return@launch
+            }
+
+            Log.d(TAG, "Running ignores migration...")
+
+            val existingBlacklistEntries = preferences.customBlacklist
+            val messageIgnores = existingBlacklistEntries.mapToMessageIgnoreEntities()
+            messageIgnoreDao.addIgnores(messageIgnores)
+
+            val userIgnores = existingBlacklistEntries.mapToUserIgnoreEntities()
+            userIgnoreDao.addIgnores(userIgnores)
+
+            val totalIgnores = messageIgnores.size + userIgnores.size
+            Log.d(TAG, "Ignores migration completed, added $totalIgnores entries.")
+        }.getOrElse {
+            Log.e(TAG, "Failed to run ignores migration", it)
+            runCatching {
+                messageIgnoreDao.deleteAllIgnores()
+                userIgnoreDao.deleteAllIgnores()
+                return@launch
+            }
+        }
+
+        preferences.customBlacklist = emptyList()
+    }
+
     fun isUserBlocked(userId: String?): Boolean {
-        return userId in _userBlocks.value
+        return _twitchBlocks.value.any { it.id == userId }
     }
 
     suspend fun loadUserBlocks(id: String) = withContext(Dispatchers.Default) {
@@ -56,15 +86,83 @@ class IgnoresRepository @Inject constructor(
         runCatching {
             val blocks = apiManager.getUserBlocks(id) ?: return@withContext
             val userIds = blocks.data.map { it.id }
-            _userBlocks.update { userIds.toSet() }
+            val users = apiManager.getUsersByIds(userIds) ?: return@withContext
+            val twitchBlocks = users.map { user ->
+                TwitchBlock(
+                    id = user.id,
+                    name = user.name,
+                )
+            }.toSet()
+
+            _twitchBlocks.update { twitchBlocks }
         }.getOrElse {
             Log.d(TAG, "Failed to load user blocks for $id", it)
         }
     }
 
-    fun addUserBlock(targetUserId: String) = _userBlocks.update { it + targetUserId }
-    fun removeUserBlock(targetUserId: String) = _userBlocks.update { it - targetUserId }
-    fun clearIgnores() = _userBlocks.update { emptySet() }
+    suspend fun addUserBlock(targetUserId: String, targetUsername: String) {
+        val result = apiManager.blockUser(targetUserId)
+        if (result) {
+            _twitchBlocks.update {
+                it + TwitchBlock(
+                    id = targetUserId,
+                    name = targetUsername,
+                )
+            }
+        }
+    }
+
+    suspend fun removeUserBlock(targetUserId: String, targetUsername: String) {
+        val result = apiManager.unblockUser(targetUserId)
+        if (result) {
+            _twitchBlocks.update {
+                it - TwitchBlock(
+                    id = targetUserId,
+                    name = targetUsername,
+                )
+            }
+        }
+    }
+
+    fun clearIgnores() = _twitchBlocks.update { emptySet() }
+
+    suspend fun addMessageIgnore(): MessageIgnoreEntity {
+        val entity = MessageIgnoreEntity(
+            id = 0,
+            enabled = true,
+            pattern = "",
+            isBlockMessage = false,
+            replacement = "***",
+        )
+        val id = messageIgnoreDao.addIgnore(entity)
+        return messageIgnoreDao.getMessageIgnore(id)
+    }
+
+    suspend fun removeMessageIgnore(entity: MessageIgnoreEntity) {
+        messageIgnoreDao.deleteIgnore(entity)
+    }
+
+    suspend fun updateMessageIgnores(entities: List<MessageIgnoreEntity>) {
+        messageIgnoreDao.addIgnores(entities)
+    }
+
+    suspend fun addUserIgnore(): UserIgnoreEntity {
+        val entity = UserIgnoreEntity(
+            id = 0,
+            enabled = true,
+            username = "",
+        )
+        val id = userIgnoreDao.addIgnore(entity)
+        return userIgnoreDao.getUserIgnore(id)
+    }
+
+    suspend fun removeUserIgnore(entity: UserIgnoreEntity) {
+        userIgnoreDao.deleteIgnore(entity)
+    }
+
+    suspend fun updateUserIgnores(entities: List<UserIgnoreEntity>) {
+        userIgnoreDao.addIgnores(entities)
+    }
 
     private fun UserNoticeMessage.applyIgnores(): UserNoticeMessage {
         return copy(
@@ -103,8 +201,7 @@ class IgnoresRepository @Inject constructor(
         userIgnores.value.forEach {
             val hasMatch = when {
                 it.isRegex -> it.regex?.let { regex -> name.matches(regex) } ?: false
-                else       -> name == it.username
-
+                else       -> name.equals(it.username, ignoreCase = !it.isCaseSensitive)
             }
 
             if (hasMatch) {
@@ -130,47 +227,19 @@ class IgnoresRepository @Inject constructor(
         }
     }
 
-    fun runMigrationsIfNeeded() = coroutineScope.launch {
-        runCatching {
-            if (messageIgnoreDao.getMessageIgnores().isNotEmpty()) {
-                // Assume nothing needs to be done, if there is at least one ignore in the db
-                return@launch
-            }
-
-            Log.d(TAG, "Running ignores migration...")
-
-            val existingBlacklistEntries = preferences.customBlacklist
-            val messageIgnores = existingBlacklistEntries.mapToMessageIgnoreEntities()
-            messageIgnoreDao.addIgnores(messageIgnores)
-
-            val userIgnores = existingBlacklistEntries.mapToUserIgnoreEntities()
-            userIgnoreDao.addIgnores(userIgnores)
-
-            val totalIgnores = messageIgnores.size + userIgnores.size
-            Log.d(TAG, "Ignores migration completed, added $totalIgnores entries.")
-        }.getOrElse {
-            Log.e(TAG, "Failed to run ignores migration", it)
-            runCatching {
-                messageIgnoreDao.deleteAllIgnores()
-                userIgnoreDao.deleteAllIgnores()
-                return@launch
-            }
-        }
-
-        // TODO
-        //preferences.customBlacklist = emptyList()
-    }
-
     private fun List<MultiEntryDto>.mapToMessageIgnoreEntities(): List<MessageIgnoreEntity> {
-        return map {
-            MessageIgnoreEntity(
-                id = 0,
-                enabled = true,
-                pattern = it.entry,
-                isRegex = it.isRegex
-
-            )
-        }
+        return filterNot { it.matchUser }
+            .map {
+                MessageIgnoreEntity(
+                    id = 0,
+                    enabled = true,
+                    pattern = it.entry,
+                    isRegex = it.isRegex,
+                    isCaseSensitive = false,
+                    isBlockMessage = true,
+                    replacement = null
+                )
+            }
     }
 
     private fun List<MultiEntryDto>.mapToUserIgnoreEntities(): List<UserIgnoreEntity> {
@@ -180,7 +249,8 @@ class IgnoresRepository @Inject constructor(
                     id = 0,
                     enabled = true,
                     username = it.entry,
-                    isRegex = it.isRegex
+                    isRegex = it.isRegex,
+                    isCaseSensitive = false
                 )
             }
     }

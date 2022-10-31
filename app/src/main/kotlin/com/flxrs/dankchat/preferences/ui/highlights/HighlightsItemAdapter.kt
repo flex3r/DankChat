@@ -7,31 +7,30 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.databinding.AddItemBinding
 import com.flxrs.dankchat.databinding.MessageHighlightItemBinding
-import com.flxrs.dankchat.databinding.MultiEntryAddItemBinding
 import com.flxrs.dankchat.databinding.UserHighlightItemBinding
 
 class HighlightsItemAdapter(
-    private val addItem: () -> Unit,
-    private val deleteItem: (item: HighlightItem) -> Unit,
+    private val onAddItem: () -> Unit,
+    private val onDeleteItem: (item: HighlightItem) -> Unit,
 ) : ListAdapter<HighlightItem, RecyclerView.ViewHolder>(DetectDiff()) {
 
     inner class MessageItemViewHolder(val binding: MessageHighlightItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.delete.setOnClickListener { deleteItem(getItem(bindingAdapterPosition)) }
-
+            binding.delete.setOnClickListener { onDeleteItem(getItem(bindingAdapterPosition)) }
         }
     }
 
     inner class UserItemViewHolder(val binding: UserHighlightItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.delete.setOnClickListener { deleteItem(getItem(bindingAdapterPosition)) }
+            binding.delete.setOnClickListener { onDeleteItem(getItem(bindingAdapterPosition)) }
         }
     }
 
-    inner class AddViewHolder(binding: MultiEntryAddItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class AddViewHolder(binding: AddItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.multiEntryAdd.setOnClickListener { addItem() }
+            binding.multiEntryAdd.setOnClickListener { onAddItem() }
         }
     }
 
@@ -39,7 +38,7 @@ class HighlightsItemAdapter(
         return when (viewType) {
             ITEM_VIEW_TYPE_MESSAGE -> MessageItemViewHolder(MessageHighlightItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
             ITEM_VIEW_TYPE_USER    -> UserItemViewHolder(UserHighlightItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-            ITEM_VIEW_TYPE_ADD     -> AddViewHolder(MultiEntryAddItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            ITEM_VIEW_TYPE_ADD     -> AddViewHolder(AddItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
             else                   -> throw ClassCastException("Unknown viewType $viewType")
         }
     }
@@ -66,9 +65,6 @@ class HighlightsItemAdapter(
                         pattern.isVisible = false
                         delete.isVisible = false
 
-                    } else {
-                        pattern.setHint(R.string.pattern)
-                        patternInput.setText(highlightItem.pattern)
                     }
                 }
             }
