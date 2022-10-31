@@ -213,15 +213,16 @@ class HighlightsRepository @Inject constructor(
 
 
     private fun List<MultiEntryDto>.mapToMessageHighlightEntities(): List<MessageHighlightEntity> {
-        return map {
-            MessageHighlightEntity(
-                id = 0,
-                enabled = true,
-                type = MessageHighlightEntityType.Custom,
-                pattern = it.entry,
-                isRegex = it.isRegex
-            )
-        }
+        return filterNot { it.matchUser }
+            .map {
+                MessageHighlightEntity(
+                    id = 0,
+                    enabled = true,
+                    type = MessageHighlightEntityType.Custom,
+                    pattern = it.entry,
+                    isRegex = it.isRegex
+                )
+            }
     }
 
     private fun List<MultiEntryDto>.mapToUserHighlightEntities(): List<UserHighlightEntity> {
