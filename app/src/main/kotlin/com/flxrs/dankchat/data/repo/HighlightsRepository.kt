@@ -41,6 +41,37 @@ class HighlightsRepository @Inject constructor(
         }
     }
 
+    fun runMigrationsIfNeeded() = coroutineScope.launch {
+        runCatching {
+            if (messageHighlightDao.getMessageHighlights().isNotEmpty()) {
+                // Assume nothing needs to be done, if there is at least one highlight in the db
+                return@launch
+            }
+
+            Log.d(TAG, "Running highlights migration...")
+            messageHighlightDao.addHighlights(DEFAULT_HIGHLIGHTS)
+
+            val existingMentions = preferences.customMentions
+            val messageHighlights = existingMentions.mapToMessageHighlightEntities()
+            messageHighlightDao.addHighlights(messageHighlights)
+
+            val userHighlights = existingMentions.mapToUserHighlightEntities()
+            userHighlightDao.addHighlights(userHighlights)
+
+            val totalHighlights = DEFAULT_HIGHLIGHTS.size + messageHighlights.size + userHighlights.size
+            Log.d(TAG, "Highlights migration completed, added $totalHighlights entries.")
+        }.getOrElse {
+            Log.e(TAG, "Failed to run highlights migration", it)
+            runCatching {
+                messageHighlightDao.deleteAllHighlights()
+                userHighlightDao.deleteAllHighlights()
+                return@launch
+            }
+        }
+
+        preferences.customMentions = emptyList()
+    }
+
     suspend fun addMessageHighlight(): MessageHighlightEntity {
         val entity = MessageHighlightEntity(
             id = 0,
@@ -178,39 +209,6 @@ class HighlightsRepository @Inject constructor(
             val regex = currentUserNameRegex.value ?: return false
             return message.contains(regex)
         }
-
-    fun runMigrationsIfNeeded() = coroutineScope.launch {
-        runCatching {
-            if (messageHighlightDao.getMessageHighlights().isNotEmpty()) {
-                // Assume nothing needs to be done, if there is at least one highlight in the db
-                return@launch
-            }
-
-            Log.d(TAG, "Running highlights migration...")
-            messageHighlightDao.addHighlights(DEFAULT_HIGHLIGHTS)
-
-            val existingMentions = preferences.customMentions
-            val messageHighlights = existingMentions.mapToMessageHighlightEntities()
-            messageHighlightDao.addHighlights(messageHighlights)
-
-            val userHighlights = existingMentions.mapToUserHighlightEntities()
-            userHighlightDao.addHighlights(userHighlights)
-
-            val totalHighlights = DEFAULT_HIGHLIGHTS.size + messageHighlights.size + userHighlights.size
-            Log.d(TAG, "Highlights migration completed, added $totalHighlights entries.")
-        }.getOrElse {
-            Log.e(TAG, "Failed to run highlights migration", it)
-            runCatching {
-                messageHighlightDao.deleteAllHighlights()
-                userHighlightDao.deleteAllHighlights()
-                return@launch
-            }
-        }
-
-        // TODO
-        //preferences.customMentions = emptyList()
-    }
-
 
     private fun List<MultiEntryDto>.mapToMessageHighlightEntities(): List<MessageHighlightEntity> {
         return filterNot { it.matchUser }
