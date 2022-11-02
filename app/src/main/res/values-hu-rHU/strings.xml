@@ -49,10 +49,7 @@
     <string name="system_message_disconnected">Lecsatlakozva</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="confirm_channel_removal_positive_button">Eltávolítás</string>
-    <string name="user_popup_follow">Követés</string>
     <string name="restart">Újraindítás</string>
-    <string name="uploader_add_header_name">Név</string>
-    <string name="uploader_add_header_value">Érték</string>
     <string name="account">Fiók</string>
     <string name="logout">Kijelentkezés</string>
     <string name="confirm_user_delete_positive_button">Törlés</string>
@@ -65,7 +62,6 @@
     <string name="preference_general_header">Általános</string>
     <string name="preference_about_header">Névjegy</string>
     <string name="preference_appearance_header">Kinézet</string>
-    <string name="preference_dark_mode_group_title">Sötét mód</string>
     <string name="preference_message_history_dashboard_title">Irányítópult megnyitása</string>
     <string name="preference_tts_title">TTS engedélyezése</string>
     <string name="preference_tts_header">TTS</string>

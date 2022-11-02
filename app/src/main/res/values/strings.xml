@@ -30,11 +30,9 @@
     <string name="take_picture">Take picture</string>
     <string name="record_video">Record video</string>
     <string name="choose_media">Choose existing media</string>
-    <string name="hide_actionbar">Hide toolbar</string>
     <string name="resume_scroll">Resume scroll</string>
     <string name="uploading_image">Uploading file</string>
     <string name="settings">Settings</string>
-    <string name="nuuls_upload_disclaimer">External hosting provided by https://nuuls.com/i, use at your own risk.</string>
     <string name="external_upload_disclaimer">External hosting provided by %1$s, use at your own risk.</string>
     <string name="nuuls_upload_title">Custom media upload</string>
     <string name="snackbar_message_copied">Message copied</string>
@@ -74,10 +72,7 @@
     <string name="system_message_no_history">You are not seeing any historical messages because you opted out of the recent-messages integration.</string>
     <string name="timed_out_message">&lt; Message deleted &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
-    <string name="multi_entry_header_match_user">Match user</string>
     <string name="multi_entry_add_entry">Add an entry</string>
-    <string name="multi_entry_remove_content_description">Remove the entry</string>
-    <string name="multi_entry_hint">Entry</string>
     <string name="login_expired">Login expired! Try logging in again.</string>
     <string name="message_history_disclaimer_title">Message history disclaimer</string>
     <string name="message_history_disclaimer_message">DankChat loads historical messages from a third-party service on startup.\nTo get the messages, DankChat sends the names of the channels you have open to that service.\nThe service temporarily stores messages for channels you (and others) visit to provide the service.\n\n- To not use this feature, click Opt-Out below or disable message history loading in the settings later.\n- You can learn more about the service and disable message history for your own channel by visiting https://recent-messages.robotty.de/</string>
@@ -94,8 +89,6 @@
     <string name="confirm_channel_removal_positive_button">Remove</string>
     <string name="confirm_channel_block_title">Confirm channel block</string>
     <string name="confirm_channel_block_message_named">Are you sure you want to block channel \"%1$s\"?</string>
-    <string name="user_popup_follow">Follow</string>
-    <string name="user_popup_unfollow">Unfollow</string>
     <string name="user_popup_block">Block</string>
     <string name="user_popup_unblock">Unblock</string>
     <string name="user_popup_mention">Mention user</string>
@@ -105,16 +98,11 @@
     <string name="user_popup_not_following">Not following</string>
     <string name="user_popup_avatar_description">Profile avatar image</string>
     <string name="user_popup_error">Failed to load user data: %1$s</string>
-    <string name="confirm_user_unfollow_title">Confirm unfollow</string>
-    <string name="confirm_user_unfollow_message">Are you sure you want to unfollow this user?</string>
     <string name="confirm_user_block_title">Confirm block</string>
     <string name="confirm_user_block_message">Are you sure you want to block this user?</string>
     <string name="confirm_user_block_positive_button">Block</string>
     <string name="restart_required">Restart required to apply changes</string>
     <string name="restart">Restart</string>
-    <string name="uploader_add_header">Add header</string>
-    <string name="uploader_add_header_name">Name</string>
-    <string name="uploader_add_header_value">Value</string>
     <string name="uploader_title">Custom media uploader</string>
     <string name="uploader_reset">Reset to defaults</string>
     <string name="uploader_url">Upload url</string>
@@ -196,10 +184,7 @@
     <string name="preference_show_input_title">Show input</string>
     <string name="preference_show_input_summary">Displays the input field to send messages</string>
     <string name="preference_dark_theme_key" translatable="false">enable_dark_mode</string>
-    <string name="preference_dark_theme_title">Enable dark theme</string>
     <string name="preference_light_theme_key" translatable="false">enable_light_mode</string>
-    <string name="preference_light_theme_title">Enable light theme</string>
-    <string name="preference_dark_mode_group_title">Dark mode</string>
     <string name="preference_follow_system_key" translatable="false">follow_system_mode</string>
     <string name="preference_follow_system_title">Follow system default</string>
     <string name="preference_true_dark_theme_key" translatable="false">true_dark_mode</string>
@@ -210,11 +195,7 @@
     <string name="preference_show_timed_out_messages_key" translatable="false">show_timed_out_messages_key</string>
     <string name="preference_show_timed_out_messages_title">Show timed out messages</string>
     <string name="preference_custom_mentions_key" translatable="false">custom_mentions_key</string>
-    <string name="preference_custom_mentions_title">Custom mentions</string>
-    <string name="preference_custom_mentions_summary">Set custom phrases as mentions</string>
     <string name="preference_blacklist_key" translatable="false">custom_blacklist_key</string>
-    <string name="preference_blacklist_title">Blacklist</string>
-    <string name="preference_blacklist_summary">Set custom phrases to hide</string>
     <string name="preference_animate_gifs_key" translatable="false">animate_gifs_key</string>
     <string name="preference_animate_gifs_title">Animate gifs</string>
     <string name="preference_line_separator_key" translatable="false">line_seperator_key</string>
@@ -227,7 +208,6 @@
     <string name="preference_font_size_summary_small">Small</string>
     <string name="preference_font_size_summary_large">Large</string>
     <string name="preference_font_size_summary_very_large">Very large</string>
-    <string name="preference_notifications_mentions_header">Notifications and Mentions</string>
     <string name="preference_notifications_mentions_key" translatable="false">notifications_mentions_key</string>
     <string name="preference_suggestions_key" translatable="false">suggestions_key</string>
     <string name="preference_suggestions_title">Emote and user suggestions</string>
@@ -287,12 +267,7 @@
     <string name="preference_tts_force_english_summary">Force TTS voice language to English instead of system default</string>
     <string name="preference_visible_emotes_title">Visible third party emotes</string>
     <string name="preference_visible_emotes_key" translatable="false">visible_emotes_key</string>
-    <string name="preference_uploader_title">Custom media uploader</string>
     <string name="preference_uploader_key" translatable="false">uploader_key</string>
-    <string name="preference_show_stream_title">Show stream toggle</string>
-    <string name="preference_show_stream_key" translatable="false">show_stream_key</string>
-    <string name="preference_show_stream_summary">Displays a toggle for embedding streams of live channels</string>
-    <string name="preference_commands_title" translatable="false">@string/commands_title</string>
     <string name="preference_commands_key" translatable="false">custom_commands_key</string>
     <string name="preference_about_tos">Twitch terms of service &amp; user policy:</string>
     <string name="preference_show_chip_actions_title">Show chip actions</string>

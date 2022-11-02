@@ -25,10 +25,8 @@
     <string name="take_picture">Ota kuva</string>
     <string name="record_video">Nauhoita video</string>
     <string name="choose_media">Valitse olemassa oleva media</string>
-    <string name="hide_actionbar">Piilota työkalurivi</string>
     <string name="resume_scroll">Jatka vieritystä</string>
     <string name="settings">Asetukset</string>
-    <string name="nuuls_upload_disclaimer">Kolmannen osapuolen ylläpidon tarjoaa https://nuuls.com/i, käytä omalla vastuullasi.</string>
     <string name="external_upload_disclaimer">Kolmannen osapuolen ylläpidon tarjoaa %1$s, käytä omalla vastuullasi.</string>
     <string name="nuuls_upload_title">Mukautettu kuvan lataus</string>
     <string name="snackbar_message_copied">Viesti kopioitu</string>
@@ -63,10 +61,7 @@
     <string name="system_message_no_history">Et näe historiallisia viestejä koska kieltäydyit niistä.</string>
     <string name="timed_out_message">&lt; Viesti poistettu &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
-    <string name="multi_entry_header_match_user">Yhdistä käyttäjä</string>
     <string name="multi_entry_add_entry">Lisää merkintä</string>
-    <string name="multi_entry_remove_content_description">Poista merkintä</string>
-    <string name="multi_entry_hint">Merkintä</string>
     <string name="login_expired">Sisäänkirjautuminen on vanhentunut! Yritä kirjautua uudelleen.</string>
     <string name="message_history_disclaimer_title">Viestihistoriaa koskeva vastuuvapauslauseke</string>
     <string name="message_history_disclaimer_message">DankChat lataa historiallisia viestejä kolmannen osapuolen palvelusta käynnistyksen yhteydessä.
@@ -85,8 +80,6 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="confirm_channel_removal_title">Vahvista kanavan sulkeminen</string>
     <string name="confirm_channel_removal_message">Haluatko varmasti sulkea tämän kanavan?</string>
     <string name="confirm_channel_removal_positive_button">Sulje</string>
-    <string name="user_popup_follow">Seuraa</string>
-    <string name="user_popup_unfollow">Lopeta seuraaminen</string>
     <string name="user_popup_block">Estä</string>
     <string name="user_popup_unblock">Poista esto</string>
     <string name="user_popup_mention">Mainitse käyttäjä</string>
@@ -96,8 +89,6 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="user_popup_not_following">Ei seuraa</string>
     <string name="user_popup_avatar_description">Profiilikuva</string>
     <string name="user_popup_error">Käyttäjän tietoja ei pystytty hakea: %1$s</string>
-    <string name="confirm_user_unfollow_title">Seuraamisen lopettaminen</string>
-    <string name="confirm_user_unfollow_message">Haluatko varmasti lopettaa tämän käyttäjän seuraaminen?</string>
     <string name="confirm_user_block_title">Vahvista esto</string>
     <string name="confirm_user_block_message">Haluatko varmasti estää tämän käyttäjän?</string>
     <string name="confirm_user_block_positive_button">Estä</string>
@@ -144,17 +135,10 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_about_summary">DankChat %1$s on tehnyt @flex3rs ja avustajat</string>
     <string name="preference_show_input_title">Näytä syöttö</string>
     <string name="preference_show_input_summary">Näyttää viestien lähettämisen syöttökentän</string>
-    <string name="preference_dark_theme_title">Ota tumma teema käyttöön</string>
-    <string name="preference_light_theme_title">Ota vaalea teema käyttön</string>
-    <string name="preference_dark_mode_group_title">Tumma tila</string>
     <string name="preference_follow_system_title">Noudata järjestelmän oletusta</string>
     <string name="preference_true_dark_theme_title">Todellinen tumma tila</string>
     <string name="preference_true_dark_theme_summary">Asettaa chatin taustan väriksi mustan</string>
     <string name="preference_show_timed_out_messages_title">Näytä jäähyviestit</string>
-    <string name="preference_custom_mentions_title">Mukautetut maininnat</string>
-    <string name="preference_custom_mentions_summary">Aseta mukautetut lauseet maininnoiksi</string>
-    <string name="preference_blacklist_title">Estolista</string>
-    <string name="preference_blacklist_summary">Aseta mukautetut lauseet piilotettavaksi</string>
     <string name="preference_animate_gifs_title">Animoi gifit</string>
     <string name="preference_line_separator_title">Erota viestit riveillä</string>
     <string name="preference_keep_screen_on_title">Pidä näyttö päällä</string>
@@ -163,7 +147,6 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_font_size_summary_small">Pieni</string>
     <string name="preference_font_size_summary_large">Suuri</string>
     <string name="preference_font_size_summary_very_large">Hyvin suuri</string>
-    <string name="preference_notifications_mentions_header">Ilmoitukset ja maininnat</string>
     <string name="preference_suggestions_title">Hymiö ja käyttäjä ehdotukset</string>
     <string name="preference_suggestions_summary">Näyttää ehdotuksia hymiöille ja aktiivisille käyttäjille kirjoittaessasi</string>
     <string name="preference_load_message_history_title">Lataa viestihistoria käynnistyessä</string>
