@@ -1,7 +1,9 @@
 package com.flxrs.dankchat.preferences.ui.highlights
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -10,6 +12,7 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.AddItemBinding
 import com.flxrs.dankchat.databinding.MessageHighlightItemBinding
 import com.flxrs.dankchat.databinding.UserHighlightItemBinding
+import java.net.URI
 
 class HighlightsItemAdapter(
     private val onAddItem: () -> Unit,
@@ -19,6 +22,7 @@ class HighlightsItemAdapter(
     inner class MessageItemViewHolder(val binding: MessageHighlightItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.delete.setOnClickListener { onDeleteItem(getItem(bindingAdapterPosition)) }
+            binding.regexInfo.setOnClickListener { CUSTOM_TABS_INTENT.launchUrl(binding.root.context, REGEX_INFO_URL) }
         }
     }
 
@@ -64,7 +68,7 @@ class HighlightsItemAdapter(
                         isCaseSensitive.isEnabled = false
                         pattern.isVisible = false
                         delete.isVisible = false
-
+                        regexInfo.isVisible = false
                     }
                 }
             }
@@ -93,5 +97,9 @@ class HighlightsItemAdapter(
         private const val ITEM_VIEW_TYPE_MESSAGE = 0
         private const val ITEM_VIEW_TYPE_USER = 1
         private const val ITEM_VIEW_TYPE_ADD = 2
+        private val REGEX_INFO_URL = Uri.parse("https://wiki.chatterino.com/Regex/")
+        private val CUSTOM_TABS_INTENT = CustomTabsIntent.Builder()
+            .setShowTitle(true)
+            .build()
     }
 }

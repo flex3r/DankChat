@@ -132,8 +132,8 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
             TabLayoutMediator(tabs, viewPager) { tab, pos ->
                 val ignoreTab = IgnoresTab.values()[pos]
                 tab.text = when (ignoreTab) {
-                    IgnoresTab.Messages -> getString(com.flxrs.dankchat.R.string.tab_messages)
-                    IgnoresTab.Users    -> getString(com.flxrs.dankchat.R.string.tab_users)
+                    IgnoresTab.Messages -> getString(R.string.tab_messages)
+                    IgnoresTab.Users    -> getString(R.string.tab_users)
                     IgnoresTab.Twitch   -> getString(R.string.tab_twitch)
                 }
             }.attach()

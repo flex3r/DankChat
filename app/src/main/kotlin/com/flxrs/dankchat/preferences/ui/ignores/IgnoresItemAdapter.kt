@@ -1,7 +1,9 @@
 package com.flxrs.dankchat.preferences.ui.ignores
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -10,6 +12,7 @@ import com.flxrs.dankchat.databinding.AddItemBinding
 import com.flxrs.dankchat.databinding.MessageIgnoreItemBinding
 import com.flxrs.dankchat.databinding.TwitchBlockItemBinding
 import com.flxrs.dankchat.databinding.UserIgnoreItemBinding
+import com.flxrs.dankchat.preferences.ui.highlights.HighlightsItemAdapter
 
 class IgnoresItemAdapter(
     private val onAddItem: () -> Unit,
@@ -19,6 +22,7 @@ class IgnoresItemAdapter(
     inner class MessageItemViewHolder(val binding: MessageIgnoreItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.delete.setOnClickListener { onDeleteItem(getItem(bindingAdapterPosition)) }
+            binding.regexInfo.setOnClickListener { CUSTOM_TABS_INTENT.launchUrl(binding.root.context, REGEX_INFO_URL) }
             binding.isBlockMessage.setOnCheckedChangeListener { _, isChecked ->
                 val item = binding.item ?: return@setOnCheckedChangeListener
                 item.isBlockMessage = isChecked
@@ -30,6 +34,7 @@ class IgnoresItemAdapter(
     inner class UserItemViewHolder(val binding: UserIgnoreItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.delete.setOnClickListener { onDeleteItem(getItem(bindingAdapterPosition)) }
+            binding.regexInfo.setOnClickListener { CUSTOM_TABS_INTENT.launchUrl(binding.root.context, REGEX_INFO_URL) }
         }
     }
 
@@ -97,5 +102,9 @@ class IgnoresItemAdapter(
         private const val ITEM_VIEW_TYPE_USER = 1
         private const val ITEM_VIEW_TYPE_TWITCH = 2
         private const val ITEM_VIEW_TYPE_ADD = 3
+        private val REGEX_INFO_URL = Uri.parse("https://wiki.chatterino.com/Regex/")
+        private val CUSTOM_TABS_INTENT = CustomTabsIntent.Builder()
+            .setShowTitle(true)
+            .build()
     }
 }

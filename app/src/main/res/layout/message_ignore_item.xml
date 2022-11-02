@@ -66,49 +66,52 @@
                 app:layout_constraintStart_toEndOf="@id/pattern"
                 app:layout_constraintTop_toTopOf="@id/pattern" />
 
-            <com.google.android.material.checkbox.MaterialCheckBox
-                android:id="@+id/enabled"
-                android:layout_width="0dp"
+            <androidx.constraintlayout.helper.widget.Flow
+                android:id="@+id/checkbox_flow"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:checked="@={item.enabled}"
-                android:text="@string/enabled"
+                app:constraint_referenced_ids="enabled,is_regex,regex_info,is_case_sensitive,is_block_message"
+                app:flow_horizontalBias="0"
+                app:flow_horizontalStyle="packed"
+                app:flow_wrapMode="chain"
                 app:layout_constraintBottom_toTopOf="@id/replacement"
-                app:layout_constraintEnd_toStartOf="@id/is_regex"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/pattern" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/enabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="@={item.enabled}"
+                android:text="@string/enabled" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/is_regex"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="@={item.regex}"
-                android:text="@string/multi_entry_header_regex"
-                app:layout_constraintBottom_toTopOf="@id/replacement"
-                app:layout_constraintEnd_toStartOf="@id/is_case_sensitive"
-                app:layout_constraintStart_toEndOf="@id/enabled"
-                app:layout_constraintTop_toBottomOf="@id/pattern" />
+                android:text="@string/multi_entry_header_regex" />
+
+            <Button
+                android:id="@+id/regex_info"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/ic_outline_info" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/is_case_sensitive"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="@={item.caseSensitive}"
-                android:text="@string/case_sensitive"
-                app:layout_constraintBottom_toTopOf="@id/replacement"
-                app:layout_constraintEnd_toStartOf="@id/is_block_message"
-                app:layout_constraintStart_toEndOf="@id/is_regex"
-                app:layout_constraintTop_toBottomOf="@id/pattern" />
+                android:text="@string/case_sensitive" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/is_block_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:text="@string/block"
-                app:layout_constraintBottom_toTopOf="@id/replacement"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/is_case_sensitive"
-                app:layout_constraintTop_toBottomOf="@id/pattern" />
+                android:text="@string/block" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/replacement"
@@ -119,7 +122,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/enabled">
+                app:layout_constraintTop_toBottomOf="@id/checkbox_flow">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/replacement_input"
