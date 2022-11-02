@@ -3,11 +3,7 @@ package com.flxrs.dankchat.chat
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
-import android.graphics.Color
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
-import android.graphics.Rect
-import android.graphics.Typeface
+import android.graphics.*
 import android.graphics.drawable.*
 import android.os.Build
 import android.text.Spannable
@@ -36,11 +32,11 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.imageLoader
 import coil.request.ImageRequest
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.data.repo.EmoteRepository
+import com.flxrs.dankchat.data.repo.EmoteRepository.Companion.cacheKey
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.badge.BadgeType
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
-import com.flxrs.dankchat.data.repo.EmoteRepository
-import com.flxrs.dankchat.data.repo.EmoteRepository.Companion.cacheKey
 import com.flxrs.dankchat.data.twitch.message.*
 import com.flxrs.dankchat.databinding.ChatItemBinding
 import com.flxrs.dankchat.utils.DateTimeUtils
@@ -159,7 +155,7 @@ class ChatAdapter(
         val isCheckeredMode = preferences.getBoolean(checkeredKey, false)
 
         val background = when {
-            message.highlights.firstOrNull()?.type == HighlightType.Subscription -> ContextCompat.getColor(context, R.color.color_highlight)
+            message.highlights.firstOrNull()?.type == HighlightType.Subscription -> ContextCompat.getColor(context, R.color.color_sub_highlight)
             isCheckeredMode && holder.isAlternateBackground                      -> MaterialColors.layer(
                 this,
                 android.R.attr.colorBackground,
@@ -268,7 +264,7 @@ class ChatAdapter(
         val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
         val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
 
-        val background = ContextCompat.getColor(context, R.color.color_reward)
+        val background = ContextCompat.getColor(context, R.color.color_redemption_highlight)
         setRippleBackground(background, enableRipple = false)
 
         setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
@@ -809,15 +805,13 @@ class ChatAdapter(
 
     @ColorInt
     private fun List<Highlight>.toBackgroundColor(context: Context): Int {
-
         return when (first().type) {
-            HighlightType.Subscription           -> ContextCompat.getColor(context, R.color.color_highlight)
-            HighlightType.ChannelPointRedemption -> ContextCompat.getColor(context, R.color.color_reward)
-            // TODO diff color
-            HighlightType.ElevatedMessage        -> ContextCompat.getColor(context, R.color.color_reward)
-            HighlightType.FirstMessage           -> ContextCompat.getColor(context, R.color.color_reward)
-            HighlightType.Username               -> ContextCompat.getColor(context, R.color.color_mention)
-            HighlightType.Custom                 -> ContextCompat.getColor(context, R.color.color_mention)
+            HighlightType.Subscription           -> ContextCompat.getColor(context, R.color.color_sub_highlight)
+            HighlightType.ChannelPointRedemption -> ContextCompat.getColor(context, R.color.color_redemption_highlight)
+            HighlightType.ElevatedMessage        -> ContextCompat.getColor(context, R.color.color_elevated_message_highlight)
+            HighlightType.FirstMessage           -> ContextCompat.getColor(context, R.color.color_first_message_highlight)
+            HighlightType.Username               -> ContextCompat.getColor(context, R.color.color_mention_highlight)
+            HighlightType.Custom                 -> ContextCompat.getColor(context, R.color.color_mention_highlight)
         }
     }
 }
