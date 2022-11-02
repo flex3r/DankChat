@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.preferences.ui.ignores
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible

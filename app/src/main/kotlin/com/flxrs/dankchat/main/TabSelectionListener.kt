@@ -36,6 +36,7 @@ fun TabLayout.Tab.setTextColor(@AttrRes id: Int, layerWithSurface: Boolean = fal
                 val surface = MaterialColors.getColor(textView, R.attr.colorSurface)
                 MaterialColors.layer(color, surface, UNSELECTED_TAB_OVERLAY_ALPHA)
             }
+
             else             -> color
         }
     }

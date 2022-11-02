@@ -50,6 +50,7 @@ class AppearanceSettingsFragment : MaterialPreferenceFragmentCompat() {
                 themeModePreference.isEnabled = false
                 themeModePreference.value = darkModeKey
             }
+
             Build.VERSION.SDK_INT < Build.VERSION_CODES.Q              -> {
                 themeModePreference.entries = arrayOf(
                     getString(R.string.preference_dark_theme_entry_title),

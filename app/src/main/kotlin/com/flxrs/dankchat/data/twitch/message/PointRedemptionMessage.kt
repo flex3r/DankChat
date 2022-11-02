@@ -3,7 +3,7 @@ package com.flxrs.dankchat.data.twitch.message
 import com.flxrs.dankchat.data.twitch.connection.PointRedemptionData
 import java.time.Instant
 import java.time.ZoneId
-import java.util.UUID
+import java.util.*
 
 data class PointRedemptionMessage(
     override val timestamp: Long = System.currentTimeMillis(),

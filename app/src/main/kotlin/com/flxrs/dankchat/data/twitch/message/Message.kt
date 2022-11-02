@@ -1,9 +1,6 @@
 package com.flxrs.dankchat.data.twitch.message
 
 import com.flxrs.dankchat.data.irc.IrcMessage
-import com.flxrs.dankchat.data.repo.EmoteRepository
-import com.flxrs.dankchat.data.twitch.badge.Badge
-import com.flxrs.dankchat.data.twitch.badge.BadgeType
 
 sealed class Message {
     abstract val id: String

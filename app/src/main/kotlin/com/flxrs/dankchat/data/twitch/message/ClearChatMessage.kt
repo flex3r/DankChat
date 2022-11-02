@@ -1,7 +1,7 @@
 package com.flxrs.dankchat.data.twitch.message
 
 import com.flxrs.dankchat.data.irc.IrcMessage
-import java.util.UUID
+import java.util.*
 
 data class ClearChatMessage(
     override val timestamp: Long = System.currentTimeMillis(),

@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="monospace_letter_spacing_adjustment" type="dimen" format="float">-0.03</item>
+    <item name="monospace_letter_spacing_adjustment" format="float" type="dimen">-0.03</item>
 </resources>

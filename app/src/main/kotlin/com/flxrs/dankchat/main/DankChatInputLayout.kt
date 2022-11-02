@@ -81,6 +81,7 @@ class DankChatInputLayout @JvmOverloads constructor(
                         touchListener.onTouch(TouchEvent.HOLD_START)
                     } ?: return@OnTouchListener view.onTouchEvent(event)
                 }
+
                 MotionEvent.ACTION_MOVE -> Unit
                 MotionEvent.ACTION_UP   -> {
                     when {
@@ -89,6 +90,7 @@ class DankChatInputLayout @JvmOverloads constructor(
                     }
                     cancelActionJob()
                 }
+
                 else                    -> cancelActionJob()
             }
 

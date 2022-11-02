@@ -21,8 +21,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.repo.EmoteRepository
+import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.main.MainViewModel
@@ -86,6 +86,7 @@ open class ChatFragment : Fragment() {
                 getString(R.string.preference_animate_gifs_key),
                 getString(R.string.preference_show_username_key),
                 getString(R.string.preference_visible_badges_key) -> binding.chat.swapAdapter(adapter, false)
+
                 getString(R.string.preference_line_separator_key) -> when {
                     pref.getBoolean(key, false) -> binding.chat.addItemDecoration(itemDecoration)
                     else                        -> binding.chat.removeItemDecoration(itemDecoration)

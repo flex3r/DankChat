@@ -1,6 +1,6 @@
 package com.flxrs.dankchat.data.twitch.message
 
-import java.util.UUID
+import java.util.*
 
 data class SystemMessage(
     val type: SystemMessageType,

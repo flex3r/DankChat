@@ -49,6 +49,7 @@ class MentionFragment : Fragment() {
                     it   -> if (binding.mentionTabs.selectedTabPosition != 0) {
                         binding.mentionTabs.getTabAt(0)?.apply { orCreateBadge }
                     }
+
                     else -> binding.mentionTabs.getTabAt(0)?.removeBadge()
                 }
             }

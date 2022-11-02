@@ -310,6 +310,7 @@ class NotificationService : Service(), CoroutineScope {
                     highlights.hasMention() -> NotificationData(channel, name, originalMessage)
                     else                    -> null
                 }
+
                 is WhisperMessage -> NotificationData(
                     channel = "",
                     name = name,

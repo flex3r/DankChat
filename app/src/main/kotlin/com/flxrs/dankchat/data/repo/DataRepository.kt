@@ -7,7 +7,6 @@ import com.flxrs.dankchat.data.api.dto.UserFollowsDto
 import com.flxrs.dankchat.data.twitch.badge.toBadgeSets
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
-import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.measureTimeAndLog
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
