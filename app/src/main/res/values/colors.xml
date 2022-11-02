@@ -6,10 +6,10 @@
     <color name="ripple_color">#cca0a0a0</color>
 
     <!-- Base: Deep Purple 300-->
-    <color name="color_sub_highlight">#ebdcff</color>
+    <color name="color_sub_highlight">#D1C4E9</color> <!--Deep Purple 100-->
 
     <!-- Base: Red 300-->
-    <color name="color_mention_highlight">#ffdad8</color>
+    <color name="color_mention_highlight">#EF9A9A</color> <!--Red 200-->
 
     <!-- Base: Cyan 300-->
     <color name="color_redemption_highlight">#93f1ff</color>
