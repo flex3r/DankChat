@@ -562,7 +562,6 @@ class ChatRepository @Inject constructor(
     }
 
     private suspend fun handleMessage(ircMessage: IrcMessage) {
-        // TODO
         val userId = ircMessage.tags["user-id"]
         if (ignoresRepository.isUserBlocked(userId)) {
             return

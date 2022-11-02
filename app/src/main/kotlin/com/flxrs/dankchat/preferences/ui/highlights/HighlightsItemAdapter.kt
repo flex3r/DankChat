@@ -49,15 +49,15 @@ class HighlightsItemAdapter(
                 val highlightItem = getItem(position) as MessageHighlightItem
                 with(holder.binding) {
                     item = highlightItem
-                    title.text = when (highlightItem.type) {
-                        // TODO
-                        MessageHighlightItem.Type.Username               -> "Your username"
-                        MessageHighlightItem.Type.Subscription           -> "Subscriptions"
-                        MessageHighlightItem.Type.FirstMessage           -> "First Messages"
-                        MessageHighlightItem.Type.ElevatedMessage        -> "Elevated Messages"
-                        MessageHighlightItem.Type.ChannelPointRedemption -> "Highlights redeemed with Channel Points"
-                        MessageHighlightItem.Type.Custom                 -> "Custom"
+                    val titleText = when (highlightItem.type) {
+                        MessageHighlightItem.Type.Username               -> R.string.highlights_entry_username
+                        MessageHighlightItem.Type.Subscription           -> R.string.highlights_entry_subscriptions
+                        MessageHighlightItem.Type.FirstMessage           -> R.string.highlights_entry_first_messages
+                        MessageHighlightItem.Type.ElevatedMessage        -> R.string.highlights_entry_elevated_messages
+                        MessageHighlightItem.Type.ChannelPointRedemption -> R.string.highlights_entry_redemptions
+                        MessageHighlightItem.Type.Custom                 -> R.string.highlights_entry_custom
                     }
+                    title.text = root.context.getString(titleText)
 
                     if (highlightItem.type != MessageHighlightItem.Type.Custom) {
                         isRegex.isEnabled = false

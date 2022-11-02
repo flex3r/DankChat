@@ -495,7 +495,10 @@ class ChatAdapter(
     private fun TextView.handleTwitchMessage(privMessage: PrivMessage, holder: ViewHolder, isMentionTab: Boolean): Unit = with(privMessage) {
         val textView = this@handleTwitchMessage
         isClickable = false
-        alpha = if (timedOut) .5f else 1f
+        alpha = when {
+            timedOut -> .5f
+            else     -> 1f
+        }
         movementMethod = LongClickLinkMovementMethod
         (text as? Spannable)?.clearSpans()
 

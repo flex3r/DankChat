@@ -78,9 +78,8 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
             TabLayoutMediator(tabs, viewPager) { tab, pos ->
                 val highlightTab = HighlightsTab.values()[pos]
                 tab.text = when (highlightTab) {
-                    // TODO
-                    HighlightsTab.Messages -> "Messages"
-                    HighlightsTab.Users    -> "Users"
+                    HighlightsTab.Messages -> getString(R.string.tab_messages)
+                    HighlightsTab.Users    -> getString(R.string.tab_users)
                 }
             }.attach()
         }
@@ -98,9 +97,8 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
                     highlightsViewModel.events.collect { event ->
                         when (event) {
                             is HighlightEvent.ItemRemoved -> {
-                                // TODO
-                                binding.root.showShortSnackbar("Item removed") {
-                                    setAction("Undo") { highlightsViewModel.addHighlightItem(event.item, event.position) }
+                                binding.root.showShortSnackbar(getString(R.string.item_removed)) {
+                                    setAction(getString(R.string.undo)) { highlightsViewModel.addHighlightItem(event.item, event.position) }
                                 }
                             }
                         }
@@ -134,10 +132,9 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
             TabLayoutMediator(tabs, viewPager) { tab, pos ->
                 val ignoreTab = IgnoresTab.values()[pos]
                 tab.text = when (ignoreTab) {
-                    // TODO
-                    IgnoresTab.Messages -> "Messages"
-                    IgnoresTab.Users    -> "Users"
-                    IgnoresTab.Twitch   -> "Twitch"
+                    IgnoresTab.Messages -> getString(com.flxrs.dankchat.R.string.tab_messages)
+                    IgnoresTab.Users    -> getString(com.flxrs.dankchat.R.string.tab_users)
+                    IgnoresTab.Twitch   -> getString(R.string.tab_twitch)
                 }
             }.attach()
         }
@@ -154,16 +151,15 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
                 repeatOnLifecycle(Lifecycle.State.STARTED) {
                     ignoresViewModel.events.collect { event ->
                         when (event) {
-                            // TODO
-                            is IgnoreEvent.UnblockError -> binding.root.showShortSnackbar("Failed to unblock user ${event.item.username}")
-                            is IgnoreEvent.BlockError   -> binding.root.showShortSnackbar("Failed to block user ${event.item.username}")
+                            is IgnoreEvent.UnblockError -> binding.root.showShortSnackbar(getString(R.string.unblocked_user_failed, event.item.username))
+                            is IgnoreEvent.BlockError   -> binding.root.showShortSnackbar(getString(R.string.blocked_user_failed, event.item.username))
                             is IgnoreEvent.ItemRemoved  -> {
                                 val snackBarText = when (event.item) {
-                                    is TwitchBlockItem -> "Unblocked user ${event.item.username}"
-                                    else               -> "Item removed"
+                                    is TwitchBlockItem -> getString(R.string.unblocked_user, event.item.username)
+                                    else               -> getString(R.string.item_removed)
                                 }
                                 binding.root.showShortSnackbar(snackBarText) {
-                                    setAction("Undo") { ignoresViewModel.addIgnoreItem(event.item, event.position) }
+                                    setAction(R.string.undo) { ignoresViewModel.addIgnoreItem(event.item, event.position) }
                                 }
                             }
                         }
