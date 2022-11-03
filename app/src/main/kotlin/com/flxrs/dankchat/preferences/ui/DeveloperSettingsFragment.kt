@@ -21,6 +21,8 @@ import kotlin.math.roundToInt
 @AndroidEntryPoint
 class DeveloperSettingsFragment : MaterialPreferenceFragmentCompat() {
 
+    private var bottomSheetDialog: BottomSheetDialog? = null
+
     @Inject
     lateinit var dankChatPreferenceStore: DankChatPreferenceStore
 
@@ -39,6 +41,12 @@ class DeveloperSettingsFragment : MaterialPreferenceFragmentCompat() {
         findPreference<Preference>(getString(R.string.preference_rm_host_key))?.apply {
             setOnPreferenceClickListener { showRmHostPreference(view) }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bottomSheetDialog?.dismiss()
+        bottomSheetDialog = null
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -60,7 +68,7 @@ class DeveloperSettingsFragment : MaterialPreferenceFragmentCompat() {
             }
         }
 
-        BottomSheetDialog(context).apply {
+        bottomSheetDialog = BottomSheetDialog(context).apply {
             setContentView(binding.root)
             setOnDismissListener {
                 val newHost = binding.rmHostInput.text

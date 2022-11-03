@@ -28,6 +28,8 @@ import kotlin.math.roundToInt
 
 class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
 
+    private var bottomSheetDialog: BottomSheetDialog? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -46,6 +48,12 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
                 showCommandsPreference(view, key, preferences)
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bottomSheetDialog?.dismiss()
+        bottomSheetDialog = null
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -98,7 +106,7 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
             }
         }
 
-        BottomSheetDialog(context).apply {
+        bottomSheetDialog = BottomSheetDialog(context).apply {
             setContentView(binding.root)
             setOnDismissListener {
                 val stringSet = commandAdapter.commands
