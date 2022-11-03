@@ -5,7 +5,6 @@
     <color name="colorThatIsActuallyTransparent">#00FFFFFF</color>
     <color name="ripple_color">#cca0a0a0</color>
 
-    <!-- Base: Deep Purple 300-->
     <color name="color_sub_highlight">#D1C4E9</color> <!--Deep Purple 100-->
 
     <!-- Base: Red 300-->
