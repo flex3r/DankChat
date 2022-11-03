@@ -16,6 +16,7 @@ class HighlightsViewModel @Inject constructor(
     private val highlightsRepository: HighlightsRepository
 ) : ViewModel() {
 
+    private val currentTab = MutableStateFlow(HighlightsTab.Messages)
     private val messageHighlightsTab = MutableStateFlow(HighlightsTabItem(HighlightsTab.Messages, listOf(AddItem)))
     private val userHighlightsTab = MutableStateFlow(HighlightsTabItem(HighlightsTab.Users, listOf(AddItem)))
     private val eventChannel = Channel<HighlightEvent>(Channel.CONFLATED)
@@ -25,6 +26,10 @@ class HighlightsViewModel @Inject constructor(
         listOf(messageHighlights, userHighlights)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), INITIAL_STATE)
 
+    fun setCurrentTab(position: Int) {
+        currentTab.value = HighlightsTab.values()[position]
+    }
+
     fun fetchHighlights() {
         val messageHighlights = highlightsRepository.messageHighlights.value.map { it.toItem() }
         val userHighlights = highlightsRepository.userHighlights.value.map { it.toItem() }
@@ -33,8 +38,8 @@ class HighlightsViewModel @Inject constructor(
         userHighlightsTab.update { it.copy(items = listOf(AddItem) + userHighlights) }
     }
 
-    fun addHighlight(tab: HighlightsTab) = viewModelScope.launch {
-        when (tab) {
+    fun addHighlight() = viewModelScope.launch {
+        when (currentTab.value) {
             HighlightsTab.Messages -> {
                 val entity = highlightsRepository.addMessageHighlight()
                 messageHighlightsTab.update {

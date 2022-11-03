@@ -7,10 +7,8 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.preference.Preference
+import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.HighlightsIgnoresBottomsheetBinding
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
@@ -19,18 +17,20 @@ import com.flxrs.dankchat.preferences.ui.highlights.HighlightsTab
 import com.flxrs.dankchat.preferences.ui.highlights.HighlightsTabAdapter
 import com.flxrs.dankchat.preferences.ui.highlights.HighlightsViewModel
 import com.flxrs.dankchat.preferences.ui.ignores.*
+import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.flxrs.dankchat.utils.extensions.expand
 import com.flxrs.dankchat.utils.extensions.showShortSnackbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
 
     private val highlightsViewModel: HighlightsViewModel by viewModels()
     private val ignoresViewModel: IgnoresViewModel by viewModels()
+    private var bottomSheetDialog: BottomSheetDialog? = null
+    private var bottomSheetBinding: HighlightsIgnoresBottomsheetBinding? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,37 +44,81 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
             }
         }
 
+        val highlightsAdapter = HighlightsTabAdapter(
+            onAddItem = highlightsViewModel::addHighlight,
+            onDeleteItem = highlightsViewModel::removeHighlight,
+        )
+        val ignoresAdapter = IgnoresTabAdapter(
+            onAddItem = ignoresViewModel::addIgnore,
+            onDeleteItem = ignoresViewModel::removeIgnore,
+        )
+
         findPreference<Preference>(getString(R.string.preference_custom_mentions_key))?.apply {
             setOnPreferenceClickListener {
-                showHighlightsSheet(view)
+                bottomSheetBinding = HighlightsIgnoresBottomsheetBinding.inflate(LayoutInflater.from(view.context), view as? ViewGroup, false)
+                showHighlightsSheet(highlightsAdapter)
                 true
             }
         }
         findPreference<Preference>(getString(R.string.preference_blacklist_key))?.apply {
             setOnPreferenceClickListener {
-                showIgnoresSheet(view)
+                bottomSheetBinding = HighlightsIgnoresBottomsheetBinding.inflate(LayoutInflater.from(view.context), view as? ViewGroup, false)
+                showIgnoresSheet(ignoresAdapter)
                 true
             }
         }
+
+        collectFlow(highlightsViewModel.highlightTabs, highlightsAdapter::submitList)
+        collectFlow(highlightsViewModel.events) { event ->
+            when (event) {
+                is HighlightEvent.ItemRemoved -> bottomSheetBinding?.root?.showShortSnackbar(getString(R.string.item_removed)) {
+                    setAction(getString(R.string.undo)) { highlightsViewModel.addHighlightItem(event.item, event.position) }
+                }
+            }
+        }
+        collectFlow(ignoresViewModel.ignoreTabs, ignoresAdapter::submitList)
+        collectFlow(ignoresViewModel.events) { event ->
+            when (event) {
+                is IgnoreEvent.UnblockError -> bottomSheetBinding?.root?.showShortSnackbar(getString(R.string.unblocked_user_failed, event.item.username))
+                is IgnoreEvent.BlockError   -> bottomSheetBinding?.root?.showShortSnackbar(getString(R.string.blocked_user_failed, event.item.username))
+                is IgnoreEvent.ItemRemoved  -> {
+                    val snackBarText = when (event.item) {
+                        is TwitchBlockItem -> getString(R.string.unblocked_user, event.item.username)
+                        else               -> getString(R.string.item_removed)
+                    }
+                    bottomSheetBinding?.root?.showShortSnackbar(snackBarText) {
+                        setAction(R.string.undo) { ignoresViewModel.addIgnoreItem(event.item, event.position) }
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bottomSheetDialog?.dismiss()
+        bottomSheetDialog = null
+        bottomSheetBinding = null
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.notifications_settings, rootKey)
     }
 
-    private fun showHighlightsSheet(root: View) {
-        val context = root.context
-        val binding = HighlightsIgnoresBottomsheetBinding.inflate(LayoutInflater.from(context), root as? ViewGroup, false)
-        val adapter = HighlightsTabAdapter(
-            onAddItem = { highlightsViewModel.addHighlight(HighlightsTab.values()[binding.tabs.selectedTabPosition]) },
-            onDeleteItem = highlightsViewModel::removeHighlight,
-        )
+    private fun showHighlightsSheet(highlightsAdapter: HighlightsTabAdapter) {
+        val binding = bottomSheetBinding ?: return
+        val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                highlightsViewModel.setCurrentTab(position)
+            }
+        }
         with(binding) {
             sheet.updateLayoutParams {
                 height = resources.displayMetrics.heightPixels
             }
             title.setText(R.string.highlights)
-            viewPager.adapter = adapter
+            viewPager.registerOnPageChangeCallback(pageChangeCallback)
+            viewPager.adapter = highlightsAdapter
             TabLayoutMediator(tabs, viewPager) { tab, pos ->
                 val highlightTab = HighlightsTab.values()[pos]
                 tab.text = when (highlightTab) {
@@ -83,30 +127,14 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
                 }
             }.attach()
         }
-        BottomSheetDialog(context).apply {
+
+        bottomSheetDialog = BottomSheetDialog(requireContext()).apply {
             highlightsViewModel.fetchHighlights()
-            lifecycleScope.launch {
-                repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    highlightsViewModel.highlightTabs.collect {
-                        adapter.submitList(it)
-                    }
-                }
-            }
-            lifecycleScope.launch {
-                repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    highlightsViewModel.events.collect { event ->
-                        when (event) {
-                            is HighlightEvent.ItemRemoved -> {
-                                binding.root.showShortSnackbar(getString(R.string.item_removed)) {
-                                    setAction(getString(R.string.undo)) { highlightsViewModel.addHighlightItem(event.item, event.position) }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
             setOnDismissListener {
-                highlightsViewModel.updateHighlights(adapter.currentList)
+                highlightsViewModel.updateHighlights(highlightsAdapter.currentList)
+                binding.viewPager.unregisterOnPageChangeCallback(pageChangeCallback)
+                bottomSheetDialog = null
+                bottomSheetBinding = null
             }
             setContentView(binding.root)
             behavior.skipCollapsed = true
@@ -116,19 +144,20 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
         }
     }
 
-    private fun showIgnoresSheet(root: View) {
-        val context = root.context
-        val binding = HighlightsIgnoresBottomsheetBinding.inflate(LayoutInflater.from(context), root as? ViewGroup, false)
-        val adapter = IgnoresTabAdapter(
-            onAddItem = { ignoresViewModel.addIgnore(IgnoresTab.values()[binding.tabs.selectedTabPosition]) },
-            onDeleteItem = ignoresViewModel::removeIgnore,
-        )
+    private fun showIgnoresSheet(ignoresAdapter: IgnoresTabAdapter) {
+        val binding = bottomSheetBinding ?: return
+        val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                ignoresViewModel.setCurrentTab(position)
+            }
+        }
         with(binding) {
             sheet.updateLayoutParams {
                 height = resources.displayMetrics.heightPixels
             }
             title.setText(R.string.ignores)
-            viewPager.adapter = adapter
+            viewPager.registerOnPageChangeCallback(pageChangeCallback)
+            viewPager.adapter = ignoresAdapter
             TabLayoutMediator(tabs, viewPager) { tab, pos ->
                 val ignoreTab = IgnoresTab.values()[pos]
                 tab.text = when (ignoreTab) {
@@ -138,36 +167,13 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
                 }
             }.attach()
         }
-        BottomSheetDialog(context).apply {
+        bottomSheetDialog = BottomSheetDialog(requireContext()).apply {
             ignoresViewModel.fetchIgnores()
-            lifecycleScope.launch {
-                repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    ignoresViewModel.ignoreTabs.collect {
-                        adapter.submitList(it)
-                    }
-                }
-            }
-            lifecycleScope.launch {
-                repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    ignoresViewModel.events.collect { event ->
-                        when (event) {
-                            is IgnoreEvent.UnblockError -> binding.root.showShortSnackbar(getString(R.string.unblocked_user_failed, event.item.username))
-                            is IgnoreEvent.BlockError   -> binding.root.showShortSnackbar(getString(R.string.blocked_user_failed, event.item.username))
-                            is IgnoreEvent.ItemRemoved  -> {
-                                val snackBarText = when (event.item) {
-                                    is TwitchBlockItem -> getString(R.string.unblocked_user, event.item.username)
-                                    else               -> getString(R.string.item_removed)
-                                }
-                                binding.root.showShortSnackbar(snackBarText) {
-                                    setAction(R.string.undo) { ignoresViewModel.addIgnoreItem(event.item, event.position) }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
             setOnDismissListener {
-                ignoresViewModel.updateIgnores(adapter.currentList)
+                ignoresViewModel.updateIgnores(ignoresAdapter.currentList)
+                binding.viewPager.unregisterOnPageChangeCallback(pageChangeCallback)
+                bottomSheetDialog = null
+                bottomSheetBinding = null
             }
             setContentView(binding.root)
             behavior.skipCollapsed = true
