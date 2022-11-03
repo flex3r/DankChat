@@ -96,6 +96,21 @@ class MainFragment : Fragment() {
         }
     }
 
+    private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            if (position in tabAdapter.channels.indices) {
+                val newChannel = tabAdapter.channels[position].lowercase(Locale.getDefault())
+                mainViewModel.setActiveChannel(newChannel)
+
+            }
+        }
+
+        override fun onPageScrollStateChanged(state: Int) {
+            emoteMenuBottomSheetBehavior?.hide()
+            binding.input.dismissDropDown()
+        }
+    }
+
     @Inject
     lateinit var dankChatPreferences: DankChatPreferenceStore
 
@@ -145,7 +160,7 @@ class MainFragment : Fragment() {
             emoteMenuBottomSheetBehavior = BottomSheetBehavior.from(emoteMenuBottomSheet)
             vm = mainViewModel
             lifecycleOwner = this@MainFragment
-            chatViewpager.setup(this)
+            chatViewpager.setup()
             input.setup(this)
 
             childFragmentManager.findFragmentById(R.id.mention_fragment)?.let {
@@ -477,6 +492,7 @@ class MainFragment : Fragment() {
 
     override fun onDestroyView() {
         bindingRef?.tabs?.removeOnTabSelectedListener(tabSelectionListener)
+        bindingRef?.chatViewpager?.unregisterOnPageChangeCallback(pageChangeCallback)
         bindingRef = null
         emoteMenuBottomSheetBehavior = null
         mentionBottomSheetBehavior = null
@@ -961,23 +977,10 @@ class MainFragment : Fragment() {
         else     -> ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
     }
 
-    private fun ViewPager2.setup(binding: MainFragmentBinding) {
+    private fun ViewPager2.setup() {
         adapter = tabAdapter
         reduceDragSensitivity()
-        registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                if (position in tabAdapter.channels.indices) {
-                    val newChannel = tabAdapter.channels[position].lowercase(Locale.getDefault())
-                    mainViewModel.setActiveChannel(newChannel)
-
-                }
-            }
-
-            override fun onPageScrollStateChanged(state: Int) {
-                emoteMenuBottomSheetBehavior?.hide()
-                binding.input.dismissDropDown()
-            }
-        })
+        registerOnPageChangeCallback(pageChangeCallback)
     }
 
     private fun DankChatInputLayout.setup() {
