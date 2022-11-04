@@ -234,24 +234,23 @@ class MainFragment : Fragment() {
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 when (menuItem.itemId) {
-                    R.id.menu_reconnect      -> mainViewModel.reconnect()
-                    R.id.menu_login          -> openLogin()
-                    R.id.menu_relogin        -> openLogin()
-                    R.id.menu_logout         -> showLogoutConfirmationDialog()
-                    R.id.menu_add            -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment)
-                    R.id.menu_mentions       -> mentionBottomSheetBehavior?.expand()
-                    R.id.menu_open_channel   -> openChannel()
-                    R.id.menu_remove_channel -> removeChannel()
-                    R.id.menu_report_channel -> reportChannel()
-                    R.id.menu_block_channel  -> blockChannel()
-                    R.id.menu_manage         -> openManageChannelsDialog()
-                    R.id.menu_reload_emotes  -> reloadEmotes()
-                    R.id.menu_choose_media   -> showExternalHostingUploadDialogIfNotAcknowledged { requestGalleryMedia.launch(PickVisualMediaRequest(PickVisualMedia.ImageAndVideo)) }
-                    R.id.menu_capture_image  -> startCameraCapture()
-                    R.id.menu_capture_video  -> startCameraCapture(captureVideo = true)
-                    R.id.menu_clear          -> clear()
-                    R.id.menu_settings       -> navigateSafe(R.id.action_mainFragment_to_overviewSettingsFragment).also { hideKeyboard() }
-                    else                     -> return false
+                    R.id.menu_reconnect                -> mainViewModel.reconnect()
+                    R.id.menu_login, R.id.menu_relogin -> openLogin()
+                    R.id.menu_logout                   -> showLogoutConfirmationDialog()
+                    R.id.menu_add                      -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment)
+                    R.id.menu_mentions                 -> mentionBottomSheetBehavior?.expand()
+                    R.id.menu_open_channel             -> openChannel()
+                    R.id.menu_remove_channel           -> removeChannel()
+                    R.id.menu_report_channel           -> reportChannel()
+                    R.id.menu_block_channel            -> blockChannel()
+                    R.id.menu_manage                   -> openManageChannelsDialog()
+                    R.id.menu_reload_emotes            -> reloadEmotes()
+                    R.id.menu_choose_media             -> showExternalHostingUploadDialogIfNotAcknowledged { requestGalleryMedia.launch(PickVisualMediaRequest(PickVisualMedia.ImageAndVideo)) }
+                    R.id.menu_capture_image            -> startCameraCapture()
+                    R.id.menu_capture_video            -> startCameraCapture(captureVideo = true)
+                    R.id.menu_clear                    -> clear()
+                    R.id.menu_settings                 -> navigateSafe(R.id.action_mainFragment_to_overviewSettingsFragment).also { hideKeyboard() }
+                    else                               -> return false
                 }
                 return true
             }

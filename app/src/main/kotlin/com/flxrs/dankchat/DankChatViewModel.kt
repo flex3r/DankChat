@@ -7,9 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.data.ChatRepository
 import com.flxrs.dankchat.data.DataRepository
 import com.flxrs.dankchat.data.api.ApiManager
+import com.flxrs.dankchat.data.api.dto.ValidateResultDto
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.withoutOAuthSuffix
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.ktor.http.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -51,17 +53,27 @@ class DankChatViewModel @Inject constructor(
         val token = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return
 
         runCatching {
-            val result = apiManager.validateUser(token)
-            if (result == null) {
-                _validationResult.send(ValidationResult.TokenInvalid)
-                dankChatPreferenceStore.clearLogin()
-                return@runCatching
+            when (val result = apiManager.validateUser(token)) {
+                is ValidateResultDto.Error     -> result.handleValidationError()
+                is ValidateResultDto.ValidUser -> {
+                    _validationResult.send(ValidationResult.User(result.login))
+                    dankChatPreferenceStore.userName = result.login
+                }
             }
-
-            _validationResult.send(ValidationResult.User(result.login))
-            dankChatPreferenceStore.userName = result.login
         }.getOrElse {
             Log.e(TAG, "Failed to validate token:", it)
+            _validationResult.send(ValidationResult.Failure)
+        }
+    }
+
+    private suspend fun ValidateResultDto.Error.handleValidationError() = when (statusCode) {
+        HttpStatusCode.Unauthorized -> {
+            dankChatPreferenceStore.clearLogin()
+            _validationResult.send(ValidationResult.TokenInvalid)
+        }
+
+        else                        -> {
+            Log.e(TAG, "Failed to validate token: $message")
             _validationResult.send(ValidationResult.Failure)
         }
     }

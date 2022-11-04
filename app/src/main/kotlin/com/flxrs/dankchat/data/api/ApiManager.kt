@@ -36,7 +36,15 @@ class ApiManager @Inject constructor(
     private val dankChatPreferenceStore: DankChatPreferenceStore
 ) {
 
-    suspend fun validateUser(token: String): ValidateUserDto? = authApiService.validateUser(token).bodyOrNull()
+    suspend fun validateUser(token: String): ValidateResultDto {
+        val response = authApiService.validateUser(token)
+        return when {
+            response.status.isSuccess() -> response.body<ValidateResultDto.ValidUser>()
+            else                        -> response
+                .bodyOrNull<ValidateResultDto.Error>()
+                ?: ValidateResultDto.Error(response.status.value, response.status.description)
+        }
+    }
 
     suspend fun getUserIdByName(name: String): String? {
         return helixApiService.getUserByName(listOf(name))

@@ -3,7 +3,7 @@ package com.flxrs.dankchat.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.data.api.ApiManager
-import com.flxrs.dankchat.data.api.dto.ValidateUserDto
+import com.flxrs.dankchat.data.api.dto.ValidateResultDto
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -32,15 +32,19 @@ class LoginViewModel @Inject constructor(
         val token = fragment
             .substringAfter("access_token=")
             .substringBefore("&scope=")
-        val result = apiManager.validateUser(token)
+
+        val result = runCatching {
+            apiManager.validateUser(token)
+        }.getOrNull()
         val successful = saveLoginDetails(token, result)
+
         eventChannel.send(TokenParseEvent(successful))
     }
 
-    private fun saveLoginDetails(oAuth: String, validateDto: ValidateUserDto?): Boolean {
-        return when {
-            validateDto == null || validateDto.login.isBlank() -> false
-            else                                               -> {
+    private fun saveLoginDetails(oAuth: String, validateDto: ValidateResultDto?): Boolean {
+        return when (validateDto) {
+            !is ValidateResultDto.ValidUser -> false
+            else                            -> {
                 dankChatPreferenceStore.apply {
                     oAuthKey = "oauth:$oAuth"
                     userName = validateDto.login.lowercase(Locale.getDefault())
