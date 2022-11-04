@@ -235,11 +235,11 @@ class DankChatPreferenceStore @Inject constructor(
         putString(ID_STRING_KEY, "")
     }
 
-    fun clearBlacklist() = dankChatPreferences.edit {
+    fun clearBlacklist() = defaultPreferences.edit {
         remove(context.getString(R.string.preference_blacklist_key))
     }
 
-    fun clearCustomMentions() = dankChatPreferences.edit {
+    fun clearCustomMentions() = defaultPreferences.edit {
         remove(context.getString(R.string.preference_custom_mentions_key))
     }
 
