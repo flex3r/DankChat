@@ -113,6 +113,10 @@ class DankChatPreferenceStore @Inject constructor(
         get() = getMultiEntriesFromPreferences(context.getString(R.string.preference_blacklist_key))
         set(value) = setMultiEntries(context.getString(R.string.preference_blacklist_key), value)
 
+    var isSecretDankerModeEnabled: Boolean
+        get() = dankChatPreferences.getBoolean(SECRET_DANKER_MODE_KEY, false)
+        set(value) = dankChatPreferences.edit { putBoolean(SECRET_DANKER_MODE_KEY, value) }
+
     val commandsAsFlow: Flow<List<CommandItem.Entry>> = callbackFlow {
         val commandsKey = context.getString(R.string.preference_commands_key)
         send(getCommandsFromPreferences(commandsKey))
@@ -333,6 +337,7 @@ class DankChatPreferenceStore @Inject constructor(
         private const val ID_STRING_KEY = "idStringKey"
         private const val EXTERNAL_HOSTING_ACK_KEY = "nuulsAckKey" // the key is old key to prevent triggering the dialog for existing users
         private const val MESSAGES_HISTORY_ACK_KEY = "messageHistoryAckKey"
+        private const val SECRET_DANKER_MODE_KEY = "secretDankerModeKey"
 
         private const val UPLOADER_URL = "uploaderUrl"
         private const val UPLOADER_FORM_FIELD = "uploaderFormField"
