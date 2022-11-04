@@ -19,12 +19,13 @@ class TabSelectionListener : TabLayout.OnTabSelectedListener {
     }
 }
 
-fun TabLayout.Tab.setInitialColor() {
-    val attr = when {
-        isSelected -> R.attr.colorPrimary
-        else       -> R.attr.colorOnSurfaceVariant
-    }
-    setTextColor(attr, !isSelected)
+
+fun TabLayout.setInitialColors() {
+    val surfaceVariant = MaterialColors.getColor(this, R.attr.colorOnSurfaceVariant)
+    val surface = MaterialColors.getColor(this, R.attr.colorSurface)
+    val primary = MaterialColors.getColor(this, R.attr.colorPrimary)
+    val layeredUnselectedColor = MaterialColors.layer(surfaceVariant, surface, UNSELECTED_TAB_OVERLAY_ALPHA)
+    setTabTextColors(layeredUnselectedColor, primary)
 }
 
 fun TabLayout.Tab.setTextColor(@AttrRes id: Int, layerWithSurface: Boolean = false) {

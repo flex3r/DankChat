@@ -155,9 +155,9 @@ class MainFragment : Fragment() {
             tabLayoutMediator = TabLayoutMediator(tabs, chatViewpager) { tab, position ->
                 val channelName = tabAdapter.titleList[position]
                 tab.text = dankChatPreferences.getRenamedChannel(channelName) ?: channelName
-                tab.setInitialColor()
             }
 
+            tabs.setInitialColors()
             tabs.getTabAt(tabs.selectedTabPosition)?.removeBadge()
             tabs.addOnTabSelectedListener(tabSelectionListener)
 
