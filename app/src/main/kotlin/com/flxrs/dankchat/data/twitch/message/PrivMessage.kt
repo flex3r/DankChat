@@ -4,7 +4,7 @@ import android.graphics.Color
 import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
-import java.util.*
+import java.util.UUID
 
 data class PrivMessage(
     override val timestamp: Long = System.currentTimeMillis(),
@@ -23,6 +23,9 @@ data class PrivMessage(
     val timedOut: Boolean = false,
     val tags: Map<String, String>,
 ) : Message() {
+
+    override val emoteData: EmoteData = EmoteData(message, channel, emoteTag = tags["emotes"].orEmpty())
+    override val badgeData: BadgeData = BadgeData(userId, channel, badgeTag = tags["badges"], badgeInfoTag = tags["badge-info"])
 
     companion object {
         fun parsePrivMessage(ircMessage: IrcMessage): PrivMessage = with(ircMessage) {

@@ -11,6 +11,10 @@ data class UserNoticeMessage(
     val message: String,
     val childMessage: PrivMessage?
 ) : Message() {
+
+    override val emoteData: EmoteData? = childMessage?.emoteData
+    override val badgeData: BadgeData? = childMessage?.badgeData
+
     companion object {
         fun parseUserNotice(message: IrcMessage, historic: Boolean = false): UserNoticeMessage = with(message) {
             val msgId = tags["msg-id"]

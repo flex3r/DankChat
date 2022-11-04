@@ -65,16 +65,8 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
     }
 
     fun parseEmotesAndBadges(message: Message): Message {
-        if (message !is PrivMessage && message !is WhisperMessage && message !is UserNoticeMessage) {
-            return message
-        }
-
-        val (messageString, channel, emoteTag) = when (message) {
-            is PrivMessage       -> Triple(message.message, message.channel, message.tags["emotes"].orEmpty())
-            is WhisperMessage    -> Triple(message.message, "", message.rawEmotes)
-            is UserNoticeMessage -> message.childMessage?.let { Triple(it.message, it.channel, it.tags["emotes"].orEmpty()) } ?: return message
-            else                 -> return message
-        }
+        val emoteData = message.emoteData ?: return message
+        val (messageString, channel, emoteTag) = emoteData
 
         val withEmojiFix = messageString.replace(
             ChatRepository.ESCAPE_TAG_REGEX,
@@ -106,23 +98,8 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
     }
 
     private fun parseBadges(message: Message): Message {
-        if (message !is PrivMessage && message !is WhisperMessage && message !is UserNoticeMessage) {
-            return message
-        }
-
-        val channel = when (message) {
-            is PrivMessage       -> message.channel
-            is WhisperMessage    -> ""
-            is UserNoticeMessage -> message.childMessage?.channel ?: return message
-            else                 -> return message
-        }
-
-        val (badgeTag, badgeInfoTag, userId) = when (message) {
-            is PrivMessage       -> Triple(message.tags["badges"], message.tags["badge-info"], message.userId)
-            is WhisperMessage    -> Triple(message.rawBadges, message.rawBadgeInfo, message.userId)
-            is UserNoticeMessage -> message.childMessage?.let { Triple(it.tags["badges"], it.tags["badge-info"], it.userId) } ?: return message
-            else                 -> return message
-        }
+        val badgeData = message.badgeData ?: return message
+        val (userId, channel, badgeTag, badgeInfoTag) = badgeData
 
         val badgeInfos = badgeInfoTag
             ?.parseTagList()
