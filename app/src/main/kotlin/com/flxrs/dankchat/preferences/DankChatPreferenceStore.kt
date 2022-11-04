@@ -231,6 +231,14 @@ class DankChatPreferenceStore @Inject constructor(
         putString(ID_STRING_KEY, "")
     }
 
+    fun clearBlacklist() = dankChatPreferences.edit {
+        remove(context.getString(R.string.preference_blacklist_key))
+    }
+
+    fun clearCustomMentions() = dankChatPreferences.edit {
+        remove(context.getString(R.string.preference_custom_mentions_key))
+    }
+
     fun getChannels(): List<String> = channelsString?.split(',') ?: channels.also { channels = null }?.toList().orEmpty()
 
     fun getRenamedChannel(channel: String): String? {

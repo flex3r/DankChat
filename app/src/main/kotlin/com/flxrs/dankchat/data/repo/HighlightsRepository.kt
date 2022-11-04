@@ -69,7 +69,7 @@ class HighlightsRepository @Inject constructor(
             }
         }
 
-        preferences.customMentions = emptyList()
+        preferences.clearCustomMentions()
     }
 
     suspend fun addMessageHighlight(): MessageHighlightEntity {

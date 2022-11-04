@@ -71,7 +71,7 @@ class IgnoresRepository @Inject constructor(
             }
         }
 
-        preferences.customBlacklist = emptyList()
+        preferences.clearBlacklist()
     }
 
     fun isUserBlocked(userId: String?): Boolean {
