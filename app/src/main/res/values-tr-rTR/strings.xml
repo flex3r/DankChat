@@ -95,7 +95,10 @@ Servis bu hizmeti verebilmek için sizin (ve başkalarının) ziyaret ettiği ka
     <string name="mentions">Bahsetmeler</string>
     <string name="confirm_channel_removal_title">Kanalı kaldırmayı onayla</string>
     <string name="confirm_channel_removal_message">Bu kanalı kaldırmak istediğinizden emin misiniz?</string>
+    <string name="confirm_channel_removal_message_named">\"%1$s\" kanalını kaldırmak istediğinize emin misiniz?</string>
     <string name="confirm_channel_removal_positive_button">Kaldır</string>
+    <string name="confirm_channel_block_title">Kanal engelini onayla</string>
+    <string name="confirm_channel_block_message_named">\"%1$s\" kanalını engellemek istediğinize emin misiniz?</string>
     <string name="user_popup_follow">Takip et</string>
     <string name="user_popup_unfollow">Takibi bırak</string>
     <string name="user_popup_block">Engelle</string>
@@ -223,6 +226,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_tts_message_format_message">Yalnızca mesajı okur</string>
     <string name="preference_tts_message_format_combined">Kullanıcı ve mesajı okur</string>
     <string name="preference_tts_message_format_title">Mesaj biçimi modu</string>
+    <string name="preference_tts_message_ignore_emote_title">İfadeleri yok say</string>
     <string name="preference_tts_header">TTS</string>
     <string name="preference_checkered_lines_title">Damalı Satırlar</string>
     <string name="preference_checkered_lines_summary">Her satırı farklı arka plan parlaklığı ile ayır</string>
@@ -260,6 +264,9 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="oauth_expired_title">Giriş Süresi Doldu!</string>
     <string name="oauth_expired_login_again">Yeniden Giriş Yap</string>
     <string name="preference_retain_webview_title">Yayın yenilemelerini önle</string>
+    <string name="reset_media_uploader_dialog_title">Medya Yükleyici Ayarlarını Sıfırla</string>
+    <string name="reset_media_uploader_dialog_message">Medya yükleyici ayarlarını varsayılana sıfırlamak istediğinize emin misiniz?</string>
+    <string name="reset_media_uploader_dialog_positive">Sıfırla</string>
     <plurals name="viewers">
         <item quantity="one">%d izleyici ile canlı</item>
         <item quantity="other">%d izleyici ile canlı</item>
