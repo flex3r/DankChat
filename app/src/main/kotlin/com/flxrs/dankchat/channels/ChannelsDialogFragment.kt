@@ -85,11 +85,12 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
         navigateSafe(direction)
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun renameChannel(rename: Pair<String, String>) {
         val (channel, name) = rename
         dankChatPreferences.setRenamedChannel(channel, name)
-        adapter.notifyDataSetChanged()
+
+        val position =  adapter.currentList.indexOf(channel)
+        adapter.notifyItemChanged(position)
     }
 
     private val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {

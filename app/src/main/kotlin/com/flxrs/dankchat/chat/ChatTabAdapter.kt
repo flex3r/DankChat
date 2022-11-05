@@ -1,7 +1,7 @@
 package com.flxrs.dankchat.chat
 
-import android.annotation.SuppressLint
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
@@ -26,10 +26,27 @@ class ChatTabAdapter(parentFragment: Fragment) : FragmentStateAdapter(parentFrag
         notifyItemInserted(_titleList.lastIndex)
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     fun updateFragments(titles: List<String>) {
+        if (titles == _titleList) {
+            // nothing to do
+            return
+        }
+
+        val oldList = _titleList.toList()
         _titleList.clear()
         _titleList.addAll(titles)
-        notifyDataSetChanged()
+
+        val result = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun getOldListSize(): Int = oldList.size
+            override fun getNewListSize(): Int = titles.size
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return oldList[oldItemPosition] == titles[newItemPosition]
+            }
+
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return oldList[oldItemPosition] == titles[newItemPosition]
+            }
+        })
+        result.dispatchUpdatesTo(this)
     }
 }
