@@ -44,7 +44,7 @@ class HighlightsRepository @Inject constructor(
 
     fun runMigrationsIfNeeded() = coroutineScope.launch {
         runCatching {
-            if (preferences.mentionEntries.isEmpty() || messageHighlightDao.getMessageHighlights().isNotEmpty()) {
+            if (preferences.mentionEntries.isEmpty() && messageHighlightDao.getMessageHighlights().isNotEmpty()) {
                 return@launch
             }
 
