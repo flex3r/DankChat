@@ -283,7 +283,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="reset_media_uploader_dialog_positive">Zurücksetzen</string>
     <string name="clear_recent_uploads_dialog_title">Upload-Verlauf löschen</string>
     <string name="clear_recent_uploads_dialog_message">Willst du den Upload-Verlauf wirklich löschen? Deine hochgeladenen Dateien werden nicht gelöscht.</string>
-    <string name="clear_recent_uploads_dialog_positive">Löschen</string>
+    <string name="clear">Löschen</string>
     <string name="copied_image_url">Bild-URL kopiert</string>
     <plurals name="viewers">
         <item quantity="one">Live mit %d Zuschauer</item>

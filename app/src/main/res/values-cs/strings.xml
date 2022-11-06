@@ -283,7 +283,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="reset_media_uploader_dialog_positive">Obnovit</string>
     <string name="clear_recent_uploads_dialog_title">Vymazat nedávná nahrání</string>
     <string name="clear_recent_uploads_dialog_message">Jste si jistí, že chcete smazat historii nahrávání? Vaše nahrané soubory nebudou smazány.</string>
-    <string name="clear_recent_uploads_dialog_positive">Vymazat</string>
+    <string name="clear">Vymazat</string>
     <string name="copied_image_url">Zkopírovaný odkaz obrázku</string>
     <plurals name="viewers">
         <item quantity="one">Živě s %d divákem</item>

@@ -183,7 +183,7 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
                 MaterialAlertDialogBuilder(context)
                     .setTitle(R.string.clear_recent_uploads_dialog_title)
                     .setMessage(R.string.clear_recent_uploads_dialog_message)
-                    .setPositiveButton(R.string.clear_recent_uploads_dialog_positive) { _, _ -> viewModel.clearUploads() }
+                    .setPositiveButton(R.string.clear) { _, _ -> viewModel.clearUploads() }
                     .setNegativeButton(R.string.dialog_cancel) { _, _ -> }
                     .create().show()
             }

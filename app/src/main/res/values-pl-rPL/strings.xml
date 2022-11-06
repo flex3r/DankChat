@@ -279,7 +279,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="reset_media_uploader_dialog_positive">Zresetuj</string>
     <string name="clear_recent_uploads_dialog_title">Wyczyść ostatnio przesłane</string>
     <string name="clear_recent_uploads_dialog_message">Czy jesteś pewien, że chcesz wyczyścić historie przesłania? Twoje przesłane pliki nie będą usunięte.</string>
-    <string name="clear_recent_uploads_dialog_positive">Wyczyść</string>
+    <string name="clear">Wyczyść</string>
     <plurals name="viewers">
         <item quantity="one">Na żywo z %d widzem</item>
         <item quantity="few">Na żywo z %d widzami</item>

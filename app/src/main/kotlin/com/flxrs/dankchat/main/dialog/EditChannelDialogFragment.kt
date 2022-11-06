@@ -15,41 +15,41 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 class EditChannelDialogFragment : DialogFragment() {
 
     private val args: EditChannelDialogFragmentArgs by navArgs()
-    private var bindingRef: EditDialogBinding? = null
-    private val binding get() = bindingRef!!
-
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        bindingRef = EditDialogBinding.inflate(layoutInflater, null, false)
+        val binding = EditDialogBinding.inflate(layoutInflater, null, false).apply {
+            dialogEdit.hint = args.renaming ?: args.channel
+            dialogEdit.setOnEditorActionListener { _, actionId, _ ->
+                when (actionId) {
+                    EditorInfo.IME_ACTION_DONE -> getInputAndDismiss(dialogEdit.text)
+                    else                       -> false
+                }
+            }
+
+            dialogEditLayout.isEndIconVisible = args.renaming != null
+            dialogEditLayout.setEndIconOnClickListener {
+                findNavController()
+                    .getBackStackEntry(R.id.channelsDialogFragment)
+                    .savedStateHandle[ChannelsDialogFragment.RENAME_TAB_REQUEST_KEY] = args.channel to args.channel
+                dismiss()
+            }
+        }
+
         val builder = MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.edit_dialog_title)
             .setView(binding.root)
             .setNegativeButton(R.string.dialog_cancel) { _, _ -> dismiss() }
             .setPositiveButton(R.string.dialog_ok) { _, _ -> getInputAndDismiss(binding.dialogEdit.text) }
 
-        binding.dialogEdit.hint = args.renaming ?: args.channel
-
-        binding.dialogEdit.setOnEditorActionListener { _, actionId, _ ->
-            when (actionId) {
-                EditorInfo.IME_ACTION_DONE -> getInputAndDismiss(binding.dialogEdit.text)
-                else                       -> false
-            }
-        }
         return builder.create()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        bindingRef = null
     }
 
     private fun getInputAndDismiss(input: Editable?): Boolean {
         val trimmedInput = input?.toString()?.trim().orEmpty()
         if (trimmedInput.isNotBlank()) {
-            with(findNavController()) {
-                getBackStackEntry(R.id.channelsDialogFragment)
-                    .savedStateHandle[ChannelsDialogFragment.RENAME_TAB_REQUEST_KEY] = args.channel to trimmedInput
-            }
+            findNavController()
+                .getBackStackEntry(R.id.channelsDialogFragment)
+                .savedStateHandle[ChannelsDialogFragment.RENAME_TAB_REQUEST_KEY] = args.channel to trimmedInput
         }
         dismiss()
         return true
