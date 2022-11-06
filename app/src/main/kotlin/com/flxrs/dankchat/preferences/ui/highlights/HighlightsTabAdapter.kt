@@ -13,7 +13,7 @@ class HighlightsTabAdapter(
     private val onDeleteItem: (item: HighlightItem) -> Unit,
 ) : ListAdapter<HighlightsTabItem, HighlightsTabAdapter.ItemViewHolder>(DetectDiff()) {
 
-    inner class ItemViewHolder(val adapter: HighlightsItemAdapter, binding: TabListBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class ItemViewHolder(val adapter: HighlightsItemAdapter, val binding: TabListBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun getItemCount(): Int = HighlightsTab.values().size
 
@@ -28,7 +28,14 @@ class HighlightsTabAdapter(
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val items = getItem(position).items
-        holder.adapter.submitList(items)
+        with(holder) {
+            adapter.submitList(items)
+            if (items.size > adapter.itemCount) {
+                binding.root.post {
+                    binding.tabList.scrollToPosition(items.lastIndex)
+                }
+            }
+        }
     }
 
     private class DetectDiff : DiffUtil.ItemCallback<HighlightsTabItem>() {
