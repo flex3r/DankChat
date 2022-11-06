@@ -283,7 +283,6 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="reset_media_uploader_dialog_positive">Restablecer</string>
     <string name="clear_recent_uploads_dialog_title">Limpiar subidas recientes</string>
     <string name="clear_recent_uploads_dialog_message">¿Estás seguro de que quieres limpiar el historial de subida? Los archivos subidos no serán eliminados </string>
-    <string name="clear">Limpiar</string>
     <plurals name="viewers">
         <item quantity="one">En directo con %d espectador</item>
         <item quantity="other">En directo con %d espectadores</item>
