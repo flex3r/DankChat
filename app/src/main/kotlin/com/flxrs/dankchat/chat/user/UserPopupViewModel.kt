@@ -81,8 +81,8 @@ class UserPopupViewModel @Inject constructor(
         if (!preferenceStore.isLoggedIn) {
             return@launch
         }
-        val currentUserId = preferenceStore.userIdString ?: return@launch
-        val result = runCatching { block(args.targetUserId, currentUserId) }
+
+        val result = runCatching { block(args.targetUserId, args.targetUserName) }
         when {
             result.isFailure -> _userPopupState.value = UserPopupState.Error(result.exceptionOrNull())
             else             -> loadData()
