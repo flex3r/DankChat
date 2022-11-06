@@ -98,6 +98,11 @@ class ChatAdapter(
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
+        holder.binding.itemText.alpha = when {
+            item.isCleared -> .5f
+            else           -> 1f
+        }
+
         when (val message = item.message) {
             is SystemMessage          -> holder.binding.itemText.handleSystemMessage(message, holder)
             is NoticeMessage          -> holder.binding.itemText.handleNoticeMessage(message, holder)
@@ -116,8 +121,6 @@ class ChatAdapter(
         }
 
     private fun TextView.handleNoticeMessage(message: NoticeMessage, holder: ViewHolder) {
-        alpha = 1.0f
-
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
         val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
@@ -144,8 +147,6 @@ class ChatAdapter(
     }
 
     private fun TextView.handleUserNoticeMessage(message: UserNoticeMessage, holder: ViewHolder) {
-        alpha = 1.0f
-
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
         val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
@@ -181,8 +182,6 @@ class ChatAdapter(
     }
 
     private fun TextView.handleSystemMessage(message: SystemMessage, holder: ViewHolder) {
-        alpha = 1.0f
-
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
         val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
@@ -222,8 +221,6 @@ class ChatAdapter(
     }
 
     private fun TextView.handleClearChatMessage(message: ClearChatMessage, holder: ViewHolder) {
-        alpha = 1.0f
-
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
         val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
@@ -258,8 +255,6 @@ class ChatAdapter(
     }
 
     private fun TextView.handlePointRedemptionMessage(message: PointRedemptionMessage, holder: ViewHolder) {
-        alpha = 1.0f
-
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
         val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
@@ -307,7 +302,6 @@ class ChatAdapter(
     private fun TextView.handleWhisperMessage(whisperMessage: WhisperMessage, holder: ViewHolder) = with(whisperMessage) {
         val textView = this@handleWhisperMessage
         isClickable = false
-        alpha = 1.0f
         movementMethod = LongClickLinkMovementMethod
         (text as? Spannable)?.clearSpans()
 
@@ -494,10 +488,6 @@ class ChatAdapter(
     private fun TextView.handleTwitchMessage(privMessage: PrivMessage, holder: ViewHolder, isMentionTab: Boolean): Unit = with(privMessage) {
         val textView = this@handleTwitchMessage
         isClickable = false
-        alpha = when {
-            timedOut -> .5f
-            else     -> 1f
-        }
         movementMethod = LongClickLinkMovementMethod
         (text as? Spannable)?.clearSpans()
 
@@ -822,18 +812,9 @@ private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
 
     override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
         return when {
-            newItem.message.highlights.hasMention() || isNewItemTimedout(oldItem, newItem) -> false
-
-            else                                                                           -> oldItem.message == newItem.message
+            newItem.message.highlights.hasMention() || (!oldItem.isCleared && newItem.isCleared) -> false
+            else                                                                                 -> oldItem.message == newItem.message
         }
-    }
-
-    private fun isNewItemTimedout(oldItem: ChatItem, newItem: ChatItem): Boolean {
-        if (oldItem.message !is PrivMessage || newItem.message !is PrivMessage) {
-            return false
-        }
-
-        return !oldItem.message.timedOut && newItem.message.timedOut
     }
 }
 
