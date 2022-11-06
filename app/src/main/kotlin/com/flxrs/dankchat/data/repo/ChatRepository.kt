@@ -634,10 +634,10 @@ class ChatRepository @Inject constructor(
         }
 
         val items = buildList {
-            add(ChatItem(message))
             if (message is UserNoticeMessage && message.childMessage != null) {
                 add(ChatItem(message.childMessage))
             }
+            add(ChatItem(message))
         }
 
         val channel = when (rawMessage) {
@@ -741,10 +741,10 @@ class ChatRepository @Inject constructor(
                 val message = emoteRepository.parseEmotesAndBadges(messageWithHighlights)
 
 
-                items += ChatItem(message)
                 if (message is UserNoticeMessage && message.childMessage != null) {
                     items += ChatItem(message.childMessage)
                 }
+                items += ChatItem(message)
             }
         }.let { Log.i(TAG, "Parsing message history for #$channel took $it ms") }
 
