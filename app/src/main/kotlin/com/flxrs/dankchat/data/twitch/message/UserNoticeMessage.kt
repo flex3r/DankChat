@@ -9,7 +9,8 @@ data class UserNoticeMessage(
     override val highlights: List<Highlight> = emptyList(),
     val channel: String,
     val message: String,
-    val childMessage: PrivMessage?
+    val childMessage: PrivMessage?,
+    val tags: Map<String, String>,
 ) : Message() {
 
     override val emoteData: EmoteData? = childMessage?.emoteData
@@ -37,8 +38,15 @@ data class UserNoticeMessage(
                 id = id,
                 channel = channel,
                 message = systemMsg,
-                childMessage = childMessage?.takeIf { it.message.isNotBlank() }
+                childMessage = childMessage?.takeIf { it.message.isNotBlank() },
+                tags = tags,
             )
         }
     }
 }
+
+val UserNoticeMessage.isSub: Boolean
+    get() = tags["msg-id"] == "sub" || tags["msg-id"] == "resub"
+
+val UserNoticeMessage.isAnnouncement: Boolean
+    get() = tags["msg-id"] == "announcement"

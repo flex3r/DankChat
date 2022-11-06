@@ -23,6 +23,7 @@ data class MessageHighlightItem(
     enum class Type {
         Username,
         Subscription,
+        Announcement,
         ChannelPointRedemption,
         FirstMessage,
         ElevatedMessage,
@@ -58,6 +59,7 @@ fun MessageHighlightItem.toEntity() = MessageHighlightEntity(
 fun MessageHighlightItem.Type.toEntityType(): MessageHighlightEntityType = when (this) {
     MessageHighlightItem.Type.Username               -> MessageHighlightEntityType.Username
     MessageHighlightItem.Type.Subscription           -> MessageHighlightEntityType.Subscription
+    MessageHighlightItem.Type.Announcement           -> MessageHighlightEntityType.Announcement
     MessageHighlightItem.Type.ChannelPointRedemption -> MessageHighlightEntityType.ChannelPointRedemption
     MessageHighlightItem.Type.FirstMessage           -> MessageHighlightEntityType.FirstMessage
     MessageHighlightItem.Type.ElevatedMessage        -> MessageHighlightEntityType.ElevatedMessage
@@ -67,6 +69,7 @@ fun MessageHighlightItem.Type.toEntityType(): MessageHighlightEntityType = when 
 fun MessageHighlightEntityType.toItemType(): MessageHighlightItem.Type = when (this) {
     MessageHighlightEntityType.Username               -> MessageHighlightItem.Type.Username
     MessageHighlightEntityType.Subscription           -> MessageHighlightItem.Type.Subscription
+    MessageHighlightEntityType.Announcement           -> MessageHighlightItem.Type.Announcement
     MessageHighlightEntityType.ChannelPointRedemption -> MessageHighlightItem.Type.ChannelPointRedemption
     MessageHighlightEntityType.FirstMessage           -> MessageHighlightItem.Type.FirstMessage
     MessageHighlightEntityType.ElevatedMessage        -> MessageHighlightItem.Type.ElevatedMessage

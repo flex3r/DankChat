@@ -118,12 +118,16 @@ class HighlightsRepository @Inject constructor(
     }
 
     private fun UserNoticeMessage.calculateHighlightState(): UserNoticeMessage {
-        val subscriptionEnabled = messageHighlights.value
-            .any { it.enabled && it.type == MessageHighlightEntityType.Subscription }
+        val enabledMessageHighlights = messageHighlights.value.filter { it.enabled }
 
-        val highlights = when {
-            subscriptionEnabled -> listOf(Highlight(HighlightType.Subscription))
-            else                -> emptyList()
+        val highlights = buildList {
+            if (isSub && enabledMessageHighlights.areSubsEnabled) {
+                add(Highlight(HighlightType.Subscription))
+            }
+
+            if (isAnnouncement && enabledMessageHighlights.areAnnouncementsEnabled) {
+                add(Highlight(HighlightType.Announcement))
+            }
         }
 
         return copy(
@@ -133,11 +137,12 @@ class HighlightsRepository @Inject constructor(
     }
 
     private fun PointRedemptionMessage.calculateHighlightState(): PointRedemptionMessage {
-        val enabledMessageHighlights = messageHighlights.value.filter { it.enabled }
-        val highlights = buildList {
-            if (enabledMessageHighlights.areRewardsEnabled) {
-                add(Highlight(HighlightType.ChannelPointRedemption))
-            }
+        val redemptionsEnabled = messageHighlights.value
+            .any { it.enabled && it.type == MessageHighlightEntityType.ChannelPointRedemption }
+
+        val highlights = when {
+            redemptionsEnabled -> listOf(Highlight(HighlightType.ChannelPointRedemption))
+            else               -> emptyList()
         }
 
         return copy(highlights = highlights)
@@ -147,20 +152,28 @@ class HighlightsRepository @Inject constructor(
         val enabledUserHighlights = userHighlights.value.filter { it.enabled }
         val enabledMessageHighlights = messageHighlights.value.filter { it.enabled }
         val highlights = buildList {
-            if (enabledMessageHighlights.areRewardsEnabled && isReward) {
+            if (isSub && enabledMessageHighlights.areSubsEnabled) {
+                add(Highlight(HighlightType.Subscription))
+            }
+
+            if (isAnnouncement && enabledMessageHighlights.areAnnouncementsEnabled) {
+                add(Highlight(HighlightType.Announcement))
+            }
+
+            if (isReward && enabledMessageHighlights.areRewardsEnabled) {
                 add(Highlight(HighlightType.ChannelPointRedemption))
             }
 
-            if (enabledMessageHighlights.areFirstMessagesEnabled && isFirstMessage) {
+            if (isFirstMessage && enabledMessageHighlights.areFirstMessagesEnabled) {
                 add(Highlight(HighlightType.FirstMessage))
             }
 
-            if (enabledMessageHighlights.areElevatedMessagesEnabled && isElevatedMessage) {
+            if (isElevatedMessage && enabledMessageHighlights.areElevatedMessagesEnabled) {
                 add(Highlight(HighlightType.ElevatedMessage))
             }
 
             // Username
-            if (enabledMessageHighlights.isOwnUserNameEnabled && containsCurrentUserName) {
+            if (containsCurrentUserName && enabledMessageHighlights.isOwnUserNameEnabled) {
                 add(Highlight(HighlightType.Username))
             }
 
@@ -187,6 +200,12 @@ class HighlightsRepository @Inject constructor(
         return copy(highlights = highlights)
     }
 
+    private val List<MessageHighlightEntity>.areSubsEnabled: Boolean
+        get() = isMessageHighlightTypeEnabled(MessageHighlightEntityType.Subscription)
+
+    private val List<MessageHighlightEntity>.areAnnouncementsEnabled: Boolean
+        get() = isMessageHighlightTypeEnabled(MessageHighlightEntityType.Announcement)
+
     private val List<MessageHighlightEntity>.areRewardsEnabled: Boolean
         get() = isMessageHighlightTypeEnabled(MessageHighlightEntityType.ChannelPointRedemption)
 
@@ -202,15 +221,6 @@ class HighlightsRepository @Inject constructor(
     private fun List<MessageHighlightEntity>.isMessageHighlightTypeEnabled(type: MessageHighlightEntityType): Boolean {
         return any { it.type == type }
     }
-
-    private val PrivMessage.isReward: Boolean
-        get() = tags["msg-id"] == "highlighted-message" || tags["custom-reward-id"] != null
-
-    private val PrivMessage.isFirstMessage: Boolean
-        get() = tags["first-msg"] == "1"
-
-    private val PrivMessage.isElevatedMessage: Boolean
-        get() = tags["pinned-chat-paid-amount"] != null
 
     private val PrivMessage.containsCurrentUserName: Boolean
         get() {
@@ -247,9 +257,10 @@ class HighlightsRepository @Inject constructor(
         private val DEFAULT_HIGHLIGHTS = listOf(
             MessageHighlightEntity(id = 1, enabled = true, type = MessageHighlightEntityType.Username, pattern = ""),
             MessageHighlightEntity(id = 2, enabled = true, type = MessageHighlightEntityType.Subscription, pattern = ""),
-            MessageHighlightEntity(id = 3, enabled = true, type = MessageHighlightEntityType.ChannelPointRedemption, pattern = ""),
-            MessageHighlightEntity(id = 4, enabled = true, type = MessageHighlightEntityType.FirstMessage, pattern = ""),
-            MessageHighlightEntity(id = 5, enabled = true, type = MessageHighlightEntityType.ElevatedMessage, pattern = ""),
+            MessageHighlightEntity(id = 3, enabled = true, type = MessageHighlightEntityType.Announcement, pattern = ""),
+            MessageHighlightEntity(id = 4, enabled = true, type = MessageHighlightEntityType.ChannelPointRedemption, pattern = ""),
+            MessageHighlightEntity(id = 5, enabled = true, type = MessageHighlightEntityType.FirstMessage, pattern = ""),
+            MessageHighlightEntity(id = 6, enabled = true, type = MessageHighlightEntityType.ElevatedMessage, pattern = ""),
         )
     }
 }

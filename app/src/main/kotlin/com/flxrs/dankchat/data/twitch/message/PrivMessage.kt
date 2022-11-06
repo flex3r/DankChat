@@ -67,3 +67,18 @@ data class PrivMessage(
         }
     }
 }
+
+val PrivMessage.isSub: Boolean
+    get() = tags["msg-id"] == "sub" || tags["msg-id"] == "resub"
+
+val PrivMessage.isAnnouncement: Boolean
+    get() = tags["msg-id"] == "announcement"
+
+val PrivMessage.isReward: Boolean
+    get() = tags["msg-id"] == "highlighted-message" || tags["custom-reward-id"] != null
+
+val PrivMessage.isFirstMessage: Boolean
+    get() = tags["first-msg"] == "1"
+
+val PrivMessage.isElevatedMessage: Boolean
+    get() = tags["pinned-chat-paid-amount"] != null

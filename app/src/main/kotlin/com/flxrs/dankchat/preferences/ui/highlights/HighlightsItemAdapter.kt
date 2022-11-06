@@ -12,7 +12,6 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.AddItemBinding
 import com.flxrs.dankchat.databinding.MessageHighlightItemBinding
 import com.flxrs.dankchat.databinding.UserHighlightItemBinding
-import java.net.URI
 
 class HighlightsItemAdapter(
     private val onAddItem: () -> Unit,
@@ -55,11 +54,12 @@ class HighlightsItemAdapter(
                     item = highlightItem
                     val titleText = when (highlightItem.type) {
                         MessageHighlightItem.Type.Username               -> R.string.highlights_entry_username
-                        MessageHighlightItem.Type.Subscription           -> R.string.highlights_entry_subscriptions
-                        MessageHighlightItem.Type.FirstMessage           -> R.string.highlights_entry_first_messages
-                        MessageHighlightItem.Type.ElevatedMessage        -> R.string.highlights_entry_elevated_messages
-                        MessageHighlightItem.Type.ChannelPointRedemption -> R.string.highlights_entry_redemptions
-                        MessageHighlightItem.Type.Custom                 -> R.string.highlights_entry_custom
+                        MessageHighlightItem.Type.Subscription           -> R.string.highlights_ignores_entry_subscriptions
+                        MessageHighlightItem.Type.Announcement           -> R.string.highlights_ignores_entry_announcements
+                        MessageHighlightItem.Type.FirstMessage           -> R.string.highlights_ignores_entry_first_messages
+                        MessageHighlightItem.Type.ElevatedMessage        -> R.string.highlights_ignores_entry_elevated_messages
+                        MessageHighlightItem.Type.ChannelPointRedemption -> R.string.highlights_ignores_entry_redemptions
+                        MessageHighlightItem.Type.Custom                 -> R.string.highlights_ignores_entry_custom
                     }
                     title.text = root.context.getString(titleText)
 

@@ -12,6 +12,7 @@ fun List<Highlight>.hasMention(): Boolean = any(Highlight::isMention)
 enum class HighlightType {
     Username,
     Subscription,
+    Announcement,
     ChannelPointRedemption,
     FirstMessage,
     ElevatedMessage,

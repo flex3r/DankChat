@@ -154,16 +154,18 @@ class ChatAdapter(
         val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
         val isCheckeredMode = preferences.getBoolean(checkeredKey, false)
 
+        val firstHighlightType = message.highlights.firstOrNull()?.type
+        val shouldHighlight = firstHighlightType == HighlightType.Subscription || firstHighlightType == HighlightType.Announcement
         val background = when {
-            message.highlights.firstOrNull()?.type == HighlightType.Subscription -> ContextCompat.getColor(context, R.color.color_sub_highlight)
-            isCheckeredMode && holder.isAlternateBackground                      -> MaterialColors.layer(
+            shouldHighlight                                 -> ContextCompat.getColor(context, R.color.color_sub_highlight)
+            isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(
                 this,
                 android.R.attr.colorBackground,
                 R.attr.colorSurfaceInverse,
                 MaterialColors.ALPHA_DISABLED_LOW
             )
 
-            else                                                                 -> ContextCompat.getColor(context, android.R.color.transparent)
+            else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
         }
         setBackgroundColor(background)
         val withTime = when {
@@ -803,12 +805,12 @@ class ChatAdapter(
     @ColorInt
     private fun List<Highlight>.toBackgroundColor(context: Context): Int {
         return when (first().type) {
-            HighlightType.Subscription           -> ContextCompat.getColor(context, R.color.color_sub_highlight)
-            HighlightType.ChannelPointRedemption -> ContextCompat.getColor(context, R.color.color_redemption_highlight)
-            HighlightType.ElevatedMessage        -> ContextCompat.getColor(context, R.color.color_elevated_message_highlight)
-            HighlightType.FirstMessage           -> ContextCompat.getColor(context, R.color.color_first_message_highlight)
-            HighlightType.Username               -> ContextCompat.getColor(context, R.color.color_mention_highlight)
-            HighlightType.Custom                 -> ContextCompat.getColor(context, R.color.color_mention_highlight)
+            HighlightType.Subscription, HighlightType.Announcement -> ContextCompat.getColor(context, R.color.color_sub_highlight)
+            HighlightType.ChannelPointRedemption                   -> ContextCompat.getColor(context, R.color.color_redemption_highlight)
+            HighlightType.ElevatedMessage                          -> ContextCompat.getColor(context, R.color.color_elevated_message_highlight)
+            HighlightType.FirstMessage                             -> ContextCompat.getColor(context, R.color.color_first_message_highlight)
+            HighlightType.Username                                 -> ContextCompat.getColor(context, R.color.color_mention_highlight)
+            HighlightType.Custom                                   -> ContextCompat.getColor(context, R.color.color_mention_highlight)
         }
     }
 }
