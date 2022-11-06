@@ -969,9 +969,13 @@ class MainFragment : Fragment() {
                 if (position in tabAdapter.channels.indices) {
                     val newChannel = tabAdapter.channels[position].lowercase(Locale.getDefault())
                     mainViewModel.setActiveChannel(newChannel)
-                    emoteMenuBottomSheetBehavior?.hide()
-                    binding.input.dismissDropDown()
+
                 }
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {
+                emoteMenuBottomSheetBehavior?.hide()
+                binding.input.dismissDropDown()
             }
         })
     }
