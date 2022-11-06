@@ -276,7 +276,6 @@
     <string name="reset_media_uploader_dialog_positive">Redefinir</string>
     <string name="clear_recent_uploads_dialog_title">Limpar Envios Recentes</string>
     <string name="clear_recent_uploads_dialog_message">Tem certeza que quer limpar o histórico de envios? Seus arquivos enviados não serão excluídos.</string>
-    <string name="clear">Limpar</string>
     <plurals name="viewers">
         <item quantity="one">Ao vivo com %d espectador</item>
         <item quantity="other">Ao vivo com %d espectadores</item>
