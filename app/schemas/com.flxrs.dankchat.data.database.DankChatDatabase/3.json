@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "88433be2fa018e315719a0ff54b75024",
+    "identityHash": "e1bb15fd751354a41828545c8ff037d5",
     "entities": [
       {
         "tableName": "emote_usage",
@@ -126,7 +126,7 @@
       },
       {
         "tableName": "message_ignore",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `enabled` INTEGER NOT NULL, `pattern` TEXT NOT NULL, `is_regex` INTEGER NOT NULL, `is_case_sensitive` INTEGER NOT NULL, `replacement` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `enabled` INTEGER NOT NULL, `type` TEXT NOT NULL, `pattern` TEXT NOT NULL, `is_regex` INTEGER NOT NULL, `is_case_sensitive` INTEGER NOT NULL, `is_block_message` INTEGER NOT NULL, `replacement` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -138,6 +138,12 @@
             "fieldPath": "enabled",
             "columnName": "enabled",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -155,6 +161,12 @@
           {
             "fieldPath": "isCaseSensitive",
             "columnName": "is_case_sensitive",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isBlockMessage",
+            "columnName": "is_block_message",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -214,7 +226,7 @@
       },
       {
         "tableName": "blacklisted_user",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `enabled` INTEGER NOT NULL, `username` TEXT NOT NULL, `is_regex` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `enabled` INTEGER NOT NULL, `username` TEXT NOT NULL, `is_regex` INTEGER NOT NULL, `is_case_sensitive` INTEGER NOT NULL DEFAULT 0)",
         "fields": [
           {
             "fieldPath": "id",
@@ -239,6 +251,13 @@
             "columnName": "is_regex",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "isCaseSensitive",
+            "columnName": "is_case_sensitive",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
           }
         ],
         "primaryKey": {
@@ -254,7 +273,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '88433be2fa018e315719a0ff54b75024')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e1bb15fd751354a41828545c8ff037d5')"
     ]
   }
 }

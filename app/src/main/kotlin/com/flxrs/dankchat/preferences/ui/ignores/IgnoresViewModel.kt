@@ -2,6 +2,8 @@ package com.flxrs.dankchat.preferences.ui.ignores
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntity
+import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntityType
 import com.flxrs.dankchat.data.repo.IgnoresRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -135,7 +137,7 @@ class IgnoresViewModel @Inject constructor(
                     val (blankEntities, entities) = tab.items
                         .filterIsInstance<MessageIgnoreItem>()
                         .map { it.toEntity() }
-                        .partition { it.pattern.isBlank() }
+                        .partition { it.type == MessageIgnoreEntityType.Custom && it.pattern.isBlank() }
 
                     ignoresRepository.updateMessageIgnores(entities)
                     blankEntities.forEach { ignoresRepository.removeMessageIgnore(it) }

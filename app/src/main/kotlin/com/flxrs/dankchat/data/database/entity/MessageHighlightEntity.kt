@@ -49,6 +49,7 @@ data class MessageHighlightEntity(
 enum class MessageHighlightEntityType {
     Username,
     Subscription,
+    Announcement,
     ChannelPointRedemption,
     FirstMessage,
     ElevatedMessage,

@@ -8,11 +8,11 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.AddItemBinding
 import com.flxrs.dankchat.databinding.MessageIgnoreItemBinding
 import com.flxrs.dankchat.databinding.TwitchBlockItemBinding
 import com.flxrs.dankchat.databinding.UserIgnoreItemBinding
-import com.flxrs.dankchat.preferences.ui.highlights.HighlightsItemAdapter
 
 class IgnoresItemAdapter(
     private val onAddItem: () -> Unit,
@@ -66,8 +66,29 @@ class IgnoresItemAdapter(
                 val messageItem = getItem(position) as MessageIgnoreItem
                 with(holder.binding) {
                     item = messageItem
-                    isBlockMessage.isChecked = messageItem.isBlockMessage
-                    replacement.isVisible = !messageItem.isBlockMessage
+
+                    val titleText = when (messageItem.type) {
+                        MessageIgnoreItem.Type.Subscription           -> R.string.highlights_ignores_entry_subscriptions
+                        MessageIgnoreItem.Type.Announcement           -> R.string.highlights_ignores_entry_announcements
+                        MessageIgnoreItem.Type.FirstMessage           -> R.string.highlights_ignores_entry_first_messages
+                        MessageIgnoreItem.Type.ElevatedMessage        -> R.string.highlights_ignores_entry_elevated_messages
+                        MessageIgnoreItem.Type.ChannelPointRedemption -> R.string.highlights_ignores_entry_redemptions
+                        MessageIgnoreItem.Type.Custom                 -> R.string.highlights_ignores_entry_custom
+                    }
+                    title.text = root.context.getString(titleText)
+
+                    if (messageItem.type != MessageIgnoreItem.Type.Custom) {
+                        isRegex.isEnabled = false
+                        isCaseSensitive.isEnabled = false
+                        pattern.isVisible = false
+                        delete.isVisible = false
+                        regexInfo.isVisible = false
+                        isBlockMessage.isVisible = false
+                        replacement.isVisible = false
+                    } else {
+                        isBlockMessage.isChecked = messageItem.isBlockMessage
+                        replacement.isVisible = !messageItem.isBlockMessage
+                    }
                 }
             }
 

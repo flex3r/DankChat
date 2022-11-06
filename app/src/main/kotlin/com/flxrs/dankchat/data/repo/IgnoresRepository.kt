@@ -5,6 +5,7 @@ import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.data.database.dao.MessageIgnoreDao
 import com.flxrs.dankchat.data.database.dao.UserIgnoreDao
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntity
+import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntityType
 import com.flxrs.dankchat.data.database.entity.UserIgnoreEntity
 import com.flxrs.dankchat.data.twitch.message.*
 import com.flxrs.dankchat.di.ApplicationScope
@@ -37,21 +38,22 @@ class IgnoresRepository @Inject constructor(
 
     fun applyIgnores(message: Message): Message? {
         return when (message) {
-            is NoticeMessage, is PointRedemptionMessage -> message
-            is PrivMessage                              -> message.applyIgnores()
-            is UserNoticeMessage                        -> message.applyIgnores()
-            is WhisperMessage                           -> message.applyIgnores()
-            else                                        -> message
+            is PointRedemptionMessage -> message.applyIgnores()
+            is PrivMessage            -> message.applyIgnores()
+            is UserNoticeMessage      -> message.applyIgnores()
+            is WhisperMessage         -> message.applyIgnores()
+            else                      -> message
         }
     }
 
     fun runMigrationsIfNeeded() = coroutineScope.launch {
         runCatching {
-            if (preferences.blackListEntries.isEmpty()) {
+            if (preferences.blackListEntries.isEmpty() && messageIgnoreDao.getMessageIgnores().isNotEmpty()) {
                 return@launch
             }
 
             Log.d(TAG, "Running ignores migration...")
+            messageIgnoreDao.addIgnores(DEFAULT_IGNORES)
 
             val existingBlacklistEntries = preferences.customBlacklist
             val messageIgnores = existingBlacklistEntries.mapToMessageIgnoreEntities()
@@ -60,7 +62,7 @@ class IgnoresRepository @Inject constructor(
             val userIgnores = existingBlacklistEntries.mapToUserIgnoreEntities()
             userIgnoreDao.addIgnores(userIgnores)
 
-            val totalIgnores = messageIgnores.size + userIgnores.size
+            val totalIgnores = DEFAULT_IGNORES.size + messageIgnores.size + userIgnores.size
             Log.d(TAG, "Ignores migration completed, added $totalIgnores entries.")
         }.getOrElse {
             Log.e(TAG, "Failed to run ignores migration", it)
@@ -130,6 +132,7 @@ class IgnoresRepository @Inject constructor(
         val entity = MessageIgnoreEntity(
             id = 0,
             enabled = true,
+            type = MessageIgnoreEntityType.Custom,
             pattern = "",
             isBlockMessage = false,
             replacement = "***",
@@ -172,19 +175,63 @@ class IgnoresRepository @Inject constructor(
         userIgnoreDao.addIgnores(entities)
     }
 
-    private fun UserNoticeMessage.applyIgnores(): UserNoticeMessage {
+    private fun UserNoticeMessage.applyIgnores(): UserNoticeMessage? {
+        val enabledMessageIgnores = messageIgnores.value.filter { it.enabled }
+
+        if (isSub && enabledMessageIgnores.areSubsIgnored) {
+            return null
+        }
+
+        if (isAnnouncement && enabledMessageIgnores.areAnnouncementsIgnored) {
+            return null
+        }
+
         return copy(
             childMessage = childMessage?.applyIgnores()
         )
     }
 
     private fun PrivMessage.applyIgnores(): PrivMessage? {
+        val enabledMessageIgnores = messageIgnores.value.filter { it.enabled }
+
+        if (isSub && enabledMessageIgnores.areSubsIgnored) {
+            return null
+        }
+
+        if (isAnnouncement && enabledMessageIgnores.areAnnouncementsIgnored) {
+            return null
+        }
+
+        if (isReward && enabledMessageIgnores.areRewardsIgnored) {
+            return null
+        }
+
+        if (isElevatedMessage && enabledMessageIgnores.areElevatedMessagesIgnored) {
+            return null
+        }
+
+        if (isFirstMessage && enabledMessageIgnores.areFirstMessagesIgnored) {
+            return null
+        }
+
         if (isIgnoredUsername(name)) {
             return null
         }
 
-        isIgnoredMessageWithReplacement(message) { replacement ->
-            return replacement?.let { copy(message = it) }
+        enabledMessageIgnores
+            .isIgnoredMessageWithReplacement(message) { replacement ->
+                return replacement?.let { copy(message = it) }
+            }
+
+        return this
+    }
+
+    private fun PointRedemptionMessage.applyIgnores(): PointRedemptionMessage? {
+        val redemptionsIgnored = messageIgnores.value
+            .any { it.enabled && it.type == MessageIgnoreEntityType.ChannelPointRedemption }
+
+        if (redemptionsIgnored) {
+            return null
         }
 
         return this
@@ -195,44 +242,68 @@ class IgnoresRepository @Inject constructor(
             return null
         }
 
-        isIgnoredMessageWithReplacement(message) { replacement ->
-            return when (replacement) {
-                null -> null
-                else -> copy(message = replacement)
+        messageIgnores.value
+            .filter { it.enabled }
+            .isIgnoredMessageWithReplacement(message) { replacement ->
+                return when (replacement) {
+                    null -> null
+                    else -> copy(message = replacement)
+                }
             }
-        }
 
         return this
     }
 
-    private fun isIgnoredUsername(name: String): Boolean {
-        userIgnores.value.forEach {
-            val hasMatch = when {
-                it.isRegex -> it.regex?.let { regex -> name.matches(regex) } ?: false
-                else       -> name.equals(it.username, ignoreCase = !it.isCaseSensitive)
-            }
+    private val List<MessageIgnoreEntity>.areSubsIgnored: Boolean
+        get() = isMessageIgnoreTypeEnabled(MessageIgnoreEntityType.Subscription)
 
-            if (hasMatch) {
-                return true
+    private val List<MessageIgnoreEntity>.areAnnouncementsIgnored: Boolean
+        get() = isMessageIgnoreTypeEnabled(MessageIgnoreEntityType.Announcement)
+
+    private val List<MessageIgnoreEntity>.areRewardsIgnored: Boolean
+        get() = isMessageIgnoreTypeEnabled(MessageIgnoreEntityType.ChannelPointRedemption)
+
+    private val List<MessageIgnoreEntity>.areFirstMessagesIgnored: Boolean
+        get() = isMessageIgnoreTypeEnabled(MessageIgnoreEntityType.FirstMessage)
+
+    private val List<MessageIgnoreEntity>.areElevatedMessagesIgnored: Boolean
+        get() = isMessageIgnoreTypeEnabled(MessageIgnoreEntityType.ElevatedMessage)
+
+    private fun List<MessageIgnoreEntity>.isMessageIgnoreTypeEnabled(type: MessageIgnoreEntityType): Boolean {
+        return any { it.type == type }
+    }
+
+    private fun isIgnoredUsername(name: String): Boolean {
+        userIgnores.value
+            .filter { it.enabled }
+            .forEach {
+                val hasMatch = when {
+                    it.isRegex -> it.regex?.let { regex -> name.matches(regex) } ?: false
+                    else       -> name.equals(it.username, ignoreCase = !it.isCaseSensitive)
+                }
+
+                if (hasMatch) {
+                    return true
+                }
             }
-        }
 
         return false
     }
 
-    private inline fun isIgnoredMessageWithReplacement(message: String, replacement: (String?) -> Unit) {
-        messageIgnores.value.forEach {
-            val regex = it.regex ?: return@forEach
+    private inline fun List<MessageIgnoreEntity>.isIgnoredMessageWithReplacement(message: String, replacement: (String?) -> Unit) {
+        filter { it.type == MessageIgnoreEntityType.Custom }
+            .forEach {
+                val regex = it.regex ?: return@forEach
 
-            if (message.contains(regex)) {
-                if (it.replacement != null) {
-                    val filteredMessage = message.replace(regex, it.replacement)
-                    return replacement(filteredMessage)
+                if (message.contains(regex)) {
+                    if (it.replacement != null) {
+                        val filteredMessage = message.replace(regex, it.replacement)
+                        return replacement(filteredMessage)
+                    }
+
+                    return replacement(null)
                 }
-
-                return replacement(null)
             }
-        }
     }
 
     private fun List<MultiEntryDto>.mapToMessageIgnoreEntities(): List<MessageIgnoreEntity> {
@@ -241,6 +312,7 @@ class IgnoresRepository @Inject constructor(
                 MessageIgnoreEntity(
                     id = 0,
                     enabled = true,
+                    type = MessageIgnoreEntityType.Custom,
                     pattern = it.entry,
                     isRegex = it.isRegex,
                     isCaseSensitive = false,
@@ -265,5 +337,12 @@ class IgnoresRepository @Inject constructor(
 
     companion object {
         private val TAG = IgnoresRepository::class.java.simpleName
+        private val DEFAULT_IGNORES = listOf(
+            MessageIgnoreEntity(id = 1, enabled = false, type = MessageIgnoreEntityType.Subscription, pattern = ""),
+            MessageIgnoreEntity(id = 2, enabled = false, type = MessageIgnoreEntityType.Announcement, pattern = ""),
+            MessageIgnoreEntity(id = 3, enabled = false, type = MessageIgnoreEntityType.ChannelPointRedemption, pattern = ""),
+            MessageIgnoreEntity(id = 4, enabled = false, type = MessageIgnoreEntityType.FirstMessage, pattern = ""),
+            MessageIgnoreEntity(id = 5, enabled = false, type = MessageIgnoreEntityType.ElevatedMessage, pattern = ""),
+        )
     }
 }

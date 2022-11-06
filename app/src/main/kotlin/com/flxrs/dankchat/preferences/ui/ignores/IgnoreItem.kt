@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.preferences.ui.ignores
 
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntity
+import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntityType
 import com.flxrs.dankchat.data.database.entity.UserIgnoreEntity
 import com.flxrs.dankchat.data.repo.IgnoresRepository
 
@@ -14,13 +15,23 @@ object AddItem : IgnoreItem() {
 
 data class MessageIgnoreItem(
     override val id: Long,
+    val type: Type,
     var enabled: Boolean,
     var pattern: String,
     var isRegex: Boolean,
     var isCaseSensitive: Boolean,
     var isBlockMessage: Boolean,
     var replacement: String,
-) : IgnoreItem()
+) : IgnoreItem() {
+    enum class Type {
+        Subscription,
+        Announcement,
+        ChannelPointRedemption,
+        FirstMessage,
+        ElevatedMessage,
+        Custom
+    }
+}
 
 data class UserIgnoreItem(
     override val id: Long,
@@ -38,6 +49,7 @@ data class TwitchBlockItem(
 
 fun MessageIgnoreEntity.toItem() = MessageIgnoreItem(
     id = id,
+    type = type.toItemType(),
     enabled = enabled,
     pattern = pattern,
     isRegex = isRegex,
@@ -48,6 +60,7 @@ fun MessageIgnoreEntity.toItem() = MessageIgnoreItem(
 
 fun MessageIgnoreItem.toEntity() = MessageIgnoreEntity(
     id = id,
+    type = type.toEntityType(),
     enabled = enabled,
     pattern = pattern,
     isRegex = isRegex,
@@ -58,6 +71,24 @@ fun MessageIgnoreItem.toEntity() = MessageIgnoreEntity(
         else           -> replacement
     }
 )
+
+fun MessageIgnoreItem.Type.toEntityType(): MessageIgnoreEntityType = when (this) {
+    MessageIgnoreItem.Type.Subscription           -> MessageIgnoreEntityType.Subscription
+    MessageIgnoreItem.Type.Announcement           -> MessageIgnoreEntityType.Announcement
+    MessageIgnoreItem.Type.ChannelPointRedemption -> MessageIgnoreEntityType.ChannelPointRedemption
+    MessageIgnoreItem.Type.FirstMessage           -> MessageIgnoreEntityType.FirstMessage
+    MessageIgnoreItem.Type.ElevatedMessage        -> MessageIgnoreEntityType.ElevatedMessage
+    MessageIgnoreItem.Type.Custom                 -> MessageIgnoreEntityType.Custom
+}
+
+fun MessageIgnoreEntityType.toItemType(): MessageIgnoreItem.Type = when (this) {
+    MessageIgnoreEntityType.Subscription           -> MessageIgnoreItem.Type.Subscription
+    MessageIgnoreEntityType.Announcement           -> MessageIgnoreItem.Type.Announcement
+    MessageIgnoreEntityType.ChannelPointRedemption -> MessageIgnoreItem.Type.ChannelPointRedemption
+    MessageIgnoreEntityType.FirstMessage           -> MessageIgnoreItem.Type.FirstMessage
+    MessageIgnoreEntityType.ElevatedMessage        -> MessageIgnoreItem.Type.ElevatedMessage
+    MessageIgnoreEntityType.Custom                 -> MessageIgnoreItem.Type.Custom
+}
 
 fun UserIgnoreEntity.toItem() = UserIgnoreItem(
     id = id,

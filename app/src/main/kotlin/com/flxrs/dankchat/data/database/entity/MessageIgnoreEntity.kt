@@ -11,13 +11,14 @@ data class MessageIgnoreEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
     val enabled: Boolean,
+    val type: MessageIgnoreEntityType,
     val pattern: String,
 
     @ColumnInfo(name = "is_regex")
     val isRegex: Boolean = false,
     @ColumnInfo(name = "is_case_sensitive")
     val isCaseSensitive: Boolean = false,
-    @ColumnInfo(name = "is_block_message", defaultValue = "0")
+    @ColumnInfo(name = "is_block_message")
     val isBlockMessage: Boolean = false,
     val replacement: String? = null,
 ) {
@@ -41,4 +42,13 @@ data class MessageIgnoreEntity(
     companion object {
         private val TAG = MessageIgnoreEntity::class.java.simpleName
     }
+}
+
+enum class MessageIgnoreEntityType {
+    Subscription,
+    Announcement,
+    ChannelPointRedemption,
+    FirstMessage,
+    ElevatedMessage,
+    Custom
 }

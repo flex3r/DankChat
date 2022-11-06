@@ -14,6 +14,9 @@ interface MessageIgnoreDao {
     suspend fun getMessageIgnore(id: Long): MessageIgnoreEntity
 
     @Query("SELECT * FROM message_ignore")
+    suspend fun getMessageIgnores(): List<MessageIgnoreEntity>
+
+    @Query("SELECT * FROM message_ignore")
     fun getMessageIgnoresFlow(): Flow<List<MessageIgnoreEntity>>
 
     @Upsert

@@ -9,7 +9,7 @@ import com.flxrs.dankchat.data.database.dao.*
 import com.flxrs.dankchat.data.database.entity.*
 
 @Database(
-    version = 4,
+    version = 3,
     entities = [
         EmoteUsageEntity::class,
         UploadEntity::class,
@@ -21,7 +21,6 @@ import com.flxrs.dankchat.data.database.entity.*
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
         AutoMigration(from = 2, to = 3),
-        AutoMigration(from = 3, to = 4),
     ],
     exportSchema = true,
 )
