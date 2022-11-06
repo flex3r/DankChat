@@ -138,7 +138,7 @@ class MainFragment : Fragment() {
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        tabAdapter = ChatTabAdapter(this)
+        tabAdapter = ChatTabAdapter(parentFragment = this, dankChatPreferenceStore = dankChatPreferences)
         emoteMenuAdapter = EmoteMenuAdapter(::insertEmote)
 
         bindingRef = MainFragmentBinding.inflate(inflater, container, false).apply {
@@ -153,8 +153,7 @@ class MainFragment : Fragment() {
             }
 
             tabLayoutMediator = TabLayoutMediator(tabs, chatViewpager) { tab, position ->
-                val channelName = tabAdapter.titleList[position]
-                tab.text = dankChatPreferences.getRenamedChannel(channelName) ?: channelName
+                tab.text = tabAdapter.channelsWithRenames[position]
             }
 
             tabs.setInitialColors()
@@ -288,7 +287,7 @@ class MainFragment : Fragment() {
             }
             collectFlow(activeChannel) { channel ->
                 (activity as? MainActivity)?.notificationService?.setActiveChannel(channel) // TODO move
-                val index = tabAdapter.titleList.indexOf(channel)
+                val index = tabAdapter.channels.indexOf(channel)
                 binding.tabs.getTabAt(index)?.removeBadge()
                 mainViewModel.clearMentionCount(channel)
                 mainViewModel.clearUnreadMessage(channel)
@@ -301,7 +300,7 @@ class MainFragment : Fragment() {
             }
             collectFlow(channelMentionCount) { channels ->
                 channels.forEach { (channel, count) ->
-                    val index = tabAdapter.titleList.indexOf(channel)
+                    val index = tabAdapter.channels.indexOf(channel)
                     if (count > 0) {
                         when (index) {
                             binding.tabs.selectedTabPosition -> mainViewModel.clearMentionCount(channel) // mention is in active channel
@@ -314,7 +313,7 @@ class MainFragment : Fragment() {
             }
             collectFlow(unreadMessagesMap) { channels ->
                 channels.forEach { (channel, _) ->
-                    when (val index = tabAdapter.titleList.indexOf(channel)) {
+                    when (val index = tabAdapter.channels.indexOf(channel)) {
                         binding.tabs.selectedTabPosition -> mainViewModel.clearUnreadMessage(channel)
                         else                             -> {
                             val tab = binding.tabs.getTabAt(index)
@@ -741,14 +740,14 @@ class MainFragment : Fragment() {
 
     private fun clear() {
         val position = binding.tabs.selectedTabPosition
-        if (position in tabAdapter.titleList.indices)
-            mainViewModel.clear(tabAdapter.titleList[position])
+        if (position in tabAdapter.channels.indices)
+            mainViewModel.clear(tabAdapter.channels[position])
     }
 
     private fun reloadEmotes(channel: String? = null) {
-        val position = channel?.let(tabAdapter.titleList::indexOf) ?: binding.tabs.selectedTabPosition
-        if (position in tabAdapter.titleList.indices) {
-            mainViewModel.reloadEmotes(tabAdapter.titleList[position])
+        val position = channel?.let(tabAdapter.channels::indexOf) ?: binding.tabs.selectedTabPosition
+        if (position in tabAdapter.channels.indices) {
+            mainViewModel.reloadEmotes(tabAdapter.channels[position])
         }
     }
 
@@ -951,7 +950,7 @@ class MainFragment : Fragment() {
                 mainViewModel.setMentionSheetOpen(mentionBottomSheetBehavior?.isMoving == true || mentionBottomSheetBehavior?.isVisible == true)
                 when {
                     mentionBottomSheetBehavior?.isExpanded == true -> mainViewModel.setSuggestionChannel("w")
-                    mentionBottomSheetBehavior?.isHidden == true   -> mainViewModel.setSuggestionChannel(tabAdapter.titleList[binding.chatViewpager.currentItem])
+                    mentionBottomSheetBehavior?.isHidden == true   -> mainViewModel.setSuggestionChannel(tabAdapter.channels[binding.chatViewpager.currentItem])
                 }
             }
         })
@@ -967,8 +966,8 @@ class MainFragment : Fragment() {
         reduceDragSensitivity()
         registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                if (position in tabAdapter.titleList.indices) {
-                    val newChannel = tabAdapter.titleList[position].lowercase(Locale.getDefault())
+                if (position in tabAdapter.channels.indices) {
+                    val newChannel = tabAdapter.channels[position].lowercase(Locale.getDefault())
                     mainViewModel.setActiveChannel(newChannel)
                     emoteMenuBottomSheetBehavior?.hide()
                     binding.input.dismissDropDown()
