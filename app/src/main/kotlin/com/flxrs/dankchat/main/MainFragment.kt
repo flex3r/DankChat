@@ -252,7 +252,10 @@ class MainFragment : Fragment() {
                     R.id.menu_login, R.id.menu_relogin -> openLogin()
                     R.id.menu_logout                   -> showLogoutConfirmationDialog()
                     R.id.menu_add                      -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment)
-                    R.id.menu_mentions                 -> mentionBottomSheetBehavior?.expand()
+                    R.id.menu_mentions                 -> {
+                        emoteMenuBottomSheetBehavior?.hide()
+                        mentionBottomSheetBehavior?.expand()
+                    }
                     R.id.menu_open_channel             -> openChannel()
                     R.id.menu_remove_channel           -> removeChannel()
                     R.id.menu_report_channel           -> reportChannel()
