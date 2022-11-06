@@ -256,6 +256,7 @@ class MainFragment : Fragment() {
                         emoteMenuBottomSheetBehavior?.hide()
                         mentionBottomSheetBehavior?.expand()
                     }
+
                     R.id.menu_open_channel             -> openChannel()
                     R.id.menu_remove_channel           -> removeChannel()
                     R.id.menu_report_channel           -> reportChannel()

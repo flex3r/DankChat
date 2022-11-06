@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.channels
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -89,7 +88,7 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
         val (channel, name) = rename
         dankChatPreferences.setRenamedChannel(channel, name)
 
-        val position =  adapter.currentList.indexOf(channel)
+        val position = adapter.currentList.indexOf(channel)
         adapter.notifyItemChanged(position)
     }
 

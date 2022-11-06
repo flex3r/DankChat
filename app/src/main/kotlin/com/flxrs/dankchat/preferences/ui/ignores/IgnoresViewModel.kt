@@ -2,7 +2,6 @@ package com.flxrs.dankchat.preferences.ui.ignores
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntity
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntityType
 import com.flxrs.dankchat.data.repo.IgnoresRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
