@@ -172,8 +172,11 @@ class MainViewModel @Inject constructor(
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), null)
 
-    val channelMentionCount: Flow<Map<String, Int>> = chatRepository.channelMentionCount
-    val unreadMessagesMap: Flow<Map<String, Boolean>> = chatRepository.unreadMessagesMap.mapLatest { map -> map.filterValues { it } }
+    val channelMentionCount: StateFlow<Map<String, Int>> = chatRepository.channelMentionCount
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), emptyMap())
+    val unreadMessagesMap: StateFlow<Map<String, Boolean>> = chatRepository.unreadMessagesMap
+        .mapLatest { map -> map.filterValues { it } }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), emptyMap())
 
     // StateFlow -> Channel -> Flow 4HEad xd
     val imageUploadEventFlow: Flow<ImageUploadState> = _imageUploadedState.produceIn(viewModelScope).receiveAsFlow()

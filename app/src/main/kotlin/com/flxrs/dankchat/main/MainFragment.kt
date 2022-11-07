@@ -317,30 +317,8 @@ class MainFragment : Fragment() {
                     is MainViewModel.Event.Error -> handleErrorEvent(it)
                 }
             }
-            collectFlow(channelMentionCount) { channels ->
-                channels.forEach { (channel, count) ->
-                    val index = tabAdapter.channels.indexOf(channel)
-                    if (count > 0) {
-                        when (index) {
-                            binding.tabs.selectedTabPosition -> mainViewModel.clearMentionCount(channel) // mention is in active channel
-                            else                             -> binding.tabs.getTabAt(index)?.apply { orCreateBadge }
-                        }
-                    } else {
-                        binding.tabs.getTabAt(index)?.removeBadge()
-                    }
-                }
-            }
-            collectFlow(unreadMessagesMap) { channels ->
-                channels.forEach { (channel, _) ->
-                    when (val index = tabAdapter.channels.indexOf(channel)) {
-                        binding.tabs.selectedTabPosition -> mainViewModel.clearUnreadMessage(channel)
-                        else                             -> {
-                            val tab = binding.tabs.getTabAt(index)
-                            tab?.setTextColor(R.attr.colorOnSurface)
-                        }
-                    }
-                }
-            }
+            collectFlow(channelMentionCount, ::updateChannelMentionBadges)
+            collectFlow(unreadMessagesMap, ::updateUnreadChannelTabColors)
             collectFlow(shouldColorNotification) { activity?.invalidateMenu() }
             collectFlow(channels) {
                 if (!it.isNullOrEmpty()) {
@@ -947,19 +925,50 @@ class MainFragment : Fragment() {
         val index = updatedChannels.indexOf(oldActiveChannel).coerceAtLeast(0)
         val activeChannel = updatedChannels.getOrNull(index) ?: ""
 
+        binding.chatViewpager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
+        tabAdapter.updateFragments(updatedChannels)
         mainViewModel.updateChannels(updatedChannels)
         mainViewModel.setActiveChannel(activeChannel)
-        tabAdapter.updateFragments(updatedChannels)
 
-        if (updatedChannels.isNotEmpty()) {
-            dankChatPreferences.channelsString = updatedChannels.joinToString(",")
-            binding.chatViewpager.setCurrentItem(index, false)
-        } else {
-            dankChatPreferences.channelsString = null
-        }
+        dankChatPreferences.channelsString = updatedChannels
+            .takeIf { it.isNotEmpty() }
+            ?.joinToString(separator = ",")
+            ?.also {
+                binding.chatViewpager.setCurrentItem(index, false)
+                binding.root.postDelayed(TAB_SCROLL_DELAY_MS) {
+                    binding.tabs.setScrollPosition(index, 0f, false)
+                }
+            }
 
-        binding.chatViewpager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
         activity?.invalidateMenu()
+        updateChannelMentionBadges(mainViewModel.channelMentionCount.value)
+        updateUnreadChannelTabColors(mainViewModel.unreadMessagesMap.value)
+    }
+
+    private fun updateUnreadChannelTabColors(channels: Map<String, Boolean>) {
+        channels.forEach { (channel, _) ->
+            when (val index = tabAdapter.channels.indexOf(channel)) {
+                binding.tabs.selectedTabPosition -> mainViewModel.clearUnreadMessage(channel)
+                else                             -> {
+                    val tab = binding.tabs.getTabAt(index)
+                    tab?.setTextColor(R.attr.colorOnSurface)
+                }
+            }
+        }
+    }
+
+    private fun updateChannelMentionBadges(channels: Map<String, Int>) {
+        channels.forEach { (channel, count) ->
+            val index = tabAdapter.channels.indexOf(channel)
+            if (count > 0) {
+                when (index) {
+                    binding.tabs.selectedTabPosition -> mainViewModel.clearMentionCount(channel) // mention is in active channel
+                    else                             -> binding.tabs.getTabAt(index)?.apply { orCreateBadge }
+                }
+            } else {
+                binding.tabs.getTabAt(index)?.removeBadge()
+            }
+        }
     }
 
     private fun BottomSheetBehavior<View>.setupMentionSheet() {
@@ -1144,6 +1153,7 @@ class MainFragment : Fragment() {
         private const val MAX_GUIDELINE_PERCENT = 0.8f
         private const val MIN_GUIDELINE_PERCENT = 0.2f
         private const val CLIPBOARD_LABEL = "dankchat_media_url"
+        private const val TAB_SCROLL_DELAY_MS = 1000 / 60 * 10L
 
         const val LOGOUT_REQUEST_KEY = "logout_key"
         const val LOGIN_REQUEST_KEY = "login_key"
