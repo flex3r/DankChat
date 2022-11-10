@@ -9,6 +9,7 @@ import com.flxrs.dankchat.data.twitch.connection.PointRedemptionData
 import com.flxrs.dankchat.data.twitch.connection.WhisperData
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager
+import com.flxrs.dankchat.preferences.userdisplay.UserDisplayItem
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.extensions.appendSpacesBetweenEmojiGroup
 import com.flxrs.dankchat.utils.extensions.removeDuplicateWhitespace
@@ -284,6 +285,20 @@ data class TwitchMessage(
 
         val isMention = mentionsWithUser.matches(this)
         return copy(isMention = isMention)
+    }
+
+    fun checkForUserDisplay(userDisplays: List<UserDisplayItem.Entry>): TwitchMessage {
+        if (isSystem) {
+            return this
+        }
+
+        val override = userDisplays.find { it -> it.username.lowercase() == name.lowercase() }
+        if (override != null) {
+            val res = kotlin.runCatching { Color.parseColor(override.colorHex) }
+            if (res.isFailure) return this
+            return copy(color = res.getOrThrow())
+        }
+        return this
     }
 
     companion object {

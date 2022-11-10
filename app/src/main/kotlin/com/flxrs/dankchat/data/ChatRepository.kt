@@ -590,6 +590,8 @@ class ChatRepository @Inject constructor(
             return
         }
 
+        val userDisplays = dankChatPreferenceStore.userDisplays
+
         val rewardId = ircMessage.tags["custom-reward-id"]
         val additionalMessages = when {
             rewardId != null -> {
@@ -636,7 +638,7 @@ class ChatRepository @Inject constructor(
                     return
                 }
 
-                val withMentions = it.checkForMention(name, customMentionEntries)
+                val withMentions = it.checkForMention(name, customMentionEntries).checkForUserDisplay(userDisplays)
                 val currentUsers = users
                     .getOrPut(withMentions.channel) { createUserCache() }
                     .also { cache -> cache.put(withMentions.name, true) }
@@ -715,6 +717,8 @@ class ChatRepository @Inject constructor(
             return@withContext
         }
 
+        val userDisplays = dankChatPreferenceStore.userDisplays
+
         val response = runCatching {
             apiManager.getRecentMessages(channel)
         }.getOrElse {
@@ -757,7 +761,7 @@ class ChatRepository @Inject constructor(
                                 continue@loop
                             }
 
-                            msg.checkForMention(name, customMentionEntries)
+                            msg.checkForMention(name, customMentionEntries).checkForUserDisplay(userDisplays)
                         }
                         else             -> msg
                     }
