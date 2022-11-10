@@ -51,6 +51,12 @@
             android:title="@string/preference_show_username_title"
             app:iconSpaceReserved="false" />
 
+        <Preference
+            android:key="@string/preference_custom_user_display_key"
+            android:title="@string/custom_user_display_title"
+            app:iconSpaceReserved="false" />
+
+
         <MultiSelectListPreference
             android:defaultValue="@array/badges_entry_values"
             android:entries="@array/badges_entries"

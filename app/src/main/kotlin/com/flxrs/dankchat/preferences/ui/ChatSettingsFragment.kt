@@ -13,12 +13,18 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.databinding.CommandsBottomsheetBinding
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
+import com.flxrs.dankchat.databinding.UserDisplayBottomSheetBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.command.CommandAdapter
 import com.flxrs.dankchat.preferences.command.CommandDto
 import com.flxrs.dankchat.preferences.command.CommandDto.Companion.toDto
 import com.flxrs.dankchat.preferences.command.CommandDto.Companion.toEntryItem
 import com.flxrs.dankchat.preferences.command.CommandItem
+import com.flxrs.dankchat.preferences.userdisplay.UserDisplayAdapter
+import com.flxrs.dankchat.preferences.userdisplay.UserDisplayDto
+import com.flxrs.dankchat.preferences.userdisplay.UserDisplayDto.Companion.toDto
+import com.flxrs.dankchat.preferences.userdisplay.UserDisplayDto.Companion.toEntryItem
+import com.flxrs.dankchat.preferences.userdisplay.UserDisplayItem
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import com.flxrs.dankchat.utils.extensions.showRestartRequired
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -45,6 +51,13 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
             setOnPreferenceClickListener {
                 showCommandsPreference(view, key, preferences)
             }
+        }
+
+        findPreference<Preference>(getString(R.string.preference_custom_user_display_key))?.apply {
+            setOnPreferenceClickListener {
+                showUserDisplaySettingsFragment(view, key, preferences)
+            }
+
         }
     }
 
@@ -104,6 +117,45 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
                 val stringSet = commandAdapter.commands
                     .filterIsInstance<CommandItem.Entry>()
                     .filter { it.trigger.isNotBlank() && it.command.isNotBlank() }
+                    .map { Json.encodeToString(it.toDto()) }
+                    .toSet()
+
+                sharedPreferences.edit { putStringSet(key, stringSet) }
+            }
+            behavior.isFitToContents = false
+            behavior.peekHeight = peekHeight
+            show()
+        }
+
+        return true
+    }
+
+    private fun showUserDisplaySettingsFragment(root: View, key: String, sharedPreferences: SharedPreferences): Boolean {
+        val context = root.context
+        val windowHeight = resources.displayMetrics.heightPixels
+        val peekHeight = (windowHeight * 0.6).roundToInt()
+        val userDisplays = runCatching {
+            sharedPreferences
+                .getStringSet(key, emptySet())
+                .orEmpty()
+                .mapNotNull { Json.decodeOrNull<UserDisplayDto>(it)?.toEntryItem() }
+                .plus(UserDisplayItem.AddEntry)
+        }.getOrDefault(emptyList())
+
+        val userDisplayAdapter = UserDisplayAdapter(userDisplays.toMutableList())
+        val binding = UserDisplayBottomSheetBinding.inflate(LayoutInflater.from(context), root as? ViewGroup, false).apply {
+            usersList.adapter = userDisplayAdapter
+            userOverrideDisplaySheet.updateLayoutParams {
+                height = windowHeight
+            }
+        }
+
+        BottomSheetDialog(context).apply {
+            setContentView(binding.root)
+            setOnDismissListener {
+                val stringSet = userDisplayAdapter.entries
+                    .filterIsInstance<UserDisplayItem.Entry>()
+                    .filter { it.username.isNotBlank() && it.colorHex.isNotBlank() } // NOTE: color is NOT validated
                     .map { Json.encodeToString(it.toDto()) }
                     .toSet()
 

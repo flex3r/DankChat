@@ -2,6 +2,7 @@ package com.flxrs.dankchat.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.R
@@ -10,6 +11,9 @@ import com.flxrs.dankchat.preferences.command.CommandDto
 import com.flxrs.dankchat.preferences.command.CommandDto.Companion.toEntryItem
 import com.flxrs.dankchat.preferences.command.CommandItem
 import com.flxrs.dankchat.preferences.upload.ImageUploader
+import com.flxrs.dankchat.preferences.userdisplay.UserDisplayDto
+import com.flxrs.dankchat.preferences.userdisplay.UserDisplayDto.Companion.toEntryItem
+import com.flxrs.dankchat.preferences.userdisplay.UserDisplayItem
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -148,6 +152,14 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
 
     val retainWebViewEnabled: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_retain_webview_key), false)
+
+
+    val userDisplays: List<UserDisplayItem.Entry>
+        get() = defaultPreferences.getStringSet(context.getString(R.string.preference_custom_user_display_key), emptySet())
+            .orEmpty()
+            .mapNotNull { Json.decodeOrNull<UserDisplayDto>(it)?.toEntryItem() }.also {
+                Log.i("DANK", it.toString())
+            }
 
     val preferenceFlow: Flow<Preference> = callbackFlow {
         with(context) {
