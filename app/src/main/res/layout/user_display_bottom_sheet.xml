@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
-        android:id="@+id/user_override_display_sheet"
+        android:id="@+id/custom_user_display_sheet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -21,7 +21,7 @@
             android:textAppearance="?attr/textAppearanceTitleMedium" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/usersList"
+            android:id="@+id/custom_user_display_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingTop="8dp"

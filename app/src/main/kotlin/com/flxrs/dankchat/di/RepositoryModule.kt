@@ -39,6 +39,7 @@ object RepositoryModule {
         pubSubManager: PubSubManager,
         dankChatPreferenceStore: DankChatPreferenceStore,
         @ApplicationScope scope: CoroutineScope,
+        // it's probably not very good to have Repository depends on another Repository, but do it to make the ChatRepository not too large
         userDisplayRepository: UserDisplayRepository,
     ): ChatRepository = ChatRepository(apiManager, emoteManager, readConnection, writeConnection, pubSubManager, dankChatPreferenceStore, userDisplayRepository, scope)
 

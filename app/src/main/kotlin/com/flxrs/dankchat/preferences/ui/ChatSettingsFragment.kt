@@ -145,18 +145,16 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
         val peekHeight = (windowHeight * 0.6).roundToInt()
 
         lifecycleScope.launch {
-            val userDisplays = userDisplayRepository.getAllUserDisplays().map { it.toEntryItem() }.plus(UserDisplayItem.AddEntry)
-            val idBefore = userDisplays.mapNotNull {
-                if (it is UserDisplayItem.Entry) {
-                    it.id
-                } else null
-            }
+            val userDisplays = userDisplayRepository.getAllUserDisplays()
+                .map { it.toEntryItem() }
+                .plus(UserDisplayItem.AddEntry)
+            val idBefore = userDisplays.filterIsInstance<UserDisplayItem.Entry>().map { it.id }
 
 
             val userDisplayAdapter = UserDisplayAdapter(userDisplays.toMutableList())
             val binding = UserDisplayBottomSheetBinding.inflate(LayoutInflater.from(context), root as? ViewGroup, false).apply {
-                usersList.adapter = userDisplayAdapter
-                userOverrideDisplaySheet.updateLayoutParams {
+                customUserDisplayList.adapter = userDisplayAdapter
+                customUserDisplaySheet.updateLayoutParams {
                     height = windowHeight
                 }
             }
@@ -166,10 +164,8 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
                 setOnDismissListener {
                     lifecycleScope.launch {
                         val entries = userDisplayAdapter.entries
-                            // filter out "AddEntry"
-                            .filter { it is UserDisplayItem.Entry }
-                            // need to force the type somehow
-                            .map { (it as UserDisplayItem.Entry).toDto() }
+                            .filterIsInstance<UserDisplayItem.Entry>() // filter out "AddEntry"
+                            .map { it.toDto() }
                             .also { userDisplayRepository.addUserDisplays(it) }
 
                         val idAfter = entries.map { it.id }.toSet()

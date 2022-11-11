@@ -287,6 +287,7 @@ data class TwitchMessage(
         return copy(isMention = isMention)
     }
 
+    /** temporary implementation, will need to re-implement after "Mention Refactor" anyway */
     fun checkForUserDisplay(userDisplays: List<UserDisplayDto>): TwitchMessage {
         if (isSystem) {
             return this

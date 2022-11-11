@@ -7,9 +7,9 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "user_display")
 data class UserDisplayEntity(
     @PrimaryKey(autoGenerate = true) val id: Int,
-    @ColumnInfo(name = "target_user") val targetUser: String,
-    @ColumnInfo(name = "color_hex") val colorHex: String?,
-    @ColumnInfo(name = "alias") val alias: String?
+    @ColumnInfo(name = "target_user") val targetUser: String, // target user to apply the color and/or alias
+    @ColumnInfo(name = "color_hex") val colorHex: String?, // effect color: leaving blank or invalid color will have no effect
+    @ColumnInfo(name = "alias") val alias: String? // aliased name
 ) {
     companion object {
         /** make dummy entity with specified ID, useful for deleting by ID */
