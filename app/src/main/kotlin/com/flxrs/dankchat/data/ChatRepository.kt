@@ -33,6 +33,7 @@ class ChatRepository @Inject constructor(
     private val writeConnection: ChatConnection,
     private val pubSubManager: PubSubManager,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
+    private val userDisplayRepository: UserDisplayRepository,
     scope: CoroutineScope,
 ) {
 
@@ -590,7 +591,7 @@ class ChatRepository @Inject constructor(
             return
         }
 
-        val userDisplays = dankChatPreferenceStore.userDisplays
+        val userDisplays = userDisplayRepository.getAllUserDisplays()
 
         val rewardId = ircMessage.tags["custom-reward-id"]
         val additionalMessages = when {
@@ -717,7 +718,7 @@ class ChatRepository @Inject constructor(
             return@withContext
         }
 
-        val userDisplays = dankChatPreferenceStore.userDisplays
+        val userDisplays = userDisplayRepository.getAllUserDisplays()
 
         val response = runCatching {
             apiManager.getRecentMessages(channel)
