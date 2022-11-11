@@ -2,7 +2,6 @@ package com.flxrs.dankchat.data
 
 import com.flxrs.dankchat.data.database.UserDisplayDao
 import com.flxrs.dankchat.data.database.UserDisplayEntity
-import com.flxrs.dankchat.data.database.UserDisplayEntity.Companion.toEntity
 import com.flxrs.dankchat.preferences.userdisplay.UserDisplayDto
 import javax.inject.Inject
 
