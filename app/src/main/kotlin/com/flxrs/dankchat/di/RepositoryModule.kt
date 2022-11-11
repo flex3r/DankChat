@@ -4,6 +4,7 @@ import com.flxrs.dankchat.data.*
 import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.data.database.EmoteUsageDao
 import com.flxrs.dankchat.data.database.RecentUploadsDao
+import com.flxrs.dankchat.data.database.UserDisplayDao
 import com.flxrs.dankchat.data.twitch.connection.ChatConnection
 import com.flxrs.dankchat.data.twitch.connection.PubSubManager
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager
@@ -36,9 +37,10 @@ object RepositoryModule {
         @ReadConnection readConnection: ChatConnection,
         @WriteConnection writeConnection: ChatConnection,
         pubSubManager: PubSubManager,
-        @ApplicationScope scope: CoroutineScope,
         dankChatPreferenceStore: DankChatPreferenceStore,
-    ): ChatRepository = ChatRepository(apiManager, emoteManager, readConnection, writeConnection, pubSubManager, dankChatPreferenceStore, scope)
+        @ApplicationScope scope: CoroutineScope,
+        userDisplayRepository: UserDisplayRepository,
+    ): ChatRepository = ChatRepository(apiManager, emoteManager, readConnection, writeConnection, pubSubManager, dankChatPreferenceStore, userDisplayRepository, scope)
 
     @Singleton
     @Provides
@@ -60,4 +62,10 @@ object RepositoryModule {
     fun provideRecentUploadsRepository(
         recentUploadsDao: RecentUploadsDao
     ) = RecentUploadsRepository(recentUploadsDao)
+
+    @Singleton
+    @Provides
+    fun provideUserDisplayRepository(
+        userDisplayDao: UserDisplayDao
+    ) = UserDisplayRepository(userDisplayDao)
 }
