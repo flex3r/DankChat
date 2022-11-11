@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.flxrs.dankchat.data.database.DankChatDatabase
 import com.flxrs.dankchat.data.database.EmoteUsageDao
 import com.flxrs.dankchat.data.database.RecentUploadsDao
+import com.flxrs.dankchat.data.database.UserDisplayDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,6 +37,11 @@ object DatabaseModule {
         database: DankChatDatabase
     ): RecentUploadsDao = database.recentUploadsDao()
 
+    @Singleton
+    @Provides
+    fun provideUserDisplayDao(
+        database: DankChatDatabase
+    ): UserDisplayDao = database.userDisplayDao()
 
     private const val DB_NAME = "dankchat-db"
 }

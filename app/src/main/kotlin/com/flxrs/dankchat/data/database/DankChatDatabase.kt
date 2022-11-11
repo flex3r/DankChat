@@ -6,10 +6,11 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    version = 2,
-    entities = [EmoteUsageEntity::class, UploadEntity::class],
+    version = 3,
+    entities = [EmoteUsageEntity::class, UploadEntity::class, UserDisplayEntity::class],
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
+        AutoMigration(from = 2, to = 3),
     ],
     exportSchema = true,
 )
@@ -17,4 +18,5 @@ import androidx.room.TypeConverters
 abstract class DankChatDatabase : RoomDatabase() {
     abstract fun emoteUsageDao(): EmoteUsageDao
     abstract fun recentUploadsDao(): RecentUploadsDao
+    abstract fun userDisplayDao(): UserDisplayDao
 }
