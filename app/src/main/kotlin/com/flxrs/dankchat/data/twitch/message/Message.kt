@@ -294,9 +294,12 @@ data class TwitchMessage(
 
         val override = userDisplays.find { it -> it.username.lowercase() == name.lowercase() }
         if (override != null) {
-            val res = kotlin.runCatching { Color.parseColor(override.colorHex) }
-            if (res.isFailure) return this
-            return copy(color = res.getOrThrow())
+            // gracefully handle invalid color by reverting to previous color
+            val color = runCatching { Color.parseColor(override.colorHex) }.getOrDefault(color)
+
+            // if name not specified, use old name
+            val name = if (override.alias.isNotEmpty()) override.alias else name
+            return copy(color = color, name = name)
         }
         return this
     }

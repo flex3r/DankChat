@@ -351,4 +351,5 @@
     <string name="user_display_item_username_hint">Target Username</string>
     <string name="user_display_item_color_hint">Color</string>
     <string name="remove_custom_user_display">Remove Custom User Display</string>
+    <string name="user_display_alias_input">Alias (Optional)</string>
 </resources>

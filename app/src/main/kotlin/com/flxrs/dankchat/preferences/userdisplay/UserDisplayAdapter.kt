@@ -21,7 +21,7 @@ class UserDisplayAdapter(val entries: MutableList<UserDisplayItem>) : RecyclerVi
     inner class AddItemViewHolder(val binding: MultiEntryAddItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.multiEntryAdd.setOnClickListener {
-                val entry = UserDisplayItem.Entry(username = "", colorHex = "#ff0000")
+                val entry = UserDisplayItem.Entry(username = "", colorHex = "#ff0000", alias = "")
                 val index = entries.lastIndex
                 entries.add(index, entry)
                 notifyItemInserted(index)
