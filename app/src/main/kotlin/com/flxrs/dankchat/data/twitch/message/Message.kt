@@ -9,7 +9,7 @@ import com.flxrs.dankchat.data.twitch.connection.PointRedemptionData
 import com.flxrs.dankchat.data.twitch.connection.WhisperData
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.data.twitch.emote.EmoteManager
-import com.flxrs.dankchat.preferences.userdisplay.UserDisplayItem
+import com.flxrs.dankchat.preferences.userdisplay.UserDisplayDto
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.extensions.appendSpacesBetweenEmojiGroup
 import com.flxrs.dankchat.utils.extensions.removeDuplicateWhitespace
@@ -287,12 +287,12 @@ data class TwitchMessage(
         return copy(isMention = isMention)
     }
 
-    fun checkForUserDisplay(userDisplays: List<UserDisplayItem.Entry>): TwitchMessage {
+    fun checkForUserDisplay(userDisplays: List<UserDisplayDto>): TwitchMessage {
         if (isSystem) {
             return this
         }
 
-        val override = userDisplays.find { it -> it.username.lowercase() == name.lowercase() }
+        val override = userDisplays.find { it.username.lowercase() == name.lowercase() }
         if (override != null) {
             // gracefully handle invalid color by reverting to previous color
             val color = runCatching { Color.parseColor(override.colorHex) }.getOrDefault(color)
