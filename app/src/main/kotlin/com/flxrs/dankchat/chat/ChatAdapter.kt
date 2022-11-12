@@ -235,7 +235,7 @@ class ChatAdapter(
         }
         setRippleBackground(background, enableRipple = false)
 
-        val count = message.count
+        val count = message.stackCount
         // TODO localize
         val systemMessageText = when {
             message.isFullChatClear -> "Chat has been cleared by a moderator."

@@ -10,7 +10,7 @@ data class ClearChatMessage(
     val channel: String,
     val targetUser: String? = null,
     val duration: String = "",
-    val count: Int = 0,
+    val stackCount: Int = 0,
 ) : Message() {
     val isBan = duration.isBlank()
     val isFullChatClear = targetUser == null
@@ -29,7 +29,7 @@ data class ClearChatMessage(
                 channel = channel,
                 targetUser = target,
                 duration = duration,
-                count = if (target != null && duration.isNotBlank()) 1 else 0
+                stackCount = if (target != null && duration.isNotBlank()) 1 else 0
             )
         }
     }

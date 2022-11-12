@@ -173,19 +173,16 @@ class HighlightsRepository @Inject constructor(
                 add(Highlight(HighlightType.ElevatedMessage))
             }
 
-            // Username
             if (containsCurrentUserName && enabledMessageHighlights.isOwnUserNameEnabled) {
                 add(Highlight(HighlightType.Username))
             }
 
-            // User highlights
             enabledUserHighlights.forEach {
                 if (it.username.equals(name, ignoreCase = true)) {
                     add(Highlight(HighlightType.Custom))
                 }
             }
 
-            // custom message highlights
             enabledMessageHighlights
                 .filter { it.type == MessageHighlightEntityType.Custom }
                 .forEach {
