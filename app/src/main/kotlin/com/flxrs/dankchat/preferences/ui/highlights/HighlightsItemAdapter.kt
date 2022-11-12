@@ -12,10 +12,12 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.AddItemBinding
 import com.flxrs.dankchat.databinding.MessageHighlightItemBinding
 import com.flxrs.dankchat.databinding.UserHighlightItemBinding
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 
 class HighlightsItemAdapter(
     private val onAddItem: () -> Unit,
     private val onDeleteItem: (item: HighlightItem) -> Unit,
+    private val preferenceStore: DankChatPreferenceStore,
 ) : ListAdapter<HighlightItem, RecyclerView.ViewHolder>(DetectDiff()) {
 
     inner class MessageItemViewHolder(val binding: MessageHighlightItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -69,6 +71,10 @@ class HighlightsItemAdapter(
                         pattern.isVisible = false
                         delete.isVisible = false
                         regexInfo.isVisible = false
+                    }
+
+                    if (highlightItem.type == MessageHighlightItem.Type.Username && !preferenceStore.isLoggedIn) {
+                        enabled.isEnabled = false
                     }
                 }
             }

@@ -179,7 +179,7 @@ class DankChatPreferenceStore @Inject constructor(
         send(userName?.ifBlank { null })
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             if (key == NAME_KEY) {
-                trySend(userName)
+                trySend(userName?.ifBlank { null })
             }
         }
 

@@ -12,6 +12,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.HighlightsIgnoresBottomsheetBinding
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.ui.highlights.HighlightEvent
 import com.flxrs.dankchat.preferences.ui.highlights.HighlightsTab
 import com.flxrs.dankchat.preferences.ui.highlights.HighlightsTabAdapter
@@ -23,6 +24,8 @@ import com.flxrs.dankchat.utils.extensions.showShortSnackbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.migration.CustomInjection.inject
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
@@ -31,6 +34,9 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
     private val ignoresViewModel: IgnoresViewModel by viewModels()
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var bottomSheetBinding: HighlightsIgnoresBottomsheetBinding? = null
+
+    @Inject
+    lateinit var preferences: DankChatPreferenceStore
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -47,6 +53,7 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
         val highlightsAdapter = HighlightsTabAdapter(
             onAddItem = highlightsViewModel::addHighlight,
             onDeleteItem = highlightsViewModel::removeHighlight,
+            preferences = preferences,
         )
         val ignoresAdapter = IgnoresTabAdapter(
             onAddItem = ignoresViewModel::addIgnore,
