@@ -107,14 +107,18 @@ class ChatRepository @Inject constructor(
                             return@collect
                         }
 
-                        knownRewards[pubSubMessage.data.id] = pubSubMessage
+                        if (pubSubMessage.data.reward.requiresUserInput) {
+                            knownRewards[pubSubMessage.data.id] = pubSubMessage
+                        } else {
+                            val message = runCatching {
+                                PointRedemptionMessage
+                                    .parsePointReward(pubSubMessage.timestamp, pubSubMessage.data)
+                                    .applyIgnores()
+                                    ?.calculateHighlightState()
+                            }.getOrNull() ?: return@collect
 
-                        if (!pubSubMessage.data.reward.requiresUserInput) {
-                            val parsed = PointRedemptionMessage.parsePointReward(pubSubMessage.timestamp, pubSubMessage.data)
-                            val messageWithIgnores = ignoresRepository.applyIgnores(parsed) ?: return@collect
-                            val messageWithHighlights = highlightsRepository.calculateHighlightState(messageWithIgnores)
                             messages[pubSubMessage.channelName]?.update {
-                                it.addAndLimit(ChatItem(messageWithHighlights), scrollBackLength)
+                                it.addAndLimit(ChatItem(message), scrollBackLength)
                             }
                         }
                     }
@@ -124,13 +128,12 @@ class ChatRepository @Inject constructor(
                             return@collect
                         }
 
-                        val parsed = runCatching {
+                        val message = runCatching {
                             WhisperMessage.fromPubSub(pubSubMessage.data)
-                        }.getOrElse { return@collect }
-
-                        val messageWithIgnores = ignoresRepository.applyIgnores(parsed) ?: return@collect
-                        val messageWithHighlights = highlightsRepository.calculateHighlightState(messageWithIgnores)
-                        val message = emoteRepository.parseEmotesAndBadges(messageWithHighlights) as WhisperMessage
+                                .applyIgnores()
+                                ?.calculateHighlightState()
+                                ?.parseEmotesAndBadges() as? WhisperMessage
+                        }.getOrNull() ?: return@collect
 
                         val item = ChatItem(message, isMentionTab = true)
                         _whispers.update { current ->
@@ -141,12 +144,12 @@ class ChatRepository @Inject constructor(
                             return@collect
                         }
 
-                        val currentUsers = users["*"] ?: createUserCache()
+                        val currentUsers = users[GLOBAL_CHANNEL_TAG] ?: createUserCache()
                         currentUsers.put(message.name, true)
-                        usersFlows["*"]?.update {
+                        usersFlows[GLOBAL_CHANNEL_TAG]?.update {
                             currentUsers.snapshot().keys
                         }
-                        _channelMentionCount.increment("w", 1)
+                        _channelMentionCount.increment(WHISPER_CHANNEL_TAG, 1)
                         _notificationsFlow.tryEmit(listOf(item))
                     }
                 }
@@ -159,8 +162,8 @@ class ChatRepository @Inject constructor(
     val channelMentionCount: SharedFlow<Map<String, Int>> = _channelMentionCount.asSharedFlow()
     val unreadMessagesMap: SharedFlow<Map<String, Boolean>> = _unreadMessagesMap.asSharedFlow()
     val userStateFlow: StateFlow<UserState> = userState.asStateFlow()
-    val hasMentions = channelMentionCount.map { it.any { channel -> channel.key != "w" && channel.value > 0 } }
-    val hasWhispers = channelMentionCount.map { it.getOrDefault("w", 0) > 0 }
+    val hasMentions = channelMentionCount.map { it.any { channel -> channel.key != WHISPER_CHANNEL_TAG && channel.value > 0 } }
+    val hasWhispers = channelMentionCount.map { it.getOrDefault(WHISPER_CHANNEL_TAG, 0) > 0 }
     val mentions: StateFlow<List<ChatItem>>
         get() = _mentions
     val whispers: StateFlow<List<ChatItem>>
@@ -226,7 +229,7 @@ class ChatRepository @Inject constructor(
     }
 
     fun clearMentionCounts() = with(_channelMentionCount) {
-        tryEmit(firstValue.apply { keys.forEach { if (it != "w") set(it, 0) } })
+        tryEmit(firstValue.apply { keys.forEach { if (it != WHISPER_CHANNEL_TAG) set(it, 0) } })
     }
 
     fun clearUnreadMessage(channel: String) {
@@ -394,7 +397,7 @@ class ChatRepository @Inject constructor(
         usersFlows.putIfAbsent(channel, MutableStateFlow(emptySet()))
 
         with(_channelMentionCount) {
-            if (!firstValue.contains("w")) tryEmit(firstValue.apply { set(channel, 0) })
+            if (!firstValue.contains(WHISPER_CHANNEL_TAG)) tryEmit(firstValue.apply { set(channel, 0) })
             if (!firstValue.contains(channel)) tryEmit(firstValue.apply { set(channel, 0) })
         }
     }
@@ -538,27 +541,26 @@ class ChatRepository @Inject constructor(
         }
 
         val userState = userState.value
-        val parsed = runCatching {
+        val message = runCatching {
             WhisperMessage.parseFromIrc(ircMessage, userState.displayName, userState.color)
-        }.getOrElse { return }
-
-        val messageWithIgnores = ignoresRepository.applyIgnores(parsed) ?: return
-        val messageWithHighlights = highlightsRepository.calculateHighlightState(messageWithIgnores)
-        val message = emoteRepository.parseEmotesAndBadges(messageWithHighlights) as WhisperMessage
+                .applyIgnores()
+                ?.calculateHighlightState()
+                ?.parseEmotesAndBadges() as? WhisperMessage
+        }.getOrNull() ?: return
 
         val currentUsers = users
-            .getOrPut("*") { createUserCache() }
+            .getOrPut(GLOBAL_CHANNEL_TAG) { createUserCache() }
             .also { it.put(message.name, true) }
 
         usersFlows
-            .getOrPut("*") { MutableStateFlow(emptySet()) }
+            .getOrPut(GLOBAL_CHANNEL_TAG) { MutableStateFlow(emptySet()) }
             .update { currentUsers.snapshot().keys }
 
         val item = ChatItem(message, isMentionTab = true)
         _whispers.update { current ->
             current.addAndLimit(item, scrollBackLength)
         }
-        _channelMentionCount.increment("w", 1)
+        _channelMentionCount.increment(WHISPER_CHANNEL_TAG, 1)
     }
 
     private suspend fun handleMessage(ircMessage: IrcMessage) {
@@ -588,17 +590,17 @@ class ChatRepository @Inject constructor(
             else             -> emptyList()
         }
 
-        val rawMessage = runCatching { Message.parse(ircMessage) }
-            .getOrElse {
-                Log.e(TAG, "Failed to parse message", it)
-                return
-            } ?: return
+        val message = runCatching {
+            Message.parse(ircMessage)
+                ?.applyIgnores()
+                ?.calculateHighlightState()
+                ?.parseEmotesAndBadges()
+        }.getOrElse {
+            Log.e(TAG, "Failed to parse message", it)
+            return
+        } ?: return
 
-        val messageWithIgnores = ignoresRepository.applyIgnores(rawMessage) ?: return
-        val messageWithHighlights = highlightsRepository.calculateHighlightState(messageWithIgnores)
-        val message = emoteRepository.parseEmotesAndBadges(messageWithHighlights)
-
-        if (message is NoticeMessage && message.channel == "*") {
+        if (message is NoticeMessage && message.channel == GLOBAL_CHANNEL_TAG) {
             messages.keys.forEach {
                 messages[it]?.update { current ->
                     current.addAndLimit(ChatItem(message), scrollBackLength)
@@ -640,10 +642,10 @@ class ChatRepository @Inject constructor(
             add(ChatItem(message))
         }
 
-        val channel = when (rawMessage) {
-            is PrivMessage       -> rawMessage.channel
-            is UserNoticeMessage -> rawMessage.channel
-            is NoticeMessage     -> rawMessage.channel
+        val channel = when (message) {
+            is PrivMessage       -> message.channel
+            is UserNoticeMessage -> message.channel
+            is NoticeMessage     -> message.channel
             else                 -> return
         }
 
@@ -732,14 +734,12 @@ class ChatRepository @Inject constructor(
                     continue
                 }
 
-                val rawMessage = runCatching {
+                val message = runCatching {
                     Message.parse(parsedIrc)
+                        ?.applyIgnores()
+                        ?.calculateHighlightState()
+                        ?.parseEmotesAndBadges()
                 }.getOrNull() ?: continue
-
-                val messageWithIgnores = ignoresRepository.applyIgnores(rawMessage) ?: continue
-                val messageWithHighlights = highlightsRepository.calculateHighlightState(messageWithIgnores)
-                val message = emoteRepository.parseEmotesAndBadges(messageWithHighlights)
-
 
                 if (message is UserNoticeMessage && message.childMessage != null) {
                     items += ChatItem(message.childMessage)
@@ -765,12 +765,18 @@ class ChatRepository @Inject constructor(
         }
     }
 
+    private fun Message.applyIgnores(): Message? = ignoresRepository.applyIgnores(this)
+    private fun Message.calculateHighlightState(): Message = highlightsRepository.calculateHighlightState(this)
+    private fun Message.parseEmotesAndBadges(): Message = emoteRepository.parseEmotesAndBadges(this)
+
     companion object {
         private val TAG = ChatRepository::class.java.simpleName
         private val INVISIBLE_CHAR = 0x000E0000.codePointAsString
         private val ESCAPE_TAG = 0x000E0002.codePointAsString
         private const val USER_CACHE_SIZE = 5000
         private const val PUBSUB_TIMEOUT = 1000L
+        private const val GLOBAL_CHANNEL_TAG = "*"
+        private const val WHISPER_CHANNEL_TAG = "w"
 
         val ESCAPE_TAG_REGEX = "(?<!$ESCAPE_TAG)$ESCAPE_TAG".toRegex()
         const val ZERO_WIDTH_JOINER = 0x200D.toChar().toString()
