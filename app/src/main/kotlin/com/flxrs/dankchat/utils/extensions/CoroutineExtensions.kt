@@ -8,6 +8,9 @@ import kotlinx.coroutines.flow.SharedFlow
 inline val <T> SharedFlow<T>.firstValue: T
     get() = replayCache.first()
 
+inline val <T> SharedFlow<T>.firstValueOrNull: T?
+    get() = replayCache.firstOrNull()
+
 fun MutableSharedFlow<MutableMap<String, Int>>.increment(key: String, amount: Int) = tryEmit(firstValue.apply {
     val count = get(key) ?: 0
     put(key, count + amount)

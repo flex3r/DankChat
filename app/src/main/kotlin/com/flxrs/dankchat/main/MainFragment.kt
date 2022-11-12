@@ -941,8 +941,8 @@ class MainFragment : Fragment() {
             }
 
         activity?.invalidateMenu()
-        updateChannelMentionBadges(mainViewModel.channelMentionCount.value)
-        updateUnreadChannelTabColors(mainViewModel.unreadMessagesMap.value)
+        updateChannelMentionBadges(channels = mainViewModel.channelMentionCount.firstValueOrNull.orEmpty())
+        updateUnreadChannelTabColors(channels = mainViewModel.unreadMessagesMap.firstValueOrNull.orEmpty())
     }
 
     private fun updateUnreadChannelTabColors(channels: Map<String, Boolean>) {
