@@ -19,6 +19,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@Suppress("DEPRECATION")
 @Singleton
 class IgnoresRepository @Inject constructor(
     private val apiManager: ApiManager,

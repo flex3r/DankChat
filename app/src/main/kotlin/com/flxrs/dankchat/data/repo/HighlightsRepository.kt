@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@Suppress("DEPRECATION")
 @Singleton
 class HighlightsRepository @Inject constructor(
     private val messageHighlightDao: MessageHighlightDao,
