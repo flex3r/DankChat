@@ -654,23 +654,26 @@ class ChatRepository @Inject constructor(
         }
 
         _notificationsFlow.tryEmit(items)
-        when (ircMessage.command) {
-            "PRIVMSG", "USERNOTICE" -> {
-                val isUnread = _unreadMessagesMap.firstValue[channel]
-                if (channel != activeChannel.value && (isUnread == null || isUnread == false)) {
-                    _unreadMessagesMap.assign(channel, true)
-                }
-            }
-        }
-
         val mentions = items
             .filter { it.message.highlights.hasMention() }
             .toMentionTabItems()
 
         if (mentions.isNotEmpty()) {
-            _channelMentionCount.increment(channel, mentions.size)
             _mentions.update { current ->
                 current.addAndLimit(mentions, scrollBackLength)
+            }
+        }
+
+        if (channel != activeChannel.value) {
+            if (mentions.isNotEmpty()) {
+                _channelMentionCount.increment(channel, mentions.size)
+            }
+
+            if (message is PrivMessage) {
+                val isUnread = _unreadMessagesMap.firstValue[channel] ?: false
+                if (!isUnread) {
+                    _unreadMessagesMap.assign(channel, true)
+                }
             }
         }
     }
