@@ -72,7 +72,7 @@ class ChatRepository @Inject constructor(
     private val _whispers = MutableStateFlow<List<ChatItem>>(emptyList())
     private val connectionState = ConcurrentHashMap<String, MutableStateFlow<ConnectionState>>()
     private val roomStates = ConcurrentHashMap<String, MutableSharedFlow<RoomState>>()
-    private val users = ConcurrentHashMap<String, LruCache<String, Boolean>>()
+    private val users = ConcurrentHashMap<String, LruCache<String, String>>()
     private val usersFlows = ConcurrentHashMap<String, MutableStateFlow<Set<String>>>()
     private val userState = MutableStateFlow(UserState())
 
@@ -144,10 +144,11 @@ class ChatRepository @Inject constructor(
                             return@collect
                         }
 
+                        val userForSuggestion = message.displayName.takeIf { it.equals(message.name, ignoreCase = true) } ?: message.name
                         val currentUsers = users[GLOBAL_CHANNEL_TAG] ?: createUserCache()
-                        currentUsers.put(message.name, true)
+                        currentUsers.put(message.name.lowercase(), userForSuggestion)
                         usersFlows[GLOBAL_CHANNEL_TAG]?.update {
-                            currentUsers.snapshot().keys
+                            currentUsers.snapshot().values.toSet()
                         }
                         _channelMentionCount.increment(WHISPER_CHANNEL_TAG, 1)
                         _notificationsFlow.tryEmit(listOf(item))
@@ -210,12 +211,18 @@ class ChatRepository @Inject constructor(
                 val currentUsers = users
                     .getOrPut(channel) { createUserCache() }
                     .also { cache ->
-                        chatters.total.forEach { cache.put(it, true) }
+                        val keys = cache.snapshot().keys
+                        chatters.total.forEach { user ->
+                            val key = user.lowercase()
+                            if (key !in keys) {
+                                cache.put(key, user)
+                            }
+                        }
                     }
 
                 usersFlows
                     .getOrPut(channel) { MutableStateFlow(emptySet()) }
-                    .update { currentUsers.snapshot().keys }
+                    .update { currentUsers.snapshot().values.toSet() }
             }
         }.let { Log.i(TAG, "Loading chatters for #$channel took $it ms") }
     }
@@ -548,13 +555,14 @@ class ChatRepository @Inject constructor(
                 ?.parseEmotesAndBadges() as? WhisperMessage
         }.getOrNull() ?: return
 
+        val userForSuggestion = message.displayName.takeIf { it.equals(message.name, ignoreCase = true) } ?: message.name
         val currentUsers = users
             .getOrPut(GLOBAL_CHANNEL_TAG) { createUserCache() }
-            .also { it.put(message.name, true) }
+            .also { it.put(message.name.lowercase(), userForSuggestion) }
 
         usersFlows
             .getOrPut(GLOBAL_CHANNEL_TAG) { MutableStateFlow(emptySet()) }
-            .update { currentUsers.snapshot().keys }
+            .update { currentUsers.snapshot().values.toSet() }
 
         val item = ChatItem(message, isMentionTab = true)
         _whispers.update { current ->
@@ -627,12 +635,13 @@ class ChatRepository @Inject constructor(
                 }
             }
 
+            val userForSuggestion = message.displayName.takeIf { it.equals(message.name, ignoreCase = true) } ?: message.name
             val currentUsers = users
                 .getOrPut(message.channel) { createUserCache() }
-                .also { cache -> cache.put(message.name, true) }
+                .also { cache -> cache.put(message.name.lowercase(), userForSuggestion) }
             usersFlows
                 .getOrPut(message.channel) { MutableStateFlow(emptySet()) }
-                .update { currentUsers.snapshot().keys }
+                .update { currentUsers.snapshot().values.toSet() }
         }
 
         val items = buildList {
@@ -678,7 +687,7 @@ class ChatRepository @Inject constructor(
         }
     }
 
-    private fun createUserCache(): LruCache<String, Boolean> = LruCache(USER_CACHE_SIZE)
+    private fun createUserCache(): LruCache<String, String> = LruCache(USER_CACHE_SIZE)
 
     fun makeAndPostCustomSystemMessage(message: String, channel: String) {
         messages[channel]?.update {
@@ -730,6 +739,7 @@ class ChatRepository @Inject constructor(
         val result = response.bodyOrNull<RecentMessagesDto>()
         val recentMessages = result?.messages.orEmpty()
         val items = mutableListOf<ChatItem>()
+        val userSuggestions = mutableListOf<Pair<String, String>>()
         measureTimeMillis {
             for (recentMessage in recentMessages) {
                 val parsedIrc = IrcMessage.parse(recentMessage)
@@ -743,6 +753,11 @@ class ChatRepository @Inject constructor(
                         ?.calculateHighlightState()
                         ?.parseEmotesAndBadges()
                 }.getOrNull() ?: continue
+
+                if (message is PrivMessage) {
+                    val userForSuggestion = message.displayName.takeIf { it.equals(message.name, ignoreCase = true) } ?: message.name
+                    userSuggestions += message.name.lowercase() to userForSuggestion
+                }
 
                 if (message is UserNoticeMessage && message.childMessage != null) {
                     items += ChatItem(message.childMessage)
@@ -766,6 +781,14 @@ class ChatRepository @Inject constructor(
         _mentions.update { current ->
             (current + mentions).sortedBy { it.message.timestamp }
         }
+        val currentUsers = users
+            .getOrPut(channel) { createUserCache() }
+            .also { cache ->
+                userSuggestions.forEach { (key, value) -> cache.put(key, value) }
+            }
+        usersFlows
+            .getOrPut(channel) { MutableStateFlow(emptySet()) }
+            .update { currentUsers.snapshot().values.toSet() }
     }
 
     private fun Message.applyIgnores(): Message? = ignoresRepository.applyIgnores(this)

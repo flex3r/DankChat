@@ -44,6 +44,12 @@ class UserPopupViewModel @Inject constructor(
     val userName: String
         get() = (userPopupState.value as? UserPopupState.Success)?.userName ?: args.targetUserName
 
+    val displayOrUsername: String
+        get() {
+            val state = userPopupState.value as? UserPopupState.Success ?: return args.targetUserName
+            return state.displayName.takeIf { it.equals(state.userName, ignoreCase = true) } ?: state.userName
+        }
+
     init {
         loadData()
     }
