@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.AddItemBinding
+import com.flxrs.dankchat.databinding.BlacklistedUserItemBinding
 import com.flxrs.dankchat.databinding.MessageHighlightItemBinding
 import com.flxrs.dankchat.databinding.UserHighlightItemBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
@@ -33,6 +34,13 @@ class HighlightsItemAdapter(
         }
     }
 
+    inner class BlacklistedUserItemViewHolder(val binding: BlacklistedUserItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.delete.setOnClickListener { onDeleteItem(getItem(bindingAdapterPosition)) }
+            binding.regexInfo.setOnClickListener { CUSTOM_TABS_INTENT.launchUrl(binding.root.context, REGEX_INFO_URL) }
+        }
+    }
+
     inner class AddViewHolder(binding: AddItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.multiEntryAdd.setOnClickListener { onAddItem() }
@@ -41,10 +49,11 @@ class HighlightsItemAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            ITEM_VIEW_TYPE_MESSAGE -> MessageItemViewHolder(MessageHighlightItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-            ITEM_VIEW_TYPE_USER    -> UserItemViewHolder(UserHighlightItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-            ITEM_VIEW_TYPE_ADD     -> AddViewHolder(AddItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-            else                   -> throw ClassCastException("Unknown viewType $viewType")
+            ITEM_VIEW_TYPE_MESSAGE          -> MessageItemViewHolder(MessageHighlightItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            ITEM_VIEW_TYPE_USER             -> UserItemViewHolder(UserHighlightItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            ITEM_VIEW_TYPE_BLACKLISTED_USER -> BlacklistedUserItemViewHolder(BlacklistedUserItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            ITEM_VIEW_TYPE_ADD              -> AddViewHolder(AddItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            else                            -> throw ClassCastException("Unknown viewType $viewType")
         }
     }
 
@@ -83,6 +92,11 @@ class HighlightsItemAdapter(
                 val highlightItem = getItem(position) as UserHighlightItem
                 holder.binding.item = highlightItem
             }
+
+            is BlacklistedUserItemViewHolder -> {
+                val item = getItem(position) as BlacklistedUserItem
+                holder.binding.item = item
+            }
         }
     }
 
@@ -90,6 +104,7 @@ class HighlightsItemAdapter(
         return when (getItem(position)) {
             is MessageHighlightItem -> ITEM_VIEW_TYPE_MESSAGE
             is UserHighlightItem    -> ITEM_VIEW_TYPE_USER
+            is BlacklistedUserItem  -> ITEM_VIEW_TYPE_BLACKLISTED_USER
             is AddItem              -> ITEM_VIEW_TYPE_ADD
         }
     }
@@ -102,7 +117,8 @@ class HighlightsItemAdapter(
     companion object {
         private const val ITEM_VIEW_TYPE_MESSAGE = 0
         private const val ITEM_VIEW_TYPE_USER = 1
-        private const val ITEM_VIEW_TYPE_ADD = 2
+        private const val ITEM_VIEW_TYPE_BLACKLISTED_USER = 2
+        private const val ITEM_VIEW_TYPE_ADD = 3
         private val REGEX_INFO_URL = Uri.parse("https://wiki.chatterino.com/Regex/")
         private val CUSTOM_TABS_INTENT = CustomTabsIntent.Builder()
             .setShowTitle(true)

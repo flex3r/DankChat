@@ -59,5 +59,11 @@ object DatabaseModule {
         database: DankChatDatabase
     ): MessageIgnoreDao = database.messageIgnoreDao()
 
+    @Singleton
+    @Provides
+    fun provideBlacklistedUserHighlightDao(
+        database: DankChatDatabase
+    ): BlacklistedUserDao = database.blacklistedUserDao()
+
     private const val DB_NAME = "dankchat-db"
 }

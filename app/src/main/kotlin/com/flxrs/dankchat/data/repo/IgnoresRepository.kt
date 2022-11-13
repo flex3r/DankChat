@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.flxrs.dankchat.data.repo
 
 import android.util.Log
@@ -19,7 +21,6 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Suppress("DEPRECATION")
 @Singleton
 class IgnoresRepository @Inject constructor(
     private val apiManager: ApiManager,

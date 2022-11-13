@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.flxrs.dankchat.preferences
 
 import android.content.Context
@@ -105,12 +107,10 @@ class DankChatPreferenceStore @Inject constructor(
             defaultPreferences.edit { putString(context.getString(R.string.preference_rm_host_key), hostOrDefault) }
         }
 
-    @Suppress("DEPRECATION")
     var customMentions: List<MultiEntryDto>
         get() = getMultiEntriesFromPreferences(context.getString(R.string.preference_custom_mentions_key))
         set(value) = setMultiEntries(context.getString(R.string.preference_custom_mentions_key), value)
 
-    @Suppress("DEPRECATION")
     var customBlacklist: List<MultiEntryDto>
         get() = getMultiEntriesFromPreferences(context.getString(R.string.preference_blacklist_key))
         set(value) = setMultiEntries(context.getString(R.string.preference_blacklist_key), value)
@@ -289,7 +289,6 @@ class DankChatPreferenceStore @Inject constructor(
         return Json.decodeOrNull<Map<String, String>>(this).orEmpty().toMutableMap()
     }
 
-    @Suppress("DEPRECATION")
     private fun getMultiEntriesFromPreferences(key: String): List<MultiEntryDto> {
         return defaultPreferences
             .getStringSet(key, emptySet())
@@ -297,7 +296,6 @@ class DankChatPreferenceStore @Inject constructor(
             .mapNotNull { Json.decodeOrNull<MultiEntryDto>(it) }
     }
 
-    @Suppress("DEPRECATION")
     private fun setMultiEntries(key: String, entries: List<MultiEntryDto>) {
         entries.map { Json.encodeToString(it) }
             .toSet()

@@ -24,7 +24,6 @@ import com.flxrs.dankchat.utils.extensions.showShortSnackbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.migration.CustomInjection.inject
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -83,6 +82,13 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
                 }
             }
         }
+        collectFlow(highlightsViewModel.currentTab) { currentTab ->
+            bottomSheetBinding?.subTitle?.text = when (currentTab) {
+                HighlightsTab.Messages         -> getString(R.string.highlights_messages_title)
+                HighlightsTab.Users            -> getString(R.string.highlights_users_title)
+                HighlightsTab.BlacklistedUsers -> getString(R.string.highlights_blacklisted_users_title)
+            }
+        }
         collectFlow(ignoresViewModel.ignoreTabs, ignoresAdapter::submitList)
         collectFlow(ignoresViewModel.events) { event ->
             when (event) {
@@ -97,6 +103,13 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
                         setAction(R.string.undo) { ignoresViewModel.addIgnoreItem(event.item, event.position) }
                     }
                 }
+            }
+        }
+        collectFlow(ignoresViewModel.currentTab) { currentTab ->
+            bottomSheetBinding?.subTitle?.text = when (currentTab) {
+                IgnoresTab.Messages -> getString(R.string.ignores_messages_title)
+                IgnoresTab.Users    -> getString(R.string.ignores_users_title)
+                IgnoresTab.Twitch   -> getString(R.string.ignores_twitch_title)
             }
         }
     }
@@ -114,6 +127,7 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
 
     private fun showHighlightsSheet(highlightsAdapter: HighlightsTabAdapter) {
         val binding = bottomSheetBinding ?: return
+        binding.subTitle.setText(R.string.highlights_messages_title)
         val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 highlightsViewModel.setCurrentTab(position)
@@ -129,8 +143,9 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
             TabLayoutMediator(tabs, viewPager) { tab, pos ->
                 val highlightTab = HighlightsTab.values()[pos]
                 tab.text = when (highlightTab) {
-                    HighlightsTab.Messages -> getString(R.string.tab_messages)
-                    HighlightsTab.Users    -> getString(R.string.tab_users)
+                    HighlightsTab.Messages         -> getString(R.string.tab_messages)
+                    HighlightsTab.Users            -> getString(R.string.tab_users)
+                    HighlightsTab.BlacklistedUsers -> getString(R.string.tab_blacklisted_users)
                 }
             }.attach()
         }
@@ -153,6 +168,7 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
 
     private fun showIgnoresSheet(ignoresAdapter: IgnoresTabAdapter) {
         val binding = bottomSheetBinding ?: return
+        binding.subTitle.setText(R.string.ignores_messages_title)
         val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 ignoresViewModel.setCurrentTab(position)

@@ -20,6 +20,14 @@
             android:gravity="center_horizontal"
             android:textAppearance="?attr/textAppearanceTitleLarge" />
 
+        <TextView
+            android:id="@+id/sub_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:padding="8dp"
+            android:textAppearance="?attr/textAppearanceBodyMedium" />
+
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
             style="@style/Widget.Material3.TabLayout.OnSurface"

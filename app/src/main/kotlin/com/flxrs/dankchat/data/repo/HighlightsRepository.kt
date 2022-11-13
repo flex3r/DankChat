@@ -1,8 +1,12 @@
+@file:Suppress("DEPRECATION")
+
 package com.flxrs.dankchat.data.repo
 
 import android.util.Log
+import com.flxrs.dankchat.data.database.dao.BlacklistedUserDao
 import com.flxrs.dankchat.data.database.dao.MessageHighlightDao
 import com.flxrs.dankchat.data.database.dao.UserHighlightDao
+import com.flxrs.dankchat.data.database.entity.BlacklistedUserEntity
 import com.flxrs.dankchat.data.database.entity.MessageHighlightEntity
 import com.flxrs.dankchat.data.database.entity.MessageHighlightEntityType
 import com.flxrs.dankchat.data.database.entity.UserHighlightEntity
@@ -18,11 +22,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Suppress("DEPRECATION")
 @Singleton
 class HighlightsRepository @Inject constructor(
     private val messageHighlightDao: MessageHighlightDao,
     private val userHighlightDao: UserHighlightDao,
+    private val blacklistedUserDao: BlacklistedUserDao,
     private val preferences: DankChatPreferenceStore,
     @ApplicationScope private val coroutineScope: CoroutineScope
 ) {
@@ -33,6 +37,7 @@ class HighlightsRepository @Inject constructor(
 
     val messageHighlights = messageHighlightDao.getMessageHighlightsFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
     val userHighlights = userHighlightDao.getUserHighlightsFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+    val blacklistedUsers = blacklistedUserDao.getBlacklistedUserFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
 
     fun calculateHighlightState(message: Message): Message {
         return when (message) {
@@ -118,6 +123,28 @@ class HighlightsRepository @Inject constructor(
         userHighlightDao.addHighlights(entities)
     }
 
+    suspend fun addBlacklistedUser(): BlacklistedUserEntity {
+        val entity = BlacklistedUserEntity(
+            id = 0,
+            enabled = true,
+            username = ""
+        )
+        val id = blacklistedUserDao.addBlacklistedUser(entity)
+        return blacklistedUserDao.getBlacklistedUser(id)
+    }
+
+    suspend fun updateBlacklistedUser(entity: BlacklistedUserEntity) {
+        blacklistedUserDao.addBlacklistedUser(entity)
+    }
+
+    suspend fun removeBlacklistedUser(entity: BlacklistedUserEntity) {
+        blacklistedUserDao.deleteBlacklistedUser(entity)
+    }
+
+    suspend fun updateBlacklistedUser(entities: List<BlacklistedUserEntity>) {
+        blacklistedUserDao.addBlacklistedUsers(entities)
+    }
+
     private fun UserNoticeMessage.calculateHighlightState(): UserNoticeMessage {
         val enabledMessageHighlights = messageHighlights.value.filter { it.enabled }
 
@@ -150,6 +177,10 @@ class HighlightsRepository @Inject constructor(
     }
 
     private fun PrivMessage.calculateHighlightState(): PrivMessage {
+        if (isUserBlacklisted(name)) {
+            return this
+        }
+
         val enabledUserHighlights = userHighlights.value.filter { it.enabled }
         val enabledMessageHighlights = messageHighlights.value.filter { it.enabled }
         val highlights = buildList {
@@ -225,6 +256,23 @@ class HighlightsRepository @Inject constructor(
             val regex = currentUserNameRegex.value ?: return false
             return message.contains(regex)
         }
+
+    private fun isUserBlacklisted(name: String): Boolean {
+        blacklistedUsers.value
+            .filter { it.enabled }
+            .forEach {
+                val hasMatch = when {
+                    it.isRegex -> it.regex?.let { regex -> name.matches(regex) } ?: false
+                    else       -> name.equals(it.username, ignoreCase = true)
+                }
+
+                if (hasMatch) {
+                    return true
+                }
+            }
+
+        return false
+    }
 
     private fun List<MultiEntryDto>.mapToMessageHighlightEntities(): List<MessageHighlightEntity> {
         return filterNot { it.matchUser }

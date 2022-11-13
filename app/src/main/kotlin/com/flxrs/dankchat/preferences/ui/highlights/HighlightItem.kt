@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.preferences.ui.highlights
 
+import com.flxrs.dankchat.data.database.entity.BlacklistedUserEntity
 import com.flxrs.dankchat.data.database.entity.MessageHighlightEntity
 import com.flxrs.dankchat.data.database.entity.MessageHighlightEntityType
 import com.flxrs.dankchat.data.database.entity.UserHighlightEntity
@@ -34,7 +35,14 @@ data class MessageHighlightItem(
 data class UserHighlightItem(
     override val id: Long,
     var enabled: Boolean,
-    var username: String
+    var username: String,
+) : HighlightItem()
+
+data class BlacklistedUserItem(
+    override val id: Long,
+    var enabled: Boolean,
+    var username: String,
+    var isRegex: Boolean,
 ) : HighlightItem()
 
 
@@ -86,4 +94,18 @@ fun UserHighlightItem.toEntity() = UserHighlightEntity(
     id = id,
     enabled = enabled,
     username = username
+)
+
+fun BlacklistedUserEntity.toItem() = BlacklistedUserItem(
+    id = id,
+    enabled = enabled,
+    username = username,
+    isRegex = isRegex,
+)
+
+fun BlacklistedUserItem.toEntity() = BlacklistedUserEntity(
+    id = id,
+    enabled = enabled,
+    username = username,
+    isRegex = isRegex,
 )

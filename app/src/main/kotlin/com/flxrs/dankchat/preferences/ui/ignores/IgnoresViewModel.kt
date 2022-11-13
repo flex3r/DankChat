@@ -16,7 +16,7 @@ class IgnoresViewModel @Inject constructor(
     private val ignoresRepository: IgnoresRepository
 ) : ViewModel() {
 
-    private val currentTab = MutableStateFlow(IgnoresTab.Messages)
+    private val _currentTab = MutableStateFlow(IgnoresTab.Messages)
     private val messageIgnoresTab = MutableStateFlow(IgnoresTabItem(IgnoresTab.Messages, listOf(AddItem)))
     private val userIgnoresTab = MutableStateFlow(IgnoresTabItem(IgnoresTab.Users, listOf(AddItem)))
     private val twitchBlocksTab = MutableStateFlow(IgnoresTabItem(IgnoresTab.Twitch, emptyList()))
@@ -26,9 +26,10 @@ class IgnoresViewModel @Inject constructor(
     val ignoreTabs = combine(messageIgnoresTab, userIgnoresTab, twitchBlocksTab) { messageIgnoresTab, userIgnoresTab, twitchBlocksTab ->
         listOf(messageIgnoresTab, userIgnoresTab, twitchBlocksTab)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), INITIAL_STATE)
+    val currentTab = _currentTab.asStateFlow()
 
     fun setCurrentTab(position: Int) {
-        currentTab.value = IgnoresTab.values()[position]
+        _currentTab.value = IgnoresTab.values()[position]
     }
 
     fun fetchIgnores() {
@@ -42,7 +43,7 @@ class IgnoresViewModel @Inject constructor(
     }
 
     fun addIgnore() = viewModelScope.launch {
-        when (currentTab.value) {
+        when (_currentTab.value) {
             IgnoresTab.Messages -> {
                 val entity = ignoresRepository.addMessageIgnore()
                 messageIgnoresTab.update {

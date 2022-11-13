@@ -16,40 +16,51 @@ class HighlightsViewModel @Inject constructor(
     private val highlightsRepository: HighlightsRepository
 ) : ViewModel() {
 
-    private val currentTab = MutableStateFlow(HighlightsTab.Messages)
+    private val _currentTab = MutableStateFlow(HighlightsTab.Messages)
     private val messageHighlightsTab = MutableStateFlow(HighlightsTabItem(HighlightsTab.Messages, listOf(AddItem)))
     private val userHighlightsTab = MutableStateFlow(HighlightsTabItem(HighlightsTab.Users, listOf(AddItem)))
+    private val blacklistedUsersTab = MutableStateFlow(HighlightsTabItem(HighlightsTab.BlacklistedUsers, listOf(AddItem)))
     private val eventChannel = Channel<HighlightEvent>(Channel.CONFLATED)
 
     val events = eventChannel.receiveAsFlow()
-    val highlightTabs = combine(messageHighlightsTab, userHighlightsTab) { messageHighlights, userHighlights ->
-        listOf(messageHighlights, userHighlights)
+    val highlightTabs = combine(messageHighlightsTab, userHighlightsTab, blacklistedUsersTab) { messageHighlights, userHighlights, blacklistedUsersTab ->
+        listOf(messageHighlights, userHighlights, blacklistedUsersTab)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), INITIAL_STATE)
+    val currentTab = _currentTab.asStateFlow()
 
     fun setCurrentTab(position: Int) {
-        currentTab.value = HighlightsTab.values()[position]
+        _currentTab.value = HighlightsTab.values()[position]
     }
 
     fun fetchHighlights() {
         val messageHighlights = highlightsRepository.messageHighlights.value.map { it.toItem() }
         val userHighlights = highlightsRepository.userHighlights.value.map { it.toItem() }
+        val blacklistedUsers = highlightsRepository.blacklistedUsers.value.map { it.toItem() }
 
         messageHighlightsTab.update { it.copy(items = listOf(AddItem) + messageHighlights) }
         userHighlightsTab.update { it.copy(items = listOf(AddItem) + userHighlights) }
+        blacklistedUsersTab.update { it.copy(items = listOf(AddItem) + blacklistedUsers) }
     }
 
     fun addHighlight() = viewModelScope.launch {
-        when (currentTab.value) {
-            HighlightsTab.Messages -> {
+        when (_currentTab.value) {
+            HighlightsTab.Messages         -> {
                 val entity = highlightsRepository.addMessageHighlight()
                 messageHighlightsTab.update {
                     it.copy(items = it.items + entity.toItem())
                 }
             }
 
-            HighlightsTab.Users    -> {
+            HighlightsTab.Users            -> {
                 val entity = highlightsRepository.addUserHighlight()
                 userHighlightsTab.update {
+                    it.copy(items = it.items + entity.toItem())
+                }
+            }
+
+            HighlightsTab.BlacklistedUsers -> {
+                val entity = highlightsRepository.addBlacklistedUser()
+                blacklistedUsersTab.update {
                     it.copy(items = it.items + entity.toItem())
                 }
             }
@@ -76,7 +87,16 @@ class HighlightsViewModel @Inject constructor(
                 }
             }
 
-            else                    -> Unit
+            is BlacklistedUserItem  -> {
+                highlightsRepository.updateBlacklistedUser(item.toEntity())
+                blacklistedUsersTab.update {
+                    val mutableItems = it.items.toMutableList()
+                    mutableItems.add(position, item)
+                    it.copy(items = mutableItems)
+                }
+            }
+
+            is AddItem              -> Unit
         }
     }
 
@@ -96,14 +116,21 @@ class HighlightsViewModel @Inject constructor(
                 eventChannel.trySend(HighlightEvent.ItemRemoved(item, position))
             }
 
-            else                    -> Unit
+            is BlacklistedUserItem  -> {
+                val position = blacklistedUsersTab.value.items.indexOf(item)
+                highlightsRepository.removeBlacklistedUser(item.toEntity())
+                blacklistedUsersTab.update { it.copy(items = it.items - item) }
+                eventChannel.trySend(HighlightEvent.ItemRemoved(item, position))
+            }
+
+            is AddItem              -> Unit
         }
     }
 
     fun updateHighlights(tabItems: List<HighlightsTabItem>) = viewModelScope.launch {
         tabItems.forEach { tab ->
             when (tab.tab) {
-                HighlightsTab.Messages -> {
+                HighlightsTab.Messages         -> {
                     val (blankEntities, entities) = tab.items
                         .filterIsInstance<MessageHighlightItem>()
                         .map { it.toEntity() }
@@ -113,7 +140,7 @@ class HighlightsViewModel @Inject constructor(
                     blankEntities.forEach { highlightsRepository.removeMessageHighlight(it) }
                 }
 
-                HighlightsTab.Users    -> {
+                HighlightsTab.Users            -> {
                     val (blankEntities, entities) = tab.items
                         .filterIsInstance<UserHighlightItem>()
                         .map { it.toEntity() }
@@ -121,6 +148,16 @@ class HighlightsViewModel @Inject constructor(
 
                     highlightsRepository.updateUserHighlights(entities)
                     blankEntities.forEach { highlightsRepository.removeUserHighlight(it) }
+                }
+
+                HighlightsTab.BlacklistedUsers -> {
+                    val (blankEntities, entities) = tab.items
+                        .filterIsInstance<BlacklistedUserItem>()
+                        .map { it.toEntity() }
+                        .partition { it.username.isBlank() }
+
+                    highlightsRepository.updateBlacklistedUser(entities)
+                    blankEntities.forEach { highlightsRepository.removeBlacklistedUser(it) }
                 }
             }
         }
@@ -130,6 +167,7 @@ class HighlightsViewModel @Inject constructor(
         private val INITIAL_STATE = listOf(
             HighlightsTabItem(HighlightsTab.Messages, listOf(AddItem)),
             HighlightsTabItem(HighlightsTab.Users, listOf(AddItem)),
+            HighlightsTabItem(HighlightsTab.BlacklistedUsers, listOf(AddItem)),
         )
     }
 }
