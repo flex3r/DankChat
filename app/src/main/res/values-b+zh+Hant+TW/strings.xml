@@ -25,11 +25,9 @@
     <string name="take_picture">拍照</string>
     <string name="record_video">錄製影片</string>
     <string name="choose_media">選擇媒體</string>
-    <string name="hide_actionbar">隱藏工具列</string>
     <string name="resume_scroll">還原滑動</string>
     <string name="uploading_image">上傳圖片中</string>
     <string name="settings">設定</string>
-    <string name="nuuls_upload_disclaimer">多媒體檔案上傳由 https://nuuls.com/i 提供，請自行承擔風險</string>
     <string name="external_upload_disclaimer">多媒體檔案上傳由 %1$s 提供，請自行承擔風險</string>
     <string name="nuuls_upload_title">上傳自訂圖片</string>
     <string name="snackbar_message_copied">已複製訊息</string>
@@ -63,10 +61,7 @@
     <string name="system_message_no_history">由於您不同意使用聊天紀錄服務，因此無法顯示歷史紀錄。</string>
     <string name="timed_out_message">&lt; 訊息已被刪除 &gt;</string>
     <string name="multi_entry_header_regex">Regex 常規式</string>
-    <string name="multi_entry_header_match_user">對應使用者</string>
     <string name="multi_entry_add_entry">新增項目</string>
-    <string name="multi_entry_remove_content_description">移除項目</string>
-    <string name="multi_entry_hint">項目</string>
     <string name="login_expired">登入失敗！請再試一次。</string>
     <string name="message_history_disclaimer_title">聊天歷史紀錄聲明</string>
     <string name="message_history_disclaimer_message">DankChat 可於啟動時透過第三方服務載入聊天室中的歷史紀錄。
@@ -85,8 +80,6 @@
     <string name="confirm_channel_removal_title">確認移除頻道</string>
     <string name="confirm_channel_removal_message">您確定要將此頻道移除嗎？</string>
     <string name="confirm_channel_removal_positive_button">移除</string>
-    <string name="user_popup_follow">追隨</string>
-    <string name="user_popup_unfollow">退追</string>
     <string name="user_popup_block">封鎖</string>
     <string name="user_popup_unblock">移除封鎖</string>
     <string name="user_popup_mention">提及使用者</string>
@@ -96,8 +89,6 @@
     <string name="user_popup_not_following">目前尚未追隨</string>
     <string name="user_popup_avatar_description">個人檔案頭像</string>
     <string name="user_popup_error">載入使用者失敗：%1$s</string>
-    <string name="confirm_user_unfollow_title">確定退追</string>
-    <string name="confirm_user_unfollow_message">您確定要退追此使用者嗎？</string>
     <string name="confirm_user_block_title">確定封鎖</string>
     <string name="confirm_user_block_message">您確定要封鎖此使用者嗎？</string>
     <string name="confirm_user_block_positive_button">封鎖</string>
@@ -121,12 +112,7 @@
     <string name="preference_about_summary">DankChat %1$s 是由 @flex3rs 及其貢獻者所製</string>
     <string name="preference_show_input_title">顯示訊息輸入</string>
     <string name="preference_show_input_summary">顯示訊息輸入方框以便傳送訊息</string>
-    <string name="preference_dark_theme_title">啟用深色模式</string>
     <string name="preference_show_timed_out_messages_title">顯示被靜音的訊息</string>
-    <string name="preference_custom_mentions_title">自訂提及</string>
-    <string name="preference_custom_mentions_summary">將自訂字句設為提及做為通知</string>
-    <string name="preference_blacklist_title">黑名單</string>
-    <string name="preference_blacklist_summary">設定特定字句隱藏</string>
     <string name="preference_animate_gifs_title">顯示動圖 (GIF)</string>
     <string name="preference_line_separator_title">透過格線分隔訊息</string>
     <string name="preference_keep_screen_on_title">保持螢幕恆開</string>
@@ -135,7 +121,6 @@
     <string name="preference_font_size_summary_small">小</string>
     <string name="preference_font_size_summary_large">大</string>
     <string name="preference_font_size_summary_very_large">非常大</string>
-    <string name="preference_notifications_mentions_header">通知及訊息提及</string>
     <string name="preference_suggestions_title">自動完成表情符號及使用者</string>
     <string name="preference_suggestions_summary">於輸入訊息時，依照輸入字串顯示相關表情符號以及使用者名</string>
     <string name="preference_load_message_history_title">啟動時自動讀取聊天紀錄</string>
