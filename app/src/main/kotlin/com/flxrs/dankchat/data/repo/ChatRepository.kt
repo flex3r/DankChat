@@ -743,6 +743,7 @@ class ChatRepository @Inject constructor(
         measureTimeMillis {
             for (recentMessage in recentMessages) {
                 val parsedIrc = IrcMessage.parse(recentMessage)
+                val isCleared = parsedIrc.tags["rm-deleted"] == "1"
                 if (ignoresRepository.isUserBlocked(parsedIrc.tags["user-id"])) {
                     continue
                 }
@@ -760,9 +761,9 @@ class ChatRepository @Inject constructor(
                 }
 
                 if (message is UserNoticeMessage && message.childMessage != null) {
-                    items += ChatItem(message.childMessage)
+                    items += ChatItem(message.childMessage, isCleared = isCleared)
                 }
-                items += ChatItem(message)
+                items += ChatItem(message, isCleared = isCleared)
             }
         }.let { Log.i(TAG, "Parsing message history for #$channel took $it ms") }
 
