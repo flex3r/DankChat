@@ -23,11 +23,9 @@
     <string name="take_picture">Fai una foto</string>
     <string name="record_video">Registra un video</string>
     <string name="choose_media">Scegli un media esistente</string>
-    <string name="hide_actionbar">Nascondi la barra degli strumenti</string>
     <string name="resume_scroll">Riprendi scorrimento</string>
     <string name="uploading_image">Caricando un\'immagine</string>
     <string name="settings">Impostazioni</string>
-    <string name="nuuls_upload_disclaimer">Hosting esterno fornito da https://nuuls.com/i, a vostro rischio e pericolo</string>
     <string name="external_upload_disclaimer">Hosting esterno fornito da %1$s, a vostro rischio e pericolo</string>
     <string name="nuuls_upload_title">Caricatore di immagini personalizzato</string>
     <string name="snackbar_message_copied">Messaggio copiato</string>
@@ -61,10 +59,7 @@
     <string name="system_message_no_history">Non stai vedendo nessun messaggio passato perche\' hai rifiutato la nuova funzionalita\' dei messaggi recenti.</string>
     <string name="timed_out_message">&lt; Messaggio cancellato &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
-    <string name="multi_entry_header_match_user">Autocompleta utente</string>
     <string name="multi_entry_add_entry">Aggiungi una frase</string>
-    <string name="multi_entry_remove_content_description">Rimouvi la frase</string>
-    <string name="multi_entry_hint">Frase</string>
     <string name="login_expired">Autenticazione scaduta! Prova ad autenticarti nuovamente.</string>
     <string name="message_history_disclaimer_title">Disclaimer messaggi passati</string>
     <string name="message_history_disclaimer_message">DankChat carica i messaggi passati da un servizio di terze parti all\'avvio.
@@ -98,12 +93,7 @@ Il servizio immagazzina temporaneamente messaggi di canali che tu (e altri) visi
     <string name="preference_about_summary">DankChat %1$s e\' sviluppata da @flex3rs e contributori.</string>
     <string name="preference_show_input_title">Mostra input</string>
     <string name="preference_show_input_summary">Mostra il campo di input per mandare un messaggio</string>
-    <string name="preference_dark_theme_title">Attiva modalita\' scura</string>
     <string name="preference_show_timed_out_messages_title">Mostra messaggi silenziati</string>
-    <string name="preference_custom_mentions_title">Menzioni personalizzate</string>
-    <string name="preference_custom_mentions_summary">Imposta frasi personalizzate come menzioni</string>
-    <string name="preference_blacklist_title">Blacklist</string>
-    <string name="preference_blacklist_summary">Imposta frasi personalizzate de nascondere</string>
     <string name="preference_animate_gifs_title">Anima gifs</string>
     <string name="preference_line_separator_title">Separa messaggi con una riga</string>
     <string name="preference_keep_screen_on_title">Mantieni lo schermo acceso</string>
@@ -112,7 +102,6 @@ Il servizio immagazzina temporaneamente messaggi di canali che tu (e altri) visi
     <string name="preference_font_size_summary_small">Piccolo</string>
     <string name="preference_font_size_summary_large">Grosso</string>
     <string name="preference_font_size_summary_very_large">Molto grosso</string>
-    <string name="preference_notifications_mentions_header">Notifiche e menzioni</string>
     <string name="preference_suggestions_title">Autocompletamento per emotes e utenti</string>
     <string name="preference_suggestions_summary">Mostra autocompletamento per emotes e utenti mentre si sta scrivendo</string>
     <string name="preference_load_message_history_title">Carica messaggi passati all\'avvio</string>
