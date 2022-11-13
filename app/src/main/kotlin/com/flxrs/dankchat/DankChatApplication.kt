@@ -12,6 +12,8 @@ import coil.ImageLoaderFactory
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.disk.DiskCache
+import com.flxrs.dankchat.data.repo.HighlightsRepository
+import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.di.ApplicationScope
 import com.flxrs.dankchat.di.EmoteOkHttpClient
 import com.flxrs.dankchat.utils.tryClearEmptyFiles
@@ -32,21 +34,24 @@ class DankChatApplication : Application(), ImageLoaderFactory {
     @ApplicationScope
     lateinit var scope: CoroutineScope
 
+    @Inject
+    lateinit var highlightsRepository: HighlightsRepository
+
+    @Inject
+    lateinit var ignoresRepository: IgnoresRepository
+
     override fun onCreate() {
         super.onCreate()
+        setupThemeMode()
 
-//        // eagerly initialize webview to give it access to original resources before crowdin wraps them
-//        // otherwise some web content will cause a native crash
-//        // https://issuetracker.google.com/issues/77246450
-//        WebView(this)
-//
-//        val config = CrowdinConfig.Builder()
-//            .withDistributionHash(CROWD_IN_DISTRIBUTION_HASH)
-//            .withNetworkType(NetworkType.WIFI)
-//            .withUpdateInterval(CROWD_IN_UPDATE_INTERVAL)
-//            .build()
-//        Crowdin.init(applicationContext, config)
+        highlightsRepository.runMigrationsIfNeeded()
+        ignoresRepository.runMigrationsIfNeeded()
+        scope.launch(Dispatchers.IO) {
+            tryClearEmptyFiles(this@DankChatApplication)
+        }
+    }
 
+    private fun setupThemeMode() {
         val uiModeManager = getSystemService<UiModeManager>()
         val isTv = uiModeManager?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
@@ -65,10 +70,6 @@ class DankChatApplication : Application(), ImageLoaderFactory {
             else                                                                                                -> AppCompatDelegate.MODE_NIGHT_NO
         }
         AppCompatDelegate.setDefaultNightMode(nightMode)
-
-        scope.launch(Dispatchers.IO) {
-            tryClearEmptyFiles(this@DankChatApplication)
-        }
     }
 
     override fun newImageLoader(): ImageLoader {
@@ -88,10 +89,5 @@ class DankChatApplication : Application(), ImageLoaderFactory {
                 add(decoder)
             }
             .build()
-    }
-
-    companion object {
-//        private const val CROWD_IN_DISTRIBUTION_HASH = "a3ba4d9c6a89d1aa991bc492jem"
-//        private const val CROWD_IN_UPDATE_INTERVAL = 120L * 60 // 2 hours
     }
 }

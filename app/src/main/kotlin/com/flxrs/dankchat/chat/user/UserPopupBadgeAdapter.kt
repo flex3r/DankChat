@@ -54,6 +54,7 @@ class UserPopupBadgeAdapter : ListAdapter<Badge, UserPopupBadgeAdapter.BadgeView
                 val info = badgeInfo ?: return title.orEmpty()
                 context.getString(R.string.badge_tooltip_predictions, info.replace("⸝", ","))
             }
+
             "subscriber", "founder" -> {
                 val info = badgeInfo ?: return title.orEmpty()
                 val subTier = if (value.length > 3) value.first() else "1"
@@ -73,6 +74,7 @@ class UserPopupBadgeAdapter : ListAdapter<Badge, UserPopupBadgeAdapter.BadgeView
                     append(")")
                 }
             }
+
             else                    -> title.orEmpty()
         }
     }

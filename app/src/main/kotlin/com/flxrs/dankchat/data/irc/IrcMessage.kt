@@ -48,6 +48,7 @@ data class IrcMessage(
                                     .replace("\\r", "\r")
                                     .replace("\\n", "\n")
                                     .replace("\\\\", "\\")
+
                                 else -> "true"
                             }
                             kv[0] to v

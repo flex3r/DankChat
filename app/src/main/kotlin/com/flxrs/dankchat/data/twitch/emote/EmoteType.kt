@@ -52,9 +52,11 @@ sealed class EmoteType : Comparable<EmoteType> {
             when (other) {
                 is ChannelTwitchBitEmote,
                 is ChannelTwitchFollowerEmote -> 0
+
                 else                          -> 1
             }
         }
+
         other is ChannelTwitchBitEmote || other is ChannelTwitchFollowerEmote -> -1
         else                                                                  -> 0
     }

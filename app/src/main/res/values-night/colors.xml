@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="color_highlight">#4d2c91</color>
-    <color name="color_mention">#6e3737</color>
-    <color name="color_reward">#00766c</color>
+    <color name="color_sub_highlight">#543589</color>
+    <color name="color_mention_highlight">#773031</color>
+    <color name="color_redemption_highlight">#004f57</color>
+    <color name="color_first_message_highlight">#2d5000</color>
+    <color name="color_elevated_message_highlight">#574500</color>
 </resources>

@@ -12,9 +12,7 @@
     <string name="no_channels_added">Cap canal afegit</string>
     <string name="upload_media">Pujar media</string>
     <string name="choose_media">Triar media existent</string>
-    <string name="hide_actionbar">Ocultar barra d\'eines</string>
     <string name="resume_scroll">Reanudar scroll</string>
-    <string name="nuuls_upload_disclaimer">Hosting extern proporcionat per https://nuuls.com/i, fes-lo servir sota el teu propi risc.</string>
     <string name="external_upload_disclaimer">Hosting extern proporcionat per %1$s, fes-lo servir sota el teu propi risc.</string>
     <string name="nuuls_upload_title">Pujada de media personalitzat</string>
     <string name="snackbar_error_copied">Error informació copiada</string>
@@ -31,8 +29,6 @@
     <string name="emote_menu_tab_subs">Subs</string>
     <string name="system_message_no_history">No pots veure l\'historial de missatges perquè has desactivat la integració amb missatges-recents</string>
     <string name="multi_entry_header_regex">Regex</string>
-    <string name="multi_entry_header_match_user">Detectar usuari</string>
-    <string name="multi_entry_remove_content_description">Eliminar l\'entrada</string>
     <string name="login_expired">Inici de sessió ha expirat! Intenta iniciar sessió de nou</string>
     <string name="message_history_disclaimer_title">Exempció de responsabilitat de l\'historial de missatges</string>
     <string name="message_history_disclaimer_message">DankChat carrega un historial de missatges des d\'un servei de tercers a l\'inici.
@@ -52,12 +48,9 @@ El servei emmagatzema temporalment missatges per a canals que tu (i altres) visi
     <string name="user_popup_not_following">No seguit</string>
     <string name="user_popup_avatar_description">Imatge de perfil</string>
     <string name="user_popup_error">Error al carregar dades d\'usuari: %1$s</string>
-    <string name="confirm_user_unfollow_title">Confirmar deixar de seguir</string>
-    <string name="confirm_user_unfollow_message">Estàs segur que vols deixar de seguir aquest usuari?</string>
     <string name="confirm_user_block_title">Confirmar bloqueig</string>
     <string name="confirm_user_block_message">Estàs segur que vols bloquejar aquest usuari?</string>
     <string name="restart_required">Reinici requerit per aplicar canvis</string>
-    <string name="uploader_add_header">Afegir capçalera</string>
     <string name="uploader_title">Pujador de media personalitzat</string>
     <string name="uploader_url">Pujar url</string>
     <string name="uploader_field">Camp del formulari</string>
@@ -96,16 +89,12 @@ Mira aquesta guia per ajuda: https://wiki.chatterino.com/Image%20Uploader/</stri
     <string name="preference_about_summary">DankChat %1$s creat per @flex3rs i col·laboradors</string>
     <string name="preference_show_input_title">Mostrar entrada</string>
     <string name="preference_show_input_summary">Mostra el camp d\'entrada per enviar missatges</string>
-    <string name="preference_dark_theme_title">Activar tema oscur</string>
-    <string name="preference_light_theme_title">Activar tema clar</string>
     <string name="preference_follow_system_title">Seguir sistema per defecte</string>
     <string name="preference_true_dark_theme_title">Mode oscur vertader</string>
     <string name="preference_true_dark_theme_summary">Força el color de fons del xat a negre</string>
     <string name="preference_show_timed_out_messages_title">Mostrar missatges timed out</string>
-    <string name="preference_custom_mentions_title">Mencions personalitzades</string>
     <string name="preference_animate_gifs_title">Animar gifs</string>
     <string name="preference_line_separator_title">Separar missatges amb línies</string>
-    <string name="preference_notifications_mentions_header">Notificacions i Mencions</string>
     <string name="preference_suggestions_title">Suggeriments d\'usuari i emotes</string>
     <string name="preference_suggestions_summary">Mostrar suggeriments per emotes i usuaris actius al escriure</string>
     <string name="preference_load_message_history_title">Carregar historial de missatges a l\'inici</string>
@@ -129,7 +118,6 @@ Mira aquesta guia per ajuda: https://wiki.chatterino.com/Image%20Uploader/</stri
     <string name="preference_tts_force_english_title">Forçar llenguatge a anglès</string>
     <string name="preference_tts_force_english_summary">Forçar llenguatge de la veu TTS a anglès en comptes del per defecte en el sistema</string>
     <string name="preference_visible_emotes_title">Emotes de tercers visibles</string>
-    <string name="preference_uploader_title">Pujador de media personalitzat</string>
     <string name="preference_about_tos">Twitch termes de servei i política d\'usuari</string>
     <string name="preference_show_chip_actions_title">Mostrar accions chip</string>
     <string name="preference_show_chip_actions_summary">Mostrar chips per alternar pantalla completa, streams i ajustar modes de chat</string>

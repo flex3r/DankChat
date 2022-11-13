@@ -50,10 +50,12 @@ class SuggestionsArrayAdapter(
                     scale(Scale.FIT)
                     size(textView.lineHeight * 2)
                 }
+
                 is Suggestion.UserSuggestion    -> {
                     textView.text = suggestion.name
                     imageView.setImageDrawable(context.getDrawableAndSetSurfaceTint(R.drawable.ic_notification_icon))
                 }
+
                 is Suggestion.CommandSuggestion -> imageView.setImageDrawable(context.getDrawableAndSetSurfaceTint(R.drawable.ic_android))
             }
         }

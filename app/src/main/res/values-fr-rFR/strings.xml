@@ -24,11 +24,9 @@
     <string name="take_picture">Prendre une photo</string>
     <string name="record_video">Prendre une vidéo</string>
     <string name="choose_media">Choisir existant</string>
-    <string name="hide_actionbar">Masquer la barre d\'outils</string>
     <string name="resume_scroll">Réactiver le défilement</string>
     <string name="uploading_image">Envoi de l\'image</string>
     <string name="settings">Réglages</string>
-    <string name="nuuls_upload_disclaimer">Stockage fourni par https://nuuls.com/i, à vos risques et périls.</string>
     <string name="external_upload_disclaimer">Stockage fourni par %1$s, à vos risques et périls.</string>
     <string name="nuuls_upload_title">Envoi d\'une image personalisée</string>
     <string name="snackbar_message_copied">Message copié</string>
@@ -62,10 +60,7 @@
     <string name="system_message_no_history">Vous ne voyez pas les anciens messages car vous vous êtes désinscris de l\'intégration</string>
     <string name="timed_out_message">&lt; Message supprimé &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
-    <string name="multi_entry_header_match_user">Matcher l\'utilisateur</string>
     <string name="multi_entry_add_entry">Ajouter une entrée</string>
-    <string name="multi_entry_remove_content_description">Supprimer l\'entrée</string>
-    <string name="multi_entry_hint">Entrée</string>
     <string name="login_expired">Authentification expirée! Essayez de vous reconnecter.</string>
     <string name="message_history_disclaimer_title">Notice pour les anciens messages</string>
     <string name="message_history_disclaimer_message">DankChat charge les anciens messages à partir d\'un service tiers au démarrage.
@@ -84,8 +79,6 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="confirm_channel_removal_title">Confirmer la suppression de la chaîne</string>
     <string name="confirm_channel_removal_message">Êtes-vous certain de vouloir supprimer cette chaîne?</string>
     <string name="confirm_channel_removal_positive_button">Supprimer</string>
-    <string name="user_popup_follow">Suivre</string>
-    <string name="user_popup_unfollow">Ne plus suivre</string>
     <string name="user_popup_block">Bloquer</string>
     <string name="user_popup_unblock">Débloquer</string>
     <string name="user_popup_mention">Mentionner l\'utilisateur</string>
@@ -95,8 +88,6 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="user_popup_not_following">Ne suit pas</string>
     <string name="user_popup_avatar_description">Image de profil</string>
     <string name="user_popup_error">Impossible de charger les données utilisateur: %1$s</string>
-    <string name="confirm_user_unfollow_title">Confirmer de ne plus vouloir suivre</string>
-    <string name="confirm_user_unfollow_message">Êtes-vous certain de vouloir arrêter de suivre cet utilisateur?</string>
     <string name="confirm_user_block_title">Confirmer le bloquage</string>
     <string name="confirm_user_block_message">Êtes-vous certain de vouloir bloquer de suivre cet utilisateur?</string>
     <string name="confirm_user_block_positive_button">Bloquer</string>
@@ -118,12 +109,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_about_summary">DankChat %1$s créé par @flex3rs et d\'autres contributeurs</string>
     <string name="preference_show_input_title">Afficher la boite d\'entrée</string>
     <string name="preference_show_input_summary">Affiche la boite pour envoyer des messages</string>
-    <string name="preference_dark_theme_title">Activer le thème sombre</string>
     <string name="preference_show_timed_out_messages_title">Afficher les messages supprimés</string>
-    <string name="preference_custom_mentions_title">Mentions personalisées</string>
-    <string name="preference_custom_mentions_summary">Affecter certaines phrases comme mentions</string>
-    <string name="preference_blacklist_title">Liste noire</string>
-    <string name="preference_blacklist_summary">Définit des phrases à masquer</string>
     <string name="preference_animate_gifs_title">Animer les gifs</string>
     <string name="preference_line_separator_title">Séparer les messages par des lignes</string>
     <string name="preference_keep_screen_on_title">Forcer l\'écran allumé</string>
@@ -132,7 +118,6 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_font_size_summary_small">Petit</string>
     <string name="preference_font_size_summary_large">Grand</string>
     <string name="preference_font_size_summary_very_large">Très grand</string>
-    <string name="preference_notifications_mentions_header">Notifications et Mentions</string>
     <string name="preference_suggestions_title">Suggestions d\'émoticônes et d\'utilisateurs</string>
     <string name="preference_suggestions_summary">Propose des suggestions de nom d\'émotes lorsque vous tappez</string>
     <string name="preference_load_message_history_title">Charger les anciens messages au démarrage</string>

@@ -2,7 +2,7 @@ package com.flxrs.dankchat.preferences.upload
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flxrs.dankchat.data.RecentUploadsRepository
+import com.flxrs.dankchat.data.repo.RecentUploadsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

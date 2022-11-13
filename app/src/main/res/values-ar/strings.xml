@@ -24,11 +24,9 @@
     <string name="take_picture">التقاط صورة</string>
     <string name="record_video">تسجيل فيديو </string>
     <string name="choose_media">اختر من الوسائط الموجودة </string>
-    <string name="hide_actionbar">إخفاء شريط الأدوات </string>
     <string name="resume_scroll">Resume scroll</string>
     <string name="uploading_image">تحميل الصورة</string>
     <string name="settings">إلاعدادات</string>
-    <string name="nuuls_upload_disclaimer">لاستضافة الخارجية مقدمة من https://nuuls.com/i ، استخدمها على مسؤوليتك الخاصة.</string>
     <string name="external_upload_disclaimer">لاستضافة الخارجية مقدمة من %1$s ، استخدمها على مسؤوليتك الخاصة.</string>
     <string name="nuuls_upload_title">تحميل صورة مخصصة</string>
     <string name="snackbar_message_copied">تم نسخ الرسالة</string>
@@ -62,10 +60,7 @@
     <string name="system_message_no_history">You are not seeing any historical messages because you opted out of the recent-messages integration.</string>
     <string name="timed_out_message">&lt; الرسالة مسحت &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
-    <string name="multi_entry_header_match_user">Match user</string>
     <string name="multi_entry_add_entry">أضف إدخالاً </string>
-    <string name="multi_entry_remove_content_description">قم بإزالة الإدخال </string>
-    <string name="multi_entry_hint">دخول</string>
     <string name="login_expired">نتهت صلاحية تسجيل الدخول! حاول تسجيل الدخول مرة أخرى.</string>
     <string name="message_history_disclaimer_title">إخلاء مسؤولية سجل الرسائل </string>
     <string name="message_history_disclaimer_message">DankChat loads historical messages from a third-party service on startup.
@@ -84,8 +79,6 @@ The service temporarily stores messages for channels you (and others) visit to p
     <string name="confirm_channel_removal_title">تأكيد إزالة القناة</string>
     <string name="confirm_channel_removal_message">هل أنت متأكد أنك تريد إزالة هذه القناة؟</string>
     <string name="confirm_channel_removal_positive_button">إزالة</string>
-    <string name="user_popup_follow">متابعة</string>
-    <string name="user_popup_unfollow">الغاء المتابعة</string>
     <string name="user_popup_block">حظر</string>
     <string name="user_popup_unblock">الغاء الحظر</string>
     <string name="user_popup_mention">أذكر المستخدم</string>
@@ -95,8 +88,6 @@ The service temporarily stores messages for channels you (and others) visit to p
     <string name="user_popup_not_following">غير متابع</string>
     <string name="user_popup_avatar_description">صورة الملف الشخصي</string>
     <string name="user_popup_error">فشل تحميل بيانات المستخدم: %1$s</string>
-    <string name="confirm_user_unfollow_title">تأكيد إلغاء المتابعة</string>
-    <string name="confirm_user_unfollow_message">هل أنت متأكد أنك تريد إلغاء متابعة هذا المستخدم؟</string>
     <string name="confirm_user_block_title">تأكيد الحظر</string>
     <string name="confirm_user_block_message">هل أنت متأكد أنك تريد حظر هذا المستخدم؟</string>
     <string name="confirm_user_block_positive_button">حظر</string>
@@ -118,12 +109,7 @@ The service temporarily stores messages for channels you (and others) visit to p
     <string name="preference_about_summary">DankChat %1$s made by @flex3rs and contributors</string>
     <string name="preference_show_input_title">إظهار المدخلات </string>
     <string name="preference_show_input_summary">يعرض حقل الإدخال لإرسال الرسائل </string>
-    <string name="preference_dark_theme_title">تفعيل المظهر الداكن</string>
     <string name="preference_show_timed_out_messages_title">Show timed out messages</string>
-    <string name="preference_custom_mentions_title">الإشارات المخصصة</string>
-    <string name="preference_custom_mentions_summary">تعيين العبارات المخصصة كإشارات </string>
-    <string name="preference_blacklist_title">القائمة السوداء </string>
-    <string name="preference_blacklist_summary">Set custom phrases to hide</string>
     <string name="preference_animate_gifs_title">صور متحركة</string>
     <string name="preference_line_separator_title">رسائل منفصلة مع خطوط</string>
     <string name="preference_keep_screen_on_title">حافظ على الشاشة قيد التشغيل </string>
@@ -132,7 +118,6 @@ The service temporarily stores messages for channels you (and others) visit to p
     <string name="preference_font_size_summary_small">صغير</string>
     <string name="preference_font_size_summary_large">كبير</string>
     <string name="preference_font_size_summary_very_large">كبير جدأ</string>
-    <string name="preference_notifications_mentions_header">الاشعارات و الاشارات</string>
     <string name="preference_suggestions_title">الايموتات و اقتراحات المستخدم</string>
     <string name="preference_suggestions_summary">ظهر اقتراحات الايموتات والمستخدمين النشطين أثناء الكتابة</string>
     <string name="preference_load_message_history_title">تحميل الرسائل القديمة عند البدء</string>

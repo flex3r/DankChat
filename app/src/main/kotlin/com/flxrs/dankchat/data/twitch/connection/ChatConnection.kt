@@ -236,6 +236,7 @@ class ChatConnection @Inject constructor(
                             channelsToJoin.send(channels)
                         }
                     }
+
                     "JOIN"      -> channelsAttemptedToJoin.remove(ircMessage.params[0].substring(1))
                     "366"       -> scope.launch { receiveChannel.send(ChatEvent.Connected(ircMessage.params[1].substring(1), isAnonymous)) }
                     "PING"      -> webSocket.handlePing()

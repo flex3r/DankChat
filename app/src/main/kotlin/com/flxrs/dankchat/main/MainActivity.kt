@@ -29,8 +29,8 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.data.DataRepository
 import com.flxrs.dankchat.data.NotificationService
+import com.flxrs.dankchat.data.repo.DataRepository
 import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.ui.*
@@ -79,10 +79,12 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
                     .build()
                 DynamicColors.applyToActivityIfAvailable(this, dynamicColorsOptions)
             }
+
             isTrueDarkModeEnabled                            -> {
                 theme.applyStyle(R.style.AppTheme_TrueDarkTheme, true)
                 window.peekDecorView()?.context?.theme?.applyStyle(R.style.AppTheme_TrueDarkTheme, true)
             }
+
             else                                             -> DynamicColors.applyToActivityIfAvailable(this)
         }
 
@@ -194,6 +196,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
                     supportActionBar?.hide()
                 }
             }
+
             else    -> {
                 windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
                 if (changeActionBarVisibility) {

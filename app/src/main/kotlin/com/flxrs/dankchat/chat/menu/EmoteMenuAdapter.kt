@@ -10,20 +10,20 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
-import com.flxrs.dankchat.databinding.EmoteMenuTabBinding
+import com.flxrs.dankchat.databinding.MenuTabListBinding
 
 class EmoteMenuAdapter(private val onEmoteClick: (emote: GenericEmote) -> Unit) : ListAdapter<EmoteMenuTabItem, EmoteMenuAdapter.ViewHolder>(DetectDiff()) {
 
-    inner class ViewHolder(val adapter: EmoteAdapter, binding: EmoteMenuTabBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class ViewHolder(val adapter: EmoteAdapter, binding: MenuTabListBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun getItemCount() = EmoteMenuTab.values().size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val emoteAdapter = EmoteAdapter(onEmoteClick)
-        return ViewHolder(emoteAdapter, EmoteMenuTabBinding.inflate(LayoutInflater.from(parent.context), parent, false).apply {
+        return ViewHolder(emoteAdapter, MenuTabListBinding.inflate(LayoutInflater.from(parent.context), parent, false).apply {
             val isLandscape = parent.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
             val spanCount = if (isLandscape) 12 else 6
-            emoteList.apply {
+            tabList.apply {
                 layoutManager = GridLayoutManager(parent.context, spanCount).apply {
                     spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                         override fun getSpanSize(position: Int): Int {

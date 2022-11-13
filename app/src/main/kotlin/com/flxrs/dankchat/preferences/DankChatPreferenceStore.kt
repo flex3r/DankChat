@@ -9,16 +9,22 @@ import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.preferences.command.CommandDto
 import com.flxrs.dankchat.preferences.command.CommandDto.Companion.toEntryItem
 import com.flxrs.dankchat.preferences.command.CommandItem
+import com.flxrs.dankchat.preferences.multientry.MultiEntryDto
 import com.flxrs.dankchat.preferences.upload.ImageUploader
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class DankChatPreferenceStore @Inject constructor(private val context: Context) {
+@Singleton
+class DankChatPreferenceStore @Inject constructor(
+    @ApplicationContext private val context: Context
+) {
     private val dankChatPreferences: SharedPreferences = context.getSharedPreferences(context.getString(R.string.shared_preference_key), Context.MODE_PRIVATE)
     private val defaultPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
@@ -99,6 +105,20 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
             defaultPreferences.edit { putString(context.getString(R.string.preference_rm_host_key), hostOrDefault) }
         }
 
+    @Suppress("DEPRECATION")
+    var customMentions: List<MultiEntryDto>
+        get() = getMultiEntriesFromPreferences(context.getString(R.string.preference_custom_mentions_key))
+        set(value) = setMultiEntries(context.getString(R.string.preference_custom_mentions_key), value)
+
+    @Suppress("DEPRECATION")
+    var customBlacklist: List<MultiEntryDto>
+        get() = getMultiEntriesFromPreferences(context.getString(R.string.preference_blacklist_key))
+        set(value) = setMultiEntries(context.getString(R.string.preference_blacklist_key), value)
+
+    var isSecretDankerModeEnabled: Boolean
+        get() = dankChatPreferences.getBoolean(SECRET_DANKER_MODE_KEY, false)
+        set(value) = dankChatPreferences.edit { putBoolean(SECRET_DANKER_MODE_KEY, value) }
+
     val commandsAsFlow: Flow<List<CommandItem.Entry>> = callbackFlow {
         val commandsKey = context.getString(R.string.preference_commands_key)
         send(getCommandsFromPreferences(commandsKey))
@@ -149,13 +169,29 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
     val retainWebViewEnabled: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_retain_webview_key), false)
 
+    val mentionEntries: Set<String>
+        get() = defaultPreferences.getStringSet(context.getString(R.string.preference_custom_mentions_key), emptySet()).orEmpty()
+
+    val blackListEntries: Set<String>
+        get() = defaultPreferences.getStringSet(context.getString(R.string.preference_blacklist_key), emptySet()).orEmpty()
+
+    val currentUserNameFlow: Flow<String?> = callbackFlow {
+        send(userName?.ifBlank { null })
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            if (key == NAME_KEY) {
+                trySend(userName?.ifBlank { null })
+            }
+        }
+
+        dankChatPreferences.registerOnSharedPreferenceChangeListener(listener)
+        awaitClose { dankChatPreferences.unregisterOnSharedPreferenceChangeListener(listener) }
+    }
+
     val preferenceFlow: Flow<Preference> = callbackFlow {
         with(context) {
             val roomStateKey = getString(R.string.preference_roomstate_key)
             val streamInfoKey = getString(R.string.preference_streaminfo_key)
             val inputKey = getString(R.string.preference_show_input_key)
-            val customMentionsKey = getString(R.string.preference_custom_mentions_key)
-            val blacklistKey = getString(R.string.preference_blacklist_key)
             val loadSupibotKey = getString(R.string.preference_supibot_suggestions_key)
             val scrollBackLengthKey = getString(R.string.preference_scrollback_length_key)
             val showChipsKey = getString(R.string.preference_show_chip_actions_key)
@@ -166,8 +202,6 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
             //send(Preference.FetchStreams(fetchStreamInfoEnabled))
             send(Preference.StreamInfo(showStreamInfoEnabled, updateTimer = false))
             send(Preference.Input(inputEnabled))
-            send(Preference.CustomMentions(mentionEntries))
-            send(Preference.BlackList(blackListEntries))
             send(Preference.ScrollBack(scrollbackLength))
             send(Preference.Chips(shouldShowChips))
             send(Preference.TimeStampFormat(timestampFormat))
@@ -177,8 +211,6 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
                     roomStateKey        -> Preference.RoomState(roomStateEnabled)
                     streamInfoKey       -> Preference.StreamInfo(showStreamInfoEnabled, updateTimer = true)
                     inputKey            -> Preference.Input(inputEnabled)
-                    customMentionsKey   -> Preference.CustomMentions(mentionEntries)
-                    blacklistKey        -> Preference.BlackList(blackListEntries)
                     loadSupibotKey      -> Preference.SupibotSuggestions(shouldLoadSupibot)
                     scrollBackLengthKey -> Preference.ScrollBack(scrollbackLength)
                     showChipsKey        -> Preference.Chips(shouldShowChips)
@@ -203,6 +235,14 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
         putString(OAUTH_KEY, "")
         putString(NAME_KEY, "")
         putString(ID_STRING_KEY, "")
+    }
+
+    fun clearBlacklist() = defaultPreferences.edit {
+        remove(context.getString(R.string.preference_blacklist_key))
+    }
+
+    fun clearCustomMentions() = defaultPreferences.edit {
+        remove(context.getString(R.string.preference_custom_mentions_key))
     }
 
     fun getChannels(): List<String> = channelsString?.split(',') ?: channels.also { channels = null }?.toList().orEmpty()
@@ -249,6 +289,23 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
         return Json.decodeOrNull<Map<String, String>>(this).orEmpty().toMutableMap()
     }
 
+    @Suppress("DEPRECATION")
+    private fun getMultiEntriesFromPreferences(key: String): List<MultiEntryDto> {
+        return defaultPreferences
+            .getStringSet(key, emptySet())
+            .orEmpty()
+            .mapNotNull { Json.decodeOrNull<MultiEntryDto>(it) }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun setMultiEntries(key: String, entries: List<MultiEntryDto>) {
+        entries.map { Json.encodeToString(it) }
+            .toSet()
+            .let {
+                defaultPreferences.edit { putStringSet(key, it) }
+            }
+    }
+
     private fun getCommandsFromPreferences(key: String): List<CommandItem.Entry> {
         return defaultPreferences
             .getStringSet(key, emptySet())
@@ -270,12 +327,6 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
     private val shouldShowChips: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_show_chip_actions_key), true)
 
-    private val mentionEntries: Set<String>
-        get() = defaultPreferences.getStringSet(context.getString(R.string.preference_custom_mentions_key), emptySet()).orEmpty()
-
-    private val blackListEntries: Set<String>
-        get() = defaultPreferences.getStringSet(context.getString(R.string.preference_blacklist_key), emptySet()).orEmpty()
-
     private val showStreamInfoEnabled: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_streaminfo_key), true)
 
@@ -290,6 +341,7 @@ class DankChatPreferenceStore @Inject constructor(private val context: Context) 
         private const val ID_STRING_KEY = "idStringKey"
         private const val EXTERNAL_HOSTING_ACK_KEY = "nuulsAckKey" // the key is old key to prevent triggering the dialog for existing users
         private const val MESSAGES_HISTORY_ACK_KEY = "messageHistoryAckKey"
+        private const val SECRET_DANKER_MODE_KEY = "secretDankerModeKey"
 
         private const val UPLOADER_URL = "uploaderUrl"
         private const val UPLOADER_FORM_FIELD = "uploaderFormField"

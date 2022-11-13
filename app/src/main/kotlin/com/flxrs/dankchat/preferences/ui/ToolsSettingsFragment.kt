@@ -44,6 +44,7 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
     }
 
     private val viewModel: RecentUploadsViewModel by viewModels()
+    private var bottomSheetDialog: BottomSheetDialog? = null
 
     @Inject
     lateinit var dankChatPreferenceStore: DankChatPreferenceStore
@@ -85,6 +86,12 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bottomSheetDialog?.dismiss()
+        bottomSheetDialog = null
+    }
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.tools_settings, rootKey)
     }
@@ -109,7 +116,7 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
             LinkifyCompat.addLinks(uploaderDescription, Linkify.WEB_URLS)
         }
 
-        BottomSheetDialog(context).apply {
+        bottomSheetDialog = BottomSheetDialog(context).apply {
             setContentView(binding.root)
             setOnDismissListener {
                 binding.uploader?.let { uploader ->
@@ -149,7 +156,7 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
             }
         }
 
-        BottomSheetDialog(context).apply {
+        bottomSheetDialog = BottomSheetDialog(context).apply {
             setContentView(binding.root)
             setOnDismissListener {
                 val stringSet = ttsIgnoreListAdapter.items
@@ -198,7 +205,7 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
                 }
         }
 
-        BottomSheetDialog(context).apply {
+        bottomSheetDialog = BottomSheetDialog(context).apply {
             setContentView(binding.root)
             setOnDismissListener { collectJob.cancel() }
             behavior.isFitToContents = false

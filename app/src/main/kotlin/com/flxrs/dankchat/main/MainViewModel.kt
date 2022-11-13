@@ -8,12 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.chat.menu.EmoteMenuTabItem
 import com.flxrs.dankchat.chat.suggestion.Suggestion
-import com.flxrs.dankchat.data.ChatRepository
-import com.flxrs.dankchat.data.CommandRepository
-import com.flxrs.dankchat.data.DataRepository
-import com.flxrs.dankchat.data.EmoteUsageRepository
 import com.flxrs.dankchat.data.api.ApiException
 import com.flxrs.dankchat.data.api.ApiManager
+import com.flxrs.dankchat.data.repo.*
 import com.flxrs.dankchat.data.state.DataLoadingState
 import com.flxrs.dankchat.data.state.ImageUploadState
 import com.flxrs.dankchat.data.twitch.connection.ConnectionState
@@ -43,6 +40,7 @@ class MainViewModel @Inject constructor(
     private val dataRepository: DataRepository,
     private val commandRepository: CommandRepository,
     private val emoteUsageRepository: EmoteUsageRepository,
+    private val ignoresRepository: IgnoresRepository,
     private val apiManager: ApiManager,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
 ) : ViewModel() {
@@ -65,7 +63,7 @@ class MainViewModel @Inject constructor(
 
     val activeChannel: StateFlow<String> = chatRepository.activeChannel
 
-    private val eventChannel = Channel<Event>(Channel.BUFFERED)
+    private val eventChannel = Channel<Event>(Channel.CONFLATED)
     private val _dataLoadingState = MutableStateFlow<DataLoadingState>(DataLoadingState.None)
     private val _imageUploadedState = MutableStateFlow<ImageUploadState>(ImageUploadState.None)
     private val streamInfoEnabled = MutableStateFlow(true)
@@ -141,8 +139,6 @@ class MainViewModel @Inject constructor(
                     is Preference.RoomState          -> roomStateEnabled.value = it.enabled
                     is Preference.StreamInfo         -> streamInfoEnabled.value = it.enabled
                     is Preference.Input              -> inputEnabled.value = it.enabled
-                    is Preference.CustomMentions     -> setMentionEntries(it.entries)
-                    is Preference.BlackList          -> setBlacklistEntries(it.entries)
                     is Preference.SupibotSuggestions -> setSupibotSuggestions(it.enabled)
                     is Preference.ScrollBack         -> chatRepository.scrollBackLength = it.length
                     is Preference.Chips              -> shouldShowChips.value = it.enabled
@@ -176,8 +172,11 @@ class MainViewModel @Inject constructor(
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), null)
 
-    val channelMentionCount: Flow<Map<String, Int>> = chatRepository.channelMentionCount
-    val unreadMessagesMap: Flow<Map<String, Boolean>> = chatRepository.unreadMessagesMap.mapLatest { map -> map.filterValues { it } }
+    val channelMentionCount: SharedFlow<Map<String, Int>> = chatRepository.channelMentionCount
+        .shareIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), replay = 1)
+    val unreadMessagesMap: SharedFlow<Map<String, Boolean>> = chatRepository.unreadMessagesMap
+        .mapLatest { map -> map.filterValues { it } }
+        .shareIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), replay = 1)
 
     // StateFlow -> Channel -> Flow 4HEad xd
     val imageUploadEventFlow: Flow<ImageUploadState> = _imageUploadedState.produceIn(viewModelScope).receiveAsFlow()
@@ -383,8 +382,7 @@ class MainViewModel @Inject constructor(
 
             val activeChannel = getActiveChannel() ?: return@launch
             val channelId = dataRepository.getUserIdByName(activeChannel) ?: return@launch
-            dataRepository.blockUser(channelId)
-            chatRepository.addUserBlock(channelId)
+            ignoresRepository.addUserBlock(channelId, activeChannel)
         }
     }
 
@@ -423,7 +421,6 @@ class MainViewModel @Inject constructor(
     }
 
     fun clear(channel: String) = chatRepository.clear(channel)
-    fun clearIgnores() = chatRepository.clearIgnores()
     fun clearMentionCount(channel: String) = chatRepository.clearMentionCount(channel)
     fun clearUnreadMessage(channel: String) = chatRepository.clearUnreadMessage(channel)
     fun reconnect() = chatRepository.reconnect()
@@ -616,14 +613,6 @@ class MainViewModel @Inject constructor(
         emoteUsageRepository.clearUsages()
     }
 
-    private fun setMentionEntries(entries: Set<String>) = viewModelScope.launch(coroutineExceptionHandler) {
-        chatRepository.setMentionEntries(entries)
-    }
-
-    private fun setBlacklistEntries(entries: Set<String>) = viewModelScope.launch(coroutineExceptionHandler) {
-        chatRepository.setBlacklistEntries(entries)
-    }
-
     private fun setSupibotSuggestions(enabled: Boolean) = viewModelScope.launch(coroutineExceptionHandler) {
         when {
             enabled -> commandRepository.loadSupibotCommands()
@@ -637,7 +626,7 @@ class MainViewModel @Inject constructor(
                 launch(handler) { dataRepository.loadDankChatBadges() },
                 launch(handler) { dataRepository.loadGlobalBadges() },
                 launch(handler) { if (loadSupibot) commandRepository.loadSupibotCommands() },
-                launch(handler) { chatRepository.loadUserBlocks(id) },
+                launch(handler) { ignoresRepository.loadUserBlocks(id) },
                 launch(handler) { dataRepository.loadGlobalData(loadThirdPartyData) }
             ) + channelList.map {
                 launch(handler) {
@@ -682,6 +671,8 @@ class MainViewModel @Inject constructor(
             else                                -> DataLoadingState.Finished
         }
     }
+
+    private fun clearIgnores() = ignoresRepository.clearIgnores()
 
     fun clearDataForLogout() {
         CookieManager.getInstance().removeAllCookies(null)

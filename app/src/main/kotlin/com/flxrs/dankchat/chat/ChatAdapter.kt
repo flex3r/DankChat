@@ -3,11 +3,7 @@ package com.flxrs.dankchat.chat
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
-import android.graphics.Color
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
-import android.graphics.Rect
-import android.graphics.Typeface
+import android.graphics.*
 import android.graphics.drawable.*
 import android.os.Build
 import android.text.Spannable
@@ -36,11 +32,11 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.imageLoader
 import coil.request.ImageRequest
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.data.repo.EmoteRepository
+import com.flxrs.dankchat.data.repo.EmoteRepository.Companion.cacheKey
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.badge.BadgeType
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
-import com.flxrs.dankchat.data.twitch.emote.EmoteManager
-import com.flxrs.dankchat.data.twitch.emote.EmoteManager.Companion.cacheKey
 import com.flxrs.dankchat.data.twitch.message.*
 import com.flxrs.dankchat.databinding.ChatItemBinding
 import com.flxrs.dankchat.utils.DateTimeUtils
@@ -54,7 +50,7 @@ import kotlin.math.roundToInt
 
 
 class ChatAdapter(
-    private val emoteManager: EmoteManager,
+    private val emoteRepository: EmoteRepository,
     private val onListChanged: (position: Int) -> Unit,
     private val onUserClicked: (targetUserId: String?, targetUsername: String, messageId: String, channelName: String, badges: List<Badge>, isLongPress: Boolean) -> Unit,
     private val onMessageLongClick: (message: String) -> Unit
@@ -93,7 +89,7 @@ class ChatAdapter(
     override fun onViewRecycled(holder: ViewHolder) {
         holder.scope.coroutineContext.cancelChildren()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
-            emoteManager.gifCallback.removeView(holder.binding.itemText)
+            emoteRepository.gifCallback.removeView(holder.binding.itemText)
         }
 
         super.onViewRecycled(holder)
@@ -102,9 +98,16 @@ class ChatAdapter(
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
+        holder.binding.itemText.alpha = when {
+            item.isCleared -> .5f
+            else           -> 1f
+        }
+
         when (val message = item.message) {
             is SystemMessage          -> holder.binding.itemText.handleSystemMessage(message, holder)
-            is TwitchMessage          -> holder.binding.itemText.handleTwitchMessage(message, holder, item.isMentionTab)
+            is NoticeMessage          -> holder.binding.itemText.handleNoticeMessage(message, holder)
+            is UserNoticeMessage      -> holder.binding.itemText.handleUserNoticeMessage(message, holder)
+            is PrivMessage            -> holder.binding.itemText.handleTwitchMessage(message, holder, item.isMentionTab)
             is ClearChatMessage       -> holder.binding.itemText.handleClearChatMessage(message, holder)
             is PointRedemptionMessage -> holder.binding.itemText.handlePointRedemptionMessage(message, holder)
             is WhisperMessage         -> holder.binding.itemText.handleWhisperMessage(message, holder)
@@ -117,9 +120,68 @@ class ChatAdapter(
             else          -> (bindingAdapterPosition - itemCount - 1).isEven
         }
 
-    private fun TextView.handleSystemMessage(message: SystemMessage, holder: ViewHolder) {
-        alpha = 1.0f
+    private fun TextView.handleNoticeMessage(message: NoticeMessage, holder: ViewHolder) {
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
+        val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
+        val checkeredKey = context.getString(R.string.checkered_messages_key)
+        val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
+        val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
+        val isCheckeredMode = preferences.getBoolean(checkeredKey, false)
 
+        val background = when {
+            isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(this, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
+            else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
+        }
+        setBackgroundColor(background)
+        val withTime = when {
+            showTimeStamp -> SpannableStringBuilder()
+                .bold { append("${DateTimeUtils.timestampToLocalTime(message.timestamp)} ") }
+                .append(message.message)
+
+            else          -> SpannableStringBuilder().append(message.message)
+        }
+
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
+        text = withTime
+    }
+
+    private fun TextView.handleUserNoticeMessage(message: UserNoticeMessage, holder: ViewHolder) {
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
+        val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
+        val checkeredKey = context.getString(R.string.checkered_messages_key)
+        val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
+        val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
+        val isCheckeredMode = preferences.getBoolean(checkeredKey, false)
+
+        val firstHighlightType = message.highlights.firstOrNull()?.type
+        val shouldHighlight = firstHighlightType == HighlightType.Subscription || firstHighlightType == HighlightType.Announcement
+        val background = when {
+            shouldHighlight                                 -> ContextCompat.getColor(context, R.color.color_sub_highlight)
+            isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(
+                this,
+                android.R.attr.colorBackground,
+                R.attr.colorSurfaceInverse,
+                MaterialColors.ALPHA_DISABLED_LOW
+            )
+
+            else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
+        }
+        setBackgroundColor(background)
+        val withTime = when {
+            showTimeStamp -> SpannableStringBuilder()
+                .bold { append("${DateTimeUtils.timestampToLocalTime(message.timestamp)} ") }
+                .append(message.message)
+
+            else          -> SpannableStringBuilder().append(message.message)
+        }
+
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
+        text = withTime
+    }
+
+    private fun TextView.handleSystemMessage(message: SystemMessage, holder: ViewHolder) {
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
         val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
@@ -159,8 +221,6 @@ class ChatAdapter(
     }
 
     private fun TextView.handleClearChatMessage(message: ClearChatMessage, holder: ViewHolder) {
-        alpha = 1.0f
-
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
         val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
@@ -175,7 +235,7 @@ class ChatAdapter(
         }
         setRippleBackground(background, enableRipple = false)
 
-        val count = message.count
+        val count = message.stackCount
         // TODO localize
         val systemMessageText = when {
             message.isFullChatClear -> "Chat has been cleared by a moderator."
@@ -195,15 +255,13 @@ class ChatAdapter(
     }
 
     private fun TextView.handlePointRedemptionMessage(message: PointRedemptionMessage, holder: ViewHolder) {
-        alpha = 1.0f
-
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
         val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
         val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
         val fontSize = preferences.getInt(fontSizePreferenceKey, 14)
 
-        val background = ContextCompat.getColor(context, R.color.color_reward)
+        val background = ContextCompat.getColor(context, R.color.color_redemption_highlight)
         setRippleBackground(background, enableRipple = false)
 
         setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.toFloat())
@@ -244,19 +302,15 @@ class ChatAdapter(
     private fun TextView.handleWhisperMessage(whisperMessage: WhisperMessage, holder: ViewHolder) = with(whisperMessage) {
         val textView = this@handleWhisperMessage
         isClickable = false
-        alpha = 1.0f
         movementMethod = LongClickLinkMovementMethod
         (text as? Spannable)?.clearSpans()
 
-        val darkModeKey = context.getString(R.string.preference_dark_theme_key)
-        val themePreferenceKey = context.getString(R.string.preference_theme_key)
         val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
         val animateGifsKey = context.getString(R.string.preference_animate_gifs_key)
         val fontSizePreferenceKey = context.getString(R.string.preference_font_size_key)
         val checkeredKey = context.getString(R.string.checkered_messages_key)
         val badgesKey = context.getString(R.string.preference_visible_badges_key)
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val isDarkMode = resources.isSystemNightMode || preferences.getString(themePreferenceKey, darkModeKey) == darkModeKey
         val isCheckeredMode = preferences.getBoolean(checkeredKey, false)
         val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
         val animateGifs = preferences.getBoolean(animateGifsKey, true)
@@ -300,11 +354,11 @@ class ChatAdapter(
             spannable.length - 2 to spannable.length - 1
         }
 
-        val normalizedColor = color.normalizeColor(isDarkMode)
+        val normalizedColor = color.normalizeColor(background)
         spannable.bold { color(normalizedColor) { append(fullName) } }
         spannable.append(" -> ")
 
-        val normalizedRecipientColor = recipientColor.normalizeColor(isDarkMode)
+        val normalizedRecipientColor = recipientColor.normalizeColor(background)
         spannable.bold { color(normalizedRecipientColor) { append(fullRecipientName) } }
         spannable.append(": ")
         spannable.append(message)
@@ -377,7 +431,7 @@ class ChatAdapter(
                 try {
                     val (start, end) = badgePositions[idx]
                     val cacheKey = badge.cacheKey(baseHeight)
-                    val cached = emoteManager.badgeCache[cacheKey]
+                    val cached = emoteRepository.badgeCache[cacheKey]
                     val drawable = when {
                         cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
                         else           -> context.imageLoader
@@ -391,7 +445,7 @@ class ChatAdapter(
                                 val width = (baseHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
                                 setBounds(0, 0, width, baseHeight)
                                 if (this is Animatable) {
-                                    emoteManager.badgeCache.put(cacheKey, this)
+                                    emoteRepository.badgeCache.put(cacheKey, this)
                                     setRunning(animateGifs)
                                 }
                             }
@@ -407,7 +461,7 @@ class ChatAdapter(
             }
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && animateGifs) {
-                emoteManager.gifCallback.addView(holder.binding.itemText)
+                emoteRepository.gifCallback.addView(holder.binding.itemText)
             }
 
 
@@ -418,7 +472,7 @@ class ChatAdapter(
                     .forEach { (_, emotes) ->
                         val key = emotes.cacheKey(baseHeight)
                         // fast path, backed by lru cache
-                        val layerDrawable = emoteManager.layerCache[key] ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
+                        val layerDrawable = emoteRepository.layerCache[key] ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
 
                         if (layerDrawable != null) {
                             (text as Spannable).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
@@ -430,17 +484,13 @@ class ChatAdapter(
         }
     }
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     @SuppressLint("ClickableViewAccessibility")
-    private fun TextView.handleTwitchMessage(twitchMessage: TwitchMessage, holder: ViewHolder, isMentionTab: Boolean): Unit = with(twitchMessage) {
+    private fun TextView.handleTwitchMessage(privMessage: PrivMessage, holder: ViewHolder, isMentionTab: Boolean): Unit = with(privMessage) {
         val textView = this@handleTwitchMessage
         isClickable = false
-        alpha = if (timedOut) .5f else 1f
         movementMethod = LongClickLinkMovementMethod
         (text as? Spannable)?.clearSpans()
 
-        val darkModeKey = context.getString(R.string.preference_dark_theme_key)
-        val themePreferenceKey = context.getString(R.string.preference_theme_key)
         val timedOutPreferenceKey = context.getString(R.string.preference_show_timed_out_messages_key)
         val timestampPreferenceKey = context.getString(R.string.preference_timestamp_key)
         val usernamePreferenceKey = context.getString(R.string.preference_show_username_key)
@@ -449,7 +499,6 @@ class ChatAdapter(
         val checkeredKey = context.getString(R.string.checkered_messages_key)
         val badgesKey = context.getString(R.string.preference_visible_badges_key)
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val isDarkMode = resources.isSystemNightMode || preferences.getString(themePreferenceKey, darkModeKey) == darkModeKey
         val isCheckeredMode = preferences.getBoolean(checkeredKey, false)
         val showTimedOutMessages = preferences.getBoolean(timedOutPreferenceKey, true)
         val showTimeStamp = preferences.getBoolean(timestampPreferenceKey, true)
@@ -464,9 +513,7 @@ class ChatAdapter(
         val scaleFactor = baseHeight * SCALE_FACTOR_CONSTANT
         val bgColor = when {
             timedOut && !showTimedOutMessages               -> ContextCompat.getColor(context, android.R.color.transparent)
-            isNotify                                        -> ContextCompat.getColor(context, R.color.color_highlight)
-            isReward                                        -> ContextCompat.getColor(context, R.color.color_reward)
-            isMention                                       -> ContextCompat.getColor(context, R.color.color_mention)
+            highlights.isNotEmpty()                         -> highlights.toBackgroundColor(context)
             isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(textView, android.R.attr.colorBackground, R.attr.colorSurfaceInverse, MaterialColors.ALPHA_DISABLED_LOW)
             else                                            -> ContextCompat.getColor(context, android.R.color.transparent)
         }
@@ -499,8 +546,13 @@ class ChatAdapter(
         val badgesLength = allowedBadges.size * 2
 
         val timeAndWhisperBuilder = StringBuilder()
-        if (isMentionTab && isMention) timeAndWhisperBuilder.append("#$channel ")
-        if (showTimeStamp) timeAndWhisperBuilder.append(DateTimeUtils.timestampToLocalTime(timestamp))
+        if (isMentionTab && highlights.hasMention()) {
+            timeAndWhisperBuilder.append("#$channel ")
+        }
+        if (showTimeStamp) {
+            timeAndWhisperBuilder.append(DateTimeUtils.timestampToLocalTime(timestamp))
+        }
+
 
         val spannable = SpannableStringBuilder().timestampFont(context) { append(timeAndWhisperBuilder) }
         val prefixLength = spannable.length + fullDisplayName.length // spannable.length is timestamp's length (plus some extra length from extra methods call above)
@@ -510,7 +562,7 @@ class ChatAdapter(
             spannable.length - 2 to spannable.length - 1
         }
 
-        val normalizedColor = color.normalizeColor(isDarkMode)
+        val normalizedColor = color.normalizeColor(background = bgColor)
         spannable.bold { color(normalizedColor) { append(fullDisplayName) } }
 
         when {
@@ -587,7 +639,7 @@ class ChatAdapter(
                 try {
                     val (start, end) = badgePositions[idx]
                     val cacheKey = badge.cacheKey(baseHeight)
-                    val cached = emoteManager.badgeCache[cacheKey]
+                    val cached = emoteRepository.badgeCache[cacheKey]
                     val drawable = when {
                         cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
                         else           -> context.imageLoader
@@ -601,7 +653,7 @@ class ChatAdapter(
                                 val width = (baseHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
                                 setBounds(0, 0, width, baseHeight)
                                 if (this is Animatable) {
-                                    emoteManager.badgeCache.put(cacheKey, this)
+                                    emoteRepository.badgeCache.put(cacheKey, this)
                                     setRunning(animateGifs)
                                 }
                             }
@@ -617,7 +669,7 @@ class ChatAdapter(
             }
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && animateGifs) {
-                emoteManager.gifCallback.addView(holder.binding.itemText)
+                emoteRepository.gifCallback.addView(holder.binding.itemText)
             }
 
 
@@ -628,7 +680,7 @@ class ChatAdapter(
                     .forEach { (_, emotes) ->
                         val key = emotes.cacheKey(baseHeight)
                         // fast path, backed by lru cache
-                        val layerDrawable = emoteManager.layerCache[key]?.also {
+                        val layerDrawable = emoteRepository.layerCache[key]?.also {
                             it.forEachLayer<Animatable> { animatable -> animatable.setRunning(animateGifs) }
                         } ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
 
@@ -663,7 +715,7 @@ class ChatAdapter(
         }
 
         return drawables.toLayerDrawable(bounds, scaleFactor, emotes).also {
-            emoteManager.layerCache.put(cacheKey, it)
+            emoteRepository.layerCache.put(cacheKey, it)
             it.forEachLayer<Animatable> { animatable -> animatable.setRunning(animateGifs) }
         }
     }
@@ -677,7 +729,7 @@ class ChatAdapter(
         forEachIndexed { idx, dr -> dr.transformEmoteDrawable(scaleFactor, emotes[idx], maxWidth, maxHeight) }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
-            callback = emoteManager.gifCallback
+            callback = emoteRepository.gifCallback
         }
     }
 
@@ -739,6 +791,18 @@ class ChatAdapter(
             setBackgroundColor(backgroundColor)
         }
     }
+
+    @ColorInt
+    private fun List<Highlight>.toBackgroundColor(context: Context): Int {
+        return when (first().type) {
+            HighlightType.Subscription, HighlightType.Announcement -> ContextCompat.getColor(context, R.color.color_sub_highlight)
+            HighlightType.ChannelPointRedemption                   -> ContextCompat.getColor(context, R.color.color_redemption_highlight)
+            HighlightType.ElevatedMessage                          -> ContextCompat.getColor(context, R.color.color_elevated_message_highlight)
+            HighlightType.FirstMessage                             -> ContextCompat.getColor(context, R.color.color_first_message_highlight)
+            HighlightType.Username                                 -> ContextCompat.getColor(context, R.color.color_mention_highlight)
+            HighlightType.Custom                                   -> ContextCompat.getColor(context, R.color.color_mention_highlight)
+        }
+    }
 }
 
 private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
@@ -748,10 +812,8 @@ private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
 
     override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
         return when {
-            oldItem.message is TwitchMessage && newItem.message is TwitchMessage &&
-                    ((!oldItem.message.timedOut && newItem.message.timedOut) || newItem.message.isMention) -> false
-
-            else                                                                                           -> oldItem.message == newItem.message
+            newItem.message.highlights.hasMention() || (!oldItem.isCleared && newItem.isCleared) -> false
+            else                                                                                 -> oldItem.message == newItem.message
         }
     }
 }

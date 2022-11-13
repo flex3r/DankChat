@@ -242,6 +242,7 @@ class PubSubConnection(
 
                             PubSubMessage.Whisper(parsedMessage.data)
                         }
+
                         is PubSubTopic.PointRedemptions -> {
                             if (messageTopic != "reward-redeemed") {
                                 return
