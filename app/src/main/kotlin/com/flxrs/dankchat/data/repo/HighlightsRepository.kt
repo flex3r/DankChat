@@ -31,7 +31,8 @@ class HighlightsRepository @Inject constructor(
     @ApplicationScope private val coroutineScope: CoroutineScope
 ) {
 
-    private val currentUserNameRegex = preferences.currentUserNameFlow
+    private val currentUserName = preferences.currentUserNameFlow.stateIn(coroutineScope, SharingStarted.Eagerly, null)
+    private val currentUserNameRegex = currentUserName
         .map { it?.let { """\b$it\b""".toRegex(RegexOption.IGNORE_CASE) } }
         .stateIn(coroutineScope, SharingStarted.Eagerly, null)
 
@@ -253,6 +254,11 @@ class HighlightsRepository @Inject constructor(
 
     private val PrivMessage.containsCurrentUserName: Boolean
         get() {
+            val currentUser = currentUserName.value ?: return false
+            if (name.equals(currentUser, ignoreCase = true)) {
+                return false
+            }
+
             val regex = currentUserNameRegex.value ?: return false
             return message.contains(regex)
         }
