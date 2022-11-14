@@ -9,6 +9,7 @@ data class UserDisplayDto(val id: Int, val username: String, val colorHex: Strin
         // when entering text, it's possible that there is leading/trailing whitespace due to user's keyboard inserting space after word, trim them
         fun UserDisplayItem.Entry.toDto() = UserDisplayDto(id, username.trim(), colorHex.trim(), alias.trim())
         fun UserDisplayDto.toEntryItem() = UserDisplayItem.Entry(id, username, colorHex, alias)
+        fun UserDisplayEntity.toDto() = UserDisplayDto(id = id, username = targetUser, colorHex = colorHex.orEmpty(), alias = alias.orEmpty())
     }
 
     fun toEntity() = UserDisplayEntity(id = id, targetUser = username, colorHex = colorHex, alias = alias)
