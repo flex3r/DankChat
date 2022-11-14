@@ -40,6 +40,16 @@ class HighlightsRepository @Inject constructor(
     val userHighlights = userHighlightDao.getUserHighlightsFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
     val blacklistedUsers = blacklistedUserDao.getBlacklistedUserFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
 
+    private val validMessageHighlights = messageHighlights
+        .map { highlights -> highlights.filter { it.enabled && (it.type != MessageHighlightEntityType.Custom || it.pattern.isNotBlank()) } }
+        .stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+    private val validUserHighlights = userHighlights
+        .map { highlights -> highlights.filter { it.enabled && it.username.isNotBlank() } }
+        .stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+    private val validBlacklistedUsers = blacklistedUsers
+        .map { highlights -> highlights.filter { it.enabled && it.username.isNotBlank() } }
+        .stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+
     fun calculateHighlightState(message: Message): Message {
         return when (message) {
             is UserNoticeMessage      -> message.calculateHighlightState()
@@ -147,14 +157,14 @@ class HighlightsRepository @Inject constructor(
     }
 
     private fun UserNoticeMessage.calculateHighlightState(): UserNoticeMessage {
-        val enabledMessageHighlights = messageHighlights.value.filter { it.enabled }
+        val messageHighlights = validMessageHighlights.value
 
         val highlights = buildList {
-            if (isSub && enabledMessageHighlights.areSubsEnabled) {
+            if (isSub && messageHighlights.areSubsEnabled) {
                 add(Highlight(HighlightType.Subscription))
             }
 
-            if (isAnnouncement && enabledMessageHighlights.areAnnouncementsEnabled) {
+            if (isAnnouncement && messageHighlights.areAnnouncementsEnabled) {
                 add(Highlight(HighlightType.Announcement))
             }
         }
@@ -166,8 +176,8 @@ class HighlightsRepository @Inject constructor(
     }
 
     private fun PointRedemptionMessage.calculateHighlightState(): PointRedemptionMessage {
-        val redemptionsEnabled = messageHighlights.value
-            .any { it.enabled && it.type == MessageHighlightEntityType.ChannelPointRedemption }
+        val redemptionsEnabled = validMessageHighlights.value
+            .any { it.type == MessageHighlightEntityType.ChannelPointRedemption }
 
         val highlights = when {
             redemptionsEnabled -> listOf(Highlight(HighlightType.ChannelPointRedemption))
@@ -182,40 +192,40 @@ class HighlightsRepository @Inject constructor(
             return this
         }
 
-        val enabledUserHighlights = userHighlights.value.filter { it.enabled }
-        val enabledMessageHighlights = messageHighlights.value.filter { it.enabled }
+        val userHighlights = validUserHighlights.value
+        val messageHighlights = validMessageHighlights.value
         val highlights = buildList {
-            if (isSub && enabledMessageHighlights.areSubsEnabled) {
+            if (isSub && messageHighlights.areSubsEnabled) {
                 add(Highlight(HighlightType.Subscription))
             }
 
-            if (isAnnouncement && enabledMessageHighlights.areAnnouncementsEnabled) {
+            if (isAnnouncement && messageHighlights.areAnnouncementsEnabled) {
                 add(Highlight(HighlightType.Announcement))
             }
 
-            if (isReward && enabledMessageHighlights.areRewardsEnabled) {
+            if (isReward && messageHighlights.areRewardsEnabled) {
                 add(Highlight(HighlightType.ChannelPointRedemption))
             }
 
-            if (isFirstMessage && enabledMessageHighlights.areFirstMessagesEnabled) {
+            if (isFirstMessage && messageHighlights.areFirstMessagesEnabled) {
                 add(Highlight(HighlightType.FirstMessage))
             }
 
-            if (isElevatedMessage && enabledMessageHighlights.areElevatedMessagesEnabled) {
+            if (isElevatedMessage && messageHighlights.areElevatedMessagesEnabled) {
                 add(Highlight(HighlightType.ElevatedMessage))
             }
 
-            if (containsCurrentUserName && enabledMessageHighlights.isOwnUserNameEnabled) {
+            if (containsCurrentUserName && messageHighlights.isOwnUserNameEnabled) {
                 add(Highlight(HighlightType.Username))
             }
 
-            enabledUserHighlights.forEach {
+            userHighlights.forEach {
                 if (it.username.equals(name, ignoreCase = true)) {
                     add(Highlight(HighlightType.Custom))
                 }
             }
 
-            enabledMessageHighlights
+            messageHighlights
                 .filter { it.type == MessageHighlightEntityType.Custom }
                 .forEach {
                     val regex = it.regex ?: return@forEach
@@ -264,8 +274,7 @@ class HighlightsRepository @Inject constructor(
         }
 
     private fun isUserBlacklisted(name: String): Boolean {
-        blacklistedUsers.value
-            .filter { it.enabled }
+        validBlacklistedUsers.value
             .forEach {
                 val hasMatch = when {
                     it.isRegex -> it.regex?.let { regex -> name.matches(regex) } ?: false
