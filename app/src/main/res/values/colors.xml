@@ -5,12 +5,17 @@
     <color name="colorThatIsActuallyTransparent">#00FFFFFF</color>
     <color name="ripple_color">#cca0a0a0</color>
 
-    <!-- Deep Purple 500-->
-    <color name="color_highlight">#b085f5</color>
+    <color name="color_sub_highlight">#D1C4E9</color> <!--Deep Purple 100-->
 
-    <!-- (Darker) Red 200-->
-    <color name="color_mention">#ef9a9a</color> <!--Red 200 P-->
+    <!-- Base: Red 300-->
+    <color name="color_mention_highlight">#EF9A9A</color> <!--Red 200-->
 
-    <!-- Teal 400-->
-    <color name="color_reward">#64d8cb</color>
+    <!-- Base: Cyan 300-->
+    <color name="color_redemption_highlight">#93f1ff</color>
+
+    <!-- Base: Light Green 300-->
+    <color name="color_first_message_highlight">#c2f18d</color>
+
+    <!-- Base: Amber 300-->
+    <color name="color_elevated_message_highlight">#ffe087</color>
 </resources>

@@ -37,6 +37,7 @@ class SpaceTokenizer : MultiAutoCompleteTextView.Tokenizer {
             text is Spanned                   -> SpannableString(text.toString() + separator.toString()).apply {
                 TextUtils.copySpansFrom(text, 0, text.length, Any::class.java, this, 0)
             }
+
             else                              -> text.toString() + separator
         }
     }

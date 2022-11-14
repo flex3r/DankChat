@@ -2,10 +2,8 @@ package com.flxrs.dankchat.di
 
 import android.content.Context
 import androidx.room.Room
-import com.flxrs.dankchat.data.database.DankChatDatabase
-import com.flxrs.dankchat.data.database.EmoteUsageDao
-import com.flxrs.dankchat.data.database.RecentUploadsDao
-import com.flxrs.dankchat.data.database.UserDisplayDao
+import com.flxrs.dankchat.data.database.*
+import com.flxrs.dankchat.data.database.dao.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,6 +40,36 @@ object DatabaseModule {
     fun provideUserDisplayDao(
         database: DankChatDatabase
     ): UserDisplayDao = database.userDisplayDao()
+
+    @Singleton
+    @Provides
+    fun provideMessageHighlightDao(
+        database: DankChatDatabase
+    ): MessageHighlightDao = database.messageHighlightDao()
+
+    @Singleton
+    @Provides
+    fun provideUserHighlightDao(
+        database: DankChatDatabase
+    ): UserHighlightDao = database.userHighlightDao()
+
+    @Singleton
+    @Provides
+    fun provideIgnoreUserDao(
+        database: DankChatDatabase
+    ): UserIgnoreDao = database.userIgnoreDao()
+
+    @Singleton
+    @Provides
+    fun provideMessageIgnoreDao(
+        database: DankChatDatabase
+    ): MessageIgnoreDao = database.messageIgnoreDao()
+
+    @Singleton
+    @Provides
+    fun provideBlacklistedUserHighlightDao(
+        database: DankChatDatabase
+    ): BlacklistedUserDao = database.blacklistedUserDao()
 
     private const val DB_NAME = "dankchat-db"
 }

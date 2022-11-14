@@ -136,6 +136,7 @@ fun String.trimEndSpecialChar(): String = trimEnd().run {
                 else       -> this
             }
         }
+
         else                                                    -> this
     }.trimEnd()
 }

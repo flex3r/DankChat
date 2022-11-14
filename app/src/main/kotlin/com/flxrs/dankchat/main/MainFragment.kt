@@ -96,6 +96,21 @@ class MainFragment : Fragment() {
         }
     }
 
+    private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            if (position in tabAdapter.channels.indices) {
+                val newChannel = tabAdapter.channels[position].lowercase(Locale.getDefault())
+                mainViewModel.setActiveChannel(newChannel)
+
+            }
+        }
+
+        override fun onPageScrollStateChanged(state: Int) {
+            emoteMenuBottomSheetBehavior?.hide()
+            binding.input.dismissDropDown()
+        }
+    }
+
     @Inject
     lateinit var dankChatPreferences: DankChatPreferenceStore
 
@@ -145,7 +160,7 @@ class MainFragment : Fragment() {
             emoteMenuBottomSheetBehavior = BottomSheetBehavior.from(emoteMenuBottomSheet)
             vm = mainViewModel
             lifecycleOwner = this@MainFragment
-            chatViewpager.setup(this)
+            chatViewpager.setup()
             input.setup(this)
 
             childFragmentManager.findFragmentById(R.id.mention_fragment)?.let {
@@ -237,7 +252,11 @@ class MainFragment : Fragment() {
                     R.id.menu_login, R.id.menu_relogin -> openLogin()
                     R.id.menu_logout                   -> showLogoutConfirmationDialog()
                     R.id.menu_add                      -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment)
-                    R.id.menu_mentions                 -> mentionBottomSheetBehavior?.expand()
+                    R.id.menu_mentions                 -> {
+                        emoteMenuBottomSheetBehavior?.hide()
+                        mentionBottomSheetBehavior?.expand()
+                    }
+
                     R.id.menu_open_channel             -> openChannel()
                     R.id.menu_remove_channel           -> removeChannel()
                     R.id.menu_report_channel           -> reportChannel()
@@ -298,30 +317,8 @@ class MainFragment : Fragment() {
                     is MainViewModel.Event.Error -> handleErrorEvent(it)
                 }
             }
-            collectFlow(channelMentionCount) { channels ->
-                channels.forEach { (channel, count) ->
-                    val index = tabAdapter.channels.indexOf(channel)
-                    if (count > 0) {
-                        when (index) {
-                            binding.tabs.selectedTabPosition -> mainViewModel.clearMentionCount(channel) // mention is in active channel
-                            else                             -> binding.tabs.getTabAt(index)?.apply { orCreateBadge }
-                        }
-                    } else {
-                        binding.tabs.getTabAt(index)?.removeBadge()
-                    }
-                }
-            }
-            collectFlow(unreadMessagesMap) { channels ->
-                channels.forEach { (channel, _) ->
-                    when (val index = tabAdapter.channels.indexOf(channel)) {
-                        binding.tabs.selectedTabPosition -> mainViewModel.clearUnreadMessage(channel)
-                        else                             -> {
-                            val tab = binding.tabs.getTabAt(index)
-                            tab?.setTextColor(R.attr.colorOnSurface)
-                        }
-                    }
-                }
-            }
+            collectFlow(channelMentionCount, ::updateChannelMentionBadges)
+            collectFlow(unreadMessagesMap, ::updateUnreadChannelTabColors)
             collectFlow(shouldColorNotification) { activity?.invalidateMenu() }
             collectFlow(channels) {
                 if (!it.isNullOrEmpty()) {
@@ -477,6 +474,7 @@ class MainFragment : Fragment() {
 
     override fun onDestroyView() {
         bindingRef?.tabs?.removeOnTabSelectedListener(tabSelectionListener)
+        bindingRef?.chatViewpager?.unregisterOnPageChangeCallback(pageChangeCallback)
         bindingRef = null
         emoteMenuBottomSheetBehavior = null
         mentionBottomSheetBehavior = null
@@ -927,19 +925,50 @@ class MainFragment : Fragment() {
         val index = updatedChannels.indexOf(oldActiveChannel).coerceAtLeast(0)
         val activeChannel = updatedChannels.getOrNull(index) ?: ""
 
+        binding.chatViewpager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
+        tabAdapter.updateFragments(updatedChannels)
         mainViewModel.updateChannels(updatedChannels)
         mainViewModel.setActiveChannel(activeChannel)
-        tabAdapter.updateFragments(updatedChannels)
 
-        if (updatedChannels.isNotEmpty()) {
-            dankChatPreferences.channelsString = updatedChannels.joinToString(",")
-            binding.chatViewpager.setCurrentItem(index, false)
-        } else {
-            dankChatPreferences.channelsString = null
-        }
+        dankChatPreferences.channelsString = updatedChannels
+            .takeIf { it.isNotEmpty() }
+            ?.joinToString(separator = ",")
+            ?.also {
+                binding.chatViewpager.setCurrentItem(index, false)
+                binding.root.postDelayed(TAB_SCROLL_DELAY_MS) {
+                    binding.tabs.setScrollPosition(index, 0f, false)
+                }
+            }
 
-        binding.chatViewpager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
         activity?.invalidateMenu()
+        updateChannelMentionBadges(channels = mainViewModel.channelMentionCount.firstValueOrNull.orEmpty())
+        updateUnreadChannelTabColors(channels = mainViewModel.unreadMessagesMap.firstValueOrNull.orEmpty())
+    }
+
+    private fun updateUnreadChannelTabColors(channels: Map<String, Boolean>) {
+        channels.forEach { (channel, _) ->
+            when (val index = tabAdapter.channels.indexOf(channel)) {
+                binding.tabs.selectedTabPosition -> mainViewModel.clearUnreadMessage(channel)
+                else                             -> {
+                    val tab = binding.tabs.getTabAt(index)
+                    tab?.setTextColor(R.attr.colorOnSurface)
+                }
+            }
+        }
+    }
+
+    private fun updateChannelMentionBadges(channels: Map<String, Int>) {
+        channels.forEach { (channel, count) ->
+            val index = tabAdapter.channels.indexOf(channel)
+            if (count > 0) {
+                when (index) {
+                    binding.tabs.selectedTabPosition -> mainViewModel.clearMentionCount(channel) // mention is in active channel
+                    else                             -> binding.tabs.getTabAt(index)?.apply { orCreateBadge }
+                }
+            } else {
+                binding.tabs.getTabAt(index)?.removeBadge()
+            }
+        }
     }
 
     private fun BottomSheetBehavior<View>.setupMentionSheet() {
@@ -961,23 +990,10 @@ class MainFragment : Fragment() {
         else     -> ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
     }
 
-    private fun ViewPager2.setup(binding: MainFragmentBinding) {
+    private fun ViewPager2.setup() {
         adapter = tabAdapter
         reduceDragSensitivity()
-        registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                if (position in tabAdapter.channels.indices) {
-                    val newChannel = tabAdapter.channels[position].lowercase(Locale.getDefault())
-                    mainViewModel.setActiveChannel(newChannel)
-
-                }
-            }
-
-            override fun onPageScrollStateChanged(state: Int) {
-                emoteMenuBottomSheetBehavior?.hide()
-                binding.input.dismissDropDown()
-            }
-        })
+        registerOnPageChangeCallback(pageChangeCallback)
     }
 
     private fun DankChatInputLayout.setup() {
@@ -1137,6 +1153,7 @@ class MainFragment : Fragment() {
         private const val MAX_GUIDELINE_PERCENT = 0.8f
         private const val MIN_GUIDELINE_PERCENT = 0.2f
         private const val CLIPBOARD_LABEL = "dankchat_media_url"
+        private const val TAB_SCROLL_DELAY_MS = 1000 / 60 * 10L
 
         const val LOGOUT_REQUEST_KEY = "logout_key"
         const val LOGIN_REQUEST_KEY = "login_key"

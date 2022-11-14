@@ -3,7 +3,7 @@ package com.flxrs.dankchat.preferences.userdisplay
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.flxrs.dankchat.databinding.MultiEntryAddItemBinding
+import com.flxrs.dankchat.databinding.AddItemBinding
 import com.flxrs.dankchat.databinding.UserDisplayItemBinding
 
 class UserDisplayAdapter(val entries: MutableList<UserDisplayItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -18,7 +18,7 @@ class UserDisplayAdapter(val entries: MutableList<UserDisplayItem>) : RecyclerVi
     }
 
     // stolen UI lule
-    inner class AddItemViewHolder(val binding: MultiEntryAddItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class AddItemViewHolder(val binding: AddItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.multiEntryAdd.setOnClickListener {
                 // ID 0, so that the create call generate the ID
@@ -34,7 +34,7 @@ class UserDisplayAdapter(val entries: MutableList<UserDisplayItem>) : RecyclerVi
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             0    -> EntryViewHolder(UserDisplayItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-            1    -> AddItemViewHolder(MultiEntryAddItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            1    -> AddItemViewHolder(AddItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
             else -> throw ClassCastException("Invalid view type $viewType")
 
         }

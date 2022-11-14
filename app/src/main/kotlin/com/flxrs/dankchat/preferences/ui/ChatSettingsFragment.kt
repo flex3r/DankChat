@@ -11,7 +11,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.*
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.data.UserDisplayRepository
+import com.flxrs.dankchat.data.repo.UserDisplayRepository
 import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.databinding.CommandsBottomsheetBinding
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
@@ -43,6 +43,8 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
     @Inject
     lateinit var userDisplayRepository: UserDisplayRepository
 
+    private var bottomSheetDialog: BottomSheetDialog? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -68,6 +70,12 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
             }
 
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bottomSheetDialog?.dismiss()
+        bottomSheetDialog = null
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -120,7 +128,7 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
             }
         }
 
-        BottomSheetDialog(context).apply {
+        bottomSheetDialog = BottomSheetDialog(context).apply {
             setContentView(binding.root)
             setOnDismissListener {
                 val stringSet = commandAdapter.commands
@@ -159,7 +167,7 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
                 }
             }
 
-            BottomSheetDialog(context).apply {
+            bottomSheetDialog = BottomSheetDialog(context).apply {
                 setContentView(binding.root)
                 setOnDismissListener {
                     lifecycleScope.launch {

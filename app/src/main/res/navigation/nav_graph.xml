@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav_graph"
     app:startDestination="@id/mainFragment">
 
     <fragment
@@ -54,7 +53,7 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.flxrs.dankchat.login.LoginFragment"
-        android:label="LoginFragment"/>
+        android:label="LoginFragment" />
     <fragment
         android:id="@+id/overviewSettingsFragment"
         android:name="com.flxrs.dankchat.preferences.ui.OverviewSettingsFragment"

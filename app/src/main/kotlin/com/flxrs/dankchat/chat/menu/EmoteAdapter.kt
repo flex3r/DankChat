@@ -37,6 +37,7 @@ class EmoteAdapter(private val onEmoteClick: (emote: GenericEmote) -> Unit) : Li
                     loadImage(emote.lowResUrl)
                 }
             }
+
             is TextViewHolder -> {
                 val item = getItem(position) as EmoteItem.Header
                 holder.binding.text.text = item.title.replaceFirstChar { it.titlecase(Locale.getDefault()) }
