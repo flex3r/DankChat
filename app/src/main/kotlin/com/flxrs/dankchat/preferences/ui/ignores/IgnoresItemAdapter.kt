@@ -77,18 +77,15 @@ class IgnoresItemAdapter(
                     }
                     title.text = root.context.getString(titleText)
 
-                    if (messageItem.type != MessageIgnoreItem.Type.Custom) {
-                        isRegex.isEnabled = false
-                        isCaseSensitive.isEnabled = false
-                        pattern.isVisible = false
-                        delete.isVisible = false
-                        regexInfo.isVisible = false
-                        isBlockMessage.isVisible = false
-                        replacement.isVisible = false
-                    } else {
-                        isBlockMessage.isChecked = messageItem.isBlockMessage
-                        replacement.isVisible = !messageItem.isBlockMessage
-                    }
+                    val isCustomItem = messageItem.type == MessageIgnoreItem.Type.Custom
+                    isRegex.isEnabled = isCustomItem
+                    isCaseSensitive.isEnabled = isCustomItem
+                    pattern.isVisible = isCustomItem
+                    delete.isVisible = isCustomItem
+                    regexInfo.isVisible = isCustomItem
+                    isBlockMessage.isVisible = isCustomItem
+                    isBlockMessage.isChecked = messageItem.isBlockMessage
+                    replacement.isVisible = isCustomItem && !messageItem.isBlockMessage
                 }
             }
 
