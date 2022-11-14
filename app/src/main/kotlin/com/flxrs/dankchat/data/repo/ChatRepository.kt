@@ -33,6 +33,7 @@ class ChatRepository @Inject constructor(
     private val dankChatPreferenceStore: DankChatPreferenceStore,
     private val highlightsRepository: HighlightsRepository,
     private val ignoresRepository: IgnoresRepository,
+    private val userDisplayRepository: UserDisplayRepository,
     @ReadConnection private val readConnection: ChatConnection,
     @WriteConnection private val writeConnection: ChatConnection,
     @ApplicationScope scope: CoroutineScope,
@@ -115,6 +116,7 @@ class ChatRepository @Inject constructor(
                                     .parsePointReward(pubSubMessage.timestamp, pubSubMessage.data)
                                     .applyIgnores()
                                     ?.calculateHighlightState()
+                                    ?.calculateUserDisplays()
                             }.getOrNull() ?: return@collect
 
                             messages[pubSubMessage.channelName]?.update {
@@ -132,6 +134,7 @@ class ChatRepository @Inject constructor(
                             WhisperMessage.fromPubSub(pubSubMessage.data)
                                 .applyIgnores()
                                 ?.calculateHighlightState()
+                                ?.calculateUserDisplays()
                                 ?.parseEmotesAndBadges() as? WhisperMessage
                         }.getOrNull() ?: return@collect
 
@@ -464,7 +467,7 @@ class ChatRepository @Inject constructor(
 
     private fun handleClearChat(msg: IrcMessage) {
         val parsed = runCatching {
-            ClearChatMessage.parseClearChat(msg)
+            ClearChatMessage.parseClearChat(msg).calculateUserDisplays() as ClearChatMessage // TODO[DANK]
         }.getOrElse {
             return
         }
@@ -552,6 +555,7 @@ class ChatRepository @Inject constructor(
             WhisperMessage.parseFromIrc(ircMessage, userState.displayName, userState.color)
                 .applyIgnores()
                 ?.calculateHighlightState()
+                ?.calculateUserDisplays()
                 ?.parseEmotesAndBadges() as? WhisperMessage
         }.getOrNull() ?: return
 
@@ -603,6 +607,7 @@ class ChatRepository @Inject constructor(
                 ?.applyIgnores()
                 ?.calculateHighlightState()
                 ?.parseEmotesAndBadges()
+                ?.calculateUserDisplays()
         }.getOrElse {
             Log.e(TAG, "Failed to parse message", it)
             return
@@ -753,6 +758,7 @@ class ChatRepository @Inject constructor(
                         ?.applyIgnores()
                         ?.calculateHighlightState()
                         ?.parseEmotesAndBadges()
+                        ?.calculateUserDisplays()
                 }.getOrNull() ?: continue
 
                 if (message is PrivMessage) {
@@ -795,6 +801,7 @@ class ChatRepository @Inject constructor(
     private fun Message.applyIgnores(): Message? = ignoresRepository.applyIgnores(this)
     private fun Message.calculateHighlightState(): Message = highlightsRepository.calculateHighlightState(this)
     private fun Message.parseEmotesAndBadges(): Message = emoteRepository.parseEmotesAndBadges(this)
+    private fun Message.calculateUserDisplays(): Message = userDisplayRepository.calculateUserDisplay(this)
 
     companion object {
         private val TAG = ChatRepository::class.java.simpleName
