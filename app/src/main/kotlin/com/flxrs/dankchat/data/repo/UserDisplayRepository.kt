@@ -6,12 +6,14 @@ import com.flxrs.dankchat.data.twitch.message.*
 import com.flxrs.dankchat.di.ApplicationScope
 import com.flxrs.dankchat.preferences.userdisplay.UserDisplayDto
 import com.flxrs.dankchat.preferences.userdisplay.UserDisplayDto.Companion.toDto
+import com.flxrs.dankchat.preferences.userdisplay.UserFinalizedDisplay
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 import javax.inject.Singleton
+
 
 @Singleton
 class UserDisplayRepository @Inject constructor(
@@ -37,13 +39,12 @@ class UserDisplayRepository @Inject constructor(
 
     fun calculateUserDisplay(message: Message): Message {
         return when (message) {
-            is ClearChatMessage       -> message.applyUserDisplay()
+            is ClearChatMessage -> message.applyUserDisplay()
             is PointRedemptionMessage -> message.applyUserDisplay()
-            is PrivMessage            -> message.applyUserDisplay()
-            is UserNoticeMessage      -> message.applyUserDisplay()
-            is WhisperMessage         -> message.applyUserDisplay()
-            is NoticeMessage          -> return message // test
-            else                      -> return message
+            is PrivMessage -> message.applyUserDisplay()
+            is UserNoticeMessage -> message.applyUserDisplay()
+            is WhisperMessage -> message.applyUserDisplay()
+            else -> return message
         }
 
     }
@@ -52,21 +53,20 @@ class UserDisplayRepository @Inject constructor(
         return userDisplays.value.find { it.username.equals(name, true) }
     }
 
-    // OK
     private fun PrivMessage.applyUserDisplay(): PrivMessage {
         val match = findMatchingUserDisplay(name) ?: return this
-        return copy(userDisplay = match)
+        return copy(userDisplay = UserFinalizedDisplay.calculateUserDisplay(match, name, displayName, color))
     }
 
     private fun ClearChatMessage.applyUserDisplay(): ClearChatMessage {
         if (targetUser == null) return this
         val match = findMatchingUserDisplay(targetUser) ?: return this
-        return copy(userDisplay = match)
+        return copy(userDisplay = UserFinalizedDisplay.calculateUserDisplay(match, targetUser, "", 0))
     }
 
     private fun PointRedemptionMessage.applyUserDisplay(): PointRedemptionMessage {
         val match = findMatchingUserDisplay(name) ?: return this
-        return copy(userDisplay = match)
+        return copy(userDisplay = UserFinalizedDisplay.calculateUserDisplay(match, name, displayName, 0))
     }
 
     // e.g. announcement ->have child message
@@ -82,9 +82,14 @@ class UserDisplayRepository @Inject constructor(
         val recipientMatch = findMatchingUserDisplay(recipientName)
         if (senderMatch == null && recipientMatch == null) return this
         return copy(
-            userDisplay = senderMatch,
-            recipientDisplay = recipientMatch,
+            userDisplay = senderMatch?.let {
+                UserFinalizedDisplay.calculateUserDisplay(it, name, displayName, color)
+            },
+            recipientDisplay = recipientMatch?.let {
+                UserFinalizedDisplay.calculateUserDisplay(it, recipientName, recipientDisplayName, recipientColor)
+            }
         )
     }
-
 }
+
+
