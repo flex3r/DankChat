@@ -6,6 +6,7 @@ import android.util.Log
 import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.data.database.dao.MessageIgnoreDao
 import com.flxrs.dankchat.data.database.dao.UserIgnoreDao
+import com.flxrs.dankchat.data.database.entity.MessageHighlightEntityType
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntity
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntityType
 import com.flxrs.dankchat.data.database.entity.UserIgnoreEntity
@@ -39,7 +40,7 @@ class IgnoresRepository @Inject constructor(
     val twitchBlocks = _twitchBlocks.asStateFlow()
 
     private val validMessageIgnores = messageIgnores
-        .map { ignores -> ignores.filter { it.enabled && it.pattern.isNotBlank() } }
+        .map { ignores -> ignores.filter { it.enabled && (it.type != MessageIgnoreEntityType.Custom || it.pattern.isNotBlank()) } }
         .stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
     private val validUserIgnores = userIgnores
         .map { ignores -> ignores.filter { it.enabled && it.username.isNotBlank() } }
