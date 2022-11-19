@@ -31,7 +31,7 @@ data class MessageIgnoreEntity(
             }
             when {
                 isRegex -> pattern.toRegex(options)
-                else    -> "\\b$pattern\\b".toRegex(options)
+                else    -> """(?<!\w)$pattern(?!\w)""".toRegex(options)
             }
         }.getOrElse {
             Log.e(TAG, "Failed to create regex for pattern $pattern", it)
