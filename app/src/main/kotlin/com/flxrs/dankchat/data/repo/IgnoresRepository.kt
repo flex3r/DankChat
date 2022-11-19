@@ -96,6 +96,10 @@ class IgnoresRepository @Inject constructor(
 
         runCatching {
             val blocks = apiManager.getUserBlocks(id) ?: return@withContext
+            if (blocks.data.isEmpty()) {
+                _twitchBlocks.update { emptySet() }
+                return@withContext
+            }
             val userIds = blocks.data.map { it.id }
             val users = apiManager.getUsersByIds(userIds) ?: return@withContext
             val twitchBlocks = users.map { user ->
