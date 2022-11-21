@@ -41,6 +41,9 @@ buildscript {
         hilt_version = '2.44'
         ktor_version = '2.1.3'
 
+        // Test
+        junitVersion = '5.9.1'
+
         // Localization
         crowdin_version = '1.5.1'
 
