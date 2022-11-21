@@ -12,7 +12,7 @@ import kotlin.test.assertEquals
 
 
 @ExtendWith(MockKExtension::class)
-class EmoteRepositoryTest {
+internal class EmoteRepositoryTest {
 
     @MockK
     lateinit var apiManager: ApiManager
