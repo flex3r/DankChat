@@ -50,4 +50,19 @@ internal class IrcMessageTest {
         assertEquals(expected = "1594561392337", actual = ircMessage.tags["tmi-sent-ts"])
         assertEquals(expected = 2, actual = ircMessage.tags.size)
     }
+
+    @Test
+    fun `parse delete chat message`() {
+        val msg = "@login=alazymeme;room-id=;target-msg-id=3c92014f-340a-4dc3-a9c9-e5cf182f4a84;tmi-sent-ts=1594561955611 :tmi.twitch.tv CLEARMSG #pajlada :NIGHT CUNT"
+        val ircMessage = IrcMessage.parse(msg)
+
+        assertEquals(expected = "CLEARMSG", actual = ircMessage.command)
+        assertEquals(expected = listOf("#pajlada", "NIGHT CUNT"), actual = ircMessage.params)
+        assertEquals(expected = "tmi.twitch.tv", actual = ircMessage.prefix)
+        assertEquals(expected = "alazymeme", actual = ircMessage.tags["login"])
+        assertEquals(expected = "", actual = ircMessage.tags["room-id"])
+        assertEquals(expected = "3c92014f-340a-4dc3-a9c9-e5cf182f4a84", actual = ircMessage.tags["target-msg-id"])
+        assertEquals(expected = "1594561955611", actual = ircMessage.tags["tmi-sent-ts"])
+        assertEquals(expected = 4, actual = ircMessage.tags.size)
+    }
 }
