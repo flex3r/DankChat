@@ -3,6 +3,7 @@
 package com.flxrs.dankchat.preferences.userdisplay
 
 import android.graphics.Color
+import androidx.annotation.ColorInt
 import com.flxrs.dankchat.data.database.UserDisplayEntity
 import kotlinx.serialization.Serializable
 import kotlin.contracts.ExperimentalContracts
@@ -33,10 +34,17 @@ fun UserDisplayDto?.hasAlias(): Boolean {
     return alias.isNotEmpty()
 }
 
-/** simply fallback logic to use `fallback` if alias is not set */
+/** return this object's alias if has set, otherwise, fallback */
 fun UserDisplayDto?.nameIfEmpty(fallback: String): String {
     return if (hasAlias()) alias else fallback
 }
+
+/** return this object's color if it has set and valid, otherwise, fallback */
+@ColorInt
+fun UserDisplayDto?.colorIfEmpty(@ColorInt fallback: Int): Int {
+    return this?.color ?: fallback
+}
+
 
 /** return whether color is set, (i.e not empty), calling on null will return false.
  * Note that this method does NOT check if the color is valid

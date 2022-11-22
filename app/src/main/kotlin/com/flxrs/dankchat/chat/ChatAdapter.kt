@@ -39,6 +39,7 @@ import com.flxrs.dankchat.data.twitch.badge.BadgeType
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.data.twitch.message.*
 import com.flxrs.dankchat.databinding.ChatItemBinding
+import com.flxrs.dankchat.preferences.userdisplay.colorIfEmpty
 import com.flxrs.dankchat.preferences.userdisplay.hasAlias
 import com.flxrs.dankchat.preferences.userdisplay.nameIfEmpty
 import com.flxrs.dankchat.utils.DateTimeUtils
@@ -361,11 +362,11 @@ class ChatAdapter(
             spannable.length - 2 to spannable.length - 1
         }
 
-        val normalizedColor = color.normalizeColor(background)
+        val normalizedColor = userDisplay.colorIfEmpty(color).normalizeColor(background)
         spannable.bold { color(normalizedColor) { append(fullName) } }
         spannable.append(" -> ")
 
-        val normalizedRecipientColor = recipientColor.normalizeColor(background)
+        val normalizedRecipientColor = recipientDisplay.colorIfEmpty(recipientColor).normalizeColor(background)
         spannable.bold { color(normalizedRecipientColor) { append(fullRecipientName) } }
         spannable.append(": ")
         spannable.append(message)
@@ -570,7 +571,7 @@ class ChatAdapter(
             spannable.length - 2 to spannable.length - 1
         }
 
-        val normalizedColor = color.normalizeColor(background = bgColor)
+        val normalizedColor = userDisplay.colorIfEmpty(color).normalizeColor(background = bgColor)
         spannable.bold { color(normalizedColor) { append(fullDisplayName) } }
 
         when {
