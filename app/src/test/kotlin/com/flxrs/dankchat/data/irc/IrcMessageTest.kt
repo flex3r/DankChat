@@ -67,7 +67,7 @@ internal class IrcMessageTest {
     }
 
     @Test
-    fun `parse global user state message`() {
+    fun `parse global user state message with color`() {
         val msg = "@badge-info=;badges=;color=#19E6E6;display-name=randers;emote-sets=0,42,237;user-id=40286300;user-type= :tmi.twitch.tv GLOBALUSERSTATE"
         val ircMessage = IrcMessage.parse(msg)
 
@@ -80,6 +80,42 @@ internal class IrcMessageTest {
         assertEquals(expected = "randers", actual = ircMessage.tags["display-name"])
         assertEquals(expected = "0,42,237", actual = ircMessage.tags["emote-sets"])
         assertEquals(expected = "40286300", actual = ircMessage.tags["user-id"])
+        assertEquals(expected = "", actual = ircMessage.tags["user-type"])
+        assertEquals(expected = 7, actual = ircMessage.tags.size)
+    }
+
+    @Test
+    fun `parse global user state message with badges`() {
+        val msg = "@badge-info=;badges=premium/1;color=;display-name=randers;emote-sets=;user-id=40286300;user-type= :tmi.twitch.tv GLOBALUSERSTATE"
+        val ircMessage = IrcMessage.parse(msg)
+
+        assertEquals(expected = "GLOBALUSERSTATE", actual = ircMessage.command)
+        assertEquals(expected = listOf(), actual = ircMessage.params)
+        assertEquals(expected = "tmi.twitch.tv", actual = ircMessage.prefix)
+        assertEquals(expected = "", actual = ircMessage.tags["badge-info"])
+        assertEquals(expected = "premium/1", actual = ircMessage.tags["badges"])
+        assertEquals(expected = "", actual = ircMessage.tags["color"])
+        assertEquals(expected = "randers", actual = ircMessage.tags["display-name"])
+        assertEquals(expected = "", actual = ircMessage.tags["emote-sets"])
+        assertEquals(expected = "40286300", actual = ircMessage.tags["user-id"])
+        assertEquals(expected = "", actual = ircMessage.tags["user-type"])
+        assertEquals(expected = 7, actual = ircMessage.tags.size)
+    }
+
+    @Test
+    fun `parse plain global user state message`() {
+        val msg = "@badge-info=;badges=;color=;display-name=randers811;emote-sets=0;user-id=553170741;user-type= :tmi.twitch.tv GLOBALUSERSTATE"
+        val ircMessage = IrcMessage.parse(msg)
+
+        assertEquals(expected = "GLOBALUSERSTATE", actual = ircMessage.command)
+        assertEquals(expected = listOf(), actual = ircMessage.params)
+        assertEquals(expected = "tmi.twitch.tv", actual = ircMessage.prefix)
+        assertEquals(expected = "", actual = ircMessage.tags["badge-info"])
+        assertEquals(expected = "", actual = ircMessage.tags["badges"])
+        assertEquals(expected = "", actual = ircMessage.tags["color"])
+        assertEquals(expected = "randers811", actual = ircMessage.tags["display-name"])
+        assertEquals(expected = "0", actual = ircMessage.tags["emote-sets"])
+        assertEquals(expected = "553170741", actual = ircMessage.tags["user-id"])
         assertEquals(expected = "", actual = ircMessage.tags["user-type"])
         assertEquals(expected = 7, actual = ircMessage.tags.size)
     }
