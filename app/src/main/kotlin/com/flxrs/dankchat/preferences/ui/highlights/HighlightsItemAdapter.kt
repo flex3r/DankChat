@@ -59,7 +59,7 @@ class HighlightsItemAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is MessageItemViewHolder -> {
+            is MessageItemViewHolder         -> {
                 val highlightItem = getItem(position) as MessageHighlightItem
                 with(holder.binding) {
                     item = highlightItem
@@ -74,21 +74,17 @@ class HighlightsItemAdapter(
                     }
                     title.text = root.context.getString(titleText)
 
-                    if (highlightItem.type != MessageHighlightItem.Type.Custom) {
-                        isRegex.isEnabled = false
-                        isCaseSensitive.isEnabled = false
-                        pattern.isVisible = false
-                        delete.isVisible = false
-                        regexInfo.isVisible = false
-                    }
-
-                    if (highlightItem.type == MessageHighlightItem.Type.Username && !preferenceStore.isLoggedIn) {
-                        enabled.isEnabled = false
-                    }
+                    val isCustomItem = highlightItem.type == MessageHighlightItem.Type.Custom
+                    isRegex.isEnabled = isCustomItem
+                    isCaseSensitive.isEnabled = isCustomItem
+                    pattern.isVisible = isCustomItem
+                    delete.isVisible = isCustomItem
+                    regexInfo.isVisible = isCustomItem
+                    enabled.isEnabled = highlightItem.type != MessageHighlightItem.Type.Username || preferenceStore.isLoggedIn
                 }
             }
 
-            is UserItemViewHolder    -> {
+            is UserItemViewHolder            -> {
                 val highlightItem = getItem(position) as UserHighlightItem
                 holder.binding.item = highlightItem
             }

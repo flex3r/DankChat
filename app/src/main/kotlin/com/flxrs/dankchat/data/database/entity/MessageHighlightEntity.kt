@@ -31,7 +31,7 @@ data class MessageHighlightEntity(
             }
             when {
                 isRegex -> pattern.toRegex(options)
-                else    -> "\\b$pattern\\b".toRegex(options)
+                else    -> """(?<!\w)$pattern(?!\w)""".toRegex(options)
             }
 
         }.getOrElse {

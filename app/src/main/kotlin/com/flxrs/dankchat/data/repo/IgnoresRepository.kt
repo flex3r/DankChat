@@ -6,6 +6,7 @@ import android.util.Log
 import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.data.database.dao.MessageIgnoreDao
 import com.flxrs.dankchat.data.database.dao.UserIgnoreDao
+import com.flxrs.dankchat.data.database.entity.MessageHighlightEntityType
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntity
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntityType
 import com.flxrs.dankchat.data.database.entity.UserIgnoreEntity
@@ -37,6 +38,13 @@ class IgnoresRepository @Inject constructor(
     val messageIgnores = messageIgnoreDao.getMessageIgnoresFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
     val userIgnores = userIgnoreDao.getUserIgnoresFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
     val twitchBlocks = _twitchBlocks.asStateFlow()
+
+    private val validMessageIgnores = messageIgnores
+        .map { ignores -> ignores.filter { it.enabled && (it.type != MessageIgnoreEntityType.Custom || it.pattern.isNotBlank()) } }
+        .stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+    private val validUserIgnores = userIgnores
+        .map { ignores -> ignores.filter { it.enabled && it.username.isNotBlank() } }
+        .stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
 
     fun applyIgnores(message: Message): Message? {
         return when (message) {
@@ -89,6 +97,10 @@ class IgnoresRepository @Inject constructor(
 
         runCatching {
             val blocks = apiManager.getUserBlocks(id) ?: return@withContext
+            if (blocks.data.isEmpty()) {
+                _twitchBlocks.update { emptySet() }
+                return@withContext
+            }
             val userIds = blocks.data.map { it.id }
             val users = apiManager.getUsersByIds(userIds) ?: return@withContext
             val twitchBlocks = users.map { user ->
@@ -178,13 +190,13 @@ class IgnoresRepository @Inject constructor(
     }
 
     private fun UserNoticeMessage.applyIgnores(): UserNoticeMessage? {
-        val enabledMessageIgnores = messageIgnores.value.filter { it.enabled }
+        val messageIgnores = validMessageIgnores.value
 
-        if (isSub && enabledMessageIgnores.areSubsIgnored) {
+        if (isSub && messageIgnores.areSubsIgnored) {
             return null
         }
 
-        if (isAnnouncement && enabledMessageIgnores.areAnnouncementsIgnored) {
+        if (isAnnouncement && messageIgnores.areAnnouncementsIgnored) {
             return null
         }
 
@@ -194,25 +206,25 @@ class IgnoresRepository @Inject constructor(
     }
 
     private fun PrivMessage.applyIgnores(): PrivMessage? {
-        val enabledMessageIgnores = messageIgnores.value.filter { it.enabled }
+        val messageIgnores = validMessageIgnores.value
 
-        if (isSub && enabledMessageIgnores.areSubsIgnored) {
+        if (isSub && messageIgnores.areSubsIgnored) {
             return null
         }
 
-        if (isAnnouncement && enabledMessageIgnores.areAnnouncementsIgnored) {
+        if (isAnnouncement && messageIgnores.areAnnouncementsIgnored) {
             return null
         }
 
-        if (isReward && enabledMessageIgnores.areRewardsIgnored) {
+        if (isReward && messageIgnores.areRewardsIgnored) {
             return null
         }
 
-        if (isElevatedMessage && enabledMessageIgnores.areElevatedMessagesIgnored) {
+        if (isElevatedMessage && messageIgnores.areElevatedMessagesIgnored) {
             return null
         }
 
-        if (isFirstMessage && enabledMessageIgnores.areFirstMessagesIgnored) {
+        if (isFirstMessage && messageIgnores.areFirstMessagesIgnored) {
             return null
         }
 
@@ -220,7 +232,7 @@ class IgnoresRepository @Inject constructor(
             return null
         }
 
-        enabledMessageIgnores
+        messageIgnores
             .isIgnoredMessageWithReplacement(message) { replacement ->
                 return replacement?.let { copy(message = it) }
             }
@@ -229,8 +241,8 @@ class IgnoresRepository @Inject constructor(
     }
 
     private fun PointRedemptionMessage.applyIgnores(): PointRedemptionMessage? {
-        val redemptionsIgnored = messageIgnores.value
-            .any { it.enabled && it.type == MessageIgnoreEntityType.ChannelPointRedemption }
+        val redemptionsIgnored = validMessageIgnores.value
+            .any { it.type == MessageIgnoreEntityType.ChannelPointRedemption }
 
         if (redemptionsIgnored) {
             return null
@@ -244,8 +256,7 @@ class IgnoresRepository @Inject constructor(
             return null
         }
 
-        messageIgnores.value
-            .filter { it.enabled }
+        validMessageIgnores.value
             .isIgnoredMessageWithReplacement(message) { replacement ->
                 return when (replacement) {
                     null -> null
@@ -276,8 +287,7 @@ class IgnoresRepository @Inject constructor(
     }
 
     private fun isIgnoredUsername(name: String): Boolean {
-        userIgnores.value
-            .filter { it.enabled }
+        validUserIgnores.value
             .forEach {
                 val hasMatch = when {
                     it.isRegex -> it.regex?.let { regex -> name.matches(regex) } ?: false

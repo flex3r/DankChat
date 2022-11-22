@@ -48,7 +48,7 @@ fun List<ChatItem>.replaceWithTimeOut(id: String): List<ChatItem> = toMutableLis
     for (idx in indices) {
         val item = this[idx]
         if (item.message is PrivMessage && item.message.id == id) {
-            this[idx] = item.copy(message = item.message.copy(timedOut = true))
+            this[idx] = item.copy(message = item.message.copy(timedOut = true), isCleared = true)
             break
         }
     }
