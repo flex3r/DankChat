@@ -3,6 +3,7 @@ package com.flxrs.dankchat.data.repo
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.util.LruCache
+import androidx.annotation.VisibleForTesting
 import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.data.api.dto.*
 import com.flxrs.dankchat.data.twitch.badge.Badge
@@ -351,7 +352,8 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
         )
     }.orEmpty()
 
-    private fun adjustOverlayEmotes(message: String, emotes: List<ChatMessageEmote>): Pair<String, List<ChatMessageEmote>> {
+    @VisibleForTesting
+    fun adjustOverlayEmotes(message: String, emotes: List<ChatMessageEmote>): Pair<String, List<ChatMessageEmote>> {
         var adjustedMessage = message
         val adjustedEmotes = emotes.sortedBy { it.position.first }
 
@@ -360,11 +362,23 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
 
             if (emote.isOverlayEmote) {
                 var foundEmote = false
+                var distanceToRegularEmote = 1 // initial space
                 // first, iterate over previous emotes until a regular emote is found
                 for (j in i - 1 downTo 0) {
                     val previousEmote = adjustedEmotes[j]
                     if (previousEmote.isOverlayEmote) {
+                        distanceToRegularEmote += previousEmote.code.length + 1 // emote code + space
                         continue
+                    }
+
+                    val actualDistanceToRegularEmote = emote.position.first - previousEmote.position.last
+
+                    // The "distance" between the found non-overlay emote and the current overlay emote does not match the expected, valid distance
+                    // This means, that there are non-emote "words" in-between and we should not adjust this overlay emote
+                    // Example: FeelsDankMan asd cvHazmat RainTime
+                    // actualDistanceToRegularEmote = 14 != distanceToRegularEmote = 10 -> break
+                    if (actualDistanceToRegularEmote != distanceToRegularEmote) {
+                        break
                     }
 
                     adjustedMessage = when (emote.position.last) {

@@ -152,8 +152,11 @@ dependencies {
     implementation "io.ktor:ktor-serialization-kotlinx-json:$ktor_version"
 
     // Test
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-    testImplementation "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_ersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:$junit_ersion"
+    testImplementation "io.mockk:mockk:$mockk_version"
+    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+
 
 // Localization
 //    implementation "com.github.crowdin.mobile-sdk-android:sdk:$crowdin_version"
