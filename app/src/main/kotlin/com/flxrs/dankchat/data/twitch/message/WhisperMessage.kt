@@ -5,7 +5,7 @@ import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.connection.WhisperData
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
-import com.flxrs.dankchat.preferences.userdisplay.UserFinalizedDisplay
+import com.flxrs.dankchat.preferences.userdisplay.UserDisplayDto
 import java.util.*
 
 data class WhisperMessage(
@@ -27,20 +27,12 @@ data class WhisperMessage(
     val originalMessage: String = message,
     val emotes: List<ChatMessageEmote> = emptyList(),
     val badges: List<Badge> = emptyList(),
-    val userDisplay: UserFinalizedDisplay? = null,
-    val recipientDisplay: UserFinalizedDisplay? = null
+    val userDisplay: UserDisplayDto? = null,
+    val recipientDisplay: UserDisplayDto? = null
 ) : Message() {
 
     override val emoteData: EmoteData = EmoteData(message, channel = "", emoteTag = rawEmotes)
     override val badgeData: BadgeData = BadgeData(userId, channel = "", badgeTag = rawBadges, badgeInfoTag = rawBadgeInfo)
-
-    // final (effective) name/color to be shown, according to override logic
-    val finalName: String get() = userDisplay?.username ?: name
-    val finalDisplayName: String get() = userDisplay?.displayName ?: displayName
-    val finalColor: Int get() = userDisplay?.color ?: color
-    val finalRecipientName: String get() = recipientDisplay?.username ?: recipientName
-    val finalRecipientDisplayName: String get() = recipientDisplay?.displayName ?: recipientDisplayName
-    val finalRecipientColor: Int get() = recipientDisplay?.color ?: recipientColor
 
     companion object {
         fun parseFromIrc(ircMessage: IrcMessage, recipientName: String, recipientColor: String?): WhisperMessage = with(ircMessage) {

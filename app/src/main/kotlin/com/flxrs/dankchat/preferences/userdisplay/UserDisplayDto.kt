@@ -1,7 +1,12 @@
+@file:OptIn(ExperimentalContracts::class)
+
 package com.flxrs.dankchat.preferences.userdisplay
 
+import android.graphics.Color
 import com.flxrs.dankchat.data.database.UserDisplayEntity
 import kotlinx.serialization.Serializable
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 @Serializable
 data class UserDisplayDto(val id: Int, val username: String, val colorHex: String, val alias: String) {
@@ -13,4 +18,33 @@ data class UserDisplayDto(val id: Int, val username: String, val colorHex: Strin
     }
 
     fun toEntity() = UserDisplayEntity(id = id, targetUser = username, colorHex = colorHex, alias = alias)
+
+    val color: Int?
+        get() = if (hasColor()) kotlin.runCatching { Color.parseColor(colorHex) }.getOrNull() else null
+}
+
+// these are defined as extension type to allow convenient checking even the object is null
+/** return whether alias is set, (i.e not empty), calling on null will return false */
+fun UserDisplayDto?.hasAlias(): Boolean {
+    contract {
+        returns(true) implies (this@hasAlias != null)
+    }
+    if (this == null) return false
+    return alias.isNotEmpty()
+}
+
+/** simply fallback logic to use `fallback` if alias is not set */
+fun UserDisplayDto?.nameIfEmpty(fallback: String): String {
+    return if (hasAlias()) alias else fallback
+}
+
+/** return whether color is set, (i.e not empty), calling on null will return false.
+ * Note that this method does NOT check if the color is valid
+ * */
+fun UserDisplayDto?.hasColor(): Boolean {
+    contract {
+        returns(true) implies (this@hasColor != null)
+    }
+    if (this == null) return false
+    return colorHex.isNotEmpty()
 }

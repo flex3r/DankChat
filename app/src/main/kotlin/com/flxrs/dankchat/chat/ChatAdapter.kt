@@ -39,6 +39,8 @@ import com.flxrs.dankchat.data.twitch.badge.BadgeType
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.data.twitch.message.*
 import com.flxrs.dankchat.databinding.ChatItemBinding
+import com.flxrs.dankchat.preferences.userdisplay.hasAlias
+import com.flxrs.dankchat.preferences.userdisplay.nameIfEmpty
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.extensions.*
 import com.flxrs.dankchat.utils.showErrorDialog
@@ -239,10 +241,11 @@ class ChatAdapter(
         // TODO localize
         val systemMessageText = when {
             message.isFullChatClear -> "Chat has been cleared by a moderator."
-            message.isBan           -> "${message.targetUser} has been permanently banned"
+            // why is targetUser can be null?
+            message.isBan           -> "${message.userDisplay.nameIfEmpty(message.targetUser ?: "A user")} has been permanently banned"
             else                    -> {
                 val countOrBlank = if (count > 1) " ($count times)" else ""
-                "${message.targetUser} has been timed out for ${DateTimeUtils.formatSeconds(message.duration)}.$countOrBlank"
+                "${message.userDisplay.nameIfEmpty(message.targetUser ?: "A user")} has been timed out for ${DateTimeUtils.formatSeconds(message.duration)}.$countOrBlank"
             }
         }
         val withTime = when {
@@ -277,7 +280,9 @@ class ChatAdapter(
                 when {
                     message.requiresUserInput -> append("Redeemed ")
                     else                      -> {
-                        bold { append(message.displayName) }
+                        bold {
+                            append(message.userDisplay.nameIfEmpty(message.displayName))
+                        }
                         append(" redeemed ")
                     }
                 }
@@ -330,11 +335,13 @@ class ChatAdapter(
         setRippleBackground(background, enableRipple = true)
 
         val fullName = when {
+            userDisplay.hasAlias()         -> userDisplay.alias
             displayName.equals(name, true) -> displayName
             else                           -> "$name($displayName)"
         }
 
         val fullRecipientName = when {
+            recipientDisplay.hasAlias()                      -> recipientDisplay.alias
             recipientDisplayName.equals(recipientName, true) -> recipientDisplayName
             else                                             -> "$recipientName($recipientDisplayName)"
         }
@@ -531,6 +538,7 @@ class ChatAdapter(
         }
 
         val fullName = when {
+            userDisplay.hasAlias()         -> userDisplay.alias
             displayName.equals(name, true) -> displayName
             else                           -> "$name($displayName)"
         }

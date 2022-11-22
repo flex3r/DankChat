@@ -1,7 +1,7 @@
 package com.flxrs.dankchat.data.twitch.message
 
 import com.flxrs.dankchat.data.irc.IrcMessage
-import com.flxrs.dankchat.preferences.userdisplay.UserFinalizedDisplay
+import com.flxrs.dankchat.preferences.userdisplay.UserDisplayDto
 import java.util.*
 
 data class ClearChatMessage(
@@ -12,14 +12,10 @@ data class ClearChatMessage(
     val targetUser: String? = null,
     val duration: String = "",
     val stackCount: Int = 0,
-    val userDisplay: UserFinalizedDisplay? = null,
+    val userDisplay: UserDisplayDto? = null,
 ) : Message() {
     val isBan = duration.isBlank()
     val isFullChatClear = targetUser == null
-
-    // final (effective) name/color to be shown, according to override logic
-    val finalName: String? get() = userDisplay?.username ?: targetUser
-    val finalDisplayName: String get() = userDisplay?.displayName ?: ""
 
     companion object {
         fun parseClearChat(message: IrcMessage): ClearChatMessage = with(message) {
