@@ -356,8 +356,8 @@
     </plurals>
     <string name="custom_user_display_title">Custom User Display</string>
     <string name="preference_custom_user_display_key">custom_user_display_key</string>
-    <string name="user_display_item_username_hint">Target Username</string>
-    <string name="user_display_item_color_hint">Color</string>
+    <string name="user_display_item_username_hint">Username</string>
+    <string name="user_display_item_color_hint">Color (Optional)</string>
     <string name="remove_custom_user_display">Remove Custom User Display</string>
     <string name="user_display_alias_input">Alias (Optional)</string>
 </resources>
