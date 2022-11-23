@@ -31,11 +31,18 @@ data class MessageIgnoreEntity(
             }
             when {
                 isRegex -> pattern.toRegex(options)
-                else    -> """(?<!\w)$pattern(?!\w)""".toRegex(options)
+                else    -> """(?<!\w)${Regex.escape(pattern)}(?!\w)""".toRegex(options)
             }
         }.getOrElse {
             Log.e(TAG, "Failed to create regex for pattern $pattern", it)
             null
+        }
+    }
+
+    @delegate:Ignore
+    val escapedReplacement: String? by lazy {
+        replacement?.let {
+            Regex.escapeReplacement(it)
         }
     }
 

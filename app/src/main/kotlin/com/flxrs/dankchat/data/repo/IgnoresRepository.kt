@@ -6,7 +6,6 @@ import android.util.Log
 import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.data.database.dao.MessageIgnoreDao
 import com.flxrs.dankchat.data.database.dao.UserIgnoreDao
-import com.flxrs.dankchat.data.database.entity.MessageHighlightEntityType
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntity
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntityType
 import com.flxrs.dankchat.data.database.entity.UserIgnoreEntity
@@ -302,18 +301,18 @@ class IgnoresRepository @Inject constructor(
         return false
     }
 
-    private inline fun List<MessageIgnoreEntity>.isIgnoredMessageWithReplacement(message: String, replacement: (String?) -> Unit) {
+    private inline fun List<MessageIgnoreEntity>.isIgnoredMessageWithReplacement(message: String, onReplacement: (String?) -> Unit) {
         filter { it.type == MessageIgnoreEntityType.Custom }
-            .forEach {
-                val regex = it.regex ?: return@forEach
+            .forEach { ignoreEntity ->
+                val regex = ignoreEntity.regex ?: return@forEach
 
                 if (message.contains(regex)) {
-                    if (it.replacement != null) {
-                        val filteredMessage = message.replace(regex, it.replacement)
-                        return replacement(filteredMessage)
+                    ignoreEntity.escapedReplacement?.let { replacement ->
+                        val filteredMessage = message.replace(regex, replacement)
+                        return onReplacement(filteredMessage)
                     }
 
-                    return replacement(null)
+                    return onReplacement(null)
                 }
             }
     }
