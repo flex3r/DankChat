@@ -171,14 +171,21 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
                 setContentView(binding.root)
                 setOnDismissListener {
                     lifecycleScope.launch {
+                        var hasAddedOrDeleted = false
                         val entries = userDisplayAdapter.entries
                             .filterIsInstance<UserDisplayItem.Entry>() // filter out "AddEntry"
                             .map { it.toDto() }
-                            .also { userDisplayRepository.addUserDisplays(it) }
+                            .also {
+                                userDisplayRepository.addUserDisplays(it)
+                                if (it.any { entry -> entry.id == 0 }) hasAddedOrDeleted = true
+
+                            }
 
                         val idAfter = entries.map { it.id }.toSet()
                         val deletedIds = idBefore.subtract(idAfter).toList()
                         userDisplayRepository.deleteByIds(deletedIds)
+                        if (deletedIds.isNotEmpty()) hasAddedOrDeleted = true
+                        if (hasAddedOrDeleted) view?.showRestartRequired()
                     }
                 }
                 behavior.isFitToContents = false
