@@ -362,11 +362,12 @@ class ChatAdapter(
             spannable.length - 2 to spannable.length - 1
         }
 
-        val normalizedColor = userDisplay.colorIfEmpty(color).normalizeColor(background)
+        // it's intened to NOT normalize color if custom value is set
+        val normalizedColor = userDisplay.colorIfEmpty(color.normalizeColor(background))
         spannable.bold { color(normalizedColor) { append(fullName) } }
         spannable.append(" -> ")
 
-        val normalizedRecipientColor = recipientDisplay.colorIfEmpty(recipientColor).normalizeColor(background)
+        val normalizedRecipientColor = recipientDisplay.colorIfEmpty(recipientColor.normalizeColor(background))
         spannable.bold { color(normalizedRecipientColor) { append(fullRecipientName) } }
         spannable.append(": ")
         spannable.append(message)
@@ -571,7 +572,7 @@ class ChatAdapter(
             spannable.length - 2 to spannable.length - 1
         }
 
-        val normalizedColor = userDisplay.colorIfEmpty(color).normalizeColor(background = bgColor)
+        val normalizedColor = userDisplay.colorIfEmpty(color.normalizeColor(background = bgColor))
         spannable.bold { color(normalizedColor) { append(fullDisplayName) } }
 
         when {
