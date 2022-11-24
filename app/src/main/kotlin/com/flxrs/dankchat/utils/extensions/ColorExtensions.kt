@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.utils.extensions
 
 import android.content.Context
+import android.graphics.Color
 import androidx.annotation.ColorInt
 import androidx.core.graphics.ColorUtils
 import com.google.android.material.color.MaterialColors
@@ -47,8 +48,19 @@ fun Int.normalizeColor(@ColorInt background: Int): Int {
 fun Int.harmonize(context: Context): Int = MaterialColors.harmonizeWithPrimary(context, this)
 
 
+/** helper to extract only RGB part (i.e. drop the alpha part) */
+fun Int.onlyRGB(): Int = this and 0xffffff
+
 /** convert int to RGB with zero pad */
-fun Int.toHexCode(): String = Integer.toHexString(this and 0xffffff).padStart(6, '0')
+fun Int.toHexCode(): String = Integer.toHexString(this.onlyRGB()).padStart(6, '0')
 
 /** convert RGB color (0xffffff) to ARGB with alpha */
-fun Int.toARGBInt(alpha: Int = 255): Int = (alpha shl 24) or this
+fun Int.toARGBInt(alpha: Int = 255): Int = (alpha shl 24) or this.onlyRGB()
+
+
+/** find best contrast text to display on specified background color (whtie or black) -- opacity ignored */
+fun Int.getContrastTextColor(): Int {
+    val possibleColors = listOf(Color.BLACK, Color.WHITE)
+    val colorOpaque = this.toARGBInt()
+    return possibleColors.maxBy { ColorUtils.calculateContrast(it, colorOpaque) }
+}

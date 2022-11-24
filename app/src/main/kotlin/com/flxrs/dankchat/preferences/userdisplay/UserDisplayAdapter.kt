@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.AddItemBinding
 import com.flxrs.dankchat.databinding.UserDisplayItemBinding
+import com.flxrs.dankchat.utils.extensions.getContrastTextColor
 import com.flxrs.dankchat.utils.extensions.toARGBInt
 import com.flxrs.dankchat.utils.extensions.toHexCode
 import com.google.android.material.button.MaterialButton
@@ -61,7 +62,7 @@ class UserDisplayAdapter(val entries: MutableList<UserDisplayItem>) : RecyclerVi
     @SuppressLint("SetTextI18n")
     private fun MaterialButton.setColorAndBg(colorRGB: Int) {
         text = "#" + colorRGB.toHexCode()
-        setTextColor((0xffffff xor colorRGB).toARGBInt()) // TODO: just invert for now
+        setTextColor(colorRGB.toARGBInt().getContrastTextColor())
         setBackgroundColor(colorRGB.toARGBInt())
     }
 
