@@ -52,7 +52,6 @@
                     android:imeOptions="actionNext"
                     android:inputType="text"
                     android:singleLine="true"
-                    android:enabled="@{userDisplay.enabled}"
                     android:text="@={userDisplay.username}" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -90,8 +89,7 @@
                 app:layout_constraintEnd_toStartOf="@id/user_display_pick_color_button"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/entry_header_end"
-                android:enabled="@{userDisplay.enabled}" />
+                app:layout_constraintTop_toBottomOf="@id/entry_header_end" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/user_display_pick_color_button"
@@ -99,7 +97,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:textSize="18sp"
-                android:enabled="@{userDisplay.enabled}"
                 android:layout_marginVertical="4dp"
                 app:layout_constraintBottom_toBottomOf="@id/user_display_enable_color"
                 app:layout_constraintStart_toEndOf="@id/user_display_enable_color"
@@ -126,7 +123,6 @@
                 app:layout_constraintEnd_toStartOf="@id/user_display_alias_input"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="parent"
-                android:enabled="@{userDisplay.enabled}"
                 app:layout_constraintTop_toBottomOf="@id/entry_color_end" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -137,7 +133,6 @@
                 android:layout_marginVertical="4dp"
                 android:layout_marginStart="16dp"
                 android:hint="@string/user_display_alias_input"
-                android:enabled="@{userDisplay.enabled}"
                 app:endIconMode="clear_text"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
