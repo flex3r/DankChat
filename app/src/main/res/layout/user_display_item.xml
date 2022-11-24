@@ -89,8 +89,7 @@
                 app:layout_constraintEnd_toStartOf="@id/user_display_color_input"
                 style="@style/Widget.Material3.CompoundButton.CheckBox"
                 app:layout_constraintHorizontal_bias="0"
-                android:text="@string/user_display_custom_color_enable"
-                android:checked="@={userDisplay.colorEnabled}" />
+                android:text="@string/user_display_custom_color_enable" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/user_display_color_input"
@@ -131,8 +130,7 @@
                 app:layout_constraintEnd_toStartOf="@id/user_display_alias_input"
                 style="@style/Widget.Material3.CompoundButton.CheckBox"
                 app:layout_constraintHorizontal_bias="0"
-                android:text="@string/user_display_custom_alias_enable"
-                android:checked="@={userDisplay.aliasEnabled}" />
+                android:text="@string/user_display_custom_alias_enable" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/user_display_alias_input"

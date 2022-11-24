@@ -1,8 +1,8 @@
 package com.flxrs.dankchat.preferences.userdisplay
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.databinding.AddItemBinding
 import com.flxrs.dankchat.databinding.UserDisplayItemBinding
@@ -17,19 +17,19 @@ class UserDisplayAdapter(val entries: MutableList<UserDisplayItem>) : RecyclerVi
             }
             (binding.userDisplayEnableColor).apply {
                 setOnCheckedChangeListener { _, checked ->
-                    binding.userDisplayColorInput.setVisible(checked)
+                    val item = binding.userDisplay ?: return@setOnCheckedChangeListener
+                    item.colorEnabled = checked
+                    binding.userDisplayColorInput.isVisible = checked
                 }
             }
             (binding.userDisplayEnableAlias).apply {
                 setOnCheckedChangeListener { _, checked ->
-                    binding.userDisplayAliasInput.setVisible(checked)
+                    val item = binding.userDisplay ?: return@setOnCheckedChangeListener
+                    item.aliasEnabled = checked
+                    binding.userDisplayAliasInput.isVisible = checked
                 }
             }
         }
-    }
-
-    private fun View.setVisible(visible: Boolean) {
-        visibility = if (visible) View.VISIBLE else View.GONE
     }
 
     // stolen UI lule
@@ -60,6 +60,10 @@ class UserDisplayAdapter(val entries: MutableList<UserDisplayItem>) : RecyclerVi
             is EntryViewHolder -> {
                 val entry = entries[position] as UserDisplayItem.Entry
                 holder.binding.userDisplay = entry
+                holder.binding.userDisplayEnableColor.isChecked = entry.colorEnabled
+                holder.binding.userDisplayColorInput.isVisible = entry.colorEnabled
+                holder.binding.userDisplayEnableAlias.isChecked = entry.aliasEnabled
+                holder.binding.userDisplayAliasInput.isVisible = entry.aliasEnabled
             }
         }
     }
