@@ -360,4 +360,6 @@
     <string name="user_display_item_color_hint">Color (Optional)</string>
     <string name="remove_custom_user_display">Remove Custom User Display</string>
     <string name="user_display_alias_input">Alias (Optional)</string>
+    <string name="user_display_custom_color_enable">Custom Color</string>
+    <string name="user_display_custom_alias_enable">Custom Alias</string>
 </resources>

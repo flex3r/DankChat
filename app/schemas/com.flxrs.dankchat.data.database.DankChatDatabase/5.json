@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 5,
-    "identityHash": "b13fb43f759ea0b36736d7afd5922c47",
+    "identityHash": "096a5fea9e10ee17c0d2bf619aa3f081",
     "entities": [
       {
         "tableName": "emote_usage",
@@ -309,7 +309,7 @@
       },
       {
         "tableName": "user_display",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `target_user` TEXT NOT NULL, `color_hex` TEXT, `alias` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `target_user` TEXT NOT NULL, `enabled` INTEGER NOT NULL, `color_enabled` INTEGER NOT NULL, `color_hex` TEXT, `aliasEnabled` INTEGER NOT NULL, `alias` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -324,10 +324,28 @@
             "notNull": true
           },
           {
+            "fieldPath": "enabled",
+            "columnName": "enabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "colorEnabled",
+            "columnName": "color_enabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "colorHex",
             "columnName": "color_hex",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "aliasEnabled",
+            "columnName": "aliasEnabled",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "alias",
@@ -349,7 +367,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b13fb43f759ea0b36736d7afd5922c47')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '096a5fea9e10ee17c0d2bf619aa3f081')"
     ]
   }
 }

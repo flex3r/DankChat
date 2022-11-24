@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.preferences.userdisplay
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.databinding.AddItemBinding
@@ -14,7 +15,21 @@ class UserDisplayAdapter(val entries: MutableList<UserDisplayItem>) : RecyclerVi
                 entries.removeAt(bindingAdapterPosition)
                 notifyItemRemoved(bindingAdapterPosition)
             }
+            (binding.userDisplayEnableColor).apply {
+                setOnCheckedChangeListener { _, checked ->
+                    binding.userDisplayColorInput.setVisible(checked)
+                }
+            }
+            (binding.userDisplayEnableAlias).apply {
+                setOnCheckedChangeListener { _, checked ->
+                    binding.userDisplayAliasInput.setVisible(checked)
+                }
+            }
         }
+    }
+
+    private fun View.setVisible(visible: Boolean) {
+        visibility = if (visible) View.VISIBLE else View.GONE
     }
 
     // stolen UI lule

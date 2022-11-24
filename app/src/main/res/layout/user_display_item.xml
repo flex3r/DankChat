@@ -9,94 +9,155 @@
             type="com.flxrs.dankchat.preferences.userdisplay.UserDisplayItem.Entry" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardCornerRadius="4dp">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/user_display_user_input"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="4dp"
-            android:layout_marginStart="16dp"
-            android:hint="@string/user_display_item_username_hint"
-            app:endIconMode="clear_text"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/user_display_color_input"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:padding="8dp"
+            android:layout_height="wrap_content">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/user_display_user_input"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionNext"
-                android:inputType="text"
-                android:singleLine="true"
-                android:text="@={userDisplay.username}" />
+                android:layout_marginVertical="4dp"
+                android:layout_marginStart="0dp"
+                android:hint="@string/user_display_item_username_hint"
+                app:endIconMode="clear_text"
+                app:layout_constraintEnd_toStartOf="@id/user_display_enable"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:text="@={userDisplay.username}" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/user_display_color_input"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="4dp"
-            android:layout_marginStart="16dp"
-            android:hint="@string/user_display_item_color_hint"
-            app:endIconMode="clear_text"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/user_display_alias_input"
-            app:layout_constraintStart_toEndOf="@id/user_display_user_input"
-            app:layout_constraintBottom_toBottomOf="parent">
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/user_display_enable"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionNext"
-                android:inputType="text"
-                android:singleLine="true"
-                android:text="@={userDisplay.colorHex}" />
-        </com.google.android.material.textfield.TextInputLayout>
+                style="@style/Widget.Material3.CompoundButton.CheckBox"
+                app:layout_constraintTop_toTopOf="@+id/user_display_user_input"
+                app:layout_constraintBottom_toBottomOf="@+id/user_display_user_input"
+                app:layout_constraintStart_toEndOf="@id/user_display_user_input"
+                app:layout_constraintEnd_toStartOf="@id/user_delete"
+                android:layout_marginHorizontal="8dp"
+                android:text="@string/enabled"
+                android:checked="@={userDisplay.enabled}" />
 
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/user_display_alias_input"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="4dp"
-            android:layout_marginStart="16dp"
-            android:hint="@string/user_display_alias_input"
-            app:endIconMode="clear_text"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/user_delete"
-            app:layout_constraintStart_toEndOf="@id/user_display_color_input"
-            app:layout_constraintBottom_toBottomOf="parent">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
+            <ImageView
+                android:id="@+id/user_delete"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionNext"
-                android:inputType="text"
-                android:singleLine="true"
-                android:text="@={userDisplay.alias}" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginHorizontal="16dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:contentDescription="@string/remove_custom_user_display"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintTop_toTopOf="@id/user_display_user_input"
+                app:layout_constraintBottom_toBottomOf="@id/user_display_user_input"
+                app:layout_constraintStart_toEndOf="@id/user_display_enable"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:srcCompat="@drawable/ic_clear"
+                android:layout_marginStart="8dp"
+                app:tint="?colorControlNormal" />
 
-        <ImageView
-            android:id="@+id/user_delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:background="?selectableItemBackgroundBorderless"
-            android:contentDescription="@string/remove_custom_user_display"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintBottom_toBottomOf="@id/user_display_color_input"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/user_display_user_input"
-            app:srcCompat="@drawable/ic_clear"
-            app:tint="?colorOnSurface" />
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/entry_header_end"
+                app:barrierDirection="bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="user_display_user_input,user_display_enable,user_delete" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/user_display_enable_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/entry_header_end"
+                app:layout_constraintBottom_toBottomOf="@id/entry_color_end"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/user_display_color_input"
+                style="@style/Widget.Material3.CompoundButton.CheckBox"
+                app:layout_constraintHorizontal_bias="0"
+                android:text="@string/user_display_custom_color_enable"
+                android:checked="@={userDisplay.colorEnabled}" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/user_display_color_input"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="4dp"
+                android:layout_marginStart="16dp"
+                android:hint="@string/user_display_item_color_hint"
+                app:endIconMode="clear_text"
+                app:layout_constraintTop_toBottomOf="@id/user_display_user_input"
+                app:layout_constraintStart_toEndOf="@id/user_display_enable_color"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:text="@={userDisplay.colorHex}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/entry_color_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="user_display_enable_color,user_display_color_input" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/user_display_enable_alias"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/entry_color_end"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/user_display_alias_input"
+                style="@style/Widget.Material3.CompoundButton.CheckBox"
+                app:layout_constraintHorizontal_bias="0"
+                android:text="@string/user_display_custom_alias_enable"
+                android:checked="@={userDisplay.aliasEnabled}" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/user_display_alias_input"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="4dp"
+                android:layout_marginStart="16dp"
+                android:hint="@string/user_display_alias_input"
+                app:endIconMode="clear_text"
+                app:layout_constraintTop_toTopOf="@id/entry_color_end"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/user_display_enable_alias"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:text="@={userDisplay.alias}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 </layout>

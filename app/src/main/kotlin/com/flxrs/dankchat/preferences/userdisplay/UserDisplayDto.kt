@@ -10,28 +10,71 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 @Serializable
-data class UserDisplayDto(val id: Int, val username: String, val colorHex: String, val alias: String) {
+data class UserDisplayDto(
+    val id: Int,
+    val username: String,
+    val enabled: Boolean,
+    val colorEnabled: Boolean,
+    val colorHex: String,
+    val aliasEnabled: Boolean,
+    val alias: String,
+) {
     companion object {
-        // when entering text, it's possible that there is leading/trailing whitespace due to user's keyboard inserting space after word, trim them
-        fun UserDisplayItem.Entry.toDto() = UserDisplayDto(id, username.trim(), colorHex.trim(), alias.trim())
-        fun UserDisplayDto.toEntryItem() = UserDisplayItem.Entry(id, username, colorHex, alias)
-        fun UserDisplayEntity.toDto() = UserDisplayDto(id = id, username = targetUser, colorHex = colorHex.orEmpty(), alias = alias.orEmpty())
+        fun UserDisplayItem.Entry.toDto() = UserDisplayDto(
+            id = id,
+            // trim input entries (especially important for username matching)
+            username = username.trim(),
+            enabled = enabled,
+            colorEnabled = colorEnabled,
+            colorHex = colorHex.trim(),
+            aliasEnabled = aliasEnabled,
+            alias = alias.trim(),
+        )
+
+        fun UserDisplayDto.toEntryItem() = UserDisplayItem.Entry(
+            id = id,
+            username = username,
+            enabled = enabled,
+            colorEnabled = colorEnabled,
+            colorHex = colorHex,
+            aliasEnabled = aliasEnabled,
+            alias = alias,
+        )
+
+        fun UserDisplayEntity.toDto() = UserDisplayDto(
+            id = id,
+            username = targetUser,
+            enabled = enabled,
+            colorEnabled = colorEnabled,
+            colorHex = colorHex.orEmpty(),
+            aliasEnabled = aliasEnabled,
+            alias = alias.orEmpty()
+        )
     }
 
-    fun toEntity() = UserDisplayEntity(id = id, targetUser = username, colorHex = colorHex, alias = alias)
+    fun toEntity() = UserDisplayEntity(
+        id = id,
+        targetUser = username,
+        enabled = enabled,
+        colorEnabled = colorEnabled,
+        colorHex = colorHex,
+        aliasEnabled = aliasEnabled,
+        alias = alias
+    )
 
     val color: Int?
         get() = if (hasColor()) kotlin.runCatching { Color.parseColor(colorHex) }.getOrNull() else null
 }
 
 // these are defined as extension type to allow convenient checking even the object is null
-/** return whether alias is set, (i.e not empty), calling on null will return false */
+/** return whether alias is set, and enabled
+ * calling on null will return false */
 fun UserDisplayDto?.hasAlias(): Boolean {
     contract {
         returns(true) implies (this@hasAlias != null)
     }
     if (this == null) return false
-    return alias.isNotEmpty()
+    return enabled && aliasEnabled && alias.isNotEmpty()
 }
 
 /** return this object's alias if has set, otherwise, fallback */
@@ -39,10 +82,10 @@ fun UserDisplayDto?.nameIfEmpty(fallback: String): String {
     return if (hasAlias()) alias else fallback
 }
 
-/** return this object's color if it has set and valid, otherwise, fallback */
+/** return this object's color if it enabled, hasSet and valid, otherwise, fallback */
 @ColorInt
 fun UserDisplayDto?.colorIfEmpty(@ColorInt fallback: Int): Int {
-    return this?.color ?: fallback
+    return if (hasColor()) this.color ?: fallback else fallback
 }
 
 
@@ -54,5 +97,5 @@ fun UserDisplayDto?.hasColor(): Boolean {
         returns(true) implies (this@hasColor != null)
     }
     if (this == null) return false
-    return colorHex.isNotEmpty()
+    return enabled && colorEnabled && colorHex.isNotEmpty()
 }
