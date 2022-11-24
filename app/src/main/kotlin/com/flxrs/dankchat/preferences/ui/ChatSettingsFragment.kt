@@ -153,9 +153,9 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
         val peekHeight = (windowHeight * 0.6).roundToInt()
 
         lifecycleScope.launch {
-            val userDisplays = userDisplayRepository.getAllUserDisplays()
+            val userDisplays = listOf(UserDisplayItem.AddEntry) + userDisplayRepository.getAllUserDisplays()
                 .map { it.toEntryItem() }
-                .plus(UserDisplayItem.AddEntry)
+                .sortedByDescending { it.id } // preserve order: since new entries is added at the top of the list
             val idBefore = userDisplays.filterIsInstance<UserDisplayItem.Entry>().map { it.id }
 
 

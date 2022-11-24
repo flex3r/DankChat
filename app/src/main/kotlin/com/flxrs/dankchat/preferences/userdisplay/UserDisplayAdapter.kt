@@ -73,9 +73,9 @@ class UserDisplayAdapter(val entries: MutableList<UserDisplayItem>) : RecyclerVi
             binding.multiEntryAdd.setOnClickListener {
                 // ID 0, so that the create call generate the ID
                 val entry = UserDisplayItem.Entry(id = 0, username = "", color = 0, alias = "")
-                val index = entries.lastIndex
-                entries.add(index, entry)
-                notifyItemInserted(index)
+                // always put item below the add entry
+                entries.add(1, entry)
+                notifyItemInserted(1)
             }
         }
 
