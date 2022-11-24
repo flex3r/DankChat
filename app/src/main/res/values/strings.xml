@@ -357,9 +357,10 @@
     <string name="custom_user_display_title">Custom User Display</string>
     <string name="preference_custom_user_display_key">custom_user_display_key</string>
     <string name="user_display_item_username_hint">Username</string>
-    <string name="user_display_item_color_hint">Color (Optional)</string>
+    <string name="user_display_item_color_hint">Color</string>
     <string name="remove_custom_user_display">Remove Custom User Display</string>
-    <string name="user_display_alias_input">Alias (Optional)</string>
+    <string name="user_display_alias_input">Alias</string>
     <string name="user_display_custom_color_enable">Custom Color</string>
     <string name="user_display_custom_alias_enable">Custom Alias</string>
+    <string name="pick_custom_user_color_title">Pick custom user color</string>
 </resources>

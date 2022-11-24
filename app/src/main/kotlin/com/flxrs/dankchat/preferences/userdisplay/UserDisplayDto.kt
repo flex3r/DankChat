@@ -2,7 +2,6 @@
 
 package com.flxrs.dankchat.preferences.userdisplay
 
-import android.graphics.Color
 import androidx.annotation.ColorInt
 import com.flxrs.dankchat.data.database.UserDisplayEntity
 import kotlinx.serialization.Serializable
@@ -15,7 +14,7 @@ data class UserDisplayDto(
     val username: String,
     val enabled: Boolean,
     val colorEnabled: Boolean,
-    val colorHex: String,
+    val color: Int,
     val aliasEnabled: Boolean,
     val alias: String,
 ) {
@@ -26,7 +25,7 @@ data class UserDisplayDto(
             username = username.trim(),
             enabled = enabled,
             colorEnabled = colorEnabled,
-            colorHex = colorHex.trim(),
+            color = color,
             aliasEnabled = aliasEnabled,
             alias = alias.trim(),
         )
@@ -36,7 +35,7 @@ data class UserDisplayDto(
             username = username,
             enabled = enabled,
             colorEnabled = colorEnabled,
-            colorHex = colorHex,
+            color = color,
             aliasEnabled = aliasEnabled,
             alias = alias,
         )
@@ -46,7 +45,7 @@ data class UserDisplayDto(
             username = targetUser,
             enabled = enabled,
             colorEnabled = colorEnabled,
-            colorHex = colorHex.orEmpty(),
+            color = color,
             aliasEnabled = aliasEnabled,
             alias = alias.orEmpty()
         )
@@ -57,13 +56,10 @@ data class UserDisplayDto(
         targetUser = username,
         enabled = enabled,
         colorEnabled = colorEnabled,
-        colorHex = colorHex,
+        color = color,
         aliasEnabled = aliasEnabled,
         alias = alias
     )
-
-    val color: Int?
-        get() = if (hasColor()) kotlin.runCatching { Color.parseColor(colorHex) }.getOrNull() else null
 }
 
 // these are defined as extension type to allow convenient checking even the object is null
@@ -85,7 +81,7 @@ fun UserDisplayDto?.nameIfEmpty(fallback: String): String {
 /** return this object's color if it enabled, hasSet and valid, otherwise, fallback */
 @ColorInt
 fun UserDisplayDto?.colorIfEmpty(@ColorInt fallback: Int): Int {
-    return if (hasColor()) this.color ?: fallback else fallback
+    return if (hasColor()) color else fallback
 }
 
 
@@ -97,5 +93,5 @@ fun UserDisplayDto?.hasColor(): Boolean {
         returns(true) implies (this@hasColor != null)
     }
     if (this == null) return false
-    return enabled && colorEnabled && colorHex.isNotEmpty()
+    return enabled && colorEnabled
 }

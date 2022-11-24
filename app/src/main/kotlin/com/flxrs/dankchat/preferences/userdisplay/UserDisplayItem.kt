@@ -7,7 +7,7 @@ sealed class UserDisplayItem {
         var username: String,
         var enabled: Boolean = true,
         var colorEnabled: Boolean = false,
-        var colorHex: String = "",
+        var color: Int = 0,
         var aliasEnabled: Boolean = false,
         var alias: String = "",
     ) : UserDisplayItem()

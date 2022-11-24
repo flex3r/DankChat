@@ -1,25 +1,50 @@
 package com.flxrs.dankchat.preferences.userdisplay
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.AddItemBinding
 import com.flxrs.dankchat.databinding.UserDisplayItemBinding
+import com.flxrs.dankchat.utils.extensions.toARGBInt
+import com.flxrs.dankchat.utils.extensions.toHexCode
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.rarepebble.colorpicker.ColorPickerView
 
 class UserDisplayAdapter(val entries: MutableList<UserDisplayItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     inner class EntryViewHolder(val binding: UserDisplayItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.userDelete.setOnClickListener {
+            binding.userDisplayDelete.setOnClickListener {
                 entries.removeAt(bindingAdapterPosition)
                 notifyItemRemoved(bindingAdapterPosition)
+            }
+            binding.userDisplayPickColor.setOnClickListener {
+                val item = binding.userDisplay ?: return@setOnClickListener
+                val picker = ColorPickerView(binding.root.context)
+                picker.showAlpha(false)
+
+                picker.color = item.color.toARGBInt() // to correctly set initial alpha to 255
+                MaterialAlertDialogBuilder(binding.root.context)
+                    .setView(picker)
+                    .setTitle(binding.root.context.getString(R.string.pick_custom_user_color_title))
+                    .setNegativeButton(binding.root.context.getString(R.string.dialog_cancel)) { _, _ -> }
+                    .setPositiveButton(binding.root.context.getString(R.string.dialog_ok)) { _, _ ->
+                        val pickedColor = picker.color
+                        item.color = pickedColor
+                        binding.userDisplayPickColor.setColorAndBg(item.color)
+                    }
+                    .show()
             }
             (binding.userDisplayEnableColor).apply {
                 setOnCheckedChangeListener { _, checked ->
                     val item = binding.userDisplay ?: return@setOnCheckedChangeListener
                     item.colorEnabled = checked
-                    binding.userDisplayColorInput.isVisible = checked
+                    binding.userDisplayPickColor.isVisible = checked
+                    binding.userDisplayPickColor.setColorAndBg(item.color)
                 }
             }
             (binding.userDisplayEnableAlias).apply {
@@ -32,12 +57,19 @@ class UserDisplayAdapter(val entries: MutableList<UserDisplayItem>) : RecyclerVi
         }
     }
 
-    // stolen UI lule
+    /** set text, text color, background color to represent specified color */
+    @SuppressLint("SetTextI18n")
+    private fun MaterialButton.setColorAndBg(colorRGB: Int) {
+        text = "#" + colorRGB.toHexCode()
+        setTextColor((0xffffff xor colorRGB).toARGBInt()) // TODO: just invert for now
+        setBackgroundColor(colorRGB.toARGBInt())
+    }
+
     inner class AddItemViewHolder(val binding: AddItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.multiEntryAdd.setOnClickListener {
                 // ID 0, so that the create call generate the ID
-                val entry = UserDisplayItem.Entry(id = 0, username = "", colorHex = "#ff0000", alias = "")
+                val entry = UserDisplayItem.Entry(id = 0, username = "", color = 0, alias = "")
                 val index = entries.lastIndex
                 entries.add(index, entry)
                 notifyItemInserted(index)
@@ -61,9 +93,12 @@ class UserDisplayAdapter(val entries: MutableList<UserDisplayItem>) : RecyclerVi
                 val entry = entries[position] as UserDisplayItem.Entry
                 holder.binding.userDisplay = entry
                 holder.binding.userDisplayEnableColor.isChecked = entry.colorEnabled
-                holder.binding.userDisplayColorInput.isVisible = entry.colorEnabled
+                holder.binding.userDisplayPickColor.isVisible = entry.colorEnabled
                 holder.binding.userDisplayEnableAlias.isChecked = entry.aliasEnabled
                 holder.binding.userDisplayAliasInput.isVisible = entry.aliasEnabled
+
+                // DANK
+                holder.binding.userDisplayPickColor.setColorAndBg(entry.color)
             }
         }
     }

@@ -45,3 +45,10 @@ fun Int.normalizeColor(@ColorInt background: Int): Int {
 
 @ColorInt
 fun Int.harmonize(context: Context): Int = MaterialColors.harmonizeWithPrimary(context, this)
+
+
+/** convert int to RGB with zero pad */
+fun Int.toHexCode(): String = Integer.toHexString(this and 0xffffff).padStart(6, '0')
+
+/** convert RGB color (0xffffff) to ARGB with alpha */
+fun Int.toARGBInt(alpha: Int = 255): Int = (alpha shl 24) or this

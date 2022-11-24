@@ -59,3 +59,4 @@ inline fun <reified T> SavedStateHandle.withData(key: String, block: (T) -> Unit
 val isAtLeastTiramisu: Boolean by lazy { Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU }
 
 fun Context.hasPermission(permission: String): Boolean = ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED
+

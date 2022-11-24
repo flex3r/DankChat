@@ -10,13 +10,13 @@ data class UserDisplayEntity(
     @ColumnInfo(name = "target_user") val targetUser: String, // target user to apply the color and/or alias
     @ColumnInfo(name = "enabled") val enabled: Boolean,
     @ColumnInfo(name = "color_enabled") val colorEnabled: Boolean,
-    @ColumnInfo(name = "color_hex") val colorHex: String?, // effect color: leaving blank or invalid color will have no effect
+    @ColumnInfo(name = "color_hex") val color: Int,
     @ColumnInfo(name = "aliasEnabled") val aliasEnabled: Boolean,
     @ColumnInfo(name = "alias") val alias: String? // aliased name
 ) {
     companion object {
         /** make dummy entity with specified ID, useful for deleting by ID, values here doesn't matter at all*/
-        fun makeDummy(id: Int) = UserDisplayEntity(id = id, targetUser = "", enabled = false, colorEnabled = false, colorHex = "", aliasEnabled = false, alias = "")
+        fun makeDummy(id: Int) = UserDisplayEntity(id = id, targetUser = "", enabled = false, colorEnabled = false, color = 0, aliasEnabled = false, alias = "")
     }
 
 }
