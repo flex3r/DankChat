@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.data.twitch.badge.BadgeType
 import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.preferences.command.CommandDto
 import com.flxrs.dankchat.preferences.command.CommandDto.Companion.toEntryItem
@@ -174,6 +175,36 @@ class DankChatPreferenceStore @Inject constructor(
 
     val blackListEntries: Set<String>
         get() = defaultPreferences.getStringSet(context.getString(R.string.preference_blacklist_key), emptySet()).orEmpty()
+
+    val showTimestamps: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_timestamp_key), true)
+
+    val fontSize: Float
+        get() = defaultPreferences.getInt(context.getString(R.string.preference_font_size_key), 14).toFloat()
+
+    val isCheckeredMode: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.checkered_messages_key), false)
+
+    val showTimedOutMessages: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_show_timed_out_messages_key), true)
+
+    val showUsername: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_show_username_key), true)
+
+    val animateGifs: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_animate_gifs_key), true)
+
+    val visibleBadgeTypes: Set<BadgeType>
+        get() {
+            val raw = defaultPreferences.getStringSet(
+                context.getString(R.string.preference_visible_badges_key),
+                context.resources.getStringArray(R.array.badges_entry_values).toSet()
+            ).orEmpty()
+            return BadgeType.mapFromPreferenceSet(raw)
+        }
+
+    val debugEnabled: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_debug_mode_key), false)
 
     val currentUserNameFlow: Flow<String?> = callbackFlow {
         send(userName?.ifBlank { null })

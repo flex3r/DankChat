@@ -26,6 +26,7 @@ import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.main.MainViewModel
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -52,6 +53,9 @@ open class ChatFragment : Fragment() {
     @Inject
     lateinit var emoteRepository: EmoteRepository
 
+    @Inject
+    lateinit var dankChatPreferenceStore: DankChatPreferenceStore
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bindingRef = ChatFragmentBinding.inflate(inflater, container, false).apply {
             lifecycleOwner = this@ChatFragment
@@ -74,7 +78,13 @@ open class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val itemDecoration = DividerItemDecoration(view.context, LinearLayoutManager.VERTICAL)
         manager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false).apply { stackFromEnd = true }
-        adapter = ChatAdapter(emoteRepository, ::scrollToPosition, ::onUserClick, ::copyMessage).apply { stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY }
+        adapter = ChatAdapter(
+            emoteRepository = emoteRepository,
+            dankChatPreferenceStore = dankChatPreferenceStore,
+            onListChanged = ::scrollToPosition,
+            onUserClick = ::onUserClick,
+            onMessageLongClick = ::copyMessage
+        ).apply { stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY }
         binding.chat.setup(adapter, manager)
 
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { pref, key ->
