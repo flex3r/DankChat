@@ -8,7 +8,7 @@ import java.util.*
 data class PointRedemptionMessage(
     override val timestamp: Long = System.currentTimeMillis(),
     override val id: String = UUID.randomUUID().toString(),
-    override val highlights: List<Highlight> = emptyList(),
+    override val highlights: Set<Highlight> = emptySet(),
     val name: String,
     val displayName: String,
     val title: String,

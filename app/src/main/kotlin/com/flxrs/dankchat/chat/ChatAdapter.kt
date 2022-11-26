@@ -793,14 +793,16 @@ class ChatAdapter(
     }
 
     @ColorInt
-    private fun List<Highlight>.toBackgroundColor(context: Context): Int {
-        return when (first().type) {
+    private fun Set<Highlight>.toBackgroundColor(context: Context): Int {
+        val highlight = highestPriorityHighlight() ?: return ContextCompat.getColor(context, android.R.color.transparent)
+        return when (highlight.type) {
             HighlightType.Subscription, HighlightType.Announcement -> ContextCompat.getColor(context, R.color.color_sub_highlight)
             HighlightType.ChannelPointRedemption                   -> ContextCompat.getColor(context, R.color.color_redemption_highlight)
             HighlightType.ElevatedMessage                          -> ContextCompat.getColor(context, R.color.color_elevated_message_highlight)
             HighlightType.FirstMessage                             -> ContextCompat.getColor(context, R.color.color_first_message_highlight)
             HighlightType.Username                                 -> ContextCompat.getColor(context, R.color.color_mention_highlight)
             HighlightType.Custom                                   -> ContextCompat.getColor(context, R.color.color_mention_highlight)
+            HighlightType.Notification                             -> ContextCompat.getColor(context, R.color.color_mention_highlight)
         }
     }
 }

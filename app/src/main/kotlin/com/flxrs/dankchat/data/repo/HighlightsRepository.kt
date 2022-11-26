@@ -55,6 +55,7 @@ class HighlightsRepository @Inject constructor(
             is UserNoticeMessage      -> message.calculateHighlightState()
             is PointRedemptionMessage -> message.calculateHighlightState()
             is PrivMessage            -> message.calculateHighlightState()
+            is WhisperMessage         -> message.calculateHighlightState()
             else                      -> message
         }
     }
@@ -159,7 +160,7 @@ class HighlightsRepository @Inject constructor(
     private fun UserNoticeMessage.calculateHighlightState(): UserNoticeMessage {
         val messageHighlights = validMessageHighlights.value
 
-        val highlights = buildList {
+        val highlights = buildSet {
             if (isSub && messageHighlights.areSubsEnabled) {
                 add(Highlight(HighlightType.Subscription))
             }
@@ -180,8 +181,8 @@ class HighlightsRepository @Inject constructor(
             .any { it.type == MessageHighlightEntityType.ChannelPointRedemption }
 
         val highlights = when {
-            redemptionsEnabled -> listOf(Highlight(HighlightType.ChannelPointRedemption))
-            else               -> emptyList()
+            redemptionsEnabled -> setOf(Highlight(HighlightType.ChannelPointRedemption))
+            else               -> emptySet()
         }
 
         return copy(highlights = highlights)
@@ -194,7 +195,7 @@ class HighlightsRepository @Inject constructor(
 
         val userHighlights = validUserHighlights.value
         val messageHighlights = validMessageHighlights.value
-        val highlights = buildList {
+        val highlights = buildSet {
             if (isSub && messageHighlights.areSubsEnabled) {
                 add(Highlight(HighlightType.Subscription))
             }
@@ -217,11 +218,13 @@ class HighlightsRepository @Inject constructor(
 
             if (containsCurrentUserName && messageHighlights.isOwnUserNameEnabled) {
                 add(Highlight(HighlightType.Username))
+                add(Highlight(HighlightType.Notification))
             }
 
             userHighlights.forEach {
                 if (it.username.equals(name, ignoreCase = true)) {
                     add(Highlight(HighlightType.Custom))
+                    add(Highlight(HighlightType.Notification))
                 }
             }
 
@@ -232,12 +235,17 @@ class HighlightsRepository @Inject constructor(
 
                     if (message.contains(regex)) {
                         add(Highlight(HighlightType.Custom))
+                        add(Highlight(HighlightType.Notification))
                     }
                 }
 
         }
 
         return copy(highlights = highlights)
+    }
+
+    private fun WhisperMessage.calculateHighlightState(): WhisperMessage {
+        return copy(highlights = setOf(Highlight(HighlightType.Notification)))
     }
 
     private val List<MessageHighlightEntity>.areSubsEnabled: Boolean

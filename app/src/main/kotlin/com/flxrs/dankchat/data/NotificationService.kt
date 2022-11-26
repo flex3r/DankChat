@@ -305,21 +305,21 @@ class NotificationService : Service(), CoroutineScope {
         val isNotify: Boolean = false,
     ) {
         companion object {
-            fun Message.toNotificationData(): NotificationData? = when (this) {
-                is PrivMessage    -> when {
-                    highlights.hasMention() -> NotificationData(channel, name, originalMessage)
-                    else                    -> null
+            fun Message.toNotificationData(): NotificationData? {
+                if (!highlights.shouldNotify()) {
+                    return null
                 }
 
-                is WhisperMessage -> NotificationData(
-                    channel = "",
-                    name = name,
-                    message = originalMessage,
-                    isWhisper = true,
-                )
+                return when (this) {
+                    is PrivMessage    -> NotificationData(channel, name, originalMessage)
+                    is WhisperMessage -> NotificationData(
+                        channel = "",
+                        name = name,
+                        message = originalMessage,
+                        isWhisper = true,
+                    )
 
-                else              -> {
-                    null
+                    else              -> null
                 }
             }
         }
