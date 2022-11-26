@@ -54,7 +54,6 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideEmoteOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
-        .dispatcher(Dispatcher().apply { maxRequestsPerHost = 20 }) // increase from default 5
         .build()
 
     @Singleton
