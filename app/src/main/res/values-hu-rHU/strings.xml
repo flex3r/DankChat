@@ -28,10 +28,15 @@
     <string name="record_video">Videó felvétele</string>
     <string name="uploading_image">Fájl feltöltése</string>
     <string name="settings">Beállítások</string>
+    <string name="nuuls_upload_title">Egyéni médiafeltöltés</string>
     <string name="snackbar_message_copied">Üzenet másolva</string>
     <string name="snackbar_error_copied">Másolt hibainformáció</string>
+    <string name="notification_stop">Leállítás</string>
     <string name="notification_title">FeelsDankMan</string>
+    <string name="notification_message">A DankChat a háttérben fut</string>
     <string name="login_title">Bejelentkezés a Twitch.tv-be</string>
+    <string name="hint_not_logged_int">Nincs bejelentkezve</string>
+    <string name="notification_new_mentions">Új említéseid vannak</string>
     <string name="snackbar_login">Bejelentkezve mint %1$s</string>
     <string name="snackbar_login_failed">Nem sikerült bejelentkezni</string>
     <string name="snackbar_image_uploaded">Másolva: %1$s</string>
@@ -42,6 +47,8 @@
     <string name="snackbar_data_load_failed_cause">Az adatbetöltés sikertelen: %1$s</string>
     <string name="snackbar_paste">Beillesztés</string>
     <string name="add_channel_hint">Csatorna neve</string>
+    <string name="emote_menu_tab_recent">Legutóbbi</string>
+    <string name="emote_menu_tab_subs">Feliratkozói</string>
     <string name="emote_menu_tab_channel">Csatorna</string>
     <string name="emote_menu_tab_global">Globális</string>
     <string name="system_message_connected">Csatlakozva</string>
@@ -49,7 +56,10 @@
     <string name="system_message_disconnected">Lecsatlakozva</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="more">Több</string>
+    <string name="mentions">Említések</string>
     <string name="confirm_channel_removal_positive_button">Eltávolítás</string>
+    <string name="user_popup_unblock">Feloldás</string>
+    <string name="user_popup_mention">Felhasználó megemlítése</string>
     <string name="user_popup_created">Létrehozva: %1$s</string>
     <string name="restart">Újraindítás</string>
     <string name="uploader_url">URL feltöltése</string>
