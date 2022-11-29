@@ -8,7 +8,6 @@ import com.flxrs.dankchat.preferences.userdisplay.UserDisplayDto
 import com.flxrs.dankchat.preferences.userdisplay.UserDisplayDto.Companion.toDto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -19,21 +18,24 @@ class UserDisplayRepository @Inject constructor(
     private val userDisplayDao: UserDisplayDao,
     @ApplicationScope val coroutineScope: CoroutineScope,
 ) {
-    suspend fun getAllUserDisplays(): List<UserDisplayDto> = userDisplayDao.getAll().map { it.toDto() }
 
-    private val userDisplays = userDisplayDao.getUserDisplaysFlow().map { users -> users.map { it.toDto() } }.stateIn(
+    val userDisplays = userDisplayDao.getUserDisplaysFlow().stateIn(
         coroutineScope,
         SharingStarted.Eagerly,
         emptyList()
     )
 
-    /** add (if ID == 0) or update (ID != 0) user displays */
-    suspend fun addUserDisplays(userDisplays: List<UserDisplayDto>) {
-        userDisplayDao.insertAll(userDisplays.map { it.toEntity() })
+    suspend fun addUserDisplays(userDisplays: List<UserDisplayEntity>) {
+        userDisplayDao.insertAll(userDisplays)
     }
 
-    suspend fun deleteByIds(ids: List<Int>): Int {
-        return userDisplayDao.deleteAll(ids.map { UserDisplayEntity.makeDummy(it) })
+    suspend fun addUserDisplay(userDisplay: UserDisplayEntity) {
+        userDisplayDao.insert(userDisplay)
+    }
+
+
+    suspend fun delete(userDisplay: UserDisplayEntity) {
+        userDisplayDao.delete(userDisplay)
     }
 
     fun calculateUserDisplay(message: Message): Message {
@@ -49,7 +51,7 @@ class UserDisplayRepository @Inject constructor(
     }
 
     private fun findMatchingUserDisplay(name: String): UserDisplayDto? {
-        return userDisplays.value.find { it.username.equals(name, true) }
+        return userDisplays.value.find { it.targetUser.equals(name, true) }?.toDto()
     }
 
     private fun PrivMessage.applyUserDisplay(): PrivMessage {

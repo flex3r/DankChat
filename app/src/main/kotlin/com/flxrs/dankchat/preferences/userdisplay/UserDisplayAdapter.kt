@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.AddItemBinding
@@ -14,14 +16,18 @@ import com.flxrs.dankchat.utils.extensions.toHexCode
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rarepebble.colorpicker.ColorPickerView
+import io.ktor.util.reflect.*
 
-class UserDisplayAdapter(val entries: MutableList<UserDisplayItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class UserDisplayAdapter(
+    val onAddItem: () -> Unit,
+    val onDeleteItem: (UserDisplayItem.Entry) -> Unit,
+) :
+    ListAdapter<UserDisplayItem, RecyclerView.ViewHolder>(DetectDiff()) {
 
     inner class EntryViewHolder(val binding: UserDisplayItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.userDisplayDelete.setOnClickListener {
-                entries.removeAt(bindingAdapterPosition)
-                notifyItemRemoved(bindingAdapterPosition)
+                onDeleteItem(getItem(bindingAdapterPosition) as UserDisplayItem.Entry) // only Entry are delete-able
             }
 
             binding.userDisplayPickColorButton.setOnClickListener {
@@ -60,6 +66,13 @@ class UserDisplayAdapter(val entries: MutableList<UserDisplayItem>) : RecyclerVi
         }
     }
 
+    inner class AddItemViewHolder(val binding: AddItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.multiEntryAdd.setOnClickListener { onAddItem() }
+        }
+
+    }
+
     /** set text, text color, background color to represent specified color */
     @SuppressLint("SetTextI18n")
     private fun MaterialButton.setColorAndBg(colorRGB: Int) {
@@ -68,18 +81,6 @@ class UserDisplayAdapter(val entries: MutableList<UserDisplayItem>) : RecyclerVi
         setBackgroundColor(colorRGB.toARGBInt())
     }
 
-    inner class AddItemViewHolder(val binding: AddItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        init {
-            binding.multiEntryAdd.setOnClickListener {
-                // ID 0, so that the create call generate the ID
-                val entry = UserDisplayItem.Entry(id = 0, username = "", color = 0, alias = "")
-                // always put item below the add entry
-                entries.add(1, entry)
-                notifyItemInserted(1)
-            }
-        }
-
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -93,7 +94,7 @@ class UserDisplayAdapter(val entries: MutableList<UserDisplayItem>) : RecyclerVi
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is EntryViewHolder -> {
-                val entry = entries[position] as UserDisplayItem.Entry
+                val entry = currentList[position] as UserDisplayItem.Entry
                 holder.binding.userDisplay = entry
                 holder.binding.userDisplayEnableColor.isChecked = entry.colorEnabled
                 holder.binding.userDisplayPickColorButton.isVisible = entry.colorEnabled
@@ -106,10 +107,8 @@ class UserDisplayAdapter(val entries: MutableList<UserDisplayItem>) : RecyclerVi
         }
     }
 
-    override fun getItemCount(): Int = entries.size
-
     override fun getItemViewType(position: Int): Int {
-        return when (entries[position]) {
+        return when (currentList[position]) {
             is UserDisplayItem.Entry -> ENTRY_VIEW_TYPE
             else                     -> ADD_ITEM_VIEW_TYPE
         }
@@ -119,5 +118,25 @@ class UserDisplayAdapter(val entries: MutableList<UserDisplayItem>) : RecyclerVi
         private const val ENTRY_VIEW_TYPE = 0
         private const val ADD_ITEM_VIEW_TYPE = 1
     }
+
+    private class DetectDiff : DiffUtil.ItemCallback<UserDisplayItem>() {
+        override fun areItemsTheSame(oldItem: UserDisplayItem, newItem: UserDisplayItem): Boolean {
+            if (oldItem is UserDisplayItem.Entry && newItem is UserDisplayItem.Entry) {
+                return oldItem.id == newItem.id
+            }
+            if (oldItem is UserDisplayItem.AddEntry) return newItem is UserDisplayItem.AddEntry
+            return false
+        }
+
+        override fun areContentsTheSame(oldItem: UserDisplayItem, newItem: UserDisplayItem): Boolean {
+            if (oldItem is UserDisplayItem.Entry && newItem is UserDisplayItem.Entry) {
+                return oldItem == newItem
+            }
+            if (oldItem is UserDisplayItem.AddEntry) return newItem is UserDisplayItem.AddEntry
+            return false
+        }
+
+    }
+
 
 }

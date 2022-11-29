@@ -8,10 +8,10 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.*
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.data.repo.UserDisplayRepository
 import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.databinding.CommandsBottomsheetBinding
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
@@ -23,9 +23,9 @@ import com.flxrs.dankchat.preferences.command.CommandDto.Companion.toDto
 import com.flxrs.dankchat.preferences.command.CommandDto.Companion.toEntryItem
 import com.flxrs.dankchat.preferences.command.CommandItem
 import com.flxrs.dankchat.preferences.userdisplay.UserDisplayAdapter
-import com.flxrs.dankchat.preferences.userdisplay.UserDisplayDto.Companion.toDto
-import com.flxrs.dankchat.preferences.userdisplay.UserDisplayDto.Companion.toEntryItem
 import com.flxrs.dankchat.preferences.userdisplay.UserDisplayItem
+import com.flxrs.dankchat.preferences.userdisplay.UserDisplayViewModel
+import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import com.flxrs.dankchat.utils.extensions.showRestartRequired
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -34,14 +34,12 @@ import io.ktor.util.reflect.*
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import javax.inject.Inject
 import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
 
-    @Inject
-    lateinit var userDisplayRepository: UserDisplayRepository
+    private val userDisplayViewModel: UserDisplayViewModel by viewModels()
 
     private var bottomSheetDialog: BottomSheetDialog? = null
 
@@ -153,13 +151,13 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
         val peekHeight = (windowHeight * 0.6).roundToInt()
 
         lifecycleScope.launch {
-            val userDisplays = listOf(UserDisplayItem.AddEntry) + userDisplayRepository.getAllUserDisplays()
-                .map { it.toEntryItem() }
-                .sortedByDescending { it.id } // preserve order: since new entries is added at the top of the list
-            val idBefore = userDisplays.filterIsInstance<UserDisplayItem.Entry>().map { it.id }
+            val userDisplayAdapter = UserDisplayAdapter(
+                userDisplayViewModel::newBlankEntry,
+                userDisplayViewModel::deleteEntry,
+            )
 
+            collectFlow(userDisplayViewModel.userDisplays) { userDisplayAdapter.submitList(it) }
 
-            val userDisplayAdapter = UserDisplayAdapter(userDisplays.toMutableList())
             val binding = UserDisplayBottomSheetBinding.inflate(LayoutInflater.from(context), root as? ViewGroup, false).apply {
                 customUserDisplayList.adapter = userDisplayAdapter
                 customUserDisplaySheet.updateLayoutParams {
@@ -171,22 +169,9 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
                 setContentView(binding.root)
                 setOnDismissListener {
                     lifecycleScope.launch {
-                        var hasChanged = false
-                        val entries = userDisplayAdapter.entries
-                            .filterIsInstance<UserDisplayItem.Entry>() // filter out "AddEntry"
-                            .map { it.toDto() }
-                            .also {
-                                userDisplayRepository.addUserDisplays(it)
-                                if (it.any { entry -> entry.id == 0 }) hasChanged = true
-
-                            }
-
-                        val idAfter = entries.map { it.id }.toSet()
-                        idBefore.subtract(idAfter).toList().let { deletedIds ->
-                            userDisplayRepository.deleteByIds(deletedIds)
-                            if (deletedIds.isNotEmpty()) hasChanged = true
-                        }
-                        if (hasChanged) view?.showRestartRequired()
+                        userDisplayViewModel.saveEntries(
+                            userDisplayAdapter.currentList.filterIsInstance<UserDisplayItem.Entry>()
+                        )
                     }
                 }
                 behavior.isFitToContents = false
