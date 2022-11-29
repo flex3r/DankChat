@@ -1,6 +1,13 @@
+@file:OptIn(ExperimentalContracts::class)
+
 package com.flxrs.dankchat.preferences.userdisplay
 
+import androidx.annotation.ColorInt
 import com.flxrs.dankchat.data.database.UserDisplayEntity
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
+
+data class UserDisplayEffectiveValue(val alias: String?, val color: Int?)
 
 sealed class UserDisplayItem {
     // NOTE: displayName can be omitted (left empty)
@@ -12,7 +19,14 @@ sealed class UserDisplayItem {
         var color: Int = 0,
         var aliasEnabled: Boolean = false,
         var alias: String = "",
-    ) : UserDisplayItem()
+    ) : UserDisplayItem() {
+
+        //        /** calculate final effect of this UserDisplay */
+        fun effectiveValue() = UserDisplayEffectiveValue(
+            alias = if (aliasEnabled && alias.isNotBlank()) alias else null, // prevent blank alias from making username blank (fool-proof)
+            color = if (colorEnabled) color else null
+        )
+    }
 
 
     fun Entry.toEntity() = UserDisplayEntity(
@@ -36,4 +50,30 @@ sealed class UserDisplayItem {
     )
 
     object AddEntry : UserDisplayItem()
+
+}
+
+fun UserDisplayEffectiveValue?.hasAlias(): Boolean {
+    contract {
+        returns(true) implies (this@hasAlias != null)
+    }
+    return this != null && alias != null
+}
+
+
+fun UserDisplayEffectiveValue?.nameOr(fallback: String): String {
+    return if (hasAlias()) alias!! else fallback
+}
+
+@ColorInt
+fun UserDisplayEffectiveValue?.colorOr(@ColorInt fallback: Int): Int {
+    return if (hasColor()) color!! else fallback
+}
+
+
+fun UserDisplayEffectiveValue?.hasColor(): Boolean {
+    contract {
+        returns(true) implies (this@hasColor != null)
+    }
+    return this != null && color != null
 }

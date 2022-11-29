@@ -39,9 +39,8 @@ import com.flxrs.dankchat.data.twitch.badge.BadgeType
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.data.twitch.message.*
 import com.flxrs.dankchat.databinding.ChatItemBinding
-import com.flxrs.dankchat.preferences.userdisplay.colorIfEmpty
-import com.flxrs.dankchat.preferences.userdisplay.hasAlias
-import com.flxrs.dankchat.preferences.userdisplay.nameIfEmpty
+import com.flxrs.dankchat.preferences.userdisplay.colorOr
+import com.flxrs.dankchat.preferences.userdisplay.nameOr
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.extensions.*
 import com.flxrs.dankchat.utils.showErrorDialog
@@ -243,10 +242,10 @@ class ChatAdapter(
         val systemMessageText = when {
             message.isFullChatClear -> "Chat has been cleared by a moderator."
             // why is targetUser can be null?
-            message.isBan           -> "${message.userDisplay.nameIfEmpty(message.targetUser ?: "A user")} has been permanently banned"
+            message.isBan           -> "${message.userDisplay.nameOr(message.targetUser ?: "A user")} has been permanently banned"
             else                    -> {
                 val countOrBlank = if (count > 1) " ($count times)" else ""
-                "${message.userDisplay.nameIfEmpty(message.targetUser ?: "A user")} has been timed out for ${DateTimeUtils.formatSeconds(message.duration)}.$countOrBlank"
+                "${message.userDisplay.nameOr(message.targetUser ?: "A user")} has been timed out for ${DateTimeUtils.formatSeconds(message.duration)}.$countOrBlank"
             }
         }
         val withTime = when {
@@ -282,7 +281,7 @@ class ChatAdapter(
                     message.requiresUserInput -> append("Redeemed ")
                     else                      -> {
                         bold {
-                            append(message.userDisplay.nameIfEmpty(message.displayName))
+                            append(message.userDisplay.nameOr(message.displayName))
                         }
                         append(" redeemed ")
                     }
@@ -335,14 +334,12 @@ class ChatAdapter(
         }
         setRippleBackground(background, enableRipple = true)
 
-        val fullName = when {
-            userDisplay.hasAlias()         -> userDisplay.alias
+        val fullName = userDisplay?.alias ?: when {
             displayName.equals(name, true) -> displayName
             else                           -> "$name($displayName)"
         }
 
-        val fullRecipientName = when {
-            recipientDisplay.hasAlias()                      -> recipientDisplay.alias
+        val fullRecipientName = recipientDisplay?.alias ?: when {
             recipientDisplayName.equals(recipientName, true) -> recipientDisplayName
             else                                             -> "$recipientName($recipientDisplayName)"
         }
@@ -362,12 +359,12 @@ class ChatAdapter(
             spannable.length - 2 to spannable.length - 1
         }
 
-        // it's intened to NOT normalize color if custom value is set
-        val normalizedColor = userDisplay.colorIfEmpty(color.normalizeColor(background))
+        // it's intended to NOT normalize color if custom value is set
+        val normalizedColor = userDisplay.colorOr(color.normalizeColor(background))
         spannable.bold { color(normalizedColor) { append(fullName) } }
         spannable.append(" -> ")
 
-        val normalizedRecipientColor = recipientDisplay.colorIfEmpty(recipientColor.normalizeColor(background))
+        val normalizedRecipientColor = recipientDisplay.colorOr(recipientColor.normalizeColor(background))
         spannable.bold { color(normalizedRecipientColor) { append(fullRecipientName) } }
         spannable.append(": ")
         spannable.append(message)
@@ -539,8 +536,7 @@ class ChatAdapter(
             return
         }
 
-        val fullName = when {
-            userDisplay.hasAlias()         -> userDisplay.alias
+        val fullName = userDisplay?.alias ?: when {
             displayName.equals(name, true) -> displayName
             else                           -> "$name($displayName)"
         }
@@ -572,7 +568,7 @@ class ChatAdapter(
             spannable.length - 2 to spannable.length - 1
         }
 
-        val normalizedColor = userDisplay.colorIfEmpty(color.normalizeColor(background = bgColor))
+        val normalizedColor = userDisplay.colorOr(color.normalizeColor(background = bgColor))
         spannable.bold { color(normalizedColor) { append(fullDisplayName) } }
 
         when {

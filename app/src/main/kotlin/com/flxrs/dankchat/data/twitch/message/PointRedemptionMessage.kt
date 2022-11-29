@@ -1,7 +1,7 @@
 package com.flxrs.dankchat.data.twitch.message
 
 import com.flxrs.dankchat.data.twitch.connection.PointRedemptionData
-import com.flxrs.dankchat.preferences.userdisplay.UserDisplayDto
+import com.flxrs.dankchat.preferences.userdisplay.UserDisplayEffectiveValue
 import java.time.Instant
 import java.time.ZoneId
 import java.util.*
@@ -16,7 +16,7 @@ data class PointRedemptionMessage(
     val rewardImageUrl: String,
     val cost: Int,
     val requiresUserInput: Boolean,
-    val userDisplay: UserDisplayDto? = null,
+    val userDisplay: UserDisplayEffectiveValue? = null,
 ) : Message() {
     companion object {
         fun parsePointReward(timestamp: Instant, data: PointRedemptionData): PointRedemptionMessage {

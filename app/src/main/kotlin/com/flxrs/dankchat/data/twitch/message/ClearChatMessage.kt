@@ -1,7 +1,7 @@
 package com.flxrs.dankchat.data.twitch.message
 
 import com.flxrs.dankchat.data.irc.IrcMessage
-import com.flxrs.dankchat.preferences.userdisplay.UserDisplayDto
+import com.flxrs.dankchat.preferences.userdisplay.UserDisplayEffectiveValue
 import java.util.*
 
 data class ClearChatMessage(
@@ -12,7 +12,7 @@ data class ClearChatMessage(
     val targetUser: String? = null,
     val duration: String = "",
     val stackCount: Int = 0,
-    val userDisplay: UserDisplayDto? = null,
+    val userDisplay: UserDisplayEffectiveValue? = null,
 ) : Message() {
     val isBan = duration.isBlank()
     val isFullChatClear = targetUser == null

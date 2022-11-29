@@ -5,7 +5,7 @@ import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.connection.WhisperData
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
-import com.flxrs.dankchat.preferences.userdisplay.UserDisplayDto
+import com.flxrs.dankchat.preferences.userdisplay.UserDisplayEffectiveValue
 import java.util.*
 
 data class WhisperMessage(
@@ -27,8 +27,8 @@ data class WhisperMessage(
     val originalMessage: String = message,
     val emotes: List<ChatMessageEmote> = emptyList(),
     val badges: List<Badge> = emptyList(),
-    val userDisplay: UserDisplayDto? = null,
-    val recipientDisplay: UserDisplayDto? = null
+    val userDisplay: UserDisplayEffectiveValue? = null,
+    val recipientDisplay: UserDisplayEffectiveValue? = null
 ) : Message() {
 
     override val emoteData: EmoteData = EmoteData(message, channel = "", emoteTag = rawEmotes)

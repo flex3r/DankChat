@@ -4,8 +4,8 @@ import com.flxrs.dankchat.data.database.UserDisplayDao
 import com.flxrs.dankchat.data.database.UserDisplayEntity
 import com.flxrs.dankchat.data.twitch.message.*
 import com.flxrs.dankchat.di.ApplicationScope
-import com.flxrs.dankchat.preferences.userdisplay.UserDisplayDto
-import com.flxrs.dankchat.preferences.userdisplay.UserDisplayDto.Companion.toDto
+import com.flxrs.dankchat.preferences.userdisplay.UserDisplayEffectiveValue
+import com.flxrs.dankchat.preferences.userdisplay.UserDisplayItem.AddEntry.toEntry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
@@ -50,8 +50,8 @@ class UserDisplayRepository @Inject constructor(
 
     }
 
-    private fun findMatchingUserDisplay(name: String): UserDisplayDto? {
-        return userDisplays.value.find { it.targetUser.equals(name, true) }?.toDto()
+    private fun findMatchingUserDisplay(name: String): UserDisplayEffectiveValue? {
+        return userDisplays.value.find { it.targetUser.equals(name, true) }?.toEntry()?.effectiveValue()
     }
 
     private fun PrivMessage.applyUserDisplay(): PrivMessage {

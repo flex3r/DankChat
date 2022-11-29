@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 5,
-    "identityHash": "3b99d4212c5904e895d5168362491348",
+    "identityHash": "e2c1de8d4be9124f0efc26e96723c8f5",
     "entities": [
       {
         "tableName": "emote_usage",
@@ -309,7 +309,7 @@
       },
       {
         "tableName": "user_display",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `target_user` TEXT NOT NULL, `enabled` INTEGER NOT NULL, `color_enabled` INTEGER NOT NULL, `color_hex` INTEGER NOT NULL, `aliasEnabled` INTEGER NOT NULL, `alias` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `target_user` TEXT NOT NULL, `enabled` INTEGER NOT NULL, `color_enabled` INTEGER NOT NULL, `color` INTEGER NOT NULL, `aliasEnabled` INTEGER NOT NULL, `alias` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -337,7 +337,7 @@
           },
           {
             "fieldPath": "color",
-            "columnName": "color_hex",
+            "columnName": "color",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -367,7 +367,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3b99d4212c5904e895d5168362491348')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e2c1de8d4be9124f0efc26e96723c8f5')"
     ]
   }
 }
