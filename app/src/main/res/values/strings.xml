@@ -335,7 +335,7 @@
     <string name="unblocked_user_failed">Failed to unblock user %1$s</string>
     <string name="blocked_user_failed">Failed to block user %1$s</string>
     <string name="highlights_entry_username">Your username</string>
-    <string name="highlights_ignores_entry_subscriptions">Subscriptions</string>
+    <string name="highlights_ignores_entry_subscriptions">Subscriptions and Events</string>
     <string name="highlights_ignores_entry_announcements">Announcements</string>
     <string name="highlights_ignores_entry_first_messages">First Messages</string>
     <string name="highlights_ignores_entry_elevated_messages">Elevated Messages</string>
