@@ -317,7 +317,6 @@
     <string name="case_sensitive">Case-sensitive</string>
     <string name="highlights">Highlights</string>
     <string name="enabled">Enabled</string>
-    <string name="create_notification">Notification</string>
     <string name="preference_highlights_summary">Edit message highlights</string>
     <string name="preference_highlights_ignores_header">Highlights and Ignores</string>
     <string name="username">Username</string>
@@ -347,8 +346,6 @@
     <string name="ignores_messages_title">Ignore messages based on certain patterns.</string>
     <string name="ignores_users_title">Ignore messages from certain users.</string>
     <string name="ignores_twitch_title">Manage blocked Twitch users.</string>
-    <string name="preference_notification_whisper_key" translatable="false">notification_whisper_key</string>
-    <string name="preference_notification_whisper_title">Create notifications for whispers</string>
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>
         <item quantity="other">Live with %d viewers</item>
