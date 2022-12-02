@@ -1,2 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string-array name="badges_entries">
+        <item>官方(Twitch員工、網站管理員)</item>
+        <item>賽況預測</item>
+        <item>頻道(實況主、聊天室 Mod )</item>
+        <item>訂閱者</item>
+        <item>頭銜(prime、小奇點、送禮大戶)</item>
+        <item>DankChat</item>
+        <!--        <item>FrankerFaceZ (Bot, FFZ Supporter, FFZ Developer)</item>-->
+    </string-array>
+</resources>
