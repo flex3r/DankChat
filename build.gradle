@@ -43,7 +43,7 @@ buildscript {
 
         // Test
         junit_ersion = '5.9.1'
-        mockk_version = '1.13.2'
+        mockk_version = '1.13.3'
 
         // Localization
         crowdin_version = '1.5.1'

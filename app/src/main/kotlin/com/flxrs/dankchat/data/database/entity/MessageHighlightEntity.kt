@@ -18,8 +18,10 @@ data class MessageHighlightEntity(
     val isRegex: Boolean = false,
     @ColumnInfo(name = "is_case_sensitive")
     val isCaseSensitive: Boolean = false,
+    @ColumnInfo(name = "create_notification")
+    val createNotification: Boolean = true,
     @ColumnInfo(name = "custom_color")
-    val customColor: Int? = null
+    val customColor: Int? = null,
 ) {
 
     @delegate:Ignore

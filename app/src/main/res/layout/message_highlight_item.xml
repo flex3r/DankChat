@@ -67,7 +67,7 @@
                 android:id="@+id/checkbox_flow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:constraint_referenced_ids="enabled,is_regex,regex_info,is_case_sensitive"
+                app:constraint_referenced_ids="enabled,is_regex,regex_info,is_case_sensitive,create_notification"
                 app:flow_horizontalBias="0"
                 app:flow_horizontalStyle="packed"
                 app:flow_wrapMode="chain"
@@ -105,6 +105,13 @@
                 android:layout_height="wrap_content"
                 android:checked="@={item.caseSensitive}"
                 android:text="@string/case_sensitive" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/create_notification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="@={item.createNotification}"
+                android:text="@string/create_notification" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>

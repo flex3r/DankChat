@@ -52,16 +52,33 @@
                 app:layout_constraintStart_toEndOf="@id/username"
                 app:layout_constraintTop_toTopOf="@id/username" />
 
-            <com.google.android.material.checkbox.MaterialCheckBox
-                android:id="@+id/enabled"
-                android:layout_width="0dp"
+            <androidx.constraintlayout.helper.widget.Flow
+                android:id="@+id/checkbox_flow"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:checked="@={item.enabled}"
-                android:text="@string/enabled"
+                app:constraint_referenced_ids="enabled,create_notification"
+                app:flow_horizontalBias="0"
+                app:flow_horizontalStyle="packed"
+                app:flow_wrapMode="chain"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/username" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/enabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="@={item.enabled}"
+                android:text="@string/enabled"
+                app:layout_constraintTop_toBottomOf="@id/username" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/create_notification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="@={item.createNotification}"
+                android:text="@string/create_notification" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>

@@ -206,6 +206,12 @@ class DankChatPreferenceStore @Inject constructor(
     val debugEnabled: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_debug_mode_key), false)
 
+    val createNotifications: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_notification_key), true)
+
+    val createWhisperNotifications: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_notification_whisper_key), true)
+
     val currentUserNameFlow: Flow<String?> = callbackFlow {
         send(userName?.ifBlank { null })
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->

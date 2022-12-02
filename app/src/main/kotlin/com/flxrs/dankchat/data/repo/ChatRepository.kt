@@ -151,7 +151,9 @@ class ChatRepository @Inject constructor(
                             currentUsers.snapshot().values.toSet()
                         }
                         _channelMentionCount.increment(WHISPER_CHANNEL_TAG, 1)
-                        _notificationsFlow.tryEmit(listOf(item))
+                        if (item.message.highlights.shouldNotify()) {
+                            _notificationsFlow.tryEmit(listOf(item))
+                        }
                     }
                 }
 
@@ -662,7 +664,7 @@ class ChatRepository @Inject constructor(
             current.addAndLimit(additionalMessages + items, scrollBackLength)
         }
 
-        _notificationsFlow.tryEmit(items)
+        _notificationsFlow.tryEmit(items.filter { it.message.highlights.shouldNotify() })
         val mentions = items
             .filter { it.message.highlights.hasMention() }
             .toMentionTabItems()

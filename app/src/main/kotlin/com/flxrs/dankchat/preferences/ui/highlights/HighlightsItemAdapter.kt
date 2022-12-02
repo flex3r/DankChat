@@ -81,12 +81,17 @@ class HighlightsItemAdapter(
                     delete.isVisible = isCustomItem
                     regexInfo.isVisible = isCustomItem
                     enabled.isEnabled = highlightItem.type != MessageHighlightItem.Type.Username || preferenceStore.isLoggedIn
+                    createNotification.isVisible = highlightItem.type == MessageHighlightItem.Type.Username || highlightItem.type == MessageHighlightItem.Type.Custom
+                    createNotification.isEnabled = preferenceStore.createNotifications && (highlightItem.type != MessageHighlightItem.Type.Username || preferenceStore.isLoggedIn)
                 }
             }
 
             is UserItemViewHolder            -> {
                 val highlightItem = getItem(position) as UserHighlightItem
-                holder.binding.item = highlightItem
+                with(holder.binding) {
+                    item = highlightItem
+                    createNotification.isEnabled = preferenceStore.createNotifications
+                }
             }
 
             is BlacklistedUserItemViewHolder -> {

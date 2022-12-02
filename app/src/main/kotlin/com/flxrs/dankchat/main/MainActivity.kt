@@ -29,7 +29,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.data.NotificationService
+import com.flxrs.dankchat.data.notification.NotificationService
 import com.flxrs.dankchat.data.repo.DataRepository
 import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
@@ -141,7 +141,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
         super.onStop()
         if (isBound) {
             if (!isChangingConfigurations) {
-                notificationService?.shouldNotifyOnMention = true
+                notificationService?.enableNotifications()
             }
 
             isBound = false
