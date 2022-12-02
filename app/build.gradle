@@ -62,8 +62,8 @@ android {
         }
         dank {
             initWith debug
-            minifyEnabled false
-            shrinkResources false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules-dank.pro'
             manifestPlaceholders = [applicationLabel: "@string/app_name_dank"]
             applicationIdSuffix ".dank"
