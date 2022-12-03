@@ -281,7 +281,6 @@
     <string name="unblocked_user_failed">Не удалось разблокировать пользователя %1$s</string>
     <string name="blocked_user_failed">Не удалось заблокировать пользователя %1$s</string>
     <string name="highlights_entry_username">Ваше имя пользователя</string>
-    <string name="highlights_ignores_entry_subscriptions">Подписки</string>
     <string name="highlights_ignores_entry_announcements">Анонсы</string>
     <string name="highlights_ignores_entry_first_messages">Первые сообщения</string>
     <string name="highlights_ignores_entry_redemptions">Выделения купленные за баллы канала</string>
