@@ -23,7 +23,6 @@ import com.flxrs.dankchat.preferences.command.CommandDto.Companion.toDto
 import com.flxrs.dankchat.preferences.command.CommandDto.Companion.toEntryItem
 import com.flxrs.dankchat.preferences.command.CommandItem
 import com.flxrs.dankchat.preferences.userdisplay.UserDisplayAdapter
-import com.flxrs.dankchat.preferences.userdisplay.UserDisplayItem
 import com.flxrs.dankchat.preferences.userdisplay.UserDisplayViewModel
 import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
@@ -152,7 +151,10 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
 
         lifecycleScope.launch {
             val userDisplayAdapter = UserDisplayAdapter(
-                userDisplayViewModel::newBlankEntry,
+                { currentList ->
+                    userDisplayViewModel.saveEntries(currentList)
+                    userDisplayViewModel.newBlankEntry()
+                },
                 userDisplayViewModel::deleteEntry,
             )
 
@@ -167,13 +169,7 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
 
             bottomSheetDialog = BottomSheetDialog(context).apply {
                 setContentView(binding.root)
-                setOnDismissListener {
-                    lifecycleScope.launch {
-                        userDisplayViewModel.saveEntries(
-                            userDisplayAdapter.currentList.filterIsInstance<UserDisplayItem.Entry>()
-                        )
-                    }
-                }
+                setOnDismissListener { userDisplayViewModel.saveEntries(userDisplayAdapter.currentEntries) }
                 behavior.isFitToContents = false
                 behavior.peekHeight = peekHeight
                 show()

@@ -17,7 +17,7 @@ import com.rarepebble.colorpicker.ColorPickerView
 import io.ktor.util.reflect.*
 
 class UserDisplayAdapter(
-    val onAddItem: () -> Unit,
+    val onAddItem: (currentEntries: List<UserDisplayItem.Entry>) -> Unit,
     val onDeleteItem: (UserDisplayItem.Entry) -> Unit,
 ) :
     ListAdapter<UserDisplayItem, RecyclerView.ViewHolder>(DetectDiff()) {
@@ -68,7 +68,7 @@ class UserDisplayAdapter(
     inner class AddItemViewHolder(val binding: AddItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.multiEntryAdd.setOnClickListener {
-                onAddItem()
+                onAddItem(currentEntries)
             }
         }
 
@@ -137,6 +137,9 @@ class UserDisplayAdapter(
         }
 
     }
+
+    /** convenient method for retrieving the list without "add entry" */
+    val currentEntries: List<UserDisplayItem.Entry> get() = currentList.filterIsInstance<UserDisplayItem.Entry>()
 
 
 }

@@ -27,7 +27,7 @@ class UserDisplayViewModel @Inject constructor(
     }
 
 
-    suspend fun saveEntries(userDisplayEntries: List<UserDisplayItem.Entry>) {
+    fun saveEntries(userDisplayEntries: List<UserDisplayItem.Entry>) = viewModelScope.launch {
         userDisplayRepository.addUserDisplays(userDisplayEntries.map { it.toEntity() })
     }
 
