@@ -11,8 +11,6 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.AddItemBinding
 import com.flxrs.dankchat.databinding.UserDisplayItemBinding
 import com.flxrs.dankchat.utils.extensions.getContrastTextColor
-import com.flxrs.dankchat.utils.extensions.toARGBInt
-import com.flxrs.dankchat.utils.extensions.toHexCode
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rarepebble.colorpicker.ColorPickerView
@@ -36,7 +34,7 @@ class UserDisplayAdapter(
                     val picker = ColorPickerView(root.context)
                     picker.showAlpha(false)
 
-                    picker.color = item.color.toARGBInt() // to correctly set initial alpha to 255
+                    picker.color = item.colorValue
                     MaterialAlertDialogBuilder(root.context)
                         .setView(picker)
                         .setTitle(root.context.getString(R.string.pick_custom_user_color_title))
@@ -44,7 +42,7 @@ class UserDisplayAdapter(
                         .setPositiveButton(root.context.getString(R.string.dialog_ok)) { _, _ ->
                             val pickedColor = picker.color
                             item.color = pickedColor
-                            userDisplayPickColorButton.setColorAndBg(item.color)
+                            userDisplayPickColorButton.setColorAndBg(item)
                         }
                         .show()
                 }
@@ -53,7 +51,7 @@ class UserDisplayAdapter(
                     val item = userDisplay ?: return@setOnCheckedChangeListener
                     item.colorEnabled = checked
                     userDisplayPickColorButton.isVisible = checked
-                    userDisplayPickColorButton.setColorAndBg(item.color)
+                    userDisplayPickColorButton.setColorAndBg(item)
                 }
 
                 userDisplayEnableAlias.setOnCheckedChangeListener { _, checked ->
@@ -69,17 +67,19 @@ class UserDisplayAdapter(
 
     inner class AddItemViewHolder(val binding: AddItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.multiEntryAdd.setOnClickListener { onAddItem() }
+            binding.multiEntryAdd.setOnClickListener {
+                onAddItem()
+            }
         }
 
     }
 
     /** set text, text color, background color to represent specified color */
     @SuppressLint("SetTextI18n")
-    private fun MaterialButton.setColorAndBg(colorRGB: Int) {
-        text = "#" + colorRGB.toHexCode()
-        setTextColor(colorRGB.toARGBInt().getContrastTextColor(context = context))
-        setBackgroundColor(colorRGB.toARGBInt())
+    private fun MaterialButton.setColorAndBg(item: UserDisplayItem.Entry) {
+        text = item.displayText
+        setTextColor(item.colorValue.getContrastTextColor(context = context))
+        setBackgroundColor(item.colorValue)
     }
 
 
@@ -102,8 +102,7 @@ class UserDisplayAdapter(
                 holder.binding.userDisplayEnableAlias.isChecked = entry.aliasEnabled
                 holder.binding.userDisplayAliasInput.isVisible = entry.aliasEnabled
 
-                // DANK
-                holder.binding.userDisplayPickColorButton.setColorAndBg(entry.color)
+                holder.binding.userDisplayPickColorButton.setColorAndBg(entry)
             }
         }
     }

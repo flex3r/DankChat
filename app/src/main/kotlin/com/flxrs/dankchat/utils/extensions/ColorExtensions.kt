@@ -51,13 +51,13 @@ fun Int.harmonize(context: Context): Int = MaterialColors.harmonizeWithPrimary(c
 
 
 /** helper to extract only RGB part (i.e. drop the alpha part) */
-fun Int.onlyRGB(): Int = this and 0xffffff
+private fun Int.onlyRGB(): Int = this and 0xffffff
 
 /** convert int to RGB with zero pad */
 fun Int.toHexCode(): String = Integer.toHexString(this.onlyRGB()).padStart(6, '0')
 
-/** convert RGB color (0xffffff) to ARGB with alpha */
-fun Int.toARGBInt(alpha: Int = 255): Int = (alpha shl 24) or this.onlyRGB()
+/** convert RGB color (0xffffff) to ARGB with alpha (opaque by default) */
+fun Int.withAlpha(alpha: Int = 255): Int = (alpha shl 24) or this.onlyRGB()
 
 
 /** find a black/white (techincally colorOnSurface and colorOnSurfaceInverse) color that best contrast with `this` color
@@ -77,6 +77,6 @@ fun Int.getContrastTextColor(context: Context? = null): Int {
     } ?: Color.WHITE
 
     val possibleColors = listOf(color1, color2)
-    val colorOpaque = this.toARGBInt()
+    val colorOpaque = this.withAlpha(255) // ensure opaque
     return possibleColors.maxBy { ColorUtils.calculateContrast(it, colorOpaque) }
 }

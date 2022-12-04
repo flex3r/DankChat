@@ -4,6 +4,8 @@ package com.flxrs.dankchat.preferences.userdisplay
 
 import androidx.annotation.ColorInt
 import com.flxrs.dankchat.data.database.UserDisplayEntity
+import com.flxrs.dankchat.utils.extensions.toHexCode
+import com.flxrs.dankchat.utils.extensions.withAlpha
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -16,7 +18,7 @@ sealed class UserDisplayItem {
         var username: String,
         var enabled: Boolean = true,
         var colorEnabled: Boolean = false,
-        var color: Int = 0,
+        var color: Int = 0xff000000.toInt(), // color need to be opaque
         var aliasEnabled: Boolean = false,
         var alias: String = "",
     ) : UserDisplayItem() {
@@ -53,6 +55,9 @@ sealed class UserDisplayItem {
 
 }
 
+/** return color, ensured to be opaque -- transparent color doesn't make sense for this feature */
+val UserDisplayItem.Entry.colorValue: Int get() = color.withAlpha()
+val UserDisplayItem.Entry.displayText: String get() = "#" + color.toHexCode()
 fun UserDisplayEffectiveValue?.hasAlias(): Boolean {
     contract {
         returns(true) implies (this@hasAlias != null)
