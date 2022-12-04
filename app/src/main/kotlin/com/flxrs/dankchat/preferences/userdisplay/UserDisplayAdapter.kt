@@ -26,43 +26,44 @@ class UserDisplayAdapter(
 
     inner class EntryViewHolder(val binding: UserDisplayItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.userDisplayDelete.setOnClickListener {
-                onDeleteItem(getItem(bindingAdapterPosition) as UserDisplayItem.Entry) // only Entry are delete-able
-            }
+            binding.apply {
+                userDisplayDelete.setOnClickListener {
+                    onDeleteItem(getItem(bindingAdapterPosition) as UserDisplayItem.Entry) // only Entry are delete-able
+                }
 
-            binding.userDisplayPickColorButton.setOnClickListener {
-                val item = binding.userDisplay ?: return@setOnClickListener
-                val picker = ColorPickerView(binding.root.context)
-                picker.showAlpha(false)
+                userDisplayPickColorButton.setOnClickListener {
+                    val item = userDisplay ?: return@setOnClickListener
+                    val picker = ColorPickerView(root.context)
+                    picker.showAlpha(false)
 
-                picker.color = item.color.toARGBInt() // to correctly set initial alpha to 255
-                MaterialAlertDialogBuilder(binding.root.context)
-                    .setView(picker)
-                    .setTitle(binding.root.context.getString(R.string.pick_custom_user_color_title))
-                    .setNegativeButton(binding.root.context.getString(R.string.dialog_cancel)) { _, _ -> }
-                    .setPositiveButton(binding.root.context.getString(R.string.dialog_ok)) { _, _ ->
-                        val pickedColor = picker.color
-                        item.color = pickedColor
-                        binding.userDisplayPickColorButton.setColorAndBg(item.color)
-                    }
-                    .show()
-            }
+                    picker.color = item.color.toARGBInt() // to correctly set initial alpha to 255
+                    MaterialAlertDialogBuilder(root.context)
+                        .setView(picker)
+                        .setTitle(root.context.getString(R.string.pick_custom_user_color_title))
+                        .setNegativeButton(root.context.getString(R.string.dialog_cancel)) { _, _ -> }
+                        .setPositiveButton(root.context.getString(R.string.dialog_ok)) { _, _ ->
+                            val pickedColor = picker.color
+                            item.color = pickedColor
+                            userDisplayPickColorButton.setColorAndBg(item.color)
+                        }
+                        .show()
+                }
 
-            (binding.userDisplayEnableColor).apply {
-                setOnCheckedChangeListener { _, checked ->
-                    val item = binding.userDisplay ?: return@setOnCheckedChangeListener
+                userDisplayEnableColor.setOnCheckedChangeListener { _, checked ->
+                    val item = userDisplay ?: return@setOnCheckedChangeListener
                     item.colorEnabled = checked
-                    binding.userDisplayPickColorButton.isVisible = checked
-                    binding.userDisplayPickColorButton.setColorAndBg(item.color)
+                    userDisplayPickColorButton.isVisible = checked
+                    userDisplayPickColorButton.setColorAndBg(item.color)
                 }
-            }
-            (binding.userDisplayEnableAlias).apply {
-                setOnCheckedChangeListener { _, checked ->
-                    val item = binding.userDisplay ?: return@setOnCheckedChangeListener
+
+                userDisplayEnableAlias.setOnCheckedChangeListener { _, checked ->
+                    val item = userDisplay ?: return@setOnCheckedChangeListener
                     item.aliasEnabled = checked
-                    binding.userDisplayAliasInput.isVisible = checked
+                    userDisplayAliasInput.isVisible = checked
                 }
             }
+
+
         }
     }
 
