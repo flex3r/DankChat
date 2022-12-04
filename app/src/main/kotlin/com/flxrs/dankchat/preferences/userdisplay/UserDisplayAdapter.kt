@@ -78,7 +78,7 @@ class UserDisplayAdapter(
     @SuppressLint("SetTextI18n")
     private fun MaterialButton.setColorAndBg(colorRGB: Int) {
         text = "#" + colorRGB.toHexCode()
-        setTextColor(colorRGB.toARGBInt().getContrastTextColor())
+        setTextColor(colorRGB.toARGBInt().getContrastTextColor(context = context))
         setBackgroundColor(colorRGB.toARGBInt())
     }
 

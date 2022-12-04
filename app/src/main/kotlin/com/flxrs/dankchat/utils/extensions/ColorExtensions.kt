@@ -2,8 +2,10 @@ package com.flxrs.dankchat.utils.extensions
 
 import android.content.Context
 import android.graphics.Color
+import android.util.TypedValue
 import androidx.annotation.ColorInt
 import androidx.core.graphics.ColorUtils
+import com.flxrs.dankchat.R
 import com.google.android.material.color.MaterialColors
 import kotlin.math.sin
 
@@ -58,9 +60,23 @@ fun Int.toHexCode(): String = Integer.toHexString(this.onlyRGB()).padStart(6, '0
 fun Int.toARGBInt(alpha: Int = 255): Int = (alpha shl 24) or this.onlyRGB()
 
 
-/** find best contrast text to display on specified background color (whtie or black) -- opacity ignored */
-fun Int.getContrastTextColor(): Int {
-    val possibleColors = listOf(Color.BLACK, Color.WHITE)
+/** find a black/white (techincally colorOnSurface and colorOnSurfaceInverse) color that best contrast with `this` color
+ * useful for example, when displaying text on this background color
+ * */
+fun Int.getContrastTextColor(context: Context? = null): Int {
+    val color1 = context?.let {
+        val typedValue = TypedValue()
+        it.theme.resolveAttribute(R.attr.colorOnSurface, typedValue, true)
+        typedValue.data
+    } ?: Color.BLACK
+
+    val color2 = context?.let {
+        val typedValue = TypedValue()
+        it.theme.resolveAttribute(R.attr.colorOnSurfaceInverse, typedValue, true)
+        typedValue.data
+    } ?: Color.WHITE
+
+    val possibleColors = listOf(color1, color2)
     val colorOpaque = this.toARGBInt()
     return possibleColors.maxBy { ColorUtils.calculateContrast(it, colorOpaque) }
 }
