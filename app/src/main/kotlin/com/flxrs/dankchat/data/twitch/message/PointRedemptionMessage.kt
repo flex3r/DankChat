@@ -2,6 +2,7 @@ package com.flxrs.dankchat.data.twitch.message
 
 import com.flxrs.dankchat.data.twitch.connection.PointRedemptionData
 import com.flxrs.dankchat.preferences.userdisplay.UserDisplayEffectiveValue
+import com.flxrs.dankchat.preferences.userdisplay.nameOr
 import java.time.Instant
 import java.time.ZoneId
 import java.util.*
@@ -33,4 +34,7 @@ data class PointRedemptionMessage(
             )
         }
     }
+
+    val finalUsername: String
+        get() = userDisplay.nameOr(displayName)
 }

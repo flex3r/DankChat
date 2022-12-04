@@ -1,10 +1,12 @@
 package com.flxrs.dankchat.data.twitch.message
 
 import android.graphics.Color
+import androidx.annotation.ColorInt
 import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.preferences.userdisplay.UserDisplayEffectiveValue
+import com.flxrs.dankchat.utils.extensions.normalizeColor
 import java.util.*
 
 data class PrivMessage(
@@ -84,3 +86,15 @@ val PrivMessage.isFirstMessage: Boolean
 
 val PrivMessage.isElevatedMessage: Boolean
     get() = tags["pinned-chat-paid-amount"] != null
+
+/** format name for display in chat */
+val PrivMessage.fullName: String
+    get() = userDisplay?.alias ?: when {
+        displayName.equals(name, true) -> displayName
+        else                           -> "$name($displayName)"
+    }
+
+fun PrivMessage.finalColor(@ColorInt bgColor: Int): Int {
+    return userDisplay?.color ?: color.normalizeColor(bgColor)
+
+}

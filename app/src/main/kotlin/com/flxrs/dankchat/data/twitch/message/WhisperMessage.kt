@@ -1,11 +1,14 @@
 package com.flxrs.dankchat.data.twitch.message
 
 import android.graphics.Color
+import androidx.annotation.ColorInt
 import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.connection.WhisperData
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.preferences.userdisplay.UserDisplayEffectiveValue
+import com.flxrs.dankchat.preferences.userdisplay.colorOr
+import com.flxrs.dankchat.utils.extensions.normalizeColor
 import java.util.*
 
 data class WhisperMessage(
@@ -91,4 +94,21 @@ data class WhisperMessage(
             )
         }
     }
+
 }
+
+fun WhisperMessage.recipientColorOnBg(@ColorInt bgColor: Int): Int = recipientDisplay.colorOr(recipientColor.normalizeColor(bgColor))
+
+fun WhisperMessage.senderColorOnBg(@ColorInt bgColor: Int): Int = userDisplay.colorOr(color.normalizeColor(bgColor))
+
+val WhisperMessage.senderFullName: String
+    get() = userDisplay?.alias ?: when {
+        displayName.equals(name, true) -> displayName
+        else                           -> "$name($displayName)"
+    }
+
+val WhisperMessage.recipientFullName: String
+    get() = recipientDisplay?.alias ?: when {
+        recipientDisplayName.equals(recipientName, true) -> recipientDisplayName
+        else                                             -> "$recipientName($recipientDisplayName)"
+    }
