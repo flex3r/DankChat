@@ -64,19 +64,14 @@ fun Int.withAlpha(alpha: Int = 255): Int = (alpha shl 24) or this.onlyRGB()
  * useful for example, when displaying text on this background color
  * */
 fun Int.getContrastTextColor(context: Context? = null): Int {
-    val color1 = context?.let {
-        val typedValue = TypedValue()
-        it.theme.resolveAttribute(R.attr.colorOnSurface, typedValue, true)
-        typedValue.data
-    } ?: Color.BLACK
+    val possibleColors = when {
+        (context != null) -> listOf(R.attr.colorOnSurface, R.attr.colorOnSurfaceInverse).map {
+            val typedValue = TypedValue()
+            context.theme.resolveAttribute(R.attr.colorOnSurface, typedValue, true)
+            typedValue.data
+        }
 
-    val color2 = context?.let {
-        val typedValue = TypedValue()
-        it.theme.resolveAttribute(R.attr.colorOnSurfaceInverse, typedValue, true)
-        typedValue.data
-    } ?: Color.WHITE
-
-    val possibleColors = listOf(color1, color2)
-    val colorOpaque = this.withAlpha(255) // ensure opaque
-    return possibleColors.maxBy { ColorUtils.calculateContrast(it, colorOpaque) }
+        else              -> listOf(Color.WHITE, Color.BLACK)
+    }
+    return possibleColors.maxBy { ColorUtils.calculateContrast(it, this.withAlpha(255)) }
 }

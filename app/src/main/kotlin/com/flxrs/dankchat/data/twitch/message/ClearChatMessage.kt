@@ -41,7 +41,7 @@ data class ClearChatMessage(
 
 }
 
-// TODO localize
+// Extracted from ChatAdapter, TODO localize
 val ClearChatMessage.fullText: String
     get() = when {
         isFullChatClear -> "Chat has been cleared by a moderator."

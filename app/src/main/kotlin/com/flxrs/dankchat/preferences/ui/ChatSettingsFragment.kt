@@ -151,8 +151,9 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
 
         lifecycleScope.launch {
             val userDisplayAdapter = UserDisplayAdapter(
-                { currentList ->
-                    userDisplayViewModel.saveEntries(currentList)
+                { currentEntries ->
+                    // ensure modified entries are saved, before new entry added
+                    userDisplayViewModel.saveEntries(currentEntries)
                     userDisplayViewModel.newBlankEntry()
                 },
                 userDisplayViewModel::deleteEntry,

@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.AddItemBinding
 import com.flxrs.dankchat.databinding.UserDisplayItemBinding
-import com.flxrs.dankchat.utils.extensions.getContrastTextColor
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rarepebble.colorpicker.ColorPickerView
@@ -33,15 +32,14 @@ class UserDisplayAdapter(
                     val item = userDisplay ?: return@setOnClickListener
                     val picker = ColorPickerView(root.context)
                     picker.showAlpha(false)
-
                     picker.color = item.colorValue
+
                     MaterialAlertDialogBuilder(root.context)
                         .setView(picker)
                         .setTitle(root.context.getString(R.string.pick_custom_user_color_title))
                         .setNegativeButton(root.context.getString(R.string.dialog_cancel)) { _, _ -> }
                         .setPositiveButton(root.context.getString(R.string.dialog_ok)) { _, _ ->
-                            val pickedColor = picker.color
-                            item.color = pickedColor
+                            item.color = picker.color
                             userDisplayPickColorButton.setColorAndBg(item)
                         }
                         .show()
@@ -78,7 +76,7 @@ class UserDisplayAdapter(
     @SuppressLint("SetTextI18n")
     private fun MaterialButton.setColorAndBg(item: UserDisplayItem.Entry) {
         text = item.displayText
-        setTextColor(item.colorValue.getContrastTextColor(context = context))
+        setTextColor(item.textColor(context = context))
         setBackgroundColor(item.colorValue)
     }
 
