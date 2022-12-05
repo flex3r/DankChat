@@ -7,7 +7,6 @@ import androidx.annotation.ColorInt
 import com.flxrs.dankchat.data.database.UserDisplayEntity
 import com.flxrs.dankchat.utils.extensions.getContrastTextColor
 import com.flxrs.dankchat.utils.extensions.toHexCode
-import com.flxrs.dankchat.utils.extensions.withAlpha
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -57,12 +56,10 @@ sealed class UserDisplayItem {
 
 }
 
-/** return color, ensured to be opaque -- transparent color doesn't make sense for this feature */
-val UserDisplayItem.Entry.colorValue: Int get() = color.withAlpha()
 val UserDisplayItem.Entry.displayText: String get() = "#" + color.toHexCode()
 
 /** get Text color (on top of background), Context passed in will be used to determine tint on "white" and "black" color*/
-fun UserDisplayItem.Entry.textColor(context: Context? = null) = colorValue.getContrastTextColor(context)
+fun UserDisplayItem.Entry.textColor(context: Context? = null) = color.getContrastTextColor(context)
 
 // convenient functions for null/empty checking, also callable on null receiver
 fun UserDisplayEffectiveValue?.hasAlias(): Boolean {

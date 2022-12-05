@@ -32,7 +32,7 @@ class UserDisplayAdapter(
                     val item = userDisplay ?: return@setOnClickListener
                     val picker = ColorPickerView(root.context)
                     picker.showAlpha(false)
-                    picker.color = item.colorValue
+                    picker.color = item.color
 
                     MaterialAlertDialogBuilder(root.context)
                         .setView(picker)
@@ -77,7 +77,7 @@ class UserDisplayAdapter(
     private fun MaterialButton.setColorAndBg(item: UserDisplayItem.Entry) {
         text = item.displayText
         setTextColor(item.textColor(context = context))
-        setBackgroundColor(item.colorValue)
+        setBackgroundColor(item.color)
     }
 
 
