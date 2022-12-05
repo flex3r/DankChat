@@ -26,7 +26,7 @@ buildscript {
         preference_version = '1.2.0'
         recyclerview_version = '1.2.1'
         viewpager2_version = '1.1.0-beta01'
-        material_version = '1.8.0-alpha02'
+        material_version = '1.8.0-alpha03'
         webkit_version = '1.5.0'
         room_version = '2.5.0-beta02'
 
@@ -43,7 +43,7 @@ buildscript {
 
         // Test
         junit_ersion = '5.9.1'
-        mockk_version = '1.13.2'
+        mockk_version = '1.13.3'
 
         // Localization
         crowdin_version = '1.5.1'

@@ -5,7 +5,7 @@ import com.flxrs.dankchat.data.irc.IrcMessage
 sealed class Message {
     abstract val id: String
     abstract val timestamp: Long
-    abstract val highlights: List<Highlight>
+    abstract val highlights: Set<Highlight>
 
     data class EmoteData(val message: String, val channel: String, val emoteTag: String)
     data class BadgeData(val userId: String?, val channel: String, val badgeTag: String?, val badgeInfoTag: String?)

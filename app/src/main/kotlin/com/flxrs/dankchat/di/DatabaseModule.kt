@@ -21,6 +21,7 @@ object DatabaseModule {
         @ApplicationContext context: Context
     ): DankChatDatabase = Room
         .databaseBuilder(context, DankChatDatabase::class.java, DB_NAME)
+        .addMigrations(DankChatDatabase.MIGRATION_4_5)
         .build()
 
     @Singleton

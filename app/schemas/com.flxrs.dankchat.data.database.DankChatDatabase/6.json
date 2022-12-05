@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 5,
-    "identityHash": "6d3c80977272c38e4871383e8cd6f13e",
+    "version": 6,
+    "identityHash": "188e3725c90a86c94fdb844949c12925",
     "entities": [
       {
         "tableName": "emote_usage",
@@ -318,12 +318,68 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "user_display",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `target_user` TEXT NOT NULL, `enabled` INTEGER NOT NULL, `color_enabled` INTEGER NOT NULL, `color` INTEGER NOT NULL, `aliasEnabled` INTEGER NOT NULL, `alias` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "targetUser",
+            "columnName": "target_user",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "enabled",
+            "columnName": "enabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "colorEnabled",
+            "columnName": "color_enabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "color",
+            "columnName": "color",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "aliasEnabled",
+            "columnName": "aliasEnabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "alias",
+            "columnName": "alias",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6d3c80977272c38e4871383e8cd6f13e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '188e3725c90a86c94fdb844949c12925')"
     ]
   }
 }

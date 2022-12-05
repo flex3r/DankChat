@@ -6,7 +6,7 @@ import java.util.*
 data class UserNoticeMessage(
     override val timestamp: Long = System.currentTimeMillis(),
     override val id: String = UUID.randomUUID().toString(),
-    override val highlights: List<Highlight> = emptyList(),
+    override val highlights: Set<Highlight> = emptySet(),
     val channel: String,
     val message: String,
     val childMessage: PrivMessage?,

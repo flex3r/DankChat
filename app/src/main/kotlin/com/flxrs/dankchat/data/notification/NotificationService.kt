@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.data
+package com.flxrs.dankchat.data.notification
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -19,10 +19,12 @@ import androidx.core.content.getSystemService
 import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.data.NotificationService.NotificationData.Companion.toNotificationData
 import com.flxrs.dankchat.data.repo.ChatRepository
 import com.flxrs.dankchat.data.repo.DataRepository
-import com.flxrs.dankchat.data.twitch.message.*
+import com.flxrs.dankchat.data.twitch.message.Message
+import com.flxrs.dankchat.data.twitch.message.NoticeMessage
+import com.flxrs.dankchat.data.twitch.message.PrivMessage
+import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
 import com.flxrs.dankchat.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -79,8 +81,8 @@ class NotificationService : Service(), CoroutineScope {
         else                                           -> PendingIntent.FLAG_UPDATE_CURRENT
     }
 
-    var activeTTSChannel: String? = null
-    var shouldNotifyOnMention = false
+    private var activeTTSChannel: String? = null
+    private var shouldNotifyOnMention = false
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + Job()
@@ -146,6 +148,10 @@ class NotificationService : Service(), CoroutineScope {
             manager.cancel(SUMMARY_NOTIFICATION_ID)
             manager.cancelAll()
         }
+    }
+
+    fun enableNotifications() {
+        shouldNotifyOnMention = true
     }
 
     private fun setTTSEnabled(enabled: Boolean) = when {
@@ -296,34 +302,6 @@ class NotificationService : Service(), CoroutineScope {
         tts?.speak(ttsMessage, queueMode, null, null)
     }
 
-
-    private data class NotificationData(
-        val channel: String,
-        val name: String,
-        val message: String,
-        val isWhisper: Boolean = false,
-        val isNotify: Boolean = false,
-    ) {
-        companion object {
-            fun Message.toNotificationData(): NotificationData? = when (this) {
-                is PrivMessage    -> when {
-                    highlights.hasMention() -> NotificationData(channel, name, originalMessage)
-                    else                    -> null
-                }
-
-                is WhisperMessage -> NotificationData(
-                    channel = "",
-                    name = name,
-                    message = originalMessage,
-                    isWhisper = true,
-                )
-
-                else              -> {
-                    null
-                }
-            }
-        }
-    }
 
     private fun NotificationData.createMentionNotification() {
         val pendingStartActivityIntent = Intent(this@NotificationService, MainActivity::class.java).let {

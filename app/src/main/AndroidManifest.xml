@@ -28,7 +28,7 @@
         tools:ignore="AllowBackup,GoogleAppIndexingWarning"
         tools:targetApi="tiramisu">
 
-        <service android:name=".data.NotificationService" />
+        <service android:name=".data.notification.NotificationService" />
 
         <activity
             android:name=".main.MainActivity"

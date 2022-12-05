@@ -20,6 +20,7 @@ data class MessageHighlightItem(
     var pattern: String,
     var isRegex: Boolean,
     var isCaseSensitive: Boolean,
+    var createNotification: Boolean,
 ) : HighlightItem() {
     enum class Type {
         Username,
@@ -36,6 +37,7 @@ data class UserHighlightItem(
     override val id: Long,
     var enabled: Boolean,
     var username: String,
+    var createNotification: Boolean,
 ) : HighlightItem()
 
 data class BlacklistedUserItem(
@@ -52,7 +54,8 @@ fun MessageHighlightEntity.toItem() = MessageHighlightItem(
     type = type.toItemType(),
     pattern = pattern,
     isRegex = isRegex,
-    isCaseSensitive = isCaseSensitive
+    isCaseSensitive = isCaseSensitive,
+    createNotification = createNotification,
 )
 
 fun MessageHighlightItem.toEntity() = MessageHighlightEntity(
@@ -61,7 +64,8 @@ fun MessageHighlightItem.toEntity() = MessageHighlightEntity(
     type = type.toEntityType(),
     pattern = pattern,
     isRegex = isRegex,
-    isCaseSensitive = isCaseSensitive
+    isCaseSensitive = isCaseSensitive,
+    createNotification = createNotification,
 )
 
 fun MessageHighlightItem.Type.toEntityType(): MessageHighlightEntityType = when (this) {
@@ -87,13 +91,15 @@ fun MessageHighlightEntityType.toItemType(): MessageHighlightItem.Type = when (t
 fun UserHighlightEntity.toItem() = UserHighlightItem(
     id = id,
     enabled = enabled,
-    username = username
+    username = username,
+    createNotification = createNotification,
 )
 
 fun UserHighlightItem.toEntity() = UserHighlightEntity(
     id = id,
     enabled = enabled,
-    username = username
+    username = username,
+    createNotification = createNotification,
 )
 
 fun BlacklistedUserEntity.toItem() = BlacklistedUserItem(

@@ -55,6 +55,7 @@ class HighlightsRepository @Inject constructor(
             is UserNoticeMessage      -> message.calculateHighlightState()
             is PointRedemptionMessage -> message.calculateHighlightState()
             is PrivMessage            -> message.calculateHighlightState()
+            is WhisperMessage         -> message.calculateHighlightState()
             else                      -> message
         }
     }
@@ -159,7 +160,7 @@ class HighlightsRepository @Inject constructor(
     private fun UserNoticeMessage.calculateHighlightState(): UserNoticeMessage {
         val messageHighlights = validMessageHighlights.value
 
-        val highlights = buildList {
+        val highlights = buildSet {
             if (isSub && messageHighlights.areSubsEnabled) {
                 add(Highlight(HighlightType.Subscription))
             }
@@ -180,8 +181,8 @@ class HighlightsRepository @Inject constructor(
             .any { it.type == MessageHighlightEntityType.ChannelPointRedemption }
 
         val highlights = when {
-            redemptionsEnabled -> listOf(Highlight(HighlightType.ChannelPointRedemption))
-            else               -> emptyList()
+            redemptionsEnabled -> setOf(Highlight(HighlightType.ChannelPointRedemption))
+            else               -> emptySet()
         }
 
         return copy(highlights = highlights)
@@ -194,7 +195,7 @@ class HighlightsRepository @Inject constructor(
 
         val userHighlights = validUserHighlights.value
         val messageHighlights = validMessageHighlights.value
-        val highlights = buildList {
+        val highlights = buildSet {
             if (isSub && messageHighlights.areSubsEnabled) {
                 add(Highlight(HighlightType.Subscription))
             }
@@ -215,13 +216,18 @@ class HighlightsRepository @Inject constructor(
                 add(Highlight(HighlightType.ElevatedMessage))
             }
 
-            if (containsCurrentUserName && messageHighlights.isOwnUserNameEnabled) {
-                add(Highlight(HighlightType.Username))
+            if (containsCurrentUserName) {
+                val highlight = messageHighlights.userNameHighlight
+                if (highlight?.enabled == true) {
+                    add(Highlight(HighlightType.Username))
+                    addNotificationHighlightIfEnabled(highlight)
+                }
             }
 
             userHighlights.forEach {
                 if (it.username.equals(name, ignoreCase = true)) {
                     add(Highlight(HighlightType.Custom))
+                    addNotificationHighlightIfEnabled(it)
                 }
             }
 
@@ -232,12 +238,18 @@ class HighlightsRepository @Inject constructor(
 
                     if (message.contains(regex)) {
                         add(Highlight(HighlightType.Custom))
+                        addNotificationHighlightIfEnabled(it)
                     }
                 }
 
         }
 
         return copy(highlights = highlights)
+    }
+
+    private fun WhisperMessage.calculateHighlightState(): WhisperMessage = when {
+        preferences.createWhisperNotifications -> copy(highlights = setOf(Highlight(HighlightType.Notification)))
+        else                                   -> this
     }
 
     private val List<MessageHighlightEntity>.areSubsEnabled: Boolean
@@ -255,11 +267,23 @@ class HighlightsRepository @Inject constructor(
     private val List<MessageHighlightEntity>.areElevatedMessagesEnabled: Boolean
         get() = isMessageHighlightTypeEnabled(MessageHighlightEntityType.ElevatedMessage)
 
-    private val List<MessageHighlightEntity>.isOwnUserNameEnabled: Boolean
-        get() = isMessageHighlightTypeEnabled(MessageHighlightEntityType.Username)
+    private val List<MessageHighlightEntity>.userNameHighlight: MessageHighlightEntity?
+        get() = find { it.type == MessageHighlightEntityType.Username }
 
     private fun List<MessageHighlightEntity>.isMessageHighlightTypeEnabled(type: MessageHighlightEntityType): Boolean {
         return any { it.type == type }
+    }
+
+    private fun MutableCollection<Highlight>.addNotificationHighlightIfEnabled(highlightEntity: MessageHighlightEntity) {
+        if (highlightEntity.createNotification) {
+            add(Highlight(HighlightType.Notification))
+        }
+    }
+
+    private fun MutableCollection<Highlight>.addNotificationHighlightIfEnabled(highlightEntity: UserHighlightEntity) {
+        if (highlightEntity.createNotification) {
+            add(Highlight(HighlightType.Notification))
+        }
     }
 
     private val PrivMessage.containsCurrentUserName: Boolean
@@ -317,11 +341,11 @@ class HighlightsRepository @Inject constructor(
         private val TAG = HighlightsRepository::class.java.simpleName
         private val DEFAULT_HIGHLIGHTS = listOf(
             MessageHighlightEntity(id = 1, enabled = true, type = MessageHighlightEntityType.Username, pattern = ""),
-            MessageHighlightEntity(id = 2, enabled = true, type = MessageHighlightEntityType.Subscription, pattern = ""),
-            MessageHighlightEntity(id = 3, enabled = true, type = MessageHighlightEntityType.Announcement, pattern = ""),
-            MessageHighlightEntity(id = 4, enabled = true, type = MessageHighlightEntityType.ChannelPointRedemption, pattern = ""),
-            MessageHighlightEntity(id = 5, enabled = true, type = MessageHighlightEntityType.FirstMessage, pattern = ""),
-            MessageHighlightEntity(id = 6, enabled = true, type = MessageHighlightEntityType.ElevatedMessage, pattern = ""),
+            MessageHighlightEntity(id = 2, enabled = true, type = MessageHighlightEntityType.Subscription, pattern = "", createNotification = false),
+            MessageHighlightEntity(id = 3, enabled = true, type = MessageHighlightEntityType.Announcement, pattern = "", createNotification = false),
+            MessageHighlightEntity(id = 4, enabled = true, type = MessageHighlightEntityType.ChannelPointRedemption, pattern = "", createNotification = false),
+            MessageHighlightEntity(id = 5, enabled = true, type = MessageHighlightEntityType.FirstMessage, pattern = "", createNotification = false),
+            MessageHighlightEntity(id = 6, enabled = true, type = MessageHighlightEntityType.ElevatedMessage, pattern = "", createNotification = false),
         )
     }
 }

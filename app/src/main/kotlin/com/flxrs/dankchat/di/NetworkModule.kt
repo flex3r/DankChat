@@ -18,7 +18,6 @@ import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
-import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import javax.inject.Singleton
 import kotlin.time.Duration.Companion.seconds
@@ -54,7 +53,6 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideEmoteOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
-        .dispatcher(Dispatcher().apply { maxRequestsPerHost = 20 }) // increase from default 5
         .build()
 
     @Singleton
