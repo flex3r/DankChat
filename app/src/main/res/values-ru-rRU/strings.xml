@@ -264,6 +264,7 @@
     <string name="case_sensitive">Соблюдать регистр</string>
     <string name="highlights">Выделения</string>
     <string name="enabled">Включено</string>
+    <string name="create_notification">Уведомление</string>
     <string name="preference_highlights_summary">Редактировать выделения сообщений</string>
     <string name="preference_highlights_ignores_header">Выделения и Игнорирования</string>
     <string name="username">Имя пользователя</string>
@@ -281,9 +282,10 @@
     <string name="unblocked_user_failed">Не удалось разблокировать пользователя %1$s</string>
     <string name="blocked_user_failed">Не удалось заблокировать пользователя %1$s</string>
     <string name="highlights_entry_username">Ваше имя пользователя</string>
-    <string name="highlights_ignores_entry_subscriptions">Подписки</string>
+    <string name="highlights_ignores_entry_subscriptions">Подписки и События</string>
     <string name="highlights_ignores_entry_announcements">Анонсы</string>
     <string name="highlights_ignores_entry_first_messages">Первые сообщения</string>
+    <string name="highlights_ignores_entry_elevated_messages">Возвышенные сообщения</string>
     <string name="highlights_ignores_entry_redemptions">Выделения купленные за баллы канала</string>
     <string name="highlights_ignores_entry_custom">Пользовательские</string>
     <string name="highlights_messages_title">Создает уведомления, и выделяет сообщения на основе определенных шаблонов.</string>
@@ -292,6 +294,7 @@
     <string name="ignores_messages_title">Игнорирует сообщения, основанные на определенных шаблонах.</string>
     <string name="ignores_users_title">Игнорирует сообщения от определенных пользователей.</string>
     <string name="ignores_twitch_title">Управление заблокированными пользователями Twitch.</string>
+    <string name="preference_notification_whisper_title">Создавать уведомления для личных сообщений</string>
     <plurals name="viewers">
         <item quantity="one">В сети с %d зрителем</item>
         <item quantity="few">В сети с %d зрителями</item>
