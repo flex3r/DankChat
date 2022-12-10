@@ -285,6 +285,7 @@
     <string name="highlights_ignores_entry_subscriptions">Подписки и События</string>
     <string name="highlights_ignores_entry_announcements">Анонсы</string>
     <string name="highlights_ignores_entry_first_messages">Первые сообщения</string>
+    <string name="highlights_ignores_entry_elevated_messages">Возвышенные сообщения</string>
     <string name="highlights_ignores_entry_redemptions">Выделения купленные за баллы канала</string>
     <string name="highlights_ignores_entry_custom">Пользовательские</string>
     <string name="highlights_messages_title">Создает уведомления, и выделяет сообщения на основе определенных шаблонов.</string>
