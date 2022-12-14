@@ -26,6 +26,7 @@ import com.flxrs.dankchat.preferences.userdisplay.UserDisplayAdapter
 import com.flxrs.dankchat.preferences.userdisplay.UserDisplayViewModel
 import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
+import com.flxrs.dankchat.utils.extensions.expand
 import com.flxrs.dankchat.utils.extensions.showRestartRequired
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -147,16 +148,15 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
     private fun showUserDisplaySettingsFragment(root: View): Boolean {
         val context = root.context
         val windowHeight = resources.displayMetrics.heightPixels
-        val peekHeight = (windowHeight * 0.6).roundToInt()
 
         lifecycleScope.launch {
             val userDisplayAdapter = UserDisplayAdapter(
-                { currentEntries ->
+                onAddItem = { currentList ->
                     // ensure modified entries are saved, before new entry added
-                    userDisplayViewModel.saveEntries(currentEntries)
+                    userDisplayViewModel.saveEntries(currentList)
                     userDisplayViewModel.newBlankEntry()
                 },
-                userDisplayViewModel::deleteEntry,
+                onDeleteItem = userDisplayViewModel::deleteEntry,
             )
 
             collectFlow(userDisplayViewModel.userDisplays) { userDisplayAdapter.submitList(it) }
@@ -170,9 +170,10 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
 
             bottomSheetDialog = BottomSheetDialog(context).apply {
                 setContentView(binding.root)
-                setOnDismissListener { userDisplayViewModel.saveEntries(userDisplayAdapter.currentEntries) }
+                setOnDismissListener { userDisplayViewModel.saveEntries(userDisplayAdapter.currentList) }
+                behavior.skipCollapsed = true
                 behavior.isFitToContents = false
-                behavior.peekHeight = peekHeight
+                behavior.expand()
                 show()
             }
         }

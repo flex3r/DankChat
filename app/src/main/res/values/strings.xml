@@ -366,4 +366,5 @@
     <string name="user_display_custom_color_enable">Custom Color</string>
     <string name="user_display_custom_alias_enable">Custom Alias</string>
     <string name="pick_custom_user_color_title">Pick custom user color</string>
+    <string name="custom_user_display_summary">Add custom name and/or color for users</string>
 </resources>

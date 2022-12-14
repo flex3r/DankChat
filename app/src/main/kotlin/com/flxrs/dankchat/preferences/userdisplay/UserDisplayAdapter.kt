@@ -16,10 +16,9 @@ import com.rarepebble.colorpicker.ColorPickerView
 import io.ktor.util.reflect.*
 
 class UserDisplayAdapter(
-    val onAddItem: (currentEntries: List<UserDisplayItem.Entry>) -> Unit,
+    val onAddItem: (currentEntries: List<UserDisplayItem>) -> Unit,
     val onDeleteItem: (UserDisplayItem.Entry) -> Unit,
-) :
-    ListAdapter<UserDisplayItem, RecyclerView.ViewHolder>(DetectDiff()) {
+) : ListAdapter<UserDisplayItem, RecyclerView.ViewHolder>(DetectDiff()) {
 
     inner class EntryViewHolder(val binding: UserDisplayItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
@@ -34,15 +33,11 @@ class UserDisplayAdapter(
                     picker.showAlpha(false)
                     picker.color = item.color
 
-                    MaterialAlertDialogBuilder(root.context)
-                        .setView(picker)
-                        .setTitle(root.context.getString(R.string.pick_custom_user_color_title))
-                        .setNegativeButton(root.context.getString(R.string.dialog_cancel)) { _, _ -> }
-                        .setPositiveButton(root.context.getString(R.string.dialog_ok)) { _, _ ->
+                    MaterialAlertDialogBuilder(root.context).setView(picker).setTitle(root.context.getString(R.string.pick_custom_user_color_title))
+                        .setNegativeButton(root.context.getString(R.string.dialog_cancel)) { _, _ -> }.setPositiveButton(root.context.getString(R.string.dialog_ok)) { _, _ ->
                             item.color = picker.color
                             userDisplayPickColorButton.setColorAndBg(item)
-                        }
-                        .show()
+                        }.show()
                 }
 
                 userDisplayEnableColor.setOnCheckedChangeListener { _, checked ->
@@ -66,7 +61,7 @@ class UserDisplayAdapter(
     inner class AddItemViewHolder(val binding: AddItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.multiEntryAdd.setOnClickListener {
-                onAddItem(currentEntries)
+                onAddItem(currentList)
             }
         }
 
@@ -76,16 +71,16 @@ class UserDisplayAdapter(
     @SuppressLint("SetTextI18n")
     private fun MaterialButton.setColorAndBg(item: UserDisplayItem.Entry) {
         text = item.displayText
-        setTextColor(item.textColor(context = context))
+        setTextColor(item.textColor(context))
         setBackgroundColor(item.color)
     }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            0    -> EntryViewHolder(UserDisplayItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-            1    -> AddItemViewHolder(AddItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-            else -> throw ClassCastException("Invalid view type $viewType")
+            ENTRY_VIEW_TYPE    -> EntryViewHolder(UserDisplayItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            ADD_ITEM_VIEW_TYPE -> AddItemViewHolder(AddItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            else               -> throw ClassCastException("Invalid view type $viewType")
 
         }
     }
@@ -107,8 +102,8 @@ class UserDisplayAdapter(
 
     override fun getItemViewType(position: Int): Int {
         return when (currentList[position]) {
-            is UserDisplayItem.Entry -> ENTRY_VIEW_TYPE
-            else                     -> ADD_ITEM_VIEW_TYPE
+            is UserDisplayItem.Entry    -> ENTRY_VIEW_TYPE
+            is UserDisplayItem.AddEntry -> ADD_ITEM_VIEW_TYPE
         }
     }
 
@@ -135,9 +130,6 @@ class UserDisplayAdapter(
         }
 
     }
-
-    /** convenient method for retrieving the list without "add entry" */
-    val currentEntries: List<UserDisplayItem.Entry> get() = currentList.filterIsInstance<UserDisplayItem.Entry>()
 
 
 }

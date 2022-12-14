@@ -6,8 +6,6 @@ import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.connection.WhisperData
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
-import com.flxrs.dankchat.preferences.userdisplay.UserDisplayEffectiveValue
-import com.flxrs.dankchat.preferences.userdisplay.colorOr
 import com.flxrs.dankchat.utils.extensions.normalizeColor
 import java.util.*
 
@@ -30,8 +28,8 @@ data class WhisperMessage(
     val originalMessage: String = message,
     val emotes: List<ChatMessageEmote> = emptyList(),
     val badges: List<Badge> = emptyList(),
-    val userDisplay: UserDisplayEffectiveValue? = null,
-    val recipientDisplay: UserDisplayEffectiveValue? = null
+    val userDisplay: UserDisplay? = null,
+    val recipientDisplay: UserDisplay? = null
 ) : Message() {
 
     override val emoteData: EmoteData = EmoteData(message, channel = "", emoteTag = rawEmotes)
@@ -104,7 +102,7 @@ val WhisperMessage.senderFullName: String
         else                           -> "$name($displayName)"
     }
 
-fun WhisperMessage.senderColorOnBg(@ColorInt bgColor: Int): Int = userDisplay.colorOr(color.normalizeColor(bgColor))
+fun WhisperMessage.senderColorOnBg(@ColorInt bgColor: Int): Int = userDisplay.colorOrElse(color.normalizeColor(bgColor))
 
 val WhisperMessage.recipientFullName: String
     get() = recipientDisplay?.alias ?: when {
@@ -112,4 +110,4 @@ val WhisperMessage.recipientFullName: String
         else                                             -> "$recipientName($recipientDisplayName)"
     }
 
-fun WhisperMessage.recipientColorOnBg(@ColorInt bgColor: Int): Int = recipientDisplay.colorOr(recipientColor.normalizeColor(bgColor))
+fun WhisperMessage.recipientColorOnBg(@ColorInt bgColor: Int): Int = recipientDisplay.colorOrElse(recipientColor.normalizeColor(bgColor))

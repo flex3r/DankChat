@@ -3,8 +3,8 @@ package com.flxrs.dankchat.data.repo
 import com.flxrs.dankchat.data.database.UserDisplayDao
 import com.flxrs.dankchat.data.database.UserDisplayEntity
 import com.flxrs.dankchat.data.twitch.message.*
+import com.flxrs.dankchat.data.twitch.message.UserDisplay.Companion.toEffectiveValue
 import com.flxrs.dankchat.di.ApplicationScope
-import com.flxrs.dankchat.preferences.userdisplay.UserDisplayEffectiveValue
 import com.flxrs.dankchat.preferences.userdisplay.UserDisplayItem.AddEntry.toEntry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -47,11 +47,10 @@ class UserDisplayRepository @Inject constructor(
             is WhisperMessage         -> message.applyUserDisplay()
             else                      -> return message
         }
-
     }
 
-    private fun findMatchingUserDisplay(name: String): UserDisplayEffectiveValue? {
-        return userDisplays.value.find { it.targetUser.equals(name, true) }?.toEntry()?.effectiveValue()
+    private fun findMatchingUserDisplay(name: String): UserDisplay? {
+        return userDisplays.value.find { it.targetUser.equals(name, ignoreCase = true) }?.toEntry()?.toEffectiveValue()
     }
 
     private fun PrivMessage.applyUserDisplay(): PrivMessage {
@@ -60,7 +59,9 @@ class UserDisplayRepository @Inject constructor(
     }
 
     private fun ClearChatMessage.applyUserDisplay(): ClearChatMessage {
-        if (targetUser == null) return this
+        if (targetUser == null) {
+            return this
+        }
         val match = findMatchingUserDisplay(targetUser) ?: return this
         return copy(userDisplay = match)
     }
@@ -72,16 +73,16 @@ class UserDisplayRepository @Inject constructor(
 
     // e.g. announcement ->have child message
     private fun UserNoticeMessage.applyUserDisplay(): UserNoticeMessage {
-        val processedChildMessage = childMessage?.applyUserDisplay()
-        // optimize to prevent unnecessary copy if the childMessage is still the same
-        if (processedChildMessage == childMessage) return this
+        val processedChildMessage = childMessage?.applyUserDisplay() ?: return this
         return copy(childMessage = processedChildMessage)
     }
 
     private fun WhisperMessage.applyUserDisplay(): WhisperMessage {
         val senderMatch = findMatchingUserDisplay(name)
         val recipientMatch = findMatchingUserDisplay(recipientName)
-        if (senderMatch == null && recipientMatch == null) return this
+        if (senderMatch == null && recipientMatch == null) {
+            return this
+        }
         return copy(
             userDisplay = senderMatch,
             recipientDisplay = recipientMatch

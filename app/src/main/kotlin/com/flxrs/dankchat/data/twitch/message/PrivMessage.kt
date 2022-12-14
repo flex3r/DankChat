@@ -5,7 +5,6 @@ import androidx.annotation.ColorInt
 import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
-import com.flxrs.dankchat.preferences.userdisplay.UserDisplayEffectiveValue
 import com.flxrs.dankchat.utils.extensions.normalizeColor
 import java.util.*
 
@@ -25,7 +24,7 @@ data class PrivMessage(
     val badges: List<Badge> = emptyList(),
     val timedOut: Boolean = false,
     val tags: Map<String, String>,
-    val userDisplay: UserDisplayEffectiveValue? = null,
+    val userDisplay: UserDisplay? = null,
 ) : Message() {
 
     override val emoteData: EmoteData = EmoteData(message, channel, emoteTag = tags["emotes"].orEmpty())

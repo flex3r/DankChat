@@ -54,6 +54,7 @@
         <Preference
             android:key="@string/preference_custom_user_display_key"
             android:title="@string/custom_user_display_title"
+            android:summary="@string/custom_user_display_summary"
             app:iconSpaceReserved="false" />
 
 

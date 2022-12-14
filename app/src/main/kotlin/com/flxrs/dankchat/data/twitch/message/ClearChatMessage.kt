@@ -1,8 +1,6 @@
 package com.flxrs.dankchat.data.twitch.message
 
 import com.flxrs.dankchat.data.irc.IrcMessage
-import com.flxrs.dankchat.preferences.userdisplay.UserDisplayEffectiveValue
-import com.flxrs.dankchat.preferences.userdisplay.nameOr
 import com.flxrs.dankchat.utils.DateTimeUtils
 import java.util.*
 
@@ -14,7 +12,7 @@ data class ClearChatMessage(
     val targetUser: String? = null,
     val duration: String = "",
     val stackCount: Int = 0,
-    val userDisplay: UserDisplayEffectiveValue? = null,
+    val userDisplay: UserDisplay? = null,
 ) : Message() {
     val isBan = duration.isBlank()
     val isFullChatClear = targetUser == null
@@ -46,10 +44,10 @@ val ClearChatMessage.fullText: String
     get() = when {
         isFullChatClear -> "Chat has been cleared by a moderator."
         // why is targetUser can be null?
-        isBan           -> "${userDisplay.nameOr(targetUser ?: "A user")} has been permanently banned"
+        isBan           -> "${userDisplay.aliasOrElse(targetUser ?: "A user")} has been permanently banned"
         else            -> {
             val countOrBlank = if (stackCount > 1) " ($stackCount times)" else ""
-            "${userDisplay.nameOr(targetUser ?: "A user")} has been timed out for ${DateTimeUtils.formatSeconds(duration)}.$countOrBlank"
+            "${userDisplay.aliasOrElse(targetUser ?: "A user")} has been timed out for ${DateTimeUtils.formatSeconds(duration)}.$countOrBlank"
         }
     }
 
