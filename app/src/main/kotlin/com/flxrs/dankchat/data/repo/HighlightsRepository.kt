@@ -31,9 +31,9 @@ class HighlightsRepository @Inject constructor(
     @ApplicationScope private val coroutineScope: CoroutineScope
 ) {
 
-    private val currentUserName = preferences.currentUserNameFlow.stateIn(coroutineScope, SharingStarted.Eagerly, null)
-    private val currentUserNameRegex = currentUserName
-        .map { it?.let { """\b$it\b""".toRegex(RegexOption.IGNORE_CASE) } }
+    private val currentUserAndDisplay = preferences.currentUserAndDisplayFlow.stateIn(coroutineScope, SharingStarted.Eagerly, null)
+    private val currentUserRegex = currentUserAndDisplay
+        .map(::createUserAndDisplayRegex)
         .stateIn(coroutineScope, SharingStarted.Eagerly, null)
 
     val messageHighlights = messageHighlightDao.getMessageHighlightsFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
@@ -288,14 +288,23 @@ class HighlightsRepository @Inject constructor(
 
     private val PrivMessage.containsCurrentUserName: Boolean
         get() {
-            val currentUser = currentUserName.value ?: return false
+            val currentUser = currentUserAndDisplay.value?.first ?: return false
             if (name.equals(currentUser, ignoreCase = true)) {
                 return false
             }
 
-            val regex = currentUserNameRegex.value ?: return false
+            val regex = currentUserRegex.value ?: return false
             return message.contains(regex)
         }
+
+    private fun createUserAndDisplayRegex(values: Pair<String?, String?>?): Regex? {
+        val (user, display) = values ?: return null
+        user ?: return null
+        val displayRegex = display
+            ?.takeIf { !it.equals(user, ignoreCase = true) }
+            ?.let { "|$it" }.orEmpty()
+        return """\b$user$displayRegex\b""".toRegex(RegexOption.IGNORE_CASE)
+    }
 
     private fun isUserBlacklisted(name: String): Boolean {
         validBlacklistedUsers.value

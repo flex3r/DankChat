@@ -505,6 +505,7 @@ class ChatRepository @Inject constructor(
         val name = msg.tags["display-name"]
         val badges = msg.tags["badges"]?.split(",")
         val hasModeration = badges?.any { it.contains("broadcaster") || it.contains("moderator") } ?: false
+        dankChatPreferenceStore.displayName = name
         userState.update { current ->
             val followerEmotes = when {
                 current.globalEmoteSets.isNotEmpty() -> sets - current.globalEmoteSets.toSet()

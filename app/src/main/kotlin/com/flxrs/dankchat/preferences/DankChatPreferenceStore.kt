@@ -55,6 +55,10 @@ class DankChatPreferenceStore @Inject constructor(
         get() = dankChatPreferences.getString(NAME_KEY, null)
         set(value) = dankChatPreferences.edit { putString(NAME_KEY, value) }
 
+    var displayName: String?
+        get() = dankChatPreferences.getString(DISPLAY_NAME_KEY, null)
+        set(value) = dankChatPreferences.edit { putString(DISPLAY_NAME_KEY, value) }
+
     var userId: Int
         get() = dankChatPreferences.getInt(ID_KEY, 0)
         set(value) = dankChatPreferences.edit { putInt(ID_KEY, value) }
@@ -212,11 +216,11 @@ class DankChatPreferenceStore @Inject constructor(
     val createWhisperNotifications: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_notification_whisper_key), true)
 
-    val currentUserNameFlow: Flow<String?> = callbackFlow {
-        send(userName?.ifBlank { null })
+    val currentUserAndDisplayFlow: Flow<Pair<String?, String?>> = callbackFlow {
+        send(userName?.ifBlank { null } to displayName?.ifBlank { null })
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (key == NAME_KEY) {
-                trySend(userName?.ifBlank { null })
+            if (key == NAME_KEY || key == DISPLAY_NAME_KEY) {
+                trySend(userName?.ifBlank { null } to displayName?.ifBlank { null })
             }
         }
 
@@ -369,6 +373,7 @@ class DankChatPreferenceStore @Inject constructor(
         private const val LOGGED_IN_KEY = "loggedIn"
         private const val OAUTH_KEY = "oAuthKey"
         private const val NAME_KEY = "nameKey"
+        private const val DISPLAY_NAME_KEY = "displayNameKey"
         private const val CHANNELS_KEY = "channelsKey"
         private const val RENAME_KEY = "renameKey"
         private const val CHANNELS_AS_STRING_KEY = "channelsAsStringKey"
