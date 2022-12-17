@@ -29,7 +29,6 @@ import javax.inject.Inject
 
 class EmoteRepository @Inject constructor(private val apiManager: ApiManager, private val preferences: DankChatPreferenceStore) {
     private val twitchEmotes = ConcurrentHashMap<String, GenericEmote>()
-    private var userStateEmoteSetIds: List<String> = emptyList()
 
     private val ffzEmotes = ConcurrentHashMap<String, HashMap<String, GenericEmote>>()
     private val globalFFZEmotes = ConcurrentHashMap<String, GenericEmote>()
@@ -214,7 +213,6 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
         val sets = runCatching { apiManager.getUserSets(combined) }
             .getOrNull()
             .orEmpty()
-        userStateEmoteSetIds = sets.map { it.id }
 
         sets.forEach { emoteSet ->
             val type = when (val set = emoteSet.id) {
