@@ -12,7 +12,7 @@ sealed class ValidateResultDto {
     data class ValidUser(
         @SerialName(value = "client_id") val clientId: String,
         @SerialName(value = "login") val login: String,
-        @SerialName(value = "scopes") val scopes: List<String>, // TODO Verify scopes
+        @SerialName(value = "scopes") val scopes: List<String>,
         @SerialName(value = "user_id") val userId: String
     ) : ValidateResultDto()
 

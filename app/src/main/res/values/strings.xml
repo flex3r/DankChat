@@ -349,6 +349,8 @@
     <string name="ignores_twitch_title">Manage blocked Twitch users.</string>
     <string name="preference_notification_whisper_key" translatable="false">notification_whisper_key</string>
     <string name="preference_notification_whisper_title">Create notifications for whispers</string>
+    <string name="login_outdated_title">Login Outdated!</string>
+    <string name="login_outdated_message">Your login is outdated and does not have access to some functionality. Please login again.</string>
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>
         <item quantity="other">Live with %d viewers</item>

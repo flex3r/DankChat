@@ -222,27 +222,38 @@ class ApiManager @Inject constructor(
 
         private const val BASE_LOGIN_URL = "https://id.twitch.tv/oauth2/authorize?response_type=token"
         private const val REDIRECT_URL = "https://flxrs.com/dankchat"
-        private const val SCOPES = "chat:edit" +
-                "+chat:read" +
-                "+whispers:read" +
-                "+whispers:edit" +
-                "+channel_editor" +
-                "+channel_commercial" +
-                "+channel:moderate" +
-                "+channel:edit:commercial" +
-                //"+channel:manage:broadcast" +
-                "+channel:read:redemptions" +
-                //"+moderator:manage:automod" +
-                // "+clips:edit" +
-                "+user_read" +
-                "+user_subscriptions" +
-                "+user_blocks_read" +
-                "+user_blocks_edit" +
-                "+user:edit:follows" +
-                "+user:read:blocked_users" +
-                "+user:manage:blocked_users"
+        val SCOPES = setOf(
+            "channel_editor", // TODO to be removed
+            "channel_commercial", // TODO to be removed
+            "channel:edit:commercial",
+            "channel:manage:broadcast",
+            "channel:manage:moderators",
+            "channel:manage:polls",
+            "channel:manage:predictions",
+            "channel:manage:raids",
+            "channel:manage:vips",
+            "channel:moderate",
+            "channel:read:polls",
+            "channel:read:predictions",
+            "channel:read:redemptions",
+            "chat:edit",
+            "chat:read",
+            "moderator:manage:announcements",
+            "moderator:manage:automod",
+            "moderator:manage:banned_users",
+            "moderator:manage:chat_messages",
+            "moderator:manage:chat_settings",
+            "moderator:manage:shield_mode",
+            "moderator:read:chatters",
+            "user:manage:blocked_users",
+            "user:manage:chat_color",
+            "user:manage:whispers",
+            "user:read:blocked_users",
+            "whispers:edit",
+            "whispers:read",
+        )
         const val CLIENT_ID = "xu7vd1i6tlr0ak45q1li2wdc0lrma8"
-        const val LOGIN_URL = "$BASE_LOGIN_URL&client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URL&scope=$SCOPES"
+        val LOGIN_URL = "$BASE_LOGIN_URL&client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URL&scope=${SCOPES.joinToString(separator = "+")}"
     }
 }
 

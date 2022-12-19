@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.data.api.ApiManager
