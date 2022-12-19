@@ -56,8 +56,13 @@ class DankChatViewModel @Inject constructor(
             when (val result = apiManager.validateUser(token)) {
                 is ValidateResultDto.Error     -> result.handleValidationError()
                 is ValidateResultDto.ValidUser -> {
-                    _validationResult.send(ValidationResult.User(result.login))
                     dankChatPreferenceStore.userName = result.login
+                    when {
+                        result.scopes.containsAll(ApiManager.SCOPES) -> _validationResult.send(ValidationResult.User(result.login))
+                        else                                          -> _validationResult.send(ValidationResult.IncompleteScopes(result.login))
+                    }
+
+
                 }
             }
         }.getOrElse {

@@ -344,12 +344,18 @@ class MainFragment : Fragment() {
                 when (it) {
                     // wait for username to be validated before showing snackbar
                     is ValidationResult.User      -> showSnackBar(getString(R.string.snackbar_login, it.username))
+                    is ValidationResult.IncompleteScopes -> MaterialAlertDialogBuilder(requireContext())
+                        .setTitle(R.string.login_outdated_title)
+                        .setMessage(R.string.login_outdated_message)
+                        .setPositiveButton(R.string.oauth_expired_login_again) { _, _ -> openLogin()}
+                        .setNegativeButton(R.string.dialog_dismiss) { _, _ -> }
+                        .create().show()
                     ValidationResult.TokenInvalid -> {
                         MaterialAlertDialogBuilder(requireContext())
-                            .setTitle(getString(R.string.oauth_expired_title))
-                            .setMessage(getString(R.string.oauth_expired_message))
-                            .setPositiveButton(getString(R.string.oauth_expired_login_again)) { _, _ -> openLogin() }
-                            .setNegativeButton(getString(R.string.dialog_dismiss)) { _, _ -> } // default action is dismissing anyway
+                            .setTitle(R.string.oauth_expired_title)
+                            .setMessage(R.string.oauth_expired_message)
+                            .setPositiveButton(R.string.oauth_expired_login_again) { _, _ -> openLogin() }
+                            .setNegativeButton(R.string.dialog_dismiss) { _, _ -> } // default action is dismissing anyway
                             .create().show()
                     }
 
