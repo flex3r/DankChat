@@ -20,9 +20,9 @@ class UserDisplayRepository @Inject constructor(
 ) {
 
     val userDisplays = userDisplayDao.getUserDisplaysFlow().stateIn(
-        coroutineScope,
-        SharingStarted.Eagerly,
-        emptyList()
+        scope = coroutineScope,
+        started = SharingStarted.Eagerly,
+        initialValue = emptyList()
     )
 
     suspend fun addUserDisplays(userDisplays: List<UserDisplayEntity>) {
@@ -59,9 +59,7 @@ class UserDisplayRepository @Inject constructor(
     }
 
     private fun ClearChatMessage.applyUserDisplay(): ClearChatMessage {
-        if (targetUser == null) {
-            return this
-        }
+        targetUser ?: return this
         val match = findMatchingUserDisplay(targetUser) ?: return this
         return copy(userDisplay = match)
     }

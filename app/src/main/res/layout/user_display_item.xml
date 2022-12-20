@@ -81,7 +81,6 @@
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/user_display_enable_color"
-                style="@style/Widget.Material3.CompoundButton.CheckBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/user_display_custom_color_enable"

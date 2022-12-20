@@ -39,8 +39,8 @@ data class ClearChatMessage(
 
 }
 
-// Extracted from ChatAdapter, TODO localize
-val ClearChatMessage.fullText: String
+// TODO localize
+val ClearChatMessage.systemMesage: String
     get() = when {
         isFullChatClear -> "Chat has been cleared by a moderator."
         // why is targetUser can be null?
