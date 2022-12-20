@@ -23,12 +23,14 @@ import com.flxrs.dankchat.preferences.command.CommandDto.Companion.toDto
 import com.flxrs.dankchat.preferences.command.CommandDto.Companion.toEntryItem
 import com.flxrs.dankchat.preferences.command.CommandItem
 import com.flxrs.dankchat.preferences.userdisplay.UserDisplayAdapter
+import com.flxrs.dankchat.preferences.userdisplay.UserDisplayEvent
 import com.flxrs.dankchat.preferences.userdisplay.UserDisplayViewModel
 import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import com.flxrs.dankchat.utils.extensions.expand
 import com.flxrs.dankchat.utils.extensions.showRestartRequired
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import io.ktor.util.reflect.*
 import kotlinx.coroutines.launch
@@ -159,17 +161,29 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
                 onDeleteItem = userDisplayViewModel::deleteEntry,
             )
 
-            collectFlow(userDisplayViewModel.userDisplays) { userDisplayAdapter.submitList(it) }
-
-            val binding = UserDisplayBottomSheetBinding.inflate(LayoutInflater.from(context), root as? ViewGroup, false).apply {
+            val bottomSheetBinding = UserDisplayBottomSheetBinding.inflate(LayoutInflater.from(context), root as? ViewGroup, false).apply {
                 customUserDisplayList.adapter = userDisplayAdapter
                 customUserDisplaySheet.updateLayoutParams {
                     height = windowHeight
                 }
             }
 
+            collectFlow(userDisplayViewModel.userDisplays) { userDisplayAdapter.submitList(it) }
+            collectFlow(userDisplayViewModel.events) { event ->
+                when (event) {
+                    is UserDisplayEvent.ItemRemoved -> Snackbar.make(
+                        bottomSheetBinding.root,
+                        getString(R.string.item_removed),
+                        Snackbar.LENGTH_SHORT
+                    )
+                        .setAction("Undo") { userDisplayViewModel.addEntry(event.item) }
+                        .show()
+                }
+            }
+
+
             bottomSheetDialog = BottomSheetDialog(context).apply {
-                setContentView(binding.root)
+                setContentView(bottomSheetBinding.root)
                 setOnDismissListener { userDisplayViewModel.saveEntries(userDisplayAdapter.currentList) }
                 behavior.skipCollapsed = true
                 behavior.isFitToContents = false
