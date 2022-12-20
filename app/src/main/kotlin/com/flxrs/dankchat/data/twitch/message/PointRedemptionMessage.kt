@@ -33,6 +33,6 @@ data class PointRedemptionMessage(
         }
     }
 
-    val finalUsername: String
+    val aliasOrDisplayName: String
         get() = userDisplay.aliasOrElse(displayName)
 }

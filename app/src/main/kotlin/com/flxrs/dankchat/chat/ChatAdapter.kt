@@ -250,7 +250,7 @@ class ChatAdapter(
                 when {
                     message.requiresUserInput -> append("Redeemed ")
                     else                      -> {
-                        bold { append(message.finalUsername) }
+                        bold { append(message.aliasOrDisplayName) }
                         append(" redeemed ")
                     }
                 }

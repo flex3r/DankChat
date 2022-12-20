@@ -70,7 +70,7 @@ class UserDisplayAdapter(
     /** set text, text color, background color to represent specified color */
     @SuppressLint("SetTextI18n")
     private fun MaterialButton.setColorAndBg(item: UserDisplayItem.Entry) {
-        text = item.displayText
+        text = item.displayColor
         setTextColor(item.textColor(context))
         setBackgroundColor(item.color)
     }

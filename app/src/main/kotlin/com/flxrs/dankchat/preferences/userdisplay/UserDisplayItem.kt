@@ -43,7 +43,7 @@ sealed class UserDisplayItem {
 
 }
 
-val UserDisplayItem.Entry.displayText: String get() = "#" + color.toHexCode()
+val UserDisplayItem.Entry.displayColor: String get() = "#" + color.toHexCode()
 
 /** get Text color (on top of background), Context passed in will be used to determine tint on "white" and "black" color*/
 fun UserDisplayItem.Entry.textColor(context: Context) = color.getContrastTextColor(context)

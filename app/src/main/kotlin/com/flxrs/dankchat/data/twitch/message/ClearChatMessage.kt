@@ -43,7 +43,6 @@ data class ClearChatMessage(
 val ClearChatMessage.systemMesage: String
     get() = when {
         isFullChatClear -> "Chat has been cleared by a moderator."
-        // why is targetUser can be null?
         isBan           -> "${userDisplay.aliasOrElse(targetUser ?: "A user")} has been permanently banned"
         else            -> {
             val countOrBlank = if (stackCount > 1) " ($stackCount times)" else ""

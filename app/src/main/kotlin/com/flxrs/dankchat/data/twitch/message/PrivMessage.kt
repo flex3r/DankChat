@@ -89,8 +89,8 @@ val PrivMessage.isElevatedMessage: Boolean
 /** format name for display in chat */
 val PrivMessage.fullName: String
     get() = userDisplay?.alias ?: when {
-        displayName.equals(name, true) -> displayName
-        else                           -> "$name($displayName)"
+        displayName.equals(name, ignoreCase = true) -> displayName
+        else                                        -> "$name($displayName)"
     }
 
 fun PrivMessage.finalColor(@ColorInt bgColor: Int): Int {
