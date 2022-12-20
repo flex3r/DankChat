@@ -1,7 +1,7 @@
 package com.flxrs.dankchat.utils.extensions
 
 import android.content.Context
-import android.util.TypedValue
+import android.graphics.Color
 import androidx.annotation.ColorInt
 import androidx.core.graphics.ColorUtils
 import com.flxrs.dankchat.R
@@ -62,9 +62,7 @@ fun Int.withAlpha(alpha: Int = 255): Int = (alpha shl 24) or this.onlyRGB()
  * */
 fun Int.getContrastTextColor(context: Context): Int {
     val possibleColors = listOf(R.attr.colorOnSurface, R.attr.colorOnSurfaceInverse).map {
-        val typedValue = TypedValue()
-        context.theme.resolveAttribute(R.attr.colorOnSurface, typedValue, true)
-        typedValue.data
+        MaterialColors.getColor(context, it, Color.WHITE) // just some default color
     }
 
     return possibleColors.maxBy { ColorUtils.calculateContrast(it, this.withAlpha(255)) }
