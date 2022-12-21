@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.di
 
 import com.flxrs.dankchat.data.api.ApiManager
+import com.flxrs.dankchat.data.api.helix.HelixApiClient
 import com.flxrs.dankchat.data.twitch.connection.ChatConnection
 import com.flxrs.dankchat.data.twitch.connection.ChatConnectionType
 import com.flxrs.dankchat.data.twitch.connection.PubSubManager
@@ -50,6 +51,6 @@ object ChatConnectionModule {
         @WebSocketOkHttpClient client: OkHttpClient,
         @ApplicationScope scope: CoroutineScope,
         preferenceStore: DankChatPreferenceStore,
-        apiManager: ApiManager,
-    ): PubSubManager = PubSubManager(apiManager, preferenceStore, client, scope)
+        helixApiClient: HelixApiClient,
+    ): PubSubManager = PubSubManager(helixApiClient, preferenceStore, client, scope)
 }

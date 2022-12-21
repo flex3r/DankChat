@@ -3,7 +3,7 @@
 package com.flxrs.dankchat.data.repo
 
 import android.util.Log
-import com.flxrs.dankchat.data.api.ApiManager
+import com.flxrs.dankchat.data.api.helix.HelixApiClient
 import com.flxrs.dankchat.data.database.dao.MessageIgnoreDao
 import com.flxrs.dankchat.data.database.dao.UserIgnoreDao
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntity
@@ -23,7 +23,7 @@ import javax.inject.Singleton
 
 @Singleton
 class IgnoresRepository @Inject constructor(
-    private val apiManager: ApiManager,
+    private val helixApiClient: HelixApiClient,
     private val messageIgnoreDao: MessageIgnoreDao,
     private val userIgnoreDao: UserIgnoreDao,
     private val preferences: DankChatPreferenceStore,
@@ -94,14 +94,19 @@ class IgnoresRepository @Inject constructor(
             return@withContext
         }
 
-        runCatching {
-            val blocks = apiManager.getUserBlocks(id) ?: return@withContext
+            val blocks = helixApiClient.getUserBlocks(id).getOrElse {
+                Log.d(TAG, "Failed to load user blocks for $id", it)
+                return@withContext
+            }
             if (blocks.data.isEmpty()) {
                 _twitchBlocks.update { emptySet() }
                 return@withContext
             }
             val userIds = blocks.data.map { it.id }
-            val users = apiManager.getUsersByIds(userIds) ?: return@withContext
+            val users = helixApiClient.getUsersByIds(userIds).getOrElse {
+                Log.d(TAG, "Failed to load user ids $userIds", it)
+                return@withContext
+            }
             val twitchBlocks = users.map { user ->
                 TwitchBlock(
                     id = user.id,
@@ -110,14 +115,11 @@ class IgnoresRepository @Inject constructor(
             }.toSet()
 
             _twitchBlocks.update { twitchBlocks }
-        }.getOrElse {
-            Log.d(TAG, "Failed to load user blocks for $id", it)
-        }
     }
 
     suspend fun addUserBlock(targetUserId: String, targetUsername: String) {
-        val result = apiManager.blockUser(targetUserId)
-        if (result) {
+        val result = helixApiClient.blockUser(targetUserId)
+        if (result.isSuccess) {
             _twitchBlocks.update {
                 it + TwitchBlock(
                     id = targetUserId,
@@ -128,8 +130,8 @@ class IgnoresRepository @Inject constructor(
     }
 
     suspend fun removeUserBlock(targetUserId: String, targetUsername: String) {
-        val result = apiManager.unblockUser(targetUserId)
-        if (result) {
+        val result = helixApiClient.unblockUser(targetUserId)
+        if (result.isSuccess) {
             _twitchBlocks.update {
                 it - TwitchBlock(
                     id = targetUserId,

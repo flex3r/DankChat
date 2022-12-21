@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.data.api.dto
+package com.flxrs.dankchat.data.api.helix.dto
 
 import androidx.annotation.Keep
 import kotlinx.serialization.SerialName

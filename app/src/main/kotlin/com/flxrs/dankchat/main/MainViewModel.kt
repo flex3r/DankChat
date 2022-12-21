@@ -9,7 +9,6 @@ import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.chat.menu.EmoteMenuTabItem
 import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.data.api.ApiException
-import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.data.repo.*
 import com.flxrs.dankchat.data.state.DataLoadingState
 import com.flxrs.dankchat.data.state.ImageUploadState
@@ -41,7 +40,6 @@ class MainViewModel @Inject constructor(
     private val commandRepository: CommandRepository,
     private val emoteUsageRepository: EmoteUsageRepository,
     private val ignoresRepository: IgnoresRepository,
-    private val apiManager: ApiManager,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
 ) : ViewModel() {
 
@@ -110,7 +108,7 @@ class MainViewModel @Inject constructor(
         commands.map { Suggestion.CommandSuggestion(it) }
     }
 
-    private val defaultCommandSuggestions = commandRepository.commands.map { commands ->
+    private val defaultCommandSuggestions = commandRepository.commandTriggers.map { commands ->
         commands.map { Suggestion.CommandSuggestion(it) }
     }
 
@@ -431,17 +429,19 @@ class MainViewModel @Inject constructor(
         }
 
         val channel = currentSuggestionChannel.value
+        val channelId = currentRoomState.channelId
         val commandResult = runCatching {
-            commandRepository.checkForCommands(message, channel, skipSuspendingCommands)
+            commandRepository.checkForCommands(message, channel, channelId, skipSuspendingCommands)
         }.getOrElse {
             eventChannel.send(Event.Error(it))
             return@launch
         }
 
         when (commandResult) {
-            is CommandRepository.CommandResult.Accepted -> chatRepository.makeAndPostCustomSystemMessage(commandResult.response, channel)
-            is CommandRepository.CommandResult.Message  -> chatRepository.sendMessage(commandResult.message)
-            is CommandRepository.CommandResult.NotFound -> chatRepository.sendMessage(message)
+            is CommandResult.Accepted             -> Unit
+            is CommandResult.AcceptedWithResponse -> chatRepository.makeAndPostCustomSystemMessage(commandResult.response, channel)
+            is CommandResult.Message              -> chatRepository.sendMessage(commandResult.message)
+            is CommandResult.NotFound             -> chatRepository.sendMessage(message)
         }
     }
 
@@ -534,11 +534,7 @@ class MainViewModel @Inject constructor(
 
         viewModelScope.launch(coroutineExceptionHandler) {
             fetchTimerJob = timer(STREAM_REFRESH_RATE) {
-                val streams = runCatching {
-                    apiManager.getStreams(channels)
-                }.getOrNull()
-
-                val data = streams?.data?.map {
+                val data = dataRepository.getStreams(channels)?.data?.map {
                     val formatted = dankChatPreferenceStore.formatViewersString(it.viewerCount)
                     StreamData(channel = it.userLogin, formattedData = formatted)
                 }.orEmpty()
