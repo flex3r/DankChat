@@ -1,6 +1,6 @@
 package com.flxrs.dankchat.data.twitch.connection
 
-import com.flxrs.dankchat.data.api.ApiManager
+import com.flxrs.dankchat.data.api.helix.HelixApiClient
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.withoutOAuthSuffix
 import kotlinx.coroutines.CoroutineScope
@@ -14,7 +14,7 @@ import okhttp3.OkHttpClient
 import javax.inject.Inject
 
 class PubSubManager @Inject constructor(
-    private val apiManager: ApiManager,
+    private val helixApiClient: HelixApiClient,
     private val preferenceStore: DankChatPreferenceStore,
     private val client: OkHttpClient,
     private val scope: CoroutineScope,
@@ -40,9 +40,8 @@ class PubSubManager @Inject constructor(
         val channels = preferenceStore.getChannels()
 
         scope.launch {
-            val helixChannels = runCatching {
-                apiManager.getUsersByNames(channels)
-            }.getOrNull() ?: return@launch
+            val helixChannels = helixApiClient.getUsersByNames(channels)
+                .getOrNull() ?: return@launch
 
             val topics = buildSet {
                 add(PubSubTopic.Whispers(userId))
@@ -69,9 +68,8 @@ class PubSubManager @Inject constructor(
             return@launch
         }
 
-        val channelId = runCatching {
-            apiManager.getUserIdByName(channel)
-        }.getOrNull() ?: return@launch
+        val channelId = helixApiClient.getUserIdByName(channel)
+            .getOrNull() ?: return@launch
 
         val topic = PubSubTopic.PointRedemptions(channelId, channel)
         listen(setOf(topic))

@@ -1,12 +1,16 @@
-package com.flxrs.dankchat.data.api
+package com.flxrs.dankchat.data.api.helix
 
+import com.flxrs.dankchat.data.api.helix.dto.AnnouncementRequestDto
+import com.flxrs.dankchat.data.api.helix.dto.HelixErrorDto
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.withoutOAuthSuffix
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import io.ktor.http.*
 
-class HelixApiService(private val ktorClient: HttpClient, private val dankChatPreferenceStore: DankChatPreferenceStore) {
+class HelixApi(private val ktorClient: HttpClient, private val dankChatPreferenceStore: DankChatPreferenceStore) {
 
     suspend fun getUserByName(logins: List<String>): HttpResponse? = ktorClient.get("users/") {
         val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
@@ -59,5 +63,14 @@ class HelixApiService(private val ktorClient: HttpClient, private val dankChatPr
         val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
         bearerAuth(oAuth)
         parameter("target_user_id", targetUserId)
+    }
+
+    suspend fun postAnnouncement(broadcasterUserId: String, moderatorUserId: String, request: AnnouncementRequestDto): HttpResponse? = ktorClient.post("chat/announcements") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        parameter("broadcaster_id", broadcasterUserId)
+        parameter("moderator_id", moderatorUserId)
+        contentType(ContentType.Application.Json)
+        setBody(request)
     }
 }

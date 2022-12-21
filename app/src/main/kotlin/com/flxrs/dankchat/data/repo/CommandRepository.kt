@@ -2,6 +2,10 @@ package com.flxrs.dankchat.data.repo
 
 import android.util.Log
 import com.flxrs.dankchat.data.api.ApiManager
+import com.flxrs.dankchat.data.api.helix.HelixApiClient
+import com.flxrs.dankchat.data.twitch.command.TwitchCommand
+import com.flxrs.dankchat.data.twitch.command.CommandContext
+import com.flxrs.dankchat.data.twitch.command.TwitchCommandService
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.command.CommandItem
 import kotlinx.coroutines.Dispatchers
@@ -20,22 +24,26 @@ import kotlin.time.Duration.Companion.seconds
 class CommandRepository @Inject constructor(
     private val ignoresRepository: IgnoresRepository,
     private val apiManager: ApiManager,
+    private val helixApiClient: HelixApiClient,
+    private val twitchCommandService: TwitchCommandService,
     private val preferenceStore: DankChatPreferenceStore
 ) {
     private val customCommands: Flow<List<CommandItem.Entry>> = preferenceStore.commandsAsFlow
     private val supibotCommands = mutableMapOf<String, MutableStateFlow<List<String>>>()
 
-    private val defaultCommands = Command.values().map { it.trigger }
-    private val twitchCommands = TWITCH_COMMANDS.map { listOf(".$it", "/$it") }.flatten()
+    private val defaultCommands = Command.values()
+    private val defaultCommandTriggers = defaultCommands.map { it.trigger }
+    private val twitchCommands = TwitchCommand.values()
+    private val twitchCommandTriggers = twitchCommands.map { listOf(".${it.trigger}", "/${it.trigger}") }.flatten()
 
-    val commands: Flow<List<String>> = customCommands.map { customCommands ->
-        defaultCommands + twitchCommands + customCommands.map { it.trigger }
+    val commandTriggers: Flow<List<String>> = customCommands.map { customCommands ->
+        defaultCommandTriggers + twitchCommandTriggers + customCommands.map { it.trigger }
     }
 
     fun getSupibotCommands(channel: String): StateFlow<List<String>> = supibotCommands.getOrPut(channel) { MutableStateFlow(emptyList()) }
     fun clearSupibotCommands() = supibotCommands.forEach { it.value.value = emptyList() }.also { supibotCommands.clear() }
 
-    suspend fun checkForCommands(message: String, channel: String, skipSuspendingCommands: Boolean = false): CommandResult {
+    suspend fun checkForCommands(message: String, channel: String, channelId: String, skipSuspendingCommands: Boolean = false): CommandResult {
         if (!preferenceStore.isLoggedIn) {
             return CommandResult.NotFound
         }
@@ -47,11 +55,26 @@ class CommandRepository @Inject constructor(
 
 
         val trigger = words.first()
+        if (trigger.isEmpty()) {
+            return CommandResult.NotFound
+        }
+
+        val triggerWithoutFirstChar = trigger.drop(1)
+        if (triggerWithoutFirstChar == TwitchCommand.Me.trigger) {
+            return CommandResult.Message(message)
+        }
+
         if (skipSuspendingCommands) {
             return checkUserCommands(trigger)
         }
 
-        return when (Command.values().find { it.trigger == trigger }) {
+        val twitchCommand = twitchCommands.find { it.trigger == triggerWithoutFirstChar }
+        if (twitchCommand != null) {
+            val context = CommandContext(trigger, channel, channelId, message, words.drop(1))
+            return twitchCommandService.handleTwitchCommand(twitchCommand, context)
+        }
+
+        return when (defaultCommands.find { it.trigger == trigger }) {
             Command.BLOCK    -> blockUserCommand(words.drop(1))
             Command.UNBLOCK  -> unblockUserCommand(words.drop(1))
             Command.CHATTERS -> chattersCommand(channel)
@@ -106,61 +129,58 @@ class CommandRepository @Inject constructor(
         }.orEmpty()
     }
 
-    private suspend fun blockUserCommand(args: List<String>): CommandResult.Accepted {
+    private suspend fun blockUserCommand(args: List<String>): CommandResult.AcceptedWithResponse {
         if (args.isEmpty() || args.first().isBlank()) {
-            return CommandResult.Accepted("Usage: /block <user>")
+            return CommandResult.AcceptedWithResponse("Usage: /block <user>")
         }
 
         val target = args.first()
-        val targetId = runCatching {
-            apiManager.getUserIdByName(target)
-        }.getOrNull() ?: return CommandResult.Accepted("User $target couldn't be blocked, no user with that name found!")
+        val targetId = helixApiClient.getUserIdByName(target)
+            .getOrNull() ?: return CommandResult.AcceptedWithResponse("User $target couldn't be blocked, no user with that name found!")
 
-        val result = runCatching { apiManager.blockUser(targetId) }
+        val result = helixApiClient.blockUser(targetId)
         return when {
             result.isSuccess -> {
                 ignoresRepository.addUserBlock(targetId, target)
-                CommandResult.Accepted("You successfully blocked user $target")
+                CommandResult.AcceptedWithResponse("You successfully blocked user $target")
             }
 
-            else             -> CommandResult.Accepted("User $target couldn't be blocked, an unknown error occurred!")
+            else             -> CommandResult.AcceptedWithResponse("User $target couldn't be blocked, an unknown error occurred!")
         }
     }
 
-    private suspend fun unblockUserCommand(args: List<String>): CommandResult.Accepted {
+    private suspend fun unblockUserCommand(args: List<String>): CommandResult.AcceptedWithResponse {
         if (args.isEmpty() || args.first().isBlank()) {
-            return CommandResult.Accepted("Usage: /unblock <user>")
+            return CommandResult.AcceptedWithResponse("Usage: /unblock <user>")
         }
 
         val target = args.first()
-        val targetId = runCatching {
-            apiManager.getUserIdByName(target)
-        }.getOrNull() ?: return CommandResult.Accepted("User $target couldn't be unblocked, no user with that name found!")
+        val targetId = helixApiClient.getUserIdByName(target)
+            .getOrNull() ?: return CommandResult.AcceptedWithResponse("User $target couldn't be unblocked, no user with that name found!")
 
         val result = runCatching {
             ignoresRepository.removeUserBlock(targetId, target)
-            CommandResult.Accepted("You successfully unblocked user $target")
+            CommandResult.AcceptedWithResponse("You successfully unblocked user $target")
         }
 
         return result.getOrElse {
-            CommandResult.Accepted("User $target couldn't be unblocked, an unknown error occurred!")
+            CommandResult.AcceptedWithResponse("User $target couldn't be unblocked, an unknown error occurred!")
         }
     }
 
-    private suspend fun chattersCommand(channel: String): CommandResult.Accepted {
+    private suspend fun chattersCommand(channel: String): CommandResult.AcceptedWithResponse {
         val result = runCatching {
             apiManager.getChatterCount(channel)
-        }.getOrNull() ?: return CommandResult.Accepted("An unknown error occurred!")
+        }.getOrNull() ?: return CommandResult.AcceptedWithResponse("An unknown error occurred!")
 
-        return CommandResult.Accepted("Chatter count: $result")
+        return CommandResult.AcceptedWithResponse("Chatter count: $result")
     }
 
-    private suspend fun uptimeCommand(channel: String): CommandResult.Accepted {
-        val result = runCatching {
-            apiManager.getStreams(listOf(channel))
-        }.getOrNull()
+    private suspend fun uptimeCommand(channel: String): CommandResult.AcceptedWithResponse {
+        val result = helixApiClient.getStreams(listOf(channel))
+            .getOrNull()
             ?.data
-            ?.getOrNull(0) ?: return CommandResult.Accepted("Channel is not live.")
+            ?.getOrNull(0) ?: return CommandResult.AcceptedWithResponse("Channel is not live.")
 
         val startedAt = Instant.parse(result.startedAt).atZone(ZoneId.systemDefault()).toEpochSecond()
         val now = ZonedDateTime.now().toEpochSecond()
@@ -174,7 +194,7 @@ class CommandRepository @Inject constructor(
             }
         }
 
-        return CommandResult.Accepted("Uptime: $uptime")
+        return CommandResult.AcceptedWithResponse("Uptime: $uptime")
     }
 
     private fun checkUserCommands(trigger: String): CommandResult {
@@ -191,48 +211,7 @@ class CommandRepository @Inject constructor(
         UPTIME(trigger = "/uptime");
     }
 
-    sealed class CommandResult {
-        data class Accepted(val response: String) : CommandResult()
-        data class Message(val message: String) : CommandResult()
-        object NotFound : CommandResult()
-    }
-
     companion object {
         private val TAG = CommandRepository::class.java.simpleName
-        private val TWITCH_COMMANDS = listOf(
-            "help",
-            "w",
-            "me",
-            "disconnect",
-            "mods",
-            "vips",
-            "color",
-            "commercial",
-            "mod",
-            "unmod",
-            "vip",
-            "unvip",
-            "ban",
-            "unban",
-            "timeout",
-            "untimeout",
-            "slow",
-            "slowoff",
-            "r9kbeta",
-            "r9kbetaoff",
-            "emoteonly",
-            "emoteonlyoff",
-            "clear",
-            "subscribers",
-            "subscribersoff",
-            "followers",
-            "followersoff",
-            "host",
-            "unhost",
-            "raid",
-            "unraid",
-            "delete",
-            "announce",
-        )
     }
 }

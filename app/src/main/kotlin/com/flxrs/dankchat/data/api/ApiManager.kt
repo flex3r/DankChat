@@ -2,7 +2,9 @@ package com.flxrs.dankchat.data.api
 
 import android.util.Log
 import com.flxrs.dankchat.BuildConfig
+import com.flxrs.dankchat.data.api.auth.AuthApi
 import com.flxrs.dankchat.data.api.dto.*
+import com.flxrs.dankchat.data.api.helix.dto.*
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import io.ktor.client.call.*
 import io.ktor.client.statement.*
@@ -26,74 +28,15 @@ class ApiManager @Inject constructor(
     private val bttvApiService: BTTVApiService,
     private val dankChatApiService: DankChatApiService,
     private val ffzApiService: FFZApiService,
-    private val helixApiService: HelixApiService,
     private val recentMessagesApiService: RecentMessagesApiService,
     private val supibotApiService: SupibotApiService,
-    private val authApiService: AuthApiService,
     private val badgesApiService: BadgesApiService,
     private val tmiApiService: TmiApiService,
     private val sevenTVApiService: SevenTVApiService,
     private val dankChatPreferenceStore: DankChatPreferenceStore
 ) {
 
-    suspend fun validateUser(token: String): ValidateResultDto {
-        val response = authApiService.validateUser(token)
-        return when {
-            response.status.isSuccess() -> response.body<ValidateResultDto.ValidUser>()
-            else                        -> response
-                .bodyOrNull<ValidateResultDto.Error>()
-                ?: ValidateResultDto.Error(response.status.value, response.status.description)
-        }
-    }
 
-    suspend fun getUserIdByName(name: String): String? {
-        return helixApiService.getUserByName(listOf(name))
-            ?.bodyOrNull<HelixUsersDto>()
-            ?.data?.firstOrNull()?.id
-    }
-
-    suspend fun getUsersByNames(names: List<String>): List<HelixUserDto>? {
-        return helixApiService.getUserByName(names)
-            ?.bodyOrNull<HelixUsersDto>()
-            ?.data
-    }
-
-    suspend fun getUsersByIds(ids: List<String>): List<HelixUserDto>? {
-        return helixApiService.getUsersByIds(ids)
-            ?.bodyOrNull<HelixUsersDto>()
-            ?.data
-    }
-
-    suspend fun getUser(userId: String): HelixUserDto? {
-        return helixApiService.getUserById(userId)
-            ?.bodyOrNull<HelixUsersDto>()
-            ?.data?.firstOrNull()
-    }
-
-    suspend fun getUsersFollows(fromId: String, toId: String): UserFollowsDto? {
-        return helixApiService.getUsersFollows(fromId, toId)
-            ?.bodyOrNull()
-    }
-
-    suspend fun getStreams(channels: List<String>): StreamsDto? {
-        return helixApiService.getStreams(channels)
-            ?.bodyOrNull()
-    }
-
-    suspend fun getUserBlocks(userId: String): HelixUserBlockListDto? {
-        return helixApiService.getUserBlocks(userId)
-            ?.bodyOrNull()
-    }
-
-    suspend fun blockUser(targetUserId: String): Boolean {
-        return helixApiService.putUserBlock(targetUserId)
-            ?.status?.isSuccess() ?: false
-    }
-
-    suspend fun unblockUser(targetUserId: String): Boolean {
-        return helixApiService.deleteUserBlock(targetUserId)
-            ?.status?.isSuccess() ?: false
-    }
 
     suspend fun getUserSets(sets: List<String>): List<DankChatEmoteSetDto>? = dankChatApiService.getSets(sets.joinToString(separator = ",")).bodyOrNull()
     suspend fun getDankChatBadges(): List<DankChatBadgeDto>? = dankChatApiService.getDankChatBadges().bodyOrNull()
@@ -175,7 +118,7 @@ class ApiManager @Inject constructor(
 
             else                  -> {
                 Log.e("ApiManager", "Upload failed with ${response.code} ${response.message}")
-                Result.failure(ApiException(response.code, response.message))
+                Result.failure(ApiException(HttpStatusCode.fromValue(response.code), response.message))
             }
         }
     }
@@ -215,45 +158,6 @@ class ApiManager @Inject constructor(
                 }
             null
         }.getOrNull()
-    }
-
-    companion object {
-        private val TAG = ApiManager::class.java.simpleName
-
-        private const val BASE_LOGIN_URL = "https://id.twitch.tv/oauth2/authorize?response_type=token"
-        private const val REDIRECT_URL = "https://flxrs.com/dankchat"
-        val SCOPES = setOf(
-            "channel_editor", // TODO to be removed
-            "channel_commercial", // TODO to be removed
-            "channel:edit:commercial",
-            "channel:manage:broadcast",
-            "channel:manage:moderators",
-            "channel:manage:polls",
-            "channel:manage:predictions",
-            "channel:manage:raids",
-            "channel:manage:vips",
-            "channel:moderate",
-            "channel:read:polls",
-            "channel:read:predictions",
-            "channel:read:redemptions",
-            "chat:edit",
-            "chat:read",
-            "moderator:manage:announcements",
-            "moderator:manage:automod",
-            "moderator:manage:banned_users",
-            "moderator:manage:chat_messages",
-            "moderator:manage:chat_settings",
-            "moderator:manage:shield_mode",
-            "moderator:read:chatters",
-            "user:manage:blocked_users",
-            "user:manage:chat_color",
-            "user:manage:whispers",
-            "user:read:blocked_users",
-            "whispers:edit",
-            "whispers:read",
-        )
-        const val CLIENT_ID = "xu7vd1i6tlr0ak45q1li2wdc0lrma8"
-        val LOGIN_URL = "$BASE_LOGIN_URL&client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URL&scope=${SCOPES.joinToString(separator = "+")}"
     }
 }
 

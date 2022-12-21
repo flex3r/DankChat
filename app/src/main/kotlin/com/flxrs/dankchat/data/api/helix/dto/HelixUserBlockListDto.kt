@@ -1,0 +1,17 @@
+package com.flxrs.dankchat.data.api.helix.dto
+
+import androidx.annotation.Keep
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Keep
+@Serializable
+data class HelixUserBlockListDto(
+    @SerialName(value = "data") val data: List<HelixUserBlockDto>
+)
+
+@Keep
+@Serializable
+data class HelixUserBlockDto(
+    @SerialName(value = "user_id") val id: String
+)

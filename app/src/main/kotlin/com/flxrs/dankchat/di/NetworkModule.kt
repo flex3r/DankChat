@@ -3,6 +3,9 @@ package com.flxrs.dankchat.di
 import android.util.Log
 import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.data.api.*
+import com.flxrs.dankchat.data.api.auth.AuthApi
+import com.flxrs.dankchat.data.api.auth.AuthApiClient
+import com.flxrs.dankchat.data.api.helix.HelixApi
 import com.flxrs.dankchat.data.repo.EmoteRepository
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import dagger.Module
@@ -18,7 +21,6 @@ import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
-import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import javax.inject.Singleton
 import kotlin.time.Duration.Companion.seconds
@@ -41,6 +43,7 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
+        .callTimeout(20.seconds.toJavaDuration())
         .build()
 
     @UploadOkHttpClient
@@ -82,7 +85,7 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideAuthApiService(ktorClient: HttpClient) = AuthApiService(ktorClient.config {
+    fun provideAuthApiService(ktorClient: HttpClient) = AuthApi(ktorClient.config {
         defaultRequest {
             url(AUTH_BASE_URL)
         }
@@ -106,10 +109,10 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideHelixApiService(ktorClient: HttpClient, preferenceStore: DankChatPreferenceStore) = HelixApiService(ktorClient.config {
+    fun provideHelixApi(ktorClient: HttpClient, preferenceStore: DankChatPreferenceStore) = HelixApi(ktorClient.config {
         defaultRequest {
             url(HELIX_BASE_URL)
-            header("Client-ID", ApiManager.CLIENT_ID)
+            header("Client-ID", AuthApiClient.CLIENT_ID)
         }
     }, preferenceStore)
 
@@ -168,10 +171,8 @@ object NetworkModule {
         bttvApiService: BTTVApiService,
         dankChatApiService: DankChatApiService,
         ffzApiService: FFZApiService,
-        helixApiService: HelixApiService,
         recentMessagesApiService: RecentMessagesApiService,
         supibotApiService: SupibotApiService,
-        authApiService: AuthApiService,
         badgesApiService: BadgesApiService,
         tmiApiService: TmiApiService,
         sevenTVApiService: SevenTVApiService,
@@ -181,10 +182,8 @@ object NetworkModule {
         bttvApiService,
         dankChatApiService,
         ffzApiService,
-        helixApiService,
         recentMessagesApiService,
         supibotApiService,
-        authApiService,
         badgesApiService,
         tmiApiService,
         sevenTVApiService,

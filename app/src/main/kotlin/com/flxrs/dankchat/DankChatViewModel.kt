@@ -4,8 +4,8 @@ package com.flxrs.dankchat
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flxrs.dankchat.data.api.ApiManager
-import com.flxrs.dankchat.data.api.dto.ValidateResultDto
+import com.flxrs.dankchat.data.api.ApiException
+import com.flxrs.dankchat.data.api.auth.AuthApiClient
 import com.flxrs.dankchat.data.repo.ChatRepository
 import com.flxrs.dankchat.data.repo.DataRepository
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
@@ -21,7 +21,7 @@ import javax.inject.Inject
 class DankChatViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
-    private val apiManager: ApiManager,
+    private val authApiClient: AuthApiClient,
     dataRepository: DataRepository,
 ) : ViewModel() {
 
@@ -51,35 +51,29 @@ class DankChatViewModel @Inject constructor(
     private suspend fun validateUser() {
         // no token = nothing to validate 4head
         val token = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return
-
-        runCatching {
-            when (val result = apiManager.validateUser(token)) {
-                is ValidateResultDto.Error     -> result.handleValidationError()
-                is ValidateResultDto.ValidUser -> {
+        val result = authApiClient.validateUser(token)
+            .fold(
+                onSuccess = { result ->
                     dankChatPreferenceStore.userName = result.login
                     when {
-                        result.scopes.containsAll(ApiManager.SCOPES) -> _validationResult.send(ValidationResult.User(result.login))
-                        else                                          -> _validationResult.send(ValidationResult.IncompleteScopes(result.login))
+                        authApiClient.validateScopes(result.scopes) -> ValidationResult.User(result.login)
+                        else                                        -> ValidationResult.IncompleteScopes(result.login)
                     }
-
-
-                }
-            }
-        }.getOrElse {
-            Log.e(TAG, "Failed to validate token:", it)
-            _validationResult.send(ValidationResult.Failure)
-        }
+                },
+                onFailure = { it.handleValidationError() }
+            )
+        _validationResult.send(result)
     }
 
-    private suspend fun ValidateResultDto.Error.handleValidationError() = when (statusCode) {
-        HttpStatusCode.Unauthorized -> {
+    private fun Throwable.handleValidationError() = when {
+        this is ApiException && status == HttpStatusCode.Unauthorized -> {
             dankChatPreferenceStore.clearLogin()
-            _validationResult.send(ValidationResult.TokenInvalid)
+            ValidationResult.TokenInvalid
         }
 
-        else                        -> {
+        else                                                          -> {
             Log.e(TAG, "Failed to validate token: $message")
-            _validationResult.send(ValidationResult.Failure)
+            ValidationResult.Failure
         }
     }
 

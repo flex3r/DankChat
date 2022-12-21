@@ -2,8 +2,9 @@ package com.flxrs.dankchat.data.repo
 
 import android.util.Log
 import com.flxrs.dankchat.data.api.ApiManager
-import com.flxrs.dankchat.data.api.dto.HelixUserDto
-import com.flxrs.dankchat.data.api.dto.UserFollowsDto
+import com.flxrs.dankchat.data.api.helix.HelixApiClient
+import com.flxrs.dankchat.data.api.helix.dto.HelixUserDto
+import com.flxrs.dankchat.data.api.helix.dto.UserFollowsDto
 import com.flxrs.dankchat.data.twitch.badge.toBadgeSets
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
@@ -22,6 +23,7 @@ import kotlin.system.measureTimeMillis
 @Singleton
 class DataRepository @Inject constructor(
     private val apiManager: ApiManager,
+    private val helixApiClient: HelixApiClient,
     private val emoteRepository: EmoteRepository,
     private val recentUploadsRepository: RecentUploadsRepository,
 ) {
@@ -38,7 +40,7 @@ class DataRepository @Inject constructor(
 
     suspend fun loadChannelData(channel: String, channelId: String? = null, loadThirdPartyData: Set<ThirdPartyEmoteType>) = withContext(Dispatchers.Default) {
         emotes.putIfAbsent(channel, MutableStateFlow(emptyList()))
-        val id = channelId ?: apiManager.getUserIdByName(channel) ?: return@withContext
+        val id = channelId ?: helixApiClient.getUserIdByName(channel).getOrNull() ?: return@withContext
         launch { loadChannelBadges(channel, id) }
         launch {
             measureTimeMillis {
@@ -53,9 +55,10 @@ class DataRepository @Inject constructor(
         }.let { Log.i(TAG, "Loaded 3rd party global emotes in $it ms") }
     }
 
-    suspend fun getUser(userId: String): HelixUserDto? = apiManager.getUser(userId)
-    suspend fun getUserIdByName(name: String): String? = apiManager.getUserIdByName(name)
-    suspend fun getUserFollows(fromId: String, toId: String): UserFollowsDto? = apiManager.getUsersFollows(fromId, toId)
+    suspend fun getUser(userId: String): HelixUserDto? = helixApiClient.getUser(userId).getOrNull()
+    suspend fun getUserIdByName(name: String): String? = helixApiClient.getUserIdByName(name).getOrNull()
+    suspend fun getUserFollows(fromId: String, toId: String): UserFollowsDto? = helixApiClient.getUsersFollows(fromId, toId).getOrNull()
+    suspend fun getStreams(channels: List<String>) = helixApiClient.getStreams(channels).getOrNull()
 
     suspend fun uploadMedia(file: File): Result<String> {
         val uploadResult = apiManager.uploadMedia(file)
