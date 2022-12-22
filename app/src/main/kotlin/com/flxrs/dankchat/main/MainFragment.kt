@@ -10,6 +10,7 @@ import android.provider.MediaStore
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.webkit.MimeTypeMap
@@ -211,6 +212,7 @@ class MainFragment : Fragment() {
                 with(menu) {
                     val isLoggedIn = dankChatPreferences.isLoggedIn
                     val shouldShowProgress = mainViewModel.shouldShowUploadProgress.value
+                    Log.d("MainFragment", "Show Progress: $shouldShowProgress")
                     val hasChannels = mainViewModel.getChannels().isNotEmpty()
                     val mentionIconColor = when (mainViewModel.shouldColorNotification.value) {
                         true -> R.attr.colorError
@@ -440,11 +442,7 @@ class MainFragment : Fragment() {
                 if (!dankChatPreferences.hasMessageHistoryAcknowledged) {
                     navigateSafe(R.id.action_mainFragment_to_messageHistoryDisclaimerDialogFragment)
                 } else {
-                    mainViewModel.loadData(
-                        channelList = channels,
-                        isUserChange = false,
-                        loadTwitchData = true,
-                    )
+                    mainViewModel.loadData(channels)
                 }
             }
         }
@@ -538,10 +536,7 @@ class MainFragment : Fragment() {
     private fun handleMessageHistoryDisclaimerResult(result: Boolean) {
         dankChatPreferences.hasMessageHistoryAcknowledged = true
         preferences.edit { putBoolean(getString(R.string.preference_load_message_history_key), result) }
-        mainViewModel.loadData(
-            isUserChange = false,
-            loadTwitchData = true,
-        )
+        mainViewModel.loadData()
     }
 
     private fun handleUserPopupResult(result: UserPopupResult) = when (result) {
@@ -556,12 +551,7 @@ class MainFragment : Fragment() {
         if (newTabIndex == -1) {
             val updatedChannels = mainViewModel.joinChannel(lowerCaseChannel)
             newTabIndex = updatedChannels.lastIndex
-            mainViewModel.loadData(
-                channelList = listOf(lowerCaseChannel),
-                isUserChange = false,
-                loadTwitchData = false,
-                loadSupibot = false,
-            )
+            mainViewModel.loadData(channelList = listOf(lowerCaseChannel))
             dankChatPreferences.channelsString = updatedChannels.joinToString(separator = ",")
 
             tabAdapter.addFragment(lowerCaseChannel)
@@ -626,16 +616,19 @@ class MainFragment : Fragment() {
         when (result) {
             is DataLoadingState.Loading, DataLoadingState.Finished, DataLoadingState.None -> return
             is DataLoadingState.Reloaded                                                  -> showSnackBar(getString(R.string.snackbar_data_reloaded))
-            is DataLoadingState.Failed                                                    -> showSnackBar(
-                message = getString(R.string.snackbar_data_load_failed_cause, result.errorMessage),
-                multiLine = true,
-                duration = Snackbar.LENGTH_LONG,
-                action = getString(R.string.snackbar_retry) to {
-                    when {
-                        result.parameters.isReloadEmotes -> reloadEmotes(result.parameters.channels.first())
-                        else                             -> mainViewModel.loadData(result.parameters)
-                    }
-                })
+            is DataLoadingState.Failed                                                    -> {
+                val message = when (result.errorCount) {
+                    1 -> getString(R.string.snackbar_data_load_failed_cause, result.errorMessage)
+                    else -> getString(R.string.snackbar_data_load_failed_multiple_causes)
+                }
+                showSnackBar(
+                    message = message,
+                    multiLine = true,
+                    duration = Snackbar.LENGTH_LONG,
+                    action = getString(R.string.snackbar_retry) to {
+                        mainViewModel.retryDataLoading(result.dataFailures, result.chatFailures)
+                    })
+            }
         }
     }
 
@@ -648,7 +641,7 @@ class MainFragment : Fragment() {
     private fun handleLoginRequest(success: Boolean) {
         val name = dankChatPreferences.userName
         if (success && name != null) {
-            mainViewModel.closeAndReconnect(loadTwitchData = true)
+            mainViewModel.closeAndReconnect()
             showSnackBar(getString(R.string.snackbar_login, name))
         } else {
             dankChatPreferences.clearLogin()

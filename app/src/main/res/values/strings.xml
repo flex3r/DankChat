@@ -56,6 +56,7 @@
     <string name="snackbar_retry">Retry</string>
     <string name="snackbar_data_reloaded">Emotes reloaded</string>
     <string name="snackbar_data_load_failed_cause">Data loading failed: %1$s</string>
+    <string name="snackbar_data_load_failed_multiple_causes">Data loading failed with multiple errors</string>
     <string name="snackbar_paste">Paste</string>
     <string name="add_channel_hint">Channel name</string>
     <string name="emote_menu_tab_recent">Recent</string>

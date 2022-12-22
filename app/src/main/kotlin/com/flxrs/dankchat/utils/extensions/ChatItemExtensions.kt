@@ -18,7 +18,7 @@ fun List<ChatItem>.replaceWithTimeOuts(clearChatMessage: ClearChatMessage, scrol
 
         if ((clearChatMessage.timestamp - message.timestamp).milliseconds < 5.seconds) {
             val stackedMessage = clearChatMessage.copy(stackCount = message.stackCount + 1)
-            this[idx] = item.copy(message = stackedMessage)
+            this[idx] = item.copy(tag = item.tag + 1, message = stackedMessage)
             addClearChat = false
             break
         }
@@ -28,8 +28,8 @@ fun List<ChatItem>.replaceWithTimeOuts(clearChatMessage: ClearChatMessage, scrol
         val item = this[idx]
         if (clearChatMessage.isFullChatClear) {
             this[idx] = when (item.message) {
-                is PrivMessage -> item.copy(message = item.message.copy(timedOut = true), isCleared = true)
-                else           -> item.copy(isCleared = true)
+                is PrivMessage -> item.copy(tag = item.tag + 1, message = item.message.copy(timedOut = true), isCleared = true)
+                else           -> item.copy(tag = item.tag + 1, isCleared = true)
             }
         } else {
             item.message as? PrivMessage ?: continue
@@ -37,7 +37,7 @@ fun List<ChatItem>.replaceWithTimeOuts(clearChatMessage: ClearChatMessage, scrol
                 continue
             }
 
-            this[idx] = item.copy(message = item.message.copy(timedOut = true), isCleared = true)
+            this[idx] = item.copy(tag = item.tag + 1, message = item.message.copy(timedOut = true), isCleared = true)
         }
 
     }
@@ -52,7 +52,7 @@ fun List<ChatItem>.replaceWithTimeOut(id: String): List<ChatItem> = toMutableLis
     for (idx in indices) {
         val item = this[idx]
         if (item.message is PrivMessage && item.message.id == id) {
-            this[idx] = item.copy(message = item.message.copy(timedOut = true), isCleared = true)
+            this[idx] = item.copy(tag = item.tag + 1, message = item.message.copy(timedOut = true), isCleared = true)
             break
         }
     }

@@ -3,10 +3,10 @@ package com.flxrs.dankchat.chat.user
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flxrs.dankchat.data.api.helix.dto.HelixUserDto
+import com.flxrs.dankchat.data.api.helix.dto.UserDto
 import com.flxrs.dankchat.data.api.helix.dto.UserFollowsDto
-import com.flxrs.dankchat.data.repo.ChatRepository
-import com.flxrs.dankchat.data.repo.DataRepository
+import com.flxrs.dankchat.data.repo.chat.ChatRepository
+import com.flxrs.dankchat.data.repo.data.DataRepository
 import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.DateTimeUtils.asParsedZonedDateTime
@@ -127,7 +127,7 @@ class UserPopupViewModel @Inject constructor(
         _userPopupState.value = state
     }
 
-    private fun mapToState(user: HelixUserDto?, channelUserFollows: UserFollowsDto?, currentUserFollows: UserFollowsDto?, isBlocked: Boolean): UserPopupState {
+    private fun mapToState(user: UserDto?, channelUserFollows: UserFollowsDto?, currentUserFollows: UserFollowsDto?, isBlocked: Boolean): UserPopupState {
         user ?: return UserPopupState.Error()
 
         return UserPopupState.Success(

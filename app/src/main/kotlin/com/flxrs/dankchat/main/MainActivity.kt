@@ -30,7 +30,7 @@ import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.notification.NotificationService
-import com.flxrs.dankchat.data.repo.DataRepository
+import com.flxrs.dankchat.data.repo.data.ServiceEvent
 import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.ui.*
@@ -95,11 +95,11 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
             dankChatPreferences.clearLogin()
         }
 
-        viewModel.commands
+        viewModel.serviceEvents
             .flowWithLifecycle(lifecycle, minActiveState = Lifecycle.State.CREATED)
             .onEach {
                 when (it) {
-                    DataRepository.ServiceEvent.Shutdown -> handleShutDown()
+                    ServiceEvent.Shutdown -> handleShutDown()
                 }
             }
             .launchIn(lifecycleScope)

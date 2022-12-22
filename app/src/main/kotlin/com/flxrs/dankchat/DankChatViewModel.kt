@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.data.api.ApiException
 import com.flxrs.dankchat.data.api.auth.AuthApiClient
-import com.flxrs.dankchat.data.repo.ChatRepository
-import com.flxrs.dankchat.data.repo.DataRepository
+import com.flxrs.dankchat.data.repo.chat.ChatRepository
+import com.flxrs.dankchat.data.repo.data.DataRepository
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.withoutOAuthSuffix
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +25,7 @@ class DankChatViewModel @Inject constructor(
     dataRepository: DataRepository,
 ) : ViewModel() {
 
-    val commands = dataRepository.commands
+    val serviceEvents = dataRepository.serviceEvents
     var started = false
         private set
 
