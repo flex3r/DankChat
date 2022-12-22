@@ -68,7 +68,15 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideKtorClient(): HttpClient = HttpClient(OkHttp) {
+    fun provideJson(): Json = Json {
+        explicitNulls = false
+        ignoreUnknownKeys = true
+        isLenient = true
+    }
+
+    @Singleton
+    @Provides
+    fun provideKtorClient(json: Json): HttpClient = HttpClient(OkHttp) {
         install(Logging) {
             level = LogLevel.INFO
             logger = object : Logger {
@@ -82,11 +90,7 @@ object NetworkModule {
             agent = "dankchat/${BuildConfig.VERSION_NAME}"
         }
         install(ContentNegotiation) {
-            json(Json {
-                explicitNulls = false
-                ignoreUnknownKeys = true
-                isLenient = true
-            })
+            json(json)
         }
     }
 

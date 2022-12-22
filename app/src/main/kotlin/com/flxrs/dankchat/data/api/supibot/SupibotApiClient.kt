@@ -5,27 +5,28 @@ import com.flxrs.dankchat.data.api.supibot.dto.SupibotCommandsDto
 import com.flxrs.dankchat.data.api.supibot.dto.SupibotUserAliasesDto
 import com.flxrs.dankchat.data.api.throwApiErrorOnFailure
 import io.ktor.client.call.*
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SupibotApiClient @Inject constructor(private val supibotApi: SupibotApi) {
+class SupibotApiClient @Inject constructor(private val supibotApi: SupibotApi, private val json: Json) {
 
     suspend fun getSupibotCommands(): Result<SupibotCommandsDto> = runCatching {
         supibotApi.getCommands()
-            .throwApiErrorOnFailure()
+            .throwApiErrorOnFailure(json)
             .body()
     }
 
     suspend fun getSupibotChannels(): Result<SupibotChannelsDto> = runCatching {
         supibotApi.getChannels()
-            .throwApiErrorOnFailure()
+            .throwApiErrorOnFailure(json)
             .body()
     }
 
     suspend fun getSupibotUserAliases(user: String): Result<SupibotUserAliasesDto> = runCatching {
         supibotApi.getUserAliases(user)
-            .throwApiErrorOnFailure()
+            .throwApiErrorOnFailure(json)
             .body()
     }
 }

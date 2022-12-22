@@ -1,14 +1,16 @@
 package com.flxrs.dankchat.data.api.helix
 
 import com.flxrs.dankchat.data.api.helix.dto.*
+import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import io.ktor.client.call.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class HelixApiClient @Inject constructor(private val helixApi: HelixApi) {
+class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private val json: Json) {
 
     suspend fun getUserIdByName(name: String): Result<String> = runCatching {
         helixApi.getUserByName(listOf(name))
@@ -75,23 +77,53 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi) {
             .throwHelixApiErrorOnFailure()
     }
 
+    suspend fun postWhisper(
+        fromUserId: String,
+        toUserId: String,
+        request: WhisperRequestDto
+    ): Result<Unit> = runCatching {
+        helixApi.postWhisper(fromUserId, toUserId, request)
+            .throwHelixApiErrorOnFailure()
+    }
+
     private suspend fun HttpResponse?.throwHelixApiErrorOnFailure(): HttpResponse {
         this ?: throw HelixApiException(HelixError.NotLoggedIn, HttpStatusCode.Unauthorized)
         if (status.isSuccess()) {
             return this
         }
 
-        val errorBody = runCatching { body<HelixErrorDto>() }.getOrNull()
+        val errorBody = json.decodeOrNull<HelixErrorDto>(bodyAsText()) ?: throw HelixApiException(HelixError.Unknown, status, status.description)
         val error = when (status) {
-            HttpStatusCode.BadRequest   -> HelixError.BadRequest
-            HttpStatusCode.Forbidden    -> HelixError.Forbidden
-            HttpStatusCode.Unauthorized -> when {
-                errorBody?.message?.startsWith("Missing scope", ignoreCase = true) == true -> HelixError.MissingScopes
-                else                                                                       -> HelixError.Unauthorized
+            HttpStatusCode.BadRequest      -> when {
+                errorBody.message.startsWith(WHISPER_SELF_ERROR, ignoreCase = true) -> HelixError.WhisperSelf
+                else                                                                -> HelixError.BadRequest
             }
 
-            else                        -> HelixError.Unknown
+            HttpStatusCode.Forbidden       -> when {
+                errorBody.message.startsWith(RECIPIENT_BLOCKED_USER, ignoreCase = true) -> HelixError.RecipientBlockedUser
+                else                                                                    -> HelixError.Forbidden
+            }
+
+            HttpStatusCode.Unauthorized    -> when {
+                errorBody.message.startsWith(MISSING_SCOPE_ERROR, ignoreCase = true)     -> HelixError.MissingScopes
+                errorBody.message.startsWith(NO_VERIFIED_PHONE_ERROR, ignoreCase = true) -> HelixError.NoVerifiedPhone
+                else                                                                     -> HelixError.Unauthorized
+            }
+
+            HttpStatusCode.TooManyRequests -> when (request.url.encodedPath) {
+                "/helix/whispers/" -> HelixError.WhisperRateLimited
+                else               -> HelixError.RateLimited
+            }
+
+            else                           -> HelixError.Unknown
         }
-        throw HelixApiException(error, status, errorBody?.message)
+        throw HelixApiException(error, status, errorBody.message)
+    }
+
+    companion object {
+        private const val WHISPER_SELF_ERROR = "A user cannot whisper themself"
+        private const val MISSING_SCOPE_ERROR = "Missing scope"
+        private const val NO_VERIFIED_PHONE_ERROR = "the sender does not have a verified phone number"
+        private const val RECIPIENT_BLOCKED_USER = "The recipient's settings prevent this sender from whispering them"
     }
 }

@@ -2,6 +2,7 @@ package com.flxrs.dankchat.data.api.helix
 
 import com.flxrs.dankchat.data.api.helix.dto.AnnouncementRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.HelixErrorDto
+import com.flxrs.dankchat.data.api.helix.dto.WhisperRequestDto
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.withoutOAuthSuffix
 import io.ktor.client.*
@@ -70,6 +71,15 @@ class HelixApi(private val ktorClient: HttpClient, private val dankChatPreferenc
         bearerAuth(oAuth)
         parameter("broadcaster_id", broadcasterUserId)
         parameter("moderator_id", moderatorUserId)
+        contentType(ContentType.Application.Json)
+        setBody(request)
+    }
+
+    suspend fun postWhisper(fromUserId: String, toUserId: String, request: WhisperRequestDto): HttpResponse? = ktorClient.post("whispers") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        parameter("from_user_id", fromUserId)
+        parameter("to_user_id", toUserId)
         contentType(ContentType.Application.Json)
         setBody(request)
     }

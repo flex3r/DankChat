@@ -21,6 +21,7 @@ import com.flxrs.dankchat.data.repo.data.DataLoadingStep
 import com.flxrs.dankchat.data.repo.data.DataRepository
 import com.flxrs.dankchat.data.state.DataLoadingState
 import com.flxrs.dankchat.data.state.ImageUploadState
+import com.flxrs.dankchat.data.twitch.command.TwitchCommand
 import com.flxrs.dankchat.data.twitch.connection.ConnectionState
 import com.flxrs.dankchat.data.twitch.emote.EmoteType
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
@@ -344,7 +345,6 @@ class MainViewModel @Inject constructor(
                 }
             }.awaitAll()
 
-            channelList.forEach { dataRepository.setEmotesForSuggestions(it) }
             chatRepository.reparseAllEmotesAndBadges()
 
             if (!isLoggedIn) {
@@ -360,6 +360,8 @@ class MainViewModel @Inject constructor(
             userState?.let {
                 dataRepository.loadUserStateEmotes(userState.globalEmoteSets, userState.followerEmoteSets)
             }
+
+            channelList.forEach { dataRepository.setEmotesForSuggestions(it) }
 
             // global emote suggestions for whisper tab
             dataRepository.setEmotesForSuggestions("w")
@@ -472,10 +474,24 @@ class MainViewModel @Inject constructor(
         }
 
         when (commandResult) {
-            is CommandResult.Accepted             -> Unit
-            is CommandResult.AcceptedWithResponse -> chatRepository.makeAndPostCustomSystemMessage(commandResult.response, channel)
-            is CommandResult.Message              -> chatRepository.sendMessage(commandResult.message)
-            is CommandResult.NotFound             -> chatRepository.sendMessage(message)
+            is CommandResult.Accepted              -> Unit
+            is CommandResult.AcceptedTwitchCommand -> {
+                if (commandResult.command == TwitchCommand.Whisper) {
+                    chatRepository.fakeWhisperIfNecessary(message)
+                }
+
+                if (commandResult.response != null) {
+                    chatRepository.makeAndPostCustomSystemMessage(commandResult.response, channel)
+                }
+            }
+
+            is CommandResult.AcceptedWithResponse  -> chatRepository.makeAndPostCustomSystemMessage(commandResult.response, channel)
+            is CommandResult.Message               -> chatRepository.sendMessage(commandResult.message)
+            is CommandResult.NotFound              -> chatRepository.sendMessage(message)
+        }
+
+        if (commandResult != CommandResult.NotFound) {
+            chatRepository.appendLastMessage(channel, message)
         }
     }
 

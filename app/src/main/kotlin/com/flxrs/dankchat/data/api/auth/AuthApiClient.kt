@@ -3,20 +3,23 @@ package com.flxrs.dankchat.data.api.auth
 import com.flxrs.dankchat.data.api.ApiException
 import com.flxrs.dankchat.data.api.auth.dto.ValidateDto
 import com.flxrs.dankchat.data.api.auth.dto.ValidateErrorDto
-import io.ktor.client.call.*
-import io.ktor.http.*
+import com.flxrs.dankchat.utils.extensions.decodeOrNull
+import io.ktor.client.call.body
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.isSuccess
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AuthApiClient @Inject constructor(private val authApi: AuthApi) {
+class AuthApiClient @Inject constructor(private val authApi: AuthApi, private val json: Json) {
 
     suspend fun validateUser(token: String): Result<ValidateDto> = runCatching {
         val response = authApi.validateUser(token)
         when {
             response.status.isSuccess() -> response.body()
             else                        -> {
-                val error = runCatching { response.body<ValidateErrorDto>() }.getOrNull()
+                val error = json.decodeOrNull<ValidateErrorDto>(response.bodyAsText())
                 throw ApiException(status = response.status, error?.message)
             }
         }
