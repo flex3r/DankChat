@@ -1,17 +1,22 @@
 package com.flxrs.dankchat.data.api.recentmessages
 
 import com.flxrs.dankchat.data.api.recentmessages.dto.RecentMessagesDto
-import io.ktor.client.call.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import io.ktor.client.call.body
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.isSuccess
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class RecentMessagesApiClient @Inject constructor(private val recentMessagesApi: RecentMessagesApi) {
+class RecentMessagesApiClient @Inject constructor(
+    private val recentMessagesApi: RecentMessagesApi,
+    private val preferenceStore: DankChatPreferenceStore,
+) {
 
     suspend fun getRecentMessages(channel: String): Result<RecentMessagesDto> = runCatching {
-        recentMessagesApi.getRecentMessages(channel)
+        val limit = preferenceStore.scrollbackLength
+        recentMessagesApi.getRecentMessages(channel, limit)
             .throwRecentMessagesErrorOnFailure()
             .body()
     }

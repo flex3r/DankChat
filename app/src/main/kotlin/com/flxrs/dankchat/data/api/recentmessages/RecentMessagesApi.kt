@@ -6,5 +6,7 @@ import io.ktor.client.statement.*
 
 class RecentMessagesApi(private val ktorClient: HttpClient) {
 
-    suspend fun getRecentMessages(channel: String) = ktorClient.get("recent-messages/$channel")
+    suspend fun getRecentMessages(channel: String, limit: Int) = ktorClient.get("recent-messages/$channel") {
+        parameter("limit", limit)
+    }
 }
