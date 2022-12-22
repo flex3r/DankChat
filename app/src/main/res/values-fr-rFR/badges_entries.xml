@@ -1,2 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string-array name="badges_entries">
+        <item>Autorité (équipe, administrateur)</item>
+        <item>Prédictions</item>
+        <item>Chaîne (diffuseur, modérateur)</item>
+        <item>Abonné</item>
+        <item>Vanité (prime, bits, abonnements-cadeaux)</item>
+        <item>DankChat</item>
+        <!--        <item>FrankerFaceZ (Bot, FFZ Supporter, FFZ Developer)</item>-->
+    </string-array>
+</resources>
