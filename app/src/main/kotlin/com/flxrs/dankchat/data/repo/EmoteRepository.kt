@@ -30,10 +30,10 @@ import javax.inject.Inject
 class EmoteRepository @Inject constructor(private val apiManager: ApiManager, private val preferences: DankChatPreferenceStore) {
     private val twitchEmotes = ConcurrentHashMap<String, GenericEmote>()
 
-    private val ffzEmotes = ConcurrentHashMap<String, HashMap<String, GenericEmote>>()
+    private val ffzEmotes = ConcurrentHashMap<String, Map<String, GenericEmote>>()
     private val globalFFZEmotes = ConcurrentHashMap<String, GenericEmote>()
 
-    private val bttvEmotes = ConcurrentHashMap<String, HashMap<String, GenericEmote>>()
+    private val bttvEmotes = ConcurrentHashMap<String, Map<String, GenericEmote>>()
     private val globalBttvEmotes = ConcurrentHashMap<String, GenericEmote>()
 
     private val sevenTVEmotes = ConcurrentHashMap<String, Map<String, GenericEmote>>()
@@ -233,13 +233,13 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
     }
 
     suspend fun setFFZEmotes(channel: String, ffzResult: FFZChannelDto) = withContext(Dispatchers.Default) {
-        val emotes = hashMapOf<String, GenericEmote>()
-        ffzResult.sets.forEach {
-            it.value.emotes.forEach { emote ->
-                val parsedEmote = parseFFZEmote(emote, channel)
-                emotes[parsedEmote.code] = parsedEmote
+        val emotes = ffzResult.sets
+            .flatMap { set ->
+                set.value.emotes.mapNotNull {
+                    parseFFZEmote(it, channel)
+                }
             }
-        }
+            .associateBy { it.code }
         ffzEmotes[channel] = emotes
         ffzResult.room.modBadgeUrls?.let { ffzModBadges[channel] = "https:" + (it["4"] ?: it["2"] ?: it["1"]) }
         ffzResult.room.vipBadgeUrls?.let { ffzVipBadges[channel] = "https:" + (it["4"] ?: it["2"] ?: it["1"]) }
@@ -247,21 +247,21 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
 
     suspend fun setFFZGlobalEmotes(ffzResult: FFZGlobalDto) = withContext(Dispatchers.Default) {
         globalFFZEmotes.clear()
-        ffzResult.sets
+        val emotes = ffzResult.sets
             .filter { it.key in ffzResult.defaultSets }
-            .forEach { (_, emoteSet) ->
-                emoteSet.emotes.forEach { emote ->
-                    val parsedEmote = parseFFZEmote(emote)
-                    globalFFZEmotes[parsedEmote.code] = parsedEmote
+            .flatMap { (_, emoteSet) ->
+                emoteSet.emotes.mapNotNull { emote ->
+                    parseFFZEmote(emote)
                 }
             }
+            .associateBy { it.code }
+        globalFFZEmotes.putAll(emotes)
     }
 
     suspend fun setBTTVEmotes(channel: String, bttvResult: BTTVChannelDto) = withContext(Dispatchers.Default) {
-        val emotes = hashMapOf<String, GenericEmote>()
-        (bttvResult.emotes + bttvResult.sharedEmotes).forEach {
+        val emotes = (bttvResult.emotes + bttvResult.sharedEmotes).associate {
             val emote = parseBTTVEmote(it)
-            emotes[emote.code] = emote
+            emote.code to emote
         }
         bttvEmotes[channel] = emotes
     }
@@ -279,9 +279,8 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
 
         sevenTVEmotes[channel] = sevenTvResult
             .filterUnlistedIfEnabled()
-            .associate { emote ->
-                emote.name to parseSevenTVEmote(emote, EmoteType.ChannelSevenTVEmote)
-            }
+            .mapNotNull { parseSevenTVEmote(it, EmoteType.ChannelSevenTVEmote) }
+            .associateBy { it.code }
     }
 
     suspend fun setSevenTVGlobalEmotes(sevenTvResult: List<SevenTVEmoteDto>) = withContext(Dispatchers.Default) {
@@ -291,7 +290,8 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
         sevenTvResult
             .filterUnlistedIfEnabled()
             .forEach { emote ->
-                globalSevenTVEmotes[emote.name] = parseSevenTVEmote(emote, EmoteType.GlobalSevenTVEmote)
+                val parsed = parseSevenTVEmote(emote, EmoteType.GlobalSevenTVEmote) ?: return@forEach
+                globalSevenTVEmotes[emote.name] = parsed
             }
     }
 
@@ -512,15 +512,16 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
         )
     }
 
-    private fun parseFFZEmote(emote: FFZEmoteDto, channel: String = ""): GenericEmote {
+    private fun parseFFZEmote(emote: FFZEmoteDto, channel: String = ""): GenericEmote? {
         val name = emote.name
         val id = emote.id
         val (scale, url) = when {
-            emote.urls.containsKey("4") && emote.urls["4"] != null -> 1 to emote.urls.getValue("4")
-            emote.urls.containsKey("2") && emote.urls["2"] != null -> 2 to emote.urls.getValue("2")
-            else                                                   -> 4 to emote.urls["1"]
+            emote.urls["4"] != null -> 1 to emote.urls.getValue("4")
+            emote.urls["2"] != null -> 2 to emote.urls.getValue("2")
+            else                    -> 4 to emote.urls["1"]
         }
-        val lowResUrl = emote.urls["2"] ?: emote.urls.getValue("1")
+        url ?: return null
+        val lowResUrl = emote.urls["2"] ?: emote.urls["1"] ?: return null
         val type = when {
             channel.isBlank() -> EmoteType.GlobalFFZEmote
             else              -> EmoteType.ChannelFFZEmote
@@ -528,12 +529,12 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
         return GenericEmote(name, "https:$url", "https:$lowResUrl", "$id", scale, type)
     }
 
-    private fun parseSevenTVEmote(emote: SevenTVEmoteDto, type: EmoteType): GenericEmote {
+    private fun parseSevenTVEmote(emote: SevenTVEmoteDto, type: EmoteType): GenericEmote? {
         val urls = emote.urls.associate { (size, url) -> size to url }
         return GenericEmote(
             code = emote.name,
-            url = urls.getValue("4"),
-            lowResUrl = urls.getValue("2"),
+            url = urls["4"] ?: return null,
+            lowResUrl = urls["2"] ?: urls["1"] ?: return null,
             id = emote.id,
             scale = 1,
             emoteType = type,
