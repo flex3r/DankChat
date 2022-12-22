@@ -13,28 +13,28 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi) {
     suspend fun getUserIdByName(name: String): Result<String> = runCatching {
         helixApi.getUserByName(listOf(name))
             .throwHelixApiErrorOnFailure()
-            .body<HelixUsersDto>()
+            .body<UsersDto>()
             .data.first().id
     }
 
-    suspend fun getUsersByNames(names: List<String>): Result<List<HelixUserDto>> = runCatching {
+    suspend fun getUsersByNames(names: List<String>): Result<List<UserDto>> = runCatching {
         helixApi.getUserByName(names)
             .throwHelixApiErrorOnFailure()
-            .body<HelixUsersDto>()
+            .body<UsersDto>()
             .data
     }
 
-    suspend fun getUsersByIds(ids: List<String>): Result<List<HelixUserDto>> = runCatching {
+    suspend fun getUsersByIds(ids: List<String>): Result<List<UserDto>> = runCatching {
         helixApi.getUsersByIds(ids)
             .throwHelixApiErrorOnFailure()
-            .body<HelixUsersDto>()
+            .body<UsersDto>()
             .data
     }
 
-    suspend fun getUser(userId: String): Result<HelixUserDto> = runCatching {
+    suspend fun getUser(userId: String): Result<UserDto> = runCatching {
         helixApi.getUserById(userId)
             .throwHelixApiErrorOnFailure()
-            .body<HelixUsersDto>()
+            .body<UsersDto>()
             .data.first()
     }
 
@@ -50,7 +50,7 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi) {
             .body()
     }
 
-    suspend fun getUserBlocks(userId: String): Result<HelixUserBlockListDto> = runCatching {
+    suspend fun getUserBlocks(userId: String): Result<UserBlocksDto> = runCatching {
         helixApi.getUserBlocks(userId)
             .throwHelixApiErrorOnFailure()
             .body()
@@ -66,7 +66,6 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi) {
             .throwHelixApiErrorOnFailure()
     }
 
-    // TODO
     suspend fun postAnnouncement(
         broadcastUserId: String,
         moderatorUserId: String,
@@ -77,25 +76,22 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi) {
     }
 
     private suspend fun HttpResponse?.throwHelixApiErrorOnFailure(): HttpResponse {
-        this ?: throw HelixApiException(HelixError.NotLoggedIn)
+        this ?: throw HelixApiException(HelixError.NotLoggedIn, HttpStatusCode.Unauthorized)
         if (status.isSuccess()) {
             return this
         }
 
         val errorBody = runCatching { body<HelixErrorDto>() }.getOrNull()
-
-        throw when (status) {
-            HttpStatusCode.BadRequest   -> HelixApiException(HelixError.BadRequest, errorBody?.message)
-            HttpStatusCode.Forbidden    -> HelixApiException(HelixError.Forbidden, errorBody?.message)
-            HttpStatusCode.Unauthorized -> {
-                val error = when {
-                    errorBody?.message?.startsWith("Missing scope", ignoreCase = true) == true -> HelixError.MissingScopes
-                    else                                                                       -> HelixError.Unauthorized
-                }
-                HelixApiException(error, errorBody?.message)
+        val error = when (status) {
+            HttpStatusCode.BadRequest   -> HelixError.BadRequest
+            HttpStatusCode.Forbidden    -> HelixError.Forbidden
+            HttpStatusCode.Unauthorized -> when {
+                errorBody?.message?.startsWith("Missing scope", ignoreCase = true) == true -> HelixError.MissingScopes
+                else                                                                       -> HelixError.Unauthorized
             }
 
-            else                        -> HelixApiException(HelixError.Unknown, errorBody?.message)
+            else                        -> HelixError.Unknown
         }
+        throw HelixApiException(error, status, errorBody?.message)
     }
 }

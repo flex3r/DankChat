@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.di
 
-import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.data.api.helix.HelixApiClient
 import com.flxrs.dankchat.data.twitch.connection.ChatConnection
 import com.flxrs.dankchat.data.twitch.connection.ChatConnectionType

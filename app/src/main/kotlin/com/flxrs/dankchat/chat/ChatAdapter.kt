@@ -790,7 +790,7 @@ class ChatAdapter(
 
 private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
     override fun areItemsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
-        return oldItem.message.id == newItem.message.id
+        return oldItem.tag == newItem.tag && oldItem.message.id == newItem.message.id
     }
 
     override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {

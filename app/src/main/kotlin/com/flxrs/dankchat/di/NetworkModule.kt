@@ -5,8 +5,15 @@ import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.data.api.*
 import com.flxrs.dankchat.data.api.auth.AuthApi
 import com.flxrs.dankchat.data.api.auth.AuthApiClient
+import com.flxrs.dankchat.data.api.badges.BadgesApi
+import com.flxrs.dankchat.data.api.bttv.BTTVApi
+import com.flxrs.dankchat.data.api.chatters.ChattersApi
+import com.flxrs.dankchat.data.api.dankchat.DankChatApi
+import com.flxrs.dankchat.data.api.ffz.FFZApi
 import com.flxrs.dankchat.data.api.helix.HelixApi
-import com.flxrs.dankchat.data.repo.EmoteRepository
+import com.flxrs.dankchat.data.api.recentmessages.RecentMessagesApi
+import com.flxrs.dankchat.data.api.seventv.SevenTVApi
+import com.flxrs.dankchat.data.api.supibot.SupibotApi
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import dagger.Module
 import dagger.Provides
@@ -85,7 +92,7 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideAuthApiService(ktorClient: HttpClient) = AuthApi(ktorClient.config {
+    fun provideAuthApi(ktorClient: HttpClient) = AuthApi(ktorClient.config {
         defaultRequest {
             url(AUTH_BASE_URL)
         }
@@ -93,7 +100,7 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideDankChatApiService(ktorClient: HttpClient) = DankChatApiService(ktorClient.config {
+    fun provideDankChatApi(ktorClient: HttpClient) = DankChatApi(ktorClient.config {
         defaultRequest {
             url(DANKCHAT_BASE_URL)
         }
@@ -101,7 +108,7 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideSupibotApiService(ktorClient: HttpClient) = SupibotApiService(ktorClient.config {
+    fun provideSupibotApi(ktorClient: HttpClient) = SupibotApi(ktorClient.config {
         defaultRequest {
             url(SUPIBOT_BASE_URL)
         }
@@ -118,7 +125,7 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideTmiApiService(ktorClient: HttpClient) = TmiApiService(ktorClient.config {
+    fun provideTmiApi(ktorClient: HttpClient) = ChattersApi(ktorClient.config {
         defaultRequest {
             url(TMI_BASE_URL)
         }
@@ -126,7 +133,7 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideBadgesApiService(ktorClient: HttpClient) = BadgesApiService(ktorClient.config {
+    fun provideBadgesApi(ktorClient: HttpClient) = BadgesApi(ktorClient.config {
         defaultRequest {
             url(BADGES_BASE_URL)
         }
@@ -134,7 +141,7 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideFFZApiService(ktorClient: HttpClient) = FFZApiService(ktorClient.config {
+    fun provideFFZApi(ktorClient: HttpClient) = FFZApi(ktorClient.config {
         defaultRequest {
             url(FFZ_BASE_URL)
         }
@@ -142,7 +149,7 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideBTTVApiService(ktorClient: HttpClient) = BTTVApiService(ktorClient.config {
+    fun provideBTTVApi(ktorClient: HttpClient) = BTTVApi(ktorClient.config {
         defaultRequest {
             url(BTTV_BASE_URL)
         }
@@ -150,7 +157,7 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideRecentMessagesApiService(ktorClient: HttpClient, preferenceStore: DankChatPreferenceStore) = RecentMessagesApiService(ktorClient.config {
+    fun provideRecentMessagesApi(ktorClient: HttpClient, preferenceStore: DankChatPreferenceStore) = RecentMessagesApi(ktorClient.config {
         defaultRequest {
             url(preferenceStore.customRmHost)
         }
@@ -158,39 +165,9 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideSevenTVApiService(ktorClient: HttpClient) = SevenTVApiService(ktorClient.config {
+    fun provideSevenTVApi(ktorClient: HttpClient) = SevenTVApi(ktorClient.config {
         defaultRequest {
             url(SEVENTV_BASE_URL)
         }
     })
-
-    @Singleton
-    @Provides
-    fun provideApiManager(
-        @UploadOkHttpClient okHttpClient: OkHttpClient,
-        bttvApiService: BTTVApiService,
-        dankChatApiService: DankChatApiService,
-        ffzApiService: FFZApiService,
-        recentMessagesApiService: RecentMessagesApiService,
-        supibotApiService: SupibotApiService,
-        badgesApiService: BadgesApiService,
-        tmiApiService: TmiApiService,
-        sevenTVApiService: SevenTVApiService,
-        dankChatPreferenceStore: DankChatPreferenceStore
-    ): ApiManager = ApiManager(
-        okHttpClient,
-        bttvApiService,
-        dankChatApiService,
-        ffzApiService,
-        recentMessagesApiService,
-        supibotApiService,
-        badgesApiService,
-        tmiApiService,
-        sevenTVApiService,
-        dankChatPreferenceStore
-    )
-
-    @Singleton
-    @Provides
-    fun provideEmoteManager(apiManager: ApiManager, preferenceStore: DankChatPreferenceStore): EmoteRepository = EmoteRepository(apiManager, preferenceStore)
 }

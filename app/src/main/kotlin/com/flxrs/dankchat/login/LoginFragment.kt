@@ -18,8 +18,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.data.api.ApiManager
-import com.flxrs.dankchat.data.api.auth.AuthApiClient
 import com.flxrs.dankchat.databinding.LoginFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
@@ -27,7 +25,6 @@ import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.flxrs.dankchat.utils.extensions.showLongSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlin.math.log
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {

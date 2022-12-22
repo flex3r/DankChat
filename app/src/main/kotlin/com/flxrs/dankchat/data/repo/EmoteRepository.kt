@@ -4,8 +4,18 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.util.LruCache
 import androidx.annotation.VisibleForTesting
-import com.flxrs.dankchat.data.api.ApiManager
-import com.flxrs.dankchat.data.api.dto.*
+import com.flxrs.dankchat.data.api.bttv.dto.BTTVChannelDto
+import com.flxrs.dankchat.data.api.bttv.dto.BTTVEmoteDto
+import com.flxrs.dankchat.data.api.bttv.dto.BTTVGlobalEmoteDto
+import com.flxrs.dankchat.data.api.dankchat.DankChatApiClient
+import com.flxrs.dankchat.data.api.dankchat.dto.DankChatBadgeDto
+import com.flxrs.dankchat.data.api.dankchat.dto.DankChatEmoteDto
+import com.flxrs.dankchat.data.api.ffz.dto.FFZChannelDto
+import com.flxrs.dankchat.data.api.ffz.dto.FFZEmoteDto
+import com.flxrs.dankchat.data.api.ffz.dto.FFZGlobalDto
+import com.flxrs.dankchat.data.api.seventv.dto.SevenTVEmoteDto
+import com.flxrs.dankchat.data.api.seventv.dto.SevenTVEmoteVisibility
+import com.flxrs.dankchat.data.repo.chat.ChatRepository
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.badge.BadgeSet
 import com.flxrs.dankchat.data.twitch.badge.BadgeType
@@ -26,8 +36,13 @@ import pl.droidsonroids.gif.MultiCallback
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class EmoteRepository @Inject constructor(private val apiManager: ApiManager, private val preferences: DankChatPreferenceStore) {
+@Singleton
+class EmoteRepository @Inject constructor(
+    private val dankChatApiClient: DankChatApiClient,
+    private val preferences: DankChatPreferenceStore
+) {
     private val twitchEmotes = ConcurrentHashMap<String, GenericEmote>()
 
     private val ffzEmotes = ConcurrentHashMap<String, Map<String, GenericEmote>>()
@@ -210,7 +225,7 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
     suspend fun loadUserStateEmotes(globalEmoteSetIds: List<String>, followerEmoteSetIds: Map<String, List<String>>) = withContext(Dispatchers.Default) {
         twitchEmotes.clear()
         val combined = (globalEmoteSetIds + followerEmoteSetIds.values.flatten()).distinct()
-        val sets = runCatching { apiManager.getUserSets(combined) }
+        val sets = dankChatApiClient.getUserSets(combined)
             .getOrNull()
             .orEmpty()
 
@@ -266,7 +281,7 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
         bttvEmotes[channel] = emotes
     }
 
-    suspend fun setBTTVGlobalEmotes(globalEmotes: List<BTTVGlobalEmotesDto>) = withContext(Dispatchers.Default) {
+    suspend fun setBTTVGlobalEmotes(globalEmotes: List<BTTVGlobalEmoteDto>) = withContext(Dispatchers.Default) {
         globalBttvEmotes.clear()
         globalEmotes.forEach {
             val emote = parseBTTVGlobalEmote(it)
@@ -295,21 +310,6 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
             }
     }
 
-    fun clearFFZEmotes() {
-        globalFFZEmotes.clear()
-        ffzEmotes.clear()
-    }
-
-    fun clearBTTVEmotes() {
-        globalBttvEmotes.clear()
-        bttvEmotes.clear()
-    }
-
-    fun clearSevenTVEmotes() {
-        globalSevenTVEmotes.clear()
-        sevenTVEmotes.clear()
-    }
-
     suspend fun getEmotes(channel: String): List<GenericEmote> = withContext(Dispatchers.Default) {
         buildList {
             twitchEmotes.values.filterNot {
@@ -335,7 +335,7 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
     private val String.isGlobalTwitchChannel: Boolean
         get() = equals("qa_TW_Partner", ignoreCase = true) || equals("Twitch", ignoreCase = true)
 
-    private fun List<TwitchEmoteDto>?.mapToGenericEmotes(type: EmoteType): List<GenericEmote> = this?.map { (name, id) ->
+    private fun List<DankChatEmoteDto>?.mapToGenericEmotes(type: EmoteType): List<GenericEmote> = this?.map { (name, id) ->
         val code = when (type) {
             is EmoteType.GlobalTwitchEmote -> EMOTE_REPLACEMENTS[name] ?: name
             else                           -> name
@@ -496,7 +496,7 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
         )
     }
 
-    private fun parseBTTVGlobalEmote(emote: BTTVGlobalEmotesDto): GenericEmote {
+    private fun parseBTTVGlobalEmote(emote: BTTVGlobalEmoteDto): GenericEmote {
         val name = emote.code
         val id = emote.id
         val url = BTTV_EMOTE_TEMPLATE.format(id, BTTV_EMOTE_SIZE)

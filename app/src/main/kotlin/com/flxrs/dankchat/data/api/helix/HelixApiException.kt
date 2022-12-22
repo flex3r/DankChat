@@ -1,6 +1,14 @@
 package com.flxrs.dankchat.data.api.helix
 
-data class HelixApiException(val error: HelixError, override val message: String? = null, override val cause: Throwable? = null) : Throwable(message, cause)
+import com.flxrs.dankchat.data.api.ApiException
+import io.ktor.http.*
+
+data class HelixApiException(
+    val error: HelixError,
+    override val status: HttpStatusCode,
+    override val message: String? = null,
+    override val cause: Throwable? = null
+) : ApiException(status, message, cause)
 
 enum class HelixError {
     BadRequest,

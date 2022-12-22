@@ -1,11 +1,12 @@
 package com.flxrs.dankchat.data.repo
 
 import android.util.Log
-import com.flxrs.dankchat.data.api.ApiManager
+import com.flxrs.dankchat.data.api.chatters.ChattersApiClient
 import com.flxrs.dankchat.data.api.helix.HelixApiClient
-import com.flxrs.dankchat.data.twitch.command.TwitchCommand
+import com.flxrs.dankchat.data.api.supibot.SupibotApiClient
 import com.flxrs.dankchat.data.twitch.command.CommandContext
-import com.flxrs.dankchat.data.twitch.command.TwitchCommandService
+import com.flxrs.dankchat.data.twitch.command.TwitchCommand
+import com.flxrs.dankchat.data.twitch.command.TwitchCommandRepository
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.command.CommandItem
 import kotlinx.coroutines.Dispatchers
@@ -23,9 +24,10 @@ import kotlin.time.Duration.Companion.seconds
 @Singleton
 class CommandRepository @Inject constructor(
     private val ignoresRepository: IgnoresRepository,
-    private val apiManager: ApiManager,
+    private val twitchCommandRepository: TwitchCommandRepository,
     private val helixApiClient: HelixApiClient,
-    private val twitchCommandService: TwitchCommandService,
+    private val supibotApiClient: SupibotApiClient,
+    private val chattersApiClient: ChattersApiClient,
     private val preferenceStore: DankChatPreferenceStore
 ) {
     private val customCommands: Flow<List<CommandItem.Entry>> = preferenceStore.commandsAsFlow
@@ -71,7 +73,7 @@ class CommandRepository @Inject constructor(
         val twitchCommand = twitchCommands.find { it.trigger == triggerWithoutFirstChar }
         if (twitchCommand != null) {
             val context = CommandContext(trigger, channel, channelId, message, words.drop(1))
-            return twitchCommandService.handleTwitchCommand(twitchCommand, context)
+            return twitchCommandRepository.handleTwitchCommand(twitchCommand, context)
         }
 
         return when (defaultCommands.find { it.trigger == trigger }) {
@@ -84,7 +86,7 @@ class CommandRepository @Inject constructor(
     }
 
     suspend fun loadSupibotCommands() = withContext(Dispatchers.Default) {
-        if (!preferenceStore.isLoggedIn) {
+        if (!preferenceStore.isLoggedIn || !preferenceStore.shouldLoadSupibot) {
             return@withContext
         }
 
@@ -106,27 +108,30 @@ class CommandRepository @Inject constructor(
     }
 
     private suspend fun getSupibotChannels(): List<String> {
-        return apiManager.getSupibotChannels()?.let { (data) ->
-            data.filter { it.isActive }
-                .map { it.name }
-        }.orEmpty()
+        return supibotApiClient.getSupibotChannels()
+            .getOrNull()
+            ?.let { (data) ->
+                data.filter { it.isActive }.map { it.name }
+            }.orEmpty()
     }
 
     private suspend fun getSupibotCommands(): List<String> {
-        return apiManager.getSupibotCommands()?.let { (data) ->
-            data.map { command ->
-                listOf("$${command.name}") + command.aliases.map { "$$it" }
-            }.flatten()
-        }.orEmpty()
+        return supibotApiClient.getSupibotCommands()
+            .getOrNull()
+            ?.let { (data) ->
+                data.flatMap { command ->
+                    listOf("$${command.name}") + command.aliases.map { "$$it" }
+                }
+            }.orEmpty()
     }
 
     private suspend fun getSupibotUserAliases(): List<String> {
         val user = preferenceStore.userName?.ifBlank { null } ?: return emptyList()
-        return apiManager.getSupibotUserAliases(user)?.let { (data) ->
-            data.map { alias ->
-                "$$${alias.name}"
-            }
-        }.orEmpty()
+        return supibotApiClient.getSupibotUserAliases(user)
+            .getOrNull()
+            ?.let { (data) ->
+                data.map { alias -> "$$${alias.name}" }
+            }.orEmpty()
     }
 
     private suspend fun blockUserCommand(args: List<String>): CommandResult.AcceptedWithResponse {
@@ -169,9 +174,8 @@ class CommandRepository @Inject constructor(
     }
 
     private suspend fun chattersCommand(channel: String): CommandResult.AcceptedWithResponse {
-        val result = runCatching {
-            apiManager.getChatterCount(channel)
-        }.getOrNull() ?: return CommandResult.AcceptedWithResponse("An unknown error occurred!")
+        val result = chattersApiClient.getChatterCount(channel)
+            .getOrNull() ?: return CommandResult.AcceptedWithResponse("An unknown error occurred!")
 
         return CommandResult.AcceptedWithResponse("Chatter count: $result")
     }
