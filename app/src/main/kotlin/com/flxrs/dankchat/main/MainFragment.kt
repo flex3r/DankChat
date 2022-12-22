@@ -212,7 +212,6 @@ class MainFragment : Fragment() {
                 with(menu) {
                     val isLoggedIn = dankChatPreferences.isLoggedIn
                     val shouldShowProgress = mainViewModel.shouldShowUploadProgress.value
-                    Log.d("MainFragment", "Show Progress: $shouldShowProgress")
                     val hasChannels = mainViewModel.getChannels().isNotEmpty()
                     val mentionIconColor = when (mainViewModel.shouldColorNotification.value) {
                         true -> R.attr.colorError

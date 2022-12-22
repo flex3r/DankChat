@@ -40,13 +40,13 @@ open class ApiException(
 
 }
 
-suspend fun HttpResponse.throwApiErrorOnFailure(): HttpResponse {
+suspend fun HttpResponse.throwApiErrorOnFailure(json: Json): HttpResponse {
     if (status.isSuccess()) {
         return this
     }
 
     val errorBody = bodyAsText()
-    val errorMessage = Json.decodeOrNull<GenericError>(errorBody) ?: status.description
+    val errorMessage = json.decodeOrNull<GenericError>(errorBody) ?: status.description
     val message = "${request.url}: $errorMessage"
     throw ApiException(status, message)
 }

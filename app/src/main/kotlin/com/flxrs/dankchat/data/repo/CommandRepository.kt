@@ -63,7 +63,7 @@ class CommandRepository @Inject constructor(
 
         val triggerWithoutFirstChar = trigger.drop(1)
         if (triggerWithoutFirstChar == TwitchCommand.Me.trigger) {
-            return CommandResult.Message(message)
+            return CommandResult.NotFound
         }
 
         if (skipSuspendingCommands) {

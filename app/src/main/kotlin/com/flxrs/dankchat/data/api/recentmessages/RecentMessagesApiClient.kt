@@ -2,9 +2,9 @@ package com.flxrs.dankchat.data.api.recentmessages
 
 import com.flxrs.dankchat.data.api.recentmessages.dto.RecentMessagesDto
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import io.ktor.client.call.body
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.isSuccess
+import io.ktor.client.call.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import javax.inject.Inject
 import javax.inject.Singleton
 

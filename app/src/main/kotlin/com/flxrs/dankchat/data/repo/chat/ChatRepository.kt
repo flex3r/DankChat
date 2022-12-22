@@ -267,11 +267,7 @@ class ChatRepository @Inject constructor(
 
     fun getLastMessage(): String? = lastMessage[activeChannel.value]?.trimEndSpecialChar()
 
-    fun sendMessage(input: String) {
-        val channel = activeChannel.value
-        val preparedMessage = prepareMessage(channel, input) ?: return
-        writeConnection.sendMessage(preparedMessage)
-
+    fun fakeWhisperIfNecessary(input: String) {
         if (pubSubManager.connectedAndHasWhisperTopic) {
             return
         }
@@ -300,6 +296,12 @@ class ChatRepository @Inject constructor(
                 it.addAndLimit(fakeItem, scrollBackLength)
             }
         }
+    }
+
+    fun sendMessage(input: String) {
+        val channel = activeChannel.value
+        val preparedMessage = prepareMessage(channel, input) ?: return
+        writeConnection.sendMessage(preparedMessage)
     }
 
     fun connectAndJoin(channels: List<String> = dankChatPreferenceStore.getChannels()) {
@@ -362,6 +364,9 @@ class ChatRepository @Inject constructor(
         _channels.value = updatedChannels
     }
 
+    fun appendLastMessage(channel: String, message: String) {
+        lastMessage[channel] = message
+    }
 
     // TODO should be null if anon
     private fun connect(userName: String, oauth: String) {
@@ -618,8 +623,9 @@ class ChatRepository @Inject constructor(
 
         if (message is PrivMessage) {
             if (message.name == dankChatPreferenceStore.userName) {
-                val previousLastMessage = lastMessage[message.channel]?.trimEndSpecialChar()
-                if (previousLastMessage != message.originalMessage.trimEndSpecialChar()) {
+                val previousLastMessage = lastMessage[message.channel]?.trimEndSpecialChar().orEmpty()
+                val lastMessageWasCommand = previousLastMessage.startsWith('.') || previousLastMessage.startsWith('/')
+                if (!lastMessageWasCommand && previousLastMessage != message.originalMessage.trimEndSpecialChar()) {
                     lastMessage[message.channel] = message.originalMessage
                 }
 

@@ -16,5 +16,10 @@ enum class HelixError {
     MissingScopes,
     NotLoggedIn,
     Unauthorized,
-    Unknown
+    Unknown,
+    WhisperSelf,
+    NoVerifiedPhone,
+    RecipientBlockedUser,
+    WhisperRateLimited,
+    RateLimited,
 }
