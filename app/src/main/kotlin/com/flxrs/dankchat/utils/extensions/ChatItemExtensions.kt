@@ -3,6 +3,8 @@ package com.flxrs.dankchat.utils.extensions
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.data.twitch.message.ClearChatMessage
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
+import com.flxrs.dankchat.data.twitch.message.SystemMessage
+import com.flxrs.dankchat.data.twitch.message.SystemMessageType
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
@@ -80,5 +82,21 @@ fun List<ChatItem>.addAndLimit(
         while (size > scrollBackLength) {
             removeAt(0)
         }
+    }
+}
+
+fun List<ChatItem>.addSystemMessage(type: SystemMessageType, scrollBackLength: Int): List<ChatItem> {
+    return when {
+        type != SystemMessageType.Connected -> addAndLimit(ChatItem(SystemMessage(type)), scrollBackLength)
+        else                                -> replaceDisconnectedIfNecessary(scrollBackLength)
+    }
+}
+
+fun List<ChatItem>.replaceDisconnectedIfNecessary(scrollBackLength: Int): List<ChatItem> {
+    val item = lastOrNull()
+    val message = item?.message
+    return when ((message as? SystemMessage)?.type) {
+        SystemMessageType.Disconnected -> dropLast(1) + item.copy(message = SystemMessage(SystemMessageType.Reconnected))
+        else                           -> addAndLimit(ChatItem(SystemMessage(SystemMessageType.Connected)), scrollBackLength)
     }
 }
