@@ -188,6 +188,7 @@ class ChatAdapter(
             is SystemMessageType.Disconnected              -> context.getString(R.string.system_message_disconnected)
             is SystemMessageType.NoHistoryLoaded           -> context.getString(R.string.system_message_no_history)
             is SystemMessageType.Connected                 -> context.getString(R.string.system_message_connected)
+            is SystemMessageType.Reconnected               -> context.getString(R.string.system_message_reconnected)
             is SystemMessageType.LoginExpired              -> context.getString(R.string.login_expired)
             is SystemMessageType.ChannelNonExistent        -> context.getString(R.string.system_message_channel_non_existent)
             is SystemMessageType.MessageHistoryUnavailable -> when (message.type.status) {

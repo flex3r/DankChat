@@ -158,7 +158,9 @@ class ChatRepository @Inject constructor(
         set(value) {
             messages.forEach { (_, messagesFlow) ->
                 if (messagesFlow.value.size > scrollBackLength) {
-                    messagesFlow.value = messagesFlow.value.takeLast(value)
+                    messagesFlow.update {
+                        it.takeLast(value)
+                    }
                 }
             }
             field = value
@@ -695,7 +697,7 @@ class ChatRepository @Inject constructor(
     private fun makeAndPostSystemMessage(type: SystemMessageType, channels: Set<String> = messages.keys) {
         channels.forEach { channel ->
             messages[channel]?.update { current ->
-                current.addAndLimit(ChatItem(SystemMessage(type)), scrollBackLength)
+                current.addSystemMessage(type, scrollBackLength)
             }
         }
     }

@@ -5,6 +5,7 @@ import com.flxrs.dankchat.chat.ChatItem
 sealed class SystemMessageType {
     object Connected : SystemMessageType()
     object Disconnected : SystemMessageType()
+    object Reconnected : SystemMessageType()
     object NoHistoryLoaded : SystemMessageType()
     object LoginExpired : SystemMessageType()
     object MessageHistoryIncomplete : SystemMessageType()
