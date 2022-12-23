@@ -20,17 +20,21 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
     }
 
     suspend fun getUsersByNames(names: List<String>): Result<List<UserDto>> = runCatching {
-        helixApi.getUserByName(names)
-            .throwHelixApiErrorOnFailure()
-            .body<UsersDto>()
-            .data
+        names.chunked(DEFAULT_PAGE_SIZE).flatMap {
+            helixApi.getUserByName(it)
+                .throwHelixApiErrorOnFailure()
+                .body<UsersDto>()
+                .data
+        }
     }
 
     suspend fun getUsersByIds(ids: List<String>): Result<List<UserDto>> = runCatching {
-        helixApi.getUsersByIds(ids)
-            .throwHelixApiErrorOnFailure()
-            .body<UsersDto>()
-            .data
+        ids.chunked(DEFAULT_PAGE_SIZE).flatMap {
+            helixApi.getUsersByIds(it)
+                .throwHelixApiErrorOnFailure()
+                .body<UsersDto>()
+                .data
+        }
     }
 
     suspend fun getUser(userId: String): Result<UserDto> = runCatching {
@@ -46,16 +50,19 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
             .body()
     }
 
-    suspend fun getStreams(channels: List<String>): Result<StreamsDto> = runCatching {
-        helixApi.getStreams(channels)
-            .throwHelixApiErrorOnFailure()
-            .body()
+    suspend fun getStreams(channels: List<String>): Result<List<StreamDto>> = runCatching {
+        channels.chunked(DEFAULT_PAGE_SIZE).flatMap {
+            helixApi.getStreams(it)
+                .throwHelixApiErrorOnFailure()
+                .body<StreamsDto>()
+                .data
+        }
     }
 
-    suspend fun getUserBlocks(userId: String): Result<UserBlocksDto> = runCatching {
-        helixApi.getUserBlocks(userId)
-            .throwHelixApiErrorOnFailure()
-            .body()
+    suspend fun getUserBlocks(userId: String, maxUserBlocksToFetch: Int = 500): Result<List<UserBlockDto>> = runCatching {
+        pageUntil(maxUserBlocksToFetch) { cursor ->
+            helixApi.getUserBlocks(userId, DEFAULT_PAGE_SIZE, cursor)
+        }
     }
 
     suspend fun blockUser(targetUserId: String): Result<Unit> = runCatching {
@@ -86,6 +93,30 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
             .throwHelixApiErrorOnFailure()
     }
 
+    suspend fun getModerators(broadcastUserId: String, maxModeratorsToFetch: Int = 500): Result<List<ModDto>> = runCatching {
+        pageUntil(maxModeratorsToFetch) { cursor ->
+            helixApi.getModerators(broadcastUserId, DEFAULT_PAGE_SIZE, cursor)
+        }
+    }
+
+    private suspend inline fun <reified T> pageUntil(amountToFetch: Int, request: (cursor: String?) -> HttpResponse?): List<T> {
+        val initialPage = request(null)
+            .throwHelixApiErrorOnFailure()
+            .body<PagedDto<T>>()
+        var cursor = initialPage.pagination.cursor
+        val entries = initialPage.data.toMutableList()
+
+        while (cursor != null && entries.size < amountToFetch) {
+            val result = request(cursor)
+                .throwHelixApiErrorOnFailure()
+                .body<PagedDto<T>>()
+            entries.addAll(result.data)
+            cursor = result.pagination.cursor
+        }
+
+        return entries
+    }
+
     private suspend fun HttpResponse?.throwHelixApiErrorOnFailure(): HttpResponse {
         this ?: throw HelixApiException(HelixError.NotLoggedIn, HttpStatusCode.Unauthorized)
         if (status.isSuccess()) {
@@ -100,14 +131,15 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
             }
 
             HttpStatusCode.Forbidden       -> when {
-                errorBody.message.startsWith(RECIPIENT_BLOCKED_USER, ignoreCase = true) -> HelixError.RecipientBlockedUser
-                else                                                                    -> HelixError.Forbidden
+                errorBody.message.startsWith(RECIPIENT_BLOCKED_USER_ERROR, ignoreCase = true) -> HelixError.RecipientBlockedUser
+                else                                                                          -> HelixError.Forbidden
             }
 
             HttpStatusCode.Unauthorized    -> when {
-                errorBody.message.startsWith(MISSING_SCOPE_ERROR, ignoreCase = true)     -> HelixError.MissingScopes
-                errorBody.message.startsWith(NO_VERIFIED_PHONE_ERROR, ignoreCase = true) -> HelixError.NoVerifiedPhone
-                else                                                                     -> HelixError.Unauthorized
+                errorBody.message.startsWith(MISSING_SCOPE_ERROR, ignoreCase = true)           -> HelixError.MissingScopes
+                errorBody.message.startsWith(NO_VERIFIED_PHONE_ERROR, ignoreCase = true)       -> HelixError.NoVerifiedPhone
+                errorBody.message.startsWith(BROADCASTER_OAUTH_TOKEN_ERROR, ignoreCase = true) -> HelixError.BroadcasterTokenRequired
+                else                                                                           -> HelixError.Unauthorized
             }
 
             HttpStatusCode.TooManyRequests -> when (request.url.encodedPath) {
@@ -121,9 +153,11 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
     }
 
     companion object {
+        private const val DEFAULT_PAGE_SIZE = 100
         private const val WHISPER_SELF_ERROR = "A user cannot whisper themself"
         private const val MISSING_SCOPE_ERROR = "Missing scope"
         private const val NO_VERIFIED_PHONE_ERROR = "the sender does not have a verified phone number"
-        private const val RECIPIENT_BLOCKED_USER = "The recipient's settings prevent this sender from whispering them"
+        private const val RECIPIENT_BLOCKED_USER_ERROR = "The recipient's settings prevent this sender from whispering them"
+        private const val BROADCASTER_OAUTH_TOKEN_ERROR = "The ID in broadcaster_id"
     }
 }

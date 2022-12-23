@@ -183,7 +183,6 @@ class CommandRepository @Inject constructor(
     private suspend fun uptimeCommand(channel: String): CommandResult.AcceptedWithResponse {
         val result = helixApiClient.getStreams(listOf(channel))
             .getOrNull()
-            ?.data
             ?.getOrNull(0) ?: return CommandResult.AcceptedWithResponse("Channel is not live.")
 
         val startedAt = Instant.parse(result.startedAt).atZone(ZoneId.systemDefault()).toEpochSecond()

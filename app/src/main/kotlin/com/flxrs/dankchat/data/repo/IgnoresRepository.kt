@@ -98,11 +98,11 @@ class IgnoresRepository @Inject constructor(
                 Log.d(TAG, "Failed to load user blocks for $id", it)
                 return@withContext
             }
-            if (blocks.data.isEmpty()) {
+            if (blocks.isEmpty()) {
                 _twitchBlocks.update { emptySet() }
                 return@withContext
             }
-            val userIds = blocks.data.map { it.id }
+            val userIds = blocks.map { it.id }
             val users = helixApiClient.getUsersByIds(userIds).getOrElse {
                 Log.d(TAG, "Failed to load user ids $userIds", it)
                 return@withContext

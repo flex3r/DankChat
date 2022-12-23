@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.data.twitch.command
 
+import android.util.Log
 import com.flxrs.dankchat.data.api.helix.HelixApiClient
 import com.flxrs.dankchat.data.api.helix.HelixApiException
 import com.flxrs.dankchat.data.api.helix.HelixError
@@ -18,19 +19,24 @@ class TwitchCommandRepository @Inject constructor(
 ) {
 
     suspend fun handleTwitchCommand(command: TwitchCommand, context: CommandContext): CommandResult {
+        val currentUserId = dankChatPreferenceStore.userIdString ?: return CommandResult.AcceptedTwitchCommand(
+            command = command,
+            response = "You must be logged in to use the ${context.trigger} command"
+        )
+
         return when (command) {
             TwitchCommand.Announce,
             TwitchCommand.AnnounceBlue,
             TwitchCommand.AnnounceGreen,
             TwitchCommand.AnnounceOrange,
-            TwitchCommand.AnnouncePurple -> sendAnnouncement(command, context)
+            TwitchCommand.AnnouncePurple -> sendAnnouncement(command, currentUserId, context)
 
             TwitchCommand.Ban            -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.Clear          -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.Color          -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.Commercial     -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.Delete         -> CommandResult.Message(context.originalMessage) // TODO
-            TwitchCommand.Disconnect     -> CommandResult.Message(context.originalMessage) // TODO
+            TwitchCommand.Disconnect     -> CommandResult.NotFound
             TwitchCommand.EmoteOnly      -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.EmoteOnlyOff   -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.Followers      -> CommandResult.Message(context.originalMessage) // TODO
@@ -38,7 +44,7 @@ class TwitchCommandRepository @Inject constructor(
             TwitchCommand.Marker         -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.Me             -> CommandResult.NotFound
             TwitchCommand.Mod            -> CommandResult.Message(context.originalMessage) // TODO
-            TwitchCommand.Mods           -> CommandResult.Message(context.originalMessage) // TODO
+            TwitchCommand.Mods           -> getModerators(command, context)
             TwitchCommand.R9kBeta        -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.R9kBetaOff     -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.Raid           -> CommandResult.Message(context.originalMessage) // TODO
@@ -56,13 +62,11 @@ class TwitchCommandRepository @Inject constructor(
             TwitchCommand.Unvip          -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.Vip            -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.Vips           -> CommandResult.Message(context.originalMessage) // TODO
-            TwitchCommand.Whisper        -> sendWhisper(command, context)
+            TwitchCommand.Whisper        -> sendWhisper(command, currentUserId, context)
         }
     }
 
-    private suspend fun sendAnnouncement(command: TwitchCommand, context: CommandContext): CommandResult {
-        val currentUserId = dankChatPreferenceStore.userIdString
-            ?: return CommandResult.AcceptedTwitchCommand(command, response = "You must be logged in to use the ${context.trigger} command")
+    private suspend fun sendAnnouncement(command: TwitchCommand, currentUserId: String, context: CommandContext): CommandResult {
         val args = context.args
         if (args.isEmpty() || args.first().isBlank()) {
             return CommandResult.AcceptedTwitchCommand(command, response = "Usage: ${context.trigger} <message> - Call attention to your message with a highlight.")
@@ -82,14 +86,12 @@ class TwitchCommandRepository @Inject constructor(
             onSuccess = { CommandResult.AcceptedTwitchCommand(command) },
             onFailure = {
                 val response = "Failed to send announcement - ${it.toErrorMessage()}"
-                CommandResult.AcceptedTwitchCommand(command,response)
+                CommandResult.AcceptedTwitchCommand(command, response)
             }
         )
     }
 
-    private suspend fun sendWhisper(command: TwitchCommand, context: CommandContext): CommandResult {
-        val currentUserId = dankChatPreferenceStore.userIdString
-            ?: return CommandResult.AcceptedTwitchCommand(command, response = "You must be logged in to use the ${context.trigger} command")
+    private suspend fun sendWhisper(command: TwitchCommand, currentUserId: String, context: CommandContext): CommandResult {
         val args = context.args
         if (args.size < 2 || args[0].isBlank() || args[1].isBlank()) {
             return CommandResult.AcceptedTwitchCommand(command, response = "Usage: ${context.trigger} <username> <message>")
@@ -105,33 +107,54 @@ class TwitchCommandRepository @Inject constructor(
             onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "Whisper sent.") },
             onFailure = {
                 val response = "Failed to send whisper - ${it.toErrorMessage()}"
-                CommandResult.AcceptedTwitchCommand(command,response)
+                CommandResult.AcceptedTwitchCommand(command, response)
             }
         )
     }
 
+    private suspend fun getModerators(command: TwitchCommand, context: CommandContext): CommandResult {
+        return helixApiClient.getModerators(context.channelId).fold(
+            onSuccess = { result ->
+                val users = result.joinToString { formatUser(it.userName, it.userLogin) }
+                CommandResult.AcceptedTwitchCommand(command, response = "The moderators of this channel are $users.")
+            },
+            onFailure = {
+                val response = "Failed to get moderators - ${it.toErrorMessage()}"
+                CommandResult.AcceptedTwitchCommand(command, response)
+            }
+        )
+    }
+
+    private fun formatUser(user: String, login: String): String = when {
+        user.equals(login, ignoreCase = true) -> user
+        else                                  -> "$login($user)"
+    }
+
     private fun Throwable.toErrorMessage(): String {
+        Log.d(TAG, "Command failed: ", this)
         if (this !is HelixApiException) {
             return GENERIC_ERROR_MESSAGE
         }
 
         return when (error) {
             HelixError.BadRequest,
-            HelixError.Forbidden            -> "You don't have permission to perform that action."
+            HelixError.Forbidden                -> "You don't have permission to perform that action."
 
-            HelixError.Unauthorized         -> message ?: GENERIC_ERROR_MESSAGE
-            HelixError.MissingScopes        -> "Missing required scope. Re-login with your account and try again."
-            HelixError.NotLoggedIn          -> "Missing login credentials. Re-login with your account and try again."
-            HelixError.WhisperSelf          -> "You cannot whisper yourself."
-            HelixError.NoVerifiedPhone      -> "Due to Twitch restrictions, you are now required to have a verified phone number to send whispers. You can add a phone number in Twitch settings. https://www.twitch.tv/settings/security"
-            HelixError.RecipientBlockedUser -> "The recipient doesn't allow whispers from strangers or you directly."
-            HelixError.RateLimited          -> "Too many requests. Please try again later."
-            HelixError.WhisperRateLimited   -> "You may only whisper a maximum of 40 unique recipients per day. Within the per day limit, you may whisper a maximum of 3 whispers per second and a maximum of 100 whispers per minute."
-            HelixError.Unknown              -> GENERIC_ERROR_MESSAGE
+            HelixError.Unauthorized             -> message ?: GENERIC_ERROR_MESSAGE
+            HelixError.MissingScopes            -> "Missing required scope. Re-login with your account and try again."
+            HelixError.NotLoggedIn              -> "Missing login credentials. Re-login with your account and try again."
+            HelixError.WhisperSelf              -> "You cannot whisper yourself."
+            HelixError.NoVerifiedPhone          -> "Due to Twitch restrictions, you are now required to have a verified phone number to send whispers. You can add a phone number in Twitch settings. https://www.twitch.tv/settings/security"
+            HelixError.RecipientBlockedUser     -> "The recipient doesn't allow whispers from strangers or you directly."
+            HelixError.RateLimited              -> "Too many requests. Please try again later."
+            HelixError.WhisperRateLimited       -> "You may only whisper a maximum of 40 unique recipients per day. Within the per day limit, you may whisper a maximum of 3 whispers per second and a maximum of 100 whispers per minute."
+            HelixError.BroadcasterTokenRequired -> "Due to Twitch restrictions, this command can only be used by the broadcaster. Please use the Twitch website instead."
+            HelixError.Unknown                  -> GENERIC_ERROR_MESSAGE
         }
     }
 
     companion object {
+        private val TAG = TwitchCommandRepository::class.java.simpleName
         private const val GENERIC_ERROR_MESSAGE = "An unknown error has occurred."
     }
 }
