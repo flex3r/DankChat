@@ -22,14 +22,6 @@ class DankChatInput : AppCompatMultiAutoCompleteTextView {
         return super.onKeyPreIme(keyCode, event)
     }
 
-
-    fun setSuggestionAdapter(enabled: Boolean, adapter: SuggestionsArrayAdapter) {
-        if (enabled) {
-            setAdapter(adapter)
-        } else {
-            setAdapter(null)
-        }
-    }
-
+    fun setSuggestionAdapter(enabled: Boolean, adapter: SuggestionsArrayAdapter) = setAdapter(adapter.takeIf { enabled })
     fun isItemSelected() = this.listSelection != AdapterView.INVALID_POSITION
 }

@@ -94,15 +94,11 @@ class SuggestionsArrayAdapter(
         }
     }
 
-    private fun List<Suggestion.UserSuggestion>.filterUsers(constraint: String): List<Suggestion.UserSuggestion> {
-        return filter {
-            val (userSuggestion, userConstraint) = when {
-                constraint.startsWith('@') -> it.copy(withLeadingAt = true) to constraint.substringAfter('@')
-                else                       -> it to constraint
-            }
-
-            userSuggestion.name.startsWith(userConstraint, ignoreCase = true)
-        }
+    private fun List<Suggestion.UserSuggestion>.filterUsers(constraint: String): List<Suggestion.UserSuggestion> = mapNotNull { suggestion ->
+        when {
+            constraint.startsWith('@') -> suggestion.copy(withLeadingAt = true)
+            else                       -> suggestion
+        }.takeIf { it.toString().startsWith(constraint, ignoreCase = true) }
     }
 
     private fun List<Suggestion.EmoteSuggestion>.filterEmotes(constraint: String): List<Suggestion.EmoteSuggestion> {
