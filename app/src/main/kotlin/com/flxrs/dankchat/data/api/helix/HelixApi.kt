@@ -1,8 +1,6 @@
 package com.flxrs.dankchat.data.api.helix
 
-import com.flxrs.dankchat.data.api.helix.dto.AnnouncementRequestDto
-import com.flxrs.dankchat.data.api.helix.dto.HelixErrorDto
-import com.flxrs.dankchat.data.api.helix.dto.WhisperRequestDto
+import com.flxrs.dankchat.data.api.helix.dto.*
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.withoutOAuthSuffix
 import io.ktor.client.*
@@ -47,11 +45,14 @@ class HelixApi(private val ktorClient: HttpClient, private val dankChatPreferenc
         }
     }
 
-    suspend fun getUserBlocks(userId: String, first: Int = 100): HttpResponse? = ktorClient.get("users/blocks/") {
+    suspend fun getUserBlocks(userId: String, first: Int, after: String? = null): HttpResponse? = ktorClient.get("users/blocks/") {
         val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
         bearerAuth(oAuth)
         parameter("broadcaster_id", userId)
         parameter("first", first)
+        if (after != null) {
+            parameter("after", after)
+        }
     }
 
     suspend fun putUserBlock(targetUserId: String): HttpResponse? = ktorClient.put("users/blocks/") {
@@ -73,6 +74,16 @@ class HelixApi(private val ktorClient: HttpClient, private val dankChatPreferenc
         parameter("moderator_id", moderatorUserId)
         contentType(ContentType.Application.Json)
         setBody(request)
+    }
+
+    suspend fun getModerators(broadcasterUserId: String, first: Int, after: String? = null): HttpResponse? = ktorClient.get("moderation/moderators") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        parameter("broadcaster_id", broadcasterUserId)
+        parameter("first", first)
+        if (after != null) {
+            parameter("after", after)
+        }
     }
 
     suspend fun postWhisper(fromUserId: String, toUserId: String, request: WhisperRequestDto): HttpResponse? = ktorClient.post("whispers") {

@@ -6,7 +6,8 @@ import kotlinx.serialization.Serializable
 
 @Keep
 @Serializable
-data class UserBlocksDto(
-    @SerialName(value = "data") val data: List<UserBlockDto>
+data class ModDto(
+    @SerialName("user_id") val userId: String,
+    @SerialName("user_login") val userLogin: String,
+    @SerialName("user_name") val userName: String,
 )
-

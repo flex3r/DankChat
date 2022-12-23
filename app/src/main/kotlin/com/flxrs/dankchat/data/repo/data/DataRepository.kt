@@ -6,6 +6,7 @@ import com.flxrs.dankchat.data.api.bttv.BTTVApiClient
 import com.flxrs.dankchat.data.api.dankchat.DankChatApiClient
 import com.flxrs.dankchat.data.api.ffz.FFZApiClient
 import com.flxrs.dankchat.data.api.helix.HelixApiClient
+import com.flxrs.dankchat.data.api.helix.dto.StreamDto
 import com.flxrs.dankchat.data.api.helix.dto.UserDto
 import com.flxrs.dankchat.data.api.helix.dto.UserFollowsDto
 import com.flxrs.dankchat.data.api.seventv.SevenTVApiClient
@@ -54,7 +55,7 @@ class DataRepository @Inject constructor(
     suspend fun getUser(userId: String): UserDto? = helixApiClient.getUser(userId).getOrNull()
     suspend fun getUserIdByName(name: String): String? = helixApiClient.getUserIdByName(name).getOrNull()
     suspend fun getUserFollows(fromId: String, toId: String): UserFollowsDto? = helixApiClient.getUsersFollows(fromId, toId).getOrNull()
-    suspend fun getStreams(channels: List<String>) = helixApiClient.getStreams(channels).getOrNull()
+    suspend fun getStreams(channels: List<String>): List<StreamDto>? = helixApiClient.getStreams(channels).getOrNull()
 
     suspend fun uploadMedia(file: File): Result<String> = uploadClient.uploadMedia(file).mapCatching {
         recentUploadsRepository.addUpload(it)
