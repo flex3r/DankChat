@@ -22,5 +22,9 @@ enum class HelixError {
     RecipientBlockedUser,
     WhisperRateLimited,
     RateLimited,
-    BroadcasterTokenRequired
+    BroadcasterTokenRequired,
+    UserNotAuthorized,
+    TargetAlreadyModded,
+    TargetIsVip,
+    TargetNotModded,
 }
