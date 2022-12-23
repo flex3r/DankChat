@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.data.api.helix
 
+import android.util.Log
 import com.flxrs.dankchat.data.api.helix.dto.*
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import io.ktor.client.call.*
@@ -12,12 +13,8 @@ import javax.inject.Singleton
 @Singleton
 class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private val json: Json) {
 
-    suspend fun getUserIdByName(name: String): Result<String> = runCatching {
-        helixApi.getUserByName(listOf(name))
-            .throwHelixApiErrorOnFailure()
-            .body<UsersDto>()
-            .data.first().id
-    }
+    suspend fun getUserIdByName(name: String): Result<String> = getUserByName(name)
+        .mapCatching { it.id }
 
     suspend fun getUsersByNames(names: List<String>): Result<List<UserDto>> = runCatching {
         names.chunked(DEFAULT_PAGE_SIZE).flatMap {
@@ -39,6 +36,13 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
 
     suspend fun getUser(userId: String): Result<UserDto> = runCatching {
         helixApi.getUserById(userId)
+            .throwHelixApiErrorOnFailure()
+            .body<UsersDto>()
+            .data.first()
+    }
+
+    suspend fun getUserByName(name: String): Result<UserDto> = runCatching {
+        helixApi.getUserByName(listOf(name))
             .throwHelixApiErrorOnFailure()
             .body<UsersDto>()
             .data.first()
@@ -99,6 +103,16 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
         }
     }
 
+    suspend fun postModerator(broadcastUserId: String, userId: String): Result<Unit> = runCatching {
+        helixApi.postModerator(broadcastUserId, userId)
+            .throwHelixApiErrorOnFailure()
+    }
+
+    suspend fun deleteModerator(broadcastUserId: String, userId: String): Result<Unit> = runCatching {
+        helixApi.deleteModerator(broadcastUserId, userId)
+            .throwHelixApiErrorOnFailure()
+    }
+
     private suspend inline fun <reified T> pageUntil(amountToFetch: Int, request: (cursor: String?) -> HttpResponse?): List<T> {
         val initialPage = request(null)
             .throwHelixApiErrorOnFailure()
@@ -124,32 +138,42 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
         }
 
         val errorBody = json.decodeOrNull<HelixErrorDto>(bodyAsText()) ?: throw HelixApiException(HelixError.Unknown, status, status.description)
+        val message = errorBody.message
+        Log.d("HttpClient", errorBody.toString())
         val error = when (status) {
-            HttpStatusCode.BadRequest      -> when {
-                errorBody.message.startsWith(WHISPER_SELF_ERROR, ignoreCase = true) -> HelixError.WhisperSelf
-                else                                                                -> HelixError.BadRequest
+            HttpStatusCode.BadRequest          -> when {
+                message.startsWith(WHISPER_SELF_ERROR, ignoreCase = true)     -> HelixError.WhisperSelf
+                message.startsWith(USER_ALREADY_MOD_ERROR, ignoreCase = true) -> HelixError.TargetAlreadyModded
+                message.startsWith(USER_NOT_MOD_ERROR, ignoreCase = true)     -> HelixError.TargetNotModded
+                else                                                          -> HelixError.BadRequest
             }
 
-            HttpStatusCode.Forbidden       -> when {
-                errorBody.message.startsWith(RECIPIENT_BLOCKED_USER_ERROR, ignoreCase = true) -> HelixError.RecipientBlockedUser
-                else                                                                          -> HelixError.Forbidden
+            HttpStatusCode.Forbidden           -> when {
+                message.startsWith(RECIPIENT_BLOCKED_USER_ERROR, ignoreCase = true) -> HelixError.RecipientBlockedUser
+                else                                                                -> HelixError.Forbidden
             }
 
-            HttpStatusCode.Unauthorized    -> when {
-                errorBody.message.startsWith(MISSING_SCOPE_ERROR, ignoreCase = true)           -> HelixError.MissingScopes
-                errorBody.message.startsWith(NO_VERIFIED_PHONE_ERROR, ignoreCase = true)       -> HelixError.NoVerifiedPhone
-                errorBody.message.startsWith(BROADCASTER_OAUTH_TOKEN_ERROR, ignoreCase = true) -> HelixError.BroadcasterTokenRequired
-                else                                                                           -> HelixError.Unauthorized
+            HttpStatusCode.Unauthorized        -> when {
+                message.startsWith(MISSING_SCOPE_ERROR, ignoreCase = true)           -> HelixError.MissingScopes
+                message.startsWith(NO_VERIFIED_PHONE_ERROR, ignoreCase = true)       -> HelixError.NoVerifiedPhone
+                message.startsWith(BROADCASTER_OAUTH_TOKEN_ERROR, ignoreCase = true) -> HelixError.BroadcasterTokenRequired
+                message.startsWith(USER_AUTH_ERROR, ignoreCase = true)               -> HelixError.UserNotAuthorized
+                else                                                                 -> HelixError.Unauthorized
             }
 
-            HttpStatusCode.TooManyRequests -> when (request.url.encodedPath) {
+            HttpStatusCode.UnprocessableEntity -> when (request.url.encodedPath) {
+                "/helix/moderation/moderators" -> HelixError.TargetIsVip
+                else                           -> HelixError.Unknown
+            }
+
+            HttpStatusCode.TooManyRequests     -> when (request.url.encodedPath) {
                 "/helix/whispers/" -> HelixError.WhisperRateLimited
                 else               -> HelixError.RateLimited
             }
 
-            else                           -> HelixError.Unknown
+            else                               -> HelixError.Unknown
         }
-        throw HelixApiException(error, status, errorBody.message)
+        throw HelixApiException(error, status, message)
     }
 
     companion object {
@@ -159,5 +183,8 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
         private const val NO_VERIFIED_PHONE_ERROR = "the sender does not have a verified phone number"
         private const val RECIPIENT_BLOCKED_USER_ERROR = "The recipient's settings prevent this sender from whispering them"
         private const val BROADCASTER_OAUTH_TOKEN_ERROR = "The ID in broadcaster_id"
+        private const val USER_AUTH_ERROR = "incorrect user authorization"
+        private const val USER_ALREADY_MOD_ERROR = "user is already a mod"
+        private const val USER_NOT_MOD_ERROR = "user is not a mod"
     }
 }

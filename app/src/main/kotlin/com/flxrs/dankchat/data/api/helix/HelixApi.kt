@@ -86,6 +86,20 @@ class HelixApi(private val ktorClient: HttpClient, private val dankChatPreferenc
         }
     }
 
+    suspend fun postModerator(broadcasterUserId: String, userId: String): HttpResponse? = ktorClient.post("moderation/moderators") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        parameter("broadcaster_id", broadcasterUserId)
+        parameter("user_id", userId)
+    }
+
+    suspend fun deleteModerator(broadcasterUserId: String, userId: String): HttpResponse? = ktorClient.delete("moderation/moderators") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        parameter("broadcaster_id", broadcasterUserId)
+        parameter("user_id", userId)
+    }
+
     suspend fun postWhisper(fromUserId: String, toUserId: String, request: WhisperRequestDto): HttpResponse? = ktorClient.post("whispers") {
         val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
         bearerAuth(oAuth)
