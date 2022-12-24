@@ -702,7 +702,13 @@ class ChatRepository @Inject constructor(
 
     fun makeAndPostCustomSystemMessage(message: String, channel: UserName) {
         messages[channel]?.update {
-            it.addAndLimit(ChatItem(SystemMessage(SystemMessageType.Custom(message))), scrollBackLength)
+            it.addSystemMessage(SystemMessageType.Custom(message), scrollBackLength)
+        }
+    }
+
+    fun makeAndPostSystemMessage(type: SystemMessageType, channel: UserName) {
+        messages[channel]?.update {
+            it.addSystemMessage(type, scrollBackLength)
         }
     }
 

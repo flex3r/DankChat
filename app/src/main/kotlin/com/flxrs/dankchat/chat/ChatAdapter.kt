@@ -186,20 +186,22 @@ class ChatAdapter(
         setRippleBackground(background, enableRipple = false)
 
         val systemMessageText = when (message.type) {
-            is SystemMessageType.Disconnected              -> context.getString(R.string.system_message_disconnected)
-            is SystemMessageType.NoHistoryLoaded           -> context.getString(R.string.system_message_no_history)
-            is SystemMessageType.Connected                 -> context.getString(R.string.system_message_connected)
-            is SystemMessageType.Reconnected               -> context.getString(R.string.system_message_reconnected)
-            is SystemMessageType.LoginExpired              -> context.getString(R.string.login_expired)
-            is SystemMessageType.ChannelNonExistent        -> context.getString(R.string.system_message_channel_non_existent)
-            is SystemMessageType.MessageHistoryUnavailable -> when (message.type.status) {
+            is SystemMessageType.Disconnected               -> context.getString(R.string.system_message_disconnected)
+            is SystemMessageType.NoHistoryLoaded            -> context.getString(R.string.system_message_no_history)
+            is SystemMessageType.Connected                  -> context.getString(R.string.system_message_connected)
+            is SystemMessageType.Reconnected                -> context.getString(R.string.system_message_reconnected)
+            is SystemMessageType.LoginExpired               -> context.getString(R.string.login_expired)
+            is SystemMessageType.ChannelNonExistent         -> context.getString(R.string.system_message_channel_non_existent)
+            is SystemMessageType.MessageHistoryIgnored      -> context.getString(R.string.system_message_history_ignored)
+            is SystemMessageType.MessageHistoryIncomplete   -> context.getString(R.string.system_message_history_recovering)
+            is SystemMessageType.ChannelBTTVEmotesFailed    -> context.getString(R.string.system_message_bttv_emotes_failed, message.type.status)
+            is SystemMessageType.ChannelFFZEmotesFailed     -> context.getString(R.string.system_message_ffz_emotes_failed, message.type.status)
+            is SystemMessageType.ChannelSevenTVEmotesFailed -> context.getString(R.string.system_message_7tv_emotes_failed, message.type.status)
+            is SystemMessageType.Custom                     -> message.type.message
+            is SystemMessageType.MessageHistoryUnavailable  -> when (message.type.status) {
                 null -> context.getString(R.string.system_message_history_unavailable)
                 else -> context.getString(R.string.system_message_history_unavailable_detailed, message.type.status)
             }
-
-            is SystemMessageType.MessageHistoryIgnored     -> context.getString(R.string.system_message_history_ignored)
-            is SystemMessageType.MessageHistoryIncomplete  -> context.getString(R.string.system_message_history_recovering)
-            is SystemMessageType.Custom                    -> message.type.message
         }
         val withTime = when {
             dankChatPreferenceStore.showTimestamps -> SpannableStringBuilder()

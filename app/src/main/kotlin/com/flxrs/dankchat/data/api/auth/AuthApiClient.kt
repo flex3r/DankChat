@@ -20,7 +20,7 @@ class AuthApiClient @Inject constructor(private val authApi: AuthApi, private va
             response.status.isSuccess() -> response.body()
             else                        -> {
                 val error = json.decodeOrNull<ValidateErrorDto>(response.bodyAsText())
-                throw ApiException(status = response.status, error?.message)
+                throw ApiException(status = response.status, response.request.url, error?.message)
             }
         }
     }

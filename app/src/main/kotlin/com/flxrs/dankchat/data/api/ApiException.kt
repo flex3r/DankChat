@@ -9,6 +9,7 @@ import kotlinx.serialization.json.Json
 
 open class ApiException(
     open val status: HttpStatusCode,
+    open val url: Url?,
     override val message: String?,
     override val cause: Throwable? = null
 ) : Throwable(message, cause) {
@@ -50,16 +51,10 @@ suspend fun HttpResponse.throwApiErrorOnFailure(json: Json): HttpResponse {
     }
 
     val errorBody = bodyAsText()
-    val errorMessage = json.decodeOrNull<GenericError>(errorBody)?.message
     val betterStatus = HttpStatusCode.fromValue(status.value)
-    val message = buildString {
-        append("$betterStatus ${request.url}")
-        if (!errorMessage.isNullOrBlank()) {
-            append(": $errorMessage")
-        }
-    }
+    val errorMessage = json.decodeOrNull<GenericError>(errorBody)?.message ?: betterStatus.description
 
-    throw ApiException(betterStatus, message)
+    throw ApiException(betterStatus, request.url, errorMessage)
 }
 
 @Keep

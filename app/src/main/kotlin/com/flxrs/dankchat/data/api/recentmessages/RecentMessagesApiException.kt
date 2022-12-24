@@ -6,9 +6,10 @@ import io.ktor.http.*
 data class RecentMessagesApiException(
     val error: RecentMessagesError,
     override val status: HttpStatusCode,
+    override val url: Url?,
     override val message: String? = null,
     override val cause: Throwable? = null
-) : ApiException(status, message, cause)
+) : ApiException(status, url, message, cause)
 
 enum class RecentMessagesError {
     ChannelNotJoined,

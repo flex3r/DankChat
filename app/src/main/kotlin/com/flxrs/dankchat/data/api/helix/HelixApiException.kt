@@ -6,9 +6,10 @@ import io.ktor.http.*
 data class HelixApiException(
     val error: HelixError,
     override val status: HttpStatusCode,
+    override val url: Url?,
     override val message: String? = null,
     override val cause: Throwable? = null
-) : ApiException(status, message, cause)
+) : ApiException(status, url, message, cause)
 
 enum class HelixError {
     BadRequest,

@@ -29,6 +29,7 @@ import com.flxrs.dankchat.data.twitch.connection.ConnectionState
 import com.flxrs.dankchat.data.twitch.emote.EmoteType
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.data.twitch.message.RoomState
+import com.flxrs.dankchat.data.twitch.message.SystemMessageType
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.Preference
 import com.flxrs.dankchat.utils.DateTimeUtils
@@ -657,21 +658,55 @@ class MainViewModel @Inject constructor(
 
     private suspend fun checkFailuresAndEmitState() {
         val (dataFailures, chatFailures) = loadingFailures.value
-        val errorCount = dataFailures.size + chatFailures.size
-        val state = when {
-            errorCount >= 1 -> {
-                val message = dataFailures.firstOrNull()?.failure?.message
-                    ?: chatFailures.firstOrNull()?.failure?.message
-                    ?: ""
+        dataFailures.forEach {
+            val status = (it.failure as? ApiException)?.status?.value?.toString() ?: "0"
+            when (it.step) {
+                is DataLoadingStep.ChannelSevenTVEmotes -> chatRepository.makeAndPostSystemMessage(SystemMessageType.ChannelSevenTVEmotesFailed(status), it.step.channel)
+                is DataLoadingStep.ChannelBTTVEmotes    -> chatRepository.makeAndPostSystemMessage(SystemMessageType.ChannelBTTVEmotesFailed(status), it.step.channel)
+                is DataLoadingStep.ChannelFFZEmotes     -> chatRepository.makeAndPostSystemMessage(SystemMessageType.ChannelFFZEmotesFailed(status), it.step.channel)
+                else                                    -> Unit
+            }
+        }
+
+        val state = when (val errorCount = dataFailures.size + chatFailures.size) {
+            0    -> DataLoadingState.Finished
+            1    -> {
+                val firstFailure = dataFailures.firstOrNull()?.failure ?: chatFailures.firstOrNull()?.failure
+                val message = firstFailure?.toErrorMessage().orEmpty()
                 DataLoadingState.Failed(message, errorCount, dataFailures, chatFailures)
             }
 
-            else            -> DataLoadingState.Finished
+            else -> {
+                val message = (dataFailures.map { it.failure } + chatFailures.map { it.failure })
+                    .filterIsInstance<ApiException>()
+                    .groupBy { it.url?.host }
+                    .values
+                    .maxByOrNull { it.size }
+                    ?.take(3)
+                    ?.mapNotNull { it.toErrorMessage() }
+                    ?.joinToString(separator = "\n")
+                    .orEmpty()
+
+                DataLoadingState.Failed(message, errorCount, dataFailures, chatFailures)
+            }
         }
 
         chatRepository.clearChatLoadingFailures()
         dataRepository.clearDataLoadingFailures()
         _dataLoadingState.emit(state)
+    }
+
+    private fun Throwable.toErrorMessage(): String? {
+        if (this !is ApiException) {
+            return message
+        }
+
+        return buildString {
+            append("${url}(${status.value})")
+            if (message != null) {
+                append(": $message")
+            }
+        }
     }
 
     private fun clearEmoteUsages() = viewModelScope.launch {

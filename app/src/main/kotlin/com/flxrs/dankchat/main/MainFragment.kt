@@ -631,7 +631,7 @@ class MainFragment : Fragment() {
             is DataLoadingState.Failed                                                    -> {
                 val message = when (result.errorCount) {
                     1    -> getString(R.string.snackbar_data_load_failed_cause, result.errorMessage)
-                    else -> getString(R.string.snackbar_data_load_failed_multiple_causes)
+                    else -> getString(R.string.snackbar_data_load_failed_multiple_causes, result.errorMessage)
                 }
                 showSnackBar(
                     message = message,
