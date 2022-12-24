@@ -28,12 +28,13 @@ class RecentMessagesApiClient @Inject constructor(
         }
 
         val errorBody = runCatching { body<RecentMessagesDto>() }.getOrNull()
-        val message = errorBody?.error ?: status.description
+        val betterStatus = HttpStatusCode.fromValue(status.value)
+        val message = errorBody?.error ?: betterStatus.description
         val error = when (errorBody?.errorCode) {
             RecentMessagesDto.ERROR_CHANNEL_NOT_JOINED -> RecentMessagesError.ChannelNotJoined
             RecentMessagesDto.ERROR_CHANNEL_IGNORED    -> RecentMessagesError.ChannelIgnored
             else                                       -> RecentMessagesError.Unknown
         }
-        throw RecentMessagesApiException(error, status, message)
+        throw RecentMessagesApiException(error, betterStatus, message)
     }
 }
