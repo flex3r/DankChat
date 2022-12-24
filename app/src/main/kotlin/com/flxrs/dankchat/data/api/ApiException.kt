@@ -43,9 +43,16 @@ suspend fun HttpResponse.throwApiErrorOnFailure(json: Json): HttpResponse {
     }
 
     val errorBody = bodyAsText()
-    val errorMessage = json.decodeOrNull<GenericError>(errorBody) ?: status.description
-    val message = "${request.url}: $errorMessage"
-    throw ApiException(status, message)
+    val errorMessage = json.decodeOrNull<GenericError>(errorBody)?.message
+    val betterStatus = HttpStatusCode.fromValue(status.value)
+    val message = buildString {
+        append("$betterStatus ${request.url}")
+        if (!errorMessage.isNullOrBlank()) {
+            append(": $errorMessage")
+        }
+    }
+
+    throw ApiException(betterStatus, message)
 }
 
 @Keep

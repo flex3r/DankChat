@@ -141,8 +141,8 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
 
         val errorBody = json.decodeOrNull<HelixErrorDto>(bodyAsText()) ?: throw HelixApiException(HelixError.Unknown, status, status.description)
         val message = errorBody.message
-        Log.d("HttpClient", errorBody.toString())
-        val error = when (status) {
+        val betterStatus = HttpStatusCode.fromValue(status.value)
+        val error = when (betterStatus) {
             HttpStatusCode.BadRequest          -> when {
                 message.startsWith(WHISPER_SELF_ERROR, ignoreCase = true)     -> HelixError.WhisperSelf
                 message.startsWith(USER_ALREADY_MOD_ERROR, ignoreCase = true) -> HelixError.TargetAlreadyModded
@@ -175,7 +175,7 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
 
             else                               -> HelixError.Unknown
         }
-        throw HelixApiException(error, status, message)
+        throw HelixApiException(error, betterStatus, message)
     }
 
     companion object {
