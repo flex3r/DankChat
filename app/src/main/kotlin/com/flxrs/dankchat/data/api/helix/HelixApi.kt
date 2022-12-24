@@ -109,4 +109,28 @@ class HelixApi(private val ktorClient: HttpClient, private val dankChatPreferenc
         contentType(ContentType.Application.Json)
         setBody(request)
     }
+
+    suspend fun getVips(broadcasterUserId: UserId, first: Int, after: String? = null): HttpResponse? = ktorClient.get("channels/vips") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        parameter("broadcaster_id", broadcasterUserId.value)
+        parameter("first", first)
+        if (after != null) {
+            parameter("after", after)
+        }
+    }
+
+    suspend fun postVip(broadcasterUserId: UserId, userId: UserId): HttpResponse? = ktorClient.post("channels/vips") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        parameter("broadcaster_id", broadcasterUserId.value)
+        parameter("user_id", userId.value)
+    }
+
+    suspend fun deleteVip(broadcasterUserId: UserId, userId: UserId): HttpResponse? = ktorClient.delete("channels/vips") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        parameter("broadcaster_id", broadcasterUserId.value)
+        parameter("user_id", userId.value)
+    }
 }

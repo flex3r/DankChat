@@ -478,12 +478,16 @@ class MainViewModel @Inject constructor(
         }
 
         when (commandResult) {
-            is CommandResult.Accepted              -> Unit
+            is CommandResult.Accepted,
+            is CommandResult.Blocked               -> Unit
+
+            is CommandResult.IrcCommand,
+            is CommandResult.NotFound              -> chatRepository.sendMessage(message)
+
             is CommandResult.AcceptedTwitchCommand -> {
                 if (commandResult.command == TwitchCommand.Whisper) {
                     chatRepository.fakeWhisperIfNecessary(message)
                 }
-
                 if (commandResult.response != null) {
                     chatRepository.makeAndPostCustomSystemMessage(commandResult.response, channel)
                 }
@@ -491,7 +495,6 @@ class MainViewModel @Inject constructor(
 
             is CommandResult.AcceptedWithResponse  -> chatRepository.makeAndPostCustomSystemMessage(commandResult.response, channel)
             is CommandResult.Message               -> chatRepository.sendMessage(commandResult.message)
-            is CommandResult.NotFound              -> chatRepository.sendMessage(message)
         }
 
         if (commandResult != CommandResult.NotFound) {

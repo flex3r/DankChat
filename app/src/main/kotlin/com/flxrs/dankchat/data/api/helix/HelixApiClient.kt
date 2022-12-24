@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.data.api.helix
 
-import android.util.Log
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.helix.dto.*
@@ -99,7 +98,7 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
             .throwHelixApiErrorOnFailure()
     }
 
-    suspend fun getModerators(broadcastUserId: UserId, maxModeratorsToFetch: Int = 500): Result<List<ModDto>> = runCatching {
+    suspend fun getModerators(broadcastUserId: UserId, maxModeratorsToFetch: Int = 500): Result<List<ModVipDto>> = runCatching {
         pageUntil(maxModeratorsToFetch) { cursor ->
             helixApi.getModerators(broadcastUserId, DEFAULT_PAGE_SIZE, cursor)
         }
@@ -112,6 +111,22 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
 
     suspend fun deleteModerator(broadcastUserId: UserId, userId: UserId): Result<Unit> = runCatching {
         helixApi.deleteModerator(broadcastUserId, userId)
+            .throwHelixApiErrorOnFailure()
+    }
+
+    suspend fun getVips(broadcastUserId: UserId, maxVipsToFetch: Int = 500): Result<List<ModVipDto>> = runCatching {
+        pageUntil(maxVipsToFetch) { cursor ->
+            helixApi.getVips(broadcastUserId, DEFAULT_PAGE_SIZE, cursor)
+        }
+    }
+
+    suspend fun postVip(broadcastUserId: UserId, userId: UserId): Result<Unit> = runCatching {
+        helixApi.postVip(broadcastUserId, userId)
+            .throwHelixApiErrorOnFailure()
+    }
+
+    suspend fun deleteVip(broadcastUserId: UserId, userId: UserId): Result<Unit> = runCatching {
+        helixApi.deleteVip(broadcastUserId, userId)
             .throwHelixApiErrorOnFailure()
     }
 
@@ -147,7 +162,7 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
                 message.startsWith(WHISPER_SELF_ERROR, ignoreCase = true)     -> HelixError.WhisperSelf
                 message.startsWith(USER_ALREADY_MOD_ERROR, ignoreCase = true) -> HelixError.TargetAlreadyModded
                 message.startsWith(USER_NOT_MOD_ERROR, ignoreCase = true)     -> HelixError.TargetNotModded
-                else                                                          -> HelixError.BadRequest
+                else                                                          -> HelixError.Forwarded
             }
 
             HttpStatusCode.Forbidden           -> when {
@@ -160,25 +175,29 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
                 message.startsWith(NO_VERIFIED_PHONE_ERROR, ignoreCase = true)       -> HelixError.NoVerifiedPhone
                 message.startsWith(BROADCASTER_OAUTH_TOKEN_ERROR, ignoreCase = true) -> HelixError.BroadcasterTokenRequired
                 message.startsWith(USER_AUTH_ERROR, ignoreCase = true)               -> HelixError.UserNotAuthorized
-                else                                                                 -> HelixError.Unauthorized
+                else                                                                 -> HelixError.Forwarded
             }
+
 
             HttpStatusCode.UnprocessableEntity -> when (request.url.encodedPath) {
                 "/helix/moderation/moderators" -> HelixError.TargetIsVip
-                else                           -> HelixError.Unknown
+                else                           -> HelixError.Forwarded
             }
 
             HttpStatusCode.TooManyRequests     -> when (request.url.encodedPath) {
                 "/helix/whispers/" -> HelixError.WhisperRateLimited
-                else               -> HelixError.RateLimited
+                else               -> HelixError.Forwarded
             }
 
+            HttpStatusCode.Conflict            -> HelixError.Forwarded
+            TOO_EARLY_STATUS                   -> HelixError.Forwarded
             else                               -> HelixError.Unknown
         }
         throw HelixApiException(error, betterStatus, request.url, message)
     }
 
     companion object {
+        private val TOO_EARLY_STATUS = HttpStatusCode(425, "Too Early")
         private const val DEFAULT_PAGE_SIZE = 100
         private const val WHISPER_SELF_ERROR = "A user cannot whisper themself"
         private const val MISSING_SCOPE_ERROR = "Missing scope"

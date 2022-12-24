@@ -8,4 +8,6 @@ sealed class CommandResult {
     data class AcceptedWithResponse(val response: String) : CommandResult()
     data class Message(val message: String) : CommandResult()
     object NotFound : CommandResult()
+    object IrcCommand : CommandResult()
+    object Blocked : CommandResult()
 }

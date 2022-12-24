@@ -12,11 +12,9 @@ data class HelixApiException(
 ) : ApiException(status, url, message, cause)
 
 enum class HelixError {
-    BadRequest,
     Forbidden,
     MissingScopes,
     NotLoggedIn,
-    Unauthorized,
     Unknown,
     WhisperSelf,
     NoVerifiedPhone,
@@ -28,4 +26,5 @@ enum class HelixError {
     TargetAlreadyModded,
     TargetIsVip,
     TargetNotModded,
+    Forwarded
 }
