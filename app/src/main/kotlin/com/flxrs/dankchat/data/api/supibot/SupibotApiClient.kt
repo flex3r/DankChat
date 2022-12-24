@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.data.api.supibot
 
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.supibot.dto.SupibotChannelsDto
 import com.flxrs.dankchat.data.api.supibot.dto.SupibotCommandsDto
 import com.flxrs.dankchat.data.api.supibot.dto.SupibotUserAliasesDto
@@ -24,7 +25,7 @@ class SupibotApiClient @Inject constructor(private val supibotApi: SupibotApi, p
             .body()
     }
 
-    suspend fun getSupibotUserAliases(user: String): Result<SupibotUserAliasesDto> = runCatching {
+    suspend fun getSupibotUserAliases(user: UserName): Result<SupibotUserAliasesDto> = runCatching {
         supibotApi.getUserAliases(user)
             .throwApiErrorOnFailure(json)
             .body()

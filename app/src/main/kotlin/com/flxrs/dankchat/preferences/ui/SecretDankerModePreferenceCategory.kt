@@ -8,6 +8,7 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceViewHolder
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.SecretDankerModeTrigger
+import kotlinx.serialization.json.Json
 
 class SecretDankerModePreferenceCategory @JvmOverloads constructor(
     context: Context,
@@ -16,7 +17,7 @@ class SecretDankerModePreferenceCategory @JvmOverloads constructor(
     defStyleRes: Int = 0
 ) : PreferenceCategory(context, attrs, defStyleAttr, defStyleRes) {
 
-    private val dankChatPreferenceStore = DankChatPreferenceStore(context)
+    private val dankChatPreferenceStore = DankChatPreferenceStore(context, Json)
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)

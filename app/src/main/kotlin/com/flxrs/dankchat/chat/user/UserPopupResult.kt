@@ -1,6 +1,8 @@
 package com.flxrs.dankchat.chat.user
 
 import android.os.Parcelable
+import com.flxrs.dankchat.data.DisplayName
+import com.flxrs.dankchat.data.UserName
 import kotlinx.parcelize.Parcelize
 
 sealed class UserPopupResult : Parcelable {
@@ -8,8 +10,8 @@ sealed class UserPopupResult : Parcelable {
     data class Error(val throwable: Throwable?) : UserPopupResult()
 
     @Parcelize
-    data class Whisper(val targetUser: String) : UserPopupResult()
+    data class Whisper(val targetUser: UserName) : UserPopupResult()
 
     @Parcelize
-    data class Mention(val targetUser: String) : UserPopupResult()
+    data class Mention(val targetUser: UserName, val targetDisplayName: DisplayName) : UserPopupResult()
 }

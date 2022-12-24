@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.data.twitch.command
 
 import android.util.Log
+import com.flxrs.dankchat.data.*
 import com.flxrs.dankchat.data.api.helix.HelixApiClient
 import com.flxrs.dankchat.data.api.helix.HelixApiException
 import com.flxrs.dankchat.data.api.helix.HelixError
@@ -66,7 +67,7 @@ class TwitchCommandRepository @Inject constructor(
         }
     }
 
-    private suspend fun sendAnnouncement(command: TwitchCommand, currentUserId: String, context: CommandContext): CommandResult {
+    private suspend fun sendAnnouncement(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
         val args = context.args
         if (args.isEmpty() || args.first().isBlank()) {
             return CommandResult.AcceptedTwitchCommand(command, response = "Usage: ${context.trigger} <message> - Call attention to your message with a highlight.")
@@ -91,14 +92,14 @@ class TwitchCommandRepository @Inject constructor(
         )
     }
 
-    private suspend fun sendWhisper(command: TwitchCommand, currentUserId: String, context: CommandContext): CommandResult {
+    private suspend fun sendWhisper(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
         val args = context.args
         if (args.size < 2 || args[0].isBlank() || args[1].isBlank()) {
             return CommandResult.AcceptedTwitchCommand(command, response = "Usage: ${context.trigger} <username> <message>")
         }
 
         val targetName = args[0]
-        val targetId = helixApiClient.getUserIdByName(targetName).getOrElse {
+        val targetId = helixApiClient.getUserIdByName(targetName.toUserName()).getOrElse {
             return CommandResult.AcceptedTwitchCommand(command, response = "No user matching that username.")
         }
         val request = WhisperRequestDto(args.drop(1).joinToString(separator = " "))
@@ -115,7 +116,7 @@ class TwitchCommandRepository @Inject constructor(
     private suspend fun getModerators(command: TwitchCommand, context: CommandContext): CommandResult {
         return helixApiClient.getModerators(context.channelId).fold(
             onSuccess = { result ->
-                val users = result.joinToString { formatUser(it.userName, it.userLogin) }
+                val users = result.joinToString { it.userLogin.formatWithDisplayName(it.userName) }
                 CommandResult.AcceptedTwitchCommand(command, response = "The moderators of this channel are $users.")
             },
             onFailure = {
@@ -131,12 +132,13 @@ class TwitchCommandRepository @Inject constructor(
             return CommandResult.AcceptedTwitchCommand(command, response = "Usage: ${context.trigger} <username> - Grant moderation status to a user.")
         }
 
-        val target = helixApiClient.getUserByName(args.first()).getOrElse {
+        val target = helixApiClient.getUserByName(args.first().toUserName()).getOrElse {
             return CommandResult.AcceptedTwitchCommand(command, response = "No user matching that username.")
         }
 
+        val targetId = target.id
         val targetName = target.displayName
-        return helixApiClient.postModerator(context.channelId, target.id).fold(
+        return helixApiClient.postModerator(context.channelId, targetId).fold(
             onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "You have added $targetName as a moderator of this channel.") },
             onFailure = {
                 val response = "Failed to add channel moderator - ${it.toErrorMessage(targetName)}"
@@ -151,12 +153,13 @@ class TwitchCommandRepository @Inject constructor(
             return CommandResult.AcceptedTwitchCommand(command, response = "Usage: ${context.trigger} <username> - Revoke moderation status from a user.")
         }
 
-        val target = helixApiClient.getUserByName(args.first()).getOrElse {
+        val target = helixApiClient.getUserByName(args.first().toUserName()).getOrElse {
             return CommandResult.AcceptedTwitchCommand(command, response = "No user matching that username.")
         }
 
+        val targetId = target.id
         val targetName = target.displayName
-        return helixApiClient.deleteModerator(context.channelId, target.id).fold(
+        return helixApiClient.deleteModerator(context.channelId, targetId).fold(
             onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "You have removed $targetName as a moderator of this channel.") },
             onFailure = {
                 val response = "Failed to remove channel moderator - ${it.toErrorMessage(targetName)}"
@@ -165,12 +168,7 @@ class TwitchCommandRepository @Inject constructor(
         )
     }
 
-    private fun formatUser(user: String, login: String): String = when {
-        user.equals(login, ignoreCase = true) -> user
-        else                                  -> "$login($user)"
-    }
-
-    private fun Throwable.toErrorMessage(targetName: String? = null): String {
+    private fun Throwable.toErrorMessage(targetName: DisplayName? = null): String {
         Log.d(TAG, "Command failed: ", this)
         if (this !is HelixApiException) {
             return GENERIC_ERROR_MESSAGE

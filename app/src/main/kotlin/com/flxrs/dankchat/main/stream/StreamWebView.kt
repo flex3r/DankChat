@@ -7,6 +7,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.view.isVisible
+import com.flxrs.dankchat.data.UserName
 
 @SuppressLint("SetJavaScriptEnabled")
 class StreamWebView @JvmOverloads constructor(
@@ -25,8 +26,8 @@ class StreamWebView @JvmOverloads constructor(
         webViewClient = StreamWebViewClient()
     }
 
-    fun setStream(channel: String) {
-        val isActive = channel.isNotBlank()
+    fun setStream(channel: UserName?) {
+        val isActive = channel != null
         isVisible = isActive
         val url = when {
             isActive -> "https://player.twitch.tv/?channel=$channel&enableExtensions=true&muted=false&parent=twitch.tv"

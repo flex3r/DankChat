@@ -1,6 +1,9 @@
 package com.flxrs.dankchat.data.twitch.connection
 
 import android.util.Log
+import com.flxrs.dankchat.data.UserId
+import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import com.flxrs.dankchat.utils.extensions.timer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -11,7 +14,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import okhttp3.*
 import org.json.JSONArray
@@ -22,8 +24,8 @@ import kotlin.random.Random
 import kotlin.random.nextLong
 
 sealed class PubSubTopic(val topic: String) {
-    data class PointRedemptions(val channelId: String, val channelName: String) : PubSubTopic(topic = "community-points-channel-v1.$channelId")
-    data class Whispers(val userId: String) : PubSubTopic(topic = "whispers.$userId")
+    data class PointRedemptions(val channelId: UserId, val channelName: UserName) : PubSubTopic(topic = "community-points-channel-v1.$channelId")
+    data class Whispers(val userId: UserId) : PubSubTopic(topic = "whispers.$userId")
 }
 
 
@@ -52,8 +54,8 @@ data class PubSubDataObjectMessage<T>(
 sealed class PubSubMessage {
     data class PointRedemption(
         val timestamp: Instant,
-        val channelName: String,
-        val channelId: String,
+        val channelName: UserName,
+        val channelId: UserId,
         val data: PointRedemptionData
     ) : PubSubMessage()
 
@@ -65,6 +67,7 @@ class PubSubConnection(
     private val client: OkHttpClient,
     private val scope: CoroutineScope,
     private val oAuth: String,
+    private val jsonFormat: Json,
 ) {
     private var socket: WebSocket? = null
     private val request = Request.Builder().url("wss://pubsub-edge.twitch.tv").build()
@@ -131,7 +134,7 @@ class PubSubConnection(
         return remainingTopics.toSet()
     }
 
-    fun unlistenByChannel(channel: String) {
+    fun unlistenByChannel(channel: UserName) {
         val toUnlisten = topics
             .filterIsInstance<PubSubTopic.PointRedemptions>()
             .filter { it.channelName == channel }
@@ -236,10 +239,7 @@ class PubSubConnection(
                                 return
                             }
 
-                            val parsedMessage = runCatching {
-                                jsonFormat.decodeFromString<PubSubDataObjectMessage<WhisperData>>(message)
-                            }.getOrElse { return }
-
+                            val parsedMessage = jsonFormat.decodeOrNull<PubSubDataObjectMessage<WhisperData>>(message) ?: return
                             PubSubMessage.Whisper(parsedMessage.data)
                         }
 
@@ -248,10 +248,7 @@ class PubSubConnection(
                                 return
                             }
 
-                            val parsedMessage = runCatching {
-                                jsonFormat.decodeFromString<PubSubDataMessage<PointRedemption>>(message)
-                            }.getOrElse { return }
-
+                            val parsedMessage = jsonFormat.decodeOrNull<PubSubDataMessage<PointRedemption>>(message) ?: return
                             PubSubMessage.PointRedemption(
                                 timestamp = Instant.parse(parsedMessage.data.timestamp),
                                 channelName = match.channelName,
@@ -295,9 +292,5 @@ class PubSubConnection(
         private const val PING_INTERVAL = 5 * 60 * 1000L
         private const val PING_PAYLOAD = "{\"type\":\"PING\"}"
         private val TAG = PubSubConnection::class.java.simpleName
-        private val jsonFormat = Json {
-            ignoreUnknownKeys = true
-            isLenient = true
-        }
     }
 }

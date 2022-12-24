@@ -49,7 +49,7 @@ class LoginViewModel @Inject constructor(
     private fun saveLoginDetails(oAuth: String, validateDto: ValidateDto): TokenParseEvent {
         dankChatPreferenceStore.apply {
             oAuthKey = "oauth:$oAuth"
-            userName = validateDto.login.lowercase(Locale.getDefault())
+            userName = validateDto.login.lowercase()
             userIdString = validateDto.userId
             isLoggedIn = true
         }

@@ -1,5 +1,7 @@
 package com.flxrs.dankchat.preferences.ui.ignores
 
+import com.flxrs.dankchat.data.UserId
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntity
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntityType
 import com.flxrs.dankchat.data.database.entity.UserIgnoreEntity
@@ -43,8 +45,8 @@ data class UserIgnoreItem(
 
 data class TwitchBlockItem(
     override val id: Long,
-    val username: String,
-    val userId: String,
+    val username: UserName,
+    val userId: UserId,
 ) : IgnoreItem()
 
 fun MessageIgnoreEntity.toItem() = MessageIgnoreItem(

@@ -3,11 +3,12 @@ package com.flxrs.dankchat.chat.user
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.flxrs.dankchat.data.*
 import com.flxrs.dankchat.data.api.helix.dto.UserDto
 import com.flxrs.dankchat.data.api.helix.dto.UserFollowsDto
+import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.data.repo.chat.ChatRepository
 import com.flxrs.dankchat.data.repo.data.DataRepository
-import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.DateTimeUtils.asParsedZonedDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +28,7 @@ class UserPopupViewModel @Inject constructor(
 
     private val args = UserPopupDialogFragmentArgs.fromSavedStateHandle(savedStateHandle)
 
-    private val _userPopupState = MutableStateFlow<UserPopupState>(UserPopupState.Loading(args.targetUserName))
+    private val _userPopupState = MutableStateFlow<UserPopupState>(UserPopupState.Loading(args.targetUserName, args.targetDisplayName))
 
     val canShowModeration: StateFlow<Boolean> = chatRepository.userStateFlow
         .map { args.channel != null && args.channel in it.moderationChannels }
@@ -41,14 +42,11 @@ class UserPopupViewModel @Inject constructor(
             return state is UserPopupState.Success && state.isBlocked
         }
 
-    val userName: String
+    val userName: UserName
         get() = (userPopupState.value as? UserPopupState.Success)?.userName ?: args.targetUserName
 
-    val displayOrUsername: String
-        get() {
-            val state = userPopupState.value as? UserPopupState.Success ?: return args.targetUserName
-            return state.displayName.takeIf { it.equals(state.userName, ignoreCase = true) } ?: state.userName
-        }
+    val displayName: DisplayName
+        get() = (userPopupState.value as? UserPopupState.Success)?.displayName ?: args.targetDisplayName
 
     init {
         loadData()
@@ -83,7 +81,7 @@ class UserPopupViewModel @Inject constructor(
         chatRepository.sendMessage(".delete $messageId")
     }
 
-    private inline fun updateStateWith(crossinline block: suspend (targetUserId: String, targetUsername: String) -> Unit) = viewModelScope.launch {
+    private inline fun updateStateWith(crossinline block: suspend (targetUserId: UserId, targetUsername: UserName) -> Unit) = viewModelScope.launch {
         if (!preferenceStore.isLoggedIn) {
             return@launch
         }
@@ -97,23 +95,24 @@ class UserPopupViewModel @Inject constructor(
 
     private fun loadData() = viewModelScope.launch {
         if (!preferenceStore.isLoggedIn) {
-            _userPopupState.value = UserPopupState.NotLoggedIn(args.targetUserName)
+            _userPopupState.value = UserPopupState.NotLoggedIn(args.targetUserName, args.targetDisplayName)
             return@launch
         }
 
-        _userPopupState.value = UserPopupState.Loading(args.targetUserName)
+        _userPopupState.value = UserPopupState.Loading(args.targetUserName, args.targetDisplayName)
         val currentUserId = preferenceStore.userIdString
         if (!preferenceStore.isLoggedIn || currentUserId == null) {
             _userPopupState.value = UserPopupState.Error()
             return@launch
         }
 
+        val targetUserId = args.targetUserId
         val result = runCatching {
             val channelId = args.channel?.let { dataRepository.getUserIdByName(it) }
-            val channelUserFollows = channelId?.let { dataRepository.getUserFollows(args.targetUserId, channelId) }
-            val user = dataRepository.getUser(args.targetUserId)
-            val currentUserFollows = dataRepository.getUserFollows(currentUserId, args.targetUserId)
-            val isBlocked = ignoresRepository.isUserBlocked(args.targetUserId)
+            val channelUserFollows = channelId?.let { dataRepository.getUserFollows(targetUserId, channelId) }
+            val user = dataRepository.getUser(targetUserId)
+            val currentUserFollows = dataRepository.getUserFollows(currentUserId, targetUserId)
+            val isBlocked = ignoresRepository.isUserBlocked(targetUserId)
 
             mapToState(
                 user = user,

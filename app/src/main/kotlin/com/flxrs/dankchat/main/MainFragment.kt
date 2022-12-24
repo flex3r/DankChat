@@ -10,7 +10,6 @@ import android.provider.MediaStore
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.webkit.MimeTypeMap
@@ -49,6 +48,7 @@ import com.flxrs.dankchat.chat.suggestion.SpaceTokenizer
 import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.chat.suggestion.SuggestionsArrayAdapter
 import com.flxrs.dankchat.chat.user.UserPopupResult
+import com.flxrs.dankchat.data.*
 import com.flxrs.dankchat.data.state.DataLoadingState
 import com.flxrs.dankchat.data.state.ImageUploadState
 import com.flxrs.dankchat.data.twitch.badge.Badge
@@ -100,7 +100,7 @@ class MainFragment : Fragment() {
     private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             if (position in tabAdapter.channels.indices) {
-                val newChannel = tabAdapter.channels[position].lowercase(Locale.getDefault())
+                val newChannel = tabAdapter.channels[position].lowercase()
                 mainViewModel.setActiveChannel(newChannel)
 
             }
@@ -169,7 +169,7 @@ class MainFragment : Fragment() {
             }
 
             tabLayoutMediator = TabLayoutMediator(tabs, chatViewpager) { tab, position ->
-                tab.text = tabAdapter.channelsWithRenames[position]
+                tab.text = tabAdapter.channelsWithRenames[position].value
             }
 
             tabs.setInitialColors()
@@ -306,6 +306,7 @@ class MainFragment : Fragment() {
                 binding.fullscreenHintText.text = text
             }
             collectFlow(activeChannel) { channel ->
+                channel ?: return@collectFlow
                 (activity as? MainActivity)?.notificationService?.setActiveChannel(channel) // TODO move
                 val index = tabAdapter.channels.indexOf(channel)
                 binding.tabs.getTabAt(index)?.removeBadge()
@@ -315,7 +316,7 @@ class MainFragment : Fragment() {
 
             collectFlow(events) {
                 when (it) {
-                    is MainViewModel.Event.Error -> handleErrorEvent(it)
+                    is MainEvent.Error -> handleErrorEvent(it)
                 }
             }
             collectFlow(channelMentionCount, ::updateChannelMentionBadges)
@@ -327,16 +328,17 @@ class MainFragment : Fragment() {
                 }
             }
             collectFlow(currentStreamedChannel) {
-                binding.streamWebviewWrapper.isVisible = it.isNotBlank()
+                val isActive = it != null
+                binding.streamWebviewWrapper.isVisible = isActive
                 if (!isLandscape) {
                     return@collectFlow
                 }
 
-                binding.splitThumb?.isVisible = it.isNotBlank()
+                binding.splitThumb?.isVisible = isActive
                 binding.splitGuideline?.updateLayoutParams<ConstraintLayout.LayoutParams> {
                     guidePercent = when {
-                        it.isBlank() -> DISABLED_GUIDELINE_PERCENT
-                        else         -> DEFAULT_GUIDELINE_PERCENT
+                        isActive -> DEFAULT_GUIDELINE_PERCENT
+                        else -> DISABLED_GUIDELINE_PERCENT
                     }
                 }
             }
@@ -379,7 +381,7 @@ class MainFragment : Fragment() {
                         showLogoutConfirmationDialog()
                     }
 
-                    CHANNELS_REQUEST_KEY    -> handle.withData<Array<String>>(key) {
+                    CHANNELS_REQUEST_KEY    -> handle.withData<Array<UserName>>(key) {
                         updateChannels(it.toList())
                     }
                 }
@@ -393,7 +395,7 @@ class MainFragment : Fragment() {
         })
 
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.userIdString == null) {
-            dankChatPreferences.userIdString = "${dankChatPreferences.userId}"
+            dankChatPreferences.userIdString = "${dankChatPreferences.userId}".asUserId()
         }
 
         val channels = dankChatPreferences.getChannels()
@@ -459,17 +461,18 @@ class MainFragment : Fragment() {
         changeActionBarVisibility(mainViewModel.isFullscreenFlow.value)
 
         (activity as? MainActivity)?.apply {
-            if (channelToOpen.isNotBlank()) {
-                val index = mainViewModel.getChannels().indexOf(channelToOpen)
+            val channel = channelToOpen
+            if (channel != null) {
+                val index = mainViewModel.getChannels().indexOf(channel)
                 if (index >= 0) {
                     when (index) {
-                        binding.chatViewpager.currentItem -> clearNotificationsOfChannel(channelToOpen)
+                        binding.chatViewpager.currentItem -> clearNotificationsOfChannel(channel)
                         else                              -> binding.chatViewpager.setCurrentItem(index, false)
                     }
                 }
-                channelToOpen = ""
+                channelToOpen = null
             } else {
-                val activeChannel = mainViewModel.activeChannel.value
+                val activeChannel = mainViewModel.activeChannel.value ?: return
                 clearNotificationsOfChannel(activeChannel)
             }
         }
@@ -487,10 +490,19 @@ class MainFragment : Fragment() {
         super.onDestroyView()
     }
 
-    fun openUserPopup(targetUserId: String, targetUserName: String, messageId: String, channel: String?, badges: List<Badge>, isWhisperPopup: Boolean = false) {
+    fun openUserPopup(
+        targetUserId: UserId,
+        targetUserName: UserName,
+        targetDisplayName: DisplayName,
+        messageId: String,
+        channel: UserName?,
+        badges: List<Badge>,
+        isWhisperPopup: Boolean = false
+    ) {
         val directions = MainFragmentDirections.actionMainFragmentToUserPopupDialogFragment(
             targetUserId = targetUserId,
             targetUserName = targetUserName,
+            targetDisplayName = targetDisplayName,
             messageId = messageId,
             channel = channel,
             isWhisperPopup = isWhisperPopup,
@@ -499,13 +511,13 @@ class MainFragment : Fragment() {
         navigateSafe(directions)
     }
 
-    fun mentionUser(user: String) {
+    fun mentionUser(user: UserName, display: DisplayName) {
         val template = preferences.getString(getString(R.string.preference_mention_format_key), "name") ?: "name"
-        val mention = "${template.replace("name", user)} "
+        val mention = "${template.replace("name", user.valueOrDisplayName(display))} "
         insertText(mention)
     }
 
-    fun whisperUser(user: String) {
+    fun whisperUser(user: UserName) {
         if (!binding.input.isEnabled) return
 
         val current = binding.input.text.toString()
@@ -540,12 +552,12 @@ class MainFragment : Fragment() {
 
     private fun handleUserPopupResult(result: UserPopupResult) = when (result) {
         is UserPopupResult.Error   -> binding.root.showShortSnackbar(getString(R.string.user_popup_error, result.throwable?.message.orEmpty()))
-        is UserPopupResult.Mention -> mentionUser(result.targetUser)
+        is UserPopupResult.Mention -> mentionUser(result.targetUser, result.targetDisplayName)
         is UserPopupResult.Whisper -> whisperUser(result.targetUser)
     }
 
     private fun addChannel(channel: String) {
-        val lowerCaseChannel = channel.lowercase(Locale.getDefault()).removePrefix("#")
+        val lowerCaseChannel = channel.lowercase().removePrefix("#").toUserName()
         var newTabIndex = mainViewModel.getChannels().indexOf(lowerCaseChannel)
         if (newTabIndex == -1) {
             val updatedChannels = mainViewModel.joinChannel(lowerCaseChannel)
@@ -558,7 +570,7 @@ class MainFragment : Fragment() {
         }
         binding.chatViewpager.setCurrentItem(newTabIndex, false)
 
-        mainViewModel.setActiveChannel(channel)
+        mainViewModel.setActiveChannel(lowerCaseChannel)
         activity?.invalidateMenu()
     }
 
@@ -631,7 +643,7 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun handleErrorEvent(event: MainViewModel.Event.Error) {
+    private fun handleErrorEvent(event: MainEvent.Error) {
         if (preferences.getBoolean(getString(R.string.preference_debug_mode_key), false)) {
             binding.root.showErrorDialog(event.throwable)
         }
@@ -740,7 +752,7 @@ class MainFragment : Fragment() {
             mainViewModel.clear(tabAdapter.channels[position])
     }
 
-    private fun reloadEmotes(channel: String? = null) {
+    private fun reloadEmotes(channel: UserName? = null) {
         val position = channel?.let(tabAdapter.channels::indexOf) ?: binding.tabs.selectedTabPosition
         if (position in tabAdapter.channels.indices) {
             mainViewModel.reloadEmotes(tabAdapter.channels[position])
@@ -867,7 +879,7 @@ class MainFragment : Fragment() {
     }
 
     private fun showRoomStateDialog() {
-        val currentRoomState = mainViewModel.currentRoomState
+        val currentRoomState = mainViewModel.currentRoomState ?: return
         val activeStates = currentRoomState.activeStates
         val choices = resources.getStringArray(R.array.roomstate_entries)
 
@@ -915,13 +927,13 @@ class MainFragment : Fragment() {
             .show()
     }
 
-    private fun updateChannels(updatedChannels: List<String>) {
+    private fun updateChannels(updatedChannels: List<UserName>) {
         val oldChannels = mainViewModel.getChannels()
         val oldIndex = binding.chatViewpager.currentItem
         val oldActiveChannel = oldChannels[oldIndex]
 
         val index = updatedChannels.indexOf(oldActiveChannel).coerceAtLeast(0)
-        val activeChannel = updatedChannels.getOrNull(index) ?: ""
+        val activeChannel = updatedChannels.getOrNull(index)
 
         binding.chatViewpager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
         tabAdapter.updateFragments(updatedChannels)
@@ -943,7 +955,7 @@ class MainFragment : Fragment() {
         updateUnreadChannelTabColors(channels = mainViewModel.unreadMessagesMap.firstValueOrNull.orEmpty())
     }
 
-    private fun updateUnreadChannelTabColors(channels: Map<String, Boolean>) {
+    private fun updateUnreadChannelTabColors(channels: Map<UserName, Boolean>) {
         channels.forEach { (channel, _) ->
             when (val index = tabAdapter.channels.indexOf(channel)) {
                 binding.tabs.selectedTabPosition -> mainViewModel.clearUnreadMessage(channel)
@@ -955,7 +967,7 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun updateChannelMentionBadges(channels: Map<String, Int>) {
+    private fun updateChannelMentionBadges(channels: Map<UserName, Int>) {
         channels.forEach { (channel, count) ->
             val index = tabAdapter.channels.indexOf(channel)
             if (count > 0) {
@@ -976,7 +988,7 @@ class MainFragment : Fragment() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 mainViewModel.setMentionSheetOpen(mentionBottomSheetBehavior?.isMoving == true || mentionBottomSheetBehavior?.isVisible == true)
                 when {
-                    mentionBottomSheetBehavior?.isExpanded == true -> mainViewModel.setSuggestionChannel("w")
+                    mentionBottomSheetBehavior?.isExpanded == true -> mainViewModel.setSuggestionChannel("w".toUserName())
                     mentionBottomSheetBehavior?.isHidden == true   -> mainViewModel.setSuggestionChannel(tabAdapter.channels[binding.chatViewpager.currentItem])
                 }
             }

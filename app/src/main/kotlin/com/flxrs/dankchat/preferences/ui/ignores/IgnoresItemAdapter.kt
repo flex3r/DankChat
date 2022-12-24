@@ -96,7 +96,7 @@ class IgnoresItemAdapter(
 
             is TwitchItemViewHolder  -> {
                 val twitchItem = getItem(position) as TwitchBlockItem
-                holder.binding.item = twitchItem
+                holder.binding.username.text = twitchItem.username.value
             }
         }
     }

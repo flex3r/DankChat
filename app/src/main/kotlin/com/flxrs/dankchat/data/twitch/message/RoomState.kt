@@ -1,10 +1,13 @@
 package com.flxrs.dankchat.data.twitch.message
 
+import com.flxrs.dankchat.data.UserId
+import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.data.asUserId
 import com.flxrs.dankchat.data.irc.IrcMessage
 
 data class RoomState(
-    val channel: String,
-    val channelId: String = "",
+    val channel: UserName,
+    val channelId: UserId,
     val tags: Map<RoomStateTag, Int> = mapOf(
         RoomStateTag.EMOTE to 0,
         RoomStateTag.SUBS to 0,
@@ -30,7 +33,6 @@ data class RoomState(
 
     fun copyFromIrcMessage(msg: IrcMessage): RoomState = copy(
         tags = tags.mapValues { (key, value) -> msg.getRoomStateTag(key, value) },
-        channelId = msg.tags["room-id"] ?: channelId
     )
 
     private fun IrcMessage.getRoomStateTag(tag: RoomStateTag, default: Int): Int = tags[tag.ircTag]?.toIntOrNull() ?: default

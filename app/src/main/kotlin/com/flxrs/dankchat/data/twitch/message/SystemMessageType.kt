@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.data.twitch.message
 
 import com.flxrs.dankchat.chat.ChatItem
+import com.flxrs.dankchat.data.UserName
 
 sealed class SystemMessageType {
     object Connected : SystemMessageType()
@@ -11,7 +12,7 @@ sealed class SystemMessageType {
     object MessageHistoryIncomplete : SystemMessageType()
     object MessageHistoryIgnored : SystemMessageType()
     data class MessageHistoryUnavailable(val status: String?) : SystemMessageType()
-    data class ChannelNonExistent(val channel: String) : SystemMessageType()
+    data class ChannelNonExistent(val channel: UserName) : SystemMessageType()
     data class Custom(val message: String) : SystemMessageType()
 }
 

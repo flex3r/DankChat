@@ -29,6 +29,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.notification.NotificationService
 import com.flxrs.dankchat.data.repo.data.ServiceEvent
 import com.flxrs.dankchat.databinding.MainActivityBinding
@@ -37,6 +38,7 @@ import com.flxrs.dankchat.preferences.ui.*
 import com.flxrs.dankchat.utils.extensions.hasPermission
 import com.flxrs.dankchat.utils.extensions.isAtLeastTiramisu
 import com.flxrs.dankchat.utils.extensions.navigateSafe
+import com.flxrs.dankchat.utils.extensions.parcelable
 import com.google.android.material.color.DynamicColors
 import com.google.android.material.color.DynamicColorsOptions
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,7 +53,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
     lateinit var dankChatPreferences: DankChatPreferenceStore
 
     private val viewModel: DankChatViewModel by viewModels()
-    private val pendingChannelsToClear = mutableListOf<String>()
+    private val pendingChannelsToClear = mutableListOf<UserName>()
     private val navController: NavController by lazy { findNavController(R.id.main_content) }
     private var bindingRef: MainActivityBinding? = null
     private val binding get() = bindingRef!!
@@ -64,7 +66,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
     private val twitchServiceConnection = TwitchServiceConnection()
     var notificationService: NotificationService? = null
     var isBound = false
-    var channelToOpen = ""
+    var channelToOpen: UserName? = null
 
 //    override fun getDelegate() = BaseContextWrappingDelegate(super.getDelegate())
 
@@ -159,7 +161,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        val channelExtra = intent?.getStringExtra(OPEN_CHANNEL_KEY) ?: ""
+        val channelExtra = intent?.parcelable<UserName>(OPEN_CHANNEL_KEY)
         channelToOpen = channelExtra
     }
 
@@ -176,7 +178,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
         return true
     }
 
-    fun clearNotificationsOfChannel(channel: String) = when {
+    fun clearNotificationsOfChannel(channel: UserName) = when {
         isBound && notificationService != null -> notificationService?.setActiveChannel(channel)
         else                                   -> pendingChannelsToClear += channel
     }

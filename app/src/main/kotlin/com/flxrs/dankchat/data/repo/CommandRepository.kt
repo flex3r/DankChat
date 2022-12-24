@@ -1,9 +1,12 @@
 package com.flxrs.dankchat.data.repo
 
 import android.util.Log
+import com.flxrs.dankchat.data.UserId
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.chatters.ChattersApiClient
 import com.flxrs.dankchat.data.api.helix.HelixApiClient
 import com.flxrs.dankchat.data.api.supibot.SupibotApiClient
+import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.command.CommandContext
 import com.flxrs.dankchat.data.twitch.command.TwitchCommand
 import com.flxrs.dankchat.data.twitch.command.TwitchCommandRepository
@@ -31,7 +34,7 @@ class CommandRepository @Inject constructor(
     private val preferenceStore: DankChatPreferenceStore
 ) {
     private val customCommands: Flow<List<CommandItem.Entry>> = preferenceStore.commandsAsFlow
-    private val supibotCommands = mutableMapOf<String, MutableStateFlow<List<String>>>()
+    private val supibotCommands = mutableMapOf<UserName, MutableStateFlow<List<String>>>()
 
     private val defaultCommands = Command.values()
     private val defaultCommandTriggers = defaultCommands.map { it.trigger }
@@ -42,10 +45,10 @@ class CommandRepository @Inject constructor(
         defaultCommandTriggers + twitchCommandTriggers + customCommands.map { it.trigger }
     }
 
-    fun getSupibotCommands(channel: String): StateFlow<List<String>> = supibotCommands.getOrPut(channel) { MutableStateFlow(emptyList()) }
+    fun getSupibotCommands(channel: UserName): StateFlow<List<String>> = supibotCommands.getOrPut(channel) { MutableStateFlow(emptyList()) }
     fun clearSupibotCommands() = supibotCommands.forEach { it.value.value = emptyList() }.also { supibotCommands.clear() }
 
-    suspend fun checkForCommands(message: String, channel: String, channelId: String, skipSuspendingCommands: Boolean = false): CommandResult {
+    suspend fun checkForCommands(message: String, channel: UserName, channelId: UserId, skipSuspendingCommands: Boolean = false): CommandResult {
         if (!preferenceStore.isLoggedIn) {
             return CommandResult.NotFound
         }
@@ -107,7 +110,7 @@ class CommandRepository @Inject constructor(
         }.let { Log.i(TAG, "Loaded Supibot commands in $it ms") }
     }
 
-    private suspend fun getSupibotChannels(): List<String> {
+    private suspend fun getSupibotChannels(): List<UserName> {
         return supibotApiClient.getSupibotChannels()
             .getOrNull()
             ?.let { (data) ->
@@ -126,7 +129,7 @@ class CommandRepository @Inject constructor(
     }
 
     private suspend fun getSupibotUserAliases(): List<String> {
-        val user = preferenceStore.userName?.ifBlank { null } ?: return emptyList()
+        val user = preferenceStore.userName ?: return emptyList()
         return supibotApiClient.getSupibotUserAliases(user)
             .getOrNull()
             ?.let { (data) ->
@@ -139,7 +142,7 @@ class CommandRepository @Inject constructor(
             return CommandResult.AcceptedWithResponse("Usage: /block <user>")
         }
 
-        val target = args.first()
+        val target = args.first().toUserName()
         val targetId = helixApiClient.getUserIdByName(target)
             .getOrNull() ?: return CommandResult.AcceptedWithResponse("User $target couldn't be blocked, no user with that name found!")
 
@@ -159,7 +162,7 @@ class CommandRepository @Inject constructor(
             return CommandResult.AcceptedWithResponse("Usage: /unblock <user>")
         }
 
-        val target = args.first()
+        val target = args.first().toUserName()
         val targetId = helixApiClient.getUserIdByName(target)
             .getOrNull() ?: return CommandResult.AcceptedWithResponse("User $target couldn't be unblocked, no user with that name found!")
 
@@ -173,14 +176,14 @@ class CommandRepository @Inject constructor(
         }
     }
 
-    private suspend fun chattersCommand(channel: String): CommandResult.AcceptedWithResponse {
+    private suspend fun chattersCommand(channel: UserName): CommandResult.AcceptedWithResponse {
         val result = chattersApiClient.getChatterCount(channel)
             .getOrNull() ?: return CommandResult.AcceptedWithResponse("An unknown error occurred!")
 
         return CommandResult.AcceptedWithResponse("Chatter count: $result")
     }
 
-    private suspend fun uptimeCommand(channel: String): CommandResult.AcceptedWithResponse {
+    private suspend fun uptimeCommand(channel: UserName): CommandResult.AcceptedWithResponse {
         val result = helixApiClient.getStreams(listOf(channel))
             .getOrNull()
             ?.getOrNull(0) ?: return CommandResult.AcceptedWithResponse("Channel is not live.")

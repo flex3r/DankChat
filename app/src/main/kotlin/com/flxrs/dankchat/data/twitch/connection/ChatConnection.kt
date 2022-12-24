@@ -1,7 +1,10 @@
 package com.flxrs.dankchat.data.twitch.connection
 
 import android.util.Log
+import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.irc.IrcMessage
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.timer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -23,8 +26,8 @@ enum class ChatConnectionType {
 
 sealed class ChatEvent {
     data class Message(val message: IrcMessage) : ChatEvent()
-    data class Connected(val channel: String, val isAnonymous: Boolean) : ChatEvent()
-    data class ChannelNonExistent(val channel: String) : ChatEvent()
+    data class Connected(val channel: UserName, val isAnonymous: Boolean) : ChatEvent()
+    data class ChannelNonExistent(val channel: UserName) : ChatEvent()
     data class Error(val throwable: Throwable) : ChatEvent()
     object LoginFailed : ChatEvent()
     object Closed : ChatEvent()
@@ -36,7 +39,8 @@ sealed class ChatEvent {
 class ChatConnection @Inject constructor(
     private val chatConnectionType: ChatConnectionType,
     private val client: OkHttpClient,
-    private val scope: CoroutineScope
+    private val scope: CoroutineScope,
+    private val preferences: DankChatPreferenceStore,
 ) {
     private var socket: WebSocket? = null
     private val request = Request.Builder().url("wss://irc-ws.chat.twitch.tv").build()
@@ -54,13 +58,13 @@ class ChatConnection @Inject constructor(
             return reconnectDelay + jitter
         }
 
-    private val channels = mutableSetOf<String>()
-    private val channelsAttemptedToJoin = mutableSetOf<String>()
-    private val channelsToJoin = Channel<Collection<String>>(capacity = Channel.BUFFERED)
-    private var currentUserName: String? = null
+    private val channels = mutableSetOf<UserName>()
+    private val channelsAttemptedToJoin = mutableSetOf<UserName>()
+    private val channelsToJoin = Channel<Collection<UserName>>(capacity = Channel.BUFFERED)
+    private var currentUserName: UserName? = null
     private var currentOAuth: String? = null
     private val isAnonymous: Boolean
-        get() = (currentUserName.isNullOrBlank() || currentOAuth.isNullOrBlank() || currentOAuth?.startsWith("oauth:") == false)
+        get() = (currentUserName?.value.isNullOrBlank() || currentOAuth.isNullOrBlank() || currentOAuth?.startsWith("oauth:") == false)
 
     var connected = false
         private set
@@ -92,7 +96,7 @@ class ChatConnection @Inject constructor(
         }
     }
 
-    fun joinChannels(channelList: List<String>) {
+    fun joinChannels(channelList: List<UserName>) {
         val newChannels = channelList - channels
         channels.addAll(newChannels)
 
@@ -103,7 +107,7 @@ class ChatConnection @Inject constructor(
         }
     }
 
-    fun joinChannel(channel: String) {
+    fun joinChannel(channel: UserName) {
         if (channel in channels) return
         channels += channel
 
@@ -114,7 +118,7 @@ class ChatConnection @Inject constructor(
         }
     }
 
-    fun partChannel(channel: String) {
+    fun partChannel(channel: UserName) {
         if (channel !in channels) return
 
         channels.remove(channel)
@@ -123,11 +127,11 @@ class ChatConnection @Inject constructor(
         }
     }
 
-    fun connect(userName: String? = null, oAuth: String? = null) {
+    fun connect() {
         if (connected || connecting) return
 
-        currentUserName = userName
-        currentOAuth = oAuth
+        currentUserName = preferences.userName
+        currentOAuth = preferences.oAuthKey
         awaitingPong = false
         connecting = true
         socket = client.newWebSocket(request, TwitchWebSocketListener())
@@ -152,7 +156,7 @@ class ChatConnection @Inject constructor(
         scope.launch {
             delay(currentReconnectDelay)
             close()
-            connect(currentUserName, currentOAuth)
+            connect()
         }
     }
 
@@ -170,7 +174,7 @@ class ChatConnection @Inject constructor(
         }
     }
 
-    private fun setupJoinCheckInterval(channelsToCheck: List<String>) = scope.launch {
+    private fun setupJoinCheckInterval(channelsToCheck: List<UserName>) = scope.launch {
         Log.d(TAG, "[$chatConnectionType] setting up join check for $channelsToCheck")
         // only send a ChannelNonExistent event if we are actually connected or there are attempted joins
         if (socket == null || !connected || channelsAttemptedToJoin.isEmpty()) {
@@ -237,14 +241,14 @@ class ChatConnection @Inject constructor(
                         }
                     }
 
-                    "JOIN"      -> channelsAttemptedToJoin.remove(ircMessage.params[0].substring(1))
-                    "366"       -> scope.launch { receiveChannel.send(ChatEvent.Connected(ircMessage.params[1].substring(1), isAnonymous)) }
+                    "JOIN"      -> channelsAttemptedToJoin.remove(ircMessage.params[0].substring(1).toUserName())
+                    "366"       -> scope.launch { receiveChannel.send(ChatEvent.Connected(ircMessage.params[1].substring(1).toUserName(), isAnonymous)) }
                     "PING"      -> webSocket.handlePing()
                     "PONG"      -> awaitingPong = false
                     "RECONNECT" -> reconnect()
                     else        -> {
                         if (ircMessage.command == "NOTICE" && ircMessage.tags["msg-id"] == "msg_channel_suspended") {
-                            channelsAttemptedToJoin.remove(ircMessage.params[0].substring(1))
+                            channelsAttemptedToJoin.remove(ircMessage.params[0].substring(1).toUserName())
                         }
 
                         scope.launch { receiveChannel.send(ChatEvent.Message(ircMessage)) }
@@ -262,12 +266,11 @@ class ChatConnection @Inject constructor(
         sendMessage("PONG :tmi.twitch.tv")
     }
 
-    private fun WebSocket.joinChannels(channels: Collection<String>) {
+    private fun WebSocket.joinChannels(channels: Collection<UserName>) {
         if (channels.isNotEmpty()) {
             sendMessage("JOIN ${channels.joinToString(separator = ",") { "#$it" }}")
         }
     }
-
 
     companion object {
         private const val MAX_JITTER = 250L

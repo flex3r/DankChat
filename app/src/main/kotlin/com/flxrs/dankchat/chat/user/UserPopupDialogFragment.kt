@@ -44,7 +44,7 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
             userMention.setOnClickListener {
                 val result = when {
                     args.isWhisperPopup -> UserPopupResult.Whisper(viewModel.userName)
-                    else                -> UserPopupResult.Mention(viewModel.displayOrUsername)
+                    else                -> UserPopupResult.Mention(viewModel.userName, viewModel.displayName)
                 }
 
                 findNavController()
@@ -127,7 +127,7 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
         userGroup.isVisible = false
         userLoading.isVisible = true
         userBlock.isEnabled = false
-        userName.text = state.userName
+        userName.text = state.userName.formatWithDisplayName(state.displayName)
     }
 
     private fun UserPopupBottomsheetBinding.updateUserData(userState: UserPopupState.Success) {
@@ -135,7 +135,7 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
         userLoading.isVisible = false
         userGroup.isVisible = true
         userBlock.isEnabled = true
-        userName.text = userState.displayName
+        userName.text = userState.userName.formatWithDisplayName(userState.displayName)
         userCreated.text = getString(R.string.user_popup_created, userState.created)
         userFollowage.text = userState.followingSince?.let {
             getString(R.string.user_popup_following_since, it)
@@ -154,7 +154,7 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
             scale(Scale.FIT)
         }
 
-        userName.text = state.userName
+        userName.text = state.userName.formatWithDisplayName(state.displayName)
 
         userMention.isEnabled = false
         userBlock.isEnabled = false

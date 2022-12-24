@@ -25,8 +25,8 @@ import com.flxrs.dankchat.databinding.TtsIgnoreListBottomsheetBinding
 import com.flxrs.dankchat.databinding.UploaderBottomsheetBinding
 import com.flxrs.dankchat.main.MainActivity
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.preferences.tts.TtsIgnoreItem
-import com.flxrs.dankchat.preferences.tts.TtsIgnoreListAdapter
+import com.flxrs.dankchat.preferences.ui.tts.TtsIgnoreItem
+import com.flxrs.dankchat.preferences.ui.tts.TtsIgnoreListAdapter
 import com.flxrs.dankchat.preferences.upload.RecentUploadsAdapter
 import com.flxrs.dankchat.preferences.upload.RecentUploadsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog

@@ -12,6 +12,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.databinding.ChannelsFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
@@ -79,12 +80,12 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
         super.dismiss()
     }
 
-    private fun openRenameChannelDialog(channel: String, renamedChannel: String?) {
+    private fun openRenameChannelDialog(channel: UserName, renamedChannel: UserName?) {
         val direction = ChannelsDialogFragmentDirections.actionChannelsFragmentToEditChannelDialogFragment(channel, renamedChannel)
         navigateSafe(direction)
     }
 
-    private fun renameChannel(rename: Pair<String, String>) {
+    private fun renameChannel(rename: Pair<UserName, UserName>) {
         val (channel, name) = rename
         dankChatPreferences.setRenamedChannel(channel, name)
 

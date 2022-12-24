@@ -19,6 +19,8 @@ import androidx.core.content.getSystemService
 import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.data.toUserNames
 import com.flxrs.dankchat.data.repo.chat.ChatRepository
 import com.flxrs.dankchat.data.repo.data.DataRepository
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
@@ -47,7 +49,7 @@ class NotificationService : Service(), CoroutineScope {
             getString(R.string.preference_tts_key)                      -> ttsEnabled = sharedPreferences.getBoolean(key, false).also { setTTSEnabled(it) }
             getString(R.string.preference_tts_message_ignore_url_key)   -> removeURL = sharedPreferences.getBoolean(key, false)
             getString(R.string.preference_tts_message_ignore_emote_key) -> removeEmote = sharedPreferences.getBoolean(key, false)
-            getString(R.string.preference_tts_user_ignore_list_key)     -> ignoredTtsUsers = sharedPreferences.getStringSet(key, emptySet()).orEmpty()
+            getString(R.string.preference_tts_user_ignore_list_key)     -> ignoredTtsUsers = sharedPreferences.getStringSet(key, emptySet()).orEmpty().toUserNames().toSet()
             getString(R.string.preference_tts_force_english_key)        -> {
                 forceEnglishTTS = sharedPreferences.getBoolean(key, false)
                 setTTSVoice()
@@ -62,10 +64,10 @@ class NotificationService : Service(), CoroutineScope {
     private var forceEnglishTTS = false
     private var removeURL = false
     private var removeEmote = false
-    private var ignoredTtsUsers = emptySet<String>()
+    private var ignoredTtsUsers = emptySet<UserName>()
 
     private var notificationsJob: Job? = null
-    private val notifications = mutableMapOf<String, MutableList<Int>>()
+    private val notifications = mutableMapOf<UserName, MutableList<Int>>()
 
     @Inject
     lateinit var chatRepository: ChatRepository
@@ -75,14 +77,14 @@ class NotificationService : Service(), CoroutineScope {
 
     private var tts: TextToSpeech? = null
     private var audioManager: AudioManager? = null
-    private var previousTTSUser: String? = null
+    private var previousTTSUser: UserName? = null
 
     private val pendingIntentFlag: Int = when {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         else                                           -> PendingIntent.FLAG_UPDATE_CURRENT
     }
 
-    private var activeTTSChannel: String? = null
+    private var activeTTSChannel: UserName? = null
     private var shouldNotifyOnMention = false
 
     override val coroutineContext: CoroutineContext
@@ -126,7 +128,7 @@ class NotificationService : Service(), CoroutineScope {
             ttsEnabled = sharedPreferences.getBoolean(getString(R.string.preference_tts_key), false).also { setTTSEnabled(it) }
             removeURL = sharedPreferences.getBoolean(getString(R.string.preference_tts_message_ignore_url_key), false)
             removeEmote = sharedPreferences.getBoolean(getString(R.string.preference_tts_message_ignore_emote_key), false)
-            ignoredTtsUsers = sharedPreferences.getStringSet(getString(R.string.preference_tts_user_ignore_list_key), emptySet()).orEmpty()
+            ignoredTtsUsers = sharedPreferences.getStringSet(getString(R.string.preference_tts_user_ignore_list_key), emptySet()).orEmpty().toUserNames().toSet()
             registerOnSharedPreferenceChangeListener(preferenceListener)
         }
     }
@@ -140,7 +142,7 @@ class NotificationService : Service(), CoroutineScope {
         return START_NOT_STICKY
     }
 
-    fun setActiveChannel(channel: String) {
+    fun setActiveChannel(channel: UserName) {
         activeTTSChannel = channel
         val ids = notifications.remove(channel)
         ids?.forEach { manager.cancel(it) }
@@ -254,7 +256,7 @@ class NotificationService : Service(), CoroutineScope {
                         initTTS()
                     }
 
-                    if (message is PrivMessage && ignoredTtsUsers.any { it.equals(message.name, ignoreCase = true) || it.equals(message.displayName, ignoreCase = true) }) {
+                    if (message is PrivMessage && ignoredTtsUsers.any { it.matches(message.name) || it.matches(message.displayName) }) {
                         return@forEach
                     }
 

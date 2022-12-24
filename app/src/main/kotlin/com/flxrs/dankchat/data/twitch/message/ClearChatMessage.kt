@@ -1,5 +1,7 @@
 package com.flxrs.dankchat.data.twitch.message
 
+import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.irc.IrcMessage
 import java.util.*
 
@@ -7,8 +9,8 @@ data class ClearChatMessage(
     override val timestamp: Long = System.currentTimeMillis(),
     override val id: String = UUID.randomUUID().toString(),
     override val highlights: Set<Highlight> = emptySet(),
-    val channel: String,
-    val targetUser: String? = null,
+    val channel: UserName,
+    val targetUser: UserName? = null,
     val duration: String = "",
     val stackCount: Int = 0,
 ) : Message() {
@@ -26,8 +28,8 @@ data class ClearChatMessage(
             return ClearChatMessage(
                 timestamp = ts,
                 id = id,
-                channel = channel,
-                targetUser = target,
+                channel = channel.toUserName(),
+                targetUser = target?.toUserName(),
                 duration = duration,
                 stackCount = if (target != null && duration.isNotBlank()) 1 else 0
             )

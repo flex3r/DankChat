@@ -1,6 +1,9 @@
 package com.flxrs.dankchat.data.repo.data
 
 import android.util.Log
+import com.flxrs.dankchat.data.UserId
+import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.data.api.*
 import com.flxrs.dankchat.data.api.badges.BadgesApiClient
 import com.flxrs.dankchat.data.api.bttv.BTTVApiClient
 import com.flxrs.dankchat.data.api.dankchat.DankChatApiClient
@@ -40,7 +43,7 @@ class DataRepository @Inject constructor(
     private val recentUploadsRepository: RecentUploadsRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
 ) {
-    private val emotes = ConcurrentHashMap<String, MutableStateFlow<List<GenericEmote>>>()
+    private val emotes = ConcurrentHashMap<UserName, MutableStateFlow<List<GenericEmote>>>()
     private val _dataLoadingFailures = MutableStateFlow(emptySet<DataLoadingFailure>())
 
     private val serviceEventChannel = Channel<ServiceEvent>(Channel.BUFFERED)
@@ -50,12 +53,12 @@ class DataRepository @Inject constructor(
 
     fun clearDataLoadingFailures() = _dataLoadingFailures.update { emptySet() }
 
-    fun getEmotes(channel: String): StateFlow<List<GenericEmote>> = emotes.getOrPut(channel) { MutableStateFlow(emptyList()) }
+    fun getEmotes(channel: UserName): StateFlow<List<GenericEmote>> = emotes.getOrPut(channel) { MutableStateFlow(emptyList()) }
 
-    suspend fun getUser(userId: String): UserDto? = helixApiClient.getUser(userId).getOrNull()
-    suspend fun getUserIdByName(name: String): String? = helixApiClient.getUserIdByName(name).getOrNull()
-    suspend fun getUserFollows(fromId: String, toId: String): UserFollowsDto? = helixApiClient.getUsersFollows(fromId, toId).getOrNull()
-    suspend fun getStreams(channels: List<String>): List<StreamDto>? = helixApiClient.getStreams(channels).getOrNull()
+    suspend fun getUser(userId: UserId): UserDto? = helixApiClient.getUser(userId).getOrNull()
+    suspend fun getUserIdByName(name: UserName): UserId? = helixApiClient.getUserIdByName(name).getOrNull()
+    suspend fun getUserFollows(fromId: UserId, toId: UserId): UserFollowsDto? = helixApiClient.getUsersFollows(fromId, toId).getOrNull()
+    suspend fun getStreams(channels: List<UserName>): List<StreamDto>? = helixApiClient.getStreams(channels).getOrNull()
 
     suspend fun uploadMedia(file: File): Result<String> = uploadClient.uploadMedia(file).mapCatching {
         recentUploadsRepository.addUpload(it)
@@ -80,12 +83,12 @@ class DataRepository @Inject constructor(
     }
 
     // TODO refactor to flow/observe pattern
-    suspend fun setEmotesForSuggestions(channel: String) {
+    suspend fun setEmotesForSuggestions(channel: UserName) {
         emotes.putIfAbsent(channel, MutableStateFlow(emptyList()))
         emotes[channel]?.value = emoteRepository.getEmotes(channel)
     }
 
-    suspend fun loadUserStateEmotes(globalEmoteSetIds: List<String>, followerEmoteSetIds: Map<String, List<String>>) {
+    suspend fun loadUserStateEmotes(globalEmoteSetIds: List<String>, followerEmoteSetIds: Map<UserName, List<String>>) {
         emoteRepository.loadUserStateEmotes(globalEmoteSetIds, followerEmoteSetIds)
     }
 
@@ -93,7 +96,7 @@ class DataRepository @Inject constructor(
         serviceEventChannel.send(ServiceEvent.Shutdown)
     }
 
-    suspend fun loadChannelBadges(channel: String, id: String) = withContext(Dispatchers.Default) {
+    suspend fun loadChannelBadges(channel: UserName, id: UserId) = withContext(Dispatchers.Default) {
         measureTimeAndLog(TAG, "channel badges for #$id") {
             val badges = badgesApiClient.getChannelBadges(id)
                 .getOrEmitFailure { DataLoadingStep.ChannelBadges(channel, id) }
@@ -102,7 +105,7 @@ class DataRepository @Inject constructor(
         }
     }
 
-    suspend fun loadChannelFFZEmotes(channel: String, channelId: String) = withContext(Dispatchers.Default)  {
+    suspend fun loadChannelFFZEmotes(channel: UserName, channelId: UserId) = withContext(Dispatchers.Default)  {
         if (ThirdPartyEmoteType.FrankerFaceZ !in dankChatPreferenceStore.visibleThirdPartyEmotes) {
             return@withContext
         }
@@ -114,7 +117,7 @@ class DataRepository @Inject constructor(
         }.let { Log.i(TAG, "Loaded FFZ emotes for #$channel in $it ms") }
     }
 
-    suspend fun loadChannelBTTVEmotes(channel: String, channelId: String) = withContext(Dispatchers.Default)  {
+    suspend fun loadChannelBTTVEmotes(channel: UserName, channelId: UserId) = withContext(Dispatchers.Default)  {
         if (ThirdPartyEmoteType.BetterTTV !in dankChatPreferenceStore.visibleThirdPartyEmotes) {
             return@withContext
         }
@@ -126,7 +129,7 @@ class DataRepository @Inject constructor(
         }.let { Log.i(TAG, "Loaded BTTV emotes for #$channel in $it ms") }
     }
 
-    suspend fun loadChannelSevenTVEmotes(channel: String, channelId: String) = withContext(Dispatchers.Default)  {
+    suspend fun loadChannelSevenTVEmotes(channel: UserName, channelId: UserId) = withContext(Dispatchers.Default)  {
         if (ThirdPartyEmoteType.SevenTV !in dankChatPreferenceStore.visibleThirdPartyEmotes) {
             return@withContext
         }

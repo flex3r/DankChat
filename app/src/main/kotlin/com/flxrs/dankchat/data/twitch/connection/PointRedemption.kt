@@ -1,5 +1,8 @@
 package com.flxrs.dankchat.data.twitch.connection
 
+import com.flxrs.dankchat.data.DisplayName
+import com.flxrs.dankchat.data.UserId
+import com.flxrs.dankchat.data.UserName
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -18,9 +21,9 @@ data class PointRedemptionData(
 
 @Serializable
 data class PointRedemptionUser(
-    val id: String,
-    @SerialName("login") val name: String,
-    @SerialName("display_name") val displayName: String,
+    val id: UserId,
+    @SerialName("login") val name: UserName,
+    @SerialName("display_name") val displayName: DisplayName,
 )
 
 @Serializable

@@ -10,6 +10,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import javax.inject.Qualifier
 import javax.inject.Singleton
@@ -34,7 +35,8 @@ object ChatConnectionModule {
     fun provideReadConnection(
         @WebSocketOkHttpClient client: OkHttpClient,
         @ApplicationScope scope: CoroutineScope,
-    ): ChatConnection = ChatConnection(ChatConnectionType.Read, client, scope)
+        preferenceStore: DankChatPreferenceStore,
+    ): ChatConnection = ChatConnection(ChatConnectionType.Read, client, scope, preferenceStore)
 
     @Singleton
     @WriteConnection
@@ -42,7 +44,8 @@ object ChatConnectionModule {
     fun provideWriteConnection(
         @WebSocketOkHttpClient client: OkHttpClient,
         @ApplicationScope scope: CoroutineScope,
-    ): ChatConnection = ChatConnection(ChatConnectionType.Write, client, scope)
+        preferenceStore: DankChatPreferenceStore,
+    ): ChatConnection = ChatConnection(ChatConnectionType.Write, client, scope, preferenceStore)
 
     @Singleton
     @Provides
@@ -51,5 +54,6 @@ object ChatConnectionModule {
         @ApplicationScope scope: CoroutineScope,
         preferenceStore: DankChatPreferenceStore,
         helixApiClient: HelixApiClient,
-    ): PubSubManager = PubSubManager(helixApiClient, preferenceStore, client, scope)
+        json: Json,
+    ): PubSubManager = PubSubManager(helixApiClient, preferenceStore, client, scope, json)
 }
