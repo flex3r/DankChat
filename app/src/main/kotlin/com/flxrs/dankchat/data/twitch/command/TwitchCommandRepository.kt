@@ -21,6 +21,8 @@ class TwitchCommandRepository @Inject constructor(
     private val dankChatPreferenceStore: DankChatPreferenceStore,
 ) {
 
+    fun isIrcCommand(trigger: String): Boolean = trigger in ALLOWED_IRC_COMMAND_TRIGGERS
+
     suspend fun handleTwitchCommand(command: TwitchCommand, context: CommandContext): CommandResult {
         val currentUserId = dankChatPreferenceStore.userIdString ?: return CommandResult.AcceptedTwitchCommand(
             command = command,
@@ -39,13 +41,11 @@ class TwitchCommandRepository @Inject constructor(
             TwitchCommand.Color          -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.Commercial     -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.Delete         -> CommandResult.Message(context.originalMessage) // TODO
-            TwitchCommand.Disconnect     -> CommandResult.NotFound
             TwitchCommand.EmoteOnly      -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.EmoteOnlyOff   -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.Followers      -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.FollowersOff   -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.Marker         -> CommandResult.Message(context.originalMessage) // TODO
-            TwitchCommand.Me             -> CommandResult.NotFound
             TwitchCommand.Mod            -> addModerator(command, context)
             TwitchCommand.Mods           -> getModerators(command, context)
             TwitchCommand.R9kBeta        -> CommandResult.Message(context.originalMessage) // TODO
@@ -62,9 +62,9 @@ class TwitchCommandRepository @Inject constructor(
             TwitchCommand.Unmod          -> removeModerator(command, context)
             TwitchCommand.Unraid         -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.Untimeout      -> CommandResult.Message(context.originalMessage) // TODO
-            TwitchCommand.Unvip          -> CommandResult.Message(context.originalMessage) // TODO
-            TwitchCommand.Vip            -> CommandResult.Message(context.originalMessage) // TODO
-            TwitchCommand.Vips           -> CommandResult.Message(context.originalMessage) // TODO
+            TwitchCommand.Unvip          -> removeVip(command, context)
+            TwitchCommand.Vip            -> addVip(command, context)
+            TwitchCommand.Vips           -> getVips(command, context)
             TwitchCommand.Whisper        -> sendWhisper(command, currentUserId, context)
         }
     }
@@ -118,11 +118,18 @@ class TwitchCommandRepository @Inject constructor(
     private suspend fun getModerators(command: TwitchCommand, context: CommandContext): CommandResult {
         return helixApiClient.getModerators(context.channelId).fold(
             onSuccess = { result ->
+                when {
+                    result.isEmpty() -> CommandResult.AcceptedTwitchCommand(command, response = "This channel does not have any moderators.")
+                    else             -> {
+                        val users = result.joinToString { it.userLogin.formatWithDisplayName(it.userName) }
+                        CommandResult.AcceptedTwitchCommand(command, response = "The moderators of this channel are $users.")
+                    }
+                }
                 val users = result.joinToString { it.userLogin.formatWithDisplayName(it.userName) }
                 CommandResult.AcceptedTwitchCommand(command, response = "The moderators of this channel are $users.")
             },
             onFailure = {
-                val response = "Failed to get moderators - ${it.toErrorMessage()}"
+                val response = "Failed to list moderators - ${it.toErrorMessage()}"
                 CommandResult.AcceptedTwitchCommand(command, response)
             }
         )
@@ -170,8 +177,68 @@ class TwitchCommandRepository @Inject constructor(
         )
     }
 
+    private suspend fun getVips(command: TwitchCommand, context: CommandContext): CommandResult {
+        return helixApiClient.getVips(context.channelId).fold(
+            onSuccess = { result ->
+                when {
+                    result.isEmpty() -> CommandResult.AcceptedTwitchCommand(command, response = "This channel does not have any VIPs.")
+                    else             -> {
+                        val users = result.joinToString { it.userLogin.formatWithDisplayName(it.userName) }
+                        CommandResult.AcceptedTwitchCommand(command, response = "The vips of this channel are $users.")
+                    }
+                }
+            },
+            onFailure = {
+                val response = "Failed to list VIPs - ${it.toErrorMessage()}"
+                CommandResult.AcceptedTwitchCommand(command, response)
+            }
+        )
+    }
+
+    private suspend fun addVip(command: TwitchCommand, context: CommandContext): CommandResult {
+        val args = context.args
+        if (args.isEmpty() || args.first().isBlank()) {
+            return CommandResult.AcceptedTwitchCommand(command, response = "Usage: ${context.trigger} <username> - Grant VIP status to a user.")
+        }
+
+        val target = helixApiClient.getUserByName(args.first().toUserName()).getOrElse {
+            return CommandResult.AcceptedTwitchCommand(command, response = "No user matching that username.")
+        }
+
+        val targetId = target.id
+        val targetName = target.displayName
+        return helixApiClient.postVip(context.channelId, targetId).fold(
+            onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "You have added $targetName as a VIP of this channel.") },
+            onFailure = {
+                val response = "Failed to add VIP - ${it.toErrorMessage(targetName)}"
+                CommandResult.AcceptedTwitchCommand(command, response)
+            }
+        )
+    }
+
+    private suspend fun removeVip(command: TwitchCommand, context: CommandContext): CommandResult {
+        val args = context.args
+        if (args.isEmpty() || args.first().isBlank()) {
+            return CommandResult.AcceptedTwitchCommand(command, response = "Usage: ${context.trigger} <username> - Revoke VIP status from a user.")
+        }
+
+        val target = helixApiClient.getUserByName(args.first().toUserName()).getOrElse {
+            return CommandResult.AcceptedTwitchCommand(command, response = "No user matching that username.")
+        }
+
+        val targetId = target.id
+        val targetName = target.displayName
+        return helixApiClient.deleteVip(context.channelId, targetId).fold(
+            onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "You have removed $targetName as a VIP of this channel.") },
+            onFailure = {
+                val response = "Failed to remove VIP - ${it.toErrorMessage(targetName)}"
+                CommandResult.AcceptedTwitchCommand(command, response)
+            }
+        )
+    }
+
     private fun Throwable.toErrorMessage(targetName: DisplayName? = null): String {
-        Log.d(TAG, "Command failed: ", this)
+        Log.v(TAG, "Command failed: $this")
         if (this !is HelixApiException) {
             return GENERIC_ERROR_MESSAGE
         }
@@ -180,8 +247,7 @@ class TwitchCommandRepository @Inject constructor(
             HelixError.UserNotAuthorized,
             HelixError.Forbidden                -> "You don't have permission to perform that action."
 
-            HelixError.BadRequest               -> message ?: GENERIC_ERROR_MESSAGE
-            HelixError.Unauthorized             -> message ?: GENERIC_ERROR_MESSAGE
+            HelixError.Forwarded                -> message ?: GENERIC_ERROR_MESSAGE
             HelixError.MissingScopes            -> "Missing required scope. Re-login with your account and try again."
             HelixError.NotLoggedIn              -> "Missing login credentials. Re-login with your account and try again."
             HelixError.WhisperSelf              -> "You cannot whisper yourself."
@@ -200,6 +266,7 @@ class TwitchCommandRepository @Inject constructor(
     companion object {
         private val TAG = TwitchCommandRepository::class.java.simpleName
         private const val GENERIC_ERROR_MESSAGE = "An unknown error has occurred."
+        private val ALLOWED_IRC_COMMAND_TRIGGERS = listOf("me", "disconnect")
     }
 }
 

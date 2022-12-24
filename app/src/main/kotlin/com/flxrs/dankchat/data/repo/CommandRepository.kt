@@ -58,34 +58,41 @@ class CommandRepository @Inject constructor(
             return CommandResult.NotFound
         }
 
-
         val trigger = words.first()
         if (trigger.isEmpty()) {
             return CommandResult.NotFound
         }
 
         val triggerWithoutFirstChar = trigger.drop(1)
-        if (triggerWithoutFirstChar == TwitchCommand.Me.trigger) {
-            return CommandResult.NotFound
-        }
-
-        if (skipSuspendingCommands) {
-            return checkUserCommands(trigger)
+        if (twitchCommandRepository.isIrcCommand(triggerWithoutFirstChar)) {
+            return CommandResult.IrcCommand
         }
 
         val twitchCommand = twitchCommands.find { it.trigger == triggerWithoutFirstChar }
         if (twitchCommand != null) {
+            if (skipSuspendingCommands) {
+                return CommandResult.Blocked
+            }
+
             val context = CommandContext(trigger, channel, channelId, message, words.drop(1))
             return twitchCommandRepository.handleTwitchCommand(twitchCommand, context)
         }
 
-        return when (defaultCommands.find { it.trigger == trigger }) {
-            Command.BLOCK    -> blockUserCommand(words.drop(1))
-            Command.UNBLOCK  -> unblockUserCommand(words.drop(1))
-            Command.CHATTERS -> chattersCommand(channel)
-            Command.UPTIME   -> uptimeCommand(channel)
-            else             -> checkUserCommands(trigger)
+        val defaultCommand = defaultCommands.find { it.trigger == trigger }
+        if (defaultCommand != null) {
+            if (skipSuspendingCommands) {
+                return CommandResult.Blocked
+            }
+
+            when (defaultCommand) {
+                Command.BLOCK    -> blockUserCommand(words.drop(1))
+                Command.UNBLOCK  -> unblockUserCommand(words.drop(1))
+                Command.CHATTERS -> chattersCommand(channel)
+                Command.UPTIME   -> uptimeCommand(channel)
+            }
         }
+
+        return checkUserCommands(trigger)
     }
 
     suspend fun loadSupibotCommands() = withContext(Dispatchers.Default) {

@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 
 @Keep
 @Serializable
-data class ModDto(
+data class ModVipDto(
     @SerialName("user_id") val userId: UserId,
     @SerialName("user_login") val userLogin: UserName,
     @SerialName("user_name") val userName: DisplayName,
