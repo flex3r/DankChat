@@ -37,6 +37,13 @@ open class ApiException(
 
 }
 
+fun <R, T : R> Result<T>.recoverNotFoundWith(default: R): Result<R> = recoverCatching {
+    when {
+        it is ApiException && it.status == HttpStatusCode.NotFound -> default
+        else                                                       -> throw it
+    }
+}
+
 suspend fun HttpResponse.throwApiErrorOnFailure(json: Json): HttpResponse {
     if (status.isSuccess()) {
         return this
