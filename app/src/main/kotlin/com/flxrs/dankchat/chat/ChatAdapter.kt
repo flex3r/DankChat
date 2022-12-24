@@ -31,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.imageLoader
 import coil.request.ImageRequest
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.data.*
 import com.flxrs.dankchat.data.repo.EmoteRepository
 import com.flxrs.dankchat.data.repo.EmoteRepository.Companion.cacheKey
 import com.flxrs.dankchat.data.twitch.badge.Badge
@@ -52,7 +53,7 @@ class ChatAdapter(
     private val emoteRepository: EmoteRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
     private val onListChanged: (position: Int) -> Unit,
-    private val onUserClick: (targetUserId: String?, targetUsername: String, messageId: String, channelName: String, badges: List<Badge>, isLongPress: Boolean) -> Unit,
+    private val onUserClick: (targetUserId: UserId?, targetUsername: UserName, targetDisplayName: DisplayName, messageId: String, channelName: UserName?, badges: List<Badge>, isLongPress: Boolean) -> Unit,
     private val onMessageLongClick: (message: String) -> Unit
 ) : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
     // Using position.isEven for determining which background to use in checkered mode doesn't work,
@@ -264,7 +265,7 @@ class ChatAdapter(
                 when {
                     message.requiresUserInput -> append("Redeemed ")
                     else                      -> {
-                        bold { append(message.displayName) }
+                        bold { append(message.displayName.value) }
                         append(" redeemed ")
                     }
                 }
@@ -309,15 +310,8 @@ class ChatAdapter(
         }
         setRippleBackground(background, enableRipple = true)
 
-        val fullName = when {
-            displayName.equals(name, true) -> displayName
-            else                           -> "$name($displayName)"
-        }
-
-        val fullRecipientName = when {
-            recipientDisplayName.equals(recipientName, true) -> recipientDisplayName
-            else                                             -> "$recipientName($recipientDisplayName)"
-        }
+        val fullName = name.valueOrDisplayName(displayName)
+        val fullRecipientName = recipientName.valueOrDisplayName(recipientDisplayName)
 
         val allowedBadges = badges.filter { it.type in dankChatPreferenceStore.visibleBadgeTypes }
         val badgesLength = allowedBadges.size * 2
@@ -344,13 +338,8 @@ class ChatAdapter(
         spannable.append(message)
 
         val userClickableSpan = object : LongClickableSpan() {
-            val mentionName = when {
-                name.equals(displayName, ignoreCase = true) -> displayName
-                else                                        -> name
-            }
-
-            override fun onClick(v: View) = onUserClick(userId, mentionName, id, "", badges, false)
-            override fun onLongClick(view: View) = onUserClick(userId, mentionName, id, "", badges, true)
+            override fun onClick(v: View) = onUserClick(userId, name, displayName, id, null, badges, false)
+            override fun onLongClick(view: View) = onUserClick(userId, name, displayName, id, null, badges, true)
             override fun updateDrawState(ds: TextPaint) {
                 ds.isUnderlineText = false
                 ds.color = normalizedColor
@@ -504,11 +493,7 @@ class ChatAdapter(
             return
         }
 
-        val fullName = when {
-            displayName.equals(name, true) -> displayName
-            else                           -> "$name($displayName)"
-        }
-
+        val fullName = name.formatWithDisplayName(displayName)
         val fullDisplayName = when {
             !dankChatPreferenceStore.showUsername -> ""
             isAction                              -> "$fullName "
@@ -545,13 +530,8 @@ class ChatAdapter(
         // clicking usernames
         if (fullName.isNotBlank()) {
             val userClickableSpan = object : LongClickableSpan() {
-                val mentionName = when {
-                    name.equals(displayName, ignoreCase = true) -> displayName
-                    else                                        -> name
-                }
-
-                override fun onClick(v: View) = onUserClick(userId, mentionName, id, channel, badges, false)
-                override fun onLongClick(view: View) = onUserClick(userId, mentionName, id, channel, badges, true)
+                override fun onClick(v: View) = onUserClick(userId, name, displayName, id, channel, badges, false)
+                override fun onLongClick(view: View) = onUserClick(userId, name, displayName, id, channel, badges, true)
                 override fun updateDrawState(ds: TextPaint) {
                     ds.isUnderlineText = false
                     ds.color = normalizedColor

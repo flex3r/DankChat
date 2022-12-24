@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.data.twitch.connection
 
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.helix.HelixApiClient
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.withoutOAuthSuffix
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
@@ -18,6 +20,7 @@ class PubSubManager @Inject constructor(
     private val preferenceStore: DankChatPreferenceStore,
     private val client: OkHttpClient,
     private val scope: CoroutineScope,
+    private val json: Json,
 ) {
 
     private val connections = mutableListOf<PubSubConnection>()
@@ -63,7 +66,7 @@ class PubSubManager @Inject constructor(
         connections.forEach { it.close() }
     }
 
-    fun addChannel(channel: String) = scope.launch {
+    fun addChannel(channel: UserName) = scope.launch {
         if (!preferenceStore.isLoggedIn) {
             return@launch
         }
@@ -75,7 +78,7 @@ class PubSubManager @Inject constructor(
         listen(setOf(topic))
     }
 
-    fun removeChannel(channel: String) {
+    fun removeChannel(channel: UserName) {
         val emptyConnections = connections
             .onEach { it.unlistenByChannel(channel) }
             .filterNot { it.hasTopics }
@@ -109,7 +112,8 @@ class PubSubManager @Inject constructor(
                         tag = "#${connections.size}",
                         client = client,
                         scope = this,
-                        oAuth = oAuth
+                        oAuth = oAuth,
+                        jsonFormat = json,
                     )
                     connection.connect(initialTopics = topics.toSet())
                     connections += connection

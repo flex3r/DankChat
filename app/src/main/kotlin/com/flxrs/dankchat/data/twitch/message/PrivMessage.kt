@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.data.twitch.message
 
 import android.graphics.Color
+import com.flxrs.dankchat.data.*
 import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
@@ -10,10 +11,10 @@ data class PrivMessage(
     override val timestamp: Long = System.currentTimeMillis(),
     override val id: String = UUID.randomUUID().toString(),
     override val highlights: Set<Highlight> = emptySet(),
-    val channel: String,
-    val userId: String? = null,
-    val name: String = "",
-    val displayName: String = "",
+    val channel: UserName,
+    val userId: UserId? = null,
+    val name: UserName,
+    val displayName: DisplayName,
     val color: Int = Color.parseColor(DEFAULT_COLOR),
     val message: String,
     val originalMessage: String = message,
@@ -53,14 +54,14 @@ data class PrivMessage(
 
             return PrivMessage(
                 timestamp = ts,
-                channel = channel,
-                name = name,
-                displayName = displayName,
+                channel = channel.toUserName(),
+                name = name.toUserName(),
+                displayName = displayName.toDisplayName(),
                 color = color,
                 message = message,
                 isAction = isAction,
                 id = id,
-                userId = tags["user-id"],
+                userId = tags["user-id"]?.asUserId(),
                 timedOut = tags["rm-deleted"] == "1",
                 tags = tags,
             )

@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.preferences.tts
+package com.flxrs.dankchat.preferences.ui.tts
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -20,7 +20,7 @@ class TtsIgnoreListAdapter(val items: MutableList<TtsIgnoreItem>) : RecyclerView
     inner class AddViewHolder(binding: TtsIgnoreListAddItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.userAdd.setOnClickListener {
-                val item = TtsIgnoreItem.Entry("")
+                val item = TtsIgnoreItem.Entry(user = "")
                 val position = items.lastIndex
                 items.add(position, item)
                 notifyItemInserted(position)

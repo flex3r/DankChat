@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.data.api.recentmessages
 
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.recentmessages.dto.RecentMessagesDto
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import io.ktor.client.call.*
@@ -14,7 +15,7 @@ class RecentMessagesApiClient @Inject constructor(
     private val preferenceStore: DankChatPreferenceStore,
 ) {
 
-    suspend fun getRecentMessages(channel: String): Result<RecentMessagesDto> = runCatching {
+    suspend fun getRecentMessages(channel: UserName): Result<RecentMessagesDto> = runCatching {
         val limit = preferenceStore.scrollbackLength
         recentMessagesApi.getRecentMessages(channel, limit)
             .throwRecentMessagesErrorOnFailure()

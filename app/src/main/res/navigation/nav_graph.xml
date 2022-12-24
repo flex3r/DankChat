@@ -40,7 +40,7 @@
         android:label="ChatFragment">
         <argument
             android:name="channel"
-            app:argType="string" />
+            app:argType="com.flxrs.dankchat.data.UserName" />
     </fragment>
     <fragment
         android:id="@+id/mentionChatFragment"
@@ -127,7 +127,7 @@
             app:destination="@+id/editChannelDialogFragment" />
         <argument
             android:name="channels"
-            app:argType="string[]" />
+            app:argType="com.flxrs.dankchat.data.UserName[]" />
     </dialog>
 
     <dialog
@@ -140,10 +140,10 @@
         android:label="EditChannelDialogFragment">
         <argument
             android:name="channel"
-            app:argType="string" />
+            app:argType="com.flxrs.dankchat.data.UserName" />
         <argument
             android:name="renaming"
-            app:argType="string"
+            app:argType="com.flxrs.dankchat.data.UserName"
             app:nullable="true" />
     </dialog>
     <dialog
@@ -156,16 +156,16 @@
         android:label="UserPopupDialogFragment">
         <argument
             android:name="targetUserId"
-            app:argType="string" />
+            app:argType="com.flxrs.dankchat.data.UserId" />
         <argument
             android:name="targetUserName"
-            app:argType="string" />
+            app:argType="com.flxrs.dankchat.data.UserName" />
         <argument
             android:name="messageId"
             app:argType="string" />
         <argument
             android:name="channel"
-            app:argType="string"
+            app:argType="com.flxrs.dankchat.data.UserName"
             app:nullable="true" />
         <argument
             android:name="isWhisperPopup"
@@ -173,5 +173,8 @@
         <argument
             android:name="badges"
             app:argType="com.flxrs.dankchat.data.twitch.badge.Badge[]" />
+        <argument
+            android:name="targetDisplayName"
+            app:argType="com.flxrs.dankchat.data.DisplayName" />
     </dialog>
 </navigation>

@@ -21,6 +21,9 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.data.DisplayName
+import com.flxrs.dankchat.data.UserId
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.repo.EmoteRepository
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
@@ -68,10 +71,7 @@ open class ChatFragment : Fragment() {
             }
         }
 
-        if (args.channel.isNotBlank()) {
-            collectFlow(viewModel.chat) { adapter.submitList(it) }
-        }
-
+        collectFlow(viewModel.chat) { adapter.submitList(it) }
         return binding.root
     }
 
@@ -155,16 +155,25 @@ open class ChatFragment : Fragment() {
         outState.putBoolean(AT_BOTTOM_STATE, isAtBottom)
     }
 
-    protected open fun onUserClick(targetUserId: String?, targetUserName: String, messageId: String, channel: String, badges: List<Badge>, isLongPress: Boolean) {
+    protected open fun onUserClick(
+        targetUserId: UserId?,
+        targetUserName: UserName,
+        targetDisplayName: DisplayName,
+        messageId: String,
+        channel: UserName?,
+        badges: List<Badge>,
+        isLongPress: Boolean
+    ) {
         targetUserId ?: return
         val shouldLongClickMention = preferences.getBoolean(getString(R.string.preference_user_long_click_key), true)
         val shouldMention = (isLongPress && shouldLongClickMention) || (!isLongPress && !shouldLongClickMention)
 
         when {
-            shouldMention -> (parentFragment as? MainFragment)?.mentionUser(targetUserName)
+            shouldMention -> (parentFragment as? MainFragment)?.mentionUser(targetUserName, targetDisplayName)
             else          -> (parentFragment as? MainFragment)?.openUserPopup(
                 targetUserId = targetUserId,
                 targetUserName = targetUserName,
+                targetDisplayName = targetDisplayName,
                 messageId = messageId,
                 channel = channel,
                 badges = badges,
@@ -231,7 +240,7 @@ open class ChatFragment : Fragment() {
         private const val MAX_MESSAGES_REDRAW_AMOUNT = 50
         private const val OFFSCREEN_VIEW_CACHE_SIZE = 10
 
-        fun newInstance(channel: String) = ChatFragment().apply {
+        fun newInstance(channel: UserName) = ChatFragment().apply {
             arguments = ChatFragmentArgs(channel).toBundle()
         }
 

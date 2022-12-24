@@ -1,6 +1,8 @@
 package com.flxrs.dankchat.data.api.helix
 
 import android.util.Log
+import com.flxrs.dankchat.data.UserId
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.helix.dto.*
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import io.ktor.client.call.*
@@ -13,19 +15,16 @@ import javax.inject.Singleton
 @Singleton
 class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private val json: Json) {
 
-    suspend fun getUserIdByName(name: String): Result<String> = getUserByName(name)
-        .mapCatching { it.id }
-
-    suspend fun getUsersByNames(names: List<String>): Result<List<UserDto>> = runCatching {
+    suspend fun getUsersByNames(names: List<UserName>): Result<List<UserDto>> = runCatching {
         names.chunked(DEFAULT_PAGE_SIZE).flatMap {
-            helixApi.getUserByName(it)
+            helixApi.getUsersByName(it)
                 .throwHelixApiErrorOnFailure()
                 .body<UsersDto>()
                 .data
         }
     }
 
-    suspend fun getUsersByIds(ids: List<String>): Result<List<UserDto>> = runCatching {
+    suspend fun getUsersByIds(ids: List<UserId>): Result<List<UserDto>> = runCatching {
         ids.chunked(DEFAULT_PAGE_SIZE).flatMap {
             helixApi.getUsersByIds(it)
                 .throwHelixApiErrorOnFailure()
@@ -34,27 +33,30 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
         }
     }
 
-    suspend fun getUser(userId: String): Result<UserDto> = runCatching {
+    suspend fun getUser(userId: UserId): Result<UserDto> = runCatching {
         helixApi.getUserById(userId)
             .throwHelixApiErrorOnFailure()
             .body<UsersDto>()
             .data.first()
     }
 
-    suspend fun getUserByName(name: String): Result<UserDto> = runCatching {
-        helixApi.getUserByName(listOf(name))
+    suspend fun getUserByName(name: UserName): Result<UserDto> = runCatching {
+        helixApi.getUsersByName(listOf(name))
             .throwHelixApiErrorOnFailure()
             .body<UsersDto>()
             .data.first()
     }
 
-    suspend fun getUsersFollows(fromId: String, toId: String): Result<UserFollowsDto> = runCatching {
+    suspend fun getUserIdByName(name: UserName): Result<UserId> = getUserByName(name)
+        .mapCatching { it.id }
+
+    suspend fun getUsersFollows(fromId: UserId, toId: UserId): Result<UserFollowsDto> = runCatching {
         helixApi.getUsersFollows(fromId, toId)
             .throwHelixApiErrorOnFailure()
             .body()
     }
 
-    suspend fun getStreams(channels: List<String>): Result<List<StreamDto>> = runCatching {
+    suspend fun getStreams(channels: List<UserName>): Result<List<StreamDto>> = runCatching {
         channels.chunked(DEFAULT_PAGE_SIZE).flatMap {
             helixApi.getStreams(it)
                 .throwHelixApiErrorOnFailure()
@@ -63,25 +65,25 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
         }
     }
 
-    suspend fun getUserBlocks(userId: String, maxUserBlocksToFetch: Int = 500): Result<List<UserBlockDto>> = runCatching {
+    suspend fun getUserBlocks(userId: UserId, maxUserBlocksToFetch: Int = 500): Result<List<UserBlockDto>> = runCatching {
         pageUntil(maxUserBlocksToFetch) { cursor ->
             helixApi.getUserBlocks(userId, DEFAULT_PAGE_SIZE, cursor)
         }
     }
 
-    suspend fun blockUser(targetUserId: String): Result<Unit> = runCatching {
+    suspend fun blockUser(targetUserId: UserId): Result<Unit> = runCatching {
         helixApi.putUserBlock(targetUserId)
             .throwHelixApiErrorOnFailure()
     }
 
-    suspend fun unblockUser(targetUserId: String): Result<Unit> = runCatching {
+    suspend fun unblockUser(targetUserId: UserId): Result<Unit> = runCatching {
         helixApi.deleteUserBlock(targetUserId)
             .throwHelixApiErrorOnFailure()
     }
 
     suspend fun postAnnouncement(
-        broadcastUserId: String,
-        moderatorUserId: String,
+        broadcastUserId: UserId,
+        moderatorUserId: UserId,
         request: AnnouncementRequestDto
     ): Result<Unit> = runCatching {
         helixApi.postAnnouncement(broadcastUserId, moderatorUserId, request)
@@ -89,26 +91,26 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
     }
 
     suspend fun postWhisper(
-        fromUserId: String,
-        toUserId: String,
+        fromUserId: UserId,
+        toUserId: UserId,
         request: WhisperRequestDto
     ): Result<Unit> = runCatching {
         helixApi.postWhisper(fromUserId, toUserId, request)
             .throwHelixApiErrorOnFailure()
     }
 
-    suspend fun getModerators(broadcastUserId: String, maxModeratorsToFetch: Int = 500): Result<List<ModDto>> = runCatching {
+    suspend fun getModerators(broadcastUserId: UserId, maxModeratorsToFetch: Int = 500): Result<List<ModDto>> = runCatching {
         pageUntil(maxModeratorsToFetch) { cursor ->
             helixApi.getModerators(broadcastUserId, DEFAULT_PAGE_SIZE, cursor)
         }
     }
 
-    suspend fun postModerator(broadcastUserId: String, userId: String): Result<Unit> = runCatching {
+    suspend fun postModerator(broadcastUserId: UserId, userId: UserId): Result<Unit> = runCatching {
         helixApi.postModerator(broadcastUserId, userId)
             .throwHelixApiErrorOnFailure()
     }
 
-    suspend fun deleteModerator(broadcastUserId: String, userId: String): Result<Unit> = runCatching {
+    suspend fun deleteModerator(broadcastUserId: UserId, userId: UserId): Result<Unit> = runCatching {
         helixApi.deleteModerator(broadcastUserId, userId)
             .throwHelixApiErrorOnFailure()
     }

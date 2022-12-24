@@ -52,7 +52,7 @@ class SuggestionsArrayAdapter(
                 }
 
                 is Suggestion.UserSuggestion    -> {
-                    textView.text = suggestion.name
+                    textView.text = suggestion.name.value
                     imageView.setImageDrawable(context.getDrawableAndSetSurfaceTint(R.drawable.ic_notification_icon))
                 }
 

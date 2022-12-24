@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.data.api.chatters
 
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.chatters.dto.ChatterCountDto
 import com.flxrs.dankchat.data.api.chatters.dto.ChattersDto
 import com.flxrs.dankchat.data.api.chatters.dto.ChattersResultDto
@@ -13,14 +14,14 @@ import javax.inject.Singleton
 class ChattersApiClient @Inject constructor(private val chattersApi: ChattersApi, private val json: Json) {
     var count = 0
 
-    suspend fun getChatters(channel: String): Result<ChattersDto> = runCatching {
+    suspend fun getChatters(channel: UserName): Result<ChattersDto> = runCatching {
         chattersApi.getChatters(channel)
             .throwApiErrorOnFailure(json)
             .body<ChattersResultDto>()
             .chatters
     }
 
-    suspend fun getChatterCount(channel: String): Result<Int> = runCatching {
+    suspend fun getChatterCount(channel: UserName): Result<Int> = runCatching {
         chattersApi.getChatters(channel)
             .throwApiErrorOnFailure(json)
             .body<ChatterCountDto>()

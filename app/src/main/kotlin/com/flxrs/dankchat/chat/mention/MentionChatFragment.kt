@@ -8,6 +8,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.chat.ChatFragment
+import com.flxrs.dankchat.data.DisplayName
+import com.flxrs.dankchat.data.UserId
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
@@ -38,7 +41,7 @@ class MentionChatFragment : ChatFragment() {
         return binding.root
     }
 
-    override fun onUserClick(targetUserId: String?, targetUserName: String, messageId: String, channel: String, badges: List<Badge>, isLongPress: Boolean) {
+    override fun onUserClick(targetUserId: UserId?, targetUserName: UserName, targetDisplayName: DisplayName, messageId: String, channel: UserName?, badges: List<Badge>, isLongPress: Boolean) {
         targetUserId ?: return
         val shouldLongClickMention = preferences.getBoolean(getString(R.string.preference_user_long_click_key), true)
         val shouldMention = (isLongPress && shouldLongClickMention) || (!isLongPress && !shouldLongClickMention)
@@ -48,6 +51,7 @@ class MentionChatFragment : ChatFragment() {
             else          -> (parentFragment?.parentFragment as? MainFragment)?.openUserPopup(
                 targetUserId = targetUserId,
                 targetUserName = targetUserName,
+                targetDisplayName = targetDisplayName,
                 messageId = messageId,
                 channel = null,
                 badges = badges,

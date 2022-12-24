@@ -3,6 +3,8 @@
 package com.flxrs.dankchat.data.repo
 
 import android.util.Log
+import com.flxrs.dankchat.data.UserId
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.helix.HelixApiClient
 import com.flxrs.dankchat.data.database.dao.MessageIgnoreDao
 import com.flxrs.dankchat.data.database.dao.UserIgnoreDao
@@ -30,7 +32,7 @@ class IgnoresRepository @Inject constructor(
     @ApplicationScope private val coroutineScope: CoroutineScope
 ) {
 
-    data class TwitchBlock(val id: String, val name: String)
+    data class TwitchBlock(val id: UserId, val name: UserName)
 
     private val _twitchBlocks = MutableStateFlow(emptySet<TwitchBlock>())
 
@@ -85,39 +87,40 @@ class IgnoresRepository @Inject constructor(
         preferences.clearBlacklist()
     }
 
-    fun isUserBlocked(userId: String?): Boolean {
+    fun isUserBlocked(userId: UserId?): Boolean {
         return _twitchBlocks.value.any { it.id == userId }
     }
 
-    suspend fun loadUserBlocks(id: String) = withContext(Dispatchers.Default) {
+    suspend fun loadUserBlocks() = withContext(Dispatchers.Default) {
         if (!preferences.isLoggedIn) {
             return@withContext
         }
 
-            val blocks = helixApiClient.getUserBlocks(id).getOrElse {
-                Log.d(TAG, "Failed to load user blocks for $id", it)
-                return@withContext
-            }
-            if (blocks.isEmpty()) {
-                _twitchBlocks.update { emptySet() }
-                return@withContext
-            }
-            val userIds = blocks.map { it.id }
-            val users = helixApiClient.getUsersByIds(userIds).getOrElse {
-                Log.d(TAG, "Failed to load user ids $userIds", it)
-                return@withContext
-            }
-            val twitchBlocks = users.map { user ->
-                TwitchBlock(
-                    id = user.id,
-                    name = user.name,
-                )
-            }.toSet()
+        val userId = preferences.userIdString ?: return@withContext
+        val blocks = helixApiClient.getUserBlocks(userId).getOrElse {
+            Log.d(TAG, "Failed to load user blocks for $userId", it)
+            return@withContext
+        }
+        if (blocks.isEmpty()) {
+            _twitchBlocks.update { emptySet() }
+            return@withContext
+        }
+        val userIds = blocks.map { it.id }
+        val users = helixApiClient.getUsersByIds(userIds).getOrElse {
+            Log.d(TAG, "Failed to load user ids $userIds", it)
+            return@withContext
+        }
+        val twitchBlocks = users.map { user ->
+            TwitchBlock(
+                id = user.id,
+                name = user.name,
+            )
+        }.toSet()
 
-            _twitchBlocks.update { twitchBlocks }
+        _twitchBlocks.update { twitchBlocks }
     }
 
-    suspend fun addUserBlock(targetUserId: String, targetUsername: String) {
+    suspend fun addUserBlock(targetUserId: UserId, targetUsername: UserName) {
         val result = helixApiClient.blockUser(targetUserId)
         if (result.isSuccess) {
             _twitchBlocks.update {
@@ -129,7 +132,7 @@ class IgnoresRepository @Inject constructor(
         }
     }
 
-    suspend fun removeUserBlock(targetUserId: String, targetUsername: String) {
+    suspend fun removeUserBlock(targetUserId: UserId, targetUsername: UserName) {
         val result = helixApiClient.unblockUser(targetUserId)
         if (result.isSuccess) {
             _twitchBlocks.update {
@@ -287,12 +290,12 @@ class IgnoresRepository @Inject constructor(
         return any { it.type == type }
     }
 
-    private fun isIgnoredUsername(name: String): Boolean {
+    private fun isIgnoredUsername(name: UserName): Boolean {
         validUserIgnores.value
             .forEach {
                 val hasMatch = when {
-                    it.isRegex -> it.regex?.let { regex -> name.matches(regex) } ?: false
-                    else       -> name.equals(it.username, ignoreCase = !it.isCaseSensitive)
+                    it.isRegex -> it.regex?.let { regex -> name.value.matches(regex) } ?: false
+                    else       -> name.matches(it.username)
                 }
 
                 if (hasMatch) {
