@@ -9,12 +9,16 @@ import kotlinx.serialization.Serializable
 enum class AnnouncementColor {
     @SerialName("primary")
     Primary,
+
     @SerialName("blue")
     Blue,
+
     @SerialName("green")
     Green,
+
     @SerialName("orange")
     Orange,
+
     @SerialName("purple")
     Purple
 }

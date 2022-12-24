@@ -338,7 +338,7 @@ class MainFragment : Fragment() {
                 binding.splitGuideline?.updateLayoutParams<ConstraintLayout.LayoutParams> {
                     guidePercent = when {
                         isActive -> DEFAULT_GUIDELINE_PERCENT
-                        else -> DISABLED_GUIDELINE_PERCENT
+                        else     -> DISABLED_GUIDELINE_PERCENT
                     }
                 }
             }
@@ -346,14 +346,15 @@ class MainFragment : Fragment() {
             collectFlow(dankChatViewModel.validationResult) {
                 when (it) {
                     // wait for username to be validated before showing snackbar
-                    is ValidationResult.User      -> showSnackBar(getString(R.string.snackbar_login, it.username))
+                    is ValidationResult.User             -> showSnackBar(getString(R.string.snackbar_login, it.username))
                     is ValidationResult.IncompleteScopes -> MaterialAlertDialogBuilder(requireContext())
                         .setTitle(R.string.login_outdated_title)
                         .setMessage(R.string.login_outdated_message)
-                        .setPositiveButton(R.string.oauth_expired_login_again) { _, _ -> openLogin()}
+                        .setPositiveButton(R.string.oauth_expired_login_again) { _, _ -> openLogin() }
                         .setNegativeButton(R.string.dialog_dismiss) { _, _ -> }
                         .create().show()
-                    ValidationResult.TokenInvalid -> {
+
+                    ValidationResult.TokenInvalid        -> {
                         MaterialAlertDialogBuilder(requireContext())
                             .setTitle(R.string.oauth_expired_title)
                             .setMessage(R.string.oauth_expired_message)
@@ -362,7 +363,7 @@ class MainFragment : Fragment() {
                             .create().show()
                     }
 
-                    ValidationResult.Failure      -> showSnackBar(getString(R.string.oauth_verify_failed))
+                    ValidationResult.Failure             -> showSnackBar(getString(R.string.oauth_verify_failed))
                 }
             }
         }
@@ -629,7 +630,7 @@ class MainFragment : Fragment() {
             is DataLoadingState.Reloaded                                                  -> showSnackBar(getString(R.string.snackbar_data_reloaded))
             is DataLoadingState.Failed                                                    -> {
                 val message = when (result.errorCount) {
-                    1 -> getString(R.string.snackbar_data_load_failed_cause, result.errorMessage)
+                    1    -> getString(R.string.snackbar_data_load_failed_cause, result.errorMessage)
                     else -> getString(R.string.snackbar_data_load_failed_multiple_causes)
                 }
                 showSnackBar(

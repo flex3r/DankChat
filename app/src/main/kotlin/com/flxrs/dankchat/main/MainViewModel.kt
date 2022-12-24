@@ -11,7 +11,6 @@ import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.ApiException
-import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.repo.CommandRepository
 import com.flxrs.dankchat.data.repo.CommandResult
 import com.flxrs.dankchat.data.repo.EmoteUsageRepository
@@ -24,6 +23,7 @@ import com.flxrs.dankchat.data.repo.data.DataLoadingStep
 import com.flxrs.dankchat.data.repo.data.DataRepository
 import com.flxrs.dankchat.data.state.DataLoadingState
 import com.flxrs.dankchat.data.state.ImageUploadState
+import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.command.TwitchCommand
 import com.flxrs.dankchat.data.twitch.connection.ConnectionState
 import com.flxrs.dankchat.data.twitch.emote.EmoteType

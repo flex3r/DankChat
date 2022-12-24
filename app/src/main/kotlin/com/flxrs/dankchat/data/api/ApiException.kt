@@ -2,13 +2,10 @@ package com.flxrs.dankchat.data.api
 
 import androidx.annotation.Keep
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
-import io.ktor.client.call.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import org.json.JSONObject
-import kotlin.random.Random
 
 open class ApiException(
     open val status: HttpStatusCode,
