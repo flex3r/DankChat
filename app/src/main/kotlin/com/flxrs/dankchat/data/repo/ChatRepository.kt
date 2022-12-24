@@ -469,7 +469,7 @@ class ChatRepository @Inject constructor(
 
     private fun handleClearChat(msg: IrcMessage) {
         val parsed = runCatching {
-            ClearChatMessage.parseClearChat(msg).calculateUserDisplays() as ClearChatMessage // TODO[DANK]
+            ClearChatMessage.parseClearChat(msg).calculateUserDisplays() as ClearChatMessage
         }.getOrElse {
             return
         }
