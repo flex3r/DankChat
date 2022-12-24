@@ -25,7 +25,7 @@ data class PrivMessage(
     val tags: Map<String, String>,
 ) : Message() {
 
-    override val emoteData: EmoteData = EmoteData(message, channel, emoteTag = tags["emotes"].orEmpty())
+    override val emoteData: EmoteData = EmoteData(originalMessage, channel, emoteTag = tags["emotes"].orEmpty())
     override val badgeData: BadgeData = BadgeData(userId, channel, badgeTag = tags["badges"], badgeInfoTag = tags["badge-info"])
 
     companion object {
