@@ -85,7 +85,8 @@ class UploadClient @Inject constructor(
 
             else                  -> {
                 Log.e(TAG, "Upload failed with ${response.code} ${response.message}")
-                Result.failure(ApiException(HttpStatusCode.fromValue(response.code), response.message))
+                val url = URLBuilder(response.request.url.toString()).build()
+                Result.failure(ApiException(HttpStatusCode.fromValue(response.code), url, response.message))
             }
         }
     }

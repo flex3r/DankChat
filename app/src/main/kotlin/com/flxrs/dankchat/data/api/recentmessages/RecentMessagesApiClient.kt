@@ -35,6 +35,6 @@ class RecentMessagesApiClient @Inject constructor(
             RecentMessagesDto.ERROR_CHANNEL_IGNORED    -> RecentMessagesError.ChannelIgnored
             else                                       -> RecentMessagesError.Unknown
         }
-        throw RecentMessagesApiException(error, betterStatus, message)
+        throw RecentMessagesApiException(error, betterStatus, request.url, message)
     }
 }

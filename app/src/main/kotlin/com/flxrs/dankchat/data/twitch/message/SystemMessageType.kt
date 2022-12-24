@@ -13,6 +13,9 @@ sealed class SystemMessageType {
     object MessageHistoryIgnored : SystemMessageType()
     data class MessageHistoryUnavailable(val status: String?) : SystemMessageType()
     data class ChannelNonExistent(val channel: UserName) : SystemMessageType()
+    data class ChannelFFZEmotesFailed(val status: String): SystemMessageType()
+    data class ChannelBTTVEmotesFailed(val status: String): SystemMessageType()
+    data class ChannelSevenTVEmotesFailed(val status: String): SystemMessageType()
     data class Custom(val message: String) : SystemMessageType()
 }
 

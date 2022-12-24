@@ -134,12 +134,12 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
     }
 
     private suspend fun HttpResponse?.throwHelixApiErrorOnFailure(): HttpResponse {
-        this ?: throw HelixApiException(HelixError.NotLoggedIn, HttpStatusCode.Unauthorized)
+        this ?: throw HelixApiException(HelixError.NotLoggedIn, HttpStatusCode.Unauthorized, url = null)
         if (status.isSuccess()) {
             return this
         }
 
-        val errorBody = json.decodeOrNull<HelixErrorDto>(bodyAsText()) ?: throw HelixApiException(HelixError.Unknown, status, status.description)
+        val errorBody = json.decodeOrNull<HelixErrorDto>(bodyAsText()) ?: throw HelixApiException(HelixError.Unknown, status, request.url, status.description)
         val message = errorBody.message
         val betterStatus = HttpStatusCode.fromValue(status.value)
         val error = when (betterStatus) {
@@ -175,7 +175,7 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
 
             else                               -> HelixError.Unknown
         }
-        throw HelixApiException(error, betterStatus, message)
+        throw HelixApiException(error, betterStatus, request.url, message)
     }
 
     companion object {
