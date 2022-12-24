@@ -2,8 +2,8 @@ package com.flxrs.dankchat.data.twitch.connection
 
 import android.util.Log
 import com.flxrs.dankchat.data.UserName
-import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.irc.IrcMessage
+import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.timer
 import kotlinx.coroutines.CoroutineScope

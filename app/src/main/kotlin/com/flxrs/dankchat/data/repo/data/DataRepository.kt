@@ -3,7 +3,6 @@ package com.flxrs.dankchat.data.repo.data
 import android.util.Log
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
-import com.flxrs.dankchat.data.api.*
 import com.flxrs.dankchat.data.api.badges.BadgesApiClient
 import com.flxrs.dankchat.data.api.bttv.BTTVApiClient
 import com.flxrs.dankchat.data.api.dankchat.DankChatApiClient
@@ -21,9 +20,10 @@ import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.measureTimeAndLog
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
@@ -105,7 +105,7 @@ class DataRepository @Inject constructor(
         }
     }
 
-    suspend fun loadChannelFFZEmotes(channel: UserName, channelId: UserId) = withContext(Dispatchers.Default)  {
+    suspend fun loadChannelFFZEmotes(channel: UserName, channelId: UserId) = withContext(Dispatchers.Default) {
         if (ThirdPartyEmoteType.FrankerFaceZ !in dankChatPreferenceStore.visibleThirdPartyEmotes) {
             return@withContext
         }
@@ -117,7 +117,7 @@ class DataRepository @Inject constructor(
         }.let { Log.i(TAG, "Loaded FFZ emotes for #$channel in $it ms") }
     }
 
-    suspend fun loadChannelBTTVEmotes(channel: UserName, channelId: UserId) = withContext(Dispatchers.Default)  {
+    suspend fun loadChannelBTTVEmotes(channel: UserName, channelId: UserId) = withContext(Dispatchers.Default) {
         if (ThirdPartyEmoteType.BetterTTV !in dankChatPreferenceStore.visibleThirdPartyEmotes) {
             return@withContext
         }
@@ -129,7 +129,7 @@ class DataRepository @Inject constructor(
         }.let { Log.i(TAG, "Loaded BTTV emotes for #$channel in $it ms") }
     }
 
-    suspend fun loadChannelSevenTVEmotes(channel: UserName, channelId: UserId) = withContext(Dispatchers.Default)  {
+    suspend fun loadChannelSevenTVEmotes(channel: UserName, channelId: UserId) = withContext(Dispatchers.Default) {
         if (ThirdPartyEmoteType.SevenTV !in dankChatPreferenceStore.visibleThirdPartyEmotes) {
             return@withContext
         }

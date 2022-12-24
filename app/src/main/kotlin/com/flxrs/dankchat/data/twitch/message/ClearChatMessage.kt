@@ -1,8 +1,8 @@
 package com.flxrs.dankchat.data.twitch.message
 
 import com.flxrs.dankchat.data.UserName
-import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.irc.IrcMessage
+import com.flxrs.dankchat.data.toUserName
 import java.util.*
 
 data class ClearChatMessage(

@@ -8,9 +8,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Parcelize
 value class UserName(val value: String) : Parcelable {
-    override fun toString(): String {
-        return value
-    }
+
+    override fun toString() = value
 
     fun lowercase() = UserName(value.lowercase())
 

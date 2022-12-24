@@ -2,7 +2,6 @@ package com.flxrs.dankchat.data.twitch.message
 
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
-import com.flxrs.dankchat.data.asUserId
 import com.flxrs.dankchat.data.irc.IrcMessage
 
 data class RoomState(

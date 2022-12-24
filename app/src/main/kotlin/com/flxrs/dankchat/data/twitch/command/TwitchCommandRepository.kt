@@ -1,7 +1,8 @@
 package com.flxrs.dankchat.data.twitch.command
 
 import android.util.Log
-import com.flxrs.dankchat.data.*
+import com.flxrs.dankchat.data.DisplayName
+import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.api.helix.HelixApiClient
 import com.flxrs.dankchat.data.api.helix.HelixApiException
 import com.flxrs.dankchat.data.api.helix.HelixError
@@ -9,6 +10,7 @@ import com.flxrs.dankchat.data.api.helix.dto.AnnouncementColor
 import com.flxrs.dankchat.data.api.helix.dto.AnnouncementRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.WhisperRequestDto
 import com.flxrs.dankchat.data.repo.CommandResult
+import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import javax.inject.Inject
 import javax.inject.Singleton

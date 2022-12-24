@@ -4,9 +4,9 @@ import com.flxrs.dankchat.data.api.ApiException
 import com.flxrs.dankchat.data.api.auth.dto.ValidateDto
 import com.flxrs.dankchat.data.api.auth.dto.ValidateErrorDto
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
-import io.ktor.client.call.body
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.isSuccess
+import io.ktor.client.call.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
