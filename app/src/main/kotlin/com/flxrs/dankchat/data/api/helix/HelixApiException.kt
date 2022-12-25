@@ -12,7 +12,6 @@ data class HelixApiException(
 ) : ApiException(status, url, message, cause)
 
 enum class HelixError {
-    Forbidden,
     MissingScopes,
     NotLoggedIn,
     Unknown,
@@ -26,5 +25,9 @@ enum class HelixError {
     TargetAlreadyModded,
     TargetIsVip,
     TargetNotModded,
+    TargetNotBanned,
+    TargetAlreadyBanned,
+    TargetCannotBeBanned,
+    ConflictingBanOperation,
     Forwarded
 }

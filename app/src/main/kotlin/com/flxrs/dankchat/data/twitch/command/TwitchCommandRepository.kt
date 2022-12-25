@@ -1,17 +1,16 @@
 package com.flxrs.dankchat.data.twitch.command
 
 import android.util.Log
-import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.api.helix.HelixApiClient
 import com.flxrs.dankchat.data.api.helix.HelixApiException
 import com.flxrs.dankchat.data.api.helix.HelixError
-import com.flxrs.dankchat.data.api.helix.dto.AnnouncementColor
-import com.flxrs.dankchat.data.api.helix.dto.AnnouncementRequestDto
-import com.flxrs.dankchat.data.api.helix.dto.WhisperRequestDto
+import com.flxrs.dankchat.data.api.helix.dto.*
+import com.flxrs.dankchat.data.formatName
 import com.flxrs.dankchat.data.repo.CommandResult
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.utils.DateTimeUtils
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,7 +35,7 @@ class TwitchCommandRepository @Inject constructor(
             TwitchCommand.AnnounceOrange,
             TwitchCommand.AnnouncePurple -> sendAnnouncement(command, currentUserId, context)
 
-            TwitchCommand.Ban            -> CommandResult.Message(context.originalMessage) // TODO
+            TwitchCommand.Ban            -> banUser(command, currentUserId, context)
             TwitchCommand.Clear          -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.Color          -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.Commercial     -> CommandResult.Message(context.originalMessage) // TODO
@@ -55,13 +54,13 @@ class TwitchCommandRepository @Inject constructor(
             TwitchCommand.SlowOff        -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.Subscribers    -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.SubscribersOff -> CommandResult.Message(context.originalMessage) // TODO
-            TwitchCommand.Timeout        -> CommandResult.Message(context.originalMessage) // TODO
-            TwitchCommand.Unban          -> CommandResult.Message(context.originalMessage) // TODO
+            TwitchCommand.Timeout        -> timeoutUser(command, currentUserId, context)
+            TwitchCommand.Unban          -> unbanUser(command, currentUserId, context)
             TwitchCommand.UniqueChat     -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.UniqueChatOff  -> CommandResult.Message(context.originalMessage) // TODO
             TwitchCommand.Unmod          -> removeModerator(command, context)
             TwitchCommand.Unraid         -> CommandResult.Message(context.originalMessage) // TODO
-            TwitchCommand.Untimeout      -> CommandResult.Message(context.originalMessage) // TODO
+            TwitchCommand.Untimeout      -> unbanUser(command, currentUserId, context)
             TwitchCommand.Unvip          -> removeVip(command, context)
             TwitchCommand.Vip            -> addVip(command, context)
             TwitchCommand.Vips           -> getVips(command, context)
@@ -88,7 +87,7 @@ class TwitchCommandRepository @Inject constructor(
         return result.fold(
             onSuccess = { CommandResult.AcceptedTwitchCommand(command) },
             onFailure = {
-                val response = "Failed to send announcement - ${it.toErrorMessage()}"
+                val response = "Failed to send announcement - ${it.toErrorMessage(command)}"
                 CommandResult.AcceptedTwitchCommand(command, response)
             }
         )
@@ -109,7 +108,7 @@ class TwitchCommandRepository @Inject constructor(
         return result.fold(
             onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "Whisper sent.") },
             onFailure = {
-                val response = "Failed to send whisper - ${it.toErrorMessage()}"
+                val response = "Failed to send whisper - ${it.toErrorMessage(command)}"
                 CommandResult.AcceptedTwitchCommand(command, response)
             }
         )
@@ -129,7 +128,7 @@ class TwitchCommandRepository @Inject constructor(
                 CommandResult.AcceptedTwitchCommand(command, response = "The moderators of this channel are $users.")
             },
             onFailure = {
-                val response = "Failed to list moderators - ${it.toErrorMessage()}"
+                val response = "Failed to list moderators - ${it.toErrorMessage(command)}"
                 CommandResult.AcceptedTwitchCommand(command, response)
             }
         )
@@ -146,11 +145,11 @@ class TwitchCommandRepository @Inject constructor(
         }
 
         val targetId = target.id
-        val targetName = target.displayName
+        val formattedName = target.formatName()
         return helixApiClient.postModerator(context.channelId, targetId).fold(
-            onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "You have added $targetName as a moderator of this channel.") },
+            onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "You have added $formattedName as a moderator of this channel.") },
             onFailure = {
-                val response = "Failed to add channel moderator - ${it.toErrorMessage(targetName)}"
+                val response = "Failed to add channel moderator - ${it.toErrorMessage(command, formattedName)}"
                 CommandResult.AcceptedTwitchCommand(command, response)
             }
         )
@@ -167,11 +166,11 @@ class TwitchCommandRepository @Inject constructor(
         }
 
         val targetId = target.id
-        val targetName = target.displayName
+        val formattedName = target.formatName()
         return helixApiClient.deleteModerator(context.channelId, targetId).fold(
-            onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "You have removed $targetName as a moderator of this channel.") },
+            onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "You have removed $formattedName as a moderator of this channel.") },
             onFailure = {
-                val response = "Failed to remove channel moderator - ${it.toErrorMessage(targetName)}"
+                val response = "Failed to remove channel moderator - ${it.toErrorMessage(command, formattedName)}"
                 CommandResult.AcceptedTwitchCommand(command, response)
             }
         )
@@ -189,7 +188,7 @@ class TwitchCommandRepository @Inject constructor(
                 }
             },
             onFailure = {
-                val response = "Failed to list VIPs - ${it.toErrorMessage()}"
+                val response = "Failed to list VIPs - ${it.toErrorMessage(command)}"
                 CommandResult.AcceptedTwitchCommand(command, response)
             }
         )
@@ -206,11 +205,11 @@ class TwitchCommandRepository @Inject constructor(
         }
 
         val targetId = target.id
-        val targetName = target.displayName
+        val formattedName = target.formatName()
         return helixApiClient.postVip(context.channelId, targetId).fold(
-            onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "You have added $targetName as a VIP of this channel.") },
+            onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "You have added $formattedName as a VIP of this channel.") },
             onFailure = {
-                val response = "Failed to add VIP - ${it.toErrorMessage(targetName)}"
+                val response = "Failed to add VIP - ${it.toErrorMessage(command, formattedName)}"
                 CommandResult.AcceptedTwitchCommand(command, response)
             }
         )
@@ -227,26 +226,117 @@ class TwitchCommandRepository @Inject constructor(
         }
 
         val targetId = target.id
-        val targetName = target.displayName
+        val formattedName = target.formatName()
         return helixApiClient.deleteVip(context.channelId, targetId).fold(
-            onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "You have removed $targetName as a VIP of this channel.") },
+            onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "You have removed $formattedName as a VIP of this channel.") },
             onFailure = {
-                val response = "Failed to remove VIP - ${it.toErrorMessage(targetName)}"
+                val response = "Failed to remove VIP - ${it.toErrorMessage(command, formattedName)}"
                 CommandResult.AcceptedTwitchCommand(command, response)
             }
         )
     }
 
-    private fun Throwable.toErrorMessage(targetName: DisplayName? = null): String {
+    private suspend fun banUser(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
+        val args = context.args
+        if (args.isEmpty() || args.first().isBlank()) {
+            val usageResponse = "Usage: ${context.trigger} <username> [reason] - Permanently prevent a user from chatting. " +
+                    "Reason is optional and will be shown to the target user and other moderators. Use /unban to remove a ban."
+            return CommandResult.AcceptedTwitchCommand(command, usageResponse)
+        }
+
+        val target = helixApiClient.getUserByName(args.first().toUserName()).getOrElse {
+            return CommandResult.AcceptedTwitchCommand(command, response = "No user matching that username.")
+        }
+
+        if (target.id == currentUserId) {
+            return CommandResult.AcceptedTwitchCommand(command, response = "Failed to ban user - You cannot ban yourself.")
+        } else if (target.id == context.channelId) {
+            return CommandResult.AcceptedTwitchCommand(command, response = "Failed to ban user - You cannot ban the broadcaster.")
+        }
+
+        val reason = args.drop(1).joinToString(separator = " ").ifBlank { null }
+
+        val targetId = target.id
+        val request = BanRequestDto(BanRequestDataDto(targetId, duration = null, reason = reason))
+        return helixApiClient.postBan(context.channelId, currentUserId, request).fold(
+            onSuccess = { CommandResult.AcceptedTwitchCommand(command) },
+            onFailure = {
+                val response = "Failed to ban user - ${it.toErrorMessage(command, target.formatName())}"
+                CommandResult.AcceptedTwitchCommand(command, response)
+            }
+        )
+    }
+
+    private suspend fun unbanUser(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
+        val args = context.args
+        if (args.isEmpty() || args.first().isBlank()) {
+            val usageResponse = "Usage: ${context.trigger} <username> - Removes a ban on a user."
+            return CommandResult.AcceptedTwitchCommand(command, usageResponse)
+        }
+
+        val target = helixApiClient.getUserByName(args.first().toUserName()).getOrElse {
+            return CommandResult.AcceptedTwitchCommand(command, response = "No user matching that username.")
+        }
+
+
+        val targetId = target.id
+        return helixApiClient.deleteBan(context.channelId, currentUserId, targetId).fold(
+            onSuccess = { CommandResult.AcceptedTwitchCommand(command) },
+            onFailure = {
+                val response = "Failed to unban user - ${it.toErrorMessage(command, target.formatName())}"
+                CommandResult.AcceptedTwitchCommand(command, response)
+            }
+        )
+    }
+
+    private suspend fun timeoutUser(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
+        val args = context.args
+        val usageResponse = "Usage: ${context.trigger} <username> [duration][time unit] [reason] - " +
+                "Temporarily prevent a user from chatting. Duration (optional, " +
+                "default=10 minutes) must be a positive integer; time unit " +
+                "(optional, default=s) must be one of s, m, h, d, w; maximum " +
+                "duration is 2 weeks. Combinations like 1d2h are also allowed. " +
+                "Reason is optional and will be shown to the target user and other " +
+                "moderators. Use /untimeout to remove a timeout."
+        if (args.isEmpty() || args.first().isBlank()) {
+            return CommandResult.AcceptedTwitchCommand(command, usageResponse)
+        }
+
+        val target = helixApiClient.getUserByName(args.first().toUserName()).getOrElse {
+            return CommandResult.AcceptedTwitchCommand(command, response = "No user matching that username.")
+        }
+
+        if (target.id == currentUserId) {
+            return CommandResult.AcceptedTwitchCommand(command, response = "Failed to ban user - You cannot timeout yourself.")
+        } else if (target.id == context.channelId) {
+            return CommandResult.AcceptedTwitchCommand(command, response = "Failed to ban user - You cannot timeout the broadcaster.")
+        }
+
+        val durationInSeconds = when {
+            args.size > 1 && args[1].isNotBlank() -> DateTimeUtils.durationToSeconds(args[1].trim()) ?: return CommandResult.AcceptedTwitchCommand(command, usageResponse)
+            else                                  -> 60 * 10
+        }
+        val reason = args.drop(2).joinToString(separator = " ").ifBlank { null }
+
+        val targetId = target.id
+        val request = BanRequestDto(BanRequestDataDto(targetId, duration = durationInSeconds, reason = reason))
+        return helixApiClient.postBan(context.channelId, currentUserId, request).fold(
+            onSuccess = { CommandResult.AcceptedTwitchCommand(command) },
+            onFailure = {
+                val response = "Failed to timeout user - ${it.toErrorMessage(command, target.formatName())}"
+                CommandResult.AcceptedTwitchCommand(command, response)
+            }
+        )
+    }
+
+    private fun Throwable.toErrorMessage(command: TwitchCommand, formattedUser: String? = null): String {
         Log.v(TAG, "Command failed: $this")
         if (this !is HelixApiException) {
             return GENERIC_ERROR_MESSAGE
         }
 
         return when (error) {
-            HelixError.UserNotAuthorized,
-            HelixError.Forbidden                -> "You don't have permission to perform that action."
-
+            HelixError.UserNotAuthorized        -> "You don't have permission to perform that action."
             HelixError.Forwarded                -> message ?: GENERIC_ERROR_MESSAGE
             HelixError.MissingScopes            -> "Missing required scope. Re-login with your account and try again."
             HelixError.NotLoggedIn              -> "Missing login credentials. Re-login with your account and try again."
@@ -256,9 +346,13 @@ class TwitchCommandRepository @Inject constructor(
             HelixError.RateLimited              -> "You are being rate-limited by Twitch. Try again in a few seconds."
             HelixError.WhisperRateLimited       -> "You may only whisper a maximum of 40 unique recipients per day. Within the per day limit, you may whisper a maximum of 3 whispers per second and a maximum of 100 whispers per minute."
             HelixError.BroadcasterTokenRequired -> "Due to Twitch restrictions, this command can only be used by the broadcaster. Please use the Twitch website instead."
-            HelixError.TargetAlreadyModded      -> "${targetName ?: "The target user"} is already a moderator of this channel."
-            HelixError.TargetIsVip              -> "${targetName ?: "The target user"} is currently a VIP, /unvip them and retry this command."
-            HelixError.TargetNotModded          -> "${targetName ?: "The target user"} is not a moderator of this channel."
+            HelixError.TargetAlreadyModded      -> "${formattedUser ?: "The target user"} is already a moderator of this channel."
+            HelixError.TargetIsVip              -> "${formattedUser ?: "The target user"} is currently a VIP, /unvip them and retry this command."
+            HelixError.TargetNotModded          -> "${formattedUser ?: "The target user"} is not a moderator of this channel."
+            HelixError.TargetNotBanned          -> "${formattedUser ?: "The target user"} is not banned from this channel."
+            HelixError.TargetAlreadyBanned      -> "${formattedUser ?: "The target user"} is already banned in this channel."
+            HelixError.TargetCannotBeBanned     -> "You cannot ${command.trigger} ${formattedUser ?: "this user"}."
+            HelixError.ConflictingBanOperation  -> "There was a conflicting ban operation on this user. Please try again."
             HelixError.Unknown                  -> GENERIC_ERROR_MESSAGE
         }
     }
