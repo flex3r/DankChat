@@ -18,7 +18,7 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
         names.chunked(DEFAULT_PAGE_SIZE).flatMap {
             helixApi.getUsersByName(it)
                 .throwHelixApiErrorOnFailure()
-                .body<UsersDto>()
+                .body<DataListDto<UserDto>>()
                 .data
         }
     }
@@ -27,7 +27,7 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
         ids.chunked(DEFAULT_PAGE_SIZE).flatMap {
             helixApi.getUsersByIds(it)
                 .throwHelixApiErrorOnFailure()
-                .body<UsersDto>()
+                .body<DataListDto<UserDto>>()
                 .data
         }
     }
@@ -35,14 +35,14 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
     suspend fun getUser(userId: UserId): Result<UserDto> = runCatching {
         helixApi.getUserById(userId)
             .throwHelixApiErrorOnFailure()
-            .body<UsersDto>()
+            .body<DataListDto<UserDto>>()
             .data.first()
     }
 
     suspend fun getUserByName(name: UserName): Result<UserDto> = runCatching {
         helixApi.getUsersByName(listOf(name))
             .throwHelixApiErrorOnFailure()
-            .body<UsersDto>()
+            .body<DataListDto<UserDto>>()
             .data.first()
     }
 
@@ -59,7 +59,7 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
         channels.chunked(DEFAULT_PAGE_SIZE).flatMap {
             helixApi.getStreams(it)
                 .throwHelixApiErrorOnFailure()
-                .body<StreamsDto>()
+                .body<DataListDto<StreamDto>>()
                 .data
         }
     }
@@ -130,6 +130,16 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
             .throwHelixApiErrorOnFailure()
     }
 
+    suspend fun postBan(broadcastUserId: UserId, moderatorUserId: UserId, requestDto: BanRequestDto): Result<Unit> = runCatching {
+        helixApi.postBan(broadcastUserId, moderatorUserId, requestDto)
+            .throwHelixApiErrorOnFailure()
+    }
+
+    suspend fun deleteBan(broadcastUserId: UserId, moderatorUserId: UserId, targetUserId: UserId): Result<Unit> = runCatching {
+        helixApi.deleteBan(broadcastUserId, moderatorUserId, targetUserId)
+            .throwHelixApiErrorOnFailure()
+    }
+
     private suspend inline fun <reified T> pageUntil(amountToFetch: Int, request: (cursor: String?) -> HttpResponse?): List<T> {
         val initialPage = request(null)
             .throwHelixApiErrorOnFailure()
@@ -159,15 +169,18 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
         val betterStatus = HttpStatusCode.fromValue(status.value)
         val error = when (betterStatus) {
             HttpStatusCode.BadRequest          -> when {
-                message.startsWith(WHISPER_SELF_ERROR, ignoreCase = true)     -> HelixError.WhisperSelf
-                message.startsWith(USER_ALREADY_MOD_ERROR, ignoreCase = true) -> HelixError.TargetAlreadyModded
-                message.startsWith(USER_NOT_MOD_ERROR, ignoreCase = true)     -> HelixError.TargetNotModded
-                else                                                          -> HelixError.Forwarded
+                message.startsWith(WHISPER_SELF_ERROR, ignoreCase = true)           -> HelixError.WhisperSelf
+                message.startsWith(USER_ALREADY_MOD_ERROR, ignoreCase = true)       -> HelixError.TargetAlreadyModded
+                message.startsWith(USER_NOT_MOD_ERROR, ignoreCase = true)           -> HelixError.TargetNotModded
+                message.startsWith(USER_ALREADY_BANNED_ERROR, ignoreCase = true)    -> HelixError.TargetAlreadyBanned
+                message.startsWith(USER_MAY_NOT_BE_BANNED_ERROR, ignoreCase = true) -> HelixError.TargetCannotBeBanned
+                message.startsWith(USER_NOT_BANNED_ERROR, ignoreCase = true)        -> HelixError.TargetNotBanned
+                else                                                                -> HelixError.Forwarded
             }
 
             HttpStatusCode.Forbidden           -> when {
                 message.startsWith(RECIPIENT_BLOCKED_USER_ERROR, ignoreCase = true) -> HelixError.RecipientBlockedUser
-                else                                                                -> HelixError.Forbidden
+                else                                                                -> HelixError.UserNotAuthorized
             }
 
             HttpStatusCode.Unauthorized        -> when {
@@ -189,7 +202,11 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
                 else               -> HelixError.Forwarded
             }
 
-            HttpStatusCode.Conflict            -> HelixError.Forwarded
+            HttpStatusCode.Conflict            -> when (request.url.encodedPath) {
+                "helix/moderation/bans" -> HelixError.ConflictingBanOperation
+                else                    -> HelixError.Forwarded
+            }
+
             TOO_EARLY_STATUS                   -> HelixError.Forwarded
             else                               -> HelixError.Unknown
         }
@@ -207,5 +224,8 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
         private const val USER_AUTH_ERROR = "incorrect user authorization"
         private const val USER_ALREADY_MOD_ERROR = "user is already a mod"
         private const val USER_NOT_MOD_ERROR = "user is not a mod"
+        private const val USER_NOT_BANNED_ERROR = "The user in the user_id query parameter is not banned"
+        private const val USER_ALREADY_BANNED_ERROR = "The user specified in the user_id field is already banned"
+        private const val USER_MAY_NOT_BE_BANNED_ERROR = "The user specified in the user_id field may not be banned"
     }
 }

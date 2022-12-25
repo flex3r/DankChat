@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.data
 
 import android.os.Parcelable
+import com.flxrs.dankchat.data.api.helix.dto.UserDto
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
@@ -32,3 +33,4 @@ value class UserName(val value: String) : Parcelable {
 fun UserName.toDisplayName() = DisplayName(value)
 fun String.toUserName() = UserName(this)
 fun Collection<String>.toUserNames() = map(String::toUserName)
+fun UserDto.formatName() = name.formatWithDisplayName(displayName)

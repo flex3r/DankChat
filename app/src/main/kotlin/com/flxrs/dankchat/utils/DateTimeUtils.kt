@@ -34,4 +34,48 @@ object DateTimeUtils {
             .filter { (time, _) -> time > 0 }
             .joinToString(" ") { (time, unit) -> "$time$unit" }
     }
+
+    // TODO tests
+    fun durationToSeconds(duration: String): Int? {
+        if (duration.isBlank() || !duration.first().isDigit()) {
+            return null
+        }
+
+        val checkSeconds = duration.toIntOrNull()
+        if (checkSeconds != null) {
+            return checkSeconds
+        }
+
+        var seconds = 0
+        var acc = 0
+        duration.forEach { c ->
+            if (c.isDigit()) {
+                acc = acc * 10 + c.digitToInt()
+                return@forEach
+            }
+
+            if (acc == 0) {
+                return null
+            }
+
+            val multiplier = secondsMultiplierForUnit(c) ?: return null
+            seconds += acc * multiplier
+            acc = 0
+        }
+
+        if (acc != 0) {
+            return null
+        }
+
+        return seconds
+    }
+
+    private fun secondsMultiplierForUnit(char: Char): Int? = when (char) {
+        's'  -> 1
+        'm'  -> 60
+        'h'  -> 60 * 60
+        'd'  -> 60 * 60 * 24
+        'w'  -> 60 * 60 * 24 * 7
+        else -> null
+    }
 }
