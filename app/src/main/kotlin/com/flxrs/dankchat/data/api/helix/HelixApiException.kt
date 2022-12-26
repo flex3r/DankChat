@@ -29,5 +29,6 @@ enum class HelixError {
     TargetAlreadyBanned,
     TargetCannotBeBanned,
     ConflictingBanOperation,
+    InvalidColor,
     Forwarded
 }

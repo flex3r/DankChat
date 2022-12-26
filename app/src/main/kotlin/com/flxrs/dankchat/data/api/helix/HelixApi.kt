@@ -162,4 +162,11 @@ class HelixApi(private val ktorClient: HttpClient, private val dankChatPreferenc
             parameter("message_id", messageId)
         }
     }
+
+    suspend fun putUserChatColor(targetUserId: UserId, color: String): HttpResponse? = ktorClient.put("chat/color") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        parameter("user_id", targetUserId)
+        parameter("color", color)
+    }
 }

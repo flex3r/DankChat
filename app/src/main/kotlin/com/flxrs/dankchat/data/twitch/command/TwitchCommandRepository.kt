@@ -11,7 +11,7 @@ import com.flxrs.dankchat.data.repo.CommandResult
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.DateTimeUtils
-import java.util.UUID
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -38,7 +38,7 @@ class TwitchCommandRepository @Inject constructor(
 
             TwitchCommand.Ban            -> banUser(command, currentUserId, context)
             TwitchCommand.Clear          -> clearChat(command, currentUserId, context)
-            TwitchCommand.Color          -> CommandResult.IrcCommand // TODO
+            TwitchCommand.Color          -> updateColor(command, currentUserId, context)
             TwitchCommand.Commercial     -> CommandResult.IrcCommand // TODO
             TwitchCommand.Delete         -> deleteMessage(command, currentUserId, context)
             TwitchCommand.EmoteOnly      -> CommandResult.IrcCommand // TODO
@@ -344,19 +344,38 @@ class TwitchCommandRepository @Inject constructor(
     private suspend fun deleteMessage(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
         val args = context.args
         if (args.isEmpty() || args.first().isBlank()) {
-            return CommandResult.AcceptedTwitchCommand(command, "Usage: /delete <msg-id> - Deletes the specified message.")
+            return CommandResult.AcceptedTwitchCommand(command, response = "Usage: /delete <msg-id> - Deletes the specified message.")
         }
 
         val messageId = args.first()
         val parsedId = runCatching { UUID.fromString(messageId) }
         if (parsedId.isFailure) {
-            return CommandResult.AcceptedTwitchCommand(command, "Invalid msg-id: \"$messageId\".")
+            return CommandResult.AcceptedTwitchCommand(command, response = "Invalid msg-id: \"$messageId\".")
         }
 
         return helixApiClient.deleteMessages(context.channelId, currentUserId, messageId).fold(
             onSuccess = { CommandResult.AcceptedTwitchCommand(command) },
             onFailure = {
                 val response = "Failed to delete chat messages - ${it.toErrorMessage(command)}"
+                CommandResult.AcceptedTwitchCommand(command, response)
+            }
+        )
+    }
+
+    private suspend fun updateColor(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
+        val args = context.args
+        if (args.isEmpty() || args.first().isBlank()) {
+            val usage = "Usage: /color <color> - Color must be one of Twitch's supported colors (${VALID_HELIX_COLORS.joinToString()}) or a hex code (#000000) if you have Turbo or Prime."
+            return CommandResult.AcceptedTwitchCommand(command, response = usage)
+        }
+
+        val colorArg = args.first().lowercase()
+        val color = HELIX_COLOR_REPLACEMENTS[colorArg] ?: colorArg
+
+        return helixApiClient.putUserChatColor(currentUserId, color).fold(
+            onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "Your color has been changed to $color") },
+            onFailure = {
+                val response = "Failed to change color to $color - ${it.toErrorMessage(command)}"
                 CommandResult.AcceptedTwitchCommand(command, response)
             }
         )
@@ -386,6 +405,7 @@ class TwitchCommandRepository @Inject constructor(
             HelixError.TargetAlreadyBanned      -> "${targetUser ?: "The target user"} is already banned in this channel."
             HelixError.TargetCannotBeBanned     -> "You cannot ${command.trigger} ${targetUser ?: "this user"}."
             HelixError.ConflictingBanOperation  -> "There was a conflicting ban operation on this user. Please try again."
+            HelixError.InvalidColor             -> "Color must be one of Twitch's supported colors (${VALID_HELIX_COLORS.joinToString()}) or a hex code (#000000) if you have Turbo or Prime."
             HelixError.Unknown                  -> GENERIC_ERROR_MESSAGE
         }
     }
@@ -394,6 +414,35 @@ class TwitchCommandRepository @Inject constructor(
         private val TAG = TwitchCommandRepository::class.java.simpleName
         private const val GENERIC_ERROR_MESSAGE = "An unknown error has occurred."
         private val ALLOWED_IRC_COMMAND_TRIGGERS = listOf("me", "disconnect")
+        private val VALID_HELIX_COLORS = listOf(
+            "blue",
+            "blue_violet",
+            "cadet_blue",
+            "chocolate",
+            "coral",
+            "dodger_blue",
+            "firebrick",
+            "golden_rod",
+            "green",
+            "hot_pink",
+            "orange_red",
+            "red",
+            "sea_green",
+            "spring_green",
+            "yellow_green",
+        )
+
+        private val HELIX_COLOR_REPLACEMENTS = mapOf(
+            "blueviolet" to "blue_violet",
+            "cadetblue" to "cadet_blue",
+            "dodgerblue" to "dodger_blue",
+            "goldenrod" to "golden_rod",
+            "hotpink" to "hot_pink",
+            "orangered" to "orange_red",
+            "seagreen" to "sea_green",
+            "springgreen" to "spring_green",
+            "yellowgreen" to "yellow_green",
+        )
     }
 }
 
