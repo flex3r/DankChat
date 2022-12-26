@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,6 +26,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class UserPopupDialogFragment : BottomSheetDialogFragment() {
@@ -68,8 +70,10 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
             userDelete.setOnClickListener { showDeleteDialog() }
             userBan.setOnClickListener { showBanDialog() }
             userUnban.setOnClickListener {
-                viewModel.unbanUser()
-                dialog?.dismiss()
+                lifecycleScope.launch {
+                    viewModel.unbanUser()
+                    dialog?.dismiss()
+                }
             }
             userAvatarCard.setOnClickListener {
                 val userName = viewModel.userName
@@ -182,8 +186,10 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
             .setTitle(R.string.confirm_user_timeout_title)
             .setView(dialogContent.root)
             .setPositiveButton(R.string.confirm_user_timeout_positive_button) { _, _ ->
-                viewModel.timeoutUser(currentItem)
-                dialog?.dismiss()
+                lifecycleScope.launch {
+                    viewModel.timeoutUser(currentItem)
+                    dialog?.dismiss()
+                }
             }
             .setNegativeButton(R.string.dialog_cancel) { d, _ -> d.dismiss() }
             .show()
@@ -194,8 +200,10 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
             .setTitle(R.string.confirm_user_ban_title)
             .setMessage(R.string.confirm_user_ban_message)
             .setPositiveButton(R.string.confirm_user_ban_positive_button) { _, _ ->
-                viewModel.banUser()
-                dialog?.dismiss()
+                lifecycleScope.launch {
+                    viewModel.banUser()
+                    dialog?.dismiss()
+                }
             }
             .setNegativeButton(R.string.dialog_cancel) { d, _ -> d.dismiss() }
             .show()
@@ -206,8 +214,10 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
             .setTitle(R.string.confirm_user_delete_title)
             .setMessage(R.string.confirm_user_delete_message)
             .setPositiveButton(R.string.confirm_user_delete_positive_button) { _, _ ->
-                viewModel.deleteMessage()
-                dialog?.dismiss()
+                lifecycleScope.launch {
+                    viewModel.deleteMessage()
+                    dialog?.dismiss()
+                }
             }
             .setNegativeButton(R.string.dialog_cancel) { d, _ -> d.dismiss() }
             .show()
