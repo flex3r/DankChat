@@ -140,6 +140,11 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
             .throwHelixApiErrorOnFailure()
     }
 
+    suspend fun deleteMessages(broadcastUserId: UserId, moderatorUserId: UserId, messageId: String? = null): Result<Unit> = runCatching {
+        helixApi.deleteMessages(broadcastUserId, moderatorUserId, messageId)
+            .throwHelixApiErrorOnFailure()
+    }
+
     private suspend inline fun <reified T> pageUntil(amountToFetch: Int, request: (cursor: String?) -> HttpResponse?): List<T> {
         val initialPage = request(null)
             .throwHelixApiErrorOnFailure()
@@ -190,6 +195,8 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
                 message.startsWith(USER_AUTH_ERROR, ignoreCase = true)               -> HelixError.UserNotAuthorized
                 else                                                                 -> HelixError.Forwarded
             }
+
+            HttpStatusCode.NotFound            -> HelixError.Forwarded
 
 
             HttpStatusCode.UnprocessableEntity -> when (request.url.encodedPath) {

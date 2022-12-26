@@ -152,7 +152,7 @@ class ChatRepository @Inject constructor(
                         }
 
                         messages[message.channel]?.update { current ->
-                            current.replaceWithTimeOuts(message, scrollBackLength)
+                            current.replaceWithTimeouts(message, scrollBackLength)
                         }
                     }
                 }
@@ -493,7 +493,7 @@ class ChatRepository @Inject constructor(
         }
 
         messages[parsed.channel]?.update { current ->
-            current.replaceWithTimeOuts(parsed, scrollBackLength)
+            current.replaceWithTimeouts(parsed, scrollBackLength)
         }
     }
 
@@ -562,7 +562,7 @@ class ChatRepository @Inject constructor(
         val targetId = msg.tags["target-msg-id"] ?: return
 
         messages[channel]?.update { current ->
-            current.replaceWithTimeOut(targetId)
+            current.replaceWithTimeout(targetId)
         }
     }
 

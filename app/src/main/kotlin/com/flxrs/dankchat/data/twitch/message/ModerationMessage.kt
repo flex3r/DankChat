@@ -30,7 +30,8 @@ data class ModerationMessage(
         Unban,
         Mod,
         Unmod,
-        Clear
+        Clear,
+        Delete,
     }
 
     private val durationAndReasonOrBlank
@@ -66,6 +67,7 @@ data class ModerationMessage(
                 Action.Unban     -> "$creatorUser unbanned $targetUser."
                 Action.Mod       -> "$creatorUser modded $targetUser."
                 Action.Unmod     -> "$creatorUser unmodded $targetUser."
+                Action.Delete    -> "$creatorUser deleted message from $targetUser saying: \"$reason\"."
                 Action.Clear     -> when (creatorUser) {
                     null -> "Chat has been cleared by a moderator."
                     else -> "$creatorUser cleared the chat."
@@ -105,6 +107,7 @@ data class ModerationMessage(
         fun parseModerationAction(timestamp: Instant, channel: UserName, data: ModerationActionData): ModerationMessage {
             val seconds = data.args?.getOrNull(1)?.toIntOrNull()
             val duration = parseDuration(seconds, data)
+            val targetUser = parseTargetUser(data)
             val reason = parseReason(data)
 
             return ModerationMessage(
@@ -113,7 +116,7 @@ data class ModerationMessage(
                 channel = channel,
                 action = data.moderationAction.toAction(),
                 creatorUser = data.creator,
-                targetUser = data.targetUserName,
+                targetUser = targetUser,
                 durationSeconds = seconds,
                 duration = duration,
                 reason = reason,
@@ -127,9 +130,16 @@ data class ModerationMessage(
         }
 
         private fun parseReason(data: ModerationActionData): String? = when (data.moderationAction) {
-            ModerationActionType.Ban     -> data.args?.getOrNull(1)
+            ModerationActionType.Ban,
+            ModerationActionType.Delete  -> data.args?.getOrNull(1)
+
             ModerationActionType.Timeout -> data.args?.getOrNull(2)
             else                         -> null
+        }
+
+        private fun parseTargetUser(data: ModerationActionData): UserName? = when (data.moderationAction) {
+            ModerationActionType.Delete -> data.args?.getOrNull(0)?.toUserName()
+            else                        -> data.targetUserName
         }
 
         private fun ModerationActionType.toAction() = when (this) {
@@ -140,6 +150,7 @@ data class ModerationMessage(
             ModerationActionType.Mod       -> Action.Mod
             ModerationActionType.Unmod     -> Action.Unmod
             ModerationActionType.Clear     -> Action.Clear
+            ModerationActionType.Delete    -> Action.Delete
         }
     }
 }
