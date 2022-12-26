@@ -2,10 +2,7 @@ package com.flxrs.dankchat.data.api.helix
 
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
-import com.flxrs.dankchat.data.api.helix.dto.AnnouncementRequestDto
-import com.flxrs.dankchat.data.api.helix.dto.BanRequestDataDto
-import com.flxrs.dankchat.data.api.helix.dto.BanRequestDto
-import com.flxrs.dankchat.data.api.helix.dto.WhisperRequestDto
+import com.flxrs.dankchat.data.api.helix.dto.*
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.withoutOAuthSuffix
 import io.ktor.client.*
@@ -168,5 +165,12 @@ class HelixApi(private val ktorClient: HttpClient, private val dankChatPreferenc
         bearerAuth(oAuth)
         parameter("user_id", targetUserId)
         parameter("color", color)
+    }
+
+    suspend fun postMarker(request: MarkerRequestDto): HttpResponse? = ktorClient.post("streams/markers") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        contentType(ContentType.Application.Json)
+        setBody(request)
     }
 }
