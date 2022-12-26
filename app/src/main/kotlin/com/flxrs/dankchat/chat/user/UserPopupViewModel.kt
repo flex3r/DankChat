@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.chat.user
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,11 +9,14 @@ import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.helix.dto.UserDto
 import com.flxrs.dankchat.data.api.helix.dto.UserFollowsDto
+import com.flxrs.dankchat.data.repo.CommandRepository
+import com.flxrs.dankchat.data.repo.CommandResult
 import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.data.repo.chat.ChatRepository
 import com.flxrs.dankchat.data.repo.data.DataRepository
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.DateTimeUtils.asParsedZonedDateTime
+import com.flxrs.dankchat.utils.extensions.firstValueOrNull
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -25,6 +29,7 @@ class UserPopupViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
     private val dataRepository: DataRepository,
     private val ignoresRepository: IgnoresRepository,
+    private val commandRepository: CommandRepository,
     private val preferenceStore: DankChatPreferenceStore,
 ) : ViewModel() {
 
@@ -62,25 +67,39 @@ class UserPopupViewModel @Inject constructor(
         ignoresRepository.removeUserBlock(targetUserId, targetUsername)
     }
 
-    fun timeoutUser(index: Int) {
+    suspend fun timeoutUser(index: Int) {
         val userName = userName
         val duration = TIMEOUT_MAP[index] ?: return
-        chatRepository.sendMessage(".timeout $userName $duration")
+        sendCommand(".timeout $userName $duration")
     }
 
-    fun banUser() {
+    suspend fun banUser() {
         val userName = userName
-        chatRepository.sendMessage(".ban $userName")
+        sendCommand(".ban $userName")
     }
 
-    fun unbanUser() {
+    suspend fun unbanUser() {
         val userName = userName
-        chatRepository.sendMessage(".unban $userName")
+        sendCommand(".unban $userName")
     }
 
-    fun deleteMessage() {
+    suspend fun deleteMessage() {
         val messageId = args.messageId
-        chatRepository.sendMessage(".delete $messageId")
+        sendCommand(".delete $messageId")
+    }
+
+    private suspend fun sendCommand(message: String) {
+        val channel = args.channel ?: return
+        val channelId = chatRepository.getRoomState(channel).firstValueOrNull?.channelId ?: return
+        val result = runCatching {
+            commandRepository.checkForCommands(message, channel, channelId)
+        }.getOrNull() ?: return
+
+        when (result) {
+            is CommandResult.IrcCommand            -> chatRepository.sendMessage(message)
+            is CommandResult.AcceptedTwitchCommand -> result.response?.let { chatRepository.makeAndPostCustomSystemMessage(it, channel) }
+            else                                   -> Log.d(TAG, "Unhandled command result: $result")
+        }
     }
 
     private inline fun updateStateWith(crossinline block: suspend (targetUserId: UserId, targetUsername: UserName) -> Unit) = viewModelScope.launch {
@@ -144,6 +163,7 @@ class UserPopupViewModel @Inject constructor(
     }
 
     companion object {
+        private val TAG = UserPopupViewModel::class.java.simpleName
         private val TIMEOUT_MAP = mapOf(
             0 to "1",
             1 to "30",
