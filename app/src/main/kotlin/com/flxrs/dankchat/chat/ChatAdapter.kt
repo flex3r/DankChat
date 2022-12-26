@@ -109,7 +109,7 @@ class ChatAdapter(
             is NoticeMessage          -> holder.binding.itemText.handleNoticeMessage(message, holder)
             is UserNoticeMessage      -> holder.binding.itemText.handleUserNoticeMessage(message, holder)
             is PrivMessage            -> holder.binding.itemText.handlePrivMessage(message, holder, item.isMentionTab)
-            is ClearChatMessage       -> holder.binding.itemText.handleClearChatMessage(message, holder)
+            is ModerationMessage      -> holder.binding.itemText.handleModerationMessage(message, holder)
             is PointRedemptionMessage -> holder.binding.itemText.handlePointRedemptionMessage(message, holder)
             is WhisperMessage         -> holder.binding.itemText.handleWhisperMessage(message, holder)
         }
@@ -215,7 +215,7 @@ class ChatAdapter(
         text = withTime
     }
 
-    private fun TextView.handleClearChatMessage(message: ClearChatMessage, holder: ViewHolder) {
+    private fun TextView.handleModerationMessage(message: ModerationMessage, holder: ViewHolder) {
         val background = when {
             dankChatPreferenceStore.isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(
                 this,
@@ -228,22 +228,12 @@ class ChatAdapter(
         }
         setRippleBackground(background, enableRipple = false)
 
-        val count = message.stackCount
-        // TODO localize
-        val systemMessageText = when {
-            message.isFullChatClear -> "Chat has been cleared by a moderator."
-            message.isBan           -> "${message.targetUser} has been permanently banned"
-            else                    -> {
-                val countOrBlank = if (count > 1) " ($count times)" else ""
-                "${message.targetUser} has been timed out for ${DateTimeUtils.formatSeconds(message.duration)}.$countOrBlank"
-            }
-        }
         val withTime = when {
             dankChatPreferenceStore.showTimestamps -> SpannableStringBuilder()
                 .timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp)) }
-                .append(systemMessageText)
+                .append(message.systemMessage)
 
-            else                                   -> SpannableStringBuilder().append(systemMessageText)
+            else                                   -> SpannableStringBuilder().append(message.systemMessage)
         }
 
         setTextSize(TypedValue.COMPLEX_UNIT_SP, dankChatPreferenceStore.fontSize)

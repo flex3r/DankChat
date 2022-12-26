@@ -57,7 +57,8 @@ class ChatRepository @Inject constructor(
     private val _mentions = MutableStateFlow<List<ChatItem>>(emptyList())
     private val _whispers = MutableStateFlow<List<ChatItem>>(emptyList())
     private val connectionState = ConcurrentHashMap<UserName, MutableStateFlow<ConnectionState>>()
-    private val roomStates = ConcurrentHashMap<UserName, MutableSharedFlow<RoomState>>()
+    private val roomStates = ConcurrentHashMap<UserName, RoomState>()
+    private val roomStateFlows = ConcurrentHashMap<UserName, MutableSharedFlow<RoomState>>()
     private val users = ConcurrentHashMap<UserName, LruCache<UserName, DisplayName>>()
     private val usersFlows = ConcurrentHashMap<UserName, MutableStateFlow<Set<DisplayName>>>()
     private val userState = MutableStateFlow(UserState())
@@ -140,6 +141,20 @@ class ChatRepository @Inject constructor(
                         _channelMentionCount.increment(WHISPER_CHANNEL_TAG, 1)
                         _notificationsFlow.tryEmit(listOf(item))
                     }
+
+                    is PubSubMessage.ModeratorAction -> {
+                        val (timestamp, channelId, data) = pubSubMessage
+                        val channelName = roomStates.values.find { state -> state.channelId == channelId }?.channel ?: return@collect
+                        val message = runCatching {
+                            ModerationMessage.parseModerationAction(timestamp, channelName, data)
+                        }.getOrElse {
+                            return@collect
+                        }
+
+                        messages[message.channel]?.update { current ->
+                            current.replaceWithTimeOuts(message, scrollBackLength)
+                        }
+                    }
                 }
             }
         }
@@ -171,7 +186,7 @@ class ChatRepository @Inject constructor(
 
     fun getChat(channel: UserName): StateFlow<List<ChatItem>> = messages.getOrPut(channel) { MutableStateFlow(emptyList()) }
     fun getConnectionState(channel: UserName): StateFlow<ConnectionState> = connectionState.getOrPut(channel) { MutableStateFlow(ConnectionState.DISCONNECTED) }
-    fun getRoomState(channel: UserName): SharedFlow<RoomState> = roomStates.getOrPut(channel) { MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST) }
+    fun getRoomState(channel: UserName): SharedFlow<RoomState> = roomStateFlows.getOrPut(channel) { MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST) }
     fun getUsers(channel: UserName): StateFlow<Set<DisplayName>> = usersFlows.getOrPut(channel) { MutableStateFlow(emptySet()) }
 
     fun clearChatLoadingFailures() = _chatLoadingFailures.update { emptySet() }
@@ -402,7 +417,7 @@ class ChatRepository @Inject constructor(
     private fun createFlowsIfNecessary(channel: UserName) {
         messages.putIfAbsent(channel, MutableStateFlow(emptyList()))
         connectionState.putIfAbsent(channel, MutableStateFlow(ConnectionState.DISCONNECTED))
-        roomStates.putIfAbsent(channel, MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST))
+        roomStateFlows.putIfAbsent(channel, MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST))
         users.putIfAbsent(channel, createUserCache())
         usersFlows.putIfAbsent(channel, MutableStateFlow(emptySet()))
 
@@ -461,14 +476,18 @@ class ChatRepository @Inject constructor(
             isAnonymous -> ConnectionState.CONNECTED_NOT_LOGGED_IN
             else        -> ConnectionState.CONNECTED
         }
-        // TODO check for disconnected and exchange with "Reconnected" to reduce message spam
         makeAndPostSystemMessage(state.toSystemMessageType(), setOf(channel))
         connectionState[channel]?.value = state
     }
 
     private fun handleClearChat(msg: IrcMessage) {
+        val channelId = msg.tags["room-id"]?.toUserId() ?: return
+        if (pubSubManager.hasModeratorActionTopic(channelId)) {
+            return
+        }
+
         val parsed = runCatching {
-            ClearChatMessage.parseClearChat(msg)
+            ModerationMessage.parseClearChat(msg)
         }.getOrElse {
             return
         }
@@ -480,18 +499,19 @@ class ChatRepository @Inject constructor(
 
     private fun handleRoomState(msg: IrcMessage) {
         val channel = msg.params.getOrNull(0)?.substring(1)?.toUserName() ?: return
-        val channelId = msg.tags["room-id"]?.asUserId() ?: return
-        val flow = roomStates[channel] ?: return
+        val channelId = msg.tags["room-id"]?.toUserId() ?: return
+        val flow = roomStateFlows[channel] ?: return
         val state = if (flow.replayCache.isEmpty()) {
             RoomState(channel, channelId)
         } else {
             flow.firstValue.copyFromIrcMessage(msg)
         }
+        roomStates[channel] = state
         flow.tryEmit(state)
     }
 
     private fun handleGlobalUserState(msg: IrcMessage) {
-        val id = msg.tags["user-id"]?.asUserId()
+        val id = msg.tags["user-id"]?.toUserId()
         val sets = msg.tags["emote-sets"]?.split(",")
         val color = msg.tags["color"]
         val name = msg.tags["display-name"]?.toDisplayName()
@@ -507,7 +527,7 @@ class ChatRepository @Inject constructor(
 
     private fun handleUserState(msg: IrcMessage) {
         val channel = msg.params.getOrNull(0)?.substring(1)?.toUserName() ?: return
-        val id = msg.tags["user-id"]?.asUserId()
+        val id = msg.tags["user-id"]?.toUserId()
         val sets = msg.tags["emote-sets"]?.split(",").orEmpty()
         val color = msg.tags["color"]
         val name = msg.tags["display-name"]?.toDisplayName()
@@ -551,7 +571,7 @@ class ChatRepository @Inject constructor(
             return
         }
 
-        val userId = ircMessage.tags["user-id"]?.asUserId()
+        val userId = ircMessage.tags["user-id"]?.toUserId()
         if (ignoresRepository.isUserBlocked(userId)) {
             return
         }
@@ -582,7 +602,7 @@ class ChatRepository @Inject constructor(
     }
 
     private suspend fun handleMessage(ircMessage: IrcMessage) {
-        val userId = ircMessage.tags["user-id"]?.asUserId()
+        val userId = ircMessage.tags["user-id"]?.toUserId()
         if (ignoresRepository.isUserBlocked(userId)) {
             return
         }
@@ -744,7 +764,7 @@ class ChatRepository @Inject constructor(
             for (recentMessage in recentMessages) {
                 val parsedIrc = IrcMessage.parse(recentMessage)
                 val isCleared = parsedIrc.tags["rm-deleted"] == "1"
-                if (ignoresRepository.isUserBlocked(parsedIrc.tags["user-id"]?.asUserId())) {
+                if (ignoresRepository.isUserBlocked(parsedIrc.tags["user-id"]?.toUserId())) {
                     continue
                 }
 

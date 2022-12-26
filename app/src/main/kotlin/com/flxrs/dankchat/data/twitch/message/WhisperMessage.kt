@@ -4,7 +4,7 @@ import android.graphics.Color
 import com.flxrs.dankchat.data.*
 import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.twitch.badge.Badge
-import com.flxrs.dankchat.data.twitch.connection.WhisperData
+import com.flxrs.dankchat.data.twitch.connection.dto.WhisperData
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import java.util.*
 
@@ -45,7 +45,7 @@ data class WhisperMessage(
             return WhisperMessage(
                 timestamp = tags["tmi-sent-ts"]?.toLongOrNull() ?: System.currentTimeMillis(),
                 id = tags["id"] ?: UUID.randomUUID().toString(),
-                userId = tags["user-id"]?.asUserId(),
+                userId = tags["user-id"]?.toUserId(),
                 name = name.toUserName(),
                 displayName = displayName.toDisplayName(),
                 color = color,

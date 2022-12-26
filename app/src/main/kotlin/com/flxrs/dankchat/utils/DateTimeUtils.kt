@@ -18,11 +18,10 @@ object DateTimeUtils {
 
     fun String.asParsedZonedDateTime(): String = ZonedDateTime.parse(this).format(DateTimeFormatter.ISO_LOCAL_DATE)
 
-    fun formatSeconds(duration: String): String {
-        val totalSeconds = duration.toIntOrNull() ?: return ""
+    fun formatSeconds(durationInSeconds: Int): String {
 
-        val seconds = totalSeconds % 60
-        val timeoutMinutes = totalSeconds / 60
+        val seconds = durationInSeconds % 60
+        val timeoutMinutes = durationInSeconds / 60
         val minutes = timeoutMinutes % 60
         val timeoutHours = timeoutMinutes / 60
         val hours = timeoutHours % 24

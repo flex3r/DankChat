@@ -61,7 +61,7 @@ data class PrivMessage(
                 message = message,
                 isAction = isAction,
                 id = id,
-                userId = tags["user-id"]?.asUserId(),
+                userId = tags["user-id"]?.toUserId(),
                 timedOut = tags["rm-deleted"] == "1",
                 tags = tags,
             )

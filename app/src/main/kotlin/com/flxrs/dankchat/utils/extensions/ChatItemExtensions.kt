@@ -1,51 +1,61 @@
 package com.flxrs.dankchat.utils.extensions
 
 import com.flxrs.dankchat.chat.ChatItem
-import com.flxrs.dankchat.data.twitch.message.ClearChatMessage
+import com.flxrs.dankchat.data.twitch.message.ModerationMessage
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.SystemMessage
 import com.flxrs.dankchat.data.twitch.message.SystemMessageType
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-fun List<ChatItem>.replaceWithTimeOuts(clearChatMessage: ClearChatMessage, scrollBackLength: Int): List<ChatItem> = toMutableList().apply {
+fun List<ChatItem>.replaceWithTimeOuts(moderationMessage: ModerationMessage, scrollBackLength: Int): List<ChatItem> = toMutableList().apply {
     var addClearChat = true
     val end = (lastIndex - 20).coerceAtLeast(0)
     for (idx in lastIndex downTo end) {
         val item = this[idx]
         val message = item.message
-        if (message !is ClearChatMessage || message.targetUser != clearChatMessage.targetUser) {
+        if (message !is ModerationMessage || message.targetUser != moderationMessage.targetUser) {
             continue
         }
 
-        if ((clearChatMessage.timestamp - message.timestamp).milliseconds < 5.seconds) {
-            val stackedMessage = clearChatMessage.copy(stackCount = message.stackCount + 1)
+        if ((moderationMessage.timestamp - message.timestamp).milliseconds < 5.seconds) {
+            val stackedMessage = moderationMessage.copy(stackCount = message.stackCount + 1)
             this[idx] = item.copy(tag = item.tag + 1, message = stackedMessage)
             addClearChat = false
             break
         }
     }
 
+    if (!moderationMessage.canClearMessages) {
+        return addAndLimit(ChatItem(moderationMessage), scrollBackLength)
+    }
+
     for (idx in indices) {
         val item = this[idx]
-        if (clearChatMessage.isFullChatClear) {
-            this[idx] = when (item.message) {
-                is PrivMessage -> item.copy(tag = item.tag + 1, message = item.message.copy(timedOut = true), isCleared = true)
-                else           -> item.copy(tag = item.tag + 1, isCleared = true)
-            }
-        } else {
-            item.message as? PrivMessage ?: continue
-            if (clearChatMessage.targetUser != item.message.name) {
-                continue
+        when (moderationMessage.action) {
+            ModerationMessage.Action.Clear -> {
+                this[idx] = when (item.message) {
+                    is PrivMessage -> item.copy(tag = item.tag + 1, message = item.message.copy(timedOut = true), isCleared = true)
+                    else           -> item.copy(tag = item.tag + 1, isCleared = true)
+                }
             }
 
-            this[idx] = item.copy(tag = item.tag + 1, message = item.message.copy(timedOut = true), isCleared = true)
+            ModerationMessage.Action.Timeout,
+            ModerationMessage.Action.Ban   -> {
+                item.message as? PrivMessage ?: continue
+                if (moderationMessage.targetUser != item.message.name) {
+                    continue
+                }
+
+                this[idx] = item.copy(tag = item.tag + 1, message = item.message.copy(timedOut = true), isCleared = true)
+            }
+
+            else                          -> continue
         }
-
     }
 
     return when {
-        addClearChat -> addAndLimit(ChatItem(clearChatMessage), scrollBackLength)
+        addClearChat -> addAndLimit(ChatItem(moderationMessage), scrollBackLength)
         else         -> this
     }
 }

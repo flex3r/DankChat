@@ -396,7 +396,7 @@ class MainFragment : Fragment() {
         })
 
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.userIdString == null) {
-            dankChatPreferences.userIdString = "${dankChatPreferences.userId}".asUserId()
+            dankChatPreferences.userIdString = "${dankChatPreferences.userId}".toUserId()
         }
 
         val channels = dankChatPreferences.getChannels()

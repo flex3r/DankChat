@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.data.twitch.connection
 
+import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.helix.HelixApiClient
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
@@ -34,6 +35,11 @@ class PubSubManager @Inject constructor(
     val connectedAndHasWhisperTopic: Boolean
         get() = connections.any { it.connected && it.hasWhisperTopic }
 
+    fun hasModeratorActionTopic(channelId: UserId): Boolean {
+        val userId = preferenceStore.userIdString ?: return false
+        return connections.any { it.connected && it.hasModeratorTopic(userId, channelId) }
+    }
+
     fun start() {
         if (!preferenceStore.isLoggedIn) {
             return
@@ -50,6 +56,7 @@ class PubSubManager @Inject constructor(
                 add(PubSubTopic.Whispers(userId))
                 helixChannels.forEach {
                     add(PubSubTopic.PointRedemptions(channelId = it.id, channelName = it.name))
+                    add(PubSubTopic.ModeratorActions(userId = userId, channelId = it.id))
                 }
             }
             listen(topics)
@@ -71,11 +78,13 @@ class PubSubManager @Inject constructor(
             return@launch
         }
 
+        val userId = preferenceStore.userIdString ?: return@launch
         val channelId = helixApiClient.getUserIdByName(channel)
             .getOrNull() ?: return@launch
 
-        val topic = PubSubTopic.PointRedemptions(channelId, channel)
-        listen(setOf(topic))
+        val pointRedemptions = PubSubTopic.PointRedemptions(channelId, channel)
+        val moderatorActions = PubSubTopic.ModeratorActions(userId, channelId)
+        listen(setOf(pointRedemptions, moderatorActions))
     }
 
     fun removeChannel(channel: UserName) {

@@ -34,3 +34,6 @@ fun UserName.toDisplayName() = DisplayName(value)
 fun String.toUserName() = UserName(this)
 fun Collection<String>.toUserNames() = map(String::toUserName)
 fun UserDto.formatName() = name.formatWithDisplayName(displayName)
+inline fun UserName.ifBlank(default: () -> UserName?): UserName? {
+    return if (value.isBlank()) default() else this
+}

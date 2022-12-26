@@ -3,6 +3,9 @@ package com.flxrs.dankchat.data.twitch.connection
 import android.util.Log
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.data.ifBlank
+import com.flxrs.dankchat.data.toUserId
+import com.flxrs.dankchat.data.twitch.connection.dto.*
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import com.flxrs.dankchat.utils.extensions.timer
 import kotlinx.coroutines.CoroutineScope
@@ -12,8 +15,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import okhttp3.*
 import org.json.JSONArray
@@ -23,44 +24,6 @@ import java.util.*
 import kotlin.random.Random
 import kotlin.random.nextLong
 
-sealed class PubSubTopic(val topic: String) {
-    data class PointRedemptions(val channelId: UserId, val channelName: UserName) : PubSubTopic(topic = "community-points-channel-v1.$channelId")
-    data class Whispers(val userId: UserId) : PubSubTopic(topic = "whispers.$userId")
-}
-
-
-sealed class PubSubEvent {
-    data class Message(val message: PubSubMessage) : PubSubEvent()
-    object Connected : PubSubEvent()
-    object Error : PubSubEvent()
-    object Closed : PubSubEvent()
-
-    val isDisconnected: Boolean
-        get() = this is Error || this is Closed
-}
-
-@Serializable
-data class PubSubDataMessage<T>(
-    val type: String,
-    val data: T
-)
-
-@Serializable
-data class PubSubDataObjectMessage<T>(
-    val type: String,
-    @SerialName("data_object") val data: T
-)
-
-sealed class PubSubMessage {
-    data class PointRedemption(
-        val timestamp: Instant,
-        val channelName: UserName,
-        val channelId: UserId,
-        val data: PointRedemptionData
-    ) : PubSubMessage()
-
-    data class Whisper(val data: WhisperData) : PubSubMessage()
-}
 
 class PubSubConnection(
     val tag: String,
@@ -97,10 +60,13 @@ class PubSubConnection(
     val hasWhisperTopic: Boolean
         get() = topics.any { it.topic.startsWith("whispers.") }
 
+    fun hasModeratorTopic(userId: UserId, channelId: UserId): Boolean {
+        return topics.any { it.topic.startsWith("chat_moderator_actions.$userId.$channelId") }
+    }
+
     val events = receiveChannel.receiveAsFlow().distinctUntilChanged { old, new ->
         (old.isDisconnected && new.isDisconnected) || old == new
     }
-
 
     fun connect(initialTopics: Set<PubSubTopic>): Set<PubSubTopic> {
         if (connected || connecting) {
@@ -255,6 +221,51 @@ class PubSubConnection(
                                 channelId = match.channelId,
                                 data = parsedMessage.data.redemption
                             )
+                        }
+
+                        is PubSubTopic.ModeratorActions -> {
+                            when (messageTopic) {
+                                "moderator_added"   -> {
+                                    val parsedMessage = jsonFormat.decodeOrNull<PubSubDataMessage<ModeratorAddedData>>(message) ?: return
+                                    val timestamp = Instant.now()
+                                    PubSubMessage.ModeratorAction(
+                                        timestamp = timestamp,
+                                        channelId = parsedMessage.data.channelId,
+                                        data = ModerationActionData(
+                                            args = null,
+                                            targetUserId = parsedMessage.data.targetUserId,
+                                            targetUserName = parsedMessage.data.targetUserName,
+                                            moderationAction = parsedMessage.data.moderationAction,
+                                            creatorUserId = parsedMessage.data.creatorUserId,
+                                            creator = parsedMessage.data.creator,
+                                            createdAt = timestamp.toString(),
+                                            msgId = null
+                                        )
+                                    )
+                                }
+
+                                "moderation_action" -> {
+                                    val parsedMessage = jsonFormat.decodeOrNull<PubSubDataMessage<ModerationActionData>>(message) ?: return
+                                    if (parsedMessage.data.moderationAction == ModerationActionType.Mod) {
+                                        return
+                                    }
+                                    val timestamp = when {
+                                        parsedMessage.data.createdAt.isEmpty() -> Instant.now()
+                                        else                                   -> Instant.parse(parsedMessage.data.createdAt)
+                                    }
+                                    PubSubMessage.ModeratorAction(
+                                        timestamp = timestamp,
+                                        channelId = topic.substringAfterLast('.').toUserId(),
+                                        data = parsedMessage.data.copy(
+                                            msgId = parsedMessage.data.msgId?.ifBlank { null },
+                                            targetUserId = parsedMessage.data.targetUserId?.ifBlank { null },
+                                            targetUserName = parsedMessage.data.targetUserName?.ifBlank { null },
+                                        )
+                                    )
+                                }
+
+                                else                -> return
+                            }
                         }
                     }
                     receiveChannel.trySend(PubSubEvent.Message(pubSubMessage))
