@@ -145,6 +145,11 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
             .throwHelixApiErrorOnFailure()
     }
 
+    suspend fun putUserChatColor(targetUserId: UserId, color: String): Result<Unit> = runCatching {
+        helixApi.putUserChatColor(targetUserId, color)
+            .throwHelixApiErrorOnFailure()
+    }
+
     private suspend inline fun <reified T> pageUntil(amountToFetch: Int, request: (cursor: String?) -> HttpResponse?): List<T> {
         val initialPage = request(null)
             .throwHelixApiErrorOnFailure()
@@ -180,6 +185,7 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
                 message.startsWith(USER_ALREADY_BANNED_ERROR, ignoreCase = true)    -> HelixError.TargetAlreadyBanned
                 message.startsWith(USER_MAY_NOT_BE_BANNED_ERROR, ignoreCase = true) -> HelixError.TargetCannotBeBanned
                 message.startsWith(USER_NOT_BANNED_ERROR, ignoreCase = true)        -> HelixError.TargetNotBanned
+                message.startsWith(INVALID_COLOR_ERROR, ignoreCase = true)          -> HelixError.InvalidColor
                 else                                                                -> HelixError.Forwarded
             }
 
@@ -234,5 +240,6 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
         private const val USER_NOT_BANNED_ERROR = "The user in the user_id query parameter is not banned"
         private const val USER_ALREADY_BANNED_ERROR = "The user specified in the user_id field is already banned"
         private const val USER_MAY_NOT_BE_BANNED_ERROR = "The user specified in the user_id field may not be banned"
+        private const val INVALID_COLOR_ERROR = "invalid color"
     }
 }
