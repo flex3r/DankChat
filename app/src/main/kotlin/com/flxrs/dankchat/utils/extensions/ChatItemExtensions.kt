@@ -10,19 +10,21 @@ import kotlin.time.Duration.Companion.seconds
 
 fun List<ChatItem>.replaceWithTimeOuts(moderationMessage: ModerationMessage, scrollBackLength: Int): List<ChatItem> = toMutableList().apply {
     var addClearChat = true
-    val end = (lastIndex - 20).coerceAtLeast(0)
-    for (idx in lastIndex downTo end) {
-        val item = this[idx]
-        val message = item.message
-        if (message !is ModerationMessage || message.targetUser != moderationMessage.targetUser) {
-            continue
-        }
+    if (moderationMessage.action == ModerationMessage.Action.Timeout) {
+        val end = (lastIndex - 20).coerceAtLeast(0)
+        for (idx in lastIndex downTo end) {
+            val item = this[idx]
+            val message = item.message
+            if (message !is ModerationMessage || message.targetUser != moderationMessage.targetUser || message.action != ModerationMessage.Action.Timeout) {
+                continue
+            }
 
-        if ((moderationMessage.timestamp - message.timestamp).milliseconds < 5.seconds) {
-            val stackedMessage = moderationMessage.copy(stackCount = message.stackCount + 1)
-            this[idx] = item.copy(tag = item.tag + 1, message = stackedMessage)
-            addClearChat = false
-            break
+            if ((moderationMessage.timestamp - message.timestamp).milliseconds < 5.seconds) {
+                val stackedMessage = moderationMessage.copy(stackCount = message.stackCount + 1)
+                this[idx] = item.copy(tag = item.tag + 1, message = stackedMessage)
+                addClearChat = false
+                break
+            }
         }
     }
 
