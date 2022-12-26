@@ -66,7 +66,7 @@ class DankChatPreferenceStore @Inject constructor(
         set(value) = dankChatPreferences.edit { putInt(ID_KEY, value) }
 
     var userIdString: UserId?
-        get() = dankChatPreferences.getString(ID_STRING_KEY, null)?.ifBlank { null }?.asUserId()
+        get() = dankChatPreferences.getString(ID_STRING_KEY, null)?.ifBlank { null }?.toUserId()
         set(value) = dankChatPreferences.edit { putString(ID_STRING_KEY, value?.value?.ifBlank { null }) }
 
     var hasExternalHostingAcknowledged: Boolean

@@ -11,4 +11,7 @@ value class UserId(val value: String) : Parcelable {
     override fun toString() = value
 }
 
-fun String.asUserId() = UserId(this)
+fun String.toUserId() = UserId(this)
+inline fun UserId.ifBlank(default: () -> UserId?): UserId? {
+    return if (value.isBlank()) default() else this
+}

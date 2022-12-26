@@ -20,6 +20,7 @@ data class NoticeMessage(
                 tags["msg-id"] == "msg_timedout" -> params[1]
                     .split(" ")
                     .getOrNull(index = 5)
+                    ?.toIntOrNull()
                     ?.let {
                         "You are timed out for ${DateTimeUtils.formatSeconds(it)}."
                     } ?: params[1]
