@@ -150,6 +150,12 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
             .throwHelixApiErrorOnFailure()
     }
 
+    suspend fun postMarker(requestDto: MarkerRequestDto): Result<DataListDto<MarkerDto>> = runCatching {
+        helixApi.postMarker(requestDto)
+            .throwHelixApiErrorOnFailure()
+            .body()
+    }
+
     private suspend inline fun <reified T> pageUntil(amountToFetch: Int, request: (cursor: String?) -> HttpResponse?): List<T> {
         val initialPage = request(null)
             .throwHelixApiErrorOnFailure()
@@ -202,8 +208,10 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
                 else                                                                 -> HelixError.Forwarded
             }
 
-            HttpStatusCode.NotFound            -> HelixError.Forwarded
-
+            HttpStatusCode.NotFound            -> when (request.url.encodedPath) {
+                "/helix/streams/markers" -> HelixError.MarkerError(message.substringAfter("message:\"", "").substringBeforeLast('"').ifBlank { null })
+                else                     -> HelixError.Forwarded
+            }
 
             HttpStatusCode.UnprocessableEntity -> when (request.url.encodedPath) {
                 "/helix/moderation/moderators" -> HelixError.TargetIsVip

@@ -11,24 +11,25 @@ data class HelixApiException(
     override val cause: Throwable? = null
 ) : ApiException(status, url, message, cause)
 
-enum class HelixError {
-    MissingScopes,
-    NotLoggedIn,
-    Unknown,
-    WhisperSelf,
-    NoVerifiedPhone,
-    RecipientBlockedUser,
-    WhisperRateLimited,
-    RateLimited,
-    BroadcasterTokenRequired,
-    UserNotAuthorized,
-    TargetAlreadyModded,
-    TargetIsVip,
-    TargetNotModded,
-    TargetNotBanned,
-    TargetAlreadyBanned,
-    TargetCannotBeBanned,
-    ConflictingBanOperation,
-    InvalidColor,
-    Forwarded
+sealed class HelixError {
+    object MissingScopes : HelixError()
+    object NotLoggedIn : HelixError()
+    object Unknown : HelixError()
+    object WhisperSelf : HelixError()
+    object NoVerifiedPhone : HelixError()
+    object RecipientBlockedUser : HelixError()
+    object WhisperRateLimited : HelixError()
+    object RateLimited : HelixError()
+    object BroadcasterTokenRequired : HelixError()
+    object UserNotAuthorized : HelixError()
+    object TargetAlreadyModded : HelixError()
+    object TargetIsVip : HelixError()
+    object TargetNotModded : HelixError()
+    object TargetNotBanned : HelixError()
+    object TargetAlreadyBanned : HelixError()
+    object TargetCannotBeBanned : HelixError()
+    object ConflictingBanOperation : HelixError()
+    object InvalidColor : HelixError()
+    data class MarkerError(val message: String?) : HelixError()
+    object Forwarded : HelixError()
 }

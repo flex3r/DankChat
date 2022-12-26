@@ -45,7 +45,7 @@ class TwitchCommandRepository @Inject constructor(
             TwitchCommand.EmoteOnlyOff   -> CommandResult.IrcCommand // TODO
             TwitchCommand.Followers      -> CommandResult.IrcCommand // TODO
             TwitchCommand.FollowersOff   -> CommandResult.IrcCommand // TODO
-            TwitchCommand.Marker         -> CommandResult.IrcCommand // TODO
+            TwitchCommand.Marker         -> createMarker(command, context)
             TwitchCommand.Mod            -> addModerator(command, context)
             TwitchCommand.Mods           -> getModerators(command, context)
             TwitchCommand.R9kBeta        -> CommandResult.IrcCommand // TODO
@@ -381,6 +381,25 @@ class TwitchCommandRepository @Inject constructor(
         )
     }
 
+    private suspend fun createMarker(command: TwitchCommand, context: CommandContext): CommandResult {
+        val description = context.args.joinToString(separator = " ").take(140).ifBlank { null }
+        val request = MarkerRequestDto(context.channelId, description)
+
+        return helixApiClient.postMarker(request).fold(
+            onSuccess = { result ->
+                val marker = result.data.firstOrNull()
+                val time = marker?.positionSeconds?.let { " at ${DateTimeUtils.formatSeconds(it)}" }.orEmpty()
+                val markerDescription = marker?.description?.let { ": \"$it\"" }.orEmpty()
+                val response = "Successfully added a stream marker$time$markerDescription."
+                CommandResult.AcceptedTwitchCommand(command, response)
+            },
+            onFailure = {
+                val response = "Failed to create stream marker - ${it.toErrorMessage(command)}"
+                CommandResult.AcceptedTwitchCommand(command, response)
+            }
+        )
+    }
+
     private fun Throwable.toErrorMessage(command: TwitchCommand, targetUser: UserName? = null): String {
         Log.v(TAG, "Command failed: $this")
         if (this !is HelixApiException) {
@@ -406,6 +425,7 @@ class TwitchCommandRepository @Inject constructor(
             HelixError.TargetCannotBeBanned     -> "You cannot ${command.trigger} ${targetUser ?: "this user"}."
             HelixError.ConflictingBanOperation  -> "There was a conflicting ban operation on this user. Please try again."
             HelixError.InvalidColor             -> "Color must be one of Twitch's supported colors (${VALID_HELIX_COLORS.joinToString()}) or a hex code (#000000) if you have Turbo or Prime."
+            is HelixError.MarkerError           -> error.message ?: GENERIC_ERROR_MESSAGE
             HelixError.Unknown                  -> GENERIC_ERROR_MESSAGE
         }
     }
