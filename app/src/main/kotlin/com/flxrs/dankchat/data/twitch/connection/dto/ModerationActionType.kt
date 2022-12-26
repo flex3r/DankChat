@@ -12,4 +12,5 @@ enum class ModerationActionType {
     @SerialName("mod") Mod,
     @SerialName("unmod") Unmod,
     @SerialName("clear") Clear,
+    @SerialName("delete") Delete,
 }

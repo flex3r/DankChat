@@ -152,4 +152,14 @@ class HelixApi(private val ktorClient: HttpClient, private val dankChatPreferenc
         parameter("moderator_id", moderatorUserId)
         parameter("user_id", targetUserId)
     }
+
+    suspend fun deleteMessages(broadcasterUserId: UserId, moderatorUserId: UserId, messageId: String?): HttpResponse? = ktorClient.delete("moderation/chat") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        parameter("broadcaster_id", broadcasterUserId)
+        parameter("moderator_id", moderatorUserId)
+        if (messageId != null) {
+            parameter("message_id", messageId)
+        }
+    }
 }

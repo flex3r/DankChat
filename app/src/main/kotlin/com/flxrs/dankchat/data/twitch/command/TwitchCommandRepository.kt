@@ -11,6 +11,7 @@ import com.flxrs.dankchat.data.repo.CommandResult
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.DateTimeUtils
+import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,10 +37,10 @@ class TwitchCommandRepository @Inject constructor(
             TwitchCommand.AnnouncePurple -> sendAnnouncement(command, currentUserId, context)
 
             TwitchCommand.Ban            -> banUser(command, currentUserId, context)
-            TwitchCommand.Clear          -> CommandResult.IrcCommand // TODO
+            TwitchCommand.Clear          -> clearChat(command, currentUserId, context)
             TwitchCommand.Color          -> CommandResult.IrcCommand // TODO
             TwitchCommand.Commercial     -> CommandResult.IrcCommand // TODO
-            TwitchCommand.Delete         -> CommandResult.IrcCommand // TODO
+            TwitchCommand.Delete         -> deleteMessage(command, currentUserId, context)
             TwitchCommand.EmoteOnly      -> CommandResult.IrcCommand // TODO
             TwitchCommand.EmoteOnlyOff   -> CommandResult.IrcCommand // TODO
             TwitchCommand.Followers      -> CommandResult.IrcCommand // TODO
@@ -325,6 +326,37 @@ class TwitchCommandRepository @Inject constructor(
             onSuccess = { CommandResult.AcceptedTwitchCommand(command) },
             onFailure = {
                 val response = "Failed to timeout user - ${it.toErrorMessage(command, target.name)}"
+                CommandResult.AcceptedTwitchCommand(command, response)
+            }
+        )
+    }
+
+    private suspend fun clearChat(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
+        return helixApiClient.deleteMessages(context.channelId, currentUserId).fold(
+            onSuccess = { CommandResult.AcceptedTwitchCommand(command) },
+            onFailure = {
+                val response = "Failed to delete chat messages - ${it.toErrorMessage(command)}"
+                CommandResult.AcceptedTwitchCommand(command, response)
+            }
+        )
+    }
+
+    private suspend fun deleteMessage(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
+        val args = context.args
+        if (args.isEmpty() || args.first().isBlank()) {
+            return CommandResult.AcceptedTwitchCommand(command, "Usage: /delete <msg-id> - Deletes the specified message.")
+        }
+
+        val messageId = args.first()
+        val parsedId = runCatching { UUID.fromString(messageId) }
+        if (parsedId.isFailure) {
+            return CommandResult.AcceptedTwitchCommand(command, "Invalid msg-id: \"$messageId\".")
+        }
+
+        return helixApiClient.deleteMessages(context.channelId, currentUserId, messageId).fold(
+            onSuccess = { CommandResult.AcceptedTwitchCommand(command) },
+            onFailure = {
+                val response = "Failed to delete chat messages - ${it.toErrorMessage(command)}"
                 CommandResult.AcceptedTwitchCommand(command, response)
             }
         )

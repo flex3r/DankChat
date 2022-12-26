@@ -8,7 +8,7 @@ import com.flxrs.dankchat.data.twitch.message.SystemMessageType
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-fun List<ChatItem>.replaceWithTimeOuts(moderationMessage: ModerationMessage, scrollBackLength: Int): List<ChatItem> = toMutableList().apply {
+fun List<ChatItem>.replaceWithTimeouts(moderationMessage: ModerationMessage, scrollBackLength: Int): List<ChatItem> = toMutableList().apply {
     var addClearChat = true
     if (moderationMessage.action == ModerationMessage.Action.Timeout) {
         val end = (lastIndex - 20).coerceAtLeast(0)
@@ -62,7 +62,7 @@ fun List<ChatItem>.replaceWithTimeOuts(moderationMessage: ModerationMessage, scr
     }
 }
 
-fun List<ChatItem>.replaceWithTimeOut(id: String): List<ChatItem> = toMutableList().apply {
+fun List<ChatItem>.replaceWithTimeout(id: String): List<ChatItem> = toMutableList().apply {
     for (idx in indices) {
         val item = this[idx]
         if (item.message is PrivMessage && item.message.id == id) {
