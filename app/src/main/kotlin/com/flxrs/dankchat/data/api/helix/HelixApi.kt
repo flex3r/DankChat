@@ -12,7 +12,7 @@ import io.ktor.http.*
 
 class HelixApi(private val ktorClient: HttpClient, private val dankChatPreferenceStore: DankChatPreferenceStore) {
 
-    suspend fun getUsersByName(logins: List<UserName>): HttpResponse? = ktorClient.get("users/") {
+    suspend fun getUsersByName(logins: List<UserName>): HttpResponse? = ktorClient.get("users") {
         val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
         bearerAuth(oAuth)
         logins.forEach {
@@ -20,7 +20,7 @@ class HelixApi(private val ktorClient: HttpClient, private val dankChatPreferenc
         }
     }
 
-    suspend fun getUsersByIds(ids: List<UserId>): HttpResponse? = ktorClient.get("users/") {
+    suspend fun getUsersByIds(ids: List<UserId>): HttpResponse? = ktorClient.get("users") {
         val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
         bearerAuth(oAuth)
         ids.forEach {
@@ -37,7 +37,7 @@ class HelixApi(private val ktorClient: HttpClient, private val dankChatPreferenc
         parameter("to_id", toId)
     }
 
-    suspend fun getStreams(channels: List<UserName>): HttpResponse? = ktorClient.get("streams/") {
+    suspend fun getStreams(channels: List<UserName>): HttpResponse? = ktorClient.get("streams") {
         val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
         bearerAuth(oAuth)
         channels.forEach {
@@ -45,7 +45,7 @@ class HelixApi(private val ktorClient: HttpClient, private val dankChatPreferenc
         }
     }
 
-    suspend fun getUserBlocks(userId: UserId, first: Int, after: String? = null): HttpResponse? = ktorClient.get("users/blocks/") {
+    suspend fun getUserBlocks(userId: UserId, first: Int, after: String? = null): HttpResponse? = ktorClient.get("users/blocks") {
         val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
         bearerAuth(oAuth)
         parameter("broadcaster_id", userId)
@@ -55,13 +55,13 @@ class HelixApi(private val ktorClient: HttpClient, private val dankChatPreferenc
         }
     }
 
-    suspend fun putUserBlock(targetUserId: UserId): HttpResponse? = ktorClient.put("users/blocks/") {
+    suspend fun putUserBlock(targetUserId: UserId): HttpResponse? = ktorClient.put("users/blocks") {
         val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
         bearerAuth(oAuth)
         parameter("target_user_id", targetUserId)
     }
 
-    suspend fun deleteUserBlock(targetUserId: UserId): HttpResponse? = ktorClient.delete("users/blocks/") {
+    suspend fun deleteUserBlock(targetUserId: UserId): HttpResponse? = ktorClient.delete("users/blocks") {
         val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
         bearerAuth(oAuth)
         parameter("target_user_id", targetUserId)
@@ -168,6 +168,13 @@ class HelixApi(private val ktorClient: HttpClient, private val dankChatPreferenc
     }
 
     suspend fun postMarker(request: MarkerRequestDto): HttpResponse? = ktorClient.post("streams/markers") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        contentType(ContentType.Application.Json)
+        setBody(request)
+    }
+
+    suspend fun postCommercial(request: CommercialRequestDto): HttpResponse? = ktorClient.post("channels/commercial") {
         val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
         bearerAuth(oAuth)
         contentType(ContentType.Application.Json)
