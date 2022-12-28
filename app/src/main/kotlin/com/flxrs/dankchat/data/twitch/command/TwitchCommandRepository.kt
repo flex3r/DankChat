@@ -39,7 +39,7 @@ class TwitchCommandRepository @Inject constructor(
             TwitchCommand.Ban            -> banUser(command, currentUserId, context)
             TwitchCommand.Clear          -> clearChat(command, currentUserId, context)
             TwitchCommand.Color          -> updateColor(command, currentUserId, context)
-            TwitchCommand.Commercial     -> CommandResult.IrcCommand // TODO
+            TwitchCommand.Commercial     -> startCommercial(command, context)
             TwitchCommand.Delete         -> deleteMessage(command, currentUserId, context)
             TwitchCommand.EmoteOnly      -> CommandResult.IrcCommand // TODO
             TwitchCommand.EmoteOnlyOff   -> CommandResult.IrcCommand // TODO
@@ -387,14 +387,35 @@ class TwitchCommandRepository @Inject constructor(
 
         return helixApiClient.postMarker(request).fold(
             onSuccess = { result ->
-                val marker = result.data.firstOrNull()
-                val time = marker?.positionSeconds?.let { " at ${DateTimeUtils.formatSeconds(it)}" }.orEmpty()
-                val markerDescription = marker?.description?.let { ": \"$it\"" }.orEmpty()
-                val response = "Successfully added a stream marker$time$markerDescription."
+                val markerDescription = result.description?.let { ": \"$it\"" }.orEmpty()
+                val response = "Successfully added a stream marker at ${DateTimeUtils.formatSeconds(result.positionSeconds)}$markerDescription."
                 CommandResult.AcceptedTwitchCommand(command, response)
             },
             onFailure = {
                 val response = "Failed to create stream marker - ${it.toErrorMessage(command)}"
+                CommandResult.AcceptedTwitchCommand(command, response)
+            }
+        )
+    }
+
+    private suspend fun startCommercial(command: TwitchCommand, context: CommandContext): CommandResult {
+        val args = context.args
+        val usage = "Usage: /commercial <length> - Starts a commercial with the specified duration for the current channel. Valid length options are 30, 60, 90, 120, 150, and 180 seconds."
+        if (args.isEmpty() || args.first().isBlank()) {
+            return CommandResult.AcceptedTwitchCommand(command, response = usage)
+        }
+
+        val length = args.first().toIntOrNull() ?: return CommandResult.AcceptedTwitchCommand(command, response = usage)
+        val request = CommercialRequestDto(context.channelId, length)
+        return helixApiClient.postCommercial(request).fold(
+            onSuccess = { result ->
+                val response = "Starting ${result.length} second long commercial break. " +
+                        "Keep in mind you are still live and not all viewers will receive a commercial. " +
+                        "You may run another commercial in ${result.retryAfter} seconds."
+                CommandResult.AcceptedTwitchCommand(command, response)
+            },
+            onFailure = {
+                val response = "Failed to start commercial - ${it.toErrorMessage(command)}"
                 CommandResult.AcceptedTwitchCommand(command, response)
             }
         )
@@ -426,6 +447,9 @@ class TwitchCommandRepository @Inject constructor(
             HelixError.ConflictingBanOperation  -> "There was a conflicting ban operation on this user. Please try again."
             HelixError.InvalidColor             -> "Color must be one of Twitch's supported colors (${VALID_HELIX_COLORS.joinToString()}) or a hex code (#000000) if you have Turbo or Prime."
             is HelixError.MarkerError           -> error.message ?: GENERIC_ERROR_MESSAGE
+            HelixError.BroadcasterNotStreaming  -> "You must be streaming live to run commercials."
+            HelixError.CommercialRateLimited    -> "You must wait until your cool-down period expires before you can run another commercial."
+            HelixError.MissingLengthParameter   -> "Command must include a desired commercial break length that is greater than zero."
             HelixError.Unknown                  -> GENERIC_ERROR_MESSAGE
         }
     }

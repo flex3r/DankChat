@@ -150,10 +150,20 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
             .throwHelixApiErrorOnFailure()
     }
 
-    suspend fun postMarker(requestDto: MarkerRequestDto): Result<DataListDto<MarkerDto>> = runCatching {
+    suspend fun postMarker(requestDto: MarkerRequestDto): Result<MarkerDto> = runCatching {
         helixApi.postMarker(requestDto)
             .throwHelixApiErrorOnFailure()
-            .body()
+            .body<DataListDto<MarkerDto>>()
+            .data
+            .first()
+    }
+
+    suspend fun postCommercial(request: CommercialRequestDto): Result<CommercialDto> = runCatching {
+        helixApi.postCommercial(request)
+            .throwHelixApiErrorOnFailure()
+            .body<DataListDto<CommercialDto>>()
+            .data
+            .first()
     }
 
     private suspend inline fun <reified T> pageUntil(amountToFetch: Int, request: (cursor: String?) -> HttpResponse?): List<T> {
@@ -192,6 +202,8 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
                 message.startsWith(USER_MAY_NOT_BE_BANNED_ERROR, ignoreCase = true) -> HelixError.TargetCannotBeBanned
                 message.startsWith(USER_NOT_BANNED_ERROR, ignoreCase = true)        -> HelixError.TargetNotBanned
                 message.startsWith(INVALID_COLOR_ERROR, ignoreCase = true)          -> HelixError.InvalidColor
+                message.startsWith(BROADCASTER_NOT_LIVE_ERROR, ignoreCase = true)   -> HelixError.BroadcasterNotStreaming
+                message.startsWith(MISSING_REQUIRED_PARAM_ERROR, ignoreCase = true) -> HelixError.MissingLengthParameter
                 else                                                                -> HelixError.Forwarded
             }
 
@@ -219,8 +231,9 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
             }
 
             HttpStatusCode.TooManyRequests     -> when (request.url.encodedPath) {
-                "/helix/whispers/" -> HelixError.WhisperRateLimited
-                else               -> HelixError.Forwarded
+                "/helix/whispers"            -> HelixError.WhisperRateLimited
+                "/helix/channels/commercial" -> HelixError.CommercialRateLimited
+                else                         -> HelixError.Forwarded
             }
 
             HttpStatusCode.Conflict            -> when (request.url.encodedPath) {
@@ -235,6 +248,7 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
     }
 
     companion object {
+        private val TAG = HelixApiClient::class.java.simpleName
         private val TOO_EARLY_STATUS = HttpStatusCode(425, "Too Early")
         private const val DEFAULT_PAGE_SIZE = 100
         private const val WHISPER_SELF_ERROR = "A user cannot whisper themself"
@@ -249,5 +263,7 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
         private const val USER_ALREADY_BANNED_ERROR = "The user specified in the user_id field is already banned"
         private const val USER_MAY_NOT_BE_BANNED_ERROR = "The user specified in the user_id field may not be banned"
         private const val INVALID_COLOR_ERROR = "invalid color"
+        private const val BROADCASTER_NOT_LIVE_ERROR = "To start a commercial, the broadcaster must be streaming live."
+        private const val MISSING_REQUIRED_PARAM_ERROR = "Missing required parameter"
     }
 }

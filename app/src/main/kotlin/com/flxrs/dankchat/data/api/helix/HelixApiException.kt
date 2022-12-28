@@ -1,7 +1,8 @@
 package com.flxrs.dankchat.data.api.helix
 
 import com.flxrs.dankchat.data.api.ApiException
-import io.ktor.http.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.Url
 
 data class HelixApiException(
     val error: HelixError,
@@ -31,5 +32,8 @@ sealed class HelixError {
     object ConflictingBanOperation : HelixError()
     object InvalidColor : HelixError()
     data class MarkerError(val message: String?) : HelixError()
+    object CommercialRateLimited : HelixError()
+    object BroadcasterNotStreaming : HelixError()
+    object MissingLengthParameter : HelixError()
     object Forwarded : HelixError()
 }
