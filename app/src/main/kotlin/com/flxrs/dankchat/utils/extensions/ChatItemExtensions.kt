@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.utils.extensions
 
+import android.util.Log
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.data.twitch.message.ModerationMessage
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
@@ -10,21 +11,30 @@ import kotlin.time.Duration.Companion.seconds
 
 fun List<ChatItem>.replaceWithTimeouts(moderationMessage: ModerationMessage, scrollBackLength: Int): List<ChatItem> = toMutableList().apply {
     var addClearChat = true
-    if (moderationMessage.action == ModerationMessage.Action.Timeout) {
+    if (moderationMessage.action == ModerationMessage.Action.Timeout || moderationMessage.action == ModerationMessage.Action.Ban) {
         val end = (lastIndex - 20).coerceAtLeast(0)
         for (idx in lastIndex downTo end) {
             val item = this[idx]
-            val message = item.message
-            if (message !is ModerationMessage || message.targetUser != moderationMessage.targetUser || message.action != ModerationMessage.Action.Timeout) {
+            val message = item.message as? ModerationMessage ?: continue
+            if (message.targetUser != moderationMessage.targetUser || message.action != moderationMessage.action) {
                 continue
             }
 
-            if ((moderationMessage.timestamp - message.timestamp).milliseconds < 5.seconds) {
-                val stackedMessage = moderationMessage.copy(stackCount = message.stackCount + 1)
-                this[idx] = item.copy(tag = item.tag + 1, message = stackedMessage)
-                addClearChat = false
+            if ((moderationMessage.timestamp - message.timestamp).milliseconds >= 5.seconds) {
                 break
             }
+
+            when {
+                !moderationMessage.fromPubsub && message.fromPubsub          -> Unit
+                moderationMessage.fromPubsub && !message.fromPubsub          -> this[idx] = item.copy(tag = item.tag + 1, message = moderationMessage)
+                moderationMessage.action == ModerationMessage.Action.Timeout -> {
+                    val stackedMessage = moderationMessage.copy(stackCount = message.stackCount + 1)
+                    this[idx] = item.copy(tag = item.tag + 1, message = stackedMessage)
+                }
+            }
+            addClearChat = false
+            break
+
         }
     }
 
@@ -52,7 +62,7 @@ fun List<ChatItem>.replaceWithTimeouts(moderationMessage: ModerationMessage, scr
                 this[idx] = item.copy(tag = item.tag + 1, message = item.message.copy(timedOut = true), isCleared = true)
             }
 
-            else                          -> continue
+            else                           -> continue
         }
     }
 
@@ -62,14 +72,28 @@ fun List<ChatItem>.replaceWithTimeouts(moderationMessage: ModerationMessage, scr
     }
 }
 
-fun List<ChatItem>.replaceWithTimeout(id: String): List<ChatItem> = toMutableList().apply {
+fun List<ChatItem>.replaceWithTimeout(moderationMessage: ModerationMessage, scrollBackLength: Int): List<ChatItem> = toMutableList().apply {
+    val targetMsgId = moderationMessage.targetMsgId ?: return@apply
+    if (moderationMessage.fromPubsub) {
+        val end = (lastIndex - 20).coerceAtLeast(0)
+        for (idx in lastIndex downTo end) {
+            val item = this[idx]
+            val message = item.message as? ModerationMessage ?: continue
+            if (message.action == ModerationMessage.Action.Delete && message.targetMsgId == targetMsgId && !message.fromPubsub) {
+                this[idx] = item.copy(tag = item.tag + 1, message = moderationMessage)
+                return@apply
+            }
+        }
+    }
+
     for (idx in indices) {
         val item = this[idx]
-        if (item.message is PrivMessage && item.message.id == id) {
+        if (item.message is PrivMessage && item.message.id == targetMsgId) {
             this[idx] = item.copy(tag = item.tag + 1, message = item.message.copy(timedOut = true), isCleared = true)
             break
         }
     }
+    return addAndLimit(ChatItem(moderationMessage), scrollBackLength)
 }
 
 fun List<ChatItem>.addAndLimit(item: ChatItem, scrollBackLength: Int): List<ChatItem> = toMutableList().apply {

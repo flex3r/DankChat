@@ -18,9 +18,11 @@ data class ModerationMessage(
     val action: Action,
     val creatorUser: UserName? = null,
     val targetUser: UserName? = null,
+    val targetMsgId: String? = null,
     val durationSeconds: Int? = null,
     val duration: String? = null,
     val reason: String? = null,
+    val fromPubsub: Boolean = false,
     val stackCount: Int = 0,
 ) : Message() {
     enum class Action {
@@ -36,6 +38,16 @@ data class ModerationMessage(
 
     private val durationOrBlank get() = duration?.let { " for $it" }.orEmpty()
     private val reasonOrBlank get() = reason.takeUnless { it.isNullOrBlank() }?.let { ": \"$reason\"" }.orEmpty()
+    private fun getTrimmedReasonOrBlank(showDeletedMessage: Boolean): String {
+        if (!showDeletedMessage) return ""
+
+        val fullReason = reason.orEmpty()
+        val trimmed =  when {
+            fullReason.length > 50 -> "${fullReason.take(50)}…"
+            else                   -> fullReason
+        }
+        return " saying: \"$trimmed\""
+    }
     private val creatorOrBlank get() = creatorUser?.let { " by $it" }.orEmpty()
     private val countOrBlank
         get() = when {
@@ -44,7 +56,7 @@ data class ModerationMessage(
         }
 
     // TODO localize
-    fun getSystemMessage(currentUser: UserName?): String {
+    fun getSystemMessage(currentUser: UserName?, showDeletedMessage: Boolean): String {
         return when (action) {
             Action.Timeout   -> when (targetUser) {
                 currentUser -> "You were timed out$durationOrBlank$creatorOrBlank$reasonOrBlank.$countOrBlank"
@@ -58,7 +70,7 @@ data class ModerationMessage(
             Action.Ban       -> when (targetUser) {
                 currentUser -> "You were banned$creatorOrBlank$reasonOrBlank."
                 else        -> when (creatorUser) {
-                    null -> "$targetUser has been permanently banned."
+                    null -> "$targetUser has been permanently banned." // irc
                     else -> "$creatorUser banned $targetUser$reasonOrBlank."
 
                 }
@@ -67,7 +79,11 @@ data class ModerationMessage(
             Action.Unban     -> "$creatorUser unbanned $targetUser."
             Action.Mod       -> "$creatorUser modded $targetUser."
             Action.Unmod     -> "$creatorUser unmodded $targetUser."
-            Action.Delete    -> "$creatorUser deleted message from $targetUser saying: \"$reason\"."
+            Action.Delete    -> when (creatorUser) {
+                null -> "A message from $targetUser was deleted${getTrimmedReasonOrBlank(showDeletedMessage)}."
+                else -> "$creatorUser deleted message from $targetUser${getTrimmedReasonOrBlank(showDeletedMessage)}."
+            }
+
             Action.Clear     -> when (creatorUser) {
                 null -> "Chat has been cleared by a moderator."
                 else -> "$creatorUser cleared the chat."
@@ -100,7 +116,28 @@ data class ModerationMessage(
                 targetUser = target?.toUserName(),
                 durationSeconds = durationSeconds,
                 duration = duration,
-                stackCount = if (target != null && duration != null) 1 else 0
+                stackCount = if (target != null && duration != null) 1 else 0,
+                fromPubsub = false,
+            )
+        }
+
+        fun parseClearMessage(message: IrcMessage): ModerationMessage = with(message) {
+            val channel = params[0].substring(1)
+            val target = tags["login"]
+            val targetMsgId = tags["target-msg-id"]
+            val reason = params.getOrNull(1)
+            val ts = tags["tmi-sent-ts"]?.toLongOrNull() ?: System.currentTimeMillis()
+            val id = tags["id"] ?: UUID.randomUUID().toString()
+
+            return ModerationMessage(
+                timestamp = ts,
+                id = id,
+                channel = channel.toUserName(),
+                action = Action.Delete,
+                targetUser = target?.toUserName(),
+                targetMsgId = targetMsgId,
+                reason = reason,
+                fromPubsub = false,
             )
         }
 
@@ -108,6 +145,7 @@ data class ModerationMessage(
             val seconds = data.args?.getOrNull(1)?.toIntOrNull()
             val duration = parseDuration(seconds, data)
             val targetUser = parseTargetUser(data)
+            val targetMsgId = parseTargetMsgId(data)
             val reason = parseReason(data)
 
             return ModerationMessage(
@@ -117,10 +155,12 @@ data class ModerationMessage(
                 action = data.moderationAction.toAction(),
                 creatorUser = data.creator,
                 targetUser = targetUser,
+                targetMsgId = targetMsgId,
                 durationSeconds = seconds,
                 duration = duration,
                 reason = reason,
-                stackCount = if (data.targetUserName != null && duration != null) 1 else 0
+                stackCount = if (data.targetUserName != null && duration != null) 1 else 0,
+                fromPubsub = true,
             )
         }
 
@@ -140,6 +180,11 @@ data class ModerationMessage(
         private fun parseTargetUser(data: ModerationActionData): UserName? = when (data.moderationAction) {
             ModerationActionType.Delete -> data.args?.getOrNull(0)?.toUserName()
             else                        -> data.targetUserName
+        }
+
+        private fun parseTargetMsgId(data: ModerationActionData): String? = when (data.moderationAction) {
+            ModerationActionType.Delete -> data.args?.getOrNull(2)
+            else                        -> null
         }
 
         private fun ModerationActionType.toAction() = when (this) {

@@ -228,12 +228,13 @@ class ChatAdapter(
         }
         setRippleBackground(background, enableRipple = false)
 
+        val systemMessage = message.getSystemMessage(dankChatPreferenceStore.userName, dankChatPreferenceStore.showTimedOutMessages)
         val withTime = when {
             dankChatPreferenceStore.showTimestamps -> SpannableStringBuilder()
                 .timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp)) }
-                .append(message.getSystemMessage(dankChatPreferenceStore.userName))
+                .append(systemMessage)
 
-            else                                   -> SpannableStringBuilder().append(message.getSystemMessage(dankChatPreferenceStore.userName))
+            else                                   -> SpannableStringBuilder().append(systemMessage)
         }
 
         setTextSize(TypedValue.COMPLEX_UNIT_SP, dankChatPreferenceStore.fontSize)

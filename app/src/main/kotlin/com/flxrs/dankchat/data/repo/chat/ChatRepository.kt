@@ -152,7 +152,10 @@ class ChatRepository @Inject constructor(
                         }
 
                         messages[message.channel]?.update { current ->
-                            current.replaceWithTimeouts(message, scrollBackLength)
+                            when (message.action) {
+                                ModerationMessage.Action.Delete -> current.replaceWithTimeout(message, scrollBackLength)
+                                else                            -> current.replaceWithTimeouts(message, scrollBackLength)
+                            }
                         }
                     }
                 }
@@ -481,12 +484,6 @@ class ChatRepository @Inject constructor(
     }
 
     private fun handleClearChat(msg: IrcMessage) {
-        val channelId = msg.tags["room-id"]?.toUserId() ?: return
-        // TODO replace instead of skip
-        if (pubSubManager.hasModeratorActionTopic(channelId)) {
-            return
-        }
-
         val parsed = runCatching {
             ModerationMessage.parseClearChat(msg)
         }.getOrElse {
@@ -559,11 +556,14 @@ class ChatRepository @Inject constructor(
     }
 
     private fun handleClearMsg(msg: IrcMessage) {
-        val channel = msg.params.getOrNull(0)?.substring(1)?.toUserName() ?: return
-        val targetId = msg.tags["target-msg-id"] ?: return
+        val parsed = runCatching {
+            ModerationMessage.parseClearMessage(msg)
+        }.getOrElse {
+            return
+        }
 
-        messages[channel]?.update { current ->
-            current.replaceWithTimeout(targetId)
+        messages[parsed.channel]?.update { current ->
+            current.replaceWithTimeout(parsed, scrollBackLength)
         }
     }
 
