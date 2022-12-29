@@ -630,14 +630,13 @@ class MainViewModel @Inject constructor(
         chipsExpanded.update { !it }
     }
 
-    // TODO
     fun changeRoomState(index: Int, enabled: Boolean, time: String = "") {
         val base = when (index) {
-            0    -> ".emoteonly"
-            1    -> ".subscribers"
-            2    -> ".slow"
-            3    -> ".r9kbeta"
-            else -> ".followers"
+            0    -> "/emoteonly"
+            1    -> "/subscribers"
+            2    -> "/slow"
+            3    -> "/uniquechat"
+            else -> "/followers"
         }
 
         val command = buildString {
@@ -652,7 +651,7 @@ class MainViewModel @Inject constructor(
             }
         }
 
-        chatRepository.sendMessage(command)
+        trySendMessageOrCommand(command)
     }
 
     fun addEmoteUsage(emote: GenericEmote) = viewModelScope.launch {
