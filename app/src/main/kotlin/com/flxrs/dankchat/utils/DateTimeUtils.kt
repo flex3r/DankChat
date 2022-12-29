@@ -32,7 +32,6 @@ object DateTimeUtils {
             .joinToString(" ") { (time, unit) -> "$time$unit" }
     }
 
-    // TODO tests
     fun durationToSeconds(duration: String): Int? {
         if (duration.isBlank() || !duration.first().isDigit()) {
             return null
