@@ -3,6 +3,8 @@ package com.flxrs.dankchat.data.twitch.message
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.irc.IrcMessage
+import com.flxrs.dankchat.data.toUserId
+import com.flxrs.dankchat.data.toUserName
 
 data class RoomState(
     val channel: UserName,
@@ -19,6 +21,15 @@ data class RoomState(
         get() = tags.entries.map { (tag, value) ->
             if (tag == RoomStateTag.FOLLOW) value >= 0 else value > 0
         }.toBooleanArray()
+
+    val isEmoteMode get() = tags.getOrDefault(RoomStateTag.EMOTE, 0) > 0
+    val isSubscriberMode get() = tags.getOrDefault(RoomStateTag.SUBS, 0) > 0
+    val isSlowMode get() = tags.getOrDefault(RoomStateTag.SLOW, 0) > 0
+    val isUniqueChatMode get() = tags.getOrDefault(RoomStateTag.R9K, 0) > 0
+    val isFollowMode get() = tags.getOrDefault(RoomStateTag.FOLLOW, 0) >= 0
+
+    val followerModeDuration get() = tags[RoomStateTag.FOLLOW]?.takeIf { it >= 0 }
+    val slowModeWaitTime get() = tags[RoomStateTag.SLOW]?.takeIf { it > 0 }
 
     fun toDisplayText(): String = tags
         .filter { (it.key == RoomStateTag.FOLLOW && it.value >= 0) || it.value > 0 }

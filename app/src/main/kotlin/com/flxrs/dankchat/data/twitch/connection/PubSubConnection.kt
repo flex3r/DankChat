@@ -258,6 +258,8 @@ class PubSubConnection(
                                         channelId = topic.substringAfterLast('.').toUserId(),
                                         data = parsedMessage.data.copy(
                                             msgId = parsedMessage.data.msgId?.ifBlank { null },
+                                            creator = parsedMessage.data.creator?.ifBlank { null },
+                                            creatorUserId = parsedMessage.data.creatorUserId?.ifBlank { null },
                                             targetUserId = parsedMessage.data.targetUserId?.ifBlank { null },
                                             targetUserName = parsedMessage.data.targetUserName?.ifBlank { null },
                                         )

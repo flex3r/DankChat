@@ -482,6 +482,7 @@ class ChatRepository @Inject constructor(
 
     private fun handleClearChat(msg: IrcMessage) {
         val channelId = msg.tags["room-id"]?.toUserId() ?: return
+        // TODO replace instead of skip
         if (pubSubManager.hasModeratorActionTopic(channelId)) {
             return
         }
@@ -502,7 +503,7 @@ class ChatRepository @Inject constructor(
         val channelId = msg.tags["room-id"]?.toUserId() ?: return
         val flow = roomStateFlows[channel] ?: return
         val state = if (flow.replayCache.isEmpty()) {
-            RoomState(channel, channelId)
+            RoomState(channel, channelId).copyFromIrcMessage(msg)
         } else {
             flow.firstValue.copyFromIrcMessage(msg)
         }
