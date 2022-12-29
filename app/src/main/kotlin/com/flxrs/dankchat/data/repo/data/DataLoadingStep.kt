@@ -5,11 +5,26 @@ import com.flxrs.dankchat.data.UserName
 
 
 sealed class DataLoadingStep {
-    data object DankChatBadges : DataLoadingStep()
-    data object GlobalBadges : DataLoadingStep()
-    data object GlobalFFZEmotes : DataLoadingStep()
-    data object GlobalBTTVEmotes : DataLoadingStep()
-    data object GlobalSevenTVEmotes : DataLoadingStep()
+    object DankChatBadges : DataLoadingStep() {
+        override fun toString(): String = "DankChatBadges"
+    }
+
+    object GlobalBadges : DataLoadingStep() {
+        override fun toString(): String = "GlobalBadges"
+    }
+
+    object GlobalFFZEmotes : DataLoadingStep() {
+        override fun toString(): String = "GlobalFFZEmotes"
+    }
+
+    object GlobalBTTVEmotes : DataLoadingStep() {
+        override fun toString(): String = "GlobalBTTVEmotes"
+    }
+
+    object GlobalSevenTVEmotes : DataLoadingStep() {
+        override fun toString(): String = "GlobalSevenTVEmotes"
+    }
+
     data class ChannelBadges(val channel: UserName, val channelId: UserId) : DataLoadingStep()
     data class ChannelFFZEmotes(val channel: UserName, val channelId: UserId) : DataLoadingStep()
     data class ChannelBTTVEmotes(val channel: UserName, val channelId: UserId) : DataLoadingStep()
