@@ -6,7 +6,7 @@
     <string name="login">Se connecter</string>
     <string name="reload_emotes">Recharger les emotes</string>
     <string name="reconnect">Se reconnecter</string>
-    <string name="clear_chat">Effacer le chat</string>
+    <string name="clear_chat">Effacer l\'histoire du chat</string>
     <string name="add_dialog_title">Ajouter une chaîne</string>
     <string name="edit_dialog_title">Renommer la chaîne</string>
     <string name="dialog_ok">OK</string>
@@ -29,11 +29,11 @@
     <string name="upload_media">Envoyer un média</string>
     <string name="take_picture">Prendre une photo</string>
     <string name="record_video">Prendre une vidéo</string>
-    <string name="choose_media">Choisir existant</string>
+    <string name="choose_media">Choisir un fichier existant</string>
     <string name="resume_scroll">Réactiver le défilement</string>
     <string name="uploading_image">Envoi de l\'image</string>
     <string name="settings">Réglages</string>
-    <string name="external_upload_disclaimer">Stockage fourni par %1$s, à vos risques et périls.</string>
+    <string name="external_upload_disclaimer">Hébergement externe fourni par %1$s, utilisez à vos propres risques.</string>
     <string name="nuuls_upload_title">Envoi d\'une image personalisée</string>
     <string name="snackbar_message_copied">Message copié</string>
     <string name="snackbar_error_copied">Info sur l\'erreur copiée</string>
