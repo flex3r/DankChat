@@ -25,11 +25,9 @@ object DateTimeUtils {
         val minutes = timeoutMinutes % 60
         val timeoutHours = timeoutMinutes / 60
         val hours = timeoutHours % 24
-        val timeoutDays = timeoutHours / 24
-        val days = timeoutDays % 7
-        val weeks = timeoutDays / 7
+        val days = timeoutHours / 24
 
-        return listOf(weeks to "w", days to "d", hours to "h", minutes to "m", seconds to "s")
+        return listOf(days to "d", hours to "h", minutes to "m", seconds to "s")
             .filter { (time, _) -> time > 0 }
             .joinToString(" ") { (time, unit) -> "$time$unit" }
     }
@@ -46,23 +44,24 @@ object DateTimeUtils {
         }
 
         var seconds = 0
-        var acc = 0
+        var acc: Int? = null
         duration.forEach { c ->
-            if (c.isDigit()) {
-                acc = acc * 10 + c.digitToInt()
+            if (c.isWhitespace()) {
                 return@forEach
             }
 
-            if (acc == 0) {
-                return null
+            if (c.isDigit()) {
+                acc = (acc ?: 0) * 10 + c.digitToInt()
+                return@forEach
             }
 
             val multiplier = secondsMultiplierForUnit(c) ?: return null
-            seconds += acc * multiplier
-            acc = 0
+            val currentAcc = acc ?: return null
+            seconds += currentAcc * multiplier
+            acc = null
         }
 
-        if (acc != 0) {
+        if (acc != null) {
             return null
         }
 

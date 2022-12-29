@@ -35,5 +35,8 @@ sealed class HelixError {
     object CommercialRateLimited : HelixError()
     object BroadcasterNotStreaming : HelixError()
     object MissingLengthParameter : HelixError()
+    object RaidSelf : HelixError()
+    object NoRaidPending : HelixError()
+    data class NotInRange(val validRange: IntRange?) : HelixError()
     object Forwarded : HelixError()
 }

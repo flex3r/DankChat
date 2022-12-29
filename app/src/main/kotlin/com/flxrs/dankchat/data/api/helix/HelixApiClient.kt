@@ -166,6 +166,27 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
             .first()
     }
 
+    suspend fun postRaid(broadcastUserId: UserId, targetUserId: UserId): Result<RaidDto> = runCatching {
+        helixApi.postRaid(broadcastUserId, targetUserId)
+            .throwHelixApiErrorOnFailure()
+            .body<DataListDto<RaidDto>>()
+            .data
+            .first()
+    }
+
+    suspend fun deleteRaid(broadcastUserId: UserId): Result<Unit> = runCatching {
+        helixApi.deleteRaid(broadcastUserId)
+            .throwHelixApiErrorOnFailure()
+    }
+
+    suspend fun patchChatSettings(broadcastUserId: UserId, moderatorUserId: UserId, request: ChatSettingsRequestDto): Result<ChatSettingsDto> = runCatching {
+        helixApi.patchChatSettings(broadcastUserId, moderatorUserId, request)
+            .throwHelixApiErrorOnFailure()
+            .body<DataListDto<ChatSettingsDto>>()
+            .data
+            .first()
+    }
+
     private suspend inline fun <reified T> pageUntil(amountToFetch: Int, request: (cursor: String?) -> HttpResponse?): List<T> {
         val initialPage = request(null)
             .throwHelixApiErrorOnFailure()
@@ -204,6 +225,17 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
                 message.startsWith(INVALID_COLOR_ERROR, ignoreCase = true)          -> HelixError.InvalidColor
                 message.startsWith(BROADCASTER_NOT_LIVE_ERROR, ignoreCase = true)   -> HelixError.BroadcasterNotStreaming
                 message.startsWith(MISSING_REQUIRED_PARAM_ERROR, ignoreCase = true) -> HelixError.MissingLengthParameter
+                message.startsWith(RAID_SELF_ERROR, ignoreCase = true)              -> HelixError.RaidSelf
+                message.contains(NOT_IN_RANGE_ERROR, ignoreCase = true)             -> {
+                    val match = INVALID_RANGE_REGEX.find(message)?.groupValues
+                    val start = match?.getOrNull(1)?.toIntOrNull()
+                    val end = match?.getOrNull(2)?.toIntOrNull()
+                    when {
+                        start != null && end != null -> HelixError.NotInRange(validRange = start..end)
+                        else                         -> HelixError.NotInRange(validRange = null)
+                    }
+                }
+
                 else                                                                -> HelixError.Forwarded
             }
 
@@ -222,6 +254,7 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
 
             HttpStatusCode.NotFound            -> when (request.url.encodedPath) {
                 "/helix/streams/markers" -> HelixError.MarkerError(message.substringAfter("message:\"", "").substringBeforeLast('"').ifBlank { null })
+                "helix/raids"            -> HelixError.NoRaidPending
                 else                     -> HelixError.Forwarded
             }
 
@@ -265,5 +298,8 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
         private const val INVALID_COLOR_ERROR = "invalid color"
         private const val BROADCASTER_NOT_LIVE_ERROR = "To start a commercial, the broadcaster must be streaming live."
         private const val MISSING_REQUIRED_PARAM_ERROR = "Missing required parameter"
+        private const val RAID_SELF_ERROR = "The IDs in from_broadcaster_id and to_broadcaster_id cannot be the same."
+        private const val NOT_IN_RANGE_ERROR = "must be in the range"
+        private val INVALID_RANGE_REGEX = """(\d+) through (\d+)""".toRegex()
     }
 }
