@@ -34,15 +34,9 @@ data class ModerationMessage(
         Delete,
     }
 
-    private val durationAndReasonOrBlank
-        get() = buildString {
-            if (duration != null) {
-                append(" for $duration")
-            }
-            if (!reason.isNullOrBlank()) {
-                append(": \"$reason\"")
-            }
-        }
+    private val durationOrBlank get() = duration?.let { " for $it" }.orEmpty()
+    private val reasonOrBlank get() = reason.takeUnless { it.isNullOrBlank() }?.let { ": \"$reason\"" }.orEmpty()
+    private val creatorOrBlank get() = creatorUser?.let { " by $it" }.orEmpty()
     private val countOrBlank
         get() = when {
             stackCount > 1 -> " ($stackCount times)"
@@ -50,30 +44,36 @@ data class ModerationMessage(
         }
 
     // TODO localize
-    val systemMessage: String
-        get() {
-            return when (action) {
-                Action.Timeout   -> when (creatorUser) {
-                    null -> "$targetUser has been timed out for $duration.$countOrBlank"
-                    else -> "$creatorUser timed out $targetUser$durationAndReasonOrBlank.$countOrBlank"
-                }
-
-                Action.Untimeout -> "$creatorUser untimedout $targetUser."
-                Action.Ban       -> when (creatorUser) {
-                    null -> "$targetUser has been permanently banned."
-                    else -> "$creatorUser banned $targetUser$durationAndReasonOrBlank."
-                }
-
-                Action.Unban     -> "$creatorUser unbanned $targetUser."
-                Action.Mod       -> "$creatorUser modded $targetUser."
-                Action.Unmod     -> "$creatorUser unmodded $targetUser."
-                Action.Delete    -> "$creatorUser deleted message from $targetUser saying: \"$reason\"."
-                Action.Clear     -> when (creatorUser) {
-                    null -> "Chat has been cleared by a moderator."
-                    else -> "$creatorUser cleared the chat."
+    fun getSystemMessage(currentUser: UserName?): String {
+        return when (action) {
+            Action.Timeout   -> when (targetUser) {
+                currentUser -> "You were timed out$durationOrBlank$creatorOrBlank$reasonOrBlank.$countOrBlank"
+                else        -> when (creatorUser) {
+                    null -> "$targetUser has been timed out$durationOrBlank.$countOrBlank" // irc
+                    else -> "$creatorUser timed out $targetUser$durationOrBlank.$countOrBlank"
                 }
             }
+
+            Action.Untimeout -> "$creatorUser untimedout $targetUser."
+            Action.Ban       -> when (targetUser) {
+                currentUser -> "You were banned$creatorOrBlank$reasonOrBlank."
+                else        -> when (creatorUser) {
+                    null -> "$targetUser has been permanently banned."
+                    else -> "$creatorUser banned $targetUser$reasonOrBlank."
+
+                }
+            }
+
+            Action.Unban     -> "$creatorUser unbanned $targetUser."
+            Action.Mod       -> "$creatorUser modded $targetUser."
+            Action.Unmod     -> "$creatorUser unmodded $targetUser."
+            Action.Delete    -> "$creatorUser deleted message from $targetUser saying: \"$reason\"."
+            Action.Clear     -> when (creatorUser) {
+                null -> "Chat has been cleared by a moderator."
+                else -> "$creatorUser cleared the chat."
+            }
         }
+    }
 
     val canClearMessages: Boolean
         get() = action == Action.Clear || action == Action.Ban || action == Action.Timeout

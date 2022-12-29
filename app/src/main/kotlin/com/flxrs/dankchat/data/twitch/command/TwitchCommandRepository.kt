@@ -41,24 +41,24 @@ class TwitchCommandRepository @Inject constructor(
             TwitchCommand.Color          -> updateColor(command, currentUserId, context)
             TwitchCommand.Commercial     -> startCommercial(command, context)
             TwitchCommand.Delete         -> deleteMessage(command, currentUserId, context)
-            TwitchCommand.EmoteOnly      -> CommandResult.IrcCommand // TODO
-            TwitchCommand.EmoteOnlyOff   -> CommandResult.IrcCommand // TODO
+            TwitchCommand.EmoteOnly      -> enableEmoteMode(command, currentUserId, context)
+            TwitchCommand.EmoteOnlyOff   -> disableEmoteMode(command, currentUserId, context)
             TwitchCommand.Followers      -> enableFollowersMode(command, currentUserId, context)
             TwitchCommand.FollowersOff   -> disableFollowersMode(command, currentUserId, context)
             TwitchCommand.Marker         -> createMarker(command, context)
             TwitchCommand.Mod            -> addModerator(command, context)
             TwitchCommand.Mods           -> getModerators(command, context)
-            TwitchCommand.R9kBeta        -> CommandResult.IrcCommand // TODO
-            TwitchCommand.R9kBetaOff     -> CommandResult.IrcCommand // TODO
+            TwitchCommand.R9kBeta        -> enableUniqueChatMode(command, currentUserId, context)
+            TwitchCommand.R9kBetaOff     -> disableUniqueChatMode(command, currentUserId, context)
             TwitchCommand.Raid           -> startRaid(command, context)
-            TwitchCommand.Slow           -> CommandResult.IrcCommand // TODO
-            TwitchCommand.SlowOff        -> CommandResult.IrcCommand // TODO
-            TwitchCommand.Subscribers    -> CommandResult.IrcCommand // TODO
-            TwitchCommand.SubscribersOff -> CommandResult.IrcCommand // TODO
+            TwitchCommand.Slow           -> enableSlowMode(command, currentUserId, context)
+            TwitchCommand.SlowOff        -> disableSlowMode(command, currentUserId, context)
+            TwitchCommand.Subscribers    -> enableSubscriberMode(command, currentUserId, context)
+            TwitchCommand.SubscribersOff -> disableSubscriberMode(command, currentUserId, context)
             TwitchCommand.Timeout        -> timeoutUser(command, currentUserId, context)
             TwitchCommand.Unban          -> unbanUser(command, currentUserId, context)
-            TwitchCommand.UniqueChat     -> CommandResult.IrcCommand // TODO
-            TwitchCommand.UniqueChatOff  -> CommandResult.IrcCommand // TODO
+            TwitchCommand.UniqueChat     -> enableUniqueChatMode(command, currentUserId, context)
+            TwitchCommand.UniqueChatOff  -> disableUniqueChatMode(command, currentUserId, context)
             TwitchCommand.Unmod          -> removeModerator(command, context)
             TwitchCommand.Unraid         -> cancelRaid(command, context)
             TwitchCommand.Untimeout      -> unbanUser(command, currentUserId, context)
@@ -462,27 +462,120 @@ class TwitchCommandRepository @Inject constructor(
             seconds / 60
         }
 
+        if (duration != null && duration == context.roomState.followerModeDuration) {
+            return CommandResult.AcceptedTwitchCommand(command, response = "This room is already in ${DateTimeUtils.formatSeconds(duration * 60)} followers-only mode.")
+        }
+
         val request = ChatSettingsRequestDto(followerMode = true, followerModeDuration = duration)
-        return helixApiClient.patchChatSettings(context.channelId, currentUserId, request).fold(
-            onSuccess = { CommandResult.AcceptedTwitchCommand(command) },
-            onFailure = {
-                val message = it.toErrorMessage(command) { range ->
-                    val start = if (range.first == 0) "0s" else DateTimeUtils.formatSeconds(durationInSeconds = range.first * 60)
-                    val end = if (range.last == 0) "0s" else DateTimeUtils.formatSeconds(durationInSeconds = range.last * 60)
-                    "$start through $end"
-                }
-                val response = "Failed to update - $message"
-                CommandResult.AcceptedTwitchCommand(command, response)
-            }
-        )
+        return updateChatSettings(command, currentUserId, context, request) { range ->
+            val start = if (range.first == 0) "0s" else DateTimeUtils.formatSeconds(durationInSeconds = range.first * 60)
+            val end = if (range.last == 0) "0s" else DateTimeUtils.formatSeconds(durationInSeconds = range.last * 60)
+            "$start through $end"
+        }
     }
 
     private suspend fun disableFollowersMode(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
+        if (!context.roomState.isFollowMode) {
+            return CommandResult.AcceptedTwitchCommand(command, response = "This room is not in followers-only mode.")
+        }
+
         val request = ChatSettingsRequestDto(followerMode = false)
+        return updateChatSettings(command, currentUserId, context, request)
+    }
+
+    private suspend fun enableEmoteMode(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
+        if (context.roomState.isEmoteMode) {
+            return CommandResult.AcceptedTwitchCommand(command, response = "This room is already in emote-only mode.")
+        }
+
+        val request = ChatSettingsRequestDto(emoteMode = true)
+        return updateChatSettings(command, currentUserId, context, request)
+    }
+
+    private suspend fun disableEmoteMode(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
+        if (!context.roomState.isEmoteMode) {
+            return CommandResult.AcceptedTwitchCommand(command, response = "This room is not in emote-only mode.")
+        }
+
+        val request = ChatSettingsRequestDto(emoteMode = false)
+        return updateChatSettings(command, currentUserId, context, request)
+    }
+
+    private suspend fun enableSubscriberMode(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
+        if (context.roomState.isSubscriberMode) {
+            return CommandResult.AcceptedTwitchCommand(command, response = "This room is already in subscribers-only mode.")
+        }
+
+        val request = ChatSettingsRequestDto(subscriberMode = true)
+        return updateChatSettings(command, currentUserId, context, request)
+    }
+
+    private suspend fun disableSubscriberMode(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
+        if (!context.roomState.isSubscriberMode) {
+            return CommandResult.AcceptedTwitchCommand(command, response = "This room is not in subscribers-only mode.")
+        }
+
+        val request = ChatSettingsRequestDto(subscriberMode = false)
+        return updateChatSettings(command, currentUserId, context, request)
+    }
+
+    private suspend fun enableUniqueChatMode(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
+        if (context.roomState.isUniqueChatMode) {
+            return CommandResult.AcceptedTwitchCommand(command, response = "This room is already in unique-chat mode.")
+        }
+
+        val request = ChatSettingsRequestDto(uniqueChatMode = true)
+        return updateChatSettings(command, currentUserId, context, request)
+    }
+
+    private suspend fun disableUniqueChatMode(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
+        if (!context.roomState.isUniqueChatMode) {
+            return CommandResult.AcceptedTwitchCommand(command, response = "This room is not in unique-chat mode.")
+        }
+
+        val request = ChatSettingsRequestDto(uniqueChatMode = false)
+        return updateChatSettings(command, currentUserId, context, request)
+    }
+
+    private suspend fun enableSlowMode(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
+        val args = context.args
+        val duration = args.firstOrNull()?.toIntOrNull()
+        if (duration == null) {
+            val usage = "Usage: /slow [duration] - Enables slow mode (limit how often users may send messages)." +
+                    "Duration (optional, default=30) must be a positive number of seconds. Use /slowoff to disable."
+            return CommandResult.AcceptedTwitchCommand(command, usage)
+        }
+
+        if (duration == context.roomState.slowModeWaitTime) {
+            return CommandResult.AcceptedTwitchCommand(command, response = "This room is already in $duration-second slow mode.")
+        }
+
+        val request = ChatSettingsRequestDto(slowMode = true, slowModeWaitTime = duration)
+        return updateChatSettings(command, currentUserId, context, request) { range ->
+            "${range.first}s through ${range.last}s"
+        }
+    }
+
+    private suspend fun disableSlowMode(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
+        if (!context.roomState.isSlowMode) {
+            return CommandResult.AcceptedTwitchCommand(command, response = "This room is not in slow mode.")
+        }
+
+        val request = ChatSettingsRequestDto(slowMode = false)
+        return updateChatSettings(command, currentUserId, context, request)
+    }
+
+    private suspend fun updateChatSettings(
+        command: TwitchCommand,
+        currentUserId: UserId,
+        context: CommandContext,
+        request: ChatSettingsRequestDto,
+        formatRange: ((IntRange) -> String)? = null
+    ): CommandResult {
         return helixApiClient.patchChatSettings(context.channelId, currentUserId, request).fold(
             onSuccess = { CommandResult.AcceptedTwitchCommand(command) },
             onFailure = {
-                val response = "Failed to update - ${it.toErrorMessage(command)}"
+                val response = "Failed to update - ${it.toErrorMessage(command, formatRange = formatRange)}"
                 CommandResult.AcceptedTwitchCommand(command, response)
             }
         )

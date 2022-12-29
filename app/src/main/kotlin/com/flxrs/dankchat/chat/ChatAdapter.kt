@@ -231,9 +231,9 @@ class ChatAdapter(
         val withTime = when {
             dankChatPreferenceStore.showTimestamps -> SpannableStringBuilder()
                 .timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp)) }
-                .append(message.systemMessage)
+                .append(message.getSystemMessage(dankChatPreferenceStore.userName))
 
-            else                                   -> SpannableStringBuilder().append(message.systemMessage)
+            else                                   -> SpannableStringBuilder().append(message.getSystemMessage(dankChatPreferenceStore.userName))
         }
 
         setTextSize(TypedValue.COMPLEX_UNIT_SP, dankChatPreferenceStore.fontSize)

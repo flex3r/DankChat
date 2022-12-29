@@ -469,9 +469,9 @@ class MainViewModel @Inject constructor(
         }
 
         val channel = currentSuggestionChannel.value ?: return@launch
-        val channelId = currentRoomState?.channelId ?: return@launch
+        val roomState = currentRoomState ?: return@launch
         val commandResult = runCatching {
-            commandRepository.checkForCommands(message, channel, channelId, skipSuspendingCommands)
+            commandRepository.checkForCommands(message, channel, roomState, skipSuspendingCommands)
         }.getOrElse {
             eventChannel.send(MainEvent.Error(it))
             return@launch

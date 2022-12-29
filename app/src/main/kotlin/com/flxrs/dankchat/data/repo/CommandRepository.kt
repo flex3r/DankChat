@@ -10,6 +10,7 @@ import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.command.CommandContext
 import com.flxrs.dankchat.data.twitch.command.TwitchCommand
 import com.flxrs.dankchat.data.twitch.command.TwitchCommandRepository
+import com.flxrs.dankchat.data.twitch.message.RoomState
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.command.CommandItem
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +49,7 @@ class CommandRepository @Inject constructor(
     fun getSupibotCommands(channel: UserName): StateFlow<List<String>> = supibotCommands.getOrPut(channel) { MutableStateFlow(emptyList()) }
     fun clearSupibotCommands() = supibotCommands.forEach { it.value.value = emptyList() }.also { supibotCommands.clear() }
 
-    suspend fun checkForCommands(message: String, channel: UserName, channelId: UserId, skipSuspendingCommands: Boolean = false): CommandResult {
+    suspend fun checkForCommands(message: String, channel: UserName, roomState: RoomState, skipSuspendingCommands: Boolean = false): CommandResult {
         if (!preferenceStore.isLoggedIn) {
             return CommandResult.NotFound
         }
@@ -74,7 +75,7 @@ class CommandRepository @Inject constructor(
                 return CommandResult.Blocked
             }
 
-            val context = CommandContext(trigger, channel, channelId, message, words.drop(1))
+            val context = CommandContext(trigger, channel, roomState.channelId, roomState, message, words.drop(1))
             return twitchCommandRepository.handleTwitchCommand(twitchCommand, context)
         }
 
