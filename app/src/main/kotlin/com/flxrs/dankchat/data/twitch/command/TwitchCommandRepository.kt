@@ -43,14 +43,14 @@ class TwitchCommandRepository @Inject constructor(
             TwitchCommand.Delete         -> deleteMessage(command, currentUserId, context)
             TwitchCommand.EmoteOnly      -> CommandResult.IrcCommand // TODO
             TwitchCommand.EmoteOnlyOff   -> CommandResult.IrcCommand // TODO
-            TwitchCommand.Followers      -> CommandResult.IrcCommand // TODO
-            TwitchCommand.FollowersOff   -> CommandResult.IrcCommand // TODO
+            TwitchCommand.Followers      -> enableFollowersMode(command, currentUserId, context)
+            TwitchCommand.FollowersOff   -> disableFollowersMode(command, currentUserId, context)
             TwitchCommand.Marker         -> createMarker(command, context)
             TwitchCommand.Mod            -> addModerator(command, context)
             TwitchCommand.Mods           -> getModerators(command, context)
             TwitchCommand.R9kBeta        -> CommandResult.IrcCommand // TODO
             TwitchCommand.R9kBetaOff     -> CommandResult.IrcCommand // TODO
-            TwitchCommand.Raid           -> CommandResult.IrcCommand // TODO
+            TwitchCommand.Raid           -> startRaid(command, context)
             TwitchCommand.Slow           -> CommandResult.IrcCommand // TODO
             TwitchCommand.SlowOff        -> CommandResult.IrcCommand // TODO
             TwitchCommand.Subscribers    -> CommandResult.IrcCommand // TODO
@@ -60,7 +60,7 @@ class TwitchCommandRepository @Inject constructor(
             TwitchCommand.UniqueChat     -> CommandResult.IrcCommand // TODO
             TwitchCommand.UniqueChatOff  -> CommandResult.IrcCommand // TODO
             TwitchCommand.Unmod          -> removeModerator(command, context)
-            TwitchCommand.Unraid         -> CommandResult.IrcCommand // TODO
+            TwitchCommand.Unraid         -> cancelRaid(command, context)
             TwitchCommand.Untimeout      -> unbanUser(command, currentUserId, context)
             TwitchCommand.Unvip          -> removeVip(command, context)
             TwitchCommand.Vip            -> addVip(command, context)
@@ -421,7 +421,74 @@ class TwitchCommandRepository @Inject constructor(
         )
     }
 
-    private fun Throwable.toErrorMessage(command: TwitchCommand, targetUser: UserName? = null): String {
+    private suspend fun startRaid(command: TwitchCommand, context: CommandContext): CommandResult {
+        val args = context.args
+        if (args.isEmpty() || args.first().isBlank()) {
+            val usage = "Usage: /raid <username> - Raid a user. Only the broadcaster can start a raid."
+            return CommandResult.AcceptedTwitchCommand(command, response = usage)
+        }
+
+        val target = helixApiClient.getUserByName(args.first().toUserName()).getOrElse {
+            return CommandResult.AcceptedTwitchCommand(command, response = "Invalid username: ${args.first()}")
+        }
+
+        return helixApiClient.postRaid(context.channelId, target.id).fold(
+            onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "You started to raid ${target.displayName}.") },
+            onFailure = {
+                val response = "Failed to start a raid - ${it.toErrorMessage(command)}"
+                CommandResult.AcceptedTwitchCommand(command, response)
+            }
+        )
+    }
+
+    private suspend fun cancelRaid(command: TwitchCommand, context: CommandContext): CommandResult {
+        return helixApiClient.deleteRaid(context.channelId).fold(
+            onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "You cancelled the raid.") },
+            onFailure = {
+                val response = "Failed to cancel the raid - ${it.toErrorMessage(command)}"
+                CommandResult.AcceptedTwitchCommand(command, response)
+            }
+        )
+    }
+
+    private suspend fun enableFollowersMode(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
+        val args = context.args
+        val usage = "Usage: /followers [duration] - Enables followers-only mode (only users who have followed for 'duration' may chat). " +
+                "Duration is optional and must be specified in the format like \"30m\", \"1w\", \"5d 12h\". " +
+                "Must be less than 3 months. The default is \"0\" (no restriction)."
+        val durationArg = args.joinToString(separator = " ").ifBlank { null }
+        val duration = durationArg?.let {
+            val seconds = DateTimeUtils.durationToSeconds(it) ?: return CommandResult.AcceptedTwitchCommand(command, response = usage)
+            seconds / 60
+        }
+
+        val request = ChatSettingsRequestDto(followerMode = true, followerModeDuration = duration)
+        return helixApiClient.patchChatSettings(context.channelId, currentUserId, request).fold(
+            onSuccess = { CommandResult.AcceptedTwitchCommand(command) },
+            onFailure = {
+                val message = it.toErrorMessage(command) { range ->
+                    val start = if (range.first == 0) "0s" else DateTimeUtils.formatSeconds(durationInSeconds = range.first * 60)
+                    val end = if (range.last == 0) "0s" else DateTimeUtils.formatSeconds(durationInSeconds = range.last * 60)
+                    "$start through $end"
+                }
+                val response = "Failed to update - $message"
+                CommandResult.AcceptedTwitchCommand(command, response)
+            }
+        )
+    }
+
+    private suspend fun disableFollowersMode(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
+        val request = ChatSettingsRequestDto(followerMode = false)
+        return helixApiClient.patchChatSettings(context.channelId, currentUserId, request).fold(
+            onSuccess = { CommandResult.AcceptedTwitchCommand(command) },
+            onFailure = {
+                val response = "Failed to update - ${it.toErrorMessage(command)}"
+                CommandResult.AcceptedTwitchCommand(command, response)
+            }
+        )
+    }
+
+    private fun Throwable.toErrorMessage(command: TwitchCommand, targetUser: UserName? = null, formatRange: ((IntRange) -> String)? = null): String {
         Log.v(TAG, "Command failed: $this")
         if (this !is HelixApiException) {
             return GENERIC_ERROR_MESSAGE
@@ -450,6 +517,17 @@ class TwitchCommandRepository @Inject constructor(
             HelixError.BroadcasterNotStreaming  -> "You must be streaming live to run commercials."
             HelixError.CommercialRateLimited    -> "You must wait until your cool-down period expires before you can run another commercial."
             HelixError.MissingLengthParameter   -> "Command must include a desired commercial break length that is greater than zero."
+            HelixError.NoRaidPending            -> "You don't have an active raid."
+            HelixError.RaidSelf                 -> "A channel cannot raid itself."
+            is HelixError.NotInRange            -> {
+                val range = error.validRange
+                when (val formatted = range?.let { formatRange?.invoke(it) }) {
+                    null -> message ?: GENERIC_ERROR_MESSAGE
+                    else -> "The duration is out of the valid range: $formatted."
+                }
+
+            }
+
             HelixError.Unknown                  -> GENERIC_ERROR_MESSAGE
         }
     }

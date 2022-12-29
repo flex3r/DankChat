@@ -8,37 +8,37 @@ internal class DateTimeUtilsTest {
 
     @Test
     fun `formats 10 seconds correctly`() {
-        val result = DateTimeUtils.formatSeconds("10")
+        val result = DateTimeUtils.formatSeconds(10)
         assertEquals(expected = "10s", actual = result)
     }
 
     @Test
     fun `formats 100 seconds correctly`() {
-        val result = DateTimeUtils.formatSeconds("100")
+        val result = DateTimeUtils.formatSeconds(100)
         assertEquals(expected = "1m 40s", actual = result)
     }
 
     @Test
     fun `formats 1000 seconds correctly`() {
-        val result = DateTimeUtils.formatSeconds("1000")
+        val result = DateTimeUtils.formatSeconds(1000)
         assertEquals(expected = "16m 40s", actual = result)
     }
 
     @Test
     fun `formats 10000 seconds correctly`() {
-        val result = DateTimeUtils.formatSeconds("10000")
+        val result = DateTimeUtils.formatSeconds(10000)
         assertEquals(expected = "2h 46m 40s", actual = result)
     }
 
     @Test
     fun `formats 604800 seconds correctly`() {
-        val result = DateTimeUtils.formatSeconds("604800")
-        assertEquals(expected = "1w", actual = result)
+        val result = DateTimeUtils.formatSeconds(604800)
+        assertEquals(expected = "7d", actual = result)
     }
 
     @Test
     fun `formats 1209600 seconds correctly`() {
-        val result = DateTimeUtils.formatSeconds("1209600")
-        assertEquals(expected = "2w", actual = result)
+        val result = DateTimeUtils.formatSeconds(1209600)
+        assertEquals(expected = "14d", actual = result)
     }
 }

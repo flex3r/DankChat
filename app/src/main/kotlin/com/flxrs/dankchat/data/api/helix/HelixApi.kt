@@ -180,4 +180,26 @@ class HelixApi(private val ktorClient: HttpClient, private val dankChatPreferenc
         contentType(ContentType.Application.Json)
         setBody(request)
     }
+
+    suspend fun postRaid(broadcasterUserId: UserId, targetUserId: UserId): HttpResponse? = ktorClient.post("raids") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        parameter("from_broadcaster_id", broadcasterUserId)
+        parameter("to_broadcaster_id", targetUserId)
+    }
+
+    suspend fun deleteRaid(broadcasterUserId: UserId): HttpResponse? = ktorClient.delete("raids") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        parameter("broadcaster_id", broadcasterUserId)
+    }
+
+    suspend fun patchChatSettings(broadcasterUserId: UserId, moderatorUserId: UserId, request: ChatSettingsRequestDto): HttpResponse? = ktorClient.patch("chat/settings") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return null
+        bearerAuth(oAuth)
+        parameter("broadcaster_id", broadcasterUserId)
+        parameter("moderator_id", moderatorUserId)
+        contentType(ContentType.Application.Json)
+        setBody(request)
+    }
 }
