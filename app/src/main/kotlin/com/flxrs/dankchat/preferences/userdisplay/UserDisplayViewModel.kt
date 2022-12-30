@@ -24,7 +24,7 @@ class UserDisplayViewModel @Inject constructor(
         listOf(UserDisplayItem.AddEntry) + entries.map { it.toEntry() }.sortedByDescending { it.id } // preserve order: since new entries is added at the top of the list
     }
 
-    fun newBlankEntry() = viewModelScope.launch {
+    private suspend fun newBlankEntry() {
         userDisplayRepository.addUserDisplay(
             UserDisplayItem.Entry(
                 id = 0, username = "", enabled = true, aliasEnabled = false, alias = "", colorEnabled = false, color = 0xff000000.toInt()
@@ -32,12 +32,26 @@ class UserDisplayViewModel @Inject constructor(
         )
     }
 
-    fun addEntry(entry: UserDisplayItem.Entry) = viewModelScope.launch {
+    private suspend fun addEntry(entry: UserDisplayItem.Entry) {
         userDisplayRepository.addUserDisplay(entry.toEntity())
     }
 
-    fun saveEntries(userDisplayEntries: List<UserDisplayItem>) = viewModelScope.launch {
+    private suspend fun saveEntries(userDisplayEntries: List<UserDisplayItem>) {
         userDisplayRepository.addUserDisplays(userDisplayEntries.filterIsInstance<UserDisplayItem.Entry>().map { it.toEntity() })
+    }
+
+    fun saveChangesAndCreateNewBlank(userDisplayEntries: List<UserDisplayItem>) = viewModelScope.launch {
+        saveEntries(userDisplayEntries)
+        newBlankEntry()
+    }
+
+    fun saveChangesAndAddEntry(userDisplayEntries: List<UserDisplayItem>, entry: UserDisplayItem.Entry) = viewModelScope.launch {
+        saveEntries(userDisplayEntries)
+        addEntry(entry)
+    }
+
+    fun saveChanges(userDisplayEntries: List<UserDisplayItem>) = viewModelScope.launch {
+        saveEntries(userDisplayEntries)
     }
 
     fun deleteEntry(userDisplayEntry: UserDisplayItem.Entry) = viewModelScope.launch {
