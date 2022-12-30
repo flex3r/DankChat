@@ -117,17 +117,10 @@ class UserDisplayAdapter(
             if (oldItem is UserDisplayItem.Entry && newItem is UserDisplayItem.Entry) {
                 return oldItem.id == newItem.id
             }
-            if (oldItem is UserDisplayItem.AddEntry) return newItem is UserDisplayItem.AddEntry
-            return false
+            return oldItem == newItem
         }
 
-        override fun areContentsTheSame(oldItem: UserDisplayItem, newItem: UserDisplayItem): Boolean {
-            if (oldItem is UserDisplayItem.Entry && newItem is UserDisplayItem.Entry) {
-                return oldItem == newItem
-            }
-            if (oldItem is UserDisplayItem.AddEntry) return newItem is UserDisplayItem.AddEntry
-            return false
-        }
+        override fun areContentsTheSame(oldItem: UserDisplayItem, newItem: UserDisplayItem) = oldItem == newItem
 
     }
 
