@@ -276,8 +276,8 @@ class MainFragment : Fragment() {
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         mainViewModel.apply {
-            collectFlow(imageUploadEventFlow, ::handleImageUploadState)
-            collectFlow(dataLoadingEventFlow, ::handleDataLoadingState)
+            collectFlow(imageUploadState, ::handleImageUploadState)
+            collectFlow(dataLoadingState, ::handleDataLoadingState)
             collectFlow(shouldShowUploadProgress) { activity?.invalidateMenu() }
             collectFlow(suggestions, ::setSuggestions)
             collectFlow(emoteTabItems, emoteMenuAdapter::submitList)
