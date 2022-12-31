@@ -60,8 +60,10 @@ class MainViewModel @Inject constructor(
     val activeChannel: StateFlow<UserName?> = chatRepository.activeChannel
 
     private val eventChannel = Channel<MainEvent>(Channel.CONFLATED)
-    private val _dataLoadingState = MutableStateFlow<DataLoadingState>(DataLoadingState.None)
-    private val _imageUploadedState = MutableStateFlow<ImageUploadState>(ImageUploadState.None)
+    private val dataLoadingStateChannel = Channel<DataLoadingState>(Channel.CONFLATED)
+    private val imageUploadStateChannel = Channel<ImageUploadState>(Channel.CONFLATED)
+    private val isImageUploading = MutableStateFlow(false)
+    private val isDataLoading = MutableStateFlow(false)
     private val streamInfoEnabled = MutableStateFlow(true)
     private val roomStateEnabled = MutableStateFlow(true)
     private val streamData = MutableStateFlow<List<StreamData>>(emptyList())
@@ -183,8 +185,8 @@ class MainViewModel @Inject constructor(
         .mapLatest { map -> map.filterValues { it } }
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), replay = 1)
 
-    val imageUploadEventFlow = _imageUploadedState.asSharedFlow()
-    val dataLoadingEventFlow = _dataLoadingState.asSharedFlow()
+    val imageUploadState = imageUploadStateChannel.receiveAsFlow()
+    val dataLoadingState = dataLoadingStateChannel.receiveAsFlow()
 
     val shouldColorNotification: StateFlow<Boolean> =
         combine(chatRepository.hasMentions, chatRepository.hasWhispers) { hasMentions, hasWhispers ->
@@ -202,8 +204,8 @@ class MainViewModel @Inject constructor(
         inputEnabled && shouldShowViewPager
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), true)
 
-    val shouldShowUploadProgress = combine(_imageUploadedState, _dataLoadingState) { imageUploadState, dataLoadingState ->
-        imageUploadState is ImageUploadState.Loading || dataLoadingState is DataLoadingState.Loading
+    val shouldShowUploadProgress = combine(isImageUploading, isDataLoading) { isUploading, isDataLoading ->
+        isUploading || isDataLoading
     }.stateIn(viewModelScope, started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
     val connectionState = activeChannel
@@ -327,7 +329,8 @@ class MainViewModel @Inject constructor(
 
         viewModelScope.launch {
             val loadingState = DataLoadingState.Loading
-            _dataLoadingState.emit(loadingState)
+            dataLoadingStateChannel.send(loadingState)
+            isDataLoading.update { true }
 
             buildList {
                 this += async { dataRepository.loadDankChatBadges() }
@@ -375,7 +378,8 @@ class MainViewModel @Inject constructor(
     }
 
     fun retryDataLoading(dataLoadingFailures: Set<DataLoadingFailure>, chatLoadingFailures: Set<ChatLoadingFailure>) = viewModelScope.launch {
-        _dataLoadingState.emit(DataLoadingState.Loading)
+        dataLoadingStateChannel.send(DataLoadingState.Loading)
+        isDataLoading.update { true }
         dataLoadingFailures.map {
             async {
                 Log.d(TAG, "Retrying data loading step: $it")
@@ -515,7 +519,8 @@ class MainViewModel @Inject constructor(
 
     fun reloadEmotes(channel: UserName) = viewModelScope.launch {
         val isLoggedIn = dankChatPreferenceStore.isLoggedIn
-        _dataLoadingState.emit(DataLoadingState.Loading)
+        dataLoadingStateChannel.send(DataLoadingState.Loading)
+        isDataLoading.update { true }
 
         if (isLoggedIn) {
             // join a channel to try to get an up-to-date USERSTATE
@@ -558,7 +563,8 @@ class MainViewModel @Inject constructor(
 
     fun uploadMedia(file: File) {
         viewModelScope.launch {
-            _imageUploadedState.emit(ImageUploadState.Loading(file))
+            imageUploadStateChannel.send(ImageUploadState.Loading(file))
+            isImageUploading.update { true }
             val result = dataRepository.uploadMedia(file)
             val state = result.fold(
                 onSuccess = {
@@ -573,7 +579,8 @@ class MainViewModel @Inject constructor(
                     ImageUploadState.Failed(message, file)
                 }
             )
-            _imageUploadedState.emit(state)
+            imageUploadStateChannel.send(state)
+            isImageUploading.update { false }
         }
     }
 
@@ -695,7 +702,8 @@ class MainViewModel @Inject constructor(
 
         chatRepository.clearChatLoadingFailures()
         dataRepository.clearDataLoadingFailures()
-        _dataLoadingState.emit(state)
+        dataLoadingStateChannel.send(state)
+        isDataLoading.update { false }
     }
 
     private fun Throwable.toErrorMessage(): String? {
