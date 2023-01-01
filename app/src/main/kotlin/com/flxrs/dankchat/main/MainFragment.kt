@@ -1065,6 +1065,7 @@ class MainFragment : Fragment() {
                         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
 
                         override fun onStateChanged(bottomSheet: View, newState: Int) {
+                            binding.streamWebviewWrapper.isVisible = newState == BottomSheetBehavior.STATE_HIDDEN && mainViewModel.isStreamActive
                             mainViewModel.setEmoteSheetOpen(emoteMenuBottomSheetBehavior?.isMoving == true || emoteMenuBottomSheetBehavior?.isVisible == true)
                             if (!mainViewModel.isFullscreenFlow.value && isLandscape) {
                                 when (newState) {
@@ -1143,7 +1144,7 @@ class MainFragment : Fragment() {
             }
 
             binding.tabs.isVisible = !hasFocus && !isFullscreen
-            binding.streamWebviewWrapper.isVisible = !hasFocus && mainViewModel.isStreamActive
+            binding.streamWebviewWrapper.isVisible = !hasFocus && emoteMenuBottomSheetBehavior?.isHidden == true && mainViewModel.isStreamActive
 
             when {
                 hasFocus -> (activity as? MainActivity)?.apply {
