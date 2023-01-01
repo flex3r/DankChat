@@ -33,8 +33,11 @@ fun List<ChatItem>.replaceWithTimeOuts(clearChatMessage: ClearChatMessage, scrol
             }
         } else {
             item.message as? PrivMessage ?: continue
-            val isTimeout = clearChatMessage.targetUser == item.message.name
-            this[idx] = item.copy(message = item.message.copy(timedOut = isTimeout), isCleared = isTimeout)
+            if (clearChatMessage.targetUser != item.message.name) {
+                continue
+            }
+
+            this[idx] = item.copy(message = item.message.copy(timedOut = true), isCleared = true)
         }
 
     }
