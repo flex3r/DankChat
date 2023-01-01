@@ -21,6 +21,7 @@ import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.repo.ChatRepository
 import com.flxrs.dankchat.data.repo.DataRepository
+import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.data.twitch.message.Message
 import com.flxrs.dankchat.data.twitch.message.NoticeMessage
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
@@ -266,40 +267,53 @@ class NotificationService : Service(), CoroutineScope {
     private fun Message.shouldPlayTTS(): Boolean = this is PrivMessage || this is NoticeMessage || this is UserNoticeMessage
 
     private fun Message.playTTSMessage() {
-        val baseMessage = when (this) {
+        val message = when (this) {
             is UserNoticeMessage -> message
             is NoticeMessage     -> message
             else                 -> {
                 if (this !is PrivMessage) return
-                val filteredMessage = when {
-                    removeEmote -> emotes.fold(message) { acc, emote ->
-                        acc.replace(emote.code, newValue = "", ignoreCase = true)
-                    }.run {
-                        //Replaces all unicode character that are: So - Symbol Other, Sc - Symbol Currency, Sm - Symbol Math, Cn - Unassigned.
-                        //This will not filter out non latin script (Arabic and Japanese for example works fine.)
-                        replace(UNICODE_SYMBOL_REGEX, replacement = "")
-                    }
+                val filtered = message
+                    .filterEmotes(emotes)
+                    .filterUnicodeSymbols()
+                    .filterUrls()
 
-                    else        -> message
+                if (filtered.isBlank()) {
+                    return
                 }
+
                 when {
-                    !combinedTTSFormat || name == previousTTSUser           -> filteredMessage
-                    tts?.voice?.locale?.language == Locale.ENGLISH.language -> "$name said $filteredMessage"
-                    else                                                    -> "$name. $filteredMessage".also { previousTTSUser = name }
-                }
+                    !combinedTTSFormat || name == previousTTSUser           -> filtered
+                    tts?.voice?.locale?.language == Locale.ENGLISH.language -> "$name said $filtered"
+                    else                                                    -> "$name. $filtered"
+                }.also { previousTTSUser = name }
             }
-        }
-
-        var ttsMessage = baseMessage
-        if (removeURL) {
-            ttsMessage = ttsMessage.replace(URL_REGEX, replacement = "")
         }
 
         val queueMode = when {
             ttsMessageQueue -> TextToSpeech.QUEUE_ADD
             else            -> TextToSpeech.QUEUE_FLUSH
         }
-        tts?.speak(ttsMessage, queueMode, null, null)
+        tts?.speak(message, queueMode, null, null)
+    }
+
+    private fun String.filterEmotes(emotes: List<ChatMessageEmote>): String = when {
+        removeEmote -> emotes.fold(this) { acc, emote ->
+            acc.replace(emote.code, newValue = "", ignoreCase = true)
+        }
+
+        else        -> this
+    }
+
+    private fun String.filterUnicodeSymbols(): String = when {
+        //Replaces all unicode character that are: So - Symbol Other, Sc - Symbol Currency, Sm - Symbol Math, Cn - Unassigned.
+        //This will not filter out non latin script (Arabic and Japanese for example works fine.)
+        removeEmote -> replace(UNICODE_SYMBOL_REGEX, replacement = "")
+        else        -> this
+    }
+
+    private fun String.filterUrls(): String = when {
+        removeURL -> replace(URL_REGEX, replacement = "")
+        else      -> this
     }
 
 
