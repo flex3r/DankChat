@@ -781,7 +781,9 @@ class ChatRepository @Inject constructor(
 
         val mentions = items.filter { (it.message.highlights.hasMention()) }.toMentionTabItems()
         _mentions.update { current ->
-            (current + mentions).sortedBy { it.message.timestamp }
+            (current + mentions)
+                .distinctBy { it.message.id }
+                .sortedBy { it.message.timestamp }
         }
         val currentUsers = users
             .getOrPut(channel) { createUserCache() }
