@@ -15,14 +15,17 @@ open class ApiException(
 ) : Throwable(message, cause) {
 
     override fun toString(): String {
-        return "ApiException(status=$status, message=$message, cause=$cause)"
+        return "ApiException(status=$status, url=$url, message=$message, cause=$cause)"
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is ApiException) return false
+        if (javaClass != other?.javaClass) return false
+
+        other as ApiException
 
         if (status != other.status) return false
+        if (url != other.url) return false
         if (message != other.message) return false
         if (cause != other.cause) return false
 
@@ -31,11 +34,11 @@ open class ApiException(
 
     override fun hashCode(): Int {
         var result = status.hashCode()
+        result = 31 * result + (url?.hashCode() ?: 0)
         result = 31 * result + (message?.hashCode() ?: 0)
         result = 31 * result + (cause?.hashCode() ?: 0)
         return result
     }
-
 }
 
 fun <R, T : R> Result<T>.recoverNotFoundWith(default: R): Result<R> = recoverCatching {
