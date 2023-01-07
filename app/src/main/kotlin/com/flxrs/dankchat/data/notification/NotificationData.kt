@@ -23,7 +23,7 @@ fun Message.toNotificationData(): NotificationData? {
     return when (this) {
         is PrivMessage    -> NotificationData(channel, name, originalMessage)
         is WhisperMessage -> NotificationData(
-            channel = "".toUserName(),
+            channel = UserName.EMPTY,
             name = name,
             message = originalMessage,
             isWhisper = true,
