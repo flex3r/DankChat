@@ -1,10 +1,11 @@
-package com.flxrs.dankchat.data.repo
+package com.flxrs.dankchat.data.repo.command
 
 import android.util.Log
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.chatters.ChattersApiClient
 import com.flxrs.dankchat.data.api.helix.HelixApiClient
 import com.flxrs.dankchat.data.api.supibot.SupibotApiClient
+import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.command.CommandContext
 import com.flxrs.dankchat.data.twitch.command.TwitchCommand
@@ -91,10 +92,10 @@ class CommandRepository @Inject constructor(
             }
 
             when (defaultCommand) {
-                Command.BLOCK    -> blockUserCommand(words.drop(1))
-                Command.UNBLOCK  -> unblockUserCommand(words.drop(1))
-                Command.CHATTERS -> chattersCommand(channel)
-                Command.UPTIME   -> uptimeCommand(channel)
+                Command.Block    -> blockUserCommand(words.drop(1))
+                Command.Unblock  -> unblockUserCommand(words.drop(1))
+                Command.Chatters -> chattersCommand(channel)
+                Command.Uptime   -> uptimeCommand(channel)
             }
         }
 
@@ -221,13 +222,6 @@ class CommandRepository @Inject constructor(
         val foundCommand = commands.find { it.trigger == trigger } ?: return CommandResult.NotFound
 
         return CommandResult.Message(foundCommand.command)
-    }
-
-    enum class Command(val trigger: String) {
-        BLOCK(trigger = "/block"),
-        UNBLOCK(trigger = "/unblock"),
-        CHATTERS(trigger = "/chatters"),
-        UPTIME(trigger = "/uptime");
     }
 
     companion object {

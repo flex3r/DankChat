@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.data.repo
+package com.flxrs.dankchat.data.repo.command
 
 import com.flxrs.dankchat.data.twitch.command.TwitchCommand
 

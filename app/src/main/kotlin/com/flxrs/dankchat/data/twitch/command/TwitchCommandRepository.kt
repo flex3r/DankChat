@@ -14,7 +14,7 @@ import com.flxrs.dankchat.data.api.helix.dto.ChatSettingsRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.CommercialRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.MarkerRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.WhisperRequestDto
-import com.flxrs.dankchat.data.repo.CommandResult
+import com.flxrs.dankchat.data.repo.command.CommandResult
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.DateTimeUtils
