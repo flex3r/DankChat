@@ -406,7 +406,6 @@ class DankChatPreferenceStore @Inject constructor(
         private const val UPLOADER_IMAGE_LINK_DEFAULT = "{link}"
         private const val UPLOADER_DELETE_LINK_DEFAULT = "{delete}"
 
-
         private const val RM_HOST_DEFAULT = "https://recent-messages.robotty.de/api/v2/"
 
         private const val SCROLLBACK_LENGTH_STEP = 50

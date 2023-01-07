@@ -2,9 +2,13 @@ package com.flxrs.dankchat.utils.extensions
 
 import android.util.Log
 import com.flxrs.dankchat.data.UserName
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 
 inline val <T> SharedFlow<T>.firstValue: T
     get() = replayCache.first()

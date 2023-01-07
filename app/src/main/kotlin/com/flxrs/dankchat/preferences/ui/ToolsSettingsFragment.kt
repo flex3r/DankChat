@@ -49,7 +49,6 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
     @Inject
     lateinit var dankChatPreferenceStore: DankChatPreferenceStore
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

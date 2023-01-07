@@ -1,7 +1,8 @@
 package com.flxrs.dankchat.data.api.recentmessages
 
 import com.flxrs.dankchat.data.api.ApiException
-import io.ktor.http.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.Url
 
 data class RecentMessagesApiException(
     val error: RecentMessagesError,

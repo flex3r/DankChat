@@ -5,7 +5,7 @@ import com.flxrs.dankchat.data.api.chatters.dto.ChatterCountDto
 import com.flxrs.dankchat.data.api.chatters.dto.ChattersDto
 import com.flxrs.dankchat.data.api.chatters.dto.ChattersResultDto
 import com.flxrs.dankchat.data.api.throwApiErrorOnFailure
-import io.ktor.client.call.*
+import io.ktor.client.call.body
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton

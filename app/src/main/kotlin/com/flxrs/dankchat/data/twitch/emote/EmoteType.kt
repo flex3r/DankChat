@@ -2,7 +2,6 @@ package com.flxrs.dankchat.data.twitch.emote
 
 import com.flxrs.dankchat.data.UserName
 
-
 sealed class EmoteType : Comparable<EmoteType> {
     abstract val title: String
 

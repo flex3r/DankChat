@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.utils.extensions
 
-import android.util.Log
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.data.twitch.message.ModerationMessage
 import com.flxrs.dankchat.data.twitch.message.PrivMessage

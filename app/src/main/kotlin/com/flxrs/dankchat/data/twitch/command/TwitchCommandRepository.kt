@@ -6,12 +6,19 @@ import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.helix.HelixApiClient
 import com.flxrs.dankchat.data.api.helix.HelixApiException
 import com.flxrs.dankchat.data.api.helix.HelixError
-import com.flxrs.dankchat.data.api.helix.dto.*
+import com.flxrs.dankchat.data.api.helix.dto.AnnouncementColor
+import com.flxrs.dankchat.data.api.helix.dto.AnnouncementRequestDto
+import com.flxrs.dankchat.data.api.helix.dto.BanRequestDataDto
+import com.flxrs.dankchat.data.api.helix.dto.BanRequestDto
+import com.flxrs.dankchat.data.api.helix.dto.ChatSettingsRequestDto
+import com.flxrs.dankchat.data.api.helix.dto.CommercialRequestDto
+import com.flxrs.dankchat.data.api.helix.dto.MarkerRequestDto
+import com.flxrs.dankchat.data.api.helix.dto.WhisperRequestDto
 import com.flxrs.dankchat.data.repo.CommandResult
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.DateTimeUtils
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -279,7 +286,6 @@ class TwitchCommandRepository @Inject constructor(
         val target = helixApiClient.getUserByName(args.first().toUserName()).getOrElse {
             return CommandResult.AcceptedTwitchCommand(command, response = "No user matching that username.")
         }
-
 
         val targetId = target.id
         return helixApiClient.deleteBan(context.channelId, currentUserId, targetId).fold(

@@ -5,7 +5,13 @@ import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.ifBlank
 import com.flxrs.dankchat.data.toUserId
-import com.flxrs.dankchat.data.twitch.connection.dto.*
+import com.flxrs.dankchat.data.twitch.connection.dto.ModerationActionData
+import com.flxrs.dankchat.data.twitch.connection.dto.ModerationActionType
+import com.flxrs.dankchat.data.twitch.connection.dto.ModeratorAddedData
+import com.flxrs.dankchat.data.twitch.connection.dto.PointRedemption
+import com.flxrs.dankchat.data.twitch.connection.dto.PubSubDataMessage
+import com.flxrs.dankchat.data.twitch.connection.dto.PubSubDataObjectMessage
+import com.flxrs.dankchat.data.twitch.connection.dto.WhisperData
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import com.flxrs.dankchat.utils.extensions.timer
 import kotlinx.coroutines.CoroutineScope
@@ -16,14 +22,17 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import okhttp3.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.WebSocket
+import okhttp3.WebSocketListener
 import org.json.JSONArray
 import org.json.JSONObject
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 import kotlin.random.Random
 import kotlin.random.nextLong
-
 
 class PubSubConnection(
     val tag: String,

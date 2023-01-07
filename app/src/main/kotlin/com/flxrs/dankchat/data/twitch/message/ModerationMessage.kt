@@ -8,7 +8,7 @@ import com.flxrs.dankchat.data.twitch.connection.dto.ModerationActionType
 import com.flxrs.dankchat.utils.DateTimeUtils
 import java.time.Instant
 import java.time.ZoneId
-import java.util.*
+import java.util.UUID
 
 data class ModerationMessage(
     override val timestamp: Long = System.currentTimeMillis(),
@@ -42,12 +42,13 @@ data class ModerationMessage(
         if (!showDeletedMessage) return ""
 
         val fullReason = reason.orEmpty()
-        val trimmed =  when {
+        val trimmed = when {
             fullReason.length > 50 -> "${fullReason.take(50)}…"
             else                   -> fullReason
         }
         return " saying: \"$trimmed\""
     }
+
     private val creatorOrBlank get() = creatorUser?.let { " by $it" }.orEmpty()
     private val countOrBlank
         get() = when {

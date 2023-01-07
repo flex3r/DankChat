@@ -3,7 +3,6 @@ package com.flxrs.dankchat.data.repo.data
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 
-
 sealed class DataLoadingStep {
     object DankChatBadges : DataLoadingStep() {
         override fun toString(): String = "DankChatBadges"

@@ -10,7 +10,7 @@ import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.databinding.EmoteHeaderItemBinding
 import com.flxrs.dankchat.databinding.EmoteItemBinding
 import com.flxrs.dankchat.utils.extensions.loadImage
-import java.util.*
+import java.util.Locale
 
 class EmoteAdapter(private val onEmoteClick: (emote: GenericEmote) -> Unit) : ListAdapter<EmoteItem, RecyclerView.ViewHolder>(DetectDiff()) {
 

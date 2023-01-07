@@ -115,7 +115,6 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
         }
     }
 
-
     @SuppressLint("InlinedApi")
     override fun onStart() {
         super.onStart()

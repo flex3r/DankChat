@@ -3,7 +3,7 @@ package com.flxrs.dankchat.data.twitch.message
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.toUserName
-import java.util.*
+import java.util.UUID
 
 data class UserNoticeMessage(
     override val timestamp: Long = System.currentTimeMillis(),

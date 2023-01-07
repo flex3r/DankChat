@@ -5,12 +5,27 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class ModerationActionType {
-    @SerialName("timeout") Timeout,
-    @SerialName("untimeout") Untimeout,
-    @SerialName("ban") Ban,
-    @SerialName("unban") Unban,
-    @SerialName("mod") Mod,
-    @SerialName("unmod") Unmod,
-    @SerialName("clear") Clear,
-    @SerialName("delete") Delete,
+    @SerialName("timeout")
+    Timeout,
+
+    @SerialName("untimeout")
+    Untimeout,
+
+    @SerialName("ban")
+    Ban,
+
+    @SerialName("unban")
+    Unban,
+
+    @SerialName("mod")
+    Mod,
+
+    @SerialName("unmod")
+    Unmod,
+
+    @SerialName("clear")
+    Clear,
+
+    @SerialName("delete")
+    Delete,
 }
