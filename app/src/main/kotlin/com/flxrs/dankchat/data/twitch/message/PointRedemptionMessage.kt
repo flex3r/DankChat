@@ -2,7 +2,7 @@ package com.flxrs.dankchat.data.twitch.message
 
 import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserName
-import com.flxrs.dankchat.data.twitch.connection.dto.PointRedemptionData
+import com.flxrs.dankchat.data.twitch.connection.dto.redemption.PointRedemptionData
 import java.time.Instant
 import java.time.ZoneId
 import java.util.UUID

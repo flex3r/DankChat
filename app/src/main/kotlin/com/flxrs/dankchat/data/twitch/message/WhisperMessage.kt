@@ -9,7 +9,7 @@ import com.flxrs.dankchat.data.toDisplayName
 import com.flxrs.dankchat.data.toUserId
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.badge.Badge
-import com.flxrs.dankchat.data.twitch.connection.dto.WhisperData
+import com.flxrs.dankchat.data.twitch.connection.dto.whisper.WhisperData
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import java.util.UUID
 

@@ -3,8 +3,8 @@ package com.flxrs.dankchat.data.twitch.message
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.toUserName
-import com.flxrs.dankchat.data.twitch.connection.dto.ModerationActionData
-import com.flxrs.dankchat.data.twitch.connection.dto.ModerationActionType
+import com.flxrs.dankchat.data.twitch.connection.dto.moderation.ModerationActionData
+import com.flxrs.dankchat.data.twitch.connection.dto.moderation.ModerationActionType
 import com.flxrs.dankchat.utils.DateTimeUtils
 import java.time.Instant
 import java.time.ZoneId
