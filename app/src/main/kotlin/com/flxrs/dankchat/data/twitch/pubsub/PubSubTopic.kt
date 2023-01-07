@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.data.twitch.connection
+package com.flxrs.dankchat.data.twitch.pubsub
 
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName

@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.data.twitch.connection.dto.moderation
+package com.flxrs.dankchat.data.twitch.pubsub.dto.moderation
 
 import androidx.annotation.Keep
 import com.flxrs.dankchat.data.UserId

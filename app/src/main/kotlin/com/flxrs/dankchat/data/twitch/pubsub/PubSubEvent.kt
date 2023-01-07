@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.data.twitch.connection
+package com.flxrs.dankchat.data.twitch.pubsub
 
 sealed class PubSubEvent {
     data class Message(val message: PubSubMessage) : PubSubEvent()

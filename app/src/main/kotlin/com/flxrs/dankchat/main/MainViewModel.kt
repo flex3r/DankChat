@@ -25,7 +25,7 @@ import com.flxrs.dankchat.data.state.DataLoadingState
 import com.flxrs.dankchat.data.state.ImageUploadState
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.command.TwitchCommand
-import com.flxrs.dankchat.data.twitch.connection.ConnectionState
+import com.flxrs.dankchat.data.twitch.chat.ConnectionState
 import com.flxrs.dankchat.data.twitch.emote.EmoteType
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.data.twitch.message.RoomState

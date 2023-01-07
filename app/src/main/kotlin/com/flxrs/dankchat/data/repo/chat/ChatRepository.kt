@@ -19,11 +19,11 @@ import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.data.toDisplayName
 import com.flxrs.dankchat.data.toUserId
 import com.flxrs.dankchat.data.toUserName
-import com.flxrs.dankchat.data.twitch.connection.ChatConnection
-import com.flxrs.dankchat.data.twitch.connection.ChatEvent
-import com.flxrs.dankchat.data.twitch.connection.ConnectionState
-import com.flxrs.dankchat.data.twitch.connection.PubSubManager
-import com.flxrs.dankchat.data.twitch.connection.PubSubMessage
+import com.flxrs.dankchat.data.twitch.chat.ChatConnection
+import com.flxrs.dankchat.data.twitch.chat.ChatEvent
+import com.flxrs.dankchat.data.twitch.chat.ConnectionState
+import com.flxrs.dankchat.data.twitch.pubsub.PubSubManager
+import com.flxrs.dankchat.data.twitch.pubsub.PubSubMessage
 import com.flxrs.dankchat.data.twitch.message.Message
 import com.flxrs.dankchat.data.twitch.message.ModerationMessage
 import com.flxrs.dankchat.data.twitch.message.NoticeMessage

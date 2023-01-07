@@ -1,10 +1,10 @@
-package com.flxrs.dankchat.data.twitch.connection
+package com.flxrs.dankchat.data.twitch.pubsub
 
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
-import com.flxrs.dankchat.data.twitch.connection.dto.moderation.ModerationActionData
-import com.flxrs.dankchat.data.twitch.connection.dto.redemption.PointRedemptionData
-import com.flxrs.dankchat.data.twitch.connection.dto.whisper.WhisperData
+import com.flxrs.dankchat.data.twitch.pubsub.dto.moderation.ModerationActionData
+import com.flxrs.dankchat.data.twitch.pubsub.dto.redemption.PointRedemptionData
+import com.flxrs.dankchat.data.twitch.pubsub.dto.whisper.WhisperData
 import java.time.Instant
 
 sealed class PubSubMessage {

@@ -1,17 +1,17 @@
-package com.flxrs.dankchat.data.twitch.connection
+package com.flxrs.dankchat.data.twitch.pubsub
 
 import android.util.Log
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.ifBlank
 import com.flxrs.dankchat.data.toUserId
-import com.flxrs.dankchat.data.twitch.connection.dto.moderation.ModerationActionData
-import com.flxrs.dankchat.data.twitch.connection.dto.moderation.ModerationActionType
-import com.flxrs.dankchat.data.twitch.connection.dto.moderation.ModeratorAddedData
-import com.flxrs.dankchat.data.twitch.connection.dto.redemption.PointRedemption
-import com.flxrs.dankchat.data.twitch.connection.dto.PubSubDataMessage
-import com.flxrs.dankchat.data.twitch.connection.dto.PubSubDataObjectMessage
-import com.flxrs.dankchat.data.twitch.connection.dto.whisper.WhisperData
+import com.flxrs.dankchat.data.twitch.pubsub.dto.moderation.ModerationActionData
+import com.flxrs.dankchat.data.twitch.pubsub.dto.moderation.ModerationActionType
+import com.flxrs.dankchat.data.twitch.pubsub.dto.moderation.ModeratorAddedData
+import com.flxrs.dankchat.data.twitch.pubsub.dto.redemption.PointRedemption
+import com.flxrs.dankchat.data.twitch.pubsub.dto.PubSubDataMessage
+import com.flxrs.dankchat.data.twitch.pubsub.dto.PubSubDataObjectMessage
+import com.flxrs.dankchat.data.twitch.pubsub.dto.whisper.WhisperData
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import com.flxrs.dankchat.utils.extensions.timer
 import kotlinx.coroutines.CoroutineScope

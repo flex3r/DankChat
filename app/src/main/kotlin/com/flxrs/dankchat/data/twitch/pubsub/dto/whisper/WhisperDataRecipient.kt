@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.data.twitch.connection.dto.whisper
+package com.flxrs.dankchat.data.twitch.pubsub.dto.whisper
 
 import androidx.annotation.Keep
 import com.flxrs.dankchat.data.DisplayName
