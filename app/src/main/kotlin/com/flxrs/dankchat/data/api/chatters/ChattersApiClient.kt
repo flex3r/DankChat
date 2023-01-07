@@ -12,7 +12,6 @@ import javax.inject.Singleton
 
 @Singleton
 class ChattersApiClient @Inject constructor(private val chattersApi: ChattersApi, private val json: Json) {
-    var count = 0
 
     suspend fun getChatters(channel: UserName): Result<ChattersDto> = runCatching {
         chattersApi.getChatters(channel)
