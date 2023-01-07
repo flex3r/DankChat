@@ -303,8 +303,8 @@ class ChatAdapter(
         }
         setRippleBackground(background, enableRipple = true)
 
-        val fullName = name.valueOrDisplayName(displayName)
-        val fullRecipientName = recipientName.valueOrDisplayName(recipientDisplayName)
+        val fullName = name.formatWithDisplayName(displayName)
+        val fullRecipientName = recipientName.formatWithDisplayName(recipientDisplayName)
 
         val allowedBadges = badges.filter { it.type in dankChatPreferenceStore.visibleBadgeTypes }
         val badgesLength = allowedBadges.size * 2
