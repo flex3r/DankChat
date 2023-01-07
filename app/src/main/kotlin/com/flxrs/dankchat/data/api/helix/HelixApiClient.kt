@@ -32,19 +32,11 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
         }
     }
 
-    suspend fun getUser(userId: UserId): Result<UserDto> = runCatching {
-        helixApi.getUserById(userId)
-            .throwHelixApiErrorOnFailure()
-            .body<DataListDto<UserDto>>()
-            .data.first()
-    }
+    suspend fun getUser(userId: UserId): Result<UserDto> = getUsersByIds(listOf(userId))
+        .mapCatching { it.first() }
 
-    suspend fun getUserByName(name: UserName): Result<UserDto> = runCatching {
-        helixApi.getUsersByName(listOf(name))
-            .throwHelixApiErrorOnFailure()
-            .body<DataListDto<UserDto>>()
-            .data.first()
-    }
+    suspend fun getUserByName(name: UserName): Result<UserDto> = getUsersByNames(listOf(name))
+        .mapCatching { it.first() }
 
     suspend fun getUserIdByName(name: UserName): Result<UserId> = getUserByName(name)
         .mapCatching { it.id }
@@ -191,6 +183,7 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
         val initialPage = request(null)
             .throwHelixApiErrorOnFailure()
             .body<PagedDto<T>>()
+
         var cursor = initialPage.pagination.cursor
         val entries = initialPage.data.toMutableList()
 
@@ -198,6 +191,7 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
             val result = request(cursor)
                 .throwHelixApiErrorOnFailure()
                 .body<PagedDto<T>>()
+
             entries.addAll(result.data)
             cursor = result.pagination.cursor
         }
