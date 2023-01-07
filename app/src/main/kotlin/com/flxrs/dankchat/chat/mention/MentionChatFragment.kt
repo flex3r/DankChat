@@ -24,7 +24,6 @@ class MentionChatFragment : ChatFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bindingRef = ChatFragmentBinding.inflate(inflater, container, false).apply {
-            lifecycleOwner = this@MentionChatFragment
             scrollBottom.setOnClickListener {
                 scrollBottom.visibility = View.GONE
                 isAtBottom = true

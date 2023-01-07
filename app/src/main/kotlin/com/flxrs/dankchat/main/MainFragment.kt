@@ -159,8 +159,6 @@ class MainFragment : Fragment() {
 
         bindingRef = MainFragmentBinding.inflate(inflater, container, false).apply {
             emoteMenuBottomSheetBehavior = BottomSheetBehavior.from(emoteMenuBottomSheet)
-            vm = mainViewModel
-            lifecycleOwner = this@MainFragment
             chatViewpager.setup()
             input.setup(this)
 
@@ -282,10 +280,16 @@ class MainFragment : Fragment() {
             collectFlow(suggestions, ::setSuggestions)
             collectFlow(emoteTabItems, emoteMenuAdapter::submitList)
             collectFlow(isFullscreenFlow) { changeActionBarVisibility(it) }
+            collectFlow(shouldShowInput) {
+                binding.inputLayout.isVisible = it
+            }
             collectFlow(canType) {
+                binding.inputLayout.isEnabled = it
+                binding.input.isEnabled = it
                 when {
                     it   -> binding.inputLayout.setup()
                     else -> with(binding.inputLayout) {
+                        endIconDrawable = null
                         setEndIconTouchListener(null)
                         setEndIconOnClickListener(null)
                         setEndIconOnLongClickListener(null)
@@ -313,6 +317,26 @@ class MainFragment : Fragment() {
                 mainViewModel.clearMentionCount(channel)
                 mainViewModel.clearUnreadMessage(channel)
             }
+            collectFlow(shouldShowTabs) { binding.tabs.isVisible = it }
+            collectFlow(shouldShowChipToggle) { binding.showChips.isVisible = it }
+            collectFlow(areChipsExpanded) {
+                val resourceId = if (it) R.drawable.ic_keyboard_arrow_up else R.drawable.ic_keyboard_arrow_down
+                binding.showChips.setChipIconResource(resourceId)
+            }
+            collectFlow(shouldShowExpandedChips) { binding.toggleFullscreen.isVisible = it }
+            collectFlow(shouldShowStreamToggle) { binding.toggleStream.isVisible = it }
+            collectFlow(hasModInChannel) { binding.changeRoomstate.isVisible = it }
+            collectFlow(shouldShowViewPager) {
+                binding.chatViewpager.isVisible = it
+                binding.addChannelsText.isVisible = !it
+                binding.addChannelsButton.isVisible = !it
+            }
+            collectFlow(shouldShowEmoteMenuIcon) {
+                val drawableId = if (it) R.drawable.ic_insert_emoticon else 0
+                binding.inputLayout.setStartIconDrawable(drawableId)
+            }
+            collectFlow(shouldShowFullscreenHelper) { binding.fullscreenHintText.isVisible = it }
+
 
             collectFlow(events) {
                 when (it) {
@@ -1008,6 +1032,7 @@ class MainFragment : Fragment() {
     }
 
     private fun DankChatInputLayout.setup() {
+        setEndIconDrawable(R.drawable.ic_send)
         val touchListenerAdded = when {
             dankChatPreferences.repeatedSendingEnabled -> {
                 setEndIconOnClickListener { } // for ripple effects

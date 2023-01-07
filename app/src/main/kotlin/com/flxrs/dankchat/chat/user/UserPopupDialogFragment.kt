@@ -37,7 +37,6 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bindingRef = UserPopupBottomsheetBinding.inflate(inflater, container, false).apply {
-            lifecycleOwner = viewLifecycleOwner
             userMention.text = when {
                 args.isWhisperPopup -> getString(R.string.user_popup_whisper)
                 else                -> getString(R.string.user_popup_mention)
