@@ -295,7 +295,7 @@ class IgnoresRepository @Inject constructor(
             .forEach {
                 val hasMatch = when {
                     it.isRegex -> it.regex?.let { regex -> name.value.matches(regex) } ?: false
-                    else       -> name.matches(it.username)
+                    else       -> name.matches(it.username, ignoreCase = !it.isCaseSensitive)
                 }
 
                 if (hasMatch) {
