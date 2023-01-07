@@ -23,7 +23,7 @@ value class UserName(val value: String) : Parcelable {
         else                 -> this.value
     }
 
-    fun matches(other: String) = value.equals(other, ignoreCase = true)
+    fun matches(other: String, ignoreCase: Boolean = true) = value.equals(other, ignoreCase)
     fun matches(other: UserName) = value.equals(other.value, ignoreCase = true)
     fun matches(other: DisplayName) = value.equals(other.value, ignoreCase = true)
     fun matches(regex: Regex) = value.matches(regex)
