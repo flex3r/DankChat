@@ -70,10 +70,16 @@ class EmoteRepository @Inject constructor(
         val splits = message.split(WHITESPACE_REGEX)
         val emotes = mutableListOf<ChatMessageEmote>()
 
-        if (withTwitch) twitchEmotes.forEach { emotes.addAll(parseMessageForEmote(it.value, splits)) }
-        ffzEmotes[channel]?.forEach { emotes.addAll(parseMessageForEmote(it.value, splits, emotes)) }
-        bttvEmotes[channel]?.forEach { emotes.addAll(parseMessageForEmote(it.value, splits, emotes)) }
-        sevenTVEmotes[channel]?.forEach { emotes.addAll(parseMessageForEmote(it.value, splits, emotes)) }
+        if (withTwitch) {
+            twitchEmotes.forEach { emotes.addAll(parseMessageForEmote(it.value, splits)) }
+        }
+
+        if (channel != null) {
+            ffzEmotes[channel]?.forEach { emotes.addAll(parseMessageForEmote(it.value, splits, emotes)) }
+            bttvEmotes[channel]?.forEach { emotes.addAll(parseMessageForEmote(it.value, splits, emotes)) }
+            sevenTVEmotes[channel]?.forEach { emotes.addAll(parseMessageForEmote(it.value, splits, emotes)) }
+        }
+
         globalFFZEmotes.forEach { emotes.addAll(parseMessageForEmote(it.value, splits, emotes)) }
         globalBttvEmotes.forEach { emotes.addAll(parseMessageForEmote(it.value, splits, emotes)) }
         globalSevenTVEmotes.forEach { emotes.addAll(parseMessageForEmote(it.value, splits, emotes)) }
@@ -196,18 +202,18 @@ class EmoteRepository @Inject constructor(
             TagListEntry(key, value, it)
         }
 
-    private fun getChannelBadgeUrl(channel: UserName?, set: String, version: String) = channelBadges[channel]?.get(set)?.versions?.get(version)?.imageUrlHigh
+    private fun getChannelBadgeUrl(channel: UserName?, set: String, version: String) = channel?.let { channelBadges[channel]?.get(set)?.versions?.get(version)?.imageUrlHigh }
 
     private fun getGlobalBadgeUrl(set: String, version: String) = globalBadges[set]?.versions?.get(version)?.imageUrlHigh
 
     private fun getBadgeTitle(channel: UserName?, set: String, version: String): String? {
-        return channelBadges[channel]?.get(set)?.versions?.get(version)?.title
+        return channel?.let { channelBadges[channel]?.get(set)?.versions?.get(version)?.title }
             ?: globalBadges[set]?.versions?.get(version)?.title
     }
 
-    private fun getFfzModBadgeUrl(channel: UserName?): String? = ffzModBadges[channel]
+    private fun getFfzModBadgeUrl(channel: UserName?): String? = channel?.let { ffzModBadges[channel] }
 
-    private fun getFfzVipBadgeUrl(channel: UserName?): String? = ffzVipBadges[channel]
+    private fun getFfzVipBadgeUrl(channel: UserName?): String? = channel?.let { ffzVipBadges[channel] }
 
     private fun getDankChatBadgeTitleAndUrl(userId: UserId?): Pair<String, String>? = dankChatBadges.find { it.users.any { id -> id == userId } }?.let { it.type to it.url }
 
