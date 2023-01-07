@@ -27,6 +27,10 @@ value class UserName(val value: String) : Parcelable {
     fun matches(other: UserName) = value.equals(other.value, ignoreCase = true)
     fun matches(other: DisplayName) = value.equals(other.value, ignoreCase = true)
     fun matches(regex: Regex) = value.matches(regex)
+
+    companion object {
+        val EMPTY = UserName("")
+    }
 }
 
 fun UserName.toDisplayName() = DisplayName(value)
