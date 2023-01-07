@@ -43,14 +43,16 @@ class CommandRepository @Inject constructor(
     private val defaultCommands = Command.values()
     private val defaultCommandTriggers = defaultCommands.map { it.trigger }
     private val twitchCommands = TwitchCommand.values()
-    private val twitchCommandTriggers = twitchCommands.map { listOf(".${it.trigger}", "/${it.trigger}") }.flatten()
+    private val twitchCommandTriggers = twitchCommands.flatMap { listOf(".${it.trigger}", "/${it.trigger}") }
 
     val commandTriggers: Flow<List<String>> = customCommands.map { customCommands ->
         defaultCommandTriggers + twitchCommandTriggers + customCommands.map { it.trigger }
     }
 
     fun getSupibotCommands(channel: UserName): StateFlow<List<String>> = supibotCommands.getOrPut(channel) { MutableStateFlow(emptyList()) }
-    fun clearSupibotCommands() = supibotCommands.forEach { it.value.value = emptyList() }.also { supibotCommands.clear() }
+    fun clearSupibotCommands() = supibotCommands
+        .forEach { it.value.value = emptyList() }
+        .also { supibotCommands.clear() }
 
     suspend fun checkForCommands(message: String, channel: UserName, roomState: RoomState, skipSuspendingCommands: Boolean = false): CommandResult {
         if (!preferenceStore.isLoggedIn) {
