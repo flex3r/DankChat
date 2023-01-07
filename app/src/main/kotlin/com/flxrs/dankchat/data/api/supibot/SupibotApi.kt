@@ -1,8 +1,9 @@
 package com.flxrs.dankchat.data.api.supibot
 
 import com.flxrs.dankchat.data.UserName
-import io.ktor.client.*
-import io.ktor.client.request.*
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 
 class SupibotApi(private val ktorClient: HttpClient) {
 

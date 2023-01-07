@@ -1,11 +1,16 @@
 package com.flxrs.dankchat.data.twitch.message
 
 import android.graphics.Color
-import com.flxrs.dankchat.data.*
+import com.flxrs.dankchat.data.DisplayName
+import com.flxrs.dankchat.data.UserId
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.irc.IrcMessage
+import com.flxrs.dankchat.data.toDisplayName
+import com.flxrs.dankchat.data.toUserId
+import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
-import java.util.*
+import java.util.UUID
 
 data class PrivMessage(
     override val timestamp: Long = System.currentTimeMillis(),

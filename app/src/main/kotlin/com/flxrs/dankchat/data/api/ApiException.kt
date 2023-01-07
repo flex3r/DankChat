@@ -2,8 +2,12 @@ package com.flxrs.dankchat.data.api
 
 import androidx.annotation.Keep
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
-import io.ktor.client.statement.*
-import io.ktor.http.*
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
+import io.ktor.client.statement.request
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.Url
+import io.ktor.http.isSuccess
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 

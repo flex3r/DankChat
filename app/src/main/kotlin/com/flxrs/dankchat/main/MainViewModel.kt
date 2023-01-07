@@ -33,15 +33,46 @@ import com.flxrs.dankchat.data.twitch.message.SystemMessageType
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.Preference
 import com.flxrs.dankchat.utils.DateTimeUtils
-import com.flxrs.dankchat.utils.extensions.*
+import com.flxrs.dankchat.utils.extensions.firstValueOrNull
+import com.flxrs.dankchat.utils.extensions.flatMapLatestOrDefault
+import com.flxrs.dankchat.utils.extensions.moveToFront
+import com.flxrs.dankchat.utils.extensions.timer
+import com.flxrs.dankchat.utils.extensions.toEmoteItems
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import java.io.File
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
-
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -92,7 +123,6 @@ class MainViewModel @Inject constructor(
             }
         }
         .map { it?.toDisplayText()?.ifBlank { null } }
-
 
     private val users = currentSuggestionChannel.flatMapLatestOrDefault(emptySet()) { chatRepository.getUsers(it) }
     private val supibotCommands = currentSuggestionChannel.flatMapLatestOrDefault(emptyList()) { commandRepository.getSupibotCommands(it) }
@@ -289,7 +319,6 @@ class MainViewModel @Inject constructor(
         shouldShowChips && chipsExpanded
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
-
     val shouldShowStreamToggle: StateFlow<Boolean> =
         combine(
             shouldShowExpandedChips,
@@ -314,7 +343,6 @@ class MainViewModel @Inject constructor(
         get() = currentStreamedChannel.value != null
     val isFullscreen: Boolean
         get() = isFullscreenFlow.value
-
 
     val currentRoomState: RoomState?
         get() {

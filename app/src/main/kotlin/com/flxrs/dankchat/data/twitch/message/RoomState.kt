@@ -3,8 +3,6 @@ package com.flxrs.dankchat.data.twitch.message
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.irc.IrcMessage
-import com.flxrs.dankchat.data.toUserId
-import com.flxrs.dankchat.data.toUserName
 
 data class RoomState(
     val channel: UserName,

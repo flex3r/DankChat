@@ -1,7 +1,6 @@
 package com.flxrs.dankchat.data
 
 import android.os.Parcelable
-import com.flxrs.dankchat.data.api.helix.dto.UserDto
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 

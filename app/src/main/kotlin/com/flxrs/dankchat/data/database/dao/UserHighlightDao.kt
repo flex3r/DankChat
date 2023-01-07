@@ -16,7 +16,6 @@ interface UserHighlightDao {
     @Query("SELECT * FROM user_highlight")
     suspend fun getUserHighlights(): List<UserHighlightEntity>
 
-
     @Query("SELECT * FROM user_highlight")
     fun getUserHighlightsFlow(): Flow<List<UserHighlightEntity>>
 

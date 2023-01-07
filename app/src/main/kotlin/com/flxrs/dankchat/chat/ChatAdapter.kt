@@ -48,7 +48,6 @@ import com.google.android.material.color.MaterialColors
 import kotlinx.coroutines.*
 import kotlin.math.roundToInt
 
-
 class ChatAdapter(
     private val emoteRepository: EmoteRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,

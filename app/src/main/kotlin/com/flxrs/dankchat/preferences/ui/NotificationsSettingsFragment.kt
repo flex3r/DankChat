@@ -17,7 +17,11 @@ import com.flxrs.dankchat.preferences.ui.highlights.HighlightEvent
 import com.flxrs.dankchat.preferences.ui.highlights.HighlightsTab
 import com.flxrs.dankchat.preferences.ui.highlights.HighlightsTabAdapter
 import com.flxrs.dankchat.preferences.ui.highlights.HighlightsViewModel
-import com.flxrs.dankchat.preferences.ui.ignores.*
+import com.flxrs.dankchat.preferences.ui.ignores.IgnoreEvent
+import com.flxrs.dankchat.preferences.ui.ignores.IgnoresTab
+import com.flxrs.dankchat.preferences.ui.ignores.IgnoresTabAdapter
+import com.flxrs.dankchat.preferences.ui.ignores.IgnoresViewModel
+import com.flxrs.dankchat.preferences.ui.ignores.TwitchBlockItem
 import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.flxrs.dankchat.utils.extensions.expand
 import com.flxrs.dankchat.utils.extensions.showShortSnackbar

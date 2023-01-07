@@ -5,7 +5,6 @@ import android.text.Spanned
 import android.text.TextUtils
 import android.widget.MultiAutoCompleteTextView
 
-
 class SpaceTokenizer : MultiAutoCompleteTextView.Tokenizer {
     private val separator: Char = ' '
 

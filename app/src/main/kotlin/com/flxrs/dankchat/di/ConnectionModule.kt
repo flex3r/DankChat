@@ -15,7 +15,6 @@ import okhttp3.OkHttpClient
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
-
 @Retention(AnnotationRetention.RUNTIME)
 @Qualifier
 annotation class ReadConnection
@@ -23,7 +22,6 @@ annotation class ReadConnection
 @Retention(AnnotationRetention.RUNTIME)
 @Qualifier
 annotation class WriteConnection
-
 
 @InstallIn(SingletonComponent::class)
 @Module

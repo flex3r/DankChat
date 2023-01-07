@@ -30,8 +30,12 @@ import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
 import com.flxrs.dankchat.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
-import java.util.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.launch
+import java.util.Locale
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -317,7 +321,6 @@ class NotificationService : Service(), CoroutineScope {
         removeURL -> replace(URL_REGEX, replacement = "")
         else      -> this
     }
-
 
     private fun NotificationData.createMentionNotification() {
         val pendingStartActivityIntent = Intent(this@NotificationService, MainActivity::class.java).let {

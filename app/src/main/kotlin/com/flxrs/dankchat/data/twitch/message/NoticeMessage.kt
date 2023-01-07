@@ -4,7 +4,7 @@ import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.utils.DateTimeUtils
-import java.util.*
+import java.util.UUID
 
 data class NoticeMessage(
     override val timestamp: Long = System.currentTimeMillis(),
