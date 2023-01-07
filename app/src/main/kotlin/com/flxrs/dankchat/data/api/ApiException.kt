@@ -62,4 +62,4 @@ suspend fun HttpResponse.throwApiErrorOnFailure(json: Json): HttpResponse {
 
 @Keep
 @Serializable
-data class GenericError(val message: String)
+private data class GenericError(val message: String)
