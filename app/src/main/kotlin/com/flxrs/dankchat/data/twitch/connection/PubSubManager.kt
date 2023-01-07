@@ -35,11 +35,6 @@ class PubSubManager @Inject constructor(
     val connectedAndHasWhisperTopic: Boolean
         get() = connections.any { it.connected && it.hasWhisperTopic }
 
-    fun hasModeratorActionTopic(channelId: UserId): Boolean {
-        val userId = preferenceStore.userIdString ?: return false
-        return connections.any { it.connected && it.hasModeratorTopic(userId, channelId) }
-    }
-
     fun start() {
         if (!preferenceStore.isLoggedIn) {
             return
