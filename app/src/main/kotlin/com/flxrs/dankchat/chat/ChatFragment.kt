@@ -65,7 +65,6 @@ open class ChatFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bindingRef = ChatFragmentBinding.inflate(inflater, container, false).apply {
-            lifecycleOwner = this@ChatFragment
             scrollBottom.setOnClickListener {
                 scrollBottom.visibility = View.GONE
                 mainViewModel.isScrolling(false)

@@ -3,15 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-        <variable
-            name="vm"
-            type="com.flxrs.dankchat.main.MainViewModel" />
-
-        <import type="android.view.View" />
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -51,7 +42,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:visibility="@{vm.shouldShowTabs ? View.VISIBLE : View.GONE}"
                         app:tabMode="auto" />
                 </com.google.android.material.appbar.AppBarLayout>
 
@@ -72,8 +62,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:visibility="@{vm.shouldShowChipToggle ? View.VISIBLE : View.GONE}"
-                    app:chipIcon="@{vm.areChipsExpanded ? @drawable/ic_keyboard_arrow_up : @drawable/ic_keyboard_arrow_down}"
                     app:iconEndPadding="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/stream_webview_wrapper"
@@ -86,7 +74,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:text="@string/toggle_fullscreen"
-                    android:visibility="@{vm.shouldShowExpandedChips ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/show_chips" />
 
@@ -96,7 +83,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:text="@string/toggle_stream"
-                    android:visibility="@{vm.shouldShowStreamToggle ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/toggle_fullscreen" />
 
@@ -106,7 +92,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:text="@string/change_roomstate"
-                    android:visibility="@{vm.hasModInChannel ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/toggle_stream" />
 
@@ -114,7 +99,6 @@
                     android:id="@+id/chat_viewpager"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:visibility="@{vm.shouldShowViewPager ? View.VISIBLE : View.GONE}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHeight_min="64dp"
@@ -127,7 +111,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/no_channels_added"
-                    android:visibility="@{vm.shouldShowViewPager ? View.GONE : View.VISIBLE}"
                     app:layout_constraintBottom_toTopOf="@id/add_channels_button"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -140,7 +123,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="@string/add_channel"
-                    android:visibility="@{vm.shouldShowViewPager ? View.GONE : View.VISIBLE}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -215,24 +197,19 @@
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
             android:animateLayoutChanges="true"
-            android:enabled="@{vm.canType}"
-            android:visibility="@{vm.shouldShowInput ? View.VISIBLE : View.GONE}"
             app:endIconContentDescription="@string/send_hint"
-            app:endIconDrawable="@{vm.canType ? @drawable/ic_send : null}"
             app:endIconMode="custom"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/bottom_barrier"
-            app:startIconContentDescription="@string/emote_menu_hint"
-            app:startIconDrawable="@{vm.shouldShowEmoteMenuIcon ? @drawable/ic_insert_emoticon : null}">
+            app:startIconContentDescription="@string/emote_menu_hint">
 
             <com.flxrs.dankchat.main.DankChatInput
                 android:id="@+id/input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:completionThreshold="2"
-                android:enabled="@{vm.canType}"
                 android:imeOptions="actionSend|flagNoExtractUi"
                 android:inputType="text|textCapSentences"
                 android:paddingStart="12dp"
@@ -247,7 +224,6 @@
             android:layout_marginStart="8dp"
             android:animateLayoutChanges="true"
             android:textAppearance="?attr/textAppearanceBodySmall"
-            android:visibility="@{vm.shouldShowFullscreenHelper ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -411,7 +411,6 @@ class ChatRepository @Inject constructor(
 
         removeChannelData(channel)
         readConnection.partChannel(channel)
-        writeConnection.partChannel(channel)
 
         if (unListenFromPubSub) {
             pubSubManager.removeChannel(channel)
@@ -455,8 +454,11 @@ class ChatRepository @Inject constructor(
     }
 
     private fun removeChannelData(channel: UserName) {
-        messages.remove(channel)?.update { emptyList() }
-        usersFlows.remove(channel)?.update { emptySet() }
+        messages.remove(channel)
+        usersFlows.remove(channel)
+        connectionState.remove(channel)
+        roomStateFlows.remove(channel)
+        roomStates.remove(channel)
         users.remove(channel)
         lastMessage.remove(channel)
         _channelMentionCount.clear(channel)
