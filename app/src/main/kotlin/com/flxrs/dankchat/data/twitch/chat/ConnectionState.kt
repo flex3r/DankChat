@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.data.twitch.connection
+package com.flxrs.dankchat.data.twitch.chat
 
 enum class ConnectionState {
     CONNECTED,

@@ -1,9 +1,9 @@
 package com.flxrs.dankchat.di
 
 import com.flxrs.dankchat.data.api.helix.HelixApiClient
-import com.flxrs.dankchat.data.twitch.connection.ChatConnection
-import com.flxrs.dankchat.data.twitch.connection.ChatConnectionType
-import com.flxrs.dankchat.data.twitch.connection.PubSubManager
+import com.flxrs.dankchat.data.twitch.chat.ChatConnection
+import com.flxrs.dankchat.data.twitch.chat.ChatConnectionType
+import com.flxrs.dankchat.data.twitch.pubsub.PubSubManager
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import dagger.Module
 import dagger.Provides

@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.data.twitch.connection.dto.redemption
+package com.flxrs.dankchat.data.twitch.pubsub.dto.redemption
 
 import androidx.annotation.Keep
 import kotlinx.serialization.SerialName

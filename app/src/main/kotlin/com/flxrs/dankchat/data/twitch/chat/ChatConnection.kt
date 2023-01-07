@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.data.twitch.connection
+package com.flxrs.dankchat.data.twitch.chat
 
 import android.util.Log
 import com.flxrs.dankchat.data.UserName
