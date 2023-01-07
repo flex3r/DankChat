@@ -1,8 +1,10 @@
-package com.flxrs.dankchat.data.twitch.connection.dto
+package com.flxrs.dankchat.data.twitch.connection.dto.moderation
 
+import androidx.annotation.Keep
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@Keep
 @Serializable
 enum class ModerationActionType {
     @SerialName("timeout")
