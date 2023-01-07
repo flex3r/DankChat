@@ -242,7 +242,6 @@ class DankChatPreferenceStore @Inject constructor(
             val fetchStreamsKey = getString(R.string.preference_fetch_streams_key)
 
             send(Preference.RoomState(roomStateEnabled))
-            //send(Preference.FetchStreams(fetchStreamInfoEnabled))
             send(Preference.StreamInfo(showStreamInfoEnabled, updateTimer = false))
             send(Preference.Input(inputEnabled))
             send(Preference.ScrollBack(scrollbackLength))
@@ -331,12 +330,10 @@ class DankChatPreferenceStore @Inject constructor(
         channelRenames = renameMap.toJson()
     }
 
-    private fun String.toMutableMap(): MutableMap<UserName, UserName> {
-        return json.decodeOrNull<Map<UserName, UserName>>(this).orEmpty()
-//            .map { (key, value) -> key.asUserName() to value.asUserName() }
-//            .toMap()
-            .toMutableMap()
-    }
+    private fun String.toMutableMap(): MutableMap<UserName, UserName> = json
+        .decodeOrNull<Map<UserName, UserName>>(this)
+        .orEmpty()
+        .toMutableMap()
 
     private fun getMultiEntriesFromPreferences(key: String): List<MultiEntryDto> {
         return defaultPreferences
@@ -360,10 +357,7 @@ class DankChatPreferenceStore @Inject constructor(
             .mapNotNull { json.decodeOrNull<CommandDto>(it)?.toEntryItem() }
     }
 
-    private fun Map<UserName, UserName>.toJson(): String {
-//        val stringMap = map { (key, value) -> key.value to value.value }.toMap()
-        return json.encodeToString(this)
-    }
+    private fun Map<UserName, UserName>.toJson(): String = json.encodeToString(this)
 
     private val timestampFormat: String
         get() = defaultPreferences.getString(context.getString(R.string.preference_timestamp_format_key), "HH:mm") ?: "HH:mm"
