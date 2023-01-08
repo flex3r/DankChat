@@ -6,7 +6,7 @@ import io.ktor.client.request.get
 
 class SevenTVApi(private val ktorClient: HttpClient) {
 
-    suspend fun getChannelEmotes(channelId: UserId) = ktorClient.get("users/$channelId/emotes")
+    suspend fun getChannelEmotes(channelId: UserId) = ktorClient.get("users/twitch/$channelId")
 
-    suspend fun getGlobalEmotes() = ktorClient.get("emotes/global")
+    suspend fun getGlobalEmotes() = ktorClient.get("emote-sets/global")
 }

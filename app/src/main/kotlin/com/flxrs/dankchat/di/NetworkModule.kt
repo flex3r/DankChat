@@ -44,7 +44,7 @@ object NetworkModule {
     private const val BADGES_BASE_URL = "https://badges.twitch.tv/v1/badges/"
     private const val FFZ_BASE_URL = "https://api.frankerfacez.com/v1/"
     private const val BTTV_BASE_URL = "https://api.betterttv.net/3/cached/"
-    private const val SEVENTV_BASE_URL = "https://api.7tv.app/v2/"
+    private const val SEVENTV_BASE_URL = "https://7tv.io/v3/"
 
     @WebSocketOkHttpClient
     @Singleton

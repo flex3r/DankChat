@@ -51,7 +51,6 @@ class MultiCallback : Callback {
             }
         }
         callbacks.addIfAbsent(CallbackReference(callback))
-        Log.d("MultiCallback", "Callback size: ${callbacks.size}")
     }
 
     fun removeView(callback: Callback) {
@@ -61,7 +60,6 @@ class MultiCallback : Callback {
                 callbacks.remove(it)
             }
         }
-        Log.d("MultiCallback", "Callback size: ${callbacks.size}")
     }
 
     private data class CallbackReference(val callback: Callback?) : WeakReference<Callback>(callback)
