@@ -2,6 +2,7 @@ package com.flxrs.dankchat.data.repo
 
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
+import android.os.Build
 import android.util.LruCache
 import androidx.annotation.VisibleForTesting
 import com.flxrs.dankchat.data.UserId
@@ -16,7 +17,7 @@ import com.flxrs.dankchat.data.api.ffz.dto.FFZChannelDto
 import com.flxrs.dankchat.data.api.ffz.dto.FFZEmoteDto
 import com.flxrs.dankchat.data.api.ffz.dto.FFZGlobalDto
 import com.flxrs.dankchat.data.api.seventv.dto.SevenTVEmoteDto
-import com.flxrs.dankchat.data.api.seventv.dto.SevenTVEmoteVisibility
+import com.flxrs.dankchat.data.api.seventv.dto.SevenTVEmoteFileDto
 import com.flxrs.dankchat.data.repo.chat.ChatRepository
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.badge.BadgeSet
@@ -537,21 +538,39 @@ class EmoteRepository @Inject constructor(
     }
 
     private fun parseSevenTVEmote(emote: SevenTVEmoteDto, type: EmoteType): GenericEmote? {
-        val urls = emote.urls.associate { (size, url) -> size to url }
+        val data = emote.data ?: return null
+        if (data.isTwitchDisallowed) {
+            return null
+        }
+
+        val base = "https:${data.host.url}/"
+        val urls = data.host.files
+            .filter { it.format == "WEBP" }
+            .associate {
+                it.staticName to it.emoteUrlWithFallback(base, data.animated)
+            }
+
         return GenericEmote(
             code = emote.name,
-            url = urls["4"] ?: return null,
-            lowResUrl = urls["2"] ?: urls["1"] ?: return null,
+            url = urls["4x"] ?: return null,
+            lowResUrl = urls["2x"] ?: urls["1x"] ?: return null,
             id = emote.id,
             scale = 1,
             emoteType = type,
-            isOverlayEmote = SevenTVEmoteVisibility.ZERO_WIDTH in emote.visibility
+            isOverlayEmote = emote.isZeroWidth,
         )
+    }
+
+    private fun SevenTVEmoteFileDto.emoteUrlWithFallback(base: String, animated: Boolean): String {
+        return when {
+            animated && Build.VERSION.SDK_INT < Build.VERSION_CODES.P -> "$base$staticName.gif"
+            else                                                      -> "$base$name"
+        }
     }
 
     private fun List<SevenTVEmoteDto>.filterUnlistedIfEnabled(): List<SevenTVEmoteDto> = when {
         preferences.unlistedSevenTVEmotesEnabled -> this
-        else                                     -> filterNot { SevenTVEmoteVisibility.UNLISTED in it.visibility }
+        else                                     -> filter { it.data?.listed == true }
     }
 
     companion object {
