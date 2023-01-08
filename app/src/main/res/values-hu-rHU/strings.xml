@@ -146,7 +146,6 @@
     <string name="undo">Visszavonás</string>
     <string name="item_removed">Tárgy eltávolítva</string>
     <string name="highlights_entry_username">Felhasználóneved</string>
-    <string name="highlights_ignores_entry_subscriptions">Előfizetések</string>
     <string name="highlights_ignores_entry_announcements">Bejelentések</string>
     <string name="highlights_ignores_entry_first_messages">Első üzenet</string>
     <string name="highlights_ignores_entry_custom">Egyéni</string>
