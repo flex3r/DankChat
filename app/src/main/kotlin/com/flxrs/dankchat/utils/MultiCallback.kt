@@ -12,6 +12,7 @@ class MultiCallback : Callback {
     private val callbacks = CopyOnWriteArrayList<CallbackReference>()
 
     override fun invalidateDrawable(who: Drawable) {
+        Log.d("MultiCallback", "callback size: ${callbacks.size}")
         callbacks.forEach { reference ->
             when (val callback = reference.get()) {
                 null -> callbacks.remove(reference)

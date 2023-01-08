@@ -388,6 +388,7 @@ class ChatAdapter(
 
         // todo extract common badges + emote handling
         val animateGifs = dankChatPreferenceStore.animateGifs
+        var hasAnimatedEmoteOrBadge = false
         holder.scope.launch(holder.coroutineHandler) {
             allowedBadges.forEachIndexed { idx, badge ->
                 try {
@@ -395,7 +396,12 @@ class ChatAdapter(
                     val cacheKey = badge.cacheKey(baseHeight)
                     val cached = emoteRepository.badgeCache[cacheKey]
                     val drawable = when {
-                        cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
+                        cached != null -> cached.also {
+                            if (it is Animatable) {
+                                it.setRunning(animateGifs)
+                                hasAnimatedEmoteOrBadge = true
+                            }
+                        }
                         else           -> context.imageLoader
                             .execute(badge.url.toRequest(context))
                             .drawable?.apply {
@@ -409,6 +415,7 @@ class ChatAdapter(
                                 if (this is Animatable) {
                                     emoteRepository.badgeCache.put(cacheKey, this)
                                     setRunning(animateGifs)
+                                    hasAnimatedEmoteOrBadge = true
                                 }
                             }
                     }
@@ -422,10 +429,6 @@ class ChatAdapter(
                 }
             }
 
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && animateGifs) {
-                emoteRepository.gifCallback.addView(holder.binding.itemText)
-            }
-
             val fullPrefix = prefixLength + badgesLength
             try {
                 emotes
@@ -434,13 +437,20 @@ class ChatAdapter(
                         val key = emotes.cacheKey(baseHeight)
                         // fast path, backed by lru cache
                         val layerDrawable = emoteRepository.layerCache[key] ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
-
                         if (layerDrawable != null) {
+                            layerDrawable.forEachLayer<Animatable> { animatable ->
+                                hasAnimatedEmoteOrBadge = true
+                                animatable.setRunning(animateGifs)
+                            }
                             (text as Spannable).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
                         }
                     }
             } catch (t: Throwable) {
                 handleException(t)
+            }
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && animateGifs && hasAnimatedEmoteOrBadge) {
+                emoteRepository.gifCallback.addView(holder.binding.itemText)
             }
         }
     }
@@ -578,11 +588,7 @@ class ChatAdapter(
         setText(spannableWithEmojis, TextView.BufferType.SPANNABLE)
 
         val animateGifs = dankChatPreferenceStore.animateGifs
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && animateGifs) {
-            emoteRepository.gifCallback.addView(holder.binding.itemText)
-        }
-
+        var hasAnimatedEmoteOrBadge = false
         holder.scope.launch(holder.coroutineHandler) {
             allowedBadges.forEachIndexed { idx, badge ->
                 try {
@@ -590,7 +596,13 @@ class ChatAdapter(
                     val cacheKey = badge.cacheKey(baseHeight)
                     val cached = emoteRepository.badgeCache[cacheKey]
                     val drawable = when {
-                        cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
+                        cached != null -> cached.also {
+                            if (it is Animatable) {
+                                it.setRunning(animateGifs)
+                                hasAnimatedEmoteOrBadge = true
+                            }
+                        }
+
                         else           -> context.imageLoader
                             .execute(badge.url.toRequest(context))
                             .drawable?.apply {
@@ -604,6 +616,7 @@ class ChatAdapter(
                                 if (this is Animatable) {
                                     emoteRepository.badgeCache.put(cacheKey, this)
                                     setRunning(animateGifs)
+                                    hasAnimatedEmoteOrBadge = true
                                 }
                             }
                     }
@@ -624,16 +637,21 @@ class ChatAdapter(
                     .forEach { (_, emotes) ->
                         val key = emotes.cacheKey(baseHeight)
                         // fast path, backed by lru cache
-                        val layerDrawable = emoteRepository.layerCache[key]?.also {
-                            it.forEachLayer<Animatable> { animatable -> animatable.setRunning(animateGifs) }
-                        } ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
-
+                        val layerDrawable = emoteRepository.layerCache[key] ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
                         if (layerDrawable != null) {
+                            layerDrawable.forEachLayer<Animatable> { animatable ->
+                                hasAnimatedEmoteOrBadge = true
+                                animatable.setRunning(animateGifs)
+                            }
                             (text as Spannable).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
                         }
                     }
             } catch (t: Throwable) {
                 handleException(t)
+            }
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && animateGifs && hasAnimatedEmoteOrBadge) {
+                emoteRepository.gifCallback.addView(holder.binding.itemText)
             }
         }
     }
@@ -658,9 +676,11 @@ class ChatAdapter(
             return null
         }
 
-        return drawables.toLayerDrawable(bounds, scaleFactor, emotes).also {
-            emoteRepository.layerCache.put(cacheKey, it)
-            it.forEachLayer<Animatable> { animatable -> animatable.setRunning(animateGifs) }
+        return drawables.toLayerDrawable(bounds, scaleFactor, emotes).also { layerDrawable ->
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && animateGifs && drawables.any { it is Animatable }) {
+                layerDrawable.callback = emoteRepository.gifCallback
+            }
+            emoteRepository.layerCache.put(cacheKey, layerDrawable)
         }
     }
 
@@ -671,10 +691,6 @@ class ChatAdapter(
 
         // set bounds again but adjust by maximum width/height of stacked drawables
         forEachIndexed { idx, dr -> dr.transformEmoteDrawable(scaleFactor, emotes[idx], maxWidth, maxHeight) }
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
-            callback = emoteRepository.gifCallback
-        }
     }
 
     private fun Spannable.setEmoteSpans(e: ChatMessageEmote, prefix: Int, drawable: Drawable) {
