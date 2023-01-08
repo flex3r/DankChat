@@ -578,6 +578,11 @@ class ChatAdapter(
         setText(spannableWithEmojis, TextView.BufferType.SPANNABLE)
 
         val animateGifs = dankChatPreferenceStore.animateGifs
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && animateGifs) {
+            emoteRepository.gifCallback.addView(holder.binding.itemText)
+        }
+
         holder.scope.launch(holder.coroutineHandler) {
             allowedBadges.forEachIndexed { idx, badge ->
                 try {
@@ -610,10 +615,6 @@ class ChatAdapter(
                 } catch (t: Throwable) {
                     handleException(t)
                 }
-            }
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && animateGifs) {
-                emoteRepository.gifCallback.addView(holder.binding.itemText)
             }
 
             val fullPrefix = prefixLength + badgesLength
