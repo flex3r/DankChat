@@ -14,7 +14,6 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,8 +34,6 @@ import com.flxrs.dankchat.utils.extensions.forEachSpan
 import com.flxrs.dankchat.utils.extensions.forEachViewHolder
 import com.flxrs.dankchat.utils.extensions.showShortSnackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -192,14 +189,7 @@ open class ChatFragment : Fragment() {
     protected open fun scrollToPosition(position: Int) {
         bindingRef ?: return
         if (position > 0 && isAtBottom) {
-            binding.chat.stopScroll()
-            binding.chat.scrollToPosition(position)
-            lifecycleScope.launch {
-                delay(50)
-                if (isAtBottom && position != adapter.itemCount - 1) binding.chat.post {
-                    manager.scrollToPositionWithOffset(position, 0)
-                }
-            }
+            manager.scrollToPositionWithOffset(position, 0)
         }
     }
 
