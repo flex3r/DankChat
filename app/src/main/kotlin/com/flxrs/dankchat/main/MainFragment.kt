@@ -287,13 +287,12 @@ class MainFragment : Fragment() {
                 binding.inputLayout.isEnabled = it
                 binding.input.isEnabled = it
                 when {
-                    it   -> binding.inputLayout.setup()
+                    it   -> binding.inputLayout.setupSendButton()
                     else -> with(binding.inputLayout) {
                         endIconDrawable = null
                         setEndIconTouchListener(null)
                         setEndIconOnClickListener(null)
                         setEndIconOnLongClickListener(null)
-                        setStartIconOnClickListener(null)
                     }
                 }
             }
@@ -331,12 +330,13 @@ class MainFragment : Fragment() {
                 binding.addChannelsText.isVisible = !it
                 binding.addChannelsButton.isVisible = !it
             }
-            collectFlow(shouldShowEmoteMenuIcon) {
-                val drawableId = if (it) R.drawable.ic_insert_emoticon else 0
-                binding.inputLayout.setStartIconDrawable(drawableId)
+            collectFlow(shouldShowEmoteMenuIcon) { showEmoteMenuIcon ->
+                when {
+                    showEmoteMenuIcon -> binding.inputLayout.setupEmoteMenu()
+                    else              -> binding.inputLayout.startIconDrawable = null
+                }
             }
             collectFlow(shouldShowFullscreenHelper) { binding.fullscreenHintText.isVisible = it }
-
 
             collectFlow(events) {
                 when (it) {
@@ -1031,7 +1031,7 @@ class MainFragment : Fragment() {
         registerOnPageChangeCallback(pageChangeCallback)
     }
 
-    private fun DankChatInputLayout.setup() {
+    private fun DankChatInputLayout.setupSendButton() {
         setEndIconDrawable(R.drawable.ic_send)
         val touchListenerAdded = when {
             dankChatPreferences.repeatedSendingEnabled -> {
@@ -1053,6 +1053,10 @@ class MainFragment : Fragment() {
             setEndIconOnLongClickListener { getLastMessage() }
         }
 
+    }
+
+    private fun DankChatInputLayout.setupEmoteMenu() {
+        setStartIconDrawable(R.drawable.ic_insert_emoticon)
         setStartIconOnClickListener {
             if (emoteMenuBottomSheetBehavior?.isVisible == true || emoteMenuAdapter.currentList.isEmpty()) {
                 emoteMenuBottomSheetBehavior?.hide()
@@ -1081,33 +1085,31 @@ class MainFragment : Fragment() {
                 }.attach()
             }
 
-            postDelayed(50) {
-                emoteMenuBottomSheetBehavior?.apply {
-                    peekHeight = (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
-                    expand()
+            emoteMenuBottomSheetBehavior?.apply {
+                peekHeight = (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
+                expand()
 
-                    addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-                        override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
+                addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                    override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
 
-                        override fun onStateChanged(bottomSheet: View, newState: Int) {
-                            binding.streamWebviewWrapper.isVisible = newState == BottomSheetBehavior.STATE_HIDDEN && mainViewModel.isStreamActive
-                            mainViewModel.setEmoteSheetOpen(emoteMenuBottomSheetBehavior?.isMoving == true || emoteMenuBottomSheetBehavior?.isVisible == true)
-                            if (!mainViewModel.isFullscreenFlow.value && isLandscape) {
-                                when (newState) {
-                                    BottomSheetBehavior.STATE_EXPANDED, BottomSheetBehavior.STATE_COLLAPSED -> {
-                                        (activity as? AppCompatActivity)?.supportActionBar?.hide()
-                                        binding.tabs.visibility = View.GONE
-                                    }
+                    override fun onStateChanged(bottomSheet: View, newState: Int) {
+                        binding.streamWebviewWrapper.isVisible = newState == BottomSheetBehavior.STATE_HIDDEN && mainViewModel.isStreamActive
+                        mainViewModel.setEmoteSheetOpen(emoteMenuBottomSheetBehavior?.isMoving == true || emoteMenuBottomSheetBehavior?.isVisible == true)
+                        if (!mainViewModel.isFullscreenFlow.value && isLandscape) {
+                            when (newState) {
+                                BottomSheetBehavior.STATE_EXPANDED, BottomSheetBehavior.STATE_COLLAPSED -> {
+                                    (activity as? AppCompatActivity)?.supportActionBar?.hide()
+                                    binding.tabs.visibility = View.GONE
+                                }
 
-                                    else                                                                    -> {
-                                        (activity as? AppCompatActivity)?.supportActionBar?.show()
-                                        binding.tabs.visibility = View.VISIBLE
-                                    }
+                                else                                                                    -> {
+                                    (activity as? AppCompatActivity)?.supportActionBar?.show()
+                                    binding.tabs.visibility = View.VISIBLE
                                 }
                             }
                         }
-                    })
-                }
+                    }
+                })
             }
         }
     }
