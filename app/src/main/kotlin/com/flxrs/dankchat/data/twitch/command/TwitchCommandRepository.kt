@@ -14,8 +14,10 @@ import com.flxrs.dankchat.data.api.helix.dto.ChatSettingsRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.CommercialRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.MarkerRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.WhisperRequestDto
+import com.flxrs.dankchat.data.repo.chat.UserState
 import com.flxrs.dankchat.data.repo.command.CommandResult
 import com.flxrs.dankchat.data.toUserName
+import com.flxrs.dankchat.data.twitch.message.RoomState
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.DateTimeUtils
 import java.util.UUID
@@ -29,6 +31,15 @@ class TwitchCommandRepository @Inject constructor(
 ) {
 
     fun isIrcCommand(trigger: String): Boolean = trigger in ALLOWED_IRC_COMMAND_TRIGGERS
+
+    fun getAvailableCommandTriggers(room: RoomState, userState: UserState): List<String> {
+        val currentUserId = dankChatPreferenceStore.userIdString ?: return emptyList()
+        return when {
+            room.channelId == currentUserId              -> TwitchCommand.ALL_COMMANDS
+            room.channel in userState.moderationChannels -> TwitchCommand.MODERATOR_COMMANDS
+            else                                         -> TwitchCommand.USER_COMMANDS
+        }.map { "/${it.trigger}" }
+    }
 
     suspend fun handleTwitchCommand(command: TwitchCommand, context: CommandContext): CommandResult {
         val currentUserId = dankChatPreferenceStore.userIdString ?: return CommandResult.AcceptedTwitchCommand(
@@ -632,9 +643,10 @@ class TwitchCommandRepository @Inject constructor(
     }
 
     companion object {
+        val ALLOWED_IRC_COMMAND_TRIGGERS = listOf("/me", "/disconnect")
+
         private val TAG = TwitchCommandRepository::class.java.simpleName
         private const val GENERIC_ERROR_MESSAGE = "An unknown error has occurred."
-        private val ALLOWED_IRC_COMMAND_TRIGGERS = listOf("me", "disconnect")
         private val VALID_HELIX_COLORS = listOf(
             "blue",
             "blue_violet",

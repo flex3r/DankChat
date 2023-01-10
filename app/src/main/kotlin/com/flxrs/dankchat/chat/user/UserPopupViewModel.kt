@@ -97,8 +97,9 @@ class UserPopupViewModel @Inject constructor(
     private suspend fun sendCommand(message: String) {
         val channel = args.channel ?: return
         val roomState = chatRepository.getRoomState(channel).firstValueOrNull ?: return
+        val userState = chatRepository.userStateFlow.value
         val result = runCatching {
-            commandRepository.checkForCommands(message, channel, roomState)
+            commandRepository.checkForCommands(message, channel, roomState, userState)
         }.getOrNull() ?: return
 
         when (result) {

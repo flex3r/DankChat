@@ -6,6 +6,7 @@ import com.flxrs.dankchat.data.api.chatters.ChattersApiClient
 import com.flxrs.dankchat.data.api.helix.HelixApiClient
 import com.flxrs.dankchat.data.api.supibot.SupibotApiClient
 import com.flxrs.dankchat.data.repo.IgnoresRepository
+import com.flxrs.dankchat.data.repo.chat.UserState
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.command.CommandContext
 import com.flxrs.dankchat.data.twitch.command.TwitchCommand
@@ -43,11 +44,10 @@ class CommandRepository @Inject constructor(
 
     private val defaultCommands = Command.values()
     private val defaultCommandTriggers = defaultCommands.map { it.trigger }
-    private val twitchCommands = TwitchCommand.values()
-    private val twitchCommandTriggers = twitchCommands.flatMap { listOf(".${it.trigger}", "/${it.trigger}") }
+    private val twitchCommandTriggers = TwitchCommand.ALL_COMMANDS.flatMap { listOf(".${it.trigger}", "/${it.trigger}") }
 
     val commandTriggers: Flow<List<String>> = customCommands.map { customCommands ->
-        defaultCommandTriggers + twitchCommandTriggers + customCommands.map { it.trigger }
+        defaultCommandTriggers + twitchCommandTriggers + TwitchCommandRepository.ALLOWED_IRC_COMMAND_TRIGGERS + customCommands.map(CommandItem.Entry::trigger)
     }
 
     fun getSupibotCommands(channel: UserName): StateFlow<List<String>> = supibotCommands.getOrPut(channel) { MutableStateFlow(emptyList()) }
@@ -55,7 +55,7 @@ class CommandRepository @Inject constructor(
         .forEach { it.value.value = emptyList() }
         .also { supibotCommands.clear() }
 
-    suspend fun checkForCommands(message: String, channel: UserName, roomState: RoomState, skipSuspendingCommands: Boolean = false): CommandResult {
+    suspend fun checkForCommands(message: String, channel: UserName, roomState: RoomState, userState: UserState, skipSuspendingCommands: Boolean = false): CommandResult {
         if (!preferenceStore.isLoggedIn) {
             return CommandResult.NotFound
         }
@@ -75,7 +75,7 @@ class CommandRepository @Inject constructor(
             return CommandResult.IrcCommand
         }
 
-        val twitchCommand = twitchCommands.find { it.trigger == triggerWithoutFirstChar }
+        val twitchCommand = TwitchCommand.ALL_COMMANDS.find { it.trigger == triggerWithoutFirstChar }
         if (twitchCommand != null) {
             if (skipSuspendingCommands) {
                 return CommandResult.Blocked
@@ -87,7 +87,7 @@ class CommandRepository @Inject constructor(
 
         val defaultCommand = defaultCommands.find { it.trigger == trigger }
         if (defaultCommand != null) {
-            if (skipSuspendingCommands) {
+            if (skipSuspendingCommands && defaultCommand != Command.Help) {
                 return CommandResult.Blocked
             }
 
@@ -96,6 +96,7 @@ class CommandRepository @Inject constructor(
                 Command.Unblock  -> unblockUserCommand(words.drop(1))
                 Command.Chatters -> chattersCommand(channel)
                 Command.Uptime   -> uptimeCommand(channel)
+                Command.Help     -> helpCommand(roomState, userState)
             }
         }
 
@@ -215,6 +216,17 @@ class CommandRepository @Inject constructor(
         }
 
         return CommandResult.AcceptedWithResponse("Uptime: $uptime")
+    }
+
+    private fun helpCommand(roomState: RoomState, userState: UserState): CommandResult.AcceptedWithResponse {
+        val commands = twitchCommandRepository
+            .getAvailableCommandTriggers(roomState, userState)
+            .plus(TwitchCommandRepository.ALLOWED_IRC_COMMAND_TRIGGERS)
+            .plus(defaultCommandTriggers)
+            .joinToString(separator = " ")
+
+        val response = "Commands available to you in this room: $commands"
+        return CommandResult.AcceptedWithResponse(response)
     }
 
     private fun checkUserCommands(trigger: String): CommandResult {

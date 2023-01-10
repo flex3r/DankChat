@@ -502,8 +502,9 @@ class MainViewModel @Inject constructor(
 
         val channel = currentSuggestionChannel.value ?: return@launch
         val roomState = currentRoomState ?: return@launch
+        val userState = chatRepository.userStateFlow.value
         val commandResult = runCatching {
-            commandRepository.checkForCommands(message, channel, roomState, skipSuspendingCommands)
+            commandRepository.checkForCommands(message, channel, roomState, userState, skipSuspendingCommands)
         }.getOrElse {
             eventChannel.send(MainEvent.Error(it))
             return@launch
