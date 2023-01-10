@@ -91,7 +91,7 @@ class CommandRepository @Inject constructor(
                 return CommandResult.Blocked
             }
 
-            when (defaultCommand) {
+            return when (defaultCommand) {
                 Command.Block    -> blockUserCommand(words.drop(1))
                 Command.Unblock  -> unblockUserCommand(words.drop(1))
                 Command.Chatters -> chattersCommand(channel)
