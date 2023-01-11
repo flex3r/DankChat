@@ -62,8 +62,10 @@ class MentionFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        binding.mentionViewpager.adapter = null
+        tabLayoutMediator.detach()
         bindingRef = null
+        super.onDestroyView()
     }
 
     private fun ViewPager2.setup() {

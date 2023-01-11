@@ -343,6 +343,8 @@ class MainViewModel @Inject constructor(
         get() = currentStreamedChannel.value != null
     val isFullscreen: Boolean
         get() = isFullscreenFlow.value
+    val isEmoteSheetOpen: Boolean
+        get() = emoteSheetOpen.value
 
     val currentRoomState: RoomState?
         get() {

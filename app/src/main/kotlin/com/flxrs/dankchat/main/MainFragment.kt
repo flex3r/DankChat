@@ -85,6 +85,7 @@ class MainFragment : Fragment() {
     private val navController: NavController by lazy { findNavController() }
     private var bindingRef: MainFragmentBinding? = null
     private val binding get() = bindingRef!!
+    // TODO optimize this garbage
     private var emoteMenuBottomSheetBehavior: BottomSheetBehavior<MaterialCardView>? = null
     private var mentionBottomSheetBehavior: BottomSheetBehavior<View>? = null
     private val onBackPressedCallback = object : OnBackPressedCallback(false) {
@@ -158,7 +159,9 @@ class MainFragment : Fragment() {
         emoteMenuAdapter = EmoteMenuAdapter(::insertEmote)
 
         bindingRef = MainFragmentBinding.inflate(inflater, container, false).apply {
-            emoteMenuBottomSheetBehavior = BottomSheetBehavior.from(emoteMenuBottomSheet)
+            emoteMenuBottomSheetBehavior = BottomSheetBehavior.from(emoteMenuBottomSheet).apply {
+                addBottomSheetCallback(emoteMenuCallBack)
+            }
             chatViewpager.setup()
             input.setup(this)
 
@@ -505,11 +508,15 @@ class MainFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        bindingRef?.tabs?.removeOnTabSelectedListener(tabSelectionListener)
-        bindingRef?.chatViewpager?.unregisterOnPageChangeCallback(pageChangeCallback)
-        bindingRef = null
+        binding.tabs.removeOnTabSelectedListener(tabSelectionListener)
+        binding.chatViewpager.unregisterOnPageChangeCallback(pageChangeCallback)
+        emoteMenuBottomSheetBehavior?.removeBottomSheetCallback(emoteMenuCallBack)
+        tabLayoutMediator.detach()
         emoteMenuBottomSheetBehavior = null
         mentionBottomSheetBehavior = null
+        binding.chatViewpager.adapter = null
+        binding.bottomSheetViewPager.adapter = null
+        bindingRef = null
         if (::preferences.isInitialized) {
             preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         }
@@ -1052,8 +1059,9 @@ class MainFragment : Fragment() {
     private fun DankChatInputLayout.setupEmoteMenu() {
         setStartIconDrawable(R.drawable.ic_insert_emoticon)
         setStartIconOnClickListener {
-            if (emoteMenuBottomSheetBehavior?.isVisible == true || emoteMenuAdapter.currentList.isEmpty()) {
-                emoteMenuBottomSheetBehavior?.hide()
+            val behavior = emoteMenuBottomSheetBehavior ?: return@setStartIconOnClickListener
+            if (behavior.isVisible || emoteMenuAdapter.currentList.isEmpty()) {
+                behavior.hide()
                 return@setStartIconOnClickListener
             }
 
@@ -1079,31 +1087,36 @@ class MainFragment : Fragment() {
                 }.attach()
             }
 
-            emoteMenuBottomSheetBehavior?.apply {
+            behavior.apply {
                 peekHeight = (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
                 expand()
+            }
+        }
+    }
 
-                addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-                    override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
+    private val emoteMenuCallBack = object : BottomSheetBehavior.BottomSheetCallback() {
+        override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
 
-                    override fun onStateChanged(bottomSheet: View, newState: Int) {
-                        binding.streamWebviewWrapper.isVisible = newState == BottomSheetBehavior.STATE_HIDDEN && mainViewModel.isStreamActive
-                        mainViewModel.setEmoteSheetOpen(emoteMenuBottomSheetBehavior?.isMoving == true || emoteMenuBottomSheetBehavior?.isVisible == true)
-                        if (!mainViewModel.isFullscreenFlow.value && isLandscape) {
-                            when (newState) {
-                                BottomSheetBehavior.STATE_EXPANDED, BottomSheetBehavior.STATE_COLLAPSED -> {
-                                    (activity as? AppCompatActivity)?.supportActionBar?.hide()
-                                    binding.tabs.visibility = View.GONE
-                                }
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            val emoteSheetOpen = emoteMenuBottomSheetBehavior?.isMoving == true || emoteMenuBottomSheetBehavior?.isVisible == true
+            mainViewModel.setEmoteSheetOpen(emoteSheetOpen)
+            if (!emoteSheetOpen) {
+                binding.bottomSheetViewPager.adapter = null
+            }
 
-                                else                                                                    -> {
-                                    (activity as? AppCompatActivity)?.supportActionBar?.show()
-                                    binding.tabs.visibility = View.VISIBLE
-                                }
-                            }
-                        }
+            binding.streamWebviewWrapper.isVisible = newState == BottomSheetBehavior.STATE_HIDDEN && mainViewModel.isStreamActive
+            if (!mainViewModel.isFullscreenFlow.value && isLandscape) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_EXPANDED, BottomSheetBehavior.STATE_COLLAPSED -> {
+                        (activity as? AppCompatActivity)?.supportActionBar?.hide()
+                        binding.tabs.visibility = View.GONE
                     }
-                })
+
+                    else                                                                    -> {
+                        (activity as? AppCompatActivity)?.supportActionBar?.show()
+                        binding.tabs.visibility = View.VISIBLE
+                    }
+                }
             }
         }
     }

@@ -29,7 +29,7 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
     @Inject
     lateinit var dankChatPreferences: DankChatPreferenceStore
 
-    private lateinit var adapter: ChannelsAdapter
+    private var adapter: ChannelsAdapter? = null
     private val args: ChannelsDialogFragmentArgs by navArgs()
     private val navController: NavController by lazy { findNavController() }
 
@@ -67,12 +67,14 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
         })
     }
 
-    override fun onDestroy() {
-        adapter.unregisterAdapterDataObserver(dataObserver)
-        super.onDestroy()
+    override fun onDestroyView() {
+        adapter?.unregisterAdapterDataObserver(dataObserver)
+        adapter = null
+        super.onDestroyView()
     }
 
     override fun dismiss() {
+        val adapter = adapter ?: return
         with(findNavController()) {
             getBackStackEntry(R.id.mainFragment)
                 .savedStateHandle[MainFragment.CHANNELS_REQUEST_KEY] = adapter.currentList.toTypedArray()
@@ -86,6 +88,7 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun renameChannel(rename: Pair<UserName, UserName>) {
+        val adapter = adapter ?: return
         val (channel, name) = rename
         dankChatPreferences.setRenamedChannel(channel, name)
 
@@ -96,6 +99,7 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
     private val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
 
         override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+            val adapter = adapter ?: return false
             adapter.currentList.toMutableList().let {
                 it.swap(viewHolder.bindingAdapterPosition, target.bindingAdapterPosition)
                 adapter.submitList(it)
@@ -108,6 +112,7 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
 
     private val dataObserver = object : RecyclerView.AdapterDataObserver() {
         override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+            val adapter = adapter ?: return
             if (adapter.currentList.isEmpty()) {
                 dismiss()
             }
