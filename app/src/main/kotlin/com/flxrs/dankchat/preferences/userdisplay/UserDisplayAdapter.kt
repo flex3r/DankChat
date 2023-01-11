@@ -2,7 +2,6 @@ package com.flxrs.dankchat.preferences.userdisplay
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -12,6 +11,7 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.AddItemBinding
 import com.flxrs.dankchat.databinding.UserDisplayItemBinding
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rarepebble.colorpicker.ColorPickerView
 import io.ktor.util.reflect.*
@@ -76,7 +76,11 @@ class UserDisplayAdapter(
                 ),
                 intArrayOf(
                     item.color,
-                    textColors.getColorForState(intArrayOf(-android.R.attr.state_enabled), Color.BLACK)
+                    MaterialColors.layer(
+                        MaterialColors.getColor(this, R.attr.colorSurface),
+                        MaterialColors.getColor(this, R.attr.colorOnSurface),
+                        MaterialColors.ALPHA_DISABLED,
+                    )
                 )
 
             )
