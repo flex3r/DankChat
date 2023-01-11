@@ -32,7 +32,7 @@
                 app:flow_horizontalBias="0"
                 app:flow_maxElementsWrap="3"
                 app:flow_horizontalGap="12dp"
-                app:constraint_referenced_ids="user_display_enable,user_display_user_input,user_display_delete"
+                app:constraint_referenced_ids="user_display_user_input,user_display_delete"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -46,9 +46,7 @@
                 app:flow_verticalStyle="packed"
                 app:flow_verticalAlign="center"
                 app:flow_horizontalBias="0"
-                app:flow_maxElementsWrap="2"
-                app:flow_horizontalGap="12dp"
-                app:constraint_referenced_ids="user_display_enable_color,user_display_pick_color_button"
+                app:constraint_referenced_ids="user_display_enable,user_display_enable_color,user_display_enable_alias"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/flow_main_row" />
@@ -64,7 +62,7 @@
                 app:flow_horizontalBias="0"
                 app:flow_maxElementsWrap="2"
                 app:flow_horizontalGap="12dp"
-                app:constraint_referenced_ids="user_display_enable_alias,user_display_alias_input"
+                app:constraint_referenced_ids="user_display_alias_input,user_display_pick_color_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/flow_color_row" />
@@ -108,7 +106,6 @@
                 android:id="@+id/user_display_enable_color"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="@={userDisplay.colorEnabled}"
                 android:text="@string/user_display_custom_color_enable" />
 
             <com.google.android.material.button.MaterialButton

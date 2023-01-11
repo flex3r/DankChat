@@ -16,7 +16,6 @@ sealed class UserDisplayItem {
         var alias: String
     ) : UserDisplayItem()
 
-
     fun Entry.toEntity() = UserDisplayEntity(
         id = id,
         // prevent whitespace before/after name from messing up with matching

@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.preferences.userdisplay
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -40,20 +41,22 @@ class UserDisplayAdapter(
                         }.show()
                 }
 
+                Log.i("DANK", "register on check $userDisplay")
                 userDisplayEnableColor.setOnCheckedChangeListener { _, checked ->
+                    Log.i("DANK", "trigger on check color $userDisplay")
                     val item = userDisplay ?: return@setOnCheckedChangeListener
-                    item.colorEnabled = checked
+//                    item.colorEnabled = checked
                     userDisplayPickColorButton.isVisible = checked
                     userDisplayPickColorButton.setColorAndBg(item)
                 }
 
                 userDisplayEnableAlias.setOnCheckedChangeListener { _, checked ->
+                    Log.i("DANK", "trigger on check color $userDisplay")
                     val item = userDisplay ?: return@setOnCheckedChangeListener
-                    item.aliasEnabled = checked
+//                    item.aliasEnabled = checked
                     userDisplayAliasInput.isVisible = checked
                 }
             }
-
 
         }
     }
@@ -75,7 +78,6 @@ class UserDisplayAdapter(
         setBackgroundColor(item.color)
     }
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             ENTRY_VIEW_TYPE    -> EntryViewHolder(UserDisplayItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -89,6 +91,7 @@ class UserDisplayAdapter(
         when (holder) {
             is EntryViewHolder -> {
                 val entry = currentList[position] as UserDisplayItem.Entry
+                Log.i("DANK", "at entry $position is $entry (list length is ${currentList.size}")
                 holder.binding.userDisplay = entry
                 holder.binding.userDisplayEnableColor.isChecked = entry.colorEnabled
                 holder.binding.userDisplayPickColorButton.isVisible = entry.colorEnabled
@@ -123,6 +126,5 @@ class UserDisplayAdapter(
         override fun areContentsTheSame(oldItem: UserDisplayItem, newItem: UserDisplayItem) = oldItem == newItem
 
     }
-
 
 }
