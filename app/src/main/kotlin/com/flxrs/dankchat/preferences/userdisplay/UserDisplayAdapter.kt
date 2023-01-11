@@ -1,7 +1,8 @@
 package com.flxrs.dankchat.preferences.userdisplay
 
 import android.annotation.SuppressLint
-import android.util.Log
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -40,21 +41,13 @@ class UserDisplayAdapter(
                         }.show()
                 }
 
-                Log.i("DANK", "register on check $userDisplay")
                 userDisplayEnableColor.setOnCheckedChangeListener { _, checked ->
-                    Log.i("DANK", "trigger on check color $userDisplay")
                     val item = userDisplay ?: return@setOnCheckedChangeListener
-//                    item.colorEnabled = checked
-//                    userDisplayPickColorButton.isVisible = checked
                     userDisplayPickColorButton.isEnabled = checked
                     userDisplayPickColorButton.setColorAndBg(item)
                 }
 
                 userDisplayEnableAlias.setOnCheckedChangeListener { _, checked ->
-                    Log.i("DANK", "trigger on check color $userDisplay")
-                    val item = userDisplay ?: return@setOnCheckedChangeListener
-//                    item.aliasEnabled = checked
-//                    userDisplayAliasInput.isVisible = checked
                     userDisplayAliasInput.isEnabled = checked
                 }
             }
@@ -75,8 +68,19 @@ class UserDisplayAdapter(
     @SuppressLint("SetTextI18n")
     private fun MaterialButton.setColorAndBg(item: UserDisplayItem.Entry) {
         text = item.displayColor
-        setTextColor(item.textColor(context))
-        setBackgroundColor(item.color)
+        setTextColor(
+            ColorStateList(
+                arrayOf(
+                    intArrayOf(android.R.attr.state_enabled),
+                    intArrayOf(-android.R.attr.state_enabled),
+                ),
+                intArrayOf(
+                    item.color,
+                    textColors.getColorForState(intArrayOf(-android.R.attr.state_enabled), Color.BLACK)
+                )
+
+            )
+        )
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -92,13 +96,10 @@ class UserDisplayAdapter(
         when (holder) {
             is EntryViewHolder -> {
                 val entry = currentList[position] as UserDisplayItem.Entry
-                Log.i("DANK", "at entry $position is $entry (list length is ${currentList.size}")
                 holder.binding.userDisplay = entry
                 holder.binding.userDisplayEnableColor.isChecked = entry.colorEnabled
-//                holder.binding.userDisplayPickColorButton.isVisible = entry.colorEnabled
                 holder.binding.userDisplayPickColorButton.isEnabled = entry.colorEnabled
                 holder.binding.userDisplayEnableAlias.isChecked = entry.aliasEnabled
-//                holder.binding.userDisplayAliasInput.isVisible = entry.aliasEnabled
                 holder.binding.userDisplayAliasInput.isEnabled = entry.aliasEnabled
 
                 holder.binding.userDisplayPickColorButton.setColorAndBg(entry)

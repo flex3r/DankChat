@@ -46,7 +46,6 @@ fun Int.normalizeColor(@ColorInt background: Int): Int {
 @ColorInt
 fun Int.harmonize(context: Context): Int = MaterialColors.harmonizeWithPrimary(context, this)
 
-
 /** helper to extract only RGB part (i.e. drop the alpha part) */
 private fun Int.onlyRGB(): Int = this and 0xffffff
 
@@ -55,7 +54,6 @@ fun Int.toHexCode(): String = Integer.toHexString(this.onlyRGB()).padStart(6, '0
 
 /** convert RGB color (0xffffff) to ARGB with alpha (opaque by default) */
 fun Int.withAlpha(alpha: Int = 255): Int = (alpha shl 24) or this.onlyRGB()
-
 
 /** find a black/white (techincally colorOnSurface and colorOnSurfaceInverse) color that best contrast with `this` color
  * useful for example, when displaying text on this background color

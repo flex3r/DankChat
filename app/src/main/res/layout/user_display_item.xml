@@ -110,12 +110,12 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/user_display_pick_color_button"
+                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                tools:backgroundTint="#ff0000"
-                tools:text="#ff0000"
-                tools:textColor="#ffffff" />
+                android:fontFamily="sans-serif-medium"
+                tools:text="#ff0000" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/user_display_enable_alias"
