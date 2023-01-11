@@ -80,9 +80,6 @@ class DankChatPreferenceStore @Inject constructor(
     var customImageUploader: ImageUploader
         get() {
             val url = dankChatPreferences.getString(UPLOADER_URL, null) ?: return DEFAULT_UPLOADER
-            if (url == UPLOADER_URL_DEFAULT_OLD) {
-                return resetImageUploader()
-            }
 
             val formField = dankChatPreferences.getString(UPLOADER_FORM_FIELD, UPLOADER_FORM_FIELD_DEFAULT) ?: UPLOADER_FORM_FIELD_DEFAULT
             val headers = dankChatPreferences.getString(UPLOADER_HEADERS, null)
@@ -395,7 +392,6 @@ class DankChatPreferenceStore @Inject constructor(
         private const val UPLOADER_DELETION_LINK = "uploaderDeletionLink"
 
         private const val UPLOADER_URL_DEFAULT = "https://kappa.lol/api/upload"
-        private const val UPLOADER_URL_DEFAULT_OLD = "https://i.nuuls.com/upload"
         private const val UPLOADER_FORM_FIELD_DEFAULT = "file"
         private const val UPLOADER_IMAGE_LINK_DEFAULT = "{link}"
         private const val UPLOADER_DELETE_LINK_DEFAULT = "{delete}"
