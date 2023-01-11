@@ -425,7 +425,8 @@ class MainFragment : Fragment() {
 
         val channels = dankChatPreferences.getChannels()
         tabAdapter.updateFragments(channels)
-        binding.chatViewpager.offscreenPageLimit = calculatePageLimit(channels.size)
+        @SuppressLint("WrongConstant")
+        binding.chatViewpager.offscreenPageLimit = OFFSCREEN_PAGE_LIMIT
         tabLayoutMediator.attach()
 
         (requireActivity() as AppCompatActivity).apply {
@@ -591,7 +592,6 @@ class MainFragment : Fragment() {
             dankChatPreferences.channelsString = updatedChannels.joinToString(separator = ",")
 
             tabAdapter.addFragment(lowerCaseChannel)
-            binding.chatViewpager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
         }
         binding.chatViewpager.setCurrentItem(newTabIndex, false)
 
@@ -960,7 +960,6 @@ class MainFragment : Fragment() {
         val index = updatedChannels.indexOf(oldActiveChannel).coerceAtLeast(0)
         val activeChannel = updatedChannels.getOrNull(index)
 
-        binding.chatViewpager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
         tabAdapter.updateFragments(updatedChannels)
         mainViewModel.updateChannels(updatedChannels)
         mainViewModel.setActiveChannel(activeChannel)
@@ -1018,11 +1017,6 @@ class MainFragment : Fragment() {
                 }
             }
         })
-    }
-
-    private fun calculatePageLimit(size: Int): Int = when {
-        size > 1 -> size - 1
-        else     -> ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
     }
 
     private fun ViewPager2.setup() {
@@ -1193,6 +1187,7 @@ class MainFragment : Fragment() {
         private const val MIN_GUIDELINE_PERCENT = 0.2f
         private const val CLIPBOARD_LABEL = "dankchat_media_url"
         private const val TAB_SCROLL_DELAY_MS = 1000 / 60 * 10L
+        private const val OFFSCREEN_PAGE_LIMIT = 2
 
         const val LOGOUT_REQUEST_KEY = "logout_key"
         const val LOGIN_REQUEST_KEY = "login_key"
