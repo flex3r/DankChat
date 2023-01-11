@@ -62,8 +62,8 @@ android {
         }
         dank {
             initWith debug
-            minifyEnabled false
-            shrinkResources false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules-dank.pro'
             manifestPlaceholders = [applicationLabel: "@string/app_name_dank"]
             applicationIdSuffix ".dank"
@@ -152,7 +152,7 @@ dependencies {
     implementation "io.ktor:ktor-serialization-kotlinx-json:$ktor_version"
 
     // Color Picker
-    implementation 'com.github.martin-stone:hsv-alpha-color-picker-android:3.0.1'
+    implementation 'com.github.martin-stone:hsv-alpha-color-picker-android:$color_picker_version'
 
     // Test
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_ersion"
