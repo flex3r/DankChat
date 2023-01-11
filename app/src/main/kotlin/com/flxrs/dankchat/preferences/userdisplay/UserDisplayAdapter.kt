@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -46,7 +45,8 @@ class UserDisplayAdapter(
                     Log.i("DANK", "trigger on check color $userDisplay")
                     val item = userDisplay ?: return@setOnCheckedChangeListener
 //                    item.colorEnabled = checked
-                    userDisplayPickColorButton.isVisible = checked
+//                    userDisplayPickColorButton.isVisible = checked
+                    userDisplayPickColorButton.isEnabled = checked
                     userDisplayPickColorButton.setColorAndBg(item)
                 }
 
@@ -54,7 +54,8 @@ class UserDisplayAdapter(
                     Log.i("DANK", "trigger on check color $userDisplay")
                     val item = userDisplay ?: return@setOnCheckedChangeListener
 //                    item.aliasEnabled = checked
-                    userDisplayAliasInput.isVisible = checked
+//                    userDisplayAliasInput.isVisible = checked
+                    userDisplayAliasInput.isEnabled = checked
                 }
             }
 
@@ -94,9 +95,11 @@ class UserDisplayAdapter(
                 Log.i("DANK", "at entry $position is $entry (list length is ${currentList.size}")
                 holder.binding.userDisplay = entry
                 holder.binding.userDisplayEnableColor.isChecked = entry.colorEnabled
-                holder.binding.userDisplayPickColorButton.isVisible = entry.colorEnabled
+//                holder.binding.userDisplayPickColorButton.isVisible = entry.colorEnabled
+                holder.binding.userDisplayPickColorButton.isEnabled = entry.colorEnabled
                 holder.binding.userDisplayEnableAlias.isChecked = entry.aliasEnabled
-                holder.binding.userDisplayAliasInput.isVisible = entry.aliasEnabled
+//                holder.binding.userDisplayAliasInput.isVisible = entry.aliasEnabled
+                holder.binding.userDisplayAliasInput.isEnabled = entry.aliasEnabled
 
                 holder.binding.userDisplayPickColorButton.setColorAndBg(entry)
             }
