@@ -122,11 +122,13 @@ open class ChatFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        bindingRef = null
+        binding.chat.adapter = null
+        binding.chat.layoutManager = null
         if (::preferences.isInitialized) {
             preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         }
 
+        bindingRef = null
         super.onDestroyView()
     }
 
