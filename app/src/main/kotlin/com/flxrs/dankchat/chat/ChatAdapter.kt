@@ -349,30 +349,7 @@ class ChatAdapter(
             else                             -> spannable
         } as SpannableStringBuilder
 
-        // TODO extract common
-        // links
-        LinkifyCompat.addLinks(spannableWithEmojis, Linkify.WEB_URLS)
-        spannableWithEmojis.getSpans<URLSpan>().forEach {
-            val start = spannableWithEmojis.getSpanStart(it)
-            val end = spannableWithEmojis.getSpanEnd(it)
-            spannableWithEmojis.removeSpan(it)
-
-            // skip partial link matches
-            val previousChar = spannableWithEmojis.getOrNull(index = start - 1)
-            if (previousChar != null && !previousChar.isWhitespace()) return@forEach
-
-            val clickableSpan = object : LongClickableSpan() {
-                override fun onLongClick(view: View) = onMessageLongClick(originalMessage)
-                override fun onClick(v: View) {
-                    try {
-                        customTabsIntent.launchUrl(context, it.url.toUri())
-                    } catch (e: ActivityNotFoundException) {
-                        Log.e("ViewBinding", Log.getStackTraceString(e))
-                    }
-                }
-            }
-            spannableWithEmojis[start..end] = clickableSpan
-        }
+        addLinks(spannableWithEmojis, originalMessage)
 
         // copying message
         val messageClickableSpan = object : LongClickableSpan() {
@@ -402,6 +379,7 @@ class ChatAdapter(
                                 hasAnimatedEmoteOrBadge = true
                             }
                         }
+
                         else           -> context.imageLoader
                             .execute(badge.url.toRequest(context))
                             .drawable?.apply {
@@ -552,29 +530,7 @@ class ChatAdapter(
             else                             -> messageBuilder
         } as SpannableStringBuilder
 
-        // links
-        LinkifyCompat.addLinks(spannableWithEmojis, Linkify.WEB_URLS)
-        spannableWithEmojis.getSpans<URLSpan>().forEach {
-            val start = spannableWithEmojis.getSpanStart(it)
-            val end = spannableWithEmojis.getSpanEnd(it)
-            spannableWithEmojis.removeSpan(it)
-
-            // skip partial link matches
-            val previousChar = spannableWithEmojis.getOrNull(index = start - 1)
-            if (previousChar != null && !previousChar.isWhitespace()) return@forEach
-
-            val clickableSpan = object : LongClickableSpan() {
-                override fun onLongClick(view: View) = onMessageLongClick(originalMessage)
-                override fun onClick(v: View) {
-                    try {
-                        customTabsIntent.launchUrl(context, it.url.toUri())
-                    } catch (e: ActivityNotFoundException) {
-                        Log.e("ViewBinding", Log.getStackTraceString(e))
-                    }
-                }
-            }
-            spannableWithEmojis[start..end] = clickableSpan
-        }
+        addLinks(spannableWithEmojis, originalMessage)
 
         // copying message
         val messageClickableSpan = object : LongClickableSpan() {
@@ -763,6 +719,41 @@ class ChatAdapter(
             HighlightType.Username                                 -> ContextCompat.getColor(context, R.color.color_mention_highlight)
             HighlightType.Custom                                   -> ContextCompat.getColor(context, R.color.color_mention_highlight)
             HighlightType.Notification                             -> ContextCompat.getColor(context, R.color.color_mention_highlight)
+        }
+    }
+
+    private fun TextView.addLinks(spannableWithEmojis: SpannableStringBuilder, originalMessage: String) {
+        LinkifyCompat.addLinks(spannableWithEmojis, Linkify.WEB_URLS)
+        spannableWithEmojis.getSpans<URLSpan>().forEach { urlSpan ->
+            val start = spannableWithEmojis.getSpanStart(urlSpan)
+            val end = spannableWithEmojis.getSpanEnd(urlSpan)
+            spannableWithEmojis.removeSpan(urlSpan)
+
+            val fixedEnd = spannableWithEmojis
+                .indexOf(' ', end)
+                .takeIf { it != -1 } ?: end
+            val fixedUrl = when (fixedEnd) {
+                end  -> urlSpan.url
+                else -> urlSpan.url + spannableWithEmojis.substring(end..fixedEnd)
+            }
+
+            // skip partial link matches
+            val previousChar = spannableWithEmojis.getOrNull(index = start - 1)
+            if (previousChar != null && !previousChar.isWhitespace()) {
+                return@forEach
+            }
+
+            val clickableSpan = object : LongClickableSpan() {
+                override fun onLongClick(view: View) = onMessageLongClick(originalMessage)
+                override fun onClick(v: View) {
+                    try {
+                        customTabsIntent.launchUrl(context, fixedUrl.toUri())
+                    } catch (e: ActivityNotFoundException) {
+                        Log.e("ViewBinding", Log.getStackTraceString(e))
+                    }
+                }
+            }
+            spannableWithEmojis[start..fixedEnd] = clickableSpan
         }
     }
 
