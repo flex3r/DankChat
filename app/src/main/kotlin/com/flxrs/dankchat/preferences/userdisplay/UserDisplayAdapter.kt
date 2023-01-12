@@ -34,17 +34,18 @@ class UserDisplayAdapter(
                     picker.showAlpha(false)
                     picker.color = item.color
 
-                    MaterialAlertDialogBuilder(root.context).setView(picker).setTitle(root.context.getString(R.string.pick_custom_user_color_title))
-                        .setNegativeButton(root.context.getString(R.string.dialog_cancel)) { _, _ -> }.setPositiveButton(root.context.getString(R.string.dialog_ok)) { _, _ ->
+                    MaterialAlertDialogBuilder(root.context)
+                        .setView(picker)
+                        .setTitle(root.context.getString(R.string.pick_custom_user_color_title))
+                        .setNegativeButton(root.context.getString(R.string.dialog_cancel)) { _, _ -> }
+                        .setPositiveButton(root.context.getString(R.string.dialog_ok)) { _, _ ->
                             item.color = picker.color
-                            userDisplayPickColorButton.setColorAndBg(item)
+                            userDisplayPickColorButton.updateTextAndStyle(item)
                         }.show()
                 }
 
                 userDisplayEnableColor.setOnCheckedChangeListener { _, checked ->
-                    val item = userDisplay ?: return@setOnCheckedChangeListener
                     userDisplayPickColorButton.isEnabled = checked
-                    userDisplayPickColorButton.setColorAndBg(item)
                 }
 
                 userDisplayEnableAlias.setOnCheckedChangeListener { _, checked ->
@@ -64,9 +65,9 @@ class UserDisplayAdapter(
 
     }
 
-    /** set text, text color, background color to represent specified color */
+    /** set text, text color to represent selected color */
     @SuppressLint("SetTextI18n")
-    private fun MaterialButton.setColorAndBg(item: UserDisplayItem.Entry) {
+    private fun MaterialButton.updateTextAndStyle(item: UserDisplayItem.Entry) {
         text = item.displayColor
         setTextColor(
             ColorStateList(
@@ -106,7 +107,7 @@ class UserDisplayAdapter(
                 holder.binding.userDisplayEnableAlias.isChecked = entry.aliasEnabled
                 holder.binding.userDisplayAliasInput.isEnabled = entry.aliasEnabled
 
-                holder.binding.userDisplayPickColorButton.setColorAndBg(entry)
+                holder.binding.userDisplayPickColorButton.updateTextAndStyle(entry)
             }
         }
     }

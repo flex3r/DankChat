@@ -7,7 +7,7 @@ import com.flxrs.dankchat.preferences.userdisplay.UserDisplayItem
 /** represent final effect UserDisplay (after considering enabled/disabled states) */
 data class UserDisplay(val alias: String?, val color: Int?) {
     companion object {
-        fun UserDisplayItem.Entry.toEffectiveValue() = UserDisplay(
+        fun UserDisplayItem.Entry.toUserDisplay() = UserDisplay(
             alias = if (aliasEnabled && alias.isNotBlank()) alias else null, // prevent blank alias from making username blank (fool-proof)
             color = if (colorEnabled) color else null
         )

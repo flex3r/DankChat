@@ -3,7 +3,7 @@ package com.flxrs.dankchat.data.repo
 import com.flxrs.dankchat.data.database.UserDisplayDao
 import com.flxrs.dankchat.data.database.UserDisplayEntity
 import com.flxrs.dankchat.data.twitch.message.*
-import com.flxrs.dankchat.data.twitch.message.UserDisplay.Companion.toEffectiveValue
+import com.flxrs.dankchat.data.twitch.message.UserDisplay.Companion.toUserDisplay
 import com.flxrs.dankchat.di.ApplicationScope
 import com.flxrs.dankchat.preferences.userdisplay.UserDisplayItem.AddEntry.toEntry
 import kotlinx.coroutines.CoroutineScope
@@ -47,7 +47,7 @@ class UserDisplayRepository @Inject constructor(
     }
 
     private fun findMatchingUserDisplay(name: String): UserDisplay? {
-        return userDisplays.value.find { it.targetUser.equals(name, ignoreCase = true) }?.toEntry()?.toEffectiveValue()
+        return userDisplays.value.find { it.targetUser.equals(name, ignoreCase = true) }?.toEntry()?.toUserDisplay()
     }
 
     private fun PrivMessage.applyUserDisplay(): PrivMessage {

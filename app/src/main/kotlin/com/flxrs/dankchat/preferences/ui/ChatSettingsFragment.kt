@@ -113,22 +113,31 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
         val windowHeight = resources.displayMetrics.heightPixels
         val peekHeight = (windowHeight * 0.6).roundToInt()
         val commands = runCatching {
-            sharedPreferences.getStringSet(key, emptySet()).orEmpty().mapNotNull { Json.decodeOrNull<CommandDto>(it)?.toEntryItem() }.plus(CommandItem.AddEntry)
+            sharedPreferences
+                .getStringSet(key, emptySet())
+                .orEmpty()
+                .mapNotNull { Json.decodeOrNull<CommandDto>(it)?.toEntryItem() }
+                .plus(CommandItem.AddEntry)
         }.getOrDefault(emptyList())
 
         val commandAdapter = CommandAdapter(commands.toMutableList())
-        val binding = CommandsBottomsheetBinding.inflate(LayoutInflater.from(context), root as? ViewGroup, false).apply {
-            commandsList.adapter = commandAdapter
-            commandsSheet.updateLayoutParams {
-                height = windowHeight
+        val binding = CommandsBottomsheetBinding
+            .inflate(LayoutInflater.from(context), root as? ViewGroup, false).apply {
+                commandsList.adapter = commandAdapter
+                commandsSheet.updateLayoutParams {
+                    height = windowHeight
+                }
             }
-        }
 
         bottomSheetDialog = BottomSheetDialog(context).apply {
             setContentView(binding.root)
             setOnDismissListener {
                 val stringSet =
-                    commandAdapter.commands.filterIsInstance<CommandItem.Entry>().filter { it.trigger.isNotBlank() && it.command.isNotBlank() }.map { Json.encodeToString(it.toDto()) }.toSet()
+                    commandAdapter.commands
+                        .filterIsInstance<CommandItem.Entry>()
+                        .filter { it.trigger.isNotBlank() && it.command.isNotBlank() }
+                        .map { Json.encodeToString(it.toDto()) }
+                        .toSet()
 
                 sharedPreferences.edit { putStringSet(key, stringSet) }
             }
@@ -152,19 +161,22 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
                 onDeleteItem = userDisplayViewModel::deleteEntry,
             )
 
-            val bottomSheetBinding = UserDisplayBottomSheetBinding.inflate(LayoutInflater.from(context), root as? ViewGroup, false).apply {
-                customUserDisplayList.adapter = userDisplayAdapter
-                customUserDisplaySheet.updateLayoutParams {
-                    height = windowHeight
+            val bottomSheetBinding = UserDisplayBottomSheetBinding
+                .inflate(LayoutInflater.from(context), root as? ViewGroup, false).apply {
+                    customUserDisplayList.adapter = userDisplayAdapter
+                    customUserDisplaySheet.updateLayoutParams {
+                        height = windowHeight
+                    }
                 }
-            }
 
             collectFlow(userDisplayViewModel.userDisplays) { userDisplayAdapter.submitList(it) }
             collectFlow(userDisplayViewModel.events) { event ->
                 when (event) {
-                    is UserDisplayEvent.ItemRemoved -> Snackbar.make(
-                        bottomSheetBinding.root, getString(R.string.item_removed), Snackbar.LENGTH_SHORT
-                    ).setAction("Undo") { userDisplayViewModel.saveChangesAndAddEntry(userDisplayAdapter.currentList, event.item) }.show()
+                    is UserDisplayEvent.ItemRemoved -> Snackbar
+                        .make(bottomSheetBinding.root, getString(R.string.item_removed), Snackbar.LENGTH_SHORT)
+                        .setAction(getString(R.string.undo)) {
+                            userDisplayViewModel.saveChangesAndAddEntry(userDisplayAdapter.currentList, event.item)
+                        }.show()
                 }
             }
 
