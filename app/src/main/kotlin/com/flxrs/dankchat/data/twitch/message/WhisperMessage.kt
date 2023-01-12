@@ -95,14 +95,13 @@ data class WhisperMessage(
 
 }
 
-
 val WhisperMessage.senderFullName: String
     get() = userDisplay?.alias ?: when {
         displayName.equals(name, true) -> displayName
         else                           -> "$name($displayName)"
     }
 
-fun WhisperMessage.senderColorOnBg(@ColorInt bgColor: Int): Int = userDisplay.colorOrElse(color.normalizeColor(bgColor))
+fun WhisperMessage.senderColorOnBackground(@ColorInt background: Int): Int = userDisplay.colorOrElse(color.normalizeColor(background))
 
 val WhisperMessage.recipientFullName: String
     get() = recipientDisplay?.alias ?: when {
@@ -110,4 +109,4 @@ val WhisperMessage.recipientFullName: String
         else                                             -> "$recipientName($recipientDisplayName)"
     }
 
-fun WhisperMessage.recipientColorOnBg(@ColorInt bgColor: Int): Int = recipientDisplay.colorOrElse(recipientColor.normalizeColor(bgColor))
+fun WhisperMessage.recipientColorOnBackground(@ColorInt background: Int): Int = recipientDisplay.colorOrElse(recipientColor.normalizeColor(background))

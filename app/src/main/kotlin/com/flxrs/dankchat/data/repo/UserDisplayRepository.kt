@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Singleton
 class UserDisplayRepository @Inject constructor(
     private val userDisplayDao: UserDisplayDao,
@@ -33,14 +32,12 @@ class UserDisplayRepository @Inject constructor(
         userDisplayDao.insert(userDisplay)
     }
 
-
     suspend fun delete(userDisplay: UserDisplayEntity) {
         userDisplayDao.delete(userDisplay)
     }
 
     fun calculateUserDisplay(message: Message): Message {
         return when (message) {
-            is ClearChatMessage       -> message.applyUserDisplay()
             is PointRedemptionMessage -> message.applyUserDisplay()
             is PrivMessage            -> message.applyUserDisplay()
             is UserNoticeMessage      -> message.applyUserDisplay()
@@ -55,12 +52,6 @@ class UserDisplayRepository @Inject constructor(
 
     private fun PrivMessage.applyUserDisplay(): PrivMessage {
         val match = findMatchingUserDisplay(name) ?: return this
-        return copy(userDisplay = match)
-    }
-
-    private fun ClearChatMessage.applyUserDisplay(): ClearChatMessage {
-        targetUser ?: return this
-        val match = findMatchingUserDisplay(targetUser) ?: return this
         return copy(userDisplay = match)
     }
 

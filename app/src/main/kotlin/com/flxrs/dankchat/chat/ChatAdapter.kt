@@ -47,7 +47,6 @@ import com.google.android.material.color.MaterialColors
 import kotlinx.coroutines.*
 import kotlin.math.roundToInt
 
-
 class ChatAdapter(
     private val emoteRepository: EmoteRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
@@ -310,11 +309,11 @@ class ChatAdapter(
             spannable.length - 2 to spannable.length - 1
         }
 
-        val senderColor = senderColorOnBg(background)
+        val senderColor = senderColorOnBackground(background)
         spannable.bold { color(senderColor) { append(senderFullName) } }
         spannable.append(" -> ")
 
-        val recipientColor = recipientColorOnBg(background)
+        val recipientColor = recipientColorOnBackground(background)
         spannable.bold { color(recipientColor) { append(recipientFullName) } }
         spannable.append(": ")
         spannable.append(message)
@@ -482,9 +481,9 @@ class ChatAdapter(
 
         val fullDisplayName = when {
             !dankChatPreferenceStore.showUsername -> ""
-            isAction                              -> "$fullName "
-            fullName.isBlank()                    -> ""
-            else                                  -> "$fullName: "
+            isAction                              -> "$formattedName "
+            formattedName.isBlank()               -> ""
+            else                                  -> "$formattedName: "
         }
 
         val allowedBadges = badges.filter { it.type in dankChatPreferenceStore.visibleBadgeTypes }
@@ -505,7 +504,7 @@ class ChatAdapter(
             messageBuilder.length - 2 to messageBuilder.length - 1
         }
 
-        val nameColor = finalColor(bgColor = bgColor)
+        val nameColor = customOrUserColorOn(bgColor = bgColor)
         messageBuilder.bold { color(nameColor) { append(fullDisplayName) } }
 
         when {
@@ -514,7 +513,7 @@ class ChatAdapter(
         }
 
         // clicking usernames
-        if (fullName.isNotBlank()) {
+        if (formattedName.isNotBlank()) {
             val userClickableSpan = object : LongClickableSpan() {
                 val mentionName = when {
                     name.equals(displayName, ignoreCase = true) -> displayName

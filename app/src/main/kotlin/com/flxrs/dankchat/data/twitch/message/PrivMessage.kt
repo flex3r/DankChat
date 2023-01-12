@@ -87,13 +87,13 @@ val PrivMessage.isElevatedMessage: Boolean
     get() = tags["pinned-chat-paid-amount"] != null
 
 /** format name for display in chat */
-val PrivMessage.fullName: String
+val PrivMessage.formattedName: String
     get() = userDisplay?.alias ?: when {
         displayName.equals(name, ignoreCase = true) -> displayName
         else                                        -> "$name($displayName)"
     }
 
-fun PrivMessage.finalColor(@ColorInt bgColor: Int): Int {
+fun PrivMessage.customOrUserColorOn(@ColorInt bgColor: Int): Int {
     return userDisplay?.color ?: color.normalizeColor(bgColor)
 
 }

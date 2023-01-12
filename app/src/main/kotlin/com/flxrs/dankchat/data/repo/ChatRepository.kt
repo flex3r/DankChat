@@ -370,7 +370,6 @@ class ChatRepository @Inject constructor(
         _channels.value = updatedChannels
     }
 
-
     // TODO should be null if anon
     private fun connect(userName: String, oauth: String) {
         readConnection.connect(userName, oauth)
@@ -469,7 +468,7 @@ class ChatRepository @Inject constructor(
 
     private fun handleClearChat(msg: IrcMessage) {
         val parsed = runCatching {
-            ClearChatMessage.parseClearChat(msg).calculateUserDisplays() as ClearChatMessage
+            ClearChatMessage.parseClearChat(msg)
         }.getOrElse {
             return
         }
