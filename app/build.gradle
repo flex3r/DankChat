@@ -152,7 +152,7 @@ dependencies {
     implementation "io.ktor:ktor-serialization-kotlinx-json:$ktor_version"
 
     // Color Picker
-    implementation 'com.github.martin-stone:hsv-alpha-color-picker-android:$color_picker_version'
+    implementation "com.github.martin-stone:hsv-alpha-color-picker-android:$color_picker_version"
 
     // Test
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_ersion"
