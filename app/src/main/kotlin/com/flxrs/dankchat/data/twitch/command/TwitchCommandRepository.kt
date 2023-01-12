@@ -38,7 +38,18 @@ class TwitchCommandRepository @Inject constructor(
             room.channelId == currentUserId              -> TwitchCommand.ALL_COMMANDS
             room.channel in userState.moderationChannels -> TwitchCommand.MODERATOR_COMMANDS
             else                                         -> TwitchCommand.USER_COMMANDS
-        }.map { "/${it.trigger}" }
+        }.map(TwitchCommand::trigger)
+            .plus(ALLOWED_IRC_COMMANDS)
+            .map { "/$it" }
+    }
+
+    fun findTwitchCommand(trigger: String): TwitchCommand? {
+        if (trigger.first() !in ALLOWED_FIRST_TRIGGER_CHARS) {
+            return null
+        }
+
+        val withoutFirstChar = trigger.drop(1)
+        return TwitchCommand.ALL_COMMANDS.find { it.trigger == withoutFirstChar }
     }
 
     suspend fun handleTwitchCommand(command: TwitchCommand, context: CommandContext): CommandResult {
@@ -643,7 +654,11 @@ class TwitchCommandRepository @Inject constructor(
     }
 
     companion object {
-        val ALLOWED_IRC_COMMAND_TRIGGERS = listOf("/me", "/disconnect")
+        private fun asCommandTriggers(command: String): List<String> = ALLOWED_FIRST_TRIGGER_CHARS.map { "$it$command" }
+        private val ALLOWED_IRC_COMMANDS = listOf("me", "disconnect")
+        private val ALLOWED_FIRST_TRIGGER_CHARS = listOf('/', '.')
+        private val ALLOWED_IRC_COMMAND_TRIGGERS = ALLOWED_IRC_COMMANDS.flatMap { asCommandTriggers(it) }
+        val ALL_COMMAND_TRIGGERS = ALLOWED_IRC_COMMAND_TRIGGERS + TwitchCommand.ALL_COMMANDS.flatMap { asCommandTriggers(it.trigger) }
 
         private val TAG = TwitchCommandRepository::class.java.simpleName
         private const val GENERIC_ERROR_MESSAGE = "An unknown error has occurred."
@@ -678,4 +693,3 @@ class TwitchCommandRepository @Inject constructor(
         )
     }
 }
-

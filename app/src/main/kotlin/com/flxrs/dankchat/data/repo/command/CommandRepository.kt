@@ -9,7 +9,6 @@ import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.data.repo.chat.UserState
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.command.CommandContext
-import com.flxrs.dankchat.data.twitch.command.TwitchCommand
 import com.flxrs.dankchat.data.twitch.command.TwitchCommandRepository
 import com.flxrs.dankchat.data.twitch.message.RoomState
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
@@ -44,10 +43,9 @@ class CommandRepository @Inject constructor(
 
     private val defaultCommands = Command.values()
     private val defaultCommandTriggers = defaultCommands.map { it.trigger }
-    private val twitchCommandTriggers = TwitchCommand.ALL_COMMANDS.flatMap { listOf(".${it.trigger}", "/${it.trigger}") }
 
     val commandTriggers: Flow<List<String>> = customCommands.map { customCommands ->
-        defaultCommandTriggers + twitchCommandTriggers + TwitchCommandRepository.ALLOWED_IRC_COMMAND_TRIGGERS + customCommands.map(CommandItem.Entry::trigger)
+        defaultCommandTriggers + TwitchCommandRepository.ALL_COMMAND_TRIGGERS + customCommands.map(CommandItem.Entry::trigger)
     }
 
     fun getSupibotCommands(channel: UserName): StateFlow<List<String>> = supibotCommands.getOrPut(channel) { MutableStateFlow(emptyList()) }
@@ -70,12 +68,11 @@ class CommandRepository @Inject constructor(
             return CommandResult.NotFound
         }
 
-        val triggerWithoutFirstChar = trigger.drop(1)
-        if (twitchCommandRepository.isIrcCommand(triggerWithoutFirstChar)) {
+        if (twitchCommandRepository.isIrcCommand(trigger)) {
             return CommandResult.IrcCommand
         }
 
-        val twitchCommand = TwitchCommand.ALL_COMMANDS.find { it.trigger == triggerWithoutFirstChar }
+        val twitchCommand = twitchCommandRepository.findTwitchCommand(trigger)
         if (twitchCommand != null) {
             if (skipSuspendingCommands) {
                 return CommandResult.Blocked
@@ -221,7 +218,6 @@ class CommandRepository @Inject constructor(
     private fun helpCommand(roomState: RoomState, userState: UserState): CommandResult.AcceptedWithResponse {
         val commands = twitchCommandRepository
             .getAvailableCommandTriggers(roomState, userState)
-            .plus(TwitchCommandRepository.ALLOWED_IRC_COMMAND_TRIGGERS)
             .plus(defaultCommandTriggers)
             .joinToString(separator = " ")
 
