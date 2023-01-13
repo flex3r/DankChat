@@ -13,8 +13,9 @@ import androidx.core.content.edit
 import androidx.core.text.util.LinkifyCompat
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.preference.Preference
 import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreferenceCompat
@@ -32,6 +33,7 @@ import com.flxrs.dankchat.preferences.upload.RecentUploadsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
@@ -195,13 +197,14 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
             }
         }
 
-        val collectJob = lifecycleScope.launchWhenStarted {
-            viewModel.getRecentUploads()
-                .flowWithLifecycle(lifecycle)
-                .collect {
-                    binding.clearUploads.isEnabled = it.isNotEmpty()
-                    adapter.submitList(it)
-                }
+        val collectJob = lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.getRecentUploads()
+                    .collect {
+                        binding.clearUploads.isEnabled = it.isNotEmpty()
+                        adapter.submitList(it)
+                    }
+            }
         }
 
         bottomSheetDialog = BottomSheetDialog(context).apply {
