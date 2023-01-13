@@ -11,21 +11,21 @@ import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.ApiException
-import com.flxrs.dankchat.data.repo.command.CommandRepository
-import com.flxrs.dankchat.data.repo.command.CommandResult
 import com.flxrs.dankchat.data.repo.EmoteUsageRepository
 import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.data.repo.chat.ChatLoadingFailure
 import com.flxrs.dankchat.data.repo.chat.ChatLoadingStep
 import com.flxrs.dankchat.data.repo.chat.ChatRepository
+import com.flxrs.dankchat.data.repo.command.CommandRepository
+import com.flxrs.dankchat.data.repo.command.CommandResult
 import com.flxrs.dankchat.data.repo.data.DataLoadingFailure
 import com.flxrs.dankchat.data.repo.data.DataLoadingStep
 import com.flxrs.dankchat.data.repo.data.DataRepository
 import com.flxrs.dankchat.data.state.DataLoadingState
 import com.flxrs.dankchat.data.state.ImageUploadState
 import com.flxrs.dankchat.data.toUserName
-import com.flxrs.dankchat.data.twitch.command.TwitchCommand
 import com.flxrs.dankchat.data.twitch.chat.ConnectionState
+import com.flxrs.dankchat.data.twitch.command.TwitchCommand
 import com.flxrs.dankchat.data.twitch.emote.EmoteType
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.data.twitch.message.RoomState
@@ -278,7 +278,7 @@ class MainViewModel @Inject constructor(
     }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), Triple(emptyList(), emptyList(), emptyList()))
 
-    val emoteTabItems: Flow<List<EmoteMenuTabItem>> = combine(emotes, recentEmotes) { emotes, recentEmotes ->
+    val emoteTabItems: StateFlow<List<EmoteMenuTabItem>> = combine(emotes, recentEmotes) { emotes, recentEmotes ->
         withContext(Dispatchers.Default) {
             val availableRecents = recentEmotes.mapNotNull { usage ->
                 emotes
@@ -306,7 +306,7 @@ class MainViewModel @Inject constructor(
                 async { EmoteMenuTabItem(EmoteMenuTab.GLOBAL, groupedByType[EmoteMenuTab.GLOBAL].toEmoteItems()) }
             ).awaitAll()
         }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), emptyList())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), EmoteMenuTab.values().map { EmoteMenuTabItem(it, emptyList()) })
 
     val isFullscreenFlow: StateFlow<Boolean> = _isFullscreen.asStateFlow()
     val areChipsExpanded: StateFlow<Boolean> = chipsExpanded.asStateFlow()
@@ -339,6 +339,7 @@ class MainViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
     val currentStreamedChannel: StateFlow<UserName?> = _currentStreamedChannel.asStateFlow()
+
     val isStreamActive: Boolean
         get() = currentStreamedChannel.value != null
     val isFullscreen: Boolean

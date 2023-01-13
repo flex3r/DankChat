@@ -129,46 +129,12 @@
                     app:layout_constraintTop_toBottomOf="@id/add_channels_text" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/emote_menu_bottom_sheet"
+            <FrameLayout
+                android:id="@+id/bottom_sheet_frame"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:behavior_hideable="true"
-                app:cardElevation="8dp"
-                app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
-                        android:id="@+id/bottom_sheet_indicator"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginVertical="8dp"
-                        app:layout_constraintBottom_toTopOf="@id/bottom_sheet_tabs"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <com.google.android.material.tabs.TabLayout
-                        android:id="@+id/bottom_sheet_tabs"
-                        style="@style/Widget.Material3.TabLayout.OnSurface"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_indicator" />
-
-                    <androidx.viewpager2.widget.ViewPager2
-                        android:id="@+id/bottom_sheet_viewPager"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_tabs" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.card.MaterialCardView>
+                app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
 
             <fragment
                 android:id="@+id/mention_fragment"
@@ -178,7 +144,8 @@
                 app:behavior_hideable="true"
                 app:behavior_peekHeight="0dp"
                 app:behavior_skipCollapsed="true"
-                app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
+                app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+                tools:ignore="FragmentTagUsage" />
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <androidx.constraintlayout.widget.Barrier
