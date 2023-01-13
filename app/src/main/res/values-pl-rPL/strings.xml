@@ -56,6 +56,7 @@
     <string name="snackbar_retry">Ponów</string>
     <string name="snackbar_data_reloaded">Przeładowano emotki</string>
     <string name="snackbar_data_load_failed_cause">Błąd podczas ładowania danych: %1$s</string>
+    <string name="snackbar_data_load_failed_multiple_causes">Ładowanie danych nie powiodło się z wieloma błędami:\n%1$s</string>
     <string name="snackbar_paste">Wklej</string>
     <string name="add_channel_hint">Nazwa kanału</string>
     <string name="emote_menu_tab_recent">Ostatnie</string>
@@ -63,6 +64,7 @@
     <string name="emote_menu_tab_channel">Kanał</string>
     <string name="emote_menu_tab_global">Globalne</string>
     <string name="system_message_connected">Połączono</string>
+    <string name="system_message_reconnected">Ponowne połączenie </string>
     <string name="system_message_channel_non_existent">Ten kanał nie istnieje</string>
     <string name="system_message_disconnected">Rozłączono</string>
     <string name="system_message_history_unavailable_detailed">Usługa historii wiadomości nie jest dostępna (Błąd: %1$s)</string>
@@ -70,6 +72,9 @@
     <string name="system_message_history_recovering">Odzyskiwanie usługi historii, mogą występować luki w historii wiadomości.</string>
     <string name="system_message_history_ignored">Historia wiadomości nie jest dostępna, ponieważ ten kanał ma ją wyłączoną.</string>
     <string name="system_message_no_history">Nie widzisz historii wiadomości ponieważ zrezygnowałeś z tej usługi.</string>
+    <string name="system_message_ffz_emotes_failed">Nie udało się załadować emotek FFZ (Error %1$s)</string>
+    <string name="system_message_bttv_emotes_failed">Nie udało się załadować emotek BTTV (Error %1$s)</string>
+    <string name="system_message_7tv_emotes_failed">Nie udało się załadować emotek 7TV (Error %1$s)</string>
     <string name="timed_out_message">&lt; Wiadomość usunięta &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Dodaj wpis</string>
@@ -294,6 +299,8 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="ignores_users_title">Ignoruj wiadomości od określonych użytkowników.</string>
     <string name="ignores_twitch_title">Zarządzaj zablokowanymi użytkownikami.</string>
     <string name="preference_notification_whisper_title">Utwórz powiadomienia dla szeptów </string>
+    <string name="login_outdated_title">Login Nieaktualny!</string>
+    <string name="login_outdated_message">Twój login jest nieaktualny i nie ma dostępu do niektórych funkcji. Zaloguj się ponownie.</string>
     <plurals name="viewers">
         <item quantity="one">Na żywo z %d widzem</item>
         <item quantity="few">Na żywo z %d widzami</item>
