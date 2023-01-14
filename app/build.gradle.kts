@@ -87,12 +87,12 @@ android {
         }
     }
 
-    buildOutputs
-        .filterIsInstance<BaseVariantOutputImpl>()
-        .forEach {
-            val outputFileName = "DankChat-${it.name}.apk"
-            it.outputFileName = outputFileName
+    buildOutputs.all {
+        (this as? BaseVariantOutputImpl)?.apply {
+            val appName = "DankChat-${name}.apk"
+            outputFileName = appName
         }
+    }
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
