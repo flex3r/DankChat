@@ -1,16 +1,19 @@
 @file:Suppress("UnstableApiUsage")
 
+import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+@Suppress("DSL_SCOPE_VIOLATION") // https://github.com/gradle/gradle/issues/22797
 plugins {
-    id("com.android.application") version Versions.agpVersion
-    kotlin("android") version Versions.kotlinVersion
-    kotlin("kapt") version Versions.kotlinVersion
-    kotlin("plugin.parcelize") version Versions.kotlinVersion
-    kotlin("plugin.serialization") version Versions.kotlinVersion
-    id("com.google.dagger.hilt.android") version Versions.hiltVersion
-    id("androidx.navigation.safeargs.kotlin") version Versions.navVersion
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.hilt.gradle)
+    alias(libs.plugins.nav.safeargs.kotlin)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -25,10 +28,8 @@ android {
         versionCode = 30500
         versionName = "3.5.0"
 
-        kapt {
-            arguments {
-                arg("room.schemaLocation", "$projectDir/schemas")
-            }
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
         }
     }
 
@@ -57,6 +58,13 @@ android {
     buildFeatures {
         dataBinding = true
     }
+
+    packagingOptions {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true
@@ -66,8 +74,6 @@ android {
             signingConfig = signingConfigs.getByName("release")
         }
         getByName("debug") {
-            isMinifyEnabled = true
-            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             manifestPlaceholders["applicationLabel"] = "@string/app_name"
         }
@@ -81,12 +87,12 @@ android {
         }
     }
 
-    buildOutputs.all {
-        val variantOutputImpl = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
-        val variantName: String = variantOutputImpl.name
-        val outputFileName = "DankChat-${variantName}.apk"
-        variantOutputImpl.outputFileName = outputFileName
-    }
+    buildOutputs
+        .filterIsInstance<BaseVariantOutputImpl>()
+        .forEach {
+            val outputFileName = "DankChat-${it.name}.apk"
+            it.outputFileName = outputFileName
+        }
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
@@ -112,60 +118,58 @@ tasks.withType<KotlinCompile> {
 
 dependencies {
 // D8 desugaring
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.0")
+    coreLibraryDesugaring(libs.android.desugar.libs)
 
 // Kotlin
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlinVersion}")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutinesVersion}")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutinesVersion}")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.serializationVersion}")
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.serialization.json)
 
 // AndroidX
-    implementation("androidx.activity:activity-ktx:${Versions.activityVersion}")
-    implementation("androidx.browser:browser:${Versions.browserVersion}")
-    implementation("androidx.constraintlayout:constraintlayout:${Versions.constraintVersion}")
-    implementation("androidx.core:core-ktx:${Versions.coreVersion}")
-    implementation("androidx.emoji2:emoji2:${Versions.emojiVersion}")
-    implementation("androidx.exifinterface:exifinterface:${Versions.exifVersion}")
-    implementation("androidx.fragment:fragment-ktx:${Versions.fragmentVersion}")
-    implementation("androidx.lifecycle:lifecycle-common-java8:${Versions.lifecycleVersion}")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:${Versions.lifecycleVersion}")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycleVersion}")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycleVersion}")
-    implementation("androidx.media:media:${Versions.mediaVersion}")
-    implementation("androidx.navigation:navigation-fragment-ktx:${Versions.navVersion}")
-    implementation("androidx.navigation:navigation-ui-ktx:${Versions.navVersion}")
-    implementation("androidx.preference:preference-ktx:${Versions.preferenceVersion}")
-    implementation("androidx.recyclerview:recyclerview:${Versions.recyclerviewVersion}")
-    implementation("androidx.viewpager2:viewpager2:${Versions.viewpager2Version}")
-    implementation("androidx.webkit:webkit:${Versions.webkitVersion}")
-    implementation("androidx.room:room-runtime:${Versions.roomVersion}")
-    implementation("androidx.room:room-ktx:${Versions.roomVersion}")
-    kapt("androidx.room:room-compiler:${Versions.roomVersion}")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.ktx)
+    implementation(libs.androidx.browser)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.emoji2)
+    implementation(libs.androidx.exifinterface)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.lifecycle.common)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.media)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.preference.ktx)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.viewpager2)
+    implementation(libs.androidx.webkit)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
 // Material
-    implementation("com.google.android.material:material:${Versions.materialVersion}")
+    implementation(libs.android.material)
 
 // Dependency injection
-    implementation("com.google.dagger:hilt-android:${Versions.hiltVersion}")
-    kapt("com.google.dagger:hilt-android-compiler:${Versions.hiltVersion}")
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
 
 // Image loading
-    implementation("io.coil-kt:coil:${Versions.coilVersion}")
-    implementation("io.coil-kt:coil-gif:${Versions.coilVersion}")
+    implementation(libs.coil)
+    implementation(libs.coil.gif)
 
 // HTTP clients
-    implementation("com.squareup.okhttp3:okhttp:${Versions.okhttpVersion}")
-    implementation("com.squareup.okhttp3:logging-interceptor:${Versions.okhttpVersion}")
-    implementation("io.ktor:ktor-client-core:${Versions.ktorVersion}")
-    implementation("io.ktor:ktor-client-okhttp:${Versions.ktorVersion}")
-    implementation("io.ktor:ktor-client-logging:${Versions.ktorVersion}")
-    implementation("io.ktor:ktor-client-content-negotiation:${Versions.ktorVersion}")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:${Versions.ktorVersion}")
+    implementation(libs.okhttp)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
 
     // Test
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${Versions.junitVersion}")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:${Versions.junitVersion}")
-    testImplementation("io.mockk:mockk:${Versions.mockkVersion}")
-    testImplementation("org.jetbrains.kotlin:kotlin-test:${Versions.kotlinVersion}")
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.engine)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlin.test)
 }
