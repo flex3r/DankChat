@@ -226,13 +226,6 @@ class HighlightsRepository @Inject constructor(
                 }
             }
 
-            userHighlights.forEach {
-                if (name.matches(it.username)) {
-                    add(Highlight(HighlightType.Custom))
-                    addNotificationHighlightIfEnabled(it)
-                }
-            }
-
             messageHighlights
                 .filter { it.type == MessageHighlightEntityType.Custom }
                 .forEach {
@@ -243,6 +236,13 @@ class HighlightsRepository @Inject constructor(
                         addNotificationHighlightIfEnabled(it)
                     }
                 }
+
+            userHighlights.forEach {
+                if (name.matches(it.username)) {
+                    add(Highlight(HighlightType.Custom))
+                    addNotificationHighlightIfEnabled(it)
+                }
+            }
 
         }
 
