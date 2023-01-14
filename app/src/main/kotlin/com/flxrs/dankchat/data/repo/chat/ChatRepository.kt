@@ -242,8 +242,10 @@ class ChatRepository @Inject constructor(
 
     suspend fun getLatestValidUserState(minChannelsSize: Int = 0): UserState = userState
         .filter {
-            it.userId != null && it.userId.value.isNotBlank() && it.followerEmoteSets.size >= minChannelsSize
+            it.userId != null && it.userId.value.isNotBlank() && it.globalEmoteSets.isNotEmpty() && it.followerEmoteSets.size >= minChannelsSize
         }.take(count = 1).single()
+
+    fun clearUserStateEmotes() = userState.update { it.copy(globalEmoteSets = emptyList(), followerEmoteSets = emptyMap()) }
 
     suspend fun loadRecentMessagesIfEnabled(channel: UserName) {
         when {
@@ -320,10 +322,13 @@ class ChatRepository @Inject constructor(
         connectAndJoin(channels)
     }
 
-    fun reconnect() {
+    fun reconnect(reconnectPubsub: Boolean = true) {
         readConnection.reconnect()
         writeConnection.reconnect()
-        pubSubManager.reconnect()
+
+        if (reconnectPubsub) {
+            pubSubManager.reconnect()
+        }
     }
 
     fun reconnectIfNecessary() {

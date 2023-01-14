@@ -89,7 +89,7 @@ class DataRepository @Inject constructor(
     // TODO refactor to flow/observe pattern
     suspend fun setEmotesForSuggestions(channel: UserName) {
         emotes.putIfAbsent(channel, MutableStateFlow(emptyList()))
-        emotes[channel]?.value = emoteRepository.getEmotes(channel)
+        emotes[channel]?.update { emoteRepository.getEmotes(channel) }
     }
 
     suspend fun loadUserStateEmotes(globalEmoteSetIds: List<String>, followerEmoteSetIds: Map<UserName, List<String>>) {

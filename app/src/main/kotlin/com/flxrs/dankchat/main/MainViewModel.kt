@@ -399,10 +399,7 @@ class MainViewModel @Inject constructor(
                 dataRepository.loadUserStateEmotes(userState.globalEmoteSets, userState.followerEmoteSets)
             }
 
-            channelList.forEach { dataRepository.setEmotesForSuggestions(it) }
-
-            // global emote suggestions for whisper tab
-            dataRepository.setEmotesForSuggestions("w".toUserName())
+            setAllEmoteSuggestions(channelList)
 
             checkFailuresAndEmitState()
         }
@@ -437,6 +434,10 @@ class MainViewModel @Inject constructor(
         }.awaitAll()
 
         chatRepository.reparseAllEmotesAndBadges()
+
+        if (dankChatPreferenceStore.isLoggedIn) {
+            setAllEmoteSuggestions(channels.value.orEmpty())
+        }
 
         checkFailuresAndEmitState()
     }
@@ -555,8 +556,9 @@ class MainViewModel @Inject constructor(
         isDataLoading.update { true }
 
         if (isLoggedIn) {
-            // join a channel to try to get an up-to-date USERSTATE
-            chatRepository.joinChannel(channel = "jtv".toUserName(), listenToPubSub = false)
+            // reconnect to retrieve an an up-to-date GLOBALUSERSTATE
+            chatRepository.clearUserStateEmotes()
+            chatRepository.reconnect(reconnectPubsub = false)
         }
 
         val channelId = chatRepository.getRoomState(channel)
@@ -582,14 +584,17 @@ class MainViewModel @Inject constructor(
             return@launch
         }
 
-        withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
-            val userState = chatRepository.getLatestValidUserState()
+        val channels = channels.value ?: listOf(channel)
+        val userState = withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
+            chatRepository.getLatestValidUserState(minChannelsSize = channels.size)
+        } ?: withTimeoutOrNull(IRC_TIMEOUT_SHORT_DELAY) {
+            chatRepository.getLatestValidUserState(minChannelsSize = 0)
+        }
+        userState?.let {
             dataRepository.loadUserStateEmotes(userState.globalEmoteSets, userState.followerEmoteSets)
         }
 
-        chatRepository.partChannel(channel = "jtv".toUserName(), unListenFromPubSub = false)
-        dataRepository.setEmotesForSuggestions(channel)
-
+        setAllEmoteSuggestions(channels)
         checkFailuresAndEmitState()
     }
 
@@ -695,6 +700,13 @@ class MainViewModel @Inject constructor(
 
     fun addEmoteUsage(emote: GenericEmote) = viewModelScope.launch {
         emoteUsageRepository.addEmoteUsage(emote.id)
+    }
+
+    private suspend fun setAllEmoteSuggestions(channels: List<UserName>) {
+        channels.forEach { dataRepository.setEmotesForSuggestions(it) }
+
+        // global emote suggestions for whisper tab
+        dataRepository.setEmotesForSuggestions("w".toUserName())
     }
 
     private suspend fun checkFailuresAndEmitState() {
