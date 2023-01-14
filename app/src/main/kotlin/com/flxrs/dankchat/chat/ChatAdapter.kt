@@ -61,6 +61,7 @@ class ChatAdapter(
         get() = field++
 
     companion object {
+        private val DISALLOWED_URL_CHARS = """<>\{}|^"`""".toSet()
         private const val SCALE_FACTOR_CONSTANT = 1.5 / 112
         private const val BASE_HEIGHT_CONSTANT = 1.173
         private const val MONOSPACE_FONT_PROPORTION = 0.95f // make monospace font a bit smaller to make looks same sized as normal text
@@ -730,7 +731,7 @@ class ChatAdapter(
             spannableWithEmojis.removeSpan(urlSpan)
 
             val fixedEnd = spannableWithEmojis
-                .indexOf(' ', end)
+                .indexOfFirst(startIndex = end) { it.isWhitespace() || it in DISALLOWED_URL_CHARS }
                 .takeIf { it != -1 } ?: end
             val fixedUrl = when (fixedEnd) {
                 end  -> urlSpan.url
