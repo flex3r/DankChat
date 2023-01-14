@@ -134,7 +134,6 @@ dependencies {
     implementation(libs.androidx.emoji2)
     implementation(libs.androidx.exifinterface)
     implementation(libs.androidx.fragment.ktx)
-    implementation(libs.androidx.lifecycle.common)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.media)
