@@ -110,7 +110,6 @@ tasks.withType<KotlinCompile> {
         jvmTarget.set(JvmTarget.JVM_11)
         freeCompilerArgs.addAll(
             "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-            "-opt-in=kotlinx.coroutines.FlowPreview",
             "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
         )
     }
