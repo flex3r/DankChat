@@ -35,6 +35,6 @@ data class PointRedemptionMessage(
         }
     }
 
-    val aliasOrDisplayName: String
-        get() = userDisplay.aliasOrElse(displayName)
+    val aliasOrFormattedName: String
+        get() = userDisplay?.alias ?: name.formatWithDisplayName(displayName)
 }

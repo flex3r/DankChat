@@ -356,14 +356,6 @@
     <string name="preference_notification_whisper_title">Create notifications for whispers</string>
     <string name="login_outdated_title">Login Outdated!</string>
     <string name="login_outdated_message">Your login is outdated and does not have access to some functionality. Please login again.</string>
-    <plurals name="viewers">
-        <item quantity="one">Live with %d viewer</item>
-        <item quantity="other">Live with %d viewers</item>
-    </plurals>
-    <plurals name="months">
-        <item quantity="one">%d month</item>
-        <item quantity="other">%d months</item>
-    </plurals>
     <string name="custom_user_display_title">Custom User Display</string>
     <string name="preference_custom_user_display_key">custom_user_display_key</string>
     <string name="user_display_item_username_hint">Username</string>
@@ -373,5 +365,13 @@
     <string name="user_display_custom_color_enable">Custom Color</string>
     <string name="user_display_custom_alias_enable">Custom Alias</string>
     <string name="pick_custom_user_color_title">Pick custom user color</string>
-    <string name="custom_user_display_summary">Add custom name and/or color for users</string>
+    <string name="custom_user_display_summary">Add a custom name and color for users</string>
+    <plurals name="viewers">
+        <item quantity="one">Live with %d viewer</item>
+        <item quantity="other">Live with %d viewers</item>
+    </plurals>
+    <plurals name="months">
+        <item quantity="one">%d month</item>
+        <item quantity="other">%d months</item>
+    </plurals>
 </resources>

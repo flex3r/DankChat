@@ -10,8 +10,8 @@ import com.flxrs.dankchat.data.toDisplayName
 import com.flxrs.dankchat.data.toUserId
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.badge.Badge
-import com.flxrs.dankchat.data.twitch.pubsub.dto.whisper.WhisperData
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
+import com.flxrs.dankchat.data.twitch.pubsub.dto.whisper.WhisperData
 import com.flxrs.dankchat.utils.extensions.normalizeColor
 import java.util.UUID
 
@@ -22,11 +22,11 @@ data class WhisperMessage(
     val userId: UserId?,
     val name: UserName,
     val displayName: DisplayName,
-    val color: Int = Color.parseColor(DEFAULT_COLOR),
+    val color: Int = DEFAULT_COLOR,
     val recipientId: UserId?,
     val recipientName: UserName,
     val recipientDisplayName: DisplayName,
-    val recipientColor: Int = Color.parseColor(DEFAULT_COLOR),
+    val recipientColor: Int = DEFAULT_COLOR,
     val message: String,
     val rawEmotes: String,
     val rawBadges: String?,
@@ -42,12 +42,11 @@ data class WhisperMessage(
     override val badgeData: BadgeData = BadgeData(userId, channel = null, badgeTag = rawBadges, badgeInfoTag = rawBadgeInfo)
 
     companion object {
-        fun parseFromIrc(ircMessage: IrcMessage, recipientName: DisplayName, recipientColor: String?): WhisperMessage = with(ircMessage) {
+        fun parseFromIrc(ircMessage: IrcMessage, recipientName: DisplayName, recipientColorTag: String?): WhisperMessage = with(ircMessage) {
             val name = prefix.substringBefore('!')
             val displayName = tags["display-name"] ?: name
-            val colorTag = tags["color"]?.ifBlank { DEFAULT_COLOR } ?: DEFAULT_COLOR
-            val color = Color.parseColor(colorTag)
-            val recipientColorTag = recipientColor ?: DEFAULT_COLOR
+            val color = tags["color"]?.ifBlank { null }?.let(Color::parseColor) ?: DEFAULT_COLOR
+            val recipientColor = recipientColorTag?.let(Color::parseColor) ?: DEFAULT_COLOR
             val emoteTag = tags["emotes"] ?: ""
             val message = params.getOrElse(1) { "" }
 
@@ -61,7 +60,7 @@ data class WhisperMessage(
                 recipientId = null,
                 recipientName = recipientName.toUserName(),
                 recipientDisplayName = recipientName,
-                recipientColor = Color.parseColor(recipientColorTag),
+                recipientColor = recipientColor,
                 message = message,
                 rawEmotes = emoteTag,
                 rawBadges = tags["badges"],
@@ -70,9 +69,8 @@ data class WhisperMessage(
         }
 
         fun fromPubSub(data: WhisperData): WhisperMessage = with(data) {
-            val colorTag = data.tags.color.ifBlank { DEFAULT_COLOR }
-            val color = Color.parseColor(colorTag)
-            val recipientColorTag = data.recipient.color.ifBlank { DEFAULT_COLOR }
+            val color = data.tags.color.ifBlank { null }?.let(Color::parseColor) ?: DEFAULT_COLOR
+            val recipientColor = data.recipient.color.ifBlank { null }?.let(Color::parseColor) ?: DEFAULT_COLOR
             val badgeTag = data.tags.badges.joinToString(",") { "${it.id}/${it.version}" }
             val emotesTag = data.tags.emotes
                 .groupBy { it.id }
@@ -91,7 +89,7 @@ data class WhisperMessage(
                 recipientId = data.recipient.id,
                 recipientName = data.recipient.name,
                 recipientDisplayName = data.recipient.displayName,
-                recipientColor = Color.parseColor(recipientColorTag),
+                recipientColor = recipientColor,
                 message = message,
                 rawEmotes = emotesTag,
                 rawBadges = badgeTag,
@@ -101,18 +99,12 @@ data class WhisperMessage(
 
 }
 
-val WhisperMessage.senderFullName: String
-    get() = userDisplay?.alias ?: when {
-        displayName.equals(name, true) -> displayName
-        else                           -> "$name($displayName)"
-    }
+val WhisperMessage.senderAliasOrFormattedName: String
+    get() = userDisplay?.alias ?: name.formatWithDisplayName(displayName)
 
 fun WhisperMessage.senderColorOnBackground(@ColorInt background: Int): Int = userDisplay.colorOrElse(color.normalizeColor(background))
 
-val WhisperMessage.recipientFullName: String
-    get() = recipientDisplay?.alias ?: when {
-        recipientDisplayName.equals(recipientName, true) -> recipientDisplayName
-        else                                             -> "$recipientName($recipientDisplayName)"
-    }
+val WhisperMessage.recipientAliasOrFormattedName: String
+    get() = recipientDisplay?.alias ?: recipientName.formatWithDisplayName(recipientDisplayName)
 
 fun WhisperMessage.recipientColorOnBackground(@ColorInt background: Int): Int = recipientDisplay.colorOrElse(recipientColor.normalizeColor(background))

@@ -11,6 +11,7 @@
     </data>
 
     <com.google.android.material.card.MaterialCardView
+        style="?attr/materialCardViewStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -21,51 +22,50 @@
             android:layout_height="wrap_content"
             android:padding="8dp">
 
-            <androidx.constraintlayout.helper.widget.Flow
-                android:id="@+id/flow_main_row"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/user_display_user_input"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:flow_horizontalStyle="packed"
-                app:flow_horizontalAlign="start"
-                app:flow_verticalStyle="packed"
-                app:flow_verticalAlign="center"
-                app:flow_horizontalBias="0"
-                app:flow_maxElementsWrap="3"
-                app:flow_horizontalGap="12dp"
-                app:constraint_referenced_ids="user_display_user_input,user_display_delete"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:hint="@string/user_display_item_username_hint"
+                app:endIconMode="clear_text"
+                app:layout_constraintEnd_toStartOf="@id/user_display_delete"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:text="@={userDisplay.username}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/user_display_delete"
+                style="?attr/materialIconButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/remove_custom_user_display"
+                app:icon="@drawable/ic_clear"
+                app:layout_constraintBottom_toBottomOf="@id/user_display_user_input"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/user_display_user_input"
+                app:layout_constraintTop_toTopOf="@id/user_display_user_input" />
 
             <androidx.constraintlayout.helper.widget.Flow
                 android:id="@+id/flow_color_row"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:flow_horizontalStyle="packed"
-                app:flow_horizontalAlign="start"
-                app:flow_verticalStyle="packed"
-                app:flow_verticalAlign="center"
-                app:flow_horizontalBias="0"
                 app:constraint_referenced_ids="user_display_enable,user_display_enable_color,user_display_enable_alias"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/flow_main_row" />
-
-            <androidx.constraintlayout.helper.widget.Flow
-                android:id="@+id/flow_alias_row"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:flow_horizontalStyle="packed"
-                app:flow_horizontalAlign="start"
-                app:flow_verticalStyle="packed"
-                app:flow_verticalAlign="center"
                 app:flow_horizontalBias="0"
-                app:flow_maxElementsWrap="2"
-                app:flow_horizontalGap="12dp"
-                app:constraint_referenced_ids="user_display_alias_input,user_display_pick_color_button"
+                app:flow_horizontalStyle="packed"
+                app:flow_wrapMode="chain"
+                app:layout_constraintBottom_toTopOf="@id/user_display_alias_input"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/flow_color_row" />
+                app:layout_constraintTop_toBottomOf="@id/user_display_user_input" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/user_display_enable"
@@ -75,47 +75,11 @@
                 android:checked="@={userDisplay.enabled}"
                 android:text="@string/enabled" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/user_display_user_input"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/user_display_item_username_hint"
-                app:endIconMode="clear_text">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:imeOptions="actionNext"
-                    android:inputType="text"
-                    android:singleLine="true"
-                    android:text="@={userDisplay.username}" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <ImageView
-                android:id="@+id/user_display_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="?selectableItemBackgroundBorderless"
-                android:contentDescription="@string/remove_custom_user_display"
-                app:srcCompat="@drawable/ic_clear"
-                app:tint="?colorControlNormal" />
-
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/user_display_enable_color"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/user_display_custom_color_enable" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/user_display_pick_color_button"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:fontFamily="sans-serif-medium"
-                tools:text="#ff0000" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/user_display_enable_alias"
@@ -126,13 +90,16 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/user_display_alias_input"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                style="?textInputOutlinedStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="4dp"
-                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
                 android:hint="@string/user_display_alias_input"
-                app:endIconMode="clear_text">
+                app:endIconMode="clear_text"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/user_display_pick_color_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/flow_color_row">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
@@ -143,7 +110,18 @@
                     android:text="@={userDisplay.alias}" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/user_display_pick_color_button"
+                style="?materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:textAppearance="?textAppearanceButton"
+                app:layout_constraintBottom_toBottomOf="@id/user_display_alias_input"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/user_display_alias_input"
+                app:layout_constraintTop_toTopOf="@id/user_display_alias_input"
+                tools:text="#ff0000" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </com.google.android.material.card.MaterialCardView>
 </layout>

@@ -1,10 +1,8 @@
 package com.flxrs.dankchat.utils.extensions
 
 import android.content.Context
-import android.graphics.Color
 import androidx.annotation.ColorInt
 import androidx.core.graphics.ColorUtils
-import com.flxrs.dankchat.R
 import com.google.android.material.color.MaterialColors
 import kotlin.math.sin
 
@@ -43,25 +41,10 @@ fun Int.normalizeColor(@ColorInt background: Int): Int {
     }
 }
 
-@ColorInt
-fun Int.harmonize(context: Context): Int = MaterialColors.harmonizeWithPrimary(context, this)
+/** convert int to RGB with zero pad */
+val Int.hexCode: String
+    get() = Integer.toHexString(rgb).padStart(6, '0')
 
 /** helper to extract only RGB part (i.e. drop the alpha part) */
-private fun Int.onlyRGB(): Int = this and 0xffffff
-
-/** convert int to RGB with zero pad */
-fun Int.toHexCode(): String = Integer.toHexString(this.onlyRGB()).padStart(6, '0')
-
-/** convert RGB color (0xffffff) to ARGB with alpha (opaque by default) */
-fun Int.withAlpha(alpha: Int = 255): Int = (alpha shl 24) or this.onlyRGB()
-
-/** find a black/white (techincally colorOnSurface and colorOnSurfaceInverse) color that best contrast with `this` color
- * useful for example, when displaying text on this background color
- * */
-fun Int.getContrastTextColor(context: Context): Int {
-    val possibleColors = listOf(R.attr.colorOnSurface, R.attr.colorOnSurfaceInverse).map {
-        MaterialColors.getColor(context, it, Color.WHITE) // just some default color
-    }
-
-    return possibleColors.maxBy { ColorUtils.calculateContrast(it, this.withAlpha(255)) }
-}
+private val Int.rgb: Int
+    get() = this and 0xffffff

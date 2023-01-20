@@ -1,7 +1,5 @@
 package com.flxrs.dankchat.preferences.userdisplay
 
-import android.annotation.SuppressLint
-import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -10,11 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.AddItemBinding
 import com.flxrs.dankchat.databinding.UserDisplayItemBinding
+import com.flxrs.dankchat.utils.extensions.setEnabledColor
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rarepebble.colorpicker.ColorPickerView
-import io.ktor.util.reflect.*
 
 class UserDisplayAdapter(
     val onAddItem: (currentEntries: List<UserDisplayItem>) -> Unit,
@@ -23,9 +20,9 @@ class UserDisplayAdapter(
 
     inner class EntryViewHolder(val binding: UserDisplayItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.apply {
+            with(binding) {
                 userDisplayDelete.setOnClickListener {
-                    onDeleteItem(getItem(bindingAdapterPosition) as UserDisplayItem.Entry) // only Entry are delete-able
+                    onDeleteItem(getItem(bindingAdapterPosition) as UserDisplayItem.Entry) // only Entry is deletable
                 }
 
                 userDisplayPickColorButton.setOnClickListener {
@@ -40,19 +37,22 @@ class UserDisplayAdapter(
                         .setNegativeButton(root.context.getString(R.string.dialog_cancel)) { _, _ -> }
                         .setPositiveButton(root.context.getString(R.string.dialog_ok)) { _, _ ->
                             item.color = picker.color
-                            userDisplayPickColorButton.updateTextAndStyle(item)
+                            userDisplayPickColorButton.updateTextAndTextColor(item)
                         }.show()
                 }
 
                 userDisplayEnableColor.setOnCheckedChangeListener { _, checked ->
+                    val item = userDisplay ?: return@setOnCheckedChangeListener
+                    item.colorEnabled = checked
                     userDisplayPickColorButton.isEnabled = checked
                 }
 
                 userDisplayEnableAlias.setOnCheckedChangeListener { _, checked ->
+                    val item = userDisplay ?: return@setOnCheckedChangeListener
+                    item.aliasEnabled = checked
                     userDisplayAliasInput.isEnabled = checked
                 }
             }
-
         }
     }
 
@@ -62,30 +62,11 @@ class UserDisplayAdapter(
                 onAddItem(currentList)
             }
         }
-
     }
 
-    /** set text, text color to represent selected color */
-    @SuppressLint("SetTextI18n")
-    private fun MaterialButton.updateTextAndStyle(item: UserDisplayItem.Entry) {
-        text = item.displayColor
-        setTextColor(
-            ColorStateList(
-                arrayOf(
-                    intArrayOf(android.R.attr.state_enabled),
-                    intArrayOf(-android.R.attr.state_enabled),
-                ),
-                intArrayOf(
-                    item.color,
-                    MaterialColors.layer(
-                        MaterialColors.getColor(this, R.attr.colorSurface),
-                        MaterialColors.getColor(this, R.attr.colorOnSurface),
-                        MaterialColors.ALPHA_DISABLED,
-                    )
-                )
-
-            )
-        )
+    private fun MaterialButton.updateTextAndTextColor(item: UserDisplayItem.Entry) {
+        text = item.formattedDisplayColor
+        setEnabledColor(item.color)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -93,7 +74,6 @@ class UserDisplayAdapter(
             ENTRY_VIEW_TYPE    -> EntryViewHolder(UserDisplayItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
             ADD_ITEM_VIEW_TYPE -> AddItemViewHolder(AddItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
             else               -> throw ClassCastException("Invalid view type $viewType")
-
         }
     }
 
@@ -101,13 +81,14 @@ class UserDisplayAdapter(
         when (holder) {
             is EntryViewHolder -> {
                 val entry = currentList[position] as UserDisplayItem.Entry
-                holder.binding.userDisplay = entry
-                holder.binding.userDisplayEnableColor.isChecked = entry.colorEnabled
-                holder.binding.userDisplayPickColorButton.isEnabled = entry.colorEnabled
-                holder.binding.userDisplayEnableAlias.isChecked = entry.aliasEnabled
-                holder.binding.userDisplayAliasInput.isEnabled = entry.aliasEnabled
-
-                holder.binding.userDisplayPickColorButton.updateTextAndStyle(entry)
+                with(holder.binding) {
+                    userDisplay = entry
+                    userDisplayEnableColor.isChecked = entry.colorEnabled
+                    userDisplayPickColorButton.isEnabled = entry.colorEnabled
+                    userDisplayEnableAlias.isChecked = entry.aliasEnabled
+                    userDisplayAliasInput.isEnabled = entry.aliasEnabled
+                    userDisplayPickColorButton.updateTextAndTextColor(entry)
+                }
             }
         }
     }
@@ -133,7 +114,5 @@ class UserDisplayAdapter(
         }
 
         override fun areContentsTheSame(oldItem: UserDisplayItem, newItem: UserDisplayItem) = oldItem == newItem
-
     }
-
 }

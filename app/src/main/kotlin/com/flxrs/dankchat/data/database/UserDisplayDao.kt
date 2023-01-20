@@ -16,11 +16,5 @@ interface UserDisplayDao {
     suspend fun insert(user: UserDisplayEntity): Long
 
     @Delete
-    suspend fun deleteAll(user: List<UserDisplayEntity>): Int
-
-    @Delete
     suspend fun delete(user: UserDisplayEntity): Int
-
-    @Query("SELECT * from user_display where id = :id")
-    suspend fun getById(id: Int): UserDisplayEntity
 }

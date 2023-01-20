@@ -1,11 +1,13 @@
 package com.flxrs.dankchat.utils.extensions
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.drawable.LayerDrawable
 import android.text.SpannableString
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.core.text.getSpans
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +16,8 @@ import coil.load
 import coil.request.ImageRequest
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.main.MainActivity
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.Snackbar
 
 fun View.showShortSnackbar(text: String, block: Snackbar.() -> Unit = {}) = Snackbar.make(this, text, Snackbar.LENGTH_SHORT)
@@ -92,4 +96,23 @@ fun ViewPager2.reduceDragSensitivity() {
     val touchSlopField = RecyclerView::class.java.getDeclaredField("mTouchSlop").apply { isAccessible = true }
     val touchSlop = touchSlopField.get(recyclerView) as Int
     touchSlopField.set(recyclerView, touchSlop * 2)
+}
+
+fun MaterialButton.setEnabledColor(@ColorInt color: Int) {
+    setTextColor(
+        ColorStateList(
+            arrayOf(
+                intArrayOf(android.R.attr.state_enabled),
+                intArrayOf(-android.R.attr.state_enabled),
+            ),
+            intArrayOf(
+                color,
+                MaterialColors.layer(
+                    MaterialColors.getColor(this, R.attr.colorSurface),
+                    MaterialColors.getColor(this, R.attr.colorOnSurface),
+                    MaterialColors.ALPHA_DISABLED,
+                )
+            )
+        )
+    )
 }

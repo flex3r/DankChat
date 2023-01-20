@@ -1,13 +1,19 @@
 package com.flxrs.dankchat.data.repo
 
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.database.UserDisplayDao
 import com.flxrs.dankchat.data.database.UserDisplayEntity
-import com.flxrs.dankchat.data.twitch.message.*
-import com.flxrs.dankchat.data.twitch.message.UserDisplay.Companion.toUserDisplay
+import com.flxrs.dankchat.data.twitch.message.Message
+import com.flxrs.dankchat.data.twitch.message.PointRedemptionMessage
+import com.flxrs.dankchat.data.twitch.message.PrivMessage
+import com.flxrs.dankchat.data.twitch.message.UserDisplay
+import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
+import com.flxrs.dankchat.data.twitch.message.WhisperMessage
+import com.flxrs.dankchat.data.twitch.message.toUserDisplay
 import com.flxrs.dankchat.di.ApplicationScope
-import com.flxrs.dankchat.preferences.userdisplay.UserDisplayItem.AddEntry.toEntry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,11 +24,17 @@ class UserDisplayRepository @Inject constructor(
     @ApplicationScope val coroutineScope: CoroutineScope,
 ) {
 
-    val userDisplays = userDisplayDao.getUserDisplaysFlow().stateIn(
-        scope = coroutineScope,
-        started = SharingStarted.Eagerly,
-        initialValue = emptyList()
-    )
+    val userDisplays = userDisplayDao.getUserDisplaysFlow()
+        .map { entities ->
+            entities.map {
+                it.copy(targetUser = it.targetUser.trim())
+            }
+        }
+        .stateIn(
+            scope = coroutineScope,
+            started = SharingStarted.Eagerly,
+            initialValue = emptyList()
+        )
 
     suspend fun addUserDisplays(userDisplays: List<UserDisplayEntity>) {
         userDisplayDao.insertAll(userDisplays)
@@ -46,10 +58,6 @@ class UserDisplayRepository @Inject constructor(
         }
     }
 
-    private fun findMatchingUserDisplay(name: String): UserDisplay? {
-        return userDisplays.value.find { it.targetUser.equals(name, ignoreCase = true) }?.toEntry()?.toUserDisplay()
-    }
-
     private fun PrivMessage.applyUserDisplay(): PrivMessage {
         val match = findMatchingUserDisplay(name) ?: return this
         return copy(userDisplay = match)
@@ -60,7 +68,7 @@ class UserDisplayRepository @Inject constructor(
         return copy(userDisplay = match)
     }
 
-    // e.g. announcement ->have child message
+    // e.g. announcement -> have child message
     private fun UserNoticeMessage.applyUserDisplay(): UserNoticeMessage {
         val processedChildMessage = childMessage?.applyUserDisplay() ?: return this
         return copy(childMessage = processedChildMessage)
@@ -72,10 +80,15 @@ class UserDisplayRepository @Inject constructor(
         if (senderMatch == null && recipientMatch == null) {
             return this
         }
+
         return copy(
             userDisplay = senderMatch,
             recipientDisplay = recipientMatch
         )
+    }
+
+    private fun findMatchingUserDisplay(name: UserName): UserDisplay? {
+        return userDisplays.value.find { name.matches(it.targetUser) }?.toUserDisplay()
     }
 }
 

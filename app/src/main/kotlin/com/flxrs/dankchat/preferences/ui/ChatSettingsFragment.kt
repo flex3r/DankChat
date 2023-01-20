@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.preference.*
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
@@ -29,11 +28,10 @@ import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import com.flxrs.dankchat.utils.extensions.expand
 import com.flxrs.dankchat.utils.extensions.showRestartRequired
+import com.flxrs.dankchat.utils.extensions.showShortSnackbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import io.ktor.util.reflect.*
-import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.math.roundToInt
@@ -44,6 +42,7 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
     private val userDisplayViewModel: UserDisplayViewModel by viewModels()
 
     private var bottomSheetDialog: BottomSheetDialog? = null
+    private var bottomSheetBinding: UserDisplayBottomSheetBinding? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -64,11 +63,28 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
             }
         }
 
+        val userDisplayAdapter = UserDisplayAdapter(
+            onAddItem = userDisplayViewModel::saveChangesAndCreateNewBlank,
+            onDeleteItem = userDisplayViewModel::deleteEntry,
+        )
+
         findPreference<Preference>(getString(R.string.preference_custom_user_display_key))?.apply {
             setOnPreferenceClickListener {
-                showUserDisplaySettingsFragment(view)
+                bottomSheetBinding = UserDisplayBottomSheetBinding.inflate(LayoutInflater.from(view.context), view as? ViewGroup, false)
+                showUserDisplaySettingsFragment(userDisplayAdapter)
+                true
             }
+        }
 
+        collectFlow(userDisplayViewModel.userDisplays) { userDisplayAdapter.submitList(it) }
+        collectFlow(userDisplayViewModel.events) { event ->
+            when (event) {
+                is UserDisplayEvent.ItemRemoved -> bottomSheetBinding?.root?.showShortSnackbar(getString(R.string.item_removed)) {
+                    setAction(getString(R.string.undo)) {
+                        userDisplayViewModel.saveChangesAndAddEntry(userDisplayAdapter.currentList, event.item)
+                    }
+                }
+            }
         }
     }
 
@@ -76,6 +92,7 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
         super.onDestroyView()
         bottomSheetDialog?.dismiss()
         bottomSheetDialog = null
+        bottomSheetBinding = null
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -149,48 +166,26 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
         return true
     }
 
-    private fun showUserDisplaySettingsFragment(root: View): Boolean {
-        val context = root.context
-        val windowHeight = resources.displayMetrics.heightPixels
-
-        lifecycleScope.launch {
-            val userDisplayAdapter = UserDisplayAdapter(
-                onAddItem = { currentList ->
-                    userDisplayViewModel.saveChangesAndCreateNewBlank(currentList)
-                },
-                onDeleteItem = userDisplayViewModel::deleteEntry,
-            )
-
-            val bottomSheetBinding = UserDisplayBottomSheetBinding
-                .inflate(LayoutInflater.from(context), root as? ViewGroup, false).apply {
-                    customUserDisplayList.adapter = userDisplayAdapter
-                    customUserDisplaySheet.updateLayoutParams {
-                        height = windowHeight
-                    }
-                }
-
-            collectFlow(userDisplayViewModel.userDisplays) { userDisplayAdapter.submitList(it) }
-            collectFlow(userDisplayViewModel.events) { event ->
-                when (event) {
-                    is UserDisplayEvent.ItemRemoved -> Snackbar
-                        .make(bottomSheetBinding.root, getString(R.string.item_removed), Snackbar.LENGTH_SHORT)
-                        .setAction(getString(R.string.undo)) {
-                            userDisplayViewModel.saveChangesAndAddEntry(userDisplayAdapter.currentList, event.item)
-                        }.show()
-                }
+    private fun showUserDisplaySettingsFragment(adapter: UserDisplayAdapter) {
+        val binding = bottomSheetBinding ?: return
+        with(binding) {
+            customUserDisplaySheet.updateLayoutParams {
+                height = resources.displayMetrics.heightPixels
             }
-
-
-            bottomSheetDialog = BottomSheetDialog(context).apply {
-                setContentView(bottomSheetBinding.root)
-                setOnDismissListener { userDisplayViewModel.saveChanges(userDisplayAdapter.currentList) }
-                behavior.skipCollapsed = true
-                behavior.isFitToContents = false
-                behavior.expand()
-                show()
-            }
+            customUserDisplayList.adapter = adapter
         }
 
-        return true
+        bottomSheetDialog = BottomSheetDialog(requireContext()).apply {
+            setOnDismissListener {
+                userDisplayViewModel.saveChanges(adapter.currentList)
+                bottomSheetDialog = null
+                bottomSheetBinding = null
+            }
+            setContentView(binding.root)
+            behavior.skipCollapsed = true
+            behavior.isFitToContents = false
+            behavior.expand()
+            show()
+        }
     }
 }

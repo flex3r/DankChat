@@ -258,7 +258,7 @@ class ChatAdapter(
                 when {
                     message.requiresUserInput -> append("Redeemed ")
                     else                      -> {
-                        bold { append(message.aliasOrDisplayName) }
+                        bold { append(message.aliasOrFormattedName) }
                         append(" redeemed ")
                     }
                 }
@@ -311,7 +311,7 @@ class ChatAdapter(
             spannable.timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(timestamp)) }
         }
 
-        val nameGroupLength = senderFullName.length + 4 + recipientFullName.length + 2
+        val nameGroupLength = senderAliasOrFormattedName.length + 4 + recipientAliasOrFormattedName.length + 2
         val prefixLength = spannable.length + nameGroupLength
         val badgePositions = allowedBadges.map {
             spannable.append("  ")
@@ -319,11 +319,11 @@ class ChatAdapter(
         }
 
         val senderColor = senderColorOnBackground(background)
-        spannable.bold { color(senderColor) { append(senderFullName) } }
+        spannable.bold { color(senderColor) { append(senderAliasOrFormattedName) } }
         spannable.append(" -> ")
 
         val recipientColor = recipientColorOnBackground(background)
-        spannable.bold { color(recipientColor) { append(recipientFullName) } }
+        spannable.bold { color(recipientColor) { append(recipientAliasOrFormattedName) } }
         spannable.append(": ")
         spannable.append(message)
 
@@ -336,7 +336,7 @@ class ChatAdapter(
             }
         }
         val userStart = prefixLength + badgesLength - nameGroupLength
-        val userEnd = userStart + senderFullName.length
+        val userEnd = userStart + senderAliasOrFormattedName.length
         spannable[userStart..userEnd] = userClickableSpan
 
         val emojiCompat = EmojiCompat.get()
@@ -473,9 +473,9 @@ class ChatAdapter(
 
         val fullDisplayName = when {
             !dankChatPreferenceStore.showUsername -> ""
-            isAction                              -> "$formattedName "
-            formattedName.isBlank()               -> ""
-            else                                  -> "$formattedName: "
+            isAction                              -> "$aliasOrFormattedName "
+            aliasOrFormattedName.isBlank()        -> ""
+            else                                  -> "$aliasOrFormattedName: "
         }
 
         val allowedBadges = badges.filter { it.type in dankChatPreferenceStore.visibleBadgeTypes }
@@ -505,7 +505,7 @@ class ChatAdapter(
         }
 
         // clicking usernames
-        if (formattedName.isNotBlank()) {
+        if (aliasOrFormattedName.isNotBlank()) {
             val userClickableSpan = object : LongClickableSpan() {
                 override fun onClick(v: View) = onUserClick(userId, name, displayName, id, channel, badges, false)
                 override fun onLongClick(view: View) = onUserClick(userId, name, displayName, id, channel, badges, true)

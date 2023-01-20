@@ -2,9 +2,9 @@ package com.flxrs.dankchat.preferences.userdisplay
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.flxrs.dankchat.data.database.UserDisplayEntity
 import com.flxrs.dankchat.data.repo.UserDisplayRepository
-import com.flxrs.dankchat.preferences.userdisplay.UserDisplayItem.AddEntry.toEntity
-import com.flxrs.dankchat.preferences.userdisplay.UserDisplayItem.AddEntry.toEntry
+import com.flxrs.dankchat.data.twitch.message.Message
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.map
@@ -16,18 +16,28 @@ import javax.inject.Inject
 class UserDisplayViewModel @Inject constructor(
     private val userDisplayRepository: UserDisplayRepository
 ) : ViewModel() {
+
     private val eventChannel = Channel<UserDisplayEvent>(Channel.CONFLATED)
 
     val events = eventChannel.receiveAsFlow()
 
-    val userDisplays = userDisplayRepository.userDisplays.map { entries ->
-        listOf(UserDisplayItem.AddEntry) + entries.map { it.toEntry() }.sortedByDescending { it.id } // preserve order: since new entries is added at the top of the list
+    val userDisplays = userDisplayRepository.userDisplays.map { userDisplays ->
+        val entries = userDisplays
+            .map(UserDisplayEntity::toEntry)
+            .sortedByDescending { it.id } // preserve order since new entries are added at the top of the list
+        listOf(UserDisplayItem.AddEntry) + entries
     }
 
     private suspend fun newBlankEntry() {
         userDisplayRepository.addUserDisplay(
             UserDisplayItem.Entry(
-                id = 0, username = "", enabled = true, aliasEnabled = false, alias = "", colorEnabled = false, color = 0xff000000.toInt()
+                id = 0,
+                username = "",
+                enabled = true,
+                aliasEnabled = false,
+                alias = "",
+                colorEnabled = false,
+                color = Message.DEFAULT_COLOR,
             ).toEntity()
         )
     }
@@ -37,7 +47,11 @@ class UserDisplayViewModel @Inject constructor(
     }
 
     private suspend fun saveEntries(userDisplayEntries: List<UserDisplayItem>) {
-        userDisplayRepository.addUserDisplays(userDisplayEntries.filterIsInstance<UserDisplayItem.Entry>().map { it.toEntity() })
+        val entries = userDisplayEntries
+            .filterIsInstance<UserDisplayItem.Entry>()
+            .map(UserDisplayItem.Entry::toEntity)
+
+        userDisplayRepository.addUserDisplays(entries)
     }
 
     fun saveChangesAndCreateNewBlank(userDisplayEntries: List<UserDisplayItem>) = viewModelScope.launch {
@@ -58,5 +72,4 @@ class UserDisplayViewModel @Inject constructor(
         eventChannel.trySend(UserDisplayEvent.ItemRemoved(userDisplayEntry))
         userDisplayRepository.delete(userDisplayEntry.toEntity())
     }
-
 }

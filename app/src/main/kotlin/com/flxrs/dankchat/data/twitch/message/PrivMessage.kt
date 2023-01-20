@@ -22,7 +22,7 @@ data class PrivMessage(
     val userId: UserId? = null,
     val name: UserName,
     val displayName: DisplayName,
-    val color: Int = Color.parseColor(DEFAULT_COLOR),
+    val color: Int = DEFAULT_COLOR,
     val message: String,
     val originalMessage: String = message,
     val emotes: List<ChatMessageEmote> = emptyList(),
@@ -44,8 +44,7 @@ data class PrivMessage(
             }
 
             val displayName = tags["display-name"] ?: name
-            val colorTag = tags["color"]?.ifBlank { DEFAULT_COLOR } ?: DEFAULT_COLOR
-            val color = Color.parseColor(colorTag)
+            val color = tags["color"]?.ifBlank { null }?.let(Color::parseColor) ?: DEFAULT_COLOR
 
             val ts = tags["tmi-sent-ts"]?.toLongOrNull() ?: System.currentTimeMillis()
             var isAction = false
@@ -93,13 +92,7 @@ val PrivMessage.isElevatedMessage: Boolean
     get() = tags["pinned-chat-paid-amount"] != null
 
 /** format name for display in chat */
-val PrivMessage.formattedName: String
-    get() = userDisplay?.alias ?: when {
-        displayName.equals(name, ignoreCase = true) -> displayName
-        else                                        -> "$name($displayName)"
-    }
+val PrivMessage.aliasOrFormattedName: String
+    get() = userDisplay?.alias ?: name.formatWithDisplayName(displayName)
 
-fun PrivMessage.customOrUserColorOn(@ColorInt bgColor: Int): Int {
-    return userDisplay?.color ?: color.normalizeColor(bgColor)
-
-}
+fun PrivMessage.customOrUserColorOn(@ColorInt bgColor: Int): Int = userDisplay?.color ?: color.normalizeColor(bgColor)
