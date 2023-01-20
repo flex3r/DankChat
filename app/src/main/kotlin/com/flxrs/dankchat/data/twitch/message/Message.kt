@@ -1,5 +1,7 @@
 package com.flxrs.dankchat.data.twitch.message
 
+import com.flxrs.dankchat.data.UserId
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.irc.IrcMessage
 
 sealed class Message {
@@ -7,8 +9,8 @@ sealed class Message {
     abstract val timestamp: Long
     abstract val highlights: Set<Highlight>
 
-    data class EmoteData(val message: String, val channel: String, val emoteTag: String)
-    data class BadgeData(val userId: String?, val channel: String, val badgeTag: String?, val badgeInfoTag: String?)
+    data class EmoteData(val message: String, val channel: UserName?, val emoteTag: String)
+    data class BadgeData(val userId: UserId?, val channel: UserName?, val badgeTag: String?, val badgeInfoTag: String?)
 
     open val emoteData: EmoteData? = null
     open val badgeData: BadgeData? = null

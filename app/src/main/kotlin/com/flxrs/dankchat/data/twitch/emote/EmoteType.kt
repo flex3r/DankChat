@@ -1,18 +1,20 @@
 package com.flxrs.dankchat.data.twitch.emote
 
+import com.flxrs.dankchat.data.UserName
+
 sealed class EmoteType : Comparable<EmoteType> {
     abstract val title: String
 
-    data class ChannelTwitchEmote(val channel: String) : EmoteType() {
-        override val title = channel
+    data class ChannelTwitchEmote(val channel: UserName) : EmoteType() {
+        override val title = channel.value
     }
 
-    data class ChannelTwitchBitEmote(val channel: String) : EmoteType() {
-        override val title = channel
+    data class ChannelTwitchBitEmote(val channel: UserName) : EmoteType() {
+        override val title = channel.value
     }
 
-    data class ChannelTwitchFollowerEmote(val channel: String) : EmoteType() {
-        override val title = channel
+    data class ChannelTwitchFollowerEmote(val channel: UserName) : EmoteType() {
+        override val title = channel.value
     }
 
     object ChannelFFZEmote : EmoteType() {

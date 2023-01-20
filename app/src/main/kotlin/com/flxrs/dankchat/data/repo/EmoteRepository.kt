@@ -2,10 +2,23 @@ package com.flxrs.dankchat.data.repo
 
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
+import android.os.Build
 import android.util.LruCache
 import androidx.annotation.VisibleForTesting
-import com.flxrs.dankchat.data.api.ApiManager
-import com.flxrs.dankchat.data.api.dto.*
+import com.flxrs.dankchat.data.UserId
+import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.data.api.bttv.dto.BTTVChannelDto
+import com.flxrs.dankchat.data.api.bttv.dto.BTTVEmoteDto
+import com.flxrs.dankchat.data.api.bttv.dto.BTTVGlobalEmoteDto
+import com.flxrs.dankchat.data.api.dankchat.DankChatApiClient
+import com.flxrs.dankchat.data.api.dankchat.dto.DankChatBadgeDto
+import com.flxrs.dankchat.data.api.dankchat.dto.DankChatEmoteDto
+import com.flxrs.dankchat.data.api.ffz.dto.FFZChannelDto
+import com.flxrs.dankchat.data.api.ffz.dto.FFZEmoteDto
+import com.flxrs.dankchat.data.api.ffz.dto.FFZGlobalDto
+import com.flxrs.dankchat.data.api.seventv.dto.SevenTVEmoteDto
+import com.flxrs.dankchat.data.api.seventv.dto.SevenTVEmoteFileDto
+import com.flxrs.dankchat.data.repo.chat.ChatRepository
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.badge.BadgeSet
 import com.flxrs.dankchat.data.twitch.badge.BadgeType
@@ -17,47 +30,57 @@ import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.utils.MultiCallback
 import com.flxrs.dankchat.utils.extensions.appendSpacesBetweenEmojiGroup
 import com.flxrs.dankchat.utils.extensions.removeDuplicateWhitespace
 import com.flxrs.dankchat.utils.extensions.supplementaryCodePointPositions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import pl.droidsonroids.gif.MultiCallback
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class EmoteRepository @Inject constructor(private val apiManager: ApiManager, private val preferences: DankChatPreferenceStore) {
+@Singleton
+class EmoteRepository @Inject constructor(
+    private val dankChatApiClient: DankChatApiClient,
+    private val preferences: DankChatPreferenceStore
+) {
     private val twitchEmotes = ConcurrentHashMap<String, GenericEmote>()
-    private var userStateEmoteSetIds: List<String> = emptyList()
 
-    private val ffzEmotes = ConcurrentHashMap<String, HashMap<String, GenericEmote>>()
+    private val ffzEmotes = ConcurrentHashMap<UserName, Map<String, GenericEmote>>()
     private val globalFFZEmotes = ConcurrentHashMap<String, GenericEmote>()
 
-    private val bttvEmotes = ConcurrentHashMap<String, HashMap<String, GenericEmote>>()
+    private val bttvEmotes = ConcurrentHashMap<UserName, Map<String, GenericEmote>>()
     private val globalBttvEmotes = ConcurrentHashMap<String, GenericEmote>()
 
-    private val sevenTVEmotes = ConcurrentHashMap<String, Map<String, GenericEmote>>()
+    private val sevenTVEmotes = ConcurrentHashMap<UserName, Map<String, GenericEmote>>()
     private val globalSevenTVEmotes = ConcurrentHashMap<String, GenericEmote>()
 
-    private val ffzModBadges = ConcurrentHashMap<String, String>()
-    private val ffzVipBadges = ConcurrentHashMap<String, String>()
-    private val channelBadges = ConcurrentHashMap<String, Map<String, BadgeSet>>()
+    private val ffzModBadges = ConcurrentHashMap<UserName, String>()
+    private val ffzVipBadges = ConcurrentHashMap<UserName, String>()
+    private val channelBadges = ConcurrentHashMap<UserName, Map<String, BadgeSet>>()
     private val globalBadges = ConcurrentHashMap<String, BadgeSet>()
     private val dankChatBadges = CopyOnWriteArrayList<DankChatBadgeDto>()
 
     val badgeCache = LruCache<String, Drawable>(64)
     val layerCache = LruCache<String, LayerDrawable>(256)
-    val gifCallback = MultiCallback(true)
+    val gifCallback = MultiCallback()
 
-    fun parse3rdPartyEmotes(message: String, channel: String = "", withTwitch: Boolean = false): List<ChatMessageEmote> {
+    fun parse3rdPartyEmotes(message: String, channel: UserName?, withTwitch: Boolean = false): List<ChatMessageEmote> {
         val splits = message.split(WHITESPACE_REGEX)
         val emotes = mutableListOf<ChatMessageEmote>()
 
-        if (withTwitch) twitchEmotes.forEach { emotes.addAll(parseMessageForEmote(it.value, splits)) }
-        ffzEmotes[channel]?.forEach { emotes.addAll(parseMessageForEmote(it.value, splits, emotes)) }
-        bttvEmotes[channel]?.forEach { emotes.addAll(parseMessageForEmote(it.value, splits, emotes)) }
-        sevenTVEmotes[channel]?.forEach { emotes.addAll(parseMessageForEmote(it.value, splits, emotes)) }
+        if (withTwitch) {
+            twitchEmotes.forEach { emotes.addAll(parseMessageForEmote(it.value, splits)) }
+        }
+
+        if (channel != null) {
+            ffzEmotes[channel]?.forEach { emotes.addAll(parseMessageForEmote(it.value, splits, emotes)) }
+            bttvEmotes[channel]?.forEach { emotes.addAll(parseMessageForEmote(it.value, splits, emotes)) }
+            sevenTVEmotes[channel]?.forEach { emotes.addAll(parseMessageForEmote(it.value, splits, emotes)) }
+        }
+
         globalFFZEmotes.forEach { emotes.addAll(parseMessageForEmote(it.value, splits, emotes)) }
         globalBttvEmotes.forEach { emotes.addAll(parseMessageForEmote(it.value, splits, emotes)) }
         globalSevenTVEmotes.forEach { emotes.addAll(parseMessageForEmote(it.value, splits, emotes)) }
@@ -82,12 +105,11 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
 
         val (adjustedMessage, adjustedEmotes) = adjustOverlayEmotes(appendedSpaceAdjustedMessage, emotes)
         val messageWithEmotes = when (message) {
-            is PrivMessage       -> message.copy(message = adjustedMessage, originalMessage = appendedSpaceAdjustedMessage, emotes = adjustedEmotes)
-            is WhisperMessage    -> message.copy(message = adjustedMessage, originalMessage = appendedSpaceAdjustedMessage, emotes = adjustedEmotes)
+            is PrivMessage       -> message.copy(message = adjustedMessage, emotes = adjustedEmotes)
+            is WhisperMessage    -> message.copy(message = adjustedMessage, emotes = adjustedEmotes)
             is UserNoticeMessage -> message.copy(
                 childMessage = message.childMessage?.copy(
                     message = adjustedMessage,
-                    originalMessage = appendedSpaceAdjustedMessage,
                     emotes = adjustedEmotes
                 )
             )
@@ -181,22 +203,22 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
             TagListEntry(key, value, it)
         }
 
-    private fun getChannelBadgeUrl(channel: String, set: String, version: String) = channelBadges[channel]?.get(set)?.versions?.get(version)?.imageUrlHigh
+    private fun getChannelBadgeUrl(channel: UserName?, set: String, version: String) = channel?.let { channelBadges[channel]?.get(set)?.versions?.get(version)?.imageUrlHigh }
 
     private fun getGlobalBadgeUrl(set: String, version: String) = globalBadges[set]?.versions?.get(version)?.imageUrlHigh
 
-    private fun getBadgeTitle(channel: String, set: String, version: String): String? {
-        return channelBadges[channel]?.get(set)?.versions?.get(version)?.title
+    private fun getBadgeTitle(channel: UserName?, set: String, version: String): String? {
+        return channel?.let { channelBadges[channel]?.get(set)?.versions?.get(version)?.title }
             ?: globalBadges[set]?.versions?.get(version)?.title
     }
 
-    private fun getFfzModBadgeUrl(channel: String): String? = ffzModBadges[channel]
+    private fun getFfzModBadgeUrl(channel: UserName?): String? = channel?.let { ffzModBadges[channel] }
 
-    private fun getFfzVipBadgeUrl(channel: String): String? = ffzVipBadges[channel]
+    private fun getFfzVipBadgeUrl(channel: UserName?): String? = channel?.let { ffzVipBadges[channel] }
 
-    private fun getDankChatBadgeTitleAndUrl(userId: String?): Pair<String, String>? = dankChatBadges.find { it.users.any { id -> id == userId } }?.let { it.type to it.url }
+    private fun getDankChatBadgeTitleAndUrl(userId: UserId?): Pair<String, String>? = dankChatBadges.find { it.users.any { id -> id == userId } }?.let { it.type to it.url }
 
-    fun setChannelBadges(channel: String, badges: Map<String, BadgeSet>) {
+    fun setChannelBadges(channel: UserName, badges: Map<String, BadgeSet>) {
         channelBadges[channel] = badges
     }
 
@@ -208,13 +230,12 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
         dankChatBadges.addAll(dto)
     }
 
-    suspend fun loadUserStateEmotes(globalEmoteSetIds: List<String>, followerEmoteSetIds: Map<String, List<String>>) = withContext(Dispatchers.Default) {
+    suspend fun loadUserStateEmotes(globalEmoteSetIds: List<String>, followerEmoteSetIds: Map<UserName, List<String>>) = withContext(Dispatchers.Default) {
         twitchEmotes.clear()
         val combined = (globalEmoteSetIds + followerEmoteSetIds.values.flatten()).distinct()
-        val sets = runCatching { apiManager.getUserSets(combined) }
+        val sets = dankChatApiClient.getUserSets(combined)
             .getOrNull()
             .orEmpty()
-        userStateEmoteSetIds = sets.map { it.id }
 
         sets.forEach { emoteSet ->
             val type = when (val set = emoteSet.id) {
@@ -234,14 +255,14 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
         }
     }
 
-    suspend fun setFFZEmotes(channel: String, ffzResult: FFZChannelDto) = withContext(Dispatchers.Default) {
-        val emotes = hashMapOf<String, GenericEmote>()
-        ffzResult.sets.forEach {
-            it.value.emotes.forEach { emote ->
-                val parsedEmote = parseFFZEmote(emote, channel)
-                emotes[parsedEmote.code] = parsedEmote
+    suspend fun setFFZEmotes(channel: UserName, ffzResult: FFZChannelDto) = withContext(Dispatchers.Default) {
+        val emotes = ffzResult.sets
+            .flatMap { set ->
+                set.value.emotes.mapNotNull {
+                    parseFFZEmote(it, channel)
+                }
             }
-        }
+            .associateBy { it.code }
         ffzEmotes[channel] = emotes
         ffzResult.room.modBadgeUrls?.let { ffzModBadges[channel] = "https:" + (it["4"] ?: it["2"] ?: it["1"]) }
         ffzResult.room.vipBadgeUrls?.let { ffzVipBadges[channel] = "https:" + (it["4"] ?: it["2"] ?: it["1"]) }
@@ -249,26 +270,26 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
 
     suspend fun setFFZGlobalEmotes(ffzResult: FFZGlobalDto) = withContext(Dispatchers.Default) {
         globalFFZEmotes.clear()
-        ffzResult.sets
+        val emotes = ffzResult.sets
             .filter { it.key in ffzResult.defaultSets }
-            .forEach { (_, emoteSet) ->
-                emoteSet.emotes.forEach { emote ->
-                    val parsedEmote = parseFFZEmote(emote)
-                    globalFFZEmotes[parsedEmote.code] = parsedEmote
+            .flatMap { (_, emoteSet) ->
+                emoteSet.emotes.mapNotNull { emote ->
+                    parseFFZEmote(emote, channel = null)
                 }
             }
+            .associateBy { it.code }
+        globalFFZEmotes.putAll(emotes)
     }
 
-    suspend fun setBTTVEmotes(channel: String, bttvResult: BTTVChannelDto) = withContext(Dispatchers.Default) {
-        val emotes = hashMapOf<String, GenericEmote>()
-        (bttvResult.emotes + bttvResult.sharedEmotes).forEach {
+    suspend fun setBTTVEmotes(channel: UserName, bttvResult: BTTVChannelDto) = withContext(Dispatchers.Default) {
+        val emotes = (bttvResult.emotes + bttvResult.sharedEmotes).associate {
             val emote = parseBTTVEmote(it)
-            emotes[emote.code] = emote
+            emote.code to emote
         }
         bttvEmotes[channel] = emotes
     }
 
-    suspend fun setBTTVGlobalEmotes(globalEmotes: List<BTTVGlobalEmotesDto>) = withContext(Dispatchers.Default) {
+    suspend fun setBTTVGlobalEmotes(globalEmotes: List<BTTVGlobalEmoteDto>) = withContext(Dispatchers.Default) {
         globalBttvEmotes.clear()
         globalEmotes.forEach {
             val emote = parseBTTVGlobalEmote(it)
@@ -276,14 +297,13 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
         }
     }
 
-    suspend fun setSevenTVEmotes(channel: String, sevenTvResult: List<SevenTVEmoteDto>) = withContext(Dispatchers.Default) {
+    suspend fun setSevenTVEmotes(channel: UserName, sevenTvResult: List<SevenTVEmoteDto>) = withContext(Dispatchers.Default) {
         if (sevenTvResult.isEmpty()) return@withContext
 
         sevenTVEmotes[channel] = sevenTvResult
             .filterUnlistedIfEnabled()
-            .associate { emote ->
-                emote.name to parseSevenTVEmote(emote, EmoteType.ChannelSevenTVEmote)
-            }
+            .mapNotNull { parseSevenTVEmote(it, EmoteType.ChannelSevenTVEmote) }
+            .associateBy { it.code }
     }
 
     suspend fun setSevenTVGlobalEmotes(sevenTvResult: List<SevenTVEmoteDto>) = withContext(Dispatchers.Default) {
@@ -293,26 +313,12 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
         sevenTvResult
             .filterUnlistedIfEnabled()
             .forEach { emote ->
-                globalSevenTVEmotes[emote.name] = parseSevenTVEmote(emote, EmoteType.GlobalSevenTVEmote)
+                val parsed = parseSevenTVEmote(emote, EmoteType.GlobalSevenTVEmote) ?: return@forEach
+                globalSevenTVEmotes[emote.name] = parsed
             }
     }
 
-    fun clearFFZEmotes() {
-        globalFFZEmotes.clear()
-        ffzEmotes.clear()
-    }
-
-    fun clearBTTVEmotes() {
-        globalBttvEmotes.clear()
-        bttvEmotes.clear()
-    }
-
-    fun clearSevenTVEmotes() {
-        globalSevenTVEmotes.clear()
-        sevenTVEmotes.clear()
-    }
-
-    suspend fun getEmotes(channel: String): List<GenericEmote> = withContext(Dispatchers.Default) {
+    suspend fun getEmotes(channel: UserName): List<GenericEmote> = withContext(Dispatchers.Default) {
         buildList {
             twitchEmotes.values.filterNot {
                 it.emoteType is EmoteType.ChannelTwitchFollowerEmote && it.emoteType.channel != channel
@@ -328,16 +334,16 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
         }.sortedBy { it.code }
     }
 
-    private val String?.twitchEmoteType: EmoteType
+    private val UserName?.twitchEmoteType: EmoteType
         get() = when {
             this == null || isGlobalTwitchChannel -> EmoteType.GlobalTwitchEmote
             else                                  -> EmoteType.ChannelTwitchEmote(this)
         }
 
-    private val String.isGlobalTwitchChannel: Boolean
-        get() = equals("qa_TW_Partner", ignoreCase = true) || equals("Twitch", ignoreCase = true)
+    private val UserName.isGlobalTwitchChannel: Boolean
+        get() = value.equals("qa_TW_Partner", ignoreCase = true) || value.equals("Twitch", ignoreCase = true)
 
-    private fun List<TwitchEmoteDto>?.mapToGenericEmotes(type: EmoteType): List<GenericEmote> = this?.map { (name, id) ->
+    private fun List<DankChatEmoteDto>?.mapToGenericEmotes(type: EmoteType): List<GenericEmote> = this?.map { (name, id) ->
         val code = when (type) {
             is EmoteType.GlobalTwitchEmote -> EMOTE_REPLACEMENTS[name] ?: name
             else                           -> name
@@ -498,7 +504,7 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
         )
     }
 
-    private fun parseBTTVGlobalEmote(emote: BTTVGlobalEmotesDto): GenericEmote {
+    private fun parseBTTVGlobalEmote(emote: BTTVGlobalEmoteDto): GenericEmote {
         val name = emote.code
         val id = emote.id
         val url = BTTV_EMOTE_TEMPLATE.format(id, BTTV_EMOTE_SIZE)
@@ -514,38 +520,57 @@ class EmoteRepository @Inject constructor(private val apiManager: ApiManager, pr
         )
     }
 
-    private fun parseFFZEmote(emote: FFZEmoteDto, channel: String = ""): GenericEmote {
+    private fun parseFFZEmote(emote: FFZEmoteDto, channel: UserName?): GenericEmote? {
         val name = emote.name
         val id = emote.id
         val (scale, url) = when {
-            emote.urls.containsKey("4") && emote.urls["4"] != null -> 1 to emote.urls.getValue("4")
-            emote.urls.containsKey("2") && emote.urls["2"] != null -> 2 to emote.urls.getValue("2")
-            else                                                   -> 4 to emote.urls["1"]
+            emote.urls["4"] != null -> 1 to emote.urls.getValue("4")
+            emote.urls["2"] != null -> 2 to emote.urls.getValue("2")
+            else                    -> 4 to emote.urls["1"]
         }
-        val lowResUrl = emote.urls["2"] ?: emote.urls.getValue("1")
-        val type = when {
-            channel.isBlank() -> EmoteType.GlobalFFZEmote
-            else              -> EmoteType.ChannelFFZEmote
+        url ?: return null
+        val lowResUrl = emote.urls["2"] ?: emote.urls["1"] ?: return null
+        val type = when (channel) {
+            null -> EmoteType.GlobalFFZEmote
+            else -> EmoteType.ChannelFFZEmote
         }
         return GenericEmote(name, "https:$url", "https:$lowResUrl", "$id", scale, type)
     }
 
-    private fun parseSevenTVEmote(emote: SevenTVEmoteDto, type: EmoteType): GenericEmote {
-        val urls = emote.urls.associate { (size, url) -> size to url }
+    private fun parseSevenTVEmote(emote: SevenTVEmoteDto, type: EmoteType): GenericEmote? {
+        val data = emote.data ?: return null
+        if (data.isTwitchDisallowed) {
+            return null
+        }
+
+        val base = "https:${data.host.url}/"
+        val urls = data.host.files
+            .filter { it.format == "WEBP" }
+            .associate {
+                it.staticName to it.emoteUrlWithFallback(base, data.animated)
+            }
+
         return GenericEmote(
             code = emote.name,
-            url = urls.getValue("4"),
-            lowResUrl = urls.getValue("2"),
+            url = urls["4x"] ?: return null,
+            lowResUrl = urls["2x"] ?: urls["1x"] ?: return null,
             id = emote.id,
             scale = 1,
             emoteType = type,
-            isOverlayEmote = SevenTVEmoteVisibility.ZERO_WIDTH in emote.visibility
+            isOverlayEmote = emote.isZeroWidth,
         )
+    }
+
+    private fun SevenTVEmoteFileDto.emoteUrlWithFallback(base: String, animated: Boolean): String {
+        return when {
+            animated && Build.VERSION.SDK_INT < Build.VERSION_CODES.P -> "$base$staticName.gif"
+            else                                                      -> "$base$name"
+        }
     }
 
     private fun List<SevenTVEmoteDto>.filterUnlistedIfEnabled(): List<SevenTVEmoteDto> = when {
         preferences.unlistedSevenTVEmotesEnabled -> this
-        else                                     -> filterNot { SevenTVEmoteVisibility.UNLISTED in it.visibility }
+        else                                     -> filter { it.data?.listed == true }
     }
 
     companion object {

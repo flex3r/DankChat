@@ -19,16 +19,23 @@ import androidx.core.content.getSystemService
 import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.data.repo.ChatRepository
-import com.flxrs.dankchat.data.repo.DataRepository
+import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.data.repo.chat.ChatRepository
+import com.flxrs.dankchat.data.repo.data.DataRepository
+import com.flxrs.dankchat.data.toUserNames
+import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.data.twitch.message.Message
 import com.flxrs.dankchat.data.twitch.message.NoticeMessage
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
 import com.flxrs.dankchat.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
-import java.util.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.launch
+import java.util.Locale
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -46,7 +53,7 @@ class NotificationService : Service(), CoroutineScope {
             getString(R.string.preference_tts_key)                      -> ttsEnabled = sharedPreferences.getBoolean(key, false).also { setTTSEnabled(it) }
             getString(R.string.preference_tts_message_ignore_url_key)   -> removeURL = sharedPreferences.getBoolean(key, false)
             getString(R.string.preference_tts_message_ignore_emote_key) -> removeEmote = sharedPreferences.getBoolean(key, false)
-            getString(R.string.preference_tts_user_ignore_list_key)     -> ignoredTtsUsers = sharedPreferences.getStringSet(key, emptySet()).orEmpty()
+            getString(R.string.preference_tts_user_ignore_list_key)     -> ignoredTtsUsers = sharedPreferences.getStringSet(key, emptySet()).orEmpty().toUserNames().toSet()
             getString(R.string.preference_tts_force_english_key)        -> {
                 forceEnglishTTS = sharedPreferences.getBoolean(key, false)
                 setTTSVoice()
@@ -61,10 +68,10 @@ class NotificationService : Service(), CoroutineScope {
     private var forceEnglishTTS = false
     private var removeURL = false
     private var removeEmote = false
-    private var ignoredTtsUsers = emptySet<String>()
+    private var ignoredTtsUsers = emptySet<UserName>()
 
     private var notificationsJob: Job? = null
-    private val notifications = mutableMapOf<String, MutableList<Int>>()
+    private val notifications = mutableMapOf<UserName, MutableList<Int>>()
 
     @Inject
     lateinit var chatRepository: ChatRepository
@@ -74,14 +81,14 @@ class NotificationService : Service(), CoroutineScope {
 
     private var tts: TextToSpeech? = null
     private var audioManager: AudioManager? = null
-    private var previousTTSUser: String? = null
+    private var previousTTSUser: UserName? = null
 
     private val pendingIntentFlag: Int = when {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         else                                           -> PendingIntent.FLAG_UPDATE_CURRENT
     }
 
-    private var activeTTSChannel: String? = null
+    private var activeTTSChannel: UserName? = null
     private var shouldNotifyOnMention = false
 
     override val coroutineContext: CoroutineContext
@@ -125,7 +132,7 @@ class NotificationService : Service(), CoroutineScope {
             ttsEnabled = sharedPreferences.getBoolean(getString(R.string.preference_tts_key), false).also { setTTSEnabled(it) }
             removeURL = sharedPreferences.getBoolean(getString(R.string.preference_tts_message_ignore_url_key), false)
             removeEmote = sharedPreferences.getBoolean(getString(R.string.preference_tts_message_ignore_emote_key), false)
-            ignoredTtsUsers = sharedPreferences.getStringSet(getString(R.string.preference_tts_user_ignore_list_key), emptySet()).orEmpty()
+            ignoredTtsUsers = sharedPreferences.getStringSet(getString(R.string.preference_tts_user_ignore_list_key), emptySet()).orEmpty().toUserNames().toSet()
             registerOnSharedPreferenceChangeListener(preferenceListener)
         }
     }
@@ -139,7 +146,7 @@ class NotificationService : Service(), CoroutineScope {
         return START_NOT_STICKY
     }
 
-    fun setActiveChannel(channel: String) {
+    fun setActiveChannel(channel: UserName) {
         activeTTSChannel = channel
         val ids = notifications.remove(channel)
         ids?.forEach { manager.cancel(it) }
@@ -253,7 +260,7 @@ class NotificationService : Service(), CoroutineScope {
                         initTTS()
                     }
 
-                    if (message is PrivMessage && ignoredTtsUsers.any { it.equals(message.name, ignoreCase = true) || it.equals(message.displayName, ignoreCase = true) }) {
+                    if (message is PrivMessage && ignoredTtsUsers.any { it.matches(message.name) || it.matches(message.displayName) }) {
                         return@forEach
                     }
 
@@ -266,42 +273,54 @@ class NotificationService : Service(), CoroutineScope {
     private fun Message.shouldPlayTTS(): Boolean = this is PrivMessage || this is NoticeMessage || this is UserNoticeMessage
 
     private fun Message.playTTSMessage() {
-        val baseMessage = when (this) {
+        val message = when (this) {
             is UserNoticeMessage -> message
             is NoticeMessage     -> message
             else                 -> {
                 if (this !is PrivMessage) return
-                val filteredMessage = when {
-                    removeEmote -> emotes.fold(message) { acc, emote ->
-                        acc.replace(emote.code, newValue = "", ignoreCase = true)
-                    }.run {
-                        //Replaces all unicode character that are: So - Symbol Other, Sc - Symbol Currency, Sm - Symbol Math, Cn - Unassigned.
-                        //This will not filter out non latin script (Arabic and Japanese for example works fine.)
-                        replace(UNICODE_SYMBOL_REGEX, replacement = "")
-                    }
+                val filtered = message
+                    .filterEmotes(emotes)
+                    .filterUnicodeSymbols()
+                    .filterUrls()
 
-                    else        -> message
+                if (filtered.isBlank()) {
+                    return
                 }
+
                 when {
-                    !combinedTTSFormat || name == previousTTSUser           -> filteredMessage
-                    tts?.voice?.locale?.language == Locale.ENGLISH.language -> "$name said $filteredMessage"
-                    else                                                    -> "$name. $filteredMessage".also { previousTTSUser = name }
-                }
+                    !combinedTTSFormat || name == previousTTSUser           -> filtered
+                    tts?.voice?.locale?.language == Locale.ENGLISH.language -> "$name said $filtered"
+                    else                                                    -> "$name. $filtered"
+                }.also { previousTTSUser = name }
             }
-        }
-
-        var ttsMessage = baseMessage
-        if (removeURL) {
-            ttsMessage = ttsMessage.replace(URL_REGEX, replacement = "")
         }
 
         val queueMode = when {
             ttsMessageQueue -> TextToSpeech.QUEUE_ADD
             else            -> TextToSpeech.QUEUE_FLUSH
         }
-        tts?.speak(ttsMessage, queueMode, null, null)
+        tts?.speak(message, queueMode, null, null)
     }
 
+    private fun String.filterEmotes(emotes: List<ChatMessageEmote>): String = when {
+        removeEmote -> emotes.fold(this) { acc, emote ->
+            acc.replace(emote.code, newValue = "", ignoreCase = true)
+        }
+
+        else        -> this
+    }
+
+    private fun String.filterUnicodeSymbols(): String = when {
+        //Replaces all unicode character that are: So - Symbol Other, Sc - Symbol Currency, Sm - Symbol Math, Cn - Unassigned.
+        //This will not filter out non latin script (Arabic and Japanese for example works fine.)
+        removeEmote -> replace(UNICODE_SYMBOL_REGEX, replacement = "")
+        else        -> this
+    }
+
+    private fun String.filterUrls(): String = when {
+        removeURL -> replace(URL_REGEX, replacement = "")
+        else      -> this
+    }
 
     private fun NotificationData.createMentionNotification() {
         val pendingStartActivityIntent = Intent(this@NotificationService, MainActivity::class.java).let {

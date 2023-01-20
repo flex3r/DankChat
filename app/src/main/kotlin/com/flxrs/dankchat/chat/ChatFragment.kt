@@ -3,8 +3,8 @@ package com.flxrs.dankchat.chat
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.SharedPreferences
+import android.graphics.drawable.Animatable
 import android.graphics.drawable.LayerDrawable
-import android.os.Build
 import android.os.Bundle
 import android.text.style.ImageSpan
 import android.view.LayoutInflater
@@ -14,29 +14,30 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.navArgs
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.data.DisplayName
+import com.flxrs.dankchat.data.UserId
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.repo.EmoteRepository
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.main.MainViewModel
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.utils.extensions.*
+import com.flxrs.dankchat.utils.extensions.collectFlow
+import com.flxrs.dankchat.utils.extensions.forEachLayer
+import com.flxrs.dankchat.utils.extensions.forEachSpan
+import com.flxrs.dankchat.utils.extensions.forEachViewHolder
+import com.flxrs.dankchat.utils.extensions.showShortSnackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import pl.droidsonroids.gif.GifDrawable
 import javax.inject.Inject
 
 @AndroidEntryPoint
 open class ChatFragment : Fragment() {
-    private val args: ChatFragmentArgs by navArgs()
     private val viewModel: ChatViewModel by viewModels()
     private val mainViewModel: MainViewModel by viewModels({ requireParentFragment() })
 
@@ -58,7 +59,7 @@ open class ChatFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bindingRef = ChatFragmentBinding.inflate(inflater, container, false).apply {
-            lifecycleOwner = this@ChatFragment
+            chatLayout.layoutTransition?.setAnimateParentHierarchy(false)
             scrollBottom.setOnClickListener {
                 scrollBottom.visibility = View.GONE
                 mainViewModel.isScrolling(false)
@@ -68,10 +69,7 @@ open class ChatFragment : Fragment() {
             }
         }
 
-        if (args.channel.isNotBlank()) {
-            collectFlow(viewModel.chat) { adapter.submitList(it) }
-        }
-
+        collectFlow(viewModel.chat) { adapter.submitList(it) }
         return binding.root
     }
 
@@ -115,7 +113,7 @@ open class ChatFragment : Fragment() {
         super.onStart()
 
         // Trigger a redraw of last 50 items to start gifs again
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && ::preferences.isInitialized && preferences.getBoolean(getString(R.string.preference_animate_gifs_key), true)) {
+        if (::preferences.isInitialized && preferences.getBoolean(getString(R.string.preference_animate_gifs_key), true)) {
             binding.chat.post {
                 val start = (adapter.itemCount - MAX_MESSAGES_REDRAW_AMOUNT).coerceAtLeast(minimumValue = 0)
                 val itemCount = MAX_MESSAGES_REDRAW_AMOUNT.coerceAtMost(maximumValue = adapter.itemCount)
@@ -125,17 +123,19 @@ open class ChatFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        bindingRef = null
+        binding.chat.adapter = null
+        binding.chat.layoutManager = null
         if (::preferences.isInitialized) {
             preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         }
 
+        bindingRef = null
         super.onDestroyView()
     }
 
     override fun onStop() {
         // Stop animated drawables and related invalidation callbacks
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && activity?.isChangingConfigurations == false && ::adapter.isInitialized) {
+        if (activity?.isChangingConfigurations == false && ::adapter.isInitialized) {
             binding.chat.cleanupActiveDrawables(adapter.itemCount)
         }
 
@@ -155,16 +155,25 @@ open class ChatFragment : Fragment() {
         outState.putBoolean(AT_BOTTOM_STATE, isAtBottom)
     }
 
-    protected open fun onUserClick(targetUserId: String?, targetUserName: String, messageId: String, channel: String, badges: List<Badge>, isLongPress: Boolean) {
+    protected open fun onUserClick(
+        targetUserId: UserId?,
+        targetUserName: UserName,
+        targetDisplayName: DisplayName,
+        messageId: String,
+        channel: UserName?,
+        badges: List<Badge>,
+        isLongPress: Boolean
+    ) {
         targetUserId ?: return
         val shouldLongClickMention = preferences.getBoolean(getString(R.string.preference_user_long_click_key), true)
         val shouldMention = (isLongPress && shouldLongClickMention) || (!isLongPress && !shouldLongClickMention)
 
         when {
-            shouldMention -> (parentFragment as? MainFragment)?.mentionUser(targetUserName)
+            shouldMention -> (parentFragment as? MainFragment)?.mentionUser(targetUserName, targetDisplayName)
             else          -> (parentFragment as? MainFragment)?.openUserPopup(
                 targetUserId = targetUserId,
                 targetUserName = targetUserName,
+                targetDisplayName = targetDisplayName,
                 messageId = messageId,
                 channel = channel,
                 badges = badges,
@@ -183,14 +192,7 @@ open class ChatFragment : Fragment() {
     protected open fun scrollToPosition(position: Int) {
         bindingRef ?: return
         if (position > 0 && isAtBottom) {
-            binding.chat.stopScroll()
-            binding.chat.scrollToPosition(position)
-            lifecycleScope.launch {
-                delay(50)
-                if (isAtBottom && position != adapter.itemCount - 1) binding.chat.post {
-                    manager.scrollToPositionWithOffset(position, 0)
-                }
-            }
+            manager.scrollToPositionWithOffset(position, 0)
         }
     }
 
@@ -222,7 +224,7 @@ open class ChatFragment : Fragment() {
     private fun RecyclerView.cleanupActiveDrawables(itemCount: Int) =
         forEachViewHolder<ChatAdapter.ViewHolder>(itemCount) { holder ->
             holder.binding.itemText.forEachSpan<ImageSpan> { imageSpan ->
-                (imageSpan.drawable as? LayerDrawable)?.forEachLayer(GifDrawable::stop)
+                (imageSpan.drawable as? LayerDrawable)?.forEachLayer(Animatable::stop)
             }
         }
 
@@ -231,7 +233,7 @@ open class ChatFragment : Fragment() {
         private const val MAX_MESSAGES_REDRAW_AMOUNT = 50
         private const val OFFSCREEN_VIEW_CACHE_SIZE = 10
 
-        fun newInstance(channel: String) = ChatFragment().apply {
+        fun newInstance(channel: UserName) = ChatFragment().apply {
             arguments = ChatFragmentArgs(channel).toBundle()
         }
 

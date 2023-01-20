@@ -1,6 +1,6 @@
 package com.flxrs.dankchat.data.repo
 
-import com.flxrs.dankchat.data.api.ApiManager
+import com.flxrs.dankchat.data.api.dankchat.DankChatApiClient
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import io.mockk.impl.annotations.InjectMockKs
@@ -15,7 +15,7 @@ import kotlin.test.assertEquals
 internal class EmoteRepositoryTest {
 
     @MockK
-    lateinit var apiManager: ApiManager
+    lateinit var dankchatApiClient: DankChatApiClient
 
     @MockK
     lateinit var preferences: DankChatPreferenceStore

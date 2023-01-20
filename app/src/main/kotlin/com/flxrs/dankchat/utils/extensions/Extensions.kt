@@ -10,21 +10,21 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.SavedStateHandle
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.chat.menu.EmoteItem
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.google.android.material.color.MaterialColors
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
-fun List<GenericEmote>?.toEmoteItems(): List<EmoteItem> =
-    this
-        ?.groupBy { it.emoteType.title }
-        ?.mapValues { (title, emotes) -> EmoteItem.Header(title) + emotes.map(EmoteItem::Emote).sorted() }
-        ?.flatMap { it.value }
-        .orEmpty()
+fun List<GenericEmote>?.toEmoteItems(): List<EmoteItem> = this
+    ?.groupBy { it.emoteType.title }
+    ?.mapValues { (title, emotes) -> EmoteItem.Header(title) + emotes.map(EmoteItem::Emote).sorted() }
+    ?.flatMap { it.value }
+    .orEmpty()
 
-fun List<GenericEmote>.moveToFront(channel: String?): List<GenericEmote> =
-    this.partition { it.emoteType.title.equals(channel, ignoreCase = true) }
-        .run { first + second }
+fun List<GenericEmote>.moveToFront(channel: UserName?): List<GenericEmote> = this
+    .partition { it.emoteType.title.equals(channel?.value, ignoreCase = true) }
+    .run { first + second }
 
 inline fun <V> measureTimeValue(block: () -> V): Pair<V, Long> {
     val start = System.currentTimeMillis()

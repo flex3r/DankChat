@@ -4,15 +4,16 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 
 class ChatTabAdapter(parentFragment: Fragment, private val dankChatPreferenceStore: DankChatPreferenceStore) : FragmentStateAdapter(parentFragment) {
 
-    private val _channels = mutableListOf<String>()
-    private val _channelsWithRenames = mutableListOf<String>()
+    private val _channels = mutableListOf<UserName>()
+    private val _channelsWithRenames = mutableListOf<UserName>()
 
-    val channels: List<String> = _channels
-    val channelsWithRenames: List<String> = _channelsWithRenames
+    val channels: List<UserName> = _channels
+    val channelsWithRenames: List<UserName> = _channelsWithRenames
 
     override fun createFragment(position: Int) = ChatFragment.newInstance(_channels[position])
 
@@ -25,13 +26,13 @@ class ChatTabAdapter(parentFragment: Fragment, private val dankChatPreferenceSto
 
     override fun containsItem(itemId: Long): Boolean = _channels.any { it.hashCode().toLong() == itemId }
 
-    fun addFragment(channel: String) {
+    fun addFragment(channel: UserName) {
         _channels += channel
         _channelsWithRenames += dankChatPreferenceStore.getRenamedChannel(channel) ?: channel
         notifyItemInserted(_channels.lastIndex)
     }
 
-    fun updateFragments(channels: List<String>) {
+    fun updateFragments(channels: List<UserName>) {
         val oldChannels = _channels.toList()
         val oldChannelsWithRenames = _channelsWithRenames.toList()
         val newChannelsWithRenames = channels.map { dankChatPreferenceStore.getRenamedChannel(it) ?: it }

@@ -72,7 +72,7 @@
     <string name="system_message_no_history">Nevidíte žádné minulé zprávy, protože jste se odhlásili z načítání minulých zpráv.</string>
     <string name="timed_out_message">&lt; Zpráva smazána &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
-    <string name="multi_entry_add_entry">Přidat zápis</string>
+    <string name="multi_entry_add_entry">Přidat položku</string>
     <string name="login_expired">Přihlášení vypršelo! Zkuste se přihlásit znovu.</string>
     <string name="message_history_disclaimer_title">Vyloučení odpovědnosti o historii zpráv</string>
     <string name="message_history_disclaimer_message">DankChat načítá minulé zprávy ze služby třetí strany při spuštění.
@@ -266,6 +266,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="case_sensitive">Rozlišovat velká a malá písmena</string>
     <string name="highlights">Zvýraznění</string>
     <string name="enabled">Zapnuto</string>
+    <string name="create_notification">Oznámení</string>
     <string name="preference_highlights_summary">Upravit zvýraznění zpráv</string>
     <string name="preference_highlights_ignores_header">Zvýraznění a ignorování</string>
     <string name="username">Přezdívka</string>
@@ -283,8 +284,8 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="unblocked_user_failed">Nepodařilo se odblokovat uživatele %1$s</string>
     <string name="blocked_user_failed">Nepodařilo se zablokovat uživatele %1$s</string>
     <string name="highlights_entry_username">Tvá přezdívka</string>
-    <string name="highlights_ignores_entry_subscriptions">Předplatná</string>
-    <string name="highlights_ignores_entry_announcements">Oznámení</string>
+    <string name="highlights_ignores_entry_subscriptions">Předplatné a Události</string>
+    <string name="highlights_ignores_entry_announcements">Oznámení v chatu</string>
     <string name="highlights_ignores_entry_first_messages">První zprávy</string>
     <string name="highlights_ignores_entry_elevated_messages">Zvýrazněné zprávy</string>
     <string name="highlights_ignores_entry_redemptions">Zvýraznění zakoupené přes věrnostní body</string>
@@ -295,6 +296,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="ignores_messages_title">Ignorovat zprávy na základě určitých vzorů</string>
     <string name="ignores_users_title">Ignorovat zprávy od určitých uživatelů</string>
     <string name="ignores_twitch_title">Spravovat zablokované Twitch uživatele</string>
+    <string name="preference_notification_whisper_title">Vytvořit oznámení pro šepoty</string>
     <plurals name="viewers">
         <item quantity="one">Živě s %d divákem</item>
         <item quantity="few">Živě se %d diváky</item>

@@ -56,6 +56,7 @@
     <string name="snackbar_retry">Повторить</string>
     <string name="snackbar_data_reloaded">Смайлы обновлены</string>
     <string name="snackbar_data_load_failed_cause">Ошибка загрузки данных: %1$s</string>
+    <string name="snackbar_data_load_failed_multiple_causes">Загрузка данных не удалась из-за нескольких ошибок:\n%1$s</string>
     <string name="snackbar_paste">Вставить</string>
     <string name="add_channel_hint">Имя канала</string>
     <string name="emote_menu_tab_recent">Недавние</string>
@@ -63,6 +64,7 @@
     <string name="emote_menu_tab_channel">Смайлы канала</string>
     <string name="emote_menu_tab_global">Общедоступные смайлы</string>
     <string name="system_message_connected">Подключено</string>
+    <string name="system_message_reconnected">Переподключено</string>
     <string name="system_message_channel_non_existent">Такой канал не существует</string>
     <string name="system_message_disconnected">Отключено</string>
     <string name="system_message_history_unavailable_detailed">Сервис истории сообщений недоступен (Ошибка %1$s)</string>
@@ -70,6 +72,9 @@
     <string name="system_message_history_recovering">Сервис истории сообщений восстанавливается, в истории сообщений возможны пробелы.</string>
     <string name="system_message_history_ignored">История сообщений недоступна так как этот канал исключён из сервиса.</string>
     <string name="system_message_no_history">Вы не видите историю сообщений, поскольку выбрали отклонить интеграцию недавних сообщений.</string>
+    <string name="system_message_ffz_emotes_failed">Не удалось загрузить смайлы FFZ (ошибка %1$s)</string>
+    <string name="system_message_bttv_emotes_failed">Не удалось загрузить смайлы BTTV (ошибка %1$s)</string>
+    <string name="system_message_7tv_emotes_failed">Не удалось загрузить смайлы 7TV (ошибка %1$s)</string>
     <string name="timed_out_message">&lt; Сообщение удалено &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Добавить запись</string>
@@ -264,6 +269,7 @@
     <string name="case_sensitive">Соблюдать регистр</string>
     <string name="highlights">Выделения</string>
     <string name="enabled">Включено</string>
+    <string name="create_notification">Уведомление</string>
     <string name="preference_highlights_summary">Редактировать выделения сообщений</string>
     <string name="preference_highlights_ignores_header">Выделения и Игнорирования</string>
     <string name="username">Имя пользователя</string>
@@ -281,9 +287,10 @@
     <string name="unblocked_user_failed">Не удалось разблокировать пользователя %1$s</string>
     <string name="blocked_user_failed">Не удалось заблокировать пользователя %1$s</string>
     <string name="highlights_entry_username">Ваше имя пользователя</string>
-    <string name="highlights_ignores_entry_subscriptions">Подписки</string>
+    <string name="highlights_ignores_entry_subscriptions">Подписки и События</string>
     <string name="highlights_ignores_entry_announcements">Анонсы</string>
     <string name="highlights_ignores_entry_first_messages">Первые сообщения</string>
+    <string name="highlights_ignores_entry_elevated_messages">Возвышенные сообщения</string>
     <string name="highlights_ignores_entry_redemptions">Выделения купленные за баллы канала</string>
     <string name="highlights_ignores_entry_custom">Пользовательские</string>
     <string name="highlights_messages_title">Создает уведомления, и выделяет сообщения на основе определенных шаблонов.</string>
@@ -292,6 +299,9 @@
     <string name="ignores_messages_title">Игнорирует сообщения, основанные на определенных шаблонах.</string>
     <string name="ignores_users_title">Игнорирует сообщения от определенных пользователей.</string>
     <string name="ignores_twitch_title">Управление заблокированными пользователями Twitch.</string>
+    <string name="preference_notification_whisper_title">Создавать уведомления для личных сообщений</string>
+    <string name="login_outdated_title">Логин устарел!</string>
+    <string name="login_outdated_message">Ваш логин устарел и не имеет доступа к некоторым функциям. Пожалуйста, войдите снова.</string>
     <plurals name="viewers">
         <item quantity="one">В сети с %d зрителем</item>
         <item quantity="few">В сети с %d зрителями</item>

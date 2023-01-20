@@ -140,3 +140,13 @@ fun String.trimEndSpecialChar(): String = trimEnd().run {
         else                                                    -> this
     }.trimEnd()
 }
+
+inline fun CharSequence.indexOfFirst(startIndex: Int = 0, predicate: (Char) -> Boolean): Int {
+    for (index in startIndex.coerceAtLeast(0)..lastIndex) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+
+    return -1
+}

@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.data.*
 import com.flxrs.dankchat.data.twitch.badge.BadgeType
 import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.preferences.command.CommandDto
@@ -26,7 +27,8 @@ import javax.inject.Singleton
 
 @Singleton
 class DankChatPreferenceStore @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val json: Json,
 ) {
     private val dankChatPreferences: SharedPreferences = context.getSharedPreferences(context.getString(R.string.shared_preference_key), Context.MODE_PRIVATE)
     private val defaultPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -51,17 +53,21 @@ class DankChatPreferenceStore @Inject constructor(
         get() = dankChatPreferences.getStringSet(CHANNELS_KEY, setOf())
         set(value) = dankChatPreferences.edit { putStringSet(CHANNELS_KEY, value) }
 
-    var userName: String?
-        get() = dankChatPreferences.getString(NAME_KEY, null)
-        set(value) = dankChatPreferences.edit { putString(NAME_KEY, value) }
+    var userName: UserName?
+        get() = dankChatPreferences.getString(NAME_KEY, null)?.ifBlank { null }?.toUserName()
+        set(value) = dankChatPreferences.edit { putString(NAME_KEY, value?.value?.ifBlank { null }) }
+
+    var displayName: DisplayName?
+        get() = dankChatPreferences.getString(DISPLAY_NAME_KEY, null)?.ifBlank { null }?.toDisplayName()
+        set(value) = dankChatPreferences.edit { putString(DISPLAY_NAME_KEY, value?.value?.ifBlank { null }) }
 
     var userId: Int
         get() = dankChatPreferences.getInt(ID_KEY, 0)
         set(value) = dankChatPreferences.edit { putInt(ID_KEY, value) }
 
-    var userIdString: String?
-        get() = dankChatPreferences.getString(ID_STRING_KEY, null)
-        set(value) = dankChatPreferences.edit { putString(ID_STRING_KEY, value) }
+    var userIdString: UserId?
+        get() = dankChatPreferences.getString(ID_STRING_KEY, null)?.ifBlank { null }?.toUserId()
+        set(value) = dankChatPreferences.edit { putString(ID_STRING_KEY, value?.value?.ifBlank { null }) }
 
     var hasExternalHostingAcknowledged: Boolean
         get() = dankChatPreferences.getBoolean(EXTERNAL_HOSTING_ACK_KEY, false)
@@ -74,9 +80,6 @@ class DankChatPreferenceStore @Inject constructor(
     var customImageUploader: ImageUploader
         get() {
             val url = dankChatPreferences.getString(UPLOADER_URL, null) ?: return DEFAULT_UPLOADER
-            if (url == UPLOADER_URL_DEFAULT_OLD) {
-                return resetImageUploader()
-            }
 
             val formField = dankChatPreferences.getString(UPLOADER_FORM_FIELD, UPLOADER_FORM_FIELD_DEFAULT) ?: UPLOADER_FORM_FIELD_DEFAULT
             val headers = dankChatPreferences.getString(UPLOADER_HEADERS, null)
@@ -212,11 +215,11 @@ class DankChatPreferenceStore @Inject constructor(
     val createWhisperNotifications: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_notification_whisper_key), true)
 
-    val currentUserNameFlow: Flow<String?> = callbackFlow {
-        send(userName?.ifBlank { null })
+    val currentUserAndDisplayFlow: Flow<Pair<UserName?, DisplayName?>> = callbackFlow {
+        send(userName to displayName)
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (key == NAME_KEY) {
-                trySend(userName?.ifBlank { null })
+            if (key == NAME_KEY || key == DISPLAY_NAME_KEY) {
+                trySend(userName to displayName)
             }
         }
 
@@ -236,7 +239,6 @@ class DankChatPreferenceStore @Inject constructor(
             val fetchStreamsKey = getString(R.string.preference_fetch_streams_key)
 
             send(Preference.RoomState(roomStateEnabled))
-            //send(Preference.FetchStreams(fetchStreamInfoEnabled))
             send(Preference.StreamInfo(showStreamInfoEnabled, updateTimer = false))
             send(Preference.Input(inputEnabled))
             send(Preference.ScrollBack(scrollbackLength))
@@ -269,9 +271,9 @@ class DankChatPreferenceStore @Inject constructor(
 
     fun clearLogin() = dankChatPreferences.edit {
         putBoolean(LOGGED_IN_KEY, false)
-        putString(OAUTH_KEY, "")
-        putString(NAME_KEY, "")
-        putString(ID_STRING_KEY, "")
+        putString(OAUTH_KEY, null)
+        putString(NAME_KEY, null)
+        putString(ID_STRING_KEY, null)
     }
 
     fun clearBlacklist() = defaultPreferences.edit {
@@ -282,20 +284,23 @@ class DankChatPreferenceStore @Inject constructor(
         remove(context.getString(R.string.preference_custom_mentions_key))
     }
 
-    fun getChannels(): List<String> = channelsString?.split(',') ?: channels.also { channels = null }?.toList().orEmpty()
+    fun getChannels(): List<UserName> {
+        val channels = channelsString?.split(',') ?: channels.also { channels = null }?.toList().orEmpty()
+        return channels.toUserNames()
+    }
 
-    fun getRenamedChannel(channel: String): String? {
+    fun getRenamedChannel(channel: UserName): UserName? {
         val renameMap = channelRenames?.toMutableMap()
         return renameMap?.get(channel)
     }
 
-    fun setRenamedChannel(channel: String, renaming: String) {
+    fun setRenamedChannel(channel: UserName, renaming: UserName) {
         withChannelRenames {
             put(channel, renaming)
         }
     }
 
-    fun removeChannelRename(channel: String) {
+    fun removeChannelRename(channel: UserName) {
         withChannelRenames {
             remove(channel)
         }
@@ -316,25 +321,26 @@ class DankChatPreferenceStore @Inject constructor(
         return getCommandsFromPreferences(key)
     }
 
-    private inline fun withChannelRenames(block: MutableMap<String, String>.() -> Unit) {
+    private inline fun withChannelRenames(block: MutableMap<UserName, UserName>.() -> Unit) {
         val renameMap = channelRenames?.toMutableMap() ?: mutableMapOf()
         renameMap.block()
         channelRenames = renameMap.toJson()
     }
 
-    private fun String.toMutableMap(): MutableMap<String, String> {
-        return Json.decodeOrNull<Map<String, String>>(this).orEmpty().toMutableMap()
-    }
+    private fun String.toMutableMap(): MutableMap<UserName, UserName> = json
+        .decodeOrNull<Map<UserName, UserName>>(this)
+        .orEmpty()
+        .toMutableMap()
 
     private fun getMultiEntriesFromPreferences(key: String): List<MultiEntryDto> {
         return defaultPreferences
             .getStringSet(key, emptySet())
             .orEmpty()
-            .mapNotNull { Json.decodeOrNull<MultiEntryDto>(it) }
+            .mapNotNull { json.decodeOrNull<MultiEntryDto>(it) }
     }
 
     private fun setMultiEntries(key: String, entries: List<MultiEntryDto>) {
-        entries.map { Json.encodeToString(it) }
+        entries.map { json.encodeToString(it) }
             .toSet()
             .let {
                 defaultPreferences.edit { putStringSet(key, it) }
@@ -345,10 +351,10 @@ class DankChatPreferenceStore @Inject constructor(
         return defaultPreferences
             .getStringSet(key, emptySet())
             .orEmpty()
-            .mapNotNull { Json.decodeOrNull<CommandDto>(it)?.toEntryItem() }
+            .mapNotNull { json.decodeOrNull<CommandDto>(it)?.toEntryItem() }
     }
 
-    private fun Map<String, String>.toJson(): String = Json.encodeToString(this)
+    private fun Map<UserName, UserName>.toJson(): String = json.encodeToString(this)
 
     private val timestampFormat: String
         get() = defaultPreferences.getString(context.getString(R.string.preference_timestamp_format_key), "HH:mm") ?: "HH:mm"
@@ -369,6 +375,7 @@ class DankChatPreferenceStore @Inject constructor(
         private const val LOGGED_IN_KEY = "loggedIn"
         private const val OAUTH_KEY = "oAuthKey"
         private const val NAME_KEY = "nameKey"
+        private const val DISPLAY_NAME_KEY = "displayNameKey"
         private const val CHANNELS_KEY = "channelsKey"
         private const val RENAME_KEY = "renameKey"
         private const val CHANNELS_AS_STRING_KEY = "channelsAsStringKey"
@@ -385,11 +392,9 @@ class DankChatPreferenceStore @Inject constructor(
         private const val UPLOADER_DELETION_LINK = "uploaderDeletionLink"
 
         private const val UPLOADER_URL_DEFAULT = "https://kappa.lol/api/upload"
-        private const val UPLOADER_URL_DEFAULT_OLD = "https://i.nuuls.com/upload"
         private const val UPLOADER_FORM_FIELD_DEFAULT = "file"
         private const val UPLOADER_IMAGE_LINK_DEFAULT = "{link}"
         private const val UPLOADER_DELETE_LINK_DEFAULT = "{delete}"
-
 
         private const val RM_HOST_DEFAULT = "https://recent-messages.robotty.de/api/v2/"
 

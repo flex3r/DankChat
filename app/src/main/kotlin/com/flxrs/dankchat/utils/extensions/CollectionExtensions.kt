@@ -1,6 +1,6 @@
 package com.flxrs.dankchat.utils.extensions
 
-import java.util.*
+import java.util.Collections
 
 fun <T> MutableCollection<T>.replaceAll(values: Collection<T>) {
     clear()

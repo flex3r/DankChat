@@ -1,13 +1,15 @@
 package com.flxrs.dankchat.data.twitch.message
 
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.irc.IrcMessage
-import java.util.*
+import com.flxrs.dankchat.data.toUserName
+import java.util.UUID
 
 data class UserNoticeMessage(
     override val timestamp: Long = System.currentTimeMillis(),
     override val id: String = UUID.randomUUID().toString(),
     override val highlights: Set<Highlight> = emptySet(),
-    val channel: String,
+    val channel: UserName,
     val message: String,
     val childMessage: PrivMessage?,
     val tags: Map<String, String>,
@@ -55,7 +57,7 @@ data class UserNoticeMessage(
             return UserNoticeMessage(
                 timestamp = ts,
                 id = id,
-                channel = channel,
+                channel = channel.toUserName(),
                 message = systemMsg,
                 childMessage = childMessage?.takeIf { it.message.isNotBlank() },
                 tags = tags,

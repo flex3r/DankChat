@@ -56,6 +56,7 @@
     <string name="snackbar_retry">Retry</string>
     <string name="snackbar_data_reloaded">Emotes reloaded</string>
     <string name="snackbar_data_load_failed_cause">Data loading failed: %1$s</string>
+    <string name="snackbar_data_load_failed_multiple_causes">Data loading failed with multiple errors:\n%1$s</string>
     <string name="snackbar_paste">Paste</string>
     <string name="add_channel_hint">Channel name</string>
     <string name="emote_menu_tab_recent">Recent</string>
@@ -63,6 +64,7 @@
     <string name="emote_menu_tab_channel">Channel</string>
     <string name="emote_menu_tab_global">Global</string>
     <string name="system_message_connected">Connected</string>
+    <string name="system_message_reconnected">Reconnected</string>
     <string name="system_message_channel_non_existent">This channel does not exist</string>
     <string name="system_message_disconnected">Disconnected</string>
     <string name="system_message_history_unavailable_detailed">Message history service unavailable (Error %1$s)</string>
@@ -70,6 +72,9 @@
     <string name="system_message_history_recovering">Message history service recovering, there may be gaps in the message history.</string>
     <string name="system_message_history_ignored">Message history unavailable because this channel is excluded from the service.</string>
     <string name="system_message_no_history">You are not seeing any historical messages because you opted out of the recent-messages integration.</string>
+    <string name="system_message_ffz_emotes_failed">Failed to load FFZ emotes (Error %1$s)</string>
+    <string name="system_message_bttv_emotes_failed">Failed to load BTTV emotes (Error %1$s)</string>
+    <string name="system_message_7tv_emotes_failed">Failed to load 7TV emotes (Error %1$s)</string>
     <string name="timed_out_message">&lt; Message deleted &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Add an entry</string>
@@ -349,6 +354,8 @@
     <string name="ignores_twitch_title">Manage blocked Twitch users.</string>
     <string name="preference_notification_whisper_key" translatable="false">notification_whisper_key</string>
     <string name="preference_notification_whisper_title">Create notifications for whispers</string>
+    <string name="login_outdated_title">Login Outdated!</string>
+    <string name="login_outdated_message">Your login is outdated and does not have access to some functionality. Please login again.</string>
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>
         <item quantity="other">Live with %d viewers</item>

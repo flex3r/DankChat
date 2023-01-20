@@ -3,6 +3,8 @@
 package com.flxrs.dankchat.data.repo
 
 import android.util.Log
+import com.flxrs.dankchat.data.DisplayName
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.database.dao.BlacklistedUserDao
 import com.flxrs.dankchat.data.database.dao.MessageHighlightDao
 import com.flxrs.dankchat.data.database.dao.UserHighlightDao
@@ -31,9 +33,9 @@ class HighlightsRepository @Inject constructor(
     @ApplicationScope private val coroutineScope: CoroutineScope
 ) {
 
-    private val currentUserName = preferences.currentUserNameFlow.stateIn(coroutineScope, SharingStarted.Eagerly, null)
-    private val currentUserNameRegex = currentUserName
-        .map { it?.let { """\b$it\b""".toRegex(RegexOption.IGNORE_CASE) } }
+    private val currentUserAndDisplay = preferences.currentUserAndDisplayFlow.stateIn(coroutineScope, SharingStarted.Eagerly, null)
+    private val currentUserRegex = currentUserAndDisplay
+        .map(::createUserAndDisplayRegex)
         .stateIn(coroutineScope, SharingStarted.Eagerly, null)
 
     val messageHighlights = messageHighlightDao.getMessageHighlightsFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
@@ -224,13 +226,6 @@ class HighlightsRepository @Inject constructor(
                 }
             }
 
-            userHighlights.forEach {
-                if (it.username.equals(name, ignoreCase = true)) {
-                    add(Highlight(HighlightType.Custom))
-                    addNotificationHighlightIfEnabled(it)
-                }
-            }
-
             messageHighlights
                 .filter { it.type == MessageHighlightEntityType.Custom }
                 .forEach {
@@ -241,6 +236,13 @@ class HighlightsRepository @Inject constructor(
                         addNotificationHighlightIfEnabled(it)
                     }
                 }
+
+            userHighlights.forEach {
+                if (name.matches(it.username)) {
+                    add(Highlight(HighlightType.Custom))
+                    addNotificationHighlightIfEnabled(it)
+                }
+            }
 
         }
 
@@ -288,21 +290,30 @@ class HighlightsRepository @Inject constructor(
 
     private val PrivMessage.containsCurrentUserName: Boolean
         get() {
-            val currentUser = currentUserName.value ?: return false
-            if (name.equals(currentUser, ignoreCase = true)) {
+            val currentUser = currentUserAndDisplay.value?.first ?: return false
+            if (name.matches(currentUser)) {
                 return false
             }
 
-            val regex = currentUserNameRegex.value ?: return false
+            val regex = currentUserRegex.value ?: return false
             return message.contains(regex)
         }
 
-    private fun isUserBlacklisted(name: String): Boolean {
+    private fun createUserAndDisplayRegex(values: Pair<UserName?, DisplayName?>?): Regex? {
+        val (user, display) = values ?: return null
+        user ?: return null
+        val displayRegex = display
+            ?.takeIf { !user.matches(it) }
+            ?.let { "|$it" }.orEmpty()
+        return """\b$user$displayRegex\b""".toRegex(RegexOption.IGNORE_CASE)
+    }
+
+    private fun isUserBlacklisted(name: UserName): Boolean {
         validBlacklistedUsers.value
             .forEach {
                 val hasMatch = when {
                     it.isRegex -> it.regex?.let { regex -> name.matches(regex) } ?: false
-                    else       -> name.equals(it.username, ignoreCase = true)
+                    else       -> name.matches(it.username)
                 }
 
                 if (hasMatch) {

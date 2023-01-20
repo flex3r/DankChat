@@ -9,6 +9,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.channels.ChannelsDialogFragment
+import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.databinding.EditDialogBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -18,7 +19,7 @@ class EditChannelDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val binding = EditDialogBinding.inflate(layoutInflater, null, false).apply {
-            dialogEdit.hint = args.renaming ?: args.channel
+            dialogEdit.hint = args.renaming?.value ?: args.channel.value
             dialogEdit.setOnEditorActionListener { _, actionId, _ ->
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE -> getInputAndDismiss(dialogEdit.text)
@@ -49,7 +50,7 @@ class EditChannelDialogFragment : DialogFragment() {
         if (trimmedInput.isNotBlank()) {
             findNavController()
                 .getBackStackEntry(R.id.channelsDialogFragment)
-                .savedStateHandle[ChannelsDialogFragment.RENAME_TAB_REQUEST_KEY] = args.channel to trimmedInput
+                .savedStateHandle[ChannelsDialogFragment.RENAME_TAB_REQUEST_KEY] = args.channel to trimmedInput.toUserName()
         }
         dismiss()
         return true

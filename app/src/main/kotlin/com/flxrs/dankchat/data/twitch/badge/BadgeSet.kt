@@ -1,6 +1,6 @@
 package com.flxrs.dankchat.data.twitch.badge
 
-import com.flxrs.dankchat.data.api.dto.TwitchBadgesDto
+import com.flxrs.dankchat.data.api.badges.dto.TwitchBadgeSetsDto
 
 data class BadgeSet(
     val id: String,
@@ -15,7 +15,7 @@ data class BadgeVersion(
     val imageUrlHigh: String
 )
 
-fun TwitchBadgesDto.toBadgeSets(): Map<String, BadgeSet> = sets.mapValues { (id, set) ->
+fun TwitchBadgeSetsDto.toBadgeSets(): Map<String, BadgeSet> = sets.mapValues { (id, set) ->
     BadgeSet(
         id = id,
         versions = set.versions.mapValues { (badgeId, badge) ->

@@ -31,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.imageLoader
 import coil.request.ImageRequest
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.data.*
 import com.flxrs.dankchat.data.repo.EmoteRepository
 import com.flxrs.dankchat.data.repo.EmoteRepository.Companion.cacheKey
 import com.flxrs.dankchat.data.twitch.badge.Badge
@@ -51,7 +52,7 @@ class ChatAdapter(
     private val emoteRepository: EmoteRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
     private val onListChanged: (position: Int) -> Unit,
-    private val onUserClick: (targetUserId: String?, targetUsername: String, messageId: String, channelName: String, badges: List<Badge>, isLongPress: Boolean) -> Unit,
+    private val onUserClick: (targetUserId: UserId?, targetUsername: UserName, targetDisplayName: DisplayName, messageId: String, channelName: UserName?, badges: List<Badge>, isLongPress: Boolean) -> Unit,
     private val onMessageLongClick: (message: String) -> Unit
 ) : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
     // Using position.isEven for determining which background to use in checkered mode doesn't work,
@@ -60,6 +61,7 @@ class ChatAdapter(
         get() = field++
 
     companion object {
+        private val DISALLOWED_URL_CHARS = """<>\{}|^"`""".toSet()
         private const val SCALE_FACTOR_CONSTANT = 1.5 / 112
         private const val BASE_HEIGHT_CONSTANT = 1.173
         private const val MONOSPACE_FONT_PROPORTION = 0.95f // make monospace font a bit smaller to make looks same sized as normal text
@@ -107,7 +109,7 @@ class ChatAdapter(
             is NoticeMessage          -> holder.binding.itemText.handleNoticeMessage(message, holder)
             is UserNoticeMessage      -> holder.binding.itemText.handleUserNoticeMessage(message, holder)
             is PrivMessage            -> holder.binding.itemText.handlePrivMessage(message, holder, item.isMentionTab)
-            is ClearChatMessage       -> holder.binding.itemText.handleClearChatMessage(message, holder)
+            is ModerationMessage      -> holder.binding.itemText.handleModerationMessage(message, holder)
             is PointRedemptionMessage -> holder.binding.itemText.handlePointRedemptionMessage(message, holder)
             is WhisperMessage         -> holder.binding.itemText.handleWhisperMessage(message, holder)
         }
@@ -184,19 +186,22 @@ class ChatAdapter(
         setRippleBackground(background, enableRipple = false)
 
         val systemMessageText = when (message.type) {
-            is SystemMessageType.Disconnected              -> context.getString(R.string.system_message_disconnected)
-            is SystemMessageType.NoHistoryLoaded           -> context.getString(R.string.system_message_no_history)
-            is SystemMessageType.Connected                 -> context.getString(R.string.system_message_connected)
-            is SystemMessageType.LoginExpired              -> context.getString(R.string.login_expired)
-            is SystemMessageType.ChannelNonExistent        -> context.getString(R.string.system_message_channel_non_existent)
-            is SystemMessageType.MessageHistoryUnavailable -> when (message.type.status) {
+            is SystemMessageType.Disconnected               -> context.getString(R.string.system_message_disconnected)
+            is SystemMessageType.NoHistoryLoaded            -> context.getString(R.string.system_message_no_history)
+            is SystemMessageType.Connected                  -> context.getString(R.string.system_message_connected)
+            is SystemMessageType.Reconnected                -> context.getString(R.string.system_message_reconnected)
+            is SystemMessageType.LoginExpired               -> context.getString(R.string.login_expired)
+            is SystemMessageType.ChannelNonExistent         -> context.getString(R.string.system_message_channel_non_existent)
+            is SystemMessageType.MessageHistoryIgnored      -> context.getString(R.string.system_message_history_ignored)
+            is SystemMessageType.MessageHistoryIncomplete   -> context.getString(R.string.system_message_history_recovering)
+            is SystemMessageType.ChannelBTTVEmotesFailed    -> context.getString(R.string.system_message_bttv_emotes_failed, message.type.status)
+            is SystemMessageType.ChannelFFZEmotesFailed     -> context.getString(R.string.system_message_ffz_emotes_failed, message.type.status)
+            is SystemMessageType.ChannelSevenTVEmotesFailed -> context.getString(R.string.system_message_7tv_emotes_failed, message.type.status)
+            is SystemMessageType.Custom                     -> message.type.message
+            is SystemMessageType.MessageHistoryUnavailable  -> when (message.type.status) {
                 null -> context.getString(R.string.system_message_history_unavailable)
                 else -> context.getString(R.string.system_message_history_unavailable_detailed, message.type.status)
             }
-
-            is SystemMessageType.MessageHistoryIgnored     -> context.getString(R.string.system_message_history_ignored)
-            is SystemMessageType.MessageHistoryIncomplete  -> context.getString(R.string.system_message_history_recovering)
-            is SystemMessageType.Custom                    -> message.type.message
         }
         val withTime = when {
             dankChatPreferenceStore.showTimestamps -> SpannableStringBuilder()
@@ -210,7 +215,7 @@ class ChatAdapter(
         text = withTime
     }
 
-    private fun TextView.handleClearChatMessage(message: ClearChatMessage, holder: ViewHolder) {
+    private fun TextView.handleModerationMessage(message: ModerationMessage, holder: ViewHolder) {
         val background = when {
             dankChatPreferenceStore.isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(
                 this,
@@ -223,9 +228,13 @@ class ChatAdapter(
         }
         setRippleBackground(background, enableRipple = false)
 
+        val systemMessage = message.getSystemMessage(dankChatPreferenceStore.userName, dankChatPreferenceStore.showTimedOutMessages)
         val withTime = when {
-            dankChatPreferenceStore.showTimestamps -> SpannableStringBuilder().timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp)) }.append(message.systemMesage)
-            else                                   -> SpannableStringBuilder().append(message.systemMesage)
+            dankChatPreferenceStore.showTimestamps -> SpannableStringBuilder()
+                .timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp)) }
+                .append(systemMessage)
+
+            else                                   -> SpannableStringBuilder().append(systemMessage)
         }
 
         setTextSize(TypedValue.COMPLEX_UNIT_SP, dankChatPreferenceStore.fontSize)
@@ -319,13 +328,8 @@ class ChatAdapter(
         spannable.append(message)
 
         val userClickableSpan = object : LongClickableSpan() {
-            val mentionName = when {
-                name.equals(displayName, ignoreCase = true) -> displayName
-                else                                        -> name
-            }
-
-            override fun onClick(v: View) = onUserClick(userId, mentionName, id, "", badges, false)
-            override fun onLongClick(view: View) = onUserClick(userId, mentionName, id, "", badges, true)
+            override fun onClick(v: View) = onUserClick(userId, name, displayName, id, null, badges, false)
+            override fun onLongClick(view: View) = onUserClick(userId, name, displayName, id, null, badges, true)
             override fun updateDrawState(ds: TextPaint) {
                 ds.isUnderlineText = false
                 ds.color = senderColor
@@ -343,30 +347,7 @@ class ChatAdapter(
             else                             -> spannable
         } as SpannableStringBuilder
 
-        // TODO extract common
-        // links
-        LinkifyCompat.addLinks(spannableWithEmojis, Linkify.WEB_URLS)
-        spannableWithEmojis.getSpans<URLSpan>().forEach {
-            val start = spannableWithEmojis.getSpanStart(it)
-            val end = spannableWithEmojis.getSpanEnd(it)
-            spannableWithEmojis.removeSpan(it)
-
-            // skip partial link matches
-            val previousChar = spannableWithEmojis.getOrNull(index = start - 1)
-            if (previousChar != null && !previousChar.isWhitespace()) return@forEach
-
-            val clickableSpan = object : LongClickableSpan() {
-                override fun onLongClick(view: View) = onMessageLongClick(originalMessage)
-                override fun onClick(v: View) {
-                    try {
-                        customTabsIntent.launchUrl(context, it.url.toUri())
-                    } catch (e: ActivityNotFoundException) {
-                        Log.e("ViewBinding", Log.getStackTraceString(e))
-                    }
-                }
-            }
-            spannableWithEmojis[start..end] = clickableSpan
-        }
+        addLinks(spannableWithEmojis, originalMessage)
 
         // copying message
         val messageClickableSpan = object : LongClickableSpan() {
@@ -382,6 +363,7 @@ class ChatAdapter(
 
         // todo extract common badges + emote handling
         val animateGifs = dankChatPreferenceStore.animateGifs
+        var hasAnimatedEmoteOrBadge = false
         holder.scope.launch(holder.coroutineHandler) {
             allowedBadges.forEachIndexed { idx, badge ->
                 try {
@@ -389,7 +371,13 @@ class ChatAdapter(
                     val cacheKey = badge.cacheKey(baseHeight)
                     val cached = emoteRepository.badgeCache[cacheKey]
                     val drawable = when {
-                        cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
+                        cached != null -> cached.also {
+                            if (it is Animatable) {
+                                it.setRunning(animateGifs)
+                                hasAnimatedEmoteOrBadge = true
+                            }
+                        }
+
                         else           -> context.imageLoader
                             .execute(badge.url.toRequest(context))
                             .drawable?.apply {
@@ -403,6 +391,7 @@ class ChatAdapter(
                                 if (this is Animatable) {
                                     emoteRepository.badgeCache.put(cacheKey, this)
                                     setRunning(animateGifs)
+                                    hasAnimatedEmoteOrBadge = true
                                 }
                             }
                     }
@@ -416,10 +405,6 @@ class ChatAdapter(
                 }
             }
 
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && animateGifs) {
-                emoteRepository.gifCallback.addView(holder.binding.itemText)
-            }
-
             val fullPrefix = prefixLength + badgesLength
             try {
                 emotes
@@ -428,13 +413,20 @@ class ChatAdapter(
                         val key = emotes.cacheKey(baseHeight)
                         // fast path, backed by lru cache
                         val layerDrawable = emoteRepository.layerCache[key] ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
-
                         if (layerDrawable != null) {
+                            layerDrawable.forEachLayer<Animatable> { animatable ->
+                                hasAnimatedEmoteOrBadge = true
+                                animatable.setRunning(animateGifs)
+                            }
                             (text as Spannable).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
                         }
                     }
             } catch (t: Throwable) {
                 handleException(t)
+            }
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && animateGifs && hasAnimatedEmoteOrBadge) {
+                emoteRepository.gifCallback.addView(holder.binding.itemText)
             }
         }
     }
@@ -515,13 +507,8 @@ class ChatAdapter(
         // clicking usernames
         if (formattedName.isNotBlank()) {
             val userClickableSpan = object : LongClickableSpan() {
-                val mentionName = when {
-                    name.equals(displayName, ignoreCase = true) -> displayName
-                    else                                        -> name
-                }
-
-                override fun onClick(v: View) = onUserClick(userId, mentionName, id, channel, badges, false)
-                override fun onLongClick(view: View) = onUserClick(userId, mentionName, id, channel, badges, true)
+                override fun onClick(v: View) = onUserClick(userId, name, displayName, id, channel, badges, false)
+                override fun onLongClick(view: View) = onUserClick(userId, name, displayName, id, channel, badges, true)
                 override fun updateDrawState(ds: TextPaint) {
                     ds.isUnderlineText = false
                     ds.color = nameColor
@@ -540,29 +527,7 @@ class ChatAdapter(
             else                             -> messageBuilder
         } as SpannableStringBuilder
 
-        // links
-        LinkifyCompat.addLinks(spannableWithEmojis, Linkify.WEB_URLS)
-        spannableWithEmojis.getSpans<URLSpan>().forEach {
-            val start = spannableWithEmojis.getSpanStart(it)
-            val end = spannableWithEmojis.getSpanEnd(it)
-            spannableWithEmojis.removeSpan(it)
-
-            // skip partial link matches
-            val previousChar = spannableWithEmojis.getOrNull(index = start - 1)
-            if (previousChar != null && !previousChar.isWhitespace()) return@forEach
-
-            val clickableSpan = object : LongClickableSpan() {
-                override fun onLongClick(view: View) = onMessageLongClick(originalMessage)
-                override fun onClick(v: View) {
-                    try {
-                        customTabsIntent.launchUrl(context, it.url.toUri())
-                    } catch (e: ActivityNotFoundException) {
-                        Log.e("ViewBinding", Log.getStackTraceString(e))
-                    }
-                }
-            }
-            spannableWithEmojis[start..end] = clickableSpan
-        }
+        addLinks(spannableWithEmojis, originalMessage)
 
         // copying message
         val messageClickableSpan = object : LongClickableSpan() {
@@ -576,6 +541,7 @@ class ChatAdapter(
         setText(spannableWithEmojis, TextView.BufferType.SPANNABLE)
 
         val animateGifs = dankChatPreferenceStore.animateGifs
+        var hasAnimatedEmoteOrBadge = false
         holder.scope.launch(holder.coroutineHandler) {
             allowedBadges.forEachIndexed { idx, badge ->
                 try {
@@ -583,7 +549,13 @@ class ChatAdapter(
                     val cacheKey = badge.cacheKey(baseHeight)
                     val cached = emoteRepository.badgeCache[cacheKey]
                     val drawable = when {
-                        cached != null -> cached.also { (it as? Animatable)?.setRunning(animateGifs) }
+                        cached != null -> cached.also {
+                            if (it is Animatable) {
+                                it.setRunning(animateGifs)
+                                hasAnimatedEmoteOrBadge = true
+                            }
+                        }
+
                         else           -> context.imageLoader
                             .execute(badge.url.toRequest(context))
                             .drawable?.apply {
@@ -597,6 +569,7 @@ class ChatAdapter(
                                 if (this is Animatable) {
                                     emoteRepository.badgeCache.put(cacheKey, this)
                                     setRunning(animateGifs)
+                                    hasAnimatedEmoteOrBadge = true
                                 }
                             }
                     }
@@ -610,10 +583,6 @@ class ChatAdapter(
                 }
             }
 
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && animateGifs) {
-                emoteRepository.gifCallback.addView(holder.binding.itemText)
-            }
-
             val fullPrefix = prefixLength + badgesLength
             try {
                 emotes
@@ -621,16 +590,21 @@ class ChatAdapter(
                     .forEach { (_, emotes) ->
                         val key = emotes.cacheKey(baseHeight)
                         // fast path, backed by lru cache
-                        val layerDrawable = emoteRepository.layerCache[key]?.also {
-                            it.forEachLayer<Animatable> { animatable -> animatable.setRunning(animateGifs) }
-                        } ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
-
+                        val layerDrawable = emoteRepository.layerCache[key] ?: calculateLayerDrawable(context, emotes, key, animateGifs, scaleFactor)
                         if (layerDrawable != null) {
+                            layerDrawable.forEachLayer<Animatable> { animatable ->
+                                hasAnimatedEmoteOrBadge = true
+                                animatable.setRunning(animateGifs)
+                            }
                             (text as Spannable).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
                         }
                     }
             } catch (t: Throwable) {
                 handleException(t)
+            }
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && animateGifs && hasAnimatedEmoteOrBadge) {
+                emoteRepository.gifCallback.addView(holder.binding.itemText)
             }
         }
     }
@@ -655,9 +629,11 @@ class ChatAdapter(
             return null
         }
 
-        return drawables.toLayerDrawable(bounds, scaleFactor, emotes).also {
-            emoteRepository.layerCache.put(cacheKey, it)
-            it.forEachLayer<Animatable> { animatable -> animatable.setRunning(animateGifs) }
+        return drawables.toLayerDrawable(bounds, scaleFactor, emotes).also { layerDrawable ->
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && animateGifs && drawables.any { it is Animatable }) {
+                layerDrawable.callback = emoteRepository.gifCallback
+            }
+            emoteRepository.layerCache.put(cacheKey, layerDrawable)
         }
     }
 
@@ -668,10 +644,6 @@ class ChatAdapter(
 
         // set bounds again but adjust by maximum width/height of stacked drawables
         forEachIndexed { idx, dr -> dr.transformEmoteDrawable(scaleFactor, emotes[idx], maxWidth, maxHeight) }
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
-            callback = emoteRepository.gifCallback
-        }
     }
 
     private fun Spannable.setEmoteSpans(e: ChatMessageEmote, prefix: Int, drawable: Drawable) {
@@ -747,6 +719,41 @@ class ChatAdapter(
         }
     }
 
+    private fun TextView.addLinks(spannableWithEmojis: SpannableStringBuilder, originalMessage: String) {
+        LinkifyCompat.addLinks(spannableWithEmojis, Linkify.WEB_URLS)
+        spannableWithEmojis.getSpans<URLSpan>().forEach { urlSpan ->
+            val start = spannableWithEmojis.getSpanStart(urlSpan)
+            val end = spannableWithEmojis.getSpanEnd(urlSpan)
+            spannableWithEmojis.removeSpan(urlSpan)
+
+            val fixedEnd = spannableWithEmojis
+                .indexOfFirst(startIndex = end) { it.isWhitespace() || it in DISALLOWED_URL_CHARS }
+                .takeIf { it != -1 } ?: end
+            val fixedUrl = when (fixedEnd) {
+                end  -> urlSpan.url
+                else -> urlSpan.url + spannableWithEmojis.substring(end..fixedEnd)
+            }
+
+            // skip partial link matches
+            val previousChar = spannableWithEmojis.getOrNull(index = start - 1)
+            if (previousChar != null && !previousChar.isWhitespace()) {
+                return@forEach
+            }
+
+            val clickableSpan = object : LongClickableSpan() {
+                override fun onLongClick(view: View) = onMessageLongClick(originalMessage)
+                override fun onClick(v: View) {
+                    try {
+                        customTabsIntent.launchUrl(context, fixedUrl.toUri())
+                    } catch (e: ActivityNotFoundException) {
+                        Log.e("ViewBinding", Log.getStackTraceString(e))
+                    }
+                }
+            }
+            spannableWithEmojis[start..fixedEnd] = clickableSpan
+        }
+    }
+
     private fun TextView.handleException(throwable: Throwable) {
         if (throwable is CancellationException) return // Ignore job cancellations
 
@@ -761,7 +768,7 @@ class ChatAdapter(
 
 private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
     override fun areItemsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
-        return oldItem.message.id == newItem.message.id
+        return oldItem.tag == newItem.tag && oldItem.message.id == newItem.message.id
     }
 
     override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {

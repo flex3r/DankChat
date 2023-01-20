@@ -19,7 +19,6 @@ class TabSelectionListener : TabLayout.OnTabSelectedListener {
     }
 }
 
-
 fun TabLayout.setInitialColors() {
     val surfaceVariant = MaterialColors.getColor(this, R.attr.colorOnSurfaceVariant)
     val surface = MaterialColors.getColor(this, R.attr.colorSurface)

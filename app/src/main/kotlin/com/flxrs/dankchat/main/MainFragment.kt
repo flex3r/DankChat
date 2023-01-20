@@ -13,6 +13,7 @@ import android.text.util.Linkify
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.webkit.MimeTypeMap
+import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
@@ -30,6 +31,7 @@ import androidx.core.net.toUri
 import androidx.core.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -42,16 +44,16 @@ import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.ValidationResult
 import com.flxrs.dankchat.chat.ChatTabAdapter
-import com.flxrs.dankchat.chat.menu.EmoteMenuAdapter
-import com.flxrs.dankchat.chat.menu.EmoteMenuTab
+import com.flxrs.dankchat.chat.menu.EmoteMenuFragment
 import com.flxrs.dankchat.chat.suggestion.SpaceTokenizer
 import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.chat.suggestion.SuggestionsArrayAdapter
 import com.flxrs.dankchat.chat.user.UserPopupResult
+import com.flxrs.dankchat.data.*
 import com.flxrs.dankchat.data.state.DataLoadingState
 import com.flxrs.dankchat.data.state.ImageUploadState
 import com.flxrs.dankchat.data.twitch.badge.Badge
-import com.flxrs.dankchat.data.twitch.connection.ConnectionState
+import com.flxrs.dankchat.data.twitch.chat.ConnectionState
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.databinding.EditDialogBinding
 import com.flxrs.dankchat.databinding.MainFragmentBinding
@@ -61,7 +63,6 @@ import com.flxrs.dankchat.utils.extensions.*
 import com.flxrs.dankchat.utils.removeExifAttributes
 import com.flxrs.dankchat.utils.showErrorDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.card.MaterialCardView
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -84,14 +85,15 @@ class MainFragment : Fragment() {
     private val navController: NavController by lazy { findNavController() }
     private var bindingRef: MainFragmentBinding? = null
     private val binding get() = bindingRef!!
-    private var emoteMenuBottomSheetBehavior: BottomSheetBehavior<MaterialCardView>? = null
+
+    private var emoteMenuBottomSheetBehavior: BottomSheetBehavior<FrameLayout>? = null
     private var mentionBottomSheetBehavior: BottomSheetBehavior<View>? = null
     private val onBackPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
             when {
-                emoteMenuBottomSheetBehavior?.isVisible == true -> emoteMenuBottomSheetBehavior?.hide()
-                mentionBottomSheetBehavior?.isVisible == true   -> mentionBottomSheetBehavior?.hide()
-                mainViewModel.isFullscreen                      -> mainViewModel.toggleFullscreen()
+                mainViewModel.isEmoteSheetOpen                -> closeEmoteMenu()
+                mentionBottomSheetBehavior?.isVisible == true -> mentionBottomSheetBehavior?.hide()
+                mainViewModel.isFullscreen                    -> mainViewModel.toggleFullscreen()
             }
         }
     }
@@ -99,14 +101,14 @@ class MainFragment : Fragment() {
     private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             if (position in tabAdapter.channels.indices) {
-                val newChannel = tabAdapter.channels[position].lowercase(Locale.getDefault())
+                val newChannel = tabAdapter.channels[position].lowercase()
                 mainViewModel.setActiveChannel(newChannel)
 
             }
         }
 
         override fun onPageScrollStateChanged(state: Int) {
-            emoteMenuBottomSheetBehavior?.hide()
+            closeEmoteMenu()
             binding.input.dismissDropDown()
         }
     }
@@ -118,7 +120,6 @@ class MainFragment : Fragment() {
     private lateinit var preferences: SharedPreferences
     private lateinit var tabAdapter: ChatTabAdapter
     private lateinit var tabLayoutMediator: TabLayoutMediator
-    private lateinit var emoteMenuAdapter: EmoteMenuAdapter
     private lateinit var suggestionAdapter: SuggestionsArrayAdapter
     private var currentMediaUri = Uri.EMPTY
     private val tabSelectionListener = TabSelectionListener()
@@ -154,12 +155,11 @@ class MainFragment : Fragment() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         tabAdapter = ChatTabAdapter(parentFragment = this, dankChatPreferenceStore = dankChatPreferences)
-        emoteMenuAdapter = EmoteMenuAdapter(::insertEmote)
-
         bindingRef = MainFragmentBinding.inflate(inflater, container, false).apply {
-            emoteMenuBottomSheetBehavior = BottomSheetBehavior.from(emoteMenuBottomSheet)
-            vm = mainViewModel
-            lifecycleOwner = this@MainFragment
+            emoteMenuBottomSheetBehavior = BottomSheetBehavior.from(bottomSheetFrame).apply {
+                addBottomSheetCallback(emoteMenuCallBack)
+                skipCollapsed = true
+            }
             chatViewpager.setup()
             input.setup(this)
 
@@ -168,7 +168,7 @@ class MainFragment : Fragment() {
             }
 
             tabLayoutMediator = TabLayoutMediator(tabs, chatViewpager) { tab, position ->
-                tab.text = tabAdapter.channelsWithRenames[position]
+                tab.text = tabAdapter.channelsWithRenames[position].value
             }
 
             tabs.setInitialColors()
@@ -253,7 +253,7 @@ class MainFragment : Fragment() {
                     R.id.menu_logout                   -> showLogoutConfirmationDialog()
                     R.id.menu_add                      -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment)
                     R.id.menu_mentions                 -> {
-                        emoteMenuBottomSheetBehavior?.hide()
+                        closeEmoteMenu()
                         mentionBottomSheetBehavior?.expand()
                     }
 
@@ -275,20 +275,24 @@ class MainFragment : Fragment() {
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         mainViewModel.apply {
-            collectFlow(imageUploadEventFlow, ::handleImageUploadState)
-            collectFlow(dataLoadingEventFlow, ::handleDataLoadingState)
+            collectFlow(imageUploadState, ::handleImageUploadState)
+            collectFlow(dataLoadingState, ::handleDataLoadingState)
             collectFlow(shouldShowUploadProgress) { activity?.invalidateMenu() }
             collectFlow(suggestions, ::setSuggestions)
-            collectFlow(emoteTabItems, emoteMenuAdapter::submitList)
             collectFlow(isFullscreenFlow) { changeActionBarVisibility(it) }
+            collectFlow(shouldShowInput) {
+                binding.inputLayout.isVisible = it
+            }
             collectFlow(canType) {
+                binding.inputLayout.isEnabled = it
+                binding.input.isEnabled = it
                 when {
-                    it   -> binding.inputLayout.setup()
+                    it   -> binding.inputLayout.setupSendButton()
                     else -> with(binding.inputLayout) {
+                        endIconDrawable = null
                         setEndIconTouchListener(null)
                         setEndIconOnClickListener(null)
                         setEndIconOnLongClickListener(null)
-                        setStartIconOnClickListener(null)
                     }
                 }
             }
@@ -305,16 +309,38 @@ class MainFragment : Fragment() {
                 binding.fullscreenHintText.text = text
             }
             collectFlow(activeChannel) { channel ->
+                channel ?: return@collectFlow
                 (activity as? MainActivity)?.notificationService?.setActiveChannel(channel) // TODO move
                 val index = tabAdapter.channels.indexOf(channel)
                 binding.tabs.getTabAt(index)?.removeBadge()
                 mainViewModel.clearMentionCount(channel)
                 mainViewModel.clearUnreadMessage(channel)
             }
+            collectFlow(shouldShowTabs) { binding.tabs.isVisible = it }
+            collectFlow(shouldShowChipToggle) { binding.showChips.isVisible = it }
+            collectFlow(areChipsExpanded) {
+                val resourceId = if (it) R.drawable.ic_keyboard_arrow_up else R.drawable.ic_keyboard_arrow_down
+                binding.showChips.setChipIconResource(resourceId)
+            }
+            collectFlow(shouldShowExpandedChips) { binding.toggleFullscreen.isVisible = it }
+            collectFlow(shouldShowStreamToggle) { binding.toggleStream.isVisible = it }
+            collectFlow(hasModInChannel) { binding.changeRoomstate.isVisible = it }
+            collectFlow(shouldShowViewPager) {
+                binding.chatViewpager.isVisible = it
+                binding.addChannelsText.isVisible = !it
+                binding.addChannelsButton.isVisible = !it
+            }
+            collectFlow(shouldShowEmoteMenuIcon) { showEmoteMenuIcon ->
+                when {
+                    showEmoteMenuIcon -> binding.inputLayout.setupEmoteMenu()
+                    else              -> binding.inputLayout.startIconDrawable = null
+                }
+            }
+            collectFlow(shouldShowFullscreenHelper) { binding.fullscreenHintText.isVisible = it }
 
             collectFlow(events) {
                 when (it) {
-                    is MainViewModel.Event.Error -> handleErrorEvent(it)
+                    is MainEvent.Error -> handleErrorEvent(it)
                 }
             }
             collectFlow(channelMentionCount, ::updateChannelMentionBadges)
@@ -326,16 +352,17 @@ class MainFragment : Fragment() {
                 }
             }
             collectFlow(currentStreamedChannel) {
-                binding.streamWebviewWrapper.isVisible = it.isNotBlank()
+                val isActive = it != null
+                binding.streamWebviewWrapper.isVisible = isActive
                 if (!isLandscape) {
                     return@collectFlow
                 }
 
-                binding.splitThumb?.isVisible = it.isNotBlank()
+                binding.splitThumb?.isVisible = isActive
                 binding.splitGuideline?.updateLayoutParams<ConstraintLayout.LayoutParams> {
                     guidePercent = when {
-                        it.isBlank() -> DISABLED_GUIDELINE_PERCENT
-                        else         -> DEFAULT_GUIDELINE_PERCENT
+                        isActive -> DEFAULT_GUIDELINE_PERCENT
+                        else     -> DISABLED_GUIDELINE_PERCENT
                     }
                 }
             }
@@ -343,17 +370,24 @@ class MainFragment : Fragment() {
             collectFlow(dankChatViewModel.validationResult) {
                 when (it) {
                     // wait for username to be validated before showing snackbar
-                    is ValidationResult.User      -> showSnackBar(getString(R.string.snackbar_login, it.username))
-                    ValidationResult.TokenInvalid -> {
+                    is ValidationResult.User             -> showSnackBar(getString(R.string.snackbar_login, it.username))
+                    is ValidationResult.IncompleteScopes -> MaterialAlertDialogBuilder(requireContext())
+                        .setTitle(R.string.login_outdated_title)
+                        .setMessage(R.string.login_outdated_message)
+                        .setPositiveButton(R.string.oauth_expired_login_again) { _, _ -> openLogin() }
+                        .setNegativeButton(R.string.dialog_dismiss) { _, _ -> }
+                        .create().show()
+
+                    ValidationResult.TokenInvalid        -> {
                         MaterialAlertDialogBuilder(requireContext())
-                            .setTitle(getString(R.string.oauth_expired_title))
-                            .setMessage(getString(R.string.oauth_expired_message))
-                            .setPositiveButton(getString(R.string.oauth_expired_login_again)) { _, _ -> openLogin() }
-                            .setNegativeButton(getString(R.string.dialog_dismiss)) { _, _ -> } // default action is dismissing anyway
+                            .setTitle(R.string.oauth_expired_title)
+                            .setMessage(R.string.oauth_expired_message)
+                            .setPositiveButton(R.string.oauth_expired_login_again) { _, _ -> openLogin() }
+                            .setNegativeButton(R.string.dialog_dismiss) { _, _ -> } // default action is dismissing anyway
                             .create().show()
                     }
 
-                    ValidationResult.Failure      -> showSnackBar(getString(R.string.oauth_verify_failed))
+                    ValidationResult.Failure             -> showSnackBar(getString(R.string.oauth_verify_failed))
                 }
             }
         }
@@ -372,7 +406,7 @@ class MainFragment : Fragment() {
                         showLogoutConfirmationDialog()
                     }
 
-                    CHANNELS_REQUEST_KEY    -> handle.withData<Array<String>>(key) {
+                    CHANNELS_REQUEST_KEY    -> handle.withData<Array<UserName>>(key) {
                         updateChannels(it.toList())
                     }
                 }
@@ -386,12 +420,13 @@ class MainFragment : Fragment() {
         })
 
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.userIdString == null) {
-            dankChatPreferences.userIdString = "${dankChatPreferences.userId}"
+            dankChatPreferences.userIdString = "${dankChatPreferences.userId}".toUserId()
         }
 
         val channels = dankChatPreferences.getChannels()
         tabAdapter.updateFragments(channels)
-        binding.chatViewpager.offscreenPageLimit = calculatePageLimit(channels.size)
+        @SuppressLint("WrongConstant")
+        binding.chatViewpager.offscreenPageLimit = OFFSCREEN_PAGE_LIMIT
         tabLayoutMediator.attach()
 
         (requireActivity() as AppCompatActivity).apply {
@@ -434,11 +469,7 @@ class MainFragment : Fragment() {
                 if (!dankChatPreferences.hasMessageHistoryAcknowledged) {
                     navigateSafe(R.id.action_mainFragment_to_messageHistoryDisclaimerDialogFragment)
                 } else {
-                    mainViewModel.loadData(
-                        channelList = channels,
-                        isUserChange = false,
-                        loadTwitchData = true,
-                    )
+                    mainViewModel.loadData(channels)
                 }
             }
         }
@@ -452,42 +483,55 @@ class MainFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        emoteMenuBottomSheetBehavior?.hide()
+        closeEmoteMenu()
         changeActionBarVisibility(mainViewModel.isFullscreenFlow.value)
 
         (activity as? MainActivity)?.apply {
-            if (channelToOpen.isNotBlank()) {
-                val index = mainViewModel.getChannels().indexOf(channelToOpen)
+            val channel = channelToOpen
+            if (channel != null) {
+                val index = mainViewModel.getChannels().indexOf(channel)
                 if (index >= 0) {
                     when (index) {
-                        binding.chatViewpager.currentItem -> clearNotificationsOfChannel(channelToOpen)
+                        binding.chatViewpager.currentItem -> clearNotificationsOfChannel(channel)
                         else                              -> binding.chatViewpager.setCurrentItem(index, false)
                     }
                 }
-                channelToOpen = ""
+                channelToOpen = null
             } else {
-                val activeChannel = mainViewModel.activeChannel.value
+                val activeChannel = mainViewModel.activeChannel.value ?: return
                 clearNotificationsOfChannel(activeChannel)
             }
         }
     }
 
     override fun onDestroyView() {
-        bindingRef?.tabs?.removeOnTabSelectedListener(tabSelectionListener)
-        bindingRef?.chatViewpager?.unregisterOnPageChangeCallback(pageChangeCallback)
-        bindingRef = null
+        binding.tabs.removeOnTabSelectedListener(tabSelectionListener)
+        binding.chatViewpager.unregisterOnPageChangeCallback(pageChangeCallback)
+        emoteMenuBottomSheetBehavior?.removeBottomSheetCallback(emoteMenuCallBack)
+        tabLayoutMediator.detach()
         emoteMenuBottomSheetBehavior = null
         mentionBottomSheetBehavior = null
+        binding.chatViewpager.adapter = null
+        bindingRef = null
         if (::preferences.isInitialized) {
             preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         }
         super.onDestroyView()
     }
 
-    fun openUserPopup(targetUserId: String, targetUserName: String, messageId: String, channel: String?, badges: List<Badge>, isWhisperPopup: Boolean = false) {
+    fun openUserPopup(
+        targetUserId: UserId,
+        targetUserName: UserName,
+        targetDisplayName: DisplayName,
+        messageId: String,
+        channel: UserName?,
+        badges: List<Badge>,
+        isWhisperPopup: Boolean = false
+    ) {
         val directions = MainFragmentDirections.actionMainFragmentToUserPopupDialogFragment(
             targetUserId = targetUserId,
             targetUserName = targetUserName,
+            targetDisplayName = targetDisplayName,
             messageId = messageId,
             channel = channel,
             isWhisperPopup = isWhisperPopup,
@@ -496,13 +540,13 @@ class MainFragment : Fragment() {
         navigateSafe(directions)
     }
 
-    fun mentionUser(user: String) {
+    fun mentionUser(user: UserName, display: DisplayName) {
         val template = preferences.getString(getString(R.string.preference_mention_format_key), "name") ?: "name"
-        val mention = "${template.replace("name", user)} "
+        val mention = "${template.replace("name", user.valueOrDisplayName(display))} "
         insertText(mention)
     }
 
-    fun whisperUser(user: String) {
+    fun whisperUser(user: UserName) {
         if (!binding.input.isEnabled) return
 
         val current = binding.input.text.toString()
@@ -523,6 +567,13 @@ class MainFragment : Fragment() {
         binding.input.setSelection(index + text.length)
     }
 
+    fun insertEmote(emote: GenericEmote) {
+        insertText("${emote.code} ")
+        mainViewModel.addEmoteUsage(emote)
+    }
+
+    fun showEmoteMenu() = emoteMenuBottomSheetBehavior?.expand()
+
     private fun openLogin() {
         val directions = MainFragmentDirections.actionMainFragmentToLoginFragment()
         navigateSafe(directions)
@@ -532,44 +583,30 @@ class MainFragment : Fragment() {
     private fun handleMessageHistoryDisclaimerResult(result: Boolean) {
         dankChatPreferences.hasMessageHistoryAcknowledged = true
         preferences.edit { putBoolean(getString(R.string.preference_load_message_history_key), result) }
-        mainViewModel.loadData(
-            isUserChange = false,
-            loadTwitchData = true,
-        )
+        mainViewModel.loadData()
     }
 
     private fun handleUserPopupResult(result: UserPopupResult) = when (result) {
         is UserPopupResult.Error   -> binding.root.showShortSnackbar(getString(R.string.user_popup_error, result.throwable?.message.orEmpty()))
-        is UserPopupResult.Mention -> mentionUser(result.targetUser)
+        is UserPopupResult.Mention -> mentionUser(result.targetUser, result.targetDisplayName)
         is UserPopupResult.Whisper -> whisperUser(result.targetUser)
     }
 
     private fun addChannel(channel: String) {
-        val lowerCaseChannel = channel.lowercase(Locale.getDefault()).removePrefix("#")
+        val lowerCaseChannel = channel.lowercase().removePrefix("#").toUserName()
         var newTabIndex = mainViewModel.getChannels().indexOf(lowerCaseChannel)
         if (newTabIndex == -1) {
             val updatedChannels = mainViewModel.joinChannel(lowerCaseChannel)
             newTabIndex = updatedChannels.lastIndex
-            mainViewModel.loadData(
-                channelList = listOf(lowerCaseChannel),
-                isUserChange = false,
-                loadTwitchData = false,
-                loadSupibot = false,
-            )
+            mainViewModel.loadData(channelList = listOf(lowerCaseChannel))
             dankChatPreferences.channelsString = updatedChannels.joinToString(separator = ",")
 
             tabAdapter.addFragment(lowerCaseChannel)
-            binding.chatViewpager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
         }
         binding.chatViewpager.setCurrentItem(newTabIndex, false)
 
-        mainViewModel.setActiveChannel(channel)
+        mainViewModel.setActiveChannel(lowerCaseChannel)
         activity?.invalidateMenu()
-    }
-
-    private fun insertEmote(emote: GenericEmote) {
-        insertText("${emote.code} ")
-        mainViewModel.addEmoteUsage(emote)
     }
 
     private fun sendMessage(): Boolean {
@@ -620,20 +657,23 @@ class MainFragment : Fragment() {
         when (result) {
             is DataLoadingState.Loading, DataLoadingState.Finished, DataLoadingState.None -> return
             is DataLoadingState.Reloaded                                                  -> showSnackBar(getString(R.string.snackbar_data_reloaded))
-            is DataLoadingState.Failed                                                    -> showSnackBar(
-                message = getString(R.string.snackbar_data_load_failed_cause, result.errorMessage),
-                multiLine = true,
-                duration = Snackbar.LENGTH_LONG,
-                action = getString(R.string.snackbar_retry) to {
-                    when {
-                        result.parameters.isReloadEmotes -> reloadEmotes(result.parameters.channels.first())
-                        else                             -> mainViewModel.loadData(result.parameters)
-                    }
-                })
+            is DataLoadingState.Failed                                                    -> {
+                val message = when (result.errorCount) {
+                    1    -> getString(R.string.snackbar_data_load_failed_cause, result.errorMessage)
+                    else -> getString(R.string.snackbar_data_load_failed_multiple_causes, result.errorMessage)
+                }
+                showSnackBar(
+                    message = message,
+                    multiLine = true,
+                    duration = Snackbar.LENGTH_LONG,
+                    action = getString(R.string.snackbar_retry) to {
+                        mainViewModel.retryDataLoading(result.dataFailures, result.chatFailures)
+                    })
+            }
         }
     }
 
-    private fun handleErrorEvent(event: MainViewModel.Event.Error) {
+    private fun handleErrorEvent(event: MainEvent.Error) {
         if (preferences.getBoolean(getString(R.string.preference_debug_mode_key), false)) {
             binding.root.showErrorDialog(event.throwable)
         }
@@ -642,7 +682,7 @@ class MainFragment : Fragment() {
     private fun handleLoginRequest(success: Boolean) {
         val name = dankChatPreferences.userName
         if (success && name != null) {
-            mainViewModel.closeAndReconnect(loadTwitchData = true)
+            mainViewModel.closeAndReconnect()
             showSnackBar(getString(R.string.snackbar_login, name))
         } else {
             dankChatPreferences.clearLogin()
@@ -742,7 +782,7 @@ class MainFragment : Fragment() {
             mainViewModel.clear(tabAdapter.channels[position])
     }
 
-    private fun reloadEmotes(channel: String? = null) {
+    private fun reloadEmotes(channel: UserName? = null) {
         val position = channel?.let(tabAdapter.channels::indexOf) ?: binding.tabs.selectedTabPosition
         if (position in tabAdapter.channels.indices) {
             mainViewModel.reloadEmotes(tabAdapter.channels[position])
@@ -869,7 +909,7 @@ class MainFragment : Fragment() {
     }
 
     private fun showRoomStateDialog() {
-        val currentRoomState = mainViewModel.currentRoomState
+        val currentRoomState = mainViewModel.currentRoomState ?: return
         val activeStates = currentRoomState.activeStates
         val choices = resources.getStringArray(R.array.roomstate_entries)
 
@@ -917,15 +957,14 @@ class MainFragment : Fragment() {
             .show()
     }
 
-    private fun updateChannels(updatedChannels: List<String>) {
+    private fun updateChannels(updatedChannels: List<UserName>) {
         val oldChannels = mainViewModel.getChannels()
         val oldIndex = binding.chatViewpager.currentItem
         val oldActiveChannel = oldChannels[oldIndex]
 
         val index = updatedChannels.indexOf(oldActiveChannel).coerceAtLeast(0)
-        val activeChannel = updatedChannels.getOrNull(index) ?: ""
+        val activeChannel = updatedChannels.getOrNull(index)
 
-        binding.chatViewpager.offscreenPageLimit = calculatePageLimit(updatedChannels.size)
         tabAdapter.updateFragments(updatedChannels)
         mainViewModel.updateChannels(updatedChannels)
         mainViewModel.setActiveChannel(activeChannel)
@@ -945,7 +984,7 @@ class MainFragment : Fragment() {
         updateUnreadChannelTabColors(channels = mainViewModel.unreadMessagesMap.firstValueOrNull.orEmpty())
     }
 
-    private fun updateUnreadChannelTabColors(channels: Map<String, Boolean>) {
+    private fun updateUnreadChannelTabColors(channels: Map<UserName, Boolean>) {
         channels.forEach { (channel, _) ->
             when (val index = tabAdapter.channels.indexOf(channel)) {
                 binding.tabs.selectedTabPosition -> mainViewModel.clearUnreadMessage(channel)
@@ -957,7 +996,7 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun updateChannelMentionBadges(channels: Map<String, Int>) {
+    private fun updateChannelMentionBadges(channels: Map<UserName, Int>) {
         channels.forEach { (channel, count) ->
             val index = tabAdapter.channels.indexOf(channel)
             if (count > 0) {
@@ -978,16 +1017,11 @@ class MainFragment : Fragment() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 mainViewModel.setMentionSheetOpen(mentionBottomSheetBehavior?.isMoving == true || mentionBottomSheetBehavior?.isVisible == true)
                 when {
-                    mentionBottomSheetBehavior?.isExpanded == true -> mainViewModel.setSuggestionChannel("w")
+                    mentionBottomSheetBehavior?.isExpanded == true -> mainViewModel.setSuggestionChannel("w".toUserName())
                     mentionBottomSheetBehavior?.isHidden == true   -> mainViewModel.setSuggestionChannel(tabAdapter.channels[binding.chatViewpager.currentItem])
                 }
             }
         })
-    }
-
-    private fun calculatePageLimit(size: Int): Int = when {
-        size > 1 -> size - 1
-        else     -> ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
     }
 
     private fun ViewPager2.setup() {
@@ -996,7 +1030,8 @@ class MainFragment : Fragment() {
         registerOnPageChangeCallback(pageChangeCallback)
     }
 
-    private fun DankChatInputLayout.setup() {
+    private fun DankChatInputLayout.setupSendButton() {
+        setEndIconDrawable(R.drawable.ic_send)
         val touchListenerAdded = when {
             dankChatPreferences.repeatedSendingEnabled -> {
                 setEndIconOnClickListener { } // for ripple effects
@@ -1017,9 +1052,13 @@ class MainFragment : Fragment() {
             setEndIconOnLongClickListener { getLastMessage() }
         }
 
+    }
+
+    private fun DankChatInputLayout.setupEmoteMenu() {
+        setStartIconDrawable(R.drawable.ic_insert_emoticon)
         setStartIconOnClickListener {
-            if (emoteMenuBottomSheetBehavior?.isVisible == true || emoteMenuAdapter.currentList.isEmpty()) {
-                emoteMenuBottomSheetBehavior?.hide()
+            if (mainViewModel.isEmoteSheetOpen) {
+                closeEmoteMenu()
                 return@setStartIconOnClickListener
             }
 
@@ -1028,48 +1067,44 @@ class MainFragment : Fragment() {
                 binding.input.clearFocus()
             }
 
-            val heightScaleFactor = 0.5
-            binding.apply {
-                bottomSheetViewPager.adapter = emoteMenuAdapter
-                bottomSheetViewPager.updateLayoutParams {
-                    height = (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
-                }
-                TabLayoutMediator(bottomSheetTabs, bottomSheetViewPager) { tab, pos ->
-                    val menuTab = EmoteMenuTab.values()[pos]
-                    tab.text = when (menuTab) {
-                        EmoteMenuTab.SUBS    -> getString(R.string.emote_menu_tab_subs)
-                        EmoteMenuTab.CHANNEL -> getString(R.string.emote_menu_tab_channel)
-                        EmoteMenuTab.GLOBAL  -> getString(R.string.emote_menu_tab_global)
-                        EmoteMenuTab.RECENT  -> getString(R.string.emote_menu_tab_recent)
-                    }
-                }.attach()
+            childFragmentManager.commit {
+                replace(R.id.bottom_sheet_frame, EmoteMenuFragment())
             }
+        }
+    }
 
-            postDelayed(50) {
-                emoteMenuBottomSheetBehavior?.apply {
-                    peekHeight = (resources.displayMetrics.heightPixels * heightScaleFactor).toInt()
-                    expand()
+    private fun closeEmoteMenu() {
+        val behavior = emoteMenuBottomSheetBehavior ?: return
+        if (!mainViewModel.isEmoteSheetOpen) {
+            return
+        }
 
-                    addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-                        override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
+        mainViewModel.setEmoteSheetOpen(false)
+        behavior.hide()
+        val existing = childFragmentManager.fragments.find { it is EmoteMenuFragment } ?: return
+        childFragmentManager.commit {
+            remove(existing)
+        }
+    }
 
-                        override fun onStateChanged(bottomSheet: View, newState: Int) {
-                            mainViewModel.setEmoteSheetOpen(emoteMenuBottomSheetBehavior?.isMoving == true || emoteMenuBottomSheetBehavior?.isVisible == true)
-                            if (!mainViewModel.isFullscreenFlow.value && isLandscape) {
-                                when (newState) {
-                                    BottomSheetBehavior.STATE_EXPANDED, BottomSheetBehavior.STATE_COLLAPSED -> {
-                                        (activity as? AppCompatActivity)?.supportActionBar?.hide()
-                                        binding.tabs.visibility = View.GONE
-                                    }
+    private val emoteMenuCallBack = object : BottomSheetBehavior.BottomSheetCallback() {
+        override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
 
-                                    else                                                                    -> {
-                                        (activity as? AppCompatActivity)?.supportActionBar?.show()
-                                        binding.tabs.visibility = View.VISIBLE
-                                    }
-                                }
-                            }
-                        }
-                    })
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            val behavior = emoteMenuBottomSheetBehavior ?: return
+            mainViewModel.setEmoteSheetOpen(behavior.isMoving || behavior.isVisible)
+            binding.streamWebviewWrapper.isVisible = newState == BottomSheetBehavior.STATE_HIDDEN && mainViewModel.isStreamActive
+            if (!mainViewModel.isFullscreenFlow.value && isLandscape) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_EXPANDED, BottomSheetBehavior.STATE_COLLAPSED -> {
+                        (activity as? AppCompatActivity)?.supportActionBar?.hide()
+                        binding.tabs.visibility = View.GONE
+                    }
+
+                    else                                                                    -> {
+                        (activity as? AppCompatActivity)?.supportActionBar?.show()
+                        binding.tabs.visibility = View.VISIBLE
+                    }
                 }
             }
         }
@@ -1115,8 +1150,8 @@ class MainFragment : Fragment() {
 
             if (isPortrait) {
                 val mentionsView = childFragmentManager.findFragmentById(R.id.mention_fragment)?.view
-                binding.emoteMenuBottomSheet
-                    .takeIf { emoteMenuBottomSheetBehavior?.isVisible == false }
+                binding.bottomSheetFrame
+                    .takeIf { !mainViewModel.isEmoteSheetOpen }
                     ?.isInvisible = true
 
                 mentionsView
@@ -1125,14 +1160,14 @@ class MainFragment : Fragment() {
 
                 binding.root.post {
                     (activity as? MainActivity)?.setFullScreen(enabled = !hasFocus && isFullscreen, changeActionBarVisibility = false)
-                    binding.emoteMenuBottomSheet.isInvisible = false
+                    binding.bottomSheetFrame.isInvisible = false
                     mentionsView?.isInvisible = false
                 }
                 return@setOnFocusChangeListener
             }
 
             binding.tabs.isVisible = !hasFocus && !isFullscreen
-            binding.streamWebviewWrapper.isVisible = !hasFocus && mainViewModel.isStreamActive
+            binding.streamWebviewWrapper.isVisible = !hasFocus && !mainViewModel.isEmoteSheetOpen && mainViewModel.isStreamActive
 
             when {
                 hasFocus -> (activity as? MainActivity)?.apply {
@@ -1154,6 +1189,7 @@ class MainFragment : Fragment() {
         private const val MIN_GUIDELINE_PERCENT = 0.2f
         private const val CLIPBOARD_LABEL = "dankchat_media_url"
         private const val TAB_SCROLL_DELAY_MS = 1000 / 60 * 10L
+        private const val OFFSCREEN_PAGE_LIMIT = 2
 
         const val LOGOUT_REQUEST_KEY = "logout_key"
         const val LOGIN_REQUEST_KEY = "login_key"

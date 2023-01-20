@@ -1,6 +1,8 @@
 package com.flxrs.dankchat.data.twitch.message
 
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.irc.IrcMessage
+import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.utils.DateTimeUtils
 import java.util.UUID
 
@@ -8,7 +10,7 @@ data class NoticeMessage(
     override val timestamp: Long = System.currentTimeMillis(),
     override val id: String = UUID.randomUUID().toString(),
     override val highlights: Set<Highlight> = emptySet(),
-    val channel: String,
+    val channel: UserName,
     val message: String
 ) : Message() {
     companion object {
@@ -18,6 +20,7 @@ data class NoticeMessage(
                 tags["msg-id"] == "msg_timedout" -> params[1]
                     .split(" ")
                     .getOrNull(index = 5)
+                    ?.toIntOrNull()
                     ?.let {
                         "You are timed out for ${DateTimeUtils.formatSeconds(it)}."
                     } ?: params[1]
@@ -31,7 +34,7 @@ data class NoticeMessage(
             return NoticeMessage(
                 timestamp = ts,
                 id = id,
-                channel = channel,
+                channel = channel.toUserName(),
                 message = notice,
             )
         }
