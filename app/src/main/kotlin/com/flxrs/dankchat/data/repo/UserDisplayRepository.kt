@@ -1,8 +1,8 @@
 package com.flxrs.dankchat.data.repo
 
 import com.flxrs.dankchat.data.UserName
-import com.flxrs.dankchat.data.database.UserDisplayDao
-import com.flxrs.dankchat.data.database.UserDisplayEntity
+import com.flxrs.dankchat.data.database.dao.UserDisplayDao
+import com.flxrs.dankchat.data.database.entity.UserDisplayEntity
 import com.flxrs.dankchat.data.twitch.message.Message
 import com.flxrs.dankchat.data.twitch.message.PointRedemptionMessage
 import com.flxrs.dankchat.data.twitch.message.PrivMessage

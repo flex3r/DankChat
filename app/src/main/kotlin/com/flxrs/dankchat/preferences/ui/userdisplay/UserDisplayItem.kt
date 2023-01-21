@@ -1,6 +1,6 @@
-package com.flxrs.dankchat.preferences.userdisplay
+package com.flxrs.dankchat.preferences.ui.userdisplay
 
-import com.flxrs.dankchat.data.database.UserDisplayEntity
+import com.flxrs.dankchat.data.database.entity.UserDisplayEntity
 import com.flxrs.dankchat.utils.extensions.hexCode
 
 sealed class UserDisplayItem {

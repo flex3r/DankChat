@@ -7,7 +7,7 @@
 
         <variable
             name="userDisplay"
-            type="com.flxrs.dankchat.preferences.userdisplay.UserDisplayItem.Entry" />
+            type="com.flxrs.dankchat.preferences.ui.userdisplay.UserDisplayItem.Entry" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

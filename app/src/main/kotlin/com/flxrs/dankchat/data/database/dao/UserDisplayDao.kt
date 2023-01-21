@@ -1,6 +1,7 @@
-package com.flxrs.dankchat.data.database
+package com.flxrs.dankchat.data.database.dao
 
 import androidx.room.*
+import com.flxrs.dankchat.data.database.entity.UserDisplayEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

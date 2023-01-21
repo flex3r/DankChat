@@ -21,9 +21,9 @@ import com.flxrs.dankchat.preferences.command.CommandDto
 import com.flxrs.dankchat.preferences.command.CommandDto.Companion.toDto
 import com.flxrs.dankchat.preferences.command.CommandDto.Companion.toEntryItem
 import com.flxrs.dankchat.preferences.command.CommandItem
-import com.flxrs.dankchat.preferences.userdisplay.UserDisplayAdapter
-import com.flxrs.dankchat.preferences.userdisplay.UserDisplayEvent
-import com.flxrs.dankchat.preferences.userdisplay.UserDisplayViewModel
+import com.flxrs.dankchat.preferences.ui.userdisplay.UserDisplayAdapter
+import com.flxrs.dankchat.preferences.ui.userdisplay.UserDisplayEvent
+import com.flxrs.dankchat.preferences.ui.userdisplay.UserDisplayViewModel
 import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import com.flxrs.dankchat.utils.extensions.expand

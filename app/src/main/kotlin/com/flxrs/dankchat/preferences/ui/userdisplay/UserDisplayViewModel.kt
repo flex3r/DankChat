@@ -1,8 +1,8 @@
-package com.flxrs.dankchat.preferences.userdisplay
+package com.flxrs.dankchat.preferences.ui.userdisplay
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flxrs.dankchat.data.database.UserDisplayEntity
+import com.flxrs.dankchat.data.database.entity.UserDisplayEntity
 import com.flxrs.dankchat.data.repo.UserDisplayRepository
 import com.flxrs.dankchat.data.twitch.message.Message
 import dagger.hilt.android.lifecycle.HiltViewModel

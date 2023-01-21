@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.data.database
+package com.flxrs.dankchat.data.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

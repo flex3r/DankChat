@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.preferences.userdisplay
+package com.flxrs.dankchat.preferences.ui.userdisplay
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
