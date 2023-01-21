@@ -16,14 +16,13 @@ import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.repo.EmoteRepository
 import com.flxrs.dankchat.data.repo.HighlightsRepository
 import com.flxrs.dankchat.data.repo.IgnoresRepository
+import com.flxrs.dankchat.data.repo.UserDisplayRepository
 import com.flxrs.dankchat.data.toDisplayName
 import com.flxrs.dankchat.data.toUserId
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.chat.ChatConnection
 import com.flxrs.dankchat.data.twitch.chat.ChatEvent
 import com.flxrs.dankchat.data.twitch.chat.ConnectionState
-import com.flxrs.dankchat.data.twitch.pubsub.PubSubManager
-import com.flxrs.dankchat.data.twitch.pubsub.PubSubMessage
 import com.flxrs.dankchat.data.twitch.message.Message
 import com.flxrs.dankchat.data.twitch.message.ModerationMessage
 import com.flxrs.dankchat.data.twitch.message.NoticeMessage
@@ -36,6 +35,8 @@ import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.data.twitch.message.hasMention
 import com.flxrs.dankchat.data.twitch.message.toChatItem
+import com.flxrs.dankchat.data.twitch.pubsub.PubSubManager
+import com.flxrs.dankchat.data.twitch.pubsub.PubSubMessage
 import com.flxrs.dankchat.di.ApplicationScope
 import com.flxrs.dankchat.di.ReadConnection
 import com.flxrs.dankchat.di.WriteConnection
@@ -86,6 +87,7 @@ class ChatRepository @Inject constructor(
     private val emoteRepository: EmoteRepository,
     private val highlightsRepository: HighlightsRepository,
     private val ignoresRepository: IgnoresRepository,
+    private val userDisplayRepository: UserDisplayRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
     private val pubSubManager: PubSubManager,
     @ReadConnection private val readConnection: ChatConnection,
@@ -149,6 +151,7 @@ class ChatRepository @Inject constructor(
                                     .parsePointReward(pubSubMessage.timestamp, pubSubMessage.data)
                                     .applyIgnores()
                                     ?.calculateHighlightState()
+                                    ?.calculateUserDisplays()
                             }.getOrNull() ?: return@collect
 
                             messages[pubSubMessage.channelName]?.update {
@@ -166,6 +169,7 @@ class ChatRepository @Inject constructor(
                             WhisperMessage.fromPubSub(pubSubMessage.data)
                                 .applyIgnores()
                                 ?.calculateHighlightState()
+                                ?.calculateUserDisplays()
                                 ?.parseEmotesAndBadges() as? WhisperMessage
                         }.getOrNull() ?: return@collect
 
@@ -355,9 +359,9 @@ class ChatRepository @Inject constructor(
                 userId = userState.userId,
                 name = name,
                 displayName = displayName,
-                color = Color.parseColor(userState.color ?: Message.DEFAULT_COLOR),
+                color = userState.color?.let(Color::parseColor) ?: Message.DEFAULT_COLOR,
                 recipientId = null,
-                recipientColor = Color.parseColor(Message.DEFAULT_COLOR),
+                recipientColor = Message.DEFAULT_COLOR,
                 recipientName = split[1].toUserName(),
                 recipientDisplayName = split[1].toDisplayName(),
                 message = message,
@@ -636,6 +640,7 @@ class ChatRepository @Inject constructor(
             WhisperMessage.parseFromIrc(ircMessage, recipient, userState.color)
                 .applyIgnores()
                 ?.calculateHighlightState()
+                ?.calculateUserDisplays()
                 ?.parseEmotesAndBadges() as? WhisperMessage
         }.getOrNull() ?: return
 
@@ -687,6 +692,7 @@ class ChatRepository @Inject constructor(
                 ?.applyIgnores()
                 ?.calculateHighlightState()
                 ?.parseEmotesAndBadges()
+                ?.calculateUserDisplays()
         }.getOrElse {
             Log.e(TAG, "Failed to parse message", it)
             return
@@ -826,6 +832,7 @@ class ChatRepository @Inject constructor(
                     Message.parse(parsedIrc)
                         ?.applyIgnores()
                         ?.calculateHighlightState()
+                        ?.calculateUserDisplays()
                         ?.parseEmotesAndBadges()
                 }.getOrNull() ?: continue
 
@@ -898,6 +905,7 @@ class ChatRepository @Inject constructor(
     private fun Message.applyIgnores(): Message? = ignoresRepository.applyIgnores(this)
     private fun Message.calculateHighlightState(): Message = highlightsRepository.calculateHighlightState(this)
     private fun Message.parseEmotesAndBadges(): Message = emoteRepository.parseEmotesAndBadges(this)
+    private fun Message.calculateUserDisplays(): Message = userDisplayRepository.calculateUserDisplay(this)
 
     companion object {
         private val TAG = ChatRepository::class.java.simpleName

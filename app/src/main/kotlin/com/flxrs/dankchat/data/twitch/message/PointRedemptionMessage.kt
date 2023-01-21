@@ -17,8 +17,8 @@ data class PointRedemptionMessage(
     val rewardImageUrl: String,
     val cost: Int,
     val requiresUserInput: Boolean,
+    val userDisplay: UserDisplay? = null,
 ) : Message() {
-
     companion object {
         fun parsePointReward(timestamp: Instant, data: PointRedemptionData): PointRedemptionMessage {
             return PointRedemptionMessage(
@@ -34,4 +34,7 @@ data class PointRedemptionMessage(
             )
         }
     }
+
+    val aliasOrFormattedName: String
+        get() = userDisplay?.alias ?: name.formatWithDisplayName(displayName)
 }

@@ -258,7 +258,7 @@ class ChatAdapter(
                 when {
                     message.requiresUserInput -> append("Redeemed ")
                     else                      -> {
-                        bold { append(message.displayName.value) }
+                        bold { append(message.aliasOrFormattedName) }
                         append(" redeemed ")
                     }
                 }
@@ -303,9 +303,6 @@ class ChatAdapter(
         }
         setRippleBackground(background, enableRipple = true)
 
-        val fullName = name.formatWithDisplayName(displayName)
-        val fullRecipientName = recipientName.formatWithDisplayName(recipientDisplayName)
-
         val allowedBadges = badges.filter { it.type in dankChatPreferenceStore.visibleBadgeTypes }
         val badgesLength = allowedBadges.size * 2
 
@@ -314,19 +311,19 @@ class ChatAdapter(
             spannable.timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(timestamp)) }
         }
 
-        val nameGroupLength = fullName.length + 4 + fullRecipientName.length + 2
+        val nameGroupLength = senderAliasOrFormattedName.length + 4 + recipientAliasOrFormattedName.length + 2
         val prefixLength = spannable.length + nameGroupLength
         val badgePositions = allowedBadges.map {
             spannable.append("  ")
             spannable.length - 2 to spannable.length - 1
         }
 
-        val normalizedColor = color.normalizeColor(background)
-        spannable.bold { color(normalizedColor) { append(fullName) } }
+        val senderColor = senderColorOnBackground(background)
+        spannable.bold { color(senderColor) { append(senderAliasOrFormattedName) } }
         spannable.append(" -> ")
 
-        val normalizedRecipientColor = recipientColor.normalizeColor(background)
-        spannable.bold { color(normalizedRecipientColor) { append(fullRecipientName) } }
+        val recipientColor = recipientColorOnBackground(background)
+        spannable.bold { color(recipientColor) { append(recipientAliasOrFormattedName) } }
         spannable.append(": ")
         spannable.append(message)
 
@@ -335,11 +332,11 @@ class ChatAdapter(
             override fun onLongClick(view: View) = onUserClick(userId, name, displayName, id, null, badges, true)
             override fun updateDrawState(ds: TextPaint) {
                 ds.isUnderlineText = false
-                ds.color = normalizedColor
+                ds.color = senderColor
             }
         }
         val userStart = prefixLength + badgesLength - nameGroupLength
-        val userEnd = userStart + fullName.length
+        val userEnd = userStart + senderAliasOrFormattedName.length
         spannable[userStart..userEnd] = userClickableSpan
 
         val emojiCompat = EmojiCompat.get()
@@ -474,12 +471,11 @@ class ChatAdapter(
             return
         }
 
-        val fullName = name.formatWithDisplayName(displayName)
         val fullDisplayName = when {
             !dankChatPreferenceStore.showUsername -> ""
-            isAction                              -> "$fullName "
-            fullName.isBlank()                    -> ""
-            else                                  -> "$fullName: "
+            isAction                              -> "$aliasOrFormattedName "
+            aliasOrFormattedName.isBlank()        -> ""
+            else                                  -> "$aliasOrFormattedName: "
         }
 
         val allowedBadges = badges.filter { it.type in dankChatPreferenceStore.visibleBadgeTypes }
@@ -500,22 +496,22 @@ class ChatAdapter(
             messageBuilder.length - 2 to messageBuilder.length - 1
         }
 
-        val normalizedColor = color.normalizeColor(background = bgColor)
-        messageBuilder.bold { color(normalizedColor) { append(fullDisplayName) } }
+        val nameColor = customOrUserColorOn(bgColor = bgColor)
+        messageBuilder.bold { color(nameColor) { append(fullDisplayName) } }
 
         when {
-            isAction -> messageBuilder.color(normalizedColor) { append(message) }
+            isAction -> messageBuilder.color(nameColor) { append(message) }
             else     -> messageBuilder.append(message)
         }
 
         // clicking usernames
-        if (fullName.isNotBlank()) {
+        if (aliasOrFormattedName.isNotBlank()) {
             val userClickableSpan = object : LongClickableSpan() {
                 override fun onClick(v: View) = onUserClick(userId, name, displayName, id, channel, badges, false)
                 override fun onLongClick(view: View) = onUserClick(userId, name, displayName, id, channel, badges, true)
                 override fun updateDrawState(ds: TextPaint) {
                     ds.isUnderlineText = false
-                    ds.color = normalizedColor
+                    ds.color = nameColor
                 }
             }
             val start = prefixLength - fullDisplayName.length + badgesLength

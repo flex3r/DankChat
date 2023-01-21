@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.data.twitch.message
 
 import android.graphics.Color
+import androidx.annotation.ColorInt
 import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
@@ -10,6 +11,7 @@ import com.flxrs.dankchat.data.toUserId
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
+import com.flxrs.dankchat.utils.extensions.normalizeColor
 import java.util.UUID
 
 data class PrivMessage(
@@ -20,7 +22,7 @@ data class PrivMessage(
     val userId: UserId? = null,
     val name: UserName,
     val displayName: DisplayName,
-    val color: Int = Color.parseColor(DEFAULT_COLOR),
+    val color: Int = DEFAULT_COLOR,
     val message: String,
     val originalMessage: String = message,
     val emotes: List<ChatMessageEmote> = emptyList(),
@@ -28,6 +30,7 @@ data class PrivMessage(
     val badges: List<Badge> = emptyList(),
     val timedOut: Boolean = false,
     val tags: Map<String, String>,
+    val userDisplay: UserDisplay? = null,
 ) : Message() {
 
     override val emoteData: EmoteData = EmoteData(originalMessage, channel, emoteTag = tags["emotes"].orEmpty())
@@ -41,8 +44,7 @@ data class PrivMessage(
             }
 
             val displayName = tags["display-name"] ?: name
-            val colorTag = tags["color"]?.ifBlank { DEFAULT_COLOR } ?: DEFAULT_COLOR
-            val color = Color.parseColor(colorTag)
+            val color = tags["color"]?.ifBlank { null }?.let(Color::parseColor) ?: DEFAULT_COLOR
 
             val ts = tags["tmi-sent-ts"]?.toLongOrNull() ?: System.currentTimeMillis()
             var isAction = false
@@ -88,3 +90,9 @@ val PrivMessage.isFirstMessage: Boolean
 
 val PrivMessage.isElevatedMessage: Boolean
     get() = tags["pinned-chat-paid-amount"] != null
+
+/** format name for display in chat */
+val PrivMessage.aliasOrFormattedName: String
+    get() = userDisplay?.alias ?: name.formatWithDisplayName(displayName)
+
+fun PrivMessage.customOrUserColorOn(@ColorInt bgColor: Int): Int = userDisplay?.color ?: color.normalizeColor(bgColor)
