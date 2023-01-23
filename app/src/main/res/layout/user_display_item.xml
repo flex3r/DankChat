@@ -58,7 +58,7 @@
                 android:id="@+id/flow_color_row"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:constraint_referenced_ids="user_display_enable,user_display_enable_color,user_display_enable_alias"
+                app:constraint_referenced_ids="user_display_enable,user_display_enable_alias,user_display_enable_color"
                 app:flow_horizontalBias="0"
                 app:flow_horizontalStyle="packed"
                 app:flow_wrapMode="chain"
