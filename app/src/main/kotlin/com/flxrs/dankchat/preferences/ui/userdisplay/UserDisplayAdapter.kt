@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.preferences.ui.userdisplay
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -94,7 +93,6 @@ class UserDisplayAdapter(
             is EntryViewHolder -> {
                 val entry = currentList[position] as UserDisplayItem.Entry
                 with(holder.binding) {
-                    Log.i("Doge", "bind handler: $entry")
                     userDisplay = entry
                     // enable checkbox handler
                     userDisplayEnable.isChecked = entry.enabled
