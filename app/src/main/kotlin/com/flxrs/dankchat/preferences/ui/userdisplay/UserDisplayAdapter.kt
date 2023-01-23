@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.preferences.ui.userdisplay
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -41,16 +42,27 @@ class UserDisplayAdapter(
                         }.show()
                 }
 
+                userDisplayEnable.setOnCheckedChangeListener { _, checked ->
+                    val item = userDisplay ?: return@setOnCheckedChangeListener
+                    item.enabled = checked
+                    userDisplayEnableAlias.isEnabled = checked
+                    userDisplayEnableColor.isEnabled = checked
+
+                    userDisplayPickColorButton.isEnabled = checked && item.colorEnabled
+                    userDisplayAliasInput.isEnabled = checked && item.aliasEnabled
+                }
+
                 userDisplayEnableColor.setOnCheckedChangeListener { _, checked ->
                     val item = userDisplay ?: return@setOnCheckedChangeListener
                     item.colorEnabled = checked
-                    userDisplayPickColorButton.isEnabled = checked
+
+                    userDisplayPickColorButton.isEnabled = item.enabled && checked
                 }
 
                 userDisplayEnableAlias.setOnCheckedChangeListener { _, checked ->
                     val item = userDisplay ?: return@setOnCheckedChangeListener
                     item.aliasEnabled = checked
-                    userDisplayAliasInput.isEnabled = checked
+                    userDisplayAliasInput.isEnabled = item.enabled && checked
                 }
             }
         }
@@ -82,12 +94,20 @@ class UserDisplayAdapter(
             is EntryViewHolder -> {
                 val entry = currentList[position] as UserDisplayItem.Entry
                 with(holder.binding) {
+                    Log.i("Doge", "bind handler: $entry")
                     userDisplay = entry
+                    // enable checkbox handler
+                    userDisplayEnable.isChecked = entry.enabled
+                    userDisplayEnableColor.isEnabled = entry.enabled
+                    userDisplayEnableAlias.isEnabled = entry.enabled
+                    // colorEnable checkbox handler
                     userDisplayEnableColor.isChecked = entry.colorEnabled
-                    userDisplayPickColorButton.isEnabled = entry.colorEnabled
-                    userDisplayEnableAlias.isChecked = entry.aliasEnabled
-                    userDisplayAliasInput.isEnabled = entry.aliasEnabled
+                    userDisplayPickColorButton.isEnabled = entry.enabled && entry.colorEnabled
                     userDisplayPickColorButton.updateTextAndTextColor(entry)
+                    // aliasEnable checkbox handler
+                    userDisplayEnableAlias.isChecked = entry.aliasEnabled
+                    userDisplayAliasInput.isEnabled = entry.enabled && entry.aliasEnabled
+
                 }
             }
         }
