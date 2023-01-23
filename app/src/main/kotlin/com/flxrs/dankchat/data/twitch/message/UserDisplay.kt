@@ -7,8 +7,8 @@ import com.flxrs.dankchat.data.database.entity.UserDisplayEntity
 data class UserDisplay(val alias: String?, val color: Int?)
 
 fun UserDisplayEntity.toUserDisplay() = UserDisplay(
-    alias = alias?.takeIf { aliasEnabled && it.isNotBlank() },
-    color = color.takeIf { colorEnabled },
+    alias = alias?.takeIf { enabled && aliasEnabled && it.isNotBlank() },
+    color = color.takeIf { enabled && colorEnabled },
 )
 
 @ColorInt
