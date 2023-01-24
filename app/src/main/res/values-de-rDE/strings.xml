@@ -56,6 +56,7 @@
     <string name="snackbar_retry">Wiederholen</string>
     <string name="snackbar_data_reloaded">Emotes neu geladen</string>
     <string name="snackbar_data_load_failed_cause">Datenladen fehlgeschlagen: %1$s</string>
+    <string name="snackbar_data_load_failed_multiple_causes">Laden der Daten fehlgeschlagen mit mehreren Fehlern:\n%1$s</string>
     <string name="snackbar_paste">Einfügen</string>
     <string name="add_channel_hint">Kanalname</string>
     <string name="emote_menu_tab_recent">Zuletzt</string>
@@ -63,6 +64,7 @@
     <string name="emote_menu_tab_channel">Kanal</string>
     <string name="emote_menu_tab_global">Global</string>
     <string name="system_message_connected">Verbunden</string>
+    <string name="system_message_reconnected">Wiederverbunden</string>
     <string name="system_message_channel_non_existent">Dieser Kanal existiert nicht</string>
     <string name="system_message_disconnected">Verbindung getrennt</string>
     <string name="system_message_history_unavailable_detailed">Nachrichtenhistorie nicht verfügbar (Fehler %1$s)</string>
@@ -70,6 +72,9 @@
     <string name="system_message_history_recovering">Der Nachrichtenhistorie-Dienst wird wiederhergestellt, möglicherweise gibt es Lücken in der Historie.</string>
     <string name="system_message_history_ignored">Nachrichtenhistorie nicht verfügbar, da dieser Kanal vom Dienst ausgeschlossen ist.</string>
     <string name="system_message_no_history">Der historische Chatverlauf wird nicht angezeigt, da dessen Integration nicht zugestimmt wurde.</string>
+    <string name="system_message_ffz_emotes_failed">FFZ-Emotes konnten nicht geladen werden (Fehler %1$s)</string>
+    <string name="system_message_bttv_emotes_failed">BTTV-Emotes konnten nicht geladen werden (Fehler %1$s)</string>
+    <string name="system_message_7tv_emotes_failed">7TV-Emotes konnten nicht geladen werden (Fehler %1$s)</string>
     <string name="timed_out_message">&lt; Nachricht gelöscht &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Eintrag hinzufügen</string>
@@ -297,6 +302,17 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="ignores_users_title">Ignoriert Nachrichten von bestimmten Nutzern.</string>
     <string name="ignores_twitch_title">Blockierte Twitch-Nutzer verwalten</string>
     <string name="preference_notification_whisper_title">Benachrichtigungen für private Nachrichten erstellen</string>
+    <string name="login_outdated_title">Login veraltet!</string>
+    <string name="login_outdated_message">Dein Login ist veraltet und hat keinen Zugriff auf einige Funktionen. Bitte melde dich erneut an.</string>
+    <string name="custom_user_display_title">Benutzerdefinierte Nutzeransicht</string>
+    <string name="user_display_item_username_hint">Benutzername</string>
+    <string name="user_display_item_color_hint">Farbe</string>
+    <string name="remove_custom_user_display">Nutzeransicht entfernen</string>
+    <string name="user_display_alias_input">Alias</string>
+    <string name="user_display_custom_color_enable">Eigene Farbe</string>
+    <string name="user_display_custom_alias_enable">Eigener Alias</string>
+    <string name="pick_custom_user_color_title">Benutzerdefinierte Farbe wählen</string>
+    <string name="custom_user_display_summary">Eigenen Namen und Farbe für Benutzer hinzufügen</string>
     <plurals name="viewers">
         <item quantity="one">Live mit %d Zuschauer</item>
         <item quantity="other">Live mit %d Zuschauern</item>

@@ -56,6 +56,7 @@
     <string name="snackbar_retry">Reintentar</string>
     <string name="snackbar_data_reloaded">Emoticonos actualizados</string>
     <string name="snackbar_data_load_failed_cause">Error al cargar datos: %1$s</string>
+    <string name="snackbar_data_load_failed_multiple_causes">La carga de datos falló con múltiples errores:\n%1$s</string>
     <string name="snackbar_paste">Pegar</string>
     <string name="add_channel_hint">Nombre del canal</string>
     <string name="emote_menu_tab_recent">Reciente</string>
@@ -63,6 +64,7 @@
     <string name="emote_menu_tab_channel">Canal</string>
     <string name="emote_menu_tab_global">Global</string>
     <string name="system_message_connected">Conectado</string>
+    <string name="system_message_reconnected">Reconectado</string>
     <string name="system_message_channel_non_existent">Este canal no existe</string>
     <string name="system_message_disconnected">Desconectado</string>
     <string name="system_message_history_unavailable_detailed">Servicio de historial de mensajes no disponible (Error %1$s)</string>
@@ -70,6 +72,9 @@
     <string name="system_message_history_recovering">Recuperando servicio de historial de mensajes, puede haber algunas brechas.</string>
     <string name="system_message_history_ignored">Historial de mensajes no disponible porque este canal está excluido del servicio.</string>
     <string name="system_message_no_history">El historial de mensajes no es visible porque has desactivado la integración con mensajes recientes.</string>
+    <string name="system_message_ffz_emotes_failed">Error al cargar los emotes de FFZ (Error %1$s)</string>
+    <string name="system_message_bttv_emotes_failed">Error al cargar los emotes de BTTV (Error %1$s)</string>
+    <string name="system_message_7tv_emotes_failed">Error al cargar los emotes de 7TV (Error %1$s)</string>
     <string name="timed_out_message">&lt; Mensaje eliminado&gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Añadir entrada</string>
@@ -297,6 +302,17 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="ignores_users_title">Ignorar mensajes de ciertos usuarios.</string>
     <string name="ignores_twitch_title">Gestiona los usuarios bloqueados de Twitch.</string>
     <string name="preference_notification_whisper_title">Crear notificaciones para susurros</string>
+    <string name="login_outdated_title">¡Inicio de Sesión Obsoleto!</string>
+    <string name="login_outdated_message">Su inicio de sesión está desactualizado y no tiene acceso a algunas funciones. Por favor, inicie sesión nuevamente.</string>
+    <string name="custom_user_display_title">Pantalla de Usuario Personalizada</string>
+    <string name="user_display_item_username_hint">Usuario</string>
+    <string name="user_display_item_color_hint">Color</string>
+    <string name="remove_custom_user_display">Quitar Pantalla de Usuario Personalizada</string>
+    <string name="user_display_alias_input">Alias</string>
+    <string name="user_display_custom_color_enable">Color Personalizado</string>
+    <string name="user_display_custom_alias_enable">Alias Personalizado</string>
+    <string name="pick_custom_user_color_title">Elegir color de usuario personalizado</string>
+    <string name="custom_user_display_summary">Añade un nombre y color personalizado para usuarios</string>
     <plurals name="viewers">
         <item quantity="one">En directo con %d espectador</item>
         <item quantity="other">En directo con %d espectadores</item>

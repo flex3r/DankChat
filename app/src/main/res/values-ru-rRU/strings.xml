@@ -302,6 +302,15 @@
     <string name="preference_notification_whisper_title">Создавать уведомления для личных сообщений</string>
     <string name="login_outdated_title">Логин устарел!</string>
     <string name="login_outdated_message">Ваш логин устарел и не имеет доступа к некоторым функциям. Пожалуйста, войдите снова.</string>
+    <string name="custom_user_display_title">Пользовательское отображение пользователя</string>
+    <string name="user_display_item_username_hint">Имя пользователя</string>
+    <string name="user_display_item_color_hint">Цвет</string>
+    <string name="remove_custom_user_display">Удалить пользовательское отображение пользователя</string>
+    <string name="user_display_alias_input">Псевдоним</string>
+    <string name="user_display_custom_color_enable">﻿Пользовательский цвет</string>
+    <string name="user_display_custom_alias_enable">Пользовательский псевдоним</string>
+    <string name="pick_custom_user_color_title">Выбрать пользовательский цвет</string>
+    <string name="custom_user_display_summary">Добавить пользовательское имя и цвет для пользователей</string>
     <plurals name="viewers">
         <item quantity="one">В сети с %d зрителем</item>
         <item quantity="few">В сети с %d зрителями</item>
