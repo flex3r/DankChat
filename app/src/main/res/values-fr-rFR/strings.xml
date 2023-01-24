@@ -56,6 +56,7 @@
     <string name="snackbar_retry">Réessayer</string>
     <string name="snackbar_data_reloaded">Emotes rechargées</string>
     <string name="snackbar_data_load_failed_cause">Echec du chargement des données: %1$s</string>
+    <string name="snackbar_data_load_failed_multiple_causes">Le chargement des données a échoué avec plusieurs erreurs :\n%1$s</string>
     <string name="snackbar_paste">Coller</string>
     <string name="add_channel_hint">Nom de la chaîne</string>
     <string name="emote_menu_tab_recent">Récentes</string>
@@ -63,6 +64,7 @@
     <string name="emote_menu_tab_channel">Chaîne</string>
     <string name="emote_menu_tab_global">Global</string>
     <string name="system_message_connected">Connecté</string>
+    <string name="system_message_reconnected">Reconnecté</string>
     <string name="system_message_channel_non_existent">Cette chaîne n\'existe pas</string>
     <string name="system_message_disconnected">Déconnecté</string>
     <string name="system_message_history_unavailable_detailed">Service d\'historique des messages indisponible (Erreur %1$s)</string>
@@ -70,6 +72,9 @@
     <string name="system_message_history_recovering">Récupération de l\'historique des messages, il peut y avoir des vides dans l\'historique des messages.</string>
     <string name="system_message_history_ignored">Historique des messages indisponible car cette chaîne est exclu du service.</string>
     <string name="system_message_no_history">Vous ne voyez pas les anciens messages car vous vous êtes désinscris de l\'intégration</string>
+    <string name="system_message_ffz_emotes_failed">Échec du chargement des emotes FFZ (Erreur %1$s)</string>
+    <string name="system_message_bttv_emotes_failed">Échec du chargement des emotes BTTV (Erreur %1$s)</string>
+    <string name="system_message_7tv_emotes_failed">Échec du chargement des emotes 7TV (Erreur %1$s)</string>
     <string name="timed_out_message">&lt; Message supprimé &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Ajouter une entrée</string>
@@ -295,6 +300,17 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="ignores_users_title">Ignorer les messages de certains utilisateurs.</string>
     <string name="ignores_twitch_title">Gérer les utilisateurs Twitch bloqués</string>
     <string name="preference_notification_whisper_title">Créer des notifications pour des chuchotements</string>
+    <string name="login_outdated_title">Connexion dépassée !</string>
+    <string name="login_outdated_message">Votre connexion est dépassée et n\'a pas accès à certaines fonctionnalités. Veuillez vous reconnecter.</string>
+    <string name="custom_user_display_title">Affichage personnalisé de l\'utilisateur</string>
+    <string name="user_display_item_username_hint">Nom d\'utilisateur</string>
+    <string name="user_display_item_color_hint">Couleur</string>
+    <string name="remove_custom_user_display">Supprimer l\'affichage personnalisé de l\'utilisateur</string>
+    <string name="user_display_alias_input">Alias</string>
+    <string name="user_display_custom_color_enable">Couleur personnalisée</string>
+    <string name="user_display_custom_alias_enable">Alias personnalisé</string>
+    <string name="pick_custom_user_color_title">Choisir la couleur de l\'utilisateur personnalisée</string>
+    <string name="custom_user_display_summary">Ajouter un nom et une couleur personnalisés pour les utilisateurs</string>
     <plurals name="viewers">
         <item quantity="one">En direct pour %d spectateur</item>
         <item quantity="other">En direct pour %d spectateurs</item>
