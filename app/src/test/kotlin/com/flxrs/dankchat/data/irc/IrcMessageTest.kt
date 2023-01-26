@@ -119,4 +119,79 @@ internal class IrcMessageTest {
         assertEquals(expected = "", actual = ircMessage.tags["user-type"])
         assertEquals(expected = 7, actual = ircMessage.tags.size)
     }
+
+    @Test
+    fun `parse privmsg`() {
+        val msg = "@badge-info=;badges=;color=#0000FF;display-name=JuN1oRRRR;emotes=;flags=;id=e9d998c3-36f1-430f-89ec-6b887c28af36;mod=0;room-id=11148817;subscriber=0;tmi-sent-ts=1594545155039;turbo=0;user-id=29803735;user-type= :jun1orrrr!jun1orrrr@jun1orrrr.tmi.twitch.tv PRIVMSG #pajlada :dank cam"
+        val ircMessage = IrcMessage.parse(msg)
+
+        assertEquals(expected = "PRIVMSG", actual = ircMessage.command)
+        assertEquals(expected = listOf("#pajlada", "dank cam"), actual = ircMessage.params)
+        assertEquals(expected = "jun1orrrr!jun1orrrr@jun1orrrr.tmi.twitch.tv", actual = ircMessage.prefix)
+        assertEquals(expected = "", actual = ircMessage.tags["badge-info"])
+        assertEquals(expected = "", actual = ircMessage.tags["badges"])
+        assertEquals(expected = "#0000FF", actual = ircMessage.tags["color"])
+        assertEquals(expected = "JuN1oRRRR", actual = ircMessage.tags["display-name"])
+        assertEquals(expected = "29803735", actual = ircMessage.tags["user-id"])
+        assertEquals(expected = "", actual = ircMessage.tags["user-type"])
+        assertEquals(expected = 14, actual = ircMessage.tags.size)
+    }
+
+    @Test
+    fun `parse privmsg without colon`() {
+        val msg = "@badge-info=;badges=;color=#0000FF;display-name=JuN1oRRRR;emotes=;flags=;id=e9d998c3-36f1-430f-89ec-6b887c28af36;mod=0;room-id=11148817;subscriber=0;tmi-sent-ts=1594545155039;turbo=0;user-id=29803735;user-type= :jun1orrrr!jun1orrrr@jun1orrrr.tmi.twitch.tv PRIVMSG #pajlada dank"
+        val ircMessage = IrcMessage.parse(msg)
+
+        assertEquals(expected = "PRIVMSG", actual = ircMessage.command)
+        assertEquals(expected = listOf("#pajlada", "dank"), actual = ircMessage.params)
+        assertEquals(expected = "jun1orrrr!jun1orrrr@jun1orrrr.tmi.twitch.tv", actual = ircMessage.prefix)
+        assertEquals(expected = "", actual = ircMessage.tags["badge-info"])
+        assertEquals(expected = "", actual = ircMessage.tags["badges"])
+        assertEquals(expected = "#0000FF", actual = ircMessage.tags["color"])
+        assertEquals(expected = "JuN1oRRRR", actual = ircMessage.tags["display-name"])
+        assertEquals(expected = "29803735", actual = ircMessage.tags["user-id"])
+        assertEquals(expected = "", actual = ircMessage.tags["user-type"])
+        assertEquals(expected = 14, actual = ircMessage.tags.size)
+    }
+
+    @Test
+    fun `parse privmsg with tag without value`() {
+        val msg = "@badge-info=;badges=;color=#0000FF;foo=;display-name=JuN1oRRRR;emotes=;flags=;id=e9d998c3-36f1-430f-89ec-6b887c28af36;mod=0;room-id=11148817;subscriber=0;tmi-sent-ts=1594545155039;turbo=0;user-id=29803735;user-type= :jun1orrrr!jun1orrrr@jun1orrrr.tmi.twitch.tv PRIVMSG #pajlada dank"
+        val ircMessage = IrcMessage.parse(msg)
+
+        assertEquals(expected = "PRIVMSG", actual = ircMessage.command)
+        assertEquals(expected = listOf("#pajlada", "dank"), actual = ircMessage.params)
+        assertEquals(expected = "jun1orrrr!jun1orrrr@jun1orrrr.tmi.twitch.tv", actual = ircMessage.prefix)
+        assertEquals(expected = "", actual = ircMessage.tags["badge-info"])
+        assertEquals(expected = "", actual = ircMessage.tags["badges"])
+        assertEquals(expected = "#0000FF", actual = ircMessage.tags["color"])
+        assertEquals(expected = "", actual = ircMessage.tags["foo"])
+        assertEquals(expected = "JuN1oRRRR", actual = ircMessage.tags["display-name"])
+        assertEquals(expected = "", actual = ircMessage.tags["emotes"])
+        assertEquals(expected = "", actual = ircMessage.tags["flags"])
+        assertEquals(expected = "29803735", actual = ircMessage.tags["user-id"])
+        assertEquals(expected = "", actual = ircMessage.tags["user-type"])
+        assertEquals(expected = 15, actual = ircMessage.tags.size)
+    }
+
+    @Test
+    fun `parse privmsg with character replacement inside tag values`() {
+        val msg = "@badge-info=;badges=;color=#0000FF;foo=\\:;foo2=\\:\\s\\r\\n;display-name=JuN1oRRRR;emotes=;flags=;id=e9d998c3-36f1-430f-89ec-6b887c28af36;mod=0;room-id=11148817;subscriber=0;tmi-sent-ts=1594545155039;turbo=0;user-id=29803735;user-type= :jun1orrrr!jun1orrrr@jun1orrrr.tmi.twitch.tv PRIVMSG #pajlada dank"
+        val ircMessage = IrcMessage.parse(msg)
+
+        assertEquals(expected = "PRIVMSG", actual = ircMessage.command)
+        assertEquals(expected = listOf("#pajlada", "dank"), actual = ircMessage.params)
+        assertEquals(expected = "jun1orrrr!jun1orrrr@jun1orrrr.tmi.twitch.tv", actual = ircMessage.prefix)
+        assertEquals(expected = "", actual = ircMessage.tags["badge-info"])
+        assertEquals(expected = "", actual = ircMessage.tags["badges"])
+        assertEquals(expected = "#0000FF", actual = ircMessage.tags["color"])
+        assertEquals(expected = ";", actual = ircMessage.tags["foo"])
+        assertEquals(expected = "; \r\n", actual = ircMessage.tags["foo2"])
+        assertEquals(expected = "JuN1oRRRR", actual = ircMessage.tags["display-name"])
+        assertEquals(expected = "", actual = ircMessage.tags["emotes"])
+        assertEquals(expected = "", actual = ircMessage.tags["flags"])
+        assertEquals(expected = "29803735", actual = ircMessage.tags["user-id"])
+        assertEquals(expected = "", actual = ircMessage.tags["user-type"])
+        assertEquals(expected = 16, actual = ircMessage.tags.size)
+    }
 }
