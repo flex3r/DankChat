@@ -2,7 +2,6 @@ package com.flxrs.dankchat.utils
 
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.Drawable.Callback
-import android.util.Log
 import android.view.View
 import java.lang.ref.WeakReference
 import java.util.concurrent.CopyOnWriteArrayList
@@ -12,7 +11,6 @@ class MultiCallback : Callback {
     private val callbacks = CopyOnWriteArrayList<CallbackReference>()
 
     override fun invalidateDrawable(who: Drawable) {
-        Log.d("MultiCallback", "callback size: ${callbacks.size}")
         callbacks.forEach { reference ->
             when (val callback = reference.get()) {
                 null -> callbacks.remove(reference)
