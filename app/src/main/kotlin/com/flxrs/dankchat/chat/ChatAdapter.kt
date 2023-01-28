@@ -492,7 +492,7 @@ class ChatAdapter(
         val prefixLength = messageBuilder.length + fullDisplayName.length // spannable.length is timestamp's length (plus some extra length from extra methods call above)
 
         val badgePositions = allowedBadges.map {
-            messageBuilder.append("  ")
+            messageBuilder.append("⠀ ")
             messageBuilder.length - 2 to messageBuilder.length - 1
         }
 
