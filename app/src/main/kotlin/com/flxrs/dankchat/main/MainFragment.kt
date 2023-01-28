@@ -44,6 +44,7 @@ import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.ValidationResult
 import com.flxrs.dankchat.chat.ChatTabAdapter
+import com.flxrs.dankchat.chat.menu.EmoteItem
 import com.flxrs.dankchat.chat.menu.EmoteMenuFragment
 import com.flxrs.dankchat.chat.suggestion.SpaceTokenizer
 import com.flxrs.dankchat.chat.suggestion.Suggestion
@@ -54,7 +55,6 @@ import com.flxrs.dankchat.data.state.DataLoadingState
 import com.flxrs.dankchat.data.state.ImageUploadState
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.chat.ConnectionState
-import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.databinding.EditDialogBinding
 import com.flxrs.dankchat.databinding.MainFragmentBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
@@ -567,9 +567,13 @@ class MainFragment : Fragment() {
         binding.input.setSelection(index + text.length)
     }
 
-    fun insertEmote(emote: GenericEmote) {
-        insertText("${emote.code} ")
-        mainViewModel.addEmoteUsage(emote)
+    fun insertEmote(item: EmoteItem) {
+        val toInsert = item.textToInsert ?: return
+        insertText("$toInsert ")
+
+        if (item is EmoteItem.Emote) {
+            mainViewModel.addEmoteUsage(item.emote)
+        }
     }
 
     fun showEmoteMenu() = emoteMenuBottomSheetBehavior?.expand()

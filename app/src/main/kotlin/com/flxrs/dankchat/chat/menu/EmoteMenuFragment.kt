@@ -34,6 +34,7 @@ class EmoteMenuFragment : Fragment() {
                     EmoteMenuTab.CHANNEL -> getString(R.string.emote_menu_tab_channel)
                     EmoteMenuTab.GLOBAL  -> getString(R.string.emote_menu_tab_global)
                     EmoteMenuTab.RECENT  -> getString(R.string.emote_menu_tab_recent)
+                    EmoteMenuTab.EMOJI   -> "Emoji"
                 }
             }.attach()
         }

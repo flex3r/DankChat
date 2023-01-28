@@ -6,15 +6,21 @@ import androidx.appcompat.widget.TooltipCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.databinding.EmoteHeaderItemBinding
 import com.flxrs.dankchat.databinding.EmoteItemBinding
 import com.flxrs.dankchat.utils.extensions.loadImage
 import java.util.Locale
 
-class EmoteAdapter(private val onEmoteClick: (emote: GenericEmote) -> Unit) : ListAdapter<EmoteItem, RecyclerView.ViewHolder>(DetectDiff()) {
+class EmoteAdapter(private val onEmoteClick: (emote: EmoteItem) -> Unit) : ListAdapter<EmoteItem, RecyclerView.ViewHolder>(DetectDiff()) {
 
-    inner class ViewHolder(val binding: EmoteItemBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class ViewHolder(val binding: EmoteItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.root.setOnClickListener {
+                val item = getItem(bindingAdapterPosition) as EmoteItem.Emote
+                onEmoteClick(item)
+            }
+        }
+    }
     inner class TextViewHolder(val binding: EmoteHeaderItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -30,7 +36,6 @@ class EmoteAdapter(private val onEmoteClick: (emote: GenericEmote) -> Unit) : Li
             is ViewHolder     -> {
                 val emoteItem = getItem(position) as EmoteItem.Emote
                 val emote = emoteItem.emote
-                holder.binding.root.setOnClickListener { onEmoteClick(emote) }
                 with(holder.binding.emoteView) {
                     TooltipCompat.setTooltipText(this, emote.code)
                     contentDescription = emote.code
@@ -46,9 +51,10 @@ class EmoteAdapter(private val onEmoteClick: (emote: GenericEmote) -> Unit) : Li
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (getItem(position)) {
+        return when (val item = getItem(position)) {
             is EmoteItem.Header -> ITEM_VIEW_TYPE_HEADER
             is EmoteItem.Emote  -> ITEM_VIEW_TYPE_ITEM
+            is EmoteItem.Emoji  -> throw ClassCastException("Not supported item type $item")
         }
     }
 

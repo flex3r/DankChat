@@ -130,6 +130,7 @@ dependencies {
     implementation(libs.androidx.browser)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.emoji2)
+    implementation(libs.androidx.emoji2.picker)
     implementation(libs.androidx.exifinterface)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
