@@ -290,6 +290,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="highlights_ignores_entry_subscriptions">Subskrypcje i Wydarzenia</string>
     <string name="highlights_ignores_entry_announcements">Ogłoszenia</string>
     <string name="highlights_ignores_entry_first_messages">Pierwsza Wiadomość</string>
+    <string name="highlights_ignores_entry_elevated_messages">Podwyższone Czaty</string>
     <string name="highlights_ignores_entry_redemptions">Wyróżnienie odebrane za Punkty Kanału</string>
     <string name="highlights_ignores_entry_custom">Niestandardowe</string>
     <string name="highlights_messages_title">Tworzy powiadomienia i wyróżnia wiadomości na podstawie określonych wzorów.</string>
@@ -301,6 +302,10 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_notification_whisper_title">Utwórz powiadomienia dla szeptów </string>
     <string name="login_outdated_title">Login Nieaktualny!</string>
     <string name="login_outdated_message">Twój login jest nieaktualny i nie ma dostępu do niektórych funkcji. Zaloguj się ponownie.</string>
+    <string name="user_display_item_username_hint">Nazwa użytkownika</string>
+    <string name="user_display_item_color_hint">Kolor</string>
+    <string name="user_display_custom_color_enable">Niestandardowy Kolor</string>
+    <string name="pick_custom_user_color_title">Wybierz niestandardowy kolor użytkownika</string>
     <plurals name="viewers">
         <item quantity="one">Na żywo z %d widzem</item>
         <item quantity="few">Na żywo z %d widzami</item>
