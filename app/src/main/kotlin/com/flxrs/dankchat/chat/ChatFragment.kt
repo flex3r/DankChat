@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.SharedPreferences
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.LayerDrawable
+import android.os.Build
 import android.os.Bundle
 import android.text.style.ImageSpan
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.isVisible
+import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.preference.PreferenceManager
@@ -113,8 +115,8 @@ open class ChatFragment : Fragment() {
         super.onStart()
 
         // Trigger a redraw of last 50 items to start gifs again
-        if (::preferences.isInitialized && preferences.getBoolean(getString(R.string.preference_animate_gifs_key), true)) {
-            binding.chat.post {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && ::preferences.isInitialized && preferences.getBoolean(getString(R.string.preference_animate_gifs_key), true)) {
+            binding.chat.postDelayed(MESSAGES_REDRAW_DELAY_MS) {
                 val start = (adapter.itemCount - MAX_MESSAGES_REDRAW_AMOUNT).coerceAtLeast(minimumValue = 0)
                 val itemCount = MAX_MESSAGES_REDRAW_AMOUNT.coerceAtMost(maximumValue = adapter.itemCount)
                 adapter.notifyItemRangeChanged(start, itemCount)
@@ -135,7 +137,7 @@ open class ChatFragment : Fragment() {
 
     override fun onStop() {
         // Stop animated drawables and related invalidation callbacks
-        if (activity?.isChangingConfigurations == false && ::adapter.isInitialized) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && activity?.isChangingConfigurations == false && ::adapter.isInitialized) {
             binding.chat.cleanupActiveDrawables(adapter.itemCount)
         }
 
@@ -231,6 +233,7 @@ open class ChatFragment : Fragment() {
     companion object {
         private const val AT_BOTTOM_STATE = "chat_at_bottom_state"
         private const val MAX_MESSAGES_REDRAW_AMOUNT = 50
+        private const val MESSAGES_REDRAW_DELAY_MS = 100L
         private const val OFFSCREEN_VIEW_CACHE_SIZE = 10
 
         fun newInstance(channel: UserName) = ChatFragment().apply {

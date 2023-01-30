@@ -63,7 +63,7 @@ inline fun ImageView.loadImage(
 
 inline fun <reified T : RecyclerView.ViewHolder> RecyclerView.forEachViewHolder(itemCount: Int, action: (T) -> Unit) {
     for (i in 0 until itemCount) {
-        val holder = findViewHolderForAdapterPosition(i)
+        val holder = findViewHolderForAdapterPosition(i) ?: continue
         if (holder is T) {
             action(holder)
         }

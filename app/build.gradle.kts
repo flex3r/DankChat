@@ -78,8 +78,6 @@ android {
         }
         create("dank") {
             initWith(getByName("debug"))
-            isMinifyEnabled = true
-            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             manifestPlaceholders["applicationLabel"] = "@string/app_name_dank"
             applicationIdSuffix = ".dank"
