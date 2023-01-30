@@ -9,6 +9,7 @@ import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.data.repo.chat.UserState
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.command.CommandContext
+import com.flxrs.dankchat.data.twitch.command.TwitchCommand
 import com.flxrs.dankchat.data.twitch.command.TwitchCommandRepository
 import com.flxrs.dankchat.data.twitch.message.RoomState
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
@@ -18,6 +19,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
@@ -44,8 +46,13 @@ class CommandRepository @Inject constructor(
     private val defaultCommands = Command.values()
     private val defaultCommandTriggers = defaultCommands.map { it.trigger }
 
-    val commandTriggers: Flow<List<String>> = customCommands.map { customCommands ->
+    private val commandTriggers: Flow<List<String>> = customCommands.map { customCommands ->
         defaultCommandTriggers + TwitchCommandRepository.ALL_COMMAND_TRIGGERS + customCommands.map(CommandItem.Entry::trigger)
+    }
+
+    fun getCommandTriggers(channel: UserName): Flow<List<String>> = when (channel.value) {
+        "w"  -> flowOf(TwitchCommandRepository.asCommandTriggers(TwitchCommand.Whisper.trigger))
+        else -> commandTriggers
     }
 
     fun getSupibotCommands(channel: UserName): StateFlow<List<String>> = supibotCommands.getOrPut(channel) { MutableStateFlow(emptyList()) }
@@ -58,15 +65,7 @@ class CommandRepository @Inject constructor(
             return CommandResult.NotFound
         }
 
-        val words = message.split(" ")
-        if (words.isEmpty()) {
-            return CommandResult.NotFound
-        }
-
-        val trigger = words.first()
-        if (trigger.isEmpty()) {
-            return CommandResult.NotFound
-        }
+        val (trigger, args) = triggerAndArgsOrNull(message) ?: return CommandResult.NotFound
 
         if (twitchCommandRepository.isIrcCommand(trigger)) {
             return CommandResult.IrcCommand
@@ -78,7 +77,7 @@ class CommandRepository @Inject constructor(
                 return CommandResult.Blocked
             }
 
-            val context = CommandContext(trigger, channel, roomState.channelId, roomState, message, words.drop(1))
+            val context = CommandContext(trigger, channel, roomState.channelId, roomState, message, args)
             return twitchCommandRepository.handleTwitchCommand(twitchCommand, context)
         }
 
@@ -89,8 +88,8 @@ class CommandRepository @Inject constructor(
             }
 
             return when (defaultCommand) {
-                Command.Block    -> blockUserCommand(words.drop(1))
-                Command.Unblock  -> unblockUserCommand(words.drop(1))
+                Command.Block    -> blockUserCommand(args)
+                Command.Unblock  -> unblockUserCommand(args)
                 Command.Chatters -> chattersCommand(channel)
                 Command.Uptime   -> uptimeCommand(channel)
                 Command.Help     -> helpCommand(roomState, userState)
@@ -98,6 +97,27 @@ class CommandRepository @Inject constructor(
         }
 
         return checkUserCommands(trigger)
+    }
+
+    suspend fun checkForWhisperCommand(message: String, skipSuspendingCommands: Boolean): CommandResult {
+        if (skipSuspendingCommands) {
+            return CommandResult.Blocked
+        }
+
+        val (trigger, args) = triggerAndArgsOrNull(message) ?: return CommandResult.NotFound
+        return when (val twitchCommand = twitchCommandRepository.findTwitchCommand(trigger)) {
+            TwitchCommand.Whisper -> {
+                val currentUserId = preferenceStore.userIdString
+                    ?.takeIf { preferenceStore.isLoggedIn }
+                    ?: return CommandResult.AcceptedTwitchCommand(
+                        command = twitchCommand,
+                        response = "You must be logged in to use the $trigger command"
+                    )
+                twitchCommandRepository.sendWhisper(twitchCommand, currentUserId, trigger, args)
+            }
+
+            else                  -> CommandResult.NotFound
+        }
     }
 
     suspend fun loadSupibotCommands() = withContext(Dispatchers.Default) {
@@ -120,6 +140,20 @@ class CommandRepository @Inject constructor(
                     .update { commands + aliases }
             }
         }.let { Log.i(TAG, "Loaded Supibot commands in $it ms") }
+    }
+
+    private fun triggerAndArgsOrNull(message: String): Pair<String, List<String>>? {
+        val words = message.split(" ")
+        if (words.isEmpty()) {
+            return null
+        }
+
+        val trigger = words.first()
+        if (trigger.isEmpty()) {
+            return null
+        }
+
+        return trigger to words.drop(1)
     }
 
     private suspend fun getSupibotChannels(): List<UserName> {

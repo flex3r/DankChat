@@ -94,8 +94,28 @@ class TwitchCommandRepository @Inject constructor(
             TwitchCommand.Unvip          -> removeVip(command, context)
             TwitchCommand.Vip            -> addVip(command, context)
             TwitchCommand.Vips           -> getVips(command, context)
-            TwitchCommand.Whisper        -> sendWhisper(command, currentUserId, context)
+            TwitchCommand.Whisper        -> sendWhisper(command, currentUserId, context.trigger, context.args)
         }
+    }
+
+    suspend fun sendWhisper(command: TwitchCommand, currentUserId: UserId, trigger: String, args: List<String>): CommandResult {
+        if (args.size < 2 || args[0].isBlank() || args[1].isBlank()) {
+            return CommandResult.AcceptedTwitchCommand(command, response = "Usage: $trigger <username> <message>")
+        }
+
+        val targetName = args[0]
+        val targetId = helixApiClient.getUserIdByName(targetName.toUserName()).getOrElse {
+            return CommandResult.AcceptedTwitchCommand(command, response = "No user matching that username.")
+        }
+        val request = WhisperRequestDto(args.drop(1).joinToString(separator = " "))
+        val result = helixApiClient.postWhisper(currentUserId, targetId, request)
+        return result.fold(
+            onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "Whisper sent.") },
+            onFailure = {
+                val response = "Failed to send whisper - ${it.toErrorMessage(command)}"
+                CommandResult.AcceptedTwitchCommand(command, response)
+            }
+        )
     }
 
     private suspend fun sendAnnouncement(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
@@ -118,27 +138,6 @@ class TwitchCommandRepository @Inject constructor(
             onSuccess = { CommandResult.AcceptedTwitchCommand(command) },
             onFailure = {
                 val response = "Failed to send announcement - ${it.toErrorMessage(command)}"
-                CommandResult.AcceptedTwitchCommand(command, response)
-            }
-        )
-    }
-
-    private suspend fun sendWhisper(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
-        val args = context.args
-        if (args.size < 2 || args[0].isBlank() || args[1].isBlank()) {
-            return CommandResult.AcceptedTwitchCommand(command, response = "Usage: ${context.trigger} <username> <message>")
-        }
-
-        val targetName = args[0]
-        val targetId = helixApiClient.getUserIdByName(targetName.toUserName()).getOrElse {
-            return CommandResult.AcceptedTwitchCommand(command, response = "No user matching that username.")
-        }
-        val request = WhisperRequestDto(args.drop(1).joinToString(separator = " "))
-        val result = helixApiClient.postWhisper(currentUserId, targetId, request)
-        return result.fold(
-            onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "Whisper sent.") },
-            onFailure = {
-                val response = "Failed to send whisper - ${it.toErrorMessage(command)}"
                 CommandResult.AcceptedTwitchCommand(command, response)
             }
         )
@@ -654,10 +653,10 @@ class TwitchCommandRepository @Inject constructor(
     }
 
     companion object {
-        private fun asCommandTriggers(command: String): List<String> = ALLOWED_FIRST_TRIGGER_CHARS.map { "$it$command" }
         private val ALLOWED_IRC_COMMANDS = listOf("me", "disconnect")
         private val ALLOWED_FIRST_TRIGGER_CHARS = listOf('/', '.')
         private val ALLOWED_IRC_COMMAND_TRIGGERS = ALLOWED_IRC_COMMANDS.flatMap { asCommandTriggers(it) }
+        fun asCommandTriggers(command: String): List<String> = ALLOWED_FIRST_TRIGGER_CHARS.map { "$it$command" }
         val ALL_COMMAND_TRIGGERS = ALLOWED_IRC_COMMAND_TRIGGERS + TwitchCommand.ALL_COMMANDS.flatMap { asCommandTriggers(it.trigger) }
 
         private val TAG = TwitchCommandRepository::class.java.simpleName

@@ -41,7 +41,15 @@ class MentionChatFragment : ChatFragment() {
         return binding.root
     }
 
-    override fun onUserClick(targetUserId: UserId?, targetUserName: UserName, targetDisplayName: DisplayName, messageId: String, channel: UserName?, badges: List<Badge>, isLongPress: Boolean) {
+    override fun onUserClick(
+        targetUserId: UserId?,
+        targetUserName: UserName,
+        targetDisplayName: DisplayName,
+        messageId: String,
+        channel: UserName?,
+        badges: List<Badge>,
+        isLongPress: Boolean
+    ) {
         targetUserId ?: return
         val shouldLongClickMention = preferences.getBoolean(getString(R.string.preference_user_long_click_key), true)
         val shouldMention = (isLongPress && shouldLongClickMention) || (!isLongPress && !shouldLongClickMention)

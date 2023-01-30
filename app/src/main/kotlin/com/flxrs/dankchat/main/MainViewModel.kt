@@ -143,9 +143,9 @@ class MainViewModel @Inject constructor(
         commands.map { Suggestion.CommandSuggestion(it) }
     }
 
-    private val defaultCommandSuggestions = commandRepository.commandTriggers.map { commands ->
-        commands.map { Suggestion.CommandSuggestion(it) }
-    }
+    private val commandSuggestions = currentSuggestionChannel.flatMapLatestOrDefault(emptyList()) {
+        commandRepository.getCommandTriggers(it)
+    }.map { triggers -> triggers.map { Suggestion.CommandSuggestion(it) } }
 
     private val currentBottomText: Flow<String> =
         combine(roomStateText, currentStreamInformation, mentionSheetOpen) { roomState, streamInfo, mentionSheetOpen ->
@@ -272,7 +272,7 @@ class MainViewModel @Inject constructor(
         emoteSuggestions,
         userSuggestions,
         supibotCommandSuggestions,
-        defaultCommandSuggestions,
+        commandSuggestions,
     ) { emotes, users, supibotCommands, defaultCommands ->
         Triple(users, emotes, defaultCommands + supibotCommands)
     }
@@ -500,15 +500,17 @@ class MainViewModel @Inject constructor(
     fun reconnect() = chatRepository.reconnect()
     fun joinChannel(channel: UserName): List<UserName> = chatRepository.joinChannel(channel)
     fun trySendMessageOrCommand(message: String, skipSuspendingCommands: Boolean = false) = viewModelScope.launch {
-        if (mentionSheetOpen.value && whisperTabSelected.value && !(message.startsWith("/w ") || message.startsWith(".w"))) {
-            return@launch
-        }
-
         val channel = currentSuggestionChannel.value ?: return@launch
-        val roomState = currentRoomState ?: return@launch
-        val userState = chatRepository.userStateFlow.value
         val commandResult = runCatching {
-            commandRepository.checkForCommands(message, channel, roomState, userState, skipSuspendingCommands)
+            when {
+                mentionSheetOpen.value && whisperTabSelected.value -> commandRepository.checkForWhisperCommand(message, skipSuspendingCommands)
+
+                else                                               -> {
+                    val roomState = currentRoomState ?: return@launch
+                    val userState = chatRepository.userStateFlow.value
+                    commandRepository.checkForCommands(message, channel, roomState, userState, skipSuspendingCommands)
+                }
+            }
         }.getOrElse {
             eventChannel.send(MainEvent.Error(it))
             return@launch
