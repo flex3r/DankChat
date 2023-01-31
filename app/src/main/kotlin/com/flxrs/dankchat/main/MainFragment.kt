@@ -664,7 +664,7 @@ class MainFragment : Fragment() {
                 }
                 showSnackBar(
                     message = message,
-                    multiLine = true,
+                    maxLines = 8,
                     duration = Snackbar.LENGTH_LONG,
                     action = getString(R.string.snackbar_retry) to {
                         mainViewModel.retryDataLoading(result.dataFailures, result.chatFailures)
@@ -816,7 +816,7 @@ class MainFragment : Fragment() {
 
     private fun showSnackBar(
         message: String,
-        multiLine: Boolean = false,
+        maxLines: Int = 1,
         @BaseTransientBottomBar.Duration duration: Int = Snackbar.LENGTH_SHORT,
         onDismiss: () -> Unit = {},
         action: Pair<String, () -> Unit>? = null
@@ -827,10 +827,7 @@ class MainFragment : Fragment() {
                     if (binding.inputLayout.isVisible) {
                         anchorView = binding.inputLayout
                     }
-                    if (multiLine) {
-                        (view.findViewById<View?>(com.google.android.material.R.id.snackbar_text) as? TextView?)?.isSingleLine = false
-                    }
-
+                    setTextMaxLines(maxLines)
                     addCallback(object : Snackbar.Callback() {
                         override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
                             when (event) {

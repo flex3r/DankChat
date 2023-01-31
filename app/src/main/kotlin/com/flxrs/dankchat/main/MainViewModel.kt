@@ -16,11 +16,13 @@ import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.data.repo.chat.ChatLoadingFailure
 import com.flxrs.dankchat.data.repo.chat.ChatLoadingStep
 import com.flxrs.dankchat.data.repo.chat.ChatRepository
+import com.flxrs.dankchat.data.repo.chat.toMergedStrings
 import com.flxrs.dankchat.data.repo.command.CommandRepository
 import com.flxrs.dankchat.data.repo.command.CommandResult
 import com.flxrs.dankchat.data.repo.data.DataLoadingFailure
 import com.flxrs.dankchat.data.repo.data.DataLoadingStep
 import com.flxrs.dankchat.data.repo.data.DataRepository
+import com.flxrs.dankchat.data.repo.data.toMergedStrings
 import com.flxrs.dankchat.data.state.DataLoadingState
 import com.flxrs.dankchat.data.state.ImageUploadState
 import com.flxrs.dankchat.data.toUserName
@@ -39,6 +41,7 @@ import com.flxrs.dankchat.utils.extensions.moveToFront
 import com.flxrs.dankchat.utils.extensions.timer
 import com.flxrs.dankchat.utils.extensions.toEmoteItems
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.ktor.serialization.JsonConvertException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -70,6 +73,7 @@ import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.serialization.SerializationException
 import java.io.File
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
@@ -723,24 +727,39 @@ class MainViewModel @Inject constructor(
             }
         }
 
+        val steps = dataFailures.map(DataLoadingFailure::step).toMergedStrings() + chatFailures.map(ChatLoadingFailure::step).toMergedStrings()
+        val failures = dataFailures.map(DataLoadingFailure::failure) + chatFailures.map(ChatLoadingFailure::failure)
         val state = when (val errorCount = dataFailures.size + chatFailures.size) {
             0    -> DataLoadingState.Finished
             1    -> {
-                val firstFailure = dataFailures.firstOrNull()?.failure ?: chatFailures.firstOrNull()?.failure
-                val message = firstFailure?.toErrorMessage().orEmpty()
+                val step = steps.firstOrNull()
+                val failure = failures.firstOrNull()
+                val message = buildString {
+                    if (step != null) {
+                        append(step)
+                        append(": ")
+                    }
+                    append(failure?.toErrorMessage().orEmpty())
+                }
+
                 DataLoadingState.Failed(message, errorCount, dataFailures, chatFailures)
             }
 
             else -> {
-                val message = (dataFailures.map { it.failure } + chatFailures.map { it.failure })
-                    .filterIsInstance<ApiException>()
-                    .groupBy { it.url?.host }
-                    .values
-                    .maxByOrNull { it.size }
-                    ?.take(3)
-                    ?.mapNotNull { it.toErrorMessage() }
-                    ?.joinToString(separator = "\n")
-                    .orEmpty()
+                val message = failures
+                    .groupBy { it.message }.values
+                    .maxBy { it.size }
+                    .let {
+                        buildString {
+                            append(steps.joinToString())
+
+                            val error = it.firstOrNull()?.toErrorMessage()
+                            if (error != null) {
+                                append("\n")
+                                append(error)
+                            }
+                        }
+                    }
 
                 DataLoadingState.Failed(message, errorCount, dataFailures, chatFailures)
             }
@@ -752,16 +771,18 @@ class MainViewModel @Inject constructor(
         isDataLoading.update { false }
     }
 
-    private fun Throwable.toErrorMessage(): String? {
-        if (this !is ApiException) {
-            return message
-        }
+    private fun Throwable.toErrorMessage(): String {
+        return when (this) {
+            is JsonConvertException -> (cause as? SerializationException ?: this).toString()
 
-        return buildString {
-            append("${url}(${status.value})")
-            if (message != null) {
-                append(": $message")
+            is ApiException         -> buildString {
+                append("${url}(${status.value})")
+                if (message != null) {
+                    append(": $message")
+                }
             }
+
+            else                    -> toString()
         }
     }
 
