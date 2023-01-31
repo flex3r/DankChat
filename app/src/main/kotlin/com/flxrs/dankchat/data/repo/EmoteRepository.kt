@@ -547,7 +547,8 @@ class EmoteRepository @Inject constructor(
         val urls = data.host.files
             .filter { it.format == "WEBP" }
             .associate {
-                it.staticName to it.emoteUrlWithFallback(base, data.animated)
+                val size = it.name.substringBeforeLast('.')
+                size to it.emoteUrlWithFallback(base, size, data.animated)
             }
 
         return GenericEmote(
@@ -561,9 +562,9 @@ class EmoteRepository @Inject constructor(
         )
     }
 
-    private fun SevenTVEmoteFileDto.emoteUrlWithFallback(base: String, animated: Boolean): String {
+    private fun SevenTVEmoteFileDto.emoteUrlWithFallback(base: String, size: String, animated: Boolean): String {
         return when {
-            animated && Build.VERSION.SDK_INT < Build.VERSION_CODES.P -> "$base$staticName.gif"
+            animated && Build.VERSION.SDK_INT < Build.VERSION_CODES.P -> "$base$size.gif"
             else                                                      -> "$base$name"
         }
     }
