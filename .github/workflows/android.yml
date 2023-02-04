@@ -78,7 +78,7 @@ jobs:
 
       - name: Update debug release
         if: (github.event_name == 'push' && github.ref == 'refs/heads/develop')
-        uses: meeDamian/github-release@2.0
+        uses: meeDamian/github-release@v2.0.3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: debug
@@ -134,7 +134,7 @@ jobs:
           tag_name: release
 
       - name: Update signed release
-        uses: meeDamian/github-release@2.0
+        uses: meeDamian/github-release@v2.0.3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: release
