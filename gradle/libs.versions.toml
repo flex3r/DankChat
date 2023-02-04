@@ -1,11 +1,11 @@
 [versions]
-kotlin = "1.8.0"
+kotlin = "1.8.10"
 coroutines = "1.6.4"
 serialization = "1.4.1"
-ktor = "2.2.2"
+ktor = "2.2.3"
 coil = "2.2.2"
 okhttp = "5.0.0-alpha.7"
-ksp = "1.8.0-1.0.8"
+ksp = "1.8.10-1.0.9"
 hilt = "2.44.2"
 
 androidGradlePlugin = "7.4.1"
@@ -26,7 +26,7 @@ androidxViewpager2 = "1.1.0-beta01"
 androidxRoom = "2.5.0"
 androidxWebkit = "1.5.0"
 composeBom = "2022.10.00"
-material = "1.8.0-rc01"
+material = "1.8.0"
 mdcComposeAdapter = "1.0.21"
 
 colorPicker = "3.0.1"
