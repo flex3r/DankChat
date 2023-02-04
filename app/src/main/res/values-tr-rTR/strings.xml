@@ -281,6 +281,13 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="ignores_users_title">Belli kullanıcılardan gelen mesajları yok say.</string>
     <string name="ignores_twitch_title">Engellenen Twitch kullanıcılarını yönet.</string>
     <string name="preference_notification_whisper_title">Fısıltılar için bildirimler oluştur</string>
+    <string name="custom_user_display_title">Özel Kullanıcı Görünümü</string>
+    <string name="user_display_item_username_hint">Kullanıcı Adı</string>
+    <string name="user_display_item_color_hint">Renk</string>
+    <string name="remove_custom_user_display">Özel Kullanıcı Görünümünü Kaldır</string>
+    <string name="user_display_custom_color_enable">Özel Renk</string>
+    <string name="pick_custom_user_color_title">Özel kullanıcı rengi seç</string>
+    <string name="custom_user_display_summary">Kullanıcılar için özel bir ad ile renk ekle</string>
     <plurals name="viewers">
         <item quantity="one">%d izleyici ile canlı</item>
         <item quantity="other">%d izleyici ile canlı</item>
