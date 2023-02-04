@@ -70,7 +70,7 @@ jobs:
 
       - name: Update debug tag
         if: (github.event_name == 'push' && github.ref == 'refs/heads/develop')
-        uses: richardsimko/update-tag@v1
+        uses: richardsimko/update-tag@v1.0.7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -127,7 +127,7 @@ jobs:
           path: ${{ github.workspace }}/app/build/outputs/apk/release/*.apk
 
       - name: Update release tag
-        uses: richardsimko/update-tag@v1
+        uses: richardsimko/update-tag@v1.0.7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
