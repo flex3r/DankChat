@@ -63,7 +63,7 @@ jobs:
         run: bash ./gradlew :app:assembleDebug
 
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: debug apk
           path: ${{ github.workspace }}/app/build/outputs/apk/debug/*.apk
@@ -121,7 +121,7 @@ jobs:
           SIGNING_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
 
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: Signed release apk
           path: ${{ github.workspace }}/app/build/outputs/apk/release/*.apk
