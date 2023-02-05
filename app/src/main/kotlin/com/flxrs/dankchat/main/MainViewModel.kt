@@ -376,6 +376,7 @@ class MainViewModel @Inject constructor(
                 this += async { dataRepository.loadGlobalFFZEmotes() }
                 this += async { dataRepository.loadGlobalSevenTVEmotes() }
                 channelList.forEach {
+                    chatRepository.createFlowsIfNecessary(it)
                     val channelId = getRoomStateIdOrNull(it) ?: return@forEach
                     this += async { dataRepository.loadChannelBadges(it, channelId) }
                     this += async { dataRepository.loadChannelBTTVEmotes(it, channelId) }

@@ -69,7 +69,7 @@ class DataRepository @Inject constructor(
         it.imageLink
     }
 
-    suspend fun loadGlobalBadges() = withContext(Dispatchers.Default) {
+    suspend fun loadGlobalBadges() = withContext(Dispatchers.IO) {
         measureTimeAndLog(TAG, "global badges") {
             val badges = badgesApiClient.getGlobalBadges()
                 .getOrEmitFailure { DataLoadingStep.GlobalBadges }
@@ -78,7 +78,7 @@ class DataRepository @Inject constructor(
         }
     }
 
-    suspend fun loadDankChatBadges() = withContext(Dispatchers.Default) {
+    suspend fun loadDankChatBadges() = withContext(Dispatchers.IO) {
         measureTimeMillis {
             dankChatApiClient.getDankChatBadges()
                 .getOrEmitFailure { DataLoadingStep.DankChatBadges }
@@ -100,7 +100,7 @@ class DataRepository @Inject constructor(
         serviceEventChannel.send(ServiceEvent.Shutdown)
     }
 
-    suspend fun loadChannelBadges(channel: UserName, id: UserId) = withContext(Dispatchers.Default) {
+    suspend fun loadChannelBadges(channel: UserName, id: UserId) = withContext(Dispatchers.IO) {
         measureTimeAndLog(TAG, "channel badges for #$id") {
             val badges = badgesApiClient.getChannelBadges(id)
                 .getOrEmitFailure { DataLoadingStep.ChannelBadges(channel, id) }
@@ -109,7 +109,7 @@ class DataRepository @Inject constructor(
         }
     }
 
-    suspend fun loadChannelFFZEmotes(channel: UserName, channelId: UserId) = withContext(Dispatchers.Default) {
+    suspend fun loadChannelFFZEmotes(channel: UserName, channelId: UserId) = withContext(Dispatchers.IO) {
         if (ThirdPartyEmoteType.FrankerFaceZ !in dankChatPreferenceStore.visibleThirdPartyEmotes) {
             return@withContext
         }
@@ -121,7 +121,7 @@ class DataRepository @Inject constructor(
         }.let { Log.i(TAG, "Loaded FFZ emotes for #$channel in $it ms") }
     }
 
-    suspend fun loadChannelBTTVEmotes(channel: UserName, channelId: UserId) = withContext(Dispatchers.Default) {
+    suspend fun loadChannelBTTVEmotes(channel: UserName, channelId: UserId) = withContext(Dispatchers.IO) {
         if (ThirdPartyEmoteType.BetterTTV !in dankChatPreferenceStore.visibleThirdPartyEmotes) {
             return@withContext
         }
@@ -133,7 +133,7 @@ class DataRepository @Inject constructor(
         }.let { Log.i(TAG, "Loaded BTTV emotes for #$channel in $it ms") }
     }
 
-    suspend fun loadChannelSevenTVEmotes(channel: UserName, channelId: UserId) = withContext(Dispatchers.Default) {
+    suspend fun loadChannelSevenTVEmotes(channel: UserName, channelId: UserId) = withContext(Dispatchers.IO) {
         if (ThirdPartyEmoteType.SevenTV !in dankChatPreferenceStore.visibleThirdPartyEmotes) {
             return@withContext
         }
@@ -145,7 +145,7 @@ class DataRepository @Inject constructor(
         }.let { Log.i(TAG, "Loaded 7TV emotes for #$channel in $it ms") }
     }
 
-    suspend fun loadGlobalFFZEmotes() = withContext(Dispatchers.Default) {
+    suspend fun loadGlobalFFZEmotes() = withContext(Dispatchers.IO) {
         if (ThirdPartyEmoteType.FrankerFaceZ !in dankChatPreferenceStore.visibleThirdPartyEmotes) {
             return@withContext
         }
@@ -157,7 +157,7 @@ class DataRepository @Inject constructor(
         }.let { Log.i(TAG, "Loaded global FFZ emotes in $it ms") }
     }
 
-    suspend fun loadGlobalBTTVEmotes() = withContext(Dispatchers.Default) {
+    suspend fun loadGlobalBTTVEmotes() = withContext(Dispatchers.IO) {
         if (ThirdPartyEmoteType.BetterTTV !in dankChatPreferenceStore.visibleThirdPartyEmotes) {
             return@withContext
         }
@@ -169,7 +169,7 @@ class DataRepository @Inject constructor(
         }.let { Log.i(TAG, "Loaded global BTTV emotes in $it ms") }
     }
 
-    suspend fun loadGlobalSevenTVEmotes() = withContext(Dispatchers.Default) {
+    suspend fun loadGlobalSevenTVEmotes() = withContext(Dispatchers.IO) {
         if (ThirdPartyEmoteType.SevenTV !in dankChatPreferenceStore.visibleThirdPartyEmotes) {
             return@withContext
         }

@@ -261,7 +261,7 @@ class ChatRepository @Inject constructor(
         }
     }
 
-    suspend fun loadChatters(channel: UserName) = withContext(Dispatchers.Default) {
+    suspend fun loadChatters(channel: UserName) = withContext(Dispatchers.IO) {
         measureTimeMillis {
             chattersApiClient.getChatters(channel)
                 .getOrEmitFailure { ChatLoadingStep.Chatters(channel) }
@@ -414,18 +414,17 @@ class ChatRepository @Inject constructor(
         return updatedChannels
     }
 
-    fun partChannel(channel: UserName, unListenFromPubSub: Boolean = true): List<UserName> {
-        val updatedChannels = channels.value.orEmpty() - channel
-        _channels.value = updatedChannels
+    fun createFlowsIfNecessary(channel: UserName) {
+        messages.putIfAbsent(channel, MutableStateFlow(emptyList()))
+        connectionState.putIfAbsent(channel, MutableStateFlow(ConnectionState.DISCONNECTED))
+        roomStateFlows.putIfAbsent(channel, MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST))
+        users.putIfAbsent(channel, createUserCache())
+        usersFlows.putIfAbsent(channel, MutableStateFlow(emptySet()))
 
-        removeChannelData(channel)
-        readConnection.partChannel(channel)
-
-        if (unListenFromPubSub) {
-            pubSubManager.removeChannel(channel)
+        with(_channelMentionCount) {
+            if (!firstValue.contains(WHISPER_CHANNEL_TAG)) tryEmit(firstValue.apply { set(channel, 0) })
+            if (!firstValue.contains(channel)) tryEmit(firstValue.apply { set(channel, 0) })
         }
-
-        return updatedChannels
     }
 
     fun updateChannels(updatedChannels: List<UserName>) {
@@ -462,6 +461,20 @@ class ChatRepository @Inject constructor(
         readConnection.joinChannels(channels)
     }
 
+    private fun partChannel(channel: UserName, unListenFromPubSub: Boolean = true): List<UserName> {
+        val updatedChannels = channels.value.orEmpty() - channel
+        _channels.value = updatedChannels
+
+        removeChannelData(channel)
+        readConnection.partChannel(channel)
+
+        if (unListenFromPubSub) {
+            pubSubManager.removeChannel(channel)
+        }
+
+        return updatedChannels
+    }
+
     private fun removeChannelData(channel: UserName) {
         messages.remove(channel)
         usersFlows.remove(channel)
@@ -472,19 +485,6 @@ class ChatRepository @Inject constructor(
         lastMessage.remove(channel)
         _channelMentionCount.clear(channel)
         loadedRecentsInChannels.remove(channel)
-    }
-
-    private fun createFlowsIfNecessary(channel: UserName) {
-        messages.putIfAbsent(channel, MutableStateFlow(emptyList()))
-        connectionState.putIfAbsent(channel, MutableStateFlow(ConnectionState.DISCONNECTED))
-        roomStateFlows.putIfAbsent(channel, MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST))
-        users.putIfAbsent(channel, createUserCache())
-        usersFlows.putIfAbsent(channel, MutableStateFlow(emptySet()))
-
-        with(_channelMentionCount) {
-            if (!firstValue.contains(WHISPER_CHANNEL_TAG)) tryEmit(firstValue.apply { set(channel, 0) })
-            if (!firstValue.contains(channel)) tryEmit(firstValue.apply { set(channel, 0) })
-        }
     }
 
     private fun prepareMessage(channel: UserName, message: String): String? {
@@ -806,7 +806,7 @@ class ChatRepository @Inject constructor(
         ConnectionState.CONNECTED_NOT_LOGGED_IN -> SystemMessageType.Connected
     }
 
-    private suspend fun loadRecentMessages(channel: UserName) = withContext(Dispatchers.Default) {
+    private suspend fun loadRecentMessages(channel: UserName) = withContext(Dispatchers.IO) {
         if (channel in loadedRecentsInChannels) {
             return@withContext
         }
