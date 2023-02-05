@@ -367,25 +367,27 @@ class MainViewModel @Inject constructor(
             dataLoadingStateChannel.send(loadingState)
             isDataLoading.update { true }
 
-            buildList {
-                this += async { dataRepository.loadDankChatBadges() }
-                this += async { dataRepository.loadGlobalBadges() }
-                this += async { commandRepository.loadSupibotCommands() }
-                this += async { ignoresRepository.loadUserBlocks() }
-                this += async { dataRepository.loadGlobalBTTVEmotes() }
-                this += async { dataRepository.loadGlobalFFZEmotes() }
-                this += async { dataRepository.loadGlobalSevenTVEmotes() }
-                channelList.forEach {
-                    chatRepository.createFlowsIfNecessary(it)
-                    val channelId = getRoomStateIdOrNull(it) ?: return@forEach
-                    this += async { dataRepository.loadChannelBadges(it, channelId) }
-                    this += async { dataRepository.loadChannelBTTVEmotes(it, channelId) }
-                    this += async { dataRepository.loadChannelFFZEmotes(it, channelId) }
-                    this += async { dataRepository.loadChannelSevenTVEmotes(it, channelId) }
-                    this += async { chatRepository.loadChatters(it) }
-                    this += async { chatRepository.loadRecentMessagesIfEnabled(it) }
-                }
-            }.awaitAll()
+            val channelPairs = getChannelNameIdPairs(channelList)
+            awaitAll(
+                async { dataRepository.loadDankChatBadges() },
+                async { dataRepository.loadGlobalBadges() },
+                async { commandRepository.loadSupibotCommands() },
+                async { ignoresRepository.loadUserBlocks() },
+                async { dataRepository.loadGlobalBTTVEmotes() },
+                async { dataRepository.loadGlobalFFZEmotes() },
+                async { dataRepository.loadGlobalSevenTVEmotes() },
+                *channelPairs.flatMap { (channel, channelId) ->
+                    chatRepository.createFlowsIfNecessary(channel)
+                    listOf(
+                        async { dataRepository.loadChannelBadges(channel, channelId) },
+                        async { dataRepository.loadChannelBTTVEmotes(channel, channelId) },
+                        async { dataRepository.loadChannelFFZEmotes(channel, channelId) },
+                        async { dataRepository.loadChannelSevenTVEmotes(channel, channelId) },
+                        async { chatRepository.loadChatters(channel) },
+                        async { chatRepository.loadRecentMessagesIfEnabled(channel) },
+                    )
+                }.toTypedArray()
+            )
 
             chatRepository.reparseAllEmotesAndBadges()
 
@@ -798,15 +800,33 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getRoomStateIdOrNull(channel: UserName): UserId? {
-        return chatRepository.getRoomState(channel).firstValueOrNull
-            ?.channelId
-            ?: when {
-                dankChatPreferenceStore.isLoggedIn -> dataRepository.getUserIdByName(channel)
-                else                               -> withTimeoutOrNull(IRC_TIMEOUT_DELAY) {
-                    chatRepository.getRoomState(channel).firstOrNull()?.channelId
-                }
+    private suspend fun getChannelNameIdPairs(channels: List<UserName>): List<Pair<UserName, UserId>> = withContext(Dispatchers.IO) {
+        val (roomStatePairs, remaining) = channels.fold(Pair(emptyList<RoomState>(), emptyList<UserName>())) { (states, remaining), user ->
+            when (val state = chatRepository.getRoomState(user).firstValueOrNull) {
+                null -> states to remaining + user
+                else -> states + state to remaining
             }
+        }
+
+        val remainingPairs = when {
+            dankChatPreferenceStore.isLoggedIn -> dataRepository
+                .getUsersByNames(remaining)
+                .map { it.name to it.id }
+
+            else                               ->
+                remaining.map { user ->
+                    async {
+                        withTimeoutOrNull(getRoomStateDelay(remaining)) {
+                            chatRepository
+                                .getRoomState(user)
+                                .firstOrNull()
+                                ?.let { it.channel to it.channelId }
+                        }
+                    }
+                }.awaitAll().filterNotNull()
+        }
+
+        roomStatePairs.map { it.channel to it.channelId } + remainingPairs
     }
 
     private fun clearIgnores() = ignoresRepository.clearIgnores()
@@ -827,5 +847,7 @@ class MainViewModel @Inject constructor(
         private const val STREAM_REFRESH_RATE = 30_000L
         private const val IRC_TIMEOUT_DELAY = 5_000L
         private const val IRC_TIMEOUT_SHORT_DELAY = 1_000L
+        private const val IRC_TIMEOUT_CHANNEL_DELAY = 600L
+        private fun getRoomStateDelay(channels: List<UserName>): Long = IRC_TIMEOUT_DELAY + channels.size * IRC_TIMEOUT_CHANNEL_DELAY
     }
 }
