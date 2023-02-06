@@ -32,8 +32,8 @@ import coil.imageLoader
 import coil.request.ImageRequest
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.*
-import com.flxrs.dankchat.data.repo.EmoteRepository
-import com.flxrs.dankchat.data.repo.EmoteRepository.Companion.cacheKey
+import com.flxrs.dankchat.data.repo.emote.EmoteRepository
+import com.flxrs.dankchat.data.repo.emote.EmoteRepository.Companion.cacheKey
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.data.twitch.message.*

@@ -55,6 +55,7 @@ import com.flxrs.dankchat.data.state.ImageUploadState
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.chat.ConnectionState
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
+import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.databinding.EditDialogBinding
 import com.flxrs.dankchat.databinding.MainFragmentBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
@@ -1014,7 +1015,7 @@ class MainFragment : Fragment() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 mainViewModel.setMentionSheetOpen(mentionBottomSheetBehavior?.isMoving == true || mentionBottomSheetBehavior?.isVisible == true)
                 when {
-                    mentionBottomSheetBehavior?.isExpanded == true -> mainViewModel.setSuggestionChannel("w".toUserName())
+                    mentionBottomSheetBehavior?.isExpanded == true -> mainViewModel.setSuggestionChannel(WhisperMessage.WHISPER_CHANNEL)
                     mentionBottomSheetBehavior?.isHidden == true   -> mainViewModel.setSuggestionChannel(tabAdapter.channels[binding.chatViewpager.currentItem])
                 }
             }

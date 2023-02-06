@@ -13,7 +13,7 @@ import com.flxrs.dankchat.data.api.recentmessages.RecentMessagesApiException
 import com.flxrs.dankchat.data.api.recentmessages.RecentMessagesError
 import com.flxrs.dankchat.data.api.recentmessages.dto.RecentMessagesDto
 import com.flxrs.dankchat.data.irc.IrcMessage
-import com.flxrs.dankchat.data.repo.EmoteRepository
+import com.flxrs.dankchat.data.repo.emote.EmoteRepository
 import com.flxrs.dankchat.data.repo.HighlightsRepository
 import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.data.repo.UserDisplayRepository
@@ -188,7 +188,7 @@ class ChatRepository @Inject constructor(
                         usersFlows[GLOBAL_CHANNEL_TAG]?.update {
                             currentUsers.snapshot().values.toSet()
                         }
-                        _channelMentionCount.increment(WHISPER_CHANNEL_TAG, 1)
+                        _channelMentionCount.increment(WhisperMessage.WHISPER_CHANNEL, 1)
                         _notificationsFlow.tryEmit(listOf(item))
                     }
 
@@ -217,8 +217,8 @@ class ChatRepository @Inject constructor(
     val channelMentionCount: SharedFlow<Map<UserName, Int>> = _channelMentionCount.asSharedFlow()
     val unreadMessagesMap: SharedFlow<Map<UserName, Boolean>> = _unreadMessagesMap.asSharedFlow()
     val userStateFlow: StateFlow<UserState> = userState.asStateFlow()
-    val hasMentions = channelMentionCount.map { it.any { channel -> channel.key != WHISPER_CHANNEL_TAG && channel.value > 0 } }
-    val hasWhispers = channelMentionCount.map { it.getOrDefault(WHISPER_CHANNEL_TAG, 0) > 0 }
+    val hasMentions = channelMentionCount.map { it.any { channel -> channel.key != WhisperMessage.WHISPER_CHANNEL && channel.value > 0 } }
+    val hasWhispers = channelMentionCount.map { it.getOrDefault(WhisperMessage.WHISPER_CHANNEL, 0) > 0 }
     val mentions: StateFlow<List<ChatItem>> = _mentions
     val whispers: StateFlow<List<ChatItem>> = _whispers
     val activeChannel: StateFlow<UserName?> = _activeChannel.asStateFlow()
@@ -306,7 +306,7 @@ class ChatRepository @Inject constructor(
     }
 
     fun clearMentionCounts() = with(_channelMentionCount) {
-        tryEmit(firstValue.apply { keys.forEach { if (it != WHISPER_CHANNEL_TAG) set(it, 0) } })
+        tryEmit(firstValue.apply { keys.forEach { if (it != WhisperMessage.WHISPER_CHANNEL) set(it, 0) } })
     }
 
     fun clearUnreadMessage(channel: UserName) {
@@ -351,7 +351,7 @@ class ChatRepository @Inject constructor(
         val split = input.split(" ")
         if (split.size > 2 && (split[0] == "/w" || split[0] == ".w") && split[1].isNotBlank()) {
             val message = input.substring(4 + split[1].length)
-            val emotes = emoteRepository.parse3rdPartyEmotes(message, channel = null, withTwitch = true)
+            val emotes = emoteRepository.parse3rdPartyEmotes(message, WhisperMessage.WHISPER_CHANNEL, withTwitch = true)
             val userState = userState.value
             val name = dankChatPreferenceStore.userName ?: return
             val displayName = userState.displayName ?: return
@@ -422,7 +422,7 @@ class ChatRepository @Inject constructor(
         usersFlows.putIfAbsent(channel, MutableStateFlow(emptySet()))
 
         with(_channelMentionCount) {
-            if (!firstValue.contains(WHISPER_CHANNEL_TAG)) tryEmit(firstValue.apply { set(channel, 0) })
+            if (!firstValue.contains(WhisperMessage.WHISPER_CHANNEL)) tryEmit(firstValue.apply { set(channel, 0) })
             if (!firstValue.contains(channel)) tryEmit(firstValue.apply { set(channel, 0) })
         }
     }
@@ -485,6 +485,7 @@ class ChatRepository @Inject constructor(
         lastMessage.remove(channel)
         _channelMentionCount.clear(channel)
         loadedRecentsInChannels.remove(channel)
+        emoteRepository.removeChannel(channel)
     }
 
     private fun prepareMessage(channel: UserName, message: String): String? {
@@ -661,7 +662,7 @@ class ChatRepository @Inject constructor(
         _whispers.update { current ->
             current.addAndLimit(item, scrollBackLength)
         }
-        _channelMentionCount.increment(WHISPER_CHANNEL_TAG, 1)
+        _channelMentionCount.increment(WhisperMessage.WHISPER_CHANNEL, 1)
     }
 
     private suspend fun handleMessage(ircMessage: IrcMessage) {
@@ -918,7 +919,6 @@ class ChatRepository @Inject constructor(
         private const val USER_CACHE_SIZE = 5000
         private const val PUBSUB_TIMEOUT = 1000L
         private val GLOBAL_CHANNEL_TAG = UserName("*")
-        private val WHISPER_CHANNEL_TAG = UserName("w")
 
         val ESCAPE_TAG_REGEX = "(?<!$ESCAPE_TAG)$ESCAPE_TAG".toRegex()
         const val ZERO_WIDTH_JOINER = 0x200D.toChar().toString()

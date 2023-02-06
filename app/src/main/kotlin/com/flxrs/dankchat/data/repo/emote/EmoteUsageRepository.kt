@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.data.repo
+package com.flxrs.dankchat.data.repo.emote
 
 import com.flxrs.dankchat.data.database.dao.EmoteUsageDao
 import com.flxrs.dankchat.data.database.entity.EmoteUsageEntity

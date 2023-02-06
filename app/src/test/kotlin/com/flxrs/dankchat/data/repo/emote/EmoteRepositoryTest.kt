@@ -1,6 +1,7 @@
-package com.flxrs.dankchat.data.repo
+package com.flxrs.dankchat.data.repo.emote
 
 import com.flxrs.dankchat.data.api.dankchat.DankChatApiClient
+import com.flxrs.dankchat.data.repo.emote.EmoteRepository
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import io.mockk.impl.annotations.InjectMockKs

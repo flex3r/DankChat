@@ -13,10 +13,10 @@ import com.flxrs.dankchat.data.api.helix.dto.UserDto
 import com.flxrs.dankchat.data.api.helix.dto.UserFollowsDto
 import com.flxrs.dankchat.data.api.seventv.SevenTVApiClient
 import com.flxrs.dankchat.data.api.upload.UploadClient
-import com.flxrs.dankchat.data.repo.EmoteRepository
 import com.flxrs.dankchat.data.repo.RecentUploadsRepository
+import com.flxrs.dankchat.data.repo.emote.EmoteRepository
+import com.flxrs.dankchat.data.repo.emote.Emotes
 import com.flxrs.dankchat.data.twitch.badge.toBadgeSets
-import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.measureTimeAndLog
@@ -29,7 +29,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.system.measureTimeMillis
@@ -47,7 +46,6 @@ class DataRepository @Inject constructor(
     private val recentUploadsRepository: RecentUploadsRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
 ) {
-    private val emotes = ConcurrentHashMap<UserName, MutableStateFlow<List<GenericEmote>>>()
     private val _dataLoadingFailures = MutableStateFlow(emptySet<DataLoadingFailure>())
 
     private val serviceEventChannel = Channel<ServiceEvent>(Channel.BUFFERED)
@@ -57,7 +55,8 @@ class DataRepository @Inject constructor(
 
     fun clearDataLoadingFailures() = _dataLoadingFailures.update { emptySet() }
 
-    fun getEmotes(channel: UserName): StateFlow<List<GenericEmote>> = emotes.getOrPut(channel) { MutableStateFlow(emptyList()) }
+    fun getEmotes(channel: UserName): StateFlow<Emotes> = emoteRepository.getEmotes(channel)
+    fun createFlowsIfNecessary(channels: List<UserName>) = emoteRepository.createFlowsIfNecessary(channels)
 
     suspend fun getUser(userId: UserId): UserDto? = helixApiClient.getUser(userId).getOrNull()
     suspend fun getUserIdByName(name: UserName): UserId? = helixApiClient.getUserIdByName(name).getOrNull()
@@ -85,12 +84,6 @@ class DataRepository @Inject constructor(
                 .getOrEmitFailure { DataLoadingStep.DankChatBadges }
                 ?.let { emoteRepository.setDankChatBadges(it) }
         }.let { Log.i(TAG, "Loaded DankChat badges in $it ms") }
-    }
-
-    // TODO refactor to flow/observe pattern
-    suspend fun setEmotesForSuggestions(channel: UserName) {
-        emotes.putIfAbsent(channel, MutableStateFlow(emptyList()))
-        emotes[channel]?.update { emoteRepository.getEmotes(channel) }
     }
 
     suspend fun loadUserStateEmotes(globalEmoteSetIds: List<String>, followerEmoteSetIds: Map<UserName, List<String>>) {

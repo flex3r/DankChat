@@ -10,7 +10,7 @@ sealed class Message {
     abstract val timestamp: Long
     abstract val highlights: Set<Highlight>
 
-    data class EmoteData(val message: String, val channel: UserName?, val emoteTag: String)
+    data class EmoteData(val message: String, val channel: UserName, val emoteTag: String)
     data class BadgeData(val userId: UserId?, val channel: UserName?, val badgeTag: String?, val badgeInfoTag: String?)
 
     open val emoteData: EmoteData? = null

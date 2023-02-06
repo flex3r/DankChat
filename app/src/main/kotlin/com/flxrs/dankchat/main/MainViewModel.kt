@@ -11,7 +11,6 @@ import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.ApiException
-import com.flxrs.dankchat.data.repo.EmoteUsageRepository
 import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.data.repo.chat.ChatLoadingFailure
 import com.flxrs.dankchat.data.repo.chat.ChatLoadingStep
@@ -23,15 +22,17 @@ import com.flxrs.dankchat.data.repo.data.DataLoadingFailure
 import com.flxrs.dankchat.data.repo.data.DataLoadingStep
 import com.flxrs.dankchat.data.repo.data.DataRepository
 import com.flxrs.dankchat.data.repo.data.toMergedStrings
+import com.flxrs.dankchat.data.repo.emote.EmoteUsageRepository
+import com.flxrs.dankchat.data.repo.emote.Emotes
 import com.flxrs.dankchat.data.state.DataLoadingState
 import com.flxrs.dankchat.data.state.ImageUploadState
-import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.chat.ConnectionState
 import com.flxrs.dankchat.data.twitch.command.TwitchCommand
 import com.flxrs.dankchat.data.twitch.emote.EmoteType
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.data.twitch.message.RoomState
 import com.flxrs.dankchat.data.twitch.message.SystemMessageType
+import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.Preference
 import com.flxrs.dankchat.utils.DateTimeUtils
@@ -114,7 +115,10 @@ class MainViewModel @Inject constructor(
     private val chipsExpanded = MutableStateFlow(false)
     private val repeatedSend = MutableStateFlow(RepeatedSendData(enabled = false, message = ""))
 
-    private val emotes = currentSuggestionChannel.flatMapLatestOrDefault(emptyList()) { dataRepository.getEmotes(it) }
+    private val emotes = currentSuggestionChannel
+        .flatMapLatestOrDefault(Emotes()) { dataRepository.getEmotes(it) }
+        .map { it.emotes }
+
     private val recentEmotes = emoteUsageRepository.getRecentUsages().distinctUntilChanged { old, new ->
         new.all { newEmote -> old.any { it.emoteId == newEmote.emoteId } }
     }
@@ -367,6 +371,8 @@ class MainViewModel @Inject constructor(
             dataLoadingStateChannel.send(loadingState)
             isDataLoading.update { true }
 
+            dataRepository.createFlowsIfNecessary(channels = channelList + WhisperMessage.WHISPER_CHANNEL)
+
             val channelPairs = getChannelNameIdPairs(channelList)
             awaitAll(
                 async { dataRepository.loadDankChatBadges() },
@@ -406,8 +412,6 @@ class MainViewModel @Inject constructor(
                 dataRepository.loadUserStateEmotes(userState.globalEmoteSets, userState.followerEmoteSets)
             }
 
-            setAllEmoteSuggestions(channelList)
-
             checkFailuresAndEmitState()
         }
     }
@@ -441,10 +445,6 @@ class MainViewModel @Inject constructor(
         }.awaitAll()
 
         chatRepository.reparseAllEmotesAndBadges()
-
-        if (dankChatPreferenceStore.isLoggedIn) {
-            setAllEmoteSuggestions(channels.value.orEmpty())
-        }
 
         checkFailuresAndEmitState()
     }
@@ -481,7 +481,7 @@ class MainViewModel @Inject constructor(
         repeatedSend.update { it.copy(enabled = false) }
         mentionSheetOpen.value = enabled
         if (enabled) when (whisperTabSelected.value) {
-            true -> chatRepository.clearMentionCount("w".toUserName())
+            true -> chatRepository.clearMentionCount(WhisperMessage.WHISPER_CHANNEL)
             else -> chatRepository.clearMentionCounts()
         }
     }
@@ -495,7 +495,7 @@ class MainViewModel @Inject constructor(
         whisperTabSelected.value = open
         if (mentionSheetOpen.value) {
             when {
-                open -> chatRepository.clearMentionCount("w".toUserName())
+                open -> chatRepository.clearMentionCount(WhisperMessage.WHISPER_CHANNEL)
                 else -> chatRepository.clearMentionCounts()
             }
         }
@@ -603,7 +603,6 @@ class MainViewModel @Inject constructor(
             dataRepository.loadUserStateEmotes(userState.globalEmoteSets, userState.followerEmoteSets)
         }
 
-        setAllEmoteSuggestions(channels)
         checkFailuresAndEmitState()
     }
 
@@ -709,13 +708,6 @@ class MainViewModel @Inject constructor(
 
     fun addEmoteUsage(emote: GenericEmote) = viewModelScope.launch {
         emoteUsageRepository.addEmoteUsage(emote.id)
-    }
-
-    private suspend fun setAllEmoteSuggestions(channels: List<UserName>) {
-        channels.forEach { dataRepository.setEmotesForSuggestions(it) }
-
-        // global emote suggestions for whisper tab
-        dataRepository.setEmotesForSuggestions("w".toUserName())
     }
 
     private suspend fun checkFailuresAndEmitState() {

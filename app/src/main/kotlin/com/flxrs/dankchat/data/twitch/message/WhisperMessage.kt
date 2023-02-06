@@ -38,10 +38,11 @@ data class WhisperMessage(
     val recipientDisplay: UserDisplay? = null
 ) : Message() {
 
-    override val emoteData: EmoteData = EmoteData(originalMessage, channel = null, emoteTag = rawEmotes)
+    override val emoteData: EmoteData = EmoteData(originalMessage, WHISPER_CHANNEL, emoteTag = rawEmotes)
     override val badgeData: BadgeData = BadgeData(userId, channel = null, badgeTag = rawBadges, badgeInfoTag = rawBadgeInfo)
 
     companion object {
+        val WHISPER_CHANNEL = "w".toUserName()
         fun parseFromIrc(ircMessage: IrcMessage, recipientName: DisplayName, recipientColorTag: String?): WhisperMessage = with(ircMessage) {
             val name = prefix.substringBefore('!')
             val displayName = tags["display-name"] ?: name
