@@ -12,15 +12,19 @@ import com.flxrs.dankchat.data.twitch.command.CommandContext
 import com.flxrs.dankchat.data.twitch.command.TwitchCommand
 import com.flxrs.dankchat.data.twitch.command.TwitchCommandRepository
 import com.flxrs.dankchat.data.twitch.message.RoomState
+import com.flxrs.dankchat.di.ApplicationScope
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.command.CommandItem
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import java.time.Instant
@@ -38,15 +42,16 @@ class CommandRepository @Inject constructor(
     private val helixApiClient: HelixApiClient,
     private val supibotApiClient: SupibotApiClient,
     private val chattersApiClient: ChattersApiClient,
-    private val preferenceStore: DankChatPreferenceStore
+    private val preferenceStore: DankChatPreferenceStore,
+    @ApplicationScope scope: CoroutineScope,
 ) {
-    private val customCommands: Flow<List<CommandItem.Entry>> = preferenceStore.commandsAsFlow
+    private val customCommands = preferenceStore.commandsAsFlow.stateIn(scope, SharingStarted.Eagerly, emptyList())
     private val supibotCommands = mutableMapOf<UserName, MutableStateFlow<List<String>>>()
 
     private val defaultCommands = Command.values()
     private val defaultCommandTriggers = defaultCommands.map { it.trigger }
 
-    private val commandTriggers: Flow<List<String>> = customCommands.map { customCommands ->
+    private val commandTriggers = customCommands.map { customCommands ->
         defaultCommandTriggers + TwitchCommandRepository.ALL_COMMAND_TRIGGERS + customCommands.map(CommandItem.Entry::trigger)
     }
 
@@ -260,7 +265,7 @@ class CommandRepository @Inject constructor(
     }
 
     private fun checkUserCommands(trigger: String): CommandResult {
-        val commands = preferenceStore.getCommands()
+        val commands = customCommands.value
         val foundCommand = commands.find { it.trigger == trigger } ?: return CommandResult.NotFound
 
         return CommandResult.Message(foundCommand.command)
