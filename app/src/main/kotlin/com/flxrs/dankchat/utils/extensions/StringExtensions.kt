@@ -128,18 +128,7 @@ val String.withTrailingSlash: String
         else          -> "$this/"
     }
 
-fun String.trimEndSpecialChar(): String = trimEnd().run {
-    when {
-        length > 1 && Character.isLowSurrogate(this[lastIndex]) -> {
-            when (Character.toCodePoint(this[lastIndex - 1], this[lastIndex])) {
-                0x000E0000 -> removeRange(range = lastIndex - 1..lastIndex)
-                else       -> this
-            }
-        }
-
-        else                                                    -> this
-    }.trimEnd()
-}
+fun String.trimEndWith(delimiter: String): String = trimEnd().substringBeforeLast(delimiter).trimEnd()
 
 inline fun CharSequence.indexOfFirst(startIndex: Int = 0, predicate: (Char) -> Boolean): Int {
     for (index in startIndex.coerceAtLeast(0)..lastIndex) {

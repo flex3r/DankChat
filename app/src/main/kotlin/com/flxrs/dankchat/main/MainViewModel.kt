@@ -543,7 +543,7 @@ class MainViewModel @Inject constructor(
             is CommandResult.Message               -> chatRepository.sendMessage(commandResult.message)
         }
 
-        if (commandResult != CommandResult.NotFound) {
+        if (commandResult != CommandResult.NotFound && commandResult != CommandResult.IrcCommand) {
             chatRepository.appendLastMessage(channel, message)
         }
     }

@@ -51,7 +51,7 @@ import com.flxrs.dankchat.utils.extensions.increment
 import com.flxrs.dankchat.utils.extensions.mutableSharedFlowOf
 import com.flxrs.dankchat.utils.extensions.replaceWithTimeout
 import com.flxrs.dankchat.utils.extensions.replaceWithTimeouts
-import com.flxrs.dankchat.utils.extensions.trimEndSpecialChar
+import com.flxrs.dankchat.utils.extensions.trimEndWith
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -341,7 +341,7 @@ class ChatRepository @Inject constructor(
         pubSubManager.reconnectIfNecessary()
     }
 
-    fun getLastMessage(): String? = lastMessage[activeChannel.value]?.trimEndSpecialChar()
+    fun getLastMessage(): String? = lastMessage[activeChannel.value]?.trimEndWith(INVISIBLE_CHAR)
 
     fun fakeWhisperIfNecessary(input: String) {
         if (pubSubManager.connectedAndHasWhisperTopic) {
@@ -491,8 +491,12 @@ class ChatRepository @Inject constructor(
         if (message.isBlank()) return null
         val trimmedMessage = message.trimEnd()
 
-        val messageWithSuffix = when (lastMessage[channel] ?: "") {
-            trimmedMessage -> "$trimmedMessage $INVISIBLE_CHAR"
+        val messageWithSuffix = when (lastMessage[channel].orEmpty()) {
+            trimmedMessage -> when {
+                trimmedMessage.endsWith(INVISIBLE_CHAR) -> trimmedMessage.trimEndWith(INVISIBLE_CHAR)
+                else                                    -> "$trimmedMessage $INVISIBLE_CHAR"
+            }
+
             else           -> trimmedMessage
         }
 
@@ -709,9 +713,9 @@ class ChatRepository @Inject constructor(
 
         if (message is PrivMessage) {
             if (message.name == dankChatPreferenceStore.userName) {
-                val previousLastMessage = lastMessage[message.channel]?.trimEndSpecialChar().orEmpty()
+                val previousLastMessage = lastMessage[message.channel].orEmpty()
                 val lastMessageWasCommand = previousLastMessage.startsWith('.') || previousLastMessage.startsWith('/')
-                if (!lastMessageWasCommand && previousLastMessage != message.originalMessage.trimEndSpecialChar()) {
+                if (!lastMessageWasCommand && previousLastMessage.trimEndWith(INVISIBLE_CHAR) != message.originalMessage.trimEndWith(INVISIBLE_CHAR)) {
                     lastMessage[message.channel] = message.originalMessage
                 }
 
