@@ -59,10 +59,10 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
                 }
             }
         }
-        navBackStackEntry.lifecycle.addObserver(observer)
+        navBackStackEntry.getLifecycle().addObserver(observer)
         viewLifecycleOwner.lifecycle.addObserver(LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_DESTROY) {
-                navBackStackEntry.lifecycle.removeObserver(observer)
+                navBackStackEntry.getLifecycle().removeObserver(observer)
             }
         })
     }
