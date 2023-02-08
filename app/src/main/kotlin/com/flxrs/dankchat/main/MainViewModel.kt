@@ -117,7 +117,6 @@ class MainViewModel @Inject constructor(
 
     private val emotes = currentSuggestionChannel
         .flatMapLatestOrDefault(Emotes()) { dataRepository.getEmotes(it) }
-        .map { it.emotes }
 
     private val recentEmotes = emoteUsageRepository.getRecentUsages().distinctUntilChanged { old, new ->
         new.all { newEmote -> old.any { it.emoteId == newEmote.emoteId } }
@@ -139,8 +138,7 @@ class MainViewModel @Inject constructor(
     }
 
     private val emoteSuggestions = emotes.mapLatest { emotes ->
-        emotes.distinctBy { it.code }
-            .map { Suggestion.EmoteSuggestion(it) }
+        emotes.suggestions.map { Suggestion.EmoteSuggestion(it) }
     }
 
     private val userSuggestions = users.mapLatest { users ->
@@ -288,13 +286,14 @@ class MainViewModel @Inject constructor(
 
     val emoteTabItems: StateFlow<List<EmoteMenuTabItem>> = combine(emotes, recentEmotes) { emotes, recentEmotes ->
         withContext(Dispatchers.Default) {
+            val sortedEmotes = emotes.sorted
             val availableRecents = recentEmotes.mapNotNull { usage ->
-                emotes
+                sortedEmotes
                     .firstOrNull { it.id == usage.emoteId }
                     ?.copy(emoteType = EmoteType.RecentUsageEmote)
             }
 
-            val groupedByType = emotes.groupBy {
+            val groupedByType = sortedEmotes.groupBy {
                 when (it.emoteType) {
                     is EmoteType.ChannelTwitchEmote,
                     is EmoteType.ChannelTwitchBitEmote,

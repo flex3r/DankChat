@@ -65,6 +65,7 @@ class EmoteRepository @Inject constructor(
     fun createFlowsIfNecessary(channels: List<UserName>) {
         channels.forEach { emotes.putIfAbsent(it, MutableStateFlow(Emotes())) }
     }
+
     fun removeChannel(channel: UserName) {
         emotes.remove(channel)
     }
@@ -72,23 +73,22 @@ class EmoteRepository @Inject constructor(
     fun parse3rdPartyEmotes(message: String, channel: UserName, withTwitch: Boolean = false): List<ChatMessageEmote> {
         val splits = message.split(WHITESPACE_REGEX)
         val available = emotes[channel]?.value ?: return emptyList()
-        val emotes = mutableListOf<ChatMessageEmote>()
 
         return buildList {
             if (withTwitch) {
-                this += available.twitchEmotes.flatMap { parseMessageForEmote(it, splits) }
+                addAll(available.twitchEmotes.flatMap { parseMessageForEmote(it, splits) })
             }
 
             if (channel != WhisperMessage.WHISPER_CHANNEL) {
-                this += available.ffzChannelEmotes.flatMap { parseMessageForEmote(it, splits, emotes) }
-                this += available.bttvChannelEmotes.flatMap { parseMessageForEmote(it, splits, emotes) }
-                this += available.sevenTvChannelEmotes.flatMap { parseMessageForEmote(it, splits, emotes) }
+                addAll(available.ffzChannelEmotes.flatMap { parseMessageForEmote(it, splits) })
+                addAll(available.bttvChannelEmotes.flatMap { parseMessageForEmote(it, splits) })
+                addAll(available.sevenTvChannelEmotes.flatMap { parseMessageForEmote(it, splits) })
             }
 
-            this += available.ffzGlobalEmotes.flatMap { parseMessageForEmote(it, splits, emotes) }
-            this += available.bttvGlobalEmotes.flatMap { parseMessageForEmote(it, splits, emotes) }
-            this += available.sevenTvGlobalEmotes.flatMap { parseMessageForEmote(it, splits, emotes) }
-        }
+            addAll(available.ffzGlobalEmotes.flatMap { parseMessageForEmote(it, splits) })
+            addAll(available.bttvGlobalEmotes.flatMap { parseMessageForEmote(it, splits) })
+            addAll(available.sevenTvGlobalEmotes.flatMap { parseMessageForEmote(it, splits) })
+        }.distinctBy(ChatMessageEmote::code)
     }
 
     fun parseEmotesAndBadges(message: Message): Message {
@@ -419,24 +419,23 @@ class EmoteRepository @Inject constructor(
         return adjustedMessage to adjustedEmotes
     }
 
-    private fun parseMessageForEmote(emote: GenericEmote, messageSplits: List<String>, existing: List<ChatMessageEmote> = listOf()): List<ChatMessageEmote> {
-        var i = 0
-        val parsed = mutableListOf<ChatMessageEmote>()
-        messageSplits.forEach { split ->
-            if (emote.code == split.trim() && !existing.any { it.code == emote.code }) {
-                parsed += ChatMessageEmote(
-                    position = i..i + split.length,
-                    url = emote.url,
-                    id = emote.id,
-                    code = emote.code,
-                    scale = emote.scale,
-                    isOverlayEmote = emote.isOverlayEmote
-                )
+    private fun parseMessageForEmote(emote: GenericEmote, words: List<String>): List<ChatMessageEmote> {
+        var currentPosition = 0
+        return buildList {
+            words.forEach { word ->
+                if (emote.code == word) {
+                    this += ChatMessageEmote(
+                        position = currentPosition..currentPosition + word.length,
+                        url = emote.url,
+                        id = emote.id,
+                        code = emote.code,
+                        scale = emote.scale,
+                        isOverlayEmote = emote.isOverlayEmote
+                    )
+                }
+                currentPosition += word.length + 1
             }
-            i += split.length + 1
         }
-
-        return parsed
     }
 
     private fun parseTwitchEmotes(emoteTag: String, original: String, appendedSpaces: List<Int>, removedSpaces: List<Int>): List<ChatMessageEmote> {
