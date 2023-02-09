@@ -88,7 +88,7 @@ class EmoteRepository @Inject constructor(
             addAll(available.ffzGlobalEmotes.flatMap { parseMessageForEmote(it, splits) })
             addAll(available.bttvGlobalEmotes.flatMap { parseMessageForEmote(it, splits) })
             addAll(available.sevenTvGlobalEmotes.flatMap { parseMessageForEmote(it, splits) })
-        }.distinctBy(ChatMessageEmote::code)
+        }.distinctBy { it.code to it.position }
     }
 
     fun parseEmotesAndBadges(message: Message): Message {
