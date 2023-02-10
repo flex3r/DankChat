@@ -212,6 +212,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_tts_message_format_message">Yalnızca mesajı okur</string>
     <string name="preference_tts_message_format_combined">Kullanıcı ve mesajı okur</string>
     <string name="preference_tts_message_format_title">Mesaj biçimi modu</string>
+    <string name="preference_tts_message_ignore_emote_message">TTS\'te ifadeler ile emojileri yok sayar</string>
     <string name="preference_tts_message_ignore_emote_title">İfadeleri yok say</string>
     <string name="preference_tts_header">TTS</string>
     <string name="preference_checkered_lines_title">Damalı Satırlar</string>
@@ -259,14 +260,17 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="clear_recent_uploads_dialog_title">Son Yüklemeleri Temizle</string>
     <string name="clear_recent_uploads_dialog_message">Yükleme geçmişini temizlemeye emin misiniz? Yüklenmiş dosyalarınız silinmeyecektir.</string>
     <string name="clear">Temizle</string>
+    <string name="case_sensitive">Büyük-küçük harf duyarlı</string>
     <string name="enabled">Etkin</string>
     <string name="create_notification">Bildirim</string>
     <string name="username">Kullanıcı adı</string>
     <string name="block">Engelle</string>
+    <string name="replacement">Ornatma</string>
     <string name="ignores">Yok Saymalar</string>
     <string name="preference_ignores_summary">Mesaj yok saymaları düzenle</string>
     <string name="tab_messages">Mesajlar</string>
     <string name="tab_users">Kullanıcılar</string>
+    <string name="tab_blacklisted_users">Kara Listeli Kullanıcılar</string>
     <string name="tab_twitch">Twitch</string>
     <string name="undo">Geri al</string>
     <string name="item_removed">Öge kaldırıldı</string>
@@ -286,6 +290,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="user_display_item_color_hint">Renk</string>
     <string name="remove_custom_user_display">Özel Kullanıcı Görünümünü Kaldır</string>
     <string name="user_display_custom_color_enable">Özel Renk</string>
+    <string name="user_display_custom_alias_enable">Özel Takma Ad</string>
     <string name="pick_custom_user_color_title">Özel kullanıcı rengi seç</string>
     <string name="custom_user_display_summary">Kullanıcılar için özel bir ad ile renk ekle</string>
     <plurals name="viewers">
