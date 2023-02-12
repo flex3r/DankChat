@@ -18,7 +18,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.data.api.ApiManager
 import com.flxrs.dankchat.databinding.LoginFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
@@ -37,9 +36,6 @@ class LoginFragment : Fragment() {
     @Inject
     lateinit var dankChatPreferences: DankChatPreferenceStore
 
-    @Inject
-    lateinit var apiManager: ApiManager
-
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bindingRef = LoginFragmentBinding.inflate(inflater, container, false)
@@ -53,7 +49,7 @@ class LoginFragment : Fragment() {
             clearFormData()
 
             webViewClient = TwitchAuthClient()
-            loadUrl(ApiManager.LOGIN_URL)
+            loadUrl(loginViewModel.loginUrl)
         }
 
         return binding.root
@@ -83,8 +79,8 @@ class LoginFragment : Fragment() {
         bindingRef = null
     }
 
+    @Suppress("OVERRIDE_DEPRECATION")
     private inner class TwitchAuthClient : WebViewClient() {
-        @SuppressWarnings("DEPRECATION")
         override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
             bindingRef?.root?.showLongSnackbar("Error $errorCode: $description")
             Log.e(TAG, "Error $errorCode in WebView: $description")
@@ -98,7 +94,6 @@ class LoginFragment : Fragment() {
             Log.e(TAG, "Error $code in WebView: $message")
         }
 
-        @SuppressWarnings("DEPRECATION")
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
             val urlString = url ?: ""
             val fragment = urlString.toUri().fragment ?: return false

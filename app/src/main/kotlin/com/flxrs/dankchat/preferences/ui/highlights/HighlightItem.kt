@@ -47,7 +47,6 @@ data class BlacklistedUserItem(
     var isRegex: Boolean,
 ) : HighlightItem()
 
-
 fun MessageHighlightEntity.toItem() = MessageHighlightItem(
     id = id,
     enabled = enabled,

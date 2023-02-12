@@ -56,6 +56,7 @@
     <string name="snackbar_retry">Opakovat</string>
     <string name="snackbar_data_reloaded">Emotikony byly znovu načteny</string>
     <string name="snackbar_data_load_failed_cause">Načítání dat se nezdařilo: %1$s</string>
+    <string name="snackbar_data_load_failed_multiple_causes">Načítání dat se nezdařilo kvůli několika chybám: \n%1$s</string>
     <string name="snackbar_paste">Vložit</string>
     <string name="add_channel_hint">Název kanálu</string>
     <string name="emote_menu_tab_recent">Nedávné</string>
@@ -63,6 +64,7 @@
     <string name="emote_menu_tab_channel">Kanál</string>
     <string name="emote_menu_tab_global">Globální</string>
     <string name="system_message_connected">Připojeno</string>
+    <string name="system_message_reconnected">Znovu připojeno</string>
     <string name="system_message_channel_non_existent">Tento kanál neexistuje</string>
     <string name="system_message_disconnected">Odpojeno</string>
     <string name="system_message_history_unavailable_detailed">Služba pro historii zpráv není dostupná (Chyba: %1$s)</string>
@@ -70,6 +72,9 @@
     <string name="system_message_history_recovering">Služba pro historii zpráv se obnovuje, v historii zpráv můžou některé zprávy chybět.</string>
     <string name="system_message_history_ignored">Služba pro historii zpráv není dostupná, jelikož tento kanál se z této služby odhlásil.</string>
     <string name="system_message_no_history">Nevidíte žádné minulé zprávy, protože jste se odhlásili z načítání minulých zpráv.</string>
+    <string name="system_message_ffz_emotes_failed">Nepodařilo se načíst FFZ emotikony (chyba %1$s)</string>
+    <string name="system_message_bttv_emotes_failed">Nepodařilo se načíst BTTV emotikony (chyba %1$s)</string>
+    <string name="system_message_7tv_emotes_failed">Nepodařilo se načíst 7TV emotikony (chyba %1$s)</string>
     <string name="timed_out_message">&lt; Zpráva smazána &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Přidat položku</string>
@@ -297,6 +302,17 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="ignores_users_title">Ignorovat zprávy od určitých uživatelů</string>
     <string name="ignores_twitch_title">Spravovat zablokované Twitch uživatele</string>
     <string name="preference_notification_whisper_title">Vytvořit oznámení pro šepoty</string>
+    <string name="login_outdated_title">Přihlášení není aktuální!</string>
+    <string name="login_outdated_message">Vaše přihlášení není aktuální a nemá přístup k některým funkcím. Přihlašte se prosím znovu.</string>
+    <string name="custom_user_display_title">Vlastní zobrazení uživatele</string>
+    <string name="user_display_item_username_hint">Přezdívka</string>
+    <string name="user_display_item_color_hint">Barva</string>
+    <string name="remove_custom_user_display">Smazat vlastní zobrazení uživatele</string>
+    <string name="user_display_alias_input">Alias</string>
+    <string name="user_display_custom_color_enable">Vlastní barva</string>
+    <string name="user_display_custom_alias_enable">Vlastní alias</string>
+    <string name="pick_custom_user_color_title">Vybrat vlastní barvu uživatele</string>
+    <string name="custom_user_display_summary">Přidat vlastní jméno a barvu pro uživatele</string>
     <plurals name="viewers">
         <item quantity="one">Živě s %d divákem</item>
         <item quantity="few">Živě se %d diváky</item>

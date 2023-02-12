@@ -1,22 +1,24 @@
 package com.flxrs.dankchat.data.twitch.message
 
-import com.flxrs.dankchat.data.twitch.connection.PointRedemptionData
+import com.flxrs.dankchat.data.DisplayName
+import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.data.twitch.pubsub.dto.redemption.PointRedemptionData
 import java.time.Instant
 import java.time.ZoneId
-import java.util.*
+import java.util.UUID
 
 data class PointRedemptionMessage(
     override val timestamp: Long = System.currentTimeMillis(),
     override val id: String = UUID.randomUUID().toString(),
     override val highlights: Set<Highlight> = emptySet(),
-    val name: String,
-    val displayName: String,
+    val name: UserName,
+    val displayName: DisplayName,
     val title: String,
     val rewardImageUrl: String,
     val cost: Int,
     val requiresUserInput: Boolean,
+    val userDisplay: UserDisplay? = null,
 ) : Message() {
-
     companion object {
         fun parsePointReward(timestamp: Instant, data: PointRedemptionData): PointRedemptionMessage {
             return PointRedemptionMessage(
@@ -32,4 +34,7 @@ data class PointRedemptionMessage(
             )
         }
     }
+
+    val aliasOrFormattedName: String
+        get() = userDisplay?.alias ?: name.formatWithDisplayName(displayName)
 }

@@ -2,9 +2,9 @@ name: Android CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, develop ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, develop ]
 
 jobs:
   test:
@@ -12,13 +12,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
           key: gradle-${{ runner.os }}-${{ hashFiles('**.gradle', '**/**.gradle', '**/gradle/wrapper/gradle-wrapper.properties') }}
       - name: set up JDK 11
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
           java-version: '11'
@@ -30,13 +30,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
           key: gradle-${{ runner.os }}-${{ hashFiles('**.gradle', '**/**.gradle', '**/gradle/wrapper/gradle-wrapper.properties') }}
       - name: set up JDK 11
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
           java-version: '11'
@@ -48,13 +48,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
           key: gradle-${{ runner.os }}-${{ hashFiles('**.gradle', '**/**.gradle', '**/gradle/wrapper/gradle-wrapper.properties') }}
       - name: set up JDK 11
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
           java-version: '11'
@@ -63,22 +63,22 @@ jobs:
         run: bash ./gradlew :app:assembleDebug
 
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: debug apk
           path: ${{ github.workspace }}/app/build/outputs/apk/debug/*.apk
 
       - name: Update debug tag
-        if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
-        uses: richardsimko/update-tag@v1
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/develop')
+        uses: richardsimko/update-tag@v1.0.7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: debug
 
       - name: Update debug release
-        if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
-        uses: meeDamian/github-release@2.0
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/develop')
+        uses: meeDamian/github-release@v2.0.3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: debug
@@ -91,23 +91,23 @@ jobs:
     name: Generate signed release apk
     runs-on: ubuntu-latest
     environment: release
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/develop')
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
           key: gradle-${{ runner.os }}-${{ hashFiles('**.gradle', '**/**.gradle', '**/gradle/wrapper/gradle-wrapper.properties') }}
       - name: set up JDK 11
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
           java-version: '11'
 
       - name: Decode Keystore
         id: decode_keystore
-        uses: timheuer/base64-to-file@v1.1
+        uses: timheuer/base64-to-file@v1.2
         with:
           fileName: '/app/keystore/DankChat.jks'
           fileDir: ${{ github.workspace }}
@@ -121,20 +121,20 @@ jobs:
           SIGNING_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
 
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: Signed release apk
           path: ${{ github.workspace }}/app/build/outputs/apk/release/*.apk
 
       - name: Update release tag
-        uses: richardsimko/update-tag@v1
+        uses: richardsimko/update-tag@v1.0.7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: release
 
       - name: Update signed release
-        uses: meeDamian/github-release@2.0
+        uses: meeDamian/github-release@v2.0.3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: release

@@ -22,6 +22,7 @@ enum class HighlightType(val priority: HighlightPriority) {
     Custom(HighlightPriority.LOW),
     Notification(HighlightPriority.LOW),
 }
+
 enum class HighlightPriority(val value: Int) {
     LOW(0),
     MEDIUM(1),

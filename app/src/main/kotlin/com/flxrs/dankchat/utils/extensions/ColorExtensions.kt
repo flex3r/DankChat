@@ -21,8 +21,7 @@ fun Int.normalizeColor(@ColorInt background: Int): Int {
             }
 
             if (hsl[2] > 0.4f && huePercentage > 0.1f && huePercentage < 0.33333f) {
-                hsl[2] = (hsl[2] -
-                        sin((huePercentage - 0.1f) / (0.33333f - 0.1f) * 3.14159f) * hsl[1] * 0.4f)
+                hsl[2] = (hsl[2] - sin((huePercentage - 0.1f) / (0.33333f - 0.1f) * 3.14159f) * hsl[1] * 0.4f)
             }
 
             ColorUtils.HSLToColor(hsl)
@@ -34,8 +33,7 @@ fun Int.normalizeColor(@ColorInt background: Int): Int {
             }
 
             if (hsl[2] < 0.6f && huePercentage > 0.54444f && huePercentage < 0.83333f) {
-                hsl[2] = (hsl[2] +
-                        sin((huePercentage - 0.54444f) / (0.83333f - 0.54444f) * 3.14159f) * hsl[1] * 0.4f)
+                hsl[2] = (hsl[2] + sin((huePercentage - 0.54444f) / (0.83333f - 0.54444f) * 3.14159f) * hsl[1] * 0.4f)
             }
 
             ColorUtils.HSLToColor(hsl)
@@ -43,5 +41,10 @@ fun Int.normalizeColor(@ColorInt background: Int): Int {
     }
 }
 
-@ColorInt
-fun Int.harmonize(context: Context): Int = MaterialColors.harmonizeWithPrimary(context, this)
+/** convert int to RGB with zero pad */
+val Int.hexCode: String
+    get() = Integer.toHexString(rgb).padStart(6, '0')
+
+/** helper to extract only RGB part (i.e. drop the alpha part) */
+private val Int.rgb: Int
+    get() = this and 0xffffff

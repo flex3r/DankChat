@@ -2,13 +2,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
-
-        <variable
-            name="item"
-            type="com.flxrs.dankchat.preferences.ui.ignores.TwitchBlockItem" />
-    </data>
-
     <com.google.android.material.card.MaterialCardView
         style="?attr/materialCardViewStyle"
         android:layout_width="match_parent"
@@ -25,7 +18,6 @@
                 android:id="@+id/username"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@{item.username}"
                 android:textAppearance="?attr/textAppearanceBodyMedium"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/delete"

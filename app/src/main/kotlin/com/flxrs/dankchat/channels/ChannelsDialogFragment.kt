@@ -12,6 +12,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.databinding.ChannelsFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
@@ -28,7 +29,7 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
     @Inject
     lateinit var dankChatPreferences: DankChatPreferenceStore
 
-    private lateinit var adapter: ChannelsAdapter
+    private var adapter: ChannelsAdapter? = null
     private val args: ChannelsDialogFragmentArgs by navArgs()
     private val navController: NavController by lazy { findNavController() }
 
@@ -58,20 +59,22 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
                 }
             }
         }
-        navBackStackEntry.lifecycle.addObserver(observer)
+        navBackStackEntry.getLifecycle().addObserver(observer)
         viewLifecycleOwner.lifecycle.addObserver(LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_DESTROY) {
-                navBackStackEntry.lifecycle.removeObserver(observer)
+                navBackStackEntry.getLifecycle().removeObserver(observer)
             }
         })
     }
 
-    override fun onDestroy() {
-        adapter.unregisterAdapterDataObserver(dataObserver)
-        super.onDestroy()
+    override fun onDestroyView() {
+        adapter?.unregisterAdapterDataObserver(dataObserver)
+        adapter = null
+        super.onDestroyView()
     }
 
     override fun dismiss() {
+        val adapter = adapter ?: return
         with(findNavController()) {
             getBackStackEntry(R.id.mainFragment)
                 .savedStateHandle[MainFragment.CHANNELS_REQUEST_KEY] = adapter.currentList.toTypedArray()
@@ -79,12 +82,13 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
         super.dismiss()
     }
 
-    private fun openRenameChannelDialog(channel: String, renamedChannel: String?) {
+    private fun openRenameChannelDialog(channel: UserName, renamedChannel: UserName?) {
         val direction = ChannelsDialogFragmentDirections.actionChannelsFragmentToEditChannelDialogFragment(channel, renamedChannel)
         navigateSafe(direction)
     }
 
-    private fun renameChannel(rename: Pair<String, String>) {
+    private fun renameChannel(rename: Pair<UserName, UserName>) {
+        val adapter = adapter ?: return
         val (channel, name) = rename
         dankChatPreferences.setRenamedChannel(channel, name)
 
@@ -95,6 +99,7 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
     private val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
 
         override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+            val adapter = adapter ?: return false
             adapter.currentList.toMutableList().let {
                 it.swap(viewHolder.bindingAdapterPosition, target.bindingAdapterPosition)
                 adapter.submitList(it)
@@ -107,6 +112,7 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
 
     private val dataObserver = object : RecyclerView.AdapterDataObserver() {
         override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+            val adapter = adapter ?: return
             if (adapter.currentList.isEmpty()) {
                 dismiss()
             }

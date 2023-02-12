@@ -3,6 +3,7 @@ package com.flxrs.dankchat.main
 import android.annotation.SuppressLint
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.main.stream.StreamWebView
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +15,7 @@ class StreamWebViewModel @Inject constructor(
     private val dankChatPreferenceStore: DankChatPreferenceStore
 ) : AndroidViewModel(application) {
 
-    private var lastStreamedChannel: String? = null
+    private var lastStreamedChannel: UserName? = null
 
     @SuppressLint("StaticFieldLeak")
     private var streamWebView: StreamWebView? = null
@@ -28,7 +29,7 @@ class StreamWebViewModel @Inject constructor(
         }
     }
 
-    fun setStream(channel: String, webView: StreamWebView) {
+    fun setStream(channel: UserName?, webView: StreamWebView) {
         if (!dankChatPreferenceStore.retainWebViewEnabled) {
             // Clear previous retained WebView instance
             streamWebView?.let {
@@ -46,7 +47,7 @@ class StreamWebViewModel @Inject constructor(
             return
         }
 
-        lastStreamedChannel = channel.ifBlank { null }
+        lastStreamedChannel = channel
         webView.setStream(channel)
     }
 

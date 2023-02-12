@@ -10,14 +10,15 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.databinding.ChannelsItemBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class ChannelsAdapter(
     private val dankChatPreferences: DankChatPreferenceStore,
-    private val onEditChannel: (String, String?) -> Unit
-) : ListAdapter<String, ChannelsAdapter.ChannelViewHolder>(DetectDiff()) {
+    private val onEditChannel: (UserName, UserName?) -> Unit
+) : ListAdapter<UserName, ChannelsAdapter.ChannelViewHolder>(DetectDiff()) {
     class ChannelViewHolder(val binding: ChannelsItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelViewHolder {
@@ -28,7 +29,7 @@ class ChannelsAdapter(
         val channel = getItem(position)
         val renamedChannel = dankChatPreferences.getRenamedChannel(channel)
         channelText.text = buildSpannedString {
-            append(renamedChannel ?: channel)
+            append(renamedChannel?.value ?: channel?.value)
             renamedChannel
                 ?.takeIf { it != channel }
                 ?.let {
@@ -58,7 +59,7 @@ class ChannelsAdapter(
     }
 }
 
-private class DetectDiff : DiffUtil.ItemCallback<String>() {
-    override fun areItemsTheSame(oldItem: String, newItem: String): Boolean = oldItem == newItem
-    override fun areContentsTheSame(oldItem: String, newItem: String): Boolean = oldItem == newItem
+private class DetectDiff : DiffUtil.ItemCallback<UserName>() {
+    override fun areItemsTheSame(oldItem: UserName, newItem: UserName): Boolean = oldItem == newItem
+    override fun areContentsTheSame(oldItem: UserName, newItem: UserName): Boolean = oldItem == newItem
 }

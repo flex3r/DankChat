@@ -38,6 +38,12 @@ object DatabaseModule {
 
     @Singleton
     @Provides
+    fun provideUserDisplayDao(
+        database: DankChatDatabase
+    ): UserDisplayDao = database.userDisplayDao()
+
+    @Singleton
+    @Provides
     fun provideMessageHighlightDao(
         database: DankChatDatabase
     ): MessageHighlightDao = database.messageHighlightDao()

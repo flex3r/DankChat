@@ -1,20 +1,28 @@
 package com.flxrs.dankchat.data.twitch.message
 
 import android.graphics.Color
+import androidx.annotation.ColorInt
+import com.flxrs.dankchat.data.DisplayName
+import com.flxrs.dankchat.data.UserId
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.irc.IrcMessage
+import com.flxrs.dankchat.data.toDisplayName
+import com.flxrs.dankchat.data.toUserId
+import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
-import java.util.*
+import com.flxrs.dankchat.utils.extensions.normalizeColor
+import java.util.UUID
 
 data class PrivMessage(
     override val timestamp: Long = System.currentTimeMillis(),
     override val id: String = UUID.randomUUID().toString(),
     override val highlights: Set<Highlight> = emptySet(),
-    val channel: String,
-    val userId: String? = null,
-    val name: String = "",
-    val displayName: String = "",
-    val color: Int = Color.parseColor(DEFAULT_COLOR),
+    val channel: UserName,
+    val userId: UserId? = null,
+    val name: UserName,
+    val displayName: DisplayName,
+    val color: Int = DEFAULT_COLOR,
     val message: String,
     val originalMessage: String = message,
     val emotes: List<ChatMessageEmote> = emptyList(),
@@ -22,9 +30,10 @@ data class PrivMessage(
     val badges: List<Badge> = emptyList(),
     val timedOut: Boolean = false,
     val tags: Map<String, String>,
+    val userDisplay: UserDisplay? = null,
 ) : Message() {
 
-    override val emoteData: EmoteData = EmoteData(message, channel, emoteTag = tags["emotes"].orEmpty())
+    override val emoteData: EmoteData = EmoteData(originalMessage, channel, emoteTag = tags["emotes"].orEmpty())
     override val badgeData: BadgeData = BadgeData(userId, channel, badgeTag = tags["badges"], badgeInfoTag = tags["badge-info"])
 
     companion object {
@@ -35,8 +44,7 @@ data class PrivMessage(
             }
 
             val displayName = tags["display-name"] ?: name
-            val colorTag = tags["color"]?.ifBlank { DEFAULT_COLOR } ?: DEFAULT_COLOR
-            val color = Color.parseColor(colorTag)
+            val color = tags["color"]?.ifBlank { null }?.let(Color::parseColor) ?: DEFAULT_COLOR
 
             val ts = tags["tmi-sent-ts"]?.toLongOrNull() ?: System.currentTimeMillis()
             var isAction = false
@@ -53,14 +61,14 @@ data class PrivMessage(
 
             return PrivMessage(
                 timestamp = ts,
-                channel = channel,
-                name = name,
-                displayName = displayName,
+                channel = channel.toUserName(),
+                name = name.toUserName(),
+                displayName = displayName.toDisplayName(),
                 color = color,
                 message = message,
                 isAction = isAction,
                 id = id,
-                userId = tags["user-id"],
+                userId = tags["user-id"]?.toUserId(),
                 timedOut = tags["rm-deleted"] == "1",
                 tags = tags,
             )
@@ -82,3 +90,9 @@ val PrivMessage.isFirstMessage: Boolean
 
 val PrivMessage.isElevatedMessage: Boolean
     get() = tags["pinned-chat-paid-amount"] != null
+
+/** format name for display in chat */
+val PrivMessage.aliasOrFormattedName: String
+    get() = userDisplay?.alias ?: name.formatWithDisplayName(displayName)
+
+fun PrivMessage.customOrUserColorOn(@ColorInt bgColor: Int): Int = userDisplay?.color ?: color.normalizeColor(bgColor)

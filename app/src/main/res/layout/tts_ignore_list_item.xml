@@ -6,7 +6,7 @@
 
         <variable
             name="item"
-            type="com.flxrs.dankchat.preferences.tts.TtsIgnoreItem.Entry" />
+            type="com.flxrs.dankchat.preferences.ui.tts.TtsIgnoreItem.Entry" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
