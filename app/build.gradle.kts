@@ -112,6 +112,10 @@ tasks.withType<KotlinCompile> {
     }
 }
 
+kotlin {
+    jvmToolchain(jdkVersion = 11)
+}
+
 dependencies {
 // D8 desugaring
     coreLibraryDesugaring(libs.android.desugar.libs)
