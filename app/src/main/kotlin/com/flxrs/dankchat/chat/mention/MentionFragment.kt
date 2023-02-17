@@ -33,8 +33,8 @@ class MentionFragment : Fragment() {
             mentionViewpager.setup()
             tabLayoutMediator = TabLayoutMediator(mentionTabs, mentionViewpager) { tab, position ->
                 tab.text = when (position) {
-                    0    -> getString(R.string.mentions)
-                    else -> getString(R.string.whispers)
+                    0    -> root.context.getString(R.string.mentions)
+                    else -> root.context.getString(R.string.whispers)
                 }
             }.apply { attach() }
         }

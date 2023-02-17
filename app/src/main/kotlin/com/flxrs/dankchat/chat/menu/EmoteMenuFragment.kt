@@ -30,10 +30,10 @@ class EmoteMenuFragment : Fragment() {
             TabLayoutMediator(bottomSheetTabs, bottomSheetViewPager) { tab, pos ->
                 val menuTab = EmoteMenuTab.values()[pos]
                 tab.text = when (menuTab) {
-                    EmoteMenuTab.SUBS    -> getString(R.string.emote_menu_tab_subs)
-                    EmoteMenuTab.CHANNEL -> getString(R.string.emote_menu_tab_channel)
-                    EmoteMenuTab.GLOBAL  -> getString(R.string.emote_menu_tab_global)
-                    EmoteMenuTab.RECENT  -> getString(R.string.emote_menu_tab_recent)
+                    EmoteMenuTab.SUBS    -> root.context.getString(R.string.emote_menu_tab_subs)
+                    EmoteMenuTab.CHANNEL -> root.context.getString(R.string.emote_menu_tab_channel)
+                    EmoteMenuTab.GLOBAL  -> root.context.getString(R.string.emote_menu_tab_global)
+                    EmoteMenuTab.RECENT  -> root.context.getString(R.string.emote_menu_tab_recent)
                 }
             }.attach()
         }
