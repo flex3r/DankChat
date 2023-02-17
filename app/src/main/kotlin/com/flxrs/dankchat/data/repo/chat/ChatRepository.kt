@@ -13,10 +13,10 @@ import com.flxrs.dankchat.data.api.recentmessages.RecentMessagesApiException
 import com.flxrs.dankchat.data.api.recentmessages.RecentMessagesError
 import com.flxrs.dankchat.data.api.recentmessages.dto.RecentMessagesDto
 import com.flxrs.dankchat.data.irc.IrcMessage
-import com.flxrs.dankchat.data.repo.emote.EmoteRepository
 import com.flxrs.dankchat.data.repo.HighlightsRepository
 import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.data.repo.UserDisplayRepository
+import com.flxrs.dankchat.data.repo.emote.EmoteRepository
 import com.flxrs.dankchat.data.toDisplayName
 import com.flxrs.dankchat.data.toUserId
 import com.flxrs.dankchat.data.toUserName
@@ -41,6 +41,7 @@ import com.flxrs.dankchat.di.ApplicationScope
 import com.flxrs.dankchat.di.ReadConnection
 import com.flxrs.dankchat.di.WriteConnection
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.utils.extensions.INVISIBLE_CHAR
 import com.flxrs.dankchat.utils.extensions.addAndLimit
 import com.flxrs.dankchat.utils.extensions.addSystemMessage
 import com.flxrs.dankchat.utils.extensions.assign
@@ -51,7 +52,7 @@ import com.flxrs.dankchat.utils.extensions.increment
 import com.flxrs.dankchat.utils.extensions.mutableSharedFlowOf
 import com.flxrs.dankchat.utils.extensions.replaceWithTimeout
 import com.flxrs.dankchat.utils.extensions.replaceWithTimeouts
-import com.flxrs.dankchat.utils.extensions.trimEndWith
+import com.flxrs.dankchat.utils.extensions.withoutInvisibleChar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -341,7 +342,7 @@ class ChatRepository @Inject constructor(
         pubSubManager.reconnectIfNecessary()
     }
 
-    fun getLastMessage(): String? = lastMessage[activeChannel.value]?.trimEndWith(INVISIBLE_CHAR)
+    fun getLastMessage(): String? = lastMessage[activeChannel.value]?.withoutInvisibleChar
 
     fun fakeWhisperIfNecessary(input: String) {
         if (pubSubManager.connectedAndHasWhisperTopic) {
@@ -494,7 +495,7 @@ class ChatRepository @Inject constructor(
 
         val messageWithSuffix = when (lastMessage[channel].orEmpty()) {
             trimmedMessage -> when {
-                trimmedMessage.endsWith(INVISIBLE_CHAR) -> trimmedMessage.trimEndWith(INVISIBLE_CHAR)
+                trimmedMessage.endsWith(INVISIBLE_CHAR) -> trimmedMessage.withoutInvisibleChar
                 else                                    -> "$trimmedMessage $INVISIBLE_CHAR"
             }
 
@@ -716,7 +717,7 @@ class ChatRepository @Inject constructor(
             if (message.name == dankChatPreferenceStore.userName) {
                 val previousLastMessage = lastMessage[message.channel].orEmpty()
                 val lastMessageWasCommand = previousLastMessage.startsWith('.') || previousLastMessage.startsWith('/')
-                if (!lastMessageWasCommand && previousLastMessage.trimEndWith(INVISIBLE_CHAR) != message.originalMessage.trimEndWith(INVISIBLE_CHAR)) {
+                if (!lastMessageWasCommand && previousLastMessage.withoutInvisibleChar != message.originalMessage.withoutInvisibleChar) {
                     lastMessage[message.channel] = message.originalMessage
                 }
 
@@ -914,7 +915,6 @@ class ChatRepository @Inject constructor(
 
     companion object {
         private val TAG = ChatRepository::class.java.simpleName
-        private val INVISIBLE_CHAR = 0x000E0000.codePointAsString
         private val ESCAPE_TAG = 0x000E0002.codePointAsString
         private const val USER_CACHE_SIZE = 5000
         private const val PUBSUB_TIMEOUT = 1000L

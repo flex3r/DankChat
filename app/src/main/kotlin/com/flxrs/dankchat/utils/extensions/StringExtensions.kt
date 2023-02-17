@@ -128,7 +128,15 @@ val String.withTrailingSlash: String
         else          -> "$this/"
     }
 
-fun String.trimEndWith(delimiter: String): String = trimEnd().substringBeforeLast(delimiter).trimEnd()
+val String.withTrailingSpace: String
+    get() = when {
+        isNotBlank() && !endsWith(" ") -> "$this "
+        else                           -> this
+    }
+
+val INVISIBLE_CHAR = 0x000E0000.codePointAsString
+val String.withoutInvisibleChar: String
+    get() = trimEnd().substringBeforeLast(INVISIBLE_CHAR).trimEnd()
 
 inline fun CharSequence.indexOfFirst(startIndex: Int = 0, predicate: (Char) -> Boolean): Int {
     for (index in startIndex.coerceAtLeast(0)..lastIndex) {
