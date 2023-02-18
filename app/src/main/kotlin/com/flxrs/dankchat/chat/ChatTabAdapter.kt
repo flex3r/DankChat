@@ -5,53 +5,56 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.flxrs.dankchat.data.UserName
-import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.ChannelWithRename
 
-class ChatTabAdapter(parentFragment: Fragment, private val dankChatPreferenceStore: DankChatPreferenceStore) : FragmentStateAdapter(parentFragment) {
+class ChatTabAdapter(parentFragment: Fragment) : FragmentStateAdapter(parentFragment) {
 
-    private val _channels = mutableListOf<UserName>()
-    private val _channelsWithRenames = mutableListOf<UserName>()
+    private val _channels = mutableListOf<ChannelWithRename>()
 
-    val channels: List<UserName> = _channels
-    val channelsWithRenames: List<UserName> = _channelsWithRenames
-
-    override fun createFragment(position: Int) = ChatFragment.newInstance(_channels[position])
+    override fun createFragment(position: Int) = ChatFragment.newInstance(_channels[position].channel)
 
     override fun getItemCount(): Int = _channels.size
 
-    override fun getItemId(position: Int): Long = when {
-        position < _channels.size -> _channels[position].hashCode().toLong()
-        else                      -> RecyclerView.NO_ID
+    override fun getItemId(position: Int): Long = when (position) {
+        in _channels.indices -> _channels[position].channel.hashCode().toLong()
+        else                 -> RecyclerView.NO_ID
     }
 
-    override fun containsItem(itemId: Long): Boolean = _channels.any { it.hashCode().toLong() == itemId }
+    override fun containsItem(itemId: Long): Boolean = _channels.any { it.channel.hashCode().toLong() == itemId }
+
+    fun indexOfChannel(channel: UserName): Int {
+        return _channels.indexOfFirst { it.channel == channel }
+    }
+
+    operator fun get(position: Int): UserName? {
+        if (position !in _channels.indices) return null
+        return _channels[position].channel
+    }
+
+    fun getFormattedChannel(position: Int): String {
+        val channel = _channels[position]
+        return channel.rename?.value ?: channel.channel.value
+    }
 
     fun addFragment(channel: UserName) {
-        _channels += channel
-        _channelsWithRenames += dankChatPreferenceStore.getRenamedChannel(channel) ?: channel
+        _channels += ChannelWithRename(channel, rename = null)
         notifyItemInserted(_channels.lastIndex)
     }
 
-    fun updateFragments(channels: List<UserName>) {
+    fun updateFragments(channels: List<ChannelWithRename>) {
         val oldChannels = _channels.toList()
-        val oldChannelsWithRenames = _channelsWithRenames.toList()
-        val newChannelsWithRenames = channels.map { dankChatPreferenceStore.getRenamedChannel(it) ?: it }
-
         _channels.clear()
         _channels.addAll(channels)
-
-        _channelsWithRenames.clear()
-        _channelsWithRenames.addAll(newChannelsWithRenames)
 
         val result = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun getOldListSize(): Int = oldChannels.size
             override fun getNewListSize(): Int = channels.size
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return oldChannels[oldItemPosition] == channels[newItemPosition]
+                return oldChannels[oldItemPosition].channel == channels[newItemPosition].channel
             }
 
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return oldChannelsWithRenames[oldItemPosition] == newChannelsWithRenames[newItemPosition]
+                return oldChannels[oldItemPosition] == channels[newItemPosition]
             }
         })
         result.dispatchUpdatesTo(this)

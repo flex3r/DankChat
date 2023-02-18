@@ -58,6 +58,7 @@ import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.databinding.EditDialogBinding
 import com.flxrs.dankchat.databinding.MainFragmentBinding
+import com.flxrs.dankchat.preferences.ChannelWithRename
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.createMediaFile
 import com.flxrs.dankchat.utils.extensions.*
@@ -101,11 +102,8 @@ class MainFragment : Fragment() {
 
     private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
-            if (position in tabAdapter.channels.indices) {
-                val newChannel = tabAdapter.channels[position].lowercase()
-                mainViewModel.setActiveChannel(newChannel)
-
-            }
+            val newChannel = tabAdapter[position] ?: return
+            mainViewModel.setActiveChannel(newChannel)
         }
 
         override fun onPageScrollStateChanged(state: Int) {
@@ -155,7 +153,7 @@ class MainFragment : Fragment() {
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        tabAdapter = ChatTabAdapter(parentFragment = this, dankChatPreferenceStore = dankChatPreferences)
+        tabAdapter = ChatTabAdapter(parentFragment = this)
         bindingRef = MainFragmentBinding.inflate(inflater, container, false).apply {
             emoteMenuBottomSheetBehavior = BottomSheetBehavior.from(bottomSheetFrame).apply {
                 addBottomSheetCallback(emoteMenuCallBack)
@@ -169,7 +167,7 @@ class MainFragment : Fragment() {
             }
 
             tabLayoutMediator = TabLayoutMediator(tabs, chatViewpager) { tab, position ->
-                tab.text = tabAdapter.channelsWithRenames[position].value
+                tab.text = tabAdapter.getFormattedChannel(position)
             }
 
             tabs.setInitialColors()
@@ -312,7 +310,7 @@ class MainFragment : Fragment() {
             collectFlow(activeChannel) { channel ->
                 channel ?: return@collectFlow
                 (activity as? MainActivity)?.notificationService?.setActiveChannel(channel) // TODO move
-                val index = tabAdapter.channels.indexOf(channel)
+                val index = tabAdapter.indexOfChannel(channel)
                 binding.tabs.getTabAt(index)?.removeBadge()
                 mainViewModel.clearMentionCount(channel)
                 mainViewModel.clearUnreadMessage(channel)
@@ -403,13 +401,8 @@ class MainFragment : Fragment() {
                     ADD_CHANNEL_REQUEST_KEY -> handle.withData(key, ::addChannel)
                     HISTORY_DISCLAIMER_KEY  -> handle.withData(key, ::handleMessageHistoryDisclaimerResult)
                     USER_POPUP_RESULT_KEY   -> handle.withData(key, ::handleUserPopupResult)
-                    LOGOUT_REQUEST_KEY      -> handle.withData<Boolean>(key) {
-                        showLogoutConfirmationDialog()
-                    }
-
-                    CHANNELS_REQUEST_KEY    -> handle.withData<Array<UserName>>(key) {
-                        updateChannels(it.toList())
-                    }
+                    LOGOUT_REQUEST_KEY      -> handle.withData<Boolean>(key) { showLogoutConfirmationDialog() }
+                    CHANNELS_REQUEST_KEY    -> handle.withData<Array<ChannelWithRename>>(key) { updateChannels(it.toList()) }
                 }
             }
         }
@@ -425,7 +418,8 @@ class MainFragment : Fragment() {
         }
 
         val channels = dankChatPreferences.getChannels()
-        tabAdapter.updateFragments(channels)
+        val withRenames = dankChatPreferences.getChannelsWithRenames(channels)
+        tabAdapter.updateFragments(withRenames)
         @SuppressLint("WrongConstant")
         binding.chatViewpager.offscreenPageLimit = OFFSCREEN_PAGE_LIMIT
         tabLayoutMediator.attach()
@@ -779,15 +773,14 @@ class MainFragment : Fragment() {
 
     private fun clear() {
         val position = binding.tabs.selectedTabPosition
-        if (position in tabAdapter.channels.indices)
-            mainViewModel.clear(tabAdapter.channels[position])
+        val channel = tabAdapter[position] ?: return
+        mainViewModel.clear(channel)
     }
 
-    private fun reloadEmotes(channel: UserName? = null) {
-        val position = channel?.let(tabAdapter.channels::indexOf) ?: binding.tabs.selectedTabPosition
-        if (position in tabAdapter.channels.indices) {
-            mainViewModel.reloadEmotes(tabAdapter.channels[position])
-        }
+    private fun reloadEmotes() {
+        val position = binding.tabs.selectedTabPosition
+        val channel = tabAdapter[position] ?: return
+        mainViewModel.reloadEmotes(channel)
     }
 
     private fun initPreferences(context: Context) {
@@ -894,8 +887,10 @@ class MainFragment : Fragment() {
             // should give user more info that it's gonna delete the currently active channel (unlike when clicking delete from manage channels list, where is very obvious)
             .setMessage(getString(R.string.confirm_channel_removal_message_named, activeChannel))
             .setPositiveButton(R.string.confirm_channel_removal_positive_button) { _, _ ->
+                dankChatPreferences.removeChannelRename(activeChannel)
                 val updatedChannels = channels - activeChannel
-                updateChannels(updatedChannels)
+                val withRenames = dankChatPreferences.getChannelsWithRenames(updatedChannels)
+                updateChannels(withRenames)
             }
             .setNegativeButton(R.string.dialog_cancel) { _, _ -> }
             .create().show()
@@ -955,27 +950,29 @@ class MainFragment : Fragment() {
             .show()
     }
 
-    private fun updateChannels(updatedChannels: List<UserName>) {
+    private fun updateChannels(updatedChannelsWithRenames: List<ChannelWithRename>) {
+        val updatedChannels = updatedChannelsWithRenames.map(ChannelWithRename::channel)
         val oldChannels = mainViewModel.getChannels()
         val oldIndex = binding.chatViewpager.currentItem
         val oldActiveChannel = oldChannels[oldIndex]
 
-        val index = updatedChannels.indexOf(oldActiveChannel).coerceAtLeast(0)
+        val index = updatedChannelsWithRenames
+            .indexOfFirst { it.channel == oldActiveChannel }
+            .coerceAtLeast(0)
         val activeChannel = updatedChannels.getOrNull(index)
 
-        tabAdapter.updateFragments(updatedChannels)
+        tabAdapter.updateFragments(updatedChannelsWithRenames)
         mainViewModel.updateChannels(updatedChannels)
         mainViewModel.setActiveChannel(activeChannel)
 
         dankChatPreferences.channelsString = updatedChannels
             .takeIf { it.isNotEmpty() }
             ?.joinToString(separator = ",")
-            ?.also {
-                binding.chatViewpager.setCurrentItem(index, false)
-                binding.root.postDelayed(TAB_SCROLL_DELAY_MS) {
-                    binding.tabs.setScrollPosition(index, 0f, false)
-                }
-            }
+
+        binding.chatViewpager.setCurrentItem(index, false)
+        binding.root.postDelayed(TAB_SCROLL_DELAY_MS) {
+            binding.tabs.setScrollPosition(index, 0f, false)
+        }
 
         activity?.invalidateMenu()
         updateChannelMentionBadges(channels = mainViewModel.channelMentionCount.firstValueOrNull.orEmpty())
@@ -984,7 +981,7 @@ class MainFragment : Fragment() {
 
     private fun updateUnreadChannelTabColors(channels: Map<UserName, Boolean>) {
         channels.forEach { (channel, _) ->
-            when (val index = tabAdapter.channels.indexOf(channel)) {
+            when (val index = tabAdapter.indexOfChannel(channel)) {
                 binding.tabs.selectedTabPosition -> mainViewModel.clearUnreadMessage(channel)
                 else                             -> {
                     val tab = binding.tabs.getTabAt(index)
@@ -996,7 +993,7 @@ class MainFragment : Fragment() {
 
     private fun updateChannelMentionBadges(channels: Map<UserName, Int>) {
         channels.forEach { (channel, count) ->
-            val index = tabAdapter.channels.indexOf(channel)
+            val index = tabAdapter.indexOfChannel(channel)
             if (count > 0) {
                 when (index) {
                     binding.tabs.selectedTabPosition -> mainViewModel.clearMentionCount(channel) // mention is in active channel
@@ -1016,7 +1013,10 @@ class MainFragment : Fragment() {
                 mainViewModel.setMentionSheetOpen(mentionBottomSheetBehavior?.isMoving == true || mentionBottomSheetBehavior?.isVisible == true)
                 when {
                     mentionBottomSheetBehavior?.isExpanded == true -> mainViewModel.setSuggestionChannel(WhisperMessage.WHISPER_CHANNEL)
-                    mentionBottomSheetBehavior?.isHidden == true   -> mainViewModel.setSuggestionChannel(tabAdapter.channels[binding.chatViewpager.currentItem])
+                    mentionBottomSheetBehavior?.isHidden == true   -> {
+                        val channel = tabAdapter[binding.tabs.selectedTabPosition] ?: return
+                        mainViewModel.setSuggestionChannel(channel)
+                    }
                 }
             }
         })
