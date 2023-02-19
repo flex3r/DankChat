@@ -10,15 +10,15 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.databinding.ChannelsItemBinding
+import com.flxrs.dankchat.preferences.ChannelWithRename
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class ChannelsAdapter(
     private val dankChatPreferences: DankChatPreferenceStore,
-    private val onEditChannel: (UserName, UserName?) -> Unit
-) : ListAdapter<UserName, ChannelsAdapter.ChannelViewHolder>(DetectDiff()) {
+    private val onEditChannel: (ChannelWithRename) -> Unit
+) : ListAdapter<ChannelWithRename, ChannelsAdapter.ChannelViewHolder>(DetectDiff()) {
     class ChannelViewHolder(val binding: ChannelsItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelViewHolder {
@@ -26,11 +26,10 @@ class ChannelsAdapter(
     }
 
     override fun onBindViewHolder(holder: ChannelViewHolder, position: Int) = with(holder.binding) {
-        val channel = getItem(position)
-        val renamedChannel = dankChatPreferences.getRenamedChannel(channel)
+        val (channel, rename) = getItem(position)
         channelText.text = buildSpannedString {
-            append(renamedChannel?.value ?: channel?.value)
-            renamedChannel
+            append(rename?.value ?: channel.value)
+            rename
                 ?.takeIf { it != channel }
                 ?.let {
                     val channelColor = ColorUtils.setAlphaComponent(channelText.currentTextColor, 128)
@@ -53,13 +52,13 @@ class ChannelsAdapter(
                 .create().show()
         }
         channelEdit.setOnClickListener {
-            val currentChannel = currentList.getOrNull(holder.bindingAdapterPosition) ?: return@setOnClickListener
-            onEditChannel(currentChannel, renamedChannel)
+            val editedChannel = currentList.getOrNull(holder.bindingAdapterPosition) ?: return@setOnClickListener
+            onEditChannel(editedChannel)
         }
     }
 }
 
-private class DetectDiff : DiffUtil.ItemCallback<UserName>() {
-    override fun areItemsTheSame(oldItem: UserName, newItem: UserName): Boolean = oldItem == newItem
-    override fun areContentsTheSame(oldItem: UserName, newItem: UserName): Boolean = oldItem == newItem
+private class DetectDiff : DiffUtil.ItemCallback<ChannelWithRename>() {
+    override fun areItemsTheSame(oldItem: ChannelWithRename, newItem: ChannelWithRename): Boolean = oldItem.channel == newItem.channel
+    override fun areContentsTheSame(oldItem: ChannelWithRename, newItem: ChannelWithRename): Boolean = oldItem == newItem
 }

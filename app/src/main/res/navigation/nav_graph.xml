@@ -124,7 +124,7 @@
         android:label="ChannelsDialogFragment">
         <action
             android:id="@+id/action_channelsFragment_to_editChannelDialogFragment"
-            app:destination="@+id/editChannelDialogFragment" />
+            app:destination="@id/editChannelDialogFragment" />
         <argument
             android:name="channels"
             app:argType="com.flxrs.dankchat.data.UserName[]" />
@@ -139,12 +139,8 @@
         android:name="com.flxrs.dankchat.main.dialog.EditChannelDialogFragment"
         android:label="EditChannelDialogFragment">
         <argument
-            android:name="channel"
-            app:argType="com.flxrs.dankchat.data.UserName" />
-        <argument
-            android:name="renaming"
-            app:argType="com.flxrs.dankchat.data.UserName"
-            app:nullable="true" />
+            android:name="channelWithRename"
+            app:argType="com.flxrs.dankchat.preferences.ChannelWithRename" />
     </dialog>
     <dialog
         android:id="@+id/messageHistoryDisclaimerDialogFragment"

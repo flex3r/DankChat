@@ -11,15 +11,22 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.channels.ChannelsDialogFragment
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.databinding.EditDialogBinding
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class EditChannelDialogFragment : DialogFragment() {
 
     private val args: EditChannelDialogFragmentArgs by navArgs()
 
+    @Inject
+    lateinit var dankChatPreferences: DankChatPreferenceStore
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val binding = EditDialogBinding.inflate(layoutInflater, null, false).apply {
-            dialogEdit.hint = args.renaming?.value ?: args.channel.value
+            dialogEdit.hint = args.channelWithRename.rename?.value ?: args.channelWithRename.channel.value
             dialogEdit.setOnEditorActionListener { _, actionId, _ ->
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE -> getInputAndDismiss(dialogEdit.text)
@@ -27,11 +34,13 @@ class EditChannelDialogFragment : DialogFragment() {
                 }
             }
 
-            dialogEditLayout.isEndIconVisible = args.renaming != null
+            dialogEditLayout.isEndIconVisible = args.channelWithRename.rename != null
             dialogEditLayout.setEndIconOnClickListener {
+                val rename = args.channelWithRename.copy(rename = null)
+                dankChatPreferences.setRenamedChannel(rename)
                 findNavController()
                     .getBackStackEntry(R.id.channelsDialogFragment)
-                    .savedStateHandle[ChannelsDialogFragment.RENAME_TAB_REQUEST_KEY] = args.channel to args.channel
+                    .savedStateHandle[ChannelsDialogFragment.RENAME_TAB_REQUEST_KEY] = rename
                 dismiss()
             }
         }
@@ -46,12 +55,12 @@ class EditChannelDialogFragment : DialogFragment() {
     }
 
     private fun getInputAndDismiss(input: Editable?): Boolean {
-        val trimmedInput = input?.toString()?.trim().orEmpty()
-        if (trimmedInput.isNotBlank()) {
-            findNavController()
-                .getBackStackEntry(R.id.channelsDialogFragment)
-                .savedStateHandle[ChannelsDialogFragment.RENAME_TAB_REQUEST_KEY] = args.channel to trimmedInput.toUserName()
-        }
+        val trimmedInput = input?.toString()?.trim()?.ifBlank { null }
+        val rename = args.channelWithRename.copy(rename = trimmedInput?.toUserName())
+        dankChatPreferences.setRenamedChannel(rename)
+        findNavController()
+            .getBackStackEntry(R.id.channelsDialogFragment)
+            .savedStateHandle[ChannelsDialogFragment.RENAME_TAB_REQUEST_KEY] = rename
         dismiss()
         return true
     }

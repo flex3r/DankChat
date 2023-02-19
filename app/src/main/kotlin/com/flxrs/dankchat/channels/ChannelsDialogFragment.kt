@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.channels
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,9 +13,9 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.databinding.ChannelsFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
+import com.flxrs.dankchat.preferences.ChannelWithRename
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.navigateSafe
 import com.flxrs.dankchat.utils.extensions.swap
@@ -35,8 +36,9 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val channels = args.channels.toList()
+        val withRenames = dankChatPreferences.getChannelsWithRenames(channels)
         adapter = ChannelsAdapter(dankChatPreferences, ::openRenameChannelDialog).also {
-            it.submitList(channels)
+            it.submitList(withRenames)
             it.registerAdapterDataObserver(dataObserver)
         }
         val binding = ChannelsFragmentBinding.inflate(inflater, container, false).apply {
@@ -73,27 +75,27 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
         super.onDestroyView()
     }
 
-    override fun dismiss() {
-        val adapter = adapter ?: return
-        with(findNavController()) {
-            getBackStackEntry(R.id.mainFragment)
-                .savedStateHandle[MainFragment.CHANNELS_REQUEST_KEY] = adapter.currentList.toTypedArray()
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        adapter?.let {
+            navController
+                .getBackStackEntry(R.id.mainFragment)
+                .savedStateHandle[MainFragment.CHANNELS_REQUEST_KEY] = it.currentList.toTypedArray()
         }
-        super.dismiss()
+
     }
 
-    private fun openRenameChannelDialog(channel: UserName, renamedChannel: UserName?) {
-        val direction = ChannelsDialogFragmentDirections.actionChannelsFragmentToEditChannelDialogFragment(channel, renamedChannel)
+    private fun openRenameChannelDialog(channelWithRename: ChannelWithRename) {
+        val direction = ChannelsDialogFragmentDirections.actionChannelsFragmentToEditChannelDialogFragment(channelWithRename)
         navigateSafe(direction)
     }
 
-    private fun renameChannel(rename: Pair<UserName, UserName>) {
+    private fun renameChannel(channelWithRename: ChannelWithRename) {
         val adapter = adapter ?: return
-        val (channel, name) = rename
-        dankChatPreferences.setRenamedChannel(channel, name)
-
-        val position = adapter.currentList.indexOf(channel)
-        adapter.notifyItemChanged(position)
+        val updated = adapter.currentList.toMutableList()
+        val position = updated.indexOfFirst { it.channel == channelWithRename.channel }
+        updated[position] = channelWithRename
+        adapter.submitList(updated)
     }
 
     private val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {

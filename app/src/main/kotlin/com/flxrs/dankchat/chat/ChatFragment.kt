@@ -35,6 +35,8 @@ import com.flxrs.dankchat.utils.extensions.forEachLayer
 import com.flxrs.dankchat.utils.extensions.forEachSpan
 import com.flxrs.dankchat.utils.extensions.forEachViewHolder
 import com.flxrs.dankchat.utils.extensions.showShortSnackbar
+import com.flxrs.dankchat.utils.extensions.withTrailingSpace
+import com.flxrs.dankchat.utils.extensions.withoutInvisibleChar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -185,9 +187,14 @@ open class ChatFragment : Fragment() {
     }
 
     private fun copyMessage(message: String) {
-        getSystemService(requireContext(), ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("twitch message", message))
+        getSystemService(requireContext(), ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText(CLIPBOARD_MESSAGE_LABEL, message))
         binding.root.showShortSnackbar(getString(R.string.snackbar_message_copied)) {
-            setAction(R.string.snackbar_paste) { (parentFragment as? MainFragment)?.insertText(message) }
+            setAction(R.string.snackbar_paste) {
+                val preparedMessage = message
+                    .withoutInvisibleChar
+                    .withTrailingSpace
+                (parentFragment as? MainFragment)?.insertText(preparedMessage)
+            }
         }
     }
 
@@ -232,6 +239,7 @@ open class ChatFragment : Fragment() {
 
     companion object {
         private const val AT_BOTTOM_STATE = "chat_at_bottom_state"
+        private const val CLIPBOARD_MESSAGE_LABEL = "dankchat_message"
         private const val MAX_MESSAGES_REDRAW_AMOUNT = 50
         private const val MESSAGES_REDRAW_DELAY_MS = 100L
         private const val OFFSCREEN_VIEW_CACHE_SIZE = 10

@@ -289,14 +289,22 @@ class DankChatPreferenceStore @Inject constructor(
         return channels.toUserNames()
     }
 
-    fun getRenamedChannel(channel: UserName): UserName? {
-        val renameMap = channelRenames?.toMutableMap()
-        return renameMap?.get(channel)
+    fun getChannelsWithRenames(channels: List<UserName> = getChannels()): List<ChannelWithRename> {
+        val renameMap = channelRenames?.toMutableMap().orEmpty()
+        return channels.map {
+            ChannelWithRename(
+                channel = it,
+                rename = renameMap[it],
+            )
+        }
     }
 
-    fun setRenamedChannel(channel: UserName, renaming: UserName) {
+    fun setRenamedChannel(channelWithRename: ChannelWithRename) {
         withChannelRenames {
-            put(channel, renaming)
+            when (channelWithRename.rename) {
+                null -> remove(channelWithRename.channel)
+                else -> put(channelWithRename.channel, channelWithRename.rename)
+            }
         }
     }
 

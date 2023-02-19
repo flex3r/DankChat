@@ -3,6 +3,7 @@ package com.flxrs.dankchat.data.repo.chat
 import android.graphics.Color
 import android.util.Log
 import androidx.collection.LruCache
+import com.flxrs.dankchat.chat.ChatImportance
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.chat.toMentionTabItems
 import com.flxrs.dankchat.data.DisplayName
@@ -13,10 +14,10 @@ import com.flxrs.dankchat.data.api.recentmessages.RecentMessagesApiException
 import com.flxrs.dankchat.data.api.recentmessages.RecentMessagesError
 import com.flxrs.dankchat.data.api.recentmessages.dto.RecentMessagesDto
 import com.flxrs.dankchat.data.irc.IrcMessage
-import com.flxrs.dankchat.data.repo.emote.EmoteRepository
 import com.flxrs.dankchat.data.repo.HighlightsRepository
 import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.data.repo.UserDisplayRepository
+import com.flxrs.dankchat.data.repo.emote.EmoteRepository
 import com.flxrs.dankchat.data.toDisplayName
 import com.flxrs.dankchat.data.toUserId
 import com.flxrs.dankchat.data.toUserName
@@ -29,7 +30,6 @@ import com.flxrs.dankchat.data.twitch.message.NoticeMessage
 import com.flxrs.dankchat.data.twitch.message.PointRedemptionMessage
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.RoomState
-import com.flxrs.dankchat.data.twitch.message.SystemMessage
 import com.flxrs.dankchat.data.twitch.message.SystemMessageType
 import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
@@ -41,6 +41,7 @@ import com.flxrs.dankchat.di.ApplicationScope
 import com.flxrs.dankchat.di.ReadConnection
 import com.flxrs.dankchat.di.WriteConnection
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.utils.extensions.INVISIBLE_CHAR
 import com.flxrs.dankchat.utils.extensions.addAndLimit
 import com.flxrs.dankchat.utils.extensions.addSystemMessage
 import com.flxrs.dankchat.utils.extensions.assign
@@ -49,9 +50,10 @@ import com.flxrs.dankchat.utils.extensions.codePointAsString
 import com.flxrs.dankchat.utils.extensions.firstValue
 import com.flxrs.dankchat.utils.extensions.increment
 import com.flxrs.dankchat.utils.extensions.mutableSharedFlowOf
+import com.flxrs.dankchat.utils.extensions.replaceOrAddHistoryModerationMessage
+import com.flxrs.dankchat.utils.extensions.replaceOrAddModerationMessage
 import com.flxrs.dankchat.utils.extensions.replaceWithTimeout
-import com.flxrs.dankchat.utils.extensions.replaceWithTimeouts
-import com.flxrs.dankchat.utils.extensions.trimEndWith
+import com.flxrs.dankchat.utils.extensions.withoutInvisibleChar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -204,7 +206,7 @@ class ChatRepository @Inject constructor(
                         messages[message.channel]?.update { current ->
                             when (message.action) {
                                 ModerationMessage.Action.Delete -> current.replaceWithTimeout(message, scrollBackLength)
-                                else                            -> current.replaceWithTimeouts(message, scrollBackLength)
+                                else                            -> current.replaceOrAddModerationMessage(message, scrollBackLength)
                             }
                         }
                     }
@@ -341,7 +343,7 @@ class ChatRepository @Inject constructor(
         pubSubManager.reconnectIfNecessary()
     }
 
-    fun getLastMessage(): String? = lastMessage[activeChannel.value]?.trimEndWith(INVISIBLE_CHAR)
+    fun getLastMessage(): String? = lastMessage[activeChannel.value]?.withoutInvisibleChar
 
     fun fakeWhisperIfNecessary(input: String) {
         if (pubSubManager.connectedAndHasWhisperTopic) {
@@ -494,7 +496,7 @@ class ChatRepository @Inject constructor(
 
         val messageWithSuffix = when (lastMessage[channel].orEmpty()) {
             trimmedMessage -> when {
-                trimmedMessage.endsWith(INVISIBLE_CHAR) -> trimmedMessage.trimEndWith(INVISIBLE_CHAR)
+                trimmedMessage.endsWith(INVISIBLE_CHAR) -> trimmedMessage.withoutInvisibleChar
                 else                                    -> "$trimmedMessage $INVISIBLE_CHAR"
             }
 
@@ -553,7 +555,7 @@ class ChatRepository @Inject constructor(
         }
 
         messages[parsed.channel]?.update { current ->
-            current.replaceWithTimeouts(parsed, scrollBackLength)
+            current.replaceOrAddModerationMessage(parsed, scrollBackLength)
         }
     }
 
@@ -706,7 +708,7 @@ class ChatRepository @Inject constructor(
         if (message is NoticeMessage && message.channel == GLOBAL_CHANNEL_TAG) {
             messages.keys.forEach {
                 messages[it]?.update { current ->
-                    current.addAndLimit(ChatItem(message), scrollBackLength)
+                    current.addAndLimit(ChatItem(message, importance = ChatImportance.SYSTEM), scrollBackLength)
                 }
             }
             return
@@ -716,7 +718,7 @@ class ChatRepository @Inject constructor(
             if (message.name == dankChatPreferenceStore.userName) {
                 val previousLastMessage = lastMessage[message.channel].orEmpty()
                 val lastMessageWasCommand = previousLastMessage.startsWith('.') || previousLastMessage.startsWith('/')
-                if (!lastMessageWasCommand && previousLastMessage.trimEndWith(INVISIBLE_CHAR) != message.originalMessage.trimEndWith(INVISIBLE_CHAR)) {
+                if (!lastMessageWasCommand && previousLastMessage.withoutInvisibleChar != message.originalMessage.withoutInvisibleChar) {
                     lastMessage[message.channel] = message.originalMessage
                 }
 
@@ -744,7 +746,11 @@ class ChatRepository @Inject constructor(
             if (message is UserNoticeMessage && message.childMessage != null) {
                 add(ChatItem(message.childMessage))
             }
-            add(ChatItem(message))
+            val importance = when (message) {
+                is NoticeMessage -> ChatImportance.SYSTEM
+                else             -> ChatImportance.REGULAR
+            }
+            add(ChatItem(message, importance = importance))
         }
 
         val channel = when (message) {
@@ -828,35 +834,59 @@ class ChatRepository @Inject constructor(
         measureTimeMillis {
             for (recentMessage in recentMessages) {
                 val parsedIrc = IrcMessage.parse(recentMessage)
-                val isCleared = parsedIrc.tags["rm-deleted"] == "1"
+                val isDeleted = parsedIrc.tags["rm-deleted"] == "1"
                 if (ignoresRepository.isUserBlocked(parsedIrc.tags["user-id"]?.toUserId())) {
                     continue
                 }
 
-                val message = runCatching {
-                    Message.parse(parsedIrc)
-                        ?.applyIgnores()
-                        ?.calculateHighlightState()
-                        ?.calculateUserDisplays()
-                        ?.parseEmotesAndBadges()
-                }.getOrNull() ?: continue
+                when (parsedIrc.command) {
+                    "CLEARCHAT" -> {
+                        val parsed = runCatching {
+                            ModerationMessage.parseClearChat(parsedIrc)
+                        }.getOrNull() ?: continue
 
-                if (message is PrivMessage) {
-                    val userForSuggestion = message.name.valueOrDisplayName(message.displayName).toDisplayName()
-                    userSuggestions += message.name.lowercase() to userForSuggestion
-                }
+                        items.replaceOrAddHistoryModerationMessage(parsed)
+                    }
 
-                if (message is UserNoticeMessage && message.childMessage != null) {
-                    items += ChatItem(message.childMessage, isCleared = isCleared)
+                    "CLEARMSG"  -> {
+                        val parsed = runCatching {
+                            ModerationMessage.parseClearMessage(parsedIrc)
+                        }.getOrNull() ?: continue
+
+                        items += ChatItem(parsed, importance = ChatImportance.SYSTEM)
+                    }
+
+                    else        -> {
+                        val message = runCatching {
+                            Message.parse(parsedIrc)
+                                ?.applyIgnores()
+                                ?.calculateHighlightState()
+                                ?.calculateUserDisplays()
+                                ?.parseEmotesAndBadges()
+                        }.getOrNull() ?: continue
+
+                        if (message is PrivMessage) {
+                            val userForSuggestion = message.name.valueOrDisplayName(message.displayName).toDisplayName()
+                            userSuggestions += message.name.lowercase() to userForSuggestion
+                        }
+
+                        val importance = when {
+                            isDeleted -> ChatImportance.DELETED
+                            else      -> ChatImportance.REGULAR
+                        }
+                        if (message is UserNoticeMessage && message.childMessage != null) {
+                            items += ChatItem(message.childMessage, importance = importance)
+                        }
+                        items += ChatItem(message, importance = importance)
+                    }
                 }
-                items += ChatItem(message, isCleared = isCleared)
             }
         }.let { Log.i(TAG, "Parsing message history for #$channel took $it ms") }
 
         messages[channel]?.update { current ->
             val withIncompleteWarning = when {
                 recentMessages.isNotEmpty() && result.errorCode == RecentMessagesDto.ERROR_CHANNEL_NOT_JOINED -> {
-                    current + ChatItem(SystemMessage(SystemMessageType.MessageHistoryIncomplete))
+                    current + SystemMessageType.MessageHistoryIncomplete.toChatItem()
                 }
 
                 else                                                                                          -> current
@@ -914,7 +944,6 @@ class ChatRepository @Inject constructor(
 
     companion object {
         private val TAG = ChatRepository::class.java.simpleName
-        private val INVISIBLE_CHAR = 0x000E0000.codePointAsString
         private val ESCAPE_TAG = 0x000E0002.codePointAsString
         private const val USER_CACHE_SIZE = 5000
         private const val PUBSUB_TIMEOUT = 1000L
