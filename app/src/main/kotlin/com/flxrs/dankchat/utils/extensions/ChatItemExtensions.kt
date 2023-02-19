@@ -5,42 +5,26 @@ import com.flxrs.dankchat.data.twitch.message.ModerationMessage
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.SystemMessage
 import com.flxrs.dankchat.data.twitch.message.SystemMessageType
+import com.flxrs.dankchat.data.twitch.message.toChatItem
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-fun List<ChatItem>.replaceWithTimeouts(moderationMessage: ModerationMessage, scrollBackLength: Int): List<ChatItem> = toMutableList().apply {
-    var addClearChat = true
-    if (moderationMessage.action == ModerationMessage.Action.Timeout || moderationMessage.action == ModerationMessage.Action.Ban) {
-        val end = (lastIndex - 20).coerceAtLeast(0)
-        for (idx in lastIndex downTo end) {
-            val item = this[idx]
-            val message = item.message as? ModerationMessage ?: continue
-            if (message.targetUser != moderationMessage.targetUser || message.action != moderationMessage.action) {
-                continue
-            }
-
-            if ((moderationMessage.timestamp - message.timestamp).milliseconds >= 5.seconds) {
-                break
-            }
-
-            when {
-                !moderationMessage.fromPubsub && message.fromPubsub          -> Unit
-                moderationMessage.fromPubsub && !message.fromPubsub          -> this[idx] = item.copy(tag = item.tag + 1, message = moderationMessage)
-                moderationMessage.action == ModerationMessage.Action.Timeout -> {
-                    val stackedMessage = moderationMessage.copy(stackCount = message.stackCount + 1)
-                    this[idx] = item.copy(tag = item.tag + 1, message = stackedMessage)
-                }
-            }
-            addClearChat = false
-            break
-
-        }
-    }
-
+fun MutableList<ChatItem>.replaceOrAddHistoryModerationMessage(moderationMessage: ModerationMessage) {
     if (!moderationMessage.canClearMessages) {
-        return addAndLimit(ChatItem(moderationMessage), scrollBackLength)
+        return
     }
 
+    if (checkForStackedTimeouts(moderationMessage)) {
+        add(ChatItem(moderationMessage, isCleared = true))
+    }
+}
+
+fun List<ChatItem>.replaceOrAddModerationMessage(moderationMessage: ModerationMessage, scrollBackLength: Int): List<ChatItem> = toMutableList().apply {
+    if (!moderationMessage.canClearMessages) {
+        return addAndLimit(ChatItem(moderationMessage, isCleared = true), scrollBackLength)
+    }
+
+    val addSystemMessage = checkForStackedTimeouts(moderationMessage)
     for (idx in indices) {
         val item = this[idx]
         when (moderationMessage.action) {
@@ -66,7 +50,7 @@ fun List<ChatItem>.replaceWithTimeouts(moderationMessage: ModerationMessage, scr
     }
 
     return when {
-        addClearChat -> addAndLimit(ChatItem(moderationMessage), scrollBackLength)
+        addSystemMessage -> addAndLimit(ChatItem(moderationMessage, isCleared = true), scrollBackLength)
         else         -> this
     }
 }
@@ -92,7 +76,7 @@ fun List<ChatItem>.replaceWithTimeout(moderationMessage: ModerationMessage, scro
             break
         }
     }
-    return addAndLimit(ChatItem(moderationMessage), scrollBackLength)
+    return addAndLimit(ChatItem(moderationMessage, isCleared = true), scrollBackLength)
 }
 
 fun List<ChatItem>.addAndLimit(item: ChatItem, scrollBackLength: Int): List<ChatItem> = toMutableList().apply {
@@ -122,7 +106,7 @@ fun List<ChatItem>.addAndLimit(
 
 fun List<ChatItem>.addSystemMessage(type: SystemMessageType, scrollBackLength: Int): List<ChatItem> {
     return when {
-        type != SystemMessageType.Connected -> addAndLimit(ChatItem(SystemMessage(type)), scrollBackLength)
+        type != SystemMessageType.Connected -> addAndLimit(type.toChatItem(), scrollBackLength)
         else                                -> replaceDisconnectedIfNecessary(scrollBackLength)
     }
 }
@@ -132,6 +116,35 @@ fun List<ChatItem>.replaceDisconnectedIfNecessary(scrollBackLength: Int): List<C
     val message = item?.message
     return when ((message as? SystemMessage)?.type) {
         SystemMessageType.Disconnected -> dropLast(1) + item.copy(message = SystemMessage(SystemMessageType.Reconnected))
-        else                           -> addAndLimit(ChatItem(SystemMessage(SystemMessageType.Connected)), scrollBackLength)
+        else                           -> addAndLimit(SystemMessageType.Connected.toChatItem(), scrollBackLength)
     }
+}
+
+private fun MutableList<ChatItem>.checkForStackedTimeouts(moderationMessage: ModerationMessage): Boolean {
+    if (moderationMessage.action == ModerationMessage.Action.Timeout || moderationMessage.action == ModerationMessage.Action.Ban) {
+        val end = (lastIndex - 20).coerceAtLeast(0)
+        for (idx in lastIndex downTo end) {
+            val item = this[idx]
+            val message = item.message as? ModerationMessage ?: continue
+            if (message.targetUser != moderationMessage.targetUser || message.action != moderationMessage.action) {
+                continue
+            }
+
+            if ((moderationMessage.timestamp - message.timestamp).milliseconds >= 5.seconds) {
+                return true
+            }
+
+            when {
+                !moderationMessage.fromPubsub && message.fromPubsub          -> Unit
+                moderationMessage.fromPubsub && !message.fromPubsub          -> this[idx] = item.copy(tag = item.tag + 1, message = moderationMessage)
+                moderationMessage.action == ModerationMessage.Action.Timeout -> {
+                    val stackedMessage = moderationMessage.copy(stackCount = message.stackCount + 1)
+                    this[idx] = item.copy(tag = item.tag + 1, message = stackedMessage)
+                }
+            }
+            return false
+        }
+    }
+
+    return true
 }

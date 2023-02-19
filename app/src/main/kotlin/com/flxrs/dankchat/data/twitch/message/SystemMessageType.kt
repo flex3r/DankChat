@@ -19,4 +19,4 @@ sealed class SystemMessageType {
     data class Custom(val message: String) : SystemMessageType()
 }
 
-fun SystemMessageType.toChatItem() = ChatItem(SystemMessage(this))
+fun SystemMessageType.toChatItem() = ChatItem(SystemMessage(this), isCleared = true)

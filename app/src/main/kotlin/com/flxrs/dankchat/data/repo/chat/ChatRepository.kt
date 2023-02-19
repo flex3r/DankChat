@@ -29,7 +29,6 @@ import com.flxrs.dankchat.data.twitch.message.NoticeMessage
 import com.flxrs.dankchat.data.twitch.message.PointRedemptionMessage
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.RoomState
-import com.flxrs.dankchat.data.twitch.message.SystemMessage
 import com.flxrs.dankchat.data.twitch.message.SystemMessageType
 import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
@@ -50,8 +49,9 @@ import com.flxrs.dankchat.utils.extensions.codePointAsString
 import com.flxrs.dankchat.utils.extensions.firstValue
 import com.flxrs.dankchat.utils.extensions.increment
 import com.flxrs.dankchat.utils.extensions.mutableSharedFlowOf
+import com.flxrs.dankchat.utils.extensions.replaceOrAddHistoryModerationMessage
+import com.flxrs.dankchat.utils.extensions.replaceOrAddModerationMessage
 import com.flxrs.dankchat.utils.extensions.replaceWithTimeout
-import com.flxrs.dankchat.utils.extensions.replaceWithTimeouts
 import com.flxrs.dankchat.utils.extensions.withoutInvisibleChar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -205,7 +205,7 @@ class ChatRepository @Inject constructor(
                         messages[message.channel]?.update { current ->
                             when (message.action) {
                                 ModerationMessage.Action.Delete -> current.replaceWithTimeout(message, scrollBackLength)
-                                else                            -> current.replaceWithTimeouts(message, scrollBackLength)
+                                else                            -> current.replaceOrAddModerationMessage(message, scrollBackLength)
                             }
                         }
                     }
@@ -554,7 +554,7 @@ class ChatRepository @Inject constructor(
         }
 
         messages[parsed.channel]?.update { current ->
-            current.replaceWithTimeouts(parsed, scrollBackLength)
+            current.replaceOrAddModerationMessage(parsed, scrollBackLength)
         }
     }
 
@@ -707,7 +707,7 @@ class ChatRepository @Inject constructor(
         if (message is NoticeMessage && message.channel == GLOBAL_CHANNEL_TAG) {
             messages.keys.forEach {
                 messages[it]?.update { current ->
-                    current.addAndLimit(ChatItem(message), scrollBackLength)
+                    current.addAndLimit(ChatItem(message, isCleared = true), scrollBackLength)
                 }
             }
             return
@@ -745,7 +745,7 @@ class ChatRepository @Inject constructor(
             if (message is UserNoticeMessage && message.childMessage != null) {
                 add(ChatItem(message.childMessage))
             }
-            add(ChatItem(message))
+            add(ChatItem(message, isCleared = message is NoticeMessage))
         }
 
         val channel = when (message) {
@@ -834,30 +834,50 @@ class ChatRepository @Inject constructor(
                     continue
                 }
 
-                val message = runCatching {
-                    Message.parse(parsedIrc)
-                        ?.applyIgnores()
-                        ?.calculateHighlightState()
-                        ?.calculateUserDisplays()
-                        ?.parseEmotesAndBadges()
-                }.getOrNull() ?: continue
+                when (parsedIrc.command) {
+                    "CLEARCHAT" -> {
+                        val parsed = runCatching {
+                            ModerationMessage.parseClearChat(parsedIrc)
+                        }.getOrNull() ?: continue
 
-                if (message is PrivMessage) {
-                    val userForSuggestion = message.name.valueOrDisplayName(message.displayName).toDisplayName()
-                    userSuggestions += message.name.lowercase() to userForSuggestion
-                }
+                        items.replaceOrAddHistoryModerationMessage(parsed)
+                    }
 
-                if (message is UserNoticeMessage && message.childMessage != null) {
-                    items += ChatItem(message.childMessage, isCleared = isCleared)
+                    "CLEARMSG"  -> {
+                        val parsed = runCatching {
+                            ModerationMessage.parseClearMessage(parsedIrc)
+                        }.getOrNull() ?: continue
+
+                        items += ChatItem(parsed, isCleared = true)
+                    }
+
+                    else        -> {
+                        val message = runCatching {
+                            Message.parse(parsedIrc)
+                                ?.applyIgnores()
+                                ?.calculateHighlightState()
+                                ?.calculateUserDisplays()
+                                ?.parseEmotesAndBadges()
+                        }.getOrNull() ?: continue
+
+                        if (message is PrivMessage) {
+                            val userForSuggestion = message.name.valueOrDisplayName(message.displayName).toDisplayName()
+                            userSuggestions += message.name.lowercase() to userForSuggestion
+                        }
+
+                        if (message is UserNoticeMessage && message.childMessage != null) {
+                            items += ChatItem(message.childMessage, isCleared = isCleared)
+                        }
+                        items += ChatItem(message, isCleared = isCleared)
+                    }
                 }
-                items += ChatItem(message, isCleared = isCleared)
             }
         }.let { Log.i(TAG, "Parsing message history for #$channel took $it ms") }
 
         messages[channel]?.update { current ->
             val withIncompleteWarning = when {
                 recentMessages.isNotEmpty() && result.errorCode == RecentMessagesDto.ERROR_CHANNEL_NOT_JOINED -> {
-                    current + ChatItem(SystemMessage(SystemMessageType.MessageHistoryIncomplete))
+                    current + SystemMessageType.MessageHistoryIncomplete.toChatItem()
                 }
 
                 else                                                                                          -> current
