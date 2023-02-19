@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.data.twitch.message
 
+import com.flxrs.dankchat.chat.ChatImportance
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.data.UserName
 
@@ -19,4 +20,4 @@ sealed class SystemMessageType {
     data class Custom(val message: String) : SystemMessageType()
 }
 
-fun SystemMessageType.toChatItem() = ChatItem(SystemMessage(this), isCleared = true)
+fun SystemMessageType.toChatItem() = ChatItem(SystemMessage(this), importance = ChatImportance.SYSTEM)

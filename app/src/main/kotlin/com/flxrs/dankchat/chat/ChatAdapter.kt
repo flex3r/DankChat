@@ -99,9 +99,10 @@ class ChatAdapter(
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
-        holder.binding.itemText.alpha = when {
-            item.isCleared -> .5f
-            else           -> 1f
+        holder.binding.itemText.alpha = when (item.importance) {
+            ChatImportance.SYSTEM  -> .75f
+            ChatImportance.DELETED -> .5f
+            ChatImportance.REGULAR -> 1f
         }
 
         when (val message = item.message) {
@@ -773,8 +774,8 @@ private class DetectDiff : DiffUtil.ItemCallback<ChatItem>() {
 
     override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
         return when {
-            newItem.message.highlights.hasMention() || (!oldItem.isCleared && newItem.isCleared) -> false
-            else                                                                                 -> oldItem.message == newItem.message
+            newItem.message.highlights.hasMention() || (oldItem.importance != newItem.importance) -> false
+            else                                                                                  -> oldItem.message == newItem.message
         }
     }
 }

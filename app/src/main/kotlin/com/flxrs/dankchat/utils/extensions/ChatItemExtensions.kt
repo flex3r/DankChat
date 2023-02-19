@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.utils.extensions
 
+import com.flxrs.dankchat.chat.ChatImportance
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.data.twitch.message.ModerationMessage
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
@@ -15,13 +16,13 @@ fun MutableList<ChatItem>.replaceOrAddHistoryModerationMessage(moderationMessage
     }
 
     if (checkForStackedTimeouts(moderationMessage)) {
-        add(ChatItem(moderationMessage, isCleared = true))
+        add(ChatItem(moderationMessage, importance = ChatImportance.SYSTEM))
     }
 }
 
 fun List<ChatItem>.replaceOrAddModerationMessage(moderationMessage: ModerationMessage, scrollBackLength: Int): List<ChatItem> = toMutableList().apply {
     if (!moderationMessage.canClearMessages) {
-        return addAndLimit(ChatItem(moderationMessage, isCleared = true), scrollBackLength)
+        return addAndLimit(ChatItem(moderationMessage, importance = ChatImportance.SYSTEM), scrollBackLength)
     }
 
     val addSystemMessage = checkForStackedTimeouts(moderationMessage)
@@ -30,8 +31,8 @@ fun List<ChatItem>.replaceOrAddModerationMessage(moderationMessage: ModerationMe
         when (moderationMessage.action) {
             ModerationMessage.Action.Clear -> {
                 this[idx] = when (item.message) {
-                    is PrivMessage -> item.copy(tag = item.tag + 1, message = item.message.copy(timedOut = true), isCleared = true)
-                    else           -> item.copy(tag = item.tag + 1, isCleared = true)
+                    is PrivMessage -> item.copy(tag = item.tag + 1, message = item.message.copy(timedOut = true), importance = ChatImportance.DELETED)
+                    else           -> item.copy(tag = item.tag + 1, importance = ChatImportance.DELETED)
                 }
             }
 
@@ -42,7 +43,7 @@ fun List<ChatItem>.replaceOrAddModerationMessage(moderationMessage: ModerationMe
                     continue
                 }
 
-                this[idx] = item.copy(tag = item.tag + 1, message = item.message.copy(timedOut = true), isCleared = true)
+                this[idx] = item.copy(tag = item.tag + 1, message = item.message.copy(timedOut = true), importance = ChatImportance.DELETED)
             }
 
             else                           -> continue
@@ -50,7 +51,7 @@ fun List<ChatItem>.replaceOrAddModerationMessage(moderationMessage: ModerationMe
     }
 
     return when {
-        addSystemMessage -> addAndLimit(ChatItem(moderationMessage, isCleared = true), scrollBackLength)
+        addSystemMessage -> addAndLimit(ChatItem(moderationMessage, importance = ChatImportance.SYSTEM), scrollBackLength)
         else         -> this
     }
 }
@@ -72,11 +73,11 @@ fun List<ChatItem>.replaceWithTimeout(moderationMessage: ModerationMessage, scro
     for (idx in indices) {
         val item = this[idx]
         if (item.message is PrivMessage && item.message.id == targetMsgId) {
-            this[idx] = item.copy(tag = item.tag + 1, message = item.message.copy(timedOut = true), isCleared = true)
+            this[idx] = item.copy(tag = item.tag + 1, message = item.message.copy(timedOut = true), importance = ChatImportance.DELETED)
             break
         }
     }
-    return addAndLimit(ChatItem(moderationMessage, isCleared = true), scrollBackLength)
+    return addAndLimit(ChatItem(moderationMessage, importance = ChatImportance.SYSTEM), scrollBackLength)
 }
 
 fun List<ChatItem>.addAndLimit(item: ChatItem, scrollBackLength: Int): List<ChatItem> = toMutableList().apply {

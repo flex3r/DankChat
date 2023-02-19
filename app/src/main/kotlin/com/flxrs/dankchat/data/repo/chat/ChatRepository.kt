@@ -3,6 +3,7 @@ package com.flxrs.dankchat.data.repo.chat
 import android.graphics.Color
 import android.util.Log
 import androidx.collection.LruCache
+import com.flxrs.dankchat.chat.ChatImportance
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.chat.toMentionTabItems
 import com.flxrs.dankchat.data.DisplayName
@@ -707,7 +708,7 @@ class ChatRepository @Inject constructor(
         if (message is NoticeMessage && message.channel == GLOBAL_CHANNEL_TAG) {
             messages.keys.forEach {
                 messages[it]?.update { current ->
-                    current.addAndLimit(ChatItem(message, isCleared = true), scrollBackLength)
+                    current.addAndLimit(ChatItem(message, importance = ChatImportance.SYSTEM), scrollBackLength)
                 }
             }
             return
@@ -745,7 +746,11 @@ class ChatRepository @Inject constructor(
             if (message is UserNoticeMessage && message.childMessage != null) {
                 add(ChatItem(message.childMessage))
             }
-            add(ChatItem(message, isCleared = message is NoticeMessage))
+            val importance = when (message) {
+                is NoticeMessage -> ChatImportance.SYSTEM
+                else             -> ChatImportance.REGULAR
+            }
+            add(ChatItem(message, importance = importance))
         }
 
         val channel = when (message) {
@@ -829,7 +834,7 @@ class ChatRepository @Inject constructor(
         measureTimeMillis {
             for (recentMessage in recentMessages) {
                 val parsedIrc = IrcMessage.parse(recentMessage)
-                val isCleared = parsedIrc.tags["rm-deleted"] == "1"
+                val isDeleted = parsedIrc.tags["rm-deleted"] == "1"
                 if (ignoresRepository.isUserBlocked(parsedIrc.tags["user-id"]?.toUserId())) {
                     continue
                 }
@@ -848,7 +853,7 @@ class ChatRepository @Inject constructor(
                             ModerationMessage.parseClearMessage(parsedIrc)
                         }.getOrNull() ?: continue
 
-                        items += ChatItem(parsed, isCleared = true)
+                        items += ChatItem(parsed, importance = ChatImportance.SYSTEM)
                     }
 
                     else        -> {
@@ -865,10 +870,14 @@ class ChatRepository @Inject constructor(
                             userSuggestions += message.name.lowercase() to userForSuggestion
                         }
 
-                        if (message is UserNoticeMessage && message.childMessage != null) {
-                            items += ChatItem(message.childMessage, isCleared = isCleared)
+                        val importance = when {
+                            isDeleted -> ChatImportance.DELETED
+                            else      -> ChatImportance.REGULAR
                         }
-                        items += ChatItem(message, isCleared = isCleared)
+                        if (message is UserNoticeMessage && message.childMessage != null) {
+                            items += ChatItem(message.childMessage, importance = importance)
+                        }
+                        items += ChatItem(message, importance = importance)
                     }
                 }
             }
