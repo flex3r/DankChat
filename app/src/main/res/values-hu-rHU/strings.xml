@@ -44,6 +44,7 @@
     <string name="hint_disconnected">Lecsatlakozva</string>
     <string name="hint_not_logged_int">Nincs bejelentkezve</string>
     <string name="notification_new_mentions">Új említéseid vannak</string>
+    <string name="notification_mention">%1$s megemlített itt: #%2$s</string>
     <string name="snackbar_login">Bejelentkezve mint %1$s</string>
     <string name="snackbar_login_failed">Nem sikerült bejelentkezni</string>
     <string name="snackbar_image_uploaded">Másolva: %1$s</string>
@@ -62,6 +63,8 @@
     <string name="system_message_connected">Csatlakozva</string>
     <string name="system_message_channel_non_existent">Ez a csatorna nem létezik</string>
     <string name="system_message_disconnected">Lecsatlakozva</string>
+    <string name="system_message_history_unavailable_detailed">Üzenetelőzmény szolgáltatás nem elérhető (hiba:%1$s)</string>
+    <string name="system_message_history_unavailable">Üzenetelőzmény szolgáltatás nem elérhető</string>
     <string name="system_message_ffz_emotes_failed">Nem sikerült betölteni a FFZ hangulatjeleket (hiba %1$s)</string>
     <string name="system_message_bttv_emotes_failed">Nem sikerült betölteni a BTTV hangulatjeleket (hiba %1$s)</string>
     <string name="system_message_7tv_emotes_failed">Nem sikerült betölteni a 7TV hangulatjeleket (hiba %1$s)</string>
