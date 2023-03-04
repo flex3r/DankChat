@@ -49,8 +49,8 @@ class EmoteRepository @Inject constructor(
     private val dankChatApiClient: DankChatApiClient,
     private val preferences: DankChatPreferenceStore,
 ) {
-    private val ffzModBadges = ConcurrentHashMap<UserName, String>()
-    private val ffzVipBadges = ConcurrentHashMap<UserName, String>()
+    private val ffzModBadges = ConcurrentHashMap<UserName, String?>()
+    private val ffzVipBadges = ConcurrentHashMap<UserName, String?>()
     private val channelBadges = ConcurrentHashMap<UserName, Map<String, BadgeSet>>()
     private val globalBadges = ConcurrentHashMap<String, BadgeSet>()
     private val dankChatBadges = CopyOnWriteArrayList<DankChatBadgeDto>()
@@ -273,8 +273,14 @@ class EmoteRepository @Inject constructor(
         emotes[channel]?.update {
             it.copy(ffzChannelEmotes = ffzEmotes)
         }
-        ffzResult.room.modBadgeUrls?.let { ffzModBadges[channel] = "https:" + (it["4"] ?: it["2"] ?: it["1"]) }
-        ffzResult.room.vipBadgeUrls?.let { ffzVipBadges[channel] = "https:" + (it["4"] ?: it["2"] ?: it["1"]) }
+        ffzResult.room.modBadgeUrls?.let {
+            val url = it["4"] ?: it["2"] ?: it["1"]
+            ffzModBadges[channel] = url?.withLeadingHttps
+        }
+        ffzResult.room.vipBadgeUrls?.let {
+            val url = it["4"] ?: it["2"] ?: it["1"]
+            ffzVipBadges[channel] = url?.withLeadingHttps
+        }
     }
 
     suspend fun setFFZGlobalEmotes(ffzResult: FFZGlobalDto) = withContext(Dispatchers.Default) {
@@ -535,7 +541,7 @@ class EmoteRepository @Inject constructor(
             null -> EmoteType.GlobalFFZEmote
             else -> EmoteType.ChannelFFZEmote
         }
-        return GenericEmote(name, "https:$url", "https:$lowResUrl", "$id", scale, type)
+        return GenericEmote(name, url.withLeadingHttps, lowResUrl.withLeadingHttps, "$id", scale, type)
     }
 
     private fun parseSevenTVEmote(emote: SevenTVEmoteDto, type: EmoteType): GenericEmote? {
@@ -544,7 +550,7 @@ class EmoteRepository @Inject constructor(
             return null
         }
 
-        val base = "https:${data.host.url}/"
+        val base = "${data.host.url}/".withLeadingHttps
         val urls = data.host.files
             .filter { it.format == "WEBP" }
             .associate {
@@ -574,6 +580,12 @@ class EmoteRepository @Inject constructor(
         preferences.unlistedSevenTVEmotesEnabled -> this
         else                                     -> filter { it.data?.listed == true }
     }
+
+    private val String.withLeadingHttps: String
+        get() = when {
+            startsWith(prefix = "https:") -> this
+            else                            -> "https:$this"
+        }
 
     companion object {
         fun Badge.cacheKey(baseHeight: Int): String = "$url-$baseHeight"
