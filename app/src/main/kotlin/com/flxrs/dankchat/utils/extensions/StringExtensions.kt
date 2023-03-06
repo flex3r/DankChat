@@ -116,11 +116,8 @@ val String.supplementaryCodePointPositions: List<Int>
         return positions
     }
 
-val String.withoutOAuthSuffix: String
-    get() = when {
-        startsWith("oauth:", true) -> substringAfter(':')
-        else                       -> this
-    }
+val String.withoutOAuthPrefix: String
+    get() = removePrefix("oauth:")
 
 val String.withTrailingSlash: String
     get() = when {
@@ -136,7 +133,7 @@ val String.withTrailingSpace: String
 
 val INVISIBLE_CHAR = 0x000E0000.codePointAsString
 val String.withoutInvisibleChar: String
-    get() = trimEnd().substringBeforeLast(INVISIBLE_CHAR).trimEnd()
+    get() = trimEnd().removeSuffix(INVISIBLE_CHAR).trimEnd()
 
 inline fun CharSequence.indexOfFirst(startIndex: Int = 0, predicate: (Char) -> Boolean): Int {
     for (index in startIndex.coerceAtLeast(0)..lastIndex) {

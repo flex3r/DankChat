@@ -8,7 +8,7 @@ import com.flxrs.dankchat.data.api.auth.AuthApiClient
 import com.flxrs.dankchat.data.repo.chat.ChatRepository
 import com.flxrs.dankchat.data.repo.data.DataRepository
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.utils.extensions.withoutOAuthSuffix
+import com.flxrs.dankchat.utils.extensions.withoutOAuthPrefix
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.channels.Channel
@@ -49,7 +49,7 @@ class DankChatViewModel @Inject constructor(
 
     private suspend fun validateUser() {
         // no token = nothing to validate 4head
-        val token = dankChatPreferenceStore.oAuthKey?.withoutOAuthSuffix ?: return
+        val token = dankChatPreferenceStore.oAuthKey?.withoutOAuthPrefix ?: return
         val result = authApiClient.validateUser(token)
             .fold(
                 onSuccess = { result ->

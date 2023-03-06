@@ -3,7 +3,7 @@ package com.flxrs.dankchat.data.twitch.pubsub
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.helix.HelixApiClient
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.utils.extensions.withoutOAuthSuffix
+import com.flxrs.dankchat.utils.extensions.withoutOAuthPrefix
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -96,7 +96,7 @@ class PubSubManager @Inject constructor(
     }
 
     private fun listen(topics: Set<PubSubTopic>) {
-        val oAuth = preferenceStore.oAuthKey?.withoutOAuthSuffix ?: return
+        val oAuth = preferenceStore.oAuthKey?.withoutOAuthPrefix ?: return
         val remainingTopics = connections.fold(topics) { acc, conn ->
             conn.listen(acc)
         }
