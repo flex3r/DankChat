@@ -263,7 +263,11 @@ class ChatRepository @Inject constructor(
         }
     }
 
-    suspend fun loadChatters(channel: UserName) = withContext(Dispatchers.IO) {
+    suspend fun loadChatters(channel: UserName): Unit = withContext(Dispatchers.IO) {
+        if (System.currentTimeMillis() > CHATTERS_SUNSET_MILLIS) {
+            return@withContext
+        }
+
         measureTimeMillis {
             chattersApiClient.getChatters(channel)
                 .getOrEmitFailure { ChatLoadingStep.Chatters(channel) }
@@ -948,6 +952,7 @@ class ChatRepository @Inject constructor(
         private const val USER_CACHE_SIZE = 5000
         private const val PUBSUB_TIMEOUT = 1000L
         private val GLOBAL_CHANNEL_TAG = UserName("*")
+        private const val CHATTERS_SUNSET_MILLIS = 1680541200000L // 2023-04-03 17:00:00
 
         val ESCAPE_TAG_REGEX = "(?<!$ESCAPE_TAG)$ESCAPE_TAG".toRegex()
         const val ZERO_WIDTH_JOINER = 0x200D.toChar().toString()

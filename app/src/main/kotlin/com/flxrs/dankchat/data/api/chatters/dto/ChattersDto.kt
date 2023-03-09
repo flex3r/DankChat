@@ -15,5 +15,9 @@ data class ChattersDto(
 ) {
     val total: List<UserName>
         get() = viewers + vips + moderators + broadcaster
+
+    companion object {
+        val EMPTY = ChattersDto(emptyList(), emptyList(), emptyList(), emptyList())
+    }
 }
 
