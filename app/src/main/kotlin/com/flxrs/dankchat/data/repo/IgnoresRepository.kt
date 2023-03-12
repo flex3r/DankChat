@@ -238,7 +238,7 @@ class IgnoresRepository @Inject constructor(
 
         messageIgnores
             .isIgnoredMessageWithReplacement(message) { replacement ->
-                return replacement?.let { copy(message = it) }
+                return replacement?.let { copy(message = it, originalMessage = it) }
             }
 
         return this
@@ -264,7 +264,7 @@ class IgnoresRepository @Inject constructor(
             .isIgnoredMessageWithReplacement(message) { replacement ->
                 return when (replacement) {
                     null -> null
-                    else -> copy(message = replacement)
+                    else -> copy(message = replacement, originalMessage = replacement)
                 }
             }
 
