@@ -238,7 +238,13 @@ class IgnoresRepository @Inject constructor(
 
         messageIgnores
             .isIgnoredMessageWithReplacement(message) { replacement ->
-                return replacement?.let { copy(message = it, originalMessage = it) }
+                replacement ?: return this
+                val filteredPositions = adaptEmotePositions(replacement, emoteData.emotesWithPositions)
+                return copy(
+                    message = replacement.filtered,
+                    originalMessage = replacement.filtered,
+                    emoteData = emoteData.copy(message = replacement.filtered, emotesWithPositions = filteredPositions)
+                )
             }
 
         return this
@@ -262,10 +268,13 @@ class IgnoresRepository @Inject constructor(
 
         validMessageIgnores.value
             .isIgnoredMessageWithReplacement(message) { replacement ->
-                return when (replacement) {
-                    null -> null
-                    else -> copy(message = replacement, originalMessage = replacement)
-                }
+                replacement ?: return this
+                val filteredPositions = adaptEmotePositions(replacement, emoteData.emotesWithPositions)
+                return copy(
+                    message = replacement.filtered,
+                    originalMessage = replacement.filtered,
+                    emoteData = emoteData.copy(message = replacement.filtered, emotesWithPositions = filteredPositions)
+                )
             }
 
         return this
@@ -306,20 +315,41 @@ class IgnoresRepository @Inject constructor(
         return false
     }
 
-    private inline fun List<MessageIgnoreEntity>.isIgnoredMessageWithReplacement(message: String, onReplacement: (String?) -> Unit) {
+    private data class ReplacementResult(val filtered: String, val replacement: String, val matchedRanges: List<IntRange>)
+
+    private inline fun List<MessageIgnoreEntity>.isIgnoredMessageWithReplacement(message: String, onReplacement: (ReplacementResult?) -> Unit) {
         filter { it.type == MessageIgnoreEntityType.Custom }
             .forEach { ignoreEntity ->
                 val regex = ignoreEntity.regex ?: return@forEach
+                val results = regex.findAll(message).toList()
 
-                if (message.contains(regex)) {
+                if (results.isNotEmpty()) {
                     ignoreEntity.escapedReplacement?.let { replacement ->
-                        val filteredMessage = message.replace(regex, replacement)
-                        return onReplacement(filteredMessage)
+                        val filtered = message.replace(regex, replacement)
+                        return onReplacement(ReplacementResult(filtered, replacement, results.map(MatchResult::range)))
                     }
 
                     return onReplacement(null)
                 }
             }
+    }
+
+    private fun adaptEmotePositions(replacement: ReplacementResult, emotes: List<EmoteWithPositions>): List<EmoteWithPositions> {
+        return emotes.map { emoteWithPos ->
+            val adjusted = emoteWithPos.positions
+                .filterNot { pos -> replacement.matchedRanges.any { match -> match in pos || pos in match } } // filter out emotes directly affected by ignore replacement
+                .map { pos ->
+                    val offset = replacement.matchedRanges
+                        .filter { it.last < pos.first } // only replacements before an emote need to be considered
+                        .sumOf { replacement.replacement.length - (it.last + 1 - it.first) } // change between original match and replacement
+                    pos.first + offset..pos.last + offset // add sum of changes to the emote position
+                }
+            emoteWithPos.copy(positions = adjusted)
+        }
+    }
+
+    private operator fun IntRange.contains(other: IntRange): Boolean {
+        return other.first >= first && other.last <= last
     }
 
     private fun List<MultiEntryDto>.mapToMessageIgnoreEntities(): List<MessageIgnoreEntity> {

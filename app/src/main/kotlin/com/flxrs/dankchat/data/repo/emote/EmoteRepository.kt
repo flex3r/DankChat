@@ -25,6 +25,7 @@ import com.flxrs.dankchat.data.twitch.badge.BadgeType
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.data.twitch.emote.EmoteType
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
+import com.flxrs.dankchat.data.twitch.message.EmoteWithPositions
 import com.flxrs.dankchat.data.twitch.message.Message
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
@@ -93,7 +94,7 @@ class EmoteRepository @Inject constructor(
 
     fun parseEmotesAndBadges(message: Message): Message {
         val emoteData = message.emoteData ?: return message
-        val (messageString, channel, emoteTag) = emoteData
+        val (messageString, channel, emotesWithPositions) = emoteData
 
         val withEmojiFix = messageString.replace(
             ChatRepository.ESCAPE_TAG_REGEX,
@@ -102,7 +103,7 @@ class EmoteRepository @Inject constructor(
         val (duplicateSpaceAdjustedMessage, removedSpaces) = withEmojiFix.removeDuplicateWhitespace()
         val (appendedSpaceAdjustedMessage, appendedSpaces) = duplicateSpaceAdjustedMessage.appendSpacesBetweenEmojiGroup()
 
-        val twitchEmotes = parseTwitchEmotes(emoteTag, appendedSpaceAdjustedMessage, appendedSpaces, removedSpaces)
+        val twitchEmotes = parseTwitchEmotes(emotesWithPositions, appendedSpaceAdjustedMessage, appendedSpaces, removedSpaces)
         val thirdPartyEmotes = parse3rdPartyEmotes(appendedSpaceAdjustedMessage, channel).filterNot { e -> twitchEmotes.any { it.code == e.code } }
         val emotes = (twitchEmotes + thirdPartyEmotes)
 
@@ -444,55 +445,30 @@ class EmoteRepository @Inject constructor(
         }
     }
 
-    private fun parseTwitchEmotes(emoteTag: String, original: String, appendedSpaces: List<Int>, removedSpaces: List<Int>): List<ChatMessageEmote> {
-        if (emoteTag.isEmpty()) {
-            return emptyList()
-        }
-
+    private fun parseTwitchEmotes(emotesWithPositions: List<EmoteWithPositions>, message: String, appendedSpaces: List<Int>, removedSpaces: List<Int>): List<ChatMessageEmote> {
         // Characters with supplementary codepoints have two chars and need to be considered into emote positioning
-        val supplementaryCodePointPositions = original.supplementaryCodePointPositions
-        val emotes = mutableListOf<ChatMessageEmote>()
-        for (emote in emoteTag.split('/')) {
-            val split = emote.split(':')
-            // bad emote data :)
-            if (split.size != 2) continue
-
-            val (id, positions) = split
-            val pairs = positions.split(',')
-            // bad emote data :)
-            if (pairs.isEmpty()) continue
-
-            // skip over invalid parsed data, adjust positions
-            val parsedPositions = pairs.mapNotNull { pos ->
-                val pair = pos.split('-')
-                if (pair.size != 2) return@mapNotNull null
-
-                val start = pair[0].toIntOrNull() ?: return@mapNotNull null
-                val end = pair[1].toIntOrNull() ?: return@mapNotNull null
-
-                val removedSpaceExtra = removedSpaces.count { it < start }
-                val unicodeExtra = supplementaryCodePointPositions.count { it < start - removedSpaceExtra }
-                val spaceExtra = appendedSpaces.count { it < start + unicodeExtra }
-                val fixedStart = start + unicodeExtra + spaceExtra - removedSpaceExtra
-                val fixedEnd = end + unicodeExtra + spaceExtra - removedSpaceExtra
+        val supplementaryCodePointPositions = message.supplementaryCodePointPositions
+        return emotesWithPositions.flatMap { (id, positions) ->
+            positions.map { range ->
+                val removedSpaceExtra = removedSpaces.count { it < range.first }
+                val unicodeExtra = supplementaryCodePointPositions.count { it < range.first - removedSpaceExtra }
+                val spaceExtra = appendedSpaces.count { it < range.first + unicodeExtra }
+                val fixedStart = range.first + unicodeExtra + spaceExtra - removedSpaceExtra
+                val fixedEnd = range.last + unicodeExtra + spaceExtra - removedSpaceExtra
 
                 // be extra safe in case twitch sends invalid emote ranges :)
-                fixedStart.coerceAtLeast(minimumValue = 0)..(fixedEnd + 1).coerceAtMost(original.length)
-            }
-
-            val code = original.substring(parsedPositions[0].first, parsedPositions[0].last)
-            emotes.addAll(parsedPositions.map {
+                val fixedPos = fixedStart.coerceAtLeast(minimumValue = 0)..(fixedEnd + 1).coerceAtMost(message.length)
+                val code = message.substring(fixedPos.first, fixedPos.last)
                 ChatMessageEmote(
-                    position = it,
+                    position = fixedPos,
                     url = TWITCH_EMOTE_TEMPLATE.format(id, TWITCH_EMOTE_SIZE),
                     id = id,
                     code = code,
                     scale = 1,
                     isTwitch = true
                 )
-            })
+            }
         }
-        return emotes
     }
 
     private fun parseBTTVEmote(emote: BTTVEmoteDto): GenericEmote {
@@ -584,7 +560,7 @@ class EmoteRepository @Inject constructor(
     private val String.withLeadingHttps: String
         get() = when {
             startsWith(prefix = "https:") -> this
-            else                            -> "https:$this"
+            else                          -> "https:$this"
         }
 
     companion object {

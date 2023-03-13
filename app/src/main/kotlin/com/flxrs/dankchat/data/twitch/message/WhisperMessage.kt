@@ -35,11 +35,10 @@ data class WhisperMessage(
     val emotes: List<ChatMessageEmote> = emptyList(),
     val badges: List<Badge> = emptyList(),
     val userDisplay: UserDisplay? = null,
-    val recipientDisplay: UserDisplay? = null
+    val recipientDisplay: UserDisplay? = null,
+    override val emoteData: EmoteData = EmoteData(originalMessage, WHISPER_CHANNEL, parseEmoteTag(originalMessage, rawEmotes)),
+    override val badgeData: BadgeData = BadgeData(userId, channel = null, badgeTag = rawBadges, badgeInfoTag = rawBadgeInfo),
 ) : Message() {
-
-    override val emoteData: EmoteData = EmoteData(originalMessage, WHISPER_CHANNEL, emoteTag = rawEmotes)
-    override val badgeData: BadgeData = BadgeData(userId, channel = null, badgeTag = rawBadges, badgeInfoTag = rawBadgeInfo)
 
     companion object {
         val WHISPER_CHANNEL = "w".toUserName()
