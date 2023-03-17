@@ -63,6 +63,7 @@
     <string name="emote_menu_tab_channel">Canal</string>
     <string name="emote_menu_tab_global">Global</string>
     <string name="system_message_connected">Connectat</string>
+    <string name="system_message_reconnected">Reconnectat</string>
     <string name="system_message_channel_non_existent">Aquest canal no existeix</string>
     <string name="system_message_disconnected">Desconnectat</string>
     <string name="system_message_history_unavailable_detailed">Servei d\'historial de missatges no disponible (Error %1$s)</string>
@@ -70,6 +71,9 @@
     <string name="system_message_history_recovering">El servei d\'historial de missatges s\'està recuperant, podrien haver-hi buits a l\'historial de missatges.</string>
     <string name="system_message_history_ignored">Servei d\'historial de missatges no està disponible ja que el canal està exclòs del servei.</string>
     <string name="system_message_no_history">No pots veure l\'historial de missatges perquè has desactivat la integració amb missatges recents</string>
+    <string name="system_message_ffz_emotes_failed">No han pogut carregar els emotes de FFZ (Error %1$s)</string>
+    <string name="system_message_bttv_emotes_failed">No han pogut carregar els emotes de BTTV (Error %1$s)</string>
+    <string name="system_message_7tv_emotes_failed">No han pogut carregar els emotes de 7TV (Error %1$s)</string>
     <string name="timed_out_message">&lt; Missatge eliminat &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Afegeix una entrada</string>
@@ -282,6 +286,9 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="ignores_users_title">Ignora missatges de certs usuaris</string>
     <string name="ignores_twitch_title">Administrar usuaris bloquejats de Twitch</string>
     <string name="preference_notification_whisper_title">Crea notificacions per a missatges privats</string>
+    <string name="login_outdated_title">Inici de sessió caducat!</string>
+    <string name="login_outdated_message">L\'inici de sessió ha caducat i no té accés a certes funcions. Si us plau, inicieu sessió de nou.</string>
+    <string name="user_display_item_username_hint">Nom d’usuari</string>
     <string name="user_display_item_color_hint">Color</string>
     <string name="remove_custom_user_display">Eliminar l\'ordenació personalitzada de l\'usuari</string>
     <string name="user_display_alias_input">Àlies</string>
