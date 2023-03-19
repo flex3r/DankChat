@@ -238,8 +238,10 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="highlights_entry_username">Käyttäjänimesi</string>
     <string name="login_outdated_title">Kirjautuminen Vanhentunut!</string>
     <string name="login_outdated_message">Kirjautumisesi on vanhentunut eikä sillä ole pääsyä joihinkin toimintoihin. Kirjaudu sisään uudelleen.</string>
+    <string name="custom_user_display_title">Mukautettu Käyttäjänäkymä</string>
     <string name="user_display_item_username_hint">Käyttäjänimi</string>
     <string name="user_display_item_color_hint">Väri</string>
+    <string name="remove_custom_user_display">Poista Mukautettu Käyttäjänäkymä</string>
     <string name="user_display_alias_input">Alias</string>
     <string name="user_display_custom_color_enable">Mukautettu Väri</string>
     <string name="user_display_custom_alias_enable">Mukautettu Alias</string>
