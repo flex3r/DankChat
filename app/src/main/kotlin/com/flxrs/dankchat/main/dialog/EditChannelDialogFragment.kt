@@ -5,10 +5,8 @@ import android.os.Bundle
 import android.text.Editable
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.DialogFragment
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.channels.ChannelsDialogFragment
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.databinding.EditDialogBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
@@ -38,9 +36,6 @@ class EditChannelDialogFragment : DialogFragment() {
             dialogEditLayout.setEndIconOnClickListener {
                 val rename = args.channelWithRename.copy(rename = null)
                 dankChatPreferences.setRenamedChannel(rename)
-                findNavController()
-                    .getBackStackEntry(R.id.channelsDialogFragment)
-                    .savedStateHandle[ChannelsDialogFragment.RENAME_TAB_REQUEST_KEY] = rename
                 dismiss()
             }
         }
@@ -58,9 +53,6 @@ class EditChannelDialogFragment : DialogFragment() {
         val trimmedInput = input?.toString()?.trim()?.ifBlank { null }
         val rename = args.channelWithRename.copy(rename = trimmedInput?.toUserName())
         dankChatPreferences.setRenamedChannel(rename)
-        findNavController()
-            .getBackStackEntry(R.id.channelsDialogFragment)
-            .savedStateHandle[ChannelsDialogFragment.RENAME_TAB_REQUEST_KEY] = rename
         dismiss()
         return true
     }

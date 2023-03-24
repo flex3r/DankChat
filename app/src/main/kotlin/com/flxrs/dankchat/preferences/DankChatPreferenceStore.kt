@@ -299,6 +299,19 @@ class DankChatPreferenceStore @Inject constructor(
         }
     }
 
+    fun getChannelsWithRenamesFlow(channels: List<UserName>): Flow<List<ChannelWithRename>> = callbackFlow {
+        send(getChannelsWithRenames(channels))
+
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            if (key == RENAME_KEY) {
+                trySend(getChannelsWithRenames(channels))
+            }
+        }
+
+        dankChatPreferences.registerOnSharedPreferenceChangeListener(listener)
+        awaitClose { dankChatPreferences.unregisterOnSharedPreferenceChangeListener(listener) }
+    }
+
     fun setRenamedChannel(channelWithRename: ChannelWithRename) {
         withChannelRenames {
             when (channelWithRename.rename) {
@@ -322,11 +335,6 @@ class DankChatPreferenceStore @Inject constructor(
     fun resetRmHost(): String {
         customRmHost = RM_HOST_DEFAULT
         return RM_HOST_DEFAULT
-    }
-
-    fun getCommands(): List<CommandItem.Entry> {
-        val key = context.getString(R.string.preference_commands_key)
-        return getCommandsFromPreferences(key)
     }
 
     private inline fun withChannelRenames(block: MutableMap<UserName, UserName>.() -> Unit) {
