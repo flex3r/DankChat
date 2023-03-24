@@ -41,6 +41,7 @@ import com.flxrs.dankchat.utils.extensions.flatMapLatestOrDefault
 import com.flxrs.dankchat.utils.extensions.moveToFront
 import com.flxrs.dankchat.utils.extensions.timer
 import com.flxrs.dankchat.utils.extensions.toEmoteItems
+import com.flxrs.dankchat.utils.removeExifAttributes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.serialization.JsonConvertException
 import kotlinx.coroutines.Dispatchers
@@ -605,9 +606,14 @@ class MainViewModel @Inject constructor(
         checkFailuresAndEmitState()
     }
 
-    fun uploadMedia(file: File) {
-        viewModelScope.launch {
-            imageUploadStateChannel.send(ImageUploadState.Loading(file))
+    fun uploadMedia(file: File, imageCapture: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            // only remove exif data if an image was selected
+            if (imageCapture) {
+                file.removeExifAttributes()
+            }
+
+            imageUploadStateChannel.send(ImageUploadState.Loading)
             isImageUploading.update { true }
             val result = dataRepository.uploadMedia(file)
             val state = result.fold(
@@ -620,7 +626,7 @@ class MainViewModel @Inject constructor(
                         is ApiException -> "${it.status} ${it.message}"
                         else            -> it.stackTraceToString()
                     }
-                    ImageUploadState.Failed(message, file)
+                    ImageUploadState.Failed(message, file, imageCapture)
                 }
             )
             imageUploadStateChannel.send(state)
