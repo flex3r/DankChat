@@ -238,7 +238,7 @@ class IgnoresRepository @Inject constructor(
 
         messageIgnores
             .isIgnoredMessageWithReplacement(message) { replacement ->
-                replacement ?: return this
+                replacement ?: return null
                 val filteredPositions = adaptEmotePositions(replacement, emoteData.emotesWithPositions)
                 return copy(
                     message = replacement.filtered,
@@ -268,7 +268,7 @@ class IgnoresRepository @Inject constructor(
 
         validMessageIgnores.value
             .isIgnoredMessageWithReplacement(message) { replacement ->
-                replacement ?: return this
+                replacement ?: return null
                 val filteredPositions = adaptEmotePositions(replacement, emoteData.emotesWithPositions)
                 return copy(
                     message = replacement.filtered,
