@@ -20,9 +20,9 @@ fun MutableList<ChatItem>.replaceOrAddHistoryModerationMessage(moderationMessage
     }
 }
 
-fun List<ChatItem>.replaceOrAddModerationMessage(moderationMessage: ModerationMessage, scrollBackLength: Int): List<ChatItem> = toMutableList().apply {
+fun List<ChatItem>.replaceOrAddModerationMessage(moderationMessage: ModerationMessage, scrollBackLength: Int, onMessageRemoved: (ChatItem) -> Unit): List<ChatItem> = toMutableList().apply {
     if (!moderationMessage.canClearMessages) {
-        return addAndLimit(ChatItem(moderationMessage, importance = ChatImportance.SYSTEM), scrollBackLength)
+        return addAndLimit(ChatItem(moderationMessage, importance = ChatImportance.SYSTEM), scrollBackLength, onMessageRemoved)
     }
 
     val addSystemMessage = checkForStackedTimeouts(moderationMessage)
@@ -51,12 +51,12 @@ fun List<ChatItem>.replaceOrAddModerationMessage(moderationMessage: ModerationMe
     }
 
     return when {
-        addSystemMessage -> addAndLimit(ChatItem(moderationMessage, importance = ChatImportance.SYSTEM), scrollBackLength)
+        addSystemMessage -> addAndLimit(ChatItem(moderationMessage, importance = ChatImportance.SYSTEM), scrollBackLength, onMessageRemoved)
         else         -> this
     }
 }
 
-fun List<ChatItem>.replaceWithTimeout(moderationMessage: ModerationMessage, scrollBackLength: Int): List<ChatItem> = toMutableList().apply {
+fun List<ChatItem>.replaceWithTimeout(moderationMessage: ModerationMessage, scrollBackLength: Int, onMessageRemoved: (ChatItem) -> Unit): List<ChatItem> = toMutableList().apply {
     val targetMsgId = moderationMessage.targetMsgId ?: return@apply
     if (moderationMessage.fromPubsub) {
         val end = (lastIndex - 20).coerceAtLeast(0)
@@ -77,19 +77,20 @@ fun List<ChatItem>.replaceWithTimeout(moderationMessage: ModerationMessage, scro
             break
         }
     }
-    return addAndLimit(ChatItem(moderationMessage, importance = ChatImportance.SYSTEM), scrollBackLength)
+    return addAndLimit(ChatItem(moderationMessage, importance = ChatImportance.SYSTEM), scrollBackLength, onMessageRemoved)
 }
 
-fun List<ChatItem>.addAndLimit(item: ChatItem, scrollBackLength: Int): List<ChatItem> = toMutableList().apply {
+fun List<ChatItem>.addAndLimit(item: ChatItem, scrollBackLength: Int, onMessageRemoved: (ChatItem) -> Unit): List<ChatItem> = toMutableList().apply {
     add(item)
     while (size > scrollBackLength) {
-        removeAt(0)
+        onMessageRemoved(removeAt(index = 0))
     }
 }
 
 fun List<ChatItem>.addAndLimit(
     items: Collection<ChatItem>,
     scrollBackLength: Int,
+    onMessageRemoved: (ChatItem) -> Unit,
     checkForDuplications: Boolean = false
 ): List<ChatItem> = when {
     checkForDuplications -> plus(items)
@@ -100,24 +101,24 @@ fun List<ChatItem>.addAndLimit(
     else                 -> toMutableList().apply {
         addAll(items)
         while (size > scrollBackLength) {
-            removeAt(0)
+            onMessageRemoved(removeAt(index = 0))
         }
     }
 }
 
-fun List<ChatItem>.addSystemMessage(type: SystemMessageType, scrollBackLength: Int): List<ChatItem> {
+fun List<ChatItem>.addSystemMessage(type: SystemMessageType, scrollBackLength: Int, onMessageRemoved: (ChatItem) -> Unit): List<ChatItem> {
     return when {
-        type != SystemMessageType.Connected -> addAndLimit(type.toChatItem(), scrollBackLength)
-        else                                -> replaceDisconnectedIfNecessary(scrollBackLength)
+        type != SystemMessageType.Connected -> addAndLimit(type.toChatItem(), scrollBackLength, onMessageRemoved)
+        else                                -> replaceDisconnectedIfNecessary(scrollBackLength, onMessageRemoved)
     }
 }
 
-fun List<ChatItem>.replaceDisconnectedIfNecessary(scrollBackLength: Int): List<ChatItem> {
+fun List<ChatItem>.replaceDisconnectedIfNecessary(scrollBackLength: Int, onMessageRemoved: (ChatItem) -> Unit): List<ChatItem> {
     val item = lastOrNull()
     val message = item?.message
     return when ((message as? SystemMessage)?.type) {
         SystemMessageType.Disconnected -> dropLast(1) + item.copy(message = SystemMessage(SystemMessageType.Reconnected))
-        else                           -> addAndLimit(SystemMessageType.Connected.toChatItem(), scrollBackLength)
+        else                           -> addAndLimit(SystemMessageType.Connected.toChatItem(), scrollBackLength, onMessageRemoved)
     }
 }
 

@@ -93,6 +93,7 @@ class EmoteRepository @Inject constructor(
     }
 
     fun parseEmotesAndBadges(message: Message): Message {
+        val replyMentionOffset = (message as? PrivMessage)?.replyMentionOffset ?: 0
         val emoteData = message.emoteData ?: return message
         val (messageString, channel, emotesWithPositions) = emoteData
 
@@ -103,7 +104,7 @@ class EmoteRepository @Inject constructor(
         val (duplicateSpaceAdjustedMessage, removedSpaces) = withEmojiFix.removeDuplicateWhitespace()
         val (appendedSpaceAdjustedMessage, appendedSpaces) = duplicateSpaceAdjustedMessage.appendSpacesBetweenEmojiGroup()
 
-        val twitchEmotes = parseTwitchEmotes(emotesWithPositions, appendedSpaceAdjustedMessage, appendedSpaces, removedSpaces)
+        val twitchEmotes = parseTwitchEmotes(emotesWithPositions, appendedSpaceAdjustedMessage, appendedSpaces, removedSpaces, replyMentionOffset)
         val thirdPartyEmotes = parse3rdPartyEmotes(appendedSpaceAdjustedMessage, channel).filterNot { e -> twitchEmotes.any { it.code == e.code } }
         val emotes = (twitchEmotes + thirdPartyEmotes)
 
@@ -445,7 +446,13 @@ class EmoteRepository @Inject constructor(
         }
     }
 
-    private fun parseTwitchEmotes(emotesWithPositions: List<EmoteWithPositions>, message: String, appendedSpaces: List<Int>, removedSpaces: List<Int>): List<ChatMessageEmote> {
+    private fun parseTwitchEmotes(
+        emotesWithPositions: List<EmoteWithPositions>,
+        message: String,
+        appendedSpaces: List<Int>,
+        removedSpaces: List<Int>,
+        replyMentionOffset: Int,
+    ): List<ChatMessageEmote> {
         // Characters with supplementary codepoints have two chars and need to be considered into emote positioning
         val supplementaryCodePointPositions = message.supplementaryCodePointPositions
         return emotesWithPositions.flatMap { (id, positions) ->
@@ -453,8 +460,8 @@ class EmoteRepository @Inject constructor(
                 val removedSpaceExtra = removedSpaces.count { it < range.first }
                 val unicodeExtra = supplementaryCodePointPositions.count { it < range.first - removedSpaceExtra }
                 val spaceExtra = appendedSpaces.count { it < range.first + unicodeExtra }
-                val fixedStart = range.first + unicodeExtra + spaceExtra - removedSpaceExtra
-                val fixedEnd = range.last + unicodeExtra + spaceExtra - removedSpaceExtra
+                val fixedStart = range.first + unicodeExtra + spaceExtra - removedSpaceExtra - replyMentionOffset
+                val fixedEnd = range.last + unicodeExtra + spaceExtra - removedSpaceExtra  - replyMentionOffset
 
                 // be extra safe in case twitch sends invalid emote ranges :)
                 val fixedPos = fixedStart.coerceAtLeast(minimumValue = 0)..(fixedEnd + 1).coerceAtMost(message.length)

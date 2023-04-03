@@ -85,7 +85,8 @@ open class ChatFragment : Fragment() {
             dankChatPreferenceStore = dankChatPreferenceStore,
             onListChanged = ::scrollToPosition,
             onUserClick = ::onUserClick,
-            onMessageLongClick = ::copyMessage
+            onMessageLongClick = ::onMessageClick,
+            onReplyClick = ::onReplyClick,
         ).apply { stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY }
         binding.chat.setup(adapter, manager)
 
@@ -186,16 +187,26 @@ open class ChatFragment : Fragment() {
         }
     }
 
-    private fun copyMessage(message: String) {
-        getSystemService(requireContext(), ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText(CLIPBOARD_MESSAGE_LABEL, message))
-        binding.root.showShortSnackbar(getString(R.string.snackbar_message_copied)) {
-            setAction(R.string.snackbar_paste) {
-                val preparedMessage = message
-                    .withoutInvisibleChar
-                    .withTrailingSpace
-                (parentFragment as? MainFragment)?.insertText(preparedMessage)
+    private fun onMessageClick(event: MessageClickEvent) {
+        when (event) {
+            is MessageClickEvent.Copy -> {
+                getSystemService(requireContext(), ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText(CLIPBOARD_MESSAGE_LABEL, event.message))
+                binding.root.showShortSnackbar(getString(R.string.snackbar_message_copied)) {
+                    setAction(R.string.snackbar_paste) {
+                        val preparedMessage = event.message
+                            .withoutInvisibleChar
+                            .withTrailingSpace
+                        (parentFragment as? MainFragment)?.insertText(preparedMessage)
+                    }
+                }
             }
+
+            is MessageClickEvent.Reply -> (parentFragment as? MainFragment)?.openReplies(event.rootMessageId, event.channel)
         }
+    }
+
+    private fun onReplyClick(rootMessageId: String) {
+        (parentFragment as? MainFragment)?.openReplies(rootMessageId)
     }
 
     protected open fun scrollToPosition(position: Int) {

@@ -45,6 +45,7 @@
     <string name="hint_connected">Start chatting</string>
     <string name="hint_disconnected">Disconnected</string>
     <string name="hint_not_logged_int">Not logged in</string>
+    <string name="hint_replying">Reply</string>
     <string name="notification_new_mentions">You have new mentions</string>
     <string name="notification_mention">%1$s just mentioned you in #%2$s</string>
     <string name="notification_notify_mention">You were mentioned in #%1$s</string>
@@ -85,6 +86,7 @@
     <string name="dialog_optout">Opt-out</string>
     <string name="more">More</string>
     <string name="mentions_title">Mentions / Whispers</string>
+    <string name="replies_title">Reply Thread</string>
     <string name="whispers">Whispers</string>
     <string name="notification_whisper_mention">%1$s sent you a whisper</string>
     <string name="mentions">Mentions</string>
@@ -366,6 +368,10 @@
     <string name="user_display_custom_alias_enable">Custom Alias</string>
     <string name="pick_custom_user_color_title">Pick custom user color</string>
     <string name="custom_user_display_summary">Add a custom name and color for users</string>
+    <string name="reply_to">Replying to</string>
+    <string name="message_copy">Copy message</string>
+    <string name="message_copy_full">Copy full message</string>
+    <string name="message_reply">Reply to message</string>
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>
         <item quantity="other">Live with %d viewers</item>

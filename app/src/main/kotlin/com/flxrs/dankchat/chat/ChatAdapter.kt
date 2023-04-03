@@ -19,11 +19,13 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
+import androidx.appcompat.widget.PopupMenu
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.text.*
 import androidx.core.text.util.LinkifyCompat
+import androidx.core.view.isVisible
 import androidx.emoji2.text.EmojiCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -53,7 +55,8 @@ class ChatAdapter(
     private val dankChatPreferenceStore: DankChatPreferenceStore,
     private val onListChanged: (position: Int) -> Unit,
     private val onUserClick: (targetUserId: UserId?, targetUsername: UserName, targetDisplayName: DisplayName, messageId: String, channelName: UserName?, badges: List<Badge>, isLongPress: Boolean) -> Unit,
-    private val onMessageLongClick: (message: String) -> Unit
+    private val onMessageLongClick: (MessageClickEvent) -> Unit,
+    private val onReplyClick: (messageId: String) -> Unit,
 ) : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
     // Using position.isEven for determining which background to use in checkered mode doesn't work,
     // since the LayoutManager uses stackFromEnd and every new message will be even. Instead, keep count of new messages separately.
@@ -99,6 +102,7 @@ class ChatAdapter(
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
+        holder.binding.replyGroup.isVisible = false
         holder.binding.itemText.alpha = when (item.importance) {
             ChatImportance.SYSTEM  -> .75f
             ChatImportance.DELETED -> .5f
@@ -109,7 +113,21 @@ class ChatAdapter(
             is SystemMessage          -> holder.binding.itemText.handleSystemMessage(message, holder)
             is NoticeMessage          -> holder.binding.itemText.handleNoticeMessage(message, holder)
             is UserNoticeMessage      -> holder.binding.itemText.handleUserNoticeMessage(message, holder)
-            is PrivMessage            -> holder.binding.itemText.handlePrivMessage(message, holder, item.isMentionTab)
+            is PrivMessage            -> with(holder.binding) {
+                if (message.thread != null && !item.isInReplies) {
+                    replyGroup.isVisible = true
+                    val formatted = buildString {
+                        append(itemReply.context.getString(R.string.reply_to))
+                        append(" @${message.thread.name}: ")
+                        append(message.thread.message)
+                    }
+                    itemReply.text = formatted
+                    itemReply.setOnClickListener { onReplyClick(message.thread.id) }
+                }
+
+                itemText.handlePrivMessage(message, holder, item.isMentionTab)
+            }
+
             is ModerationMessage      -> holder.binding.itemText.handleModerationMessage(message, holder)
             is PointRedemptionMessage -> holder.binding.itemText.handlePointRedemptionMessage(message, holder)
             is WhisperMessage         -> holder.binding.itemText.handleWhisperMessage(message, holder)
@@ -348,12 +366,27 @@ class ChatAdapter(
             else                             -> spannable
         } as SpannableStringBuilder
 
-        addLinks(spannableWithEmojis, originalMessage)
+        addLinks(spannableWithEmojis, originalMessage, id)
 
         // copying message
         val messageClickableSpan = object : LongClickableSpan() {
             override fun onClick(v: View) = Unit
-            override fun onLongClick(view: View) = onMessageLongClick(originalMessage)
+            override fun onLongClick(view: View) {
+                PopupMenu(view.context, view).apply {
+                    inflate(R.menu.message)
+                    menu.removeItem(R.id.message_reply)
+                    setOnMenuItemClickListener {
+                        val event = when (it.itemId) {
+                            R.id.message_copy      -> MessageClickEvent.Copy(originalMessage)
+                            R.id.message_copy_full -> MessageClickEvent.Copy(spannableWithEmojis.toString().replace("\\s+".toRegex(), " "))
+                            else                   -> return@setOnMenuItemClickListener false
+                        }
+                        onMessageLongClick(event)
+                        true
+                    }
+                }.show()
+            }
+
             override fun updateDrawState(ds: TextPaint) {
                 ds.isUnderlineText = false
             }
@@ -455,6 +488,7 @@ class ChatAdapter(
 
             else                                                                    -> ContextCompat.getColor(context, android.R.color.transparent)
         }
+        holder.binding.itemLayout.setBackgroundColor(bgColor)
         setRippleBackground(bgColor, enableRipple = true)
 
         val textColor = MaterialColors.getColor(textView, R.attr.colorOnSurface)
@@ -528,12 +562,27 @@ class ChatAdapter(
             else                             -> messageBuilder
         } as SpannableStringBuilder
 
-        addLinks(spannableWithEmojis, originalMessage)
+        addLinks(spannableWithEmojis, originalMessage, messageId = thread?.id ?: id, channel)
 
         // copying message
         val messageClickableSpan = object : LongClickableSpan() {
             override fun onClick(v: View) = Unit
-            override fun onLongClick(view: View) = onMessageLongClick(originalMessage)
+            override fun onLongClick(view: View) {
+                PopupMenu(view.context, view).apply {
+                    inflate(R.menu.message)
+                    setOnMenuItemClickListener {
+                        val event = when (it.itemId) {
+                            R.id.message_copy      -> MessageClickEvent.Copy(originalMessage)
+                            R.id.message_copy_full -> MessageClickEvent.Copy(spannableWithEmojis.toString().replace("⠀ ".toRegex(), ""))
+                            R.id.message_reply     -> MessageClickEvent.Reply(rootMessageId = thread?.id ?: id, channel)
+                            else                   -> return@setOnMenuItemClickListener false
+                        }
+                        onMessageLongClick(event)
+                        true
+                    }
+                }.show()
+            }
+
             override fun updateDrawState(ds: TextPaint) {
                 ds.isUnderlineText = false
             }
@@ -694,7 +743,7 @@ class ChatAdapter(
     ).append(" ")
 
     /** set background color, and enable/disable ripple (whether enable or disable should match the "clickability" of that message */
-    private fun TextView.setRippleBackground(@ColorInt backgroundColor: Int, enableRipple: Boolean = false) {
+    private fun View.setRippleBackground(@ColorInt backgroundColor: Int, enableRipple: Boolean = false) {
         val rippleBg = background as? RippleDrawable
         if (rippleBg != null) { // background is expected set to RippleDrawable via XML layout
             rippleBg.setDrawableByLayerId(R.id.ripple_color_layer, ColorDrawable(backgroundColor))
@@ -716,11 +765,12 @@ class ChatAdapter(
             HighlightType.FirstMessage                             -> ContextCompat.getColor(context, R.color.color_first_message_highlight)
             HighlightType.Username                                 -> ContextCompat.getColor(context, R.color.color_mention_highlight)
             HighlightType.Custom                                   -> ContextCompat.getColor(context, R.color.color_mention_highlight)
+            HighlightType.Reply                                    -> ContextCompat.getColor(context, R.color.color_mention_highlight)
             HighlightType.Notification                             -> ContextCompat.getColor(context, R.color.color_mention_highlight)
         }
     }
 
-    private fun TextView.addLinks(spannableWithEmojis: SpannableStringBuilder, originalMessage: String) {
+    private fun TextView.addLinks(spannableWithEmojis: SpannableStringBuilder, originalMessage: String, messageId: String, channel: UserName? = null, canReply: Boolean = false) {
         LinkifyCompat.addLinks(spannableWithEmojis, Linkify.WEB_URLS)
         spannableWithEmojis.getSpans<URLSpan>().forEach { urlSpan ->
             val start = spannableWithEmojis.getSpanStart(urlSpan)
@@ -742,7 +792,25 @@ class ChatAdapter(
             }
 
             val clickableSpan = object : LongClickableSpan() {
-                override fun onLongClick(view: View) = onMessageLongClick(originalMessage)
+                override fun onLongClick(view: View) {
+                    PopupMenu(view.context, view).apply {
+                        inflate(R.menu.message)
+                        if (!canReply) {
+                            menu.removeItem(R.id.message_reply)
+                        }
+                        setOnMenuItemClickListener {
+                            val event = when (it.itemId) {
+                                R.id.message_copy      -> MessageClickEvent.Copy(originalMessage)
+                                R.id.message_copy_full -> MessageClickEvent.Copy(spannableWithEmojis.toString().replace("\\s+".toRegex(), " "))
+                                R.id.message_reply     -> MessageClickEvent.Reply(messageId, channel)
+                                else                   -> return@setOnMenuItemClickListener false
+                            }
+                            onMessageLongClick(event)
+                            true
+                        }
+                    }.show()
+                }
+
                 override fun onClick(v: View) {
                     try {
                         customTabsIntent.launchUrl(context, fixedUrl.toUri())

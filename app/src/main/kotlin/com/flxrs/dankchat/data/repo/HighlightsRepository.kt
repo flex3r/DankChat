@@ -244,6 +244,9 @@ class HighlightsRepository @Inject constructor(
                 }
             }
 
+            if (thread?.participated == true && name != currentUserAndDisplay.value?.first) {
+                add(Highlight(HighlightType.Reply))
+            }
         }
 
         return copy(highlights = highlights)

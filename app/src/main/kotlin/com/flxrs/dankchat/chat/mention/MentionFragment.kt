@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.chat.ChatSheetState
+import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.databinding.MentionFragmentBinding
 import com.flxrs.dankchat.main.MainViewModel
 import com.flxrs.dankchat.utils.extensions.collectFlow
@@ -39,6 +41,7 @@ class MentionFragment : Fragment() {
             }.apply { attach() }
         }
 
+        mainViewModel.setSuggestionChannel(WhisperMessage.WHISPER_CHANNEL)
         return binding.root
     }
 
@@ -70,10 +73,14 @@ class MentionFragment : Fragment() {
 
     private fun ViewPager2.setup() {
         adapter = tabAdapter
-        offscreenPageLimit = 2
+        offscreenPageLimit = 1
         registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                mainViewModel.setWhisperTabSelected(position == 1)
+                val state = when (position) {
+                    0    -> ChatSheetState.Mention
+                    else -> ChatSheetState.Whisper
+                }
+                mainViewModel.setChatSheetState(state)
                 bindingRef?.mentionTabs?.getTabAt(position)?.removeBadge()
             }
         })

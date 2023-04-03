@@ -1,16 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/item_text"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/item_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/ripple_with_background"
-        android:gravity="start"
-        android:letterSpacing="0.005"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:paddingBottom="2dp"
-        android:textAppearance="?attr/textAppearanceBodyMedium"
-        android:textColorHighlight="@color/colorThatIsActuallyTransparent" />
+        android:paddingHorizontal="8dp">
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/reply_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="item_reply_icon,item_reply" />
+
+        <ImageView
+            android:id="@+id/item_reply_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
+            app:layout_constraintBottom_toBottomOf="@id/item_reply"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/item_reply"
+            app:srcCompat="@drawable/ic_reply" />
+
+        <TextView
+            android:id="@+id/item_reply"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:maxLines="1"
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            app:layout_constraintBottom_toTopOf="@id/item_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/item_reply_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="This is a reply test" />
+
+        <TextView
+            android:id="@+id/item_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ripple_with_background"
+            android:gravity="start"
+            android:letterSpacing="0.005"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColorHighlight="@color/colorThatIsActuallyTransparent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="This is a test message" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
