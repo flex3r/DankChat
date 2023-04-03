@@ -20,6 +20,7 @@ enum class HighlightType(val priority: HighlightPriority) {
     ElevatedMessage(HighlightPriority.MEDIUM),
     Username(HighlightPriority.LOW),
     Custom(HighlightPriority.LOW),
+    Reply(HighlightPriority.LOW),
     Notification(HighlightPriority.LOW),
 }
 

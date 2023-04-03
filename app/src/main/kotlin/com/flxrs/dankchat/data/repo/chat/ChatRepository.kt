@@ -16,6 +16,7 @@ import com.flxrs.dankchat.data.api.recentmessages.dto.RecentMessagesDto
 import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.repo.HighlightsRepository
 import com.flxrs.dankchat.data.repo.IgnoresRepository
+import com.flxrs.dankchat.data.repo.RepliesRepository
 import com.flxrs.dankchat.data.repo.UserDisplayRepository
 import com.flxrs.dankchat.data.repo.emote.EmoteRepository
 import com.flxrs.dankchat.data.toDisplayName
@@ -90,6 +91,7 @@ class ChatRepository @Inject constructor(
     private val highlightsRepository: HighlightsRepository,
     private val ignoresRepository: IgnoresRepository,
     private val userDisplayRepository: UserDisplayRepository,
+    private val repliesRepository: RepliesRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
     private val pubSubManager: PubSubManager,
     @ReadConnection private val readConnection: ChatConnection,
@@ -157,7 +159,7 @@ class ChatRepository @Inject constructor(
                             }.getOrNull() ?: return@collect
 
                             messages[pubSubMessage.channelName]?.update {
-                                it.addAndLimit(ChatItem(message), scrollBackLength)
+                                it.addAndLimit(ChatItem(message), scrollBackLength, ::onMessageRemoved)
                             }
                         }
                     }
@@ -177,7 +179,7 @@ class ChatRepository @Inject constructor(
 
                         val item = ChatItem(message, isMentionTab = true)
                         _whispers.update { current ->
-                            current.addAndLimit(item, scrollBackLength)
+                            current.addAndLimit(item, scrollBackLength, ::onMessageRemoved)
                         }
 
                         if (pubSubMessage.data.userId == userState.value.userId) {
@@ -205,8 +207,8 @@ class ChatRepository @Inject constructor(
 
                         messages[message.channel]?.update { current ->
                             when (message.action) {
-                                ModerationMessage.Action.Delete -> current.replaceWithTimeout(message, scrollBackLength)
-                                else                            -> current.replaceOrAddModerationMessage(message, scrollBackLength)
+                                ModerationMessage.Action.Delete -> current.replaceWithTimeout(message, scrollBackLength, ::onMessageRemoved)
+                                else                            -> current.replaceOrAddModerationMessage(message, scrollBackLength, ::onMessageRemoved)
                             }
                         }
                     }
@@ -244,6 +246,8 @@ class ChatRepository @Inject constructor(
     fun getRoomState(channel: UserName): SharedFlow<RoomState> = roomStateFlows.getOrPut(channel) { MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST) }
     fun getUsers(channel: UserName): StateFlow<Set<DisplayName>> = usersFlows.getOrPut(channel) { MutableStateFlow(emptySet()) }
 
+    fun findMessage(channel: UserName, id: String): ChatItem? = messages[channel]?.value?.find { it.message.id == id }
+
     fun clearChatLoadingFailures() = _chatLoadingFailures.update { emptySet() }
 
     suspend fun getLatestValidUserState(minChannelsSize: Int = 0): UserState = userState
@@ -258,7 +262,7 @@ class ChatRepository @Inject constructor(
             dankChatPreferenceStore.shouldLoadHistory -> loadRecentMessages(channel)
             else                                      -> messages[channel]?.update { current ->
                 val message = SystemMessageType.NoHistoryLoaded.toChatItem()
-                listOf(message).addAndLimit(current, scrollBackLength, checkForDuplications = true)
+                listOf(message).addAndLimit(current, scrollBackLength, ::onMessageRemoved, checkForDuplications = true)
             }
         }
     }
@@ -296,7 +300,12 @@ class ChatRepository @Inject constructor(
             async {
                 flow.update { messages ->
                     messages.map {
-                        it.copy(tag = it.tag + 1, message = it.message.parseEmotesAndBadges())
+                        it.copy(
+                            tag = it.tag + 1,
+                            message = it.message
+                                .parseEmotesAndBadges()
+                                .updateMessageInThread(),
+                        )
                     }
                 }
             }
@@ -377,14 +386,14 @@ class ChatRepository @Inject constructor(
             )
             val fakeItem = ChatItem(fakeMessage, isMentionTab = true)
             _whispers.update {
-                it.addAndLimit(fakeItem, scrollBackLength)
+                it.addAndLimit(fakeItem, scrollBackLength, ::onMessageRemoved)
             }
         }
     }
 
-    fun sendMessage(input: String) {
+    fun sendMessage(input: String, replyId: String? = null) {
         val channel = activeChannel.value ?: return
-        val preparedMessage = prepareMessage(channel, input) ?: return
+        val preparedMessage = prepareMessage(channel, input, replyId) ?: return
         writeConnection.sendMessage(preparedMessage)
     }
 
@@ -492,11 +501,13 @@ class ChatRepository @Inject constructor(
         _channelMentionCount.clear(channel)
         loadedRecentsInChannels.remove(channel)
         emoteRepository.removeChannel(channel)
+        repliesRepository.cleanupMessageThreadsInChannel(channel)
     }
 
-    private fun prepareMessage(channel: UserName, message: String): String? {
+    private fun prepareMessage(channel: UserName, message: String, replyId: String?): String? {
         if (message.isBlank()) return null
         val trimmedMessage = message.trimEnd()
+        val replyIdOrBlank = replyId?.let { "@reply-parent-msg-id=$it " }.orEmpty()
 
         val messageWithSuffix = when (lastMessage[channel].orEmpty()) {
             trimmedMessage -> when {
@@ -509,7 +520,7 @@ class ChatRepository @Inject constructor(
 
         val messageWithEmojiFix = messageWithSuffix.replace(ZERO_WIDTH_JOINER, ESCAPE_TAG)
         lastMessage[channel] = messageWithEmojiFix
-        return "PRIVMSG #$channel :$messageWithEmojiFix"
+        return "${replyIdOrBlank}PRIVMSG #$channel :$messageWithEmojiFix"
     }
 
     private suspend fun onMessage(msg: IrcMessage): List<ChatItem>? {
@@ -559,7 +570,7 @@ class ChatRepository @Inject constructor(
         }
 
         messages[parsed.channel]?.update { current ->
-            current.replaceOrAddModerationMessage(parsed, scrollBackLength)
+            current.replaceOrAddModerationMessage(parsed, scrollBackLength, ::onMessageRemoved)
         }
     }
 
@@ -631,7 +642,7 @@ class ChatRepository @Inject constructor(
         }
 
         messages[parsed.channel]?.update { current ->
-            current.replaceWithTimeout(parsed, scrollBackLength)
+            current.replaceWithTimeout(parsed, scrollBackLength, ::onMessageRemoved)
         }
     }
 
@@ -666,7 +677,7 @@ class ChatRepository @Inject constructor(
 
         val item = ChatItem(message, isMentionTab = true)
         _whispers.update { current ->
-            current.addAndLimit(item, scrollBackLength)
+            current.addAndLimit(item, scrollBackLength, ::onMessageRemoved)
         }
         _channelMentionCount.increment(WhisperMessage.WHISPER_CHANNEL, 1)
     }
@@ -701,9 +712,11 @@ class ChatRepository @Inject constructor(
         val message = runCatching {
             Message.parse(ircMessage)
                 ?.applyIgnores()
+                ?.calculateMessageThread { channel, id -> messages[channel]?.value?.find { it.message.id == id }?.message }
                 ?.calculateHighlightState()
-                ?.parseEmotesAndBadges()
                 ?.calculateUserDisplays()
+                ?.parseEmotesAndBadges()
+                ?.updateMessageInThread()
         }.getOrElse {
             Log.e(TAG, "Failed to parse message", it)
             return
@@ -712,7 +725,7 @@ class ChatRepository @Inject constructor(
         if (message is NoticeMessage && message.channel == GLOBAL_CHANNEL_TAG) {
             messages.keys.forEach {
                 messages[it]?.update { current ->
-                    current.addAndLimit(ChatItem(message, importance = ChatImportance.SYSTEM), scrollBackLength)
+                    current.addAndLimit(ChatItem(message, importance = ChatImportance.SYSTEM), scrollBackLength, ::onMessageRemoved)
                 }
             }
             return
@@ -765,7 +778,7 @@ class ChatRepository @Inject constructor(
         }
 
         messages[channel]?.update { current ->
-            current.addAndLimit(additionalMessages + items, scrollBackLength)
+            current.addAndLimit(items = additionalMessages + items, scrollBackLength, ::onMessageRemoved)
         }
 
         _notificationsFlow.tryEmit(items)
@@ -775,7 +788,7 @@ class ChatRepository @Inject constructor(
 
         if (mentions.isNotEmpty()) {
             _mentions.update { current ->
-                current.addAndLimit(mentions, scrollBackLength)
+                current.addAndLimit(mentions, scrollBackLength, ::onMessageRemoved)
             }
         }
 
@@ -797,20 +810,20 @@ class ChatRepository @Inject constructor(
 
     fun makeAndPostCustomSystemMessage(message: String, channel: UserName) {
         messages[channel]?.update {
-            it.addSystemMessage(SystemMessageType.Custom(message), scrollBackLength)
+            it.addSystemMessage(SystemMessageType.Custom(message), scrollBackLength, ::onMessageRemoved)
         }
     }
 
     fun makeAndPostSystemMessage(type: SystemMessageType, channel: UserName) {
         messages[channel]?.update {
-            it.addSystemMessage(type, scrollBackLength)
+            it.addSystemMessage(type, scrollBackLength, ::onMessageRemoved)
         }
     }
 
     private fun makeAndPostSystemMessage(type: SystemMessageType, channels: Set<UserName> = messages.keys) {
         channels.forEach { channel ->
             messages[channel]?.update { current ->
-                current.addSystemMessage(type, scrollBackLength)
+                current.addSystemMessage(type, scrollBackLength, ::onMessageRemoved)
             }
         }
     }
@@ -864,9 +877,11 @@ class ChatRepository @Inject constructor(
                         val message = runCatching {
                             Message.parse(parsedIrc)
                                 ?.applyIgnores()
+                                ?.calculateMessageThread { _, id -> items.find { it.message.id == id }?.message }
                                 ?.calculateHighlightState()
                                 ?.calculateUserDisplays()
                                 ?.parseEmotesAndBadges()
+                                ?.updateMessageInThread()
                         }.getOrNull() ?: continue
 
                         if (message is PrivMessage) {
@@ -895,7 +910,7 @@ class ChatRepository @Inject constructor(
 
                 else                                                                                          -> current
             }
-            items.addAndLimit(withIncompleteWarning, scrollBackLength, checkForDuplications = true)
+            items.addAndLimit(withIncompleteWarning, scrollBackLength, ::onMessageRemoved, checkForDuplications = true)
         }
 
         val mentions = items.filter { (it.message.highlights.hasMention()) }.toMentionTabItems()
@@ -945,6 +960,14 @@ class ChatRepository @Inject constructor(
     private fun Message.calculateHighlightState(): Message = highlightsRepository.calculateHighlightState(this)
     private fun Message.parseEmotesAndBadges(): Message = emoteRepository.parseEmotesAndBadges(this)
     private fun Message.calculateUserDisplays(): Message = userDisplayRepository.calculateUserDisplay(this)
+
+    private fun Message.calculateMessageThread(findMessageById: (channel: UserName, id: String) -> Message?): Message {
+        return repliesRepository.calculateMessageThread(message = this, findMessageById)
+    }
+
+    private fun Message.updateMessageInThread(): Message = repliesRepository.updateMessageInThread(this)
+
+    private fun onMessageRemoved(item: ChatItem) = repliesRepository.cleanupMessageThread(item.message)
 
     companion object {
         private val TAG = ChatRepository::class.java.simpleName

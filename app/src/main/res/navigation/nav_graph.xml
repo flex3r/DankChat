@@ -173,4 +173,16 @@
             android:name="targetDisplayName"
             app:argType="com.flxrs.dankchat.data.DisplayName" />
     </dialog>
+    <fragment
+        android:id="@+id/repliesFragment"
+        android:name="com.flxrs.dankchat.chat.replies.RepliesFragment"
+        android:label="RepliesFragment" >
+        <argument
+            android:name="rootMessageId"
+            app:argType="string" />
+        <argument
+            android:name="channel"
+            app:argType="com.flxrs.dankchat.data.UserName"
+            app:nullable="true" />
+    </fragment>
 </navigation>

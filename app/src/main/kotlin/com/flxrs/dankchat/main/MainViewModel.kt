@@ -5,6 +5,7 @@ import android.webkit.CookieManager
 import android.webkit.WebStorage
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.flxrs.dankchat.chat.ChatSheetState
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.chat.menu.EmoteMenuTabItem
 import com.flxrs.dankchat.chat.suggestion.Suggestion
@@ -105,9 +106,8 @@ class MainViewModel @Inject constructor(
     private val roomStateEnabled = MutableStateFlow(true)
     private val streamData = MutableStateFlow<List<StreamData>>(emptyList())
     private val currentSuggestionChannel = MutableStateFlow<UserName?>(null)
-    private val whisperTabSelected = MutableStateFlow(false)
     private val emoteSheetOpen = MutableStateFlow(false)
-    private val mentionSheetOpen = MutableStateFlow(false)
+    private val chatSheetState = MutableStateFlow<ChatSheetState>(ChatSheetState.Closed)
     private val _currentStreamedChannel = MutableStateFlow<UserName?>(null)
     private val _isFullscreen = MutableStateFlow(false)
     private val shouldShowChips = MutableStateFlow(true)
@@ -155,9 +155,9 @@ class MainViewModel @Inject constructor(
     }.map { triggers -> triggers.map { Suggestion.CommandSuggestion(it) } }
 
     private val currentBottomText: Flow<String> =
-        combine(roomStateText, currentStreamInformation, mentionSheetOpen) { roomState, streamInfo, mentionSheetOpen ->
+        combine(roomStateText, currentStreamInformation, chatSheetState) { roomState, streamInfo, chatSheetState ->
             listOfNotNull(roomState, streamInfo)
-                .takeUnless { mentionSheetOpen }
+                .takeUnless { chatSheetState.isOpen }
                 ?.joinToString(separator = " - ")
                 .orEmpty()
         }
@@ -166,15 +166,19 @@ class MainViewModel @Inject constructor(
         combine(
             roomStateEnabled,
             streamInfoEnabled,
-            mentionSheetOpen,
+            chatSheetState,
             currentBottomText
-        ) { roomStateEnabled, streamInfoEnabled, mentionSheetOpen, bottomText ->
-            (roomStateEnabled || streamInfoEnabled) && !mentionSheetOpen && bottomText.isNotBlank()
+        ) { roomStateEnabled, streamInfoEnabled, chatSheetState, bottomText ->
+            (roomStateEnabled || streamInfoEnabled) && !chatSheetState.isOpen && bottomText.isNotBlank()
         }
 
     private val loadingFailures = combine(dataRepository.dataLoadingFailures, chatRepository.chatLoadingFailures) { data, chat ->
         data to chat
     }.stateIn(viewModelScope, SharingStarted.Eagerly, Pair(emptySet(), emptySet()))
+
+    private val connectionState = activeChannel
+        .flatMapLatestOrDefault(ConnectionState.DISCONNECTED) { chatRepository.getConnectionState(it) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), ConnectionState.DISCONNECTED)
 
     init {
         viewModelScope.launch {
@@ -245,13 +249,21 @@ class MainViewModel @Inject constructor(
         isUploading || isDataLoading
     }.stateIn(viewModelScope, started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
-    val connectionState = activeChannel
-        .flatMapLatestOrDefault(ConnectionState.DISCONNECTED) { chatRepository.getConnectionState(it) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), ConnectionState.DISCONNECTED)
+    val inputState: StateFlow<InputState> = combine(connectionState, chatSheetState) { connectionState, chatSheetState ->
+        when (connectionState) {
+            ConnectionState.CONNECTED               -> when (chatSheetState) {
+                is ChatSheetState.Replies -> InputState.Replying
+                else                      -> InputState.Default
+            }
 
-    val canType: StateFlow<Boolean> = combine(connectionState, mentionSheetOpen, whisperTabSelected) { connectionState, mentionSheetOpen, whisperTabSelected ->
+            ConnectionState.CONNECTED_NOT_LOGGED_IN -> InputState.NotLoggedIn
+            ConnectionState.DISCONNECTED            -> InputState.Disconnected
+        }
+    }.stateIn(viewModelScope, started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), InputState.Disconnected)
+
+    val canType: StateFlow<Boolean> = combine(connectionState, chatSheetState) { connectionState, chatSheetState ->
         val canTypeInConnectionState = connectionState == ConnectionState.CONNECTED || !dankChatPreferenceStore.autoDisableInput
-        (!mentionSheetOpen && canTypeInConnectionState) || (whisperTabSelected && canTypeInConnectionState)
+        (chatSheetState != ChatSheetState.Mention && canTypeInConnectionState)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
     data class BottomTextState(val enabled: Boolean = true, val text: String = "")
@@ -271,8 +283,8 @@ class MainViewModel @Inject constructor(
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
     val shouldShowEmoteMenuIcon: StateFlow<Boolean> =
-        combine(canType, mentionSheetOpen) { canType, mentionSheetOpen ->
-            canType && !mentionSheetOpen
+        combine(canType, chatSheetState) { canType, chatSheetState ->
+            canType && !chatSheetState.isMentionTab
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
     val suggestions: StateFlow<Triple<List<Suggestion.UserSuggestion>, List<Suggestion.EmoteSuggestion>, List<Suggestion.CommandSuggestion>>> = combine(
@@ -342,8 +354,8 @@ class MainViewModel @Inject constructor(
             canShowChips && channel != null && channel in userState.moderationChannels
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
-    val useCustomBackHandling: StateFlow<Boolean> = combine(isFullscreenFlow, emoteSheetOpen, mentionSheetOpen) { isFullscreen, emoteSheetOpen, mentionSheetOpen ->
-        isFullscreen || emoteSheetOpen || mentionSheetOpen
+    val useCustomBackHandling: StateFlow<Boolean> = combine(isFullscreenFlow, emoteSheetOpen, chatSheetState) { isFullscreen, emoteSheetOpen, chatSheetState ->
+        isFullscreen || emoteSheetOpen || chatSheetState.isOpen
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
     val currentStreamedChannel: StateFlow<UserName?> = _currentStreamedChannel.asStateFlow()
@@ -477,28 +489,18 @@ class MainViewModel @Inject constructor(
         currentSuggestionChannel.value = channel
     }
 
-    fun setMentionSheetOpen(enabled: Boolean) {
+    fun setChatSheetState(state: ChatSheetState) {
         repeatedSend.update { it.copy(enabled = false) }
-        mentionSheetOpen.value = enabled
-        if (enabled) when (whisperTabSelected.value) {
-            true -> chatRepository.clearMentionCount(WhisperMessage.WHISPER_CHANNEL)
-            else -> chatRepository.clearMentionCounts()
+        chatSheetState.update { state }
+        when (state) {
+            ChatSheetState.Whisper -> chatRepository.clearMentionCount(WhisperMessage.WHISPER_CHANNEL)
+            ChatSheetState.Mention -> chatRepository.clearMentionCounts()
+            else                   -> Unit
         }
     }
 
     fun setEmoteSheetOpen(enabled: Boolean) {
         emoteSheetOpen.update { enabled }
-    }
-
-    fun setWhisperTabSelected(open: Boolean) {
-        repeatedSend.update { it.copy(enabled = false) }
-        whisperTabSelected.value = open
-        if (mentionSheetOpen.value) {
-            when {
-                open -> chatRepository.clearMentionCount(WhisperMessage.WHISPER_CHANNEL)
-                else -> chatRepository.clearMentionCounts()
-            }
-        }
     }
 
     fun clear(channel: UserName) = chatRepository.clear(channel)
@@ -508,14 +510,15 @@ class MainViewModel @Inject constructor(
     fun joinChannel(channel: UserName): List<UserName> = chatRepository.joinChannel(channel)
     fun trySendMessageOrCommand(message: String, skipSuspendingCommands: Boolean = false) = viewModelScope.launch {
         val channel = currentSuggestionChannel.value ?: return@launch
+        val chatState = chatSheetState.value
         val commandResult = runCatching {
-            when {
-                mentionSheetOpen.value && whisperTabSelected.value -> commandRepository.checkForWhisperCommand(message, skipSuspendingCommands)
-
-                else                                               -> {
+            when (chatState) {
+                ChatSheetState.Whisper -> commandRepository.checkForWhisperCommand(message, skipSuspendingCommands)
+                else                   -> {
                     val roomState = currentRoomState ?: return@launch
                     val userState = chatRepository.userStateFlow.value
-                    commandRepository.checkForCommands(message, channel, roomState, userState, skipSuspendingCommands)
+                    val shouldSkip = skipSuspendingCommands || chatState is ChatSheetState.Replies
+                    commandRepository.checkForCommands(message, channel, roomState, userState, shouldSkip)
                 }
             }
         }.getOrElse {
@@ -528,7 +531,7 @@ class MainViewModel @Inject constructor(
             is CommandResult.Blocked               -> Unit
 
             is CommandResult.IrcCommand,
-            is CommandResult.NotFound              -> chatRepository.sendMessage(message)
+            is CommandResult.NotFound              -> chatRepository.sendMessage(message, chatState.replyIdOrNull)
 
             is CommandResult.AcceptedTwitchCommand -> {
                 if (commandResult.command == TwitchCommand.Whisper) {
@@ -540,7 +543,7 @@ class MainViewModel @Inject constructor(
             }
 
             is CommandResult.AcceptedWithResponse  -> chatRepository.makeAndPostCustomSystemMessage(commandResult.response, channel)
-            is CommandResult.Message               -> chatRepository.sendMessage(commandResult.message)
+            is CommandResult.Message               -> chatRepository.sendMessage(commandResult.message, chatState.replyIdOrNull)
         }
 
         if (commandResult != CommandResult.NotFound && commandResult != CommandResult.IrcCommand) {

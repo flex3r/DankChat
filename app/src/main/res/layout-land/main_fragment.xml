@@ -147,24 +147,20 @@
                     app:layout_constraintTop_toBottomOf="@id/add_channels_text" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/chat_sheet_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:behavior_hideable="true"
+                app:behavior_skipCollapsed="true"
+                app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
+
             <FrameLayout
-                android:id="@+id/bottom_sheet_frame"
+                android:id="@+id/emote_sheet_fragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:behavior_hideable="true"
                 app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
-
-            <fragment
-                android:id="@+id/mention_fragment"
-                android:name="com.flxrs.dankchat.chat.mention.MentionFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:behavior_hideable="true"
-                app:behavior_peekHeight="0dp"
-                app:behavior_skipCollapsed="true"
-                app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-                tools:layout="@layout/chat_fragment"
-                tools:ignore="FragmentTagUsage" />
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <androidx.constraintlayout.widget.Barrier

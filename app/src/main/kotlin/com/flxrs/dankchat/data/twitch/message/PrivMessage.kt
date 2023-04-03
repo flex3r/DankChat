@@ -31,6 +31,8 @@ data class PrivMessage(
     val timedOut: Boolean = false,
     val tags: Map<String, String>,
     val userDisplay: UserDisplay? = null,
+    val thread: MessageThreadHeader? = null,
+    val replyMentionOffset: Int = 0,
     override val emoteData: EmoteData = EmoteData(originalMessage, channel, emotesWithPositions = parseEmoteTag(originalMessage, tags["emotes"].orEmpty())),
     override val badgeData: BadgeData = BadgeData(userId, channel, badgeTag = tags["badges"], badgeInfoTag = tags["badge-info"]),
 ) : Message() {
