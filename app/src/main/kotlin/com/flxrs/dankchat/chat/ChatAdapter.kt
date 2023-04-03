@@ -103,6 +103,7 @@ class ChatAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
         holder.binding.replyGroup.isVisible = false
+        holder.binding.itemLayout.setBackgroundColor(Color.TRANSPARENT)
         holder.binding.itemText.alpha = when (item.importance) {
             ChatImportance.SYSTEM  -> .75f
             ChatImportance.DELETED -> .5f
