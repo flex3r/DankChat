@@ -8,14 +8,12 @@ import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import coil.size.Scale
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.databinding.TimeoutDialogBinding
 import com.flxrs.dankchat.databinding.UserPopupBottomsheetBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.utils.extensions.collectFlow
@@ -26,10 +24,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class UserPopupDialogFragment : BottomSheetDialogFragment() {
+
     private val args: UserPopupDialogFragmentArgs by navArgs()
     private val viewModel: UserPopupViewModel by viewModels()
     private var bindingRef: UserPopupBottomsheetBinding? = null
@@ -65,15 +63,7 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
                         .show()
                 }
             }
-            userTimeout.setOnClickListener { showTimeoutDialog() }
-            userDelete.setOnClickListener { showDeleteDialog() }
-            userBan.setOnClickListener { showBanDialog() }
-            userUnban.setOnClickListener {
-                lifecycleScope.launch {
-                    viewModel.unbanUser()
-                    dialog?.dismiss()
-                }
-            }
+
             userAvatarCard.setOnClickListener {
                 val userName = viewModel.userName
                 val url = "https://twitch.tv/$userName"
@@ -109,10 +99,6 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
                 is UserPopupState.Success     -> binding.updateUserData(it)
                 is UserPopupState.Error       -> setErrorResultAndDismiss(it.throwable)
             }
-        }
-
-        collectFlow(viewModel.canShowModeration) {
-            binding.moderationGroup.isVisible = it
         }
 
         dialog?.takeIf { isLandscape }?.let {
@@ -168,57 +154,5 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
             .getBackStackEntry(R.id.mainFragment)
             .savedStateHandle[MainFragment.USER_POPUP_RESULT_KEY] = UserPopupResult.Error(throwable)
         dialog?.dismiss()
-    }
-
-    private fun showTimeoutDialog() {
-        var currentItem = 0
-        val choices = resources.getStringArray(R.array.timeout_entries)
-        val dialogContent = TimeoutDialogBinding.inflate(LayoutInflater.from(requireContext()), null, false).apply {
-            timeoutSlider.setLabelFormatter { choices[it.toInt()] }
-            timeoutSlider.addOnChangeListener { _, value, _ ->
-                currentItem = value.toInt()
-                timeoutValue.text = choices[value.toInt()]
-            }
-        }
-
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.confirm_user_timeout_title)
-            .setView(dialogContent.root)
-            .setPositiveButton(R.string.confirm_user_timeout_positive_button) { _, _ ->
-                lifecycleScope.launch {
-                    viewModel.timeoutUser(currentItem)
-                    dialog?.dismiss()
-                }
-            }
-            .setNegativeButton(R.string.dialog_cancel) { d, _ -> d.dismiss() }
-            .show()
-    }
-
-    private fun showBanDialog() {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.confirm_user_ban_title)
-            .setMessage(R.string.confirm_user_ban_message)
-            .setPositiveButton(R.string.confirm_user_ban_positive_button) { _, _ ->
-                lifecycleScope.launch {
-                    viewModel.banUser()
-                    dialog?.dismiss()
-                }
-            }
-            .setNegativeButton(R.string.dialog_cancel) { d, _ -> d.dismiss() }
-            .show()
-    }
-
-    private fun showDeleteDialog() {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.confirm_user_delete_title)
-            .setMessage(R.string.confirm_user_delete_message)
-            .setPositiveButton(R.string.confirm_user_delete_positive_button) { _, _ ->
-                lifecycleScope.launch {
-                    viewModel.deleteMessage()
-                    dialog?.dismiss()
-                }
-            }
-            .setNegativeButton(R.string.dialog_cancel) { d, _ -> d.dismiss() }
-            .show()
     }
 }

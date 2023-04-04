@@ -5,8 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import com.flxrs.dankchat.R
 import com.flxrs.dankchat.chat.ChatFragment
+import com.flxrs.dankchat.data.DisplayName
+import com.flxrs.dankchat.data.UserId
+import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
+import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.flxrs.dankchat.utils.extensions.showLongSnackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,5 +42,27 @@ class RepliesChatFragment : ChatFragment() {
         }
 
         return binding.root
+    }
+
+    override fun onUserClick(targetUserId: UserId?, targetUserName: UserName, targetDisplayName: DisplayName, channel: UserName?, badges: List<Badge>, isLongPress: Boolean) {
+        targetUserId ?: return
+        val shouldLongClickMention = preferences.getBoolean(getString(R.string.preference_user_long_click_key), true)
+        val shouldMention = (isLongPress && shouldLongClickMention) || (!isLongPress && !shouldLongClickMention)
+
+        when {
+            shouldMention -> (parentFragment?.parentFragment as? MainFragment)?.mentionUser(targetUserName, targetDisplayName)
+            else          -> (parentFragment?.parentFragment as? MainFragment)?.openUserPopup(
+                targetUserId = targetUserId,
+                targetUserName = targetUserName,
+                targetDisplayName = targetDisplayName,
+                channel = channel,
+                badges = badges,
+                isWhisperPopup = false
+            )
+        }
+    }
+
+    override fun onMessageClick(messageId: String, replyMessageId: String?, channel: UserName?, name: UserName, message: String, fullMessage: String) {
+        (parentFragment?.parentFragment as? MainFragment)?.openMessageSheet(messageId, replyMessageId, channel, name, message, fullMessage, canReply = false, canModerate = false)
     }
 }
