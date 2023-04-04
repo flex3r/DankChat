@@ -96,7 +96,7 @@ class CommandRepository @Inject constructor(
             return when (defaultCommand) {
                 Command.Block    -> blockUserCommand(args)
                 Command.Unblock  -> unblockUserCommand(args)
-                Command.Chatters -> chattersCommand(channel)
+                //Command.Chatters -> chattersCommand(channel)
                 Command.Uptime   -> uptimeCommand(channel)
                 Command.Help     -> helpCommand(roomState, userState)
             }
