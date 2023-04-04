@@ -367,27 +367,29 @@ class ChatAdapter(
             else                             -> spannable
         } as SpannableStringBuilder
 
-        addLinks(spannableWithEmojis, originalMessage, id)
+        fun showWhisperMessagePopup(view: View) {
+            PopupMenu(view.context, view).apply {
+                inflate(R.menu.message)
+                menu.removeItem(R.id.message_reply)
+                menu.removeItem(R.id.message_view_thread)
+                setOnMenuItemClickListener {
+                    val event = when (it.itemId) {
+                        R.id.message_copy      -> MessageClickEvent.Copy(originalMessage)
+                        R.id.message_copy_full -> MessageClickEvent.Copy(spannableWithEmojis.toString().replace("\\s+".toRegex(), " "))
+                        else                   -> return@setOnMenuItemClickListener false
+                    }
+                    onMessageLongClick(event)
+                    true
+                }
+            }.show()
+        }
+
+        addLinks(spannableWithEmojis, ::showWhisperMessagePopup)
 
         // copying message
         val messageClickableSpan = object : LongClickableSpan() {
             override fun onClick(v: View) = Unit
-            override fun onLongClick(view: View) {
-                PopupMenu(view.context, view).apply {
-                    inflate(R.menu.message)
-                    menu.removeItem(R.id.message_reply)
-                    setOnMenuItemClickListener {
-                        val event = when (it.itemId) {
-                            R.id.message_copy      -> MessageClickEvent.Copy(originalMessage)
-                            R.id.message_copy_full -> MessageClickEvent.Copy(spannableWithEmojis.toString().replace("\\s+".toRegex(), " "))
-                            else                   -> return@setOnMenuItemClickListener false
-                        }
-                        onMessageLongClick(event)
-                        true
-                    }
-                }.show()
-            }
-
+            override fun onLongClick(view: View) = showWhisperMessagePopup(view)
             override fun updateDrawState(ds: TextPaint) {
                 ds.isUnderlineText = false
             }
@@ -563,27 +565,32 @@ class ChatAdapter(
             else                             -> messageBuilder
         } as SpannableStringBuilder
 
-        addLinks(spannableWithEmojis, originalMessage, messageId = thread?.id ?: id, channel)
+        fun showMessagePopup(view: View) {
+            PopupMenu(view.context, view).apply {
+                inflate(R.menu.message)
+                if (thread == null) {
+                    menu.removeItem(R.id.message_view_thread)
+                }
+                setOnMenuItemClickListener {
+                    val event = when (it.itemId) {
+                        R.id.message_copy        -> MessageClickEvent.Copy(originalMessage)
+                        R.id.message_copy_full   -> MessageClickEvent.Copy(spannableWithEmojis.toString().replace("⠀ ".toRegex(), ""))
+                        R.id.message_reply       -> MessageClickEvent.Reply(replyMessageId = thread?.id ?: id, replyName = name)
+                        R.id.message_view_thread -> MessageClickEvent.ViewThread(replyMessageId = thread?.id ?: id)
+                        else                     -> return@setOnMenuItemClickListener false
+                    }
+                    onMessageLongClick(event)
+                    true
+                }
+            }.show()
+        }
+
+        addLinks(spannableWithEmojis, ::showMessagePopup)
 
         // copying message
         val messageClickableSpan = object : LongClickableSpan() {
             override fun onClick(v: View) = Unit
-            override fun onLongClick(view: View) {
-                PopupMenu(view.context, view).apply {
-                    inflate(R.menu.message)
-                    setOnMenuItemClickListener {
-                        val event = when (it.itemId) {
-                            R.id.message_copy      -> MessageClickEvent.Copy(originalMessage)
-                            R.id.message_copy_full -> MessageClickEvent.Copy(spannableWithEmojis.toString().replace("⠀ ".toRegex(), ""))
-                            R.id.message_reply     -> MessageClickEvent.Reply(rootMessageId = thread?.id ?: id, channel)
-                            else                   -> return@setOnMenuItemClickListener false
-                        }
-                        onMessageLongClick(event)
-                        true
-                    }
-                }.show()
-            }
-
+            override fun onLongClick(view: View) = showMessagePopup(view)
             override fun updateDrawState(ds: TextPaint) {
                 ds.isUnderlineText = false
             }
@@ -771,7 +778,7 @@ class ChatAdapter(
         }
     }
 
-    private fun TextView.addLinks(spannableWithEmojis: SpannableStringBuilder, originalMessage: String, messageId: String, channel: UserName? = null, canReply: Boolean = false) {
+    private fun TextView.addLinks(spannableWithEmojis: SpannableStringBuilder, onLongClick: (View) -> Unit) {
         LinkifyCompat.addLinks(spannableWithEmojis, Linkify.WEB_URLS)
         spannableWithEmojis.getSpans<URLSpan>().forEach { urlSpan ->
             val start = spannableWithEmojis.getSpanStart(urlSpan)
@@ -793,25 +800,7 @@ class ChatAdapter(
             }
 
             val clickableSpan = object : LongClickableSpan() {
-                override fun onLongClick(view: View) {
-                    PopupMenu(view.context, view).apply {
-                        inflate(R.menu.message)
-                        if (!canReply) {
-                            menu.removeItem(R.id.message_reply)
-                        }
-                        setOnMenuItemClickListener {
-                            val event = when (it.itemId) {
-                                R.id.message_copy      -> MessageClickEvent.Copy(originalMessage)
-                                R.id.message_copy_full -> MessageClickEvent.Copy(spannableWithEmojis.toString().replace("\\s+".toRegex(), " "))
-                                R.id.message_reply     -> MessageClickEvent.Reply(messageId, channel)
-                                else                   -> return@setOnMenuItemClickListener false
-                            }
-                            onMessageLongClick(event)
-                            true
-                        }
-                    }.show()
-                }
-
+                override fun onLongClick(view: View) = onLongClick(view)
                 override fun onClick(v: View) {
                     try {
                         customTabsIntent.launchUrl(context, fixedUrl.toUri())

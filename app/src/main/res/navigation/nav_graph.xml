@@ -180,9 +180,16 @@
         <argument
             android:name="rootMessageId"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/repliesInputSheetFragment"
+        android:name="com.flxrs.dankchat.chat.replies.ReplyInputSheetFragment"
+        android:label="RepliesInputSheetFragment" >
         <argument
-            android:name="channel"
-            app:argType="com.flxrs.dankchat.data.UserName"
-            app:nullable="true" />
+            android:name="replyMessageId"
+            app:argType="string" />
+        <argument
+            android:name="replyUser"
+            app:argType="com.flxrs.dankchat.data.UserName" />
     </fragment>
 </navigation>

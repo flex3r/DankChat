@@ -372,6 +372,8 @@
     <string name="message_copy">Copy message</string>
     <string name="message_copy_full">Copy full message</string>
     <string name="message_reply">Reply to message</string>
+    <string name="message_view_thread">View thread</string>
+    <string name="reply_header">Replying to @%1$s</string>
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>
         <item quantity="other">Live with %d viewers</item>

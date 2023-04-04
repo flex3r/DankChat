@@ -10,7 +10,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.chat.FullScreenSheetState
-import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.databinding.RepliesFragmentBinding
 import com.flxrs.dankchat.main.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,8 +40,8 @@ class RepliesFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(rootMessageId: String, channel: UserName?) = RepliesFragment().apply {
-            arguments = RepliesFragmentArgs(rootMessageId, channel).toBundle()
+        fun newInstance(rootMessageId: String) = RepliesFragment().apply {
+            arguments = RepliesFragmentArgs(rootMessageId).toBundle()
         }
     }
 }

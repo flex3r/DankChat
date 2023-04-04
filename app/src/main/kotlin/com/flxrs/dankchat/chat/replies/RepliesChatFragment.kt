@@ -8,6 +8,7 @@ import androidx.fragment.app.viewModels
 import com.flxrs.dankchat.chat.ChatFragment
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.utils.extensions.collectFlow
+import com.flxrs.dankchat.utils.extensions.showLongSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,7 +26,14 @@ class RepliesChatFragment : ChatFragment() {
             }
         }
 
-        collectFlow(repliesViewModel.items) { adapter.submitList(it) }
+        collectFlow(repliesViewModel.state) {
+            when (it) {
+                is RepliesState.Found -> adapter.submitList(it.items)
+                is RepliesState.NotFound -> {
+                    binding.root.showLongSnackbar("Reply thread not found")
+                }
+            }
+        }
 
         return binding.root
     }

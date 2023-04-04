@@ -189,7 +189,7 @@ open class ChatFragment : Fragment() {
 
     private fun onMessageClick(event: MessageClickEvent) {
         when (event) {
-            is MessageClickEvent.Copy -> {
+            is MessageClickEvent.Copy       -> {
                 getSystemService(requireContext(), ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText(CLIPBOARD_MESSAGE_LABEL, event.message))
                 binding.root.showShortSnackbar(getString(R.string.snackbar_message_copied)) {
                     setAction(R.string.snackbar_paste) {
@@ -201,7 +201,8 @@ open class ChatFragment : Fragment() {
                 }
             }
 
-            is MessageClickEvent.Reply -> (parentFragment as? MainFragment)?.openReplies(event.rootMessageId, event.channel)
+            is MessageClickEvent.Reply      -> (parentFragment as? MainFragment)?.startReply(event.replyMessageId, event.replyName)
+            is MessageClickEvent.ViewThread -> (parentFragment as? MainFragment)?.openReplies(event.replyMessageId)
         }
     }
 

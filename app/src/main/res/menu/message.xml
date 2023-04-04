@@ -15,4 +15,9 @@
         android:id="@+id/message_reply"
         android:title="@string/message_reply"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/message_view_thread"
+        android:title="@string/message_view_thread"
+        app:showAsAction="never" />
 </menu>

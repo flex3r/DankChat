@@ -11,6 +11,7 @@ import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.replaceIf
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import java.util.concurrent.ConcurrentHashMap
@@ -22,14 +23,11 @@ class RepliesRepository @Inject constructor(private val dankChatPreferenceStore:
 
     private val threads = ConcurrentHashMap<String, MutableStateFlow<MessageThread>>()
 
-    fun getThreadItemsFlow(rootMessageId: String, fallbackRoot: () -> Message?): Flow<List<ChatItem>> = threads.getOrPut(rootMessageId) {
-        val fallback = fallbackRoot() as? PrivMessage ?: return@getOrPut null
-        MutableStateFlow(MessageThread(rootMessageId, fallback, emptyList(), false))
-    }.map { thread ->
+    fun getThreadItemsFlow(rootMessageId: String): Flow<List<ChatItem>> = threads[rootMessageId]?.map { thread ->
         val root = ChatItem(thread.rootMessage.clearHighlight(), isInReplies = true)
         val replies = thread.replies.map { ChatItem(it.clearHighlight(), isInReplies = true) }
         listOf(root) + replies
-    }
+    } ?: flowOf(emptyList())
 
     fun cleanupMessageThread(message: Message) {
         if (message !is PrivMessage) {

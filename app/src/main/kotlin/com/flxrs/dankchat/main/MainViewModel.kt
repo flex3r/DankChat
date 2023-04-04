@@ -250,11 +250,11 @@ class MainViewModel @Inject constructor(
         isUploading || isDataLoading
     }.stateIn(viewModelScope, started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
-    val inputState: StateFlow<InputState> = combine(connectionState, fullScreenSheetState) { connectionState, chatSheetState ->
+    val inputState: StateFlow<InputState> = combine(connectionState, fullScreenSheetState, inputSheetState) { connectionState, chatSheetState, inputSheetState ->
         when (connectionState) {
-            ConnectionState.CONNECTED               -> when (chatSheetState) {
-                is FullScreenSheetState.Replies -> InputState.Replying
-                else                            -> InputState.Default
+            ConnectionState.CONNECTED               -> when {
+                chatSheetState is FullScreenSheetState.Replies || inputSheetState is InputSheetState.Replying -> InputState.Replying
+                else                                                                                          -> InputState.Default
             }
 
             ConnectionState.CONNECTED_NOT_LOGGED_IN -> InputState.NotLoggedIn
@@ -367,6 +367,8 @@ class MainViewModel @Inject constructor(
         get() = isFullscreenFlow.value
     val isEmoteSheetOpen: Boolean
         get() = inputSheetState.value == InputSheetState.Emotes
+    val isReplySheetOpen: Boolean
+        get() = inputSheetState.value is InputSheetState.Replying
 
     val currentRoomState: RoomState?
         get() {
@@ -512,6 +514,8 @@ class MainViewModel @Inject constructor(
     fun trySendMessageOrCommand(message: String, skipSuspendingCommands: Boolean = false) = viewModelScope.launch {
         val channel = currentSuggestionChannel.value ?: return@launch
         val chatState = fullScreenSheetState.value
+        val inputSheetState = inputSheetState.value
+        val replyIdOrNull = chatState.replyIdOrNull ?: inputSheetState.replyIdOrNull
         val commandResult = runCatching {
             when (chatState) {
                 FullScreenSheetState.Whisper -> commandRepository.checkForWhisperCommand(message, skipSuspendingCommands)
@@ -532,7 +536,7 @@ class MainViewModel @Inject constructor(
             is CommandResult.Blocked               -> Unit
 
             is CommandResult.IrcCommand,
-            is CommandResult.NotFound              -> chatRepository.sendMessage(message, chatState.replyIdOrNull)
+            is CommandResult.NotFound              -> chatRepository.sendMessage(message, replyIdOrNull)
 
             is CommandResult.AcceptedTwitchCommand -> {
                 if (commandResult.command == TwitchCommand.Whisper) {
@@ -544,7 +548,7 @@ class MainViewModel @Inject constructor(
             }
 
             is CommandResult.AcceptedWithResponse  -> chatRepository.makeAndPostCustomSystemMessage(commandResult.response, channel)
-            is CommandResult.Message               -> chatRepository.sendMessage(commandResult.message, chatState.replyIdOrNull)
+            is CommandResult.Message               -> chatRepository.sendMessage(commandResult.message, replyIdOrNull)
         }
 
         if (commandResult != CommandResult.NotFound && commandResult != CommandResult.IrcCommand) {
