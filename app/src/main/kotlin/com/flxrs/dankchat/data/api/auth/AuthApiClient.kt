@@ -54,6 +54,7 @@ class AuthApiClient @Inject constructor(private val authApi: AuthApi, private va
             "moderator:manage:chat_settings",
             "moderator:manage:shield_mode",
             "moderator:read:chatters",
+            "moderator:read:followers",
             "user:manage:blocked_users",
             "user:manage:chat_color",
             "user:manage:whispers",

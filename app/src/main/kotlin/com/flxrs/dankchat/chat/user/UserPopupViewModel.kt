@@ -9,10 +9,13 @@ import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.helix.dto.UserDto
 import com.flxrs.dankchat.data.api.helix.dto.UserFollowsDto
 import com.flxrs.dankchat.data.repo.IgnoresRepository
+import com.flxrs.dankchat.data.repo.chat.ChatRepository
 import com.flxrs.dankchat.data.repo.data.DataRepository
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.DateTimeUtils.asParsedZonedDateTime
+import com.flxrs.dankchat.utils.extensions.firstValueOrNull
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,6 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class UserPopupViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val chatRepository: ChatRepository,
     private val dataRepository: DataRepository,
     private val ignoresRepository: IgnoresRepository,
     private val preferenceStore: DankChatPreferenceStore,
@@ -84,17 +88,24 @@ class UserPopupViewModel @Inject constructor(
 
         val targetUserId = args.targetUserId
         val result = runCatching {
-            val channelId = args.channel?.let { dataRepository.getUserIdByName(it) }
-            val channelUserFollows = channelId?.let { dataRepository.getUserFollows(targetUserId, channelId) }
-            val user = dataRepository.getUser(targetUserId)
-            val currentUserFollows = dataRepository.getUserFollows(currentUserId, targetUserId)
+            val channelId = args.channel?.let {
+                chatRepository.getRoomState(it).firstValueOrNull?.channelId ?: dataRepository.getUserIdByName(it)
+            }
             val isBlocked = ignoresRepository.isUserBlocked(targetUserId)
+            val canLoadFollows = channelId != targetUserId && (currentUserId == channelId || chatRepository.isModeratorInChannel(args.channel))
+
+            val channelUserFollows = async {
+                channelId?.takeIf { canLoadFollows }?.let { dataRepository.getChannelFollowers(channelId, targetUserId) }
+            }
+            val user = async {
+                dataRepository.getUser(targetUserId)
+            }
 
             mapToState(
-                user = user,
-                channelUserFollows = channelUserFollows,
-                currentUserFollows = currentUserFollows,
-                isBlocked = isBlocked
+                user = user.await(),
+                showFollowing = canLoadFollows,
+                channelUserFollows = channelUserFollows.await(),
+                isBlocked = isBlocked,
             )
         }
 
@@ -102,7 +113,7 @@ class UserPopupViewModel @Inject constructor(
         _userPopupState.value = state
     }
 
-    private fun mapToState(user: UserDto?, channelUserFollows: UserFollowsDto?, currentUserFollows: UserFollowsDto?, isBlocked: Boolean): UserPopupState {
+    private fun mapToState(user: UserDto?, showFollowing: Boolean, channelUserFollows: UserFollowsDto?, isBlocked: Boolean): UserPopupState {
         user ?: return UserPopupState.Error()
 
         return UserPopupState.Success(
@@ -111,7 +122,7 @@ class UserPopupViewModel @Inject constructor(
             displayName = user.displayName,
             avatarUrl = user.avatarUrl,
             created = user.createdAt.asParsedZonedDateTime(),
-            isFollowing = currentUserFollows?.total == 1,
+            showFollowingSince = showFollowing,
             followingSince = channelUserFollows?.data?.firstOrNull()?.followedAt?.asParsedZonedDateTime(),
             isBlocked = isBlocked
         )

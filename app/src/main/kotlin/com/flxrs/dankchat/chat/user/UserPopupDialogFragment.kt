@@ -126,6 +126,7 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
         userBlock.isEnabled = true
         userName.text = userState.userName.formatWithDisplayName(userState.displayName)
         userCreated.text = getString(R.string.user_popup_created, userState.created)
+        userFollowage.isVisible = userState.showFollowingSince
         userFollowage.text = userState.followingSince?.let {
             getString(R.string.user_popup_following_since, it)
         } ?: getString(R.string.user_popup_not_following)

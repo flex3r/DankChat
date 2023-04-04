@@ -61,7 +61,7 @@ class DataRepository @Inject constructor(
     suspend fun getUser(userId: UserId): UserDto? = helixApiClient.getUser(userId).getOrNull()
     suspend fun getUserIdByName(name: UserName): UserId? = helixApiClient.getUserIdByName(name).getOrNull()
     suspend fun getUsersByNames(names: List<UserName>): List<UserDto> = helixApiClient.getUsersByNames(names).getOrNull().orEmpty()
-    suspend fun getUserFollows(fromId: UserId, toId: UserId): UserFollowsDto? = helixApiClient.getUsersFollows(fromId, toId).getOrNull()
+    suspend fun getChannelFollowers(broadcasterId: UserId, targetId: UserId): UserFollowsDto? = helixApiClient.getChannelFollowers(broadcasterId, targetId).getOrNull()
     suspend fun getStreams(channels: List<UserName>): List<StreamDto>? = helixApiClient.getStreams(channels).getOrNull()
 
     suspend fun uploadMedia(file: File): Result<String> = uploadClient.uploadMedia(file).mapCatching {

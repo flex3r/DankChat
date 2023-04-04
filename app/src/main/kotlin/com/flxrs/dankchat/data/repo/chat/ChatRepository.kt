@@ -246,7 +246,7 @@ class ChatRepository @Inject constructor(
     fun getRoomState(channel: UserName): SharedFlow<RoomState> = roomStateFlows.getOrPut(channel) { MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST) }
     fun getUsers(channel: UserName): StateFlow<Set<DisplayName>> = usersFlows.getOrPut(channel) { MutableStateFlow(emptySet()) }
 
-    fun findMessage(channel: UserName, id: String): ChatItem? = messages[channel]?.value?.find { it.message.id == id }
+    fun isModeratorInChannel(channel: UserName?): Boolean = channel != null && channel in userStateFlow.value.moderationChannels
 
     fun clearChatLoadingFailures() = _chatLoadingFailures.update { emptySet() }
 

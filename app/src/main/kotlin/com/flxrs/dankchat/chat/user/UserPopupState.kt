@@ -13,7 +13,7 @@ sealed class UserPopupState {
         val displayName: DisplayName,
         val created: String,
         val avatarUrl: String,
-        val isFollowing: Boolean = false,
+        val showFollowingSince: Boolean = false,
         val followingSince: String? = null,
         val isBlocked: Boolean = false
     ) : UserPopupState()

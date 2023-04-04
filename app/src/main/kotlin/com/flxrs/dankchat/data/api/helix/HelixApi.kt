@@ -41,13 +41,19 @@ class HelixApi(private val ktorClient: HttpClient, private val dankChatPreferenc
         }
     }
 
-    suspend fun getUserById(userId: UserId): HttpResponse? = getUsersByIds(listOf(userId))
-
-    suspend fun getUsersFollows(fromId: UserId, toId: UserId): HttpResponse? = ktorClient.get("users/follows") {
+    suspend fun getChannelFollowers(broadcasterUserId: UserId, targetUserId: UserId? = null, first: Int? = null, after: String? = null): HttpResponse? = ktorClient.get("channels/followers") {
         val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthPrefix ?: return null
         bearerAuth(oAuth)
-        parameter("from_id", fromId)
-        parameter("to_id", toId)
+        parameter("broadcaster_id", broadcasterUserId)
+        if (targetUserId != null) {
+            parameter("user_id", targetUserId)
+        }
+        if (first != null) {
+            parameter("first", first)
+        }
+        if (after != null) {
+            parameter("after", after)
+        }
     }
 
     suspend fun getStreams(channels: List<UserName>): HttpResponse? = ktorClient.get("streams") {

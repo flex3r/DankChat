@@ -61,8 +61,8 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
     suspend fun getUserIdByName(name: UserName): Result<UserId> = getUserByName(name)
         .mapCatching { it.id }
 
-    suspend fun getUsersFollows(fromId: UserId, toId: UserId): Result<UserFollowsDto> = runCatching {
-        helixApi.getUsersFollows(fromId, toId)
+    suspend fun getChannelFollowers(broadcastUserId: UserId, targetUserId: UserId): Result<UserFollowsDto> = runCatching {
+        helixApi.getChannelFollowers(broadcastUserId, targetUserId)
             .throwHelixApiErrorOnFailure()
             .body()
     }
