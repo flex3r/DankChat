@@ -96,7 +96,7 @@ class MainFragment : Fragment() {
     private val onBackPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
             when {
-                inputBottomSheetBehavior?.isVisible == true      -> closeInputSheet()
+                inputBottomSheetBehavior?.isVisible == true      -> inputBottomSheetBehavior?.hide()
                 fullscreenBottomSheetBehavior?.isVisible == true -> fullscreenBottomSheetBehavior?.hide()
                 mainViewModel.isFullscreen                       -> mainViewModel.toggleFullscreen()
             }
@@ -110,7 +110,7 @@ class MainFragment : Fragment() {
         }
 
         override fun onPageScrollStateChanged(state: Int) {
-            closeInputSheet()
+            inputBottomSheetBehavior?.hide()
             binding.input.dismissDropDown()
         }
     }
@@ -253,7 +253,7 @@ class MainFragment : Fragment() {
                     R.id.menu_logout                   -> showLogoutConfirmationDialog()
                     R.id.menu_add                      -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment)
                     R.id.menu_mentions                 -> {
-                        closeInputSheet()
+                        inputBottomSheetBehavior?.hide()
                         val fragment = MentionFragment()
                         childFragmentManager.commit {
                             replace(R.id.full_screen_sheet_fragment, fragment)
@@ -485,7 +485,7 @@ class MainFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        closeInputSheet()
+        closeInputSheetAndSetState()
         changeActionBarVisibility(mainViewModel.isFullscreenFlow.value)
 
         (activity as? MainActivity)?.apply {
@@ -633,7 +633,7 @@ class MainFragment : Fragment() {
         binding.input.setText("")
 
         if (mainViewModel.isReplySheetOpen) {
-            closeInputSheet()
+            inputBottomSheetBehavior?.hide()
         }
 
         return true
@@ -1079,7 +1079,7 @@ class MainFragment : Fragment() {
         setStartIconDrawable(R.drawable.ic_insert_emoticon)
         setStartIconOnClickListener {
             if (mainViewModel.isEmoteSheetOpen) {
-                closeInputSheet()
+                inputBottomSheetBehavior?.hide()
                 return@setStartIconOnClickListener
             }
 
@@ -1096,24 +1096,17 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun closeInputSheet() = inputBottomSheetBehavior?.hide()
+    private fun closeInputSheetAndSetState() {
+        mainViewModel.setInputSheetState(InputSheetState.Closed)
+        inputBottomSheetBehavior?.hide()
+    }
 
     private val inputSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
 
         override fun onStateChanged(bottomSheet: View, newState: Int) {
             val behavior = inputBottomSheetBehavior ?: return
-            if (behavior.isHidden) {
-                mainViewModel.setInputSheetState(InputSheetState.Closed)
-                val existing = childFragmentManager.fragments.filter { it is EmoteMenuFragment || it is ReplyInputSheetFragment }
-                childFragmentManager.commit {
-                    existing.forEach(::remove)
-                }
-                childFragmentManager.executePendingTransactions()
-            }
-
-            binding.streamWebviewWrapper.isVisible = !mainViewModel.isEmoteSheetOpen && mainViewModel.isStreamActive
-            if (!mainViewModel.isFullscreenFlow.value && isLandscape) {
+            if (!mainViewModel.isFullscreenFlow.value && isLandscape && mainViewModel.isEmoteSheetOpen) {
                 when (newState) {
                     BottomSheetBehavior.STATE_EXPANDED, BottomSheetBehavior.STATE_COLLAPSED -> {
                         (activity as? AppCompatActivity)?.supportActionBar?.hide()
@@ -1126,6 +1119,17 @@ class MainFragment : Fragment() {
                     }
                 }
             }
+
+            if (behavior.isHidden) {
+                mainViewModel.setInputSheetState(InputSheetState.Closed)
+                val existing = childFragmentManager.fragments.filter { it is EmoteMenuFragment || it is ReplyInputSheetFragment }
+                childFragmentManager.commit {
+                    existing.forEach(::remove)
+                }
+                childFragmentManager.executePendingTransactions()
+            }
+
+            binding.streamWebviewWrapper.isVisible = !mainViewModel.isEmoteSheetOpen && mainViewModel.isStreamActive
         }
     }
 
