@@ -6,7 +6,7 @@
         android:id="@+id/emote_menu_bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:cardElevation="8dp">
+        app:cardElevation="2dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

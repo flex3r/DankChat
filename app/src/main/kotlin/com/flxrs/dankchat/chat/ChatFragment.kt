@@ -1,7 +1,5 @@
 package com.flxrs.dankchat.chat
 
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.SharedPreferences
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.LayerDrawable
@@ -11,7 +9,6 @@ import android.text.style.ImageSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
@@ -34,9 +31,6 @@ import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.flxrs.dankchat.utils.extensions.forEachLayer
 import com.flxrs.dankchat.utils.extensions.forEachSpan
 import com.flxrs.dankchat.utils.extensions.forEachViewHolder
-import com.flxrs.dankchat.utils.extensions.showShortSnackbar
-import com.flxrs.dankchat.utils.extensions.withTrailingSpace
-import com.flxrs.dankchat.utils.extensions.withoutInvisibleChar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -164,7 +158,6 @@ open class ChatFragment : Fragment() {
         targetUserId: UserId?,
         targetUserName: UserName,
         targetDisplayName: DisplayName,
-        messageId: String,
         channel: UserName?,
         badges: List<Badge>,
         isLongPress: Boolean
@@ -179,7 +172,6 @@ open class ChatFragment : Fragment() {
                 targetUserId = targetUserId,
                 targetUserName = targetUserName,
                 targetDisplayName = targetDisplayName,
-                messageId = messageId,
                 channel = channel,
                 badges = badges,
                 isWhisperPopup = false
@@ -187,23 +179,8 @@ open class ChatFragment : Fragment() {
         }
     }
 
-    private fun onMessageClick(event: MessageClickEvent) {
-        when (event) {
-            is MessageClickEvent.Copy       -> {
-                getSystemService(requireContext(), ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText(CLIPBOARD_MESSAGE_LABEL, event.message))
-                binding.root.showShortSnackbar(getString(R.string.snackbar_message_copied)) {
-                    setAction(R.string.snackbar_paste) {
-                        val preparedMessage = event.message
-                            .withoutInvisibleChar
-                            .withTrailingSpace
-                        (parentFragment as? MainFragment)?.insertText(preparedMessage)
-                    }
-                }
-            }
-
-            is MessageClickEvent.Reply      -> (parentFragment as? MainFragment)?.startReply(event.replyMessageId, event.replyName)
-            is MessageClickEvent.ViewThread -> (parentFragment as? MainFragment)?.openReplies(event.replyMessageId)
-        }
+    protected open fun onMessageClick(messageId: String, replyMessageId: String?, channel: UserName?, name: UserName, message: String, fullMessage: String) {
+        (parentFragment as? MainFragment)?.openMessageSheet(messageId, replyMessageId, channel, name, message, fullMessage, canReply = true, canModerate = true)
     }
 
     private fun onReplyClick(rootMessageId: String) {
@@ -251,7 +228,6 @@ open class ChatFragment : Fragment() {
 
     companion object {
         private const val AT_BOTTOM_STATE = "chat_at_bottom_state"
-        private const val CLIPBOARD_MESSAGE_LABEL = "dankchat_message"
         private const val MAX_MESSAGES_REDRAW_AMOUNT = 50
         private const val MESSAGES_REDRAW_DELAY_MS = 100L
         private const val OFFSCREEN_VIEW_CACHE_SIZE = 10

@@ -29,6 +29,8 @@ class RepliesRepository @Inject constructor(private val dankChatPreferenceStore:
         listOf(root) + replies
     } ?: flowOf(emptyList())
 
+    fun hasMessageThread(rootMessageId: String) = threads.containsKey(rootMessageId)
+
     fun cleanupMessageThread(message: Message) {
         if (message !is PrivMessage) {
             return

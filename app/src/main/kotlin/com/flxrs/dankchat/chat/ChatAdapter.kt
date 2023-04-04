@@ -19,7 +19,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
-import androidx.appcompat.widget.PopupMenu
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -54,8 +53,8 @@ class ChatAdapter(
     private val emoteRepository: EmoteRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
     private val onListChanged: (position: Int) -> Unit,
-    private val onUserClick: (targetUserId: UserId?, targetUsername: UserName, targetDisplayName: DisplayName, messageId: String, channelName: UserName?, badges: List<Badge>, isLongPress: Boolean) -> Unit,
-    private val onMessageLongClick: (MessageClickEvent) -> Unit,
+    private val onUserClick: (targetUserId: UserId?, targetUsername: UserName, targetDisplayName: DisplayName, channelName: UserName?, badges: List<Badge>, isLongPress: Boolean) -> Unit,
+    private val onMessageLongClick: (messageId: String, replyMessageId: String?, channel: UserName?, name: UserName, message: String, fullMessage: String) -> Unit,
     private val onReplyClick: (messageId: String) -> Unit,
 ) : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
     // Using position.isEven for determining which background to use in checkered mode doesn't work,
@@ -334,7 +333,7 @@ class ChatAdapter(
         val nameGroupLength = senderAliasOrFormattedName.length + 4 + recipientAliasOrFormattedName.length + 2
         val prefixLength = spannable.length + nameGroupLength
         val badgePositions = allowedBadges.map {
-            spannable.append("  ")
+            spannable.append("⠀ ")
             spannable.length - 2 to spannable.length - 1
         }
 
@@ -348,8 +347,8 @@ class ChatAdapter(
         spannable.append(message)
 
         val userClickableSpan = object : LongClickableSpan() {
-            override fun onClick(v: View) = onUserClick(userId, name, displayName, id, null, badges, false)
-            override fun onLongClick(view: View) = onUserClick(userId, name, displayName, id, null, badges, true)
+            override fun onClick(v: View) = onUserClick(userId, name, displayName, null, badges, false)
+            override fun onLongClick(view: View) = onUserClick(userId, name, displayName, null, badges, true)
             override fun updateDrawState(ds: TextPaint) {
                 ds.isUnderlineText = false
                 ds.color = senderColor
@@ -367,29 +366,16 @@ class ChatAdapter(
             else                             -> spannable
         } as SpannableStringBuilder
 
-        fun showWhisperMessagePopup(view: View) {
-            PopupMenu(view.context, view).apply {
-                inflate(R.menu.message)
-                menu.removeItem(R.id.message_reply)
-                menu.removeItem(R.id.message_view_thread)
-                setOnMenuItemClickListener {
-                    val event = when (it.itemId) {
-                        R.id.message_copy      -> MessageClickEvent.Copy(originalMessage)
-                        R.id.message_copy_full -> MessageClickEvent.Copy(spannableWithEmojis.toString().replace("\\s+".toRegex(), " "))
-                        else                   -> return@setOnMenuItemClickListener false
-                    }
-                    onMessageLongClick(event)
-                    true
-                }
-            }.show()
+        val onWhisperMessageClick = {
+            onMessageLongClick(id, null, null, name, originalMessage, spannableWithEmojis.toString().replace("⠀ ", ""))
         }
 
-        addLinks(spannableWithEmojis, ::showWhisperMessagePopup)
+        addLinks(spannableWithEmojis, onWhisperMessageClick)
 
         // copying message
         val messageClickableSpan = object : LongClickableSpan() {
             override fun onClick(v: View) = Unit
-            override fun onLongClick(view: View) = showWhisperMessagePopup(view)
+            override fun onLongClick(view: View) = onWhisperMessageClick()
             override fun updateDrawState(ds: TextPaint) {
                 ds.isUnderlineText = false
             }
@@ -545,8 +531,8 @@ class ChatAdapter(
         // clicking usernames
         if (aliasOrFormattedName.isNotBlank()) {
             val userClickableSpan = object : LongClickableSpan() {
-                override fun onClick(v: View) = onUserClick(userId, name, displayName, id, channel, badges, false)
-                override fun onLongClick(view: View) = onUserClick(userId, name, displayName, id, channel, badges, true)
+                override fun onClick(v: View) = onUserClick(userId, name, displayName, channel, badges, false)
+                override fun onLongClick(view: View) = onUserClick(userId, name, displayName, channel, badges, true)
                 override fun updateDrawState(ds: TextPaint) {
                     ds.isUnderlineText = false
                     ds.color = nameColor
@@ -565,32 +551,22 @@ class ChatAdapter(
             else                             -> messageBuilder
         } as SpannableStringBuilder
 
-        fun showMessagePopup(view: View) {
-            PopupMenu(view.context, view).apply {
-                inflate(R.menu.message)
-                if (thread == null) {
-                    menu.removeItem(R.id.message_view_thread)
-                }
-                setOnMenuItemClickListener {
-                    val event = when (it.itemId) {
-                        R.id.message_copy        -> MessageClickEvent.Copy(originalMessage)
-                        R.id.message_copy_full   -> MessageClickEvent.Copy(spannableWithEmojis.toString().replace("⠀ ".toRegex(), ""))
-                        R.id.message_reply       -> MessageClickEvent.Reply(replyMessageId = thread?.id ?: id, replyName = name)
-                        R.id.message_view_thread -> MessageClickEvent.ViewThread(replyMessageId = thread?.id ?: id)
-                        else                     -> return@setOnMenuItemClickListener false
-                    }
-                    onMessageLongClick(event)
-                    true
-                }
-            }.show()
+        val onMessageClick = {
+            onMessageLongClick(id, thread?.id, channel, name, originalMessage, spannableWithEmojis.toString().replace("⠀ ", ""))
         }
 
-        addLinks(spannableWithEmojis, ::showMessagePopup)
+        addLinks(spannableWithEmojis, onMessageClick)
+        if (thread != null) {
+            holder.binding.itemReply.setOnLongClickListener {
+                onMessageClick()
+                true
+            }
+        }
 
         // copying message
         val messageClickableSpan = object : LongClickableSpan() {
             override fun onClick(v: View) = Unit
-            override fun onLongClick(view: View) = showMessagePopup(view)
+            override fun onLongClick(view: View) = onMessageClick()
             override fun updateDrawState(ds: TextPaint) {
                 ds.isUnderlineText = false
             }
@@ -778,7 +754,7 @@ class ChatAdapter(
         }
     }
 
-    private fun TextView.addLinks(spannableWithEmojis: SpannableStringBuilder, onLongClick: (View) -> Unit) {
+    private fun TextView.addLinks(spannableWithEmojis: SpannableStringBuilder, onLongClick: () -> Unit) {
         LinkifyCompat.addLinks(spannableWithEmojis, Linkify.WEB_URLS)
         spannableWithEmojis.getSpans<URLSpan>().forEach { urlSpan ->
             val start = spannableWithEmojis.getSpanStart(urlSpan)
@@ -800,7 +776,7 @@ class ChatAdapter(
             }
 
             val clickableSpan = object : LongClickableSpan() {
-                override fun onLongClick(view: View) = onLongClick(view)
+                override fun onLongClick(view: View) = onLongClick()
                 override fun onClick(v: View) {
                     try {
                         customTabsIntent.launchUrl(context, fixedUrl.toUri())

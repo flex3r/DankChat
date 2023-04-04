@@ -45,7 +45,6 @@ class MentionChatFragment : ChatFragment() {
         targetUserId: UserId?,
         targetUserName: UserName,
         targetDisplayName: DisplayName,
-        messageId: String,
         channel: UserName?,
         badges: List<Badge>,
         isLongPress: Boolean
@@ -60,12 +59,15 @@ class MentionChatFragment : ChatFragment() {
                 targetUserId = targetUserId,
                 targetUserName = targetUserName,
                 targetDisplayName = targetDisplayName,
-                messageId = messageId,
                 channel = null,
                 badges = badges,
                 isWhisperPopup = true
             )
         }
+    }
+
+    override fun onMessageClick(messageId: String, replyMessageId: String?, channel: UserName?, name: UserName, message: String, fullMessage: String) {
+        (parentFragment?.parentFragment as? MainFragment)?.openMessageSheet(messageId, replyMessageId, channel, name, message, fullMessage, canReply = false, canModerate = false)
     }
 
     companion object {

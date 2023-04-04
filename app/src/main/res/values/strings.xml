@@ -36,6 +36,7 @@
     <string name="external_upload_disclaimer">External hosting provided by %1$s, use at your own risk.</string>
     <string name="nuuls_upload_title">Custom media upload</string>
     <string name="snackbar_message_copied">Message copied</string>
+    <string name="snackbar_message_id_copied">Message id copied</string>
     <string name="snackbar_error_copied">Error information copied</string>
     <string name="notification_stop">Stop</string>
     <string name="notification_title">FeelsDankMan</string>
@@ -373,6 +374,7 @@
     <string name="message_copy_full">Copy full message</string>
     <string name="message_reply">Reply to message</string>
     <string name="message_view_thread">View thread</string>
+    <string name="message_copy_id">Copy message id</string>
     <string name="reply_header">Replying to @%1$s</string>
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>

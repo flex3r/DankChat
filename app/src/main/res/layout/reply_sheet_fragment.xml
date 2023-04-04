@@ -7,7 +7,7 @@
         android:id="@+id/emote_menu_bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:cardElevation="8dp">
+        app:cardElevation="2dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -17,7 +17,7 @@
                 android:id="@+id/bottom_sheet_indicator"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="12dp"
+                android:minHeight="24dp"
                 android:paddingBottom="0dp"
                 app:layout_constraintBottom_toTopOf="@id/reply_header"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -33,6 +33,9 @@
         <action
             android:id="@+id/action_mainFragment_to_userPopupDialogFragment"
             app:destination="@id/userPopupDialogFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_messageSheetFragment"
+            app:destination="@id/messageSheetFragment" />
     </fragment>
     <fragment
         android:id="@+id/chatFragment"
@@ -157,9 +160,6 @@
             android:name="targetUserName"
             app:argType="com.flxrs.dankchat.data.UserName" />
         <argument
-            android:name="messageId"
-            app:argType="string" />
-        <argument
             android:name="channel"
             app:argType="com.flxrs.dankchat.data.UserName"
             app:nullable="true" />
@@ -192,4 +192,35 @@
             android:name="replyUser"
             app:argType="com.flxrs.dankchat.data.UserName" />
     </fragment>
+    <dialog
+        android:id="@+id/messageSheetFragment"
+        android:name="com.flxrs.dankchat.chat.message.MessageSheetFragment"
+        android:label="MessageSheetFragment" >
+        <argument
+            android:name="messageId"
+            app:argType="string" />
+        <argument
+            android:name="replyMessageId"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="channel"
+            app:argType="com.flxrs.dankchat.data.UserName"
+            app:nullable="true" />
+        <argument
+            android:name="name"
+            app:argType="com.flxrs.dankchat.data.UserName" />
+        <argument
+            android:name="message"
+            app:argType="string" />
+        <argument
+            android:name="fullMessage"
+            app:argType="string" />
+        <argument
+            android:name="canReply"
+            app:argType="boolean" />
+        <argument
+            android:name="canModerate"
+            app:argType="boolean" />
+    </dialog>
 </navigation>

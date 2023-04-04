@@ -19,6 +19,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -48,6 +49,7 @@ import com.flxrs.dankchat.chat.FullScreenSheetState
 import com.flxrs.dankchat.chat.InputSheetState
 import com.flxrs.dankchat.chat.mention.MentionFragment
 import com.flxrs.dankchat.chat.menu.EmoteMenuFragment
+import com.flxrs.dankchat.chat.message.MessageSheetResult
 import com.flxrs.dankchat.chat.replies.RepliesFragment
 import com.flxrs.dankchat.chat.replies.ReplyInputSheetFragment
 import com.flxrs.dankchat.chat.suggestion.SpaceTokenizer
@@ -404,12 +406,13 @@ class MainFragment : Fragment() {
             if (event != Lifecycle.Event.ON_RESUME) return@LifecycleEventObserver
             handle.keys().forEach { key ->
                 when (key) {
-                    LOGIN_REQUEST_KEY       -> handle.withData(key, ::handleLoginRequest)
-                    ADD_CHANNEL_REQUEST_KEY -> handle.withData(key, ::addChannel)
-                    HISTORY_DISCLAIMER_KEY  -> handle.withData(key, ::handleMessageHistoryDisclaimerResult)
-                    USER_POPUP_RESULT_KEY   -> handle.withData(key, ::handleUserPopupResult)
-                    LOGOUT_REQUEST_KEY      -> handle.withData<Boolean>(key) { showLogoutConfirmationDialog() }
-                    CHANNELS_REQUEST_KEY    -> handle.withData<Array<ChannelWithRename>>(key) { updateChannels(it.toList()) }
+                    LOGIN_REQUEST_KEY        -> handle.withData(key, ::handleLoginRequest)
+                    ADD_CHANNEL_REQUEST_KEY  -> handle.withData(key, ::addChannel)
+                    HISTORY_DISCLAIMER_KEY   -> handle.withData(key, ::handleMessageHistoryDisclaimerResult)
+                    USER_POPUP_RESULT_KEY    -> handle.withData(key, ::handleUserPopupResult)
+                    MESSAGE_SHEET_RESULT_KEY -> handle.withData(key, ::handleMessageSheetResult)
+                    LOGOUT_REQUEST_KEY       -> handle.withData<Boolean>(key) { showLogoutConfirmationDialog() }
+                    CHANNELS_REQUEST_KEY     -> handle.withData<Array<ChannelWithRename>>(key) { updateChannels(it.toList()) }
                 }
             }
         }
@@ -525,7 +528,6 @@ class MainFragment : Fragment() {
         targetUserId: UserId,
         targetUserName: UserName,
         targetDisplayName: DisplayName,
-        messageId: String,
         channel: UserName?,
         badges: List<Badge>,
         isWhisperPopup: Boolean = false
@@ -534,11 +536,24 @@ class MainFragment : Fragment() {
             targetUserId = targetUserId,
             targetUserName = targetUserName,
             targetDisplayName = targetDisplayName,
-            messageId = messageId,
             channel = channel,
             isWhisperPopup = isWhisperPopup,
             badges = badges.toTypedArray(),
         )
+        navigateSafe(directions)
+    }
+
+    fun openMessageSheet(
+        messageId: String,
+        replyMessageId: String?,
+        channel: UserName?,
+        name: UserName,
+        message: String,
+        fullMessage: String,
+        canReply: Boolean,
+        canModerate: Boolean,
+    ) {
+        val directions = MainFragmentDirections.actionMainFragmentToMessageSheetFragment(messageId, replyMessageId, channel, name, message, fullMessage, canReply, canModerate)
         navigateSafe(directions)
     }
 
@@ -567,7 +582,32 @@ class MainFragment : Fragment() {
         fullscreenBottomSheetBehavior?.expand()
     }
 
-    fun startReply(replyMessageId: String, replyName: UserName) {
+    fun insertEmote(emote: GenericEmote) {
+        insertText("${emote.code} ")
+        mainViewModel.addEmoteUsage(emote)
+    }
+
+    private fun handleMessageSheetResult(result: MessageSheetResult) = when (result) {
+        is MessageSheetResult.Copy       -> copyAndShowSnackBar(result.message, R.string.snackbar_message_copied)
+        is MessageSheetResult.CopyId     -> copyAndShowSnackBar(result.id, R.string.snackbar_message_id_copied)
+        is MessageSheetResult.Reply      -> startReply(result.replyMessageId, result.replyName)
+        is MessageSheetResult.ViewThread -> openReplies(result.replyMessageId)
+    }
+
+    private fun copyAndShowSnackBar(value: String, @StringRes snackBarLabel: Int) {
+        getSystemService(requireContext(), ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText(CLIPBOARD_LABEL_MESSAGE, value))
+        showSnackBar(
+            message = getString(snackBarLabel),
+            action = getString(R.string.snackbar_paste) to {
+                val preparedMessage = value
+                    .withoutInvisibleChar
+                    .withTrailingSpace
+                insertText(preparedMessage)
+            }
+        )
+    }
+
+    private fun startReply(replyMessageId: String, replyName: UserName) {
         val fragment = ReplyInputSheetFragment.newInstance(replyMessageId, replyName)
         childFragmentManager.commit {
             replace(R.id.input_sheet_fragment, fragment)
@@ -576,7 +616,7 @@ class MainFragment : Fragment() {
         inputBottomSheetBehavior?.expand()
     }
 
-    fun insertText(text: String) {
+    private fun insertText(text: String) {
         if (!binding.input.isEnabled) return
 
         val current = binding.input.text.toString()
@@ -585,11 +625,6 @@ class MainFragment : Fragment() {
 
         binding.input.setText(builder.toString())
         binding.input.setSelection(index + text.length)
-    }
-
-    fun insertEmote(emote: GenericEmote) {
-        insertText("${emote.code} ")
-        mainViewModel.addEmoteUsage(emote)
     }
 
     private fun openLogin() {
@@ -605,7 +640,7 @@ class MainFragment : Fragment() {
     }
 
     private fun handleUserPopupResult(result: UserPopupResult) = when (result) {
-        is UserPopupResult.Error   -> binding.root.showShortSnackbar(getString(R.string.user_popup_error, result.throwable?.message.orEmpty()))
+        is UserPopupResult.Error   -> showSnackBar(getString(R.string.user_popup_error, result.throwable?.message.orEmpty()))
         is UserPopupResult.Mention -> mentionUser(result.targetUser, result.targetDisplayName)
         is UserPopupResult.Whisper -> whisperUser(result.targetUser)
     }
@@ -1211,6 +1246,7 @@ class MainFragment : Fragment() {
         private const val MAX_GUIDELINE_PERCENT = 0.8f
         private const val MIN_GUIDELINE_PERCENT = 0.2f
         private const val CLIPBOARD_LABEL = "dankchat_media_url"
+        private const val CLIPBOARD_LABEL_MESSAGE = "dankchat_message"
         private const val TAB_SCROLL_DELAY_MS = 1000 / 60 * 10L
         private const val OFFSCREEN_PAGE_LIMIT = 2
 
@@ -1220,5 +1256,6 @@ class MainFragment : Fragment() {
         const val ADD_CHANNEL_REQUEST_KEY = "add_channel_key"
         const val HISTORY_DISCLAIMER_KEY = "history_disclaimer_key"
         const val USER_POPUP_RESULT_KEY = "user_popup_key"
+        const val MESSAGE_SHEET_RESULT_KEY = "message_sheet_key"
     }
 }
