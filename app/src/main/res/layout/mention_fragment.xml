@@ -16,6 +16,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+                android:id="@+id/bottom_sheet_indicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-4dp"
+                android:layout_marginBottom="-32dp"/>
+
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/mentions_toolbar"
                 android:layout_width="match_parent"

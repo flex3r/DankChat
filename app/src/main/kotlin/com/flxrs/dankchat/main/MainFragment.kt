@@ -164,7 +164,7 @@ class MainFragment : Fragment() {
             chatViewpager.setup()
             input.setup(this)
 
-            chatBottomSheetBehavior = BottomSheetBehavior.from(chatSheetFragment).apply { setupChatSheet() }
+            chatBottomSheetBehavior = BottomSheetBehavior.from(fullScreenSheetFragment).apply { setupFullScreenSheet() }
 
             tabLayoutMediator = TabLayoutMediator(tabs, chatViewpager) { tab, position ->
                 tab.text = tabAdapter.getFormattedChannel(position)
@@ -255,7 +255,7 @@ class MainFragment : Fragment() {
                         closeEmoteMenu()
                         val fragment = MentionFragment()
                         childFragmentManager.commit {
-                            replace(R.id.chat_sheet_fragment, fragment)
+                            replace(R.id.full_screen_sheet_fragment, fragment)
                         }
                         childFragmentManager.executePendingTransactions()
                         chatBottomSheetBehavior?.expand()
@@ -560,7 +560,7 @@ class MainFragment : Fragment() {
     fun openReplies(rootMessageId: String, channel: UserName? = null) {
         val fragment = RepliesFragment.newInstance(rootMessageId, channel)
         childFragmentManager.commit {
-            replace(R.id.chat_sheet_fragment, fragment)
+            replace(R.id.full_screen_sheet_fragment, fragment)
         }
         childFragmentManager.executePendingTransactions()
         chatBottomSheetBehavior?.expand()
@@ -1014,15 +1014,20 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun BottomSheetBehavior<FragmentContainerView>.setupChatSheet() {
+    private fun BottomSheetBehavior<FragmentContainerView>.setupFullScreenSheet() {
         hide()
         addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (chatBottomSheetBehavior?.isHidden == true) {
-                    mainViewModel.setChatSheetState(ChatSheetState.Closed)
-                    val channel = tabAdapter[binding.tabs.selectedTabPosition] ?: return
-                    mainViewModel.setSuggestionChannel(channel)
+                val behavior = chatBottomSheetBehavior ?: return
+                when {
+                    behavior.isHidden    -> {
+                        mainViewModel.setChatSheetState(ChatSheetState.Closed)
+                        val channel = tabAdapter[binding.tabs.selectedTabPosition] ?: return
+                        mainViewModel.setSuggestionChannel(channel)
+                    }
+
+                    behavior.isCollapsed -> behavior.hide()
                 }
             }
         })
@@ -1153,7 +1158,7 @@ class MainFragment : Fragment() {
             mainViewModel.setShowChips(!hasFocus)
 
             if (isPortrait) {
-                val mentionsView = childFragmentManager.findFragmentById(R.id.chat_sheet_fragment)?.view
+                val mentionsView = childFragmentManager.findFragmentById(R.id.full_screen_sheet_fragment)?.view
                 binding.emoteSheetFragment
                     .takeIf { !mainViewModel.isEmoteSheetOpen }
                     ?.isInvisible = true
