@@ -8,6 +8,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.chat.InputSheetState
 import com.flxrs.dankchat.databinding.EmoteMenuFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.main.MainViewModel
@@ -39,12 +40,8 @@ class EmoteMenuFragment : Fragment() {
         }
 
         collectFlow(mainViewModel.emoteTabItems, adapter::submitList)
+        mainViewModel.setInputSheetState(InputSheetState.Emotes)
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        (parentFragment as? MainFragment)?.showEmoteMenu()
     }
 
     override fun onDestroyView() {

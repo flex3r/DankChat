@@ -155,8 +155,8 @@
                 app:behavior_skipCollapsed="true"
                 app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
 
-            <FrameLayout
-                android:id="@+id/emote_sheet_fragment"
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/input_sheet_fragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:behavior_hideable="true"
