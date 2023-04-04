@@ -43,12 +43,13 @@ import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.ValidationResult
-import com.flxrs.dankchat.chat.FullScreenSheetState
 import com.flxrs.dankchat.chat.ChatTabAdapter
+import com.flxrs.dankchat.chat.FullScreenSheetState
 import com.flxrs.dankchat.chat.InputSheetState
 import com.flxrs.dankchat.chat.mention.MentionFragment
 import com.flxrs.dankchat.chat.menu.EmoteMenuFragment
 import com.flxrs.dankchat.chat.replies.RepliesFragment
+import com.flxrs.dankchat.chat.replies.ReplyInputSheetFragment
 import com.flxrs.dankchat.chat.suggestion.SpaceTokenizer
 import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.chat.suggestion.SuggestionsArrayAdapter
@@ -95,7 +96,7 @@ class MainFragment : Fragment() {
     private val onBackPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
             when {
-                mainViewModel.isEmoteSheetOpen                   -> closeEmoteMenu()
+                inputBottomSheetBehavior?.isVisible == true      -> closeInputSheet()
                 fullscreenBottomSheetBehavior?.isVisible == true -> fullscreenBottomSheetBehavior?.hide()
                 mainViewModel.isFullscreen                       -> mainViewModel.toggleFullscreen()
             }
@@ -109,7 +110,7 @@ class MainFragment : Fragment() {
         }
 
         override fun onPageScrollStateChanged(state: Int) {
-            closeEmoteMenu()
+            closeInputSheet()
             binding.input.dismissDropDown()
         }
     }
@@ -252,7 +253,7 @@ class MainFragment : Fragment() {
                     R.id.menu_logout                   -> showLogoutConfirmationDialog()
                     R.id.menu_add                      -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment)
                     R.id.menu_mentions                 -> {
-                        closeEmoteMenu()
+                        closeInputSheet()
                         val fragment = MentionFragment()
                         childFragmentManager.commit {
                             replace(R.id.full_screen_sheet_fragment, fragment)
@@ -484,7 +485,7 @@ class MainFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        closeEmoteMenu()
+        closeInputSheet()
         changeActionBarVisibility(mainViewModel.isFullscreenFlow.value)
 
         (activity as? MainActivity)?.apply {
@@ -557,13 +558,22 @@ class MainFragment : Fragment() {
         binding.input.setSelection(text.length)
     }
 
-    fun openReplies(rootMessageId: String, channel: UserName? = null) {
-        val fragment = RepliesFragment.newInstance(rootMessageId, channel)
+    fun openReplies(replyMessageId: String) {
+        val fragment = RepliesFragment.newInstance(replyMessageId)
         childFragmentManager.commit {
             replace(R.id.full_screen_sheet_fragment, fragment)
         }
         childFragmentManager.executePendingTransactions()
         fullscreenBottomSheetBehavior?.expand()
+    }
+
+    fun startReply(replyMessageId: String, replyName: UserName) {
+        val fragment = ReplyInputSheetFragment.newInstance(replyMessageId, replyName)
+        childFragmentManager.commit {
+            replace(R.id.input_sheet_fragment, fragment)
+        }
+        childFragmentManager.executePendingTransactions()
+        inputBottomSheetBehavior?.expand()
     }
 
     fun insertText(text: String) {
@@ -621,6 +631,10 @@ class MainFragment : Fragment() {
         val msg = binding.input.text?.toString().orEmpty()
         mainViewModel.trySendMessageOrCommand(msg)
         binding.input.setText("")
+
+        if (mainViewModel.isReplySheetOpen) {
+            closeInputSheet()
+        }
 
         return true
     }
@@ -1065,7 +1079,7 @@ class MainFragment : Fragment() {
         setStartIconDrawable(R.drawable.ic_insert_emoticon)
         setStartIconOnClickListener {
             if (mainViewModel.isEmoteSheetOpen) {
-                closeEmoteMenu()
+                closeInputSheet()
                 return@setStartIconOnClickListener
             }
 
@@ -1082,14 +1096,7 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun closeEmoteMenu() {
-        val behavior = inputBottomSheetBehavior ?: return
-        if (!mainViewModel.isEmoteSheetOpen) {
-            return
-        }
-
-        behavior.hide()
-    }
+    private fun closeInputSheet() = inputBottomSheetBehavior?.hide()
 
     private val inputSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
@@ -1098,9 +1105,9 @@ class MainFragment : Fragment() {
             val behavior = inputBottomSheetBehavior ?: return
             if (behavior.isHidden) {
                 mainViewModel.setInputSheetState(InputSheetState.Closed)
-                val existing = childFragmentManager.fragments.find { it is EmoteMenuFragment } ?: return
+                val existing = childFragmentManager.fragments.filter { it is EmoteMenuFragment || it is ReplyInputSheetFragment }
                 childFragmentManager.commit {
-                    remove(existing)
+                    existing.forEach(::remove)
                 }
                 childFragmentManager.executePendingTransactions()
             }

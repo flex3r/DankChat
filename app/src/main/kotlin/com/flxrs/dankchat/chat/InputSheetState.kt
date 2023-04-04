@@ -4,5 +4,7 @@ sealed interface InputSheetState {
     object Closed : InputSheetState
     object Emotes : InputSheetState
     data class Replying(val replyMessageId: String) : InputSheetState
+
     val isOpen: Boolean get() = this != Closed
+    val replyIdOrNull: String? get() = (this as? Replying)?.replyMessageId
 }

@@ -24,7 +24,7 @@
             app:layout_constraintBottom_toBottomOf="@id/item_reply"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/item_reply"
-            app:srcCompat="@drawable/ic_reply" />
+            app:srcCompat="@drawable/ic_reply_small" />
 
         <TextView
             android:id="@+id/item_reply"
