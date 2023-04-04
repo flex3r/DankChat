@@ -5,7 +5,8 @@ import android.webkit.CookieManager
 import android.webkit.WebStorage
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flxrs.dankchat.chat.ChatSheetState
+import com.flxrs.dankchat.chat.FullScreenSheetState
+import com.flxrs.dankchat.chat.InputSheetState
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.chat.menu.EmoteMenuTabItem
 import com.flxrs.dankchat.chat.suggestion.Suggestion
@@ -106,8 +107,8 @@ class MainViewModel @Inject constructor(
     private val roomStateEnabled = MutableStateFlow(true)
     private val streamData = MutableStateFlow<List<StreamData>>(emptyList())
     private val currentSuggestionChannel = MutableStateFlow<UserName?>(null)
-    private val emoteSheetOpen = MutableStateFlow(false)
-    private val chatSheetState = MutableStateFlow<ChatSheetState>(ChatSheetState.Closed)
+    private val inputSheetState = MutableStateFlow<InputSheetState>(InputSheetState.Closed)
+    private val fullScreenSheetState = MutableStateFlow<FullScreenSheetState>(FullScreenSheetState.Closed)
     private val _currentStreamedChannel = MutableStateFlow<UserName?>(null)
     private val _isFullscreen = MutableStateFlow(false)
     private val shouldShowChips = MutableStateFlow(true)
@@ -155,7 +156,7 @@ class MainViewModel @Inject constructor(
     }.map { triggers -> triggers.map { Suggestion.CommandSuggestion(it) } }
 
     private val currentBottomText: Flow<String> =
-        combine(roomStateText, currentStreamInformation, chatSheetState) { roomState, streamInfo, chatSheetState ->
+        combine(roomStateText, currentStreamInformation, fullScreenSheetState) { roomState, streamInfo, chatSheetState ->
             listOfNotNull(roomState, streamInfo)
                 .takeUnless { chatSheetState.isOpen }
                 ?.joinToString(separator = " - ")
@@ -166,7 +167,7 @@ class MainViewModel @Inject constructor(
         combine(
             roomStateEnabled,
             streamInfoEnabled,
-            chatSheetState,
+            fullScreenSheetState,
             currentBottomText
         ) { roomStateEnabled, streamInfoEnabled, chatSheetState, bottomText ->
             (roomStateEnabled || streamInfoEnabled) && !chatSheetState.isOpen && bottomText.isNotBlank()
@@ -249,11 +250,11 @@ class MainViewModel @Inject constructor(
         isUploading || isDataLoading
     }.stateIn(viewModelScope, started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
-    val inputState: StateFlow<InputState> = combine(connectionState, chatSheetState) { connectionState, chatSheetState ->
+    val inputState: StateFlow<InputState> = combine(connectionState, fullScreenSheetState) { connectionState, chatSheetState ->
         when (connectionState) {
             ConnectionState.CONNECTED               -> when (chatSheetState) {
-                is ChatSheetState.Replies -> InputState.Replying
-                else                      -> InputState.Default
+                is FullScreenSheetState.Replies -> InputState.Replying
+                else                            -> InputState.Default
             }
 
             ConnectionState.CONNECTED_NOT_LOGGED_IN -> InputState.NotLoggedIn
@@ -261,9 +262,9 @@ class MainViewModel @Inject constructor(
         }
     }.stateIn(viewModelScope, started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), InputState.Disconnected)
 
-    val canType: StateFlow<Boolean> = combine(connectionState, chatSheetState) { connectionState, chatSheetState ->
+    val canType: StateFlow<Boolean> = combine(connectionState, fullScreenSheetState) { connectionState, chatSheetState ->
         val canTypeInConnectionState = connectionState == ConnectionState.CONNECTED || !dankChatPreferenceStore.autoDisableInput
-        (chatSheetState != ChatSheetState.Mention && canTypeInConnectionState)
+        (chatSheetState != FullScreenSheetState.Mention && canTypeInConnectionState)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
     data class BottomTextState(val enabled: Boolean = true, val text: String = "")
@@ -283,8 +284,8 @@ class MainViewModel @Inject constructor(
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
     val shouldShowEmoteMenuIcon: StateFlow<Boolean> =
-        combine(canType, chatSheetState) { canType, chatSheetState ->
-            canType && !chatSheetState.isMentionTab
+        combine(canType, fullScreenSheetState) { canType, chatSheetState ->
+            canType && !chatSheetState.isMentionSheet
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
     val suggestions: StateFlow<Triple<List<Suggestion.UserSuggestion>, List<Suggestion.EmoteSuggestion>, List<Suggestion.CommandSuggestion>>> = combine(
@@ -354,8 +355,8 @@ class MainViewModel @Inject constructor(
             canShowChips && channel != null && channel in userState.moderationChannels
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
-    val useCustomBackHandling: StateFlow<Boolean> = combine(isFullscreenFlow, emoteSheetOpen, chatSheetState) { isFullscreen, emoteSheetOpen, chatSheetState ->
-        isFullscreen || emoteSheetOpen || chatSheetState.isOpen
+    val useCustomBackHandling: StateFlow<Boolean> = combine(isFullscreenFlow, inputSheetState, fullScreenSheetState) { isFullscreen, inputSheetState, chatSheetState ->
+        isFullscreen || inputSheetState.isOpen || chatSheetState.isOpen
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
     val currentStreamedChannel: StateFlow<UserName?> = _currentStreamedChannel.asStateFlow()
@@ -365,7 +366,7 @@ class MainViewModel @Inject constructor(
     val isFullscreen: Boolean
         get() = isFullscreenFlow.value
     val isEmoteSheetOpen: Boolean
-        get() = emoteSheetOpen.value
+        get() = inputSheetState.value == InputSheetState.Emotes
 
     val currentRoomState: RoomState?
         get() {
@@ -489,18 +490,18 @@ class MainViewModel @Inject constructor(
         currentSuggestionChannel.value = channel
     }
 
-    fun setChatSheetState(state: ChatSheetState) {
+    fun setFullScreenSheetState(state: FullScreenSheetState) {
         repeatedSend.update { it.copy(enabled = false) }
-        chatSheetState.update { state }
+        fullScreenSheetState.update { state }
         when (state) {
-            ChatSheetState.Whisper -> chatRepository.clearMentionCount(WhisperMessage.WHISPER_CHANNEL)
-            ChatSheetState.Mention -> chatRepository.clearMentionCounts()
-            else                   -> Unit
+            FullScreenSheetState.Whisper -> chatRepository.clearMentionCount(WhisperMessage.WHISPER_CHANNEL)
+            FullScreenSheetState.Mention -> chatRepository.clearMentionCounts()
+            else                         -> Unit
         }
     }
 
-    fun setEmoteSheetOpen(enabled: Boolean) {
-        emoteSheetOpen.update { enabled }
+    fun setInputSheetState(state: InputSheetState) {
+        inputSheetState.update { state }
     }
 
     fun clear(channel: UserName) = chatRepository.clear(channel)
@@ -510,14 +511,14 @@ class MainViewModel @Inject constructor(
     fun joinChannel(channel: UserName): List<UserName> = chatRepository.joinChannel(channel)
     fun trySendMessageOrCommand(message: String, skipSuspendingCommands: Boolean = false) = viewModelScope.launch {
         val channel = currentSuggestionChannel.value ?: return@launch
-        val chatState = chatSheetState.value
+        val chatState = fullScreenSheetState.value
         val commandResult = runCatching {
             when (chatState) {
-                ChatSheetState.Whisper -> commandRepository.checkForWhisperCommand(message, skipSuspendingCommands)
-                else                   -> {
+                FullScreenSheetState.Whisper -> commandRepository.checkForWhisperCommand(message, skipSuspendingCommands)
+                else                         -> {
                     val roomState = currentRoomState ?: return@launch
                     val userState = chatRepository.userStateFlow.value
-                    val shouldSkip = skipSuspendingCommands || chatState is ChatSheetState.Replies
+                    val shouldSkip = skipSuspendingCommands || chatState is FullScreenSheetState.Replies
                     commandRepository.checkForCommands(message, channel, roomState, userState, shouldSkip)
                 }
             }

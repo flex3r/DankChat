@@ -13,7 +13,6 @@ import android.text.util.Linkify
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.webkit.MimeTypeMap
-import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
@@ -44,8 +43,9 @@ import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.ValidationResult
-import com.flxrs.dankchat.chat.ChatSheetState
+import com.flxrs.dankchat.chat.FullScreenSheetState
 import com.flxrs.dankchat.chat.ChatTabAdapter
+import com.flxrs.dankchat.chat.InputSheetState
 import com.flxrs.dankchat.chat.mention.MentionFragment
 import com.flxrs.dankchat.chat.menu.EmoteMenuFragment
 import com.flxrs.dankchat.chat.replies.RepliesFragment
@@ -90,14 +90,14 @@ class MainFragment : Fragment() {
     private var bindingRef: MainFragmentBinding? = null
     private val binding get() = bindingRef!!
 
-    private var emoteMenuBottomSheetBehavior: BottomSheetBehavior<FrameLayout>? = null
-    private var chatBottomSheetBehavior: BottomSheetBehavior<FragmentContainerView>? = null
+    private var inputBottomSheetBehavior: BottomSheetBehavior<FragmentContainerView>? = null
+    private var fullscreenBottomSheetBehavior: BottomSheetBehavior<FragmentContainerView>? = null
     private val onBackPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
             when {
-                mainViewModel.isEmoteSheetOpen             -> closeEmoteMenu()
-                chatBottomSheetBehavior?.isVisible == true -> chatBottomSheetBehavior?.hide()
-                mainViewModel.isFullscreen                 -> mainViewModel.toggleFullscreen()
+                mainViewModel.isEmoteSheetOpen                   -> closeEmoteMenu()
+                fullscreenBottomSheetBehavior?.isVisible == true -> fullscreenBottomSheetBehavior?.hide()
+                mainViewModel.isFullscreen                       -> mainViewModel.toggleFullscreen()
             }
         }
     }
@@ -157,14 +157,14 @@ class MainFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         tabAdapter = ChatTabAdapter(parentFragment = this)
         bindingRef = MainFragmentBinding.inflate(inflater, container, false).apply {
-            emoteMenuBottomSheetBehavior = BottomSheetBehavior.from(emoteSheetFragment).apply {
-                addBottomSheetCallback(emoteMenuCallBack)
+            inputBottomSheetBehavior = BottomSheetBehavior.from(inputSheetFragment).apply {
+                addBottomSheetCallback(inputSheetCallback)
                 skipCollapsed = true
             }
             chatViewpager.setup()
             input.setup(this)
 
-            chatBottomSheetBehavior = BottomSheetBehavior.from(fullScreenSheetFragment).apply { setupFullScreenSheet() }
+            fullscreenBottomSheetBehavior = BottomSheetBehavior.from(fullScreenSheetFragment).apply { setupFullScreenSheet() }
 
             tabLayoutMediator = TabLayoutMediator(tabs, chatViewpager) { tab, position ->
                 tab.text = tabAdapter.getFormattedChannel(position)
@@ -258,7 +258,7 @@ class MainFragment : Fragment() {
                             replace(R.id.full_screen_sheet_fragment, fragment)
                         }
                         childFragmentManager.executePendingTransactions()
-                        chatBottomSheetBehavior?.expand()
+                        fullscreenBottomSheetBehavior?.expand()
                     }
 
                     R.id.menu_open_channel             -> openChannel()
@@ -508,10 +508,10 @@ class MainFragment : Fragment() {
     override fun onDestroyView() {
         binding.tabs.removeOnTabSelectedListener(tabSelectionListener)
         binding.chatViewpager.unregisterOnPageChangeCallback(pageChangeCallback)
-        emoteMenuBottomSheetBehavior?.removeBottomSheetCallback(emoteMenuCallBack)
+        inputBottomSheetBehavior?.removeBottomSheetCallback(inputSheetCallback)
         tabLayoutMediator.detach()
-        emoteMenuBottomSheetBehavior = null
-        chatBottomSheetBehavior = null
+        inputBottomSheetBehavior = null
+        fullscreenBottomSheetBehavior = null
         binding.chatViewpager.adapter = null
         bindingRef = null
         if (::preferences.isInitialized) {
@@ -563,7 +563,7 @@ class MainFragment : Fragment() {
             replace(R.id.full_screen_sheet_fragment, fragment)
         }
         childFragmentManager.executePendingTransactions()
-        chatBottomSheetBehavior?.expand()
+        fullscreenBottomSheetBehavior?.expand()
     }
 
     fun insertText(text: String) {
@@ -581,8 +581,6 @@ class MainFragment : Fragment() {
         insertText("${emote.code} ")
         mainViewModel.addEmoteUsage(emote)
     }
-
-    fun showEmoteMenu() = emoteMenuBottomSheetBehavior?.expand()
 
     private fun openLogin() {
         val directions = MainFragmentDirections.actionMainFragmentToLoginFragment()
@@ -1019,10 +1017,10 @@ class MainFragment : Fragment() {
         addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                val behavior = chatBottomSheetBehavior ?: return
+                val behavior = fullscreenBottomSheetBehavior ?: return
                 when {
                     behavior.isHidden    -> {
-                        mainViewModel.setChatSheetState(ChatSheetState.Closed)
+                        mainViewModel.setFullScreenSheetState(FullScreenSheetState.Closed)
                         val channel = tabAdapter[binding.tabs.selectedTabPosition] ?: return
                         mainViewModel.setSuggestionChannel(channel)
                     }
@@ -1077,32 +1075,37 @@ class MainFragment : Fragment() {
             }
 
             childFragmentManager.commit {
-                replace(R.id.emote_sheet_fragment, EmoteMenuFragment())
+                replace(R.id.input_sheet_fragment, EmoteMenuFragment())
             }
+            childFragmentManager.executePendingTransactions()
+            inputBottomSheetBehavior?.expand()
         }
     }
 
     private fun closeEmoteMenu() {
-        val behavior = emoteMenuBottomSheetBehavior ?: return
+        val behavior = inputBottomSheetBehavior ?: return
         if (!mainViewModel.isEmoteSheetOpen) {
             return
         }
 
-        mainViewModel.setEmoteSheetOpen(false)
         behavior.hide()
-        val existing = childFragmentManager.fragments.find { it is EmoteMenuFragment } ?: return
-        childFragmentManager.commit {
-            remove(existing)
-        }
     }
 
-    private val emoteMenuCallBack = object : BottomSheetBehavior.BottomSheetCallback() {
+    private val inputSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
 
         override fun onStateChanged(bottomSheet: View, newState: Int) {
-            val behavior = emoteMenuBottomSheetBehavior ?: return
-            mainViewModel.setEmoteSheetOpen(behavior.isMoving || behavior.isVisible)
-            binding.streamWebviewWrapper.isVisible = newState == BottomSheetBehavior.STATE_HIDDEN && mainViewModel.isStreamActive
+            val behavior = inputBottomSheetBehavior ?: return
+            if (behavior.isHidden) {
+                mainViewModel.setInputSheetState(InputSheetState.Closed)
+                val existing = childFragmentManager.fragments.find { it is EmoteMenuFragment } ?: return
+                childFragmentManager.commit {
+                    remove(existing)
+                }
+                childFragmentManager.executePendingTransactions()
+            }
+
+            binding.streamWebviewWrapper.isVisible = !mainViewModel.isEmoteSheetOpen && mainViewModel.isStreamActive
             if (!mainViewModel.isFullscreenFlow.value && isLandscape) {
                 when (newState) {
                     BottomSheetBehavior.STATE_EXPANDED, BottomSheetBehavior.STATE_COLLAPSED -> {
@@ -1159,17 +1162,17 @@ class MainFragment : Fragment() {
 
             if (isPortrait) {
                 val mentionsView = childFragmentManager.findFragmentById(R.id.full_screen_sheet_fragment)?.view
-                binding.emoteSheetFragment
+                binding.inputSheetFragment
                     .takeIf { !mainViewModel.isEmoteSheetOpen }
                     ?.isInvisible = true
 
                 mentionsView
-                    .takeIf { chatBottomSheetBehavior?.isVisible == false }
+                    .takeIf { fullscreenBottomSheetBehavior?.isVisible == false }
                     ?.isInvisible = true
 
                 binding.root.post {
                     (activity as? MainActivity)?.setFullScreen(enabled = !hasFocus && isFullscreen, changeActionBarVisibility = false)
-                    binding.emoteSheetFragment.isInvisible = false
+                    binding.inputSheetFragment.isInvisible = false
                     mentionsView?.isInvisible = false
                 }
                 return@setOnFocusChangeListener

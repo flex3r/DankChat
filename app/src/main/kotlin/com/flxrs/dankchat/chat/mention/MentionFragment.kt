@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.chat.ChatSheetState
+import com.flxrs.dankchat.chat.FullScreenSheetState
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.databinding.MentionFragmentBinding
 import com.flxrs.dankchat.main.MainViewModel
@@ -77,10 +77,10 @@ class MentionFragment : Fragment() {
         registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 val state = when (position) {
-                    0    -> ChatSheetState.Mention
-                    else -> ChatSheetState.Whisper
+                    0    -> FullScreenSheetState.Mention
+                    else -> FullScreenSheetState.Whisper
                 }
-                mainViewModel.setChatSheetState(state)
+                mainViewModel.setFullScreenSheetState(state)
                 bindingRef?.mentionTabs?.getTabAt(position)?.removeBadge()
             }
         })

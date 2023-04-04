@@ -9,7 +9,7 @@ import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.chat.ChatSheetState
+import com.flxrs.dankchat.chat.FullScreenSheetState
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.databinding.RepliesFragmentBinding
 import com.flxrs.dankchat.main.MainViewModel
@@ -31,7 +31,7 @@ class RepliesFragment : Fragment() {
                 replace(R.id.replies_chat_fragment, RepliesChatFragment())
             }
         }
-        mainViewModel.setChatSheetState(ChatSheetState.Replies(args.rootMessageId))
+        mainViewModel.setFullScreenSheetState(FullScreenSheetState.Replies(args.rootMessageId))
         return binding.root
     }
 
