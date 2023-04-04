@@ -28,7 +28,8 @@ androidxViewpager2 = "1.1.0-beta01"
 androidxRoom = "2.5.1"
 androidxWebkit = "1.6.1"
 composeBom = "2022.10.00"
-material = "1.8.0"
+#noinspection GradleDependency // TODO requires upside down cake
+material = "1.9.0-beta01"
 mdcComposeAdapter = "1.0.21"
 
 colorPicker = "3.0.1"

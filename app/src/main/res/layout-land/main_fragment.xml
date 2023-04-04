@@ -148,7 +148,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/chat_sheet_fragment"
+                android:id="@+id/full_screen_sheet_fragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:behavior_hideable="true"

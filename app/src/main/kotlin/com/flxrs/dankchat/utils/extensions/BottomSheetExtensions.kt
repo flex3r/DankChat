@@ -14,8 +14,8 @@ fun <V : View> BottomSheetBehavior<V>.hide() {
 inline val <V : View> BottomSheetBehavior<V>.isVisible: Boolean
     get() = this.state == BottomSheetBehavior.STATE_EXPANDED || this.state == BottomSheetBehavior.STATE_COLLAPSED
 
-inline val <V : View> BottomSheetBehavior<V>.isExpanded: Boolean
-    get() = this.state == BottomSheetBehavior.STATE_EXPANDED
+inline val <V : View> BottomSheetBehavior<V>.isCollapsed: Boolean
+    get() = this.state == BottomSheetBehavior.STATE_COLLAPSED
 
 inline val <V : View> BottomSheetBehavior<V>.isHidden: Boolean
     get() = this.state == BottomSheetBehavior.STATE_HIDDEN
