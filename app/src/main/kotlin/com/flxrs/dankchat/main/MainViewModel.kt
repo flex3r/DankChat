@@ -496,7 +496,7 @@ class MainViewModel @Inject constructor(
         repeatedSend.update { it.copy(enabled = false) }
         fullScreenSheetState.update { state }
         when (state) {
-            FullScreenSheetState.Whisper -> chatRepository.clearMentionCount(WhisperMessage.WHISPER_CHANNEL)
+            FullScreenSheetState.Whisper -> chatRepository.clearMentionCount(WhisperMessage.WHISPER_CHANNEL) // TODO check clearing when already in whisper tab
             FullScreenSheetState.Mention -> chatRepository.clearMentionCounts()
             else                         -> Unit
         }

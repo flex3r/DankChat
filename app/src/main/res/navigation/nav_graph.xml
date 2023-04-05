@@ -36,6 +36,9 @@
         <action
             android:id="@+id/action_mainFragment_to_messageSheetFragment"
             app:destination="@id/messageSheetFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_copyMessageSheetFragment"
+            app:destination="@id/copyMessageSheetFragment" />
     </fragment>
     <fragment
         android:id="@+id/chatFragment"
@@ -200,19 +203,9 @@
             android:name="messageId"
             app:argType="string" />
         <argument
-            android:name="replyMessageId"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
             android:name="channel"
             app:argType="com.flxrs.dankchat.data.UserName"
             app:nullable="true" />
-        <argument
-            android:name="name"
-            app:argType="com.flxrs.dankchat.data.UserName" />
-        <argument
-            android:name="message"
-            app:argType="string" />
         <argument
             android:name="fullMessage"
             app:argType="string" />
@@ -222,5 +215,20 @@
         <argument
             android:name="canModerate"
             app:argType="boolean" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/copyMessageSheetFragment"
+        android:name="com.flxrs.dankchat.chat.message.CopyMessageSheetFragment"
+        android:label="CopyMessageSheetFragment" >
+        <argument
+            android:name="messageId"
+            app:argType="string" />
+        <argument
+            android:name="message"
+            app:argType="string" />
+        <argument
+            android:name="fullMessage"
+            app:argType="string" />
     </dialog>
 </navigation>

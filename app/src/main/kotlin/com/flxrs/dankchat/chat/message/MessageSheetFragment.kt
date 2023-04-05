@@ -15,6 +15,7 @@ import com.flxrs.dankchat.databinding.TimeoutDialogBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.flxrs.dankchat.utils.extensions.isLandscape
+import com.flxrs.dankchat.utils.extensions.showShortSnackbar
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -31,33 +32,40 @@ class MessageSheetFragment : BottomSheetDialogFragment() {
     private val binding get() = bindingRef!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        bindingRef = MessageBottomsheetBinding.inflate(inflater, container, false).apply {
-            userTimeout.setOnClickListener { showTimeoutDialog() }
-            userDelete.setOnClickListener { showDeleteDialog() }
-            userBan.setOnClickListener { showBanDialog() }
-            userUnban.setOnClickListener {
-                lifecycleScope.launch {
-                    viewModel.unbanUser()
-                    dialog?.dismiss()
-                }
-            }
-            messageCopy.setOnClickListener { sendResultAndDismiss(MessageSheetResult.Copy(args.message)) }
-            messageCopyFull.setOnClickListener { sendResultAndDismiss(MessageSheetResult.Copy(args.fullMessage)) }
-            messageCopyId.setOnClickListener { sendResultAndDismiss(MessageSheetResult.CopyId(args.messageId)) }
-            messageReply.setOnClickListener { sendResultAndDismiss(MessageSheetResult.Reply(args.messageId, args.name)) }
-            args.replyMessageId?.let { replyMessageId ->
-                messageViewThread.setOnClickListener { sendResultAndDismiss(MessageSheetResult.ViewThread(replyMessageId)) }
-            }
-        }
-
+        bindingRef = MessageBottomsheetBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        collectFlow(viewModel.state) {
-            binding.moderationGroup.isVisible = it.canModerate
-            binding.messageViewThread.isVisible = it.hasReplyThread
-            binding.messageReply.isVisible = it.canReply
+        collectFlow(viewModel.state) { state ->
+            when (state) {
+                MessageSheetState.Default  -> Unit
+                MessageSheetState.NotFound -> binding.root.showShortSnackbar(getString(R.string.message_not_found))
+                is MessageSheetState.Found -> with(binding) {
+                    moderationGroup.isVisible = state.canModerate
+                    messageViewThread.isVisible = state.hasReplyThread
+                    messageReply.isVisible = state.canReply
+                    if (state.canModerate) {
+                        userTimeout.setOnClickListener { showTimeoutDialog() }
+                        userDelete.setOnClickListener { showDeleteDialog() }
+                        userBan.setOnClickListener { showBanDialog() }
+                        userUnban.setOnClickListener {
+                            lifecycleScope.launch {
+                                viewModel.unbanUser()
+                                dialog?.dismiss()
+                            }
+                        }
+                    }
+                    if (state.canReply) {
+                        messageReply.setOnClickListener { sendResultAndDismiss(MessageSheetResult.Reply(args.messageId, state.name)) }
+                    }
+                    if (state.hasReplyThread && state.replyMessageId != null) {
+                        messageViewThread.setOnClickListener { sendResultAndDismiss(MessageSheetResult.ViewThread(state.replyMessageId)) }
+                    }
+                    messageCopyActions.setOnClickListener { sendResultAndDismiss(MessageSheetResult.OpenCopyActions(args.messageId, state.originalMessage, args.fullMessage)) }
+                }
+            }
+
         }
 
         dialog?.takeIf { isLandscape }?.let {

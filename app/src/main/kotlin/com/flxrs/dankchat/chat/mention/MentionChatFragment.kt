@@ -66,8 +66,8 @@ class MentionChatFragment : ChatFragment() {
         }
     }
 
-    override fun onMessageClick(messageId: String, replyMessageId: String?, channel: UserName?, name: UserName, message: String, fullMessage: String) {
-        (parentFragment?.parentFragment as? MainFragment)?.openMessageSheet(messageId, replyMessageId, channel, name, message, fullMessage, canReply = false, canModerate = false)
+    override fun onMessageClick(messageId: String, channel: UserName?, fullMessage: String) {
+        (parentFragment?.parentFragment as? MainFragment)?.openMessageSheet(messageId, channel, fullMessage, canReply = false, canModerate = false)
     }
 
     companion object {

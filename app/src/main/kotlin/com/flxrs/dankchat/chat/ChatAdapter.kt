@@ -54,7 +54,7 @@ class ChatAdapter(
     private val dankChatPreferenceStore: DankChatPreferenceStore,
     private val onListChanged: (position: Int) -> Unit,
     private val onUserClick: (targetUserId: UserId?, targetUsername: UserName, targetDisplayName: DisplayName, channelName: UserName?, badges: List<Badge>, isLongPress: Boolean) -> Unit,
-    private val onMessageLongClick: (messageId: String, replyMessageId: String?, channel: UserName?, name: UserName, message: String, fullMessage: String) -> Unit,
+    private val onMessageLongClick: (messageId: String, channel: UserName?, fullMessage: String) -> Unit,
     private val onReplyClick: (messageId: String) -> Unit,
 ) : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
     // Using position.isEven for determining which background to use in checkered mode doesn't work,
@@ -367,7 +367,7 @@ class ChatAdapter(
         } as SpannableStringBuilder
 
         val onWhisperMessageClick = {
-            onMessageLongClick(id, null, null, name, originalMessage, spannableWithEmojis.toString().replace("⠀ ", ""))
+            onMessageLongClick(id, null, spannableWithEmojis.toString().replace("⠀ ", ""))
         }
 
         addLinks(spannableWithEmojis, onWhisperMessageClick)
@@ -552,7 +552,7 @@ class ChatAdapter(
         } as SpannableStringBuilder
 
         val onMessageClick = {
-            onMessageLongClick(id, thread?.id, channel, name, originalMessage, spannableWithEmojis.toString().replace("⠀ ", ""))
+            onMessageLongClick(id, channel, spannableWithEmojis.toString().replace("⠀ ", ""))
         }
 
         addLinks(spannableWithEmojis, onMessageClick)

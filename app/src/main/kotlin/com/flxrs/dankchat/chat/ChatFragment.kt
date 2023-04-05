@@ -179,8 +179,8 @@ open class ChatFragment : Fragment() {
         }
     }
 
-    protected open fun onMessageClick(messageId: String, replyMessageId: String?, channel: UserName?, name: UserName, message: String, fullMessage: String) {
-        (parentFragment as? MainFragment)?.openMessageSheet(messageId, replyMessageId, channel, name, message, fullMessage, canReply = true, canModerate = true)
+    protected open fun onMessageClick(messageId: String, channel: UserName?, fullMessage: String) {
+        (parentFragment as? MainFragment)?.openMessageSheet(messageId, channel, fullMessage, canReply = true, canModerate = true)
     }
 
     private fun onReplyClick(rootMessageId: String) {
