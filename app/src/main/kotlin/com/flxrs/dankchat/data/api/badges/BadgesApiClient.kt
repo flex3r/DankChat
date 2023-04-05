@@ -8,6 +8,7 @@ import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// TODO deprecate
 @Singleton
 class BadgesApiClient @Inject constructor(private val badgesApi: BadgesApi, private val json: Json) {
 
