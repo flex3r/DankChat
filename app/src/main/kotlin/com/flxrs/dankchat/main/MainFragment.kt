@@ -1010,7 +1010,7 @@ class MainFragment : Fragment() {
         val updatedChannels = updatedChannelsWithRenames.map(ChannelWithRename::channel)
         val oldChannels = mainViewModel.getChannels()
         val oldIndex = binding.chatViewpager.currentItem
-        val oldActiveChannel = oldChannels[oldIndex]
+        val oldActiveChannel = oldChannels[oldIndex] // TODO
 
         val index = updatedChannelsWithRenames
             .indexOfFirst { it.channel == oldActiveChannel }
