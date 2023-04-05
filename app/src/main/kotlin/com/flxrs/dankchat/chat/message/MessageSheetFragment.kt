@@ -63,6 +63,7 @@ class MessageSheetFragment : BottomSheetDialogFragment() {
         dialog?.takeIf { isLandscape }?.let {
             val sheet = it as BottomSheetDialog
             sheet.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            sheet.behavior.skipCollapsed = true
         }
     }
 

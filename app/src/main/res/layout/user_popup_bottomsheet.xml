@@ -58,7 +58,6 @@
                 tools:srcCompat="@tools:sample/avatars" />
         </com.google.android.material.card.MaterialCardView>
 
-
         <TextView
             android:id="@+id/user_name"
             style="?attr/textAppearanceTitleLarge"
@@ -162,11 +161,11 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/user_mention"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="0dp"
+                    style="@style/Widget.App.TextIconButton"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
                     android:text="@string/user_popup_mention"
+                    app:icon="@drawable/ic_alternate_email"
                     app:layout_constraintBottom_toTopOf="@id/user_block"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -174,12 +173,12 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/user_block"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="0dp"
+                    style="@style/Widget.App.TextIconButton"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
                     android:layout_marginTop="4dp"
                     android:text="@string/user_popup_block"
+                    app:icon="@drawable/ic_block"
                     app:layout_constraintBottom_toTopOf="@id/user_report"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -187,13 +186,13 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/user_report"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="0dp"
+                    style="@style/Widget.App.TextIconButton"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="8dp"
                     android:text="@string/user_popup_report"
+                    app:icon="@drawable/ic_report"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -201,5 +200,4 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </layout>
