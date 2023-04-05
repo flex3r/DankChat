@@ -35,11 +35,11 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/message_reply"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="0dp"
+                    style="@style/Widget.App.TextIconButton"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
                     android:text="@string/message_reply"
+                    app:icon="@drawable/ic_reply"
                     app:layout_constraintBottom_toTopOf="@id/message_view_thread"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -47,12 +47,12 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/message_view_thread"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="0dp"
+                    style="@style/Widget.App.TextIconButton"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
                     android:layout_marginTop="4dp"
                     android:text="@string/message_view_thread"
+                    app:icon="@drawable/ic_forum"
                     app:layout_constraintBottom_toTopOf="@id/mod_barrier"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -76,9 +76,8 @@
 
                 <com.google.android.material.divider.MaterialDivider
                     android:id="@+id/moderation_top_divider"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
                     android:layout_marginTop="4dp"
                     app:layout_constraintBottom_toTopOf="@id/user_timeout"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -89,12 +88,12 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/user_timeout"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="0dp"
+                    style="@style/Widget.App.TextIconButton"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
                     android:layout_marginTop="4dp"
                     android:text="@string/user_popup_timeout"
+                    app:icon="@drawable/ic_time"
                     app:layout_constraintBottom_toTopOf="@id/user_delete"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -102,12 +101,12 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/user_delete"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="0dp"
+                    style="@style/Widget.App.TextIconButton"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
                     android:layout_marginTop="4dp"
                     android:text="@string/user_popup_delete"
+                    app:icon="@drawable/ic_delete_outline"
                     app:layout_constraintBottom_toTopOf="@id/user_ban"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -115,35 +114,34 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/user_ban"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="0dp"
+                    style="@style/Widget.App.TextIconButton"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
                     android:layout_marginTop="4dp"
                     android:text="@string/user_popup_ban"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/user_unban"
+                    app:icon="@drawable/ic_gavel"
+                    app:layout_constraintBottom_toTopOf="@id/user_unban"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/user_delete" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/user_unban"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="0dp"
+                    style="@style/Widget.App.TextIconButton"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
                     android:layout_marginTop="4dp"
                     android:text="@string/user_popup_unban"
+                    app:icon="@drawable/ic_undo"
                     app:layout_constraintBottom_toTopOf="@id/moderation_bottom_divider"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/user_ban"
-                    app:layout_constraintTop_toBottomOf="@id/user_delete" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/user_ban" />
 
                 <com.google.android.material.divider.MaterialDivider
                     android:id="@+id/moderation_bottom_divider"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
                     android:layout_marginTop="4dp"
                     app:layout_constraintBottom_toTopOf="@id/message_copy"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -152,12 +150,12 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/message_copy"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="0dp"
+                    style="@style/Widget.App.TextIconButton"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
                     android:layout_marginTop="4dp"
                     android:text="@string/message_copy"
+                    app:icon="@drawable/ic_copy"
                     app:layout_constraintBottom_toTopOf="@id/message_copy_full"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -165,12 +163,12 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/message_copy_full"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="0dp"
+                    style="@style/Widget.App.TextIconButton"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
                     android:layout_marginTop="4dp"
                     android:text="@string/message_copy_full"
+                    app:icon="@drawable/ic_copy"
                     app:layout_constraintBottom_toTopOf="@id/message_copy_id"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -178,13 +176,13 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/message_copy_id"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="0dp"
+                    style="@style/Widget.App.TextIconButton"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="8dp"
                     android:text="@string/message_copy_id"
+                    app:icon="@drawable/ic_copy"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -192,5 +190,4 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </layout>

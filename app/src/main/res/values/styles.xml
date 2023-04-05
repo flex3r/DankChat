@@ -4,4 +4,14 @@
     <style name="timestamp_and_whisper">
         <item name="android:letterSpacing">@dimen/monospace_letter_spacing_adjustment</item>
     </style>
+
+    <style name="Widget.App.TextIconButton" parent="Widget.Material3.Button.TextButton.Icon">
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:textAppearance">@style/TextAppearance.Material3.BodyLarge</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="iconGravity">start</item>
+        <item name="iconPadding">24dp</item>
+        <item name="iconSize">16dp</item>
+        <item name="iconTint">?attr/colorOnSurface</item>
+    </style>
 </resources>
