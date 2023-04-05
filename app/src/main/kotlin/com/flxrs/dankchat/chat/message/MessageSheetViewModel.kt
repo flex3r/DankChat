@@ -4,14 +4,20 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.repo.RepliesRepository
 import com.flxrs.dankchat.data.repo.chat.ChatRepository
 import com.flxrs.dankchat.data.repo.command.CommandRepository
 import com.flxrs.dankchat.data.repo.command.CommandResult
+import com.flxrs.dankchat.data.twitch.chat.ConnectionState
+import com.flxrs.dankchat.data.twitch.message.PrivMessage
+import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.utils.extensions.firstValueOrNull
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
@@ -27,30 +33,49 @@ class MessageSheetViewModel @Inject constructor(
 
     private val args = MessageSheetFragmentArgs.fromSavedStateHandle(savedStateHandle)
 
-    val state = chatRepository.userStateFlow.map { userState ->
-        MessageSheetState(
-            canModerate = args.canModerate && args.channel != null && args.channel in userState.moderationChannels,
-            hasReplyThread = args.canReply && args.replyMessageId != null && repliesRepository.hasMessageThread(args.replyMessageId),
-            canReply = args.canReply
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), MessageSheetState(canModerate = false, hasReplyThread = false, canReply = args.canReply))
+    private val message = flowOf(chatRepository.findMessage(args.messageId, args.channel))
+    private val connectionState = chatRepository.getConnectionState(args.channel ?: WhisperMessage.WHISPER_CHANNEL)
+
+    val state = combine(chatRepository.userStateFlow, connectionState, message) { userState, connectionState, message ->
+        when (message) {
+            null -> MessageSheetState.NotFound
+            else -> {
+                val asPrivMessage = message as? PrivMessage
+                val asWhisperMessage = message as? WhisperMessage
+                val replyMessageId = asPrivMessage?.thread?.id
+                val name = asPrivMessage?.name ?: asWhisperMessage?.name
+                val originalMessage = asPrivMessage?.originalMessage ?: asWhisperMessage?.originalMessage
+                MessageSheetState.Found(
+                    messageId = message.id,
+                    replyMessageId = replyMessageId,
+                    name = name ?: UserName.EMPTY,
+                    originalMessage = originalMessage.orEmpty(),
+                    canModerate = args.canModerate && args.channel != null && args.channel in userState.moderationChannels,
+                    hasReplyThread = args.canReply && replyMessageId != null && repliesRepository.hasMessageThread(replyMessageId),
+                    canReply = connectionState == ConnectionState.CONNECTED && args.canReply
+                )
+            }
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), MessageSheetState.Default)
 
     suspend fun timeoutUser(index: Int) {
         val duration = TIMEOUT_MAP[index] ?: return
-        sendCommand(".timeout ${args.name} $duration")
+        val name = (state.value as? MessageSheetState.Found)?.name ?: return
+        sendCommand(".timeout $name $duration")
     }
 
     suspend fun banUser() {
-        sendCommand(".ban ${args.name}")
+        val name = (state.value as? MessageSheetState.Found)?.name ?: return
+        sendCommand(".ban $name")
     }
 
     suspend fun unbanUser() {
-        sendCommand(".unban ${args.name}")
+        val name = (state.value as? MessageSheetState.Found)?.name ?: return
+        sendCommand(".unban $name")
     }
 
     suspend fun deleteMessage() {
-        val messageId = args.messageId
-        sendCommand(".delete $messageId")
+        sendCommand(".delete ${args.messageId}")
     }
 
     private suspend fun sendCommand(message: String) {

@@ -49,6 +49,7 @@ import com.flxrs.dankchat.chat.FullScreenSheetState
 import com.flxrs.dankchat.chat.InputSheetState
 import com.flxrs.dankchat.chat.mention.MentionFragment
 import com.flxrs.dankchat.chat.menu.EmoteMenuFragment
+import com.flxrs.dankchat.chat.message.CopyMessageSheetResult
 import com.flxrs.dankchat.chat.message.MessageSheetResult
 import com.flxrs.dankchat.chat.replies.RepliesFragment
 import com.flxrs.dankchat.chat.replies.ReplyInputSheetFragment
@@ -406,13 +407,14 @@ class MainFragment : Fragment() {
             if (event != Lifecycle.Event.ON_RESUME) return@LifecycleEventObserver
             handle.keys().forEach { key ->
                 when (key) {
-                    LOGIN_REQUEST_KEY        -> handle.withData(key, ::handleLoginRequest)
-                    ADD_CHANNEL_REQUEST_KEY  -> handle.withData(key, ::addChannel)
-                    HISTORY_DISCLAIMER_KEY   -> handle.withData(key, ::handleMessageHistoryDisclaimerResult)
-                    USER_POPUP_RESULT_KEY    -> handle.withData(key, ::handleUserPopupResult)
-                    MESSAGE_SHEET_RESULT_KEY -> handle.withData(key, ::handleMessageSheetResult)
-                    LOGOUT_REQUEST_KEY       -> handle.withData<Boolean>(key) { showLogoutConfirmationDialog() }
-                    CHANNELS_REQUEST_KEY     -> handle.withData<Array<ChannelWithRename>>(key) { updateChannels(it.toList()) }
+                    LOGIN_REQUEST_KEY             -> handle.withData(key, ::handleLoginRequest)
+                    ADD_CHANNEL_REQUEST_KEY       -> handle.withData(key, ::addChannel)
+                    HISTORY_DISCLAIMER_KEY        -> handle.withData(key, ::handleMessageHistoryDisclaimerResult)
+                    USER_POPUP_RESULT_KEY         -> handle.withData(key, ::handleUserPopupResult)
+                    MESSAGE_SHEET_RESULT_KEY      -> handle.withData(key, ::handleMessageSheetResult)
+                    COPY_MESSAGE_SHEET_RESULT_KEY -> handle.withData(key, ::handleCopyMessageSheetResult)
+                    LOGOUT_REQUEST_KEY            -> handle.withData<Boolean>(key) { showLogoutConfirmationDialog() }
+                    CHANNELS_REQUEST_KEY          -> handle.withData<Array<ChannelWithRename>>(key) { updateChannels(it.toList()) }
                 }
             }
         }
@@ -543,17 +545,8 @@ class MainFragment : Fragment() {
         navigateSafe(directions)
     }
 
-    fun openMessageSheet(
-        messageId: String,
-        replyMessageId: String?,
-        channel: UserName?,
-        name: UserName,
-        message: String,
-        fullMessage: String,
-        canReply: Boolean,
-        canModerate: Boolean,
-    ) {
-        val directions = MainFragmentDirections.actionMainFragmentToMessageSheetFragment(messageId, replyMessageId, channel, name, message, fullMessage, canReply, canModerate)
+    fun openMessageSheet(messageId: String, channel: UserName?, fullMessage: String, canReply: Boolean, canModerate: Boolean) {
+        val directions = MainFragmentDirections.actionMainFragmentToMessageSheetFragment(messageId, channel, fullMessage, canReply, canModerate)
         navigateSafe(directions)
     }
 
@@ -588,10 +581,19 @@ class MainFragment : Fragment() {
     }
 
     private fun handleMessageSheetResult(result: MessageSheetResult) = when (result) {
-        is MessageSheetResult.Copy       -> copyAndShowSnackBar(result.message, R.string.snackbar_message_copied)
-        is MessageSheetResult.CopyId     -> copyAndShowSnackBar(result.id, R.string.snackbar_message_id_copied)
-        is MessageSheetResult.Reply      -> startReply(result.replyMessageId, result.replyName)
-        is MessageSheetResult.ViewThread -> openReplies(result.replyMessageId)
+        is MessageSheetResult.OpenCopyActions -> openCopyMessageSheet(result.messageId, result.message, result.fullMessage)
+        is MessageSheetResult.Reply           -> startReply(result.replyMessageId, result.replyName)
+        is MessageSheetResult.ViewThread      -> openReplies(result.replyMessageId)
+    }
+
+    private fun openCopyMessageSheet(messageId: String, message: String, fullMessage: String) {
+        val directions = MainFragmentDirections.actionMainFragmentToCopyMessageSheetFragment(messageId, message, fullMessage)
+        navigateSafe(directions)
+    }
+
+    private fun handleCopyMessageSheetResult(result: CopyMessageSheetResult) = when (result) {
+        is CopyMessageSheetResult.Copy   -> copyAndShowSnackBar(result.message, R.string.snackbar_message_copied)
+        is CopyMessageSheetResult.CopyId -> copyAndShowSnackBar(result.id, R.string.snackbar_message_id_copied)
     }
 
     private fun copyAndShowSnackBar(value: String, @StringRes snackBarLabel: Int) {
@@ -1257,5 +1259,6 @@ class MainFragment : Fragment() {
         const val HISTORY_DISCLAIMER_KEY = "history_disclaimer_key"
         const val USER_POPUP_RESULT_KEY = "user_popup_key"
         const val MESSAGE_SHEET_RESULT_KEY = "message_sheet_key"
+        const val COPY_MESSAGE_SHEET_RESULT_KEY = "copy_message_sheet_key"
     }
 }

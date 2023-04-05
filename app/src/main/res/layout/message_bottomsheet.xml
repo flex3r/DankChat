@@ -11,6 +11,8 @@
             android:id="@+id/bottomsheet_handle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:minHeight="24dp"
+            android:paddingBottom="0dp"
             app:layout_constraintBottom_toTopOf="@id/message_sheet_buttons_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -143,50 +145,23 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    app:layout_constraintBottom_toTopOf="@id/message_copy"
+                    app:layout_constraintBottom_toTopOf="@id/message_copy_actions"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/user_unban" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/message_copy"
+                    android:id="@+id/message_copy_actions"
                     style="@style/Widget.App.TextIconButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="@string/message_copy"
-                    app:icon="@drawable/ic_copy"
-                    app:layout_constraintBottom_toTopOf="@id/message_copy_full"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/moderation_bottom_divider" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/message_copy_full"
-                    style="@style/Widget.App.TextIconButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="@string/message_copy_full"
-                    app:icon="@drawable/ic_copy"
-                    app:layout_constraintBottom_toTopOf="@id/message_copy_id"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/message_copy" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/message_copy_id"
-                    style="@style/Widget.App.TextIconButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="@string/message_copy_id"
+                    android:text="@string/message_copy_actions"
                     app:icon="@drawable/ic_copy"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/message_copy_full" />
+                    app:layout_constraintTop_toBottomOf="@id/moderation_bottom_divider" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>

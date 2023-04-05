@@ -247,6 +247,7 @@ class ChatRepository @Inject constructor(
     fun getUsers(channel: UserName): StateFlow<Set<DisplayName>> = usersFlows.getOrPut(channel) { MutableStateFlow(emptySet()) }
 
     fun isModeratorInChannel(channel: UserName?): Boolean = channel != null && channel in userStateFlow.value.moderationChannels
+    fun findMessage(messageId: String, channel: UserName?) = (channel?.let { messages[channel] } ?: whispers).value.find { it.message.id == messageId }?.message
 
     fun clearChatLoadingFailures() = _chatLoadingFailures.update { emptySet() }
 
