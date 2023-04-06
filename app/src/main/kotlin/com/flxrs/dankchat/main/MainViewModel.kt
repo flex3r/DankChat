@@ -10,10 +10,10 @@ import com.flxrs.dankchat.chat.InputSheetState
 import com.flxrs.dankchat.chat.menu.EmoteMenuTab
 import com.flxrs.dankchat.chat.menu.EmoteMenuTabItem
 import com.flxrs.dankchat.chat.suggestion.Suggestion
-import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.ApiException
 import com.flxrs.dankchat.data.repo.IgnoresRepository
+import com.flxrs.dankchat.data.repo.channel.ChannelRepository
 import com.flxrs.dankchat.data.repo.chat.ChatLoadingFailure
 import com.flxrs.dankchat.data.repo.chat.ChatLoadingStep
 import com.flxrs.dankchat.data.repo.chat.ChatRepository
@@ -62,7 +62,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -89,6 +88,7 @@ class MainViewModel @Inject constructor(
     private val commandRepository: CommandRepository,
     private val emoteUsageRepository: EmoteUsageRepository,
     private val ignoresRepository: IgnoresRepository,
+    private val channelRepository: ChannelRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
 ) : ViewModel() {
 
@@ -388,7 +388,7 @@ class MainViewModel @Inject constructor(
 
             dataRepository.createFlowsIfNecessary(channels = channelList + WhisperMessage.WHISPER_CHANNEL)
 
-            val channelPairs = getChannelNameIdPairs(channelList)
+            val channels = channelRepository.getChannels(channelList)
             awaitAll(
                 async { dataRepository.loadDankChatBadges() },
                 async { dataRepository.loadGlobalBadges() },
@@ -397,11 +397,11 @@ class MainViewModel @Inject constructor(
                 async { dataRepository.loadGlobalBTTVEmotes() },
                 async { dataRepository.loadGlobalFFZEmotes() },
                 async { dataRepository.loadGlobalSevenTVEmotes() },
-                *channelPairs.flatMap { (channel, channelId) ->
+                *channels.flatMap { (channelId, channel, channelDisplayName) ->
                     chatRepository.createFlowsIfNecessary(channel)
                     listOf(
                         async { dataRepository.loadChannelBadges(channel, channelId) },
-                        async { dataRepository.loadChannelBTTVEmotes(channel, channelId) },
+                        async { dataRepository.loadChannelBTTVEmotes(channel, channelDisplayName, channelId) },
                         async { dataRepository.loadChannelFFZEmotes(channel, channelId) },
                         async { dataRepository.loadChannelSevenTVEmotes(channel, channelId) },
                         async { chatRepository.loadChatters(channel) },
@@ -446,7 +446,7 @@ class MainViewModel @Inject constructor(
                     is DataLoadingStep.ChannelBadges        -> dataRepository.loadChannelBadges(it.step.channel, it.step.channelId)
                     is DataLoadingStep.ChannelSevenTVEmotes -> dataRepository.loadChannelSevenTVEmotes(it.step.channel, it.step.channelId)
                     is DataLoadingStep.ChannelFFZEmotes     -> dataRepository.loadChannelFFZEmotes(it.step.channel, it.step.channelId)
-                    is DataLoadingStep.ChannelBTTVEmotes    -> dataRepository.loadChannelBTTVEmotes(it.step.channel, it.step.channelId)
+                    is DataLoadingStep.ChannelBTTVEmotes    -> dataRepository.loadChannelBTTVEmotes(it.step.channel, it.step.channelDisplayName, it.step.channelId)
                 }
             }
         } + chatLoadingFailures.map {
@@ -477,7 +477,7 @@ class MainViewModel @Inject constructor(
             }
 
             val activeChannel = getActiveChannel() ?: return@launch
-            val channelId = dataRepository.getUserIdByName(activeChannel) ?: return@launch
+            val channelId = channelRepository.getChannel(activeChannel)?.id ?: return@launch
             ignoresRepository.addUserBlock(channelId, activeChannel)
         }
     }
@@ -567,7 +567,7 @@ class MainViewModel @Inject constructor(
         loadData()
     }
 
-    fun reloadEmotes(channel: UserName) = viewModelScope.launch {
+    fun reloadEmotes(channelName: UserName) = viewModelScope.launch {
         val isLoggedIn = dankChatPreferenceStore.isLoggedIn
         dataLoadingStateChannel.send(DataLoadingState.Loading)
         isDataLoading.update { true }
@@ -578,19 +578,18 @@ class MainViewModel @Inject constructor(
             chatRepository.reconnect(reconnectPubsub = false)
         }
 
-        val channelId = chatRepository.getRoomState(channel)
-            .firstValueOrNull?.channelId ?: dataRepository.getUserIdByName(channel)
+        val channel = channelRepository.getChannel(channelName)
 
         buildList {
             this += launch { dataRepository.loadDankChatBadges() }
             this += launch { dataRepository.loadGlobalBTTVEmotes() }
             this += launch { dataRepository.loadGlobalFFZEmotes() }
             this += launch { dataRepository.loadGlobalSevenTVEmotes() }
-            if (channelId != null) {
-                this += launch { dataRepository.loadChannelBadges(channel, channelId) }
-                this += launch { dataRepository.loadChannelBTTVEmotes(channel, channelId) }
-                this += launch { dataRepository.loadChannelFFZEmotes(channel, channelId) }
-                this += launch { dataRepository.loadChannelSevenTVEmotes(channel, channelId) }
+            if (channel != null) {
+                this += launch { dataRepository.loadChannelBadges(channelName, channel.id) }
+                this += launch { dataRepository.loadChannelBTTVEmotes(channelName, channel.displayName, channel.id) }
+                this += launch { dataRepository.loadChannelFFZEmotes(channelName, channel.id) }
+                this += launch { dataRepository.loadChannelSevenTVEmotes(channelName, channel.id) }
             }
         }.joinAll()
 
@@ -805,35 +804,6 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getChannelNameIdPairs(channels: List<UserName>): List<Pair<UserName, UserId>> = withContext(Dispatchers.IO) {
-        val (roomStatePairs, remaining) = channels.fold(Pair(emptyList<RoomState>(), emptyList<UserName>())) { (states, remaining), user ->
-            when (val state = chatRepository.getRoomState(user).firstValueOrNull) {
-                null -> states to remaining + user
-                else -> states + state to remaining
-            }
-        }
-
-        val remainingPairs = when {
-            dankChatPreferenceStore.isLoggedIn -> dataRepository
-                .getUsersByNames(remaining)
-                .map { it.name to it.id }
-
-            else                               ->
-                remaining.map { user ->
-                    async {
-                        withTimeoutOrNull(getRoomStateDelay(remaining)) {
-                            chatRepository
-                                .getRoomState(user)
-                                .firstOrNull()
-                                ?.let { it.channel to it.channelId }
-                        }
-                    }
-                }.awaitAll().filterNotNull()
-        }
-
-        roomStatePairs.map { it.channel to it.channelId } + remainingPairs
-    }
-
     private fun clearIgnores() = ignoresRepository.clearIgnores()
 
     fun clearDataForLogout() {
@@ -852,7 +822,5 @@ class MainViewModel @Inject constructor(
         private const val STREAM_REFRESH_RATE = 30_000L
         private const val IRC_TIMEOUT_DELAY = 5_000L
         private const val IRC_TIMEOUT_SHORT_DELAY = 1_000L
-        private const val IRC_TIMEOUT_CHANNEL_DELAY = 600L
-        private fun getRoomStateDelay(channels: List<UserName>): Long = IRC_TIMEOUT_DELAY + channels.size * IRC_TIMEOUT_CHANNEL_DELAY
     }
 }

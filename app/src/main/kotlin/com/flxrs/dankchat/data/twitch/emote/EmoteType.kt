@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.data.twitch.emote
 
+import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserName
 
 sealed class EmoteType : Comparable<EmoteType> {
@@ -17,15 +18,15 @@ sealed class EmoteType : Comparable<EmoteType> {
         override val title = channel.value
     }
 
-    object ChannelFFZEmote : EmoteType() {
+    data class ChannelFFZEmote(val creator: DisplayName?) : EmoteType() {
         override val title = "FrankerFaceZ"
     }
 
-    object ChannelBTTVEmote : EmoteType() {
+    data class ChannelBTTVEmote(val creator: DisplayName, val isShared: Boolean) : EmoteType() {
         override val title = "BetterTTV"
     }
 
-    object ChannelSevenTVEmote : EmoteType() {
+    data class ChannelSevenTVEmote(val creator: DisplayName?, val baseName: String?) : EmoteType() {
         override val title = "SevenTV"
     }
 
@@ -33,7 +34,7 @@ sealed class EmoteType : Comparable<EmoteType> {
         override val title = "Twitch"
     }
 
-    object GlobalFFZEmote : EmoteType() {
+    data class GlobalFFZEmote(val creator: DisplayName?) : EmoteType() {
         override val title = "FrankerFaceZ"
     }
 
@@ -41,7 +42,7 @@ sealed class EmoteType : Comparable<EmoteType> {
         override val title = "BetterTTV"
     }
 
-    object GlobalSevenTVEmote : EmoteType() {
+    data class GlobalSevenTVEmote(val creator: DisplayName?, val baseName: String?) : EmoteType() {
         override val title = "SevenTV"
     }
 
