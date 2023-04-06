@@ -42,6 +42,7 @@ class MentionFragment : Fragment() {
         }
 
         mainViewModel.setSuggestionChannel(WhisperMessage.WHISPER_CHANNEL)
+        mainViewModel.setFullScreenSheetState(binding.mentionTabs.selectedTabPosition.pageIndexToSheetState())
         return binding.root
     }
 
@@ -76,14 +77,15 @@ class MentionFragment : Fragment() {
         offscreenPageLimit = 1
         registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                val state = when (position) {
-                    0    -> FullScreenSheetState.Mention
-                    else -> FullScreenSheetState.Whisper
-                }
-                mainViewModel.setFullScreenSheetState(state)
+                mainViewModel.setFullScreenSheetState(position.pageIndexToSheetState())
                 bindingRef?.mentionTabs?.getTabAt(position)?.removeBadge()
             }
         })
+    }
+
+    private fun Int.pageIndexToSheetState() = when (this) {
+        0    -> FullScreenSheetState.Mention
+        else -> FullScreenSheetState.Whisper
     }
 
     companion object {

@@ -262,9 +262,9 @@ class MainViewModel @Inject constructor(
         }
     }.stateIn(viewModelScope, started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), InputState.Disconnected)
 
-    val canType: StateFlow<Boolean> = combine(connectionState, fullScreenSheetState) { connectionState, chatSheetState ->
+    val canType: StateFlow<Boolean> = combine(connectionState, fullScreenSheetState) { connectionState, fullScreenSheetState ->
         val canTypeInConnectionState = connectionState == ConnectionState.CONNECTED || !dankChatPreferenceStore.autoDisableInput
-        (chatSheetState != FullScreenSheetState.Mention && canTypeInConnectionState)
+        (fullScreenSheetState != FullScreenSheetState.Mention && canTypeInConnectionState)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
     data class BottomTextState(val enabled: Boolean = true, val text: String = "")

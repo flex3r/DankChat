@@ -567,6 +567,7 @@ class MainFragment : Fragment() {
     }
 
     fun openReplies(replyMessageId: String) {
+        inputBottomSheetBehavior?.hide()
         val fragment = RepliesFragment.newInstance(replyMessageId)
         childFragmentManager.commit {
             replace(R.id.full_screen_sheet_fragment, fragment)
@@ -1074,6 +1075,12 @@ class MainFragment : Fragment() {
                         mainViewModel.setFullScreenSheetState(FullScreenSheetState.Closed)
                         val channel = tabAdapter[binding.tabs.selectedTabPosition] ?: return
                         mainViewModel.setSuggestionChannel(channel)
+
+                        val existing = childFragmentManager.fragments.filter { it is MentionFragment || it is RepliesFragment }
+                        childFragmentManager.commit {
+                            existing.forEach(::remove)
+                        }
+                        childFragmentManager.executePendingTransactions()
                     }
 
                     behavior.isCollapsed -> behavior.hide()
