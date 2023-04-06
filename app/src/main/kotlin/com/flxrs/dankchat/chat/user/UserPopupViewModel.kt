@@ -9,11 +9,11 @@ import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.helix.dto.UserDto
 import com.flxrs.dankchat.data.api.helix.dto.UserFollowsDto
 import com.flxrs.dankchat.data.repo.IgnoresRepository
+import com.flxrs.dankchat.data.repo.channel.ChannelRepository
 import com.flxrs.dankchat.data.repo.chat.ChatRepository
 import com.flxrs.dankchat.data.repo.data.DataRepository
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.DateTimeUtils.asParsedZonedDateTime
-import com.flxrs.dankchat.utils.extensions.firstValueOrNull
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +28,7 @@ class UserPopupViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
     private val dataRepository: DataRepository,
     private val ignoresRepository: IgnoresRepository,
+    private val channelRepository: ChannelRepository,
     private val preferenceStore: DankChatPreferenceStore,
 ) : ViewModel() {
 
@@ -88,9 +89,7 @@ class UserPopupViewModel @Inject constructor(
 
         val targetUserId = args.targetUserId
         val result = runCatching {
-            val channelId = args.channel?.let {
-                chatRepository.getRoomState(it).firstValueOrNull?.channelId ?: dataRepository.getUserIdByName(it)
-            }
+            val channelId = args.channel?.let { channelRepository.getChannel(it)?.id }
             val isBlocked = ignoresRepository.isUserBlocked(targetUserId)
             val canLoadFollows = channelId != targetUserId && (currentUserId == channelId || chatRepository.isModeratorInChannel(args.channel))
 

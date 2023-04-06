@@ -5,6 +5,7 @@ import android.graphics.drawable.LayerDrawable
 import android.os.Build
 import android.util.LruCache
 import androidx.annotation.VisibleForTesting
+import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.bttv.dto.BTTVChannelDto
@@ -300,8 +301,8 @@ class EmoteRepository @Inject constructor(
         }
     }
 
-    suspend fun setBTTVEmotes(channel: UserName, bttvResult: BTTVChannelDto) = withContext(Dispatchers.Default) {
-        val bttvEmotes = (bttvResult.emotes + bttvResult.sharedEmotes).map { parseBTTVEmote(it) }
+    suspend fun setBTTVEmotes(channel: UserName, channelDisplayName: DisplayName, bttvResult: BTTVChannelDto) = withContext(Dispatchers.Default) {
+        val bttvEmotes = (bttvResult.emotes + bttvResult.sharedEmotes).map { parseBTTVEmote(it, channelDisplayName) }
         emotes[channel]?.update {
             it.copy(bttvChannelEmotes = bttvEmotes)
         }
@@ -321,7 +322,9 @@ class EmoteRepository @Inject constructor(
 
         val sevenTvEmotes = sevenTvResult
             .filterUnlistedIfEnabled()
-            .mapNotNull { parseSevenTVEmote(it, EmoteType.ChannelSevenTVEmote) }
+            .mapNotNull { emote ->
+                parseSevenTVEmote(emote, EmoteType.ChannelSevenTVEmote(emote.data?.owner?.displayName, emote.data?.baseName?.takeIf { emote.name != it }))
+            }
 
         emotes[channel]?.update {
             it.copy(sevenTvChannelEmotes = sevenTvEmotes)
@@ -334,7 +337,7 @@ class EmoteRepository @Inject constructor(
         val sevenTvGlobalEmotes = sevenTvResult
             .filterUnlistedIfEnabled()
             .mapNotNull { emote ->
-                parseSevenTVEmote(emote, EmoteType.GlobalSevenTVEmote)
+                parseSevenTVEmote(emote, EmoteType.GlobalSevenTVEmote(emote.data?.owner?.displayName, emote.data?.baseName?.takeIf { emote.name != it }))
             }
 
         emotes.values.forEach { flow ->
@@ -478,7 +481,7 @@ class EmoteRepository @Inject constructor(
         }
     }
 
-    private fun parseBTTVEmote(emote: BTTVEmoteDto): GenericEmote {
+    private fun parseBTTVEmote(emote: BTTVEmoteDto, channelDisplayName: DisplayName): GenericEmote {
         val name = emote.code
         val id = emote.id
         val url = BTTV_EMOTE_TEMPLATE.format(id, BTTV_EMOTE_SIZE)
@@ -489,7 +492,7 @@ class EmoteRepository @Inject constructor(
             lowResUrl = lowResUrl,
             id = id,
             scale = 1,
-            emoteType = EmoteType.ChannelBTTVEmote,
+            emoteType = EmoteType.ChannelBTTVEmote(emote.user?.displayName ?: channelDisplayName, isShared = emote.user != null),
             isOverlayEmote = name in OVERLAY_EMOTES,
         )
     }
@@ -521,8 +524,8 @@ class EmoteRepository @Inject constructor(
         url ?: return null
         val lowResUrl = emote.urls["2"] ?: emote.urls["1"] ?: return null
         val type = when (channel) {
-            null -> EmoteType.GlobalFFZEmote
-            else -> EmoteType.ChannelFFZEmote
+            null -> EmoteType.GlobalFFZEmote(emote.owner?.displayName)
+            else -> EmoteType.ChannelFFZEmote(emote.owner?.displayName)
         }
         return GenericEmote(name, url.withLeadingHttps, lowResUrl.withLeadingHttps, "$id", scale, type)
     }

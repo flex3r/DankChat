@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.data.repo.data
 
 import android.util.Log
+import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.badges.BadgesApiClient
@@ -59,7 +60,7 @@ class DataRepository @Inject constructor(
     fun createFlowsIfNecessary(channels: List<UserName>) = emoteRepository.createFlowsIfNecessary(channels)
 
     suspend fun getUser(userId: UserId): UserDto? = helixApiClient.getUser(userId).getOrNull()
-    suspend fun getUserIdByName(name: UserName): UserId? = helixApiClient.getUserIdByName(name).getOrNull()
+    suspend fun getUserByName(name: UserName): UserDto? = helixApiClient.getUserByName(name).getOrNull()
     suspend fun getUsersByNames(names: List<UserName>): List<UserDto> = helixApiClient.getUsersByNames(names).getOrNull().orEmpty()
     suspend fun getChannelFollowers(broadcasterId: UserId, targetId: UserId): UserFollowsDto? = helixApiClient.getChannelFollowers(broadcasterId, targetId).getOrNull()
     suspend fun getStreams(channels: List<UserName>): List<StreamDto>? = helixApiClient.getStreams(channels).getOrNull()
@@ -115,15 +116,15 @@ class DataRepository @Inject constructor(
         }.let { Log.i(TAG, "Loaded FFZ emotes for #$channel in $it ms") }
     }
 
-    suspend fun loadChannelBTTVEmotes(channel: UserName, channelId: UserId) = withContext(Dispatchers.IO) {
+    suspend fun loadChannelBTTVEmotes(channel: UserName, channelDisplayName: DisplayName, channelId: UserId) = withContext(Dispatchers.IO) {
         if (ThirdPartyEmoteType.BetterTTV !in dankChatPreferenceStore.visibleThirdPartyEmotes) {
             return@withContext
         }
 
         measureTimeMillis {
             bttvApiClient.getBTTVChannelEmotes(channelId)
-                .getOrEmitFailure { DataLoadingStep.ChannelBTTVEmotes(channel, channelId) }
-                ?.let { emoteRepository.setBTTVEmotes(channel, it) }
+                .getOrEmitFailure { DataLoadingStep.ChannelBTTVEmotes(channel, channelDisplayName, channelId) }
+                ?.let { emoteRepository.setBTTVEmotes(channel, channelDisplayName, it) }
         }.let { Log.i(TAG, "Loaded BTTV emotes for #$channel in $it ms") }
     }
 
