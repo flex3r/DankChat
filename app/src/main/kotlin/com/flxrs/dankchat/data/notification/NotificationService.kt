@@ -250,9 +250,7 @@ class NotificationService : Service(), CoroutineScope {
                         else                 -> return@forEach
                     }
 
-                    val volume = audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC) ?: 0
-
-                    if (!ttsEnabled || channel != activeTTSChannel || volume <= 0) {
+                    if (!ttsEnabled || channel != activeTTSChannel || (audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC) ?: 0) <= 0) {
                         return@forEach
                     }
 
