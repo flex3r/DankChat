@@ -24,8 +24,10 @@ import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.badge.BadgeSet
 import com.flxrs.dankchat.data.twitch.badge.BadgeType
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
+import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmoteType
 import com.flxrs.dankchat.data.twitch.emote.EmoteType
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
+import com.flxrs.dankchat.data.twitch.emote.toChatMessageEmoteType
 import com.flxrs.dankchat.data.twitch.message.EmoteWithPositions
 import com.flxrs.dankchat.data.twitch.message.Message
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
@@ -374,7 +376,7 @@ class EmoteRepository @Inject constructor(
     @VisibleForTesting
     fun adjustOverlayEmotes(message: String, emotes: List<ChatMessageEmote>): Pair<String, List<ChatMessageEmote>> {
         var adjustedMessage = message
-        val adjustedEmotes = emotes.sortedBy { it.position.first }
+        val adjustedEmotes = emotes.sortedBy { it.position.first }.toMutableList()
 
         for (i in adjustedEmotes.lastIndex downTo 0) {
             val emote = adjustedEmotes[i]
@@ -404,8 +406,7 @@ class EmoteRepository @Inject constructor(
                         adjustedMessage.length -> adjustedMessage.substring(0, emote.position.first)
                         else                   -> adjustedMessage.removeRange(emote.position)
                     }
-                    // TODO
-                    emote.position = previousEmote.position
+                    adjustedEmotes[i] = emote.copy(position = previousEmote.position)
                     foundEmote = true
 
                     break
@@ -421,7 +422,7 @@ class EmoteRepository @Inject constructor(
 
                         val first = nextEmote.position.first - emote.code.length - 1
                         val last = nextEmote.position.last - emote.code.length - 1
-                        nextEmote.position = first..last
+                        adjustedEmotes[k] = nextEmote.copy(position = first..last)
                     }
                 }
             }
@@ -441,6 +442,7 @@ class EmoteRepository @Inject constructor(
                         id = emote.id,
                         code = emote.code,
                         scale = emote.scale,
+                        type = emote.emoteType.toChatMessageEmoteType() ?: ChatMessageEmoteType.TwitchEmote,
                         isOverlayEmote = emote.isOverlayEmote
                     )
                 }
@@ -464,7 +466,7 @@ class EmoteRepository @Inject constructor(
                 val unicodeExtra = supplementaryCodePointPositions.count { it < range.first - removedSpaceExtra }
                 val spaceExtra = appendedSpaces.count { it < range.first + unicodeExtra }
                 val fixedStart = range.first + unicodeExtra + spaceExtra - removedSpaceExtra - replyMentionOffset
-                val fixedEnd = range.last + unicodeExtra + spaceExtra - removedSpaceExtra  - replyMentionOffset
+                val fixedEnd = range.last + unicodeExtra + spaceExtra - removedSpaceExtra - replyMentionOffset
 
                 // be extra safe in case twitch sends invalid emote ranges :)
                 val fixedPos = fixedStart.coerceAtLeast(minimumValue = 0)..(fixedEnd + 1).coerceAtMost(message.length)
@@ -475,6 +477,7 @@ class EmoteRepository @Inject constructor(
                     id = id,
                     code = code,
                     scale = 1,
+                    type = ChatMessageEmoteType.TwitchEmote,
                     isTwitch = true
                 )
             }
