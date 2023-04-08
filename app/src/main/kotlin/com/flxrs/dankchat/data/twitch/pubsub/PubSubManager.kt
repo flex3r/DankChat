@@ -40,7 +40,7 @@ class PubSubManager @Inject constructor(
         }
 
         val userId = preferenceStore.userIdString ?: return
-        val channels = preferenceStore.getChannels()
+        val channels = preferenceStore.channels
 
         scope.launch {
             val helixChannels = helixApiClient.getUsersByNames(channels)

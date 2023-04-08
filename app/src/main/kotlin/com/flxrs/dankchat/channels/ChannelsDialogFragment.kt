@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
@@ -29,7 +28,6 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
     lateinit var dankChatPreferences: DankChatPreferenceStore
 
     private var adapter: ChannelsAdapter? = null
-    private val args: ChannelsDialogFragmentArgs by navArgs()
     private val navController: NavController by lazy { findNavController() }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -46,8 +44,7 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val channels = args.channels.toList()
-        collectFlow(dankChatPreferences.getChannelsWithRenamesFlow(channels)) {
+        collectFlow(dankChatPreferences.getChannelsWithRenamesFlow()) {
             adapter?.submitList(it)
         }
     }
@@ -65,7 +62,6 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
                 .getBackStackEntry(R.id.mainFragment)
                 .savedStateHandle[MainFragment.CHANNELS_REQUEST_KEY] = it.currentList.toTypedArray()
         }
-
     }
 
     private fun openRenameChannelDialog(channelWithRename: ChannelWithRename) {
@@ -85,6 +81,12 @@ class ChannelsDialogFragment : BottomSheetDialogFragment() {
         }
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) = Unit
+
+        override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+            super.clearView(recyclerView, viewHolder)
+            val adapter = adapter ?: return
+            dankChatPreferences.channels = adapter.currentList.map(ChannelWithRename::channel)
+        }
     }
 
     private val dataObserver = object : RecyclerView.AdapterDataObserver() {
