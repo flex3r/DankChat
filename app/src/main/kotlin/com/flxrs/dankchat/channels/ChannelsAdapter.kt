@@ -41,11 +41,7 @@ class ChannelsAdapter(
                 .setTitle(R.string.confirm_channel_removal_title)
                 .setMessage(R.string.confirm_channel_removal_message)
                 .setPositiveButton(R.string.confirm_channel_removal_positive_button) { dialog, _ ->
-                    currentList.toMutableList().let {
-                        it.removeAt(holder.bindingAdapterPosition)
-                        submitList(it)
-                    }
-                    dankChatPreferences.removeChannelRename(channel)
+                    dankChatPreferences.removeChannel(channel)
                     dialog.dismiss()
                 }
                 .setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.dismiss() }

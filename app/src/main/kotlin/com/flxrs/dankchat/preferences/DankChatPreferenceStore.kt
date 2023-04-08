@@ -45,13 +45,14 @@ class DankChatPreferenceStore @Inject constructor(
         get() = dankChatPreferences.getString(OAUTH_KEY, null)
         set(value) = dankChatPreferences.edit { putString(OAUTH_KEY, value) }
 
-    var channelsString: String?
-        get() = dankChatPreferences.getString(CHANNELS_AS_STRING_KEY, null)
-        set(value) = dankChatPreferences.edit { putString(CHANNELS_AS_STRING_KEY, value) }
-
-    var channels: MutableSet<String>?
-        get() = dankChatPreferences.getStringSet(CHANNELS_KEY, setOf())
-        set(value) = dankChatPreferences.edit { putStringSet(CHANNELS_KEY, value) }
+    var channels: List<UserName>
+        get() = dankChatPreferences.getString(CHANNELS_AS_STRING_KEY, null)?.split(',').orEmpty().toUserNames()
+        set(value) {
+            val channels = value
+                .takeIf { it.isNotEmpty() }
+                ?.joinToString(separator = ",")
+            dankChatPreferences.edit { putString(CHANNELS_AS_STRING_KEY, channels) }
+        }
 
     var userName: UserName?
         get() = dankChatPreferences.getString(NAME_KEY, null)?.ifBlank { null }?.toUserName()
@@ -284,12 +285,16 @@ class DankChatPreferenceStore @Inject constructor(
         remove(context.getString(R.string.preference_custom_mentions_key))
     }
 
-    fun getChannels(): List<UserName> {
-        val channels = channelsString?.split(',') ?: channels.also { channels = null }?.toList().orEmpty()
-        return channels.toUserNames()
+    fun removeChannel(channel: UserName): List<UserName> {
+        val updated = channels - channel
+        dankChatPreferences.edit {
+            removeChannelRename(channel)
+            channels = updated
+        }
+        return updated
     }
 
-    fun getChannelsWithRenames(channels: List<UserName> = getChannels()): List<ChannelWithRename> {
+    fun getChannelsWithRenames(channels: List<UserName> = this.channels): List<ChannelWithRename> {
         val renameMap = channelRenames?.toMutableMap().orEmpty()
         return channels.map {
             ChannelWithRename(
@@ -299,12 +304,12 @@ class DankChatPreferenceStore @Inject constructor(
         }
     }
 
-    fun getChannelsWithRenamesFlow(channels: List<UserName>): Flow<List<ChannelWithRename>> = callbackFlow {
-        send(getChannelsWithRenames(channels))
+    fun getChannelsWithRenamesFlow(): Flow<List<ChannelWithRename>> = callbackFlow {
+        send(getChannelsWithRenames())
 
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (key == RENAME_KEY) {
-                trySend(getChannelsWithRenames(channels))
+            if (key == RENAME_KEY || key == CHANNELS_AS_STRING_KEY) {
+                trySend(getChannelsWithRenames())
             }
         }
 
@@ -392,7 +397,6 @@ class DankChatPreferenceStore @Inject constructor(
         private const val OAUTH_KEY = "oAuthKey"
         private const val NAME_KEY = "nameKey"
         private const val DISPLAY_NAME_KEY = "displayNameKey"
-        private const val CHANNELS_KEY = "channelsKey"
         private const val RENAME_KEY = "renameKey"
         private const val CHANNELS_AS_STRING_KEY = "channelsAsStringKey"
         private const val ID_KEY = "idKey"

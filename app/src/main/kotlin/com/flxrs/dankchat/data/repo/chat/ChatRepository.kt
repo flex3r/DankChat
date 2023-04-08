@@ -399,7 +399,7 @@ class ChatRepository @Inject constructor(
         writeConnection.sendMessage(preparedMessage)
     }
 
-    fun connectAndJoin(channels: List<UserName> = dankChatPreferenceStore.getChannels()) {
+    fun connectAndJoin(channels: List<UserName> = dankChatPreferenceStore.channels) {
         if (!pubSubManager.connected) {
             pubSubManager.start()
         }

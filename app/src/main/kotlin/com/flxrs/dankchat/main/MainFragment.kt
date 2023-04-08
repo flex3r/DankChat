@@ -431,7 +431,7 @@ class MainFragment : Fragment() {
             dankChatPreferences.userIdString = "${dankChatPreferences.userId}".toUserId()
         }
 
-        val channels = dankChatPreferences.getChannels()
+        val channels = dankChatPreferences.channels
         val withRenames = dankChatPreferences.getChannelsWithRenames(channels)
         tabAdapter.updateFragments(withRenames)
         @SuppressLint("WrongConstant")
@@ -667,7 +667,7 @@ class MainFragment : Fragment() {
             val updatedChannels = mainViewModel.joinChannel(lowerCaseChannel)
             newTabIndex = updatedChannels.lastIndex
             mainViewModel.loadData(channelList = listOf(lowerCaseChannel))
-            dankChatPreferences.channelsString = updatedChannels.joinToString(separator = ",")
+            dankChatPreferences.channels = updatedChannels
 
             tabAdapter.addFragment(lowerCaseChannel)
         }
@@ -952,15 +952,13 @@ class MainFragment : Fragment() {
 
     private fun removeChannel() {
         val activeChannel = mainViewModel.getActiveChannel() ?: return
-        val channels = mainViewModel.getChannels().ifEmpty { return }
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.confirm_channel_removal_title)
             // should give user more info that it's gonna delete the currently active channel (unlike when clicking delete from manage channels list, where is very obvious)
             .setMessage(getString(R.string.confirm_channel_removal_message_named, activeChannel))
             .setPositiveButton(R.string.confirm_channel_removal_positive_button) { _, _ ->
-                dankChatPreferences.removeChannelRename(activeChannel)
-                val updatedChannels = channels - activeChannel
-                val withRenames = dankChatPreferences.getChannelsWithRenames(updatedChannels)
+                dankChatPreferences.removeChannel(activeChannel)
+                val withRenames = dankChatPreferences.getChannelsWithRenames()
                 updateChannels(withRenames)
             }
             .setNegativeButton(R.string.dialog_cancel) { _, _ -> }
@@ -1025,7 +1023,7 @@ class MainFragment : Fragment() {
         val updatedChannels = updatedChannelsWithRenames.map(ChannelWithRename::channel)
         val oldChannels = mainViewModel.getChannels()
         val oldIndex = binding.chatViewpager.currentItem
-        val oldActiveChannel = oldChannels[oldIndex] // TODO
+        val oldActiveChannel = oldChannels.getOrNull(oldIndex)
 
         val index = updatedChannelsWithRenames
             .indexOfFirst { it.channel == oldActiveChannel }
@@ -1035,10 +1033,6 @@ class MainFragment : Fragment() {
         tabAdapter.updateFragments(updatedChannelsWithRenames)
         mainViewModel.updateChannels(updatedChannels)
         mainViewModel.setActiveChannel(activeChannel)
-
-        dankChatPreferences.channelsString = updatedChannels
-            .takeIf { it.isNotEmpty() }
-            ?.joinToString(separator = ",")
 
         binding.chatViewpager.setCurrentItem(index, false)
         binding.root.postDelayed(TAB_SCROLL_DELAY_MS) {
