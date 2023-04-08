@@ -23,6 +23,7 @@ import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.repo.emote.EmoteRepository
 import com.flxrs.dankchat.data.twitch.badge.Badge
+import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.main.MainViewModel
@@ -81,6 +82,7 @@ open class ChatFragment : Fragment() {
             onUserClick = ::onUserClick,
             onMessageLongClick = ::onMessageClick,
             onReplyClick = ::onReplyClick,
+            onEmoteClick = ::onEmoteClick,
         ).apply { stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY }
         binding.chat.setup(adapter, manager)
 
@@ -181,6 +183,10 @@ open class ChatFragment : Fragment() {
 
     protected open fun onMessageClick(messageId: String, channel: UserName?, fullMessage: String) {
         (parentFragment as? MainFragment)?.openMessageSheet(messageId, channel, fullMessage, canReply = true, canModerate = true)
+    }
+
+    protected open fun onEmoteClick(emote: ChatMessageEmote) {
+        (parentFragment as? MainFragment)?.openEmoteSheet(emote)
     }
 
     private fun onReplyClick(rootMessageId: String) {

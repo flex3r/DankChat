@@ -76,8 +76,8 @@ class MessageSheetFragment : BottomSheetDialogFragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         bindingRef = null
+        super.onDestroyView()
     }
 
     private fun sendResultAndDismiss(result: MessageSheetResult) {
