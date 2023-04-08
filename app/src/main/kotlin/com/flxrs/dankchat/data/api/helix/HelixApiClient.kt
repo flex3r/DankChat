@@ -3,6 +3,7 @@ package com.flxrs.dankchat.data.api.helix
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.helix.dto.AnnouncementRequestDto
+import com.flxrs.dankchat.data.api.helix.dto.BadgeSetDto
 import com.flxrs.dankchat.data.api.helix.dto.BanRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.ChatSettingsDto
 import com.flxrs.dankchat.data.api.helix.dto.ChatSettingsRequestDto
@@ -197,6 +198,20 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
             .body<DataListDto<ChatSettingsDto>>()
             .data
             .first()
+    }
+
+    suspend fun getGlobalBadges(): Result<List<BadgeSetDto>> = runCatching {
+        helixApi.getGlobalBadges()
+            .throwHelixApiErrorOnFailure()
+            .body<DataListDto<BadgeSetDto>>()
+            .data
+    }
+
+    suspend fun getChannelBadges(broadcastUserId: UserId): Result<List<BadgeSetDto>> = runCatching {
+        helixApi.getChannelBadges(broadcastUserId)
+            .throwHelixApiErrorOnFailure()
+            .body<DataListDto<BadgeSetDto>>()
+            .data
     }
 
     private suspend inline fun <reified T> pageUntil(amountToFetch: Int, request: (cursor: String?) -> HttpResponse?): List<T> {

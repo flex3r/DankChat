@@ -72,10 +72,12 @@ class DataRepository @Inject constructor(
 
     suspend fun loadGlobalBadges() = withContext(Dispatchers.IO) {
         measureTimeAndLog(TAG, "global badges") {
-            val badges = badgesApiClient.getGlobalBadges()
-                .getOrEmitFailure { DataLoadingStep.GlobalBadges }
-                ?.toBadgeSets()
-            badges?.let { emoteRepository.setGlobalBadges(it) }
+            val badges = when {
+                dankChatPreferenceStore.isLoggedIn                -> helixApiClient.getGlobalBadges().map { it.toBadgeSets() }
+                System.currentTimeMillis() < BADGES_SUNSET_MILLIS -> badgesApiClient.getGlobalBadges().map { it.toBadgeSets() }
+                else                                              -> return@withContext
+            }.getOrEmitFailure { DataLoadingStep.GlobalBadges }
+            badges?.also { emoteRepository.setGlobalBadges(it) }
         }
     }
 
@@ -97,10 +99,12 @@ class DataRepository @Inject constructor(
 
     suspend fun loadChannelBadges(channel: UserName, id: UserId) = withContext(Dispatchers.IO) {
         measureTimeAndLog(TAG, "channel badges for #$id") {
-            val badges = badgesApiClient.getChannelBadges(id)
-                .getOrEmitFailure { DataLoadingStep.ChannelBadges(channel, id) }
-                ?.toBadgeSets()
-            badges?.let { emoteRepository.setChannelBadges(channel, it) }
+            val badges = when {
+                dankChatPreferenceStore.isLoggedIn                -> helixApiClient.getChannelBadges(id).map { it.toBadgeSets() }
+                System.currentTimeMillis() < BADGES_SUNSET_MILLIS -> badgesApiClient.getChannelBadges(id).map { it.toBadgeSets() }
+                else                                              -> return@withContext
+            }.getOrEmitFailure { DataLoadingStep.ChannelBadges(channel, id) }
+            badges?.also { emoteRepository.setChannelBadges(channel, it) }
         }
     }
 
@@ -184,5 +188,6 @@ class DataRepository @Inject constructor(
 
     companion object {
         private val TAG = DataRepository::class.java.simpleName
+        private const val BADGES_SUNSET_MILLIS = 1685637000000L // 2023-06-01 16:30:00
     }
 }
