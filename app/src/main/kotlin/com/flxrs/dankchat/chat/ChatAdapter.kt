@@ -382,7 +382,7 @@ class ChatAdapter(
             }
 
         }
-        spannableWithEmojis[messageStart..messageEnd] = messageClickableSpan
+        spannableWithEmojis[0..spannableWithEmojis.length] = messageClickableSpan
         setText(spannableWithEmojis, TextView.BufferType.SPANNABLE)
 
         // todo extract common badges + emote handling
@@ -456,7 +456,7 @@ class ChatAdapter(
                 emoteRepository.gifCallback.addView(holder.binding.itemText)
             }
 
-            (text as Spannable)[messageStart..messageEnd.coerceAtMost(text.length)] = messageClickableSpan
+            (text as Spannable)[0..text.length] = messageClickableSpan
         }
     }
 
@@ -577,7 +577,7 @@ class ChatAdapter(
                 ds.isUnderlineText = false
             }
         }
-        spannableWithEmojis[messageStart..messageEnd] = messageClickableSpan
+        spannableWithEmojis[0..spannableWithEmojis.length] = messageClickableSpan
         setText(spannableWithEmojis, TextView.BufferType.SPANNABLE)
 
         val animateGifs = dankChatPreferenceStore.animateGifs
@@ -650,7 +650,7 @@ class ChatAdapter(
                 emoteRepository.gifCallback.addView(holder.binding.itemText)
             }
 
-            (text as Spannable)[messageStart..messageEnd.coerceAtMost(text.length)] = messageClickableSpan
+            (text as Spannable)[0..text.length] = messageClickableSpan
         }
     }
 
