@@ -86,7 +86,7 @@ inline fun <reified T : Any> LayerDrawable.forEachLayer(action: (T) -> Unit) {
     }
 }
 
-fun ViewPager2.reduceDragSensitivity() {
+fun ViewPager2.reduceDragSensitivity() = runCatching {
     val viewPager = this
     val recyclerView = ViewPager2::class.java.getDeclaredField("mRecyclerView").run {
         isAccessible = true
@@ -96,6 +96,16 @@ fun ViewPager2.reduceDragSensitivity() {
     val touchSlopField = RecyclerView::class.java.getDeclaredField("mTouchSlop").apply { isAccessible = true }
     val touchSlop = touchSlopField.get(recyclerView) as Int
     touchSlopField.set(recyclerView, touchSlop * 2)
+}
+
+fun ViewPager2.disableNestedScrolling() = runCatching {
+    val viewPager = this
+    val recyclerView = ViewPager2::class.java.getDeclaredField("mRecyclerView").run {
+        isAccessible = true
+        get(viewPager) as RecyclerView
+    }
+    recyclerView.isNestedScrollingEnabled = false
+    isNestedScrollingEnabled = false
 }
 
 fun MaterialButton.setEnabledColor(@ColorInt color: Int) {

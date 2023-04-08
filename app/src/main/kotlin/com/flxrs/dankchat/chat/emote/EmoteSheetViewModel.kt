@@ -14,16 +14,18 @@ class EmoteSheetViewModel @Inject constructor(savedStateHandle: SavedStateHandle
 
     private val args = EmoteSheetFragmentArgs.fromSavedStateHandle(savedStateHandle)
 
-    val state = EmoteSheetState(
-        id = args.emote.id,
-        name = args.emote.code,
-        imageUrl = args.emote.url,
-        baseName = args.emote.baseNameOrNull(),
-        creatorName = args.emote.creatorNameOrNull(),
-        providerUrl = args.emote.providerUrlOrNull(),
-        isZeroWidth = args.emote.isOverlayEmote,
-        emoteType = args.emote.emoteTypeOrNull(),
-    )
+    val items = args.emotes.map { emote ->
+        EmoteSheetItem(
+            id = emote.id,
+            name = emote.code,
+            imageUrl = emote.url,
+            baseName = emote.baseNameOrNull(),
+            creatorName = emote.creatorNameOrNull(),
+            providerUrl = emote.providerUrlOrNull(),
+            isZeroWidth = emote.isOverlayEmote,
+            emoteType = emote.emoteTypeOrNull(),
+        )
+    }
 
     private fun ChatMessageEmote.baseNameOrNull(): String? {
         return when (type) {

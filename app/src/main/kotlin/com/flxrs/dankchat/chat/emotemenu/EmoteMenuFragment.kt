@@ -13,6 +13,7 @@ import com.flxrs.dankchat.databinding.EmoteMenuFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.main.MainViewModel
 import com.flxrs.dankchat.utils.extensions.collectFlow
+import com.flxrs.dankchat.utils.extensions.disableNestedScrolling
 import com.google.android.material.tabs.TabLayoutMediator
 
 class EmoteMenuFragment : Fragment() {
@@ -28,6 +29,7 @@ class EmoteMenuFragment : Fragment() {
             bottomSheetViewPager.updateLayoutParams {
                 height = (resources.displayMetrics.heightPixels * HEIGHT_SCALE_FACTOR).toInt()
             }
+            bottomSheetViewPager.disableNestedScrolling()
             TabLayoutMediator(bottomSheetTabs, bottomSheetViewPager) { tab, pos ->
                 val menuTab = EmoteMenuTab.values()[pos]
                 tab.text = when (menuTab) {

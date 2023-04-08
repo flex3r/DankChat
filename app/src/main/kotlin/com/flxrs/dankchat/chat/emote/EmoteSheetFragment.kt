@@ -12,11 +12,12 @@ import androidx.navigation.fragment.findNavController
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.EmoteBottomsheetBinding
 import com.flxrs.dankchat.main.MainFragment
+import com.flxrs.dankchat.utils.extensions.disableNestedScrolling
 import com.flxrs.dankchat.utils.extensions.isLandscape
-import com.flxrs.dankchat.utils.extensions.loadImage
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.tabs.TabLayoutMediator
 
 class EmoteSheetFragment : BottomSheetDialogFragment() {
 
@@ -25,47 +26,34 @@ class EmoteSheetFragment : BottomSheetDialogFragment() {
     private val binding get() = bindingRef!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        bindingRef = EmoteBottomsheetBinding.inflate(inflater, container, false)
+        val adapter = EmoteSheetAdapter(
+            onUseClick = { sendResultAndDismiss(EmoteSheetResult.Use(it.name, it.id)) },
+            onCopyClick = { sendResultAndDismiss(EmoteSheetResult.Copy(it.name)) },
+            onOpenLinkClick = { emote ->
+                Intent(Intent.ACTION_VIEW).also {
+                    it.data = emote.providerUrl.toUri()
+                    startActivity(it)
+                }
+            },
+        )
+        val items = viewModel.items
+        adapter.submitList(items)
+
+        bindingRef = EmoteBottomsheetBinding.inflate(inflater, container, false).apply {
+            emoteSheetViewPager.adapter = adapter
+            TabLayoutMediator(emoteSheetTabs, emoteSheetViewPager) { tab, pos ->
+                tab.text = items[pos].name
+            }.attach()
+
+            emoteSheetTabs.isVisible = items.size > 1
+            emoteSheetViewPager.isUserInputEnabled = items.size > 1
+            emoteSheetViewPager.isNestedScrollingEnabled = false
+            emoteSheetViewPager.disableNestedScrolling()
+        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val state = viewModel.state
-        with(binding) {
-            emoteImage.loadImage(state.imageUrl, placeholder = null, afterLoad = { emoteImageLoading.isVisible = false })
-            emoteName.text = state.name
-            emoteType.text = buildString {
-                append(getString(state.emoteType))
-                if (state.isZeroWidth) {
-                    append(" ")
-                    append(getString(R.string.emote_sheet_zero_width_emote))
-                }
-            }
-            when (state.baseName) {
-                null -> emoteBaseName.isVisible = false
-                else -> {
-                    emoteBaseName.isVisible = true
-                    emoteBaseName.text = getString(R.string.emote_sheet_alias_of, state.baseName)
-                }
-            }
-            when (state.creatorName) {
-                null -> emoteCreator.isVisible = false
-                else -> {
-                    emoteCreator.isVisible = true
-                    emoteCreator.text = getString(R.string.emote_sheet_created_by, state.creatorName.value)
-                }
-            }
-
-            emoteUse.setOnClickListener { sendResultAndDismiss(EmoteSheetResult.Use(state.name, state.id)) }
-            emoteCopy.setOnClickListener { sendResultAndDismiss(EmoteSheetResult.Copy(state.name)) }
-            emoteOpenLink.setOnClickListener {
-                Intent(Intent.ACTION_VIEW).also {
-                    it.data = state.providerUrl.toUri()
-                    startActivity(it)
-                }
-            }
-        }
-
         dialog?.takeIf { isLandscape }?.let {
             with(it as BottomSheetDialog) {
                 behavior.state = BottomSheetBehavior.STATE_EXPANDED
