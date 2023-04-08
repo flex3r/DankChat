@@ -30,7 +30,9 @@ object LongClickLinkMovementMethod : LinkMovementMethod() {
                 val offset = layout.getOffsetForHorizontal(line, x.toFloat())
 
                 val linkSpans = buffer.getSpans(offset, offset, LongClickableSpan::class.java)
-                if (linkSpans.isEmpty()) return super.onTouchEvent(widget, buffer, event)
+                if (linkSpans.isEmpty()) {
+                    return super.onTouchEvent(widget, buffer, event)
+                }
 
                 if (action == MotionEvent.ACTION_UP) {
                     longClickHandler.removeCallbacksAndMessages(null)

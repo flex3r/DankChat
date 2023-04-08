@@ -12,6 +12,7 @@ import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.twitch.badge.Badge
+import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.utils.extensions.collectFlow
@@ -68,6 +69,10 @@ class MentionChatFragment : ChatFragment() {
 
     override fun onMessageClick(messageId: String, channel: UserName?, fullMessage: String) {
         (parentFragment?.parentFragment as? MainFragment)?.openMessageSheet(messageId, channel, fullMessage, canReply = false, canModerate = false)
+    }
+
+    override fun onEmoteClick(emote: ChatMessageEmote) {
+        (parentFragment?.parentFragment as? MainFragment)?.openEmoteSheet(emote)
     }
 
     companion object {

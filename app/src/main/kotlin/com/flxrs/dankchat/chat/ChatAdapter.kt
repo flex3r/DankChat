@@ -56,6 +56,7 @@ class ChatAdapter(
     private val onUserClick: (targetUserId: UserId?, targetUsername: UserName, targetDisplayName: DisplayName, channelName: UserName?, badges: List<Badge>, isLongPress: Boolean) -> Unit,
     private val onMessageLongClick: (messageId: String, channel: UserName?, fullMessage: String) -> Unit,
     private val onReplyClick: (messageId: String) -> Unit,
+    private val onEmoteClick: (emote: ChatMessageEmote) -> Unit,
 ) : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
     // Using position.isEven for determining which background to use in checkered mode doesn't work,
     // since the LayoutManager uses stackFromEnd and every new message will be even. Instead, keep count of new messages separately.
@@ -428,6 +429,9 @@ class ChatAdapter(
                 }
             }
 
+            // Remove message clickable span because emote spans have to be set before we add the span covering the full message
+            (text as Spannable).removeSpan(messageClickableSpan)
+
             val fullPrefix = prefixLength + badgesLength
             try {
                 emotes
@@ -441,7 +445,7 @@ class ChatAdapter(
                                 hasAnimatedEmoteOrBadge = true
                                 animatable.setRunning(animateGifs)
                             }
-                            (text as Spannable).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
+                            (text as Spannable).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable, onWhisperMessageClick)
                         }
                     }
             } catch (t: Throwable) {
@@ -451,6 +455,8 @@ class ChatAdapter(
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && animateGifs && hasAnimatedEmoteOrBadge) {
                 emoteRepository.gifCallback.addView(holder.binding.itemText)
             }
+
+            (text as Spannable)[messageStart..messageEnd] = messageClickableSpan
         }
     }
 
@@ -617,6 +623,9 @@ class ChatAdapter(
                 }
             }
 
+            // Remove message clickable span because emote spans have to be set before we add the span covering the full message
+            (text as Spannable).removeSpan(messageClickableSpan)
+
             val fullPrefix = prefixLength + badgesLength
             try {
                 emotes
@@ -630,7 +639,7 @@ class ChatAdapter(
                                 hasAnimatedEmoteOrBadge = true
                                 animatable.setRunning(animateGifs)
                             }
-                            (text as Spannable).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable)
+                            (text as Spannable).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable, onMessageClick)
                         }
                     }
             } catch (t: Throwable) {
@@ -640,6 +649,8 @@ class ChatAdapter(
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && animateGifs && hasAnimatedEmoteOrBadge) {
                 emoteRepository.gifCallback.addView(holder.binding.itemText)
             }
+
+            (text as Spannable)[messageStart..messageEnd] = messageClickableSpan
         }
     }
 
@@ -680,11 +691,15 @@ class ChatAdapter(
         forEachIndexed { idx, dr -> dr.transformEmoteDrawable(scaleFactor, emotes[idx], maxWidth, maxHeight) }
     }
 
-    private fun Spannable.setEmoteSpans(e: ChatMessageEmote, prefix: Int, drawable: Drawable) {
+    private fun Spannable.setEmoteSpans(e: ChatMessageEmote, prefix: Int, drawable: Drawable, onLongClick: () -> Unit) {
         try {
             val start = e.position.first + prefix
             val end = e.position.last + prefix
             this[start..end] = ImageSpan(drawable)
+            this[start..end] = object : LongClickableSpan() {
+                override fun onLongClick(view: View) = onLongClick()
+                override fun onClick(widget: View) =onEmoteClick(e)
+            }
         } catch (t: Throwable) {
             Log.e("ViewBinding", "$t $this ${e.position} ${e.code} $length")
         }

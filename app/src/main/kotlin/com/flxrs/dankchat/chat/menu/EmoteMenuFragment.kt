@@ -21,7 +21,7 @@ class EmoteMenuFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val adapter = EmoteMenuAdapter {
-            (parentFragment as? MainFragment)?.insertEmote(it)
+            (parentFragment as? MainFragment)?.insertEmote(it.code, it.id)
         }
         val binding = EmoteMenuFragmentBinding.inflate(inflater, container, false).apply {
             bottomSheetViewPager.adapter = adapter

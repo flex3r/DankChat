@@ -718,8 +718,8 @@ class MainViewModel @Inject constructor(
         trySendMessageOrCommand(command)
     }
 
-    fun addEmoteUsage(emote: GenericEmote) = viewModelScope.launch {
-        emoteUsageRepository.addEmoteUsage(emote.id)
+    fun addEmoteUsage(id: String) = viewModelScope.launch {
+        emoteUsageRepository.addEmoteUsage(id)
     }
 
     private suspend fun checkFailuresAndEmitState() {

@@ -39,6 +39,9 @@
         <action
             android:id="@+id/action_mainFragment_to_copyMessageSheetFragment"
             app:destination="@id/copyMessageSheetFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_emoteSheetFragment"
+            app:destination="@id/emoteSheetFragment" />
     </fragment>
     <fragment
         android:id="@+id/chatFragment"
@@ -230,5 +233,13 @@
         <argument
             android:name="fullMessage"
             app:argType="string" />
+    </dialog>
+    <dialog
+        android:id="@+id/emoteSheetFragment"
+        android:name="com.flxrs.dankchat.chat.emote.EmoteSheetFragment"
+        android:label="EmoteSheetFragment" >
+        <argument
+            android:name="emote"
+            app:argType="com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote" />
     </dialog>
 </navigation>

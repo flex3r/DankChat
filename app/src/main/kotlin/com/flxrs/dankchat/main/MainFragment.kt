@@ -47,6 +47,7 @@ import com.flxrs.dankchat.ValidationResult
 import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.chat.FullScreenSheetState
 import com.flxrs.dankchat.chat.InputSheetState
+import com.flxrs.dankchat.chat.emote.EmoteSheetResult
 import com.flxrs.dankchat.chat.mention.MentionFragment
 import com.flxrs.dankchat.chat.menu.EmoteMenuFragment
 import com.flxrs.dankchat.chat.message.CopyMessageSheetResult
@@ -61,7 +62,7 @@ import com.flxrs.dankchat.data.*
 import com.flxrs.dankchat.data.state.DataLoadingState
 import com.flxrs.dankchat.data.state.ImageUploadState
 import com.flxrs.dankchat.data.twitch.badge.Badge
-import com.flxrs.dankchat.data.twitch.emote.GenericEmote
+import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.databinding.EditDialogBinding
 import com.flxrs.dankchat.databinding.MainFragmentBinding
 import com.flxrs.dankchat.preferences.ChannelWithRename
@@ -413,6 +414,7 @@ class MainFragment : Fragment() {
                     USER_POPUP_RESULT_KEY         -> handle.withData(key, ::handleUserPopupResult)
                     MESSAGE_SHEET_RESULT_KEY      -> handle.withData(key, ::handleMessageSheetResult)
                     COPY_MESSAGE_SHEET_RESULT_KEY -> handle.withData(key, ::handleCopyMessageSheetResult)
+                    EMOTE_SHEET_RESULT_KEY        -> handle.withData(key, ::handleEmoteSheetResult)
                     LOGOUT_REQUEST_KEY            -> handle.withData<Boolean>(key) { showLogoutConfirmationDialog() }
                     CHANNELS_REQUEST_KEY          -> handle.withData<Array<ChannelWithRename>>(key) { updateChannels(it.toList()) }
                 }
@@ -550,6 +552,11 @@ class MainFragment : Fragment() {
         navigateSafe(directions)
     }
 
+    fun openEmoteSheet(emote: ChatMessageEmote) {
+        val directions = MainFragmentDirections.actionMainFragmentToEmoteSheetFragment(emote)
+        navigateSafe(directions)
+    }
+
     fun mentionUser(user: UserName, display: DisplayName) {
         val template = preferences.getString(getString(R.string.preference_mention_format_key), "name") ?: "name"
         val mention = "${template.replace("name", user.valueOrDisplayName(display))} "
@@ -576,9 +583,9 @@ class MainFragment : Fragment() {
         fullscreenBottomSheetBehavior?.expand()
     }
 
-    fun insertEmote(emote: GenericEmote) {
-        insertText("${emote.code} ")
-        mainViewModel.addEmoteUsage(emote)
+    fun insertEmote(code: String, id: String) {
+        insertText("$code ")
+        mainViewModel.addEmoteUsage(id)
     }
 
     private fun handleMessageSheetResult(result: MessageSheetResult) = when (result) {
@@ -595,6 +602,11 @@ class MainFragment : Fragment() {
     private fun handleCopyMessageSheetResult(result: CopyMessageSheetResult) = when (result) {
         is CopyMessageSheetResult.Copy   -> copyAndShowSnackBar(result.message, R.string.snackbar_message_copied)
         is CopyMessageSheetResult.CopyId -> copyAndShowSnackBar(result.id, R.string.snackbar_message_id_copied)
+    }
+
+    private fun handleEmoteSheetResult(result: EmoteSheetResult) = when (result) {
+        is EmoteSheetResult.Copy -> copyAndShowSnackBar(result.emoteName, R.string.emote_copied)
+        is EmoteSheetResult.Use  -> insertEmote(result.emoteName, result.id)
     }
 
     private fun copyAndShowSnackBar(value: String, @StringRes snackBarLabel: Int) {
@@ -1191,7 +1203,7 @@ class MainFragment : Fragment() {
         setOnItemClickListener { parent, _, position, _ ->
             val suggestion = parent.getItemAtPosition(position)
             if (suggestion is Suggestion.EmoteSuggestion) {
-                mainViewModel.addEmoteUsage(suggestion.emote)
+                mainViewModel.addEmoteUsage(suggestion.emote.id)
             }
         }
 
@@ -1267,5 +1279,6 @@ class MainFragment : Fragment() {
         const val USER_POPUP_RESULT_KEY = "user_popup_key"
         const val MESSAGE_SHEET_RESULT_KEY = "message_sheet_key"
         const val COPY_MESSAGE_SHEET_RESULT_KEY = "copy_message_sheet_key"
+        const val EMOTE_SHEET_RESULT_KEY = "emote_sheet_key"
     }
 }
