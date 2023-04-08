@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.chat.menu
+package com.flxrs.dankchat.chat.emotemenu
 
 import android.os.Bundle
 import android.view.LayoutInflater
