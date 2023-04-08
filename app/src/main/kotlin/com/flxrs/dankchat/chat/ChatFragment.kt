@@ -185,8 +185,8 @@ open class ChatFragment : Fragment() {
         (parentFragment as? MainFragment)?.openMessageSheet(messageId, channel, fullMessage, canReply = true, canModerate = true)
     }
 
-    protected open fun onEmoteClick(emote: ChatMessageEmote) {
-        (parentFragment as? MainFragment)?.openEmoteSheet(emote)
+    protected open fun onEmoteClick(emotes: List<ChatMessageEmote>) {
+        (parentFragment as? MainFragment)?.openEmoteSheet(emotes)
     }
 
     private fun onReplyClick(rootMessageId: String) {

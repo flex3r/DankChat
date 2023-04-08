@@ -56,7 +56,7 @@ class ChatAdapter(
     private val onUserClick: (targetUserId: UserId?, targetUsername: UserName, targetDisplayName: DisplayName, channelName: UserName?, badges: List<Badge>, isLongPress: Boolean) -> Unit,
     private val onMessageLongClick: (messageId: String, channel: UserName?, fullMessage: String) -> Unit,
     private val onReplyClick: (messageId: String) -> Unit,
-    private val onEmoteClick: (emote: ChatMessageEmote) -> Unit,
+    private val onEmoteClick: (emotes: List<ChatMessageEmote>) -> Unit,
 ) : ListAdapter<ChatItem, ChatAdapter.ViewHolder>(DetectDiff()) {
     // Using position.isEven for determining which background to use in checkered mode doesn't work,
     // since the LayoutManager uses stackFromEnd and every new message will be even. Instead, keep count of new messages separately.
@@ -445,7 +445,7 @@ class ChatAdapter(
                                 hasAnimatedEmoteOrBadge = true
                                 animatable.setRunning(animateGifs)
                             }
-                            (text as Spannable).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable, onWhisperMessageClick)
+                            (text as Spannable).setEmoteSpans(emotes, fullPrefix, layerDrawable, onWhisperMessageClick)
                         }
                     }
             } catch (t: Throwable) {
@@ -639,7 +639,7 @@ class ChatAdapter(
                                 hasAnimatedEmoteOrBadge = true
                                 animatable.setRunning(animateGifs)
                             }
-                            (text as Spannable).setEmoteSpans(emotes.first(), fullPrefix, layerDrawable, onMessageClick)
+                            (text as Spannable).setEmoteSpans(emotes, fullPrefix, layerDrawable, onMessageClick)
                         }
                     }
             } catch (t: Throwable) {
@@ -691,17 +691,19 @@ class ChatAdapter(
         forEachIndexed { idx, dr -> dr.transformEmoteDrawable(scaleFactor, emotes[idx], maxWidth, maxHeight) }
     }
 
-    private fun Spannable.setEmoteSpans(e: ChatMessageEmote, prefix: Int, drawable: Drawable, onLongClick: () -> Unit) {
+    private fun Spannable.setEmoteSpans(emotes: List<ChatMessageEmote>, prefix: Int, drawable: Drawable, onLongClick: () -> Unit) {
         try {
-            val start = e.position.first + prefix
-            val end = e.position.last + prefix
+            val position = emotes.first().position
+            val start = position.first + prefix
+            val end = position.last + prefix
             this[start..end] = ImageSpan(drawable)
             this[start..end] = object : LongClickableSpan() {
                 override fun onLongClick(view: View) = onLongClick()
-                override fun onClick(widget: View) =onEmoteClick(e)
+                override fun onClick(widget: View) = onEmoteClick(emotes)
             }
         } catch (t: Throwable) {
-            Log.e("ViewBinding", "$t $this ${e.position} ${e.code} $length")
+            val firstEmote = emotes.firstOrNull()
+            Log.e("ViewBinding", "$t $this ${firstEmote?.position} ${firstEmote?.code} $length")
         }
     }
 

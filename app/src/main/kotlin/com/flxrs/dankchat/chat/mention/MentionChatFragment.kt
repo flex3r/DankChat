@@ -71,8 +71,8 @@ class MentionChatFragment : ChatFragment() {
         (parentFragment?.parentFragment as? MainFragment)?.openMessageSheet(messageId, channel, fullMessage, canReply = false, canModerate = false)
     }
 
-    override fun onEmoteClick(emote: ChatMessageEmote) {
-        (parentFragment?.parentFragment as? MainFragment)?.openEmoteSheet(emote)
+    override fun onEmoteClick(emotes: List<ChatMessageEmote>) {
+        (parentFragment?.parentFragment as? MainFragment)?.openEmoteSheet(emotes)
     }
 
     companion object {

@@ -239,7 +239,7 @@
         android:name="com.flxrs.dankchat.chat.emote.EmoteSheetFragment"
         android:label="EmoteSheetFragment" >
         <argument
-            android:name="emote"
-            app:argType="com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote" />
+            android:name="emotes"
+            app:argType="com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote[]" />
     </dialog>
 </navigation>

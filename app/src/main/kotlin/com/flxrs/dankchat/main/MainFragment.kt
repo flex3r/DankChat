@@ -552,8 +552,8 @@ class MainFragment : Fragment() {
         navigateSafe(directions)
     }
 
-    fun openEmoteSheet(emote: ChatMessageEmote) {
-        val directions = MainFragmentDirections.actionMainFragmentToEmoteSheetFragment(emote)
+    fun openEmoteSheet(emotes: List<ChatMessageEmote>) {
+        val directions = MainFragmentDirections.actionMainFragmentToEmoteSheetFragment(emotes.toTypedArray())
         navigateSafe(directions)
     }
 
