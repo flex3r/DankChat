@@ -456,7 +456,7 @@ class ChatAdapter(
                 emoteRepository.gifCallback.addView(holder.binding.itemText)
             }
 
-            (text as Spannable)[messageStart..messageEnd] = messageClickableSpan
+            (text as Spannable)[messageStart..messageEnd.coerceAtMost(text.length)] = messageClickableSpan
         }
     }
 
@@ -650,7 +650,7 @@ class ChatAdapter(
                 emoteRepository.gifCallback.addView(holder.binding.itemText)
             }
 
-            (text as Spannable)[messageStart..messageEnd] = messageClickableSpan
+            (text as Spannable)[messageStart..messageEnd.coerceAtMost(text.length)] = messageClickableSpan
         }
     }
 
