@@ -49,7 +49,7 @@ import com.flxrs.dankchat.chat.FullScreenSheetState
 import com.flxrs.dankchat.chat.InputSheetState
 import com.flxrs.dankchat.chat.emote.EmoteSheetResult
 import com.flxrs.dankchat.chat.mention.MentionFragment
-import com.flxrs.dankchat.chat.menu.EmoteMenuFragment
+import com.flxrs.dankchat.chat.emotemenu.EmoteMenuFragment
 import com.flxrs.dankchat.chat.message.CopyMessageSheetResult
 import com.flxrs.dankchat.chat.message.MessageSheetResult
 import com.flxrs.dankchat.chat.replies.RepliesFragment

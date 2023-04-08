@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.chat.menu
+package com.flxrs.dankchat.chat.emotemenu
 
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 

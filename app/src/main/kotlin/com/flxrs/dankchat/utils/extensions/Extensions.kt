@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.SavedStateHandle
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.chat.menu.EmoteItem
+import com.flxrs.dankchat.chat.emotemenu.EmoteItem
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.google.android.material.color.MaterialColors

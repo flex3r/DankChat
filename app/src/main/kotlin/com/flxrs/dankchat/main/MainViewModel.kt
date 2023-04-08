@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.chat.FullScreenSheetState
 import com.flxrs.dankchat.chat.InputSheetState
-import com.flxrs.dankchat.chat.menu.EmoteMenuTab
-import com.flxrs.dankchat.chat.menu.EmoteMenuTabItem
+import com.flxrs.dankchat.chat.emotemenu.EmoteMenuTab
+import com.flxrs.dankchat.chat.emotemenu.EmoteMenuTabItem
 import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.ApiException
@@ -31,7 +31,6 @@ import com.flxrs.dankchat.data.state.ImageUploadState
 import com.flxrs.dankchat.data.twitch.chat.ConnectionState
 import com.flxrs.dankchat.data.twitch.command.TwitchCommand
 import com.flxrs.dankchat.data.twitch.emote.EmoteType
-import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.data.twitch.message.RoomState
 import com.flxrs.dankchat.data.twitch.message.SystemMessageType
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
