@@ -226,7 +226,7 @@ open class ChatFragment : Fragment() {
     }
 
     private fun RecyclerView.cleanupActiveDrawables(itemCount: Int) =
-        forEachViewHolder<ChatAdapter.ViewHolder>(itemCount) { holder ->
+        forEachViewHolder<ChatAdapter.ViewHolder>(itemCount) { _, holder ->
             holder.binding.itemText.forEachSpan<ImageSpan> { imageSpan ->
                 (imageSpan.drawable as? LayerDrawable)?.forEachLayer(Animatable::stop)
             }

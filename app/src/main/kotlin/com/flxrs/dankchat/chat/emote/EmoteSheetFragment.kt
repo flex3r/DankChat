@@ -9,11 +9,14 @@ import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.EmoteBottomsheetBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.utils.extensions.disableNestedScrolling
+import com.flxrs.dankchat.utils.extensions.forEachViewHolder
 import com.flxrs.dankchat.utils.extensions.isLandscape
+import com.flxrs.dankchat.utils.extensions.recyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -47,8 +50,8 @@ class EmoteSheetFragment : BottomSheetDialogFragment() {
 
             emoteSheetTabs.isVisible = items.size > 1
             emoteSheetViewPager.isUserInputEnabled = items.size > 1
-            emoteSheetViewPager.isNestedScrollingEnabled = false
             emoteSheetViewPager.disableNestedScrolling()
+            emoteSheetViewPager.registerOnPageChangeCallback(emoteSheetPageChangeCallback)
         }
         return binding.root
     }
@@ -63,8 +66,20 @@ class EmoteSheetFragment : BottomSheetDialogFragment() {
     }
 
     override fun onDestroyView() {
+        binding.emoteSheetViewPager.unregisterOnPageChangeCallback(emoteSheetPageChangeCallback)
         bindingRef = null
         super.onDestroyView()
+    }
+
+    private val emoteSheetPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            val adapter = binding.emoteSheetViewPager.adapter as? EmoteSheetAdapter ?: return
+            runCatching {
+                binding.emoteSheetViewPager.recyclerView?.forEachViewHolder<EmoteSheetAdapter.ViewHolder>(adapter.itemCount) { idx, viewHolder ->
+                    viewHolder.binding.buttonsLayout.isNestedScrollingEnabled = idx == position
+                }
+            }
+        }
     }
 
     private fun sendResultAndDismiss(result: EmoteSheetResult) {
