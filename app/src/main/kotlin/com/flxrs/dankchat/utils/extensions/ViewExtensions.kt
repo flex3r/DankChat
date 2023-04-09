@@ -61,11 +61,11 @@ inline fun ImageView.loadImage(
     }
 }
 
-inline fun <reified T : RecyclerView.ViewHolder> RecyclerView.forEachViewHolder(itemCount: Int, action: (T) -> Unit) {
+inline fun <reified T : RecyclerView.ViewHolder> RecyclerView.forEachViewHolder(itemCount: Int, action: (Int, T) -> Unit) {
     for (i in 0 until itemCount) {
         val holder = findViewHolderForAdapterPosition(i) ?: continue
         if (holder is T) {
-            action(holder)
+            action(i, holder)
         }
     }
 }
@@ -86,25 +86,25 @@ inline fun <reified T : Any> LayerDrawable.forEachLayer(action: (T) -> Unit) {
     }
 }
 
-fun ViewPager2.reduceDragSensitivity() = runCatching {
-    val viewPager = this
-    val recyclerView = ViewPager2::class.java.getDeclaredField("mRecyclerView").run {
-        isAccessible = true
-        get(viewPager) as RecyclerView
-    }
+val ViewPager2.recyclerView: RecyclerView?
+    get() = runCatching {
+        val viewPager = this
+        ViewPager2::class.java.getDeclaredField("mRecyclerView").run {
+            isAccessible = true
+            get(viewPager) as RecyclerView
+        }
+    }.getOrNull()
 
+fun ViewPager2.reduceDragSensitivity() = runCatching {
+    val recyclerView = recyclerView
     val touchSlopField = RecyclerView::class.java.getDeclaredField("mTouchSlop").apply { isAccessible = true }
     val touchSlop = touchSlopField.get(recyclerView) as Int
     touchSlopField.set(recyclerView, touchSlop * 2)
 }
 
 fun ViewPager2.disableNestedScrolling() = runCatching {
-    val viewPager = this
-    val recyclerView = ViewPager2::class.java.getDeclaredField("mRecyclerView").run {
-        isAccessible = true
-        get(viewPager) as RecyclerView
-    }
-    recyclerView.isNestedScrollingEnabled = false
+    val recyclerView = recyclerView
+    recyclerView?.isNestedScrollingEnabled = false
     isNestedScrollingEnabled = false
 }
 

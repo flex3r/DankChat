@@ -14,7 +14,7 @@ import com.flxrs.dankchat.databinding.MenuTabListBinding
 
 class EmoteMenuAdapter(private val onEmoteClick: (emote: GenericEmote) -> Unit) : ListAdapter<EmoteMenuTabItem, EmoteMenuAdapter.ViewHolder>(DetectDiff()) {
 
-    inner class ViewHolder(val adapter: EmoteAdapter, binding: MenuTabListBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class ViewHolder(val adapter: EmoteAdapter, val binding: MenuTabListBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun getItemCount() = EmoteMenuTab.values().size
 
@@ -51,7 +51,6 @@ class EmoteMenuAdapter(private val onEmoteClick: (emote: GenericEmote) -> Unit) 
 
     private class DetectDiff : DiffUtil.ItemCallback<EmoteMenuTabItem>() {
         override fun areItemsTheSame(oldItem: EmoteMenuTabItem, newItem: EmoteMenuTabItem): Boolean = oldItem.type == newItem.type
-
         override fun areContentsTheSame(oldItem: EmoteMenuTabItem, newItem: EmoteMenuTabItem): Boolean = oldItem == newItem
     }
 }
