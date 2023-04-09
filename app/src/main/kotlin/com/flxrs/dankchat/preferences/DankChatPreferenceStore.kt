@@ -153,6 +153,9 @@ class DankChatPreferenceStore @Inject constructor(
     val shouldLoadHistory: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_load_message_history_key), true)
 
+    val shouldLoadMessagesOnReconnect: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_load_messages_on_reconnect__key), true)
+
     val shouldLoadSupibot: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_supibot_suggestions_key), false)
 

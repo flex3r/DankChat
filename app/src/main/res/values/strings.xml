@@ -222,6 +222,9 @@
     <string name="preference_suggestions_summary">Shows suggestions for emotes and active users while typing</string>
     <string name="preference_load_message_history_title">Load message history on start</string>
     <string name="preference_load_message_history_key" translatable="false">load_message_history_key</string>
+    <string name="preference_load_messages_on_reconnect_title">Load message history after a reconnect</string>
+    <string name="preference_load_messages_on_reconnect_summary">Attempts to fetch missed messages that were not received during connection drops</string>
+    <string name="preference_load_messages_on_reconnect__key" translatable="false">load_messages_on_reconnect_key</string>
     <string name="preference_message_history_header">Message history</string>
     <string name="preference_message_history_dashboard_title">Open dashboard</string>
     <string name="preference_message_history_dashboard_key" translatable="false">message_history_dashboard_key</string>
