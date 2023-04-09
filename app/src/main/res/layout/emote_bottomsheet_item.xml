@@ -27,6 +27,7 @@
             android:layout_marginBottom="16dp"
             android:contentDescription="@string/emote_sheet_image_description"
             android:scaleType="fitCenter"
+            android:background="?android:attr/selectableItemBackground"
             app:layout_constraintBottom_toTopOf="@id/top_barrier"
             app:layout_constraintEnd_toStartOf="@id/emote_name"
             app:layout_constraintStart_toStartOf="parent"
