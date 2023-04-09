@@ -96,7 +96,7 @@ class ChatRepository @Inject constructor(
     private val pubSubManager: PubSubManager,
     @ReadConnection private val readConnection: ChatConnection,
     @WriteConnection private val writeConnection: ChatConnection,
-    @ApplicationScope scope: CoroutineScope,
+    @ApplicationScope private val scope: CoroutineScope,
 ) {
 
     private val _activeChannel = MutableStateFlow<UserName?>(null)
@@ -824,8 +824,12 @@ class ChatRepository @Inject constructor(
 
     private fun makeAndPostSystemMessage(type: SystemMessageType, channels: Set<UserName> = messages.keys) {
         channels.forEach { channel ->
-            messages[channel]?.update { current ->
-                current.addSystemMessage(type, scrollBackLength, ::onMessageRemoved)
+            val flow = messages[channel] ?: return@forEach
+            val current = flow.value
+            flow.value = current.addSystemMessage(type, scrollBackLength, ::onMessageRemoved) {
+                if (dankChatPreferenceStore.shouldLoadMessagesOnReconnect) {
+                    scope.launch { loadRecentMessages(channel, isReconnect = true) }
+                }
             }
         }
     }
@@ -836,13 +840,15 @@ class ChatRepository @Inject constructor(
         ConnectionState.CONNECTED_NOT_LOGGED_IN -> SystemMessageType.Connected
     }
 
-    private suspend fun loadRecentMessages(channel: UserName) = withContext(Dispatchers.IO) {
-        if (channel in loadedRecentsInChannels) {
+    private suspend fun loadRecentMessages(channel: UserName, isReconnect: Boolean = false) = withContext(Dispatchers.IO) {
+        if (!isReconnect && channel in loadedRecentsInChannels) {
             return@withContext
         }
 
         val result = recentMessagesApiClient.getRecentMessages(channel).getOrElse { throwable ->
-            handleRecentMessagesFailure(throwable, channel)
+            if (!isReconnect) {
+                handleRecentMessagesFailure(throwable, channel)
+            }
             return@withContext
         }
 
@@ -892,8 +898,9 @@ class ChatRepository @Inject constructor(
                         }
 
                         val importance = when {
-                            isDeleted -> ChatImportance.DELETED
-                            else      -> ChatImportance.REGULAR
+                            isDeleted   -> ChatImportance.DELETED
+                            isReconnect -> ChatImportance.SYSTEM
+                            else        -> ChatImportance.REGULAR
                         }
                         if (message is UserNoticeMessage && message.childMessage != null) {
                             items += ChatItem(message.childMessage, importance = importance)
@@ -906,13 +913,13 @@ class ChatRepository @Inject constructor(
 
         messages[channel]?.update { current ->
             val withIncompleteWarning = when {
-                recentMessages.isNotEmpty() && result.errorCode == RecentMessagesDto.ERROR_CHANNEL_NOT_JOINED -> {
+                !isReconnect && recentMessages.isNotEmpty() && result.errorCode == RecentMessagesDto.ERROR_CHANNEL_NOT_JOINED -> {
                     current + SystemMessageType.MessageHistoryIncomplete.toChatItem()
                 }
 
-                else                                                                                          -> current
+                else                                                                                                          -> current
             }
-            items.addAndLimit(withIncompleteWarning, scrollBackLength, ::onMessageRemoved, checkForDuplications = true)
+            withIncompleteWarning.addAndLimit(items, scrollBackLength, ::onMessageRemoved, checkForDuplications = true)
         }
 
         val mentions = items.filter { (it.message.highlights.hasMention()) }.toMentionTabItems()

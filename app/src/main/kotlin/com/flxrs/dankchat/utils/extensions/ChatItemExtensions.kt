@@ -52,7 +52,7 @@ fun List<ChatItem>.replaceOrAddModerationMessage(moderationMessage: ModerationMe
 
     return when {
         addSystemMessage -> addAndLimit(ChatItem(moderationMessage, importance = ChatImportance.SYSTEM), scrollBackLength, onMessageRemoved)
-        else         -> this
+        else             -> this
     }
 }
 
@@ -96,6 +96,11 @@ fun List<ChatItem>.addAndLimit(
     checkForDuplications -> plus(items)
         .distinctBy { it.message.id }
         .sortedBy { it.message.timestamp }
+        .also {
+            it
+                .take((it.size - scrollBackLength).coerceAtLeast(minimumValue = 0))
+                .forEach(onMessageRemoved)
+        }
         .takeLast(scrollBackLength)
 
     else                 -> toMutableList().apply {
@@ -106,18 +111,21 @@ fun List<ChatItem>.addAndLimit(
     }
 }
 
-fun List<ChatItem>.addSystemMessage(type: SystemMessageType, scrollBackLength: Int, onMessageRemoved: (ChatItem) -> Unit): List<ChatItem> {
+fun List<ChatItem>.addSystemMessage(type: SystemMessageType, scrollBackLength: Int, onMessageRemoved: (ChatItem) -> Unit, onReconnect: () -> Unit = {}): List<ChatItem> {
     return when {
         type != SystemMessageType.Connected -> addAndLimit(type.toChatItem(), scrollBackLength, onMessageRemoved)
-        else                                -> replaceDisconnectedIfNecessary(scrollBackLength, onMessageRemoved)
+        else                                -> replaceDisconnectedIfNecessary(scrollBackLength, onMessageRemoved, onReconnect)
     }
 }
 
-fun List<ChatItem>.replaceDisconnectedIfNecessary(scrollBackLength: Int, onMessageRemoved: (ChatItem) -> Unit): List<ChatItem> {
+fun List<ChatItem>.replaceDisconnectedIfNecessary(scrollBackLength: Int, onMessageRemoved: (ChatItem) -> Unit, onReconnect: () -> Unit): List<ChatItem> {
     val item = lastOrNull()
     val message = item?.message
     return when ((message as? SystemMessage)?.type) {
-        SystemMessageType.Disconnected -> dropLast(1) + item.copy(message = SystemMessage(SystemMessageType.Reconnected))
+        SystemMessageType.Disconnected -> {
+            onReconnect()
+            dropLast(1) + item.copy(message = SystemMessage(SystemMessageType.Reconnected))
+        }
         else                           -> addAndLimit(SystemMessageType.Connected.toChatItem(), scrollBackLength, onMessageRemoved)
     }
 }
