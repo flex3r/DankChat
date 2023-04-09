@@ -38,6 +38,12 @@ class EmoteSheetFragment : BottomSheetDialogFragment() {
                     startActivity(it)
                 }
             },
+            onImageClick = { emote ->
+                Intent(Intent.ACTION_VIEW).also {
+                    it.data = emote.imageUrl.toUri()
+                    startActivity(it)
+                }
+            },
         )
         val items = viewModel.items
         adapter.submitList(items)

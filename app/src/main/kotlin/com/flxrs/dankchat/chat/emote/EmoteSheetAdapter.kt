@@ -13,7 +13,8 @@ import com.flxrs.dankchat.utils.extensions.loadImage
 class EmoteSheetAdapter(
     private val onUseClick: (item: EmoteSheetItem) -> Unit,
     private val onCopyClick: (item: EmoteSheetItem) -> Unit,
-    private val onOpenLinkClick: (item: EmoteSheetItem) -> Unit
+    private val onOpenLinkClick: (item: EmoteSheetItem) -> Unit,
+    private val onImageClick: (item: EmoteSheetItem) -> Unit,
 ) : ListAdapter<EmoteSheetItem, EmoteSheetAdapter.ViewHolder>(DetectDiff()) {
 
     inner class ViewHolder(val binding: EmoteBottomsheetItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -33,6 +34,7 @@ class EmoteSheetAdapter(
         val emote = getItem(position)
         with(holder.binding) {
             emoteImage.loadImage(emote.imageUrl, placeholder = null, afterLoad = { emoteImageLoading.isVisible = false })
+            emoteImage.setOnClickListener { onImageClick(emote) }
             emoteName.text = emote.name
             emoteType.text = buildString {
                 append(root.context.getString(emote.emoteType))
