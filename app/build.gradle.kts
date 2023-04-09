@@ -149,6 +149,7 @@ dependencies {
 
 // Material
     implementation(libs.android.material)
+    implementation(libs.android.flexbox)
 
 // Dependency injection
     implementation(libs.hilt.android)
