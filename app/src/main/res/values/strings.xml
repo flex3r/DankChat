@@ -398,6 +398,9 @@
     <string name="emote_sheet_created_by">Created by %1$s</string>
     <string name="emote_sheet_zero_width_emote">(Zero Width)</string>
     <string name="emote_copied">Emote copied</string>
+    <string name="changelog_sheet_title">DankChat has been updated!</string>
+    <string name="changelog_sheet_subtitle">Here\'s what\'s new in v%1$s:</string>
+    <string name="changelog_3_6">- Initial support for replying and viewing reply threads\n- Added setting to load missed messages after reconnects\n- New modal bottomsheet design\n- Added new message bottomsheet by long pressing a message\n- Added new emote bottomsheet by pressing an emote\n- Added new changelog bottomsheet\n- Improved emote menu layout\n- Migrated to new followers endpoint which is now limited to broadcasters and moderators</string>
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>
         <item quantity="other">Live with %d viewers</item>
