@@ -6,7 +6,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
+import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.changelog.DankChatVersion
 import com.flxrs.dankchat.data.*
 import com.flxrs.dankchat.data.twitch.badge.BadgeType
 import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
@@ -329,12 +331,6 @@ class DankChatPreferenceStore @Inject constructor(
         }
     }
 
-    fun removeChannelRename(channel: UserName) {
-        withChannelRenames {
-            remove(channel)
-        }
-    }
-
     fun resetImageUploader(): ImageUploader {
         customImageUploader = DEFAULT_UPLOADER
         return DEFAULT_UPLOADER
@@ -343,6 +339,22 @@ class DankChatPreferenceStore @Inject constructor(
     fun resetRmHost(): String {
         customRmHost = RM_HOST_DEFAULT
         return RM_HOST_DEFAULT
+    }
+
+    fun shouldShowChangelog(): Boolean {
+        val current = DankChatVersion.CURRENT ?: return false
+        val lastInstalled = lastInstalledVersion?.let { DankChatVersion.fromString(it) } ?: return true
+        return lastInstalled < current
+    }
+
+    fun setCurrentInstalledVersionCode() {
+        lastInstalledVersion = BuildConfig.VERSION_NAME
+    }
+
+    private fun removeChannelRename(channel: UserName) {
+        withChannelRenames {
+            remove(channel)
+        }
     }
 
     private inline fun withChannelRenames(block: MutableMap<UserName, UserName>.() -> Unit) {
@@ -395,6 +407,10 @@ class DankChatPreferenceStore @Inject constructor(
     private val showStreamInfoEnabled: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_streaminfo_key), true)
 
+    private var lastInstalledVersion: String?
+        get() = dankChatPreferences.getString(LAST_INSTALLED_VERSION_KEY, null)
+        set(value) = dankChatPreferences.edit { putString(LAST_INSTALLED_VERSION_KEY, value) }
+
     companion object {
         private const val LOGGED_IN_KEY = "loggedIn"
         private const val OAUTH_KEY = "oAuthKey"
@@ -407,6 +423,7 @@ class DankChatPreferenceStore @Inject constructor(
         private const val EXTERNAL_HOSTING_ACK_KEY = "nuulsAckKey" // the key is old key to prevent triggering the dialog for existing users
         private const val MESSAGES_HISTORY_ACK_KEY = "messageHistoryAckKey"
         private const val SECRET_DANKER_MODE_KEY = "secretDankerModeKey"
+        private const val LAST_INSTALLED_VERSION_KEY = "lastInstalledVersionKey"
 
         private const val UPLOADER_URL = "uploaderUrl"
         private const val UPLOADER_FORM_FIELD = "uploaderFormField"

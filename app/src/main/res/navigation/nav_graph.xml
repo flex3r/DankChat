@@ -42,6 +42,9 @@
         <action
             android:id="@+id/action_mainFragment_to_emoteSheetFragment"
             app:destination="@id/emoteSheetFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_changelogSheetFragment"
+            app:destination="@id/changelogSheetFragment" />
     </fragment>
     <fragment
         android:id="@+id/chatFragment"
@@ -242,4 +245,8 @@
             android:name="emotes"
             app:argType="com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote[]" />
     </dialog>
+    <dialog
+        android:id="@+id/changelogSheetFragment"
+        android:name="com.flxrs.dankchat.changelog.ChangelogSheetFragment"
+        android:label="ChangelogSheetFragment" />
 </navigation>

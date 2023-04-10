@@ -48,8 +48,8 @@ import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.chat.FullScreenSheetState
 import com.flxrs.dankchat.chat.InputSheetState
 import com.flxrs.dankchat.chat.emote.EmoteSheetResult
-import com.flxrs.dankchat.chat.mention.MentionFragment
 import com.flxrs.dankchat.chat.emotemenu.EmoteMenuFragment
+import com.flxrs.dankchat.chat.mention.MentionFragment
 import com.flxrs.dankchat.chat.message.CopyMessageSheetResult
 import com.flxrs.dankchat.chat.message.MessageSheetResult
 import com.flxrs.dankchat.chat.replies.RepliesFragment
@@ -479,6 +479,9 @@ class MainFragment : Fragment() {
                     navigateSafe(R.id.action_mainFragment_to_messageHistoryDisclaimerDialogFragment)
                 } else {
                     mainViewModel.loadData(channels)
+                    if (dankChatPreferences.shouldShowChangelog()) {
+                        navigateSafe(R.id.action_mainFragment_to_changelogSheetFragment)
+                    }
                 }
             }
         }
@@ -649,6 +652,7 @@ class MainFragment : Fragment() {
     }
 
     private fun handleMessageHistoryDisclaimerResult(result: Boolean) {
+        dankChatPreferences.setCurrentInstalledVersionCode()
         dankChatPreferences.hasMessageHistoryAcknowledged = true
         preferences.edit { putBoolean(getString(R.string.preference_load_message_history_key), result) }
         mainViewModel.loadData()
