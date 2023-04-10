@@ -21,19 +21,21 @@ class CopyMessageSheetFragment : BottomSheetDialogFragment() {
     private val binding get() = bindingRef!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        bindingRef = CopyMessageBottomsheetBinding.inflate(inflater, container, false)
+        bindingRef = CopyMessageBottomsheetBinding.inflate(inflater, container, false).apply {
+            messageCopy.setOnClickListener { sendResultAndDismiss(CopyMessageSheetResult.Copy(args.message)) }
+            messageCopyFull.setOnClickListener { sendResultAndDismiss(CopyMessageSheetResult.Copy(args.fullMessage)) }
+            messageCopyId.setOnClickListener { sendResultAndDismiss(CopyMessageSheetResult.CopyId(args.messageId)) }
+        }
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.messageCopy.setOnClickListener { sendResultAndDismiss(CopyMessageSheetResult.Copy(args.message)) }
-        binding.messageCopyFull.setOnClickListener { sendResultAndDismiss(CopyMessageSheetResult.Copy(args.fullMessage)) }
-        binding.messageCopyId.setOnClickListener { sendResultAndDismiss(CopyMessageSheetResult.CopyId(args.messageId)) }
-
+    override fun onResume() {
+        super.onResume()
         dialog?.takeIf { isLandscape }?.let {
-            val sheet = it as BottomSheetDialog
-            sheet.behavior.state = BottomSheetBehavior.STATE_EXPANDED
-            sheet.behavior.skipCollapsed = true
+            with(it as BottomSheetDialog) {
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                behavior.skipCollapsed = true
+            }
         }
     }
 

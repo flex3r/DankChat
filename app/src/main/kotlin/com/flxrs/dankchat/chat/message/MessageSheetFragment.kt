@@ -67,7 +67,10 @@ class MessageSheetFragment : BottomSheetDialogFragment() {
             }
 
         }
+    }
 
+    override fun onResume() {
+        super.onResume()
         dialog?.takeIf { isLandscape }?.let {
             val sheet = it as BottomSheetDialog
             sheet.behavior.state = BottomSheetBehavior.STATE_EXPANDED
