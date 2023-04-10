@@ -105,6 +105,9 @@
             app:exitAnim="@anim/close_exit"
             app:popEnterAnim="@anim/open_enter"
             app:popExitAnim="@anim/close_exit" />
+        <action
+            android:id="@+id/action_overviewSettingsFragment_to_changelogSheetFragment"
+            app:destination="@id/changelogSheetFragment" />
     </fragment>
 
     <fragment

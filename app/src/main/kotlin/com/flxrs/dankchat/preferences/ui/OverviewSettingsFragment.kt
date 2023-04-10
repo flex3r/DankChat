@@ -14,6 +14,7 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.utils.extensions.navigateSafe
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -59,6 +60,13 @@ class OverviewSettingsFragment : MaterialPreferenceFragmentCompat() {
                     previousBackStackEntry?.savedStateHandle?.set(MainFragment.LOGOUT_REQUEST_KEY, true)
                     navigateUp()
                 }
+                true
+            }
+        }
+
+        findPreference<Preference>(getString(R.string.preference_whats_new_key))?.apply {
+            setOnPreferenceClickListener {
+                navigateSafe(R.id.action_overviewSettingsFragment_to_changelogSheetFragment)
                 true
             }
         }

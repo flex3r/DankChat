@@ -33,6 +33,11 @@
         app:title="@string/preference_developer_header" />
 
     <Preference
+        app:icon="@drawable/ic_fiber_new"
+        app:key="@string/preference_whats_new_key"
+        app:title="@string/preference_whats_new_header" />
+
+    <Preference
         android:icon="@drawable/ic_exit_to_app"
         android:key="@string/preference_logout_key"
         android:title="@string/logout" />

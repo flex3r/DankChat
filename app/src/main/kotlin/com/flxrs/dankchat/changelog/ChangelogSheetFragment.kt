@@ -1,8 +1,6 @@
 package com.flxrs.dankchat.changelog
 
-import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,13 +21,12 @@ class ChangelogSheetFragment : BottomSheetDialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val adapter = ChangelogAdapter()
         val binding = ChangelogBottomsheetBinding.inflate(inflater, container, false).apply {
-            changelogEntries.adapter = ChangelogAdapter()
+            changelogEntries.adapter = adapter
             when (val state = viewModel.state) {
                 null -> root.post { dialog?.dismiss() }
                 else -> {
                     changelogSubtitle.text = getString(R.string.changelog_sheet_subtitle, state.version)
                     val entries = getString(state.changelog).split("\n")
-                    Log.d("Changelog", entries.toString())
                     adapter.submitList(entries)
                 }
             }
@@ -37,17 +34,13 @@ class ChangelogSheetFragment : BottomSheetDialogFragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onResume() {
+        super.onResume()
         dialog?.takeIf { isLandscape }?.let {
             with(it as BottomSheetDialog) {
                 behavior.state = BottomSheetBehavior.STATE_EXPANDED
                 behavior.skipCollapsed = true
             }
         }
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        viewModel.onDismiss()
-        super.onDismiss(dialog)
     }
 }

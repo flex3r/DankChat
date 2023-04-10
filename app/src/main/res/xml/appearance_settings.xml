@@ -79,5 +79,11 @@
             android:summary="@string/preference_show_chip_actions_summary"
             android:title="@string/preference_show_chip_actions_title"
             app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="@string/preference_show_changelogs_key"
+            android:title="@string/preference_show_changelogs"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 </PreferenceScreen>
