@@ -380,12 +380,12 @@ class MainFragment : Fragment() {
             collectFlow(dankChatViewModel.validationResult) {
                 when (it) {
                     // wait for username to be validated before showing snackbar
-                    is ValidationResult.User             -> showSnackBar(getString(R.string.snackbar_login, it.username))
+                    is ValidationResult.User             -> showSnackBar(getString(R.string.snackbar_login, it.username), onDismiss = ::openChangelogSheetIfNecessary)
                     is ValidationResult.IncompleteScopes -> MaterialAlertDialogBuilder(requireContext())
                         .setTitle(R.string.login_outdated_title)
                         .setMessage(R.string.login_outdated_message)
                         .setPositiveButton(R.string.oauth_expired_login_again) { _, _ -> openLogin() }
-                        .setNegativeButton(R.string.dialog_dismiss) { _, _ -> }
+                        .setNegativeButton(R.string.dialog_dismiss) { _, _ -> openChangelogSheetIfNecessary() }
                         .create().show()
 
                     ValidationResult.TokenInvalid        -> {
@@ -393,11 +393,11 @@ class MainFragment : Fragment() {
                             .setTitle(R.string.oauth_expired_title)
                             .setMessage(R.string.oauth_expired_message)
                             .setPositiveButton(R.string.oauth_expired_login_again) { _, _ -> openLogin() }
-                            .setNegativeButton(R.string.dialog_dismiss) { _, _ -> } // default action is dismissing anyway
+                            .setNegativeButton(R.string.dialog_dismiss) { _, _ -> openChangelogSheetIfNecessary() } // default action is dismissing anyway
                             .create().show()
                     }
 
-                    ValidationResult.Failure             -> showSnackBar(getString(R.string.oauth_verify_failed))
+                    ValidationResult.Failure             -> showSnackBar(getString(R.string.oauth_verify_failed), onDismiss = ::openChangelogSheetIfNecessary)
                 }
             }
         }
@@ -479,9 +479,6 @@ class MainFragment : Fragment() {
                     navigateSafe(R.id.action_mainFragment_to_messageHistoryDisclaimerDialogFragment)
                 } else {
                     mainViewModel.loadData(channels)
-                    if (dankChatPreferences.shouldShowChangelog()) {
-                        navigateSafe(R.id.action_mainFragment_to_changelogSheetFragment)
-                    }
                 }
             }
         }
@@ -589,6 +586,12 @@ class MainFragment : Fragment() {
     fun insertEmote(code: String, id: String) {
         insertText("$code ")
         mainViewModel.addEmoteUsage(id)
+    }
+
+    private fun openChangelogSheetIfNecessary() {
+        if (dankChatPreferences.shouldShowChangelog()) {
+            navigateSafe(R.id.action_mainFragment_to_changelogSheetFragment)
+        }
     }
 
     private fun handleMessageSheetResult(result: MessageSheetResult) = when (result) {
@@ -759,10 +762,10 @@ class MainFragment : Fragment() {
         val name = dankChatPreferences.userName
         if (success && name != null) {
             mainViewModel.closeAndReconnect()
-            showSnackBar(getString(R.string.snackbar_login, name))
+            showSnackBar(getString(R.string.snackbar_login, name), onDismiss = ::openChangelogSheetIfNecessary)
         } else {
             dankChatPreferences.clearLogin()
-            showSnackBar(getString(R.string.snackbar_login_failed))
+            showSnackBar(getString(R.string.snackbar_login_failed), onDismiss = ::openChangelogSheetIfNecessary)
         }
     }
 

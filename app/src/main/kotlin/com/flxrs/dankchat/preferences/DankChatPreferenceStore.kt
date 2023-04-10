@@ -342,13 +342,18 @@ class DankChatPreferenceStore @Inject constructor(
     }
 
     fun shouldShowChangelog(): Boolean {
+        if (!shouldShowChangelogAfterUpdate) {
+            setCurrentInstalledVersionCode()
+            return false
+        }
+
         val current = DankChatVersion.CURRENT ?: return false
-        val lastInstalled = lastInstalledVersion?.let { DankChatVersion.fromString(it) } ?: return true
-        return lastInstalled < current
+        val lastViewed = lastViewedChangelogVersion?.let { DankChatVersion.fromString(it) } ?: return true
+        return lastViewed < current
     }
 
     fun setCurrentInstalledVersionCode() {
-        lastInstalledVersion = BuildConfig.VERSION_NAME
+        lastViewedChangelogVersion = BuildConfig.VERSION_NAME
     }
 
     private fun removeChannelRename(channel: UserName) {
@@ -407,9 +412,12 @@ class DankChatPreferenceStore @Inject constructor(
     private val showStreamInfoEnabled: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_streaminfo_key), true)
 
-    private var lastInstalledVersion: String?
+    private var lastViewedChangelogVersion: String?
         get() = dankChatPreferences.getString(LAST_INSTALLED_VERSION_KEY, null)
         set(value) = dankChatPreferences.edit { putString(LAST_INSTALLED_VERSION_KEY, value) }
+
+    private val shouldShowChangelogAfterUpdate: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_show_changelogs_key), true)
 
     companion object {
         private const val LOGGED_IN_KEY = "loggedIn"

@@ -317,6 +317,10 @@
     <string name="preference_retain_webview_key" translatable="false">retain_webview_key</string>
     <string name="preference_retain_webview_title">Prevent stream reloads</string>
     <string name="preference_retain_webview_summary">Enables experimental prevention of stream reloads after orientation changes or re-opening DankChat.</string>
+    <string name="preference_show_changelogs_key" translatable="false">show_changelogs_key</string>
+    <string name="preference_show_changelogs">Show changelogs after update</string>
+    <string name="preference_whats_new_header">What\'s new</string>
+    <string name="preference_whats_new_key">whats_new_key</string>
     <string name="reset_media_uploader_dialog_title">Reset Media Uploader Settings</string>
     <string name="reset_media_uploader_dialog_message">Are you sure you want to reset the media uploader settings to default?</string>
     <string name="reset_media_uploader_dialog_positive">Reset</string>
@@ -399,8 +403,8 @@
     <string name="emote_sheet_zero_width_emote">(Zero Width)</string>
     <string name="emote_copied">Emote copied</string>
     <string name="changelog_sheet_title">DankChat has been updated!</string>
-    <string name="changelog_sheet_subtitle">Here\'s what\'s new in v%1$s:</string>
-    <string name="changelog_3_6">- Initial support for replying and viewing reply threads\n- Added setting to load missed messages after reconnects\n- New modal bottomsheet design\n- Added new message bottomsheet by long pressing a message\n- Added new emote bottomsheet by pressing an emote\n- Added new changelog bottomsheet\n- Improved emote menu layout\n- Migrated to new followers endpoint which is now limited to broadcasters and moderators</string>
+    <string name="changelog_sheet_subtitle">What\'s new in v%1$s:</string>
+    <string name="changelog_3_6">Initial support for replying and viewing reply threads\nAdded setting to load missed messages after reconnects\nNew modal bottomsheet design\nAdded new message bottomsheet by long pressing a message\nAdded new emote bottomsheet by pressing an emote\nAdded new changelog bottomsheet\nImproved emote menu layout\nMigrated to new followers endpoint which is now limited to broadcasters and moderators due to Twitch restrictions</string>
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>
         <item quantity="other">Live with %d viewers</item>
