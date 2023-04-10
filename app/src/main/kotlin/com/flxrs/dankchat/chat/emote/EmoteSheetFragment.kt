@@ -62,7 +62,8 @@ class EmoteSheetFragment : BottomSheetDialogFragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onResume() {
+        super.onResume()
         dialog?.takeIf { isLandscape }?.let {
             with(it as BottomSheetDialog) {
                 behavior.state = BottomSheetBehavior.STATE_EXPANDED

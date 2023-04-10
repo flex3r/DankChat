@@ -91,7 +91,6 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         collectFlow(viewModel.userPopupState) {
             when (it) {
                 is UserPopupState.Loading     -> binding.showLoadingState(it)
@@ -100,7 +99,10 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
                 is UserPopupState.Error       -> setErrorResultAndDismiss(it.throwable)
             }
         }
+    }
 
+    override fun onResume() {
+        super.onResume()
         dialog?.takeIf { isLandscape }?.let {
             val sheet = it as BottomSheetDialog
             sheet.behavior.state = BottomSheetBehavior.STATE_EXPANDED

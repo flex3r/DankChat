@@ -20,7 +20,7 @@ class ChangelogSheetFragment : BottomSheetDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val adapter = ChangelogAdapter()
-        val binding = ChangelogBottomsheetBinding.inflate(inflater, container, false).apply {
+        return ChangelogBottomsheetBinding.inflate(inflater, container, false).apply {
             changelogEntries.adapter = adapter
             when (val state = viewModel.state) {
                 null -> root.post { dialog?.dismiss() }
@@ -30,8 +30,7 @@ class ChangelogSheetFragment : BottomSheetDialogFragment() {
                     adapter.submitList(entries)
                 }
             }
-        }
-        return binding.root
+        }.root
     }
 
     override fun onResume() {
