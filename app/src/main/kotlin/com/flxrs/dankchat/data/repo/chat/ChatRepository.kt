@@ -67,12 +67,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import java.util.concurrent.ConcurrentHashMap
@@ -119,6 +122,7 @@ class ChatRepository @Inject constructor(
     private var lastMessage = ConcurrentHashMap<UserName, String>()
     private val loadedRecentsInChannels = mutableSetOf<UserName>()
     private val knownRewards = ConcurrentHashMap<String, PubSubMessage.PointRedemption>()
+    private val rewardMutex = Mutex()
 
     init {
         scope.launch {
@@ -148,7 +152,20 @@ class ChatRepository @Inject constructor(
                         }
 
                         if (pubSubMessage.data.reward.requiresUserInput) {
-                            knownRewards[pubSubMessage.data.id] = pubSubMessage
+                            val id = pubSubMessage.data.reward.id
+                            rewardMutex.withLock {
+                                when {
+                                    // already handled, remove it and do nothing else
+                                    knownRewards.containsKey(id) -> {
+                                        Log.d(TAG, "Removing known reward $id")
+                                        knownRewards.remove(id)
+                                    }
+                                    else                         -> {
+                                        Log.d(TAG, "Received pubsub reward message with id $id")
+                                        knownRewards[id] = pubSubMessage
+                                    }
+                                }
+                            }
                         } else {
                             val message = runCatching {
                                 PointRedemptionMessage
@@ -693,15 +710,21 @@ class ChatRepository @Inject constructor(
         val rewardId = ircMessage.tags["custom-reward-id"]
         val additionalMessages = when {
             rewardId != null -> {
-                val reward = knownRewards[rewardId]
-                    ?.also { knownRewards.remove(rewardId) }
-                    ?: run {
-                        withTimeoutOrNull(PUBSUB_TIMEOUT) {
-                            pubSubManager.messages.first {
-                                it is PubSubMessage.PointRedemption && it.data.reward.id == rewardId
-                            } as PubSubMessage.PointRedemption
+                val reward = rewardMutex.withLock {
+                    knownRewards[rewardId]
+                        ?.also {
+                            Log.d(TAG, "Removing known reward $rewardId")
+                            knownRewards.remove(rewardId)
                         }
-                    }
+                        ?: run {
+                            Log.d(TAG, "Waiting for pubsub reward message with id $rewardId")
+                            withTimeoutOrNull(PUBSUB_TIMEOUT) {
+                                pubSubManager.messages
+                                    .filterIsInstance<PubSubMessage.PointRedemption>()
+                                    .first { it.data.reward.id == rewardId }
+                            }?.also { knownRewards[rewardId] = it } // mark message as known so default collector does not handle it again
+                        }
+                }
 
                 reward?.let {
                     listOf(ChatItem(PointRedemptionMessage.parsePointReward(it.timestamp, it.data)))
@@ -982,7 +1005,7 @@ class ChatRepository @Inject constructor(
         private val TAG = ChatRepository::class.java.simpleName
         private val ESCAPE_TAG = 0x000E0002.codePointAsString
         private const val USER_CACHE_SIZE = 5000
-        private const val PUBSUB_TIMEOUT = 1000L
+        private const val PUBSUB_TIMEOUT = 5000L
         private val GLOBAL_CHANNEL_TAG = UserName("*")
         private const val CHATTERS_SUNSET_MILLIS = 1680541200000L // 2023-04-03 17:00:00
 
