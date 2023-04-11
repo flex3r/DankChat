@@ -152,7 +152,9 @@ class ChatAdapter(
 
             else                                                                    -> ContextCompat.getColor(context, android.R.color.transparent)
         }
+        holder.binding.itemLayout.setBackgroundColor(background)
         setBackgroundColor(background)
+
         val withTime = when {
             dankChatPreferenceStore.showTimestamps -> SpannableStringBuilder()
                 .timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp)) }
@@ -179,7 +181,9 @@ class ChatAdapter(
 
             else                                                                    -> ContextCompat.getColor(context, android.R.color.transparent)
         }
+        holder.binding.itemLayout.setBackgroundColor(background)
         setBackgroundColor(background)
+
         val withTime = when {
             dankChatPreferenceStore.showTimestamps -> SpannableStringBuilder()
                 .timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp)) }
@@ -203,6 +207,7 @@ class ChatAdapter(
 
             else                                                                    -> ContextCompat.getColor(context, android.R.color.transparent)
         }
+        holder.binding.itemLayout.setBackgroundColor(background)
         setRippleBackground(background, enableRipple = false)
 
         val systemMessageText = when (message.type) {
@@ -246,6 +251,8 @@ class ChatAdapter(
 
             else                                                                    -> ContextCompat.getColor(context, android.R.color.transparent)
         }
+
+        holder.binding.itemLayout.setBackgroundColor(background)
         setRippleBackground(background, enableRipple = false)
 
         val systemMessage = message.getSystemMessage(dankChatPreferenceStore.userName, dankChatPreferenceStore.showTimedOutMessages)
@@ -263,6 +270,7 @@ class ChatAdapter(
 
     private fun TextView.handlePointRedemptionMessage(message: PointRedemptionMessage, holder: ViewHolder) {
         val background = ContextCompat.getColor(context, R.color.color_redemption_highlight)
+        holder.binding.itemLayout.setBackgroundColor(background)
         setRippleBackground(background, enableRipple = false)
 
         setTextSize(TypedValue.COMPLEX_UNIT_SP, dankChatPreferenceStore.fontSize)
@@ -321,6 +329,7 @@ class ChatAdapter(
 
             else                                                                    -> ContextCompat.getColor(context, android.R.color.transparent)
         }
+        holder.binding.itemLayout.setBackgroundColor(background)
         setRippleBackground(background, enableRipple = true)
 
         val allowedBadges = badges.filter { it.type in dankChatPreferenceStore.visibleBadgeTypes }
