@@ -10,7 +10,8 @@ sealed interface MessageSheetState {
         val name: UserName,
         val originalMessage: String,
         val canModerate: Boolean,
-        val replyMessageId: String?,
+        val replyName: UserName,
+        val replyMessageId: String,
         val hasReplyThread: Boolean,
         val canReply: Boolean
     ) : MessageSheetState

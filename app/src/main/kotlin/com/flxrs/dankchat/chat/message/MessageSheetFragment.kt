@@ -57,9 +57,9 @@ class MessageSheetFragment : BottomSheetDialogFragment() {
                         }
                     }
                     if (state.canReply) {
-                        messageReply.setOnClickListener { sendResultAndDismiss(MessageSheetResult.Reply(args.messageId, state.name)) }
+                        messageReply.setOnClickListener { sendResultAndDismiss(MessageSheetResult.Reply(state.replyMessageId, state.replyName)) }
                     }
-                    if (state.hasReplyThread && state.replyMessageId != null) {
+                    if (state.hasReplyThread) {
                         messageViewThread.setOnClickListener { sendResultAndDismiss(MessageSheetResult.ViewThread(state.replyMessageId)) }
                     }
                     messageCopyActions.setOnClickListener { sendResultAndDismiss(MessageSheetResult.OpenCopyActions(args.messageId, state.originalMessage, args.fullMessage)) }
