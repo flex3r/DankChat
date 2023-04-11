@@ -405,6 +405,9 @@
     <string name="changelog_sheet_title">DankChat has been updated!</string>
     <string name="changelog_sheet_subtitle">What\'s new in v%1$s:</string>
     <string name="changelog_3_6">Initial support for replying and viewing reply threads\nAdded setting to load missed messages after reconnects\nNew modal bottomsheet design\nAdded new message bottomsheet by long pressing a message\nAdded new emote bottomsheet by pressing an emote\nAdded new changelog bottomsheet\nImproved emote menu layout\nMigrated to new followers endpoint which is now limited to broadcasters and moderators due to Twitch restrictions</string>
+    <string name="confirm_login_cancel_title">Confirm login cancellation</string>
+    <string name="confirm_login_cancel_message">Are you sure you  want to cancel the login process?</string>
+    <string name="confirm_login_cancel_positive_button">Cancel login</string>
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>
         <item quantity="other">Live with %d viewers</item>

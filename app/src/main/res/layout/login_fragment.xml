@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:id="@+id/login_layout"
@@ -15,7 +16,9 @@
                 android:id="@+id/login_toolbar"
                 style="?toolbarStyle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:navigationIcon="@drawable/ic_clear"
+                app:title="@string/login_title" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <WebView
