@@ -34,7 +34,7 @@ mdcComposeAdapter = "1.0.21"
 colorPicker = "3.0.1"
 
 junit = "5.9.2"
-mockk = "1.13.4"
+mockk = "1.13.5"
 
 [libraries]
 android-desugar-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "androidDesugarLibs" }
