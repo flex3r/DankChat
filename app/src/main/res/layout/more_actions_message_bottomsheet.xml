@@ -10,17 +10,17 @@
             android:id="@+id/bottomsheet_handle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/copy_message_sheet_buttons_layout"
+            android:minHeight="24dp"
+            android:paddingBottom="0dp"
+            app:layout_constraintBottom_toTopOf="@id/more_actions_message_sheet_buttons_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:paddingBottom="0dp"
-            android:minHeight="24dp"
             app:layout_constraintVertical_bias="0"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <androidx.core.widget.NestedScrollView
-            android:id="@+id/copy_message_sheet_buttons_layout"
+            android:id="@+id/more_actions_message_sheet_buttons_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constrainedHeight="true"
@@ -35,19 +35,6 @@
                 android:layout_height="match_parent">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/message_copy"
-                    style="@style/Widget.App.TextIconButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="@string/message_copy"
-                    app:icon="@drawable/ic_copy"
-                    app:layout_constraintBottom_toTopOf="@id/message_copy_full"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <com.google.android.material.button.MaterialButton
                     android:id="@+id/message_copy_full"
                     style="@style/Widget.App.TextIconButton"
                     android:layout_width="match_parent"
@@ -58,7 +45,7 @@
                     app:layout_constraintBottom_toTopOf="@id/message_copy_id"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/message_copy" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/message_copy_id"

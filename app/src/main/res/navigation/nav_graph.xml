@@ -37,8 +37,8 @@
             android:id="@+id/action_mainFragment_to_messageSheetFragment"
             app:destination="@id/messageSheetFragment" />
         <action
-            android:id="@+id/action_mainFragment_to_copyMessageSheetFragment"
-            app:destination="@id/copyMessageSheetFragment" />
+            android:id="@+id/action_mainFragment_to_moreActionsMessageSheetFragment"
+            app:destination="@id/moreActionsMessageSheetFragment" />
         <action
             android:id="@+id/action_mainFragment_to_emoteSheetFragment"
             app:destination="@id/emoteSheetFragment" />
@@ -227,14 +227,11 @@
     </dialog>
 
     <dialog
-        android:id="@+id/copyMessageSheetFragment"
-        android:name="com.flxrs.dankchat.chat.message.CopyMessageSheetFragment"
-        android:label="CopyMessageSheetFragment" >
+        android:id="@+id/moreActionsMessageSheetFragment"
+        android:name="com.flxrs.dankchat.chat.message.MoreActionsMessageSheetFragment"
+        android:label="MoreActionsMessageSheetFragment">
         <argument
             android:name="messageId"
-            app:argType="string" />
-        <argument
-            android:name="message"
             app:argType="string" />
         <argument
             android:name="fullMessage"

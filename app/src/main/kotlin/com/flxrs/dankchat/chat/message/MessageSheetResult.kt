@@ -7,7 +7,10 @@ import kotlinx.parcelize.Parcelize
 sealed interface MessageSheetResult : Parcelable {
 
     @Parcelize
-    data class OpenCopyActions(val messageId: String, val message: String, val fullMessage: String) : MessageSheetResult
+    data class OpenMoreActions(val messageId: String, val fullMessage: String) : MessageSheetResult
+
+    @Parcelize
+    data class Copy(val message: String) : MessageSheetResult
 
     @Parcelize
     data class Reply(val replyMessageId: String, val replyName: UserName) : MessageSheetResult

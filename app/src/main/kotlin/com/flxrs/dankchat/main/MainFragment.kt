@@ -50,8 +50,8 @@ import com.flxrs.dankchat.chat.InputSheetState
 import com.flxrs.dankchat.chat.emote.EmoteSheetResult
 import com.flxrs.dankchat.chat.emotemenu.EmoteMenuFragment
 import com.flxrs.dankchat.chat.mention.MentionFragment
-import com.flxrs.dankchat.chat.message.CopyMessageSheetResult
 import com.flxrs.dankchat.chat.message.MessageSheetResult
+import com.flxrs.dankchat.chat.message.MoreActionsMessageSheetResult
 import com.flxrs.dankchat.chat.replies.RepliesFragment
 import com.flxrs.dankchat.chat.replies.ReplyInputSheetFragment
 import com.flxrs.dankchat.chat.suggestion.SpaceTokenizer
@@ -595,19 +595,20 @@ class MainFragment : Fragment() {
     }
 
     private fun handleMessageSheetResult(result: MessageSheetResult) = when (result) {
-        is MessageSheetResult.OpenCopyActions -> openCopyMessageSheet(result.messageId, result.message, result.fullMessage)
+        is MessageSheetResult.OpenMoreActions -> openMoreActionsMessageSheet(result.messageId, result.fullMessage)
+        is MessageSheetResult.Copy            -> copyAndShowSnackBar(result.message, R.string.snackbar_message_copied)
         is MessageSheetResult.Reply           -> startReply(result.replyMessageId, result.replyName)
         is MessageSheetResult.ViewThread      -> openReplies(result.replyMessageId)
     }
 
-    private fun openCopyMessageSheet(messageId: String, message: String, fullMessage: String) {
-        val directions = MainFragmentDirections.actionMainFragmentToCopyMessageSheetFragment(messageId, message, fullMessage)
+    private fun openMoreActionsMessageSheet(messageId: String, fullMessage: String) {
+        val directions = MainFragmentDirections.actionMainFragmentToMoreActionsMessageSheetFragment(messageId, fullMessage)
         navigateSafe(directions)
     }
 
-    private fun handleCopyMessageSheetResult(result: CopyMessageSheetResult) = when (result) {
-        is CopyMessageSheetResult.Copy   -> copyAndShowSnackBar(result.message, R.string.snackbar_message_copied)
-        is CopyMessageSheetResult.CopyId -> copyAndShowSnackBar(result.id, R.string.snackbar_message_id_copied)
+    private fun handleCopyMessageSheetResult(result: MoreActionsMessageSheetResult) = when (result) {
+        is MoreActionsMessageSheetResult.Copy   -> copyAndShowSnackBar(result.message, R.string.snackbar_message_copied)
+        is MoreActionsMessageSheetResult.CopyId -> copyAndShowSnackBar(result.id, R.string.snackbar_message_id_copied)
     }
 
     private fun handleEmoteSheetResult(result: EmoteSheetResult) = when (result) {

@@ -55,10 +55,23 @@
                     android:layout_marginTop="4dp"
                     android:text="@string/message_view_thread"
                     app:icon="@drawable/ic_forum"
-                    app:layout_constraintBottom_toTopOf="@id/mod_barrier"
+                    app:layout_constraintBottom_toTopOf="@id/message_copy"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/message_reply" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/message_copy"
+                    style="@style/Widget.App.TextIconButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/message_copy"
+                    app:icon="@drawable/ic_copy"
+                    app:layout_constraintBottom_toTopOf="@id/mod_barrier"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/message_view_thread" />
 
                 <androidx.constraintlayout.widget.Barrier
                     android:id="@+id/mod_barrier"
@@ -145,19 +158,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    app:layout_constraintBottom_toTopOf="@id/message_copy_actions"
+                    app:layout_constraintBottom_toTopOf="@id/message_more_actions"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/user_unban" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/message_copy_actions"
+                    android:id="@+id/message_more_actions"
                     style="@style/Widget.App.TextIconButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="@string/message_copy_actions"
-                    app:icon="@drawable/ic_copy"
+                    android:text="@string/message_more_actions"
+                    app:icon="@drawable/ic_more_vert"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
