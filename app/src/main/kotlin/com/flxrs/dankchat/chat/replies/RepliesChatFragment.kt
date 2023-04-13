@@ -35,7 +35,7 @@ class RepliesChatFragment : ChatFragment() {
 
         collectFlow(repliesViewModel.state) {
             when (it) {
-                is RepliesState.Found -> adapter.submitList(it.items)
+                is RepliesState.Found    -> adapter.submitList(it.items)
                 is RepliesState.NotFound -> {
                     binding.root.showLongSnackbar(getString(R.string.reply_thread_not_found))
                 }
