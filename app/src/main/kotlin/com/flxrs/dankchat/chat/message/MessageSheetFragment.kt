@@ -62,7 +62,8 @@ class MessageSheetFragment : BottomSheetDialogFragment() {
                     if (state.hasReplyThread) {
                         messageViewThread.setOnClickListener { sendResultAndDismiss(MessageSheetResult.ViewThread(state.replyMessageId)) }
                     }
-                    messageCopyActions.setOnClickListener { sendResultAndDismiss(MessageSheetResult.OpenCopyActions(args.messageId, state.originalMessage, args.fullMessage)) }
+                    messageCopy.setOnClickListener { sendResultAndDismiss(MessageSheetResult.Copy(state.originalMessage)) }
+                    messageMoreActions.setOnClickListener { sendResultAndDismiss(MessageSheetResult.OpenMoreActions(args.messageId, args.fullMessage)) }
                 }
             }
 
