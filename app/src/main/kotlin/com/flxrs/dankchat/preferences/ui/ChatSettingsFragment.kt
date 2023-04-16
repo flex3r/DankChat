@@ -7,7 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
 import androidx.preference.*
 import com.flxrs.dankchat.R
@@ -144,6 +147,10 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
                 commandsSheet.updateLayoutParams {
                     height = windowHeight
                 }
+                ViewCompat.setOnApplyWindowInsetsListener(commandsList) { v, insets ->
+                    v.updatePadding(bottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom)
+                    WindowInsetsCompat.CONSUMED
+                }
             }
 
         bottomSheetDialog = BottomSheetDialog(context).apply {
@@ -173,6 +180,10 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
                 height = resources.displayMetrics.heightPixels
             }
             customUserDisplayList.adapter = adapter
+            ViewCompat.setOnApplyWindowInsetsListener(customUserDisplayList) { v, insets ->
+                v.updatePadding(bottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom)
+                WindowInsetsCompat.CONSUMED
+            }
         }
 
         bottomSheetDialog = BottomSheetDialog(requireContext()).apply {
