@@ -11,7 +11,10 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.edit
 import androidx.core.text.util.LinkifyCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -114,6 +117,10 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
             uploaderSheet.updateLayoutParams {
                 height = windowHeight
             }
+            ViewCompat.setOnApplyWindowInsetsListener(uploaderSheet) { v, insets ->
+                v.updatePadding(bottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom)
+                WindowInsetsCompat.CONSUMED
+            }
             LinkifyCompat.addLinks(uploaderDescription, Linkify.WEB_URLS)
         }
 
@@ -154,6 +161,10 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
             ttsIgnoreList.adapter = ttsIgnoreListAdapter
             ttsIgnoreListSheet.updateLayoutParams {
                 height = windowHeight
+            }
+            ViewCompat.setOnApplyWindowInsetsListener(ttsIgnoreList) { v, insets ->
+                v.updatePadding(bottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom)
+                WindowInsetsCompat.CONSUMED
             }
         }
 
