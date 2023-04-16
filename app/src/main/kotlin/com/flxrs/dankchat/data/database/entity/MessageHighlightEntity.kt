@@ -55,5 +55,6 @@ enum class MessageHighlightEntityType {
     ChannelPointRedemption,
     FirstMessage,
     ElevatedMessage,
+    Reply,
     Custom
 }

@@ -355,6 +355,7 @@
     <string name="highlights_ignores_entry_first_messages">First Messages</string>
     <string name="highlights_ignores_entry_elevated_messages">Elevated Messages</string>
     <string name="highlights_ignores_entry_redemptions">Highlights redeemed with Channel Points</string>
+    <string name="highlights_ignores_entry_replies">Replies</string>
     <string name="highlights_ignores_entry_custom">Custom</string>
     <string name="highlights_messages_title">Creates notifications and highlights messages based on certain patterns.</string>
     <string name="highlights_users_title">Creates notifications and highlights messages from certain users.</string>

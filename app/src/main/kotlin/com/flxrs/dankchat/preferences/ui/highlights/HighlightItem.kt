@@ -29,7 +29,14 @@ data class MessageHighlightItem(
         ChannelPointRedemption,
         FirstMessage,
         ElevatedMessage,
+        Reply,
         Custom
+    }
+
+    val canNotify = type in WITH_NOTIFIES
+
+    companion object {
+        private val WITH_NOTIFIES = listOf(Type.Username, Type.Custom, Type.Reply)
     }
 }
 
@@ -74,6 +81,7 @@ fun MessageHighlightItem.Type.toEntityType(): MessageHighlightEntityType = when 
     MessageHighlightItem.Type.ChannelPointRedemption -> MessageHighlightEntityType.ChannelPointRedemption
     MessageHighlightItem.Type.FirstMessage           -> MessageHighlightEntityType.FirstMessage
     MessageHighlightItem.Type.ElevatedMessage        -> MessageHighlightEntityType.ElevatedMessage
+    MessageHighlightItem.Type.Reply                  -> MessageHighlightEntityType.Reply
     MessageHighlightItem.Type.Custom                 -> MessageHighlightEntityType.Custom
 }
 
@@ -84,6 +92,7 @@ fun MessageHighlightEntityType.toItemType(): MessageHighlightItem.Type = when (t
     MessageHighlightEntityType.ChannelPointRedemption -> MessageHighlightItem.Type.ChannelPointRedemption
     MessageHighlightEntityType.FirstMessage           -> MessageHighlightItem.Type.FirstMessage
     MessageHighlightEntityType.ElevatedMessage        -> MessageHighlightItem.Type.ElevatedMessage
+    MessageHighlightEntityType.Reply                  -> MessageHighlightItem.Type.Reply
     MessageHighlightEntityType.Custom                 -> MessageHighlightItem.Type.Custom
 }
 
