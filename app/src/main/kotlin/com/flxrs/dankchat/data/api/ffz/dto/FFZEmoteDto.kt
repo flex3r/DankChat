@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FFZEmoteDto(
     val urls: Map<String, String?>,
+    val animated: Map<String, String?>?,
     val name: String,
     val id: Int,
     val owner: FFZEmoteOwnerDto?,

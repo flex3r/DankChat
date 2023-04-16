@@ -519,13 +519,17 @@ class EmoteRepository @Inject constructor(
     private fun parseFFZEmote(emote: FFZEmoteDto, channel: UserName?): GenericEmote? {
         val name = emote.name
         val id = emote.id
+        val urlMap = emote.animated
+            ?.mapValues { (_, url) -> url.takeIf { SUPPORTS_WEBP } ?: "$url.gif" }
+            ?: emote.urls
+
         val (scale, url) = when {
-            emote.urls["4"] != null -> 1 to emote.urls.getValue("4")
-            emote.urls["2"] != null -> 2 to emote.urls.getValue("2")
-            else                    -> 4 to emote.urls["1"]
+            urlMap["4"] != null -> 1 to urlMap.getValue("4")
+            urlMap["2"] != null -> 2 to urlMap.getValue("2")
+            else                -> 4 to urlMap["1"]
         }
         url ?: return null
-        val lowResUrl = emote.urls["2"] ?: emote.urls["1"] ?: return null
+        val lowResUrl = urlMap["2"] ?: urlMap["1"] ?: return null
         val type = when (channel) {
             null -> EmoteType.GlobalFFZEmote(emote.owner?.displayName)
             else -> EmoteType.ChannelFFZEmote(emote.owner?.displayName)
@@ -560,8 +564,8 @@ class EmoteRepository @Inject constructor(
 
     private fun SevenTVEmoteFileDto.emoteUrlWithFallback(base: String, size: String, animated: Boolean): String {
         return when {
-            animated && Build.VERSION.SDK_INT < Build.VERSION_CODES.P -> "$base$size.gif"
-            else                                                      -> "$base$name"
+            animated && !SUPPORTS_WEBP -> "$base$size.gif"
+            else                       -> "$base$name"
         }
     }
 
@@ -577,6 +581,7 @@ class EmoteRepository @Inject constructor(
         }
 
     companion object {
+        private val SUPPORTS_WEBP = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
         fun Badge.cacheKey(baseHeight: Int): String = "$url-$baseHeight"
         fun List<ChatMessageEmote>.cacheKey(baseHeight: Int): String = joinToString(separator = "-") { it.id } + "-$baseHeight"
 
