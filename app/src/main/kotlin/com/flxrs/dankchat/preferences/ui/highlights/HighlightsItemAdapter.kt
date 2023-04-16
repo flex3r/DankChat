@@ -70,6 +70,7 @@ class HighlightsItemAdapter(
                         MessageHighlightItem.Type.FirstMessage           -> R.string.highlights_ignores_entry_first_messages
                         MessageHighlightItem.Type.ElevatedMessage        -> R.string.highlights_ignores_entry_elevated_messages
                         MessageHighlightItem.Type.ChannelPointRedemption -> R.string.highlights_ignores_entry_redemptions
+                        MessageHighlightItem.Type.Reply                  -> R.string.highlights_ignores_entry_replies
                         MessageHighlightItem.Type.Custom                 -> R.string.highlights_ignores_entry_custom
                     }
                     title.text = root.context.getString(titleText)
@@ -81,7 +82,7 @@ class HighlightsItemAdapter(
                     delete.isVisible = isCustomItem
                     regexInfo.isVisible = isCustomItem
                     enabled.isEnabled = highlightItem.type != MessageHighlightItem.Type.Username || preferenceStore.isLoggedIn
-                    createNotification.isVisible = highlightItem.type == MessageHighlightItem.Type.Username || highlightItem.type == MessageHighlightItem.Type.Custom
+                    createNotification.isVisible = highlightItem.canNotify
                     createNotification.isEnabled = preferenceStore.createNotifications && (highlightItem.type != MessageHighlightItem.Type.Username || preferenceStore.isLoggedIn)
                 }
             }

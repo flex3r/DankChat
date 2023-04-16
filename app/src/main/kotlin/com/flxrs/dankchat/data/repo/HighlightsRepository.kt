@@ -38,7 +38,10 @@ class HighlightsRepository @Inject constructor(
         .map(::createUserAndDisplayRegex)
         .stateIn(coroutineScope, SharingStarted.Eagerly, null)
 
-    val messageHighlights = messageHighlightDao.getMessageHighlightsFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+    val messageHighlights = messageHighlightDao.getMessageHighlightsFlow()
+        .map { it.addDefaultsIfNecessary() }
+        .stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+
     val userHighlights = userHighlightDao.getUserHighlightsFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
     val blacklistedUsers = blacklistedUserDao.getBlacklistedUserFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
 
@@ -226,6 +229,14 @@ class HighlightsRepository @Inject constructor(
                 }
             }
 
+            if (containsParticipatedReply) {
+                val highlight = messageHighlights.repliesHighlight
+                if (highlight?.enabled == true) {
+                    add(Highlight(HighlightType.Reply))
+                    addNotificationHighlightIfEnabled(highlight)
+                }
+            }
+
             messageHighlights
                 .filter { it.type == MessageHighlightEntityType.Custom }
                 .forEach {
@@ -242,10 +253,6 @@ class HighlightsRepository @Inject constructor(
                     add(Highlight(HighlightType.Custom))
                     addNotificationHighlightIfEnabled(it)
                 }
-            }
-
-            if (thread?.participated == true && name != currentUserAndDisplay.value?.first) {
-                add(Highlight(HighlightType.Reply))
             }
         }
 
@@ -271,6 +278,9 @@ class HighlightsRepository @Inject constructor(
 
     private val List<MessageHighlightEntity>.areElevatedMessagesEnabled: Boolean
         get() = isMessageHighlightTypeEnabled(MessageHighlightEntityType.ElevatedMessage)
+
+    private val List<MessageHighlightEntity>.repliesHighlight: MessageHighlightEntity?
+        get() = find { it.type == MessageHighlightEntityType.Reply }
 
     private val List<MessageHighlightEntity>.userNameHighlight: MessageHighlightEntity?
         get() = find { it.type == MessageHighlightEntityType.Username }
@@ -301,6 +311,9 @@ class HighlightsRepository @Inject constructor(
             val regex = currentUserRegex.value ?: return false
             return message.contains(regex)
         }
+
+    private val PrivMessage.containsParticipatedReply: Boolean
+        get() = thread?.participated == true && name != currentUserAndDisplay.value?.first
 
     private fun createUserAndDisplayRegex(values: Pair<UserName?, DisplayName?>?): Regex? {
         val (user, display) = values ?: return null
@@ -351,15 +364,25 @@ class HighlightsRepository @Inject constructor(
             }
     }
 
+    private fun List<MessageHighlightEntity>.addDefaultsIfNecessary(): List<MessageHighlightEntity> {
+        return (this + DEFAULT_HIGHLIGHTS).distinctBy {
+            when (it.type) {
+                MessageHighlightEntityType.Custom -> it.id
+                else                              -> it.type
+            }
+        }.sortedBy { it.type.ordinal }
+    }
+
     companion object {
         private val TAG = HighlightsRepository::class.java.simpleName
         private val DEFAULT_HIGHLIGHTS = listOf(
-            MessageHighlightEntity(id = 1, enabled = true, type = MessageHighlightEntityType.Username, pattern = ""),
-            MessageHighlightEntity(id = 2, enabled = true, type = MessageHighlightEntityType.Subscription, pattern = "", createNotification = false),
-            MessageHighlightEntity(id = 3, enabled = true, type = MessageHighlightEntityType.Announcement, pattern = "", createNotification = false),
-            MessageHighlightEntity(id = 4, enabled = true, type = MessageHighlightEntityType.ChannelPointRedemption, pattern = "", createNotification = false),
-            MessageHighlightEntity(id = 5, enabled = true, type = MessageHighlightEntityType.FirstMessage, pattern = "", createNotification = false),
-            MessageHighlightEntity(id = 6, enabled = true, type = MessageHighlightEntityType.ElevatedMessage, pattern = "", createNotification = false),
+            MessageHighlightEntity(id = 0, enabled = true, type = MessageHighlightEntityType.Username, pattern = ""),
+            MessageHighlightEntity(id = 0, enabled = true, type = MessageHighlightEntityType.Subscription, pattern = "", createNotification = false),
+            MessageHighlightEntity(id = 0, enabled = true, type = MessageHighlightEntityType.Announcement, pattern = "", createNotification = false),
+            MessageHighlightEntity(id = 0, enabled = true, type = MessageHighlightEntityType.ChannelPointRedemption, pattern = "", createNotification = false),
+            MessageHighlightEntity(id = 0, enabled = true, type = MessageHighlightEntityType.FirstMessage, pattern = "", createNotification = false),
+            MessageHighlightEntity(id = 0, enabled = true, type = MessageHighlightEntityType.ElevatedMessage, pattern = "", createNotification = false),
+            MessageHighlightEntity(id = 0, enabled = true, type = MessageHighlightEntityType.Reply, pattern = ""),
         )
     }
 }
