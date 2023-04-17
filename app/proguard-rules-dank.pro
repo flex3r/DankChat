@@ -9,6 +9,7 @@
 -dontwarn com.oracle.svm.core.annotate.Delete
 -dontwarn com.oracle.svm.core.annotate.Substitute
 -dontwarn com.oracle.svm.core.annotate.TargetClass
+-dontwarn org.slf4j.impl.StaticLoggerBinder
 -dontshrink
 -dontobfuscate
 
