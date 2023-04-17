@@ -187,7 +187,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
         val windowInsetsController = WindowCompat.getInsetsController(window, it)
         when {
             enabled -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !isInMultiWindowMode) {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || !isInMultiWindowMode) {
                     windowInsetsController.apply {
                         systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
                         hide(WindowInsetsCompat.Type.systemBars())
