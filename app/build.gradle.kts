@@ -84,8 +84,8 @@ android {
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
@@ -95,7 +95,7 @@ tasks.withType<Test> {
 
 tasks.withType<KotlinCompile> {
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_11)
+        jvmTarget.set(JvmTarget.JVM_17)
         freeCompilerArgs.addAll(
             "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
             "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
@@ -104,7 +104,7 @@ tasks.withType<KotlinCompile> {
 }
 
 kotlin {
-    jvmToolchain(jdkVersion = 11)
+    jvmToolchain(jdkVersion = 17)
 }
 
 dependencies {
