@@ -443,7 +443,16 @@ class MainFragment : Fragment() {
             onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackPressedCallback)
 
             var wasKeyboardOpen = false
-            ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, insets ->
+                val needsExtraMargin = binding.streamWebviewWrapper.isVisible || isLandscape || !mainViewModel.isFullscreenFlow.value
+                val extraMargin = when {
+                    needsExtraMargin -> 0
+                    else             -> insets.getInsets(WindowInsetsCompat.Type.displayCutout()).top
+                }
+                binding.showChips.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                    topMargin = 8.px + extraMargin
+                }
+
                 val isKeyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
                 if (wasKeyboardOpen == isKeyboardVisible) {
                     return@setOnApplyWindowInsetsListener insets
@@ -456,18 +465,7 @@ class MainFragment : Fragment() {
 
                 insets
             }
-            ViewCompat.setOnApplyWindowInsetsListener(binding.showChips) { v, insets ->
-                val needsExtraMargin = binding.streamWebviewWrapper.isVisible || isLandscape || !mainViewModel.isFullscreenFlow.value
-                val extraMargin = when {
-                    needsExtraMargin -> 0
-                    else             -> insets.getInsets(WindowInsetsCompat.Type.displayCutout()).top
-                }
 
-                v.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                    topMargin = 8.px + extraMargin
-                }
-                WindowInsetsCompat.CONSUMED
-            }
             ViewCompat.setOnApplyWindowInsetsListener(binding.inputLayout) { v, insets ->
                 v.updatePadding(bottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom)
                 WindowInsetsCompat.CONSUMED
@@ -1230,19 +1228,18 @@ class MainFragment : Fragment() {
             mainViewModel.setShowChips(!hasFocus)
 
             if (isPortrait) {
-                val mentionsView = childFragmentManager.findFragmentById(R.id.full_screen_sheet_fragment)?.view
                 binding.inputSheetFragment
-                    .takeIf { !mainViewModel.isEmoteSheetOpen }
+                    .takeIf { inputBottomSheetBehavior?.isVisible == false }
                     ?.isInvisible = true
 
-                mentionsView
+                binding.fullScreenSheetFragment
                     .takeIf { fullscreenBottomSheetBehavior?.isVisible == false }
                     ?.isInvisible = true
 
                 binding.root.post {
                     (activity as? MainActivity)?.setFullScreen(enabled = !hasFocus && isFullscreen, changeActionBarVisibility = false)
                     binding.inputSheetFragment.isInvisible = false
-                    mentionsView?.isInvisible = false
+                    binding.fullScreenSheetFragment.isInvisible = false
                 }
                 return@setOnFocusChangeListener
             }
