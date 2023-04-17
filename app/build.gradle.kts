@@ -23,8 +23,8 @@ android {
         applicationId = "com.flxrs.dankchat"
         minSdk = 21
         targetSdk = 33
-        versionCode = 30612
-        versionName = "3.6.12"
+        versionCode = 30613
+        versionName = "3.6.13"
 
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
@@ -49,7 +49,7 @@ android {
         dataBinding = true
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
