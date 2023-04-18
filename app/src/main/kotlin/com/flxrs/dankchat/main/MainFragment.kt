@@ -523,6 +523,7 @@ class MainFragment : Fragment() {
         if (::preferences.isInitialized) {
             preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         }
+        activity?.let { ViewCompat.setOnApplyWindowInsetsListener(it.window.decorView, null) }
         super.onDestroyView()
     }
 
