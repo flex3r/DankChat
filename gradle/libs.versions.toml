@@ -11,7 +11,7 @@ hilt = "2.45"
 androidGradlePlugin = "8.0.0"
 androidDesugarLibs = "2.0.3"
 #noinspection GradleDependency // TODO requires upside down cake
-androidxActivity = "1.7.0"
+androidxActivity = "1.7.1"
 androidxBrowser = "1.5.0"
 androidxConstraintLayout = "2.1.4"
 androidxCore = "1.10.0"
