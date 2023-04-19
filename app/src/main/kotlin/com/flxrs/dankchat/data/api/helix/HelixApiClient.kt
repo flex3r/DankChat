@@ -303,7 +303,7 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
                 else                    -> HelixError.Forwarded
             }
 
-            TOO_EARLY_STATUS                   -> HelixError.Forwarded
+            HttpStatusCode.TooEarly            -> HelixError.Forwarded
             else                               -> HelixError.Unknown
         }
         throw HelixApiException(error, betterStatus, request.url, message)
@@ -311,7 +311,6 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
 
     companion object {
         private val TAG = HelixApiClient::class.java.simpleName
-        private val TOO_EARLY_STATUS = HttpStatusCode(425, "Too Early")
         private const val DEFAULT_PAGE_SIZE = 100
         private const val WHISPER_SELF_ERROR = "A user cannot whisper themself"
         private const val MISSING_SCOPE_ERROR = "Missing scope"
