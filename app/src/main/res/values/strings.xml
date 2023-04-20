@@ -36,6 +36,7 @@
     <string name="external_upload_disclaimer">External hosting provided by %1$s, use at your own risk.</string>
     <string name="nuuls_upload_title">Custom media upload</string>
     <string name="snackbar_message_copied">Message copied</string>
+    <string name="snackbar_message_id_copied">Message id copied</string>
     <string name="snackbar_error_copied">Error information copied</string>
     <string name="notification_stop">Stop</string>
     <string name="notification_title">FeelsDankMan</string>
@@ -45,6 +46,7 @@
     <string name="hint_connected">Start chatting</string>
     <string name="hint_disconnected">Disconnected</string>
     <string name="hint_not_logged_int">Not logged in</string>
+    <string name="hint_replying">Reply</string>
     <string name="notification_new_mentions">You have new mentions</string>
     <string name="notification_mention">%1$s just mentioned you in #%2$s</string>
     <string name="notification_notify_mention">You were mentioned in #%1$s</string>
@@ -85,6 +87,7 @@
     <string name="dialog_optout">Opt-out</string>
     <string name="more">More</string>
     <string name="mentions_title">Mentions / Whispers</string>
+    <string name="replies_title">Reply Thread</string>
     <string name="whispers">Whispers</string>
     <string name="notification_whisper_mention">%1$s sent you a whisper</string>
     <string name="mentions">Mentions</string>
@@ -219,6 +222,9 @@
     <string name="preference_suggestions_summary">Shows suggestions for emotes and active users while typing</string>
     <string name="preference_load_message_history_title">Load message history on start</string>
     <string name="preference_load_message_history_key" translatable="false">load_message_history_key</string>
+    <string name="preference_load_messages_on_reconnect_title">Load message history after a reconnect</string>
+    <string name="preference_load_messages_on_reconnect_summary">Attempts to fetch missed messages that were not received during connection drops</string>
+    <string name="preference_load_messages_on_reconnect__key" translatable="false">load_messages_on_reconnect_key</string>
     <string name="preference_message_history_header">Message history</string>
     <string name="preference_message_history_dashboard_title">Open dashboard</string>
     <string name="preference_message_history_dashboard_key" translatable="false">message_history_dashboard_key</string>
@@ -311,6 +317,10 @@
     <string name="preference_retain_webview_key" translatable="false">retain_webview_key</string>
     <string name="preference_retain_webview_title">Prevent stream reloads</string>
     <string name="preference_retain_webview_summary">Enables experimental prevention of stream reloads after orientation changes or re-opening DankChat.</string>
+    <string name="preference_show_changelogs_key" translatable="false">show_changelogs_key</string>
+    <string name="preference_show_changelogs">Show changelogs after update</string>
+    <string name="preference_whats_new_header">What\'s new</string>
+    <string name="preference_whats_new_key">whats_new_key</string>
     <string name="reset_media_uploader_dialog_title">Reset Media Uploader Settings</string>
     <string name="reset_media_uploader_dialog_message">Are you sure you want to reset the media uploader settings to default?</string>
     <string name="reset_media_uploader_dialog_positive">Reset</string>
@@ -345,6 +355,7 @@
     <string name="highlights_ignores_entry_first_messages">First Messages</string>
     <string name="highlights_ignores_entry_elevated_messages">Elevated Messages</string>
     <string name="highlights_ignores_entry_redemptions">Highlights redeemed with Channel Points</string>
+    <string name="highlights_ignores_entry_replies">Replies</string>
     <string name="highlights_ignores_entry_custom">Custom</string>
     <string name="highlights_messages_title">Creates notifications and highlights messages based on certain patterns.</string>
     <string name="highlights_users_title">Creates notifications and highlights messages from certain users.</string>
@@ -366,6 +377,38 @@
     <string name="user_display_custom_alias_enable">Custom Alias</string>
     <string name="pick_custom_user_color_title">Pick custom user color</string>
     <string name="custom_user_display_summary">Add a custom name and color for users</string>
+    <string name="reply_to">Replying to</string>
+    <string name="message_copy">Copy message</string>
+    <string name="message_copy_full">Copy full message</string>
+    <string name="message_reply">Reply to message</string>
+    <string name="message_view_thread">View thread</string>
+    <string name="message_copy_id">Copy message id</string>
+    <string name="message_more_actions">More…</string>
+    <string name="reply_header">Replying to @%1$s</string>
+    <string name="reply_thread_not_found">Reply thread not found</string>
+    <string name="message_not_found">Message not found</string>
+    <string name="emote_sheet_use">Use emote</string>
+    <string name="emote_sheet_copy">Copy</string>
+    <string name="emote_sheet_open_link">Open emote link</string>
+    <string name="emote_sheet_image_description">Emote image</string>
+    <string name="emote_sheet_twitch_emote">Twitch Emote</string>
+    <string name="emote_sheet_ffz_channel_emote">Channel FFZ Emote</string>
+    <string name="emote_sheet_ffz_global_emote">Global FFZ Emote</string>
+    <string name="emote_sheet_bttv_channel_emote">Channel BTTV Emote</string>
+    <string name="emote_sheet_bttv_shared_emote">Shared BTTV Emote</string>
+    <string name="emote_sheet_bttv_global_emote">Global BTTV Emote</string>
+    <string name="emote_sheet_seventv_channel_emote">Channel 7TV Emote</string>
+    <string name="emote_sheet_seventv_global_emote">Global 7TV Emote</string>
+    <string name="emote_sheet_alias_of">Alias of %1$s</string>
+    <string name="emote_sheet_created_by">Created by %1$s</string>
+    <string name="emote_sheet_zero_width_emote">(Zero Width)</string>
+    <string name="emote_copied">Emote copied</string>
+    <string name="changelog_sheet_title">DankChat has been updated!</string>
+    <string name="changelog_sheet_subtitle">What\'s new in v%1$s:</string>
+    <string name="changelog_3_6">Initial support for replying and viewing reply threads\nAdded setting to load missed messages after reconnects\nNew modal bottomsheet design\nAdded new message bottomsheet by long pressing a message\nAdded new emote bottomsheet by pressing an emote\nAdded new changelog bottomsheet\nAdded support for animated FFZ emotes\nImproved emote menu layout\nMigrated to new followers endpoint which is now limited to broadcasters and moderators due to Twitch restrictions</string>
+    <string name="confirm_login_cancel_title">Confirm login cancellation</string>
+    <string name="confirm_login_cancel_message">Are you sure you  want to cancel the login process?</string>
+    <string name="confirm_login_cancel_positive_button">Cancel login</string>
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>
         <item quantity="other">Live with %d viewers</item>
