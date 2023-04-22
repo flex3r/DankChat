@@ -88,10 +88,9 @@ inline fun <reified T : Any> LayerDrawable.forEachLayer(action: (T) -> Unit) {
 
 val ViewPager2.recyclerView: RecyclerView?
     get() = runCatching {
-        val viewPager = this
-        ViewPager2::class.java.getDeclaredField("mRecyclerView").run {
-            isAccessible = true
-            get(viewPager) as RecyclerView
+        when (val view = getChildAt(0)) {
+            is RecyclerView -> view
+            else            -> null
         }
     }.getOrNull()
 

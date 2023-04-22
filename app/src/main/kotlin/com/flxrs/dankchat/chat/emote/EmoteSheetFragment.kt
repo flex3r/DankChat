@@ -56,6 +56,7 @@ class EmoteSheetFragment : BottomSheetDialogFragment() {
 
             emoteSheetTabs.isVisible = items.size > 1
             emoteSheetViewPager.isUserInputEnabled = items.size > 1
+
             emoteSheetViewPager.disableNestedScrolling()
             emoteSheetViewPager.registerOnPageChangeCallback(emoteSheetPageChangeCallback)
         }
