@@ -478,12 +478,12 @@ class MainFragment : Fragment() {
                 // add padding to input or root view when input is hidden
                 when {
                     binding.inputLayout.isVisible -> {
-                        v.setPadding(0)
+                        v.updatePadding(bottom = 0)
                         binding.inputLayout.updatePadding(bottom = inputPadding)
                     }
 
                     else                          -> {
-                        binding.inputLayout.setPadding(0)
+                        binding.inputLayout.updatePadding(bottom = 0)
                         v.updatePadding(bottom = inputPadding)
                     }
                 }
