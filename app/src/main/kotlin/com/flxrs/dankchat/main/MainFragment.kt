@@ -29,6 +29,7 @@ import androidx.core.content.edit
 import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.core.view.*
+import androidx.core.view.WindowInsetsCompat.Type
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.activityViewModels
@@ -443,31 +444,69 @@ class MainFragment : Fragment() {
             onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackPressedCallback)
 
             var wasKeyboardOpen = false
-            ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, insets ->
+            ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+                // side paddings for landscape
+                val systemInsets = insets.getInsets(Type.systemBars())
+                val displayCutout = insets.getInsets(Type.displayCutout())
+                val sidePadding = when {
+                    mainViewModel.isFullscreen -> 0 to 0
+                    else                       -> systemInsets.left + displayCutout.left to systemInsets.right + displayCutout.right
+                }
+                v.updatePadding(left = sidePadding.first, right = sidePadding.second)
+
+                // additional margin for chips because of display cutouts/punch holes
                 val needsExtraMargin = binding.streamWebviewWrapper.isVisible || isLandscape || !mainViewModel.isFullscreenFlow.value
                 val extraMargin = when {
                     needsExtraMargin -> 0
-                    else             -> insets.getInsets(WindowInsetsCompat.Type.displayCutout()).top
+                    else             -> insets.getInsets(Type.displayCutout()).top
                 }
                 binding.showChips.updateLayoutParams<ConstraintLayout.LayoutParams> {
                     topMargin = 8.px + extraMargin
                 }
 
-                val isKeyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+                val isKeyboardVisible = insets.isVisible(Type.ime())
+
+                // don't add additional system bars padding when keyboard is open
+                // don't add padding if there are no channels or fullscreen is enabled
+                val inputPadding = when {
+                    mainViewModel.getChannels().isEmpty() -> 0
+                    isKeyboardVisible                     -> insets.getInsets(Type.ime()).bottom
+                    mainViewModel.isFullscreen            -> 0
+                    else                                  -> insets.getInsets(Type.systemBars()).bottom
+                }
+
+                // add padding to input or root view when input is hidden
+                when {
+                    binding.inputLayout.isVisible -> {
+                        v.setPadding(0)
+                        binding.inputLayout.updatePadding(bottom = inputPadding)
+                    }
+
+                    else                          -> {
+                        binding.inputLayout.setPadding(0)
+                        v.updatePadding(bottom = inputPadding)
+                    }
+                }
+
                 if (wasKeyboardOpen == isKeyboardVisible) {
                     return@setOnApplyWindowInsetsListener insets
                 }
 
                 wasKeyboardOpen = isKeyboardVisible
+                // clear focus when keyboard was hidden e.g. via back gesture
                 if (binding.input.isFocused && !isKeyboardVisible) {
                     binding.input.clearFocus()
                 }
 
-                insets
+                ViewCompat.onApplyWindowInsets(v, insets)
             }
 
-            ViewCompat.setOnApplyWindowInsetsListener(binding.inputLayout) { v, insets ->
-                v.updatePadding(bottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom)
+            ViewCompat.setOnApplyWindowInsetsListener(binding.appbarLayout) { v, insets ->
+                val top = when {
+                    mainViewModel.isFullscreen -> 0
+                    else                       -> insets.getInsets(Type.systemBars()).top
+                }
+                v.updatePadding(top = top)
                 WindowInsetsCompat.CONSUMED
             }
 
@@ -523,7 +562,6 @@ class MainFragment : Fragment() {
         if (::preferences.isInitialized) {
             preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         }
-        activity?.let { ViewCompat.setOnApplyWindowInsetsListener(it.window.decorView, null) }
         super.onDestroyView()
     }
 

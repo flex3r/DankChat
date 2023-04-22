@@ -15,6 +15,9 @@ import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -58,6 +61,12 @@ class LoginFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.loginAppbarLayout) { v, insets ->
+            val top = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top
+            v.updatePadding(top = top)
+            WindowInsetsCompat.CONSUMED
+        }
+
         (requireActivity() as AppCompatActivity).apply {
             binding.loginToolbar.setNavigationOnClickListener { showCancelLoginDialog() }
             onBackPressedDispatcher.addCallback(viewLifecycleOwner) {

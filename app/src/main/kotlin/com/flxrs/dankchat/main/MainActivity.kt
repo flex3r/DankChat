@@ -15,7 +15,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsCompat.Type
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.doOnAttach
 import androidx.databinding.DataBindingUtil
@@ -91,6 +91,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
         }
 
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         bindingRef = DataBindingUtil.setContentView(this, R.layout.main_activity)
 
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.oAuthKey.isNullOrBlank()) {
@@ -183,14 +184,13 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
     }
 
     fun setFullScreen(enabled: Boolean, changeActionBarVisibility: Boolean = true) = binding.root.doOnAttach {
-        WindowCompat.setDecorFitsSystemWindows(window, !enabled)
         val windowInsetsController = WindowCompat.getInsetsController(window, it)
         when {
             enabled -> {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || !isInMultiWindowMode) {
-                    windowInsetsController.apply {
+                    with(windowInsetsController) {
                         systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-                        hide(WindowInsetsCompat.Type.systemBars())
+                        hide(Type.systemBars())
                     }
                 }
                 if (changeActionBarVisibility) {
@@ -199,12 +199,13 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
             }
 
             else    -> {
-                windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
+                windowInsetsController.show(Type.systemBars())
                 if (changeActionBarVisibility) {
                     supportActionBar?.show()
                 }
             }
         }
+        it.requestApplyInsets()
     }
 
     private fun handleShutDown() {
