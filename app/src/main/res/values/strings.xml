@@ -320,7 +320,7 @@
     <string name="preference_show_changelogs_key" translatable="false">show_changelogs_key</string>
     <string name="preference_show_changelogs">Show changelogs after update</string>
     <string name="preference_whats_new_header">What\'s new</string>
-    <string name="preference_whats_new_key">whats_new_key</string>
+    <string name="preference_whats_new_key" translatable="false">whats_new_key</string>
     <string name="reset_media_uploader_dialog_title">Reset Media Uploader Settings</string>
     <string name="reset_media_uploader_dialog_message">Are you sure you want to reset the media uploader settings to default?</string>
     <string name="reset_media_uploader_dialog_positive">Reset</string>
