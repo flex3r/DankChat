@@ -7,15 +7,11 @@ import android.view.ViewGroup
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.EmoteMenuFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.main.MainViewModel
 import com.flxrs.dankchat.utils.extensions.collectFlow
-import com.flxrs.dankchat.utils.extensions.disableNestedScrolling
-import com.flxrs.dankchat.utils.extensions.forEachViewHolder
-import com.flxrs.dankchat.utils.extensions.recyclerView
 import com.google.android.material.tabs.TabLayoutMediator
 
 class EmoteMenuFragment : Fragment() {
@@ -33,8 +29,6 @@ class EmoteMenuFragment : Fragment() {
             bottomSheetViewPager.updateLayoutParams {
                 height = (resources.displayMetrics.heightPixels * HEIGHT_SCALE_FACTOR).toInt()
             }
-            bottomSheetViewPager.disableNestedScrolling()
-            bottomSheetViewPager.registerOnPageChangeCallback(emotePageChangeCallback)
 
             TabLayoutMediator(bottomSheetTabs, bottomSheetViewPager) { tab, pos ->
                 val menuTab = EmoteMenuTab.values()[pos]
@@ -53,20 +47,8 @@ class EmoteMenuFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        binding.bottomSheetViewPager.unregisterOnPageChangeCallback(emotePageChangeCallback)
         bindingRef = null
         super.onDestroyView()
-    }
-
-    private val emotePageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
-        override fun onPageSelected(position: Int) {
-            val adapter = binding.bottomSheetViewPager.adapter as? EmoteMenuAdapter ?: return
-            runCatching {
-                binding.bottomSheetViewPager.recyclerView?.forEachViewHolder<EmoteMenuAdapter.ViewHolder>(adapter.itemCount) { idx, viewHolder ->
-                    viewHolder.binding.tabList.isNestedScrollingEnabled = idx == position
-                }
-            }
-        }
     }
 
     companion object {
