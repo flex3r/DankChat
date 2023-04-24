@@ -9,6 +9,8 @@ import android.text.style.ImageSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
@@ -32,6 +34,7 @@ import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.flxrs.dankchat.utils.extensions.forEachLayer
 import com.flxrs.dankchat.utils.extensions.forEachSpan
 import com.flxrs.dankchat.utils.extensions.forEachViewHolder
+import com.flxrs.dankchat.utils.insets.TranslateDeferringInsetsAnimationCallback
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -85,6 +88,14 @@ open class ChatFragment : Fragment() {
             onEmoteClick = ::onEmoteClick,
         ).apply { stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY }
         binding.chat.setup(adapter, manager)
+        ViewCompat.setWindowInsetsAnimationCallback(
+            binding.chat,
+            TranslateDeferringInsetsAnimationCallback(
+                view = binding.chat,
+                persistentInsetTypes = WindowInsetsCompat.Type.systemBars(),
+                deferredInsetTypes = WindowInsetsCompat.Type.ime(),
+            )
+        )
 
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { pref, key ->
             context ?: return@OnSharedPreferenceChangeListener

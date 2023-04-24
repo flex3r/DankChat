@@ -71,6 +71,9 @@ import com.flxrs.dankchat.preferences.ChannelWithRename
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.createMediaFile
 import com.flxrs.dankchat.utils.extensions.*
+import com.flxrs.dankchat.utils.insets.ControlFocusInsetsAnimationCallback
+import com.flxrs.dankchat.utils.insets.RootViewDeferringInsetsCallback
+import com.flxrs.dankchat.utils.insets.TranslateDeferringInsetsAnimationCallback
 import com.flxrs.dankchat.utils.removeExifAttributes
 import com.flxrs.dankchat.utils.showErrorDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -444,72 +447,40 @@ class MainFragment : Fragment() {
             setSupportActionBar(binding.toolbar)
             onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackPressedCallback)
 
-            var wasKeyboardOpen = false
-            ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-                // side paddings for landscape
-                val systemInsets = insets.getInsets(Type.systemBars())
-                val displayCutout = insets.getInsets(Type.displayCutout())
-                val sidePadding = when {
-                    mainViewModel.isFullscreen -> 0 to 0
-                    else                       -> systemInsets.left + displayCutout.left to systemInsets.right + displayCutout.right
-                }
-                v.updatePadding(left = sidePadding.first, right = sidePadding.second)
-
+            ViewCompat.setOnApplyWindowInsetsListener(binding.showChips) { v, insets ->
                 // additional margin for chips because of display cutouts/punch holes
-                val needsExtraMargin = binding.streamWebviewWrapper.isVisible || isLandscape || !mainViewModel.isFullscreenFlow.value
+                val needsExtraMargin = binding.streamWebviewWrapper.isVisible || isLandscape || !mainViewModel.isFullscreen
                 val extraMargin = when {
                     needsExtraMargin -> 0
                     else             -> insets.getInsets(Type.displayCutout()).top
                 }
-                binding.showChips.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                v.updateLayoutParams<ConstraintLayout.LayoutParams> {
                     topMargin = 8.px + extraMargin
                 }
 
-                val isKeyboardVisible = insets.isVisible(Type.ime())
-
-                // don't add additional system bars padding when keyboard is open
-                // don't add padding if there are no channels or fullscreen is enabled
-                val inputPadding = when {
-                    mainViewModel.getChannels().isEmpty() -> 0
-                    isKeyboardVisible                     -> insets.getInsets(Type.ime()).bottom
-                    mainViewModel.isFullscreen            -> 0
-                    else                                  -> insets.getInsets(Type.systemBars()).bottom
-                }
-
-                // add padding to input or root view when input is hidden
-                when {
-                    binding.inputLayout.isVisible -> {
-                        v.updatePadding(bottom = 0)
-                        binding.inputLayout.updatePadding(bottom = inputPadding)
-                    }
-
-                    else                          -> {
-                        binding.inputLayout.updatePadding(bottom = 0)
-                        v.updatePadding(bottom = inputPadding)
-                    }
-                }
-
-                if (wasKeyboardOpen == isKeyboardVisible) {
-                    return@setOnApplyWindowInsetsListener insets
-                }
-
-                wasKeyboardOpen = isKeyboardVisible
-                // clear focus when keyboard was hidden e.g. via back gesture
-                if (binding.input.isFocused && !isKeyboardVisible) {
-                    binding.input.clearFocus()
-                }
-
-                ViewCompat.onApplyWindowInsets(v, insets)
-            }
-
-            ViewCompat.setOnApplyWindowInsetsListener(binding.appbarLayout) { v, insets ->
-                val top = when {
-                    mainViewModel.isFullscreen -> 0
-                    else                       -> insets.getInsets(Type.systemBars()).top
-                }
-                v.updatePadding(top = top)
                 WindowInsetsCompat.CONSUMED
             }
+
+            val deferringInsetsListener = RootViewDeferringInsetsCallback(
+                persistentInsetTypes = Type.systemBars() or Type.displayCutout(),
+                deferredInsetTypes = Type.ime(),
+                ignorePersistentInsetTypes = { mainViewModel.isFullscreen }
+            )
+            ViewCompat.setWindowInsetsAnimationCallback(binding.root, deferringInsetsListener)
+            ViewCompat.setOnApplyWindowInsetsListener(binding.root, deferringInsetsListener)
+            ViewCompat.setWindowInsetsAnimationCallback(
+                binding.inputLayout,
+                TranslateDeferringInsetsAnimationCallback(
+                    view = binding.inputLayout,
+                    persistentInsetTypes = Type.systemBars(),
+                    deferredInsetTypes = Type.ime(),
+                    dispatchMode = WindowInsetsAnimationCompat.Callback.DISPATCH_MODE_CONTINUE_ON_SUBTREE
+                )
+            )
+            ViewCompat.setWindowInsetsAnimationCallback(
+                binding.input,
+                ControlFocusInsetsAnimationCallback(binding.input)
+            )
 
             if (savedInstanceState == null && !mainViewModel.started) {
                 mainViewModel.started = true // TODO ???
@@ -1245,7 +1216,7 @@ class MainFragment : Fragment() {
         setTokenizer(SpaceTokenizer())
         suggestionAdapter = SuggestionsArrayAdapter(binding.input.context, dankChatPreferences) { count ->
             dropDownHeight = if (count > 4) {
-                (binding.root.measuredHeight / 2.0).roundToInt()
+                (binding.root.measuredHeight / 2.0).roundToInt() - height
             } else {
                 ViewGroup.LayoutParams.WRAP_CONTENT
             }
@@ -1277,38 +1248,23 @@ class MainFragment : Fragment() {
 
         setOnFocusChangeListener { _, hasFocus ->
             val isFullscreen = mainViewModel.isFullscreenFlow.value
+            (activity as? MainActivity)?.setFullScreen(isFullscreen, changeActionBarVisibility = false)
             mainViewModel.setShowChips(!hasFocus)
 
+            if (hasFocus && mainViewModel.isEmoteSheetOpen) {
+                closeInputSheetAndSetState()
+            }
+
             if (isPortrait) {
-                binding.inputSheetFragment
-                    .takeIf { inputBottomSheetBehavior?.isVisible == false }
-                    ?.isInvisible = true
-
-                binding.fullScreenSheetFragment
-                    .takeIf { fullscreenBottomSheetBehavior?.isVisible == false }
-                    ?.isInvisible = true
-
-                binding.root.post {
-                    (activity as? MainActivity)?.setFullScreen(enabled = !hasFocus && isFullscreen, changeActionBarVisibility = false)
-                    binding.inputSheetFragment.isInvisible = false
-                    binding.fullScreenSheetFragment.isInvisible = false
-                }
                 return@setOnFocusChangeListener
             }
 
             binding.tabs.isVisible = !hasFocus && !isFullscreen
             binding.streamWebviewWrapper.isVisible = !hasFocus && !mainViewModel.isEmoteSheetOpen && mainViewModel.isStreamActive
-
             when {
-                hasFocus -> (activity as? MainActivity)?.apply {
-                    supportActionBar?.hide()
-                    setFullScreen(enabled = false, changeActionBarVisibility = false)
-                }
-
-                else     -> (activity as? MainActivity)?.setFullScreen(isFullscreen)
+                hasFocus      -> (activity as? MainActivity)?.supportActionBar?.hide()
+                !isFullscreen -> (activity as? MainActivity)?.supportActionBar?.show()
             }
-
-            binding.root.requestApplyInsets()
         }
     }
 
