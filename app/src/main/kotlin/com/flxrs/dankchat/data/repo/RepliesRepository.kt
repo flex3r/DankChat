@@ -68,7 +68,14 @@ class RepliesRepository @Inject constructor(private val dankChatPreferenceStore:
                 )
             }
 
-            else -> existing.copy(replies = existing.replies + strippedMessage, participated = existing.updateParticipated(strippedMessage))
+            else -> {
+                // Message already exists in thread
+                if (existing.replies.any { it.id == strippedMessage.id }) {
+                    return strippedMessage
+                }
+
+                existing.copy(replies = existing.replies + strippedMessage, participated = existing.updateParticipated(strippedMessage))
+            }
         }
         when {
             !threads.containsKey(rootId) -> threads[rootId] = MutableStateFlow(thread)
