@@ -35,21 +35,11 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bindingRef = UserPopupBottomsheetBinding.inflate(inflater, container, false).apply {
-            userMention.text = when {
-                args.isWhisperPopup -> getString(R.string.user_popup_whisper)
-                else                -> getString(R.string.user_popup_mention)
-            }
-
             userMention.setOnClickListener {
-                val result = when {
-                    args.isWhisperPopup -> UserPopupResult.Whisper(viewModel.userName)
-                    else                -> UserPopupResult.Mention(viewModel.userName, viewModel.displayName)
-                }
-
-                findNavController()
-                    .getBackStackEntry(R.id.mainFragment)
-                    .savedStateHandle[MainFragment.USER_POPUP_RESULT_KEY] = result
-                dialog?.dismiss()
+                setResultAndDismiss(UserPopupResult.Mention(viewModel.userName, viewModel.displayName))
+            }
+            userWhisper.setOnClickListener {
+                setResultAndDismiss(UserPopupResult.Whisper(viewModel.userName))
             }
 
             userBlock.setOnClickListener {
@@ -96,7 +86,7 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
                 is UserPopupState.Loading     -> binding.showLoadingState(it)
                 is UserPopupState.NotLoggedIn -> binding.showNotLoggedInState(it)
                 is UserPopupState.Success     -> binding.updateUserData(it)
-                is UserPopupState.Error       -> setErrorResultAndDismiss(it.throwable)
+                is UserPopupState.Error       -> setResultAndDismiss(UserPopupResult.Error(it.throwable))
             }
         }
     }
@@ -150,13 +140,14 @@ class UserPopupDialogFragment : BottomSheetDialogFragment() {
         userName.text = state.userName.formatWithDisplayName(state.displayName)
 
         userMention.isEnabled = false
+        userWhisper.isEnabled = false
         userBlock.isEnabled = false
     }
 
-    private fun setErrorResultAndDismiss(throwable: Throwable?) {
+    private fun setResultAndDismiss(result: UserPopupResult) {
         findNavController()
             .getBackStackEntry(R.id.mainFragment)
-            .savedStateHandle[MainFragment.USER_POPUP_RESULT_KEY] = UserPopupResult.Error(throwable)
+            .savedStateHandle[MainFragment.USER_POPUP_RESULT_KEY] = result
         dialog?.dismiss()
     }
 }

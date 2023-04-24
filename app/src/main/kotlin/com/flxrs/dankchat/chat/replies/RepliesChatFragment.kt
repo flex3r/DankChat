@@ -51,8 +51,8 @@ class RepliesChatFragment : ChatFragment() {
         val shouldMention = (isLongPress && shouldLongClickMention) || (!isLongPress && !shouldLongClickMention)
 
         when {
-            shouldMention -> (parentFragment?.parentFragment as? MainFragment)?.mentionUser(targetUserName, targetDisplayName)
-            else          -> (parentFragment?.parentFragment as? MainFragment)?.openUserPopup(
+            shouldMention && dankChatPreferenceStore.isLoggedIn -> (parentFragment?.parentFragment as? MainFragment)?.mentionUser(targetUserName, targetDisplayName)
+            else                                                -> (parentFragment?.parentFragment as? MainFragment)?.openUserPopup(
                 targetUserId = targetUserId,
                 targetUserName = targetUserName,
                 targetDisplayName = targetDisplayName,

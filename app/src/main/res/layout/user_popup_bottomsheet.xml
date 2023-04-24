@@ -167,10 +167,22 @@
                     android:layout_height="wrap_content"
                     android:text="@string/user_popup_mention"
                     app:icon="@drawable/ic_alternate_email"
-                    app:layout_constraintBottom_toTopOf="@id/user_block"
+                    app:layout_constraintBottom_toTopOf="@id/user_whisper"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/user_whisper"
+                    style="@style/Widget.App.TextIconButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/user_popup_whisper"
+                    app:icon="@drawable/ic_3p"
+                    app:layout_constraintBottom_toTopOf="@id/user_block"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/user_mention" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/user_block"
@@ -182,7 +194,7 @@
                     app:layout_constraintBottom_toTopOf="@id/user_report"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/user_mention" />
+                    app:layout_constraintTop_toBottomOf="@id/user_whisper" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/user_report"

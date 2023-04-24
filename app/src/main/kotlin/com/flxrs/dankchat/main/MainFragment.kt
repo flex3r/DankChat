@@ -261,16 +261,7 @@ class MainFragment : Fragment() {
                     R.id.menu_login, R.id.menu_relogin -> openLogin()
                     R.id.menu_logout                   -> showLogoutConfirmationDialog()
                     R.id.menu_add                      -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment)
-                    R.id.menu_mentions                 -> {
-                        inputBottomSheetBehavior?.hide()
-                        val fragment = MentionFragment()
-                        childFragmentManager.commit {
-                            replace(R.id.full_screen_sheet_fragment, fragment)
-                        }
-                        childFragmentManager.executePendingTransactions()
-                        fullscreenBottomSheetBehavior?.expand()
-                    }
-
+                    R.id.menu_mentions                 -> openMentionSheet()
                     R.id.menu_open_channel             -> openChannel()
                     R.id.menu_remove_channel           -> removeChannel()
                     R.id.menu_report_channel           -> reportChannel()
@@ -573,10 +564,15 @@ class MainFragment : Fragment() {
     }
 
     fun whisperUser(user: UserName) {
-        if (!binding.input.isEnabled) return
+        binding.fullScreenSheetFragment.post {
+            openMentionSheet(openWhisperTab = true)
+        }
 
         val current = binding.input.text.toString()
         val text = "/w $user $current"
+        if (current.startsWith(text)) {
+            return
+        }
 
         binding.input.setText(text)
         binding.input.setSelection(text.length)
@@ -601,6 +597,35 @@ class MainFragment : Fragment() {
         if (dankChatPreferences.shouldShowChangelog()) {
             navigateSafe(R.id.action_mainFragment_to_changelogSheetFragment)
         }
+    }
+
+    private fun openMentionSheet(openWhisperTab: Boolean = false) {
+        when {
+            openWhisperTab && mainViewModel.isWhisperTabOpen -> return
+            openWhisperTab && mainViewModel.isMentionTabOpen -> {
+                val fragment = childFragmentManager.fragments.filterIsInstance<MentionFragment>().firstOrNull()
+                if (fragment == null) {
+                    createAndOpenMentionSheet(openWhisperTab = true)
+                    return
+                }
+
+                mainViewModel.setFullScreenSheetState(FullScreenSheetState.Whisper)
+                fragment.scrollToWhisperTab()
+            }
+
+            else                                             -> createAndOpenMentionSheet(openWhisperTab)
+        }
+    }
+
+    private fun createAndOpenMentionSheet(openWhisperTab: Boolean = false) {
+        inputBottomSheetBehavior?.hide()
+        fullscreenBottomSheetBehavior?.hide()
+        val fragment = MentionFragment.newInstance(openWhisperTab)
+        childFragmentManager.commit {
+            replace(R.id.full_screen_sheet_fragment, fragment)
+        }
+        childFragmentManager.executePendingTransactions()
+        fullscreenBottomSheetBehavior?.expand()
     }
 
     private fun handleMessageSheetResult(result: MessageSheetResult) = when (result) {
@@ -653,7 +678,9 @@ class MainFragment : Fragment() {
     }
 
     private fun insertText(text: String) {
-        if (!binding.input.isEnabled) return
+        if (!dankChatPreferences.isLoggedIn) {
+            return
+        }
 
         val current = binding.input.text.toString()
         val index = binding.input.selectionStart.takeIf { it >= 0 } ?: current.length
@@ -676,10 +703,21 @@ class MainFragment : Fragment() {
         mainViewModel.loadData()
     }
 
-    private fun handleUserPopupResult(result: UserPopupResult) = when (result) {
-        is UserPopupResult.Error   -> showSnackBar(getString(R.string.user_popup_error, result.throwable?.message.orEmpty()))
-        is UserPopupResult.Mention -> mentionUser(result.targetUser, result.targetDisplayName)
-        is UserPopupResult.Whisper -> whisperUser(result.targetUser)
+    private fun handleUserPopupResult(result: UserPopupResult) {
+        when (result) {
+            is UserPopupResult.Error   -> showSnackBar(getString(R.string.user_popup_error, result.throwable?.message.orEmpty()))
+            is UserPopupResult.Mention -> {
+                if (mainViewModel.isMentionTabOpen) {
+                    mainViewModel.setFullScreenSheetState(FullScreenSheetState.Closed)
+                    fullscreenBottomSheetBehavior?.hide()
+                }
+                binding.fullScreenSheetFragment.post {
+                    mentionUser(result.targetUser, result.targetDisplayName)
+                }
+            }
+
+            is UserPopupResult.Whisper -> whisperUser(result.targetUser)
+        }
     }
 
     private fun addChannel(channel: String) {

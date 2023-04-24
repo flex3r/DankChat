@@ -180,8 +180,8 @@ open class ChatFragment : Fragment() {
         val shouldMention = (isLongPress && shouldLongClickMention) || (!isLongPress && !shouldLongClickMention)
 
         when {
-            shouldMention -> (parentFragment as? MainFragment)?.mentionUser(targetUserName, targetDisplayName)
-            else          -> (parentFragment as? MainFragment)?.openUserPopup(
+            shouldMention && dankChatPreferenceStore.isLoggedIn -> (parentFragment as? MainFragment)?.mentionUser(targetUserName, targetDisplayName)
+            else                                                -> (parentFragment as? MainFragment)?.openUserPopup(
                 targetUserId = targetUserId,
                 targetUserName = targetUserName,
                 targetDisplayName = targetDisplayName,

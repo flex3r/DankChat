@@ -249,4 +249,13 @@
         android:id="@+id/changelogSheetFragment"
         android:name="com.flxrs.dankchat.changelog.ChangelogSheetFragment"
         android:label="ChangelogSheetFragment" />
+    <fragment
+        android:id="@+id/mentionFragment"
+        android:name="com.flxrs.dankchat.chat.mention.MentionFragment"
+        android:label="MentionFragment" >
+        <argument
+            android:name="openWhisperTab"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
 </navigation>
