@@ -1,2 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="dialog_ok">ଠିକ୍ ଅଛି</string>
+    <string name="more">ଅଧିକ</string>
+    <string name="seconds">ସେକେଣ୍ଡ</string>
+    <string name="minutes">ମିନିଟ୍</string>
+    <string name="tts_ignore_list_user_hint">ଉପଭୋକ୍ତା</string>
+    <string name="preference_notification_header">ଵିଜ୍ଞପ୍ତି</string>
+    <string name="preference_general_header">ସାଧାରଣ</string>
+    <string name="preference_about_header">ଵିଷୟରେ</string>
+    <string name="preference_appearance_header">ରୂପ</string>
+    <string name="preference_follow_system_title">ସିଷ୍ଟମ୍ ଡିଫଲ୍ଟକୁ ଅନୁସରଣ କରିବା</string>
+    <string name="preference_display_group_title">ପ୍ରଦର୍ଶନ</string>
+    <string name="preference_keep_screen_on_title">ସ୍କ୍ରୀନ୍ ସଚଳ ରଖିବା</string>
+    <string name="preference_theme_title">ଥିମ୍</string>
+    <string name="preference_dark_theme_entry_title">ଗାଢ଼ ଥିମ୍</string>
+    <string name="preference_light_theme_entry_title">ହାଲୁକା ଥିମ୍</string>
+    <plurals name="months">
+        <item quantity="one">%d ମାସ</item>
+        <item quantity="other">%d ମାସ</item>
+    </plurals>
+</resources>
