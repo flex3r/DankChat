@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.chat.InputSheetState
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.databinding.ReplySheetFragmentBinding
 import com.flxrs.dankchat.main.MainViewModel
@@ -24,7 +23,7 @@ class ReplyInputSheetFragment : Fragment() {
         val binding = ReplySheetFragmentBinding.inflate(inflater, container, false).apply {
             replyHeader.text = getString(R.string.reply_header, args.replyUser.value)
         }
-        mainViewModel.setInputSheetState(InputSheetState.Replying(args.replyMessageId))
+        mainViewModel.setReplyingInputSheetState(args.replyMessageId, args.replyUser)
         return binding.root
     }
 

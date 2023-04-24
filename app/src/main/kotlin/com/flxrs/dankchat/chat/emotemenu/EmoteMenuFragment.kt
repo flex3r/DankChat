@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.chat.InputSheetState
 import com.flxrs.dankchat.databinding.EmoteMenuFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.main.MainViewModel
@@ -49,7 +48,7 @@ class EmoteMenuFragment : Fragment() {
         }
 
         collectFlow(mainViewModel.emoteTabItems, adapter::submitList)
-        mainViewModel.setInputSheetState(InputSheetState.Emotes)
+        mainViewModel.setEmoteInputSheetState()
         return binding.root
     }
 

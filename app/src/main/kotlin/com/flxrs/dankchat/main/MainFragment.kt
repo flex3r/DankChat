@@ -11,6 +11,7 @@ import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
 import android.view.*
+import android.view.ViewGroup.MarginLayoutParams
 import android.view.inputmethod.EditorInfo
 import android.webkit.MimeTypeMap
 import android.widget.ProgressBar
@@ -673,6 +674,11 @@ class MainFragment : Fragment() {
         }
         childFragmentManager.executePendingTransactions()
         inputBottomSheetBehavior?.expand()
+        binding.root.post {
+            binding.chatViewpager.updateLayoutParams<MarginLayoutParams> {
+                bottomMargin = binding.inputSheetFragment.height
+            }
+        }
     }
 
     private fun insertText(text: String) {
@@ -1192,8 +1198,11 @@ class MainFragment : Fragment() {
     }
 
     private fun closeInputSheetAndSetState() {
-        mainViewModel.setInputSheetState(InputSheetState.Closed)
+        val previousState = mainViewModel.closeInputSheet()
         inputBottomSheetBehavior?.hide()
+        if (previousState is InputSheetState.Replying) {
+            startReply(previousState.replyMessageId, previousState.replyName)
+        }
     }
 
     private val inputSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
@@ -1216,12 +1225,16 @@ class MainFragment : Fragment() {
             }
 
             if (behavior.isHidden) {
-                mainViewModel.setInputSheetState(InputSheetState.Closed)
+                val previousState = mainViewModel.closeInputSheet()
                 val existing = childFragmentManager.fragments.filter { it is EmoteMenuFragment || it is ReplyInputSheetFragment }
                 childFragmentManager.commit {
                     existing.forEach(::remove)
                 }
                 childFragmentManager.executePendingTransactions()
+                when (previousState) {
+                    is InputSheetState.Replying -> startReply(previousState.replyMessageId, previousState.replyName)
+                    else                        -> binding.chatViewpager.updateLayoutParams<MarginLayoutParams> { bottomMargin = 0 }
+                }
             }
 
             binding.streamWebviewWrapper.isVisible = !mainViewModel.isEmoteSheetOpen && mainViewModel.isStreamActive

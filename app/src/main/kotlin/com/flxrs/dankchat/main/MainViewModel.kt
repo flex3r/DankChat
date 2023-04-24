@@ -250,10 +250,11 @@ class MainViewModel @Inject constructor(
     }.stateIn(viewModelScope, started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
     val inputState: StateFlow<InputState> = combine(connectionState, fullScreenSheetState, inputSheetState) { connectionState, chatSheetState, inputSheetState ->
+        val inputIsReply = inputSheetState is InputSheetState.Replying || (inputSheetState as? InputSheetState.Emotes)?.previous is InputSheetState.Replying
         when (connectionState) {
             ConnectionState.CONNECTED               -> when {
-                chatSheetState is FullScreenSheetState.Replies || inputSheetState is InputSheetState.Replying -> InputState.Replying
-                else                                                                                          -> InputState.Default
+                chatSheetState is FullScreenSheetState.Replies || inputIsReply -> InputState.Replying
+                else                                                           -> InputState.Default
             }
 
             ConnectionState.CONNECTED_NOT_LOGGED_IN -> InputState.NotLoggedIn
@@ -365,7 +366,7 @@ class MainViewModel @Inject constructor(
     val isFullscreen: Boolean
         get() = isFullscreenFlow.value
     val isEmoteSheetOpen: Boolean
-        get() = inputSheetState.value == InputSheetState.Emotes
+        get() = inputSheetState.value is InputSheetState.Emotes
     val isReplySheetOpen: Boolean
         get() = inputSheetState.value is InputSheetState.Replying
 
@@ -501,8 +502,23 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun setInputSheetState(state: InputSheetState) {
-        inputSheetState.update { state }
+    fun setEmoteInputSheetState() {
+        inputSheetState.update {
+            InputSheetState.Emotes(it)
+        }
+    }
+
+    fun setReplyingInputSheetState(replyMessageId: String, replyName: UserName) {
+        inputSheetState.update {
+            InputSheetState.Replying(replyMessageId, replyName)
+        }
+    }
+
+    fun closeInputSheet(): InputSheetState {
+        inputSheetState.update {
+            (it as? InputSheetState.Emotes)?.previous ?: InputSheetState.Closed
+        }
+        return inputSheetState.value
     }
 
     fun clear(channel: UserName) = chatRepository.clear(channel)
