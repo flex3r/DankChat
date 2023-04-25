@@ -343,6 +343,7 @@
     <string name="emote_sheet_seventv_global_emote">Глобальный смайл 7TV</string>
     <string name="emote_sheet_alias_of">Псевдоним %1$s</string>
     <string name="emote_sheet_created_by">Создан %1$s</string>
+    <string name="emote_sheet_zero_width_emote">(Zero Width)</string>
     <string name="emote_copied">Смайл скопирован</string>
     <string name="changelog_sheet_title">DankChat был обновлён!</string>
     <string name="changelog_sheet_subtitle">Что нового в v%1$s:</string>
