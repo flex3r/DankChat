@@ -492,7 +492,6 @@ class MainFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        closeInputSheetAndSetState()
         changeActionBarVisibility(mainViewModel.isFullscreenFlow.value)
 
         (activity as? MainActivity)?.apply {
@@ -1189,7 +1188,7 @@ class MainFragment : Fragment() {
         setStartIconDrawable(R.drawable.ic_insert_emoticon)
         setStartIconOnClickListener {
             if (mainViewModel.isEmoteSheetOpen) {
-                inputBottomSheetBehavior?.hide()
+                closeInputSheetAndSetState()
                 return@setStartIconOnClickListener
             }
 
@@ -1208,9 +1207,11 @@ class MainFragment : Fragment() {
 
     private fun closeInputSheetAndSetState() {
         val previousState = mainViewModel.closeInputSheet()
-        inputBottomSheetBehavior?.hide()
-        if (previousState is InputSheetState.Replying) {
-            startReply(previousState.replyMessageId, previousState.replyName)
+        lifecycleScope.launch {
+            inputBottomSheetBehavior?.awaitState(BottomSheetBehavior.STATE_HIDDEN)
+            if (previousState is InputSheetState.Replying) {
+                startReply(previousState.replyMessageId, previousState.replyName)
+            }
         }
     }
 

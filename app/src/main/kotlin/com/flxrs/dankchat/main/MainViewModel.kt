@@ -250,7 +250,7 @@ class MainViewModel @Inject constructor(
     }.stateIn(viewModelScope, started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
     val inputState: StateFlow<InputState> = combine(connectionState, fullScreenSheetState, inputSheetState) { connectionState, chatSheetState, inputSheetState ->
-        val inputIsReply = inputSheetState is InputSheetState.Replying || (inputSheetState as? InputSheetState.Emotes)?.previous is InputSheetState.Replying
+        val inputIsReply = inputSheetState is InputSheetState.Replying || (inputSheetState as? InputSheetState.Emotes)?.previousReply != null
         when (connectionState) {
             ConnectionState.CONNECTED               -> when {
                 chatSheetState is FullScreenSheetState.Replies || inputIsReply -> InputState.Replying
@@ -508,7 +508,10 @@ class MainViewModel @Inject constructor(
 
     fun setEmoteInputSheetState() {
         inputSheetState.update {
-            InputSheetState.Emotes(it)
+            when (it) {
+                is InputSheetState.Emotes -> it
+                else                      -> InputSheetState.Emotes(previousReply = it as? InputSheetState.Replying)
+            }
         }
     }
 
@@ -520,7 +523,7 @@ class MainViewModel @Inject constructor(
 
     fun closeInputSheet(): InputSheetState {
         inputSheetState.update {
-            (it as? InputSheetState.Emotes)?.previous ?: InputSheetState.Closed
+            (it as? InputSheetState.Emotes)?.previousReply ?: InputSheetState.Closed
         }
         return inputSheetState.value
     }
