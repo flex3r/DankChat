@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="dialog_ok">ଠିକ୍ ଅଛି</string>
+    <string name="hint_replying">ପ୍ରତ୍ୟୁତ୍ତର</string>
     <string name="more">ଅଧିକ</string>
     <string name="confirm_user_timeout_positive_button">ସମୟ-ସମାପ୍ତି</string>
     <string name="seconds">ସେକେଣ୍ଡ</string>
@@ -17,6 +18,7 @@
     <string name="preference_dark_theme_entry_title">ଗାଢ଼ ଥିମ୍</string>
     <string name="preference_light_theme_entry_title">ହାଲୁକା ଥିମ୍</string>
     <string name="create_notification">ଵିଜ୍ଞପ୍ତି</string>
+    <string name="user_display_item_username_hint">ଉପଭୋକ୍ତା ନାମ</string>
     <plurals name="months">
         <item quantity="one">%d ମାସ</item>
         <item quantity="other">%d ମାସ</item>
