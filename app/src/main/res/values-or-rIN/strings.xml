@@ -2,6 +2,7 @@
 <resources>
     <string name="dialog_ok">ଠିକ୍ ଅଛି</string>
     <string name="more">ଅଧିକ</string>
+    <string name="confirm_user_timeout_positive_button">ସମୟ-ସମାପ୍ତି</string>
     <string name="seconds">ସେକେଣ୍ଡ</string>
     <string name="minutes">ମିନିଟ୍</string>
     <string name="tts_ignore_list_user_hint">ଉପଭୋକ୍ତା</string>
@@ -15,6 +16,7 @@
     <string name="preference_theme_title">ଥିମ୍</string>
     <string name="preference_dark_theme_entry_title">ଗାଢ଼ ଥିମ୍</string>
     <string name="preference_light_theme_entry_title">ହାଲୁକା ଥିମ୍</string>
+    <string name="create_notification">ଵିଜ୍ଞପ୍ତି</string>
     <plurals name="months">
         <item quantity="one">%d ମାସ</item>
         <item quantity="other">%d ମାସ</item>
