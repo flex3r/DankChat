@@ -38,6 +38,7 @@ import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
@@ -84,6 +85,7 @@ import com.google.android.material.snackbar.BaseTransientBottomBar.BaseCallback
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
 import java.net.URL
@@ -516,6 +518,7 @@ class MainFragment : Fragment() {
         binding.tabs.removeOnTabSelectedListener(tabSelectionListener)
         binding.chatViewpager.unregisterOnPageChangeCallback(pageChangeCallback)
         inputBottomSheetBehavior?.removeBottomSheetCallback(inputSheetCallback)
+        fullscreenBottomSheetBehavior?.removeBottomSheetCallback(fullScreenSheetCallback)
         tabLayoutMediator.detach()
         inputBottomSheetBehavior = null
         fullscreenBottomSheetBehavior = null
@@ -563,16 +566,15 @@ class MainFragment : Fragment() {
     }
 
     fun whisperUser(user: UserName) {
-        binding.fullScreenSheetFragment.post {
-            openMentionSheet(openWhisperTab = true)
-        }
+        openMentionSheet(openWhisperTab = true)
 
         val current = binding.input.text.toString()
-        val text = "/w $user $current"
-        if (current.startsWith(text)) {
+        val command = "/w $user"
+        if (current.startsWith(command)) {
             return
         }
 
+        val text = "$command $current"
         binding.input.setText(text)
         binding.input.setSelection(text.length)
     }
@@ -618,13 +620,15 @@ class MainFragment : Fragment() {
 
     private fun createAndOpenMentionSheet(openWhisperTab: Boolean = false) {
         inputBottomSheetBehavior?.hide()
-        fullscreenBottomSheetBehavior?.hide()
-        val fragment = MentionFragment.newInstance(openWhisperTab)
-        childFragmentManager.commit {
-            replace(R.id.full_screen_sheet_fragment, fragment)
+        lifecycleScope.launch {
+            fullscreenBottomSheetBehavior?.awaitState(BottomSheetBehavior.STATE_HIDDEN)
+            val fragment = MentionFragment.newInstance(openWhisperTab)
+            childFragmentManager.commit {
+                replace(R.id.full_screen_sheet_fragment, fragment)
+            }
+            childFragmentManager.executePendingTransactions()
+            fullscreenBottomSheetBehavior?.expand()
         }
-        childFragmentManager.executePendingTransactions()
-        fullscreenBottomSheetBehavior?.expand()
     }
 
     private fun handleMessageSheetResult(result: MessageSheetResult) = when (result) {
@@ -706,11 +710,11 @@ class MainFragment : Fragment() {
         when (result) {
             is UserPopupResult.Error   -> showSnackBar(getString(R.string.user_popup_error, result.throwable?.message.orEmpty()))
             is UserPopupResult.Mention -> {
-                if (mainViewModel.isMentionTabOpen) {
-                    mainViewModel.setFullScreenSheetState(FullScreenSheetState.Closed)
-                    fullscreenBottomSheetBehavior?.hide()
-                }
-                binding.fullScreenSheetFragment.post {
+                lifecycleScope.launch {
+                    if (mainViewModel.isMentionTabOpen) {
+                        mainViewModel.setFullScreenSheetState(FullScreenSheetState.Closed)
+                        fullscreenBottomSheetBehavior?.awaitState(BottomSheetBehavior.STATE_HIDDEN)
+                    }
                     mentionUser(result.targetUser, result.targetDisplayName)
                 }
             }
@@ -1130,28 +1134,8 @@ class MainFragment : Fragment() {
     }
 
     private fun BottomSheetBehavior<FragmentContainerView>.setupFullScreenSheet() {
+        addBottomSheetCallback(fullScreenSheetCallback)
         hide()
-        addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                val behavior = fullscreenBottomSheetBehavior ?: return
-                when {
-                    behavior.isHidden    -> {
-                        mainViewModel.setFullScreenSheetState(FullScreenSheetState.Closed)
-                        val channel = tabAdapter[binding.tabs.selectedTabPosition] ?: return
-                        mainViewModel.setSuggestionChannel(channel)
-
-                        val existing = childFragmentManager.fragments.filter { it is MentionFragment || it is RepliesFragment }
-                        childFragmentManager.commit {
-                            existing.forEach(::remove)
-                        }
-                        childFragmentManager.executePendingTransactions()
-                    }
-
-                    behavior.isCollapsed -> behavior.hide()
-                }
-            }
-        })
     }
 
     private fun ViewPager2.setup() {
@@ -1211,6 +1195,28 @@ class MainFragment : Fragment() {
             inputBottomSheetBehavior?.awaitState(BottomSheetBehavior.STATE_HIDDEN)
             if (previousState is InputSheetState.Replying) {
                 startReply(previousState.replyMessageId, previousState.replyName)
+            }
+        }
+    }
+
+    private val fullScreenSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+        override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            val behavior = fullscreenBottomSheetBehavior ?: return
+            when {
+                behavior.isHidden    -> {
+                    mainViewModel.setFullScreenSheetState(FullScreenSheetState.Closed)
+                    val channel = tabAdapter[binding.tabs.selectedTabPosition] ?: return
+                    mainViewModel.setSuggestionChannel(channel)
+
+                    val existing = childFragmentManager.fragments.filter { it is MentionFragment || it is RepliesFragment }
+                    childFragmentManager.commit {
+                        existing.forEach(::remove)
+                    }
+                    childFragmentManager.executePendingTransactions()
+                }
+
+                behavior.isCollapsed -> behavior.hide()
             }
         }
     }
