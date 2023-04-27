@@ -810,6 +810,11 @@ class ChatAdapter(
                         Log.e("ViewBinding", Log.getStackTraceString(e))
                     }
                 }
+
+                override fun updateDrawState(ds: TextPaint) {
+                    ds.color = ds.linkColor
+                    ds.isUnderlineText = false
+                }
             }
             spannableWithEmojis[start..fixedEnd] = clickableSpan
         }
