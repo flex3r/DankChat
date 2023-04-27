@@ -187,8 +187,6 @@ class MainFragment : Fragment() {
             }
 
             tabs.setInitialColors()
-            tabs.getTabAt(tabs.selectedTabPosition)?.removeBadge()
-            tabs.addOnTabSelectedListener(tabSelectionListener)
 
             addChannelsButton.setOnClickListener { navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment) }
             toggleFullscreen.setOnClickListener { mainViewModel.toggleFullscreen() }
@@ -439,6 +437,13 @@ class MainFragment : Fragment() {
         @SuppressLint("WrongConstant")
         binding.chatViewpager.offscreenPageLimit = OFFSCREEN_PAGE_LIMIT
         tabLayoutMediator.attach()
+        binding.tabs.addOnTabSelectedListener(tabSelectionListener)
+
+        val active = mainViewModel.getActiveChannel()
+        if (active != null) {
+            val index = tabAdapter.indexOfChannel(active)
+            binding.tabs.getTabAt(index)?.removeBadge()
+        }
 
         (requireActivity() as AppCompatActivity).apply {
             setSupportActionBar(binding.toolbar)
@@ -512,7 +517,7 @@ class MainFragment : Fragment() {
                 }
                 channelToOpen = null
             } else {
-                val activeChannel = mainViewModel.activeChannel.value ?: return
+                val activeChannel = mainViewModel.getActiveChannel() ?: return
                 clearNotificationsOfChannel(activeChannel)
             }
         }
@@ -1114,10 +1119,10 @@ class MainFragment : Fragment() {
     private fun updateUnreadChannelTabColors(channels: Map<UserName, Boolean>) {
         channels.forEach { (channel, _) ->
             when (val index = tabAdapter.indexOfChannel(channel)) {
-                binding.tabs.selectedTabPosition -> mainViewModel.clearUnreadMessage(channel)
-                else                             -> {
+                binding.chatViewpager.currentItem -> mainViewModel.clearUnreadMessage(channel)
+                else                              -> {
                     val tab = binding.tabs.getTabAt(index)
-                    tab?.setTextColor(R.attr.colorOnSurface)
+                    binding.tabs.post { tab?.setTextColor(R.attr.colorOnSurface) }
                 }
             }
         }
@@ -1128,8 +1133,8 @@ class MainFragment : Fragment() {
             val index = tabAdapter.indexOfChannel(channel)
             if (count > 0) {
                 when (index) {
-                    binding.tabs.selectedTabPosition -> mainViewModel.clearMentionCount(channel) // mention is in active channel
-                    else                             -> binding.tabs.getTabAt(index)?.apply { orCreateBadge }
+                    binding.chatViewpager.currentItem -> mainViewModel.clearMentionCount(channel) // mention is in active channel
+                    else                              -> binding.tabs.getTabAt(index)?.apply { orCreateBadge }
                 }
             } else {
                 binding.tabs.getTabAt(index)?.removeBadge()
