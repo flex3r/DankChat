@@ -114,19 +114,21 @@ fun List<ChatItem>.addAndLimit(
 fun List<ChatItem>.addSystemMessage(type: SystemMessageType, scrollBackLength: Int, onMessageRemoved: (ChatItem) -> Unit, onReconnect: () -> Unit = {}): List<ChatItem> {
     return when {
         type != SystemMessageType.Connected -> addAndLimit(type.toChatItem(), scrollBackLength, onMessageRemoved)
-        else                                -> replaceDisconnectedIfNecessary(scrollBackLength, onMessageRemoved, onReconnect)
+        else                                -> replaceLastSystemMessageIfNecessary(scrollBackLength, onMessageRemoved, onReconnect)
     }
 }
 
-fun List<ChatItem>.replaceDisconnectedIfNecessary(scrollBackLength: Int, onMessageRemoved: (ChatItem) -> Unit, onReconnect: () -> Unit): List<ChatItem> {
+fun List<ChatItem>.replaceLastSystemMessageIfNecessary(scrollBackLength: Int, onMessageRemoved: (ChatItem) -> Unit, onReconnect: () -> Unit): List<ChatItem> {
     val item = lastOrNull()
     val message = item?.message
     return when ((message as? SystemMessage)?.type) {
-        SystemMessageType.Disconnected -> {
+        SystemMessageType.Disconnected          -> {
             onReconnect()
             dropLast(1) + item.copy(message = SystemMessage(SystemMessageType.Reconnected))
         }
-        else                           -> addAndLimit(SystemMessageType.Connected.toChatItem(), scrollBackLength, onMessageRemoved)
+
+        is SystemMessageType.ChannelNonExistent -> dropLast(1) + SystemMessageType.Connected.toChatItem()
+        else                                    -> addAndLimit(SystemMessageType.Connected.toChatItem(), scrollBackLength, onMessageRemoved)
     }
 }
 

@@ -6,6 +6,7 @@ import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.timer
+import io.ktor.util.collections.ConcurrentSet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -63,7 +64,7 @@ class ChatConnection @Inject constructor(
         }
 
     private val channels = mutableSetOf<UserName>()
-    private val channelsAttemptedToJoin = mutableSetOf<UserName>()
+    private val channelsAttemptedToJoin = ConcurrentSet<UserName>()
     private val channelsToJoin = Channel<Collection<UserName>>(capacity = Channel.BUFFERED)
     private var currentUserName: UserName? = null
     private var currentOAuth: String? = null
@@ -86,8 +87,8 @@ class ChatConnection @Inject constructor(
                     .chunked(JOIN_CHUNK_SIZE)
                     .forEach { chunk ->
                         socket?.joinChannels(chunk)
-                        setupJoinCheckInterval(chunk)
                         channelsAttemptedToJoin.addAll(chunk)
+                        setupJoinCheckInterval(chunk)
                         delay(timeMillis = chunk.size * JOIN_DELAY)
                     }
             }
@@ -186,6 +187,11 @@ class ChatConnection @Inject constructor(
         }
 
         delay(JOIN_CHECK_DELAY)
+        if (socket == null || !connected) {
+            channelsAttemptedToJoin.removeAll(channelsToCheck.toSet())
+            return@launch
+        }
+
         channelsToCheck.forEach {
             if (it in channelsAttemptedToJoin) {
                 channelsAttemptedToJoin.remove(it)
@@ -200,6 +206,7 @@ class ChatConnection @Inject constructor(
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
             connected = false
             pingJob?.cancel()
+            channelsAttemptedToJoin.clear()
             scope.launch { receiveChannel.send(ChatEvent.Closed) }
         }
 
@@ -209,6 +216,7 @@ class ChatConnection @Inject constructor(
             connected = false
             connecting = false
             pingJob?.cancel()
+            channelsAttemptedToJoin.clear()
             scope.launch { receiveChannel.send(ChatEvent.Closed) }
 
             attemptReconnect()
