@@ -521,9 +521,9 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun closeInputSheet(): InputSheetState {
+    fun closeInputSheet(keepPreviousReply: Boolean = true): InputSheetState {
         inputSheetState.update {
-            (it as? InputSheetState.Emotes)?.previousReply ?: InputSheetState.Closed
+            (it as? InputSheetState.Emotes)?.previousReply?.takeIf { keepPreviousReply } ?: InputSheetState.Closed
         }
         return inputSheetState.value
     }

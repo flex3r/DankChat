@@ -34,7 +34,7 @@ import androidx.core.view.WindowInsetsCompat.Type
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.commit
+import androidx.fragment.app.commitNow
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -116,14 +116,18 @@ class MainFragment : Fragment() {
 
     private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
+            closeInputSheets()
             val newChannel = tabAdapter[position] ?: return
             mainViewModel.setActiveChannel(newChannel)
         }
 
-        override fun onPageScrollStateChanged(state: Int) {
-            inputBottomSheetBehavior?.hide()
-            binding.input.dismissDropDown()
-        }
+        override fun onPageScrollStateChanged(state: Int) = closeInputSheets()
+    }
+
+    private fun closeInputSheets() {
+        mainViewModel.closeInputSheet(keepPreviousReply = false)
+        inputBottomSheetBehavior?.hide()
+        binding.input.dismissDropDown()
     }
 
     @Inject
@@ -262,7 +266,7 @@ class MainFragment : Fragment() {
                     R.id.menu_reconnect                -> mainViewModel.reconnect()
                     R.id.menu_login, R.id.menu_relogin -> openLogin()
                     R.id.menu_logout                   -> showLogoutConfirmationDialog()
-                    R.id.menu_add                      -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment)
+                    R.id.menu_add                      -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment).also { closeInputSheets() }
                     R.id.menu_mentions                 -> openMentionSheet()
                     R.id.menu_open_channel             -> openChannel()
                     R.id.menu_remove_channel           -> removeChannel()
@@ -582,10 +586,9 @@ class MainFragment : Fragment() {
     fun openReplies(replyMessageId: String) {
         inputBottomSheetBehavior?.hide()
         val fragment = RepliesFragment.newInstance(replyMessageId)
-        childFragmentManager.commit {
+        childFragmentManager.commitNow {
             replace(R.id.full_screen_sheet_fragment, fragment)
         }
-        childFragmentManager.executePendingTransactions()
         fullscreenBottomSheetBehavior?.expand()
     }
 
@@ -623,10 +626,9 @@ class MainFragment : Fragment() {
         lifecycleScope.launch {
             fullscreenBottomSheetBehavior?.awaitState(BottomSheetBehavior.STATE_HIDDEN)
             val fragment = MentionFragment.newInstance(openWhisperTab)
-            childFragmentManager.commit {
+            childFragmentManager.commitNow {
                 replace(R.id.full_screen_sheet_fragment, fragment)
             }
-            childFragmentManager.executePendingTransactions()
             fullscreenBottomSheetBehavior?.expand()
         }
     }
@@ -668,10 +670,9 @@ class MainFragment : Fragment() {
 
     private fun startReply(replyMessageId: String, replyName: UserName) {
         val fragment = ReplyInputSheetFragment.newInstance(replyMessageId, replyName)
-        childFragmentManager.commit {
+        childFragmentManager.commitNow {
             replace(R.id.input_sheet_fragment, fragment)
         }
-        childFragmentManager.executePendingTransactions()
         inputBottomSheetBehavior?.expand()
         binding.root.post {
             binding.chatViewpager.updateLayoutParams<MarginLayoutParams> {
@@ -1000,6 +1001,7 @@ class MainFragment : Fragment() {
     }
 
     private fun blockChannel() {
+        closeInputSheets()
         val activeChannel = mainViewModel.getActiveChannel() ?: return
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.confirm_channel_block_title)
@@ -1014,6 +1016,7 @@ class MainFragment : Fragment() {
     }
 
     private fun removeChannel() {
+        closeInputSheets()
         val activeChannel = mainViewModel.getActiveChannel() ?: return
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.confirm_channel_removal_title)
@@ -1029,6 +1032,7 @@ class MainFragment : Fragment() {
     }
 
     private fun openManageChannelsDialog() {
+        closeInputSheets()
         val direction = MainFragmentDirections.actionMainFragmentToChannelsDialogFragment(channels = mainViewModel.getChannels().toTypedArray())
         navigateSafe(direction)
     }
@@ -1181,10 +1185,9 @@ class MainFragment : Fragment() {
                 binding.input.clearFocus()
             }
 
-            childFragmentManager.commit {
+            childFragmentManager.commitNow {
                 replace(R.id.input_sheet_fragment, EmoteMenuFragment())
             }
-            childFragmentManager.executePendingTransactions()
             inputBottomSheetBehavior?.expand()
         }
     }
@@ -1210,10 +1213,9 @@ class MainFragment : Fragment() {
                     mainViewModel.setSuggestionChannel(channel)
 
                     val existing = childFragmentManager.fragments.filter { it is MentionFragment || it is RepliesFragment }
-                    childFragmentManager.commit {
+                    childFragmentManager.commitNow {
                         existing.forEach(::remove)
                     }
-                    childFragmentManager.executePendingTransactions()
                 }
 
                 behavior.isCollapsed -> behavior.hide()
@@ -1243,10 +1245,9 @@ class MainFragment : Fragment() {
             if (behavior.isHidden) {
                 val previousState = mainViewModel.closeInputSheet()
                 val existing = childFragmentManager.fragments.filter { it is EmoteMenuFragment || it is ReplyInputSheetFragment }
-                childFragmentManager.commit {
+                childFragmentManager.commitNow {
                     existing.forEach(::remove)
                 }
-                childFragmentManager.executePendingTransactions()
                 when (previousState) {
                     is InputSheetState.Replying -> startReply(previousState.replyMessageId, previousState.replyName)
                     else                        -> binding.chatViewpager.updateLayoutParams<MarginLayoutParams> { bottomMargin = 0 }
