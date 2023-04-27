@@ -92,6 +92,12 @@ class ChatAdapter(
 
     override fun onViewRecycled(holder: ViewHolder) {
         holder.scope.coroutineContext.cancelChildren()
+        with(holder.binding) {
+            (itemText.text as? Spannable)?.clearSpans()
+            itemText.text = ""
+            itemReply.text = ""
+        }
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
             emoteRepository.gifCallback.removeView(holder.binding.itemText)
         }
@@ -102,6 +108,11 @@ class ChatAdapter(
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
+        holder.scope.coroutineContext.cancelChildren()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            emoteRepository.gifCallback.removeView(holder.binding.itemText)
+        }
+
         holder.binding.replyGroup.isVisible = false
         holder.binding.itemLayout.setBackgroundColor(Color.TRANSPARENT)
         holder.binding.itemText.alpha = when (item.importance) {
