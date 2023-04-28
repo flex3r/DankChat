@@ -394,7 +394,7 @@ class ChatAdapter(
         addLinks(spannableWithEmojis, onWhisperMessageClick)
 
         // copying message
-        val messageClickableSpan = object : LongClickableSpan() {
+        val messageClickableSpan = object : LongClickableSpan(checkBounds = false) {
             override fun onClick(v: View) = Unit
             override fun onLongClick(view: View) = onWhisperMessageClick()
             override fun updateDrawState(ds: TextPaint) {
@@ -590,7 +590,7 @@ class ChatAdapter(
         }
 
         // copying message
-        val messageClickableSpan = object : LongClickableSpan() {
+        val messageClickableSpan = object : LongClickableSpan(checkBounds = false) {
             override fun onClick(v: View) = Unit
             override fun onLongClick(view: View) = onMessageClick()
             override fun updateDrawState(ds: TextPaint) {

@@ -36,6 +36,10 @@ object LongClickLinkMovementMethod : LinkMovementMethod() {
                 }
 
                 val span = linkSpans.find {
+                    if (!it.checkBounds) {
+                        return@find true
+                    }
+
                     val start = buffer.getSpanStart(it)
                     val end = buffer.getSpanEnd(it)
                     val startPos = layout.getPrimaryHorizontal(start).toInt()
