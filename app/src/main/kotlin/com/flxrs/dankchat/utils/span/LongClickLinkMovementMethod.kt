@@ -11,6 +11,7 @@ import androidx.core.os.postDelayed
 
 object LongClickLinkMovementMethod : LinkMovementMethod() {
     private const val LONG_CLICK_TIME = 500L
+    private const val CLICKABLE_OFFSET = 10
     private var isLongPressed = false
     private val longClickHandler = Handler(Looper.getMainLooper())
 
@@ -34,16 +35,28 @@ object LongClickLinkMovementMethod : LinkMovementMethod() {
                     return super.onTouchEvent(widget, buffer, event)
                 }
 
+                val span = linkSpans.find {
+                    val start = buffer.getSpanStart(it)
+                    val end = buffer.getSpanEnd(it)
+                    val startPos = layout.getPrimaryHorizontal(start).toInt()
+                    val endPos = layout.getPrimaryHorizontal(end).toInt()
+                    val range = when {
+                        startPos <= endPos -> startPos - CLICKABLE_OFFSET..endPos + CLICKABLE_OFFSET
+                        else               -> endPos - CLICKABLE_OFFSET..startPos + CLICKABLE_OFFSET
+                    }
+                    x in range
+                } ?: return true
+
                 if (action == MotionEvent.ACTION_UP) {
                     longClickHandler.removeCallbacksAndMessages(null)
                     if (!isLongPressed) {
-                        linkSpans[0].onClick(widget)
+                        span.onClick(widget)
                     }
                     isLongPressed = false
                 } else {
-                    Selection.setSelection(buffer, buffer.getSpanStart(linkSpans[0]), buffer.getSpanEnd(linkSpans[0]))
+                    Selection.setSelection(buffer, buffer.getSpanStart(span), buffer.getSpanEnd(span))
                     longClickHandler.postDelayed(LONG_CLICK_TIME) {
-                        linkSpans[0].onLongClick(widget)
+                        span.onLongClick(widget)
                         isLongPressed = true
                     }
                 }
