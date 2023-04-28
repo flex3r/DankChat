@@ -260,6 +260,8 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="oauth_verify_failed">No se ha podido verificar el token de acceso, comprueba tu conexión.</string>
     <string name="preference_retain_webview_title">Evitar la recarga de las transmisiones</string>
     <string name="preference_retain_webview_summary">Activa la prevención experimental de recargas de las transmisiones después de cambios de orientación o al volver a abrir DankChat.</string>
+    <string name="preference_show_changelogs">Mostrar cambios después de actualizar</string>
+    <string name="preference_whats_new_header">Novedades</string>
     <string name="reset_media_uploader_dialog_title">Restablecer la configuración del subidor de imágenes</string>
     <string name="reset_media_uploader_dialog_message">¿Estás seguro de que quieres restablecer por defecto las opciones del subidor de multimedia?</string>
     <string name="reset_media_uploader_dialog_positive">Restablecer</string>
@@ -313,6 +315,15 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="user_display_custom_alias_enable">Alias Personalizado</string>
     <string name="pick_custom_user_color_title">Elegir color de usuario personalizado</string>
     <string name="custom_user_display_summary">Añade un nombre y color personalizado para usuarios</string>
+    <string name="message_copy">Copiar mensaje</string>
+    <string name="message_copy_id">Copiar id del mensaje</string>
+    <string name="message_not_found">Mensaje no encontrado</string>
+    <string name="emote_sheet_copy">Copiar</string>
+    <string name="emote_sheet_created_by">Creado por %1$s</string>
+    <string name="changelog_sheet_title">¡DankChat ha sido actualizado!</string>
+    <string name="confirm_login_cancel_title">Confirmar la cancelación del inicio de sesión</string>
+    <string name="confirm_login_cancel_message">¿Estás seguro de que deseas cancelar el proceso de inicio de sesión?</string>
+    <string name="confirm_login_cancel_positive_button">Cancelar inicio de sesión</string>
     <plurals name="viewers">
         <item quantity="one">En directo con %d espectador</item>
         <item quantity="other">En directo con %d espectadores</item>
