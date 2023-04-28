@@ -79,6 +79,8 @@ import kotlinx.serialization.SerializationException
 import java.io.File
 import java.time.Duration
 import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.*
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
@@ -681,11 +683,18 @@ class MainViewModel @Inject constructor(
 
                     try {
                         // Try to calculate and show stream uptime
-                        val now = Date()
-                        val started = Instant.parse(it.startedAt)
-                        val difference = Duration.between(started, now.toInstant())
-                        val seconds = difference.seconds
-                        formatted += " for ${seconds / 3600}h ${(seconds % 3600) / 60}m"
+                        val startedAt = Instant.parse(it.startedAt).atZone(ZoneId.systemDefault()).toEpochSecond()
+                        val now = ZonedDateTime.now().toEpochSecond()
+                        val duration = now.seconds - startedAt.seconds
+                        val uptime = duration.toComponents { days, hours, minutes, _, _ ->
+                            buildString {
+                                append(" for ")
+                                if (days > 0) append("${days}d ")
+                                if (hours > 0) append("${hours}h ")
+                                append("${minutes}m")
+                            }
+                        }
+                        formatted += uptime
                     } catch(e: Exception) {}
 
                     StreamData(channel = it.userLogin, formattedData = formatted)
