@@ -36,6 +36,7 @@
     <string name="external_upload_disclaimer">Hosting externo proporcionado por %1$s, úsalo bajo tu propio riesgo.</string>
     <string name="nuuls_upload_title">Subida de imagen personalizada</string>
     <string name="snackbar_message_copied">Mensaje copiado</string>
+    <string name="snackbar_message_id_copied">Mensaje id copiado</string>
     <string name="snackbar_error_copied">Error al copiar</string>
     <string name="notification_stop">Parar</string>
     <string name="notification_title">FeelsDankMan</string>
@@ -45,6 +46,7 @@
     <string name="hint_connected">Comenzar a conversar</string>
     <string name="hint_disconnected">Desconectado</string>
     <string name="hint_not_logged_int">Sesión no iniciada</string>
+    <string name="hint_replying">Responder</string>
     <string name="notification_new_mentions">Tienes nuevas menciones</string>
     <string name="notification_mention">%1$s te ha mencionado en #%2$s</string>
     <string name="notification_notify_mention">Has sido mencionado en #%1$s</string>
@@ -199,6 +201,8 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="preference_suggestions_title">Sugerencias de emoticonos y usuarios</string>
     <string name="preference_suggestions_summary">Muestra sugerencias para emoticonos y usuarios activos al escribir</string>
     <string name="preference_load_message_history_title">Cargar historial de mensajes al inicio</string>
+    <string name="preference_load_messages_on_reconnect_title">Cargar el historial de mensajes después de una reconexión</string>
+    <string name="preference_load_messages_on_reconnect_summary">Intentos de recuperar los mensajes perdidos que no fueron recibidos durante caídas de conexión</string>
     <string name="preference_message_history_header">Historial de mensajes</string>
     <string name="preference_message_history_dashboard_title">Abrir panel</string>
     <string name="preference_message_history_dashboard_summary">Aprende más sobre el servicio y desactiva el historial de mensajes para tu propio canal</string>
@@ -316,11 +320,20 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="pick_custom_user_color_title">Elegir color de usuario personalizado</string>
     <string name="custom_user_display_summary">Añade un nombre y color personalizado para usuarios</string>
     <string name="message_copy">Copiar mensaje</string>
+    <string name="message_copy_full">Copiar mensaje completo</string>
+    <string name="message_reply">Responder mensaje</string>
     <string name="message_copy_id">Copiar id del mensaje</string>
+    <string name="message_more_actions">Ver más…</string>
+    <string name="reply_header">Respondiendo a @%1$s</string>
     <string name="message_not_found">Mensaje no encontrado</string>
+    <string name="emote_sheet_use">Usar emote</string>
     <string name="emote_sheet_copy">Copiar</string>
+    <string name="emote_sheet_open_link">Abrir enlace del emote</string>
+    <string name="emote_sheet_alias_of">Alias de %1$s</string>
     <string name="emote_sheet_created_by">Creado por %1$s</string>
+    <string name="emote_copied">Emote copiado</string>
     <string name="changelog_sheet_title">¡DankChat ha sido actualizado!</string>
+    <string name="changelog_sheet_subtitle">Novedades en v%1$s:</string>
     <string name="confirm_login_cancel_title">Confirmar la cancelación del inicio de sesión</string>
     <string name="confirm_login_cancel_message">¿Estás seguro de que deseas cancelar el proceso de inicio de sesión?</string>
     <string name="confirm_login_cancel_positive_button">Cancelar inicio de sesión</string>
