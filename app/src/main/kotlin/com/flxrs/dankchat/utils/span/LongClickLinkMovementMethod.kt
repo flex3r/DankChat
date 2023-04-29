@@ -35,15 +35,37 @@ object LongClickLinkMovementMethod : LinkMovementMethod() {
                     return super.onTouchEvent(widget, buffer, event)
                 }
 
-                val span = linkSpans.find {
-                    if (!it.checkBounds) {
+                val span = linkSpans.find { span ->
+                    if (!span.checkBounds) {
                         return@find true
                     }
 
-                    val start = buffer.getSpanStart(it)
-                    val end = buffer.getSpanEnd(it)
-                    val startPos = layout.getPrimaryHorizontal(start).toInt()
-                    val endPos = layout.getPrimaryHorizontal(end).toInt()
+                    val start = buffer.getSpanStart(span)
+                    val end = buffer.getSpanEnd(span)
+                    var startPos = layout.getPrimaryHorizontal(start).toInt()
+                    var endPos = layout.getPrimaryHorizontal(end).toInt()
+
+                    val lineStart = layout.getLineForOffset(start)
+                    val lineEnd = layout.getLineForOffset(end)
+
+                    if (lineStart != lineEnd) {
+                        val multiLineStart = layout.getLineStart(line)
+                        val multiLineEnd = layout.getLineEnd(line)
+                        val multiLineStartPos = layout.getPrimaryHorizontal(multiLineStart).toInt()
+                        val multiLineEndPos = layout.getPrimaryHorizontal(multiLineEnd).toInt()
+                            .takeIf { it != 0 }
+                            ?: layout.getPrimaryHorizontal(multiLineEnd - 1).toInt()
+
+                        when (line) {
+                            lineStart -> endPos = multiLineEndPos
+                            lineEnd   -> startPos = multiLineStartPos
+                            else      -> {
+                                startPos = multiLineStartPos
+                                endPos = multiLineEndPos
+                            }
+                        }
+                    }
+
                     val range = when {
                         startPos <= endPos -> startPos - CLICKABLE_OFFSET..endPos + CLICKABLE_OFFSET
                         else               -> endPos - CLICKABLE_OFFSET..startPos + CLICKABLE_OFFSET
