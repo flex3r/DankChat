@@ -77,8 +77,8 @@ object DateTimeUtils {
         else -> null
     }
 
-    fun calculateUptime(startedAt: String): String {
-        val startedAt = Instant.parse(startedAt).atZone(ZoneId.systemDefault()).toEpochSecond()
+    fun calculateUptime(startedAtString: String): String {
+        val startedAt = Instant.parse(startedAtString).atZone(ZoneId.systemDefault()).toEpochSecond()
         val now = ZonedDateTime.now().toEpochSecond()
 
         val duration = now.seconds - startedAt.seconds
