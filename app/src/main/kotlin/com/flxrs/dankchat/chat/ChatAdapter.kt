@@ -92,11 +92,7 @@ class ChatAdapter(
 
     override fun onViewRecycled(holder: ViewHolder) {
         holder.scope.coroutineContext.cancelChildren()
-        with(holder.binding) {
-            (itemText.text as? Spannable)?.clearSpans()
-            itemText.text = ""
-            itemReply.text = ""
-        }
+        (holder.binding.itemText.text as? Spannable)?.clearSpans()
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
             emoteRepository.gifCallback.removeView(holder.binding.itemText)
