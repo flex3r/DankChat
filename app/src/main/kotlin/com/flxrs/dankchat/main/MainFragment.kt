@@ -440,12 +440,6 @@ class MainFragment : Fragment() {
         tabLayoutMediator.attach()
         binding.tabs.addOnTabSelectedListener(tabSelectionListener)
 
-        val active = mainViewModel.getActiveChannel()
-        if (active != null) {
-            val index = tabAdapter.indexOfChannel(active)
-            binding.tabs.getTabAt(index)?.removeBadge()
-        }
-
         (requireActivity() as AppCompatActivity).apply {
             setSupportActionBar(binding.toolbar)
             onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackPressedCallback)
@@ -513,7 +507,7 @@ class MainFragment : Fragment() {
                 if (index >= 0) {
                     when (index) {
                         binding.chatViewpager.currentItem -> clearNotificationsOfChannel(channel)
-                        else                              -> binding.chatViewpager.setCurrentItem(index, false)
+                        else                              -> binding.chatViewpager.post { binding.chatViewpager.setCurrentItem(index, false) }
                     }
                 }
                 channelToOpen = null
