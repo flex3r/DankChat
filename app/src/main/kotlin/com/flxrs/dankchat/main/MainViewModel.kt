@@ -679,23 +679,19 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             fetchTimerJob = timer(STREAM_REFRESH_RATE) {
                 val data = dataRepository.getStreams(channels)?.map {
-                    var formatted = dankChatPreferenceStore.formatViewersString(it.viewerCount)
-
-                    try {
-                        // Try to calculate and show stream uptime
-                        val startedAt = Instant.parse(it.startedAt).atZone(ZoneId.systemDefault()).toEpochSecond()
-                        val now = ZonedDateTime.now().toEpochSecond()
-                        val duration = now.seconds - startedAt.seconds
-                        val uptime = duration.toComponents { days, hours, minutes, _, _ ->
-                            buildString {
-                                append(" for ")
-                                if (days > 0) append("${days}d ")
-                                if (hours > 0) append("${hours}h ")
-                                append("${minutes}m")
-                            }
+                    // Calculate uptime
+                    val startedAt = Instant.parse(it.startedAt).atZone(ZoneId.systemDefault()).toEpochSecond()
+                    val now = ZonedDateTime.now().toEpochSecond()
+                    val duration = now.seconds - startedAt.seconds
+                    val uptime = duration.toComponents { days, hours, minutes, _, _ ->
+                        buildString {
+                            if (days > 0) append("${days}d ")
+                            if (hours > 0) append("${hours}h ")
+                            append("${minutes}m")
                         }
-                        formatted += uptime
-                    } catch(e: Exception) {}
+                    }
+
+                    val formatted = dankChatPreferenceStore.formatViewersString(it.viewerCount, uptime)
 
                     StreamData(channel = it.userLogin, formattedData = formatted)
                 }.orEmpty()
