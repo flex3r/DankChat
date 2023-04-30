@@ -77,11 +77,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.SerializationException
 import java.io.File
-import java.time.Duration
-import java.time.Instant
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.util.*
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
@@ -679,18 +674,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             fetchTimerJob = timer(STREAM_REFRESH_RATE) {
                 val data = dataRepository.getStreams(channels)?.map {
-                    // Calculate uptime
-                    val startedAt = Instant.parse(it.startedAt).atZone(ZoneId.systemDefault()).toEpochSecond()
-                    val now = ZonedDateTime.now().toEpochSecond()
-                    val duration = now.seconds - startedAt.seconds
-                    val uptime = duration.toComponents { days, hours, minutes, _, _ ->
-                        buildString {
-                            if (days > 0) append("${days}d ")
-                            if (hours > 0) append("${hours}h ")
-                            append("${minutes}m")
-                        }
-                    }
-
+                    val uptime = DateTimeUtils.calculateUptime(it.startedAt)
                     val formatted = dankChatPreferenceStore.formatViewersString(it.viewerCount, uptime)
 
                     StreamData(channel = it.userLogin, formattedData = formatted)
