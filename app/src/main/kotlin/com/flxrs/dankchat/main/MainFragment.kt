@@ -124,6 +124,69 @@ class MainFragment : Fragment() {
         override fun onPageScrollStateChanged(state: Int) = closeInputSheets()
     }
 
+    private val menuProvider = object : MenuProvider {
+        override fun onPrepareMenu(menu: Menu) {
+            with(menu) {
+                val isLoggedIn = dankChatPreferences.isLoggedIn
+                val shouldShowProgress = mainViewModel.shouldShowUploadProgress.value
+                val hasChannels = mainViewModel.getChannels().isNotEmpty()
+                val mentionIconColor = when (mainViewModel.shouldColorNotification.value) {
+                    true -> R.attr.colorError
+                    else -> R.attr.colorControlHighlight
+                }
+                findItem(R.id.menu_login)?.isVisible = !isLoggedIn
+                findItem(R.id.menu_account)?.isVisible = isLoggedIn
+                findItem(R.id.menu_manage)?.isVisible = hasChannels
+                findItem(R.id.menu_channel)?.isVisible = hasChannels
+                findItem(R.id.menu_open_channel)?.isVisible = hasChannels
+                findItem(R.id.menu_block_channel)?.isVisible = isLoggedIn
+                findItem(R.id.menu_mentions)?.apply {
+                    isVisible = hasChannels
+                    context?.let {
+                        val fallback = ContextCompat.getColor(it, android.R.color.white)
+                        val color = MaterialColors.getColor(it, mentionIconColor, fallback)
+                        icon?.setTintList(ColorStateList.valueOf(color))
+                    }
+                }
+
+                findItem(R.id.progress)?.apply {
+                    isVisible = shouldShowProgress
+                    actionView = ProgressBar(requireContext()).apply {
+                        indeterminateTintList = ColorStateList.valueOf(MaterialColors.getColor(this, R.attr.colorOnSurfaceVariant))
+                        isVisible = shouldShowProgress
+                    }
+                }
+            }
+        }
+
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menuInflater.inflate(R.menu.menu, menu)
+        }
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            when (menuItem.itemId) {
+                R.id.menu_reconnect                -> mainViewModel.reconnect()
+                R.id.menu_login, R.id.menu_relogin -> openLogin()
+                R.id.menu_logout                   -> showLogoutConfirmationDialog()
+                R.id.menu_add                      -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment).also { closeInputSheets() }
+                R.id.menu_mentions                 -> openMentionSheet()
+                R.id.menu_open_channel             -> openChannel()
+                R.id.menu_remove_channel           -> removeChannel()
+                R.id.menu_report_channel           -> reportChannel()
+                R.id.menu_block_channel            -> blockChannel()
+                R.id.menu_manage                   -> openManageChannelsDialog()
+                R.id.menu_reload_emotes            -> reloadEmotes()
+                R.id.menu_choose_media             -> showExternalHostingUploadDialogIfNotAcknowledged { requestGalleryMedia.launch(PickVisualMediaRequest(PickVisualMedia.ImageAndVideo)) }
+                R.id.menu_capture_image            -> startCameraCapture()
+                R.id.menu_capture_video            -> startCameraCapture(captureVideo = true)
+                R.id.menu_clear                    -> clear()
+                R.id.menu_settings                 -> navigateSafe(R.id.action_mainFragment_to_overviewSettingsFragment).also { hideKeyboard() }
+                else                               -> return false
+            }
+            return true
+        }
+    }
+
     private fun closeInputSheets() {
         mainViewModel.closeInputSheet(keepPreviousReply = false)
         inputBottomSheetBehavior?.hide()
@@ -219,69 +282,7 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initPreferences(view.context)
         binding.splitThumb?.background?.alpha = 150
-        activity?.addMenuProvider(object : MenuProvider {
-            override fun onPrepareMenu(menu: Menu) {
-                with(menu) {
-                    val isLoggedIn = dankChatPreferences.isLoggedIn
-                    val shouldShowProgress = mainViewModel.shouldShowUploadProgress.value
-                    val hasChannels = mainViewModel.getChannels().isNotEmpty()
-                    val mentionIconColor = when (mainViewModel.shouldColorNotification.value) {
-                        true -> R.attr.colorError
-                        else -> R.attr.colorControlHighlight
-                    }
-                    findItem(R.id.menu_login)?.isVisible = !isLoggedIn
-                    findItem(R.id.menu_account)?.isVisible = isLoggedIn
-                    findItem(R.id.menu_manage)?.isVisible = hasChannels
-                    findItem(R.id.menu_channel)?.isVisible = hasChannels
-                    findItem(R.id.menu_open_channel)?.isVisible = hasChannels
-                    findItem(R.id.menu_block_channel)?.isVisible = isLoggedIn
-                    findItem(R.id.menu_mentions)?.apply {
-                        isVisible = hasChannels
-                        context?.let {
-                            val fallback = ContextCompat.getColor(it, android.R.color.white)
-                            val color = MaterialColors.getColor(it, mentionIconColor, fallback)
-                            icon?.setTintList(ColorStateList.valueOf(color))
-                        }
-                    }
-
-                    findItem(R.id.progress)?.apply {
-                        isVisible = shouldShowProgress
-                        actionView = ProgressBar(requireContext()).apply {
-                            indeterminateTintList = ColorStateList.valueOf(MaterialColors.getColor(this, R.attr.colorOnSurfaceVariant))
-                            isVisible = shouldShowProgress
-                        }
-                    }
-                }
-            }
-
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu, menu)
-//                menuInflater.inflateWithCrowdin(R.menu.menu, menu, resources)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                when (menuItem.itemId) {
-                    R.id.menu_reconnect                -> mainViewModel.reconnect()
-                    R.id.menu_login, R.id.menu_relogin -> openLogin()
-                    R.id.menu_logout                   -> showLogoutConfirmationDialog()
-                    R.id.menu_add                      -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment).also { closeInputSheets() }
-                    R.id.menu_mentions                 -> openMentionSheet()
-                    R.id.menu_open_channel             -> openChannel()
-                    R.id.menu_remove_channel           -> removeChannel()
-                    R.id.menu_report_channel           -> reportChannel()
-                    R.id.menu_block_channel            -> blockChannel()
-                    R.id.menu_manage                   -> openManageChannelsDialog()
-                    R.id.menu_reload_emotes            -> reloadEmotes()
-                    R.id.menu_choose_media             -> showExternalHostingUploadDialogIfNotAcknowledged { requestGalleryMedia.launch(PickVisualMediaRequest(PickVisualMedia.ImageAndVideo)) }
-                    R.id.menu_capture_image            -> startCameraCapture()
-                    R.id.menu_capture_video            -> startCameraCapture(captureVideo = true)
-                    R.id.menu_clear                    -> clear()
-                    R.id.menu_settings                 -> navigateSafe(R.id.action_mainFragment_to_overviewSettingsFragment).also { hideKeyboard() }
-                    else                               -> return false
-                }
-                return true
-            }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+        activity?.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         mainViewModel.apply {
             collectFlow(imageUploadState, ::handleImageUploadState)
