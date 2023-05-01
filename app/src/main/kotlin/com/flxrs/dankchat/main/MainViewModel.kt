@@ -369,10 +369,17 @@ class MainViewModel @Inject constructor(
         get() = inputSheetState.value is InputSheetState.Emotes
     val isReplySheetOpen: Boolean
         get() = inputSheetState.value is InputSheetState.Replying
+    val currentReply: InputSheetState.Replying?
+        get() = inputSheetState.value as? InputSheetState.Replying
     val isWhisperTabOpen: Boolean
         get() = fullScreenSheetState.value is FullScreenSheetState.Whisper
     val isMentionTabOpen: Boolean
         get() = fullScreenSheetState.value is FullScreenSheetState.Mention
+
+    val isFullScreenSheetClosed: Boolean
+        get() = fullScreenSheetState.value is FullScreenSheetState.Closed
+    val isInputSheetClosed: Boolean
+        get() = inputSheetState.value is InputSheetState.Closed
 
     val currentRoomState: RoomState?
         get() {

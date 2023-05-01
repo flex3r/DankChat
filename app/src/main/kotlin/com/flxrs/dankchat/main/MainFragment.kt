@@ -50,6 +50,7 @@ import com.flxrs.dankchat.ValidationResult
 import com.flxrs.dankchat.chat.ChatTabAdapter
 import com.flxrs.dankchat.chat.FullScreenSheetState
 import com.flxrs.dankchat.chat.InputSheetState
+import com.flxrs.dankchat.chat.emote.EmoteSheetFragment
 import com.flxrs.dankchat.chat.emote.EmoteSheetResult
 import com.flxrs.dankchat.chat.emotemenu.EmoteMenuFragment
 import com.flxrs.dankchat.chat.mention.MentionFragment
@@ -516,6 +517,34 @@ class MainFragment : Fragment() {
                 clearNotificationsOfChannel(activeChannel)
             }
         }
+
+        if (mainViewModel.isFullScreenSheetClosed) {
+            val existing = childFragmentManager.fragments.filter { it is MentionFragment || it is RepliesFragment }
+            if (existing.isNotEmpty()) {
+                childFragmentManager.commitNow(allowStateLoss = true) {
+                    existing.forEach(::remove)
+                }
+                fullscreenBottomSheetBehavior?.hide()
+            }
+        }
+
+        when {
+            mainViewModel.isInputSheetClosed -> {
+                val existing = childFragmentManager.fragments.filter { it is ReplyInputSheetFragment || it is EmoteSheetFragment }
+                if (existing.isNotEmpty()) {
+                    childFragmentManager.commitNow(allowStateLoss = true) {
+                        existing.forEach(::remove)
+                    }
+                    inputBottomSheetBehavior?.hide()
+                    binding.chatViewpager.updateLayoutParams<MarginLayoutParams> { bottomMargin = 0 }
+                }
+            }
+
+            mainViewModel.isReplySheetOpen   -> {
+                val reply = mainViewModel.currentReply ?: return
+                startReply(reply.replyMessageId, reply.replyName)
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -586,7 +615,7 @@ class MainFragment : Fragment() {
     fun openReplies(replyMessageId: String) {
         inputBottomSheetBehavior?.hide()
         val fragment = RepliesFragment.newInstance(replyMessageId)
-        childFragmentManager.commitNow {
+        childFragmentManager.commitNow(allowStateLoss = true) {
             replace(R.id.full_screen_sheet_fragment, fragment)
         }
         fullscreenBottomSheetBehavior?.expand()
@@ -626,7 +655,7 @@ class MainFragment : Fragment() {
         lifecycleScope.launch {
             fullscreenBottomSheetBehavior?.awaitState(BottomSheetBehavior.STATE_HIDDEN)
             val fragment = MentionFragment.newInstance(openWhisperTab)
-            childFragmentManager.commitNow {
+            childFragmentManager.commitNow(allowStateLoss = true) {
                 replace(R.id.full_screen_sheet_fragment, fragment)
             }
             fullscreenBottomSheetBehavior?.expand()
@@ -670,7 +699,7 @@ class MainFragment : Fragment() {
 
     private fun startReply(replyMessageId: String, replyName: UserName) {
         val fragment = ReplyInputSheetFragment.newInstance(replyMessageId, replyName)
-        childFragmentManager.commitNow {
+        childFragmentManager.commitNow(allowStateLoss = true) {
             replace(R.id.input_sheet_fragment, fragment)
         }
         inputBottomSheetBehavior?.expand()
@@ -1185,7 +1214,7 @@ class MainFragment : Fragment() {
                 binding.input.clearFocus()
             }
 
-            childFragmentManager.commitNow {
+            childFragmentManager.commitNow(allowStateLoss = true) {
                 replace(R.id.input_sheet_fragment, EmoteMenuFragment())
             }
             inputBottomSheetBehavior?.expand()
@@ -1213,7 +1242,7 @@ class MainFragment : Fragment() {
                     mainViewModel.setSuggestionChannel(channel)
 
                     val existing = childFragmentManager.fragments.filter { it is MentionFragment || it is RepliesFragment }
-                    childFragmentManager.commitNow {
+                    childFragmentManager.commitNow(allowStateLoss = true) {
                         existing.forEach(::remove)
                     }
                 }
@@ -1245,7 +1274,7 @@ class MainFragment : Fragment() {
             if (behavior.isHidden) {
                 val previousState = mainViewModel.closeInputSheet()
                 val existing = childFragmentManager.fragments.filter { it is EmoteMenuFragment || it is ReplyInputSheetFragment }
-                childFragmentManager.commitNow {
+                childFragmentManager.commitNow(allowStateLoss = true) {
                     existing.forEach(::remove)
                 }
                 when (previousState) {
