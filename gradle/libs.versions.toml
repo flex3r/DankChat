@@ -8,7 +8,7 @@ okhttp = "5.0.0-alpha.11"
 ksp = "1.8.21-1.0.11"
 hilt = "2.46"
 
-androidGradlePlugin = "8.0.0"
+androidGradlePlugin = "8.0.1"
 androidDesugarLibs = "2.0.3"
 #noinspection GradleDependency // TODO requires upside down cake
 androidxActivity = "1.7.1"
