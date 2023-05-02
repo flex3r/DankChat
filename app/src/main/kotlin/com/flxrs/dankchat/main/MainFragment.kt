@@ -1291,11 +1291,11 @@ class MainFragment : Fragment() {
         setTokenizer(SpaceTokenizer())
         suggestionAdapter = SuggestionsArrayAdapter(binding.input.context, dankChatPreferences) { count ->
             dropDownHeight = if (count > 4) {
-                (binding.root.measuredHeight / 2.0).roundToInt() - height
+                (binding.root.height / 4.0).roundToInt()
             } else {
                 ViewGroup.LayoutParams.WRAP_CONTENT
             }
-            dropDownWidth = (binding.root.measuredWidth * 0.6).roundToInt()
+            dropDownWidth = (binding.root.width * 0.6).roundToInt()
         }
 
         setOnItemClickListener { parent, _, position, _ ->
