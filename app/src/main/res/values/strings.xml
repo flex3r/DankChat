@@ -410,6 +410,10 @@
     <string name="confirm_login_cancel_message">Are you sure you want to cancel the login process?</string>
     <string name="confirm_login_cancel_positive_button">Cancel login</string>
     <plurals name="viewers">
+        <item quantity="one">Live with %d viewer</item>
+        <item quantity="other">Live with %d viewers</item>
+    </plurals>
+    <plurals name="viewers_and_uptime">
         <item quantity="one">Live with %d viewer for %s</item>
         <item quantity="other">Live with %d viewers for %s</item>
     </plurals>
