@@ -447,7 +447,7 @@ class MainFragment : Fragment() {
 
             ViewCompat.setOnApplyWindowInsetsListener(binding.showChips) { v, insets ->
                 // additional margin for chips because of display cutouts/punch holes
-                val needsExtraMargin = binding.streamWebviewWrapper.isVisible || isLandscape || !mainViewModel.isFullscreen
+                val needsExtraMargin = bindingRef?.streamWebviewWrapper?.isVisible == true || isLandscape || !mainViewModel.isFullscreen
                 val extraMargin = when {
                     needsExtraMargin -> 0
                     else             -> insets.getInsets(Type.displayCutout()).top
