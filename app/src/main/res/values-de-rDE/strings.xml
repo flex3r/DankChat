@@ -357,6 +357,10 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
         <item quantity="one">Live mit %d Zuschauer</item>
         <item quantity="other">Live mit %d Zuschauern</item>
     </plurals>
+    <plurals name="viewers_and_uptime">
+        <item quantity="one">Live mit %d Zuschauer für %s</item>
+        <item quantity="other">Live mit %d Zuschauern für %s</item>
+    </plurals>
     <plurals name="months">
         <item quantity="one">%d Monat</item>
         <item quantity="other">%d Monate</item>
