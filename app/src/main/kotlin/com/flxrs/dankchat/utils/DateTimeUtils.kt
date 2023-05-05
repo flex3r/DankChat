@@ -4,6 +4,7 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.time.Duration.Companion.seconds
 
 object DateTimeUtils {
     private var timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
@@ -74,5 +75,21 @@ object DateTimeUtils {
         'd'  -> 60 * 60 * 24
         'w'  -> 60 * 60 * 24 * 7
         else -> null
+    }
+
+    fun calculateUptime(startedAtString: String): String {
+        val startedAt = Instant.parse(startedAtString).atZone(ZoneId.systemDefault()).toEpochSecond()
+        val now = ZonedDateTime.now().toEpochSecond()
+
+        val duration = now.seconds - startedAt.seconds
+        val uptime = duration.toComponents { days, hours, minutes, _, _ ->
+            buildString {
+                if (days > 0) append("${days}d ")
+                if (hours > 0) append("${hours}h ")
+                append("${minutes}m")
+            }
+        }
+
+        return uptime
     }
 }

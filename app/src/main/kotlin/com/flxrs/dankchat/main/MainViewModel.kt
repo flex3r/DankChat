@@ -681,7 +681,9 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             fetchTimerJob = timer(STREAM_REFRESH_RATE) {
                 val data = dataRepository.getStreams(channels)?.map {
-                    val formatted = dankChatPreferenceStore.formatViewersString(it.viewerCount)
+                    val uptime = DateTimeUtils.calculateUptime(it.startedAt)
+                    val formatted = dankChatPreferenceStore.formatViewersString(it.viewerCount, uptime)
+
                     StreamData(channel = it.userLogin, formattedData = formatted)
                 }.orEmpty()
 

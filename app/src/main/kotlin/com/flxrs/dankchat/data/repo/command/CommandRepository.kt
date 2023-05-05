@@ -16,6 +16,7 @@ import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.di.ApplicationScope
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.command.CommandItem
+import com.flxrs.dankchat.utils.DateTimeUtils.calculateUptime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -28,13 +29,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
-import java.time.Instant
-import java.time.ZoneId
-import java.time.ZonedDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.system.measureTimeMillis
-import kotlin.time.Duration.Companion.seconds
 
 @Singleton
 class CommandRepository @Inject constructor(
@@ -240,18 +237,7 @@ class CommandRepository @Inject constructor(
             .getOrNull()
             ?.getOrNull(0) ?: return CommandResult.AcceptedWithResponse("Channel is not live.")
 
-        val startedAt = Instant.parse(result.startedAt).atZone(ZoneId.systemDefault()).toEpochSecond()
-        val now = ZonedDateTime.now().toEpochSecond()
-
-        val duration = now.seconds - startedAt.seconds
-        val uptime = duration.toComponents { days, hours, minutes, _, _ ->
-            buildString {
-                if (days > 0) append("${days}d ")
-                if (hours > 0) append("${hours}h ")
-                append("${minutes}m")
-            }
-        }
-
+        val uptime = calculateUptime(result.startedAt)
         return CommandResult.AcceptedWithResponse("Uptime: $uptime")
     }
 
