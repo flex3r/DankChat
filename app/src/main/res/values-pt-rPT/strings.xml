@@ -83,6 +83,7 @@
     <string name="login_expired">Sessão expirada! Tenta fazer login novamente.</string>
     <string name="message_history_disclaimer_title">Aviso de histórico de mensagem</string>
     <string name="dialog_optin">Opção de inclusão</string>
+    <string name="dialog_optout">Opta por não participar</string>
     <string name="more">Mais</string>
     <string name="mentions_title">Menções / Sussurros</string>
     <string name="replies_title">Responde à thread</string>
@@ -107,8 +108,16 @@
     <string name="confirm_user_block_title">Confirmar bloqueio</string>
     <string name="confirm_user_block_message">Tens a certeza que queres bloquear este utilizador?</string>
     <string name="confirm_user_block_positive_button">Bloquear</string>
+    <string name="restart_required">É necessário reiniciar para aplicar as alterações</string>
     <string name="restart">Reinicia</string>
+    <string name="uploader_title">Carregador de mídia personalizado</string>
+    <string name="uploader_reset">Redefinir para configurações originais</string>
+    <string name="uploader_url">URL de carregamento</string>
+    <string name="uploader_field">Campo de formulário</string>
     <string name="uploader_headers">Cabeçalhos</string>
+    <string name="uploader_image_link">Padrão de link de mídia</string>
+    <string name="uploader_description">Podes definir um anfitrião personalizado para fazer upload de mídia, como imgur.com ou s-ul.eu. O DankChat usa o mesmo formato de configuração do Chatterino.\nVerifica este guia para obter ajuda: https://wiki.chatterino.com/Image%20Uploader/</string>
+    <string name="toggle_fullscreen">Ativa ecrã completo</string>
     <string name="account">Conta</string>
     <string name="relogin">Inicia sessão novamente</string>
     <string name="logout">Encerrar Sessão</string>
@@ -145,12 +154,17 @@
     <string name="host">Anfitrião</string>
     <string name="reset">Reinicia</string>
     <string name="badge_tooltip_moderator">Moderador</string>
+    <string name="badge_tooltip_predictions">Previsto \"%1$s\"</string>
+    <string name="badge_tooltip_sub_tier">Escalão %1$s</string>
     <string name="preference_timestamp_title">Mostrar horas</string>
+    <string name="preference_mention_format_title">Formato de menção</string>
+    <string name="preference_mention_format_summary">Altera o formato da menção ao clicar no nome do utilizador</string>
     <string name="preference_notification_header">Notificações</string>
     <string name="preference_chat_header">Chat</string>
     <string name="preference_general_header">Geral</string>
     <string name="preference_about_header">Sobre</string>
     <string name="preference_appearance_header">Aparência</string>
+    <string name="preference_animate_gifs_title">Gifs animados</string>
     <string name="preference_line_separator_title">Separar mensagens com linhas</string>
     <string name="preference_keep_screen_on_title">Manter o ecrã ligado</string>
     <string name="preference_font_size_title">Tamanho da fonte</string>
@@ -162,6 +176,7 @@
     <string name="preference_load_messages_on_reconnect_summary">Tentativas de buscar mensagens perdidas que não foram recebidas durante quedas de conexão</string>
     <string name="preference_message_history_header">Histórico de mensagens</string>
     <string name="preference_message_history_dashboard_title">Abrir painel de controle</string>
+    <string name="preference_channel_data_header">Dados do canal</string>
     <string name="preference_developer_header">Opções de programador</string>
     <string name="preference_tts_title">Habilitar TTS</string>
     <string name="preference_tts_message_ignore_url_title">Ignorar URLs</string>
@@ -170,6 +185,10 @@
     <string name="oauth_expired_login_again">Inicia sessão novamente</string>
     <string name="preference_show_changelogs">Mostrar lista de alterações após uma actualização</string>
     <string name="preference_whats_new_header">O que há de novo</string>
+    <string name="clear">Limpar</string>
+    <string name="copied_image_url">URL da imagem copiada</string>
+    <string name="pattern">Padrão</string>
+    <string name="case_sensitive">Sensível a maiúsculas e minúsculas</string>
     <string name="enabled">Ativado</string>
     <string name="create_notification">Notificação</string>
     <string name="username">Nome de utilizador</string>
@@ -234,6 +253,8 @@
     <string name="emote_copied">Emote copiado</string>
     <string name="changelog_sheet_title">DankChat foi atualizado!</string>
     <string name="changelog_sheet_subtitle">O que há de novo em v%1$s</string>
+    <string name="changelog_3_6">Suporte inicial para responder e visualizar threads de resposta\nAdicionada configuração para carregar mensagens perdidas após reconectar\nNovo design de folha inferior modal\nAdicionada nova página inferior da mensagem pressionando longamente uma mensagem\nAdicionada nova folha inferior de emote pressionando um emote\nAdicionada nova folha inferior do changelog\nAdicionado suporte para emotes FFZ animados\nDisposição do menu de emotes\nMigrado para o novo ponto de sa
+ída de seguidores, que está agora limitado a transmissores e moderadores devido a restrições do Twitch</string>
     <string name="confirm_login_cancel_title">Confirmação do cancelamento do inicio de sessão</string>
     <string name="confirm_login_cancel_message">Tens a certeza de que desejas cancelar o processo do inicio de sessão</string>
     <string name="confirm_login_cancel_positive_button">Cancelar inicio de sessão</string>
