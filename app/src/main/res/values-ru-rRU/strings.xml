@@ -357,6 +357,12 @@
         <item quantity="many">В сети с %d зрителями</item>
         <item quantity="other">В сети с %d зрителями</item>
     </plurals>
+    <plurals name="viewers_and_uptime">
+        <item quantity="one">В эфире %2$s с %1$d зрителем</item>
+        <item quantity="few">В эфире %2$s с %1$d зрителями </item>
+        <item quantity="many">В эфире %2$s с %1$d зрителями </item>
+        <item quantity="other">В эфире %2$s с %1$d зрителями </item>
+    </plurals>
     <plurals name="months">
         <item quantity="one">%d месяц</item>
         <item quantity="few">%d месяца</item>

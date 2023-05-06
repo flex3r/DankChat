@@ -414,8 +414,8 @@
         <item quantity="other">Live with %d viewers</item>
     </plurals>
     <plurals name="viewers_and_uptime">
-        <item quantity="one">Live with %d viewer for %s</item>
-        <item quantity="other">Live with %d viewers for %s</item>
+        <item quantity="one">Live with %1$d viewer for %2$s</item>
+        <item quantity="other">Live with %1$d viewers for %2$s</item>
     </plurals>
     <plurals name="months">
         <item quantity="one">%d month</item>
