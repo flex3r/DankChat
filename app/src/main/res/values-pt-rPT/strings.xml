@@ -150,7 +150,6 @@
     <string name="tts_ignore_list_add_user">Adicionar um utilizador</string>
     <string name="tts_ignore_list_remove_user">Remover utilizador</string>
     <string name="tts_ignore_list_user_hint">Utilizador</string>
-    <string name="recent_uploads_clear">Limpar envios</string>
     <string name="host">Anfitrião</string>
     <string name="reset">Reinicia</string>
     <string name="badge_tooltip_moderator">Moderador</string>
