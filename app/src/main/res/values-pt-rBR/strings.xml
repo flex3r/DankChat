@@ -183,7 +183,7 @@
     <string name="preference_true_dark_theme_summary">Força a cor de fundo do chat para preto</string>
     <string name="preference_display_group_title">Exibição</string>
     <string name="preference_components_group_title">Componentes</string>
-    <string name="preference_show_timed_out_messages_title">Mostrar mensagens suspensas</string>
+    <string name="preference_show_timed_out_messages_title">Mostrar mensagens apagadas por suspensão temporária</string>
     <string name="preference_animate_gifs_title">Animar gifs</string>
     <string name="preference_line_separator_title">Separar mensagens com linhas</string>
     <string name="preference_keep_screen_on_title">Manter tela ligada</string>
@@ -349,6 +349,10 @@
     <plurals name="viewers">
         <item quantity="one">Ao vivo com %d espectador</item>
         <item quantity="other">Ao vivo com %d espectadores</item>
+    </plurals>
+    <plurals name="viewers_and_uptime">
+        <item quantity="one">Ao vivo com %1$d espectador por %2$s</item>
+        <item quantity="other">Ao vivo com %1$d espectadores por %2$s</item>
     </plurals>
     <plurals name="months">
         <item quantity="one">%d mês</item>
