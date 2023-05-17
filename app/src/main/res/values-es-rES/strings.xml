@@ -92,6 +92,7 @@ El servicio temporalmente almacena mensajes para canales que tú (y otros) visit
     <string name="dialog_optout">Desactivar</string>
     <string name="more">Más</string>
     <string name="mentions_title">Menciones / Susurros</string>
+    <string name="replies_title">Responder hilo</string>
     <string name="whispers">Susurros</string>
     <string name="notification_whisper_mention">%1$s te ha enviado un susurro</string>
     <string name="mentions">Menciones</string>
@@ -300,6 +301,7 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="highlights_ignores_entry_first_messages">Primeros Mensajes</string>
     <string name="highlights_ignores_entry_elevated_messages">Mensajes Elevados</string>
     <string name="highlights_ignores_entry_redemptions">Destacados canjeados con Puntos Canal</string>
+    <string name="highlights_ignores_entry_replies">Respuestas</string>
     <string name="highlights_ignores_entry_custom">Personalizado</string>
     <string name="highlights_messages_title">Crea notificaciones y destaca mensajes basados en ciertos patrones.</string>
     <string name="highlights_users_title">Crea notificaciones y destaca los mensajes de ciertos usuarios.</string>
@@ -319,18 +321,31 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="user_display_custom_alias_enable">Alias Personalizado</string>
     <string name="pick_custom_user_color_title">Elegir color de usuario personalizado</string>
     <string name="custom_user_display_summary">Añade un nombre y color personalizado para usuarios</string>
+    <string name="reply_to">Respondiendo a</string>
     <string name="message_copy">Copiar mensaje</string>
     <string name="message_copy_full">Copiar mensaje completo</string>
     <string name="message_reply">Responder mensaje</string>
+    <string name="message_view_thread">Ver hilo</string>
     <string name="message_copy_id">Copiar id del mensaje</string>
     <string name="message_more_actions">Ver más…</string>
     <string name="reply_header">Respondiendo a @%1$s</string>
+    <string name="reply_thread_not_found">Respuesta no encontrada</string>
     <string name="message_not_found">Mensaje no encontrado</string>
     <string name="emote_sheet_use">Usar emote</string>
     <string name="emote_sheet_copy">Copiar</string>
     <string name="emote_sheet_open_link">Abrir enlace del emote</string>
+    <string name="emote_sheet_image_description">Imagen de emote</string>
+    <string name="emote_sheet_twitch_emote">Emote de Twitch</string>
+    <string name="emote_sheet_ffz_channel_emote">Emote de FFZ del canal</string>
+    <string name="emote_sheet_ffz_global_emote">Emote global de FFZ</string>
+    <string name="emote_sheet_bttv_channel_emote">Emote de BTTV del canal</string>
+    <string name="emote_sheet_bttv_shared_emote">Emote BTTV compartido</string>
+    <string name="emote_sheet_bttv_global_emote">Emote global de BTTV</string>
+    <string name="emote_sheet_seventv_channel_emote">Emote de 7TV del canal</string>
+    <string name="emote_sheet_seventv_global_emote">Emote global de 7TV</string>
     <string name="emote_sheet_alias_of">Alias de %1$s</string>
     <string name="emote_sheet_created_by">Creado por %1$s</string>
+    <string name="emote_sheet_zero_width_emote">(Anchura cero)</string>
     <string name="emote_copied">Emote copiado</string>
     <string name="changelog_sheet_title">¡DankChat ha sido actualizado!</string>
     <string name="changelog_sheet_subtitle">Novedades en v%1$s:</string>
@@ -340,6 +355,10 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <plurals name="viewers">
         <item quantity="one">En directo con %d espectador</item>
         <item quantity="other">En directo con %d espectadores</item>
+    </plurals>
+    <plurals name="viewers_and_uptime">
+        <item quantity="one">En directo con %1$d espectador por %2$s</item>
+        <item quantity="other">En directo con %1$d espectadores por %2$s</item>
     </plurals>
     <plurals name="months">
         <item quantity="one">%d mes</item>
