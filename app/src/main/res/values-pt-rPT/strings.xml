@@ -207,6 +207,7 @@
     <string name="preference_timestamp_format_title">Formato do carimbo da hora</string>
     <string name="preference_tts_title">Habilitar TTS</string>
     <string name="preference_tts_summary">Lê as mensagens do canal ativo</string>
+    <string name="preference_tts_queue_title"> Modo de fila de mensagens</string>
     <string name="preference_tts_queue_add">Reproduz todas as mensagens usando uma fila</string>
     <string name="preference_tts_queue_flush">Reproduz apenas as mensagens mais recente</string>
     <string name="preference_tts_message_format_message">Lê apenas mensagem</string>
@@ -217,12 +218,15 @@
     <string name="preference_tts_message_ignore_emote_message">Ignora emotes e emojis no TTS</string>
     <string name="preference_tts_message_ignore_emote_title">Ignorar emotes</string>
     <string name="preference_tts_header">TTS</string>
+    <string name="preference_checkered_lines_title"> Fundo alternado</string>
     <string name="preference_checkered_lines_summary">Separar cada linha com um brilho de fundo diferente</string>
     <string name="preference_supibot_suggestions_title">Sugestões de comando Supibot</string>
+    <string name="preference_scrollback_length_title">Quantidade de retrocesso de mensagens</string>
     <string name="preference_show_username_title">Mostrar nomes de utilizadores</string>
     <string name="preference_visible_badges_title">Emblemas visíveis</string>
     <string name="preference_prefer_emote_suggestions_title">Preferir sugestões de emotes</string>
     <string name="preference_prefer_emote_suggestions_summary">Prioritizar sugestões de emotes sobre sugestões de utilizadores</string>
+    <string name="preference_user_long_click_title">Comportamento de clique longo do utilizador</string>
     <string name="preference_user_long_click_summary_on">Clique regular abre janela, clique longo abre menções</string>
     <string name="preference_user_long_click_summary_off">Clique regular abre menções, clique longo abre janela</string>
     <string name="preference_tts_force_english_title">Forçar a língua para Inglês</string>
@@ -230,7 +234,9 @@
     <string name="preference_visible_emotes_title">Emotes de terceiros visíveis</string>
     <string name="preference_about_tos">Termos de serviço da Twitch &amp; política do utilizador:</string>
     <string name="preference_show_chip_actions_title">Mostrar botão de ações</string>
+    <string name="preference_show_chip_actions_summary">Exibe um botão para alternar em tela cheia, transmissões e ajustar os modos do chat</string>
     <string name="preference_uploader_header">Carregador de mídia</string>
+    <string name="preference_uploader_configure_title">Configurar carregador</string>
     <string name="preference_uploader_recent_uploads_title">Carregamentos recentes</string>
     <string name="preference_tts_user_ignore_list_title">Lista de utilizadores ignorados</string>
     <string name="preference_tts_user_ignore_list_summary">Lista de utilizadores/contas que serão ignoradas</string>
@@ -251,6 +257,7 @@
     <string name="oauth_expired_login_again">Inicia sessão novamente</string>
     <string name="oauth_verify_failed">Falha ao verificar o token de início de sessão, verifica a tua conexão.</string>
     <string name="preference_retain_webview_title">Impedir recarregamentos da stream</string>
+    <string name="preference_retain_webview_summary">Permite a prevenção experimental de recargas da stream após mudanças da orientação ou reabertura do DankChat.</string>
     <string name="preference_show_changelogs">Mostrar lista de alterações após uma actualização</string>
     <string name="preference_whats_new_header">O que há de novo</string>
     <string name="reset_media_uploader_dialog_title">Redefinir as configurações do carregador de mídia</string>
@@ -266,10 +273,12 @@
     <string name="enabled">Ativado</string>
     <string name="create_notification">Notificação</string>
     <string name="preference_highlights_summary">Editar destaques de mensagem</string>
+    <string name="preference_highlights_ignores_header">Destaques e Ignorados</string>
     <string name="username">Nome de utilizador</string>
     <string name="block">Bloquear</string>
     <string name="replacement">Substituição</string>
     <string name="ignores">Ignorar</string>
+    <string name="preference_ignores_summary">Edita as mensagens a ser ignoradas</string>
     <string name="tab_messages">Mensagens</string>
     <string name="tab_users">Utilizadores</string>
     <string name="tab_blacklisted_users">Utilizadores bloqueados</string>
