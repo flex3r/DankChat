@@ -40,7 +40,7 @@ data class PrivMessage(
     companion object {
         fun parsePrivMessage(ircMessage: IrcMessage): PrivMessage = with(ircMessage) {
             val (name, id) = when (ircMessage.command) {
-                "USERNOTICE" -> tags.getValue("login") to UUID.randomUUID().toString()
+                "USERNOTICE" -> tags.getValue("login") to (tags["id"]?.let { "$it-msg" } ?: UUID.randomUUID().toString())
                 else         -> prefix.substringBefore('!') to (tags["id"] ?: UUID.randomUUID().toString())
             }
 
