@@ -93,9 +93,7 @@ data class IrcMessage(
                         pos = nextSpace + 1
                         skipTrailingWhitespace()
                         continue
-                    }
-
-                    if (nextSpace == -1) {
+                    } else {
                         params += message.substring(pos)
                         break
                     }
