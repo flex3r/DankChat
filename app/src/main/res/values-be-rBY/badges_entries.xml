@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="badges_entries">
+        <item>Упаўнаважаныя (персанал, адміністратар)</item>
+        <item>Прагнозы</item>
+        <item>Канал (уладальнік, мадэратар)</item>
+        <item>Падпісчык</item>
+        <item>Платны кантэнт (prime, bits, карыстальнік, які падарыў падпіску)</item>
+        <item>DankChat</item>
+        <!--        <item>FrankerFaceZ (Bot, FFZ Supporter, FFZ Developer)</item>-->
+    </string-array>
+</resources>
