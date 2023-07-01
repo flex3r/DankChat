@@ -47,6 +47,10 @@ class DankChatPreferenceStore @Inject constructor(
         get() = dankChatPreferences.getString(OAUTH_KEY, null)
         set(value) = dankChatPreferences.edit { putString(OAUTH_KEY, value) }
 
+    var clientId: String
+        get() = dankChatPreferences.getString(CLIENT_ID_KEY, null) ?: DEFAULT_CLIENT_ID
+        set(value) = dankChatPreferences.edit { putString(CLIENT_ID_KEY, value) }
+
     var channels: List<UserName>
         get() = dankChatPreferences.getString(CHANNELS_AS_STRING_KEY, null)?.split(',').orEmpty().toUserNames()
         set(value) {
@@ -221,6 +225,9 @@ class DankChatPreferenceStore @Inject constructor(
     val createWhisperNotifications: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_notification_whisper_key), true)
 
+    val bypassCommandHandling: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_bypass_command_handling_key), false)
+
     val currentUserAndDisplayFlow: Flow<Pair<UserName?, DisplayName?>> = callbackFlow {
         send(userName to displayName)
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
@@ -280,6 +287,7 @@ class DankChatPreferenceStore @Inject constructor(
         putString(OAUTH_KEY, null)
         putString(NAME_KEY, null)
         putString(ID_STRING_KEY, null)
+        putString(CLIENT_ID_KEY, null)
     }
 
     fun clearBlacklist() = defaultPreferences.edit {
@@ -422,6 +430,7 @@ class DankChatPreferenceStore @Inject constructor(
     companion object {
         private const val LOGGED_IN_KEY = "loggedIn"
         private const val OAUTH_KEY = "oAuthKey"
+        private const val CLIENT_ID_KEY = "clientIdKey"
         private const val NAME_KEY = "nameKey"
         private const val DISPLAY_NAME_KEY = "displayNameKey"
         private const val RENAME_KEY = "renameKey"
@@ -448,6 +457,8 @@ class DankChatPreferenceStore @Inject constructor(
 
         private const val SCROLLBACK_LENGTH_STEP = 50
         fun correctScrollbackLength(seekbarValue: Int): Int = seekbarValue * SCROLLBACK_LENGTH_STEP
+
+        const val DEFAULT_CLIENT_ID = "xu7vd1i6tlr0ak45q1li2wdc0lrma8"
 
         val DEFAULT_UPLOADER = ImageUploader(
             uploadUrl = UPLOADER_URL_DEFAULT,

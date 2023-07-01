@@ -144,3 +144,8 @@ inline fun CharSequence.indexOfFirst(startIndex: Int = 0, predicate: (Char) -> B
 
     return -1
 }
+
+fun String.truncate(maxLength: Int) = when {
+    length <= maxLength -> this
+    else                -> take(maxLength) + Typography.ellipsis
+}

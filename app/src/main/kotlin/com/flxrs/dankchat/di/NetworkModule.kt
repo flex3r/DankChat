@@ -4,7 +4,6 @@ import android.util.Log
 import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.data.api.*
 import com.flxrs.dankchat.data.api.auth.AuthApi
-import com.flxrs.dankchat.data.api.auth.AuthApiClient
 import com.flxrs.dankchat.data.api.badges.BadgesApi
 import com.flxrs.dankchat.data.api.bttv.BTTVApi
 import com.flxrs.dankchat.data.api.chatters.ChattersApi
@@ -123,7 +122,7 @@ object NetworkModule {
     fun provideHelixApi(ktorClient: HttpClient, preferenceStore: DankChatPreferenceStore) = HelixApi(ktorClient.config {
         defaultRequest {
             url(HELIX_BASE_URL)
-            header("Client-ID", AuthApiClient.CLIENT_ID)
+            header("Client-ID", preferenceStore.clientId)
         }
     }, preferenceStore)
 

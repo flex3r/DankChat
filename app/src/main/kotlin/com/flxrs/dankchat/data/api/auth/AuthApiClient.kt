@@ -3,6 +3,7 @@ package com.flxrs.dankchat.data.api.auth
 import com.flxrs.dankchat.data.api.ApiException
 import com.flxrs.dankchat.data.api.auth.dto.ValidateDto
 import com.flxrs.dankchat.data.api.auth.dto.ValidateErrorDto
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import io.ktor.client.call.body
 import io.ktor.client.statement.bodyAsText
@@ -27,13 +28,12 @@ class AuthApiClient @Inject constructor(private val authApi: AuthApi, private va
     }
 
     fun validateScopes(scopes: List<String>): Boolean = scopes.containsAll(SCOPES)
+    fun missingScopes(scopes: List<String>): Set<String> = SCOPES - scopes.toSet()
 
     companion object {
         private const val BASE_LOGIN_URL = "https://id.twitch.tv/oauth2/authorize?response_type=token"
         private const val REDIRECT_URL = "https://flxrs.com/dankchat"
-        private val SCOPES = setOf(
-            "channel_editor", // TODO to be removed
-            "channel_commercial", // TODO to be removed
+        val SCOPES = setOf(
             "channel:edit:commercial",
             "channel:manage:broadcast",
             "channel:manage:moderators",
@@ -62,7 +62,6 @@ class AuthApiClient @Inject constructor(private val authApi: AuthApi, private va
             "whispers:edit",
             "whispers:read",
         )
-        const val CLIENT_ID = "xu7vd1i6tlr0ak45q1li2wdc0lrma8"
-        val LOGIN_URL = "$BASE_LOGIN_URL&client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URL&scope=${SCOPES.joinToString(separator = "+")}"
+        val LOGIN_URL = "$BASE_LOGIN_URL&client_id=${DankChatPreferenceStore.DEFAULT_CLIENT_ID}&redirect_uri=$REDIRECT_URL&scope=${SCOPES.joinToString(separator = "+")}"
     }
 }

@@ -158,6 +158,18 @@
     <string name="recent_uploads_clear">Clear uploads</string>
     <string name="host">Host</string>
     <string name="reset">Reset</string>
+    <string name="oauth_token">OAuth token</string>
+    <string name="verify_login">Verify &amp; Save</string>
+    <string name="custom_login_hint">Only Client IDs that work with Twitch\'s Helix API are supported</string>
+    <string name="custom_login_show_scopes">Show required scopes</string>
+    <string name="custom_login_required_scopes">Required scopes</string>
+    <string name="custom_login_missing_scopes_title">Missing scopes</string>
+    <string name="custom_login_missing_scopes_text">Some scopes required by DankChat are missing in the token and some functionality might not work as expected. Do you want to continue using this token?\nMissing: %1$s</string>
+    <string name="custom_login_missing_scopes_continue">Continue</string>
+    <string name="custom_login_error_missing_scopes">Missing scopes: %1$s</string>
+    <string name="custom_login_error_fallback">Error: %1$s</string>
+    <string name="custom_login_error_empty_token">Token can\'t be empty</string>
+    <string name="custom_login_error_invalid_token">Token is invalid</string>
     <string name="badge_tooltip_moderator">Moderator</string>
     <string name="badge_tooltip_vip" translatable="false">VIP</string>
     <string name="badge_tooltip_bits" translatable="false">Twitch cheer %1$s</string>
@@ -321,6 +333,11 @@
     <string name="preference_show_changelogs">Show changelogs after update</string>
     <string name="preference_whats_new_header">What\'s new</string>
     <string name="preference_whats_new_key" translatable="false">whats_new_key</string>
+    <string name="preference_custom_login_key" translatable="false">custom_login_key</string>
+    <string name="preference_custom_login_title">Custom login</string>
+    <string name="preference_bypass_command_handling_key" translatable="false">bypass_command_handling_key</string>
+    <string name="preference_bypass_command_handling_title">Bypass Twitch command handling</string>
+    <string name="preference_bypass_command_handling_summary">Disables intercepting of Twitch commands and sends them to chat instead</string>
     <string name="reset_media_uploader_dialog_title">Reset Media Uploader Settings</string>
     <string name="reset_media_uploader_dialog_message">Are you sure you want to reset the media uploader settings to default?</string>
     <string name="reset_media_uploader_dialog_positive">Reset</string>

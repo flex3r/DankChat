@@ -23,6 +23,18 @@
         android:title="@string/preference_retain_webview_title"
         app:iconSpaceReserved="false" />
 
+    <SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:key="@string/preference_bypass_command_handling_key"
+        android:summary="@string/preference_bypass_command_handling_summary"
+        android:title="@string/preference_bypass_command_handling_title"
+        app:iconSpaceReserved="false" />
+
+    <Preference
+        android:key="@string/preference_custom_login_key"
+        android:title="@string/preference_custom_login_title"
+        app:iconSpaceReserved="false" />
+
     <Preference
         android:key="@string/preference_rm_host_key"
         android:title="@string/preference_rm_host_title"

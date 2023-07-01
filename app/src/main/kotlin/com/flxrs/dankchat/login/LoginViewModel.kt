@@ -50,6 +50,7 @@ class LoginViewModel @Inject constructor(
             oAuthKey = "oauth:$oAuth"
             userName = validateDto.login.lowercase()
             userIdString = validateDto.userId
+            clientId = validateDto.clientId
             isLoggedIn = true
         }
 
