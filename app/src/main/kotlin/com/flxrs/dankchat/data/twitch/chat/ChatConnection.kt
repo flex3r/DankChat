@@ -253,7 +253,14 @@ class ChatConnection @Inject constructor(
                         }
                     }
 
-                    "JOIN"      -> channelsAttemptedToJoin.remove(ircMessage.params[0].substring(1).toUserName())
+                    "JOIN"      -> {
+                        if (ircMessage.prefix.startsWith(currentUserName?.value.orEmpty())) {
+                            val channel = ircMessage.params[0].substring(1).toUserName()
+                            Log.i(TAG, "[$chatConnectionType] Joined #$channel")
+                            channelsAttemptedToJoin.remove(channel)
+                        }
+                    }
+
                     "366"       -> scope.launch { receiveChannel.send(ChatEvent.Connected(ircMessage.params[1].substring(1).toUserName(), isAnonymous)) }
                     "PING"      -> webSocket.handlePing()
                     "PONG"      -> awaitingPong = false
