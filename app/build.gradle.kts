@@ -17,12 +17,12 @@ plugins {
 
 android {
     namespace = "com.flxrs.dankchat"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.flxrs.dankchat"
         minSdk = 21
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 30704
         versionName = "3.7.4"
 
