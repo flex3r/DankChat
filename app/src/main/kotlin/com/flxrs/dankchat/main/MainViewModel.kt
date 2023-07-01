@@ -92,6 +92,7 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var fetchTimerJob: Job? = null
+    private var lastDataLoadingJob: Job? = null
 
     var started = false
 
@@ -387,15 +388,21 @@ class MainViewModel @Inject constructor(
             return chatRepository.getRoomState(channel).firstValueOrNull
         }
 
+    fun cancelDataLoad() {
+        lastDataLoadingJob?.cancel()
+        viewModelScope.launch {
+            clearDataLoadingStates(DataLoadingState.None)
+        }
+    }
+
     fun loadData(channelList: List<UserName> = channels.value.orEmpty()) {
         val isLoggedIn = dankChatPreferenceStore.isLoggedIn
         val scrollBackLength = dankChatPreferenceStore.scrollbackLength
         chatRepository.scrollBackLength = scrollBackLength
 
-        viewModelScope.launch {
-            val loadingState = DataLoadingState.Loading
-            dataLoadingStateChannel.send(loadingState)
-            isDataLoading.update { true }
+        lastDataLoadingJob?.cancel()
+        lastDataLoadingJob = viewModelScope.launch {
+            clearDataLoadingStates(DataLoadingState.Loading)
 
             dataRepository.createFlowsIfNecessary(channels = channelList + WhisperMessage.WHISPER_CHANNEL)
 
@@ -442,37 +449,39 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun retryDataLoading(dataLoadingFailures: Set<DataLoadingFailure>, chatLoadingFailures: Set<ChatLoadingFailure>) = viewModelScope.launch {
-        dataLoadingStateChannel.send(DataLoadingState.Loading)
-        isDataLoading.update { true }
-        dataLoadingFailures.map {
-            async {
-                Log.d(TAG, "Retrying data loading step: $it")
-                when (it.step) {
-                    is DataLoadingStep.GlobalSevenTVEmotes  -> dataRepository.loadGlobalSevenTVEmotes()
-                    is DataLoadingStep.GlobalBTTVEmotes     -> dataRepository.loadGlobalBTTVEmotes()
-                    is DataLoadingStep.GlobalFFZEmotes      -> dataRepository.loadGlobalFFZEmotes()
-                    is DataLoadingStep.GlobalBadges         -> dataRepository.loadGlobalBadges()
-                    is DataLoadingStep.DankChatBadges       -> dataRepository.loadDankChatBadges()
-                    is DataLoadingStep.ChannelBadges        -> dataRepository.loadChannelBadges(it.step.channel, it.step.channelId)
-                    is DataLoadingStep.ChannelSevenTVEmotes -> dataRepository.loadChannelSevenTVEmotes(it.step.channel, it.step.channelId)
-                    is DataLoadingStep.ChannelFFZEmotes     -> dataRepository.loadChannelFFZEmotes(it.step.channel, it.step.channelId)
-                    is DataLoadingStep.ChannelBTTVEmotes    -> dataRepository.loadChannelBTTVEmotes(it.step.channel, it.step.channelDisplayName, it.step.channelId)
+    fun retryDataLoading(dataLoadingFailures: Set<DataLoadingFailure>, chatLoadingFailures: Set<ChatLoadingFailure>) {
+        lastDataLoadingJob?.cancel()
+        lastDataLoadingJob = viewModelScope.launch {
+            clearDataLoadingStates(DataLoadingState.Loading)
+            dataLoadingFailures.map {
+                async {
+                    Log.d(TAG, "Retrying data loading step: $it")
+                    when (it.step) {
+                        is DataLoadingStep.GlobalSevenTVEmotes  -> dataRepository.loadGlobalSevenTVEmotes()
+                        is DataLoadingStep.GlobalBTTVEmotes     -> dataRepository.loadGlobalBTTVEmotes()
+                        is DataLoadingStep.GlobalFFZEmotes      -> dataRepository.loadGlobalFFZEmotes()
+                        is DataLoadingStep.GlobalBadges         -> dataRepository.loadGlobalBadges()
+                        is DataLoadingStep.DankChatBadges       -> dataRepository.loadDankChatBadges()
+                        is DataLoadingStep.ChannelBadges        -> dataRepository.loadChannelBadges(it.step.channel, it.step.channelId)
+                        is DataLoadingStep.ChannelSevenTVEmotes -> dataRepository.loadChannelSevenTVEmotes(it.step.channel, it.step.channelId)
+                        is DataLoadingStep.ChannelFFZEmotes     -> dataRepository.loadChannelFFZEmotes(it.step.channel, it.step.channelId)
+                        is DataLoadingStep.ChannelBTTVEmotes    -> dataRepository.loadChannelBTTVEmotes(it.step.channel, it.step.channelDisplayName, it.step.channelId)
+                    }
                 }
-            }
-        } + chatLoadingFailures.map {
-            async {
-                Log.d(TAG, "Retrying chat loading step: $it")
-                when (it.step) {
-                    is ChatLoadingStep.Chatters       -> chatRepository.loadChatters(it.step.channel)
-                    is ChatLoadingStep.RecentMessages -> chatRepository.loadRecentMessagesIfEnabled(it.step.channel)
+            } + chatLoadingFailures.map {
+                async {
+                    Log.d(TAG, "Retrying chat loading step: $it")
+                    when (it.step) {
+                        is ChatLoadingStep.Chatters       -> chatRepository.loadChatters(it.step.channel)
+                        is ChatLoadingStep.RecentMessages -> chatRepository.loadRecentMessagesIfEnabled(it.step.channel)
+                    }
                 }
-            }
-        }.awaitAll()
+            }.awaitAll()
 
-        chatRepository.reparseAllEmotesAndBadges()
+            chatRepository.reparseAllEmotesAndBadges()
 
-        checkFailuresAndEmitState()
+            checkFailuresAndEmitState()
+        }
     }
 
     fun getLastMessage() = chatRepository.getLastMessage()
@@ -803,10 +812,14 @@ class MainViewModel @Inject constructor(
             }
         }
 
+        clearDataLoadingStates(state)
+    }
+
+    private suspend fun clearDataLoadingStates(state: DataLoadingState) {
         chatRepository.clearChatLoadingFailures()
         dataRepository.clearDataLoadingFailures()
         dataLoadingStateChannel.send(state)
-        isDataLoading.update { false }
+        isDataLoading.update { state is DataLoadingState.Loading }
     }
 
     private fun Throwable.toErrorMessage(): String {

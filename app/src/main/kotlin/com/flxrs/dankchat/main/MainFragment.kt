@@ -391,6 +391,7 @@ class MainFragment : Fragment() {
                         .create().show()
 
                     ValidationResult.TokenInvalid        -> {
+                        mainViewModel.cancelDataLoad()
                         MaterialAlertDialogBuilder(requireContext())
                             .setTitle(R.string.oauth_expired_title)
                             .setMessage(R.string.oauth_expired_message)
