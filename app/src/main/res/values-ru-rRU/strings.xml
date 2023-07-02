@@ -34,7 +34,7 @@
     <string name="uploading_image">Загружается файл</string>
     <string name="settings">Настройки</string>
     <string name="external_upload_disclaimer">Сторонний хостинг %1$s предоставлен, используйте на свой страх и риск.</string>
-    <string name="nuuls_upload_title">Загрузка собственного изображения</string>
+    <string name="nuuls_upload_title">Пользовательский загрузчик медиа</string>
     <string name="snackbar_message_copied">Сообщение скопировано</string>
     <string name="snackbar_message_id_copied">ID сообщения скопирован</string>
     <string name="snackbar_error_copied">Информация об ошибке скопирована</string>
