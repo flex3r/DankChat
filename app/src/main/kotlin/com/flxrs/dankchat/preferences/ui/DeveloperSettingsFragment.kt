@@ -108,6 +108,7 @@ class DeveloperSettingsFragment : MaterialPreferenceFragmentCompat() {
         super.onDestroyView()
         bottomSheetDialog?.dismiss()
         bottomSheetDialog = null
+        customLoginBinding = null
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
