@@ -11,9 +11,7 @@ class DankChatVersion(val major: Int, val minor: Int, val patch: Int) : Comparab
         if (other !is DankChatVersion) return false
 
         if (major != other.major) return false
-        if (minor != other.minor) return false
-
-        return true
+        return minor == other.minor
     }
 
     override fun hashCode(): Int {
@@ -37,6 +35,8 @@ class DankChatVersion(val major: Int, val minor: Int, val patch: Int) : Comparab
         }
 
         val CURRENT = fromString(BuildConfig.VERSION_NAME)
-
+        val VERSIONS_WITH_CHANGELOG = listOf(
+            DankChatVersion(major = 3, minor = 6, patch = 0)
+        )
     }
 }

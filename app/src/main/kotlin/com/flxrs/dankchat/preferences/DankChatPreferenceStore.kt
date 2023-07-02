@@ -9,7 +9,13 @@ import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.changelog.DankChatVersion
-import com.flxrs.dankchat.data.*
+import com.flxrs.dankchat.data.DisplayName
+import com.flxrs.dankchat.data.UserId
+import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.data.toDisplayName
+import com.flxrs.dankchat.data.toUserId
+import com.flxrs.dankchat.data.toUserName
+import com.flxrs.dankchat.data.toUserNames
 import com.flxrs.dankchat.data.twitch.badge.BadgeType
 import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.preferences.command.CommandDto
@@ -356,8 +362,8 @@ class DankChatPreferenceStore @Inject constructor(
         }
 
         val current = DankChatVersion.CURRENT ?: return false
-        val lastViewed = lastViewedChangelogVersion?.let { DankChatVersion.fromString(it) } ?: return true
-        return lastViewed < current
+        val lastViewed = lastViewedChangelogVersion?.let(DankChatVersion.Companion::fromString) ?: return true
+        return lastViewed < current && current in DankChatVersion.VERSIONS_WITH_CHANGELOG
     }
 
     fun setCurrentInstalledVersionCode() {
