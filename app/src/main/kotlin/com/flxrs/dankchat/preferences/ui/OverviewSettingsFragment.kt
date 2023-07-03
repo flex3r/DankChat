@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.changelog.DankChatVersion
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
@@ -65,6 +66,7 @@ class OverviewSettingsFragment : MaterialPreferenceFragmentCompat() {
         }
 
         findPreference<Preference>(getString(R.string.preference_whats_new_key))?.apply {
+            isVisible = DankChatVersion.HAS_CHANGELOG
             setOnPreferenceClickListener {
                 navigateSafe(R.id.action_overviewSettingsFragment_to_changelogSheetFragment)
                 true

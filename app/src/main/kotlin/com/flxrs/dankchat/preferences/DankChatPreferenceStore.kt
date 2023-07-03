@@ -363,7 +363,7 @@ class DankChatPreferenceStore @Inject constructor(
 
         val current = DankChatVersion.CURRENT ?: return false
         val lastViewed = lastViewedChangelogVersion?.let(DankChatVersion.Companion::fromString) ?: return true
-        return lastViewed < current && current in DankChatVersion.VERSIONS_WITH_CHANGELOG
+        return lastViewed < current && DankChatVersion.HAS_CHANGELOG
     }
 
     fun setCurrentInstalledVersionCode() {

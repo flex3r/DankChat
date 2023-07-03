@@ -26,6 +26,9 @@ class DankChatVersion(val major: Int, val minor: Int, val patch: Int) : Comparab
         private val COMPARATOR = Comparator
             .comparingInt(DankChatVersion::major)
             .thenComparingInt(DankChatVersion::minor)
+        private val VERSIONS_WITH_CHANGELOG = listOf(
+            DankChatVersion(major = 3, minor = 6, patch = 0),
+        )
 
         fun fromString(version: String): DankChatVersion? {
             return version.split(".")
@@ -35,8 +38,6 @@ class DankChatVersion(val major: Int, val minor: Int, val patch: Int) : Comparab
         }
 
         val CURRENT = fromString(BuildConfig.VERSION_NAME)
-        val VERSIONS_WITH_CHANGELOG = listOf(
-            DankChatVersion(major = 3, minor = 6, patch = 0)
-        )
+        val HAS_CHANGELOG = CURRENT in VERSIONS_WITH_CHANGELOG
     }
 }
