@@ -165,6 +165,18 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="recent_uploads_clear">Vaciar subidas</string>
     <string name="host">Alojar</string>
     <string name="reset">Reiniciar</string>
+    <string name="oauth_token">Token OAuth</string>
+    <string name="verify_login">Verificar &amp; Guardar</string>
+    <string name="custom_login_hint">Solo ID de Clientes que trabajan con la API Helix de Twitch son compatibles</string>
+    <string name="custom_login_show_scopes">Mostrar ámbitos requeridos</string>
+    <string name="custom_login_required_scopes">Ámbitos requeridos</string>
+    <string name="custom_login_missing_scopes_title">Ámbitos faltantes</string>
+    <string name="custom_login_missing_scopes_text">Algunos ámbitos requeridos por DankChat faltan en el token y algunas funcionalidades no podrían funcionar como se esperan. Quieres continuar usando este token?\nFaltantes:%1$s</string>
+    <string name="custom_login_missing_scopes_continue">Continuar</string>
+    <string name="custom_login_error_missing_scopes">Ámbitos faltantes: %1$s</string>
+    <string name="custom_login_error_fallback">Error: %1$s</string>
+    <string name="custom_login_error_empty_token">El token no puede estar vacío</string>
+    <string name="custom_login_error_invalid_token">Token inválido</string>
     <string name="badge_tooltip_moderator">Moderador</string>
     <string name="badge_tooltip_predictions">Predicción: \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">Tier %1$s</string>
@@ -267,6 +279,8 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="preference_retain_webview_summary">Activa la prevención experimental de recargas de las transmisiones después de cambios de orientación o al volver a abrir DankChat.</string>
     <string name="preference_show_changelogs">Mostrar cambios después de actualizar</string>
     <string name="preference_whats_new_header">Novedades</string>
+    <string name="preference_custom_login_title">Inicio de sesión personalizado</string>
+    <string name="preference_bypass_command_handling_summary">Deshabilita la interceptación de los comandos de Twitch y los envía al chat en su lugar</string>
     <string name="reset_media_uploader_dialog_title">Restablecer la configuración del subidor de imágenes</string>
     <string name="reset_media_uploader_dialog_message">¿Estás seguro de que quieres restablecer por defecto las opciones del subidor de multimedia?</string>
     <string name="reset_media_uploader_dialog_positive">Restablecer</string>
