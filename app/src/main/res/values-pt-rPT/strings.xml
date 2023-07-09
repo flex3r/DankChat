@@ -158,6 +158,18 @@
     <string name="recent_uploads_clear">Limpar carregamentos</string>
     <string name="host">Anfitrião</string>
     <string name="reset">Reinicia</string>
+    <string name="oauth_token">Token OAuth</string>
+    <string name="verify_login">Verficar &amp; Salvar</string>
+    <string name="custom_login_hint">Somente as IDs de clientes que funcionam com a API Helix da Twitch são suportadas</string>
+    <string name="custom_login_show_scopes">Exibir campos obrigatórios</string>
+    <string name="custom_login_required_scopes">Campos obrigatórios</string>
+    <string name="custom_login_missing_scopes_title">Campos ausentes</string>
+    <string name="custom_login_missing_scopes_text">Alguns campos exigidos pelo DankChat estão ausentes no token e algumas funcionalidades podem não funcionar conforme o esperado. Deseja continuar usando este token?\nAusente: %1$s</string>
+    <string name="custom_login_missing_scopes_continue">Continuar</string>
+    <string name="custom_login_error_missing_scopes">Campos ausentes: %1$s</string>
+    <string name="custom_login_error_fallback">Erro: %1$s</string>
+    <string name="custom_login_error_empty_token">O token não pode estar vazio</string>
+    <string name="custom_login_error_invalid_token">O token não é válido</string>
     <string name="badge_tooltip_moderator">Moderador</string>
     <string name="badge_tooltip_predictions">Previsto \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">Escalão %1$s</string>
@@ -260,6 +272,8 @@
     <string name="preference_retain_webview_summary">Permite a prevenção experimental de recargas da stream após mudanças da orientação ou reabertura do DankChat.</string>
     <string name="preference_show_changelogs">Mostrar lista de alterações após uma actualização</string>
     <string name="preference_whats_new_header">O que há de novo</string>
+    <string name="preference_custom_login_title">Inicio de sessão customizado</string>
+    <string name="preference_bypass_command_handling_title">Ignorar manipulação de comandos da Twitch</string>
     <string name="reset_media_uploader_dialog_title">Redefinir as configurações do carregador de mídia</string>
     <string name="reset_media_uploader_dialog_message">Tens a certeza de que desejas redefinir as configurações padrão do carregador de mídia?</string>
     <string name="reset_media_uploader_dialog_positive">Reinicia</string>
