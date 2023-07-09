@@ -19,7 +19,7 @@ enum class BadgeType {
         }
 
         fun mapFromPreferenceSet(preferenceSet: Set<String>): Set<BadgeType> = preferenceSet.mapNotNull {
-            values().find { badgeType -> badgeType.name.lowercase() == it }
+            entries.find { badgeType -> badgeType.name.lowercase() == it }
         }.toSet()
     }
 }

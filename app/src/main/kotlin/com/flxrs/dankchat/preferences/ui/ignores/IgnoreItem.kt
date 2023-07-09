@@ -7,11 +7,11 @@ import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntityType
 import com.flxrs.dankchat.data.database.entity.UserIgnoreEntity
 import com.flxrs.dankchat.data.repo.IgnoresRepository
 
-sealed class IgnoreItem {
-    abstract val id: Long
+sealed interface IgnoreItem {
+    val id: Long
 }
 
-object AddItem : IgnoreItem() {
+data object AddItem : IgnoreItem {
     override val id = -1L
 }
 
@@ -24,7 +24,7 @@ data class MessageIgnoreItem(
     var isCaseSensitive: Boolean,
     var isBlockMessage: Boolean,
     var replacement: String,
-) : IgnoreItem() {
+) : IgnoreItem {
     enum class Type {
         Subscription,
         Announcement,
@@ -41,13 +41,13 @@ data class UserIgnoreItem(
     var username: String,
     var isRegex: Boolean,
     var isCaseSensitive: Boolean
-) : IgnoreItem()
+) : IgnoreItem
 
 data class TwitchBlockItem(
     override val id: Long,
     val username: UserName,
     val userId: UserId,
-) : IgnoreItem()
+) : IgnoreItem
 
 fun MessageIgnoreEntity.toItem() = MessageIgnoreItem(
     id = id,

@@ -5,11 +5,11 @@ import com.flxrs.dankchat.data.database.entity.MessageHighlightEntity
 import com.flxrs.dankchat.data.database.entity.MessageHighlightEntityType
 import com.flxrs.dankchat.data.database.entity.UserHighlightEntity
 
-sealed class HighlightItem {
-    abstract val id: Long
+sealed interface HighlightItem {
+    val id: Long
 }
 
-object AddItem : HighlightItem() {
+data object AddItem : HighlightItem {
     override val id = -1L
 }
 
@@ -21,7 +21,7 @@ data class MessageHighlightItem(
     var isRegex: Boolean,
     var isCaseSensitive: Boolean,
     var createNotification: Boolean,
-) : HighlightItem() {
+) : HighlightItem {
     enum class Type {
         Username,
         Subscription,
@@ -45,14 +45,14 @@ data class UserHighlightItem(
     var enabled: Boolean,
     var username: String,
     var createNotification: Boolean,
-) : HighlightItem()
+) : HighlightItem
 
 data class BlacklistedUserItem(
     override val id: Long,
     var enabled: Boolean,
     var username: String,
     var isRegex: Boolean,
-) : HighlightItem()
+) : HighlightItem
 
 fun MessageHighlightEntity.toItem() = MessageHighlightItem(
     id = id,

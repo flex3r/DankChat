@@ -36,7 +36,7 @@ class HighlightsViewModel @Inject constructor(
     val currentTab = _currentTab.asStateFlow()
 
     fun setCurrentTab(position: Int) {
-        _currentTab.value = HighlightsTab.values()[position]
+        _currentTab.value = HighlightsTab.entries[position]
     }
 
     fun fetchHighlights() {

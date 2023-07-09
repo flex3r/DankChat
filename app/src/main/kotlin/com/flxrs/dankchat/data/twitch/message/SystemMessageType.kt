@@ -4,20 +4,20 @@ import com.flxrs.dankchat.chat.ChatImportance
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.data.UserName
 
-sealed class SystemMessageType {
-    object Connected : SystemMessageType()
-    object Disconnected : SystemMessageType()
-    object Reconnected : SystemMessageType()
-    object NoHistoryLoaded : SystemMessageType()
-    object LoginExpired : SystemMessageType()
-    object MessageHistoryIncomplete : SystemMessageType()
-    object MessageHistoryIgnored : SystemMessageType()
-    data class MessageHistoryUnavailable(val status: String?) : SystemMessageType()
-    data class ChannelNonExistent(val channel: UserName) : SystemMessageType()
-    data class ChannelFFZEmotesFailed(val status: String) : SystemMessageType()
-    data class ChannelBTTVEmotesFailed(val status: String) : SystemMessageType()
-    data class ChannelSevenTVEmotesFailed(val status: String) : SystemMessageType()
-    data class Custom(val message: String) : SystemMessageType()
+sealed interface SystemMessageType {
+    data object Connected : SystemMessageType
+    data object Disconnected : SystemMessageType
+    data object Reconnected : SystemMessageType
+    data object NoHistoryLoaded : SystemMessageType
+    data object LoginExpired : SystemMessageType
+    data object MessageHistoryIncomplete : SystemMessageType
+    data object MessageHistoryIgnored : SystemMessageType
+    data class MessageHistoryUnavailable(val status: String?) : SystemMessageType
+    data class ChannelNonExistent(val channel: UserName) : SystemMessageType
+    data class ChannelFFZEmotesFailed(val status: String) : SystemMessageType
+    data class ChannelBTTVEmotesFailed(val status: String) : SystemMessageType
+    data class ChannelSevenTVEmotesFailed(val status: String) : SystemMessageType
+    data class Custom(val message: String) : SystemMessageType
 }
 
 fun SystemMessageType.toChatItem() = ChatItem(SystemMessage(this), importance = ChatImportance.SYSTEM)

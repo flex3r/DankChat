@@ -3,7 +3,7 @@ package com.flxrs.dankchat.preferences.ui.userdisplay
 import com.flxrs.dankchat.data.database.entity.UserDisplayEntity
 import com.flxrs.dankchat.utils.extensions.hexCode
 
-sealed class UserDisplayItem {
+sealed interface UserDisplayItem {
     data class Entry(
         val id: Int,
         var username: String,
@@ -12,9 +12,9 @@ sealed class UserDisplayItem {
         var color: Int, // color needs to be opaque
         var aliasEnabled: Boolean,
         var alias: String
-    ) : UserDisplayItem()
+    ) : UserDisplayItem
 
-    object AddEntry : UserDisplayItem()
+    data object AddEntry : UserDisplayItem
 }
 
 fun UserDisplayItem.Entry.toEntity() = UserDisplayEntity(

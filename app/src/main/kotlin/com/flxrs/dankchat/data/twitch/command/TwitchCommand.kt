@@ -39,8 +39,8 @@ enum class TwitchCommand(val trigger: String) {
     Whisper(trigger = "w");
 
     companion object {
-        val ALL_COMMANDS = TwitchCommand.values().toList()
-        val MODERATOR_COMMANDS = TwitchCommand.values().toList() - listOf(Commercial, Mods, Mod, Unmod, Raid, Unraid, Vips, Vip, Unvip)
+        val ALL_COMMANDS = TwitchCommand.entries
+        val MODERATOR_COMMANDS = TwitchCommand.entries - listOf(Commercial, Mods, Mod, Unmod, Raid, Unraid, Vips, Vip, Unvip)
         val USER_COMMANDS = listOf(Color, Whisper)
     }
 }

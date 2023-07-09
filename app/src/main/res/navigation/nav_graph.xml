@@ -188,7 +188,7 @@
     <fragment
         android:id="@+id/repliesFragment"
         android:name="com.flxrs.dankchat.chat.replies.RepliesFragment"
-        android:label="RepliesFragment" >
+        android:label="RepliesFragment">
         <argument
             android:name="rootMessageId"
             app:argType="string" />
@@ -196,7 +196,7 @@
     <fragment
         android:id="@+id/repliesInputSheetFragment"
         android:name="com.flxrs.dankchat.chat.replies.ReplyInputSheetFragment"
-        android:label="RepliesInputSheetFragment" >
+        android:label="RepliesInputSheetFragment">
         <argument
             android:name="replyMessageId"
             app:argType="string" />
@@ -207,7 +207,7 @@
     <dialog
         android:id="@+id/messageSheetFragment"
         android:name="com.flxrs.dankchat.chat.message.MessageSheetFragment"
-        android:label="MessageSheetFragment" >
+        android:label="MessageSheetFragment">
         <argument
             android:name="messageId"
             app:argType="string" />
@@ -240,7 +240,7 @@
     <dialog
         android:id="@+id/emoteSheetFragment"
         android:name="com.flxrs.dankchat.chat.emote.EmoteSheetFragment"
-        android:label="EmoteSheetFragment" >
+        android:label="EmoteSheetFragment">
         <argument
             android:name="emotes"
             app:argType="com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote[]" />
@@ -252,10 +252,10 @@
     <fragment
         android:id="@+id/mentionFragment"
         android:name="com.flxrs.dankchat.chat.mention.MentionFragment"
-        android:label="MentionFragment" >
+        android:label="MentionFragment">
         <argument
             android:name="openWhisperTab"
-            app:argType="boolean"
-            android:defaultValue="false" />
+            android:defaultValue="false"
+            app:argType="boolean" />
     </fragment>
 </navigation>

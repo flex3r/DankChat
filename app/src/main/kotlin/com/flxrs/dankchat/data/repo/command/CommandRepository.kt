@@ -46,7 +46,7 @@ class CommandRepository @Inject constructor(
     private val customCommands = preferenceStore.commandsAsFlow.stateIn(scope, SharingStarted.Eagerly, emptyList())
     private val supibotCommands = mutableMapOf<UserName, MutableStateFlow<List<String>>>()
 
-    private val defaultCommands = Command.values()
+    private val defaultCommands = Command.entries
     private val defaultCommandTriggers = defaultCommands.map { it.trigger }
 
     private val commandTriggers = customCommands.map { customCommands ->

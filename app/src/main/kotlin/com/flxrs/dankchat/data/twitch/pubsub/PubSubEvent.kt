@@ -1,10 +1,10 @@
 package com.flxrs.dankchat.data.twitch.pubsub
 
-sealed class PubSubEvent {
-    data class Message(val message: PubSubMessage) : PubSubEvent()
-    object Connected : PubSubEvent()
-    object Error : PubSubEvent()
-    object Closed : PubSubEvent()
+sealed interface PubSubEvent {
+    data class Message(val message: PubSubMessage) : PubSubEvent
+    data object Connected : PubSubEvent
+    data object Error : PubSubEvent
+    data object Closed : PubSubEvent
 
     val isDisconnected: Boolean
         get() = this is Error || this is Closed

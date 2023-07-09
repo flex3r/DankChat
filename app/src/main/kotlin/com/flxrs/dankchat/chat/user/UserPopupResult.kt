@@ -5,13 +5,13 @@ import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserName
 import kotlinx.parcelize.Parcelize
 
-sealed class UserPopupResult : Parcelable {
+sealed interface UserPopupResult : Parcelable {
     @Parcelize
-    data class Error(val throwable: Throwable?) : UserPopupResult()
+    data class Error(val throwable: Throwable?) : UserPopupResult
 
     @Parcelize
-    data class Whisper(val targetUser: UserName) : UserPopupResult()
+    data class Whisper(val targetUser: UserName) : UserPopupResult
 
     @Parcelize
-    data class Mention(val targetUser: UserName, val targetDisplayName: DisplayName) : UserPopupResult()
+    data class Mention(val targetUser: UserName, val targetDisplayName: DisplayName) : UserPopupResult
 }

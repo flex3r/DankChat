@@ -12,31 +12,31 @@ data class HelixApiException(
     override val cause: Throwable? = null
 ) : ApiException(status, url, message, cause)
 
-sealed class HelixError {
-    object MissingScopes : HelixError()
-    object NotLoggedIn : HelixError()
-    object Unknown : HelixError()
-    object WhisperSelf : HelixError()
-    object NoVerifiedPhone : HelixError()
-    object RecipientBlockedUser : HelixError()
-    object WhisperRateLimited : HelixError()
-    object RateLimited : HelixError()
-    object BroadcasterTokenRequired : HelixError()
-    object UserNotAuthorized : HelixError()
-    object TargetAlreadyModded : HelixError()
-    object TargetIsVip : HelixError()
-    object TargetNotModded : HelixError()
-    object TargetNotBanned : HelixError()
-    object TargetAlreadyBanned : HelixError()
-    object TargetCannotBeBanned : HelixError()
-    object ConflictingBanOperation : HelixError()
-    object InvalidColor : HelixError()
-    data class MarkerError(val message: String?) : HelixError()
-    object CommercialRateLimited : HelixError()
-    object BroadcasterNotStreaming : HelixError()
-    object MissingLengthParameter : HelixError()
-    object RaidSelf : HelixError()
-    object NoRaidPending : HelixError()
-    data class NotInRange(val validRange: IntRange?) : HelixError()
-    object Forwarded : HelixError()
+sealed interface HelixError {
+    data object MissingScopes : HelixError
+    data object NotLoggedIn : HelixError
+    data object Unknown : HelixError
+    data object WhisperSelf : HelixError
+    data object NoVerifiedPhone : HelixError
+    data object RecipientBlockedUser : HelixError
+    data object WhisperRateLimited : HelixError
+    data object RateLimited : HelixError
+    data object BroadcasterTokenRequired : HelixError
+    data object UserNotAuthorized : HelixError
+    data object TargetAlreadyModded : HelixError
+    data object TargetIsVip : HelixError
+    data object TargetNotModded : HelixError
+    data object TargetNotBanned : HelixError
+    data object TargetAlreadyBanned : HelixError
+    data object TargetCannotBeBanned : HelixError
+    data object ConflictingBanOperation : HelixError
+    data object InvalidColor : HelixError
+    data class MarkerError(val message: String?) : HelixError
+    data object CommercialRateLimited : HelixError
+    data object BroadcasterNotStreaming : HelixError
+    data object MissingLengthParameter : HelixError
+    data object RaidSelf : HelixError
+    data object NoRaidPending : HelixError
+    data class NotInRange(val validRange: IntRange?) : HelixError
+    data object Forwarded : HelixError
 }

@@ -4,9 +4,9 @@ import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 
-sealed class UserPopupState {
-    data class Loading(val userName: UserName, val displayName: DisplayName) : UserPopupState()
-    data class Error(val throwable: Throwable? = null) : UserPopupState()
+sealed interface UserPopupState {
+    data class Loading(val userName: UserName, val displayName: DisplayName) : UserPopupState
+    data class Error(val throwable: Throwable? = null) : UserPopupState
     data class Success(
         val userId: UserId,
         val userName: UserName,
@@ -16,7 +16,7 @@ sealed class UserPopupState {
         val showFollowingSince: Boolean = false,
         val followingSince: String? = null,
         val isBlocked: Boolean = false
-    ) : UserPopupState()
+    ) : UserPopupState
 
-    data class NotLoggedIn(val userName: UserName, val displayName: DisplayName) : UserPopupState()
+    data class NotLoggedIn(val userName: UserName, val displayName: DisplayName) : UserPopupState
 }

@@ -7,7 +7,7 @@ enum class ThirdPartyEmoteType {
 
     companion object {
         fun mapFromPreferenceSet(preferenceSet: Set<String>): Set<ThirdPartyEmoteType> = preferenceSet.mapNotNull {
-            values().find { emoteType -> emoteType.name.lowercase() == it }
+            entries.find { emoteType -> emoteType.name.lowercase() == it }
         }.toSet()
     }
 }

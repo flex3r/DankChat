@@ -36,7 +36,7 @@ class IgnoresViewModel @Inject constructor(
     val currentTab = _currentTab.asStateFlow()
 
     fun setCurrentTab(position: Int) {
-        _currentTab.value = IgnoresTab.values()[position]
+        _currentTab.value = IgnoresTab.entries[position]
     }
 
     fun fetchIgnores() {

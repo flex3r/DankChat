@@ -5,32 +5,22 @@ import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.utils.extensions.partitionIsInstance
 
-sealed class DataLoadingStep {
+sealed interface DataLoadingStep {
 
-    object DankChatBadges : DataLoadingStep() {
-        override fun toString(): String = "DankChatBadges"
-    }
+    data object DankChatBadges : DataLoadingStep
 
-    object GlobalBadges : DataLoadingStep() {
-        override fun toString(): String = "GlobalBadges"
-    }
+    data object GlobalBadges : DataLoadingStep
 
-    object GlobalFFZEmotes : DataLoadingStep() {
-        override fun toString(): String = "GlobalFFZEmotes"
-    }
+    data object GlobalFFZEmotes : DataLoadingStep
 
-    object GlobalBTTVEmotes : DataLoadingStep() {
-        override fun toString(): String = "GlobalBTTVEmotes"
-    }
+    data object GlobalBTTVEmotes : DataLoadingStep
 
-    object GlobalSevenTVEmotes : DataLoadingStep() {
-        override fun toString(): String = "GlobalSevenTVEmotes"
-    }
+    data object GlobalSevenTVEmotes : DataLoadingStep
 
-    data class ChannelBadges(val channel: UserName, val channelId: UserId) : DataLoadingStep()
-    data class ChannelFFZEmotes(val channel: UserName, val channelId: UserId) : DataLoadingStep()
-    data class ChannelBTTVEmotes(val channel: UserName, val channelDisplayName: DisplayName, val channelId: UserId) : DataLoadingStep()
-    data class ChannelSevenTVEmotes(val channel: UserName, val channelId: UserId) : DataLoadingStep()
+    data class ChannelBadges(val channel: UserName, val channelId: UserId) : DataLoadingStep
+    data class ChannelFFZEmotes(val channel: UserName, val channelId: UserId) : DataLoadingStep
+    data class ChannelBTTVEmotes(val channel: UserName, val channelDisplayName: DisplayName, val channelId: UserId) : DataLoadingStep
+    data class ChannelSevenTVEmotes(val channel: UserName, val channelId: UserId) : DataLoadingStep
 }
 
 fun List<DataLoadingStep>.toMergedStrings(): List<String> {

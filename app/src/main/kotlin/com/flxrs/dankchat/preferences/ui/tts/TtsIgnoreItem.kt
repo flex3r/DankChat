@@ -1,7 +1,6 @@
 package com.flxrs.dankchat.preferences.ui.tts
 
-sealed class TtsIgnoreItem {
-    data class Entry(var user: String) : TtsIgnoreItem()
-
-    object AddEntry : TtsIgnoreItem()
+sealed interface TtsIgnoreItem {
+    data class Entry(var user: String) : TtsIgnoreItem
+    data object AddEntry : TtsIgnoreItem
 }

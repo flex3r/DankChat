@@ -145,7 +145,7 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
             viewPager.registerOnPageChangeCallback(pageChangeCallback)
             viewPager.adapter = highlightsAdapter
             TabLayoutMediator(tabs, viewPager) { tab, pos ->
-                val highlightTab = HighlightsTab.values()[pos]
+                val highlightTab = HighlightsTab.entries[pos]
                 tab.text = when (highlightTab) {
                     HighlightsTab.Messages         -> getString(R.string.tab_messages)
                     HighlightsTab.Users            -> getString(R.string.tab_users)
@@ -186,7 +186,7 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
             viewPager.registerOnPageChangeCallback(pageChangeCallback)
             viewPager.adapter = ignoresAdapter
             TabLayoutMediator(tabs, viewPager) { tab, pos ->
-                val ignoreTab = IgnoresTab.values()[pos]
+                val ignoreTab = IgnoresTab.entries[pos]
                 tab.text = when (ignoreTab) {
                     IgnoresTab.Messages -> getString(R.string.tab_messages)
                     IgnoresTab.Users    -> getString(R.string.tab_users)

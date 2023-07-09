@@ -31,9 +31,7 @@ open class ApiException(
         if (status != other.status) return false
         if (url != other.url) return false
         if (message != other.message) return false
-        if (cause != other.cause) return false
-
-        return true
+        return cause == other.cause
     }
 
     override fun hashCode(): Int {

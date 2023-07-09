@@ -14,7 +14,7 @@ class EmoteMenuAdapter(private val onEmoteClick: (emote: GenericEmote) -> Unit) 
 
     inner class ViewHolder(val adapter: EmoteAdapter, val binding: MenuTabListBinding) : RecyclerView.ViewHolder(binding.root)
 
-    override fun getItemCount() = EmoteMenuTab.values().size
+    override fun getItemCount() = EmoteMenuTab.entries.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val emoteAdapter = EmoteAdapter(onEmoteClick)

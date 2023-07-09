@@ -14,7 +14,7 @@ class SecretDankerModeTrigger(
         lastToast?.cancel()
         currentClicks++
         when (currentClicks) {
-            in 2 until SECRET_DANKER_MODE_CLICKS -> {
+            in 2..<SECRET_DANKER_MODE_CLICKS -> {
                 val clicksNeeded = SECRET_DANKER_MODE_CLICKS - currentClicks
                 lastToast = Toast
                     .makeText(v.context, "$clicksNeeded click(s) left to enable secret danker mode", Toast.LENGTH_SHORT)

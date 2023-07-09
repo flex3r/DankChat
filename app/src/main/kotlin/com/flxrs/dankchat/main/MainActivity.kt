@@ -101,6 +101,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
         viewModel.serviceEvents
             .flowWithLifecycle(lifecycle, minActiveState = Lifecycle.State.CREATED)
             .onEach {
+                Log.i(TAG, "Received service event: $it")
                 when (it) {
                     ServiceEvent.Shutdown -> handleShutDown()
                 }

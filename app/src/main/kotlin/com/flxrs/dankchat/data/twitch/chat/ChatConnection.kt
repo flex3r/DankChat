@@ -29,13 +29,13 @@ enum class ChatConnectionType {
     Write
 }
 
-sealed class ChatEvent {
-    data class Message(val message: IrcMessage) : ChatEvent()
-    data class Connected(val channel: UserName, val isAnonymous: Boolean) : ChatEvent()
-    data class ChannelNonExistent(val channel: UserName) : ChatEvent()
-    data class Error(val throwable: Throwable) : ChatEvent()
-    object LoginFailed : ChatEvent()
-    object Closed : ChatEvent()
+sealed interface ChatEvent {
+    data class Message(val message: IrcMessage) : ChatEvent
+    data class Connected(val channel: UserName, val isAnonymous: Boolean) : ChatEvent
+    data class ChannelNonExistent(val channel: UserName) : ChatEvent
+    data class Error(val throwable: Throwable) : ChatEvent
+    data object LoginFailed : ChatEvent
+    data object Closed : ChatEvent
 
     val isDisconnected: Boolean
         get() = this is Error || this is Closed

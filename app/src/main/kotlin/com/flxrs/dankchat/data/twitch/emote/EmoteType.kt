@@ -3,50 +3,50 @@ package com.flxrs.dankchat.data.twitch.emote
 import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserName
 
-sealed class EmoteType : Comparable<EmoteType> {
-    abstract val title: String
+sealed interface EmoteType : Comparable<EmoteType> {
+    val title: String
 
-    data class ChannelTwitchEmote(val channel: UserName) : EmoteType() {
+    data class ChannelTwitchEmote(val channel: UserName) : EmoteType {
         override val title = channel.value
     }
 
-    data class ChannelTwitchBitEmote(val channel: UserName) : EmoteType() {
+    data class ChannelTwitchBitEmote(val channel: UserName) : EmoteType {
         override val title = channel.value
     }
 
-    data class ChannelTwitchFollowerEmote(val channel: UserName) : EmoteType() {
+    data class ChannelTwitchFollowerEmote(val channel: UserName) : EmoteType {
         override val title = channel.value
     }
 
-    data class ChannelFFZEmote(val creator: DisplayName?) : EmoteType() {
+    data class ChannelFFZEmote(val creator: DisplayName?) : EmoteType {
         override val title = "FrankerFaceZ"
     }
 
-    data class ChannelBTTVEmote(val creator: DisplayName, val isShared: Boolean) : EmoteType() {
+    data class ChannelBTTVEmote(val creator: DisplayName, val isShared: Boolean) : EmoteType {
         override val title = "BetterTTV"
     }
 
-    data class ChannelSevenTVEmote(val creator: DisplayName?, val baseName: String?) : EmoteType() {
+    data class ChannelSevenTVEmote(val creator: DisplayName?, val baseName: String?) : EmoteType {
         override val title = "SevenTV"
     }
 
-    object GlobalTwitchEmote : EmoteType() {
+    data object GlobalTwitchEmote : EmoteType {
         override val title = "Twitch"
     }
 
-    data class GlobalFFZEmote(val creator: DisplayName?) : EmoteType() {
+    data class GlobalFFZEmote(val creator: DisplayName?) : EmoteType {
         override val title = "FrankerFaceZ"
     }
 
-    object GlobalBTTVEmote : EmoteType() {
+    data object GlobalBTTVEmote : EmoteType {
         override val title = "BetterTTV"
     }
 
-    data class GlobalSevenTVEmote(val creator: DisplayName?, val baseName: String?) : EmoteType() {
+    data class GlobalSevenTVEmote(val creator: DisplayName?, val baseName: String?) : EmoteType {
         override val title = "SevenTV"
     }
 
-    object RecentUsageEmote : EmoteType() {
+    data object RecentUsageEmote : EmoteType {
         override val title = ""
     }
 

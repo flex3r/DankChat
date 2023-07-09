@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.preferences.ui.ignores
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
@@ -18,7 +19,7 @@ class IgnoresTabAdapter(
 
     inner class ItemViewHolder(val adapter: IgnoresItemAdapter, val binding: TabListBinding) : RecyclerView.ViewHolder(binding.root)
 
-    override fun getItemCount(): Int = IgnoresTab.values().size
+    override fun getItemCount(): Int = IgnoresTab.entries.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val adapter = IgnoresItemAdapter(onAddItem, onDeleteItem)
@@ -50,6 +51,7 @@ class IgnoresTabAdapter(
             return oldItem.tab == newItem.tab
         }
 
+        @SuppressLint("DiffUtilEquals")
         override fun areContentsTheSame(oldItem: IgnoresTabItem, newItem: IgnoresTabItem): Boolean {
             return oldItem.items == newItem.items
         }

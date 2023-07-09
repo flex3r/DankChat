@@ -62,7 +62,7 @@ inline fun ImageView.loadImage(
 }
 
 inline fun <reified T : RecyclerView.ViewHolder> RecyclerView.forEachViewHolder(itemCount: Int, action: (Int, T) -> Unit) {
-    for (i in 0 until itemCount) {
+    for (i in 0..<itemCount) {
         val holder = findViewHolderForAdapterPosition(i) ?: continue
         if (holder is T) {
             action(i, holder)
@@ -78,7 +78,7 @@ inline fun <reified T : Any> TextView.forEachSpan(action: (T) -> Unit) {
 }
 
 inline fun <reified T : Any> LayerDrawable.forEachLayer(action: (T) -> Unit) {
-    for (i in 0 until numberOfLayers) {
+    for (i in 0..<numberOfLayers) {
         val drawable = getDrawable(i)
         if (drawable is T) {
             action(drawable)
