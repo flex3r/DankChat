@@ -2,33 +2,18 @@ package com.flxrs.dankchat.changelog
 
 import com.flxrs.dankchat.BuildConfig
 
-class DankChatVersion(val major: Int, val minor: Int, val patch: Int) : Comparable<DankChatVersion> {
+data class DankChatVersion(val major: Int, val minor: Int, val patch: Int) : Comparable<DankChatVersion> {
 
     override fun compareTo(other: DankChatVersion): Int = COMPARATOR.compare(this, other)
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is DankChatVersion) return false
-
-        if (major != other.major) return false
-        return minor == other.minor
-    }
-
-    override fun hashCode(): Int {
-        var result = major
-        result = 31 * result + minor
-        return result
-    }
 
     fun formattedString(): String = "$major.$minor.$patch"
 
     companion object {
+        private val CURRENT = fromString(BuildConfig.VERSION_NAME)!!
         private val COMPARATOR = Comparator
             .comparingInt(DankChatVersion::major)
             .thenComparingInt(DankChatVersion::minor)
-        private val VERSIONS_WITH_CHANGELOG = listOf(
-            DankChatVersion(major = 3, minor = 6, patch = 0),
-        )
+            .thenComparingInt(DankChatVersion::patch)
 
         fun fromString(version: String): DankChatVersion? {
             return version.split(".")
@@ -37,7 +22,7 @@ class DankChatVersion(val major: Int, val minor: Int, val patch: Int) : Comparab
                 ?.let { (major, minor, patch) -> DankChatVersion(major, minor, patch) }
         }
 
-        val CURRENT = fromString(BuildConfig.VERSION_NAME)
-        val HAS_CHANGELOG = CURRENT in VERSIONS_WITH_CHANGELOG
+        val LATEST_CHANGELOG = DankChatChangelog.entries.findLast { CURRENT >= it.version }
+        val HAS_CHANGELOG = LATEST_CHANGELOG != null
     }
 }
