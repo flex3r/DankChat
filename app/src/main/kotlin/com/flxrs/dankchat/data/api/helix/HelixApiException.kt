@@ -33,10 +33,12 @@ sealed interface HelixError {
     data object InvalidColor : HelixError
     data class MarkerError(val message: String?) : HelixError
     data object CommercialRateLimited : HelixError
-    data object BroadcasterNotStreaming : HelixError
+    data object CommercialNotStreaming : HelixError
     data object MissingLengthParameter : HelixError
     data object RaidSelf : HelixError
     data object NoRaidPending : HelixError
     data class NotInRange(val validRange: IntRange?) : HelixError
     data object Forwarded : HelixError
+    data object ShoutoutSelf : HelixError
+    data object ShoutoutTargetNotStreaming : HelixError
 }

@@ -234,4 +234,13 @@ class HelixApi(private val ktorClient: HttpClient, private val dankChatPreferenc
         parameter("broadcaster_id", broadcasterUserId)
         contentType(ContentType.Application.Json)
     }
+
+    suspend fun postShoutout(broadcasterUserId: UserId, targetUserId: UserId, moderatorUserId: UserId): HttpResponse? = ktorClient.post("chat/shoutouts") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthPrefix ?: return null
+        bearerAuth(oAuth)
+        parameter("from_broadcaster_id", broadcasterUserId)
+        parameter("to_broadcaster_id", targetUserId)
+        parameter("moderator_id", moderatorUserId)
+        contentType(ContentType.Application.Json)
+    }
 }

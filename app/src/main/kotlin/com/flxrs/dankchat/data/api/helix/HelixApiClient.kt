@@ -214,6 +214,11 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
             .data
     }
 
+    suspend fun postShoutout(broadcastUserId: UserId, targetUserId: UserId, moderatorUserId: UserId): Result<Unit> = runCatching {
+        helixApi.postShoutout(broadcastUserId, targetUserId, moderatorUserId)
+            .throwHelixApiErrorOnFailure()
+    }
+
     private suspend inline fun <reified T> pageUntil(amountToFetch: Int, request: (cursor: String?) -> HttpResponse?): List<T> {
         val initialPage = request(null)
             .throwHelixApiErrorOnFailure()
@@ -252,9 +257,11 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
                 message.startsWith(USER_MAY_NOT_BE_BANNED_ERROR, ignoreCase = true) -> HelixError.TargetCannotBeBanned
                 message.startsWith(USER_NOT_BANNED_ERROR, ignoreCase = true)        -> HelixError.TargetNotBanned
                 message.startsWith(INVALID_COLOR_ERROR, ignoreCase = true)          -> HelixError.InvalidColor
-                message.startsWith(BROADCASTER_NOT_LIVE_ERROR, ignoreCase = true)   -> HelixError.BroadcasterNotStreaming
+                message.startsWith(BROADCASTER_NOT_LIVE_ERROR, ignoreCase = true)   -> HelixError.CommercialNotStreaming
                 message.startsWith(MISSING_REQUIRED_PARAM_ERROR, ignoreCase = true) -> HelixError.MissingLengthParameter
                 message.startsWith(RAID_SELF_ERROR, ignoreCase = true)              -> HelixError.RaidSelf
+                message.startsWith(SHOUTOUT_SELF_ERROR, ignoreCase = true)          -> HelixError.ShoutoutSelf
+                message.startsWith(SHOUTOUT_NOT_LIVE_ERROR, ignoreCase = true)      -> HelixError.ShoutoutTargetNotStreaming
                 message.contains(NOT_IN_RANGE_ERROR, ignoreCase = true)             -> {
                     val match = INVALID_RANGE_REGEX.find(message)?.groupValues
                     val start = match?.getOrNull(1)?.toIntOrNull()
@@ -328,6 +335,8 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
         private const val MISSING_REQUIRED_PARAM_ERROR = "Missing required parameter"
         private const val RAID_SELF_ERROR = "The IDs in from_broadcaster_id and to_broadcaster_id cannot be the same."
         private const val NOT_IN_RANGE_ERROR = "must be in the range"
+        private const val SHOUTOUT_SELF_ERROR = "The broadcaster may not give themselves a Shoutout."
+        private const val SHOUTOUT_NOT_LIVE_ERROR = "The broadcaster is not streaming live or does not have one or more viewers."
         private val INVALID_RANGE_REGEX = """(\d+) through (\d+)""".toRegex()
     }
 }
