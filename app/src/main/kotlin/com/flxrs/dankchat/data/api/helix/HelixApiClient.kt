@@ -16,6 +16,8 @@ import com.flxrs.dankchat.data.api.helix.dto.MarkerRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.ModVipDto
 import com.flxrs.dankchat.data.api.helix.dto.PagedDto
 import com.flxrs.dankchat.data.api.helix.dto.RaidDto
+import com.flxrs.dankchat.data.api.helix.dto.ShieldModeRequestDto
+import com.flxrs.dankchat.data.api.helix.dto.ShieldModeStatusDto
 import com.flxrs.dankchat.data.api.helix.dto.StreamDto
 import com.flxrs.dankchat.data.api.helix.dto.UserBlockDto
 import com.flxrs.dankchat.data.api.helix.dto.UserDto
@@ -217,6 +219,14 @@ class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private
     suspend fun postShoutout(broadcastUserId: UserId, targetUserId: UserId, moderatorUserId: UserId): Result<Unit> = runCatching {
         helixApi.postShoutout(broadcastUserId, targetUserId, moderatorUserId)
             .throwHelixApiErrorOnFailure()
+    }
+
+    suspend fun putShieldMode(broadcastUserId: UserId, moderatorUserId: UserId, request: ShieldModeRequestDto): Result<ShieldModeStatusDto> = runCatching {
+        helixApi.putShieldMode(broadcastUserId, moderatorUserId, request)
+            .throwHelixApiErrorOnFailure()
+            .body<DataListDto<ShieldModeStatusDto>>()
+            .data
+            .first()
     }
 
     private suspend inline fun <reified T> pageUntil(amountToFetch: Int, request: (cursor: String?) -> HttpResponse?): List<T> {

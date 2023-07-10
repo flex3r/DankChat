@@ -22,6 +22,8 @@ enum class TwitchCommand(val trigger: String) {
     R9kBeta(trigger = "r9kbeta"),
     R9kBetaOff(trigger = "r9kbetaoff"),
     Raid(trigger = "raid"),
+    Shield(trigger = "shield"),
+    ShieldOff(trigger = "shieldoff"),
     Shoutout(trigger = "shoutout"),
     Slow(trigger = "slow"),
     SlowOff(trigger = "slowoff"),

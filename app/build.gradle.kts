@@ -116,6 +116,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.datetime)
 
 // AndroidX
     implementation(libs.androidx.core.ktx)

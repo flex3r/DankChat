@@ -13,6 +13,7 @@ import com.flxrs.dankchat.data.api.helix.dto.BanRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.ChatSettingsRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.CommercialRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.MarkerRequestDto
+import com.flxrs.dankchat.data.api.helix.dto.ShieldModeRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.WhisperRequestDto
 import com.flxrs.dankchat.data.repo.chat.UserState
 import com.flxrs.dankchat.data.repo.command.CommandResult
@@ -80,6 +81,9 @@ class TwitchCommandRepository @Inject constructor(
             TwitchCommand.R9kBeta        -> enableUniqueChatMode(command, currentUserId, context)
             TwitchCommand.R9kBetaOff     -> disableUniqueChatMode(command, currentUserId, context)
             TwitchCommand.Raid           -> startRaid(command, context)
+            TwitchCommand.Shield,
+            TwitchCommand.ShieldOff      -> toggleShieldMode(command, currentUserId, context)
+
             TwitchCommand.Slow           -> enableSlowMode(command, currentUserId, context)
             TwitchCommand.SlowOff        -> disableSlowMode(command, currentUserId, context)
             TwitchCommand.Subscribers    -> enableSubscriberMode(command, currentUserId, context)
@@ -619,11 +623,29 @@ class TwitchCommandRepository @Inject constructor(
             return CommandResult.AcceptedTwitchCommand(command, response = "No user matching that username.")
         }
 
-        val result = helixApiClient.postShoutout(context.channelId, target.id, currentUserId)
-        return result.fold(
+        return helixApiClient.postShoutout(context.channelId, target.id, currentUserId).fold(
             onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "Sent shoutout to ${target.displayName}") },
             onFailure = {
                 val response = "Failed to send shoutout - ${it.toErrorMessage(command)}"
+                CommandResult.AcceptedTwitchCommand(command, response)
+            }
+        )
+    }
+
+    private suspend fun toggleShieldMode(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
+        val enable = command == TwitchCommand.Shield
+        val request = ShieldModeRequestDto(isActive = enable)
+
+        return helixApiClient.putShieldMode(context.channelId, currentUserId, request).fold(
+            onSuccess = {
+                val response = when {
+                    it.isActive -> "Shield mode was activated."
+                    else        -> "Shield mode was deactivated."
+                }
+                CommandResult.AcceptedTwitchCommand(command, response)
+            },
+            onFailure = {
+                val response = "Failed to update shield mode - ${it.toErrorMessage(command)}"
                 CommandResult.AcceptedTwitchCommand(command, response)
             }
         )
