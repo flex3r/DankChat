@@ -159,7 +159,6 @@
     <string name="host">Anfitrião</string>
     <string name="reset">Reinicia</string>
     <string name="oauth_token">Token OAuth</string>
-    <string name="verify_login">Verficar &amp; Salvar</string>
     <string name="custom_login_hint">Somente as IDs de clientes que funcionam com a API Helix da Twitch são suportadas</string>
     <string name="custom_login_show_scopes">Exibir campos obrigatórios</string>
     <string name="custom_login_required_scopes">Campos obrigatórios</string>
