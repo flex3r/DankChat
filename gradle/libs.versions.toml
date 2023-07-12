@@ -33,7 +33,7 @@ material = "1.9.0"
 mdcComposeAdapter = "1.0.21"
 flexBox = "3.0.0"
 
-colorPicker = "3.0.1"
+colorPicker = "3.1.0"
 
 junit = "5.9.3"
 mockk = "1.13.5"
