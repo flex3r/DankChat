@@ -158,6 +158,18 @@
     <string name="recent_uploads_clear">Limpar envios</string>
     <string name="host">Hospedagem</string>
     <string name="reset">Redefinir</string>
+    <string name="oauth_token">Token OAuth</string>
+    <string name="verify_login">Verificar &amp; salvar</string>
+    <string name="custom_login_hint">Somente as IDs de clientes que funcionam com a API Helix da Twitch são suportadas</string>
+    <string name="custom_login_show_scopes">Mostrar campos obrigatórios</string>
+    <string name="custom_login_required_scopes">Campos obrigatórios</string>
+    <string name="custom_login_missing_scopes_title">Campos faltando</string>
+    <string name="custom_login_missing_scopes_text">Alguns campos necessários para o DankChat estão faltando no token e algumas funcionalidades podem não funcionar como esperado. Você quer continuar usando este token?\nFaltando: %1$s</string>
+    <string name="custom_login_missing_scopes_continue">Continuar</string>
+    <string name="custom_login_error_missing_scopes">Campos faltando: %1$s</string>
+    <string name="custom_login_error_fallback">Erro: %1$s</string>
+    <string name="custom_login_error_empty_token">O token não pode estar vazio</string>
+    <string name="custom_login_error_invalid_token">Token inválido</string>
     <string name="badge_tooltip_moderator">Moderador</string>
     <string name="badge_tooltip_predictions">Votou \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">Grupo %1$s</string>
@@ -260,6 +272,9 @@
     <string name="preference_retain_webview_summary">Permite a prevenção experimental de recargas de stream após mudanças de orientação ou reabertura do DankChat.</string>
     <string name="preference_show_changelogs">Mostrar as alterações após atualizar</string>
     <string name="preference_whats_new_header">Novidades</string>
+    <string name="preference_custom_login_title">Login customizado</string>
+    <string name="preference_bypass_command_handling_title">Ignorar manipulação de comandos da Twitch</string>
+    <string name="preference_bypass_command_handling_summary">Desativa a interceptação de comandos da Twitch e os envia para o chat</string>
     <string name="reset_media_uploader_dialog_title">Redefinir Configurações do Carregador de Mídia</string>
     <string name="reset_media_uploader_dialog_message">Tem certeza que quer redefinir as configurações do carregador de mídia para o padrão?</string>
     <string name="reset_media_uploader_dialog_positive">Redefinir</string>
@@ -343,6 +358,7 @@
     <string name="changelog_sheet_title">DankChat teve uma atualização!</string>
     <string name="changelog_sheet_subtitle">O que há de novo na versão %1$s:</string>
     <string name="changelog_3_6">Suporte inicial para respostas e visualização de tópicos\nAdicionado função para recuperar mensagens perdidas após fazer reconexões\nNovo design das janelas informativas\nAdicionado nova janela informativa ao ter um pressionar longo nas mensagens\nAdicionado nova janela informativa ao pressionar em um emote\nAdicionado nova janela informativa para alterações recentes\nAdicionado suporte para os emotes animados do FFZ\nMelhora no layout do menu de emote\nMigração para o novo endpoint de seguidores, onde agora é limitado para o Streamer e aos Moderadores devido a restrições da Twitch</string>
+    <string name="changelog_3_7_3">Adicionado comando /shoutout\nAdicionado comandos /shield e /shieldoff\nConcertado erros de carregamento de dados quando o login expirava\nAdicionado opção de desenvolvedor para definir um token de acesso customizado\nAdicionado opção de desenvolvedor para ignorar a manipulação de comandos da Twitch\nVárias traduções novas e updates de manutenção!</string>
     <string name="confirm_login_cancel_title">Confirmar cancelamento de login</string>
     <string name="confirm_login_cancel_message">Você tem certeza que deseja cancelar o processo de Login?</string>
     <string name="confirm_login_cancel_positive_button">Cancelar login</string>
