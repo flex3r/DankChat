@@ -78,14 +78,12 @@ jobs:
 
       - name: Update debug release
         if: (github.event_name == 'push' && github.ref == 'refs/heads/develop')
-        uses: meeDamian/github-release@v2.0.3
+        uses: ncipollo/release-action@v1.12.0
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           tag: debug
           name: Debug APK
-          files: ${{ github.workspace }}/app/build/outputs/apk/debug/DankChat-debug.apk
-          gzip: false
-          allow_override: true
+          artifacts: ${{ github.workspace }}/app/build/outputs/apk/debug/DankChat-debug.apk
+          allowUpdates: true
 
   build-release:
     name: Generate signed release apk
@@ -134,11 +132,9 @@ jobs:
           tag_name: release
 
       - name: Update signed release
-        uses: meeDamian/github-release@v2.0.3
+        uses: ncipollo/release-action@v1.12.0
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag: release
-          name: Signed release APK
-          files: ${{ github.workspace }}/app/build/outputs/apk/release/*.apk
-          gzip: false
-          allow_override: true
+            tag: release
+            name: Signed release APK
+            artifacts: ${{ github.workspace }}/app/build/outputs/apk/release/*.apk
+            allowUpdates: true
