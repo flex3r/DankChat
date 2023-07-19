@@ -2,7 +2,9 @@ package com.flxrs.dankchat.preferences.ui
 
 import android.os.Bundle
 import android.text.util.Linkify
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.toSpannable
 import androidx.core.text.util.LinkifyCompat
@@ -27,6 +29,43 @@ class OverviewSettingsFragment : MaterialPreferenceFragmentCompat() {
     @Inject
     lateinit var dankChatPreferences: DankChatPreferenceStore
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        return super.onCreateView(inflater, container, savedInstanceState).apply {
+            findPreference<Preference>(getString(R.string.preference_about_key))?.apply {
+                val spannable = buildString {
+                    append(context.getString(R.string.preference_about_summary, BuildConfig.VERSION_NAME))
+                    append("\n")
+                    append(GITHUB_URL)
+                    append("\n\n")
+                    append(context.getString(R.string.preference_about_tos))
+                    append("\n")
+                    append(TWITCH_TOS_URL)
+                }.toSpannable()
+                LinkifyCompat.addLinks(spannable, Linkify.WEB_URLS)
+                summary = spannable
+            }
+
+            findPreference<Preference>(getString(R.string.preference_logout_key))?.apply {
+                isEnabled = dankChatPreferences.isLoggedIn
+                setOnPreferenceClickListener {
+                    with(navController) {
+                        previousBackStackEntry?.savedStateHandle?.set(MainFragment.LOGOUT_REQUEST_KEY, true)
+                        navigateUp()
+                    }
+                    true
+                }
+            }
+
+            findPreference<Preference>(getString(R.string.preference_whats_new_key))?.apply {
+                isVisible = DankChatVersion.HAS_CHANGELOG
+                setOnPreferenceClickListener {
+                    navigateSafe(R.id.action_overviewSettingsFragment_to_changelogSheetFragment)
+                    true
+                }
+            }
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -36,40 +75,6 @@ class OverviewSettingsFragment : MaterialPreferenceFragmentCompat() {
             supportActionBar?.apply {
                 setDisplayHomeAsUpEnabled(true)
                 title = getString(R.string.settings)
-            }
-        }
-
-        val isLoggedIn = dankChatPreferences.isLoggedIn
-        findPreference<Preference>(getString(R.string.preference_about_key))?.apply {
-            val spannable = buildString {
-                append(context.getString(R.string.preference_about_summary, BuildConfig.VERSION_NAME))
-                append("\n")
-                append(GITHUB_URL)
-                append("\n\n")
-                append(context.getString(R.string.preference_about_tos))
-                append("\n")
-                append(TWITCH_TOS_URL)
-            }.toSpannable()
-            LinkifyCompat.addLinks(spannable, Linkify.WEB_URLS)
-            summary = spannable
-        }
-
-        findPreference<Preference>(getString(R.string.preference_logout_key))?.apply {
-            isEnabled = isLoggedIn
-            setOnPreferenceClickListener {
-                with(navController) {
-                    previousBackStackEntry?.savedStateHandle?.set(MainFragment.LOGOUT_REQUEST_KEY, true)
-                    navigateUp()
-                }
-                true
-            }
-        }
-
-        findPreference<Preference>(getString(R.string.preference_whats_new_key))?.apply {
-            isVisible = DankChatVersion.HAS_CHANGELOG
-            setOnPreferenceClickListener {
-                navigateSafe(R.id.action_overviewSettingsFragment_to_changelogSheetFragment)
-                true
             }
         }
     }
