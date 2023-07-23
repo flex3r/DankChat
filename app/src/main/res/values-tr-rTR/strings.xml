@@ -16,7 +16,6 @@
     <string name="error_dialog_title">Hata yakalandı: %1$s</string>
     <string name="add_channel">Kanal ekle</string>
     <string name="manage_channels">Kanalları yönet</string>
-    <string name="report_channel">Kanalı şikayet et</string>
     <string name="block_channel">Kanalı engelle</string>
     <string name="channel">Kanal</string>
     <string name="open_channel">Kanalı aç</string>
