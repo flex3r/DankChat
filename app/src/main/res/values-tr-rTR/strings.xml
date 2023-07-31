@@ -8,7 +8,7 @@
     <string name="reconnect">Yeniden bağlan</string>
     <string name="clear_chat">Sohbeti temizle</string>
     <string name="add_dialog_title">Kanal ekle</string>
-    <string name="edit_dialog_title">Kanalın adını değiştir</string>
+    <string name="edit_dialog_title">Kanal adını değiştir</string>
     <string name="dialog_ok">Tamam</string>
     <string name="dialog_cancel">İptal</string>
     <string name="dialog_dismiss">Reddet</string>
@@ -16,7 +16,6 @@
     <string name="error_dialog_title">Hata yakalandı: %1$s</string>
     <string name="add_channel">Kanal ekle</string>
     <string name="manage_channels">Kanalları yönet</string>
-    <string name="report_channel">Kanalı şikayet et</string>
     <string name="block_channel">Kanalı engelle</string>
     <string name="channel">Kanal</string>
     <string name="open_channel">Kanalı aç</string>
@@ -163,6 +162,13 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
 %1$s</string>
     <string name="recent_uploads_clear">Yüklemeleri temizle</string>
     <string name="reset">Sıfırla</string>
+    <string name="verify_login">Doğrula ve Kaydet</string>
+    <string name="custom_login_show_scopes">Gerekli kapsamları göster</string>
+    <string name="custom_login_required_scopes">Gerekli kapsamlar</string>
+    <string name="custom_login_missing_scopes_title">Eksik kapsamlar</string>
+    <string name="custom_login_missing_scopes_continue">Sürdür</string>
+    <string name="custom_login_error_missing_scopes">Eksik kapsamlar: %1$s</string>
+    <string name="custom_login_error_fallback">Hata: %1$s</string>
     <string name="badge_tooltip_moderator">Moderatör</string>
     <string name="badge_tooltip_predictions">Tahmin: \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">Kademe %1$s</string>
@@ -264,6 +270,8 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_retain_webview_summary">Yön değişikliklerinden ya da DankChat\'in yeniden açılmasından sonra yayın yenilemelerinin deneysel önlenmesini etkinleştirir.</string>
     <string name="preference_show_changelogs">Güncellemeden sonra değişiklik günlüklerini göster</string>
     <string name="preference_whats_new_header">Yenilikler</string>
+    <string name="preference_custom_login_title">Özel giriş</string>
+    <string name="preference_bypass_command_handling_summary">Twitch komutlarının yakalanmasını etkisizleştirir ve bunun yerine onları sohbete gönderir</string>
     <string name="reset_media_uploader_dialog_title">Medya Yükleyici Ayarlarını Sıfırla</string>
     <string name="reset_media_uploader_dialog_message">Medya yükleyici ayarlarını varsayılana sıfırlamak istediğinize emin misiniz?</string>
     <string name="reset_media_uploader_dialog_positive">Sıfırla</string>
