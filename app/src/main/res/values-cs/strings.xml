@@ -376,7 +376,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
         <item quantity="other">Živě s %d diváky</item>
     </plurals>
     <plurals name="viewers_and_uptime">
-        <item quantity="one">Živě s %1$d již: %2$s</item>
+        <item quantity="one">Živě s %1$d divákem již: %2$s</item>
         <item quantity="few">Živě se %1$d již: %2$s</item>
         <item quantity="many">Živě s %1$d již: %2$s</item>
         <item quantity="other">Živě s %1$d již: %2$s</item>
