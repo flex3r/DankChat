@@ -364,6 +364,10 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
         <item quantity="one">%d izleyiciyle yayında</item>
         <item quantity="other">%d izleyici ile canlı</item>
     </plurals>
+    <plurals name="viewers_and_uptime">
+        <item quantity="one">%1$d izleyiciyle %2$s süredir yayında</item>
+        <item quantity="other">%1$d izleyiciyle %2$s süredir yayında</item>
+    </plurals>
     <plurals name="months">
         <item quantity="one">%d aylık</item>
         <item quantity="other">%d aylık</item>
