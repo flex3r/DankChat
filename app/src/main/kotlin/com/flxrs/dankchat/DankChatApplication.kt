@@ -6,6 +6,8 @@ import android.content.res.Configuration
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.getSystemService
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.PredictiveBackControl
 import androidx.preference.PreferenceManager
 import coil.ImageLoader
 import coil.ImageLoaderFactory
@@ -40,8 +42,10 @@ class DankChatApplication : Application(), ImageLoaderFactory {
     @Inject
     lateinit var ignoresRepository: IgnoresRepository
 
+    @OptIn(PredictiveBackControl::class)
     override fun onCreate() {
         super.onCreate()
+        FragmentManager.enablePredictiveBack(false)
         setupThemeMode()
 
         highlightsRepository.runMigrationsIfNeeded()
