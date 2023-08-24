@@ -78,7 +78,7 @@ jobs:
 
       - name: Update debug release
         if: (github.event_name == 'push' && github.ref == 'refs/heads/develop')
-        uses: ncipollo/release-action@v1.12.0
+        uses: ncipollo/release-action@v1.13.0
         with:
           tag: debug
           name: Debug APK
@@ -132,7 +132,7 @@ jobs:
           tag_name: release
 
       - name: Update signed release
-        uses: ncipollo/release-action@v1.12.0
+        uses: ncipollo/release-action@v1.13.0
         with:
             tag: release
             name: Signed release APK
