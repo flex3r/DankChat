@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -68,8 +69,6 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
     var isBound = false
     var channelToOpen: UserName? = null
 
-//    override fun getDelegate() = BaseContextWrappingDelegate(super.getDelegate())
-
     override fun onCreate(savedInstanceState: Bundle?) {
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         val isTrueDarkModeEnabled = preferences.getBoolean(getString(R.string.preference_true_dark_theme_key), false)
@@ -91,7 +90,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
         }
 
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableEdgeToEdge()
         bindingRef = DataBindingUtil.setContentView(this, R.layout.main_activity)
 
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.oAuthKey.isNullOrBlank()) {
