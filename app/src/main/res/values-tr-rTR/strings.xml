@@ -16,6 +16,7 @@
     <string name="error_dialog_title">Hata yakalandı: %1$s</string>
     <string name="add_channel">Kanal ekle</string>
     <string name="manage_channels">Kanalları yönet</string>
+    <string name="report_channel">Kanalı bildir</string>
     <string name="block_channel">Kanalı engelle</string>
     <string name="channel">Kanal</string>
     <string name="open_channel">Kanalı aç</string>
@@ -29,11 +30,11 @@
     <string name="take_picture">Fotoğraf çek</string>
     <string name="record_video">Video çek</string>
     <string name="choose_media">Galeriden seç</string>
-    <string name="resume_scroll">Kaydırmaya devam et</string>
-    <string name="uploading_image">Resim yükleniyor</string>
+    <string name="resume_scroll">Kaydırmayı sürdür</string>
+    <string name="uploading_image">Dosya yükleniyor</string>
     <string name="settings">Ayarlar</string>
     <string name="external_upload_disclaimer">Dış barındırma %1$s tarafından sağlanmaktadır, kendi sorumluluğunuzda kullanınız.</string>
-    <string name="nuuls_upload_title">Özel resim yükleme</string>
+    <string name="nuuls_upload_title">Özel medya yükleme</string>
     <string name="snackbar_message_copied">Mesaj kopyalandı</string>
     <string name="snackbar_message_id_copied">Mesaj ID\'si kopyalandı</string>
     <string name="snackbar_error_copied">Hata bilgisi kopyalandı</string>
@@ -42,7 +43,7 @@
     <string name="notification_message">DankChat arka planda çalışıyor</string>
     <string name="emote_menu_hint">İfade menüsünü aç</string>
     <string name="login_title">Twitch.tv\'ye giriş yap</string>
-    <string name="hint_connected">Sohbet etmeye başla</string>
+    <string name="hint_connected">Sohbete başla</string>
     <string name="hint_disconnected">Bağlantı kesildi</string>
     <string name="hint_not_logged_int">Giriş yapılmadı</string>
     <string name="hint_replying">Yanıt</string>
@@ -58,7 +59,7 @@
     <string name="snackbar_data_reloaded">İfadeler yenilendi</string>
     <string name="snackbar_data_load_failed_cause">Veri yüklenemedi: %1$s</string>
     <string name="snackbar_data_load_failed_multiple_causes">Birden çok hata ile başarısız veri yükleme:\n%1$s</string>
-    <string name="snackbar_paste">yapıştır</string>
+    <string name="snackbar_paste">Yapıştır</string>
     <string name="add_channel_hint">Kanal adı</string>
     <string name="emote_menu_tab_recent">Son kullanılanlar</string>
     <string name="emote_menu_tab_subs">Abonelikler</string>
@@ -72,7 +73,7 @@
     <string name="system_message_history_unavailable">Mesaj tarihi servisi kullanılamıyor</string>
     <string name="system_message_history_recovering">Mesaj tarihi servisi düzelmekte, mesaj tarihinde boşluklar olabilir.</string>
     <string name="system_message_history_ignored">Bu kanal servis dışında olduğu için mesaj tarihi kullanılamıyor.</string>
-    <string name="system_message_no_history">Tarihi mesajları görmüyorsunuz çünkü son mesajlar entegrasyonunu reddettiniz.</string>
+    <string name="system_message_no_history">Son mesajlar entegrasyonundan ayrıldığınız için tarihsel mesajları görmüyorsunuz.</string>
     <string name="system_message_ffz_emotes_failed">FFZ ifadeleri yüklenemedi (Hata %1$s)</string>
     <string name="system_message_bttv_emotes_failed">BTTV ifadeleri yüklenemedi (Hata %1$s)</string>
     <string name="system_message_7tv_emotes_failed">7TV ifadeleri yüklenemedi (Hata %1$s)</string>
@@ -87,13 +88,13 @@ Servis bu hizmeti verebilmek için sizin (ve başkalarının) ziyaret ettiği ka
 
 - Bu özelliği kullanmamak için aşağıda \"Reddet\"e basabilir ya da daha sonra mesaj tarihi yüklenmesini ayarlarda devre dışı bırakabilirsiniz.
 - https://recent-messages.robotty.de/ adresini ziyaret ederek bu servis hakkında daha çok öğrenebilir ya da kendi kanalınız için mesaj tarihini devre dışı bırakabilirsiniz.</string>
-    <string name="dialog_optin">Kabul et</string>
-    <string name="dialog_optout">Reddet</string>
+    <string name="dialog_optin">Katıl</string>
+    <string name="dialog_optout">Ayrıl</string>
     <string name="more">Daha fazla</string>
     <string name="mentions_title">Bahsetmeler / Fısıltılar</string>
     <string name="replies_title">Yanıt Akışı</string>
     <string name="whispers">Fısıltılar</string>
-    <string name="notification_whisper_mention">%1$s sana bir fısıltı gönderdi</string>
+    <string name="notification_whisper_mention">%1$s size bir fısıltı gönderdi</string>
     <string name="mentions">Bahsetmeler</string>
     <string name="confirm_channel_removal_title">Kanalı kaldırmayı onayla</string>
     <string name="confirm_channel_removal_message">Bu kanalı kaldırmak istediğinizden emin misiniz?</string>
@@ -142,8 +143,8 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="confirm_user_delete_message">Bu mesajı silmek istediğinizden emin misiniz?</string>
     <string name="confirm_user_delete_positive_button">Sil</string>
     <string name="confirm_user_roomstate_title">Sohbet modlarını güncelle</string>
-    <string name="roomstate_emote">Sadece İfade</string>
-    <string name="roomstate_subs">Sadece aboneler</string>
+    <string name="roomstate_emote">Yalnız ifadeler</string>
+    <string name="roomstate_subs">Yalnız aboneler</string>
     <string name="roomstate_slow">Yavaş mod</string>
     <string name="roomstate_r9k">R9K modu</string>
     <string name="roomstate_follow">Takipçiler modu</string>
@@ -154,7 +155,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="command_trigger_hint">Tetik</string>
     <string name="command__hint">Komut</string>
     <string name="commands_title">Özel komutlar</string>
-    <string name="user_popup_report">Şikayet et</string>
+    <string name="user_popup_report">Bildir</string>
     <string name="tts_ignore_list_add_user">Kullanıcı ekle</string>
     <string name="tts_ignore_list_remove_user">Kullanıcıyı kaldır</string>
     <string name="tts_ignore_list_user_hint">Kullanıcı</string>
@@ -162,13 +163,17 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
 %1$s</string>
     <string name="recent_uploads_clear">Yüklemeleri temizle</string>
     <string name="reset">Sıfırla</string>
+    <string name="oauth_token">OAuth jetonu</string>
     <string name="verify_login">Doğrula ve Kaydet</string>
     <string name="custom_login_show_scopes">Gerekli kapsamları göster</string>
     <string name="custom_login_required_scopes">Gerekli kapsamlar</string>
     <string name="custom_login_missing_scopes_title">Eksik kapsamlar</string>
+    <string name="custom_login_missing_scopes_text">DankChat\'in gereksediği kimi kapsamlar jetonda eksik ve kimi işlevler beklendiği gibi çalışmayabilir. Bu jetonu kullanmayı sürdürmek istiyor musunuz?\nEksik: %1$s</string>
     <string name="custom_login_missing_scopes_continue">Sürdür</string>
     <string name="custom_login_error_missing_scopes">Eksik kapsamlar: %1$s</string>
     <string name="custom_login_error_fallback">Hata: %1$s</string>
+    <string name="custom_login_error_empty_token">Jeton boş olamaz</string>
+    <string name="custom_login_error_invalid_token">Jeton geçersiz</string>
     <string name="badge_tooltip_moderator">Moderatör</string>
     <string name="badge_tooltip_predictions">Tahmin: \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">Kademe %1$s</string>
@@ -176,7 +181,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_mention_format_title">Bahsetme biçimi</string>
     <string name="preference_mention_format_summary">Bir kullanıcı adına tıklandığındaki bahsetme biçimini değiştir</string>
     <string name="preference_roomstate_title">Kanal modu bilgisini göster</string>
-    <string name="preference_roomstate_summary">Abonelere özel mod gibi şu anki kanal modu hakkında bilgi gösterir</string>
+    <string name="preference_roomstate_summary">Yalnız aboneler modu gibi şimdiki kanal moduna ilişkin bilgi gösterir</string>
     <string name="preference_streaminfo_title">Yayın bilgisini göster</string>
     <string name="preference_streaminfo_summary">Canlılık durumunu ve izleyici sayısını gösterir</string>
     <string name="preference_notification_title">Bahsetme bildirimleri göster</string>
@@ -210,7 +215,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_load_messages_on_reconnect_summary">Bağlantı kesintileri sırasında alınmamış yitik mesajları almayı dener</string>
     <string name="preference_message_history_header">Mesaj tarihi</string>
     <string name="preference_message_history_dashboard_title">Gösterge panelini aç</string>
-    <string name="preference_message_history_dashboard_summary">Servis hakkında daha çok öğrenin ve kendi kanalınız için mesaj tarihini devre dışı bırakın</string>
+    <string name="preference_message_history_dashboard_summary">Servise ilişkin daha fazlasını öğrenin ve kendi kanalınız için mesaj tarihini etkisizleştirin</string>
     <string name="preference_channel_data_header">Kanal verisi</string>
     <string name="preference_developer_header">Geliştirici seçenekleri</string>
     <string name="preference_debug_mode_title">Hata ayıklama modu</string>
@@ -243,7 +248,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_tts_force_english_title">Dili İngilizceye zorla</string>
     <string name="preference_tts_force_english_summary">TTS sesini sistem varsayılanı yerine İngilizceye zorla</string>
     <string name="preference_visible_emotes_title">Görünür üçüncü taraf ifadeler</string>
-    <string name="preference_about_tos">Twitch hizmet şartları ile kullanıcı politikası:</string>
+    <string name="preference_about_tos">Twitch hizmet koşulları ile kullanıcı politikası:</string>
     <string name="preference_show_chip_actions_title">Çip eylemlerini göster</string>
     <string name="preference_uploader_header">Medya yükleyici</string>
     <string name="preference_uploader_configure_title">Yükleyiciyi ayarla</string>
@@ -357,8 +362,12 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="confirm_login_cancel_message">Giriş sürecini iptal etmek istediğinizden emin misiniz?</string>
     <string name="confirm_login_cancel_positive_button">Girişi iptal et</string>
     <plurals name="viewers">
-        <item quantity="one">%d izleyici ile canlı</item>
+        <item quantity="one">%d izleyiciyle yayında</item>
         <item quantity="other">%d izleyici ile canlı</item>
+    </plurals>
+    <plurals name="viewers_and_uptime">
+        <item quantity="one">%1$d izleyiciyle %2$s süredir yayında</item>
+        <item quantity="other">%1$d izleyiciyle %2$s süredir yayında</item>
     </plurals>
     <plurals name="months">
         <item quantity="one">%d aylık</item>

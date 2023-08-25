@@ -163,6 +163,18 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="recent_uploads_clear">Wyczyść przesłane</string>
     <string name="host">Host</string>
     <string name="reset">Reset</string>
+    <string name="oauth_token">Token OAuth</string>
+    <string name="verify_login">Zweryfikuj &amp; Zapisz</string>
+    <string name="custom_login_hint">Obsługiwane są tylko ID klienta współpracujące z API Helix Twitcha</string>
+    <string name="custom_login_show_scopes">Pokaż wymagane zakresy</string>
+    <string name="custom_login_required_scopes">Wymagane zakresy</string>
+    <string name="custom_login_missing_scopes_title">Brakujące zakresy</string>
+    <string name="custom_login_missing_scopes_text">W tokenie brakuje niektórych zakresów wymaganych przez DankChat, a niektóre funkcje mogą nie działać zgodnie z oczekiwaniami. Czy chcesz nadal używać tego tokena?\nBrakuje: %1$s</string>
+    <string name="custom_login_missing_scopes_continue">Kontynuuj</string>
+    <string name="custom_login_error_missing_scopes">Brakujące zakresy: %1$s</string>
+    <string name="custom_login_error_fallback">Błąd: %1$s</string>
+    <string name="custom_login_error_empty_token">Token nie może być pusty</string>
+    <string name="custom_login_error_invalid_token">Token jest nieprawidłowy</string>
     <string name="badge_tooltip_moderator">Moderator</string>
     <string name="badge_tooltip_predictions">Przewidział(-a) \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">Poziom %1$s</string>
@@ -201,6 +213,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_suggestions_summary">Pokazuj sugestie i aktywnych użytkowników podczas pisania</string>
     <string name="preference_load_message_history_title">Ładuj historię wiadomości podczas startu</string>
     <string name="preference_load_messages_on_reconnect_title">Załaduj historie wiadomości po ponownym połączeniu</string>
+    <string name="preference_load_messages_on_reconnect_summary">Próbuje pobrać brakujące wiadomości, które nie zostały odebrane podczas zerwania połączenia</string>
     <string name="preference_message_history_header">Historia wiadomości</string>
     <string name="preference_message_history_dashboard_title">Otwórz dashboard</string>
     <string name="preference_message_history_dashboard_summary">Dowiedz się więcej o usłudze i wyłącz historię wiadomości dla swojego kanału</string>
@@ -264,6 +277,9 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_retain_webview_summary">Umożliwia eksperymentalne zapobieganie przeładowaniu transmisji po zmianie ustawień lub ponownym otwarciu DankChat.</string>
     <string name="preference_show_changelogs">Pokaż dziennik zmian po aktualizacji</string>
     <string name="preference_whats_new_header">Co nowego</string>
+    <string name="preference_custom_login_title">Niestandardowy login</string>
+    <string name="preference_bypass_command_handling_title">Pomiń obsługę poleceń Twitcha</string>
+    <string name="preference_bypass_command_handling_summary">Wyłącza przechwytywanie poleceń Twitcha i zamiast tego wysyła je na czat.</string>
     <string name="reset_media_uploader_dialog_title">Zresetuj ustawienia przesłania media</string>
     <string name="reset_media_uploader_dialog_message">Czy jesteś pewien, że chcesz zresetować ustawienia przesłania media do domyślnych?</string>
     <string name="reset_media_uploader_dialog_positive">Zresetuj</string>
@@ -346,6 +362,8 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="emote_copied">Skopiowano emotkę</string>
     <string name="changelog_sheet_title">DankChat został zaktualizowany!</string>
     <string name="changelog_sheet_subtitle">Co nowego w v%1$s:</string>
+    <string name="changelog_3_6">Wstępne wsparcie dla odpowiadania i przeglądania wątków odpowiedzi\nDodano ustawienie wczytywania brakujących wiadomości po ponownym połączeniu\nNowy wygląd modalnego dolnego arkusza\nDodano nowy arkusz dolny wiadomości poprzez długie przytrzymanie wiadomości\nDodano nowy arkusz dolny emotek po naciśnięciu emotki\nDodano nowy arkusz dolny dziennika zmian\nDodano wsparcie dla animowanych emotek FFZ\nUlepszono układ menu emotek\nZmigrowano do nowego punktu końcowego obserwujących, który jest teraz ograniczony do nadawców i moderatorów z powodu ograniczeń Twitcha.</string>
+    <string name="changelog_3_7_3">Dodano komendę /shoutout\nDodano komendy /shield i /shieldoff\nPoprawiono błędy ładowania danych po wygaśnięciu loginu\nDodano ustawienie dewelopera, aby ustawić niestandardowy token dostępu\nDodano ustawienie dewelopera, aby ominąć obsługę poleceń Twitcha\nDużo tłumaczeń i aktualizacji konserwacyjnych!</string>
     <string name="confirm_login_cancel_title">Potwierdź anulowanie loginu</string>
     <string name="confirm_login_cancel_message">Czy na pewno chcesz anulować proces logowania?</string>
     <string name="confirm_login_cancel_positive_button">Anuluj login</string>
@@ -354,6 +372,12 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
         <item quantity="few">Na żywo z %d widzami</item>
         <item quantity="many">Na żywo z %d widzami</item>
         <item quantity="other">Na żywo z %d widzami</item>
+    </plurals>
+    <plurals name="viewers_and_uptime">
+        <item quantity="one">Na żywo z %1$d widzem przez %2$s</item>
+        <item quantity="few">Na żywo z %1$d widzami przez %2$s</item>
+        <item quantity="many">Na żywo z %1$d widzami przez %2$s</item>
+        <item quantity="other">Na żywo z %1$d widzami przez %2$s</item>
     </plurals>
     <plurals name="months">
         <item quantity="one">%d miesiąc</item>
