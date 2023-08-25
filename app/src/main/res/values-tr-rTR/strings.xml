@@ -31,10 +31,10 @@
     <string name="record_video">Video çek</string>
     <string name="choose_media">Galeriden seç</string>
     <string name="resume_scroll">Kaydırmayı sürdür</string>
-    <string name="uploading_image">Resim yükleniyor</string>
+    <string name="uploading_image">Dosya yükleniyor</string>
     <string name="settings">Ayarlar</string>
     <string name="external_upload_disclaimer">Dış barındırma %1$s tarafından sağlanmaktadır, kendi sorumluluğunuzda kullanınız.</string>
-    <string name="nuuls_upload_title">Özel resim yükleme</string>
+    <string name="nuuls_upload_title">Özel medya yükleme</string>
     <string name="snackbar_message_copied">Mesaj kopyalandı</string>
     <string name="snackbar_message_id_copied">Mesaj ID\'si kopyalandı</string>
     <string name="snackbar_error_copied">Hata bilgisi kopyalandı</string>
@@ -43,7 +43,7 @@
     <string name="notification_message">DankChat arka planda çalışıyor</string>
     <string name="emote_menu_hint">İfade menüsünü aç</string>
     <string name="login_title">Twitch.tv\'ye giriş yap</string>
-    <string name="hint_connected">Sohbet etmeye başla</string>
+    <string name="hint_connected">Sohbete başla</string>
     <string name="hint_disconnected">Bağlantı kesildi</string>
     <string name="hint_not_logged_int">Giriş yapılmadı</string>
     <string name="hint_replying">Yanıt</string>
@@ -59,7 +59,7 @@
     <string name="snackbar_data_reloaded">İfadeler yenilendi</string>
     <string name="snackbar_data_load_failed_cause">Veri yüklenemedi: %1$s</string>
     <string name="snackbar_data_load_failed_multiple_causes">Birden çok hata ile başarısız veri yükleme:\n%1$s</string>
-    <string name="snackbar_paste">yapıştır</string>
+    <string name="snackbar_paste">Yapıştır</string>
     <string name="add_channel_hint">Kanal adı</string>
     <string name="emote_menu_tab_recent">Son kullanılanlar</string>
     <string name="emote_menu_tab_subs">Abonelikler</string>
