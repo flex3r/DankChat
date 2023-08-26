@@ -77,10 +77,10 @@
     <string name="system_message_ffz_emotes_failed">Failed to load FFZ emotes (Error %1$s)</string>
     <string name="system_message_bttv_emotes_failed">Failed to load BTTV emotes (Error %1$s)</string>
     <string name="system_message_7tv_emotes_failed">Failed to load 7TV emotes (Error %1$s)</string>
-    <string name="system_message_7tv_emote_set_changed">%1$s switched the active 7TV Emote Set to "%2$s".</string>
-    <string name="system_message_7tv_emote_added">%1$s added 7TV Emote %2$s.</string>
-    <string name="system_message_7tv_emote_renamed">%1$s renamed 7TV Emote %2$s to %3$s.</string>
-    <string name="system_message_7tv_emote_removed">%1$s removed 7TV Emote %2$s.</string>
+    <string name="system_message_7tv_emote_set_changed" comment="flex3rs switched the active 7TV Emote Set to &quot;flex3rs's Emotes&quot;. ">%1$s switched the active 7TV Emote Set to "%2$s".</string>
+    <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s added 7TV Emote %2$s.</string>
+    <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s renamed 7TV Emote %2$s to %3$s.</string>
+    <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s removed 7TV Emote %2$s.</string>
     <string name="timed_out_message">&lt; Message deleted &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Add an entry</string>
