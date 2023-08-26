@@ -234,6 +234,23 @@ class DankChatPreferenceStore @Inject constructor(
     val bypassCommandHandling: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_bypass_command_handling_key), false)
 
+    val sevenTVEventApiEnabled: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_7tv_live_updates_key), true)
+
+    val sevenTVEventApiEnabledFlow: Flow<Boolean> = callbackFlow {
+        val prefKey = context.getString(R.string.preference_7tv_live_updates_key)
+        send(defaultPreferences.getBoolean(prefKey, true))
+
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            if (key == prefKey) {
+                trySend(defaultPreferences.getBoolean(prefKey, true))
+            }
+        }
+
+        defaultPreferences.registerOnSharedPreferenceChangeListener(listener)
+        awaitClose { defaultPreferences.unregisterOnSharedPreferenceChangeListener(listener) }
+    }
+
     val currentUserAndDisplayFlow: Flow<Pair<UserName?, DisplayName?>> = callbackFlow {
         send(userName to displayName)
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->

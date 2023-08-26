@@ -23,6 +23,11 @@ import okhttp3.WebSocketListener
 import javax.inject.Inject
 import kotlin.random.Random
 import kotlin.random.nextLong
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.times
 
 enum class ChatConnectionType {
     Read,
@@ -54,9 +59,9 @@ class ChatConnection @Inject constructor(
     private var connecting = false
     private var awaitingPong = false
     private var reconnectAttempts = 1
-    private val currentReconnectDelay: Long
+    private val currentReconnectDelay: Duration
         get() {
-            val jitter = Random.nextLong(0L..MAX_JITTER)
+            val jitter = randomJitter()
             val reconnectDelay = RECONNECT_BASE_DELAY * (1 shl (reconnectAttempts - 1))
             reconnectAttempts = (reconnectAttempts + 1).coerceAtMost(RECONNECT_MAX_ATTEMPTS)
 
@@ -89,7 +94,7 @@ class ChatConnection @Inject constructor(
                         socket?.joinChannels(chunk)
                         channelsAttemptedToJoin.addAll(chunk)
                         setupJoinCheckInterval(chunk)
-                        delay(timeMillis = chunk.size * JOIN_DELAY)
+                        delay(duration = chunk.size * JOIN_DELAY)
                     }
             }
         }
@@ -165,7 +170,9 @@ class ChatConnection @Inject constructor(
         }
     }
 
-    private fun setupPingInterval() = scope.timer(interval = PING_INTERVAL - Random.nextLong(range = 0L..MAX_JITTER)) {
+    private fun randomJitter() = Random.nextLong(range = 0L..MAX_JITTER).milliseconds
+
+    private fun setupPingInterval() = scope.timer(interval = PING_INTERVAL - randomJitter()) {
         val webSocket = socket
         if (awaitingPong || webSocket == null) {
             cancel()
@@ -293,11 +300,11 @@ class ChatConnection @Inject constructor(
 
     companion object {
         private const val MAX_JITTER = 250L
-        private const val RECONNECT_BASE_DELAY = 1_000L
+        private val RECONNECT_BASE_DELAY = 1.seconds
         private const val RECONNECT_MAX_ATTEMPTS = 4
-        private const val PING_INTERVAL = 5 * 60 * 1000L
-        private const val JOIN_CHECK_DELAY = 10 * 1000L
-        private const val JOIN_DELAY = 600L
+        private val PING_INTERVAL = 5.minutes
+        private val JOIN_CHECK_DELAY = 10.seconds
+        private val JOIN_DELAY = 600.milliseconds
         private const val JOIN_CHUNK_SIZE = 5
         private val TAG = ChatConnection::class.java.simpleName
     }

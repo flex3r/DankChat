@@ -77,6 +77,10 @@
     <string name="system_message_ffz_emotes_failed">Failed to load FFZ emotes (Error %1$s)</string>
     <string name="system_message_bttv_emotes_failed">Failed to load BTTV emotes (Error %1$s)</string>
     <string name="system_message_7tv_emotes_failed">Failed to load 7TV emotes (Error %1$s)</string>
+    <string name="system_message_7tv_emote_set_changed">%1$s switched the active 7TV Emote Set to "%2$s".</string>
+    <string name="system_message_7tv_emote_added">%1$s added 7TV Emote %2$s.</string>
+    <string name="system_message_7tv_emote_renamed">%1$s renamed 7TV Emote %2$s to %3$s.</string>
+    <string name="system_message_7tv_emote_removed">%1$s removed 7TV Emote %2$s.</string>
     <string name="timed_out_message">&lt; Message deleted &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Add an entry</string>
@@ -338,6 +342,8 @@
     <string name="preference_bypass_command_handling_key" translatable="false">bypass_command_handling_key</string>
     <string name="preference_bypass_command_handling_title">Bypass Twitch command handling</string>
     <string name="preference_bypass_command_handling_summary">Disables intercepting of Twitch commands and sends them to chat instead</string>
+    <string name="preference_7tv_live_updates_key" translatable="false">7tv_live_updates_key</string>
+    <string name="preference_7tv_live_updates_title">7TV live emote updates</string>
     <string name="reset_media_uploader_dialog_title">Reset Media Uploader Settings</string>
     <string name="reset_media_uploader_dialog_message">Are you sure you want to reset the media uploader settings to default?</string>
     <string name="reset_media_uploader_dialog_positive">Reset</string>

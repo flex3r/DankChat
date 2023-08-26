@@ -74,6 +74,12 @@
             app:iconSpaceReserved="false" />
 
         <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="@string/preference_7tv_live_updates_key"
+            android:title="@string/preference_7tv_live_updates_title"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="@string/preference_unlisted_emotes_key"
             android:summary="@string/preference_unlisted_emotes_summary"

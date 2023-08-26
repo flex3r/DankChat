@@ -21,12 +21,11 @@ class DankChatViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
     private val authApiClient: AuthApiClient,
-    dataRepository: DataRepository,
+    private val dataRepository: DataRepository,
 ) : ViewModel() {
 
     val serviceEvents = dataRepository.serviceEvents
-    var started = false
-        private set
+    private var started = false
 
     private val _validationResult = Channel<ValidationResult>(Channel.BUFFERED)
     val validationResult get() = _validationResult.receiveAsFlow()
@@ -34,6 +33,7 @@ class DankChatViewModel @Inject constructor(
     fun init(tryReconnect: Boolean) {
         if (tryReconnect && started) {
             chatRepository.reconnectIfNecessary()
+            dataRepository.reconnectIfNecessary()
         } else {
             started = true
 

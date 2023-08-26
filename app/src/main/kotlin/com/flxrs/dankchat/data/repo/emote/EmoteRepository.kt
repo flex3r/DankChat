@@ -17,8 +17,13 @@ import com.flxrs.dankchat.data.api.dankchat.dto.DankChatEmoteDto
 import com.flxrs.dankchat.data.api.ffz.dto.FFZChannelDto
 import com.flxrs.dankchat.data.api.ffz.dto.FFZEmoteDto
 import com.flxrs.dankchat.data.api.ffz.dto.FFZGlobalDto
+import com.flxrs.dankchat.data.api.seventv.SevenTVUserDetails
 import com.flxrs.dankchat.data.api.seventv.dto.SevenTVEmoteDto
 import com.flxrs.dankchat.data.api.seventv.dto.SevenTVEmoteFileDto
+import com.flxrs.dankchat.data.api.seventv.dto.SevenTVEmoteSetDto
+import com.flxrs.dankchat.data.api.seventv.dto.SevenTVUserConnection
+import com.flxrs.dankchat.data.api.seventv.dto.SevenTVUserDto
+import com.flxrs.dankchat.data.api.seventv.eventapi.SevenTVEventMessage
 import com.flxrs.dankchat.data.repo.chat.ChatRepository
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.badge.BadgeSet
@@ -58,6 +63,8 @@ class EmoteRepository @Inject constructor(
     private val channelBadges = ConcurrentHashMap<UserName, Map<String, BadgeSet>>()
     private val globalBadges = ConcurrentHashMap<String, BadgeSet>()
     private val dankChatBadges = CopyOnWriteArrayList<DankChatBadgeDto>()
+
+    private val sevenTvChannelDetails = ConcurrentHashMap<UserName, SevenTVUserDetails>()
 
     private val emotes = ConcurrentHashMap<UserName, MutableStateFlow<Emotes>>()
 
@@ -238,6 +245,13 @@ class EmoteRepository @Inject constructor(
         dankChatBadges.addAll(dto)
     }
 
+    fun getChannelForSevenTVEmoteSet(emoteSetId: String): UserName? = sevenTvChannelDetails
+        .entries
+        .find { (_, details) -> details.activeEmoteSetId == emoteSetId }
+        ?.key
+
+    fun getSevenTVUserDetails(channel: UserName): SevenTVUserDetails? = sevenTvChannelDetails[channel]
+
     suspend fun loadUserStateEmotes(globalEmoteSetIds: List<String>, followerEmoteSetIds: Map<UserName, List<String>>) = withContext(Dispatchers.Default) {
         val combined = (globalEmoteSetIds + followerEmoteSetIds.values.flatten()).distinct()
         val sets = dankChatApiClient.getUserSets(combined)
@@ -319,10 +333,16 @@ class EmoteRepository @Inject constructor(
         }
     }
 
-    suspend fun setSevenTVEmotes(channel: UserName, sevenTvResult: List<SevenTVEmoteDto>) = withContext(Dispatchers.Default) {
-        if (sevenTvResult.isEmpty()) return@withContext
+    suspend fun setSevenTVEmotes(channel: UserName, userDto: SevenTVUserDto) = withContext(Dispatchers.Default) {
+        val emoteSetId = userDto.emoteSet?.id ?: return@withContext
+        val emoteList = userDto.emoteSet.emotes.orEmpty()
 
-        val sevenTvEmotes = sevenTvResult
+        sevenTvChannelDetails[channel] = SevenTVUserDetails(
+            id = userDto.user.id,
+            activeEmoteSetId = emoteSetId,
+            connectionIndex = userDto.user.connections.indexOfFirst { it.platform == SevenTVUserConnection.twitch}
+        )
+        val sevenTvEmotes = emoteList
             .filterUnlistedIfEnabled()
             .mapNotNull { emote ->
                 parseSevenTVEmote(emote, EmoteType.ChannelSevenTVEmote(emote.data?.owner?.displayName, emote.data?.baseName?.takeIf { emote.name != it }))
@@ -330,6 +350,45 @@ class EmoteRepository @Inject constructor(
 
         emotes[channel]?.update {
             it.copy(sevenTvChannelEmotes = sevenTvEmotes)
+        }
+    }
+
+    suspend fun setSevenTVEmoteSet(channel: UserName, emoteSet: SevenTVEmoteSetDto) = withContext(Dispatchers.Default) {
+        sevenTvChannelDetails[channel]?.let { details ->
+            sevenTvChannelDetails[channel] = details.copy(activeEmoteSetId = emoteSet.id)
+        }
+
+        val sevenTvEmotes = emoteSet.emotes
+            .orEmpty()
+            .filterUnlistedIfEnabled()
+            .mapNotNull { emote ->
+                parseSevenTVEmote(emote, EmoteType.ChannelSevenTVEmote(emote.data?.owner?.displayName, emote.data?.baseName?.takeIf { emote.name != it }))
+            }
+
+        emotes[channel]?.update {
+            it.copy(sevenTvChannelEmotes = sevenTvEmotes)
+        }
+    }
+
+    suspend fun updateSevenTVEmotes(channel: UserName, event: SevenTVEventMessage.EmoteSetUpdated) = withContext(Dispatchers.Default) {
+        val addedEmotes = event.added
+            .filterUnlistedIfEnabled()
+            .mapNotNull { emote ->
+                parseSevenTVEmote(emote, EmoteType.ChannelSevenTVEmote(emote.data?.owner?.displayName, emote.data?.baseName?.takeIf { emote.name != it }))
+            }
+
+        emotes[channel]?.update { emotes ->
+            val updated = emotes.sevenTvChannelEmotes.mapNotNull { emote ->
+
+                if (event.removed.any { emote.id == it.id }) {
+                    null
+                } else {
+                    event.updated.find { emote.id == it.id }?.let {
+                        emote.copy(code = it.name)
+                    } ?: emote
+                }
+            }
+            emotes.copy(sevenTvChannelEmotes = updated + addedEmotes)
         }
     }
 

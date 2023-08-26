@@ -13,21 +13,28 @@ import com.flxrs.dankchat.data.api.helix.dto.StreamDto
 import com.flxrs.dankchat.data.api.helix.dto.UserDto
 import com.flxrs.dankchat.data.api.helix.dto.UserFollowsDto
 import com.flxrs.dankchat.data.api.seventv.SevenTVApiClient
+import com.flxrs.dankchat.data.api.seventv.eventapi.SevenTVEventApiClient
+import com.flxrs.dankchat.data.api.seventv.eventapi.SevenTVEventMessage
 import com.flxrs.dankchat.data.api.upload.UploadClient
 import com.flxrs.dankchat.data.repo.RecentUploadsRepository
 import com.flxrs.dankchat.data.repo.emote.EmoteRepository
 import com.flxrs.dankchat.data.repo.emote.Emotes
 import com.flxrs.dankchat.data.twitch.badge.toBadgeSets
 import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
+import com.flxrs.dankchat.di.ApplicationScope
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.measureTimeAndLog
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
@@ -42,17 +49,48 @@ class DataRepository @Inject constructor(
     private val ffzApiClient: FFZApiClient,
     private val bttvApiClient: BTTVApiClient,
     private val sevenTVApiClient: SevenTVApiClient,
+    private val sevenTVEventApiClient: SevenTVEventApiClient,
     private val uploadClient: UploadClient,
     private val emoteRepository: EmoteRepository,
     private val recentUploadsRepository: RecentUploadsRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
+    @ApplicationScope private val scope: CoroutineScope
 ) {
     private val _dataLoadingFailures = MutableStateFlow(emptySet<DataLoadingFailure>())
-
+    private val _dataUpdateEvents = MutableSharedFlow<DataUpdateEventMessage>()
     private val serviceEventChannel = Channel<ServiceEvent>(Channel.BUFFERED)
-    val serviceEvents = serviceEventChannel.receiveAsFlow()
 
+    init {
+        scope.launch {
+            sevenTVEventApiClient.messages.collect { event ->
+                when (event) {
+                    is SevenTVEventMessage.UserUpdated     -> {
+                        val channel = emoteRepository.getChannelForSevenTVEmoteSet(event.oldEmoteSetId) ?: return@collect
+                        val details = emoteRepository.getSevenTVUserDetails(channel) ?: return@collect
+                        if (details.connectionIndex != event.connectionIndex) {
+                            return@collect
+                        }
+
+                        val newEmoteSet = sevenTVApiClient.getSevenTVEmoteSet(event.emoteSetId).getOrNull() ?: return@collect
+                        emoteRepository.setSevenTVEmoteSet(channel, newEmoteSet)
+
+                        sevenTVEventApiClient.unsubscribeEmoteSet(event.oldEmoteSetId)
+                        sevenTVEventApiClient.subscribeEmoteSet(event.emoteSetId)
+                        _dataUpdateEvents.emit(DataUpdateEventMessage.ActiveEmoteSetChanged(channel, event.actorName, newEmoteSet.name))
+                    }
+                    is SevenTVEventMessage.EmoteSetUpdated -> {
+                        val channel = emoteRepository.getChannelForSevenTVEmoteSet(event.emoteSetId) ?: return@collect
+                        emoteRepository.updateSevenTVEmotes(channel, event)
+                        _dataUpdateEvents.emit(DataUpdateEventMessage.EmoteSetUpdated(channel, event))
+                    }
+                }
+            }
+        }
+    }
+
+    val serviceEvents = serviceEventChannel.receiveAsFlow()
     val dataLoadingFailures = _dataLoadingFailures.asStateFlow()
+    val dataUpdateEvents = _dataUpdateEvents.asSharedFlow()
 
     fun clearDataLoadingFailures() = _dataLoadingFailures.update { emptySet() }
 
@@ -64,6 +102,22 @@ class DataRepository @Inject constructor(
     suspend fun getUsersByNames(names: List<UserName>): List<UserDto> = helixApiClient.getUsersByNames(names).getOrNull().orEmpty()
     suspend fun getChannelFollowers(broadcasterId: UserId, targetId: UserId): UserFollowsDto? = helixApiClient.getChannelFollowers(broadcasterId, targetId).getOrNull()
     suspend fun getStreams(channels: List<UserName>): List<StreamDto>? = helixApiClient.getStreams(channels).getOrNull()
+
+    fun reconnect() {
+        sevenTVEventApiClient.reconnect()
+    }
+
+    fun reconnectIfNecessary() {
+        sevenTVEventApiClient.reconnectIfNecessary()
+    }
+
+    fun removeChannels(removed: List<UserName>) {
+        removed.forEach { channel ->
+            val details = emoteRepository.getSevenTVUserDetails(channel) ?: return@forEach
+            sevenTVEventApiClient.unsubscribeUser(details.id)
+            sevenTVEventApiClient.unsubscribeEmoteSet(details.activeEmoteSetId)
+        }
+    }
 
     suspend fun uploadMedia(file: File): Result<String> = uploadClient.uploadMedia(file).mapCatching {
         recentUploadsRepository.addUpload(it)
@@ -140,7 +194,13 @@ class DataRepository @Inject constructor(
         measureTimeMillis {
             sevenTVApiClient.getSevenTVChannelEmotes(channelId)
                 .getOrEmitFailure { DataLoadingStep.ChannelSevenTVEmotes(channel, channelId) }
-                ?.let { emoteRepository.setSevenTVEmotes(channel, it) }
+                ?.let { result ->
+                    if (result.emoteSet?.id != null) {
+                        sevenTVEventApiClient.subscribeEmoteSet(result.emoteSet.id)
+                    }
+                    sevenTVEventApiClient.subscribeUser(result.user.id)
+                    emoteRepository.setSevenTVEmotes(channel, result)
+                }
         }.let { Log.i(TAG, "Loaded 7TV emotes for #$channel in $it ms") }
     }
 

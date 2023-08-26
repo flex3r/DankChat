@@ -14,14 +14,17 @@ import javax.inject.Singleton
 @Singleton
 class SevenTVApiClient @Inject constructor(private val sevenTVApi: SevenTVApi, private val json: Json) {
 
-    suspend fun getSevenTVChannelEmotes(channelId: UserId): Result<List<SevenTVEmoteDto>> = runCatching {
+    suspend fun getSevenTVChannelEmotes(channelId: UserId): Result<SevenTVUserDto?> = runCatching {
         sevenTVApi.getChannelEmotes(channelId)
             .throwApiErrorOnFailure(json)
             .body<SevenTVUserDto>()
-            .emoteSet
-            ?.emotes
-            .orEmpty()
-    }.recoverNotFoundWith(emptyList())
+    }.recoverNotFoundWith(default = null)
+
+    suspend fun getSevenTVEmoteSet(emoteSetId: String): Result<SevenTVEmoteSetDto> = runCatching {
+        sevenTVApi.getEmoteSet(emoteSetId)
+            .throwApiErrorOnFailure(json)
+            .body()
+    }
 
     suspend fun getSevenTVGlobalEmotes(): Result<List<SevenTVEmoteDto>> = runCatching {
         sevenTVApi.getGlobalEmotes()

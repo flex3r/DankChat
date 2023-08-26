@@ -2,6 +2,7 @@ package com.flxrs.dankchat.data.twitch.message
 
 import com.flxrs.dankchat.chat.ChatImportance
 import com.flxrs.dankchat.chat.ChatItem
+import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserName
 
 sealed interface SystemMessageType {
@@ -17,6 +18,10 @@ sealed interface SystemMessageType {
     data class ChannelFFZEmotesFailed(val status: String) : SystemMessageType
     data class ChannelBTTVEmotesFailed(val status: String) : SystemMessageType
     data class ChannelSevenTVEmotesFailed(val status: String) : SystemMessageType
+    data class ChannelSevenTVEmoteSetChanged(val actorName: DisplayName, val newEmoteSetName: String) : SystemMessageType
+    data class ChannelSevenTVEmoteAdded(val actorName: DisplayName, val emoteName: String) : SystemMessageType
+    data class ChannelSevenTVEmoteRenamed(val actorName: DisplayName, val oldEmoteName: String, val emoteName: String) : SystemMessageType
+    data class ChannelSevenTVEmoteRemoved(val actorName: DisplayName, val emoteName: String) : SystemMessageType
     data class Custom(val message: String) : SystemMessageType
 }
 

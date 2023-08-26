@@ -8,5 +8,7 @@ class SevenTVApi(private val ktorClient: HttpClient) {
 
     suspend fun getChannelEmotes(channelId: UserId) = ktorClient.get("users/twitch/$channelId")
 
+    suspend fun getEmoteSet(emoteSetId: String) = ktorClient.get("emote-sets/$emoteSetId")
+
     suspend fun getGlobalEmotes() = ktorClient.get("emote-sets/global")
 }

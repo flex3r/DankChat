@@ -23,6 +23,7 @@ import com.flxrs.dankchat.data.repo.command.CommandResult
 import com.flxrs.dankchat.data.repo.data.DataLoadingFailure
 import com.flxrs.dankchat.data.repo.data.DataLoadingStep
 import com.flxrs.dankchat.data.repo.data.DataRepository
+import com.flxrs.dankchat.data.repo.data.DataUpdateEventMessage
 import com.flxrs.dankchat.data.repo.data.toMergedStrings
 import com.flxrs.dankchat.data.repo.emote.EmoteUsageRepository
 import com.flxrs.dankchat.data.repo.emote.Emotes
@@ -33,6 +34,12 @@ import com.flxrs.dankchat.data.twitch.command.TwitchCommand
 import com.flxrs.dankchat.data.twitch.emote.EmoteType
 import com.flxrs.dankchat.data.twitch.message.RoomState
 import com.flxrs.dankchat.data.twitch.message.SystemMessageType
+import com.flxrs.dankchat.data.twitch.message.SystemMessageType.ChannelBTTVEmotesFailed
+import com.flxrs.dankchat.data.twitch.message.SystemMessageType.ChannelFFZEmotesFailed
+import com.flxrs.dankchat.data.twitch.message.SystemMessageType.ChannelSevenTVEmoteAdded
+import com.flxrs.dankchat.data.twitch.message.SystemMessageType.ChannelSevenTVEmoteRemoved
+import com.flxrs.dankchat.data.twitch.message.SystemMessageType.ChannelSevenTVEmoteRenamed
+import com.flxrs.dankchat.data.twitch.message.SystemMessageType.ChannelSevenTVEmoteSetChanged
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.Preference
@@ -205,6 +212,24 @@ class MainViewModel @Inject constructor(
                         val delay = chatRepository.userStateFlow.value.getSendDelay(activeChannel)
                         trySendMessageOrCommand(it.message, skipSuspendingCommands = true)
                         delay(delay)
+                    }
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            dataRepository.dataUpdateEvents.collect { updateEvent ->
+                when (updateEvent) {
+                    is DataUpdateEventMessage.ActiveEmoteSetChanged -> chatRepository.makeAndPostSystemMessage(
+                        type = ChannelSevenTVEmoteSetChanged(updateEvent.actorName, updateEvent.emoteSetName),
+                        channel = updateEvent.channel
+                    )
+
+                    is DataUpdateEventMessage.EmoteSetUpdated       -> {
+                        val (channel, event) = updateEvent
+                        event.added.forEach { chatRepository.makeAndPostSystemMessage(ChannelSevenTVEmoteAdded(event.actorName, it.name), channel) }
+                        event.updated.forEach { chatRepository.makeAndPostSystemMessage(ChannelSevenTVEmoteRenamed(event.actorName, it.oldName, it.name), channel) }
+                        event.removed.forEach { chatRepository.makeAndPostSystemMessage(ChannelSevenTVEmoteRemoved(event.actorName, it.name), channel) }
                     }
                 }
             }
@@ -547,7 +572,11 @@ class MainViewModel @Inject constructor(
     fun clear(channel: UserName) = chatRepository.clear(channel)
     fun clearMentionCount(channel: UserName) = chatRepository.clearMentionCount(channel)
     fun clearUnreadMessage(channel: UserName) = chatRepository.clearUnreadMessage(channel)
-    fun reconnect() = chatRepository.reconnect()
+    fun reconnect() {
+        chatRepository.reconnect()
+        dataRepository.reconnect()
+    }
+
     fun joinChannel(channel: UserName): List<UserName> = chatRepository.joinChannel(channel)
     fun trySendMessageOrCommand(message: String, skipSuspendingCommands: Boolean = false) = viewModelScope.launch {
         val channel = currentSuggestionChannel.value ?: return@launch
@@ -598,7 +627,10 @@ class MainViewModel @Inject constructor(
         RepeatedSendData(enabled, message)
     }
 
-    fun updateChannels(channels: List<UserName>) = chatRepository.updateChannels(channels)
+    fun updateChannels(channels: List<UserName>) {
+        val removed = chatRepository.updateChannels(channels)
+        dataRepository.removeChannels(removed)
+    }
 
     fun closeAndReconnect() {
         chatRepository.closeAndReconnect()
@@ -768,8 +800,8 @@ class MainViewModel @Inject constructor(
             val status = (it.failure as? ApiException)?.status?.value?.toString() ?: "0"
             when (it.step) {
                 is DataLoadingStep.ChannelSevenTVEmotes -> chatRepository.makeAndPostSystemMessage(SystemMessageType.ChannelSevenTVEmotesFailed(status), it.step.channel)
-                is DataLoadingStep.ChannelBTTVEmotes    -> chatRepository.makeAndPostSystemMessage(SystemMessageType.ChannelBTTVEmotesFailed(status), it.step.channel)
-                is DataLoadingStep.ChannelFFZEmotes     -> chatRepository.makeAndPostSystemMessage(SystemMessageType.ChannelFFZEmotesFailed(status), it.step.channel)
+                is DataLoadingStep.ChannelBTTVEmotes    -> chatRepository.makeAndPostSystemMessage(ChannelBTTVEmotesFailed(status), it.step.channel)
+                is DataLoadingStep.ChannelFFZEmotes     -> chatRepository.makeAndPostSystemMessage(ChannelFFZEmotesFailed(status), it.step.channel)
                 else                                    -> Unit
             }
         }
@@ -863,8 +895,8 @@ class MainViewModel @Inject constructor(
 
     companion object {
         private val TAG = MainViewModel::class.java.simpleName
-        private const val STREAM_REFRESH_RATE = 30_000L
-        private const val IRC_TIMEOUT_DELAY = 5_000L
-        private const val IRC_TIMEOUT_SHORT_DELAY = 1_000L
+        private val STREAM_REFRESH_RATE = 30.seconds
+        private val IRC_TIMEOUT_DELAY = 5.seconds
+        private val IRC_TIMEOUT_SHORT_DELAY = 1.seconds
     }
 }

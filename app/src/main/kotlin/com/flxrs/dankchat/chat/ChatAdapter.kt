@@ -234,6 +234,11 @@ class ChatAdapter(
                 null -> context.getString(R.string.system_message_history_unavailable)
                 else -> context.getString(R.string.system_message_history_unavailable_detailed, message.type.status)
             }
+
+            is SystemMessageType.ChannelSevenTVEmoteAdded   -> context.getString(R.string.system_message_7tv_emote_added, message.type.actorName, message.type.emoteName)
+            is SystemMessageType.ChannelSevenTVEmoteRemoved -> context.getString(R.string.system_message_7tv_emote_removed, message.type.actorName, message.type.emoteName)
+            is SystemMessageType.ChannelSevenTVEmoteRenamed -> context.getString(R.string.system_message_7tv_emote_renamed, message.type.actorName, message.type.oldEmoteName, message.type.emoteName)
+            is SystemMessageType.ChannelSevenTVEmoteSetChanged -> context.getString(R.string.system_message_7tv_emote_set_changed, message.type.actorName, message.type.newEmoteSetName)
         }
         val withTime = when {
             dankChatPreferenceStore.showTimestamps -> SpannableStringBuilder()

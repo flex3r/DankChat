@@ -33,6 +33,10 @@ import java.time.Instant
 import java.util.UUID
 import kotlin.random.Random
 import kotlin.random.nextLong
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 class PubSubConnection(
     val tag: String,
@@ -48,9 +52,9 @@ class PubSubConnection(
     private var connecting = false
     private var awaitingPong = false
     private var reconnectAttempts = 1
-    private val currentReconnectDelay: Long
+    private val currentReconnectDelay: Duration
         get() {
-            val jitter = Random.nextLong(0L..MAX_JITTER)
+            val jitter = randomJitter()
             val reconnectDelay = RECONNECT_BASE_DELAY * (1 shl (reconnectAttempts - 1))
             reconnectAttempts = (reconnectAttempts + 1).coerceAtMost(RECONNECT_MAX_ATTEMPTS)
 
@@ -148,7 +152,9 @@ class PubSubConnection(
         }
     }
 
-    private fun setupPingInterval() = scope.timer(interval = PING_INTERVAL - Random.nextLong(range = 0L..MAX_JITTER)) {
+    private fun randomJitter() = Random.nextLong(range = 0L..MAX_JITTER).milliseconds
+
+    private fun setupPingInterval() = scope.timer(interval = PING_INTERVAL - randomJitter()) {
         val webSocket = socket
         if (awaitingPong || webSocket == null) {
             cancel()
@@ -309,9 +315,9 @@ class PubSubConnection(
         const val MAX_TOPICS = 50
         const val MAX_CONNECTIONS = 10
         private const val MAX_JITTER = 250L
-        private const val RECONNECT_BASE_DELAY = 1_000L
+        private val RECONNECT_BASE_DELAY = 1.seconds
         private const val RECONNECT_MAX_ATTEMPTS = 6
-        private const val PING_INTERVAL = 5 * 60 * 1000L
+        private val PING_INTERVAL = 5.minutes
         private const val PING_PAYLOAD = "{\"type\":\"PING\"}"
         private val TAG = PubSubConnection::class.java.simpleName
     }

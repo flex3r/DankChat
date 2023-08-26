@@ -5,8 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Keep
 @Serializable
-data class SevenTVEmoteSetDto(
-    val id: String,
-    val name: String,
-    val emotes: List<SevenTVEmoteDto>?
-)
+data class SevenTVUserConnection(val platform: String) {
+    companion object {
+        const val twitch = "TWITCH"
+    }
+}

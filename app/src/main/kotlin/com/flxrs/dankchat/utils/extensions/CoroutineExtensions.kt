@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
+import kotlin.time.Duration
 
 inline val <T> SharedFlow<T>.firstValue: T
     get() = replayCache.first()
@@ -29,7 +30,7 @@ fun <T> MutableSharedFlow<MutableMap<UserName, T>>.assign(key: UserName, value: 
     put(key, value)
 })
 
-fun CoroutineScope.timer(interval: Long, action: suspend TimerScope.() -> Unit): Job {
+fun CoroutineScope.timer(interval: Duration, action: suspend TimerScope.() -> Unit): Job {
     return launch {
         val scope = TimerScope()
 
