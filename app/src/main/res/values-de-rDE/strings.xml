@@ -77,6 +77,10 @@
     <string name="system_message_ffz_emotes_failed">FFZ-Emotes konnten nicht geladen werden (Fehler %1$s)</string>
     <string name="system_message_bttv_emotes_failed">BTTV-Emotes konnten nicht geladen werden (Fehler %1$s)</string>
     <string name="system_message_7tv_emotes_failed">7TV-Emotes konnten nicht geladen werden (Fehler %1$s)</string>
+    <string name="system_message_7tv_emote_set_changed" comment="flex3rs switched the active 7TV Emote Set to &quot;flex3rs's Emotes&quot;. ">%1$s hat das aktive 7TV-Emote-Set auf \"%2$s\" umgestellt.</string>
+    <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s hat 7TV-Emote %2$s hinzugefügt.</string>
+    <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s hat 7TV-Emote %2$s in %3$s umbenannt.</string>
+    <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s hat 7TV-Emote %2$s entfernt.</string>
     <string name="timed_out_message">&lt; Nachricht gelöscht &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Eintrag hinzufügen</string>
@@ -282,6 +286,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_custom_login_title">Benutzerdefinierte Anmeldung</string>
     <string name="preference_bypass_command_handling_title">Twitch-Befehlsbehandlung überspringen</string>
     <string name="preference_bypass_command_handling_summary">Deaktiviert das Abfangen von Twitch-Befehlen und sendet sie stattdessen an den Chat</string>
+    <string name="preference_7tv_live_updates_title">7TV Live-Emote-Updates</string>
     <string name="reset_media_uploader_dialog_title">Medienuploader zurücksetzen</string>
     <string name="reset_media_uploader_dialog_message">Willst du die Einstellungen des Uploaders wirklich zurücksetzen?</string>
     <string name="reset_media_uploader_dialog_positive">Zurücksetzen</string>
@@ -365,6 +370,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="changelog_sheet_title">DankChat wurde aktualisiert!</string>
     <string name="changelog_sheet_subtitle">Was ist neu in v%1$s:</string>
     <string name="changelog_3_6">Initiale Unterstützung für das Beantworten von Nachrichten und Anzeigen von Antwortverläufen\nNeue Einstellung, um verpasste Nachrichten nach Verbindungsabbrüchen zu laden\nNeues Design für Bottomsheet-Dialoge\nNeuer Nachrichten-Dialog, aufklappbar durch das Halten einer Nachricht\nNeuer Emote-Dialog, aufklappbar durch das Drücken eines Emotes\nNeuer Changelog Dialog\nUnterstützung für animierte FFZ-Emotes\nVerbessertes Layout des Emote-Menüs\nMigration zu neuem Follower API-Endpunkt, der aufgrund von Twitch-Beschränkungen nun auf Broadcaster und Moderatoren beschränkt ist</string>
+    <string name="changelog_3_7_3">Added /shoutout command\nAdded /shield and /shieldoff commands\nFixed data loading errors when a login expired\nAdded developer setting to set a custom access token\nAdded developer setting to bypass Twitch command handling\nLots of translation and maintenance updates!</string>
     <string name="confirm_login_cancel_title">Anmeldeabbruch bestätigen</string>
     <string name="confirm_login_cancel_message">Möchtest du den Anmeldevorgang wirklich abbrechen?</string>
     <string name="confirm_login_cancel_positive_button">Anmeldung abbrechen</string>
