@@ -42,7 +42,7 @@ import com.flxrs.dankchat.data.twitch.message.SystemMessageType.ChannelSevenTVEm
 import com.flxrs.dankchat.data.twitch.message.SystemMessageType.ChannelSevenTVEmoteSetChanged
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.preferences.Preference
+import com.flxrs.dankchat.preferences.model.Preference
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.extensions.firstValueOrNull
 import com.flxrs.dankchat.utils.extensions.flatMapLatestOrDefault

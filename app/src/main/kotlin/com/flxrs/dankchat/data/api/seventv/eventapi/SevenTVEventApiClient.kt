@@ -6,6 +6,7 @@ import com.flxrs.dankchat.data.api.seventv.eventapi.dto.DataMessage
 import com.flxrs.dankchat.data.api.seventv.eventapi.dto.DispatchMessage
 import com.flxrs.dankchat.data.api.seventv.eventapi.dto.EmoteSetChangeField
 import com.flxrs.dankchat.data.api.seventv.eventapi.dto.EmoteSetDispatchData
+import com.flxrs.dankchat.data.api.seventv.eventapi.dto.EndOfStreamMessage
 import com.flxrs.dankchat.data.api.seventv.eventapi.dto.HeartbeatMessage
 import com.flxrs.dankchat.data.api.seventv.eventapi.dto.HelloMessage
 import com.flxrs.dankchat.data.api.seventv.eventapi.dto.ReconnectMessage
@@ -15,6 +16,9 @@ import com.flxrs.dankchat.data.api.seventv.eventapi.dto.UserDispatchData
 import com.flxrs.dankchat.di.ApplicationScope
 import com.flxrs.dankchat.di.WebSocketOkHttpClient
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.model.LiveUpdatesBackgroundBehavior
+import com.flxrs.dankchat.utils.AppLifecycleListener
+import com.flxrs.dankchat.utils.AppLifecycleListener.AppLifecycle.Background
 import com.flxrs.dankchat.utils.extensions.timer
 import io.ktor.util.collections.ConcurrentSet
 import kotlinx.coroutines.CoroutineScope
@@ -23,6 +27,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -37,6 +42,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.random.Random
 import kotlin.random.nextLong
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
@@ -46,6 +52,7 @@ class SevenTVEventApiClient @Inject constructor(
     @WebSocketOkHttpClient private val client: OkHttpClient,
     @ApplicationScope private val scope: CoroutineScope,
     private val preferenceStore: DankChatPreferenceStore,
+    private val appLifecycleListener: AppLifecycleListener,
     defaultJson: Json,
 ) {
     private var socket: WebSocket? = null
@@ -75,12 +82,29 @@ class SevenTVEventApiClient @Inject constructor(
     init {
         scope.launch {
             preferenceStore.sevenTVEventApiEnabledFlow
-                .debounce(PREFERENCE_DEBOUNCE)
+                .debounce(FLOW_DEBOUNCE)
                 .distinctUntilChanged()
                 .collect { enabled ->
                     when {
                         enabled && !connected && !connecting -> start()
                         else                                 -> close()
+                    }
+                }
+        }
+        scope.launch {
+            appLifecycleListener.appState
+                .debounce(FLOW_DEBOUNCE)
+                .collectLatest { state ->
+                    if (state == Background) {
+                        val timeout = when (val behavior = preferenceStore.sevenTVEventApiBackgroundBehavior) {
+                            LiveUpdatesBackgroundBehavior.Always      -> return@collectLatest
+                            LiveUpdatesBackgroundBehavior.Never      -> Duration.ZERO
+                            is LiveUpdatesBackgroundBehavior.Timeout -> behavior.timeout
+                        }
+
+                        Log.d(TAG, "[7TV Event-Api] Sleeping for $timeout until connection is closed")
+                        delay(timeout)
+                        close()
                     }
                 }
         }
@@ -219,7 +243,7 @@ class SevenTVEventApiClient @Inject constructor(
             }
 
             when (message) {
-                is HelloMessage     -> {
+                is HelloMessage       -> {
                     heartBeatInterval = message.d.heartBeatInterval.milliseconds
                     heartBeatJob = setupHeartBeatInterval()
 
@@ -229,10 +253,11 @@ class SevenTVEventApiClient @Inject constructor(
                     }
                 }
 
-                is HeartbeatMessage -> lastHeartBeat = System.currentTimeMillis()
-                is DispatchMessage  -> message.handleMessage()
-                is ReconnectMessage -> reconnect()
-                is AckMessage       -> Unit
+                is HeartbeatMessage   -> lastHeartBeat = System.currentTimeMillis()
+                is DispatchMessage    -> message.handleMessage()
+                is ReconnectMessage   -> reconnect()
+                is EndOfStreamMessage -> Unit
+                is AckMessage         -> Unit
             }
         }
 
@@ -298,7 +323,7 @@ class SevenTVEventApiClient @Inject constructor(
         private const val RECONNECT_BASE_DELAY = 1_000L
         private const val RECONNECT_MAX_ATTEMPTS = 6
         private val DEFAULT_HEARTBEAT_INTERVAL = 25.seconds
-        private val PREFERENCE_DEBOUNCE = 2.seconds
+        private val FLOW_DEBOUNCE = 2.seconds
         private val TAG = SevenTVEventApiClient::class.java.simpleName
     }
 }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="event_api_timeout_entry_values" translatable="false">
+        <item>@string/preference_7tv_live_updates_entry_never_key</item>
+        <item>@string/preference_7tv_live_updates_entry_one_minute_key</item>
+        <item>@string/preference_7tv_live_updates_entry_five_minutes_key</item>
+        <item>@string/preference_7tv_live_updates_entry_thirty_minutes_key</item>
+        <item>@string/preference_7tv_live_updates_entry_one_hour_key</item>
+        <item>@string/preference_7tv_live_updates_entry_always_key</item>
+    </string-array>
+</resources>

@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.preferences
+package com.flxrs.dankchat.preferences.model
 
 sealed interface Preference {
     data class RoomState(val enabled: Boolean) : Preference

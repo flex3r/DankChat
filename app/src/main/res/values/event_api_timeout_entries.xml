@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="event_api_timeout_entries" translatable="false">
+        <item>@string/preference_7tv_live_updates_entry_never</item>
+        <item>@string/preference_7tv_live_updates_entry_one_minute</item>
+        <item>@string/preference_7tv_live_updates_entry_five_minutes</item>
+        <item>@string/preference_7tv_live_updates_entry_thirty_minutes</item>
+        <item>@string/preference_7tv_live_updates_entry_one_hour</item>
+        <item>@string/preference_7tv_live_updates_entry_always</item>
+    </string-array>
+</resources>

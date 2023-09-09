@@ -21,6 +21,9 @@ import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.preferences.command.CommandDto
 import com.flxrs.dankchat.preferences.command.CommandDto.Companion.toEntryItem
 import com.flxrs.dankchat.preferences.command.CommandItem
+import com.flxrs.dankchat.preferences.model.ChannelWithRename
+import com.flxrs.dankchat.preferences.model.LiveUpdatesBackgroundBehavior
+import com.flxrs.dankchat.preferences.model.Preference
 import com.flxrs.dankchat.preferences.multientry.MultiEntryDto
 import com.flxrs.dankchat.preferences.upload.ImageUploader
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
@@ -32,6 +35,8 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 
 @Singleton
 class DankChatPreferenceStore @Inject constructor(
@@ -236,6 +241,17 @@ class DankChatPreferenceStore @Inject constructor(
 
     val sevenTVEventApiEnabled: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_7tv_live_updates_key), true)
+
+    val sevenTVEventApiBackgroundBehavior: LiveUpdatesBackgroundBehavior
+        get() = when (defaultPreferences.getString(context.getString(R.string.preference_7tv_live_updates_timeout_key), null)) {
+            context.getString(R.string.preference_7tv_live_updates_entry_never_key)          -> LiveUpdatesBackgroundBehavior.Never
+            context.getString(R.string.preference_7tv_live_updates_entry_always_key)         -> LiveUpdatesBackgroundBehavior.Always
+            context.getString(R.string.preference_7tv_live_updates_entry_one_minute_key)     -> LiveUpdatesBackgroundBehavior.Timeout(1.minutes)
+            context.getString(R.string.preference_7tv_live_updates_entry_five_minutes_key)   -> LiveUpdatesBackgroundBehavior.Timeout(5.minutes)
+            context.getString(R.string.preference_7tv_live_updates_entry_thirty_minutes_key) -> LiveUpdatesBackgroundBehavior.Timeout(30.minutes)
+            context.getString(R.string.preference_7tv_live_updates_entry_one_hour_key)       -> LiveUpdatesBackgroundBehavior.Timeout(1.hours)
+            else                                                                             -> LiveUpdatesBackgroundBehavior.Timeout(5.minutes) // default
+        }
 
     val sevenTVEventApiEnabledFlow: Flow<Boolean> = callbackFlow {
         val prefKey = context.getString(R.string.preference_7tv_live_updates_key)

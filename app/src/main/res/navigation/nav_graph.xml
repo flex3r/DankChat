@@ -155,7 +155,7 @@
         android:label="EditChannelDialogFragment">
         <argument
             android:name="channelWithRename"
-            app:argType="com.flxrs.dankchat.preferences.ChannelWithRename" />
+            app:argType="com.flxrs.dankchat.preferences.model.ChannelWithRename" />
     </dialog>
     <dialog
         android:id="@+id/messageHistoryDisclaimerDialogFragment"

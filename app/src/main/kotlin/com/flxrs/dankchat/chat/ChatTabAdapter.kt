@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.flxrs.dankchat.data.UserName
-import com.flxrs.dankchat.preferences.ChannelWithRename
+import com.flxrs.dankchat.preferences.model.ChannelWithRename
 
 class ChatTabAdapter(parentFragment: Fragment) : FragmentStateAdapter(parentFragment) {
 

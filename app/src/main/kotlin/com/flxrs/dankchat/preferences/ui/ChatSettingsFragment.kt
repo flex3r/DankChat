@@ -12,7 +12,13 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
-import androidx.preference.*
+import androidx.preference.ListPreference
+import androidx.preference.MultiSelectListPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceCategory
+import androidx.preference.PreferenceManager
+import androidx.preference.SeekBarPreference
+import androidx.preference.SwitchPreferenceCompat
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.databinding.CommandsBottomsheetBinding
@@ -34,7 +40,6 @@ import com.flxrs.dankchat.utils.extensions.showRestartRequired
 import com.flxrs.dankchat.utils.extensions.showShortSnackbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
-import io.ktor.util.reflect.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.math.roundToInt
@@ -108,20 +113,31 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
                 true
             }
         }
-        val allowUnlistedEmotesPreference = findPreference<SwitchPreferenceCompat>(getString(R.string.preference_unlisted_emotes_key))?.apply {
+        findPreference<SwitchPreferenceCompat>(getString(R.string.preference_unlisted_emotes_key))?.apply {
             setOnPreferenceChangeListener { _, _ ->
                 view?.showRestartRequired()
                 true
             }
         }
-        findPreference<MultiSelectListPreference>(getString(R.string.preference_visible_emotes_key))?.apply {
-            fun updateUnlistedVisibility(values: Set<String>) {
-                val sevenTvEnabled = ThirdPartyEmoteType.SevenTV in ThirdPartyEmoteType.mapFromPreferenceSet(values)
-                allowUnlistedEmotesPreference?.isEnabled = sevenTvEnabled
+        findPreference<ListPreference>(getString(R.string.preference_7tv_live_updates_timeout_key))?.apply {
+            setSummaryProvider {
+                it as ListPreference
+                when (it.value) {
+                    getString(R.string.preference_7tv_live_updates_entry_never_key)  -> getString(R.string.preference_7tv_live_updates_timeout_summary_never_active)
+                    getString(R.string.preference_7tv_live_updates_entry_always_key) -> getString(R.string.preference_7tv_live_updates_timeout_summary_always_active)
+                    else                                                             -> getString(R.string.preference_7tv_live_updates_timeout_summary_timeout, it.entry)
+                }
             }
-            updateUnlistedVisibility(values)
+        }
+        val sevenTvCategory = findPreference<PreferenceCategory>(getString(R.string.preference_7tv_category_key))
+        findPreference<MultiSelectListPreference>(getString(R.string.preference_visible_emotes_key))?.apply {
+            fun update7TVCategory(values: Set<String>) {
+                val sevenTvEnabled = ThirdPartyEmoteType.SevenTV in ThirdPartyEmoteType.mapFromPreferenceSet(values)
+                sevenTvCategory?.isEnabled = sevenTvEnabled
+            }
+            update7TVCategory(values)
             setOnPreferenceChangeListener { _, values ->
-                updateUnlistedVisibility(values as Set<String>)
+                update7TVCategory(values as Set<String>)
                 view?.showRestartRequired()
                 true
             }

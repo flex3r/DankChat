@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.preferences
+package com.flxrs.dankchat.preferences.model
 
 import android.os.Parcelable
 import com.flxrs.dankchat.data.UserName
