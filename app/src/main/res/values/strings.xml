@@ -344,6 +344,25 @@
     <string name="preference_bypass_command_handling_summary">Disables intercepting of Twitch commands and sends them to chat instead</string>
     <string name="preference_7tv_live_updates_key" translatable="false">7tv_live_updates_key</string>
     <string name="preference_7tv_live_updates_title">7TV live emote updates</string>
+    <string name="preference_7tv_category_title" translatable="false">7TV</string>
+    <string name="preference_7tv_category_key" translatable="false">7tv_category_key</string>
+    <string name="preference_7tv_live_updates_timeout_title">Live emote updates background behavior</string>
+    <string name="preference_7tv_live_updates_timeout_key" translatable="false">7tv_live_updates_timeout_key</string>
+    <string name="preference_7tv_live_updates_timeout_summary_timeout">Updates stop after %1$s.\nLowering this number may increase battery life.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_always_active">Updates are always active.\nAdding a timeout may increase battery life.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_never_active">Updates are never active in the background.</string>
+    <string name="preference_7tv_live_updates_entry_never">Never active</string>
+    <string name="preference_7tv_live_updates_entry_one_minute">1 minute</string>
+    <string name="preference_7tv_live_updates_entry_five_minutes">5 minutes</string>
+    <string name="preference_7tv_live_updates_entry_thirty_minutes">30 minutes</string>
+    <string name="preference_7tv_live_updates_entry_one_hour">1 hour</string>
+    <string name="preference_7tv_live_updates_entry_always">Always active</string>
+    <string name="preference_7tv_live_updates_entry_never_key" translatable="false">never</string>
+    <string name="preference_7tv_live_updates_entry_one_minute_key" translatable="false">1m</string>
+    <string name="preference_7tv_live_updates_entry_five_minutes_key" translatable="false">5m</string>
+    <string name="preference_7tv_live_updates_entry_thirty_minutes_key" translatable="false">30m</string>
+    <string name="preference_7tv_live_updates_entry_one_hour_key" translatable="false">1h</string>
+    <string name="preference_7tv_live_updates_entry_always_key" translatable="false">always</string>
     <string name="reset_media_uploader_dialog_title">Reset Media Uploader Settings</string>
     <string name="reset_media_uploader_dialog_message">Are you sure you want to reset the media uploader settings to default?</string>
     <string name="reset_media_uploader_dialog_positive">Reset</string>
