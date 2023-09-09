@@ -77,6 +77,10 @@
     <string name="system_message_ffz_emotes_failed">Impossibile caricare le emote FFZ (Errore %1$s)</string>
     <string name="system_message_bttv_emotes_failed">Impossibile caricare le emote BTTV (Errore %1$s)</string>
     <string name="system_message_7tv_emotes_failed">Impossibile caricare le emote 7TV (Errore %1$s)</string>
+    <string name="system_message_7tv_emote_set_changed" comment="flex3rs switched the active 7TV Emote Set to &quot;flex3rs's Emotes&quot;. ">%1$s ha cambiato il Set Emote 7TV attivo a \"%2$s\".</string>
+    <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s ha aggiunto l\'Emote 7TV %2$s.</string>
+    <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s ha rinominato l\'Emote 7TV %2$s in %3$s.</string>
+    <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s ha rimosso l\'Emote 7TV %2$s.</string>
     <string name="timed_out_message">&lt; Messaggio eliminato &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Aggiungi una voce</string>
@@ -275,6 +279,7 @@
     <string name="preference_custom_login_title">Login personalizzato</string>
     <string name="preference_bypass_command_handling_title">Bypassa la gestione dei comandi di Twitch</string>
     <string name="preference_bypass_command_handling_summary">Disabilità l\'intercettazione dei comandi di Twitch inviandoli invece in chat</string>
+    <string name="preference_7tv_live_updates_title">Aggiornamenti Emote 7tv live</string>
     <string name="reset_media_uploader_dialog_title">RIpristina Impostazioni Caricatore Multimediale</string>
     <string name="reset_media_uploader_dialog_message">Sei sicuro di voler ripristinare le impostazioni del caricatore multimediale ai valori predefiniti?</string>
     <string name="reset_media_uploader_dialog_positive">Ripristina</string>
