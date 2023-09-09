@@ -77,6 +77,10 @@
     <string name="system_message_ffz_emotes_failed">Nie udało się załadować emotek FFZ (Error %1$s)</string>
     <string name="system_message_bttv_emotes_failed">Nie udało się załadować emotek BTTV (Error %1$s)</string>
     <string name="system_message_7tv_emotes_failed">Nie udało się załadować emotek 7TV (Error %1$s)</string>
+    <string name="system_message_7tv_emote_set_changed" comment="flex3rs switched the active 7TV Emote Set to &quot;flex3rs's Emotes&quot;. ">%1$s zmienił(a) aktywny zestaw emotek 7TV na \"%2$s\".</string>
+    <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s dodał(a) emotkę 7TV %2$s.</string>
+    <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s zmienił(a) nazwę emotki 7TV %2$s na %3$s.</string>
+    <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s usunął emotkę 7TV %2$s.</string>
     <string name="timed_out_message">&lt; Wiadomość usunięta &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Dodaj wpis</string>
@@ -280,6 +284,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_custom_login_title">Niestandardowy login</string>
     <string name="preference_bypass_command_handling_title">Pomiń obsługę poleceń Twitcha</string>
     <string name="preference_bypass_command_handling_summary">Wyłącza przechwytywanie poleceń Twitcha i zamiast tego wysyła je na czat.</string>
+    <string name="preference_7tv_live_updates_title">Aktualizacje emotek 7TV na żywo</string>
     <string name="reset_media_uploader_dialog_title">Zresetuj ustawienia przesłania media</string>
     <string name="reset_media_uploader_dialog_message">Czy jesteś pewien, że chcesz zresetować ustawienia przesłania media do domyślnych?</string>
     <string name="reset_media_uploader_dialog_positive">Zresetuj</string>
