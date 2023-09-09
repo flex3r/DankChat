@@ -11,7 +11,7 @@ hilt = "2.48"
 
 androidGradlePlugin = "8.2.0-beta03"
 androidDesugarLibs = "2.0.3"
-androidxActivity = "1.8.0-alpha07"
+androidxActivity = "1.8.0-beta01"
 androidxBrowser = "1.6.0"
 androidxConstraintLayout = "2.1.4"
 androidxCore = "1.12.0"
