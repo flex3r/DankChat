@@ -77,6 +77,10 @@
     <string name="system_message_ffz_emotes_failed">FFZ ifadeleri yüklenemedi (Hata %1$s)</string>
     <string name="system_message_bttv_emotes_failed">BTTV ifadeleri yüklenemedi (Hata %1$s)</string>
     <string name="system_message_7tv_emotes_failed">7TV ifadeleri yüklenemedi (Hata %1$s)</string>
+    <string name="system_message_7tv_emote_set_changed" comment="flex3rs switched the active 7TV Emote Set to &quot;flex3rs's Emotes&quot;. ">%1$s, etkin 7TV İfade Öbeğini \"%2$s\" olarak değiştirdi.</string>
+    <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s, %2$s 7TV İfadesini ekledi.</string>
+    <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s, %2$s 7TV İfadesinin adını %3$s olarak değiştirdi.</string>
+    <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s, %2$s 7TV İfadesini kaldırdı.</string>
     <string name="timed_out_message">&lt; Mesaj silindi &gt;</string>
     <string name="multi_entry_header_regex">Düzenli ifade</string>
     <string name="multi_entry_add_entry">Girdi ekle</string>
@@ -165,6 +169,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="reset">Sıfırla</string>
     <string name="oauth_token">OAuth jetonu</string>
     <string name="verify_login">Doğrula ve Kaydet</string>
+    <string name="custom_login_hint">Salt Twitch\'in Helix API\'ı ile çalışan Client ID\'ler desteklidir</string>
     <string name="custom_login_show_scopes">Gerekli kapsamları göster</string>
     <string name="custom_login_required_scopes">Gerekli kapsamlar</string>
     <string name="custom_login_missing_scopes_title">Eksik kapsamlar</string>
@@ -185,7 +190,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_streaminfo_title">Yayın bilgisini göster</string>
     <string name="preference_streaminfo_summary">Canlılık durumunu ve izleyici sayısını gösterir</string>
     <string name="preference_notification_title">Bahsetme bildirimleri göster</string>
-    <string name="preference_notification_summary">Uygulama arka plandayken sizden bahsedildiğinde bildirimler oluşturur</string>
+    <string name="preference_notification_summary">Uygulama arkaplandayken sizden bahsedilince bildirim oluşturur</string>
     <string name="preference_notification_header">Bildirimler</string>
     <string name="preference_chat_header">Sohbet</string>
     <string name="preference_general_header">Genel</string>
@@ -196,7 +201,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_show_input_summary">Mesaj göndermek için girdiyi gösterir</string>
     <string name="preference_follow_system_title">Sistem varsayılanını izle</string>
     <string name="preference_true_dark_theme_title">Gerçek karanlık tema</string>
-    <string name="preference_true_dark_theme_summary">Sohbet arka plan rengini siyaha zorlar</string>
+    <string name="preference_true_dark_theme_summary">Sohbet arkaplan rengini kara olmaya zorlar</string>
     <string name="preference_display_group_title">Görünüm</string>
     <string name="preference_components_group_title">Bileşenler</string>
     <string name="preference_show_timed_out_messages_title">Zaman aşımına uğrayan mesajları göster</string>
@@ -219,7 +224,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_channel_data_header">Kanal verisi</string>
     <string name="preference_developer_header">Geliştirici seçenekleri</string>
     <string name="preference_debug_mode_title">Hata ayıklama modu</string>
-    <string name="preference_debug_mode_summary">Yakalanan her hata hakkında bilgilendirir</string>
+    <string name="preference_debug_mode_summary">Yakalanan her hata için bilgi verir</string>
     <string name="preference_timestamp_format_title">Zaman damgası biçimi</string>
     <string name="preference_tts_title">TTS\'i etkinleştir</string>
     <string name="preference_tts_summary">Etkin kanalın mesajlarını okur</string>
@@ -235,7 +240,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_tts_message_ignore_emote_title">İfadeleri yok say</string>
     <string name="preference_tts_header">TTS</string>
     <string name="preference_checkered_lines_title">Damalı Satırlar</string>
-    <string name="preference_checkered_lines_summary">Her satırı farklı arka plan parlaklığı ile ayır</string>
+    <string name="preference_checkered_lines_summary">Her satırı değişik arkaplan parlaklığıyla ayır</string>
     <string name="preference_supibot_suggestions_title">Supibot komut önerileri</string>
     <string name="preference_scrollback_length_title">Mesaj geri dönme uzunluğu</string>
     <string name="preference_show_username_title">Kullanıcı adını göster</string>
@@ -245,11 +250,12 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_user_long_click_title">Kullanıcı adına uzunca tıklanıncaki davranış</string>
     <string name="preference_user_long_click_summary_on">Normal tıklama pencereyi açar, uzun tıklama bahseder</string>
     <string name="preference_user_long_click_summary_off">Normal tıklama bahseder, uzun tıklama pencereyi açar</string>
-    <string name="preference_tts_force_english_title">Dili İngilizceye zorla</string>
-    <string name="preference_tts_force_english_summary">TTS sesini sistem varsayılanı yerine İngilizceye zorla</string>
+    <string name="preference_tts_force_english_title">Dili İngilizce olmaya zorla</string>
+    <string name="preference_tts_force_english_summary">TTS sesini sistem varsayılanı yerine İngilizce olmaya zorla</string>
     <string name="preference_visible_emotes_title">Görünür üçüncü taraf ifadeler</string>
     <string name="preference_about_tos">Twitch hizmet koşulları ile kullanıcı politikası:</string>
     <string name="preference_show_chip_actions_title">Çip eylemlerini göster</string>
+    <string name="preference_show_chip_actions_summary">Yayınlar, tamekranı açıp kapamak ve sohbet modlarını ayarlamak için çipler gösterir</string>
     <string name="preference_uploader_header">Medya yükleyici</string>
     <string name="preference_uploader_configure_title">Yükleyiciyi ayarla</string>
     <string name="preference_uploader_recent_uploads_title">Son yüklemeler</string>
@@ -276,7 +282,9 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_show_changelogs">Güncellemeden sonra değişiklik günlüklerini göster</string>
     <string name="preference_whats_new_header">Yenilikler</string>
     <string name="preference_custom_login_title">Özel giriş</string>
+    <string name="preference_bypass_command_handling_title">Twitch komut işlemeyi atla</string>
     <string name="preference_bypass_command_handling_summary">Twitch komutlarının yakalanmasını etkisizleştirir ve bunun yerine onları sohbete gönderir</string>
+    <string name="preference_7tv_live_updates_title">7TV canlı ifade güncellemeleri</string>
     <string name="reset_media_uploader_dialog_title">Medya Yükleyici Ayarlarını Sıfırla</string>
     <string name="reset_media_uploader_dialog_message">Medya yükleyici ayarlarını varsayılana sıfırlamak istediğinize emin misiniz?</string>
     <string name="reset_media_uploader_dialog_positive">Sıfırla</string>
@@ -309,6 +317,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="highlights_ignores_entry_subscriptions">Abonelikler ile Etkinlikler</string>
     <string name="highlights_ignores_entry_announcements">Duyurular</string>
     <string name="highlights_ignores_entry_first_messages">İlk Mesajlar</string>
+    <string name="highlights_ignores_entry_redemptions">Kanal Puanlarıyla alınan Öne Çıkarmalar</string>
     <string name="highlights_ignores_entry_replies">Yanıtlar</string>
     <string name="highlights_ignores_entry_custom">Özel</string>
     <string name="highlights_messages_title">Belli şablonlara göre bildirimler oluşturup mesajları öne çıkarır.</string>
