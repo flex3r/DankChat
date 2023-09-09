@@ -287,6 +287,16 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_bypass_command_handling_title">Twitch-Befehlsbehandlung überspringen</string>
     <string name="preference_bypass_command_handling_summary">Deaktiviert das Abfangen von Twitch-Befehlen und sendet sie stattdessen an den Chat</string>
     <string name="preference_7tv_live_updates_title">7TV Live-Emote-Updates</string>
+    <string name="preference_7tv_live_updates_timeout_title">Live-Emote-Updates Hintergrundverhalten</string>
+    <string name="preference_7tv_live_updates_timeout_summary_timeout">Updates stoppen nach %1$s.\nEin niedrigeres Limit kann die Akkulaufzeit verbessern.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_always_active">Updates sind immer aktiv.\nEin Limit kann die Akkulaufzeit verbessern.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_never_active">Updates sind nie im Hintergrund aktiv.</string>
+    <string name="preference_7tv_live_updates_entry_never">Nie aktiv</string>
+    <string name="preference_7tv_live_updates_entry_one_minute">1 Minute</string>
+    <string name="preference_7tv_live_updates_entry_five_minutes">5 Minuten</string>
+    <string name="preference_7tv_live_updates_entry_thirty_minutes">30 Minuten</string>
+    <string name="preference_7tv_live_updates_entry_one_hour">1 Stunde</string>
+    <string name="preference_7tv_live_updates_entry_always">Immer aktiv</string>
     <string name="reset_media_uploader_dialog_title">Medienuploader zurücksetzen</string>
     <string name="reset_media_uploader_dialog_message">Willst du die Einstellungen des Uploaders wirklich zurücksetzen?</string>
     <string name="reset_media_uploader_dialog_positive">Zurücksetzen</string>

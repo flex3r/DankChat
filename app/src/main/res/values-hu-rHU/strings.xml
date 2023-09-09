@@ -77,6 +77,10 @@
     <string name="system_message_ffz_emotes_failed">Nem sikerült betölteni a FFZ hangulatjeleket (hiba %1$s)</string>
     <string name="system_message_bttv_emotes_failed">Nem sikerült betölteni a BTTV hangulatjeleket (hiba %1$s)</string>
     <string name="system_message_7tv_emotes_failed">Nem sikerült betölteni a 7TV hangulatjeleket (hiba %1$s)</string>
+    <string name="system_message_7tv_emote_set_changed" comment="flex3rs switched the active 7TV Emote Set to &quot;flex3rs's Emotes&quot;. ">%1$s átváltotta az aktív hangulatjel készletet a \"%2$s\".</string>
+    <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s hozzáadta a 7TV hangulatjelet %2$s.</string>
+    <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s átnevezte a 7TV hangulatjelet %2$s erre %3$s.</string>
+    <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s eltávolította a 7TV hangulatjelet %2$s.</string>
     <string name="timed_out_message">&lt; Üzenete törölve &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Bejegyzés hozzáadása</string>
@@ -273,6 +277,7 @@
     <string name="preference_custom_login_title">Egyéni bejelentkezés</string>
     <string name="preference_bypass_command_handling_title">Twitch parancs kitérés kezelése</string>
     <string name="preference_bypass_command_handling_summary">Letiltja a Twitch parancsok elfogását és a chatbe küldi helyette</string>
+    <string name="preference_7tv_live_updates_title">7TV élő hangulatjel frissítések</string>
     <string name="reset_media_uploader_dialog_title">A média feltöltő alaphelyzetbe állítása</string>
     <string name="reset_media_uploader_dialog_message">Biztosan alaphelyzetbe állítja a média feltöltő beállításait?</string>
     <string name="reset_media_uploader_dialog_positive">Visszaállítás</string>
