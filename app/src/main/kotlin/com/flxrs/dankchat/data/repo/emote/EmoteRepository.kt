@@ -340,7 +340,7 @@ class EmoteRepository @Inject constructor(
         sevenTvChannelDetails[channel] = SevenTVUserDetails(
             id = userDto.user.id,
             activeEmoteSetId = emoteSetId,
-            connectionIndex = userDto.user.connections.indexOfFirst { it.platform == SevenTVUserConnection.twitch}
+            connectionIndex = userDto.user.connections.indexOfFirst { it.platform == SevenTVUserConnection.twitch }
         )
         val sevenTvEmotes = emoteList
             .filterUnlistedIfEnabled()
@@ -383,8 +383,14 @@ class EmoteRepository @Inject constructor(
                 if (event.removed.any { emote.id == it.id }) {
                     null
                 } else {
-                    event.updated.find { emote.id == it.id }?.let {
-                        emote.copy(code = it.name)
+                    event.updated.find { emote.id == it.id }?.let { update ->
+                        val mapNewBaseName = { oldBase: String? -> (oldBase ?: emote.code).takeIf { it != update.name } }
+                        val newType = when (emote.emoteType) {
+                            is EmoteType.ChannelSevenTVEmote -> emote.emoteType.copy(baseName = mapNewBaseName(emote.emoteType.baseName))
+                            is EmoteType.GlobalSevenTVEmote  -> emote.emoteType.copy(baseName = mapNewBaseName(emote.emoteType.baseName))
+                            else                             -> emote.emoteType
+                        }
+                        emote.copy(code = update.name, emoteType = newType)
                     } ?: emote
                 }
             }
