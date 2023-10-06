@@ -77,6 +77,10 @@
     <string name="system_message_ffz_emotes_failed">Не удалось загрузить смайлы FFZ (ошибка %1$s)</string>
     <string name="system_message_bttv_emotes_failed">Не удалось загрузить смайлы BTTV (ошибка %1$s)</string>
     <string name="system_message_7tv_emotes_failed">Не удалось загрузить смайлы 7TV (ошибка %1$s)</string>
+    <string name="system_message_7tv_emote_set_changed" comment="flex3rs switched the active 7TV Emote Set to &quot;flex3rs's Emotes&quot;. ">%1$s переключил набор 7TV эмоций  на \"%2$s\".</string>
+    <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s добавил 7TV эмоцию %2$s.</string>
+    <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s переименовал 7TV эмоцию %2$s на %3$s.</string>
+    <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s удалил 7TV эмоцию %2$s.</string>
     <string name="timed_out_message">&lt; Сообщение удалено &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Добавить запись</string>
@@ -280,6 +284,17 @@
     <string name="preference_custom_login_title">Пользовательский логин</string>
     <string name="preference_bypass_command_handling_title">Обход обработки команд Twitch</string>
     <string name="preference_bypass_command_handling_summary">Отключает перехват команд Twitch и отправляет их в чат</string>
+    <string name="preference_7tv_live_updates_title">Обновления 7TV эмоций в реальном времени</string>
+    <string name="preference_7tv_live_updates_timeout_title">Фоновые обновления эмоций</string>
+    <string name="preference_7tv_live_updates_timeout_summary_timeout">Обновления останавливаются после %1$s.\nУменьшение этого значения может увеличить время автономной работы.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_always_active">Обновления всегда активны.\nДобавление тайм-аута может увеличить время автономной работы.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_never_active">Фоновые обновления всегда выключены. </string>
+    <string name="preference_7tv_live_updates_entry_never">Всегда выключены</string>
+    <string name="preference_7tv_live_updates_entry_one_minute">1 минуту</string>
+    <string name="preference_7tv_live_updates_entry_five_minutes">5 минут</string>
+    <string name="preference_7tv_live_updates_entry_thirty_minutes">30 минут</string>
+    <string name="preference_7tv_live_updates_entry_one_hour">1 час</string>
+    <string name="preference_7tv_live_updates_entry_always">Всегда активны</string>
     <string name="reset_media_uploader_dialog_title">Сбросить настройки загрузчика медиа</string>
     <string name="reset_media_uploader_dialog_message">Вы уверены, что хотите сбросить настройки загрузчика медиа по умолчанию?</string>
     <string name="reset_media_uploader_dialog_positive">Сбросить</string>
