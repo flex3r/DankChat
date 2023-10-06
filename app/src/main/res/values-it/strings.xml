@@ -280,6 +280,16 @@
     <string name="preference_bypass_command_handling_title">Bypassa la gestione dei comandi di Twitch</string>
     <string name="preference_bypass_command_handling_summary">Disabilità l\'intercettazione dei comandi di Twitch inviandoli invece in chat</string>
     <string name="preference_7tv_live_updates_title">Aggiornamenti Emote 7tv live</string>
+    <string name="preference_7tv_live_updates_timeout_title">Comportamento degli aggiornamenti in background delle emote live</string>
+    <string name="preference_7tv_live_updates_timeout_summary_timeout">Gli aggiornamenti si fermano dopo %1$s.\nAbbassare questo numero può aumentare la durata della batteria.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_always_active">Gli aggiornamenti sono sempre attivi.\nAggiungere un timeout può aumentare la durata della batteria</string>
+    <string name="preference_7tv_live_updates_timeout_summary_never_active">Gli aggiornamenti non sono mai attivi in background.</string>
+    <string name="preference_7tv_live_updates_entry_never">Mai attivi</string>
+    <string name="preference_7tv_live_updates_entry_one_minute">1 minuto</string>
+    <string name="preference_7tv_live_updates_entry_five_minutes">5 minuti</string>
+    <string name="preference_7tv_live_updates_entry_thirty_minutes">30 minuti</string>
+    <string name="preference_7tv_live_updates_entry_one_hour">1 ora</string>
+    <string name="preference_7tv_live_updates_entry_always">sempre attivi</string>
     <string name="reset_media_uploader_dialog_title">RIpristina Impostazioni Caricatore Multimediale</string>
     <string name="reset_media_uploader_dialog_message">Sei sicuro di voler ripristinare le impostazioni del caricatore multimediale ai valori predefiniti?</string>
     <string name="reset_media_uploader_dialog_positive">Ripristina</string>
