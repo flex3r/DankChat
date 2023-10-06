@@ -285,6 +285,16 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_bypass_command_handling_title">Twitch komut işlemeyi atla</string>
     <string name="preference_bypass_command_handling_summary">Twitch komutlarının yakalanmasını etkisizleştirir ve bunun yerine onları sohbete gönderir</string>
     <string name="preference_7tv_live_updates_title">7TV canlı ifade güncellemeleri</string>
+    <string name="preference_7tv_live_updates_timeout_title">Canlı ifade güncellemeleri arkaplan davranışı</string>
+    <string name="preference_7tv_live_updates_timeout_summary_timeout">Güncellemeler %1$s sonra durur.\nBu sayıyı düşürmek pil ömrünü uzatabilir.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_always_active">Güncellemeler sürekli etkindir.\nBir zamanaşımı eklemek pil ömrünü uzatabilir.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_never_active">Güncellemeler asla arkaplanda etkin değildir.</string>
+    <string name="preference_7tv_live_updates_entry_never">Asla etkin değil</string>
+    <string name="preference_7tv_live_updates_entry_one_minute">1 dakika</string>
+    <string name="preference_7tv_live_updates_entry_five_minutes">5 dakika</string>
+    <string name="preference_7tv_live_updates_entry_thirty_minutes">30 dakika</string>
+    <string name="preference_7tv_live_updates_entry_one_hour">1 saat</string>
+    <string name="preference_7tv_live_updates_entry_always">Sürekli etkin</string>
     <string name="reset_media_uploader_dialog_title">Medya Yükleyici Ayarlarını Sıfırla</string>
     <string name="reset_media_uploader_dialog_message">Medya yükleyici ayarlarını varsayılana sıfırlamak istediğinize emin misiniz?</string>
     <string name="reset_media_uploader_dialog_positive">Sıfırla</string>
