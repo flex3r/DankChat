@@ -77,6 +77,10 @@
     <string name="system_message_ffz_emotes_failed">Falha ao carregar emotes FFZ (Erro %1$s)</string>
     <string name="system_message_bttv_emotes_failed">Falha ao carregar emotes BTTV (Erro %1$s)</string>
     <string name="system_message_7tv_emotes_failed">Falha ao carregar emotes do 7TV (Erro %1$s)</string>
+    <string name="system_message_7tv_emote_set_changed" comment="flex3rs switched the active 7TV Emote Set to &quot;flex3rs's Emotes&quot;. ">%1$s mudou o conjunto de emotes do 7TV ativo para \"%2$s\".</string>
+    <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s adicionou o emote de 7TV %2$s.</string>
+    <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s renomeou o emote do 7TV %2$s para %3$s.</string>
+    <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s removeu o emote de 7TV %2$s.</string>
     <string name="timed_out_message">&lt; Mensagem apagada &gt;</string>
     <string name="multi_entry_header_regex">Expressão regular</string>
     <string name="multi_entry_add_entry">Adicionar uma entrada</string>
@@ -275,6 +279,17 @@
     <string name="preference_custom_login_title">Inicio de sessão customizado</string>
     <string name="preference_bypass_command_handling_title">Ignorar manipulação de comandos da Twitch</string>
     <string name="preference_bypass_command_handling_summary">Desativa a interceptação de comandos da Twitch e envia-os para o chat</string>
+    <string name="preference_7tv_live_updates_title">7TV atualização de emotes ao vivo</string>
+    <string name="preference_7tv_live_updates_timeout_title">Comportamento em segundo plano de atualização ao vivo de emotes</string>
+    <string name="preference_7tv_live_updates_timeout_summary_timeout">Atualizações param após %1$s.\nDiminuir este número pode aumentar a duração da bateria.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_always_active">Atualizações estão sempre ativas.\n Adicionar uma suspensão pode aumentar a vida da bateria.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_never_active">Atualizações nunca estão ativas em segundo plano.</string>
+    <string name="preference_7tv_live_updates_entry_never">Nunca ativo</string>
+    <string name="preference_7tv_live_updates_entry_one_minute">1 minuto</string>
+    <string name="preference_7tv_live_updates_entry_five_minutes">5 minutes</string>
+    <string name="preference_7tv_live_updates_entry_thirty_minutes">30 minutes</string>
+    <string name="preference_7tv_live_updates_entry_one_hour">1 hora</string>
+    <string name="preference_7tv_live_updates_entry_always">Sempre ativo</string>
     <string name="reset_media_uploader_dialog_title">Redefinir as configurações do carregador de mídia</string>
     <string name="reset_media_uploader_dialog_message">Tens a certeza de que desejas redefinir as configurações padrão do carregador de mídia?</string>
     <string name="reset_media_uploader_dialog_positive">Reinicia</string>
