@@ -24,7 +24,7 @@ android {
         minSdk = 21
         targetSdk = 34
         versionCode = 30801
-        versionName = "3.8.1"
+        versionName = "3.8.2"
 
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
@@ -53,6 +53,7 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/versions/9/previous-compilation-data.bin"
         }
     }
 
@@ -127,6 +128,7 @@ dependencies {
     implementation(libs.androidx.emoji2)
     implementation(libs.androidx.exifinterface)
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.transition.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.media)

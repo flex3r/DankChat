@@ -79,6 +79,9 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
                     .setThemeOverlay(R.style.AppTheme_TrueDarkOverlay)
                     .build()
                 DynamicColors.applyToActivityIfAvailable(this, dynamicColorsOptions)
+                // TODO check if still neded in future material alphas
+                theme.applyStyle(R.style.AppTheme_TrueDarkOverlay, true)
+                window.peekDecorView()?.context?.theme?.applyStyle(R.style.AppTheme_TrueDarkOverlay, true)
             }
 
             isTrueDarkModeEnabled                            -> {

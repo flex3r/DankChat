@@ -449,6 +449,7 @@
     <string name="changelog_sheet_subtitle">What\'s new in v%1$s:</string>
     <string name="changelog_3_6">Initial support for replying and viewing reply threads\nAdded setting to load missed messages after reconnects\nNew modal bottomsheet design\nAdded new message bottomsheet by long pressing a message\nAdded new emote bottomsheet by pressing an emote\nAdded new changelog bottomsheet\nAdded support for animated FFZ emotes\nImproved emote menu layout\nMigrated to new followers endpoint which is now limited to broadcasters and moderators due to Twitch restrictions</string>
     <string name="changelog_3_7_3">Added /shoutout command\nAdded /shield and /shieldoff commands\nFixed data loading errors when a login expired\nAdded developer setting to set a custom access token\nAdded developer setting to bypass Twitch command handling\nLots of translation and maintenance updates!</string>
+    <string name="changelog_3_8_2">Added support for Android 14\nAdded support for 7TV live emote updates\nAdded setting to configure 7TV live emote updates background behavior</string>
     <string name="confirm_login_cancel_title">Confirm login cancellation</string>
     <string name="confirm_login_cancel_message">Are you sure you want to cancel the login process?</string>
     <string name="confirm_login_cancel_positive_button">Cancel login</string>
