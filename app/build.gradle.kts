@@ -23,7 +23,7 @@ android {
         applicationId = "com.flxrs.dankchat"
         minSdk = 21
         targetSdk = 34
-        versionCode = 30801
+        versionCode = 30802
         versionName = "3.8.2"
 
         ksp {
