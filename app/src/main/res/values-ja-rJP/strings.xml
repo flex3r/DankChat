@@ -280,6 +280,16 @@
     <string name="preference_bypass_command_handling_title">Twitchコマンドの処理をバイパスする</string>
     <string name="preference_bypass_command_handling_summary">Twitchコマンドの通信切断を無効にし、代わりにチャットに送信します</string>
     <string name="preference_7tv_live_updates_title">7TVライブエモートの更新</string>
+    <string name="preference_7tv_live_updates_timeout_title">ライブエモートはバックグラウンドで更新中</string>
+    <string name="preference_7tv_live_updates_timeout_summary_timeout">%1$s後にアップデートを停止します。\n数字を下げることでバッテリー寿命を延ばせるかもしれません。</string>
+    <string name="preference_7tv_live_updates_timeout_summary_always_active">アップデートは常にアクティブです。\nタイムアウト時間を追加するとバッテリー寿命が延びることがあります。</string>
+    <string name="preference_7tv_live_updates_timeout_summary_never_active">アップデートはバックグラウンドで有効になっていません。</string>
+    <string name="preference_7tv_live_updates_entry_never">アクティブになっていません</string>
+    <string name="preference_7tv_live_updates_entry_one_minute">1分</string>
+    <string name="preference_7tv_live_updates_entry_five_minutes">5分</string>
+    <string name="preference_7tv_live_updates_entry_thirty_minutes">30分</string>
+    <string name="preference_7tv_live_updates_entry_one_hour">1時間</string>
+    <string name="preference_7tv_live_updates_entry_always">常にアクティブ</string>
     <string name="reset_media_uploader_dialog_title">メディアアップローダーの設定をリセット</string>
     <string name="reset_media_uploader_dialog_message">メディアアップローダーの設定を既定値にリセットしてもよろしいですか？</string>
     <string name="reset_media_uploader_dialog_positive">リセット</string>
