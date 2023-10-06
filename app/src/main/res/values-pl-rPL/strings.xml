@@ -285,6 +285,16 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_bypass_command_handling_title">Pomiń obsługę poleceń Twitcha</string>
     <string name="preference_bypass_command_handling_summary">Wyłącza przechwytywanie poleceń Twitcha i zamiast tego wysyła je na czat.</string>
     <string name="preference_7tv_live_updates_title">Aktualizacje emotek 7TV na żywo</string>
+    <string name="preference_7tv_live_updates_timeout_title">Zachowanie w tle aktualizacji emotek na żywo</string>
+    <string name="preference_7tv_live_updates_timeout_summary_timeout">Aktualizacje zostaną zatrzymane po %1$s.\nZmniejszenie tej liczby może wydłużyć czas pracy baterii.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_always_active">Aktualizacje są zawsze aktywne.\nDodanie limitu czasu może wydłużyć czas pracy baterii.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_never_active">Aktualizacje nigdy nie są aktywne w tle.</string>
+    <string name="preference_7tv_live_updates_entry_never">Nigdy nie aktywne</string>
+    <string name="preference_7tv_live_updates_entry_one_minute">1 minuta</string>
+    <string name="preference_7tv_live_updates_entry_five_minutes">5 minut</string>
+    <string name="preference_7tv_live_updates_entry_thirty_minutes">30 minut</string>
+    <string name="preference_7tv_live_updates_entry_one_hour">1 godzina</string>
+    <string name="preference_7tv_live_updates_entry_always">Zawsze aktywne</string>
     <string name="reset_media_uploader_dialog_title">Zresetuj ustawienia przesłania media</string>
     <string name="reset_media_uploader_dialog_message">Czy jesteś pewien, że chcesz zresetować ustawienia przesłania media do domyślnych?</string>
     <string name="reset_media_uploader_dialog_positive">Zresetuj</string>
