@@ -23,6 +23,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.activity.trackPipAnimationHintView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -42,6 +43,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
@@ -291,12 +293,16 @@ class MainFragment : Fragment() {
                     .setAspectRatio(Rational(16, 9))
                     .build()
             )
+            lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    activity?.trackPipAnimationHintView(binding.streamWebviewWrapper)
+                }
+            }
         }
 
         initPreferences(view.context)
         binding.splitThumb?.background?.alpha = 150
         activity?.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
-
         mainViewModel.apply {
             collectFlow(imageUploadState, ::handleImageUploadState)
             collectFlow(dataLoadingState, ::handleDataLoadingState)
@@ -1209,13 +1215,14 @@ class MainFragment : Fragment() {
 
     private fun MainFragmentBinding.updatePictureInPictureVisibility(isInPictureInPicture: Boolean = isInPictureInPictureMode) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            appbarLayout.isVisible = !isInPictureInPicture
-            chatViewpager.isVisible = !isInPictureInPicture
+            appbarLayout.isVisible = !isInPictureInPicture && mainViewModel.shouldShowTabs.value
+            chatViewpager.isVisible = !isInPictureInPicture && mainViewModel.shouldShowViewPager.value
             fullScreenSheetFragment.isVisible = !isInPictureInPicture
             inputSheetFragment.isVisible = !isInPictureInPicture
-            inputLayout.isVisible = !isInPictureInPicture
-            showChips.isVisible = !isInPictureInPicture
-            splitThumb?.isVisible = !isInPictureInPicture
+            inputLayout.isVisible = !isInPictureInPicture && mainViewModel.shouldShowInput.value
+            fullscreenHintText.isVisible = !isInPictureInPicture && mainViewModel.shouldShowFullscreenHelper.value
+            showChips.isVisible = !isInPictureInPicture && mainViewModel.shouldShowChipToggle.value
+            splitThumb?.isVisible = !isInPictureInPicture && streamWebviewWrapper.isVisible
             splitGuideline?.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 guidePercent = when {
                     isInPictureInPicture -> PIP_GUIDELINE_PERCENT
