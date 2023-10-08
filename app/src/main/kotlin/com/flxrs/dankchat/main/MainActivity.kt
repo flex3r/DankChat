@@ -176,6 +176,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
             ChatSettingsFragment::class.java.simpleName          -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_chatSettingsFragment)
             ToolsSettingsFragment::class.java.simpleName         -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_toolsSettingsFragment)
             DeveloperSettingsFragment::class.java.simpleName     -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_developerSettingsFragment)
+            StreamsSettingsFragment::class.java.simpleName       -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_streamsSettingsFragment)
             else                                                 -> return false
         }
         return true

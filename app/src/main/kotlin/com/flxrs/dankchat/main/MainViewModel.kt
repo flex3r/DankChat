@@ -387,6 +387,10 @@ class MainViewModel @Inject constructor(
 
     val currentStreamedChannel: StateFlow<UserName?> = _currentStreamedChannel.asStateFlow()
 
+    val shouldEnablePictureInPictureAutoMode: StateFlow<Boolean> = combine(currentStreamedChannel, dankChatPreferenceStore.pictureInPictureModeEnabledFlow) { currentStream, pipEnabled ->
+        currentStream != null && pipEnabled
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
+
     val isStreamActive: Boolean
         get() = currentStreamedChannel.value != null
     val isFullscreen: Boolean
@@ -711,8 +715,9 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun fetchStreamData(channels: List<UserName>) {
+    fun fetchStreamData(channels: List<UserName>? = this.channels.value) {
         cancelStreamData()
+        channels?.ifEmpty { null } ?: return
 
         val fetchingEnabled = dankChatPreferenceStore.fetchStreamInfoEnabled
         if (!dankChatPreferenceStore.isLoggedIn || !fetchingEnabled) {

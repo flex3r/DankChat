@@ -4,6 +4,7 @@ package com.flxrs.dankchat.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.annotation.StringRes
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.BuildConfig
@@ -192,7 +193,7 @@ class DankChatPreferenceStore @Inject constructor(
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_repeated_sending_key), false)
 
     val retainWebViewEnabled: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_retain_webview_key), false)
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_retain_webview_new_key), false)
 
     val mentionEntries: Set<String>
         get() = defaultPreferences.getStringSet(context.getString(R.string.preference_custom_mentions_key), emptySet()).orEmpty()
@@ -242,6 +243,10 @@ class DankChatPreferenceStore @Inject constructor(
     val sevenTVEventApiEnabled: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_7tv_live_updates_key), true)
 
+    val pictureInPictureModeEnabled: Boolean
+        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_pip_key), false)
+    val pictureInPictureModeEnabledFlow: Flow<Boolean> = booleanPreferenceFlowOf(R.string.preference_pip_key, default = false)
+
     val sevenTVEventApiBackgroundBehavior: LiveUpdatesBackgroundBehavior
         get() = when (defaultPreferences.getString(context.getString(R.string.preference_7tv_live_updates_timeout_key), null)) {
             context.getString(R.string.preference_7tv_live_updates_entry_never_key)          -> LiveUpdatesBackgroundBehavior.Never
@@ -252,20 +257,7 @@ class DankChatPreferenceStore @Inject constructor(
             context.getString(R.string.preference_7tv_live_updates_entry_one_hour_key)       -> LiveUpdatesBackgroundBehavior.Timeout(1.hours)
             else                                                                             -> LiveUpdatesBackgroundBehavior.Timeout(5.minutes) // default
         }
-
-    val sevenTVEventApiEnabledFlow: Flow<Boolean> = callbackFlow {
-        val prefKey = context.getString(R.string.preference_7tv_live_updates_key)
-        send(defaultPreferences.getBoolean(prefKey, true))
-
-        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (key == prefKey) {
-                trySend(defaultPreferences.getBoolean(prefKey, true))
-            }
-        }
-
-        defaultPreferences.registerOnSharedPreferenceChangeListener(listener)
-        awaitClose { defaultPreferences.unregisterOnSharedPreferenceChangeListener(listener) }
-    }
+    val sevenTVEventApiEnabledFlow: Flow<Boolean> = booleanPreferenceFlowOf(R.string.preference_7tv_live_updates_key, default = true)
 
     val currentUserAndDisplayFlow: Flow<Pair<UserName?, DisplayName?>> = callbackFlow {
         send(userName to displayName)
@@ -466,6 +458,22 @@ class DankChatPreferenceStore @Inject constructor(
 
     private val shouldShowChangelogAfterUpdate: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_show_changelogs_key), true)
+
+    private fun booleanPreferenceFlowOf(@StringRes key: Int, default: Boolean): Flow<Boolean> {
+        return callbackFlow {
+            val prefKey = context.getString(key)
+            send(defaultPreferences.getBoolean(prefKey, default))
+
+            val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+                if (key == prefKey) {
+                    trySend(defaultPreferences.getBoolean(prefKey, default))
+                }
+            }
+
+            defaultPreferences.registerOnSharedPreferenceChangeListener(listener)
+            awaitClose { defaultPreferences.unregisterOnSharedPreferenceChangeListener(listener) }
+        }
+    }
 
     companion object {
         private const val LOGGED_IN_KEY = "loggedIn"

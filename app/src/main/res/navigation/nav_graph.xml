@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--suppress NavigationFile -->
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:startDestination="@id/mainFragment">
@@ -106,6 +106,13 @@
             app:popEnterAnim="@anim/open_enter"
             app:popExitAnim="@anim/close_exit" />
         <action
+            android:id="@+id/action_overviewSettingsFragment_to_streamsSettingsFragment"
+            app:destination="@id/streamsSettingsFragment"
+            app:enterAnim="@anim/open_enter"
+            app:exitAnim="@anim/close_exit"
+            app:popEnterAnim="@anim/open_enter"
+            app:popExitAnim="@anim/close_exit" />
+        <action
             android:id="@+id/action_overviewSettingsFragment_to_changelogSheetFragment"
             app:destination="@id/changelogSheetFragment" />
     </fragment>
@@ -132,6 +139,11 @@
         android:id="@+id/developerSettingsFragment"
         android:name="com.flxrs.dankchat.preferences.ui.DeveloperSettingsFragment"
         android:label="DeveloperSettingsFragment" />
+
+    <fragment
+        android:id="@+id/streamsSettingsFragment"
+        android:name="com.flxrs.dankchat.preferences.ui.StreamsSettingsFragment"
+        android:label="StreamsSettingsFragment" />
 
     <dialog
         android:id="@+id/channelsDialogFragment"

@@ -16,6 +16,9 @@ class StreamWebView @JvmOverloads constructor(
     defStyleAttr: Int = android.R.attr.webViewStyle,
     defStyleRes: Int = 0
 ) : WebView(context, attrs, defStyleAttr, defStyleRes) {
+
+    var shouldOverrideWindowVisibilityHandling = false
+
     init {
         with(settings) {
             javaScriptEnabled = true
@@ -36,6 +39,17 @@ class StreamWebView @JvmOverloads constructor(
 
         stopLoading()
         loadUrl(url)
+    }
+
+    override fun onWindowVisibilityChanged(visibility: Int) {
+        if (!shouldOverrideWindowVisibilityHandling) {
+            super.onWindowVisibilityChanged(visibility)
+            return
+        }
+
+        if (visibility != GONE || url == null || url == BLANK_URL) {
+            super.onWindowVisibilityChanged(visibility)
+        }
     }
 
     private class StreamWebViewClient : WebViewClient() {

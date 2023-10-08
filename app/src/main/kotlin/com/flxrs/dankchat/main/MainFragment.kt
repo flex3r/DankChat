@@ -2,14 +2,17 @@ package com.flxrs.dankchat.main
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.PictureInPictureParams
 import android.content.*
 import android.content.res.ColorStateList
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
+import android.util.Rational
 import android.view.*
 import android.view.ViewGroup.MarginLayoutParams
 import android.view.inputmethod.EditorInfo
@@ -69,8 +72,8 @@ import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.databinding.EditDialogBinding
 import com.flxrs.dankchat.databinding.MainFragmentBinding
-import com.flxrs.dankchat.preferences.model.ChannelWithRename
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.model.ChannelWithRename
 import com.flxrs.dankchat.utils.createMediaFile
 import com.flxrs.dankchat.utils.extensions.*
 import com.flxrs.dankchat.utils.insets.ControlFocusInsetsAnimationCallback
@@ -236,6 +239,8 @@ class MainFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         tabAdapter = ChatTabAdapter(parentFragment = this)
         bindingRef = MainFragmentBinding.inflate(inflater, container, false).apply {
+            updatePictureInPictureVisibility()
+
             inputBottomSheetBehavior = BottomSheetBehavior.from(inputSheetFragment).apply {
                 addBottomSheetCallback(inputSheetCallback)
                 skipCollapsed = true
@@ -280,6 +285,14 @@ class MainFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            activity?.setPictureInPictureParams(
+                PictureInPictureParams.Builder()
+                    .setAspectRatio(Rational(16, 9))
+                    .build()
+            )
+        }
+
         initPreferences(view.context)
         binding.splitThumb?.background?.alpha = 150
         activity?.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
@@ -357,11 +370,7 @@ class MainFragment : Fragment() {
             collectFlow(channelMentionCount, ::updateChannelMentionBadges)
             collectFlow(unreadMessagesMap, ::updateUnreadChannelTabColors)
             collectFlow(shouldColorNotification) { activity?.invalidateMenu() }
-            collectFlow(channels) {
-                if (!it.isNullOrEmpty()) {
-                    mainViewModel.fetchStreamData(it)
-                }
-            }
+            collectFlow(channels, mainViewModel::fetchStreamData)
             collectFlow(currentStreamedChannel) {
                 val isActive = it != null
                 binding.streamWebviewWrapper.isVisible = isActive
@@ -369,12 +378,21 @@ class MainFragment : Fragment() {
                     return@collectFlow
                 }
 
-                binding.splitThumb?.isVisible = isActive
+                binding.splitThumb?.isVisible = isActive && !isInPictureInPictureMode
                 binding.splitGuideline?.updateLayoutParams<ConstraintLayout.LayoutParams> {
                     guidePercent = when {
                         isActive -> DEFAULT_GUIDELINE_PERCENT
                         else     -> DISABLED_GUIDELINE_PERCENT
                     }
+                }
+            }
+            collectFlow(shouldEnablePictureInPictureAutoMode) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    activity?.setPictureInPictureParams(
+                        PictureInPictureParams.Builder()
+                            .setAutoEnterEnabled(it)
+                            .build()
+                    )
                 }
             }
             collectFlow(useCustomBackHandling) { onBackPressedCallback.isEnabled = it }
@@ -491,8 +509,13 @@ class MainFragment : Fragment() {
         }
     }
 
+    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean) {
+        bindingRef?.updatePictureInPictureVisibility(isInPictureInPictureMode)
+    }
+
     override fun onPause() {
         binding.input.clearFocus()
+        binding.updatePictureInPictureVisibility()
         mainViewModel.cancelStreamData()
         super.onPause()
     }
@@ -500,6 +523,7 @@ class MainFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         changeActionBarVisibility(mainViewModel.isFullscreenFlow.value)
+        binding.updatePictureInPictureVisibility()
 
         (activity as? MainActivity)?.apply {
             val channel = channelToOpen
@@ -545,6 +569,7 @@ class MainFragment : Fragment() {
                 startReply(reply.replyMessageId, reply.replyName)
             }
         }
+        mainViewModel.fetchStreamData()
     }
 
     override fun onDestroyView() {
@@ -1166,6 +1191,27 @@ class MainFragment : Fragment() {
         }
     }
 
+    private fun MainFragmentBinding.updatePictureInPictureVisibility(isInPictureInPicture: Boolean = isInPictureInPictureMode) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            appbarLayout.isVisible = !isInPictureInPicture
+            chatViewpager.isVisible = !isInPictureInPicture
+            fullScreenSheetFragment.isVisible = !isInPictureInPicture
+            inputSheetFragment.isVisible = !isInPictureInPicture
+            inputLayout.isVisible = !isInPictureInPicture
+            showChips.isVisible = !isInPictureInPicture
+            splitThumb?.isVisible = !isInPictureInPicture
+            splitGuideline?.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                guidePercent = when {
+                    isInPictureInPicture -> PIP_GUIDELINE_PERCENT
+                    else                 -> DEFAULT_GUIDELINE_PERCENT
+                }
+            }
+        }
+    }
+
+    private val isInPictureInPictureMode: Boolean
+        get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && (activity?.isInPictureInPictureMode ?: false)
+
     private fun BottomSheetBehavior<FragmentContainerView>.setupFullScreenSheet() {
         addBottomSheetCallback(fullScreenSheetCallback)
         hide()
@@ -1346,6 +1392,7 @@ class MainFragment : Fragment() {
     companion object {
         private const val DISABLED_GUIDELINE_PERCENT = 0f
         private const val DEFAULT_GUIDELINE_PERCENT = 0.6f
+        private const val PIP_GUIDELINE_PERCENT = 1f
         private const val MAX_GUIDELINE_PERCENT = 0.8f
         private const val MIN_GUIDELINE_PERCENT = 0.2f
         private const val CLIPBOARD_LABEL = "dankchat_media_url"

@@ -18,13 +18,6 @@
 
     <SwitchPreferenceCompat
         android:defaultValue="false"
-        android:key="@string/preference_retain_webview_key"
-        android:summary="@string/preference_retain_webview_summary"
-        android:title="@string/preference_retain_webview_title"
-        app:iconSpaceReserved="false" />
-
-    <SwitchPreferenceCompat
-        android:defaultValue="false"
         android:key="@string/preference_bypass_command_handling_key"
         android:summary="@string/preference_bypass_command_handling_summary"
         android:title="@string/preference_bypass_command_handling_title"
