@@ -397,6 +397,10 @@ class MainFragment : Fragment() {
             }
             collectFlow(useCustomBackHandling) { onBackPressedCallback.isEnabled = it }
             collectFlow(dankChatViewModel.validationResult) {
+                if (isInPictureInPictureMode) {
+                    return@collectFlow
+                }
+
                 when (it) {
                     // wait for username to be validated before showing snackbar
                     is ValidationResult.User             -> showSnackBar(getString(R.string.snackbar_login, it.username), onDismiss = ::openChangelogSheetIfNecessary)
@@ -518,6 +522,18 @@ class MainFragment : Fragment() {
         binding.updatePictureInPictureVisibility()
         mainViewModel.cancelStreamData()
         super.onPause()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(CURRENT_STREAM_STATE, mainViewModel.currentStreamedChannel.value?.value)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        savedInstanceState?.let {
+            mainViewModel.setCurrentStream(it.getString(CURRENT_STREAM_STATE)?.toUserName())
+        }
     }
 
     override fun onResume() {
@@ -1209,9 +1225,6 @@ class MainFragment : Fragment() {
         }
     }
 
-    private val isInPictureInPictureMode: Boolean
-        get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && (activity?.isInPictureInPictureMode ?: false)
-
     private fun BottomSheetBehavior<FragmentContainerView>.setupFullScreenSheet() {
         addBottomSheetCallback(fullScreenSheetCallback)
         hide()
@@ -1399,6 +1412,7 @@ class MainFragment : Fragment() {
         private const val CLIPBOARD_LABEL_MESSAGE = "dankchat_message"
         private const val TAB_SCROLL_DELAY_MS = 1000 / 60 * 10L
         private const val OFFSCREEN_PAGE_LIMIT = 2
+        private const val CURRENT_STREAM_STATE = "current_stream_state"
 
         const val LOGOUT_REQUEST_KEY = "logout_key"
         const val LOGIN_REQUEST_KEY = "login_key"

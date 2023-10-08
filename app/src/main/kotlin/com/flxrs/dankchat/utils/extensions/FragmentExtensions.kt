@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -12,6 +13,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
@@ -88,3 +90,7 @@ private fun AppCompatActivity.keepScreenOn(keep: Boolean) {
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 }
+
+val FragmentActivity.isInSupportedPictureInPictureMode: Boolean get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && isInPictureInPictureMode
+
+val Fragment.isInPictureInPictureMode: Boolean get() = activity?.isInSupportedPictureInPictureMode ?: false

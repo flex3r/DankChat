@@ -744,6 +744,10 @@ class MainViewModel @Inject constructor(
         streamData.value = emptyList()
     }
 
+    fun setCurrentStream(value: UserName?) {
+        _currentStreamedChannel.update { value }
+    }
+
     fun toggleStream() {
         chipsExpanded.update { false }
         _currentStreamedChannel.update {
