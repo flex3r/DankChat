@@ -381,6 +381,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="changelog_sheet_subtitle">Was ist neu in v%1$s:</string>
     <string name="changelog_3_6">Initiale Unterstützung für das Beantworten von Nachrichten und Anzeigen von Antwortverläufen\nNeue Einstellung, um verpasste Nachrichten nach Verbindungsabbrüchen zu laden\nNeues Design für Bottomsheet-Dialoge\nNeuer Nachrichten-Dialog, aufklappbar durch das Halten einer Nachricht\nNeuer Emote-Dialog, aufklappbar durch das Drücken eines Emotes\nNeuer Changelog Dialog\nUnterstützung für animierte FFZ-Emotes\nVerbessertes Layout des Emote-Menüs\nMigration zu neuem Follower API-Endpunkt, der aufgrund von Twitch-Beschränkungen nun auf Broadcaster und Moderatoren beschränkt ist</string>
     <string name="changelog_3_7_3">Added /shoutout command\nAdded /shield and /shieldoff commands\nFixed data loading errors when a login expired\nAdded developer setting to set a custom access token\nAdded developer setting to bypass Twitch command handling\nLots of translation and maintenance updates!</string>
+    <string name="changelog_3_8_2">Unterstützung für Android 14\nUnterstützung für 7TV Live-Emote-Updates\nNeue Einstellung, um das Hintergrundverhalten von 7TV Live-Emote-Updates zu konfigurieren</string>
     <string name="confirm_login_cancel_title">Anmeldeabbruch bestätigen</string>
     <string name="confirm_login_cancel_message">Möchtest du den Anmeldevorgang wirklich abbrechen?</string>
     <string name="confirm_login_cancel_positive_button">Anmeldung abbrechen</string>
