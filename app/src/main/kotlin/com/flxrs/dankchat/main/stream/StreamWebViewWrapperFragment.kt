@@ -37,7 +37,6 @@ class StreamWebViewWrapperFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val streamWebView = streamWebViewModel.getOrCreateStreamWebView()
-        streamWebView.shouldOverrideWindowVisibilityHandling = dankChatPreferenceStore.pictureInPictureModeEnabled
         binding.streamWrapper.addView(
             streamWebView,
             ViewGroup.LayoutParams(
