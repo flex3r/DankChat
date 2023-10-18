@@ -77,6 +77,10 @@
     <string name="system_message_ffz_emotes_failed">Nepodařilo se načíst FFZ emotikony (chyba %1$s)</string>
     <string name="system_message_bttv_emotes_failed">Nepodařilo se načíst BTTV emotikony (chyba %1$s)</string>
     <string name="system_message_7tv_emotes_failed">Nepodařilo se načíst 7TV emotikony (chyba %1$s)</string>
+    <string name="system_message_7tv_emote_set_changed" comment="flex3rs switched the active 7TV Emote Set to &quot;flex3rs's Emotes&quot;. ">%1$s přepnul aktivní sadu 7TV emotikonů na \"%2$s\".</string>
+    <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s přidal 7TV emotikon %2$s.</string>
+    <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s přejmenoval 7TV emotikon %2$s na %3$s.</string>
+    <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s odstranil 7TV emotikon %2$s.</string>
     <string name="timed_out_message">&lt; Zpráva smazána &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Přidat položku</string>
@@ -282,6 +286,17 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_custom_login_title">Vlastní přihlášení</string>
     <string name="preference_bypass_command_handling_title">Obejít zpracování Twitch příkazů</string>
     <string name="preference_bypass_command_handling_summary">Zakáže zpracování Twitch příkazů a místo toho je rovnou odešle do chatu</string>
+    <string name="preference_7tv_live_updates_title">Aktualizace emotikonů 7TV</string>
+    <string name="preference_7tv_live_updates_timeout_title">Chování aktualizací emotikonů na pozadí</string>
+    <string name="preference_7tv_live_updates_timeout_summary_timeout">Aktualizace se zastaví po %1$s.\nSnížení hodnoty může zvýšit výdrž baterie.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_always_active">Aktualizace budou probíhat vždy.\nPřidání časového limitu může zvýšit výdrž baterie.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_never_active">Aktualizace nebudou probíhat na pozadí.</string>
+    <string name="preference_7tv_live_updates_entry_never">Neaktivní</string>
+    <string name="preference_7tv_live_updates_entry_one_minute">1 minutě</string>
+    <string name="preference_7tv_live_updates_entry_five_minutes">5 minutách</string>
+    <string name="preference_7tv_live_updates_entry_thirty_minutes">30 minutách</string>
+    <string name="preference_7tv_live_updates_entry_one_hour">1 hodině</string>
+    <string name="preference_7tv_live_updates_entry_always">Vždy aktivní</string>
     <string name="reset_media_uploader_dialog_title">Obnovit nastavení nahrávače médií</string>
     <string name="reset_media_uploader_dialog_message">Jste si jístí, že chcete obnovit výchozí nastavení nahrávače médií?</string>
     <string name="reset_media_uploader_dialog_positive">Obnovit</string>
@@ -366,6 +381,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="changelog_sheet_subtitle">Co je nového ve verzi %1$s:</string>
     <string name="changelog_3_6">Přidána podpora pro odpovídání a prohlížení vláken odpovědí\nPřidáno nastavení načítání zmeškaných zpráv po opětovném připojení\nNový design spodních panelů\nPřidán nový spodní panel s možnostmi zpráv dlouhým stisknutím zprávy\nPřidán nový spodní panel s možnostmi emotikonů stisknutím na emotikon\nPřidán nový panel seznamu změn\nPřidána podpora animovaných emotů FFZ\nVylepšeno rozložení menu emotikonů\nMigrováno na nový koncový bod sledujících, který je nyní omezen na streamery a moderátory kvůli omezením Twitche.</string>
     <string name="changelog_3_7_3">Přidán příkaz / shoutout\nPřidány příkazy / shiel a / shieldoff\nOprava chyb při načítání, když vypršelo přihlášení\nPřidáno vývojářské nastavení pro nastavení vlastního přístupového tokenu\nPřidáno vývojářské nastavení na obejití zpracování Twitch příkazů\nSpoustu aktualizací překladu a oprav chyb!</string>
+    <string name="changelog_3_8_2">Přidána podpora pro Android 14\nPřidána podpora pro aktualizace 7TV emotikonů v kanálu\nPřidáno nastavení k přizpůsobení chování aktualizací 7TV emotikonů v kanálu</string>
     <string name="confirm_login_cancel_title">Potvrdit zrušení přihlášení</string>
     <string name="confirm_login_cancel_message">Jste si jistí, že chcete zrušit proces přihlášení?</string>
     <string name="confirm_login_cancel_positive_button">Zrušit přihlášení</string>
