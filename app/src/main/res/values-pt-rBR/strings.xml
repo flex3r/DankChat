@@ -77,7 +77,10 @@
     <string name="system_message_ffz_emotes_failed">Falha ao carregar emotes FFZ (Erro %1$s)</string>
     <string name="system_message_bttv_emotes_failed">Falha ao carregar emotes BTTV (Erro %1$s)</string>
     <string name="system_message_7tv_emotes_failed">Falha ao carregar Emotes 7TV (Erro %1$s)</string>
+    <string name="system_message_7tv_emote_set_changed" comment="flex3rs switched the active 7TV Emote Set to &quot;flex3rs's Emotes&quot;. ">%1$s alterou o grupo ativo de emotes 7TV para \"%2$s\".</string>
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s adicionou o emote %2$s na 7TV.  </string>
+    <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s renomeou o emote do 7tv de %2$s para %3$s.</string>
+    <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s removeu o emote 7TV %2$s.</string>
     <string name="timed_out_message">&lt; Mensagem excluída &gt;</string>
     <string name="multi_entry_header_regex">Expressão regular</string>
     <string name="multi_entry_add_entry">Adicionar uma entrada</string>
@@ -276,10 +279,17 @@
     <string name="preference_custom_login_title">Login customizado</string>
     <string name="preference_bypass_command_handling_title">Ignorar manipulação de comandos da Twitch</string>
     <string name="preference_bypass_command_handling_summary">Desativa a interceptação de comandos da Twitch e os envia para o chat</string>
+    <string name="preference_7tv_live_updates_title">Atualização de emotes 7TV ao vivo</string>
+    <string name="preference_7tv_live_updates_timeout_title">Atualização em segundo plano de alterações de emotes</string>
+    <string name="preference_7tv_live_updates_timeout_summary_timeout">Atualizações param após %1$s.\nDiminuir esse número pode aumentar a duração da bateria.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_always_active">Atualizações estão sempre ativas.\nAdicionar um tempo de duração pode aumentar a vida da bateria.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_never_active">Atualizações nunca vão acontecer em segundo plano.</string>
+    <string name="preference_7tv_live_updates_entry_never">Nunca ativo</string>
     <string name="preference_7tv_live_updates_entry_one_minute">1 minuto</string>
     <string name="preference_7tv_live_updates_entry_five_minutes">5 minutos</string>
     <string name="preference_7tv_live_updates_entry_thirty_minutes">30 minutos</string>
     <string name="preference_7tv_live_updates_entry_one_hour">1 hora</string>
+    <string name="preference_7tv_live_updates_entry_always">Sempre ativo</string>
     <string name="reset_media_uploader_dialog_title">Redefinir Configurações do Carregador de Mídia</string>
     <string name="reset_media_uploader_dialog_message">Tem certeza que quer redefinir as configurações do carregador de mídia para o padrão?</string>
     <string name="reset_media_uploader_dialog_positive">Redefinir</string>
@@ -364,6 +374,7 @@
     <string name="changelog_sheet_subtitle">O que há de novo na versão %1$s:</string>
     <string name="changelog_3_6">Suporte inicial para respostas e visualização de tópicos\nAdicionado função para recuperar mensagens perdidas após fazer reconexões\nNovo design das janelas informativas\nAdicionado nova janela informativa ao ter um pressionar longo nas mensagens\nAdicionado nova janela informativa ao pressionar em um emote\nAdicionado nova janela informativa para alterações recentes\nAdicionado suporte para os emotes animados do FFZ\nMelhora no layout do menu de emote\nMigração para o novo endpoint de seguidores, onde agora é limitado para o Streamer e aos Moderadores devido a restrições da Twitch</string>
     <string name="changelog_3_7_3">Adicionado comando /shoutout\nAdicionado comandos /shield e /shieldoff\nConcertado erros de carregamento de dados quando o login expirava\nAdicionado opção de desenvolvedor para definir um token de acesso customizado\nAdicionado opção de desenvolvedor para ignorar a manipulação de comandos da Twitch\nVárias traduções novas e updates de manutenção!</string>
+    <string name="changelog_3_8_2">Adicionado suporte para Android 14\nAdicionado suporte para atualização ao vivo de emotes 7TV\nAdicionado configurações para alterar o comportamento de atualização ao vivo de emotes 7TV em segundo plano</string>
     <string name="confirm_login_cancel_title">Confirmar cancelamento de login</string>
     <string name="confirm_login_cancel_message">Você tem certeza que deseja cancelar o processo de Login?</string>
     <string name="confirm_login_cancel_positive_button">Cancelar login</string>
