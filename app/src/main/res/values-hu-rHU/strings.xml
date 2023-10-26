@@ -278,6 +278,16 @@
     <string name="preference_bypass_command_handling_title">Twitch parancs kitérés kezelése</string>
     <string name="preference_bypass_command_handling_summary">Letiltja a Twitch parancsok elfogását és a chatbe küldi helyette</string>
     <string name="preference_7tv_live_updates_title">7TV élő hangulatjel frissítések</string>
+    <string name="preference_7tv_live_updates_timeout_title">Élő hangulatjel frissítések háttér viselkedése</string>
+    <string name="preference_7tv_live_updates_timeout_summary_timeout">A frissítések befejeződnek %1$s után.\nA szám csökkentésével az akkumulátor élettartamát növelheti.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_always_active">A frissítések mindig aktívak.\nIdőkorlát hozzáadásával növelheti az akkumulátor élettartamát.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_never_active">A frissítések soha nem aktívak a háttérben.</string>
+    <string name="preference_7tv_live_updates_entry_never">Soha nem aktív</string>
+    <string name="preference_7tv_live_updates_entry_one_minute">1 perc</string>
+    <string name="preference_7tv_live_updates_entry_five_minutes">5 perc</string>
+    <string name="preference_7tv_live_updates_entry_thirty_minutes">30 perc</string>
+    <string name="preference_7tv_live_updates_entry_one_hour">1 óra</string>
+    <string name="preference_7tv_live_updates_entry_always">Mindig aktív</string>
     <string name="reset_media_uploader_dialog_title">A média feltöltő alaphelyzetbe állítása</string>
     <string name="reset_media_uploader_dialog_message">Biztosan alaphelyzetbe állítja a média feltöltő beállításait?</string>
     <string name="reset_media_uploader_dialog_positive">Visszaállítás</string>
@@ -360,6 +370,7 @@
     <string name="emote_copied">Hangulatjel másolva</string>
     <string name="changelog_sheet_title">A DankChat frissítve lett!</string>
     <string name="changelog_sheet_subtitle">Újdonságok a v%1$s</string>
+    <string name="changelog_3_8_2">Android 14 támogatása\nTámogatás a 7TV élő hangulatjel frissítésekre\nBeállítás hozzáadása a 7TV élő hangulatjel frissítések háttér viselkedésére</string>
     <string name="confirm_login_cancel_title">A bejelentkezés megszakításának megerősítése</string>
     <string name="confirm_login_cancel_message">Biztosan megszakítja a bejelentkezési folyamatot?</string>
     <string name="confirm_login_cancel_positive_button">Bejelentkezés megszakítása</string>
