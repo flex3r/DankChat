@@ -90,7 +90,6 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
 import java.net.URL
-import java.util.*
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
@@ -667,7 +666,7 @@ class MainFragment : Fragment() {
         is MessageSheetResult.OpenMoreActions -> openMoreActionsMessageSheet(result.messageId, result.fullMessage)
         is MessageSheetResult.Copy            -> copyAndShowSnackBar(result.message, R.string.snackbar_message_copied)
         is MessageSheetResult.Reply           -> startReply(result.replyMessageId, result.replyName)
-        is MessageSheetResult.ViewThread      -> openReplies(result.replyMessageId)
+        is MessageSheetResult.ViewThread      -> openReplies(result.rootThreadId)
     }
 
     private fun openMoreActionsMessageSheet(messageId: String, fullMessage: String) {

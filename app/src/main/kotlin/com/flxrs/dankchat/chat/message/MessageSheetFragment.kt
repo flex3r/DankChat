@@ -57,16 +57,15 @@ class MessageSheetFragment : BottomSheetDialogFragment() {
                         }
                     }
                     if (state.canReply) {
-                        messageReply.setOnClickListener { sendResultAndDismiss(MessageSheetResult.Reply(state.replyMessageId, state.replyName)) }
+                        messageReply.setOnClickListener { sendResultAndDismiss(MessageSheetResult.Reply(state.messageId, state.replyName)) }
                     }
                     if (state.hasReplyThread) {
-                        messageViewThread.setOnClickListener { sendResultAndDismiss(MessageSheetResult.ViewThread(state.replyMessageId)) }
+                        messageViewThread.setOnClickListener { sendResultAndDismiss(MessageSheetResult.ViewThread(state.rootThreadId)) }
                     }
                     messageCopy.setOnClickListener { sendResultAndDismiss(MessageSheetResult.Copy(state.originalMessage)) }
                     messageMoreActions.setOnClickListener { sendResultAndDismiss(MessageSheetResult.OpenMoreActions(args.messageId, args.fullMessage)) }
                 }
             }
-
         }
     }
 

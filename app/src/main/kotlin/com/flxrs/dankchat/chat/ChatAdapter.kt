@@ -130,7 +130,7 @@ class ChatAdapter(
                         append(message.thread.message)
                     }
                     itemReply.text = formatted
-                    itemReply.setOnClickListener { onReplyClick(message.thread.id) }
+                    itemReply.setOnClickListener { onReplyClick(message.thread.rootId) }
                 }
 
                 itemText.handlePrivMessage(message, holder, item.isMentionTab)

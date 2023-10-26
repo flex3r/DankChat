@@ -16,5 +16,5 @@ sealed interface MessageSheetResult : Parcelable {
     data class Reply(val replyMessageId: String, val replyName: UserName) : MessageSheetResult
 
     @Parcelize
-    data class ViewThread(val replyMessageId: String) : MessageSheetResult
+    data class ViewThread(val rootThreadId: String) : MessageSheetResult
 }

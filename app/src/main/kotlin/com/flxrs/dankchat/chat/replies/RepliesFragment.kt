@@ -12,6 +12,7 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.chat.FullScreenSheetState
 import com.flxrs.dankchat.databinding.RepliesFragmentBinding
 import com.flxrs.dankchat.main.MainViewModel
+import com.flxrs.dankchat.utils.extensions.collectFlow
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -19,6 +20,7 @@ class RepliesFragment : Fragment() {
 
     private val args: RepliesFragmentArgs by navArgs()
     private val mainViewModel: MainViewModel by viewModels({ requireParentFragment() })
+    private val repliesViewModel: RepliesViewModel by viewModels()
 
     private var bindingRef: RepliesFragmentBinding? = null
     private val binding get() = bindingRef!!
@@ -32,6 +34,15 @@ class RepliesFragment : Fragment() {
         }
         mainViewModel.setFullScreenSheetState(FullScreenSheetState.Replies(args.rootMessageId))
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        collectFlow(repliesViewModel.state) { state ->
+            if (state !is RepliesState.Found) return@collectFlow
+            val lastMessage = state.items.lastOrNull() ?: return@collectFlow
+            mainViewModel.setFullScreenSheetState(FullScreenSheetState.Replies(lastMessage.message.id))
+        }
     }
 
     override fun onDestroyView() {

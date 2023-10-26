@@ -40,18 +40,18 @@ class MessageSheetViewModel @Inject constructor(
             else -> {
                 val asPrivMessage = message as? PrivMessage
                 val asWhisperMessage = message as? WhisperMessage
-                val replyMessageId = asPrivMessage?.thread?.id
+                val rootId = asPrivMessage?.thread?.rootId
                 val name = asPrivMessage?.name ?: asWhisperMessage?.name ?: return@combine MessageSheetState.NotFound
                 val replyName = asPrivMessage?.thread?.name ?: name
                 val originalMessage = asPrivMessage?.originalMessage ?: asWhisperMessage?.originalMessage
                 MessageSheetState.Found(
                     messageId = message.id,
-                    replyMessageId = replyMessageId ?: message.id,
+                    rootThreadId = rootId ?: message.id,
                     replyName = replyName,
                     name = name,
                     originalMessage = originalMessage.orEmpty(),
                     canModerate = args.canModerate && args.channel != null && args.channel in userState.moderationChannels,
-                    hasReplyThread = args.canReply && replyMessageId != null && repliesRepository.hasMessageThread(replyMessageId),
+                    hasReplyThread = args.canReply && rootId != null && repliesRepository.hasMessageThread(rootId),
                     canReply = connectionState == ConnectionState.CONNECTED && args.canReply
                 )
             }

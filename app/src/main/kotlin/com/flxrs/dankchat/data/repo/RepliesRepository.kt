@@ -82,8 +82,12 @@ class RepliesRepository @Inject constructor(private val dankChatPreferenceStore:
             else                         -> threads.getValue(rootId).update { thread }
         }
 
+        val parentMessage = message.tags[PARENT_MESSAGE_ID_TAG]?.let { parentMessageId ->
+            thread.replies.find { it.id == parentMessageId }
+        } ?: thread.rootMessage
+
         return strippedMessage
-            .copy(thread = MessageThreadHeader(thread.rootMessageId, thread.rootMessage.name, thread.rootMessage.originalMessage, thread.participated))
+            .copy(thread = MessageThreadHeader(thread.rootMessageId, parentMessage.name, parentMessage.originalMessage, thread.participated))
     }
 
     fun updateMessageInThread(message: Message): Message {
@@ -128,6 +132,7 @@ class RepliesRepository @Inject constructor(private val dankChatPreferenceStore:
             val stripped = message.substringAfter("@$displayName ")
             return copy(
                 message = stripped,
+                originalMessage = stripped,
                 replyMentionOffset = displayName.length + 2,
                 emoteData = emoteData.copy(message = stripped)
             )
@@ -143,7 +148,8 @@ class RepliesRepository @Inject constructor(private val dankChatPreferenceStore:
     companion object {
         private val TAG = RepliesRepository::class.java.simpleName
 
-        private const val ROOT_MESSAGE_ID_TAG = "reply-parent-msg-id"
+        private const val PARENT_MESSAGE_ID_TAG = "reply-parent-msg-id"
+        private const val ROOT_MESSAGE_ID_TAG = "reply-thread-parent-msg-id"
         private const val ROOT_MESSAGE_LOGIN_TAG = "reply-parent-user-login"
         private const val ROOT_MESSAGE_DISPLAY_TAG = "reply-parent-display-name"
     }
