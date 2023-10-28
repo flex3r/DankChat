@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
                 android:inputType="textNoSuggestions"
-                android:singleLine="true"
+                android:textMultiLine="true"
                 android:text="" />
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>

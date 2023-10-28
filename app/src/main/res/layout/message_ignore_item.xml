@@ -50,7 +50,7 @@
                     android:layout_height="wrap_content"
                     android:imeOptions="actionDone"
                     android:inputType="text"
-                    android:singleLine="true"
+                    android:singleLine="false"
                     android:text="@={item.pattern}" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -129,7 +129,7 @@
                     android:layout_height="wrap_content"
                     android:imeOptions="actionDone"
                     android:inputType="text"
-                    android:singleLine="true"
+                    android:singleLine="false"
                     android:text="@={item.replacement}" />
             </com.google.android.material.textfield.TextInputLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

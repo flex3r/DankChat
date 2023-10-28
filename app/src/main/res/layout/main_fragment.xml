@@ -177,7 +177,7 @@
                 android:inputType="text|textCapSentences"
                 android:paddingStart="12dp"
                 android:paddingEnd="8dp"
-                android:singleLine="true" />
+                android:singleLine="false" />
         </com.flxrs.dankchat.main.DankChatInputLayout>
 
         <TextView

@@ -67,7 +67,7 @@
                         android:layout_height="wrap_content"
                         android:imeOptions="actionNext"
                         android:inputType="textNoSuggestions"
-                        android:singleLine="true"
+                        android:singleLine="false"
                         android:text="@={uploader.uploadUrl}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -84,7 +84,7 @@
                         android:layout_height="wrap_content"
                         android:imeOptions="actionNext"
                         android:inputType="textNoSuggestions"
-                        android:singleLine="true"
+                        android:singleLine="false"
                         android:text="@={uploader.formField}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -101,7 +101,7 @@
                         android:layout_height="wrap_content"
                         android:imeOptions="actionNext"
                         android:inputType="textNoSuggestions"
-                        android:singleLine="true"
+                        android:singleLine="false"
                         android:text="@={uploader.headers}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -118,7 +118,7 @@
                         android:layout_height="wrap_content"
                         android:imeOptions="actionNext"
                         android:inputType="textNoSuggestions"
-                        android:singleLine="true"
+                        android:singleLine="false"
                         android:text="@={uploader.imageLinkPattern}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -135,7 +135,7 @@
                         android:layout_height="wrap_content"
                         android:imeOptions="actionDone"
                         android:inputType="textNoSuggestions"
-                        android:singleLine="true"
+                        android:singleLine="false"
                         android:text="@={uploader.deletionLinkPattern}" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>

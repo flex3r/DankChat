@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone|flagNoExtractUi"
                 android:inputType="text"
-                android:singleLine="true" />
+                android:singleLine="false" />
         </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>
