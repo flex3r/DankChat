@@ -27,8 +27,10 @@ fun TabLayout.setInitialColors() {
     setTabTextColors(layeredUnselectedColor, primary)
 }
 
+@Suppress("USELESS_ELVIS")
 fun TabLayout.Tab.setTextColor(@AttrRes id: Int, layerWithSurface: Boolean = false) {
-    val textView = this.view[1] as? TextView ?: return
+    val tabView = view ?: return
+    val textView = tabView[1] as? TextView ?: return
     val textColor = MaterialColors.getColor(textView, id).let { color ->
         when {
             layerWithSurface -> {
