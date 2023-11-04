@@ -363,7 +363,7 @@
     <string name="preference_7tv_live_updates_entry_thirty_minutes_key" translatable="false">30m</string>
     <string name="preference_7tv_live_updates_entry_one_hour_key" translatable="false">1h</string>
     <string name="preference_7tv_live_updates_entry_always_key" translatable="false">always</string>
-    <string name="preference_streams_header">Streams</string>
+    <string name="preference_streams_header">Livestreams</string>
     <string name="preference_streams_header_key" translatable="false">streams_header_key</string>
     <string name="preference_retain_webview_new_key" translatable="false">retain_webview_new_key</string>
     <string name="preference_pip_key" translatable="false">pip_key</string>
@@ -456,7 +456,7 @@
     <string name="changelog_3_6">Initial support for replying and viewing reply threads\nAdded setting to load missed messages after reconnects\nNew modal bottomsheet design\nAdded new message bottomsheet by long pressing a message\nAdded new emote bottomsheet by pressing an emote\nAdded new changelog bottomsheet\nAdded support for animated FFZ emotes\nImproved emote menu layout\nMigrated to new followers endpoint which is now limited to broadcasters and moderators due to Twitch restrictions</string>
     <string name="changelog_3_7_3">Added /shoutout command\nAdded /shield and /shieldoff commands\nFixed data loading errors when a login expired\nAdded developer setting to set a custom access token\nAdded developer setting to bypass Twitch command handling\nLots of translation and maintenance updates!</string>
     <string name="changelog_3_8_2">Added support for Android 14\nAdded support for 7TV live emote updates\nAdded setting to configure 7TV live emote updates background behavior</string>
-    <string name="changelog_3_9_0">Added \"Streams\" settings category\nAdded support for picture-in-picture mode to allow streams to keep playing while the app is in the background (off by default)</string>
+    <string name="changelog_3_9_0">Added \"Livestreams\" settings category\nAdded support for picture-in-picture mode to allow streams to keep playing while the app is in the background (off by default)</string>
     <string name="confirm_login_cancel_title">Confirm login cancellation</string>
     <string name="confirm_login_cancel_message">Are you sure you want to cancel the login process?</string>
     <string name="confirm_login_cancel_positive_button">Cancel login</string>
