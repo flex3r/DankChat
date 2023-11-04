@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">DankChat</string>
     <string name="app_name_dank">DankChat (Dank)</string>
     <string name="send_hint">Sende eine Nachricht</string>
@@ -297,6 +297,9 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_7tv_live_updates_entry_thirty_minutes">30 Minuten</string>
     <string name="preference_7tv_live_updates_entry_one_hour">1 Stunde</string>
     <string name="preference_7tv_live_updates_entry_always">Immer aktiv</string>
+    <string name="preference_streams_header">Livestreams</string>
+    <string name="preference_pip_title">Bild-im-Bild-Modus aktivieren</string>
+    <string name="preference_pip_summary">Erlaubt das Abspielen von Livestreams, während die App im Hintergrund läuft</string>
     <string name="reset_media_uploader_dialog_title">Medienuploader zurücksetzen</string>
     <string name="reset_media_uploader_dialog_message">Willst du die Einstellungen des Uploaders wirklich zurücksetzen?</string>
     <string name="reset_media_uploader_dialog_positive">Zurücksetzen</string>
@@ -382,6 +385,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="changelog_3_6">Initiale Unterstützung für das Beantworten von Nachrichten und Anzeigen von Antwortverläufen\nNeue Einstellung, um verpasste Nachrichten nach Verbindungsabbrüchen zu laden\nNeues Design für Bottomsheet-Dialoge\nNeuer Nachrichten-Dialog, aufklappbar durch das Halten einer Nachricht\nNeuer Emote-Dialog, aufklappbar durch das Drücken eines Emotes\nNeuer Changelog Dialog\nUnterstützung für animierte FFZ-Emotes\nVerbessertes Layout des Emote-Menüs\nMigration zu neuem Follower API-Endpunkt, der aufgrund von Twitch-Beschränkungen nun auf Broadcaster und Moderatoren beschränkt ist</string>
     <string name="changelog_3_7_3">Added /shoutout command\nAdded /shield and /shieldoff commands\nFixed data loading errors when a login expired\nAdded developer setting to set a custom access token\nAdded developer setting to bypass Twitch command handling\nLots of translation and maintenance updates!</string>
     <string name="changelog_3_8_2">Unterstützung für Android 14\nUnterstützung für 7TV Live-Emote-Updates\nNeue Einstellung, um das Hintergrundverhalten von 7TV Live-Emote-Updates zu konfigurieren</string>
+    <string name="changelog_3_9_0">Neue Einstellungs-Kategorie \"Livestreams\"\nUnterstützung für Bild-im-Bild-Modus, damit Livestreams abgespielt werden können, während die App im Hintergrund läuft (standardmäßig deaktiviert)</string>
     <string name="confirm_login_cancel_title">Anmeldeabbruch bestätigen</string>
     <string name="confirm_login_cancel_message">Möchtest du den Anmeldevorgang wirklich abbrechen?</string>
     <string name="confirm_login_cancel_positive_button">Anmeldung abbrechen</string>
