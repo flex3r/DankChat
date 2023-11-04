@@ -2,14 +2,17 @@ package com.flxrs.dankchat.main
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.PictureInPictureParams
 import android.content.*
 import android.content.res.ColorStateList
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
+import android.util.Rational
 import android.view.*
 import android.view.ViewGroup.MarginLayoutParams
 import android.view.inputmethod.EditorInfo
@@ -20,6 +23,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.activity.trackPipAnimationHintView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -39,6 +43,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
@@ -69,8 +74,8 @@ import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.databinding.EditDialogBinding
 import com.flxrs.dankchat.databinding.MainFragmentBinding
-import com.flxrs.dankchat.preferences.model.ChannelWithRename
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.model.ChannelWithRename
 import com.flxrs.dankchat.utils.createMediaFile
 import com.flxrs.dankchat.utils.extensions.*
 import com.flxrs.dankchat.utils.insets.ControlFocusInsetsAnimationCallback
@@ -236,6 +241,8 @@ class MainFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         tabAdapter = ChatTabAdapter(parentFragment = this)
         bindingRef = MainFragmentBinding.inflate(inflater, container, false).apply {
+            updatePictureInPictureVisibility()
+
             inputBottomSheetBehavior = BottomSheetBehavior.from(inputSheetFragment).apply {
                 addBottomSheetCallback(inputSheetCallback)
                 skipCollapsed = true
@@ -280,10 +287,22 @@ class MainFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            activity?.setPictureInPictureParams(
+                PictureInPictureParams.Builder()
+                    .setAspectRatio(Rational(16, 9))
+                    .build()
+            )
+            lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    activity?.trackPipAnimationHintView(binding.streamWebviewWrapper)
+                }
+            }
+        }
+
         initPreferences(view.context)
         binding.splitThumb?.background?.alpha = 150
         activity?.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
-
         mainViewModel.apply {
             collectFlow(imageUploadState, ::handleImageUploadState)
             collectFlow(dataLoadingState, ::handleDataLoadingState)
@@ -357,11 +376,7 @@ class MainFragment : Fragment() {
             collectFlow(channelMentionCount, ::updateChannelMentionBadges)
             collectFlow(unreadMessagesMap, ::updateUnreadChannelTabColors)
             collectFlow(shouldColorNotification) { activity?.invalidateMenu() }
-            collectFlow(channels) {
-                if (!it.isNullOrEmpty()) {
-                    mainViewModel.fetchStreamData(it)
-                }
-            }
+            collectFlow(channels, mainViewModel::fetchStreamData)
             collectFlow(currentStreamedChannel) {
                 val isActive = it != null
                 binding.streamWebviewWrapper.isVisible = isActive
@@ -369,7 +384,7 @@ class MainFragment : Fragment() {
                     return@collectFlow
                 }
 
-                binding.splitThumb?.isVisible = isActive
+                binding.splitThumb?.isVisible = isActive && !isInPictureInPictureMode
                 binding.splitGuideline?.updateLayoutParams<ConstraintLayout.LayoutParams> {
                     guidePercent = when {
                         isActive -> DEFAULT_GUIDELINE_PERCENT
@@ -377,8 +392,21 @@ class MainFragment : Fragment() {
                     }
                 }
             }
+            collectFlow(shouldEnablePictureInPictureAutoMode) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    activity?.setPictureInPictureParams(
+                        PictureInPictureParams.Builder()
+                            .setAutoEnterEnabled(it)
+                            .build()
+                    )
+                }
+            }
             collectFlow(useCustomBackHandling) { onBackPressedCallback.isEnabled = it }
             collectFlow(dankChatViewModel.validationResult) {
+                if (isInPictureInPictureMode) {
+                    return@collectFlow
+                }
+
                 when (it) {
                     // wait for username to be validated before showing snackbar
                     is ValidationResult.User             -> showSnackBar(getString(R.string.snackbar_login, it.username), onDismiss = ::openChangelogSheetIfNecessary)
@@ -491,15 +519,33 @@ class MainFragment : Fragment() {
         }
     }
 
+    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean) {
+        bindingRef?.updatePictureInPictureVisibility(isInPictureInPictureMode)
+    }
+
     override fun onPause() {
         binding.input.clearFocus()
+        binding.updatePictureInPictureVisibility()
         mainViewModel.cancelStreamData()
         super.onPause()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(CURRENT_STREAM_STATE, mainViewModel.currentStreamedChannel.value?.value)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        savedInstanceState?.let {
+            mainViewModel.setCurrentStream(it.getString(CURRENT_STREAM_STATE)?.toUserName())
+        }
     }
 
     override fun onResume() {
         super.onResume()
         changeActionBarVisibility(mainViewModel.isFullscreenFlow.value)
+        binding.updatePictureInPictureVisibility()
 
         (activity as? MainActivity)?.apply {
             val channel = channelToOpen
@@ -545,6 +591,7 @@ class MainFragment : Fragment() {
                 startReply(reply.replyMessageId, reply.replyName)
             }
         }
+        mainViewModel.fetchStreamData()
     }
 
     override fun onDestroyView() {
@@ -1166,6 +1213,25 @@ class MainFragment : Fragment() {
         }
     }
 
+    private fun MainFragmentBinding.updatePictureInPictureVisibility(isInPictureInPicture: Boolean = isInPictureInPictureMode) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            appbarLayout.isVisible = !isInPictureInPicture && mainViewModel.shouldShowTabs.value
+            chatViewpager.isVisible = !isInPictureInPicture && mainViewModel.shouldShowViewPager.value
+            fullScreenSheetFragment.isVisible = !isInPictureInPicture
+            inputSheetFragment.isVisible = !isInPictureInPicture
+            inputLayout.isVisible = !isInPictureInPicture && mainViewModel.shouldShowInput.value
+            fullscreenHintText.isVisible = !isInPictureInPicture && mainViewModel.shouldShowFullscreenHelper.value
+            showChips.isVisible = !isInPictureInPicture && mainViewModel.shouldShowChipToggle.value
+            splitThumb?.isVisible = !isInPictureInPicture && streamWebviewWrapper.isVisible
+            splitGuideline?.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                guidePercent = when {
+                    isInPictureInPicture -> PIP_GUIDELINE_PERCENT
+                    else                 -> DEFAULT_GUIDELINE_PERCENT
+                }
+            }
+        }
+    }
+
     private fun BottomSheetBehavior<FragmentContainerView>.setupFullScreenSheet() {
         addBottomSheetCallback(fullScreenSheetCallback)
         hide()
@@ -1346,12 +1412,14 @@ class MainFragment : Fragment() {
     companion object {
         private const val DISABLED_GUIDELINE_PERCENT = 0f
         private const val DEFAULT_GUIDELINE_PERCENT = 0.6f
+        private const val PIP_GUIDELINE_PERCENT = 1f
         private const val MAX_GUIDELINE_PERCENT = 0.8f
         private const val MIN_GUIDELINE_PERCENT = 0.2f
         private const val CLIPBOARD_LABEL = "dankchat_media_url"
         private const val CLIPBOARD_LABEL_MESSAGE = "dankchat_message"
         private const val TAB_SCROLL_DELAY_MS = 1000 / 60 * 10L
         private const val OFFSCREEN_PAGE_LIMIT = 2
+        private const val CURRENT_STREAM_STATE = "current_stream_state"
 
         const val LOGOUT_REQUEST_KEY = "logout_key"
         const val LOGIN_REQUEST_KEY = "login_key"

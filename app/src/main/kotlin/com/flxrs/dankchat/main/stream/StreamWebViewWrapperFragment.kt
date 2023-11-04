@@ -9,8 +9,10 @@ import androidx.fragment.app.viewModels
 import com.flxrs.dankchat.databinding.FragmentStreamWebViewWrapperBinding
 import com.flxrs.dankchat.main.MainViewModel
 import com.flxrs.dankchat.main.StreamWebViewModel
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.collectFlow
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 /**
 This fragment's purpose is to manage the lifecycle of the WebView inside it
@@ -22,6 +24,9 @@ class StreamWebViewWrapperFragment : Fragment() {
     private val streamWebViewModel: StreamWebViewModel by viewModels({ requireParentFragment() })
     private var bindingRef: FragmentStreamWebViewWrapperBinding? = null
     private val binding get() = bindingRef!!
+
+    @Inject
+    lateinit var dankChatPreferenceStore: DankChatPreferenceStore
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

@@ -16,6 +16,7 @@ class StreamWebView @JvmOverloads constructor(
     defStyleAttr: Int = android.R.attr.webViewStyle,
     defStyleRes: Int = 0
 ) : WebView(context, attrs, defStyleAttr, defStyleRes) {
+
     init {
         with(settings) {
             javaScriptEnabled = true

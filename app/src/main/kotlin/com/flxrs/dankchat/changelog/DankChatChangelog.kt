@@ -8,4 +8,5 @@ enum class DankChatChangelog(val version: DankChatVersion, @get:StringRes val st
     VERSION_3_6_0(DankChatVersion(major = 3, minor = 6, patch = 0), R.string.changelog_3_6),
     VERSION_3_7_3(DankChatVersion(major = 3, minor = 7, patch = 3), R.string.changelog_3_7_3),
     VERSION_3_8_0(DankChatVersion(major = 3, minor = 8, patch = 2), R.string.changelog_3_8_2),
+    VERSION_3_9_0(DankChatVersion(major = 3, minor = 9, patch = 0), R.string.changelog_3_9_0)
 }
