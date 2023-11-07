@@ -37,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:imeOptions="actionDone"
                     android:inputType="text"
-                    android:singleLine="false"
+                    android:singleLine="true"
                     android:text="@={item.username}" />
             </com.google.android.material.textfield.TextInputLayout>
 
