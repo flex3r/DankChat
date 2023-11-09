@@ -295,6 +295,9 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_7tv_live_updates_entry_thirty_minutes">30 dakika</string>
     <string name="preference_7tv_live_updates_entry_one_hour">1 saat</string>
     <string name="preference_7tv_live_updates_entry_always">Sürekli etkin</string>
+    <string name="preference_streams_header">Canlı yayınlar</string>
+    <string name="preference_pip_title">Resim içinde resim modunu etkinleştir</string>
+    <string name="preference_pip_summary">Uygulama arkaplandayken yayınların oynamayı sürdürmesine izin verir</string>
     <string name="reset_media_uploader_dialog_title">Medya Yükleyici Ayarlarını Sıfırla</string>
     <string name="reset_media_uploader_dialog_message">Medya yükleyici ayarlarını varsayılana sıfırlamak istediğinize emin misiniz?</string>
     <string name="reset_media_uploader_dialog_positive">Sıfırla</string>
@@ -378,6 +381,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="changelog_sheet_subtitle">v%1$s sürümündeki yenilikler:</string>
     <string name="changelog_3_6">Yanıtlama ve yanıt akışlarını görüntüleneme için ön destek\nYeniden bağlandıktan sonraki yitik mesajları yüklemek için ayar eklendi\nYeni model alt sayfası tasarımı\nBir mesaja uzun bastıktan sonra yeni mesaj alt sayfası eklendi\nBir ifadeye bastıktan sonra yeni ifade alt sayfası eklendi\nYeni değişiklik günlüğü alt sayfası eklendi\nDevingen FFZ ifadeleri desteği eklendi\nİfade menüsü düzeni iyileştirildi\nTwitch kısıtlamalarından yayıncılar ile moderatörlere sınırlı yeni takipçiler uç noktasına geçildi</string>
     <string name="changelog_3_8_2">Android 14 desteği eklendi\n7TV canlı ifade güncellemeleri desteği eklendi\n7TV canlı ifade güncellemeleri arkaplan davranışını yapılandırmak için ayar eklendi</string>
+    <string name="changelog_3_9_0">\"Canlı yayınlar\" ayar kategorisi eklendi\nUygulama arkaplandayken yayınların oynamayı sürdürmesine izin vermek için resim içinde resim modu desteği eklendi (varsayılan olarak kapalı)</string>
     <string name="confirm_login_cancel_title">Giriş iptalini onayla</string>
     <string name="confirm_login_cancel_message">Giriş sürecini iptal etmek istediğinizden emin misiniz?</string>
     <string name="confirm_login_cancel_positive_button">Girişi iptal et</string>
