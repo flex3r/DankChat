@@ -297,6 +297,9 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_7tv_live_updates_entry_thirty_minutes">30 minutách</string>
     <string name="preference_7tv_live_updates_entry_one_hour">1 hodině</string>
     <string name="preference_7tv_live_updates_entry_always">Vždy aktivní</string>
+    <string name="preference_streams_header">Živá vysílání</string>
+    <string name="preference_pip_title">Zapnout režim obraz v obraze</string>
+    <string name="preference_pip_summary">Umožní aby streamy nadále běžely, i když bude aplikace spuštěná na pozadí</string>
     <string name="reset_media_uploader_dialog_title">Obnovit nastavení nahrávače médií</string>
     <string name="reset_media_uploader_dialog_message">Jste si jístí, že chcete obnovit výchozí nastavení nahrávače médií?</string>
     <string name="reset_media_uploader_dialog_positive">Obnovit</string>
@@ -382,6 +385,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="changelog_3_6">Přidána podpora pro odpovídání a prohlížení vláken odpovědí\nPřidáno nastavení načítání zmeškaných zpráv po opětovném připojení\nNový design spodních panelů\nPřidán nový spodní panel s možnostmi zpráv dlouhým stisknutím zprávy\nPřidán nový spodní panel s možnostmi emotikonů stisknutím na emotikon\nPřidán nový panel seznamu změn\nPřidána podpora animovaných emotů FFZ\nVylepšeno rozložení menu emotikonů\nMigrováno na nový koncový bod sledujících, který je nyní omezen na streamery a moderátory kvůli omezením Twitche.</string>
     <string name="changelog_3_7_3">Přidán příkaz / shoutout\nPřidány příkazy / shiel a / shieldoff\nOprava chyb při načítání, když vypršelo přihlášení\nPřidáno vývojářské nastavení pro nastavení vlastního přístupového tokenu\nPřidáno vývojářské nastavení na obejití zpracování Twitch příkazů\nSpoustu aktualizací překladu a oprav chyb!</string>
     <string name="changelog_3_8_2">Přidána podpora pro Android 14\nPřidána podpora pro aktualizace 7TV emotikonů v kanálu\nPřidáno nastavení k přizpůsobení chování aktualizací 7TV emotikonů v kanálu</string>
+    <string name="changelog_3_9_0">Přidána kategorie nastavení \"Živá vysílání\"\nPřidána podpora pro režim obraz v obraze, aby mohly streamy nadále běžet i při spuštěné aplikaci na pozadí (ve výchozím nastavení vypnuto)</string>
     <string name="confirm_login_cancel_title">Potvrdit zrušení přihlášení</string>
     <string name="confirm_login_cancel_message">Jste si jistí, že chcete zrušit proces přihlášení?</string>
     <string name="confirm_login_cancel_positive_button">Zrušit přihlášení</string>
