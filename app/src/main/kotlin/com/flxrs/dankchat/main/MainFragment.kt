@@ -23,7 +23,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
-import androidx.activity.trackPipAnimationHintView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -43,7 +42,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
@@ -293,11 +291,6 @@ class MainFragment : Fragment() {
                     .setAspectRatio(Rational(16, 9))
                     .build()
             )
-            lifecycleScope.launch {
-                repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    activity?.trackPipAnimationHintView(binding.streamWebviewWrapper)
-                }
-            }
         }
 
         initPreferences(view.context)
@@ -356,7 +349,7 @@ class MainFragment : Fragment() {
             collectFlow(shouldShowStreamToggle) { binding.toggleStream.isVisible = it }
             collectFlow(hasModInChannel) { binding.changeRoomstate.isVisible = it }
             collectFlow(shouldShowViewPager) {
-                binding.chatViewpager.isVisible = it
+                binding.chatViewpager.isVisible = it && !isInPictureInPictureMode
                 binding.addChannelsText.isVisible = !it
                 binding.addChannelsButton.isVisible = !it
             }
@@ -387,8 +380,9 @@ class MainFragment : Fragment() {
                 binding.splitThumb?.isVisible = isActive && !isInPictureInPictureMode
                 binding.splitGuideline?.updateLayoutParams<ConstraintLayout.LayoutParams> {
                     guidePercent = when {
-                        isActive -> DEFAULT_GUIDELINE_PERCENT
-                        else     -> DISABLED_GUIDELINE_PERCENT
+                        isActive && isInPictureInPictureMode -> PIP_GUIDELINE_PERCENT
+                        isActive                             -> DEFAULT_GUIDELINE_PERCENT
+                        else                                 -> DISABLED_GUIDELINE_PERCENT
                     }
                 }
             }
@@ -1225,8 +1219,9 @@ class MainFragment : Fragment() {
             splitThumb?.isVisible = !isInPictureInPicture && streamWebviewWrapper.isVisible
             splitGuideline?.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 guidePercent = when {
-                    isInPictureInPicture -> PIP_GUIDELINE_PERCENT
-                    else                 -> DEFAULT_GUIDELINE_PERCENT
+                    !mainViewModel.isStreamActive -> DISABLED_GUIDELINE_PERCENT
+                    isInPictureInPicture          -> PIP_GUIDELINE_PERCENT
+                    else                          -> DEFAULT_GUIDELINE_PERCENT
                 }
             }
         }
