@@ -28,7 +28,7 @@ androidxViewpager2 = "1.1.0-beta02"
 androidxRoom = "2.6.0"
 androidxWebkit = "1.8.0"
 composeBom = "2022.10.00"
-material = "1.11.0-beta01"
+material = "1.11.0-rc01"
 mdcComposeAdapter = "1.0.21"
 flexBox = "3.0.0"
 
