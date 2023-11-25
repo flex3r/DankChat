@@ -41,6 +41,8 @@ import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.MultiCallback
 import com.flxrs.dankchat.utils.extensions.appendSpacesBetweenEmojiGroup
+import com.flxrs.dankchat.utils.extensions.chunkedBy
+import com.flxrs.dankchat.utils.extensions.concurrentMap
 import com.flxrs.dankchat.utils.extensions.removeDuplicateWhitespace
 import com.flxrs.dankchat.utils.extensions.supplementaryCodePointPositions
 import kotlinx.coroutines.Dispatchers
@@ -253,10 +255,15 @@ class EmoteRepository @Inject constructor(
     fun getSevenTVUserDetails(channel: UserName): SevenTVUserDetails? = sevenTvChannelDetails[channel]
 
     suspend fun loadUserStateEmotes(globalEmoteSetIds: List<String>, followerEmoteSetIds: Map<UserName, List<String>>) = withContext(Dispatchers.Default) {
-        val combined = (globalEmoteSetIds + followerEmoteSetIds.values.flatten()).distinct()
-        val sets = dankChatApiClient.getUserSets(combined)
-            .getOrNull()
-            .orEmpty()
+        val sets = (globalEmoteSetIds + followerEmoteSetIds.values.flatten())
+            .distinct()
+            .chunkedBy(maxSize = MAX_PARAMS_LENGTH) { it.length + 3 }
+            .concurrentMap {
+                dankChatApiClient.getUserSets(it)
+                    .getOrNull()
+                    .orEmpty()
+            }
+            .flatten()
 
         val twitchEmotes = sets.flatMap { emoteSet ->
             val type = when (val set = emoteSet.id) {
@@ -651,6 +658,7 @@ class EmoteRepository @Inject constructor(
         fun List<ChatMessageEmote>.cacheKey(baseHeight: Int): String = joinToString(separator = "-") { it.id } + "-$baseHeight"
 
         private val TAG = EmoteRepository::class.java.simpleName
+        private const val MAX_PARAMS_LENGTH = 2000
 
         private const val TWITCH_EMOTE_TEMPLATE = "https://static-cdn.jtvnw.net/emoticons/v2/%s/default/dark/%s"
         private const val TWITCH_EMOTE_SIZE = "3.0"

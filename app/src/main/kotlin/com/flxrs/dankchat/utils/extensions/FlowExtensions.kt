@@ -4,9 +4,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.flxrs.dankchat.data.UserName
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
@@ -35,3 +37,22 @@ inline fun <T, R> Flow<T?>.flatMapLatestOrDefault(defaultValue: R, crossinline t
             else -> emitAll(transform(it))
         }
     }
+
+inline val <T> SharedFlow<T>.firstValue: T
+    get() = replayCache.first()
+
+inline val <T> SharedFlow<T>.firstValueOrNull: T?
+    get() = replayCache.firstOrNull()
+
+fun MutableSharedFlow<MutableMap<UserName, Int>>.increment(key: UserName, amount: Int) = tryEmit(firstValue.apply {
+    val count = get(key) ?: 0
+    put(key, count + amount)
+})
+
+fun MutableSharedFlow<MutableMap<UserName, Int>>.clear(key: UserName) = tryEmit(firstValue.apply {
+    put(key, 0)
+})
+
+fun <T> MutableSharedFlow<MutableMap<UserName, T>>.assign(key: UserName, value: T) = tryEmit(firstValue.apply {
+    put(key, value)
+})
