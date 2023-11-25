@@ -174,10 +174,11 @@
                 android:layout_height="wrap_content"
                 android:completionThreshold="2"
                 android:imeOptions="actionSend|flagNoExtractUi"
-                android:inputType="text|textCapSentences"
+                android:inputType="text|textMultiLine|textCapSentences"
                 android:paddingStart="12dp"
                 android:paddingEnd="8dp"
-                android:singleLine="true" />
+                android:paddingVertical="4dp"
+                android:singleLine="false" />
         </com.flxrs.dankchat.main.DankChatInputLayout>
 
         <TextView
