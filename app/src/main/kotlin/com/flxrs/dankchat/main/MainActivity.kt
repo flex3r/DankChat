@@ -38,6 +38,7 @@ import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.ui.*
 import com.flxrs.dankchat.utils.extensions.hasPermission
 import com.flxrs.dankchat.utils.extensions.isAtLeastTiramisu
+import com.flxrs.dankchat.utils.extensions.isInSupportedPictureInPictureMode
 import com.flxrs.dankchat.utils.extensions.navigateSafe
 import com.flxrs.dankchat.utils.extensions.parcelable
 import com.google.android.material.color.DynamicColors
@@ -114,7 +115,8 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
     override fun onDestroy() {
         super.onDestroy()
         bindingRef = null
-        if (!isChangingConfigurations) {
+
+        if (!isChangingConfigurations && !isInSupportedPictureInPictureMode) {
             handleShutDown()
         }
     }
@@ -176,6 +178,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
             ChatSettingsFragment::class.java.simpleName          -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_chatSettingsFragment)
             ToolsSettingsFragment::class.java.simpleName         -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_toolsSettingsFragment)
             DeveloperSettingsFragment::class.java.simpleName     -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_developerSettingsFragment)
+            StreamsSettingsFragment::class.java.simpleName       -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_streamsSettingsFragment)
             else                                                 -> return false
         }
         return true

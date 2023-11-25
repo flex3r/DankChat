@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">DankChat</string>
     <string name="app_name_dank">DankChat (Dank)</string>
     <string name="send_hint">Wyślij wiadomość</string>
@@ -295,6 +295,9 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_7tv_live_updates_entry_thirty_minutes">30 minut</string>
     <string name="preference_7tv_live_updates_entry_one_hour">1 godzina</string>
     <string name="preference_7tv_live_updates_entry_always">Zawsze aktywne</string>
+    <string name="preference_streams_header">Transmisje na żywo</string>
+    <string name="preference_pip_title">Włącz tryb obrazu w obrazie</string>
+    <string name="preference_pip_summary">Umożliwia kontynuowanie odtwarzania strumieni, gdy aplikacja działa w tle</string>
     <string name="reset_media_uploader_dialog_title">Zresetuj ustawienia przesłania media</string>
     <string name="reset_media_uploader_dialog_message">Czy jesteś pewien, że chcesz zresetować ustawienia przesłania media do domyślnych?</string>
     <string name="reset_media_uploader_dialog_positive">Zresetuj</string>
@@ -380,6 +383,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="changelog_3_6">Wstępne wsparcie dla odpowiadania i przeglądania wątków odpowiedzi\nDodano ustawienie wczytywania brakujących wiadomości po ponownym połączeniu\nNowy wygląd modalnego dolnego arkusza\nDodano nowy arkusz dolny wiadomości poprzez długie przytrzymanie wiadomości\nDodano nowy arkusz dolny emotek po naciśnięciu emotki\nDodano nowy arkusz dolny dziennika zmian\nDodano wsparcie dla animowanych emotek FFZ\nUlepszono układ menu emotek\nZmigrowano do nowego punktu końcowego obserwujących, który jest teraz ograniczony do nadawców i moderatorów z powodu ograniczeń Twitcha.</string>
     <string name="changelog_3_7_3">Dodano komendę /shoutout\nDodano komendy /shield i /shieldoff\nPoprawiono błędy ładowania danych po wygaśnięciu loginu\nDodano ustawienie dewelopera, aby ustawić niestandardowy token dostępu\nDodano ustawienie dewelopera, aby ominąć obsługę poleceń Twitcha\nDużo tłumaczeń i aktualizacji konserwacyjnych!</string>
     <string name="changelog_3_8_2">Dodano wsparcie dla Androida 14\nDodano obsługę aktualizacji emotek 7TV na żywo\nDodano ustawienie umożliwiające konfigurację działania aktualizacji emotek 7TV na żywo w tle</string>
+    <string name="changelog_3_9_0">Dodano kategorię ustawień \"Transmisje na żywo\"\nDodano obsługę trybu obrazu w obrazie, aby umożliwić ciągłe odtwarzanie strumieni, gdy aplikacja działa w tle (domyślnie wyłączone, wymaga co najmniej Androida 12)</string>
     <string name="confirm_login_cancel_title">Potwierdź anulowanie loginu</string>
     <string name="confirm_login_cancel_message">Czy na pewno chcesz anulować proces logowania?</string>
     <string name="confirm_login_cancel_positive_button">Anuluj login</string>

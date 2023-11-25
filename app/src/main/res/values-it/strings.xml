@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">DankChat</string>
     <string name="app_name_dank">DankChat (Dank)</string>
     <string name="send_hint">Invia un messaggio</string>
@@ -290,6 +290,9 @@
     <string name="preference_7tv_live_updates_entry_thirty_minutes">30 minuti</string>
     <string name="preference_7tv_live_updates_entry_one_hour">1 ora</string>
     <string name="preference_7tv_live_updates_entry_always">sempre attivi</string>
+    <string name="preference_streams_header">Canali live</string>
+    <string name="preference_pip_title">Attiva modalità picture-in-picture</string>
+    <string name="preference_pip_summary">Consente la riproduzione della live mentre l\'applicazione è in background</string>
     <string name="reset_media_uploader_dialog_title">RIpristina Impostazioni Caricatore Multimediale</string>
     <string name="reset_media_uploader_dialog_message">Sei sicuro di voler ripristinare le impostazioni del caricatore multimediale ai valori predefiniti?</string>
     <string name="reset_media_uploader_dialog_positive">Ripristina</string>
@@ -374,6 +377,8 @@
     <string name="changelog_sheet_subtitle">Cosa c\'è di nuovo in v%1$s:</string>
     <string name="changelog_3_6">Supporto iniziale per rispondere e visualizzare i thread di risposta\nAggiunta impostazione per caricare i messaggi persi dopo la riconnessione\nNuovo design del foglio inferiore\nAggiunto nuovo foglio inferiore del messaggio premendo a lungo un messaggio\nAggiunto nuovo foglio inferiore dell\'emote premendo un\'emote\nAggiunto nuovo foglio inferiore del changelog\nAggiunto supporto per le emote animate di FFZ\nLayout del menu delle Emote migliorato\nMigrazione al nuovo endpoint dei follower limitato solamente agli emittenti e ai moderatori a causa delle nuove restrizioni di Twitch</string>
     <string name="changelog_3_7_3">Aggiunto il comando /shoutout\nAggiunti i comandi /shield e /shieldoff\nCorretti gli errori di caricamento dei dati quando un login è scaduto\nAggiunta l\'impostazione sviluppatore per impostare un token di accesso personalizzato\nAggiunta l\'impostazione sviluppatore per bypassare la gestione dei comandi Twitch\nMoltissimi altri aggiornamenti di traduzione e manutenzione!</string>
+    <string name="changelog_3_8_2">Aggiunto il supporto per Android 14\nAggiunto il supporto per gli aggiornamenti in live delle emote 7TV\nAggiunta l\'impostazione per configurare gli aggiornamenti in live delle emote 7TV</string>
+    <string name="changelog_3_9_0">Aggiunta categoria delle impostazioni \"Canali live\"\nAggiunto il supporto per la modalità picture-in-picture per consentire alle live di continuare la riproduzione anche mentre l\'applicazione è in background (off per impostazione predefinita, richiede almeno Android 12)</string>
     <string name="confirm_login_cancel_title">Conferma la cancellazione del login</string>
     <string name="confirm_login_cancel_message">Sei sicuro di voler annullare il processo di login?</string>
     <string name="confirm_login_cancel_positive_button">Annulla login</string>

@@ -1,16 +1,24 @@
 package com.flxrs.dankchat.main.stream
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.trackPipAnimationHintView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.flxrs.dankchat.databinding.FragmentStreamWebViewWrapperBinding
 import com.flxrs.dankchat.main.MainViewModel
 import com.flxrs.dankchat.main.StreamWebViewModel
+import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.collectFlow
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
 This fragment's purpose is to manage the lifecycle of the WebView inside it
@@ -22,6 +30,9 @@ class StreamWebViewWrapperFragment : Fragment() {
     private val streamWebViewModel: StreamWebViewModel by viewModels({ requireParentFragment() })
     private var bindingRef: FragmentStreamWebViewWrapperBinding? = null
     private val binding get() = bindingRef!!
+
+    @Inject
+    lateinit var dankChatPreferenceStore: DankChatPreferenceStore
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,6 +52,13 @@ class StreamWebViewWrapperFragment : Fragment() {
         )
         collectFlow(mainViewModel.currentStreamedChannel) {
             streamWebViewModel.setStream(it, streamWebView)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    activity?.trackPipAnimationHintView(streamWebView)
+                }
+            }
         }
     }
 
