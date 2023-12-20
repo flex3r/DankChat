@@ -194,7 +194,7 @@
                 android:completionThreshold="2"
                 android:imeOptions="actionSend|flagNoExtractUi"
                 android:inputType="text|textMultiLine|textCapSentences"
-                android:lines="3"
+                android:maxLines="3"
                 android:paddingStart="12dp"
                 android:paddingEnd="8dp"
                 android:singleLine="false" />
