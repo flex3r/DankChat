@@ -5,7 +5,7 @@ serialization = "1.6.2"
 datetime = "0.5.0"
 ktor = "2.3.7"
 coil = "2.5.0"
-okhttp = "5.0.0-alpha.11"
+okhttp = "5.0.0-alpha.12"
 ksp = "1.9.21-1.0.15"
 hilt = "2.50"
 
