@@ -339,7 +339,7 @@ class MainFragment : Fragment() {
                 mainViewModel.clearMentionCount(channel)
                 mainViewModel.clearUnreadMessage(channel)
             }
-            collectFlow(shouldShowTabs) { binding.tabs.isVisible = it }
+            collectFlow(shouldShowTabs) { binding.tabs.isVisible = it && !isInPictureInPictureMode }
             collectFlow(shouldShowChipToggle) { binding.showChips.isVisible = it }
             collectFlow(areChipsExpanded) {
                 val resourceId = if (it) R.drawable.ic_keyboard_arrow_up else R.drawable.ic_keyboard_arrow_down
@@ -519,7 +519,6 @@ class MainFragment : Fragment() {
 
     override fun onPause() {
         binding.input.clearFocus()
-        binding.updatePictureInPictureVisibility()
         mainViewModel.cancelStreamData()
         super.onPause()
     }
@@ -972,6 +971,10 @@ class MainFragment : Fragment() {
     }
 
     private fun changeActionBarVisibility(isFullscreen: Boolean) {
+        if (isInPictureInPictureMode) {
+            return
+        }
+
         hideKeyboard()
         (activity as? MainActivity)?.setFullScreen(isFullscreen)
     }
@@ -1209,7 +1212,8 @@ class MainFragment : Fragment() {
 
     private fun MainFragmentBinding.updatePictureInPictureVisibility(isInPictureInPicture: Boolean = isInPictureInPictureMode) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            appbarLayout.isVisible = !isInPictureInPicture && mainViewModel.shouldShowTabs.value
+            appbarLayout.isVisible = !isInPictureInPicture
+            tabs.isVisible = !isInPictureInPicture && mainViewModel.shouldShowTabs.value
             chatViewpager.isVisible = !isInPictureInPicture && mainViewModel.shouldShowViewPager.value
             fullScreenSheetFragment.isVisible = !isInPictureInPicture
             inputSheetFragment.isVisible = !isInPictureInPicture
