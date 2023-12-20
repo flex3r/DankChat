@@ -59,7 +59,7 @@ fun tryClearEmptyFiles(context: Context) = runCatching {
         ?.onEach { it.delete() }
 }
 
-@Throws(IOException::class)
+@Throws(IOException::class, IllegalStateException::class)
 fun File.removeExifAttributes() = ExifInterface(this).run {
     GPS_ATTRIBUTES.forEach { if (getAttribute(it) != null) setAttribute(it, null) }
     saveAttributes()

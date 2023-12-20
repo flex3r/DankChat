@@ -691,7 +691,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             // only remove exif data if an image was selected
             if (imageCapture) {
-                file.removeExifAttributes()
+                runCatching { file.removeExifAttributes() }
             }
 
             imageUploadStateChannel.send(ImageUploadState.Loading)
