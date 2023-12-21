@@ -264,18 +264,22 @@ class MainFragment : Fragment() {
             }
             changeRoomstate.setOnClickListener { showRoomStateDialog() }
             showChips.setOnClickListener { mainViewModel.toggleChipsExpanded() }
-            splitThumb?.setOnTouchListener { _, event ->
+            var offset = 0f
+            splitThumb?.setOnTouchListener { v, event ->
                 when (event.actionMasked) {
                     MotionEvent.ACTION_MOVE -> {
                         val guideline = splitGuideline ?: return@setOnTouchListener false
-                        val width = resources.displayMetrics.widthPixels
+                        val centered = event.rawX + offset + (v.width / 2f)
                         guideline.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                            guidePercent = (event.rawX / width).coerceIn(MIN_GUIDELINE_PERCENT, MAX_GUIDELINE_PERCENT)
+                            guidePercent = (centered / constraintLayout.width).coerceIn(MIN_GUIDELINE_PERCENT, MAX_GUIDELINE_PERCENT)
                         }
                         true
                     }
 
-                    MotionEvent.ACTION_DOWN -> true
+                    MotionEvent.ACTION_DOWN -> {
+                        offset = v.x - event.rawX
+                        true
+                    }
                     else                    -> false
                 }
             }
