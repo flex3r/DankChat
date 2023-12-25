@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.InputType
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
@@ -1357,6 +1358,8 @@ class MainFragment : Fragment() {
     }
 
     private fun DankChatInput.setup(binding: MainFragmentBinding) {
+        imeOptions = EditorInfo.IME_ACTION_SEND or EditorInfo.IME_FLAG_NO_FULLSCREEN
+        setRawInputType(InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES)
         setTokenizer(SpaceTokenizer())
         suggestionAdapter = SuggestionsArrayAdapter(binding.input.context, dankChatPreferences) { count ->
             dropDownHeight = if (count > 4) {
