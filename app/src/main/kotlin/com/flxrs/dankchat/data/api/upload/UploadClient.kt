@@ -6,8 +6,9 @@ import com.flxrs.dankchat.data.api.ApiException
 import com.flxrs.dankchat.data.api.upload.dto.UploadDto
 import com.flxrs.dankchat.di.UploadOkHttpClient
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import io.ktor.client.*
-import io.ktor.http.*
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.URLBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
@@ -70,16 +71,17 @@ class UploadClient @Inject constructor(
                     }
                 }
 
-                val jsonResult = response.asJsonObject()
-                jsonResult.mapCatching { json ->
-                    val deleteLink = deletionLinkPattern?.let { json.extractLink(it) }
-                    val imageLink = json.extractLink(imageLinkPattern)
-                    UploadDto(
-                        imageLink = imageLink,
-                        deleteLink = deleteLink,
-                        timestamp = Instant.now()
-                    )
-                }
+                response
+                    .asJsonObject()
+                    .mapCatching { json ->
+                        val deleteLink = deletionLinkPattern?.let { json.extractLink(it) }
+                        val imageLink = json.extractLink(imageLinkPattern)
+                        UploadDto(
+                            imageLink = imageLink,
+                            deleteLink = deleteLink,
+                            timestamp = Instant.now()
+                        )
+                    }
 
             }
 
@@ -95,7 +97,7 @@ class UploadClient @Inject constructor(
     private suspend fun JSONObject.extractLink(linkPattern: String): String = withContext(Dispatchers.Default) {
         var imageLink: String = linkPattern
 
-        val regex = "\\{(.+)\\}".toRegex()
+        val regex = "\\{(.+?)\\}".toRegex()
         regex.findAll(linkPattern).forEach {
             val jsonValue = getValue(it.groupValues[1])
             if (jsonValue != null) {
