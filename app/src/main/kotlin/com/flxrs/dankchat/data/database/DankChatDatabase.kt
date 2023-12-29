@@ -43,10 +43,10 @@ abstract class DankChatDatabase : RoomDatabase() {
 
     companion object {
         val MIGRATION_4_5 = object : Migration(4, 5) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE user_highlight ADD COLUMN create_notification INTEGER DEFAULT 1 NOT NUll")
-                database.execSQL("ALTER TABLE message_highlight ADD COLUMN create_notification INTEGER DEFAULT 0 NOT NUll")
-                database.execSQL("UPDATE message_highlight SET create_notification=1 WHERE type = 'Username' OR type = 'Custom'")
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE user_highlight ADD COLUMN create_notification INTEGER DEFAULT 1 NOT NUll")
+                db.execSQL("ALTER TABLE message_highlight ADD COLUMN create_notification INTEGER DEFAULT 0 NOT NUll")
+                db.execSQL("UPDATE message_highlight SET create_notification=1 WHERE type = 'Username' OR type = 'Custom'")
             }
         }
     }
