@@ -261,10 +261,9 @@ class ChatConnection @Inject constructor(
                     }
 
                     "JOIN"      -> {
-                        if (ircMessage.prefix.startsWith(currentUserName?.value.orEmpty())) {
-                            val channel = ircMessage.params[0].substring(1).toUserName()
+                        val channel = ircMessage.params.getOrNull(0)?.substring(1)?.toUserName() ?: return
+                        if (channelsAttemptedToJoin.remove(channel)) {
                             Log.i(TAG, "[$chatConnectionType] Joined #$channel")
-                            channelsAttemptedToJoin.remove(channel)
                         }
                     }
 
