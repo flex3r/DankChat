@@ -77,6 +77,10 @@
     <string name="system_message_ffz_emotes_failed">Error al cargar los emotes de FFZ (Error %1$s)</string>
     <string name="system_message_bttv_emotes_failed">Error al cargar los emotes de BTTV (Error %1$s)</string>
     <string name="system_message_7tv_emotes_failed">Error al cargar los emotes de 7TV (Error %1$s)</string>
+    <string name="system_message_7tv_emote_set_changed" comment="flex3rs switched the active 7TV Emote Set to &quot;flex3rs's Emotes&quot;. ">%1$s cambió el conjunto de emoticonos 7TV activo a \"%2$s\".</string>
+    <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s ha añadido el emoticono 7TV %2$s.</string>
+    <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s ha cambiado el nombre del emoticono 7TV %2$s a %3$s.</string>
+    <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s ha eliminado el emoticono 7TV %2$s.</string>
     <string name="timed_out_message">&lt; Mensaje eliminado&gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Añadir entrada</string>
@@ -280,7 +284,22 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="preference_show_changelogs">Mostrar cambios después de actualizar</string>
     <string name="preference_whats_new_header">Novedades</string>
     <string name="preference_custom_login_title">Inicio de sesión personalizado</string>
+    <string name="preference_bypass_command_handling_title">Omitir la gestión de comandos de Twitch</string>
     <string name="preference_bypass_command_handling_summary">Deshabilita la interceptación de los comandos de Twitch y los envía al chat en su lugar</string>
+    <string name="preference_7tv_live_updates_title">Actualizaciones de emoticonos 7TV en directo</string>
+    <string name="preference_7tv_live_updates_timeout_title">Frecuencia de actualizaciones de emoticonos</string>
+    <string name="preference_7tv_live_updates_timeout_summary_timeout">Las actualizaciones se detienen después de %1$s.\nReducir este número puede aumentar la duración de la batería.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_always_active">Las actualizaciones están siempre activas.\nAñadir un tiempo de espera puede aumentar la duración de la batería.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_never_active">Las actualizaciones nunca están activas en segundo plano.</string>
+    <string name="preference_7tv_live_updates_entry_never">Nunca activo</string>
+    <string name="preference_7tv_live_updates_entry_one_minute">1 minuto</string>
+    <string name="preference_7tv_live_updates_entry_five_minutes">5 minutos</string>
+    <string name="preference_7tv_live_updates_entry_thirty_minutes">30 minutos</string>
+    <string name="preference_7tv_live_updates_entry_one_hour">1 hora</string>
+    <string name="preference_7tv_live_updates_entry_always">Siempre activo</string>
+    <string name="preference_streams_header">Streams en directo</string>
+    <string name="preference_pip_title">Activar modo de imagen en imagen</string>
+    <string name="preference_pip_summary">Permite que los streams continúen reproduciéndose mientras la aplicación está en segundo plano.</string>
     <string name="reset_media_uploader_dialog_title">Restablecer la configuración del subidor de imágenes</string>
     <string name="reset_media_uploader_dialog_message">¿Estás seguro de que quieres restablecer por defecto las opciones del subidor de multimedia?</string>
     <string name="reset_media_uploader_dialog_positive">Restablecer</string>
