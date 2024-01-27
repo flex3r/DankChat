@@ -23,8 +23,8 @@ android {
         applicationId = "com.flxrs.dankchat"
         minSdk = 21
         targetSdk = 34
-        versionCode = 30909
-        versionName = "3.9.9"
+        versionCode = 30910
+        versionName = "3.9.10"
 
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
