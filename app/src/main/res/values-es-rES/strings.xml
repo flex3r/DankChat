@@ -8,7 +8,7 @@
     <string name="reconnect">Reconectar</string>
     <string name="clear_chat">Limpiar chat</string>
     <string name="add_dialog_title">Añadir canal</string>
-    <string name="edit_dialog_title">Renombrar canal</string>
+    <string name="edit_dialog_title">Renombrar canal </string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancelar</string>
     <string name="dialog_dismiss">Descartar</string>
@@ -382,6 +382,10 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="emote_copied">Emote copiado</string>
     <string name="changelog_sheet_title">¡DankChat ha sido actualizado!</string>
     <string name="changelog_sheet_subtitle">Novedades en v%1$s:</string>
+    <string name="changelog_3_6">Soporte inicial para responder y ver hilos de respuestas\nSe agregó una configuración para cargar los mensajes perdidos después de volver a conectarse\nNuevo diseño del menú inferior\nSe ha añadido un nuevo menú inferior de mensajes manteniendo pulsado un mensaje\nSe ha añadido un nuevo menú inferior de emotes pulsando un emote\nSe ha añadido un nuevo menú inferior del registro de cambios\nSe ha añadido soporte para los emotes animado de FFZ\nSe ha mejorado el diseño del menú de emotes\nSe migró al punto final de nuevos seguidores, que ahora está limitado a los streamers y moderadores debido a las restricciones de Twitch</string>
+    <string name="changelog_3_7_3">Se ha añadido el comando /shoutout\nSe agregaron los comandos /shield y /shieldoff\nSe corrigieron errores de carga de datos cuando caducaba un inicio de sesión\nSe agregó la configuración del desarrollador para omitir el manejo de comandos de Twitch\n¡Muchas actualizaciones de traducción y mantenimiento!</string>
+    <string name="changelog_3_8_2">Se añadió soporte para Android 14\nSe añadió soporte para actualizaciones en vivo de 7TV\nSe añadió una configuración para configurar el comportamiento en segundo plano de las actualizaciones de emotes en vivo de 7TV</string>
+    <string name="changelog_3_9_0">Se añadió la categoría de configuración \"Livestreams\"\nSe añadió soporte para el modo de  picture-in-picture para permitir que los streams se sigan reproduciendo mientras la aplicación está en segundo plano (desactivado por defecto, requiere al menos Android 12)</string>
     <string name="confirm_login_cancel_title">Confirmar la cancelación del inicio de sesión</string>
     <string name="confirm_login_cancel_message">¿Estás seguro de que deseas cancelar el proceso de inicio de sesión?</string>
     <string name="confirm_login_cancel_positive_button">Cancelar inicio de sesión</string>
