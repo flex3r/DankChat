@@ -460,6 +460,8 @@
     <string name="confirm_login_cancel_title">Confirm login cancellation</string>
     <string name="confirm_login_cancel_message">Are you sure you want to cancel the login process?</string>
     <string name="confirm_login_cancel_positive_button">Cancel login</string>
+    <string name="login_menu_zoom_out">Zoom out</string>
+    <string name="login_menu_zoom_in">Zoom in</string>
     <plurals name="viewers">
         <item quantity="one">Live with %d viewer</item>
         <item quantity="other">Live with %d viewers</item>

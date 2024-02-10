@@ -5,6 +5,9 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebResourceError
@@ -15,10 +18,12 @@ import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import androidx.core.view.MenuProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.LoginFragmentBinding
@@ -69,6 +74,7 @@ class LoginFragment : Fragment() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.root, deferringInsetsListener)
 
         (requireActivity() as AppCompatActivity).apply {
+            setSupportActionBar(binding.loginToolbar)
             binding.loginToolbar.setNavigationOnClickListener { showCancelLoginDialog() }
             onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
                 when {
@@ -76,6 +82,7 @@ class LoginFragment : Fragment() {
                     else                        -> showCancelLoginDialog()
                 }
             }
+            addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
         }
         collectFlow(loginViewModel.events) { (successful) ->
             with(findNavController()) {
@@ -85,6 +92,28 @@ class LoginFragment : Fragment() {
                 }
                 navigateUp()
             }
+        }
+    }
+
+    private val menuProvider = object : MenuProvider {
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menuInflater.inflate(R.menu.login_menu, menu)
+        }
+
+        override fun onPrepareMenu(menu: Menu) {
+            val isDefaultZoom = binding.webview.settings.textZoom == 100
+            menu.findItem(R.id.zoom_out)?.isVisible = isDefaultZoom
+            menu.findItem(R.id.zoom_in)?.isVisible = !isDefaultZoom
+        }
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            when (menuItem.itemId) {
+                R.id.zoom_in  -> binding.webview.settings.textZoom = 100
+                R.id.zoom_out -> binding.webview.settings.textZoom = 50
+                else          -> return false
+            }
+            activity?.invalidateMenu()
+            return true
         }
     }
 
