@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.data.repo.emote
 
+import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.os.Build
@@ -113,10 +114,21 @@ class EmoteRepository @Inject constructor(
             ChatRepository.ESCAPE_TAG_REGEX,
             ChatRepository.ZERO_WIDTH_JOINER
         )
+
+        // Twitch counts characters with supplementary codepoints as one while java based strings counts them as two.
+        // We need to find these codepoints and adjust emote positions to not break text-emote replacing
+        val supplementaryCodePointPositions = withEmojiFix.supplementaryCodePointPositions
         val (duplicateSpaceAdjustedMessage, removedSpaces) = withEmojiFix.removeDuplicateWhitespace()
         val (appendedSpaceAdjustedMessage, appendedSpaces) = duplicateSpaceAdjustedMessage.appendSpacesBetweenEmojiGroup()
 
-        val twitchEmotes = parseTwitchEmotes(emotesWithPositions, appendedSpaceAdjustedMessage, appendedSpaces, removedSpaces, replyMentionOffset)
+        val twitchEmotes = parseTwitchEmotes(
+            emotesWithPositions = emotesWithPositions,
+            message = appendedSpaceAdjustedMessage,
+            supplementaryCodePointPositions = supplementaryCodePointPositions,
+            appendedSpaces = appendedSpaces,
+            removedSpaces = removedSpaces,
+            replyMentionOffset = replyMentionOffset
+        )
         val thirdPartyEmotes = parse3rdPartyEmotes(appendedSpaceAdjustedMessage, channel).filterNot { e -> twitchEmotes.any { it.code == e.code } }
         val emotes = (twitchEmotes + thirdPartyEmotes)
 
@@ -503,6 +515,7 @@ class EmoteRepository @Inject constructor(
         return adjustedMessage to adjustedEmotes
     }
 
+    @SuppressLint("BuildListAdds")
     private fun parseMessageForEmote(emote: GenericEmote, words: List<String>): List<ChatMessageEmote> {
         var currentPosition = 0
         return buildList {
@@ -526,33 +539,30 @@ class EmoteRepository @Inject constructor(
     private fun parseTwitchEmotes(
         emotesWithPositions: List<EmoteWithPositions>,
         message: String,
+        supplementaryCodePointPositions: List<Int>,
         appendedSpaces: List<Int>,
         removedSpaces: List<Int>,
         replyMentionOffset: Int,
-    ): List<ChatMessageEmote> {
-        // Characters with supplementary codepoints have two chars and need to be considered into emote positioning
-        val supplementaryCodePointPositions = message.supplementaryCodePointPositions
-        return emotesWithPositions.flatMap { (id, positions) ->
-            positions.map { range ->
-                val removedSpaceExtra = removedSpaces.count { it < range.first }
-                val unicodeExtra = supplementaryCodePointPositions.count { it < range.first - removedSpaceExtra }
-                val spaceExtra = appendedSpaces.count { it < range.first + unicodeExtra }
-                val fixedStart = range.first + unicodeExtra + spaceExtra - removedSpaceExtra - replyMentionOffset
-                val fixedEnd = range.last + unicodeExtra + spaceExtra - removedSpaceExtra - replyMentionOffset
+    ): List<ChatMessageEmote> = emotesWithPositions.flatMap { (id, positions) ->
+        positions.map { range ->
+            val removedSpaceExtra = removedSpaces.count { it < range.first }
+            val unicodeExtra = supplementaryCodePointPositions.count { it < range.first - removedSpaceExtra }
+            val spaceExtra = appendedSpaces.count { it < range.first + unicodeExtra }
+            val fixedStart = range.first + unicodeExtra + spaceExtra - removedSpaceExtra - replyMentionOffset
+            val fixedEnd = range.last + unicodeExtra + spaceExtra - removedSpaceExtra - replyMentionOffset
 
-                // be extra safe in case twitch sends invalid emote ranges :)
-                val fixedPos = fixedStart.coerceAtLeast(minimumValue = 0)..(fixedEnd + 1).coerceAtMost(message.length)
-                val code = message.substring(fixedPos.first, fixedPos.last)
-                ChatMessageEmote(
-                    position = fixedPos,
-                    url = TWITCH_EMOTE_TEMPLATE.format(id, TWITCH_EMOTE_SIZE),
-                    id = id,
-                    code = code,
-                    scale = 1,
-                    type = ChatMessageEmoteType.TwitchEmote,
-                    isTwitch = true
-                )
-            }
+            // be extra safe in case twitch sends invalid emote ranges :)
+            val fixedPos = fixedStart.coerceAtLeast(minimumValue = 0)..(fixedEnd + 1).coerceAtMost(message.length)
+            val code = message.substring(fixedPos.first, fixedPos.last)
+            ChatMessageEmote(
+                position = fixedPos,
+                url = TWITCH_EMOTE_TEMPLATE.format(id, TWITCH_EMOTE_SIZE),
+                id = id,
+                code = code,
+                scale = 1,
+                type = ChatMessageEmoteType.TwitchEmote,
+                isTwitch = true
+            )
         }
     }
 
@@ -657,7 +667,6 @@ class EmoteRepository @Inject constructor(
         fun Badge.cacheKey(baseHeight: Int): String = "$url-$baseHeight"
         fun List<ChatMessageEmote>.cacheKey(baseHeight: Int): String = joinToString(separator = "-") { it.id } + "-$baseHeight"
 
-        private val TAG = EmoteRepository::class.java.simpleName
         private const val MAX_PARAMS_LENGTH = 2000
 
         private const val TWITCH_EMOTE_TEMPLATE = "https://static-cdn.jtvnw.net/emoticons/v2/%s/default/dark/%s"
@@ -696,3 +705,5 @@ class EmoteRepository @Inject constructor(
         )
     }
 }
+
+private operator fun IntRange.inc() = first + 1..last + 1
