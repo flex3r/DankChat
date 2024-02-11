@@ -2,7 +2,6 @@ package com.flxrs.dankchat.di
 
 import android.util.Log
 import com.flxrs.dankchat.BuildConfig
-import com.flxrs.dankchat.data.api.*
 import com.flxrs.dankchat.data.api.auth.AuthApi
 import com.flxrs.dankchat.data.api.badges.BadgesApi
 import com.flxrs.dankchat.data.api.bttv.BTTVApi
@@ -18,14 +17,18 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.ktor.client.*
-import io.ktor.client.engine.okhttp.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.cache.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.logging.*
-import io.ktor.client.request.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.UserAgent
+import io.ktor.client.plugins.cache.HttpCache
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.header
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import javax.inject.Singleton
@@ -90,6 +93,11 @@ object NetworkModule {
         }
         install(ContentNegotiation) {
             json(json)
+        }
+        install(HttpTimeout) {
+            connectTimeoutMillis = 15_000
+            requestTimeoutMillis = 15_000
+            socketTimeoutMillis = 15_000
         }
     }
 
