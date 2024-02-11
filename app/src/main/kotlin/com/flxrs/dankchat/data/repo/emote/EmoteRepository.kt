@@ -134,12 +134,13 @@ class EmoteRepository @Inject constructor(
 
         val (adjustedMessage, adjustedEmotes) = adjustOverlayEmotes(appendedSpaceAdjustedMessage, emotes)
         val messageWithEmotes = when (message) {
-            is PrivMessage       -> message.copy(message = adjustedMessage, emotes = adjustedEmotes)
-            is WhisperMessage    -> message.copy(message = adjustedMessage, emotes = adjustedEmotes)
+            is PrivMessage       -> message.copy(message = adjustedMessage, emotes = adjustedEmotes, originalMessage = withEmojiFix)
+            is WhisperMessage    -> message.copy(message = adjustedMessage, emotes = adjustedEmotes, originalMessage = withEmojiFix)
             is UserNoticeMessage -> message.copy(
                 childMessage = message.childMessage?.copy(
                     message = adjustedMessage,
-                    emotes = adjustedEmotes
+                    emotes = adjustedEmotes,
+                    originalMessage = withEmojiFix,
                 )
             )
 
