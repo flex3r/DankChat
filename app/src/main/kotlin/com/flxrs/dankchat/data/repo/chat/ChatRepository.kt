@@ -538,9 +538,8 @@ class ChatRepository @Inject constructor(
             else           -> trimmedMessage
         }
 
-        val messageWithEmojiFix = messageWithSuffix.replace(ZERO_WIDTH_JOINER, ESCAPE_TAG)
-        lastMessage[channel] = messageWithEmojiFix
-        return "${replyIdOrBlank}PRIVMSG #$channel :$messageWithEmojiFix"
+        lastMessage[channel] = messageWithSuffix
+        return "${replyIdOrBlank}PRIVMSG #$channel :$messageWithSuffix"
     }
 
     private suspend fun onMessage(msg: IrcMessage): List<ChatItem>? {
