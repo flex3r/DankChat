@@ -17,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.browser.customtabs.CustomTabsIntent
@@ -80,7 +81,70 @@ class ChatAdapter(
     inner class ViewHolder(val binding: ChatItemBinding) : RecyclerView.ViewHolder(binding.root) {
         val scope = CoroutineScope(Dispatchers.Main.immediate)
         val coroutineHandler = CoroutineExceptionHandler { _, throwable -> binding.itemText.handleException(throwable) }
+
+        fun bind(item: ChatItem, isAlternateBackground: Boolean) {
+            // Set the background color for the entire itemLayout
+            val background = getBackgroundForMessage(item, isAlternateBackground)
+            binding.itemLayout.setBackgroundColor(background)
+
+            binding.replyGroup.isVisible = false
+            binding.itemText.alpha = when (item.importance) {
+                ChatImportance.SYSTEM  -> .75f
+                ChatImportance.DELETED -> .5f
+                ChatImportance.REGULAR -> 1f
+            }
+            when (val message = item.message) {
+                is PrivMessage -> {
+                    if (message.thread != null && !item.isInReplies) {
+                        binding.replyGroup.isVisible = true
+                        val formatted = buildString {
+                            append(binding.itemReply.context.getString(R.string.reply_to))
+                            append(" @${message.thread.name}: ")
+                            append(message.thread.message)
+                        }
+                        binding.itemReply.text = formatted
+                        binding.itemReply.setOnClickListener { onReplyClick(message.thread.rootId) }
+                    }
+                    binding.itemText.handlePrivMessage(message, this, item.isMentionTab)
+                }
+                is SystemMessage -> {
+                    binding.itemText.handleSystemMessage(message, this)
+                }
+                is NoticeMessage -> {
+                    binding.itemText.handleNoticeMessage(message, this)
+                }
+                is UserNoticeMessage -> {
+                    binding.itemText.handleUserNoticeMessage(message, this)
+                }
+                is ModerationMessage -> {
+                    binding.itemText.handleModerationMessage(message, this)
+                }
+                is PointRedemptionMessage -> {
+                    binding.itemText.handlePointRedemptionMessage(message, this)
+                }
+                is WhisperMessage -> {
+                    binding.itemText.handleWhisperMessage(message, this)
+                }
+
+            }
+
+        }
+
+        private fun getBackgroundForMessage(item: ChatItem, isAlternateBackground: Boolean): Int {
+            val context = binding.root.context
+            return if (dankChatPreferenceStore.isCheckeredMode && isAlternateBackground) {
+                MaterialColors.layer(
+                    binding.itemText,
+                    android.R.attr.colorBackground,
+                    R.attr.colorSurfaceInverse,
+                    MaterialColors.ALPHA_DISABLED_LOW
+                )
+            } else {
+                ContextCompat.getColor(context, android.R.color.transparent)
+            }
+        }
     }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(ChatItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -101,45 +165,26 @@ class ChatAdapter(
         super.onViewRecycled(holder)
     }
 
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
+        val isAlternateBackground = when (position) {
+            itemCount - 1 -> messageCount.isEven
+            else -> (position - itemCount - 1).isEven
+        }
+
         holder.scope.coroutineContext.cancelChildren()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
             emoteRepository.gifCallback.removeView(holder.binding.itemText)
         }
 
-        holder.binding.replyGroup.isVisible = false
-        holder.binding.itemLayout.setBackgroundColor(Color.TRANSPARENT)
-        holder.binding.itemText.alpha = when (item.importance) {
-            ChatImportance.SYSTEM  -> .75f
-            ChatImportance.DELETED -> .5f
-            ChatImportance.REGULAR -> 1f
-        }
-
-        when (val message = item.message) {
-            is SystemMessage          -> holder.binding.itemText.handleSystemMessage(message, holder)
-            is NoticeMessage          -> holder.binding.itemText.handleNoticeMessage(message, holder)
-            is UserNoticeMessage      -> holder.binding.itemText.handleUserNoticeMessage(message, holder)
-            is PrivMessage            -> with(holder.binding) {
-                if (message.thread != null && !item.isInReplies) {
-                    replyGroup.isVisible = true
-                    val formatted = buildString {
-                        append(itemReply.context.getString(R.string.reply_to))
-                        append(" @${message.thread.name}: ")
-                        append(message.thread.message)
-                    }
-                    itemReply.text = formatted
-                    itemReply.setOnClickListener { onReplyClick(message.thread.rootId) }
-                }
-
-                itemText.handlePrivMessage(message, holder, item.isMentionTab)
-            }
-
-            is ModerationMessage      -> holder.binding.itemText.handleModerationMessage(message, holder)
-            is PointRedemptionMessage -> holder.binding.itemText.handlePointRedemptionMessage(message, holder)
-            is WhisperMessage         -> holder.binding.itemText.handleWhisperMessage(message, holder)
-        }
+        holder.bind(item, isAlternateBackground)
+    }
+    private fun resolveColorAttribute(context: Context, @AttrRes attribute: Int): Int {
+        val typedValue = TypedValue()
+        context.theme.resolveAttribute(attribute, typedValue, true)
+        return typedValue.data
     }
 
     private val ViewHolder.isAlternateBackground
