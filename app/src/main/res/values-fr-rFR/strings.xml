@@ -36,6 +36,7 @@
     <string name="external_upload_disclaimer">Hébergement externe fourni par %1$s, utilisez à vos propres risques.</string>
     <string name="nuuls_upload_title">Envoi d\'une image personalisée</string>
     <string name="snackbar_message_copied">Message copié</string>
+    <string name="snackbar_message_id_copied">Message copié</string>
     <string name="snackbar_error_copied">Info sur l\'erreur copiée</string>
     <string name="notification_stop">Stop</string>
     <string name="notification_title">FeelsDankMan</string>
@@ -45,6 +46,7 @@
     <string name="hint_connected">Commencez à discuter</string>
     <string name="hint_disconnected">Déconnecté</string>
     <string name="hint_not_logged_int">Non authentifié</string>
+    <string name="hint_replying">Répondre</string>
     <string name="notification_new_mentions">Vous avez de nouvelles mentions</string>
     <string name="notification_mention">%1$s vous a mentionné dans #%2$s</string>
     <string name="notification_notify_mention">Vous avez été mentionné dans #%1$s</string>
@@ -75,6 +77,10 @@
     <string name="system_message_ffz_emotes_failed">Échec du chargement des emotes FFZ (Erreur %1$s)</string>
     <string name="system_message_bttv_emotes_failed">Échec du chargement des emotes BTTV (Erreur %1$s)</string>
     <string name="system_message_7tv_emotes_failed">Échec du chargement des emotes 7TV (Erreur %1$s)</string>
+    <string name="system_message_7tv_emote_set_changed" comment="flex3rs switched the active 7TV Emote Set to &quot;flex3rs's Emotes&quot;. ">%1$s a changé l\'émote active de 7TV à \"%2$s\".</string>
+    <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s a ajouté 7TV Emote %2$s.</string>
+    <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s a renommé 7TV Emote %2$s en %3$s.</string>
+    <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s a retiré l\'émote %2$s de 7TV.</string>
     <string name="timed_out_message">&lt; Message supprimé &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Ajouter une entrée</string>
@@ -90,6 +96,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="dialog_optout">Ne pas participer</string>
     <string name="more">Plus</string>
     <string name="mentions_title">Mentions / Messages privé</string>
+    <string name="replies_title">Répondre dans la discussion</string>
     <string name="whispers">Messages privé</string>
     <string name="notification_whisper_mention">%1$s vous a envoyé un message privé</string>
     <string name="mentions">Mentions</string>
@@ -160,6 +167,18 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="recent_uploads_clear">Supprimer vos fichiers mis en ligne</string>
     <string name="host">Hôte</string>
     <string name="reset">Réinitialiser</string>
+    <string name="oauth_token">jeton OAuth</string>
+    <string name="verify_login">Vérifier &amp; Sauvegarder</string>
+    <string name="custom_login_hint">Seuls les ID du client qui fonctionnent avec l\'API Helix de Twitch sont pris en charge</string>
+    <string name="custom_login_show_scopes">Afficher les portées requises</string>
+    <string name="custom_login_required_scopes">Portées requises</string>
+    <string name="custom_login_missing_scopes_title">Portées manquantes</string>
+    <string name="custom_login_missing_scopes_text">Certaines portées requises par DankChat sont manquantes dans le jeton et certaines fonctionnalités peuvent ne pas fonctionner comme prévu. Voulez-vous continuer à utiliser ce jeton ?\nManquant : %1$s</string>
+    <string name="custom_login_missing_scopes_continue">Continuer</string>
+    <string name="custom_login_error_missing_scopes">Portées manquantes : %1$s</string>
+    <string name="custom_login_error_fallback">Erreur : %1$s</string>
+    <string name="custom_login_error_empty_token">Jeton ne peut pas être vide</string>
+    <string name="custom_login_error_invalid_token">Jeton invalide</string>
     <string name="badge_tooltip_moderator">Modérateur</string>
     <string name="badge_tooltip_predictions">Prédit \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">Niveau %1$s</string>
@@ -197,6 +216,8 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_suggestions_title">Suggestions d\'émoticônes et d\'utilisateurs</string>
     <string name="preference_suggestions_summary">Propose des suggestions de nom d\'émotes lorsque vous tappez</string>
     <string name="preference_load_message_history_title">Charger les anciens messages au démarrage</string>
+    <string name="preference_load_messages_on_reconnect_title">Charger l\'historique des messages après une reconnexion</string>
+    <string name="preference_load_messages_on_reconnect_summary">Tente de récupérer les messages manquants qui n\'ont pas été reçus pendant la connexion</string>
     <string name="preference_message_history_header">Anciens messages</string>
     <string name="preference_message_history_dashboard_title">Ouvrir le dashboard</string>
     <string name="preference_message_history_dashboard_summary">Apprenez en plus sur ce service et désactivez le pour votre chaîne</string>
@@ -258,6 +279,25 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="oauth_verify_failed">Impossible de vérifier le jeton de connexion, vérifiez votre connexion.</string>
     <string name="preference_retain_webview_title">Empêcher les rechargements du live</string>
     <string name="preference_retain_webview_summary">Active la prévention expérimentale des recharges du live après changement d\'orientation ou réouverture de DankChat.</string>
+    <string name="preference_show_changelogs">Afficher l\'historique des modifications après la mise à jour</string>
+    <string name="preference_whats_new_header">Quoi de neuf</string>
+    <string name="preference_custom_login_title">Connexion personnalisée</string>
+    <string name="preference_bypass_command_handling_title">Contournez la commande Twitch</string>
+    <string name="preference_bypass_command_handling_summary">Désactive l\'interception des commandes Twitch et les envoie dans le chat à la place</string>
+    <string name="preference_7tv_live_updates_title">Mises à jour des emotes 7TV en direct</string>
+    <string name="preference_7tv_live_updates_timeout_title">Comportement de l\'arrière-plan des mises à jour des emotes en direct</string>
+    <string name="preference_7tv_live_updates_timeout_summary_timeout">Les mises à jour s\'arrêtent après %1$s.\nRéduire ce nombre peut augmenter la durée de vie de la batterie.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_always_active">Les mises à jour sont toujours actives.\nAjouter un délai d\'attente peut augmenter la durée de vie de la batterie.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_never_active">Les mises à jour ne sont jamais actives en arrière-plan.</string>
+    <string name="preference_7tv_live_updates_entry_never">Jamais actif</string>
+    <string name="preference_7tv_live_updates_entry_one_minute">1 minute</string>
+    <string name="preference_7tv_live_updates_entry_five_minutes">5 minutes</string>
+    <string name="preference_7tv_live_updates_entry_thirty_minutes">30 minutes</string>
+    <string name="preference_7tv_live_updates_entry_one_hour">1 heure</string>
+    <string name="preference_7tv_live_updates_entry_always">Toujours actif</string>
+    <string name="preference_streams_header">Streams en direct</string>
+    <string name="preference_pip_title">Désactiver le mode image-dans-image</string>
+    <string name="preference_pip_summary">Permet aux streams de continuer à jouer pendant que l\'application est en arrière-plan</string>
     <string name="reset_media_uploader_dialog_title">Réinitialiser les paramètres de Media Uploader</string>
     <string name="reset_media_uploader_dialog_message">Êtes-vous sûr de vouloir réinitialiser les paramètres de Media Uploader par défaut ?</string>
     <string name="reset_media_uploader_dialog_positive">Réinitialiser</string>
@@ -292,6 +332,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="highlights_ignores_entry_first_messages">Premier message</string>
     <string name="highlights_ignores_entry_elevated_messages">Message mis en avant</string>
     <string name="highlights_ignores_entry_redemptions">Message mis en avant avec des points de chaîne</string>
+    <string name="highlights_ignores_entry_replies">Réponses</string>
     <string name="highlights_ignores_entry_custom">Personnaliser</string>
     <string name="highlights_messages_title">Crée des notifications et met en surbrillance les messages de certains utilisateurs.</string>
     <string name="highlights_users_title">Crée des notifications et met en surbrillance les messages de certains utilisateurs.</string>
@@ -311,9 +352,48 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="user_display_custom_alias_enable">Alias personnalisé</string>
     <string name="pick_custom_user_color_title">Choisir la couleur de l\'utilisateur personnalisée</string>
     <string name="custom_user_display_summary">Ajouter un nom et une couleur personnalisés pour les utilisateurs</string>
+    <string name="reply_to">Répondre à</string>
+    <string name="message_copy">Copier le message</string>
+    <string name="message_copy_full">Copier le message complet</string>
+    <string name="message_reply">Réponse à un message</string>
+    <string name="message_view_thread">Afficher le fil de discussion</string>
+    <string name="message_copy_id">Copier l\'ID du message</string>
+    <string name="message_more_actions">Plus…</string>
+    <string name="reply_header">Répondre à @%1$s</string>
+    <string name="reply_thread_not_found">Sujet de réponse introuvable</string>
+    <string name="message_not_found">Message non trouvé</string>
+    <string name="emote_sheet_use">Ajouter l\'emote</string>
+    <string name="emote_sheet_copy">Copier</string>
+    <string name="emote_sheet_open_link">Ouvrir le lien emote</string>
+    <string name="emote_sheet_image_description">Image de l\'emote</string>
+    <string name="emote_sheet_twitch_emote">Emoticones de Twitch</string>
+    <string name="emote_sheet_ffz_channel_emote">Emote FFZ de la chaîne</string>
+    <string name="emote_sheet_ffz_global_emote">Emote FFZ globale</string>
+    <string name="emote_sheet_bttv_channel_emote">Émotes BTTV de la chaîne</string>
+    <string name="emote_sheet_bttv_shared_emote">Émotes BTTV de la chaîne</string>
+    <string name="emote_sheet_bttv_global_emote">Global BTTV Emotes</string>
+    <string name="emote_sheet_seventv_channel_emote">Émote 7TV de la chaîne</string>
+    <string name="emote_sheet_seventv_global_emote">Global 7TV Emotes</string>
+    <string name="emote_sheet_alias_of">Alias de %1$s</string>
+    <string name="emote_sheet_created_by">Créé par %1$s</string>
+    <string name="emote_sheet_zero_width_emote">(Zero Width)</string>
+    <string name="emote_copied">Emote copiée</string>
+    <string name="changelog_sheet_title">DankChat a été mis à jour !</string>
+    <string name="changelog_sheet_subtitle">Quoi de neuf dans v%1$s:</string>
+    <string name="changelog_3_6">Prise en charge initiale pour répondre et visualiser les sujets de réponse\nAjouté le paramètre pour charger les messages manqués après la reconnexion\nNouvelle feuille de fond modale\nAjout d\'une nouvelle feuille bas de message par un appui long sur un message\nAjout d\'une nouvelle feuille d\'emote\nAjout d\'une nouvelle feuille de fond\nAjout du support pour les emotes FFZ\nAmélioration de la disposition du menu d\'emotes\nMigration vers de nouveaux points de terminaison de suiveurs qui est maintenant limitée aux diffuseurs et modérateurs en raison des restrictions Twitch</string>
+    <string name="changelog_3_7_3">Ajout de la commande /shoutout\nAjout des commandes /shield et /shieldoff\nCorrection d\'erreurs de chargement de données lorsqu\'un login a expiré\nAjout du paramètre développeur pour définir un jeton d\'accès personnalisé\nAjout du paramètre développeur pour contourner la gestion des commandes Twitch\nBeaucoup de mises à jour de traduction et de maintenance!</string>
+    <string name="changelog_3_8_2">Ajout de la prise en charge d\'Android 14\nAjout du support des mises à jour des emotes 7TV en direct\nAjout du paramètre pour configurer le comportement des emotes 7TV en direct</string>
+    <string name="changelog_3_9_0">Ajout de la catégorie de paramètres \"Livestreams\"\nAjout de la prise en charge du mode image pour permettre aux streams de continuer à jouer pendant que l\'application est en arrière-plan (désactivé par défaut, nécessite au moins Android 12)</string>
+    <string name="confirm_login_cancel_title">Confirmer l\'annulation de la connexion</string>
+    <string name="confirm_login_cancel_message">Êtes-vous sûr de vouloir annuler le processus d\'équilibrage?</string>
+    <string name="confirm_login_cancel_positive_button">Annuler la connexion</string>
     <plurals name="viewers">
         <item quantity="one">En direct pour %d spectateur</item>
         <item quantity="other">En direct pour %d spectateurs</item>
+    </plurals>
+    <plurals name="viewers_and_uptime">
+        <item quantity="one">En direct avec %1$d spectateur pendant %2$s</item>
+        <item quantity="other">En direct avec %1$d spectateurs pendant %2$s</item>
     </plurals>
     <plurals name="months">
         <item quantity="one">%d mois</item>
