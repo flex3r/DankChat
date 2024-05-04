@@ -164,9 +164,9 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        val channelExtra = intent?.parcelable<UserName>(OPEN_CHANNEL_KEY)
+        val channelExtra = intent.parcelable<UserName>(OPEN_CHANNEL_KEY)
         channelToOpen = channelExtra
     }
 
