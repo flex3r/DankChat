@@ -389,6 +389,8 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="confirm_login_cancel_title">Anmeldeabbruch bestätigen</string>
     <string name="confirm_login_cancel_message">Möchtest du den Anmeldevorgang wirklich abbrechen?</string>
     <string name="confirm_login_cancel_positive_button">Anmeldung abbrechen</string>
+    <string name="login_menu_zoom_out">Herauszoomen</string>
+    <string name="login_menu_zoom_in">Heranzoomen</string>
     <plurals name="viewers">
         <item quantity="one">Live mit %d Zuschauer</item>
         <item quantity="other">Live mit %d Zuschauern</item>
