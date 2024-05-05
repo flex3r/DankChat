@@ -36,6 +36,7 @@
     <string name="external_upload_disclaimer">Зовнішній хостинг надано %1$s. Використовуйте на Ваш розсуд.</string>
     <string name="nuuls_upload_title">Завантаження власного зображення</string>
     <string name="snackbar_message_copied">Повідомлення скопійовано</string>
+    <string name="snackbar_message_id_copied">Ідентифікатор повідомлення скопійовано</string>
     <string name="snackbar_error_copied">Інформацію про помилку скопійовано</string>
     <string name="notification_stop">Стоп</string>
     <string name="notification_title">FeelsDankMan</string>
@@ -45,6 +46,7 @@
     <string name="hint_connected">Розпочати чат</string>
     <string name="hint_disconnected">Від\'єднано</string>
     <string name="hint_not_logged_int">Ви не ввійшли</string>
+    <string name="hint_replying">Відповісти</string>
     <string name="notification_new_mentions">У Вас є нові згадки</string>
     <string name="notification_mention">%1$s згадав Вас у #%2$s</string>
     <string name="notification_notify_mention">Вас згадали у #%1$s</string>
@@ -75,6 +77,10 @@
     <string name="system_message_ffz_emotes_failed">Не вдалося завантажити емоції FFZ (помилка %1$s)</string>
     <string name="system_message_bttv_emotes_failed">Не вдалося завантажити емоції BTTV (помилка %1$s)</string>
     <string name="system_message_7tv_emotes_failed">Не вдалося завантажити емоції 7TV (помилка %1$s)</string>
+    <string name="system_message_7tv_emote_set_changed" comment="flex3rs switched the active 7TV Emote Set to &quot;flex3rs's Emotes&quot;. ">%1$s переключив активний 7TV Emote Set на \"%2$s\".</string>
+    <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s додав 7TV емоцію %2$s.</string>
+    <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s перейменовано на 7TV Emote %2$s на %3$s.</string>
+    <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s видалено 7TV Emote %2$s.</string>
     <string name="timed_out_message">&lt; Повідомлення видалено &gt;</string>
     <string name="multi_entry_header_regex">Регулярний вираз (regex)</string>
     <string name="multi_entry_add_entry">Додати запис</string>
@@ -90,6 +96,7 @@
     <string name="dialog_optout">Відхилити</string>
     <string name="more">Більше</string>
     <string name="mentions_title">Згадки / Особисті повідомлення</string>
+    <string name="replies_title">Тема для відповіді</string>
     <string name="whispers">Особисті повідомлення</string>
     <string name="notification_whisper_mention">%1$s надіслав особисте повідомлення</string>
     <string name="mentions">Згадки</string>
@@ -162,6 +169,18 @@
     <string name="recent_uploads_clear">Очистити нещодавні завантаження</string>
     <string name="host">Хост</string>
     <string name="reset">Скинути</string>
+    <string name="oauth_token">Токен OAuth</string>
+    <string name="verify_login">Підтвердити та зберегти</string>
+    <string name="custom_login_hint">Підтримуються лише ідентифікатори клієнтів, які працюють з API Helix від Twitch</string>
+    <string name="custom_login_show_scopes">Показати необхідні діапазони</string>
+    <string name="custom_login_required_scopes">Необхідні діапазони</string>
+    <string name="custom_login_missing_scopes_title">Відсутні приціли</string>
+    <string name="custom_login_missing_scopes_text">У токені відсутні деякі області видимості, необхідні для DankChat, і деякі функції можуть працювати не так, як очікувалося. Ви хочете продовжувати використовувати цей токен?\nВідсутній: %1$s</string>
+    <string name="custom_login_missing_scopes_continue">Продовжуйте</string>
+    <string name="custom_login_error_missing_scopes">Відсутні діапазони: %1$s</string>
+    <string name="custom_login_error_fallback">Помилка: %1$s</string>
+    <string name="custom_login_error_empty_token">Токен не може бути порожнім</string>
+    <string name="custom_login_error_invalid_token">Токен недійсний</string>
     <string name="badge_tooltip_moderator">Модератор</string>
     <string name="badge_tooltip_predictions">Передбачено \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">%1$s рівень</string>
@@ -199,6 +218,8 @@
     <string name="preference_suggestions_title">Підказки імен користувачів та смайлів</string>
     <string name="preference_suggestions_summary">Показувати підказки для імен користувачів та назв смайлів</string>
     <string name="preference_load_message_history_title">Завантажувати історію повідомлень при запуску</string>
+    <string name="preference_load_messages_on_reconnect_title">Завантаження історії повідомлень після повторного підключення</string>
+    <string name="preference_load_messages_on_reconnect_summary">Спроби отримати пропущені повідомлення, які не були отримані під час з\'єднання, обриваються</string>
     <string name="preference_message_history_header">Історія повідомлень</string>
     <string name="preference_message_history_dashboard_title">Відкрити інформаційну панель</string>
     <string name="preference_message_history_dashboard_summary">Дізнатися більше про службу та відімкнути історію повідомлень для Вашого каналу</string>
@@ -260,6 +281,25 @@
     <string name="oauth_verify_failed">Не вдалося перевірити токен входу, перевірте підключення.</string>
     <string name="preference_retain_webview_title">Запобігти перезавантаженню трансляції</string>
     <string name="preference_retain_webview_summary">Увімкнути експериментальне запобігання перезавантаженню трансляції після зміни орієнтації або повторного відкриття DankChat.</string>
+    <string name="preference_show_changelogs">Показувати журнали змін після оновлення</string>
+    <string name="preference_whats_new_header">Що нового</string>
+    <string name="preference_custom_login_title">Користувацький логін</string>
+    <string name="preference_bypass_command_handling_title">Обробка команд обходу Twitch</string>
+    <string name="preference_bypass_command_handling_summary">Вимикає перехоплення команд Twitch і надсилає їх до чату</string>
+    <string name="preference_7tv_live_updates_title">Оновлення емоцій в прямому ефірі 7TV</string>
+    <string name="preference_7tv_live_updates_timeout_title">Живі емоти оновлюють фонову поведінку</string>
+    <string name="preference_7tv_live_updates_timeout_summary_timeout">Оновлення припиняються після %1$s.\nЗменшення цього числа може збільшити час автономної роботи.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_always_active">Оновлення завжди активні.\nДодавання тайм-ауту може збільшити час автономної роботи.</string>
+    <string name="preference_7tv_live_updates_timeout_summary_never_active">Оновлення ніколи не працюють у фоновому режимі.</string>
+    <string name="preference_7tv_live_updates_entry_never">Ніколи не активний</string>
+    <string name="preference_7tv_live_updates_entry_one_minute">1 хвилина</string>
+    <string name="preference_7tv_live_updates_entry_five_minutes">5 хвилин</string>
+    <string name="preference_7tv_live_updates_entry_thirty_minutes">30 хвилин</string>
+    <string name="preference_7tv_live_updates_entry_one_hour">1 година</string>
+    <string name="preference_7tv_live_updates_entry_always">Завжди активні</string>
+    <string name="preference_streams_header">Прямі ефіри</string>
+    <string name="preference_pip_title">Увімкнути режим \"картинка в картинці</string>
+    <string name="preference_pip_summary">Дозволяє потокам продовжувати відтворення, коли програма працює у фоновому режимі</string>
     <string name="reset_media_uploader_dialog_title">Скинути налаштування медіа-завантажувача</string>
     <string name="reset_media_uploader_dialog_message">Ви впевнені, що бажаєте скинути налаштування медіа-завантажувача до стандартних?</string>
     <string name="reset_media_uploader_dialog_positive">Скинути</string>
@@ -294,6 +334,7 @@
     <string name="highlights_ignores_entry_first_messages">Перші повідомлення</string>
     <string name="highlights_ignores_entry_elevated_messages">Піднесені повідомлення</string>
     <string name="highlights_ignores_entry_redemptions">Виділення куплені балами каналу</string>
+    <string name="highlights_ignores_entry_replies">Відповіді</string>
     <string name="highlights_ignores_entry_custom">Власне</string>
     <string name="highlights_messages_title">Створює сповіщення та виділяє повідомлення на основі певних шаблонів.</string>
     <string name="highlights_users_title">Створює сповіщення та виділяє повідомлення від певних користувачів.</string>
@@ -313,6 +354,39 @@
     <string name="user_display_custom_alias_enable">Користувацький псевдонім</string>
     <string name="pick_custom_user_color_title">Виберіть власний колір користувача</string>
     <string name="custom_user_display_summary">Додати власне ім’я та колір для користувачів</string>
+    <string name="reply_to">У відповідь на</string>
+    <string name="message_copy">Скопіювати повідомлення</string>
+    <string name="message_copy_full">Скопіювати повне повідомлення</string>
+    <string name="message_reply">Відповісти на повідомлення</string>
+    <string name="message_view_thread">Переглянути тему</string>
+    <string name="message_copy_id">Скопіювати ідентифікатор повідомлення</string>
+    <string name="message_more_actions">Більше…</string>
+    <string name="reply_header">Відповісти @%1$s</string>
+    <string name="reply_thread_not_found">Тема відповіді не знайдена</string>
+    <string name="message_not_found">Повідомлення не знайдено</string>
+    <string name="emote_sheet_use">Використовуйте смайлик</string>
+    <string name="emote_sheet_open_link">Відкрийте емоційне посилання</string>
+    <string name="emote_sheet_image_description">Емоційне зображення</string>
+    <string name="emote_sheet_twitch_emote">Емоція Twitch</string>
+    <string name="emote_sheet_ffz_channel_emote">Канал FFZ Emote</string>
+    <string name="emote_sheet_bttv_channel_emote">Канал BTTV Emote</string>
+    <string name="emote_sheet_bttv_shared_emote">Спільний BTTV Emote</string>
+    <string name="emote_sheet_seventv_channel_emote">Канал 7TV Emote</string>
+    <string name="emote_sheet_alias_of">Псевдонім %1$s</string>
+    <string name="emote_sheet_created_by">Створено %1$s</string>
+    <string name="emote_sheet_zero_width_emote">(Нульова ширина)</string>
+    <string name="emote_copied">Смайлик скопійовано</string>
+    <string name="changelog_sheet_title">DankChat оновився!</string>
+    <string name="changelog_sheet_subtitle">Що нового в v%1$s:</string>
+    <string name="changelog_3_6">Початкова підтримка відповідей та перегляду потоків відповідей\nДодано налаштування для завантаження пропущених повідомлень після повторного з\'єднання\nНовий модальний дизайн нижньої панелі\nДодано нову нижню панель повідомлень при тривалому натисканні на повідомлення\nДодано нову нижню панель емоцій при натисканні на емоцію\nДодано нову нижню панель журналу змін\nДодано підтримку анімованих емоцій FFZ\nПокращено макет меню емоцій\nПереміщено кінцеву точку для нових підписників, доступ до якої наразі надається лише ведучим та модераторам у зв\'язку з обмеженнями Twitch</string>
+    <string name="changelog_3_7_3">Додано команду /shoutout\nДобавлено команди /shield та /shieldoff\nВиправлено помилки завантаження даних після закінчення терміну дії логіну\nДобавлено налаштування розробника для встановлення власного токену доступу\nДобавлено налаштування розробника для обходу обробки команд Twitch\nБагато оновлень перекладу та обслуговування!</string>
+    <string name="changelog_3_8_2">Додано підтримку Android 14\nДодано підтримку оновлень смайликів у реальному часі 7TV\nДодано налаштування для налаштування фонової поведінки оновлень смайликів у реальному часі 7TV</string>
+    <string name="changelog_3_9_0">Додано категорію налаштувань \"Прямі трансляції\"\nДодана підтримка режиму \"картинка в картинці\", щоб потоки продовжували відтворюватися, коли програма працює у фоновому режимі (вимкнено за замовчуванням, потрібна принаймні Android 12)</string>
+    <string name="confirm_login_cancel_title">Підтвердити скасування входу</string>
+    <string name="confirm_login_cancel_message">Ви впевнені, що хочете скасувати процес входу?</string>
+    <string name="confirm_login_cancel_positive_button">Скасувати вхід</string>
+    <string name="login_menu_zoom_out">Зменшити</string>
+    <string name="login_menu_zoom_in">Збільшити</string>
     <plurals name="viewers">
         <item quantity="one">Наживо з %d глядачем</item>
         <item quantity="few">Наживо з %d глядачами</item>
