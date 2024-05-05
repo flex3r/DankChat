@@ -382,6 +382,8 @@
     <string name="confirm_login_cancel_title">ログインのキャンセルを確認</string>
     <string name="confirm_login_cancel_message">ログインをキャンセルしてもよろしいですか？</string>
     <string name="confirm_login_cancel_positive_button">ログインをキャンセル</string>
+    <string name="login_menu_zoom_out">ズームアウト</string>
+    <string name="login_menu_zoom_in">ズームイン</string>
     <plurals name="viewers">
         <item quantity="other">%d人の視聴者とライブ</item>
     </plurals>
