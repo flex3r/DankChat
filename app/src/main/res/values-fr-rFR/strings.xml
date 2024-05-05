@@ -387,6 +387,8 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="confirm_login_cancel_title">Confirmer l\'annulation de la connexion</string>
     <string name="confirm_login_cancel_message">Êtes-vous sûr de vouloir annuler le processus d\'équilibrage?</string>
     <string name="confirm_login_cancel_positive_button">Annuler la connexion</string>
+    <string name="login_menu_zoom_out">Zoom arrière</string>
+    <string name="login_menu_zoom_in">Zoom avant</string>
     <plurals name="viewers">
         <item quantity="one">En direct pour %d spectateur</item>
         <item quantity="other">En direct pour %d spectateurs</item>
