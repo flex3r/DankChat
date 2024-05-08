@@ -89,7 +89,6 @@
     <string name="dialog_optin">شرکت کردن</string>
     <string name="dialog_optout">کناره گیری کردن</string>
     <string name="more">بیشتر</string>
-    <string name="mentions_title">منشن ها / زمزمه‌ها</string>
     <string name="replies_title">پاسخ به موضوع</string>
     <string name="whispers">زمزمه‌ها</string>
     <string name="notification_whisper_mention">%1$s به شما یک نجوا فرستاد.</string>
