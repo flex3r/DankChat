@@ -250,7 +250,7 @@ The service temporarily stores messages for channels you (and others) visit to p
     <string name="preference_tts_force_english_title">فرض اللغة إلى الإنجليزية</string>
     <string name="preference_tts_force_english_summary">فرض لغة TTS الصوتية على اللغة الإنجليزية بدلاً من اللغة الافتراضية للنظام</string>
     <string name="preference_visible_emotes_title">عواطف الطرف الثالث المرئية</string>
-    <string name="preference_about_tos">شروط خدمة Twitch &amp;؛ سياسة المستخدم:</string>
+    <string name="preference_about_tos">شروط خدمة Twitch &amp; سياسة المستخدم:</string>
     <string name="preference_show_chip_actions_title">إظهار إجراءات الرقاقة</string>
     <string name="preference_show_chip_actions_summary">يعرض شرائح لتبديل وضع ملء الشاشة والبث وضبط أوضاع المحادثة</string>
     <string name="preference_uploader_header">أداة تحميل الوسائط</string>
@@ -355,7 +355,7 @@ The service temporarily stores messages for channels you (and others) visit to p
     <string name="message_reply">الرد على الرسالة</string>
     <string name="message_view_thread">عرض الموضوع</string>
     <string name="message_copy_id">نسخ معرف الرسالة</string>
-    <string name="message_more_actions">المزيد...</string>
+    <string name="message_more_actions">المزيد…</string>
     <string name="reply_header">الرد على @%1$s</string>
     <string name="reply_thread_not_found">موضوع الرد غير موجود</string>
     <string name="message_not_found">لم يتم العثور على الرسالة</string>
