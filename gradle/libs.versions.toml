@@ -1,12 +1,12 @@
 [versions]
-kotlin = "1.9.23"
+kotlin = "1.9.24"
 coroutines = "1.8.1"
 serialization = "1.6.3"
 datetime = "0.5.0"
 ktor = "2.3.11"
 coil = "2.6.0"
 okhttp = "5.0.0-alpha.14"
-ksp = "1.9.23-1.0.20"
+ksp = "1.9.24-1.0.20"
 hilt = "2.51.1"
 
 androidGradlePlugin = "8.4.0"
