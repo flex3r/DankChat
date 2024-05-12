@@ -355,7 +355,7 @@ The service temporarily stores messages for channels you (and others) visit to p
     <string name="message_reply">الرد على الرسالة</string>
     <string name="message_view_thread">عرض الموضوع</string>
     <string name="message_copy_id">نسخ معرف الرسالة</string>
-    <string name="message_more_actions">المزيد...</string>
+    <string name="message_more_actions">المزيد…</string>
     <string name="reply_header">الرد على @%1$s</string>
     <string name="reply_thread_not_found">موضوع الرد غير موجود</string>
     <string name="message_not_found">لم يتم العثور على الرسالة</string>
