@@ -126,6 +126,10 @@ class ChatAdapter(
                     replyGroup.isVisible = true
                     val formatted = buildString {
                         append(itemReply.context.getString(R.string.reply_to))
+                        // add LTR mark if necessary
+                        if (itemReply.layoutDirection == View.LAYOUT_DIRECTION_RTL) {
+                            append('\u200E')
+                        }
                         append(" @${message.thread.name}: ")
                         append(message.thread.message)
                     }
