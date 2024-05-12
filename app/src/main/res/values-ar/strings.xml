@@ -250,7 +250,7 @@ The service temporarily stores messages for channels you (and others) visit to p
     <string name="preference_tts_force_english_title">فرض اللغة إلى الإنجليزية</string>
     <string name="preference_tts_force_english_summary">فرض لغة TTS الصوتية على اللغة الإنجليزية بدلاً من اللغة الافتراضية للنظام</string>
     <string name="preference_visible_emotes_title">عواطف الطرف الثالث المرئية</string>
-    <string name="preference_about_tos">شروط خدمة Twitch &amp;؛ سياسة المستخدم:</string>
+    <string name="preference_about_tos">شروط خدمة Twitch &amp; سياسة المستخدم:</string>
     <string name="preference_show_chip_actions_title">إظهار إجراءات الرقاقة</string>
     <string name="preference_show_chip_actions_summary">يعرض شرائح لتبديل وضع ملء الشاشة والبث وضبط أوضاع المحادثة</string>
     <string name="preference_uploader_header">أداة تحميل الوسائط</string>
