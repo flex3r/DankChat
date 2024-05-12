@@ -1,2 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string-array name="badges_entries">
+        <item>ପ୍ରାଧିକରଣ (କର୍ମଚାରୀ, ଆଡମିନି)</item>
+        <item>ଭବିଷ୍ୟବାଣୀ</item>
+        <item>ଚ୍ୟାନେଲ୍ (ବ୍ରଡକେଷ୍ଟର୍, ମୋଡରେଟର୍)</item>
+        <item>ଗ୍ରାହକ |</item>
+        <item>ଅସାରତା (ପ୍ରଧାନ, ବିଟ୍, ସବ୍ଲିଗର)</item>
+        <item>ଡାନକଚାଟ |</item>
+        <!--        <item>FrankerFaceZ (Bot, FFZ Supporter, FFZ Developer)</item>-->
+    </string-array>
+</resources>

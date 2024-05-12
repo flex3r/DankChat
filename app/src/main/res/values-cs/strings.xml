@@ -389,6 +389,8 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="confirm_login_cancel_title">Potvrdit zrušení přihlášení</string>
     <string name="confirm_login_cancel_message">Jste si jistí, že chcete zrušit proces přihlášení?</string>
     <string name="confirm_login_cancel_positive_button">Zrušit přihlášení</string>
+    <string name="login_menu_zoom_out">Oddálit</string>
+    <string name="login_menu_zoom_in">Přiblížit</string>
     <plurals name="viewers">
         <item quantity="one">Živě s %d divákem</item>
         <item quantity="few">Živě se %d diváky</item>

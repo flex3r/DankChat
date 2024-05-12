@@ -382,6 +382,8 @@
     <string name="confirm_login_cancel_title">Confirmar cancelamento de login</string>
     <string name="confirm_login_cancel_message">Você tem certeza que deseja cancelar o processo de Login?</string>
     <string name="confirm_login_cancel_positive_button">Cancelar login</string>
+    <string name="login_menu_zoom_out">Diminuir zoom</string>
+    <string name="login_menu_zoom_in">Aumentar zoom</string>
     <plurals name="viewers">
         <item quantity="one">Ao vivo com %d espectador</item>
         <item quantity="other">Ao vivo com %d espectadores</item>
