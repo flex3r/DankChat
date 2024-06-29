@@ -359,6 +359,7 @@
     <string name="message_not_found">ବାର୍ତ୍ତା ମିଳିଲା ନାହିଁ |</string>
     <string name="emote_sheet_use">ଇମୋଟ୍ ବ୍ୟବହାର କରନ୍ତୁ |</string>
     <string name="emote_sheet_copy">କପି କରନ୍ତୁ</string>
+    <string name="emote_sheet_open_link">ଇମୋଟ୍ ଲିଙ୍କ୍ ଖୋଲ</string>
     <string name="emote_sheet_image_description">ଇମୋଟ୍ ପ୍ରତିଛବି |</string>
     <string name="emote_sheet_twitch_emote">Twitch ଇମୋଟ୍ |</string>
     <string name="emote_sheet_ffz_channel_emote">ଚ୍ୟାନେଲ FFZ ଇମୋଟ୍ |</string>
