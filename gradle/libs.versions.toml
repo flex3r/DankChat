@@ -6,7 +6,7 @@ datetime = "0.6.0"
 ktor = "2.3.12"
 coil = "2.6.0"
 okhttp = "5.0.0-alpha.14"
-ksp = "2.0.0-1.0.22"
+ksp = "2.0.0-1.0.23"
 hilt = "2.51.1"
 
 androidGradlePlugin = "8.5.0"
