@@ -35,7 +35,7 @@ flexBox = "3.0.0"
 colorPicker = "3.1.0"
 
 junit = "5.10.3"
-mockk = "1.13.11"
+mockk = "1.13.12"
 
 [libraries]
 android-desugar-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "androidDesugarLibs" }
