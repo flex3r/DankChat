@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.data.twitch.message
 
+import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.toUserName
@@ -28,8 +29,23 @@ data class UserNoticeMessage(
             "announcement"
         )
 
-        fun parseUserNotice(message: IrcMessage, historic: Boolean = false): UserNoticeMessage = with(message) {
-            val msgId = tags["msg-id"]
+        fun parseUserNotice(message: IrcMessage, findChannel: (UserId) -> UserName?, historic: Boolean = false): UserNoticeMessage? = with(message) {
+            var msgId = tags["msg-id"]
+            var mirrored = msgId == "sharedchatnotice"
+            if (mirrored) {
+               msgId = tags["source-msg-id"]
+            } else {
+                val roomId = tags["room-id"]
+                val sourceRoomId = tags["source-room-id"]
+                if (roomId != null && sourceRoomId != null) {
+                    mirrored = roomId != sourceRoomId
+                }
+            }
+
+            if (mirrored && msgId != "announcement") {
+                return null
+            }
+
             val id = tags["id"] ?: UUID.randomUUID().toString()
             val channel = params[0].substring(1)
             val defaultMessage = tags["system-msg"] ?: ""
@@ -50,7 +66,7 @@ data class UserNoticeMessage(
             val ts = tags["tmi-sent-ts"]?.toLongOrNull() ?: System.currentTimeMillis()
 
             val childMessage = when (msgId) {
-                in USER_NOTICE_MSG_IDS_WITH_MESSAGE -> PrivMessage.parsePrivMessage(message)
+                in USER_NOTICE_MSG_IDS_WITH_MESSAGE -> PrivMessage.parsePrivMessage(message, findChannel)
                 else                                -> null
             }
 

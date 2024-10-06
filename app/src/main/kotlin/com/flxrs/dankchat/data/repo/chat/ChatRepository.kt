@@ -7,6 +7,7 @@ import com.flxrs.dankchat.chat.ChatImportance
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.chat.toMentionTabItems
 import com.flxrs.dankchat.data.DisplayName
+import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.chatters.ChattersApiClient
 import com.flxrs.dankchat.data.api.recentmessages.RecentMessagesApiClient
@@ -735,7 +736,7 @@ class ChatRepository @Inject constructor(
         }
 
         val message = runCatching {
-            Message.parse(ircMessage)
+            Message.parse(ircMessage, ::findChannelById)
                 ?.applyIgnores()
                 ?.calculateMessageThread { channel, id -> messages[channel]?.value?.find { it.message.id == id }?.message }
                 ?.calculateHighlightState()
@@ -906,7 +907,7 @@ class ChatRepository @Inject constructor(
 
                     else        -> {
                         val message = runCatching {
-                            Message.parse(parsedIrc)
+                            Message.parse(parsedIrc, ::findChannelById)
                                 ?.applyIgnores()
                                 ?.calculateMessageThread { _, id -> items.find { it.message.id == id }?.message }
                                 ?.calculateHighlightState()
@@ -1000,6 +1001,8 @@ class ChatRepository @Inject constructor(
     private fun Message.updateMessageInThread(): Message = repliesRepository.updateMessageInThread(this)
 
     private fun onMessageRemoved(item: ChatItem) = repliesRepository.cleanupMessageThread(item.message)
+
+    private fun findChannelById(channelId: UserId): UserName? = roomStates.values.find { state -> state.channelId == channelId }?.channel
 
     companion object {
         private val TAG = ChatRepository::class.java.simpleName

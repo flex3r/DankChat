@@ -19,6 +19,7 @@ data class PrivMessage(
     override val id: String = UUID.randomUUID().toString(),
     override val highlights: Set<Highlight> = emptySet(),
     val channel: UserName,
+    val sourceChannel: UserName?,
     val userId: UserId? = null,
     val name: UserName,
     val displayName: DisplayName,
@@ -33,12 +34,16 @@ data class PrivMessage(
     val userDisplay: UserDisplay? = null,
     val thread: MessageThreadHeader? = null,
     val replyMentionOffset: Int = 0,
-    override val emoteData: EmoteData = EmoteData(originalMessage, channel, emotesWithPositions = parseEmoteTag(originalMessage, tags["emotes"].orEmpty())),
+    override val emoteData: EmoteData = EmoteData(
+        message = originalMessage,
+        channel = sourceChannel ?: channel,
+        emotesWithPositions = parseEmoteTag(originalMessage, tags["emotes"].orEmpty()),
+    ),
     override val badgeData: BadgeData = BadgeData(userId, channel, badgeTag = tags["badges"], badgeInfoTag = tags["badge-info"]),
 ) : Message() {
 
     companion object {
-        fun parsePrivMessage(ircMessage: IrcMessage): PrivMessage = with(ircMessage) {
+        fun parsePrivMessage(ircMessage: IrcMessage, findChannel: (UserId) -> UserName?): PrivMessage = with(ircMessage) {
             val (name, id) = when (ircMessage.command) {
                 "USERNOTICE" -> tags.getValue("login") to (tags["id"]?.let { "$it-msg" } ?: UUID.randomUUID().toString())
                 else         -> prefix.substringBefore('!') to (tags["id"] ?: UUID.randomUUID().toString())
@@ -58,11 +63,17 @@ data class PrivMessage(
 
                 else                                                                                          -> messageParam
             }
-            val channel = params[0].substring(1)
+
+            val channel = params[0].substring(1).toUserName()
+            val sourceChannel = tags["source-room-id"]
+                ?.takeIf { it.isNotEmpty() && it != tags["room-id"] }
+                ?.toUserId()
+                ?.let(findChannel)
 
             return PrivMessage(
                 timestamp = ts,
-                channel = channel.toUserName(),
+                channel = channel,
+                sourceChannel = sourceChannel,
                 name = name.toUserName(),
                 displayName = displayName.toDisplayName(),
                 color = color,

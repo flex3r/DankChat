@@ -194,6 +194,11 @@ class HighlightsRepository @Inject constructor(
     }
 
     private fun PrivMessage.calculateHighlightState(): PrivMessage {
+        // Disable highlights for shared chat messages to avoid duplicate pings
+        if (sourceChannel != null) {
+            return this
+        }
+
         if (isUserBlacklisted(name)) {
             return this
         }
