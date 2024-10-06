@@ -105,6 +105,9 @@ class RootViewDeferringInsetsCallback(
             // This results in only the WindowInsetsCompat.Type.systemBars() being applied, allowing
             // the scrolling view to remain at it's larger size.
             deferredInsets = true
+            if (lastWindowInsets != null && view != null) {
+                ViewCompat.dispatchApplyWindowInsets(view!!, lastWindowInsets!!)
+            }
         }
     }
 
