@@ -10,7 +10,7 @@ ksp = "2.0.0-1.0.24"
 hilt = "2.52"
 
 androidGradlePlugin = "8.5.1"
-androidDesugarLibs = "2.0.4"
+androidDesugarLibs = "2.1.2"
 androidxActivity = "1.9.1"
 androidxBrowser = "1.8.0"
 androidxConstraintLayout = "2.1.4"
