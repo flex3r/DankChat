@@ -5,9 +5,9 @@ import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.toSpannable
 import androidx.core.text.util.LinkifyCompat
+import androidx.core.view.doOnPreDraw
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
@@ -18,6 +18,8 @@ import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.navigateSafe
+import com.google.android.material.transition.MaterialFadeThrough
+import com.google.android.material.transition.MaterialSharedAxis
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -28,6 +30,14 @@ class OverviewSettingsFragment : MaterialPreferenceFragmentCompat() {
 
     @Inject
     lateinit var dankChatPreferences: DankChatPreferenceStore
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        exitTransition = MaterialFadeThrough()
+        reenterTransition = MaterialFadeThrough()
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return super.onCreateView(inflater, container, savedInstanceState).apply {
@@ -68,14 +78,12 @@ class OverviewSettingsFragment : MaterialPreferenceFragmentCompat() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        postponeEnterTransition()
+        (view.parent as? View)?.doOnPreDraw { startPostponedEnterTransition() }
 
-        val binding = SettingsFragmentBinding.bind(view)
-        (requireActivity() as AppCompatActivity).apply {
-            setSupportActionBar(binding.settingsToolbar)
-            supportActionBar?.apply {
-                setDisplayHomeAsUpEnabled(true)
-                title = getString(R.string.settings)
-            }
+        SettingsFragmentBinding.bind(view).apply {
+            settingsToolbar.setNavigationOnClickListener { navController.navigateUp() }
+            settingsToolbar.title = getString(R.string.settings)
         }
     }
 

@@ -4,9 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.R
@@ -27,6 +28,7 @@ import com.flxrs.dankchat.utils.extensions.expand
 import com.flxrs.dankchat.utils.extensions.showShortSnackbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.transition.MaterialFadeThrough
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -41,16 +43,20 @@ class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
     @Inject
     lateinit var preferences: DankChatPreferenceStore
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialFadeThrough()
+        returnTransition = MaterialFadeThrough()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        postponeEnterTransition()
+        (view.parent as? View)?.doOnPreDraw { startPostponedEnterTransition() }
 
-        val binding = SettingsFragmentBinding.bind(view)
-        (requireActivity() as AppCompatActivity).apply {
-            setSupportActionBar(binding.settingsToolbar)
-            supportActionBar?.apply {
-                setDisplayHomeAsUpEnabled(true)
-                title = getString(R.string.preference_highlights_ignores_header)
-            }
+        SettingsFragmentBinding.bind(view).apply {
+            settingsToolbar.setNavigationOnClickListener { findNavController().navigateUp() }
+            settingsToolbar.title = getString(R.string.preference_highlights_ignores_header)
         }
 
         val highlightsAdapter = HighlightsTabAdapter(

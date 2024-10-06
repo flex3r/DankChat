@@ -9,18 +9,10 @@
         android:label="MainFragment">
         <action
             android:id="@+id/action_mainFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
+            app:destination="@id/loginFragment" />
         <action
             android:id="@+id/action_mainFragment_to_overviewSettingsFragment"
-            app:destination="@id/overviewSettingsFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
+            app:destination="@id/overviewSettingsFragment" />
         <action
             android:id="@+id/action_mainFragment_to_channelsDialogFragment"
             app:destination="@id/channelsDialogFragment" />

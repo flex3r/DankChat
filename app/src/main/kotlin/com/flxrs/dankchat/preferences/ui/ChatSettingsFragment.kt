@@ -5,13 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.preference.ListPreference
 import androidx.preference.MultiSelectListPreference
 import androidx.preference.Preference
@@ -39,6 +40,7 @@ import com.flxrs.dankchat.utils.extensions.expand
 import com.flxrs.dankchat.utils.extensions.showRestartRequired
 import com.flxrs.dankchat.utils.extensions.showShortSnackbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.transition.MaterialFadeThrough
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -52,16 +54,20 @@ class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var bottomSheetBinding: UserDisplayBottomSheetBinding? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialFadeThrough()
+        returnTransition = MaterialFadeThrough()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        postponeEnterTransition()
+        (view.parent as? View)?.doOnPreDraw { startPostponedEnterTransition() }
 
-        val binding = SettingsFragmentBinding.bind(view)
-        (requireActivity() as AppCompatActivity).apply {
-            setSupportActionBar(binding.settingsToolbar)
-            supportActionBar?.apply {
-                setDisplayHomeAsUpEnabled(true)
-                title = getString(R.string.preference_chat_header)
-            }
+        SettingsFragmentBinding.bind(view).apply {
+            settingsToolbar.setNavigationOnClickListener { findNavController().navigateUp() }
+            settingsToolbar.title = getString(R.string.preference_chat_header)
         }
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(view.context)

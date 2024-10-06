@@ -31,8 +31,8 @@ import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.flxrs.dankchat.utils.extensions.showLongSnackbar
-import com.flxrs.dankchat.utils.insets.RootViewDeferringInsetsCallback
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.transition.MaterialSharedAxis
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -65,16 +65,24 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
+        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val deferringInsetsListener = RootViewDeferringInsetsCallback(
-            persistentInsetTypes = WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout(),
-            deferredInsetTypes = WindowInsetsCompat.Type.ime()
-        )
-        ViewCompat.setWindowInsetsAnimationCallback(binding.root, deferringInsetsListener)
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root, deferringInsetsListener)
+        super.onViewCreated(view, savedInstanceState)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemInsets.left, systemInsets.top, systemInsets.right, systemInsets.bottom)
+            ViewCompat.onApplyWindowInsets(v, insets)
+        }
 
         (requireActivity() as AppCompatActivity).apply {
-            setSupportActionBar(binding.loginToolbar)
             binding.loginToolbar.setNavigationOnClickListener { showCancelLoginDialog() }
             onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
                 when {

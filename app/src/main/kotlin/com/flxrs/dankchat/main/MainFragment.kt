@@ -3,7 +3,11 @@ package com.flxrs.dankchat.main
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.PictureInPictureParams
-import android.content.*
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Build
@@ -14,12 +18,20 @@ import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
 import android.util.Rational
-import android.view.*
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
 import android.view.inputmethod.EditorInfo
 import android.webkit.MimeTypeMap
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.activity.BackEventCompat
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
@@ -33,8 +45,15 @@ import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.core.net.toFile
 import androidx.core.net.toUri
-import androidx.core.view.*
+import androidx.core.view.MenuProvider
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsAnimationCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.Type
+import androidx.core.view.doOnPreDraw
+import androidx.core.view.isVisible
+import androidx.core.view.postDelayed
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.activityViewModels
@@ -66,9 +85,13 @@ import com.flxrs.dankchat.chat.suggestion.SpaceTokenizer
 import com.flxrs.dankchat.chat.suggestion.Suggestion
 import com.flxrs.dankchat.chat.suggestion.SuggestionsArrayAdapter
 import com.flxrs.dankchat.chat.user.UserPopupResult
-import com.flxrs.dankchat.data.*
+import com.flxrs.dankchat.data.DisplayName
+import com.flxrs.dankchat.data.UserId
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.state.DataLoadingState
 import com.flxrs.dankchat.data.state.ImageUploadState
+import com.flxrs.dankchat.data.toUserId
+import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.databinding.EditDialogBinding
@@ -76,7 +99,25 @@ import com.flxrs.dankchat.databinding.MainFragmentBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.model.ChannelWithRename
 import com.flxrs.dankchat.utils.createMediaFile
-import com.flxrs.dankchat.utils.extensions.*
+import com.flxrs.dankchat.utils.extensions.awaitState
+import com.flxrs.dankchat.utils.extensions.collectFlow
+import com.flxrs.dankchat.utils.extensions.expand
+import com.flxrs.dankchat.utils.extensions.firstValueOrNull
+import com.flxrs.dankchat.utils.extensions.hide
+import com.flxrs.dankchat.utils.extensions.hideKeyboard
+import com.flxrs.dankchat.utils.extensions.isCollapsed
+import com.flxrs.dankchat.utils.extensions.isHidden
+import com.flxrs.dankchat.utils.extensions.isInPictureInPictureMode
+import com.flxrs.dankchat.utils.extensions.isLandscape
+import com.flxrs.dankchat.utils.extensions.isPortrait
+import com.flxrs.dankchat.utils.extensions.isVisible
+import com.flxrs.dankchat.utils.extensions.keepScreenOn
+import com.flxrs.dankchat.utils.extensions.navigateSafe
+import com.flxrs.dankchat.utils.extensions.px
+import com.flxrs.dankchat.utils.extensions.reduceDragSensitivity
+import com.flxrs.dankchat.utils.extensions.withData
+import com.flxrs.dankchat.utils.extensions.withTrailingSpace
+import com.flxrs.dankchat.utils.extensions.withoutInvisibleChar
 import com.flxrs.dankchat.utils.insets.ControlFocusInsetsAnimationCallback
 import com.flxrs.dankchat.utils.insets.RootViewDeferringInsetsCallback
 import com.flxrs.dankchat.utils.insets.TranslateDeferringInsetsAnimationCallback
@@ -89,12 +130,15 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.BaseTransientBottomBar.BaseCallback
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.transition.MaterialSharedAxis
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
 import java.net.URL
 import javax.inject.Inject
+import kotlin.collections.component1
+import kotlin.collections.component2
 import kotlin.math.roundToInt
 
 @AndroidEntryPoint
@@ -111,9 +155,30 @@ class MainFragment : Fragment() {
     private val onBackPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
             when {
-                inputBottomSheetBehavior?.isVisible == true      -> inputBottomSheetBehavior?.hide()
-                fullscreenBottomSheetBehavior?.isVisible == true -> fullscreenBottomSheetBehavior?.hide()
+                inputBottomSheetBehavior?.isVisible == true      -> inputBottomSheetBehavior?.handleBackInvoked()
+                fullscreenBottomSheetBehavior?.isVisible == true -> fullscreenBottomSheetBehavior?.handleBackInvoked()
                 mainViewModel.isFullscreen                       -> mainViewModel.toggleFullscreen()
+            }
+        }
+
+        override fun handleOnBackProgressed(backEvent: BackEventCompat) {
+            when {
+                inputBottomSheetBehavior?.isVisible == true -> inputBottomSheetBehavior?.updateBackProgress(backEvent)
+                fullscreenBottomSheetBehavior?.isVisible == true -> fullscreenBottomSheetBehavior?.updateBackProgress(backEvent)
+            }
+        }
+
+        override fun handleOnBackCancelled() {
+            when {
+                inputBottomSheetBehavior?.isVisible == true -> inputBottomSheetBehavior?.cancelBackProgress()
+                fullscreenBottomSheetBehavior?.isVisible == true -> fullscreenBottomSheetBehavior?.cancelBackProgress()
+            }
+        }
+
+        override fun handleOnBackStarted(backEvent: BackEventCompat) {
+            when {
+                inputBottomSheetBehavior?.isVisible == true -> inputBottomSheetBehavior?.startBackProgress(backEvent)
+                fullscreenBottomSheetBehavior?.isVisible == true -> fullscreenBottomSheetBehavior?.startBackProgress(backEvent)
             }
         }
     }
@@ -236,6 +301,14 @@ class MainFragment : Fragment() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
+        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         tabAdapter = ChatTabAdapter(parentFragment = this)
@@ -281,6 +354,7 @@ class MainFragment : Fragment() {
                         offset = v.x - event.rawX
                         true
                     }
+
                     else                    -> false
                 }
             }
@@ -290,6 +364,10 @@ class MainFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        postponeEnterTransition()
+        view.setBackgroundColor(MaterialColors.getColor(view, android.R.attr.colorBackground))
+        view.doOnPreDraw { startPostponedEnterTransition() }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             activity?.setPictureInPictureParams(
                 PictureInPictureParams.Builder()
@@ -300,7 +378,7 @@ class MainFragment : Fragment() {
 
         initPreferences(view.context)
         binding.splitThumb?.background?.alpha = 150
-        activity?.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
+        activity?.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.STARTED)
         mainViewModel.apply {
             collectFlow(imageUploadState, ::handleImageUploadState)
             collectFlow(dataLoadingState, ::handleDataLoadingState)

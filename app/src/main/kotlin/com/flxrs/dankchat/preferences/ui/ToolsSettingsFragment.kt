@@ -13,12 +13,14 @@ import androidx.core.content.edit
 import androidx.core.text.util.LinkifyCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreferenceCompat
@@ -27,7 +29,6 @@ import com.flxrs.dankchat.databinding.RecentUploadsBottomsheetBinding
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.databinding.TtsIgnoreListBottomsheetBinding
 import com.flxrs.dankchat.databinding.UploaderBottomsheetBinding
-import com.flxrs.dankchat.main.MainActivity
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.ui.tts.TtsIgnoreItem
 import com.flxrs.dankchat.preferences.ui.tts.TtsIgnoreListAdapter
@@ -35,6 +36,7 @@ import com.flxrs.dankchat.preferences.upload.RecentUploadsAdapter
 import com.flxrs.dankchat.preferences.upload.RecentUploadsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.transition.MaterialFadeThrough
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -54,25 +56,29 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
     @Inject
     lateinit var dankChatPreferenceStore: DankChatPreferenceStore
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialFadeThrough()
+        returnTransition = MaterialFadeThrough()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        postponeEnterTransition()
+        (view.parent as? View)?.doOnPreDraw { startPostponedEnterTransition() }
 
-        val binding = SettingsFragmentBinding.bind(view)
-        (requireActivity() as MainActivity).apply {
-            setSupportActionBar(binding.settingsToolbar)
-            supportActionBar?.apply {
-                setDisplayHomeAsUpEnabled(true)
-                title = getString(R.string.preference_tools_header)
-            }
+        SettingsFragmentBinding.bind(view).apply {
+            settingsToolbar.setNavigationOnClickListener { findNavController().navigateUp() }
+            settingsToolbar.title = getString(R.string.preference_tools_header)
+        }
 
-            findPreference<SwitchPreferenceCompat>(getString(R.string.preference_tts_key))?.apply {
-                setOnPreferenceChangeListener { _, value ->
-                    if (value as Boolean) {
-                        requestCheckTTSData.launch(Intent(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA))
-                    }
-
-                    true
+        findPreference<SwitchPreferenceCompat>(getString(R.string.preference_tts_key))?.apply {
+            setOnPreferenceChangeListener { _, value ->
+                if (value as Boolean) {
+                    requestCheckTTSData.launch(Intent(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA))
                 }
+
+                true
             }
         }
 

@@ -5,29 +5,35 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.view.doOnPreDraw
+import androidx.navigation.fragment.findNavController
 import androidx.preference.ListPreference
 import androidx.preference.SeekBarPreference
 import androidx.preference.SwitchPreferenceCompat
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
 import com.flxrs.dankchat.utils.extensions.isSystemLightMode
+import com.google.android.material.transition.MaterialFadeThrough
 
 class AppearanceSettingsFragment : MaterialPreferenceFragmentCompat() {
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialFadeThrough()
+        returnTransition = MaterialFadeThrough()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        postponeEnterTransition()
+        (view.parent as? View)?.doOnPreDraw { startPostponedEnterTransition() }
 
-        val binding = SettingsFragmentBinding.bind(view)
-        (requireActivity() as AppCompatActivity).apply {
-            setSupportActionBar(binding.settingsToolbar)
-            supportActionBar?.apply {
-                setDisplayHomeAsUpEnabled(true)
-                title = getString(R.string.preference_appearance_header)
-            }
+        SettingsFragmentBinding.bind(view).apply {
+            settingsToolbar.setNavigationOnClickListener { findNavController().navigateUp() }
+            settingsToolbar.title = getString(R.string.preference_appearance_header)
         }
     }
 

@@ -8,16 +8,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.CustomLoginBottomsheetBinding
 import com.flxrs.dankchat.databinding.EditDialogBinding
 import com.flxrs.dankchat.databinding.RmHostBottomsheetBinding
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
-import com.flxrs.dankchat.main.MainActivity
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.ui.customlogin.CustomLoginState
 import com.flxrs.dankchat.preferences.ui.customlogin.CustomLoginViewModel
@@ -29,6 +30,7 @@ import com.flxrs.dankchat.utils.extensions.withoutOAuthPrefix
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
+import com.google.android.material.transition.MaterialFadeThrough
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.math.roundToInt
@@ -43,16 +45,20 @@ class DeveloperSettingsFragment : MaterialPreferenceFragmentCompat() {
     @Inject
     lateinit var dankChatPreferenceStore: DankChatPreferenceStore
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialFadeThrough()
+        returnTransition = MaterialFadeThrough()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        postponeEnterTransition()
+        (view.parent as? View)?.doOnPreDraw { startPostponedEnterTransition() }
 
-        val binding = SettingsFragmentBinding.bind(view)
-        (requireActivity() as MainActivity).apply {
-            setSupportActionBar(binding.settingsToolbar)
-            supportActionBar?.apply {
-                setDisplayHomeAsUpEnabled(true)
-                title = getString(R.string.preference_developer_header)
-            }
+        SettingsFragmentBinding.bind(view).apply {
+            settingsToolbar.setNavigationOnClickListener { findNavController().navigateUp() }
+            settingsToolbar.title = getString(R.string.preference_developer_header)
         }
 
         findPreference<Preference>(getString(R.string.preference_rm_host_key))?.apply {
