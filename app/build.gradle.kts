@@ -160,6 +160,7 @@ dependencies {
 
 // HTTP clients
     implementation(libs.okhttp)
+    implementation(libs.okhttp.sse)
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.logging)
