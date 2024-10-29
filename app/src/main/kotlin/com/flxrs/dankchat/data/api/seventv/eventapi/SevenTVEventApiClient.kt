@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.data.api.seventv.eventapi
 
 import android.util.Log
+import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.data.api.seventv.eventapi.dto.AckMessage
 import com.flxrs.dankchat.data.api.seventv.eventapi.dto.DataMessage
 import com.flxrs.dankchat.data.api.seventv.eventapi.dto.DispatchMessage
@@ -20,6 +21,7 @@ import com.flxrs.dankchat.preferences.model.LiveUpdatesBackgroundBehavior
 import com.flxrs.dankchat.utils.AppLifecycleListener
 import com.flxrs.dankchat.utils.AppLifecycleListener.AppLifecycle.Background
 import com.flxrs.dankchat.utils.extensions.timer
+import io.ktor.http.HttpHeaders
 import io.ktor.util.collections.ConcurrentSet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
@@ -56,7 +58,11 @@ class SevenTVEventApiClient @Inject constructor(
     defaultJson: Json,
 ) {
     private var socket: WebSocket? = null
-    private val request = Request.Builder().url("wss://events.7tv.io/v3").build()
+    private val request = Request.Builder()
+        .header(HttpHeaders.UserAgent, "dankchat/${BuildConfig.VERSION_NAME}")
+        .url("wss://events.7tv.io/v3")
+        .build()
+
     private val json = Json(defaultJson) {
         encodeDefaults = true
     }
@@ -97,7 +103,7 @@ class SevenTVEventApiClient @Inject constructor(
                 .collectLatest { state ->
                     if (state == Background) {
                         val timeout = when (val behavior = preferenceStore.sevenTVEventApiBackgroundBehavior) {
-                            LiveUpdatesBackgroundBehavior.Always      -> return@collectLatest
+                            LiveUpdatesBackgroundBehavior.Always     -> return@collectLatest
                             LiveUpdatesBackgroundBehavior.Never      -> Duration.ZERO
                             is LiveUpdatesBackgroundBehavior.Timeout -> behavior.timeout
                         }

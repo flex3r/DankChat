@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.data.twitch.pubsub
 
 import android.util.Log
+import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.ifBlank
@@ -14,6 +15,7 @@ import com.flxrs.dankchat.data.twitch.pubsub.dto.PubSubDataObjectMessage
 import com.flxrs.dankchat.data.twitch.pubsub.dto.whisper.WhisperData
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import com.flxrs.dankchat.utils.extensions.timer
+import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -46,7 +48,11 @@ class PubSubConnection(
     private val jsonFormat: Json,
 ) {
     private var socket: WebSocket? = null
-    private val request = Request.Builder().url("wss://pubsub-edge.twitch.tv").build()
+    private val request = Request.Builder()
+        .url("wss://pubsub-edge.twitch.tv")
+        .header(HttpHeaders.UserAgent, "dankchat/${BuildConfig.VERSION_NAME}")
+        .build()
+
     private val receiveChannel = Channel<PubSubEvent>(capacity = Channel.BUFFERED)
 
     private var connecting = false

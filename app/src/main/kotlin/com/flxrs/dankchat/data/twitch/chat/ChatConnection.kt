@@ -1,11 +1,13 @@
 package com.flxrs.dankchat.data.twitch.chat
 
 import android.util.Log
+import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.timer
+import io.ktor.http.HttpHeaders
 import io.ktor.util.collections.ConcurrentSet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -53,7 +55,11 @@ class ChatConnection @Inject constructor(
     private val preferences: DankChatPreferenceStore,
 ) {
     private var socket: WebSocket? = null
-    private val request = Request.Builder().url("wss://irc-ws.chat.twitch.tv").build()
+    private val request = Request.Builder()
+        .url("wss://irc-ws.chat.twitch.tv")
+        .header(HttpHeaders.UserAgent, "dankchat/${BuildConfig.VERSION_NAME}")
+        .build()
+
     private val receiveChannel = Channel<ChatEvent>(capacity = Channel.BUFFERED)
 
     private var connecting = false
