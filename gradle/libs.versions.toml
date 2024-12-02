@@ -9,7 +9,7 @@ okhttp = "5.0.0-alpha.14"
 ksp = "2.0.21-1.0.25"
 hilt = "2.52"
 
-androidGradlePlugin = "8.7.1"
+androidGradlePlugin = "8.7.3"
 androidDesugarLibs = "2.1.2"
 androidxActivity = "1.9.2"
 androidxBrowser = "1.8.0"
