@@ -1,8 +1,11 @@
 @file:Suppress("UnstableApiUsage")
 
+import com.android.build.gradle.internal.PropertiesValueSource
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.StringReader
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -27,7 +30,7 @@ android {
         versionName = "3.9.14"
 
         ksp {
-            arg("room.schemaLocation", "$projectDir/schemas")
+            arg("room.schemaLocation", "${layout.projectDirectory}/schemas")
         }
     }
 
@@ -35,12 +38,13 @@ android {
         generateLocaleConfig = true
     }
 
+    val localProperties = gradleLocalProperties(rootDir, providers)
     signingConfigs {
         create("release") {
             storeFile = file("keystore/DankChat.jks").takeIf { it.exists() } ?: File(System.getProperty("user.home") + "/dankchat/DankChat.jks")
-            storePassword = System.getenv("SIGNING_STORE_PASSWORD")
-            keyAlias = System.getenv("SIGNING_KEY_ALIAS")
-            keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
+            storePassword = localProperties.getProperty("SIGNING_STORE_PASSWORD") ?: System.getenv("SIGNING_STORE_PASSWORD")
+            keyAlias = localProperties.getProperty("SIGNING_KEY_ALIAS") ?: System.getenv("SIGNING_KEY_ALIAS")
+            keyPassword = localProperties.getProperty("SIGNING_KEY_PASSWORD") ?: System.getenv("SIGNING_KEY_PASSWORD")
         }
     }
 
@@ -177,4 +181,18 @@ dependencies {
     testImplementation(libs.junit.jupiter.engine)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlin.test)
+}
+
+fun gradleLocalProperties(projectRootDir : File, providers: ProviderFactory) : Properties {
+    val properties = Properties()
+    val propertiesContent =
+        providers.of(PropertiesValueSource::class.java) {
+            parameters.projectRoot.set(projectRootDir)
+        }.get()
+
+    StringReader(propertiesContent).use { reader ->
+        properties.load(reader)
+    }
+
+    return properties
 }
