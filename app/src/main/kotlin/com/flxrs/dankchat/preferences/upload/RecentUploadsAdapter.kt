@@ -10,8 +10,8 @@ import androidx.core.content.getSystemService
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
-import coil.size.Scale
+import coil3.load
+import coil3.size.Scale
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.RecentUploadItemBinding
 

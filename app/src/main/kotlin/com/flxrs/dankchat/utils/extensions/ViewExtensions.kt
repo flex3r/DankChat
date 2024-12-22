@@ -12,8 +12,10 @@ import androidx.annotation.DrawableRes
 import androidx.core.text.getSpans
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import coil.load
-import coil.request.ImageRequest
+import coil3.load
+import coil3.request.ImageRequest
+import coil3.request.error
+import coil3.request.placeholder
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.main.MainActivity
 import com.google.android.material.button.MaterialButton

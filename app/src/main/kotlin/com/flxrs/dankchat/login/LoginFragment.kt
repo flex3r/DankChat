@@ -30,7 +30,6 @@ import com.flxrs.dankchat.databinding.LoginFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.collectFlow
-import com.flxrs.dankchat.utils.extensions.showLongSnackbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.transition.MaterialSharedAxis
 import dagger.hilt.android.AndroidEntryPoint
@@ -91,6 +90,7 @@ class LoginFragment : Fragment() {
                 }
             }
             addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
+            setSupportActionBar(binding.loginToolbar)
         }
         collectFlow(loginViewModel.events) { (successful) ->
             with(findNavController()) {
@@ -142,7 +142,7 @@ class LoginFragment : Fragment() {
     @Suppress("OVERRIDE_DEPRECATION")
     private inner class TwitchAuthClient : WebViewClient() {
         override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
-            bindingRef?.root?.showLongSnackbar("Error $errorCode: $description")
+            //bindingRef?.root?.showLongSnackbar("Error $errorCode: $description")
             Log.e(TAG, "Error $errorCode in WebView: $description")
         }
 
@@ -150,7 +150,7 @@ class LoginFragment : Fragment() {
         override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
             val message = error?.description
             val code = error?.errorCode
-            bindingRef?.root?.showLongSnackbar("Error $code: $message")
+            //bindingRef?.root?.showLongSnackbar("Error $code: $message")
             Log.e(TAG, "Error $code in WebView: $message")
         }
 

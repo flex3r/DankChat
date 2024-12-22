@@ -7,29 +7,31 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.getSystemService
 import androidx.preference.PreferenceManager
-import coil.ImageLoader
-import coil.ImageLoaderFactory
-import coil.decode.GifDecoder
-import coil.decode.ImageDecoderDecoder
-import coil.disk.DiskCache
+import coil3.ImageLoader
+import coil3.PlatformContext
+import coil3.SingletonImageLoader
+import coil3.annotation.ExperimentalCoilApi
+import coil3.disk.DiskCache
+import coil3.disk.directory
+import coil3.gif.AnimatedImageDecoder
+import coil3.gif.GifDecoder
+import coil3.network.cachecontrol.CacheControlCacheStrategy
+import coil3.network.ktor3.KtorNetworkFetcherFactory
 import com.flxrs.dankchat.data.repo.HighlightsRepository
 import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.di.ApplicationScope
-import com.flxrs.dankchat.di.EmoteOkHttpClient
 import com.flxrs.dankchat.utils.tryClearEmptyFiles
 import dagger.hilt.android.HiltAndroidApp
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.UserAgent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
 import javax.inject.Inject
 
 @HiltAndroidApp
-class DankChatApplication : Application(), ImageLoaderFactory {
-    @Inject
-    @EmoteOkHttpClient
-    lateinit var emoteClient: OkHttpClient
-
+class DankChatApplication : Application(), SingletonImageLoader.Factory {
     @Inject
     @ApplicationScope
     lateinit var scope: CoroutineScope
@@ -72,21 +74,30 @@ class DankChatApplication : Application(), ImageLoaderFactory {
         AppCompatDelegate.setDefaultNightMode(nightMode)
     }
 
-    override fun newImageLoader(): ImageLoader {
+    @OptIn(ExperimentalCoilApi::class)
+    override fun newImageLoader(context: PlatformContext): ImageLoader {
         return ImageLoader.Builder(this)
-            //.logger(DebugLogger())
-            .okHttpClient(emoteClient)
             .diskCache {
                 DiskCache.Builder()
-                    .directory(this.cacheDir.resolve("image_cache"))
+                    .directory(context.cacheDir.resolve("image_cache"))
                     .build()
             }
             .components {
                 val decoder = when {
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.P -> ImageDecoderDecoder.Factory()
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.P -> AnimatedImageDecoder.Factory()
                     else                                           -> GifDecoder.Factory() //GifDrawableDecoder.Factory()
                 }
                 add(decoder)
+                val client = HttpClient(OkHttp) {
+                    install(UserAgent) {
+                        agent = "dankchat/${BuildConfig.VERSION_NAME}"
+                    }
+                }
+                val fetcher = KtorNetworkFetcherFactory(
+                    httpClient = { client },
+                    cacheStrategy = { CacheControlCacheStrategy() },
+                )
+                add(fetcher)
             }
             .build()
     }

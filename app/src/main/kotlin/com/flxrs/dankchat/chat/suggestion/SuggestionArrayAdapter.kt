@@ -7,8 +7,8 @@ import android.widget.ArrayAdapter
 import android.widget.Filter
 import android.widget.ImageView
 import android.widget.TextView
-import coil.dispose
-import coil.size.Scale
+import coil3.dispose
+import coil3.size.Scale
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.getDrawableAndSetSurfaceTint

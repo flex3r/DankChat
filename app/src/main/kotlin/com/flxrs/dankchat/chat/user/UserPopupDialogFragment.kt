@@ -11,8 +11,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import coil.load
-import coil.size.Scale
+import coil3.load
+import coil3.size.Scale
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.UserPopupBottomsheetBinding
 import com.flxrs.dankchat.main.MainFragment

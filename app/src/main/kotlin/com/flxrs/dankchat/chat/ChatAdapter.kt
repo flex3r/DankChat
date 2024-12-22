@@ -29,8 +29,9 @@ import androidx.emoji2.text.EmojiCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import coil.imageLoader
-import coil.request.ImageRequest
+import coil3.asDrawable
+import coil3.imageLoader
+import coil3.request.ImageRequest
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.*
 import com.flxrs.dankchat.data.repo.emote.EmoteRepository
@@ -316,7 +317,9 @@ class ChatAdapter(
             val imageStart = spannable.lastIndexOf(' ') - 1
             context.imageLoader
                 .execute(message.rewardImageUrl.toRequest(context))
-                .drawable?.apply {
+                .image
+                ?.asDrawable(resources)
+                ?.apply {
                     val width = (baseHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
                     setBounds(0, 0, width, baseHeight)
                     (text as Spannable)[imageStart..imageStart + 1] = ImageSpan(this, ImageSpan.ALIGN_BOTTOM)
@@ -430,7 +433,9 @@ class ChatAdapter(
 
                         else           -> context.imageLoader
                             .execute(badge.url.toRequest(context))
-                            .drawable?.apply {
+                            .image
+                            ?.asDrawable(resources)
+                            ?.apply {
                                 if (badge is Badge.FFZModBadge) {
                                     val modColor = ContextCompat.getColor(context, R.color.color_ffz_mod)
                                     colorFilter = PorterDuffColorFilter(modColor, PorterDuff.Mode.DST_OVER)
@@ -631,7 +636,9 @@ class ChatAdapter(
 
                         else           -> context.imageLoader
                             .execute(badge.url.toRequest(context))
-                            .drawable?.apply {
+                            .image
+                            ?.asDrawable(resources)
+                            ?.apply {
                                 if (badge is Badge.FFZModBadge) {
                                     val modColor = ContextCompat.getColor(context, R.color.color_ffz_mod)
                                     colorFilter = PorterDuffColorFilter(modColor, PorterDuff.Mode.DST_OVER)
@@ -704,7 +711,8 @@ class ChatAdapter(
             val request = it.url.toRequest(context)
             context.imageLoader
                 .execute(request)
-                .drawable
+                .image
+                ?.asDrawable(context.resources)
                 ?.transformEmoteDrawable(scaleFactor, it)
         }.toTypedArray()
 

@@ -157,6 +157,8 @@ dependencies {
 // Image loading
     implementation(libs.coil)
     implementation(libs.coil.gif)
+    implementation(libs.coil.ktor)
+    implementation(libs.coil.cache.control)
 
 // HTTP clients
     implementation(libs.okhttp)

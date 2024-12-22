@@ -62,12 +62,6 @@ object NetworkModule {
         .callTimeout(60.seconds.toJavaDuration())
         .build()
 
-    @EmoteOkHttpClient
-    @Singleton
-    @Provides
-    fun provideEmoteOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
-        .build()
-
     @Singleton
     @Provides
     fun provideJson(): Json = Json {
