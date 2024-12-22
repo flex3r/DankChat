@@ -14,6 +14,10 @@ ij_smart_tabs = false
 ij_visual_guides = none
 ij_wrap_on_typing = false
 
+[*.yml]
+indent_size = 2
+tab_width = 2
+
 [{*.ant,*.fxml,*.jhm,*.jnlp,*.jrxml,*.rng,*.tld,*.wsdl,*.xml,*.xsd,*.xsl,*.xslt,*.xul}]
 ij_continuation_indent_size = 4
 ij_xml_align_attributes = false
