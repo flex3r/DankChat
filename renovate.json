@@ -1,20 +1,20 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": [
-        "config:base"
+        "config:recommended"
     ],
     "packageRules": [
         {
-            "matchPackagePatterns": [
-                "org.jetbrains.kotlin.*"
-            ],
-            "groupName": "Kotlin"
+            "groupName": "Kotlin",
+            "matchPackageNames": [
+                "/org.jetbrains.kotlin.*/"
+            ]
         },
         {
-            "matchPackagePatterns": [
-                "com.google.devtools.ksp"
-            ],
-            "groupName": "Kotlin"
+            "groupName": "Kotlin",
+            "matchPackageNames": [
+                "/com.google.devtools.ksp/"
+            ]
         }
     ]
 }
