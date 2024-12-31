@@ -13,6 +13,7 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.nav.safeargs.kotlin)
     alias(libs.plugins.ksp)
@@ -138,6 +139,7 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.transition.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.media)
     implementation(libs.androidx.navigation.fragment.ktx)
@@ -149,6 +151,17 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
+
+// Compose
+    implementation(libs.compose.animation)
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.runtime)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.tooling.preview)
+    debugImplementation(libs.compose.ui.tooling)
+    implementation(libs.compose.icons.core)
+    implementation(libs.compose.icons.extended)
 
 // Material
     implementation(libs.android.material)

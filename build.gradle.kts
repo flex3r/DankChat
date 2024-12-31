@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.kapt) apply false
     alias(libs.plugins.kotlin.parcelize) apply false
     alias(libs.plugins.kotlin.serialization) apply false
+    alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.hilt.gradle) apply false
     alias(libs.plugins.nav.safeargs.kotlin) apply false
     alias(libs.plugins.ksp) apply false

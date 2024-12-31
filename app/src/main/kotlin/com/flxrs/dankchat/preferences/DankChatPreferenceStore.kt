@@ -142,6 +142,8 @@ class DankChatPreferenceStore @Inject constructor(
         get() = dankChatPreferences.getBoolean(SECRET_DANKER_MODE_KEY, false)
         set(value) = dankChatPreferences.edit { putBoolean(SECRET_DANKER_MODE_KEY, value) }
 
+    val secretDankerModeClicks: Int = SECRET_DANKER_MODE_CLICKS
+
     val commandsAsFlow: Flow<List<CommandItem.Entry>> = callbackFlow {
         val commandsKey = context.getString(R.string.preference_commands_key)
         send(getCommandsFromPreferences(commandsKey))
@@ -502,6 +504,8 @@ class DankChatPreferenceStore @Inject constructor(
         private const val UPLOADER_DELETE_LINK_DEFAULT = "{delete}"
 
         private const val RM_HOST_DEFAULT = "https://recent-messages.robotty.de/api/v2/"
+
+        private const val SECRET_DANKER_MODE_CLICKS = 5
 
         private const val SCROLLBACK_LENGTH_STEP = 50
         fun correctScrollbackLength(seekbarValue: Int): Int = seekbarValue * SCROLLBACK_LENGTH_STEP
