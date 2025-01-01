@@ -11,12 +11,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.SwitchPreferenceCompat
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.SettingsFragmentBinding
-import com.flxrs.dankchat.main.MainActivity
-import com.google.android.material.color.MaterialColors
 import com.google.android.material.transition.MaterialFadeThrough
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 class StreamsSettingsFragment : MaterialPreferenceFragmentCompat() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

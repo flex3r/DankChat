@@ -11,7 +11,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.preference.ListPreference
 import androidx.preference.MultiSelectListPreference
@@ -41,15 +40,14 @@ import com.flxrs.dankchat.utils.extensions.showRestartRequired
 import com.flxrs.dankchat.utils.extensions.showShortSnackbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.transition.MaterialFadeThrough
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.math.roundToInt
 
-@AndroidEntryPoint
 class ChatSettingsFragment : MaterialPreferenceFragmentCompat() {
 
-    private val userDisplayViewModel: UserDisplayViewModel by viewModels()
+    private val userDisplayViewModel: UserDisplayViewModel by viewModel()
 
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var bottomSheetBinding: UserDisplayBottomSheetBinding? = null

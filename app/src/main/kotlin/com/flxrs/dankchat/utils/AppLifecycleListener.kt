@@ -5,11 +5,10 @@ import android.app.Application
 import android.os.Bundle
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
-import javax.inject.Singleton
+import org.koin.core.annotation.Single
 
-@Singleton
-class AppLifecycleListener @Inject constructor(val app: Application) {
+@Single
+class AppLifecycleListener(val app: Application) {
     sealed interface AppLifecycle {
         data object Background : AppLifecycle
         data object Foreground : AppLifecycle

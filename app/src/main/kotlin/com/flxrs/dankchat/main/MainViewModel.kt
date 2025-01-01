@@ -50,7 +50,6 @@ import com.flxrs.dankchat.utils.extensions.moveToFront
 import com.flxrs.dankchat.utils.extensions.timer
 import com.flxrs.dankchat.utils.extensions.toEmoteItems
 import com.flxrs.dankchat.utils.removeExifAttributes
-import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.serialization.JsonConvertException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -83,12 +82,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.SerializationException
+import org.koin.android.annotation.KoinViewModel
 import java.io.File
-import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
-@HiltViewModel
-class MainViewModel @Inject constructor(
+@KoinViewModel
+class MainViewModel(
     private val chatRepository: ChatRepository,
     private val dataRepository: DataRepository,
     private val commandRepository: CommandRepository,

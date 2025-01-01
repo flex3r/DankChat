@@ -29,17 +29,15 @@ import com.flxrs.dankchat.data.twitch.message.NoticeMessage
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
 import com.flxrs.dankchat.main.MainActivity
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import java.util.Locale
-import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-@AndroidEntryPoint
 class NotificationService : Service(), CoroutineScope {
 
     private val binder = LocalBinder()
@@ -73,11 +71,8 @@ class NotificationService : Service(), CoroutineScope {
     private var notificationsJob: Job? = null
     private val notifications = mutableMapOf<UserName, MutableList<Int>>()
 
-    @Inject
-    lateinit var chatRepository: ChatRepository
-
-    @Inject
-    lateinit var dataRepository: DataRepository
+    private val chatRepository: ChatRepository by inject()
+    private val dataRepository: DataRepository by inject()
 
     private var tts: TextToSpeech? = null
     private var audioManager: AudioManager? = null

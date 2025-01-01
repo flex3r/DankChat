@@ -6,14 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.data.api.auth.AuthApiClient
 import com.flxrs.dankchat.data.api.auth.dto.ValidateDto
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import org.koin.android.annotation.KoinViewModel
 
-@HiltViewModel
-class LoginViewModel @Inject constructor(
+@KoinViewModel
+class LoginViewModel(
     private val authApiClient: AuthApiClient,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
 ) : ViewModel() {

@@ -6,17 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.EmoteMenuFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.main.MainViewModel
 import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.google.android.material.tabs.TabLayoutMediator
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class EmoteMenuFragment : Fragment() {
 
-    private val mainViewModel: MainViewModel by viewModels({ requireParentFragment() })
+    private val mainViewModel: MainViewModel by viewModel(ownerProducer = { requireParentFragment() })
     private var bindingRef: EmoteMenuFragmentBinding? = null
     private val binding get() = bindingRef!!
 

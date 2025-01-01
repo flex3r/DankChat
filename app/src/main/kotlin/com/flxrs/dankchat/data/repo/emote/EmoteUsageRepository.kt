@@ -2,21 +2,23 @@ package com.flxrs.dankchat.data.repo.emote
 
 import com.flxrs.dankchat.data.database.dao.EmoteUsageDao
 import com.flxrs.dankchat.data.database.entity.EmoteUsageEntity
-import com.flxrs.dankchat.di.ApplicationScope
+import com.flxrs.dankchat.di.DispatchersProvider
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import org.koin.core.annotation.Single
 import java.time.Instant
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class EmoteUsageRepository @Inject constructor(
+@Single
+class EmoteUsageRepository(
     private val emoteUsageDao: EmoteUsageDao,
-    @ApplicationScope coroutineScope: CoroutineScope
+    dispatchersProvider: DispatchersProvider,
 ) {
 
+    private val scope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
+
     init {
-        coroutineScope.launch {
+        scope.launch {
             runCatching {
                 emoteUsageDao.deleteOldUsages()
             }

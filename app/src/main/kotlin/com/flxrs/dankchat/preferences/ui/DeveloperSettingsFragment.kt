@@ -11,7 +11,6 @@ import androidx.core.content.getSystemService
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import com.flxrs.dankchat.R
@@ -31,19 +30,17 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.transition.MaterialFadeThrough
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.math.roundToInt
 
-@AndroidEntryPoint
 class DeveloperSettingsFragment : MaterialPreferenceFragmentCompat() {
 
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var customLoginBinding: CustomLoginBottomsheetBinding? = null
-    private val customLoginViewModel: CustomLoginViewModel by viewModels()
+    private val customLoginViewModel: CustomLoginViewModel by viewModel()
 
-    @Inject
-    lateinit var dankChatPreferenceStore: DankChatPreferenceStore
+    private val dankChatPreferenceStore: DankChatPreferenceStore by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

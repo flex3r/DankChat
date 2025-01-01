@@ -21,11 +21,12 @@ import com.flxrs.dankchat.data.repo.emote.EmoteRepository
 import com.flxrs.dankchat.data.repo.emote.Emotes
 import com.flxrs.dankchat.data.twitch.badge.toBadgeSets
 import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
-import com.flxrs.dankchat.di.ApplicationScope
+import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.measureTimeAndLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,13 +37,12 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.core.annotation.Single
 import java.io.File
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlin.system.measureTimeMillis
 
-@Singleton
-class DataRepository @Inject constructor(
+@Single
+class DataRepository(
     private val helixApiClient: HelixApiClient,
     private val dankChatApiClient: DankChatApiClient,
     private val badgesApiClient: BadgesApiClient,
@@ -54,8 +54,10 @@ class DataRepository @Inject constructor(
     private val emoteRepository: EmoteRepository,
     private val recentUploadsRepository: RecentUploadsRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
-    @ApplicationScope private val scope: CoroutineScope
+    dispatchersProvider: DispatchersProvider,
 ) {
+
+    private val scope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
     private val _dataLoadingFailures = MutableStateFlow(emptySet<DataLoadingFailure>())
     private val _dataUpdateEvents = MutableSharedFlow<DataUpdateEventMessage>()
     private val serviceEventChannel = Channel<ServiceEvent>(Channel.BUFFERED)
@@ -78,6 +80,7 @@ class DataRepository @Inject constructor(
                         sevenTVEventApiClient.subscribeEmoteSet(event.emoteSetId)
                         _dataUpdateEvents.emit(DataUpdateEventMessage.ActiveEmoteSetChanged(channel, event.actorName, newEmoteSet.name))
                     }
+
                     is SevenTVEventMessage.EmoteSetUpdated -> {
                         val channel = emoteRepository.getChannelForSevenTVEmoteSet(event.emoteSetId) ?: return@collect
                         emoteRepository.updateSevenTVEmotes(channel, event)

@@ -8,11 +8,10 @@ import com.flxrs.dankchat.data.api.seventv.dto.SevenTVUserDto
 import com.flxrs.dankchat.data.api.throwApiErrorOnFailure
 import io.ktor.client.call.body
 import kotlinx.serialization.json.Json
-import javax.inject.Inject
-import javax.inject.Singleton
+import org.koin.core.annotation.Single
 
-@Singleton
-class SevenTVApiClient @Inject constructor(private val sevenTVApi: SevenTVApi, private val json: Json) {
+@Single
+class SevenTVApiClient(private val sevenTVApi: SevenTVApi, private val json: Json) {
 
     suspend fun getSevenTVChannelEmotes(channelId: UserId): Result<SevenTVUserDto?> = runCatching {
         sevenTVApi.getChannelEmotes(channelId)

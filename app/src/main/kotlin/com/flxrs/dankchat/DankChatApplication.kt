@@ -19,36 +19,40 @@ import coil3.network.cachecontrol.CacheControlCacheStrategy
 import coil3.network.ktor3.KtorNetworkFetcherFactory
 import com.flxrs.dankchat.data.repo.HighlightsRepository
 import com.flxrs.dankchat.data.repo.IgnoresRepository
-import com.flxrs.dankchat.di.ApplicationScope
+import com.flxrs.dankchat.di.DankChatModule
+import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.utils.tryClearEmptyFiles
-import dagger.hilt.android.HiltAndroidApp
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.UserAgent
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
+import org.koin.ksp.generated.module
 
-@HiltAndroidApp
 class DankChatApplication : Application(), SingletonImageLoader.Factory {
-    @Inject
-    @ApplicationScope
-    lateinit var scope: CoroutineScope
 
-    @Inject
-    lateinit var highlightsRepository: HighlightsRepository
+    private val dispatchersProvider: DispatchersProvider by inject()
+    private val scope by lazy { CoroutineScope(SupervisorJob() + dispatchersProvider.io) }
 
-    @Inject
-    lateinit var ignoresRepository: IgnoresRepository
+    private val highlightsRepository: HighlightsRepository by inject()
+    private val ignoresRepository: IgnoresRepository by inject()
 
     override fun onCreate() {
         super.onCreate()
+        startKoin {
+            androidContext(this@DankChatApplication)
+            modules(DankChatModule().module)
+        }
+
         setupThemeMode()
 
         highlightsRepository.runMigrationsIfNeeded()
         ignoresRepository.runMigrationsIfNeeded()
-        scope.launch(Dispatchers.IO) {
+        scope.launch {
             tryClearEmptyFiles(this@DankChatApplication)
         }
     }

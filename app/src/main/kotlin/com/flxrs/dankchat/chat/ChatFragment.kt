@@ -14,7 +14,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,13 +34,14 @@ import com.flxrs.dankchat.utils.extensions.forEachLayer
 import com.flxrs.dankchat.utils.extensions.forEachSpan
 import com.flxrs.dankchat.utils.extensions.forEachViewHolder
 import com.flxrs.dankchat.utils.insets.TranslateDeferringInsetsAnimationCallback
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@AndroidEntryPoint
 open class ChatFragment : Fragment() {
-    private val viewModel: ChatViewModel by viewModels()
-    private val mainViewModel: MainViewModel by viewModels({ requireParentFragment() })
+    private val viewModel: ChatViewModel by viewModel()
+    private val mainViewModel: MainViewModel by viewModel(ownerProducer = { requireParentFragment() })
+    private val emoteRepository: EmoteRepository by inject()
+    protected val dankChatPreferenceStore: DankChatPreferenceStore by inject()
 
     protected var bindingRef: ChatFragmentBinding? = null
     protected val binding get() = bindingRef!!
@@ -52,12 +52,6 @@ open class ChatFragment : Fragment() {
 
     // TODO move to viewmodel?
     protected open var isAtBottom = true
-
-    @Inject
-    lateinit var emoteRepository: EmoteRepository
-
-    @Inject
-    lateinit var dankChatPreferenceStore: DankChatPreferenceStore
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bindingRef = ChatFragmentBinding.inflate(inflater, container, false).apply {

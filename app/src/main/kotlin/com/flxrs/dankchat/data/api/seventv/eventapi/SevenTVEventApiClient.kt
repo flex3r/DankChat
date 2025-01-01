@@ -14,7 +14,7 @@ import com.flxrs.dankchat.data.api.seventv.eventapi.dto.ReconnectMessage
 import com.flxrs.dankchat.data.api.seventv.eventapi.dto.SubscribeRequest
 import com.flxrs.dankchat.data.api.seventv.eventapi.dto.UnsubscribeRequest
 import com.flxrs.dankchat.data.api.seventv.eventapi.dto.UserDispatchData
-import com.flxrs.dankchat.di.ApplicationScope
+import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.di.WebSocketOkHttpClient
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.model.LiveUpdatesBackgroundBehavior
@@ -26,6 +26,7 @@ import io.ktor.util.collections.ConcurrentSet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -40,8 +41,8 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
-import javax.inject.Inject
-import javax.inject.Singleton
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 import kotlin.random.Random
 import kotlin.random.nextLong
 import kotlin.time.Duration
@@ -49,14 +50,16 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(FlowPreview::class)
-@Singleton
-class SevenTVEventApiClient @Inject constructor(
-    @WebSocketOkHttpClient private val client: OkHttpClient,
-    @ApplicationScope private val scope: CoroutineScope,
+@Single
+class SevenTVEventApiClient(
+    @Named(type = WebSocketOkHttpClient::class)
+    private val client: OkHttpClient,
     private val preferenceStore: DankChatPreferenceStore,
     private val appLifecycleListener: AppLifecycleListener,
     defaultJson: Json,
+    dispatchersProvider: DispatchersProvider,
 ) {
+    private val scope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
     private var socket: WebSocket? = null
     private val request = Request.Builder()
         .header(HttpHeaders.UserAgent, "dankchat/${BuildConfig.VERSION_NAME}")

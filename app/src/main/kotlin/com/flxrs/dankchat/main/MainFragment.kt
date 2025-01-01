@@ -1,5 +1,8 @@
 package com.flxrs.dankchat.main
 
+import android.R.attr.dropDownHeight
+import android.R.attr.dropDownWidth
+import android.R.attr.imeOptions
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.PictureInPictureParams
@@ -56,9 +59,7 @@ import androidx.core.view.postDelayed
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commitNow
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
@@ -131,21 +132,19 @@ import com.google.android.material.snackbar.BaseTransientBottomBar.BaseCallback
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.transition.MaterialSharedAxis
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.IOException
 import java.net.URL
-import javax.inject.Inject
-import kotlin.collections.component1
-import kotlin.collections.component2
 import kotlin.math.roundToInt
 
-@AndroidEntryPoint
 class MainFragment : Fragment() {
 
-    private val mainViewModel: MainViewModel by viewModels()
-    private val dankChatViewModel: DankChatViewModel by activityViewModels()
+    private val mainViewModel: MainViewModel by viewModel()
+    private val dankChatViewModel: DankChatViewModel by activityViewModel()
     private val navController: NavController by lazy { findNavController() }
     private var bindingRef: MainFragmentBinding? = null
     private val binding get() = bindingRef!!
@@ -163,21 +162,21 @@ class MainFragment : Fragment() {
 
         override fun handleOnBackProgressed(backEvent: BackEventCompat) {
             when {
-                inputBottomSheetBehavior?.isVisible == true -> inputBottomSheetBehavior?.updateBackProgress(backEvent)
+                inputBottomSheetBehavior?.isVisible == true      -> inputBottomSheetBehavior?.updateBackProgress(backEvent)
                 fullscreenBottomSheetBehavior?.isVisible == true -> fullscreenBottomSheetBehavior?.updateBackProgress(backEvent)
             }
         }
 
         override fun handleOnBackCancelled() {
             when {
-                inputBottomSheetBehavior?.isVisible == true -> inputBottomSheetBehavior?.cancelBackProgress()
+                inputBottomSheetBehavior?.isVisible == true      -> inputBottomSheetBehavior?.cancelBackProgress()
                 fullscreenBottomSheetBehavior?.isVisible == true -> fullscreenBottomSheetBehavior?.cancelBackProgress()
             }
         }
 
         override fun handleOnBackStarted(backEvent: BackEventCompat) {
             when {
-                inputBottomSheetBehavior?.isVisible == true -> inputBottomSheetBehavior?.startBackProgress(backEvent)
+                inputBottomSheetBehavior?.isVisible == true      -> inputBottomSheetBehavior?.startBackProgress(backEvent)
                 fullscreenBottomSheetBehavior?.isVisible == true -> fullscreenBottomSheetBehavior?.startBackProgress(backEvent)
             }
         }
@@ -262,8 +261,7 @@ class MainFragment : Fragment() {
         binding.input.dismissDropDown()
     }
 
-    @Inject
-    lateinit var dankChatPreferences: DankChatPreferenceStore
+    private val dankChatPreferences: DankChatPreferenceStore by inject()
 
     private lateinit var preferenceListener: SharedPreferences.OnSharedPreferenceChangeListener
     private lateinit var preferences: SharedPreferences

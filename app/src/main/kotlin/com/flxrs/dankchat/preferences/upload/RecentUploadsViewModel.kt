@@ -3,19 +3,18 @@ package com.flxrs.dankchat.preferences.upload
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.data.repo.RecentUploadsRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import org.koin.android.annotation.KoinViewModel
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
-import javax.inject.Inject
 
-@HiltViewModel
-class RecentUploadsViewModel @Inject constructor(
+@KoinViewModel
+class RecentUploadsViewModel(
     private val recentUploadsRepository: RecentUploadsRepository
 ) : ViewModel() {
 

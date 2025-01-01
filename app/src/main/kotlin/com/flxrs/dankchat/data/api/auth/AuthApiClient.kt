@@ -10,11 +10,10 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.request
 import io.ktor.http.isSuccess
 import kotlinx.serialization.json.Json
-import javax.inject.Inject
-import javax.inject.Singleton
+import org.koin.core.annotation.Single
 
-@Singleton
-class AuthApiClient @Inject constructor(private val authApi: AuthApi, private val json: Json) {
+@Single
+class AuthApiClient(private val authApi: AuthApi, private val json: Json) {
 
     suspend fun validateUser(token: String): Result<ValidateDto> = runCatching {
         val response = authApi.validateUser(token)

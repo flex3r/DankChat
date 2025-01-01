@@ -14,7 +14,6 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.nav.safeargs.kotlin)
     alias(libs.plugins.ksp)
 }
@@ -32,6 +31,9 @@ android {
 
         ksp {
             arg("room.schemaLocation", "${layout.projectDirectory}/schemas")
+            arg("KOIN_CONFIG_CHECK", "true")
+            arg("KOIN_DEFAULT_MODULE", "false")
+            arg("KOIN_USE_COMPOSE_VIEWMODEL", "true")
         }
     }
 
@@ -98,6 +100,14 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
+    androidComponents {
+        beforeVariants {
+            sourceSets.named("main") {
+                java.srcDir(File("build/generated/ksp/${it.name}/kotlin"))
+            }
+        }
+    }
 }
 
 tasks.withType<Test> {
@@ -160,6 +170,7 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.tooling.preview)
     debugImplementation(libs.compose.ui.tooling)
+    "dankImplementation"(libs.compose.ui.tooling)
     implementation(libs.compose.icons.core)
     implementation(libs.compose.icons.extended)
 
@@ -168,8 +179,12 @@ dependencies {
     implementation(libs.android.flexbox)
 
 // Dependency injection
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.annotations)
+    implementation(libs.koin.ksp.compiler)
+    ksp(libs.koin.ksp.compiler)
 
 // Image loading
     implementation(libs.coil)
@@ -196,7 +211,7 @@ dependencies {
     testImplementation(libs.kotlin.test)
 }
 
-fun gradleLocalProperties(projectRootDir : File, providers: ProviderFactory) : Properties {
+fun gradleLocalProperties(projectRootDir: File, providers: ProviderFactory): Properties {
     val properties = Properties()
     val propertiesContent =
         providers.of(PropertiesValueSource::class.java) {

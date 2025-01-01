@@ -39,7 +39,7 @@ import com.flxrs.dankchat.data.twitch.message.hasMention
 import com.flxrs.dankchat.data.twitch.message.toChatItem
 import com.flxrs.dankchat.data.twitch.pubsub.PubSubManager
 import com.flxrs.dankchat.data.twitch.pubsub.PubSubMessage
-import com.flxrs.dankchat.di.ApplicationScope
+import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.di.ReadConnection
 import com.flxrs.dankchat.di.WriteConnection
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
@@ -58,6 +58,7 @@ import com.flxrs.dankchat.utils.extensions.replaceWithTimeout
 import com.flxrs.dankchat.utils.extensions.withoutInvisibleChar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.BufferOverflow
@@ -79,16 +80,13 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 import java.util.concurrent.ConcurrentHashMap
-import javax.inject.Inject
-import javax.inject.Singleton
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.set
 import kotlin.system.measureTimeMillis
 
-@Singleton
-class ChatRepository @Inject constructor(
+@Single
+class ChatRepository(
     private val recentMessagesApiClient: RecentMessagesApiClient,
     private val chattersApiClient: ChattersApiClient,
     private val emoteRepository: EmoteRepository,
@@ -98,11 +96,12 @@ class ChatRepository @Inject constructor(
     private val repliesRepository: RepliesRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
     private val pubSubManager: PubSubManager,
-    @ReadConnection private val readConnection: ChatConnection,
-    @WriteConnection private val writeConnection: ChatConnection,
-    @ApplicationScope private val scope: CoroutineScope,
+    @Named(type = ReadConnection::class) private val readConnection: ChatConnection,
+    @Named(type = WriteConnection::class) private val writeConnection: ChatConnection,
+    dispatchersProvider: DispatchersProvider,
 ) {
 
+    private val scope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
     private val _activeChannel = MutableStateFlow<UserName?>(null)
     private val _channels = MutableStateFlow<List<UserName>?>(null)
 
@@ -161,6 +160,7 @@ class ChatRepository @Inject constructor(
                                         Log.d(TAG, "Removing known reward $id")
                                         knownRewards.remove(id)
                                     }
+
                                     else                         -> {
                                         Log.d(TAG, "Received pubsub reward message with id $id")
                                         knownRewards[id] = pubSubMessage

@@ -14,12 +14,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import org.koin.core.annotation.Single
 import java.util.concurrent.ConcurrentHashMap
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class RepliesRepository @Inject constructor(private val dankChatPreferenceStore: DankChatPreferenceStore) {
+@Single
+class RepliesRepository(private val dankChatPreferenceStore: DankChatPreferenceStore) {
 
     private val threads = ConcurrentHashMap<String, MutableStateFlow<MessageThread>>()
 

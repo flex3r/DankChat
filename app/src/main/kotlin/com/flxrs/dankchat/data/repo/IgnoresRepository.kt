@@ -11,26 +11,43 @@ import com.flxrs.dankchat.data.database.dao.UserIgnoreDao
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntity
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntityType
 import com.flxrs.dankchat.data.database.entity.UserIgnoreEntity
-import com.flxrs.dankchat.data.twitch.message.*
-import com.flxrs.dankchat.di.ApplicationScope
+import com.flxrs.dankchat.data.twitch.message.EmoteWithPositions
+import com.flxrs.dankchat.data.twitch.message.Message
+import com.flxrs.dankchat.data.twitch.message.PointRedemptionMessage
+import com.flxrs.dankchat.data.twitch.message.PrivMessage
+import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
+import com.flxrs.dankchat.data.twitch.message.WhisperMessage
+import com.flxrs.dankchat.data.twitch.message.isAnnouncement
+import com.flxrs.dankchat.data.twitch.message.isElevatedMessage
+import com.flxrs.dankchat.data.twitch.message.isFirstMessage
+import com.flxrs.dankchat.data.twitch.message.isReward
+import com.flxrs.dankchat.data.twitch.message.isSub
+import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.multientry.MultiEntryDto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
+import org.koin.core.annotation.Single
 
-@Singleton
-class IgnoresRepository @Inject constructor(
+@Single
+class IgnoresRepository(
     private val helixApiClient: HelixApiClient,
     private val messageIgnoreDao: MessageIgnoreDao,
     private val userIgnoreDao: UserIgnoreDao,
     private val preferences: DankChatPreferenceStore,
-    @ApplicationScope private val coroutineScope: CoroutineScope
+    dispatchersProvider: DispatchersProvider,
 ) {
+
+    private val coroutineScope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
 
     data class TwitchBlock(val id: UserId, val name: UserName)
 

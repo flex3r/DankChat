@@ -10,20 +10,21 @@ import com.flxrs.dankchat.data.twitch.message.UserDisplay
 import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.data.twitch.message.toUserDisplay
-import com.flxrs.dankchat.di.ApplicationScope
+import com.flxrs.dankchat.di.DispatchersProvider
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import javax.inject.Inject
-import javax.inject.Singleton
+import org.koin.core.annotation.Single
 
-@Singleton
-class UserDisplayRepository @Inject constructor(
+@Single
+class UserDisplayRepository(
     private val userDisplayDao: UserDisplayDao,
-    @ApplicationScope val coroutineScope: CoroutineScope,
+    dispatchersProvider: DispatchersProvider,
 ) {
 
+    private val coroutineScope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
     val userDisplays = userDisplayDao.getUserDisplaysFlow()
         .map { entities ->
             entities.map {

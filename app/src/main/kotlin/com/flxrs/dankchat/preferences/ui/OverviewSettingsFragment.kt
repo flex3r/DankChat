@@ -79,16 +79,13 @@ import com.flxrs.dankchat.theme.DankChatTheme
 import com.flxrs.dankchat.utils.extensions.navigateSafe
 import com.google.android.material.transition.MaterialFadeThrough
 import com.google.android.material.transition.MaterialSharedAxis
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
 
-@AndroidEntryPoint
 class OverviewSettingsFragment : Fragment() {
 
     private val navController: NavController by lazy { findNavController() }
 
-    @Inject
-    lateinit var dankChatPreferences: DankChatPreferenceStore
+    private val dankChatPreferences: DankChatPreferenceStore by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,14 +99,16 @@ class OverviewSettingsFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                var secretDankerMode by remember { mutableStateOf(dankChatPreferences.isSecretDankerModeEnabled) }
-                OverviewSettings(
-                    isLoggedIn = dankChatPreferences.isLoggedIn,
-                    hasChangelog = DankChatVersion.HAS_CHANGELOG,
-                    isSecretDankerModeEnabled = secretDankerMode,
-                    clicksNeeded = dankChatPreferences.secretDankerModeClicks,
-                    onSecretDankerModeEnabled = { dankChatPreferences.isSecretDankerModeEnabled = true },
-                )
+                DankChatTheme {
+                    var secretDankerMode by remember { mutableStateOf(dankChatPreferences.isSecretDankerModeEnabled) }
+                    OverviewSettings(
+                        isLoggedIn = dankChatPreferences.isLoggedIn,
+                        hasChangelog = DankChatVersion.HAS_CHANGELOG,
+                        isSecretDankerModeEnabled = secretDankerMode,
+                        clicksNeeded = dankChatPreferences.secretDankerModeClicks,
+                        onSecretDankerModeEnabled = { dankChatPreferences.isSecretDankerModeEnabled = true },
+                    )
+                }
             }
         }
     }
@@ -365,7 +364,7 @@ class OverviewSettingsFragment : Fragment() {
     private fun OverviewSettingsPreview() {
         DankChatTheme {
             OverviewSettings(
-                isLoggedIn = true,
+                isLoggedIn = false,
                 hasChangelog = true,
                 isSecretDankerModeEnabled = false,
                 clicksNeeded = 10,

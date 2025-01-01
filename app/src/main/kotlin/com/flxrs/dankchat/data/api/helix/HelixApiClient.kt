@@ -31,11 +31,10 @@ import io.ktor.client.statement.request
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.isSuccess
 import kotlinx.serialization.json.Json
-import javax.inject.Inject
-import javax.inject.Singleton
+import org.koin.core.annotation.Single
 
-@Singleton
-class HelixApiClient @Inject constructor(private val helixApi: HelixApi, private val json: Json) {
+@Single
+class HelixApiClient(private val helixApi: HelixApi, private val json: Json) {
 
     suspend fun getUsersByNames(names: List<UserName>): Result<List<UserDto>> = runCatching {
         names.chunked(DEFAULT_PAGE_SIZE).flatMap {

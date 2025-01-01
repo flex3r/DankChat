@@ -12,27 +12,39 @@ import com.flxrs.dankchat.data.database.entity.BlacklistedUserEntity
 import com.flxrs.dankchat.data.database.entity.MessageHighlightEntity
 import com.flxrs.dankchat.data.database.entity.MessageHighlightEntityType
 import com.flxrs.dankchat.data.database.entity.UserHighlightEntity
-import com.flxrs.dankchat.data.twitch.message.*
-import com.flxrs.dankchat.di.ApplicationScope
+import com.flxrs.dankchat.data.twitch.message.Highlight
+import com.flxrs.dankchat.data.twitch.message.HighlightType
+import com.flxrs.dankchat.data.twitch.message.Message
+import com.flxrs.dankchat.data.twitch.message.PointRedemptionMessage
+import com.flxrs.dankchat.data.twitch.message.PrivMessage
+import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
+import com.flxrs.dankchat.data.twitch.message.WhisperMessage
+import com.flxrs.dankchat.data.twitch.message.isAnnouncement
+import com.flxrs.dankchat.data.twitch.message.isElevatedMessage
+import com.flxrs.dankchat.data.twitch.message.isFirstMessage
+import com.flxrs.dankchat.data.twitch.message.isReward
+import com.flxrs.dankchat.data.twitch.message.isSub
+import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.multientry.MultiEntryDto
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import javax.inject.Singleton
+import org.koin.core.annotation.Single
 
-@Singleton
-class HighlightsRepository @Inject constructor(
+@Single
+class HighlightsRepository(
     private val messageHighlightDao: MessageHighlightDao,
     private val userHighlightDao: UserHighlightDao,
     private val blacklistedUserDao: BlacklistedUserDao,
     private val preferences: DankChatPreferenceStore,
-    @ApplicationScope private val coroutineScope: CoroutineScope
+    dispatchersProvider: DispatchersProvider,
 ) {
 
+    private val coroutineScope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
     private val currentUserAndDisplay = preferences.currentUserAndDisplayFlow.stateIn(coroutineScope, SharingStarted.Eagerly, null)
     private val currentUserRegex = currentUserAndDisplay
         .map(::createUserAndDisplayRegex)

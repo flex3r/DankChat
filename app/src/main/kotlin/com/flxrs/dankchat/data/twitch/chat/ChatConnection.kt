@@ -5,12 +5,14 @@ import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.irc.IrcMessage
 import com.flxrs.dankchat.data.toUserName
+import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.timer
 import io.ktor.http.HttpHeaders
 import io.ktor.util.collections.ConcurrentSet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.consumeAsFlow
@@ -22,7 +24,6 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
-import javax.inject.Inject
 import kotlin.random.Random
 import kotlin.random.nextLong
 import kotlin.time.Duration
@@ -48,12 +49,13 @@ sealed interface ChatEvent {
         get() = this is Error || this is Closed
 }
 
-class ChatConnection @Inject constructor(
+class ChatConnection(
     private val chatConnectionType: ChatConnectionType,
     private val client: OkHttpClient,
-    private val scope: CoroutineScope,
     private val preferences: DankChatPreferenceStore,
+    dispatchersProvider: DispatchersProvider,
 ) {
+    private val scope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
     private var socket: WebSocket? = null
     private val request = Request.Builder()
         .url("wss://irc-ws.chat.twitch.tv")

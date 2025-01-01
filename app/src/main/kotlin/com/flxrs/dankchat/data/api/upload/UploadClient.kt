@@ -18,15 +18,15 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.Response
 import org.json.JSONObject
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 import java.io.File
 import java.net.URLConnection
 import java.time.Instant
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class UploadClient @Inject constructor(
-    @UploadOkHttpClient private val httpClient: OkHttpClient,
+@Single
+class UploadClient(
+    @Named(type = UploadOkHttpClient::class) private val httpClient: OkHttpClient,
     private val dankChatPreferenceStore: DankChatPreferenceStore
 ) {
 

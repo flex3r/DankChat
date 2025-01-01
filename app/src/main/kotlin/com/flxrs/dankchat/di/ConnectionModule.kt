@@ -5,53 +5,40 @@ import com.flxrs.dankchat.data.twitch.chat.ChatConnection
 import com.flxrs.dankchat.data.twitch.chat.ChatConnectionType
 import com.flxrs.dankchat.data.twitch.pubsub.PubSubManager
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
-import javax.inject.Qualifier
-import javax.inject.Singleton
+import org.koin.core.annotation.Module
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 
-@Retention(AnnotationRetention.RUNTIME)
-@Qualifier
-annotation class ReadConnection
+data object ReadConnection
+data object WriteConnection
 
-@Retention(AnnotationRetention.RUNTIME)
-@Qualifier
-annotation class WriteConnection
-
-@InstallIn(SingletonComponent::class)
 @Module
-object ChatConnectionModule {
+class ConnectionModule {
 
-    @Singleton
-    @ReadConnection
-    @Provides
+    @Single
+    @Named(type = ReadConnection::class)
     fun provideReadConnection(
-        @WebSocketOkHttpClient client: OkHttpClient,
-        @ApplicationScope scope: CoroutineScope,
+        @Named(type = WebSocketOkHttpClient::class) client: OkHttpClient,
+        dispatchersProvider: DispatchersProvider,
         preferenceStore: DankChatPreferenceStore,
-    ): ChatConnection = ChatConnection(ChatConnectionType.Read, client, scope, preferenceStore)
+    ): ChatConnection = ChatConnection(ChatConnectionType.Read, client, preferenceStore, dispatchersProvider)
 
-    @Singleton
-    @WriteConnection
-    @Provides
+    @Single
+    @Named(type = WriteConnection::class)
     fun provideWriteConnection(
-        @WebSocketOkHttpClient client: OkHttpClient,
-        @ApplicationScope scope: CoroutineScope,
+        @Named(type = WebSocketOkHttpClient::class) client: OkHttpClient,
+        dispatchersProvider: DispatchersProvider,
         preferenceStore: DankChatPreferenceStore,
-    ): ChatConnection = ChatConnection(ChatConnectionType.Write, client, scope, preferenceStore)
+    ): ChatConnection = ChatConnection(ChatConnectionType.Write, client, preferenceStore, dispatchersProvider)
 
-    @Singleton
-    @Provides
+    @Single
     fun providePubSubManager(
-        @WebSocketOkHttpClient client: OkHttpClient,
-        @ApplicationScope scope: CoroutineScope,
+        @Named(type = WebSocketOkHttpClient::class) client: OkHttpClient,
+        dispatchersProvider: DispatchersProvider,
         preferenceStore: DankChatPreferenceStore,
         helixApiClient: HelixApiClient,
         json: Json,
-    ): PubSubManager = PubSubManager(helixApiClient, preferenceStore, client, scope, json)
+    ): PubSubManager = PubSubManager(helixApiClient, preferenceStore, client, json, dispatchersProvider)
 }

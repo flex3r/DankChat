@@ -21,12 +21,11 @@ import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.message.RoomState
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.DateTimeUtils
+import org.koin.core.annotation.Single
 import java.util.UUID
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class TwitchCommandRepository @Inject constructor(
+@Single
+class TwitchCommandRepository(
     private val helixApiClient: HelixApiClient,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
 ) {

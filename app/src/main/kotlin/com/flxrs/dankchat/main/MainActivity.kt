@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.main
 
 import android.Manifest
+import android.R.attr.theme
 import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context
@@ -12,7 +13,6 @@ import android.os.IBinder
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
@@ -28,6 +28,7 @@ import androidx.navigation.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import coil3.request.lifecycle
 import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.UserName
@@ -35,7 +36,12 @@ import com.flxrs.dankchat.data.notification.NotificationService
 import com.flxrs.dankchat.data.repo.data.ServiceEvent
 import com.flxrs.dankchat.databinding.MainActivityBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.preferences.ui.*
+import com.flxrs.dankchat.preferences.ui.AppearanceSettingsFragment
+import com.flxrs.dankchat.preferences.ui.ChatSettingsFragment
+import com.flxrs.dankchat.preferences.ui.DeveloperSettingsFragment
+import com.flxrs.dankchat.preferences.ui.NotificationsSettingsFragment
+import com.flxrs.dankchat.preferences.ui.StreamsSettingsFragment
+import com.flxrs.dankchat.preferences.ui.ToolsSettingsFragment
 import com.flxrs.dankchat.utils.extensions.hasPermission
 import com.flxrs.dankchat.utils.extensions.isAtLeastTiramisu
 import com.flxrs.dankchat.utils.extensions.isInSupportedPictureInPictureMode
@@ -43,18 +49,17 @@ import com.flxrs.dankchat.utils.extensions.navigateSafe
 import com.flxrs.dankchat.utils.extensions.parcelable
 import com.google.android.material.color.DynamicColors
 import com.google.android.material.color.DynamicColorsOptions
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.java.KoinJavaComponent.inject
 
-@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
 
-    @Inject
-    lateinit var dankChatPreferences: DankChatPreferenceStore
+    private val dankChatPreferences: DankChatPreferenceStore by inject()
 
-    private val viewModel: DankChatViewModel by viewModels()
+    private val viewModel: DankChatViewModel by viewModel()
     private val pendingChannelsToClear = mutableListOf<UserName>()
     private val navController: NavController by lazy { findNavController(R.id.main_content) }
     private var bindingRef: MainActivityBinding? = null

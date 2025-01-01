@@ -51,13 +51,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
+import org.koin.core.annotation.Single
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class EmoteRepository @Inject constructor(
+@Single
+class EmoteRepository(
     private val dankChatApiClient: DankChatApiClient,
     private val preferences: DankChatPreferenceStore,
 ) {

@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.updateLayoutParams
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.viewpager2.widget.ViewPager2
@@ -29,19 +28,17 @@ import com.flxrs.dankchat.utils.extensions.showShortSnackbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.transition.MaterialFadeThrough
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@AndroidEntryPoint
 class NotificationsSettingsFragment : MaterialPreferenceFragmentCompat() {
 
-    private val highlightsViewModel: HighlightsViewModel by viewModels()
-    private val ignoresViewModel: IgnoresViewModel by viewModels()
+    private val highlightsViewModel: HighlightsViewModel by viewModel()
+    private val ignoresViewModel: IgnoresViewModel by viewModel()
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var bottomSheetBinding: HighlightsIgnoresBottomsheetBinding? = null
 
-    @Inject
-    lateinit var preferences: DankChatPreferenceStore
+    private val preferences: DankChatPreferenceStore by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

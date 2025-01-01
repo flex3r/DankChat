@@ -2,11 +2,10 @@ package com.flxrs.dankchat.changelog
 
 import androidx.lifecycle.ViewModel
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import org.koin.android.annotation.KoinViewModel
 
-@HiltViewModel
-class ChangelogSheetViewModel @Inject constructor(
+@KoinViewModel
+class ChangelogSheetViewModel(
     dankChatPreferenceStore: DankChatPreferenceStore,
 ) : ViewModel() {
 

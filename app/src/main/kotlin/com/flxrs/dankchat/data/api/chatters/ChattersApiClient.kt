@@ -8,11 +8,10 @@ import com.flxrs.dankchat.data.api.recoverNotFoundWith
 import com.flxrs.dankchat.data.api.throwApiErrorOnFailure
 import io.ktor.client.call.body
 import kotlinx.serialization.json.Json
-import javax.inject.Inject
-import javax.inject.Singleton
+import org.koin.core.annotation.Single
 
-@Singleton
-class ChattersApiClient @Inject constructor(private val chattersApi: ChattersApi, private val json: Json) {
+@Single
+class ChattersApiClient(private val chattersApi: ChattersApi, private val json: Json) {
 
     suspend fun getChatters(channel: UserName): Result<ChattersDto> = runCatching {
         chattersApi.getChatters(channel)

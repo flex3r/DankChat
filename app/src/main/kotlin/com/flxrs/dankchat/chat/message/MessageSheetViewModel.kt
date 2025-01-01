@@ -12,17 +12,16 @@ import com.flxrs.dankchat.data.twitch.chat.ConnectionState
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.utils.extensions.firstValueOrNull
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
-import javax.inject.Inject
+import org.koin.android.annotation.KoinViewModel
 import kotlin.time.Duration.Companion.seconds
 
-@HiltViewModel
-class MessageSheetViewModel @Inject constructor(
+@KoinViewModel
+class MessageSheetViewModel(
     savedStateHandle: SavedStateHandle,
     repliesRepository: RepliesRepository,
     private val chatRepository: ChatRepository,

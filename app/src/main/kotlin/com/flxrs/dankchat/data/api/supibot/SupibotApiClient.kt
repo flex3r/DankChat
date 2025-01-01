@@ -7,11 +7,10 @@ import com.flxrs.dankchat.data.api.supibot.dto.SupibotUserAliasesDto
 import com.flxrs.dankchat.data.api.throwApiErrorOnFailure
 import io.ktor.client.call.body
 import kotlinx.serialization.json.Json
-import javax.inject.Inject
-import javax.inject.Singleton
+import org.koin.core.annotation.Single
 
-@Singleton
-class SupibotApiClient @Inject constructor(private val supibotApi: SupibotApi, private val json: Json) {
+@Single
+class SupibotApiClient(private val supibotApi: SupibotApi, private val json: Json) {
 
     suspend fun getSupibotCommands(): Result<SupibotCommandsDto> = runCatching {
         supibotApi.getCommands()

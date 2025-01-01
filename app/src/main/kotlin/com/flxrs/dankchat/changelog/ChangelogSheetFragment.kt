@@ -4,19 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChangelogBottomsheetBinding
 import com.flxrs.dankchat.utils.extensions.isLandscape
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import dagger.hilt.android.AndroidEntryPoint
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@AndroidEntryPoint
 class ChangelogSheetFragment : BottomSheetDialogFragment() {
 
-    private val viewModel: ChangelogSheetViewModel by viewModels()
+    private val viewModel: ChangelogSheetViewModel by viewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val adapter = ChangelogAdapter()

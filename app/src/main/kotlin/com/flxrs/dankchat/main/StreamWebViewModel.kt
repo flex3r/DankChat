@@ -6,11 +6,10 @@ import androidx.lifecycle.AndroidViewModel
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.main.stream.StreamWebView
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import org.koin.android.annotation.KoinViewModel
 
-@HiltViewModel
-class StreamWebViewModel @Inject constructor(
+@KoinViewModel
+class StreamWebViewModel(
     application: Application,
     private val dankChatPreferenceStore: DankChatPreferenceStore
 ) : AndroidViewModel(application) {

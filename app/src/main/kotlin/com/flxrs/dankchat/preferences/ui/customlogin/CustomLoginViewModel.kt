@@ -14,16 +14,15 @@ import com.flxrs.dankchat.preferences.ui.customlogin.CustomLoginState.TokenEmpty
 import com.flxrs.dankchat.preferences.ui.customlogin.CustomLoginState.TokenInvalid
 import com.flxrs.dankchat.preferences.ui.customlogin.CustomLoginState.Validated
 import com.flxrs.dankchat.utils.extensions.withoutOAuthPrefix
-import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import org.koin.android.annotation.KoinViewModel
 
-@HiltViewModel
-class CustomLoginViewModel @Inject constructor(
+@KoinViewModel
+class CustomLoginViewModel(
     private val authApiClient: AuthApiClient,
     private val dankChatPreferenceStore: DankChatPreferenceStore
 ) : ViewModel() {

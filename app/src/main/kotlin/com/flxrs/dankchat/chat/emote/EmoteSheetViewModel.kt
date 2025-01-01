@@ -6,11 +6,10 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmoteType
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import org.koin.android.annotation.KoinViewModel
 
-@HiltViewModel
-class EmoteSheetViewModel @Inject constructor(savedStateHandle: SavedStateHandle) : ViewModel() {
+@KoinViewModel
+class EmoteSheetViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
     private val args = EmoteSheetFragmentArgs.fromSavedStateHandle(savedStateHandle)
 

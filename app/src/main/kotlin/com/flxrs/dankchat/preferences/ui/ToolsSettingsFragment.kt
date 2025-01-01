@@ -16,7 +16,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -37,12 +36,11 @@ import com.flxrs.dankchat.preferences.upload.RecentUploadsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.transition.MaterialFadeThrough
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.math.roundToInt
 
-@AndroidEntryPoint
 class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
     private val requestCheckTTSData = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode != TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
@@ -50,11 +48,10 @@ class ToolsSettingsFragment : MaterialPreferenceFragmentCompat() {
         }
     }
 
-    private val viewModel: RecentUploadsViewModel by viewModels()
+    private val viewModel: RecentUploadsViewModel by viewModel()
     private var bottomSheetDialog: BottomSheetDialog? = null
 
-    @Inject
-    lateinit var dankChatPreferenceStore: DankChatPreferenceStore
+    private val dankChatPreferenceStore: DankChatPreferenceStore by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

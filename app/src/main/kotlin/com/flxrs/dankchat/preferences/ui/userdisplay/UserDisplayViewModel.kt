@@ -5,15 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.data.database.entity.UserDisplayEntity
 import com.flxrs.dankchat.data.repo.UserDisplayRepository
 import com.flxrs.dankchat.data.twitch.message.Message
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import org.koin.android.annotation.KoinViewModel
 
-@HiltViewModel
-class UserDisplayViewModel @Inject constructor(
+@KoinViewModel
+class UserDisplayViewModel(
     private val userDisplayRepository: UserDisplayRepository
 ) : ViewModel() {
 
