@@ -12,8 +12,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.preference.PreferenceManager
-import com.flxrs.dankchat.R
+import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
+import org.koin.compose.koinInject
 
 private val TrueDarkColorScheme = darkColorScheme(
     surface = Color.Black,
@@ -27,17 +27,10 @@ fun DankChatTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val context = LocalContext.current
     val inspectionMode = LocalInspectionMode.current
-    val trueDarkTheme = remember {
-        when {
-            inspectionMode -> false
-            else           -> PreferenceManager
-                .getDefaultSharedPreferences(context)
-                .getBoolean(context.getString(R.string.preference_true_dark_theme_key), false)
-        }
+    val appearanceSettings = if (!inspectionMode) koinInject<AppearanceSettingsDataStore>() else null
+    val trueDarkTheme = remember { appearanceSettings?.trueDarkTheme ?: false }
 
-    }
     // Dynamic color is available on Android 12+
     val dynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     val colors = when {

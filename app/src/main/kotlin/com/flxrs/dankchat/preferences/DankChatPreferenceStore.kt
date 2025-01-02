@@ -19,6 +19,7 @@ import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.toUserNames
 import com.flxrs.dankchat.data.twitch.badge.BadgeType
 import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
+import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
 import com.flxrs.dankchat.preferences.command.CommandDto
 import com.flxrs.dankchat.preferences.command.CommandDto.Companion.toEntryItem
 import com.flxrs.dankchat.preferences.command.CommandItem
@@ -41,6 +42,7 @@ import kotlin.time.Duration.Companion.minutes
 class DankChatPreferenceStore(
     private val context: Context,
     private val json: Json,
+    private val appearanceSettingsDataStore: AppearanceSettingsDataStore,
 ) {
     private val dankChatPreferences: SharedPreferences = context.getSharedPreferences(context.getString(R.string.shared_preference_key), Context.MODE_PRIVATE)
     private val defaultPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -186,9 +188,6 @@ class DankChatPreferenceStore(
     val shouldPreferEmoteSuggestions: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_prefer_emote_suggestions_key), false)
 
-    val autoDisableInput: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_auto_disable_input_key), true)
-
     val repeatedSendingEnabled: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_repeated_sending_key), false)
 
@@ -203,12 +202,6 @@ class DankChatPreferenceStore(
 
     val showTimestamps: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_timestamp_key), true)
-
-    val fontSize: Float
-        get() = defaultPreferences.getInt(context.getString(R.string.preference_font_size_key), 14).toFloat()
-
-    val isCheckeredMode: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.checkered_messages_key), false)
 
     val showTimedOutMessages: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_show_timed_out_messages_key), true)
@@ -275,28 +268,22 @@ class DankChatPreferenceStore(
         with(context) {
             val roomStateKey = getString(R.string.preference_roomstate_key)
             val streamInfoKey = getString(R.string.preference_streaminfo_key)
-            val inputKey = getString(R.string.preference_show_input_key)
             val loadSupibotKey = getString(R.string.preference_supibot_suggestions_key)
             val scrollBackLengthKey = getString(R.string.preference_scrollback_length_key)
-            val showChipsKey = getString(R.string.preference_show_chip_actions_key)
             val timestampFormatKey = getString(R.string.preference_timestamp_format_key)
             val fetchStreamsKey = getString(R.string.preference_fetch_streams_key)
 
             send(Preference.RoomState(roomStateEnabled))
             send(Preference.StreamInfo(showStreamInfoEnabled, updateTimer = false))
-            send(Preference.Input(inputEnabled))
             send(Preference.ScrollBack(scrollbackLength))
-            send(Preference.Chips(shouldShowChips))
             send(Preference.TimeStampFormat(timestampFormat))
 
             val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
                 val preference = when (key) {
                     roomStateKey        -> Preference.RoomState(roomStateEnabled)
                     streamInfoKey       -> Preference.StreamInfo(showStreamInfoEnabled, updateTimer = true)
-                    inputKey            -> Preference.Input(inputEnabled)
                     loadSupibotKey      -> Preference.SupibotSuggestions(shouldLoadSupibot)
                     scrollBackLengthKey -> Preference.ScrollBack(scrollbackLength)
-                    showChipsKey        -> Preference.Chips(shouldShowChips)
                     timestampFormatKey  -> Preference.TimeStampFormat(timestampFormat)
                     fetchStreamsKey     -> Preference.FetchStreams(fetchStreamInfoEnabled)
                     else                -> null
@@ -381,7 +368,7 @@ class DankChatPreferenceStore(
     }
 
     fun shouldShowChangelog(): Boolean {
-        if (!shouldShowChangelogAfterUpdate) {
+        if (!appearanceSettingsDataStore.showChangelogs) {
             setCurrentInstalledVersionCode()
             return false
         }
@@ -443,21 +430,12 @@ class DankChatPreferenceStore(
     private val roomStateEnabled: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_roomstate_key), true)
 
-    private val inputEnabled: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_show_input_key), true)
-
-    private val shouldShowChips: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_show_chip_actions_key), true)
-
     private val showStreamInfoEnabled: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_streaminfo_key), true)
 
     private var lastViewedChangelogVersion: String?
         get() = dankChatPreferences.getString(LAST_INSTALLED_VERSION_KEY, null)
         set(value) = dankChatPreferences.edit { putString(LAST_INSTALLED_VERSION_KEY, value) }
-
-    private val shouldShowChangelogAfterUpdate: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_show_changelogs_key), true)
 
     private fun booleanPreferenceFlowOf(@StringRes key: Int, default: Boolean): Flow<Boolean> {
         return callbackFlow {

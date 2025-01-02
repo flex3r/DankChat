@@ -42,6 +42,7 @@ import com.flxrs.dankchat.data.twitch.message.SystemMessageType.ChannelSevenTVEm
 import com.flxrs.dankchat.data.twitch.message.SystemMessageType.ChannelSevenTVEmoteSetChanged
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
 import com.flxrs.dankchat.preferences.model.Preference
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.extensions.firstValueOrNull
@@ -95,6 +96,7 @@ class MainViewModel(
     private val ignoresRepository: IgnoresRepository,
     private val channelRepository: ChannelRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
+    private val appearanceSettingsDataStore: AppearanceSettingsDataStore,
 ) : ViewModel() {
 
     private var fetchTimerJob: Job? = null
@@ -117,8 +119,9 @@ class MainViewModel(
     private val fullScreenSheetState = MutableStateFlow<FullScreenSheetState>(FullScreenSheetState.Closed)
     private val _currentStreamedChannel = MutableStateFlow<UserName?>(null)
     private val _isFullscreen = MutableStateFlow(false)
-    private val shouldShowChips = MutableStateFlow(true)
-    private val inputEnabled = MutableStateFlow(true)
+    private val shouldShowChips = appearanceSettingsDataStore.settings.map { it.showChips }
+    private val isInputFocused = MutableStateFlow(false)
+    private val inputEnabled = appearanceSettingsDataStore.settings.map { it.showInput }
     private val isScrolling = MutableStateFlow(false)
     private val chipsExpanded = MutableStateFlow(false)
     private val repeatedSend = MutableStateFlow(RepeatedSendData(enabled = false, message = ""))
@@ -193,10 +196,8 @@ class MainViewModel(
                 when (it) {
                     is Preference.RoomState          -> roomStateEnabled.value = it.enabled
                     is Preference.StreamInfo         -> streamInfoEnabled.value = it.enabled
-                    is Preference.Input              -> inputEnabled.value = it.enabled
                     is Preference.SupibotSuggestions -> setSupibotSuggestions(it.enabled)
                     is Preference.ScrollBack         -> chatRepository.scrollBackLength = it.length
-                    is Preference.Chips              -> shouldShowChips.value = it.enabled
                     is Preference.TimeStampFormat    -> DateTimeUtils.setPattern(it.pattern)
                     is Preference.FetchStreams       -> fetchStreamData(channels.value.orEmpty())
                 }
@@ -288,7 +289,7 @@ class MainViewModel(
     }.stateIn(viewModelScope, started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), InputState.Disconnected)
 
     val canType: StateFlow<Boolean> = combine(connectionState, fullScreenSheetState) { connectionState, fullScreenSheetState ->
-        val canTypeInConnectionState = connectionState == ConnectionState.CONNECTED || !dankChatPreferenceStore.autoDisableInput
+        val canTypeInConnectionState = connectionState == ConnectionState.CONNECTED || !appearanceSettingsDataStore.autoDisableInput
         (fullScreenSheetState != FullScreenSheetState.Mention && canTypeInConnectionState)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
@@ -357,8 +358,8 @@ class MainViewModel(
     val isFullscreenFlow: StateFlow<Boolean> = _isFullscreen.asStateFlow()
     val areChipsExpanded: StateFlow<Boolean> = chipsExpanded.asStateFlow()
 
-    val shouldShowChipToggle: StateFlow<Boolean> = combine(shouldShowChips, isScrolling) { shouldShowChips, isScrolling ->
-        shouldShowChips && !isScrolling
+    val shouldShowChipToggle: StateFlow<Boolean> = combine(shouldShowChips, isScrolling, isInputFocused) { shouldShowChips, isScrolling, inputFocus ->
+        shouldShowChips && !isScrolling && !inputFocus
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), true)
 
     val shouldShowExpandedChips: StateFlow<Boolean> = combine(shouldShowChipToggle, chipsExpanded) { shouldShowChips, chipsExpanded ->
@@ -757,8 +758,8 @@ class MainViewModel(
         }
     }
 
-    fun setShowChips(value: Boolean) {
-        shouldShowChips.value = value
+    fun setInputFocus(value: Boolean) {
+        isInputFocused.value = value
     }
 
     fun toggleFullscreen() {

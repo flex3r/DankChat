@@ -74,16 +74,13 @@ val Resources.isSystemLightMode: Boolean
 val Fragment.isSystemLightMode: Boolean
     get() = resources.isSystemLightMode
 
-fun Fragment.keepScreenOn(keep: Boolean) {
-    (activity as? AppCompatActivity)?.keepScreenOn(keep)
-}
 
 private fun Context.hideKeyboard(view: View) {
     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
-private fun AppCompatActivity.keepScreenOn(keep: Boolean) {
+fun AppCompatActivity.keepScreenOn(keep: Boolean) {
     if (keep) {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     } else {

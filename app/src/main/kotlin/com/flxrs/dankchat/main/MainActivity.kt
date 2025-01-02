@@ -1,7 +1,6 @@
 package com.flxrs.dankchat.main
 
 import android.Manifest
-import android.R.attr.theme
 import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context
@@ -25,39 +24,24 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceManager
-import coil3.request.lifecycle
 import com.flxrs.dankchat.DankChatViewModel
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.notification.NotificationService
 import com.flxrs.dankchat.data.repo.data.ServiceEvent
 import com.flxrs.dankchat.databinding.MainActivityBinding
-import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.preferences.ui.AppearanceSettingsFragment
-import com.flxrs.dankchat.preferences.ui.ChatSettingsFragment
-import com.flxrs.dankchat.preferences.ui.DeveloperSettingsFragment
-import com.flxrs.dankchat.preferences.ui.NotificationsSettingsFragment
-import com.flxrs.dankchat.preferences.ui.StreamsSettingsFragment
-import com.flxrs.dankchat.preferences.ui.ToolsSettingsFragment
 import com.flxrs.dankchat.utils.extensions.hasPermission
 import com.flxrs.dankchat.utils.extensions.isAtLeastTiramisu
 import com.flxrs.dankchat.utils.extensions.isInSupportedPictureInPictureMode
-import com.flxrs.dankchat.utils.extensions.navigateSafe
+import com.flxrs.dankchat.utils.extensions.keepScreenOn
 import com.flxrs.dankchat.utils.extensions.parcelable
 import com.google.android.material.color.DynamicColors
 import com.google.android.material.color.DynamicColorsOptions
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.java.KoinJavaComponent.inject
 
-class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
-
-    private val dankChatPreferences: DankChatPreferenceStore by inject()
+class MainActivity : AppCompatActivity() {
 
     private val viewModel: DankChatViewModel by viewModel()
     private val pendingChannelsToClear = mutableListOf<UserName>()
@@ -76,8 +60,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
     var channelToOpen: UserName? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val isTrueDarkModeEnabled = preferences.getBoolean(getString(R.string.preference_true_dark_theme_key), false)
+        val isTrueDarkModeEnabled = viewModel.isTrueDarkModeEnabled
         val isDynamicColorAvailable = DynamicColors.isDynamicColorAvailable()
         when {
             isTrueDarkModeEnabled && isDynamicColorAvailable -> {
@@ -102,10 +85,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
         enableEdgeToEdge()
         bindingRef = DataBindingUtil.setContentView(this, R.layout.main_activity)
 
-        if (dankChatPreferences.isLoggedIn && dankChatPreferences.oAuthKey.isNullOrBlank()) {
-            dankChatPreferences.clearLogin()
-        }
-
+        viewModel.checkLogin()
         viewModel.serviceEvents
             .flowWithLifecycle(lifecycle, minActiveState = Lifecycle.State.CREATED)
             .onEach {
@@ -113,6 +93,14 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
                 when (it) {
                     ServiceEvent.Shutdown -> handleShutDown()
                 }
+            }
+            .launchIn(lifecycleScope)
+
+        viewModel.keepScreenOn
+            .flowWithLifecycle(lifecycle, minActiveState = Lifecycle.State.CREATED)
+            .onEach {
+                Log.i(TAG, "Setting FLAG_KEEP_SCREEN_ON to $it")
+                keepScreenOn(it)
             }
             .launchIn(lifecycleScope)
     }
@@ -173,20 +161,6 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
         super.onNewIntent(intent)
         val channelExtra = intent.parcelable<UserName>(OPEN_CHANNEL_KEY)
         channelToOpen = channelExtra
-    }
-
-    override fun onPreferenceStartFragment(caller: PreferenceFragmentCompat, pref: Preference): Boolean {
-        val fragmentTag = pref.fragment ?: return false
-        when (fragmentTag.substringAfterLast(".")) {
-            AppearanceSettingsFragment::class.java.simpleName    -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_appearanceSettingsFragment)
-            NotificationsSettingsFragment::class.java.simpleName -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_notificationsSettingsFragment)
-            ChatSettingsFragment::class.java.simpleName          -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_chatSettingsFragment)
-            ToolsSettingsFragment::class.java.simpleName         -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_toolsSettingsFragment)
-            DeveloperSettingsFragment::class.java.simpleName     -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_developerSettingsFragment)
-            StreamsSettingsFragment::class.java.simpleName       -> caller.navigateSafe(R.id.action_overviewSettingsFragment_to_streamsSettingsFragment)
-            else                                                 -> return false
-        }
-        return true
     }
 
     fun clearNotificationsOfChannel(channel: UserName) = when {

@@ -1,8 +1,5 @@
 package com.flxrs.dankchat.main
 
-import android.R.attr.dropDownHeight
-import android.R.attr.dropDownWidth
-import android.R.attr.imeOptions
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.PictureInPictureParams
@@ -112,7 +109,6 @@ import com.flxrs.dankchat.utils.extensions.isInPictureInPictureMode
 import com.flxrs.dankchat.utils.extensions.isLandscape
 import com.flxrs.dankchat.utils.extensions.isPortrait
 import com.flxrs.dankchat.utils.extensions.isVisible
-import com.flxrs.dankchat.utils.extensions.keepScreenOn
 import com.flxrs.dankchat.utils.extensions.navigateSafe
 import com.flxrs.dankchat.utils.extensions.px
 import com.flxrs.dankchat.utils.extensions.reduceDragSensitivity
@@ -1073,7 +1069,6 @@ class MainFragment : Fragment() {
     }
 
     private fun initPreferences(context: Context) {
-        val keepScreenOnKey = getString(R.string.preference_keep_screen_on_key)
         val suggestionsKey = getString(R.string.preference_suggestions_key)
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.oAuthKey.isNullOrBlank()) {
             dankChatPreferences.clearLogin()
@@ -1086,13 +1081,11 @@ class MainFragment : Fragment() {
 
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
             when (key) {
-                keepScreenOnKey -> keepScreenOn(p.getBoolean(key, true))
-                suggestionsKey  -> binding.input.setSuggestionAdapter(p.getBoolean(key, true), suggestionAdapter)
+                suggestionsKey -> binding.input.setSuggestionAdapter(p.getBoolean(key, true), suggestionAdapter)
             }
         }
         preferences.apply {
             registerOnSharedPreferenceChangeListener(preferenceListener)
-            keepScreenOn(getBoolean(keepScreenOnKey, true))
             binding.input.setSuggestionAdapter(getBoolean(suggestionsKey, true), suggestionAdapter)
         }
     }
@@ -1472,7 +1465,7 @@ class MainFragment : Fragment() {
         setOnFocusChangeListener { _, hasFocus ->
             val isFullscreen = mainViewModel.isFullscreenFlow.value
             (activity as? MainActivity)?.setFullScreen(isFullscreen, changeActionBarVisibility = false)
-            mainViewModel.setShowChips(!hasFocus)
+            mainViewModel.setInputFocus(hasFocus)
 
             if (hasFocus && mainViewModel.isEmoteSheetOpen) {
                 closeInputSheetAndSetState()

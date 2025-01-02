@@ -29,6 +29,7 @@ import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.main.MainViewModel
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
 import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.flxrs.dankchat.utils.extensions.forEachLayer
 import com.flxrs.dankchat.utils.extensions.forEachSpan
@@ -41,6 +42,7 @@ open class ChatFragment : Fragment() {
     private val viewModel: ChatViewModel by viewModel()
     private val mainViewModel: MainViewModel by viewModel(ownerProducer = { requireParentFragment() })
     private val emoteRepository: EmoteRepository by inject()
+    private val appearanceSettingsDataStore: AppearanceSettingsDataStore by inject()
     protected val dankChatPreferenceStore: DankChatPreferenceStore by inject()
 
     protected var bindingRef: ChatFragmentBinding? = null
@@ -75,6 +77,7 @@ open class ChatFragment : Fragment() {
         adapter = ChatAdapter(
             emoteRepository = emoteRepository,
             dankChatPreferenceStore = dankChatPreferenceStore,
+            appearanceSettingsDataStore = appearanceSettingsDataStore,
             onListChanged = ::scrollToPosition,
             onUserClick = ::onUserClick,
             onMessageLongClick = ::onMessageClick,
@@ -91,6 +94,13 @@ open class ChatFragment : Fragment() {
             )
         )
 
+        collectFlow(viewModel.settings) {
+            when {
+                it.lineSeparator && binding.chat.itemDecorationCount == 0 -> binding.chat.addItemDecoration(itemDecoration)
+                else             -> binding.chat.removeItemDecoration(itemDecoration)
+            }
+        }
+
         preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { pref, key ->
             context ?: return@OnSharedPreferenceChangeListener
             when (key) {
@@ -100,18 +110,10 @@ open class ChatFragment : Fragment() {
                 getString(R.string.preference_animate_gifs_key),
                 getString(R.string.preference_show_username_key),
                 getString(R.string.preference_visible_badges_key) -> binding.chat.swapAdapter(adapter, false)
-
-                getString(R.string.preference_line_separator_key) -> when {
-                    pref.getBoolean(key, false) -> binding.chat.addItemDecoration(itemDecoration)
-                    else                        -> binding.chat.removeItemDecoration(itemDecoration)
-                }
             }
         }
         preferences = PreferenceManager.getDefaultSharedPreferences(view.context).apply {
             registerOnSharedPreferenceChangeListener(preferenceListener)
-            if (getBoolean(getString(R.string.preference_line_separator_key), false)) {
-                binding.chat.addItemDecoration(itemDecoration)
-            }
         }
     }
 

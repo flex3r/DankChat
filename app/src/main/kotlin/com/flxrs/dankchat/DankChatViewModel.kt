@@ -8,17 +8,24 @@ import com.flxrs.dankchat.data.api.auth.AuthApiClient
 import com.flxrs.dankchat.data.repo.chat.ChatRepository
 import com.flxrs.dankchat.data.repo.data.DataRepository
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
 import com.flxrs.dankchat.utils.extensions.withoutOAuthPrefix
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
+import kotlin.time.Duration.Companion.seconds
 
 @KoinViewModel
 class DankChatViewModel(
     private val chatRepository: ChatRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
+    private val appearanceSettingsDataStore: AppearanceSettingsDataStore,
     private val authApiClient: AuthApiClient,
     private val dataRepository: DataRepository,
 ) : ViewModel() {
@@ -28,6 +35,11 @@ class DankChatViewModel(
 
     private val _validationResult = Channel<ValidationResult>(Channel.BUFFERED)
     val validationResult get() = _validationResult.receiveAsFlow()
+
+    val isTrueDarkModeEnabled get() = appearanceSettingsDataStore.trueDarkTheme
+    val keepScreenOn = appearanceSettingsDataStore.settings
+        .map { it.keepScreenOn }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5.seconds), appearanceSettingsDataStore.keepScreenOn)
 
     fun init(tryReconnect: Boolean) {
         if (tryReconnect && started) {
@@ -43,6 +55,12 @@ class DankChatViewModel(
 
                 chatRepository.connectAndJoin()
             }
+        }
+    }
+
+    fun checkLogin() {
+        if (dankChatPreferenceStore.isLoggedIn && dankChatPreferenceStore.oAuthKey.isNullOrBlank()) {
+            dankChatPreferenceStore.clearLogin()
         }
     }
 
