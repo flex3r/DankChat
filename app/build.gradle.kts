@@ -211,6 +211,7 @@ dependencies {
 
 // Other
     implementation(libs.colorpicker.android)
+    implementation(libs.process.phoenix)
 
 // Test
     testImplementation(libs.junit.jupiter.api)

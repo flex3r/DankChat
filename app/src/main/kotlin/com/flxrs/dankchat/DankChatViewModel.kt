@@ -72,7 +72,7 @@ class DankChatViewModel(
                 onSuccess = { result ->
                     dankChatPreferenceStore.userName = result.login
                     when {
-                        authApiClient.validateScopes(result.scopes) -> ValidationResult.User(result.login)
+                        authApiClient.validateScopes(result.scopes.orEmpty()) -> ValidationResult.User(result.login)
                         else                                        -> ValidationResult.IncompleteScopes(result.login)
                     }
                 },

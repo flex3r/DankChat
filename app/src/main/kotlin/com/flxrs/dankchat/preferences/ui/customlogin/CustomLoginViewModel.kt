@@ -1,7 +1,5 @@
 package com.flxrs.dankchat.preferences.ui.customlogin
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.data.api.ApiException
 import com.flxrs.dankchat.data.api.auth.AuthApiClient
 import com.flxrs.dankchat.data.api.auth.dto.ValidateDto
@@ -18,22 +16,21 @@ import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import org.koin.android.annotation.KoinViewModel
+import org.koin.core.annotation.Factory
 
-@KoinViewModel
+@Factory
 class CustomLoginViewModel(
     private val authApiClient: AuthApiClient,
     private val dankChatPreferenceStore: DankChatPreferenceStore
-) : ViewModel() {
+) {
 
     private val _customLoginState = MutableStateFlow<CustomLoginState>(Default)
     val customLoginState = _customLoginState.asStateFlow()
 
-    fun validateCustomLogin(oAuthToken: String) = viewModelScope.launch {
+    suspend fun validateCustomLogin(oAuthToken: String) {
         if (oAuthToken.isBlank()) {
             _customLoginState.update { TokenEmpty }
-            return@launch
+            return
         }
 
         _customLoginState.update { Loading }
@@ -41,9 +38,16 @@ class CustomLoginViewModel(
         val token = oAuthToken.withoutOAuthPrefix
         val result = authApiClient.validateUser(token).fold(
             onSuccess = { result ->
+                val scopes = result.scopes.orEmpty()
                 when {
-                    !authApiClient.validateScopes(result.scopes) -> MissingScopes(authApiClient.missingScopes(result.scopes), result, token)
-                    else                                         -> {
+                    !authApiClient.validateScopes(scopes) -> MissingScopes(
+                        missingScopes = authApiClient.missingScopes(scopes).joinToString(),
+                        validation = result,
+                        token = token,
+                        dialogOpen = true,
+                    )
+
+                    else                                  -> {
                         saveLogin(token, result)
                         Validated
                     }
@@ -60,6 +64,10 @@ class CustomLoginViewModel(
         _customLoginState.update { result }
     }
 
+    fun dismissMissingScopesDialog() {
+        _customLoginState.update { (it as? MissingScopes)?.copy(dialogOpen = false) ?: it }
+    }
+
     fun saveLogin(token: String, validateDto: ValidateDto) = with(dankChatPreferenceStore) {
         clientId = validateDto.clientId
         oAuthKey = "oauth:$token"
@@ -69,4 +77,5 @@ class CustomLoginViewModel(
     }
 
     fun getScopes() = AuthApiClient.SCOPES.joinToString(separator = "+")
+    fun getToken() = dankChatPreferenceStore.oAuthKey?.withoutOAuthPrefix.orEmpty()
 }

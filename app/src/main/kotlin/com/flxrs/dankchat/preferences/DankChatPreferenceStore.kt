@@ -123,13 +123,6 @@ class DankChatPreferenceStore(
             }
         }
 
-    var customRmHost: String
-        get() = defaultPreferences.getString(context.getString(R.string.preference_rm_host_key), RM_HOST_DEFAULT) ?: RM_HOST_DEFAULT
-        set(value) {
-            val hostOrDefault = value.ifBlank { RM_HOST_DEFAULT }
-            defaultPreferences.edit { putString(context.getString(R.string.preference_rm_host_key), hostOrDefault) }
-        }
-
     var customMentions: List<MultiEntryDto>
         get() = getMultiEntriesFromPreferences(context.getString(R.string.preference_custom_mentions_key))
         set(value) = setMultiEntries(context.getString(R.string.preference_custom_mentions_key), value)
@@ -360,11 +353,6 @@ class DankChatPreferenceStore(
     fun resetImageUploader(): ImageUploader {
         customImageUploader = DEFAULT_UPLOADER
         return DEFAULT_UPLOADER
-    }
-
-    fun resetRmHost(): String {
-        customRmHost = RM_HOST_DEFAULT
-        return RM_HOST_DEFAULT
     }
 
     fun shouldShowChangelog(): Boolean {

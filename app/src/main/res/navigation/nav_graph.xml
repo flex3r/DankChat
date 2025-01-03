@@ -129,7 +129,7 @@
 
     <fragment
         android:id="@+id/developerSettingsFragment"
-        android:name="com.flxrs.dankchat.preferences.ui.DeveloperSettingsFragment"
+        android:name="com.flxrs.dankchat.preferences.developer.DeveloperSettingsFragment"
         android:label="DeveloperSettingsFragment" />
 
     <fragment

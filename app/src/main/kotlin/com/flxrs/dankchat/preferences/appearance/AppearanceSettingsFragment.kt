@@ -128,7 +128,7 @@ private fun AppearanceSettings(
                 navigationIcon = {
                     IconButton(
                         onClick = onBackPressed,
-                        content = { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back") },
+                        content = { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back)) },
                     )
                 }
             )

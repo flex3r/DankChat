@@ -13,6 +13,7 @@ import com.flxrs.dankchat.data.api.recentmessages.RecentMessagesApi
 import com.flxrs.dankchat.data.api.seventv.SevenTVApi
 import com.flxrs.dankchat.data.api.supibot.SupibotApi
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.developer.DeveloperSettingsDataStore
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpTimeout
@@ -151,9 +152,9 @@ class NetworkModule {
     })
 
     @Single
-    fun provideRecentMessagesApi(ktorClient: HttpClient, preferenceStore: DankChatPreferenceStore) = RecentMessagesApi(ktorClient.config {
+    fun provideRecentMessagesApi(ktorClient: HttpClient, developerSettingsDataStore: DeveloperSettingsDataStore) = RecentMessagesApi(ktorClient.config {
         defaultRequest {
-            url(preferenceStore.customRmHost)
+            url(developerSettingsDataStore.current().customRecentMessagesHost)
         }
     })
 
