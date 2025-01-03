@@ -134,7 +134,7 @@
 
     <fragment
         android:id="@+id/streamsSettingsFragment"
-        android:name="com.flxrs.dankchat.preferences.ui.StreamsSettingsFragment"
+        android:name="com.flxrs.dankchat.preferences.stream.StreamsSettingsFragment"
         android:label="StreamsSettingsFragment" />
 
     <dialog

@@ -29,7 +29,7 @@ fun DankChatTheme(
 ) {
     val inspectionMode = LocalInspectionMode.current
     val appearanceSettings = if (!inspectionMode) koinInject<AppearanceSettingsDataStore>() else null
-    val trueDarkTheme = remember { appearanceSettings?.trueDarkTheme ?: false }
+    val trueDarkTheme = remember { appearanceSettings?.current()?.trueDarkTheme ?: false }
 
     // Dynamic color is available on Android 12+
     val dynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S

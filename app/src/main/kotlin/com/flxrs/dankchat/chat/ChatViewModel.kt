@@ -3,6 +3,7 @@ package com.flxrs.dankchat.chat
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.flxrs.dankchat.chat.ChatViewModel.ChatFragmentSettings.Companion.fromSettings
 import com.flxrs.dankchat.data.repo.chat.ChatRepository
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettings
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
@@ -28,10 +29,13 @@ class ChatViewModel(
     val settings = appearanceSettingsDataStore
         .settings
         .map { ChatFragmentSettings(it.lineSeparator) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5.seconds), fromSettings(appearanceSettingsDataStore.current))
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5.seconds), fromSettings(appearanceSettingsDataStore.current()))
 
-    class ChatFragmentSettings(val lineSeparator: Boolean)
-    private fun fromSettings(appearanceSettings: AppearanceSettings) = ChatFragmentSettings(appearanceSettings.lineSeparator)
+    data class ChatFragmentSettings(val lineSeparator: Boolean) {
+        companion object {
+            fun fromSettings(appearanceSettings: AppearanceSettings) = ChatFragmentSettings(appearanceSettings.lineSeparator)
+        }
+    }
 
     companion object {
         private val TAG = ChatViewModel::class.java.simpleName

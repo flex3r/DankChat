@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.flxrs.dankchat.preferences.appearance
 
 import android.app.Activity
@@ -15,19 +13,13 @@ import androidx.activity.compose.LocalActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -52,7 +44,6 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.doOnPreDraw
@@ -62,14 +53,15 @@ import androidx.navigation.findNavController
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsInteraction.AutoDisableInput
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsInteraction.CheckeredMessages
-import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsInteraction.FontSizeChanged
+import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsInteraction.FontSize
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsInteraction.KeepScreenOn
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsInteraction.LineSeparator
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsInteraction.ShowChangelogs
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsInteraction.ShowChips
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsInteraction.ShowInput
-import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsInteraction.ThemeChanged
-import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsInteraction.TrueDarkThemeChanged
+import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsInteraction.Theme
+import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsInteraction.TrueDarkTheme
+import com.flxrs.dankchat.preferences.components.NavigationBarSpacer
 import com.flxrs.dankchat.preferences.components.PreferenceCategory
 import com.flxrs.dankchat.preferences.components.PreferenceCategoryTitle
 import com.flxrs.dankchat.preferences.components.PreferenceItem
@@ -102,67 +94,74 @@ class AppearanceSettingsFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                AppearanceSettings(onBackPressed = { findNavController().popBackStack() })
+                val viewModel = koinViewModel<AppearanceSettingsViewModel>()
+                val settings = viewModel.settings.collectAsStateWithLifecycle().value
+
+                DankChatTheme {
+                    AppearanceSettings(
+                        settings = settings,
+                        onInteraction = { viewModel.onInteraction(it) },
+                        onSuspendingInteraction = { viewModel.onSuspendingInteraction(it) },
+                        onBackPressed = { findNavController().popBackStack() }
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-private fun AppearanceSettings(onBackPressed: () -> Unit) {
-    val viewModel = koinViewModel<AppearanceSettingsViewModel>()
-    val settings = viewModel.data.collectAsStateWithLifecycle().value
+private fun AppearanceSettings(
+    settings: AppearanceSettings,
+    onInteraction: (AppearanceSettingsInteraction) -> Unit,
+    onSuspendingInteraction: suspend (AppearanceSettingsInteraction) -> Unit,
+    onBackPressed: () -> Unit,
+) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-
-    DankChatTheme {
-        Scaffold(
-            contentWindowInsets = WindowInsets(bottom = 0),
+    Scaffold(
+        contentWindowInsets = WindowInsets(bottom = 0),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            TopAppBar(
+                scrollBehavior = scrollBehavior,
+                title = { Text(stringResource(R.string.preference_appearance_header)) },
+                navigationIcon = {
+                    IconButton(
+                        onClick = onBackPressed,
+                        content = { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back") },
+                    )
+                }
+            )
+        },
+    ) { padding ->
+        Column(
             modifier = Modifier
-                .imePadding()
-                .nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = {
-                TopAppBar(
-                    scrollBehavior = scrollBehavior,
-                    title = { Text(stringResource(R.string.preference_appearance_header)) },
-                    navigationIcon = {
-                        IconButton(
-                            onClick = onBackPressed,
-                            content = { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back") },
-                        )
-                    }
-                )
-            },
-        ) { padding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .padding(start = 16.dp, end = 16.dp)
-                    .verticalScroll(rememberScrollState()),
-            ) {
-                ThemeCategory(
-                    theme = settings.theme,
-                    trueDarkTheme = settings.trueDarkTheme,
-                    onSuspendingInteraction = { viewModel.onSuspendingInteraction(it) },
-                )
-                HorizontalDivider(thickness = Dp.Hairline)
-                DisplayCategory(
-                    fontSize = settings.fontSize,
-                    keepScreenOn = settings.keepScreenOn,
-                    lineSeparator = settings.lineSeparator,
-                    checkeredMessages = settings.checkeredMessages,
-                    onInteraction = { viewModel.onInteraction(it) },
-                )
-                HorizontalDivider(thickness = Dp.Hairline)
-                ComponentsCategory(
-                    showInput = settings.showInput,
-                    autoDisableInput = settings.autoDisableInput,
-                    showChips = settings.showChips,
-                    showChangelogs = settings.showChangelogs,
-                    onInteraction = { viewModel.onInteraction(it) },
-                )
-                Spacer(Modifier.height(WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()))
-            }
+                .fillMaxSize()
+                .padding(padding)
+                .verticalScroll(rememberScrollState()),
+        ) {
+            ThemeCategory(
+                theme = settings.theme,
+                trueDarkTheme = settings.trueDarkTheme,
+                onInteraction = onSuspendingInteraction,
+            )
+            HorizontalDivider(thickness = Dp.Hairline)
+            DisplayCategory(
+                fontSize = settings.fontSize,
+                keepScreenOn = settings.keepScreenOn,
+                lineSeparator = settings.lineSeparator,
+                checkeredMessages = settings.checkeredMessages,
+                onInteraction = onInteraction,
+            )
+            HorizontalDivider(thickness = Dp.Hairline)
+            ComponentsCategory(
+                showInput = settings.showInput,
+                autoDisableInput = settings.autoDisableInput,
+                showChips = settings.showChips,
+                showChangelogs = settings.showChangelogs,
+                onInteraction = onInteraction,
+            )
+            NavigationBarSpacer()
         }
     }
 }
@@ -223,7 +222,7 @@ private fun DisplayCategory(
             value = value,
             range = 10f..40f,
             onDrag = { value = it },
-            onDragFinished = { onInteraction(FontSizeChanged(value.roundToInt())) },
+            onDragFinished = { onInteraction(FontSize(value.roundToInt())) },
             summary = summary,
         )
 
@@ -250,7 +249,7 @@ private fun DisplayCategory(
 private fun ThemeCategory(
     theme: ThemePreference,
     trueDarkTheme: Boolean,
-    onSuspendingInteraction: suspend (AppearanceSettingsInteraction) -> Unit,
+    onInteraction: suspend (AppearanceSettingsInteraction) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     var themeDialog by remember { mutableStateOf(false) }
@@ -275,7 +274,7 @@ private fun ThemeCategory(
                 onChanged = {
                     scope.launch {
                         activity ?: return@launch
-                        onSuspendingInteraction(ThemeChanged(it))
+                        onInteraction(Theme(it))
                         sheetState.hide()
                         themeDialog = false
                         setDarkMode(it, activity)
@@ -292,7 +291,7 @@ private fun ThemeCategory(
             onClick = {
                 scope.launch {
                     activity ?: return@launch
-                    onSuspendingInteraction(TrueDarkThemeChanged(it))
+                    onInteraction(TrueDarkTheme(it))
                     ActivityCompat.recreate(activity)
                 }
             }

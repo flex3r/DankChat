@@ -289,7 +289,7 @@ class MainViewModel(
     }.stateIn(viewModelScope, started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), InputState.Disconnected)
 
     val canType: StateFlow<Boolean> = combine(connectionState, fullScreenSheetState) { connectionState, fullScreenSheetState ->
-        val canTypeInConnectionState = connectionState == ConnectionState.CONNECTED || !appearanceSettingsDataStore.autoDisableInput
+        val canTypeInConnectionState = connectionState == ConnectionState.CONNECTED || !appearanceSettingsDataStore.current().autoDisableInput
         (fullScreenSheetState != FullScreenSheetState.Mention && canTypeInConnectionState)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 

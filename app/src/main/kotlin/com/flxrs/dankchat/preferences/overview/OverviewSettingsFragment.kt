@@ -21,7 +21,6 @@ import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -105,7 +104,6 @@ class OverviewSettingsFragment : Fragment() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun OverviewSettings(
     isLoggedIn: Boolean,
@@ -155,7 +153,7 @@ private fun OverviewSettings(
                 onNavigateRequested(R.id.action_overviewSettingsFragment_to_toolsSettingsFragment)
             })
             PreferenceItem(stringResource(R.string.preference_developer_header), Icons.Default.DeveloperMode, onClick = {
-                onNavigateRequested(R.id.action_overviewSettingsFragment_to_streamsSettingsFragment)
+                onNavigateRequested(R.id.action_overviewSettingsFragment_to_developerSettingsFragment)
             })
 
             AnimatedVisibility(hasChangelog) {

@@ -206,7 +206,7 @@ class ChatAdapter(
 
     private fun TextView.handleNoticeMessage(message: NoticeMessage, holder: ViewHolder) {
         val background = when {
-            appearanceSettingsDataStore.checkeredMessages && holder.isAlternateBackground -> MaterialColors.layer(
+            appearanceSettingsDataStore.current().checkeredMessages && holder.isAlternateBackground -> MaterialColors.layer(
                 this,
                 android.R.attr.colorBackground,
                 R.attr.colorSurfaceInverse,
@@ -226,7 +226,7 @@ class ChatAdapter(
             else                                   -> SpannableStringBuilder().append(message.message)
         }
 
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, appearanceSettingsDataStore.fontSize)
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, appearanceSettingsDataStore.current().fontSize.toFloat())
         text = withTime
     }
 
@@ -235,7 +235,7 @@ class ChatAdapter(
         val shouldHighlight = firstHighlightType == HighlightType.Subscription || firstHighlightType == HighlightType.Announcement
         val background = when {
             shouldHighlight                                                               -> ContextCompat.getColor(context, R.color.color_sub_highlight)
-            appearanceSettingsDataStore.checkeredMessages && holder.isAlternateBackground -> MaterialColors.layer(
+            appearanceSettingsDataStore.current().checkeredMessages && holder.isAlternateBackground -> MaterialColors.layer(
                 this,
                 android.R.attr.colorBackground,
                 R.attr.colorSurfaceInverse,
@@ -255,13 +255,13 @@ class ChatAdapter(
             else                                   -> SpannableStringBuilder().append(message.message)
         }
 
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, appearanceSettingsDataStore.fontSize)
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, appearanceSettingsDataStore.current().fontSize.toFloat())
         text = withTime
     }
 
     private fun TextView.handleSystemMessage(message: SystemMessage, holder: ViewHolder) {
         val background = when {
-            appearanceSettingsDataStore.checkeredMessages && holder.isAlternateBackground -> MaterialColors.layer(
+            appearanceSettingsDataStore.current().checkeredMessages && holder.isAlternateBackground -> MaterialColors.layer(
                 this,
                 android.R.attr.colorBackground,
                 R.attr.colorSurfaceInverse,
@@ -310,13 +310,13 @@ class ChatAdapter(
             else                                   -> SpannableStringBuilder().append(systemMessageText)
         }
 
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, appearanceSettingsDataStore.fontSize)
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, appearanceSettingsDataStore.current().fontSize.toFloat())
         text = withTime
     }
 
     private fun TextView.handleModerationMessage(message: ModerationMessage, holder: ViewHolder) {
         val background = when {
-            appearanceSettingsDataStore.checkeredMessages && holder.isAlternateBackground -> MaterialColors.layer(
+            appearanceSettingsDataStore.current().checkeredMessages && holder.isAlternateBackground -> MaterialColors.layer(
                 this,
                 android.R.attr.colorBackground,
                 R.attr.colorSurfaceInverse,
@@ -338,7 +338,7 @@ class ChatAdapter(
             else                                   -> SpannableStringBuilder().append(systemMessage)
         }
 
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, appearanceSettingsDataStore.fontSize)
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, appearanceSettingsDataStore.current().fontSize.toFloat())
         text = withTime
     }
 
@@ -347,7 +347,7 @@ class ChatAdapter(
         holder.binding.itemLayout.setBackgroundColor(background)
         setRippleBackground(background, enableRipple = false)
 
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, appearanceSettingsDataStore.fontSize)
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, appearanceSettingsDataStore.current().fontSize.toFloat())
         val baseHeight = getBaseHeight(textSize)
 
         holder.scope.launch(holder.coroutineHandler) {
@@ -389,14 +389,14 @@ class ChatAdapter(
         isClickable = false
         movementMethod = LongClickLinkMovementMethod
         (text as? Spannable)?.clearSpans()
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, appearanceSettingsDataStore.fontSize)
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, appearanceSettingsDataStore.current().fontSize.toFloat())
         val textColor = MaterialColors.getColor(textView, R.attr.colorOnSurface)
         setTextColor(textColor)
 
         val baseHeight = getBaseHeight(textSize)
         val scaleFactor = baseHeight * SCALE_FACTOR_CONSTANT
         val background = when {
-            appearanceSettingsDataStore.checkeredMessages && holder.isAlternateBackground -> MaterialColors.layer(
+            appearanceSettingsDataStore.current().checkeredMessages && holder.isAlternateBackground -> MaterialColors.layer(
                 textView,
                 android.R.attr.colorBackground,
                 R.attr.colorSurfaceInverse,
@@ -561,14 +561,14 @@ class ChatAdapter(
         movementMethod = LongClickLinkMovementMethod
         (text as? Spannable)?.clearSpans()
 
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, appearanceSettingsDataStore.fontSize)
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, appearanceSettingsDataStore.current().fontSize.toFloat())
 
         val baseHeight = getBaseHeight(textSize)
         val scaleFactor = baseHeight * SCALE_FACTOR_CONSTANT
         val bgColor = when {
             timedOut && !dankChatPreferenceStore.showTimedOutMessages                     -> ContextCompat.getColor(context, android.R.color.transparent)
             highlights.isNotEmpty()                                                       -> highlights.toBackgroundColor(context)
-            appearanceSettingsDataStore.checkeredMessages && holder.isAlternateBackground -> MaterialColors.layer(
+            appearanceSettingsDataStore.current().checkeredMessages && holder.isAlternateBackground -> MaterialColors.layer(
                 textView,
                 android.R.attr.colorBackground,
                 R.attr.colorSurfaceInverse,

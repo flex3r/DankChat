@@ -36,10 +36,10 @@ class DankChatViewModel(
     private val _validationResult = Channel<ValidationResult>(Channel.BUFFERED)
     val validationResult get() = _validationResult.receiveAsFlow()
 
-    val isTrueDarkModeEnabled get() = appearanceSettingsDataStore.trueDarkTheme
+    val isTrueDarkModeEnabled get() = appearanceSettingsDataStore.current().trueDarkTheme
     val keepScreenOn = appearanceSettingsDataStore.settings
         .map { it.keepScreenOn }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5.seconds), appearanceSettingsDataStore.keepScreenOn)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5.seconds), appearanceSettingsDataStore.current().keepScreenOn)
 
     fun init(tryReconnect: Boolean) {
         if (tryReconnect && started) {

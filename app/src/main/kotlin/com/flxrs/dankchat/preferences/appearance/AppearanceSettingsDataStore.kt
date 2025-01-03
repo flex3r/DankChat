@@ -65,17 +65,8 @@ class AppearanceSettingsDataStore(
         migrations = listOf(initialMigration),
     )
 
-    private fun <T> getBlocking(field: (AppearanceSettings) -> T) = runBlocking { field(settings.first()) }
-
     val settings = dataStore.safeData(AppearanceSettings())
-    val current = runBlocking { settings.first() }
-
-    val trueDarkTheme: Boolean get() = getBlocking(AppearanceSettings::trueDarkTheme)
-    val fontSize: Float get() = getBlocking(AppearanceSettings::fontSize).toFloat()
-    val keepScreenOn: Boolean get() = getBlocking(AppearanceSettings::keepScreenOn)
-    val checkeredMessages: Boolean get() = getBlocking(AppearanceSettings::checkeredMessages)
-    val autoDisableInput: Boolean get() = getBlocking(AppearanceSettings::autoDisableInput)
-    val showChangelogs: Boolean get() = getBlocking(AppearanceSettings::showChangelogs)
+    fun current() = runBlocking { settings.first() }
 
     suspend fun update(transform: suspend (AppearanceSettings) -> AppearanceSettings) {
         runCatching { dataStore.updateData(transform) }

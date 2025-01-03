@@ -368,7 +368,7 @@ class DankChatPreferenceStore(
     }
 
     fun shouldShowChangelog(): Boolean {
-        if (!appearanceSettingsDataStore.showChangelogs) {
+        if (!appearanceSettingsDataStore.current().showChangelogs) {
             setCurrentInstalledVersionCode()
             return false
         }

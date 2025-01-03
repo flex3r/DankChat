@@ -65,11 +65,13 @@ fun SliderPreferenceItem(
     isEnabled: Boolean = true,
     summary: String? = null,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
     VerticalPreferenceItemWrapper(
         title = title,
         icon = null,
         summary = summary,
         isEnabled = isEnabled,
+        interactionSource = interactionSource,
         content = {
             Row(
                 horizontalArrangement = Arrangement.Center,
@@ -82,6 +84,7 @@ fun SliderPreferenceItem(
                     onValueChangeFinished = onDragFinished,
                     valueRange = range,
                     steps = range.endInclusive.toInt() - range.start.toInt() - 1,
+                    interactionSource = interactionSource,
                     modifier = Modifier
                         .weight(1f)
                         .padding(top = 4.dp),
@@ -153,6 +156,7 @@ private fun VerticalPreferenceItemWrapper(
     summary: String? = null,
     isEnabled: Boolean = true,
     onClick: () -> Unit = {},
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     content: @Composable ColumnScope.() -> Unit = {},
 ) {
     Column(
@@ -162,7 +166,7 @@ private fun VerticalPreferenceItemWrapper(
             .clickable(
                 enabled = isEnabled,
                 onClick = onClick,
-                interactionSource = remember { MutableInteractionSource() },
+                interactionSource = interactionSource,
                 indication = ripple(),
             )
             .padding(horizontal = 16.dp),
