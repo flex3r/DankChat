@@ -7,7 +7,7 @@ ktor = "3.0.3"
 coil = "3.0.4"
 okhttp = "5.0.0-alpha.14"
 ksp = "2.1.0-1.0.29"
-hilt = "2.54"
+hilt = "2.55"
 
 androidGradlePlugin = "8.7.3"
 androidDesugarLibs = "2.1.4"
