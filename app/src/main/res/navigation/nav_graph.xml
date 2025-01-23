@@ -44,7 +44,9 @@
         android:label="ChatFragment">
         <argument
             android:name="channel"
-            app:argType="com.flxrs.dankchat.data.UserName" />
+            android:defaultValue="@null"
+            app:argType="com.flxrs.dankchat.data.UserName"
+            app:nullable="true" />
     </fragment>
     <fragment
         android:id="@+id/mentionChatFragment"
@@ -119,7 +121,7 @@
         android:label="NotificationsSettingsFragment" />
     <fragment
         android:id="@+id/chatSettingsFragment"
-        android:name="com.flxrs.dankchat.preferences.ui.ChatSettingsFragment"
+        android:name="com.flxrs.dankchat.preferences.chat.ChatSettingsFragment"
         android:label="ChatSettingsFragment" />
 
     <fragment

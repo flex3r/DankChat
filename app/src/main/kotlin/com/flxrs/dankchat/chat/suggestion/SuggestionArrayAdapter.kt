@@ -10,14 +10,14 @@ import android.widget.TextView
 import coil3.dispose
 import coil3.size.Scale
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import com.flxrs.dankchat.utils.extensions.getDrawableAndSetSurfaceTint
 import com.flxrs.dankchat.utils.extensions.loadImage
 import com.flxrs.dankchat.utils.extensions.replaceAll
 
 class SuggestionsArrayAdapter(
     context: Context,
-    private val preferenceStore: DankChatPreferenceStore,
+    private val chatSettingsDataStore: ChatSettingsDataStore,
     private val onCount: (count: Int) -> Unit
 ) : ArrayAdapter<Suggestion>(context, R.layout.emote_suggestion_item, R.id.suggestion_text) {
     private val emotes = mutableListOf<Suggestion.EmoteSuggestion>()
@@ -74,8 +74,8 @@ class SuggestionsArrayAdapter(
             val commandsSuggestions = commands.filterCommands(constraintString)
 
             val suggestions = when {
-                preferenceStore.shouldPreferEmoteSuggestions -> emoteSuggestions + userSuggestions + commandsSuggestions
-                else                                         -> userSuggestions + emoteSuggestions + commandsSuggestions
+                chatSettingsDataStore.current().preferEmoteSuggestions -> emoteSuggestions + userSuggestions + commandsSuggestions
+                else                                                   -> userSuggestions + emoteSuggestions + commandsSuggestions
             }
 
             return FilterResults().apply {

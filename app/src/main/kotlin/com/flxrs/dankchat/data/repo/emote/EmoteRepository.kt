@@ -39,7 +39,7 @@ import com.flxrs.dankchat.data.twitch.message.Message
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
-import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import com.flxrs.dankchat.utils.MultiCallback
 import com.flxrs.dankchat.utils.extensions.appendSpacesBetweenEmojiGroup
 import com.flxrs.dankchat.utils.extensions.chunkedBy
@@ -58,7 +58,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 @Single
 class EmoteRepository(
     private val dankChatApiClient: DankChatApiClient,
-    private val preferences: DankChatPreferenceStore,
+    private val chatSettingsDataStore: ChatSettingsDataStore,
 ) {
     private val ffzModBadges = ConcurrentHashMap<UserName, String?>()
     private val ffzVipBadges = ConcurrentHashMap<UserName, String?>()
@@ -652,8 +652,8 @@ class EmoteRepository(
     }
 
     private fun List<SevenTVEmoteDto>.filterUnlistedIfEnabled(): List<SevenTVEmoteDto> = when {
-        preferences.unlistedSevenTVEmotesEnabled -> this
-        else                                     -> filter { it.data?.listed == true }
+        chatSettingsDataStore.current().allowUnlistedSevenTvEmotes -> this
+        else                                                       -> filter { it.data?.listed == true }
     }
 
     private val String.withLeadingHttps: String

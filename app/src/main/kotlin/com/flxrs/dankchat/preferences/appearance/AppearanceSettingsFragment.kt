@@ -27,12 +27,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -63,8 +61,6 @@ import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsInteraction.T
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsInteraction.TrueDarkTheme
 import com.flxrs.dankchat.preferences.components.NavigationBarSpacer
 import com.flxrs.dankchat.preferences.components.PreferenceCategory
-import com.flxrs.dankchat.preferences.components.PreferenceCategoryTitle
-import com.flxrs.dankchat.preferences.components.PreferenceItem
 import com.flxrs.dankchat.preferences.components.PreferenceListDialog
 import com.flxrs.dankchat.preferences.components.SliderPreferenceItem
 import com.flxrs.dankchat.preferences.components.SwitchPreferenceItem
@@ -175,7 +171,7 @@ private fun ComponentsCategory(
     onInteraction: (AppearanceSettingsInteraction) -> Unit,
 ) {
     PreferenceCategory(
-        title = { PreferenceCategoryTitle(text = stringResource(R.string.preference_components_group_title)) }
+        title = stringResource(R.string.preference_components_group_title),
     ) {
         SwitchPreferenceItem(
             title = stringResource(R.string.preference_show_input_title),
@@ -212,7 +208,7 @@ private fun DisplayCategory(
     onInteraction: (AppearanceSettingsInteraction) -> Unit,
 ) {
     PreferenceCategory(
-        title = { PreferenceCategoryTitle(stringResource(R.string.preference_display_group_title)) }
+        title = stringResource(R.string.preference_display_group_title),
     ) {
         val context = LocalContext.current
         var value by remember(fontSize) { mutableFloatStateOf(fontSize.toFloat()) }
@@ -252,37 +248,26 @@ private fun ThemeCategory(
     onInteraction: suspend (AppearanceSettingsInteraction) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    var themeDialog by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
     val themeState = rememberThemeState(theme, trueDarkTheme, isSystemInDarkTheme())
     PreferenceCategory(
-        title = { PreferenceCategoryTitle(stringResource(R.string.preference_theme_title)) }
+        title = stringResource(R.string.preference_theme_title),
     ) {
-        PreferenceItem(
+        val activity = LocalActivity.current
+        PreferenceListDialog(
             title = stringResource(R.string.preference_theme_title),
             summary = themeState.summary,
-            onClick = { themeDialog = true },
             isEnabled = themeState.themeSwitcherEnabled,
-        )
-        val activity = LocalActivity.current
-        if (themeDialog) {
-            PreferenceListDialog(
-                values = themeState.values,
-                entries = themeState.entries,
-                selected = themeState.preference,
-                onDismissRequested = { themeDialog = false },
-                onChanged = {
-                    scope.launch {
-                        activity ?: return@launch
-                        onInteraction(Theme(it))
-                        sheetState.hide()
-                        themeDialog = false
-                        setDarkMode(it, activity)
-                    }
+            values = themeState.values,
+            entries = themeState.entries,
+            selected = themeState.preference,
+            onChanged = {
+                scope.launch {
+                    activity ?: return@launch
+                    onInteraction(Theme(it))
+                    setDarkMode(it, activity)
                 }
-            )
-        }
-
+            }
+        )
         SwitchPreferenceItem(
             title = stringResource(R.string.preference_true_dark_theme_title),
             summary = stringResource(R.string.preference_true_dark_theme_summary),

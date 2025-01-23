@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.preferences.ui.customlogin
+package com.flxrs.dankchat.preferences.developer.customlogin
 
 import com.flxrs.dankchat.data.api.auth.dto.ValidateDto
 
@@ -15,5 +15,6 @@ sealed interface CustomLoginState {
         val token: String,
         val dialogOpen: Boolean
     ) : CustomLoginState
+
     data class Failure(val error: String) : CustomLoginState
 }

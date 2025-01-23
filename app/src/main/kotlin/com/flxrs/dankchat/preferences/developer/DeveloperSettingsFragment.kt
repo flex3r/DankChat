@@ -18,6 +18,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextObfuscationMode
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -32,6 +35,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedSecureTextField
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -60,8 +64,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.view.doOnPreDraw
@@ -69,15 +71,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.fragment.findNavController
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.preferences.components.ExpandablePreferenceItem
 import com.flxrs.dankchat.preferences.components.NavigationBarSpacer
-import com.flxrs.dankchat.preferences.components.PreferenceItem
 import com.flxrs.dankchat.preferences.components.SwitchPreferenceItem
-import com.flxrs.dankchat.preferences.ui.customlogin.CustomLoginState
-import com.flxrs.dankchat.preferences.ui.customlogin.CustomLoginViewModel
+import com.flxrs.dankchat.preferences.developer.customlogin.CustomLoginState
+import com.flxrs.dankchat.preferences.developer.customlogin.CustomLoginViewModel
 import com.flxrs.dankchat.theme.DankChatTheme
 import com.flxrs.dankchat.utils.extensions.truncate
 import com.google.android.material.transition.MaterialFadeThrough
 import com.jakewharton.processphoenix.ProcessPhoenix
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -108,9 +111,9 @@ class DeveloperSettingsFragment : Fragment() {
                 val snackbarHostState = remember { SnackbarHostState() }
 
                 LaunchedEffect(viewModel) {
-                    viewModel.events.collect {
+                    viewModel.events.collectLatest {
                         when (it) {
-                            DeveloperSettingsEvents.RestartRequired -> {
+                            DeveloperSettingsEvent.RestartRequired -> {
                                 val result = snackbarHostState.showSnackbar(
                                     message = restartRequiredTitle,
                                     actionLabel = restartRequiredAction,
@@ -186,32 +189,21 @@ private fun DeveloperSettings(
                 isChecked = settings.bypassCommandHandling,
                 onClick = { onInteraction(DeveloperSettingsInteraction.BypassCommandHandling(it)) },
             )
-            var showCustomLoginBottomSheet by remember { mutableStateOf(false) }
-            PreferenceItem(
-                title = stringResource(R.string.preference_custom_login_title),
-                onClick = { showCustomLoginBottomSheet = true },
-            )
-            if (showCustomLoginBottomSheet) {
+            ExpandablePreferenceItem(title = stringResource(R.string.preference_custom_login_title)) {
                 CustomLoginBottomSheet(
-                    onDismissRequested = { showCustomLoginBottomSheet = false },
+                    onDismissRequested = ::dismiss,
                     onRestartRequiredRequested = {
-                        showCustomLoginBottomSheet = false
+                        dismiss()
                         onInteraction(DeveloperSettingsInteraction.RestartRequired)
                     }
                 )
             }
-
-            var showCustomRecentMessagesHostDialog by remember { mutableStateOf(false) }
-            PreferenceItem(
-                title = stringResource(R.string.preference_rm_host_title),
-                onClick = { showCustomRecentMessagesHostDialog = true },
-            )
-            if (showCustomRecentMessagesHostDialog) {
+            ExpandablePreferenceItem(title = stringResource(R.string.preference_rm_host_title)) {
                 CustomRecentMessagesHostBottomSheet(
                     initialHost = settings.customRecentMessagesHost,
-                    onDismissRequested = {
-                        showCustomRecentMessagesHostDialog = false
-                        onInteraction(DeveloperSettingsInteraction.CustomRecentMessagesHost(it))
+                    onInteraction = {
+                        dismiss()
+                        onInteraction(it)
                     },
                 )
             }
@@ -224,10 +216,10 @@ private fun DeveloperSettings(
 @Composable
 private fun CustomRecentMessagesHostBottomSheet(
     initialHost: String,
-    onDismissRequested: (String) -> Unit
+    onInteraction: (DeveloperSettingsInteraction) -> Unit,
 ) {
     var host by remember(initialHost) { mutableStateOf(initialHost) }
-    ModalBottomSheet(onDismissRequest = { onDismissRequested(host) }) {
+    ModalBottomSheet(onDismissRequest = { onInteraction(DeveloperSettingsInteraction.CustomRecentMessagesHost(host)) }) {
         Text(
             text = stringResource(R.string.preference_rm_host_title),
             textAlign = TextAlign.Center,
@@ -269,7 +261,7 @@ private fun CustomLoginBottomSheet(
     val scope = rememberCoroutineScope()
     val customLoginViewModel = koinInject<CustomLoginViewModel>()
     val state = customLoginViewModel.customLoginState.collectAsStateWithLifecycle().value
-    var token by remember { mutableStateOf(customLoginViewModel.getToken()) }
+    val token = rememberTextFieldState(customLoginViewModel.getToken())
     var showScopesDialog by remember { mutableStateOf(false) }
 
     val error = when (state) {
@@ -315,23 +307,24 @@ private fun CustomLoginBottomSheet(
                     content = { Text(stringResource(R.string.custom_login_show_scopes)) },
                 )
                 TextButton(
-                    onClick = { token = customLoginViewModel.getToken() },
+                    onClick = { token.setTextAndPlaceCursorAtEnd(customLoginViewModel.getToken()) },
                     content = { Text(stringResource(R.string.reset)) },
                 )
             }
 
             var showPassword by remember { mutableStateOf(false) }
-            OutlinedTextField(
+            OutlinedSecureTextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp),
-                value = token,
-                onValueChange = { token = it },
+                state = token,
+                textObfuscationMode = when {
+                    showPassword -> TextObfuscationMode.Visible
+                    else         -> TextObfuscationMode.Hidden
+                },
                 label = { Text(stringResource(R.string.oauth_token)) },
-                supportingText = { error?.let { Text(it) } },
                 isError = error != null,
-                maxLines = 1,
-                visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                supportingText = { error?.let { Text(it) } },
                 trailingIcon = {
                     IconButton(
                         onClick = { showPassword = !showPassword },
@@ -353,7 +346,7 @@ private fun CustomLoginBottomSheet(
             AnimatedVisibility(visible = state !is CustomLoginState.Loading, modifier = Modifier.fillMaxWidth()) {
                 TextButton(
                     onClick = {
-                        scope.launch { customLoginViewModel.validateCustomLogin(token) }
+                        scope.launch { customLoginViewModel.validateCustomLogin(token.text.toString()) }
                     },
                     contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
                     content = {

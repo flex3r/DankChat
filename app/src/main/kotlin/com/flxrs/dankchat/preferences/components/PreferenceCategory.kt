@@ -19,14 +19,14 @@ import com.flxrs.dankchat.theme.DankChatTheme
 
 @Composable
 fun PreferenceCategory(
-    title: @Composable () -> Unit,
+    title: String,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
         modifier = Modifier.padding(top = 16.dp),
     ) {
         Box(Modifier.padding(horizontal = 16.dp)) {
-            title()
+            PreferenceCategoryTitle(title)
         }
         content()
     }
@@ -74,7 +74,7 @@ fun PreferenceCategoryWithItemsPreview(@PreviewParameter(provider = LoremIpsum::
     DankChatTheme {
         Surface {
             PreferenceCategory(
-                title = { PreferenceCategoryTitle("Title") },
+                title = "Title",
                 content = {
                     PreferenceItem("Appearence", Icons.Default.Palette)
                 }

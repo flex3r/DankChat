@@ -10,9 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun NavigationBarSpacer() {
-    Spacer(
-        modifier = Modifier
-            .height(16.dp + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding())
-    )
+fun NavigationBarSpacer(modifier: Modifier = Modifier) {
+    Spacer(modifier = modifier.height(16.dp + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()))
 }

@@ -4,7 +4,6 @@ package com.flxrs.dankchat.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.annotation.StringRes
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.BuildConfig
@@ -17,15 +16,8 @@ import com.flxrs.dankchat.data.toDisplayName
 import com.flxrs.dankchat.data.toUserId
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.toUserNames
-import com.flxrs.dankchat.data.twitch.badge.BadgeType
-import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
-import com.flxrs.dankchat.preferences.command.CommandDto
-import com.flxrs.dankchat.preferences.command.CommandDto.Companion.toEntryItem
-import com.flxrs.dankchat.preferences.command.CommandItem
 import com.flxrs.dankchat.preferences.model.ChannelWithRename
-import com.flxrs.dankchat.preferences.model.LiveUpdatesBackgroundBehavior
-import com.flxrs.dankchat.preferences.model.Preference
 import com.flxrs.dankchat.preferences.multientry.MultiEntryDto
 import com.flxrs.dankchat.preferences.upload.ImageUploader
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
@@ -35,8 +27,6 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.koin.core.annotation.Single
-import kotlin.time.Duration.Companion.hours
-import kotlin.time.Duration.Companion.minutes
 
 @Single
 class DankChatPreferenceStore(
@@ -137,113 +127,17 @@ class DankChatPreferenceStore(
 
     val secretDankerModeClicks: Int = SECRET_DANKER_MODE_CLICKS
 
-    val commandsAsFlow: Flow<List<CommandItem.Entry>> = callbackFlow {
-        val commandsKey = context.getString(R.string.preference_commands_key)
-        send(getCommandsFromPreferences(commandsKey))
-
-        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (key == commandsKey) {
-                trySend(getCommandsFromPreferences(key))
-            }
-        }
-
-        defaultPreferences.registerOnSharedPreferenceChangeListener(listener)
-        awaitClose { defaultPreferences.unregisterOnSharedPreferenceChangeListener(listener) }
-    }
-
-    val visibleThirdPartyEmotes: Set<ThirdPartyEmoteType>
-        get() {
-            val entries = defaultPreferences.getStringSet(
-                context.getString(R.string.preference_visible_emotes_key),
-                context.resources.getStringArray(R.array.emotes_entry_values).toSet()
-            ).orEmpty()
-            return ThirdPartyEmoteType.mapFromPreferenceSet(entries)
-        }
-
-    val unlistedSevenTVEmotesEnabled: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_unlisted_emotes_key), false)
-
-    val shouldLoadHistory: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_load_message_history_key), true)
-
-    val shouldLoadMessagesOnReconnect: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_load_messages_on_reconnect__key), true)
-
-    val shouldLoadSupibot: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_supibot_suggestions_key), false)
-
-    val scrollbackLength: Int
-        get() = correctScrollbackLength(defaultPreferences.getInt(context.getString(R.string.preference_scrollback_length_key), 10))
-
-    val fetchStreamInfoEnabled: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_fetch_streams_key), true)
-
-    val shouldPreferEmoteSuggestions: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_prefer_emote_suggestions_key), false)
-
-    val repeatedSendingEnabled: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_repeated_sending_key), false)
-
-    val retainWebViewEnabled: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_retain_webview_new_key), false)
-
     val mentionEntries: Set<String>
         get() = defaultPreferences.getStringSet(context.getString(R.string.preference_custom_mentions_key), emptySet()).orEmpty()
 
     val blackListEntries: Set<String>
         get() = defaultPreferences.getStringSet(context.getString(R.string.preference_blacklist_key), emptySet()).orEmpty()
 
-    val showTimestamps: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_timestamp_key), true)
-
-    val showTimedOutMessages: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_show_timed_out_messages_key), true)
-
-    val showUsername: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_show_username_key), true)
-
-    val animateGifs: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_animate_gifs_key), true)
-
-    val visibleBadgeTypes: Set<BadgeType>
-        get() {
-            val raw = defaultPreferences.getStringSet(
-                context.getString(R.string.preference_visible_badges_key),
-                context.resources.getStringArray(R.array.badges_entry_values).toSet()
-            ).orEmpty()
-            return BadgeType.mapFromPreferenceSet(raw)
-        }
-
-    val debugEnabled: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_debug_mode_key), false)
-
     val createNotifications: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_notification_key), true)
 
     val createWhisperNotifications: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_notification_whisper_key), true)
-
-    val bypassCommandHandling: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_bypass_command_handling_key), false)
-
-    val sevenTVEventApiEnabled: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_7tv_live_updates_key), true)
-
-    val pictureInPictureModeEnabled: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_pip_key), false)
-    val pictureInPictureModeEnabledFlow: Flow<Boolean> = booleanPreferenceFlowOf(R.string.preference_pip_key, default = false)
-
-    val sevenTVEventApiBackgroundBehavior: LiveUpdatesBackgroundBehavior
-        get() = when (defaultPreferences.getString(context.getString(R.string.preference_7tv_live_updates_timeout_key), null)) {
-            context.getString(R.string.preference_7tv_live_updates_entry_never_key)          -> LiveUpdatesBackgroundBehavior.Never
-            context.getString(R.string.preference_7tv_live_updates_entry_always_key)         -> LiveUpdatesBackgroundBehavior.Always
-            context.getString(R.string.preference_7tv_live_updates_entry_one_minute_key)     -> LiveUpdatesBackgroundBehavior.Timeout(1.minutes)
-            context.getString(R.string.preference_7tv_live_updates_entry_five_minutes_key)   -> LiveUpdatesBackgroundBehavior.Timeout(5.minutes)
-            context.getString(R.string.preference_7tv_live_updates_entry_thirty_minutes_key) -> LiveUpdatesBackgroundBehavior.Timeout(30.minutes)
-            context.getString(R.string.preference_7tv_live_updates_entry_one_hour_key)       -> LiveUpdatesBackgroundBehavior.Timeout(1.hours)
-            else                                                                             -> LiveUpdatesBackgroundBehavior.Timeout(5.minutes) // default
-        }
-    val sevenTVEventApiEnabledFlow: Flow<Boolean> = booleanPreferenceFlowOf(R.string.preference_7tv_live_updates_key, default = true)
 
     val currentUserAndDisplayFlow: Flow<Pair<UserName?, DisplayName?>> = callbackFlow {
         send(userName to displayName)
@@ -255,40 +149,6 @@ class DankChatPreferenceStore(
 
         dankChatPreferences.registerOnSharedPreferenceChangeListener(listener)
         awaitClose { dankChatPreferences.unregisterOnSharedPreferenceChangeListener(listener) }
-    }
-
-    val preferenceFlow: Flow<Preference> = callbackFlow {
-        with(context) {
-            val roomStateKey = getString(R.string.preference_roomstate_key)
-            val streamInfoKey = getString(R.string.preference_streaminfo_key)
-            val loadSupibotKey = getString(R.string.preference_supibot_suggestions_key)
-            val scrollBackLengthKey = getString(R.string.preference_scrollback_length_key)
-            val timestampFormatKey = getString(R.string.preference_timestamp_format_key)
-            val fetchStreamsKey = getString(R.string.preference_fetch_streams_key)
-
-            send(Preference.RoomState(roomStateEnabled))
-            send(Preference.StreamInfo(showStreamInfoEnabled, updateTimer = false))
-            send(Preference.ScrollBack(scrollbackLength))
-            send(Preference.TimeStampFormat(timestampFormat))
-
-            val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-                val preference = when (key) {
-                    roomStateKey        -> Preference.RoomState(roomStateEnabled)
-                    streamInfoKey       -> Preference.StreamInfo(showStreamInfoEnabled, updateTimer = true)
-                    loadSupibotKey      -> Preference.SupibotSuggestions(shouldLoadSupibot)
-                    scrollBackLengthKey -> Preference.ScrollBack(scrollbackLength)
-                    timestampFormatKey  -> Preference.TimeStampFormat(timestampFormat)
-                    fetchStreamsKey     -> Preference.FetchStreams(fetchStreamInfoEnabled)
-                    else                -> null
-                }
-                if (preference != null) {
-                    trySend(preference)
-                }
-            }
-
-            defaultPreferences.registerOnSharedPreferenceChangeListener(listener)
-            awaitClose { defaultPreferences.unregisterOnSharedPreferenceChangeListener(listener) }
-        }
     }
 
     fun formatViewersString(viewers: Int, uptime: String): String = context.resources.getQuantityString(R.plurals.viewers_and_uptime, viewers, viewers, uptime)
@@ -403,43 +263,11 @@ class DankChatPreferenceStore(
             }
     }
 
-    private fun getCommandsFromPreferences(key: String): List<CommandItem.Entry> {
-        return defaultPreferences
-            .getStringSet(key, emptySet())
-            .orEmpty()
-            .mapNotNull { json.decodeOrNull<CommandDto>(it)?.toEntryItem() }
-    }
-
     private fun Map<UserName, UserName>.toJson(): String = json.encodeToString(this)
-
-    private val timestampFormat: String
-        get() = defaultPreferences.getString(context.getString(R.string.preference_timestamp_format_key), "HH:mm") ?: "HH:mm"
-
-    private val roomStateEnabled: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_roomstate_key), true)
-
-    private val showStreamInfoEnabled: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_streaminfo_key), true)
 
     private var lastViewedChangelogVersion: String?
         get() = dankChatPreferences.getString(LAST_INSTALLED_VERSION_KEY, null)
         set(value) = dankChatPreferences.edit { putString(LAST_INSTALLED_VERSION_KEY, value) }
-
-    private fun booleanPreferenceFlowOf(@StringRes key: Int, default: Boolean): Flow<Boolean> {
-        return callbackFlow {
-            val prefKey = context.getString(key)
-            send(defaultPreferences.getBoolean(prefKey, default))
-
-            val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-                if (key == prefKey) {
-                    trySend(defaultPreferences.getBoolean(prefKey, default))
-                }
-            }
-
-            defaultPreferences.registerOnSharedPreferenceChangeListener(listener)
-            awaitClose { defaultPreferences.unregisterOnSharedPreferenceChangeListener(listener) }
-        }
-    }
 
     companion object {
         private const val LOGGED_IN_KEY = "loggedIn"
@@ -467,12 +295,7 @@ class DankChatPreferenceStore(
         private const val UPLOADER_IMAGE_LINK_DEFAULT = "{link}"
         private const val UPLOADER_DELETE_LINK_DEFAULT = "{delete}"
 
-        private const val RM_HOST_DEFAULT = "https://recent-messages.robotty.de/api/v2/"
-
         private const val SECRET_DANKER_MODE_CLICKS = 5
-
-        private const val SCROLLBACK_LENGTH_STEP = 50
-        fun correctScrollbackLength(seekbarValue: Int): Int = seekbarValue * SCROLLBACK_LENGTH_STEP
 
         const val DEFAULT_CLIENT_ID = "xu7vd1i6tlr0ak45q1li2wdc0lrma8"
 

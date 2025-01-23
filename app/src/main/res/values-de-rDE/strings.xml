@@ -10,6 +10,7 @@
     <string name="add_dialog_title">Kanal hinzufügen</string>
     <string name="edit_dialog_title">Kanal umbenennen</string>
     <string name="dialog_ok">OK</string>
+    <string name="save">Speichern</string>
     <string name="dialog_cancel">Abbrechen</string>
     <string name="dialog_dismiss">Schließen</string>
     <string name="error_dialog_copy">Kopieren</string>

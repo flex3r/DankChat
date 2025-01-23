@@ -20,9 +20,10 @@ import com.flxrs.dankchat.data.repo.RecentUploadsRepository
 import com.flxrs.dankchat.data.repo.emote.EmoteRepository
 import com.flxrs.dankchat.data.repo.emote.Emotes
 import com.flxrs.dankchat.data.twitch.badge.toBadgeSets
-import com.flxrs.dankchat.data.twitch.emote.ThirdPartyEmoteType
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
+import com.flxrs.dankchat.preferences.chat.VisibleThirdPartyEmotes
 import com.flxrs.dankchat.utils.extensions.measureTimeAndLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -54,6 +55,7 @@ class DataRepository(
     private val emoteRepository: EmoteRepository,
     private val recentUploadsRepository: RecentUploadsRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
+    private val chatSettingsDataStore: ChatSettingsDataStore,
     dispatchersProvider: DispatchersProvider,
 ) {
 
@@ -166,7 +168,7 @@ class DataRepository(
     }
 
     suspend fun loadChannelFFZEmotes(channel: UserName, channelId: UserId) = withContext(Dispatchers.IO) {
-        if (ThirdPartyEmoteType.FrankerFaceZ !in dankChatPreferenceStore.visibleThirdPartyEmotes) {
+        if (VisibleThirdPartyEmotes.FFZ !in chatSettingsDataStore.current().visibleEmotes) {
             return@withContext
         }
 
@@ -178,7 +180,7 @@ class DataRepository(
     }
 
     suspend fun loadChannelBTTVEmotes(channel: UserName, channelDisplayName: DisplayName, channelId: UserId) = withContext(Dispatchers.IO) {
-        if (ThirdPartyEmoteType.BetterTTV !in dankChatPreferenceStore.visibleThirdPartyEmotes) {
+        if (VisibleThirdPartyEmotes.BTTV !in chatSettingsDataStore.current().visibleEmotes) {
             return@withContext
         }
 
@@ -190,7 +192,7 @@ class DataRepository(
     }
 
     suspend fun loadChannelSevenTVEmotes(channel: UserName, channelId: UserId) = withContext(Dispatchers.IO) {
-        if (ThirdPartyEmoteType.SevenTV !in dankChatPreferenceStore.visibleThirdPartyEmotes) {
+        if (VisibleThirdPartyEmotes.SevenTV !in chatSettingsDataStore.current().visibleEmotes) {
             return@withContext
         }
 
@@ -208,7 +210,7 @@ class DataRepository(
     }
 
     suspend fun loadGlobalFFZEmotes() = withContext(Dispatchers.IO) {
-        if (ThirdPartyEmoteType.FrankerFaceZ !in dankChatPreferenceStore.visibleThirdPartyEmotes) {
+        if (VisibleThirdPartyEmotes.FFZ !in chatSettingsDataStore.current().visibleEmotes) {
             return@withContext
         }
 
@@ -220,7 +222,7 @@ class DataRepository(
     }
 
     suspend fun loadGlobalBTTVEmotes() = withContext(Dispatchers.IO) {
-        if (ThirdPartyEmoteType.BetterTTV !in dankChatPreferenceStore.visibleThirdPartyEmotes) {
+        if (VisibleThirdPartyEmotes.BTTV !in chatSettingsDataStore.current().visibleEmotes) {
             return@withContext
         }
 
@@ -232,7 +234,7 @@ class DataRepository(
     }
 
     suspend fun loadGlobalSevenTVEmotes() = withContext(Dispatchers.IO) {
-        if (ThirdPartyEmoteType.SevenTV !in dankChatPreferenceStore.visibleThirdPartyEmotes) {
+        if (VisibleThirdPartyEmotes.SevenTV !in chatSettingsDataStore.current().visibleEmotes) {
             return@withContext
         }
 

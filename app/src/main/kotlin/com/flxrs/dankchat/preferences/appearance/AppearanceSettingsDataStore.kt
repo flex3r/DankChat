@@ -13,6 +13,7 @@ import com.flxrs.dankchat.utils.datastore.safeData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import org.koin.core.annotation.Single
 
@@ -37,12 +38,13 @@ class AppearanceSettingsDataStore(
 
     private val initialMigration = dankChatPreferencesMigration<AppearancePreferenceKeys, AppearanceSettings>(context) { acc, key, value ->
         when (key) {
-            AppearancePreferenceKeys.Theme             -> {
-                val themeValues = context.resources.getStringArray(R.array.theme_entry_values)
-                acc.copy(
-                    theme = value.mappedStringOrDefault(acc.theme) { ThemePreference.entries.getOrNull(themeValues.indexOf(it)) }
+            AppearancePreferenceKeys.Theme             -> acc.copy(
+                theme = value.mappedStringOrDefault(
+                    original = context.resources.getStringArray(R.array.theme_entry_values),
+                    enumEntries = ThemePreference.entries,
+                    default = acc.theme,
                 )
-            }
+            )
 
             AppearancePreferenceKeys.TrueDark          -> acc.copy(trueDarkTheme = value.booleanOrDefault(acc.trueDarkTheme))
             AppearancePreferenceKeys.FontSize          -> acc.copy(fontSize = value.intOrDefault(acc.fontSize))
@@ -66,6 +68,7 @@ class AppearanceSettingsDataStore(
     )
 
     val settings = dataStore.safeData(AppearanceSettings())
+    val lineSeparator = settings.map { it.lineSeparator }
     fun current() = runBlocking { settings.first() }
 
     suspend fun update(transform: suspend (AppearanceSettings) -> AppearanceSettings) {

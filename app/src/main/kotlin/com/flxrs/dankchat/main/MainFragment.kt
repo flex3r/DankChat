@@ -42,7 +42,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.FileProvider
-import androidx.core.content.edit
 import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.core.view.MenuProvider
@@ -95,6 +94,8 @@ import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.databinding.EditDialogBinding
 import com.flxrs.dankchat.databinding.MainFragmentBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
+import com.flxrs.dankchat.preferences.developer.DeveloperSettingsDataStore
 import com.flxrs.dankchat.preferences.model.ChannelWithRename
 import com.flxrs.dankchat.utils.createMediaFile
 import com.flxrs.dankchat.utils.extensions.awaitState
@@ -141,6 +142,9 @@ class MainFragment : Fragment() {
 
     private val mainViewModel: MainViewModel by viewModel()
     private val dankChatViewModel: DankChatViewModel by activityViewModel()
+    private val chatSettingsDataStore: ChatSettingsDataStore by inject()
+    private val developerSettingsDataStore: DeveloperSettingsDataStore by inject()
+    private val dankChatPreferences: DankChatPreferenceStore by inject()
     private val navController: NavController by lazy { findNavController() }
     private var bindingRef: MainFragmentBinding? = null
     private val binding get() = bindingRef!!
@@ -257,9 +261,6 @@ class MainFragment : Fragment() {
         binding.input.dismissDropDown()
     }
 
-    private val dankChatPreferences: DankChatPreferenceStore by inject()
-
-    private lateinit var preferenceListener: SharedPreferences.OnSharedPreferenceChangeListener
     private lateinit var preferences: SharedPreferences
     private lateinit var tabAdapter: ChatTabAdapter
     private lateinit var tabLayoutMediator: TabLayoutMediator
@@ -289,7 +290,7 @@ class MainFragment : Fragment() {
             }
 
             mainViewModel.uploadMedia(copy, imageCapture = false)
-        } catch (t: Throwable) {
+        } catch (_: Throwable) {
             copy.delete()
             showSnackBar(getString(R.string.snackbar_upload_failed))
         }
@@ -674,9 +675,6 @@ class MainFragment : Fragment() {
         fullscreenBottomSheetBehavior = null
         binding.chatViewpager.adapter = null
         bindingRef = null
-        if (::preferences.isInitialized) {
-            preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
-        }
         super.onDestroyView()
     }
 
@@ -849,7 +847,9 @@ class MainFragment : Fragment() {
     private fun handleMessageHistoryDisclaimerResult(result: Boolean) {
         dankChatPreferences.setCurrentInstalledVersionCode()
         dankChatPreferences.hasMessageHistoryAcknowledged = true
-        preferences.edit { putBoolean(getString(R.string.preference_load_message_history_key), result) }
+        lifecycleScope.launch {
+            chatSettingsDataStore.update { it.copy(loadMessageHistory = result) }
+        }
         mainViewModel.loadData()
     }
 
@@ -956,7 +956,7 @@ class MainFragment : Fragment() {
     }
 
     private fun handleErrorEvent(event: MainEvent.Error) {
-        if (preferences.getBoolean(getString(R.string.preference_debug_mode_key), false)) {
+        if (developerSettingsDataStore.current().debugMode) {
             binding.root.showErrorDialog(event.throwable)
         }
     }
@@ -980,7 +980,7 @@ class MainFragment : Fragment() {
             mediaFile = currentMediaUri.toFile()
             currentMediaUri = Uri.EMPTY
             mainViewModel.uploadMedia(mediaFile, imageCapture)
-        } catch (e: IOException) {
+        } catch (_: IOException) {
             currentMediaUri = Uri.EMPTY
             mediaFile?.delete()
             showSnackBar(getString(R.string.snackbar_upload_failed))
@@ -1069,24 +1069,13 @@ class MainFragment : Fragment() {
     }
 
     private fun initPreferences(context: Context) {
-        val suggestionsKey = getString(R.string.preference_suggestions_key)
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.oAuthKey.isNullOrBlank()) {
             dankChatPreferences.clearLogin()
         }
 
         preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        if (::preferenceListener.isInitialized) {
-            preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
-        }
-
-        preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
-            when (key) {
-                suggestionsKey -> binding.input.setSuggestionAdapter(p.getBoolean(key, true), suggestionAdapter)
-            }
-        }
-        preferences.apply {
-            registerOnSharedPreferenceChangeListener(preferenceListener)
-            binding.input.setSuggestionAdapter(getBoolean(suggestionsKey, true), suggestionAdapter)
+        collectFlow(chatSettingsDataStore.suggestions) {
+            binding.input.setSuggestionAdapter(it, suggestionAdapter)
         }
     }
 
@@ -1319,7 +1308,7 @@ class MainFragment : Fragment() {
     private fun DankChatInputLayout.setupSendButton() {
         setEndIconDrawable(R.drawable.ic_send)
         val touchListenerAdded = when {
-            dankChatPreferences.repeatedSendingEnabled -> {
+            developerSettingsDataStore.current().repeatedSending -> {
                 setEndIconOnClickListener { } // for ripple effects
                 setEndIconTouchListener { holdTouchEvent ->
                     when (holdTouchEvent) {
@@ -1330,7 +1319,7 @@ class MainFragment : Fragment() {
                 }
             }
 
-            else                                       -> false
+            else                                                 -> false
         }
 
         if (!touchListenerAdded) {
@@ -1430,7 +1419,7 @@ class MainFragment : Fragment() {
         imeOptions = EditorInfo.IME_ACTION_SEND or EditorInfo.IME_FLAG_NO_FULLSCREEN
         setRawInputType(InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES)
         setTokenizer(SpaceTokenizer())
-        suggestionAdapter = SuggestionsArrayAdapter(binding.input.context, dankChatPreferences) { count ->
+        suggestionAdapter = SuggestionsArrayAdapter(binding.input.context, chatSettingsDataStore) { count ->
             dropDownHeight = if (count > 4) {
                 (binding.root.height / 4.0).roundToInt()
             } else {

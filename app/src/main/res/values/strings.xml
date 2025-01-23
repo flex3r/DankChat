@@ -10,6 +10,7 @@
     <string name="add_dialog_title">Add channel</string>
     <string name="edit_dialog_title">Rename channel</string>
     <string name="dialog_ok">OK</string>
+    <string name="save">Save</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_dismiss">Dismiss</string>
     <string name="error_dialog_copy">Copy</string>

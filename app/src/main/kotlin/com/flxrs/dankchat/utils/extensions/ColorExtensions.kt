@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.utils.extensions
 
-import android.content.Context
 import androidx.annotation.ColorInt
 import androidx.core.graphics.ColorUtils
 import com.google.android.material.color.MaterialColors

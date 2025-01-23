@@ -14,7 +14,6 @@ import com.flxrs.dankchat.di.DispatchersProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import org.koin.core.annotation.Single
 
@@ -26,23 +25,18 @@ class UserDisplayRepository(
 
     private val coroutineScope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
     val userDisplays = userDisplayDao.getUserDisplaysFlow()
-        .map { entities ->
-            entities.map {
-                it.copy(targetUser = it.targetUser.trim())
-            }
-        }
         .stateIn(
             scope = coroutineScope,
             started = SharingStarted.Eagerly,
             initialValue = emptyList()
         )
 
-    suspend fun addUserDisplays(userDisplays: List<UserDisplayEntity>) {
-        userDisplayDao.insertAll(userDisplays)
+    suspend fun updateUserDisplays(userDisplays: List<UserDisplayEntity>) {
+        userDisplayDao.upsertAll(userDisplays)
     }
 
-    suspend fun addUserDisplay(userDisplay: UserDisplayEntity) {
-        userDisplayDao.insert(userDisplay)
+    suspend fun updateUserDisplay(userDisplay: UserDisplayEntity) {
+        userDisplayDao.upsert(userDisplay)
     }
 
     suspend fun delete(userDisplay: UserDisplayEntity) {

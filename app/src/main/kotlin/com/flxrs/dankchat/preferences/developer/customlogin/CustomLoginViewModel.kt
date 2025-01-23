@@ -1,16 +1,16 @@
-package com.flxrs.dankchat.preferences.ui.customlogin
+package com.flxrs.dankchat.preferences.developer.customlogin
 
 import com.flxrs.dankchat.data.api.ApiException
 import com.flxrs.dankchat.data.api.auth.AuthApiClient
 import com.flxrs.dankchat.data.api.auth.dto.ValidateDto
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.preferences.ui.customlogin.CustomLoginState.Default
-import com.flxrs.dankchat.preferences.ui.customlogin.CustomLoginState.Failure
-import com.flxrs.dankchat.preferences.ui.customlogin.CustomLoginState.Loading
-import com.flxrs.dankchat.preferences.ui.customlogin.CustomLoginState.MissingScopes
-import com.flxrs.dankchat.preferences.ui.customlogin.CustomLoginState.TokenEmpty
-import com.flxrs.dankchat.preferences.ui.customlogin.CustomLoginState.TokenInvalid
-import com.flxrs.dankchat.preferences.ui.customlogin.CustomLoginState.Validated
+import com.flxrs.dankchat.preferences.developer.customlogin.CustomLoginState.Default
+import com.flxrs.dankchat.preferences.developer.customlogin.CustomLoginState.Failure
+import com.flxrs.dankchat.preferences.developer.customlogin.CustomLoginState.Loading
+import com.flxrs.dankchat.preferences.developer.customlogin.CustomLoginState.MissingScopes
+import com.flxrs.dankchat.preferences.developer.customlogin.CustomLoginState.TokenEmpty
+import com.flxrs.dankchat.preferences.developer.customlogin.CustomLoginState.TokenInvalid
+import com.flxrs.dankchat.preferences.developer.customlogin.CustomLoginState.Validated
 import com.flxrs.dankchat.utils.extensions.withoutOAuthPrefix
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.flow.MutableStateFlow

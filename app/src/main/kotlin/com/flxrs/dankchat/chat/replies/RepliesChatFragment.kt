@@ -13,6 +13,7 @@ import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
+import com.flxrs.dankchat.preferences.chat.UserLongClickBehavior
 import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.flxrs.dankchat.utils.extensions.showLongSnackbar
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -45,7 +46,7 @@ class RepliesChatFragment : ChatFragment() {
 
     override fun onUserClick(targetUserId: UserId?, targetUserName: UserName, targetDisplayName: DisplayName, channel: UserName?, badges: List<Badge>, isLongPress: Boolean) {
         targetUserId ?: return
-        val shouldLongClickMention = preferences.getBoolean(getString(R.string.preference_user_long_click_key), true)
+        val shouldLongClickMention = chatSettingsDataStore.current().userLongClickBehavior == UserLongClickBehavior.MentionsUser
         val shouldMention = (isLongPress && shouldLongClickMention) || (!isLongPress && !shouldLongClickMention)
 
         when {

@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.navArgs
-import com.flxrs.dankchat.R
 import com.flxrs.dankchat.chat.ChatFragment
 import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserId
@@ -14,6 +13,7 @@ import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
+import com.flxrs.dankchat.preferences.chat.UserLongClickBehavior
 import com.flxrs.dankchat.utils.extensions.collectFlow
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -49,7 +49,7 @@ class MentionChatFragment : ChatFragment() {
         isLongPress: Boolean
     ) {
         targetUserId ?: return
-        val shouldLongClickMention = preferences.getBoolean(getString(R.string.preference_user_long_click_key), true)
+        val shouldLongClickMention = chatSettingsDataStore.current().userLongClickBehavior == UserLongClickBehavior.MentionsUser
         val shouldMention = (isLongPress && shouldLongClickMention) || (!isLongPress && !shouldLongClickMention)
 
         when {

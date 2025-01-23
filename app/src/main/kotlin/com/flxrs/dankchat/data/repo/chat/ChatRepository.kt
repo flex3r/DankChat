@@ -43,6 +43,7 @@ import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.di.ReadConnection
 import com.flxrs.dankchat.di.WriteConnection
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import com.flxrs.dankchat.utils.extensions.INVISIBLE_CHAR
 import com.flxrs.dankchat.utils.extensions.addAndLimit
 import com.flxrs.dankchat.utils.extensions.addSystemMessage
@@ -65,14 +66,18 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -84,6 +89,7 @@ import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.system.measureTimeMillis
+import kotlin.time.Duration.Companion.seconds
 
 @Single
 class ChatRepository(
@@ -95,6 +101,7 @@ class ChatRepository(
     private val userDisplayRepository: UserDisplayRepository,
     private val repliesRepository: RepliesRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
+    private val chatSettingsDataStore: ChatSettingsDataStore,
     private val pubSubManager: PubSubManager,
     @Named(type = ReadConnection::class) private val readConnection: ChatConnection,
     @Named(type = WriteConnection::class) private val writeConnection: ChatConnection,
@@ -123,6 +130,21 @@ class ChatRepository(
     private val loadedRecentsInChannels = mutableSetOf<UserName>()
     private val knownRewards = ConcurrentHashMap<String, PubSubMessage.PointRedemption>()
     private val rewardMutex = Mutex()
+
+    private val scrollBackLengthFlow = chatSettingsDataStore.settings
+        .map { it.scrollbackLength }
+        .debounce(1.seconds)
+        .onEach { length ->
+            messages.forEach { (_, messagesFlow) ->
+                if (messagesFlow.value.size > length) {
+                    messagesFlow.update {
+                        it.takeLast(length)
+                    }
+                }
+            }
+        }
+        .stateIn(scope, SharingStarted.Eagerly, 500)
+    private val scrollBackLength get() = scrollBackLengthFlow.value
 
     init {
         scope.launch {
@@ -247,18 +269,6 @@ class ChatRepository(
     val channels: StateFlow<List<UserName>?> = _channels.asStateFlow()
     val chatLoadingFailures = _chatLoadingFailures.asStateFlow()
 
-    var scrollBackLength = 500
-        set(value) {
-            messages.forEach { (_, messagesFlow) ->
-                if (messagesFlow.value.size > scrollBackLength) {
-                    messagesFlow.update {
-                        it.takeLast(value)
-                    }
-                }
-            }
-            field = value
-        }
-
     fun getChat(channel: UserName): StateFlow<List<ChatItem>> = messages.getOrPut(channel) { MutableStateFlow(emptyList()) }
     fun getConnectionState(channel: UserName): StateFlow<ConnectionState> = connectionState.getOrPut(channel) { MutableStateFlow(ConnectionState.DISCONNECTED) }
     fun getRoomState(channel: UserName): SharedFlow<RoomState> = roomStateFlows.getOrPut(channel) { MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST) }
@@ -279,8 +289,8 @@ class ChatRepository(
 
     suspend fun loadRecentMessagesIfEnabled(channel: UserName) {
         when {
-            dankChatPreferenceStore.shouldLoadHistory -> loadRecentMessages(channel)
-            else                                      -> messages[channel]?.update { current ->
+            chatSettingsDataStore.current().loadMessageHistory -> loadRecentMessages(channel)
+            else                                               -> messages[channel]?.update { current ->
                 val message = SystemMessageType.NoHistoryLoaded.toChatItem()
                 listOf(message).addAndLimit(current, scrollBackLength, ::onMessageRemoved, checkForDuplications = true)
             }
@@ -629,7 +639,7 @@ class ChatRepository(
         val color = msg.tags["color"]
         val name = msg.tags["display-name"]?.toDisplayName()
         val badges = msg.tags["badges"]?.split(",")
-        val hasModeration = badges?.any { it.contains("broadcaster") || it.contains("moderator") } ?: false
+        val hasModeration = badges?.any { it.contains("broadcaster") || it.contains("moderator") } == true
         dankChatPreferenceStore.displayName = name
         userState.update { current ->
             val followerEmotes = when {
@@ -824,7 +834,7 @@ class ChatRepository(
             }
 
             if (message is PrivMessage) {
-                val isUnread = _unreadMessagesMap.firstValue[channel] ?: false
+                val isUnread = _unreadMessagesMap.firstValue[channel] == true
                 if (!isUnread) {
                     _unreadMessagesMap.assign(channel, true)
                 }
@@ -851,7 +861,7 @@ class ChatRepository(
             val flow = messages[channel] ?: return@forEach
             val current = flow.value
             flow.value = current.addSystemMessage(type, scrollBackLength, ::onMessageRemoved) {
-                if (dankChatPreferenceStore.shouldLoadMessagesOnReconnect) {
+                if (chatSettingsDataStore.current().loadMessageHistoryAfterReconnect) {
                     scope.launch { loadRecentMessages(channel, isReconnect = true) }
                 }
             }

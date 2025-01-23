@@ -119,8 +119,12 @@ tasks.withType<KotlinCompile> {
         jvmTarget.set(JvmTarget.JVM_17)
         freeCompilerArgs.addAll(
             "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            "-opt-in=kotlinx.coroutines.FlowPreview",
             "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+            "-opt-in=androidx.compose.foundation.layout.ExperimentalLayoutApi",
+            "-opt-in=kotlin.uuid.ExperimentalUuidApi",
         )
     }
 }
@@ -158,6 +162,7 @@ dependencies {
     implementation(libs.androidx.media)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.preference.ktx)
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.viewpager2)
@@ -179,6 +184,7 @@ dependencies {
     "dankImplementation"(libs.compose.ui.tooling)
     implementation(libs.compose.icons.core)
     implementation(libs.compose.icons.extended)
+    implementation(libs.compose.unstyled)
 
 // Material
     implementation(libs.android.material)

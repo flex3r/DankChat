@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -25,7 +26,10 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -39,8 +43,8 @@ import kotlin.math.roundToInt
 fun SwitchPreferenceItem(
     title: String,
     isChecked: Boolean,
-    isEnabled: Boolean = true,
     onClick: (Boolean) -> Unit,
+    isEnabled: Boolean = true,
     summary: String? = null,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -55,41 +59,76 @@ fun SwitchPreferenceItem(
     )
 }
 
+interface ExpandablePreferenceScope {
+    fun dismiss()
+}
+
+@Composable
+fun ExpandablePreferenceItem(
+    title: String,
+    icon: ImageVector? = null,
+    isEnabled: Boolean = true,
+    summary: String? = null,
+    content: @Composable ExpandablePreferenceScope.() -> Unit,
+) {
+    var contentVisible by remember { mutableStateOf(false) }
+    val scope = object : ExpandablePreferenceScope {
+        override fun dismiss() {
+            contentVisible = false
+        }
+    }
+    val contentColor = LocalContentColor.current
+    val color = when {
+        isEnabled -> contentColor
+        else      -> contentColor.copy(alpha = ContentAlpha.disabled)
+    }
+    HorizontalPreferenceItemWrapper(
+        title = title,
+        icon = icon,
+        summary = summary,
+        isEnabled = isEnabled,
+        onClick = { contentVisible = true },
+        content = { Icon(Icons.Default.KeyboardArrowDown, title, Modifier.padding(end = 4.dp), color) },
+    )
+    if (contentVisible) {
+        content(scope)
+    }
+}
+
 @Composable
 fun SliderPreferenceItem(
     title: String,
     value: Float,
-    range: ClosedFloatingPointRange<Float>,
     onDrag: (Float) -> Unit,
+    range: ClosedFloatingPointRange<Float>,
     onDragFinished: () -> Unit,
+    steps: Int = range.endInclusive.toInt() - range.start.toInt() - 1,
     isEnabled: Boolean = true,
+    displayValue: Boolean = true,
     summary: String? = null,
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
     VerticalPreferenceItemWrapper(
         title = title,
         icon = null,
         summary = summary,
         isEnabled = isEnabled,
-        interactionSource = interactionSource,
         content = {
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(end = 16.dp),
+                modifier = Modifier.padding(horizontal = 16.dp),
             ) {
                 Slider(
                     value = value,
                     onValueChange = onDrag,
                     onValueChangeFinished = onDragFinished,
                     valueRange = range,
-                    steps = range.endInclusive.toInt() - range.start.toInt() - 1,
-                    interactionSource = interactionSource,
+                    steps = steps,
                     modifier = Modifier
                         .weight(1f)
                         .padding(top = 4.dp),
                 )
-                summary?.let {
+                if (displayValue) {
                     Text(
                         text = "${value.roundToInt()}",
                         modifier = Modifier.padding(start = 12.dp),
@@ -105,11 +144,28 @@ fun SliderPreferenceItem(
 fun PreferenceItem(
     title: String,
     icon: ImageVector? = null,
+    trailingIcon: ImageVector? = null,
     isEnabled: Boolean = true,
     summary: String? = null,
     onClick: () -> Unit = { },
 ) {
-    HorizontalPreferenceItemWrapper(title, icon, summary, isEnabled, onClick)
+    HorizontalPreferenceItemWrapper(
+        title = title,
+        icon = icon,
+        summary = summary,
+        isEnabled = isEnabled,
+        onClick = onClick,
+        content = trailingIcon?.let {
+            {
+                val contentColor = LocalContentColor.current
+                val color = when {
+                    isEnabled -> contentColor
+                    else      -> contentColor.copy(alpha = ContentAlpha.disabled)
+                }
+                Icon(it, title, Modifier.padding(end = 4.dp), color)
+            }
+        }
+    )
 }
 
 @Composable
@@ -169,7 +225,7 @@ private fun VerticalPreferenceItemWrapper(
                 interactionSource = interactionSource,
                 indication = ripple(),
             )
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.Center,
     ) {
         Row(

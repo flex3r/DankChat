@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.main
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.webkit.CookieManager
 import android.webkit.WebStorage
@@ -43,7 +44,8 @@ import com.flxrs.dankchat.data.twitch.message.SystemMessageType.ChannelSevenTVEm
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
-import com.flxrs.dankchat.preferences.model.Preference
+import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
+import com.flxrs.dankchat.preferences.stream.StreamsSettingsDataStore
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.extensions.firstValueOrNull
 import com.flxrs.dankchat.utils.extensions.flatMapLatestOrDefault
@@ -97,6 +99,8 @@ class MainViewModel(
     private val channelRepository: ChannelRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
     private val appearanceSettingsDataStore: AppearanceSettingsDataStore,
+    private val streamsSettingsDataStore: StreamsSettingsDataStore,
+    chatSettingsDataStore: ChatSettingsDataStore,
 ) : ViewModel() {
 
     private var fetchTimerJob: Job? = null
@@ -111,8 +115,8 @@ class MainViewModel(
     private val imageUploadStateChannel = Channel<ImageUploadState>(Channel.CONFLATED)
     private val isImageUploading = MutableStateFlow(false)
     private val isDataLoading = MutableStateFlow(false)
-    private val streamInfoEnabled = MutableStateFlow(true)
-    private val roomStateEnabled = MutableStateFlow(true)
+    private val streamInfoEnabled = streamsSettingsDataStore.settings.map { it.showStreamInfo }
+    private val roomStateEnabled = chatSettingsDataStore.settings.map { it.showChatModes }
     private val streamData = MutableStateFlow<List<StreamData>>(emptyList())
     private val currentSuggestionChannel = MutableStateFlow<UserName?>(null)
     private val inputSheetState = MutableStateFlow<InputSheetState>(InputSheetState.Closed)
@@ -192,16 +196,10 @@ class MainViewModel(
 
     init {
         viewModelScope.launch {
-            dankChatPreferenceStore.preferenceFlow.collect {
-                when (it) {
-                    is Preference.RoomState          -> roomStateEnabled.value = it.enabled
-                    is Preference.StreamInfo         -> streamInfoEnabled.value = it.enabled
-                    is Preference.SupibotSuggestions -> setSupibotSuggestions(it.enabled)
-                    is Preference.ScrollBack         -> chatRepository.scrollBackLength = it.length
-                    is Preference.TimeStampFormat    -> DateTimeUtils.setPattern(it.pattern)
-                    is Preference.FetchStreams       -> fetchStreamData(channels.value.orEmpty())
-                }
-            }
+            streamsSettingsDataStore.settings
+                .map { it.fetchStreams }
+                .distinctUntilChanged()
+                .collect { fetchStreamData(channels.value.orEmpty()) }
         }
 
         viewModelScope.launch {
@@ -260,7 +258,7 @@ class MainViewModel(
             hasMentions || hasWhispers
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
-    val shouldShowViewPager: StateFlow<Boolean> = channels.mapLatest { it?.isNotEmpty() ?: true }
+    val shouldShowViewPager: StateFlow<Boolean> = channels.mapLatest { it?.isNotEmpty() != false }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), true)
 
     val shouldShowTabs: StateFlow<Boolean> = shouldShowViewPager.combine(_isFullscreen) { shouldShowViewPager, isFullscreen ->
@@ -387,7 +385,10 @@ class MainViewModel(
 
     val currentStreamedChannel: StateFlow<UserName?> = _currentStreamedChannel.asStateFlow()
 
-    val shouldEnablePictureInPictureAutoMode: StateFlow<Boolean> = combine(currentStreamedChannel, dankChatPreferenceStore.pictureInPictureModeEnabledFlow) { currentStream, pipEnabled ->
+    val shouldEnablePictureInPictureAutoMode: StateFlow<Boolean> = combine(
+        currentStreamedChannel,
+        streamsSettingsDataStore.settings.map { it.enablePiP },
+    ) { currentStream, pipEnabled ->
         currentStream != null && pipEnabled
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
@@ -426,8 +427,6 @@ class MainViewModel(
 
     fun loadData(channelList: List<UserName> = channels.value.orEmpty()) {
         val isLoggedIn = dankChatPreferenceStore.isLoggedIn
-        val scrollBackLength = dankChatPreferenceStore.scrollbackLength
-        chatRepository.scrollBackLength = scrollBackLength
 
         lastDataLoadingJob?.cancel()
         lastDataLoadingJob = viewModelScope.launch {
@@ -641,6 +640,7 @@ class MainViewModel(
         loadData()
     }
 
+    @SuppressLint("BuildListAdds")
     fun reloadEmotes(channelName: UserName) = viewModelScope.launch {
         val isLoggedIn = dankChatPreferenceStore.isLoggedIn
         dataLoadingStateChannel.send(DataLoadingState.Loading)
@@ -719,7 +719,7 @@ class MainViewModel(
         cancelStreamData()
         channels?.ifEmpty { null } ?: return
 
-        val fetchingEnabled = dankChatPreferenceStore.fetchStreamInfoEnabled
+        val fetchingEnabled = streamsSettingsDataStore.current().fetchStreams
         if (!dankChatPreferenceStore.isLoggedIn || !fetchingEnabled) {
             return
         }
@@ -880,13 +880,6 @@ class MainViewModel(
 
     private fun clearEmoteUsages() = viewModelScope.launch {
         emoteUsageRepository.clearUsages()
-    }
-
-    private fun setSupibotSuggestions(enabled: Boolean) = viewModelScope.launch {
-        when {
-            enabled -> commandRepository.loadSupibotCommands()
-            else    -> commandRepository.clearSupibotCommands()
-        }
     }
 
     private fun clearIgnores() = ignoresRepository.clearIgnores()
