@@ -205,6 +205,7 @@ dependencies {
     implementation(libs.coil.gif)
     implementation(libs.coil.ktor)
     implementation(libs.coil.cache.control)
+    implementation(libs.coil.compose)
 
 // HTTP clients
     implementation(libs.okhttp)
@@ -218,6 +219,7 @@ dependencies {
 // Other
     implementation(libs.colorpicker.android)
     implementation(libs.process.phoenix)
+    implementation(libs.autolinktext)
 
 // Test
     testImplementation(libs.junit.jupiter.api)

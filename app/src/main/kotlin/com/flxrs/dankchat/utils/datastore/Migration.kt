@@ -18,8 +18,20 @@ inline fun <reified K, T> dankChatPreferencesMigration(
     context: Context,
     prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context),
     crossinline migrateValue: suspend (currentData: T, key: K, value: Any?) -> T,
-): DataMigration<T> where K : Enum<K>, K : PreferenceKeys = object : DataMigration<T> {
-    val map = enumEntries<K>().associateBy { context.getString(it.id) }
+): DataMigration<T> where K : Enum<K>, K : PreferenceKeys = dankChatMigration(
+    context = context,
+    prefs = prefs,
+    keyMapper = { context.getString(it.id) },
+    migrateValue = migrateValue,
+)
+
+inline fun <reified K, T> dankChatMigration(
+    context: Context,
+    prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context),
+    crossinline keyMapper: (K) -> String,
+    crossinline migrateValue: suspend (currentData: T, key: K, value: Any?) -> T,
+): DataMigration<T> where K : Enum<K> = object : DataMigration<T> {
+    val map = enumEntries<K>().associateBy(keyMapper)
     override suspend fun migrate(currentData: T): T {
         return runCatching {
             prefs.all.filterKeys { it in map.keys }.entries.fold(currentData) { acc, (key, value) ->
@@ -45,6 +57,8 @@ fun <T : Enum<T>> Any?.mappedStringOrDefault(original: Array<String>, enumEntrie
 
 @Suppress("UNCHECKED_CAST")
 fun Any?.stringSetOrNull() = this as? Set<String>
+@Suppress("UNCHECKED_CAST")
+fun Any?.stringSetOrDefault(default: Set<String>) = this as? Set<String> ?: default
 fun <T : Enum<T>> Any?.mappedStringSetOrDefault(original: Array<String>, enumEntries: EnumEntries<T>, default: List<T>): List<T> {
     return stringSetOrNull()?.toList()?.mapNotNull { enumEntries.getOrNull(original.indexOf(it)) } ?: default
 }

@@ -69,7 +69,7 @@ class ChatSettingsDataStore(
             ChatPreferenceKeys.UserLongClickBehavior -> acc.copy(
                 userLongClickBehavior = value.booleanOrNull()?.let {
                     if (it) UserLongClickBehavior.MentionsUser else UserLongClickBehavior.OpensPopup
-                } ?: UserLongClickBehavior.MentionsUser
+                } ?: acc.userLongClickBehavior
             )
 
             ChatPreferenceKeys.ShowTimedOutMessages -> acc.copy(showTimedOutMessages = value.booleanOrDefault(acc.showTimedOutMessages))

@@ -1,10 +1,12 @@
-package com.flxrs.dankchat.preferences.upload
+package com.flxrs.dankchat.preferences.tools.upload
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.data.repo.RecentUploadsRepository
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 import java.time.Instant
@@ -12,17 +14,14 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
+import kotlin.time.Duration.Companion.seconds
 
 @KoinViewModel
 class RecentUploadsViewModel(
     private val recentUploadsRepository: RecentUploadsRepository
 ) : ViewModel() {
 
-    fun clearUploads() = viewModelScope.launch {
-        recentUploadsRepository.clearUploads()
-    }
-
-    fun getRecentUploads(): Flow<List<RecentUpload>> = recentUploadsRepository
+    val recentUploads = recentUploadsRepository
         .getRecentUploads()
         .map { uploads ->
             uploads.map {
@@ -34,6 +33,15 @@ class RecentUploadsViewModel(
                 )
             }
         }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5.seconds),
+            initialValue = emptyList(),
+        )
+
+    fun clearUploads() = viewModelScope.launch {
+        recentUploadsRepository.clearUploads()
+    }
 
     companion object {
         private val formatter = DateTimeFormatter

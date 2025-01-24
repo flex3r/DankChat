@@ -126,7 +126,7 @@
 
     <fragment
         android:id="@+id/toolsSettingsFragment"
-        android:name="com.flxrs.dankchat.preferences.ui.ToolsSettingsFragment"
+        android:name="com.flxrs.dankchat.preferences.tools.ToolsSettingsFragment"
         android:label="ToolsSettingsFragment" />
 
     <fragment

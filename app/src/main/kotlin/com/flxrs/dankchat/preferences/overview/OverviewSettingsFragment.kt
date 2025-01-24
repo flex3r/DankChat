@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -33,11 +32,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -56,6 +51,7 @@ import com.flxrs.dankchat.preferences.components.PreferenceCategoryWithSummary
 import com.flxrs.dankchat.preferences.components.PreferenceItem
 import com.flxrs.dankchat.preferences.components.PreferenceSummary
 import com.flxrs.dankchat.theme.DankChatTheme
+import com.flxrs.dankchat.utils.buildLinkAnnotation
 import com.flxrs.dankchat.utils.extensions.navigateSafe
 import com.google.android.material.transition.MaterialFadeThrough
 import com.google.android.material.transition.MaterialSharedAxis
@@ -194,16 +190,7 @@ private fun OverviewSettings(
     }
 }
 
-@Composable
-private fun buildLinkAnnotation(url: String): LinkAnnotation = LinkAnnotation.Url(
-    url = url,
-    styles = TextLinkStyles(
-        style = SpanStyle(
-            color = MaterialTheme.colorScheme.primary,
-            textDecoration = TextDecoration.Underline,
-        )
-    )
-)
+
 
 @Composable
 @PreviewDynamicColors
