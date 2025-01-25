@@ -97,6 +97,7 @@ import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import com.flxrs.dankchat.preferences.developer.DeveloperSettingsDataStore
 import com.flxrs.dankchat.preferences.model.ChannelWithRename
+import com.flxrs.dankchat.preferences.tools.ToolsSettingsDataStore
 import com.flxrs.dankchat.utils.createMediaFile
 import com.flxrs.dankchat.utils.extensions.awaitState
 import com.flxrs.dankchat.utils.extensions.collectFlow
@@ -144,6 +145,7 @@ class MainFragment : Fragment() {
     private val dankChatViewModel: DankChatViewModel by activityViewModel()
     private val chatSettingsDataStore: ChatSettingsDataStore by inject()
     private val developerSettingsDataStore: DeveloperSettingsDataStore by inject()
+    private val toolsSettingsDataStore: ToolsSettingsDataStore by inject()
     private val dankChatPreferences: DankChatPreferenceStore by inject()
     private val navController: NavController by lazy { findNavController() }
     private var bindingRef: MainFragmentBinding? = null
@@ -998,7 +1000,7 @@ class MainFragment : Fragment() {
     private inline fun showExternalHostingUploadDialogIfNotAcknowledged(crossinline action: () -> Unit) {
         // show host name in dialog, another nice thing we get is it also detect some invalid URLs
         val host = runCatching {
-            URL(dankChatPreferences.customImageUploader.uploadUrl).host
+            URL(toolsSettingsDataStore.current().uploaderConfig.uploadUrl).host
         }.getOrElse { "" }
 
         // if config is invalid, just let the error handled by HTTP client

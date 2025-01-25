@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.utils
+package com.flxrs.dankchat.utils.compose
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background

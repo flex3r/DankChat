@@ -63,17 +63,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.twitch.message.Message
 import com.flxrs.dankchat.preferences.components.NavigationBarSpacer
-import com.flxrs.dankchat.utils.SwipeToDelete
+import com.flxrs.dankchat.utils.compose.SwipeToDelete
 import com.rarepebble.colorpicker.ColorPickerView
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.collectLatest
@@ -81,6 +83,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun UserDisplayScreen(onNavBack: () -> Unit) {
+    val focusManager = LocalFocusManager.current
     val viewModel = koinViewModel<UserDisplayViewModel>()
     val events = remember(viewModel) { UserDisplayEventsWrapper(viewModel.events) }
     val userDisplays = viewModel.userDisplays.collectAsStateWithLifecycle().value
@@ -90,11 +93,15 @@ fun UserDisplayScreen(onNavBack: () -> Unit) {
         eventsWrapper = events,
         onSaveAndAddNew = { viewModel.saveChangesAndCreateNew(it) },
         onSaveAndAddItem = { list, new -> viewModel.saveChangesAndAddItem(list, new) },
-        onRemoveItem = { viewModel.removeItem(it) },
+        onRemoveItem = {
+            focusManager.clearFocus()
+            viewModel.removeItem(it)
+        },
         onSaveAndNavBack = {
             viewModel.saveChanges(it)
             onNavBack()
         },
+        onSave = { viewModel.saveChanges(it) },
     )
 }
 
@@ -106,12 +113,21 @@ private fun UserDisplayScreen(
     onSaveAndAddItem: (List<UserDisplayItem>, UserDisplayItem) -> Unit,
     onRemoveItem: (UserDisplayItem) -> Unit,
     onSaveAndNavBack: (List<UserDisplayItem>) -> Unit,
+    onSave: (List<UserDisplayItem>) -> Unit,
 ) {
     val items = remember(initialItems) { initialItems.toMutableStateList() }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val snackbarHost = remember { SnackbarHostState() }
     val removedMessage = stringResource(R.string.item_removed)
     val undo = stringResource(R.string.undo)
+
+    // :)
+    val newItems = rememberUpdatedState(items)
+    LifecycleStartEffect(Unit) {
+        onStopOrDispose {
+            onSave(newItems.value)
+        }
+    }
 
     LaunchedEffect(eventsWrapper) {
         eventsWrapper.events.collectLatest {
@@ -220,6 +236,7 @@ private fun UserDisplayItem(
                         onValueChange = { onChange(item.copy(username = it)) },
                         label = { Text(stringResource(R.string.username)) },
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        maxLines = 1,
                     )
                     FlowRow(modifier = Modifier.fillMaxWidth()) {
                         CheckboxWithText(
@@ -251,6 +268,7 @@ private fun UserDisplayItem(
                             onValueChange = { onChange(item.copy(alias = it)) },
                             label = { Text(stringResource(R.string.user_display_alias_input)) },
                             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                            maxLines = 1,
                         )
                         Spacer(Modifier.width(16.dp))
                         var showColorPicker by remember { mutableStateOf(false) }

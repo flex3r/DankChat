@@ -14,7 +14,10 @@ import com.flxrs.dankchat.utils.datastore.stringOrNull
 import com.flxrs.dankchat.utils.datastore.stringSetOrDefault
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import org.koin.core.annotation.Single
 
@@ -44,21 +47,23 @@ class ToolsSettingsDataStore(
 
     private val initialMigration = dankChatPreferencesMigration<ToolsPreferenceKeys, ToolsSettings>(context) { acc, key, value ->
         when (key) {
-            ToolsPreferenceKeys.TTS -> acc.copy(ttsEnabled = value.booleanOrDefault(acc.ttsEnabled))
-            ToolsPreferenceKeys.TTSQueue -> acc.copy(
+            ToolsPreferenceKeys.TTS                   -> acc.copy(ttsEnabled = value.booleanOrDefault(acc.ttsEnabled))
+            ToolsPreferenceKeys.TTSQueue              -> acc.copy(
                 ttsPlayMode = value.booleanOrNull()?.let {
                     if (it) TTSPlayMode.Queue else TTSPlayMode.Newest
                 } ?: acc.ttsPlayMode
             )
-            ToolsPreferenceKeys.TTSMessageFormat -> acc.copy(
+
+            ToolsPreferenceKeys.TTSMessageFormat      -> acc.copy(
                 ttsMessageFormat = value.booleanOrNull()?.let {
                     if (it) TTSMessageFormat.UserAndMessage else TTSMessageFormat.Message
                 } ?: acc.ttsMessageFormat
             )
-            ToolsPreferenceKeys.TTSForceEnglish -> acc.copy(ttsForceEnglish = value.booleanOrDefault(acc.ttsForceEnglish))
-            ToolsPreferenceKeys.TTSMessageIgnoreUrl -> acc.copy(ttsIgnoreUrls = value.booleanOrDefault(acc.ttsIgnoreUrls))
+
+            ToolsPreferenceKeys.TTSForceEnglish       -> acc.copy(ttsForceEnglish = value.booleanOrDefault(acc.ttsForceEnglish))
+            ToolsPreferenceKeys.TTSMessageIgnoreUrl   -> acc.copy(ttsIgnoreUrls = value.booleanOrDefault(acc.ttsIgnoreUrls))
             ToolsPreferenceKeys.TTSMessageIgnoreEmote -> acc.copy(ttsIgnoreEmotes = value.booleanOrDefault(acc.ttsIgnoreEmotes))
-            ToolsPreferenceKeys.TTSUserIgnoreList -> acc.copy(ttsUserIgnoreList = value.stringSetOrDefault(acc.ttsUserIgnoreList))
+            ToolsPreferenceKeys.TTSUserIgnoreList     -> acc.copy(ttsUserIgnoreList = value.stringSetOrDefault(acc.ttsUserIgnoreList))
         }
     }
 
@@ -85,6 +90,14 @@ class ToolsSettingsDataStore(
 
     val settings = dataStore.data
     fun current() = runBlocking { settings.first() }
+
+    val ttsEnabled = settings
+        .map { it.ttsEnabled }
+        .distinctUntilChanged()
+    val ttsForceEnglishChanged = settings
+        .map { it.ttsForceEnglish }
+        .distinctUntilChanged()
+        .drop(1)
 
     suspend fun update(transform: suspend (ToolsSettings) -> ToolsSettings) {
         runCatching { dataStore.updateData(transform) }

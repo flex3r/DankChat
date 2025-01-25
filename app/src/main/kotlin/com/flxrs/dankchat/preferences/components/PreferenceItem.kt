@@ -36,7 +36,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.flxrs.dankchat.theme.DankChatTheme
-import com.flxrs.dankchat.utils.ContentAlpha
+import com.flxrs.dankchat.utils.compose.ContentAlpha
 import kotlin.math.roundToInt
 
 @Composable

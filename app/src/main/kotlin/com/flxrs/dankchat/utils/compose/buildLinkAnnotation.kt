@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.utils
+package com.flxrs.dankchat.utils.compose
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable

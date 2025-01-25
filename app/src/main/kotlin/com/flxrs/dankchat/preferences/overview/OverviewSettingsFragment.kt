@@ -6,8 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -24,10 +27,13 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -46,12 +52,13 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.changelog.DankChatVersion
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.components.NavigationBarSpacer
 import com.flxrs.dankchat.preferences.components.PreferenceCategoryTitle
 import com.flxrs.dankchat.preferences.components.PreferenceCategoryWithSummary
 import com.flxrs.dankchat.preferences.components.PreferenceItem
 import com.flxrs.dankchat.preferences.components.PreferenceSummary
 import com.flxrs.dankchat.theme.DankChatTheme
-import com.flxrs.dankchat.utils.buildLinkAnnotation
+import com.flxrs.dankchat.utils.compose.buildLinkAnnotation
 import com.flxrs.dankchat.utils.extensions.navigateSafe
 import com.google.android.material.transition.MaterialFadeThrough
 import com.google.android.material.transition.MaterialSharedAxis
@@ -108,10 +115,15 @@ private fun OverviewSettings(
     onLogoutRequested: () -> Unit,
     onNavigateRequested: (id: Int) -> Unit,
 ) {
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
-        modifier = Modifier.imePadding(),
+        contentWindowInsets = ScaffoldDefaults.contentWindowInsets.exclude(WindowInsets.navigationBars),
+        modifier = Modifier
+            .nestedScroll(scrollBehavior.nestedScrollConnection)
+            .imePadding(),
         topBar = {
             TopAppBar(
+                scrollBehavior = scrollBehavior,
                 title = { Text(stringResource(R.string.settings)) },
                 navigationIcon = {
                     IconButton(
@@ -124,10 +136,10 @@ private fun OverviewSettings(
     ) { padding ->
         Column(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(padding)
                 .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState()),
         ) {
             PreferenceItem(
                 title = stringResource(R.string.preference_appearance_header),
@@ -186,11 +198,10 @@ private fun OverviewSettings(
                     PreferenceSummary(annotated, Modifier.padding(top = 16.dp))
                 }
             }
+            NavigationBarSpacer()
         }
     }
 }
-
-
 
 @Composable
 @PreviewDynamicColors

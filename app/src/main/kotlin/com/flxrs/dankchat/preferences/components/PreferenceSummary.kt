@@ -6,7 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
-import com.flxrs.dankchat.utils.ContentAlpha
+import com.flxrs.dankchat.utils.compose.ContentAlpha
 
 @Composable
 fun PreferenceSummary(summary: AnnotatedString, modifier: Modifier = Modifier, isEnabled: Boolean = true) {

@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <data>
-
-        <variable
-            name="uploader"
-            type="com.flxrs.dankchat.preferences.upload.ImageUploader" />
-    </data>
-
     <LinearLayout
         android:id="@+id/uploader_sheet"
         android:layout_width="match_parent"
@@ -67,8 +60,7 @@
                         android:layout_height="wrap_content"
                         android:imeOptions="actionNext"
                         android:inputType="textNoSuggestions"
-                        android:singleLine="true"
-                        android:text="@={uploader.uploadUrl}" />
+                        android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -84,8 +76,7 @@
                         android:layout_height="wrap_content"
                         android:imeOptions="actionNext"
                         android:inputType="textNoSuggestions"
-                        android:singleLine="true"
-                        android:text="@={uploader.formField}" />
+                        android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -101,8 +92,7 @@
                         android:layout_height="wrap_content"
                         android:imeOptions="actionNext"
                         android:inputType="textNoSuggestions"
-                        android:singleLine="true"
-                        android:text="@={uploader.headers}" />
+                        android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -118,8 +108,7 @@
                         android:layout_height="wrap_content"
                         android:imeOptions="actionNext"
                         android:inputType="textNoSuggestions"
-                        android:singleLine="true"
-                        android:text="@={uploader.imageLinkPattern}" />
+                        android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -135,8 +124,7 @@
                         android:layout_height="wrap_content"
                         android:imeOptions="actionDone"
                         android:inputType="textNoSuggestions"
-                        android:singleLine="true"
-                        android:text="@={uploader.deletionLinkPattern}" />
+                        android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

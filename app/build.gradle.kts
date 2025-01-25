@@ -122,6 +122,7 @@ tasks.withType<KotlinCompile> {
             "-opt-in=kotlinx.coroutines.FlowPreview",
             "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3ExpressiveApi",
             "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
             "-opt-in=androidx.compose.foundation.layout.ExperimentalLayoutApi",
             "-opt-in=kotlin.uuid.ExperimentalUuidApi",

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.flxrs.dankchat.utils
+package com.flxrs.dankchat.utils.compose
 
 import androidx.annotation.FloatRange
 import androidx.compose.foundation.isSystemInDarkTheme

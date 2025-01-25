@@ -5,7 +5,7 @@ import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.data.api.ApiException
 import com.flxrs.dankchat.data.api.upload.dto.UploadDto
 import com.flxrs.dankchat.di.UploadOkHttpClient
-import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.tools.ToolsSettingsDataStore
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.URLBuilder
@@ -27,11 +27,11 @@ import java.time.Instant
 @Single
 class UploadClient(
     @Named(type = UploadOkHttpClient::class) private val httpClient: OkHttpClient,
-    private val dankChatPreferenceStore: DankChatPreferenceStore
+    private val toolsSettingsDataStore: ToolsSettingsDataStore,
 ) {
 
     suspend fun uploadMedia(file: File): Result<UploadDto> = withContext(Dispatchers.IO) {
-        val uploader = dankChatPreferenceStore.customImageUploader
+        val uploader = toolsSettingsDataStore.current().uploaderConfig
         val mimetype = URLConnection.guessContentTypeFromName(file.name)
 
         val requestBody = MultipartBody.Builder()

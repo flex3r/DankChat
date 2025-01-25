@@ -1,8 +1,6 @@
-package com.flxrs.dankchat.preferences.chat.commands
+package com.flxrs.dankchat.preferences.tools.tts
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
@@ -49,7 +47,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.preferences.chat.CustomCommand
 import com.flxrs.dankchat.preferences.components.NavigationBarSpacer
 import com.flxrs.dankchat.utils.compose.SwipeToDelete
 import kotlinx.collections.immutable.ImmutableList
@@ -57,11 +54,11 @@ import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun CustomCommandsScreen(onNavBack: () -> Unit) {
-    val viewModel = koinViewModel<CommandsViewModel>()
-    val commands = viewModel.commands.collectAsStateWithLifecycle().value
-    CustomCommandsScreen(
-        initialCommands = commands,
+fun TTSUserIgnoreListScreen(onNavBack: () -> Unit) {
+    val viewModel = koinViewModel<TTSUserIgnoreListViewModel>()
+    val ignores = viewModel.userIgnores.collectAsStateWithLifecycle().value
+    UserIgnoreListScreen(
+        initialIgnores = ignores,
         onSaveAndNavBack = {
             viewModel.save(it)
             onNavBack()
@@ -71,13 +68,13 @@ fun CustomCommandsScreen(onNavBack: () -> Unit) {
 }
 
 @Composable
-private fun CustomCommandsScreen(
-    initialCommands: ImmutableList<CustomCommand>,
-    onSaveAndNavBack: (List<CustomCommand>) -> Unit,
-    onSave: (List<CustomCommand>) -> Unit,
+private fun UserIgnoreListScreen(
+    initialIgnores: ImmutableList<UserIgnore>,
+    onSaveAndNavBack: (List<UserIgnore>) -> Unit,
+    onSave: (List<UserIgnore>) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
-    val commands = remember { initialCommands.toMutableStateList() }
+    val ignores = remember { initialIgnores.toMutableStateList() }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val snackbarHost = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -86,7 +83,7 @@ private fun CustomCommandsScreen(
 
     LifecycleStartEffect(Unit) {
         onStopOrDispose {
-            onSave(commands)
+            onSave(ignores)
         }
     }
 
@@ -99,24 +96,24 @@ private fun CustomCommandsScreen(
         topBar = {
             TopAppBar(
                 scrollBehavior = scrollBehavior,
-                title = { Text(stringResource(R.string.commands_title)) },
+                title = { Text(stringResource(R.string.preference_tts_user_ignore_list_title)) },
                 navigationIcon = {
                     IconButton(
-                        onClick = { onSaveAndNavBack(commands) },
+                        onClick = { onSaveAndNavBack(ignores) },
                         content = { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back)) },
                     )
-                }
+                },
             )
         },
         floatingActionButton = {
             if (!WindowInsets.isImeVisible) {
                 ExtendedFloatingActionButton(
-                    text = { Text(stringResource(R.string.add_command)) },
-                    icon = { Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.add_command)) },
+                    text = { Text(stringResource(R.string.tts_ignore_list_add_user)) },
+                    icon = { Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.tts_ignore_list_add_user)) },
                     modifier = Modifier
                         .navigationBarsPadding()
                         .padding(8.dp),
-                    onClick = { commands += CustomCommand(trigger = "", command = "") },
+                    onClick = { ignores += UserIgnore(user = "") }
                 )
             }
         },
@@ -125,26 +122,24 @@ private fun CustomCommandsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp)
         ) {
-            itemsIndexed(commands, key = { _, it -> it.id }) { idx, command ->
-                CustomCommandItem(
-                    trigger = command.trigger,
-                    command = command.command,
-                    onTriggerChanged = { commands[idx] = command.copy(trigger = it) },
-                    onCommandChanged = { commands[idx] = command.copy(command = it) },
+            itemsIndexed(ignores, key = { _, it -> it.id }) { idx, ignore ->
+                UserIgnoreItem(
+                    user = ignore.user,
+                    onUserChanged = { ignores[idx] = ignore.copy(user = it) },
                     onRemove = {
                         focusManager.clearFocus()
-                        val removed = commands.removeAt(idx)
+                        val removed = ignores.removeAt(idx)
                         scope.launch {
                             snackbarHost.currentSnackbarData?.dismiss()
                             val result = snackbarHost.showSnackbar(
                                 message = removedMessage,
                                 actionLabel = undo,
-                                duration = SnackbarDuration.Short,
+                                duration = SnackbarDuration.Short
                             )
                             if (result == SnackbarResult.ActionPerformed) {
-                                commands.add(idx, removed)
+                                ignores.add(idx, removed)
                             }
                         }
                     },
@@ -153,14 +148,14 @@ private fun CustomCommandsScreen(
                         .animateItem(),
                 )
             }
-            if (commands.isNotEmpty()) {
+            if (ignores.isNotEmpty()) {
                 item(key = "save") {
                     Button(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 8.dp)
                             .animateItem(),
-                        onClick = { onSaveAndNavBack(commands) },
+                        onClick = { onSaveAndNavBack(ignores) },
                         content = { Text(stringResource(R.string.save)) },
                     )
                 }
@@ -173,44 +168,28 @@ private fun CustomCommandsScreen(
 }
 
 @Composable
-private fun CustomCommandItem(
-    trigger: String,
-    command: String,
-    onTriggerChanged: (String) -> Unit,
-    onCommandChanged: (String) -> Unit,
+private fun UserIgnoreItem(
+    user: String,
+    onUserChanged: (String) -> Unit,
     onRemove: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     SwipeToDelete(onRemove, modifier) {
         ElevatedCard {
             Row {
-                Column(
+                OutlinedTextField(
                     modifier = Modifier
                         .weight(1f)
                         .padding(16.dp),
-                ) {
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = trigger,
-                        onValueChange = onTriggerChanged,
-                        label = { Text(stringResource(R.string.command_trigger_hint)) },
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                        maxLines = 1,
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = command,
-                        onValueChange = onCommandChanged,
-                        label = { Text(stringResource(R.string.command__hint)) },
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                        maxLines = 1,
-                    )
-                }
+                    value = user,
+                    onValueChange = onUserChanged,
+                    label = { Text(stringResource(R.string.tts_ignore_list_user_hint)) },
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                )
                 IconButton(
                     modifier = Modifier.align(Alignment.Top),
                     onClick = onRemove,
-                    content = { Icon(Icons.Default.Clear, contentDescription = stringResource(R.string.remove_command)) }
+                    content = { Icon(Icons.Default.Clear, contentDescription = stringResource(R.string.tts_ignore_list_remove_user)) },
                 )
             }
         }

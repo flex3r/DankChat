@@ -19,7 +19,6 @@ import com.flxrs.dankchat.data.toUserNames
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
 import com.flxrs.dankchat.preferences.model.ChannelWithRename
 import com.flxrs.dankchat.preferences.multientry.MultiEntryDto
-import com.flxrs.dankchat.preferences.upload.ImageUploader
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -85,33 +84,6 @@ class DankChatPreferenceStore(
     var hasMessageHistoryAcknowledged: Boolean
         get() = dankChatPreferences.getBoolean(MESSAGES_HISTORY_ACK_KEY, false)
         set(value) = dankChatPreferences.edit { putBoolean(MESSAGES_HISTORY_ACK_KEY, value) }
-
-    var customImageUploader: ImageUploader
-        get() {
-            val url = dankChatPreferences.getString(UPLOADER_URL, null) ?: return DEFAULT_UPLOADER
-
-            val formField = dankChatPreferences.getString(UPLOADER_FORM_FIELD, UPLOADER_FORM_FIELD_DEFAULT) ?: UPLOADER_FORM_FIELD_DEFAULT
-            val headers = dankChatPreferences.getString(UPLOADER_HEADERS, null)
-            val imageLinkPattern = dankChatPreferences.getString(UPLOADER_IMAGE_LINK, null)
-            val deletionLinkPattern = dankChatPreferences.getString(UPLOADER_DELETION_LINK, null)
-
-            return ImageUploader(
-                uploadUrl = url,
-                formField = formField,
-                headers = headers,
-                imageLinkPattern = imageLinkPattern,
-                deletionLinkPattern = deletionLinkPattern,
-            )
-        }
-        set(value) {
-            dankChatPreferences.edit {
-                putString(UPLOADER_URL, value.uploadUrl)
-                putString(UPLOADER_FORM_FIELD, value.formField)
-                putString(UPLOADER_HEADERS, value.headers)
-                putString(UPLOADER_IMAGE_LINK, value.imageLinkPattern)
-                putString(UPLOADER_DELETION_LINK, value.deletionLinkPattern)
-            }
-        }
 
     var customMentions: List<MultiEntryDto>
         get() = getMultiEntriesFromPreferences(context.getString(R.string.preference_custom_mentions_key))
@@ -210,11 +182,6 @@ class DankChatPreferenceStore(
         }
     }
 
-    fun resetImageUploader(): ImageUploader {
-        customImageUploader = DEFAULT_UPLOADER
-        return DEFAULT_UPLOADER
-    }
-
     fun shouldShowChangelog(): Boolean {
         if (!appearanceSettingsDataStore.current().showChangelogs) {
             setCurrentInstalledVersionCode()
@@ -284,27 +251,8 @@ class DankChatPreferenceStore(
         private const val SECRET_DANKER_MODE_KEY = "secretDankerModeKey"
         private const val LAST_INSTALLED_VERSION_KEY = "lastInstalledVersionKey"
 
-        private const val UPLOADER_URL = "uploaderUrl"
-        private const val UPLOADER_FORM_FIELD = "uploaderFormField"
-        private const val UPLOADER_HEADERS = "uploaderHeaders"
-        private const val UPLOADER_IMAGE_LINK = "uploaderImageLink"
-        private const val UPLOADER_DELETION_LINK = "uploaderDeletionLink"
-
-        private const val UPLOADER_URL_DEFAULT = "https://kappa.lol/api/upload"
-        private const val UPLOADER_FORM_FIELD_DEFAULT = "file"
-        private const val UPLOADER_IMAGE_LINK_DEFAULT = "{link}"
-        private const val UPLOADER_DELETE_LINK_DEFAULT = "{delete}"
-
         private const val SECRET_DANKER_MODE_CLICKS = 5
 
         const val DEFAULT_CLIENT_ID = "xu7vd1i6tlr0ak45q1li2wdc0lrma8"
-
-        val DEFAULT_UPLOADER = ImageUploader(
-            uploadUrl = UPLOADER_URL_DEFAULT,
-            formField = UPLOADER_FORM_FIELD_DEFAULT,
-            headers = null,
-            imageLinkPattern = UPLOADER_IMAGE_LINK_DEFAULT,
-            deletionLinkPattern = UPLOADER_DELETE_LINK_DEFAULT,
-        )
     }
 }

@@ -71,8 +71,8 @@ import com.flxrs.dankchat.preferences.components.PreferenceListDialog
 import com.flxrs.dankchat.preferences.components.SwitchPreferenceItem
 import com.flxrs.dankchat.preferences.tools.upload.RecentUpload
 import com.flxrs.dankchat.preferences.tools.upload.RecentUploadsViewModel
-import com.flxrs.dankchat.utils.buildLinkAnnotation
-import com.flxrs.dankchat.utils.textLinkStyles
+import com.flxrs.dankchat.utils.compose.buildLinkAnnotation
+import com.flxrs.dankchat.utils.compose.textLinkStyles
 import kotlinx.collections.immutable.toImmutableList
 import org.koin.compose.viewmodel.koinViewModel
 import sh.calvin.autolinktext.rememberAutoLinkText
@@ -313,7 +313,7 @@ fun TextToSpeechCategory(
         val formatEntries = remember { listOf(formatMessage, formatUserAndMessage).toImmutableList() }
         PreferenceListDialog(
             title = stringResource(R.string.preference_tts_message_format_title),
-            summary = modeEntries[settings.ttsMessageFormat.ordinal],
+            summary = formatEntries[settings.ttsMessageFormat.ordinal],
             values = TTSMessageFormat.entries.toImmutableList(),
             entries = formatEntries,
             selected = settings.ttsMessageFormat,
