@@ -24,7 +24,6 @@ import com.flxrs.dankchat.data.twitch.message.isReward
 import com.flxrs.dankchat.data.twitch.message.isSub
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.preferences.multientry.MultiEntryDto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -76,21 +75,14 @@ class IgnoresRepository(
 
     fun runMigrationsIfNeeded() = coroutineScope.launch {
         runCatching {
-            if (preferences.blackListEntries.isEmpty() && messageIgnoreDao.getMessageIgnores().isNotEmpty()) {
+            if (messageIgnoreDao.getMessageIgnores().isNotEmpty()) {
                 return@launch
             }
 
             Log.d(TAG, "Running ignores migration...")
             messageIgnoreDao.addIgnores(DEFAULT_IGNORES)
 
-            val existingBlacklistEntries = preferences.customBlacklist
-            val messageIgnores = existingBlacklistEntries.mapToMessageIgnoreEntities()
-            messageIgnoreDao.addIgnores(messageIgnores)
-
-            val userIgnores = existingBlacklistEntries.mapToUserIgnoreEntities()
-            userIgnoreDao.addIgnores(userIgnores)
-
-            val totalIgnores = DEFAULT_IGNORES.size + messageIgnores.size + userIgnores.size
+            val totalIgnores = DEFAULT_IGNORES.size
             Log.d(TAG, "Ignores migration completed, added $totalIgnores entries.")
         }.getOrElse {
             Log.e(TAG, "Failed to run ignores migration", it)
@@ -367,35 +359,6 @@ class IgnoresRepository(
 
     private operator fun IntRange.contains(other: IntRange): Boolean {
         return other.first >= first && other.last <= last
-    }
-
-    private fun List<MultiEntryDto>.mapToMessageIgnoreEntities(): List<MessageIgnoreEntity> {
-        return filterNot { it.matchUser }
-            .map {
-                MessageIgnoreEntity(
-                    id = 0,
-                    enabled = true,
-                    type = MessageIgnoreEntityType.Custom,
-                    pattern = it.entry,
-                    isRegex = it.isRegex,
-                    isCaseSensitive = false,
-                    isBlockMessage = true,
-                    replacement = null
-                )
-            }
-    }
-
-    private fun List<MultiEntryDto>.mapToUserIgnoreEntities(): List<UserIgnoreEntity> {
-        return filter { it.matchUser }
-            .map {
-                UserIgnoreEntity(
-                    id = 0,
-                    enabled = true,
-                    username = it.entry,
-                    isRegex = it.isRegex,
-                    isCaseSensitive = false
-                )
-            }
     }
 
     companion object {

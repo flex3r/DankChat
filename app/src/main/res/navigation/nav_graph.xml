@@ -117,7 +117,7 @@
         android:label="AppearanceSettingsFragment" />
     <fragment
         android:id="@+id/notificationsSettingsFragment"
-        android:name="com.flxrs.dankchat.preferences.ui.NotificationsSettingsFragment"
+        android:name="com.flxrs.dankchat.preferences.notifications.NotificationsSettingsFragment"
         android:label="NotificationsSettingsFragment" />
     <fragment
         android:id="@+id/chatSettingsFragment"

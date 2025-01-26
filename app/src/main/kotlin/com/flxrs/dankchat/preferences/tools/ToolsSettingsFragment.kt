@@ -1,21 +1,18 @@
 package com.flxrs.dankchat.preferences.tools
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
-import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.findNavController
 import com.flxrs.dankchat.preferences.tools.tts.TTSUserIgnoreListScreen
@@ -43,10 +40,6 @@ class ToolsSettingsFragment : Fragment() {
             setContent {
                 DankChatTheme {
                     val navController = rememberNavController()
-                    val backStack = navController.currentBackStackEntryAsState().value
-                    SideEffect {
-                        Log.d("XXX", "${backStack?.destination?.route}")
-                    }
                     NavHost(
                         navController = navController,
                         startDestination = ToolsSettingsRoute.ToolsSettings,

@@ -18,7 +18,6 @@ import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.toUserNames
 import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
 import com.flxrs.dankchat.preferences.model.ChannelWithRename
-import com.flxrs.dankchat.preferences.multientry.MultiEntryDto
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -85,25 +84,11 @@ class DankChatPreferenceStore(
         get() = dankChatPreferences.getBoolean(MESSAGES_HISTORY_ACK_KEY, false)
         set(value) = dankChatPreferences.edit { putBoolean(MESSAGES_HISTORY_ACK_KEY, value) }
 
-    var customMentions: List<MultiEntryDto>
-        get() = getMultiEntriesFromPreferences(context.getString(R.string.preference_custom_mentions_key))
-        set(value) = setMultiEntries(context.getString(R.string.preference_custom_mentions_key), value)
-
-    var customBlacklist: List<MultiEntryDto>
-        get() = getMultiEntriesFromPreferences(context.getString(R.string.preference_blacklist_key))
-        set(value) = setMultiEntries(context.getString(R.string.preference_blacklist_key), value)
-
     var isSecretDankerModeEnabled: Boolean
         get() = dankChatPreferences.getBoolean(SECRET_DANKER_MODE_KEY, false)
         set(value) = dankChatPreferences.edit { putBoolean(SECRET_DANKER_MODE_KEY, value) }
 
     val secretDankerModeClicks: Int = SECRET_DANKER_MODE_CLICKS
-
-    val mentionEntries: Set<String>
-        get() = defaultPreferences.getStringSet(context.getString(R.string.preference_custom_mentions_key), emptySet()).orEmpty()
-
-    val blackListEntries: Set<String>
-        get() = defaultPreferences.getStringSet(context.getString(R.string.preference_blacklist_key), emptySet()).orEmpty()
 
     val createNotifications: Boolean
         get() = defaultPreferences.getBoolean(context.getString(R.string.preference_notification_key), true)
@@ -214,21 +199,6 @@ class DankChatPreferenceStore(
         .decodeOrNull<Map<UserName, UserName>>(this)
         .orEmpty()
         .toMutableMap()
-
-    private fun getMultiEntriesFromPreferences(key: String): List<MultiEntryDto> {
-        return defaultPreferences
-            .getStringSet(key, emptySet())
-            .orEmpty()
-            .mapNotNull { json.decodeOrNull<MultiEntryDto>(it) }
-    }
-
-    private fun setMultiEntries(key: String, entries: List<MultiEntryDto>) {
-        entries.map { json.encodeToString(it) }
-            .toSet()
-            .let {
-                defaultPreferences.edit { putStringSet(key, it) }
-            }
-    }
 
     private fun Map<UserName, UserName>.toJson(): String = json.encodeToString(this)
 

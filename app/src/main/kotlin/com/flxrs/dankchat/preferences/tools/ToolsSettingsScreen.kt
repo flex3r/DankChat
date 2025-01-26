@@ -65,6 +65,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.preferences.components.NavigationBarSpacer
 import com.flxrs.dankchat.preferences.components.PreferenceCategory
 import com.flxrs.dankchat.preferences.components.PreferenceItem
 import com.flxrs.dankchat.preferences.components.PreferenceListDialog
@@ -118,7 +119,7 @@ private fun ToolsSettingsScreen(
                     )
                 }
             )
-        }
+        },
     ) { padding ->
         Column(
             modifier = Modifier
@@ -129,6 +130,7 @@ private fun ToolsSettingsScreen(
             ImageUploaderCategory(onNavToImageUploader)
             HorizontalDivider(thickness = Dp.Hairline)
             TextToSpeechCategory(settings, onInteraction, onNavToTTSUserIgnoreList)
+            NavigationBarSpacer()
         }
     }
 }
