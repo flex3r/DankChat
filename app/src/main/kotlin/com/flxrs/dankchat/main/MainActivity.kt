@@ -18,7 +18,6 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat.Type
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.doOnAttach
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -83,7 +82,8 @@ class MainActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        bindingRef = DataBindingUtil.setContentView(this, R.layout.main_activity)
+        bindingRef = MainActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         viewModel.checkLogin()
         viewModel.serviceEvents

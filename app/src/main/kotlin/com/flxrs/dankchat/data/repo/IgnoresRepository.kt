@@ -92,8 +92,6 @@ class IgnoresRepository(
                 return@launch
             }
         }
-
-        preferences.clearBlacklist()
     }
 
     fun isUserBlocked(userId: UserId?): Boolean {
@@ -165,7 +163,7 @@ class IgnoresRepository(
             replacement = "***",
         )
         val id = messageIgnoreDao.addIgnore(entity)
-        return messageIgnoreDao.getMessageIgnore(id)
+        return entity.copy(id = id)
     }
 
     suspend fun updateMessageIgnore(entity: MessageIgnoreEntity) {
@@ -187,7 +185,7 @@ class IgnoresRepository(
             username = "",
         )
         val id = userIgnoreDao.addIgnore(entity)
-        return userIgnoreDao.getUserIgnore(id)
+        return entity.copy(id = id)
     }
 
     suspend fun updateUserIgnore(entity: UserIgnoreEntity) {

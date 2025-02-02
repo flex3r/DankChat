@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.isImeVisible
@@ -13,14 +12,15 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -40,6 +40,7 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -73,13 +74,13 @@ private fun UserIgnoreListScreen(
     onSaveAndNavBack: (List<UserIgnore>) -> Unit,
     onSave: (List<UserIgnore>) -> Unit,
 ) {
+    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val ignores = remember { initialIgnores.toMutableStateList() }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val listState = rememberLazyListState()
     val snackbarHost = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val removedMessage = stringResource(R.string.item_removed)
-    val undo = stringResource(R.string.undo)
 
     LifecycleStartEffect(Unit) {
         onStopOrDispose {
@@ -113,12 +114,23 @@ private fun UserIgnoreListScreen(
                     modifier = Modifier
                         .navigationBarsPadding()
                         .padding(8.dp),
-                    onClick = { ignores += UserIgnore(user = "") }
+                    onClick = {
+                        focusManager.clearFocus()
+                        ignores += UserIgnore(user = "")
+                        scope.launch {
+                            when {
+                                listState.canScrollForward -> listState.animateScrollToItem(listState.layoutInfo.totalItemsCount - 1)
+                                else                       -> listState.requestScrollToItem(listState.layoutInfo.totalItemsCount - 1)
+                            }
+                        }
+                    }
                 )
             }
         },
+        floatingActionButtonPosition = FabPosition.Center,
     ) { padding ->
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
@@ -134,31 +146,24 @@ private fun UserIgnoreListScreen(
                         scope.launch {
                             snackbarHost.currentSnackbarData?.dismiss()
                             val result = snackbarHost.showSnackbar(
-                                message = removedMessage,
-                                actionLabel = undo,
+                                message = context.getString(R.string.item_removed),
+                                actionLabel = context.getString(R.string.undo),
                                 duration = SnackbarDuration.Short
                             )
                             if (result == SnackbarResult.ActionPerformed) {
+                                focusManager.clearFocus()
                                 ignores.add(idx, removed)
+                                listState.animateScrollToItem(idx)
                             }
                         }
                     },
                     modifier = Modifier
                         .padding(bottom = 16.dp)
-                        .animateItem(),
+                        .animateItem(
+                            fadeInSpec = null,
+                            fadeOutSpec = null,
+                        ),
                 )
-            }
-            if (ignores.isNotEmpty()) {
-                item(key = "save") {
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp)
-                            .animateItem(),
-                        onClick = { onSaveAndNavBack(ignores) },
-                        content = { Text(stringResource(R.string.save)) },
-                    )
-                }
             }
             item(key = "spacer") {
                 NavigationBarSpacer(Modifier.height(112.dp))

@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.flxrs.dankchat.R
 
 @Composable
-fun SwipeToDelete(onDelete: () -> Unit, modifier: Modifier = Modifier, content: @Composable RowScope.() -> Unit) {
+fun SwipeToDelete(onDelete: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true, content: @Composable RowScope.() -> Unit) {
     val density = LocalDensity.current
     lateinit var state: SwipeToDismissBoxState
     state = rememberSwipeToDismissBoxState(
@@ -45,6 +45,9 @@ fun SwipeToDelete(onDelete: () -> Unit, modifier: Modifier = Modifier, content: 
         positionalThreshold = { with(density) { 84.dp.toPx() } },
     )
     SwipeToDismissBox(
+        gesturesEnabled = enabled,
+        enableDismissFromEndToStart = enabled,
+        enableDismissFromStartToEnd = enabled,
         modifier = modifier,
         state = state,
         backgroundContent = {

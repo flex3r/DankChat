@@ -1,4 +1,4 @@
-package com.flxrs.dankchat.preferences.ui.ignores
+package com.flxrs.dankchat.preferences.notifications.ignores
 
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
@@ -11,19 +11,15 @@ sealed interface IgnoreItem {
     val id: Long
 }
 
-data object AddItem : IgnoreItem {
-    override val id = -1L
-}
-
 data class MessageIgnoreItem(
     override val id: Long,
     val type: Type,
-    var enabled: Boolean,
-    var pattern: String,
-    var isRegex: Boolean,
-    var isCaseSensitive: Boolean,
-    var isBlockMessage: Boolean,
-    var replacement: String,
+    val enabled: Boolean,
+    val pattern: String,
+    val isRegex: Boolean,
+    val isCaseSensitive: Boolean,
+    val isBlockMessage: Boolean,
+    val replacement: String,
 ) : IgnoreItem {
     enum class Type {
         Subscription,
@@ -37,10 +33,10 @@ data class MessageIgnoreItem(
 
 data class UserIgnoreItem(
     override val id: Long,
-    var enabled: Boolean,
-    var username: String,
-    var isRegex: Boolean,
-    var isCaseSensitive: Boolean
+    val enabled: Boolean,
+    val username: String,
+    val isRegex: Boolean,
+    val isCaseSensitive: Boolean
 ) : IgnoreItem
 
 data class TwitchBlockItem(

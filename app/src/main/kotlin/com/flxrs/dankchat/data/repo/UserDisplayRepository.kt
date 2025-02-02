@@ -35,11 +35,25 @@ class UserDisplayRepository(
         userDisplayDao.upsertAll(userDisplays)
     }
 
+    suspend fun addUserDisplay(): UserDisplayEntity {
+        val entity = UserDisplayEntity(
+            id = 0,
+            targetUser = "",
+            enabled = true,
+            colorEnabled = false,
+            color = Message.DEFAULT_COLOR,
+            aliasEnabled = false,
+            alias = "",
+        )
+        val id = userDisplayDao.upsert(entity)
+        return entity.copy(id = id.toInt())
+    }
+
     suspend fun updateUserDisplay(userDisplay: UserDisplayEntity) {
         userDisplayDao.upsert(userDisplay)
     }
 
-    suspend fun delete(userDisplay: UserDisplayEntity) {
+    suspend fun removeUserDisplay(userDisplay: UserDisplayEntity) {
         userDisplayDao.delete(userDisplay)
     }
 

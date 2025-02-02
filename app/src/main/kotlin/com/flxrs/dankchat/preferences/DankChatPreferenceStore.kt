@@ -5,7 +5,6 @@ package com.flxrs.dankchat.preferences
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.changelog.DankChatVersion
@@ -33,7 +32,6 @@ class DankChatPreferenceStore(
     private val appearanceSettingsDataStore: AppearanceSettingsDataStore,
 ) {
     private val dankChatPreferences: SharedPreferences = context.getSharedPreferences(context.getString(R.string.shared_preference_key), Context.MODE_PRIVATE)
-    private val defaultPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     private var channelRenames: String?
         get() = dankChatPreferences.getString(RENAME_KEY, null)
@@ -90,12 +88,6 @@ class DankChatPreferenceStore(
 
     val secretDankerModeClicks: Int = SECRET_DANKER_MODE_CLICKS
 
-    val createNotifications: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_notification_key), true)
-
-    val createWhisperNotifications: Boolean
-        get() = defaultPreferences.getBoolean(context.getString(R.string.preference_notification_whisper_key), true)
-
     val currentUserAndDisplayFlow: Flow<Pair<UserName?, DisplayName?>> = callbackFlow {
         send(userName to displayName)
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
@@ -116,14 +108,6 @@ class DankChatPreferenceStore(
         putString(NAME_KEY, null)
         putString(ID_STRING_KEY, null)
         putString(CLIENT_ID_KEY, null)
-    }
-
-    fun clearBlacklist() = defaultPreferences.edit {
-        remove(context.getString(R.string.preference_blacklist_key))
-    }
-
-    fun clearCustomMentions() = defaultPreferences.edit {
-        remove(context.getString(R.string.preference_custom_mentions_key))
     }
 
     fun removeChannel(channel: UserName): List<UserName> {

@@ -1,26 +1,25 @@
-package com.flxrs.dankchat.preferences.ui.highlights
+package com.flxrs.dankchat.preferences.notifications.highlights
 
 import com.flxrs.dankchat.data.database.entity.BlacklistedUserEntity
 import com.flxrs.dankchat.data.database.entity.MessageHighlightEntity
 import com.flxrs.dankchat.data.database.entity.MessageHighlightEntityType
 import com.flxrs.dankchat.data.database.entity.UserHighlightEntity
+import kotlinx.collections.immutable.ImmutableList
 
 sealed interface HighlightItem {
     val id: Long
 }
 
-data object AddItem : HighlightItem {
-    override val id = -1L
-}
-
 data class MessageHighlightItem(
     override val id: Long,
-    var enabled: Boolean,
+    val enabled: Boolean,
     val type: Type,
-    var pattern: String,
-    var isRegex: Boolean,
-    var isCaseSensitive: Boolean,
-    var createNotification: Boolean,
+    val pattern: String,
+    val isRegex: Boolean,
+    val isCaseSensitive: Boolean,
+    val createNotification: Boolean,
+    val loggedIn: Boolean,
+    val notificationsEnabled: Boolean,
 ) : HighlightItem {
     enum class Type {
         Username,
@@ -42,19 +41,20 @@ data class MessageHighlightItem(
 
 data class UserHighlightItem(
     override val id: Long,
-    var enabled: Boolean,
-    var username: String,
-    var createNotification: Boolean,
+    val enabled: Boolean,
+    val username: String,
+    val createNotification: Boolean,
+    val notificationsEnabled: Boolean,
 ) : HighlightItem
 
 data class BlacklistedUserItem(
     override val id: Long,
-    var enabled: Boolean,
-    var username: String,
-    var isRegex: Boolean,
+    val enabled: Boolean,
+    val username: String,
+    val isRegex: Boolean,
 ) : HighlightItem
 
-fun MessageHighlightEntity.toItem() = MessageHighlightItem(
+fun MessageHighlightEntity.toItem(loggedIn: Boolean, notificationsEnabled: Boolean) = MessageHighlightItem(
     id = id,
     enabled = enabled,
     type = type.toItemType(),
@@ -62,6 +62,8 @@ fun MessageHighlightEntity.toItem() = MessageHighlightItem(
     isRegex = isRegex,
     isCaseSensitive = isCaseSensitive,
     createNotification = createNotification,
+    loggedIn = loggedIn,
+    notificationsEnabled = notificationsEnabled,
 )
 
 fun MessageHighlightItem.toEntity() = MessageHighlightEntity(
@@ -96,11 +98,12 @@ fun MessageHighlightEntityType.toItemType(): MessageHighlightItem.Type = when (t
     MessageHighlightEntityType.Custom                 -> MessageHighlightItem.Type.Custom
 }
 
-fun UserHighlightEntity.toItem() = UserHighlightItem(
+fun UserHighlightEntity.toItem(notificationsEnabled: Boolean) = UserHighlightItem(
     id = id,
     enabled = enabled,
     username = username,
     createNotification = createNotification,
+    notificationsEnabled = notificationsEnabled,
 )
 
 fun UserHighlightItem.toEntity() = UserHighlightEntity(

@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 import androidx.annotation.StringRes
 import androidx.core.content.edit
 import androidx.datastore.core.DataMigration
-import androidx.preference.PreferenceManager
 import kotlin.enums.EnumEntries
 import kotlin.enums.enumEntries
 
@@ -16,7 +15,7 @@ interface PreferenceKeys {
 
 inline fun <reified K, T> dankChatPreferencesMigration(
     context: Context,
-    prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context),
+    prefs: SharedPreferences = context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE),
     crossinline migrateValue: suspend (currentData: T, key: K, value: Any?) -> T,
 ): DataMigration<T> where K : Enum<K>, K : PreferenceKeys = dankChatMigration(
     context = context,
@@ -27,7 +26,7 @@ inline fun <reified K, T> dankChatPreferencesMigration(
 
 inline fun <reified K, T> dankChatMigration(
     context: Context,
-    prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context),
+    prefs: SharedPreferences = context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE),
     crossinline keyMapper: (K) -> String,
     crossinline migrateValue: suspend (currentData: T, key: K, value: Any?) -> T,
 ): DataMigration<T> where K : Enum<K> = object : DataMigration<T> {

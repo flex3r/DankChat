@@ -1,73 +1,59 @@
 package com.flxrs.dankchat.preferences.chat.userdisplay
 
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flxrs.dankchat.data.database.entity.UserDisplayEntity
 import com.flxrs.dankchat.data.repo.UserDisplayRepository
-import com.flxrs.dankchat.data.twitch.message.Message
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import com.flxrs.dankchat.utils.extensions.replaceAll
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.annotation.KoinViewModel
-import kotlin.time.Duration.Companion.seconds
 
 @KoinViewModel
 class UserDisplayViewModel(
     private val userDisplayRepository: UserDisplayRepository
 ) : ViewModel() {
 
-    private val _events = MutableSharedFlow<UserDisplayEvent>()
-    val events = _events.asSharedFlow()
+    private val eventChannel = Channel<UserDisplayEvent>(Channel.BUFFERED)
 
-    val userDisplays = userDisplayRepository.userDisplays.map { userDisplays ->
-        userDisplays.map(UserDisplayEntity::toItem).toImmutableList()
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5.seconds), persistentListOf())
+    val events = eventChannel.receiveAsFlow()
+    val userDisplays = SnapshotStateList<UserDisplayItem>()
 
-    fun saveChangesAndCreateNew(userDisplayItems: List<UserDisplayItem>) = viewModelScope.launch {
-        saveItems(userDisplayItems)
-        newItem()
+    fun fetchUserDisplays() {
+        val items = userDisplayRepository.userDisplays.value.map { it.toItem() }
+        userDisplays.replaceAll(items)
     }
 
-    fun saveChangesAndAddItem(userDisplayItems: List<UserDisplayItem>, item: UserDisplayItem) = viewModelScope.launch {
-        saveItems(userDisplayItems)
-        addItem(item)
+    fun addUserDisplay() = viewModelScope.launch {
+        val entity = userDisplayRepository.addUserDisplay()
+        userDisplays += entity.toItem()
+        val position = userDisplays.lastIndex
+        sendEvent(UserDisplayEvent.ItemAdded(position, isLast = true))
     }
 
-    fun saveChanges(userDisplayItems: List<UserDisplayItem>) = viewModelScope.launch {
-        saveItems(userDisplayItems)
+    fun addUserDisplayItem(item: UserDisplayItem, position: Int) = viewModelScope.launch {
+        userDisplayRepository.updateUserDisplay(item.toEntity())
+        userDisplays.add(position, item)
+        val isLast = position == userDisplays.lastIndex
+        sendEvent(UserDisplayEvent.ItemAdded(position, isLast))
     }
 
-    fun removeItem(userDisplayItem: UserDisplayItem) = viewModelScope.launch {
-        _events.emit(UserDisplayEvent.ItemRemoved(userDisplayItem))
-        userDisplayRepository.delete(userDisplayItem.toEntity())
+    fun removeUserDisplayItem(item: UserDisplayItem) = viewModelScope.launch {
+        val position = userDisplays.indexOfFirst { it.id == item.id }
+        userDisplayRepository.removeUserDisplay(item.toEntity())
+        userDisplays.removeAt(position)
+        sendEvent(UserDisplayEvent.ItemRemoved(item, position))
     }
 
-    private suspend fun newItem() {
-        userDisplayRepository.updateUserDisplay(
-            UserDisplayItem(
-                id = 0,
-                username = "",
-                enabled = true,
-                aliasEnabled = false,
-                alias = "",
-                colorEnabled = false,
-                color = Message.DEFAULT_COLOR,
-            ).toEntity()
-        )
-    }
-
-    private suspend fun addItem(entry: UserDisplayItem) {
-        userDisplayRepository.updateUserDisplay(entry.toEntity())
-    }
-
-    private suspend fun saveItems(userDisplayEntries: List<UserDisplayItem>) {
-        val entries = userDisplayEntries.map(UserDisplayItem::toEntity)
+    fun updateUserDisplays(userDisplayItems: List<UserDisplayItem>) = viewModelScope.launch {
+        val entries = userDisplayItems.map(UserDisplayItem::toEntity)
         userDisplayRepository.updateUserDisplays(entries)
+    }
+
+    private suspend fun sendEvent(event: UserDisplayEvent) = withContext(Dispatchers.Main.immediate) {
+        eventChannel.send(event)
     }
 }

@@ -5,9 +5,7 @@ import android.app.Activity
 import android.app.PictureInPictureParams
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Build
@@ -61,7 +59,6 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.DankChatViewModel
@@ -97,6 +94,7 @@ import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import com.flxrs.dankchat.preferences.developer.DeveloperSettingsDataStore
 import com.flxrs.dankchat.preferences.model.ChannelWithRename
+import com.flxrs.dankchat.preferences.notifications.NotificationsSettingsDataStore
 import com.flxrs.dankchat.preferences.tools.ToolsSettingsDataStore
 import com.flxrs.dankchat.utils.createMediaFile
 import com.flxrs.dankchat.utils.extensions.awaitState
@@ -146,6 +144,7 @@ class MainFragment : Fragment() {
     private val chatSettingsDataStore: ChatSettingsDataStore by inject()
     private val developerSettingsDataStore: DeveloperSettingsDataStore by inject()
     private val toolsSettingsDataStore: ToolsSettingsDataStore by inject()
+    private val notificationsSettingsDataStore: NotificationsSettingsDataStore by inject()
     private val dankChatPreferences: DankChatPreferenceStore by inject()
     private val navController: NavController by lazy { findNavController() }
     private var bindingRef: MainFragmentBinding? = null
@@ -263,7 +262,6 @@ class MainFragment : Fragment() {
         binding.input.dismissDropDown()
     }
 
-    private lateinit var preferences: SharedPreferences
     private lateinit var tabAdapter: ChatTabAdapter
     private lateinit var tabLayoutMediator: TabLayoutMediator
     private lateinit var suggestionAdapter: SuggestionsArrayAdapter
@@ -373,7 +371,7 @@ class MainFragment : Fragment() {
             )
         }
 
-        initPreferences(view.context)
+        initPreferences()
         binding.splitThumb?.background?.alpha = 150
         activity?.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.STARTED)
         mainViewModel.apply {
@@ -710,7 +708,7 @@ class MainFragment : Fragment() {
     }
 
     fun mentionUser(user: UserName, display: DisplayName) {
-        val template = preferences.getString(getString(R.string.preference_mention_format_key), "name") ?: "name"
+        val template = notificationsSettingsDataStore.current().mentionFormat.template
         val mention = "${template.replace("name", user.valueOrDisplayName(display))} "
         insertText(mention)
     }
@@ -1070,12 +1068,11 @@ class MainFragment : Fragment() {
         mainViewModel.reloadEmotes(channel)
     }
 
-    private fun initPreferences(context: Context) {
+    private fun initPreferences() {
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.oAuthKey.isNullOrBlank()) {
             dankChatPreferences.clearLogin()
         }
 
-        preferences = PreferenceManager.getDefaultSharedPreferences(context)
         collectFlow(chatSettingsDataStore.suggestions) {
             binding.input.setSuggestionAdapter(it, suggestionAdapter)
         }

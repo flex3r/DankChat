@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
-import android.content.SharedPreferences
 import android.media.AudioManager
 import android.os.Binder
 import android.os.Build
@@ -15,7 +14,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.getSystemService
 import androidx.media.app.NotificationCompat.MediaStyle
-import androidx.preference.PreferenceManager
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.repo.chat.ChatRepository
@@ -26,6 +24,7 @@ import com.flxrs.dankchat.data.twitch.message.NoticeMessage
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
 import com.flxrs.dankchat.main.MainActivity
+import com.flxrs.dankchat.preferences.notifications.NotificationsSettingsDataStore
 import com.flxrs.dankchat.preferences.tools.TTSMessageFormat
 import com.flxrs.dankchat.preferences.tools.TTSPlayMode
 import com.flxrs.dankchat.preferences.tools.ToolsSettings
@@ -45,12 +44,6 @@ class NotificationService : Service(), CoroutineScope {
 
     private val binder = LocalBinder()
     private val manager: NotificationManager by lazy { getSystemService(NOTIFICATION_SERVICE) as NotificationManager }
-    private val sharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
-    private val preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-        when (key) {
-            getString(R.string.preference_notification_key) -> notificationsEnabled = sharedPreferences.getBoolean(key, true)
-        }
-    }
 
     private var notificationsEnabled = false
     private var toolSettings = ToolsSettings()
@@ -61,6 +54,7 @@ class NotificationService : Service(), CoroutineScope {
     private val chatRepository: ChatRepository by inject()
     private val dataRepository: DataRepository by inject()
     private val toolsSettingsDataStore: ToolsSettingsDataStore by inject()
+    private val notificationsSettingsDataStore: NotificationsSettingsDataStore by inject()
 
     private var tts: TextToSpeech? = null
     private var audioManager: AudioManager? = null
@@ -85,7 +79,6 @@ class NotificationService : Service(), CoroutineScope {
         coroutineContext.cancelChildren()
         manager.cancelAll()
         shutdownTTS()
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
 
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
         stopSelf()
@@ -108,6 +101,9 @@ class NotificationService : Service(), CoroutineScope {
         }
 
 
+        notificationsSettingsDataStore.settings
+            .onEach { notificationsEnabled = it.showNotifications }
+            .launchIn(this)
         toolsSettingsDataStore.ttsEnabled
             .onEach { setTTSEnabled(enabled = it) }
             .launchIn(this)
@@ -117,11 +113,6 @@ class NotificationService : Service(), CoroutineScope {
         toolsSettingsDataStore.settings
             .onEach { toolSettings = it }
             .launchIn(this)
-
-        sharedPreferences.apply {
-            notificationsEnabled = sharedPreferences.getBoolean(getString(R.string.preference_notification_key), true)
-            registerOnSharedPreferenceChangeListener(preferenceListener)
-        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

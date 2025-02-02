@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.1.0"
+kotlin = "2.1.10"
 coroutines = "1.10.1"
 serialization = "1.7.3"
 datetime = "0.6.1"
@@ -7,7 +7,7 @@ immutable = "0.3.8"
 ktor = "3.0.3"
 coil = "3.0.4"
 okhttp = "5.0.0-alpha.14"
-ksp = "2.1.0-1.0.29"
+ksp = "2.1.10-1.0.29"
 koin = "4.0.1"
 koin-annotations = "2.0.0-Beta3"
 
@@ -23,15 +23,14 @@ androidxFragment = "1.8.5"
 androidxTransition = "1.5.1"
 androidxLifecycle = "2.8.7"
 androidxMedia = "1.7.0"
-androidxNavigation = "2.8.5"
-androidxPreference = "1.2.1"
+androidxNavigation = "2.8.6"
 androidxRecyclerview = "1.4.0"
 androidxViewpager2 = "1.1.0"
 androidxRoom = "2.6.1"
 androidxWebkit = "1.12.1"
 androidxDataStore = "1.1.2"
-compose = "1.7.6"
-compose-materia3 = "1.4.0-alpha06"
+compose = "1.7.7"
+compose-materia3 = "1.4.0-alpha07"
 compose-unstyled = "1.20.0"
 material = "1.12.0"
 flexBox = "3.0.0"
@@ -73,7 +72,6 @@ androidx-media = { module = "androidx.media:media", version.ref = "androidxMedia
 androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "androidxNavigation" }
 androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "androidxNavigation" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidxNavigation" }
-androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "androidxPreference" }
 androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "androidxRecyclerview" }
 androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "androidxViewpager2" }
 androidx-webkit = { module = "androidx.webkit:webkit", version.ref = "androidxWebkit" }
@@ -130,7 +128,6 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotl
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

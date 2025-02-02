@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.preferences.chat.userdisplay
 
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -19,21 +18,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
@@ -49,100 +45,101 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.LifecycleStartEffect
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.twitch.message.Message
+import com.flxrs.dankchat.preferences.components.CheckboxWithText
+import com.flxrs.dankchat.preferences.components.DankBackground
 import com.flxrs.dankchat.preferences.components.NavigationBarSpacer
 import com.flxrs.dankchat.utils.compose.SwipeToDelete
 import com.rarepebble.colorpicker.ColorPickerView
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun UserDisplayScreen(onNavBack: () -> Unit) {
-    val focusManager = LocalFocusManager.current
     val viewModel = koinViewModel<UserDisplayViewModel>()
     val events = remember(viewModel) { UserDisplayEventsWrapper(viewModel.events) }
-    val userDisplays = viewModel.userDisplays.collectAsStateWithLifecycle().value
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchUserDisplays()
+    }
 
     UserDisplayScreen(
-        initialItems = userDisplays,
+        userDisplays = viewModel.userDisplays,
         eventsWrapper = events,
-        onSaveAndAddNew = { viewModel.saveChangesAndCreateNew(it) },
-        onSaveAndAddItem = { list, new -> viewModel.saveChangesAndAddItem(list, new) },
-        onRemoveItem = {
-            focusManager.clearFocus()
-            viewModel.removeItem(it)
-        },
-        onSaveAndNavBack = {
-            viewModel.saveChanges(it)
-            onNavBack()
-        },
-        onSave = { viewModel.saveChanges(it) },
+        onSave = viewModel::updateUserDisplays,
+        onRemove = viewModel::removeUserDisplayItem,
+        onAddNew = viewModel::addUserDisplay,
+        onAdd = viewModel::addUserDisplayItem,
+        onNavBack = onNavBack,
     )
 }
 
 @Composable
 private fun UserDisplayScreen(
-    initialItems: ImmutableList<UserDisplayItem>,
+    userDisplays: SnapshotStateList<UserDisplayItem>,
     eventsWrapper: UserDisplayEventsWrapper,
-    onSaveAndAddNew: (List<UserDisplayItem>) -> Unit,
-    onSaveAndAddItem: (List<UserDisplayItem>, UserDisplayItem) -> Unit,
-    onRemoveItem: (UserDisplayItem) -> Unit,
-    onSaveAndNavBack: (List<UserDisplayItem>) -> Unit,
     onSave: (List<UserDisplayItem>) -> Unit,
+    onRemove: (UserDisplayItem) -> Unit,
+    onAddNew: () -> Unit,
+    onAdd: (UserDisplayItem, Int) -> Unit,
+    onNavBack: () -> Unit,
 ) {
-    val items = remember(initialItems) { initialItems.toMutableStateList() }
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
     val snackbarHost = remember { SnackbarHostState() }
-    val removedMessage = stringResource(R.string.item_removed)
-    val undo = stringResource(R.string.undo)
-
-    // :)
-    val newItems = rememberUpdatedState(items)
-    LifecycleStartEffect(Unit) {
-        onStopOrDispose {
-            onSave(newItems.value)
-        }
-    }
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val listState = rememberLazyListState()
 
     LaunchedEffect(eventsWrapper) {
         eventsWrapper.events.collectLatest {
+            focusManager.clearFocus()
             when (it) {
                 is UserDisplayEvent.ItemRemoved -> {
                     val result = snackbarHost.showSnackbar(
-                        message = removedMessage,
-                        actionLabel = undo,
-                        duration = SnackbarDuration.Long,
+                        message = context.getString(R.string.item_removed),
+                        actionLabel = context.getString(R.string.undo),
+                        duration = SnackbarDuration.Short,
                     )
                     if (result == SnackbarResult.ActionPerformed) {
-                        onSaveAndAddItem(items, it.removed)
+                        onAdd(it.item, it.position)
+                    }
+                }
+
+                is UserDisplayEvent.ItemAdded   -> {
+                    when {
+                        it.isLast && listState.canScrollForward -> listState.animateScrollToItem(listState.layoutInfo.totalItemsCount - 1)
+                        it.isLast                               -> listState.requestScrollToItem(listState.layoutInfo.totalItemsCount - 1)
+                        else                                    -> listState.animateScrollToItem(it.position)
                     }
                 }
             }
+        }
+    }
+
+    LifecycleStartEffect(Unit) {
+        onStopOrDispose {
+            onSave(userDisplays)
         }
     }
 
@@ -158,7 +155,10 @@ private fun UserDisplayScreen(
                 title = { Text(stringResource(R.string.custom_user_display_title)) },
                 navigationIcon = {
                     IconButton(
-                        onClick = { onSaveAndNavBack(items) },
+                        onClick = {
+                            onSave(userDisplays)
+                            onNavBack()
+                        },
                         content = { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back)) },
                     )
                 }
@@ -172,40 +172,32 @@ private fun UserDisplayScreen(
                     modifier = Modifier
                         .navigationBarsPadding()
                         .padding(8.dp),
-                    onClick = { onSaveAndAddNew(items) },
+                    onClick = onAddNew,
                 )
             }
-        }
+        },
+        floatingActionButtonPosition = FabPosition.Center,
     ) { padding ->
+        DankBackground(visible = userDisplays.isEmpty())
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
                 .padding(start = 16.dp, end = 16.dp, top = 16.dp),
         ) {
-            itemsIndexed(items, key = { _, it -> it.id }) { idx, item ->
-                val actualItem = rememberUpdatedState(item)
+            itemsIndexed(userDisplays, key = { _, it -> it.id }) { idx, item ->
                 UserDisplayItem(
                     item = item,
-                    onChange = { items[idx] = it },
-                    onRemove = { onRemoveItem(actualItem.value) },
+                    onChange = { userDisplays[idx] = it },
+                    onRemove = { onRemove(userDisplays[idx]) },
                     modifier = Modifier
                         .padding(bottom = 16.dp)
-                        .animateItem(),
+                        .animateItem(
+                            fadeInSpec = null,
+                            fadeOutSpec = null,
+                        ),
                 )
-            }
-
-            if (items.isNotEmpty()) {
-                item(key = "save") {
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp)
-                            .animateItem(),
-                        onClick = { onSaveAndNavBack(items) },
-                        content = { Text(stringResource(R.string.save)) },
-                    )
-                }
             }
             item(key = "spacer") {
                 NavigationBarSpacer(Modifier.height(112.dp))
@@ -331,35 +323,4 @@ private fun UserDisplayItem(
     }
 }
 
-@Composable
-private fun CheckboxWithText(
-    text: String,
-    checked: Boolean,
-    enabled: Boolean = true,
-    onCheckedChange: (Boolean) -> Unit,
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.selectable(
-            selected = checked,
-            interactionSource = interactionSource,
-            indication = ripple(),
-            enabled = enabled,
-            onClick = { onCheckedChange(!checked) },
-            role = Role.Checkbox,
-        )
-    ) {
-        Checkbox(
-            checked = checked,
-            onCheckedChange = onCheckedChange,
-            enabled = enabled,
-            interactionSource = interactionSource,
-        )
-        Text(
-            text = text,
-            color = if (enabled) LocalContentColor.current else CheckboxDefaults.colors().disabledBorderColor,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-    }
-}
+

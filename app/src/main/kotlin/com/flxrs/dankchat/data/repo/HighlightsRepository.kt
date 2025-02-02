@@ -26,6 +26,7 @@ import com.flxrs.dankchat.data.twitch.message.isReward
 import com.flxrs.dankchat.data.twitch.message.isSub
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.notifications.NotificationsSettingsDataStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
@@ -40,6 +41,7 @@ class HighlightsRepository(
     private val userHighlightDao: UserHighlightDao,
     private val blacklistedUserDao: BlacklistedUserDao,
     private val preferences: DankChatPreferenceStore,
+    private val notificationsSettingsDataStore: NotificationsSettingsDataStore,
     dispatchersProvider: DispatchersProvider,
 ) {
 
@@ -95,8 +97,6 @@ class HighlightsRepository(
                 return@launch
             }
         }
-
-        preferences.clearCustomMentions()
     }
 
     suspend fun addMessageHighlight(): MessageHighlightEntity {
@@ -107,7 +107,7 @@ class HighlightsRepository(
             pattern = ""
         )
         val id = messageHighlightDao.addHighlight(entity)
-        return messageHighlightDao.getMessageHighlight(id)
+        return entity.copy(id = id)
     }
 
     suspend fun updateMessageHighlight(entity: MessageHighlightEntity) {
@@ -129,7 +129,7 @@ class HighlightsRepository(
             username = ""
         )
         val id = userHighlightDao.addHighlight(entity)
-        return userHighlightDao.getUserHighlight(id)
+        return entity.copy(id = id)
     }
 
     suspend fun updateUserHighlight(entity: UserHighlightEntity) {
@@ -151,7 +151,7 @@ class HighlightsRepository(
             username = ""
         )
         val id = blacklistedUserDao.addBlacklistedUser(entity)
-        return blacklistedUserDao.getBlacklistedUser(id)
+        return entity.copy(id = id)
     }
 
     suspend fun updateBlacklistedUser(entity: BlacklistedUserEntity) {
@@ -269,8 +269,8 @@ class HighlightsRepository(
     }
 
     private fun WhisperMessage.calculateHighlightState(): WhisperMessage = when {
-        preferences.createWhisperNotifications -> copy(highlights = setOf(Highlight(HighlightType.Notification)))
-        else                                   -> this
+        notificationsSettingsDataStore.current().showWhisperNotifications -> copy(highlights = setOf(Highlight(HighlightType.Notification)))
+        else                                                              -> this
     }
 
     private val List<MessageHighlightEntity>.areSubsEnabled: Boolean

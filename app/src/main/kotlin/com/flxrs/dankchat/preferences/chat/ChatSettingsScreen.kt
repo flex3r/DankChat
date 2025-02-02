@@ -1,7 +1,5 @@
 package com.flxrs.dankchat.preferences.chat
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.exclude
@@ -35,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -333,6 +332,7 @@ private fun MessageHistoryCategory(
     messageHistoryDashboardUrl: String,
     onInteraction: (ChatSettingsInteraction) -> Unit,
 ) {
+    val launcher = LocalUriHandler.current
     PreferenceCategory(title = stringResource(R.string.preference_message_history_header)) {
         SwitchPreferenceItem(
             title = stringResource(R.string.preference_load_message_history_title),
@@ -349,7 +349,7 @@ private fun MessageHistoryCategory(
         PreferenceItem(
             title = stringResource(R.string.preference_message_history_dashboard_title),
             summary = stringResource(R.string.preference_message_history_dashboard_summary),
-            onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(messageHistoryDashboardUrl))) },
+            onClick = { launcher.openUri(messageHistoryDashboardUrl) },
         )
     }
 }

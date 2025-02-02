@@ -3,7 +3,6 @@ package com.flxrs.dankchat.utils.extensions
 import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -64,16 +63,6 @@ val Fragment.isLandscape: Boolean
 
 val Fragment.isPortrait: Boolean
     get() = resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
-
-val Resources.isSystemNightMode: Boolean
-    get() = configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-
-val Resources.isSystemLightMode: Boolean
-    get() = !isSystemNightMode
-
-val Fragment.isSystemLightMode: Boolean
-    get() = resources.isSystemLightMode
-
 
 private fun Context.hideKeyboard(view: View) {
     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
