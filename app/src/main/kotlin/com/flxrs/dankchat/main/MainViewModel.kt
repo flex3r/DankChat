@@ -387,7 +387,7 @@ class MainViewModel(
 
     val shouldEnablePictureInPictureAutoMode: StateFlow<Boolean> = combine(
         currentStreamedChannel,
-        streamsSettingsDataStore.settings.map { it.enablePiP },
+        streamsSettingsDataStore.settings.map { it.pipAllowed },
     ) { currentStream, pipEnabled ->
         currentStream != null && pipEnabled
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)

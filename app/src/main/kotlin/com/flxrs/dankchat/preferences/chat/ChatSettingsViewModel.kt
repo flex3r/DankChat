@@ -46,8 +46,11 @@ class ChatSettingsViewModel(
                 is ChatSettingsInteraction.TimestampFormat              -> chatSettingsDataStore.update { it.copy(timestampFormat = interaction.value) }
                 is ChatSettingsInteraction.Badges                       -> chatSettingsDataStore.update { it.copy(visibleBadges = interaction.value) }
                 is ChatSettingsInteraction.Emotes                       -> {
+                    val previous = settings.value.visibleEmotes
                     chatSettingsDataStore.update { it.copy(visibleEmotes = interaction.value) }
-                    _events.emit(ChatSettingsEvent.RestartRequired)
+                    if (previous != interaction.value) {
+                        _events.emit(ChatSettingsEvent.RestartRequired)
+                    }
                 }
 
                 is ChatSettingsInteraction.AllowUnlisted                -> {

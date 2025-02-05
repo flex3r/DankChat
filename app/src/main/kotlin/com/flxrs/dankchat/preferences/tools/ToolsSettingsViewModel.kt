@@ -2,11 +2,12 @@ package com.flxrs.dankchat.preferences.tools
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.flxrs.dankchat.data.repo.RecentUploadsRepository
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
@@ -15,15 +16,19 @@ import kotlin.time.Duration.Companion.seconds
 @KoinViewModel
 class ToolsSettingsViewModel(
     private val toolsSettingsDataStore: ToolsSettingsDataStore,
+    private val recentUploadsRepository: RecentUploadsRepository,
 ) : ViewModel() {
 
-    val settings = toolsSettingsDataStore.settings
-        .map { it.toState() }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5.seconds),
-            initialValue = toolsSettingsDataStore.current().toState(),
-        )
+    val settings = combine(
+        toolsSettingsDataStore.settings,
+        recentUploadsRepository.getRecentUploads(),
+    ) { toolsSettings, recentUploads ->
+        toolsSettings.toState(hasRecentUploads = recentUploads.isNotEmpty())
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5.seconds),
+        initialValue = toolsSettingsDataStore.current().toState(hasRecentUploads = false),
+    )
 
     fun onInteraction(interaction: ToolsSettingsInteraction) = viewModelScope.launch {
         runCatching {
@@ -52,17 +57,19 @@ sealed interface ToolsSettingsInteraction {
 
 data class ToolsSettingsState(
     val imageUploader: ImageUploaderConfig,
+    val hasRecentUploads: Boolean,
     val ttsEnabled: Boolean,
     val ttsPlayMode: TTSPlayMode,
     val ttsMessageFormat: TTSMessageFormat,
     val ttsForceEnglish: Boolean,
     val ttsIgnoreUrls: Boolean,
     val ttsIgnoreEmotes: Boolean,
-    val ttsUserIgnoreList: ImmutableSet<String>
+    val ttsUserIgnoreList: ImmutableSet<String>,
 )
 
-private fun ToolsSettings.toState() = ToolsSettingsState(
+private fun ToolsSettings.toState(hasRecentUploads: Boolean) = ToolsSettingsState(
     imageUploader = uploaderConfig,
+    hasRecentUploads = hasRecentUploads,
     ttsEnabled = ttsEnabled,
     ttsPlayMode = ttsPlayMode,
     ttsMessageFormat = ttsMessageFormat,

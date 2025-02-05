@@ -127,7 +127,7 @@ private fun ToolsSettingsScreen(
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
         ) {
-            ImageUploaderCategory(onNavToImageUploader)
+            ImageUploaderCategory(hasRecentUploads = settings.hasRecentUploads, onNavToImageUploader = onNavToImageUploader)
             HorizontalDivider(thickness = Dp.Hairline)
             TextToSpeechCategory(settings, onInteraction, onNavToTTSUserIgnoreList)
             NavigationBarSpacer()
@@ -137,6 +137,7 @@ private fun ToolsSettingsScreen(
 
 @Composable
 fun ImageUploaderCategory(
+    hasRecentUploads: Boolean,
     onNavToImageUploader: () -> Unit,
 ) {
     var recentUploadSheetOpen by remember { mutableStateOf(false) }
@@ -148,6 +149,7 @@ fun ImageUploaderCategory(
         )
         PreferenceItem(
             title = stringResource(R.string.preference_uploader_recent_uploads_title),
+            isEnabled = hasRecentUploads,
             onClick = { recentUploadSheetOpen = true },
             trailingIcon = Icons.Default.History,
         )

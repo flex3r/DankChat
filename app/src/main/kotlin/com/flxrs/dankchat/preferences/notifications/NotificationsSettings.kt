@@ -14,8 +14,4 @@ enum class MentionFormat(val template: String) {
     NameComma("name,"),
     AtName("@name"),
     AtNameComma("@name,");
-
-    companion object {
-        val Base = "name"
-    }
 }
