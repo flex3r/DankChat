@@ -387,10 +387,6 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="confirm_login_cancel_positive_button">Anmeldung abbrechen</string>
     <string name="login_menu_zoom_out">Herauszoomen</string>
     <string name="login_menu_zoom_in">Heranzoomen</string>
-    <plurals name="viewers">
-        <item quantity="one">Live mit %d Zuschauer</item>
-        <item quantity="other">Live mit %d Zuschauern</item>
-    </plurals>
     <plurals name="viewers_and_uptime">
         <item quantity="one">Live mit %1$d Zuschauer für %2$s</item>
         <item quantity="other">Live mit %1$d Zuschauern für %2$s</item>

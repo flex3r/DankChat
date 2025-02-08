@@ -389,10 +389,6 @@
     <string name="confirm_login_cancel_positive_button">لغو ورود</string>
     <string name="login_menu_zoom_out">کوچک نمایی</string>
     <string name="login_menu_zoom_in">بزرگنمایی</string>
-    <plurals name="viewers">
-        <item quantity="one">زنده با %d بیننده</item>
-        <item quantity="other">زنده با %d بیننده</item>
-    </plurals>
     <plurals name="viewers_and_uptime">
         <item quantity="one">زنده با %1$d بیننده برای %2$s</item>
         <item quantity="other">زنده با %1$d بیننده برای %2$s</item>

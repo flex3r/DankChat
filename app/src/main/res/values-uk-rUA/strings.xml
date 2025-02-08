@@ -382,12 +382,6 @@
     <string name="confirm_login_cancel_positive_button">Скасувати вхід</string>
     <string name="login_menu_zoom_out">Зменшити</string>
     <string name="login_menu_zoom_in">Збільшити</string>
-    <plurals name="viewers">
-        <item quantity="one">Наживо з %d глядачем</item>
-        <item quantity="few">Наживо з %d глядачами</item>
-        <item quantity="many">Наживо з %d глядачами</item>
-        <item quantity="other">Наживо з %d глядачами</item>
-    </plurals>
     <plurals name="months">
         <item quantity="one">%d місяць</item>
         <item quantity="few">%d місяці</item>

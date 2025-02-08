@@ -301,7 +301,4 @@
     <string name="ignores">忽略</string>
     <string name="preference_ignores_summary">編輯訊息忽略</string>
     <string name="highlights_ignores_entry_custom">自訂</string>
-    <plurals name="viewers">
-        <item quantity="other">%d 人正在觀看</item>
-    </plurals>
 </resources>

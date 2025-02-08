@@ -291,8 +291,4 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="user_display_custom_alias_enable">Àlies personalitzat</string>
     <string name="pick_custom_user_color_title">Escollir color d\'usuari personalitzat</string>
     <string name="custom_user_display_summary">Afegeix un nom i color personalitzat per a usuaris</string>
-    <plurals name="viewers">
-        <item quantity="one">En viu amb %d espectador</item>
-        <item quantity="other">En viu amb %d espectadors</item>
-    </plurals>
 </resources>

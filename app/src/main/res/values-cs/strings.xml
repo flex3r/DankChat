@@ -386,12 +386,6 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="confirm_login_cancel_positive_button">Zrušit přihlášení</string>
     <string name="login_menu_zoom_out">Oddálit</string>
     <string name="login_menu_zoom_in">Přiblížit</string>
-    <plurals name="viewers">
-        <item quantity="one">Živě s %d divákem</item>
-        <item quantity="few">Živě se %d diváky</item>
-        <item quantity="many">Živě s %d diváky</item>
-        <item quantity="other">Živě s %d diváky</item>
-    </plurals>
     <plurals name="viewers_and_uptime">
         <item quantity="one">Živě s %1$d divákem již: %2$s</item>
         <item quantity="few">Živě se %1$d diváky již: %2$s</item>

@@ -380,10 +380,6 @@
     <string name="confirm_login_cancel_positive_button">Cancelar inicio de sessão</string>
     <string name="login_menu_zoom_out">Reduzir o zoom</string>
     <string name="login_menu_zoom_in">Aumentar o zoom</string>
-    <plurals name="viewers">
-        <item quantity="one">Ao vivo com %d espectador</item>
-        <item quantity="other">Ao vivo com %d espectadores</item>
-    </plurals>
     <plurals name="viewers_and_uptime">
         <item quantity="one">Ao vivo com %1$d espectador à %2$s</item>
         <item quantity="other">Ao vivo com %1$d espectadores à %2$s</item>

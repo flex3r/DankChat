@@ -384,12 +384,6 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="confirm_login_cancel_positive_button">Anuluj login</string>
     <string name="login_menu_zoom_out">Pomniejsz</string>
     <string name="login_menu_zoom_in">Powiększ</string>
-    <plurals name="viewers">
-        <item quantity="one">Na żywo z %d widzem</item>
-        <item quantity="few">Na żywo z %d widzami</item>
-        <item quantity="many">Na żywo z %d widzami</item>
-        <item quantity="other">Na żywo z %d widzami</item>
-    </plurals>
     <plurals name="viewers_and_uptime">
         <item quantity="one">Na żywo z %1$d widzem przez %2$s</item>
         <item quantity="few">Na żywo z %1$d widzami przez %2$s</item>

@@ -379,10 +379,6 @@
     <string name="confirm_login_cancel_positive_button">Annulla login</string>
     <string name="login_menu_zoom_out">Rimpicciolisci</string>
     <string name="login_menu_zoom_in">Ingrandisci</string>
-    <plurals name="viewers">
-        <item quantity="one">In live con %d spettatore</item>
-        <item quantity="other">Live con %d spettatori</item>
-    </plurals>
     <plurals name="viewers_and_uptime">
         <item quantity="one">Live con %1$d spettatore per %2$s</item>
         <item quantity="other">Live con %1$d spettatori per %2$s</item>

@@ -379,10 +379,6 @@
     <string name="confirm_login_cancel_positive_button">ଲଗଇନ୍ ବାତିଲ୍ କରନ୍ତୁ |</string>
     <string name="login_menu_zoom_out">ଜୁମ୍ ଆଉଟ୍ କରନ୍ତୁ |</string>
     <string name="login_menu_zoom_in">ଜୁମ୍ ଇନ୍ କରନ୍ତୁ |</string>
-    <plurals name="viewers">
-        <item quantity="one">ସହିତ ରୁହନ୍ତୁ | %d ଦର୍ଶକ</item>
-        <item quantity="other">ସହିତ ରୁହ | %d ଦର୍ଶକ |</item>
-    </plurals>
     <plurals name="viewers_and_uptime">
         <item quantity="one">ସହିତ ରୁହନ୍ତୁ | %1$d ପାଇଁ ଦର୍ଶକ %2$s</item>
         <item quantity="other">ସହିତ ରୁହ | %1$d ପାଇଁ ଦର୍ଶକ | %2$s</item>

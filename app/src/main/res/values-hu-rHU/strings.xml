@@ -379,10 +379,6 @@
     <string name="confirm_login_cancel_positive_button">Bejelentkezés megszakítása</string>
     <string name="login_menu_zoom_out">Kicsinyítés</string>
     <string name="login_menu_zoom_in">Nagyítás</string>
-    <plurals name="viewers">
-        <item quantity="one">Előben %d nézővel</item>
-        <item quantity="other">Élőben %d nézővel</item>
-    </plurals>
     <plurals name="viewers_and_uptime">
         <item quantity="one">Élő %1$d nézővel %2$s ideje</item>
         <item quantity="other">Élő %1$d nézőkkel %2$s ideje</item>

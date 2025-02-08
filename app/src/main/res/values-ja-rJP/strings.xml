@@ -379,9 +379,6 @@
     <string name="confirm_login_cancel_positive_button">ログインをキャンセル</string>
     <string name="login_menu_zoom_out">ズームアウト</string>
     <string name="login_menu_zoom_in">ズームイン</string>
-    <plurals name="viewers">
-        <item quantity="other">%d人の視聴者とライブ</item>
-    </plurals>
     <plurals name="viewers_and_uptime">
         <item quantity="other">%2$sが%1$d人の視聴者とライブ中</item>
     </plurals>

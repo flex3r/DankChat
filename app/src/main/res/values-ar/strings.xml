@@ -375,12 +375,4 @@ The service temporarily stores messages for channels you (and others) visit to p
     <string name="confirm_login_cancel_positive_button">إلغاء تسجيل الدخول</string>
     <string name="login_menu_zoom_out">تصغير</string>
     <string name="login_menu_zoom_in">تكبير الصورة</string>
-    <plurals name="viewers">
-        <item quantity="zero">Live with %d viewer</item>
-        <item quantity="one">Live with %d viewers</item>
-        <item quantity="two">Live with %d viewers</item>
-        <item quantity="few">Live with %d viewers</item>
-        <item quantity="many">Live with %d viewers</item>
-        <item quantity="other">Live with %d viewers</item>
-    </plurals>
 </resources>

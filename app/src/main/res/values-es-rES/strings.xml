@@ -386,10 +386,6 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="confirm_login_cancel_positive_button">Cancelar inicio de sesión</string>
     <string name="login_menu_zoom_out">Alejar</string>
     <string name="login_menu_zoom_in">Acercar</string>
-    <plurals name="viewers">
-        <item quantity="one">En directo con %d espectador</item>
-        <item quantity="other">En directo con %d espectadores</item>
-    </plurals>
     <plurals name="viewers_and_uptime">
         <item quantity="one">En directo con %1$d espectador por %2$s</item>
         <item quantity="other">En directo con %1$d espectadores por %2$s</item>

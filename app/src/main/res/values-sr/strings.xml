@@ -196,9 +196,4 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_tts_force_english_title">Forsiraj engleski jezik</string>
     <string name="preference_tts_force_english_summary">Forisraj čitanje teksta na engleskom umesto na podrazumevanom jeziku</string>
     <string name="preference_visible_emotes_title">Vidljivost emotova nezavisnih servisa</string>
-    <plurals name="viewers">
-        <item quantity="one">Uživo (%d osoba gleda)</item>
-        <item quantity="few">Uživo (gleda %d ljudi)</item>
-        <item quantity="other">Uživo (gleda %d ljudi)</item>
-    </plurals>
 </resources>
