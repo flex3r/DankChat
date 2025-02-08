@@ -1325,7 +1325,6 @@ class MainFragment : Fragment() {
             setEndIconOnClickListener { sendMessage() }
             setEndIconOnLongClickListener { getLastMessage() }
         }
-
     }
 
     private fun DankChatInputLayout.setupEmoteMenu() {

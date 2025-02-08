@@ -6,7 +6,6 @@ import com.flxrs.dankchat.preferences.tools.ImageUploaderConfig
 import com.flxrs.dankchat.preferences.tools.ToolsSettingsDataStore
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
@@ -17,8 +16,7 @@ class ImageUploaderViewModel(
     private val toolsSettingsDataStore: ToolsSettingsDataStore,
 ) : ViewModel() {
 
-    val uploader = toolsSettingsDataStore.settings
-        .map { it.uploaderConfig }
+    val uploader = toolsSettingsDataStore.uploadConfig
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5.seconds),

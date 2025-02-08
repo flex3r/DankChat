@@ -10,7 +10,9 @@ import com.flxrs.dankchat.utils.datastore.dankChatPreferencesMigration
 import com.flxrs.dankchat.utils.datastore.safeData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import org.koin.core.annotation.Single
 
@@ -46,6 +48,16 @@ class StreamsSettingsDataStore(
     )
 
     val settings = dataStore.safeData(StreamsSettings())
+    val fetchStreams = settings
+        .map { it.fetchStreams }
+        .distinctUntilChanged()
+    val showStreamsInfo = settings
+        .map { it.showStreamInfo }
+        .distinctUntilChanged()
+    val pipEnabled = settings
+        .map { it.fetchStreams && it.preventStreamReloads && it.enablePiP }
+        .distinctUntilChanged()
+
     fun current() = runBlocking { settings.first() }
 
     suspend fun update(transform: suspend (StreamsSettings) -> StreamsSettings) {

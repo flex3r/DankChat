@@ -31,8 +31,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -91,10 +89,7 @@ class SevenTVEventApiClient(
 
     init {
         scope.launch {
-            chatSettingsDataStore.settings
-                .map { it.sevenTVLiveEmoteUpdates }
-                .debounce(FLOW_DEBOUNCE)
-                .distinctUntilChanged()
+            chatSettingsDataStore.debouncedSevenTvLiveEmoteUpdates
                 .collectLatest { enabled ->
                     when {
                         enabled && !connected && !connecting -> start()

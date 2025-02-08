@@ -52,7 +52,7 @@ class DankChatApplication : Application(), SingletonImageLoader.Factory {
             modules(DankChatModule().module)
         }
 
-        scope.launch {
+        scope.launch(dispatchersProvider.immediate) {
             setupThemeMode()
         }
 

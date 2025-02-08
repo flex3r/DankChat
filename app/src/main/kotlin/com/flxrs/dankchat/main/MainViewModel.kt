@@ -115,17 +115,13 @@ class MainViewModel(
     private val imageUploadStateChannel = Channel<ImageUploadState>(Channel.CONFLATED)
     private val isImageUploading = MutableStateFlow(false)
     private val isDataLoading = MutableStateFlow(false)
-    private val streamInfoEnabled = streamsSettingsDataStore.settings.map { it.showStreamInfo }
-    private val roomStateEnabled = chatSettingsDataStore.settings.map { it.showChatModes }
     private val streamData = MutableStateFlow<List<StreamData>>(emptyList())
     private val currentSuggestionChannel = MutableStateFlow<UserName?>(null)
     private val inputSheetState = MutableStateFlow<InputSheetState>(InputSheetState.Closed)
     private val fullScreenSheetState = MutableStateFlow<FullScreenSheetState>(FullScreenSheetState.Closed)
     private val _currentStreamedChannel = MutableStateFlow<UserName?>(null)
     private val _isFullscreen = MutableStateFlow(false)
-    private val shouldShowChips = appearanceSettingsDataStore.settings.map { it.showChips }
     private val isInputFocused = MutableStateFlow(false)
-    private val inputEnabled = appearanceSettingsDataStore.settings.map { it.showInput }
     private val isScrolling = MutableStateFlow(false)
     private val chipsExpanded = MutableStateFlow(false)
     private val repeatedSend = MutableStateFlow(RepeatedSendData(enabled = false, message = ""))
@@ -137,7 +133,10 @@ class MainViewModel(
         new.all { newEmote -> old.any { it.emoteId == newEmote.emoteId } }
     }
 
-    private val roomStateText = combine(roomStateEnabled, currentSuggestionChannel) { roomStateEnabled, channel -> roomStateEnabled to channel }
+    private val roomStateText = combine(
+        chatSettingsDataStore.showChatModes,
+        currentSuggestionChannel
+    ) { roomStateEnabled, channel -> roomStateEnabled to channel }
         .flatMapLatest { (enabled, channel) ->
             when {
                 enabled && channel != null -> chatRepository.getRoomState(channel)
@@ -148,7 +147,11 @@ class MainViewModel(
 
     private val users = currentSuggestionChannel.flatMapLatestOrDefault(emptySet()) { chatRepository.getUsers(it) }
     private val supibotCommands = currentSuggestionChannel.flatMapLatestOrDefault(emptyList()) { commandRepository.getSupibotCommands(it) }
-    private val currentStreamInformation = combine(streamInfoEnabled, activeChannel, streamData) { streamInfoEnabled, activeChannel, streamData ->
+    private val currentStreamInformation = combine(
+        streamsSettingsDataStore.showStreamsInfo,
+        activeChannel,
+        streamData
+    ) { streamInfoEnabled, activeChannel, streamData ->
         streamData.find { it.channel == activeChannel }?.formattedData?.takeIf { streamInfoEnabled }
     }
 
@@ -178,8 +181,8 @@ class MainViewModel(
 
     private val shouldShowBottomText: Flow<Boolean> =
         combine(
-            roomStateEnabled,
-            streamInfoEnabled,
+            chatSettingsDataStore.showChatModes,
+            streamsSettingsDataStore.showStreamsInfo,
             fullScreenSheetState,
             currentBottomText
         ) { roomStateEnabled, streamInfoEnabled, chatSheetState, bottomText ->
@@ -196,9 +199,7 @@ class MainViewModel(
 
     init {
         viewModelScope.launch {
-            streamsSettingsDataStore.settings
-                .map { it.fetchStreams }
-                .distinctUntilChanged()
+            streamsSettingsDataStore.fetchStreams
                 .collect { fetchStreamData(channels.value.orEmpty()) }
         }
 
@@ -265,7 +266,10 @@ class MainViewModel(
         shouldShowViewPager && !isFullscreen
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), true)
 
-    val shouldShowInput: StateFlow<Boolean> = combine(inputEnabled, shouldShowViewPager) { inputEnabled, shouldShowViewPager ->
+    val shouldShowInput: StateFlow<Boolean> = combine(
+        appearanceSettingsDataStore.showInput,
+        shouldShowViewPager
+    ) { inputEnabled, shouldShowViewPager ->
         inputEnabled && shouldShowViewPager
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), true)
 
@@ -356,7 +360,11 @@ class MainViewModel(
     val isFullscreenFlow: StateFlow<Boolean> = _isFullscreen.asStateFlow()
     val areChipsExpanded: StateFlow<Boolean> = chipsExpanded.asStateFlow()
 
-    val shouldShowChipToggle: StateFlow<Boolean> = combine(shouldShowChips, isScrolling, isInputFocused) { shouldShowChips, isScrolling, inputFocus ->
+    val shouldShowChipToggle: StateFlow<Boolean> = combine(
+        appearanceSettingsDataStore.showChips,
+        isScrolling,
+        isInputFocused
+    ) { shouldShowChips, isScrolling, inputFocus ->
         shouldShowChips && !isScrolling && !inputFocus
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), true)
 
@@ -387,7 +395,7 @@ class MainViewModel(
 
     val shouldEnablePictureInPictureAutoMode: StateFlow<Boolean> = combine(
         currentStreamedChannel,
-        streamsSettingsDataStore.settings.map { it.pipAllowed },
+        streamsSettingsDataStore.pipEnabled,
     ) { currentStream, pipEnabled ->
         currentStream != null && pipEnabled
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)

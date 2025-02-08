@@ -12,6 +12,7 @@ import com.flxrs.dankchat.utils.datastore.mappedStringOrDefault
 import com.flxrs.dankchat.utils.datastore.safeData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
@@ -68,7 +69,15 @@ class AppearanceSettingsDataStore(
     )
 
     val settings = dataStore.safeData(AppearanceSettings())
-    val lineSeparator = settings.map { it.lineSeparator }
+    val lineSeparator = settings
+        .map { it.lineSeparator }
+        .distinctUntilChanged()
+    val showChips = settings
+        .map { it.showChips }
+        .distinctUntilChanged()
+    val showInput = settings
+        .map { it.showInput }
+        .distinctUntilChanged()
     fun current() = runBlocking { settings.first() }
 
     suspend fun update(transform: suspend (AppearanceSettings) -> AppearanceSettings) {

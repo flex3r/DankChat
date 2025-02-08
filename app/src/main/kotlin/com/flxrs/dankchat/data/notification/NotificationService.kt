@@ -101,8 +101,8 @@ class NotificationService : Service(), CoroutineScope {
         }
 
 
-        notificationsSettingsDataStore.settings
-            .onEach { notificationsEnabled = it.showNotifications }
+        notificationsSettingsDataStore.showNotifications
+            .onEach { notificationsEnabled = it }
             .launchIn(this)
         toolsSettingsDataStore.ttsEnabled
             .onEach { setTTSEnabled(enabled = it) }

@@ -70,7 +70,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
@@ -89,7 +88,6 @@ import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.system.measureTimeMillis
-import kotlin.time.Duration.Companion.seconds
 
 @Single
 class ChatRepository(
@@ -131,9 +129,7 @@ class ChatRepository(
     private val knownRewards = ConcurrentHashMap<String, PubSubMessage.PointRedemption>()
     private val rewardMutex = Mutex()
 
-    private val scrollBackLengthFlow = chatSettingsDataStore.settings
-        .map { it.scrollbackLength }
-        .debounce(1.seconds)
+    private val scrollBackLengthFlow = chatSettingsDataStore.debouncedScrollBack
         .onEach { length ->
             messages.forEach { (_, messagesFlow) ->
                 if (messagesFlow.value.size > length) {

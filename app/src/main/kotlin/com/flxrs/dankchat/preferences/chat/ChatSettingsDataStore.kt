@@ -17,12 +17,14 @@ import com.flxrs.dankchat.utils.datastore.stringSetOrNull
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import org.koin.core.annotation.Single
+import kotlin.time.Duration.Companion.seconds
 
 @Single
 class ChatSettingsDataStore(
@@ -117,8 +119,25 @@ class ChatSettingsDataStore(
     )
 
     val settings = dataStore.safeData(ChatSettings())
-    val commands = settings.map { it.customCommands }
-    val suggestions = settings.map { it.suggestions }
+    val commands = settings
+        .map { it.customCommands }
+        .distinctUntilChanged()
+    val suggestions = settings
+        .map { it.suggestions }
+        .distinctUntilChanged()
+    val showChatModes = settings
+        .map { it.showChatModes }
+        .distinctUntilChanged()
+
+    val debouncedScrollBack = settings
+        .map { it.scrollbackLength }
+        .distinctUntilChanged()
+        .debounce(1.seconds)
+    val debouncedSevenTvLiveEmoteUpdates = settings
+        .map { it.sevenTVLiveEmoteUpdates }
+        .distinctUntilChanged()
+        .debounce(2.seconds)
+
     val restartChat = settings.distinctUntilChanged { old, new ->
         old.showTimestamps != new.showTimestamps ||
                 old.timestampFormat != new.timestampFormat ||

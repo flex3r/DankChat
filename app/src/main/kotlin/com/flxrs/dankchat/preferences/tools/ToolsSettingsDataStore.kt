@@ -89,6 +89,10 @@ class ToolsSettingsDataStore(
     )
 
     val settings = dataStore.data
+    val uploadConfig = settings
+        .map { it.uploaderConfig }
+        .distinctUntilChanged()
+
     fun current() = runBlocking { settings.first() }
 
     val ttsEnabled = settings

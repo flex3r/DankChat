@@ -10,7 +10,9 @@ import com.flxrs.dankchat.utils.datastore.dankChatPreferencesMigration
 import com.flxrs.dankchat.utils.datastore.stringOrNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import org.koin.core.annotation.Single
 
@@ -48,6 +50,10 @@ class NotificationsSettingsDataStore(
     )
 
     val settings = dataStore.data
+    val showNotifications = settings
+        .map { it.showNotifications }
+        .distinctUntilChanged()
+
     fun current() = runBlocking { settings.first() }
 
     suspend fun update(transform: suspend (NotificationsSettings) -> NotificationsSettings) {

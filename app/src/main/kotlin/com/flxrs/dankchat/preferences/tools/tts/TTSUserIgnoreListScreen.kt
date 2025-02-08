@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.preferences.components.DankBackground
 import com.flxrs.dankchat.preferences.components.NavigationBarSpacer
 import com.flxrs.dankchat.utils.compose.SwipeToDelete
 import kotlinx.collections.immutable.ImmutableList
@@ -129,6 +130,7 @@ private fun UserIgnoreListScreen(
         },
         floatingActionButtonPosition = FabPosition.Center,
     ) { padding ->
+        DankBackground(visible = ignores.isEmpty())
         LazyColumn(
             state = listState,
             modifier = Modifier
