@@ -3,14 +3,13 @@ package com.flxrs.dankchat.data.repo.emote
 import com.flxrs.dankchat.data.api.dankchat.DankChatApiClient
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmoteType
-import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.test.assertEquals
-
 
 @ExtendWith(MockKExtension::class)
 internal class EmoteRepositoryTest {
@@ -19,7 +18,7 @@ internal class EmoteRepositoryTest {
     lateinit var dankchatApiClient: DankChatApiClient
 
     @MockK
-    lateinit var preferences: DankChatPreferenceStore
+    lateinit var chatSettings: ChatSettingsDataStore
 
     @InjectMockKs
     lateinit var emoteRepository: EmoteRepository
