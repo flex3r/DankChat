@@ -77,6 +77,6 @@ class EmoteSheetViewModel @Inject constructor(savedStateHandle: SavedStateHandle
         private const val SEVEN_TV_BASE_LINK = "https://7tv.app/emotes/"
         private const val FFZ_BASE_LINK = "https://www.frankerfacez.com/emoticon/"
         private const val BTTV_BASE_LINK = "https://betterttv.com/emotes/"
-        private const val RACCATTACK_BASE_LINK = "https://emotes.raccatta.cc/twitch/emote/"
+        private const val RACCATTACK_BASE_LINK = "https://emotes.awoo.nl/twitch/emote/"
     }
 }
