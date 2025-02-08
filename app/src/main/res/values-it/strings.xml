@@ -115,7 +115,6 @@
     <string name="confirm_user_block_positive_button">Blocca</string>
     <string name="restart_required">Riavvio necessario per applicare le modifiche</string>
     <string name="restart">Riavvia</string>
-    <string name="uploader_title">Caricatore multimediale personalizzato</string>
     <string name="uploader_reset">Ripristina a predefiniti</string>
     <string name="uploader_url">Carica URL</string>
     <string name="uploader_field">Campo del modulo</string>
@@ -179,7 +178,6 @@
     <string name="badge_tooltip_sub_tier">Rango %1$s</string>
     <string name="preference_timestamp_title">Mostra marche orarie</string>
     <string name="preference_mention_format_title">Formato delle menzioni</string>
-    <string name="preference_mention_format_summary">Modifica il formato delle menzioni, cliccando su un nome utente</string>
     <string name="preference_roomstate_title">Mostra le informazioni delle modalità della chat</string>
     <string name="preference_roomstate_summary">Mostra le informazioni sulle modalità correnti della chat, come la modalità solo iscritti.</string>
     <string name="preference_streaminfo_title">Mostra informazioni sulla live</string>
@@ -299,7 +297,6 @@
     <string name="clear_recent_uploads_dialog_title">Cancella Caricamenti Recenti</string>
     <string name="clear_recent_uploads_dialog_message">Sei sicuro di voler cancellare la cronologia di caricamento? I tuoi file caricati non saranno eliminati.</string>
     <string name="clear">Cancella</string>
-    <string name="copied_image_url">URL Immagine Copiato</string>
     <string name="pattern">Modello</string>
     <string name="case_sensitive">Sensibile alle maiuscole</string>
     <string name="highlights">In evidenza</string>
@@ -339,8 +336,6 @@
     <string name="login_outdated_title">Accesso Obsoleto!</string>
     <string name="login_outdated_message">Il tuo accesso è obsoleto e non ha accesso ad alcune funzionalità. Sei pregato di accedere nuovamente.</string>
     <string name="custom_user_display_title">Schermata Utente Personalizzata</string>
-    <string name="user_display_item_username_hint">Nome Utente</string>
-    <string name="user_display_item_color_hint">Colore</string>
     <string name="remove_custom_user_display">Rimuovi Schermata Utente Personalizzata</string>
     <string name="user_display_alias_input">Alias</string>
     <string name="user_display_custom_color_enable">Colore Personalizzato</string>

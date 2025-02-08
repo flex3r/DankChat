@@ -115,7 +115,6 @@
     <string name="confirm_user_block_positive_button">ଅବରୋଧ କରନ୍ତୁ |</string>
     <string name="restart_required">ପରିବର୍ତ୍ତନଗୁଡିକ ପ୍ରୟୋଗ କରିବାକୁ ଆବଶ୍ୟକ ପୁନ art ଆରମ୍ଭ କରନ୍ତୁ |</string>
     <string name="restart">ପୁନଃପ୍ରାରମ୍ଭ</string>
-    <string name="uploader_title">କଷ୍ଟମ୍ ମିଡିଆ ଅପଲୋଡର୍ |</string>
     <string name="uploader_reset">ଡିଫଲ୍ଟକୁ ପୁନ et ସେଟ୍ କରନ୍ତୁ |</string>
     <string name="uploader_url">URL ଅପଲୋଡ୍ କରନ୍ତୁ |</string>
     <string name="uploader_field">ଫର୍ମ ଫିଲ୍ଡ |</string>
@@ -179,7 +178,6 @@
     <string name="badge_tooltip_sub_tier">ସ୍ତର %1$s</string>
     <string name="preference_timestamp_title">ଟାଇମଷ୍ଟ୍ୟାମ୍ପ ଦେଖାନ୍ତୁ |</string>
     <string name="preference_mention_format_title">ଫର୍ମାଟ୍ ଉଲ୍ଲେଖ କରନ୍ତୁ |</string>
-    <string name="preference_mention_format_summary">ଏକ ଉପଯୋଗକର୍ତ୍ତା ନାମ କ୍ଲିକ୍ କରିବା ସମୟରେ ଉଲ୍ଲେଖ ଫର୍ମାଟ୍ ପରିବର୍ତ୍ତନ କରନ୍ତୁ |</string>
     <string name="preference_roomstate_title">ଚାଟ୍ ମୋଡ୍ ସୂଚନା ଦେଖାନ୍ତୁ |</string>
     <string name="preference_roomstate_summary">କେବଳ ଚାଟ୍ ମୋଡ୍ ପରି ସାମ୍ପ୍ରତିକ ଚାଟ୍ ମୋଡ୍ ବିଷୟରେ ସୂଚନା ପ୍ରଦର୍ଶନ କରେ |</string>
     <string name="preference_streaminfo_title">ଷ୍ଟ୍ରିମ୍ ସୂଚନା ଦେଖାନ୍ତୁ |</string>
@@ -299,7 +297,6 @@
     <string name="clear_recent_uploads_dialog_title">ସାମ୍ପ୍ରତିକ ଅପଲୋଡ୍ ସଫା କରନ୍ତୁ |</string>
     <string name="clear_recent_uploads_dialog_message">ଆପଣ ନିଶ୍ଚିତ କି ଆପଣ ଅପଲୋଡ୍ ଇତିହାସ ସଫା କରିବାକୁ ଚାହୁଁଛନ୍ତି କି? ଆପଣଙ୍କର ଅପଲୋଡ୍ ହୋଇଥିବା ଫାଇଲଗୁଡିକ ବିଲୋପ ହେବ ନାହିଁ |</string>
     <string name="clear">ସଫା</string>
-    <string name="copied_image_url">ପ୍ରତିଛବି URL କପି କରାଯାଇଛି |</string>
     <string name="pattern">ନମୁନା</string>
     <string name="case_sensitive">ଅକ୍ଷର ସମ୍ବେଦନଶିଳ</string>
     <string name="highlights">ହାଇଲାଇଟ୍ସ |</string>
@@ -339,8 +336,6 @@
     <string name="login_outdated_title">ଲଗଇନ୍ ପୁରୁଣା!</string>
     <string name="login_outdated_message">ଆପଣଙ୍କର ଲଗଇନ୍ ପୁରୁଣା ଏବଂ କିଛି କାର୍ଯ୍ୟକାରିତାକୁ ପ୍ରବେଶ ନାହିଁ | ଦୟାକରି ପୁନର୍ବାର ଲଗଇନ୍ କରନ୍ତୁ |</string>
     <string name="custom_user_display_title">କଷ୍ଟମ୍ ଉପଭୋକ୍ତା ପ୍ରଦର୍ଶନ |</string>
-    <string name="user_display_item_username_hint">ଉପଭୋକ୍ତା ନାମ</string>
-    <string name="user_display_item_color_hint">ରଙ୍ଗ</string>
     <string name="remove_custom_user_display">କଷ୍ଟମ୍ ୟୁଜର୍ ଡିସପ୍ଲେ ଅପସାରଣ କରନ୍ତୁ |</string>
     <string name="user_display_alias_input">ଛଦ୍ମନାମ</string>
     <string name="user_display_custom_color_enable">ନିଜ ତିଆରି ରଙ୍ଗ</string>

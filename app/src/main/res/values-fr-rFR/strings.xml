@@ -120,7 +120,6 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="confirm_user_block_positive_button">Bloquer</string>
     <string name="restart_required">Redémarrez l\'application pour appliquer les changements</string>
     <string name="restart">Redémarrer</string>
-    <string name="uploader_title">Service de mise en ligne de fichiers personnalisé</string>
     <string name="uploader_reset">Rétablir les valeurs par défaut</string>
     <string name="uploader_url">Url d\'upload</string>
     <string name="uploader_field">Champ de formulaire</string>
@@ -184,7 +183,6 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="badge_tooltip_sub_tier">Niveau %1$s</string>
     <string name="preference_timestamp_title">Afficher l\'horodatage</string>
     <string name="preference_mention_format_title">Format des mentions</string>
-    <string name="preference_mention_format_summary">Change le format de mention quand vous appuyez sur un nom</string>
     <string name="preference_roomstate_title">Afficher les informations de la salle de discussion</string>
     <string name="preference_roomstate_summary">Affiche les infos sur la salle de discussion tels que le mode \"sub-only\"</string>
     <string name="preference_streaminfo_title">Récupérer les informations du live</string>
@@ -304,7 +302,6 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="clear_recent_uploads_dialog_title">Effacer les fichiers récents</string>
     <string name="clear_recent_uploads_dialog_message">Êtes-vous sûr de vouloir effacer l\'historique des fichiers que vous avez mis en ligne ? Vos fichiers ne seront pas supprimés.</string>
     <string name="clear">Effacer</string>
-    <string name="copied_image_url">Copier l\'URL de l\'image</string>
     <string name="pattern">Modèle</string>
     <string name="case_sensitive">Sensible à la casse</string>
     <string name="highlights">Surbrillance</string>
@@ -344,8 +341,6 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="login_outdated_title">Connexion dépassée !</string>
     <string name="login_outdated_message">Votre connexion est dépassée et n\'a pas accès à certaines fonctionnalités. Veuillez vous reconnecter.</string>
     <string name="custom_user_display_title">Affichage personnalisé de l\'utilisateur</string>
-    <string name="user_display_item_username_hint">Nom d\'utilisateur</string>
-    <string name="user_display_item_color_hint">Couleur</string>
     <string name="remove_custom_user_display">Supprimer l\'affichage personnalisé de l\'utilisateur</string>
     <string name="user_display_alias_input">Alias</string>
     <string name="user_display_custom_color_enable">Couleur personnalisée</string>

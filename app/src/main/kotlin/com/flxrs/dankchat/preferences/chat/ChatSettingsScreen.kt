@@ -313,10 +313,15 @@ private fun SevenTVCategory(
             onClick = { onInteraction(ChatSettingsInteraction.LiveEmoteUpdates(it)) },
         )
         val liveUpdateEntries = stringArrayResource(R.array.event_api_timeout_entries).toImmutableList()
+        val summary = when (sevenTVLiveEmoteUpdatesBehavior) {
+            LiveUpdatesBackgroundBehavior.Never -> stringResource(R.string.preference_7tv_live_updates_timeout_summary_never_active)
+            LiveUpdatesBackgroundBehavior.Always -> stringResource(R.string.preference_7tv_live_updates_timeout_summary_always_active)
+            else -> stringResource(R.string.preference_7tv_live_updates_timeout_summary_timeout, liveUpdateEntries[sevenTVLiveEmoteUpdatesBehavior.ordinal])
+        }
         PreferenceListDialog(
             isEnabled = enabled && sevenTVLiveEmoteUpdates,
             title = stringResource(R.string.preference_7tv_live_updates_timeout_title),
-            summary = liveUpdateEntries[sevenTVLiveEmoteUpdatesBehavior.ordinal],
+            summary = summary,
             values = LiveUpdatesBackgroundBehavior.entries.toImmutableList(),
             entries = liveUpdateEntries,
             selected = sevenTVLiveEmoteUpdatesBehavior,
@@ -345,7 +350,6 @@ private fun MessageHistoryCategory(
             isChecked = loadMessageHistoryAfterReconnect,
             onClick = { onInteraction(ChatSettingsInteraction.MessageHistoryAfterReconnect(it)) },
         )
-        val context = LocalContext.current
         PreferenceItem(
             title = stringResource(R.string.preference_message_history_dashboard_title),
             summary = stringResource(R.string.preference_message_history_dashboard_summary),

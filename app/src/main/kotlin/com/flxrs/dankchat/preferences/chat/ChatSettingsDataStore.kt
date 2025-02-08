@@ -48,34 +48,35 @@ class ChatSettingsDataStore(
         LiveUpdates(R.string.preference_7tv_live_updates_key),
         LiveUpdatesTimeout(R.string.preference_7tv_live_updates_timeout_key),
         LoadMessageHistory(R.string.preference_load_message_history_key),
+        LoadMessageHistoryOnReconnect(R.string.preference_load_messages_on_reconnect__key),
         ShowRoomState(R.string.preference_roomstate_key),
     }
 
     private val initialMigration = dankChatPreferencesMigration<ChatPreferenceKeys, ChatSettings>(context) { acc, key, value ->
         when (key) {
-            ChatPreferenceKeys.Suggestions -> acc.copy(suggestions = value.booleanOrDefault(acc.suggestions))
-            ChatPreferenceKeys.PreferEmoteSuggestions -> acc.copy(preferEmoteSuggestions = value.booleanOrDefault(acc.preferEmoteSuggestions))
-            ChatPreferenceKeys.SupibotSuggestions -> acc.copy(supibotSuggestions = value.booleanOrDefault(acc.supibotSuggestions))
-            ChatPreferenceKeys.CustomCommands -> {
+            ChatPreferenceKeys.Suggestions                      -> acc.copy(suggestions = value.booleanOrDefault(acc.suggestions))
+            ChatPreferenceKeys.PreferEmoteSuggestions           -> acc.copy(preferEmoteSuggestions = value.booleanOrDefault(acc.preferEmoteSuggestions))
+            ChatPreferenceKeys.SupibotSuggestions               -> acc.copy(supibotSuggestions = value.booleanOrDefault(acc.supibotSuggestions))
+            ChatPreferenceKeys.CustomCommands                   -> {
                 val commands = value.stringSetOrNull()?.mapNotNull {
                     Json.decodeOrNull<CustomCommand>(it)
                 } ?: acc.customCommands
                 acc.copy(customCommands = commands)
             }
 
-            ChatPreferenceKeys.AnimateGifs -> acc.copy(animateGifs = value.booleanOrDefault(acc.animateGifs))
-            ChatPreferenceKeys.ScrollbackLength -> acc.copy(scrollbackLength = value.intOrDefault(acc.scrollbackLength))
-            ChatPreferenceKeys.ShowUsernames -> acc.copy(showUsernames = value.booleanOrDefault(acc.showUsernames))
-            ChatPreferenceKeys.UserLongClickBehavior -> acc.copy(
+            ChatPreferenceKeys.AnimateGifs                      -> acc.copy(animateGifs = value.booleanOrDefault(acc.animateGifs))
+            ChatPreferenceKeys.ScrollbackLength                 -> acc.copy(scrollbackLength = value.intOrDefault(acc.scrollbackLength))
+            ChatPreferenceKeys.ShowUsernames                    -> acc.copy(showUsernames = value.booleanOrDefault(acc.showUsernames))
+            ChatPreferenceKeys.UserLongClickBehavior            -> acc.copy(
                 userLongClickBehavior = value.booleanOrNull()?.let {
                     if (it) UserLongClickBehavior.MentionsUser else UserLongClickBehavior.OpensPopup
                 } ?: acc.userLongClickBehavior
             )
 
-            ChatPreferenceKeys.ShowTimedOutMessages -> acc.copy(showTimedOutMessages = value.booleanOrDefault(acc.showTimedOutMessages))
-            ChatPreferenceKeys.ShowTimestamps -> acc.copy(showTimestamps = value.booleanOrDefault(acc.showTimestamps))
-            ChatPreferenceKeys.TimestampFormat -> acc.copy(timestampFormat = value.stringOrDefault(acc.timestampFormat))
-            ChatPreferenceKeys.VisibleBadges -> acc.copy(
+            ChatPreferenceKeys.ShowTimedOutMessages             -> acc.copy(showTimedOutMessages = value.booleanOrDefault(acc.showTimedOutMessages))
+            ChatPreferenceKeys.ShowTimestamps                   -> acc.copy(showTimestamps = value.booleanOrDefault(acc.showTimestamps))
+            ChatPreferenceKeys.TimestampFormat                  -> acc.copy(timestampFormat = value.stringOrDefault(acc.timestampFormat))
+            ChatPreferenceKeys.VisibleBadges                    -> acc.copy(
                 visibleBadges = value.mappedStringSetOrDefault(
                     original = context.resources.getStringArray(R.array.badges_entry_values),
                     enumEntries = VisibleBadges.entries,
@@ -83,7 +84,7 @@ class ChatSettingsDataStore(
                 )
             )
 
-            ChatPreferenceKeys.VisibleEmotes -> acc.copy(
+            ChatPreferenceKeys.VisibleEmotes                    -> acc.copy(
                 visibleEmotes = value.mappedStringSetOrDefault(
                     original = context.resources.getStringArray(R.array.emotes_entry_values),
                     enumEntries = VisibleThirdPartyEmotes.entries,
@@ -91,9 +92,9 @@ class ChatSettingsDataStore(
                 )
             )
 
-            ChatPreferenceKeys.UnlistedEmotes -> acc.copy(allowUnlistedSevenTvEmotes = value.booleanOrDefault(acc.allowUnlistedSevenTvEmotes))
-            ChatPreferenceKeys.LiveUpdates -> acc.copy(sevenTVLiveEmoteUpdates = value.booleanOrDefault(acc.sevenTVLiveEmoteUpdates))
-            ChatPreferenceKeys.LiveUpdatesTimeout -> acc.copy(
+            ChatPreferenceKeys.UnlistedEmotes                   -> acc.copy(allowUnlistedSevenTvEmotes = value.booleanOrDefault(acc.allowUnlistedSevenTvEmotes))
+            ChatPreferenceKeys.LiveUpdates                      -> acc.copy(sevenTVLiveEmoteUpdates = value.booleanOrDefault(acc.sevenTVLiveEmoteUpdates))
+            ChatPreferenceKeys.LiveUpdatesTimeout               -> acc.copy(
                 sevenTVLiveEmoteUpdatesBehavior = value.mappedStringOrDefault(
                     original = context.resources.getStringArray(R.array.event_api_timeout_entry_values),
                     enumEntries = LiveUpdatesBackgroundBehavior.entries,
@@ -101,8 +102,9 @@ class ChatSettingsDataStore(
                 )
             )
 
-            ChatPreferenceKeys.LoadMessageHistory -> acc.copy(loadMessageHistory = value.booleanOrDefault(acc.loadMessageHistory))
-            ChatPreferenceKeys.ShowRoomState -> acc.copy(showChatModes = value.booleanOrDefault(acc.showChatModes))
+            ChatPreferenceKeys.LoadMessageHistory            -> acc.copy(loadMessageHistory = value.booleanOrDefault(acc.loadMessageHistory))
+            ChatPreferenceKeys.LoadMessageHistoryOnReconnect -> acc.copy(loadMessageHistoryOnReconnect = value.booleanOrDefault(acc.loadMessageHistoryOnReconnect))
+            ChatPreferenceKeys.ShowRoomState                 -> acc.copy(showChatModes = value.booleanOrDefault(acc.showChatModes))
         }
     }
     private val dataStore = createDataStore(

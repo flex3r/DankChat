@@ -116,7 +116,6 @@
     <string name="confirm_user_block_positive_button">Block</string>
     <string name="restart_required">Restart required to apply changes</string>
     <string name="restart">Restart</string>
-    <string name="uploader_title">Custom media uploader</string>
     <string name="uploader_reset">Reset to defaults</string>
     <string name="uploader_url">Upload url</string>
     <string name="uploader_field">Form field</string>
@@ -184,7 +183,6 @@
     <string name="preference_timestamp_title">Show timestamps</string>
     <string name="preference_timestamp_key" translatable="false">show_timestamp</string>
     <string name="preference_mention_format_title">Mention format</string>
-    <string name="preference_mention_format_summary">Change the mention format when clicking an username</string>
     <string name="preference_mention_format_key" translatable="false">mention_format</string>
     <string name="preference_roomstate_key" translatable="false">show_roomstate</string>
     <string name="preference_roomstate_title">Show chat modes information</string>
@@ -197,14 +195,10 @@
     <string name="preference_notification_summary">Creates notifications when mentioned while the app is in the background</string>
     <string name="preference_notification_header">Notifications</string>
     <string name="preference_chat_header">Chat</string>
-    <string name="preference_chat_key" translatable="false">chat_key</string>
-    <string name="preference_logout_key" translatable="false">logout_key</string>
     <string name="preference_general_header">General</string>
     <string name="preference_about_header">About</string>
     <string name="preference_appearance_header">Appearance</string>
-    <string name="preference_appearance_key" translatable="false">appearance_key</string>
     <string name="preference_about_summary">DankChat %1$s made by @flex3rs and contributors</string>
-    <string name="preference_about_key" translatable="false">about_key</string>
     <string name="preference_show_input_key" translatable="false">show_input_key</string>
     <string name="preference_show_input_title">Show input</string>
     <string name="preference_show_input_summary">Displays the input field to send messages</string>
@@ -219,8 +213,6 @@
     <string name="preference_components_group_title">Components</string>
     <string name="preference_show_timed_out_messages_key" translatable="false">show_timed_out_messages_key</string>
     <string name="preference_show_timed_out_messages_title">Show timed out messages</string>
-    <string name="preference_custom_mentions_key" translatable="false">custom_mentions_key</string>
-    <string name="preference_blacklist_key" translatable="false">custom_blacklist_key</string>
     <string name="preference_animate_gifs_key" translatable="false">animate_gifs_key</string>
     <string name="preference_animate_gifs_title">Animate gifs</string>
     <string name="preference_line_separator_key" translatable="false">line_seperator_key</string>
@@ -233,7 +225,6 @@
     <string name="preference_font_size_summary_small">Small</string>
     <string name="preference_font_size_summary_large">Large</string>
     <string name="preference_font_size_summary_very_large">Very large</string>
-    <string name="preference_notifications_mentions_key" translatable="false">notifications_mentions_key</string>
     <string name="preference_suggestions_key" translatable="false">suggestions_key</string>
     <string name="preference_suggestions_title">Emote and user suggestions</string>
     <string name="preference_suggestions_summary">Shows suggestions for emotes and active users while typing</string>
@@ -244,11 +235,9 @@
     <string name="preference_load_messages_on_reconnect__key" translatable="false">load_messages_on_reconnect_key</string>
     <string name="preference_message_history_header">Message history</string>
     <string name="preference_message_history_dashboard_title">Open dashboard</string>
-    <string name="preference_message_history_dashboard_key" translatable="false">message_history_dashboard_key</string>
     <string name="preference_message_history_dashboard_summary">Learn more about the service and disable message history for your own channel</string>
     <string name="preference_channel_data_header">Channel data</string>
     <string name="preference_developer_header">Developer options</string>
-    <string name="preference_developer_key" translatable="false">developer_key</string>
     <string name="preference_debug_mode_key" translatable="false">debug_mode_key</string>
     <string name="preference_debug_mode_title">Debug mode</string>
     <string name="preference_debug_mode_summary">Provides information for any exceptions that have been caught</string>
@@ -295,7 +284,6 @@
     <string name="preference_tts_force_english_summary">Force TTS voice language to English instead of system default</string>
     <string name="preference_visible_emotes_title">Visible third party emotes</string>
     <string name="preference_visible_emotes_key" translatable="false">visible_emotes_key</string>
-    <string name="preference_uploader_key" translatable="false">uploader_key</string>
     <string name="preference_commands_key" translatable="false">custom_commands_key</string>
     <string name="preference_about_tos">Twitch terms of service &amp; user policy:</string>
     <string name="preference_show_chip_actions_title">Show chip actions</string>
@@ -304,11 +292,9 @@
     <string name="preference_uploader_header">Media uploader</string>
     <string name="preference_uploader_configure_title">Configure uploader</string>
     <string name="preference_uploader_recent_uploads_title">Recent uploads</string>
-    <string name="preference_uploader_recent_uploads_key" translatable="false">uploader_recent_uploads_key</string>
     <string name="preference_tts_user_ignore_list_title">User ignore list</string>
     <string name="preference_tts_user_ignore_list_key" translatable="false">tts_user_ignore_list_key</string>
     <string name="preference_tts_user_ignore_list_summary">List of users/accounts that will be ignored</string>
-    <string name="preference_tools_key" translatable="false">tools_key</string>
     <string name="preference_tools_header">Tools</string>
     <string name="preference_theme_key" translatable="false">theme_key</string>
     <string name="preference_theme_title">Theme</string>
@@ -331,14 +317,11 @@
     <string name="oauth_expired_message">Your login token has expired! Please login again.</string>
     <string name="oauth_expired_login_again">Login Again</string>
     <string name="oauth_verify_failed">Failed to verify the login token, check your connection.</string>
-    <string name="preference_retain_webview_key" translatable="false">retain_webview_key</string>
     <string name="preference_retain_webview_title">Prevent stream reloads</string>
     <string name="preference_retain_webview_summary">Enables experimental prevention of stream reloads after orientation changes or re-opening DankChat.</string>
     <string name="preference_show_changelogs_key" translatable="false">show_changelogs_key</string>
     <string name="preference_show_changelogs">Show changelogs after update</string>
     <string name="preference_whats_new_header">What\'s new</string>
-    <string name="preference_whats_new_key" translatable="false">whats_new_key</string>
-    <string name="preference_custom_login_key" translatable="false">custom_login_key</string>
     <string name="preference_custom_login_title">Custom login</string>
     <string name="preference_bypass_command_handling_key" translatable="false">bypass_command_handling_key</string>
     <string name="preference_bypass_command_handling_title">Bypass Twitch command handling</string>
@@ -346,7 +329,6 @@
     <string name="preference_7tv_live_updates_key" translatable="false">7tv_live_updates_key</string>
     <string name="preference_7tv_live_updates_title">7TV live emote updates</string>
     <string name="preference_7tv_category_title" translatable="false">7TV</string>
-    <string name="preference_7tv_category_key" translatable="false">7tv_category_key</string>
     <string name="preference_7tv_live_updates_timeout_title">Live emote updates background behavior</string>
     <string name="preference_7tv_live_updates_timeout_key" translatable="false">7tv_live_updates_timeout_key</string>
     <string name="preference_7tv_live_updates_timeout_summary_timeout">Updates stop after %1$s.\nLowering this number may increase battery life.</string>
@@ -365,7 +347,6 @@
     <string name="preference_7tv_live_updates_entry_one_hour_key" translatable="false">1h</string>
     <string name="preference_7tv_live_updates_entry_always_key" translatable="false">always</string>
     <string name="preference_streams_header">Livestreams</string>
-    <string name="preference_streams_header_key" translatable="false">streams_header_key</string>
     <string name="preference_retain_webview_new_key" translatable="false">retain_webview_new_key</string>
     <string name="preference_pip_key" translatable="false">pip_key</string>
     <string name="preference_pip_title">Enable picture-in-picture mode</string>
@@ -376,7 +357,6 @@
     <string name="clear_recent_uploads_dialog_title">Clear Recent Uploads</string>
     <string name="clear_recent_uploads_dialog_message">Are you sure you want to clear the upload history? Your uploaded files won\'t be deleted.</string>
     <string name="clear">Clear</string>
-    <string name="copied_image_url">Copied Image URL</string>
     <string name="pattern">Pattern</string>
     <string name="case_sensitive">Case-sensitive</string>
     <string name="highlights">Highlights</string>
@@ -417,9 +397,6 @@
     <string name="login_outdated_title">Login Outdated!</string>
     <string name="login_outdated_message">Your login is outdated and does not have access to some functionality. Please login again.</string>
     <string name="custom_user_display_title">Custom User Display</string>
-    <string name="preference_custom_user_display_key" translatable="false">custom_user_display_key</string>
-    <string name="user_display_item_username_hint">Username</string>
-    <string name="user_display_item_color_hint">Color</string>
     <string name="remove_custom_user_display">Remove Custom User Display</string>
     <string name="user_display_alias_input">Alias</string>
     <string name="user_display_custom_color_enable">Custom Color</string>
@@ -464,10 +441,6 @@
     <string name="login_menu_zoom_out">Zoom out</string>
     <string name="login_menu_zoom_in">Zoom in</string>
     <string name="back">Back</string>
-    <plurals name="viewers">
-        <item quantity="one">Live with %d viewer</item>
-        <item quantity="other">Live with %d viewers</item>
-    </plurals>
     <plurals name="viewers_and_uptime">
         <item quantity="one">Live with %1$d viewer for %2$s</item>
         <item quantity="other">Live with %1$d viewers for %2$s</item>

@@ -120,7 +120,6 @@
     <string name="confirm_user_block_positive_button">封鎖</string>
     <string name="restart_required">重啟以套用變更</string>
     <string name="restart">重新啟動</string>
-    <string name="uploader_title">自訂媒體上傳者</string>
     <string name="uploader_reset">重置為預設值</string>
     <string name="uploader_url">上傳連結</string>
     <string name="uploader_headers">標頭</string>
@@ -184,7 +183,6 @@
     <string name="badge_tooltip_sub_tier">等級 %1$s</string>
     <string name="preference_timestamp_title">顯示時間戳記</string>
     <string name="preference_mention_format_title">提及格式</string>
-    <string name="preference_mention_format_summary">更改點選使用者名時所出現的提及字串樣式</string>
     <string name="preference_roomstate_title">顯示聊天室狀態</string>
     <string name="preference_roomstate_summary">顯示目前聊天室狀態，如訂閱者聊天模式</string>
     <string name="preference_streaminfo_title">顯示直播訊息</string>
@@ -290,7 +288,6 @@
     <string name="clear_recent_uploads_dialog_title">清除近期上傳</string>
     <string name="clear_recent_uploads_dialog_message">您確定要清楚近期上傳歷史嗎? 您已上傳的檔案不會被刪除。</string>
     <string name="clear">清楚</string>
-    <string name="copied_image_url">複製圖片連結</string>
     <string name="pattern">圖樣</string>
     <string name="case_sensitive">區分大小寫</string>
     <string name="highlights">標示</string>

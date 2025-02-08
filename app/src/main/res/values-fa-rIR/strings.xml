@@ -115,7 +115,6 @@
     <string name="confirm_user_block_positive_button">بلاک</string>
     <string name="restart_required">برای اعمال تغییرات، نیاز به راه‌اندازی مجدد است</string>
     <string name="restart">راه اندازی مجدد</string>
-    <string name="uploader_title">آپلود کننده رسانه‌ی سفارشی</string>
     <string name="uploader_reset">بازگردانی به تنظیمات پیشفرض</string>
     <string name="uploader_url">آپلود URL</string>
     <string name="uploader_field">فیلد فرم</string>
@@ -180,7 +179,6 @@
     <string name="badge_tooltip_sub_tier">تیر %1$s</string>
     <string name="preference_timestamp_title">نمایش زمان</string>
     <string name="preference_mention_format_title">فرمت منشن</string>
-    <string name="preference_mention_format_summary">تغییر فرمت منشن هنگام کلیک روی نام کاربری</string>
     <string name="preference_roomstate_title">نمایش اطلاعات حالت‌های چت</string>
     <string name="preference_roomstate_summary">نمایش اطلاعات درباره حالت‌های فعلی چت مانند حالت تنها برای سابسکرایبرها</string>
     <string name="preference_streaminfo_title">نمایش اطلاعات استریم</string>
@@ -300,7 +298,6 @@
     <string name="clear_recent_uploads_dialog_title">پاک‌کردن آپلودهای اخیر</string>
     <string name="clear_recent_uploads_dialog_message">آیا مطمئنید که می‌خواهید تاریخچه آپلود را پاک کنید؟ پرونده‌های آپلود شده شما پاک نخواهند شد</string>
     <string name="clear">پاکسازی</string>
-    <string name="copied_image_url">آدرس URL تصویر کپی شد</string>
     <string name="pattern">الگو</string>
     <string name="case_sensitive">حساس به حروف کوچک و بزرگ</string>
     <string name="highlights">هایلایت ها</string>
@@ -340,8 +337,6 @@
     <string name="login_outdated_title">ورود منسوخ شده!</string>
     <string name="login_outdated_message">ورود شما قدیمی شده است و به برخی از قابلیت‌ها دسترسی ندارد. لطفاً دوباره وارد شوید</string>
     <string name="custom_user_display_title">نمایش کاربری سفارشی</string>
-    <string name="user_display_item_username_hint">نام کاربری</string>
-    <string name="user_display_item_color_hint">رنگ</string>
     <string name="remove_custom_user_display">حذف نمایش کاربری سفارشی</string>
     <string name="user_display_alias_input">نام مستعار</string>
     <string name="user_display_custom_color_enable">رنگ سفارشی</string>

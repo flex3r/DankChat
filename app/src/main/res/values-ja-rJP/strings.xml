@@ -115,7 +115,6 @@
     <string name="confirm_user_block_positive_button">ブロック</string>
     <string name="restart_required">変更を適用するには再起動が必要です</string>
     <string name="restart">再起動</string>
-    <string name="uploader_title">カスタムメディアアップローダー</string>
     <string name="uploader_reset">既定値に戻す</string>
     <string name="uploader_url">URLをアップロード</string>
     <string name="uploader_field">フォームのフィールド</string>
@@ -179,7 +178,6 @@
     <string name="badge_tooltip_sub_tier">ティア %1$s</string>
     <string name="preference_timestamp_title">タイムスタンプを表示</string>
     <string name="preference_mention_format_title">返信の形式</string>
-    <string name="preference_mention_format_summary">ユーザー名をクリックしたときの返信の形式を変更する</string>
     <string name="preference_roomstate_title">チャットモードの情報を表示</string>
     <string name="preference_roomstate_summary">現在のチャットモードに関する情報を表示します（例：サブスクライバー限定モード）</string>
     <string name="preference_streaminfo_title">ストリーム情報を表示</string>
@@ -299,7 +297,6 @@
     <string name="clear_recent_uploads_dialog_title">最近のアップロードを消去</string>
     <string name="clear_recent_uploads_dialog_message">アップロード履歴を消去してもよろしいですか？ アップロードしたファイルは削除されません。</string>
     <string name="clear">消去</string>
-    <string name="copied_image_url">コピーされた画像URL</string>
     <string name="pattern">パターン</string>
     <string name="case_sensitive">大文字と小文字を区別</string>
     <string name="highlights">ハイライト</string>
@@ -339,8 +336,6 @@
     <string name="login_outdated_title">ログインが期限切れです！</string>
     <string name="login_outdated_message">ログインが古いため、一部の機能にアクセスできません。もう一度ログインしてください。</string>
     <string name="custom_user_display_title">カスタムユーザー表示</string>
-    <string name="user_display_item_username_hint">ユーザー名</string>
-    <string name="user_display_item_color_hint">色</string>
     <string name="remove_custom_user_display">カスタムユーザー表示を削除</string>
     <string name="user_display_alias_input">エイリアス</string>
     <string name="user_display_custom_color_enable">カスタム色</string>

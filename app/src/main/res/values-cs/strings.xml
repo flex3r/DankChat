@@ -120,7 +120,6 @@ Služba dočasně ukládá zprávy pro kanály, které vy (a další) navštív�
     <string name="confirm_user_block_positive_button">Zablokovat</string>
     <string name="restart_required">K potvrzení změn je potřeba restart</string>
     <string name="restart">Restartovat</string>
-    <string name="uploader_title">Vlastní nahrávač médií</string>
     <string name="uploader_reset">Obnovit nastavení</string>
     <string name="uploader_url">Nahrávací URL</string>
     <string name="uploader_field">Pole formuláře</string>
@@ -186,7 +185,6 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="badge_tooltip_sub_tier">Úroveň %1$s</string>
     <string name="preference_timestamp_title">Zobrazit časová razítka</string>
     <string name="preference_mention_format_title">Formát zmínek</string>
-    <string name="preference_mention_format_summary">Změnit formát zmínek, když kliknete na uživatelské jméno</string>
     <string name="preference_roomstate_title">Zobrazit informaci o režimu místnosti</string>
     <string name="preference_roomstate_summary">Zobrazí informaci o současném režimu místnosti jako například pouze pro předplatitele</string>
     <string name="preference_streaminfo_title">Zobrazit informace o streamu</string>
@@ -306,7 +304,6 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="clear_recent_uploads_dialog_title">Vymazat nedávná nahrání</string>
     <string name="clear_recent_uploads_dialog_message">Jste si jistí, že chcete smazat historii nahrávání? Vaše nahrané soubory nebudou smazány.</string>
     <string name="clear">Vymazat</string>
-    <string name="copied_image_url">Zkopírovaný odkaz obrázku</string>
     <string name="pattern">Vzor</string>
     <string name="case_sensitive">Rozlišovat velká a malá písmena</string>
     <string name="highlights">Zvýraznění</string>
@@ -346,8 +343,6 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="login_outdated_title">Přihlášení není aktuální!</string>
     <string name="login_outdated_message">Vaše přihlášení není aktuální a nemá přístup k některým funkcím. Přihlašte se prosím znovu.</string>
     <string name="custom_user_display_title">Vlastní zobrazení uživatele</string>
-    <string name="user_display_item_username_hint">Přezdívka</string>
-    <string name="user_display_item_color_hint">Barva</string>
     <string name="remove_custom_user_display">Smazat vlastní zobrazení uživatele</string>
     <string name="user_display_alias_input">Alias</string>
     <string name="user_display_custom_color_enable">Vlastní barva</string>

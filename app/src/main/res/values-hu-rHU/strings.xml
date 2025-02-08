@@ -115,7 +115,6 @@
     <string name="confirm_user_block_positive_button">Letiltás</string>
     <string name="restart_required">Újraindítás szükséges a módosítások alkalmazásához</string>
     <string name="restart">Újraindítás</string>
-    <string name="uploader_title">Egyéni média feltöltő</string>
     <string name="uploader_reset">Alapértelmezettek visszaállítása</string>
     <string name="uploader_url">URL feltöltése</string>
     <string name="uploader_field">Űrlapmező</string>
@@ -179,7 +178,6 @@
     <string name="badge_tooltip_sub_tier">Szint %1$s</string>
     <string name="preference_timestamp_title">Időbélyegek mutatása</string>
     <string name="preference_mention_format_title">Említés formátuma</string>
-    <string name="preference_mention_format_summary">Az említés formátum megváltoztatása mikor egy felhasználónévre kattint</string>
     <string name="preference_roomstate_title">Mutassa a chat módok információit</string>
     <string name="preference_roomstate_summary">Információt jelenít meg a jelenlegi chat módokrol mint a csak feliratkozói mód</string>
     <string name="preference_streaminfo_title">Az élő adás információinak mutatása</string>
@@ -299,7 +297,6 @@
     <string name="clear_recent_uploads_dialog_title">Legutóbbi feltöltések törlése</string>
     <string name="clear_recent_uploads_dialog_message">Biztosan törölni akarja a feltöltésí előzményeit? A feltöltőtt fájlok nem lesznek törölve.</string>
     <string name="clear">Törlés</string>
-    <string name="copied_image_url">Másolt kép URL címe</string>
     <string name="pattern">Minta</string>
     <string name="case_sensitive">Kis- és nagybetűk megkülönböztetése</string>
     <string name="highlights">Kiemelések</string>
@@ -339,8 +336,6 @@
     <string name="login_outdated_title">Bejelentkezés elavult!</string>
     <string name="login_outdated_message">A bejelentkezésed elavult, és nincs hozzáférésed bizonyos funkciókhoz. Kérjük, jelentkezz be újra.</string>
     <string name="custom_user_display_title">Saját felhasználói testreszabás</string>
-    <string name="user_display_item_username_hint">Felhasználónév</string>
-    <string name="user_display_item_color_hint">Szín</string>
     <string name="remove_custom_user_display">Saját felhasználói testreszabás eltávolítása</string>
     <string name="user_display_alias_input">Álnév</string>
     <string name="user_display_custom_color_enable">Egyedi szín</string>

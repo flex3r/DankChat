@@ -25,7 +25,7 @@ data class ChatSettings(
     val sevenTVLiveEmoteUpdates: Boolean = true,
     val sevenTVLiveEmoteUpdatesBehavior: LiveUpdatesBackgroundBehavior = LiveUpdatesBackgroundBehavior.FiveMinutes,
     val loadMessageHistory: Boolean = true,
-    val loadMessageHistoryAfterReconnect: Boolean = true,
+    val loadMessageHistoryOnReconnect: Boolean = true,
     val showChatModes: Boolean = true,
 ) {
 

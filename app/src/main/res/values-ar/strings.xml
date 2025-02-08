@@ -118,7 +118,6 @@ The service temporarily stores messages for channels you (and others) visit to p
     <string name="confirm_user_block_positive_button">حظر</string>
     <string name="restart_required">إعادة التشغيل مطلوبة لتطبيق التغييرات</string>
     <string name="restart">إعادة التشغيل</string>
-    <string name="uploader_title">أداة تحميل الوسائط المخصصة</string>
     <string name="uploader_reset">إعادة التعيين إلى الإعدادات الافتراضية</string>
     <string name="uploader_url">تحميل الرابط</string>
     <string name="uploader_field">حقل النموذج</string>
@@ -181,7 +180,6 @@ The service temporarily stores messages for channels you (and others) visit to p
     <string name="badge_tooltip_sub_tier">الفئة %1$s</string>
     <string name="preference_timestamp_title">Show timestamps</string>
     <string name="preference_mention_format_title"> تنسيق الإشارة</string>
-    <string name="preference_mention_format_summary">قم بتغيير تنسيق الإشارة عند النقر فوق اسم مستخدم</string>
     <string name="preference_roomstate_title">Show roomstate information</string>
     <string name="preference_roomstate_summary">يعرض معلومات حول الدردشة الحالية مثل وضع المشتركين فقط </string>
     <string name="preference_streaminfo_title">اظهار معلومات البث </string>
@@ -301,7 +299,6 @@ The service temporarily stores messages for channels you (and others) visit to p
     <string name="clear_recent_uploads_dialog_title">مسح التحميلات الأخيرة</string>
     <string name="clear_recent_uploads_dialog_message">هل أنت متأكد من رغبتك في مسح سجل التحميل؟ لن يتم حذف ملفاتك التي تم تحميلها.</string>
     <string name="clear">واضح</string>
-    <string name="copied_image_url">عنوان URL الصورة المنسوخ</string>
     <string name="pattern">النمط</string>
     <string name="case_sensitive">حساس لحالة الأحرف</string>
     <string name="highlights">أبرز الملامح</string>
@@ -341,8 +338,6 @@ The service temporarily stores messages for channels you (and others) visit to p
     <string name="login_outdated_title">تسجيل الدخول قديم!</string>
     <string name="login_outdated_message">تسجيل الدخول الخاص بك قديم ولا يمكنه الوصول إلى بعض الوظائف. يرجى تسجيل الدخول مرة أخرى.</string>
     <string name="custom_user_display_title">عرض المستخدم المخصص</string>
-    <string name="user_display_item_username_hint">اسم المستخدم</string>
-    <string name="user_display_item_color_hint">اللون</string>
     <string name="remove_custom_user_display">إزالة عرض المستخدم المخصص</string>
     <string name="user_display_alias_input">الاسم المستعار</string>
     <string name="user_display_custom_color_enable">لون مخصص</string>

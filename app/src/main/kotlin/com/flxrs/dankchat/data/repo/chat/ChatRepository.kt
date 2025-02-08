@@ -861,7 +861,7 @@ class ChatRepository(
             val flow = messages[channel] ?: return@forEach
             val current = flow.value
             flow.value = current.addSystemMessage(type, scrollBackLength, ::onMessageRemoved) {
-                if (chatSettingsDataStore.current().loadMessageHistoryAfterReconnect) {
+                if (chatSettingsDataStore.current().loadMessageHistoryOnReconnect) {
                     scope.launch { loadRecentMessages(channel, isReconnect = true) }
                 }
             }

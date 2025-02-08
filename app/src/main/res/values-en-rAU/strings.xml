@@ -105,7 +105,6 @@ The service temporarily stores messages for channels you (and others) visit to p
     <string name="confirm_user_block_positive_button">Block</string>
     <string name="restart_required">Restart required to apply changes.</string>
     <string name="restart">Restart</string>
-    <string name="uploader_title">Custom media uploader</string>
     <string name="uploader_reset">Reset to defaults</string>
     <string name="uploader_url">Upload url</string>
     <string name="uploader_field">Form field</string>
@@ -154,7 +153,6 @@ Check this guide for help: https://wiki.chatterino.com/Image%20Uploader/</string
     <string name="recent_uploads_clear">Clear uploads</string>
     <string name="preference_timestamp_title">Show timestamps</string>
     <string name="preference_mention_format_title">Mention format</string>
-    <string name="preference_mention_format_summary">Change the mention format when clicking an username</string>
     <string name="preference_roomstate_title">Show chat modes information</string>
     <string name="preference_roomstate_summary">Displays information about the current chat modes like subscribers only mode</string>
     <string name="preference_streaminfo_title">Show stream information</string>
