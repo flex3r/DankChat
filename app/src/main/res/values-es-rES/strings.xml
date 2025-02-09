@@ -120,7 +120,6 @@ El servicio temporalmente almacena mensajes para canales que tú (y otros) visit
     <string name="confirm_user_block_positive_button">Bloquear</string>
     <string name="restart_required">Es necesario reiniciar para aplicar los cambios</string>
     <string name="restart">Reiniciar</string>
-    <string name="uploader_title">Subidor de imágenes personalizado</string>
     <string name="uploader_reset">Resetear a valores por defecto</string>
     <string name="uploader_url">URL de subida</string>
     <string name="uploader_field">Campo de formulario</string>
@@ -186,7 +185,6 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="badge_tooltip_sub_tier">Tier %1$s</string>
     <string name="preference_timestamp_title">Mostrar fecha</string>
     <string name="preference_mention_format_title">Formato de la mención</string>
-    <string name="preference_mention_format_summary">Cambiar formato de la mención al hacer click en un usuario</string>
     <string name="preference_roomstate_title">Mostrar información sobre el estado del canal</string>
     <string name="preference_roomstate_summary">Mostrar información sobre el actual estado del canal (e.g. Modo solo suscriptores)</string>
     <string name="preference_streaminfo_title">Mostrar información del stream</string>
@@ -306,7 +304,6 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="clear_recent_uploads_dialog_title">Limpiar subidas recientes</string>
     <string name="clear_recent_uploads_dialog_message">¿Estás seguro de que quieres limpiar el historial de subida? Los archivos subidos no serán eliminados </string>
     <string name="clear">Limpiar</string>
-    <string name="copied_image_url">URL de Imagen Copiada</string>
     <string name="pattern">Patrón</string>
     <string name="case_sensitive">Sensible a Mayúsculas</string>
     <string name="highlights">Destacados</string>
@@ -346,8 +343,6 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="login_outdated_title">¡Inicio de Sesión Obsoleto!</string>
     <string name="login_outdated_message">Su inicio de sesión está desactualizado y no tiene acceso a algunas funciones. Por favor, inicie sesión nuevamente.</string>
     <string name="custom_user_display_title">Pantalla de Usuario Personalizada</string>
-    <string name="user_display_item_username_hint">Usuario</string>
-    <string name="user_display_item_color_hint">Color</string>
     <string name="remove_custom_user_display">Quitar Pantalla de Usuario Personalizada</string>
     <string name="user_display_alias_input">Alias</string>
     <string name="user_display_custom_color_enable">Color Personalizado</string>
@@ -391,10 +386,6 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="confirm_login_cancel_positive_button">Cancelar inicio de sesión</string>
     <string name="login_menu_zoom_out">Alejar</string>
     <string name="login_menu_zoom_in">Acercar</string>
-    <plurals name="viewers">
-        <item quantity="one">En directo con %d espectador</item>
-        <item quantity="other">En directo con %d espectadores</item>
-    </plurals>
     <plurals name="viewers_and_uptime">
         <item quantity="one">En directo con %1$d espectador por %2$s</item>
         <item quantity="other">En directo con %1$d espectadores por %2$s</item>
