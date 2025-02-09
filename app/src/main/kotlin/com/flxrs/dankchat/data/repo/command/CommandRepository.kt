@@ -13,44 +13,66 @@ import com.flxrs.dankchat.data.twitch.command.TwitchCommand
 import com.flxrs.dankchat.data.twitch.command.TwitchCommandRepository
 import com.flxrs.dankchat.data.twitch.message.RoomState
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
-import com.flxrs.dankchat.di.ApplicationScope
+import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.preferences.command.CommandItem
+import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
+import com.flxrs.dankchat.preferences.chat.CustomCommand
+import com.flxrs.dankchat.preferences.developer.DeveloperSettingsDataStore
 import com.flxrs.dankchat.utils.DateTimeUtils.calculateUptime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
+import org.koin.core.annotation.Single
 import kotlin.system.measureTimeMillis
 
-@Singleton
-class CommandRepository @Inject constructor(
+@Single
+class CommandRepository(
     private val ignoresRepository: IgnoresRepository,
     private val twitchCommandRepository: TwitchCommandRepository,
     private val helixApiClient: HelixApiClient,
     private val supibotApiClient: SupibotApiClient,
     private val chattersApiClient: ChattersApiClient,
+    private val chatSettingsDataStore: ChatSettingsDataStore,
+    private val developerSettingsDataStore: DeveloperSettingsDataStore,
     private val preferenceStore: DankChatPreferenceStore,
-    @ApplicationScope scope: CoroutineScope,
+    dispatchersProvider: DispatchersProvider,
 ) {
-    private val customCommands = preferenceStore.commandsAsFlow.stateIn(scope, SharingStarted.Eagerly, emptyList())
+
+    private val scope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
+    private val customCommands = chatSettingsDataStore.commands.stateIn(scope, SharingStarted.Eagerly, emptyList())
     private val supibotCommands = mutableMapOf<UserName, MutableStateFlow<List<String>>>()
 
     private val defaultCommands = Command.entries
     private val defaultCommandTriggers = defaultCommands.map { it.trigger }
 
-    private val commandTriggers = customCommands.map { customCommands ->
-        defaultCommandTriggers + TwitchCommandRepository.ALL_COMMAND_TRIGGERS + customCommands.map(CommandItem.Entry::trigger)
+    private val commandTriggers = chatSettingsDataStore.commands.map { customCommands ->
+        defaultCommandTriggers + TwitchCommandRepository.ALL_COMMAND_TRIGGERS + customCommands.map(CustomCommand::trigger)
+    }
+
+    init {
+        scope.launch {
+            chatSettingsDataStore.settings
+                .map { it.supibotSuggestions }
+                .distinctUntilChanged()
+                .collect { enabled ->
+                    when {
+                        enabled -> loadSupibotCommands()
+                        else    -> clearSupibotCommands()
+                    }
+                }
+        }
     }
 
     fun getCommandTriggers(channel: UserName): Flow<List<String>> = when (channel) {
@@ -59,9 +81,6 @@ class CommandRepository @Inject constructor(
     }
 
     fun getSupibotCommands(channel: UserName): StateFlow<List<String>> = supibotCommands.getOrPut(channel) { MutableStateFlow(emptyList()) }
-    fun clearSupibotCommands() = supibotCommands
-        .forEach { it.value.value = emptyList() }
-        .also { supibotCommands.clear() }
 
     suspend fun checkForCommands(message: String, channel: UserName, roomState: RoomState, userState: UserState, skipSuspendingCommands: Boolean = false): CommandResult {
         if (!preferenceStore.isLoggedIn) {
@@ -76,7 +95,7 @@ class CommandRepository @Inject constructor(
 
         val twitchCommand = twitchCommandRepository.findTwitchCommand(trigger)
         if (twitchCommand != null) {
-            if (preferenceStore.bypassCommandHandling) {
+            if (developerSettingsDataStore.current().bypassCommandHandling) {
                 return CommandResult.IrcCommand
             } else if (skipSuspendingCommands) {
                 return CommandResult.Blocked
@@ -126,7 +145,7 @@ class CommandRepository @Inject constructor(
     }
 
     suspend fun loadSupibotCommands() = withContext(Dispatchers.Default) {
-        if (!preferenceStore.isLoggedIn || !preferenceStore.shouldLoadSupibot) {
+        if (!preferenceStore.isLoggedIn || !chatSettingsDataStore.current().supibotSuggestions) {
             return@withContext
         }
 
@@ -187,6 +206,10 @@ class CommandRepository @Inject constructor(
                 data.map { alias -> "$$${alias.name}" }
             }.orEmpty()
     }
+
+    private fun clearSupibotCommands() = supibotCommands
+        .forEach { it.value.value = emptyList() }
+        .also { supibotCommands.clear() }
 
     private suspend fun blockUserCommand(args: List<String>): CommandResult.AcceptedWithResponse {
         if (args.isEmpty() || args.first().isBlank()) {

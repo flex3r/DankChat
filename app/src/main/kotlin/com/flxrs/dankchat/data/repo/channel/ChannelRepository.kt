@@ -13,12 +13,11 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
+import org.koin.core.annotation.Single
 import java.util.concurrent.ConcurrentHashMap
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class ChannelRepository @Inject constructor(
+@Single
+class ChannelRepository(
     private val chatRepository: ChatRepository,
     private val dataRepository: DataRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,

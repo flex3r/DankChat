@@ -10,41 +10,50 @@ import com.flxrs.dankchat.data.twitch.message.UserDisplay
 import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.data.twitch.message.toUserDisplay
-import com.flxrs.dankchat.di.ApplicationScope
+import com.flxrs.dankchat.di.DispatchersProvider
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import javax.inject.Inject
-import javax.inject.Singleton
+import org.koin.core.annotation.Single
 
-@Singleton
-class UserDisplayRepository @Inject constructor(
+@Single
+class UserDisplayRepository(
     private val userDisplayDao: UserDisplayDao,
-    @ApplicationScope val coroutineScope: CoroutineScope,
+    dispatchersProvider: DispatchersProvider,
 ) {
 
+    private val coroutineScope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
     val userDisplays = userDisplayDao.getUserDisplaysFlow()
-        .map { entities ->
-            entities.map {
-                it.copy(targetUser = it.targetUser.trim())
-            }
-        }
         .stateIn(
             scope = coroutineScope,
             started = SharingStarted.Eagerly,
             initialValue = emptyList()
         )
 
-    suspend fun addUserDisplays(userDisplays: List<UserDisplayEntity>) {
-        userDisplayDao.insertAll(userDisplays)
+    suspend fun updateUserDisplays(userDisplays: List<UserDisplayEntity>) {
+        userDisplayDao.upsertAll(userDisplays)
     }
 
-    suspend fun addUserDisplay(userDisplay: UserDisplayEntity) {
-        userDisplayDao.insert(userDisplay)
+    suspend fun addUserDisplay(): UserDisplayEntity {
+        val entity = UserDisplayEntity(
+            id = 0,
+            targetUser = "",
+            enabled = true,
+            colorEnabled = false,
+            color = Message.DEFAULT_COLOR,
+            aliasEnabled = false,
+            alias = "",
+        )
+        val id = userDisplayDao.upsert(entity)
+        return entity.copy(id = id.toInt())
     }
 
-    suspend fun delete(userDisplay: UserDisplayEntity) {
+    suspend fun updateUserDisplay(userDisplay: UserDisplayEntity) {
+        userDisplayDao.upsert(userDisplay)
+    }
+
+    suspend fun removeUserDisplay(userDisplay: UserDisplayEntity) {
         userDisplayDao.delete(userDisplay)
     }
 

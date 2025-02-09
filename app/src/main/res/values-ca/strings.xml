@@ -111,7 +111,6 @@ El servei emmagatzema temporalment missatges per a canals que tu (i altres) visi
     <string name="confirm_user_block_positive_button">Bloquejar</string>
     <string name="restart_required">Reinici requerit per aplicar canvis</string>
     <string name="restart">Reiniciar</string>
-    <string name="uploader_title">Pujador de media personalitzat</string>
     <string name="uploader_reset">Reiniciar a valors per defecte</string>
     <string name="uploader_url">Pujar url</string>
     <string name="uploader_field">Camp del formulari</string>
@@ -160,7 +159,6 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="badge_tooltip_sub_tier">Nivell %1$s</string>
     <string name="preference_timestamp_title">Mostrar l\'hora</string>
     <string name="preference_mention_format_title">Format de mencions</string>
-    <string name="preference_mention_format_summary">Canviar el format de les mencions al clicar un usuari</string>
     <string name="preference_roomstate_title">Mostrar informació de modes de xat</string>
     <string name="preference_roomstate_summary">Mostra informació sobre els actuals modes de xat com el mode de només subscriptors</string>
     <string name="preference_streaminfo_title">Mostrar informació sobre l\'stream</string>
@@ -252,7 +250,6 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="clear_recent_uploads_dialog_title">Esborrar pujades recents</string>
     <string name="clear_recent_uploads_dialog_message">Voleu esborrar l\'historial de pujada? Els arxius pujats no seran eliminats.</string>
     <string name="clear">Esborrar</string>
-    <string name="copied_image_url">URL de la imatge copiada</string>
     <string name="pattern">Patró</string>
     <string name="case_sensitive">Distingeix entre majúscules i minúscules</string>
     <string name="highlights">Missatges destacats</string>
@@ -288,16 +285,10 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="preference_notification_whisper_title">Crea notificacions per a missatges privats</string>
     <string name="login_outdated_title">Inici de sessió caducat!</string>
     <string name="login_outdated_message">L\'inici de sessió ha caducat i no té accés a certes funcions. Si us plau, inicieu sessió de nou.</string>
-    <string name="user_display_item_username_hint">Nom d’usuari</string>
-    <string name="user_display_item_color_hint">Color</string>
     <string name="remove_custom_user_display">Eliminar l\'ordenació personalitzada de l\'usuari</string>
     <string name="user_display_alias_input">Àlies</string>
     <string name="user_display_custom_color_enable">Color personalitzat</string>
     <string name="user_display_custom_alias_enable">Àlies personalitzat</string>
     <string name="pick_custom_user_color_title">Escollir color d\'usuari personalitzat</string>
     <string name="custom_user_display_summary">Afegeix un nom i color personalitzat per a usuaris</string>
-    <plurals name="viewers">
-        <item quantity="one">En viu amb %d espectador</item>
-        <item quantity="other">En viu amb %d espectadors</item>
-    </plurals>
 </resources>

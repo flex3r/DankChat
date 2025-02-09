@@ -5,9 +5,7 @@ import android.app.Activity
 import android.app.PictureInPictureParams
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Build
@@ -42,7 +40,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.FileProvider
-import androidx.core.content.edit
 import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.core.view.MenuProvider
@@ -56,15 +53,12 @@ import androidx.core.view.postDelayed
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commitNow
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.DankChatViewModel
@@ -97,7 +91,11 @@ import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.databinding.EditDialogBinding
 import com.flxrs.dankchat.databinding.MainFragmentBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
+import com.flxrs.dankchat.preferences.developer.DeveloperSettingsDataStore
 import com.flxrs.dankchat.preferences.model.ChannelWithRename
+import com.flxrs.dankchat.preferences.notifications.NotificationsSettingsDataStore
+import com.flxrs.dankchat.preferences.tools.ToolsSettingsDataStore
 import com.flxrs.dankchat.utils.createMediaFile
 import com.flxrs.dankchat.utils.extensions.awaitState
 import com.flxrs.dankchat.utils.extensions.collectFlow
@@ -111,7 +109,6 @@ import com.flxrs.dankchat.utils.extensions.isInPictureInPictureMode
 import com.flxrs.dankchat.utils.extensions.isLandscape
 import com.flxrs.dankchat.utils.extensions.isPortrait
 import com.flxrs.dankchat.utils.extensions.isVisible
-import com.flxrs.dankchat.utils.extensions.keepScreenOn
 import com.flxrs.dankchat.utils.extensions.navigateSafe
 import com.flxrs.dankchat.utils.extensions.px
 import com.flxrs.dankchat.utils.extensions.reduceDragSensitivity
@@ -131,21 +128,24 @@ import com.google.android.material.snackbar.BaseTransientBottomBar.BaseCallback
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.transition.MaterialSharedAxis
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.IOException
 import java.net.URL
-import javax.inject.Inject
-import kotlin.collections.component1
-import kotlin.collections.component2
 import kotlin.math.roundToInt
 
-@AndroidEntryPoint
 class MainFragment : Fragment() {
 
-    private val mainViewModel: MainViewModel by viewModels()
-    private val dankChatViewModel: DankChatViewModel by activityViewModels()
+    private val mainViewModel: MainViewModel by viewModel()
+    private val dankChatViewModel: DankChatViewModel by activityViewModel()
+    private val chatSettingsDataStore: ChatSettingsDataStore by inject()
+    private val developerSettingsDataStore: DeveloperSettingsDataStore by inject()
+    private val toolsSettingsDataStore: ToolsSettingsDataStore by inject()
+    private val notificationsSettingsDataStore: NotificationsSettingsDataStore by inject()
+    private val dankChatPreferences: DankChatPreferenceStore by inject()
     private val navController: NavController by lazy { findNavController() }
     private var bindingRef: MainFragmentBinding? = null
     private val binding get() = bindingRef!!
@@ -163,21 +163,21 @@ class MainFragment : Fragment() {
 
         override fun handleOnBackProgressed(backEvent: BackEventCompat) {
             when {
-                inputBottomSheetBehavior?.isVisible == true -> inputBottomSheetBehavior?.updateBackProgress(backEvent)
+                inputBottomSheetBehavior?.isVisible == true      -> inputBottomSheetBehavior?.updateBackProgress(backEvent)
                 fullscreenBottomSheetBehavior?.isVisible == true -> fullscreenBottomSheetBehavior?.updateBackProgress(backEvent)
             }
         }
 
         override fun handleOnBackCancelled() {
             when {
-                inputBottomSheetBehavior?.isVisible == true -> inputBottomSheetBehavior?.cancelBackProgress()
+                inputBottomSheetBehavior?.isVisible == true      -> inputBottomSheetBehavior?.cancelBackProgress()
                 fullscreenBottomSheetBehavior?.isVisible == true -> fullscreenBottomSheetBehavior?.cancelBackProgress()
             }
         }
 
         override fun handleOnBackStarted(backEvent: BackEventCompat) {
             when {
-                inputBottomSheetBehavior?.isVisible == true -> inputBottomSheetBehavior?.startBackProgress(backEvent)
+                inputBottomSheetBehavior?.isVisible == true      -> inputBottomSheetBehavior?.startBackProgress(backEvent)
                 fullscreenBottomSheetBehavior?.isVisible == true -> fullscreenBottomSheetBehavior?.startBackProgress(backEvent)
             }
         }
@@ -262,11 +262,6 @@ class MainFragment : Fragment() {
         binding.input.dismissDropDown()
     }
 
-    @Inject
-    lateinit var dankChatPreferences: DankChatPreferenceStore
-
-    private lateinit var preferenceListener: SharedPreferences.OnSharedPreferenceChangeListener
-    private lateinit var preferences: SharedPreferences
     private lateinit var tabAdapter: ChatTabAdapter
     private lateinit var tabLayoutMediator: TabLayoutMediator
     private lateinit var suggestionAdapter: SuggestionsArrayAdapter
@@ -295,7 +290,7 @@ class MainFragment : Fragment() {
             }
 
             mainViewModel.uploadMedia(copy, imageCapture = false)
-        } catch (t: Throwable) {
+        } catch (_: Throwable) {
             copy.delete()
             showSnackBar(getString(R.string.snackbar_upload_failed))
         }
@@ -376,7 +371,7 @@ class MainFragment : Fragment() {
             )
         }
 
-        initPreferences(view.context)
+        initPreferences()
         binding.splitThumb?.background?.alpha = 150
         activity?.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.STARTED)
         mainViewModel.apply {
@@ -680,9 +675,6 @@ class MainFragment : Fragment() {
         fullscreenBottomSheetBehavior = null
         binding.chatViewpager.adapter = null
         bindingRef = null
-        if (::preferences.isInitialized) {
-            preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
-        }
         super.onDestroyView()
     }
 
@@ -716,7 +708,7 @@ class MainFragment : Fragment() {
     }
 
     fun mentionUser(user: UserName, display: DisplayName) {
-        val template = preferences.getString(getString(R.string.preference_mention_format_key), "name") ?: "name"
+        val template = notificationsSettingsDataStore.current().mentionFormat.template
         val mention = "${template.replace("name", user.valueOrDisplayName(display))} "
         insertText(mention)
     }
@@ -855,7 +847,9 @@ class MainFragment : Fragment() {
     private fun handleMessageHistoryDisclaimerResult(result: Boolean) {
         dankChatPreferences.setCurrentInstalledVersionCode()
         dankChatPreferences.hasMessageHistoryAcknowledged = true
-        preferences.edit { putBoolean(getString(R.string.preference_load_message_history_key), result) }
+        lifecycleScope.launch {
+            chatSettingsDataStore.update { it.copy(loadMessageHistory = result) }
+        }
         mainViewModel.loadData()
     }
 
@@ -962,7 +956,7 @@ class MainFragment : Fragment() {
     }
 
     private fun handleErrorEvent(event: MainEvent.Error) {
-        if (preferences.getBoolean(getString(R.string.preference_debug_mode_key), false)) {
+        if (developerSettingsDataStore.current().debugMode) {
             binding.root.showErrorDialog(event.throwable)
         }
     }
@@ -986,7 +980,7 @@ class MainFragment : Fragment() {
             mediaFile = currentMediaUri.toFile()
             currentMediaUri = Uri.EMPTY
             mainViewModel.uploadMedia(mediaFile, imageCapture)
-        } catch (e: IOException) {
+        } catch (_: IOException) {
             currentMediaUri = Uri.EMPTY
             mediaFile?.delete()
             showSnackBar(getString(R.string.snackbar_upload_failed))
@@ -1004,7 +998,7 @@ class MainFragment : Fragment() {
     private inline fun showExternalHostingUploadDialogIfNotAcknowledged(crossinline action: () -> Unit) {
         // show host name in dialog, another nice thing we get is it also detect some invalid URLs
         val host = runCatching {
-            URL(dankChatPreferences.customImageUploader.uploadUrl).host
+            URL(toolsSettingsDataStore.current().uploaderConfig.uploadUrl).host
         }.getOrElse { "" }
 
         // if config is invalid, just let the error handled by HTTP client
@@ -1074,28 +1068,13 @@ class MainFragment : Fragment() {
         mainViewModel.reloadEmotes(channel)
     }
 
-    private fun initPreferences(context: Context) {
-        val keepScreenOnKey = getString(R.string.preference_keep_screen_on_key)
-        val suggestionsKey = getString(R.string.preference_suggestions_key)
+    private fun initPreferences() {
         if (dankChatPreferences.isLoggedIn && dankChatPreferences.oAuthKey.isNullOrBlank()) {
             dankChatPreferences.clearLogin()
         }
 
-        preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        if (::preferenceListener.isInitialized) {
-            preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
-        }
-
-        preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
-            when (key) {
-                keepScreenOnKey -> keepScreenOn(p.getBoolean(key, true))
-                suggestionsKey  -> binding.input.setSuggestionAdapter(p.getBoolean(key, true), suggestionAdapter)
-            }
-        }
-        preferences.apply {
-            registerOnSharedPreferenceChangeListener(preferenceListener)
-            keepScreenOn(getBoolean(keepScreenOnKey, true))
-            binding.input.setSuggestionAdapter(getBoolean(suggestionsKey, true), suggestionAdapter)
+        collectFlow(chatSettingsDataStore.suggestions) {
+            binding.input.setSuggestionAdapter(it, suggestionAdapter)
         }
     }
 
@@ -1328,7 +1307,7 @@ class MainFragment : Fragment() {
     private fun DankChatInputLayout.setupSendButton() {
         setEndIconDrawable(R.drawable.ic_send)
         val touchListenerAdded = when {
-            dankChatPreferences.repeatedSendingEnabled -> {
+            developerSettingsDataStore.current().repeatedSending -> {
                 setEndIconOnClickListener { } // for ripple effects
                 setEndIconTouchListener { holdTouchEvent ->
                     when (holdTouchEvent) {
@@ -1339,14 +1318,13 @@ class MainFragment : Fragment() {
                 }
             }
 
-            else                                       -> false
+            else                                                 -> false
         }
 
         if (!touchListenerAdded) {
             setEndIconOnClickListener { sendMessage() }
             setEndIconOnLongClickListener { getLastMessage() }
         }
-
     }
 
     private fun DankChatInputLayout.setupEmoteMenu() {
@@ -1439,7 +1417,7 @@ class MainFragment : Fragment() {
         imeOptions = EditorInfo.IME_ACTION_SEND or EditorInfo.IME_FLAG_NO_FULLSCREEN
         setRawInputType(InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES)
         setTokenizer(SpaceTokenizer())
-        suggestionAdapter = SuggestionsArrayAdapter(binding.input.context, dankChatPreferences) { count ->
+        suggestionAdapter = SuggestionsArrayAdapter(binding.input.context, chatSettingsDataStore) { count ->
             dropDownHeight = if (count > 4) {
                 (binding.root.height / 4.0).roundToInt()
             } else {
@@ -1474,7 +1452,7 @@ class MainFragment : Fragment() {
         setOnFocusChangeListener { _, hasFocus ->
             val isFullscreen = mainViewModel.isFullscreenFlow.value
             (activity as? MainActivity)?.setFullScreen(isFullscreen, changeActionBarVisibility = false)
-            mainViewModel.setShowChips(!hasFocus)
+            mainViewModel.setInputFocus(hasFocus)
 
             if (hasFocus && mainViewModel.isEmoteSheetOpen) {
                 closeInputSheetAndSetState()

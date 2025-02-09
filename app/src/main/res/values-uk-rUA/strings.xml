@@ -120,7 +120,6 @@
     <string name="confirm_user_block_positive_button">Заблокувати</string>
     <string name="restart_required">Необхідно перезапустити програму для застосування змін</string>
     <string name="restart">Перезапустити</string>
-    <string name="uploader_title">Користувацький сервіс завантаження медіа</string>
     <string name="uploader_reset">Відновити значення за замовчуванням</string>
     <string name="uploader_url">Посилання</string>
     <string name="uploader_field">Поле форми</string>
@@ -186,7 +185,6 @@
     <string name="badge_tooltip_sub_tier">%1$s рівень</string>
     <string name="preference_timestamp_title">Показувати часові мітки</string>
     <string name="preference_mention_format_title">Формат згадок</string>
-    <string name="preference_mention_format_summary">Змінити формат згадок при натисканні на ім\'я користувача</string>
     <string name="preference_roomstate_title">Показувати статус чату</string>
     <string name="preference_roomstate_summary">Показувати інформацію про статус чату (наприклад, режиму \"Тільки для підписників\")</string>
     <string name="preference_streaminfo_title">Показувати інформацію про стрім</string>
@@ -306,7 +304,6 @@
     <string name="clear_recent_uploads_dialog_title">Очистити останні завантаження</string>
     <string name="clear_recent_uploads_dialog_message">Ви впевнені, що бажаєте очистити історію завантажень? Ваші завантажені файли не будуть видалені.</string>
     <string name="clear">Очистити</string>
-    <string name="copied_image_url">Посилання скопійовано</string>
     <string name="pattern">Шаблон</string>
     <string name="case_sensitive">Дотримуватись регістру</string>
     <string name="highlights">Виділення</string>
@@ -346,8 +343,6 @@
     <string name="login_outdated_title">Увійдіть ще раз!</string>
     <string name="login_outdated_message">Ваш вхід застарів і не має доступу до деяких функцій. Увійдіть ще раз.</string>
     <string name="custom_user_display_title">Користувацьке відображення користувача</string>
-    <string name="user_display_item_username_hint">Ім’я користувача</string>
-    <string name="user_display_item_color_hint">Колір</string>
     <string name="remove_custom_user_display">Видалити користувацьке відображення користувача</string>
     <string name="user_display_alias_input">Псевдонім</string>
     <string name="user_display_custom_color_enable">Власний колір</string>
@@ -387,12 +382,6 @@
     <string name="confirm_login_cancel_positive_button">Скасувати вхід</string>
     <string name="login_menu_zoom_out">Зменшити</string>
     <string name="login_menu_zoom_in">Збільшити</string>
-    <plurals name="viewers">
-        <item quantity="one">Наживо з %d глядачем</item>
-        <item quantity="few">Наживо з %d глядачами</item>
-        <item quantity="many">Наживо з %d глядачами</item>
-        <item quantity="other">Наживо з %d глядачами</item>
-    </plurals>
     <plurals name="months">
         <item quantity="one">%d місяць</item>
         <item quantity="few">%d місяці</item>

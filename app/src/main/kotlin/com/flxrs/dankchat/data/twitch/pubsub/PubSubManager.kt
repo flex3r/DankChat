@@ -2,10 +2,12 @@ package com.flxrs.dankchat.data.twitch.pubsub
 
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.helix.HelixApiClient
+import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.withoutOAuthPrefix
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -13,16 +15,15 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
-import javax.inject.Inject
 
-class PubSubManager @Inject constructor(
+class PubSubManager(
     private val helixApiClient: HelixApiClient,
     private val preferenceStore: DankChatPreferenceStore,
     private val client: OkHttpClient,
-    private val scope: CoroutineScope,
     private val json: Json,
+    dispatchersProvider: DispatchersProvider,
 ) {
-
+    private val scope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
     private val connections = mutableListOf<PubSubConnection>()
     private val collectJobs = mutableListOf<Job>()
     private val receiveChannel = Channel<PubSubMessage>(capacity = Channel.BUFFERED)

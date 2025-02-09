@@ -10,6 +10,7 @@
     <string name="add_dialog_title">Kanal hinzufügen</string>
     <string name="edit_dialog_title">Kanal umbenennen</string>
     <string name="dialog_ok">OK</string>
+    <string name="save">Speichern</string>
     <string name="dialog_cancel">Abbrechen</string>
     <string name="dialog_dismiss">Schließen</string>
     <string name="error_dialog_copy">Kopieren</string>
@@ -120,7 +121,6 @@
     <string name="confirm_user_block_positive_button">Blockieren</string>
     <string name="restart_required">Neustart erforderlich, um Änderungen zu Übernehmen</string>
     <string name="restart">Neustarten</string>
-    <string name="uploader_title">Benutzerdefinierter Medienupload</string>
     <string name="uploader_reset">Einstellungen zurücksetzen</string>
     <string name="uploader_url">Upload URL</string>
     <string name="uploader_field">Form Feld</string>
@@ -186,7 +186,6 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="badge_tooltip_sub_tier">Stufe %1$s</string>
     <string name="preference_timestamp_title">Zeitstempel anzeigen</string>
     <string name="preference_mention_format_title">Erwähnungsformat</string>
-    <string name="preference_mention_format_summary">Ändere das Erwähnungsformat beim Anklicken eines Nutzernamens</string>
     <string name="preference_roomstate_title">Chatmodi anzeigen</string>
     <string name="preference_roomstate_summary">Zeigt Informationen über den momentanen Chatmodus, wie \"Subscriber-Only\"</string>
     <string name="preference_streaminfo_title">Streaminfo anzeigen</string>
@@ -306,7 +305,6 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="clear_recent_uploads_dialog_title">Upload-Verlauf löschen</string>
     <string name="clear_recent_uploads_dialog_message">Willst du den Upload-Verlauf wirklich löschen? Deine hochgeladenen Dateien werden nicht gelöscht.</string>
     <string name="clear">Löschen</string>
-    <string name="copied_image_url">Bild-URL kopiert</string>
     <string name="pattern">Muster</string>
     <string name="case_sensitive">Groß-/Kleinschreibung beachten</string>
     <string name="highlights">Hervorhebungen</string>
@@ -346,8 +344,6 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="login_outdated_title">Login veraltet!</string>
     <string name="login_outdated_message">Dein Login ist veraltet und hat keinen Zugriff auf einige Funktionen. Bitte melde dich erneut an.</string>
     <string name="custom_user_display_title">Benutzerdefinierte Nutzeransicht</string>
-    <string name="user_display_item_username_hint">Benutzername</string>
-    <string name="user_display_item_color_hint">Farbe</string>
     <string name="remove_custom_user_display">Nutzeransicht entfernen</string>
     <string name="user_display_alias_input">Alias</string>
     <string name="user_display_custom_color_enable">Eigene Farbe</string>
@@ -391,10 +387,6 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="confirm_login_cancel_positive_button">Anmeldung abbrechen</string>
     <string name="login_menu_zoom_out">Herauszoomen</string>
     <string name="login_menu_zoom_in">Heranzoomen</string>
-    <plurals name="viewers">
-        <item quantity="one">Live mit %d Zuschauer</item>
-        <item quantity="other">Live mit %d Zuschauern</item>
-    </plurals>
     <plurals name="viewers_and_uptime">
         <item quantity="one">Live mit %1$d Zuschauer für %2$s</item>
         <item quantity="other">Live mit %1$d Zuschauern für %2$s</item>

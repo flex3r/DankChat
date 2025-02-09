@@ -7,20 +7,16 @@ import java.time.format.DateTimeFormatter
 import kotlin.time.Duration.Companion.seconds
 
 object DateTimeUtils {
-    private var timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+    fun timestampToLocalTime(ts: Long, formatter: DateTimeFormatter): String = Instant
+        .ofEpochMilli(ts)
+        .atZone(ZoneId.systemDefault())
+        .format(formatter)
 
-    fun setPattern(pattern: String) {
-        timeFormatter = DateTimeFormatter.ofPattern(pattern)
-    }
-
-    fun timestampToLocalTime(ts: Long): String {
-        return Instant.ofEpochMilli(ts).atZone(ZoneId.systemDefault()).format(timeFormatter)
-    }
-
-    fun String.asParsedZonedDateTime(): String = ZonedDateTime.parse(this).format(DateTimeFormatter.ISO_LOCAL_DATE)
+    fun String.asParsedZonedDateTime(): String = ZonedDateTime
+        .parse(this)
+        .format(DateTimeFormatter.ISO_LOCAL_DATE)
 
     fun formatSeconds(durationInSeconds: Int): String {
-
         val seconds = durationInSeconds % 60
         val timeoutMinutes = durationInSeconds / 60
         val minutes = timeoutMinutes % 60

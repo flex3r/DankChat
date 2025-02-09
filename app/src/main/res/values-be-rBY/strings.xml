@@ -101,7 +101,6 @@
     <string name="confirm_user_block_positive_button">Заблакіраваць</string>
     <string name="restart_required">Каб змены набылі моц, патрэбна перазагрузка</string>
     <string name="restart">Перазагрузіць</string>
-    <string name="uploader_title">Уласны загрузчык медыя</string>
     <string name="uploader_reset">Скінуць па ўмаўчанні</string>
     <string name="uploader_url">Загрузіць URL</string>
     <string name="uploader_field">Форма поля</string>
@@ -153,7 +152,6 @@
     <string name="badge_tooltip_sub_tier">Узровень %1$s</string>
     <string name="preference_timestamp_title">Адлюстроўваць часовыя пазнакі</string>
     <string name="preference_mention_format_title">Фармат згадвання</string>
-    <string name="preference_mention_format_summary">Змяніць фармат згадвання пры націску на імя карыстальніка</string>
     <string name="preference_roomstate_title">Адлюстраваць статус чату</string>
     <string name="preference_roomstate_summary">Адлюстроўваць інфармацыю пра статус бягучага чату, кшталту рэжыму толькі для падпісчыкаў</string>
     <string name="preference_streaminfo_title">Адлюстроўваць інфармацыю пра трансляцыю</string>

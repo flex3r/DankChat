@@ -1,6 +1,9 @@
 package com.flxrs.dankchat.data.database.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Query
+import androidx.room.Upsert
 import com.flxrs.dankchat.data.database.entity.UserDisplayEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -11,10 +14,10 @@ interface UserDisplayDao {
     fun getUserDisplaysFlow(): Flow<List<UserDisplayEntity>>
 
     @Upsert
-    suspend fun insertAll(users: List<UserDisplayEntity>)
+    suspend fun upsertAll(users: List<UserDisplayEntity>)
 
     @Upsert
-    suspend fun insert(user: UserDisplayEntity): Long
+    suspend fun upsert(user: UserDisplayEntity): Long
 
     @Delete
     suspend fun delete(user: UserDisplayEntity): Int

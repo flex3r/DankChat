@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.main
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.webkit.CookieManager
 import android.webkit.WebStorage
@@ -42,7 +43,9 @@ import com.flxrs.dankchat.data.twitch.message.SystemMessageType.ChannelSevenTVEm
 import com.flxrs.dankchat.data.twitch.message.SystemMessageType.ChannelSevenTVEmoteSetChanged
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.preferences.model.Preference
+import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
+import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
+import com.flxrs.dankchat.preferences.stream.StreamsSettingsDataStore
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.extensions.firstValueOrNull
 import com.flxrs.dankchat.utils.extensions.flatMapLatestOrDefault
@@ -50,7 +53,6 @@ import com.flxrs.dankchat.utils.extensions.moveToFront
 import com.flxrs.dankchat.utils.extensions.timer
 import com.flxrs.dankchat.utils.extensions.toEmoteItems
 import com.flxrs.dankchat.utils.removeExifAttributes
-import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.serialization.JsonConvertException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -83,12 +85,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.SerializationException
+import org.koin.android.annotation.KoinViewModel
 import java.io.File
-import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
-@HiltViewModel
-class MainViewModel @Inject constructor(
+@KoinViewModel
+class MainViewModel(
     private val chatRepository: ChatRepository,
     private val dataRepository: DataRepository,
     private val commandRepository: CommandRepository,
@@ -96,6 +98,9 @@ class MainViewModel @Inject constructor(
     private val ignoresRepository: IgnoresRepository,
     private val channelRepository: ChannelRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
+    private val appearanceSettingsDataStore: AppearanceSettingsDataStore,
+    private val streamsSettingsDataStore: StreamsSettingsDataStore,
+    chatSettingsDataStore: ChatSettingsDataStore,
 ) : ViewModel() {
 
     private var fetchTimerJob: Job? = null
@@ -110,16 +115,13 @@ class MainViewModel @Inject constructor(
     private val imageUploadStateChannel = Channel<ImageUploadState>(Channel.CONFLATED)
     private val isImageUploading = MutableStateFlow(false)
     private val isDataLoading = MutableStateFlow(false)
-    private val streamInfoEnabled = MutableStateFlow(true)
-    private val roomStateEnabled = MutableStateFlow(true)
     private val streamData = MutableStateFlow<List<StreamData>>(emptyList())
     private val currentSuggestionChannel = MutableStateFlow<UserName?>(null)
     private val inputSheetState = MutableStateFlow<InputSheetState>(InputSheetState.Closed)
     private val fullScreenSheetState = MutableStateFlow<FullScreenSheetState>(FullScreenSheetState.Closed)
     private val _currentStreamedChannel = MutableStateFlow<UserName?>(null)
     private val _isFullscreen = MutableStateFlow(false)
-    private val shouldShowChips = MutableStateFlow(true)
-    private val inputEnabled = MutableStateFlow(true)
+    private val isInputFocused = MutableStateFlow(false)
     private val isScrolling = MutableStateFlow(false)
     private val chipsExpanded = MutableStateFlow(false)
     private val repeatedSend = MutableStateFlow(RepeatedSendData(enabled = false, message = ""))
@@ -131,7 +133,10 @@ class MainViewModel @Inject constructor(
         new.all { newEmote -> old.any { it.emoteId == newEmote.emoteId } }
     }
 
-    private val roomStateText = combine(roomStateEnabled, currentSuggestionChannel) { roomStateEnabled, channel -> roomStateEnabled to channel }
+    private val roomStateText = combine(
+        chatSettingsDataStore.showChatModes,
+        currentSuggestionChannel
+    ) { roomStateEnabled, channel -> roomStateEnabled to channel }
         .flatMapLatest { (enabled, channel) ->
             when {
                 enabled && channel != null -> chatRepository.getRoomState(channel)
@@ -142,7 +147,11 @@ class MainViewModel @Inject constructor(
 
     private val users = currentSuggestionChannel.flatMapLatestOrDefault(emptySet()) { chatRepository.getUsers(it) }
     private val supibotCommands = currentSuggestionChannel.flatMapLatestOrDefault(emptyList()) { commandRepository.getSupibotCommands(it) }
-    private val currentStreamInformation = combine(streamInfoEnabled, activeChannel, streamData) { streamInfoEnabled, activeChannel, streamData ->
+    private val currentStreamInformation = combine(
+        streamsSettingsDataStore.showStreamsInfo,
+        activeChannel,
+        streamData
+    ) { streamInfoEnabled, activeChannel, streamData ->
         streamData.find { it.channel == activeChannel }?.formattedData?.takeIf { streamInfoEnabled }
     }
 
@@ -172,8 +181,8 @@ class MainViewModel @Inject constructor(
 
     private val shouldShowBottomText: Flow<Boolean> =
         combine(
-            roomStateEnabled,
-            streamInfoEnabled,
+            chatSettingsDataStore.showChatModes,
+            streamsSettingsDataStore.showStreamsInfo,
             fullScreenSheetState,
             currentBottomText
         ) { roomStateEnabled, streamInfoEnabled, chatSheetState, bottomText ->
@@ -190,18 +199,8 @@ class MainViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            dankChatPreferenceStore.preferenceFlow.collect {
-                when (it) {
-                    is Preference.RoomState          -> roomStateEnabled.value = it.enabled
-                    is Preference.StreamInfo         -> streamInfoEnabled.value = it.enabled
-                    is Preference.Input              -> inputEnabled.value = it.enabled
-                    is Preference.SupibotSuggestions -> setSupibotSuggestions(it.enabled)
-                    is Preference.ScrollBack         -> chatRepository.scrollBackLength = it.length
-                    is Preference.Chips              -> shouldShowChips.value = it.enabled
-                    is Preference.TimeStampFormat    -> DateTimeUtils.setPattern(it.pattern)
-                    is Preference.FetchStreams       -> fetchStreamData(channels.value.orEmpty())
-                }
-            }
+            streamsSettingsDataStore.fetchStreams
+                .collect { fetchStreamData(channels.value.orEmpty()) }
         }
 
         viewModelScope.launch {
@@ -260,14 +259,17 @@ class MainViewModel @Inject constructor(
             hasMentions || hasWhispers
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
-    val shouldShowViewPager: StateFlow<Boolean> = channels.mapLatest { it?.isNotEmpty() ?: true }
+    val shouldShowViewPager: StateFlow<Boolean> = channels.mapLatest { it?.isNotEmpty() != false }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), true)
 
     val shouldShowTabs: StateFlow<Boolean> = shouldShowViewPager.combine(_isFullscreen) { shouldShowViewPager, isFullscreen ->
         shouldShowViewPager && !isFullscreen
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), true)
 
-    val shouldShowInput: StateFlow<Boolean> = combine(inputEnabled, shouldShowViewPager) { inputEnabled, shouldShowViewPager ->
+    val shouldShowInput: StateFlow<Boolean> = combine(
+        appearanceSettingsDataStore.showInput,
+        shouldShowViewPager
+    ) { inputEnabled, shouldShowViewPager ->
         inputEnabled && shouldShowViewPager
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), true)
 
@@ -289,7 +291,7 @@ class MainViewModel @Inject constructor(
     }.stateIn(viewModelScope, started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), InputState.Disconnected)
 
     val canType: StateFlow<Boolean> = combine(connectionState, fullScreenSheetState) { connectionState, fullScreenSheetState ->
-        val canTypeInConnectionState = connectionState == ConnectionState.CONNECTED || !dankChatPreferenceStore.autoDisableInput
+        val canTypeInConnectionState = connectionState == ConnectionState.CONNECTED || !appearanceSettingsDataStore.current().autoDisableInput
         (fullScreenSheetState != FullScreenSheetState.Mention && canTypeInConnectionState)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
@@ -358,8 +360,12 @@ class MainViewModel @Inject constructor(
     val isFullscreenFlow: StateFlow<Boolean> = _isFullscreen.asStateFlow()
     val areChipsExpanded: StateFlow<Boolean> = chipsExpanded.asStateFlow()
 
-    val shouldShowChipToggle: StateFlow<Boolean> = combine(shouldShowChips, isScrolling) { shouldShowChips, isScrolling ->
-        shouldShowChips && !isScrolling
+    val shouldShowChipToggle: StateFlow<Boolean> = combine(
+        appearanceSettingsDataStore.showChips,
+        isScrolling,
+        isInputFocused
+    ) { shouldShowChips, isScrolling, inputFocus ->
+        shouldShowChips && !isScrolling && !inputFocus
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), true)
 
     val shouldShowExpandedChips: StateFlow<Boolean> = combine(shouldShowChipToggle, chipsExpanded) { shouldShowChips, chipsExpanded ->
@@ -387,7 +393,10 @@ class MainViewModel @Inject constructor(
 
     val currentStreamedChannel: StateFlow<UserName?> = _currentStreamedChannel.asStateFlow()
 
-    val shouldEnablePictureInPictureAutoMode: StateFlow<Boolean> = combine(currentStreamedChannel, dankChatPreferenceStore.pictureInPictureModeEnabledFlow) { currentStream, pipEnabled ->
+    val shouldEnablePictureInPictureAutoMode: StateFlow<Boolean> = combine(
+        currentStreamedChannel,
+        streamsSettingsDataStore.pipEnabled,
+    ) { currentStream, pipEnabled ->
         currentStream != null && pipEnabled
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
@@ -426,8 +435,6 @@ class MainViewModel @Inject constructor(
 
     fun loadData(channelList: List<UserName> = channels.value.orEmpty()) {
         val isLoggedIn = dankChatPreferenceStore.isLoggedIn
-        val scrollBackLength = dankChatPreferenceStore.scrollbackLength
-        chatRepository.scrollBackLength = scrollBackLength
 
         lastDataLoadingJob?.cancel()
         lastDataLoadingJob = viewModelScope.launch {
@@ -641,6 +648,7 @@ class MainViewModel @Inject constructor(
         loadData()
     }
 
+    @SuppressLint("BuildListAdds")
     fun reloadEmotes(channelName: UserName) = viewModelScope.launch {
         val isLoggedIn = dankChatPreferenceStore.isLoggedIn
         dataLoadingStateChannel.send(DataLoadingState.Loading)
@@ -719,7 +727,7 @@ class MainViewModel @Inject constructor(
         cancelStreamData()
         channels?.ifEmpty { null } ?: return
 
-        val fetchingEnabled = dankChatPreferenceStore.fetchStreamInfoEnabled
+        val fetchingEnabled = streamsSettingsDataStore.current().fetchStreams
         if (!dankChatPreferenceStore.isLoggedIn || !fetchingEnabled) {
             return
         }
@@ -758,8 +766,8 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun setShowChips(value: Boolean) {
-        shouldShowChips.value = value
+    fun setInputFocus(value: Boolean) {
+        isInputFocused.value = value
     }
 
     fun toggleFullscreen() {
@@ -880,13 +888,6 @@ class MainViewModel @Inject constructor(
 
     private fun clearEmoteUsages() = viewModelScope.launch {
         emoteUsageRepository.clearUsages()
-    }
-
-    private fun setSupibotSuggestions(enabled: Boolean) = viewModelScope.launch {
-        when {
-            enabled -> commandRepository.loadSupibotCommands()
-            else    -> commandRepository.clearSupibotCommands()
-        }
     }
 
     private fun clearIgnores() = ignoresRepository.clearIgnores()

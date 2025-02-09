@@ -14,24 +14,23 @@ import com.flxrs.dankchat.data.api.seventv.eventapi.dto.ReconnectMessage
 import com.flxrs.dankchat.data.api.seventv.eventapi.dto.SubscribeRequest
 import com.flxrs.dankchat.data.api.seventv.eventapi.dto.UnsubscribeRequest
 import com.flxrs.dankchat.data.api.seventv.eventapi.dto.UserDispatchData
-import com.flxrs.dankchat.di.ApplicationScope
+import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.di.WebSocketOkHttpClient
-import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.preferences.model.LiveUpdatesBackgroundBehavior
+import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
+import com.flxrs.dankchat.preferences.chat.LiveUpdatesBackgroundBehavior
 import com.flxrs.dankchat.utils.AppLifecycleListener
 import com.flxrs.dankchat.utils.AppLifecycleListener.AppLifecycle.Background
 import com.flxrs.dankchat.utils.extensions.timer
 import io.ktor.http.HttpHeaders
 import io.ktor.util.collections.ConcurrentSet
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -40,23 +39,26 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
-import javax.inject.Inject
-import javax.inject.Singleton
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 import kotlin.random.Random
 import kotlin.random.nextLong
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
-@OptIn(FlowPreview::class)
-@Singleton
-class SevenTVEventApiClient @Inject constructor(
-    @WebSocketOkHttpClient private val client: OkHttpClient,
-    @ApplicationScope private val scope: CoroutineScope,
-    private val preferenceStore: DankChatPreferenceStore,
+@Single
+class SevenTVEventApiClient(
+    @Named(type = WebSocketOkHttpClient::class)
+    private val client: OkHttpClient,
+    private val chatSettingsDataStore: ChatSettingsDataStore,
     private val appLifecycleListener: AppLifecycleListener,
     defaultJson: Json,
+    dispatchersProvider: DispatchersProvider,
 ) {
+    private val scope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
     private var socket: WebSocket? = null
     private val request = Request.Builder()
         .header(HttpHeaders.UserAgent, "dankchat/${BuildConfig.VERSION_NAME}")
@@ -87,30 +89,31 @@ class SevenTVEventApiClient @Inject constructor(
 
     init {
         scope.launch {
-            preferenceStore.sevenTVEventApiEnabledFlow
-                .debounce(FLOW_DEBOUNCE)
-                .distinctUntilChanged()
-                .collect { enabled ->
+            chatSettingsDataStore.debouncedSevenTvLiveEmoteUpdates
+                .collectLatest { enabled ->
                     when {
                         enabled && !connected && !connecting -> start()
                         else                                 -> close()
                     }
-                }
-        }
-        scope.launch {
-            appLifecycleListener.appState
-                .debounce(FLOW_DEBOUNCE)
-                .collectLatest { state ->
-                    if (state == Background) {
-                        val timeout = when (val behavior = preferenceStore.sevenTVEventApiBackgroundBehavior) {
-                            LiveUpdatesBackgroundBehavior.Always     -> return@collectLatest
-                            LiveUpdatesBackgroundBehavior.Never      -> Duration.ZERO
-                            is LiveUpdatesBackgroundBehavior.Timeout -> behavior.timeout
-                        }
+                    if (enabled) {
+                        appLifecycleListener.appState
+                            .debounce(FLOW_DEBOUNCE)
+                            .collectLatest { state ->
+                                if (state == Background) {
+                                    val timeout = when (chatSettingsDataStore.current().sevenTVLiveEmoteUpdatesBehavior) {
+                                        LiveUpdatesBackgroundBehavior.Always        -> return@collectLatest
+                                        LiveUpdatesBackgroundBehavior.Never         -> Duration.ZERO
+                                        LiveUpdatesBackgroundBehavior.FiveMinutes   -> 5.minutes
+                                        LiveUpdatesBackgroundBehavior.OneHour       -> 1.hours
+                                        LiveUpdatesBackgroundBehavior.OneMinute     -> 1.minutes
+                                        LiveUpdatesBackgroundBehavior.ThirtyMinutes -> 30.minutes
+                                    }
 
-                        Log.d(TAG, "[7TV Event-Api] Sleeping for $timeout until connection is closed")
-                        delay(timeout)
-                        close()
+                                    Log.d(TAG, "[7TV Event-Api] Sleeping for $timeout until connection is closed")
+                                    delay(timeout)
+                                    close()
+                                }
+                            }
                     }
                 }
         }
@@ -119,7 +122,7 @@ class SevenTVEventApiClient @Inject constructor(
     val messages = _messages.asSharedFlow()
 
     fun subscribeUser(userId: String) {
-        if (!preferenceStore.sevenTVEventApiEnabled) {
+        if (!chatSettingsDataStore.current().sevenTVLiveEmoteUpdates) {
             return
         }
 
@@ -128,7 +131,7 @@ class SevenTVEventApiClient @Inject constructor(
     }
 
     fun subscribeEmoteSet(emoteSetId: String) {
-        if (!preferenceStore.sevenTVEventApiEnabled) {
+        if (!chatSettingsDataStore.current().sevenTVLiveEmoteUpdates) {
             return
         }
 
@@ -137,7 +140,7 @@ class SevenTVEventApiClient @Inject constructor(
     }
 
     fun unsubscribeUser(userId: String) {
-        if (!preferenceStore.sevenTVEventApiEnabled) {
+        if (!chatSettingsDataStore.current().sevenTVLiveEmoteUpdates) {
             return
         }
 
@@ -146,7 +149,7 @@ class SevenTVEventApiClient @Inject constructor(
     }
 
     fun unsubscribeEmoteSet(emoteSetId: String) {
-        if (!preferenceStore.sevenTVEventApiEnabled) {
+        if (!chatSettingsDataStore.current().sevenTVLiveEmoteUpdates) {
             return
         }
 
@@ -155,7 +158,7 @@ class SevenTVEventApiClient @Inject constructor(
     }
 
     fun reconnect() {
-        if (!preferenceStore.sevenTVEventApiEnabled) {
+        if (!chatSettingsDataStore.current().sevenTVLiveEmoteUpdates) {
             return
         }
 
@@ -164,7 +167,7 @@ class SevenTVEventApiClient @Inject constructor(
     }
 
     fun reconnectIfNecessary() {
-        if (!preferenceStore.sevenTVEventApiEnabled || connected || connecting) {
+        if (!chatSettingsDataStore.current().sevenTVLiveEmoteUpdates || connected || connecting) {
             return
         }
 

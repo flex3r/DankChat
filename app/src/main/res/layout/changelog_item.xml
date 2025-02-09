@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <TextView
-        android:id="@+id/changelog_entry"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="4dp"
-        android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
-</layout>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/changelog_entry"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="4dp"
+    android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />

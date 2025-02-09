@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <ImageView
-        android:id="@+id/badge_image"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:background="?selectableItemBackgroundBorderless"
-        android:clickable="true"
-        android:focusable="true"
-        android:padding="4dp"
-        tools:ignore="ContentDescription"
-        tools:srcCompat="@tools:sample/avatars" />
-</layout>
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/badge_image"
+    android:layout_width="32dp"
+    android:layout_height="32dp"
+    android:background="?selectableItemBackgroundBorderless"
+    android:clickable="true"
+    android:focusable="true"
+    android:padding="4dp"
+    tools:ignore="ContentDescription"
+    tools:srcCompat="@tools:sample/avatars" />

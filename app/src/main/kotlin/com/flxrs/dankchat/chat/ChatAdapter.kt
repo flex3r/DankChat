@@ -3,13 +3,26 @@ package com.flxrs.dankchat.chat
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
-import android.graphics.*
-import android.graphics.drawable.*
+import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
+import android.graphics.Rect
+import android.graphics.Typeface
+import android.graphics.drawable.Animatable
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.LayerDrawable
+import android.graphics.drawable.RippleDrawable
 import android.os.Build
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.TextPaint
-import android.text.style.*
+import android.text.style.ImageSpan
+import android.text.style.RelativeSizeSpan
+import android.text.style.StyleSpan
+import android.text.style.TextAppearanceSpan
+import android.text.style.TypefaceSpan
+import android.text.style.URLSpan
 import android.text.util.Linkify
 import android.util.Log
 import android.util.TypedValue
@@ -21,8 +34,15 @@ import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.net.toUri
-import androidx.core.text.*
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
+import androidx.core.text.clearSpans
+import androidx.core.text.color
+import androidx.core.text.getSpans
+import androidx.core.text.inSpans
+import androidx.core.text.set
 import androidx.core.text.util.LinkifyCompat
 import androidx.core.view.isVisible
 import androidx.emoji2.text.EmojiCompat
@@ -33,26 +53,60 @@ import coil3.asDrawable
 import coil3.imageLoader
 import coil3.request.ImageRequest
 import com.flxrs.dankchat.R
-import com.flxrs.dankchat.data.*
+import com.flxrs.dankchat.data.DisplayName
+import com.flxrs.dankchat.data.UserId
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.repo.emote.EmoteRepository
 import com.flxrs.dankchat.data.repo.emote.EmoteRepository.Companion.cacheKey
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
-import com.flxrs.dankchat.data.twitch.message.*
+import com.flxrs.dankchat.data.twitch.message.Highlight
+import com.flxrs.dankchat.data.twitch.message.HighlightType
+import com.flxrs.dankchat.data.twitch.message.ModerationMessage
+import com.flxrs.dankchat.data.twitch.message.NoticeMessage
+import com.flxrs.dankchat.data.twitch.message.PointRedemptionMessage
+import com.flxrs.dankchat.data.twitch.message.PrivMessage
+import com.flxrs.dankchat.data.twitch.message.SystemMessage
+import com.flxrs.dankchat.data.twitch.message.SystemMessageType
+import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
+import com.flxrs.dankchat.data.twitch.message.WhisperMessage
+import com.flxrs.dankchat.data.twitch.message.aliasOrFormattedName
+import com.flxrs.dankchat.data.twitch.message.customOrUserColorOn
+import com.flxrs.dankchat.data.twitch.message.hasMention
+import com.flxrs.dankchat.data.twitch.message.highestPriorityHighlight
+import com.flxrs.dankchat.data.twitch.message.recipientAliasOrFormattedName
+import com.flxrs.dankchat.data.twitch.message.recipientColorOnBackground
+import com.flxrs.dankchat.data.twitch.message.senderAliasOrFormattedName
+import com.flxrs.dankchat.data.twitch.message.senderColorOnBackground
 import com.flxrs.dankchat.databinding.ChatItemBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
+import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
+import com.flxrs.dankchat.preferences.developer.DeveloperSettingsDataStore
 import com.flxrs.dankchat.utils.DateTimeUtils
-import com.flxrs.dankchat.utils.extensions.*
+import com.flxrs.dankchat.utils.extensions.forEachLayer
+import com.flxrs.dankchat.utils.extensions.indexOfFirst
+import com.flxrs.dankchat.utils.extensions.isEven
+import com.flxrs.dankchat.utils.extensions.setRunning
 import com.flxrs.dankchat.utils.showErrorDialog
 import com.flxrs.dankchat.utils.span.LongClickLinkMovementMethod
 import com.flxrs.dankchat.utils.span.LongClickableSpan
 import com.google.android.material.color.MaterialColors
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 class ChatAdapter(
     private val emoteRepository: EmoteRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
+    private val chatSettingsDataStore: ChatSettingsDataStore,
+    private val developerSettingsDataStore: DeveloperSettingsDataStore,
+    private val appearanceSettingsDataStore: AppearanceSettingsDataStore,
     private val onListChanged: (position: Int) -> Unit,
     private val onUserClick: (targetUserId: UserId?, targetUsername: UserName, targetDisplayName: DisplayName, channelName: UserName?, badges: List<Badge>, isLongPress: Boolean) -> Unit,
     private val onMessageLongClick: (messageId: String, channel: UserName?, fullMessage: String) -> Unit,
@@ -69,8 +123,8 @@ class ChatAdapter(
         private const val SCALE_FACTOR_CONSTANT = 1.5 / 112
         private const val BASE_HEIGHT_CONSTANT = 1.173
         private const val MONOSPACE_FONT_PROPORTION = 0.95f // make monospace font a bit smaller to make looks same sized as normal text
-        private val MASK_FULL = ColorDrawable(Color.argb(255, 0, 0, 0))
-        private val MASK_NONE = ColorDrawable(Color.argb(0, 0, 0, 0))
+        private val MASK_FULL = Color.argb(255, 0, 0, 0).toDrawable()
+        private val MASK_NONE = Color.argb(0, 0, 0, 0).toDrawable()
         private fun getBaseHeight(@Px textSize: Float): Int = (textSize * BASE_HEIGHT_CONSTANT).roundToInt()
     }
 
@@ -154,150 +208,166 @@ class ChatAdapter(
         }
 
     private fun TextView.handleNoticeMessage(message: NoticeMessage, holder: ViewHolder) {
+        val appearanceSettings = appearanceSettingsDataStore.current()
+        val chatSettings = chatSettingsDataStore.current()
         val background = when {
-            dankChatPreferenceStore.isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(
+            appearanceSettings.checkeredMessages && holder.isAlternateBackground -> MaterialColors.layer(
                 this,
                 android.R.attr.colorBackground,
                 R.attr.colorSurfaceInverse,
                 MaterialColors.ALPHA_DISABLED_LOW
             )
 
-            else                                                                    -> ContextCompat.getColor(context, android.R.color.transparent)
+            else                                                                 -> ContextCompat.getColor(context, android.R.color.transparent)
         }
         holder.binding.itemLayout.setBackgroundColor(background)
         setBackgroundColor(background)
 
         val withTime = when {
-            dankChatPreferenceStore.showTimestamps -> SpannableStringBuilder()
-                .timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp)) }
+            chatSettings.showTimestamps -> SpannableStringBuilder()
+                .timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp, chatSettings.formatter)) }
                 .append(message.message)
 
-            else                                   -> SpannableStringBuilder().append(message.message)
+            else                        -> SpannableStringBuilder().append(message.message)
         }
 
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, dankChatPreferenceStore.fontSize)
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, appearanceSettings.fontSize.toFloat())
         text = withTime
     }
 
     private fun TextView.handleUserNoticeMessage(message: UserNoticeMessage, holder: ViewHolder) {
+        val appearanceSettings = appearanceSettingsDataStore.current()
+        val chatSettings = chatSettingsDataStore.current()
         val firstHighlightType = message.highlights.firstOrNull()?.type
         val shouldHighlight = firstHighlightType == HighlightType.Subscription || firstHighlightType == HighlightType.Announcement
         val background = when {
-            shouldHighlight                                                         -> ContextCompat.getColor(context, R.color.color_sub_highlight)
-            dankChatPreferenceStore.isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(
+            shouldHighlight                                                      -> ContextCompat.getColor(context, R.color.color_sub_highlight)
+            appearanceSettings.checkeredMessages && holder.isAlternateBackground -> MaterialColors.layer(
                 this,
                 android.R.attr.colorBackground,
                 R.attr.colorSurfaceInverse,
                 MaterialColors.ALPHA_DISABLED_LOW
             )
 
-            else                                                                    -> ContextCompat.getColor(context, android.R.color.transparent)
+            else                                                                 -> ContextCompat.getColor(context, android.R.color.transparent)
         }
         holder.binding.itemLayout.setBackgroundColor(background)
         setBackgroundColor(background)
 
         val withTime = when {
-            dankChatPreferenceStore.showTimestamps -> SpannableStringBuilder()
-                .timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp)) }
+            chatSettings.showTimestamps -> SpannableStringBuilder()
+                .timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp, chatSettings.formatter)) }
                 .append(message.message)
 
-            else                                   -> SpannableStringBuilder().append(message.message)
+            else                        -> SpannableStringBuilder().append(message.message)
         }
 
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, dankChatPreferenceStore.fontSize)
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, appearanceSettings.fontSize.toFloat())
         text = withTime
     }
 
     private fun TextView.handleSystemMessage(message: SystemMessage, holder: ViewHolder) {
+        val appearanceSettings = appearanceSettingsDataStore.current()
+        val chatSettings = chatSettingsDataStore.current()
         val background = when {
-            dankChatPreferenceStore.isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(
+            appearanceSettings.checkeredMessages && holder.isAlternateBackground -> MaterialColors.layer(
                 this,
                 android.R.attr.colorBackground,
                 R.attr.colorSurfaceInverse,
                 MaterialColors.ALPHA_DISABLED_LOW
             )
 
-            else                                                                    -> ContextCompat.getColor(context, android.R.color.transparent)
+            else                                                                 -> ContextCompat.getColor(context, android.R.color.transparent)
         }
         holder.binding.itemLayout.setBackgroundColor(background)
         setRippleBackground(background, enableRipple = false)
 
         val systemMessageText = when (message.type) {
-            is SystemMessageType.Disconnected               -> context.getString(R.string.system_message_disconnected)
-            is SystemMessageType.NoHistoryLoaded            -> context.getString(R.string.system_message_no_history)
-            is SystemMessageType.Connected                  -> context.getString(R.string.system_message_connected)
-            is SystemMessageType.Reconnected                -> context.getString(R.string.system_message_reconnected)
-            is SystemMessageType.LoginExpired               -> context.getString(R.string.login_expired)
-            is SystemMessageType.ChannelNonExistent         -> context.getString(R.string.system_message_channel_non_existent)
-            is SystemMessageType.MessageHistoryIgnored      -> context.getString(R.string.system_message_history_ignored)
-            is SystemMessageType.MessageHistoryIncomplete   -> context.getString(R.string.system_message_history_recovering)
-            is SystemMessageType.ChannelBTTVEmotesFailed    -> context.getString(R.string.system_message_bttv_emotes_failed, message.type.status)
-            is SystemMessageType.ChannelFFZEmotesFailed     -> context.getString(R.string.system_message_ffz_emotes_failed, message.type.status)
-            is SystemMessageType.ChannelSevenTVEmotesFailed -> context.getString(R.string.system_message_7tv_emotes_failed, message.type.status)
-            is SystemMessageType.Custom                     -> message.type.message
-            is SystemMessageType.MessageHistoryUnavailable  -> when (message.type.status) {
+            is SystemMessageType.Disconnected                  -> context.getString(R.string.system_message_disconnected)
+            is SystemMessageType.NoHistoryLoaded               -> context.getString(R.string.system_message_no_history)
+            is SystemMessageType.Connected                     -> context.getString(R.string.system_message_connected)
+            is SystemMessageType.Reconnected                   -> context.getString(R.string.system_message_reconnected)
+            is SystemMessageType.LoginExpired                  -> context.getString(R.string.login_expired)
+            is SystemMessageType.ChannelNonExistent            -> context.getString(R.string.system_message_channel_non_existent)
+            is SystemMessageType.MessageHistoryIgnored         -> context.getString(R.string.system_message_history_ignored)
+            is SystemMessageType.MessageHistoryIncomplete      -> context.getString(R.string.system_message_history_recovering)
+            is SystemMessageType.ChannelBTTVEmotesFailed       -> context.getString(R.string.system_message_bttv_emotes_failed, message.type.status)
+            is SystemMessageType.ChannelFFZEmotesFailed        -> context.getString(R.string.system_message_ffz_emotes_failed, message.type.status)
+            is SystemMessageType.ChannelSevenTVEmotesFailed    -> context.getString(R.string.system_message_7tv_emotes_failed, message.type.status)
+            is SystemMessageType.Custom                        -> message.type.message
+            is SystemMessageType.MessageHistoryUnavailable     -> when (message.type.status) {
                 null -> context.getString(R.string.system_message_history_unavailable)
                 else -> context.getString(R.string.system_message_history_unavailable_detailed, message.type.status)
             }
 
-            is SystemMessageType.ChannelSevenTVEmoteAdded   -> context.getString(R.string.system_message_7tv_emote_added, message.type.actorName, message.type.emoteName)
-            is SystemMessageType.ChannelSevenTVEmoteRemoved -> context.getString(R.string.system_message_7tv_emote_removed, message.type.actorName, message.type.emoteName)
-            is SystemMessageType.ChannelSevenTVEmoteRenamed -> context.getString(R.string.system_message_7tv_emote_renamed, message.type.actorName, message.type.oldEmoteName, message.type.emoteName)
+            is SystemMessageType.ChannelSevenTVEmoteAdded      -> context.getString(R.string.system_message_7tv_emote_added, message.type.actorName, message.type.emoteName)
+            is SystemMessageType.ChannelSevenTVEmoteRemoved    -> context.getString(R.string.system_message_7tv_emote_removed, message.type.actorName, message.type.emoteName)
+            is SystemMessageType.ChannelSevenTVEmoteRenamed    -> context.getString(
+                R.string.system_message_7tv_emote_renamed,
+                message.type.actorName,
+                message.type.oldEmoteName,
+                message.type.emoteName
+            )
+
             is SystemMessageType.ChannelSevenTVEmoteSetChanged -> context.getString(R.string.system_message_7tv_emote_set_changed, message.type.actorName, message.type.newEmoteSetName)
         }
         val withTime = when {
-            dankChatPreferenceStore.showTimestamps -> SpannableStringBuilder()
-                .timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp)) }
+            chatSettings.showTimestamps -> SpannableStringBuilder()
+                .timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp, chatSettings.formatter)) }
                 .append(systemMessageText)
 
-            else                                   -> SpannableStringBuilder().append(systemMessageText)
+            else                        -> SpannableStringBuilder().append(systemMessageText)
         }
 
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, dankChatPreferenceStore.fontSize)
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, appearanceSettings.fontSize.toFloat())
         text = withTime
     }
 
     private fun TextView.handleModerationMessage(message: ModerationMessage, holder: ViewHolder) {
+        val appearanceSettings = appearanceSettingsDataStore.current()
+        val chatSettings = chatSettingsDataStore.current()
         val background = when {
-            dankChatPreferenceStore.isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(
+            appearanceSettings.checkeredMessages && holder.isAlternateBackground -> MaterialColors.layer(
                 this,
                 android.R.attr.colorBackground,
                 R.attr.colorSurfaceInverse,
                 MaterialColors.ALPHA_DISABLED_LOW
             )
 
-            else                                                                    -> ContextCompat.getColor(context, android.R.color.transparent)
+            else                                                                 -> ContextCompat.getColor(context, android.R.color.transparent)
         }
 
         holder.binding.itemLayout.setBackgroundColor(background)
         setRippleBackground(background, enableRipple = false)
 
-        val systemMessage = message.getSystemMessage(dankChatPreferenceStore.userName, dankChatPreferenceStore.showTimedOutMessages)
+        val systemMessage = message.getSystemMessage(dankChatPreferenceStore.userName, chatSettings.showTimedOutMessages)
         val withTime = when {
-            dankChatPreferenceStore.showTimestamps -> SpannableStringBuilder()
-                .timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp)) }
+            chatSettings.showTimestamps -> SpannableStringBuilder()
+                .timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp, chatSettings.formatter)) }
                 .append(systemMessage)
 
-            else                                   -> SpannableStringBuilder().append(systemMessage)
+            else                        -> SpannableStringBuilder().append(systemMessage)
         }
 
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, dankChatPreferenceStore.fontSize)
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, appearanceSettings.fontSize.toFloat())
         text = withTime
     }
 
     private fun TextView.handlePointRedemptionMessage(message: PointRedemptionMessage, holder: ViewHolder) {
+        val appearanceSettings = appearanceSettingsDataStore.current()
+        val chatSettings = chatSettingsDataStore.current()
         val background = ContextCompat.getColor(context, R.color.color_redemption_highlight)
         holder.binding.itemLayout.setBackgroundColor(background)
         setRippleBackground(background, enableRipple = false)
 
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, dankChatPreferenceStore.fontSize)
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, appearanceSettings.fontSize.toFloat())
         val baseHeight = getBaseHeight(textSize)
 
         holder.scope.launch(holder.coroutineHandler) {
 
             val spannable = buildSpannedString {
-                if (dankChatPreferenceStore.showTimestamps) {
-                    timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp)) }
+                if (chatSettings.showTimestamps) {
+                    timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(message.timestamp, chatSettings.formatter)) }
                 }
 
                 when {
@@ -328,35 +398,37 @@ class ChatAdapter(
     }
 
     private fun TextView.handleWhisperMessage(whisperMessage: WhisperMessage, holder: ViewHolder) = with(whisperMessage) {
+        val appearanceSettings = appearanceSettingsDataStore.current()
+        val chatSettings = chatSettingsDataStore.current()
         val textView = this@handleWhisperMessage
         isClickable = false
         movementMethod = LongClickLinkMovementMethod
         (text as? Spannable)?.clearSpans()
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, dankChatPreferenceStore.fontSize)
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, appearanceSettings.fontSize.toFloat())
         val textColor = MaterialColors.getColor(textView, R.attr.colorOnSurface)
         setTextColor(textColor)
 
         val baseHeight = getBaseHeight(textSize)
         val scaleFactor = baseHeight * SCALE_FACTOR_CONSTANT
         val background = when {
-            dankChatPreferenceStore.isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(
+            appearanceSettings.checkeredMessages && holder.isAlternateBackground -> MaterialColors.layer(
                 textView,
                 android.R.attr.colorBackground,
                 R.attr.colorSurfaceInverse,
                 MaterialColors.ALPHA_DISABLED_LOW
             )
 
-            else                                                                    -> ContextCompat.getColor(context, android.R.color.transparent)
+            else                                                                 -> ContextCompat.getColor(context, android.R.color.transparent)
         }
         holder.binding.itemLayout.setBackgroundColor(background)
         setRippleBackground(background, enableRipple = true)
 
-        val allowedBadges = badges.filter { it.type in dankChatPreferenceStore.visibleBadgeTypes }
+        val allowedBadges = badges.filter { it.type in chatSettings.visibleBadgeTypes }
         val badgesLength = allowedBadges.size * 2
 
         val spannable = SpannableStringBuilder(StringBuilder())
-        if (dankChatPreferenceStore.showTimestamps) {
-            spannable.timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(timestamp)) }
+        if (chatSettings.showTimestamps) {
+            spannable.timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(timestamp, chatSettings.formatter)) }
         }
 
         val nameGroupLength = senderAliasOrFormattedName.length + 4 + recipientAliasOrFormattedName.length + 2
@@ -414,7 +486,7 @@ class ChatAdapter(
         setText(spannableWithEmojis, TextView.BufferType.SPANNABLE)
 
         // todo extract common badges + emote handling
-        val animateGifs = dankChatPreferenceStore.animateGifs
+        val animateGifs = chatSettings.animateGifs
         var hasAnimatedEmoteOrBadge = false
         holder.scope.launch(holder.coroutineHandler) {
             allowedBadges.forEachIndexed { idx, badge ->
@@ -499,26 +571,28 @@ class ChatAdapter(
 
     @SuppressLint("ClickableViewAccessibility")
     private fun TextView.handlePrivMessage(privMessage: PrivMessage, holder: ViewHolder, isMentionTab: Boolean): Unit = with(privMessage) {
+        val appearanceSettings = appearanceSettingsDataStore.current()
+        val chatSettings = chatSettingsDataStore.current()
         val textView = this@handlePrivMessage
         isClickable = false
         movementMethod = LongClickLinkMovementMethod
         (text as? Spannable)?.clearSpans()
 
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, dankChatPreferenceStore.fontSize)
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, appearanceSettings.fontSize.toFloat())
 
         val baseHeight = getBaseHeight(textSize)
         val scaleFactor = baseHeight * SCALE_FACTOR_CONSTANT
         val bgColor = when {
-            timedOut && !dankChatPreferenceStore.showTimedOutMessages               -> ContextCompat.getColor(context, android.R.color.transparent)
-            highlights.isNotEmpty()                                                 -> highlights.toBackgroundColor(context)
-            dankChatPreferenceStore.isCheckeredMode && holder.isAlternateBackground -> MaterialColors.layer(
+            timedOut && !chatSettings.showTimedOutMessages                       -> ContextCompat.getColor(context, android.R.color.transparent)
+            highlights.isNotEmpty()                                              -> highlights.toBackgroundColor(context)
+            appearanceSettings.checkeredMessages && holder.isAlternateBackground -> MaterialColors.layer(
                 textView,
                 android.R.attr.colorBackground,
                 R.attr.colorSurfaceInverse,
                 MaterialColors.ALPHA_DISABLED_LOW
             )
 
-            else                                                                    -> ContextCompat.getColor(context, android.R.color.transparent)
+            else                                                                 -> ContextCompat.getColor(context, android.R.color.transparent)
         }
         holder.binding.itemLayout.setBackgroundColor(bgColor)
         setRippleBackground(bgColor, enableRipple = true)
@@ -526,34 +600,34 @@ class ChatAdapter(
         val textColor = MaterialColors.getColor(textView, R.attr.colorOnSurface)
         setTextColor(textColor)
 
-        if (timedOut && !dankChatPreferenceStore.showTimedOutMessages) {
+        if (timedOut && !chatSettings.showTimedOutMessages) {
             text = when {
-                dankChatPreferenceStore.showTimestamps -> buildSpannedString {
-                    timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(timestamp)) }
+                chatSettings.showTimestamps -> buildSpannedString {
+                    timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(timestamp, chatSettings.formatter)) }
                     append(context.getString(R.string.timed_out_message))
                 }
 
-                else                                   -> context.getString(R.string.timed_out_message)
+                else                        -> context.getString(R.string.timed_out_message)
             }
             return
         }
 
         val fullDisplayName = when {
-            !dankChatPreferenceStore.showUsername -> ""
-            isAction                              -> "$aliasOrFormattedName "
-            aliasOrFormattedName.isBlank()        -> ""
-            else                                  -> "$aliasOrFormattedName: "
+            !chatSettings.showUsernames    -> ""
+            isAction                       -> "$aliasOrFormattedName "
+            aliasOrFormattedName.isBlank() -> ""
+            else                           -> "$aliasOrFormattedName: "
         }
 
-        val allowedBadges = badges.filter { it.type in dankChatPreferenceStore.visibleBadgeTypes }
+        val allowedBadges = badges.filter { it.type in chatSettings.visibleBadgeTypes }
         val badgesLength = allowedBadges.size * 2
 
         val messageBuilder = SpannableStringBuilder()
         if (isMentionTab && highlights.hasMention()) {
             messageBuilder.bold { append("#$channel ") }
         }
-        if (dankChatPreferenceStore.showTimestamps) {
-            messageBuilder.timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(timestamp)) }
+        if (chatSettings.showTimestamps) {
+            messageBuilder.timestampFont(context) { append(DateTimeUtils.timestampToLocalTime(timestamp, chatSettings.formatter)) }
         }
 
         val prefixLength = messageBuilder.length + fullDisplayName.length // spannable.length is timestamp's length (plus some extra length from extra methods call above)
@@ -617,7 +691,7 @@ class ChatAdapter(
         spannableWithEmojis[0..spannableWithEmojis.length] = messageClickableSpan
         setText(spannableWithEmojis, TextView.BufferType.SPANNABLE)
 
-        val animateGifs = dankChatPreferenceStore.animateGifs
+        val animateGifs = chatSettings.animateGifs
         var hasAnimatedEmoteOrBadge = false
         holder.scope.launch(holder.coroutineHandler) {
             allowedBadges.forEachIndexed { idx, badge ->
@@ -862,7 +936,7 @@ class ChatAdapter(
         val trace = Log.getStackTraceString(throwable)
         Log.e("DankChat-Rendering", trace)
 
-        if (dankChatPreferenceStore.debugEnabled) {
+        if (developerSettingsDataStore.current().debugMode) {
             showErrorDialog(throwable, stackTraceString = trace)
         }
     }

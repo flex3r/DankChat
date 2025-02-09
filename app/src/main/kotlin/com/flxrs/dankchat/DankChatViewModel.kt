@@ -8,18 +8,24 @@ import com.flxrs.dankchat.data.api.auth.AuthApiClient
 import com.flxrs.dankchat.data.repo.chat.ChatRepository
 import com.flxrs.dankchat.data.repo.data.DataRepository
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
 import com.flxrs.dankchat.utils.extensions.withoutOAuthPrefix
-import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import org.koin.android.annotation.KoinViewModel
+import kotlin.time.Duration.Companion.seconds
 
-@HiltViewModel
-class DankChatViewModel @Inject constructor(
+@KoinViewModel
+class DankChatViewModel(
     private val chatRepository: ChatRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
+    private val appearanceSettingsDataStore: AppearanceSettingsDataStore,
     private val authApiClient: AuthApiClient,
     private val dataRepository: DataRepository,
 ) : ViewModel() {
@@ -29,6 +35,11 @@ class DankChatViewModel @Inject constructor(
 
     private val _validationResult = Channel<ValidationResult>(Channel.BUFFERED)
     val validationResult get() = _validationResult.receiveAsFlow()
+
+    val isTrueDarkModeEnabled get() = appearanceSettingsDataStore.current().trueDarkTheme
+    val keepScreenOn = appearanceSettingsDataStore.settings
+        .map { it.keepScreenOn }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5.seconds), appearanceSettingsDataStore.current().keepScreenOn)
 
     fun init(tryReconnect: Boolean) {
         if (tryReconnect && started) {
@@ -47,6 +58,12 @@ class DankChatViewModel @Inject constructor(
         }
     }
 
+    fun checkLogin() {
+        if (dankChatPreferenceStore.isLoggedIn && dankChatPreferenceStore.oAuthKey.isNullOrBlank()) {
+            dankChatPreferenceStore.clearLogin()
+        }
+    }
+
     private suspend fun validateUser() {
         // no token = nothing to validate 4head
         val token = dankChatPreferenceStore.oAuthKey?.withoutOAuthPrefix ?: return
@@ -55,7 +72,7 @@ class DankChatViewModel @Inject constructor(
                 onSuccess = { result ->
                     dankChatPreferenceStore.userName = result.login
                     when {
-                        authApiClient.validateScopes(result.scopes) -> ValidationResult.User(result.login)
+                        authApiClient.validateScopes(result.scopes.orEmpty()) -> ValidationResult.User(result.login)
                         else                                        -> ValidationResult.IncompleteScopes(result.login)
                     }
                 },

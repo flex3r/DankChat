@@ -5,9 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,13 +24,12 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import dagger.hilt.android.AndroidEntryPoint
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@AndroidEntryPoint
 class UserPopupDialogFragment : BottomSheetDialogFragment() {
 
     private val args: UserPopupDialogFragmentArgs by navArgs()
-    private val viewModel: UserPopupViewModel by viewModels()
+    private val viewModel: UserPopupViewModel by viewModel()
     private var bindingRef: UserPopupBottomsheetBinding? = null
     private val binding get() = bindingRef!!
 

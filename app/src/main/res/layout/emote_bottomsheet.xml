@@ -1,44 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        android:id="@+id/bottomsheet_handle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="24dp"
+        android:paddingBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@id/emote_sheet_tabs"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/emote_sheet_tabs"
+        style="@style/Widget.Material3.TabLayout.OnSurface"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        app:layout_constraintBottom_toTopOf="@id/emote_sheet_viewPager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bottomsheet_handle"
+        app:tabMode="auto" />
 
-        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
-            android:id="@+id/bottomsheet_handle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:minHeight="24dp"
-            android:paddingBottom="0dp"
-            app:layout_constraintBottom_toTopOf="@id/emote_sheet_tabs"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0"
-            app:layout_constraintVertical_chainStyle="packed" />
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/emote_sheet_tabs"
-            style="@style/Widget.Material3.TabLayout.OnSurface"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            app:layout_constraintBottom_toTopOf="@id/emote_sheet_viewPager"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/bottomsheet_handle"
-            app:tabMode="auto" />
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/emote_sheet_viewPager"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constrainedHeight="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/emote_sheet_tabs" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/emote_sheet_viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/emote_sheet_tabs" />
+</androidx.constraintlayout.widget.ConstraintLayout>

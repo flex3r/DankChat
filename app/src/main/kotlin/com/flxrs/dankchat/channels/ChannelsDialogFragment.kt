@@ -12,20 +12,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.ChannelsFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
-import com.flxrs.dankchat.preferences.model.ChannelWithRename
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.model.ChannelWithRename
 import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.flxrs.dankchat.utils.extensions.navigateSafe
 import com.flxrs.dankchat.utils.extensions.swap
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+import org.koin.java.KoinJavaComponent.inject
 
-@AndroidEntryPoint
 class ChannelsDialogFragment : BottomSheetDialogFragment() {
 
-    @Inject
-    lateinit var dankChatPreferences: DankChatPreferenceStore
+    private val dankChatPreferences: DankChatPreferenceStore by inject()
 
     private var adapter: ChannelsAdapter? = null
     private val navController: NavController by lazy { findNavController() }

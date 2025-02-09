@@ -44,7 +44,9 @@
         android:label="ChatFragment">
         <argument
             android:name="channel"
-            app:argType="com.flxrs.dankchat.data.UserName" />
+            android:defaultValue="@null"
+            app:argType="com.flxrs.dankchat.data.UserName"
+            app:nullable="true" />
     </fragment>
     <fragment
         android:id="@+id/mentionChatFragment"
@@ -60,7 +62,7 @@
         android:label="LoginFragment" />
     <fragment
         android:id="@+id/overviewSettingsFragment"
-        android:name="com.flxrs.dankchat.preferences.ui.OverviewSettingsFragment"
+        android:name="com.flxrs.dankchat.preferences.overview.OverviewSettingsFragment"
         android:label="OverviewSettingsFragment">
         <action
             android:id="@+id/action_overviewSettingsFragment_to_appearanceSettingsFragment"
@@ -111,30 +113,30 @@
 
     <fragment
         android:id="@+id/appearanceSettingsFragment"
-        android:name="com.flxrs.dankchat.preferences.ui.AppearanceSettingsFragment"
+        android:name="com.flxrs.dankchat.preferences.appearance.AppearanceSettingsFragment"
         android:label="AppearanceSettingsFragment" />
     <fragment
         android:id="@+id/notificationsSettingsFragment"
-        android:name="com.flxrs.dankchat.preferences.ui.NotificationsSettingsFragment"
+        android:name="com.flxrs.dankchat.preferences.notifications.NotificationsSettingsFragment"
         android:label="NotificationsSettingsFragment" />
     <fragment
         android:id="@+id/chatSettingsFragment"
-        android:name="com.flxrs.dankchat.preferences.ui.ChatSettingsFragment"
+        android:name="com.flxrs.dankchat.preferences.chat.ChatSettingsFragment"
         android:label="ChatSettingsFragment" />
 
     <fragment
         android:id="@+id/toolsSettingsFragment"
-        android:name="com.flxrs.dankchat.preferences.ui.ToolsSettingsFragment"
+        android:name="com.flxrs.dankchat.preferences.tools.ToolsSettingsFragment"
         android:label="ToolsSettingsFragment" />
 
     <fragment
         android:id="@+id/developerSettingsFragment"
-        android:name="com.flxrs.dankchat.preferences.ui.DeveloperSettingsFragment"
+        android:name="com.flxrs.dankchat.preferences.developer.DeveloperSettingsFragment"
         android:label="DeveloperSettingsFragment" />
 
     <fragment
         android:id="@+id/streamsSettingsFragment"
-        android:name="com.flxrs.dankchat.preferences.ui.StreamsSettingsFragment"
+        android:name="com.flxrs.dankchat.preferences.stream.StreamsSettingsFragment"
         android:label="StreamsSettingsFragment" />
 
     <dialog

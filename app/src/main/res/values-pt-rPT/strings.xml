@@ -115,7 +115,6 @@
     <string name="confirm_user_block_positive_button">Bloquear</string>
     <string name="restart_required">É necessário reiniciar para aplicar as alterações</string>
     <string name="restart">Reinicia</string>
-    <string name="uploader_title">Carregador de mídia personalizado</string>
     <string name="uploader_reset">Redefinir para configurações originais</string>
     <string name="uploader_url">URL de carregamento</string>
     <string name="uploader_field">Campo de formulário</string>
@@ -179,7 +178,6 @@
     <string name="badge_tooltip_sub_tier">Escalão %1$s</string>
     <string name="preference_timestamp_title">Mostrar horas</string>
     <string name="preference_mention_format_title">Formato de menção</string>
-    <string name="preference_mention_format_summary">Altera o formato da menção ao clicar no nome do utilizador</string>
     <string name="preference_roomstate_title">Mostrar modos do chat</string>
     <string name="preference_roomstate_summary">Exibir informações sobre os modos atuais do chat, como o modo somente para subscritores</string>
     <string name="preference_streaminfo_title">Mostrar informação da stream</string>
@@ -299,7 +297,6 @@
     <string name="clear_recent_uploads_dialog_title">Limpar carregamentos recentes</string>
     <string name="clear_recent_uploads_dialog_message">Tens a certeza de que desejas limpar o histórico de carregamentos? Os teus arquivos enviados não serão excluídos.</string>
     <string name="clear">Limpar</string>
-    <string name="copied_image_url">URL da imagem copiada</string>
     <string name="pattern">Padrão</string>
     <string name="case_sensitive">Sensível a maiúsculas e minúsculas</string>
     <string name="highlights">Destaques</string>
@@ -339,8 +336,6 @@
     <string name="login_outdated_title">Login desatualizado!</string>
     <string name="login_outdated_message">O teu login está desatualizado e não tem acesso a algumas funcionalidades. Por favor, faz login novamente.</string>
     <string name="custom_user_display_title">Exibição de utilizador personalizada</string>
-    <string name="user_display_item_username_hint">Nome de utilizador</string>
-    <string name="user_display_item_color_hint">Cor</string>
     <string name="remove_custom_user_display">Remove exibição de utilizador personalizada</string>
     <string name="user_display_alias_input">Pseudônimo</string>
     <string name="user_display_custom_color_enable">Cor personalizada</string>
@@ -385,10 +380,6 @@
     <string name="confirm_login_cancel_positive_button">Cancelar inicio de sessão</string>
     <string name="login_menu_zoom_out">Reduzir o zoom</string>
     <string name="login_menu_zoom_in">Aumentar o zoom</string>
-    <plurals name="viewers">
-        <item quantity="one">Ao vivo com %d espectador</item>
-        <item quantity="other">Ao vivo com %d espectadores</item>
-    </plurals>
     <plurals name="viewers_and_uptime">
         <item quantity="one">Ao vivo com %1$d espectador à %2$s</item>
         <item quantity="other">Ao vivo com %1$d espectadores à %2$s</item>

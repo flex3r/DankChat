@@ -7,32 +7,25 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.trackPipAnimationHintView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.flxrs.dankchat.databinding.FragmentStreamWebViewWrapperBinding
 import com.flxrs.dankchat.main.MainViewModel
 import com.flxrs.dankchat.main.StreamWebViewModel
-import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.collectFlow
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
 This fragment's purpose is to manage the lifecycle of the WebView inside it
 it removes the StreamWebView before the fragment is destroyed to prevent the WebView from being destroyed along with it.
  */
-@AndroidEntryPoint
 class StreamWebViewWrapperFragment : Fragment() {
-    private val mainViewModel: MainViewModel by viewModels({ requireParentFragment() })
-    private val streamWebViewModel: StreamWebViewModel by viewModels({ requireParentFragment() })
+    private val mainViewModel: MainViewModel by viewModel(ownerProducer = { requireParentFragment() })
+    private val streamWebViewModel: StreamWebViewModel by viewModel(ownerProducer = { requireParentFragment() })
     private var bindingRef: FragmentStreamWebViewWrapperBinding? = null
     private val binding get() = bindingRef!!
-
-    @Inject
-    lateinit var dankChatPreferenceStore: DankChatPreferenceStore
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

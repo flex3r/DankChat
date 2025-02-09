@@ -94,7 +94,6 @@ Kako biste isključili ovu uslogu, pritisnite odustati ispod ili onemogućiti u�
     <string name="confirm_user_block_positive_button">Blokiraj</string>
     <string name="restart_required">Potrebno je restartovati aplikaciju da bi bile prihvaćene promene</string>
     <string name="restart">Restart</string>
-    <string name="uploader_title">Učitavač slika</string>
     <string name="uploader_reset">Resetuj na početno stanje</string>
     <string name="uploader_url">Link za upload</string>
     <string name="uploader_field">Iz polja</string>
@@ -136,7 +135,6 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="commands_title">Prilagođene komande</string>
     <string name="preference_timestamp_title">Prikaži vremensku markicu</string>
     <string name="preference_mention_format_title">Format pominjanja</string>
-    <string name="preference_mention_format_summary">Promenite format pominjanja kada kliknete na korisničko ime</string>
     <string name="preference_roomstate_title">Prikaži informacije o režimu sobe</string>
     <string name="preference_roomstate_summary">Prikazuje informacije o trenutnom režimu sobe, poput režima samo za pretplatnike</string>
     <string name="preference_streaminfo_title">Prikaži informacije o strimu</string>
@@ -198,9 +196,4 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_tts_force_english_title">Forsiraj engleski jezik</string>
     <string name="preference_tts_force_english_summary">Forisraj čitanje teksta na engleskom umesto na podrazumevanom jeziku</string>
     <string name="preference_visible_emotes_title">Vidljivost emotova nezavisnih servisa</string>
-    <plurals name="viewers">
-        <item quantity="one">Uživo (%d osoba gleda)</item>
-        <item quantity="few">Uživo (gleda %d ljudi)</item>
-        <item quantity="other">Uživo (gleda %d ljudi)</item>
-    </plurals>
 </resources>

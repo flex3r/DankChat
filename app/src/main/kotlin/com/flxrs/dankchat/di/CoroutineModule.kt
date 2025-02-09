@@ -1,44 +1,24 @@
 package com.flxrs.dankchat.di
 
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import javax.inject.Qualifier
-import javax.inject.Singleton
+import org.koin.core.annotation.Module
+import org.koin.core.annotation.Single
 
-@Retention(AnnotationRetention.RUNTIME)
-@Qualifier
-annotation class ApplicationScope
-
-@InstallIn(SingletonComponent::class)
 @Module
-object CoroutineModule {
+class CoroutineModule {
+    @Single
+    fun provideDispatchersProvider(): DispatchersProvider = object : DispatchersProvider {
+        override val default: CoroutineDispatcher = Dispatchers.Default
+        override val io: CoroutineDispatcher = Dispatchers.IO
+        override val main: CoroutineDispatcher = Dispatchers.Main
+        override val immediate: CoroutineDispatcher = Dispatchers.Main.immediate
+    }
+}
 
-    @DefaultDispatcher
-    @Provides
-    fun provideDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
-
-    @IoDispatcher
-    @Provides
-    fun provideIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
-
-    @MainDispatcher
-    @Provides
-    fun provideMainDispatcher(): CoroutineDispatcher = Dispatchers.Main
-
-    @MainImmediateDispatcher
-    @Provides
-    fun provideMainImmediateDispatcher(): CoroutineDispatcher = Dispatchers.Main.immediate
-
-    @Singleton
-    @ApplicationScope
-    @Provides
-    fun provideCoroutineScope(
-        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
-    ): CoroutineScope = CoroutineScope(SupervisorJob() + defaultDispatcher)
+interface DispatchersProvider {
+    val default: CoroutineDispatcher
+    val io: CoroutineDispatcher
+    val main: CoroutineDispatcher
+    val immediate: CoroutineDispatcher
 }

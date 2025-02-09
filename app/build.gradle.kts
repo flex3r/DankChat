@@ -10,10 +10,9 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.hilt.gradle)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.nav.safeargs.kotlin)
     alias(libs.plugins.ksp)
 }
@@ -31,6 +30,9 @@ android {
 
         ksp {
             arg("room.schemaLocation", "${layout.projectDirectory}/schemas")
+            arg("KOIN_CONFIG_CHECK", "true")
+            arg("KOIN_DEFAULT_MODULE", "false")
+            arg("KOIN_USE_COMPOSE_VIEWMODEL", "true")
         }
     }
 
@@ -54,7 +56,7 @@ android {
         }
     }
     buildFeatures {
-        dataBinding = true
+        viewBinding = true
         buildConfig = true
     }
 
@@ -97,6 +99,14 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
+    androidComponents {
+        beforeVariants {
+            sourceSets.named("main") {
+                java.srcDir(File("build/generated/ksp/${it.name}/kotlin"))
+            }
+        }
+    }
 }
 
 tasks.withType<Test> {
@@ -108,7 +118,13 @@ tasks.withType<KotlinCompile> {
         jvmTarget.set(JvmTarget.JVM_17)
         freeCompilerArgs.addAll(
             "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-            "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
+            "-opt-in=kotlinx.coroutines.FlowPreview",
+            "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3ExpressiveApi",
+            "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+            "-opt-in=androidx.compose.foundation.layout.ExperimentalLayoutApi",
+            "-opt-in=kotlin.uuid.ExperimentalUuidApi",
         )
     }
 }
@@ -126,11 +142,14 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.serialization.json.okio)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.kotlinx.immutable.collections)
 
 // AndroidX
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.ktx)
+    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.browser)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.emoji2)
@@ -138,31 +157,54 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.transition.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.media)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-    implementation(libs.androidx.preference.ktx)
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.viewpager2)
     implementation(libs.androidx.webkit)
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.datastore.core)
+    implementation(libs.androidx.datastore.android)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
+
+// Compose
+    implementation(libs.compose.animation)
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.runtime)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.tooling.preview)
+    debugImplementation(libs.compose.ui.tooling)
+    "dankImplementation"(libs.compose.ui.tooling)
+    implementation(libs.compose.icons.core)
+    implementation(libs.compose.icons.extended)
+    implementation(libs.compose.unstyled)
 
 // Material
     implementation(libs.android.material)
     implementation(libs.android.flexbox)
 
 // Dependency injection
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose)
+    implementation(libs.koin.compose.viewmodel)
+    implementation(libs.koin.annotations)
+    implementation(libs.koin.ksp.compiler)
+    ksp(libs.koin.ksp.compiler)
 
 // Image loading
     implementation(libs.coil)
     implementation(libs.coil.gif)
     implementation(libs.coil.ktor)
     implementation(libs.coil.cache.control)
+    implementation(libs.coil.compose)
 
 // HTTP clients
     implementation(libs.okhttp)
@@ -175,6 +217,8 @@ dependencies {
 
 // Other
     implementation(libs.colorpicker.android)
+    implementation(libs.process.phoenix)
+    implementation(libs.autolinktext)
 
 // Test
     testImplementation(libs.junit.jupiter.api)
@@ -183,7 +227,7 @@ dependencies {
     testImplementation(libs.kotlin.test)
 }
 
-fun gradleLocalProperties(projectRootDir : File, providers: ProviderFactory) : Properties {
+fun gradleLocalProperties(projectRootDir: File, providers: ProviderFactory): Properties {
     val properties = Properties()
     val propertiesContent =
         providers.of(PropertiesValueSource::class.java) {

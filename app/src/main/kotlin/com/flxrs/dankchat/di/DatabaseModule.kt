@@ -2,75 +2,70 @@ package com.flxrs.dankchat.di
 
 import android.content.Context
 import androidx.room.Room
-import com.flxrs.dankchat.data.database.*
-import com.flxrs.dankchat.data.database.dao.*
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import com.flxrs.dankchat.data.database.DankChatDatabase
+import com.flxrs.dankchat.data.database.dao.BlacklistedUserDao
+import com.flxrs.dankchat.data.database.dao.EmoteUsageDao
+import com.flxrs.dankchat.data.database.dao.MessageHighlightDao
+import com.flxrs.dankchat.data.database.dao.MessageIgnoreDao
+import com.flxrs.dankchat.data.database.dao.RecentUploadsDao
+import com.flxrs.dankchat.data.database.dao.UserDisplayDao
+import com.flxrs.dankchat.data.database.dao.UserHighlightDao
+import com.flxrs.dankchat.data.database.dao.UserIgnoreDao
+import org.koin.core.annotation.Module
+import org.koin.core.annotation.Single
 
-@InstallIn(SingletonComponent::class)
 @Module
-object DatabaseModule {
+class DatabaseModule {
 
-    @Singleton
-    @Provides
+    @Single
     fun provideDatabase(
-        @ApplicationContext context: Context
+        context: Context
     ): DankChatDatabase = Room
         .databaseBuilder(context, DankChatDatabase::class.java, DB_NAME)
         .addMigrations(DankChatDatabase.MIGRATION_4_5)
         .build()
 
-    @Singleton
-    @Provides
+    @Single
     fun provideEmoteUsageDao(
         database: DankChatDatabase
     ): EmoteUsageDao = database.emoteUsageDao()
 
-    @Singleton
-    @Provides
+    @Single
     fun provideRecentUploadsDao(
         database: DankChatDatabase
     ): RecentUploadsDao = database.recentUploadsDao()
 
-    @Singleton
-    @Provides
+    @Single
     fun provideUserDisplayDao(
         database: DankChatDatabase
     ): UserDisplayDao = database.userDisplayDao()
 
-    @Singleton
-    @Provides
+    @Single
     fun provideMessageHighlightDao(
         database: DankChatDatabase
     ): MessageHighlightDao = database.messageHighlightDao()
 
-    @Singleton
-    @Provides
+    @Single
     fun provideUserHighlightDao(
         database: DankChatDatabase
     ): UserHighlightDao = database.userHighlightDao()
 
-    @Singleton
-    @Provides
+    @Single
     fun provideIgnoreUserDao(
         database: DankChatDatabase
     ): UserIgnoreDao = database.userIgnoreDao()
 
-    @Singleton
-    @Provides
+    @Single
     fun provideMessageIgnoreDao(
         database: DankChatDatabase
     ): MessageIgnoreDao = database.messageIgnoreDao()
 
-    @Singleton
-    @Provides
+    @Single
     fun provideBlacklistedUserHighlightDao(
         database: DankChatDatabase
     ): BlacklistedUserDao = database.blacklistedUserDao()
 
-    private const val DB_NAME = "dankchat-db"
+    private companion object {
+        const val DB_NAME = "dankchat-db"
+    }
 }

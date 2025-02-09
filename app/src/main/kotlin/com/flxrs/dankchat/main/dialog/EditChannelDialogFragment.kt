@@ -11,16 +11,13 @@ import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.databinding.EditDialogBinding
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
 
-@AndroidEntryPoint
 class EditChannelDialogFragment : DialogFragment() {
 
     private val args: EditChannelDialogFragmentArgs by navArgs()
 
-    @Inject
-    lateinit var dankChatPreferences: DankChatPreferenceStore
+    private val dankChatPreferences: DankChatPreferenceStore by inject()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val binding = EditDialogBinding.inflate(layoutInflater, null, false).apply {

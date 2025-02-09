@@ -120,7 +120,6 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="confirm_user_block_positive_button">Zablokuj</string>
     <string name="restart_required">Aby zastosować zmiany, należy zrestartować aplikację</string>
     <string name="restart">Restartuj</string>
-    <string name="uploader_title">Niestandardowe przesyłanie plików</string>
     <string name="uploader_reset">Przywróć domyślne ustawienia</string>
     <string name="uploader_url">Adres URL</string>
     <string name="uploader_field">Pole Formularza</string>
@@ -184,7 +183,6 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="badge_tooltip_sub_tier">Poziom %1$s</string>
     <string name="preference_timestamp_title">Pokazuj znaczniki czasu</string>
     <string name="preference_mention_format_title">Format wzmianek</string>
-    <string name="preference_mention_format_summary">Zmień format wzmianek klikając na nazwę użytkownika</string>
     <string name="preference_roomstate_title">Pokazuj informacje dotyczące trybu kanału</string>
     <string name="preference_roomstate_summary">Pokazuj informacje dotyczące trybu kanału takie jak \"Czat tylko dla Subskrybentów\"</string>
     <string name="preference_streaminfo_title">Pokazuj informacje transmisji</string>
@@ -304,7 +302,6 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="clear_recent_uploads_dialog_title">Wyczyść ostatnio przesłane</string>
     <string name="clear_recent_uploads_dialog_message">Czy jesteś pewien, że chcesz wyczyścić historie przesłania? Twoje przesłane pliki nie będą usunięte.</string>
     <string name="clear">Wyczyść</string>
-    <string name="copied_image_url">Skopiowano adres URL obrazu </string>
     <string name="pattern">Wzór</string>
     <string name="case_sensitive">Uwzględnianie wielkości liter</string>
     <string name="highlights">Wyróżnienia</string>
@@ -344,8 +341,6 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="login_outdated_title">Login Nieaktualny!</string>
     <string name="login_outdated_message">Twój login jest nieaktualny i nie ma dostępu do niektórych funkcji. Zaloguj się ponownie.</string>
     <string name="custom_user_display_title">Niestandardowy Wyświetlacz Użytkownika</string>
-    <string name="user_display_item_username_hint">Nazwa użytkownika</string>
-    <string name="user_display_item_color_hint">Kolor</string>
     <string name="remove_custom_user_display">Usuń Niestandardowy Wyświetlacz Użytkownika</string>
     <string name="user_display_alias_input">Alias</string>
     <string name="user_display_custom_color_enable">Niestandardowy Kolor</string>
@@ -389,12 +384,6 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="confirm_login_cancel_positive_button">Anuluj login</string>
     <string name="login_menu_zoom_out">Pomniejsz</string>
     <string name="login_menu_zoom_in">Powiększ</string>
-    <plurals name="viewers">
-        <item quantity="one">Na żywo z %d widzem</item>
-        <item quantity="few">Na żywo z %d widzami</item>
-        <item quantity="many">Na żywo z %d widzami</item>
-        <item quantity="other">Na żywo z %d widzami</item>
-    </plurals>
     <plurals name="viewers_and_uptime">
         <item quantity="one">Na żywo z %1$d widzem przez %2$s</item>
         <item quantity="few">Na żywo z %1$d widzami przez %2$s</item>

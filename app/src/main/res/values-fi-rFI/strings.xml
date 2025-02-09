@@ -113,7 +113,6 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="confirm_user_block_positive_button">Estä</string>
     <string name="restart_required">Uudelleenkäynnistys vaaditaan muutosten käyttöön</string>
     <string name="restart">Käynnistä uudelleen</string>
-    <string name="uploader_title">Mukautettu median lataaja</string>
     <string name="uploader_reset">Palauta oletukset</string>
     <string name="uploader_url">Lataus url</string>
     <string name="uploader_field">Muoto kenttä</string>
@@ -163,7 +162,6 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="badge_tooltip_sub_tier">Taso %1$s</string>
     <string name="preference_timestamp_title">Näytä aikaleimat</string>
     <string name="preference_mention_format_title">Maininnan muoto</string>
-    <string name="preference_mention_format_summary">Vaihda maininnan muoto napsauttamalla käyttäjänimeä</string>
     <string name="preference_roomstate_title">Näytä huonetilan tiedot</string>
     <string name="preference_roomstate_summary">Näyttää tiedot nykyisestä huonetilasta, kuten vain tilaajatila</string>
     <string name="preference_streaminfo_title">Näytä suoratoistotiedot</string>
@@ -239,16 +237,10 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="login_outdated_title">Kirjautuminen Vanhentunut!</string>
     <string name="login_outdated_message">Kirjautumisesi on vanhentunut eikä sillä ole pääsyä joihinkin toimintoihin. Kirjaudu sisään uudelleen.</string>
     <string name="custom_user_display_title">Mukautettu Käyttäjänäkymä</string>
-    <string name="user_display_item_username_hint">Käyttäjänimi</string>
-    <string name="user_display_item_color_hint">Väri</string>
     <string name="remove_custom_user_display">Poista Mukautettu Käyttäjänäkymä</string>
     <string name="user_display_alias_input">Alias</string>
     <string name="user_display_custom_color_enable">Mukautettu Väri</string>
     <string name="user_display_custom_alias_enable">Mukautettu Alias</string>
     <string name="pick_custom_user_color_title">Valitse käyttäjän mukautettu väri</string>
     <string name="custom_user_display_summary">Lisää mukautettu nimi ja väri käyttäjille</string>
-    <plurals name="viewers">
-        <item quantity="one">Live-tilassa %d katsojan kanssa</item>
-        <item quantity="other">Live-tilassa %d katsojan kanssa</item>
-    </plurals>
 </resources>

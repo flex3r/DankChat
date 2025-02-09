@@ -39,10 +39,11 @@ import com.flxrs.dankchat.data.twitch.message.hasMention
 import com.flxrs.dankchat.data.twitch.message.toChatItem
 import com.flxrs.dankchat.data.twitch.pubsub.PubSubManager
 import com.flxrs.dankchat.data.twitch.pubsub.PubSubMessage
-import com.flxrs.dankchat.di.ApplicationScope
+import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.di.ReadConnection
 import com.flxrs.dankchat.di.WriteConnection
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import com.flxrs.dankchat.utils.extensions.INVISIBLE_CHAR
 import com.flxrs.dankchat.utils.extensions.addAndLimit
 import com.flxrs.dankchat.utils.extensions.addSystemMessage
@@ -58,12 +59,14 @@ import com.flxrs.dankchat.utils.extensions.replaceWithTimeout
 import com.flxrs.dankchat.utils.extensions.withoutInvisibleChar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -71,7 +74,9 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -79,16 +84,13 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 import java.util.concurrent.ConcurrentHashMap
-import javax.inject.Inject
-import javax.inject.Singleton
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.set
 import kotlin.system.measureTimeMillis
 
-@Singleton
-class ChatRepository @Inject constructor(
+@Single
+class ChatRepository(
     private val recentMessagesApiClient: RecentMessagesApiClient,
     private val chattersApiClient: ChattersApiClient,
     private val emoteRepository: EmoteRepository,
@@ -97,12 +99,14 @@ class ChatRepository @Inject constructor(
     private val userDisplayRepository: UserDisplayRepository,
     private val repliesRepository: RepliesRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
+    private val chatSettingsDataStore: ChatSettingsDataStore,
     private val pubSubManager: PubSubManager,
-    @ReadConnection private val readConnection: ChatConnection,
-    @WriteConnection private val writeConnection: ChatConnection,
-    @ApplicationScope private val scope: CoroutineScope,
+    @Named(type = ReadConnection::class) private val readConnection: ChatConnection,
+    @Named(type = WriteConnection::class) private val writeConnection: ChatConnection,
+    dispatchersProvider: DispatchersProvider,
 ) {
 
+    private val scope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
     private val _activeChannel = MutableStateFlow<UserName?>(null)
     private val _channels = MutableStateFlow<List<UserName>?>(null)
 
@@ -124,6 +128,19 @@ class ChatRepository @Inject constructor(
     private val loadedRecentsInChannels = mutableSetOf<UserName>()
     private val knownRewards = ConcurrentHashMap<String, PubSubMessage.PointRedemption>()
     private val rewardMutex = Mutex()
+
+    private val scrollBackLengthFlow = chatSettingsDataStore.debouncedScrollBack
+        .onEach { length ->
+            messages.forEach { (_, messagesFlow) ->
+                if (messagesFlow.value.size > length) {
+                    messagesFlow.update {
+                        it.takeLast(length)
+                    }
+                }
+            }
+        }
+        .stateIn(scope, SharingStarted.Eagerly, 500)
+    private val scrollBackLength get() = scrollBackLengthFlow.value
 
     init {
         scope.launch {
@@ -161,6 +178,7 @@ class ChatRepository @Inject constructor(
                                         Log.d(TAG, "Removing known reward $id")
                                         knownRewards.remove(id)
                                     }
+
                                     else                         -> {
                                         Log.d(TAG, "Received pubsub reward message with id $id")
                                         knownRewards[id] = pubSubMessage
@@ -247,18 +265,6 @@ class ChatRepository @Inject constructor(
     val channels: StateFlow<List<UserName>?> = _channels.asStateFlow()
     val chatLoadingFailures = _chatLoadingFailures.asStateFlow()
 
-    var scrollBackLength = 500
-        set(value) {
-            messages.forEach { (_, messagesFlow) ->
-                if (messagesFlow.value.size > scrollBackLength) {
-                    messagesFlow.update {
-                        it.takeLast(value)
-                    }
-                }
-            }
-            field = value
-        }
-
     fun getChat(channel: UserName): StateFlow<List<ChatItem>> = messages.getOrPut(channel) { MutableStateFlow(emptyList()) }
     fun getConnectionState(channel: UserName): StateFlow<ConnectionState> = connectionState.getOrPut(channel) { MutableStateFlow(ConnectionState.DISCONNECTED) }
     fun getRoomState(channel: UserName): SharedFlow<RoomState> = roomStateFlows.getOrPut(channel) { MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST) }
@@ -279,8 +285,8 @@ class ChatRepository @Inject constructor(
 
     suspend fun loadRecentMessagesIfEnabled(channel: UserName) {
         when {
-            dankChatPreferenceStore.shouldLoadHistory -> loadRecentMessages(channel)
-            else                                      -> messages[channel]?.update { current ->
+            chatSettingsDataStore.current().loadMessageHistory -> loadRecentMessages(channel)
+            else                                               -> messages[channel]?.update { current ->
                 val message = SystemMessageType.NoHistoryLoaded.toChatItem()
                 listOf(message).addAndLimit(current, scrollBackLength, ::onMessageRemoved, checkForDuplications = true)
             }
@@ -629,7 +635,7 @@ class ChatRepository @Inject constructor(
         val color = msg.tags["color"]
         val name = msg.tags["display-name"]?.toDisplayName()
         val badges = msg.tags["badges"]?.split(",")
-        val hasModeration = badges?.any { it.contains("broadcaster") || it.contains("moderator") } ?: false
+        val hasModeration = badges?.any { it.contains("broadcaster") || it.contains("moderator") } == true
         dankChatPreferenceStore.displayName = name
         userState.update { current ->
             val followerEmotes = when {
@@ -824,7 +830,7 @@ class ChatRepository @Inject constructor(
             }
 
             if (message is PrivMessage) {
-                val isUnread = _unreadMessagesMap.firstValue[channel] ?: false
+                val isUnread = _unreadMessagesMap.firstValue[channel] == true
                 if (!isUnread) {
                     _unreadMessagesMap.assign(channel, true)
                 }
@@ -851,7 +857,7 @@ class ChatRepository @Inject constructor(
             val flow = messages[channel] ?: return@forEach
             val current = flow.value
             flow.value = current.addSystemMessage(type, scrollBackLength, ::onMessageRemoved) {
-                if (dankChatPreferenceStore.shouldLoadMessagesOnReconnect) {
+                if (chatSettingsDataStore.current().loadMessageHistoryOnReconnect) {
                     scope.launch { loadRecentMessages(channel, isReconnect = true) }
                 }
             }

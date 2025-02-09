@@ -22,28 +22,21 @@ import androidx.core.view.MenuProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.databinding.LoginFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
-import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.transition.MaterialSharedAxis
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@AndroidEntryPoint
 class LoginFragment : Fragment() {
 
     private var bindingRef: LoginFragmentBinding? = null
     private val binding get() = bindingRef!!
-    private val loginViewModel: LoginViewModel by viewModels()
-
-    @Inject
-    lateinit var dankChatPreferences: DankChatPreferenceStore
+    private val loginViewModel: LoginViewModel by viewModel()
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.chat
 
-import android.content.SharedPreferences
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.LayerDrawable
 import android.os.Build
@@ -14,12 +13,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
@@ -30,34 +26,34 @@ import com.flxrs.dankchat.databinding.ChatFragmentBinding
 import com.flxrs.dankchat.main.MainFragment
 import com.flxrs.dankchat.main.MainViewModel
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.appearance.AppearanceSettingsDataStore
+import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
+import com.flxrs.dankchat.preferences.chat.UserLongClickBehavior
+import com.flxrs.dankchat.preferences.developer.DeveloperSettingsDataStore
 import com.flxrs.dankchat.utils.extensions.collectFlow
 import com.flxrs.dankchat.utils.extensions.forEachLayer
 import com.flxrs.dankchat.utils.extensions.forEachSpan
 import com.flxrs.dankchat.utils.extensions.forEachViewHolder
 import com.flxrs.dankchat.utils.insets.TranslateDeferringInsetsAnimationCallback
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@AndroidEntryPoint
 open class ChatFragment : Fragment() {
-    private val viewModel: ChatViewModel by viewModels()
-    private val mainViewModel: MainViewModel by viewModels({ requireParentFragment() })
+    private val viewModel: ChatViewModel by viewModel()
+    private val mainViewModel: MainViewModel by viewModel(ownerProducer = { requireParentFragment() })
+    private val emoteRepository: EmoteRepository by inject()
+    private val appearanceSettingsDataStore: AppearanceSettingsDataStore by inject()
+    private val developerSettingsDataStore: DeveloperSettingsDataStore by inject()
+    protected val chatSettingsDataStore: ChatSettingsDataStore by inject()
+    protected val dankChatPreferenceStore: DankChatPreferenceStore by inject()
 
     protected var bindingRef: ChatFragmentBinding? = null
     protected val binding get() = bindingRef!!
     protected open lateinit var adapter: ChatAdapter
     protected open lateinit var manager: LinearLayoutManager
-    protected open lateinit var preferenceListener: SharedPreferences.OnSharedPreferenceChangeListener
-    protected open lateinit var preferences: SharedPreferences
 
     // TODO move to viewmodel?
     protected open var isAtBottom = true
-
-    @Inject
-    lateinit var emoteRepository: EmoteRepository
-
-    @Inject
-    lateinit var dankChatPreferenceStore: DankChatPreferenceStore
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bindingRef = ChatFragmentBinding.inflate(inflater, container, false).apply {
@@ -81,6 +77,9 @@ open class ChatFragment : Fragment() {
         adapter = ChatAdapter(
             emoteRepository = emoteRepository,
             dankChatPreferenceStore = dankChatPreferenceStore,
+            chatSettingsDataStore = chatSettingsDataStore,
+            developerSettingsDataStore = developerSettingsDataStore,
+            appearanceSettingsDataStore = appearanceSettingsDataStore,
             onListChanged = ::scrollToPosition,
             onUserClick = ::onUserClick,
             onMessageLongClick = ::onMessageClick,
@@ -97,27 +96,14 @@ open class ChatFragment : Fragment() {
             )
         )
 
-        preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { pref, key ->
-            context ?: return@OnSharedPreferenceChangeListener
-            when (key) {
-                getString(R.string.preference_timestamp_key),
-                getString(R.string.preference_timestamp_format_key),
-                getString(R.string.preference_show_timed_out_messages_key),
-                getString(R.string.preference_animate_gifs_key),
-                getString(R.string.preference_show_username_key),
-                getString(R.string.preference_visible_badges_key) -> binding.chat.swapAdapter(adapter, false)
-
-                getString(R.string.preference_line_separator_key) -> when {
-                    pref.getBoolean(key, false) -> binding.chat.addItemDecoration(itemDecoration)
-                    else                        -> binding.chat.removeItemDecoration(itemDecoration)
-                }
+        collectFlow(appearanceSettingsDataStore.lineSeparator) {
+            when {
+                it && binding.chat.itemDecorationCount == 0 -> binding.chat.addItemDecoration(itemDecoration)
+                else                                        -> binding.chat.removeItemDecoration(itemDecoration)
             }
         }
-        preferences = PreferenceManager.getDefaultSharedPreferences(view.context).apply {
-            registerOnSharedPreferenceChangeListener(preferenceListener)
-            if (getBoolean(getString(R.string.preference_line_separator_key), false)) {
-                binding.chat.addItemDecoration(itemDecoration)
-            }
+        collectFlow(chatSettingsDataStore.restartChat) {
+            binding.chat.swapAdapter(adapter, false)
         }
     }
 
@@ -125,7 +111,7 @@ open class ChatFragment : Fragment() {
         super.onStart()
 
         // Trigger a redraw of last 50 items to start gifs again
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && ::preferences.isInitialized && preferences.getBoolean(getString(R.string.preference_animate_gifs_key), true)) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && chatSettingsDataStore.current().animateGifs) {
             binding.chat.postDelayed(MESSAGES_REDRAW_DELAY_MS) {
                 val start = (adapter.itemCount - MAX_MESSAGES_REDRAW_AMOUNT).coerceAtLeast(minimumValue = 0)
                 val itemCount = MAX_MESSAGES_REDRAW_AMOUNT.coerceAtMost(maximumValue = adapter.itemCount)
@@ -137,9 +123,6 @@ open class ChatFragment : Fragment() {
     override fun onDestroyView() {
         binding.chat.adapter = null
         binding.chat.layoutManager = null
-        if (::preferences.isInitialized) {
-            preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
-        }
 
         bindingRef = null
         super.onDestroyView()
@@ -176,7 +159,7 @@ open class ChatFragment : Fragment() {
         isLongPress: Boolean
     ) {
         targetUserId ?: return
-        val shouldLongClickMention = preferences.getBoolean(getString(R.string.preference_user_long_click_key), true)
+        val shouldLongClickMention = chatSettingsDataStore.current().userLongClickBehavior == UserLongClickBehavior.MentionsUser
         val shouldMention = (isLongPress && shouldLongClickMention) || (!isLongPress && !shouldLongClickMention)
 
         when {

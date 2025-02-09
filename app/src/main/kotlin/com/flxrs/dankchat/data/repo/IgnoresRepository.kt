@@ -11,26 +11,42 @@ import com.flxrs.dankchat.data.database.dao.UserIgnoreDao
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntity
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntityType
 import com.flxrs.dankchat.data.database.entity.UserIgnoreEntity
-import com.flxrs.dankchat.data.twitch.message.*
-import com.flxrs.dankchat.di.ApplicationScope
+import com.flxrs.dankchat.data.twitch.message.EmoteWithPositions
+import com.flxrs.dankchat.data.twitch.message.Message
+import com.flxrs.dankchat.data.twitch.message.PointRedemptionMessage
+import com.flxrs.dankchat.data.twitch.message.PrivMessage
+import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
+import com.flxrs.dankchat.data.twitch.message.WhisperMessage
+import com.flxrs.dankchat.data.twitch.message.isAnnouncement
+import com.flxrs.dankchat.data.twitch.message.isElevatedMessage
+import com.flxrs.dankchat.data.twitch.message.isFirstMessage
+import com.flxrs.dankchat.data.twitch.message.isReward
+import com.flxrs.dankchat.data.twitch.message.isSub
+import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.preferences.multientry.MultiEntryDto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
+import org.koin.core.annotation.Single
 
-@Singleton
-class IgnoresRepository @Inject constructor(
+@Single
+class IgnoresRepository(
     private val helixApiClient: HelixApiClient,
     private val messageIgnoreDao: MessageIgnoreDao,
     private val userIgnoreDao: UserIgnoreDao,
     private val preferences: DankChatPreferenceStore,
-    @ApplicationScope private val coroutineScope: CoroutineScope
+    dispatchersProvider: DispatchersProvider,
 ) {
+
+    private val coroutineScope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
 
     data class TwitchBlock(val id: UserId, val name: UserName)
 
@@ -59,21 +75,14 @@ class IgnoresRepository @Inject constructor(
 
     fun runMigrationsIfNeeded() = coroutineScope.launch {
         runCatching {
-            if (preferences.blackListEntries.isEmpty() && messageIgnoreDao.getMessageIgnores().isNotEmpty()) {
+            if (messageIgnoreDao.getMessageIgnores().isNotEmpty()) {
                 return@launch
             }
 
             Log.d(TAG, "Running ignores migration...")
             messageIgnoreDao.addIgnores(DEFAULT_IGNORES)
 
-            val existingBlacklistEntries = preferences.customBlacklist
-            val messageIgnores = existingBlacklistEntries.mapToMessageIgnoreEntities()
-            messageIgnoreDao.addIgnores(messageIgnores)
-
-            val userIgnores = existingBlacklistEntries.mapToUserIgnoreEntities()
-            userIgnoreDao.addIgnores(userIgnores)
-
-            val totalIgnores = DEFAULT_IGNORES.size + messageIgnores.size + userIgnores.size
+            val totalIgnores = DEFAULT_IGNORES.size
             Log.d(TAG, "Ignores migration completed, added $totalIgnores entries.")
         }.getOrElse {
             Log.e(TAG, "Failed to run ignores migration", it)
@@ -83,8 +92,6 @@ class IgnoresRepository @Inject constructor(
                 return@launch
             }
         }
-
-        preferences.clearBlacklist()
     }
 
     fun isUserBlocked(userId: UserId?): Boolean {
@@ -156,7 +163,7 @@ class IgnoresRepository @Inject constructor(
             replacement = "***",
         )
         val id = messageIgnoreDao.addIgnore(entity)
-        return messageIgnoreDao.getMessageIgnore(id)
+        return entity.copy(id = id)
     }
 
     suspend fun updateMessageIgnore(entity: MessageIgnoreEntity) {
@@ -178,7 +185,7 @@ class IgnoresRepository @Inject constructor(
             username = "",
         )
         val id = userIgnoreDao.addIgnore(entity)
-        return userIgnoreDao.getUserIgnore(id)
+        return entity.copy(id = id)
     }
 
     suspend fun updateUserIgnore(entity: UserIgnoreEntity) {
@@ -350,35 +357,6 @@ class IgnoresRepository @Inject constructor(
 
     private operator fun IntRange.contains(other: IntRange): Boolean {
         return other.first >= first && other.last <= last
-    }
-
-    private fun List<MultiEntryDto>.mapToMessageIgnoreEntities(): List<MessageIgnoreEntity> {
-        return filterNot { it.matchUser }
-            .map {
-                MessageIgnoreEntity(
-                    id = 0,
-                    enabled = true,
-                    type = MessageIgnoreEntityType.Custom,
-                    pattern = it.entry,
-                    isRegex = it.isRegex,
-                    isCaseSensitive = false,
-                    isBlockMessage = true,
-                    replacement = null
-                )
-            }
-    }
-
-    private fun List<MultiEntryDto>.mapToUserIgnoreEntities(): List<UserIgnoreEntity> {
-        return filter { it.matchUser }
-            .map {
-                UserIgnoreEntity(
-                    id = 0,
-                    enabled = true,
-                    username = it.entry,
-                    isRegex = it.isRegex,
-                    isCaseSensitive = false
-                )
-            }
     }
 
     companion object {

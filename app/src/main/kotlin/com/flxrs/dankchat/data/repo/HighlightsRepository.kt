@@ -12,27 +12,40 @@ import com.flxrs.dankchat.data.database.entity.BlacklistedUserEntity
 import com.flxrs.dankchat.data.database.entity.MessageHighlightEntity
 import com.flxrs.dankchat.data.database.entity.MessageHighlightEntityType
 import com.flxrs.dankchat.data.database.entity.UserHighlightEntity
-import com.flxrs.dankchat.data.twitch.message.*
-import com.flxrs.dankchat.di.ApplicationScope
+import com.flxrs.dankchat.data.twitch.message.Highlight
+import com.flxrs.dankchat.data.twitch.message.HighlightType
+import com.flxrs.dankchat.data.twitch.message.Message
+import com.flxrs.dankchat.data.twitch.message.PointRedemptionMessage
+import com.flxrs.dankchat.data.twitch.message.PrivMessage
+import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
+import com.flxrs.dankchat.data.twitch.message.WhisperMessage
+import com.flxrs.dankchat.data.twitch.message.isAnnouncement
+import com.flxrs.dankchat.data.twitch.message.isElevatedMessage
+import com.flxrs.dankchat.data.twitch.message.isFirstMessage
+import com.flxrs.dankchat.data.twitch.message.isReward
+import com.flxrs.dankchat.data.twitch.message.isSub
+import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import com.flxrs.dankchat.preferences.multientry.MultiEntryDto
+import com.flxrs.dankchat.preferences.notifications.NotificationsSettingsDataStore
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import javax.inject.Singleton
+import org.koin.core.annotation.Single
 
-@Singleton
-class HighlightsRepository @Inject constructor(
+@Single
+class HighlightsRepository(
     private val messageHighlightDao: MessageHighlightDao,
     private val userHighlightDao: UserHighlightDao,
     private val blacklistedUserDao: BlacklistedUserDao,
     private val preferences: DankChatPreferenceStore,
-    @ApplicationScope private val coroutineScope: CoroutineScope
+    private val notificationsSettingsDataStore: NotificationsSettingsDataStore,
+    dispatchersProvider: DispatchersProvider,
 ) {
 
+    private val coroutineScope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
     private val currentUserAndDisplay = preferences.currentUserAndDisplayFlow.stateIn(coroutineScope, SharingStarted.Eagerly, null)
     private val currentUserRegex = currentUserAndDisplay
         .map(::createUserAndDisplayRegex)
@@ -67,21 +80,14 @@ class HighlightsRepository @Inject constructor(
 
     fun runMigrationsIfNeeded() = coroutineScope.launch {
         runCatching {
-            if (preferences.mentionEntries.isEmpty() && messageHighlightDao.getMessageHighlights().isNotEmpty()) {
+            if (messageHighlightDao.getMessageHighlights().isNotEmpty()) {
                 return@launch
             }
 
             Log.d(TAG, "Running highlights migration...")
             messageHighlightDao.addHighlights(DEFAULT_HIGHLIGHTS)
 
-            val existingMentions = preferences.customMentions
-            val messageHighlights = existingMentions.mapToMessageHighlightEntities()
-            messageHighlightDao.addHighlights(messageHighlights)
-
-            val userHighlights = existingMentions.mapToUserHighlightEntities()
-            userHighlightDao.addHighlights(userHighlights)
-
-            val totalHighlights = DEFAULT_HIGHLIGHTS.size + messageHighlights.size + userHighlights.size
+            val totalHighlights = DEFAULT_HIGHLIGHTS.size
             Log.d(TAG, "Highlights migration completed, added $totalHighlights entries.")
         }.getOrElse {
             Log.e(TAG, "Failed to run highlights migration", it)
@@ -91,8 +97,6 @@ class HighlightsRepository @Inject constructor(
                 return@launch
             }
         }
-
-        preferences.clearCustomMentions()
     }
 
     suspend fun addMessageHighlight(): MessageHighlightEntity {
@@ -103,7 +107,7 @@ class HighlightsRepository @Inject constructor(
             pattern = ""
         )
         val id = messageHighlightDao.addHighlight(entity)
-        return messageHighlightDao.getMessageHighlight(id)
+        return entity.copy(id = id)
     }
 
     suspend fun updateMessageHighlight(entity: MessageHighlightEntity) {
@@ -125,7 +129,7 @@ class HighlightsRepository @Inject constructor(
             username = ""
         )
         val id = userHighlightDao.addHighlight(entity)
-        return userHighlightDao.getUserHighlight(id)
+        return entity.copy(id = id)
     }
 
     suspend fun updateUserHighlight(entity: UserHighlightEntity) {
@@ -147,7 +151,7 @@ class HighlightsRepository @Inject constructor(
             username = ""
         )
         val id = blacklistedUserDao.addBlacklistedUser(entity)
-        return blacklistedUserDao.getBlacklistedUser(id)
+        return entity.copy(id = id)
     }
 
     suspend fun updateBlacklistedUser(entity: BlacklistedUserEntity) {
@@ -265,8 +269,8 @@ class HighlightsRepository @Inject constructor(
     }
 
     private fun WhisperMessage.calculateHighlightState(): WhisperMessage = when {
-        preferences.createWhisperNotifications -> copy(highlights = setOf(Highlight(HighlightType.Notification)))
-        else                                   -> this
+        notificationsSettingsDataStore.current().showWhisperNotifications -> copy(highlights = setOf(Highlight(HighlightType.Notification)))
+        else                                                              -> this
     }
 
     private val List<MessageHighlightEntity>.areSubsEnabled: Boolean
@@ -343,30 +347,6 @@ class HighlightsRepository @Inject constructor(
             }
 
         return false
-    }
-
-    private fun List<MultiEntryDto>.mapToMessageHighlightEntities(): List<MessageHighlightEntity> {
-        return filterNot { it.matchUser }
-            .map {
-                MessageHighlightEntity(
-                    id = 0,
-                    enabled = true,
-                    type = MessageHighlightEntityType.Custom,
-                    pattern = it.entry,
-                    isRegex = it.isRegex
-                )
-            }
-    }
-
-    private fun List<MultiEntryDto>.mapToUserHighlightEntities(): List<UserHighlightEntity> {
-        return filter { it.matchUser }
-            .map {
-                UserHighlightEntity(
-                    id = 0,
-                    enabled = true,
-                    username = it.entry
-                )
-            }
     }
 
     private fun List<MessageHighlightEntity>.addDefaultsIfNecessary(): List<MessageHighlightEntity> {

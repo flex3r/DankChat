@@ -13,10 +13,7 @@ import com.flxrs.dankchat.data.api.recentmessages.RecentMessagesApi
 import com.flxrs.dankchat.data.api.seventv.SevenTVApi
 import com.flxrs.dankchat.data.api.supibot.SupibotApi
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import com.flxrs.dankchat.preferences.developer.DeveloperSettingsDataStore
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpTimeout
@@ -31,47 +28,49 @@ import io.ktor.client.request.header
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
-import javax.inject.Singleton
+import org.koin.core.annotation.Module
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 
-@InstallIn(SingletonComponent::class)
-@Module
-object NetworkModule {
-    private const val SUPIBOT_BASE_URL = "https://supinic.com/api/"
-    private const val HELIX_BASE_URL = "https://api.twitch.tv/helix/"
-    private const val AUTH_BASE_URL = "https://id.twitch.tv/oauth2/"
-    private const val DANKCHAT_BASE_URL = "https://flxrs.com/api/"
-    private const val TMI_BASE_URL = "https://tmi.twitch.tv/"
-    private const val BADGES_BASE_URL = "https://badges.twitch.tv/v1/badges/"
-    private const val FFZ_BASE_URL = "https://api.frankerfacez.com/v1/"
-    private const val BTTV_BASE_URL = "https://api.betterttv.net/3/cached/"
-    private const val SEVENTV_BASE_URL = "https://7tv.io/v3/"
+data object WebSocketOkHttpClient
+data object UploadOkHttpClient
 
-    @WebSocketOkHttpClient
-    @Singleton
-    @Provides
+@Module
+class NetworkModule {
+    private companion object {
+        const val SUPIBOT_BASE_URL = "https://supinic.com/api/"
+        const val HELIX_BASE_URL = "https://api.twitch.tv/helix/"
+        const val AUTH_BASE_URL = "https://id.twitch.tv/oauth2/"
+        const val DANKCHAT_BASE_URL = "https://flxrs.com/api/"
+        const val TMI_BASE_URL = "https://tmi.twitch.tv/"
+        const val BADGES_BASE_URL = "https://badges.twitch.tv/v1/badges/"
+        const val FFZ_BASE_URL = "https://api.frankerfacez.com/v1/"
+        const val BTTV_BASE_URL = "https://api.betterttv.net/3/cached/"
+        const val SEVENTV_BASE_URL = "https://7tv.io/v3/"
+    }
+
+    @Single
+    @Named(type = WebSocketOkHttpClient::class)
     fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
         .callTimeout(20.seconds.toJavaDuration())
         .build()
 
-    @UploadOkHttpClient
-    @Singleton
-    @Provides
+    @Single
+    @Named(type = UploadOkHttpClient::class)
     fun provideUploadOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
         .callTimeout(60.seconds.toJavaDuration())
         .build()
 
-    @Singleton
-    @Provides
+    @Single
     fun provideJson(): Json = Json {
         explicitNulls = false
         ignoreUnknownKeys = true
         isLenient = true
     }
 
-    @Singleton
-    @Provides
+    @Single
     fun provideKtorClient(json: Json): HttpClient = HttpClient(OkHttp) {
         install(Logging) {
             level = LogLevel.INFO
@@ -95,32 +94,28 @@ object NetworkModule {
         }
     }
 
-    @Singleton
-    @Provides
+    @Single
     fun provideAuthApi(ktorClient: HttpClient) = AuthApi(ktorClient.config {
         defaultRequest {
             url(AUTH_BASE_URL)
         }
     })
 
-    @Singleton
-    @Provides
+    @Single
     fun provideDankChatApi(ktorClient: HttpClient) = DankChatApi(ktorClient.config {
         defaultRequest {
             url(DANKCHAT_BASE_URL)
         }
     })
 
-    @Singleton
-    @Provides
+    @Single
     fun provideSupibotApi(ktorClient: HttpClient) = SupibotApi(ktorClient.config {
         defaultRequest {
             url(SUPIBOT_BASE_URL)
         }
     })
 
-    @Singleton
-    @Provides
+    @Single
     fun provideHelixApi(ktorClient: HttpClient, preferenceStore: DankChatPreferenceStore) = HelixApi(ktorClient.config {
         defaultRequest {
             url(HELIX_BASE_URL)
@@ -128,48 +123,42 @@ object NetworkModule {
         }
     }, preferenceStore)
 
-    @Singleton
-    @Provides
+    @Single
     fun provideTmiApi(ktorClient: HttpClient) = ChattersApi(ktorClient.config {
         defaultRequest {
             url(TMI_BASE_URL)
         }
     })
 
-    @Singleton
-    @Provides
+    @Single
     fun provideBadgesApi(ktorClient: HttpClient) = BadgesApi(ktorClient.config {
         defaultRequest {
             url(BADGES_BASE_URL)
         }
     })
 
-    @Singleton
-    @Provides
+    @Single
     fun provideFFZApi(ktorClient: HttpClient) = FFZApi(ktorClient.config {
         defaultRequest {
             url(FFZ_BASE_URL)
         }
     })
 
-    @Singleton
-    @Provides
+    @Single
     fun provideBTTVApi(ktorClient: HttpClient) = BTTVApi(ktorClient.config {
         defaultRequest {
             url(BTTV_BASE_URL)
         }
     })
 
-    @Singleton
-    @Provides
-    fun provideRecentMessagesApi(ktorClient: HttpClient, preferenceStore: DankChatPreferenceStore) = RecentMessagesApi(ktorClient.config {
+    @Single
+    fun provideRecentMessagesApi(ktorClient: HttpClient, developerSettingsDataStore: DeveloperSettingsDataStore) = RecentMessagesApi(ktorClient.config {
         defaultRequest {
-            url(preferenceStore.customRmHost)
+            url(developerSettingsDataStore.current().customRecentMessagesHost)
         }
     })
 
-    @Singleton
-    @Provides
+    @Single
     fun provideSevenTVApi(ktorClient: HttpClient) = SevenTVApi(ktorClient.config {
         defaultRequest {
             url(SEVENTV_BASE_URL)
