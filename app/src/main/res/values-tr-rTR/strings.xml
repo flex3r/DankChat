@@ -380,6 +380,8 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="confirm_login_cancel_title">Giriş iptalini onayla</string>
     <string name="confirm_login_cancel_message">Giriş sürecini iptal etmek istediğinizden emin misiniz?</string>
     <string name="confirm_login_cancel_positive_button">Girişi iptal et</string>
+    <string name="login_menu_zoom_out">Uzaklaştır</string>
+    <string name="login_menu_zoom_in">Yakınlaştır</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">%1$d izleyiciyle %2$s süredir yayında</item>
         <item quantity="other">%1$d izleyiciyle %2$s süredir yayında</item>
