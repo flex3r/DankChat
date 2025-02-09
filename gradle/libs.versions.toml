@@ -9,7 +9,7 @@ coil = "3.1.0"
 okhttp = "5.0.0-alpha.14"
 ksp = "2.1.10-1.0.29"
 koin = "4.0.2"
-koin-annotations = "2.0.0-Beta3"
+koin-annotations = "2.0.0-RC1"
 
 androidGradlePlugin = "8.8.0"
 androidDesugarLibs = "2.1.4"
