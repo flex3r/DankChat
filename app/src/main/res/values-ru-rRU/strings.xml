@@ -120,7 +120,6 @@
     <string name="confirm_user_block_positive_button">Заблокировать</string>
     <string name="restart_required">Чтобы изменения вступили в силу, требуется перезагрузка</string>
     <string name="restart">Перезапустить</string>
-    <string name="uploader_title">Пользовательский загрузчик медиа</string>
     <string name="uploader_reset">Сбросить по умолчанию</string>
     <string name="uploader_url">Загрузить URL</string>
     <string name="uploader_field">Форма поля</string>
@@ -184,7 +183,6 @@
     <string name="badge_tooltip_sub_tier">Уровень %1$s</string>
     <string name="preference_timestamp_title">Отображать временные метки</string>
     <string name="preference_mention_format_title">Формат упоминаний</string>
-    <string name="preference_mention_format_summary">Изменить формат упоминания при нажатии на имя пользователя</string>
     <string name="preference_roomstate_title">Отображать статус чата</string>
     <string name="preference_roomstate_summary">Отображать информацию о статусе текущего чата, вроде режима только для подписчиков</string>
     <string name="preference_streaminfo_title">Отображать информацию о трансляции</string>
@@ -304,7 +302,6 @@
     <string name="clear_recent_uploads_dialog_title">Отчистить недавние загрузки</string>
     <string name="clear_recent_uploads_dialog_message">Вы уверены, что хотите отчистить историю загрузок? Ваши загруженные файлы не будут удалены.</string>
     <string name="clear">Отчистить</string>
-    <string name="copied_image_url">Ссылка скопирована</string>
     <string name="pattern">Шаблон</string>
     <string name="case_sensitive">Соблюдать регистр</string>
     <string name="highlights">Выделения</string>
@@ -344,8 +341,6 @@
     <string name="login_outdated_title">Логин устарел!</string>
     <string name="login_outdated_message">Ваш логин устарел и не имеет доступа к некоторым функциям. Пожалуйста, войдите снова.</string>
     <string name="custom_user_display_title">Пользовательское отображение пользователя</string>
-    <string name="user_display_item_username_hint">Имя пользователя</string>
-    <string name="user_display_item_color_hint">Цвет</string>
     <string name="remove_custom_user_display">Удалить пользовательское отображение пользователя</string>
     <string name="user_display_alias_input">Псевдоним</string>
     <string name="user_display_custom_color_enable">﻿Пользовательский цвет</string>
@@ -387,12 +382,6 @@
     <string name="confirm_login_cancel_title">Подтвердить отмену входа</string>
     <string name="confirm_login_cancel_message">Вы уверены, что хотите отменить процесс входа?</string>
     <string name="confirm_login_cancel_positive_button">Отменить вход</string>
-    <plurals name="viewers">
-        <item quantity="one">В сети с %d зрителем</item>
-        <item quantity="few">В сети с %d зрителями</item>
-        <item quantity="many">В сети с %d зрителями</item>
-        <item quantity="other">В сети с %d зрителями</item>
-    </plurals>
     <plurals name="viewers_and_uptime">
         <item quantity="one">В эфире %2$s с %1$d зрителем</item>
         <item quantity="few">В эфире %2$s с %1$d зрителями </item>
