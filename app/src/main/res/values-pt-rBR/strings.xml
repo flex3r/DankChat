@@ -115,7 +115,6 @@
     <string name="confirm_user_block_positive_button">Bloquear</string>
     <string name="restart_required">Para aplicar as alterações é necessário reiniciar</string>
     <string name="restart">Reiniciar</string>
-    <string name="uploader_title">Carregador de mídia personalizado</string>
     <string name="uploader_reset">Redefinir para os padrões</string>
     <string name="uploader_url">URL de envio</string>
     <string name="uploader_field">Campo do formulário</string>
@@ -179,7 +178,6 @@
     <string name="badge_tooltip_sub_tier">Grupo %1$s</string>
     <string name="preference_timestamp_title">Mostrar marcações de tempo</string>
     <string name="preference_mention_format_title">Formato de menção</string>
-    <string name="preference_mention_format_summary">Altere o formato de menção ao clicar em um nome de usuário</string>
     <string name="preference_roomstate_title">Mostrar informações dos modos de chat</string>
     <string name="preference_roomstate_summary">Exibe informações sobre os modos de chat atuais, como o modo exclusivo para inscritos</string>
     <string name="preference_streaminfo_title">Mostrar informações da transmissão</string>
@@ -299,7 +297,6 @@
     <string name="clear_recent_uploads_dialog_title">Limpar Envios Recentes</string>
     <string name="clear_recent_uploads_dialog_message">Tem certeza que quer limpar o histórico de envios? Seus arquivos enviados não serão excluídos.</string>
     <string name="clear">Limpar</string>
-    <string name="copied_image_url">URL da Imagem Copiada</string>
     <string name="pattern">Padrão</string>
     <string name="case_sensitive">Sensível a Maiúsculas/Minúsculas</string>
     <string name="highlights">Realces</string>
@@ -339,8 +336,6 @@
     <string name="login_outdated_title">Login Expirado!</string>
     <string name="login_outdated_message">Seu login está expirado e não tem acesso a algumas funcionalidades. Por favor, conecte-se novamente.</string>
     <string name="custom_user_display_title">Exibir nomes customizados</string>
-    <string name="user_display_item_username_hint">Nome de Usuário</string>
-    <string name="user_display_item_color_hint">Cor</string>
     <string name="remove_custom_user_display">Remover Nome Customizado</string>
     <string name="user_display_alias_input">Apelido</string>
     <string name="user_display_custom_color_enable">Cor personalizada</string>
@@ -384,10 +379,6 @@
     <string name="confirm_login_cancel_positive_button">Cancelar login</string>
     <string name="login_menu_zoom_out">Diminuir zoom</string>
     <string name="login_menu_zoom_in">Aumentar zoom</string>
-    <plurals name="viewers">
-        <item quantity="one">Ao vivo com %d espectador</item>
-        <item quantity="other">Ao vivo com %d espectadores</item>
-    </plurals>
     <plurals name="viewers_and_uptime">
         <item quantity="one">Ao vivo com %1$d espectador por %2$s</item>
         <item quantity="other">Ao vivo com %1$d espectadores por %2$s</item>
