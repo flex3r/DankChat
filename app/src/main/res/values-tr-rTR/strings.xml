@@ -120,7 +120,6 @@ Servis bu hizmeti verebilmek için sizin (ve başkalarının) ziyaret ettiği ka
     <string name="confirm_user_block_positive_button">Engelle</string>
     <string name="restart_required">Değişikliklerin uygulanması için yeniden başlatma gerekiyor</string>
     <string name="restart">Yeniden başlat</string>
-    <string name="uploader_title">Özel medya yükleyici</string>
     <string name="uploader_reset">Varsayılanlara sıfırla</string>
     <string name="uploader_url">Yükleme URL\'i</string>
     <string name="uploader_field">Form alanı</string>
@@ -184,7 +183,6 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="badge_tooltip_sub_tier">Kademe %1$s</string>
     <string name="preference_timestamp_title">Zaman damgalarını göster</string>
     <string name="preference_mention_format_title">Bahsetme biçimi</string>
-    <string name="preference_mention_format_summary">Bir kullanıcı adına tıklandığındaki bahsetme biçimini değiştir</string>
     <string name="preference_roomstate_title">Kanal modu bilgisini göster</string>
     <string name="preference_roomstate_summary">Yalnız aboneler modu gibi şimdiki kanal moduna ilişkin bilgi gösterir</string>
     <string name="preference_streaminfo_title">Yayın bilgisini göster</string>
@@ -304,7 +302,6 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="clear_recent_uploads_dialog_title">Son Yüklemeleri Temizle</string>
     <string name="clear_recent_uploads_dialog_message">Yükleme geçmişini temizlemeye emin misiniz? Yüklenmiş dosyalarınız silinmeyecektir.</string>
     <string name="clear">Temizle</string>
-    <string name="copied_image_url">Resim URL\'i kopyalandı</string>
     <string name="pattern">Şablon</string>
     <string name="case_sensitive">Büyük-küçük harf duyarlı</string>
     <string name="highlights">Öne Çıkarmalar</string>
@@ -343,8 +340,6 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="login_outdated_title">Giriş Süresi Doldu!</string>
     <string name="login_outdated_message">Girişinizin süresi doldu ve birtakım işlevlere erişimi yok. Lütfen yeniden giriş yapın.</string>
     <string name="custom_user_display_title">Özel Kullanıcı Görünümü</string>
-    <string name="user_display_item_username_hint">Kullanıcı Adı</string>
-    <string name="user_display_item_color_hint">Renk</string>
     <string name="remove_custom_user_display">Özel Kullanıcı Görünümünü Kaldır</string>
     <string name="user_display_alias_input">Takma ad</string>
     <string name="user_display_custom_color_enable">Özel Renk</string>
@@ -385,10 +380,6 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="confirm_login_cancel_title">Giriş iptalini onayla</string>
     <string name="confirm_login_cancel_message">Giriş sürecini iptal etmek istediğinizden emin misiniz?</string>
     <string name="confirm_login_cancel_positive_button">Girişi iptal et</string>
-    <plurals name="viewers">
-        <item quantity="one">%d izleyiciyle yayında</item>
-        <item quantity="other">%d izleyici ile canlı</item>
-    </plurals>
     <plurals name="viewers_and_uptime">
         <item quantity="one">%1$d izleyiciyle %2$s süredir yayında</item>
         <item quantity="other">%1$d izleyiciyle %2$s süredir yayında</item>
