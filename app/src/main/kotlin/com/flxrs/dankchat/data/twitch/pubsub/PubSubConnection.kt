@@ -6,12 +6,12 @@ import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.ifBlank
 import com.flxrs.dankchat.data.toUserId
+import com.flxrs.dankchat.data.twitch.pubsub.dto.PubSubDataMessage
+import com.flxrs.dankchat.data.twitch.pubsub.dto.PubSubDataObjectMessage
 import com.flxrs.dankchat.data.twitch.pubsub.dto.moderation.ModerationActionData
 import com.flxrs.dankchat.data.twitch.pubsub.dto.moderation.ModerationActionType
 import com.flxrs.dankchat.data.twitch.pubsub.dto.moderation.ModeratorAddedData
 import com.flxrs.dankchat.data.twitch.pubsub.dto.redemption.PointRedemption
-import com.flxrs.dankchat.data.twitch.pubsub.dto.PubSubDataMessage
-import com.flxrs.dankchat.data.twitch.pubsub.dto.PubSubDataObjectMessage
 import com.flxrs.dankchat.data.twitch.pubsub.dto.whisper.WhisperData
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import com.flxrs.dankchat.utils.extensions.timer
@@ -24,12 +24,16 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.add
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonArray
+import kotlinx.serialization.json.putJsonObject
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
-import org.json.JSONArray
 import org.json.JSONObject
 import java.time.Instant
 import java.util.UUID
@@ -113,16 +117,17 @@ class PubSubConnection(
         val needsListen = (possibleTopics - topics)
         topics.addAll(needsListen)
 
-        val listenMessage = needsListen.toRequestMessage()
-        socket?.send(listenMessage)
+        needsListen
+            .toRequestMessages()
+            .forEach { socket?.send(it) }
 
         return remainingTopics.toSet()
     }
 
     fun unlistenByChannel(channel: UserName) {
-        val toUnlisten = topics
-            .filterIsInstance<PubSubTopic.PointRedemptions>()
-            .filter { it.channelName == channel }
+        val toUnlisten = topics.filter {
+            it is PubSubTopic.PointRedemptions && it.channelName == channel || it is PubSubTopic.ModeratorActions && it.channelName == channel
+        }
         unlisten(toUnlisten.toSet())
     }
 
@@ -146,8 +151,11 @@ class PubSubConnection(
         val foundTopics = topics.filter { it in toUnlisten }.toSet()
         topics.removeAll(foundTopics)
 
-        val message = foundTopics.toRequestMessage(type = "UNLISTEN")
-        socket?.send(message)
+        foundTopics
+            .toRequestMessages(type = "UNLISTEN")
+            .forEach { message ->
+                socket?.send(message)
+            }
     }
 
     private fun attemptReconnect() {
@@ -201,8 +209,10 @@ class PubSubConnection(
             receiveChannel.trySend(PubSubEvent.Connected)
             Log.i(TAG, "[PubSub $tag] connected")
 
-            val listenMessage = initialTopics.toRequestMessage()
-            webSocket.send(listenMessage)
+            initialTopics
+                .toRequestMessages()
+                .forEach(webSocket::send)
+
             pingJob = setupPingInterval()
         }
 
@@ -302,16 +312,27 @@ class PubSubConnection(
         return take(n) to drop(n)
     }
 
-    private fun Collection<PubSubTopic>.toRequestMessage(type: String = "LISTEN"): String {
-        val message = JSONObject().apply {
+    private fun Collection<PubSubTopic>.toRequestMessages(type: String = "LISTEN"): List<String> {
+        val (pointRewards, rest) = partition { it is PubSubTopic.PointRedemptions }
+        return listOf(
+            rest.toRequestMessage(type),
+            pointRewards.toRequestMessage(type, withAuth = false),
+        )
+    }
+
+    private fun Collection<PubSubTopic>.toRequestMessage(type: String = "LISTEN", withAuth: Boolean = true): String {
+        val nonce = UUID.randomUUID().toString()
+        val message = buildJsonObject {
             put("type", type)
-            put("nonce", UUID.randomUUID().toString())
-            val data = JSONObject().let { data ->
-                val mappedTopics = map { it.topic }
-                data.put("topics", JSONArray(mappedTopics))
-                data.put("auth_token", oAuth)
+            put("nonce", nonce)
+            putJsonObject("data") {
+                putJsonArray("topics") {
+                    forEach { add(it.topic) }
+                }
+                if (withAuth) {
+                    put("auth_token", currentOAuth)
+                }
             }
-            put("data", data)
         }
 
         return message.toString()

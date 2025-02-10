@@ -51,7 +51,7 @@ class PubSubManager(
                 add(PubSubTopic.Whispers(userId))
                 helixChannels.forEach {
                     add(PubSubTopic.PointRedemptions(channelId = it.id, channelName = it.name))
-                    add(PubSubTopic.ModeratorActions(userId = userId, channelId = it.id))
+                    add(PubSubTopic.ModeratorActions(userId = userId, channelId = it.id, channelName = it.name))
                 }
             }
             listen(topics)
@@ -78,7 +78,7 @@ class PubSubManager(
             .getOrNull() ?: return@launch
 
         val pointRedemptions = PubSubTopic.PointRedemptions(channelId, channel)
-        val moderatorActions = PubSubTopic.ModeratorActions(userId, channelId)
+        val moderatorActions = PubSubTopic.ModeratorActions(userId, channelId, channel)
         listen(setOf(pointRedemptions, moderatorActions))
     }
 
