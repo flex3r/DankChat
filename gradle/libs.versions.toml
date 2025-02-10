@@ -2,7 +2,7 @@
 kotlin = "2.1.10"
 coroutines = "1.10.1"
 serialization = "1.8.0"
-datetime = "0.6.1"
+datetime = "0.6.2"
 immutable = "0.3.8"
 ktor = "3.0.3"
 coil = "3.1.0"
