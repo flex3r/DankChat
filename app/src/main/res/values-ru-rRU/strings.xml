@@ -10,6 +10,7 @@
     <string name="add_dialog_title">Добавить канал</string>
     <string name="edit_dialog_title">Переименовать канал</string>
     <string name="dialog_ok">OK</string>
+    <string name="save">Сохранить</string>
     <string name="dialog_cancel">Отмена</string>
     <string name="dialog_dismiss">Закрыть</string>
     <string name="error_dialog_copy">Копировать</string>
@@ -382,6 +383,9 @@
     <string name="confirm_login_cancel_title">Подтвердить отмену входа</string>
     <string name="confirm_login_cancel_message">Вы уверены, что хотите отменить процесс входа?</string>
     <string name="confirm_login_cancel_positive_button">Отменить вход</string>
+    <string name="login_menu_zoom_out">Отдалить</string>
+    <string name="login_menu_zoom_in">Приблизить</string>
+    <string name="back">Назад</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">В эфире %2$s с %1$d зрителем</item>
         <item quantity="few">В эфире %2$s с %1$d зрителями </item>
