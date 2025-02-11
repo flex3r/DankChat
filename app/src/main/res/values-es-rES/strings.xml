@@ -10,6 +10,7 @@
     <string name="add_dialog_title">Añadir canal</string>
     <string name="edit_dialog_title">Renombrar canal </string>
     <string name="dialog_ok">OK</string>
+    <string name="save">Guardar</string>
     <string name="dialog_cancel">Cancelar</string>
     <string name="dialog_dismiss">Descartar</string>
     <string name="error_dialog_copy">Copiar</string>
@@ -386,6 +387,7 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="confirm_login_cancel_positive_button">Cancelar inicio de sesión</string>
     <string name="login_menu_zoom_out">Alejar</string>
     <string name="login_menu_zoom_in">Acercar</string>
+    <string name="back">Atrás</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">En directo con %1$d espectador por %2$s</item>
         <item quantity="other">En directo con %1$d espectadores por %2$s</item>
