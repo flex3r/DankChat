@@ -10,6 +10,7 @@
     <string name="add_dialog_title">Csatorna hozzáadása</string>
     <string name="edit_dialog_title">Csatorna átnevezése</string>
     <string name="dialog_ok">OK</string>
+    <string name="save">Mentés</string>
     <string name="dialog_cancel">Mégse</string>
     <string name="dialog_dismiss">Elutasítás</string>
     <string name="error_dialog_copy">Másolás</string>
@@ -379,6 +380,7 @@
     <string name="confirm_login_cancel_positive_button">Bejelentkezés megszakítása</string>
     <string name="login_menu_zoom_out">Kicsinyítés</string>
     <string name="login_menu_zoom_in">Nagyítás</string>
+    <string name="back">Vissza</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">Élő %1$d nézővel %2$s ideje</item>
         <item quantity="other">Élő %1$d nézőkkel %2$s ideje</item>
