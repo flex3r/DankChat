@@ -10,6 +10,7 @@
     <string name="add_dialog_title">Ajouter une chaîne</string>
     <string name="edit_dialog_title">Renommer la chaîne</string>
     <string name="dialog_ok">OK</string>
+    <string name="save">Sauvegarder</string>
     <string name="dialog_cancel">Annuler</string>
     <string name="dialog_dismiss">Masquer</string>
     <string name="error_dialog_copy">Copier</string>
@@ -384,6 +385,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="confirm_login_cancel_positive_button">Annuler la connexion</string>
     <string name="login_menu_zoom_out">Zoom arrière</string>
     <string name="login_menu_zoom_in">Zoom avant</string>
+    <string name="back">Retour</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">En direct avec %1$d spectateur pendant %2$s</item>
         <item quantity="other">En direct avec %1$d spectateurs pendant %2$s</item>
