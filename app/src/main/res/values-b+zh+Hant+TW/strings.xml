@@ -286,6 +286,7 @@
     <string name="preference_bypass_command_handling_summary">取消攔截Twitch指令並改為傳送至聊天室</string>
     <string name="preference_7tv_live_updates_title">7TV即時表情符號更新</string>
     <string name="preference_7tv_live_updates_timeout_title">即時表情更新背景行為</string>
+    <string name="preference_7tv_live_updates_timeout_summary_timeout">更新將停止於 %1$s。\n降低這個數字可能會提升電池壽命。</string>
     <string name="preference_7tv_live_updates_timeout_summary_always_active">更新保持啟動。新增超時門檻可能會增加電池壽命。</string>
     <string name="preference_7tv_live_updates_timeout_summary_never_active">在背景時更新永遠不保持啟動。</string>
     <string name="preference_7tv_live_updates_entry_never">永不啟動</string>
