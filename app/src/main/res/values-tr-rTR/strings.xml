@@ -10,6 +10,7 @@
     <string name="add_dialog_title">Kanal ekle</string>
     <string name="edit_dialog_title">Kanal adını değiştir</string>
     <string name="dialog_ok">Tamam</string>
+    <string name="save">Kaydet</string>
     <string name="dialog_cancel">İptal</string>
     <string name="dialog_dismiss">Reddet</string>
     <string name="error_dialog_copy">Kopyala</string>
@@ -142,6 +143,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="confirm_user_ban_message">Bu kullanıcıyı banlamak istediğinizden emin misiniz?</string>
     <string name="confirm_user_ban_positive_button">Banla</string>
     <string name="confirm_user_timeout_title">Zaman aşımını onayla</string>
+    <string name="confirm_user_timeout_positive_button">Zaman aşımı</string>
     <string name="confirm_user_delete_title">Mesaj silmeyi onayla</string>
     <string name="confirm_user_delete_message">Bu mesajı silmek istediğinizden emin misiniz?</string>
     <string name="confirm_user_delete_positive_button">Sil</string>
@@ -165,6 +167,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="recent_upload_deletion_link">Silme bağlantısı:
 %1$s</string>
     <string name="recent_uploads_clear">Yüklemeleri temizle</string>
+    <string name="host">Barındırıcı</string>
     <string name="reset">Sıfırla</string>
     <string name="oauth_token">OAuth jetonu</string>
     <string name="verify_login">Doğrula ve Kaydet</string>
@@ -327,6 +330,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="highlights_ignores_entry_subscriptions">Abonelikler ile Etkinlikler</string>
     <string name="highlights_ignores_entry_announcements">Duyurular</string>
     <string name="highlights_ignores_entry_first_messages">İlk Mesajlar</string>
+    <string name="highlights_ignores_entry_elevated_messages">Yükseltilmiş Mesaj</string>
     <string name="highlights_ignores_entry_redemptions">Kanal Puanlarıyla alınan Öne Çıkarmalar</string>
     <string name="highlights_ignores_entry_replies">Yanıtlar</string>
     <string name="highlights_ignores_entry_custom">Özel</string>
@@ -375,6 +379,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="changelog_sheet_title">DankChat güncellendi!</string>
     <string name="changelog_sheet_subtitle">v%1$s sürümündeki yenilikler:</string>
     <string name="changelog_3_6">Yanıtlama ve yanıt akışlarını görüntüleneme için ön destek\nYeniden bağlandıktan sonraki yitik mesajları yüklemek için ayar eklendi\nYeni model alt sayfası tasarımı\nBir mesaja uzun bastıktan sonra yeni mesaj alt sayfası eklendi\nBir ifadeye bastıktan sonra yeni ifade alt sayfası eklendi\nYeni değişiklik günlüğü alt sayfası eklendi\nDevingen FFZ ifadeleri desteği eklendi\nİfade menüsü düzeni iyileştirildi\nTwitch kısıtlamalarından yayıncılar ile moderatörlere sınırlı yeni takipçiler uç noktasına geçildi</string>
+    <string name="changelog_3_7_3">/shoutout komutu eklendi\n /shield ve /shieldoff komutları eklendi\n Oturum süresi dolduğunda oluşan veri yükleme hataları düzeltildi\n Özel erişim jetonu belirlemek için geliştirici ayarı eklendi\n Twitch komut işleyicisini atlamak için geliştirici ayarı eklendi\n Birçok çeveri ve bakım güncellemesi yapıldı!</string>
     <string name="changelog_3_8_2">Android 14 desteği eklendi\n7TV canlı ifade güncellemeleri desteği eklendi\n7TV canlı ifade güncellemeleri arkaplan davranışını yapılandırmak için ayar eklendi</string>
     <string name="changelog_3_9_0">\"Canlı yayınlar\" ayar kategorisi eklendi\nUygulama arkaplandayken yayınların oynamayı sürdürmesine izin vermek için resim içinde resim modu desteği eklendi (varsayılan olarak kapalı, en az Android 12 ister)</string>
     <string name="confirm_login_cancel_title">Giriş iptalini onayla</string>
@@ -382,6 +387,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="confirm_login_cancel_positive_button">Girişi iptal et</string>
     <string name="login_menu_zoom_out">Uzaklaştır</string>
     <string name="login_menu_zoom_in">Yakınlaştır</string>
+    <string name="back">Geri git</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">%1$d izleyiciyle %2$s süredir yayında</item>
         <item quantity="other">%1$d izleyiciyle %2$s süredir yayında</item>
