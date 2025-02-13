@@ -1,2 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation"></resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="app_name">DankChat</string>
+    <string name="app_name_dank">DankChat (Dank)</string>
+    <string name="send_hint">Қатынас жіберу</string>
+    <string name="login">Кіру</string>
+    <string name="reload_emotes">Эмодзилерді қайта жүктеу</string>
+    <string name="reconnect">Қайта қосылу</string>
+    <string name="clear_chat">Чатты тазарту</string>
+    <string name="add_dialog_title">Арнасыды салу</string>
+    <string name="edit_dialog_title">Арнасыды атын өзгерту</string>
+    <string name="dialog_ok">ОК</string>
+    <string name="save">Сақтау</string>
+    <string name="dialog_cancel">Болдырмау</string>
+    <string name="dialog_dismiss">Қабылдамау</string>
+    <string name="error_dialog_copy">Көшіру</string>
+    <string name="error_dialog_title">Ұсталған жою:  %1$s</string>
+    <string name="add_channel">Арнасыды салу</string>
+    <string name="manage_channels">Арнасылерды басқару</string>
+    <string name="report_channel">Арнасыды шағымдану</string>
+    <string name="block_channel">Арнасыды бұғаттау</string>
+    <string name="channel">Арнасы</string>
+    <string name="open_channel">Арнасыды ашу</string>
+    <string name="remove_channel">Арнасыды жұлу</string>
+    <string name="channel_blocked_message">Арнасы бұғаттады</string>
+    <string name="no_channels_added">Қосылған арнасыдылер жоқ</string>
+    <string name="confirm_logout_title">Шығыс растау</string>
+    <string name="confirm_logout_message">Сен шығын келу сенімді болды ма?</string>
+    <string name="confirm_logout_positive_button">Шығу</string>
+    <string name="upload_media">Файлдарды енгізу</string>
+    <string name="take_picture">Фото істеу</string>
+    <string name="uploading_image">Файлды енгіз</string>
+    <string name="settings">Теңшелімлер</string>
+    <string name="snackbar_message_id_copied">Хабарламадың id көшіріп алды</string>
+    <string name="notification_title">FeelsDankMan</string>
+    <string name="notification_message">DankChat фондық тәртібіде істейді</string>
+    <string name="emote_menu_hint">Эмодзилерді мәзір ашу</string>
+    <string name="login_title">Twitch.tv кіру</string>
+    <string name="hint_connected">Әңгімеге кірісу</string>
+    <string name="hint_disconnected">Ажыратты</string>
+    <string name="hint_replying">Жауап беру</string>
+    <string name="system_message_reconnected">Қайта қосылды</string>
+    <string name="system_message_ffz_emotes_failed">FFZ эмоджилердi енгізу сәтті болды емес (%1$s қате)</string>
+    <string name="system_message_bttv_emotes_failed">BTTV эмоджилердi енгізу сәтті болды емес (%1$s қате)</string>
+    <string name="system_message_7tv_emotes_failed">7TV эмоджилердi енгізу сәтті болды емес (%1$s қате)</string>
+    <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s  %2$s 7TV эмоджины жұлды</string>
+    <string name="notification_whisper_mention">Сенге %1$s хабарламады жіберді</string>
+    <string name="preference_7tv_live_updates_entry_one_minute">1 минут</string>
+    <string name="preference_7tv_live_updates_entry_five_minutes">5 минут</string>
+    <string name="preference_7tv_live_updates_entry_thirty_minutes">30 минут</string>
+    <string name="preference_7tv_live_updates_entry_one_hour">1 сағат</string>
+</resources>
