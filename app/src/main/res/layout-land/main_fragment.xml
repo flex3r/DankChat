@@ -5,54 +5,115 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/coordinator"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/split_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/split_thumb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:chipIcon="@drawable/ic_drag_indicator"
+        app:iconEndPadding="-2dp"
+        app:iconStartPadding="-2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/split_guideline"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/split_guideline"
+        app:textEndPadding="0dp"
+        app:textStartPadding="0dp" />
+
+    <com.flxrs.dankchat.main.DankChatInputLayout
+        android:id="@+id/input_layout"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:animateLayoutChanges="true"
+        app:endIconContentDescription="@string/send_hint"
+        app:endIconMode="custom"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/split_guideline"
+        app:startIconContentDescription="@string/emote_menu_hint">
+
+        <com.flxrs.dankchat.main.DankChatInput
+            android:id="@+id/input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:completionThreshold="2"
+            android:inputType="text|textMultiLine|textCapSentences"
+            android:maxLines="3"
+            android:paddingStart="12dp"
+            android:paddingEnd="8dp"
+            android:singleLine="false" />
+    </com.flxrs.dankchat.main.DankChatInputLayout>
+
+    <TextView
+        android:id="@+id/fullscreen_hint_text"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/bottom_barrier"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:animateLayoutChanges="true"
+        android:textAppearance="?attr/textAppearanceBodySmall"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/input_layout" />
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constrainedHeight="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"
+            app:tabMode="auto" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/stream_webview_wrapper"
+        android:name="com.flxrs.dankchat.main.stream.StreamWebViewWrapperFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/split_guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appbar_layout"
+        tools:visibility="visible" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/input_layout"
+        app:layout_constraintEnd_toEndOf="@id/input_layout"
+        app:layout_constraintStart_toStartOf="@id/input_layout"
+        app:layout_constraintTop_toBottomOf="@id/appbar_layout">
+
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraint_layout"
+            android:id="@+id/inner_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:animateLayoutChanges="true"
             tools:context=".main.MainActivity">
-
-            <com.google.android.material.appbar.AppBarLayout
-                android:id="@+id/appbar_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constrainedHeight="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <com.google.android.material.appbar.MaterialToolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <com.google.android.material.tabs.TabLayout
-                    android:id="@+id/tabs"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    app:tabMode="auto" />
-            </com.google.android.material.appbar.AppBarLayout>
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/stream_webview_wrapper"
-                android:name="com.flxrs.dankchat.main.stream.StreamWebViewWrapperFragment"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/split_guideline"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/appbar_layout"
-                tools:visibility="visible" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/show_chips"
@@ -61,7 +122,7 @@
                 android:layout_marginEnd="8dp"
                 app:iconEndPadding="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/appbar_layout"
+                app:layout_constraintTop_toTopOf="parent"
                 app:textEndPadding="0dp"
                 app:textStartPadding="0dp" />
 
@@ -92,35 +153,14 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/toggle_stream" />
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/split_guideline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.5" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/split_thumb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:chipIcon="@drawable/ic_drag_indicator"
-                app:iconEndPadding="-2dp"
-                app:iconStartPadding="-2dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/chat_viewpager"
-                app:layout_constraintStart_toEndOf="@id/stream_webview_wrapper"
-                app:layout_constraintTop_toBottomOf="@id/appbar_layout"
-                app:textEndPadding="0dp"
-                app:textStartPadding="0dp" />
-
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/chat_viewpager"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/split_guideline"
-                app:layout_constraintTop_toBottomOf="@id/appbar_layout" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/add_channels_text"
@@ -160,52 +200,4 @@
             app:behavior_hideable="true"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/bottom_barrier"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:barrierAllowsGoneWidgets="true"
-        app:barrierDirection="top"
-        app:constraint_referenced_ids="input_layout,fullscreen_hint_text" />
-
-    <com.flxrs.dankchat.main.DankChatInputLayout
-        android:id="@+id/input_layout"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="4dp"
-        android:animateLayoutChanges="true"
-        app:endIconContentDescription="@string/send_hint"
-        app:endIconMode="custom"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bottom_barrier"
-        app:startIconContentDescription="@string/emote_menu_hint">
-
-        <com.flxrs.dankchat.main.DankChatInput
-            android:id="@+id/input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:completionThreshold="2"
-            android:inputType="text|textMultiLine|textCapSentences"
-            android:maxLines="3"
-            android:paddingStart="12dp"
-            android:paddingEnd="8dp"
-            android:singleLine="false" />
-    </com.flxrs.dankchat.main.DankChatInputLayout>
-
-    <TextView
-        android:id="@+id/fullscreen_hint_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:animateLayoutChanges="true"
-        android:textAppearance="?attr/textAppearanceBodySmall"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bottom_barrier" />
 </androidx.constraintlayout.widget.ConstraintLayout>

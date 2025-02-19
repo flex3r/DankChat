@@ -340,7 +340,7 @@ class MainFragment : Fragment() {
                         val guideline = splitGuideline ?: return@setOnTouchListener false
                         val centered = event.rawX + offset + (v.width / 2f)
                         guideline.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                            guidePercent = (centered / constraintLayout.width).coerceIn(MIN_GUIDELINE_PERCENT, MAX_GUIDELINE_PERCENT)
+                            guidePercent = (centered / root.width).coerceIn(MIN_GUIDELINE_PERCENT, MAX_GUIDELINE_PERCENT)
                         }
                         true
                     }
@@ -375,6 +375,7 @@ class MainFragment : Fragment() {
         binding.splitThumb?.background?.alpha = 150
         activity?.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.STARTED)
         mainViewModel.apply {
+            setIsLandscape(isLandscape)
             collectFlow(imageUploadState, ::handleImageUploadState)
             collectFlow(dataLoadingState, ::handleDataLoadingState)
             collectFlow(shouldShowUploadProgress) { activity?.invalidateMenu() }
@@ -1387,12 +1388,12 @@ class MainFragment : Fragment() {
                 when (newState) {
                     BottomSheetBehavior.STATE_EXPANDED, BottomSheetBehavior.STATE_COLLAPSED -> {
                         (activity as? AppCompatActivity)?.supportActionBar?.hide()
-                        binding.tabs.visibility = View.GONE
+                       // binding.tabs.visibility = View.GONE
                     }
 
                     else                                                                    -> {
                         (activity as? AppCompatActivity)?.supportActionBar?.show()
-                        binding.tabs.visibility = View.VISIBLE
+                        //binding.tabs.visibility = View.VISIBLE
                     }
                 }
             }
@@ -1409,7 +1410,7 @@ class MainFragment : Fragment() {
                 }
             }
 
-            binding.streamWebviewWrapper.isVisible = !mainViewModel.isEmoteSheetOpen && mainViewModel.isStreamActive
+            //binding.streamWebviewWrapper.isVisible = !mainViewModel.isEmoteSheetOpen && mainViewModel.isStreamActive
         }
     }
 
@@ -1462,7 +1463,7 @@ class MainFragment : Fragment() {
                 return@setOnFocusChangeListener
             }
 
-            binding.tabs.isVisible = !hasFocus && !isFullscreen
+            binding.tabs.isVisible = !hasFocus && mainViewModel.shouldShowTabs.value
             binding.streamWebviewWrapper.isVisible = !hasFocus && !mainViewModel.isEmoteSheetOpen && mainViewModel.isStreamActive
             when {
                 hasFocus      -> (activity as? MainActivity)?.supportActionBar?.hide()

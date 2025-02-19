@@ -121,6 +121,7 @@ class MainViewModel(
     private val fullScreenSheetState = MutableStateFlow<FullScreenSheetState>(FullScreenSheetState.Closed)
     private val _currentStreamedChannel = MutableStateFlow<UserName?>(null)
     private val _isFullscreen = MutableStateFlow(false)
+    private val _isLandscape = MutableStateFlow(false)
     private val isInputFocused = MutableStateFlow(false)
     private val isScrolling = MutableStateFlow(false)
     private val chipsExpanded = MutableStateFlow(false)
@@ -262,8 +263,8 @@ class MainViewModel(
     val shouldShowViewPager: StateFlow<Boolean> = channels.mapLatest { it?.isNotEmpty() != false }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), true)
 
-    val shouldShowTabs: StateFlow<Boolean> = shouldShowViewPager.combine(_isFullscreen) { shouldShowViewPager, isFullscreen ->
-        shouldShowViewPager && !isFullscreen
+    val shouldShowTabs: StateFlow<Boolean> = combine(shouldShowViewPager, _isFullscreen, _isLandscape, _currentStreamedChannel) { shouldShowViewPager, isFullscreen, isLandscape, currentStream ->
+        shouldShowViewPager && !isFullscreen && !(isLandscape && currentStream != null)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), true)
 
     val shouldShowInput: StateFlow<Boolean> = combine(
@@ -773,6 +774,10 @@ class MainViewModel(
     fun toggleFullscreen() {
         chipsExpanded.update { false }
         _isFullscreen.update { !it }
+    }
+
+    fun setIsLandscape(value: Boolean) {
+        _isLandscape.update { value }
     }
 
     fun isScrolling(value: Boolean) {
