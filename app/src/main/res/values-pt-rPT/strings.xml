@@ -371,11 +371,6 @@
     <string name="emote_copied">Emote copiado</string>
     <string name="changelog_sheet_title">DankChat foi atualizado!</string>
     <string name="changelog_sheet_subtitle">O que há de novo em v%1$s</string>
-    <string name="changelog_3_6">Suporte inicial para responder e visualizar threads de resposta\nAdicionada configuração para carregar mensagens perdidas após reconectar\nNovo design de folha inferior modal\nAdicionada nova página inferior da mensagem pressionando longamente uma mensagem\nAdicionada nova folha inferior de emote pressionando um emote\nAdicionada nova folha inferior do changelog\nAdicionado suporte para emotes FFZ animados\nDisposição do menu de emotes\nMigrado para o novo ponto de sa
-ída de seguidores, que está agora limitado a transmissores e moderadores devido a restrições do Twitch</string>
-    <string name="changelog_3_7_3">Adicionado comando /shoutout\nAdicionados comandos /shield e /shieldoff\nCorrigidos erros de carregamento de dados quando um inicio de sessão expirava\nAdicionada configuração de desenvolvedor para definir um token de acesso personalizado\nAdicionada configuração de desenvolvedor para ignorar o manuseio de comandos da Twitch\nMuitas atualizações de tradução e manutenção!</string>
-    <string name="changelog_3_8_2">Adicionado suporte para  Android 14\nAdicionado suporte para atualizações de emotes ao vivo 7TV\nAdicionado configuração para configurar o o comportamento em segundo plano de atualização de emotes ao vivo 7TV</string>
-    <string name="changelog_3_9_0">Adicionada a categoria de definições \"Livestreams\"\nSuporte adicional para o modo picture-in-picture para permitir que as transmissões continuem a ser reproduzidas enquanto a aplicação está em segundo plano (desativado por predefinição, requer pelo menos o Android 12)</string>
     <string name="confirm_login_cancel_title">Confirmação do cancelamento do inicio de sessão</string>
     <string name="confirm_login_cancel_message">Tens a certeza de que desejas cancelar o processo do inicio de sessão</string>
     <string name="confirm_login_cancel_positive_button">Cancelar inicio de sessão</string>
