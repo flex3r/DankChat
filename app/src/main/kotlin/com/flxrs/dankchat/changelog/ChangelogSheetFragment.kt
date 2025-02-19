@@ -24,7 +24,7 @@ class ChangelogSheetFragment : BottomSheetDialogFragment() {
                 null -> root.post { dialog?.dismiss() }
                 else -> {
                     changelogSubtitle.text = getString(R.string.changelog_sheet_subtitle, state.version)
-                    val entries = getString(state.changelog).split("\n")
+                    val entries = state.changelog.split("\n")
                     adapter.submitList(entries)
                 }
             }

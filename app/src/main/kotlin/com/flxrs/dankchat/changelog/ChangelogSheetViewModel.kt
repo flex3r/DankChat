@@ -14,6 +14,6 @@ class ChangelogSheetViewModel(
     }
 
     val state: ChangelogState? = DankChatVersion.LATEST_CHANGELOG?.let {
-        ChangelogState(it.version.copy(patch = 0).formattedString(), it.stringRes)
+        ChangelogState(it.version.copy(patch = 0).formattedString(), it.string)
     }
 }
