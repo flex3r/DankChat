@@ -370,10 +370,6 @@
     <string name="emote_copied">エモートをコピー</string>
     <string name="changelog_sheet_title">DankChatが更新されました！</string>
     <string name="changelog_sheet_subtitle">v%1$sの新機能：</string>
-    <string name="changelog_3_6">返信スレッドの返信/表示のサポートを開始\n再接続後に消失したメッセージをロードする設定を追加\n新しいモーダルなボトムシートのデザイン\nメッセージを長押しして新しいメッセージのボトムシートを追加\nエモートを押して新しいエモートのボトムシートを追加\n新しい変更ログのボトムシートを追加\nFFZエモートアニメーションのサポートを追加\nエモートメニューのレイアウトの改善\n 現在Twitchの制限により配信者とモデレーターに限定されている新しいフォロワーエンドポイントに移行</string>
-    <string name="changelog_3_7_3">/shoutoutコマンドを追加\n/shieldおよび/shieldoffコマンドを追加\nログインの有効期限が切れたときのデータロードエラーの修正\nカスタムアクセストークンを設定するための開発者設定の追加\n Twitchコマンド処理をバイパスするための開発者設定の追加\n多くの翻訳とメンテナンスの更新！</string>
-    <string name="changelog_3_8_2">Android 14のサポート対応を追加\n7TVライブエモートの更新に対応\n7TVライブエモートの更新のバックグラウンド処理を行うかどうかの設定項目を追加</string>
-    <string name="changelog_3_9_0">「ライブストリーム」の設定カテゴリを追加\nアプリがパックグラウンドでもピクチャーインピクチャーモードで再生を続けるサポートを追加（デフォルトではオフ。最低でもAndroid 12以上が必要）</string>
     <string name="confirm_login_cancel_title">ログインのキャンセルを確認</string>
     <string name="confirm_login_cancel_message">ログインをキャンセルしてもよろしいですか？</string>
     <string name="confirm_login_cancel_positive_button">ログインをキャンセル</string>
