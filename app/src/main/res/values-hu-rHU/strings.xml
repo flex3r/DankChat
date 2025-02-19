@@ -371,10 +371,6 @@
     <string name="emote_copied">Hangulatjel másolva</string>
     <string name="changelog_sheet_title">A DankChat frissítve lett!</string>
     <string name="changelog_sheet_subtitle">Újdonságok a v%1$s</string>
-    <string name="changelog_3_6">Kezdeti támogatás a válaszadáshoz és a válaszszálak megtekintéséhez\nÚj beállítás hozzáadása a hiányzó üzenetek újrakapcsolódás utáni betöltéséhez\nÚj modális fenéklap design\nÚj üzenet fenéklap hozzáadása egy üzenet hosszú megnyomásával\nÚj emote fenéklap hozzáadása egy emote megnyomásával\nÚj changelog fenéklap hozzáadása\nÚj animált FFZ érzelmek támogatása\nÚjított emote menü elrendezés\nMigrált az új követői végpontra, amely most a Twitch korlátozások miatt a műsorszolgáltatókra és a moderátorokra korlátozódik.</string>
-    <string name="changelog_3_7_3">Hozzáadva a /shoutout parancs\nAdd hozzá a /shield és /shieldoff parancsokat\nKijavítva az adatbetöltési hibákat, amikor a bejelentkezés lejárt\nAdd hozzá fejlesztői beállítást egyéni hozzáférési token beállításához\nAdd hozzá fejlesztői beállítást a Twitch parancskezelés megkerülésére\nSok fordítási és karbantartási frissítés!</string>
-    <string name="changelog_3_8_2">Android 14 támogatása\nTámogatás a 7TV élő hangulatjel frissítésekre\nBeállítás hozzáadása a 7TV élő hangulatjel frissítések háttér viselkedésére</string>
-    <string name="changelog_3_9_0">Élő adások beállítás kategória hozzáadva\nKép a képben mód támogatása engedélyezi hogy az adásokat tovább lejátsza amíg az alkalmazás a háttérben van (ki van kapcsolva alapból, legalább Andoid 12 a követelmény)</string>
     <string name="confirm_login_cancel_title">A bejelentkezés megszakításának megerősítése</string>
     <string name="confirm_login_cancel_message">Biztosan megszakítja a bejelentkezési folyamatot?</string>
     <string name="confirm_login_cancel_positive_button">Bejelentkezés megszakítása</string>
