@@ -10,6 +10,7 @@
     <string name="add_dialog_title">Adicionar canal</string>
     <string name="edit_dialog_title">Renomear canal</string>
     <string name="dialog_ok">Confirmar</string>
+    <string name="save">Salvar</string>
     <string name="dialog_cancel">Cancelar</string>
     <string name="dialog_dismiss">Dispensar</string>
     <string name="error_dialog_copy">Copiar</string>
@@ -379,6 +380,7 @@
     <string name="confirm_login_cancel_positive_button">Cancelar login</string>
     <string name="login_menu_zoom_out">Diminuir zoom</string>
     <string name="login_menu_zoom_in">Aumentar zoom</string>
+    <string name="back">Voltar</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">Ao vivo com %1$d espectador por %2$s</item>
         <item quantity="other">Ao vivo com %1$d espectadores por %2$s</item>
