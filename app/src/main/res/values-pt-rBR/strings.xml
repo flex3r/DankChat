@@ -371,10 +371,6 @@
     <string name="emote_copied">Emote copiado</string>
     <string name="changelog_sheet_title">DankChat teve uma atualização!</string>
     <string name="changelog_sheet_subtitle">O que há de novo na versão %1$s:</string>
-    <string name="changelog_3_6">Suporte inicial para respostas e visualização de tópicos\nAdicionado função para recuperar mensagens perdidas após fazer reconexões\nNovo design das janelas informativas\nAdicionado nova janela informativa ao ter um pressionar longo nas mensagens\nAdicionado nova janela informativa ao pressionar em um emote\nAdicionado nova janela informativa para alterações recentes\nAdicionado suporte para os emotes animados do FFZ\nMelhora no layout do menu de emote\nMigração para o novo endpoint de seguidores, onde agora é limitado para o Streamer e aos Moderadores devido a restrições da Twitch</string>
-    <string name="changelog_3_7_3">Adicionado comando /shoutout\nAdicionado comandos /shield e /shieldoff\nConcertado erros de carregamento de dados quando o login expirava\nAdicionado opção de desenvolvedor para definir um token de acesso customizado\nAdicionado opção de desenvolvedor para ignorar a manipulação de comandos da Twitch\nVárias traduções novas e updates de manutenção!</string>
-    <string name="changelog_3_8_2">Adicionado suporte para Android 14\nAdicionado suporte para atualização ao vivo de emotes 7TV\nAdicionado configurações para alterar o comportamento de atualização ao vivo de emotes 7TV em segundo plano</string>
-    <string name="changelog_3_9_0">Adicionada a categoria de configurações \"Transmissão\"\nAdicionado suporte para o modo picture-in-picture para permitir que as transmissões continuem reproduzindo enquanto o aplicativo está em segundo plano (desativado por padrão, requer pelo menos Android 12)</string>
     <string name="confirm_login_cancel_title">Confirmar cancelamento de login</string>
     <string name="confirm_login_cancel_message">Você tem certeza que deseja cancelar o processo de Login?</string>
     <string name="confirm_login_cancel_positive_button">Cancelar login</string>
