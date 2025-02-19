@@ -10,6 +10,7 @@
     <string name="add_dialog_title">Ajouter une chaîne</string>
     <string name="edit_dialog_title">Renommer la chaîne</string>
     <string name="dialog_ok">OK</string>
+    <string name="save">Sauvegarder</string>
     <string name="dialog_cancel">Annuler</string>
     <string name="dialog_dismiss">Masquer</string>
     <string name="error_dialog_copy">Copier</string>
@@ -375,15 +376,12 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="emote_copied">Emote copiée</string>
     <string name="changelog_sheet_title">DankChat a été mis à jour !</string>
     <string name="changelog_sheet_subtitle">Quoi de neuf dans v%1$s:</string>
-    <string name="changelog_3_6">Prise en charge initiale pour répondre et visualiser les sujets de réponse\nAjouté le paramètre pour charger les messages manqués après la reconnexion\nNouvelle feuille de fond modale\nAjout d\'une nouvelle feuille bas de message par un appui long sur un message\nAjout d\'une nouvelle feuille d\'emote\nAjout d\'une nouvelle feuille de fond\nAjout du support pour les emotes FFZ\nAmélioration de la disposition du menu d\'emotes\nMigration vers de nouveaux points de terminaison de suiveurs qui est maintenant limitée aux diffuseurs et modérateurs en raison des restrictions Twitch</string>
-    <string name="changelog_3_7_3">Ajout de la commande /shoutout\nAjout des commandes /shield et /shieldoff\nCorrection d\'erreurs de chargement de données lorsqu\'un login a expiré\nAjout du paramètre développeur pour définir un jeton d\'accès personnalisé\nAjout du paramètre développeur pour contourner la gestion des commandes Twitch\nBeaucoup de mises à jour de traduction et de maintenance!</string>
-    <string name="changelog_3_8_2">Ajout de la prise en charge d\'Android 14\nAjout du support des mises à jour des emotes 7TV en direct\nAjout du paramètre pour configurer le comportement des emotes 7TV en direct</string>
-    <string name="changelog_3_9_0">Ajout de la catégorie de paramètres \"Livestreams\"\nAjout de la prise en charge du mode image pour permettre aux streams de continuer à jouer pendant que l\'application est en arrière-plan (désactivé par défaut, nécessite au moins Android 12)</string>
     <string name="confirm_login_cancel_title">Confirmer l\'annulation de la connexion</string>
     <string name="confirm_login_cancel_message">Êtes-vous sûr de vouloir annuler le processus d\'équilibrage?</string>
     <string name="confirm_login_cancel_positive_button">Annuler la connexion</string>
     <string name="login_menu_zoom_out">Zoom arrière</string>
     <string name="login_menu_zoom_in">Zoom avant</string>
+    <string name="back">Retour</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">En direct avec %1$d spectateur pendant %2$s</item>
         <item quantity="other">En direct avec %1$d spectateurs pendant %2$s</item>

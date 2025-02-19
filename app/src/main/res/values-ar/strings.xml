@@ -369,7 +369,6 @@ The service temporarily stores messages for channels you (and others) visit to p
     <string name="emote_copied">تم نسخ التعبير عن المشاعر</string>
     <string name="changelog_sheet_title">تم تحديث DankChat!</string>
     <string name="changelog_sheet_subtitle">ما الجديد في v%1$s:</string>
-    <string name="changelog_3_6">دعم مبدئي للرد وعرض سلاسل الردود\nإعداد مضاف لتحميل الرسائل الفائتة بعد إعادة الاتصال\nتصميم جديد للصفحة السفلية المشروطة\nإضافة صفحة سفلية جديدة للرسائل بالضغط المطول على رسالة\nإضافة صفحة سفلية جديدة للمبعوثين بالضغط على مبعوث\nإضافة صفحة سفلية جديدة لسجل التغيير\nإضافة دعم لرسائل FFZ المتحركة للمبعوثين\nتخطيط محسّن لقائمة المبعوثين\nترحيل إلى نقطة نهاية المتابعين الجديدة التي تقتصر الآن على المذيعين والمشرفين بسبب قيود Twitch</string>
     <string name="confirm_login_cancel_title">تأكيد إلغاء تسجيل الدخول</string>
     <string name="confirm_login_cancel_message">هل أنت متأكد من رغبتك في إلغاء عملية تسجيل الدخول؟</string>
     <string name="confirm_login_cancel_positive_button">إلغاء تسجيل الدخول</string>
