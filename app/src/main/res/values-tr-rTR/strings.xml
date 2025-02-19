@@ -378,10 +378,6 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="emote_copied">İfade kopyalandı</string>
     <string name="changelog_sheet_title">DankChat güncellendi!</string>
     <string name="changelog_sheet_subtitle">v%1$s sürümündeki yenilikler:</string>
-    <string name="changelog_3_6">Yanıtlama ve yanıt akışlarını görüntüleneme için ön destek\nYeniden bağlandıktan sonraki yitik mesajları yüklemek için ayar eklendi\nYeni model alt sayfası tasarımı\nBir mesaja uzun bastıktan sonra yeni mesaj alt sayfası eklendi\nBir ifadeye bastıktan sonra yeni ifade alt sayfası eklendi\nYeni değişiklik günlüğü alt sayfası eklendi\nDevingen FFZ ifadeleri desteği eklendi\nİfade menüsü düzeni iyileştirildi\nTwitch kısıtlamalarından yayıncılar ile moderatörlere sınırlı yeni takipçiler uç noktasına geçildi</string>
-    <string name="changelog_3_7_3">/shoutout komutu eklendi\n /shield ve /shieldoff komutları eklendi\n Oturum süresi dolduğunda oluşan veri yükleme hataları düzeltildi\n Özel erişim jetonu belirlemek için geliştirici ayarı eklendi\n Twitch komut işleyicisini atlamak için geliştirici ayarı eklendi\n Birçok çeveri ve bakım güncellemesi yapıldı!</string>
-    <string name="changelog_3_8_2">Android 14 desteği eklendi\n7TV canlı ifade güncellemeleri desteği eklendi\n7TV canlı ifade güncellemeleri arkaplan davranışını yapılandırmak için ayar eklendi</string>
-    <string name="changelog_3_9_0">\"Canlı yayınlar\" ayar kategorisi eklendi\nUygulama arkaplandayken yayınların oynamayı sürdürmesine izin vermek için resim içinde resim modu desteği eklendi (varsayılan olarak kapalı, en az Android 12 ister)</string>
     <string name="confirm_login_cancel_title">Giriş iptalini onayla</string>
     <string name="confirm_login_cancel_message">Giriş sürecini iptal etmek istediğinizden emin misiniz?</string>
     <string name="confirm_login_cancel_positive_button">Girişi iptal et</string>
