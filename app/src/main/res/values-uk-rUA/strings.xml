@@ -10,6 +10,7 @@
     <string name="add_dialog_title">Додати канал</string>
     <string name="edit_dialog_title">Перейменувати канал</string>
     <string name="dialog_ok">ОК</string>
+    <string name="save">Зберегти</string>
     <string name="dialog_cancel">Відмінити</string>
     <string name="dialog_dismiss">Закрити</string>
     <string name="error_dialog_copy">Копіювати</string>
@@ -360,13 +361,17 @@
     <string name="reply_thread_not_found">Тема відповіді не знайдена</string>
     <string name="message_not_found">Повідомлення не знайдено</string>
     <string name="emote_sheet_use">Використовуйте смайлик</string>
+    <string name="emote_sheet_copy">Скопіювати</string>
     <string name="emote_sheet_open_link">Відкрийте емоційне посилання</string>
     <string name="emote_sheet_image_description">Емоційне зображення</string>
     <string name="emote_sheet_twitch_emote">Емоція Twitch</string>
     <string name="emote_sheet_ffz_channel_emote">Канал FFZ Emote</string>
+    <string name="emote_sheet_ffz_global_emote">Глобальний FFZ смайл</string>
     <string name="emote_sheet_bttv_channel_emote">Канал BTTV Emote</string>
     <string name="emote_sheet_bttv_shared_emote">Спільний BTTV Emote</string>
+    <string name="emote_sheet_bttv_global_emote">Глобальний BTTV смайл</string>
     <string name="emote_sheet_seventv_channel_emote">Канал 7TV Emote</string>
+    <string name="emote_sheet_seventv_global_emote">Глобальний 7TV смайл</string>
     <string name="emote_sheet_alias_of">Псевдонім %1$s</string>
     <string name="emote_sheet_created_by">Створено %1$s</string>
     <string name="emote_sheet_zero_width_emote">(Нульова ширина)</string>
@@ -382,6 +387,7 @@
     <string name="confirm_login_cancel_positive_button">Скасувати вхід</string>
     <string name="login_menu_zoom_out">Зменшити</string>
     <string name="login_menu_zoom_in">Збільшити</string>
+    <string name="back">Назад</string>
     <plurals name="months">
         <item quantity="one">%d місяць</item>
         <item quantity="few">%d місяці</item>
