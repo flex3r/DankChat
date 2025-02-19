@@ -377,10 +377,6 @@
     <string name="emote_copied">表情符號已複製</string>
     <string name="changelog_sheet_title">DankChat已更新!</string>
     <string name="changelog_sheet_subtitle">版本%1$s的新功能:</string>
-    <string name="changelog_3_6">回覆與查看回覆串的基礎支援\n新增了用於重新連結後載入遺失訊息的設定\n新模式底部功能表設計\n新增了長時間按壓訊息後新的訊息底部功能表\n新增了按壓表情符號後新的表情符號底部功能表\n新增了新的更新紀錄底部功能表\n新增了動態FFZ表情符號的支援\n改進了表情符號選單佈局\n遷移了新追隨者端點，由於Twitch限制目前僅限直播者與mod</string>
-    <string name="changelog_3_7_3">新增了/shoutout指令\n新增了/shield跟/shieldoff指令\n修正了登入過期時的資料讀取錯誤\n新增了設置自訂訪問權杖的開發者設定\n新增了用於繞過Twitch指令處理的開發者設定\n許多更新與維護更新!</string>
-    <string name="changelog_3_8_2">新增了Android 14的支援\n新增了7TV即時表情符號更新的支援\n新增了用於控制7TV即時表情符號更新背景行為的設定</string>
-    <string name="changelog_3_9_0">新增了\"直播\"設定類別\n新增了子母畫面模式的支援來允許直播在應用程式處於背景時能繼續播放(預設關閉，需要至少Android 12)</string>
     <string name="confirm_login_cancel_title">確認登入取消</string>
     <string name="confirm_login_cancel_message">您確認要取消登入流程嗎?</string>
     <string name="confirm_login_cancel_positive_button">取消登入</string>
