@@ -47,6 +47,7 @@ inline fun <reified K, T> dankChatMigration(
 fun Any?.booleanOrNull() = this as? Boolean
 fun Any?.booleanOrDefault(default: Boolean) = this as? Boolean ?: default
 fun Any?.intOrDefault(default: Int) = this as? Int ?: default
+fun Any?.intOrNull() = this as? Int
 
 fun Any?.stringOrNull() = this as? String
 fun Any?.stringOrDefault(default: String) = this as? String ?: default
