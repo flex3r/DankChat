@@ -25,9 +25,9 @@ class ImageUploaderViewModel(
 
     fun save(uploader: ImageUploaderConfig) = viewModelScope.launch {
         val validated = uploader.copy(
-            headers = uploader.headers?.takeIf { it.isNotBlank() },
-            imageLinkPattern = uploader.imageLinkPattern?.takeIf { it.isNotBlank() },
-            deletionLinkPattern = uploader.deletionLinkPattern?.takeIf { it.isNotBlank() },
+            headers = uploader.headers?.takeIf { it.isNotBlank() }.orEmpty(),
+            imageLinkPattern = uploader.imageLinkPattern?.takeIf { it.isNotBlank() }.orEmpty(),
+            deletionLinkPattern = uploader.deletionLinkPattern?.takeIf { it.isNotBlank() }.orEmpty(),
         )
         toolsSettingsDataStore.update { it.copy(uploaderConfig = validated) }
     }
