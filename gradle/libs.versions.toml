@@ -12,7 +12,7 @@ koin = "4.0.2"
 koin-annotations = "2.0.0"
 
 androidGradlePlugin = "8.8.1"
-androidDesugarLibs = "2.1.4"
+androidDesugarLibs = "2.1.5"
 androidxActivity = "1.10.0"
 androidxBrowser = "1.8.0"
 androidxConstraintLayout = "2.2.0"
