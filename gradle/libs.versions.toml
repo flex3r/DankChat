@@ -11,7 +11,7 @@ ksp = "2.1.10-1.0.30"
 koin = "4.0.2"
 koin-annotations = "2.0.0"
 
-androidGradlePlugin = "8.8.1"
+androidGradlePlugin = "8.8.2"
 androidDesugarLibs = "2.1.5"
 androidxActivity = "1.10.0"
 androidxBrowser = "1.8.0"
