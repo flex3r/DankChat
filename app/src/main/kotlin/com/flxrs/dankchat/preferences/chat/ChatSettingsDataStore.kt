@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.preferences.chat
 
 import android.content.Context
+import androidx.datastore.core.DataMigration
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.utils.datastore.PreferenceKeys
@@ -8,7 +9,7 @@ import com.flxrs.dankchat.utils.datastore.booleanOrDefault
 import com.flxrs.dankchat.utils.datastore.booleanOrNull
 import com.flxrs.dankchat.utils.datastore.createDataStore
 import com.flxrs.dankchat.utils.datastore.dankChatPreferencesMigration
-import com.flxrs.dankchat.utils.datastore.intOrDefault
+import com.flxrs.dankchat.utils.datastore.intOrNull
 import com.flxrs.dankchat.utils.datastore.mappedStringOrDefault
 import com.flxrs.dankchat.utils.datastore.mappedStringSetOrDefault
 import com.flxrs.dankchat.utils.datastore.safeData
@@ -67,7 +68,7 @@ class ChatSettingsDataStore(
             }
 
             ChatPreferenceKeys.AnimateGifs                      -> acc.copy(animateGifs = value.booleanOrDefault(acc.animateGifs))
-            ChatPreferenceKeys.ScrollbackLength                 -> acc.copy(scrollbackLength = value.intOrDefault(acc.scrollbackLength))
+            ChatPreferenceKeys.ScrollbackLength                 -> acc.copy(scrollbackLength = value.intOrNull()?.let { it * 50 } ?: acc.scrollbackLength)
             ChatPreferenceKeys.ShowUsernames                    -> acc.copy(showUsernames = value.booleanOrDefault(acc.showUsernames))
             ChatPreferenceKeys.UserLongClickBehavior            -> acc.copy(
                 userLongClickBehavior = value.booleanOrNull()?.let {
@@ -109,13 +110,19 @@ class ChatSettingsDataStore(
             ChatPreferenceKeys.ShowRoomState                 -> acc.copy(showChatModes = value.booleanOrDefault(acc.showChatModes))
         }
     }
+    private val scrollbackResetMigration = object : DataMigration<ChatSettings> {
+        override suspend fun shouldMigrate(currentData: ChatSettings): Boolean = currentData.scrollbackLength <= 20
+        override suspend fun migrate(currentData: ChatSettings): ChatSettings = currentData.copy(scrollbackLength = currentData.scrollbackLength * 50)
+        override suspend fun cleanUp() = Unit
+    }
+
     private val dataStore = createDataStore(
         fileName = "chat",
         context = context,
         defaultValue = ChatSettings(),
         serializer = ChatSettings.serializer(),
         scope = CoroutineScope(dispatchersProvider.io + SupervisorJob()),
-        migrations = listOf(initialMigration),
+        migrations = listOf(initialMigration, scrollbackResetMigration),
     )
 
     val settings = dataStore.safeData(ChatSettings())

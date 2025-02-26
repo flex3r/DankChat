@@ -98,8 +98,8 @@ open class ChatFragment : Fragment() {
 
         collectFlow(appearanceSettingsDataStore.lineSeparator) {
             when {
-                it && binding.chat.itemDecorationCount == 0 -> binding.chat.addItemDecoration(itemDecoration)
-                else                                        -> binding.chat.removeItemDecoration(itemDecoration)
+                it && binding.chat.itemDecorationCount == 0  -> binding.chat.addItemDecoration(itemDecoration)
+                !it && binding.chat.itemDecorationCount == 1 -> binding.chat.removeItemDecoration(itemDecoration)
             }
         }
         collectFlow(chatSettingsDataStore.restartChat) {

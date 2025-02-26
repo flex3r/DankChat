@@ -442,13 +442,13 @@ class MainViewModel(
             clearDataLoadingStates(DataLoadingState.Loading)
 
             dataRepository.createFlowsIfNecessary(channels = channelList + WhisperMessage.WHISPER_CHANNEL)
+            ignoresRepository.loadUserBlocks()
 
             val channels = channelRepository.getChannels(channelList)
             awaitAll(
                 async { dataRepository.loadDankChatBadges() },
                 async { dataRepository.loadGlobalBadges() },
                 async { commandRepository.loadSupibotCommands() },
-                async { ignoresRepository.loadUserBlocks() },
                 async { dataRepository.loadGlobalBTTVEmotes() },
                 async { dataRepository.loadGlobalFFZEmotes() },
                 async { dataRepository.loadGlobalSevenTVEmotes() },

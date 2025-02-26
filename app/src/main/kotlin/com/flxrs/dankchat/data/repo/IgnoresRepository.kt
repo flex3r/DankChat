@@ -117,12 +117,12 @@ class IgnoresRepository(
             Log.d(TAG, "Failed to load user ids $userIds", it)
             return@withContext
         }
-        val twitchBlocks = users.map { user ->
+        val twitchBlocks = users.mapTo(mutableSetOf()) { user ->
             TwitchBlock(
                 id = user.id,
                 name = user.name,
             )
-        }.toSet()
+        }
 
         _twitchBlocks.update { twitchBlocks }
     }
