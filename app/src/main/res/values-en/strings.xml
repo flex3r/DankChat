@@ -175,7 +175,7 @@
     <string name="custom_login_error_empty_token">Token can\'t be empty</string>
     <string name="custom_login_error_invalid_token">Token is invalid</string>
     <string name="badge_tooltip_moderator">Moderator</string>
-    <string name="badge_tooltip_predictions">Predicted "%1$s"</string>
+    <string name="badge_tooltip_predictions">Predicted \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">Tier %1$s</string>
     <string name="preference_timestamp_title">Show timestamps</string>
     <string name="preference_mention_format_title">Mention format</string>

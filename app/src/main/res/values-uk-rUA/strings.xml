@@ -384,6 +384,18 @@
     <string name="login_menu_zoom_out">Зменшити</string>
     <string name="login_menu_zoom_in">Збільшити</string>
     <string name="back">Назад</string>
+    <plurals name="viewers_and_uptime">
+        <item quantity="one">Один
+Прямий ефір з %1$d глядачем для %2$s
+Інший
+Прямий ефір з %1$d глядачами за %2$s</item>
+        <item quantity="few">Один
+Прямий ефір з %1$d глядачем для %2$s
+Інший
+Прямий ефір з %1$d глядачами за %2$s</item>
+        <item quantity="many">Прямий ефір з %1$d глядачами за %2$s</item>
+        <item quantity="other">Прямий ефір з %1$d глядачами за %2$s</item>
+    </plurals>
     <plurals name="months">
         <item quantity="one">%d місяць</item>
         <item quantity="few">%d місяці</item>
