@@ -10,6 +10,7 @@
     <string name="add_dialog_title">Dodaj kanał</string>
     <string name="edit_dialog_title">Zmień nazwę kanału</string>
     <string name="dialog_ok">OK</string>
+    <string name="save">Zapisz</string>
     <string name="dialog_cancel">Anuluj</string>
     <string name="dialog_dismiss">Zignoruj</string>
     <string name="error_dialog_copy">Kopiuj</string>
@@ -380,6 +381,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="confirm_login_cancel_positive_button">Anuluj login</string>
     <string name="login_menu_zoom_out">Pomniejsz</string>
     <string name="login_menu_zoom_in">Powiększ</string>
+    <string name="back">Wróć</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">Na żywo z %1$d widzem przez %2$s</item>
         <item quantity="few">Na żywo z %1$d widzami przez %2$s</item>
