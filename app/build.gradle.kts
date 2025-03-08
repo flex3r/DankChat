@@ -27,13 +27,6 @@ android {
         targetSdk = 34
         versionCode = 31004
         versionName = "3.10.4"
-
-        ksp {
-            arg("room.schemaLocation", "${layout.projectDirectory}/schemas")
-            arg("KOIN_CONFIG_CHECK", "true")
-            arg("KOIN_DEFAULT_MODULE", "false")
-            arg("KOIN_USE_COMPOSE_VIEWMODEL", "true")
-        }
     }
 
     androidResources {
@@ -100,6 +93,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    //noinspection WrongGradleMethod
     androidComponents {
         beforeVariants {
             sourceSets.named("main") {
@@ -107,6 +101,13 @@ android {
             }
         }
     }
+}
+
+ksp {
+    arg("room.schemaLocation", "${layout.projectDirectory}/schemas")
+    arg("KOIN_CONFIG_CHECK", "true")
+    arg("KOIN_DEFAULT_MODULE", "false")
+    arg("KOIN_USE_COMPOSE_VIEWMODEL", "true")
 }
 
 tasks.withType<Test> {
