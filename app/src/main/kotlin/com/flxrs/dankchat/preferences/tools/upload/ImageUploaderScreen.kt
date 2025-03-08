@@ -16,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -82,7 +83,7 @@ private fun ImageUploaderScreen(
     val headers = rememberTextFieldState(uploaderConfig.headers.orEmpty())
     val linkPattern = rememberTextFieldState(uploaderConfig.imageLinkPattern.orEmpty())
     val deleteLinkPattern = rememberTextFieldState(uploaderConfig.deletionLinkPattern.orEmpty())
-    val hasChanged = remember {
+    val hasChanged = remember(uploaderConfig) {
         derivedStateOf {
             uploaderConfig.uploadUrl != uploadUrl.text ||
                     uploaderConfig.formField != formField.text ||
@@ -226,6 +227,12 @@ private fun ImageUploaderScreen(
                     onClick = {
                         resetDialog = false
                         onReset()
+                        val default = ImageUploaderConfig.DEFAULT
+                        uploadUrl.setTextAndPlaceCursorAtEnd(default.uploadUrl)
+                        formField.setTextAndPlaceCursorAtEnd(default.formField)
+                        headers.setTextAndPlaceCursorAtEnd(default.headers.orEmpty())
+                        linkPattern.setTextAndPlaceCursorAtEnd(default.imageLinkPattern.orEmpty())
+                        deleteLinkPattern.setTextAndPlaceCursorAtEnd(default.deletionLinkPattern.orEmpty())
                     },
                     content = { Text(stringResource(R.string.reset_media_uploader_dialog_positive)) },
                 )

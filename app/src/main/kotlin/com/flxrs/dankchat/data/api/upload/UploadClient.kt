@@ -60,7 +60,7 @@ class UploadClient(
                 val imageLinkPattern = uploader.imageLinkPattern
                 val deletionLinkPattern = uploader.deletionLinkPattern
 
-                if (imageLinkPattern == null) {
+                if (imageLinkPattern == null || imageLinkPattern.isBlank()) {
                     return@withContext runCatching {
                         val body = response.body.string()
                         UploadDto(
@@ -74,7 +74,7 @@ class UploadClient(
                 response
                     .asJsonObject()
                     .mapCatching { json ->
-                        val deleteLink = deletionLinkPattern?.let { json.extractLink(it) }
+                        val deleteLink = deletionLinkPattern?.takeIf { it.isNotBlank() }?.let { json.extractLink(it) }
                         val imageLink = json.extractLink(imageLinkPattern)
                         UploadDto(
                             imageLink = imageLink,

@@ -33,7 +33,10 @@ data class ImageUploaderConfig(
     val parsedHeaders: List<Pair<String, String>> = headers
         ?.split(";")
         ?.mapNotNull {
-            val splits = it.split(":", limit = 2)
+            val splits = runCatching {
+                it.split(":", limit = 2)
+            }.getOrElse { return@mapNotNull null }
+
             when {
                 splits.size != 2 -> null
                 else             -> Pair(splits[0].trim(), splits[1].trim())

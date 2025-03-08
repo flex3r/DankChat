@@ -187,7 +187,10 @@ fun ImageUploaderCategory(
                 onDismissRequest = { confirmClearDialog = false },
                 confirmButton = {
                     TextButton(
-                        onClick = { viewModel.clearUploads() },
+                        onClick = {
+                            viewModel.clearUploads()
+                            recentUploadSheetOpen = false
+                        },
                         content = { Text(stringResource(R.string.clear)) },
                     )
                 },
