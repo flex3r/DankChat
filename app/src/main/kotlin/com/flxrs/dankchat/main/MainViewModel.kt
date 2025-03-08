@@ -198,6 +198,14 @@ class MainViewModel(
         .flatMapLatestOrDefault(ConnectionState.DISCONNECTED) { chatRepository.getConnectionState(it) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), ConnectionState.DISCONNECTED)
 
+    val channels: StateFlow<List<UserName>?> = chatRepository.channels
+        .onEach { channels ->
+            if (channels != null && _currentStreamedChannel.value !in channels) {
+                _currentStreamedChannel.value = null
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), null)
+
     init {
         viewModelScope.launch {
             streamsSettingsDataStore.fetchStreams
@@ -237,14 +245,6 @@ class MainViewModel(
     }
 
     val events = eventChannel.receiveAsFlow()
-
-    val channels: StateFlow<List<UserName>?> = chatRepository.channels
-        .onEach { channels ->
-            if (channels != null && _currentStreamedChannel.value !in channels) {
-                _currentStreamedChannel.value = null
-            }
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), null)
 
     val channelMentionCount: SharedFlow<Map<UserName, Int>> = chatRepository.channelMentionCount
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), replay = 1)
