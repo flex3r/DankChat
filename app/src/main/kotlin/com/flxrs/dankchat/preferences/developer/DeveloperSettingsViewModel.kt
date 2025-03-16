@@ -19,10 +19,11 @@ class DeveloperSettingsViewModel(
     private val dankchatPreferenceStore: DankChatPreferenceStore,
 ) : ViewModel() {
 
+    private val initial = developerSettingsDataStore.current()
     val settings = developerSettingsDataStore.settings.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5.seconds),
-        initialValue = developerSettingsDataStore.current(),
+        initialValue = initial,
     )
 
     private val _events = MutableSharedFlow<DeveloperSettingsEvent>()
@@ -45,7 +46,9 @@ class DeveloperSettingsViewModel(
 
                 is DeveloperSettingsInteraction.EventSubEnabled          -> {
                     developerSettingsDataStore.update { it.copy(eventSubEnabled = interaction.value) }
-                    _events.emit(DeveloperSettingsEvent.RestartRequired)
+                    if (initial.eventSubEnabled != interaction.value) {
+                        _events.emit(DeveloperSettingsEvent.RestartRequired)
+                    }
                 }
 
                 is DeveloperSettingsInteraction.EventSubDebugOutput      -> developerSettingsDataStore.update { it.copy(eventSubDebugOutput = interaction.value) }

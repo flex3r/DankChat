@@ -22,12 +22,13 @@ class ChatSettingsViewModel(
     private val _events = MutableSharedFlow<ChatSettingsEvent>()
     val events = _events.asSharedFlow()
 
+    private val initial = chatSettingsDataStore.current()
     val settings = chatSettingsDataStore.settings
         .map { it.toState() }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5.seconds),
-            initialValue = chatSettingsDataStore.current().toState(),
+            initialValue = initial.toState(),
         )
 
     fun onInteraction(interaction: ChatSettingsInteraction) = viewModelScope.launch {
@@ -46,16 +47,17 @@ class ChatSettingsViewModel(
                 is ChatSettingsInteraction.TimestampFormat              -> chatSettingsDataStore.update { it.copy(timestampFormat = interaction.value) }
                 is ChatSettingsInteraction.Badges                       -> chatSettingsDataStore.update { it.copy(visibleBadges = interaction.value) }
                 is ChatSettingsInteraction.Emotes                       -> {
-                    val previous = settings.value.visibleEmotes
                     chatSettingsDataStore.update { it.copy(visibleEmotes = interaction.value) }
-                    if (previous != interaction.value) {
+                    if (initial.visibleEmotes != interaction.value) {
                         _events.emit(ChatSettingsEvent.RestartRequired)
                     }
                 }
 
                 is ChatSettingsInteraction.AllowUnlisted                -> {
                     chatSettingsDataStore.update { it.copy(allowUnlistedSevenTvEmotes = interaction.value) }
-                    _events.emit(ChatSettingsEvent.RestartRequired)
+                    if (initial.allowUnlistedSevenTvEmotes != interaction.value) {
+                        _events.emit(ChatSettingsEvent.RestartRequired)
+                    }
                 }
 
                 is ChatSettingsInteraction.LiveEmoteUpdates             -> chatSettingsDataStore.update { it.copy(sevenTVLiveEmoteUpdates = interaction.value) }
