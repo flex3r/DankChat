@@ -445,4 +445,5 @@
         <item quantity="one">%d month</item>
         <item quantity="other">%d months</item>
     </plurals>
+    <string name="open_source_licenses">Open source licenses</string>
 </resources>
