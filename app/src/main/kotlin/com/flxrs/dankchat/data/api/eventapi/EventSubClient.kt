@@ -27,6 +27,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.shareIn
@@ -196,7 +197,7 @@ class EventSubClient(
         }
 
         val connectedState = withTimeoutOrNull(SUBSCRIPTION_TIMEOUT) {
-            state.first { it is EventSubClientState.Connected } as EventSubClientState.Connected
+            state.filterIsInstance<EventSubClientState.Connected>().first()
         } ?: return@withLock
 
         val request = topic.createRequest(connectedState.sessionId)
