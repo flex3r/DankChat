@@ -17,7 +17,7 @@ data class DeveloperSettings(
     val shouldUsePubSub: Boolean get() = !shouldUseEventSub
 
     companion object {
-        private const val PUBSUB_SHUTDOWN_MILLIS = 1744653600000
+        private const val PUBSUB_SHUTDOWN_MILLIS = 1744653600000 // 2025-04-14T18:00:00.000Z
         const val RM_HOST_DEFAULT = "https://recent-messages.robotty.de/api/v2/"
     }
 }

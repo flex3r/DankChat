@@ -10,7 +10,6 @@ import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.eventapi.EventSubManager
 import com.flxrs.dankchat.data.api.eventapi.ModerationAction
 import com.flxrs.dankchat.data.api.eventapi.SystemMessage
-import com.flxrs.dankchat.data.api.eventapi.dto.messages.notification.ChannelModerateAction
 import com.flxrs.dankchat.data.api.recentmessages.RecentMessagesApiClient
 import com.flxrs.dankchat.data.api.recentmessages.RecentMessagesApiException
 import com.flxrs.dankchat.data.api.recentmessages.RecentMessagesError
@@ -247,40 +246,18 @@ class ChatRepository(
                 when (eventMessage) {
                     is ModerationAction -> {
                         val (id, timestamp, channelName, data) = eventMessage
-                        when (data.action) {
-                            ChannelModerateAction.Timeout,
-                            ChannelModerateAction.Untimeout,
-                            ChannelModerateAction.Ban,
-                            ChannelModerateAction.Unban,
-                            ChannelModerateAction.Mod,
-                            ChannelModerateAction.Unmod,
-                            ChannelModerateAction.Clear,
-                            ChannelModerateAction.Delete,
-                            ChannelModerateAction.Vip,
-                            ChannelModerateAction.Unvip,
-                            ChannelModerateAction.Warn,
-                            ChannelModerateAction.SharedChatTimeout,
-                            ChannelModerateAction.SharedChatUntimeout,
-                            ChannelModerateAction.SharedChatBan,
-                            ChannelModerateAction.SharedChatUnban,
-                            ChannelModerateAction.SharedChatDelete,
-                                 -> {
-                                val message = runCatching {
-                                    ModerationMessage.parseModerationAction(id, timestamp, channelName, data)
-                                }.getOrElse {
-                                    Log.d(TAG, "Failed to parse event sub moderation message: $it")
-                                    return@collect
-                                }
+                        val message = runCatching {
+                            ModerationMessage.parseModerationAction(id, timestamp, channelName, data)
+                        }.getOrElse {
+                            Log.d(TAG, "Failed to parse event sub moderation message: $it")
+                            return@collect
+                        }
 
-                                messages[message.channel]?.update { current ->
-                                    when (message.action) {
-                                        ModerationMessage.Action.Delete -> current.replaceWithTimeout(message, scrollBackLength, ::onMessageRemoved)
-                                        else                            -> current.replaceOrAddModerationMessage(message, scrollBackLength, ::onMessageRemoved)
-                                    }
-                                }
+                        messages[message.channel]?.update { current ->
+                            when (message.action) {
+                                ModerationMessage.Action.Delete -> current.replaceWithTimeout(message, scrollBackLength, ::onMessageRemoved)
+                                else                            -> current.replaceOrAddModerationMessage(message, scrollBackLength, ::onMessageRemoved)
                             }
-
-                            else -> Log.d(TAG, "Unhandled event sub moderation action: $data")
                         }
                     }
 
@@ -640,6 +617,14 @@ class ChatRepository(
     }
 
     private suspend fun handleMessage(ircMessage: IrcMessage) {
+        if (ircMessage.command == "NOTICE" && ircMessage.tags["msg-id"] in NoticeMessage.ROOM_STATE_CHANGE_MSG_IDS) {
+            val channel = ircMessage.params[0].substring(1).toUserName()
+            if (eventSubManager.connectedAndHasModerateTopic(channel)) {
+                // we get better data from event sub, avoid showing this message
+                return
+            }
+        }
+
         val userId = ircMessage.tags["user-id"]?.toUserId()
         if (ignoresRepository.isUserBlocked(userId)) {
             return
@@ -901,11 +886,6 @@ class ChatRepository(
             }
         }
         makeAndPostSystemMessage(type, setOf(channel))
-    }
-
-    private inline fun <T> Result<T>.getOrEmitFailure(step: () -> ChatLoadingStep): T? = getOrElse { throwable ->
-        _chatLoadingFailures.update { it + ChatLoadingFailure(step(), throwable) }
-        null
     }
 
     private fun Message.applyIgnores(): Message? = ignoresRepository.applyIgnores(this)

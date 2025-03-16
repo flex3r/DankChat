@@ -56,6 +56,13 @@ class EventSubManager(
         }
     }
 
+    fun connectedAndHasModerateTopic(channel: UserName): Boolean {
+        val topics = eventSubClient.topics.value
+        return eventSubClient.connected && topics.isNotEmpty() && topics.any {
+            it.topic is EventSubTopic.ChannelModerate && it.topic.channel == channel
+        }
+    }
+
     fun removeChannel(channel: UserName) {
         if (!isEnabled) {
             return

@@ -29,7 +29,7 @@ data class ModerationMessage(
     val sourceBroadcaster: UserName? = null,
     val sourceBroadcasterDisplay: DisplayName? = null,
     val targetMsgId: String? = null,
-    val durationSeconds: Int? = null,
+    val durationInt: Int? = null,
     val duration: String? = null,
     val reason: String? = null,
     val fromEventSource: Boolean = false,
@@ -47,6 +47,18 @@ data class ModerationMessage(
         Vip,
         Unvip,
         Warn,
+        Raid,
+        Unraid,
+        EmoteOnly,
+        EmoteOnlyOff,
+        Followers,
+        FollowersOff,
+        UniqueChat,
+        UniqueChatOff,
+        Slow,
+        SlowOff,
+        Subscribers,
+        SubscribersOff,
         SharedBan,
         SharedUnban,
         SharedTimeout,
@@ -112,6 +124,18 @@ data class ModerationMessage(
             Action.Vip             -> "$creatorUserDisplay has added $targetUserDisplay as a VIP of this channel."
             Action.Unvip           -> "$creatorUserDisplay has removed $targetUserDisplay as a VIP of this channel."
             Action.Warn            -> "$creatorUserDisplay has warned $targetUserDisplay${reasonsOrBlank.ifBlank { "." }}"
+            Action.Raid            -> "$creatorUserDisplay initiated a raid to $targetUserDisplay."
+            Action.Unraid          -> "$creatorUserDisplay canceled the raid to $targetUserDisplay."
+            Action.EmoteOnly       -> "$creatorUserDisplay turned on emote-only mode."
+            Action.EmoteOnlyOff    -> "$creatorUserDisplay turned off emote-only mode."
+            Action.Followers       -> "$creatorUserDisplay turned on followers-only mode.${durationInt?.takeIf { it > 0 }?.let { " ($it minutes)" }.orEmpty()}"
+            Action.FollowersOff    -> "$creatorUserDisplay turned off followers-only mode."
+            Action.UniqueChat      -> "$creatorUserDisplay turned on unique-chat mode."
+            Action.UniqueChatOff   -> "$creatorUserDisplay turned off unique-chat mode."
+            Action.Slow            -> "$creatorUserDisplay turned on slow mode.${durationInt?.let { " ($it seconds)" }.orEmpty()}"
+            Action.SlowOff         -> "$creatorUserDisplay turned off slow mode."
+            Action.Subscribers     -> "$creatorUserDisplay turned on subscribers-only mode."
+            Action.SubscribersOff  -> "$creatorUserDisplay turned off subscribers-only mode."
             Action.SharedTimeout   -> "$creatorUserDisplay timed out $targetUserDisplay$durationOrBlank in $sourceBroadcasterDisplay.$countOrBlank"
             Action.SharedUntimeout -> "$creatorUserDisplay untimedout $targetUserDisplay in $sourceBroadcasterDisplay."
             Action.SharedBan       -> "$creatorUserDisplay banned $targetUserDisplay in $sourceBroadcasterDisplay$reasonOrBlank."
@@ -144,7 +168,7 @@ data class ModerationMessage(
                 action = action,
                 targetUserDisplay = target?.toDisplayName(),
                 targetUser = target?.toUserName(),
-                durationSeconds = durationSeconds,
+                durationInt = durationSeconds,
                 duration = duration,
                 stackCount = if (target != null && duration != null) 1 else 0,
                 fromEventSource = false,
@@ -190,7 +214,7 @@ data class ModerationMessage(
                 targetUser = targetUser,
                 targetUserDisplay = targetUser?.toDisplayName(),
                 targetMsgId = targetMsgId,
-                durationSeconds = seconds,
+                durationInt = seconds,
                 duration = duration,
                 reason = reason,
                 stackCount = if (data.targetUserName != null && duration != null) 1 else 0,
@@ -219,7 +243,7 @@ data class ModerationMessage(
                 targetUser = userPair?.first,
                 targetUserDisplay = userPair?.second,
                 targetMsgId = targetMsgId,
-                durationSeconds = duration,
+                durationInt = duration,
                 duration = formattedDuration,
                 reason = reason,
                 fromEventSource = true,
@@ -234,6 +258,8 @@ data class ModerationMessage(
         private fun parseDuration(timestamp: Instant, data: ChannelModerateDto): Int? = when (data.action) {
             ChannelModerateAction.Timeout           -> data.timeout?.let { it.expiresAt.epochSeconds - timestamp.epochSeconds }?.toInt()
             ChannelModerateAction.SharedChatTimeout -> data.sharedChatTimeout?.let { it.expiresAt.epochSeconds - timestamp.epochSeconds }?.toInt()
+            ChannelModerateAction.Followers         -> data.followers?.followDurationMinutes
+            ChannelModerateAction.Slow              -> data.slow?.waitTimeSeconds
             else                                    -> null
         }
 
@@ -272,6 +298,8 @@ data class ModerationMessage(
             ChannelModerateAction.Vip                 -> data.vip?.let { it.userLogin to it.userName }
             ChannelModerateAction.Unvip               -> data.unvip?.let { it.userLogin to it.userName }
             ChannelModerateAction.Warn                -> data.warn?.let { it.userLogin to it.userName }
+            ChannelModerateAction.Raid                -> data.raid?.let { it.userLogin to it.userName }
+            ChannelModerateAction.Unraid              -> data.unraid?.let { it.userLogin to it.userName }
             ChannelModerateAction.SharedChatTimeout   -> data.sharedChatTimeout?.let { it.userLogin to it.userName }
             ChannelModerateAction.SharedChatUntimeout -> data.sharedChatUntimeout?.let { it.userLogin to it.userName }
             ChannelModerateAction.SharedChatBan       -> data.sharedChatBan?.let { it.userLogin to it.userName }
@@ -314,6 +342,18 @@ data class ModerationMessage(
             ChannelModerateAction.Vip                 -> Action.Vip
             ChannelModerateAction.Unvip               -> Action.Unvip
             ChannelModerateAction.Warn                -> Action.Warn
+            ChannelModerateAction.Raid                -> Action.Raid
+            ChannelModerateAction.Unraid              -> Action.Unraid
+            ChannelModerateAction.EmoteOnly           -> Action.EmoteOnly
+            ChannelModerateAction.EmoteOnlyOff        -> Action.EmoteOnlyOff
+            ChannelModerateAction.Followers           -> Action.Followers
+            ChannelModerateAction.FollowersOff        -> Action.FollowersOff
+            ChannelModerateAction.UniqueChat          -> Action.UniqueChat
+            ChannelModerateAction.UniqueChatOff       -> Action.UniqueChatOff
+            ChannelModerateAction.Slow                -> Action.Slow
+            ChannelModerateAction.SlowOff             -> Action.SlowOff
+            ChannelModerateAction.Subscribers         -> Action.Subscribers
+            ChannelModerateAction.SubscribersOff      -> Action.SubscribersOff
             ChannelModerateAction.SharedChatTimeout   -> Action.SharedTimeout
             ChannelModerateAction.SharedChatUntimeout -> Action.SharedUntimeout
             ChannelModerateAction.SharedChatBan       -> Action.SharedBan

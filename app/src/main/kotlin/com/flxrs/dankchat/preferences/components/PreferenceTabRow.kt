@@ -2,8 +2,8 @@ package com.flxrs.dankchat.preferences.components
 
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -19,7 +19,7 @@ fun PreferenceTabRow(
     tabText: @Composable (Int) -> String,
 ) {
     val scope = rememberCoroutineScope()
-    TabRow(
+    PrimaryTabRow(
         containerColor = appBarContainerColor.value,
         selectedTabIndex = pagerState.currentPage,
     ) {

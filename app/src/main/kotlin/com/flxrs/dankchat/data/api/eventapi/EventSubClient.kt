@@ -69,7 +69,7 @@ class EventSubClient(
         install(WebSockets)
     }
 
-    val connected get() = session?.incoming?.isClosedForReceive == false
+    val connected get() = session?.isActive == true && session?.incoming?.isClosedForReceive == false
     val state = _state.asStateFlow()
     val topics = subscriptions.asStateFlow()
     val events = eventsChannel.receiveAsFlow().shareIn(scope = scope, started = SharingStarted.Eagerly)
