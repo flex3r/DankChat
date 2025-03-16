@@ -30,7 +30,6 @@ sealed interface HelixError {
     data object TargetAlreadyBanned : HelixError
     data object TargetCannotBeBanned : HelixError
     data object ConflictingBanOperation : HelixError
-    data object ConflictingEventSubOperation : HelixError
     data object InvalidColor : HelixError
     data class MarkerError(val message: String?) : HelixError
     data object CommercialRateLimited : HelixError

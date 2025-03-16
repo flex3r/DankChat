@@ -657,33 +657,33 @@ class TwitchCommandRepository(
         }
 
         return when (error) {
-            HelixError.UserNotAuthorized            -> "You don't have permission to perform that action."
-            HelixError.Forwarded                    -> message ?: GENERIC_ERROR_MESSAGE
-            HelixError.MissingScopes                -> "Missing required scope. Re-login with your account and try again."
-            HelixError.NotLoggedIn                  -> "Missing login credentials. Re-login with your account and try again."
-            HelixError.WhisperSelf                  -> "You cannot whisper yourself."
-            HelixError.NoVerifiedPhone              -> "Due to Twitch restrictions, you are now required to have a verified phone number to send whispers. You can add a phone number in Twitch settings. https://www.twitch.tv/settings/security"
-            HelixError.RecipientBlockedUser         -> "The recipient doesn't allow whispers from strangers or you directly."
-            HelixError.RateLimited                  -> "You are being rate-limited by Twitch. Try again in a few seconds."
-            HelixError.WhisperRateLimited           -> "You may only whisper a maximum of 40 unique recipients per day. Within the per day limit, you may whisper a maximum of 3 whispers per second and a maximum of 100 whispers per minute."
-            HelixError.BroadcasterTokenRequired     -> "Due to Twitch restrictions, this command can only be used by the broadcaster. Please use the Twitch website instead."
-            HelixError.TargetAlreadyModded          -> "${targetUser ?: "The target user"} is already a moderator of this channel."
-            HelixError.TargetIsVip                  -> "${targetUser ?: "The target user"} is currently a VIP, /unvip them and retry this command."
-            HelixError.TargetNotModded              -> "${targetUser ?: "The target user"} is not a moderator of this channel."
-            HelixError.TargetNotBanned              -> "${targetUser ?: "The target user"} is not banned from this channel."
-            HelixError.TargetAlreadyBanned          -> "${targetUser ?: "The target user"} is already banned in this channel."
-            HelixError.TargetCannotBeBanned         -> "You cannot ${command.trigger} ${targetUser ?: "this user"}."
-            HelixError.ConflictingBanOperation      -> "There was a conflicting ban operation on this user. Please try again."
-            HelixError.InvalidColor                 -> "Color must be one of Twitch's supported colors (${VALID_HELIX_COLORS.joinToString()}) or a hex code (#000000) if you have Turbo or Prime."
-            is HelixError.MarkerError               -> error.message ?: GENERIC_ERROR_MESSAGE
-            HelixError.CommercialNotStreaming       -> "You must be streaming live to run commercials."
-            HelixError.CommercialRateLimited        -> "You must wait until your cool-down period expires before you can run another commercial."
-            HelixError.MissingLengthParameter       -> "Command must include a desired commercial break length that is greater than zero."
-            HelixError.NoRaidPending                -> "You don't have an active raid."
-            HelixError.RaidSelf                     -> "A channel cannot raid itself."
-            HelixError.ShoutoutSelf                 -> "The broadcaster may not give themselves a Shoutout."
-            HelixError.ShoutoutTargetNotStreaming   -> "The broadcaster is not streaming live or does not have one or more viewers."
-            is HelixError.NotInRange                -> {
+            HelixError.UserNotAuthorized          -> "You don't have permission to perform that action."
+            HelixError.Forwarded                  -> message ?: GENERIC_ERROR_MESSAGE
+            HelixError.MissingScopes              -> "Missing required scope. Re-login with your account and try again."
+            HelixError.NotLoggedIn                -> "Missing login credentials. Re-login with your account and try again."
+            HelixError.WhisperSelf                -> "You cannot whisper yourself."
+            HelixError.NoVerifiedPhone            -> "Due to Twitch restrictions, you are now required to have a verified phone number to send whispers. You can add a phone number in Twitch settings. https://www.twitch.tv/settings/security"
+            HelixError.RecipientBlockedUser       -> "The recipient doesn't allow whispers from strangers or you directly."
+            HelixError.RateLimited                -> "You are being rate-limited by Twitch. Try again in a few seconds."
+            HelixError.WhisperRateLimited         -> "You may only whisper a maximum of 40 unique recipients per day. Within the per day limit, you may whisper a maximum of 3 whispers per second and a maximum of 100 whispers per minute."
+            HelixError.BroadcasterTokenRequired   -> "Due to Twitch restrictions, this command can only be used by the broadcaster. Please use the Twitch website instead."
+            HelixError.TargetAlreadyModded        -> "${targetUser ?: "The target user"} is already a moderator of this channel."
+            HelixError.TargetIsVip                -> "${targetUser ?: "The target user"} is currently a VIP, /unvip them and retry this command."
+            HelixError.TargetNotModded            -> "${targetUser ?: "The target user"} is not a moderator of this channel."
+            HelixError.TargetNotBanned            -> "${targetUser ?: "The target user"} is not banned from this channel."
+            HelixError.TargetAlreadyBanned        -> "${targetUser ?: "The target user"} is already banned in this channel."
+            HelixError.TargetCannotBeBanned       -> "You cannot ${command.trigger} ${targetUser ?: "this user"}."
+            HelixError.ConflictingBanOperation    -> "There was a conflicting ban operation on this user. Please try again."
+            HelixError.InvalidColor               -> "Color must be one of Twitch's supported colors (${VALID_HELIX_COLORS.joinToString()}) or a hex code (#000000) if you have Turbo or Prime."
+            is HelixError.MarkerError             -> error.message ?: GENERIC_ERROR_MESSAGE
+            HelixError.CommercialNotStreaming     -> "You must be streaming live to run commercials."
+            HelixError.CommercialRateLimited      -> "You must wait until your cool-down period expires before you can run another commercial."
+            HelixError.MissingLengthParameter     -> "Command must include a desired commercial break length that is greater than zero."
+            HelixError.NoRaidPending              -> "You don't have an active raid."
+            HelixError.RaidSelf                   -> "A channel cannot raid itself."
+            HelixError.ShoutoutSelf               -> "The broadcaster may not give themselves a Shoutout."
+            HelixError.ShoutoutTargetNotStreaming -> "The broadcaster is not streaming live or does not have one or more viewers."
+            is HelixError.NotInRange              -> {
                 val range = error.validRange
                 when (val formatted = range?.let { formatRange?.invoke(it) }) {
                     null -> message ?: GENERIC_ERROR_MESSAGE
@@ -692,8 +692,7 @@ class TwitchCommandRepository(
 
             }
 
-            HelixError.Unknown,
-            HelixError.ConflictingEventSubOperation -> GENERIC_ERROR_MESSAGE
+            HelixError.Unknown                    -> GENERIC_ERROR_MESSAGE
         }
     }
 

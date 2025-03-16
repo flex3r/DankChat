@@ -328,9 +328,8 @@ class HelixApiClient(private val helixApi: HelixApi, private val json: Json) {
             }
 
             HttpStatusCode.Conflict            -> when (request.url.encodedPath) {
-                "helix/moderation/bans"        -> HelixError.ConflictingBanOperation
-                "helix/eventsub/subscriptions" -> HelixError.ConflictingEventSubOperation
-                else                           -> HelixError.Forwarded
+                "helix/moderation/bans" -> HelixError.ConflictingBanOperation
+                else                    -> HelixError.Forwarded
             }
 
             HttpStatusCode.TooEarly            -> HelixError.Forwarded
