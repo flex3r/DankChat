@@ -569,10 +569,10 @@ class TwitchCommandRepository(
     }
 
     private suspend fun enableSlowMode(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
-        val args = context.args
-        val duration = args.firstOrNull()?.toIntOrNull()
+        val args = context.args.firstOrNull() ?: "30"
+        val duration = args.toIntOrNull()
         if (duration == null) {
-            val usage = "Usage: /slow [duration] - Enables slow mode (limit how often users may send messages)." +
+            val usage = "Usage: /slow [duration] - Enables slow mode (limit how often users may send messages). " +
                     "Duration (optional, default=30) must be a positive number of seconds. Use /slowoff to disable."
             return CommandResult.AcceptedTwitchCommand(command, usage)
         }
