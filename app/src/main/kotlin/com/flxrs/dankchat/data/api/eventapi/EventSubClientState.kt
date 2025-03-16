@@ -4,6 +4,5 @@ sealed interface EventSubClientState {
     data object Disconnected : EventSubClientState
     data object Failed : EventSubClientState
     data object Connecting : EventSubClientState
-    data object Reconnecting : EventSubClientState
     data class Connected(val sessionId: String) : EventSubClientState
 }
