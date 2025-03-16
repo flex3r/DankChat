@@ -23,8 +23,9 @@ data class PointRedemptionMessage(
 ) : Message() {
     companion object {
         fun parsePointReward(timestamp: Instant, data: PointRedemptionData): PointRedemptionMessage {
+            val timeZone = TimeZone.currentSystemDefault()
             return PointRedemptionMessage(
-                timestamp = timestamp.toLocalDateTime(TimeZone.UTC).toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds(),
+                timestamp = timestamp.toLocalDateTime(timeZone).toInstant(timeZone).toEpochMilliseconds(),
                 id = data.id,
                 name = data.user.name,
                 displayName = data.user.displayName,
