@@ -8,6 +8,7 @@ import com.flxrs.dankchat.data.twitch.message.RoomState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withTimeoutOrNull
 import org.koin.core.annotation.Single
 
@@ -27,7 +28,7 @@ class GetChannelsUseCase(private val channelRepository: ChannelRepository) {
         val remainingPairs = remainingForRoomState.map { user ->
             async {
                 withTimeoutOrNull(getRoomStateDelay(remainingForRoomState)) {
-                    channelRepository.getRoomState(user)?.let { Channel(it.channelId, it.channel, it.channel.toDisplayName()) }
+                    channelRepository.getRoomStateFlow(user).firstOrNull()?.let { Channel(it.channelId, it.channel, it.channel.toDisplayName()) }
                 }
             }
         }.awaitAll().filterNotNull()
