@@ -10,7 +10,7 @@ import com.flxrs.dankchat.data.api.helix.dto.UserDto
 import com.flxrs.dankchat.data.api.helix.dto.UserFollowsDto
 import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.data.repo.channel.ChannelRepository
-import com.flxrs.dankchat.data.repo.chat.ChatRepository
+import com.flxrs.dankchat.data.repo.chat.UserStateRepository
 import com.flxrs.dankchat.data.repo.data.DataRepository
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.DateTimeUtils.asParsedZonedDateTime
@@ -24,10 +24,10 @@ import org.koin.android.annotation.KoinViewModel
 @KoinViewModel
 class UserPopupViewModel(
     savedStateHandle: SavedStateHandle,
-    private val chatRepository: ChatRepository,
     private val dataRepository: DataRepository,
     private val ignoresRepository: IgnoresRepository,
     private val channelRepository: ChannelRepository,
+    private val userStateRepository: UserStateRepository,
     private val preferenceStore: DankChatPreferenceStore,
 ) : ViewModel() {
 
@@ -90,7 +90,7 @@ class UserPopupViewModel(
         val result = runCatching {
             val channelId = args.channel?.let { channelRepository.getChannel(it)?.id }
             val isBlocked = ignoresRepository.isUserBlocked(targetUserId)
-            val canLoadFollows = channelId != targetUserId && (currentUserId == channelId || chatRepository.isModeratorInChannel(args.channel))
+            val canLoadFollows = channelId != targetUserId && (currentUserId == channelId || userStateRepository.isModeratorInChannel(args.channel))
 
             val channelUserFollows = async {
                 channelId?.takeIf { canLoadFollows }?.let { dataRepository.getChannelFollowers(channelId, targetUserId) }

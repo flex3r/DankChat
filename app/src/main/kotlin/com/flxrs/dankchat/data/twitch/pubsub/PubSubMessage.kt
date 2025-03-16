@@ -5,7 +5,7 @@ import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.twitch.pubsub.dto.moderation.ModerationActionData
 import com.flxrs.dankchat.data.twitch.pubsub.dto.redemption.PointRedemptionData
 import com.flxrs.dankchat.data.twitch.pubsub.dto.whisper.WhisperData
-import java.time.Instant
+import kotlinx.datetime.Instant
 
 sealed interface PubSubMessage {
     data class PointRedemption(

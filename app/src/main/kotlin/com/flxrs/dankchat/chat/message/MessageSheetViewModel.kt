@@ -5,13 +5,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.data.repo.RepliesRepository
+import com.flxrs.dankchat.data.repo.channel.ChannelRepository
 import com.flxrs.dankchat.data.repo.chat.ChatRepository
+import com.flxrs.dankchat.data.repo.chat.UserStateRepository
 import com.flxrs.dankchat.data.repo.command.CommandRepository
 import com.flxrs.dankchat.data.repo.command.CommandResult
 import com.flxrs.dankchat.data.twitch.chat.ConnectionState
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
-import com.flxrs.dankchat.utils.extensions.firstValueOrNull
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
@@ -25,6 +26,8 @@ class MessageSheetViewModel(
     savedStateHandle: SavedStateHandle,
     repliesRepository: RepliesRepository,
     private val chatRepository: ChatRepository,
+    private val channelRepository: ChannelRepository,
+    private val userStateRepository: UserStateRepository,
     private val commandRepository: CommandRepository,
 ) : ViewModel() {
 
@@ -33,7 +36,7 @@ class MessageSheetViewModel(
     private val message = flowOf(chatRepository.findMessage(args.messageId, args.channel))
     private val connectionState = chatRepository.getConnectionState(args.channel ?: WhisperMessage.WHISPER_CHANNEL)
 
-    val state = combine(chatRepository.userStateFlow, connectionState, message) { userState, connectionState, message ->
+    val state = combine(userStateRepository.userState, connectionState, message) { userState, connectionState, message ->
         when (message) {
             null -> MessageSheetState.NotFound
             else -> {
@@ -79,8 +82,8 @@ class MessageSheetViewModel(
 
     private suspend fun sendCommand(message: String) {
         val channel = args.channel ?: return
-        val roomState = chatRepository.getRoomState(channel).firstValueOrNull ?: return
-        val userState = chatRepository.userStateFlow.value
+        val roomState = channelRepository.getRoomState(channel) ?: return
+        val userState = userStateRepository.userState.value
         val result = runCatching {
             commandRepository.checkForCommands(message, channel, roomState, userState)
         }.getOrNull() ?: return

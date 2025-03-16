@@ -2,6 +2,8 @@ package com.flxrs.dankchat.data.api.helix
 
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.data.api.eventapi.dto.EventSubSubscriptionRequestDto
+import com.flxrs.dankchat.data.api.eventapi.dto.EventSubSubscriptionResponseListDto
 import com.flxrs.dankchat.data.api.helix.dto.AnnouncementRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.BadgeSetDto
 import com.flxrs.dankchat.data.api.helix.dto.BanRequestDto
@@ -228,6 +230,17 @@ class HelixApiClient(private val helixApi: HelixApi, private val json: Json) {
             .first()
     }
 
+    suspend fun postEventSubSubscription(request: EventSubSubscriptionRequestDto): Result<EventSubSubscriptionResponseListDto> = runCatching {
+        helixApi.postEventSubSubscription(request)
+            .throwHelixApiErrorOnFailure()
+            .body<EventSubSubscriptionResponseListDto>()
+    }
+
+    suspend fun deleteEventSubSubscription(id: String): Result<Unit> = runCatching {
+        helixApi.deleteEventSubSubscription(id)
+            .throwHelixApiErrorOnFailure()
+    }
+
     private suspend inline fun <reified T> pageUntil(amountToFetch: Int, request: (cursor: String?) -> HttpResponse?): List<T> {
         val initialPage = request(null)
             .throwHelixApiErrorOnFailure()
@@ -315,8 +328,9 @@ class HelixApiClient(private val helixApi: HelixApi, private val json: Json) {
             }
 
             HttpStatusCode.Conflict            -> when (request.url.encodedPath) {
-                "helix/moderation/bans" -> HelixError.ConflictingBanOperation
-                else                    -> HelixError.Forwarded
+                "helix/moderation/bans"        -> HelixError.ConflictingBanOperation
+                "helix/eventsub/subscriptions" -> HelixError.ConflictingEventSubOperation
+                else                           -> HelixError.Forwarded
             }
 
             HttpStatusCode.TooEarly            -> HelixError.Forwarded

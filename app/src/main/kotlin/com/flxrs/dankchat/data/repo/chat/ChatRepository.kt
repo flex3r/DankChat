@@ -2,14 +2,14 @@ package com.flxrs.dankchat.data.repo.chat
 
 import android.graphics.Color
 import android.util.Log
-import androidx.collection.LruCache
 import com.flxrs.dankchat.chat.ChatImportance
 import com.flxrs.dankchat.chat.ChatItem
 import com.flxrs.dankchat.chat.toMentionTabItems
 import com.flxrs.dankchat.data.DisplayName
-import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
-import com.flxrs.dankchat.data.api.chatters.ChattersApiClient
+import com.flxrs.dankchat.data.api.eventapi.EventSubManager
+import com.flxrs.dankchat.data.api.eventapi.ModerationAction
+import com.flxrs.dankchat.data.api.eventapi.dto.messages.notification.ChannelModerateAction
 import com.flxrs.dankchat.data.api.recentmessages.RecentMessagesApiClient
 import com.flxrs.dankchat.data.api.recentmessages.RecentMessagesApiException
 import com.flxrs.dankchat.data.api.recentmessages.RecentMessagesError
@@ -19,6 +19,7 @@ import com.flxrs.dankchat.data.repo.HighlightsRepository
 import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.data.repo.RepliesRepository
 import com.flxrs.dankchat.data.repo.UserDisplayRepository
+import com.flxrs.dankchat.data.repo.channel.ChannelRepository
 import com.flxrs.dankchat.data.repo.emote.EmoteRepository
 import com.flxrs.dankchat.data.toDisplayName
 import com.flxrs.dankchat.data.toUserId
@@ -31,7 +32,6 @@ import com.flxrs.dankchat.data.twitch.message.ModerationMessage
 import com.flxrs.dankchat.data.twitch.message.NoticeMessage
 import com.flxrs.dankchat.data.twitch.message.PointRedemptionMessage
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
-import com.flxrs.dankchat.data.twitch.message.RoomState
 import com.flxrs.dankchat.data.twitch.message.SystemMessageType
 import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
@@ -62,7 +62,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -70,14 +69,11 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -92,15 +88,18 @@ import kotlin.system.measureTimeMillis
 @Single
 class ChatRepository(
     private val recentMessagesApiClient: RecentMessagesApiClient,
-    private val chattersApiClient: ChattersApiClient,
     private val emoteRepository: EmoteRepository,
     private val highlightsRepository: HighlightsRepository,
     private val ignoresRepository: IgnoresRepository,
     private val userDisplayRepository: UserDisplayRepository,
     private val repliesRepository: RepliesRepository,
+    private val userStateRepository: UserStateRepository,
+    private val usersRepository: UsersRepository,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
     private val chatSettingsDataStore: ChatSettingsDataStore,
     private val pubSubManager: PubSubManager,
+    private val channelRepository: ChannelRepository,
+    private val eventSubManager: EventSubManager,
     @Named(type = ReadConnection::class) private val readConnection: ChatConnection,
     @Named(type = WriteConnection::class) private val writeConnection: ChatConnection,
     dispatchersProvider: DispatchersProvider,
@@ -117,11 +116,6 @@ class ChatRepository(
     private val _mentions = MutableStateFlow<List<ChatItem>>(emptyList())
     private val _whispers = MutableStateFlow<List<ChatItem>>(emptyList())
     private val connectionState = ConcurrentHashMap<UserName, MutableStateFlow<ConnectionState>>()
-    private val roomStates = ConcurrentHashMap<UserName, RoomState>()
-    private val roomStateFlows = ConcurrentHashMap<UserName, MutableSharedFlow<RoomState>>()
-    private val users = ConcurrentHashMap<UserName, LruCache<UserName, DisplayName>>()
-    private val usersFlows = ConcurrentHashMap<UserName, MutableStateFlow<Set<DisplayName>>>()
-    private val userState = MutableStateFlow(UserState())
     private val _chatLoadingFailures = MutableStateFlow(emptySet<ChatLoadingFailure>())
 
     private var lastMessage = ConcurrentHashMap<UserName, String>()
@@ -218,23 +212,19 @@ class ChatRepository(
                             current.addAndLimit(item, scrollBackLength, ::onMessageRemoved)
                         }
 
-                        if (pubSubMessage.data.userId == userState.value.userId) {
+                        if (pubSubMessage.data.userId == userStateRepository.userState.value.userId) {
                             return@collect
                         }
 
                         val userForSuggestion = message.name.valueOrDisplayName(message.displayName).toDisplayName()
-                        val currentUsers = users[GLOBAL_CHANNEL_TAG] ?: createUserCache()
-                        currentUsers.put(message.name.lowercase(), userForSuggestion)
-                        usersFlows[GLOBAL_CHANNEL_TAG]?.update {
-                            currentUsers.snapshot().values.toSet()
-                        }
+                        usersRepository.updateGlobalUser(message.name.lowercase(), userForSuggestion)
                         _channelMentionCount.increment(WhisperMessage.WHISPER_CHANNEL, 1)
                         _notificationsFlow.tryEmit(listOf(item))
                     }
 
                     is PubSubMessage.ModeratorAction -> {
                         val (timestamp, channelId, data) = pubSubMessage
-                        val channelName = roomStates.values.find { state -> state.channelId == channelId }?.channel ?: return@collect
+                        val channelName = channelRepository.tryGetUserNameById(channelId) ?: return@collect
                         val message = runCatching {
                             ModerationMessage.parseModerationAction(timestamp, channelName, data)
                         }.getOrElse {
@@ -251,12 +241,55 @@ class ChatRepository(
                 }
             }
         }
+        scope.launch {
+            eventSubManager.events.collect { eventMessage ->
+                when (eventMessage) {
+                    is ModerationAction -> {
+                        val (id, timestamp, channelName, data) = eventMessage
+                        when (data.action) {
+                            ChannelModerateAction.Timeout,
+                            ChannelModerateAction.Untimeout,
+                            ChannelModerateAction.Ban,
+                            ChannelModerateAction.Unban,
+                            ChannelModerateAction.Mod,
+                            ChannelModerateAction.Unmod,
+                            ChannelModerateAction.Clear,
+                            ChannelModerateAction.Delete,
+                            ChannelModerateAction.Vip,
+                            ChannelModerateAction.Unvip,
+                            ChannelModerateAction.Warn,
+                            ChannelModerateAction.SharedChatTimeout,
+                            ChannelModerateAction.SharedChatUntimeout,
+                            ChannelModerateAction.SharedChatBan,
+                            ChannelModerateAction.SharedChatUnban,
+                            ChannelModerateAction.SharedChatDelete,
+                                 -> {
+                                val message = runCatching {
+                                    ModerationMessage.parseModerationAction(id, timestamp, channelName, data)
+                                }.getOrElse {
+                                    Log.d(TAG, "Failed to parse event sub moderation message: $it")
+                                    return@collect
+                                }
+
+                                messages[message.channel]?.update { current ->
+                                    when (message.action) {
+                                        ModerationMessage.Action.Delete -> current.replaceWithTimeout(message, scrollBackLength, ::onMessageRemoved)
+                                        else                            -> current.replaceOrAddModerationMessage(message, scrollBackLength, ::onMessageRemoved)
+                                    }
+                                }
+                            }
+
+                            else -> Log.d(TAG, "Unhandled event sub moderation action: $data")
+                        }
+                    }
+                }
+            }
+        }
     }
 
     val notificationsFlow: SharedFlow<List<ChatItem>> = _notificationsFlow.asSharedFlow()
     val channelMentionCount: SharedFlow<Map<UserName, Int>> = _channelMentionCount.asSharedFlow()
     val unreadMessagesMap: SharedFlow<Map<UserName, Boolean>> = _unreadMessagesMap.asSharedFlow()
-    val userStateFlow: StateFlow<UserState> = userState.asStateFlow()
     val hasMentions = channelMentionCount.map { it.any { channel -> channel.key != WhisperMessage.WHISPER_CHANNEL && channel.value > 0 } }
     val hasWhispers = channelMentionCount.map { it.getOrDefault(WhisperMessage.WHISPER_CHANNEL, 0) > 0 }
     val mentions: StateFlow<List<ChatItem>> = _mentions
@@ -267,21 +300,10 @@ class ChatRepository(
 
     fun getChat(channel: UserName): StateFlow<List<ChatItem>> = messages.getOrPut(channel) { MutableStateFlow(emptyList()) }
     fun getConnectionState(channel: UserName): StateFlow<ConnectionState> = connectionState.getOrPut(channel) { MutableStateFlow(ConnectionState.DISCONNECTED) }
-    fun getRoomState(channel: UserName): SharedFlow<RoomState> = roomStateFlows.getOrPut(channel) { MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST) }
-    fun getUsers(channel: UserName): StateFlow<Set<DisplayName>> = usersFlows.getOrPut(channel) { MutableStateFlow(emptySet()) }
 
-    fun isModeratorInChannel(channel: UserName?): Boolean = channel != null && channel in userStateFlow.value.moderationChannels
     fun findMessage(messageId: String, channel: UserName?) = (channel?.let { messages[channel] } ?: whispers).value.find { it.message.id == messageId }?.message
-    fun findDisplayName(channel: UserName, userName: UserName): DisplayName? = users[channel]?.get(userName)
 
     fun clearChatLoadingFailures() = _chatLoadingFailures.update { emptySet() }
-
-    suspend fun getLatestValidUserState(minChannelsSize: Int = 0): UserState = userState
-        .filter {
-            it.userId != null && it.userId.value.isNotBlank() && it.globalEmoteSets.isNotEmpty() && it.followerEmoteSets.size >= minChannelsSize
-        }.take(count = 1).single()
-
-    fun clearUserStateEmotes() = userState.update { it.copy(globalEmoteSets = emptyList(), followerEmoteSets = emptyMap()) }
 
     suspend fun loadRecentMessagesIfEnabled(channel: UserName) {
         when {
@@ -291,34 +313,6 @@ class ChatRepository(
                 listOf(message).addAndLimit(current, scrollBackLength, ::onMessageRemoved, checkForDuplications = true)
             }
         }
-    }
-
-    suspend fun loadChatters(channel: UserName): Unit = withContext(Dispatchers.IO) {
-        if (System.currentTimeMillis() > CHATTERS_SUNSET_MILLIS) {
-            return@withContext
-        }
-
-        measureTimeMillis {
-            chattersApiClient.getChatters(channel)
-                .getOrEmitFailure { ChatLoadingStep.Chatters(channel) }
-                ?.let { chatters ->
-                    val currentUsers = users
-                        .getOrPut(channel) { createUserCache() }
-                        .also { cache ->
-                            val keys = cache.snapshot().keys
-                            chatters.total.forEach { user ->
-                                val key = user.lowercase()
-                                if (key !in keys) {
-                                    cache.put(key, user.toDisplayName())
-                                }
-                            }
-                        }
-
-                    usersFlows
-                        .getOrPut(channel) { MutableStateFlow(emptySet()) }
-                        .update { currentUsers.snapshot().values.toSet() }
-                }
-        }.let { Log.i(TAG, "Loading chatters for #$channel took $it ms") }
     }
 
     suspend fun reparseAllEmotesAndBadges() = withContext(Dispatchers.Default) {
@@ -358,12 +352,13 @@ class ChatRepository(
         messages[channel]?.value = emptyList()
     }
 
-    fun closeAndReconnect() {
+    fun closeAndReconnect() = scope.launch {
         val channels = channels.value.orEmpty()
 
         readConnection.close()
         writeConnection.close()
         pubSubManager.close()
+        eventSubManager.close()
         connectAndJoin(channels)
     }
 
@@ -373,6 +368,7 @@ class ChatRepository(
 
         if (reconnectPubsub) {
             pubSubManager.reconnect()
+            eventSubManager.reconnect()
         }
     }
 
@@ -380,6 +376,7 @@ class ChatRepository(
         readConnection.reconnectIfNecessary()
         writeConnection.reconnectIfNecessary()
         pubSubManager.reconnectIfNecessary()
+        eventSubManager.reconnectIfNecessary()
     }
 
     fun getLastMessage(): String? = lastMessage[activeChannel.value]?.withoutInvisibleChar
@@ -393,7 +390,7 @@ class ChatRepository(
         if (split.size > 2 && (split[0] == "/w" || split[0] == ".w") && split[1].isNotBlank()) {
             val message = input.substring(4 + split[1].length)
             val emotes = emoteRepository.parse3rdPartyEmotes(message, WhisperMessage.WHISPER_CHANNEL, withTwitch = true)
-            val userState = userState.value
+            val userState = userStateRepository.userState.value
             val name = dankChatPreferenceStore.userName ?: return
             val displayName = userState.displayName ?: return
             val fakeMessage = WhisperMessage(
@@ -458,9 +455,8 @@ class ChatRepository(
     fun createFlowsIfNecessary(channel: UserName) {
         messages.putIfAbsent(channel, MutableStateFlow(emptyList()))
         connectionState.putIfAbsent(channel, MutableStateFlow(ConnectionState.DISCONNECTED))
-        roomStateFlows.putIfAbsent(channel, MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST))
-        users.putIfAbsent(channel, createUserCache())
-        usersFlows.putIfAbsent(channel, MutableStateFlow(emptySet()))
+        usersRepository.initChannel(channel)
+        channelRepository.initRoomState(channel)
 
         with(_channelMentionCount) {
             if (!firstValue.contains(WhisperMessage.WHISPER_CHANNEL)) tryEmit(firstValue.apply { set(channel, 0) })
@@ -503,30 +499,28 @@ class ChatRepository(
         readConnection.joinChannels(channels)
     }
 
-    private fun partChannel(channel: UserName, unListenFromPubSub: Boolean = true): List<UserName> {
+    private fun partChannel(channel: UserName): List<UserName> {
         val updatedChannels = channels.value.orEmpty() - channel
         _channels.value = updatedChannels
 
         removeChannelData(channel)
         readConnection.partChannel(channel)
 
-        if (unListenFromPubSub) {
-            pubSubManager.removeChannel(channel)
-        }
+        pubSubManager.removeChannel(channel)
+        eventSubManager.removeChannel(channel)
 
         return updatedChannels
     }
 
     private fun removeChannelData(channel: UserName) {
         messages.remove(channel)
-        usersFlows.remove(channel)
         connectionState.remove(channel)
-        roomStateFlows.remove(channel)
-        roomStates.remove(channel)
-        users.remove(channel)
         lastMessage.remove(channel)
         _channelMentionCount.clear(channel)
         loadedRecentsInChannels.remove(channel)
+        usersRepository.removeChannel(channel)
+        userStateRepository.removeChannel(channel)
+        channelRepository.removeRoomState(channel)
         emoteRepository.removeChannel(channel)
         repliesRepository.cleanupMessageThreadsInChannel(channel)
     }
@@ -552,10 +546,10 @@ class ChatRepository(
     private suspend fun onMessage(msg: IrcMessage): List<ChatItem>? {
         when (msg.command) {
             "CLEARCHAT"       -> handleClearChat(msg)
-            "ROOMSTATE"       -> handleRoomState(msg)
             "CLEARMSG"        -> handleClearMsg(msg)
-            "USERSTATE"       -> handleUserState(msg)
-            "GLOBALUSERSTATE" -> handleGlobalUserState(msg)
+            "ROOMSTATE"       -> channelRepository.handleRoomState(msg)
+            "USERSTATE"       -> userStateRepository.handleUserState(msg)
+            "GLOBALUSERSTATE" -> userStateRepository.handleGlobalUserState(msg)
             "WHISPER"         -> handleWhisper(msg)
             else              -> handleMessage(msg)
         }
@@ -564,8 +558,8 @@ class ChatRepository(
 
     private suspend fun onWriterMessage(message: IrcMessage) {
         when (message.command) {
-            "USERSTATE"       -> handleUserState(message)
-            "GLOBALUSERSTATE" -> handleGlobalUserState(message)
+            "USERSTATE"       -> userStateRepository.handleUserState(message)
+            "GLOBALUSERSTATE" -> userStateRepository.handleGlobalUserState(message)
             "NOTICE"          -> handleMessage(message)
         }
     }
@@ -600,66 +594,6 @@ class ChatRepository(
         }
     }
 
-    private fun handleRoomState(msg: IrcMessage) {
-        val channel = msg.params.getOrNull(0)?.substring(1)?.toUserName() ?: return
-        val channelId = msg.tags["room-id"]?.toUserId() ?: return
-        val flow = roomStateFlows[channel] ?: return
-        val state = if (flow.replayCache.isEmpty()) {
-            RoomState(channel, channelId).copyFromIrcMessage(msg)
-        } else {
-            flow.firstValue.copyFromIrcMessage(msg)
-        }
-        roomStates[channel] = state
-        flow.tryEmit(state)
-    }
-
-    private fun handleGlobalUserState(msg: IrcMessage) {
-        val id = msg.tags["user-id"]?.toUserId()
-        val sets = msg.tags["emote-sets"]?.split(",")
-        val color = msg.tags["color"]
-        val name = msg.tags["display-name"]?.toDisplayName()
-        userState.update { current ->
-            current.copy(
-                userId = id ?: current.userId,
-                color = color ?: current.color,
-                displayName = name ?: current.displayName,
-                globalEmoteSets = sets ?: current.globalEmoteSets
-            )
-        }
-    }
-
-    private fun handleUserState(msg: IrcMessage) {
-        val channel = msg.params.getOrNull(0)?.substring(1)?.toUserName() ?: return
-        val id = msg.tags["user-id"]?.toUserId()
-        val sets = msg.tags["emote-sets"]?.split(",").orEmpty()
-        val color = msg.tags["color"]
-        val name = msg.tags["display-name"]?.toDisplayName()
-        val badges = msg.tags["badges"]?.split(",")
-        val hasModeration = badges?.any { it.contains("broadcaster") || it.contains("moderator") } == true
-        dankChatPreferenceStore.displayName = name
-        userState.update { current ->
-            val followerEmotes = when {
-                current.globalEmoteSets.isNotEmpty() -> sets - current.globalEmoteSets.toSet()
-                else                                 -> emptyList()
-            }
-            val newFollowerEmoteSets = current.followerEmoteSets.toMutableMap()
-            newFollowerEmoteSets[channel] = followerEmotes
-
-            val newModerationChannels = when {
-                hasModeration -> current.moderationChannels + channel
-                else          -> current.moderationChannels
-            }
-
-            current.copy(
-                userId = id ?: current.userId,
-                color = color ?: current.color,
-                displayName = name ?: current.displayName,
-                followerEmoteSets = newFollowerEmoteSets,
-                moderationChannels = newModerationChannels
-            )
-        }
-    }
-
     private fun handleClearMsg(msg: IrcMessage) {
         val parsed = runCatching {
             ModerationMessage.parseClearMessage(msg)
@@ -682,7 +616,7 @@ class ChatRepository(
             return
         }
 
-        val userState = userState.value
+        val userState = userStateRepository.userState.value
         val recipient = userState.displayName ?: return
         val message = runCatching {
             WhisperMessage.parseFromIrc(ircMessage, recipient, userState.color)
@@ -693,13 +627,7 @@ class ChatRepository(
         }.getOrNull() ?: return
 
         val userForSuggestion = message.name.valueOrDisplayName(message.displayName).toDisplayName()
-        val currentUsers = users
-            .getOrPut(GLOBAL_CHANNEL_TAG) { createUserCache() }
-            .also { it.put(message.name.lowercase(), userForSuggestion) }
-
-        usersFlows
-            .getOrPut(GLOBAL_CHANNEL_TAG) { MutableStateFlow(emptySet()) }
-            .update { currentUsers.snapshot().values.toSet() }
+        usersRepository.updateGlobalUser(message.name.lowercase(), userForSuggestion)
 
         val item = ChatItem(message, isMentionTab = true)
         _whispers.update { current ->
@@ -742,7 +670,7 @@ class ChatRepository(
         }
 
         val message = runCatching {
-            Message.parse(ircMessage, ::findChannelById)
+            Message.parse(ircMessage, channelRepository::tryGetUserNameById)
                 ?.applyIgnores()
                 ?.calculateMessageThread { channel, id -> messages[channel]?.value?.find { it.message.id == id }?.message }
                 ?.calculateHighlightState()
@@ -754,7 +682,7 @@ class ChatRepository(
             return
         } ?: return
 
-        if (message is NoticeMessage && message.channel == GLOBAL_CHANNEL_TAG) {
+        if (message is NoticeMessage && usersRepository.isGlobalChannel(message.channel)) {
             messages.keys.forEach {
                 messages[it]?.update { current ->
                     current.addAndLimit(ChatItem(message, importance = ChatImportance.SYSTEM), scrollBackLength, ::onMessageRemoved)
@@ -772,23 +700,14 @@ class ChatRepository(
                 }
 
                 val hasVip = message.badges.any { badge -> badge.badgeTag?.startsWith("vip") == true }
-                userState.update { userState ->
-                    val updatedVipChannels = when {
-                        hasVip -> userState.vipChannels + message.channel
-                        else   -> userState.vipChannels - message.channel
-
-                    }
-                    userState.copy(vipChannels = updatedVipChannels)
+                when {
+                    hasVip -> userStateRepository.addVipChannel(message.channel)
+                    else   -> userStateRepository.removeVipChannel(message.channel)
                 }
             }
 
             val userForSuggestion = message.name.valueOrDisplayName(message.displayName).toDisplayName()
-            val currentUsers = users
-                .getOrPut(message.channel) { createUserCache() }
-                .also { cache -> cache.put(message.name.lowercase(), userForSuggestion) }
-            usersFlows
-                .getOrPut(message.channel) { MutableStateFlow(emptySet()) }
-                .update { currentUsers.snapshot().values.toSet() }
+            usersRepository.updateUser(message.channel, message.name.lowercase(), userForSuggestion)
         }
 
         val items = buildList {
@@ -837,8 +756,6 @@ class ChatRepository(
             }
         }
     }
-
-    private fun createUserCache(): LruCache<UserName, DisplayName> = LruCache(USER_CACHE_SIZE)
 
     fun makeAndPostCustomSystemMessage(message: String, channel: UserName) {
         messages[channel]?.update {
@@ -913,7 +830,7 @@ class ChatRepository(
 
                     else        -> {
                         val message = runCatching {
-                            Message.parse(parsedIrc, ::findChannelById)
+                            Message.parse(parsedIrc, channelRepository::tryGetUserNameById)
                                 ?.applyIgnores()
                                 ?.calculateMessageThread { _, id -> items.find { it.message.id == id }?.message }
                                 ?.calculateHighlightState()
@@ -958,14 +875,7 @@ class ChatRepository(
                 .distinctBy { it.message.id }
                 .sortedBy { it.message.timestamp }
         }
-        val currentUsers = users
-            .getOrPut(channel) { createUserCache() }
-            .also { cache ->
-                userSuggestions.forEach { (key, value) -> cache.put(key, value) }
-            }
-        usersFlows
-            .getOrPut(channel) { MutableStateFlow(emptySet()) }
-            .update { currentUsers.snapshot().values.toSet() }
+        usersRepository.updateUsers(channel, userSuggestions)
     }
 
     private fun handleRecentMessagesFailure(throwable: Throwable, channel: UserName) {
@@ -1008,14 +918,11 @@ class ChatRepository(
 
     private fun onMessageRemoved(item: ChatItem) = repliesRepository.cleanupMessageThread(item.message)
 
-    private fun findChannelById(channelId: UserId): UserName? = roomStates.values.find { state -> state.channelId == channelId }?.channel
-
     companion object {
         private val TAG = ChatRepository::class.java.simpleName
         private val ESCAPE_TAG = 0x000E0002.codePointAsString
-        private const val USER_CACHE_SIZE = 5000
+
         private const val PUBSUB_TIMEOUT = 5000L
-        private val GLOBAL_CHANNEL_TAG = UserName("*")
         private const val CHATTERS_SUNSET_MILLIS = 1680541200000L // 2023-04-03 17:00:00
 
         val ESCAPE_TAG_REGEX = "(?<!$ESCAPE_TAG)$ESCAPE_TAG".toRegex()

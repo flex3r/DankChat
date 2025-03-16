@@ -5,7 +5,6 @@ import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.data.api.auth.AuthApi
 import com.flxrs.dankchat.data.api.badges.BadgesApi
 import com.flxrs.dankchat.data.api.bttv.BTTVApi
-import com.flxrs.dankchat.data.api.chatters.ChattersApi
 import com.flxrs.dankchat.data.api.dankchat.DankChatApi
 import com.flxrs.dankchat.data.api.ffz.FFZApi
 import com.flxrs.dankchat.data.api.helix.HelixApi
@@ -44,7 +43,6 @@ class NetworkModule {
         const val HELIX_BASE_URL = "https://api.twitch.tv/helix/"
         const val AUTH_BASE_URL = "https://id.twitch.tv/oauth2/"
         const val DANKCHAT_BASE_URL = "https://flxrs.com/api/"
-        const val TMI_BASE_URL = "https://tmi.twitch.tv/"
         const val BADGES_BASE_URL = "https://badges.twitch.tv/v1/badges/"
         const val FFZ_BASE_URL = "https://api.frankerfacez.com/v1/"
         const val BTTV_BASE_URL = "https://api.betterttv.net/3/cached/"
@@ -68,6 +66,7 @@ class NetworkModule {
         explicitNulls = false
         ignoreUnknownKeys = true
         isLenient = true
+        coerceInputValues = true
     }
 
     @Single
@@ -122,13 +121,6 @@ class NetworkModule {
             header("Client-ID", preferenceStore.clientId)
         }
     }, preferenceStore)
-
-    @Single
-    fun provideTmiApi(ktorClient: HttpClient) = ChattersApi(ktorClient.config {
-        defaultRequest {
-            url(TMI_BASE_URL)
-        }
-    })
 
     @Single
     fun provideBadgesApi(ktorClient: HttpClient) = BadgesApi(ktorClient.config {

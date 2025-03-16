@@ -103,8 +103,6 @@ class DataRepository(
     fun createFlowsIfNecessary(channels: List<UserName>) = emoteRepository.createFlowsIfNecessary(channels)
 
     suspend fun getUser(userId: UserId): UserDto? = helixApiClient.getUser(userId).getOrNull()
-    suspend fun getUserByName(name: UserName): UserDto? = helixApiClient.getUserByName(name).getOrNull()
-    suspend fun getUsersByNames(names: List<UserName>): List<UserDto> = helixApiClient.getUsersByNames(names).getOrNull().orEmpty()
     suspend fun getChannelFollowers(broadcasterId: UserId, targetId: UserId): UserFollowsDto? = helixApiClient.getChannelFollowers(broadcasterId, targetId).getOrNull()
     suspend fun getStreams(channels: List<UserName>): List<StreamDto>? = helixApiClient.getStreams(channels).getOrNull()
 

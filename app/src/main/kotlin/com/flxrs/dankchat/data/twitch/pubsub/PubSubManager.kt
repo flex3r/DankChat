@@ -1,8 +1,9 @@
 package com.flxrs.dankchat.data.twitch.pubsub
 
 import com.flxrs.dankchat.data.UserName
-import com.flxrs.dankchat.data.api.helix.HelixApiClient
+import com.flxrs.dankchat.data.repo.channel.ChannelRepository
 import com.flxrs.dankchat.di.DispatchersProvider
+import com.flxrs.dankchat.di.WebSocketOkHttpClient
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.utils.extensions.withoutOAuthPrefix
 import kotlinx.coroutines.CoroutineScope
@@ -15,11 +16,14 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 
+@Single
 class PubSubManager(
-    private val helixApiClient: HelixApiClient,
+    private val channelRepository: ChannelRepository,
     private val preferenceStore: DankChatPreferenceStore,
-    private val client: OkHttpClient,
+    @Named(type = WebSocketOkHttpClient::class) private val client: OkHttpClient,
     private val json: Json,
     dispatchersProvider: DispatchersProvider,
 ) {
@@ -44,9 +48,7 @@ class PubSubManager(
         val channels = preferenceStore.channels
 
         scope.launch {
-            val helixChannels = helixApiClient.getUsersByNames(channels)
-                .getOrNull() ?: return@launch
-
+            val helixChannels = channelRepository.getChannels(channels)
             val topics = buildSet {
                 add(PubSubTopic.Whispers(userId))
                 helixChannels.forEach {
@@ -74,9 +76,7 @@ class PubSubManager(
         }
 
         val userId = preferenceStore.userIdString ?: return@launch
-        val channelId = helixApiClient.getUserIdByName(channel)
-            .getOrNull() ?: return@launch
-
+        val channelId = channelRepository.getChannel(channel)?.id ?: return@launch
         val pointRedemptions = PubSubTopic.PointRedemptions(channelId, channel)
         val moderatorActions = PubSubTopic.ModeratorActions(userId, channelId, channel)
         listen(setOf(pointRedemptions, moderatorActions))

@@ -3,7 +3,6 @@
 import com.android.build.gradle.internal.PropertiesValueSource
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.StringReader
 import java.util.Properties
 
@@ -114,7 +113,8 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-tasks.withType<KotlinCompile> {
+kotlin {
+    jvmToolchain(jdkVersion = 17)
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_17)
         freeCompilerArgs.addAll(
@@ -126,12 +126,10 @@ tasks.withType<KotlinCompile> {
             "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
             "-opt-in=androidx.compose.foundation.layout.ExperimentalLayoutApi",
             "-opt-in=kotlin.uuid.ExperimentalUuidApi",
+            "-Xnon-local-break-continue",
+            "-Xwhen-guards",
         )
     }
-}
-
-kotlin {
-    jvmToolchain(jdkVersion = 17)
 }
 
 dependencies {

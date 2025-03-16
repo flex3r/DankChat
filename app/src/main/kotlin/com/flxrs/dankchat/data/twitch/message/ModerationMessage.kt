@@ -1,13 +1,19 @@
 package com.flxrs.dankchat.data.twitch.message
 
+import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.data.api.eventapi.dto.messages.notification.ChannelModerateAction
+import com.flxrs.dankchat.data.api.eventapi.dto.messages.notification.ChannelModerateDto
 import com.flxrs.dankchat.data.irc.IrcMessage
+import com.flxrs.dankchat.data.toDisplayName
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.pubsub.dto.moderation.ModerationActionData
 import com.flxrs.dankchat.data.twitch.pubsub.dto.moderation.ModerationActionType
 import com.flxrs.dankchat.utils.DateTimeUtils
-import java.time.Instant
-import java.time.ZoneId
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import java.util.UUID
 
 data class ModerationMessage(
@@ -17,12 +23,17 @@ data class ModerationMessage(
     val channel: UserName,
     val action: Action,
     val creatorUser: UserName? = null,
+    val creatorUserDisplay: DisplayName? = null,
     val targetUser: UserName? = null,
+    val targetUserDisplay: DisplayName? = null,
+    val sourceBroadcaster: UserName? = null,
+    val sourceBroadcasterDisplay: DisplayName? = null,
     val targetMsgId: String? = null,
     val durationSeconds: Int? = null,
     val duration: String? = null,
     val reason: String? = null,
     val fromPubsub: Boolean = false,
+    val fromEventSub: Boolean = false,
     val stackCount: Int = 0,
 ) : Message() {
     enum class Action {
@@ -34,10 +45,19 @@ data class ModerationMessage(
         Unmod,
         Clear,
         Delete,
+        Vip,
+        Unvip,
+        Warn,
+        SharedBan,
+        SharedUnban,
+        SharedTimeout,
+        SharedUntimeout,
+        SharedDelete,
     }
 
     private val durationOrBlank get() = duration?.let { " for $it" }.orEmpty()
-    private val reasonOrBlank get() = reason.takeUnless { it.isNullOrBlank() }?.let { ": \"$reason\"" }.orEmpty()
+    private val reasonOrBlank get() = reason.takeUnless { it.isNullOrBlank() }?.let { ": \"$it\"" }.orEmpty()
+    private val reasonsOrBlank get() = reason.takeUnless { it.isNullOrBlank() }?.let { ": $it" }.orEmpty()
     private fun getTrimmedReasonOrBlank(showDeletedMessage: Boolean): String {
         if (!showDeletedMessage) return ""
 
@@ -49,7 +69,7 @@ data class ModerationMessage(
         return " saying: \"$trimmed\""
     }
 
-    private val creatorOrBlank get() = creatorUser?.let { " by $it" }.orEmpty()
+    private val creatorOrBlank get() = creatorUserDisplay?.let { " by $it" }.orEmpty()
     private val countOrBlank
         get() = when {
             stackCount > 1 -> " ($stackCount times)"
@@ -59,36 +79,45 @@ data class ModerationMessage(
     // TODO localize
     fun getSystemMessage(currentUser: UserName?, showDeletedMessage: Boolean): String {
         return when (action) {
-            Action.Timeout   -> when (targetUser) {
+            Action.Timeout         -> when (targetUser) {
                 currentUser -> "You were timed out$durationOrBlank$creatorOrBlank$reasonOrBlank.$countOrBlank"
-                else        -> when (creatorUser) {
-                    null -> "$targetUser has been timed out$durationOrBlank.$countOrBlank" // irc
-                    else -> "$creatorUser timed out $targetUser$durationOrBlank.$countOrBlank"
+                else        -> when (creatorUserDisplay) {
+                    null -> "$targetUserDisplay has been timed out$durationOrBlank.$countOrBlank" // irc
+                    else -> "$creatorUserDisplay timed out $targetUserDisplay$durationOrBlank.$countOrBlank"
                 }
             }
 
-            Action.Untimeout -> "$creatorUser untimedout $targetUser."
-            Action.Ban       -> when (targetUser) {
+            Action.Untimeout       -> "$creatorUserDisplay untimedout $targetUserDisplay."
+            Action.Ban             -> when (targetUser) {
                 currentUser -> "You were banned$creatorOrBlank$reasonOrBlank."
-                else        -> when (creatorUser) {
-                    null -> "$targetUser has been permanently banned." // irc
-                    else -> "$creatorUser banned $targetUser$reasonOrBlank."
+                else        -> when (creatorUserDisplay) {
+                    null -> "$targetUserDisplay has been permanently banned." // irc
+                    else -> "$creatorUserDisplay banned $targetUserDisplay$reasonOrBlank."
 
                 }
             }
 
-            Action.Unban     -> "$creatorUser unbanned $targetUser."
-            Action.Mod       -> "$creatorUser modded $targetUser."
-            Action.Unmod     -> "$creatorUser unmodded $targetUser."
-            Action.Delete    -> when (creatorUser) {
-                null -> "A message from $targetUser was deleted${getTrimmedReasonOrBlank(showDeletedMessage)}."
-                else -> "$creatorUser deleted message from $targetUser${getTrimmedReasonOrBlank(showDeletedMessage)}."
+            Action.Unban           -> "$creatorUserDisplay unbanned $targetUserDisplay."
+            Action.Mod             -> "$creatorUserDisplay modded $targetUserDisplay."
+            Action.Unmod           -> "$creatorUserDisplay unmodded $targetUserDisplay."
+            Action.Delete          -> when (creatorUserDisplay) {
+                null -> "A message from $targetUserDisplay was deleted${getTrimmedReasonOrBlank(showDeletedMessage)}."
+                else -> "$creatorUserDisplay deleted message from $targetUserDisplay${getTrimmedReasonOrBlank(showDeletedMessage)}."
             }
 
-            Action.Clear     -> when (creatorUser) {
+            Action.Clear           -> when (creatorUserDisplay) {
                 null -> "Chat has been cleared by a moderator."
-                else -> "$creatorUser cleared the chat."
+                else -> "$creatorUserDisplay cleared the chat."
             }
+
+            Action.Vip             -> "$creatorUserDisplay has added $targetUserDisplay as a VIP of this channel."
+            Action.Unvip           -> "$creatorUserDisplay has removed $targetUserDisplay as a VIP of this channel."
+            Action.Warn            -> "$creatorUserDisplay has warned $targetUserDisplay${reasonsOrBlank.ifBlank { "." }}"
+            Action.SharedTimeout   -> "$creatorUserDisplay timed out $targetUserDisplay$durationOrBlank in $sourceBroadcasterDisplay.$countOrBlank"
+            Action.SharedUntimeout -> "$creatorUserDisplay untimedout $targetUserDisplay in $sourceBroadcasterDisplay."
+            Action.SharedBan       -> "$creatorUserDisplay banned $targetUserDisplay in $sourceBroadcasterDisplay$reasonOrBlank."
+            Action.SharedUnban     -> "$creatorUserDisplay unbanned $targetUserDisplay in $sourceBroadcasterDisplay."
+            Action.SharedDelete    -> "$creatorUserDisplay deleted message from $targetUserDisplay in $sourceBroadcasterDisplay${getTrimmedReasonOrBlank(showDeletedMessage)}"
         }
     }
 
@@ -114,6 +143,7 @@ data class ModerationMessage(
                 id = id,
                 channel = channel.toUserName(),
                 action = action,
+                targetUserDisplay = target?.toDisplayName(),
                 targetUser = target?.toUserName(),
                 durationSeconds = durationSeconds,
                 duration = duration,
@@ -135,6 +165,7 @@ data class ModerationMessage(
                 id = id,
                 channel = channel.toUserName(),
                 action = Action.Delete,
+                targetUserDisplay = target?.toDisplayName(),
                 targetUser = target?.toUserName(),
                 targetMsgId = targetMsgId,
                 reason = reason,
@@ -148,14 +179,17 @@ data class ModerationMessage(
             val targetUser = parseTargetUser(data)
             val targetMsgId = parseTargetMsgId(data)
             val reason = parseReason(data)
+            val timeZone = TimeZone.currentSystemDefault()
 
             return ModerationMessage(
-                timestamp = timestamp.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                timestamp = timestamp.toLocalDateTime(timeZone).toInstant(timeZone).toEpochMilliseconds(),
                 id = data.msgId ?: UUID.randomUUID().toString(),
                 channel = channel,
                 action = data.moderationAction.toAction(),
                 creatorUser = data.creator,
+                creatorUserDisplay = data.creator?.toDisplayName(),
                 targetUser = targetUser,
+                targetUserDisplay = targetUser?.toDisplayName(),
                 targetMsgId = targetMsgId,
                 durationSeconds = seconds,
                 duration = duration,
@@ -165,9 +199,44 @@ data class ModerationMessage(
             )
         }
 
+        fun parseModerationAction(id: String, timestamp: Instant, channel: UserName, data: ChannelModerateDto): ModerationMessage {
+            val timeZone = TimeZone.currentSystemDefault()
+            val timestampMillis = timestamp.toLocalDateTime(timeZone).toInstant(timeZone).toEpochMilliseconds()
+            val duration = parseDuration(timestamp, data)
+            val formattedDuration = duration?.let { DateTimeUtils.formatSeconds(it) }
+            val userPair = parseTargetUser(data)
+            val targetMsgId = parseTargetMsgId(data)
+            val reason = parseReason(data)
+
+            return ModerationMessage(
+                timestamp = timestampMillis,
+                id = id,
+                channel = channel,
+                action = data.action.toAction(),
+                creatorUser = data.moderatorUserLogin,
+                creatorUserDisplay = data.moderatorUserName,
+                sourceBroadcaster = data.sourceBroadcasterUserLogin,
+                sourceBroadcasterDisplay = data.sourceBroadcasterUserName,
+                targetUser = userPair?.first,
+                targetUserDisplay = userPair?.second,
+                targetMsgId = targetMsgId,
+                durationSeconds = duration,
+                duration = formattedDuration,
+                reason = reason,
+                fromPubsub = true,
+                fromEventSub = true,
+            )
+        }
+
         private fun parseDuration(seconds: Int?, data: ModerationActionData): String? = when (data.moderationAction) {
             ModerationActionType.Timeout -> seconds?.let { DateTimeUtils.formatSeconds(seconds) }
             else                         -> null
+        }
+
+        private fun parseDuration(timestamp: Instant, data: ChannelModerateDto): Int? = when (data.action) {
+            ChannelModerateAction.Timeout           -> data.timeout?.let { it.expiresAt.epochSeconds - timestamp.epochSeconds }?.toInt()
+            ChannelModerateAction.SharedChatTimeout -> data.sharedChatTimeout?.let { it.expiresAt.epochSeconds - timestamp.epochSeconds }?.toInt()
+            else                                    -> null
         }
 
         private fun parseReason(data: ModerationActionData): String? = when (data.moderationAction) {
@@ -178,14 +247,50 @@ data class ModerationMessage(
             else                         -> null
         }
 
+        private fun parseReason(data: ChannelModerateDto): String? = when (data.action) {
+            ChannelModerateAction.Ban               -> data.ban?.reason
+            ChannelModerateAction.Delete            -> data.delete?.messageBody
+            ChannelModerateAction.Timeout           -> data.timeout?.reason
+            ChannelModerateAction.SharedChatBan     -> data.sharedChatBan?.reason
+            ChannelModerateAction.SharedChatDelete  -> data.sharedChatDelete?.messageBody
+            ChannelModerateAction.SharedChatTimeout -> data.sharedChatTimeout?.reason
+            ChannelModerateAction.Warn              -> data.warn?.let { listOfNotNull(it.reason).plus(it.chatRulesCited.orEmpty()).joinToString() }
+            else                                    -> null
+        }
+
         private fun parseTargetUser(data: ModerationActionData): UserName? = when (data.moderationAction) {
             ModerationActionType.Delete -> data.args?.getOrNull(0)?.toUserName()
             else                        -> data.targetUserName
         }
 
+        private fun parseTargetUser(data: ChannelModerateDto): Pair<UserName, DisplayName>? = when (data.action) {
+            ChannelModerateAction.Timeout             -> data.timeout?.let { it.userLogin to it.userName }
+            ChannelModerateAction.Untimeout           -> data.untimeout?.let { it.userLogin to it.userName }
+            ChannelModerateAction.Ban                 -> data.ban?.let { it.userLogin to it.userName }
+            ChannelModerateAction.Unban               -> data.unban?.let { it.userLogin to it.userName }
+            ChannelModerateAction.Mod                 -> data.mod?.let { it.userLogin to it.userName }
+            ChannelModerateAction.Unmod               -> data.unmod?.let { it.userLogin to it.userName }
+            ChannelModerateAction.Delete              -> data.delete?.let { it.userLogin to it.userName }
+            ChannelModerateAction.Vip                 -> data.vip?.let { it.userLogin to it.userName }
+            ChannelModerateAction.Unvip               -> data.unvip?.let { it.userLogin to it.userName }
+            ChannelModerateAction.Warn                -> data.warn?.let { it.userLogin to it.userName }
+            ChannelModerateAction.SharedChatTimeout   -> data.sharedChatTimeout?.let { it.userLogin to it.userName }
+            ChannelModerateAction.SharedChatUntimeout -> data.sharedChatUntimeout?.let { it.userLogin to it.userName }
+            ChannelModerateAction.SharedChatBan       -> data.sharedChatBan?.let { it.userLogin to it.userName }
+            ChannelModerateAction.SharedChatUnban     -> data.sharedChatUnban?.let { it.userLogin to it.userName }
+            ChannelModerateAction.SharedChatDelete    -> data.sharedChatDelete?.let { it.userLogin to it.userName }
+            else                                      -> null
+        }
+
         private fun parseTargetMsgId(data: ModerationActionData): String? = when (data.moderationAction) {
             ModerationActionType.Delete -> data.args?.getOrNull(2)
             else                        -> null
+        }
+
+        private fun parseTargetMsgId(data: ChannelModerateDto): String? = when (data.action) {
+            ChannelModerateAction.Delete           -> data.delete?.messageId
+            ChannelModerateAction.SharedChatDelete -> data.sharedChatDelete?.messageId
+            else                                   -> null
         }
 
         private fun ModerationActionType.toAction() = when (this) {
@@ -197,6 +302,26 @@ data class ModerationMessage(
             ModerationActionType.Unmod     -> Action.Unmod
             ModerationActionType.Clear     -> Action.Clear
             ModerationActionType.Delete    -> Action.Delete
+        }
+
+        private fun ChannelModerateAction.toAction() = when (this) {
+            ChannelModerateAction.Timeout             -> Action.Timeout
+            ChannelModerateAction.Untimeout           -> Action.Untimeout
+            ChannelModerateAction.Ban                 -> Action.Ban
+            ChannelModerateAction.Unban               -> Action.Unban
+            ChannelModerateAction.Mod                 -> Action.Mod
+            ChannelModerateAction.Unmod               -> Action.Unmod
+            ChannelModerateAction.Clear               -> Action.Clear
+            ChannelModerateAction.Delete              -> Action.Delete
+            ChannelModerateAction.Vip                 -> Action.Vip
+            ChannelModerateAction.Unvip               -> Action.Unvip
+            ChannelModerateAction.Warn                -> Action.Warn
+            ChannelModerateAction.SharedChatTimeout   -> Action.SharedTimeout
+            ChannelModerateAction.SharedChatUntimeout -> Action.SharedUntimeout
+            ChannelModerateAction.SharedChatBan       -> Action.SharedBan
+            ChannelModerateAction.SharedChatUnban     -> Action.SharedUnban
+            ChannelModerateAction.SharedChatDelete    -> Action.SharedDelete
+            else                                      -> error("Unexpected moderation action $this")
         }
     }
 }
