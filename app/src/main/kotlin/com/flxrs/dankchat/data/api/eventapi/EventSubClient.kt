@@ -76,6 +76,7 @@ class EventSubClient(
 
     fun connect(url: String = DEFAULT_URL, twitchReconnect: Boolean = false) {
         Log.i(TAG, "[EventSub] starting connection, twitchReconnect=$twitchReconnect")
+        emitSystemMessage(message = "[EventSub] connecting, twitchReconnect=$twitchReconnect")
 
         if (!twitchReconnect) {
             _state.update { EventSubClientState.Connecting }
@@ -105,7 +106,7 @@ class EventSubClient(
                                 else -> (element as? Frame.Text)?.readText() ?: continue
                             }
 
-                            Log.v(TAG, "[EventSub] Received raw message: $raw")
+                            //Log.v(TAG, "[EventSub] Received raw message: $raw")
 
                             val jsonObject = json
                                 .parseToJsonElement(raw)
@@ -114,12 +115,14 @@ class EventSubClient(
                             val message = runCatching { json.decodeFromJsonElement<EventSubMessageDto>(jsonObject) }
                                 .getOrElse {
                                     Log.e(TAG, "[EventSub] failed to parse message: $it")
+                                    emitSystemMessage(message = "[EventSub] failed to parse message: $it")
                                     continue
                                 }
 
                             when (message) {
                                 is WelcomeMessageDto      -> {
                                     Log.i(TAG, "[EventSub] received welcome message, status=${message.payload.session.status}")
+                                    emitSystemMessage(message = "[EventSub] received welcome message, status=${message.payload.session.status}")
                                     retryCount = 0
                                     sessionId = message.payload.session.id
                                     _state.update { EventSubClientState.Connected(message.payload.session.id) }
@@ -149,11 +152,14 @@ class EventSubClient(
                     }
 
                     Log.i(TAG, "[EventSub] connection closed")
+                    emitSystemMessage(message = "[EventSub] connection closed")
+
                     shouldDiscardSession(sessionId)
                     return@launch
 
                 } catch (t: Throwable) {
                     Log.e(TAG, "[EventSub] connection failed: $t")
+                    emitSystemMessage(message = "[EventSub] connection failed: $t")
                     if (shouldDiscardSession(sessionId)) {
                         return@launch
                     }
@@ -163,10 +169,12 @@ class EventSubClient(
                     delay(reconnectDelay + jitter)
                     retryCount = (retryCount + 1).coerceAtMost(RECONNECT_MAX_ATTEMPTS)
                     Log.i(TAG, "[EventSub] attempting to reconnect #$retryCount..")
+                    emitSystemMessage(message = "[EventSub] attempting to reconnect #$retryCount..")
                 }
             }
 
             Log.e(TAG, "[EventSub] connection failed after $retryCount retries, cleaning up..")
+            emitSystemMessage(message = "[EventSub] connection failed after $retryCount retries, cleaning up..")
             _state.update { EventSubClientState.Failed }
             subscriptions.update { emptySet() }
             session = null
@@ -191,12 +199,12 @@ class EventSubClient(
             state.first { it is EventSubClientState.Connected } as EventSubClientState.Connected
         } ?: return@withLock
 
-
         val request = topic.createRequest(connectedState.sessionId)
         val response = helixApiClient.postEventSubSubscription(request)
             .getOrElse {
                 // TODO: handle errors, maybe retry?
                 Log.e(TAG, "[EventSub] failed to subscribe: $it")
+                emitSystemMessage(message = "[EventSub] failed to subscribe: $it")
                 return@withLock
             }
 
@@ -207,19 +215,22 @@ class EventSubClient(
         }
 
         Log.d(TAG, "[EventSub] subscribed to $topic")
-        subscriptions.update { it + SubscribedTopic(subscription!!, topic) }
+        emitSystemMessage(message = "[EventSub] subscribed to ${topic.shortFormatted()}")
+        subscriptions.update { it + SubscribedTopic(subscription, topic) }
     }
 
     suspend fun unsubscribe(topic: SubscribedTopic) {
         wantedSubscriptions -= topic.topic
         helixApiClient.deleteEventSubSubscription(topic.id)
             .getOrElse {
-                // TODO: handle errors
+                // TODO: handle errors, maybe retry?
                 Log.e(TAG, "[EventSub] failed to unsubscribe: $it")
+                emitSystemMessage(message = "[EventSub] failed to unsubscribe: $it")
                 return@getOrElse
             }
 
         Log.d(TAG, "[EventSub] unsubscribed from $topic")
+        emitSystemMessage(message = "[EventSub] unsubscribed from ${topic.topic.shortFormatted()}")
         subscriptions.update { it - topic }
     }
 
@@ -245,6 +256,7 @@ class EventSubClient(
     }
 
     private fun handleNotification(message: NotificationMessageDto) {
+        Log.d(TAG, "[EventSub] received notification message: $message")
         val event = message.payload.event
         val message = when (event) {
             is ChannelModerateDto -> ModerationAction(
@@ -259,11 +271,13 @@ class EventSubClient(
 
     private fun handleRevocation(message: RevocationMessageDto) {
         Log.i(TAG, "[EventSub] received revocation message for subscription: ${message.payload.subscription}")
+        emitSystemMessage(message = "[EventSub] received revocation message for subscription: ${message.payload.subscription}")
         subscriptions.update { it.filterTo(mutableSetOf()) { it.id == message.payload.subscription.id } }
     }
 
     private fun DefaultClientWebSocketSession.handleReconnect(message: ReconnectMessageDto) {
         Log.i(TAG, "[EventSub] received request to reconnect")
+        emitSystemMessage(message = "[EventSub] received request to reconnect")
         val url = message.payload.session.reconnectUrl
         when (url) {
             null -> connect()
@@ -272,6 +286,11 @@ class EventSubClient(
                 connect(url = url, twitchReconnect = true)
             }
         }
+    }
+
+    private fun emitSystemMessage(message: String) {
+        val systemMessage = SystemMessage(message = message)
+        eventsChannel.trySend(systemMessage)
     }
 
     private suspend fun DefaultClientWebSocketSession.closeAndCancel() {

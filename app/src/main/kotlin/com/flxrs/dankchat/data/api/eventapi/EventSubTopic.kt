@@ -10,6 +10,7 @@ import com.flxrs.dankchat.data.api.eventapi.dto.EventSubTransportDto
 
 sealed interface EventSubTopic {
     fun createRequest(sessionId: String): EventSubSubscriptionRequestDto
+    fun shortFormatted(): String
 
     data class ChannelModerate(
         val channel: UserName,
@@ -28,6 +29,8 @@ sealed interface EventSubTopic {
                 method = EventSubMethod.Websocket,
             ),
         )
+
+        override fun shortFormatted(): String = "ChannelModerate($channel)"
     }
 }
 

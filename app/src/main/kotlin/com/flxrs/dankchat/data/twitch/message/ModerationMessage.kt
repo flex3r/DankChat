@@ -32,8 +32,7 @@ data class ModerationMessage(
     val durationSeconds: Int? = null,
     val duration: String? = null,
     val reason: String? = null,
-    val fromPubsub: Boolean = false,
-    val fromEventSub: Boolean = false,
+    val fromEventSource: Boolean = false,
     val stackCount: Int = 0,
 ) : Message() {
     enum class Action {
@@ -148,7 +147,7 @@ data class ModerationMessage(
                 durationSeconds = durationSeconds,
                 duration = duration,
                 stackCount = if (target != null && duration != null) 1 else 0,
-                fromPubsub = false,
+                fromEventSource = false,
             )
         }
 
@@ -169,7 +168,7 @@ data class ModerationMessage(
                 targetUser = target?.toUserName(),
                 targetMsgId = targetMsgId,
                 reason = reason,
-                fromPubsub = false,
+                fromEventSource = false,
             )
         }
 
@@ -195,7 +194,7 @@ data class ModerationMessage(
                 duration = duration,
                 reason = reason,
                 stackCount = if (data.targetUserName != null && duration != null) 1 else 0,
-                fromPubsub = true,
+                fromEventSource = true,
             )
         }
 
@@ -223,8 +222,7 @@ data class ModerationMessage(
                 durationSeconds = duration,
                 duration = formattedDuration,
                 reason = reason,
-                fromPubsub = true,
-                fromEventSub = true,
+                fromEventSource = true,
             )
         }
 

@@ -5,12 +5,14 @@ import com.flxrs.dankchat.data.repo.channel.ChannelRepository
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.di.WebSocketOkHttpClient
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.preferences.developer.DeveloperSettingsDataStore
 import com.flxrs.dankchat.utils.extensions.withoutOAuthPrefix
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
@@ -22,6 +24,7 @@ import org.koin.core.annotation.Single
 @Single
 class PubSubManager(
     private val channelRepository: ChannelRepository,
+    private val developerSettingsDataStore: DeveloperSettingsDataStore,
     private val preferenceStore: DankChatPreferenceStore,
     @Named(type = WebSocketOkHttpClient::class) private val client: OkHttpClient,
     private val json: Json,
@@ -48,12 +51,24 @@ class PubSubManager(
         val channels = preferenceStore.channels
 
         scope.launch {
+            val usePubsub = developerSettingsDataStore.settings.first().shouldUsePubSub
             val helixChannels = channelRepository.getChannels(channels)
             val topics = buildSet {
-                add(PubSubTopic.Whispers(userId))
-                helixChannels.forEach {
-                    add(PubSubTopic.PointRedemptions(channelId = it.id, channelName = it.name))
-                    add(PubSubTopic.ModeratorActions(userId = userId, channelId = it.id, channelName = it.name))
+                when {
+                    usePubsub -> {
+                        add(PubSubTopic.Whispers(userId))
+                        helixChannels.forEach {
+                            add(PubSubTopic.PointRedemptions(channelId = it.id, channelName = it.name))
+                            add(PubSubTopic.ModeratorActions(userId = userId, channelId = it.id, channelName = it.name))
+                        }
+                    }
+
+                    else      -> {
+                        helixChannels.forEach {
+                            add(PubSubTopic.PointRedemptions(channelId = it.id, channelName = it.name))
+                        }
+                    }
+
                 }
             }
             listen(topics)
@@ -77,9 +92,16 @@ class PubSubManager(
 
         val userId = preferenceStore.userIdString ?: return@launch
         val channelId = channelRepository.getChannel(channel)?.id ?: return@launch
-        val pointRedemptions = PubSubTopic.PointRedemptions(channelId, channel)
-        val moderatorActions = PubSubTopic.ModeratorActions(userId, channelId, channel)
-        listen(setOf(pointRedemptions, moderatorActions))
+        val usePubsub = developerSettingsDataStore.settings.first().shouldUsePubSub
+
+        val topics = buildSet {
+            add(PubSubTopic.PointRedemptions(channelId, channel))
+
+            if (usePubsub) {
+                add(PubSubTopic.ModeratorActions(userId, channelId, channel))
+            }
+        }
+        listen(topics)
     }
 
     fun removeChannel(channel: UserName) {

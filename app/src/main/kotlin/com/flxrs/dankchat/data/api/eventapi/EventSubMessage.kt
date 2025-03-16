@@ -6,6 +6,8 @@ import kotlinx.datetime.Instant
 
 sealed interface EventSubMessage
 
+data class SystemMessage(val message: String) : EventSubMessage
+
 data class ModerationAction(
     val id: String,
     val timestamp: Instant,

@@ -76,7 +76,10 @@ import androidx.navigation.fragment.findNavController
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.preferences.components.ExpandablePreferenceItem
 import com.flxrs.dankchat.preferences.components.NavigationBarSpacer
+import com.flxrs.dankchat.preferences.components.PreferenceCategory
 import com.flxrs.dankchat.preferences.components.SwitchPreferenceItem
+import com.flxrs.dankchat.preferences.developer.DeveloperSettingsInteraction.EventSubDebugOutput
+import com.flxrs.dankchat.preferences.developer.DeveloperSettingsInteraction.EventSubEnabled
 import com.flxrs.dankchat.preferences.developer.customlogin.CustomLoginState
 import com.flxrs.dankchat.preferences.developer.customlogin.CustomLoginViewModel
 import com.flxrs.dankchat.theme.DankChatTheme
@@ -208,6 +211,24 @@ private fun DeveloperSettings(
                         dismiss()
                         onInteraction(it)
                     },
+                )
+            }
+
+            PreferenceCategory(title = "EventSub") {
+                if (!settings.isPubSubShutdown) {
+                    SwitchPreferenceItem(
+                        title = "Enable Twitch EventSub",
+                        summary = "Uses EventSub for various real-time events instead of deprecated PubSub",
+                        isChecked = settings.shouldUseEventSub,
+                        onClick = { onInteraction(EventSubEnabled(it)) },
+                    )
+                }
+                SwitchPreferenceItem(
+                    title = "Enable EventSub debug output",
+                    summary = "Prints debug output related to EventSub as system messages",
+                    isEnabled = settings.shouldUseEventSub,
+                    isChecked = settings.eventSubDebugOutput,
+                    onClick = { onInteraction(EventSubDebugOutput(it)) },
                 )
             }
 

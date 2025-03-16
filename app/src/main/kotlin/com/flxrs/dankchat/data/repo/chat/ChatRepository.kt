@@ -9,6 +9,7 @@ import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.eventapi.EventSubManager
 import com.flxrs.dankchat.data.api.eventapi.ModerationAction
+import com.flxrs.dankchat.data.api.eventapi.SystemMessage
 import com.flxrs.dankchat.data.api.eventapi.dto.messages.notification.ChannelModerateAction
 import com.flxrs.dankchat.data.api.recentmessages.RecentMessagesApiClient
 import com.flxrs.dankchat.data.api.recentmessages.RecentMessagesApiException
@@ -282,6 +283,8 @@ class ChatRepository(
                             else -> Log.d(TAG, "Unhandled event sub moderation action: $data")
                         }
                     }
+
+                    is SystemMessage    -> makeAndPostSystemMessage(type = SystemMessageType.Custom(eventMessage.message))
                 }
             }
         }
@@ -923,7 +926,6 @@ class ChatRepository(
         private val ESCAPE_TAG = 0x000E0002.codePointAsString
 
         private const val PUBSUB_TIMEOUT = 5000L
-        private const val CHATTERS_SUNSET_MILLIS = 1680541200000L // 2023-04-03 17:00:00
 
         val ESCAPE_TAG_REGEX = "(?<!$ESCAPE_TAG)$ESCAPE_TAG".toRegex()
         const val ZERO_WIDTH_JOINER = 0x200D.toChar().toString()
