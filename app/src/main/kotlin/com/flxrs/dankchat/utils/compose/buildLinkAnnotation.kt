@@ -3,6 +3,7 @@ package com.flxrs.dankchat.utils.compose
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.LinkInteractionListener
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.style.TextDecoration
@@ -26,4 +27,11 @@ fun textLinkStyles(): TextLinkStyles {
 fun buildLinkAnnotation(url: String): LinkAnnotation = LinkAnnotation.Url(
     url = url,
     styles = textLinkStyles(),
+)
+
+@Composable
+fun buildClickableAnnotation(text: String, onClick: LinkInteractionListener): LinkAnnotation = LinkAnnotation.Clickable(
+    tag = text,
+    styles = textLinkStyles(),
+    linkInteractionListener = onClick,
 )

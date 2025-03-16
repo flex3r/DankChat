@@ -58,6 +58,7 @@ import com.flxrs.dankchat.preferences.components.PreferenceCategoryWithSummary
 import com.flxrs.dankchat.preferences.components.PreferenceItem
 import com.flxrs.dankchat.preferences.components.PreferenceSummary
 import com.flxrs.dankchat.theme.DankChatTheme
+import com.flxrs.dankchat.utils.compose.buildClickableAnnotation
 import com.flxrs.dankchat.utils.compose.buildLinkAnnotation
 import com.flxrs.dankchat.utils.extensions.navigateSafe
 import com.google.android.material.transition.MaterialFadeThrough
@@ -193,6 +194,12 @@ private fun OverviewSettings(
                         appendLine()
                         withLink(link = buildLinkAnnotation(TWITCH_TOS_URL)) {
                             append(TWITCH_TOS_URL)
+                        }
+                        appendLine()
+                        appendLine()
+                        val licenseText = stringResource(R.string.open_source_licenses)
+                        withLink(link = buildClickableAnnotation(text = licenseText, onClick = { onNavigateRequested(R.id.action_overviewSettingsFragment_to_aboutFragment) })) {
+                            append(licenseText)
                         }
                     }
                     PreferenceSummary(annotated, Modifier.padding(top = 16.dp))

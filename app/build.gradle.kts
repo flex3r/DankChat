@@ -14,6 +14,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.nav.safeargs.kotlin)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.about.libraries)
 }
 
 android {
@@ -218,6 +219,7 @@ dependencies {
     implementation(libs.colorpicker.android)
     implementation(libs.process.phoenix)
     implementation(libs.autolinktext)
+    implementation(libs.aboutlibraries.compose.m3)
 
 // Test
     testImplementation(libs.junit.jupiter.api)

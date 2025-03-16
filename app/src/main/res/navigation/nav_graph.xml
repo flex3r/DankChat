@@ -109,6 +109,13 @@
         <action
             android:id="@+id/action_overviewSettingsFragment_to_changelogSheetFragment"
             app:destination="@id/changelogSheetFragment" />
+        <action
+            android:id="@+id/action_overviewSettingsFragment_to_aboutFragment"
+            app:destination="@id/aboutFragment"
+            app:enterAnim="@anim/open_enter"
+            app:exitAnim="@anim/close_exit"
+            app:popEnterAnim="@anim/open_enter"
+            app:popExitAnim="@anim/close_exit" />
     </fragment>
 
     <fragment
@@ -138,6 +145,10 @@
         android:id="@+id/streamsSettingsFragment"
         android:name="com.flxrs.dankchat.preferences.stream.StreamsSettingsFragment"
         android:label="StreamsSettingsFragment" />
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.flxrs.dankchat.preferences.about.AboutFragment"
+        android:label="AboutFragment" />
 
     <dialog
         android:id="@+id/channelsDialogFragment"
