@@ -65,7 +65,7 @@ data class ModerationMessage(
     }
 
     private val durationOrBlank get() = duration?.let { " for $it" }.orEmpty()
-    private val reasonOrBlank get() = reason.takeUnless { it.isNullOrBlank() }?.let { ": \"$it\"" }.orEmpty()
+    private val quotedReasonOrBlank get() = reason.takeUnless { it.isNullOrBlank() }?.let { ": \"$it\"" }.orEmpty()
     private val reasonsOrBlank get() = reason.takeUnless { it.isNullOrBlank() }?.let { ": $it" }.orEmpty()
     private fun getTrimmedReasonOrBlank(showDeletedMessage: Boolean): String {
         if (!showDeletedMessage) return ""
@@ -89,7 +89,7 @@ data class ModerationMessage(
     fun getSystemMessage(currentUser: UserName?, showDeletedMessage: Boolean): String {
         return when (action) {
             Action.Timeout         -> when (targetUser) {
-                currentUser -> "You were timed out$durationOrBlank$creatorOrBlank$reasonOrBlank.$countOrBlank"
+                currentUser -> "You were timed out$durationOrBlank$creatorOrBlank$quotedReasonOrBlank.$countOrBlank"
                 else        -> when (creatorUserDisplay) {
                     null -> "$targetUserDisplay has been timed out$durationOrBlank.$countOrBlank" // irc
                     else -> "$creatorUserDisplay timed out $targetUserDisplay$durationOrBlank.$countOrBlank"
@@ -98,10 +98,10 @@ data class ModerationMessage(
 
             Action.Untimeout       -> "$creatorUserDisplay untimedout $targetUserDisplay."
             Action.Ban             -> when (targetUser) {
-                currentUser -> "You were banned$creatorOrBlank$reasonOrBlank."
+                currentUser -> "You were banned$creatorOrBlank$quotedReasonOrBlank."
                 else        -> when (creatorUserDisplay) {
                     null -> "$targetUserDisplay has been permanently banned." // irc
-                    else -> "$creatorUserDisplay banned $targetUserDisplay$reasonOrBlank."
+                    else -> "$creatorUserDisplay banned $targetUserDisplay$quotedReasonOrBlank."
 
                 }
             }
@@ -136,7 +136,7 @@ data class ModerationMessage(
             Action.SubscribersOff  -> "$creatorUserDisplay turned off subscribers-only mode."
             Action.SharedTimeout   -> "$creatorUserDisplay timed out $targetUserDisplay$durationOrBlank in $sourceBroadcasterDisplay.$countOrBlank"
             Action.SharedUntimeout -> "$creatorUserDisplay untimedout $targetUserDisplay in $sourceBroadcasterDisplay."
-            Action.SharedBan       -> "$creatorUserDisplay banned $targetUserDisplay in $sourceBroadcasterDisplay$reasonOrBlank."
+            Action.SharedBan       -> "$creatorUserDisplay banned $targetUserDisplay in $sourceBroadcasterDisplay$quotedReasonOrBlank."
             Action.SharedUnban     -> "$creatorUserDisplay unbanned $targetUserDisplay in $sourceBroadcasterDisplay."
             Action.SharedDelete    -> "$creatorUserDisplay deleted message from $targetUserDisplay in $sourceBroadcasterDisplay${getTrimmedReasonOrBlank(showDeletedMessage)}"
         }
