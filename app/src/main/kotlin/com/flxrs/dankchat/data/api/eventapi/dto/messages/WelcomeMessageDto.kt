@@ -23,7 +23,7 @@ data class SessionPayloadDto(
     @SerialName("connected_at")
     val connectedAt: Instant,
     @SerialName("keepalive_timeout_seconds")
-    val keepAliveSeconds: Int,
+    val keepAliveSeconds: Int?,
     @SerialName("reconnect_url")
     val reconnectUrl: String? = null,
 )

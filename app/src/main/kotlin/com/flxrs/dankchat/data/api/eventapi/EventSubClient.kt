@@ -121,15 +121,15 @@ class EventSubClient(
 
                             when (message) {
                                 is WelcomeMessageDto      -> {
-                                    Log.i(TAG, "[EventSub] received welcome message, status=${message.payload.session.status}")
-                                    emitSystemMessage(message = "[EventSub] received welcome message, status=${message.payload.session.status}")
                                     retryCount = 0
                                     sessionId = message.payload.session.id
+                                    Log.i(TAG, "[EventSub]($sessionId) received welcome message, status=${message.payload.session.status}")
+                                    emitSystemMessage(message = "[EventSub]($sessionId) received welcome message, status=${message.payload.session.status}")
                                     _state.update { EventSubClientState.Connected(message.payload.session.id) }
 
                                     if (twitchReconnect) {
                                         scope.launch {
-                                            previousSession?.close()
+                                            previousSession?.closeAndCancel()
                                             previousSession = null
                                         }
 
@@ -151,15 +151,15 @@ class EventSubClient(
                         }
                     }
 
-                    Log.i(TAG, "[EventSub] connection closed")
-                    emitSystemMessage(message = "[EventSub] connection closed")
+                    Log.i(TAG, "[EventSub]($sessionId) connection closed")
+                    emitSystemMessage(message = "[EventSub]($sessionId) connection closed")
 
                     shouldDiscardSession(sessionId)
                     return@launch
 
                 } catch (t: Throwable) {
-                    Log.e(TAG, "[EventSub] connection failed: $t")
-                    emitSystemMessage(message = "[EventSub] connection failed: $t")
+                    Log.e(TAG, "[EventSub]($sessionId) connection failed: $t")
+                    emitSystemMessage(message = "[EventSub]($sessionId) connection failed: $t")
                     if (shouldDiscardSession(sessionId)) {
                         return@launch
                     }
@@ -276,11 +276,11 @@ class EventSubClient(
     }
 
     private fun DefaultClientWebSocketSession.handleReconnect(message: ReconnectMessageDto) {
-        Log.i(TAG, "[EventSub] received request to reconnect")
+        Log.i(TAG, "[EventSub] received request to reconnect: ${message.payload.session.reconnectUrl}")
         emitSystemMessage(message = "[EventSub] received request to reconnect")
-        val url = message.payload.session.reconnectUrl
+        val url = message.payload.session.reconnectUrl?.replaceFirst("ws://", "wss://")
         when (url) {
-            null -> connect()
+            null -> reconnect()
             else -> {
                 previousSession = this
                 connect(url = url, twitchReconnect = true)
@@ -303,7 +303,8 @@ class EventSubClient(
             when (current) {
                 // this session got closed but we are already connected to a new one, don't update the state
                 is EventSubClientState.Connected if sessionId != current.sessionId -> {
-                    Log.d(TAG, "[EventSub] Discarding this session as we are already connected to a new one")
+                    Log.d(TAG, "[EventSub]($sessionId) Discarding session as we are already connected to a new one (${current.sessionId})")
+                    emitSystemMessage(message = "[EventSub]($sessionId) Discarding session as we are already connected to a new one (${current.sessionId})")
                     return true
                 }
 
