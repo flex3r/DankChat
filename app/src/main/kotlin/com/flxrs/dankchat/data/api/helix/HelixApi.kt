@@ -2,6 +2,7 @@ package com.flxrs.dankchat.data.api.helix
 
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.data.api.eventapi.dto.EventSubSubscriptionRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.AnnouncementRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.BanRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.ChatSettingsRequestDto
@@ -252,5 +253,18 @@ class HelixApi(private val ktorClient: HttpClient, private val dankChatPreferenc
         parameter("moderator_id", moderatorUserId)
         contentType(ContentType.Application.Json)
         setBody(request)
+    }
+
+    suspend fun postEventSubSubscription(eventSubSubscriptionRequestDto: EventSubSubscriptionRequestDto): HttpResponse? = ktorClient.post("eventsub/subscriptions") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthPrefix ?: return null
+        bearerAuth(oAuth)
+        contentType(ContentType.Application.Json)
+        setBody(eventSubSubscriptionRequestDto)
+    }
+
+    suspend fun deleteEventSubSubscription(id: String): HttpResponse? = ktorClient.delete("eventsub/subscriptions") {
+        val oAuth = dankChatPreferenceStore.oAuthKey?.withoutOAuthPrefix ?: return null
+        bearerAuth(oAuth)
+        parameter("id", id)
     }
 }

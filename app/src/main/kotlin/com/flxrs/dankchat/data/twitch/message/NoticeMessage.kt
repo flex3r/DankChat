@@ -38,5 +38,19 @@ data class NoticeMessage(
                 message = notice,
             )
         }
+
+        val ROOM_STATE_CHANGE_MSG_IDS = listOf(
+            "followers_on_zero",
+            "followers_on",
+            "followers_off",
+            "emote_only_on",
+            "emote_only_off",
+            "r9k_on",
+            "r9k_off",
+            "subs_on",
+            "subs_off",
+            "slow_on",
+            "slow_off",
+        )
     }
 }

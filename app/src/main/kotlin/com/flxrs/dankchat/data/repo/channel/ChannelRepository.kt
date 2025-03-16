@@ -1,94 +1,112 @@
 package com.flxrs.dankchat.data.repo.channel
 
+import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
-import com.flxrs.dankchat.data.repo.chat.ChatRepository
-import com.flxrs.dankchat.data.repo.data.DataRepository
+import com.flxrs.dankchat.data.api.helix.HelixApiClient
+import com.flxrs.dankchat.data.irc.IrcMessage
+import com.flxrs.dankchat.data.repo.chat.UsersRepository
 import com.flxrs.dankchat.data.toDisplayName
+import com.flxrs.dankchat.data.toUserId
+import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.message.RoomState
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
+import com.flxrs.dankchat.utils.extensions.firstValue
 import com.flxrs.dankchat.utils.extensions.firstValueOrNull
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeoutOrNull
 import org.koin.core.annotation.Single
 import java.util.concurrent.ConcurrentHashMap
 
 @Single
 class ChannelRepository(
-    private val chatRepository: ChatRepository,
-    private val dataRepository: DataRepository,
+    private val usersRepository: UsersRepository,
+    private val helixApiClient: HelixApiClient,
     private val dankChatPreferenceStore: DankChatPreferenceStore,
 ) {
 
-    private val cache = ConcurrentHashMap<UserName, Channel>()
+    private val channelCache = ConcurrentHashMap<UserName, Channel>()
+    private val roomStates = ConcurrentHashMap<UserName, RoomState>()
+    private val roomStateFlows = ConcurrentHashMap<UserName, MutableSharedFlow<RoomState>>()
 
     suspend fun getChannel(name: UserName): Channel? {
-        val cached = cache[name]
+        val cached = channelCache[name]
         if (cached != null) {
-            return cache[name]
+            return channelCache[name]
         }
 
         val channel = when {
-            dankChatPreferenceStore.isLoggedIn -> dataRepository.getUserByName(name)?.let { Channel(it.id, it.name, it.displayName) }
+            dankChatPreferenceStore.isLoggedIn -> helixApiClient.getUserByName(name)
+                .getOrNull()
+                ?.let { Channel(it.id, it.name, it.displayName) }
+
             else                               -> null
         } ?: tryGetChannelFromIrc(name)
 
         if (channel != null) {
-            cache[name] = channel
+            channelCache[name] = channel
         }
 
         return channel
     }
 
-    suspend fun getChannels(names: List<UserName>): List<Channel> = withContext(Dispatchers.IO) {
-        val cached = names.mapNotNull { cache[it] }
-        val cachedNames = cached.map(Channel::name).toSet()
+    fun tryGetUserNameById(id: UserId): UserName? {
+        return roomStates.values.find { it.channelId == id }?.channel
+    }
+
+    fun getRoomStateFlow(channel: UserName): SharedFlow<RoomState> = roomStateFlows.getOrPut(channel) {
+        MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    }
+
+    fun getRoomState(channel: UserName): RoomState? = roomStateFlows[channel]?.firstValueOrNull
+
+    fun handleRoomState(msg: IrcMessage) {
+        val channel = msg.params.getOrNull(0)?.substring(1)?.toUserName() ?: return
+        val channelId = msg.tags["room-id"]?.toUserId() ?: return
+        val flow = roomStateFlows[channel] ?: return
+        val state = if (flow.replayCache.isEmpty()) {
+            RoomState(channel, channelId).copyFromIrcMessage(msg)
+        } else {
+            flow.firstValue.copyFromIrcMessage(msg)
+        }
+        roomStates[channel] = state
+        flow.tryEmit(state)
+    }
+
+    suspend fun getChannels(names: Collection<UserName>): List<Channel> = withContext(Dispatchers.IO) {
+        val cached = names.mapNotNull { channelCache[it] }
+        val cachedNames = cached.mapTo(mutableSetOf(), Channel::name)
         val remaining = names - cachedNames
-        if (remaining.isEmpty()) {
+        if (remaining.isEmpty() || !dankChatPreferenceStore.isLoggedIn) {
             return@withContext cached
         }
 
-        if (dankChatPreferenceStore.isLoggedIn) {
-            val channels = dataRepository.getUsersByNames(remaining).map { Channel(it.id, it.name, it.displayName) }
-            channels.forEach { cache[it.name] = it }
-            return@withContext cached + channels
-        }
+        val channels = helixApiClient.getUsersByNames(remaining)
+            .getOrNull()
+            .orEmpty()
+            .map { Channel(it.id, it.name, it.displayName) }
 
-        val (roomStatePairs, remainingForRoomState) = remaining.fold(Pair(emptyList<RoomState>(), emptyList<UserName>())) { (states, remaining), user ->
-            when (val state = chatRepository.getRoomState(user).firstValueOrNull) {
-                null -> states to remaining + user
-                else -> states + state to remaining
-            }
-        }
+        channels.forEach { channelCache[it.name] = it }
+        return@withContext cached + channels
+    }
 
-        val remainingPairs = remainingForRoomState.map { user ->
-            async {
-                withTimeoutOrNull(getRoomStateDelay(remainingForRoomState)) {
-                    chatRepository
-                        .getRoomState(user)
-                        .firstOrNull()
-                        ?.let { Channel(it.channelId, it.channel, it.channel.toDisplayName()) }
-                }
-            }
-        }.awaitAll().filterNotNull()
+    fun cacheChannels(channels: List<Channel>) {
+        channels.forEach { channelCache[it.name] = it }
+    }
 
-        val roomStateChannels = roomStatePairs.map { Channel(it.channelId, it.channel, it.channel.toDisplayName()) } + remainingPairs
-        roomStateChannels.forEach { cache[it.name] = it }
-        cached + roomStateChannels
+    fun initRoomState(channel: UserName) {
+        roomStateFlows.putIfAbsent(channel, MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST))    }
+
+    fun removeRoomState(channel: UserName) {
+        roomStates.remove(channel)
+        roomStateFlows.remove(channel)
     }
 
     private fun tryGetChannelFromIrc(name: UserName): Channel? {
-        val id = chatRepository.getRoomState(name).firstValueOrNull?.channelId
-        val displayName = chatRepository.findDisplayName(name, name)
+        val id = roomStates[name]?.channelId
+        val displayName = usersRepository.findDisplayName(name, name)
         return id?.let { Channel(it, name, displayName ?: name.toDisplayName()) }
-    }
-
-    companion object {
-        private const val IRC_TIMEOUT_DELAY = 5_000L
-        private const val IRC_TIMEOUT_CHANNEL_DELAY = 600L
-        private fun getRoomStateDelay(channels: List<UserName>): Long = IRC_TIMEOUT_DELAY + channels.size * IRC_TIMEOUT_CHANNEL_DELAY
     }
 }

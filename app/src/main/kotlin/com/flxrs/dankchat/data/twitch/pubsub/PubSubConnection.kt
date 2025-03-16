@@ -23,6 +23,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonObject
@@ -35,7 +37,6 @@ import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.json.JSONObject
-import java.time.Instant
 import java.util.UUID
 import kotlin.random.Random
 import kotlin.random.nextLong
@@ -247,7 +248,7 @@ class PubSubConnection(
 
                             val parsedMessage = jsonFormat.decodeOrNull<PubSubDataMessage<PointRedemption>>(message) ?: return
                             PubSubMessage.PointRedemption(
-                                timestamp = Instant.parse(parsedMessage.data.timestamp),
+                                timestamp = parsedMessage.data.timestamp,
                                 channelName = match.channelName,
                                 channelId = match.channelId,
                                 data = parsedMessage.data.redemption
@@ -258,7 +259,7 @@ class PubSubConnection(
                             when (messageTopic) {
                                 "moderator_added"   -> {
                                     val parsedMessage = jsonFormat.decodeOrNull<PubSubDataMessage<ModeratorAddedData>>(message) ?: return
-                                    val timestamp = Instant.now()
+                                    val timestamp = Clock.System.now()
                                     PubSubMessage.ModeratorAction(
                                         timestamp = timestamp,
                                         channelId = parsedMessage.data.channelId,
@@ -281,7 +282,7 @@ class PubSubConnection(
                                         return
                                     }
                                     val timestamp = when {
-                                        parsedMessage.data.createdAt.isEmpty() -> Instant.now()
+                                        parsedMessage.data.createdAt.isEmpty() -> Clock.System.now()
                                         else                                   -> Instant.parse(parsedMessage.data.createdAt)
                                     }
                                     PubSubMessage.ModeratorAction(

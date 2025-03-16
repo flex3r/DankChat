@@ -2,7 +2,6 @@ package com.flxrs.dankchat.data.repo.command
 
 import android.util.Log
 import com.flxrs.dankchat.data.UserName
-import com.flxrs.dankchat.data.api.chatters.ChattersApiClient
 import com.flxrs.dankchat.data.api.helix.HelixApiClient
 import com.flxrs.dankchat.data.api.supibot.SupibotApiClient
 import com.flxrs.dankchat.data.repo.IgnoresRepository
@@ -43,7 +42,6 @@ class CommandRepository(
     private val twitchCommandRepository: TwitchCommandRepository,
     private val helixApiClient: HelixApiClient,
     private val supibotApiClient: SupibotApiClient,
-    private val chattersApiClient: ChattersApiClient,
     private val chatSettingsDataStore: ChatSettingsDataStore,
     private val developerSettingsDataStore: DeveloperSettingsDataStore,
     private val preferenceStore: DankChatPreferenceStore,
@@ -248,13 +246,6 @@ class CommandRepository(
         return result.getOrElse {
             CommandResult.AcceptedWithResponse("User $target couldn't be unblocked, an unknown error occurred!")
         }
-    }
-
-    private suspend fun chattersCommand(channel: UserName): CommandResult.AcceptedWithResponse {
-        val result = chattersApiClient.getChatterCount(channel)
-            .getOrNull() ?: return CommandResult.AcceptedWithResponse("An unknown error occurred!")
-
-        return CommandResult.AcceptedWithResponse("Chatter count: $result")
     }
 
     private suspend fun uptimeCommand(channel: UserName): CommandResult.AcceptedWithResponse {

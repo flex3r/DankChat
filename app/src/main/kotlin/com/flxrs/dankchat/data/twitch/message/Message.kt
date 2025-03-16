@@ -1,6 +1,6 @@
 package com.flxrs.dankchat.data.twitch.message
 
-import android.graphics.Color
+import androidx.core.graphics.toColorInt
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.irc.IrcMessage
@@ -18,7 +18,7 @@ sealed class Message {
 
     companion object {
         private const val DEFAULT_COLOR_TAG = "#717171"
-        val DEFAULT_COLOR = Color.parseColor(DEFAULT_COLOR_TAG)
+        val DEFAULT_COLOR = DEFAULT_COLOR_TAG.toColorInt()
         fun parse(message: IrcMessage, findChannel: (UserId) -> UserName?): Message? = with(message) {
             return when (command) {
                 "PRIVMSG"    -> PrivMessage.parsePrivMessage(message, findChannel)

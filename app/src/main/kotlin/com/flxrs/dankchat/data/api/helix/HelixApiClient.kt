@@ -2,6 +2,8 @@ package com.flxrs.dankchat.data.api.helix
 
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.data.api.eventapi.dto.EventSubSubscriptionRequestDto
+import com.flxrs.dankchat.data.api.eventapi.dto.EventSubSubscriptionResponseListDto
 import com.flxrs.dankchat.data.api.helix.dto.AnnouncementRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.BadgeSetDto
 import com.flxrs.dankchat.data.api.helix.dto.BanRequestDto
@@ -226,6 +228,17 @@ class HelixApiClient(private val helixApi: HelixApi, private val json: Json) {
             .body<DataListDto<ShieldModeStatusDto>>()
             .data
             .first()
+    }
+
+    suspend fun postEventSubSubscription(request: EventSubSubscriptionRequestDto): Result<EventSubSubscriptionResponseListDto> = runCatching {
+        helixApi.postEventSubSubscription(request)
+            .throwHelixApiErrorOnFailure()
+            .body<EventSubSubscriptionResponseListDto>()
+    }
+
+    suspend fun deleteEventSubSubscription(id: String): Result<Unit> = runCatching {
+        helixApi.deleteEventSubSubscription(id)
+            .throwHelixApiErrorOnFailure()
     }
 
     private suspend inline fun <reified T> pageUntil(amountToFetch: Int, request: (cursor: String?) -> HttpResponse?): List<T> {

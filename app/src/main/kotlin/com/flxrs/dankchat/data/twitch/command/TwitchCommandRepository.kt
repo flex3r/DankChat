@@ -1,8 +1,8 @@
 package com.flxrs.dankchat.data.twitch.command
 
 import android.util.Log
+import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserId
-import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.helix.HelixApiClient
 import com.flxrs.dankchat.data.api.helix.HelixApiException
 import com.flxrs.dankchat.data.api.helix.HelixError
@@ -178,7 +178,7 @@ class TwitchCommandRepository(
         }
 
         val targetId = target.id
-        val targetUser = target.name
+        val targetUser = target.displayName
         return helixApiClient.postModerator(context.channelId, targetId).fold(
             onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "You have added $targetUser as a moderator of this channel.") },
             onFailure = {
@@ -199,7 +199,7 @@ class TwitchCommandRepository(
         }
 
         val targetId = target.id
-        val targetUser = target.name
+        val targetUser = target.displayName
         return helixApiClient.deleteModerator(context.channelId, targetId).fold(
             onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "You have removed $targetUser as a moderator of this channel.") },
             onFailure = {
@@ -238,7 +238,7 @@ class TwitchCommandRepository(
         }
 
         val targetId = target.id
-        val targetUser = target.name
+        val targetUser = target.displayName
         return helixApiClient.postVip(context.channelId, targetId).fold(
             onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "You have added $targetUser as a VIP of this channel.") },
             onFailure = {
@@ -259,7 +259,7 @@ class TwitchCommandRepository(
         }
 
         val targetId = target.id
-        val targetUser = target.name
+        val targetUser = target.displayName
         return helixApiClient.deleteVip(context.channelId, targetId).fold(
             onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = "You have removed $targetUser as a VIP of this channel.") },
             onFailure = {
@@ -290,7 +290,7 @@ class TwitchCommandRepository(
         val reason = args.drop(1).joinToString(separator = " ").ifBlank { null }
 
         val targetId = target.id
-        val targetUser = target.name
+        val targetUser = target.displayName
         val request = BanRequestDto(BanRequestDataDto(targetId, duration = null, reason = reason))
         return helixApiClient.postBan(context.channelId, currentUserId, request).fold(
             onSuccess = { CommandResult.AcceptedTwitchCommand(command) },
@@ -316,7 +316,7 @@ class TwitchCommandRepository(
         return helixApiClient.deleteBan(context.channelId, currentUserId, targetId).fold(
             onSuccess = { CommandResult.AcceptedTwitchCommand(command) },
             onFailure = {
-                val response = "Failed to unban user - ${it.toErrorMessage(command, target.name)}"
+                val response = "Failed to unban user - ${it.toErrorMessage(command, target.displayName)}"
                 CommandResult.AcceptedTwitchCommand(command, response)
             }
         )
@@ -356,7 +356,7 @@ class TwitchCommandRepository(
         return helixApiClient.postBan(context.channelId, currentUserId, request).fold(
             onSuccess = { CommandResult.AcceptedTwitchCommand(command) },
             onFailure = {
-                val response = "Failed to timeout user - ${it.toErrorMessage(command, target.name)}"
+                val response = "Failed to timeout user - ${it.toErrorMessage(command, target.displayName)}"
                 CommandResult.AcceptedTwitchCommand(command, response)
             }
         )
@@ -569,10 +569,10 @@ class TwitchCommandRepository(
     }
 
     private suspend fun enableSlowMode(command: TwitchCommand, currentUserId: UserId, context: CommandContext): CommandResult {
-        val args = context.args
-        val duration = args.firstOrNull()?.toIntOrNull()
+        val args = context.args.firstOrNull() ?: "30"
+        val duration = args.toIntOrNull()
         if (duration == null) {
-            val usage = "Usage: /slow [duration] - Enables slow mode (limit how often users may send messages)." +
+            val usage = "Usage: /slow [duration] - Enables slow mode (limit how often users may send messages). " +
                     "Duration (optional, default=30) must be a positive number of seconds. Use /slowoff to disable."
             return CommandResult.AcceptedTwitchCommand(command, usage)
         }
@@ -650,7 +650,7 @@ class TwitchCommandRepository(
         )
     }
 
-    private fun Throwable.toErrorMessage(command: TwitchCommand, targetUser: UserName? = null, formatRange: ((IntRange) -> String)? = null): String {
+    private fun Throwable.toErrorMessage(command: TwitchCommand, targetUser: DisplayName? = null, formatRange: ((IntRange) -> String)? = null): String {
         Log.v(TAG, "Command failed: $this")
         if (this !is HelixApiException) {
             return GENERIC_ERROR_MESSAGE

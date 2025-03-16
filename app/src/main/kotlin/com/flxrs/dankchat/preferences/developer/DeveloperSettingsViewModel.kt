@@ -19,10 +19,11 @@ class DeveloperSettingsViewModel(
     private val dankchatPreferenceStore: DankChatPreferenceStore,
 ) : ViewModel() {
 
+    private val initial = developerSettingsDataStore.current()
     val settings = developerSettingsDataStore.settings.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5.seconds),
-        initialValue = developerSettingsDataStore.current(),
+        initialValue = initial,
     )
 
     private val _events = MutableSharedFlow<DeveloperSettingsEvent>()
@@ -43,6 +44,14 @@ class DeveloperSettingsViewModel(
                     _events.emit(DeveloperSettingsEvent.RestartRequired)
                 }
 
+                is DeveloperSettingsInteraction.EventSubEnabled          -> {
+                    developerSettingsDataStore.update { it.copy(eventSubEnabled = interaction.value) }
+                    if (initial.eventSubEnabled != interaction.value) {
+                        _events.emit(DeveloperSettingsEvent.RestartRequired)
+                    }
+                }
+
+                is DeveloperSettingsInteraction.EventSubDebugOutput      -> developerSettingsDataStore.update { it.copy(eventSubDebugOutput = interaction.value) }
                 is DeveloperSettingsInteraction.RestartRequired          -> _events.emit(DeveloperSettingsEvent.RestartRequired)
             }
         }
@@ -58,6 +67,8 @@ sealed interface DeveloperSettingsInteraction {
     data class RepeatedSending(val value: Boolean) : DeveloperSettingsInteraction
     data class BypassCommandHandling(val value: Boolean) : DeveloperSettingsInteraction
     data class CustomRecentMessagesHost(val host: String) : DeveloperSettingsInteraction
+    data class EventSubEnabled(val value: Boolean) : DeveloperSettingsInteraction
+    data class EventSubDebugOutput(val value: Boolean) : DeveloperSettingsInteraction
     data object RestartRequired : DeveloperSettingsInteraction
 }
 

@@ -3,8 +3,10 @@ package com.flxrs.dankchat.data.twitch.message
 import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.twitch.pubsub.dto.redemption.PointRedemptionData
-import java.time.Instant
-import java.time.ZoneId
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import java.util.UUID
 
 data class PointRedemptionMessage(
@@ -21,8 +23,9 @@ data class PointRedemptionMessage(
 ) : Message() {
     companion object {
         fun parsePointReward(timestamp: Instant, data: PointRedemptionData): PointRedemptionMessage {
+            val timeZone = TimeZone.currentSystemDefault()
             return PointRedemptionMessage(
-                timestamp = timestamp.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                timestamp = timestamp.toLocalDateTime(timeZone).toInstant(timeZone).toEpochMilliseconds(),
                 id = data.id,
                 name = data.user.name,
                 displayName = data.user.displayName,
