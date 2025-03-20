@@ -25,8 +25,8 @@ android {
         applicationId = "com.flxrs.dankchat"
         minSdk = 21
         targetSdk = 34
-        versionCode = 31100
-        versionName = "3.11.0"
+        versionCode = 31101
+        versionName = "3.11.1"
     }
 
     androidResources {
