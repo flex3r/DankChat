@@ -339,6 +339,7 @@ class ChatRepository(
         writeConnection.close()
         pubSubManager.close()
         eventSubManager.close()
+        userStateRepository.clear()
         connectAndJoin(channels)
     }
 
