@@ -1,16 +1,15 @@
 package com.flxrs.dankchat.preferences.tools
 
 import android.content.Context
+import androidx.core.content.edit
+import androidx.datastore.core.DataMigration
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.utils.datastore.PreferenceKeys
 import com.flxrs.dankchat.utils.datastore.booleanOrDefault
 import com.flxrs.dankchat.utils.datastore.booleanOrNull
 import com.flxrs.dankchat.utils.datastore.createDataStore
-import com.flxrs.dankchat.utils.datastore.dankChatMigration
 import com.flxrs.dankchat.utils.datastore.dankChatPreferencesMigration
-import com.flxrs.dankchat.utils.datastore.stringOrDefault
-import com.flxrs.dankchat.utils.datastore.stringOrNull
 import com.flxrs.dankchat.utils.datastore.stringSetOrDefault
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -68,15 +67,28 @@ class ToolsSettingsDataStore(
     }
 
     private val dankchatPreferences = context.getSharedPreferences(context.getString(R.string.shared_preference_key), Context.MODE_PRIVATE)
-    private val uploaderMigration = dankChatMigration<UploaderKeys, ToolsSettings>(context, dankchatPreferences, UploaderKeys::key) { acc, key, value ->
-        val config = acc.uploaderConfig
-        when (key) {
-            UploaderKeys.UploadUrl           -> acc.copy(uploaderConfig = config.copy(uploadUrl = value.stringOrDefault(config.uploadUrl)))
-            UploaderKeys.FormField           -> acc.copy(uploaderConfig = config.copy(formField = value.stringOrDefault(config.formField)))
-            UploaderKeys.Headers             -> acc.copy(uploaderConfig = config.copy(headers = value.stringOrNull() ?: config.headers))
-            UploaderKeys.ImageLinkPattern    -> acc.copy(uploaderConfig = config.copy(imageLinkPattern = value.stringOrNull() ?: config.imageLinkPattern))
-            UploaderKeys.DeletionLinkPattern -> acc.copy(uploaderConfig = config.copy(deletionLinkPattern = value.stringOrNull() ?: config.deletionLinkPattern))
+    private val uploaderMigration = object : DataMigration<ToolsSettings> {
+        override suspend fun migrate(currentData: ToolsSettings): ToolsSettings {
+            val current = currentData.uploaderConfig
+            val url = dankchatPreferences.getString(UploaderKeys.UploadUrl.key, current.uploadUrl) ?: current.uploadUrl
+            val field = dankchatPreferences.getString(UploaderKeys.FormField.key, current.formField) ?: current.formField
+            val isDefault = url == ImageUploaderConfig.DEFAULT.uploadUrl && field == ImageUploaderConfig.DEFAULT.formField
+            val headers = dankchatPreferences.getString(UploaderKeys.Headers.key, null)
+            val link = dankchatPreferences.getString(UploaderKeys.ImageLinkPattern.key, null)
+            val delete = dankchatPreferences.getString(UploaderKeys.DeletionLinkPattern.key, null)
+            return currentData.copy(
+                uploaderConfig = current.copy(
+                    uploadUrl = url,
+                    formField = field,
+                    headers = headers,
+                    imageLinkPattern = if (isDefault) ImageUploaderConfig.DEFAULT.imageLinkPattern else link.orEmpty(),
+                    deletionLinkPattern = if (isDefault) ImageUploaderConfig.DEFAULT.deletionLinkPattern else delete.orEmpty(),
+                )
+            )
         }
+
+        override suspend fun shouldMigrate(currentData: ToolsSettings): Boolean = UploaderKeys.entries.any { dankchatPreferences.contains(it.key) }
+        override suspend fun cleanUp() = dankchatPreferences.edit { UploaderKeys.entries.forEach { remove(it.key) } }
     }
 
     private val dataStore = createDataStore(
