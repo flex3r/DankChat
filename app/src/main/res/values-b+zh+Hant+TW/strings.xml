@@ -389,4 +389,5 @@
     <plurals name="months">
         <item quantity="other">%d 個月</item>
     </plurals>
+    <string name="open_source_licenses">開源授權</string>
 </resources>
