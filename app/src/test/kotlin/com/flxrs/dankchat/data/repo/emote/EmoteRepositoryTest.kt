@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.data.repo.emote
 
 import com.flxrs.dankchat.data.api.dankchat.DankChatApiClient
+import com.flxrs.dankchat.data.repo.channel.ChannelRepository
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmote
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmoteType
 import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
@@ -19,6 +20,9 @@ internal class EmoteRepositoryTest {
 
     @MockK
     lateinit var chatSettings: ChatSettingsDataStore
+
+    @MockK
+    lateinit var channelRepository: ChannelRepository
 
     @InjectMockKs
     lateinit var emoteRepository: EmoteRepository
