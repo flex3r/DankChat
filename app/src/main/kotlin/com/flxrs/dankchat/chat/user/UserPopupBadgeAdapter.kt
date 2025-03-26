@@ -34,7 +34,11 @@ class UserPopupBadgeAdapter : ListAdapter<Badge, UserPopupBadgeAdapter.BadgeView
 
             TooltipCompat.setTooltipText(this, tooltip)
             contentDescription = tooltip
-            loadImage(badge.url)
+            val data = when (badge) {
+                is Badge.SharedChatBadge if badge.url.isEmpty() -> R.drawable.shared_chat
+                else                                            -> badge.url
+            }
+            loadImage(data)
         }
     }
 

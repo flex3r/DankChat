@@ -40,7 +40,7 @@ class ChannelRepository(
         val channel = when {
             dankChatPreferenceStore.isLoggedIn -> helixApiClient.getUserByName(name)
                 .getOrNull()
-                ?.let { Channel(it.id, it.name, it.displayName) }
+                ?.let { Channel(id = it.id, name = it.name, displayName = it.displayName, avatarUrl = it.avatarUrl) }
 
             else                               -> null
         } ?: tryGetChannelFromIrc(name)
@@ -50,6 +50,31 @@ class ChannelRepository(
         }
 
         return channel
+    }
+
+    suspend fun getChannel(id: UserId): Channel? {
+        val cached = getCachedChannelByIdOrNull(id)
+        if (cached != null) {
+            return cached
+        }
+
+        if (!dankChatPreferenceStore.isLoggedIn) {
+            return null
+        }
+
+        val channel = helixApiClient.getUser(id)
+            .getOrNull()
+            ?.let { Channel(id = it.id, name = it.name, displayName = it.displayName, avatarUrl = it.avatarUrl) }
+
+        if (channel != null) {
+            channelCache[channel.name] = channel
+        }
+
+        return channel
+    }
+
+    fun getCachedChannelByIdOrNull(id: UserId): Channel? {
+        return channelCache.values.find { it.id == id }
     }
 
     fun tryGetUserNameById(id: UserId): UserName? {
@@ -86,7 +111,7 @@ class ChannelRepository(
         val channels = helixApiClient.getUsersByNames(remaining)
             .getOrNull()
             .orEmpty()
-            .map { Channel(it.id, it.name, it.displayName) }
+            .map { Channel(id = it.id, name = it.name, displayName = it.displayName, avatarUrl = it.avatarUrl) }
 
         channels.forEach { channelCache[it.name] = it }
         return@withContext cached + channels
@@ -107,6 +132,6 @@ class ChannelRepository(
     private fun tryGetChannelFromIrc(name: UserName): Channel? {
         val id = roomStates[name]?.channelId
         val displayName = usersRepository.findDisplayName(name, name)
-        return id?.let { Channel(it, name, displayName ?: name.toDisplayName()) }
+        return id?.let { Channel(id = it, name = name, displayName = displayName ?: name.toDisplayName(), avatarUrl = null) }
     }
 }

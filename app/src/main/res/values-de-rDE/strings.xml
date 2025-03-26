@@ -384,6 +384,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="login_menu_zoom_out">Herauszoomen</string>
     <string name="login_menu_zoom_in">Heranzoomen</string>
     <string name="back">Zurück</string>
+    <string name="shared_chat">Geteilter Chat</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">Live mit %1$d Zuschauer für %2$s</item>
         <item quantity="other">Live mit %1$d Zuschauern für %2$s</item>

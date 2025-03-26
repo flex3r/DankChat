@@ -589,7 +589,7 @@ class ChatRepository(
         }
     }
 
-    private fun handleWhisper(ircMessage: IrcMessage) {
+    private suspend fun handleWhisper(ircMessage: IrcMessage) {
         if (pubSubManager.connectedAndHasWhisperTopic) {
             return
         }
@@ -893,7 +893,7 @@ class ChatRepository(
 
     private fun Message.applyIgnores(): Message? = ignoresRepository.applyIgnores(this)
     private fun Message.calculateHighlightState(): Message = highlightsRepository.calculateHighlightState(this)
-    private fun Message.parseEmotesAndBadges(): Message = emoteRepository.parseEmotesAndBadges(this)
+    private suspend fun Message.parseEmotesAndBadges(): Message = emoteRepository.parseEmotesAndBadges(this)
     private fun Message.calculateUserDisplays(): Message = userDisplayRepository.calculateUserDisplay(this)
 
     private fun Message.calculateMessageThread(findMessageById: (channel: UserName, id: String) -> Message?): Message {

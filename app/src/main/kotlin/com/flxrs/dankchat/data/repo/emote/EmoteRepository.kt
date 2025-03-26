@@ -25,7 +25,9 @@ import com.flxrs.dankchat.data.api.seventv.dto.SevenTVEmoteSetDto
 import com.flxrs.dankchat.data.api.seventv.dto.SevenTVUserConnection
 import com.flxrs.dankchat.data.api.seventv.dto.SevenTVUserDto
 import com.flxrs.dankchat.data.api.seventv.eventapi.SevenTVEventMessage
+import com.flxrs.dankchat.data.repo.channel.ChannelRepository
 import com.flxrs.dankchat.data.repo.chat.ChatRepository
+import com.flxrs.dankchat.data.toUserId
 import com.flxrs.dankchat.data.twitch.badge.Badge
 import com.flxrs.dankchat.data.twitch.badge.BadgeSet
 import com.flxrs.dankchat.data.twitch.badge.BadgeType
@@ -59,6 +61,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 class EmoteRepository(
     private val dankChatApiClient: DankChatApiClient,
     private val chatSettingsDataStore: ChatSettingsDataStore,
+    private val channelRepository: ChannelRepository,
 ) {
     private val ffzModBadges = ConcurrentHashMap<UserName, String?>()
     private val ffzVipBadges = ConcurrentHashMap<UserName, String?>()
@@ -104,7 +107,7 @@ class EmoteRepository(
         }.distinctBy { it.code to it.position }
     }
 
-    fun parseEmotesAndBadges(message: Message): Message {
+    suspend fun parseEmotesAndBadges(message: Message): Message {
         val replyMentionOffset = (message as? PrivMessage)?.replyMentionOffset ?: 0
         val emoteData = message.emoteData ?: return message
         val (messageString, channel, emotesWithPositions) = emoteData
@@ -149,7 +152,7 @@ class EmoteRepository(
         return parseBadges(messageWithEmotes)
     }
 
-    private fun parseBadges(message: Message): Message {
+    private suspend fun parseBadges(message: Message): Message {
         val badgeData = message.badgeData ?: return message
         val (userId, channel, badgeTag, badgeInfoTag) = badgeData
 
@@ -200,7 +203,11 @@ class EmoteRepository(
                 }
             }.orEmpty()
 
-        val badgesWithDankChatBadge = buildList {
+        val sharedChatBadge = getSharedChatBadge(message)
+        val allBadges = buildList {
+            if (sharedChatBadge != null) {
+                add(sharedChatBadge)
+            }
             addAll(badges)
             val badge = getDankChatBadgeTitleAndUrl(userId)
             if (badge != null) {
@@ -209,10 +216,10 @@ class EmoteRepository(
         }
 
         return when (message) {
-            is PrivMessage       -> message.copy(badges = badgesWithDankChatBadge)
-            is WhisperMessage    -> message.copy(badges = badgesWithDankChatBadge)
+            is PrivMessage       -> message.copy(badges = allBadges)
+            is WhisperMessage    -> message.copy(badges = allBadges)
             is UserNoticeMessage -> message.copy(
-                childMessage = message.childMessage?.copy(badges = badgesWithDankChatBadge)
+                childMessage = message.childMessage?.copy(badges = allBadges)
             )
 
             else                 -> message
@@ -246,6 +253,22 @@ class EmoteRepository(
     private fun getFfzVipBadgeUrl(channel: UserName?): String? = channel?.let { ffzVipBadges[channel] }
 
     private fun getDankChatBadgeTitleAndUrl(userId: UserId?): Pair<String, String>? = dankChatBadges.find { it.users.any { id -> id == userId } }?.let { it.type to it.url }
+
+    private suspend fun getSharedChatBadge(message: Message): Badge? {
+        if (message !is PrivMessage) {
+            return null
+        }
+
+        val sourceRoomId = message.tags["source-room-id"] ?: return null
+        val channel = channelRepository.getChannel(sourceRoomId.toUserId())
+        if (channel?.avatarUrl == null && sourceRoomId == message.tags["room-id"]) {
+            return null // don't show the fallback icon if we don't have the avatar
+        }
+        return Badge.SharedChatBadge(
+            url = channel?.avatarUrl?.replace(oldValue = "300x300", newValue = "70x70").orEmpty(),
+            title = "Shared Message${channel?.displayName?.let { " from $it" }.orEmpty()}"
+        )
+    }
 
     fun setChannelBadges(channel: UserName, badges: Map<String, BadgeSet>) {
         channelBadges[channel] = badges

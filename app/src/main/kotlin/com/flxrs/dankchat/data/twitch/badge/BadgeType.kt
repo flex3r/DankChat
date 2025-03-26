@@ -6,7 +6,8 @@ enum class BadgeType {
     Channel,
     Subscriber,
     Vanity,
-    DankChat;
+    DankChat,
+    SharedChat;
     //FrankerFaceZ;
 
     companion object {
@@ -17,9 +18,5 @@ enum class BadgeType {
             "subscriber", "founder"           -> Subscriber
             else                              -> Vanity
         }
-
-        fun mapFromPreferenceSet(preferenceSet: Set<String>): Set<BadgeType> = preferenceSet.mapNotNull {
-            entries.find { badgeType -> badgeType.name.lowercase() == it }
-        }.toSet()
     }
 }

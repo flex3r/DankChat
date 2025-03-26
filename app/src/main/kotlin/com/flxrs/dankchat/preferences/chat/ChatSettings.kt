@@ -27,6 +27,7 @@ data class ChatSettings(
     val loadMessageHistory: Boolean = true,
     val loadMessageHistoryOnReconnect: Boolean = true,
     val showChatModes: Boolean = true,
+    val sharedChatMigration: Boolean = false,
 ) {
 
     @Transient
@@ -55,6 +56,7 @@ enum class VisibleBadges {
     Subscriber,
     Vanity,
     DankChat,
+    SharedChat,
 }
 
 enum class VisibleThirdPartyEmotes {

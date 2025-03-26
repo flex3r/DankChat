@@ -273,11 +273,15 @@ private fun GeneralCategory(
             onChanged = { onInteraction(ChatSettingsInteraction.TimestampFormat(it)) },
         )
 
+        val entries = stringArrayResource(R.array.badges_entries)
+            .plus(stringResource(R.string.shared_chat))
+            .toImmutableList()
+
         PreferenceMultiListDialog(
             title = stringResource(R.string.preference_visible_badges_title),
             initialSelected = visibleBadges,
             values = VisibleBadges.entries.toImmutableList(),
-            entries = stringArrayResource(R.array.badges_entries).toImmutableList(),
+            entries = entries,
             onChanged = { onInteraction(ChatSettingsInteraction.Badges(it)) },
         )
         PreferenceMultiListDialog(

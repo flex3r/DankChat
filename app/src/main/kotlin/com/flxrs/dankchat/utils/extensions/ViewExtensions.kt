@@ -25,12 +25,12 @@ fun View.showLongSnackbar(text: String, block: Snackbar.() -> Unit = {}) = Snack
     .show()
 
 inline fun ImageView.loadImage(
-    url: String,
+    data: Any,
     @DrawableRes placeholder: Int? = R.drawable.ic_missing_emote,
     noinline afterLoad: (() -> Unit)? = null,
     block: ImageRequest.Builder.() -> Unit = {}
 ) {
-    load(url) {
+    load(data) {
         error(R.drawable.ic_missing_emote)
         placeholder?.let { placeholder(it) }
         afterLoad?.let {

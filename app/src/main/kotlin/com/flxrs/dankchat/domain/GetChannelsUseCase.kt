@@ -28,12 +28,16 @@ class GetChannelsUseCase(private val channelRepository: ChannelRepository) {
         val remainingPairs = remainingForRoomState.map { user ->
             async {
                 withTimeoutOrNull(getRoomStateDelay(remainingForRoomState)) {
-                    channelRepository.getRoomStateFlow(user).firstOrNull()?.let { Channel(it.channelId, it.channel, it.channel.toDisplayName()) }
+                    channelRepository.getRoomStateFlow(user).firstOrNull()?.let {
+                        Channel(id = it.channelId, name = it.channel, displayName = it.channel.toDisplayName(), avatarUrl = null)
+                    }
                 }
             }
         }.awaitAll().filterNotNull()
 
-        val roomStateChannels = roomStatePairs.map { Channel(it.channelId, it.channel, it.channel.toDisplayName()) } + remainingPairs
+        val roomStateChannels = roomStatePairs.map {
+            Channel(id = it.channelId, name = it.channel, displayName = it.channel.toDisplayName(), avatarUrl = null)
+        } + remainingPairs
         channelRepository.cacheChannels(roomStateChannels)
 
         channels + roomStateChannels

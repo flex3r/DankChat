@@ -52,6 +52,8 @@ import androidx.recyclerview.widget.RecyclerView
 import coil3.asDrawable
 import coil3.imageLoader
 import coil3.request.ImageRequest
+import coil3.request.transformations
+import coil3.transform.CircleCropTransformation
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserId
@@ -698,8 +700,8 @@ class ChatAdapter(
                 try {
                     ensureActive()
                     val (start, end) = badgePositions[idx]
-                    val cacheKey = badge.cacheKey(baseHeight)
-                    val cached = emoteRepository.badgeCache[cacheKey]
+                    val cacheKey = badge.takeIf { it.url.isNotEmpty() }?.cacheKey(baseHeight)
+                    val cached = cacheKey?.let { emoteRepository.badgeCache[it] }
                     val drawable = when {
                         cached != null -> cached.also {
                             if (it is Animatable) {
@@ -708,24 +710,35 @@ class ChatAdapter(
                             }
                         }
 
-                        else           -> context.imageLoader
-                            .execute(badge.url.toRequest(context))
-                            .image
-                            ?.asDrawable(resources)
-                            ?.apply {
-                                if (badge is Badge.FFZModBadge) {
-                                    val modColor = ContextCompat.getColor(context, R.color.color_ffz_mod)
-                                    colorFilter = PorterDuffColorFilter(modColor, PorterDuff.Mode.DST_OVER)
+                        else           -> {
+                            val request = when (badge) {
+                                is Badge.SharedChatBadge if badge.url.isEmpty() -> {
+                                    ImageRequest.Builder(context)
+                                        .data(R.drawable.shared_chat)
+                                        .build()
                                 }
 
-                                val width = (baseHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
-                                setBounds(0, 0, width, baseHeight)
-                                if (this is Animatable) {
-                                    emoteRepository.badgeCache.put(cacheKey, this)
-                                    setRunning(animateGifs)
-                                    hasAnimatedEmoteOrBadge = true
-                                }
+                                else                                            -> badge.url.toRequest(context, circleCrop = badge is Badge.SharedChatBadge)
                             }
+                            context.imageLoader
+                                .execute(request)
+                                .image
+                                ?.asDrawable(resources)
+                                ?.apply {
+                                    if (badge is Badge.FFZModBadge) {
+                                        val modColor = ContextCompat.getColor(context, R.color.color_ffz_mod)
+                                        colorFilter = PorterDuffColorFilter(modColor, PorterDuff.Mode.DST_OVER)
+                                    }
+
+                                    val width = (baseHeight * intrinsicWidth / intrinsicHeight.toFloat()).roundToInt()
+                                    setBounds(0, 0, width, baseHeight)
+                                    if (this is Animatable && cacheKey != null) {
+                                        emoteRepository.badgeCache.put(cacheKey, this)
+                                        setRunning(animateGifs)
+                                        hasAnimatedEmoteOrBadge = true
+                                    }
+                                }
+                        }
                     }
 
                     if (drawable != null) {
@@ -847,8 +860,9 @@ class ChatAdapter(
         return this
     }
 
-    private fun String.toRequest(context: Context): ImageRequest = ImageRequest.Builder(context)
+    private fun String.toRequest(context: Context, circleCrop: Boolean = false): ImageRequest = ImageRequest.Builder(context)
         .data(this)
+        .apply { if (circleCrop) transformations(CircleCropTransformation()) else this }
         .build()
 
     /** make the font monospaced, also add an extra space after it */

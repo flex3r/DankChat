@@ -8,4 +8,5 @@ data class Channel(
     val id: UserId,
     val name: UserName,
     val displayName: DisplayName,
+    val avatarUrl: String?,
 )

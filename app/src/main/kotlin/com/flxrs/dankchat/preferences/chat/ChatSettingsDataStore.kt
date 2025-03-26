@@ -84,7 +84,8 @@ class ChatSettingsDataStore(
                     original = context.resources.getStringArray(R.array.badges_entry_values),
                     enumEntries = VisibleBadges.entries,
                     default = acc.visibleBadges,
-                )
+                ).plus(VisibleBadges.SharedChat).distinct(),
+                sharedChatMigration = true,
             )
 
             ChatPreferenceKeys.VisibleEmotes                    -> acc.copy(
@@ -116,13 +117,22 @@ class ChatSettingsDataStore(
         override suspend fun cleanUp() = Unit
     }
 
+    private val sharedChatMigration = object : DataMigration<ChatSettings> {
+        override suspend fun shouldMigrate(currentData: ChatSettings): Boolean = !currentData.sharedChatMigration
+        override suspend fun migrate(currentData: ChatSettings): ChatSettings = currentData.copy(
+            visibleBadges = currentData.visibleBadges.plus(VisibleBadges.SharedChat).distinct(),
+            sharedChatMigration = true,
+        )
+        override suspend fun cleanUp() = Unit
+    }
+
     private val dataStore = createDataStore(
         fileName = "chat",
         context = context,
         defaultValue = ChatSettings(),
         serializer = ChatSettings.serializer(),
         scope = CoroutineScope(dispatchersProvider.io + SupervisorJob()),
-        migrations = listOf(initialMigration, scrollbackResetMigration),
+        migrations = listOf(initialMigration, scrollbackResetMigration, sharedChatMigration),
     )
 
     val settings = dataStore.safeData(ChatSettings())
