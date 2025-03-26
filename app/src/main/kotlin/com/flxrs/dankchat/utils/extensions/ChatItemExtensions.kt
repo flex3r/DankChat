@@ -29,7 +29,7 @@ fun List<ChatItem>.replaceOrAddModerationMessage(moderationMessage: ModerationMe
     for (idx in indices) {
         val item = this[idx]
         when (moderationMessage.action) {
-            ModerationMessage.Action.Clear -> {
+            ModerationMessage.Action.Clear     -> {
                 this[idx] = when (item.message) {
                     is PrivMessage -> item.copy(tag = item.tag + 1, message = item.message.copy(timedOut = true), importance = ChatImportance.DELETED)
                     else           -> item.copy(tag = item.tag + 1, importance = ChatImportance.DELETED)
@@ -37,7 +37,9 @@ fun List<ChatItem>.replaceOrAddModerationMessage(moderationMessage: ModerationMe
             }
 
             ModerationMessage.Action.Timeout,
-            ModerationMessage.Action.Ban   -> {
+            ModerationMessage.Action.Ban,
+            ModerationMessage.Action.SharedTimeout,
+            ModerationMessage.Action.SharedBan -> {
                 item.message as? PrivMessage ?: continue
                 if (moderationMessage.targetUser != item.message.name) {
                     continue
@@ -46,7 +48,7 @@ fun List<ChatItem>.replaceOrAddModerationMessage(moderationMessage: ModerationMe
                 this[idx] = item.copy(tag = item.tag + 1, message = item.message.copy(timedOut = true), importance = ChatImportance.DELETED)
             }
 
-            else                           -> continue
+            else                               -> continue
         }
     }
 
@@ -63,7 +65,7 @@ fun List<ChatItem>.replaceWithTimeout(moderationMessage: ModerationMessage, scro
         for (idx in lastIndex downTo end) {
             val item = this[idx]
             val message = item.message as? ModerationMessage ?: continue
-            if (message.action == ModerationMessage.Action.Delete && message.targetMsgId == targetMsgId && !message.fromEventSource) {
+            if ((message.action == ModerationMessage.Action.Delete || message.action == ModerationMessage.Action.SharedDelete) && message.targetMsgId == targetMsgId && !message.fromEventSource) {
                 this[idx] = item.copy(tag = item.tag + 1, message = moderationMessage)
                 return@apply
             }
@@ -133,7 +135,7 @@ fun List<ChatItem>.replaceLastSystemMessageIfNecessary(scrollBackLength: Int, on
 }
 
 private fun MutableList<ChatItem>.checkForStackedTimeouts(moderationMessage: ModerationMessage): Boolean {
-    if (moderationMessage.action == ModerationMessage.Action.Timeout || moderationMessage.action == ModerationMessage.Action.Ban) {
+    if (moderationMessage.canStack) {
         val end = (lastIndex - 20).coerceAtLeast(0)
         for (idx in lastIndex downTo end) {
             val item = this[idx]
@@ -147,9 +149,12 @@ private fun MutableList<ChatItem>.checkForStackedTimeouts(moderationMessage: Mod
             }
 
             when {
-                !moderationMessage.fromEventSource && message.fromEventSource -> Unit
-                moderationMessage.fromEventSource && !message.fromEventSource -> this[idx] = item.copy(tag = item.tag + 1, message = moderationMessage)
-                moderationMessage.action == ModerationMessage.Action.Timeout  -> {
+                !moderationMessage.fromEventSource && message.fromEventSource                                                                      -> Unit
+                moderationMessage.fromEventSource && !message.fromEventSource                                                                      -> {
+                    this[idx] = item.copy(tag = item.tag + 1, message = moderationMessage)
+                }
+
+                moderationMessage.action == ModerationMessage.Action.Timeout || moderationMessage.action == ModerationMessage.Action.SharedTimeout -> {
                     val stackedMessage = moderationMessage.copy(stackCount = message.stackCount + 1)
                     this[idx] = item.copy(tag = item.tag + 1, message = stackedMessage)
                 }

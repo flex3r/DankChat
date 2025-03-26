@@ -255,8 +255,10 @@ class ChatRepository(
 
                         messages[message.channel]?.update { current ->
                             when (message.action) {
-                                ModerationMessage.Action.Delete -> current.replaceWithTimeout(message, scrollBackLength, ::onMessageRemoved)
-                                else                            -> current.replaceOrAddModerationMessage(message, scrollBackLength, ::onMessageRemoved)
+                                ModerationMessage.Action.Delete,
+                                ModerationMessage.Action.SharedDelete -> current.replaceWithTimeout(message, scrollBackLength, ::onMessageRemoved)
+
+                                else                                  -> current.replaceOrAddModerationMessage(message, scrollBackLength, ::onMessageRemoved)
                             }
                         }
                     }

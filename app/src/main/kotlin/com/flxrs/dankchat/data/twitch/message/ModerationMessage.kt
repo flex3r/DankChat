@@ -142,8 +142,8 @@ data class ModerationMessage(
         }
     }
 
-    val canClearMessages: Boolean
-        get() = action == Action.Clear || action == Action.Ban || action == Action.Timeout
+    val canClearMessages: Boolean = action in listOf(Action.Clear, Action.Ban, Action.Timeout, Action.SharedTimeout, Action.SharedBan)
+    val canStack: Boolean = canClearMessages && action != Action.Clear
 
     companion object {
         fun parseClearChat(message: IrcMessage): ModerationMessage = with(message) {
