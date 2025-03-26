@@ -390,4 +390,5 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
         <item quantity="one">%d mois</item>
         <item quantity="other">%d mois</item>
     </plurals>
+    <string name="open_source_licenses">Licences open source</string>
 </resources>

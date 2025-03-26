@@ -384,6 +384,7 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="login_menu_zoom_out">Alejar</string>
     <string name="login_menu_zoom_in">Acercar</string>
     <string name="back">Atrás</string>
+    <string name="shared_chat">Chat compartido</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">En directo con %1$d espectador por %2$s</item>
         <item quantity="other">En directo con %1$d espectadores por %2$s</item>
