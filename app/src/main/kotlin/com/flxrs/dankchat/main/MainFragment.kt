@@ -617,7 +617,7 @@ class MainFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         changeActionBarVisibility(mainViewModel.isFullscreenFlow.value)
-        binding.updatePictureInPictureVisibility()
+        bindingRef?.updatePictureInPictureVisibility()
 
         (activity as? MainActivity)?.apply {
             val channel = channelToOpen
@@ -625,8 +625,8 @@ class MainFragment : Fragment() {
                 val index = mainViewModel.getChannels().indexOf(channel)
                 if (index >= 0) {
                     when (index) {
-                        binding.chatViewpager.currentItem -> clearNotificationsOfChannel(channel)
-                        else                              -> binding.chatViewpager.post { binding.chatViewpager.setCurrentItem(index, false) }
+                        bindingRef?.chatViewpager?.currentItem -> clearNotificationsOfChannel(channel)
+                        else                              -> bindingRef?.chatViewpager?.post { bindingRef?.chatViewpager?.setCurrentItem(index, false) }
                     }
                 }
                 channelToOpen = null
@@ -654,7 +654,7 @@ class MainFragment : Fragment() {
                         existing.forEach(::remove)
                     }
                     inputBottomSheetBehavior?.hide()
-                    binding.chatViewpager.updateLayoutParams<MarginLayoutParams> { bottomMargin = 0 }
+                    bindingRef?.chatViewpager?.updateLayoutParams<MarginLayoutParams> { bottomMargin = 0 }
                 }
             }
 
