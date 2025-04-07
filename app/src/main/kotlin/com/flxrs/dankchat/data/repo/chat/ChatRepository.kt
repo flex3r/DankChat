@@ -785,7 +785,8 @@ class ChatRepository(
             return@withContext
         }
 
-        val result = recentMessagesApiClient.getRecentMessages(channel).getOrElse { throwable ->
+        val limit = if (isReconnect) RECENT_MESSAGES_LIMIT_AFTER_RECONNECT else null
+        val result = recentMessagesApiClient.getRecentMessages(channel, limit).getOrElse { throwable ->
             if (!isReconnect) {
                 handleRecentMessagesFailure(throwable, channel)
             }
@@ -911,6 +912,7 @@ class ChatRepository(
         private val ESCAPE_TAG = 0x000E0002.codePointAsString
 
         private const val PUBSUB_TIMEOUT = 5000L
+        private const val RECENT_MESSAGES_LIMIT_AFTER_RECONNECT = 100
 
         val ESCAPE_TAG_REGEX = "(?<!$ESCAPE_TAG)$ESCAPE_TAG".toRegex()
         const val ZERO_WIDTH_JOINER = 0x200D.toChar().toString()
