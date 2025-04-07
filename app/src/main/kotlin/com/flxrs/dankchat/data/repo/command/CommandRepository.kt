@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -93,7 +94,7 @@ class CommandRepository(
 
         val twitchCommand = twitchCommandRepository.findTwitchCommand(trigger)
         if (twitchCommand != null) {
-            if (developerSettingsDataStore.current().bypassCommandHandling) {
+            if (developerSettingsDataStore.settings.first().bypassCommandHandling) {
                 return CommandResult.IrcCommand
             } else if (skipSuspendingCommands) {
                 return CommandResult.Blocked
@@ -143,7 +144,7 @@ class CommandRepository(
     }
 
     suspend fun loadSupibotCommands() = withContext(Dispatchers.Default) {
-        if (!preferenceStore.isLoggedIn || !chatSettingsDataStore.current().supibotSuggestions) {
+        if (!preferenceStore.isLoggedIn || !chatSettingsDataStore.settings.first().supibotSuggestions) {
             return@withContext
         }
 

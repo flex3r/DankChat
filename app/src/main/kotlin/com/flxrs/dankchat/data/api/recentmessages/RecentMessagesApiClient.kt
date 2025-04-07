@@ -8,6 +8,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.request
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.isSuccess
+import kotlinx.coroutines.flow.first
 import org.koin.core.annotation.Single
 
 @Single
@@ -17,7 +18,7 @@ class RecentMessagesApiClient(
 ) {
 
     suspend fun getRecentMessages(channel: UserName): Result<RecentMessagesDto> = runCatching {
-        val limit = chatSettingsDataStore.current().scrollbackLength
+        val limit = chatSettingsDataStore.settings.first().scrollbackLength
         recentMessagesApi.getRecentMessages(channel, limit)
             .throwRecentMessagesErrorOnFailure()
             .body()

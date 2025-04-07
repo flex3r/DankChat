@@ -289,7 +289,7 @@ class ChatRepository(
 
     suspend fun loadRecentMessagesIfEnabled(channel: UserName) {
         when {
-            chatSettingsDataStore.current().loadMessageHistory -> loadRecentMessages(channel)
+            chatSettingsDataStore.settings.first().loadMessageHistory -> loadRecentMessages(channel)
             else                                               -> messages[channel]?.update { current ->
                 val message = SystemMessageType.NoHistoryLoaded.toChatItem()
                 listOf(message).addAndLimit(current, scrollBackLength, ::onMessageRemoved, checkForDuplications = true)
@@ -765,8 +765,10 @@ class ChatRepository(
             val flow = messages[channel] ?: return@forEach
             val current = flow.value
             flow.value = current.addSystemMessage(type, scrollBackLength, ::onMessageRemoved) {
-                if (chatSettingsDataStore.current().loadMessageHistoryOnReconnect) {
-                    scope.launch { loadRecentMessages(channel, isReconnect = true) }
+                scope.launch {
+                    if (chatSettingsDataStore.settings.first().loadMessageHistoryOnReconnect) {
+                        loadRecentMessages(channel, isReconnect = true)
+                    }
                 }
             }
         }
@@ -892,7 +894,7 @@ class ChatRepository(
     }
 
     private fun Message.applyIgnores(): Message? = ignoresRepository.applyIgnores(this)
-    private fun Message.calculateHighlightState(): Message = highlightsRepository.calculateHighlightState(this)
+    private suspend fun Message.calculateHighlightState(): Message = highlightsRepository.calculateHighlightState(this)
     private suspend fun Message.parseEmotesAndBadges(): Message = emoteRepository.parseEmotesAndBadges(this)
     private fun Message.calculateUserDisplays(): Message = userDisplayRepository.calculateUserDisplay(this)
 

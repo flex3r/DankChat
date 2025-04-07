@@ -51,6 +51,7 @@ import com.flxrs.dankchat.utils.extensions.supplementaryCodePointPositions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Single
@@ -674,8 +675,8 @@ class EmoteRepository(
         }
     }
 
-    private fun List<SevenTVEmoteDto>.filterUnlistedIfEnabled(): List<SevenTVEmoteDto> = when {
-        chatSettingsDataStore.current().allowUnlistedSevenTvEmotes -> this
+    private suspend fun List<SevenTVEmoteDto>.filterUnlistedIfEnabled(): List<SevenTVEmoteDto> = when {
+        chatSettingsDataStore.settings.first().allowUnlistedSevenTvEmotes -> this
         else                                                       -> filter { it.data?.listed == true }
     }
 

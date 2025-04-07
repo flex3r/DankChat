@@ -31,8 +31,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -100,7 +100,7 @@ class SevenTVEventApiClient(
                             .debounce(FLOW_DEBOUNCE)
                             .collectLatest { state ->
                                 if (state == Background) {
-                                    val timeout = when (chatSettingsDataStore.current().sevenTVLiveEmoteUpdatesBehavior) {
+                                    val timeout = when (chatSettingsDataStore.settings.first().sevenTVLiveEmoteUpdatesBehavior) {
                                         LiveUpdatesBackgroundBehavior.Always        -> return@collectLatest
                                         LiveUpdatesBackgroundBehavior.Never         -> Duration.ZERO
                                         LiveUpdatesBackgroundBehavior.FiveMinutes   -> 5.minutes
@@ -121,8 +121,8 @@ class SevenTVEventApiClient(
 
     val messages = _messages.asSharedFlow()
 
-    fun subscribeUser(userId: String) {
-        if (!chatSettingsDataStore.current().sevenTVLiveEmoteUpdates) {
+    suspend fun subscribeUser(userId: String) {
+        if (!chatSettingsDataStore.settings.first().sevenTVLiveEmoteUpdates) {
             return
         }
 
@@ -130,8 +130,8 @@ class SevenTVEventApiClient(
         addSubscription(request)
     }
 
-    fun subscribeEmoteSet(emoteSetId: String) {
-        if (!chatSettingsDataStore.current().sevenTVLiveEmoteUpdates) {
+    suspend fun subscribeEmoteSet(emoteSetId: String) {
+        if (!chatSettingsDataStore.settings.first().sevenTVLiveEmoteUpdates) {
             return
         }
 
@@ -139,8 +139,8 @@ class SevenTVEventApiClient(
         addSubscription(request)
     }
 
-    fun unsubscribeUser(userId: String) {
-        if (!chatSettingsDataStore.current().sevenTVLiveEmoteUpdates) {
+    suspend fun unsubscribeUser(userId: String) {
+        if (!chatSettingsDataStore.settings.first().sevenTVLiveEmoteUpdates) {
             return
         }
 
@@ -148,8 +148,8 @@ class SevenTVEventApiClient(
         removeSubscription(request)
     }
 
-    fun unsubscribeEmoteSet(emoteSetId: String) {
-        if (!chatSettingsDataStore.current().sevenTVLiveEmoteUpdates) {
+    suspend fun unsubscribeEmoteSet(emoteSetId: String) {
+        if (!chatSettingsDataStore.settings.first().sevenTVLiveEmoteUpdates) {
             return
         }
 
@@ -157,8 +157,8 @@ class SevenTVEventApiClient(
         removeSubscription(request)
     }
 
-    fun reconnect() {
-        if (!chatSettingsDataStore.current().sevenTVLiveEmoteUpdates) {
+    suspend fun reconnect() {
+        if (!chatSettingsDataStore.settings.first().sevenTVLiveEmoteUpdates) {
             return
         }
 
@@ -166,8 +166,8 @@ class SevenTVEventApiClient(
         attemptReconnect()
     }
 
-    fun reconnectIfNecessary() {
-        if (!chatSettingsDataStore.current().sevenTVLiveEmoteUpdates || connected || connecting) {
+    suspend fun reconnectIfNecessary() {
+        if (!chatSettingsDataStore.settings.first().sevenTVLiveEmoteUpdates || connected || connecting) {
             return
         }
 
@@ -264,7 +264,7 @@ class SevenTVEventApiClient(
 
                 is HeartbeatMessage   -> lastHeartBeat = System.currentTimeMillis()
                 is DispatchMessage    -> message.handleMessage()
-                is ReconnectMessage   -> reconnect()
+                is ReconnectMessage   -> scope.launch { reconnect() }
                 is EndOfStreamMessage -> Unit
                 is AckMessage         -> Unit
             }

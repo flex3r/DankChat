@@ -39,16 +39,20 @@ class DankChatViewModel(
     val isTrueDarkModeEnabled get() = appearanceSettingsDataStore.current().trueDarkTheme
     val keepScreenOn = appearanceSettingsDataStore.settings
         .map { it.keepScreenOn }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5.seconds), appearanceSettingsDataStore.current().keepScreenOn)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5.seconds),
+            initialValue = appearanceSettingsDataStore.current().keepScreenOn,
+        )
 
     fun init(tryReconnect: Boolean) {
-        if (tryReconnect && started) {
-            chatRepository.reconnectIfNecessary()
-            dataRepository.reconnectIfNecessary()
-        } else {
-            started = true
+        viewModelScope.launch {
+            if (tryReconnect && started) {
+                chatRepository.reconnectIfNecessary()
+                dataRepository.reconnectIfNecessary()
+            } else {
+                started = true
 
-            viewModelScope.launch {
                 if (dankChatPreferenceStore.isLoggedIn) {
                     validateUser()
                 }
@@ -73,7 +77,7 @@ class DankChatViewModel(
                     dankChatPreferenceStore.userName = result.login
                     when {
                         authApiClient.validateScopes(result.scopes.orEmpty()) -> ValidationResult.User(result.login)
-                        else                                        -> ValidationResult.IncompleteScopes(result.login)
+                        else                                                  -> ValidationResult.IncompleteScopes(result.login)
                     }
                 },
                 onFailure = { it.handleValidationError() }

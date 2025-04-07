@@ -30,6 +30,7 @@ import com.flxrs.dankchat.preferences.notifications.NotificationsSettingsDataSto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -68,7 +69,7 @@ class HighlightsRepository(
         .map { highlights -> highlights.filter { it.enabled && it.username.isNotBlank() } }
         .stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
 
-    fun calculateHighlightState(message: Message): Message {
+    suspend fun calculateHighlightState(message: Message): Message {
         return when (message) {
             is UserNoticeMessage      -> message.calculateHighlightState()
             is PointRedemptionMessage -> message.calculateHighlightState()
@@ -268,8 +269,8 @@ class HighlightsRepository(
         return copy(highlights = highlights)
     }
 
-    private fun WhisperMessage.calculateHighlightState(): WhisperMessage = when {
-        notificationsSettingsDataStore.current().showWhisperNotifications -> copy(highlights = setOf(Highlight(HighlightType.Notification)))
+    private suspend fun WhisperMessage.calculateHighlightState(): WhisperMessage = when {
+        notificationsSettingsDataStore.settings.first().showWhisperNotifications -> copy(highlights = setOf(Highlight(HighlightType.Notification)))
         else                                                              -> this
     }
 

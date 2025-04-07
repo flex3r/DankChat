@@ -33,6 +33,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -139,16 +140,17 @@ class NotificationService : Service(), CoroutineScope {
         shouldNotifyOnMention = true
     }
 
-    private fun setTTSEnabled(enabled: Boolean) = when {
+    private suspend fun setTTSEnabled(enabled: Boolean) = when {
         enabled -> initTTS()
         else    -> shutdownTTS()
     }
 
-    private fun initTTS() {
+    private suspend fun initTTS() {
+        val forceEnglish = toolsSettingsDataStore.settings.first().ttsForceEnglish
         audioManager = getSystemService()
         tts = TextToSpeech(this) { status ->
             when (status) {
-                TextToSpeech.SUCCESS -> setTTSVoice(forceEnglish = toolsSettingsDataStore.current().ttsForceEnglish)
+                TextToSpeech.SUCCESS -> setTTSVoice(forceEnglish = forceEnglish)
                 else                 -> shutdownAndDisableTTS()
             }
         }

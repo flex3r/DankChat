@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
@@ -39,7 +40,7 @@ class DeveloperSettingsViewModel(
                     val withSlash = interaction.host
                         .ifBlank { DeveloperSettings.RM_HOST_DEFAULT }
                         .withTrailingSlash
-                    if (withSlash == developerSettingsDataStore.current().customRecentMessagesHost) return@launch
+                    if (withSlash == developerSettingsDataStore.settings.first().customRecentMessagesHost) return@launch
                     developerSettingsDataStore.update { it.copy(customRecentMessagesHost = withSlash) }
                     _events.emit(DeveloperSettingsEvent.RestartRequired)
                 }

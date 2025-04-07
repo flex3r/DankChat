@@ -10,6 +10,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.URLBuilder
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -31,7 +32,7 @@ class UploadClient(
 ) {
 
     suspend fun uploadMedia(file: File): Result<UploadDto> = withContext(Dispatchers.IO) {
-        val uploader = toolsSettingsDataStore.current().uploaderConfig
+        val uploader = toolsSettingsDataStore.settings.first().uploaderConfig
         val mimetype = URLConnection.guessContentTypeFromName(file.name)
 
         val requestBody = MultipartBody.Builder()

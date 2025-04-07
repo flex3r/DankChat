@@ -72,6 +72,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -296,7 +297,7 @@ class MainViewModel(
     }.stateIn(viewModelScope, started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), InputState.Disconnected)
 
     val canType: StateFlow<Boolean> = combine(connectionState, fullScreenSheetState) { connectionState, fullScreenSheetState ->
-        val canTypeInConnectionState = connectionState == ConnectionState.CONNECTED || !appearanceSettingsDataStore.current().autoDisableInput
+        val canTypeInConnectionState = connectionState == ConnectionState.CONNECTED || !appearanceSettingsDataStore.settings.first().autoDisableInput
         (fullScreenSheetState != FullScreenSheetState.Mention && canTypeInConnectionState)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), false)
 
@@ -581,7 +582,7 @@ class MainViewModel(
     fun clear(channel: UserName) = chatRepository.clear(channel)
     fun clearMentionCount(channel: UserName) = chatRepository.clearMentionCount(channel)
     fun clearUnreadMessage(channel: UserName) = chatRepository.clearUnreadMessage(channel)
-    fun reconnect() {
+    fun reconnect() = viewModelScope.launch {
         chatRepository.reconnect()
         dataRepository.reconnect()
     }
@@ -636,7 +637,7 @@ class MainViewModel(
         RepeatedSendData(enabled, message)
     }
 
-    fun updateChannels(channels: List<UserName>) {
+    fun updateChannels(channels: List<UserName>) = viewModelScope.launch {
         val removed = chatRepository.updateChannels(channels)
         dataRepository.removeChannels(removed)
     }
@@ -721,12 +722,12 @@ class MainViewModel(
         cancelStreamData()
         channels?.ifEmpty { null } ?: return
 
-        val fetchingEnabled = streamsSettingsDataStore.current().fetchStreams
-        if (!dankChatPreferenceStore.isLoggedIn || !fetchingEnabled) {
-            return
-        }
-
         viewModelScope.launch {
+            val fetchingEnabled = streamsSettingsDataStore.settings.first().fetchStreams
+            if (!dankChatPreferenceStore.isLoggedIn || !fetchingEnabled) {
+                return@launch
+            }
+
             fetchTimerJob = timer(STREAM_REFRESH_RATE) {
                 val data = dataRepository.getStreams(channels)?.map {
                     val uptime = DateTimeUtils.calculateUptime(it.startedAt)

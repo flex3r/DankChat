@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -106,15 +107,15 @@ class DataRepository(
     suspend fun getChannelFollowers(broadcasterId: UserId, targetId: UserId): UserFollowsDto? = helixApiClient.getChannelFollowers(broadcasterId, targetId).getOrNull()
     suspend fun getStreams(channels: List<UserName>): List<StreamDto>? = helixApiClient.getStreams(channels).getOrNull()
 
-    fun reconnect() {
+    suspend fun reconnect() {
         sevenTVEventApiClient.reconnect()
     }
 
-    fun reconnectIfNecessary() {
+    suspend fun reconnectIfNecessary() {
         sevenTVEventApiClient.reconnectIfNecessary()
     }
 
-    fun removeChannels(removed: List<UserName>) {
+    suspend fun removeChannels(removed: List<UserName>) {
         removed.forEach { channel ->
             val details = emoteRepository.getSevenTVUserDetails(channel) ?: return@forEach
             sevenTVEventApiClient.unsubscribeUser(details.id)
@@ -166,7 +167,7 @@ class DataRepository(
     }
 
     suspend fun loadChannelFFZEmotes(channel: UserName, channelId: UserId) = withContext(Dispatchers.IO) {
-        if (VisibleThirdPartyEmotes.FFZ !in chatSettingsDataStore.current().visibleEmotes) {
+        if (VisibleThirdPartyEmotes.FFZ !in chatSettingsDataStore.settings.first().visibleEmotes) {
             return@withContext
         }
 
@@ -178,7 +179,7 @@ class DataRepository(
     }
 
     suspend fun loadChannelBTTVEmotes(channel: UserName, channelDisplayName: DisplayName, channelId: UserId) = withContext(Dispatchers.IO) {
-        if (VisibleThirdPartyEmotes.BTTV !in chatSettingsDataStore.current().visibleEmotes) {
+        if (VisibleThirdPartyEmotes.BTTV !in chatSettingsDataStore.settings.first().visibleEmotes) {
             return@withContext
         }
 
@@ -190,7 +191,7 @@ class DataRepository(
     }
 
     suspend fun loadChannelSevenTVEmotes(channel: UserName, channelId: UserId) = withContext(Dispatchers.IO) {
-        if (VisibleThirdPartyEmotes.SevenTV !in chatSettingsDataStore.current().visibleEmotes) {
+        if (VisibleThirdPartyEmotes.SevenTV !in chatSettingsDataStore.settings.first().visibleEmotes) {
             return@withContext
         }
 
@@ -208,7 +209,7 @@ class DataRepository(
     }
 
     suspend fun loadGlobalFFZEmotes() = withContext(Dispatchers.IO) {
-        if (VisibleThirdPartyEmotes.FFZ !in chatSettingsDataStore.current().visibleEmotes) {
+        if (VisibleThirdPartyEmotes.FFZ !in chatSettingsDataStore.settings.first().visibleEmotes) {
             return@withContext
         }
 
@@ -220,7 +221,7 @@ class DataRepository(
     }
 
     suspend fun loadGlobalBTTVEmotes() = withContext(Dispatchers.IO) {
-        if (VisibleThirdPartyEmotes.BTTV !in chatSettingsDataStore.current().visibleEmotes) {
+        if (VisibleThirdPartyEmotes.BTTV !in chatSettingsDataStore.settings.first().visibleEmotes) {
             return@withContext
         }
 
@@ -232,7 +233,7 @@ class DataRepository(
     }
 
     suspend fun loadGlobalSevenTVEmotes() = withContext(Dispatchers.IO) {
-        if (VisibleThirdPartyEmotes.SevenTV !in chatSettingsDataStore.current().visibleEmotes) {
+        if (VisibleThirdPartyEmotes.SevenTV !in chatSettingsDataStore.settings.first().visibleEmotes) {
             return@withContext
         }
 

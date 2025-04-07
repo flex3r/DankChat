@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -38,9 +39,9 @@ class HighlightsViewModel(
         _currentTab.value = HighlightsTab.entries[position]
     }
 
-    fun fetchHighlights() {
+    fun fetchHighlights() = viewModelScope.launch {
         val loggedIn = preferenceStore.isLoggedIn
-        val notificationsEnabled = notificationsSettingsDataStore.current().showNotifications
+        val notificationsEnabled = notificationsSettingsDataStore.settings.first().showNotifications
         val messageHighlightItems = highlightsRepository.messageHighlights.value.map { it.toItem(loggedIn, notificationsEnabled) }
         val userHighlightItems = highlightsRepository.userHighlights.value.map { it.toItem(notificationsEnabled) }
         val blacklistedUserItems = highlightsRepository.blacklistedUsers.value.map { it.toItem() }
@@ -52,7 +53,7 @@ class HighlightsViewModel(
 
     fun addHighlight() = viewModelScope.launch {
         val loggedIn = preferenceStore.isLoggedIn
-        val notificationsEnabled = notificationsSettingsDataStore.current().showNotifications
+        val notificationsEnabled = notificationsSettingsDataStore.settings.first().showNotifications
         val position: Int
         when (_currentTab.value) {
             HighlightsTab.Messages         -> {
