@@ -18,10 +18,12 @@ import com.flxrs.dankchat.utils.datastore.stringSetOrNull
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import org.koin.core.annotation.Single
@@ -136,6 +138,12 @@ class ChatSettingsDataStore(
     )
 
     val settings = dataStore.safeData(ChatSettings())
+    val currentSettings = settings.stateIn(
+        scope = CoroutineScope(dispatchersProvider.io),
+        started = SharingStarted.Eagerly,
+        initialValue = runBlocking { settings.first() }
+    )
+
     val commands = settings
         .map { it.customCommands }
         .distinctUntilChanged()
@@ -164,7 +172,7 @@ class ChatSettingsDataStore(
                 old.visibleBadges != new.visibleBadges
     }
 
-    fun current() = runBlocking { settings.first() }
+    fun current() = currentSettings.value
 
     suspend fun update(transform: suspend (ChatSettings) -> ChatSettings) {
         runCatching { dataStore.updateData(transform) }

@@ -10,9 +10,11 @@ import com.flxrs.dankchat.utils.datastore.dankChatPreferencesMigration
 import com.flxrs.dankchat.utils.datastore.stringOrNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.runBlocking
 import org.koin.core.annotation.Single
 
@@ -50,11 +52,17 @@ class NotificationsSettingsDataStore(
     )
 
     val settings = dataStore.data
+    val currentSettings = settings.stateIn(
+        scope = CoroutineScope(dispatchersProvider.io),
+        started = SharingStarted.Eagerly,
+        initialValue = runBlocking { settings.first() }
+    )
+
     val showNotifications = settings
         .map { it.showNotifications }
         .distinctUntilChanged()
 
-    fun current() = runBlocking { settings.first() }
+    fun current() = currentSettings.value
 
     suspend fun update(transform: suspend (NotificationsSettings) -> NotificationsSettings) {
         runCatching { dataStore.updateData(transform) }

@@ -12,9 +12,11 @@ import com.flxrs.dankchat.utils.datastore.mappedStringOrDefault
 import com.flxrs.dankchat.utils.datastore.safeData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.runBlocking
 import org.koin.core.annotation.Single
 
@@ -69,6 +71,12 @@ class AppearanceSettingsDataStore(
     )
 
     val settings = dataStore.safeData(AppearanceSettings())
+    val currentSettings = settings.stateIn(
+        scope = CoroutineScope(dispatchersProvider.io),
+        started = SharingStarted.Eagerly,
+        initialValue = runBlocking { settings.first() }
+    )
+
     val lineSeparator = settings
         .map { it.lineSeparator }
         .distinctUntilChanged()
@@ -78,7 +86,8 @@ class AppearanceSettingsDataStore(
     val showInput = settings
         .map { it.showInput }
         .distinctUntilChanged()
-    fun current() = runBlocking { settings.first() }
+
+    fun current() = currentSettings.value
 
     suspend fun update(transform: suspend (AppearanceSettings) -> AppearanceSettings) {
         runCatching { dataStore.updateData(transform) }

@@ -11,7 +11,9 @@ import com.flxrs.dankchat.utils.datastore.safeData
 import com.flxrs.dankchat.utils.datastore.stringOrDefault
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.runBlocking
 import org.koin.core.annotation.Single
 
@@ -47,7 +49,13 @@ class DeveloperSettingsDataStore(
     )
 
     val settings = dataStore.safeData(DeveloperSettings())
-    fun current() = runBlocking { settings.first() }
+    val currentSettings = settings.stateIn(
+        scope = CoroutineScope(dispatchersProvider.io),
+        started = SharingStarted.Eagerly,
+        initialValue = runBlocking { settings.first() }
+    )
+
+    fun current() = currentSettings.value
 
     suspend fun update(transform: suspend (DeveloperSettings) -> DeveloperSettings) {
         runCatching { dataStore.updateData(transform) }
