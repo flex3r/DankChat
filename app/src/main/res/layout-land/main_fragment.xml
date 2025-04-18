@@ -20,9 +20,9 @@
         app:iconEndPadding="-2dp"
         app:iconStartPadding="-2dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/split_guideline"
         app:layout_constraintStart_toStartOf="@id/split_guideline"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/split_guideline"
         app:textEndPadding="0dp"
         app:textStartPadding="0dp" />
 
@@ -39,7 +39,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/split_guideline"
-        app:startIconContentDescription="@string/emote_menu_hint">
+        app:layout_constraintTop_toBottomOf="@id/bottom_barrier"
+        app:startIconContentDescription="@string/emote_menu_hint"
+        tools:visibility="gone">
 
         <com.flxrs.dankchat.main.DankChatInput
             android:id="@+id/input"
@@ -55,15 +57,23 @@
 
     <TextView
         android:id="@+id/fullscreen_hint_text"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:animateLayoutChanges="true"
         android:textAppearance="?attr/textAppearanceBodySmall"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/input_layout" />
+        app:layout_constraintStart_toEndOf="@id/split_guideline"
+        app:layout_constraintTop_toBottomOf="@id/bottom_barrier" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/bottom_barrier"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:barrierAllowsGoneWidgets="true"
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="input_layout,fullscreen_hint_text" />
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar_layout"
@@ -103,9 +113,9 @@
         android:id="@+id/coordinator"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/input_layout"
-        app:layout_constraintEnd_toEndOf="@id/input_layout"
-        app:layout_constraintStart_toStartOf="@id/input_layout"
+        app:layout_constraintBottom_toTopOf="@id/bottom_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/split_guideline"
         app:layout_constraintTop_toBottomOf="@id/appbar_layout">
 
         <androidx.constraintlayout.widget.ConstraintLayout
