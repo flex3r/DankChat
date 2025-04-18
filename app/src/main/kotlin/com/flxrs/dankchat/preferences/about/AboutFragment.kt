@@ -20,11 +20,17 @@ import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
+import androidx.compose.ui.unit.dp
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -32,7 +38,13 @@ import androidx.navigation.fragment.findNavController
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.theme.DankChatTheme
 import com.google.android.material.transition.MaterialFadeThrough
+import com.mikepenz.aboutlibraries.Libs
+import com.mikepenz.aboutlibraries.ui.compose.LibraryDefaults
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
+import com.mikepenz.aboutlibraries.ui.compose.util.htmlReadyLicenseContent
+import com.mikepenz.aboutlibraries.util.withContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class AboutFragment : Fragment() {
 
@@ -74,11 +86,31 @@ class AboutFragment : Fragment() {
                             )
                         },
                     ) { padding ->
+                        val context = LocalContext.current
+                        val libraries = produceState<Libs?>(null) {
+                            value = withContext(Dispatchers.IO) {
+                                Libs.Builder().withContext(context).build()
+                            }
+                        }
                         LibrariesContainer(
+                            libraries = libraries.value,
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(padding),
+                            dimensions = LibraryDefaults.libraryDimensions(),
                             contentPadding = WindowInsets.navigationBars.asPaddingValues(),
+                            licenseDialogBody = { library ->
+                                val license = remember(library) {
+                                    library.htmlReadyLicenseContent.takeIf { it.isNotEmpty() }?.let { AnnotatedString.fromHtml(it) }
+                                }
+                                if (license != null) {
+                                    Text(
+                                        text = license,
+                                        modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
+                                    )
+                                }
+                            },
+                            licenseDialogConfirmText = stringResource(R.string.dialog_ok),
                         )
                     }
                 }
