@@ -15,6 +15,7 @@ import android.text.InputType
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
+import android.util.LayoutDirection
 import android.util.Rational
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -22,6 +23,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.MotionEvent
+import android.view.RoundedCorner
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
@@ -585,6 +587,36 @@ class MainFragment : Fragment() {
                 ControlFocusInsetsAnimationCallback(binding.input)
             )
 
+            ViewCompat.setOnApplyWindowInsetsListener(binding.fullscreenHintText) { v, compatInsets ->
+                val insets = compatInsets.toWindowInsets()
+                if (insets != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    val bottomLeft = insets.getRoundedCorner(RoundedCorner.POSITION_BOTTOM_LEFT)
+                    val bottomRight = insets.getRoundedCorner(RoundedCorner.POSITION_BOTTOM_RIGHT)
+                    if (bottomLeft == null || bottomRight == null) {
+                        return@setOnApplyWindowInsetsListener compatInsets
+                    }
+
+                    val isRtl = v.layoutDirection == View.LAYOUT_DIRECTION_RTL
+                    val left = when {
+                        mainViewModel.isFullscreen && (isPortrait || isRtl || !mainViewModel.isStreamActive) -> bottomLeft.center.x
+                        else                                                                                 -> 8.px
+                    }
+
+                    val screenWidth = window.decorView.width
+                    val right = when {
+                        mainViewModel.isFullscreen && (isPortrait || !isRtl || !mainViewModel.isStreamActive) -> screenWidth - bottomRight.center.x
+                        else                                                                                  -> 8.px
+                    }
+
+                    v.updateLayoutParams<MarginLayoutParams> {
+                        leftMargin = left
+                        rightMargin = right
+                    }
+                }
+
+                compatInsets
+            }
+
             if (savedInstanceState == null && !mainViewModel.started) {
                 mainViewModel.started = true // TODO ???
                 if (!dankChatPreferences.hasMessageHistoryAcknowledged) {
@@ -630,7 +662,7 @@ class MainFragment : Fragment() {
                 if (index >= 0) {
                     when (index) {
                         bindingRef?.chatViewpager?.currentItem -> clearNotificationsOfChannel(channel)
-                        else                              -> bindingRef?.chatViewpager?.post { bindingRef?.chatViewpager?.setCurrentItem(index, false) }
+                        else                                   -> bindingRef?.chatViewpager?.post { bindingRef?.chatViewpager?.setCurrentItem(index, false) }
                     }
                 }
                 channelToOpen = null
