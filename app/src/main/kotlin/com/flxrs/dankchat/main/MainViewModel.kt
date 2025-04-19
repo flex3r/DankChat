@@ -768,6 +768,12 @@ class MainViewModel(
         _isFullscreen.update { !it }
     }
 
+    fun toggleInput() {
+        viewModelScope.launch {
+            appearanceSettingsDataStore.update { it.copy(showInput = !it.showInput) }
+        }
+    }
+
     fun setIsLandscape(value: Boolean) {
         _isLandscape.update { value }
     }

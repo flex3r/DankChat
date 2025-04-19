@@ -327,6 +327,7 @@ class MainFragment : Fragment() {
 
             addChannelsButton.setOnClickListener { navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment) }
             toggleFullscreen.setOnClickListener { mainViewModel.toggleFullscreen() }
+            toggleInput.setOnClickListener { mainViewModel.toggleInput() }
             toggleStream.setOnClickListener {
                 mainViewModel.toggleStream()
                 root.requestApplyInsets()
@@ -424,7 +425,10 @@ class MainFragment : Fragment() {
                 val resourceId = if (it) R.drawable.ic_keyboard_arrow_up else R.drawable.ic_keyboard_arrow_down
                 binding.showChips.setChipIconResource(resourceId)
             }
-            collectFlow(shouldShowExpandedChips) { binding.toggleFullscreen.isVisible = it }
+            collectFlow(shouldShowExpandedChips) {
+                binding.toggleFullscreen.isVisible = it
+                binding.toggleInput.isVisible = it
+            }
             collectFlow(shouldShowStreamToggle) { binding.toggleStream.isVisible = it }
             collectFlow(hasModInChannel) { binding.changeRoomstate.isVisible = it }
             collectFlow(shouldShowViewPager) {
