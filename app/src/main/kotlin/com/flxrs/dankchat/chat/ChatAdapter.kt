@@ -853,7 +853,7 @@ class ChatAdapter(
         val scaledWidth = width * emote.scale
         val scaledHeight = height * emote.scale
 
-        val left = (maxWidth - scaledWidth).coerceAtLeast(0)
+        val left = if (maxWidth > 0) (maxWidth - scaledWidth).div(2).coerceAtLeast(0) else 0
         val top = (maxHeight - scaledHeight).coerceAtLeast(0)
 
         setBounds(left, top, scaledWidth + left, scaledHeight + top)
