@@ -391,4 +391,6 @@
         <item quantity="one">Live with %1$d viewer in %2$s for %3$s</item>
         <item quantity="other">Live with %1$d viewers in %2$s for %3$s</item>
     </plurals>
+    <string name="preference_streaminfo_category_title">Show stream category</string>
+    <string name="preference_streaminfo_category_summary">Also display stream category</string>
 </resources>

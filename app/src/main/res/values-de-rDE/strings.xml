@@ -398,4 +398,6 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
         <item quantity="one">Live mit %1$d Zuschauer in %2$s für %3$s</item>
         <item quantity="other">Live mit %1$d Zuschauern in %2$s für %3$s</item>
     </plurals>
+    <string name="preference_streaminfo_category_title">Stream-Kategorie anzeigen</string>
+    <string name="preference_streaminfo_category_summary">Zeigt auch die Stream-Kategorie</string>
 </resources>
