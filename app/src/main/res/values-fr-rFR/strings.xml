@@ -382,6 +382,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="login_menu_zoom_out">Zoom arrière</string>
     <string name="login_menu_zoom_in">Zoom avant</string>
     <string name="back">Retour</string>
+    <string name="shared_chat">Chat partagé</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">En direct avec %1$d spectateur pendant %2$s</item>
         <item quantity="other">En direct avec %1$d spectateurs pendant %2$s</item>

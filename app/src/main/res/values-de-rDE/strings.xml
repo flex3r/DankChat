@@ -394,4 +394,8 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
         <item quantity="other">%d Monate</item>
     </plurals>
     <string name="open_source_licenses">Open-Source-Lizenzen</string>
+    <plurals name="viewers_and_uptime_with_cateogry" comment="Live with 1 viewer in Just Chatting for 1h 1m&#13;&#10;Live with 10 viewers in Just Chatting for 1h 1m">
+        <item quantity="one">Live mit %1$d Zuschauer in %2$s für %3$s</item>
+        <item quantity="other">Live mit %1$d Zuschauern in %2$s für %3$s</item>
+    </plurals>
 </resources>
