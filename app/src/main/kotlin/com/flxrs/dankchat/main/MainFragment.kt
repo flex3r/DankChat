@@ -50,6 +50,7 @@ import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.Type
 import androidx.core.view.doOnPreDraw
+import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.core.view.updateLayoutParams
@@ -61,6 +62,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.flxrs.dankchat.BuildConfig
 import com.flxrs.dankchat.DankChatViewModel
@@ -341,9 +343,17 @@ class MainFragment : Fragment() {
                 when (event.actionMasked) {
                     MotionEvent.ACTION_MOVE -> {
                         val guideline = splitGuideline ?: return@setOnTouchListener false
+                        // Calculate centered position the same way for both LTR and RTL
                         val centered = event.rawX + offset + (v.width / 2f)
+                        val percentValue = centered / root.width
                         guideline.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                            guidePercent = (centered / root.width).coerceIn(MIN_GUIDELINE_PERCENT, MAX_GUIDELINE_PERCENT)
+                            // Only invert the percentage for RTL
+                            val isRtl = root.layoutDirection == LayoutDirection.RTL
+                            guidePercent = if (isRtl) {
+                                (1f - percentValue).coerceIn(MIN_GUIDELINE_PERCENT, MAX_GUIDELINE_PERCENT)
+                            } else {
+                                percentValue.coerceIn(MIN_GUIDELINE_PERCENT, MAX_GUIDELINE_PERCENT)
+                            }
                         }
                         true
                     }
@@ -543,8 +553,14 @@ class MainFragment : Fragment() {
         val channels = dankChatPreferences.channels
         val withRenames = dankChatPreferences.getChannelsWithRenames(channels)
         tabAdapter.updateFragments(withRenames)
-        @SuppressLint("WrongConstant")
-        binding.chatViewpager.offscreenPageLimit = OFFSCREEN_PAGE_LIMIT
+//        Setting a custom limit completely breaks the chat when in landscape, rtl and the split is moved around
+//        Use the default caching mechanism instead but limit the cache size of the underlying recyclerview
+//        binding.chatViewpager.offscreenPageLimit = OFFSCREEN_PAGE_LIMIT
+        runCatching {
+            with(binding.chatViewpager[0] as RecyclerView) {
+                setItemViewCacheSize(OFFSCREEN_PAGE_LIMIT * 2)
+            }
+        }
         tabLayoutMediator.attach()
         binding.tabs.addOnTabSelectedListener(tabSelectionListener)
 
