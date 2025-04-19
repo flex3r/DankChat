@@ -383,6 +383,7 @@
     <string name="login_menu_zoom_out">縮小</string>
     <string name="login_menu_zoom_in">放大</string>
     <string name="back">返回</string>
+    <string name="shared_chat">共享聊天室</string>
     <plurals name="viewers_and_uptime">
         <item quantity="other">於%1$d觀看者直播了%2$s</item>
     </plurals>
