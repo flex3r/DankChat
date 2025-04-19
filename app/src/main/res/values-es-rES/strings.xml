@@ -394,4 +394,10 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
         <item quantity="other">%d meses</item>
     </plurals>
     <string name="open_source_licenses">Licencias de software libre</string>
+    <plurals name="viewers_and_uptime_with_cateogry" comment="Live with 1 viewer in Just Chatting for 1h 1m&#13;&#10;Live with 10 viewers in Just Chatting for 1h 1m">
+        <item quantity="one">En directo con %1$d espectador en %2$s durante %3$s</item>
+        <item quantity="other">En directo con %1$d espectadores en %2$s durante %3$s</item>
+    </plurals>
+    <string name="preference_streaminfo_category_title">Mostrar categoría del stream</string>
+    <string name="preference_streaminfo_category_summary">Muestra también la categoría del stream</string>
 </resources>

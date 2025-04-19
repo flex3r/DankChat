@@ -393,4 +393,5 @@
     </plurals>
     <string name="preference_streaminfo_category_title">Show stream category</string>
     <string name="preference_streaminfo_category_summary">Also display stream category</string>
+    <string name="toggle_input">Toggle input</string>
 </resources>

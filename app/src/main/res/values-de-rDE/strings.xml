@@ -400,4 +400,5 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     </plurals>
     <string name="preference_streaminfo_category_title">Stream-Kategorie anzeigen</string>
     <string name="preference_streaminfo_category_summary">Zeigt auch die Stream-Kategorie</string>
+    <string name="toggle_input">Eingabefeld ein-/ausblenden</string>
 </resources>
