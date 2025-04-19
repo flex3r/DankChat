@@ -387,4 +387,8 @@
         <item quantity="other">%d months</item>
     </plurals>
     <string name="open_source_licenses">Open source licenses</string>
+    <plurals name="viewers_and_uptime_with_cateogry" comment="Live with 1 viewer in Just Chatting for 1h 1m&#13;&#10;Live with 10 viewers in Just Chatting for 1h 1m">
+        <item quantity="one">Live with %1$d viewer in %2$s for %3$s</item>
+        <item quantity="other">Live with %1$d viewers in %2$s for %3$s</item>
+    </plurals>
 </resources>
