@@ -119,6 +119,13 @@ private fun StreamsSettings(
                 onClick = { onInteraction(StreamsSettingsInteraction.ShowStreamInfo(it)) },
             )
             SwitchPreferenceItem(
+                title = stringResource(R.string.preference_streaminfo_category_title),
+                summary = stringResource(R.string.preference_streaminfo_category_summary),
+                isChecked = settings.showStreamCategory,
+                isEnabled = settings.fetchStreams && settings.showStreamInfo,
+                onClick = { onInteraction(StreamsSettingsInteraction.ShowStreamCategory(it)) },
+            )
+            SwitchPreferenceItem(
                 title = stringResource(R.string.preference_retain_webview_title),
                 summary = stringResource(R.string.preference_retain_webview_summary),
                 isChecked = settings.preventStreamReloads,

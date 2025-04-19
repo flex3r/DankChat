@@ -213,11 +213,6 @@ class MainViewModel(
 
     init {
         viewModelScope.launch {
-            streamsSettingsDataStore.fetchStreams
-                .collect { fetchStreamData(channels.value.orEmpty()) }
-        }
-
-        viewModelScope.launch {
             repeatedSend.collectLatest {
                 if (it.enabled && it.message.isNotBlank()) {
                     while (isActive) {
@@ -723,15 +718,18 @@ class MainViewModel(
         channels?.ifEmpty { null } ?: return
 
         viewModelScope.launch {
-            val fetchingEnabled = streamsSettingsDataStore.settings.first().fetchStreams
-            if (!dankChatPreferenceStore.isLoggedIn || !fetchingEnabled) {
+            val settings = streamsSettingsDataStore.settings.first()
+            if (!dankChatPreferenceStore.isLoggedIn || !settings.fetchStreams) {
                 return@launch
             }
 
             fetchTimerJob = timer(STREAM_REFRESH_RATE) {
                 val data = dataRepository.getStreams(channels)?.map {
                     val uptime = DateTimeUtils.calculateUptime(it.startedAt)
-                    val formatted = dankChatPreferenceStore.formatViewersString(it.viewerCount, uptime)
+                    val category = it.category
+                        ?.takeIf { settings.showStreamCategory }
+                        ?.ifBlank { null }
+                    val formatted = dankChatPreferenceStore.formatViewersString(it.viewerCount, uptime, category)
 
                     StreamData(channel = it.userLogin, formattedData = formatted)
                 }.orEmpty()

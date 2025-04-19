@@ -663,7 +663,6 @@ class MainFragment : Fragment() {
                 startReply(reply.replyMessageId, reply.replyName)
             }
         }
-        mainViewModel.fetchStreamData()
     }
 
     override fun onDestroyView() {

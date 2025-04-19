@@ -99,7 +99,12 @@ class DankChatPreferenceStore(
         awaitClose { dankChatPreferences.unregisterOnSharedPreferenceChangeListener(listener) }
     }
 
-    fun formatViewersString(viewers: Int, uptime: String): String = context.resources.getQuantityString(R.plurals.viewers_and_uptime, viewers, viewers, uptime)
+    fun formatViewersString(viewers: Int, uptime: String, category: String?): String {
+        return when (category) {
+            null -> context.resources.getQuantityString(R.plurals.viewers_and_uptime, viewers, viewers, uptime)
+            else -> context.resources.getQuantityString(R.plurals.viewers_and_uptime_with_cateogry, viewers, viewers, category, uptime)
+        }
+    }
 
     fun clearLogin() = dankChatPreferences.edit {
         putBoolean(LOGGED_IN_KEY, false)

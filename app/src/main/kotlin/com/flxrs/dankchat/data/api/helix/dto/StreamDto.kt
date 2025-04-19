@@ -11,4 +11,5 @@ data class StreamDto(
     @SerialName(value = "viewer_count") val viewerCount: Int,
     @SerialName(value = "user_login") val userLogin: UserName,
     @SerialName(value = "started_at") val startedAt: String,
+    @SerialName(value = "game_name") val category: String? = null,
 )
