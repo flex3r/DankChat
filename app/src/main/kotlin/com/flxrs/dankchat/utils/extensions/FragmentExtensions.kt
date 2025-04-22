@@ -3,6 +3,7 @@ package com.flxrs.dankchat.utils.extensions
 import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -61,8 +62,14 @@ fun Fragment.hideKeyboard() {
 val Fragment.isLandscape: Boolean
     get() = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
+val Resources.isLandscape: Boolean
+    get() = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
 val Fragment.isPortrait: Boolean
     get() = resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+
+val Resources.isPortrait: Boolean
+    get() = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
 
 private fun Context.hideKeyboard(view: View) {
     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager

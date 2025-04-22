@@ -570,7 +570,7 @@ class MainFragment : Fragment() {
 
             ViewCompat.setOnApplyWindowInsetsListener(binding.showChips) { v, insets ->
                 // additional margin for chips because of display cutouts/punch holes
-                val needsExtraMargin = bindingRef?.streamWebviewWrapper?.isVisible == true || isLandscape || !mainViewModel.isFullscreen
+                val needsExtraMargin = bindingRef?.streamWebviewWrapper?.isVisible == true || v.resources.isLandscape || !mainViewModel.isFullscreen
                 val extraMargin = when {
                     needsExtraMargin -> 0
                     else             -> insets.getInsets(Type.displayCutout()).top
@@ -614,13 +614,13 @@ class MainFragment : Fragment() {
 
                     val isRtl = v.layoutDirection == View.LAYOUT_DIRECTION_RTL
                     val left = when {
-                        mainViewModel.isFullscreen && (isPortrait || isRtl || !mainViewModel.isStreamActive) -> bottomLeft.center.x
+                        mainViewModel.isFullscreen && (v.resources.isPortrait || isRtl || !mainViewModel.isStreamActive) -> bottomLeft.center.x
                         else                                                                                 -> 8.px
                     }
 
                     val screenWidth = window.decorView.width
                     val right = when {
-                        mainViewModel.isFullscreen && (isPortrait || !isRtl || !mainViewModel.isStreamActive) -> screenWidth - bottomRight.center.x
+                        mainViewModel.isFullscreen && (v.resources.isPortrait || !isRtl || !mainViewModel.isStreamActive) -> screenWidth - bottomRight.center.x
                         else                                                                                  -> 8.px
                     }
 
