@@ -394,4 +394,11 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
         <item quantity="other">%d aylık</item>
     </plurals>
     <string name="open_source_licenses">Açık Kaynaklı Lisanslar</string>
+    <plurals name="viewers_and_uptime_with_cateogry" comment="Live with 1 viewer in Just Chatting for 1h 1m&#13;&#10;Live with 10 viewers in Just Chatting for 1h 1m">
+        <item quantity="one">%2$s içinde %3$s için %1$d izleyici ile canlı</item>
+        <item quantity="other">%2$s içinde %3$s için %1$d izleyici ile canlı</item>
+    </plurals>
+    <string name="preference_streaminfo_category_title">Yayın kategorisini göster</string>
+    <string name="preference_streaminfo_category_summary">Yayın kategorisini de göster</string>
+    <string name="toggle_input">Girişi Değiştir</string>
 </resources>
