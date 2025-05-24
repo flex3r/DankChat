@@ -392,4 +392,11 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
         <item quantity="other">%d mois</item>
     </plurals>
     <string name="open_source_licenses">Licences open source</string>
+    <plurals name="viewers_and_uptime_with_cateogry" comment="Live with 1 viewer in Just Chatting for 1h 1m&#13;&#10;Live with 10 viewers in Just Chatting for 1h 1m">
+        <item quantity="one">En direct avec %1$d spectateur sur %2$s depuis %3$s</item>
+        <item quantity="other">En direct avec %1$d spectateurs sur %2$s depuis %3$s</item>
+    </plurals>
+    <string name="preference_streaminfo_category_title">Montrer la catégorie du live</string>
+    <string name="preference_streaminfo_category_summary">Montrer également la catégorie du live</string>
+    <string name="toggle_input">Activer/désactiver la saisie</string>
 </resources>
