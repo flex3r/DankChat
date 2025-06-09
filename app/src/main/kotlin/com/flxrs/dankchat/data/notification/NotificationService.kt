@@ -10,6 +10,7 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.speech.tts.TextToSpeech
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.getSystemService
@@ -123,6 +124,11 @@ class NotificationService : Service(), CoroutineScope {
         }
 
         return START_NOT_STICKY
+    }
+
+    override fun onTimeout(startId: Int, fgsType: Int) {
+        Log.w(TAG, "Stopping foreground service due to 6h timeout restriction..")
+        stopSelf()
     }
 
     fun setActiveChannel(channel: UserName) {
