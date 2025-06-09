@@ -879,7 +879,7 @@ class MainFragment : Fragment() {
     }
 
     private fun insertText(text: String) {
-        if (!dankChatPreferences.isLoggedIn) {
+        if (!dankChatPreferences.isLoggedIn || !mainViewModel.shouldShowInput.value) {
             return
         }
 
