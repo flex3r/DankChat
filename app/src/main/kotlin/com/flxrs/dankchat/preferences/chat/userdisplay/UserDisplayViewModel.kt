@@ -30,6 +30,7 @@ class UserDisplayViewModel(
     fun addUserDisplay() = viewModelScope.launch {
         val entity = userDisplayRepository.addUserDisplay()
         userDisplays += entity.toItem()
+        println("XXX ${userDisplays.toList()}")
         val position = userDisplays.lastIndex
         sendEvent(UserDisplayEvent.ItemAdded(position, isLast = true))
     }
@@ -43,6 +44,10 @@ class UserDisplayViewModel(
 
     fun removeUserDisplayItem(item: UserDisplayItem) = viewModelScope.launch {
         val position = userDisplays.indexOfFirst { it.id == item.id }
+        if (position == -1) {
+            return@launch
+        }
+
         userDisplayRepository.removeUserDisplay(item.toEntity())
         userDisplays.removeAt(position)
         sendEvent(UserDisplayEvent.ItemRemoved(item, position))

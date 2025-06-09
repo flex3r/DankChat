@@ -16,9 +16,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -30,20 +30,26 @@ import com.flxrs.dankchat.R
 fun SwipeToDelete(onDelete: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true, content: @Composable RowScope.() -> Unit) {
     val density = LocalDensity.current
     lateinit var state: SwipeToDismissBoxState
-    state = rememberSwipeToDismissBoxState(
-        confirmValueChange = {
-            when (it) {
-                SwipeToDismissBoxValue.StartToEnd, SwipeToDismissBoxValue.EndToStart -> when {
-                    state.progress > 0.3f -> onDelete()
-                    else                  -> return@rememberSwipeToDismissBoxState false
-                }
+    state = remember {
+        SwipeToDismissBoxState(
+            confirmValueChange = {
+                when (it) {
+                    SwipeToDismissBoxValue.StartToEnd, SwipeToDismissBoxValue.EndToStart -> when {
+                        state.currentValue == state.targetValue -> return@SwipeToDismissBoxState false
+                        state.progress > 0.3f   -> onDelete()
 
-                SwipeToDismissBoxValue.Settled                                       -> return@rememberSwipeToDismissBoxState false
-            }
-            true
-        },
-        positionalThreshold = { with(density) { 84.dp.toPx() } },
-    )
+                        else                    -> return@SwipeToDismissBoxState false
+                    }
+
+                    SwipeToDismissBoxValue.Settled                                       -> return@SwipeToDismissBoxState false
+                }
+                true
+            },
+            positionalThreshold = { with(density) { 84.dp.toPx() } },
+            initialValue = SwipeToDismissBoxValue.Settled,
+            density = density,
+        )
+    }
     SwipeToDismissBox(
         gesturesEnabled = enabled,
         enableDismissFromEndToStart = enabled,
