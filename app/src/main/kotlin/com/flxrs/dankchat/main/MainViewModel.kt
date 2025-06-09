@@ -364,9 +364,8 @@ class MainViewModel(
     val shouldShowChipToggle: StateFlow<Boolean> = combine(
         appearanceSettingsDataStore.showChips,
         isScrolling,
-        isInputFocused
-    ) { shouldShowChips, isScrolling, inputFocus ->
-        shouldShowChips && !isScrolling && !inputFocus
+    ) { shouldShowChips, isScrolling ->
+        shouldShowChips && !isScrolling
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeout = 5.seconds), true)
 
     val shouldShowExpandedChips: StateFlow<Boolean> = combine(shouldShowChipToggle, chipsExpanded) { shouldShowChips, chipsExpanded ->

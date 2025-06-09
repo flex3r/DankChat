@@ -7,6 +7,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -1514,8 +1515,10 @@ class MainFragment : Fragment() {
                 return@setOnFocusChangeListener
             }
 
-            binding.tabs.isVisible = !hasFocus && mainViewModel.shouldShowTabs.value
-            binding.streamWebviewWrapper.isVisible = !hasFocus && !mainViewModel.isEmoteSheetOpen && mainViewModel.isStreamActive
+
+            val hasHardwareKeyboard = resources.configuration.keyboard != Configuration.KEYBOARD_NOKEYS
+            binding.tabs.isVisible = (!hasFocus || hasHardwareKeyboard) && mainViewModel.shouldShowTabs.value
+            binding.streamWebviewWrapper.isVisible = (!hasFocus || hasHardwareKeyboard) && !mainViewModel.isEmoteSheetOpen && mainViewModel.isStreamActive
             when {
                 hasFocus      -> (activity as? MainActivity)?.supportActionBar?.hide()
                 !isFullscreen -> (activity as? MainActivity)?.supportActionBar?.show()
