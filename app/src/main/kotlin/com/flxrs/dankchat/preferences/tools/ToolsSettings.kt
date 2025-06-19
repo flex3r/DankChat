@@ -45,11 +45,11 @@ data class ImageUploaderConfig(
 
     companion object {
         val DEFAULT = ImageUploaderConfig(
-            uploadUrl = "https://kappa.lol/api/upload",
+            uploadUrl = "https://i.nuuls.com/upload",
             formField = "file",
             headers = null,
-            imageLinkPattern = "{link}",
-            deletionLinkPattern = "{delete}",
+            imageLinkPattern = null,
+            deletionLinkPattern = null,
         )
     }
 }
