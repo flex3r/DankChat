@@ -42,7 +42,7 @@ processPhoenix = "3.0.0"
 
 colorPicker = "3.1.0"
 
-junit = "5.13.1"
+junit = "5.13.3"
 mockk = "1.14.2"
 
 [libraries]
