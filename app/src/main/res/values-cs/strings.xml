@@ -10,6 +10,7 @@
     <string name="add_dialog_title">Přidat kanál</string>
     <string name="edit_dialog_title">Přejmenovat kanál</string>
     <string name="dialog_ok">OK</string>
+    <string name="save">Uložit</string>
     <string name="dialog_cancel">Zrušit</string>
     <string name="dialog_dismiss">Zamítnout</string>
     <string name="error_dialog_copy">Zkopírovat</string>
@@ -382,6 +383,8 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="confirm_login_cancel_positive_button">Zrušit přihlášení</string>
     <string name="login_menu_zoom_out">Oddálit</string>
     <string name="login_menu_zoom_in">Přiblížit</string>
+    <string name="back">Zpět</string>
+    <string name="shared_chat">Sdílený chat</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">Živě s %1$d divákem již: %2$s</item>
         <item quantity="few">Živě se %1$d diváky již: %2$s</item>
@@ -394,4 +397,8 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
         <item quantity="many">%d měsíců</item>
         <item quantity="other">%d měsíců</item>
     </plurals>
+    <string name="open_source_licenses">Licence open source</string>
+    <string name="preference_streaminfo_category_title">Zobrazit kategorii vysílání</string>
+    <string name="preference_streaminfo_category_summary">Zobrazit také kategorii vysílání</string>
+    <string name="toggle_input">Přepnout vstup</string>
 </resources>
