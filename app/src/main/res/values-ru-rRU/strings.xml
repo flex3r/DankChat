@@ -129,7 +129,7 @@
     <string name="uploader_deletion_link">Шаблон для удаления ссылки</string>
     <string name="uploader_description">Вы можете настроить собственный хостинг для загрузки медиа, например imgur.com или s-ul.eu. DankChat использует схожий с Chatterino формат настройки.\nПосмотрите здесь, если хотите узнать подробнее (на английском): https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="toggle_fullscreen">Полноэкранный режим</string>
-    <string name="toggle_stream">Отображать трансляцию </string>
+    <string name="toggle_stream">Вкл/выкл трансляцию</string>
     <string name="account">Аккаунт</string>
     <string name="relogin">Войти снова</string>
     <string name="logout">Выйти</string>
@@ -382,6 +382,7 @@
     <string name="login_menu_zoom_out">Отдалить</string>
     <string name="login_menu_zoom_in">Приблизить</string>
     <string name="back">Назад</string>
+    <string name="shared_chat">Общий чат</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">В эфире %2$s с %1$d зрителем</item>
         <item quantity="few">В эфире %2$s с %1$d зрителями </item>
@@ -394,4 +395,14 @@
         <item quantity="many">%d месяцев</item>
         <item quantity="other">%d месяца</item>
     </plurals>
+    <string name="open_source_licenses">Лицензии с открытым исходным кодом</string>
+    <plurals name="viewers_and_uptime_with_cateogry" comment="Live with 1 viewer in Just Chatting for 1h 1m&#13;&#10;Live with 10 viewers in Just Chatting for 1h 1m">
+        <item quantity="one">В эфире %3$s с %1$d зрителем в %2$s</item>
+        <item quantity="few">В эфире %3$s с %1$d зрителями в %2$s</item>
+        <item quantity="many">В эфире %3$s с %1$d зрителями в %2$s</item>
+        <item quantity="other">В эфире %3$s с %1$d зрителями в %2$s</item>
+    </plurals>
+    <string name="preference_streaminfo_category_title">Отображать категорию стрима</string>
+    <string name="preference_streaminfo_category_summary">Также показывать категорию стрима</string>
+    <string name="toggle_input">Переключить строку ввода</string>
 </resources>
