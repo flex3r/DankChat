@@ -47,7 +47,7 @@
     <string name="hint_connected">Пачаць чат</string>
     <string name="hint_disconnected">Адключана</string>
     <string name="hint_not_logged_int">Вы не ўвайшлі</string>
-    <string name="hint_replying">адказаць</string>
+    <string name="hint_replying">Адказаць</string>
     <string name="notification_new_mentions">У вас новыя згадванні</string>
     <string name="notification_mention">%1$s згадаў вас у #%2$s</string>
     <string name="notification_notify_mention">Вас згадалі ў #%1$s</string>
@@ -67,7 +67,7 @@
     <string name="emote_menu_tab_channel">Смайлы канала</string>
     <string name="emote_menu_tab_global">Глабальныя смайлы</string>
     <string name="system_message_connected">Падлучана</string>
-    <string name="system_message_reconnected">Падключэнне адноўлена</string>
+    <string name="system_message_reconnected">Перападлучана</string>
     <string name="system_message_channel_non_existent">Гэты канал не існуе</string>
     <string name="system_message_disconnected">Адключана</string>
     <string name="system_message_history_unavailable_detailed">Сэрвіс гісторыі паведамленняў недаступны (Памылка %1$s)</string>
@@ -92,7 +92,7 @@
     <string name="dialog_optout">Адхіліць</string>
     <string name="more">Больш</string>
     <string name="mentions_title">Згадванні / Асабістыя паведамленні</string>
-    <string name="replies_title">Тэма адказу</string>
+    <string name="replies_title">Галіна адказаў</string>
     <string name="whispers">Асабістыя паведамленні</string>
     <string name="notification_whisper_mention">Вам прыйшло паведамленне ад %1$s</string>
     <string name="mentions">Згадванні</string>
@@ -211,7 +211,7 @@
     <string name="preference_suggestions_summary">Адлюстроўваць падказкі для нікаў карыстальнікаў і смайлаў пры наборы паведамленняў</string>
     <string name="preference_load_message_history_title">Загружаць гісторыю паведамленняў адразу</string>
     <string name="preference_load_messages_on_reconnect_title">Загрузіць гісторыю паведамленняў пасля паўторнага падключэння</string>
-    <string name="preference_load_messages_on_reconnect_summary">Спробы атрымаць прапушчаныя паведамленні, якія не былі атрыманы падчас разрыву злучэння</string>
+    <string name="preference_load_messages_on_reconnect_summary">Спрабаваць атрымаць прапушчаныя паведамленні, якія не былі атрыманы падчас разрыву злучэння</string>
     <string name="preference_message_history_header">Гісторыя паведамленняў</string>
     <string name="preference_message_history_dashboard_title">Адкрыць інфармацыйную панэль</string>
     <string name="preference_message_history_dashboard_summary">Даведайцеся больш пра рэсурс і адключыце гісторыю паведамленняў для вашага ўласнага канала</string>
@@ -289,9 +289,9 @@
     <string name="preference_7tv_live_updates_entry_thirty_minutes">30 хвілін</string>
     <string name="preference_7tv_live_updates_entry_one_hour">1 гадзіна</string>
     <string name="preference_7tv_live_updates_entry_always">Заўсёды актыўны</string>
-    <string name="preference_streams_header">Стрымы</string>
+    <string name="preference_streams_header">Трасляцыі</string>
     <string name="preference_pip_title">Уключыць рэжым карціны ў карцінцы</string>
-    <string name="preference_pip_summary">Дазваляе працягваць прайграванне стрымаў, калі праграма знаходзіцца на заднім плане</string>
+    <string name="preference_pip_summary">Дазваляе працягваць прайграванне трансляцый, калі праграма знаходзіцца ў фонавым рэжыме</string>
     <string name="reset_media_uploader_dialog_title">Скінуць налады загрузкі медыя</string>
     <string name="reset_media_uploader_dialog_message">Вы ўпэўнены, што хочаце скінуць налады загрузкі медыя да стандартных?</string>
     <string name="reset_media_uploader_dialog_positive">Скінуць</string>
@@ -338,20 +338,20 @@
     <string name="login_outdated_message">Ваш лагін устарэўшы і не мае доступу да некаторых функцый. Калі ласка, увайдзіце зноў.</string>
     <string name="custom_user_display_title">Карыстальніцкі выгляд</string>
     <string name="remove_custom_user_display">Выдаліць індывідуальнае адлюстраванне карыстальніка</string>
-    <string name="user_display_alias_input">Аліас</string>
+    <string name="user_display_alias_input">Псеўданім</string>
     <string name="user_display_custom_color_enable">Індывідуальны колер</string>
-    <string name="user_display_custom_alias_enable">Індывідуальны аліас</string>
+    <string name="user_display_custom_alias_enable">Карыстальніцкі псеўданім</string>
     <string name="pick_custom_user_color_title">Выбраць індывідуальны колер карыстальніка</string>
     <string name="custom_user_display_summary">Дадаць індывідуальнае імя і колер для карыстальнікаў</string>
     <string name="reply_to">Адказ на</string>
     <string name="message_copy">Скапіраваць тэкст</string>
     <string name="message_copy_full">Скапіраваць увесь тэкст</string>
     <string name="message_reply">Адказаць на паведамленне</string>
-    <string name="message_view_thread">Паглядзець тэму</string>
+    <string name="message_view_thread">Паглядзець галіну</string>
     <string name="message_copy_id">Скапіраваць ID паведамлення</string>
     <string name="message_more_actions">Больш…</string>
     <string name="reply_header">У адказ @%1$s</string>
-    <string name="reply_thread_not_found">Тэма адказу не знойдзена</string>
+    <string name="reply_thread_not_found">Галіна адказаў не знойдзена</string>
     <string name="message_not_found">Паведамленне не знойдзена</string>
     <string name="emote_sheet_use">Выкарыстаць смайл</string>
     <string name="emote_sheet_copy">Скапіраваць </string>
@@ -377,6 +377,7 @@
     <string name="login_menu_zoom_out">Аддаліць</string>
     <string name="login_menu_zoom_in">Наблізіць</string>
     <string name="back">Назад</string>
+    <string name="shared_chat">Супольны чат</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">У эфіры з %1$d гледачом на працягу %2$s</item>
         <item quantity="few">У эфіры з %1$d гледачамі на працягу %2$s</item>
@@ -389,4 +390,14 @@
         <item quantity="many">%d месяцаў</item>
         <item quantity="other">%d месяцаў</item>
     </plurals>
+    <string name="open_source_licenses">Ліцэнзіі з адкрытым зыходным кодам</string>
+    <plurals name="viewers_and_uptime_with_cateogry" comment="Live with 1 viewer in Just Chatting for 1h 1m&#13;&#10;Live with 10 viewers in Just Chatting for 1h 1m">
+        <item quantity="one">У эфіры з %1$d гледачом у %2$s на працягу %3$s</item>
+        <item quantity="few">У эфіры з %1$d гледачамі ў %2$s на працягу %3$s</item>
+        <item quantity="many">У эфіры з %1$d гледачамі ў %2$s на працягу %3$s</item>
+        <item quantity="other">У эфіры з %1$d гледачамі ў %2$s на працягу %3$s</item>
+    </plurals>
+    <string name="preference_streaminfo_category_title">Паказваць катэгорыю трансляцыі</string>
+    <string name="preference_streaminfo_category_summary">Таксама паказваць катэгорыю трансляцыі</string>
+    <string name="toggle_input">Пераключыць радок уводу</string>
 </resources>
