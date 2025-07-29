@@ -289,7 +289,7 @@
     <string name="preference_7tv_live_updates_entry_thirty_minutes">30 хвілін</string>
     <string name="preference_7tv_live_updates_entry_one_hour">1 гадзіна</string>
     <string name="preference_7tv_live_updates_entry_always">Заўсёды актыўны</string>
-    <string name="preference_streams_header">Трасляцыі</string>
+    <string name="preference_streams_header">Трансляцыі</string>
     <string name="preference_pip_title">Уключыць рэжым карціны ў карцінцы</string>
     <string name="preference_pip_summary">Дазваляе працягваць прайграванне трансляцый, калі праграма знаходзіцца ў фонавым рэжыме</string>
     <string name="reset_media_uploader_dialog_title">Скінуць налады загрузкі медыя</string>
