@@ -56,7 +56,7 @@ class EmoteSheetViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
             is ChatMessageEmoteType.ChannelFFZEmote,
             is ChatMessageEmoteType.GlobalFFZEmote      -> "$FFZ_BASE_LINK$id-$code"
 
-            is ChatMessageEmoteType.TwitchEmote         -> "$RACCATTACK_BASE_LINK$id"
+            is ChatMessageEmoteType.TwitchEmote         -> "$TWITCH_BASE_LINK$id"
         }
     }
 
@@ -76,6 +76,6 @@ class EmoteSheetViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         private const val SEVEN_TV_BASE_LINK = "https://7tv.app/emotes/"
         private const val FFZ_BASE_LINK = "https://www.frankerfacez.com/emoticon/"
         private const val BTTV_BASE_LINK = "https://betterttv.com/emotes/"
-        private const val RACCATTACK_BASE_LINK = "https://emotes.awoo.nl/twitch/emote/"
+        private const val TWITCH_BASE_LINK = "https://chatvau.lt/emote/twitch/"
     }
 }
