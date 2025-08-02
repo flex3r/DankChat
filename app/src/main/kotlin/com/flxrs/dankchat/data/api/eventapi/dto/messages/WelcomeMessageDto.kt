@@ -1,6 +1,6 @@
 package com.flxrs.dankchat.data.api.eventapi.dto.messages
 
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

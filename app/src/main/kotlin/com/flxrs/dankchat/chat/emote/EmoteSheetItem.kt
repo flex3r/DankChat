@@ -8,7 +8,7 @@ data class EmoteSheetItem(
     val name: String,
     val baseName: String?,
     val imageUrl: String,
-    @StringRes val emoteType: Int,
+    @param:StringRes val emoteType: Int,
     val providerUrl: String,
     val isZeroWidth: Boolean,
     val creatorName: DisplayName?,

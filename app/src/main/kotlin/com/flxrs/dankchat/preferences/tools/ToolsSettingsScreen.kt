@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.preferences.tools
 
+import android.content.ClipData
 import android.content.Intent
 import android.speech.tts.TextToSpeech
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -49,12 +50,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -75,6 +78,7 @@ import com.flxrs.dankchat.preferences.tools.upload.RecentUploadsViewModel
 import com.flxrs.dankchat.utils.compose.buildLinkAnnotation
 import com.flxrs.dankchat.utils.compose.textLinkStyles
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import sh.calvin.autolinktext.rememberAutoLinkText
 
@@ -214,7 +218,8 @@ fun RecentUploadItem(upload: RecentUpload) {
             .fillMaxWidth()
             .padding(16.dp),
     ) {
-        val clipboardManager = LocalClipboardManager.current
+        val clipboardManager = LocalClipboard.current
+        val scope = rememberCoroutineScope()
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -250,7 +255,11 @@ fun RecentUploadItem(upload: RecentUpload) {
                         style = MaterialTheme.typography.bodyMedium,
                     )
                     IconButton(
-                        onClick = { clipboardManager.setText(AnnotatedString(upload.imageUrl)) },
+                        onClick = {
+                            scope.launch {
+                                clipboardManager.setClipEntry(ClipEntry(ClipData.newPlainText("image url", upload.imageUrl)))
+                            }
+                        },
                         content = {
                             Icon(Icons.Default.ContentCopy, contentDescription = stringResource(R.string.emote_sheet_copy))
                         },

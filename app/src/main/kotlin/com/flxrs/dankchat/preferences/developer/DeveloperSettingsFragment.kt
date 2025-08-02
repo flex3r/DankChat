@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.preferences.developer
 
+import android.content.ClipData
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -60,11 +61,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -410,7 +411,8 @@ private fun CustomLoginBottomSheet(
 
 @Composable
 private fun ShowScopesBottomSheet(scopes: String, onDismissRequested: () -> Unit) {
-    val clipboard = LocalClipboardManager.current
+    val clipboard = LocalClipboard.current
+    val scope = rememberCoroutineScope()
     ModalBottomSheet(onDismissRequested, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Column(Modifier.padding(horizontal = 16.dp)) {
             Text(
@@ -427,7 +429,11 @@ private fun ShowScopesBottomSheet(scopes: String, onDismissRequested: () -> Unit
                 readOnly = true,
                 trailingIcon = {
                     IconButton(
-                        onClick = { clipboard.setText(AnnotatedString(scopes)) },
+                        onClick = {
+                            scope.launch {
+                                clipboard.setClipEntry(ClipEntry(ClipData.newPlainText("scopes", scopes)))
+                            }
+                        },
                         content = { Icon(imageVector = Icons.Default.ContentCopy, contentDescription = null) }
                     )
                 }
