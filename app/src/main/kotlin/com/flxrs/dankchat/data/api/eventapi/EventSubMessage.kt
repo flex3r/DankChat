@@ -2,7 +2,7 @@ package com.flxrs.dankchat.data.api.eventapi
 
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.api.eventapi.dto.messages.notification.ChannelModerateDto
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 sealed interface EventSubMessage
 

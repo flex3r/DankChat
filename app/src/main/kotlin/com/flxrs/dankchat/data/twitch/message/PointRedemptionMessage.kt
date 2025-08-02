@@ -3,11 +3,11 @@ package com.flxrs.dankchat.data.twitch.message
 import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.twitch.pubsub.dto.redemption.PointRedemptionData
-import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import java.util.UUID
+import kotlin.time.Instant
 
 data class PointRedemptionMessage(
     override val timestamp: Long = System.currentTimeMillis(),

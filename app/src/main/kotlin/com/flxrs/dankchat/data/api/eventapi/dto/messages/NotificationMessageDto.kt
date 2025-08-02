@@ -3,7 +3,7 @@ package com.flxrs.dankchat.data.api.eventapi.dto.messages
 import com.flxrs.dankchat.data.api.eventapi.dto.EventSubSubscriptionStatus
 import com.flxrs.dankchat.data.api.eventapi.dto.EventSubSubscriptionType
 import com.flxrs.dankchat.data.api.eventapi.dto.messages.notification.NotificationEventDto
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

@@ -10,8 +10,8 @@ import android.text.style.LeadingMarginSpan
 import androidx.annotation.Px
 
 class ImprovedBulletSpan(
-    @Px private val bulletRadius: Int = STANDARD_BULLET_RADIUS,
-    @Px private val gapWidth: Int = STANDARD_GAP_WIDTH,
+    @param:Px private val bulletRadius: Int = STANDARD_BULLET_RADIUS,
+    @param:Px private val gapWidth: Int = STANDARD_GAP_WIDTH,
     private val color: Int = STANDARD_COLOR
 ) : LeadingMarginSpan {
 

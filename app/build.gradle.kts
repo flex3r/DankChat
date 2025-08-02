@@ -128,6 +128,7 @@ kotlin {
             "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
             "-opt-in=androidx.compose.foundation.layout.ExperimentalLayoutApi",
             "-opt-in=kotlin.uuid.ExperimentalUuidApi",
+            "-opt-in=kotlin.time.ExperimentalTime",
             "-Xnon-local-break-continue",
             "-Xwhen-guards",
         )

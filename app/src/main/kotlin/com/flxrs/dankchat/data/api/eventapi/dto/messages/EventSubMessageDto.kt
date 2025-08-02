@@ -1,7 +1,7 @@
 package com.flxrs.dankchat.data.api.eventapi.dto.messages
 
 import com.flxrs.dankchat.data.api.eventapi.dto.EventSubSubscriptionType
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonClassDiscriminator
