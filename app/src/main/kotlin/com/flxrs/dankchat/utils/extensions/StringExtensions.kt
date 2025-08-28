@@ -146,7 +146,7 @@ val String.withTrailingSpace: String
         else                           -> this
     }
 
-val INVISIBLE_CHAR = 0x000E0000.codePointAsString
+val INVISIBLE_CHAR = 0x034f.codePointAsString
 val String.withoutInvisibleChar: String
     get() = trimEnd().removeSuffix(INVISIBLE_CHAR).trimEnd()
 
