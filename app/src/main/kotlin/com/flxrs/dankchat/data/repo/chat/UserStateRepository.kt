@@ -44,7 +44,7 @@ class UserStateRepository(private val preferenceStore: DankChatPreferenceStore) 
     fun handleGlobalUserState(msg: IrcMessage) {
         val id = msg.tags["user-id"]?.toUserId()
         val sets = msg.tags["emote-sets"]?.split(",")
-        val color = msg.tags["color"]
+        val color = msg.tags["color"]?.ifBlank { null }
         val name = msg.tags["display-name"]?.toDisplayName()
         _userState.update { current ->
             current.copy(
@@ -60,7 +60,7 @@ class UserStateRepository(private val preferenceStore: DankChatPreferenceStore) 
         val channel = msg.params.getOrNull(0)?.substring(1)?.toUserName() ?: return
         val id = msg.tags["user-id"]?.toUserId()
         val sets = msg.tags["emote-sets"]?.split(",").orEmpty()
-        val color = msg.tags["color"]
+        val color = msg.tags["color"]?.ifBlank { null }
         val name = msg.tags["display-name"]?.toDisplayName()
         val badges = msg.tags["badges"]?.split(",")
         val hasModeration = badges?.any { it.contains("broadcaster") || it.contains("moderator") } == true
