@@ -11,9 +11,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import org.koin.core.annotation.Singleton
+import org.koin.core.annotation.Single
 
-@Singleton
+@Single
 class EventSubManager(
     private val eventSubClient: EventSubClient,
     private val channelRepository: ChannelRepository,
