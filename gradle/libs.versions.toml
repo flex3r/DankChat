@@ -8,7 +8,7 @@ ktor = "3.2.3"
 coil = "3.3.0"
 okhttp = "5.1.0"
 ksp = "2.2.10-2.0.2"
-koin = "4.1.0"
+koin = "4.1.1"
 koin-annotations = "2.1.0"
 about-libraries = "12.2.4"
 
