@@ -34,7 +34,7 @@ compose = "1.9.2"
 compose-icons = "1.7.8"
 compose-materia3 = "1.5.0-alpha01"
 compose-unstyled = "1.43.1"
-material = "1.12.0"
+material = "1.13.0"
 flexBox = "3.0.0"
 autoLinkText =  "2.0.2"
 
