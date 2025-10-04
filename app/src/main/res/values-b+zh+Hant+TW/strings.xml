@@ -129,17 +129,17 @@
     <string name="uploader_deletion_link">刪除連結格式</string>
     <string name="uploader_description">您可以設定一個自訂的主機來用於上傳媒體，例如imgur.com或是s-ul.eu。DankChat使用與Chatterino相同的設定格式。\n若需幫助請查看這則指導文章: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="toggle_fullscreen">開啟/關閉全螢幕</string>
-    <string name="toggle_stream">開啟/關閉直播 </string>
+    <string name="toggle_stream">開啟/關閉實況</string>
     <string name="account">帳戶</string>
     <string name="relogin">重新登入</string>
     <string name="logout">登出</string>
     <string name="user_popup_timeout">禁言</string>
     <string name="user_popup_delete">刪除留言</string>
-    <string name="user_popup_ban">Ban</string>
-    <string name="user_popup_unban">解除禁言</string>
+    <string name="user_popup_ban">永久禁言</string>
+    <string name="user_popup_unban">解ban</string>
     <string name="change_roomstate">聊天室狀態</string>
-    <string name="confirm_user_ban_title">確認永久禁言</string>
-    <string name="confirm_user_ban_message">您確定要ban掉這名用戶嗎?</string>
+    <string name="confirm_user_ban_title">確認永ban</string>
+    <string name="confirm_user_ban_message">您確定要永久禁言這名用戶嗎?</string>
     <string name="confirm_user_ban_positive_button">Ban</string>
     <string name="confirm_user_timeout_title">確認禁言</string>
     <string name="confirm_user_timeout_positive_button">禁言</string>
@@ -165,7 +165,7 @@
     <string name="tts_ignore_list_user_hint">使用者</string>
     <string name="recent_upload_deletion_link">刪除連結: \n%1$s</string>
     <string name="recent_uploads_clear">清除上傳</string>
-    <string name="host">直播主</string>
+    <string name="host">實況主</string>
     <string name="reset">重置</string>
     <string name="oauth_token">OAuth授權token</string>
     <string name="verify_login">確認&amp;保存</string>
@@ -187,8 +187,8 @@
     <string name="preference_mention_format_title">提及格式</string>
     <string name="preference_roomstate_title">顯示聊天室狀態</string>
     <string name="preference_roomstate_summary">顯示目前聊天室狀態，如訂閱者聊天模式</string>
-    <string name="preference_streaminfo_title">顯示直播訊息</string>
-    <string name="preference_streaminfo_summary">顯示直播狀態及觀看人數</string>
+    <string name="preference_streaminfo_title">顯示實況訊息</string>
+    <string name="preference_streaminfo_summary">顯示實況狀態及觀看人數</string>
     <string name="preference_notification_title">顯示訊息通知</string>
     <string name="preference_notification_summary">於背景執行時，當被他人提及時顯示通知</string>
     <string name="preference_notification_header">提醒</string>
@@ -226,7 +226,7 @@
     <string name="preference_debug_mode_title">除錯模式</string>
     <string name="preference_debug_mode_summary">提供已攔截的例外訊息</string>
     <string name="preference_timestamp_format_title">時間戳記格式</string>
-    <string name="preference_tts_title">啟用 TTS</string>
+    <string name="preference_tts_title">啟用文字朗讀</string>
     <string name="preference_tts_summary">朗讀目前選取頻道的訊息</string>
     <string name="preference_tts_queue_title">訊息播放模式</string>
     <string name="preference_tts_queue_add">依序播放每個訊息</string>
@@ -251,11 +251,11 @@
     <string name="preference_user_long_click_summary_on">輕觸開啟用戶資訊；長按提及用戶</string>
     <string name="preference_user_long_click_summary_off">輕觸提及用戶；長按開啟用戶資訊</string>
     <string name="preference_tts_force_english_title">強制使用英文</string>
-    <string name="preference_tts_force_english_summary">強制 TTS 使用英文，而非系統預設語言</string>
+    <string name="preference_tts_force_english_summary">強制文字朗讀使用英文，而非系統預設語言</string>
     <string name="preference_visible_emotes_title">顯示第三方表情符號</string>
     <string name="preference_about_tos">Twitch 服務條款和用戶政策</string>
     <string name="preference_show_chip_actions_title">顯示微項動作</string>
-    <string name="preference_show_chip_actions_summary">顯示用於切換全螢幕、直播與聊天室模式的微項動作</string>
+    <string name="preference_show_chip_actions_summary">顯示用於切換全螢幕、實況與聊天室模式的微項動作</string>
     <string name="preference_uploader_header">媒體上傳者</string>
     <string name="preference_uploader_configure_title">設定上傳者</string>
     <string name="preference_uploader_recent_uploads_title">近期上傳</string>
@@ -268,8 +268,8 @@
     <string name="preference_unlisted_emotes_title">允許不在列表中的表情</string>
     <string name="preference_unlisted_emotes_summary">關閉未准許或不在列表中表情的過濾</string>
     <string name="preference_rm_host_title">自訂 recent messages 伺服器</string>
-    <string name="preference_fetch_streams_title">捉取直播資訊</string>
-    <string name="preference_fetch_streams_summary">定期捉取開啟頻道的直播資訊。啟用嵌入式直播的必須功能。</string>
+    <string name="preference_fetch_streams_title">捉取實況資訊</string>
+    <string name="preference_fetch_streams_summary">定期捉取開啟頻道的實況資訊。啟用嵌入式實況的必須功能。</string>
     <string name="preference_auto_disable_input_title">未連結至聊天室時取消輸入框</string>
     <string name="preference_repeated_sending_title">啟用重複送訊</string>
     <string name="preference_repeated_sending_summary">使在按住送出按鈕時可以連續送出訊息</string>
@@ -277,8 +277,8 @@
     <string name="oauth_expired_message">你的登入通行令失效了！請重新登入。</string>
     <string name="oauth_expired_login_again">重新登入</string>
     <string name="oauth_verify_failed">登入驗證失敗，請確認連線狀態。</string>
-    <string name="preference_retain_webview_title">防止直播重新載入</string>
-    <string name="preference_retain_webview_summary">使用實驗性的機制防止在旋轉或重新開啟DankChat時直播重新載入。</string>
+    <string name="preference_retain_webview_title">防止實況重新載入</string>
+    <string name="preference_retain_webview_summary">使用實驗性的機制防止在旋轉或重新開啟DankChat時實況重新載入。</string>
     <string name="preference_show_changelogs">更新後顯示變更紀錄</string>
     <string name="preference_whats_new_header">新功能</string>
     <string name="preference_custom_login_title">自訂登入</string>
@@ -295,9 +295,9 @@
     <string name="preference_7tv_live_updates_entry_thirty_minutes">30分鐘</string>
     <string name="preference_7tv_live_updates_entry_one_hour">1小時</string>
     <string name="preference_7tv_live_updates_entry_always">保持啟動</string>
-    <string name="preference_streams_header">直播</string>
+    <string name="preference_streams_header">實況</string>
     <string name="preference_pip_title">啟用子母畫面模式</string>
-    <string name="preference_pip_summary">允許直播在應用程式處於背景時繼續播放</string>
+    <string name="preference_pip_summary">允許實況在應用程式處於背景時繼續播放</string>
     <string name="reset_media_uploader_dialog_title">重置媒體上傳者設定</string>
     <string name="reset_media_uploader_dialog_message">您確定要將媒體上傳者設定重置成預設嗎?</string>
     <string name="reset_media_uploader_dialog_positive">重置</string>
@@ -333,9 +333,9 @@
     <string name="highlights_ignores_entry_redemptions">使用頻道點數兌換的醒目訊息</string>
     <string name="highlights_ignores_entry_replies">回覆</string>
     <string name="highlights_ignores_entry_custom">自訂</string>
-    <string name="highlights_messages_title">基於某些格式產生通知與高亮訊息提示</string>
-    <string name="highlights_users_title">當某些使用者發出訊息時產生通知與高亮提示</string>
-    <string name="highlights_blacklisted_users_title">關閉來自於某些使用者的通知與高亮提示 (例如機器人)</string>
+    <string name="highlights_messages_title">基於某些格式產生通知與醒目訊息提示</string>
+    <string name="highlights_users_title">當某些使用者發出訊息時產生通知與醒目提示</string>
+    <string name="highlights_blacklisted_users_title">關閉來自於某些使用者的通知與醒目提示 (例如機器人)</string>
     <string name="ignores_messages_title">基於某些格式忽略訊息</string>
     <string name="ignores_users_title">忽略來自於某些使用的訊息</string>
     <string name="ignores_twitch_title">管理封鎖的Twitch使用者</string>
@@ -385,16 +385,16 @@
     <string name="back">返回</string>
     <string name="shared_chat">共享聊天室</string>
     <plurals name="viewers_and_uptime">
-        <item quantity="other">現有%1$d位觀眾 直播了%2$s</item>
+        <item quantity="other">現有%1$d位觀眾 實況了%2$s</item>
     </plurals>
     <plurals name="months">
         <item quantity="other">%d 個月</item>
     </plurals>
     <string name="open_source_licenses">開源授權</string>
     <plurals name="viewers_and_uptime_with_cateogry" comment="Live with 1 viewer in Just Chatting for 1h 1m&#13;&#10;Live with 10 viewers in Just Chatting for 1h 1m">
-        <item quantity="other">現有%1$d位觀眾 類別為%2$s 直播了%3$s</item>
+        <item quantity="other">現有%1$d位觀眾 類別為%2$s 實況了%3$s</item>
     </plurals>
-    <string name="preference_streaminfo_category_title">顯示直播類別</string>
-    <string name="preference_streaminfo_category_summary">同時也顯示直播類別</string>
+    <string name="preference_streaminfo_category_title">顯示實況類別</string>
+    <string name="preference_streaminfo_category_summary">同時也顯示實況類別</string>
     <string name="toggle_input">開關輸入框</string>
 </resources>
