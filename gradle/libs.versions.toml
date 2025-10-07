@@ -9,7 +9,7 @@ coil = "3.3.0"
 okhttp = "5.1.0"
 ksp = "2.2.20-2.0.2"
 koin = "4.1.1"
-koin-annotations = "2.1.0"
+koin-annotations = "2.2.0"
 about-libraries = "12.2.4"
 
 androidGradlePlugin = "8.13.0"
