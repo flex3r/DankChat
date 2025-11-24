@@ -88,6 +88,7 @@ fun HighlightsScreen(onNavBack: () -> Unit) {
         currentTab = currentTab,
         messageHighlights = viewModel.messageHighlights,
         userHighlights = viewModel.userHighlights,
+        badgeHighlights = viewModel.badgeHighlights,
         blacklistedUsers = viewModel.blacklistedUsers,
         eventsWrapper = events,
         onSave = viewModel::updateHighlights,
@@ -104,9 +105,10 @@ private fun HighlightsScreen(
     currentTab: HighlightsTab,
     messageHighlights: SnapshotStateList<MessageHighlightItem>,
     userHighlights: SnapshotStateList<UserHighlightItem>,
+    badgeHighlights: SnapshotStateList<BadgeHighlightItem>,
     blacklistedUsers: SnapshotStateList<BlacklistedUserItem>,
     eventsWrapper: HighlightEventsWrapper,
-    onSave: (List<MessageHighlightItem>, List<UserHighlightItem>, List<BlacklistedUserItem>) -> Unit,
+    onSave: (List<MessageHighlightItem>, List<UserHighlightItem>, List<BlacklistedUserItem>, List<BadgeHighlightItem>) -> Unit,
     onRemove: (HighlightItem) -> Unit,
     onAddNew: () -> Unit,
     onAdd: (HighlightItem, Int) -> Unit,
@@ -159,7 +161,7 @@ private fun HighlightsScreen(
 
     LifecycleStartEffect(Unit) {
         onStopOrDispose {
-            onSave(messageHighlights, userHighlights, blacklistedUsers)
+            onSave(messageHighlights, userHighlights, blacklistedUsers, badgeHighlights)
         }
     }
 
@@ -176,7 +178,7 @@ private fun HighlightsScreen(
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            onSave(messageHighlights, userHighlights, blacklistedUsers)
+                            onSave(messageHighlights, userHighlights, blacklistedUsers, badgeHighlights)
                             onNavBack()
                         },
                         content = { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back)) },
@@ -207,6 +209,7 @@ private fun HighlightsScreen(
                 val subtitle = when (currentTab) {
                     HighlightsTab.Messages         -> stringResource(R.string.highlights_messages_title)
                     HighlightsTab.Users            -> stringResource(R.string.highlights_users_title)
+                    HighlightsTab.Badges           -> stringResource(R.string.highlights_badges_title)
                     HighlightsTab.BlacklistedUsers -> stringResource(R.string.highlights_blacklisted_users_title)
                 }
                 Text(
@@ -225,6 +228,7 @@ private fun HighlightsScreen(
                         when (HighlightsTab.entries[it]) {
                             HighlightsTab.Messages         -> stringResource(R.string.tab_messages)
                             HighlightsTab.Users            -> stringResource(R.string.tab_users)
+                            HighlightsTab.Badges           -> stringResource(R.string.tab_badges)
                             HighlightsTab.BlacklistedUsers -> stringResource(R.string.tab_blacklisted_users)
                         }
                     }
@@ -262,6 +266,21 @@ private fun HighlightsScreen(
                             item = item,
                             onChanged = { userHighlights[idx] = it },
                             onRemove = { onRemove(userHighlights[idx]) },
+                            modifier = Modifier.animateItem(
+                                fadeInSpec = null,
+                                fadeOutSpec = null,
+                            ),
+                        )
+                    }
+
+                    HighlightsTab.Badges           -> HighlightsList(
+                        highlights = badgeHighlights,
+                        listState = listState,
+                    ) { idx, item ->
+                        BadgeHighlightItem(
+                            item = item,
+                            onChanged = { badgeHighlights[idx] = it },
+                            onRemove = { onRemove(badgeHighlights[idx]) },
                             modifier = Modifier.animateItem(
                                 fadeInSpec = null,
                                 fadeOutSpec = null,
@@ -435,6 +454,80 @@ private fun UserHighlightItem(
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     maxLines = 1,
                 )
+                FlowRow(
+                    modifier = Modifier.padding(top = 8.dp),
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    CheckboxWithText(
+                        text = stringResource(R.string.enabled),
+                        checked = item.enabled,
+                        onCheckedChange = { onChanged(item.copy(enabled = it)) },
+                        modifier = modifier.padding(end = 8.dp),
+                    )
+                    CheckboxWithText(
+                        text = stringResource(R.string.create_notification),
+                        checked = item.createNotification,
+                        onCheckedChange = { onChanged(item.copy(createNotification = it)) },
+                        enabled = item.enabled && item.notificationsEnabled,
+                    )
+                }
+            }
+            IconButton(
+                onClick = onRemove,
+                content = { Icon(Icons.Default.Clear, contentDescription = stringResource(R.string.clear)) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun BadgeHighlightItem(
+    item: BadgeHighlightItem,
+    onChanged: (BadgeHighlightItem) -> Unit,
+    onRemove: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    ElevatedCard(modifier) {
+        Row {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(8.dp),
+            ) {
+                if (item.isCustom) {
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = item.badgeName,
+                        onValueChange = { onChanged(item.copy(badgeName = it)) },
+                        label = { Text(stringResource(R.string.badge)) },
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        maxLines = 1,
+                    )
+                } else {
+                    var name = ""
+                    when (item.badgeName) {
+                        "broadcaster"-> name = stringResource(R.string.badge_broadcaster)
+                        "admin"-> name = stringResource(R.string.badge_admin)
+                        "staff"-> name = stringResource(R.string.badge_staff)
+                        "moderator"-> name = stringResource(R.string.badge_moderator)
+                        "lead_moderator"-> name = stringResource(R.string.badge_lead_moderator)
+                        "partner"-> name = stringResource(R.string.badge_verified)
+                        "vip"-> name = stringResource(R.string.badge_vip)
+                        "founder"-> name = stringResource(R.string.badge_founder)
+                        "subscriber"-> name = stringResource(R.string.badge_subscriber)
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp)
+                    ) {
+                        Text(
+                            text = name,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+                }
                 FlowRow(
                     modifier = Modifier.padding(top = 8.dp),
                     verticalArrangement = Arrangement.Center,

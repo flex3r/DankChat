@@ -4,4 +4,5 @@ enum class HighlightsTab {
     Messages,
     Users,
     BlacklistedUsers,
+    Badges,
 }

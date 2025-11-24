@@ -1,5 +1,6 @@
 package com.flxrs.dankchat.preferences.notifications.highlights
 
+import com.flxrs.dankchat.data.database.entity.BadgeHighlightEntity
 import com.flxrs.dankchat.data.database.entity.BlacklistedUserEntity
 import com.flxrs.dankchat.data.database.entity.MessageHighlightEntity
 import com.flxrs.dankchat.data.database.entity.MessageHighlightEntityType
@@ -43,6 +44,16 @@ data class UserHighlightItem(
     override val id: Long,
     val enabled: Boolean,
     val username: String,
+    val createNotification: Boolean,
+    val notificationsEnabled: Boolean,
+) : HighlightItem
+
+data class BadgeHighlightItem(
+    override val id: Long,
+    val enabled: Boolean,
+    val badgeName: String,
+    val isCustom: Boolean,
+    val customColor: Int?,
     val createNotification: Boolean,
     val notificationsEnabled: Boolean,
 ) : HighlightItem
@@ -110,6 +121,25 @@ fun UserHighlightItem.toEntity() = UserHighlightEntity(
     id = id,
     enabled = enabled,
     username = username,
+    createNotification = createNotification,
+)
+
+fun BadgeHighlightEntity.toItem(notificationsEnabled: Boolean) = BadgeHighlightItem(
+    id = id,
+    enabled = enabled,
+    badgeName = badgeName,
+    isCustom = isCustom,
+    customColor = customColor,
+    createNotification = createNotification,
+    notificationsEnabled = notificationsEnabled,
+)
+
+fun BadgeHighlightItem.toEntity() = BadgeHighlightEntity(
+    id = id,
+    enabled = enabled,
+    badgeName = badgeName,
+    isCustom = isCustom,
+    customColor = customColor,
     createNotification = createNotification,
 )
 

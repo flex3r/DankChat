@@ -5,9 +5,11 @@ package com.flxrs.dankchat.data.repo
 import android.util.Log
 import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.data.database.dao.BadgeHighlightDao
 import com.flxrs.dankchat.data.database.dao.BlacklistedUserDao
 import com.flxrs.dankchat.data.database.dao.MessageHighlightDao
 import com.flxrs.dankchat.data.database.dao.UserHighlightDao
+import com.flxrs.dankchat.data.database.entity.BadgeHighlightEntity
 import com.flxrs.dankchat.data.database.entity.BlacklistedUserEntity
 import com.flxrs.dankchat.data.database.entity.MessageHighlightEntity
 import com.flxrs.dankchat.data.database.entity.MessageHighlightEntityType
@@ -40,6 +42,7 @@ import org.koin.core.annotation.Single
 class HighlightsRepository(
     private val messageHighlightDao: MessageHighlightDao,
     private val userHighlightDao: UserHighlightDao,
+    private val badgeHighlightDao: BadgeHighlightDao,
     private val blacklistedUserDao: BlacklistedUserDao,
     private val preferences: DankChatPreferenceStore,
     private val notificationsSettingsDataStore: NotificationsSettingsDataStore,
@@ -57,6 +60,7 @@ class HighlightsRepository(
         .stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
 
     val userHighlights = userHighlightDao.getUserHighlightsFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+    val badgeHighlights = badgeHighlightDao.getBadgeHighlightsFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
     val blacklistedUsers = blacklistedUserDao.getBlacklistedUserFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
 
     private val validMessageHighlights = messageHighlights
@@ -64,6 +68,9 @@ class HighlightsRepository(
         .stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
     private val validUserHighlights = userHighlights
         .map { highlights -> highlights.filter { it.enabled && it.username.isNotBlank() } }
+        .stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+    private val validBadgeHighlights = badgeHighlights
+        .map { highlights -> highlights.filter { it.enabled && it.badgeName.isNotBlank() } }
         .stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
     private val validBlacklistedUsers = blacklistedUsers
         .map { highlights -> highlights.filter { it.enabled && it.username.isNotBlank() } }
@@ -95,6 +102,7 @@ class HighlightsRepository(
             runCatching {
                 messageHighlightDao.deleteAllHighlights()
                 userHighlightDao.deleteAllHighlights()
+                badgeHighlightDao.deleteAllHighlights()
                 return@launch
             }
         }
@@ -143,6 +151,29 @@ class HighlightsRepository(
 
     suspend fun updateUserHighlights(entities: List<UserHighlightEntity>) {
         userHighlightDao.addHighlights(entities)
+    }
+
+    suspend fun addBadgeHighlight(): BadgeHighlightEntity {
+        val entity = BadgeHighlightEntity(
+            id = 0,
+            enabled = true,
+            badgeName = "",
+            isCustom = true,
+        )
+        val id = badgeHighlightDao.addHighlight(entity)
+        return entity.copy(id = id)
+    }
+
+    suspend fun updateBadgeHighlight(entity: BadgeHighlightEntity) {
+        badgeHighlightDao.addHighlight(entity)
+    }
+
+    suspend fun removeBadgeHighlight(entity: BadgeHighlightEntity) {
+        badgeHighlightDao.deleteHighlight(entity)
+    }
+
+    suspend fun updateBadgeHighlights(entities: List<BadgeHighlightEntity>) {
+        badgeHighlightDao.addHighlights(entities)
     }
 
     suspend fun addBlacklistedUser(): BlacklistedUserEntity {
@@ -209,6 +240,7 @@ class HighlightsRepository(
         }
 
         val userHighlights = validUserHighlights.value
+        val badgeHighlights = validBadgeHighlights.value
         val messageHighlights = validMessageHighlights.value
         val highlights = buildSet {
             if (isSub && messageHighlights.areSubsEnabled) {
@@ -306,6 +338,12 @@ class HighlightsRepository(
     }
 
     private fun MutableCollection<Highlight>.addNotificationHighlightIfEnabled(highlightEntity: UserHighlightEntity) {
+        if (highlightEntity.createNotification) {
+            add(Highlight(HighlightType.Notification))
+        }
+    }
+
+    private fun MutableCollection<Highlight>.addNotificationHighlightIfEnabled(highlightEntity: BadgeHighlightEntity) {
         if (highlightEntity.createNotification) {
             add(Highlight(HighlightType.Notification))
         }

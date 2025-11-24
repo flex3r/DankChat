@@ -30,6 +30,7 @@ class HighlightsViewModel(
 
     val messageHighlights = SnapshotStateList<MessageHighlightItem>()
     val userHighlights = SnapshotStateList<UserHighlightItem>()
+    val badgeHighlights = SnapshotStateList<BadgeHighlightItem>()
     val blacklistedUsers = SnapshotStateList<BlacklistedUserItem>()
 
     val events = eventChannel.receiveAsFlow()
@@ -44,10 +45,12 @@ class HighlightsViewModel(
         val notificationsEnabled = notificationsSettingsDataStore.settings.first().showNotifications
         val messageHighlightItems = highlightsRepository.messageHighlights.value.map { it.toItem(loggedIn, notificationsEnabled) }
         val userHighlightItems = highlightsRepository.userHighlights.value.map { it.toItem(notificationsEnabled) }
+        val badgeHighlightItems = highlightsRepository.badgeHighlights.value.map { it.toItem(notificationsEnabled) }
         val blacklistedUserItems = highlightsRepository.blacklistedUsers.value.map { it.toItem() }
 
         messageHighlights.replaceAll(messageHighlightItems)
         userHighlights.replaceAll(userHighlightItems)
+        badgeHighlights.replaceAll(badgeHighlightItems)
         blacklistedUsers.replaceAll(blacklistedUserItems)
     }
 
@@ -66,6 +69,12 @@ class HighlightsViewModel(
                 val entity = highlightsRepository.addUserHighlight()
                 userHighlights +=  entity.toItem(notificationsEnabled)
                 position = userHighlights.lastIndex
+            }
+
+            HighlightsTab.Badges           -> {
+                val entity = highlightsRepository.addBadgeHighlight()
+                badgeHighlights +=  entity.toItem(notificationsEnabled)
+                position = badgeHighlights.lastIndex
             }
 
             HighlightsTab.BlacklistedUsers -> {
@@ -92,6 +101,12 @@ class HighlightsViewModel(
                 isLast = position == userHighlights.lastIndex
             }
 
+            is BadgeHighlightItem    -> {
+                highlightsRepository.updateBadgeHighlight(item.toEntity())
+                badgeHighlights.add(position, item)
+                isLast = position == badgeHighlights.lastIndex
+            }
+
             is BlacklistedUserItem  -> {
                 highlightsRepository.updateBlacklistedUser(item.toEntity())
                 blacklistedUsers.add(position, item)
@@ -116,6 +131,12 @@ class HighlightsViewModel(
                 userHighlights.removeAt(position)
             }
 
+            is BadgeHighlightItem    -> {
+                position = badgeHighlights.indexOfFirst { it.id == item.id }
+                highlightsRepository.removeBadgeHighlight(item.toEntity())
+                badgeHighlights.removeAt(position)
+            }
+
             is BlacklistedUserItem  -> {
                 position = blacklistedUsers.indexOfFirst { it.id == item.id }
                 highlightsRepository.removeBlacklistedUser(item.toEntity())
@@ -129,6 +150,7 @@ class HighlightsViewModel(
         messageHighlightItems: List<MessageHighlightItem>,
         userHighlightItems: List<UserHighlightItem>,
         blacklistedUserHighlightItems: List<BlacklistedUserItem>,
+        badgeHighlightItems: List<BadgeHighlightItem>,
     ) = viewModelScope.launch {
         filterMessageHighlights(messageHighlightItems).let { (blankEntities, entities) ->
             highlightsRepository.updateMessageHighlights(entities)
@@ -138,6 +160,11 @@ class HighlightsViewModel(
         filterUserHighlights(userHighlightItems).let { (blankEntities, entities) ->
             highlightsRepository.updateUserHighlights(entities)
             blankEntities.forEach { highlightsRepository.removeUserHighlight(it) }
+        }
+
+        filterBadgeHighlights(badgeHighlightItems).let { (blankEntities, entities) ->
+            highlightsRepository.updateBadgeHighlights(entities)
+            blankEntities.forEach { highlightsRepository.removeBadgeHighlight(it) }
         }
 
         filterBlacklistedUsers(blacklistedUserHighlightItems).let { (blankEntities, entities) ->
@@ -153,6 +180,10 @@ class HighlightsViewModel(
     private fun filterUserHighlights(items: List<UserHighlightItem>) = items
         .map { it.toEntity() }
         .partition { it.username.isBlank() }
+
+    private fun filterBadgeHighlights(items: List<BadgeHighlightItem>) = items
+        .map { it.toEntity() }
+        .partition { it.badgeName.isBlank() }
 
     private fun filterBlacklistedUsers(items: List<BlacklistedUserItem>) = items
         .map { it.toEntity() }
