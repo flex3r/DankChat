@@ -11,8 +11,9 @@ import com.flxrs.dankchat.data.database.dao.*
 import com.flxrs.dankchat.data.database.entity.*
 
 @Database(
-    version = 6,
+    version = 7,
     entities = [
+        BadgeHighlightEntity::class,
         EmoteUsageEntity::class,
         UploadEntity::class,
         MessageHighlightEntity::class,
@@ -27,11 +28,13 @@ import com.flxrs.dankchat.data.database.entity.*
         AutoMigration(from = 2, to = 3),
         AutoMigration(from = 3, to = 4),
         AutoMigration(from = 5, to = 6),
+        AutoMigration(from = 6, to = 7),
     ],
     exportSchema = true,
 )
 @TypeConverters(InstantConverter::class)
 abstract class DankChatDatabase : RoomDatabase() {
+    abstract fun badgeHighlightDao(): BadgeHighlightDao
     abstract fun emoteUsageDao(): EmoteUsageDao
     abstract fun recentUploadsDao(): RecentUploadsDao
     abstract fun userDisplayDao(): UserDisplayDao

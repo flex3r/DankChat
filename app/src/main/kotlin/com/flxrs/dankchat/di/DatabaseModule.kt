@@ -3,6 +3,7 @@ package com.flxrs.dankchat.di
 import android.content.Context
 import androidx.room.Room
 import com.flxrs.dankchat.data.database.DankChatDatabase
+import com.flxrs.dankchat.data.database.dao.BadgeHighlightDao
 import com.flxrs.dankchat.data.database.dao.BlacklistedUserDao
 import com.flxrs.dankchat.data.database.dao.EmoteUsageDao
 import com.flxrs.dankchat.data.database.dao.MessageHighlightDao
@@ -49,6 +50,11 @@ class DatabaseModule {
     fun provideUserHighlightDao(
         database: DankChatDatabase
     ): UserHighlightDao = database.userHighlightDao()
+
+    @Single
+    fun provideBadgeHighlightDao(
+        database: DankChatDatabase
+    ): BadgeHighlightDao = database.badgeHighlightDao()
 
     @Single
     fun provideIgnoreUserDao(
