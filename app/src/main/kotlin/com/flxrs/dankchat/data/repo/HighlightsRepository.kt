@@ -60,7 +60,8 @@ class HighlightsRepository(
         .stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
 
     val userHighlights = userHighlightDao.getUserHighlightsFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
-    val badgeHighlights = badgeHighlightDao.getBadgeHighlightsFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+    val badgeHighlights = badgeHighlightDao.getBadgeHighlightsFlow()
+        .stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
     val blacklistedUsers = blacklistedUserDao.getBlacklistedUserFlow().stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
 
     private val validMessageHighlights = messageHighlights
@@ -88,15 +89,18 @@ class HighlightsRepository(
 
     fun runMigrationsIfNeeded() = coroutineScope.launch {
         runCatching {
-            if (messageHighlightDao.getMessageHighlights().isNotEmpty()) {
-                return@launch
+            if (messageHighlightDao.getMessageHighlights().isEmpty()) {
+                Log.d(TAG, "Running message highlights migration...")
+                messageHighlightDao.addHighlights(DEFAULT_MESSAGE_HIGHLIGHTS)
+                val totalMessageHighlights = DEFAULT_MESSAGE_HIGHLIGHTS.size
+                Log.d(TAG, "Message highlights migration completed, added $totalMessageHighlights entries.")
             }
-
-            Log.d(TAG, "Running highlights migration...")
-            messageHighlightDao.addHighlights(DEFAULT_HIGHLIGHTS)
-
-            val totalHighlights = DEFAULT_HIGHLIGHTS.size
-            Log.d(TAG, "Highlights migration completed, added $totalHighlights entries.")
+            if (badgeHighlightDao.getBadgeHighlights().isEmpty()) {
+                Log.d(TAG, "Running badge highlights migration...")
+                badgeHighlightDao.addHighlights(DEFAULT_BADGE_HIGHLIGHTS)
+                val totalBadgeHighlights =  + DEFAULT_BADGE_HIGHLIGHTS.size
+                Log.d(TAG, "Badge highlights migration completed, added $totalBadgeHighlights entries.")
+            }
         }.getOrElse {
             Log.e(TAG, "Failed to run highlights migration", it)
             runCatching {
@@ -405,7 +409,7 @@ class HighlightsRepository(
     }
 
     private fun List<MessageHighlightEntity>.addDefaultsIfNecessary(): List<MessageHighlightEntity> {
-        return (this + DEFAULT_HIGHLIGHTS).distinctBy {
+        return (this + DEFAULT_MESSAGE_HIGHLIGHTS).distinctBy {
             when (it.type) {
                 MessageHighlightEntityType.Custom -> it.id
                 else                              -> it.type
@@ -415,7 +419,7 @@ class HighlightsRepository(
 
     companion object {
         private val TAG = HighlightsRepository::class.java.simpleName
-        private val DEFAULT_HIGHLIGHTS = listOf(
+        private val DEFAULT_MESSAGE_HIGHLIGHTS = listOf(
             MessageHighlightEntity(id = 0, enabled = true, type = MessageHighlightEntityType.Username, pattern = ""),
             MessageHighlightEntity(id = 0, enabled = true, type = MessageHighlightEntityType.Subscription, pattern = "", createNotification = false),
             MessageHighlightEntity(id = 0, enabled = true, type = MessageHighlightEntityType.Announcement, pattern = "", createNotification = false),
@@ -423,6 +427,17 @@ class HighlightsRepository(
             MessageHighlightEntity(id = 0, enabled = true, type = MessageHighlightEntityType.FirstMessage, pattern = "", createNotification = false),
             MessageHighlightEntity(id = 0, enabled = true, type = MessageHighlightEntityType.ElevatedMessage, pattern = "", createNotification = false),
             MessageHighlightEntity(id = 0, enabled = true, type = MessageHighlightEntityType.Reply, pattern = ""),
+        )
+        private val DEFAULT_BADGE_HIGHLIGHTS = listOf(
+            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "broadcaster", isCustom = false),
+            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "admin", isCustom = false),
+            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "staff", isCustom = false),
+            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "moderator", isCustom = false),
+            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "lead_moderator", isCustom = false),
+            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "partner", isCustom = false),
+            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "vip", isCustom = false),
+            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "founder", isCustom = false),
+            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "subscriber", isCustom = false),
         )
     }
 }

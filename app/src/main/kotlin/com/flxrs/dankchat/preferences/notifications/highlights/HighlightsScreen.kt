@@ -546,10 +546,12 @@ private fun BadgeHighlightItem(
                     )
                 }
             }
-            IconButton(
-                onClick = onRemove,
-                content = { Icon(Icons.Default.Clear, contentDescription = stringResource(R.string.clear)) },
-            )
+            if (item.isCustom) {
+                IconButton(
+                    onClick = onRemove,
+                    content = { Icon(Icons.Default.Clear, contentDescription = stringResource(R.string.clear)) },
+                )
+            }
         }
     }
 }
