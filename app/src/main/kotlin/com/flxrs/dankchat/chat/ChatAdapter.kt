@@ -243,7 +243,7 @@ class ChatAdapter(
         val firstHighlightType = message.highlights.firstOrNull()?.type
         val shouldHighlight = firstHighlightType == HighlightType.Subscription || firstHighlightType == HighlightType.Announcement
         val background = when {
-            shouldHighlight                                                      -> ContextCompat.getColor(context, R.color.color_sub_highlight)
+            shouldHighlight                                                      -> message.highlights.toBackgroundColor(context)
             appearanceSettings.checkeredMessages && holder.isAlternateBackground -> MaterialColors.layer(
                 this,
                 android.R.attr.colorBackground,
@@ -358,7 +358,7 @@ class ChatAdapter(
     private fun TextView.handlePointRedemptionMessage(message: PointRedemptionMessage, holder: ViewHolder) {
         val appearanceSettings = appearanceSettingsDataStore.current()
         val chatSettings = chatSettingsDataStore.current()
-        val background = ContextCompat.getColor(context, R.color.color_redemption_highlight)
+        val background = message.highlights.toBackgroundColor(context)
         holder.binding.itemLayout.setBackgroundColor(background)
         setRippleBackground(background, enableRipple = false)
 
@@ -894,6 +894,9 @@ class ChatAdapter(
     @ColorInt
     private fun Set<Highlight>.toBackgroundColor(context: Context): Int {
         val highlight = highestPriorityHighlight() ?: return ContextCompat.getColor(context, android.R.color.transparent)
+        if (highlight.customColor != null) {
+            return highlight.customColor
+        }
         return when (highlight.type) {
             HighlightType.Subscription, HighlightType.Announcement -> ContextCompat.getColor(context, R.color.color_sub_highlight)
             HighlightType.ChannelPointRedemption                   -> ContextCompat.getColor(context, R.color.color_redemption_highlight)
