@@ -21,6 +21,7 @@ data class MessageHighlightItem(
     val createNotification: Boolean,
     val loggedIn: Boolean,
     val notificationsEnabled: Boolean,
+    val customColor: Int?,
 ) : HighlightItem {
     enum class Type {
         Username,
@@ -46,6 +47,7 @@ data class UserHighlightItem(
     val username: String,
     val createNotification: Boolean,
     val notificationsEnabled: Boolean,
+    val customColor: Int?,
 ) : HighlightItem
 
 data class BadgeHighlightItem(
@@ -75,6 +77,7 @@ fun MessageHighlightEntity.toItem(loggedIn: Boolean, notificationsEnabled: Boole
     createNotification = createNotification,
     loggedIn = loggedIn,
     notificationsEnabled = notificationsEnabled,
+    customColor = customColor,
 )
 
 fun MessageHighlightItem.toEntity() = MessageHighlightEntity(
@@ -85,6 +88,7 @@ fun MessageHighlightItem.toEntity() = MessageHighlightEntity(
     isRegex = isRegex,
     isCaseSensitive = isCaseSensitive,
     createNotification = createNotification,
+    customColor = customColor,
 )
 
 fun MessageHighlightItem.Type.toEntityType(): MessageHighlightEntityType = when (this) {
@@ -115,6 +119,7 @@ fun UserHighlightEntity.toItem(notificationsEnabled: Boolean) = UserHighlightIte
     username = username,
     createNotification = createNotification,
     notificationsEnabled = notificationsEnabled,
+    customColor = customColor,
 )
 
 fun UserHighlightItem.toEntity() = UserHighlightEntity(
@@ -122,6 +127,7 @@ fun UserHighlightItem.toEntity() = UserHighlightEntity(
     enabled = enabled,
     username = username,
     createNotification = createNotification,
+    customColor = customColor,
 )
 
 fun BadgeHighlightEntity.toItem(notificationsEnabled: Boolean) = BadgeHighlightItem(
