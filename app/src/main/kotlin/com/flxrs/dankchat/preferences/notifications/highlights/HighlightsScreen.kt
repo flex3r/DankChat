@@ -697,6 +697,71 @@ private fun BadgeHighlightItem(
                         enabled = item.enabled && item.notificationsEnabled,
                     )
                 }
+                val defaultColor = ContextCompat.getColor(LocalContext.current, R.color.color_mention_highlight)
+                val color = item.customColor ?: defaultColor
+                var showColorPicker by remember { mutableStateOf(false) }
+                var selectedColor by remember(color) { mutableIntStateOf(color) }
+                OutlinedButton(
+                    onClick = { showColorPicker = true },
+                    enabled = item.enabled,
+                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+                    content = {
+                        Spacer(
+                            Modifier
+                                .size(ButtonDefaults.IconSize)
+                                .background(color = Color(color), shape = CircleShape)
+                        )
+                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                        Text(text = stringResource(R.string.choose_highlight_color))
+                    },
+                    modifier = Modifier.padding(12.dp)
+                )
+                if (showColorPicker) {
+                    ModalBottomSheet(
+                        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+                        onDismissRequest = {
+                            onChanged(item.copy(customColor = selectedColor))
+                            showColorPicker = false
+                        },
+                    ) {
+                        Text(
+                            text = stringResource(R.string.pick_highlight_color_title),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                        )
+                        Row (
+                            modifier = modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            TextButton(
+                                onClick = { selectedColor = defaultColor },
+                                content = { Text(stringResource(R.string.reset_default_highlight_color)) },
+                            )
+                            TextButton(
+                                onClick = { selectedColor = color },
+                                content = { Text(stringResource(R.string.reset)) },
+                            )
+                        }
+                        AndroidView(
+                            factory = { context ->
+                                ColorPickerView(context).apply {
+                                    showAlpha(true)
+                                    setOriginalColor(color)
+                                    setCurrentColor(selectedColor)
+                                    addColorObserver {
+                                        selectedColor = it.color
+                                    }
+                                }
+                            },
+                            update = {
+                                it.setCurrentColor(selectedColor)
+                            }
+                        )
+                    }
+                }
             }
             if (item.isCustom) {
                 IconButton(
