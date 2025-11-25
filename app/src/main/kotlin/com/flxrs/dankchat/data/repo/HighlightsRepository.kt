@@ -429,13 +429,13 @@ class HighlightsRepository(
             MessageHighlightEntity(id = 0, enabled = true, type = MessageHighlightEntityType.Reply, pattern = ""),
         )
         private val DEFAULT_BADGE_HIGHLIGHTS = listOf(
-            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "broadcaster", isCustom = false),
-            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "admin", isCustom = false),
-            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "staff", isCustom = false),
-            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "moderator", isCustom = false),
-            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "lead_moderator", isCustom = false),
-            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "partner", isCustom = false),
-            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "vip", isCustom = false),
+            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "broadcaster", isCustom = false, customColor = 0x7f7f3f49.toInt()),
+            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "admin", isCustom = false, customColor = 0x7f8f3018.toInt()),
+            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "staff", isCustom = false, customColor = 0x7f8f3018.toInt()),
+            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "moderator", isCustom = false, customColor = 0x731f8d2b.toInt()),
+            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "lead_moderator", isCustom = false, customColor = 0x731f8d2b.toInt()),
+            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "partner", isCustom = false, customColor = 0x64c466ff.toInt()),
+            BadgeHighlightEntity(id = 0, enabled = false, badgeName = "vip", isCustom = false, customColor = 0x7fc12ea9.toInt()),
             BadgeHighlightEntity(id = 0, enabled = false, badgeName = "founder", isCustom = false),
             BadgeHighlightEntity(id = 0, enabled = false, badgeName = "subscriber", isCustom = false),
         )
