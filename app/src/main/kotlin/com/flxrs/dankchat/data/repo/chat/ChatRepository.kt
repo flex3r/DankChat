@@ -664,9 +664,9 @@ class ChatRepository(
             Message.parse(ircMessage, channelRepository::tryGetUserNameById)
                 ?.applyIgnores()
                 ?.calculateMessageThread { channel, id -> messages[channel]?.value?.find { it.message.id == id }?.message }
-                ?.calculateHighlightState()
                 ?.calculateUserDisplays()
                 ?.parseEmotesAndBadges()
+                ?.calculateHighlightState()
                 ?.updateMessageInThread()
         }.getOrElse {
             Log.e(TAG, "Failed to parse message", it)
@@ -827,9 +827,9 @@ class ChatRepository(
                             Message.parse(parsedIrc, channelRepository::tryGetUserNameById)
                                 ?.applyIgnores()
                                 ?.calculateMessageThread { _, id -> items.find { it.message.id == id }?.message }
-                                ?.calculateHighlightState()
                                 ?.calculateUserDisplays()
                                 ?.parseEmotesAndBadges()
+                                ?.calculateHighlightState()
                                 ?.updateMessageInThread()
                         }.getOrNull() ?: continue
 

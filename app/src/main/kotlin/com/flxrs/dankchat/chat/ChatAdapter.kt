@@ -900,6 +900,7 @@ class ChatAdapter(
             HighlightType.ElevatedMessage                          -> ContextCompat.getColor(context, R.color.color_elevated_message_highlight)
             HighlightType.FirstMessage                             -> ContextCompat.getColor(context, R.color.color_first_message_highlight)
             HighlightType.Username                                 -> ContextCompat.getColor(context, R.color.color_mention_highlight)
+            HighlightType.Badge                                    -> ContextCompat.getColor(context, R.color.color_mention_highlight)
             HighlightType.Custom                                   -> ContextCompat.getColor(context, R.color.color_mention_highlight)
             HighlightType.Reply                                    -> ContextCompat.getColor(context, R.color.color_mention_highlight)
             HighlightType.Notification                             -> ContextCompat.getColor(context, R.color.color_mention_highlight)

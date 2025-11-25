@@ -296,6 +296,22 @@ class HighlightsRepository(
                     addNotificationHighlightIfEnabled(it)
                 }
             }
+            badgeHighlights.forEach { highlight ->
+                badges.forEach { badge ->
+                    val tag = badge.badgeTag ?: return@forEach
+                    if (tag.isNotBlank()) {
+                        val match = if (highlight.badgeName.contains("/")) {
+                            tag == highlight.badgeName
+                        } else {
+                            tag.startsWith(highlight.badgeName + "/")
+                        }
+                        if (match) {
+                            add(Highlight(HighlightType.Badge, highlight.customColor))
+                            addNotificationHighlightIfEnabled(highlight)
+                        }
+                    }
+                }
+            }
         }
 
         return copy(highlights = highlights)
