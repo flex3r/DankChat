@@ -474,7 +474,7 @@ private fun UserIgnoreItem(
             ) {
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = false,
+                    enabled = true,
                     value = item.username,
                     onValueChange = { onChanged(item.copy(username = it)) },
                     label = { Text(stringResource(R.string.username)) },
