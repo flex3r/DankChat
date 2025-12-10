@@ -113,7 +113,7 @@ El servicio temporalmente almacena mensajes para canales que tú (y otros) visit
     <string name="user_popup_whisper">Susurrar usuario</string>
     <string name="user_popup_created">Creado: %1$s</string>
     <string name="user_popup_following_since">Siguiendo desde %1$s</string>
-    <string name="user_popup_not_following">Dejar de seguir</string>
+    <string name="user_popup_not_following">Sin seguir</string>
     <string name="user_popup_avatar_description">Imagen de perfil</string>
     <string name="user_popup_error">Error al cargar los datos del usuario: %1$s</string>
     <string name="confirm_user_block_title">Confirmar bloqueo</string>
