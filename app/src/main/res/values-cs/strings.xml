@@ -182,6 +182,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="custom_login_error_empty_token">Token nemůže být prázdný</string>
     <string name="custom_login_error_invalid_token">Token není platný</string>
     <string name="badge_tooltip_moderator">Moderátor</string>
+    <string name="badge_tooltip_lead_moderator">Hlavní moderátor</string>
     <string name="badge_tooltip_predictions">Předpovězeno: \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">Úroveň %1$s</string>
     <string name="preference_timestamp_title">Zobrazit časová razítka</string>
@@ -401,5 +402,4 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_streaminfo_category_title">Zobrazit kategorii vysílání</string>
     <string name="preference_streaminfo_category_summary">Zobrazit také kategorii vysílání</string>
     <string name="toggle_input">Přepnout vstup</string>
-    <string name="badge_tooltip_lead_moderator">Hlavní moderátor</string>
 </resources>
