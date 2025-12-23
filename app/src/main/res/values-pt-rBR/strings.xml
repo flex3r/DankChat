@@ -175,6 +175,7 @@
     <string name="custom_login_error_empty_token">O token não pode estar vazio</string>
     <string name="custom_login_error_invalid_token">Token inválido</string>
     <string name="badge_tooltip_moderator">Moderador</string>
+    <string name="badge_tooltip_lead_moderator">Moderador principal</string>
     <string name="badge_tooltip_predictions">Votou \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">Grupo %1$s</string>
     <string name="preference_timestamp_title">Mostrar marcações de tempo</string>
@@ -394,5 +395,4 @@
     <string name="preference_streaminfo_category_title">Mostrar categoria da transmissão</string>
     <string name="preference_streaminfo_category_summary">Também exibir categoria da transmissão</string>
     <string name="toggle_input">Alternar entrada</string>
-    <string name="badge_tooltip_lead_moderator">Moderador principal</string>
 </resources>
