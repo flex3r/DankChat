@@ -175,6 +175,7 @@
     <string name="custom_login_error_empty_token">Токен не можа быць пустым значэннем</string>
     <string name="custom_login_error_invalid_token">Токен няправільны</string>
     <string name="badge_tooltip_moderator">Мадэратар</string>
+    <string name="badge_tooltip_lead_moderator">Вядучы мадэратар</string>
     <string name="badge_tooltip_predictions">Прагноз \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">Узровень %1$s</string>
     <string name="preference_timestamp_title">Адлюстроўваць часовыя пазнакі</string>
@@ -400,5 +401,4 @@
     <string name="preference_streaminfo_category_title">Паказваць катэгорыю трансляцыі</string>
     <string name="preference_streaminfo_category_summary">Таксама паказваць катэгорыю трансляцыі</string>
     <string name="toggle_input">Пераключыць радок уводу</string>
-    <string name="badge_tooltip_lead_moderator">Вядучы мадэратар</string>
 </resources>
