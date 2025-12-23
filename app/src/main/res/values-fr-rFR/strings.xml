@@ -180,6 +180,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="custom_login_error_empty_token">Jeton ne peut pas être vide</string>
     <string name="custom_login_error_invalid_token">Jeton invalide</string>
     <string name="badge_tooltip_moderator">Modérateur</string>
+    <string name="badge_tooltip_lead_moderator">Modérateur principal</string>
     <string name="badge_tooltip_predictions">Prédit \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">Niveau %1$s</string>
     <string name="preference_timestamp_title">Afficher l\'horodatage</string>
