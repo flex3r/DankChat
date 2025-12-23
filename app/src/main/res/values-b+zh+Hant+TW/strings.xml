@@ -181,6 +181,7 @@
     <string name="custom_login_error_empty_token">Token不能為空</string>
     <string name="custom_login_error_invalid_token">無效的Token</string>
     <string name="badge_tooltip_moderator">聊天室 Mod</string>
+    <string name="badge_tooltip_lead_moderator">主要 Mod</string>
     <string name="badge_tooltip_predictions">已預測\"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">等級 %1$s</string>
     <string name="preference_timestamp_title">顯示時間戳記</string>
@@ -397,5 +398,4 @@
     <string name="preference_streaminfo_category_title">顯示實況類別</string>
     <string name="preference_streaminfo_category_summary">同時也顯示實況類別</string>
     <string name="toggle_input">開關輸入框</string>
-    <string name="badge_tooltip_lead_moderator">主要 Mod</string>
 </resources>
