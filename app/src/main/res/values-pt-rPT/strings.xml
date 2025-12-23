@@ -175,6 +175,7 @@
     <string name="custom_login_error_empty_token">O token não pode estar vazio</string>
     <string name="custom_login_error_invalid_token">O token não é válido</string>
     <string name="badge_tooltip_moderator">Moderador</string>
+    <string name="badge_tooltip_lead_moderator">Moderador principal</string>
     <string name="badge_tooltip_predictions">Previsto \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">Escalão %1$s</string>
     <string name="preference_timestamp_title">Mostrar horas</string>
@@ -385,5 +386,4 @@
         <item quantity="one">%d mês</item>
         <item quantity="other">%d meses</item>
     </plurals>
-    <string name="badge_tooltip_lead_moderator">Moderador principal</string>
 </resources>
