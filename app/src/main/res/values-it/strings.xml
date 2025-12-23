@@ -174,6 +174,7 @@
     <string name="custom_login_error_empty_token">Il Token non può essere vuoto</string>
     <string name="custom_login_error_invalid_token">Il Token non è valido</string>
     <string name="badge_tooltip_moderator">Moderatore</string>
+    <string name="badge_tooltip_lead_moderator">Moderatore capo</string>
     <string name="badge_tooltip_predictions">\"%1$s\" previsto</string>
     <string name="badge_tooltip_sub_tier">Rango %1$s</string>
     <string name="preference_timestamp_title">Mostra marche orarie</string>
@@ -383,5 +384,4 @@
         <item quantity="one">%d mese</item>
         <item quantity="other">%d mesi</item>
     </plurals>
-    <string name="badge_tooltip_lead_moderator">Moderatore capo</string>
 </resources>
