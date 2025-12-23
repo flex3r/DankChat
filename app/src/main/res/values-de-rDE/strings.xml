@@ -182,6 +182,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="custom_login_error_empty_token">Token darf nicht leer sein</string>
     <string name="custom_login_error_invalid_token">Token ist ungültig</string>
     <string name="badge_tooltip_moderator">Moderator</string>
+    <string name="badge_tooltip_lead_moderator">Haupt-Moderator</string>
     <string name="badge_tooltip_predictions">Vorhersage: \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">Stufe %1$s</string>
     <string name="preference_timestamp_title">Zeitstempel anzeigen</string>
@@ -401,5 +402,4 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_streaminfo_category_title">Stream-Kategorie anzeigen</string>
     <string name="preference_streaminfo_category_summary">Zeigt auch die Stream-Kategorie</string>
     <string name="toggle_input">Eingabefeld ein-/ausblenden</string>
-    <string name="badge_tooltip_lead_moderator">Haupt-Moderator</string>
 </resources>
