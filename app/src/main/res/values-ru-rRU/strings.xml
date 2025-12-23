@@ -180,6 +180,7 @@
     <string name="custom_login_error_empty_token">Токен не может быть пустым</string>
     <string name="custom_login_error_invalid_token">Неверный токен</string>
     <string name="badge_tooltip_moderator">Модератор</string>
+    <string name="badge_tooltip_lead_moderator">Ведущий модератор</string>
     <string name="badge_tooltip_predictions">Прогноз \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">Уровень %1$s</string>
     <string name="preference_timestamp_title">Отображать временные метки</string>
@@ -405,5 +406,4 @@
     <string name="preference_streaminfo_category_title">Отображать категорию стрима</string>
     <string name="preference_streaminfo_category_summary">Также показывать категорию стрима</string>
     <string name="toggle_input">Переключить строку ввода</string>
-    <string name="badge_tooltip_lead_moderator">Ведущий модератор</string>
 </resources>
