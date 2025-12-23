@@ -182,6 +182,7 @@
     <string name="custom_login_error_empty_token">Токен не може бути порожнім</string>
     <string name="custom_login_error_invalid_token">Токен недійсний</string>
     <string name="badge_tooltip_moderator">Модератор</string>
+    <string name="badge_tooltip_lead_moderator">Провідний модератор</string>
     <string name="badge_tooltip_predictions">Передбачено \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">%1$s рівень</string>
     <string name="preference_timestamp_title">Показувати часові мітки</string>
@@ -402,5 +403,4 @@
         <item quantity="many">%d місяців</item>
         <item quantity="other">%d місяців</item>
     </plurals>
-    <string name="badge_tooltip_lead_moderator">Провідний модератор</string>
 </resources>
