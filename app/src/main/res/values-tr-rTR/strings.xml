@@ -182,6 +182,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="custom_login_error_empty_token">Jeton boş olamaz</string>
     <string name="custom_login_error_invalid_token">Jeton geçersiz</string>
     <string name="badge_tooltip_moderator">Moderatör</string>
+    <string name="badge_tooltip_lead_moderator">Baş moderatör</string>
     <string name="badge_tooltip_predictions">Tahmin: \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">Kademe %1$s</string>
     <string name="preference_timestamp_title">Zaman damgalarını göster</string>
@@ -401,5 +402,4 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_streaminfo_category_title">Yayın kategorisini göster</string>
     <string name="preference_streaminfo_category_summary">Yayın kategorisini de göster</string>
     <string name="toggle_input">Girişi Değiştir</string>
-    <string name="badge_tooltip_lead_moderator">Baş moderatör</string>
 </resources>
