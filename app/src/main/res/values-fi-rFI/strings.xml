@@ -10,6 +10,7 @@
     <string name="add_dialog_title">Lisää kanava</string>
     <string name="edit_dialog_title">Nimeä kanava uudelleen</string>
     <string name="dialog_ok">OK</string>
+    <string name="save">Tallentaa</string>
     <string name="dialog_cancel">Peruuta</string>
     <string name="dialog_dismiss">Hylkää</string>
     <string name="error_dialog_copy">Kopioi</string>
@@ -45,6 +46,7 @@
     <string name="hint_connected">Aloita chattailu</string>
     <string name="hint_disconnected">Yhteys katkaistu</string>
     <string name="hint_not_logged_int">Ei kirjautuneena</string>
+    <string name="hint_replying">Vastaa</string>
     <string name="notification_new_mentions">Sinulla on uusia mainintoja</string>
     <string name="notification_mention">%1$s mainitsi sinut kanavalla #%2$s</string>
     <string name="notification_notify_mention">Sinut mainittiin kanavalla #%1$s</string>
