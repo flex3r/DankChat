@@ -180,6 +180,7 @@
     <string name="custom_login_error_empty_token">Токен не может быть пустым</string>
     <string name="custom_login_error_invalid_token">Неверный токен</string>
     <string name="badge_tooltip_moderator">Модератор</string>
+    <string name="badge_tooltip_lead_moderator">Ведущий модератор</string>
     <string name="badge_tooltip_predictions">Прогноз \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">Уровень %1$s</string>
     <string name="preference_timestamp_title">Отображать временные метки</string>
