@@ -180,6 +180,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="custom_login_error_empty_token">Token nie może być pusty</string>
     <string name="custom_login_error_invalid_token">Token jest nieprawidłowy</string>
     <string name="badge_tooltip_moderator">Moderator</string>
+    <string name="badge_tooltip_lead_moderator">Główny moderator</string>
     <string name="badge_tooltip_predictions">Przewidział(-a) \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">Poziom %1$s</string>
     <string name="preference_timestamp_title">Pokazuj znaczniki czasu</string>
@@ -394,5 +395,4 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
         <item quantity="many">%d miesięcy</item>
         <item quantity="other">%d miesięcy</item>
     </plurals>
-    <string name="badge_tooltip_lead_moderator">Główny moderator</string>
 </resources>
