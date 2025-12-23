@@ -113,7 +113,7 @@ El servicio temporalmente almacena mensajes para canales que tú (y otros) visit
     <string name="user_popup_whisper">Susurrar usuario</string>
     <string name="user_popup_created">Creado: %1$s</string>
     <string name="user_popup_following_since">Siguiendo desde %1$s</string>
-    <string name="user_popup_not_following">Dejar de seguir</string>
+    <string name="user_popup_not_following">Sin seguir</string>
     <string name="user_popup_avatar_description">Imagen de perfil</string>
     <string name="user_popup_error">Error al cargar los datos del usuario: %1$s</string>
     <string name="confirm_user_block_title">Confirmar bloqueo</string>
@@ -182,6 +182,7 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="custom_login_error_empty_token">El token no puede estar vacío</string>
     <string name="custom_login_error_invalid_token">Token inválido</string>
     <string name="badge_tooltip_moderator">Moderador</string>
+    <string name="badge_tooltip_lead_moderator">Moderador principal</string>
     <string name="badge_tooltip_predictions">Predicción: \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">Tier %1$s</string>
     <string name="preference_timestamp_title">Mostrar fecha</string>
@@ -401,5 +402,4 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="preference_streaminfo_category_title">Mostrar categoría del stream</string>
     <string name="preference_streaminfo_category_summary">Muestra también la categoría del stream</string>
     <string name="toggle_input">Alternar entrada</string>
-    <string name="badge_tooltip_lead_moderator">Moderador principal</string>
 </resources>
