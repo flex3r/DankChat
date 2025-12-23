@@ -175,6 +175,7 @@
     <string name="custom_login_error_empty_token">A token nem lehet üres</string>
     <string name="custom_login_error_invalid_token">A token érvénytelen</string>
     <string name="badge_tooltip_moderator">Moderátor</string>
+    <string name="badge_tooltip_lead_moderator">Vezető moderátor</string>
     <string name="badge_tooltip_predictions">Előrejelzett \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">Szint %1$s</string>
     <string name="preference_timestamp_title">Időbélyegek mutatása</string>
@@ -377,6 +378,7 @@
     <string name="login_menu_zoom_out">Kicsinyítés</string>
     <string name="login_menu_zoom_in">Nagyítás</string>
     <string name="back">Vissza</string>
+    <string name="shared_chat">Megosztott chat</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">Élő %1$d nézővel %2$s ideje</item>
         <item quantity="other">Élő %1$d nézőkkel %2$s ideje</item>
@@ -385,5 +387,12 @@
         <item quantity="one">%d hónap</item>
         <item quantity="other">%d hónap</item>
     </plurals>
-    <string name="badge_tooltip_lead_moderator">Vezető moderátor</string>
+    <string name="open_source_licenses">Nyílt forráskódú licencek</string>
+    <plurals name="viewers_and_uptime_with_cateogry" comment="Live with 1 viewer in Just Chatting for 1h 1m&#13;&#10;Live with 10 viewers in Just Chatting for 1h 1m">
+        <item quantity="one">Élőben %1$d nézővel a %2$s %3$s időre</item>
+        <item quantity="other">Élőben %1$d nézővel a %2$s %3$s időre</item>
+    </plurals>
+    <string name="preference_streaminfo_category_title">Stream kategória mutatása</string>
+    <string name="preference_streaminfo_category_summary">Stream kategória megjelenítése</string>
+    <string name="toggle_input">Beviteli mező kapcsolása</string>
 </resources>
