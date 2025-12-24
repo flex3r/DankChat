@@ -653,7 +653,7 @@ class ChatRepository(
                 }
 
                 reward?.let {
-                    listOf(ChatItem(PointRedemptionMessage.parsePointReward(it.timestamp, it.data)))
+                    listOf(ChatItem(PointRedemptionMessage.parsePointReward(it.timestamp, it.data).calculateHighlightState()))
                 }.orEmpty()
             }
 
