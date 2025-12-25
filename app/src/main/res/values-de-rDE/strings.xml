@@ -322,10 +322,12 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="tab_users">Nutzer</string>
     <string name="tab_blacklisted_users">Blockierte Nutzer</string>
     <string name="tab_twitch">Twitch</string>
+    <string name="tab_badges">Abzeichen</string>
     <string name="undo">Rückgängig</string>
     <string name="item_removed">Eintrag entfernt</string>
     <string name="unblocked_user">Benutzer %1$s entblockt</string>
     <string name="unblocked_user_failed">Nutzer %1$s konnte nicht entblockt werden</string>
+    <string name="badge">Abzeichen</string>
     <string name="blocked_user_failed">Nutzer %1$s konnte nicht geblockt werden</string>
     <string name="highlights_entry_username">Dein Benutzername</string>
     <string name="highlights_ignores_entry_subscriptions">Abonnements und Events</string>
@@ -338,6 +340,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="highlights_messages_title">Erzeugt Benachrichtigungen und hebt Nachrichten nach bestimmten Mustern hervor.</string>
     <string name="highlights_users_title">Erzeugt Benachrichtigungen und hebt Nachrichten von bestimmten Benutzern hervor.</string>
     <string name="highlights_blacklisted_users_title">Deaktiviert Benachrichtigungen und Hervorhebungen von bestimmten Nutzern (z. B. Bots).</string>
+    <string name="highlights_badges_title">Erzeugt Benachrichtigungen und hebt Nachrichten basierend auf Abzeichen hervor.</string>
     <string name="ignores_messages_title">Ignoriert Nachrichten nach bestimmten Mustern.</string>
     <string name="ignores_users_title">Ignoriert Nachrichten von bestimmten Nutzern.</string>
     <string name="ignores_twitch_title">Blockierte Twitch-Nutzer verwalten</string>
@@ -402,4 +405,13 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_streaminfo_category_title">Stream-Kategorie anzeigen</string>
     <string name="preference_streaminfo_category_summary">Zeigt auch die Stream-Kategorie</string>
     <string name="toggle_input">Eingabefeld ein-/ausblenden</string>
+    <string name="badge_broadcaster">Broadcaster</string>
+    <string name="badge_admin">Admin</string>
+    <string name="badge_staff">Mitarbeiter</string>
+    <string name="badge_moderator">Moderator</string>
+    <string name="badge_lead_moderator">Haupt-Moderator</string>
+    <string name="badge_verified">Verifiziert</string>
+    <string name="badge_vip">VIP</string>
+    <string name="badge_founder">Gründer</string>
+    <string name="badge_subscriber">Abonnent</string>
 </resources>
