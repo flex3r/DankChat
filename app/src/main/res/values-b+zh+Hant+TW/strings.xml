@@ -135,11 +135,11 @@
     <string name="logout">登出</string>
     <string name="user_popup_timeout">禁言</string>
     <string name="user_popup_delete">刪除留言</string>
-    <string name="user_popup_ban">永久禁言</string>
+    <string name="user_popup_ban">Ban</string>
     <string name="user_popup_unban">解ban</string>
     <string name="change_roomstate">聊天室狀態</string>
     <string name="confirm_user_ban_title">確認永ban</string>
-    <string name="confirm_user_ban_message">您確定要永久禁言這名用戶嗎?</string>
+    <string name="confirm_user_ban_message">您確定要永ban這名用戶嗎?</string>
     <string name="confirm_user_ban_positive_button">Ban</string>
     <string name="confirm_user_timeout_title">確認禁言</string>
     <string name="confirm_user_timeout_positive_button">禁言</string>
