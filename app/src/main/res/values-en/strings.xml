@@ -315,10 +315,12 @@
     <string name="tab_users">Users</string>
     <string name="tab_blacklisted_users">Blacklisted Users</string>
     <string name="tab_twitch">Twitch</string>
+    <string name="tab_badges">Badges</string>
     <string name="undo">Undo</string>
     <string name="item_removed">Item removed</string>
     <string name="unblocked_user">Unblocked user %1$s</string>
     <string name="unblocked_user_failed">Failed to unblock user %1$s</string>
+    <string name="badge">Badge</string>
     <string name="blocked_user_failed">Failed to block user %1$s</string>
     <string name="highlights_entry_username">Your username</string>
     <string name="highlights_ignores_entry_subscriptions">Subscriptions and Events</string>
@@ -331,6 +333,7 @@
     <string name="highlights_messages_title">Creates notifications and highlights messages based on certain patterns.</string>
     <string name="highlights_users_title">Creates notifications and highlights messages from certain users.</string>
     <string name="highlights_blacklisted_users_title">Disable notifications and highlights from certain users (e.g. bots).</string>
+    <string name="highlights_badges_title">Create notifications and highlights messages from users based on badges.</string>
     <string name="ignores_messages_title">Ignore messages based on certain patterns.</string>
     <string name="ignores_users_title">Ignore messages from certain users.</string>
     <string name="ignores_twitch_title">Manage blocked Twitch users.</string>
@@ -395,4 +398,13 @@
     <string name="preference_streaminfo_category_title">Show stream category</string>
     <string name="preference_streaminfo_category_summary">Also display stream category</string>
     <string name="toggle_input">Toggle input</string>
+    <string name="badge_broadcaster">Broadcaster</string>
+    <string name="badge_admin">Admin</string>
+    <string name="badge_staff">Staff</string>
+    <string name="badge_moderator">Moderator</string>
+    <string name="badge_lead_moderator">Lead Moderator</string>
+    <string name="badge_verified">Verified</string>
+    <string name="badge_vip">VIP</string>
+    <string name="badge_founder">Founder</string>
+    <string name="badge_subscriber">Subscriber</string>
 </resources>
