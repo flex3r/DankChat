@@ -407,4 +407,7 @@
     <string name="badge_vip">VIP</string>
     <string name="badge_founder">Founder</string>
     <string name="badge_subscriber">Subscriber</string>
+    <string name="pick_highlight_color_title">Pick custom highlight color</string>
+    <string name="reset_default_highlight_color">Default</string>
+    <string name="choose_highlight_color">Choose Color</string>
 </resources>
