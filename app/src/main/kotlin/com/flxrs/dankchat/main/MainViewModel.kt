@@ -519,13 +519,13 @@ class MainViewModel(
 
     fun getActiveChannel(): UserName? = activeChannel.value
 
-    fun blockUser() = viewModelScope.launch {
+    fun blockUser(channel: UserName?) = viewModelScope.launch {
         runCatching {
             if (!dankChatPreferenceStore.isLoggedIn) {
                 return@launch
             }
 
-            val activeChannel = getActiveChannel() ?: return@launch
+            val activeChannel = channel ?: getActiveChannel() ?: return@launch
             val channelId = channelRepository.getChannel(activeChannel)?.id ?: return@launch
             ignoresRepository.addUserBlock(channelId, activeChannel)
         }

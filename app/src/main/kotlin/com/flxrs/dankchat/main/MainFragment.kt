@@ -244,10 +244,10 @@ class MainFragment : Fragment() {
                 R.id.menu_logout                   -> showLogoutConfirmationDialog()
                 R.id.menu_add                      -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment).also { closeInputSheets() }
                 R.id.menu_mentions                 -> openMentionSheet()
-                R.id.menu_open_channel             -> openChannel()
-                R.id.menu_remove_channel           -> removeChannel()
-                R.id.menu_report_channel           -> reportChannel()
-                R.id.menu_block_channel            -> blockChannel()
+                R.id.menu_open_channel             -> openChannel(null)
+                R.id.menu_remove_channel           -> removeChannel(null)
+                R.id.menu_report_channel           -> reportChannel(null)
+                R.id.menu_block_channel            -> blockChannel(null)
                 R.id.menu_manage                   -> openManageChannelsDialog()
                 R.id.menu_reload_emotes            -> reloadEmotes()
                 R.id.menu_choose_media             -> showExternalHostingUploadDialogIfNotAcknowledged { requestGalleryMedia.launch(PickVisualMediaRequest(PickVisualMedia.ImageAndVideo)) }
@@ -326,6 +326,29 @@ class MainFragment : Fragment() {
 
             tabLayoutMediator = TabLayoutMediator(tabs, chatViewpager) { tab, position ->
                 tab.text = tabAdapter.getFormattedChannel(position)
+                tab.view.setOnLongClickListener { view ->
+                    var items = arrayOf(
+                        getString(R.string.open_channel),
+                        getString(R.string.remove_channel),
+                        getString(R.string.report_channel)
+                    )
+                    if (dankChatPreferences.isLoggedIn) {
+                        items = items.plus(getString(R.string.block_channel))
+                    }
+                    val channel = tabAdapter[position]
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle(tab.text)
+                        .setItems(items, { dialog, which ->
+                            when (which) {
+                                0 -> openChannel(channel)
+                                1 -> removeChannel(channel)
+                                2 -> reportChannel(channel)
+                                3 -> blockChannel(channel)
+                            }
+                        })
+                        .create().show()
+                    true
+                 }
             }
 
             tabs.setInitialColors()
@@ -1170,17 +1193,17 @@ class MainFragment : Fragment() {
         .setNegativeButton(getString(R.string.dialog_cancel)) { dialog, _ -> dialog.dismiss() }
         .create().show()
 
-    private fun openChannel() {
-        val channel = mainViewModel.getActiveChannel() ?: return
-        val url = "https://twitch.tv/$channel"
+    private fun openChannel(channel: UserName?) {
+        val activeChannel = channel ?: mainViewModel.getActiveChannel() ?: return
+        val url = "https://twitch.tv/$activeChannel"
         Intent(Intent.ACTION_VIEW).also {
             it.data = url.toUri()
             startActivity(it)
         }
     }
 
-    private fun reportChannel() {
-        val activeChannel = mainViewModel.getActiveChannel() ?: return
+    private fun reportChannel(channel: UserName?) {
+        val activeChannel = channel ?: mainViewModel.getActiveChannel() ?: return
         val url = "https://twitch.tv/$activeChannel/report"
         Intent(Intent.ACTION_VIEW).also {
             it.data = url.toUri()
@@ -1188,24 +1211,24 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun blockChannel() {
+    private fun blockChannel(channel: UserName?) {
         closeInputSheets()
-        val activeChannel = mainViewModel.getActiveChannel() ?: return
+        val activeChannel = channel ?: mainViewModel.getActiveChannel() ?: return
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.confirm_channel_block_title)
             .setMessage(getString(R.string.confirm_channel_block_message_named, activeChannel))
             .setPositiveButton(R.string.confirm_user_block_positive_button) { _, _ ->
-                mainViewModel.blockUser()
-                removeChannel()
+                mainViewModel.blockUser(activeChannel)
+                removeChannel(activeChannel)
                 showSnackBar(getString(R.string.channel_blocked_message))
             }
             .setNegativeButton(R.string.dialog_cancel) { d, _ -> d.dismiss() }
             .show()
     }
 
-    private fun removeChannel() {
+    private fun removeChannel(channel: UserName?) {
         closeInputSheets()
-        val activeChannel = mainViewModel.getActiveChannel() ?: return
+        val activeChannel = channel ?: mainViewModel.getActiveChannel() ?: return
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.confirm_channel_removal_title)
             // should give user more info that it's gonna delete the currently active channel (unlike when clicking delete from manage channels list, where is very obvious)
