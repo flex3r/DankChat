@@ -519,7 +519,7 @@ class MainViewModel(
 
     fun getActiveChannel(): UserName? = activeChannel.value
 
-    fun blockUser(channel: UserName?) = viewModelScope.launch {
+    fun blockUser(channel: UserName? = null) = viewModelScope.launch {
         runCatching {
             if (!dankChatPreferenceStore.isLoggedIn) {
                 return@launch

@@ -244,10 +244,10 @@ class MainFragment : Fragment() {
                 R.id.menu_logout                   -> showLogoutConfirmationDialog()
                 R.id.menu_add                      -> navigateSafe(R.id.action_mainFragment_to_addChannelDialogFragment).also { closeInputSheets() }
                 R.id.menu_mentions                 -> openMentionSheet()
-                R.id.menu_open_channel             -> openChannel(null)
-                R.id.menu_remove_channel           -> removeChannel(null)
-                R.id.menu_report_channel           -> reportChannel(null)
-                R.id.menu_block_channel            -> blockChannel(null)
+                R.id.menu_open_channel             -> openChannel()
+                R.id.menu_remove_channel           -> removeChannel()
+                R.id.menu_report_channel           -> reportChannel()
+                R.id.menu_block_channel            -> blockChannel()
                 R.id.menu_manage                   -> openManageChannelsDialog()
                 R.id.menu_reload_emotes            -> reloadEmotes()
                 R.id.menu_choose_media             -> showExternalHostingUploadDialogIfNotAcknowledged { requestGalleryMedia.launch(PickVisualMediaRequest(PickVisualMedia.ImageAndVideo)) }
@@ -1193,48 +1193,48 @@ class MainFragment : Fragment() {
         .setNegativeButton(getString(R.string.dialog_cancel)) { dialog, _ -> dialog.dismiss() }
         .create().show()
 
-    private fun openChannel(channel: UserName?) {
-        val activeChannel = channel ?: mainViewModel.getActiveChannel() ?: return
-        val url = "https://twitch.tv/$activeChannel"
+    private fun openChannel(channel: UserName? = null) {
+        val selectedChannel = channel ?: mainViewModel.getActiveChannel() ?: return
+        val url = "https://twitch.tv/$selectedChannel"
         Intent(Intent.ACTION_VIEW).also {
             it.data = url.toUri()
             startActivity(it)
         }
     }
 
-    private fun reportChannel(channel: UserName?) {
-        val activeChannel = channel ?: mainViewModel.getActiveChannel() ?: return
-        val url = "https://twitch.tv/$activeChannel/report"
+    private fun reportChannel(channel: UserName? = null) {
+        val selectedChannel = channel ?: mainViewModel.getActiveChannel() ?: return
+        val url = "https://twitch.tv/$selectedChannel/report"
         Intent(Intent.ACTION_VIEW).also {
             it.data = url.toUri()
             startActivity(it)
         }
     }
 
-    private fun blockChannel(channel: UserName?) {
+    private fun blockChannel(channel: UserName? = null) {
         closeInputSheets()
-        val activeChannel = channel ?: mainViewModel.getActiveChannel() ?: return
+        val selectedChannel = channel ?: mainViewModel.getActiveChannel() ?: return
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.confirm_channel_block_title)
-            .setMessage(getString(R.string.confirm_channel_block_message_named, activeChannel))
+            .setMessage(getString(R.string.confirm_channel_block_message_named, selectedChannel))
             .setPositiveButton(R.string.confirm_user_block_positive_button) { _, _ ->
-                mainViewModel.blockUser(activeChannel)
-                removeChannel(activeChannel)
+                mainViewModel.blockUser(selectedChannel)
+                removeChannel(selectedChannel)
                 showSnackBar(getString(R.string.channel_blocked_message))
             }
             .setNegativeButton(R.string.dialog_cancel) { d, _ -> d.dismiss() }
             .show()
     }
 
-    private fun removeChannel(channel: UserName?) {
+    private fun removeChannel(channel: UserName? = null) {
         closeInputSheets()
-        val activeChannel = channel ?: mainViewModel.getActiveChannel() ?: return
+        val selectedChannel = channel ?: mainViewModel.getActiveChannel() ?: return
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.confirm_channel_removal_title)
             // should give user more info that it's gonna delete the currently active channel (unlike when clicking delete from manage channels list, where is very obvious)
-            .setMessage(getString(R.string.confirm_channel_removal_message_named, activeChannel))
+            .setMessage(getString(R.string.confirm_channel_removal_message_named, selectedChannel))
             .setPositiveButton(R.string.confirm_channel_removal_positive_button) { _, _ ->
-                dankChatPreferences.removeChannel(activeChannel)
+                dankChatPreferences.removeChannel(selectedChannel)
                 val withRenames = dankChatPreferences.getChannelsWithRenames()
                 updateChannels(withRenames)
             }
