@@ -84,7 +84,7 @@ fun String.appendSpacesBetweenEmojiGroup(): Pair<String, List<Int>> {
     }
 
     // append a whitespace after the last emoji, if necessary
-    if (index < lastIndex) {
+    if (index <= lastIndex) {
         val end = substring(index..lastIndex)
         if (!end.first().isWhitespace()) {
             addedSpacesPositions += index
