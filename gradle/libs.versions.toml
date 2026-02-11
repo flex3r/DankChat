@@ -14,7 +14,7 @@ about-libraries = "13.2.1"
 
 androidGradlePlugin = "8.13.2"
 androidDesugarLibs = "2.1.5"
-androidxActivity = "1.12.2"
+androidxActivity = "1.12.4"
 androidxBrowser = "1.9.0"
 androidxConstraintLayout = "2.2.1"
 androidxCore = "1.17.0"
