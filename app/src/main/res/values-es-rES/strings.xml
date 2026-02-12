@@ -322,10 +322,12 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="tab_users">Usuarios</string>
     <string name="tab_blacklisted_users">Lista Negra de Usuarios</string>
     <string name="tab_twitch">Twitch</string>
+    <string name="tab_badges">Emblemas</string>
     <string name="undo">Deshacer</string>
     <string name="item_removed">Elemento eliminado</string>
     <string name="unblocked_user">Usuario %1$s desbloqueado</string>
     <string name="unblocked_user_failed">Error al desbloquear el usuario %1$s</string>
+    <string name="badge">Emblema</string>
     <string name="blocked_user_failed">Error al bloquear el usuario %1$s</string>
     <string name="highlights_entry_username">Tu usuario</string>
     <string name="highlights_ignores_entry_subscriptions">Suscripciones y Eventos</string>
@@ -338,6 +340,7 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="highlights_messages_title">Crea notificaciones y destaca mensajes basados en ciertos patrones.</string>
     <string name="highlights_users_title">Crea notificaciones y destaca los mensajes de ciertos usuarios.</string>
     <string name="highlights_blacklisted_users_title">Desactiva las notificaciones y los destacados de ciertos usuarios (ej. bots).</string>
+    <string name="highlights_badges_title">Crea notificaciones y destaca los mensajes de los usuarios en función de los emblemas.</string>
     <string name="ignores_messages_title">Ignorar mensajes basados en ciertos patrones.</string>
     <string name="ignores_users_title">Ignorar mensajes de ciertos usuarios.</string>
     <string name="ignores_twitch_title">Gestiona los usuarios bloqueados de Twitch.</string>
@@ -402,4 +405,16 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="preference_streaminfo_category_title">Mostrar categoría del stream</string>
     <string name="preference_streaminfo_category_summary">Muestra también la categoría del stream</string>
     <string name="toggle_input">Alternar entrada</string>
+    <string name="badge_broadcaster">Streamer</string>
+    <string name="badge_admin">Administrador</string>
+    <string name="badge_staff">Staff</string>
+    <string name="badge_moderator">Moderador</string>
+    <string name="badge_lead_moderator">Moderador principal</string>
+    <string name="badge_verified">Verificado</string>
+    <string name="badge_vip">VIP</string>
+    <string name="badge_founder">Fundador</string>
+    <string name="badge_subscriber">Suscriptor</string>
+    <string name="pick_highlight_color_title">Elegir color de resaltado personalizado</string>
+    <string name="reset_default_highlight_color">Predeterminado</string>
+    <string name="choose_highlight_color">Elegir color</string>
 </resources>
