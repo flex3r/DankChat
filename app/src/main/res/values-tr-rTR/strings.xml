@@ -322,10 +322,12 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="tab_users">Kullanıcılar</string>
     <string name="tab_blacklisted_users">Kara Listeli Kullanıcılar</string>
     <string name="tab_twitch">Twitch</string>
+    <string name="tab_badges">Rozetler</string>
     <string name="undo">Geri al</string>
     <string name="item_removed">Öge kaldırıldı</string>
     <string name="unblocked_user">%1$s kullanıcısının engeli kaldırıldı</string>
     <string name="unblocked_user_failed">%1$s kullanıcısının engeli kaldırılamadı</string>
+    <string name="badge">Rozet</string>
     <string name="blocked_user_failed">%1$s kullanıcısı engellenemedi</string>
     <string name="highlights_entry_username">Kullanıcı adınız</string>
     <string name="highlights_ignores_entry_subscriptions">Abonelikler ile Etkinlikler</string>
@@ -338,6 +340,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="highlights_messages_title">Belli şablonlara göre bildirimler oluşturup mesajları öne çıkarır.</string>
     <string name="highlights_users_title">Belli kullanıcılardan bildirimler oluşturup mesajlar öne çıkarır.</string>
     <string name="highlights_blacklisted_users_title">Belli kullanıcılardan (örneğin botlardan) bildirimler ile öne çıkarmaları etkisizleştirir.</string>
+    <string name="highlights_badges_title">Rozetlere göre kullanıcıların mesajlarından bildirimler ve vurgular oluştur.</string>
     <string name="ignores_messages_title">Belli şablonlara göre mesajları yoksayar.</string>
     <string name="ignores_users_title">Belli kullanıcılardan gelen mesajları yok say.</string>
     <string name="ignores_twitch_title">Engellenen Twitch kullanıcılarını yönet.</string>
@@ -402,4 +405,16 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_streaminfo_category_title">Yayın kategorisini göster</string>
     <string name="preference_streaminfo_category_summary">Yayın kategorisini de göster</string>
     <string name="toggle_input">Girişi Değiştir</string>
+    <string name="badge_broadcaster">Yayıncı</string>
+    <string name="badge_admin">Yönetici</string>
+    <string name="badge_staff">Ekip</string>
+    <string name="badge_moderator">Moderatör</string>
+    <string name="badge_lead_moderator">Baş moderatör</string>
+    <string name="badge_verified">Doğrulandı</string>
+    <string name="badge_vip">VIP</string>
+    <string name="badge_founder">Kurucu</string>
+    <string name="badge_subscriber">Abone</string>
+    <string name="pick_highlight_color_title">Özel vurgu rengi seç</string>
+    <string name="reset_default_highlight_color">Varsayılan</string>
+    <string name="choose_highlight_color">Renk Seç</string>
 </resources>
