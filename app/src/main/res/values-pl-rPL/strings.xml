@@ -320,10 +320,12 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="tab_users">Użytkownicy</string>
     <string name="tab_blacklisted_users">Użytkownicy na Czarnej liście </string>
     <string name="tab_twitch">Twitch</string>
+    <string name="tab_badges">Odznaki</string>
     <string name="undo">Cofnij</string>
     <string name="item_removed">Element został usunięty</string>
     <string name="unblocked_user">Odblokowano użytkownika %1$s</string>
     <string name="unblocked_user_failed">Nie udało się odblokować użytkownika %1$s</string>
+    <string name="badge">Odznaka</string>
     <string name="blocked_user_failed">Nie udało się zablokować użytkownika %1$s</string>
     <string name="highlights_entry_username">Twoja nazwa użytkownika</string>
     <string name="highlights_ignores_entry_subscriptions">Subskrypcje i Wydarzenia</string>
@@ -336,6 +338,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="highlights_messages_title">Tworzy powiadomienia i wyróżnia wiadomości na podstawie określonych wzorów.</string>
     <string name="highlights_users_title">Tworzy powiadomienia i wyróżnia wiadomości od określonych użytkowników.</string>
     <string name="highlights_blacklisted_users_title">Wyłącz powiadomienia i wyróżnienia od określonych użytkowników (np. botów)</string>
+    <string name="highlights_badges_title">Utwórz powiadomienia i wyróżnienia wiadomości od użytkowników na podstawie odznak.</string>
     <string name="ignores_messages_title">Ignoruj wiadomości na podstawie określonych wzorów.</string>
     <string name="ignores_users_title">Ignoruj wiadomości od określonych użytkowników.</string>
     <string name="ignores_twitch_title">Zarządzaj zablokowanymi użytkownikami.</string>
@@ -383,6 +386,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="login_menu_zoom_out">Pomniejsz</string>
     <string name="login_menu_zoom_in">Powiększ</string>
     <string name="back">Wróć</string>
+    <string name="shared_chat">Wspólny Czat</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">Na żywo z %1$d widzem przez %2$s</item>
         <item quantity="few">Na żywo z %1$d widzami przez %2$s</item>
@@ -395,4 +399,26 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
         <item quantity="many">%d miesięcy</item>
         <item quantity="other">%d miesięcy</item>
     </plurals>
+    <string name="open_source_licenses">Licencje Open Source</string>
+    <plurals name="viewers_and_uptime_with_cateogry" comment="Live with 1 viewer in Just Chatting for 1h 1m&#13;&#10;Live with 10 viewers in Just Chatting for 1h 1m">
+        <item quantity="one">Na żywo z %1$d widzem w %2$s od %3$s</item>
+        <item quantity="few">Na żywo z %1$d widzami w %2$s od %3$s</item>
+        <item quantity="many">Na żywo z %1$d widzami w %2$s od %3$s</item>
+        <item quantity="other">Na żywo z %1$d widzami w %2$s od %3$s</item>
+    </plurals>
+    <string name="preference_streaminfo_category_title">Pokaż kategorię transmisji</string>
+    <string name="preference_streaminfo_category_summary">Wyświetlaj również kategorię transmisji</string>
+    <string name="toggle_input">Przełącz pole wprowadzania</string>
+    <string name="badge_broadcaster">Nadawca</string>
+    <string name="badge_admin">Admin</string>
+    <string name="badge_staff">Personel</string>
+    <string name="badge_moderator">Moderator</string>
+    <string name="badge_lead_moderator">Główny Moderator</string>
+    <string name="badge_verified">Zweryfikowane</string>
+    <string name="badge_vip">VIP</string>
+    <string name="badge_founder">Założyciel</string>
+    <string name="badge_subscriber">Subskrybent</string>
+    <string name="pick_highlight_color_title">Wybierz niestandardowy kolor podświetlenia</string>
+    <string name="reset_default_highlight_color">Domyślny</string>
+    <string name="choose_highlight_color">Wybierz Kolor</string>
 </resources>
