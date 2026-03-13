@@ -414,4 +414,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="badge_vip">VIP</string>
     <string name="badge_founder">Gründer</string>
     <string name="badge_subscriber">Abonnent</string>
+    <string name="pick_highlight_color_title">Wähle benutzerdefinierte Highlight Farbe</string>
+    <string name="reset_default_highlight_color">Standard</string>
+    <string name="choose_highlight_color">Farbe wählen</string>
 </resources>

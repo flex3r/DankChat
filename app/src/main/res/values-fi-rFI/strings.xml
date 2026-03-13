@@ -211,6 +211,7 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_tts_message_format_message">Lukee vain viestin ääneen</string>
     <string name="preference_tts_message_format_combined">Lukee käyttäjän ja viestin</string>
     <string name="preference_tts_message_format_title">Viestin muoto</string>
+    <string name="preference_tts_message_ignore_url_message">Ohittaa URL-osoitteet TTS:ssä</string>
     <string name="preference_tts_header">TTS</string>
     <string name="preference_checkered_lines_title">Ruudulliset viivat</string>
     <string name="preference_checkered_lines_summary">Erota kukin rivi erillaisella taustan kirkkaudella</string>
