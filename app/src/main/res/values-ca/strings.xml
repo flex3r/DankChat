@@ -24,8 +24,10 @@
     <string name="remove_channel">Eliminar canal</string>
     <string name="channel_blocked_message">Canal bloquejat</string>
     <string name="no_channels_added">Cap canal afegit</string>
+    <string name="no_channels_added_body">Afegeix un canal per començar a xatejar</string>
     <string name="confirm_logout_title">Confirma tancar la sessió</string>
     <string name="confirm_logout_message">Estàs segur que vols tancar la sessió?</string>
+    <string name="confirm_logout_question">Tancar sessió?</string>
     <string name="confirm_logout_positive_button">Tancar la sessió</string>
     <string name="upload_media">Pujar contingut</string>
     <string name="take_picture">Fer una foto</string>
@@ -51,7 +53,8 @@
     <string name="hint_disconnected">Desconnectat</string>
     <string name="hint_not_logged_int">Sessió no iniciada</string>
     <string name="hint_replying">Resposta</string>
-    <string name="hint_announcing">Send announcement</string>    <string name="notification_new_mentions">Tens noves mencions</string>
+    <string name="hint_announcing">Send announcement</string>
+    <string name="notification_new_mentions">Tens noves mencions</string>
     <string name="notification_mention">%1$s t\'acaba de mencionar en #%2$s</string>
     <string name="notification_notify_mention">Has estat mencionat a #%1$s</string>
     <string name="snackbar_login">Iniciant sessió com %1$s</string>
@@ -80,34 +83,29 @@
     <string name="data_loading_step_cheermotes">Cheermotes</string>
     <string name="data_loading_step_recent_messages">Missatges recents</string>
     <string name="data_loading_step_with_channels">%1$s (%2$s)</string>
-
     <string name="highlight_header_first_time_chat">Primer missatge</string>
     <string name="highlight_header_elevated_chat">Missatge destacat</string>
     <string name="highlight_header_gigantified_emote">Emote gegant</string>
     <string name="highlight_header_animated_message">Missatge animat</string>
-    <string name="highlight_header_reward_no_cost">Bescanviat %1$s</string>    <plurals name="duration_seconds">
+    <string name="highlight_header_reward_no_cost">Bescanviat %1$s</string>
+    <plurals name="duration_seconds">
         <item quantity="one">%1$d segon</item>
-        <item quantity="many">%1$d segons</item>
         <item quantity="other">%1$d segons</item>
     </plurals>
     <plurals name="duration_minutes">
         <item quantity="one">%1$d minut</item>
-        <item quantity="many">%1$d minuts</item>
         <item quantity="other">%1$d minuts</item>
     </plurals>
     <plurals name="duration_hours">
         <item quantity="one">%1$d hora</item>
-        <item quantity="many">%1$d hores</item>
         <item quantity="other">%1$d hores</item>
     </plurals>
     <plurals name="duration_days">
         <item quantity="one">%1$d dia</item>
-        <item quantity="many">%1$d dies</item>
         <item quantity="other">%1$d dies</item>
     </plurals>
     <plurals name="duration_weeks">
         <item quantity="one">%1$d setmana</item>
-        <item quantity="many">%1$d setmanes</item>
         <item quantity="other">%1$d setmanes</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
@@ -116,6 +114,7 @@
     <string name="add_channel_hint">Nom del canal</string>
     <string name="add_channel_already_added">El canal ja està afegit</string>
     <string name="emote_menu_tab_recent">Recent</string>
+    <string name="backspace">Retrocés</string>
     <string name="emote_menu_tab_subs">Subscriptors</string>
     <string name="emote_menu_tab_channel">Canal</string>
     <string name="emote_menu_tab_global">Global</string>
@@ -138,6 +137,108 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s ha afegit l\'emote 7TV %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s ha reanomenat l\'emote 7TV %2$s a %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s ha eliminat l\'emote 7TV %2$s.</string>
+    <!-- Send errors -->
+    <string name="system_message_send_not_logged_in">No s\'ha iniciat sessió</string>
+    <string name="system_message_send_channel_not_resolved">No s\'ha pogut resoldre l\'ID del canal per a %1$s</string>
+    <string name="system_message_send_not_delivered">El missatge no s\'ha enviat</string>
+    <string name="system_message_send_dropped">Missatge descartat: %1$s (%2$s)</string>
+    <string name="system_message_send_missing_scopes">Falta el permís user:write:chat, torneu a iniciar sessió</string>
+    <string name="system_message_send_not_authorized">No teniu autorització per enviar missatges en aquest canal</string>
+    <string name="system_message_send_message_too_large">El missatge és massa gran</string>
+    <string name="system_message_send_rate_limited">Límit de freqüència superat, torneu-ho a provar d\'aquí a un moment</string>
+    <string name="system_message_send_failed">Error d\'enviament: %1$s</string>
+    <!-- AutoMod -->
+    <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">S\'ha retingut un missatge per motiu: %1$s. Permetre el publicarà al xat.</string>
+    <string name="automod_allow">Permetre</string>
+    <string name="automod_deny">Denegar</string>
+    <string name="automod_status_approved">Aprovat</string>
+    <string name="automod_status_denied">Denegat</string>
+    <string name="automod_ban_user">Prohibir l\'usuari</string>
+    <string name="automod_status_expired">Caducat</string>
+    <string name="automod_user_held">Ei! El teu missatge està sent revisat pels moderadors i no s\'ha enviat.</string>
+    <string name="automod_user_accepted">Els moderadors han acceptat el teu missatge.</string>
+    <string name="automod_user_denied">Els moderadors han rebutjat el teu missatge.</string>
+    <string name="automod_reason_category" comment="aggressive (level 2)">%1$s (nivell %2$d)</string>
+    <plurals name="automod_reason_blocked_terms">
+        <item quantity="one">coincideix amb %1$d terme bloquejat %2$s</item>
+        <item quantity="other">coincideix amb %1$d termes bloquejats %2$s</item>
+    </plurals>
+    <string name="automod_error_already_processed" comment="Failed to allow AutoMod message - message has already been processed.">No s\'ha pogut %1$s el missatge d\'AutoMod - el missatge ja ha estat processat.</string>
+    <string name="automod_error_not_authenticated" comment="Failed to allow AutoMod message - you need to re-authenticate.">No s\'ha pogut %1$s el missatge d\'AutoMod - cal tornar a autenticar-se.</string>
+    <string name="automod_error_not_authorized" comment="Failed to allow AutoMod message - you don\'t have permission to perform that action.">No s\'ha pogut %1$s el missatge d\'AutoMod - no tens permís per realitzar aquesta acció.</string>
+    <string name="automod_error_not_found" comment="Failed to allow AutoMod message - target message not found.">No s\'ha pogut %1$s el missatge d\'AutoMod - missatge objectiu no trobat.</string>
+    <string name="automod_error_unknown" comment="Failed to allow AutoMod message - an unknown error occurred.">No s\'ha pogut %1$s el missatge d\'AutoMod - s\'ha produït un error desconegut.</string>
+    <string name="automod_moderation_added_blocked_term" comment="flex3rs added &quot;test&quot; as a blocked term on AutoMod.">%1$s ha afegit %2$s com a terme bloquejat a AutoMod.</string>
+    <string name="automod_moderation_added_permitted_term" comment="flex3rs added &quot;test&quot; as a permitted term on AutoMod.">%1$s ha afegit %2$s com a terme permès a AutoMod.</string>
+    <string name="automod_moderation_removed_blocked_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s ha eliminat %2$s com a terme bloquejat d\'AutoMod.</string>
+    <string name="automod_moderation_removed_permitted_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s ha eliminat %2$s com a terme permès d\'AutoMod.</string>
+    <!-- Moderation messages — complete sentence variants for proper localization -->
+    <!-- Timeout (self, IRC — no creator info) -->
+    <string name="mod_timeout_self_irc" comment="You were timed out for 10m">Has estat expulsat temporalment per %1$s</string>
+    <!-- Timeout (self, EventSub — has creator) -->
+    <string name="mod_timeout_self" comment="You were timed out for 10m by flex3rs">Has estat expulsat temporalment per %1$s per %2$s</string>
+    <string name="mod_timeout_self_reason" comment="You were timed out for 10m by flex3rs: reason">Has estat expulsat temporalment per %1$s per %2$s: %3$s</string>
+    <!-- Timeout (other, by creator) -->
+    <string name="mod_timeout_by_creator" comment="flex3rs timed out user123 for 10m">%1$s ha expulsat temporalment %2$s per %3$s</string>
+    <string name="mod_timeout_by_creator_reason" comment="flex3rs timed out user123 for 10m: reason">%1$s ha expulsat temporalment %2$s per %3$s: %4$s</string>
+    <!-- Timeout (other, IRC — no creator) -->
+    <string name="mod_timeout_no_creator" comment="user123 has been timed out for 10m">%1$s ha estat expulsat temporalment per %2$s</string>
+    <!-- Ban (self) -->
+    <string name="mod_ban_self_irc" comment="You were banned">Has estat banejat</string>
+    <string name="mod_ban_self" comment="You were banned by flex3rs">Has estat banejat per %1$s</string>
+    <string name="mod_ban_self_reason" comment="You were banned by flex3rs: reason">Has estat banejat per %1$s: %2$s</string>
+    <!-- Ban (other) -->
+    <string name="mod_ban_by_creator" comment="flex3rs banned user123">%1$s ha banejat %2$s</string>
+    <string name="mod_ban_by_creator_reason" comment="flex3rs banned user123: reason">%1$s ha banejat %2$s: %3$s</string>
+    <string name="mod_ban_no_creator" comment="user123 has been permanently banned">%1$s ha estat banejat permanentment</string>
+    <!-- Simple actions -->
+    <string name="mod_untimeout" comment="flex3rs untimedout user123">%1$s ha llevat l\'expulsió temporal de %2$s</string>
+    <string name="mod_unban" comment="flex3rs unbanned user123">%1$s ha desbanejat %2$s</string>
+    <string name="mod_modded" comment="flex3rs modded user123">%1$s ha nomenat %2$s moderador</string>
+    <string name="mod_unmodded" comment="flex3rs unmodded user123">%1$s ha retirat %2$s de moderador</string>
+    <string name="mod_vip_added" comment="flex3rs has added user123 as a VIP of this channel">%1$s ha afegit %2$s com a VIP d\'aquest canal</string>
+    <string name="mod_vip_removed" comment="flex3rs has removed user123 as a VIP of this channel">%1$s ha retirat %2$s com a VIP d\'aquest canal</string>
+    <string name="mod_warn" comment="flex3rs has warned user123">%1$s ha advertit %2$s</string>
+    <string name="mod_warn_reason" comment="flex3rs has warned user123: reason1, reason2">%1$s ha advertit %2$s: %3$s</string>
+    <string name="mod_raid" comment="flex3rs initiated a raid to user123">%1$s ha iniciat un raid a %2$s</string>
+    <string name="mod_unraid" comment="flex3rs canceled the raid to user123">%1$s ha cancel·lat el raid a %2$s</string>
+    <!-- Delete -->
+    <string name="mod_delete_by_creator" comment="flex3rs deleted message from user123">%1$s ha eliminat un missatge de %2$s</string>
+    <string name="mod_delete_by_creator_message" comment="flex3rs deleted message from user123 saying: hello">%1$s ha eliminat un missatge de %2$s dient: %3$s</string>
+    <string name="mod_delete_no_creator" comment="A message from user123 was deleted">Un missatge de %1$s ha estat eliminat</string>
+    <string name="mod_delete_no_creator_message" comment="A message from user123 was deleted saying: hello">Un missatge de %1$s ha estat eliminat dient: %2$s</string>
+    <!-- Clear -->
+    <string name="mod_clear_by_creator" comment="flex3rs cleared the chat">%1$s ha buidat el xat</string>
+    <string name="mod_clear_no_creator">El xat ha estat buidat per un moderador</string>
+    <!-- Room state -->
+    <string name="mod_emote_only_on" comment="flex3rs turned on emote-only mode">%1$s ha activat el mode emote-only</string>
+    <string name="mod_emote_only_off" comment="flex3rs turned off emote-only mode">%1$s ha desactivat el mode emote-only</string>
+    <string name="mod_followers_on" comment="flex3rs turned on followers-only mode">%1$s ha activat el mode followers-only</string>
+    <string name="mod_followers_on_duration" comment="flex3rs turned on followers-only mode (1 week)">%1$s ha activat el mode followers-only (%2$s)</string>
+    <string name="mod_followers_off" comment="flex3rs turned off followers-only mode">%1$s ha desactivat el mode followers-only</string>
+    <string name="mod_unique_chat_on" comment="flex3rs turned on unique-chat mode">%1$s ha activat el mode unique-chat</string>
+    <string name="mod_unique_chat_off" comment="flex3rs turned off unique-chat mode">%1$s ha desactivat el mode unique-chat</string>
+    <string name="mod_slow_on" comment="flex3rs turned on slow mode">%1$s ha activat el mode slow</string>
+    <string name="mod_slow_on_duration" comment="flex3rs turned on slow mode (2 minutes 5 seconds)">%1$s ha activat el mode slow (%2$s)</string>
+    <string name="mod_slow_off" comment="flex3rs turned off slow mode">%1$s ha desactivat el mode slow</string>
+    <string name="mod_subscribers_on" comment="flex3rs turned on subscribers-only mode">%1$s ha activat el mode subscribers-only</string>
+    <string name="mod_subscribers_off" comment="flex3rs turned off subscribers-only mode">%1$s ha desactivat el mode subscribers-only</string>
+    <!-- Shared chat -->
+    <string name="mod_shared_timeout" comment="flex3rs timed out user123 for 10m in channel456">%1$s ha expulsat temporalment %2$s per %3$s a %4$s</string>
+    <string name="mod_shared_timeout_reason" comment="flex3rs timed out user123 for 10m in channel456: reason">%1$s ha expulsat temporalment %2$s per %3$s a %4$s: %5$s</string>
+    <string name="mod_shared_untimeout" comment="flex3rs untimedout user123 in channel456">%1$s ha llevat l\'expulsió temporal de %2$s a %3$s</string>
+    <string name="mod_shared_ban" comment="flex3rs banned user123 in channel456">%1$s ha banejat %2$s a %3$s</string>
+    <string name="mod_shared_ban_reason" comment="flex3rs banned user123 in channel456: reason">%1$s ha banejat %2$s a %3$s: %4$s</string>
+    <string name="mod_shared_unban" comment="flex3rs unbanned user123 in channel456">%1$s ha desbanejat %2$s a %3$s</string>
+    <string name="mod_shared_delete" comment="flex3rs deleted message from user123 in channel456">%1$s ha eliminat un missatge de %2$s a %3$s</string>
+    <string name="mod_shared_delete_message" comment="flex3rs deleted message from user123 in channel456 saying: hello">%1$s ha eliminat un missatge de %2$s a %3$s dient: %4$s</string>
+    <!-- Helper: message + count concatenation -->
+    <string name="mod_message_with_count" comment="flex3rs timed out user123 for 10m. (2 times)">%1$s%2$s</string>
+    <!-- Parenthetical count (appended after complete sentences, safe for all languages) -->
+    <plurals name="mod_count_suffix" comment=" (2 times)">
+        <item quantity="one">\u0020(%1$d vegada)</item>
+        <item quantity="other">\u0020(%1$d vegades)</item>
+    </plurals>
     <string name="timed_out_message">&lt; Missatge eliminat &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Afegeix una entrada</string>
@@ -149,7 +250,6 @@ El servei emmagatzema temporalment missatges per a canals que tu (i altres) visi
 
 - Per a no fer ús d\'aquesta característica, clica Opt-Out a baix o desactiva la càrrega de l\'historial de missatges des de la configuració més tard.
 - Pots aprendre més del teu propi canal visitant https://recent-messages.robotty.de/</string>
-    <string name="dialog_optin">Opt-in</string>
     <string name="dialog_optout">Opt-out</string>
     <string name="more">Més</string>
     <string name="mentions_title">Mencions / Missatges privats</string>
@@ -160,12 +260,14 @@ El servei emmagatzema temporalment missatges per a canals que tu (i altres) visi
     <string name="confirm_channel_removal_title">Confirmar eliminació del canal</string>
     <string name="confirm_channel_removal_message">Estàs segur que vols eliminar aquest canal?</string>
     <string name="confirm_channel_removal_message_named">Estàs segur que vols eliminar el canal \"%1$s\"?</string>
+    <string name="confirm_channel_removal_question">Eliminar aquest canal?</string>
+    <string name="confirm_channel_removal_question_named">Eliminar el canal \"%1$s\"?</string>
     <string name="confirm_channel_removal_positive_button">Eliminar</string>
     <string name="confirm_channel_block_title">Confirmar el bloqueig del canal</string>
     <string name="confirm_channel_block_message_named">Esteu segurs que voleu bloquejar el canal \"%1$s\"?</string>
+    <string name="confirm_channel_block_question_named">Bloquejar el canal \"%1$s\"?</string>
     <string name="user_popup_block">Bloquejar</string>
     <string name="user_popup_unblock">Desbloquejar</string>
-    <string name="user_popup_unban">Desvetar</string>
     <string name="user_popup_mention">Mencionar l\'usuari</string>
     <string name="user_popup_whisper">Xiuxiuejar usuari</string>
     <string name="user_popup_created">Creat: %1$s</string>
@@ -188,6 +290,62 @@ El servei emmagatzema temporalment missatges per a canals que tu (i altres) visi
 Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="toggle_fullscreen">Alternar pantalla completa</string>
     <string name="toggle_stream">Alternar stream</string>
+    <string name="menu_show_stream">Mostra l\'emissió</string>
+    <string name="menu_hide_stream">Amaga l\'emissió</string>
+    <string name="menu_audio_only">Només àudio</string>
+    <string name="menu_exit_audio_only">Surt del mode àudio</string>
+    <string name="menu_fullscreen">Pantalla completa</string>
+    <string name="menu_exit_fullscreen">Surt de la pantalla completa</string>
+    <string name="menu_hide_input">Amaga l\'entrada</string>
+    <string name="menu_show_input">Mostra l\'entrada</string>
+    <string name="preference_swipe_navigation_title">Navegació de canals per lliscament</string>
+    <string name="preference_swipe_navigation_summary">Canvia de canal lliscant al xat</string>
+    <string name="menu_mod_actions">Moderació del canal</string>
+    <plurals name="input_actions_max">
+        <item quantity="one">Màxim %1$d acció</item>
+        <item quantity="other">Màxim %1$d accions</item>
+    </plurals>
+    <string name="input_action_search">Cerca missatges</string>
+    <string name="input_action_last_message">Últim missatge</string>
+    <string name="input_action_stream">Commuta l\'emissió</string>
+    <string name="input_action_mod_actions">Moderació del canal</string>
+    <string name="input_action_fullscreen">Pantalla completa</string>
+    <string name="input_action_hide_input">Amaga l\'entrada</string>
+    <string name="input_action_debug">Depuració</string>
+    <string name="input_action_configure">Configura accions</string>
+    <string name="room_state_emote_only">Només emotes</string>
+    <string name="room_state_subscriber_only">Només subscriptors</string>
+    <string name="room_state_slow_mode">Mode lent</string>
+    <string name="room_state_slow_mode_duration">Mode lent (%1$s)</string>
+    <string name="room_state_unique_chat">Xat únic (R9K)</string>
+    <string name="room_state_follower_only">Només seguidors</string>
+    <string name="room_state_follower_only_duration">Només seguidors (%1$s)</string>
+    <string name="room_state_preset_custom">Personalitzat</string>
+    <string name="room_state_follower_any">Qualsevol</string>
+    <string name="room_state_duration_seconds">%1$ds</string>
+    <string name="room_state_duration_minutes">%1$dm</string>
+    <string name="room_state_duration_hours">%1$dh</string>
+    <string name="room_state_duration_days">%1$dd</string>
+    <string name="room_state_duration_weeks">%1$dw</string>
+    <string name="room_state_duration_months">%1$dmo</string>
+    <string name="mod_actions_room_state_section">Room state</string>
+    <string name="mod_actions_section">Mod actions</string>
+    <string name="mod_actions_broadcaster_section">Broadcaster</string>
+    <string name="mod_actions_shield_mode">Shield mode</string>
+    <string name="mod_actions_clear_chat">Clear chat</string>
+    <string name="mod_actions_confirm_clear_chat">Clear all messages in this channel?</string>
+    <string name="mod_actions_confirm_shield_mode_title">Activar el mode d\'escut?</string>
+    <string name="mod_actions_confirm_shield_mode_body">Això aplicarà les configuracions de seguretat preconfigurades del canal, que poden incloure restriccions de xat, ajustos d\'AutoMod i requisits de verificació.</string>
+    <string name="mod_actions_shield_mode_activate">Activa</string>
+    <string name="mod_actions_announce">Announce</string>
+    <string name="mod_actions_announce_header">Announcement</string>
+    <string name="mod_actions_shoutout">Shoutout</string>
+    <string name="mod_actions_commercial">Commercial</string>
+    <string name="mod_actions_raid">Raid</string>
+    <string name="mod_actions_cancel_raid">Cancel raid</string>
+    <string name="mod_actions_stream_marker">Stream marker</string>
+    <string name="mod_actions_username_hint">Username</string>
+    <string name="mod_actions_channel_hint">Channel</string>
     <string name="account">Compte</string>
     <string name="relogin">Torna a iniciar sessió</string>
     <string name="logout">Tancar la sessió</string>
@@ -197,12 +355,12 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="change_roomstate">Modes de xat</string>
     <string name="confirm_user_ban_title">Confirmar ban</string>
     <string name="confirm_user_ban_message">Estàs segur que vols vetar aquest usuari?</string>
-    <string name="confirm_user_ban_positive_button">Vetar</string>
+    <string name="confirm_user_ban_question">Bloquejar aquest usuari?</string>
     <string name="confirm_user_timeout_title">Confirmar expulsió temporal</string>
-    <string name="confirm_user_timeout_positive_button">Expulsar temporalment</string>
     <string name="confirm_user_delete_title">Confimar eliminació del missatge</string>
-    <string name="confirm_user_delete_message">Estàs segur que vols eliminar aquest missatge?</string>
+    <string name="confirm_user_delete_question">Eliminar aquest missatge?</string>
     <string name="confirm_user_delete_positive_button">Eliminar</string>
+    <string name="confirm_clear_chat_question">Netejar el xat?</string>
     <string name="confirm_user_roomstate_title">Actualitzar modes de xat</string>
     <string name="roomstate_emote">Només emotes.</string>
     <string name="roomstate_subs">Només subscriptors</string>
@@ -213,7 +371,6 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="minutes">Minuts</string>
     <string name="add_command">Afegir un commandament</string>
     <string name="remove_command">Eliminar el commandament</string>
-    <string name="command_trigger_hint">Disparador</string>
     <string name="command_trigger_reserved">Aquest disparador està reservat per un comandament integrat</string>
     <string name="command_trigger_duplicate">Aquest disparador ja està en ús per un altre comandament</string>
     <string name="command__hint">Commandaments</string>
@@ -261,7 +418,6 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="preference_suggestion_mode_title">Mode de suggeriment</string>
     <string name="preference_suggestion_mode_automatic">Suggereix coincidències mentre escrius</string>
     <string name="preference_suggestion_mode_prefix_only">Suggereix només després d\'un caràcter activador</string>
-    <string name="preference_about_header">Quant a</string>
     <string name="preference_appearance_header">Aparença</string>
     <string name="preference_about_summary">DankChat %1$s creat per @flex3rs i col·laboradors</string>
     <string name="preference_show_input_title">Mostrar entrada</string>
@@ -334,7 +490,8 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="preference_message_history_dashboard_summary">Aprendre més sobre el servei i desactivar historial de missatges pel teu propi canal</string>
     <string name="preference_channel_data_header">Dades del canal</string>
     <string name="preference_developer_header">Opcions de desenvolupador</string>
-    <string name="preference_debug_mode_title">Mode de depuració</string>
+    <string name="preference_log_viewer_title">Visor de registres</string>
+    <string name="preference_log_viewer_summary">Mostra els registres de l\'aplicació</string>
     <string name="preference_debug_mode_summary">Mostra l\'acció d\'analítiques de depuració a la barra d\'entrada i recull informes d\'error localment</string>
     <string name="preference_timestamp_format_title">Format del temps</string>
     <string name="preference_tts_title">Activar TTS</string>
@@ -388,7 +545,14 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="preference_light_theme_entry_title">Tema clar</string>
     <string name="preference_unlisted_emotes_title">Permetre emotes no allistats</string>
     <string name="preference_unlisted_emotes_summary">Desactiva la filtració d\'emotes no aprovats o allistats</string>
-    <string name="preference_rm_host_title">Host personalitzat de missatges recents</string>
+    <string name="preference_developer_category_general">General</string>
+    <string name="preference_developer_category_auth">Autenticació</string>
+    <string name="preference_eventsub_title">Activa Twitch EventSub</string>
+    <string name="preference_eventsub_summary">Utilitza EventSub per a diversos esdeveniments en temps real en lloc del PubSub obsolet</string>
+    <string name="preference_eventsub_debug_title">Activa la sortida de depuració d\'EventSub</string>
+    <string name="preference_eventsub_debug_summary">Mostra la sortida de depuració relacionada amb EventSub com a missatges del sistema</string>
+    <string name="preference_revoke_token_title">Revoca el token i reinicia</string>
+    <string name="preference_revoke_token_summary">Invalida el token actual i reinicia l\'aplicació</string>
     <string name="preference_fetch_streams_title">Buscar informació de l\'emissió</string>
     <string name="preference_fetch_streams_summary">Busca periòdicament informació de l\'emissió dels canals oberts. Necessari per a iniciar emissions incorporades.</string>
     <string name="preference_auto_disable_input_title">Desactiva l\'entrada si no s\'està connectat al xat</string>
@@ -397,8 +561,6 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="oauth_expired_title">Inici de sessió expirat!</string>
     <string name="oauth_expired_message">L\'inici de sessió ha expirat! Si us plau, accediu de nou.</string>
     <string name="oauth_expired_login_again">Tornar a iniciar sessió</string>
-    <string name="oauth_verify_failed">No s\'ha pogut verificar el token d\'inici de sessió, comprova la connexió.</string>
-    <string name="preference_retain_webview_title">Evita les recàrregues de l\'emissió</string>
     <string name="preference_retain_webview_summary">Permet la prevenció experimental de les recàrregues de l\'emissió després del canvi d\'orientació o tornant a obrir DankChat.</string>
     <string name="preference_show_changelogs">Mostra els canvis després d\'actualitzar</string>
     <string name="preference_whats_new_header">Novetats</string>
@@ -422,8 +584,6 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="preference_streams_header">Emissions en directe</string>
     <string name="preference_pip_title">Activa el mode imatge en imatge</string>
     <string name="preference_pip_summary">Permet que les emissions continuïn reproduint-se mentre l\'app és en segon pla</string>
-    <string name="reset_media_uploader_dialog_title">Reinicia la configuració del pujador de media</string>
-    <string name="reset_media_uploader_dialog_message">Estàs segur que vols reiniciar la configuració del pujador de media als valors per defecte?</string>
     <string name="reset_media_uploader_dialog_positive">Reinicia</string>
     <string name="clear_recent_uploads_dialog_title">Esborrar pujades recents</string>
     <string name="clear_recent_uploads_dialog_message">Voleu esborrar l\'historial de pujada? Els arxius pujats no seran eliminats.</string>
@@ -435,14 +595,13 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="create_notification">Notificació</string>
     <string name="preference_highlights_summary">Editar els missatges destacats</string>
     <string name="preference_highlights_ignores_header">Missatges destacats i ignorats</string>
-    <string name="username">Nom d\'usuari</string>
+    <string name="username">Nom d’usuari</string>
     <string name="block">Bloquejar</string>
     <string name="replacement">Reemplaçament</string>
     <string name="ignores">Ignora</string>
     <string name="preference_ignores_summary">Editar continguts ignorats</string>
     <string name="tab_messages">Missatges</string>
     <string name="tab_users">Usuaris</string>
-    <string name="tab_blacklisted_users">Usuaris a la llista negra</string>
     <string name="tab_twitch">Twitch</string>
     <string name="tab_badges">Insígnies</string>
     <string name="undo">Desfer</string>
@@ -456,7 +615,6 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="highlights_ignores_entry_announcements">Anuncis</string>
     <string name="highlights_ignores_entry_watch_streaks">Ratxes de visualització</string>
     <string name="highlights_ignores_entry_first_messages">Primers missatges</string>
-    <string name="highlights_ignores_entry_elevated_messages">Missatges destacats</string>
     <string name="highlights_ignores_entry_redemptions">Missatges destacats amb punts de canal</string>
     <string name="highlights_ignores_entry_replies">Respostes</string>
     <string name="highlights_ignores_entry_custom">Personalitzat</string>
@@ -478,15 +636,6 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="pick_custom_user_color_title">Escollir color d\'usuari personalitzat</string>
     <string name="custom_user_display_summary">Afegeix un nom i color personalitzat per a usuaris</string>
     <string name="reply_to">Responent a</string>
-    <string name="toggle_app_bar">Mostra/amaga la barra d\'aplicació</string>
-    <string name="error_with_message">Error: %s</string>
-    <string name="confirm_logout_question">Tancar sessió?</string>
-    <string name="confirm_channel_removal_question">Eliminar aquest canal?</string>
-    <string name="confirm_channel_removal_question_named">Eliminar el canal \"%1$s\"?</string>
-    <string name="confirm_channel_block_question_named">Bloquejar el canal \"%1$s\"?</string>
-    <string name="confirm_user_ban_question">Bloquejar aquest usuari?</string>
-    <string name="confirm_user_delete_question">Eliminar aquest missatge?</string>
-    <string name="confirm_clear_chat_question">Netejar el xat?</string>
     <string name="message_copy">Copia el missatge</string>
     <string name="message_copy_full">Copia el missatge complet</string>
     <string name="message_reply">Respon al missatge</string>
@@ -495,12 +644,46 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="message_copy_id">Copia l\'ID del missatge</string>
     <string name="message_more_actions">Més…</string>
     <string name="message_jump_to">Anar al missatge</string>
-    <string name="message_not_found">No s\'ha trobat el missatge</string>
     <string name="message_not_in_history">El missatge ja no és a l\'historial del xat</string>
     <string name="message_history">Historial de missatges</string>
     <string name="global_history_title">Historial global</string>
     <string name="message_history_title">Historial: %1$s</string>
+    <string name="view_history">Veure historial</string>
+    <string name="history_empty">No hi ha missatges que coincideixin amb els filtres actuals</string>
     <string name="search_messages_hint">Cerca missatges…</string>
+    <string name="log_viewer_title">Registres</string>
+    <string name="log_viewer_share">Comparteix els registres</string>
+    <string name="log_viewer_open">Mostra els registres</string>
+    <string name="preference_log_viewer_empty">No hi ha fitxers de registre disponibles</string>
+    <string name="log_viewer_search_hint">Cerca als registres</string>
+    <plurals name="log_viewer_selected_count">
+        <item quantity="one">%1$d seleccionats</item>
+        <item quantity="other">%1$d seleccionats</item>
+    </plurals>
+    <string name="log_viewer_copy_selection">Copia els registres seleccionats</string>
+    <string name="log_viewer_clear_selection">Esborra la selecció</string>
+    <string name="crash_report_title">Error detectat</string>
+    <string name="crash_report_message">L\'aplicació s\'ha tancat inesperadament durant la darrera sessió.</string>
+    <string name="crash_report_thread">Fil: %1$s</string>
+    <string name="crash_report_copy">Copia</string>
+    <string name="crash_report_send">Informe per xat</string>
+    <string name="crash_report_send_description">S\'uneix a #flex3rs i prepara un resum de l\'error per enviar</string>
+    <string name="crash_report_email">Informe per correu</string>
+    <string name="crash_report_email_description">Envia un informe detallat de l\'error per correu electrònic</string>
+    <string name="crash_email_confirm_title">Enviar informe d\'error per correu electrònic</string>
+    <string name="crash_email_confirm_message">Les dades següents s\'inclouran a l\'informe:</string>
+    <string name="crash_email_confirm_stacktrace">Traça de la pila</string>
+    <string name="crash_email_confirm_include_logs">Inclou el fitxer de registre actual</string>
+    <string name="preference_crash_viewer_title">Informes d\'error</string>
+    <string name="preference_crash_viewer_summary">Veure els informes d\'error recents</string>
+    <string name="preference_crash_viewer_empty">No s\'han trobat informes d\'error</string>
+    <string name="crash_viewer_title">Informe d\'error</string>
+    <string name="crash_viewer_share">Comparteix l\'informe d\'error</string>
+    <string name="crash_viewer_delete">Elimina</string>
+    <string name="crash_viewer_clear_all">Esborra-ho tot</string>
+    <string name="crash_viewer_delete_confirm">Eliminar aquest informe d\'error?</string>
+    <string name="crash_viewer_clear_all_confirm">Eliminar tots els informes d\'error?</string>
+    <string name="scroll_to_bottom">Desplaça cap avall</string>
     <string name="search_filter_by_username">Filtra per nom d\'usuari</string>
     <string name="search_filter_has_link">Missatges amb enllaços</string>
     <string name="search_filter_has_emote">Missatges amb emotes</string>
@@ -508,18 +691,14 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="search_filter_user">Usuari</string>
     <string name="search_filter_badge">Insígnia</string>
     <string name="reply_header">Responent a @%1$s</string>
-    <string name="reply_thread_not_found">No s\'ha trobat el fil de respostes</string>
-
-    <!-- Whisper -->
-    <string name="backspace">Retrocés</string>
-    <string name="hint_whispering">Envia un xiuxiueig</string>
     <string name="whisper_header">Xiuxiuejant a @%1$s</string>
+    <string name="hint_whispering">Envia un xiuxiueig</string>
     <string name="whisper_new">Nou xiuxiueig</string>
     <string name="whisper_new_dialog_title">Envia xiuxiueig a</string>
     <string name="whisper_new_dialog_hint">Nom d\'usuari</string>
     <string name="whisper_new_dialog_start">Enviar</string>
-
-    <!-- Emote Sheet -->
+    <string name="reply_thread_not_found">No s\'ha trobat el fil de respostes</string>
+    <string name="message_not_found">No s\'ha trobat el missatge</string>
     <string name="emote_sheet_use">Utilitza l\'emote</string>
     <string name="emote_sheet_copy">Copia</string>
     <string name="emote_sheet_open_link">Obre l\'enllaç de l\'emote</string>
@@ -536,42 +715,27 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="emote_sheet_created_by">Creat per %1$s</string>
     <string name="emote_sheet_zero_width_emote">(Amplada zero)</string>
     <string name="emote_copied">Emote copiat</string>
-
-    <!-- Changelog -->
     <string name="changelog_sheet_title">DankChat s\'ha actualitzat!</string>
     <string name="changelog_sheet_subtitle">Novetats de la v%1$s:</string>
-
-    <!-- Login -->
     <string name="confirm_login_cancel_title">Confirmar cancel·lació de l\'inici de sessió</string>
     <string name="confirm_login_cancel_message">Estàs segur que vols cancel·lar el procés d\'inici de sessió?</string>
     <string name="confirm_login_cancel_positive_button">Cancel·la l\'inici de sessió</string>
     <string name="login_menu_zoom_out">Redueix</string>
     <string name="login_menu_zoom_in">Amplia</string>
-
-    <!-- Misc -->
     <string name="back">Enrere</string>
     <string name="shared_chat">Xat compartit</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">En directe amb %1$d espectador durant %2$s</item>
-        <item quantity="many">En directe amb %1$d espectadors durant %2$s</item>
         <item quantity="other">En directe amb %1$d espectadors durant %2$s</item>
-    </plurals>
-    <plurals name="months">
-        <item quantity="one">%d mes</item>
-        <item quantity="many">%d mesos</item>
-        <item quantity="other">%d mesos</item>
     </plurals>
     <string name="open_source_licenses">Llicències de codi obert</string>
     <plurals name="viewers_and_uptime_with_cateogry" comment="Live with 1 viewer in Just Chatting for 1h 1m&#13;&#10;Live with 10 viewers in Just Chatting for 1h 1m">
         <item quantity="one">En directe amb %1$d espectador a %2$s durant %3$s</item>
-        <item quantity="many">En directe amb %1$d espectadors a %2$s durant %3$s</item>
         <item quantity="other">En directe amb %1$d espectadors a %2$s durant %3$s</item>
     </plurals>
     <string name="preference_streaminfo_category_title">Mostra la categoria de l\'emissió</string>
     <string name="preference_streaminfo_category_summary">Mostra també la categoria de l\'emissió</string>
     <string name="toggle_input">Commuta l\'entrada</string>
-
-    <!-- Badges -->
     <string name="badge_broadcaster">Emissor</string>
     <string name="badge_admin">Admin</string>
     <string name="badge_staff">Staff</string>
@@ -581,182 +745,31 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="badge_vip">VIP</string>
     <string name="badge_founder">Fundador</string>
     <string name="badge_subscriber">Subscriptor</string>
-
-    <!-- Highlight Colors -->
     <string name="pick_highlight_color_title">Escull un color de ressaltat personalitzat</string>
     <string name="reset_default_highlight_color">Per defecte</string>
     <string name="choose_highlight_color">Escull un color</string>
-
-    <!-- Room State -->
-    <string name="room_state_emote_only">Només emotes</string>
-    <string name="room_state_subscriber_only">Només subscriptors</string>
-    <string name="room_state_slow_mode">Mode lent</string>
-    <string name="room_state_slow_mode_duration">Mode lent (%1$s)</string>
-    <string name="room_state_unique_chat">Xat únic (R9K)</string>
-    <string name="room_state_follower_only">Només seguidors</string>
-    <string name="room_state_follower_only_duration">Només seguidors (%1$s)</string>
-    <string name="room_state_preset_custom">Personalitzat</string>
-    <string name="room_state_follower_any">Qualsevol</string>
-    <string name="room_state_duration_seconds">%1$ds</string>
-    <string name="room_state_duration_minutes">%1$dm</string>
-    <string name="room_state_duration_hours">%1$dh</string>
-    <string name="room_state_duration_days">%1$dd</string>
-    <string name="room_state_duration_weeks">%1$dw</string>
-    <string name="room_state_duration_months">%1$dmo</string>
-    <string name="mod_actions_room_state_section">Room state</string>
-    <string name="mod_actions_section">Mod actions</string>
-    <string name="mod_actions_broadcaster_section">Broadcaster</string>
-    <string name="mod_actions_shield_mode">Shield mode</string>
-    <string name="mod_actions_clear_chat">Clear chat</string>
-    <string name="mod_actions_confirm_clear_chat">Clear all messages in this channel?</string>
-
-    <string name="mod_actions_confirm_shield_mode_title">Activar el mode d\'escut?</string>
-    <string name="mod_actions_confirm_shield_mode_body">Això aplicarà les configuracions de seguretat preconfigurades del canal, que poden incloure restriccions de xat, ajustos d\'AutoMod i requisits de verificació.</string>
-    <string name="mod_actions_shield_mode_activate">Activa</string>    <string name="mod_actions_announce">Announce</string>
-    <string name="mod_actions_announce_header">Announcement</string>
-    <string name="mod_actions_shoutout">Shoutout</string>
-    <string name="mod_actions_commercial">Commercial</string>
-    <string name="mod_actions_raid">Raid</string>
-    <string name="mod_actions_cancel_raid">Cancel raid</string>
-    <string name="mod_actions_stream_marker">Stream marker</string>
-    <string name="mod_actions_username_hint">Username</string>
-    <string name="mod_actions_channel_hint">Channel</string>
-
-    <!-- Empty States -->
-    <string name="no_channels_added_body">Afegeix un canal per començar a xatejar</string>
-
-    <!-- Menu -->
-    <string name="menu_show_stream">Mostra l\'emissió</string>
-    <string name="menu_hide_stream">Amaga l\'emissió</string>
-    <string name="menu_audio_only">Només àudio</string>
-    <string name="menu_exit_audio_only">Surt del mode àudio</string>
-    <string name="menu_fullscreen">Pantalla completa</string>
-    <string name="menu_exit_fullscreen">Surt de la pantalla completa</string>
-    <string name="menu_hide_input">Amaga l\'entrada</string>
-    <string name="menu_show_input">Mostra l\'entrada</string>
-    <string name="preference_swipe_navigation_title">Navegació de canals per lliscament</string>
-    <string name="preference_swipe_navigation_summary">Canvia de canal lliscant al xat</string>
-    <string name="menu_mod_actions">Moderació del canal</string>
-
-    <!-- Input Actions -->
-    <string name="input_action_search">Cerca missatges</string>
-    <string name="input_action_last_message">Últim missatge</string>
-    <string name="input_action_stream">Commuta l\'emissió</string>
-    <string name="input_action_mod_actions">Moderació del canal</string>
-    <string name="input_action_fullscreen">Pantalla completa</string>
-    <string name="input_action_hide_input">Amaga l\'entrada</string>
-    <string name="input_action_configure">Configura accions</string>
-    <string name="input_action_debug">Depuració</string>
-    <plurals name="input_actions_max">
-        <item quantity="one">Màxim %1$d acció</item>
-        <item quantity="many">Màxim %1$d accions</item>
-        <item quantity="other">Màxim %1$d accions</item>
-    </plurals>
-
-    <!-- AutoMod -->
-    <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">S\'ha retingut un missatge per motiu: %1$s. Permetre el publicarà al xat.</string>
-    <string name="automod_allow">Permetre</string>
-    <string name="automod_deny">Denegar</string>
-    <string name="automod_status_approved">Aprovat</string>
-    <string name="automod_status_denied">Denegat</string>
-    <string name="automod_ban_user">Prohibir l\'usuari</string>
-    <string name="automod_status_expired">Caducat</string>
-    <string name="automod_user_held">Ei! El teu missatge està sent revisat pels moderadors i no s\'ha enviat.</string>
-    <string name="automod_user_accepted">Els moderadors han acceptat el teu missatge.</string>
-    <string name="automod_user_denied">Els moderadors han rebutjat el teu missatge.</string>
-    <string name="automod_reason_category" comment="aggressive (level 2)">%1$s (nivell %2$d)</string>
-    <plurals name="automod_reason_blocked_terms">
-        <item quantity="one">coincideix amb %1$d terme bloquejat %2$s</item>
-        <item quantity="many">coincideix amb %1$d termes bloquejats %2$s</item>
-        <item quantity="other">coincideix amb %1$d termes bloquejats %2$s</item>
-    </plurals>
-    <string name="automod_error_already_processed" comment="Failed to allow AutoMod message - message has already been processed.">No s\'ha pogut %1$s el missatge d\'AutoMod - el missatge ja ha estat processat.</string>
-    <string name="automod_error_not_authenticated" comment="Failed to allow AutoMod message - you need to re-authenticate.">No s\'ha pogut %1$s el missatge d\'AutoMod - cal tornar a autenticar-se.</string>
-    <string name="automod_error_not_authorized" comment="Failed to allow AutoMod message - you don\'t have permission to perform that action.">No s\'ha pogut %1$s el missatge d\'AutoMod - no tens permís per realitzar aquesta acció.</string>
-    <string name="automod_error_not_found" comment="Failed to allow AutoMod message - target message not found.">No s\'ha pogut %1$s el missatge d\'AutoMod - missatge objectiu no trobat.</string>
-    <string name="automod_error_unknown" comment="Failed to allow AutoMod message - an unknown error occurred.">No s\'ha pogut %1$s el missatge d\'AutoMod - s\'ha produït un error desconegut.</string>
-    <string name="automod_moderation_added_blocked_term" comment="flex3rs added &quot;test&quot; as a blocked term on AutoMod.">%1$s ha afegit %2$s com a terme bloquejat a AutoMod.</string>
-    <string name="automod_moderation_added_permitted_term" comment="flex3rs added &quot;test&quot; as a permitted term on AutoMod.">%1$s ha afegit %2$s com a terme permès a AutoMod.</string>
-    <string name="automod_moderation_removed_blocked_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s ha eliminat %2$s com a terme bloquejat d\'AutoMod.</string>
-    <string name="automod_moderation_removed_permitted_term" comment="flex3rs removed &quot;test&quot; as a permitted term on AutoMod.">%1$s ha eliminat %2$s com a terme permès d\'AutoMod.</string>
-
-    <!-- Moderation messages — complete sentence variants for proper localization -->
-    <string name="mod_timeout_self_irc" comment="You were timed out for 10m">Has estat expulsat temporalment per %1$s</string>
-    <string name="mod_timeout_self" comment="You were timed out for 10m by flex3rs">Has estat expulsat temporalment per %1$s per %2$s</string>
-    <string name="mod_timeout_self_reason" comment="You were timed out for 10m by flex3rs: reason">Has estat expulsat temporalment per %1$s per %2$s: %3$s</string>
-    <string name="mod_timeout_by_creator" comment="flex3rs timed out user123 for 10m">%1$s ha expulsat temporalment %2$s per %3$s</string>
-    <string name="mod_timeout_by_creator_reason" comment="flex3rs timed out user123 for 10m: reason">%1$s ha expulsat temporalment %2$s per %3$s: %4$s</string>
-    <string name="mod_timeout_no_creator" comment="user123 has been timed out for 10m">%1$s ha estat expulsat temporalment per %2$s</string>
-    <string name="mod_ban_self_irc" comment="You were banned">Has estat banejat</string>
-    <string name="mod_ban_self" comment="You were banned by flex3rs">Has estat banejat per %1$s</string>
-    <string name="mod_ban_self_reason" comment="You were banned by flex3rs: reason">Has estat banejat per %1$s: %2$s</string>
-    <string name="mod_ban_by_creator" comment="flex3rs banned user123">%1$s ha banejat %2$s</string>
-    <string name="mod_ban_by_creator_reason" comment="flex3rs banned user123: reason">%1$s ha banejat %2$s: %3$s</string>
-    <string name="mod_ban_no_creator" comment="user123 has been permanently banned">%1$s ha estat banejat permanentment</string>
-    <string name="mod_untimeout" comment="flex3rs untimedout user123">%1$s ha llevat l\'expulsió temporal de %2$s</string>
-    <string name="mod_unban" comment="flex3rs unbanned user123">%1$s ha desbanejat %2$s</string>
-    <string name="mod_modded" comment="flex3rs modded user123">%1$s ha nomenat %2$s moderador</string>
-    <string name="mod_unmodded" comment="flex3rs unmodded user123">%1$s ha retirat %2$s de moderador</string>
-    <string name="mod_vip_added" comment="flex3rs has added user123 as a VIP of this channel">%1$s ha afegit %2$s com a VIP d\'aquest canal</string>
-    <string name="mod_vip_removed" comment="flex3rs has removed user123 as a VIP of this channel">%1$s ha retirat %2$s com a VIP d\'aquest canal</string>
-    <string name="mod_warn" comment="flex3rs has warned user123">%1$s ha advertit %2$s</string>
-    <string name="mod_warn_reason" comment="flex3rs has warned user123: reason1, reason2">%1$s ha advertit %2$s: %3$s</string>
-    <string name="mod_raid" comment="flex3rs initiated a raid to user123">%1$s ha iniciat un raid a %2$s</string>
-    <string name="mod_unraid" comment="flex3rs canceled the raid to user123">%1$s ha cancel·lat el raid a %2$s</string>
-    <string name="mod_delete_by_creator" comment="flex3rs deleted message from user123">%1$s ha eliminat un missatge de %2$s</string>
-    <string name="mod_delete_by_creator_message" comment="flex3rs deleted message from user123 saying: hello">%1$s ha eliminat un missatge de %2$s dient: %3$s</string>
-    <string name="mod_delete_no_creator" comment="A message from user123 was deleted">Un missatge de %1$s ha estat eliminat</string>
-    <string name="mod_delete_no_creator_message" comment="A message from user123 was deleted saying: hello">Un missatge de %1$s ha estat eliminat dient: %2$s</string>
-    <string name="mod_clear_by_creator" comment="flex3rs cleared the chat">%1$s ha buidat el xat</string>
-    <string name="mod_clear_no_creator">El xat ha estat buidat per un moderador</string>
-    <string name="mod_emote_only_on" comment="flex3rs turned on emote-only mode">%1$s ha activat el mode emote-only</string>
-    <string name="mod_emote_only_off" comment="flex3rs turned off emote-only mode">%1$s ha desactivat el mode emote-only</string>
-    <string name="mod_followers_on" comment="flex3rs turned on followers-only mode">%1$s ha activat el mode followers-only</string>
-    <string name="mod_followers_on_duration" comment="flex3rs turned on followers-only mode (10 minutes)">%1$s ha activat el mode followers-only (%2$s)</string>
-    <string name="mod_followers_off" comment="flex3rs turned off followers-only mode">%1$s ha desactivat el mode followers-only</string>
-    <string name="mod_unique_chat_on" comment="flex3rs turned on unique-chat mode">%1$s ha activat el mode unique-chat</string>
-    <string name="mod_unique_chat_off" comment="flex3rs turned off unique-chat mode">%1$s ha desactivat el mode unique-chat</string>
-    <string name="mod_slow_on" comment="flex3rs turned on slow mode">%1$s ha activat el mode slow</string>
-    <string name="mod_slow_on_duration" comment="flex3rs turned on slow mode (30 seconds)">%1$s ha activat el mode slow (%2$s)</string>
-    <string name="mod_slow_off" comment="flex3rs turned off slow mode">%1$s ha desactivat el mode slow</string>
-    <string name="mod_subscribers_on" comment="flex3rs turned on subscribers-only mode">%1$s ha activat el mode subscribers-only</string>
-    <string name="mod_subscribers_off" comment="flex3rs turned off subscribers-only mode">%1$s ha desactivat el mode subscribers-only</string>
-    <string name="mod_shared_timeout" comment="flex3rs timed out user123 for 10m in channel456">%1$s ha expulsat temporalment %2$s per %3$s a %4$s</string>
-    <string name="mod_shared_timeout_reason" comment="flex3rs timed out user123 for 10m in channel456: reason">%1$s ha expulsat temporalment %2$s per %3$s a %4$s: %5$s</string>
-    <string name="mod_shared_untimeout" comment="flex3rs untimedout user123 in channel456">%1$s ha llevat l\'expulsió temporal de %2$s a %3$s</string>
-    <string name="mod_shared_ban" comment="flex3rs banned user123 in channel456">%1$s ha banejat %2$s a %3$s</string>
-    <string name="mod_shared_ban_reason" comment="flex3rs banned user123 in channel456: reason">%1$s ha banejat %2$s a %3$s: %4$s</string>
-    <string name="mod_shared_unban" comment="flex3rs unbanned user123 in channel456">%1$s ha desbanejat %2$s a %3$s</string>
-    <string name="mod_shared_delete" comment="flex3rs deleted message from user123 in channel456">%1$s ha eliminat un missatge de %2$s a %3$s</string>
-    <string name="mod_shared_delete_message" comment="flex3rs deleted message from user123 in channel456 saying: hello">%1$s ha eliminat un missatge de %2$s a %3$s dient: %4$s</string>
-    <string name="mod_message_with_count" comment="flex3rs timed out user123 for 10m. (2 times)">%1$s%2$s</string>
-    <plurals name="mod_count_suffix" comment=" (2 times)">
-        <item quantity="one">\u0020(%1$d vegada)</item>
-        <item quantity="many">\u0020(%1$d vegades)</item>
-        <item quantity="other">\u0020(%1$d vegades)</item>
-    </plurals>
-
+    <string name="toggle_app_bar">Mostra/amaga la barra d\'aplicació</string>
+    <string name="error_with_message">Error: %s</string>
     <!-- Onboarding -->
     <string name="onboarding_welcome_title">DankChat</string>
     <string name="onboarding_welcome_body">Configurem-ho tot.</string>
+    <string name="onboarding_get_started">Comença</string>
     <string name="onboarding_login_title">Inicia sessió amb Twitch</string>
     <string name="onboarding_login_body">Inicia sessió per enviar missatges, fer servir els teus emotes, rebre xiuxiueigs i desbloquejar totes les funcions.</string>
     <string name="onboarding_login_disclaimer">Se t\'demanarà que concedeixis diversos permisos de Twitch alhora perquè no hagis de tornar a autoritzar quan facis servir funcions diferents. DankChat només realitza accions de moderació i gestió de transmissions quan tu ho demanes.</string>
     <string name="onboarding_login_button">Inicia sessió amb Twitch</string>
     <string name="onboarding_login_success">Inici de sessió correcte</string>
-    <string name="onboarding_notifications_title">Notificacions</string>
-    <string name="onboarding_notifications_body">DankChat pot notificar-te quan algú et menciona al xat mentre l\'aplicació és en segon pla.</string>
-    <string name="onboarding_notifications_allow">Permet les notificacions</string>
-    <string name="onboarding_notifications_open_settings">Obre la configuració de notificacions</string>
-    <string name="onboarding_notifications_rationale">Sense notificacions, no sabràs quan algú et menciona al xat mentre l\'aplicació és en segon pla.</string>
+    <string name="onboarding_skip">Omet</string>
+    <string name="onboarding_continue">Continua</string>
     <string name="onboarding_history_title">Historial de missatges</string>
     <string name="onboarding_history_body">DankChat carrega missatges històrics d\'un servei de tercers en iniciar. Per obtenir els missatges, DankChat envia els noms dels canals oberts a aquest servei. El servei emmagatzema temporalment els missatges dels canals visitats.\n\nPots canviar això més tard a la configuració o saber-ne més a https://recent-messages.robotty.de/</string>
     <string name="onboarding_history_enable">Activa</string>
     <string name="onboarding_history_disable">Desactiva</string>
-    <string name="onboarding_continue">Continua</string>
-    <string name="onboarding_get_started">Comença</string>
-    <string name="onboarding_skip">Omet</string>
-
+    <string name="onboarding_notifications_title">Notificacions</string>
+    <string name="onboarding_notifications_body">DankChat pot notificar-te quan algú et menciona al xat mentre l\'aplicació és en segon pla.</string>
+    <string name="onboarding_notifications_allow">Permet les notificacions</string>
+    <string name="onboarding_notifications_rationale">Sense notificacions, no sabràs quan algú et menciona al xat mentre l\'aplicació és en segon pla.</string>
+    <string name="onboarding_notifications_open_settings">Obre la configuració de notificacions</string>
     <!-- Feature Tour -->
     <string name="tour_input_actions">Accions personalitzables per accedir ràpidament a la cerca, les transmissions i més</string>
     <string name="tour_overflow_menu">Toca aquí per a més accions i per configurar la barra d\'accions</string>
@@ -767,26 +780,6 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="tour_got_it">Entès</string>
     <string name="tour_skip">Ometre el tour</string>
     <string name="tour_add_more_channels_hint">Aquí pots afegir més canals</string>
-
-    <!-- Developer Settings -->
-    <string name="preference_developer_category_general">General</string>
-    <string name="preference_developer_category_auth">Autenticació</string>
-    <string name="preference_eventsub_title">Activa Twitch EventSub</string>
-    <string name="preference_eventsub_summary">Utilitza EventSub per a diversos esdeveniments en temps real en lloc del PubSub obsolet</string>
-    <string name="preference_eventsub_debug_title">Activa la sortida de depuració d\'EventSub</string>
-    <string name="preference_eventsub_debug_summary">Mostra la sortida de depuració relacionada amb EventSub com a missatges del sistema</string>
-    <string name="preference_revoke_token_title">Revoca el token i reinicia</string>
-    <string name="preference_revoke_token_summary">Invalida el token actual i reinicia l\'aplicació</string>
-    <string name="system_message_send_not_logged_in">No s\'ha iniciat sessió</string>
-    <string name="system_message_send_channel_not_resolved">No s\'ha pogut resoldre l\'ID del canal per a %1$s</string>
-    <string name="system_message_send_not_delivered">El missatge no s\'ha enviat</string>
-    <string name="system_message_send_dropped">Missatge descartat: %1$s (%2$s)</string>
-    <string name="system_message_send_missing_scopes">Falta el permís user:write:chat, torneu a iniciar sessió</string>
-    <string name="system_message_send_not_authorized">No teniu autorització per enviar missatges en aquest canal</string>
-    <string name="system_message_send_message_too_large">El missatge és massa gran</string>
-    <string name="system_message_send_rate_limited">Límit de freqüència superat, torneu-ho a provar d\'aquí a un moment</string>
-    <string name="system_message_send_failed">Error d\'enviament: %1$s</string>
-
     <!-- Command responses -->
     <string name="cmd_error_not_logged_in">Heu d\'estar connectat per utilitzar la comanda %1$s</string>
     <string name="cmd_error_no_user_matching">No s\'ha trobat cap usuari amb aquest nom.</string>
@@ -850,7 +843,6 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="cmd_usage_commercial">Ús: /commercial &lt;durada&gt; - Inicia un anunci amb la durada especificada per al canal actual. Les durades vàlides són 30, 60, 90, 120, 150 i 180 segons.</string>
     <plurals name="cmd_success_commercial">
         <item quantity="one">S\'inicia una pausa publicitària de %1$d segons. Tingueu en compte que encara esteu en directe i no tots els espectadors rebran un anunci. Podeu executar un altre anunci en %2$d segons.</item>
-        <item quantity="many">S\'inicia una pausa publicitària de %1$d segons. Tingueu en compte que encara esteu en directe i no tots els espectadors rebran un anunci. Podeu executar un altre anunci en %2$d segons.</item>
         <item quantity="other">S\'inicia una pausa publicitària de %1$d segons. Tingueu en compte que encara esteu en directe i no tots els espectadors rebran un anunci. Podeu executar un altre anunci en %2$d segons.</item>
     </plurals>
     <string name="cmd_fail_commercial">No s\'ha pogut iniciar l\'anunci - %1$s</string>
@@ -906,42 +898,4 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="cmd_error_message_too_large">El vostre missatge era massa llarg.</string>
     <string name="cmd_error_chat_rate_limited">Se us està limitant la velocitat. Torneu-ho a provar d\'aquí a un moment.</string>
     <string name="cmd_error_target_default">L\'usuari objectiu</string>
-    <string name="preference_log_viewer_title">Visor de registres</string>
-    <string name="preference_log_viewer_summary">Mostra els registres de l\'aplicació</string>
-    <string name="log_viewer_title">Registres</string>
-    <string name="log_viewer_share">Comparteix els registres</string>
-    <string name="log_viewer_open">Mostra els registres</string>
-    <string name="preference_log_viewer_empty">No hi ha fitxers de registre disponibles</string>
-    <string name="log_viewer_search_hint">Cerca als registres</string>
-    <plurals name="log_viewer_selected_count">
-        <item quantity="one">%1$d seleccionats</item>
-        <item quantity="many">%1$d seleccionats</item>
-        <item quantity="other">%1$d seleccionats</item>
-    </plurals>
-    <string name="log_viewer_copy_selection">Copia els registres seleccionats</string>
-    <string name="log_viewer_clear_selection">Esborra la selecció</string>
-    <string name="crash_report_title">Error detectat</string>
-    <string name="crash_report_message">L\'aplicació s\'ha tancat inesperadament durant la darrera sessió.</string>
-    <string name="crash_report_thread">Fil: %1$s</string>
-    <string name="crash_report_copy">Copia</string>
-    <string name="crash_report_send">Informe per xat</string>
-    <string name="crash_report_send_description">S\'uneix a #flex3rs i prepara un resum de l\'error per enviar</string>
-    <string name="crash_report_email">Informe per correu</string>
-    <string name="crash_report_email_description">Envia un informe detallat de l\'error per correu electrònic</string>
-    <string name="crash_email_confirm_title">Enviar informe d\'error per correu electrònic</string>
-    <string name="crash_email_confirm_message">Les dades següents s\'inclouran a l\'informe:</string>
-    <string name="crash_email_confirm_stacktrace">Traça de la pila</string>
-    <string name="crash_email_confirm_include_logs">Inclou el fitxer de registre actual</string>
-    <string name="preference_crash_viewer_title">Informes d\'error</string>
-    <string name="preference_crash_viewer_summary">Veure els informes d\'error recents</string>
-    <string name="preference_crash_viewer_empty">No s\'han trobat informes d\'error</string>
-    <string name="crash_viewer_title">Informe d\'error</string>
-    <string name="crash_viewer_share">Comparteix l\'informe d\'error</string>
-    <string name="crash_viewer_delete">Elimina</string>
-    <string name="crash_viewer_delete_confirm">Eliminar aquest informe d\'error?</string>
-    <string name="crash_viewer_clear_all">Esborra-ho tot</string>
-    <string name="crash_viewer_clear_all_confirm">Eliminar tots els informes d\'error?</string>
-    <string name="scroll_to_bottom">Desplaça cap avall</string>
-    <string name="view_history">Veure historial</string>
-    <string name="history_empty">No hi ha missatges que coincideixin amb els filtres actuals</string>
 </resources>
