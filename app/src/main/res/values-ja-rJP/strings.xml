@@ -10,6 +10,7 @@
     <string name="add_dialog_title">チャンネルを追加</string>
     <string name="edit_dialog_title">チャンネル名の変更</string>
     <string name="dialog_ok">OK</string>
+    <string name="save">保存</string>
     <string name="dialog_cancel">キャンセル</string>
     <string name="dialog_dismiss">中止</string>
     <string name="error_dialog_copy">コピー</string>
@@ -23,8 +24,10 @@
     <string name="remove_channel">チャンネルを削除</string>
     <string name="channel_blocked_message">チャンネルをブロックしました</string>
     <string name="no_channels_added">チャンネルが追加されていません</string>
+    <string name="no_channels_added_body">チャンネルを追加してチャットを始めましょう</string>
     <string name="confirm_logout_title">ログアウトを確認</string>
     <string name="confirm_logout_message">ログアウトしてもよろしいですか？</string>
+    <string name="confirm_logout_question">ログアウトしますか？</string>
     <string name="confirm_logout_positive_button">ログアウト</string>
     <string name="upload_media">メディアをアップロード</string>
     <string name="take_picture">写真を撮る</string>
@@ -42,26 +45,69 @@
     <string name="notification_title">FeelsDankMan</string>
     <string name="notification_message">DankChatはバックグラウンドで実行中</string>
     <string name="emote_menu_hint">エモートメニューを開く</string>
+    <string name="no_recent_emotes">最近使用したエモートはありません</string>
     <string name="login_title">Twitch.tvにログイン</string>
     <string name="hint_connected">チャットを開始</string>
     <string name="hint_disconnected">切断されました</string>
     <string name="hint_not_logged_int">ログインされていません</string>
     <string name="hint_replying">返信</string>
+    <string name="hint_announcing">Send announcement</string>
     <string name="notification_new_mentions">新しいメンションがあります</string>
     <string name="notification_mention">%1$sが#%2$sであなたに返信しました</string>
     <string name="notification_notify_mention">#%1$s 内であなた宛の返信があります</string>
     <string name="snackbar_login">%1$sとしてログイン</string>
     <string name="snackbar_login_failed">ログインに失敗しました</string>
     <string name="snackbar_image_uploaded">コピーしました：%1$s</string>
+    <string name="system_message_upload_complete">アップロード完了：%1$s</string>
     <string name="snackbar_upload_failed">アップロード中にエラー</string>
     <string name="snackbar_upload_failed_cause">アップロード中にエラー：%1$s</string>
+    <string name="share_upload_label">アップロード</string>
+    <string name="share_upload_copied">クリップボードにコピーしました</string>
+    <string name="share_upload_copy">URLをコピー</string>
     <string name="snackbar_retry">再試行</string>
     <string name="snackbar_data_reloaded">エモートをリロードしました</string>
     <string name="snackbar_data_load_failed_cause">データの読み込みに失敗しました：%1$s</string>
     <string name="snackbar_data_load_failed_multiple_causes">複数のエラーでデータの読み込みに失敗しました:\n%1$s</string>
+    <string name="data_loading_step_dankchat_badges">DankChat バッジ</string>
+    <string name="data_loading_step_global_badges">グローバルバッジ</string>
+    <string name="data_loading_step_global_ffz_emotes">グローバル FFZ エモート</string>
+    <string name="data_loading_step_global_bttv_emotes">グローバル BTTV エモート</string>
+    <string name="data_loading_step_global_7tv_emotes">グローバル 7TV エモート</string>
+    <string name="data_loading_step_channel_badges">チャンネルバッジ</string>
+    <string name="data_loading_step_ffz_emotes">FFZ エモート</string>
+    <string name="data_loading_step_bttv_emotes">BTTV エモート</string>
+    <string name="data_loading_step_7tv_emotes">7TV エモート</string>
+    <string name="data_loading_step_twitch_emotes">Twitch エモート</string>
+    <string name="data_loading_step_cheermotes">チアエモート</string>
+    <string name="data_loading_step_recent_messages">最近のメッセージ</string>
+    <string name="data_loading_step_with_channels">%1$s (%2$s)</string>
+    <string name="highlight_header_first_time_chat">初めてのチャット</string>
+    <string name="highlight_header_elevated_chat">ピン留めチャット</string>
+    <string name="highlight_header_gigantified_emote">巨大エモート</string>
+    <string name="highlight_header_animated_message">アニメーションメッセージ</string>
+    <string name="highlight_header_reward_no_cost">引き換え済み %1$s</string>
+    <plurals name="duration_seconds">
+        <item quantity="other">%1$d秒</item>
+    </plurals>
+    <plurals name="duration_minutes">
+        <item quantity="other">%1$d分</item>
+    </plurals>
+    <plurals name="duration_hours">
+        <item quantity="other">%1$d時間</item>
+    </plurals>
+    <plurals name="duration_days">
+        <item quantity="other">%1$d日</item>
+    </plurals>
+    <plurals name="duration_weeks">
+        <item quantity="other">%1$d週間</item>
+    </plurals>
+    <string name="duration_join_2">%1$s %2$s</string>
+    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">貼り付け</string>
     <string name="add_channel_hint">チャンネル名</string>
+    <string name="add_channel_already_added">チャンネルは既に追加されています</string>
     <string name="emote_menu_tab_recent">新着</string>
+    <string name="backspace">バックスペース</string>
     <string name="emote_menu_tab_subs">サブスク</string>
     <string name="emote_menu_tab_channel">チャンネル</string>
     <string name="emote_menu_tab_global">グローバル</string>
@@ -77,10 +123,113 @@
     <string name="system_message_ffz_emotes_failed">FFZエモートの読み込みに失敗しました(エラー %1$s)</string>
     <string name="system_message_bttv_emotes_failed">BTTVエモートの読み込みに失敗しました(エラー %1$s)</string>
     <string name="system_message_7tv_emotes_failed">7TVエモートの読み込みに失敗しました(エラー %1$s)</string>
+    <string name="system_message_ffz_emotes_cached_fallback">キャッシュされたFFZのemotesをフォールバックとして使用中</string>
+    <string name="system_message_bttv_emotes_cached_fallback">キャッシュされたBTTVのemotesをフォールバックとして使用中</string>
+    <string name="system_message_7tv_emotes_cached_fallback">キャッシュされた7TVのemotesをフォールバックとして使用中</string>
     <string name="system_message_7tv_emote_set_changed" comment="flex3rs switched the active 7TV Emote Set to &quot;flex3rs's Emotes&quot;. ">%1$sはアクティブな7TVエモートを\"%2$s\"に切り替えました。</string>
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$sは7TVエモート%2$sを追加しました。</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$sは7TVエモート%2$sを%3$sに変更しました。</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$sは7TVエモート%2$sを削除しました。</string>
+    <!-- Send errors -->
+    <string name="system_message_send_not_logged_in">ログインしていません</string>
+    <string name="system_message_send_channel_not_resolved">%1$s のチャンネルIDを解決できませんでした</string>
+    <string name="system_message_send_not_delivered">メッセージは送信されませんでした</string>
+    <string name="system_message_send_dropped">メッセージが破棄されました: %1$s (%2$s)</string>
+    <string name="system_message_send_missing_scopes">user:write:chat スコープがありません。再ログインしてください</string>
+    <string name="system_message_send_not_authorized">このチャンネルでメッセージを送信する権限がありません</string>
+    <string name="system_message_send_message_too_large">メッセージが大きすぎます</string>
+    <string name="system_message_send_rate_limited">レート制限中です。しばらくしてから再試行してください</string>
+    <string name="system_message_send_failed">送信失敗: %1$s</string>
+    <!-- AutoMod -->
+    <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">理由: %1$s でメッセージが保留されました。許可するとチャットに投稿されます。</string>
+    <string name="automod_allow">許可</string>
+    <string name="automod_deny">拒否</string>
+    <string name="automod_status_approved">承認済み</string>
+    <string name="automod_status_denied">拒否済み</string>
+    <string name="automod_ban_user">ユーザーをBANする</string>
+    <string name="automod_status_expired">期限切れ</string>
+    <string name="automod_user_held">おっと！あなたのメッセージはモデレーターが確認中で、まだ送信されていません。</string>
+    <string name="automod_user_accepted">モデレーターがあなたのメッセージを承認しました。</string>
+    <string name="automod_user_denied">モデレーターがあなたのメッセージを拒否しました。</string>
+    <string name="automod_reason_category" comment="aggressive (level 2)">%1$s (レベル %2$d)</string>
+    <plurals name="automod_reason_blocked_terms">
+        <item quantity="other">%1$d件のブロックされた用語 %2$s に一致</item>
+    </plurals>
+    <string name="automod_error_already_processed" comment="Failed to allow AutoMod message - message has already been processed.">AutoModメッセージの%1$sに失敗しました - メッセージは既に処理されています。</string>
+    <string name="automod_error_not_authenticated" comment="Failed to allow AutoMod message - you need to re-authenticate.">AutoModメッセージの%1$sに失敗しました - 再認証が必要です。</string>
+    <string name="automod_error_not_authorized" comment="Failed to allow AutoMod message - you don\'t have permission to perform that action.">AutoModメッセージの%1$sに失敗しました - この操作を行う権限がありません。</string>
+    <string name="automod_error_not_found" comment="Failed to allow AutoMod message - target message not found.">AutoModメッセージの%1$sに失敗しました - 対象メッセージが見つかりません。</string>
+    <string name="automod_error_unknown" comment="Failed to allow AutoMod message - an unknown error occurred.">AutoModメッセージの%1$sに失敗しました - 不明なエラーが発生しました。</string>
+    <string name="automod_moderation_added_blocked_term" comment="flex3rs added &quot;test&quot; as a blocked term on AutoMod.">%1$sがAutoModで%2$sをブロック用語として追加しました。</string>
+    <string name="automod_moderation_added_permitted_term" comment="flex3rs added &quot;test&quot; as a permitted term on AutoMod.">%1$sがAutoModで%2$sを許可用語として追加しました。</string>
+    <string name="automod_moderation_removed_blocked_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$sがAutoModから%2$sをブロック用語として削除しました。</string>
+    <string name="automod_moderation_removed_permitted_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$sがAutoModから%2$sを許可用語として削除しました。</string>
+    <!-- Moderation messages — complete sentence variants for proper localization -->
+    <!-- Timeout (self, IRC — no creator info) -->
+    <string name="mod_timeout_self_irc" comment="You were timed out for 10m">あなたは%1$sタイムアウトされました</string>
+    <!-- Timeout (self, EventSub — has creator) -->
+    <string name="mod_timeout_self" comment="You were timed out for 10m by flex3rs">あなたは%2$sにより%1$sタイムアウトされました</string>
+    <string name="mod_timeout_self_reason" comment="You were timed out for 10m by flex3rs: reason">あなたは%2$sにより%1$sタイムアウトされました: %3$s</string>
+    <!-- Timeout (other, by creator) -->
+    <string name="mod_timeout_by_creator" comment="flex3rs timed out user123 for 10m">%1$sが%2$sを%3$sタイムアウトしました</string>
+    <string name="mod_timeout_by_creator_reason" comment="flex3rs timed out user123 for 10m: reason">%1$sが%2$sを%3$sタイムアウトしました: %4$s</string>
+    <!-- Timeout (other, IRC — no creator) -->
+    <string name="mod_timeout_no_creator" comment="user123 has been timed out for 10m">%1$sは%2$sタイムアウトされました</string>
+    <!-- Ban (self) -->
+    <string name="mod_ban_self_irc" comment="You were banned">あなたはBANされました</string>
+    <string name="mod_ban_self" comment="You were banned by flex3rs">あなたは%1$sによりBANされました</string>
+    <string name="mod_ban_self_reason" comment="You were banned by flex3rs: reason">あなたは%1$sによりBANされました: %2$s</string>
+    <!-- Ban (other) -->
+    <string name="mod_ban_by_creator" comment="flex3rs banned user123">%1$sが%2$sをBANしました</string>
+    <string name="mod_ban_by_creator_reason" comment="flex3rs banned user123: reason">%1$sが%2$sをBANしました: %3$s</string>
+    <string name="mod_ban_no_creator" comment="user123 has been permanently banned">%1$sは永久BANされました</string>
+    <!-- Simple actions -->
+    <string name="mod_untimeout" comment="flex3rs untimedout user123">%1$sが%2$sのタイムアウトを解除しました</string>
+    <string name="mod_unban" comment="flex3rs unbanned user123">%1$sが%2$sのBANを解除しました</string>
+    <string name="mod_modded" comment="flex3rs modded user123">%1$sが%2$sをモデレーターにしました</string>
+    <string name="mod_unmodded" comment="flex3rs unmodded user123">%1$sが%2$sのモデレーターを解除しました</string>
+    <string name="mod_vip_added" comment="flex3rs has added user123 as a VIP of this channel">%1$sが%2$sをこのチャンネルのVIPに追加しました</string>
+    <string name="mod_vip_removed" comment="flex3rs has removed user123 as a VIP of this channel">%1$sが%2$sをこのチャンネルのVIPから削除しました</string>
+    <string name="mod_warn" comment="flex3rs has warned user123">%1$sが%2$sに警告しました</string>
+    <string name="mod_warn_reason" comment="flex3rs has warned user123: reason1, reason2">%1$sが%2$sに警告しました: %3$s</string>
+    <string name="mod_raid" comment="flex3rs initiated a raid to user123">%1$sが%2$sへのレイドを開始しました</string>
+    <string name="mod_unraid" comment="flex3rs canceled the raid to user123">%1$sが%2$sへのレイドをキャンセルしました</string>
+    <!-- Delete -->
+    <string name="mod_delete_by_creator" comment="flex3rs deleted message from user123">%1$sが%2$sのメッセージを削除しました</string>
+    <string name="mod_delete_by_creator_message" comment="flex3rs deleted message from user123 saying: hello">%1$sが%2$sのメッセージを削除しました 内容: %3$s</string>
+    <string name="mod_delete_no_creator" comment="A message from user123 was deleted">%1$sのメッセージが削除されました</string>
+    <string name="mod_delete_no_creator_message" comment="A message from user123 was deleted saying: hello">%1$sのメッセージが削除されました 内容: %2$s</string>
+    <!-- Clear -->
+    <string name="mod_clear_by_creator" comment="flex3rs cleared the chat">%1$sがチャットを消去しました</string>
+    <string name="mod_clear_no_creator">モデレーターによってチャットが消去されました</string>
+    <!-- Room state -->
+    <string name="mod_emote_only_on" comment="flex3rs turned on emote-only mode">%1$sがエモート限定モードをオンにしました</string>
+    <string name="mod_emote_only_off" comment="flex3rs turned off emote-only mode">%1$sがエモート限定モードをオフにしました</string>
+    <string name="mod_followers_on" comment="flex3rs turned on followers-only mode">%1$sがフォロワー限定モードをオンにしました</string>
+    <string name="mod_followers_on_duration" comment="flex3rs turned on followers-only mode (1 week)">%1$sがフォロワー限定モードをオンにしました (%2$s)</string>
+    <string name="mod_followers_off" comment="flex3rs turned off followers-only mode">%1$sがフォロワー限定モードをオフにしました</string>
+    <string name="mod_unique_chat_on" comment="flex3rs turned on unique-chat mode">%1$sがユニークチャットモードをオンにしました</string>
+    <string name="mod_unique_chat_off" comment="flex3rs turned off unique-chat mode">%1$sがユニークチャットモードをオフにしました</string>
+    <string name="mod_slow_on" comment="flex3rs turned on slow mode">%1$sがスローモードをオンにしました</string>
+    <string name="mod_slow_on_duration" comment="flex3rs turned on slow mode (2 minutes 5 seconds)">%1$sがスローモードをオンにしました (%2$s)</string>
+    <string name="mod_slow_off" comment="flex3rs turned off slow mode">%1$sがスローモードをオフにしました</string>
+    <string name="mod_subscribers_on" comment="flex3rs turned on subscribers-only mode">%1$sがサブスクライバー限定モードをオンにしました</string>
+    <string name="mod_subscribers_off" comment="flex3rs turned off subscribers-only mode">%1$sがサブスクライバー限定モードをオフにしました</string>
+    <!-- Shared chat -->
+    <string name="mod_shared_timeout" comment="flex3rs timed out user123 for 10m in channel456">%1$sが%4$sで%2$sを%3$sタイムアウトしました</string>
+    <string name="mod_shared_timeout_reason" comment="flex3rs timed out user123 for 10m in channel456: reason">%1$sが%4$sで%2$sを%3$sタイムアウトしました: %5$s</string>
+    <string name="mod_shared_untimeout" comment="flex3rs untimedout user123 in channel456">%1$sが%3$sで%2$sのタイムアウトを解除しました</string>
+    <string name="mod_shared_ban" comment="flex3rs banned user123 in channel456">%1$sが%3$sで%2$sをBANしました</string>
+    <string name="mod_shared_ban_reason" comment="flex3rs banned user123 in channel456: reason">%1$sが%3$sで%2$sをBANしました: %4$s</string>
+    <string name="mod_shared_unban" comment="flex3rs unbanned user123 in channel456">%1$sが%3$sで%2$sのBANを解除しました</string>
+    <string name="mod_shared_delete" comment="flex3rs deleted message from user123 in channel456">%1$sが%3$sで%2$sのメッセージを削除しました</string>
+    <string name="mod_shared_delete_message" comment="flex3rs deleted message from user123 in channel456 saying: hello">%1$sが%3$sで%2$sのメッセージを削除しました 内容: %4$s</string>
+    <!-- Helper: message + count concatenation -->
+    <string name="mod_message_with_count" comment="flex3rs timed out user123 for 10m. (2 times)">%1$s%2$s</string>
+    <!-- Parenthetical count (appended after complete sentences, safe for all languages) -->
+    <plurals name="mod_count_suffix" comment=" (2 times)">
+        <item quantity="other">\u0020(%1$d回)</item>
+    </plurals>
     <string name="timed_out_message">&lt; メッセージが削除されました &gt;</string>
     <string name="multi_entry_header_regex">正規表現</string>
     <string name="multi_entry_add_entry">エントリを追加</string>
@@ -98,9 +247,12 @@
     <string name="confirm_channel_removal_title">チャンネル削除の確認</string>
     <string name="confirm_channel_removal_message">このチャンネルを削除してもよろしいですか？</string>
     <string name="confirm_channel_removal_message_named">\"%1$s\"を削除しますがよろしいですか？</string>
+    <string name="confirm_channel_removal_question">このチャンネルを削除しますか？</string>
+    <string name="confirm_channel_removal_question_named">チャンネル「%1$s」を削除しますか？</string>
     <string name="confirm_channel_removal_positive_button">削除</string>
     <string name="confirm_channel_block_title">チャンネルブロックの確認</string>
     <string name="confirm_channel_block_message_named"> \"%1$s\" をブロックしてもよろしいですか？</string>
+    <string name="confirm_channel_block_question_named">チャンネル「%1$s」をブロックしますか？</string>
     <string name="user_popup_block">ブロック</string>
     <string name="user_popup_unblock">ブロックを解除</string>
     <string name="user_popup_mention">ユーザーへ返信</string>
@@ -124,6 +276,61 @@
     <string name="uploader_description">imgur.com や s-ul.eu のようなメディアをアップロードするためのカスタムホストを設定できます。DankChatはChatterinoと同じ設定形式を使用します。\nこちらのガイドをご確認ください: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="toggle_fullscreen">全画面表示に切り替え</string>
     <string name="toggle_stream">ストリームの切り替え</string>
+    <string name="menu_show_stream">配信を表示</string>
+    <string name="menu_hide_stream">配信を非表示</string>
+    <string name="menu_audio_only">音声のみ</string>
+    <string name="menu_exit_audio_only">音声モードを終了</string>
+    <string name="menu_fullscreen">全画面</string>
+    <string name="menu_exit_fullscreen">全画面を終了</string>
+    <string name="menu_hide_input">入力欄を非表示</string>
+    <string name="menu_show_input">入力欄を表示</string>
+    <string name="preference_swipe_navigation_title">チャンネルスワイプナビゲーション</string>
+    <string name="preference_swipe_navigation_summary">チャットをスワイプしてチャンネルを切り替え</string>
+    <string name="menu_mod_actions">チャンネルモデレーション</string>
+    <plurals name="input_actions_max">
+        <item quantity="other">最大%1$d個のアクション</item>
+    </plurals>
+    <string name="input_action_search">メッセージを検索</string>
+    <string name="input_action_last_message">最後のメッセージ</string>
+    <string name="input_action_stream">配信を切り替え</string>
+    <string name="input_action_mod_actions">チャンネルモデレーション</string>
+    <string name="input_action_fullscreen">全画面</string>
+    <string name="input_action_hide_input">入力欄を非表示</string>
+    <string name="input_action_debug">デバッグ</string>
+    <string name="input_action_configure">アクションを設定</string>
+    <string name="room_state_emote_only">エモートのみ</string>
+    <string name="room_state_subscriber_only">サブスクライバーのみ</string>
+    <string name="room_state_slow_mode">スローモード</string>
+    <string name="room_state_slow_mode_duration">スローモード (%1$s)</string>
+    <string name="room_state_unique_chat">ユニークチャット (R9K)</string>
+    <string name="room_state_follower_only">フォロワーのみ</string>
+    <string name="room_state_follower_only_duration">フォロワーのみ (%1$s)</string>
+    <string name="room_state_preset_custom">カスタム</string>
+    <string name="room_state_follower_any">すべて</string>
+    <string name="room_state_duration_seconds">%1$ds</string>
+    <string name="room_state_duration_minutes">%1$dm</string>
+    <string name="room_state_duration_hours">%1$dh</string>
+    <string name="room_state_duration_days">%1$dd</string>
+    <string name="room_state_duration_weeks">%1$dw</string>
+    <string name="room_state_duration_months">%1$dmo</string>
+    <string name="mod_actions_room_state_section">Room state</string>
+    <string name="mod_actions_section">Mod actions</string>
+    <string name="mod_actions_broadcaster_section">Broadcaster</string>
+    <string name="mod_actions_shield_mode">Shield mode</string>
+    <string name="mod_actions_clear_chat">Clear chat</string>
+    <string name="mod_actions_confirm_clear_chat">Clear all messages in this channel?</string>
+    <string name="mod_actions_confirm_shield_mode_title">シールドモードを有効にしますか？</string>
+    <string name="mod_actions_confirm_shield_mode_body">チャンネルの事前設定された安全設定が適用されます。チャット制限、AutoMod設定、チャット認証要件が含まれる場合があります。</string>
+    <string name="mod_actions_shield_mode_activate">有効にする</string>
+    <string name="mod_actions_announce">Announce</string>
+    <string name="mod_actions_announce_header">Announcement</string>
+    <string name="mod_actions_shoutout">Shoutout</string>
+    <string name="mod_actions_commercial">Commercial</string>
+    <string name="mod_actions_raid">Raid</string>
+    <string name="mod_actions_cancel_raid">Cancel raid</string>
+    <string name="mod_actions_stream_marker">Stream marker</string>
+    <string name="mod_actions_username_hint">Username</string>
+    <string name="mod_actions_channel_hint">Channel</string>
     <string name="account">アカウント</string>
     <string name="relogin">再ログイン</string>
     <string name="logout">ログアウト</string>
@@ -134,12 +341,15 @@
     <string name="change_roomstate">チャットモード</string>
     <string name="confirm_user_ban_title">追放を確認</string>
     <string name="confirm_user_ban_message">本当にこのユーザーを追放しますか？</string>
+    <string name="confirm_user_ban_question">このユーザーをBANしますか？</string>
     <string name="confirm_user_ban_positive_button">追放</string>
     <string name="confirm_user_timeout_title">タイムアウト期間の確認</string>
     <string name="confirm_user_timeout_positive_button">タイムアウト</string>
     <string name="confirm_user_delete_title">メッセージ削除の確認</string>
     <string name="confirm_user_delete_message">このメッセージを削除してもよろしいですか？</string>
+    <string name="confirm_user_delete_question">このメッセージを削除しますか？</string>
     <string name="confirm_user_delete_positive_button">削除</string>
+    <string name="confirm_clear_chat_question">チャットをクリアしますか？</string>
     <string name="confirm_user_roomstate_title">チャットモードを更新</string>
     <string name="roomstate_emote">エモートのみ</string>
     <string name="roomstate_subs">サブスクライバーのみ</string>
@@ -151,6 +361,8 @@
     <string name="add_command">コマンドの追加</string>
     <string name="remove_command">コマンドを削除</string>
     <string name="command_trigger_hint">トリガー</string>
+    <string name="command_trigger_reserved">このトリガーは組み込みコマンドによって予約されています</string>
+    <string name="command_trigger_duplicate">このトリガーは既に別のコマンドで使用されています</string>
     <string name="command__hint">コマンド</string>
     <string name="commands_title">カスタムコマンド</string>
     <string name="user_popup_report">通報</string>
@@ -188,14 +400,57 @@
     <string name="preference_notification_header">通知</string>
     <string name="preference_chat_header">チャット</string>
     <string name="preference_general_header">一般</string>
+    <string name="preference_suggestions_header">サジェスト</string>
+    <string name="preference_messages_header">メッセージ</string>
+    <string name="preference_users_header">ユーザー</string>
+    <string name="preference_emotes_badges_header">エモートとバッジ</string>
+    <string name="preference_suggestion_mode_title">サジェストモード</string>
+    <string name="preference_suggestion_mode_automatic">入力中に候補を表示</string>
+    <string name="preference_suggestion_mode_prefix_only">トリガー文字の後にのみ候補を表示</string>
     <string name="preference_about_header">このアプリについて</string>
     <string name="preference_appearance_header">外観</string>
     <string name="preference_about_summary">DankChat %1$sは@flex3rsと複数のコントリビューターによって作成されました</string>
     <string name="preference_show_input_title">入力を表示</string>
     <string name="preference_show_input_summary">メッセージを送信するための入力フィールドを表示します</string>
     <string name="preference_follow_system_title">システムの既定値に設定</string>
-    <string name="preference_true_dark_theme_title">トゥルーダークテーマ</string>
-    <string name="preference_true_dark_theme_summary">チャット背景色を強制的に黒にする</string>
+    <string name="preference_true_dark_theme_title">AMOLEDダークモード</string>
+    <string name="preference_true_dark_theme_summary">OLED画面向けの純粋な黒背景</string>
+    <string name="preference_accent_color_title">アクセントカラー</string>
+    <string name="preference_accent_color_summary_default">システムの壁紙に従う</string>
+    <string name="accent_color_blue">青</string>
+    <string name="accent_color_teal">ティール</string>
+    <string name="accent_color_green">緑</string>
+    <string name="accent_color_lime">ライム</string>
+    <string name="accent_color_yellow">黄</string>
+    <string name="accent_color_orange">オレンジ</string>
+    <string name="accent_color_red">赤</string>
+    <string name="accent_color_pink">ピンク</string>
+    <string name="accent_color_purple">紫</string>
+    <string name="accent_color_indigo">インディゴ</string>
+    <string name="accent_color_brown">茶</string>
+    <string name="accent_color_grey">グレー</string>
+    <string name="preference_palette_style_title">カラースタイル</string>
+    <string name="palette_style_system_default">システムデフォルト</string>
+    <string name="palette_style_system_default_desc">システムのデフォルトカラーパレットを使用</string>
+    <string name="palette_style_tonal_spot">Tonal Spot</string>
+    <string name="palette_style_tonal_spot_desc">落ち着いた控えめな色合い</string>
+    <string name="palette_style_neutral">Neutral</string>
+    <string name="palette_style_neutral_desc">ほぼモノクロ、微かな色味</string>
+    <string name="palette_style_vibrant">Vibrant</string>
+    <string name="palette_style_vibrant_desc">大胆で鮮やかな色合い</string>
+    <string name="palette_style_expressive">Expressive</string>
+    <string name="palette_style_expressive_desc">色相をずらした遊び心のある色</string>
+    <string name="palette_style_rainbow">Rainbow</string>
+    <string name="palette_style_rainbow_desc">幅広い色相のスペクトル</string>
+    <string name="palette_style_fruit_salad">Fruit Salad</string>
+    <string name="palette_style_fruit_salad_desc">遊び心のあるマルチカラーパレット</string>
+    <string name="palette_style_monochrome">Monochrome</string>
+    <string name="palette_style_monochrome_desc">黒、白、グレーのみ</string>
+    <string name="palette_style_fidelity">Fidelity</string>
+    <string name="palette_style_fidelity_desc">アクセントカラーに忠実</string>
+    <string name="palette_style_content">Content</string>
+    <string name="palette_style_content_desc">類似色の第三色を伴うアクセントカラー</string>
+    <string name="palette_style_more">その他のスタイル</string>
     <string name="preference_display_group_title">表示</string>
     <string name="preference_components_group_title">コンポーネント</string>
     <string name="preference_show_timed_out_messages_title">タイムアウトメッセージを表示</string>
@@ -207,8 +462,16 @@
     <string name="preference_font_size_summary_small">小</string>
     <string name="preference_font_size_summary_large">大</string>
     <string name="preference_font_size_summary_very_large">極大</string>
-    <string name="preference_suggestions_title">エモートとユーザーの候補</string>
-    <string name="preference_suggestions_summary">入力中にエモートとアクティブユーザーの候補を表示する</string>
+    <string name="preference_suggestions_title">サジェスト</string>
+    <string name="preference_suggestions_summary">入力中に表示するサジェストを選択</string>
+    <string name="preference_suggestions_emotes">エモート</string>
+    <string name="preference_suggestions_emotes_desc">: で呼び出す</string>
+    <string name="preference_suggestions_users">ユーザー</string>
+    <string name="preference_suggestions_users_desc">\@ で呼び出す</string>
+    <string name="preference_suggestions_commands">Twitchコマンド</string>
+    <string name="preference_suggestions_commands_desc">/ で呼び出す</string>
+    <string name="preference_suggestions_supibot">Supibotコマンド</string>
+    <string name="preference_suggestions_supibot_desc">$ で呼び出す</string>
     <string name="preference_load_message_history_title">開始時にメッセージ履歴を読み込む</string>
     <string name="preference_load_messages_on_reconnect_title">再接続後にメッセージ履歴を読み込む</string>
     <string name="preference_load_messages_on_reconnect_summary">接続が切断中に受信されずに失われたメッセージを取得しようとしています</string>
@@ -217,8 +480,10 @@
     <string name="preference_message_history_dashboard_summary">サービスの詳細を確認し、あなたのチャンネルのメッセージ履歴を無効にします</string>
     <string name="preference_channel_data_header">チャンネルデータ</string>
     <string name="preference_developer_header">開発者オプション</string>
+    <string name="preference_log_viewer_title">ログビューア</string>
+    <string name="preference_log_viewer_summary">アプリケーションログを表示</string>
     <string name="preference_debug_mode_title">デバッグモード</string>
-    <string name="preference_debug_mode_summary">キャッチされた例外情報の提供</string>
+    <string name="preference_debug_mode_summary">入力バーにデバッグ分析アクションを表示し、クラッシュレポートをローカルに収集</string>
     <string name="preference_timestamp_format_title">タイムスタンプ形式</string>
     <string name="preference_tts_title">TTSの有効化</string>
     <string name="preference_tts_summary">アクティブなチャンネルのメッセージを読み込む</string>
@@ -232,6 +497,9 @@
     <string name="preference_tts_message_ignore_url_title">URLを無視</string>
     <string name="preference_tts_message_ignore_emote_message">TTSのエモートと絵文字を無視</string>
     <string name="preference_tts_message_ignore_emote_title">エモートを無視</string>
+    <string name="preference_tts_volume_title">音量</string>
+    <string name="preference_tts_audio_ducking_title">オーディオダッキング</string>
+    <string name="preference_tts_audio_ducking_summary">TTS再生中に他のアプリの音量を下げる</string>
     <string name="preference_tts_header">TTS</string>
     <string name="preference_checkered_lines_title">ラインの色調整</string>
     <string name="preference_checkered_lines_summary">ラインごとに背景の明るさを変更</string>
@@ -244,12 +512,19 @@
     <string name="preference_user_long_click_title">ユーザーの長押しの動作</string>
     <string name="preference_user_long_click_summary_on">通常のクリックでポップアップを開き、長押しでメンション</string>
     <string name="preference_user_long_click_summary_off">通常のクリックでメンション、長押しでポップアップを開く</string>
+    <string name="preference_colorize_nicknames_title">ニックネームに色を付ける</string>
+    <string name="preference_colorize_nicknames_summary">色が設定されていないユーザーにランダムな色を割り当てる</string>
     <string name="preference_tts_force_english_title">強制的に言語を英語にする</string>
     <string name="preference_tts_force_english_summary">システムのデフォルトの代わりにTTS音声言語を英語にする</string>
     <string name="preference_visible_emotes_title">サードパーティのエモートの表示</string>
     <string name="preference_about_tos">Twitch利用規約とユーザーポリシー：</string>
     <string name="preference_show_chip_actions_title">チップの動作を表示</string>
     <string name="preference_show_chip_actions_summary">全画面表示、ストリーム、チャットモードの調整のためのチップを表示します</string>
+    <string name="preference_show_character_counter_title">文字数カウンターを表示</string>
+    <string name="preference_show_character_counter_summary">入力フィールドにコードポイント数を表示します</string>
+    <string name="preference_show_clear_input_button_title">入力クリアボタンを表示</string>
+    <string name="preference_show_send_button_title">送信ボタンを表示</string>
+    <string name="preference_input_group_title">入力</string>
     <string name="preference_uploader_header">メディアアップローダー</string>
     <string name="preference_uploader_configure_title">アップローダーを設定</string>
     <string name="preference_uploader_recent_uploads_title">最近のアップロード</string>
@@ -262,6 +537,14 @@
     <string name="preference_unlisted_emotes_title">リストにないエモートを許可</string>
     <string name="preference_unlisted_emotes_summary">未承認またはリストにないエモートのフィルタリングを無効にする</string>
     <string name="preference_rm_host_title">最近のメッセージホストのカスタム</string>
+    <string name="preference_developer_category_general">一般</string>
+    <string name="preference_developer_category_auth">認証</string>
+    <string name="preference_eventsub_title">Twitch EventSubを有効にする</string>
+    <string name="preference_eventsub_summary">非推奨のPubSubの代わりにEventSubを使用してリアルタイムイベントを処理します</string>
+    <string name="preference_eventsub_debug_title">EventSubデバッグ出力を有効にする</string>
+    <string name="preference_eventsub_debug_summary">EventSub関連のデバッグ情報をシステムメッセージとして表示します</string>
+    <string name="preference_revoke_token_title">トークンを失効させて再起動</string>
+    <string name="preference_revoke_token_summary">現在のトークンを無効化してアプリを再起動します</string>
     <string name="preference_fetch_streams_title">ストリーム情報を取得</string>
     <string name="preference_fetch_streams_summary">オープンチャンネルのストリーム情報を定期的に取得。埋め込みストリームを開始するために必要。</string>
     <string name="preference_auto_disable_input_title">チャットに接続されていない場合は入力を無効化</string>
@@ -278,6 +561,9 @@
     <string name="preference_custom_login_title">カスタムログイン</string>
     <string name="preference_bypass_command_handling_title">Twitchコマンドの処理をバイパスする</string>
     <string name="preference_bypass_command_handling_summary">Twitchコマンドの通信切断を無効にし、代わりにチャットに送信します</string>
+    <string name="preference_chat_send_protocol_category">チャット送信プロトコル</string>
+    <string name="preference_helix_sending_title">Helix APIで送信する</string>
+    <string name="preference_helix_sending_summary">IRCの代わりにTwitch Helix API経由でチャットメッセージを送信します</string>
     <string name="preference_7tv_live_updates_title">7TVライブエモートの更新</string>
     <string name="preference_7tv_live_updates_timeout_title">ライブエモートはバックグラウンドで更新中</string>
     <string name="preference_7tv_live_updates_timeout_summary_timeout">%1$s後にアップデートを停止します。\n数字を下げることでバッテリー寿命を延ばせるかもしれません。</string>
@@ -314,14 +600,17 @@
     <string name="tab_users">ユーザー</string>
     <string name="tab_blacklisted_users">ブロック済みユーザー</string>
     <string name="tab_twitch">Twitch</string>
+    <string name="tab_badges">バッジ</string>
     <string name="undo">元に戻す</string>
     <string name="item_removed">アイテムを削除</string>
     <string name="unblocked_user">ブロック解除されたユーザー %1$s</string>
     <string name="unblocked_user_failed">%1$sのブロック解除に失敗しました</string>
+    <string name="badge">バッジ</string>
     <string name="blocked_user_failed">%1$sのブロックに失敗しました</string>
     <string name="highlights_entry_username">あなたのユーザー名</string>
     <string name="highlights_ignores_entry_subscriptions">サブスクリプションとイベント</string>
     <string name="highlights_ignores_entry_announcements">お知らせ</string>
+    <string name="highlights_ignores_entry_watch_streaks">視聴ストリーク</string>
     <string name="highlights_ignores_entry_first_messages">最初のメッセージ</string>
     <string name="highlights_ignores_entry_elevated_messages">メッセージのピン留め表示</string>
     <string name="highlights_ignores_entry_redemptions">チャンネルポイントで交換されたメッセージのハイライト</string>
@@ -330,6 +619,7 @@
     <string name="highlights_messages_title">特定のパターンで通知を作成し、メッセージをハイライト表示する。</string>
     <string name="highlights_users_title">特定のユーザーからの通知やハイライトメッセージを作成する。</string>
     <string name="highlights_blacklisted_users_title">特定のユーザー（ボットなど）からの通知やハイライトを無効にする。</string>
+    <string name="highlights_badges_title">バッジに基づいてユーザーのメッセージの通知とハイライトを作成します。</string>
     <string name="ignores_messages_title">特定のパターンのメッセージを無視する。</string>
     <string name="ignores_users_title">特定のユーザーからのメッセージを無視する。</string>
     <string name="ignores_twitch_title">ブロック済みTwitchユーザを管理する。</string>
@@ -347,10 +637,63 @@
     <string name="message_copy">メッセージをコピー</string>
     <string name="message_copy_full">メッセージ全体をコピー</string>
     <string name="message_reply">メッセージに返信</string>
+    <string name="message_reply_original">元のメッセージに返信</string>
     <string name="message_view_thread">スレッドを表示</string>
     <string name="message_copy_id">メッセージIDをコピー</string>
     <string name="message_more_actions">もっとみる…</string>
+    <string name="message_jump_to">メッセージに移動</string>
+    <string name="message_not_in_history">メッセージはチャット履歴にありません</string>
+    <string name="message_history">メッセージ履歴</string>
+    <string name="global_history_title">グローバル履歴</string>
+    <string name="message_history_title">履歴：%1$s</string>
+    <string name="view_history">履歴を表示</string>
+    <string name="history_empty">現在のフィルターに一致するメッセージはありません</string>
+    <string name="search_messages_hint">メッセージを検索…</string>
+    <string name="log_viewer_title">ログ</string>
+    <string name="log_viewer_share">ログを共有</string>
+    <string name="log_viewer_open">ログを表示</string>
+    <string name="preference_log_viewer_empty">ログファイルがありません</string>
+    <string name="log_viewer_search_hint">ログを検索</string>
+    <plurals name="log_viewer_selected_count">
+        <item quantity="other">%1$d 件選択中</item>
+    </plurals>
+    <string name="log_viewer_copy_selection">選択したログをコピー</string>
+    <string name="log_viewer_clear_selection">選択を解除</string>
+    <string name="crash_report_title">クラッシュを検出</string>
+    <string name="crash_report_message">前回のセッション中にアプリがクラッシュしました。</string>
+    <string name="crash_report_thread">スレッド: %1$s</string>
+    <string name="crash_report_copy">コピー</string>
+    <string name="crash_report_send">チャットレポート</string>
+    <string name="crash_report_send_description">#flex3rsに参加し、送信用のクラッシュ概要を準備します</string>
+    <string name="crash_report_email">メールレポート</string>
+    <string name="crash_report_email_description">詳細なクラッシュレポートをメールで送信</string>
+    <string name="crash_email_confirm_title">クラッシュレポートをメールで送信</string>
+    <string name="crash_email_confirm_message">以下のデータがレポートに含まれます:</string>
+    <string name="crash_email_confirm_stacktrace">スタックトレース</string>
+    <string name="crash_email_confirm_include_logs">現在のログファイルを含める</string>
+    <string name="preference_crash_viewer_title">クラッシュレポート</string>
+    <string name="preference_crash_viewer_summary">最近のクラッシュレポートを表示</string>
+    <string name="preference_crash_viewer_empty">クラッシュレポートが見つかりません</string>
+    <string name="crash_viewer_title">クラッシュレポート</string>
+    <string name="crash_viewer_share">クラッシュレポートを共有</string>
+    <string name="crash_viewer_delete">削除</string>
+    <string name="crash_viewer_clear_all">すべて消去</string>
+    <string name="crash_viewer_delete_confirm">このクラッシュレポートを削除しますか?</string>
+    <string name="crash_viewer_clear_all_confirm">すべてのクラッシュレポートを削除しますか?</string>
+    <string name="scroll_to_bottom">一番下にスクロール</string>
+    <string name="search_filter_by_username">ユーザー名でフィルター</string>
+    <string name="search_filter_has_link">リンクを含むメッセージ</string>
+    <string name="search_filter_has_emote">エモートを含むメッセージ</string>
+    <string name="search_filter_by_badge">バッジ名でフィルター</string>
+    <string name="search_filter_user">ユーザー</string>
+    <string name="search_filter_badge">バッジ</string>
     <string name="reply_header">\@%1$sに返信</string>
+    <string name="whisper_header">\@%1$s にウィスパー中</string>
+    <string name="hint_whispering">ウィスパーを送信</string>
+    <string name="whisper_new">新しいウィスパー</string>
+    <string name="whisper_new_dialog_title">ウィスパーの送信先</string>
+    <string name="whisper_new_dialog_hint">ユーザー名</string>
+    <string name="whisper_new_dialog_start">送信</string>
     <string name="reply_thread_not_found">返信スレッドが見つかりません</string>
     <string name="message_not_found">メッセージが見つかりません</string>
     <string name="emote_sheet_use">エモートを使用</string>
@@ -376,10 +719,179 @@
     <string name="confirm_login_cancel_positive_button">ログインをキャンセル</string>
     <string name="login_menu_zoom_out">ズームアウト</string>
     <string name="login_menu_zoom_in">ズームイン</string>
+    <string name="back">戻る</string>
+    <string name="shared_chat">共有チャット</string>
     <plurals name="viewers_and_uptime">
         <item quantity="other">%2$sが%1$d人の視聴者とライブ中</item>
     </plurals>
     <plurals name="months">
         <item quantity="other">%dヶ月</item>
     </plurals>
+    <string name="open_source_licenses">オープンソースライセンス</string>
+    <plurals name="viewers_and_uptime_with_cateogry" comment="Live with 1 viewer in Just Chatting for 1h 1m&#13;&#10;Live with 10 viewers in Just Chatting for 1h 1m">
+        <item quantity="other">%2$sで%1$d人の視聴者と%3$s配信中</item>
+    </plurals>
+    <string name="preference_streaminfo_category_title">配信カテゴリを表示</string>
+    <string name="preference_streaminfo_category_summary">配信カテゴリも表示する</string>
+    <string name="badge_broadcaster">配信者</string>
+    <string name="badge_admin">管理者</string>
+    <string name="badge_staff">スタッフ</string>
+    <string name="badge_moderator">モデレーター</string>
+    <string name="badge_lead_moderator">リードモデレーター</string>
+    <string name="badge_verified">認証済み</string>
+    <string name="badge_vip">VIP</string>
+    <string name="badge_founder">ファウンダー</string>
+    <string name="badge_subscriber">サブスクライバー</string>
+    <string name="pick_highlight_color_title">カスタムハイライト色を選択</string>
+    <string name="reset_default_highlight_color">デフォルト</string>
+    <string name="choose_highlight_color">色を選択</string>
+    <string name="toggle_app_bar">アプリバーの切り替え</string>
+    <string name="error_with_message">エラー: %s</string>
+    <!-- Onboarding -->
+    <string name="onboarding_welcome_title">DankChat</string>
+    <string name="onboarding_welcome_body">セットアップを始めましょう。</string>
+    <string name="onboarding_get_started">始める</string>
+    <string name="onboarding_login_title">Twitchでログイン</string>
+    <string name="onboarding_login_body">ログインして、メッセージの送信、エモートの使用、ウィスパーの受信、すべての機能をお楽しみください。</string>
+    <string name="onboarding_login_disclaimer">複数のTwitch権限をまとめて許可するよう求められます。これにより、異なる機能を使うたびに再認証する必要がなくなります。DankChatがモデレーションや配信の操作を行うのは、あなたが指示したときだけです。</string>
+    <string name="onboarding_login_button">Twitchでログイン</string>
+    <string name="onboarding_login_success">ログイン成功</string>
+    <string name="onboarding_skip">スキップ</string>
+    <string name="onboarding_continue">続ける</string>
+    <string name="onboarding_history_title">メッセージ履歴</string>
+    <string name="onboarding_history_body">DankChatは起動時にサードパーティサービスから過去のメッセージを読み込みます。 メッセージを取得するために、DankChatは開いているチャンネル名をそのサービスに送信します。 サービスは訪問されたチャンネルのメッセージを一時的に保存します。\n\nこれは後で設定から変更できます。詳細は https://recent-messages.robotty.de/ をご覧ください。</string>
+    <string name="onboarding_history_enable">有効にする</string>
+    <string name="onboarding_history_disable">無効にする</string>
+    <string name="onboarding_notifications_title">通知</string>
+    <string name="onboarding_notifications_body">DankChatは、アプリがバックグラウンドにある時にチャットで誰かがあなたをメンションした場合に通知できます。</string>
+    <string name="onboarding_notifications_allow">通知を許可</string>
+    <string name="onboarding_notifications_rationale">通知がないと、アプリがバックグラウンドにある時にチャットで誰かがあなたをメンションしても気づけません。</string>
+    <string name="onboarding_notifications_open_settings">通知設定を開く</string>
+    <!-- Feature Tour -->
+    <string name="tour_input_actions">検索、配信などへのクイックアクセスのためのカスタマイズ可能なアクション</string>
+    <string name="tour_overflow_menu">ここをタップしてその他のアクションやアクションバーの設定ができます</string>
+    <string name="tour_configure_actions">アクションバーに表示するアクションをここでカスタマイズできます</string>
+    <string name="tour_swipe_gesture">入力欄を下にスワイプすると素早く非表示にできます</string>
+    <string name="tour_recovery_fab">ここをタップして入力欄を元に戻します</string>
+    <string name="tour_next">次へ</string>
+    <string name="tour_got_it">了解</string>
+    <string name="tour_skip">ツアーをスキップ</string>
+    <string name="tour_add_more_channels_hint">ここでチャンネルを追加できます</string>
+    <!-- Command responses -->
+    <string name="cmd_error_not_logged_in">%1$s コマンドを使用するにはログインが必要です</string>
+    <string name="cmd_error_no_user_matching">そのユーザー名に一致するユーザーが見つかりません。</string>
+    <string name="cmd_error_unknown">不明なエラーが発生しました。</string>
+    <string name="cmd_error_no_permission">この操作を実行する権限がありません。</string>
+    <string name="cmd_error_missing_scopes">必要なスコープが不足しています。アカウントで再ログインしてやり直してください。</string>
+    <string name="cmd_error_not_logged_in_credentials">ログイン情報がありません。アカウントで再ログインしてやり直してください。</string>
+    <string name="cmd_block_usage">使い方: /block &lt;ユーザー&gt;</string>
+    <string name="cmd_block_success">ユーザー %1$s を正常にブロックしました</string>
+    <string name="cmd_block_not_found">ユーザー %1$s をブロックできませんでした。その名前のユーザーが見つかりません！</string>
+    <string name="cmd_block_error">ユーザー %1$s をブロックできませんでした。不明なエラーが発生しました！</string>
+    <string name="cmd_unblock_usage">使い方: /unblock &lt;ユーザー&gt;</string>
+    <string name="cmd_unblock_success">ユーザー %1$s のブロックを正常に解除しました</string>
+    <string name="cmd_unblock_not_found">ユーザー %1$s のブロックを解除できませんでした。その名前のユーザーが見つかりません！</string>
+    <string name="cmd_unblock_error">ユーザー %1$s のブロックを解除できませんでした。不明なエラーが発生しました！</string>
+    <string name="cmd_uptime_not_live">チャンネルは配信中ではありません。</string>
+    <string name="cmd_uptime_response">配信時間: %1$s</string>
+    <string name="cmd_help_response">このルームで使用できるコマンド: %1$s</string>
+    <string name="cmd_usage_whisper">使い方: %1$s &lt;ユーザー名&gt; &lt;メッセージ&gt;。</string>
+    <string name="cmd_whisper_sent">ウィスパーを送信しました。</string>
+    <string name="cmd_fail_whisper">ウィスパーの送信に失敗しました - %1$s</string>
+    <string name="cmd_usage_announce">使い方: %1$s &lt;メッセージ&gt; - ハイライトでメッセージに注目を集めます。</string>
+    <string name="cmd_fail_announce">アナウンスの送信に失敗しました - %1$s</string>
+    <string name="cmd_no_moderators">このチャンネルにはモデレーターがいません。</string>
+    <string name="cmd_moderators_list">このチャンネルのモデレーターは %1$s です。</string>
+    <string name="cmd_fail_list_moderators">モデレーターの一覧取得に失敗しました - %1$s</string>
+    <string name="cmd_usage_mod">使い方: %1$s &lt;ユーザー名&gt; - ユーザーにモデレーター権限を付与します。</string>
+    <string name="cmd_success_mod_added">%1$s をこのチャンネルのモデレーターに追加しました。</string>
+    <string name="cmd_fail_mod_add">チャンネルモデレーターの追加に失敗しました - %1$s</string>
+    <string name="cmd_usage_unmod">使い方: %1$s &lt;ユーザー名&gt; - ユーザーからモデレーター権限を剥奪します。</string>
+    <string name="cmd_success_mod_removed">%1$s をこのチャンネルのモデレーターから削除しました。</string>
+    <string name="cmd_fail_mod_remove">チャンネルモデレーターの削除に失敗しました - %1$s</string>
+    <string name="cmd_no_vips">このチャンネルにはVIPがいません。</string>
+    <string name="cmd_vips_list">このチャンネルのVIPは %1$s です。</string>
+    <string name="cmd_fail_list_vips">VIPの一覧取得に失敗しました - %1$s</string>
+    <string name="cmd_usage_vip">使い方: %1$s &lt;ユーザー名&gt; - ユーザーにVIPステータスを付与します。</string>
+    <string name="cmd_success_vip_added">%1$s をこのチャンネルのVIPに追加しました。</string>
+    <string name="cmd_fail_vip_add">VIPの追加に失敗しました - %1$s</string>
+    <string name="cmd_usage_unvip">使い方: %1$s &lt;ユーザー名&gt; - ユーザーからVIPステータスを剥奪します。</string>
+    <string name="cmd_success_vip_removed">%1$s をこのチャンネルのVIPから削除しました。</string>
+    <string name="cmd_fail_vip_remove">VIPの削除に失敗しました - %1$s</string>
+    <string name="cmd_usage_ban">使い方: %1$s &lt;ユーザー名&gt; [理由] - ユーザーのチャットを永久に禁止します。理由は任意で、対象ユーザーと他のモデレーターに表示されます。BANを解除するには /unban を使用してください。</string>
+    <string name="cmd_ban_cannot_self">ユーザーのBANに失敗しました - 自分自身をBANすることはできません。</string>
+    <string name="cmd_ban_cannot_broadcaster">ユーザーのBANに失敗しました - 配信者をBANすることはできません。</string>
+    <string name="cmd_fail_ban">ユーザーのBANに失敗しました - %1$s</string>
+    <string name="cmd_usage_unban">使い方: %1$s &lt;ユーザー名&gt; - ユーザーのBANを解除します。</string>
+    <string name="cmd_fail_unban">ユーザーのBAN解除に失敗しました - %1$s</string>
+    <string name="cmd_usage_timeout">使い方: %1$s &lt;ユーザー名&gt; [期間][時間単位] [理由] - ユーザーのチャットを一時的に禁止します。期間（任意、デフォルト: 10分）は正の整数、時間単位（任意、デフォルト: s）はs、m、h、d、wのいずれか、最大期間は2週間です。理由は任意で、対象ユーザーと他のモデレーターに表示されます。</string>
+    <string name="cmd_timeout_cannot_self">ユーザーのBANに失敗しました - 自分自身をタイムアウトすることはできません。</string>
+    <string name="cmd_timeout_cannot_broadcaster">ユーザーのBANに失敗しました - 配信者をタイムアウトすることはできません。</string>
+    <string name="cmd_fail_timeout">ユーザーのタイムアウトに失敗しました - %1$s</string>
+    <string name="cmd_fail_clear">チャットメッセージの削除に失敗しました - %1$s</string>
+    <string name="cmd_usage_delete">使い方: /delete &lt;msg-id&gt; - 指定されたメッセージを削除します。</string>
+    <string name="cmd_delete_invalid_id">無効なmsg-id: \"%1$s\"。</string>
+    <string name="cmd_fail_delete">チャットメッセージの削除に失敗しました - %1$s</string>
+    <string name="cmd_usage_color">使い方: /color &lt;色&gt; - 色はTwitchがサポートする色（%1$s）またはTurboかPrimeをお持ちの場合はhex code（#000000）である必要があります。</string>
+    <string name="cmd_success_color">色が %1$s に変更されました</string>
+    <string name="cmd_fail_color">色を %1$s に変更できませんでした - %2$s</string>
+    <string name="cmd_success_marker">%1$s%2$s にストリームマーカーを正常に追加しました。</string>
+    <string name="cmd_fail_marker">ストリームマーカーの作成に失敗しました - %1$s</string>
+    <string name="cmd_usage_commercial">使い方: /commercial &lt;長さ&gt; - 現在のチャンネルで指定した長さのCMを開始します。有効な長さは30、60、90、120、150、180秒です。</string>
+    <plurals name="cmd_success_commercial">
+        <item quantity="other">%1$d 秒のCM休憩を開始します。まだ配信中であり、すべての視聴者にCMが表示されるわけではないことにご注意ください。次のCMは %2$d 秒後に実行できます。</item>
+    </plurals>
+    <string name="cmd_fail_commercial">CMの開始に失敗しました - %1$s</string>
+    <string name="cmd_usage_raid">使い方: /raid &lt;ユーザー名&gt; - ユーザーをレイドします。配信者のみがレイドを開始できます。</string>
+    <string name="cmd_raid_invalid_username">無効なユーザー名: %1$s</string>
+    <string name="cmd_success_raid">%1$s へのレイドを開始しました。</string>
+    <string name="cmd_fail_raid">レイドの開始に失敗しました - %1$s</string>
+    <string name="cmd_success_unraid">レイドをキャンセルしました。</string>
+    <string name="cmd_fail_unraid">レイドのキャンセルに失敗しました - %1$s</string>
+    <string name="cmd_usage_followers">使い方: %1$s [期間] - フォロワー限定モードを有効にします（フォロワーのみチャット可能）。期間（任意、デフォルト: 0分）は正の数と時間単位（m、h、d、w）、最大期間は3か月です。</string>
+    <string name="cmd_room_already_followers">このルームは既に %1$s のフォロワー限定モードです。</string>
+    <string name="cmd_fail_chat_settings">チャット設定の更新に失敗しました - %1$s</string>
+    <string name="cmd_room_not_followers">このルームはフォロワー限定モードではありません。</string>
+    <string name="cmd_room_already_emote_only">このルームは既にエモート限定モードです。</string>
+    <string name="cmd_room_not_emote_only">このルームはエモート限定モードではありません。</string>
+    <string name="cmd_room_already_subscribers">このルームは既にサブスクライバー限定モードです。</string>
+    <string name="cmd_room_not_subscribers">このルームはサブスクライバー限定モードではありません。</string>
+    <string name="cmd_room_already_unique_chat">このルームは既にユニークチャットモードです。</string>
+    <string name="cmd_room_not_unique_chat">このルームはユニークチャットモードではありません。</string>
+    <string name="cmd_usage_slow">使い方: %1$s [期間] - 低速モードを有効にします（メッセージ送信頻度を制限）。期間（任意、デフォルト: 30）は正の秒数、最大120です。</string>
+    <string name="cmd_room_already_slow">このルームは既に %1$d 秒の低速モードです。</string>
+    <string name="cmd_room_not_slow">このルームは低速モードではありません。</string>
+    <string name="cmd_usage_shoutout">使い方: %1$s &lt;ユーザー名&gt; - 指定したTwitchユーザーにシャウトアウトを送信します。</string>
+    <string name="cmd_success_shoutout">%1$s にシャウトアウトを送信しました</string>
+    <string name="cmd_fail_shoutout">シャウトアウトの送信に失敗しました - %1$s</string>
+    <string name="cmd_shield_activated">シールドモードが有効になりました。</string>
+    <string name="cmd_shield_deactivated">シールドモードが無効になりました。</string>
+    <string name="cmd_fail_shield">シールドモードの更新に失敗しました - %1$s</string>
+    <string name="cmd_error_whisper_self">自分自身にウィスパーすることはできません。</string>
+    <string name="cmd_error_no_verified_phone">Twitchの制限により、ウィスパーを送信するには認証済みの電話番号が必要です。電話番号はTwitchの設定で追加できます。https://www.twitch.tv/settings/security</string>
+    <string name="cmd_error_recipient_blocked">受信者は見知らぬ人またはあなたからのウィスパーを許可していません。</string>
+    <string name="cmd_error_rate_limited">Twitchによりレート制限されています。数秒後にもう一度お試しください。</string>
+    <string name="cmd_error_whisper_rate_limited">1日に最大40人のユニークな受信者にウィスパーできます。1日の制限内で、1秒あたり最大3件、1分あたり最大100件のウィスパーを送信できます。</string>
+    <string name="cmd_error_broadcaster_required">Twitchの制限により、このコマンドは配信者のみが使用できます。代わりにTwitchのウェブサイトをご利用ください。</string>
+    <string name="cmd_error_already_modded">%1$s は既にこのチャンネルのモデレーターです。</string>
+    <string name="cmd_error_target_is_vip">%1$s は現在VIPです。/unvip してからこのコマンドを再試行してください。</string>
+    <string name="cmd_error_not_modded">%1$s はこのチャンネルのモデレーターではありません。</string>
+    <string name="cmd_error_not_banned">%1$s はこのチャンネルでBANされていません。</string>
+    <string name="cmd_error_already_banned">%1$s は既にこのチャンネルでBANされています。</string>
+    <string name="cmd_error_cannot_perform">%2$s を %1$s することはできません。</string>
+    <string name="cmd_error_conflicting_ban">このユーザーに対して競合するBAN操作がありました。もう一度お試しください。</string>
+    <string name="cmd_error_invalid_color">色はTwitchがサポートする色（%1$s）またはTurboかPrimeをお持ちの場合はhex code（#000000）である必要があります。</string>
+    <string name="cmd_error_commercial_not_streaming">CMを実行するにはライブ配信中である必要があります。</string>
+    <string name="cmd_error_commercial_rate_limited">次のCMを実行するにはクールダウン期間が終了するまで待つ必要があります。</string>
+    <string name="cmd_error_missing_length">コマンドにはゼロより大きいCM休憩の長さを含める必要があります。</string>
+    <string name="cmd_error_no_raid_pending">アクティブなレイドがありません。</string>
+    <string name="cmd_error_raid_self">チャンネルは自分自身をレイドできません。</string>
+    <string name="cmd_error_shoutout_self">配信者は自分自身にシャウトアウトすることはできません。</string>
+    <string name="cmd_error_shoutout_not_streaming">配信者がライブ配信中でないか、1人以上の視聴者がいません。</string>
+    <string name="cmd_error_out_of_range">期間が有効な範囲外です: %1$s。</string>
+    <string name="cmd_error_message_already_processed">メッセージは既に処理されています。</string>
+    <string name="cmd_error_message_not_found">対象メッセージが見つかりませんでした。</string>
+    <string name="cmd_error_message_too_large">メッセージが長すぎます。</string>
+    <string name="cmd_error_chat_rate_limited">レート制限されています。しばらくしてからもう一度お試しください。</string>
+    <string name="cmd_error_target_default">対象ユーザー</string>
 </resources>
