@@ -81,6 +81,22 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s ایموت 7TV %2$s را اضافه کرد.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s ایموت 7TV %2$s را به %3$s تغییر نام داد.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s ایموت 7TV %2$s را حذف کرد.</string>
+    <!-- Send errors -->
+    <!-- AutoMod -->
+    <!-- Moderation messages — complete sentence variants for proper localization -->
+    <!-- Timeout (self, IRC — no creator info) -->
+    <!-- Timeout (self, EventSub — has creator) -->
+    <!-- Timeout (other, by creator) -->
+    <!-- Timeout (other, IRC — no creator) -->
+    <!-- Ban (self) -->
+    <!-- Ban (other) -->
+    <!-- Simple actions -->
+    <!-- Delete -->
+    <!-- Clear -->
+    <!-- Room state -->
+    <!-- Shared chat -->
+    <!-- Helper: message + count concatenation -->
+    <!-- Parenthetical count (appended after complete sentences, safe for all languages) -->
     <string name="timed_out_message">&lt; پیام حذف شده &gt;</string>
     <string name="multi_entry_header_regex">عبارت باقاعده</string>
     <string name="multi_entry_add_entry">اضافه کردن ورودی</string>
@@ -350,6 +366,7 @@
     <string name="message_view_thread">مشاهده‌ی پست‌ها</string>
     <string name="message_copy_id">کپی آی دی پیام</string>
     <string name="message_more_actions">بیشتر…</string>
+    <string name="message_history_title">تاریخچه: %1$s</string>
     <string name="reply_header">پاسخ به @%1$s</string>
     <string name="reply_thread_not_found">موضوع پاسخ یافت نشد.</string>
     <string name="message_not_found">پیام پیدا نشد</string>
@@ -384,5 +401,7 @@
         <item quantity="one">%d ماه</item>
         <item quantity="other">%d ماه</item>
     </plurals>
-    <string name="message_history_title">تاریخچه: %1$s</string>
+    <!-- Onboarding -->
+    <!-- Feature Tour -->
+    <!-- Command responses -->
 </resources>
