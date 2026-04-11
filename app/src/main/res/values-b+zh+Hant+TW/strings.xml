@@ -53,7 +53,8 @@
     <string name="hint_disconnected">已斷線</string>
     <string name="hint_not_logged_int">尚未登入</string>
     <string name="hint_replying">回覆</string>
-    <string name="hint_announcing">Send announcement</string>    <string name="notification_new_mentions">您有新的提及訊息</string>
+    <string name="hint_announcing">Send announcement</string>
+    <string name="notification_new_mentions">您有新的提及訊息</string>
     <string name="notification_mention">%1$s 剛於 #%2$s 提及了您</string>
     <string name="notification_notify_mention">您剛在 #%1$s 中被提及</string>
     <string name="snackbar_login">已登入為 %1$s</string>
@@ -82,7 +83,6 @@
     <string name="data_loading_step_cheermotes">Cheermotes</string>
     <string name="data_loading_step_recent_messages">近期訊息</string>
     <string name="data_loading_step_with_channels">%1$s (%2$s)</string>
-
     <string name="highlight_header_first_time_chat">首次聊天</string>
     <string name="highlight_header_elevated_chat">固定聊天訊息</string>
     <string name="highlight_header_gigantified_emote">巨大表情</string>
@@ -105,12 +105,11 @@
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
     <string name="duration_join_3">%1$s %2$s %3$s</string>
-
     <string name="snackbar_paste">貼上</string>
     <string name="add_channel_hint">頻道名稱</string>
     <string name="add_channel_already_added">頻道已經加入</string>
-    <string name="backspace">退格鍵</string>
     <string name="emote_menu_tab_recent">常用</string>
+    <string name="backspace">退格鍵</string>
     <string name="emote_menu_tab_subs">訂閱</string>
     <string name="emote_menu_tab_channel">頻道</string>
     <string name="emote_menu_tab_global">全域</string>
@@ -133,6 +132,16 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s新增了7TV表情%2$s。</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s重新命名了7TV表情%2$s成%3$s。</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s移除了7TV表情%2$s。</string>
+    <!-- Send errors -->
+    <string name="system_message_send_not_logged_in">未登入</string>
+    <string name="system_message_send_channel_not_resolved">無法解析 %1$s 的頻道 ID</string>
+    <string name="system_message_send_not_delivered">訊息未送出</string>
+    <string name="system_message_send_dropped">訊息被丟棄：%1$s（%2$s）</string>
+    <string name="system_message_send_missing_scopes">缺少 user:write:chat 權限，請重新登入</string>
+    <string name="system_message_send_not_authorized">無權在此頻道發送訊息</string>
+    <string name="system_message_send_message_too_large">訊息過長</string>
+    <string name="system_message_send_rate_limited">已被限速，請稍後再試</string>
+    <string name="system_message_send_failed">發送失敗：%1$s</string>
     <!-- AutoMod -->
     <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">因以下原因攔截了一則訊息: %1$s。允許將會把該訊息發佈到聊天室。</string>
     <string name="automod_allow">允許</string>
@@ -157,20 +166,26 @@
     <string name="automod_moderation_added_permitted_term" comment="flex3rs added &quot;test&quot; as a permitted term on AutoMod.">%1$s 在 AutoMod 上新增了 %2$s 為允許詞彙。</string>
     <string name="automod_moderation_removed_blocked_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s 從 AutoMod 上移除了封鎖詞彙 %2$s。</string>
     <string name="automod_moderation_removed_permitted_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s 從 AutoMod 上移除了允許詞彙 %2$s。</string>
-
-    <!-- Moderation messages -->
+    <!-- Moderation messages — complete sentence variants for proper localization -->
+    <!-- Timeout (self, IRC — no creator info) -->
     <string name="mod_timeout_self_irc" comment="You were timed out for 10m">您被禁言了 %1$s</string>
+    <!-- Timeout (self, EventSub — has creator) -->
     <string name="mod_timeout_self" comment="You were timed out for 10m by flex3rs">您被 %2$s 禁言了 %1$s</string>
     <string name="mod_timeout_self_reason" comment="You were timed out for 10m by flex3rs: reason">您被 %2$s 禁言了 %1$s: %3$s</string>
+    <!-- Timeout (other, by creator) -->
     <string name="mod_timeout_by_creator" comment="flex3rs timed out user123 for 10m">%1$s 將 %2$s 禁言了 %3$s</string>
     <string name="mod_timeout_by_creator_reason" comment="flex3rs timed out user123 for 10m: reason">%1$s 將 %2$s 禁言了 %3$s: %4$s</string>
+    <!-- Timeout (other, IRC — no creator) -->
     <string name="mod_timeout_no_creator" comment="user123 has been timed out for 10m">%1$s 已被禁言 %2$s</string>
+    <!-- Ban (self) -->
     <string name="mod_ban_self_irc" comment="You were banned">您已被封鎖</string>
     <string name="mod_ban_self" comment="You were banned by flex3rs">您被 %1$s 封鎖了</string>
     <string name="mod_ban_self_reason" comment="You were banned by flex3rs: reason">您被 %1$s 封鎖了: %2$s</string>
+    <!-- Ban (other) -->
     <string name="mod_ban_by_creator" comment="flex3rs banned user123">%1$s 封鎖了 %2$s</string>
     <string name="mod_ban_by_creator_reason" comment="flex3rs banned user123: reason">%1$s 封鎖了 %2$s: %3$s</string>
     <string name="mod_ban_no_creator" comment="user123 has been permanently banned">%1$s 已被永久封鎖</string>
+    <!-- Simple actions -->
     <string name="mod_untimeout" comment="flex3rs untimedout user123">%1$s 解除了 %2$s 的禁言</string>
     <string name="mod_unban" comment="flex3rs unbanned user123">%1$s 解除了 %2$s 的封鎖</string>
     <string name="mod_modded" comment="flex3rs modded user123">%1$s 將 %2$s 設為了模組</string>
@@ -181,12 +196,15 @@
     <string name="mod_warn_reason" comment="flex3rs has warned user123: reason1, reason2">%1$s 已警告了 %2$s: %3$s</string>
     <string name="mod_raid" comment="flex3rs initiated a raid to user123">%1$s 發起了對 %2$s 的突襲</string>
     <string name="mod_unraid" comment="flex3rs canceled the raid to user123">%1$s 取消了對 %2$s 的突襲</string>
+    <!-- Delete -->
     <string name="mod_delete_by_creator" comment="flex3rs deleted message from user123">%1$s 刪除了 %2$s 的訊息</string>
     <string name="mod_delete_by_creator_message" comment="flex3rs deleted message from user123 saying: hello">%1$s 刪除了 %2$s 的訊息，內容為: %3$s</string>
     <string name="mod_delete_no_creator" comment="A message from user123 was deleted">%1$s 的一則訊息已被刪除</string>
     <string name="mod_delete_no_creator_message" comment="A message from user123 was deleted saying: hello">%1$s 的一則訊息已被刪除，內容為: %2$s</string>
+    <!-- Clear -->
     <string name="mod_clear_by_creator" comment="flex3rs cleared the chat">%1$s 清除了聊天室</string>
     <string name="mod_clear_no_creator">聊天室已被管理員清除</string>
+    <!-- Room state -->
     <string name="mod_emote_only_on" comment="flex3rs turned on emote-only mode">%1$s 開啟了僅限表情符號模式</string>
     <string name="mod_emote_only_off" comment="flex3rs turned off emote-only mode">%1$s 關閉了僅限表情符號模式</string>
     <string name="mod_followers_on" comment="flex3rs turned on followers-only mode">%1$s 開啟了僅限追隨者模式</string>
@@ -199,6 +217,7 @@
     <string name="mod_slow_off" comment="flex3rs turned off slow mode">%1$s 關閉了低速模式</string>
     <string name="mod_subscribers_on" comment="flex3rs turned on subscribers-only mode">%1$s 開啟了僅限訂閱者模式</string>
     <string name="mod_subscribers_off" comment="flex3rs turned off subscribers-only mode">%1$s 關閉了僅限訂閱者模式</string>
+    <!-- Shared chat -->
     <string name="mod_shared_timeout" comment="flex3rs timed out user123 for 10m in channel456">%1$s 在 %4$s 中將 %2$s 禁言了 %3$s</string>
     <string name="mod_shared_timeout_reason" comment="flex3rs timed out user123 for 10m in channel456: reason">%1$s 在 %4$s 中將 %2$s 禁言了 %3$s: %5$s</string>
     <string name="mod_shared_untimeout" comment="flex3rs untimedout user123 in channel456">%1$s 在 %3$s 中解除了 %2$s 的禁言</string>
@@ -207,11 +226,12 @@
     <string name="mod_shared_unban" comment="flex3rs unbanned user123 in channel456">%1$s 在 %3$s 中解除了 %2$s 的封鎖</string>
     <string name="mod_shared_delete" comment="flex3rs deleted message from user123 in channel456">%1$s 在 %3$s 中刪除了 %2$s 的訊息</string>
     <string name="mod_shared_delete_message" comment="flex3rs deleted message from user123 in channel456 saying: hello">%1$s 在 %3$s 中刪除了 %2$s 的訊息，內容為: %4$s</string>
+    <!-- Helper: message + count concatenation -->
     <string name="mod_message_with_count" comment="flex3rs timed out user123 for 10m. (2 times)">%1$s%2$s</string>
+    <!-- Parenthetical count (appended after complete sentences, safe for all languages) -->
     <plurals name="mod_count_suffix" comment=" (2 times)">
         <item quantity="other">\u0020(%1$d 次)</item>
     </plurals>
-
     <string name="timed_out_message">&lt; 訊息已被刪除 &gt;</string>
     <string name="multi_entry_header_regex">Regex 常規式</string>
     <string name="multi_entry_add_entry">新增項目</string>
@@ -283,8 +303,8 @@
     <string name="input_action_mod_actions">頻道管理</string>
     <string name="input_action_fullscreen">全螢幕</string>
     <string name="input_action_hide_input">隱藏輸入框</string>
-    <string name="input_action_configure">設定動作</string>
     <string name="input_action_debug">偵錯</string>
+    <string name="input_action_configure">設定動作</string>
     <string name="room_state_emote_only">僅限表情符號</string>
     <string name="room_state_subscriber_only">僅限訂閱者</string>
     <string name="room_state_slow_mode">低速模式</string>
@@ -306,10 +326,10 @@
     <string name="mod_actions_shield_mode">Shield mode</string>
     <string name="mod_actions_clear_chat">Clear chat</string>
     <string name="mod_actions_confirm_clear_chat">Clear all messages in this channel?</string>
-
     <string name="mod_actions_confirm_shield_mode_title">啟用護盾模式？</string>
     <string name="mod_actions_confirm_shield_mode_body">這將套用頻道預先設定的安全設定，可能包括聊天限制、AutoMod 設定和聊天驗證要求。</string>
-    <string name="mod_actions_shield_mode_activate">啟用</string>    <string name="mod_actions_announce">Announce</string>
+    <string name="mod_actions_shield_mode_activate">啟用</string>
+    <string name="mod_actions_announce">Announce</string>
     <string name="mod_actions_announce_header">Announcement</string>
     <string name="mod_actions_shoutout">Shoutout</string>
     <string name="mod_actions_commercial">Commercial</string>
@@ -468,6 +488,8 @@
     <string name="preference_message_history_dashboard_summary">進一步了解此服務，並選擇是否要替您的頻道關閉聊天紀錄</string>
     <string name="preference_channel_data_header">頻道資訊</string>
     <string name="preference_developer_header">開發者選項</string>
+    <string name="preference_log_viewer_title">日誌檢視器</string>
+    <string name="preference_log_viewer_summary">檢視應用程式日誌</string>
     <string name="preference_debug_mode_title">除錯模式</string>
     <string name="preference_debug_mode_summary">在輸入欄中顯示除錯分析操作並在本機收集當機報告</string>
     <string name="preference_timestamp_format_title">時間戳記格式</string>
@@ -523,6 +545,14 @@
     <string name="preference_unlisted_emotes_title">允許不在列表中的表情</string>
     <string name="preference_unlisted_emotes_summary">關閉未准許或不在列表中表情的過濾</string>
     <string name="preference_rm_host_title">自訂 recent messages 伺服器</string>
+    <string name="preference_developer_category_general">一般</string>
+    <string name="preference_developer_category_auth">驗證</string>
+    <string name="preference_eventsub_title">啟用 Twitch EventSub</string>
+    <string name="preference_eventsub_summary">使用 EventSub 取代已棄用的 PubSub 來接收各種即時事件</string>
+    <string name="preference_eventsub_debug_title">啟用 EventSub 除錯輸出</string>
+    <string name="preference_eventsub_debug_summary">將 EventSub 相關除錯資訊以系統訊息顯示</string>
+    <string name="preference_revoke_token_title">撤銷權杖並重新啟動</string>
+    <string name="preference_revoke_token_summary">使目前的權杖失效並重新啟動應用程式</string>
     <string name="preference_fetch_streams_title">捉取實況資訊</string>
     <string name="preference_fetch_streams_summary">定期捉取開啟頻道的實況資訊。啟用嵌入式實況的必須功能。</string>
     <string name="preference_auto_disable_input_title">未連結至聊天室時取消輸入框</string>
@@ -624,7 +654,41 @@
     <string name="message_history">訊息紀錄</string>
     <string name="global_history_title">全域歷史</string>
     <string name="message_history_title">歷史紀錄：%1$s</string>
+    <string name="view_history">查看歷史</string>
+    <string name="history_empty">沒有符合目前篩選條件的訊息</string>
     <string name="search_messages_hint">搜尋訊息…</string>
+    <string name="log_viewer_title">日誌</string>
+    <string name="log_viewer_share">分享日誌</string>
+    <string name="log_viewer_open">檢視日誌</string>
+    <string name="preference_log_viewer_empty">沒有可用的日誌檔案</string>
+    <string name="log_viewer_search_hint">搜尋日誌</string>
+    <plurals name="log_viewer_selected_count">
+        <item quantity="other">已選取 %1$d 項</item>
+    </plurals>
+    <string name="log_viewer_copy_selection">複製選取的日誌</string>
+    <string name="log_viewer_clear_selection">清除選取</string>
+    <string name="crash_report_title">偵測到當機</string>
+    <string name="crash_report_message">應用程式在您上次使用期間當機。</string>
+    <string name="crash_report_thread">執行緒：%1$s</string>
+    <string name="crash_report_copy">複製</string>
+    <string name="crash_report_send">聊天報告</string>
+    <string name="crash_report_send_description">加入 #flex3rs 並準備當機摘要以傳送</string>
+    <string name="crash_report_email">電郵報告</string>
+    <string name="crash_report_email_description">透過電子郵件傳送詳細的當機報告</string>
+    <string name="crash_email_confirm_title">透過電子郵件傳送當機報告</string>
+    <string name="crash_email_confirm_message">以下資料將包含在報告中：</string>
+    <string name="crash_email_confirm_stacktrace">堆疊追蹤</string>
+    <string name="crash_email_confirm_include_logs">包含目前的記錄檔</string>
+    <string name="preference_crash_viewer_title">當機報告</string>
+    <string name="preference_crash_viewer_summary">檢視最近的當機報告</string>
+    <string name="preference_crash_viewer_empty">找不到當機報告</string>
+    <string name="crash_viewer_title">當機報告</string>
+    <string name="crash_viewer_share">分享當機報告</string>
+    <string name="crash_viewer_delete">刪除</string>
+    <string name="crash_viewer_clear_all">全部清除</string>
+    <string name="crash_viewer_delete_confirm">刪除此當機報告？</string>
+    <string name="crash_viewer_clear_all_confirm">刪除所有當機報告？</string>
+    <string name="scroll_to_bottom">捲動至底部</string>
     <string name="search_filter_by_username">依使用者名稱篩選</string>
     <string name="search_filter_has_link">包含連結的訊息</string>
     <string name="search_filter_has_emote">包含表情符號的訊息</string>
@@ -692,7 +756,6 @@
     <string name="choose_highlight_color">選擇色彩</string>
     <string name="toggle_app_bar">切換應用程式列</string>
     <string name="error_with_message">錯誤: %s</string>
-
     <!-- Onboarding -->
     <string name="onboarding_welcome_title">DankChat</string>
     <string name="onboarding_welcome_body">讓我們為您進行設定。</string>
@@ -713,7 +776,6 @@
     <string name="onboarding_notifications_allow">允許通知</string>
     <string name="onboarding_notifications_rationale">若不允許通知，當應用程式在背景執行時，您將不會收到聊天室中的提及通知。</string>
     <string name="onboarding_notifications_open_settings">開啟通知設定</string>
-
     <!-- Feature Tour -->
     <string name="tour_input_actions">可自訂的快捷動作，快速存取搜尋、實況等功能</string>
     <string name="tour_overflow_menu">點此查看更多動作並設定您的動作列</string>
@@ -724,26 +786,6 @@
     <string name="tour_got_it">了解</string>
     <string name="tour_skip">略過導覽</string>
     <string name="tour_add_more_channels_hint">您可以在此新增更多頻道</string>
-
-    <!-- Developer Settings -->
-    <string name="preference_developer_category_general">一般</string>
-    <string name="preference_developer_category_auth">驗證</string>
-    <string name="preference_eventsub_title">啟用 Twitch EventSub</string>
-    <string name="preference_eventsub_summary">使用 EventSub 取代已棄用的 PubSub 來接收各種即時事件</string>
-    <string name="preference_eventsub_debug_title">啟用 EventSub 除錯輸出</string>
-    <string name="preference_eventsub_debug_summary">將 EventSub 相關除錯資訊以系統訊息顯示</string>
-    <string name="preference_revoke_token_title">撤銷權杖並重新啟動</string>
-    <string name="preference_revoke_token_summary">使目前的權杖失效並重新啟動應用程式</string>
-    <string name="system_message_send_not_logged_in">未登入</string>
-    <string name="system_message_send_channel_not_resolved">無法解析 %1$s 的頻道 ID</string>
-    <string name="system_message_send_not_delivered">訊息未送出</string>
-    <string name="system_message_send_dropped">訊息被丟棄：%1$s（%2$s）</string>
-    <string name="system_message_send_missing_scopes">缺少 user:write:chat 權限，請重新登入</string>
-    <string name="system_message_send_not_authorized">無權在此頻道發送訊息</string>
-    <string name="system_message_send_message_too_large">訊息過長</string>
-    <string name="system_message_send_rate_limited">已被限速，請稍後再試</string>
-    <string name="system_message_send_failed">發送失敗：%1$s</string>
-
     <!-- Command responses -->
     <string name="cmd_error_not_logged_in">您必須登入才能使用 %1$s 指令</string>
     <string name="cmd_error_no_user_matching">找不到符合該使用者名稱的使用者。</string>
@@ -861,40 +903,4 @@
     <string name="cmd_error_message_too_large">您的訊息太長了。</string>
     <string name="cmd_error_chat_rate_limited">您被限速了。請稍後再試。</string>
     <string name="cmd_error_target_default">目標使用者</string>
-    <string name="preference_log_viewer_title">日誌檢視器</string>
-    <string name="preference_log_viewer_summary">檢視應用程式日誌</string>
-    <string name="log_viewer_title">日誌</string>
-    <string name="log_viewer_share">分享日誌</string>
-    <string name="log_viewer_open">檢視日誌</string>
-    <string name="preference_log_viewer_empty">沒有可用的日誌檔案</string>
-    <string name="log_viewer_search_hint">搜尋日誌</string>
-    <plurals name="log_viewer_selected_count">
-        <item quantity="other">已選取 %1$d 項</item>
-    </plurals>
-    <string name="log_viewer_copy_selection">複製選取的日誌</string>
-    <string name="log_viewer_clear_selection">清除選取</string>
-    <string name="crash_report_title">偵測到當機</string>
-    <string name="crash_report_message">應用程式在您上次使用期間當機。</string>
-    <string name="crash_report_thread">執行緒：%1$s</string>
-    <string name="crash_report_copy">複製</string>
-    <string name="crash_report_send">聊天報告</string>
-    <string name="crash_report_send_description">加入 #flex3rs 並準備當機摘要以傳送</string>
-    <string name="crash_report_email">電郵報告</string>
-    <string name="crash_report_email_description">透過電子郵件傳送詳細的當機報告</string>
-    <string name="crash_email_confirm_title">透過電子郵件傳送當機報告</string>
-    <string name="crash_email_confirm_message">以下資料將包含在報告中：</string>
-    <string name="crash_email_confirm_stacktrace">堆疊追蹤</string>
-    <string name="crash_email_confirm_include_logs">包含目前的記錄檔</string>
-    <string name="preference_crash_viewer_title">當機報告</string>
-    <string name="preference_crash_viewer_summary">檢視最近的當機報告</string>
-    <string name="preference_crash_viewer_empty">找不到當機報告</string>
-    <string name="crash_viewer_title">當機報告</string>
-    <string name="crash_viewer_share">分享當機報告</string>
-    <string name="crash_viewer_delete">刪除</string>
-    <string name="crash_viewer_delete_confirm">刪除此當機報告？</string>
-    <string name="crash_viewer_clear_all">全部清除</string>
-    <string name="crash_viewer_clear_all_confirm">刪除所有當機報告？</string>
-    <string name="scroll_to_bottom">捲動至底部</string>
-    <string name="view_history">查看歷史</string>
-    <string name="history_empty">沒有符合目前篩選條件的訊息</string>
 </resources>
