@@ -79,6 +79,22 @@
     <string name="system_message_7tv_emotes_failed">فشل تحميل عواطف 7TV (خطأ %1$s)</string>
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">قام %1$s بإضافة %1$s إلى 7TV Emote %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">تم تغيير اسم %1$s إلى %2$s إلى %3$s.</string>
+    <!-- Send errors -->
+    <!-- AutoMod -->
+    <!-- Moderation messages — complete sentence variants for proper localization -->
+    <!-- Timeout (self, IRC — no creator info) -->
+    <!-- Timeout (self, EventSub — has creator) -->
+    <!-- Timeout (other, by creator) -->
+    <!-- Timeout (other, IRC — no creator) -->
+    <!-- Ban (self) -->
+    <!-- Ban (other) -->
+    <!-- Simple actions -->
+    <!-- Delete -->
+    <!-- Clear -->
+    <!-- Room state -->
+    <!-- Shared chat -->
+    <!-- Helper: message + count concatenation -->
+    <!-- Parenthetical count (appended after complete sentences, safe for all languages) -->
     <string name="timed_out_message">&lt; الرسالة مسحت &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">أضف إدخالاً </string>
@@ -351,6 +367,7 @@ The service temporarily stores messages for channels you (and others) visit to p
     <string name="message_view_thread">عرض الموضوع</string>
     <string name="message_copy_id">نسخ معرف الرسالة</string>
     <string name="message_more_actions">المزيد…</string>
+    <string name="message_history_title">تاريخ: %1$s</string>
     <string name="reply_header">الرد على @%1$s</string>
     <string name="reply_thread_not_found">موضوع الرد غير موجود</string>
     <string name="message_not_found">لم يتم العثور على الرسالة</string>
@@ -374,5 +391,7 @@ The service temporarily stores messages for channels you (and others) visit to p
     <string name="confirm_login_cancel_positive_button">إلغاء تسجيل الدخول</string>
     <string name="login_menu_zoom_out">تصغير</string>
     <string name="login_menu_zoom_in">تكبير الصورة</string>
-    <string name="message_history_title">تاريخ: %1$s</string>
+    <!-- Onboarding -->
+    <!-- Feature Tour -->
+    <!-- Command responses -->
 </resources>
