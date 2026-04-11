@@ -42,7 +42,7 @@ flexBox = "3.0.0"
 autoLinkText = "2.0.2"
 
 logbackAndroid = "3.0.0"
-kotlinLogging = "7.0.7"
+kotlinLogging = "7.0.14"
 
 processPhoenix = "3.0.0"
 
