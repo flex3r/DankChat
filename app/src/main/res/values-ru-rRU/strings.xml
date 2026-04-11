@@ -24,8 +24,10 @@
     <string name="remove_channel">Удалить канал</string>
     <string name="channel_blocked_message">Канал заблокирован</string>
     <string name="no_channels_added">Нет добавленных каналов</string>
+    <string name="no_channels_added_body">Добавьте канал, чтобы начать общение</string>
     <string name="confirm_logout_title">Подтверждение выхода</string>
     <string name="confirm_logout_message">Вы уверены, что хотите выйти?</string>
+    <string name="confirm_logout_question">Выйти?</string>
     <string name="confirm_logout_positive_button">Выйти</string>
     <string name="upload_media">Загрузить медиа</string>
     <string name="take_picture">Сделать снимок</string>
@@ -43,26 +45,84 @@
     <string name="notification_title">FeelsDankMan</string>
     <string name="notification_message">DankChat работает в фоновом режиме</string>
     <string name="emote_menu_hint">Открыть меню смайлов</string>
+    <string name="no_recent_emotes">Нет недавних эмоутов</string>
     <string name="login_title">Войти в Twitch.tv</string>
     <string name="hint_connected">Начать чат</string>
     <string name="hint_disconnected">Отключено</string>
     <string name="hint_not_logged_int">Вы не вошли</string>
     <string name="hint_replying">Ответить</string>
+    <string name="hint_announcing">Send announcement</string>
     <string name="notification_new_mentions">У вас новые упоминания</string>
     <string name="notification_mention">%1$s упомянул вас в #%2$s</string>
     <string name="notification_notify_mention">Вас упомянули в #%1$s</string>
     <string name="snackbar_login">Вы вошли как %1$s</string>
     <string name="snackbar_login_failed">Ошибка входа</string>
     <string name="snackbar_image_uploaded">Скопировано: %1$s</string>
+    <string name="system_message_upload_complete">Загрузка завершена: %1$s</string>
     <string name="snackbar_upload_failed">Ошибка при загрузке</string>
     <string name="snackbar_upload_failed_cause">Ошибка при загрузке: %1$s</string>
+    <string name="share_upload_label">Загрузить</string>
+    <string name="share_upload_copied">Скопировано в буфер обмена</string>
+    <string name="share_upload_copy">Копировать URL</string>
     <string name="snackbar_retry">Повторить</string>
     <string name="snackbar_data_reloaded">Смайлы обновлены</string>
     <string name="snackbar_data_load_failed_cause">Ошибка загрузки данных: %1$s</string>
     <string name="snackbar_data_load_failed_multiple_causes">Загрузка данных не удалась из-за нескольких ошибок:\n%1$s</string>
+    <string name="data_loading_step_dankchat_badges">Значки DankChat</string>
+    <string name="data_loading_step_global_badges">Глобальные значки</string>
+    <string name="data_loading_step_global_ffz_emotes">Глобальные FFZ-эмоуты</string>
+    <string name="data_loading_step_global_bttv_emotes">Глобальные BTTV-эмоуты</string>
+    <string name="data_loading_step_global_7tv_emotes">Глобальные 7TV-эмоуты</string>
+    <string name="data_loading_step_channel_badges">Значки канала</string>
+    <string name="data_loading_step_ffz_emotes">FFZ-эмоуты</string>
+    <string name="data_loading_step_bttv_emotes">BTTV-эмоуты</string>
+    <string name="data_loading_step_7tv_emotes">7TV-эмоуты</string>
+    <string name="data_loading_step_twitch_emotes">Twitch-эмоуты</string>
+    <string name="data_loading_step_cheermotes">Cheermote-ы</string>
+    <string name="data_loading_step_recent_messages">Последние сообщения</string>
+    <string name="data_loading_step_with_channels">%1$s (%2$s)</string>
+    <string name="highlight_header_first_time_chat">Первое сообщение</string>
+    <string name="highlight_header_elevated_chat">Выделенное сообщение</string>
+    <string name="highlight_header_gigantified_emote">Гигантский эмоут</string>
+    <string name="highlight_header_animated_message">Анимированное сообщение</string>
+    <string name="highlight_header_reward_no_cost">Использовано: %1$s</string>
+    <plurals name="duration_seconds">
+        <item quantity="one">%1$d секунду</item>
+        <item quantity="few">%1$d секунды</item>
+        <item quantity="many">%1$d секунд</item>
+        <item quantity="other">%1$d секунд</item>
+    </plurals>
+    <plurals name="duration_minutes">
+        <item quantity="one">%1$d минуту</item>
+        <item quantity="few">%1$d минуты</item>
+        <item quantity="many">%1$d минут</item>
+        <item quantity="other">%1$d минут</item>
+    </plurals>
+    <plurals name="duration_hours">
+        <item quantity="one">%1$d час</item>
+        <item quantity="few">%1$d часа</item>
+        <item quantity="many">%1$d часов</item>
+        <item quantity="other">%1$d часов</item>
+    </plurals>
+    <plurals name="duration_days">
+        <item quantity="one">%1$d день</item>
+        <item quantity="few">%1$d дня</item>
+        <item quantity="many">%1$d дней</item>
+        <item quantity="other">%1$d дней</item>
+    </plurals>
+    <plurals name="duration_weeks">
+        <item quantity="one">%1$d неделю</item>
+        <item quantity="few">%1$d недели</item>
+        <item quantity="many">%1$d недель</item>
+        <item quantity="other">%1$d недель</item>
+    </plurals>
+    <string name="duration_join_2">%1$s %2$s</string>
+    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Вставить</string>
     <string name="add_channel_hint">Имя канала</string>
+    <string name="add_channel_already_added">Канал уже добавлен</string>
     <string name="emote_menu_tab_recent">Недавние</string>
+    <string name="backspace">Удалить</string>
     <string name="emote_menu_tab_subs">Смайлы подписки</string>
     <string name="emote_menu_tab_channel">Смайлы канала</string>
     <string name="emote_menu_tab_global">Общедоступные смайлы</string>
@@ -78,10 +138,119 @@
     <string name="system_message_ffz_emotes_failed">Не удалось загрузить смайлы FFZ (ошибка %1$s)</string>
     <string name="system_message_bttv_emotes_failed">Не удалось загрузить смайлы BTTV (ошибка %1$s)</string>
     <string name="system_message_7tv_emotes_failed">Не удалось загрузить смайлы 7TV (ошибка %1$s)</string>
+    <string name="system_message_ffz_emotes_cached_fallback">Используются кэшированные FFZ emotes в качестве запасного варианта</string>
+    <string name="system_message_bttv_emotes_cached_fallback">Используются кэшированные BTTV emotes в качестве запасного варианта</string>
+    <string name="system_message_7tv_emotes_cached_fallback">Используются кэшированные 7TV emotes в качестве запасного варианта</string>
     <string name="system_message_7tv_emote_set_changed" comment="flex3rs switched the active 7TV Emote Set to &quot;flex3rs's Emotes&quot;. ">%1$s переключил набор 7TV эмоций  на \"%2$s\".</string>
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s добавил 7TV эмоцию %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s переименовал 7TV эмоцию %2$s на %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s удалил 7TV эмоцию %2$s.</string>
+    <!-- Send errors -->
+    <string name="system_message_send_not_logged_in">Не выполнен вход</string>
+    <string name="system_message_send_channel_not_resolved">Не удалось определить ID канала для %1$s</string>
+    <string name="system_message_send_not_delivered">Сообщение не было отправлено</string>
+    <string name="system_message_send_dropped">Сообщение отклонено: %1$s (%2$s)</string>
+    <string name="system_message_send_missing_scopes">Отсутствует разрешение user:write:chat, войдите заново</string>
+    <string name="system_message_send_not_authorized">Нет прав для отправки сообщений в этом канале</string>
+    <string name="system_message_send_message_too_large">Сообщение слишком большое</string>
+    <string name="system_message_send_rate_limited">Превышен лимит запросов, попробуйте через некоторое время</string>
+    <string name="system_message_send_failed">Ошибка отправки: %1$s</string>
+    <!-- AutoMod -->
+    <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Сообщение задержано по причине: %1$s. Разрешение опубликует его в чате.</string>
+    <string name="automod_allow">Разрешить</string>
+    <string name="automod_deny">Отклонить</string>
+    <string name="automod_status_approved">Одобрено</string>
+    <string name="automod_status_denied">Отклонено</string>
+    <string name="automod_ban_user">Заблокировать пользователя</string>
+    <string name="automod_status_expired">Истекло</string>
+    <string name="automod_user_held">Эй! Твоё сообщение проверяется модераторами и ещё не отправлено.</string>
+    <string name="automod_user_accepted">Модераторы приняли твоё сообщение.</string>
+    <string name="automod_user_denied">Модераторы отклонили твоё сообщение.</string>
+    <string name="automod_reason_category" comment="aggressive (level 2)">%1$s (уровень %2$d)</string>
+    <plurals name="automod_reason_blocked_terms">
+        <item quantity="one">совпадает с %1$d заблокированным термином %2$s</item>
+        <item quantity="few">совпадает с %1$d заблокированными терминами %2$s</item>
+        <item quantity="many">совпадает с %1$d заблокированными терминами %2$s</item>
+        <item quantity="other">совпадает с %1$d заблокированными терминами %2$s</item>
+    </plurals>
+    <string name="automod_error_already_processed" comment="Failed to allow AutoMod message - message has already been processed.">Не удалось %1$s сообщение AutoMod - сообщение уже обработано.</string>
+    <string name="automod_error_not_authenticated" comment="Failed to allow AutoMod message - you need to re-authenticate.">Не удалось %1$s сообщение AutoMod - необходимо повторно авторизоваться.</string>
+    <string name="automod_error_not_authorized" comment="Failed to allow AutoMod message - you don\'t have permission to perform that action.">Не удалось %1$s сообщение AutoMod - у вас нет прав для выполнения этого действия.</string>
+    <string name="automod_error_not_found" comment="Failed to allow AutoMod message - target message not found.">Не удалось %1$s сообщение AutoMod - целевое сообщение не найдено.</string>
+    <string name="automod_error_unknown" comment="Failed to allow AutoMod message - an unknown error occurred.">Не удалось %1$s сообщение AutoMod - произошла неизвестная ошибка.</string>
+    <string name="automod_moderation_added_blocked_term" comment="flex3rs added &quot;test&quot; as a blocked term on AutoMod.">%1$s добавил %2$s как заблокированный термин в AutoMod.</string>
+    <string name="automod_moderation_added_permitted_term" comment="flex3rs added &quot;test&quot; as a permitted term on AutoMod.">%1$s добавил %2$s как разрешённый термин в AutoMod.</string>
+    <string name="automod_moderation_removed_blocked_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s удалил %2$s как заблокированный термин из AutoMod.</string>
+    <string name="automod_moderation_removed_permitted_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s удалил %2$s как разрешённый термин из AutoMod.</string>
+    <!-- Moderation messages — complete sentence variants for proper localization -->
+    <!-- Timeout (self, IRC — no creator info) -->
+    <string name="mod_timeout_self_irc" comment="You were timed out for 10m">Вы были заглушены на %1$s</string>
+    <!-- Timeout (self, EventSub — has creator) -->
+    <string name="mod_timeout_self" comment="You were timed out for 10m by flex3rs">Вы были заглушены на %1$s модератором %2$s</string>
+    <string name="mod_timeout_self_reason" comment="You were timed out for 10m by flex3rs: reason">Вы были заглушены на %1$s модератором %2$s: %3$s</string>
+    <!-- Timeout (other, by creator) -->
+    <string name="mod_timeout_by_creator" comment="flex3rs timed out user123 for 10m">%1$s заглушил %2$s на %3$s</string>
+    <string name="mod_timeout_by_creator_reason" comment="flex3rs timed out user123 for 10m: reason">%1$s заглушил %2$s на %3$s: %4$s</string>
+    <!-- Timeout (other, IRC — no creator) -->
+    <string name="mod_timeout_no_creator" comment="user123 has been timed out for 10m">%1$s был заглушён на %2$s</string>
+    <!-- Ban (self) -->
+    <string name="mod_ban_self_irc" comment="You were banned">Вы были забанены</string>
+    <string name="mod_ban_self" comment="You were banned by flex3rs">Вы были забанены модератором %1$s</string>
+    <string name="mod_ban_self_reason" comment="You were banned by flex3rs: reason">Вы были забанены модератором %1$s: %2$s</string>
+    <!-- Ban (other) -->
+    <string name="mod_ban_by_creator" comment="flex3rs banned user123">%1$s забанил %2$s</string>
+    <string name="mod_ban_by_creator_reason" comment="flex3rs banned user123: reason">%1$s забанил %2$s: %3$s</string>
+    <string name="mod_ban_no_creator" comment="user123 has been permanently banned">%1$s был перманентно забанен</string>
+    <!-- Simple actions -->
+    <string name="mod_untimeout" comment="flex3rs untimedout user123">%1$s снял заглушение с %2$s</string>
+    <string name="mod_unban" comment="flex3rs unbanned user123">%1$s разбанил %2$s</string>
+    <string name="mod_modded" comment="flex3rs modded user123">%1$s назначил модератором %2$s</string>
+    <string name="mod_unmodded" comment="flex3rs unmodded user123">%1$s снял модератора с %2$s</string>
+    <string name="mod_vip_added" comment="flex3rs has added user123 as a VIP of this channel">%1$s добавил %2$s как VIP этого канала</string>
+    <string name="mod_vip_removed" comment="flex3rs has removed user123 as a VIP of this channel">%1$s удалил %2$s как VIP этого канала</string>
+    <string name="mod_warn" comment="flex3rs has warned user123">%1$s предупредил %2$s</string>
+    <string name="mod_warn_reason" comment="flex3rs has warned user123: reason1, reason2">%1$s предупредил %2$s: %3$s</string>
+    <string name="mod_raid" comment="flex3rs initiated a raid to user123">%1$s начал рейд на %2$s</string>
+    <string name="mod_unraid" comment="flex3rs canceled the raid to user123">%1$s отменил рейд на %2$s</string>
+    <!-- Delete -->
+    <string name="mod_delete_by_creator" comment="flex3rs deleted message from user123">%1$s удалил сообщение от %2$s</string>
+    <string name="mod_delete_by_creator_message" comment="flex3rs deleted message from user123 saying: hello">%1$s удалил сообщение от %2$s с текстом: %3$s</string>
+    <string name="mod_delete_no_creator" comment="A message from user123 was deleted">Сообщение от %1$s было удалено</string>
+    <string name="mod_delete_no_creator_message" comment="A message from user123 was deleted saying: hello">Сообщение от %1$s было удалено с текстом: %2$s</string>
+    <!-- Clear -->
+    <string name="mod_clear_by_creator" comment="flex3rs cleared the chat">%1$s очистил чат</string>
+    <string name="mod_clear_no_creator">Чат был очищен модератором</string>
+    <!-- Room state -->
+    <string name="mod_emote_only_on" comment="flex3rs turned on emote-only mode">%1$s включил режим только эмоции</string>
+    <string name="mod_emote_only_off" comment="flex3rs turned off emote-only mode">%1$s выключил режим только эмоции</string>
+    <string name="mod_followers_on" comment="flex3rs turned on followers-only mode">%1$s включил режим только для подписчиков канала</string>
+    <string name="mod_followers_on_duration" comment="flex3rs turned on followers-only mode (1 week)">%1$s включил режим только для подписчиков канала (%2$s)</string>
+    <string name="mod_followers_off" comment="flex3rs turned off followers-only mode">%1$s выключил режим только для подписчиков канала</string>
+    <string name="mod_unique_chat_on" comment="flex3rs turned on unique-chat mode">%1$s включил режим уникального чата</string>
+    <string name="mod_unique_chat_off" comment="flex3rs turned off unique-chat mode">%1$s выключил режим уникального чата</string>
+    <string name="mod_slow_on" comment="flex3rs turned on slow mode">%1$s включил медленный режим</string>
+    <string name="mod_slow_on_duration" comment="flex3rs turned on slow mode (2 minutes 5 seconds)">%1$s включил медленный режим (%2$s)</string>
+    <string name="mod_slow_off" comment="flex3rs turned off slow mode">%1$s выключил медленный режим</string>
+    <string name="mod_subscribers_on" comment="flex3rs turned on subscribers-only mode">%1$s включил режим только для подписчиков</string>
+    <string name="mod_subscribers_off" comment="flex3rs turned off subscribers-only mode">%1$s выключил режим только для подписчиков</string>
+    <!-- Shared chat -->
+    <string name="mod_shared_timeout" comment="flex3rs timed out user123 for 10m in channel456">%1$s заглушил %2$s на %3$s в %4$s</string>
+    <string name="mod_shared_timeout_reason" comment="flex3rs timed out user123 for 10m in channel456: reason">%1$s заглушил %2$s на %3$s в %4$s: %5$s</string>
+    <string name="mod_shared_untimeout" comment="flex3rs untimedout user123 in channel456">%1$s снял заглушение с %2$s в %3$s</string>
+    <string name="mod_shared_ban" comment="flex3rs banned user123 in channel456">%1$s забанил %2$s в %3$s</string>
+    <string name="mod_shared_ban_reason" comment="flex3rs banned user123 in channel456: reason">%1$s забанил %2$s в %3$s: %4$s</string>
+    <string name="mod_shared_unban" comment="flex3rs unbanned user123 in channel456">%1$s разбанил %2$s в %3$s</string>
+    <string name="mod_shared_delete" comment="flex3rs deleted message from user123 in channel456">%1$s удалил сообщение от %2$s в %3$s</string>
+    <string name="mod_shared_delete_message" comment="flex3rs deleted message from user123 in channel456 saying: hello">%1$s удалил сообщение от %2$s в %3$s с текстом: %4$s</string>
+    <!-- Helper: message + count concatenation -->
+    <string name="mod_message_with_count" comment="flex3rs timed out user123 for 10m. (2 times)">%1$s%2$s</string>
+    <!-- Parenthetical count (appended after complete sentences, safe for all languages) -->
+    <plurals name="mod_count_suffix" comment=" (2 times)">
+        <item quantity="one">\u0020(%1$d раз)</item>
+        <item quantity="few">\u0020(%1$d раза)</item>
+        <item quantity="many">\u0020(%1$d раз)</item>
+        <item quantity="other">\u0020(%1$d раз)</item>
+    </plurals>
     <string name="timed_out_message">&lt; Сообщение удалено &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Добавить запись</string>
@@ -104,9 +273,12 @@
     <string name="confirm_channel_removal_title">Подтверждение удаления канала</string>
     <string name="confirm_channel_removal_message">Вы уверены, что хотите удалить канал?</string>
     <string name="confirm_channel_removal_message_named">Вы уверены, что хотите удалить канал \"%1$s\"?</string>
+    <string name="confirm_channel_removal_question">Удалить этот канал?</string>
+    <string name="confirm_channel_removal_question_named">Удалить канал \"%1$s\"?</string>
     <string name="confirm_channel_removal_positive_button">Удалить</string>
     <string name="confirm_channel_block_title">Подтверждение блокировки канала</string>
     <string name="confirm_channel_block_message_named">Вы уверены, что хотите заблокировать канал \"%1$s\"?</string>
+    <string name="confirm_channel_block_question_named">Заблокировать канал \"%1$s\"?</string>
     <string name="user_popup_block">Заблокировать</string>
     <string name="user_popup_unblock">Разблокировать</string>
     <string name="user_popup_mention">Упомянуть пользователя</string>
@@ -130,6 +302,64 @@
     <string name="uploader_description">Вы можете настроить собственный хостинг для загрузки медиа, например imgur.com или s-ul.eu. DankChat использует схожий с Chatterino формат настройки.\nПосмотрите здесь, если хотите узнать подробнее (на английском): https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="toggle_fullscreen">Полноэкранный режим</string>
     <string name="toggle_stream">Вкл/выкл трансляцию</string>
+    <string name="menu_show_stream">Показать трансляцию</string>
+    <string name="menu_hide_stream">Скрыть трансляцию</string>
+    <string name="menu_audio_only">Только аудио</string>
+    <string name="menu_exit_audio_only">Выйти из режима аудио</string>
+    <string name="menu_fullscreen">На весь экран</string>
+    <string name="menu_exit_fullscreen">Выйти из полноэкранного режима</string>
+    <string name="menu_hide_input">Скрыть ввод</string>
+    <string name="menu_show_input">Показать ввод</string>
+    <string name="preference_swipe_navigation_title">Навигация каналов свайпом</string>
+    <string name="preference_swipe_navigation_summary">Переключение каналов свайпом по чату</string>
+    <string name="menu_mod_actions">Модерация канала</string>
+    <plurals name="input_actions_max">
+        <item quantity="one">Максимум %1$d действие</item>
+        <item quantity="few">Максимум %1$d действия</item>
+        <item quantity="many">Максимум %1$d действий</item>
+        <item quantity="other">Максимум %1$d действий</item>
+    </plurals>
+    <string name="input_action_search">Поиск сообщений</string>
+    <string name="input_action_last_message">Последнее сообщение</string>
+    <string name="input_action_stream">Переключить трансляцию</string>
+    <string name="input_action_mod_actions">Модерация канала</string>
+    <string name="input_action_fullscreen">На весь экран</string>
+    <string name="input_action_hide_input">Скрыть ввод</string>
+    <string name="input_action_debug">Отладка</string>
+    <string name="input_action_configure">Настроить действия</string>
+    <string name="room_state_emote_only">Только эмоуты</string>
+    <string name="room_state_subscriber_only">Только подписчики</string>
+    <string name="room_state_slow_mode">Медленный режим</string>
+    <string name="room_state_slow_mode_duration">Медленный режим (%1$s)</string>
+    <string name="room_state_unique_chat">Уникальный чат (R9K)</string>
+    <string name="room_state_follower_only">Только фолловеры</string>
+    <string name="room_state_follower_only_duration">Только фолловеры (%1$s)</string>
+    <string name="room_state_preset_custom">Другое</string>
+    <string name="room_state_follower_any">Любой</string>
+    <string name="room_state_duration_seconds">%1$ds</string>
+    <string name="room_state_duration_minutes">%1$dm</string>
+    <string name="room_state_duration_hours">%1$dh</string>
+    <string name="room_state_duration_days">%1$dd</string>
+    <string name="room_state_duration_weeks">%1$dw</string>
+    <string name="room_state_duration_months">%1$dmo</string>
+    <string name="mod_actions_room_state_section">Room state</string>
+    <string name="mod_actions_section">Mod actions</string>
+    <string name="mod_actions_broadcaster_section">Broadcaster</string>
+    <string name="mod_actions_shield_mode">Shield mode</string>
+    <string name="mod_actions_clear_chat">Clear chat</string>
+    <string name="mod_actions_confirm_clear_chat">Clear all messages in this channel?</string>
+    <string name="mod_actions_confirm_shield_mode_title">Активировать режим щита?</string>
+    <string name="mod_actions_confirm_shield_mode_body">Это применит предварительно настроенные параметры безопасности канала, которые могут включать ограничения чата, настройки AutoMod и требования верификации.</string>
+    <string name="mod_actions_shield_mode_activate">Активировать</string>
+    <string name="mod_actions_announce">Announce</string>
+    <string name="mod_actions_announce_header">Announcement</string>
+    <string name="mod_actions_shoutout">Shoutout</string>
+    <string name="mod_actions_commercial">Commercial</string>
+    <string name="mod_actions_raid">Raid</string>
+    <string name="mod_actions_cancel_raid">Cancel raid</string>
+    <string name="mod_actions_stream_marker">Stream marker</string>
+    <string name="mod_actions_username_hint">Username</string>
+    <string name="mod_actions_channel_hint">Channel</string>
     <string name="account">Аккаунт</string>
     <string name="relogin">Войти снова</string>
     <string name="logout">Выйти</string>
@@ -140,12 +370,15 @@
     <string name="change_roomstate">Режимы чата</string>
     <string name="confirm_user_ban_title">Подтверждение бана</string>
     <string name="confirm_user_ban_message">Вы уверены, что хотите забанить этого пользователя?</string>
+    <string name="confirm_user_ban_question">Забанить этого пользователя?</string>
     <string name="confirm_user_ban_positive_button">Забанить</string>
     <string name="confirm_user_timeout_title">Подтверждение тайм-аута</string>
     <string name="confirm_user_timeout_positive_button">Тайм-аут</string>
     <string name="confirm_user_delete_title">Подтверждение удаления сообщения</string>
     <string name="confirm_user_delete_message">Вы уверены, что хотите удалить это сообщение?</string>
+    <string name="confirm_user_delete_question">Удалить это сообщение?</string>
     <string name="confirm_user_delete_positive_button">Удалить</string>
+    <string name="confirm_clear_chat_question">Очистить чат?</string>
     <string name="confirm_user_roomstate_title">Обновить режимы чата</string>
     <string name="roomstate_emote">Только смайлы</string>
     <string name="roomstate_subs">Только подписчики</string>
@@ -157,6 +390,8 @@
     <string name="add_command">Добавить команду</string>
     <string name="remove_command">Удалить команду</string>
     <string name="command_trigger_hint">Триггер</string>
+    <string name="command_trigger_reserved">Этот триггер зарезервирован встроенной командой</string>
+    <string name="command_trigger_duplicate">Этот триггер уже используется другой командой</string>
     <string name="command__hint">Команда</string>
     <string name="commands_title">Пользовательские команды</string>
     <string name="user_popup_report">Пожаловаться</string>
@@ -194,14 +429,57 @@
     <string name="preference_notification_header">Уведомления</string>
     <string name="preference_chat_header">Чат</string>
     <string name="preference_general_header">Общие</string>
+    <string name="preference_suggestions_header">Подсказки</string>
+    <string name="preference_messages_header">Сообщения</string>
+    <string name="preference_users_header">Пользователи</string>
+    <string name="preference_emotes_badges_header">Эмоции и значки</string>
+    <string name="preference_suggestion_mode_title">Режим подсказок</string>
+    <string name="preference_suggestion_mode_automatic">Предлагать совпадения при вводе</string>
+    <string name="preference_suggestion_mode_prefix_only">Предлагать только после символа-триггера</string>
     <string name="preference_about_header">О программе</string>
     <string name="preference_appearance_header">Внешний вид</string>
     <string name="preference_about_summary">DankChat %1$s создан @flex3rs и другими участниками</string>
     <string name="preference_show_input_title">Отображать строку ввода</string>
     <string name="preference_show_input_summary">Отображать строку для ввода сообщений</string>
     <string name="preference_follow_system_title">В соответствии с системой</string>
-    <string name="preference_true_dark_theme_title">Истинно тёмная тема</string>
-    <string name="preference_true_dark_theme_summary">Переключать цвет заднего фона чата на чёрный</string>
+    <string name="preference_true_dark_theme_title">AMOLED тёмный режим</string>
+    <string name="preference_true_dark_theme_summary">Чисто чёрный фон для OLED-экранов</string>
+    <string name="preference_accent_color_title">Цвет акцента</string>
+    <string name="preference_accent_color_summary_default">Следовать обоям системы</string>
+    <string name="accent_color_blue">Синий</string>
+    <string name="accent_color_teal">Бирюзовый</string>
+    <string name="accent_color_green">Зелёный</string>
+    <string name="accent_color_lime">Лаймовый</string>
+    <string name="accent_color_yellow">Жёлтый</string>
+    <string name="accent_color_orange">Оранжевый</string>
+    <string name="accent_color_red">Красный</string>
+    <string name="accent_color_pink">Розовый</string>
+    <string name="accent_color_purple">Фиолетовый</string>
+    <string name="accent_color_indigo">Индиго</string>
+    <string name="accent_color_brown">Коричневый</string>
+    <string name="accent_color_grey">Серый</string>
+    <string name="preference_palette_style_title">Стиль цвета</string>
+    <string name="palette_style_system_default">Системный по умолчанию</string>
+    <string name="palette_style_system_default_desc">Использовать стандартную цветовую палитру системы</string>
+    <string name="palette_style_tonal_spot">Tonal Spot</string>
+    <string name="palette_style_tonal_spot_desc">Спокойные и приглушённые цвета</string>
+    <string name="palette_style_neutral">Neutral</string>
+    <string name="palette_style_neutral_desc">Почти монохромный, едва заметный оттенок</string>
+    <string name="palette_style_vibrant">Vibrant</string>
+    <string name="palette_style_vibrant_desc">Яркие и насыщенные цвета</string>
+    <string name="palette_style_expressive">Expressive</string>
+    <string name="palette_style_expressive_desc">Игривые цвета со сдвинутыми оттенками</string>
+    <string name="palette_style_rainbow">Rainbow</string>
+    <string name="palette_style_rainbow_desc">Широкий спектр оттенков</string>
+    <string name="palette_style_fruit_salad">Fruit Salad</string>
+    <string name="palette_style_fruit_salad_desc">Игривая многоцветная палитра</string>
+    <string name="palette_style_monochrome">Monochrome</string>
+    <string name="palette_style_monochrome_desc">Только чёрный, белый и серый</string>
+    <string name="palette_style_fidelity">Fidelity</string>
+    <string name="palette_style_fidelity_desc">Верен цвету акцента</string>
+    <string name="palette_style_content">Content</string>
+    <string name="palette_style_content_desc">Цвет акцента с аналоговым третичным</string>
+    <string name="palette_style_more">Больше стилей</string>
     <string name="preference_display_group_title">Отображение</string>
     <string name="preference_components_group_title">Компоненты</string>
     <string name="preference_show_timed_out_messages_title">Отображать удалённые сообщения</string>
@@ -213,8 +491,16 @@
     <string name="preference_font_size_summary_small">Маленький</string>
     <string name="preference_font_size_summary_large">Большой</string>
     <string name="preference_font_size_summary_very_large">Огромный</string>
-    <string name="preference_suggestions_title">Подсказки пользователей и смайлов</string>
-    <string name="preference_suggestions_summary">Отображать подсказки для имён пользователей и смайлов при наборе сообщения</string>
+    <string name="preference_suggestions_title">Подсказки</string>
+    <string name="preference_suggestions_summary">Выберите, какие подсказки показывать при вводе</string>
+    <string name="preference_suggestions_emotes">Эмоции</string>
+    <string name="preference_suggestions_emotes_desc">Активировать с помощью :</string>
+    <string name="preference_suggestions_users">Пользователи</string>
+    <string name="preference_suggestions_users_desc">Активировать с помощью @</string>
+    <string name="preference_suggestions_commands">Команды Twitch</string>
+    <string name="preference_suggestions_commands_desc">Активировать с помощью /</string>
+    <string name="preference_suggestions_supibot">Команды Supibot</string>
+    <string name="preference_suggestions_supibot_desc">Активировать с помощью $</string>
     <string name="preference_load_message_history_title">Загружать историю сообщений сразу</string>
     <string name="preference_load_messages_on_reconnect_title">Загружать историю сообщений после переподключения</string>
     <string name="preference_load_messages_on_reconnect_summary">Попытаться получить пропущенные сообщения, которые не были получены во время разрыва соединения</string>
@@ -223,8 +509,10 @@
     <string name="preference_message_history_dashboard_summary">Узнайте больше про ресурс и отключите историю сообщений для вашего собственного канала</string>
     <string name="preference_channel_data_header">Данные канала</string>
     <string name="preference_developer_header">Настройки разработчика</string>
+    <string name="preference_log_viewer_title">Просмотр журналов</string>
+    <string name="preference_log_viewer_summary">Просмотр журналов приложения</string>
     <string name="preference_debug_mode_title">Режим отладки</string>
-    <string name="preference_debug_mode_summary">Отображать информацию о записанных исключениях</string>
+    <string name="preference_debug_mode_summary">Показывать действие отладочной аналитики в панели ввода и собирать отчёты о сбоях локально</string>
     <string name="preference_timestamp_format_title">Формат временных меток</string>
     <string name="preference_tts_title">Включить синтезатор речи</string>
     <string name="preference_tts_summary">Зачитывает сообщения активного канала</string>
@@ -238,6 +526,9 @@
     <string name="preference_tts_message_ignore_url_title">Игнорировать URL</string>
     <string name="preference_tts_message_ignore_emote_message">Игнорировать смайлы и эмодзи в синтезаторе речи </string>
     <string name="preference_tts_message_ignore_emote_title">Игнорировать смайлы </string>
+    <string name="preference_tts_volume_title">Громкость</string>
+    <string name="preference_tts_audio_ducking_title">Приглушение звука</string>
+    <string name="preference_tts_audio_ducking_summary">Уменьшать громкость других приложений во время озвучки</string>
     <string name="preference_tts_header">Синтезатор речи</string>
     <string name="preference_checkered_lines_title">Шахматные линии</string>
     <string name="preference_checkered_lines_summary">Разделять каждую линию, используя цвета фона с разной яркостью</string>
@@ -250,12 +541,19 @@
     <string name="preference_user_long_click_title">Поведение при долгом нажатии на имя пользователя</string>
     <string name="preference_user_long_click_summary_on">Обычное нажатие открывает всплывающее окно с информацией о пользователе, долгое - открывает упоминания</string>
     <string name="preference_user_long_click_summary_off">Обычное нажатие открывает упоминания, долгое - открывает всплывающее окно с информацией о пользователе</string>
+    <string name="preference_colorize_nicknames_title">Окрашивать никнеймы</string>
+    <string name="preference_colorize_nicknames_summary">Назначать случайный цвет пользователям без установленного цвета</string>
     <string name="preference_tts_force_english_title">Переключить язык на английский</string>
     <string name="preference_tts_force_english_summary">Переключить язык синтезатора речи с системного на английский</string>
     <string name="preference_visible_emotes_title">Видимые сторонние смайлы</string>
     <string name="preference_about_tos">Условия пользования и политика пользователя Twitch:</string>
     <string name="preference_show_chip_actions_title">Отображать быстрые переключатели</string>
     <string name="preference_show_chip_actions_summary">Отображать переключатели для полноэкранного режима, трансляций и настройки режимов чата</string>
+    <string name="preference_show_character_counter_title">Показывать счётчик символов</string>
+    <string name="preference_show_character_counter_summary">Отображает количество кодовых точек в поле ввода</string>
+    <string name="preference_show_clear_input_button_title">Показывать кнопку очистки ввода</string>
+    <string name="preference_show_send_button_title">Показывать кнопку отправки</string>
+    <string name="preference_input_group_title">Ввод</string>
     <string name="preference_uploader_header">Загрузчик медиа</string>
     <string name="preference_uploader_configure_title">Настроить загрузчик</string>
     <string name="preference_uploader_recent_uploads_title">Недавние загрузки</string>
@@ -268,6 +566,14 @@
     <string name="preference_unlisted_emotes_title">Разрешить незарегистрированные смайлы</string>
     <string name="preference_unlisted_emotes_summary">Отключить фильтрацию неутвержденных или незарегистрированных смайлов</string>
     <string name="preference_rm_host_title">Пользовательский узел последних сообщений</string>
+    <string name="preference_developer_category_general">Общие</string>
+    <string name="preference_developer_category_auth">Авторизация</string>
+    <string name="preference_eventsub_title">Включить Twitch EventSub</string>
+    <string name="preference_eventsub_summary">Использует EventSub для различных событий в реальном времени вместо устаревшего PubSub</string>
+    <string name="preference_eventsub_debug_title">Включить отладочный вывод EventSub</string>
+    <string name="preference_eventsub_debug_summary">Выводит отладочную информацию по EventSub в виде системных сообщений</string>
+    <string name="preference_revoke_token_title">Отозвать токен и перезапустить</string>
+    <string name="preference_revoke_token_summary">Аннулирует текущий токен и перезапускает приложение</string>
     <string name="preference_fetch_streams_title">Получать информацию о трансляции</string>
     <string name="preference_fetch_streams_summary">Периодически извлекать потоковую информацию об открытых каналах. Требуется для запуска встроенной трансляции.</string>
     <string name="preference_auto_disable_input_title">Отключить ввод, если нет подключения к чату</string>
@@ -284,6 +590,9 @@
     <string name="preference_custom_login_title">Пользовательский логин</string>
     <string name="preference_bypass_command_handling_title">Обход обработки команд Twitch</string>
     <string name="preference_bypass_command_handling_summary">Отключает перехват команд Twitch и отправляет их в чат</string>
+    <string name="preference_chat_send_protocol_category">Протокол отправки чата</string>
+    <string name="preference_helix_sending_title">Использовать Helix API для отправки</string>
+    <string name="preference_helix_sending_summary">Отправлять сообщения чата через Twitch Helix API вместо IRC</string>
     <string name="preference_7tv_live_updates_title">Обновления 7TV эмоций в реальном времени</string>
     <string name="preference_7tv_live_updates_timeout_title">Фоновые обновления эмоций</string>
     <string name="preference_7tv_live_updates_timeout_summary_timeout">Обновления останавливаются после %1$s.\nУменьшение этого значения может увеличить время автономной работы.</string>
@@ -320,14 +629,17 @@
     <string name="tab_users">Пользователи</string>
     <string name="tab_blacklisted_users">Заблокированные пользователи</string>
     <string name="tab_twitch">Twitch</string>
+    <string name="tab_badges">Значки</string>
     <string name="undo">Отменить</string>
     <string name="item_removed">Элемент удалён</string>
     <string name="unblocked_user">Пользователь %1$s разблокирован</string>
     <string name="unblocked_user_failed">Не удалось разблокировать пользователя %1$s</string>
+    <string name="badge">Значок</string>
     <string name="blocked_user_failed">Не удалось заблокировать пользователя %1$s</string>
     <string name="highlights_entry_username">Ваше имя пользователя</string>
     <string name="highlights_ignores_entry_subscriptions">Подписки и События</string>
     <string name="highlights_ignores_entry_announcements">Анонсы</string>
+    <string name="highlights_ignores_entry_watch_streaks">Серии просмотров</string>
     <string name="highlights_ignores_entry_first_messages">Первые сообщения</string>
     <string name="highlights_ignores_entry_elevated_messages">Возвышенные сообщения</string>
     <string name="highlights_ignores_entry_redemptions">Выделения купленные за баллы канала</string>
@@ -336,6 +648,7 @@
     <string name="highlights_messages_title">Создает уведомления, и выделяет сообщения на основе определенных шаблонов.</string>
     <string name="highlights_users_title">Создает уведомления, и выделяет сообщения от определенных пользователей.</string>
     <string name="highlights_blacklisted_users_title">Отключает уведомления и выделения от определенных пользователей (например, ботов).</string>
+    <string name="highlights_badges_title">Создавайте уведомления и выделяйте сообщения пользователей на основе значков.</string>
     <string name="ignores_messages_title">Игнорирует сообщения, основанные на определенных шаблонах.</string>
     <string name="ignores_users_title">Игнорирует сообщения от определенных пользователей.</string>
     <string name="ignores_twitch_title">Управление заблокированными пользователями Twitch.</string>
@@ -345,7 +658,7 @@
     <string name="custom_user_display_title">Пользовательское отображение пользователя</string>
     <string name="remove_custom_user_display">Удалить пользовательское отображение пользователя</string>
     <string name="user_display_alias_input">Псевдоним</string>
-    <string name="user_display_custom_color_enable">﻿Пользовательский цвет</string>
+    <string name="user_display_custom_color_enable">Пользовательский цвет</string>
     <string name="user_display_custom_alias_enable">Пользовательский псевдоним</string>
     <string name="pick_custom_user_color_title">Выбрать пользовательский цвет</string>
     <string name="custom_user_display_summary">Добавить пользовательское имя и цвет для пользователей</string>
@@ -353,10 +666,66 @@
     <string name="message_copy">Копировать сообщение </string>
     <string name="message_copy_full">Копировать полное сообщения </string>
     <string name="message_reply">Ответить на сообщение</string>
+    <string name="message_reply_original">Ответить на исходное сообщение</string>
     <string name="message_view_thread">Посмотреть ветку</string>
     <string name="message_copy_id">Копировать ID сообщения</string>
     <string name="message_more_actions">Ещё…</string>
+    <string name="message_jump_to">Перейти к сообщению</string>
+    <string name="message_not_in_history">Сообщение больше не в истории чата</string>
+    <string name="message_history">История сообщений</string>
+    <string name="global_history_title">Глобальная история</string>
+    <string name="message_history_title">История: %1$s</string>
+    <string name="view_history">Просмотреть историю</string>
+    <string name="history_empty">Нет сообщений, соответствующих текущим фильтрам</string>
+    <string name="search_messages_hint">Поиск сообщений…</string>
+    <string name="log_viewer_title">Журналы</string>
+    <string name="log_viewer_share">Поделиться журналами</string>
+    <string name="log_viewer_open">Просмотреть журналы</string>
+    <string name="preference_log_viewer_empty">Файлы журналов отсутствуют</string>
+    <string name="log_viewer_search_hint">Поиск по журналам</string>
+    <plurals name="log_viewer_selected_count">
+        <item quantity="one">Выбрано: %1$d</item>
+        <item quantity="few">Выбрано: %1$d</item>
+        <item quantity="many">Выбрано: %1$d</item>
+        <item quantity="other">Выбрано: %1$d</item>
+    </plurals>
+    <string name="log_viewer_copy_selection">Копировать выбранные журналы</string>
+    <string name="log_viewer_clear_selection">Снять выделение</string>
+    <string name="crash_report_title">Обнаружен сбой</string>
+    <string name="crash_report_message">Приложение аварийно завершилось во время последнего сеанса.</string>
+    <string name="crash_report_thread">Поток: %1$s</string>
+    <string name="crash_report_copy">Копировать</string>
+    <string name="crash_report_send">Отчёт в чат</string>
+    <string name="crash_report_send_description">Присоединяется к #flex3rs и готовит сводку сбоя для отправки</string>
+    <string name="crash_report_email">Отчёт по эл. почте</string>
+    <string name="crash_report_email_description">Отправить подробный отчёт о сбое по электронной почте</string>
+    <string name="crash_email_confirm_title">Отправить отчёт о сбое по электронной почте</string>
+    <string name="crash_email_confirm_message">Следующие данные будут включены в отчёт:</string>
+    <string name="crash_email_confirm_stacktrace">Стек вызовов</string>
+    <string name="crash_email_confirm_include_logs">Включить текущий файл журнала</string>
+    <string name="preference_crash_viewer_title">Отчёты о сбоях</string>
+    <string name="preference_crash_viewer_summary">Просмотр последних отчётов о сбоях</string>
+    <string name="preference_crash_viewer_empty">Отчёты о сбоях не найдены</string>
+    <string name="crash_viewer_title">Отчёт о сбое</string>
+    <string name="crash_viewer_share">Поделиться отчётом о сбое</string>
+    <string name="crash_viewer_delete">Удалить</string>
+    <string name="crash_viewer_clear_all">Очистить всё</string>
+    <string name="crash_viewer_delete_confirm">Удалить этот отчёт о сбое?</string>
+    <string name="crash_viewer_clear_all_confirm">Удалить все отчёты о сбоях?</string>
+    <string name="scroll_to_bottom">Прокрутить вниз</string>
+    <string name="search_filter_by_username">Фильтр по имени пользователя</string>
+    <string name="search_filter_has_link">Сообщения со ссылками</string>
+    <string name="search_filter_has_emote">Сообщения с эмоутами</string>
+    <string name="search_filter_by_badge">Фильтр по названию значка</string>
+    <string name="search_filter_user">Пользователь</string>
+    <string name="search_filter_badge">Значок</string>
     <string name="reply_header">В ответ @%1$s</string>
+    <string name="whisper_header">Личное сообщение для @%1$s</string>
+    <string name="hint_whispering">Отправить личное сообщение</string>
+    <string name="whisper_new">Новое личное сообщение</string>
+    <string name="whisper_new_dialog_title">Отправить личное сообщение</string>
+    <string name="whisper_new_dialog_hint">Имя пользователя</string>
+    <string name="whisper_new_dialog_start">Отправить</string>
     <string name="reply_thread_not_found">Ветка ответов не найдена</string>
     <string name="message_not_found">Сообщение не найдено</string>
     <string name="emote_sheet_use">Использовать смайл</string>
@@ -406,4 +775,168 @@
     <string name="preference_streaminfo_category_title">Отображать категорию стрима</string>
     <string name="preference_streaminfo_category_summary">Также показывать категорию стрима</string>
     <string name="toggle_input">Переключить строку ввода</string>
+    <string name="badge_broadcaster">Стример</string>
+    <string name="badge_admin">Администратор</string>
+    <string name="badge_staff">Сотрудник</string>
+    <string name="badge_moderator">Модератор</string>
+    <string name="badge_lead_moderator">Главный модератор</string>
+    <string name="badge_verified">Подтверждённый</string>
+    <string name="badge_vip">VIP</string>
+    <string name="badge_founder">Основатель</string>
+    <string name="badge_subscriber">Подписчик</string>
+    <string name="pick_highlight_color_title">Выбрать пользовательский цвет выделения</string>
+    <string name="reset_default_highlight_color">По умолчанию</string>
+    <string name="choose_highlight_color">Выбрать цвет</string>
+    <string name="toggle_app_bar">Переключить панель приложения</string>
+    <string name="error_with_message">Ошибка: %s</string>
+    <!-- Onboarding -->
+    <string name="onboarding_welcome_title">DankChat</string>
+    <string name="onboarding_welcome_body">Давайте настроим всё.</string>
+    <string name="onboarding_get_started">Начать</string>
+    <string name="onboarding_login_title">Войти через Twitch</string>
+    <string name="onboarding_login_body">Войдите, чтобы отправлять сообщения, использовать свои эмоуты, получать личные сообщения и разблокировать все функции.</string>
+    <string name="onboarding_login_disclaimer">Вам будет предложено предоставить сразу несколько разрешений Twitch, чтобы вам не пришлось повторно авторизоваться при использовании различных функций. DankChat выполняет действия по модерации и управлению трансляцией только по вашему запросу.</string>
+    <string name="onboarding_login_button">Войти через Twitch</string>
+    <string name="onboarding_login_success">Вход выполнен</string>
+    <string name="onboarding_skip">Пропустить</string>
+    <string name="onboarding_continue">Продолжить</string>
+    <string name="onboarding_history_title">История сообщений</string>
+    <string name="onboarding_history_body">DankChat загружает историю сообщений из стороннего сервиса при запуске. Для получения сообщений DankChat отправляет названия открытых каналов этому сервису. Сервис временно хранит сообщения посещённых каналов.\n\nВы можете изменить это позже в настройках или узнать больше на https://recent-messages.robotty.de/</string>
+    <string name="onboarding_history_enable">Включить</string>
+    <string name="onboarding_history_disable">Отключить</string>
+    <string name="onboarding_notifications_title">Уведомления</string>
+    <string name="onboarding_notifications_body">DankChat может уведомлять вас, когда кто-то упоминает вас в чате, пока приложение работает в фоне.</string>
+    <string name="onboarding_notifications_allow">Разрешить уведомления</string>
+    <string name="onboarding_notifications_rationale">Без уведомлений вы не узнаете, когда кто-то упоминает вас в чате, пока приложение работает в фоне.</string>
+    <string name="onboarding_notifications_open_settings">Открыть настройки уведомлений</string>
+    <!-- Feature Tour -->
+    <string name="tour_input_actions">Настраиваемые действия для быстрого доступа к поиску, трансляциям и другому</string>
+    <string name="tour_overflow_menu">Нажмите здесь для дополнительных действий и настройки панели действий</string>
+    <string name="tour_configure_actions">Здесь можно настроить, какие действия отображаются на панели действий</string>
+    <string name="tour_swipe_gesture">Проведите вниз по полю ввода, чтобы быстро скрыть его</string>
+    <string name="tour_recovery_fab">Нажмите здесь, чтобы вернуть поле ввода</string>
+    <string name="tour_next">Далее</string>
+    <string name="tour_got_it">Понятно</string>
+    <string name="tour_skip">Пропустить тур</string>
+    <string name="tour_add_more_channels_hint">Здесь можно добавить больше каналов</string>
+    <!-- Command responses -->
+    <string name="cmd_error_not_logged_in">Необходимо войти в аккаунт для использования команды %1$s</string>
+    <string name="cmd_error_no_user_matching">Пользователь с таким именем не найден.</string>
+    <string name="cmd_error_unknown">Произошла неизвестная ошибка.</string>
+    <string name="cmd_error_no_permission">У вас нет разрешения на выполнение этого действия.</string>
+    <string name="cmd_error_missing_scopes">Отсутствует необходимое разрешение. Войдите заново и попробуйте снова.</string>
+    <string name="cmd_error_not_logged_in_credentials">Отсутствуют данные для входа. Войдите заново и попробуйте снова.</string>
+    <string name="cmd_block_usage">Использование: /block &lt;пользователь&gt;</string>
+    <string name="cmd_block_success">Вы успешно заблокировали пользователя %1$s</string>
+    <string name="cmd_block_not_found">Не удалось заблокировать пользователя %1$s, пользователь с таким именем не найден!</string>
+    <string name="cmd_block_error">Не удалось заблокировать пользователя %1$s, произошла неизвестная ошибка!</string>
+    <string name="cmd_unblock_usage">Использование: /unblock &lt;пользователь&gt;</string>
+    <string name="cmd_unblock_success">Вы успешно разблокировали пользователя %1$s</string>
+    <string name="cmd_unblock_not_found">Не удалось разблокировать пользователя %1$s, пользователь с таким именем не найден!</string>
+    <string name="cmd_unblock_error">Не удалось разблокировать пользователя %1$s, произошла неизвестная ошибка!</string>
+    <string name="cmd_uptime_not_live">Канал не в эфире.</string>
+    <string name="cmd_uptime_response">Время в эфире: %1$s</string>
+    <string name="cmd_help_response">Доступные команды в этой комнате: %1$s</string>
+    <string name="cmd_usage_whisper">Использование: %1$s &lt;имя пользователя&gt; &lt;сообщение&gt;.</string>
+    <string name="cmd_whisper_sent">Личное сообщение отправлено.</string>
+    <string name="cmd_fail_whisper">Не удалось отправить личное сообщение - %1$s</string>
+    <string name="cmd_usage_announce">Использование: %1$s &lt;сообщение&gt; - Привлеките внимание к своему сообщению с помощью выделения.</string>
+    <string name="cmd_fail_announce">Не удалось отправить объявление - %1$s</string>
+    <string name="cmd_no_moderators">На этом канале нет модераторов.</string>
+    <string name="cmd_moderators_list">Модераторы этого канала: %1$s.</string>
+    <string name="cmd_fail_list_moderators">Не удалось получить список модераторов - %1$s</string>
+    <string name="cmd_usage_mod">Использование: %1$s &lt;имя пользователя&gt; - Предоставить пользователю статус модератора.</string>
+    <string name="cmd_success_mod_added">Вы добавили %1$s в качестве модератора этого канала.</string>
+    <string name="cmd_fail_mod_add">Не удалось добавить модератора канала - %1$s</string>
+    <string name="cmd_usage_unmod">Использование: %1$s &lt;имя пользователя&gt; - Отозвать статус модератора у пользователя.</string>
+    <string name="cmd_success_mod_removed">Вы убрали %1$s из модераторов этого канала.</string>
+    <string name="cmd_fail_mod_remove">Не удалось убрать модератора канала - %1$s</string>
+    <string name="cmd_no_vips">На этом канале нет VIP.</string>
+    <string name="cmd_vips_list">VIP этого канала: %1$s.</string>
+    <string name="cmd_fail_list_vips">Не удалось получить список VIP - %1$s</string>
+    <string name="cmd_usage_vip">Использование: %1$s &lt;имя пользователя&gt; - Предоставить пользователю статус VIP.</string>
+    <string name="cmd_success_vip_added">Вы добавили %1$s в качестве VIP этого канала.</string>
+    <string name="cmd_fail_vip_add">Не удалось добавить VIP - %1$s</string>
+    <string name="cmd_usage_unvip">Использование: %1$s &lt;имя пользователя&gt; - Отозвать статус VIP у пользователя.</string>
+    <string name="cmd_success_vip_removed">Вы убрали %1$s из VIP этого канала.</string>
+    <string name="cmd_fail_vip_remove">Не удалось убрать VIP - %1$s</string>
+    <string name="cmd_usage_ban">Использование: %1$s &lt;имя пользователя&gt; [причина] - Навсегда запретить пользователю писать в чат. Причина необязательна и будет показана целевому пользователю и другим модераторам. Используйте /unban для снятия бана.</string>
+    <string name="cmd_ban_cannot_self">Не удалось забанить пользователя - Вы не можете забанить самого себя.</string>
+    <string name="cmd_ban_cannot_broadcaster">Не удалось забанить пользователя - Вы не можете забанить стримера.</string>
+    <string name="cmd_fail_ban">Не удалось забанить пользователя - %1$s</string>
+    <string name="cmd_usage_unban">Использование: %1$s &lt;имя пользователя&gt; - Снимает бан с пользователя.</string>
+    <string name="cmd_fail_unban">Не удалось разбанить пользователя - %1$s</string>
+    <string name="cmd_usage_timeout">Использование: %1$s &lt;имя пользователя&gt; [длительность][единица времени] [причина] - Временно запретить пользователю писать в чат. Длительность (необязательно, по умолчанию: 10 минут) должна быть положительным целым числом; единица времени (необязательно, по умолчанию: s) должна быть s, m, h, d или w; максимальная длительность — 2 недели. Причина необязательна и будет показана целевому пользователю и другим модераторам.</string>
+    <string name="cmd_timeout_cannot_self">Не удалось забанить пользователя - Вы не можете дать тайм-аут самому себе.</string>
+    <string name="cmd_timeout_cannot_broadcaster">Не удалось забанить пользователя - Вы не можете дать тайм-аут стримеру.</string>
+    <string name="cmd_fail_timeout">Не удалось дать тайм-аут пользователю - %1$s</string>
+    <string name="cmd_fail_clear">Не удалось удалить сообщения чата - %1$s</string>
+    <string name="cmd_usage_delete">Использование: /delete &lt;msg-id&gt; - Удаляет указанное сообщение.</string>
+    <string name="cmd_delete_invalid_id">Недопустимый msg-id: \"%1$s\".</string>
+    <string name="cmd_fail_delete">Не удалось удалить сообщения чата - %1$s</string>
+    <string name="cmd_usage_color">Использование: /color &lt;цвет&gt; - Цвет должен быть одним из поддерживаемых Twitch цветов (%1$s) или hex code (#000000), если у вас есть Turbo или Prime.</string>
+    <string name="cmd_success_color">Ваш цвет был изменён на %1$s</string>
+    <string name="cmd_fail_color">Не удалось изменить цвет на %1$s - %2$s</string>
+    <string name="cmd_success_marker">Маркер стрима успешно добавлен на %1$s%2$s.</string>
+    <string name="cmd_fail_marker">Не удалось создать маркер стрима - %1$s</string>
+    <string name="cmd_usage_commercial">Использование: /commercial &lt;длительность&gt; - Запускает рекламу указанной длительности для текущего канала. Допустимые значения: 30, 60, 90, 120, 150 и 180 секунд.</string>
+    <plurals name="cmd_success_commercial">
+        <item quantity="one">Запуск рекламной паузы длительностью %1$d секунд. Помните, что вы всё ещё в эфире и не все зрители получат рекламу. Вы сможете запустить следующую рекламу через %2$d секунд.</item>
+        <item quantity="few">Запуск рекламной паузы длительностью %1$d секунд. Помните, что вы всё ещё в эфире и не все зрители получат рекламу. Вы сможете запустить следующую рекламу через %2$d секунд.</item>
+        <item quantity="many">Запуск рекламной паузы длительностью %1$d секунд. Помните, что вы всё ещё в эфире и не все зрители получат рекламу. Вы сможете запустить следующую рекламу через %2$d секунд.</item>
+        <item quantity="other">Запуск рекламной паузы длительностью %1$d секунд. Помните, что вы всё ещё в эфире и не все зрители получат рекламу. Вы сможете запустить следующую рекламу через %2$d секунд.</item>
+    </plurals>
+    <string name="cmd_fail_commercial">Не удалось запустить рекламу - %1$s</string>
+    <string name="cmd_usage_raid">Использование: /raid &lt;имя пользователя&gt; - Совершить рейд на пользователя. Только стример может начать рейд.</string>
+    <string name="cmd_raid_invalid_username">Недопустимое имя пользователя: %1$s</string>
+    <string name="cmd_success_raid">Вы начали рейд на %1$s.</string>
+    <string name="cmd_fail_raid">Не удалось начать рейд - %1$s</string>
+    <string name="cmd_success_unraid">Вы отменили рейд.</string>
+    <string name="cmd_fail_unraid">Не удалось отменить рейд - %1$s</string>
+    <string name="cmd_usage_followers">Использование: %1$s [длительность] - Включает режим «только для подписчиков» (только подписчики могут писать в чат). Длительность (необязательно, по умолчанию: 0 минут) должна быть положительным числом с единицей времени (m, h, d, w); максимальная длительность — 3 месяца.</string>
+    <string name="cmd_room_already_followers">Эта комната уже в режиме «только для подписчиков» %1$s.</string>
+    <string name="cmd_fail_chat_settings">Не удалось обновить настройки чата - %1$s</string>
+    <string name="cmd_room_not_followers">Эта комната не в режиме «только для подписчиков».</string>
+    <string name="cmd_room_already_emote_only">Эта комната уже в режиме «только эмоуты».</string>
+    <string name="cmd_room_not_emote_only">Эта комната не в режиме «только эмоуты».</string>
+    <string name="cmd_room_already_subscribers">Эта комната уже в режиме «только для подписчиков канала».</string>
+    <string name="cmd_room_not_subscribers">Эта комната не в режиме «только для подписчиков канала».</string>
+    <string name="cmd_room_already_unique_chat">Эта комната уже в режиме уникального чата.</string>
+    <string name="cmd_room_not_unique_chat">Эта комната не в режиме уникального чата.</string>
+    <string name="cmd_usage_slow">Использование: %1$s [длительность] - Включает медленный режим (ограничивает частоту отправки сообщений). Длительность (необязательно, по умолчанию: 30) должна быть положительным числом секунд; максимум 120.</string>
+    <string name="cmd_room_already_slow">Эта комната уже в медленном режиме (%1$d сек.).</string>
+    <string name="cmd_room_not_slow">Эта комната не в медленном режиме.</string>
+    <string name="cmd_usage_shoutout">Использование: %1$s &lt;имя пользователя&gt; - Отправляет шаут-аут указанному пользователю Twitch.</string>
+    <string name="cmd_success_shoutout">Шаут-аут отправлен %1$s</string>
+    <string name="cmd_fail_shoutout">Не удалось отправить шаут-аут - %1$s</string>
+    <string name="cmd_shield_activated">Режим щита активирован.</string>
+    <string name="cmd_shield_deactivated">Режим щита деактивирован.</string>
+    <string name="cmd_fail_shield">Не удалось обновить режим щита - %1$s</string>
+    <string name="cmd_error_whisper_self">Вы не можете отправлять личные сообщения самому себе.</string>
+    <string name="cmd_error_no_verified_phone">Из-за ограничений Twitch теперь для отправки личных сообщений требуется подтверждённый номер телефона. Вы можете добавить номер телефона в настройках Twitch. https://www.twitch.tv/settings/security</string>
+    <string name="cmd_error_recipient_blocked">Получатель не принимает личные сообщения от незнакомцев или от вас напрямую.</string>
+    <string name="cmd_error_rate_limited">Twitch ограничил частоту ваших запросов. Попробуйте через несколько секунд.</string>
+    <string name="cmd_error_whisper_rate_limited">Вы можете отправлять личные сообщения максимум 40 уникальным получателям в день. В рамках дневного лимита вы можете отправлять максимум 3 личных сообщения в секунду и максимум 100 личных сообщений в минуту.</string>
+    <string name="cmd_error_broadcaster_required">Из-за ограничений Twitch эта команда доступна только стримеру. Пожалуйста, используйте веб-сайт Twitch.</string>
+    <string name="cmd_error_already_modded">%1$s уже является модератором этого канала.</string>
+    <string name="cmd_error_target_is_vip">%1$s сейчас VIP, используйте /unvip и повторите эту команду.</string>
+    <string name="cmd_error_not_modded">%1$s не является модератором этого канала.</string>
+    <string name="cmd_error_not_banned">%1$s не забанен на этом канале.</string>
+    <string name="cmd_error_already_banned">%1$s уже забанен на этом канале.</string>
+    <string name="cmd_error_cannot_perform">Вы не можете %1$s %2$s.</string>
+    <string name="cmd_error_conflicting_ban">Произошла конфликтующая операция бана для этого пользователя. Пожалуйста, попробуйте снова.</string>
+    <string name="cmd_error_invalid_color">Цвет должен быть одним из поддерживаемых Twitch цветов (%1$s) или hex code (#000000), если у вас есть Turbo или Prime.</string>
+    <string name="cmd_error_commercial_not_streaming">Вы должны вести прямую трансляцию для запуска рекламы.</string>
+    <string name="cmd_error_commercial_rate_limited">Необходимо дождаться окончания периода ожидания, прежде чем запускать следующую рекламу.</string>
+    <string name="cmd_error_missing_length">Команда должна включать желаемую длительность рекламной паузы больше нуля.</string>
+    <string name="cmd_error_no_raid_pending">У вас нет активного рейда.</string>
+    <string name="cmd_error_raid_self">Канал не может совершить рейд на самого себя.</string>
+    <string name="cmd_error_shoutout_self">Стример не может дать Shoutout самому себе.</string>
+    <string name="cmd_error_shoutout_not_streaming">Стример не ведёт трансляцию или не имеет одного или более зрителей.</string>
+    <string name="cmd_error_out_of_range">Длительность вне допустимого диапазона: %1$s.</string>
+    <string name="cmd_error_message_already_processed">Сообщение уже было обработано.</string>
+    <string name="cmd_error_message_not_found">Целевое сообщение не найдено.</string>
+    <string name="cmd_error_message_too_large">Ваше сообщение было слишком длинным.</string>
+    <string name="cmd_error_chat_rate_limited">Частота ваших запросов ограничена. Попробуйте через мгновение.</string>
+    <string name="cmd_error_target_default">Целевой пользователь</string>
 </resources>
