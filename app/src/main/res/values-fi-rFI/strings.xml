@@ -24,8 +24,10 @@
     <string name="remove_channel">Poista kanava</string>
     <string name="channel_blocked_message">Kanava estetty</string>
     <string name="no_channels_added">Kanavia ei lisätty</string>
+    <string name="no_channels_added_body">Lisää kanava aloittaaksesi keskustelun</string>
     <string name="confirm_logout_title">Vahvista uloskirjautuminen</string>
     <string name="confirm_logout_message">Haluatko varmasti kirjautua ulos?</string>
+    <string name="confirm_logout_question">Kirjaudutaanko ulos?</string>
     <string name="confirm_logout_positive_button">Kirjaudu ulos</string>
     <string name="upload_media">Lähetä media</string>
     <string name="take_picture">Ota kuva</string>
@@ -44,13 +46,15 @@
     <string name="notification_message">DankChat on käynnissä taustalla</string>
     <string name="emote_menu_hint">Avaa hymiö-valikko</string>
     <string name="close_emote_menu">Sulje hymiö-valikko</string>
+    <string name="no_recent_emotes">Ei viimeaikaisia hymiöitä</string>
     <string name="emote_menu_title">Hymiöt</string>
     <string name="login_title">Kirjaudu sisään Twitch.tv:hen</string>
     <string name="hint_connected">Aloita chattailu</string>
     <string name="hint_disconnected">Yhteys katkaistu</string>
     <string name="hint_not_logged_int">Ei kirjautuneena</string>
     <string name="hint_replying">Vastaa</string>
-    <string name="hint_announcing">Send announcement</string>    <string name="notification_new_mentions">Sinulla on uusia mainintoja</string>
+    <string name="hint_announcing">Send announcement</string>
+    <string name="notification_new_mentions">Sinulla on uusia mainintoja</string>
     <string name="notification_mention">%1$s mainitsi sinut kanavalla #%2$s</string>
     <string name="notification_notify_mention">Sinut mainittiin kanavalla #%1$s</string>
     <string name="snackbar_login">Sisäänkirjautuminen nimellä %1$s</string>
@@ -79,12 +83,12 @@
     <string name="data_loading_step_cheermotes">Cheermotit</string>
     <string name="data_loading_step_recent_messages">Viimeaikaiset viestit</string>
     <string name="data_loading_step_with_channels">%1$s (%2$s)</string>
-
     <string name="highlight_header_first_time_chat">Ensimmäinen viesti</string>
     <string name="highlight_header_elevated_chat">Korostettu viesti</string>
     <string name="highlight_header_gigantified_emote">Jättimäinen emote</string>
     <string name="highlight_header_animated_message">Animoitu viesti</string>
-    <string name="highlight_header_reward_no_cost">Lunastettu %1$s</string>    <plurals name="duration_seconds">
+    <string name="highlight_header_reward_no_cost">Lunastettu %1$s</string>
+    <plurals name="duration_seconds">
         <item quantity="one">%1$d sekunti</item>
         <item quantity="other">%1$d sekuntia</item>
     </plurals>
@@ -110,6 +114,7 @@
     <string name="add_channel_hint">Kanavan nimi</string>
     <string name="add_channel_already_added">Kanava on jo lisätty</string>
     <string name="emote_menu_tab_recent">Viimeisimmät</string>
+    <string name="backspace">Askelpalautin</string>
     <string name="emote_menu_tab_subs">Tilaukset</string>
     <string name="emote_menu_tab_channel">Kanava</string>
     <string name="emote_menu_tab_global">Globaali</string>
@@ -132,6 +137,108 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s lisäsi 7TV-emotin %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s nimesi 7TV-emotin %2$s uudelleen nimellä %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s poisti 7TV-emotin %2$s.</string>
+    <!-- Send errors -->
+    <string name="system_message_send_not_logged_in">Ei kirjautunut sisään</string>
+    <string name="system_message_send_channel_not_resolved">Kanavan tunnusta ei voitu selvittää kanavalle %1$s</string>
+    <string name="system_message_send_not_delivered">Viestiä ei lähetetty</string>
+    <string name="system_message_send_dropped">Viesti hylätty: %1$s (%2$s)</string>
+    <string name="system_message_send_missing_scopes">Puuttuva user:write:chat-oikeus, kirjaudu uudelleen</string>
+    <string name="system_message_send_not_authorized">Ei oikeutta lähettää viestejä tällä kanavalla</string>
+    <string name="system_message_send_message_too_large">Viesti on liian suuri</string>
+    <string name="system_message_send_rate_limited">Nopeusrajoitus, yritä hetken kuluttua uudelleen</string>
+    <string name="system_message_send_failed">Lähetys epäonnistui: %1$s</string>
+    <!-- AutoMod -->
+    <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Viesti pidätetty syystä: %1$s. Salliminen julkaisee sen chatissa.</string>
+    <string name="automod_allow">Salli</string>
+    <string name="automod_deny">Hylkää</string>
+    <string name="automod_status_approved">Hyväksytty</string>
+    <string name="automod_status_denied">Hylätty</string>
+    <string name="automod_ban_user">Estä käyttäjä</string>
+    <string name="automod_status_expired">Vanhentunut</string>
+    <string name="automod_user_held">Hei! Viestisi on modien tarkistettavana eikä sitä ole vielä lähetetty.</string>
+    <string name="automod_user_accepted">Modit ovat hyväksyneet viestisi.</string>
+    <string name="automod_user_denied">Modit ovat hylänneet viestisi.</string>
+    <string name="automod_reason_category" comment="aggressive (level 2)">%1$s (taso %2$d)</string>
+    <plurals name="automod_reason_blocked_terms">
+        <item quantity="one">vastaa %1$d estettyä termiä %2$s</item>
+        <item quantity="other">vastaa %1$d estettyä termiä %2$s</item>
+    </plurals>
+    <string name="automod_error_already_processed" comment="Failed to allow AutoMod message - message has already been processed.">AutoMod-viestin %1$s epäonnistui - viesti on jo käsitelty.</string>
+    <string name="automod_error_not_authenticated" comment="Failed to allow AutoMod message - you need to re-authenticate.">AutoMod-viestin %1$s epäonnistui - sinun täytyy kirjautua uudelleen.</string>
+    <string name="automod_error_not_authorized" comment="Failed to allow AutoMod message - you don\'t have permission to perform that action.">AutoMod-viestin %1$s epäonnistui - sinulla ei ole oikeutta suorittaa tätä toimintoa.</string>
+    <string name="automod_error_not_found" comment="Failed to allow AutoMod message - target message not found.">AutoMod-viestin %1$s epäonnistui - kohdeviestiä ei löytynyt.</string>
+    <string name="automod_error_unknown" comment="Failed to allow AutoMod message - an unknown error occurred.">AutoMod-viestin %1$s epäonnistui - tuntematon virhe tapahtui.</string>
+    <string name="automod_moderation_added_blocked_term" comment="flex3rs added &quot;test&quot; as a blocked term on AutoMod.">%1$s lisäsi %2$s estetyksi termiksi AutoModissa.</string>
+    <string name="automod_moderation_added_permitted_term" comment="flex3rs added &quot;test&quot; as a permitted term on AutoMod.">%1$s lisäsi %2$s sallituksi termiksi AutoModissa.</string>
+    <string name="automod_moderation_removed_blocked_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s poisti %2$s estettynä terminä AutoModista.</string>
+    <string name="automod_moderation_removed_permitted_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s poisti %2$s sallittuna terminä AutoModista.</string>
+    <!-- Moderation messages — complete sentence variants for proper localization -->
+    <!-- Timeout (self, IRC — no creator info) -->
+    <string name="mod_timeout_self_irc" comment="You were timed out for 10m">Sinut asetettiin jäähylle %1$s ajaksi</string>
+    <!-- Timeout (self, EventSub — has creator) -->
+    <string name="mod_timeout_self" comment="You were timed out for 10m by flex3rs">Sinut asetettiin jäähylle %1$s ajaksi käyttäjän %2$s toimesta</string>
+    <string name="mod_timeout_self_reason" comment="You were timed out for 10m by flex3rs: reason">Sinut asetettiin jäähylle %1$s ajaksi käyttäjän %2$s toimesta: %3$s</string>
+    <!-- Timeout (other, by creator) -->
+    <string name="mod_timeout_by_creator" comment="flex3rs timed out user123 for 10m">%1$s asetti käyttäjän %2$s jäähylle %3$s ajaksi</string>
+    <string name="mod_timeout_by_creator_reason" comment="flex3rs timed out user123 for 10m: reason">%1$s asetti käyttäjän %2$s jäähylle %3$s ajaksi: %4$s</string>
+    <!-- Timeout (other, IRC — no creator) -->
+    <string name="mod_timeout_no_creator" comment="user123 has been timed out for 10m">%1$s on asetettu jäähylle %2$s ajaksi</string>
+    <!-- Ban (self) -->
+    <string name="mod_ban_self_irc" comment="You were banned">Sinut estettiin</string>
+    <string name="mod_ban_self" comment="You were banned by flex3rs">Sinut estettiin käyttäjän %1$s toimesta</string>
+    <string name="mod_ban_self_reason" comment="You were banned by flex3rs: reason">Sinut estettiin käyttäjän %1$s toimesta: %2$s</string>
+    <!-- Ban (other) -->
+    <string name="mod_ban_by_creator" comment="flex3rs banned user123">%1$s esti käyttäjän %2$s</string>
+    <string name="mod_ban_by_creator_reason" comment="flex3rs banned user123: reason">%1$s esti käyttäjän %2$s: %3$s</string>
+    <string name="mod_ban_no_creator" comment="user123 has been permanently banned">%1$s on estetty pysyvästi</string>
+    <!-- Simple actions -->
+    <string name="mod_untimeout" comment="flex3rs untimedout user123">%1$s poisti jäähyn käyttäjältä %2$s</string>
+    <string name="mod_unban" comment="flex3rs unbanned user123">%1$s poisti eston käyttäjältä %2$s</string>
+    <string name="mod_modded" comment="flex3rs modded user123">%1$s ylenti käyttäjän %2$s moderaattoriksi</string>
+    <string name="mod_unmodded" comment="flex3rs unmodded user123">%1$s poisti moderaattorin käyttäjältä %2$s</string>
+    <string name="mod_vip_added" comment="flex3rs has added user123 as a VIP of this channel">%1$s lisäsi käyttäjän %2$s tämän kanavan VIP-jäseneksi</string>
+    <string name="mod_vip_removed" comment="flex3rs has removed user123 as a VIP of this channel">%1$s poisti käyttäjän %2$s tämän kanavan VIP-jäsenyydestä</string>
+    <string name="mod_warn" comment="flex3rs has warned user123">%1$s varoitti käyttäjää %2$s</string>
+    <string name="mod_warn_reason" comment="flex3rs has warned user123: reason1, reason2">%1$s varoitti käyttäjää %2$s: %3$s</string>
+    <string name="mod_raid" comment="flex3rs initiated a raid to user123">%1$s aloitti raidin kanavalle %2$s</string>
+    <string name="mod_unraid" comment="flex3rs canceled the raid to user123">%1$s peruutti raidin kanavalle %2$s</string>
+    <!-- Delete -->
+    <string name="mod_delete_by_creator" comment="flex3rs deleted message from user123">%1$s poisti viestin käyttäjältä %2$s</string>
+    <string name="mod_delete_by_creator_message" comment="flex3rs deleted message from user123 saying: hello">%1$s poisti viestin käyttäjältä %2$s sanoen: %3$s</string>
+    <string name="mod_delete_no_creator" comment="A message from user123 was deleted">Viesti käyttäjältä %1$s poistettiin</string>
+    <string name="mod_delete_no_creator_message" comment="A message from user123 was deleted saying: hello">Viesti käyttäjältä %1$s poistettiin sanoen: %2$s</string>
+    <!-- Clear -->
+    <string name="mod_clear_by_creator" comment="flex3rs cleared the chat">%1$s tyhjesi chatin</string>
+    <string name="mod_clear_no_creator">Moderaattori on tyhjentänyt chatin</string>
+    <!-- Room state -->
+    <string name="mod_emote_only_on" comment="flex3rs turned on emote-only mode">%1$s otti käyttöön vain hymiöt -tilan</string>
+    <string name="mod_emote_only_off" comment="flex3rs turned off emote-only mode">%1$s poisti käytöstä vain hymiöt -tilan</string>
+    <string name="mod_followers_on" comment="flex3rs turned on followers-only mode">%1$s otti käyttöön vain seuraajat -tilan</string>
+    <string name="mod_followers_on_duration" comment="flex3rs turned on followers-only mode (1 week)">%1$s otti käyttöön vain seuraajat -tilan (%2$s)</string>
+    <string name="mod_followers_off" comment="flex3rs turned off followers-only mode">%1$s poisti käytöstä vain seuraajat -tilan</string>
+    <string name="mod_unique_chat_on" comment="flex3rs turned on unique-chat mode">%1$s otti käyttöön ainutlaatuinen chat -tilan</string>
+    <string name="mod_unique_chat_off" comment="flex3rs turned off unique-chat mode">%1$s poisti käytöstä ainutlaatuinen chat -tilan</string>
+    <string name="mod_slow_on" comment="flex3rs turned on slow mode">%1$s otti käyttöön hitaan tilan</string>
+    <string name="mod_slow_on_duration" comment="flex3rs turned on slow mode (2 minutes 5 seconds)">%1$s otti käyttöön hitaan tilan (%2$s)</string>
+    <string name="mod_slow_off" comment="flex3rs turned off slow mode">%1$s poisti käytöstä hitaan tilan</string>
+    <string name="mod_subscribers_on" comment="flex3rs turned on subscribers-only mode">%1$s otti käyttöön vain tilaajat -tilan</string>
+    <string name="mod_subscribers_off" comment="flex3rs turned off subscribers-only mode">%1$s poisti käytöstä vain tilaajat -tilan</string>
+    <!-- Shared chat -->
+    <string name="mod_shared_timeout" comment="flex3rs timed out user123 for 10m in channel456">%1$s asetti käyttäjän %2$s jäähylle %3$s ajaksi kanavalla %4$s</string>
+    <string name="mod_shared_timeout_reason" comment="flex3rs timed out user123 for 10m in channel456: reason">%1$s asetti käyttäjän %2$s jäähylle %3$s ajaksi kanavalla %4$s: %5$s</string>
+    <string name="mod_shared_untimeout" comment="flex3rs untimedout user123 in channel456">%1$s poisti jäähyn käyttäjältä %2$s kanavalla %3$s</string>
+    <string name="mod_shared_ban" comment="flex3rs banned user123 in channel456">%1$s esti käyttäjän %2$s kanavalla %3$s</string>
+    <string name="mod_shared_ban_reason" comment="flex3rs banned user123 in channel456: reason">%1$s esti käyttäjän %2$s kanavalla %3$s: %4$s</string>
+    <string name="mod_shared_unban" comment="flex3rs unbanned user123 in channel456">%1$s poisti eston käyttäjältä %2$s kanavalla %3$s</string>
+    <string name="mod_shared_delete" comment="flex3rs deleted message from user123 in channel456">%1$s poisti viestin käyttäjältä %2$s kanavalla %3$s</string>
+    <string name="mod_shared_delete_message" comment="flex3rs deleted message from user123 in channel456 saying: hello">%1$s poisti viestin käyttäjältä %2$s kanavalla %3$s sanoen: %4$s</string>
+    <!-- Helper: message + count concatenation -->
+    <string name="mod_message_with_count" comment="flex3rs timed out user123 for 10m. (2 times)">%1$s%2$s</string>
+    <!-- Parenthetical count (appended after complete sentences, safe for all languages) -->
+    <plurals name="mod_count_suffix" comment=" (2 times)">
+        <item quantity="one">\u0020(%1$d kerta)</item>
+        <item quantity="other">\u0020(%1$d kertaa)</item>
+    </plurals>
     <string name="timed_out_message">&lt; Viesti poistettu &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Lisää merkintä</string>
@@ -154,9 +261,12 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="confirm_channel_removal_title">Vahvista kanavan sulkeminen</string>
     <string name="confirm_channel_removal_message">Haluatko varmasti sulkea tämän kanavan?</string>
     <string name="confirm_channel_removal_message_named">Oletko varma, että haluat poistaa kanavan \"%1$s\"?</string>
+    <string name="confirm_channel_removal_question">Poistetaanko tämä kanava?</string>
+    <string name="confirm_channel_removal_question_named">Poistetaanko kanava \"%1$s\"?</string>
     <string name="confirm_channel_removal_positive_button">Sulje</string>
     <string name="confirm_channel_block_title">Vahvista kanavan esto</string>
     <string name="confirm_channel_block_message_named">Oletko varma, että haluat estää kanavan \"%1$s\"?</string>
+    <string name="confirm_channel_block_question_named">Estetäänkö kanava \"%1$s\"?</string>
     <string name="user_popup_block">Estä</string>
     <string name="user_popup_unblock">Poista esto</string>
     <string name="user_popup_mention">Mainitse käyttäjä</string>
@@ -180,6 +290,62 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="uploader_description">Voit asettaa mukautetun hostin median lataamiseen, kuten imgur.com tai s-ul.eu. DankChat käyttää samaa rakennetta kuin Chatterino.\nTarkista tästä oppaasta apua: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="toggle_fullscreen">Vaihda näyttötilaa</string>
     <string name="toggle_stream">Vaihda streami</string>
+    <string name="menu_show_stream">Näytä lähetys</string>
+    <string name="menu_hide_stream">Piilota lähetys</string>
+    <string name="menu_audio_only">Vain ääni</string>
+    <string name="menu_exit_audio_only">Poistu äänitilasta</string>
+    <string name="menu_fullscreen">Koko näyttö</string>
+    <string name="menu_exit_fullscreen">Poistu koko näytöstä</string>
+    <string name="menu_hide_input">Piilota syöttö</string>
+    <string name="menu_show_input">Näytä syöttö</string>
+    <string name="preference_swipe_navigation_title">Kanavien pyyhkäisynavigaatio</string>
+    <string name="preference_swipe_navigation_summary">Vaihda kanavaa pyyhkäisemällä chatissa</string>
+    <string name="menu_mod_actions">Kanavan moderointi</string>
+    <plurals name="input_actions_max">
+        <item quantity="one">Enintään %1$d toiminto</item>
+        <item quantity="other">Enintään %1$d toimintoa</item>
+    </plurals>
+    <string name="input_action_search">Hae viestejä</string>
+    <string name="input_action_last_message">Viimeisin viesti</string>
+    <string name="input_action_stream">Vaihda lähetys</string>
+    <string name="input_action_mod_actions">Kanavan moderointi</string>
+    <string name="input_action_fullscreen">Koko näyttö</string>
+    <string name="input_action_hide_input">Piilota syöttö</string>
+    <string name="input_action_debug">Virheenkorjaus</string>
+    <string name="input_action_configure">Muokkaa toimintoja</string>
+    <string name="room_state_emote_only">Vain hymiöt</string>
+    <string name="room_state_subscriber_only">Vain tilaajat</string>
+    <string name="room_state_slow_mode">Hidas tila</string>
+    <string name="room_state_slow_mode_duration">Hidas tila (%1$s)</string>
+    <string name="room_state_unique_chat">Ainutlaatuinen chat (R9K)</string>
+    <string name="room_state_follower_only">Vain seuraajat</string>
+    <string name="room_state_follower_only_duration">Vain seuraajat (%1$s)</string>
+    <string name="room_state_preset_custom">Mukautettu</string>
+    <string name="room_state_follower_any">Mikä tahansa</string>
+    <string name="room_state_duration_seconds">%1$ds</string>
+    <string name="room_state_duration_minutes">%1$dm</string>
+    <string name="room_state_duration_hours">%1$dh</string>
+    <string name="room_state_duration_days">%1$dd</string>
+    <string name="room_state_duration_weeks">%1$dw</string>
+    <string name="room_state_duration_months">%1$dmo</string>
+    <string name="mod_actions_room_state_section">Room state</string>
+    <string name="mod_actions_section">Mod actions</string>
+    <string name="mod_actions_broadcaster_section">Broadcaster</string>
+    <string name="mod_actions_shield_mode">Shield mode</string>
+    <string name="mod_actions_clear_chat">Clear chat</string>
+    <string name="mod_actions_confirm_clear_chat">Clear all messages in this channel?</string>
+    <string name="mod_actions_confirm_shield_mode_title">Ota suojatila käyttöön?</string>
+    <string name="mod_actions_confirm_shield_mode_body">Tämä ottaa käyttöön kanavan esimääritetyt turvallisuusasetukset, jotka voivat sisältää chatin rajoituksia, AutoMod-asetuksia ja vahvistusvaatimuksia.</string>
+    <string name="mod_actions_shield_mode_activate">Ota käyttöön</string>
+    <string name="mod_actions_announce">Announce</string>
+    <string name="mod_actions_announce_header">Announcement</string>
+    <string name="mod_actions_shoutout">Shoutout</string>
+    <string name="mod_actions_commercial">Commercial</string>
+    <string name="mod_actions_raid">Raid</string>
+    <string name="mod_actions_cancel_raid">Cancel raid</string>
+    <string name="mod_actions_stream_marker">Stream marker</string>
+    <string name="mod_actions_username_hint">Username</string>
+    <string name="mod_actions_channel_hint">Channel</string>
     <string name="account">Tili</string>
     <string name="relogin">Kirjaudu uudelleen sisään</string>
     <string name="logout">Kirjaudu ulos</string>
@@ -190,12 +356,15 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="change_roomstate">Chatti-tilat</string>
     <string name="confirm_user_ban_title">Vahvista porttikiellon antaminen</string>
     <string name="confirm_user_ban_message">Haluatko varmasti antaa porttikiellon tälle käyttäjälle?</string>
+    <string name="confirm_user_ban_question">Estetäänkö tämä käyttäjä?</string>
     <string name="confirm_user_ban_positive_button">Porttikielto</string>
     <string name="confirm_user_timeout_title">Varmista jäähy</string>
     <string name="confirm_user_timeout_positive_button">Jäähy</string>
     <string name="confirm_user_delete_title">Vahvista viestin poistaminen</string>
     <string name="confirm_user_delete_message">Haluatko varmasti poistaa tämän viestin?</string>
+    <string name="confirm_user_delete_question">Poistetaanko tämä viesti?</string>
     <string name="confirm_user_delete_positive_button">Poista</string>
+    <string name="confirm_clear_chat_question">Tyhjennetäänkö chat?</string>
     <string name="confirm_user_roomstate_title">Päivitä chatti-tilat</string>
     <string name="roomstate_emote">Vain hymiöitä</string>
     <string name="roomstate_subs">Vain tilaajille</string>
@@ -206,7 +375,6 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="minutes">Minuuttia</string>
     <string name="add_command">Lisää komento</string>
     <string name="remove_command">Poista komento</string>
-    <string name="command_trigger_hint">Laukaisin</string>
     <string name="command_trigger_reserved">Tämä laukaisin on varattu sisäänrakennetulle komennolle</string>
     <string name="command_trigger_duplicate">Tämä laukaisin on jo toisen komennon käytössä</string>
     <string name="command__hint">Komento</string>
@@ -233,7 +401,6 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="custom_login_error_invalid_token">Tunnus on virheellinen</string>
     <string name="badge_tooltip_moderator">Moderaattori</string>
     <string name="badge_tooltip_lead_moderator">Päämoderattori</string>
-    <string name="badge_tooltip_predictions">Ennusti \"%1$s\"</string>
     <string name="badge_tooltip_sub_tier">Taso %1$s</string>
     <string name="preference_timestamp_title">Näytä aikaleimat</string>
     <string name="preference_mention_format_title">Maininnan muoto</string>
@@ -250,6 +417,9 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_messages_header">Viestit</string>
     <string name="preference_users_header">Käyttäjät</string>
     <string name="preference_emotes_badges_header">Emojit ja merkit</string>
+    <string name="preference_suggestion_mode_title">Ehdotustila</string>
+    <string name="preference_suggestion_mode_automatic">Ehdota osumia kirjoittaessa</string>
+    <string name="preference_suggestion_mode_prefix_only">Ehdota vain laukaisumerkin jälkeen</string>
     <string name="preference_about_header">Tietoja</string>
     <string name="preference_appearance_header">Ulkoasu</string>
     <string name="preference_about_summary">DankChat %1$s on tehnyt @flex3rs ja avustajat</string>
@@ -308,16 +478,13 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_suggestions_title">Ehdotukset</string>
     <string name="preference_suggestions_summary">Valitse mitkä ehdotukset näytetään kirjoittaessa</string>
     <string name="preference_suggestions_emotes">Emojit</string>
-    <string name="preference_suggestions_users">Käyttäjät</string>
-    <string name="preference_suggestions_commands">Twitch-komennot</string>
-    <string name="preference_suggestions_supibot">Supibot-komennot</string>
     <string name="preference_suggestions_emotes_desc">Aktivoi merkillä :</string>
+    <string name="preference_suggestions_users">Käyttäjät</string>
     <string name="preference_suggestions_users_desc">Aktivoi merkillä @</string>
+    <string name="preference_suggestions_commands">Twitch-komennot</string>
     <string name="preference_suggestions_commands_desc">Aktivoi merkillä /</string>
+    <string name="preference_suggestions_supibot">Supibot-komennot</string>
     <string name="preference_suggestions_supibot_desc">Aktivoi merkillä $</string>
-    <string name="preference_suggestion_mode_title">Ehdotustila</string>
-    <string name="preference_suggestion_mode_automatic">Ehdota osumia kirjoittaessa</string>
-    <string name="preference_suggestion_mode_prefix_only">Ehdota vain laukaisumerkin jälkeen</string>
     <string name="preference_load_message_history_title">Lataa viestihistoria käynnistyessä</string>
     <string name="preference_load_messages_on_reconnect_title">Lataa viestihistoria uudelleenyhdistyksen jälkeen</string>
     <string name="preference_load_messages_on_reconnect_summary">Yrittää hakea puuttuvat viestit, joita ei vastaanotettu yhteyskatkosten aikana</string>
@@ -326,6 +493,8 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_message_history_dashboard_summary">Lue lisää palvelusta ja poista viestihistoria käytöstä omalla kanavallasi</string>
     <string name="preference_channel_data_header">Kanavatiedot</string>
     <string name="preference_developer_header">Kehittäjävaihtoehdot</string>
+    <string name="preference_log_viewer_title">Lokien katselin</string>
+    <string name="preference_log_viewer_summary">Näytä sovelluksen lokit</string>
     <string name="preference_debug_mode_title">Virheenkorjaustila</string>
     <string name="preference_debug_mode_summary">Näytä virheenkorjausanalytiikkatoiminto syöttöpalkissa ja kerää kaatumisraportit paikallisesti</string>
     <string name="preference_timestamp_format_title">Aikaleiman muoto</string>
@@ -338,9 +507,6 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_tts_message_format_combined">Lukee käyttäjän ja viestin</string>
     <string name="preference_tts_message_format_title">Viestin muoto</string>
     <string name="preference_tts_message_ignore_url_message">Ohittaa URL-osoitteet TTS:ssä</string>
-    <string name="preference_tts_message_ignore_url_title">Ohita URL-osoitteet</string>
-    <string name="preference_tts_message_ignore_emote_message">Ohittaa emotet ja emojit TTS:ssä</string>
-    <string name="preference_tts_message_ignore_emote_title">Ohita emotet</string>
     <string name="preference_tts_volume_title">Äänenvoimakkuus</string>
     <string name="preference_tts_audio_ducking_title">Äänen vaimennus</string>
     <string name="preference_tts_audio_ducking_summary">Hiljennä muiden sovellusten ääntä TTS:n puhuessa</string>
@@ -359,39 +525,26 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_colorize_nicknames_title">Väritä nimimerkit</string>
     <string name="preference_colorize_nicknames_summary">Määritä satunnainen väri käyttäjille, joilla ei ole asetettua väriä</string>
     <string name="preference_tts_force_english_title">Aseta kieli englanniksi</string>
-    <string name="preference_tts_force_english_summary">Pakottaa TTS-äänen kieleksi englannin järjestelmän oletuksen sijaan</string>
     <string name="preference_visible_emotes_title">Näkyvät kolmannen osapuolen hymiöt</string>
-    <string name="preference_about_tos">Twitchin käyttöehdot ja käyttäjäsäännöt:</string>
-    <string name="preference_show_chip_actions_title">Näytä pikatoiminnot</string>
-    <string name="preference_show_chip_actions_summary">Näyttää pikatoiminnot koko näytön, lähetysten ja chatti-tilojen hallintaan</string>
     <string name="preference_show_character_counter_title">Näytä merkkimäärälaskuri</string>
     <string name="preference_show_character_counter_summary">Näyttää koodipisteiden määrän syöttökentässä</string>
     <string name="preference_show_clear_input_button_title">Näytä syötteen tyhjennys -painike</string>
     <string name="preference_show_send_button_title">Näytä lähetyspainike</string>
     <string name="preference_input_group_title">Syöte</string>
     <string name="preference_uploader_header">Median lähettäjä</string>
-    <string name="preference_uploader_configure_title">Määritä lähettäjä</string>
-    <string name="preference_uploader_recent_uploads_title">Viimeaikaiset lataukset</string>
-    <string name="preference_tts_user_ignore_list_title">Käyttäjien ohituslista</string>
-    <string name="preference_tts_user_ignore_list_summary">Lista käyttäjistä/tileistä, jotka ohitetaan</string>
     <string name="preference_tools_header">Työkalut</string>
     <string name="preference_theme_title">Teema</string>
     <string name="preference_dark_theme_entry_title">Tumma teema</string>
     <string name="preference_light_theme_entry_title">Vaalea teema</string>
-    <string name="preference_unlisted_emotes_title">Salli listaamattomat emotet</string>
-    <string name="preference_unlisted_emotes_summary">Poistaa hyväksymättömien tai listaamattomien emotien suodatuksen</string>
-    <string name="preference_rm_host_title">Mukautettu viestihistoriapalvelin</string>
-    <string name="preference_fetch_streams_title">Hae lähetystiedot</string>
-    <string name="preference_fetch_streams_summary">Hakee säännöllisesti avointen kanavien lähetystiedot. Vaaditaan upotetun lähetyksen käynnistämiseen.</string>
-    <string name="preference_auto_disable_input_title">Poista syöttö käytöstä, jos chattiin ei ole yhteyttä</string>
-    <string name="preference_repeated_sending_title">Ota toistuva lähetys käyttöön</string>
-    <string name="preference_repeated_sending_summary">Mahdollistaa jatkuvan viestien lähettämisen lähetyspainiketta painettaessa</string>
+    <string name="preference_developer_category_general">Yleiset</string>
+    <string name="preference_developer_category_auth">Todennus</string>
+    <string name="preference_eventsub_title">Ota Twitch EventSub käyttöön</string>
+    <string name="preference_eventsub_summary">Käyttää EventSubia reaaliaikaisiin tapahtumiin vanhentuneen PubSubin sijaan</string>
+    <string name="preference_eventsub_debug_title">Ota EventSub-virheenkorjaustuloste käyttöön</string>
+    <string name="preference_eventsub_debug_summary">Tulostaa EventSubiin liittyvää virheenkorjaustietoa järjestelmäviesteinä</string>
+    <string name="preference_revoke_token_title">Peruuta tunnus ja käynnistä uudelleen</string>
+    <string name="preference_revoke_token_summary">Mitätöi nykyisen tunnuksen ja käynnistää sovelluksen uudelleen</string>
     <string name="oauth_expired_title">Kirjautuminen vanhentunut!</string>
-    <string name="oauth_expired_message">Kirjautumistunnuksesi on vanhentunut! Kirjaudu uudelleen.</string>
-    <string name="oauth_expired_login_again">Kirjaudu uudelleen</string>
-    <string name="oauth_verify_failed">Kirjautumistunnuksen vahvistaminen epäonnistui, tarkista yhteytesi.</string>
-    <string name="preference_retain_webview_title">Estä lähetyksen uudelleenlataukset</string>
-    <string name="preference_retain_webview_summary">Ottaa käyttöön kokeellisen lähetyksen uudelleenlatausten eston suunnanvaihdon tai DankChatin uudelleen avaamisen jälkeen.</string>
     <string name="preference_show_changelogs">Näytä muutosloki päivityksen jälkeen</string>
     <string name="preference_whats_new_header">Uutta</string>
     <string name="preference_custom_login_title">Mukautettu kirjautuminen</string>
@@ -414,52 +567,25 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_streams_header">Suoratoistot</string>
     <string name="preference_pip_title">Ota kuva kuvassa -tila käyttöön</string>
     <string name="preference_pip_summary">Sallii lähetysten jatkuvan toiston sovelluksen ollessa taustalla</string>
-    <string name="reset_media_uploader_dialog_title">Palauta median lähettäjän asetukset</string>
-    <string name="reset_media_uploader_dialog_message">Haluatko varmasti palauttaa median lähettäjän asetukset oletuksiksi?</string>
     <string name="reset_media_uploader_dialog_positive">Palauta</string>
-    <string name="clear_recent_uploads_dialog_title">Tyhjennä viimeaikaiset lataukset</string>
-    <string name="clear_recent_uploads_dialog_message">Haluatko varmasti tyhjentää lataushistorian? Ladattuja tiedostoja ei poisteta.</string>
     <string name="clear">Tyhjennä</string>
-    <string name="pattern">Kaava</string>
-    <string name="case_sensitive">Kirjainkokoriippuvainen</string>
     <string name="highlights">Kohokohdat</string>
     <string name="enabled">Käytössä</string>
     <string name="create_notification">Ilmoitus</string>
-    <string name="preference_highlights_summary">Muokkaa viestien korostuksia</string>
-    <string name="preference_highlights_ignores_header">Korostukset ja ohitukset</string>
     <string name="username">Käyttäjänimi</string>
     <string name="block">Estää</string>
-    <string name="replacement">Korvaus</string>
-    <string name="ignores">Ohitukset</string>
-    <string name="preference_ignores_summary">Muokkaa viestien ohituksia</string>
     <string name="tab_messages">Viestit</string>
     <string name="tab_users">Käyttäjät</string>
-    <string name="tab_blacklisted_users">Estolistalla olevat käyttäjät</string>
     <string name="tab_twitch">Twitch</string>
     <string name="tab_badges">Merkit</string>
     <string name="undo">Kumoa</string>
-    <string name="item_removed">Kohde poistettu</string>
-    <string name="unblocked_user">Käyttäjän %1$s esto poistettu</string>
-    <string name="unblocked_user_failed">Käyttäjän %1$s eston poistaminen epäonnistui</string>
     <string name="badge">Merkki</string>
-    <string name="blocked_user_failed">Käyttäjän %1$s estäminen epäonnistui</string>
     <string name="highlights_entry_username">Käyttäjänimesi</string>
-    <string name="highlights_ignores_entry_subscriptions">Tilaukset ja tapahtumat</string>
-    <string name="highlights_ignores_entry_announcements">Ilmoitukset</string>
     <string name="highlights_ignores_entry_watch_streaks">Katseluputket</string>
     <string name="highlights_ignores_entry_first_messages">Ensimmäiset viestit</string>
-    <string name="highlights_ignores_entry_elevated_messages">Korostetut viestit</string>
-    <string name="highlights_ignores_entry_redemptions">Kanavapisteiden korostukset</string>
     <string name="highlights_ignores_entry_replies">Vastaukset</string>
     <string name="highlights_ignores_entry_custom">Mukautettu</string>
-    <string name="highlights_messages_title">Luo ilmoituksia ja korostaa viestejä tiettyjen kaavojen perusteella.</string>
-    <string name="highlights_users_title">Luo ilmoituksia ja korostaa viestejä tietyiltä käyttäjiltä.</string>
-    <string name="highlights_blacklisted_users_title">Poista ilmoitukset ja korostukset käytöstä tietyiltä käyttäjiltä (esim. botit).</string>
     <string name="highlights_badges_title">Luo ilmoituksia ja korostaa viestejä käyttäjiltä merkkien perusteella.</string>
-    <string name="ignores_messages_title">Ohita viestejä tiettyjen kaavojen perusteella.</string>
-    <string name="ignores_users_title">Ohita viestejä tietyiltä käyttäjiltä.</string>
-    <string name="ignores_twitch_title">Hallitse estettyjä Twitch-käyttäjiä.</string>
-    <string name="preference_notification_whisper_title">Luo ilmoitukset kuiskauksista</string>
     <string name="login_outdated_title">Kirjautuminen Vanhentunut!</string>
     <string name="login_outdated_message">Kirjautumisesi on vanhentunut eikä sillä ole pääsyä joihinkin toimintoihin. Kirjaudu sisään uudelleen.</string>
     <string name="custom_user_display_title">Mukautettu Käyttäjänäkymä</string>
@@ -470,16 +596,6 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="pick_custom_user_color_title">Valitse käyttäjän mukautettu väri</string>
     <string name="custom_user_display_summary">Lisää mukautettu nimi ja väri käyttäjille</string>
     <string name="reply_to">Vastataan käyttäjälle</string>
-    <string name="reply_header">Vastataan käyttäjälle @%1$s</string>
-    <string name="toggle_app_bar">Näytä/piilota sovelluspalkki</string>
-    <string name="error_with_message">Virhe: %s</string>
-    <string name="confirm_logout_question">Kirjaudutaanko ulos?</string>
-    <string name="confirm_channel_removal_question">Poistetaanko tämä kanava?</string>
-    <string name="confirm_channel_removal_question_named">Poistetaanko kanava \"%1$s\"?</string>
-    <string name="confirm_channel_block_question_named">Estetäänkö kanava \"%1$s\"?</string>
-    <string name="confirm_user_ban_question">Estetäänkö tämä käyttäjä?</string>
-    <string name="confirm_user_delete_question">Poistetaanko tämä viesti?</string>
-    <string name="confirm_clear_chat_question">Tyhjennetäänkö chat?</string>
     <string name="message_copy">Kopioi viesti</string>
     <string name="message_copy_full">Kopioi koko viesti</string>
     <string name="message_reply">Vastaa viestiin</string>
@@ -488,19 +604,61 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="message_copy_id">Kopioi viestin tunnus</string>
     <string name="message_more_actions">Lisää…</string>
     <string name="message_jump_to">Siirry viestiin</string>
-    <string name="message_not_found">Viestiä ei löytynyt</string>
     <string name="message_not_in_history">Viesti ei ole enää chat-historiassa</string>
     <string name="message_history">Viestihistoria</string>
     <string name="global_history_title">Yleinen historia</string>
     <string name="message_history_title">Historia: %1$s</string>
+    <string name="view_history">Näytä historia</string>
+    <string name="history_empty">Ei viestejä nykyisillä suodattimilla</string>
     <string name="search_messages_hint">Hae viestejä…</string>
+    <string name="log_viewer_title">Lokit</string>
+    <string name="log_viewer_share">Jaa lokit</string>
+    <string name="log_viewer_open">Näytä lokit</string>
+    <string name="preference_log_viewer_empty">Lokitiedostoja ei ole saatavilla</string>
+    <string name="log_viewer_search_hint">Hae lokeista</string>
+    <plurals name="log_viewer_selected_count">
+        <item quantity="one">%1$d valittu</item>
+        <item quantity="other">%1$d valittu</item>
+    </plurals>
+    <string name="log_viewer_copy_selection">Kopioi valitut lokit</string>
+    <string name="log_viewer_clear_selection">Tyhjennä valinta</string>
+    <string name="crash_report_title">Kaatuminen havaittu</string>
+    <string name="crash_report_message">Sovellus kaatui viimeisen istunnon aikana.</string>
+    <string name="crash_report_thread">Säie: %1$s</string>
+    <string name="crash_report_copy">Kopioi</string>
+    <string name="crash_report_send">Raportti chatissa</string>
+    <string name="crash_report_send_description">Liittyy kanavalle #flex3rs ja valmistelee kaatumisyhteenvedon lähetettäväksi</string>
+    <string name="crash_report_email">Sähköpostiraportti</string>
+    <string name="crash_report_email_description">Lähetä yksityiskohtainen kaatumisraportti sähköpostilla</string>
+    <string name="crash_email_confirm_title">Lähetä kaatumisraportti sähköpostilla</string>
+    <string name="crash_email_confirm_message">Seuraavat tiedot sisällytetään raporttiin:</string>
+    <string name="crash_email_confirm_stacktrace">Pinojälki</string>
+    <string name="crash_email_confirm_include_logs">Sisällytä nykyinen lokitiedosto</string>
+    <string name="preference_crash_viewer_title">Kaatumisraportit</string>
+    <string name="preference_crash_viewer_summary">Näytä viimeisimmät kaatumisraportit</string>
+    <string name="preference_crash_viewer_empty">Kaatumisraportteja ei löytynyt</string>
+    <string name="crash_viewer_title">Kaatumisraportti</string>
+    <string name="crash_viewer_share">Jaa kaatumisraportti</string>
+    <string name="crash_viewer_delete">Poista</string>
+    <string name="crash_viewer_clear_all">Tyhjennä kaikki</string>
+    <string name="crash_viewer_delete_confirm">Poistetaanko tämä kaatumisraportti?</string>
+    <string name="crash_viewer_clear_all_confirm">Poistetaanko kaikki kaatumisraportit?</string>
+    <string name="scroll_to_bottom">Vieritä alas</string>
     <string name="search_filter_by_username">Suodata käyttäjänimen mukaan</string>
     <string name="search_filter_has_link">Linkkejä sisältävät viestit</string>
     <string name="search_filter_has_emote">Emojeja sisältävät viestit</string>
     <string name="search_filter_by_badge">Suodata merkin nimen mukaan</string>
     <string name="search_filter_user">Käyttäjä</string>
     <string name="search_filter_badge">Merkki</string>
+    <string name="reply_header">Vastataan käyttäjälle @%1$s</string>
+    <string name="whisper_header">Kuiskaus käyttäjälle @%1$s</string>
+    <string name="hint_whispering">Lähetä kuiskaus</string>
+    <string name="whisper_new">Uusi kuiskaus</string>
+    <string name="whisper_new_dialog_title">Lähetä kuiskaus käyttäjälle</string>
+    <string name="whisper_new_dialog_hint">Käyttäjänimi</string>
+    <string name="whisper_new_dialog_start">Lähetä</string>
     <string name="reply_thread_not_found">Vastausketjua ei löytynyt</string>
+    <string name="message_not_found">Viestiä ei löytynyt</string>
     <string name="emote_sheet_use">Käytä emotea</string>
     <string name="emote_sheet_copy">Kopioi</string>
     <string name="emote_sheet_open_link">Avaa emote-linkki</string>
@@ -530,10 +688,6 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
         <item quantity="one">Livenä %1$d katsojalla %2$s ajan</item>
         <item quantity="other">Livenä %1$d katsojalla %2$s ajan</item>
     </plurals>
-    <plurals name="months">
-        <item quantity="one">%d kuukausi</item>
-        <item quantity="other">%d kuukautta</item>
-    </plurals>
     <string name="open_source_licenses">Avoimen lähdekoodin lisenssit</string>
     <plurals name="viewers_and_uptime_with_cateogry" comment="Live with 1 viewer in Just Chatting for 1h 1m&#13;&#10;Live with 10 viewers in Just Chatting for 1h 1m">
         <item quantity="one">Livenä %1$d katsojalla kategoriassa %2$s %3$s ajan</item>
@@ -554,184 +708,28 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="pick_highlight_color_title">Valitse mukautettu korostusväri</string>
     <string name="reset_default_highlight_color">Oletus</string>
     <string name="choose_highlight_color">Valitse väri</string>
-
-    <!-- AutoMod -->
-    <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Viesti pidätetty syystä: %1$s. Salliminen julkaisee sen chatissa.</string>
-    <string name="automod_allow">Salli</string>
-    <string name="automod_deny">Hylkää</string>
-    <string name="automod_status_approved">Hyväksytty</string>
-    <string name="automod_status_denied">Hylätty</string>
-    <string name="automod_ban_user">Estä käyttäjä</string>
-    <string name="automod_status_expired">Vanhentunut</string>
-    <string name="automod_user_held">Hei! Viestisi on modien tarkistettavana eikä sitä ole vielä lähetetty.</string>
-    <string name="automod_user_accepted">Modit ovat hyväksyneet viestisi.</string>
-    <string name="automod_user_denied">Modit ovat hylänneet viestisi.</string>
-    <string name="automod_reason_category" comment="aggressive (level 2)">%1$s (taso %2$d)</string>
-    <plurals name="automod_reason_blocked_terms">
-        <item quantity="one">vastaa %1$d estettyä termiä %2$s</item>
-        <item quantity="other">vastaa %1$d estettyä termiä %2$s</item>
-    </plurals>
-    <string name="automod_error_already_processed" comment="Failed to allow AutoMod message - message has already been processed.">AutoMod-viestin %1$s epäonnistui - viesti on jo käsitelty.</string>
-    <string name="automod_error_not_authenticated" comment="Failed to allow AutoMod message - you need to re-authenticate.">AutoMod-viestin %1$s epäonnistui - sinun täytyy kirjautua uudelleen.</string>
-    <string name="automod_error_not_authorized" comment="Failed to allow AutoMod message - you don\'t have permission to perform that action.">AutoMod-viestin %1$s epäonnistui - sinulla ei ole oikeutta suorittaa tätä toimintoa.</string>
-    <string name="automod_error_not_found" comment="Failed to allow AutoMod message - target message not found.">AutoMod-viestin %1$s epäonnistui - kohdeviestiä ei löytynyt.</string>
-    <string name="automod_error_unknown" comment="Failed to allow AutoMod message - an unknown error occurred.">AutoMod-viestin %1$s epäonnistui - tuntematon virhe tapahtui.</string>
-    <string name="automod_moderation_added_blocked_term" comment="flex3rs added &quot;test&quot; as a blocked term on AutoMod.">%1$s lisäsi %2$s estetyksi termiksi AutoModissa.</string>
-    <string name="automod_moderation_added_permitted_term" comment="flex3rs added &quot;test&quot; as a permitted term on AutoMod.">%1$s lisäsi %2$s sallituksi termiksi AutoModissa.</string>
-    <string name="automod_moderation_removed_blocked_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s poisti %2$s estettynä terminä AutoModista.</string>
-    <string name="automod_moderation_removed_permitted_term" comment="flex3rs removed &quot;test&quot; as a permitted term on AutoMod.">%1$s poisti %2$s sallittuna terminä AutoModista.</string>
-
-    <!-- Moderation messages -->
-    <string name="mod_timeout_self_irc" comment="You were timed out for 10m">Sinut asetettiin jäähylle %1$s ajaksi</string>
-    <string name="mod_timeout_self" comment="You were timed out for 10m by flex3rs">Sinut asetettiin jäähylle %1$s ajaksi käyttäjän %2$s toimesta</string>
-    <string name="mod_timeout_self_reason" comment="You were timed out for 10m by flex3rs: reason">Sinut asetettiin jäähylle %1$s ajaksi käyttäjän %2$s toimesta: %3$s</string>
-    <string name="mod_timeout_by_creator" comment="flex3rs timed out user123 for 10m">%1$s asetti käyttäjän %2$s jäähylle %3$s ajaksi</string>
-    <string name="mod_timeout_by_creator_reason" comment="flex3rs timed out user123 for 10m: reason">%1$s asetti käyttäjän %2$s jäähylle %3$s ajaksi: %4$s</string>
-    <string name="mod_timeout_no_creator" comment="user123 has been timed out for 10m">%1$s on asetettu jäähylle %2$s ajaksi</string>
-    <string name="mod_ban_self_irc" comment="You were banned">Sinut estettiin</string>
-    <string name="mod_ban_self" comment="You were banned by flex3rs">Sinut estettiin käyttäjän %1$s toimesta</string>
-    <string name="mod_ban_self_reason" comment="You were banned by flex3rs: reason">Sinut estettiin käyttäjän %1$s toimesta: %2$s</string>
-    <string name="mod_ban_by_creator" comment="flex3rs banned user123">%1$s esti käyttäjän %2$s</string>
-    <string name="mod_ban_by_creator_reason" comment="flex3rs banned user123: reason">%1$s esti käyttäjän %2$s: %3$s</string>
-    <string name="mod_ban_no_creator" comment="user123 has been permanently banned">%1$s on estetty pysyvästi</string>
-    <string name="mod_untimeout" comment="flex3rs untimedout user123">%1$s poisti jäähyn käyttäjältä %2$s</string>
-    <string name="mod_unban" comment="flex3rs unbanned user123">%1$s poisti eston käyttäjältä %2$s</string>
-    <string name="mod_modded" comment="flex3rs modded user123">%1$s ylenti käyttäjän %2$s moderaattoriksi</string>
-    <string name="mod_unmodded" comment="flex3rs unmodded user123">%1$s poisti moderaattorin käyttäjältä %2$s</string>
-    <string name="mod_vip_added" comment="flex3rs has added user123 as a VIP of this channel">%1$s lisäsi käyttäjän %2$s tämän kanavan VIP-jäseneksi</string>
-    <string name="mod_vip_removed" comment="flex3rs has removed user123 as a VIP of this channel">%1$s poisti käyttäjän %2$s tämän kanavan VIP-jäsenyydestä</string>
-    <string name="mod_warn" comment="flex3rs has warned user123">%1$s varoitti käyttäjää %2$s</string>
-    <string name="mod_warn_reason" comment="flex3rs has warned user123: reason1, reason2">%1$s varoitti käyttäjää %2$s: %3$s</string>
-    <string name="mod_raid" comment="flex3rs initiated a raid to user123">%1$s aloitti raidin kanavalle %2$s</string>
-    <string name="mod_unraid" comment="flex3rs canceled the raid to user123">%1$s peruutti raidin kanavalle %2$s</string>
-    <string name="mod_delete_by_creator" comment="flex3rs deleted message from user123">%1$s poisti viestin käyttäjältä %2$s</string>
-    <string name="mod_delete_by_creator_message" comment="flex3rs deleted message from user123 saying: hello">%1$s poisti viestin käyttäjältä %2$s sanoen: %3$s</string>
-    <string name="mod_delete_no_creator" comment="A message from user123 was deleted">Viesti käyttäjältä %1$s poistettiin</string>
-    <string name="mod_delete_no_creator_message" comment="A message from user123 was deleted saying: hello">Viesti käyttäjältä %1$s poistettiin sanoen: %2$s</string>
-    <string name="mod_clear_by_creator" comment="flex3rs cleared the chat">%1$s tyhjesi chatin</string>
-    <string name="mod_clear_no_creator">Moderaattori on tyhjentänyt chatin</string>
-    <string name="mod_emote_only_on" comment="flex3rs turned on emote-only mode">%1$s otti käyttöön vain hymiöt -tilan</string>
-    <string name="mod_emote_only_off" comment="flex3rs turned off emote-only mode">%1$s poisti käytöstä vain hymiöt -tilan</string>
-    <string name="mod_followers_on" comment="flex3rs turned on followers-only mode">%1$s otti käyttöön vain seuraajat -tilan</string>
-    <string name="mod_followers_on_duration" comment="flex3rs turned on followers-only mode (10 minutes)">%1$s otti käyttöön vain seuraajat -tilan (%2$s)</string>
-    <string name="mod_followers_off" comment="flex3rs turned off followers-only mode">%1$s poisti käytöstä vain seuraajat -tilan</string>
-    <string name="mod_unique_chat_on" comment="flex3rs turned on unique-chat mode">%1$s otti käyttöön ainutlaatuinen chat -tilan</string>
-    <string name="mod_unique_chat_off" comment="flex3rs turned off unique-chat mode">%1$s poisti käytöstä ainutlaatuinen chat -tilan</string>
-    <string name="mod_slow_on" comment="flex3rs turned on slow mode">%1$s otti käyttöön hitaan tilan</string>
-    <string name="mod_slow_on_duration" comment="flex3rs turned on slow mode (30 seconds)">%1$s otti käyttöön hitaan tilan (%2$s)</string>
-    <string name="mod_slow_off" comment="flex3rs turned off slow mode">%1$s poisti käytöstä hitaan tilan</string>
-    <string name="mod_subscribers_on" comment="flex3rs turned on subscribers-only mode">%1$s otti käyttöön vain tilaajat -tilan</string>
-    <string name="mod_subscribers_off" comment="flex3rs turned off subscribers-only mode">%1$s poisti käytöstä vain tilaajat -tilan</string>
-    <string name="mod_shared_timeout" comment="flex3rs timed out user123 for 10m in channel456">%1$s asetti käyttäjän %2$s jäähylle %3$s ajaksi kanavalla %4$s</string>
-    <string name="mod_shared_timeout_reason" comment="flex3rs timed out user123 for 10m in channel456: reason">%1$s asetti käyttäjän %2$s jäähylle %3$s ajaksi kanavalla %4$s: %5$s</string>
-    <string name="mod_shared_untimeout" comment="flex3rs untimedout user123 in channel456">%1$s poisti jäähyn käyttäjältä %2$s kanavalla %3$s</string>
-    <string name="mod_shared_ban" comment="flex3rs banned user123 in channel456">%1$s esti käyttäjän %2$s kanavalla %3$s</string>
-    <string name="mod_shared_ban_reason" comment="flex3rs banned user123 in channel456: reason">%1$s esti käyttäjän %2$s kanavalla %3$s: %4$s</string>
-    <string name="mod_shared_unban" comment="flex3rs unbanned user123 in channel456">%1$s poisti eston käyttäjältä %2$s kanavalla %3$s</string>
-    <string name="mod_shared_delete" comment="flex3rs deleted message from user123 in channel456">%1$s poisti viestin käyttäjältä %2$s kanavalla %3$s</string>
-    <string name="mod_shared_delete_message" comment="flex3rs deleted message from user123 in channel456 saying: hello">%1$s poisti viestin käyttäjältä %2$s kanavalla %3$s sanoen: %4$s</string>
-    <string name="mod_message_with_count" comment="flex3rs timed out user123 for 10m. (2 times)">%1$s%2$s</string>
-    <plurals name="mod_count_suffix" comment=" (2 times)">
-        <item quantity="one">\u0020(%1$d kerta)</item>
-        <item quantity="other">\u0020(%1$d kertaa)</item>
-    </plurals>
-
-    <!-- Whisper -->
-    <string name="backspace">Askelpalautin</string>
-    <string name="hint_whispering">Lähetä kuiskaus</string>
-    <string name="whisper_header">Kuiskaus käyttäjälle @%1$s</string>
-    <string name="whisper_new">Uusi kuiskaus</string>
-    <string name="whisper_new_dialog_title">Lähetä kuiskaus käyttäjälle</string>
-    <string name="whisper_new_dialog_hint">Käyttäjänimi</string>
-    <string name="whisper_new_dialog_start">Lähetä</string>
-
-    <!-- Room State -->
-    <string name="room_state_emote_only">Vain hymiöt</string>
-    <string name="room_state_subscriber_only">Vain tilaajat</string>
-    <string name="room_state_slow_mode">Hidas tila</string>
-    <string name="room_state_slow_mode_duration">Hidas tila (%1$s)</string>
-    <string name="room_state_unique_chat">Ainutlaatuinen chat (R9K)</string>
-    <string name="room_state_follower_only">Vain seuraajat</string>
-    <string name="room_state_follower_only_duration">Vain seuraajat (%1$s)</string>
-    <string name="room_state_preset_custom">Mukautettu</string>
-    <string name="room_state_follower_any">Mikä tahansa</string>
-    <string name="room_state_duration_seconds">%1$ds</string>
-    <string name="room_state_duration_minutes">%1$dm</string>
-    <string name="room_state_duration_hours">%1$dh</string>
-    <string name="room_state_duration_days">%1$dd</string>
-    <string name="room_state_duration_weeks">%1$dw</string>
-    <string name="room_state_duration_months">%1$dmo</string>
-    <string name="mod_actions_room_state_section">Room state</string>
-    <string name="mod_actions_section">Mod actions</string>
-    <string name="mod_actions_broadcaster_section">Broadcaster</string>
-    <string name="mod_actions_shield_mode">Shield mode</string>
-    <string name="mod_actions_clear_chat">Clear chat</string>
-    <string name="mod_actions_confirm_clear_chat">Clear all messages in this channel?</string>
-
-    <string name="mod_actions_confirm_shield_mode_title">Ota suojatila käyttöön?</string>
-    <string name="mod_actions_confirm_shield_mode_body">Tämä ottaa käyttöön kanavan esimääritetyt turvallisuusasetukset, jotka voivat sisältää chatin rajoituksia, AutoMod-asetuksia ja vahvistusvaatimuksia.</string>
-    <string name="mod_actions_shield_mode_activate">Ota käyttöön</string>    <string name="mod_actions_announce">Announce</string>
-    <string name="mod_actions_announce_header">Announcement</string>
-    <string name="mod_actions_shoutout">Shoutout</string>
-    <string name="mod_actions_commercial">Commercial</string>
-    <string name="mod_actions_raid">Raid</string>
-    <string name="mod_actions_cancel_raid">Cancel raid</string>
-    <string name="mod_actions_stream_marker">Stream marker</string>
-    <string name="mod_actions_username_hint">Username</string>
-    <string name="mod_actions_channel_hint">Channel</string>
-
-    <!-- Empty States -->
-    <string name="no_channels_added_body">Lisää kanava aloittaaksesi keskustelun</string>
-    <string name="no_recent_emotes">Ei viimeaikaisia hymiöitä</string>
-
-    <!-- Menu -->
-    <string name="menu_show_stream">Näytä lähetys</string>
-    <string name="menu_hide_stream">Piilota lähetys</string>
-    <string name="menu_audio_only">Vain ääni</string>
-    <string name="menu_exit_audio_only">Poistu äänitilasta</string>
-    <string name="menu_fullscreen">Koko näyttö</string>
-    <string name="menu_exit_fullscreen">Poistu koko näytöstä</string>
-    <string name="menu_hide_input">Piilota syöttö</string>
-    <string name="menu_show_input">Näytä syöttö</string>
-    <string name="preference_swipe_navigation_title">Kanavien pyyhkäisynavigaatio</string>
-    <string name="preference_swipe_navigation_summary">Vaihda kanavaa pyyhkäisemällä chatissa</string>
-    <string name="menu_mod_actions">Kanavan moderointi</string>
-
-    <!-- Input Actions -->
-    <string name="input_action_search">Hae viestejä</string>
-    <string name="input_action_last_message">Viimeisin viesti</string>
-    <string name="input_action_stream">Vaihda lähetys</string>
-    <string name="input_action_mod_actions">Kanavan moderointi</string>
-    <string name="input_action_fullscreen">Koko näyttö</string>
-    <string name="input_action_hide_input">Piilota syöttö</string>
-    <string name="input_action_configure">Muokkaa toimintoja</string>
-    <string name="input_action_debug">Virheenkorjaus</string>
-    <plurals name="input_actions_max">
-        <item quantity="one">Enintään %1$d toiminto</item>
-        <item quantity="other">Enintään %1$d toimintoa</item>
-    </plurals>
-
+    <string name="toggle_app_bar">Näytä/piilota sovelluspalkki</string>
+    <string name="error_with_message">Virhe: %s</string>
     <!-- Onboarding -->
     <string name="onboarding_welcome_title">DankChat</string>
     <string name="onboarding_welcome_body">Aloitetaan käyttöönotto.</string>
+    <string name="onboarding_get_started">Aloita</string>
     <string name="onboarding_login_title">Kirjaudu Twitchillä</string>
     <string name="onboarding_login_body">Kirjaudu sisään lähettääksesi viestejä, käyttääksesi hymiöitäsi, vastaanottaaksesi kuiskauksia ja avataksesi kaikki ominaisuudet.</string>
     <string name="onboarding_login_disclaimer">Sinua pyydetään myöntämään useita Twitch-oikeuksia kerralla, joten sinun ei tarvitse valtuuttaa uudelleen eri ominaisuuksia käyttäessäsi. DankChat suorittaa moderointi- ja lähetystoimintoja vain silloin, kun pyydät sitä.</string>
     <string name="onboarding_login_button">Kirjaudu Twitchillä</string>
     <string name="onboarding_login_success">Kirjautuminen onnistui</string>
-    <string name="onboarding_notifications_title">Ilmoitukset</string>
-    <string name="onboarding_notifications_body">DankChat voi ilmoittaa sinulle, kun joku mainitsee sinut chatissa sovelluksen ollessa taustalla.</string>
-    <string name="onboarding_notifications_allow">Salli ilmoitukset</string>
-    <string name="onboarding_notifications_open_settings">Avaa ilmoitusasetukset</string>
-    <string name="onboarding_notifications_rationale">Ilman ilmoituksia et tiedä, kun joku mainitsee sinut chatissa sovelluksen ollessa taustalla.</string>
+    <string name="onboarding_skip">Ohita</string>
+    <string name="onboarding_continue">Jatka</string>
     <string name="onboarding_history_title">Viestihistoria</string>
     <string name="onboarding_history_body">DankChat lataa historiallisia viestejä kolmannen osapuolen palvelusta käynnistyksen yhteydessä. Viestien hakemiseksi DankChat lähettää avattujen kanavien nimet tälle palvelulle. Palvelu tallentaa tilapäisesti vierailtujen kanavien viestejä.\n\nVoit muuttaa tätä myöhemmin asetuksista tai lukea lisää osoitteessa https://recent-messages.robotty.de/</string>
     <string name="onboarding_history_enable">Ota käyttöön</string>
     <string name="onboarding_history_disable">Poista käytöstä</string>
-    <string name="onboarding_continue">Jatka</string>
-    <string name="onboarding_get_started">Aloita</string>
-    <string name="onboarding_skip">Ohita</string>
-
+    <string name="onboarding_notifications_title">Ilmoitukset</string>
+    <string name="onboarding_notifications_body">DankChat voi ilmoittaa sinulle, kun joku mainitsee sinut chatissa sovelluksen ollessa taustalla.</string>
+    <string name="onboarding_notifications_allow">Salli ilmoitukset</string>
+    <string name="onboarding_notifications_rationale">Ilman ilmoituksia et tiedä, kun joku mainitsee sinut chatissa sovelluksen ollessa taustalla.</string>
+    <string name="onboarding_notifications_open_settings">Avaa ilmoitusasetukset</string>
     <!-- Feature Tour -->
     <string name="tour_input_actions">Mukautettavat toiminnot hakuun, suoratoistoihin ja muuhun nopeaan pääsyyn</string>
     <string name="tour_overflow_menu">Napauta tästä lisätoimintoja ja toimintopalkin määrittämistä varten</string>
@@ -742,26 +740,6 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="tour_got_it">Selvä</string>
     <string name="tour_skip">Ohita esittely</string>
     <string name="tour_add_more_channels_hint">Voit lisätä lisää kanavia täältä</string>
-
-    <!-- Developer Settings -->
-    <string name="preference_developer_category_general">Yleiset</string>
-    <string name="preference_developer_category_auth">Todennus</string>
-    <string name="preference_eventsub_title">Ota Twitch EventSub käyttöön</string>
-    <string name="preference_eventsub_summary">Käyttää EventSubia reaaliaikaisiin tapahtumiin vanhentuneen PubSubin sijaan</string>
-    <string name="preference_eventsub_debug_title">Ota EventSub-virheenkorjaustuloste käyttöön</string>
-    <string name="preference_eventsub_debug_summary">Tulostaa EventSubiin liittyvää virheenkorjaustietoa järjestelmäviesteinä</string>
-    <string name="preference_revoke_token_title">Peruuta tunnus ja käynnistä uudelleen</string>
-    <string name="preference_revoke_token_summary">Mitätöi nykyisen tunnuksen ja käynnistää sovelluksen uudelleen</string>
-    <string name="system_message_send_not_logged_in">Ei kirjautunut sisään</string>
-    <string name="system_message_send_channel_not_resolved">Kanavan tunnusta ei voitu selvittää kanavalle %1$s</string>
-    <string name="system_message_send_not_delivered">Viestiä ei lähetetty</string>
-    <string name="system_message_send_dropped">Viesti hylätty: %1$s (%2$s)</string>
-    <string name="system_message_send_missing_scopes">Puuttuva user:write:chat-oikeus, kirjaudu uudelleen</string>
-    <string name="system_message_send_not_authorized">Ei oikeutta lähettää viestejä tällä kanavalla</string>
-    <string name="system_message_send_message_too_large">Viesti on liian suuri</string>
-    <string name="system_message_send_rate_limited">Nopeusrajoitus, yritä hetken kuluttua uudelleen</string>
-    <string name="system_message_send_failed">Lähetys epäonnistui: %1$s</string>
-
     <!-- Command responses -->
     <string name="cmd_error_not_logged_in">Sinun täytyy olla kirjautuneena käyttääksesi komentoa %1$s</string>
     <string name="cmd_error_no_user_matching">Käyttäjää tällä nimellä ei löytynyt.</string>
@@ -880,41 +858,4 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="cmd_error_message_too_large">Viestisi oli liian pitkä.</string>
     <string name="cmd_error_chat_rate_limited">Nopeuttasi rajoitetaan. Yritä uudelleen hetken kuluttua.</string>
     <string name="cmd_error_target_default">Kohdekäyttäjä</string>
-    <string name="preference_log_viewer_title">Lokien katselin</string>
-    <string name="preference_log_viewer_summary">Näytä sovelluksen lokit</string>
-    <string name="log_viewer_title">Lokit</string>
-    <string name="log_viewer_share">Jaa lokit</string>
-    <string name="log_viewer_open">Näytä lokit</string>
-    <string name="preference_log_viewer_empty">Lokitiedostoja ei ole saatavilla</string>
-    <string name="log_viewer_search_hint">Hae lokeista</string>
-    <plurals name="log_viewer_selected_count">
-        <item quantity="one">%1$d valittu</item>
-        <item quantity="other">%1$d valittu</item>
-    </plurals>
-    <string name="log_viewer_copy_selection">Kopioi valitut lokit</string>
-    <string name="log_viewer_clear_selection">Tyhjennä valinta</string>
-    <string name="crash_report_title">Kaatuminen havaittu</string>
-    <string name="crash_report_message">Sovellus kaatui viimeisen istunnon aikana.</string>
-    <string name="crash_report_thread">Säie: %1$s</string>
-    <string name="crash_report_copy">Kopioi</string>
-    <string name="crash_report_send">Raportti chatissa</string>
-    <string name="crash_report_send_description">Liittyy kanavalle #flex3rs ja valmistelee kaatumisyhteenvedon lähetettäväksi</string>
-    <string name="crash_report_email">Sähköpostiraportti</string>
-    <string name="crash_report_email_description">Lähetä yksityiskohtainen kaatumisraportti sähköpostilla</string>
-    <string name="crash_email_confirm_title">Lähetä kaatumisraportti sähköpostilla</string>
-    <string name="crash_email_confirm_message">Seuraavat tiedot sisällytetään raporttiin:</string>
-    <string name="crash_email_confirm_stacktrace">Pinojälki</string>
-    <string name="crash_email_confirm_include_logs">Sisällytä nykyinen lokitiedosto</string>
-    <string name="preference_crash_viewer_title">Kaatumisraportit</string>
-    <string name="preference_crash_viewer_summary">Näytä viimeisimmät kaatumisraportit</string>
-    <string name="preference_crash_viewer_empty">Kaatumisraportteja ei löytynyt</string>
-    <string name="crash_viewer_title">Kaatumisraportti</string>
-    <string name="crash_viewer_share">Jaa kaatumisraportti</string>
-    <string name="crash_viewer_delete">Poista</string>
-    <string name="crash_viewer_delete_confirm">Poistetaanko tämä kaatumisraportti?</string>
-    <string name="crash_viewer_clear_all">Tyhjennä kaikki</string>
-    <string name="crash_viewer_clear_all_confirm">Poistetaanko kaikki kaatumisraportit?</string>
-    <string name="scroll_to_bottom">Vieritä alas</string>
-    <string name="view_history">Näytä historia</string>
-    <string name="history_empty">Ei viestejä nykyisillä suodattimilla</string>
 </resources>
