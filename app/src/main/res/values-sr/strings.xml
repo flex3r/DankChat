@@ -17,13 +17,9 @@
     <string name="error_dialog_title">Izuzetak uhvaćen: %1$s</string>
     <string name="add_channel">Dodaj kanal</string>
     <string name="manage_channels">Upravljaj kanalima</string>
-    <string name="report_channel">Пријави канал</string>
-    <string name="block_channel">Блокирај канал</string>
-    <string name="channel">Канал</string>
     <string name="open_channel">Otvori kanal</string>
-    <string name="remove_channel">Уклони канал</string>
-    <string name="channel_blocked_message">Канал блокиран</string>
     <string name="no_channels_added">Nijedan kanal nije dodat</string>
+    <string name="no_channels_added_body">Додајте канал да бисте почели да ћаскате</string>
     <string name="confirm_logout_title">Potvrdi odjavu</string>
     <string name="confirm_logout_message">Da li ste sigurni da želite da se odjavite?</string>
     <string name="confirm_logout_question">Odjaviti se?</string>
@@ -52,7 +48,8 @@
     <string name="hint_disconnected">Veza nije uspostavljena</string>
     <string name="hint_not_logged_int">Niste prijavljeni</string>
     <string name="hint_replying">Одговор</string>
-    <string name="hint_announcing">Send announcement</string>    <string name="notification_new_mentions">Neko te je spomenuo</string>
+    <string name="hint_announcing">Send announcement</string>
+    <string name="notification_new_mentions">Neko te je spomenuo</string>
     <string name="notification_mention">%1$s te je spomenuo u #%2$s</string>
     <string name="notification_notify_mention">Spomenut si u #%1$s</string>
     <string name="snackbar_login">Prijavljen kao %1$s</string>
@@ -81,12 +78,12 @@
     <string name="data_loading_step_cheermotes">Cheermotovi</string>
     <string name="data_loading_step_recent_messages">Nedavne poruke</string>
     <string name="data_loading_step_with_channels">%1$s (%2$s)</string>
-
     <string name="highlight_header_first_time_chat">Прва порука</string>
     <string name="highlight_header_elevated_chat">Истакнута порука</string>
     <string name="highlight_header_gigantified_emote">Гигантски емоут</string>
     <string name="highlight_header_animated_message">Анимирана порука</string>
-    <string name="highlight_header_reward_no_cost">Искоришћено: %1$s</string>    <plurals name="duration_seconds">
+    <string name="highlight_header_reward_no_cost">Искоришћено: %1$s</string>
+    <plurals name="duration_seconds">
         <item quantity="one">%1$d секунду</item>
         <item quantity="few">%1$d секунде</item>
         <item quantity="other">%1$d секунди</item>
@@ -116,18 +113,13 @@
     <string name="snackbar_paste">Paste</string>
     <string name="add_channel_hint">Naziv kanala</string>
     <string name="add_channel_already_added">Канал је већ додат</string>
-    <string name="emote_menu_tab_recent">Недавно</string>
+    <string name="backspace">Обриши</string>
     <string name="emote_menu_tab_subs">Pretplatnici</string>
     <string name="emote_menu_tab_channel">Kanal</string>
     <string name="emote_menu_tab_global">Globalno</string>
     <string name="system_message_connected">Povezan</string>
     <string name="system_message_reconnected">Поново повезан</string>
-    <string name="system_message_channel_non_existent">Овај канал не постоји</string>
     <string name="system_message_disconnected">Veza prekiuta</string>
-    <string name="system_message_history_unavailable_detailed">Сервис историје порука недоступан (Грешка %1$s)</string>
-    <string name="system_message_history_unavailable">Сервис историје порука недоступан</string>
-    <string name="system_message_history_recovering">Сервис историје порука се опоравља, могући су прекиди у историји порука.</string>
-    <string name="system_message_history_ignored">Историја порука недоступна јер је овај канал искључен из сервиса.</string>
     <string name="system_message_no_history">Ne vidite prethodne poruke jer ste onemogućili integraciju nedavnih poruka.</string>
     <string name="system_message_ffz_emotes_failed">Учитавање FFZ емотикона није успело (Грешка %1$s)</string>
     <string name="system_message_bttv_emotes_failed">Учитавање BTTV емотикона није успело (Грешка %1$s)</string>
@@ -139,7 +131,16 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s је додао 7TV емотикон %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s је преименовао 7TV емотикон %2$s у %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s је уклонио 7TV емотикон %2$s.</string>
-
+    <!-- Send errors -->
+    <string name="system_message_send_not_logged_in">Нисте пријављени</string>
+    <string name="system_message_send_channel_not_resolved">Није могуће одредити ID канала за %1$s</string>
+    <string name="system_message_send_not_delivered">Порука није послата</string>
+    <string name="system_message_send_dropped">Порука одбачена: %1$s (%2$s)</string>
+    <string name="system_message_send_missing_scopes">Недостаје дозвола user:write:chat, пријавите се поново</string>
+    <string name="system_message_send_not_authorized">Немате дозволу за слање порука у овом каналу</string>
+    <string name="system_message_send_message_too_large">Порука је превелика</string>
+    <string name="system_message_send_rate_limited">Ограничење брзине, покушајте поново за тренутак</string>
+    <string name="system_message_send_failed">Слање неуспешно: %1$s</string>
     <!-- AutoMod -->
     <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Порука задржана из разлога: %1$s. Дозвола ће је објавити у ћаскању.</string>
     <string name="automod_allow">Дозволи</string>
@@ -165,22 +166,27 @@
     <string name="automod_moderation_added_blocked_term" comment="flex3rs added &quot;test&quot; as a blocked term on AutoMod.">%1$s је додао %2$s као блокирани термин на AutoMod.</string>
     <string name="automod_moderation_added_permitted_term" comment="flex3rs added &quot;test&quot; as a permitted term on AutoMod.">%1$s је додао %2$s као дозвољени термин на AutoMod.</string>
     <string name="automod_moderation_removed_blocked_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s је уклонио %2$s као блокирани термин са AutoMod.</string>
-    <string name="automod_moderation_removed_permitted_term" comment="flex3rs removed &quot;test&quot; as a permitted term on AutoMod.">%1$s је уклонио %2$s као дозвољени термин са AutoMod.</string>
-
-    <!-- Moderation messages -->
-    <!-- Timeout -->
+    <string name="automod_moderation_removed_permitted_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s је уклонио %2$s као дозвољени термин са AutoMod.</string>
+    <!-- Moderation messages — complete sentence variants for proper localization -->
+    <!-- Timeout (self, IRC — no creator info) -->
     <string name="mod_timeout_self_irc" comment="You were timed out for 10m">Добили сте тајмаут на %1$s</string>
+    <!-- Timeout (self, EventSub — has creator) -->
     <string name="mod_timeout_self" comment="You were timed out for 10m by flex3rs">Добили сте тајмаут на %1$s од стране %2$s</string>
     <string name="mod_timeout_self_reason" comment="You were timed out for 10m by flex3rs: reason">Добили сте тајмаут на %1$s од стране %2$s: %3$s</string>
+    <!-- Timeout (other, by creator) -->
     <string name="mod_timeout_by_creator" comment="flex3rs timed out user123 for 10m">%1$s је дао тајмаут кориснику %2$s на %3$s</string>
     <string name="mod_timeout_by_creator_reason" comment="flex3rs timed out user123 for 10m: reason">%1$s је дао тајмаут кориснику %2$s на %3$s: %4$s</string>
+    <!-- Timeout (other, IRC — no creator) -->
     <string name="mod_timeout_no_creator" comment="user123 has been timed out for 10m">%1$s је добио тајмаут на %2$s</string>
+    <!-- Ban (self) -->
     <string name="mod_ban_self_irc" comment="You were banned">Бановани сте</string>
     <string name="mod_ban_self" comment="You were banned by flex3rs">Бановани сте од стране %1$s</string>
     <string name="mod_ban_self_reason" comment="You were banned by flex3rs: reason">Бановани сте од стране %1$s: %2$s</string>
+    <!-- Ban (other) -->
     <string name="mod_ban_by_creator" comment="flex3rs banned user123">%1$s је бановао %2$s</string>
     <string name="mod_ban_by_creator_reason" comment="flex3rs banned user123: reason">%1$s је бановао %2$s: %3$s</string>
     <string name="mod_ban_no_creator" comment="user123 has been permanently banned">%1$s је трајно банован</string>
+    <!-- Simple actions -->
     <string name="mod_untimeout" comment="flex3rs untimedout user123">%1$s је уклонио тајмаут кориснику %2$s</string>
     <string name="mod_unban" comment="flex3rs unbanned user123">%1$s је одбановао %2$s</string>
     <string name="mod_modded" comment="flex3rs modded user123">%1$s је поставио %2$s за модератора</string>
@@ -191,24 +197,28 @@
     <string name="mod_warn_reason" comment="flex3rs has warned user123: reason1, reason2">%1$s је упозорио %2$s: %3$s</string>
     <string name="mod_raid" comment="flex3rs initiated a raid to user123">%1$s је покренуо рејд на %2$s</string>
     <string name="mod_unraid" comment="flex3rs canceled the raid to user123">%1$s је отказао рејд на %2$s</string>
+    <!-- Delete -->
     <string name="mod_delete_by_creator" comment="flex3rs deleted message from user123">%1$s је обрисао поруку од %2$s</string>
     <string name="mod_delete_by_creator_message" comment="flex3rs deleted message from user123 saying: hello">%1$s је обрисао поруку од %2$s са садржајем: %3$s</string>
     <string name="mod_delete_no_creator" comment="A message from user123 was deleted">Порука од %1$s је обрисана</string>
     <string name="mod_delete_no_creator_message" comment="A message from user123 was deleted saying: hello">Порука од %1$s је обрисана са садржајем: %2$s</string>
+    <!-- Clear -->
     <string name="mod_clear_by_creator" comment="flex3rs cleared the chat">%1$s је очистио чат</string>
     <string name="mod_clear_no_creator">Чат је очишћен од стране модератора</string>
+    <!-- Room state -->
     <string name="mod_emote_only_on" comment="flex3rs turned on emote-only mode">%1$s је укључио emote-only режим</string>
     <string name="mod_emote_only_off" comment="flex3rs turned off emote-only mode">%1$s је искључио emote-only режим</string>
     <string name="mod_followers_on" comment="flex3rs turned on followers-only mode">%1$s је укључио followers-only режим</string>
-    <string name="mod_followers_on_duration" comment="flex3rs turned on followers-only mode (10 minutes)">%1$s је укључио followers-only режим (%2$s)</string>
+    <string name="mod_followers_on_duration" comment="flex3rs turned on followers-only mode (1 week)">%1$s је укључио followers-only режим (%2$s)</string>
     <string name="mod_followers_off" comment="flex3rs turned off followers-only mode">%1$s је искључио followers-only режим</string>
     <string name="mod_unique_chat_on" comment="flex3rs turned on unique-chat mode">%1$s је укључио unique-chat режим</string>
     <string name="mod_unique_chat_off" comment="flex3rs turned off unique-chat mode">%1$s је искључио unique-chat режим</string>
     <string name="mod_slow_on" comment="flex3rs turned on slow mode">%1$s је укључио спори режим</string>
-    <string name="mod_slow_on_duration" comment="flex3rs turned on slow mode (30 seconds)">%1$s је укључио спори режим (%2$s)</string>
+    <string name="mod_slow_on_duration" comment="flex3rs turned on slow mode (2 minutes 5 seconds)">%1$s је укључио спори режим (%2$s)</string>
     <string name="mod_slow_off" comment="flex3rs turned off slow mode">%1$s је искључио спори режим</string>
     <string name="mod_subscribers_on" comment="flex3rs turned on subscribers-only mode">%1$s је укључио subscribers-only режим</string>
     <string name="mod_subscribers_off" comment="flex3rs turned off subscribers-only mode">%1$s је искључио subscribers-only режим</string>
+    <!-- Shared chat -->
     <string name="mod_shared_timeout" comment="flex3rs timed out user123 for 10m in channel456">%1$s је дао тајмаут кориснику %2$s на %3$s у %4$s</string>
     <string name="mod_shared_timeout_reason" comment="flex3rs timed out user123 for 10m in channel456: reason">%1$s је дао тајмаут кориснику %2$s на %3$s у %4$s: %5$s</string>
     <string name="mod_shared_untimeout" comment="flex3rs untimedout user123 in channel456">%1$s је уклонио тајмаут кориснику %2$s у %3$s</string>
@@ -217,13 +227,14 @@
     <string name="mod_shared_unban" comment="flex3rs unbanned user123 in channel456">%1$s је одбановао %2$s у %3$s</string>
     <string name="mod_shared_delete" comment="flex3rs deleted message from user123 in channel456">%1$s је обрисао поруку од %2$s у %3$s</string>
     <string name="mod_shared_delete_message" comment="flex3rs deleted message from user123 in channel456 saying: hello">%1$s је обрисао поруку од %2$s у %3$s са садржајем: %4$s</string>
+    <!-- Helper: message + count concatenation -->
     <string name="mod_message_with_count" comment="flex3rs timed out user123 for 10m. (2 times)">%1$s%2$s</string>
+    <!-- Parenthetical count (appended after complete sentences, safe for all languages) -->
     <plurals name="mod_count_suffix" comment=" (2 times)">
         <item quantity="one">\u0020(%1$d пут)</item>
         <item quantity="few">\u0020(%1$d пута)</item>
         <item quantity="other">\u0020(%1$d пута)</item>
     </plurals>
-
     <string name="timed_out_message">&lt; Poruka obrisana &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Dodajte unos</string>
@@ -231,7 +242,7 @@
     <string name="message_history_disclaimer_title">Odricanje odgovornosti za istoriju poruka</string>
     <string name="message_history_disclaimer_message">DankChat učitava istoriju poruka sa nezavisnih servisa.
 Da bi dobio poruke DankChat šalje imena kanala koje ste otvori tom servisu.
-Servis privremeno čuva poruke za kanal koji vi (i drugi) posetite kako bi pružio uslogu.
+Servis privremeno čuva poruke za kanal koji vi (i drugi) posetite kako bi pružio uslogu. 
 
 Kako biste isključili ovu uslogu, pritisnite odustati ispod ili onemogućiti učitavanje poruke iz istorije u podešavanju kasnije.
 - Posetite https://recent-messages.robotty.de/ kako biste saznali više informacija o servisu i onemogućili istoriju poruka za svoj kanal. </string>
@@ -245,12 +256,9 @@ Kako biste isključili ovu uslogu, pritisnite odustati ispod ili onemogućiti u�
     <string name="mentions">Pominjanja</string>
     <string name="confirm_channel_removal_title">Potvrdi brisanje kanala</string>
     <string name="confirm_channel_removal_message">Da li ste sigurni da želite da obrišete ovaj kanal?</string>
-    <string name="confirm_channel_removal_message_named">Да ли сте сигурни да желите да уклоните канал \"%1$s\"?</string>
     <string name="confirm_channel_removal_question">Ukloniti ovaj kanal?</string>
     <string name="confirm_channel_removal_question_named">Ukloniti kanal \"%1$s\"?</string>
     <string name="confirm_channel_removal_positive_button">Obriši</string>
-    <string name="confirm_channel_block_title">Потврди блокирање канала</string>
-    <string name="confirm_channel_block_message_named">Да ли сте сигурни да желите да блокирате канал \"%1$s\"?</string>
     <string name="confirm_channel_block_question_named">Blokirati kanal \"%1$s\"?</string>
     <string name="user_popup_block">Blokiraj</string>
     <string name="user_popup_unblock">Odblokiraj</string>
@@ -276,6 +284,63 @@ Kako biste isključili ovu uslogu, pritisnite odustati ispod ili onemogućiti u�
 Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="toggle_fullscreen">Režim celog ekrana</string>
     <string name="toggle_stream">Režim strima</string>
+    <string name="menu_show_stream">Прикажи стрим</string>
+    <string name="menu_hide_stream">Сакриј стрим</string>
+    <string name="menu_audio_only">Само звук</string>
+    <string name="menu_exit_audio_only">Изађи из режима звука</string>
+    <string name="menu_fullscreen">Цео екран</string>
+    <string name="menu_exit_fullscreen">Изађи из целог екрана</string>
+    <string name="menu_hide_input">Сакриј унос</string>
+    <string name="menu_show_input">Прикажи унос</string>
+    <string name="preference_swipe_navigation_title">Навигација канала превлачењем</string>
+    <string name="preference_swipe_navigation_summary">Мењајте канале превлачењем по чату</string>
+    <string name="menu_mod_actions">Модерација канала</string>
+    <plurals name="input_actions_max">
+        <item quantity="one">Максимално %1$d акција</item>
+        <item quantity="few">Максимално %1$d акције</item>
+        <item quantity="other">Максимално %1$d акција</item>
+    </plurals>
+    <string name="input_action_search">Претражи поруке</string>
+    <string name="input_action_last_message">Последња порука</string>
+    <string name="input_action_stream">Укључи/искључи стрим</string>
+    <string name="input_action_mod_actions">Модерација канала</string>
+    <string name="input_action_fullscreen">Цео екран</string>
+    <string name="input_action_hide_input">Сакриј унос</string>
+    <string name="input_action_debug">Отклањање грешака</string>
+    <string name="input_action_configure">Подеси акције</string>
+    <string name="room_state_emote_only">Само емотикони</string>
+    <string name="room_state_subscriber_only">Само претплатници</string>
+    <string name="room_state_slow_mode">Спори режим</string>
+    <string name="room_state_slow_mode_duration">Спори режим (%1$s)</string>
+    <string name="room_state_unique_chat">Јединствени чат (R9K)</string>
+    <string name="room_state_follower_only">Само пратиоци</string>
+    <string name="room_state_follower_only_duration">Само пратиоци (%1$s)</string>
+    <string name="room_state_preset_custom">Прилагођено</string>
+    <string name="room_state_follower_any">Било који</string>
+    <string name="room_state_duration_seconds">%1$ds</string>
+    <string name="room_state_duration_minutes">%1$dm</string>
+    <string name="room_state_duration_hours">%1$dh</string>
+    <string name="room_state_duration_days">%1$dd</string>
+    <string name="room_state_duration_weeks">%1$dw</string>
+    <string name="room_state_duration_months">%1$dmo</string>
+    <string name="mod_actions_room_state_section">Room state</string>
+    <string name="mod_actions_section">Mod actions</string>
+    <string name="mod_actions_broadcaster_section">Broadcaster</string>
+    <string name="mod_actions_shield_mode">Shield mode</string>
+    <string name="mod_actions_clear_chat">Clear chat</string>
+    <string name="mod_actions_confirm_clear_chat">Clear all messages in this channel?</string>
+    <string name="mod_actions_confirm_shield_mode_title">Активирати режим штита?</string>
+    <string name="mod_actions_confirm_shield_mode_body">Ово ће применити унапред конфигурисане безбедносне поставке канала, које могу укључивати ограничења ћаскања, подешавања AutoMod-а и захтеве за верификацију.</string>
+    <string name="mod_actions_shield_mode_activate">Активирај</string>
+    <string name="mod_actions_announce">Announce</string>
+    <string name="mod_actions_announce_header">Announcement</string>
+    <string name="mod_actions_shoutout">Shoutout</string>
+    <string name="mod_actions_commercial">Commercial</string>
+    <string name="mod_actions_raid">Raid</string>
+    <string name="mod_actions_cancel_raid">Cancel raid</string>
+    <string name="mod_actions_stream_marker">Stream marker</string>
+    <string name="mod_actions_username_hint">Username</string>
+    <string name="mod_actions_channel_hint">Channel</string>
     <string name="account">Nalog</string>
     <string name="relogin">Ponovno logovanje</string>
     <string name="logout">Odjavi se</string>
@@ -283,7 +348,6 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="user_popup_delete">Obriši poruku</string>
     <string name="user_popup_ban">Ban</string>
     <string name="user_popup_unban">Unban</string>
-    <string name="user_popup_report">Пријави</string>
     <string name="change_roomstate">Režim sobe</string>
     <string name="confirm_user_ban_title">Potvrditi banovanje</string>
     <string name="confirm_user_ban_message">Da li ste sigurni da želite da banujete ovog korisnika</string>
@@ -311,13 +375,6 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="command_trigger_duplicate">Ovaj okidač je već u upotrebi od strane druge komande</string>
     <string name="command__hint">Komanda</string>
     <string name="commands_title">Prilagođene komande</string>
-    <string name="tts_ignore_list_add_user">Додај корисника</string>
-    <string name="tts_ignore_list_remove_user">Уклони корисника</string>
-    <string name="tts_ignore_list_user_hint">Корисник</string>
-    <string name="recent_upload_deletion_link">Линк за брисање:\n%1$s</string>
-    <string name="recent_uploads_clear">Обриши отпремања</string>
-    <string name="host">Хост</string>
-    <string name="reset">Ресетуј</string>
     <string name="oauth_token">OAuth токен</string>
     <string name="verify_login">Верификуј и сачувај</string>
     <string name="custom_login_hint">Подржани су само Client ID-ови који раде са Twitch Helix API</string>
@@ -330,10 +387,7 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="custom_login_error_fallback">Грешка: %1$s</string>
     <string name="custom_login_error_empty_token">Токен не може бити празан</string>
     <string name="custom_login_error_invalid_token">Токен је неважећи</string>
-    <string name="badge_tooltip_moderator">Модератор</string>
     <string name="badge_tooltip_lead_moderator">Главни модератор</string>
-    <string name="badge_tooltip_predictions">Предвидео \"%1$s\"</string>
-    <string name="badge_tooltip_sub_tier">Ниво %1$s</string>
     <string name="preference_timestamp_title">Prikaži vremensku markicu</string>
     <string name="preference_mention_format_title">Format pominjanja</string>
     <string name="preference_roomstate_title">Prikaži informacije o režimu sobe</string>
@@ -397,7 +451,6 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="palette_style_content_desc">Boja isticanja sa analognom tercijarnom</string>
     <string name="palette_style_more">Više stilova</string>
     <string name="preference_display_group_title">Ekran</string>
-    <string name="preference_components_group_title">Компоненте</string>
     <string name="preference_show_timed_out_messages_title">Prikaži obrisane poruke</string>
     <string name="preference_animate_gifs_title">Animirani gifovi</string>
     <string name="preference_line_separator_title">Odvojite poruke linijama</string>
@@ -425,6 +478,8 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_message_history_dashboard_summary">Saznajte više o usluzi i onemogućite istoriju poruka za svoj kanal</string>
     <string name="preference_channel_data_header">Podaci o kanalu</string>
     <string name="preference_developer_header">Programerska podešavanja</string>
+    <string name="preference_log_viewer_title">Прегледач логова</string>
+    <string name="preference_log_viewer_summary">Прегледајте логове апликације</string>
     <string name="preference_debug_mode_title">Debug mod</string>
     <string name="preference_debug_mode_summary">Прикажи акцију аналитике за отклањање грешака у траци за унос и локално прикупљај извештаје о падовима</string>
     <string name="preference_timestamp_format_title">Format vremenskih markica</string>
@@ -436,18 +491,10 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_tts_message_format_message">Čita samo poruku</string>
     <string name="preference_tts_message_format_combined">Čita korisnika i poruku</string>
     <string name="preference_tts_message_format_title">Režim formata poruka</string>
-    <string name="preference_tts_message_ignore_url_message">Игнорише URL адресе у TTS</string>
-    <string name="preference_tts_message_ignore_url_title">Игнориши URL адресе</string>
-    <string name="preference_tts_message_ignore_emote_message">Игнорише емотиконе и емоџије у TTS</string>
-    <string name="preference_tts_message_ignore_emote_title">Игнориши емотиконе</string>
     <string name="preference_tts_volume_title">Јачина звука</string>
     <string name="preference_tts_audio_ducking_title">Пригушивање звука</string>
     <string name="preference_tts_audio_ducking_summary">Смањи јачину других апликација док TTS говори</string>
     <string name="preference_tts_header">Tekst u govor</string>
-    <string name="preference_tts_force_english_title">Forsiraj engleski jezik</string>
-    <string name="preference_tts_force_english_summary">Forisraj čitanje teksta na engleskom umesto na podrazumevanom jeziku</string>
-    <string name="preference_tts_user_ignore_list_title">Листа игнорисаних корисника</string>
-    <string name="preference_tts_user_ignore_list_summary">Листа корисника/налога који ће бити игнорисани</string>
     <string name="preference_checkered_lines_title">Karirane linije</string>
     <string name="preference_checkered_lines_summary">Odvojite svaku liniju različitom osvetljenošću pozadine</string>
     <string name="preference_supibot_suggestions_title">Predlozi komandi za Supibot</string>
@@ -461,36 +508,22 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_user_long_click_summary_off">Obićan klik otvara pominjanja, duži klik otvara iskačući prozor</string>
     <string name="preference_colorize_nicknames_title">Обојите надимке</string>
     <string name="preference_colorize_nicknames_summary">Додели насумичну боју корисницима без постављене боје</string>
+    <string name="preference_tts_force_english_title">Forsiraj engleski jezik</string>
+    <string name="preference_tts_force_english_summary">Forisraj čitanje teksta na engleskom umesto na podrazumevanom jeziku</string>
     <string name="preference_visible_emotes_title">Vidljivost emotova nezavisnih servisa</string>
-    <string name="preference_about_tos">Twitch услови коришћења и правила:</string>
-    <string name="preference_show_chip_actions_title">Прикажи акције чипова</string>
-    <string name="preference_show_chip_actions_summary">Приказује чипове за пребацивање целог екрана, стримова и подешавање режима чата</string>
     <string name="preference_show_character_counter_title">Prikaži brojač karaktera</string>
     <string name="preference_show_character_counter_summary">Prikazuje broj kodnih tačaka u polju za unos</string>
     <string name="preference_show_clear_input_button_title">Prikaži dugme za brisanje unosa</string>
     <string name="preference_show_send_button_title">Prikaži dugme za slanje</string>
     <string name="preference_input_group_title">Unos</string>
-    <string name="preference_uploader_header">Отпремање медија</string>
-    <string name="preference_uploader_configure_title">Подеси отпремање</string>
-    <string name="preference_uploader_recent_uploads_title">Недавна отпремања</string>
-    <string name="preference_tools_header">Алатке</string>
-    <string name="preference_theme_title">Тема</string>
-    <string name="preference_dark_theme_entry_title">Тамна тема</string>
-    <string name="preference_light_theme_entry_title">Светла тема</string>
-    <string name="preference_unlisted_emotes_title">Дозволи неуврштене емотиконе</string>
-    <string name="preference_unlisted_emotes_summary">Искључује филтрирање неодобрених или неуврштених емотикона</string>
-    <string name="preference_rm_host_title">Прилагођени хост за недавне поруке</string>
-    <string name="preference_fetch_streams_title">Преузми информације о стриму</string>
-    <string name="preference_fetch_streams_summary">Периодично преузима информације о стриму отворених канала. Потребно за покретање уграђеног стрима.</string>
-    <string name="preference_auto_disable_input_title">Онемогући унос ако нисте повезани на чат</string>
-    <string name="preference_repeated_sending_title">Омогући поновљено слање</string>
-    <string name="preference_repeated_sending_summary">Омогућава непрекидно слање порука док је дугме за слање притиснуто</string>
-    <string name="oauth_expired_title">Пријава је истекла!</string>
-    <string name="oauth_expired_message">Ваш токен за пријаву је истекао! Пријавите се поново.</string>
-    <string name="oauth_expired_login_again">Пријави се поново</string>
-    <string name="oauth_verify_failed">Верификација токена за пријаву није успела, проверите вашу везу.</string>
-    <string name="preference_retain_webview_title">Спречи поновно учитавање стрима</string>
-    <string name="preference_retain_webview_summary">Омогућава експериментално спречавање поновног учитавања стрима након ротације екрана или поновног отварања DankChat-а.</string>
+    <string name="preference_developer_category_general">Опште</string>
+    <string name="preference_developer_category_auth">Аутентификација</string>
+    <string name="preference_eventsub_title">Укључи Twitch EventSub</string>
+    <string name="preference_eventsub_summary">Користи EventSub за различите догађаје у реалном времену уместо застарелог PubSub</string>
+    <string name="preference_eventsub_debug_title">Укључи дебаг излаз за EventSub</string>
+    <string name="preference_eventsub_debug_summary">Приказује дебаг излаз везан за EventSub као системске поруке</string>
+    <string name="preference_revoke_token_title">Опозови токен и рестартуј</string>
+    <string name="preference_revoke_token_summary">Поништава тренутни токен и рестартује апликацију</string>
     <string name="preference_show_changelogs">Прикажи дневник промена после ажурирања</string>
     <string name="preference_whats_new_header">Шта је ново</string>
     <string name="preference_custom_login_title">Прилагођена пријава</string>
@@ -513,52 +546,11 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_streams_header">Стримови уживо</string>
     <string name="preference_pip_title">Омогући режим слика-у-слици</string>
     <string name="preference_pip_summary">Омогућава наставак репродукције стримова док апликација ради у позадини</string>
-    <string name="preference_notification_whisper_title">Обавештења за шапате</string>
-    <string name="reset_media_uploader_dialog_title">Ресетуј подешавања отпремања медија</string>
-    <string name="reset_media_uploader_dialog_message">Да ли сте сигурни да желите да ресетујете подешавања отпремања медија на подразумевана?</string>
-    <string name="reset_media_uploader_dialog_positive">Ресетуј</string>
-    <string name="clear_recent_uploads_dialog_title">Обриши недавна отпремања</string>
-    <string name="clear_recent_uploads_dialog_message">Да ли сте сигурни да желите да обришете историју отпремања? Отпремљени фајлови неће бити обрисани.</string>
-    <string name="clear">Обриши</string>
-    <string name="pattern">Образац</string>
-    <string name="case_sensitive">Осетљиво на величину слова</string>
-    <string name="highlights">Истицања</string>
-    <string name="enabled">Укључено</string>
-    <string name="create_notification">Обавештење</string>
-    <string name="preference_highlights_summary">Измени истицања порука</string>
-    <string name="preference_highlights_ignores_header">Истицања и игнорисања</string>
-    <string name="username">Корисничко име</string>
-    <string name="block">Блокирај</string>
-    <string name="replacement">Замена</string>
-    <string name="ignores">Игнорисања</string>
-    <string name="preference_ignores_summary">Измени игнорисања порука</string>
-    <string name="tab_messages">Поруке</string>
-    <string name="tab_users">Корисници</string>
-    <string name="tab_blacklisted_users">Блокирани корисници</string>
-    <string name="tab_twitch">Twitch</string>
     <string name="tab_badges">Значке</string>
-    <string name="undo">Поништи</string>
-    <string name="item_removed">Ставка уклоњена</string>
-    <string name="unblocked_user">Корисник %1$s одблокиран</string>
-    <string name="unblocked_user_failed">Одблокирање корисника %1$s није успело</string>
     <string name="badge">Значка</string>
-    <string name="blocked_user_failed">Блокирање корисника %1$s није успело</string>
-    <string name="highlights_entry_username">Ваше корисничко име</string>
-    <string name="highlights_ignores_entry_subscriptions">Претплате и догађаји</string>
-    <string name="highlights_ignores_entry_announcements">Обавештења</string>
     <string name="highlights_ignores_entry_watch_streaks">Серије гледања</string>
-    <string name="highlights_ignores_entry_first_messages">Прве поруке</string>
-    <string name="highlights_ignores_entry_elevated_messages">Истакнуте поруке</string>
-    <string name="highlights_ignores_entry_redemptions">Истицања откупљена поенима канала</string>
     <string name="highlights_ignores_entry_replies">Одговори</string>
-    <string name="highlights_ignores_entry_custom">Прилагођено</string>
-    <string name="highlights_messages_title">Прави обавештења и истиче поруке на основу одређених образаца.</string>
-    <string name="highlights_users_title">Прави обавештења и истиче поруке од одређених корисника.</string>
-    <string name="highlights_blacklisted_users_title">Искључи обавештења и истицања од одређених корисника (нпр. ботова).</string>
     <string name="highlights_badges_title">Прави обавештења и истиче поруке од корисника на основу значки.</string>
-    <string name="ignores_messages_title">Игнориши поруке на основу одређених образаца.</string>
-    <string name="ignores_users_title">Игнориши поруке од одређених корисника.</string>
-    <string name="ignores_twitch_title">Управљај блокираним Twitch корисницима.</string>
     <string name="login_outdated_title">Пријава је застарела!</string>
     <string name="login_outdated_message">Ваша пријава је застарела и нема приступ неким функцијама. Пријавите се поново.</string>
     <string name="custom_user_display_title">Прилагођени приказ корисника</string>
@@ -569,19 +561,70 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="pick_custom_user_color_title">Изабери прилагођену боју корисника</string>
     <string name="custom_user_display_summary">Додај прилагођено име и боју за кориснике</string>
     <string name="reply_to">Одговор на</string>
+    <string name="message_copy">Копирај поруку</string>
+    <string name="message_copy_full">Копирај целу поруку</string>
+    <string name="message_reply">Одговори на поруку</string>
+    <string name="message_reply_original">Одговори на оригиналну поруку</string>
+    <string name="message_view_thread">Прикажи тему</string>
+    <string name="message_copy_id">Копирај ID поруке</string>
+    <string name="message_more_actions">Још…</string>
+    <string name="message_jump_to">Иди на поруку</string>
+    <string name="message_not_in_history">Порука више није у историји ћаскања</string>
+    <string name="message_history">Историја порука</string>
+    <string name="global_history_title">Глобална историја</string>
+    <string name="message_history_title">Историја: %1$s</string>
+    <string name="view_history">Погледај историју</string>
+    <string name="history_empty">Нема порука које одговарају тренутним филтерима</string>
+    <string name="search_messages_hint">Претражи поруке…</string>
+    <string name="log_viewer_title">Логови</string>
+    <string name="log_viewer_share">Подели логове</string>
+    <string name="log_viewer_open">Прегледај логове</string>
+    <string name="preference_log_viewer_empty">Нема доступних лог фајлова</string>
+    <string name="log_viewer_search_hint">Претражи логове</string>
+    <plurals name="log_viewer_selected_count">
+        <item quantity="one">%1$d изабрано</item>
+        <item quantity="few">%1$d изабрано</item>
+        <item quantity="other">%1$d изабрано</item>
+    </plurals>
+    <string name="log_viewer_copy_selection">Копирај изабране логове</string>
+    <string name="log_viewer_clear_selection">Обриши избор</string>
+    <string name="crash_report_title">Откривен пад</string>
+    <string name="crash_report_message">Апликација се срушила током последње сесије.</string>
+    <string name="crash_report_thread">Нит: %1$s</string>
+    <string name="crash_report_copy">Копирај</string>
+    <string name="crash_report_send">Извештај у чату</string>
+    <string name="crash_report_send_description">Придружује се каналу #flex3rs и припрема сажетак пада за слање</string>
+    <string name="crash_report_email">Извештај путем е-поште</string>
+    <string name="crash_report_email_description">Пошаљи детаљан извештај о паду путем е-поште</string>
+    <string name="crash_email_confirm_title">Пошаљи извештај о паду путем е-поште</string>
+    <string name="crash_email_confirm_message">Следећи подаци ће бити укључени у извештај:</string>
+    <string name="crash_email_confirm_stacktrace">Трага стека</string>
+    <string name="crash_email_confirm_include_logs">Укључи тренутни лог фајл</string>
+    <string name="preference_crash_viewer_title">Извештаји о падовима</string>
+    <string name="preference_crash_viewer_summary">Прегледај недавне извештаје о падовима</string>
+    <string name="preference_crash_viewer_empty">Нису пронађени извештаји о падовима</string>
+    <string name="crash_viewer_title">Извештај о паду</string>
+    <string name="crash_viewer_share">Подели извештај о паду</string>
+    <string name="crash_viewer_delete">Обриши</string>
+    <string name="crash_viewer_clear_all">Обриши све</string>
+    <string name="crash_viewer_delete_confirm">Обрисати овај извештај о паду?</string>
+    <string name="crash_viewer_clear_all_confirm">Обрисати све извештаје о падовима?</string>
+    <string name="scroll_to_bottom">Помери на дно</string>
+    <string name="search_filter_by_username">Филтрирај по корисничком имену</string>
+    <string name="search_filter_has_link">Поруке са линковима</string>
+    <string name="search_filter_has_emote">Поруке са емотима</string>
+    <string name="search_filter_by_badge">Филтрирај по називу значке</string>
+    <string name="search_filter_user">Корисник</string>
+    <string name="search_filter_badge">Значка</string>
     <string name="reply_header">Одговор ка @%1$s</string>
-    <string name="reply_thread_not_found">Тема одговора није пронађена</string>
-
-    <!-- Whisper -->
-    <string name="backspace">Обриши</string>
-    <string name="hint_whispering">Пошаљи шапат</string>
     <string name="whisper_header">Шапат ка @%1$s</string>
+    <string name="hint_whispering">Пошаљи шапат</string>
     <string name="whisper_new">Нови шапат</string>
     <string name="whisper_new_dialog_title">Пошаљи шапат</string>
     <string name="whisper_new_dialog_hint">Корисничко име</string>
     <string name="whisper_new_dialog_start">Пошаљи</string>
-
-    <!-- Emote Sheet -->
+    <string name="reply_thread_not_found">Тема одговора није пронађена</string>
+    <string name="message_not_found">Порука није пронађена</string>
     <string name="emote_sheet_use">Користи емотикон</string>
     <string name="emote_sheet_copy">Копирај</string>
     <string name="emote_sheet_open_link">Отвори линк емотикона</string>
@@ -598,47 +641,29 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="emote_sheet_created_by">Направио %1$s</string>
     <string name="emote_sheet_zero_width_emote">(Нулте ширине)</string>
     <string name="emote_copied">Емотикон копиран</string>
-
-    <!-- Changelog -->
     <string name="changelog_sheet_title">DankChat је ажуриран!</string>
     <string name="changelog_sheet_subtitle">Шта је ново у v%1$s:</string>
-
-    <!-- Login -->
     <string name="confirm_login_cancel_title">Потврди отказивање пријаве</string>
     <string name="confirm_login_cancel_message">Да ли сте сигурни да желите да откажете процес пријаве?</string>
     <string name="confirm_login_cancel_positive_button">Откажи пријаву</string>
     <string name="login_menu_zoom_out">Умањи</string>
     <string name="login_menu_zoom_in">Увећај</string>
     <string name="back">Назад</string>
-
-    <!-- Shared Chat -->
     <string name="shared_chat">Дељени чат</string>
-
-    <!-- Viewers -->
     <plurals name="viewers_and_uptime">
         <item quantity="one">Уживо са %1$d гледаоцем %2$s</item>
         <item quantity="few">Уживо са %1$d гледаоца %2$s</item>
         <item quantity="other">Уживо са %1$d гледалаца %2$s</item>
     </plurals>
+    <string name="open_source_licenses">Лиценце отвореног кода</string>
     <plurals name="viewers_and_uptime_with_cateogry" comment="Live with 1 viewer in Just Chatting for 1h 1m&#13;&#10;Live with 10 viewers in Just Chatting for 1h 1m">
         <item quantity="one">Уживо са %1$d гледаоцем у %2$s %3$s</item>
         <item quantity="few">Уживо са %1$d гледаоца у %2$s %3$s</item>
         <item quantity="other">Уживо са %1$d гледалаца у %2$s %3$s</item>
     </plurals>
-    <plurals name="months">
-        <item quantity="one">%d месец</item>
-        <item quantity="few">%d месеца</item>
-        <item quantity="other">%d месеци</item>
-    </plurals>
-
-    <string name="open_source_licenses">Лиценце отвореног кода</string>
     <string name="preference_streaminfo_category_title">Прикажи категорију стрима</string>
     <string name="preference_streaminfo_category_summary">Такође приказује категорију стрима</string>
     <string name="toggle_input">Укључи/искључи унос</string>
-    <string name="toggle_app_bar">Prikaži/sakrij traku aplikacije</string>
-    <string name="error_with_message">Greška: %s</string>
-
-    <!-- Badges -->
     <string name="badge_broadcaster">Стример</string>
     <string name="badge_admin">Админ</string>
     <string name="badge_staff">Особље</string>
@@ -651,116 +676,28 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="pick_highlight_color_title">Изабери прилагођену боју истицања</string>
     <string name="reset_default_highlight_color">Подразумевано</string>
     <string name="choose_highlight_color">Изабери боју</string>
-
-    <!-- Room State -->
-    <string name="room_state_emote_only">Само емотикони</string>
-    <string name="room_state_subscriber_only">Само претплатници</string>
-    <string name="room_state_slow_mode">Спори режим</string>
-    <string name="room_state_slow_mode_duration">Спори режим (%1$s)</string>
-    <string name="room_state_unique_chat">Јединствени чат (R9K)</string>
-    <string name="room_state_follower_only">Само пратиоци</string>
-    <string name="room_state_follower_only_duration">Само пратиоци (%1$s)</string>
-    <string name="room_state_preset_custom">Прилагођено</string>
-    <string name="room_state_follower_any">Било који</string>
-    <string name="room_state_duration_seconds">%1$ds</string>
-    <string name="room_state_duration_minutes">%1$dm</string>
-    <string name="room_state_duration_hours">%1$dh</string>
-    <string name="room_state_duration_days">%1$dd</string>
-    <string name="room_state_duration_weeks">%1$dw</string>
-    <string name="room_state_duration_months">%1$dmo</string>
-    <string name="mod_actions_room_state_section">Room state</string>
-    <string name="mod_actions_section">Mod actions</string>
-    <string name="mod_actions_broadcaster_section">Broadcaster</string>
-    <string name="mod_actions_shield_mode">Shield mode</string>
-    <string name="mod_actions_clear_chat">Clear chat</string>
-    <string name="mod_actions_confirm_clear_chat">Clear all messages in this channel?</string>
-
-    <string name="mod_actions_confirm_shield_mode_title">Активирати режим штита?</string>
-    <string name="mod_actions_confirm_shield_mode_body">Ово ће применити унапред конфигурисане безбедносне поставке канала, које могу укључивати ограничења ћаскања, подешавања AutoMod-а и захтеве за верификацију.</string>
-    <string name="mod_actions_shield_mode_activate">Активирај</string>    <string name="mod_actions_announce">Announce</string>
-    <string name="mod_actions_announce_header">Announcement</string>
-    <string name="mod_actions_shoutout">Shoutout</string>
-    <string name="mod_actions_commercial">Commercial</string>
-    <string name="mod_actions_raid">Raid</string>
-    <string name="mod_actions_cancel_raid">Cancel raid</string>
-    <string name="mod_actions_stream_marker">Stream marker</string>
-    <string name="mod_actions_username_hint">Username</string>
-    <string name="mod_actions_channel_hint">Channel</string>
-
-    <!-- Empty States -->
-    <string name="no_channels_added_body">Додајте канал да бисте почели да ћаскате</string>
-
-    <!-- Menu -->
-    <string name="menu_show_stream">Прикажи стрим</string>
-    <string name="menu_hide_stream">Сакриј стрим</string>
-    <string name="menu_audio_only">Само звук</string>
-    <string name="menu_exit_audio_only">Изађи из режима звука</string>
-    <string name="menu_fullscreen">Цео екран</string>
-    <string name="menu_exit_fullscreen">Изађи из целог екрана</string>
-    <string name="menu_hide_input">Сакриј унос</string>
-    <string name="menu_show_input">Прикажи унос</string>
-    <string name="preference_swipe_navigation_title">Навигација канала превлачењем</string>
-    <string name="preference_swipe_navigation_summary">Мењајте канале превлачењем по чату</string>
-    <string name="menu_mod_actions">Модерација канала</string>
-
-    <!-- Input Actions -->
-    <string name="input_action_search">Претражи поруке</string>
-    <string name="input_action_last_message">Последња порука</string>
-    <string name="input_action_stream">Укључи/искључи стрим</string>
-    <string name="input_action_mod_actions">Модерација канала</string>
-    <string name="input_action_fullscreen">Цео екран</string>
-    <string name="input_action_hide_input">Сакриј унос</string>
-    <string name="input_action_configure">Подеси акције</string>
-    <string name="input_action_debug">Отклањање грешака</string>
-    <plurals name="input_actions_max">
-        <item quantity="one">Максимално %1$d акција</item>
-        <item quantity="few">Максимално %1$d акције</item>
-        <item quantity="other">Максимално %1$d акција</item>
-    </plurals>
-
-    <!-- Search -->
-    <string name="message_copy">Копирај поруку</string>
-    <string name="message_copy_full">Копирај целу поруку</string>
-    <string name="message_reply">Одговори на поруку</string>
-    <string name="message_reply_original">Одговори на оригиналну поруку</string>
-    <string name="message_view_thread">Прикажи тему</string>
-    <string name="message_copy_id">Копирај ID поруке</string>
-    <string name="message_more_actions">Још…</string>
-    <string name="message_jump_to">Иди на поруку</string>
-    <string name="message_not_found">Порука није пронађена</string>
-    <string name="message_not_in_history">Порука више није у историји ћаскања</string>
-    <string name="message_history">Историја порука</string>
-    <string name="global_history_title">Глобална историја</string>
-    <string name="message_history_title">Историја: %1$s</string>
-    <string name="search_messages_hint">Претражи поруке…</string>
-    <string name="search_filter_by_username">Филтрирај по корисничком имену</string>
-    <string name="search_filter_has_link">Поруке са линковима</string>
-    <string name="search_filter_has_emote">Поруке са емотима</string>
-    <string name="search_filter_by_badge">Филтрирај по називу значке</string>
-    <string name="search_filter_user">Корисник</string>
-    <string name="search_filter_badge">Значка</string>
-
+    <string name="toggle_app_bar">Prikaži/sakrij traku aplikacije</string>
+    <string name="error_with_message">Greška: %s</string>
     <!-- Onboarding -->
     <string name="onboarding_welcome_title">DankChat</string>
     <string name="onboarding_welcome_body">Хајде да подесимо све.</string>
+    <string name="onboarding_get_started">Почни</string>
     <string name="onboarding_login_title">Пријави се преко Twitch-а</string>
     <string name="onboarding_login_body">Пријавите се да бисте слали поруке, користили емотиконе, примали шапате и откључали све функције.</string>
     <string name="onboarding_login_disclaimer">Бићете замољени да одобрите неколико Twitch дозвола одједном како не бисте морали поново да се ауторизујете при коришћењу различитих функција. DankChat извршава радње модерације и управљања преносом само када то затражите.</string>
     <string name="onboarding_login_button">Пријави се преко Twitch-а</string>
     <string name="onboarding_login_success">Пријава успешна</string>
-    <string name="onboarding_notifications_title">Обавештења</string>
-    <string name="onboarding_notifications_body">DankChat може да вас обавести када вас неко помене у чату док апликација ради у позадини.</string>
-    <string name="onboarding_notifications_allow">Дозволи обавештења</string>
-    <string name="onboarding_notifications_open_settings">Отвори подешавања обавештења</string>
-    <string name="onboarding_notifications_rationale">Без обавештења нећете знати када вас неко помене у чату док апликација ради у позадини.</string>
+    <string name="onboarding_skip">Прескочи</string>
+    <string name="onboarding_continue">Настави</string>
     <string name="onboarding_history_title">Историја порука</string>
     <string name="onboarding_history_body">DankChat учитава историјске поруке из услуге треће стране при покретању. Да би добио поруке, DankChat шаље имена отворених канала овој услузи. Услуга привремено чува поруке посећених канала.\n\nОво можете касније променити у подешавањима или сазнати више на https://recent-messages.robotty.de/</string>
     <string name="onboarding_history_enable">Укључи</string>
     <string name="onboarding_history_disable">Искључи</string>
-    <string name="onboarding_continue">Настави</string>
-    <string name="onboarding_get_started">Почни</string>
-    <string name="onboarding_skip">Прескочи</string>
-
+    <string name="onboarding_notifications_title">Обавештења</string>
+    <string name="onboarding_notifications_body">DankChat може да вас обавести када вас неко помене у чату док апликација ради у позадини.</string>
+    <string name="onboarding_notifications_allow">Дозволи обавештења</string>
+    <string name="onboarding_notifications_rationale">Без обавештења нећете знати када вас неко помене у чату док апликација ради у позадини.</string>
+    <string name="onboarding_notifications_open_settings">Отвори подешавања обавештења</string>
     <!-- Feature Tour -->
     <string name="tour_input_actions">Прилагодљиве акције за брз приступ претрази, стримовима и другом</string>
     <string name="tour_overflow_menu">Додирните овде за више акција и подешавање траке акција</string>
@@ -771,26 +708,6 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="tour_got_it">Разумем</string>
     <string name="tour_skip">Прескочи обилазак</string>
     <string name="tour_add_more_channels_hint">Овде можете додати више канала</string>
-
-    <!-- Developer Settings -->
-    <string name="preference_developer_category_general">Опште</string>
-    <string name="preference_developer_category_auth">Аутентификација</string>
-    <string name="preference_eventsub_title">Укључи Twitch EventSub</string>
-    <string name="preference_eventsub_summary">Користи EventSub за различите догађаје у реалном времену уместо застарелог PubSub</string>
-    <string name="preference_eventsub_debug_title">Укључи дебаг излаз за EventSub</string>
-    <string name="preference_eventsub_debug_summary">Приказује дебаг излаз везан за EventSub као системске поруке</string>
-    <string name="preference_revoke_token_title">Опозови токен и рестартуј</string>
-    <string name="preference_revoke_token_summary">Поништава тренутни токен и рестартује апликацију</string>
-    <string name="system_message_send_not_logged_in">Нисте пријављени</string>
-    <string name="system_message_send_channel_not_resolved">Није могуће одредити ID канала за %1$s</string>
-    <string name="system_message_send_not_delivered">Порука није послата</string>
-    <string name="system_message_send_dropped">Порука одбачена: %1$s (%2$s)</string>
-    <string name="system_message_send_missing_scopes">Недостаје дозвола user:write:chat, пријавите се поново</string>
-    <string name="system_message_send_not_authorized">Немате дозволу за слање порука у овом каналу</string>
-    <string name="system_message_send_message_too_large">Порука је превелика</string>
-    <string name="system_message_send_rate_limited">Ограничење брзине, покушајте поново за тренутак</string>
-    <string name="system_message_send_failed">Слање неуспешно: %1$s</string>
-
     <!-- Command responses -->
     <string name="cmd_error_not_logged_in">Морате бити пријављени да бисте користили команду %1$s</string>
     <string name="cmd_error_no_user_matching">Није пронађен корисник са тим корисничким именом.</string>
@@ -910,42 +827,4 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="cmd_error_message_too_large">Ваша порука је била предуга.</string>
     <string name="cmd_error_chat_rate_limited">Ограничена вам је брзина. Покушајте поново за тренутак.</string>
     <string name="cmd_error_target_default">Циљни корисник</string>
-    <string name="preference_log_viewer_title">Прегледач логова</string>
-    <string name="preference_log_viewer_summary">Прегледајте логове апликације</string>
-    <string name="log_viewer_title">Логови</string>
-    <string name="log_viewer_share">Подели логове</string>
-    <string name="log_viewer_open">Прегледај логове</string>
-    <string name="preference_log_viewer_empty">Нема доступних лог фајлова</string>
-    <string name="log_viewer_search_hint">Претражи логове</string>
-    <plurals name="log_viewer_selected_count">
-        <item quantity="one">%1$d изабрано</item>
-        <item quantity="few">%1$d изабрано</item>
-        <item quantity="other">%1$d изабрано</item>
-    </plurals>
-    <string name="log_viewer_copy_selection">Копирај изабране логове</string>
-    <string name="log_viewer_clear_selection">Обриши избор</string>
-    <string name="crash_report_title">Откривен пад</string>
-    <string name="crash_report_message">Апликација се срушила током последње сесије.</string>
-    <string name="crash_report_thread">Нит: %1$s</string>
-    <string name="crash_report_copy">Копирај</string>
-    <string name="crash_report_send">Извештај у чату</string>
-    <string name="crash_report_send_description">Придружује се каналу #flex3rs и припрема сажетак пада за слање</string>
-    <string name="crash_report_email">Извештај путем е-поште</string>
-    <string name="crash_report_email_description">Пошаљи детаљан извештај о паду путем е-поште</string>
-    <string name="crash_email_confirm_title">Пошаљи извештај о паду путем е-поште</string>
-    <string name="crash_email_confirm_message">Следећи подаци ће бити укључени у извештај:</string>
-    <string name="crash_email_confirm_stacktrace">Трага стека</string>
-    <string name="crash_email_confirm_include_logs">Укључи тренутни лог фајл</string>
-    <string name="preference_crash_viewer_title">Извештаји о падовима</string>
-    <string name="preference_crash_viewer_summary">Прегледај недавне извештаје о падовима</string>
-    <string name="preference_crash_viewer_empty">Нису пронађени извештаји о падовима</string>
-    <string name="crash_viewer_title">Извештај о паду</string>
-    <string name="crash_viewer_share">Подели извештај о паду</string>
-    <string name="crash_viewer_delete">Обриши</string>
-    <string name="crash_viewer_delete_confirm">Обрисати овај извештај о паду?</string>
-    <string name="crash_viewer_clear_all">Обриши све</string>
-    <string name="crash_viewer_clear_all_confirm">Обрисати све извештаје о падовима?</string>
-    <string name="scroll_to_bottom">Помери на дно</string>
-    <string name="view_history">Погледај историју</string>
-    <string name="history_empty">Нема порука које одговарају тренутним филтерима</string>
 </resources>
