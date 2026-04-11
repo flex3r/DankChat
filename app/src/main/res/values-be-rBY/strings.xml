@@ -24,8 +24,10 @@
     <string name="remove_channel">Выдаліць канал</string>
     <string name="channel_blocked_message">Канал заблакіраваны</string>
     <string name="no_channels_added">Няма дададзеных каналаў</string>
+    <string name="no_channels_added_body">Дадайце канал, каб пачаць размову</string>
     <string name="confirm_logout_title">Пацверджанне выхаду</string>
     <string name="confirm_logout_message">Вы ўпэўнены, што хочаце выйсці?</string>
+    <string name="confirm_logout_question">Выйсці?</string>
     <string name="confirm_logout_positive_button">Выйсці</string>
     <string name="upload_media">Загрузіць медыя</string>
     <string name="take_picture">Зрабіць здымак</string>
@@ -43,12 +45,14 @@
     <string name="notification_title">FeelsDankMan</string>
     <string name="notification_message">DankChat працуе ў фонавым рэжыме</string>
     <string name="emote_menu_hint">Адкрыць меню смайлаў</string>
+    <string name="no_recent_emotes">Няма нядаўніх эмоутаў</string>
     <string name="login_title">Увайсці ў Twitch.tv</string>
     <string name="hint_connected">Пачаць чат</string>
     <string name="hint_disconnected">Адключана</string>
     <string name="hint_not_logged_int">Вы не ўвайшлі</string>
     <string name="hint_replying">Адказаць</string>
-    <string name="hint_announcing">Send announcement</string>    <string name="notification_new_mentions">У вас новыя згадванні</string>
+    <string name="hint_announcing">Send announcement</string>
+    <string name="notification_new_mentions">У вас новыя згадванні</string>
     <string name="notification_mention">%1$s згадаў вас у #%2$s</string>
     <string name="notification_notify_mention">Вас згадалі ў #%1$s</string>
     <string name="snackbar_login">Вы ўвайшлі як %1$s</string>
@@ -77,7 +81,6 @@
     <string name="data_loading_step_cheermotes">Cheermote-ы</string>
     <string name="data_loading_step_recent_messages">Апошнія паведамленні</string>
     <string name="data_loading_step_with_channels">%1$s (%2$s)</string>
-
     <string name="highlight_header_first_time_chat">Першае паведамленне</string>
     <string name="highlight_header_elevated_chat">Павышанае паведамленне</string>
     <string name="highlight_header_gigantified_emote">Гіганцкі эмоут</string>
@@ -119,6 +122,7 @@
     <string name="add_channel_hint">Назва канала</string>
     <string name="add_channel_already_added">Канал ужо дададзены</string>
     <string name="emote_menu_tab_recent">Нядаўнія</string>
+    <string name="backspace">Выдаліць</string>
     <string name="emote_menu_tab_subs">Смайлы падпіскі</string>
     <string name="emote_menu_tab_channel">Смайлы канала</string>
     <string name="emote_menu_tab_global">Глабальныя смайлы</string>
@@ -141,6 +145,112 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s Дадаў у 7TV смайл %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s Змяніў назву смайла 7TV %2$s на %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s Прыбраў смайл 7TV %2$s.</string>
+    <!-- Send errors -->
+    <string name="system_message_send_not_logged_in">Не ўвайшлі ў сістэму</string>
+    <string name="system_message_send_channel_not_resolved">Не ўдалося вызначыць ID канала для %1$s</string>
+    <string name="system_message_send_not_delivered">Паведамленне не было адпраўлена</string>
+    <string name="system_message_send_dropped">Паведамленне адхілена: %1$s (%2$s)</string>
+    <string name="system_message_send_missing_scopes">Адсутнічае дазвол user:write:chat, калі ласка, увайдзіце зноў</string>
+    <string name="system_message_send_not_authorized">Няма дазволу адпраўляць паведамленні ў гэтым канале</string>
+    <string name="system_message_send_message_too_large">Паведамленне занадта вялікае</string>
+    <string name="system_message_send_rate_limited">Перавышаны ліміт запытаў, паспрабуйце пазней</string>
+    <string name="system_message_send_failed">Памылка адпраўкі: %1$s</string>
+    <!-- AutoMod -->
+    <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Паведамленне затрымана з прычыны: %1$s. Дазвол апублікуе яго ў чаце.</string>
+    <string name="automod_allow">Дазволіць</string>
+    <string name="automod_deny">Адхіліць</string>
+    <string name="automod_status_approved">Ухвалена</string>
+    <string name="automod_status_denied">Адхілена</string>
+    <string name="automod_ban_user">Заблакаваць карыстальніка</string>
+    <string name="automod_status_expired">Тэрмін скончыўся</string>
+    <string name="automod_user_held">Гэй! Тваё паведамленне правяраецца мадэратарамі і яшчэ не адпраўлена.</string>
+    <string name="automod_user_accepted">Мадэратары прынялі тваё паведамленне.</string>
+    <string name="automod_user_denied">Мадэратары адхілілі тваё паведамленне.</string>
+    <string name="automod_reason_category" comment="aggressive (level 2)">%1$s (узровень %2$d)</string>
+    <plurals name="automod_reason_blocked_terms">
+        <item quantity="one">супадае з %1$d заблакаваным тэрмінам %2$s</item>
+        <item quantity="few">супадае з %1$d заблакаванымі тэрмінамі %2$s</item>
+        <item quantity="many">супадае з %1$d заблакаванымі тэрмінамі %2$s</item>
+        <item quantity="other">супадае з %1$d заблакаванымі тэрмінамі %2$s</item>
+    </plurals>
+    <string name="automod_error_already_processed" comment="Failed to allow AutoMod message - message has already been processed.">Не ўдалося %1$s паведамленне AutoMod - паведамленне ўжо апрацавана.</string>
+    <string name="automod_error_not_authenticated" comment="Failed to allow AutoMod message - you need to re-authenticate.">Не ўдалося %1$s паведамленне AutoMod - вам трэба паўторна аўтарызавацца.</string>
+    <string name="automod_error_not_authorized" comment="Failed to allow AutoMod message - you don\'t have permission to perform that action.">Не ўдалося %1$s паведамленне AutoMod - у вас няма дазволу на гэтае дзеянне.</string>
+    <string name="automod_error_not_found" comment="Failed to allow AutoMod message - target message not found.">Не ўдалося %1$s паведамленне AutoMod - мэтавае паведамленне не знойдзена.</string>
+    <string name="automod_error_unknown" comment="Failed to allow AutoMod message - an unknown error occurred.">Не ўдалося %1$s паведамленне AutoMod - адбылася невядомая памылка.</string>
+    <string name="automod_moderation_added_blocked_term" comment="flex3rs added &quot;test&quot; as a blocked term on AutoMod.">%1$s дадаў %2$s як заблакаваны тэрмін у AutoMod.</string>
+    <string name="automod_moderation_added_permitted_term" comment="flex3rs added &quot;test&quot; as a permitted term on AutoMod.">%1$s дадаў %2$s як дазволены тэрмін у AutoMod.</string>
+    <string name="automod_moderation_removed_blocked_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s выдаліў %2$s як заблакаваны тэрмін з AutoMod.</string>
+    <string name="automod_moderation_removed_permitted_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s выдаліў %2$s як дазволены тэрмін з AutoMod.</string>
+    <!-- Moderation messages — complete sentence variants for proper localization -->
+    <!-- Timeout (self, IRC — no creator info) -->
+    <string name="mod_timeout_self_irc" comment="You were timed out for 10m">Вас было заглушана на %1$s</string>
+    <!-- Timeout (self, EventSub — has creator) -->
+    <string name="mod_timeout_self" comment="You were timed out for 10m by flex3rs">Вас было заглушана на %1$s мадэратарам %2$s</string>
+    <string name="mod_timeout_self_reason" comment="You were timed out for 10m by flex3rs: reason">Вас было заглушана на %1$s мадэратарам %2$s: %3$s</string>
+    <!-- Timeout (other, by creator) -->
+    <string name="mod_timeout_by_creator" comment="flex3rs timed out user123 for 10m">%1$s заглушыў %2$s на %3$s</string>
+    <string name="mod_timeout_by_creator_reason" comment="flex3rs timed out user123 for 10m: reason">%1$s заглушыў %2$s на %3$s: %4$s</string>
+    <!-- Timeout (other, IRC — no creator) -->
+    <string name="mod_timeout_no_creator" comment="user123 has been timed out for 10m">%1$s быў заглушаны на %2$s</string>
+    <!-- Ban (self) -->
+    <string name="mod_ban_self_irc" comment="You were banned">Вас было забанена</string>
+    <string name="mod_ban_self" comment="You were banned by flex3rs">Вас было забанена мадэратарам %1$s</string>
+    <string name="mod_ban_self_reason" comment="You were banned by flex3rs: reason">Вас было забанена мадэратарам %1$s: %2$s</string>
+    <!-- Ban (other) -->
+    <string name="mod_ban_by_creator" comment="flex3rs banned user123">%1$s забаніў %2$s</string>
+    <string name="mod_ban_by_creator_reason" comment="flex3rs banned user123: reason">%1$s забаніў %2$s: %3$s</string>
+    <string name="mod_ban_no_creator" comment="user123 has been permanently banned">%1$s быў перманентна забанены</string>
+    <!-- Simple actions -->
+    <string name="mod_untimeout" comment="flex3rs untimedout user123">%1$s зняў заглушэнне з %2$s</string>
+    <string name="mod_unban" comment="flex3rs unbanned user123">%1$s разбаніў %2$s</string>
+    <string name="mod_modded" comment="flex3rs modded user123">%1$s прызначыў мадэратарам %2$s</string>
+    <string name="mod_unmodded" comment="flex3rs unmodded user123">%1$s зняў мадэратара з %2$s</string>
+    <string name="mod_vip_added" comment="flex3rs has added user123 as a VIP of this channel">%1$s дадаў %2$s як VIP гэтага канала</string>
+    <string name="mod_vip_removed" comment="flex3rs has removed user123 as a VIP of this channel">%1$s выдаліў %2$s як VIP гэтага канала</string>
+    <string name="mod_warn" comment="flex3rs has warned user123">%1$s папярэдзіў %2$s</string>
+    <string name="mod_warn_reason" comment="flex3rs has warned user123: reason1, reason2">%1$s папярэдзіў %2$s: %3$s</string>
+    <string name="mod_raid" comment="flex3rs initiated a raid to user123">%1$s пачаў рэйд на %2$s</string>
+    <string name="mod_unraid" comment="flex3rs canceled the raid to user123">%1$s адмяніў рэйд на %2$s</string>
+    <!-- Delete -->
+    <string name="mod_delete_by_creator" comment="flex3rs deleted message from user123">%1$s выдаліў паведамленне ад %2$s</string>
+    <string name="mod_delete_by_creator_message" comment="flex3rs deleted message from user123 saying: hello">%1$s выдаліў паведамленне ад %2$s з тэкстам: %3$s</string>
+    <string name="mod_delete_no_creator" comment="A message from user123 was deleted">Паведамленне ад %1$s было выдалена</string>
+    <string name="mod_delete_no_creator_message" comment="A message from user123 was deleted saying: hello">Паведамленне ад %1$s было выдалена з тэкстам: %2$s</string>
+    <!-- Clear -->
+    <string name="mod_clear_by_creator" comment="flex3rs cleared the chat">%1$s ачысціў чат</string>
+    <string name="mod_clear_no_creator">Чат быў ачышчаны мадэратарам</string>
+    <!-- Room state -->
+    <string name="mod_emote_only_on" comment="flex3rs turned on emote-only mode">%1$s уключыў рэжым толькі эмоцыі</string>
+    <string name="mod_emote_only_off" comment="flex3rs turned off emote-only mode">%1$s выключыў рэжым толькі эмоцыі</string>
+    <string name="mod_followers_on" comment="flex3rs turned on followers-only mode">%1$s уключыў рэжым толькі для падпісчыкаў канала</string>
+    <string name="mod_followers_on_duration" comment="flex3rs turned on followers-only mode (1 week)">%1$s уключыў рэжым толькі для падпісчыкаў канала (%2$s)</string>
+    <string name="mod_followers_off" comment="flex3rs turned off followers-only mode">%1$s выключыў рэжым толькі для падпісчыкаў канала</string>
+    <string name="mod_unique_chat_on" comment="flex3rs turned on unique-chat mode">%1$s уключыў рэжым унікальнага чату</string>
+    <string name="mod_unique_chat_off" comment="flex3rs turned off unique-chat mode">%1$s выключыў рэжым унікальнага чату</string>
+    <string name="mod_slow_on" comment="flex3rs turned on slow mode">%1$s уключыў павольны рэжым</string>
+    <string name="mod_slow_on_duration" comment="flex3rs turned on slow mode (2 minutes 5 seconds)">%1$s уключыў павольны рэжым (%2$s)</string>
+    <string name="mod_slow_off" comment="flex3rs turned off slow mode">%1$s выключыў павольны рэжым</string>
+    <string name="mod_subscribers_on" comment="flex3rs turned on subscribers-only mode">%1$s уключыў рэжым толькі для падпісчыкаў</string>
+    <string name="mod_subscribers_off" comment="flex3rs turned off subscribers-only mode">%1$s выключыў рэжым толькі для падпісчыкаў</string>
+    <!-- Shared chat -->
+    <string name="mod_shared_timeout" comment="flex3rs timed out user123 for 10m in channel456">%1$s заглушыў %2$s на %3$s у %4$s</string>
+    <string name="mod_shared_timeout_reason" comment="flex3rs timed out user123 for 10m in channel456: reason">%1$s заглушыў %2$s на %3$s у %4$s: %5$s</string>
+    <string name="mod_shared_untimeout" comment="flex3rs untimedout user123 in channel456">%1$s зняў заглушэнне з %2$s у %3$s</string>
+    <string name="mod_shared_ban" comment="flex3rs banned user123 in channel456">%1$s забаніў %2$s у %3$s</string>
+    <string name="mod_shared_ban_reason" comment="flex3rs banned user123 in channel456: reason">%1$s забаніў %2$s у %3$s: %4$s</string>
+    <string name="mod_shared_unban" comment="flex3rs unbanned user123 in channel456">%1$s разбаніў %2$s у %3$s</string>
+    <string name="mod_shared_delete" comment="flex3rs deleted message from user123 in channel456">%1$s выдаліў паведамленне ад %2$s у %3$s</string>
+    <string name="mod_shared_delete_message" comment="flex3rs deleted message from user123 in channel456 saying: hello">%1$s выдаліў паведамленне ад %2$s у %3$s з тэкстам: %4$s</string>
+    <!-- Helper: message + count concatenation -->
+    <string name="mod_message_with_count" comment="flex3rs timed out user123 for 10m. (2 times)">%1$s%2$s</string>
+    <!-- Parenthetical count (appended after complete sentences, safe for all languages) -->
+    <plurals name="mod_count_suffix" comment=" (2 times)">
+        <item quantity="one">\u0020(%1$d раз)</item>
+        <item quantity="few">\u0020(%1$d разы)</item>
+        <item quantity="many">\u0020(%1$d разоў)</item>
+        <item quantity="other">\u0020(%1$d разоў)</item>
+    </plurals>
     <string name="timed_out_message">&lt; Паведамленне выдалена &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Дадаць запіс</string>
@@ -158,9 +268,12 @@
     <string name="confirm_channel_removal_title">Пацверджанне выдалення канала</string>
     <string name="confirm_channel_removal_message">Вы ўпэўнены, што хочаце выдаліць канал?</string>
     <string name="confirm_channel_removal_message_named">Вы ўпэўнены, што хочаце выдаліць канал \"%1$s\"?</string>
+    <string name="confirm_channel_removal_question">Выдаліць гэты канал?</string>
+    <string name="confirm_channel_removal_question_named">Выдаліць канал \"%1$s\"?</string>
     <string name="confirm_channel_removal_positive_button">Выдаліць</string>
     <string name="confirm_channel_block_title">Пацверджанне выдалення канала</string>
     <string name="confirm_channel_block_message_named">Вы ўпэўнены, што хочаце заблакіраваць канал \"%1$s\"?</string>
+    <string name="confirm_channel_block_question_named">Заблакаваць канал \"%1$s\"?</string>
     <string name="user_popup_block">Заблакіраваць</string>
     <string name="user_popup_unblock">Разблакіраваць</string>
     <string name="user_popup_mention">Згадаць карыстальніка</string>
@@ -184,6 +297,64 @@
     <string name="uploader_description">Вы можаце настроіць уласны хостынг для загрузкі медыя, напрыклад imgur.com або s-ul.eu. DankChat выкарыстоўвае падобны з Chatterino фармат налады.\nПаглядзіце тут, калі хочаце даведацца больш (на ангельскай): https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="toggle_fullscreen">Поўнаэкранны рэжым</string>
     <string name="toggle_stream">Адлюстроўваць трансляцыю</string>
+    <string name="menu_show_stream">Паказаць трансляцыю</string>
+    <string name="menu_hide_stream">Схаваць трансляцыю</string>
+    <string name="menu_audio_only">Толькі аўдыё</string>
+    <string name="menu_exit_audio_only">Выйсці з рэжыму аўдыё</string>
+    <string name="menu_fullscreen">На ўвесь экран</string>
+    <string name="menu_exit_fullscreen">Выйсці з поўнаэкраннага рэжыму</string>
+    <string name="menu_hide_input">Схаваць увод</string>
+    <string name="menu_show_input">Паказаць увод</string>
+    <string name="preference_swipe_navigation_title">Навігацыя каналаў свайпам</string>
+    <string name="preference_swipe_navigation_summary">Пераключэнне каналаў свайпам па чаце</string>
+    <string name="menu_mod_actions">Мадэрацыя канала</string>
+    <plurals name="input_actions_max">
+        <item quantity="one">Максімум %1$d дзеянне</item>
+        <item quantity="few">Максімум %1$d дзеянні</item>
+        <item quantity="many">Максімум %1$d дзеянняў</item>
+        <item quantity="other">Максімум %1$d дзеянняў</item>
+    </plurals>
+    <string name="input_action_search">Пошук паведамленняў</string>
+    <string name="input_action_last_message">Апошняе паведамленне</string>
+    <string name="input_action_stream">Пераключыць трансляцыю</string>
+    <string name="input_action_mod_actions">Мадэрацыя канала</string>
+    <string name="input_action_fullscreen">На ўвесь экран</string>
+    <string name="input_action_hide_input">Схаваць увод</string>
+    <string name="input_action_debug">Адладка</string>
+    <string name="input_action_configure">Наладзіць дзеянні</string>
+    <string name="room_state_emote_only">Толькі эмоуты</string>
+    <string name="room_state_subscriber_only">Толькі падпісчыкі</string>
+    <string name="room_state_slow_mode">Павольны рэжым</string>
+    <string name="room_state_slow_mode_duration">Павольны рэжым (%1$s)</string>
+    <string name="room_state_unique_chat">Унікальны чат (R9K)</string>
+    <string name="room_state_follower_only">Толькі фалаверы</string>
+    <string name="room_state_follower_only_duration">Толькі фалаверы (%1$s)</string>
+    <string name="room_state_preset_custom">Іншае</string>
+    <string name="room_state_follower_any">Любы</string>
+    <string name="room_state_duration_seconds">%1$ds</string>
+    <string name="room_state_duration_minutes">%1$dm</string>
+    <string name="room_state_duration_hours">%1$dh</string>
+    <string name="room_state_duration_days">%1$dd</string>
+    <string name="room_state_duration_weeks">%1$dw</string>
+    <string name="room_state_duration_months">%1$dmo</string>
+    <string name="mod_actions_room_state_section">Room state</string>
+    <string name="mod_actions_section">Mod actions</string>
+    <string name="mod_actions_broadcaster_section">Broadcaster</string>
+    <string name="mod_actions_shield_mode">Shield mode</string>
+    <string name="mod_actions_clear_chat">Clear chat</string>
+    <string name="mod_actions_confirm_clear_chat">Clear all messages in this channel?</string>
+    <string name="mod_actions_confirm_shield_mode_title">Актываваць рэжым шчыта?</string>
+    <string name="mod_actions_confirm_shield_mode_body">Гэта прыменіць папярэдне наладжаныя параметры бяспекі канала, якія могуць уключаць абмежаванні чата, налады AutoMod і патрабаванні верыфікацыі.</string>
+    <string name="mod_actions_shield_mode_activate">Актываваць</string>
+    <string name="mod_actions_announce">Announce</string>
+    <string name="mod_actions_announce_header">Announcement</string>
+    <string name="mod_actions_shoutout">Shoutout</string>
+    <string name="mod_actions_commercial">Commercial</string>
+    <string name="mod_actions_raid">Raid</string>
+    <string name="mod_actions_cancel_raid">Cancel raid</string>
+    <string name="mod_actions_stream_marker">Stream marker</string>
+    <string name="mod_actions_username_hint">Username</string>
+    <string name="mod_actions_channel_hint">Channel</string>
     <string name="account">Акаўнт</string>
     <string name="relogin">Увайсці ізноў</string>
     <string name="logout">Выйсці</string>
@@ -194,12 +365,15 @@
     <string name="change_roomstate">Рэжымы чату</string>
     <string name="confirm_user_ban_title">Пацверджанне бана</string>
     <string name="confirm_user_ban_message">Вы ўпэўнены, што хочаце забаніць гэтага карыстальніка?</string>
+    <string name="confirm_user_ban_question">Забаніць гэтага карыстальніка?</string>
     <string name="confirm_user_ban_positive_button">Забаніць</string>
     <string name="confirm_user_timeout_title">Пацверджанне тайм-аўта</string>
     <string name="confirm_user_timeout_positive_button">Тайм-аўт</string>
     <string name="confirm_user_delete_title">Пацверджанне выдаленні паведамлення</string>
     <string name="confirm_user_delete_message">Вы ўпэўнены, што хочаце выдаліць гэтае паведамленне?</string>
+    <string name="confirm_user_delete_question">Выдаліць гэтае паведамленне?</string>
     <string name="confirm_user_delete_positive_button">Выдаліць</string>
+    <string name="confirm_clear_chat_question">Ачысціць чат?</string>
     <string name="confirm_user_roomstate_title">Абнавіць рэжымы чату</string>
     <string name="roomstate_emote">Толькі смайлы</string>
     <string name="roomstate_subs">Толькі платныя падпісчыкі</string>
@@ -330,6 +504,8 @@
     <string name="preference_message_history_dashboard_summary">Даведайцеся больш пра рэсурс і адключыце гісторыю паведамленняў для вашага ўласнага канала</string>
     <string name="preference_channel_data_header">Дадзеныя канала</string>
     <string name="preference_developer_header">Налады для распрацоўшчыкаў</string>
+    <string name="preference_log_viewer_title">Прагляд логаў</string>
+    <string name="preference_log_viewer_summary">Прагляд логаў праграмы</string>
     <string name="preference_debug_mode_title">Рэжым адладкі</string>
     <string name="preference_debug_mode_summary">Паказваць дзеянне адладкавай аналітыкі ў панэлі ўводу і збіраць справаздачы пра збоі лакальна</string>
     <string name="preference_timestamp_format_title">Фармат часавых пазнак</string>
@@ -385,6 +561,14 @@
     <string name="preference_unlisted_emotes_title">Дазволіць незарэгістраваныя смайлы</string>
     <string name="preference_unlisted_emotes_summary">Адключыць фільтрацыю незацверджаных ці незарэгістраваных смайлаў</string>
     <string name="preference_rm_host_title">Уласны вузел апошніх паведамленняў</string>
+    <string name="preference_developer_category_general">Агульныя</string>
+    <string name="preference_developer_category_auth">Аўтарызацыя</string>
+    <string name="preference_eventsub_title">Уключыць Twitch EventSub</string>
+    <string name="preference_eventsub_summary">Выкарыстоўвае EventSub для розных падзей у рэальным часе замест састарэлага PubSub</string>
+    <string name="preference_eventsub_debug_title">Уключыць адладачны вывад EventSub</string>
+    <string name="preference_eventsub_debug_summary">Выводзіць адладачную інфармацыю пра EventSub як сістэмныя паведамленні</string>
+    <string name="preference_revoke_token_title">Адклікаць токен і перазапусціць</string>
+    <string name="preference_revoke_token_summary">Робіць бягучы токен несапраўдным і перазапускае праграму</string>
     <string name="preference_fetch_streams_title">Атрымоўваць інфармацыю пра трансляцыю</string>
     <string name="preference_fetch_streams_summary">Перыядычна здабываць струменевую інфармацыю пра адкрытыя каналы. Патрабуецца для запуску ўбудаванай трансляцыі.</string>
     <string name="preference_auto_disable_input_title">Адключыць увод, калі няма падлучэння да чату</string>
@@ -440,10 +624,12 @@
     <string name="tab_users">Карыстальнікі</string>
     <string name="tab_blacklisted_users">Карыстальнікі ў чорным спісе</string>
     <string name="tab_twitch">Twitch</string>
+    <string name="tab_badges">Значкі</string>
     <string name="undo">Адмяніць</string>
     <string name="item_removed">Элемент выдалены</string>
     <string name="unblocked_user">Карыстальнік %1$s разблакіраваны</string>
     <string name="unblocked_user_failed">Не ўдалося разблакіраваць карыстальніка %1$s</string>
+    <string name="badge">Значок</string>
     <string name="blocked_user_failed">Не ўдалося заблакіраваць карыстальніка %1$s</string>
     <string name="highlights_entry_username">Ваша імя карыстальніка</string>
     <string name="highlights_ignores_entry_subscriptions">Падпіскі і падзеі</string>
@@ -457,6 +643,7 @@
     <string name="highlights_messages_title">Стварыць апавяшчэнні і выдзяленні паведамленняў на аснове пэўных шаблонаў.</string>
     <string name="highlights_users_title">Стварае апавяшчэнні і выдзяленні паведамленняў ад пэўных карыстальнікаў.</string>
     <string name="highlights_blacklisted_users_title">Выключыць апавяшчэнні і выдзяленні ад пэўных карыстальнікаў (напрыклад, ботаў).</string>
+    <string name="highlights_badges_title">Стварайце апавяшчэнні і вылучайце паведамленні карыстальнікаў на аснове значкоў.</string>
     <string name="ignores_messages_title">Ігнараваць паведамленні на аснове пэўных шаблонаў.</string>
     <string name="ignores_users_title">Ігнараваць паведамленні ад пэўных карыстальнікаў.</string>
     <string name="ignores_twitch_title">Кіраваць заблакіраванымі карыстальнікамі Twitch.</string>
@@ -483,7 +670,44 @@
     <string name="message_history">Гісторыя паведамленняў</string>
     <string name="global_history_title">Глабальная гісторыя</string>
     <string name="message_history_title">Гісторыя: %1$s</string>
+    <string name="view_history">Паглядзець гісторыю</string>
+    <string name="history_empty">Няма паведамленняў, якія адпавядаюць бягучым фільтрам</string>
     <string name="search_messages_hint">Пошук паведамленняў…</string>
+    <string name="log_viewer_title">Логі</string>
+    <string name="log_viewer_share">Падзяліцца логамі</string>
+    <string name="log_viewer_open">Праглядзець логі</string>
+    <string name="preference_log_viewer_empty">Няма даступных файлаў логаў</string>
+    <string name="log_viewer_search_hint">Пошук у логах</string>
+    <plurals name="log_viewer_selected_count">
+        <item quantity="one">Выбрана: %1$d</item>
+        <item quantity="few">Выбрана: %1$d</item>
+        <item quantity="many">Выбрана: %1$d</item>
+        <item quantity="other">Выбрана: %1$d</item>
+    </plurals>
+    <string name="log_viewer_copy_selection">Капіраваць выбраныя логі</string>
+    <string name="log_viewer_clear_selection">Ачысціць выбар</string>
+    <string name="crash_report_title">Выяўлены збой</string>
+    <string name="crash_report_message">Праграма аварыйна завяршылася падчас апошняга сеансу.</string>
+    <string name="crash_report_thread">Паток: %1$s</string>
+    <string name="crash_report_copy">Капіраваць</string>
+    <string name="crash_report_send">Справаздача ў чат</string>
+    <string name="crash_report_send_description">Далучаецца да #flex3rs і рыхтуе зводку збою для адпраўкі</string>
+    <string name="crash_report_email">Справаздача па эл. пошце</string>
+    <string name="crash_report_email_description">Адправіць падрабязную справаздачу пра збой па электроннай пошце</string>
+    <string name="crash_email_confirm_title">Адправіць справаздачу пра збой па электроннай пошце</string>
+    <string name="crash_email_confirm_message">Наступныя дадзеныя будуць уключаны ў справаздачу:</string>
+    <string name="crash_email_confirm_stacktrace">Стэк выклікаў</string>
+    <string name="crash_email_confirm_include_logs">Уключыць бягучы файл журнала</string>
+    <string name="preference_crash_viewer_title">Справаздачы пра збоі</string>
+    <string name="preference_crash_viewer_summary">Прагляд апошніх справаздач пра збоі</string>
+    <string name="preference_crash_viewer_empty">Справаздачы пра збоі не знойдзены</string>
+    <string name="crash_viewer_title">Справаздача пра збой</string>
+    <string name="crash_viewer_share">Падзяліцца справаздачай пра збой</string>
+    <string name="crash_viewer_delete">Выдаліць</string>
+    <string name="crash_viewer_clear_all">Ачысціць усё</string>
+    <string name="crash_viewer_delete_confirm">Выдаліць гэту справаздачу пра збой?</string>
+    <string name="crash_viewer_clear_all_confirm">Выдаліць усе справаздачы пра збоі?</string>
+    <string name="scroll_to_bottom">Пракруціць уніз</string>
     <string name="search_filter_by_username">Фільтр па імені карыстальніка</string>
     <string name="search_filter_has_link">Паведамленні са спасылкамі</string>
     <string name="search_filter_has_emote">Паведамленні з эмоўтамі</string>
@@ -491,6 +715,12 @@
     <string name="search_filter_user">Карыстальнік</string>
     <string name="search_filter_badge">Значок</string>
     <string name="reply_header">У адказ @%1$s</string>
+    <string name="whisper_header">Шэпт да @%1$s</string>
+    <string name="hint_whispering">Адправіць шэпт</string>
+    <string name="whisper_new">Новы шэпт</string>
+    <string name="whisper_new_dialog_title">Адправіць шэпт да</string>
+    <string name="whisper_new_dialog_hint">Імя карыстальніка</string>
+    <string name="whisper_new_dialog_start">Адправіць</string>
     <string name="reply_thread_not_found">Галіна адказаў не знойдзена</string>
     <string name="message_not_found">Паведамленне не знойдзена</string>
     <string name="emote_sheet_use">Выкарыстаць смайл</string>
@@ -540,15 +770,41 @@
     <string name="preference_streaminfo_category_title">Паказваць катэгорыю трансляцыі</string>
     <string name="preference_streaminfo_category_summary">Таксама паказваць катэгорыю трансляцыі</string>
     <string name="toggle_input">Пераключыць радок уводу</string>
+    <string name="badge_broadcaster">Стрымер</string>
+    <string name="badge_admin">Адміністратар</string>
+    <string name="badge_staff">Супрацоўнік</string>
+    <string name="badge_moderator">Мадэратар</string>
+    <string name="badge_lead_moderator">Галоўны мадэратар</string>
+    <string name="badge_verified">Пацверджаны</string>
+    <string name="badge_vip">VIP</string>
+    <string name="badge_founder">Заснавальнік</string>
+    <string name="badge_subscriber">Падпісчык</string>
+    <string name="pick_highlight_color_title">Абраць карыстальніцкі колер вылучэння</string>
+    <string name="reset_default_highlight_color">Па змаўчанні</string>
+    <string name="choose_highlight_color">Абраць колер</string>
     <string name="toggle_app_bar">Пераключыць панэль праграмы</string>
     <string name="error_with_message">Памылка: %s</string>
-    <string name="confirm_logout_question">Выйсці?</string>
-    <string name="confirm_channel_removal_question">Выдаліць гэты канал?</string>
-    <string name="confirm_channel_removal_question_named">Выдаліць канал \"%1$s\"?</string>
-    <string name="confirm_channel_block_question_named">Заблакаваць канал \"%1$s\"?</string>
-    <string name="confirm_user_ban_question">Забаніць гэтага карыстальніка?</string>
-    <string name="confirm_user_delete_question">Выдаліць гэтае паведамленне?</string>
-    <string name="confirm_clear_chat_question">Ачысціць чат?</string>
+    <!-- Onboarding -->
+    <string name="onboarding_welcome_title">DankChat</string>
+    <string name="onboarding_welcome_body">Давайце ўсё наладзім.</string>
+    <string name="onboarding_get_started">Пачаць</string>
+    <string name="onboarding_login_title">Увайсці праз Twitch</string>
+    <string name="onboarding_login_body">Увайдзіце, каб адпраўляць паведамленні, выкарыстоўваць свае эмоуты, атрымліваць шэпты і разблакаваць усе функцыі.</string>
+    <string name="onboarding_login_disclaimer">Вам будзе прапанавана даць некалькі дазволаў Twitch адразу, каб вам не давялося паўторна аўтарызавацца пры выкарыстанні розных функцый. DankChat выконвае дзеянні мадэрацыі і кіравання стрымам толькі тады, калі вы самі гэта запытваеце.</string>
+    <string name="onboarding_login_button">Увайсці праз Twitch</string>
+    <string name="onboarding_login_success">Уваход паспяховы</string>
+    <string name="onboarding_skip">Прапусціць</string>
+    <string name="onboarding_continue">Працягнуць</string>
+    <string name="onboarding_history_title">Гісторыя паведамленняў</string>
+    <string name="onboarding_history_body">DankChat загружае гістарычныя паведамленні са старонняга сэрвісу пры запуску. Для атрымання паведамленняў DankChat адпраўляе назвы адкрытых каналаў гэтаму сэрвісу. Сэрвіс часова захоўвае паведамленні наведаных каналаў.\n\nВы можаце змяніць гэта пазней у наладах або даведацца больш на https://recent-messages.robotty.de/</string>
+    <string name="onboarding_history_enable">Уключыць</string>
+    <string name="onboarding_history_disable">Адключыць</string>
+    <string name="onboarding_notifications_title">Апавяшчэнні</string>
+    <string name="onboarding_notifications_body">DankChat можа апавяшчаць вас, калі нехта згадвае вас у чаце, пакуль праграма працуе ў фоне.</string>
+    <string name="onboarding_notifications_allow">Дазволіць апавяшчэнні</string>
+    <string name="onboarding_notifications_rationale">Без апавяшчэнняў вы не даведаецеся, калі нехта згадвае вас у чаце, пакуль праграма працуе ў фоне.</string>
+    <string name="onboarding_notifications_open_settings">Адкрыць налады апавяшчэнняў</string>
+    <!-- Feature Tour -->
     <string name="tour_input_actions">Наладжвальныя дзеянні для хуткага доступу да пошуку, трансляцый і іншага</string>
     <string name="tour_overflow_menu">Націсніце тут для дадатковых дзеянняў і наладкі панэлі дзеянняў</string>
     <string name="tour_configure_actions">Тут вы можаце наладзіць, якія дзеянні адлюстроўваюцца на панэлі дзеянняў</string>
@@ -558,210 +814,6 @@
     <string name="tour_got_it">Зразумела</string>
     <string name="tour_skip">Прапусціць тур</string>
     <string name="tour_add_more_channels_hint">Тут вы можаце дадаць больш каналаў</string>
-
-    <!-- AutoMod -->
-    <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Паведамленне затрымана з прычыны: %1$s. Дазвол апублікуе яго ў чаце.</string>
-    <string name="automod_allow">Дазволіць</string>
-    <string name="automod_deny">Адхіліць</string>
-    <string name="automod_status_approved">Ухвалена</string>
-    <string name="automod_status_denied">Адхілена</string>
-    <string name="automod_ban_user">Заблакаваць карыстальніка</string>
-    <string name="automod_status_expired">Тэрмін скончыўся</string>
-    <string name="automod_user_held">Гэй! Тваё паведамленне правяраецца мадэратарамі і яшчэ не адпраўлена.</string>
-    <string name="automod_user_accepted">Мадэратары прынялі тваё паведамленне.</string>
-    <string name="automod_user_denied">Мадэратары адхілілі тваё паведамленне.</string>
-    <string name="automod_reason_category" comment="aggressive (level 2)">%1$s (узровень %2$d)</string>
-    <plurals name="automod_reason_blocked_terms">
-        <item quantity="one">супадае з %1$d заблакаваным тэрмінам %2$s</item>
-        <item quantity="few">супадае з %1$d заблакаванымі тэрмінамі %2$s</item>
-        <item quantity="many">супадае з %1$d заблакаванымі тэрмінамі %2$s</item>
-        <item quantity="other">супадае з %1$d заблакаванымі тэрмінамі %2$s</item>
-    </plurals>
-    <string name="automod_error_already_processed" comment="Failed to allow AutoMod message - message has already been processed.">Не ўдалося %1$s паведамленне AutoMod - паведамленне ўжо апрацавана.</string>
-    <string name="automod_error_not_authenticated" comment="Failed to allow AutoMod message - you need to re-authenticate.">Не ўдалося %1$s паведамленне AutoMod - вам трэба паўторна аўтарызавацца.</string>
-    <string name="automod_error_not_authorized" comment="Failed to allow AutoMod message - you don\'t have permission to perform that action.">Не ўдалося %1$s паведамленне AutoMod - у вас няма дазволу на гэтае дзеянне.</string>
-    <string name="automod_error_not_found" comment="Failed to allow AutoMod message - target message not found.">Не ўдалося %1$s паведамленне AutoMod - мэтавае паведамленне не знойдзена.</string>
-    <string name="automod_error_unknown" comment="Failed to allow AutoMod message - an unknown error occurred.">Не ўдалося %1$s паведамленне AutoMod - адбылася невядомая памылка.</string>
-    <string name="automod_moderation_added_blocked_term" comment="flex3rs added &quot;test&quot; as a blocked term on AutoMod.">%1$s дадаў %2$s як заблакаваны тэрмін у AutoMod.</string>
-    <string name="automod_moderation_added_permitted_term" comment="flex3rs added &quot;test&quot; as a permitted term on AutoMod.">%1$s дадаў %2$s як дазволены тэрмін у AutoMod.</string>
-    <string name="automod_moderation_removed_blocked_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s выдаліў %2$s як заблакаваны тэрмін з AutoMod.</string>
-    <string name="automod_moderation_removed_permitted_term" comment="flex3rs removed &quot;test&quot; as a permitted term on AutoMod.">%1$s выдаліў %2$s як дазволены тэрмін з AutoMod.</string>
-
-    <!-- Moderation messages -->
-    <!-- Timeout -->
-    <string name="mod_timeout_self_irc" comment="You were timed out for 10m">Вас было заглушана на %1$s</string>
-    <string name="mod_timeout_self" comment="You were timed out for 10m by flex3rs">Вас было заглушана на %1$s мадэратарам %2$s</string>
-    <string name="mod_timeout_self_reason" comment="You were timed out for 10m by flex3rs: reason">Вас было заглушана на %1$s мадэратарам %2$s: %3$s</string>
-    <string name="mod_timeout_by_creator" comment="flex3rs timed out user123 for 10m">%1$s заглушыў %2$s на %3$s</string>
-    <string name="mod_timeout_by_creator_reason" comment="flex3rs timed out user123 for 10m: reason">%1$s заглушыў %2$s на %3$s: %4$s</string>
-    <string name="mod_timeout_no_creator" comment="user123 has been timed out for 10m">%1$s быў заглушаны на %2$s</string>
-    <string name="mod_ban_self_irc" comment="You were banned">Вас было забанена</string>
-    <string name="mod_ban_self" comment="You were banned by flex3rs">Вас было забанена мадэратарам %1$s</string>
-    <string name="mod_ban_self_reason" comment="You were banned by flex3rs: reason">Вас было забанена мадэратарам %1$s: %2$s</string>
-    <string name="mod_ban_by_creator" comment="flex3rs banned user123">%1$s забаніў %2$s</string>
-    <string name="mod_ban_by_creator_reason" comment="flex3rs banned user123: reason">%1$s забаніў %2$s: %3$s</string>
-    <string name="mod_ban_no_creator" comment="user123 has been permanently banned">%1$s быў перманентна забанены</string>
-    <string name="mod_untimeout" comment="flex3rs untimedout user123">%1$s зняў заглушэнне з %2$s</string>
-    <string name="mod_unban" comment="flex3rs unbanned user123">%1$s разбаніў %2$s</string>
-    <string name="mod_modded" comment="flex3rs modded user123">%1$s прызначыў мадэратарам %2$s</string>
-    <string name="mod_unmodded" comment="flex3rs unmodded user123">%1$s зняў мадэратара з %2$s</string>
-    <string name="mod_vip_added" comment="flex3rs has added user123 as a VIP of this channel">%1$s дадаў %2$s як VIP гэтага канала</string>
-    <string name="mod_vip_removed" comment="flex3rs has removed user123 as a VIP of this channel">%1$s выдаліў %2$s як VIP гэтага канала</string>
-    <string name="mod_warn" comment="flex3rs has warned user123">%1$s папярэдзіў %2$s</string>
-    <string name="mod_warn_reason" comment="flex3rs has warned user123: reason1, reason2">%1$s папярэдзіў %2$s: %3$s</string>
-    <string name="mod_raid" comment="flex3rs initiated a raid to user123">%1$s пачаў рэйд на %2$s</string>
-    <string name="mod_unraid" comment="flex3rs canceled the raid to user123">%1$s адмяніў рэйд на %2$s</string>
-    <string name="mod_delete_by_creator" comment="flex3rs deleted message from user123">%1$s выдаліў паведамленне ад %2$s</string>
-    <string name="mod_delete_by_creator_message" comment="flex3rs deleted message from user123 saying: hello">%1$s выдаліў паведамленне ад %2$s з тэкстам: %3$s</string>
-    <string name="mod_delete_no_creator" comment="A message from user123 was deleted">Паведамленне ад %1$s было выдалена</string>
-    <string name="mod_delete_no_creator_message" comment="A message from user123 was deleted saying: hello">Паведамленне ад %1$s было выдалена з тэкстам: %2$s</string>
-    <string name="mod_clear_by_creator" comment="flex3rs cleared the chat">%1$s ачысціў чат</string>
-    <string name="mod_clear_no_creator">Чат быў ачышчаны мадэратарам</string>
-    <string name="mod_emote_only_on" comment="flex3rs turned on emote-only mode">%1$s уключыў рэжым толькі эмоцыі</string>
-    <string name="mod_emote_only_off" comment="flex3rs turned off emote-only mode">%1$s выключыў рэжым толькі эмоцыі</string>
-    <string name="mod_followers_on" comment="flex3rs turned on followers-only mode">%1$s уключыў рэжым толькі для падпісчыкаў канала</string>
-    <string name="mod_followers_on_duration" comment="flex3rs turned on followers-only mode (10 minutes)">%1$s уключыў рэжым толькі для падпісчыкаў канала (%2$s)</string>
-    <string name="mod_followers_off" comment="flex3rs turned off followers-only mode">%1$s выключыў рэжым толькі для падпісчыкаў канала</string>
-    <string name="mod_unique_chat_on" comment="flex3rs turned on unique-chat mode">%1$s уключыў рэжым унікальнага чату</string>
-    <string name="mod_unique_chat_off" comment="flex3rs turned off unique-chat mode">%1$s выключыў рэжым унікальнага чату</string>
-    <string name="mod_slow_on" comment="flex3rs turned on slow mode">%1$s уключыў павольны рэжым</string>
-    <string name="mod_slow_on_duration" comment="flex3rs turned on slow mode (30 seconds)">%1$s уключыў павольны рэжым (%2$s)</string>
-    <string name="mod_slow_off" comment="flex3rs turned off slow mode">%1$s выключыў павольны рэжым</string>
-    <string name="mod_subscribers_on" comment="flex3rs turned on subscribers-only mode">%1$s уключыў рэжым толькі для падпісчыкаў</string>
-    <string name="mod_subscribers_off" comment="flex3rs turned off subscribers-only mode">%1$s выключыў рэжым толькі для падпісчыкаў</string>
-    <string name="mod_shared_timeout" comment="flex3rs timed out user123 for 10m in channel456">%1$s заглушыў %2$s на %3$s у %4$s</string>
-    <string name="mod_shared_timeout_reason" comment="flex3rs timed out user123 for 10m in channel456: reason">%1$s заглушыў %2$s на %3$s у %4$s: %5$s</string>
-    <string name="mod_shared_untimeout" comment="flex3rs untimedout user123 in channel456">%1$s зняў заглушэнне з %2$s у %3$s</string>
-    <string name="mod_shared_ban" comment="flex3rs banned user123 in channel456">%1$s забаніў %2$s у %3$s</string>
-    <string name="mod_shared_ban_reason" comment="flex3rs banned user123 in channel456: reason">%1$s забаніў %2$s у %3$s: %4$s</string>
-    <string name="mod_shared_unban" comment="flex3rs unbanned user123 in channel456">%1$s разбаніў %2$s у %3$s</string>
-    <string name="mod_shared_delete" comment="flex3rs deleted message from user123 in channel456">%1$s выдаліў паведамленне ад %2$s у %3$s</string>
-    <string name="mod_shared_delete_message" comment="flex3rs deleted message from user123 in channel456 saying: hello">%1$s выдаліў паведамленне ад %2$s у %3$s з тэкстам: %4$s</string>
-    <string name="mod_message_with_count" comment="flex3rs timed out user123 for 10m. (2 times)">%1$s%2$s</string>
-    <plurals name="mod_count_suffix" comment=" (2 times)">
-        <item quantity="one">\u0020(%1$d раз)</item>
-        <item quantity="few">\u0020(%1$d разы)</item>
-        <item quantity="many">\u0020(%1$d разоў)</item>
-        <item quantity="other">\u0020(%1$d разоў)</item>
-    </plurals>
-
-    <!-- Whisper -->
-    <string name="backspace">Выдаліць</string>
-    <string name="hint_whispering">Адправіць шэпт</string>
-    <string name="whisper_header">Шэпт да @%1$s</string>
-    <string name="whisper_new">Новы шэпт</string>
-    <string name="whisper_new_dialog_title">Адправіць шэпт да</string>
-    <string name="whisper_new_dialog_hint">Імя карыстальніка</string>
-    <string name="whisper_new_dialog_start">Адправіць</string>
-
-    <!-- Room State -->
-    <string name="room_state_emote_only">Толькі эмоуты</string>
-    <string name="room_state_subscriber_only">Толькі падпісчыкі</string>
-    <string name="room_state_slow_mode">Павольны рэжым</string>
-    <string name="room_state_slow_mode_duration">Павольны рэжым (%1$s)</string>
-    <string name="room_state_unique_chat">Унікальны чат (R9K)</string>
-    <string name="room_state_follower_only">Толькі фалаверы</string>
-    <string name="room_state_follower_only_duration">Толькі фалаверы (%1$s)</string>
-    <string name="room_state_preset_custom">Іншае</string>
-    <string name="room_state_follower_any">Любы</string>
-    <string name="room_state_duration_seconds">%1$ds</string>
-    <string name="room_state_duration_minutes">%1$dm</string>
-    <string name="room_state_duration_hours">%1$dh</string>
-    <string name="room_state_duration_days">%1$dd</string>
-    <string name="room_state_duration_weeks">%1$dw</string>
-    <string name="room_state_duration_months">%1$dmo</string>
-    <string name="mod_actions_room_state_section">Room state</string>
-    <string name="mod_actions_section">Mod actions</string>
-    <string name="mod_actions_broadcaster_section">Broadcaster</string>
-    <string name="mod_actions_shield_mode">Shield mode</string>
-    <string name="mod_actions_clear_chat">Clear chat</string>
-    <string name="mod_actions_confirm_clear_chat">Clear all messages in this channel?</string>
-
-    <string name="mod_actions_confirm_shield_mode_title">Актываваць рэжым шчыта?</string>
-    <string name="mod_actions_confirm_shield_mode_body">Гэта прыменіць папярэдне наладжаныя параметры бяспекі канала, якія могуць уключаць абмежаванні чата, налады AutoMod і патрабаванні верыфікацыі.</string>
-    <string name="mod_actions_shield_mode_activate">Актываваць</string>    <string name="mod_actions_announce">Announce</string>
-    <string name="mod_actions_announce_header">Announcement</string>
-    <string name="mod_actions_shoutout">Shoutout</string>
-    <string name="mod_actions_commercial">Commercial</string>
-    <string name="mod_actions_raid">Raid</string>
-    <string name="mod_actions_cancel_raid">Cancel raid</string>
-    <string name="mod_actions_stream_marker">Stream marker</string>
-    <string name="mod_actions_username_hint">Username</string>
-    <string name="mod_actions_channel_hint">Channel</string>
-
-    <!-- Empty States -->
-    <string name="no_channels_added_body">Дадайце канал, каб пачаць размову</string>
-    <string name="no_recent_emotes">Няма нядаўніх эмоутаў</string>
-
-    <!-- Menu -->
-    <string name="menu_show_stream">Паказаць трансляцыю</string>
-    <string name="menu_hide_stream">Схаваць трансляцыю</string>
-    <string name="menu_audio_only">Толькі аўдыё</string>
-    <string name="menu_exit_audio_only">Выйсці з рэжыму аўдыё</string>
-    <string name="menu_fullscreen">На ўвесь экран</string>
-    <string name="menu_exit_fullscreen">Выйсці з поўнаэкраннага рэжыму</string>
-    <string name="menu_hide_input">Схаваць увод</string>
-    <string name="menu_show_input">Паказаць увод</string>
-    <string name="preference_swipe_navigation_title">Навігацыя каналаў свайпам</string>
-    <string name="preference_swipe_navigation_summary">Пераключэнне каналаў свайпам па чаце</string>
-    <string name="menu_mod_actions">Мадэрацыя канала</string>
-
-    <!-- Input Actions -->
-    <string name="input_action_search">Пошук паведамленняў</string>
-    <string name="input_action_last_message">Апошняе паведамленне</string>
-    <string name="input_action_stream">Пераключыць трансляцыю</string>
-    <string name="input_action_mod_actions">Мадэрацыя канала</string>
-    <string name="input_action_fullscreen">На ўвесь экран</string>
-    <string name="input_action_hide_input">Схаваць увод</string>
-    <string name="input_action_configure">Наладзіць дзеянні</string>
-    <string name="input_action_debug">Адладка</string>
-    <plurals name="input_actions_max">
-        <item quantity="one">Максімум %1$d дзеянне</item>
-        <item quantity="few">Максімум %1$d дзеянні</item>
-        <item quantity="many">Максімум %1$d дзеянняў</item>
-        <item quantity="other">Максімум %1$d дзеянняў</item>
-    </plurals>
-
-    <!-- Onboarding -->
-    <string name="onboarding_welcome_title">DankChat</string>
-    <string name="onboarding_welcome_body">Давайце ўсё наладзім.</string>
-    <string name="onboarding_login_title">Увайсці праз Twitch</string>
-    <string name="onboarding_login_body">Увайдзіце, каб адпраўляць паведамленні, выкарыстоўваць свае эмоуты, атрымліваць шэпты і разблакаваць усе функцыі.</string>
-    <string name="onboarding_login_disclaimer">Вам будзе прапанавана даць некалькі дазволаў Twitch адразу, каб вам не давялося паўторна аўтарызавацца пры выкарыстанні розных функцый. DankChat выконвае дзеянні мадэрацыі і кіравання стрымам толькі тады, калі вы самі гэта запытваеце.</string>
-    <string name="onboarding_login_button">Увайсці праз Twitch</string>
-    <string name="onboarding_login_success">Уваход паспяховы</string>
-    <string name="onboarding_notifications_title">Апавяшчэнні</string>
-    <string name="onboarding_notifications_body">DankChat можа апавяшчаць вас, калі нехта згадвае вас у чаце, пакуль праграма працуе ў фоне.</string>
-    <string name="onboarding_notifications_allow">Дазволіць апавяшчэнні</string>
-    <string name="onboarding_notifications_open_settings">Адкрыць налады апавяшчэнняў</string>
-    <string name="onboarding_notifications_rationale">Без апавяшчэнняў вы не даведаецеся, калі нехта згадвае вас у чаце, пакуль праграма працуе ў фоне.</string>
-    <string name="onboarding_history_title">Гісторыя паведамленняў</string>
-    <string name="onboarding_history_body">DankChat загружае гістарычныя паведамленні са старонняга сэрвісу пры запуску. Для атрымання паведамленняў DankChat адпраўляе назвы адкрытых каналаў гэтаму сэрвісу. Сэрвіс часова захоўвае паведамленні наведаных каналаў.\n\nВы можаце змяніць гэта пазней у наладах або даведацца больш на https://recent-messages.robotty.de/</string>
-    <string name="onboarding_history_enable">Уключыць</string>
-    <string name="onboarding_history_disable">Адключыць</string>
-    <string name="onboarding_continue">Працягнуць</string>
-    <string name="onboarding_get_started">Пачаць</string>
-    <string name="onboarding_skip">Прапусціць</string>
-
-    <!-- Developer Settings -->
-    <string name="preference_developer_category_general">Агульныя</string>
-    <string name="preference_developer_category_auth">Аўтарызацыя</string>
-    <string name="preference_eventsub_title">Уключыць Twitch EventSub</string>
-    <string name="preference_eventsub_summary">Выкарыстоўвае EventSub для розных падзей у рэальным часе замест састарэлага PubSub</string>
-    <string name="preference_eventsub_debug_title">Уключыць адладачны вывад EventSub</string>
-    <string name="preference_eventsub_debug_summary">Выводзіць адладачную інфармацыю пра EventSub як сістэмныя паведамленні</string>
-    <string name="preference_revoke_token_title">Адклікаць токен і перазапусціць</string>
-    <string name="preference_revoke_token_summary">Робіць бягучы токен несапраўдным і перазапускае праграму</string>
-    <string name="system_message_send_not_logged_in">Не ўвайшлі ў сістэму</string>
-    <string name="system_message_send_channel_not_resolved">Не ўдалося вызначыць ID канала для %1$s</string>
-    <string name="system_message_send_not_delivered">Паведамленне не было адпраўлена</string>
-    <string name="system_message_send_dropped">Паведамленне адхілена: %1$s (%2$s)</string>
-    <string name="system_message_send_missing_scopes">Адсутнічае дазвол user:write:chat, калі ласка, увайдзіце зноў</string>
-    <string name="system_message_send_not_authorized">Няма дазволу адпраўляць паведамленні ў гэтым канале</string>
-    <string name="system_message_send_message_too_large">Паведамленне занадта вялікае</string>
-    <string name="system_message_send_rate_limited">Перавышаны ліміт запытаў, паспрабуйце пазней</string>
-    <string name="system_message_send_failed">Памылка адпраўкі: %1$s</string>
-
     <!-- Command responses -->
     <string name="cmd_error_not_logged_in">Вы павінны ўвайсці, каб выкарыстоўваць каманду %1$s</string>
     <string name="cmd_error_no_user_matching">Не знойдзены карыстальнік з такім імем.</string>
@@ -882,58 +934,4 @@
     <string name="cmd_error_message_too_large">Ваша паведамленне занадта доўгае.</string>
     <string name="cmd_error_chat_rate_limited">Вашы запыты абмежаваныя. Паспрабуйце зноў праз хвіліну.</string>
     <string name="cmd_error_target_default">Мэтавы карыстальнік</string>
-    <string name="preference_log_viewer_title">Прагляд логаў</string>
-    <string name="preference_log_viewer_summary">Прагляд логаў праграмы</string>
-    <string name="log_viewer_title">Логі</string>
-    <string name="log_viewer_share">Падзяліцца логамі</string>
-    <string name="log_viewer_open">Праглядзець логі</string>
-    <string name="preference_log_viewer_empty">Няма даступных файлаў логаў</string>
-    <string name="log_viewer_search_hint">Пошук у логах</string>
-    <plurals name="log_viewer_selected_count">
-        <item quantity="one">Выбрана: %1$d</item>
-        <item quantity="few">Выбрана: %1$d</item>
-        <item quantity="many">Выбрана: %1$d</item>
-        <item quantity="other">Выбрана: %1$d</item>
-    </plurals>
-    <string name="log_viewer_copy_selection">Капіраваць выбраныя логі</string>
-    <string name="log_viewer_clear_selection">Ачысціць выбар</string>
-    <string name="crash_report_title">Выяўлены збой</string>
-    <string name="crash_report_message">Праграма аварыйна завяршылася падчас апошняга сеансу.</string>
-    <string name="crash_report_thread">Паток: %1$s</string>
-    <string name="crash_report_copy">Капіраваць</string>
-    <string name="crash_report_send">Справаздача ў чат</string>
-    <string name="crash_report_send_description">Далучаецца да #flex3rs і рыхтуе зводку збою для адпраўкі</string>
-    <string name="crash_report_email">Справаздача па эл. пошце</string>
-    <string name="crash_report_email_description">Адправіць падрабязную справаздачу пра збой па электроннай пошце</string>
-    <string name="crash_email_confirm_title">Адправіць справаздачу пра збой па электроннай пошце</string>
-    <string name="crash_email_confirm_message">Наступныя дадзеныя будуць уключаны ў справаздачу:</string>
-    <string name="crash_email_confirm_stacktrace">Стэк выклікаў</string>
-    <string name="crash_email_confirm_include_logs">Уключыць бягучы файл журнала</string>
-    <string name="preference_crash_viewer_title">Справаздачы пра збоі</string>
-    <string name="preference_crash_viewer_summary">Прагляд апошніх справаздач пра збоі</string>
-    <string name="preference_crash_viewer_empty">Справаздачы пра збоі не знойдзены</string>
-    <string name="crash_viewer_title">Справаздача пра збой</string>
-    <string name="crash_viewer_share">Падзяліцца справаздачай пра збой</string>
-    <string name="crash_viewer_delete">Выдаліць</string>
-    <string name="crash_viewer_delete_confirm">Выдаліць гэту справаздачу пра збой?</string>
-    <string name="crash_viewer_clear_all">Ачысціць усё</string>
-    <string name="crash_viewer_clear_all_confirm">Выдаліць усе справаздачы пра збоі?</string>
-    <string name="scroll_to_bottom">Пракруціць уніз</string>
-    <string name="badge">Значок</string>
-    <string name="badge_admin">Адміністратар</string>
-    <string name="badge_broadcaster">Стрымер</string>
-    <string name="badge_founder">Заснавальнік</string>
-    <string name="badge_lead_moderator">Галоўны мадэратар</string>
-    <string name="badge_moderator">Мадэратар</string>
-    <string name="badge_staff">Супрацоўнік</string>
-    <string name="badge_subscriber">Падпісчык</string>
-    <string name="badge_verified">Пацверджаны</string>
-    <string name="badge_vip">VIP</string>
-    <string name="tab_badges">Значкі</string>
-    <string name="highlights_badges_title">Стварайце апавяшчэнні і вылучайце паведамленні карыстальнікаў на аснове значкоў.</string>
-    <string name="choose_highlight_color">Абраць колер</string>
-    <string name="pick_highlight_color_title">Абраць карыстальніцкі колер вылучэння</string>
-    <string name="reset_default_highlight_color">Па змаўчанні</string>
-    <string name="view_history">Паглядзець гісторыю</string>
-    <string name="history_empty">Няма паведамленняў, якія адпавядаюць бягучым фільтрам</string>
 </resources>
