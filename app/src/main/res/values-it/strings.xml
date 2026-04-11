@@ -10,6 +10,7 @@
     <string name="add_dialog_title">Aggiungi canale</string>
     <string name="edit_dialog_title">Rinomina canale</string>
     <string name="dialog_ok">OK</string>
+    <string name="save">Salva</string>
     <string name="dialog_cancel">Annulla</string>
     <string name="dialog_dismiss">Scarta</string>
     <string name="error_dialog_copy">Copia</string>
@@ -23,8 +24,10 @@
     <string name="remove_channel">Rimuovi canale</string>
     <string name="channel_blocked_message">Canale bloccato</string>
     <string name="no_channels_added">Nessun canale aggiunto</string>
+    <string name="no_channels_added_body">Aggiungi un canale per iniziare a chattare</string>
     <string name="confirm_logout_title">Conferma la disconnessione</string>
     <string name="confirm_logout_message">Sei sicuro di volerti disconnettere?</string>
+    <string name="confirm_logout_question">Disconnettersi?</string>
     <string name="confirm_logout_positive_button">Disconnettiti</string>
     <string name="upload_media">Carica media</string>
     <string name="take_picture">Scatta una foto</string>
@@ -42,12 +45,14 @@
     <string name="notification_title">FeelsDankMan</string>
     <string name="notification_message">DankChat in esecuzione in background </string>
     <string name="emote_menu_hint">Apri il menu delle emote</string>
+    <string name="no_recent_emotes">Nessuna emote recente</string>
     <string name="login_title">Accedi su Twitch.tv</string>
     <string name="hint_connected">Inizia a chattare</string>
     <string name="hint_disconnected">Disconnesso</string>
     <string name="hint_not_logged_int">Non connesso</string>
     <string name="hint_replying">Rispondi</string>
-    <string name="hint_announcing">Send announcement</string>    <string name="notification_new_mentions">Hai delle nuove menzioni</string>
+    <string name="hint_announcing">Send announcement</string>
+    <string name="notification_new_mentions">Hai delle nuove menzioni</string>
     <string name="notification_mention">%1$s ti ha appena menzionato in #%2$s</string>
     <string name="notification_notify_mention">Sei stato menzionato in #%1$s</string>
     <string name="snackbar_login">Accedendo come %1$s</string>
@@ -76,7 +81,6 @@
     <string name="data_loading_step_cheermotes">Cheermote</string>
     <string name="data_loading_step_recent_messages">Messaggi recenti</string>
     <string name="data_loading_step_with_channels">%1$s (%2$s)</string>
-
     <string name="highlight_header_first_time_chat">Primo messaggio</string>
     <string name="highlight_header_elevated_chat">Messaggio elevato</string>
     <string name="highlight_header_gigantified_emote">Emote gigante</string>
@@ -84,27 +88,22 @@
     <string name="highlight_header_reward_no_cost">Riscattato %1$s</string>
     <plurals name="duration_seconds">
         <item quantity="one">%1$d secondo</item>
-        <item quantity="many">%1$d secondi</item>
         <item quantity="other">%1$d secondi</item>
     </plurals>
     <plurals name="duration_minutes">
         <item quantity="one">%1$d minuto</item>
-        <item quantity="many">%1$d minuti</item>
         <item quantity="other">%1$d minuti</item>
     </plurals>
     <plurals name="duration_hours">
         <item quantity="one">%1$d ora</item>
-        <item quantity="many">%1$d ore</item>
         <item quantity="other">%1$d ore</item>
     </plurals>
     <plurals name="duration_days">
         <item quantity="one">%1$d giorno</item>
-        <item quantity="many">%1$d giorni</item>
         <item quantity="other">%1$d giorni</item>
     </plurals>
     <plurals name="duration_weeks">
         <item quantity="one">%1$d settimana</item>
-        <item quantity="many">%1$d settimane</item>
         <item quantity="other">%1$d settimane</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
@@ -113,6 +112,7 @@
     <string name="add_channel_hint">Nome del canale</string>
     <string name="add_channel_already_added">Il canale è già stato aggiunto</string>
     <string name="emote_menu_tab_recent">Recente</string>
+    <string name="backspace">Cancella</string>
     <string name="emote_menu_tab_subs">Abbonati</string>
     <string name="emote_menu_tab_channel">Canale</string>
     <string name="emote_menu_tab_global">Globale</string>
@@ -135,6 +135,108 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s ha aggiunto l\'Emote 7TV %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s ha rinominato l\'Emote 7TV %2$s in %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s ha rimosso l\'Emote 7TV %2$s.</string>
+    <!-- Send errors -->
+    <string name="system_message_send_not_logged_in">Non connesso</string>
+    <string name="system_message_send_channel_not_resolved">Impossibile risolvere l\'ID del canale per %1$s</string>
+    <string name="system_message_send_not_delivered">Il messaggio non è stato inviato</string>
+    <string name="system_message_send_dropped">Messaggio scartato: %1$s (%2$s)</string>
+    <string name="system_message_send_missing_scopes">Permesso user:write:chat mancante, effettua nuovamente l\'accesso</string>
+    <string name="system_message_send_not_authorized">Non autorizzato a inviare messaggi in questo canale</string>
+    <string name="system_message_send_message_too_large">Il messaggio è troppo grande</string>
+    <string name="system_message_send_rate_limited">Limite di frequenza raggiunto, riprova tra un momento</string>
+    <string name="system_message_send_failed">Invio fallito: %1$s</string>
+    <!-- AutoMod -->
+    <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Messaggio trattenuto per motivo: %1$s. Consenti lo pubblicherà nella chat.</string>
+    <string name="automod_allow">Consenti</string>
+    <string name="automod_deny">Nega</string>
+    <string name="automod_status_approved">Approvato</string>
+    <string name="automod_status_denied">Negato</string>
+    <string name="automod_ban_user">Banna utente</string>
+    <string name="automod_status_expired">Scaduto</string>
+    <string name="automod_user_held">Ehi! Il tuo messaggio è in fase di verifica dai mod e non è stato ancora inviato.</string>
+    <string name="automod_user_accepted">I mod hanno accettato il tuo messaggio.</string>
+    <string name="automod_user_denied">I mod hanno rifiutato il tuo messaggio.</string>
+    <string name="automod_reason_category" comment="aggressive (level 2)">%1$s (livello %2$d)</string>
+    <plurals name="automod_reason_blocked_terms">
+        <item quantity="one">corrisponde a %1$d termine bloccato %2$s</item>
+        <item quantity="other">corrisponde a %1$d termini bloccati %2$s</item>
+    </plurals>
+    <string name="automod_error_already_processed" comment="Failed to allow AutoMod message - message has already been processed.">Impossibile %1$s il messaggio AutoMod - il messaggio è già stato elaborato.</string>
+    <string name="automod_error_not_authenticated" comment="Failed to allow AutoMod message - you need to re-authenticate.">Impossibile %1$s il messaggio AutoMod - devi autenticarti di nuovo.</string>
+    <string name="automod_error_not_authorized" comment="Failed to allow AutoMod message - you don\'t have permission to perform that action.">Impossibile %1$s il messaggio AutoMod - non hai il permesso di eseguire questa azione.</string>
+    <string name="automod_error_not_found" comment="Failed to allow AutoMod message - target message not found.">Impossibile %1$s il messaggio AutoMod - messaggio di destinazione non trovato.</string>
+    <string name="automod_error_unknown" comment="Failed to allow AutoMod message - an unknown error occurred.">Impossibile %1$s il messaggio AutoMod - si è verificato un errore sconosciuto.</string>
+    <string name="automod_moderation_added_blocked_term" comment="flex3rs added &quot;test&quot; as a blocked term on AutoMod.">%1$s ha aggiunto %2$s come termine bloccato su AutoMod.</string>
+    <string name="automod_moderation_added_permitted_term" comment="flex3rs added &quot;test&quot; as a permitted term on AutoMod.">%1$s ha aggiunto %2$s come termine consentito su AutoMod.</string>
+    <string name="automod_moderation_removed_blocked_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s ha rimosso %2$s come termine bloccato da AutoMod.</string>
+    <string name="automod_moderation_removed_permitted_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s ha rimosso %2$s come termine consentito da AutoMod.</string>
+    <!-- Moderation messages — complete sentence variants for proper localization -->
+    <!-- Timeout (self, IRC — no creator info) -->
+    <string name="mod_timeout_self_irc" comment="You were timed out for 10m">Sei stato espulso temporaneamente per %1$s</string>
+    <!-- Timeout (self, EventSub — has creator) -->
+    <string name="mod_timeout_self" comment="You were timed out for 10m by flex3rs">Sei stato espulso temporaneamente per %1$s da %2$s</string>
+    <string name="mod_timeout_self_reason" comment="You were timed out for 10m by flex3rs: reason">Sei stato espulso temporaneamente per %1$s da %2$s: %3$s</string>
+    <!-- Timeout (other, by creator) -->
+    <string name="mod_timeout_by_creator" comment="flex3rs timed out user123 for 10m">%1$s ha espulso temporaneamente %2$s per %3$s</string>
+    <string name="mod_timeout_by_creator_reason" comment="flex3rs timed out user123 for 10m: reason">%1$s ha espulso temporaneamente %2$s per %3$s: %4$s</string>
+    <!-- Timeout (other, IRC — no creator) -->
+    <string name="mod_timeout_no_creator" comment="user123 has been timed out for 10m">%1$s è stato espulso temporaneamente per %2$s</string>
+    <!-- Ban (self) -->
+    <string name="mod_ban_self_irc" comment="You were banned">Sei stato bannato</string>
+    <string name="mod_ban_self" comment="You were banned by flex3rs">Sei stato bannato da %1$s</string>
+    <string name="mod_ban_self_reason" comment="You were banned by flex3rs: reason">Sei stato bannato da %1$s: %2$s</string>
+    <!-- Ban (other) -->
+    <string name="mod_ban_by_creator" comment="flex3rs banned user123">%1$s ha bannato %2$s</string>
+    <string name="mod_ban_by_creator_reason" comment="flex3rs banned user123: reason">%1$s ha bannato %2$s: %3$s</string>
+    <string name="mod_ban_no_creator" comment="user123 has been permanently banned">%1$s è stato bannato permanentemente</string>
+    <!-- Simple actions -->
+    <string name="mod_untimeout" comment="flex3rs untimedout user123">%1$s ha rimosso l\'espulsione temporanea di %2$s</string>
+    <string name="mod_unban" comment="flex3rs unbanned user123">%1$s ha sbannato %2$s</string>
+    <string name="mod_modded" comment="flex3rs modded user123">%1$s ha nominato %2$s moderatore</string>
+    <string name="mod_unmodded" comment="flex3rs unmodded user123">%1$s ha rimosso %2$s dai moderatori</string>
+    <string name="mod_vip_added" comment="flex3rs has added user123 as a VIP of this channel">%1$s ha aggiunto %2$s come VIP di questo canale</string>
+    <string name="mod_vip_removed" comment="flex3rs has removed user123 as a VIP of this channel">%1$s ha rimosso %2$s come VIP di questo canale</string>
+    <string name="mod_warn" comment="flex3rs has warned user123">%1$s ha avvertito %2$s</string>
+    <string name="mod_warn_reason" comment="flex3rs has warned user123: reason1, reason2">%1$s ha avvertito %2$s: %3$s</string>
+    <string name="mod_raid" comment="flex3rs initiated a raid to user123">%1$s ha avviato un raid verso %2$s</string>
+    <string name="mod_unraid" comment="flex3rs canceled the raid to user123">%1$s ha annullato il raid verso %2$s</string>
+    <!-- Delete -->
+    <string name="mod_delete_by_creator" comment="flex3rs deleted message from user123">%1$s ha eliminato un messaggio di %2$s</string>
+    <string name="mod_delete_by_creator_message" comment="flex3rs deleted message from user123 saying: hello">%1$s ha eliminato un messaggio di %2$s dicendo: %3$s</string>
+    <string name="mod_delete_no_creator" comment="A message from user123 was deleted">Un messaggio di %1$s è stato eliminato</string>
+    <string name="mod_delete_no_creator_message" comment="A message from user123 was deleted saying: hello">Un messaggio di %1$s è stato eliminato dicendo: %2$s</string>
+    <!-- Clear -->
+    <string name="mod_clear_by_creator" comment="flex3rs cleared the chat">%1$s ha svuotato la chat</string>
+    <string name="mod_clear_no_creator">La chat è stata svuotata da un moderatore</string>
+    <!-- Room state -->
+    <string name="mod_emote_only_on" comment="flex3rs turned on emote-only mode">%1$s ha attivato la modalità emote-only</string>
+    <string name="mod_emote_only_off" comment="flex3rs turned off emote-only mode">%1$s ha disattivato la modalità emote-only</string>
+    <string name="mod_followers_on" comment="flex3rs turned on followers-only mode">%1$s ha attivato la modalità followers-only</string>
+    <string name="mod_followers_on_duration" comment="flex3rs turned on followers-only mode (1 week)">%1$s ha attivato la modalità followers-only (%2$s)</string>
+    <string name="mod_followers_off" comment="flex3rs turned off followers-only mode">%1$s ha disattivato la modalità followers-only</string>
+    <string name="mod_unique_chat_on" comment="flex3rs turned on unique-chat mode">%1$s ha attivato la modalità unique-chat</string>
+    <string name="mod_unique_chat_off" comment="flex3rs turned off unique-chat mode">%1$s ha disattivato la modalità unique-chat</string>
+    <string name="mod_slow_on" comment="flex3rs turned on slow mode">%1$s ha attivato la modalità slow</string>
+    <string name="mod_slow_on_duration" comment="flex3rs turned on slow mode (2 minutes 5 seconds)">%1$s ha attivato la modalità slow (%2$s)</string>
+    <string name="mod_slow_off" comment="flex3rs turned off slow mode">%1$s ha disattivato la modalità slow</string>
+    <string name="mod_subscribers_on" comment="flex3rs turned on subscribers-only mode">%1$s ha attivato la modalità subscribers-only</string>
+    <string name="mod_subscribers_off" comment="flex3rs turned off subscribers-only mode">%1$s ha disattivato la modalità subscribers-only</string>
+    <!-- Shared chat -->
+    <string name="mod_shared_timeout" comment="flex3rs timed out user123 for 10m in channel456">%1$s ha espulso temporaneamente %2$s per %3$s in %4$s</string>
+    <string name="mod_shared_timeout_reason" comment="flex3rs timed out user123 for 10m in channel456: reason">%1$s ha espulso temporaneamente %2$s per %3$s in %4$s: %5$s</string>
+    <string name="mod_shared_untimeout" comment="flex3rs untimedout user123 in channel456">%1$s ha rimosso l\'espulsione temporanea di %2$s in %3$s</string>
+    <string name="mod_shared_ban" comment="flex3rs banned user123 in channel456">%1$s ha bannato %2$s in %3$s</string>
+    <string name="mod_shared_ban_reason" comment="flex3rs banned user123 in channel456: reason">%1$s ha bannato %2$s in %3$s: %4$s</string>
+    <string name="mod_shared_unban" comment="flex3rs unbanned user123 in channel456">%1$s ha sbannato %2$s in %3$s</string>
+    <string name="mod_shared_delete" comment="flex3rs deleted message from user123 in channel456">%1$s ha eliminato un messaggio di %2$s in %3$s</string>
+    <string name="mod_shared_delete_message" comment="flex3rs deleted message from user123 in channel456 saying: hello">%1$s ha eliminato un messaggio di %2$s in %3$s dicendo: %4$s</string>
+    <!-- Helper: message + count concatenation -->
+    <string name="mod_message_with_count" comment="flex3rs timed out user123 for 10m. (2 times)">%1$s%2$s</string>
+    <!-- Parenthetical count (appended after complete sentences, safe for all languages) -->
+    <plurals name="mod_count_suffix" comment=" (2 times)">
+        <item quantity="one">\u0020(%1$d volta)</item>
+        <item quantity="other">\u0020(%1$d volte)</item>
+    </plurals>
     <string name="timed_out_message">&lt; Messaggio eliminato &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Aggiungi una voce</string>
@@ -152,9 +254,12 @@
     <string name="confirm_channel_removal_title">Conferma rimozione canale</string>
     <string name="confirm_channel_removal_message">Sei sicuro di voler rimuovere questo canale?</string>
     <string name="confirm_channel_removal_message_named">Sei sicuro di voler rimuovere il canale \"%1$s\"?</string>
+    <string name="confirm_channel_removal_question">Rimuovere questo canale?</string>
+    <string name="confirm_channel_removal_question_named">Rimuovere il canale \"%1$s\"?</string>
     <string name="confirm_channel_removal_positive_button">Rimuovi</string>
     <string name="confirm_channel_block_title">Conferma blocco canale</string>
     <string name="confirm_channel_block_message_named">Sei sicuro di voler bloccare il canale \"%1$s\"?</string>
+    <string name="confirm_channel_block_question_named">Bloccare il canale \"%1$s\"?</string>
     <string name="user_popup_block">Blocca</string>
     <string name="user_popup_unblock">Sblocca</string>
     <string name="user_popup_mention">Menziona utente</string>
@@ -178,6 +283,62 @@
     <string name="uploader_description">Puoi impostare un host personalizzato per caricare file multimediali, come imgur.com o s-ul.eu. DankChat utilizza lo stesso formato di configurazione di Chatterino.\nDai un\'occhiata a questa guida per assistenza: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="toggle_fullscreen">Attiva/Disattiva schermo intero</string>
     <string name="toggle_stream">Attiva/Disattiva la live</string>
+    <string name="menu_show_stream">Mostra stream</string>
+    <string name="menu_hide_stream">Nascondi stream</string>
+    <string name="menu_audio_only">Solo audio</string>
+    <string name="menu_exit_audio_only">Esci da solo audio</string>
+    <string name="menu_fullscreen">Schermo intero</string>
+    <string name="menu_exit_fullscreen">Esci dallo schermo intero</string>
+    <string name="menu_hide_input">Nascondi input</string>
+    <string name="menu_show_input">Mostra input</string>
+    <string name="preference_swipe_navigation_title">Navigazione canali a scorrimento</string>
+    <string name="preference_swipe_navigation_summary">Cambia canale scorrendo sulla chat</string>
+    <string name="menu_mod_actions">Moderazione canale</string>
+    <plurals name="input_actions_max">
+        <item quantity="one">Massimo %1$d azione</item>
+        <item quantity="other">Massimo %1$d azioni</item>
+    </plurals>
+    <string name="input_action_search">Cerca messaggi</string>
+    <string name="input_action_last_message">Ultimo messaggio</string>
+    <string name="input_action_stream">Attiva/disattiva stream</string>
+    <string name="input_action_mod_actions">Moderazione canale</string>
+    <string name="input_action_fullscreen">Schermo intero</string>
+    <string name="input_action_hide_input">Nascondi input</string>
+    <string name="input_action_debug">Debug</string>
+    <string name="input_action_configure">Configura azioni</string>
+    <string name="room_state_emote_only">Solo emote</string>
+    <string name="room_state_subscriber_only">Solo abbonati</string>
+    <string name="room_state_slow_mode">Modalità lenta</string>
+    <string name="room_state_slow_mode_duration">Modalità lenta (%1$s)</string>
+    <string name="room_state_unique_chat">Chat unica (R9K)</string>
+    <string name="room_state_follower_only">Solo follower</string>
+    <string name="room_state_follower_only_duration">Solo follower (%1$s)</string>
+    <string name="room_state_preset_custom">Personalizzato</string>
+    <string name="room_state_follower_any">Qualsiasi</string>
+    <string name="room_state_duration_seconds">%1$ds</string>
+    <string name="room_state_duration_minutes">%1$dm</string>
+    <string name="room_state_duration_hours">%1$dh</string>
+    <string name="room_state_duration_days">%1$dd</string>
+    <string name="room_state_duration_weeks">%1$dw</string>
+    <string name="room_state_duration_months">%1$dmo</string>
+    <string name="mod_actions_room_state_section">Room state</string>
+    <string name="mod_actions_section">Mod actions</string>
+    <string name="mod_actions_broadcaster_section">Broadcaster</string>
+    <string name="mod_actions_shield_mode">Shield mode</string>
+    <string name="mod_actions_clear_chat">Clear chat</string>
+    <string name="mod_actions_confirm_clear_chat">Clear all messages in this channel?</string>
+    <string name="mod_actions_confirm_shield_mode_title">Attivare la modalità scudo?</string>
+    <string name="mod_actions_confirm_shield_mode_body">Verranno applicate le impostazioni di sicurezza preconfigurate del canale, che possono includere restrizioni della chat, impostazioni AutoMod e requisiti di verifica.</string>
+    <string name="mod_actions_shield_mode_activate">Attiva</string>
+    <string name="mod_actions_announce">Announce</string>
+    <string name="mod_actions_announce_header">Announcement</string>
+    <string name="mod_actions_shoutout">Shoutout</string>
+    <string name="mod_actions_commercial">Commercial</string>
+    <string name="mod_actions_raid">Raid</string>
+    <string name="mod_actions_cancel_raid">Cancel raid</string>
+    <string name="mod_actions_stream_marker">Stream marker</string>
+    <string name="mod_actions_username_hint">Username</string>
+    <string name="mod_actions_channel_hint">Channel</string>
     <string name="account">Profilo</string>
     <string name="relogin">Accedi di nuovo</string>
     <string name="logout">Disconnettiti</string>
@@ -188,12 +349,15 @@
     <string name="change_roomstate">Modalità Chat</string>
     <string name="confirm_user_ban_title">Conferma ban</string>
     <string name="confirm_user_ban_message">Sei sicuro di voler bannare questo utente?</string>
+    <string name="confirm_user_ban_question">Bannare questo utente?</string>
     <string name="confirm_user_ban_positive_button">Banna</string>
     <string name="confirm_user_timeout_title">Conferma timeout</string>
     <string name="confirm_user_timeout_positive_button">Timeout</string>
     <string name="confirm_user_delete_title">Conferma eliminazione messaggio</string>
     <string name="confirm_user_delete_message">Sei sicuro di voler eliminare questo messaggio?</string>
+    <string name="confirm_user_delete_question">Eliminare questo messaggio?</string>
     <string name="confirm_user_delete_positive_button">Elimina</string>
+    <string name="confirm_clear_chat_question">Cancellare la chat?</string>
     <string name="confirm_user_roomstate_title">Aggiorna modalità di chat</string>
     <string name="roomstate_emote">Sole emote</string>
     <string name="roomstate_subs">Solo iscritti</string>
@@ -244,12 +408,15 @@
     <string name="preference_notification_header">Notifiche</string>
     <string name="preference_chat_header">Chat</string>
     <string name="preference_general_header">Generale</string>
-    <string name="preference_about_header">Info</string>
-    <string name="preference_appearance_header">Aspetto</string>
     <string name="preference_suggestions_header">Suggerimenti</string>
     <string name="preference_messages_header">Messaggi</string>
     <string name="preference_users_header">Utenti</string>
     <string name="preference_emotes_badges_header">Emote &amp; Badge</string>
+    <string name="preference_suggestion_mode_title">Modalita di suggerimento</string>
+    <string name="preference_suggestion_mode_automatic">Suggerisci corrispondenze durante la digitazione</string>
+    <string name="preference_suggestion_mode_prefix_only">Suggerisci solo dopo un carattere di attivazione</string>
+    <string name="preference_about_header">Info</string>
+    <string name="preference_appearance_header">Aspetto</string>
     <string name="preference_about_summary">DankChat %1$s, sviluppata da @flex3rs e collaboratori</string>
     <string name="preference_show_input_title">Mostra input</string>
     <string name="preference_show_input_summary">Mostra il campo di inserimento per inviare i messaggi</string>
@@ -306,16 +473,13 @@
     <string name="preference_suggestions_title">Suggerimenti</string>
     <string name="preference_suggestions_summary">Scegli quali suggerimenti mostrare durante la digitazione</string>
     <string name="preference_suggestions_emotes">Emote</string>
-    <string name="preference_suggestions_users">Utenti</string>
-    <string name="preference_suggestions_commands">Comandi Twitch</string>
-    <string name="preference_suggestions_supibot">Comandi Supibot</string>
     <string name="preference_suggestions_emotes_desc">Attiva con :</string>
+    <string name="preference_suggestions_users">Utenti</string>
     <string name="preference_suggestions_users_desc">Attiva con @</string>
+    <string name="preference_suggestions_commands">Comandi Twitch</string>
     <string name="preference_suggestions_commands_desc">Attiva con /</string>
+    <string name="preference_suggestions_supibot">Comandi Supibot</string>
     <string name="preference_suggestions_supibot_desc">Attiva con $</string>
-    <string name="preference_suggestion_mode_title">Modalita di suggerimento</string>
-    <string name="preference_suggestion_mode_automatic">Suggerisci corrispondenze durante la digitazione</string>
-    <string name="preference_suggestion_mode_prefix_only">Suggerisci solo dopo un carattere di attivazione</string>
     <string name="preference_load_message_history_title">Carica cronologia messaggi, all\'avvio</string>
     <string name="preference_load_messages_on_reconnect_title">Carica la cronologia dei messaggi dopo una riconnessone</string>
     <string name="preference_load_messages_on_reconnect_summary">Tenta di recuperare i messaggi persi durante un interruzione della connessione</string>
@@ -324,6 +488,8 @@
     <string name="preference_message_history_dashboard_summary">Scopri di più sul servizio e disabilita la cronologia dei messaggi per il tuo canale</string>
     <string name="preference_channel_data_header">Dati del canale</string>
     <string name="preference_developer_header">Opzioni per sviluppatori</string>
+    <string name="preference_log_viewer_title">Visualizzatore log</string>
+    <string name="preference_log_viewer_summary">Visualizza i log dell\'applicazione</string>
     <string name="preference_debug_mode_title">Modalità di debug</string>
     <string name="preference_debug_mode_summary">Mostra l\'azione di analisi di debug nella barra di input e raccogli i report dei crash localmente</string>
     <string name="preference_timestamp_format_title">Formato marca oraria</string>
@@ -379,6 +545,14 @@
     <string name="preference_unlisted_emotes_title">Consenti emote non elencate</string>
     <string name="preference_unlisted_emotes_summary">Disabilita il filtraggio di emote non approvate/elencate</string>
     <string name="preference_rm_host_title">Host messaggi personalizzati recenti</string>
+    <string name="preference_developer_category_general">Generali</string>
+    <string name="preference_developer_category_auth">Autenticazione</string>
+    <string name="preference_eventsub_title">Attiva Twitch EventSub</string>
+    <string name="preference_eventsub_summary">Usa EventSub per vari eventi in tempo reale al posto del deprecato PubSub</string>
+    <string name="preference_eventsub_debug_title">Attiva output di debug EventSub</string>
+    <string name="preference_eventsub_debug_summary">Mostra informazioni di debug relative a EventSub come messaggi di sistema</string>
+    <string name="preference_revoke_token_title">Revoca token e riavvia</string>
+    <string name="preference_revoke_token_summary">Invalida il token attuale e riavvia l\'applicazione</string>
     <string name="preference_fetch_streams_title">Recupera informazioni sulla live</string>
     <string name="preference_fetch_streams_summary">Recupera periodicamente le informazioni sulla live dei canali aperti. Necessario per avviare la live incorporata.</string>
     <string name="preference_auto_disable_input_title">Disabilita l\'input se non connesso alla chat</string>
@@ -434,10 +608,12 @@
     <string name="tab_users">Utenti</string>
     <string name="tab_blacklisted_users">Utenti Bloccati</string>
     <string name="tab_twitch">Twitch</string>
+    <string name="tab_badges">Badge</string>
     <string name="undo">Annulla</string>
     <string name="item_removed">Elemento Rimosso</string>
     <string name="unblocked_user">Utente %1$s sbloccato</string>
     <string name="unblocked_user_failed">Impossibile sbloccare l\'utente %1$s</string>
+    <string name="badge">Badge</string>
     <string name="blocked_user_failed">Impossibile bloccare l\'utente %1$s</string>
     <string name="highlights_entry_username">Il tuo nome utente</string>
     <string name="highlights_ignores_entry_subscriptions">Iscrizioni ed Eventi</string>
@@ -451,6 +627,7 @@
     <string name="highlights_messages_title">Crea notifiche ed evidenzia messaggi secondo certi modelli.</string>
     <string name="highlights_users_title">Crea notifiche ed evidenzia messaggi da certi utenti.</string>
     <string name="highlights_blacklisted_users_title">Disabilita notifiche ed evidenziazioni da certi utenti (es., bot).</string>
+    <string name="highlights_badges_title">Crea notifiche e evidenzia i messaggi degli utenti in base ai badge.</string>
     <string name="ignores_messages_title">Ignora messaggi secondo certi schemi.</string>
     <string name="ignores_users_title">Ignora messaggi da certi utenti.</string>
     <string name="ignores_twitch_title">Gestisci utenti di Twitch bloccati.</string>
@@ -477,7 +654,42 @@
     <string name="message_history">Cronologia messaggi</string>
     <string name="global_history_title">Cronologia globale</string>
     <string name="message_history_title">Cronologia: %1$s</string>
+    <string name="view_history">Visualizza cronologia</string>
+    <string name="history_empty">Nessun messaggio corrisponde ai filtri attuali</string>
     <string name="search_messages_hint">Cerca messaggi…</string>
+    <string name="log_viewer_title">Log</string>
+    <string name="log_viewer_share">Condividi log</string>
+    <string name="log_viewer_open">Visualizza log</string>
+    <string name="preference_log_viewer_empty">Nessun file di log disponibile</string>
+    <string name="log_viewer_search_hint">Cerca nei log</string>
+    <plurals name="log_viewer_selected_count">
+        <item quantity="one">%1$d selezionati</item>
+        <item quantity="other">%1$d selezionati</item>
+    </plurals>
+    <string name="log_viewer_copy_selection">Copia log selezionati</string>
+    <string name="log_viewer_clear_selection">Cancella selezione</string>
+    <string name="crash_report_title">Crash rilevato</string>
+    <string name="crash_report_message">L\'app si è bloccata durante l\'ultima sessione.</string>
+    <string name="crash_report_thread">Thread: %1$s</string>
+    <string name="crash_report_copy">Copia</string>
+    <string name="crash_report_send">Report via chat</string>
+    <string name="crash_report_send_description">Entra in #flex3rs e prepara un riepilogo del crash da inviare</string>
+    <string name="crash_report_email">Report via email</string>
+    <string name="crash_report_email_description">Invia un report dettagliato del crash via email</string>
+    <string name="crash_email_confirm_title">Invia report del crash via email</string>
+    <string name="crash_email_confirm_message">I seguenti dati saranno inclusi nel report:</string>
+    <string name="crash_email_confirm_stacktrace">Stack trace</string>
+    <string name="crash_email_confirm_include_logs">Includi file di log corrente</string>
+    <string name="preference_crash_viewer_title">Report dei crash</string>
+    <string name="preference_crash_viewer_summary">Visualizza i report dei crash recenti</string>
+    <string name="preference_crash_viewer_empty">Nessun report dei crash trovato</string>
+    <string name="crash_viewer_title">Report del crash</string>
+    <string name="crash_viewer_share">Condividi report del crash</string>
+    <string name="crash_viewer_delete">Elimina</string>
+    <string name="crash_viewer_clear_all">Cancella tutto</string>
+    <string name="crash_viewer_delete_confirm">Eliminare questo report del crash?</string>
+    <string name="crash_viewer_clear_all_confirm">Eliminare tutti i report dei crash?</string>
+    <string name="scroll_to_bottom">Scorri verso il basso</string>
     <string name="search_filter_by_username">Filtra per nome utente</string>
     <string name="search_filter_has_link">Messaggi contenenti link</string>
     <string name="search_filter_has_emote">Messaggi contenenti emote</string>
@@ -485,6 +697,12 @@
     <string name="search_filter_user">Utente</string>
     <string name="search_filter_badge">Distintivo</string>
     <string name="reply_header">Stai rispondendo a @%1$s</string>
+    <string name="whisper_header">Sussurro a @%1$s</string>
+    <string name="hint_whispering">Invia un sussurro</string>
+    <string name="whisper_new">Nuovo sussurro</string>
+    <string name="whisper_new_dialog_title">Invia sussurro a</string>
+    <string name="whisper_new_dialog_hint">Nome utente</string>
+    <string name="whisper_new_dialog_start">Invia</string>
     <string name="reply_thread_not_found">Thread risposta non trovato</string>
     <string name="message_not_found">Messaggio non trovato</string>
     <string name="emote_sheet_use">Usa emote</string>
@@ -510,25 +728,58 @@
     <string name="confirm_login_cancel_positive_button">Annulla login</string>
     <string name="login_menu_zoom_out">Rimpicciolisci</string>
     <string name="login_menu_zoom_in">Ingrandisci</string>
+    <string name="back">Indietro</string>
+    <string name="shared_chat">Chat condivisa</string>
     <plurals name="viewers_and_uptime">
         <item quantity="one">Live con %1$d spettatore per %2$s</item>
-        <item quantity="many">Live con %1$d spettatori per %2$s</item>
         <item quantity="other">Live con %1$d spettatori per %2$s</item>
     </plurals>
     <plurals name="months">
         <item quantity="one">%d mese</item>
-        <item quantity="many">%d mesi</item>
         <item quantity="other">%d mesi</item>
     </plurals>
+    <string name="open_source_licenses">Licenze open source</string>
+    <plurals name="viewers_and_uptime_with_cateogry" comment="Live with 1 viewer in Just Chatting for 1h 1m&#13;&#10;Live with 10 viewers in Just Chatting for 1h 1m">
+        <item quantity="one">In diretta con %1$d spettatore in %2$s da %3$s</item>
+        <item quantity="other">In diretta con %1$d spettatori in %2$s da %3$s</item>
+    </plurals>
+    <string name="preference_streaminfo_category_title">Mostra categoria dello stream</string>
+    <string name="preference_streaminfo_category_summary">Mostra anche la categoria dello stream</string>
+    <string name="badge_broadcaster">Broadcaster</string>
+    <string name="badge_admin">Admin</string>
+    <string name="badge_staff">Staff</string>
+    <string name="badge_moderator">Moderatore</string>
+    <string name="badge_lead_moderator">Moderatore capo</string>
+    <string name="badge_verified">Verificato</string>
+    <string name="badge_vip">VIP</string>
+    <string name="badge_founder">Fondatore</string>
+    <string name="badge_subscriber">Abbonato</string>
+    <string name="pick_highlight_color_title">Scegli un colore di evidenziazione personalizzato</string>
+    <string name="reset_default_highlight_color">Predefinito</string>
+    <string name="choose_highlight_color">Scegli colore</string>
     <string name="toggle_app_bar">Mostra/nascondi barra app</string>
     <string name="error_with_message">Errore: %s</string>
-    <string name="confirm_logout_question">Disconnettersi?</string>
-    <string name="confirm_channel_removal_question">Rimuovere questo canale?</string>
-    <string name="confirm_channel_removal_question_named">Rimuovere il canale \"%1$s\"?</string>
-    <string name="confirm_channel_block_question_named">Bloccare il canale \"%1$s\"?</string>
-    <string name="confirm_user_ban_question">Bannare questo utente?</string>
-    <string name="confirm_user_delete_question">Eliminare questo messaggio?</string>
-    <string name="confirm_clear_chat_question">Cancellare la chat?</string>
+    <!-- Onboarding -->
+    <string name="onboarding_welcome_title">DankChat</string>
+    <string name="onboarding_welcome_body">Configuriamo tutto.</string>
+    <string name="onboarding_get_started">Inizia</string>
+    <string name="onboarding_login_title">Accedi con Twitch</string>
+    <string name="onboarding_login_body">Accedi per inviare messaggi, usare le tue emote, ricevere sussurri e sbloccare tutte le funzionalità.</string>
+    <string name="onboarding_login_disclaimer">Ti verrà chiesto di concedere diversi permessi Twitch tutti insieme, così non dovrai autorizzare di nuovo quando usi funzionalità diverse. DankChat esegue azioni di moderazione e stream solo quando glielo chiedi.</string>
+    <string name="onboarding_login_button">Accedi con Twitch</string>
+    <string name="onboarding_login_success">Accesso riuscito</string>
+    <string name="onboarding_skip">Salta</string>
+    <string name="onboarding_continue">Continua</string>
+    <string name="onboarding_history_title">Cronologia messaggi</string>
+    <string name="onboarding_history_body">DankChat carica messaggi storici da un servizio di terze parti all\'avvio. Per ottenere i messaggi, DankChat invia i nomi dei canali aperti a questo servizio. Il servizio memorizza temporaneamente i messaggi dei canali visitati.\n\nPuoi cambiare questa impostazione nelle impostazioni o saperne di più su https://recent-messages.robotty.de/</string>
+    <string name="onboarding_history_enable">Attiva</string>
+    <string name="onboarding_history_disable">Disattiva</string>
+    <string name="onboarding_notifications_title">Notifiche</string>
+    <string name="onboarding_notifications_body">DankChat può avvisarti quando qualcuno ti menziona in chat mentre l\'app è in background.</string>
+    <string name="onboarding_notifications_allow">Consenti notifiche</string>
+    <string name="onboarding_notifications_rationale">Senza notifiche, non saprai quando qualcuno ti menziona in chat mentre l\'app è in background.</string>
+    <string name="onboarding_notifications_open_settings">Apri impostazioni notifiche</string>
+    <!-- Feature Tour -->
     <string name="tour_input_actions">Azioni personalizzabili per un accesso rapido a ricerca, streaming e altro</string>
     <string name="tour_overflow_menu">Tocca qui per altre azioni e per configurare la barra delle azioni</string>
     <string name="tour_configure_actions">Puoi personalizzare quali azioni appaiono nella tua barra delle azioni qui</string>
@@ -538,206 +789,6 @@
     <string name="tour_got_it">Capito</string>
     <string name="tour_skip">Salta il tour</string>
     <string name="tour_add_more_channels_hint">Puoi aggiungere altri canali qui</string>
-
-    <!-- AutoMod -->
-    <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Messaggio trattenuto per motivo: %1$s. Consenti lo pubblicherà nella chat.</string>
-    <string name="automod_allow">Consenti</string>
-    <string name="automod_deny">Nega</string>
-    <string name="automod_status_approved">Approvato</string>
-    <string name="automod_status_denied">Negato</string>
-    <string name="automod_ban_user">Banna utente</string>
-    <string name="automod_status_expired">Scaduto</string>
-    <string name="automod_user_held">Ehi! Il tuo messaggio è in fase di verifica dai mod e non è stato ancora inviato.</string>
-    <string name="automod_user_accepted">I mod hanno accettato il tuo messaggio.</string>
-    <string name="automod_user_denied">I mod hanno rifiutato il tuo messaggio.</string>
-    <string name="automod_reason_category" comment="aggressive (level 2)">%1$s (livello %2$d)</string>
-    <plurals name="automod_reason_blocked_terms">
-        <item quantity="one">corrisponde a %1$d termine bloccato %2$s</item>
-        <item quantity="many">corrisponde a %1$d termini bloccati %2$s</item>
-        <item quantity="other">corrisponde a %1$d termini bloccati %2$s</item>
-    </plurals>
-    <string name="automod_error_already_processed" comment="Failed to allow AutoMod message - message has already been processed.">Impossibile %1$s il messaggio AutoMod - il messaggio è già stato elaborato.</string>
-    <string name="automod_error_not_authenticated" comment="Failed to allow AutoMod message - you need to re-authenticate.">Impossibile %1$s il messaggio AutoMod - devi autenticarti di nuovo.</string>
-    <string name="automod_error_not_authorized" comment="Failed to allow AutoMod message - you don\'t have permission to perform that action.">Impossibile %1$s il messaggio AutoMod - non hai il permesso di eseguire questa azione.</string>
-    <string name="automod_error_not_found" comment="Failed to allow AutoMod message - target message not found.">Impossibile %1$s il messaggio AutoMod - messaggio di destinazione non trovato.</string>
-    <string name="automod_error_unknown" comment="Failed to allow AutoMod message - an unknown error occurred.">Impossibile %1$s il messaggio AutoMod - si è verificato un errore sconosciuto.</string>
-    <string name="automod_moderation_added_blocked_term" comment="flex3rs added &quot;test&quot; as a blocked term on AutoMod.">%1$s ha aggiunto %2$s come termine bloccato su AutoMod.</string>
-    <string name="automod_moderation_added_permitted_term" comment="flex3rs added &quot;test&quot; as a permitted term on AutoMod.">%1$s ha aggiunto %2$s come termine consentito su AutoMod.</string>
-    <string name="automod_moderation_removed_blocked_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s ha rimosso %2$s come termine bloccato da AutoMod.</string>
-    <string name="automod_moderation_removed_permitted_term" comment="flex3rs removed &quot;test&quot; as a permitted term on AutoMod.">%1$s ha rimosso %2$s come termine consentito da AutoMod.</string>
-
-    <!-- Moderation messages — complete sentence variants for proper localization -->
-    <string name="mod_timeout_self_irc" comment="You were timed out for 10m">Sei stato espulso temporaneamente per %1$s</string>
-    <string name="mod_timeout_self" comment="You were timed out for 10m by flex3rs">Sei stato espulso temporaneamente per %1$s da %2$s</string>
-    <string name="mod_timeout_self_reason" comment="You were timed out for 10m by flex3rs: reason">Sei stato espulso temporaneamente per %1$s da %2$s: %3$s</string>
-    <string name="mod_timeout_by_creator" comment="flex3rs timed out user123 for 10m">%1$s ha espulso temporaneamente %2$s per %3$s</string>
-    <string name="mod_timeout_by_creator_reason" comment="flex3rs timed out user123 for 10m: reason">%1$s ha espulso temporaneamente %2$s per %3$s: %4$s</string>
-    <string name="mod_timeout_no_creator" comment="user123 has been timed out for 10m">%1$s è stato espulso temporaneamente per %2$s</string>
-    <string name="mod_ban_self_irc" comment="You were banned">Sei stato bannato</string>
-    <string name="mod_ban_self" comment="You were banned by flex3rs">Sei stato bannato da %1$s</string>
-    <string name="mod_ban_self_reason" comment="You were banned by flex3rs: reason">Sei stato bannato da %1$s: %2$s</string>
-    <string name="mod_ban_by_creator" comment="flex3rs banned user123">%1$s ha bannato %2$s</string>
-    <string name="mod_ban_by_creator_reason" comment="flex3rs banned user123: reason">%1$s ha bannato %2$s: %3$s</string>
-    <string name="mod_ban_no_creator" comment="user123 has been permanently banned">%1$s è stato bannato permanentemente</string>
-    <string name="mod_untimeout" comment="flex3rs untimedout user123">%1$s ha rimosso l\'espulsione temporanea di %2$s</string>
-    <string name="mod_unban" comment="flex3rs unbanned user123">%1$s ha sbannato %2$s</string>
-    <string name="mod_modded" comment="flex3rs modded user123">%1$s ha nominato %2$s moderatore</string>
-    <string name="mod_unmodded" comment="flex3rs unmodded user123">%1$s ha rimosso %2$s dai moderatori</string>
-    <string name="mod_vip_added" comment="flex3rs has added user123 as a VIP of this channel">%1$s ha aggiunto %2$s come VIP di questo canale</string>
-    <string name="mod_vip_removed" comment="flex3rs has removed user123 as a VIP of this channel">%1$s ha rimosso %2$s come VIP di questo canale</string>
-    <string name="mod_warn" comment="flex3rs has warned user123">%1$s ha avvertito %2$s</string>
-    <string name="mod_warn_reason" comment="flex3rs has warned user123: reason1, reason2">%1$s ha avvertito %2$s: %3$s</string>
-    <string name="mod_raid" comment="flex3rs initiated a raid to user123">%1$s ha avviato un raid verso %2$s</string>
-    <string name="mod_unraid" comment="flex3rs canceled the raid to user123">%1$s ha annullato il raid verso %2$s</string>
-    <string name="mod_delete_by_creator" comment="flex3rs deleted message from user123">%1$s ha eliminato un messaggio di %2$s</string>
-    <string name="mod_delete_by_creator_message" comment="flex3rs deleted message from user123 saying: hello">%1$s ha eliminato un messaggio di %2$s dicendo: %3$s</string>
-    <string name="mod_delete_no_creator" comment="A message from user123 was deleted">Un messaggio di %1$s è stato eliminato</string>
-    <string name="mod_delete_no_creator_message" comment="A message from user123 was deleted saying: hello">Un messaggio di %1$s è stato eliminato dicendo: %2$s</string>
-    <string name="mod_clear_by_creator" comment="flex3rs cleared the chat">%1$s ha svuotato la chat</string>
-    <string name="mod_clear_no_creator">La chat è stata svuotata da un moderatore</string>
-    <string name="mod_emote_only_on" comment="flex3rs turned on emote-only mode">%1$s ha attivato la modalità emote-only</string>
-    <string name="mod_emote_only_off" comment="flex3rs turned off emote-only mode">%1$s ha disattivato la modalità emote-only</string>
-    <string name="mod_followers_on" comment="flex3rs turned on followers-only mode">%1$s ha attivato la modalità followers-only</string>
-    <string name="mod_followers_on_duration" comment="flex3rs turned on followers-only mode (10 minutes)">%1$s ha attivato la modalità followers-only (%2$s)</string>
-    <string name="mod_followers_off" comment="flex3rs turned off followers-only mode">%1$s ha disattivato la modalità followers-only</string>
-    <string name="mod_unique_chat_on" comment="flex3rs turned on unique-chat mode">%1$s ha attivato la modalità unique-chat</string>
-    <string name="mod_unique_chat_off" comment="flex3rs turned off unique-chat mode">%1$s ha disattivato la modalità unique-chat</string>
-    <string name="mod_slow_on" comment="flex3rs turned on slow mode">%1$s ha attivato la modalità slow</string>
-    <string name="mod_slow_on_duration" comment="flex3rs turned on slow mode (30 seconds)">%1$s ha attivato la modalità slow (%2$s)</string>
-    <string name="mod_slow_off" comment="flex3rs turned off slow mode">%1$s ha disattivato la modalità slow</string>
-    <string name="mod_subscribers_on" comment="flex3rs turned on subscribers-only mode">%1$s ha attivato la modalità subscribers-only</string>
-    <string name="mod_subscribers_off" comment="flex3rs turned off subscribers-only mode">%1$s ha disattivato la modalità subscribers-only</string>
-    <string name="mod_shared_timeout" comment="flex3rs timed out user123 for 10m in channel456">%1$s ha espulso temporaneamente %2$s per %3$s in %4$s</string>
-    <string name="mod_shared_timeout_reason" comment="flex3rs timed out user123 for 10m in channel456: reason">%1$s ha espulso temporaneamente %2$s per %3$s in %4$s: %5$s</string>
-    <string name="mod_shared_untimeout" comment="flex3rs untimedout user123 in channel456">%1$s ha rimosso l\'espulsione temporanea di %2$s in %3$s</string>
-    <string name="mod_shared_ban" comment="flex3rs banned user123 in channel456">%1$s ha bannato %2$s in %3$s</string>
-    <string name="mod_shared_ban_reason" comment="flex3rs banned user123 in channel456: reason">%1$s ha bannato %2$s in %3$s: %4$s</string>
-    <string name="mod_shared_unban" comment="flex3rs unbanned user123 in channel456">%1$s ha sbannato %2$s in %3$s</string>
-    <string name="mod_shared_delete" comment="flex3rs deleted message from user123 in channel456">%1$s ha eliminato un messaggio di %2$s in %3$s</string>
-    <string name="mod_shared_delete_message" comment="flex3rs deleted message from user123 in channel456 saying: hello">%1$s ha eliminato un messaggio di %2$s in %3$s dicendo: %4$s</string>
-    <string name="mod_message_with_count" comment="flex3rs timed out user123 for 10m. (2 times)">%1$s%2$s</string>
-    <plurals name="mod_count_suffix" comment=" (2 times)">
-        <item quantity="one">\u0020(%1$d volta)</item>
-        <item quantity="many">\u0020(%1$d volte)</item>
-        <item quantity="other">\u0020(%1$d volte)</item>
-    </plurals>
-
-    <!-- Whisper -->
-    <string name="backspace">Cancella</string>
-    <string name="hint_whispering">Invia un sussurro</string>
-    <string name="whisper_header">Sussurro a @%1$s</string>
-    <string name="whisper_new">Nuovo sussurro</string>
-    <string name="whisper_new_dialog_title">Invia sussurro a</string>
-    <string name="whisper_new_dialog_hint">Nome utente</string>
-    <string name="whisper_new_dialog_start">Invia</string>
-
-    <!-- Room State -->
-    <string name="room_state_emote_only">Solo emote</string>
-    <string name="room_state_subscriber_only">Solo abbonati</string>
-    <string name="room_state_slow_mode">Modalità lenta</string>
-    <string name="room_state_slow_mode_duration">Modalità lenta (%1$s)</string>
-    <string name="room_state_unique_chat">Chat unica (R9K)</string>
-    <string name="room_state_follower_only">Solo follower</string>
-    <string name="room_state_follower_only_duration">Solo follower (%1$s)</string>
-    <string name="room_state_preset_custom">Personalizzato</string>
-    <string name="room_state_follower_any">Qualsiasi</string>
-    <string name="room_state_duration_seconds">%1$ds</string>
-    <string name="room_state_duration_minutes">%1$dm</string>
-    <string name="room_state_duration_hours">%1$dh</string>
-    <string name="room_state_duration_days">%1$dd</string>
-    <string name="room_state_duration_weeks">%1$dw</string>
-    <string name="room_state_duration_months">%1$dmo</string>
-    <string name="mod_actions_room_state_section">Room state</string>
-    <string name="mod_actions_section">Mod actions</string>
-    <string name="mod_actions_broadcaster_section">Broadcaster</string>
-    <string name="mod_actions_shield_mode">Shield mode</string>
-    <string name="mod_actions_clear_chat">Clear chat</string>
-    <string name="mod_actions_confirm_clear_chat">Clear all messages in this channel?</string>
-
-    <string name="mod_actions_confirm_shield_mode_title">Attivare la modalità scudo?</string>
-    <string name="mod_actions_confirm_shield_mode_body">Verranno applicate le impostazioni di sicurezza preconfigurate del canale, che possono includere restrizioni della chat, impostazioni AutoMod e requisiti di verifica.</string>
-    <string name="mod_actions_shield_mode_activate">Attiva</string>    <string name="mod_actions_announce">Announce</string>
-    <string name="mod_actions_announce_header">Announcement</string>
-    <string name="mod_actions_shoutout">Shoutout</string>
-    <string name="mod_actions_commercial">Commercial</string>
-    <string name="mod_actions_raid">Raid</string>
-    <string name="mod_actions_cancel_raid">Cancel raid</string>
-    <string name="mod_actions_stream_marker">Stream marker</string>
-    <string name="mod_actions_username_hint">Username</string>
-    <string name="mod_actions_channel_hint">Channel</string>
-
-    <!-- Empty States -->
-    <string name="no_channels_added_body">Aggiungi un canale per iniziare a chattare</string>
-    <string name="no_recent_emotes">Nessuna emote recente</string>
-
-    <!-- Menu -->
-    <string name="menu_show_stream">Mostra stream</string>
-    <string name="menu_hide_stream">Nascondi stream</string>
-    <string name="menu_audio_only">Solo audio</string>
-    <string name="menu_exit_audio_only">Esci da solo audio</string>
-    <string name="menu_fullscreen">Schermo intero</string>
-    <string name="menu_exit_fullscreen">Esci dallo schermo intero</string>
-    <string name="menu_hide_input">Nascondi input</string>
-    <string name="menu_show_input">Mostra input</string>
-    <string name="preference_swipe_navigation_title">Navigazione canali a scorrimento</string>
-    <string name="preference_swipe_navigation_summary">Cambia canale scorrendo sulla chat</string>
-    <string name="menu_mod_actions">Moderazione canale</string>
-
-    <!-- Input Actions -->
-    <string name="input_action_search">Cerca messaggi</string>
-    <string name="input_action_last_message">Ultimo messaggio</string>
-    <string name="input_action_stream">Attiva/disattiva stream</string>
-    <string name="input_action_mod_actions">Moderazione canale</string>
-    <string name="input_action_fullscreen">Schermo intero</string>
-    <string name="input_action_hide_input">Nascondi input</string>
-    <string name="input_action_configure">Configura azioni</string>
-    <string name="input_action_debug">Debug</string>
-    <plurals name="input_actions_max">
-        <item quantity="one">Massimo %1$d azione</item>
-        <item quantity="many">Massimo %1$d azioni</item>
-        <item quantity="other">Massimo %1$d azioni</item>
-    </plurals>
-
-    <!-- Onboarding -->
-    <string name="onboarding_welcome_title">DankChat</string>
-    <string name="onboarding_welcome_body">Configuriamo tutto.</string>
-    <string name="onboarding_login_title">Accedi con Twitch</string>
-    <string name="onboarding_login_body">Accedi per inviare messaggi, usare le tue emote, ricevere sussurri e sbloccare tutte le funzionalità.</string>
-    <string name="onboarding_login_disclaimer">Ti verrà chiesto di concedere diversi permessi Twitch tutti insieme, così non dovrai autorizzare di nuovo quando usi funzionalità diverse. DankChat esegue azioni di moderazione e stream solo quando glielo chiedi.</string>
-    <string name="onboarding_login_button">Accedi con Twitch</string>
-    <string name="onboarding_login_success">Accesso riuscito</string>
-    <string name="onboarding_notifications_title">Notifiche</string>
-    <string name="onboarding_notifications_body">DankChat può avvisarti quando qualcuno ti menziona in chat mentre l\'app è in background.</string>
-    <string name="onboarding_notifications_allow">Consenti notifiche</string>
-    <string name="onboarding_notifications_open_settings">Apri impostazioni notifiche</string>
-    <string name="onboarding_notifications_rationale">Senza notifiche, non saprai quando qualcuno ti menziona in chat mentre l\'app è in background.</string>
-    <string name="onboarding_history_title">Cronologia messaggi</string>
-    <string name="onboarding_history_body">DankChat carica messaggi storici da un servizio di terze parti all\'avvio. Per ottenere i messaggi, DankChat invia i nomi dei canali aperti a questo servizio. Il servizio memorizza temporaneamente i messaggi dei canali visitati.\n\nPuoi cambiare questa impostazione nelle impostazioni o saperne di più su https://recent-messages.robotty.de/</string>
-    <string name="onboarding_history_enable">Attiva</string>
-    <string name="onboarding_history_disable">Disattiva</string>
-    <string name="onboarding_continue">Continua</string>
-    <string name="onboarding_get_started">Inizia</string>
-    <string name="onboarding_skip">Salta</string>
-
-    <!-- Developer Settings -->
-    <string name="preference_developer_category_general">Generali</string>
-    <string name="preference_developer_category_auth">Autenticazione</string>
-    <string name="preference_eventsub_title">Attiva Twitch EventSub</string>
-    <string name="preference_eventsub_summary">Usa EventSub per vari eventi in tempo reale al posto del deprecato PubSub</string>
-    <string name="preference_eventsub_debug_title">Attiva output di debug EventSub</string>
-    <string name="preference_eventsub_debug_summary">Mostra informazioni di debug relative a EventSub come messaggi di sistema</string>
-    <string name="preference_revoke_token_title">Revoca token e riavvia</string>
-    <string name="preference_revoke_token_summary">Invalida il token attuale e riavvia l\'applicazione</string>
-    <string name="system_message_send_not_logged_in">Non connesso</string>
-    <string name="system_message_send_channel_not_resolved">Impossibile risolvere l\'ID del canale per %1$s</string>
-    <string name="system_message_send_not_delivered">Il messaggio non è stato inviato</string>
-    <string name="system_message_send_dropped">Messaggio scartato: %1$s (%2$s)</string>
-    <string name="system_message_send_missing_scopes">Permesso user:write:chat mancante, effettua nuovamente l\'accesso</string>
-    <string name="system_message_send_not_authorized">Non autorizzato a inviare messaggi in questo canale</string>
-    <string name="system_message_send_message_too_large">Il messaggio è troppo grande</string>
-    <string name="system_message_send_rate_limited">Limite di frequenza raggiunto, riprova tra un momento</string>
-    <string name="system_message_send_failed">Invio fallito: %1$s</string>
-
     <!-- Command responses -->
     <string name="cmd_error_not_logged_in">Devi effettuare l\'accesso per usare il comando %1$s</string>
     <string name="cmd_error_no_user_matching">Nessun utente corrispondente a quel nome.</string>
@@ -801,7 +852,6 @@
     <string name="cmd_usage_commercial">Uso: /commercial &lt;durata&gt; - Avvia una pubblicità con la durata specificata per il canale attuale. Le durate valide sono 30, 60, 90, 120, 150 e 180 secondi.</string>
     <plurals name="cmd_success_commercial">
         <item quantity="one">Avvio di una pausa pubblicitaria di %1$d secondi. Ricorda che sei ancora in diretta e non tutti gli spettatori riceveranno la pubblicità. Puoi avviare un\'altra pubblicità tra %2$d secondi.</item>
-        <item quantity="many">Avvio di una pausa pubblicitaria di %1$d secondi. Ricorda che sei ancora in diretta e non tutti gli spettatori riceveranno la pubblicità. Puoi avviare un\'altra pubblicità tra %2$d secondi.</item>
         <item quantity="other">Avvio di una pausa pubblicitaria di %1$d secondi. Ricorda che sei ancora in diretta e non tutti gli spettatori riceveranno la pubblicità. Puoi avviare un\'altra pubblicità tra %2$d secondi.</item>
     </plurals>
     <string name="cmd_fail_commercial">Impossibile avviare la pubblicità - %1$s</string>
@@ -857,68 +907,4 @@
     <string name="cmd_error_message_too_large">Il tuo messaggio era troppo lungo.</string>
     <string name="cmd_error_chat_rate_limited">La tua frequenza di invio è stata limitata. Riprova tra un momento.</string>
     <string name="cmd_error_target_default">L\'utente di destinazione</string>
-    <string name="preference_log_viewer_title">Visualizzatore log</string>
-    <string name="preference_log_viewer_summary">Visualizza i log dell\'applicazione</string>
-    <string name="log_viewer_title">Log</string>
-    <string name="log_viewer_share">Condividi log</string>
-    <string name="log_viewer_open">Visualizza log</string>
-    <string name="preference_log_viewer_empty">Nessun file di log disponibile</string>
-    <string name="log_viewer_search_hint">Cerca nei log</string>
-    <plurals name="log_viewer_selected_count">
-        <item quantity="one">%1$d selezionati</item>
-        <item quantity="many">%1$d selezionati</item>
-        <item quantity="other">%1$d selezionati</item>
-    </plurals>
-    <string name="log_viewer_copy_selection">Copia log selezionati</string>
-    <string name="log_viewer_clear_selection">Cancella selezione</string>
-    <string name="crash_report_title">Crash rilevato</string>
-    <string name="crash_report_message">L\'app si è bloccata durante l\'ultima sessione.</string>
-    <string name="crash_report_thread">Thread: %1$s</string>
-    <string name="crash_report_copy">Copia</string>
-    <string name="crash_report_send">Report via chat</string>
-    <string name="crash_report_send_description">Entra in #flex3rs e prepara un riepilogo del crash da inviare</string>
-    <string name="crash_report_email">Report via email</string>
-    <string name="crash_report_email_description">Invia un report dettagliato del crash via email</string>
-    <string name="crash_email_confirm_title">Invia report del crash via email</string>
-    <string name="crash_email_confirm_message">I seguenti dati saranno inclusi nel report:</string>
-    <string name="crash_email_confirm_stacktrace">Stack trace</string>
-    <string name="crash_email_confirm_include_logs">Includi file di log corrente</string>
-    <string name="preference_crash_viewer_title">Report dei crash</string>
-    <string name="preference_crash_viewer_summary">Visualizza i report dei crash recenti</string>
-    <string name="preference_crash_viewer_empty">Nessun report dei crash trovato</string>
-    <string name="crash_viewer_title">Report del crash</string>
-    <string name="crash_viewer_share">Condividi report del crash</string>
-    <string name="crash_viewer_delete">Elimina</string>
-    <string name="crash_viewer_delete_confirm">Eliminare questo report del crash?</string>
-    <string name="crash_viewer_clear_all">Cancella tutto</string>
-    <string name="crash_viewer_clear_all_confirm">Eliminare tutti i report dei crash?</string>
-    <string name="scroll_to_bottom">Scorri verso il basso</string>
-    <string name="back">Indietro</string>
-    <string name="save">Salva</string>
-    <string name="badge">Badge</string>
-    <string name="badge_admin">Admin</string>
-    <string name="badge_broadcaster">Broadcaster</string>
-    <string name="badge_founder">Fondatore</string>
-    <string name="badge_lead_moderator">Moderatore capo</string>
-    <string name="badge_moderator">Moderatore</string>
-    <string name="badge_staff">Staff</string>
-    <string name="badge_subscriber">Abbonato</string>
-    <string name="badge_verified">Verificato</string>
-    <string name="badge_vip">VIP</string>
-    <string name="tab_badges">Badge</string>
-    <string name="highlights_badges_title">Crea notifiche e evidenzia i messaggi degli utenti in base ai badge.</string>
-    <string name="choose_highlight_color">Scegli colore</string>
-    <string name="pick_highlight_color_title">Scegli un colore di evidenziazione personalizzato</string>
-    <string name="reset_default_highlight_color">Predefinito</string>
-    <string name="open_source_licenses">Licenze open source</string>
-    <string name="preference_streaminfo_category_title">Mostra categoria dello stream</string>
-    <string name="preference_streaminfo_category_summary">Mostra anche la categoria dello stream</string>
-    <string name="shared_chat">Chat condivisa</string>
-    <plurals name="viewers_and_uptime_with_cateogry">
-        <item quantity="one">In diretta con %1$d spettatore in %2$s da %3$s</item>
-        <item quantity="many">In diretta con %1$d spettatori in %2$s da %3$s</item>
-        <item quantity="other">In diretta con %1$d spettatori in %2$s da %3$s</item>
-    </plurals>
-    <string name="view_history">Visualizza cronologia</string>
-    <string name="history_empty">Nessun messaggio corrisponde ai filtri attuali</string>
 </resources>
