@@ -24,8 +24,10 @@
     <string name="remove_channel">刪除頻道</string>
     <string name="channel_blocked_message">已封鎖此頻道</string>
     <string name="no_channels_added">尚未新增頻道</string>
+    <string name="no_channels_added_body">新增頻道以開始聊天</string>
     <string name="confirm_logout_title">確認登出</string>
     <string name="confirm_logout_message">您確定要登出嗎?</string>
+    <string name="confirm_logout_question">登出?</string>
     <string name="confirm_logout_positive_button">登出</string>
     <string name="upload_media">上傳媒體</string>
     <string name="take_picture">拍照</string>
@@ -43,26 +45,71 @@
     <string name="notification_title">FeelsDankMan</string>
     <string name="notification_message">DankChat 背景執行中</string>
     <string name="emote_menu_hint">開啟表情符號選單</string>
+    <string name="close_emote_menu">關閉表情符號選單</string>
+    <string name="no_recent_emotes">沒有最近使用的表情符號</string>
+    <string name="emote_menu_title">表情符號</string>
     <string name="login_title">登入至 Twitch.tv</string>
     <string name="hint_connected">開始聊天</string>
     <string name="hint_disconnected">已斷線</string>
     <string name="hint_not_logged_int">尚未登入</string>
     <string name="hint_replying">回覆</string>
+    <string name="hint_announcing">Send announcement</string>
     <string name="notification_new_mentions">您有新的提及訊息</string>
     <string name="notification_mention">%1$s 剛於 #%2$s 提及了您</string>
     <string name="notification_notify_mention">您剛在 #%1$s 中被提及</string>
     <string name="snackbar_login">已登入為 %1$s</string>
     <string name="snackbar_login_failed">登入失敗</string>
     <string name="snackbar_image_uploaded">已複製: %1$s</string>
+    <string name="system_message_upload_complete">上傳完成: %1$s</string>
     <string name="snackbar_upload_failed">在上傳時遭遇錯誤</string>
     <string name="snackbar_upload_failed_cause">上傳失敗: %1$s</string>
+    <string name="share_upload_label">上傳</string>
+    <string name="share_upload_copied">已複製到剪貼簿</string>
+    <string name="share_upload_copy">複製連結</string>
     <string name="snackbar_retry">重試</string>
     <string name="snackbar_data_reloaded">已重整表情符號</string>
     <string name="snackbar_data_load_failed_cause">讀取資料失敗: %1$s</string>
     <string name="snackbar_data_load_failed_multiple_causes">因複數錯誤導致資料載入失敗:\n%1$s</string>
+    <string name="data_loading_step_dankchat_badges">DankChat 徽章</string>
+    <string name="data_loading_step_global_badges">全域徽章</string>
+    <string name="data_loading_step_global_ffz_emotes">全域 FFZ 表情</string>
+    <string name="data_loading_step_global_bttv_emotes">全域 BTTV 表情</string>
+    <string name="data_loading_step_global_7tv_emotes">全域 7TV 表情</string>
+    <string name="data_loading_step_channel_badges">頻道徽章</string>
+    <string name="data_loading_step_ffz_emotes">FFZ 表情</string>
+    <string name="data_loading_step_bttv_emotes">BTTV 表情</string>
+    <string name="data_loading_step_7tv_emotes">7TV 表情</string>
+    <string name="data_loading_step_twitch_emotes">Twitch 表情</string>
+    <string name="data_loading_step_cheermotes">Cheermotes</string>
+    <string name="data_loading_step_recent_messages">近期訊息</string>
+    <string name="data_loading_step_with_channels">%1$s (%2$s)</string>
+    <string name="highlight_header_first_time_chat">首次聊天</string>
+    <string name="highlight_header_elevated_chat">固定聊天訊息</string>
+    <string name="highlight_header_gigantified_emote">巨大表情</string>
+    <string name="highlight_header_animated_message">動畫訊息</string>
+    <string name="highlight_header_reward_no_cost">已兌換 %1$s</string>
+    <plurals name="duration_seconds">
+        <item quantity="other">%1$d 秒</item>
+    </plurals>
+    <plurals name="duration_minutes">
+        <item quantity="other">%1$d 分鐘</item>
+    </plurals>
+    <plurals name="duration_hours">
+        <item quantity="other">%1$d 小時</item>
+    </plurals>
+    <plurals name="duration_days">
+        <item quantity="other">%1$d 天</item>
+    </plurals>
+    <plurals name="duration_weeks">
+        <item quantity="other">%1$d 週</item>
+    </plurals>
+    <string name="duration_join_2">%1$s %2$s</string>
+    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">貼上</string>
     <string name="add_channel_hint">頻道名稱</string>
+    <string name="add_channel_already_added">頻道已經加入</string>
     <string name="emote_menu_tab_recent">常用</string>
+    <string name="backspace">退格鍵</string>
     <string name="emote_menu_tab_subs">訂閱</string>
     <string name="emote_menu_tab_channel">頻道</string>
     <string name="emote_menu_tab_global">全域</string>
@@ -78,10 +125,113 @@
     <string name="system_message_ffz_emotes_failed">載入FFZ表情失敗(錯誤%1$s)</string>
     <string name="system_message_bttv_emotes_failed">載入BTTV表情失敗(錯誤%1$s)</string>
     <string name="system_message_7tv_emotes_failed">載入7TV表情失敗(錯誤%1$s)</string>
+    <string name="system_message_ffz_emotes_cached_fallback">使用快取的 FFZ emotes 作為備用</string>
+    <string name="system_message_bttv_emotes_cached_fallback">使用快取的 BTTV emotes 作為備用</string>
+    <string name="system_message_7tv_emotes_cached_fallback">使用快取的 7TV emotes 作為備用</string>
     <string name="system_message_7tv_emote_set_changed" comment="flex3rs switched the active 7TV Emote Set to &quot;flex3rs's Emotes&quot;. ">%1$s切換了使用中的7TV表情套組至\"%2$s\"。</string>
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s新增了7TV表情%2$s。</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s重新命名了7TV表情%2$s成%3$s。</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s移除了7TV表情%2$s。</string>
+    <!-- Send errors -->
+    <string name="system_message_send_not_logged_in">未登入</string>
+    <string name="system_message_send_channel_not_resolved">無法解析 %1$s 的頻道 ID</string>
+    <string name="system_message_send_not_delivered">訊息未送出</string>
+    <string name="system_message_send_dropped">訊息被丟棄：%1$s（%2$s）</string>
+    <string name="system_message_send_missing_scopes">缺少 user:write:chat 權限，請重新登入</string>
+    <string name="system_message_send_not_authorized">無權在此頻道發送訊息</string>
+    <string name="system_message_send_message_too_large">訊息過長</string>
+    <string name="system_message_send_rate_limited">已被限速，請稍後再試</string>
+    <string name="system_message_send_failed">發送失敗：%1$s</string>
+    <!-- AutoMod -->
+    <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">因以下原因攔截了一則訊息: %1$s。允許將會把該訊息發佈到聊天室。</string>
+    <string name="automod_allow">允許</string>
+    <string name="automod_deny">拒絕</string>
+    <string name="automod_status_approved">已允許</string>
+    <string name="automod_status_denied">已拒絕</string>
+    <string name="automod_ban_user">封鎖使用者</string>
+    <string name="automod_status_expired">已過期</string>
+    <string name="automod_user_held">嘿！你的訊息正在被版主審核中，尚未發送。</string>
+    <string name="automod_user_accepted">版主已接受你的訊息。</string>
+    <string name="automod_user_denied">版主已拒絕你的訊息。</string>
+    <string name="automod_reason_category" comment="aggressive (level 2)">%1$s (等級 %2$d)</string>
+    <plurals name="automod_reason_blocked_terms">
+        <item quantity="other">符合 %1$d 個封鎖詞彙 %2$s</item>
+    </plurals>
+    <string name="automod_error_already_processed" comment="Failed to allow AutoMod message - message has already been processed.">無法%1$s AutoMod 訊息 - 該訊息已被處理。</string>
+    <string name="automod_error_not_authenticated" comment="Failed to allow AutoMod message - you need to re-authenticate.">無法%1$s AutoMod 訊息 - 您需要重新驗證。</string>
+    <string name="automod_error_not_authorized" comment="Failed to allow AutoMod message - you don\'t have permission to perform that action.">無法%1$s AutoMod 訊息 - 您沒有權限執行此操作。</string>
+    <string name="automod_error_not_found" comment="Failed to allow AutoMod message - target message not found.">無法%1$s AutoMod 訊息 - 找不到目標訊息。</string>
+    <string name="automod_error_unknown" comment="Failed to allow AutoMod message - an unknown error occurred.">無法%1$s AutoMod 訊息 - 發生未知錯誤。</string>
+    <string name="automod_moderation_added_blocked_term" comment="flex3rs added &quot;test&quot; as a blocked term on AutoMod.">%1$s 在 AutoMod 上新增了 %2$s 為封鎖詞彙。</string>
+    <string name="automod_moderation_added_permitted_term" comment="flex3rs added &quot;test&quot; as a permitted term on AutoMod.">%1$s 在 AutoMod 上新增了 %2$s 為允許詞彙。</string>
+    <string name="automod_moderation_removed_blocked_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s 從 AutoMod 上移除了封鎖詞彙 %2$s。</string>
+    <string name="automod_moderation_removed_permitted_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s 從 AutoMod 上移除了允許詞彙 %2$s。</string>
+    <!-- Moderation messages — complete sentence variants for proper localization -->
+    <!-- Timeout (self, IRC — no creator info) -->
+    <string name="mod_timeout_self_irc" comment="You were timed out for 10m">您被禁言了 %1$s</string>
+    <!-- Timeout (self, EventSub — has creator) -->
+    <string name="mod_timeout_self" comment="You were timed out for 10m by flex3rs">您被 %2$s 禁言了 %1$s</string>
+    <string name="mod_timeout_self_reason" comment="You were timed out for 10m by flex3rs: reason">您被 %2$s 禁言了 %1$s: %3$s</string>
+    <!-- Timeout (other, by creator) -->
+    <string name="mod_timeout_by_creator" comment="flex3rs timed out user123 for 10m">%1$s 將 %2$s 禁言了 %3$s</string>
+    <string name="mod_timeout_by_creator_reason" comment="flex3rs timed out user123 for 10m: reason">%1$s 將 %2$s 禁言了 %3$s: %4$s</string>
+    <!-- Timeout (other, IRC — no creator) -->
+    <string name="mod_timeout_no_creator" comment="user123 has been timed out for 10m">%1$s 已被禁言 %2$s</string>
+    <!-- Ban (self) -->
+    <string name="mod_ban_self_irc" comment="You were banned">您已被封鎖</string>
+    <string name="mod_ban_self" comment="You were banned by flex3rs">您被 %1$s 封鎖了</string>
+    <string name="mod_ban_self_reason" comment="You were banned by flex3rs: reason">您被 %1$s 封鎖了: %2$s</string>
+    <!-- Ban (other) -->
+    <string name="mod_ban_by_creator" comment="flex3rs banned user123">%1$s 封鎖了 %2$s</string>
+    <string name="mod_ban_by_creator_reason" comment="flex3rs banned user123: reason">%1$s 封鎖了 %2$s: %3$s</string>
+    <string name="mod_ban_no_creator" comment="user123 has been permanently banned">%1$s 已被永久封鎖</string>
+    <!-- Simple actions -->
+    <string name="mod_untimeout" comment="flex3rs untimedout user123">%1$s 解除了 %2$s 的禁言</string>
+    <string name="mod_unban" comment="flex3rs unbanned user123">%1$s 解除了 %2$s 的封鎖</string>
+    <string name="mod_modded" comment="flex3rs modded user123">%1$s 將 %2$s 設為了模組</string>
+    <string name="mod_unmodded" comment="flex3rs unmodded user123">%1$s 取消了 %2$s 的模組身份</string>
+    <string name="mod_vip_added" comment="flex3rs has added user123 as a VIP of this channel">%1$s 已將 %2$s 新增為此頻道的 VIP</string>
+    <string name="mod_vip_removed" comment="flex3rs has removed user123 as a VIP of this channel">%1$s 已將 %2$s 從此頻道的 VIP 中移除</string>
+    <string name="mod_warn" comment="flex3rs has warned user123">%1$s 已警告了 %2$s</string>
+    <string name="mod_warn_reason" comment="flex3rs has warned user123: reason1, reason2">%1$s 已警告了 %2$s: %3$s</string>
+    <string name="mod_raid" comment="flex3rs initiated a raid to user123">%1$s 發起了對 %2$s 的突襲</string>
+    <string name="mod_unraid" comment="flex3rs canceled the raid to user123">%1$s 取消了對 %2$s 的突襲</string>
+    <!-- Delete -->
+    <string name="mod_delete_by_creator" comment="flex3rs deleted message from user123">%1$s 刪除了 %2$s 的訊息</string>
+    <string name="mod_delete_by_creator_message" comment="flex3rs deleted message from user123 saying: hello">%1$s 刪除了 %2$s 的訊息，內容為: %3$s</string>
+    <string name="mod_delete_no_creator" comment="A message from user123 was deleted">%1$s 的一則訊息已被刪除</string>
+    <string name="mod_delete_no_creator_message" comment="A message from user123 was deleted saying: hello">%1$s 的一則訊息已被刪除，內容為: %2$s</string>
+    <!-- Clear -->
+    <string name="mod_clear_by_creator" comment="flex3rs cleared the chat">%1$s 清除了聊天室</string>
+    <string name="mod_clear_no_creator">聊天室已被管理員清除</string>
+    <!-- Room state -->
+    <string name="mod_emote_only_on" comment="flex3rs turned on emote-only mode">%1$s 開啟了僅限表情符號模式</string>
+    <string name="mod_emote_only_off" comment="flex3rs turned off emote-only mode">%1$s 關閉了僅限表情符號模式</string>
+    <string name="mod_followers_on" comment="flex3rs turned on followers-only mode">%1$s 開啟了僅限追隨者模式</string>
+    <string name="mod_followers_on_duration" comment="flex3rs turned on followers-only mode (1 week)">%1$s 開啟了僅限追隨者模式 (%2$s)</string>
+    <string name="mod_followers_off" comment="flex3rs turned off followers-only mode">%1$s 關閉了僅限追隨者模式</string>
+    <string name="mod_unique_chat_on" comment="flex3rs turned on unique-chat mode">%1$s 開啟了獨特聊天模式</string>
+    <string name="mod_unique_chat_off" comment="flex3rs turned off unique-chat mode">%1$s 關閉了獨特聊天模式</string>
+    <string name="mod_slow_on" comment="flex3rs turned on slow mode">%1$s 開啟了低速模式</string>
+    <string name="mod_slow_on_duration" comment="flex3rs turned on slow mode (2 minutes 5 seconds)">%1$s 開啟了低速模式 (%2$s)</string>
+    <string name="mod_slow_off" comment="flex3rs turned off slow mode">%1$s 關閉了低速模式</string>
+    <string name="mod_subscribers_on" comment="flex3rs turned on subscribers-only mode">%1$s 開啟了僅限訂閱者模式</string>
+    <string name="mod_subscribers_off" comment="flex3rs turned off subscribers-only mode">%1$s 關閉了僅限訂閱者模式</string>
+    <!-- Shared chat -->
+    <string name="mod_shared_timeout" comment="flex3rs timed out user123 for 10m in channel456">%1$s 在 %4$s 中將 %2$s 禁言了 %3$s</string>
+    <string name="mod_shared_timeout_reason" comment="flex3rs timed out user123 for 10m in channel456: reason">%1$s 在 %4$s 中將 %2$s 禁言了 %3$s: %5$s</string>
+    <string name="mod_shared_untimeout" comment="flex3rs untimedout user123 in channel456">%1$s 在 %3$s 中解除了 %2$s 的禁言</string>
+    <string name="mod_shared_ban" comment="flex3rs banned user123 in channel456">%1$s 在 %3$s 中封鎖了 %2$s</string>
+    <string name="mod_shared_ban_reason" comment="flex3rs banned user123 in channel456: reason">%1$s 在 %3$s 中封鎖了 %2$s: %4$s</string>
+    <string name="mod_shared_unban" comment="flex3rs unbanned user123 in channel456">%1$s 在 %3$s 中解除了 %2$s 的封鎖</string>
+    <string name="mod_shared_delete" comment="flex3rs deleted message from user123 in channel456">%1$s 在 %3$s 中刪除了 %2$s 的訊息</string>
+    <string name="mod_shared_delete_message" comment="flex3rs deleted message from user123 in channel456 saying: hello">%1$s 在 %3$s 中刪除了 %2$s 的訊息，內容為: %4$s</string>
+    <!-- Helper: message + count concatenation -->
+    <string name="mod_message_with_count" comment="flex3rs timed out user123 for 10m. (2 times)">%1$s%2$s</string>
+    <!-- Parenthetical count (appended after complete sentences, safe for all languages) -->
+    <plurals name="mod_count_suffix" comment=" (2 times)">
+        <item quantity="other">\u0020(%1$d 次)</item>
+    </plurals>
     <string name="timed_out_message">&lt; 訊息已被刪除 &gt;</string>
     <string name="multi_entry_header_regex">Regex 常規式</string>
     <string name="multi_entry_add_entry">新增項目</string>
@@ -104,9 +254,12 @@
     <string name="confirm_channel_removal_title">確認移除頻道</string>
     <string name="confirm_channel_removal_message">您確定要將此頻道移除嗎？</string>
     <string name="confirm_channel_removal_message_named">您確定要移除頻道\"%1$s\"嗎?</string>
+    <string name="confirm_channel_removal_question">移除此頻道?</string>
+    <string name="confirm_channel_removal_question_named">移除頻道\"%1$s\"?</string>
     <string name="confirm_channel_removal_positive_button">移除</string>
     <string name="confirm_channel_block_title">確認封鎖頻道</string>
     <string name="confirm_channel_block_message_named">您確定要封鎖頻道\"%1$s\"嗎?</string>
+    <string name="confirm_channel_block_question_named">封鎖頻道\"%1$s\"?</string>
     <string name="user_popup_block">封鎖</string>
     <string name="user_popup_unblock">移除封鎖</string>
     <string name="user_popup_mention">提及使用者</string>
@@ -130,6 +283,61 @@
     <string name="uploader_description">您可以設定一個自訂的主機來用於上傳媒體，例如imgur.com或是s-ul.eu。DankChat使用與Chatterino相同的設定格式。\n若需幫助請查看這則指導文章: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="toggle_fullscreen">開啟/關閉全螢幕</string>
     <string name="toggle_stream">開啟/關閉實況</string>
+    <string name="menu_show_stream">顯示實況</string>
+    <string name="menu_hide_stream">隱藏實況</string>
+    <string name="menu_audio_only">僅音訊</string>
+    <string name="menu_exit_audio_only">退出僅音訊模式</string>
+    <string name="menu_fullscreen">全螢幕</string>
+    <string name="menu_exit_fullscreen">退出全螢幕</string>
+    <string name="menu_hide_input">隱藏輸入框</string>
+    <string name="menu_show_input">顯示輸入框</string>
+    <string name="preference_swipe_navigation_title">頻道滑動導航</string>
+    <string name="preference_swipe_navigation_summary">在聊天中滑動切換頻道</string>
+    <string name="menu_mod_actions">頻道管理</string>
+    <plurals name="input_actions_max">
+        <item quantity="other">最多 %1$d 個動作</item>
+    </plurals>
+    <string name="input_action_search">搜尋訊息</string>
+    <string name="input_action_last_message">上一則訊息</string>
+    <string name="input_action_stream">切換實況</string>
+    <string name="input_action_mod_actions">頻道管理</string>
+    <string name="input_action_fullscreen">全螢幕</string>
+    <string name="input_action_hide_input">隱藏輸入框</string>
+    <string name="input_action_debug">偵錯</string>
+    <string name="input_action_configure">設定動作</string>
+    <string name="room_state_emote_only">僅限表情符號</string>
+    <string name="room_state_subscriber_only">僅限訂閱者</string>
+    <string name="room_state_slow_mode">低速模式</string>
+    <string name="room_state_slow_mode_duration">慢速模式 (%1$s)</string>
+    <string name="room_state_unique_chat">獨特聊天 (R9K)</string>
+    <string name="room_state_follower_only">僅限追隨者</string>
+    <string name="room_state_follower_only_duration">僅限追隨者 (%1$s)</string>
+    <string name="room_state_preset_custom">自訂</string>
+    <string name="room_state_follower_any">任何人</string>
+    <string name="room_state_duration_seconds">%1$d秒</string>
+    <string name="room_state_duration_minutes">%1$d分</string>
+    <string name="room_state_duration_hours">%1$d時</string>
+    <string name="room_state_duration_days">%1$d天</string>
+    <string name="room_state_duration_weeks">%1$d週</string>
+    <string name="room_state_duration_months">%1$d月</string>
+    <string name="mod_actions_room_state_section">Room state</string>
+    <string name="mod_actions_section">Mod actions</string>
+    <string name="mod_actions_broadcaster_section">Broadcaster</string>
+    <string name="mod_actions_shield_mode">Shield mode</string>
+    <string name="mod_actions_clear_chat">Clear chat</string>
+    <string name="mod_actions_confirm_clear_chat">Clear all messages in this channel?</string>
+    <string name="mod_actions_confirm_shield_mode_title">啟用護盾模式？</string>
+    <string name="mod_actions_confirm_shield_mode_body">這將套用頻道預先設定的安全設定，可能包括聊天限制、AutoMod 設定和聊天驗證要求。</string>
+    <string name="mod_actions_shield_mode_activate">啟用</string>
+    <string name="mod_actions_announce">Announce</string>
+    <string name="mod_actions_announce_header">Announcement</string>
+    <string name="mod_actions_shoutout">Shoutout</string>
+    <string name="mod_actions_commercial">Commercial</string>
+    <string name="mod_actions_raid">Raid</string>
+    <string name="mod_actions_cancel_raid">Cancel raid</string>
+    <string name="mod_actions_stream_marker">Stream marker</string>
+    <string name="mod_actions_username_hint">Username</string>
+    <string name="mod_actions_channel_hint">Channel</string>
     <string name="account">帳戶</string>
     <string name="relogin">重新登入</string>
     <string name="logout">登出</string>
@@ -140,12 +348,15 @@
     <string name="change_roomstate">聊天室狀態</string>
     <string name="confirm_user_ban_title">確認永ban</string>
     <string name="confirm_user_ban_message">您確定要永ban這名用戶嗎?</string>
+    <string name="confirm_user_ban_question">封鎖此使用者?</string>
     <string name="confirm_user_ban_positive_button">Ban</string>
     <string name="confirm_user_timeout_title">確認禁言</string>
     <string name="confirm_user_timeout_positive_button">禁言</string>
     <string name="confirm_user_delete_title">確認訊息刪除</string>
     <string name="confirm_user_delete_message">您確定要刪除這則訊息嗎?</string>
+    <string name="confirm_user_delete_question">刪除此訊息?</string>
     <string name="confirm_user_delete_positive_button">刪除</string>
+    <string name="confirm_clear_chat_question">清除聊天室?</string>
     <string name="confirm_user_roomstate_title">更新聊天室模式</string>
     <string name="roomstate_emote">限定表情符號</string>
     <string name="roomstate_subs">訂閱者限定</string>
@@ -157,6 +368,8 @@
     <string name="add_command">新增指令</string>
     <string name="remove_command">移除指令</string>
     <string name="command_trigger_hint">觸發</string>
+    <string name="command_trigger_reserved">此觸發器已被內建指令保留</string>
+    <string name="command_trigger_duplicate">此觸發器已被其他指令使用</string>
     <string name="command__hint">指令</string>
     <string name="commands_title">自訂指令</string>
     <string name="user_popup_report">檢舉</string>
@@ -195,14 +408,57 @@
     <string name="preference_notification_header">提醒</string>
     <string name="preference_chat_header">聊天</string>
     <string name="preference_general_header">一般</string>
+    <string name="preference_suggestions_header">建議</string>
+    <string name="preference_messages_header">訊息</string>
+    <string name="preference_users_header">用戶</string>
+    <string name="preference_emotes_badges_header">表情與徽章</string>
+    <string name="preference_suggestion_mode_title">建議模式</string>
+    <string name="preference_suggestion_mode_automatic">輸入時建議匹配項目</string>
+    <string name="preference_suggestion_mode_prefix_only">僅在觸發字元後建議</string>
     <string name="preference_about_header">關於</string>
     <string name="preference_appearance_header">樣式</string>
     <string name="preference_about_summary">DankChat %1$s 是由 @flex3rs 及其貢獻者所製</string>
     <string name="preference_show_input_title">顯示訊息輸入</string>
     <string name="preference_show_input_summary">顯示訊息輸入方框以便傳送訊息</string>
     <string name="preference_follow_system_title">使用系統預設</string>
-    <string name="preference_true_dark_theme_title">真黑暗模式</string>
-    <string name="preference_true_dark_theme_summary">強制聊天室背景顏色設為黑色</string>
+    <string name="preference_true_dark_theme_title">Amoled 深色模式</string>
+    <string name="preference_true_dark_theme_summary">為 OLED 螢幕提供純黑背景</string>
+    <string name="preference_accent_color_title">強調色</string>
+    <string name="preference_accent_color_summary_default">跟隨系統桌布</string>
+    <string name="accent_color_blue">藍色</string>
+    <string name="accent_color_teal">青色</string>
+    <string name="accent_color_green">綠色</string>
+    <string name="accent_color_lime">萊姆色</string>
+    <string name="accent_color_yellow">黃色</string>
+    <string name="accent_color_orange">橘色</string>
+    <string name="accent_color_red">紅色</string>
+    <string name="accent_color_pink">粉紅色</string>
+    <string name="accent_color_purple">紫色</string>
+    <string name="accent_color_indigo">靛色</string>
+    <string name="accent_color_brown">棕色</string>
+    <string name="accent_color_grey">灰色</string>
+    <string name="preference_palette_style_title">色彩風格</string>
+    <string name="palette_style_system_default">系統預設</string>
+    <string name="palette_style_system_default_desc">使用系統預設色彩配置</string>
+    <string name="palette_style_tonal_spot">Tonal Spot</string>
+    <string name="palette_style_tonal_spot_desc">沉穩柔和的色調</string>
+    <string name="palette_style_neutral">Neutral</string>
+    <string name="palette_style_neutral_desc">近乎單色，淡雅色調</string>
+    <string name="palette_style_vibrant">Vibrant</string>
+    <string name="palette_style_vibrant_desc">鮮豔飽和的色彩</string>
+    <string name="palette_style_expressive">Expressive</string>
+    <string name="palette_style_expressive_desc">活潑的色彩搭配偏移色調</string>
+    <string name="palette_style_rainbow">Rainbow</string>
+    <string name="palette_style_rainbow_desc">廣泛的色調光譜</string>
+    <string name="palette_style_fruit_salad">Fruit Salad</string>
+    <string name="palette_style_fruit_salad_desc">活潑的多彩調色盤</string>
+    <string name="palette_style_monochrome">Monochrome</string>
+    <string name="palette_style_monochrome_desc">僅有黑、白和灰色</string>
+    <string name="palette_style_fidelity">Fidelity</string>
+    <string name="palette_style_fidelity_desc">忠於強調色</string>
+    <string name="palette_style_content">Content</string>
+    <string name="palette_style_content_desc">強調色搭配類似的第三色</string>
+    <string name="palette_style_more">更多風格</string>
     <string name="preference_display_group_title">顯示</string>
     <string name="preference_components_group_title">元件</string>
     <string name="preference_show_timed_out_messages_title">顯示被靜音的訊息</string>
@@ -214,8 +470,16 @@
     <string name="preference_font_size_summary_small">小</string>
     <string name="preference_font_size_summary_large">大</string>
     <string name="preference_font_size_summary_very_large">非常大</string>
-    <string name="preference_suggestions_title">自動完成表情符號及使用者</string>
-    <string name="preference_suggestions_summary">於輸入訊息時，依照輸入字串顯示相關表情符號以及使用者名</string>
+    <string name="preference_suggestions_title">建議</string>
+    <string name="preference_suggestions_summary">選擇輸入時顯示的建議類型</string>
+    <string name="preference_suggestions_emotes">表情</string>
+    <string name="preference_suggestions_emotes_desc">以 : 觸發</string>
+    <string name="preference_suggestions_users">用戶</string>
+    <string name="preference_suggestions_users_desc">以 @ 觸發</string>
+    <string name="preference_suggestions_commands">Twitch 指令</string>
+    <string name="preference_suggestions_commands_desc">以 / 觸發</string>
+    <string name="preference_suggestions_supibot">Supibot指令</string>
+    <string name="preference_suggestions_supibot_desc">以 $ 觸發</string>
     <string name="preference_load_message_history_title">啟動時自動讀取聊天紀錄</string>
     <string name="preference_load_messages_on_reconnect_title">在重新連接後載入訊息歷史</string>
     <string name="preference_load_messages_on_reconnect_summary">嘗試捕捉在連接斷開時漏掉的訊息</string>
@@ -224,8 +488,10 @@
     <string name="preference_message_history_dashboard_summary">進一步了解此服務，並選擇是否要替您的頻道關閉聊天紀錄</string>
     <string name="preference_channel_data_header">頻道資訊</string>
     <string name="preference_developer_header">開發者選項</string>
+    <string name="preference_log_viewer_title">日誌檢視器</string>
+    <string name="preference_log_viewer_summary">檢視應用程式日誌</string>
     <string name="preference_debug_mode_title">除錯模式</string>
-    <string name="preference_debug_mode_summary">提供已攔截的例外訊息</string>
+    <string name="preference_debug_mode_summary">在輸入欄中顯示除錯分析操作並在本機收集當機報告</string>
     <string name="preference_timestamp_format_title">時間戳記格式</string>
     <string name="preference_tts_title">啟用文字朗讀</string>
     <string name="preference_tts_summary">朗讀目前選取頻道的訊息</string>
@@ -239,6 +505,9 @@
     <string name="preference_tts_message_ignore_url_title">忽略 URL</string>
     <string name="preference_tts_message_ignore_emote_message">在文字朗讀時忽略表情符號</string>
     <string name="preference_tts_message_ignore_emote_title">忽略 表情符號</string>
+    <string name="preference_tts_volume_title">音量</string>
+    <string name="preference_tts_audio_ducking_title">音訊閃避</string>
+    <string name="preference_tts_audio_ducking_summary">TTS朗讀時降低其他應用程式的音量</string>
     <string name="preference_tts_header">TTS</string>
     <string name="preference_checkered_lines_title">行列顏色調整</string>
     <string name="preference_checkered_lines_summary">以不同顏色隔開訊息</string>
@@ -251,12 +520,19 @@
     <string name="preference_user_long_click_title">使用者長按行為</string>
     <string name="preference_user_long_click_summary_on">輕觸開啟用戶資訊；長按提及用戶</string>
     <string name="preference_user_long_click_summary_off">輕觸提及用戶；長按開啟用戶資訊</string>
+    <string name="preference_colorize_nicknames_title">為暱稱上色</string>
+    <string name="preference_colorize_nicknames_summary">為未設定顏色的用戶隨機分配顏色</string>
     <string name="preference_tts_force_english_title">強制使用英文</string>
     <string name="preference_tts_force_english_summary">強制文字朗讀使用英文，而非系統預設語言</string>
     <string name="preference_visible_emotes_title">顯示第三方表情符號</string>
     <string name="preference_about_tos">Twitch 服務條款和用戶政策</string>
     <string name="preference_show_chip_actions_title">顯示微項動作</string>
     <string name="preference_show_chip_actions_summary">顯示用於切換全螢幕、實況與聊天室模式的微項動作</string>
+    <string name="preference_show_character_counter_title">顯示字元計數器</string>
+    <string name="preference_show_character_counter_summary">在輸入框中顯示字碼數</string>
+    <string name="preference_show_clear_input_button_title">顯示清除輸入按鈕</string>
+    <string name="preference_show_send_button_title">顯示傳送按鈕</string>
+    <string name="preference_input_group_title">輸入</string>
     <string name="preference_uploader_header">媒體上傳者</string>
     <string name="preference_uploader_configure_title">設定上傳者</string>
     <string name="preference_uploader_recent_uploads_title">近期上傳</string>
@@ -269,6 +545,14 @@
     <string name="preference_unlisted_emotes_title">允許不在列表中的表情</string>
     <string name="preference_unlisted_emotes_summary">關閉未准許或不在列表中表情的過濾</string>
     <string name="preference_rm_host_title">自訂 recent messages 伺服器</string>
+    <string name="preference_developer_category_general">一般</string>
+    <string name="preference_developer_category_auth">驗證</string>
+    <string name="preference_eventsub_title">啟用 Twitch EventSub</string>
+    <string name="preference_eventsub_summary">使用 EventSub 取代已棄用的 PubSub 來接收各種即時事件</string>
+    <string name="preference_eventsub_debug_title">啟用 EventSub 除錯輸出</string>
+    <string name="preference_eventsub_debug_summary">將 EventSub 相關除錯資訊以系統訊息顯示</string>
+    <string name="preference_revoke_token_title">撤銷權杖並重新啟動</string>
+    <string name="preference_revoke_token_summary">使目前的權杖失效並重新啟動應用程式</string>
     <string name="preference_fetch_streams_title">捉取實況資訊</string>
     <string name="preference_fetch_streams_summary">定期捉取開啟頻道的實況資訊。啟用嵌入式實況的必須功能。</string>
     <string name="preference_auto_disable_input_title">未連結至聊天室時取消輸入框</string>
@@ -285,6 +569,9 @@
     <string name="preference_custom_login_title">自訂登入</string>
     <string name="preference_bypass_command_handling_title">繞過Twitch指令處理</string>
     <string name="preference_bypass_command_handling_summary">取消攔截Twitch指令並改為傳送至聊天室</string>
+    <string name="preference_chat_send_protocol_category">聊天傳送協議</string>
+    <string name="preference_helix_sending_title">使用 Helix API 傳送</string>
+    <string name="preference_helix_sending_summary">透過 Twitch Helix API 傳送聊天訊息，而非 IRC</string>
     <string name="preference_7tv_live_updates_title">7TV即時表情符號更新</string>
     <string name="preference_7tv_live_updates_timeout_title">即時表情更新背景行為</string>
     <string name="preference_7tv_live_updates_timeout_summary_timeout">更新將停止於%1$s後。\n降低這個數字可能會提升電池壽命。</string>
@@ -321,14 +608,17 @@
     <string name="tab_users">使用者</string>
     <string name="tab_blacklisted_users">黑名單的使用者</string>
     <string name="tab_twitch">Twitch</string>
+    <string name="tab_badges">徽章</string>
     <string name="undo">復原</string>
     <string name="item_removed">物件已移除</string>
     <string name="unblocked_user">已封鎖使用者 %1$s</string>
     <string name="unblocked_user_failed">無法解除封鎖使用者 %1$s</string>
+    <string name="badge">徽章</string>
     <string name="blocked_user_failed">無法封鎖使用者 %1$s</string>
     <string name="highlights_entry_username">您的使用者名稱</string>
     <string name="highlights_ignores_entry_subscriptions">訂閱與活動</string>
     <string name="highlights_ignores_entry_announcements">公告</string>
+    <string name="highlights_ignores_entry_watch_streaks">連續觀看</string>
     <string name="highlights_ignores_entry_first_messages">第一則訊息</string>
     <string name="highlights_ignores_entry_elevated_messages">固定訊息顯示</string>
     <string name="highlights_ignores_entry_redemptions">使用頻道點數兌換的醒目訊息</string>
@@ -337,6 +627,7 @@
     <string name="highlights_messages_title">基於某些格式產生通知與醒目訊息提示</string>
     <string name="highlights_users_title">當某些使用者發出訊息時產生通知與醒目提示</string>
     <string name="highlights_blacklisted_users_title">關閉來自於某些使用者的通知與醒目提示 (例如機器人)</string>
+    <string name="highlights_badges_title">基於徽章對使用者的訊息產生通知與醒目提示</string>
     <string name="ignores_messages_title">基於某些格式忽略訊息</string>
     <string name="ignores_users_title">忽略來自於某些使用的訊息</string>
     <string name="ignores_twitch_title">管理封鎖的Twitch使用者</string>
@@ -354,10 +645,63 @@
     <string name="message_copy">複製訊息</string>
     <string name="message_copy_full">複製完整訊息</string>
     <string name="message_reply">回覆訊息</string>
+    <string name="message_reply_original">回覆原始訊息</string>
     <string name="message_view_thread">查看回覆串</string>
     <string name="message_copy_id">複製訊息ID</string>
     <string name="message_more_actions">更多…</string>
+    <string name="message_jump_to">跳至訊息</string>
+    <string name="message_not_in_history">訊息已不在聊天紀錄中</string>
+    <string name="message_history">訊息紀錄</string>
+    <string name="global_history_title">全域歷史</string>
+    <string name="message_history_title">歷史紀錄：%1$s</string>
+    <string name="view_history">查看歷史</string>
+    <string name="history_empty">沒有符合目前篩選條件的訊息</string>
+    <string name="search_messages_hint">搜尋訊息…</string>
+    <string name="log_viewer_title">日誌</string>
+    <string name="log_viewer_share">分享日誌</string>
+    <string name="log_viewer_open">檢視日誌</string>
+    <string name="preference_log_viewer_empty">沒有可用的日誌檔案</string>
+    <string name="log_viewer_search_hint">搜尋日誌</string>
+    <plurals name="log_viewer_selected_count">
+        <item quantity="other">已選取 %1$d 項</item>
+    </plurals>
+    <string name="log_viewer_copy_selection">複製選取的日誌</string>
+    <string name="log_viewer_clear_selection">清除選取</string>
+    <string name="crash_report_title">偵測到當機</string>
+    <string name="crash_report_message">應用程式在您上次使用期間當機。</string>
+    <string name="crash_report_thread">執行緒：%1$s</string>
+    <string name="crash_report_copy">複製</string>
+    <string name="crash_report_send">聊天報告</string>
+    <string name="crash_report_send_description">加入 #flex3rs 並準備當機摘要以傳送</string>
+    <string name="crash_report_email">電郵報告</string>
+    <string name="crash_report_email_description">透過電子郵件傳送詳細的當機報告</string>
+    <string name="crash_email_confirm_title">透過電子郵件傳送當機報告</string>
+    <string name="crash_email_confirm_message">以下資料將包含在報告中：</string>
+    <string name="crash_email_confirm_stacktrace">堆疊追蹤</string>
+    <string name="crash_email_confirm_include_logs">包含目前的記錄檔</string>
+    <string name="preference_crash_viewer_title">當機報告</string>
+    <string name="preference_crash_viewer_summary">檢視最近的當機報告</string>
+    <string name="preference_crash_viewer_empty">找不到當機報告</string>
+    <string name="crash_viewer_title">當機報告</string>
+    <string name="crash_viewer_share">分享當機報告</string>
+    <string name="crash_viewer_delete">刪除</string>
+    <string name="crash_viewer_clear_all">全部清除</string>
+    <string name="crash_viewer_delete_confirm">刪除此當機報告？</string>
+    <string name="crash_viewer_clear_all_confirm">刪除所有當機報告？</string>
+    <string name="scroll_to_bottom">捲動至底部</string>
+    <string name="search_filter_by_username">依使用者名稱篩選</string>
+    <string name="search_filter_has_link">包含連結的訊息</string>
+    <string name="search_filter_has_emote">包含表情符號的訊息</string>
+    <string name="search_filter_by_badge">依徽章名稱篩選</string>
+    <string name="search_filter_user">使用者</string>
+    <string name="search_filter_badge">徽章</string>
     <string name="reply_header">回覆至@%1$s</string>
+    <string name="whisper_header">悄悄話至@%1$s</string>
+    <string name="hint_whispering">傳送悄悄話</string>
+    <string name="whisper_new">新悄悄話</string>
+    <string name="whisper_new_dialog_title">傳送悄悄話至</string>
+    <string name="whisper_new_dialog_hint">使用者名稱</string>
+    <string name="whisper_new_dialog_start">開始</string>
     <string name="reply_thread_not_found">未找到回覆串</string>
     <string name="message_not_found">未找到訊息</string>
     <string name="emote_sheet_use">使用表情符號</string>
@@ -398,4 +742,165 @@
     <string name="preference_streaminfo_category_title">顯示實況類別</string>
     <string name="preference_streaminfo_category_summary">同時也顯示實況類別</string>
     <string name="toggle_input">開關輸入框</string>
+    <string name="badge_broadcaster">實況主</string>
+    <string name="badge_admin">管理員</string>
+    <string name="badge_staff">工作人員</string>
+    <string name="badge_moderator">模組</string>
+    <string name="badge_lead_moderator">主要模組</string>
+    <string name="badge_verified">已驗證</string>
+    <string name="badge_vip">VIP</string>
+    <string name="badge_founder">創始者</string>
+    <string name="badge_subscriber">訂閱者</string>
+    <string name="pick_highlight_color_title">選擇自訂標示色彩</string>
+    <string name="reset_default_highlight_color">預設</string>
+    <string name="choose_highlight_color">選擇色彩</string>
+    <string name="toggle_app_bar">切換應用程式列</string>
+    <string name="error_with_message">錯誤: %s</string>
+    <!-- Onboarding -->
+    <string name="onboarding_welcome_title">DankChat</string>
+    <string name="onboarding_welcome_body">讓我們為您進行設定。</string>
+    <string name="onboarding_get_started">開始使用</string>
+    <string name="onboarding_login_title">使用 Twitch 登入</string>
+    <string name="onboarding_login_body">登入以傳送訊息、使用您的表情符號、接收悄悄話，並解鎖所有功能。</string>
+    <string name="onboarding_login_disclaimer">系統會一次性要求您授予數項 Twitch 權限，這樣您在使用不同功能時就不需要重新授權。DankChat 僅在您主動要求時才會執行管理或直播相關操作。</string>
+    <string name="onboarding_login_button">使用 Twitch 登入</string>
+    <string name="onboarding_login_success">登入成功</string>
+    <string name="onboarding_skip">略過</string>
+    <string name="onboarding_continue">繼續</string>
+    <string name="onboarding_history_title">訊息紀錄</string>
+    <string name="onboarding_history_body">DankChat 可於啟動時透過第三方服務載入歷史訊息。 為了取得這些訊息，DankChat 會將您開啟的頻道名稱傳送至該服務。 該服務會暫時儲存您（及其他人）造訪的頻道訊息以提供此功能。\n\n您可以稍後在設定中變更此選項，或透過 https://recent-messages.robotty.de/ 了解更多資訊</string>
+    <string name="onboarding_history_enable">啟用</string>
+    <string name="onboarding_history_disable">停用</string>
+    <string name="onboarding_notifications_title">通知</string>
+    <string name="onboarding_notifications_body">當應用程式在背景執行時，DankChat 可以在有人於聊天室中提及您時通知您。</string>
+    <string name="onboarding_notifications_allow">允許通知</string>
+    <string name="onboarding_notifications_rationale">若不允許通知，當應用程式在背景執行時，您將不會收到聊天室中的提及通知。</string>
+    <string name="onboarding_notifications_open_settings">開啟通知設定</string>
+    <!-- Feature Tour -->
+    <string name="tour_input_actions">可自訂的快捷動作，快速存取搜尋、實況等功能</string>
+    <string name="tour_overflow_menu">點此查看更多動作並設定您的動作列</string>
+    <string name="tour_configure_actions">您可以在此自訂動作列中顯示的動作</string>
+    <string name="tour_swipe_gesture">在輸入框上向下滑動即可快速隱藏</string>
+    <string name="tour_recovery_fab">點此恢復輸入框</string>
+    <string name="tour_next">下一步</string>
+    <string name="tour_got_it">了解</string>
+    <string name="tour_skip">略過導覽</string>
+    <string name="tour_add_more_channels_hint">您可以在此新增更多頻道</string>
+    <!-- Command responses -->
+    <string name="cmd_error_not_logged_in">您必須登入才能使用 %1$s 指令</string>
+    <string name="cmd_error_no_user_matching">找不到符合該使用者名稱的使用者。</string>
+    <string name="cmd_error_unknown">發生了未知錯誤。</string>
+    <string name="cmd_error_no_permission">您沒有權限執行該操作。</string>
+    <string name="cmd_error_missing_scopes">缺少必要的權限範圍。請重新登入您的帳號後再試一次。</string>
+    <string name="cmd_error_not_logged_in_credentials">缺少登入憑證。請重新登入您的帳號後再試一次。</string>
+    <string name="cmd_block_usage">用法：/block &lt;user&gt;</string>
+    <string name="cmd_block_success">您已成功封鎖使用者 %1$s</string>
+    <string name="cmd_block_not_found">無法封鎖使用者 %1$s，找不到該名稱的使用者！</string>
+    <string name="cmd_block_error">無法封鎖使用者 %1$s，發生未知錯誤！</string>
+    <string name="cmd_unblock_usage">用法：/unblock &lt;user&gt;</string>
+    <string name="cmd_unblock_success">您已成功解除封鎖使用者 %1$s</string>
+    <string name="cmd_unblock_not_found">無法解除封鎖使用者 %1$s，找不到該名稱的使用者！</string>
+    <string name="cmd_unblock_error">無法解除封鎖使用者 %1$s，發生未知錯誤！</string>
+    <string name="cmd_uptime_not_live">頻道目前未直播。</string>
+    <string name="cmd_uptime_response">已直播時間：%1$s</string>
+    <string name="cmd_help_response">您在此聊天室可用的指令：%1$s</string>
+    <string name="cmd_usage_whisper">用法：%1$s &lt;username&gt; &lt;message&gt;。</string>
+    <string name="cmd_whisper_sent">悄悄話已送出。</string>
+    <string name="cmd_fail_whisper">悄悄話發送失敗 - %1$s</string>
+    <string name="cmd_usage_announce">用法：%1$s &lt;message&gt; - 以醒目提示方式引起對您訊息的注意。</string>
+    <string name="cmd_fail_announce">公告發送失敗 - %1$s</string>
+    <string name="cmd_no_moderators">此頻道沒有任何管理員。</string>
+    <string name="cmd_moderators_list">此頻道的管理員為 %1$s。</string>
+    <string name="cmd_fail_list_moderators">無法列出管理員 - %1$s</string>
+    <string name="cmd_usage_mod">用法：%1$s &lt;username&gt; - 授予使用者管理員身分。</string>
+    <string name="cmd_success_mod_added">您已將 %1$s 新增為此頻道的管理員。</string>
+    <string name="cmd_fail_mod_add">無法新增頻道管理員 - %1$s</string>
+    <string name="cmd_usage_unmod">用法：%1$s &lt;username&gt; - 撤銷使用者的管理員身分。</string>
+    <string name="cmd_success_mod_removed">您已將 %1$s 從此頻道的管理員中移除。</string>
+    <string name="cmd_fail_mod_remove">無法移除頻道管理員 - %1$s</string>
+    <string name="cmd_no_vips">此頻道沒有任何 VIP。</string>
+    <string name="cmd_vips_list">此頻道的 VIP 為 %1$s。</string>
+    <string name="cmd_fail_list_vips">無法列出 VIP - %1$s</string>
+    <string name="cmd_usage_vip">用法：%1$s &lt;username&gt; - 授予使用者 VIP 身分。</string>
+    <string name="cmd_success_vip_added">您已將 %1$s 新增為此頻道的 VIP。</string>
+    <string name="cmd_fail_vip_add">無法新增 VIP - %1$s</string>
+    <string name="cmd_usage_unvip">用法：%1$s &lt;username&gt; - 撤銷使用者的 VIP 身分。</string>
+    <string name="cmd_success_vip_removed">您已將 %1$s 從此頻道的 VIP 中移除。</string>
+    <string name="cmd_fail_vip_remove">無法移除 VIP - %1$s</string>
+    <string name="cmd_usage_ban">用法：%1$s &lt;username&gt; [原因] - 永久禁止使用者發言。原因為選填，將顯示給目標使用者和其他管理員。使用 /unban 來解除封禁。</string>
+    <string name="cmd_ban_cannot_self">封禁使用者失敗 - 您無法封禁自己。</string>
+    <string name="cmd_ban_cannot_broadcaster">封禁使用者失敗 - 您無法封禁實況主。</string>
+    <string name="cmd_fail_ban">封禁使用者失敗 - %1$s</string>
+    <string name="cmd_usage_unban">用法：%1$s &lt;username&gt; - 解除對使用者的封禁。</string>
+    <string name="cmd_fail_unban">解除封禁使用者失敗 - %1$s</string>
+    <string name="cmd_usage_timeout">用法：%1$s &lt;username&gt; [時間][時間單位] [原因] - 暫時禁止使用者發言。時間（選填，預設：10 分鐘）必須為正整數；時間單位（選填，預設：s）必須為 s、m、h、d、w 其中之一；最長時間為 2 週。原因為選填，將顯示給目標使用者和其他管理員。</string>
+    <string name="cmd_timeout_cannot_self">封禁使用者失敗 - 您無法對自己執行暫時禁言。</string>
+    <string name="cmd_timeout_cannot_broadcaster">封禁使用者失敗 - 您無法對實況主執行暫時禁言。</string>
+    <string name="cmd_fail_timeout">暫時禁言使用者失敗 - %1$s</string>
+    <string name="cmd_fail_clear">刪除聊天訊息失敗 - %1$s</string>
+    <string name="cmd_usage_delete">用法：/delete &lt;msg-id&gt; - 刪除指定的訊息。</string>
+    <string name="cmd_delete_invalid_id">無效的 msg-id：\"%1$s\"。</string>
+    <string name="cmd_fail_delete">刪除聊天訊息失敗 - %1$s</string>
+    <string name="cmd_usage_color">用法：/color &lt;color&gt; - 顏色必須為 Twitch 支援的顏色之一（%1$s），或者如果您有 Turbo 或 Prime，可以使用 hex code（#000000）。</string>
+    <string name="cmd_success_color">您的顏色已更改為 %1$s</string>
+    <string name="cmd_fail_color">更改顏色為 %1$s 失敗 - %2$s</string>
+    <string name="cmd_success_marker">已成功在 %1$s%2$s 新增直播標記。</string>
+    <string name="cmd_fail_marker">建立直播標記失敗 - %1$s</string>
+    <string name="cmd_usage_commercial">用法：/commercial &lt;length&gt; - 為目前頻道開始指定時長的廣告。有效的時長選項為 30、60、90、120、150 及 180 秒。</string>
+    <plurals name="cmd_success_commercial">
+        <item quantity="other">開始 %1$d 秒的廣告時段。請注意您仍在直播中，並非所有觀眾都會收到廣告。您可以在 %2$d 秒後再次播放廣告。</item>
+    </plurals>
+    <string name="cmd_fail_commercial">開始廣告失敗 - %1$s</string>
+    <string name="cmd_usage_raid">用法：/raid &lt;username&gt; - 突襲一位使用者。只有實況主可以發起突襲。</string>
+    <string name="cmd_raid_invalid_username">無效的使用者名稱：%1$s</string>
+    <string name="cmd_success_raid">您已開始突襲 %1$s。</string>
+    <string name="cmd_fail_raid">發起突襲失敗 - %1$s</string>
+    <string name="cmd_success_unraid">您已取消突襲。</string>
+    <string name="cmd_fail_unraid">取消突襲失敗 - %1$s</string>
+    <string name="cmd_usage_followers">用法：%1$s [時間] - 啟用僅限追隨者模式（只有追隨者可以發言）。時間（選填，預設：0 分鐘）必須為正數，後接時間單位（m、h、d、w）；最長時間為 3 個月。</string>
+    <string name="cmd_room_already_followers">此聊天室已在 %1$s 僅限追隨者模式中。</string>
+    <string name="cmd_fail_chat_settings">更新聊天設定失敗 - %1$s</string>
+    <string name="cmd_room_not_followers">此聊天室未處於僅限追隨者模式。</string>
+    <string name="cmd_room_already_emote_only">此聊天室已在僅限表情模式中。</string>
+    <string name="cmd_room_not_emote_only">此聊天室未處於僅限表情模式。</string>
+    <string name="cmd_room_already_subscribers">此聊天室已在僅限訂閱者模式中。</string>
+    <string name="cmd_room_not_subscribers">此聊天室未處於僅限訂閱者模式。</string>
+    <string name="cmd_room_already_unique_chat">此聊天室已在獨特聊天模式中。</string>
+    <string name="cmd_room_not_unique_chat">此聊天室未處於獨特聊天模式。</string>
+    <string name="cmd_usage_slow">用法：%1$s [時間] - 啟用慢速模式（限制使用者發送訊息的頻率）。時間（選填，預設：30）必須為正整數秒數；最大值為 120。</string>
+    <string name="cmd_room_already_slow">此聊天室已在 %1$d 秒慢速模式中。</string>
+    <string name="cmd_room_not_slow">此聊天室未處於慢速模式。</string>
+    <string name="cmd_usage_shoutout">用法：%1$s &lt;username&gt; - 向指定的 Twitch 使用者發送推薦。</string>
+    <string name="cmd_success_shoutout">已向 %1$s 發送推薦</string>
+    <string name="cmd_fail_shoutout">發送推薦失敗 - %1$s</string>
+    <string name="cmd_shield_activated">護盾模式已啟用。</string>
+    <string name="cmd_shield_deactivated">護盾模式已停用。</string>
+    <string name="cmd_fail_shield">更新護盾模式失敗 - %1$s</string>
+    <string name="cmd_error_whisper_self">您無法對自己發送悄悄話。</string>
+    <string name="cmd_error_no_verified_phone">由於 Twitch 限制，您現在需要驗證手機號碼才能發送悄悄話。您可以在 Twitch 設定中新增手機號碼。https://www.twitch.tv/settings/security</string>
+    <string name="cmd_error_recipient_blocked">收件人不允許來自陌生人或您的悄悄話。</string>
+    <string name="cmd_error_rate_limited">您被 Twitch 限速了。請幾秒後再試。</string>
+    <string name="cmd_error_whisper_rate_limited">您每天最多只能向 40 位不同的收件人發送悄悄話。在每日限制內，您每秒最多可發送 3 則悄悄話，每分鐘最多可發送 100 則悄悄話。</string>
+    <string name="cmd_error_broadcaster_required">由於 Twitch 限制，此指令只能由實況主使用。請改用 Twitch 網站。</string>
+    <string name="cmd_error_already_modded">%1$s 已經是此頻道的管理員。</string>
+    <string name="cmd_error_target_is_vip">%1$s 目前是 VIP，請先 /unvip 再重試此指令。</string>
+    <string name="cmd_error_not_modded">%1$s 不是此頻道的管理員。</string>
+    <string name="cmd_error_not_banned">%1$s 未被此頻道封禁。</string>
+    <string name="cmd_error_already_banned">%1$s 已在此頻道中被封禁。</string>
+    <string name="cmd_error_cannot_perform">您無法對 %2$s 執行 %1$s。</string>
+    <string name="cmd_error_conflicting_ban">對此使用者存在衝突的封禁操作。請再試一次。</string>
+    <string name="cmd_error_invalid_color">顏色必須為 Twitch 支援的顏色之一（%1$s），或者如果您有 Turbo 或 Prime，可以使用 hex code（#000000）。</string>
+    <string name="cmd_error_commercial_not_streaming">您必須正在直播才能播放廣告。</string>
+    <string name="cmd_error_commercial_rate_limited">您必須等到冷卻時間結束後才能再次播放廣告。</string>
+    <string name="cmd_error_missing_length">指令必須包含大於零的廣告時段長度。</string>
+    <string name="cmd_error_no_raid_pending">您沒有進行中的突襲。</string>
+    <string name="cmd_error_raid_self">頻道無法突襲自己。</string>
+    <string name="cmd_error_shoutout_self">實況主不能向自己發送推薦。</string>
+    <string name="cmd_error_shoutout_not_streaming">實況主目前未直播或觀眾人數不足。</string>
+    <string name="cmd_error_out_of_range">時間超出有效範圍：%1$s。</string>
+    <string name="cmd_error_message_already_processed">該訊息已被處理。</string>
+    <string name="cmd_error_message_not_found">找不到目標訊息。</string>
+    <string name="cmd_error_message_too_large">您的訊息太長了。</string>
+    <string name="cmd_error_chat_rate_limited">您被限速了。請稍後再試。</string>
+    <string name="cmd_error_target_default">目標使用者</string>
 </resources>
