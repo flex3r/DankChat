@@ -24,8 +24,10 @@
     <string name="remove_channel">Kanalı kaldır</string>
     <string name="channel_blocked_message">Kanal engellendi</string>
     <string name="no_channels_added">Eklenmiş kanal yok</string>
+    <string name="no_channels_added_body">Sohbete başlamak için bir kanal ekleyin</string>
     <string name="confirm_logout_title">Çıkışı onayla</string>
     <string name="confirm_logout_message">Çıkış yapmak istediğinize emin misiniz?</string>
+    <string name="confirm_logout_question">Çıkış yapılsın mı?</string>
     <string name="confirm_logout_positive_button">Çıkış</string>
     <string name="upload_media">Medya yükle</string>
     <string name="take_picture">Fotoğraf çek</string>
@@ -43,17 +45,20 @@
     <string name="notification_title">FeelsDankMan</string>
     <string name="notification_message">DankChat arkaplanda çalışıyor</string>
     <string name="emote_menu_hint">İfade menüsünü aç</string>
+    <string name="no_recent_emotes">Son kullanılan emote yok</string>
     <string name="login_title">Twitch.tv\'ye giriş yap</string>
     <string name="hint_connected">Sohbete başla</string>
     <string name="hint_disconnected">Bağlantı kesildi</string>
     <string name="hint_not_logged_int">Giriş yapılmadı</string>
     <string name="hint_replying">Yanıt</string>
-    <string name="hint_announcing">Send announcement</string>    <string name="notification_new_mentions">Yeni bahsetmeleriniz var</string>
+    <string name="hint_announcing">Send announcement</string>
+    <string name="notification_new_mentions">Yeni bahsetmeleriniz var</string>
     <string name="notification_mention">%1$s sizden #%2$s\'de bahsetti</string>
     <string name="notification_notify_mention">#%1$s\'de sizden bahsedildi</string>
     <string name="snackbar_login">%1$s olarak giriş yapıldı</string>
     <string name="snackbar_login_failed">Giriş yapılamadı</string>
     <string name="snackbar_image_uploaded">Kopyalandı: %1$s</string>
+    <string name="system_message_upload_complete">Yükleme tamamlandı: %1$s</string>
     <string name="snackbar_upload_failed">Yükleme sırasında hata</string>
     <string name="snackbar_upload_failed_cause">Yükleme sırasında hata: %1$s</string>
     <string name="share_upload_label">Yükle</string>
@@ -76,12 +81,12 @@
     <string name="data_loading_step_cheermotes">Cheermote\'lar</string>
     <string name="data_loading_step_recent_messages">Son mesajlar</string>
     <string name="data_loading_step_with_channels">%1$s (%2$s)</string>
-
     <string name="highlight_header_first_time_chat">İlk mesaj</string>
     <string name="highlight_header_elevated_chat">Yükseltilmiş mesaj</string>
     <string name="highlight_header_gigantified_emote">Dev Emote</string>
     <string name="highlight_header_animated_message">Animasyonlu Mesaj</string>
-    <string name="highlight_header_reward_no_cost">Kullanıldı: %1$s</string>    <plurals name="duration_seconds">
+    <string name="highlight_header_reward_no_cost">Kullanıldı: %1$s</string>
+    <plurals name="duration_seconds">
         <item quantity="one">%1$d saniye</item>
         <item quantity="other">%1$d saniye</item>
     </plurals>
@@ -107,6 +112,7 @@
     <string name="add_channel_hint">Kanal adı</string>
     <string name="add_channel_already_added">Kanal zaten eklenmiş</string>
     <string name="emote_menu_tab_recent">Son kullanılanlar</string>
+    <string name="backspace">Geri sil</string>
     <string name="emote_menu_tab_subs">Abonelikler</string>
     <string name="emote_menu_tab_channel">Kanal</string>
     <string name="emote_menu_tab_global">Küresel</string>
@@ -129,6 +135,108 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s, %2$s 7TV İfadesini ekledi.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s, %2$s 7TV İfadesinin adını %3$s olarak değiştirdi.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s, %2$s 7TV İfadesini kaldırdı.</string>
+    <!-- Send errors -->
+    <string name="system_message_send_not_logged_in">Giriş yapılmadı</string>
+    <string name="system_message_send_channel_not_resolved">%1$s için kanal kimliği çözülemedi</string>
+    <string name="system_message_send_not_delivered">Mesaj gönderilemedi</string>
+    <string name="system_message_send_dropped">Mesaj düşürüldü: %1$s (%2$s)</string>
+    <string name="system_message_send_missing_scopes">user:write:chat izni eksik, lütfen tekrar giriş yapın</string>
+    <string name="system_message_send_not_authorized">Bu kanalda mesaj gönderme yetkiniz yok</string>
+    <string name="system_message_send_message_too_large">Mesaj çok büyük</string>
+    <string name="system_message_send_rate_limited">Hız sınırına ulaşıldı, biraz sonra tekrar deneyin</string>
+    <string name="system_message_send_failed">Gönderim başarısız: %1$s</string>
+    <!-- AutoMod -->
+    <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Mesaj şu nedenle tutuldu: %1$s. İzin vermek mesajı sohbette yayınlayacaktır.</string>
+    <string name="automod_allow">İzin Ver</string>
+    <string name="automod_deny">Reddet</string>
+    <string name="automod_status_approved">Onaylandı</string>
+    <string name="automod_status_denied">Reddedildi</string>
+    <string name="automod_ban_user">Kullanıcıyı yasakla</string>
+    <string name="automod_status_expired">Süresi Doldu</string>
+    <string name="automod_user_held">Hey! Mesajın modlar tarafından kontrol ediliyor ve henüz gönderilmedi.</string>
+    <string name="automod_user_accepted">Modlar mesajını kabul etti.</string>
+    <string name="automod_user_denied">Modlar mesajını reddetti.</string>
+    <string name="automod_reason_category" comment="aggressive (level 2)">%1$s (seviye %2$d)</string>
+    <plurals name="automod_reason_blocked_terms">
+        <item quantity="one">%1$d engellenen terimle eşleşiyor %2$s</item>
+        <item quantity="other">%1$d engellenen terimle eşleşiyor %2$s</item>
+    </plurals>
+    <string name="automod_error_already_processed" comment="Failed to allow AutoMod message - message has already been processed.">AutoMod mesajı %1$s başarısız oldu - mesaj zaten işlenmiş.</string>
+    <string name="automod_error_not_authenticated" comment="Failed to allow AutoMod message - you need to re-authenticate.">AutoMod mesajı %1$s başarısız oldu - yeniden kimlik doğrulaması yapmanız gerekiyor.</string>
+    <string name="automod_error_not_authorized" comment="Failed to allow AutoMod message - you don\'t have permission to perform that action.">AutoMod mesajı %1$s başarısız oldu - bu işlemi gerçekleştirme izniniz yok.</string>
+    <string name="automod_error_not_found" comment="Failed to allow AutoMod message - target message not found.">AutoMod mesajı %1$s başarısız oldu - hedef mesaj bulunamadı.</string>
+    <string name="automod_error_unknown" comment="Failed to allow AutoMod message - an unknown error occurred.">AutoMod mesajı %1$s başarısız oldu - bilinmeyen bir hata oluştu.</string>
+    <string name="automod_moderation_added_blocked_term" comment="flex3rs added &quot;test&quot; as a blocked term on AutoMod.">%1$s, AutoMod üzerinde %2$s terimini engellenen terim olarak ekledi.</string>
+    <string name="automod_moderation_added_permitted_term" comment="flex3rs added &quot;test&quot; as a permitted term on AutoMod.">%1$s, AutoMod üzerinde %2$s terimini izin verilen terim olarak ekledi.</string>
+    <string name="automod_moderation_removed_blocked_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s, AutoMod üzerinden %2$s terimini engellenen terim olarak kaldırdı.</string>
+    <string name="automod_moderation_removed_permitted_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s, AutoMod üzerinden %2$s terimini izin verilen terim olarak kaldırdı.</string>
+    <!-- Moderation messages — complete sentence variants for proper localization -->
+    <!-- Timeout (self, IRC — no creator info) -->
+    <string name="mod_timeout_self_irc" comment="You were timed out for 10m">%1$s süreliğine zaman aşımına uğratıldınız</string>
+    <!-- Timeout (self, EventSub — has creator) -->
+    <string name="mod_timeout_self" comment="You were timed out for 10m by flex3rs">%2$s tarafından %1$s süreliğine zaman aşımına uğratıldınız</string>
+    <string name="mod_timeout_self_reason" comment="You were timed out for 10m by flex3rs: reason">%2$s tarafından %1$s süreliğine zaman aşımına uğratıldınız: %3$s</string>
+    <!-- Timeout (other, by creator) -->
+    <string name="mod_timeout_by_creator" comment="flex3rs timed out user123 for 10m">%1$s, %2$s kullanıcısını %3$s süreliğine zaman aşımına uğrattı</string>
+    <string name="mod_timeout_by_creator_reason" comment="flex3rs timed out user123 for 10m: reason">%1$s, %2$s kullanıcısını %3$s süreliğine zaman aşımına uğrattı: %4$s</string>
+    <!-- Timeout (other, IRC — no creator) -->
+    <string name="mod_timeout_no_creator" comment="user123 has been timed out for 10m">%1$s %2$s süreliğine zaman aşımına uğratıldı</string>
+    <!-- Ban (self) -->
+    <string name="mod_ban_self_irc" comment="You were banned">Banlandınız</string>
+    <string name="mod_ban_self" comment="You were banned by flex3rs">%1$s tarafından banlandınız</string>
+    <string name="mod_ban_self_reason" comment="You were banned by flex3rs: reason">%1$s tarafından banlandınız: %2$s</string>
+    <!-- Ban (other) -->
+    <string name="mod_ban_by_creator" comment="flex3rs banned user123">%1$s, %2$s kullanıcısını banladı</string>
+    <string name="mod_ban_by_creator_reason" comment="flex3rs banned user123: reason">%1$s, %2$s kullanıcısını banladı: %3$s</string>
+    <string name="mod_ban_no_creator" comment="user123 has been permanently banned">%1$s kalıcı olarak banlandı</string>
+    <!-- Simple actions -->
+    <string name="mod_untimeout" comment="flex3rs untimedout user123">%1$s, %2$s kullanıcısının zaman aşımını kaldırdı</string>
+    <string name="mod_unban" comment="flex3rs unbanned user123">%1$s, %2$s kullanıcısının banını kaldırdı</string>
+    <string name="mod_modded" comment="flex3rs modded user123">%1$s, %2$s kullanıcısını moderatör yaptı</string>
+    <string name="mod_unmodded" comment="flex3rs unmodded user123">%1$s, %2$s kullanıcısının moderatörlüğünü kaldırdı</string>
+    <string name="mod_vip_added" comment="flex3rs has added user123 as a VIP of this channel">%1$s, %2$s kullanıcısını bu kanalın VIP\'si olarak ekledi</string>
+    <string name="mod_vip_removed" comment="flex3rs has removed user123 as a VIP of this channel">%1$s, %2$s kullanıcısını bu kanalın VIP\'leri arasından çıkardı</string>
+    <string name="mod_warn" comment="flex3rs has warned user123">%1$s, %2$s kullanıcısını uyardı</string>
+    <string name="mod_warn_reason" comment="flex3rs has warned user123: reason1, reason2">%1$s, %2$s kullanıcısını uyardı: %3$s</string>
+    <string name="mod_raid" comment="flex3rs initiated a raid to user123">%1$s, %2$s kanalına raid başlattı</string>
+    <string name="mod_unraid" comment="flex3rs canceled the raid to user123">%1$s, %2$s kanalına raidi iptal etti</string>
+    <!-- Delete -->
+    <string name="mod_delete_by_creator" comment="flex3rs deleted message from user123">%1$s, %2$s kullanıcısının mesajını sildi</string>
+    <string name="mod_delete_by_creator_message" comment="flex3rs deleted message from user123 saying: hello">%1$s, %2$s kullanıcısının mesajını sildi şunu diyerek: %3$s</string>
+    <string name="mod_delete_no_creator" comment="A message from user123 was deleted">%1$s kullanıcısının bir mesajı silindi</string>
+    <string name="mod_delete_no_creator_message" comment="A message from user123 was deleted saying: hello">%1$s kullanıcısının bir mesajı silindi şunu diyerek: %2$s</string>
+    <!-- Clear -->
+    <string name="mod_clear_by_creator" comment="flex3rs cleared the chat">%1$s sohbeti temizledi</string>
+    <string name="mod_clear_no_creator">Sohbet bir moderatör tarafından temizlendi</string>
+    <!-- Room state -->
+    <string name="mod_emote_only_on" comment="flex3rs turned on emote-only mode">%1$s yalnızca emote modunu açtı</string>
+    <string name="mod_emote_only_off" comment="flex3rs turned off emote-only mode">%1$s yalnızca emote modunu kapattı</string>
+    <string name="mod_followers_on" comment="flex3rs turned on followers-only mode">%1$s yalnızca takipçiler modunu açtı</string>
+    <string name="mod_followers_on_duration" comment="flex3rs turned on followers-only mode (1 week)">%1$s yalnızca takipçiler modunu açtı (%2$s)</string>
+    <string name="mod_followers_off" comment="flex3rs turned off followers-only mode">%1$s yalnızca takipçiler modunu kapattı</string>
+    <string name="mod_unique_chat_on" comment="flex3rs turned on unique-chat mode">%1$s benzersiz sohbet modunu açtı</string>
+    <string name="mod_unique_chat_off" comment="flex3rs turned off unique-chat mode">%1$s benzersiz sohbet modunu kapattı</string>
+    <string name="mod_slow_on" comment="flex3rs turned on slow mode">%1$s yavaş modu açtı</string>
+    <string name="mod_slow_on_duration" comment="flex3rs turned on slow mode (2 minutes 5 seconds)">%1$s yavaş modu açtı (%2$s)</string>
+    <string name="mod_slow_off" comment="flex3rs turned off slow mode">%1$s yavaş modu kapattı</string>
+    <string name="mod_subscribers_on" comment="flex3rs turned on subscribers-only mode">%1$s yalnızca aboneler modunu açtı</string>
+    <string name="mod_subscribers_off" comment="flex3rs turned off subscribers-only mode">%1$s yalnızca aboneler modunu kapattı</string>
+    <!-- Shared chat -->
+    <string name="mod_shared_timeout" comment="flex3rs timed out user123 for 10m in channel456">%1$s, %2$s kullanıcısını %3$s süreliğine %4$s kanalında zaman aşımına uğrattı</string>
+    <string name="mod_shared_timeout_reason" comment="flex3rs timed out user123 for 10m in channel456: reason">%1$s, %2$s kullanıcısını %3$s süreliğine %4$s kanalında zaman aşımına uğrattı: %5$s</string>
+    <string name="mod_shared_untimeout" comment="flex3rs untimedout user123 in channel456">%1$s, %2$s kullanıcısının zaman aşımını %3$s kanalında kaldırdı</string>
+    <string name="mod_shared_ban" comment="flex3rs banned user123 in channel456">%1$s, %2$s kullanıcısını %3$s kanalında banladı</string>
+    <string name="mod_shared_ban_reason" comment="flex3rs banned user123 in channel456: reason">%1$s, %2$s kullanıcısını %3$s kanalında banladı: %4$s</string>
+    <string name="mod_shared_unban" comment="flex3rs unbanned user123 in channel456">%1$s, %2$s kullanıcısının banını %3$s kanalında kaldırdı</string>
+    <string name="mod_shared_delete" comment="flex3rs deleted message from user123 in channel456">%1$s, %2$s kullanıcısının mesajını %3$s kanalında sildi</string>
+    <string name="mod_shared_delete_message" comment="flex3rs deleted message from user123 in channel456 saying: hello">%1$s, %2$s kullanıcısının mesajını %3$s kanalında sildi şunu diyerek: %4$s</string>
+    <!-- Helper: message + count concatenation -->
+    <string name="mod_message_with_count" comment="flex3rs timed out user123 for 10m. (2 times)">%1$s%2$s</string>
+    <!-- Parenthetical count (appended after complete sentences, safe for all languages) -->
+    <plurals name="mod_count_suffix" comment=" (2 times)">
+        <item quantity="one">\u0020(%1$d kez)</item>
+        <item quantity="other">\u0020(%1$d kez)</item>
+    </plurals>
     <string name="timed_out_message">&lt; Mesaj silindi &gt;</string>
     <string name="multi_entry_header_regex">Düzenli ifade</string>
     <string name="multi_entry_add_entry">Girdi ekle</string>
@@ -151,9 +259,12 @@ Servis bu hizmeti verebilmek için sizin (ve başkalarının) ziyaret ettiği ka
     <string name="confirm_channel_removal_title">Kanalı kaldırmayı onayla</string>
     <string name="confirm_channel_removal_message">Bu kanalı kaldırmak istediğinizden emin misiniz?</string>
     <string name="confirm_channel_removal_message_named">\"%1$s\" kanalını kaldırmak istediğinize emin misiniz?</string>
+    <string name="confirm_channel_removal_question">Bu kanal kaldırılsın mı?</string>
+    <string name="confirm_channel_removal_question_named">\"%1$s\" kanalı kaldırılsın mı?</string>
     <string name="confirm_channel_removal_positive_button">Kaldır</string>
     <string name="confirm_channel_block_title">Kanal engelini onayla</string>
     <string name="confirm_channel_block_message_named">\"%1$s\" kanalını engellemek istediğinize emin misiniz?</string>
+    <string name="confirm_channel_block_question_named">\"%1$s\" kanalı engellensin mi?</string>
     <string name="user_popup_block">Engelle</string>
     <string name="user_popup_unblock">Engeli kaldır</string>
     <string name="user_popup_mention">Kullanıcıdan bahset</string>
@@ -178,6 +289,62 @@ Servis bu hizmeti verebilmek için sizin (ve başkalarının) ziyaret ettiği ka
 Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="toggle_fullscreen">Tam ekranı aç</string>
     <string name="toggle_stream">Yayını aç</string>
+    <string name="menu_show_stream">Yayını göster</string>
+    <string name="menu_hide_stream">Yayını gizle</string>
+    <string name="menu_audio_only">Yalnızca ses</string>
+    <string name="menu_exit_audio_only">Ses modundan çık</string>
+    <string name="menu_fullscreen">Tam ekran</string>
+    <string name="menu_exit_fullscreen">Tam ekrandan çık</string>
+    <string name="menu_hide_input">Girişi gizle</string>
+    <string name="menu_show_input">Girişi göster</string>
+    <string name="preference_swipe_navigation_title">Kanal kaydırma ile gezinme</string>
+    <string name="preference_swipe_navigation_summary">Sohbette kaydırarak kanal değiştirme</string>
+    <string name="menu_mod_actions">Kanal moderasyonu</string>
+    <plurals name="input_actions_max">
+        <item quantity="one">En fazla %1$d eylem</item>
+        <item quantity="other">En fazla %1$d eylem</item>
+    </plurals>
+    <string name="input_action_search">Mesajları ara</string>
+    <string name="input_action_last_message">Son mesaj</string>
+    <string name="input_action_stream">Yayını aç/kapat</string>
+    <string name="input_action_mod_actions">Kanal moderasyonu</string>
+    <string name="input_action_fullscreen">Tam ekran</string>
+    <string name="input_action_hide_input">Girişi gizle</string>
+    <string name="input_action_debug">Hata ayıklama</string>
+    <string name="input_action_configure">Eylemleri yapılandır</string>
+    <string name="room_state_emote_only">Yalnızca emote</string>
+    <string name="room_state_subscriber_only">Yalnızca aboneler</string>
+    <string name="room_state_slow_mode">Yavaş mod</string>
+    <string name="room_state_slow_mode_duration">Yavaş mod (%1$s)</string>
+    <string name="room_state_unique_chat">Benzersiz sohbet (R9K)</string>
+    <string name="room_state_follower_only">Yalnızca takipçiler</string>
+    <string name="room_state_follower_only_duration">Yalnızca takipçiler (%1$s)</string>
+    <string name="room_state_preset_custom">Özel</string>
+    <string name="room_state_follower_any">Herhangi</string>
+    <string name="room_state_duration_seconds">%1$ds</string>
+    <string name="room_state_duration_minutes">%1$dm</string>
+    <string name="room_state_duration_hours">%1$dh</string>
+    <string name="room_state_duration_days">%1$dd</string>
+    <string name="room_state_duration_weeks">%1$dw</string>
+    <string name="room_state_duration_months">%1$dmo</string>
+    <string name="mod_actions_room_state_section">Room state</string>
+    <string name="mod_actions_section">Mod actions</string>
+    <string name="mod_actions_broadcaster_section">Broadcaster</string>
+    <string name="mod_actions_shield_mode">Shield mode</string>
+    <string name="mod_actions_clear_chat">Clear chat</string>
+    <string name="mod_actions_confirm_clear_chat">Clear all messages in this channel?</string>
+    <string name="mod_actions_confirm_shield_mode_title">Kalkan Modu etkinleştirilsin mi?</string>
+    <string name="mod_actions_confirm_shield_mode_body">Bu, kanalın önceden yapılandırılmış güvenlik ayarlarını uygulayacaktır; sohbet kısıtlamaları, AutoMod ayarları ve doğrulama gereksinimleri dahil olabilir.</string>
+    <string name="mod_actions_shield_mode_activate">Etkinleştir</string>
+    <string name="mod_actions_announce">Announce</string>
+    <string name="mod_actions_announce_header">Announcement</string>
+    <string name="mod_actions_shoutout">Shoutout</string>
+    <string name="mod_actions_commercial">Commercial</string>
+    <string name="mod_actions_raid">Raid</string>
+    <string name="mod_actions_cancel_raid">Cancel raid</string>
+    <string name="mod_actions_stream_marker">Stream marker</string>
+    <string name="mod_actions_username_hint">Username</string>
+    <string name="mod_actions_channel_hint">Channel</string>
     <string name="account">Hesap</string>
     <string name="relogin">Yeniden giriş yap</string>
     <string name="logout">Çıkış yap</string>
@@ -188,12 +355,15 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="change_roomstate">Sohbet modları</string>
     <string name="confirm_user_ban_title">Banı onayla</string>
     <string name="confirm_user_ban_message">Bu kullanıcıyı banlamak istediğinizden emin misiniz?</string>
+    <string name="confirm_user_ban_question">Bu kullanıcı banlansın mı?</string>
     <string name="confirm_user_ban_positive_button">Banla</string>
     <string name="confirm_user_timeout_title">Zaman aşımını onayla</string>
     <string name="confirm_user_timeout_positive_button">Zaman aşımı</string>
     <string name="confirm_user_delete_title">Mesaj silmeyi onayla</string>
     <string name="confirm_user_delete_message">Bu mesajı silmek istediğinizden emin misiniz?</string>
+    <string name="confirm_user_delete_question">Bu mesaj silinsin mi?</string>
     <string name="confirm_user_delete_positive_button">Sil</string>
+    <string name="confirm_clear_chat_question">Sohbet temizlensin mi?</string>
     <string name="confirm_user_roomstate_title">Sohbet modlarını güncelle</string>
     <string name="roomstate_emote">Yalnız ifadeler</string>
     <string name="roomstate_subs">Yalnız aboneler</string>
@@ -249,6 +419,9 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_messages_header">Mesajlar</string>
     <string name="preference_users_header">Kullanıcılar</string>
     <string name="preference_emotes_badges_header">İfadeler ve Rozetler</string>
+    <string name="preference_suggestion_mode_title">Öneri modu</string>
+    <string name="preference_suggestion_mode_automatic">Yazarken eşleşmeleri öner</string>
+    <string name="preference_suggestion_mode_prefix_only">Yalnızca tetikleyici karakterden sonra öner</string>
     <string name="preference_about_header">Hakkında</string>
     <string name="preference_appearance_header">Görünüm</string>
     <string name="preference_about_summary">DankChat %1$s @flex3rs ve katılımcılar tarafından yapıldı</string>
@@ -307,16 +480,13 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_suggestions_title">Öneriler</string>
     <string name="preference_suggestions_summary">Yazarken hangi önerilerin gösterileceğini seçin</string>
     <string name="preference_suggestions_emotes">İfadeler</string>
-    <string name="preference_suggestions_users">Kullanıcılar</string>
-    <string name="preference_suggestions_commands">Twitch komutları</string>
-    <string name="preference_suggestions_supibot">Supibot komutları</string>
     <string name="preference_suggestions_emotes_desc">: ile tetikle</string>
-    <string name="preference_suggestions_users_desc">@ ile tetikle</string>
+    <string name="preference_suggestions_users">Kullanıcılar</string>
+    <string name="preference_suggestions_users_desc">\@ ile tetikle</string>
+    <string name="preference_suggestions_commands">Twitch komutları</string>
     <string name="preference_suggestions_commands_desc">/ ile tetikle</string>
+    <string name="preference_suggestions_supibot">Supibot komutları</string>
     <string name="preference_suggestions_supibot_desc">$ ile tetikle</string>
-    <string name="preference_suggestion_mode_title">Öneri modu</string>
-    <string name="preference_suggestion_mode_automatic">Yazarken eşleşmeleri öner</string>
-    <string name="preference_suggestion_mode_prefix_only">Yalnızca tetikleyici karakterden sonra öner</string>
     <string name="preference_load_message_history_title">Başlangıçta mesaj tarihini yükle</string>
     <string name="preference_load_messages_on_reconnect_title">Yeniden bağlandıktan sonra mesaj tarihini yükle</string>
     <string name="preference_load_messages_on_reconnect_summary">Bağlantı kesintileri sırasında alınmamış yitik mesajları almayı dener</string>
@@ -325,6 +495,8 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_message_history_dashboard_summary">Servise ilişkin daha fazlasını öğrenin ve kendi kanalınız için mesaj tarihini etkisizleştirin</string>
     <string name="preference_channel_data_header">Kanal verisi</string>
     <string name="preference_developer_header">Geliştirici seçenekleri</string>
+    <string name="preference_log_viewer_title">Günlük görüntüleyici</string>
+    <string name="preference_log_viewer_summary">Uygulama günlüklerini görüntüle</string>
     <string name="preference_debug_mode_title">Hata ayıklama modu</string>
     <string name="preference_debug_mode_summary">Giriş çubuğunda hata ayıklama analitik eylemini göster ve çökme raporlarını yerel olarak topla</string>
     <string name="preference_timestamp_format_title">Zaman damgası biçimi</string>
@@ -380,6 +552,14 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_unlisted_emotes_title">Listelenmemiş ifadelere izin ver</string>
     <string name="preference_unlisted_emotes_summary">Onaylanmamış ya da listelenmemiş ifadelerin filtrelenmesini kapatır</string>
     <string name="preference_rm_host_title">Özel son mesajlar sunucusu</string>
+    <string name="preference_developer_category_general">Genel</string>
+    <string name="preference_developer_category_auth">Kimlik doğrulama</string>
+    <string name="preference_eventsub_title">Twitch EventSub\'u etkinleştir</string>
+    <string name="preference_eventsub_summary">Kullanımdan kaldırılan PubSub yerine çeşitli gerçek zamanlı olaylar için EventSub kullanır</string>
+    <string name="preference_eventsub_debug_title">EventSub hata ayıklama çıktısını etkinleştir</string>
+    <string name="preference_eventsub_debug_summary">EventSub ile ilgili hata ayıklama çıktısını sistem mesajları olarak gösterir</string>
+    <string name="preference_revoke_token_title">Jetonu iptal et ve yeniden başlat</string>
+    <string name="preference_revoke_token_summary">Mevcut jetonu geçersiz kılar ve uygulamayı yeniden başlatır</string>
     <string name="preference_fetch_streams_title">Yayın bilgisini al</string>
     <string name="preference_fetch_streams_summary">Süreli olarak açık kanalların yayın bilgilerini alır. Gömülü yayın başlatmak için gereklidir.</string>
     <string name="preference_auto_disable_input_title">Sohbet bağlı değilse girdiyi kapat</string>
@@ -481,7 +661,42 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="message_history">Mesaj geçmişi</string>
     <string name="global_history_title">Genel geçmiş</string>
     <string name="message_history_title">Geçmiş: %1$s</string>
+    <string name="view_history">Geçmişi görüntüle</string>
+    <string name="history_empty">Mevcut filtrelerle eşleşen mesaj yok</string>
     <string name="search_messages_hint">Mesaj ara…</string>
+    <string name="log_viewer_title">Günlükler</string>
+    <string name="log_viewer_share">Günlükleri paylaş</string>
+    <string name="log_viewer_open">Günlükleri görüntüle</string>
+    <string name="preference_log_viewer_empty">Kullanılabilir günlük dosyası yok</string>
+    <string name="log_viewer_search_hint">Günlüklerde ara</string>
+    <plurals name="log_viewer_selected_count">
+        <item quantity="one">%1$d seçili</item>
+        <item quantity="other">%1$d seçili</item>
+    </plurals>
+    <string name="log_viewer_copy_selection">Seçili günlükleri kopyala</string>
+    <string name="log_viewer_clear_selection">Seçimi temizle</string>
+    <string name="crash_report_title">Çökme algılandı</string>
+    <string name="crash_report_message">Uygulama son oturumunuz sırasında çöktü.</string>
+    <string name="crash_report_thread">İş parçacığı: %1$s</string>
+    <string name="crash_report_copy">Kopyala</string>
+    <string name="crash_report_send">Sohbet raporu</string>
+    <string name="crash_report_send_description">#flex3rs kanalına katılır ve göndermek için bir çökme özeti hazırlar</string>
+    <string name="crash_report_email">E-posta raporu</string>
+    <string name="crash_report_email_description">Ayrıntılı bir çökme raporunu e-posta ile gönder</string>
+    <string name="crash_email_confirm_title">Çökme raporunu e-posta ile gönder</string>
+    <string name="crash_email_confirm_message">Aşağıdaki veriler rapora dahil edilecektir:</string>
+    <string name="crash_email_confirm_stacktrace">Yığın izleme</string>
+    <string name="crash_email_confirm_include_logs">Mevcut günlük dosyasını dahil et</string>
+    <string name="preference_crash_viewer_title">Çökme raporları</string>
+    <string name="preference_crash_viewer_summary">Son çökme raporlarını görüntüle</string>
+    <string name="preference_crash_viewer_empty">Çökme raporu bulunamadı</string>
+    <string name="crash_viewer_title">Çökme Raporu</string>
+    <string name="crash_viewer_share">Çökme raporunu paylaş</string>
+    <string name="crash_viewer_delete">Sil</string>
+    <string name="crash_viewer_clear_all">Tümünü temizle</string>
+    <string name="crash_viewer_delete_confirm">Bu çökme raporu silinsin mi?</string>
+    <string name="crash_viewer_clear_all_confirm">Tüm çökme raporları silinsin mi?</string>
+    <string name="scroll_to_bottom">En alta kaydır</string>
     <string name="search_filter_by_username">Kullanıcı adına göre filtrele</string>
     <string name="search_filter_has_link">Bağlantı içeren mesajlar</string>
     <string name="search_filter_has_emote">Emote içeren mesajlar</string>
@@ -489,6 +704,12 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="search_filter_user">Kullanıcı</string>
     <string name="search_filter_badge">Rozet</string>
     <string name="reply_header">\@%1$s yanıtlanıyor</string>
+    <string name="whisper_header">\@%1$s adlı kişiye fısıldıyor</string>
+    <string name="hint_whispering">Fısıltı gönder</string>
+    <string name="whisper_new">Yeni fısıltı</string>
+    <string name="whisper_new_dialog_title">Fısıltı gönder</string>
+    <string name="whisper_new_dialog_hint">Kullanıcı adı</string>
+    <string name="whisper_new_dialog_start">Gönder</string>
     <string name="reply_thread_not_found">Yanıt akışı bulunamadı</string>
     <string name="message_not_found">Mesaj bulunamadı</string>
     <string name="emote_sheet_use">İfade kullan</string>
@@ -546,13 +767,27 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="choose_highlight_color">Renk Seç</string>
     <string name="toggle_app_bar">Uygulama Çubuğunu Aç/Kapat</string>
     <string name="error_with_message">Hata: %s</string>
-    <string name="confirm_logout_question">Çıkış yapılsın mı?</string>
-    <string name="confirm_channel_removal_question">Bu kanal kaldırılsın mı?</string>
-    <string name="confirm_channel_removal_question_named">\"%1$s\" kanalı kaldırılsın mı?</string>
-    <string name="confirm_channel_block_question_named">\"%1$s\" kanalı engellensin mi?</string>
-    <string name="confirm_user_ban_question">Bu kullanıcı banlansın mı?</string>
-    <string name="confirm_user_delete_question">Bu mesaj silinsin mi?</string>
-    <string name="confirm_clear_chat_question">Sohbet temizlensin mi?</string>
+    <!-- Onboarding -->
+    <string name="onboarding_welcome_title">DankChat</string>
+    <string name="onboarding_welcome_body">Hadi her şeyi ayarlayalım.</string>
+    <string name="onboarding_get_started">Başla</string>
+    <string name="onboarding_login_title">Twitch ile giriş yap</string>
+    <string name="onboarding_login_body">Mesaj göndermek, emote\'larınızı kullanmak, fısıltı almak ve tüm özelliklerin kilidini açmak için giriş yapın.</string>
+    <string name="onboarding_login_disclaimer">Farklı özellikleri kullanırken tekrar yetkilendirme yapmanız gerekmemesi için birkaç Twitch izni tek seferde istenecektir. DankChat moderasyon ve yayın işlemlerini yalnızca siz istediğinizde gerçekleştirir.</string>
+    <string name="onboarding_login_button">Twitch ile giriş yap</string>
+    <string name="onboarding_login_success">Giriş başarılı</string>
+    <string name="onboarding_skip">Atla</string>
+    <string name="onboarding_continue">Devam et</string>
+    <string name="onboarding_history_title">Mesaj Geçmişi</string>
+    <string name="onboarding_history_body">DankChat başlangıçta üçüncü taraf bir hizmetten geçmiş mesajları yükler. Mesajları almak için DankChat, açık kanalların adlarını bu hizmete gönderir. Hizmet, ziyaret edilen kanalların mesajlarını geçici olarak depolar.\n\nBunu daha sonra ayarlardan değiştirebilir veya https://recent-messages.robotty.de/ adresinden daha fazla bilgi edinebilirsiniz.</string>
+    <string name="onboarding_history_enable">Etkinleştir</string>
+    <string name="onboarding_history_disable">Devre dışı bırak</string>
+    <string name="onboarding_notifications_title">Bildirimler</string>
+    <string name="onboarding_notifications_body">DankChat, uygulama arka planda çalışırken sohbette biri sizden bahsettiğinde sizi bilgilendirebilir.</string>
+    <string name="onboarding_notifications_allow">Bildirimlere izin ver</string>
+    <string name="onboarding_notifications_rationale">Bildirimler olmadan, uygulama arka planda çalışırken sohbette biri sizden bahsettiğinde haberiniz olmaz.</string>
+    <string name="onboarding_notifications_open_settings">Bildirim ayarlarını aç</string>
+    <!-- Feature Tour -->
     <string name="tour_input_actions">Arama, yayınlar ve daha fazlasına hızlı erişim için özelleştirilebilir eylemler</string>
     <string name="tour_overflow_menu">Daha fazla eylem ve eylem çubuğunuzu yapılandırmak için buraya dokunun</string>
     <string name="tour_configure_actions">Eylem çubuğunuzda hangi eylemlerin görüneceğini buradan özelleştirebilirsiniz</string>
@@ -562,203 +797,6 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="tour_got_it">Anladım</string>
     <string name="tour_skip">Turu atla</string>
     <string name="tour_add_more_channels_hint">Buradan daha fazla kanal ekleyebilirsiniz</string>
-
-    <!-- AutoMod -->
-    <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Mesaj şu nedenle tutuldu: %1$s. İzin vermek mesajı sohbette yayınlayacaktır.</string>
-    <string name="automod_allow">İzin Ver</string>
-    <string name="automod_deny">Reddet</string>
-    <string name="automod_status_approved">Onaylandı</string>
-    <string name="automod_status_denied">Reddedildi</string>
-    <string name="automod_ban_user">Kullanıcıyı yasakla</string>
-    <string name="automod_status_expired">Süresi Doldu</string>
-    <string name="automod_user_held">Hey! Mesajın modlar tarafından kontrol ediliyor ve henüz gönderilmedi.</string>
-    <string name="automod_user_accepted">Modlar mesajını kabul etti.</string>
-    <string name="automod_user_denied">Modlar mesajını reddetti.</string>
-    <string name="automod_reason_category" comment="aggressive (level 2)">%1$s (seviye %2$d)</string>
-    <plurals name="automod_reason_blocked_terms">
-        <item quantity="one">%1$d engellenen terimle eşleşiyor %2$s</item>
-        <item quantity="other">%1$d engellenen terimle eşleşiyor %2$s</item>
-    </plurals>
-    <string name="automod_error_already_processed" comment="Failed to allow AutoMod message - message has already been processed.">AutoMod mesajı %1$s başarısız oldu - mesaj zaten işlenmiş.</string>
-    <string name="automod_error_not_authenticated" comment="Failed to allow AutoMod message - you need to re-authenticate.">AutoMod mesajı %1$s başarısız oldu - yeniden kimlik doğrulaması yapmanız gerekiyor.</string>
-    <string name="automod_error_not_authorized" comment="Failed to allow AutoMod message - you don\'t have permission to perform that action.">AutoMod mesajı %1$s başarısız oldu - bu işlemi gerçekleştirme izniniz yok.</string>
-    <string name="automod_error_not_found" comment="Failed to allow AutoMod message - target message not found.">AutoMod mesajı %1$s başarısız oldu - hedef mesaj bulunamadı.</string>
-    <string name="automod_error_unknown" comment="Failed to allow AutoMod message - an unknown error occurred.">AutoMod mesajı %1$s başarısız oldu - bilinmeyen bir hata oluştu.</string>
-    <string name="automod_moderation_added_blocked_term" comment="flex3rs added &quot;test&quot; as a blocked term on AutoMod.">%1$s, AutoMod üzerinde %2$s terimini engellenen terim olarak ekledi.</string>
-    <string name="automod_moderation_added_permitted_term" comment="flex3rs added &quot;test&quot; as a permitted term on AutoMod.">%1$s, AutoMod üzerinde %2$s terimini izin verilen terim olarak ekledi.</string>
-    <string name="automod_moderation_removed_blocked_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s, AutoMod üzerinden %2$s terimini engellenen terim olarak kaldırdı.</string>
-    <string name="automod_moderation_removed_permitted_term" comment="flex3rs removed &quot;test&quot; as a permitted term on AutoMod.">%1$s, AutoMod üzerinden %2$s terimini izin verilen terim olarak kaldırdı.</string>
-
-    <!-- Moderation messages -->
-    <string name="mod_timeout_self_irc" comment="You were timed out for 10m">%1$s süreliğine zaman aşımına uğratıldınız</string>
-    <string name="mod_timeout_self" comment="You were timed out for 10m by flex3rs">%2$s tarafından %1$s süreliğine zaman aşımına uğratıldınız</string>
-    <string name="mod_timeout_self_reason" comment="You were timed out for 10m by flex3rs: reason">%2$s tarafından %1$s süreliğine zaman aşımına uğratıldınız: %3$s</string>
-    <string name="mod_timeout_by_creator" comment="flex3rs timed out user123 for 10m">%1$s, %2$s kullanıcısını %3$s süreliğine zaman aşımına uğrattı</string>
-    <string name="mod_timeout_by_creator_reason" comment="flex3rs timed out user123 for 10m: reason">%1$s, %2$s kullanıcısını %3$s süreliğine zaman aşımına uğrattı: %4$s</string>
-    <string name="mod_timeout_no_creator" comment="user123 has been timed out for 10m">%1$s %2$s süreliğine zaman aşımına uğratıldı</string>
-    <string name="mod_ban_self_irc" comment="You were banned">Banlandınız</string>
-    <string name="mod_ban_self" comment="You were banned by flex3rs">%1$s tarafından banlandınız</string>
-    <string name="mod_ban_self_reason" comment="You were banned by flex3rs: reason">%1$s tarafından banlandınız: %2$s</string>
-    <string name="mod_ban_by_creator" comment="flex3rs banned user123">%1$s, %2$s kullanıcısını banladı</string>
-    <string name="mod_ban_by_creator_reason" comment="flex3rs banned user123: reason">%1$s, %2$s kullanıcısını banladı: %3$s</string>
-    <string name="mod_ban_no_creator" comment="user123 has been permanently banned">%1$s kalıcı olarak banlandı</string>
-    <string name="mod_untimeout" comment="flex3rs untimedout user123">%1$s, %2$s kullanıcısının zaman aşımını kaldırdı</string>
-    <string name="mod_unban" comment="flex3rs unbanned user123">%1$s, %2$s kullanıcısının banını kaldırdı</string>
-    <string name="mod_modded" comment="flex3rs modded user123">%1$s, %2$s kullanıcısını moderatör yaptı</string>
-    <string name="mod_unmodded" comment="flex3rs unmodded user123">%1$s, %2$s kullanıcısının moderatörlüğünü kaldırdı</string>
-    <string name="mod_vip_added" comment="flex3rs has added user123 as a VIP of this channel">%1$s, %2$s kullanıcısını bu kanalın VIP\'si olarak ekledi</string>
-    <string name="mod_vip_removed" comment="flex3rs has removed user123 as a VIP of this channel">%1$s, %2$s kullanıcısını bu kanalın VIP\'leri arasından çıkardı</string>
-    <string name="mod_warn" comment="flex3rs has warned user123">%1$s, %2$s kullanıcısını uyardı</string>
-    <string name="mod_warn_reason" comment="flex3rs has warned user123: reason1, reason2">%1$s, %2$s kullanıcısını uyardı: %3$s</string>
-    <string name="mod_raid" comment="flex3rs initiated a raid to user123">%1$s, %2$s kanalına raid başlattı</string>
-    <string name="mod_unraid" comment="flex3rs canceled the raid to user123">%1$s, %2$s kanalına raidi iptal etti</string>
-    <string name="mod_delete_by_creator" comment="flex3rs deleted message from user123">%1$s, %2$s kullanıcısının mesajını sildi</string>
-    <string name="mod_delete_by_creator_message" comment="flex3rs deleted message from user123 saying: hello">%1$s, %2$s kullanıcısının mesajını sildi şunu diyerek: %3$s</string>
-    <string name="mod_delete_no_creator" comment="A message from user123 was deleted">%1$s kullanıcısının bir mesajı silindi</string>
-    <string name="mod_delete_no_creator_message" comment="A message from user123 was deleted saying: hello">%1$s kullanıcısının bir mesajı silindi şunu diyerek: %2$s</string>
-    <string name="mod_clear_by_creator" comment="flex3rs cleared the chat">%1$s sohbeti temizledi</string>
-    <string name="mod_clear_no_creator">Sohbet bir moderatör tarafından temizlendi</string>
-    <string name="mod_emote_only_on" comment="flex3rs turned on emote-only mode">%1$s yalnızca emote modunu açtı</string>
-    <string name="mod_emote_only_off" comment="flex3rs turned off emote-only mode">%1$s yalnızca emote modunu kapattı</string>
-    <string name="mod_followers_on" comment="flex3rs turned on followers-only mode">%1$s yalnızca takipçiler modunu açtı</string>
-    <string name="mod_followers_on_duration" comment="flex3rs turned on followers-only mode (10 minutes)">%1$s yalnızca takipçiler modunu açtı (%2$s)</string>
-    <string name="mod_followers_off" comment="flex3rs turned off followers-only mode">%1$s yalnızca takipçiler modunu kapattı</string>
-    <string name="mod_unique_chat_on" comment="flex3rs turned on unique-chat mode">%1$s benzersiz sohbet modunu açtı</string>
-    <string name="mod_unique_chat_off" comment="flex3rs turned off unique-chat mode">%1$s benzersiz sohbet modunu kapattı</string>
-    <string name="mod_slow_on" comment="flex3rs turned on slow mode">%1$s yavaş modu açtı</string>
-    <string name="mod_slow_on_duration" comment="flex3rs turned on slow mode (30 seconds)">%1$s yavaş modu açtı (%2$s)</string>
-    <string name="mod_slow_off" comment="flex3rs turned off slow mode">%1$s yavaş modu kapattı</string>
-    <string name="mod_subscribers_on" comment="flex3rs turned on subscribers-only mode">%1$s yalnızca aboneler modunu açtı</string>
-    <string name="mod_subscribers_off" comment="flex3rs turned off subscribers-only mode">%1$s yalnızca aboneler modunu kapattı</string>
-    <string name="mod_shared_timeout" comment="flex3rs timed out user123 for 10m in channel456">%1$s, %2$s kullanıcısını %3$s süreliğine %4$s kanalında zaman aşımına uğrattı</string>
-    <string name="mod_shared_timeout_reason" comment="flex3rs timed out user123 for 10m in channel456: reason">%1$s, %2$s kullanıcısını %3$s süreliğine %4$s kanalında zaman aşımına uğrattı: %5$s</string>
-    <string name="mod_shared_untimeout" comment="flex3rs untimedout user123 in channel456">%1$s, %2$s kullanıcısının zaman aşımını %3$s kanalında kaldırdı</string>
-    <string name="mod_shared_ban" comment="flex3rs banned user123 in channel456">%1$s, %2$s kullanıcısını %3$s kanalında banladı</string>
-    <string name="mod_shared_ban_reason" comment="flex3rs banned user123 in channel456: reason">%1$s, %2$s kullanıcısını %3$s kanalında banladı: %4$s</string>
-    <string name="mod_shared_unban" comment="flex3rs unbanned user123 in channel456">%1$s, %2$s kullanıcısının banını %3$s kanalında kaldırdı</string>
-    <string name="mod_shared_delete" comment="flex3rs deleted message from user123 in channel456">%1$s, %2$s kullanıcısının mesajını %3$s kanalında sildi</string>
-    <string name="mod_shared_delete_message" comment="flex3rs deleted message from user123 in channel456 saying: hello">%1$s, %2$s kullanıcısının mesajını %3$s kanalında sildi şunu diyerek: %4$s</string>
-    <string name="mod_message_with_count" comment="flex3rs timed out user123 for 10m. (2 times)">%1$s%2$s</string>
-    <plurals name="mod_count_suffix" comment=" (2 times)">
-        <item quantity="one">\u0020(%1$d kez)</item>
-        <item quantity="other">\u0020(%1$d kez)</item>
-    </plurals>
-
-    <!-- Whisper -->
-    <string name="backspace">Geri sil</string>
-    <string name="hint_whispering">Fısıltı gönder</string>
-    <string name="whisper_header">@%1$s adlı kişiye fısıldıyor</string>
-    <string name="whisper_new">Yeni fısıltı</string>
-    <string name="whisper_new_dialog_title">Fısıltı gönder</string>
-    <string name="whisper_new_dialog_hint">Kullanıcı adı</string>
-    <string name="whisper_new_dialog_start">Gönder</string>
-
-    <!-- Room State -->
-    <string name="room_state_emote_only">Yalnızca emote</string>
-    <string name="room_state_subscriber_only">Yalnızca aboneler</string>
-    <string name="room_state_slow_mode">Yavaş mod</string>
-    <string name="room_state_slow_mode_duration">Yavaş mod (%1$s)</string>
-    <string name="room_state_unique_chat">Benzersiz sohbet (R9K)</string>
-    <string name="room_state_follower_only">Yalnızca takipçiler</string>
-    <string name="room_state_follower_only_duration">Yalnızca takipçiler (%1$s)</string>
-    <string name="room_state_preset_custom">Özel</string>
-    <string name="room_state_follower_any">Herhangi</string>
-    <string name="room_state_duration_seconds">%1$ds</string>
-    <string name="room_state_duration_minutes">%1$dm</string>
-    <string name="room_state_duration_hours">%1$dh</string>
-    <string name="room_state_duration_days">%1$dd</string>
-    <string name="room_state_duration_weeks">%1$dw</string>
-    <string name="room_state_duration_months">%1$dmo</string>
-    <string name="mod_actions_room_state_section">Room state</string>
-    <string name="mod_actions_section">Mod actions</string>
-    <string name="mod_actions_broadcaster_section">Broadcaster</string>
-    <string name="mod_actions_shield_mode">Shield mode</string>
-    <string name="mod_actions_clear_chat">Clear chat</string>
-    <string name="mod_actions_confirm_clear_chat">Clear all messages in this channel?</string>
-
-    <string name="mod_actions_confirm_shield_mode_title">Kalkan Modu etkinleştirilsin mi?</string>
-    <string name="mod_actions_confirm_shield_mode_body">Bu, kanalın önceden yapılandırılmış güvenlik ayarlarını uygulayacaktır; sohbet kısıtlamaları, AutoMod ayarları ve doğrulama gereksinimleri dahil olabilir.</string>
-    <string name="mod_actions_shield_mode_activate">Etkinleştir</string>    <string name="mod_actions_announce">Announce</string>
-    <string name="mod_actions_announce_header">Announcement</string>
-    <string name="mod_actions_shoutout">Shoutout</string>
-    <string name="mod_actions_commercial">Commercial</string>
-    <string name="mod_actions_raid">Raid</string>
-    <string name="mod_actions_cancel_raid">Cancel raid</string>
-    <string name="mod_actions_stream_marker">Stream marker</string>
-    <string name="mod_actions_username_hint">Username</string>
-    <string name="mod_actions_channel_hint">Channel</string>
-
-    <!-- Empty States -->
-    <string name="no_channels_added_body">Sohbete başlamak için bir kanal ekleyin</string>
-    <string name="no_recent_emotes">Son kullanılan emote yok</string>
-
-    <!-- Menu -->
-    <string name="menu_show_stream">Yayını göster</string>
-    <string name="menu_hide_stream">Yayını gizle</string>
-    <string name="menu_audio_only">Yalnızca ses</string>
-    <string name="menu_exit_audio_only">Ses modundan çık</string>
-    <string name="menu_fullscreen">Tam ekran</string>
-    <string name="menu_exit_fullscreen">Tam ekrandan çık</string>
-    <string name="menu_hide_input">Girişi gizle</string>
-    <string name="menu_show_input">Girişi göster</string>
-    <string name="preference_swipe_navigation_title">Kanal kaydırma ile gezinme</string>
-    <string name="preference_swipe_navigation_summary">Sohbette kaydırarak kanal değiştirme</string>
-    <string name="menu_mod_actions">Kanal moderasyonu</string>
-
-    <!-- Input Actions -->
-    <string name="input_action_search">Mesajları ara</string>
-    <string name="input_action_last_message">Son mesaj</string>
-    <string name="input_action_stream">Yayını aç/kapat</string>
-    <string name="input_action_mod_actions">Kanal moderasyonu</string>
-    <string name="input_action_fullscreen">Tam ekran</string>
-    <string name="input_action_hide_input">Girişi gizle</string>
-    <string name="input_action_configure">Eylemleri yapılandır</string>
-    <string name="input_action_debug">Hata ayıklama</string>
-    <plurals name="input_actions_max">
-        <item quantity="one">En fazla %1$d eylem</item>
-        <item quantity="other">En fazla %1$d eylem</item>
-    </plurals>
-
-    <!-- Onboarding -->
-    <string name="onboarding_welcome_title">DankChat</string>
-    <string name="onboarding_welcome_body">Hadi her şeyi ayarlayalım.</string>
-    <string name="onboarding_login_title">Twitch ile giriş yap</string>
-    <string name="onboarding_login_body">Mesaj göndermek, emote\'larınızı kullanmak, fısıltı almak ve tüm özelliklerin kilidini açmak için giriş yapın.</string>
-    <string name="onboarding_login_disclaimer">Farklı özellikleri kullanırken tekrar yetkilendirme yapmanız gerekmemesi için birkaç Twitch izni tek seferde istenecektir. DankChat moderasyon ve yayın işlemlerini yalnızca siz istediğinizde gerçekleştirir.</string>
-    <string name="onboarding_login_button">Twitch ile giriş yap</string>
-    <string name="onboarding_login_success">Giriş başarılı</string>
-    <string name="onboarding_notifications_title">Bildirimler</string>
-    <string name="onboarding_notifications_body">DankChat, uygulama arka planda çalışırken sohbette biri sizden bahsettiğinde sizi bilgilendirebilir.</string>
-    <string name="onboarding_notifications_allow">Bildirimlere izin ver</string>
-    <string name="onboarding_notifications_open_settings">Bildirim ayarlarını aç</string>
-    <string name="onboarding_notifications_rationale">Bildirimler olmadan, uygulama arka planda çalışırken sohbette biri sizden bahsettiğinde haberiniz olmaz.</string>
-    <string name="onboarding_history_title">Mesaj Geçmişi</string>
-    <string name="onboarding_history_body">DankChat başlangıçta üçüncü taraf bir hizmetten geçmiş mesajları yükler. Mesajları almak için DankChat, açık kanalların adlarını bu hizmete gönderir. Hizmet, ziyaret edilen kanalların mesajlarını geçici olarak depolar.\n\nBunu daha sonra ayarlardan değiştirebilir veya https://recent-messages.robotty.de/ adresinden daha fazla bilgi edinebilirsiniz.</string>
-    <string name="onboarding_history_enable">Etkinleştir</string>
-    <string name="onboarding_history_disable">Devre dışı bırak</string>
-    <string name="onboarding_continue">Devam et</string>
-    <string name="onboarding_get_started">Başla</string>
-    <string name="onboarding_skip">Atla</string>
-
-    <!-- Developer Settings -->
-    <string name="preference_developer_category_general">Genel</string>
-    <string name="preference_developer_category_auth">Kimlik doğrulama</string>
-    <string name="preference_eventsub_title">Twitch EventSub\'u etkinleştir</string>
-    <string name="preference_eventsub_summary">Kullanımdan kaldırılan PubSub yerine çeşitli gerçek zamanlı olaylar için EventSub kullanır</string>
-    <string name="preference_eventsub_debug_title">EventSub hata ayıklama çıktısını etkinleştir</string>
-    <string name="preference_eventsub_debug_summary">EventSub ile ilgili hata ayıklama çıktısını sistem mesajları olarak gösterir</string>
-    <string name="preference_revoke_token_title">Jetonu iptal et ve yeniden başlat</string>
-    <string name="preference_revoke_token_summary">Mevcut jetonu geçersiz kılar ve uygulamayı yeniden başlatır</string>
-    <string name="system_message_send_not_logged_in">Giriş yapılmadı</string>
-    <string name="system_message_send_channel_not_resolved">%1$s için kanal kimliği çözülemedi</string>
-    <string name="system_message_send_not_delivered">Mesaj gönderilemedi</string>
-    <string name="system_message_send_dropped">Mesaj düşürüldü: %1$s (%2$s)</string>
-    <string name="system_message_send_missing_scopes">user:write:chat izni eksik, lütfen tekrar giriş yapın</string>
-    <string name="system_message_send_not_authorized">Bu kanalda mesaj gönderme yetkiniz yok</string>
-    <string name="system_message_send_message_too_large">Mesaj çok büyük</string>
-    <string name="system_message_send_rate_limited">Hız sınırına ulaşıldı, biraz sonra tekrar deneyin</string>
-    <string name="system_message_send_failed">Gönderim başarısız: %1$s</string>
-
     <!-- Command responses -->
     <string name="cmd_error_not_logged_in">%1$s komutunu kullanmak için giriş yapmış olmalısınız</string>
     <string name="cmd_error_no_user_matching">Bu kullanıcı adıyla eşleşen kullanıcı bulunamadı.</string>
@@ -877,42 +915,4 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="cmd_error_message_too_large">Mesajınız çok uzundu.</string>
     <string name="cmd_error_chat_rate_limited">Hız sınırlamasına uğruyorsunuz. Biraz sonra tekrar deneyin.</string>
     <string name="cmd_error_target_default">Hedef kullanıcı</string>
-    <string name="preference_log_viewer_title">Günlük görüntüleyici</string>
-    <string name="preference_log_viewer_summary">Uygulama günlüklerini görüntüle</string>
-    <string name="log_viewer_title">Günlükler</string>
-    <string name="log_viewer_share">Günlükleri paylaş</string>
-    <string name="log_viewer_open">Günlükleri görüntüle</string>
-    <string name="preference_log_viewer_empty">Kullanılabilir günlük dosyası yok</string>
-    <string name="log_viewer_search_hint">Günlüklerde ara</string>
-    <plurals name="log_viewer_selected_count">
-        <item quantity="one">%1$d seçili</item>
-        <item quantity="other">%1$d seçili</item>
-    </plurals>
-    <string name="log_viewer_copy_selection">Seçili günlükleri kopyala</string>
-    <string name="log_viewer_clear_selection">Seçimi temizle</string>
-    <string name="crash_report_title">Çökme algılandı</string>
-    <string name="crash_report_message">Uygulama son oturumunuz sırasında çöktü.</string>
-    <string name="crash_report_thread">İş parçacığı: %1$s</string>
-    <string name="crash_report_copy">Kopyala</string>
-    <string name="crash_report_send">Sohbet raporu</string>
-    <string name="crash_report_send_description">#flex3rs kanalına katılır ve göndermek için bir çökme özeti hazırlar</string>
-    <string name="crash_report_email">E-posta raporu</string>
-    <string name="crash_report_email_description">Ayrıntılı bir çökme raporunu e-posta ile gönder</string>
-    <string name="crash_email_confirm_title">Çökme raporunu e-posta ile gönder</string>
-    <string name="crash_email_confirm_message">Aşağıdaki veriler rapora dahil edilecektir:</string>
-    <string name="crash_email_confirm_stacktrace">Yığın izleme</string>
-    <string name="crash_email_confirm_include_logs">Mevcut günlük dosyasını dahil et</string>
-    <string name="preference_crash_viewer_title">Çökme raporları</string>
-    <string name="preference_crash_viewer_summary">Son çökme raporlarını görüntüle</string>
-    <string name="preference_crash_viewer_empty">Çökme raporu bulunamadı</string>
-    <string name="crash_viewer_title">Çökme Raporu</string>
-    <string name="crash_viewer_share">Çökme raporunu paylaş</string>
-    <string name="crash_viewer_delete">Sil</string>
-    <string name="crash_viewer_delete_confirm">Bu çökme raporu silinsin mi?</string>
-    <string name="crash_viewer_clear_all">Tümünü temizle</string>
-    <string name="crash_viewer_clear_all_confirm">Tüm çökme raporları silinsin mi?</string>
-    <string name="scroll_to_bottom">En alta kaydır</string>
-    <string name="system_message_upload_complete">Yükleme tamamlandı: %1$s</string>
-    <string name="view_history">Geçmişi görüntüle</string>
-    <string name="history_empty">Mevcut filtrelerle eşleşen mesaj yok</string>
 </resources>
