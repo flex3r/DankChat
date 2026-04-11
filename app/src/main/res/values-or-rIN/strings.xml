@@ -53,7 +53,8 @@
     <string name="hint_disconnected">ବିଚ୍ଛିନ୍ନ ହୋଇଛି |</string>
     <string name="hint_not_logged_int">ଲଗ୍ ଇନ୍ ହୋଇନାହିଁ |</string>
     <string name="hint_replying">ପ୍ରତ୍ୟୁତ୍ତର</string>
-    <string name="hint_announcing">Send announcement</string>    <string name="notification_new_mentions">ତୁମର ନୂତନ ଉଲ୍ଲେଖ ଅଛି |</string>
+    <string name="hint_announcing">Send announcement</string>
+    <string name="notification_new_mentions">ତୁମର ନୂତନ ଉଲ୍ଲେଖ ଅଛି |</string>
     <string name="notification_mention">%1$s ତୁମକୁ କେବଳ ଉଲ୍ଲେଖ କରିଛି | #%2$s</string>
     <string name="notification_notify_mention">ଆପଣ ଏଥିରେ ଉଲ୍ଲେଖ କରିଛନ୍ତି | #%1$s</string>
     <string name="snackbar_login">ଯେପରି ଲଗ୍ ଇନ୍ କରୁଛି | %1$s</string>
@@ -86,7 +87,8 @@
     <string name="highlight_header_elevated_chat">ଉଚ୍ଚତର ଚାଟ୍</string>
     <string name="highlight_header_gigantified_emote">ବିଶାଳ ଇମୋଟ</string>
     <string name="highlight_header_animated_message">ଆନିମେଟେଡ ବାର୍ତ୍ତା</string>
-    <string name="highlight_header_reward_no_cost">ରିଡିମ କରାଯାଇଛି %1$s</string>    <plurals name="duration_seconds">
+    <string name="highlight_header_reward_no_cost">ରିଡିମ କରାଯାଇଛି %1$s</string>
+    <plurals name="duration_seconds">
         <item quantity="one">%1$d ସେକେଣ୍ଡ</item>
         <item quantity="other">%1$d ସେକେଣ୍ଡ</item>
     </plurals>
@@ -120,10 +122,10 @@
     <string name="system_message_reconnected">ପୁନ-ସଂଯୋଗିତ |</string>
     <string name="system_message_channel_non_existent">ଏହି ଚ୍ୟାନେଲ୍ ବିଦ୍ୟମାନ ନାହିଁ |</string>
     <string name="system_message_disconnected">ବିଚ୍ଛିନ୍ନ ହୋଇଛି |</string>
-    <string name="system_message_history_unavailable_detailed">ବାର୍ତ୍ତା ଇତିହାସ ସେବା ଉପಲ ବ୍ଧ ନାହିଁ | (ତ୍ରୁଟି %1$s)</string>
-    <string name="system_message_history_unavailable">ବାର୍ତ୍ତା ଇତିହାସ ସେବା ଉପಲ ବ୍ଧ ନାହିଁ |</string>
+    <string name="system_message_history_unavailable_detailed">ବାର୍ତ୍ତା ଇତିହାସ ସେବା ଉପଲବ୍ଧ ନାହିଁ | (ତ୍ରୁଟି %1$s)</string>
+    <string name="system_message_history_unavailable">ବାର୍ତ୍ତା ଇତିହାସ ସେବା ଉପଲବ୍ଧ ନାହିଁ |</string>
     <string name="system_message_history_recovering">ବାର୍ତ୍ତା ଇତିହାସ ସେବା ପୁନରୁଦ୍ଧାର, ବାର୍ତ୍ତା ଇତିହାସରେ ଫାଟ ଥାଇପାରେ |</string>
-    <string name="system_message_history_ignored">ବାର୍ତ୍ତା ଇତିହାସ ଉପಲ ବ୍ଧ ନାହିଁ କାରଣ ଏହି ଚ୍ୟାନେଲ ସେବାରୁ ବାଦ ଦିଆଯାଇଛି |</string>
+    <string name="system_message_history_ignored">ବାର୍ତ୍ତା ଇତିହାସ ଉପଲବ୍ଧ ନାହିଁ କାରଣ ଏହି ଚ୍ୟାନେଲ ସେବାରୁ ବାଦ ଦିଆଯାଇଛି |</string>
     <string name="system_message_no_history">ଆପଣ କ historical ତିହାସିକ ବାର୍ତ୍ତା ଦେଖୁ ନାହାଁନ୍ତି କାରଣ ଆପଣ ସାମ୍ପ୍ରତିକ-ବାର୍ତ୍ତା ଏକୀକରଣରୁ ଚୟନ କରିଛନ୍ତି |</string>
     <string name="system_message_ffz_emotes_failed">FFZ ଇମୋଟସ୍ ଲୋଡ୍ କରିବାରେ ବିଫଳ (ଇ %1$s)</string>
     <string name="system_message_bttv_emotes_failed">BTTV ରେଟ୍ ଲୋଡ୍ କରିବାରେ ବିଫଳ | (ଇ %1$s)</string>
@@ -135,6 +137,16 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s 7TV ଇମୋଟ ଯୋଡିଛି | %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s 7TV ଇମୋଟ ନାମ ପରିବର୍ତ୍ତନ କରନ୍ତୁ | %2$s କୁ %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s 7TV ଇମୋଟ ଯୋଡିଛି | %2$s.</string>
+    <!-- Send errors -->
+    <string name="system_message_send_not_logged_in">ଲଗ୍ ଇନ୍ ହୋଇନାହାଁନ୍ତି</string>
+    <string name="system_message_send_channel_not_resolved">%1$s ପାଇଁ ଚ୍ୟାନେଲ ID ସମାଧାନ ହୋଇପାରିଲା ନାହିଁ</string>
+    <string name="system_message_send_not_delivered">ମେସେଜ୍ ପଠାଯାଇନାହିଁ</string>
+    <string name="system_message_send_dropped">ମେସେଜ୍ ବାଦ୍ ପଡ଼ିଲା: %1$s (%2$s)</string>
+    <string name="system_message_send_missing_scopes">user:write:chat ଅନୁମତି ନାହିଁ, ଦୟାକରି ପୁନଃ ଲଗ୍ ଇନ୍ କରନ୍ତୁ</string>
+    <string name="system_message_send_not_authorized">ଏହି ଚ୍ୟାନେଲରେ ମେସେଜ୍ ପଠାଇବାକୁ ଅନୁମତି ନାହିଁ</string>
+    <string name="system_message_send_message_too_large">ମେସେଜ୍ ବହୁତ ବଡ଼</string>
+    <string name="system_message_send_rate_limited">ହାର ସୀମିତ, କିଛି ସମୟ ପରେ ପୁନଃଚେଷ୍ଟା କରନ୍ତୁ</string>
+    <string name="system_message_send_failed">ପଠାଇବା ବିଫଳ: %1$s</string>
     <!-- AutoMod -->
     <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">କାରଣ ପାଇଁ ଏକ ବାର୍ତ୍ତା ଧରାଯାଇଛି: %1$s। ଅନୁମତି ଦେଲେ ଏହା ଚାଟ୍ ରେ ପୋଷ୍ଟ ହେବ।</string>
     <string name="automod_allow">ଅନୁମତି ଦିଅନ୍ତୁ</string>
@@ -160,19 +172,26 @@
     <string name="automod_moderation_added_permitted_term" comment="flex3rs added &quot;test&quot; as a permitted term on AutoMod.">%1$s AutoMod ରେ %2$s କୁ ଅନୁମୋଦିତ ଶବ୍ଦ ଭାବେ ଯୋଡିଛି।</string>
     <string name="automod_moderation_removed_blocked_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s AutoMod ରୁ %2$s କୁ ଅବରୋଧିତ ଶବ୍ଦ ଭାବେ ହଟାଇଛି।</string>
     <string name="automod_moderation_removed_permitted_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s AutoMod ରୁ %2$s କୁ ଅନୁମୋଦିତ ଶବ୍ଦ ଭାବେ ହଟାଇଛି।</string>
-    <!-- Moderation messages -->
+    <!-- Moderation messages — complete sentence variants for proper localization -->
+    <!-- Timeout (self, IRC — no creator info) -->
     <string name="mod_timeout_self_irc" comment="You were timed out for 10m">ଆପଣଙ୍କୁ %1$s ପାଇଁ ସମୟ ସମାପ୍ତ କରାଯାଇଛି</string>
+    <!-- Timeout (self, EventSub — has creator) -->
     <string name="mod_timeout_self" comment="You were timed out for 10m by flex3rs">ଆପଣଙ୍କୁ %2$s ଦ୍ୱାରା %1$s ପାଇଁ ସମୟ ସମାପ୍ତ କରାଯାଇଛି</string>
     <string name="mod_timeout_self_reason" comment="You were timed out for 10m by flex3rs: reason">ଆପଣଙ୍କୁ %2$s ଦ୍ୱାରା %1$s ପାଇଁ ସମୟ ସମାପ୍ତ କରାଯାଇଛି: %3$s</string>
+    <!-- Timeout (other, by creator) -->
     <string name="mod_timeout_by_creator" comment="flex3rs timed out user123 for 10m">%1$s %2$s କୁ %3$s ପାଇଁ ସମୟ ସମାପ୍ତ କଲେ</string>
     <string name="mod_timeout_by_creator_reason" comment="flex3rs timed out user123 for 10m: reason">%1$s %2$s କୁ %3$s ପାଇଁ ସମୟ ସମାପ୍ତ କଲେ: %4$s</string>
+    <!-- Timeout (other, IRC — no creator) -->
     <string name="mod_timeout_no_creator" comment="user123 has been timed out for 10m">%1$s କୁ %2$s ପାଇଁ ସମୟ ସମାପ୍ତ କରାଯାଇଛି</string>
+    <!-- Ban (self) -->
     <string name="mod_ban_self_irc" comment="You were banned">ଆପଣଙ୍କୁ ନିଷେଧ କରାଯାଇଛି</string>
     <string name="mod_ban_self" comment="You were banned by flex3rs">ଆପଣଙ୍କୁ %1$s ଦ୍ୱାରା ନିଷେଧ କରାଯାଇଛି</string>
     <string name="mod_ban_self_reason" comment="You were banned by flex3rs: reason">ଆପଣଙ୍କୁ %1$s ଦ୍ୱାରା ନିଷେଧ କରାଯାଇଛି: %2$s</string>
+    <!-- Ban (other) -->
     <string name="mod_ban_by_creator" comment="flex3rs banned user123">%1$s %2$s କୁ ନିଷେଧ କଲେ</string>
     <string name="mod_ban_by_creator_reason" comment="flex3rs banned user123: reason">%1$s %2$s କୁ ନିଷେଧ କଲେ: %3$s</string>
     <string name="mod_ban_no_creator" comment="user123 has been permanently banned">%1$s କୁ ସ୍ଥାୟୀ ଭାବେ ନିଷେଧ କରାଯାଇଛି</string>
+    <!-- Simple actions -->
     <string name="mod_untimeout" comment="flex3rs untimedout user123">%1$s %2$s ର ସମୟ ସମାପ୍ତ ହଟାଇଲେ</string>
     <string name="mod_unban" comment="flex3rs unbanned user123">%1$s %2$s ର ନିଷେଧ ହଟାଇଲେ</string>
     <string name="mod_modded" comment="flex3rs modded user123">%1$s %2$s କୁ ମୋଡରେଟର୍ କଲେ</string>
@@ -183,12 +202,15 @@
     <string name="mod_warn_reason" comment="flex3rs has warned user123: reason1, reason2">%1$s %2$s କୁ ଚେତାବନୀ ଦେଇଛି: %3$s</string>
     <string name="mod_raid" comment="flex3rs initiated a raid to user123">%1$s %2$s କୁ ଏକ ରେଡ୍ ଆରମ୍ଭ କଲେ</string>
     <string name="mod_unraid" comment="flex3rs canceled the raid to user123">%1$s %2$s କୁ ରେଡ୍ ବାତିଲ କଲେ</string>
+    <!-- Delete -->
     <string name="mod_delete_by_creator" comment="flex3rs deleted message from user123">%1$s %2$s ର ବାର୍ତ୍ତା ବିଲୋପ କଲେ</string>
     <string name="mod_delete_by_creator_message" comment="flex3rs deleted message from user123 saying: hello">%1$s %2$s ର ବାର୍ତ୍ତା ବିଲୋପ କଲେ: %3$s</string>
     <string name="mod_delete_no_creator" comment="A message from user123 was deleted">%1$s ର ଏକ ବାର୍ତ୍ତା ବିଲୋପ କରାଯାଇଛି</string>
     <string name="mod_delete_no_creator_message" comment="A message from user123 was deleted saying: hello">%1$s ର ଏକ ବାର୍ତ୍ତା ବିଲୋପ କରାଯାଇଛି: %2$s</string>
+    <!-- Clear -->
     <string name="mod_clear_by_creator" comment="flex3rs cleared the chat">%1$s ଚାଟ୍ ସଫା କଲେ</string>
     <string name="mod_clear_no_creator">ଜଣେ ମୋଡରେଟର୍ ଦ୍ୱାରା ଚାଟ୍ ସଫା କରାଯାଇଛି</string>
+    <!-- Room state -->
     <string name="mod_emote_only_on" comment="flex3rs turned on emote-only mode">%1$s ଇମୋଟ୍-ଓନ୍ଲି ମୋଡ୍ ଚାଲୁ କଲେ</string>
     <string name="mod_emote_only_off" comment="flex3rs turned off emote-only mode">%1$s ଇମୋଟ୍-ଓନ୍ଲି ମୋଡ୍ ବନ୍ଦ କଲେ</string>
     <string name="mod_followers_on" comment="flex3rs turned on followers-only mode">%1$s ଅନୁଗାମୀ-ଓନ୍ଲି ମୋଡ୍ ଚାଲୁ କଲେ</string>
@@ -210,7 +232,9 @@
     <string name="mod_shared_unban" comment="flex3rs unbanned user123 in channel456">%1$s %3$s ରେ %2$s ର ନିଷେଧ ହଟାଇଲେ</string>
     <string name="mod_shared_delete" comment="flex3rs deleted message from user123 in channel456">%1$s %3$s ରେ %2$s ର ବାର୍ତ୍ତା ବିଲୋପ କଲେ</string>
     <string name="mod_shared_delete_message" comment="flex3rs deleted message from user123 in channel456 saying: hello">%1$s %3$s ରେ %2$s ର ବାର୍ତ୍ତା ବିଲୋପ କଲେ: %4$s</string>
+    <!-- Helper: message + count concatenation -->
     <string name="mod_message_with_count" comment="flex3rs timed out user123 for 10m. (2 times)">%1$s%2$s</string>
+    <!-- Parenthetical count (appended after complete sentences, safe for all languages) -->
     <plurals name="mod_count_suffix" comment=" (2 times)">
         <item quantity="one">\u0020(%1$d ଥର)</item>
         <item quantity="other">\u0020(%1$d ଥର)</item>
@@ -282,8 +306,8 @@
     <string name="input_action_mod_actions">ଚ୍ୟାନେଲ ମଡରେସନ</string>
     <string name="input_action_fullscreen">ଫୁଲ୍ ସ୍କ୍ରିନ୍</string>
     <string name="input_action_hide_input">ଇନପୁଟ୍ ଲୁଚାନ୍ତୁ</string>
-    <string name="input_action_configure">କ୍ରିୟାଗୁଡିକ ବିନ୍ୟାସ କରନ୍ତୁ</string>
     <string name="input_action_debug">ଡିବଗ୍</string>
+    <string name="input_action_configure">କ୍ରିୟାଗୁଡିକ ବିନ୍ୟାସ କରନ୍ତୁ</string>
     <string name="room_state_emote_only">କେବଳ ଇମୋଟ୍</string>
     <string name="room_state_subscriber_only">କେବଳ ଗ୍ରାହକ</string>
     <string name="room_state_slow_mode">ସ୍ଲୋ ମୋଡ୍</string>
@@ -305,10 +329,10 @@
     <string name="mod_actions_shield_mode">Shield mode</string>
     <string name="mod_actions_clear_chat">Clear chat</string>
     <string name="mod_actions_confirm_clear_chat">Clear all messages in this channel?</string>
-
     <string name="mod_actions_confirm_shield_mode_title">ଶିଲ୍ଡ ମୋଡ୍ ସକ୍ରିୟ କରିବେ?</string>
     <string name="mod_actions_confirm_shield_mode_body">ଏହା ଚ୍ୟାନେଲର ପୂର୍ବ-କନଫିଗର୍ ହୋଇଥିବା ସୁରକ୍ଷା ସେଟିଂ ପ୍ରୟୋଗ କରିବ, ଯାହା ଚାଟ୍ ସୀମାବଦ୍ଧତା, AutoMod ସେଟିଂ ଏବଂ ଯାଞ୍ଚ ଆବଶ୍ୟକତା ଅନ୍ତର୍ଭୁକ୍ତ କରିପାରେ।</string>
-    <string name="mod_actions_shield_mode_activate">ସକ୍ରିୟ କରନ୍ତୁ</string>    <string name="mod_actions_announce">Announce</string>
+    <string name="mod_actions_shield_mode_activate">ସକ୍ରିୟ କରନ୍ତୁ</string>
+    <string name="mod_actions_announce">Announce</string>
     <string name="mod_actions_announce_header">Announcement</string>
     <string name="mod_actions_shoutout">Shoutout</string>
     <string name="mod_actions_commercial">Commercial</string>
@@ -453,7 +477,7 @@
     <string name="preference_suggestions_emotes">ଇମୋଟ</string>
     <string name="preference_suggestions_emotes_desc">: ସହିତ ଟ୍ରିଗର କରନ୍ତୁ</string>
     <string name="preference_suggestions_users">ଉପଭୋକ୍ତା</string>
-    <string name="preference_suggestions_users_desc">@ ସହିତ ଟ୍ରିଗର କରନ୍ତୁ</string>
+    <string name="preference_suggestions_users_desc">\@ ସହିତ ଟ୍ରିଗର କରନ୍ତୁ</string>
     <string name="preference_suggestions_commands">Twitch କମାଣ୍ଡ</string>
     <string name="preference_suggestions_commands_desc">/ ସହିତ ଟ୍ରିଗର କରନ୍ତୁ</string>
     <string name="preference_suggestions_supibot">Supibot କମାଣ୍ଡ</string>
@@ -466,6 +490,8 @@
     <string name="preference_message_history_dashboard_summary">ସେବା ବିଷୟରେ ଅଧିକ ଜାଣନ୍ତୁ ଏବଂ ନିଜ ଚ୍ୟାନେଲ ପାଇଁ ବାର୍ତ୍ତା ଇତିହାସକୁ ଅକ୍ଷମ କରନ୍ତୁ |</string>
     <string name="preference_channel_data_header">ଚ୍ୟାନେଲ ତଥ୍ୟ |</string>
     <string name="preference_developer_header">ଡେଵେଲପର୍ ଵିକଳ୍ପ</string>
+    <string name="preference_log_viewer_title">ଲଗ୍ ଦର୍ଶକ</string>
+    <string name="preference_log_viewer_summary">ଆପ୍ଲିକେସନ୍ ଲଗ୍ ଦେଖନ୍ତୁ</string>
     <string name="preference_debug_mode_title">କିବଗ୍ ମୋଡ୍ |</string>
     <string name="preference_debug_mode_summary">ଇନପୁଟ ବାରରେ ଡିବଗ ଆନାଲିଟିକ୍ସ କାର୍ଯ୍ୟ ଦେଖାନ୍ତୁ ଏବଂ ସ୍ଥାନୀୟ ଭାବରେ କ୍ର୍ୟାସ ରିପୋର୍ଟ ସଂଗ୍ରହ କରନ୍ତୁ</string>
     <string name="preference_timestamp_format_title">ଟାଇମଷ୍ଟ୍ୟାମ୍ପ ଫର୍ମାଟ୍ |</string>
@@ -516,11 +542,19 @@
     <string name="preference_tts_user_ignore_list_summary">ଉପଯୋଗକର୍ତ୍ତା / ଖାତାଗୁଡ଼ିକର ତାଲିକା ଯାହାକୁ ଅଣଦେଖା କରାଯିବ |</string>
     <string name="preference_tools_header">ସାଧନଗୁଡ଼ିକ |</string>
     <string name="preference_theme_title">ଥିମ୍</string>
-    <string name="preference_dark_theme_entry_title">ଗାଢ଼ ଥିମ୍</string>
+    <string name="preference_dark_theme_entry_title">ଗାଢ଼ ଥିମ୍</string>
     <string name="preference_light_theme_entry_title">ହାଲୁକା ଥିମ୍</string>
     <string name="preference_unlisted_emotes_title">ତାଲିକାଭୁକ୍ତ ଇମୋଟଗୁଡିକୁ ଅନୁମତି ଦିଅନ୍ତୁ |</string>
     <string name="preference_unlisted_emotes_summary">ଅନୁମୋଦିତ କିମ୍ବା ତାଲିକାଭୁକ୍ତ ଇମୋଟଗୁଡିକର ଫିଲ୍ଟରିଂକୁ ଅକ୍ଷମ କରିଥାଏ |</string>
     <string name="preference_rm_host_title">ସାମ୍ପ୍ରତିକ ବାର୍ତ୍ତା ହୋଷ୍ଟ କଷ୍ଟମ୍ କରନ୍ତୁ |</string>
+    <string name="preference_developer_category_general">ସାଧାରଣ</string>
+    <string name="preference_developer_category_auth">ପ୍ରମାଣୀକରଣ</string>
+    <string name="preference_eventsub_title">Twitch EventSub ସକ୍ରିୟ କରନ୍ତୁ</string>
+    <string name="preference_eventsub_summary">ଅଚଳ PubSub ବଦଳରେ ବିଭିନ୍ନ ରିଅଲ-ଟାଇମ ଇଭେଣ୍ଟ ପାଇଁ EventSub ବ୍ୟବହାର କରେ</string>
+    <string name="preference_eventsub_debug_title">EventSub ଡିବଗ୍ ଆଉଟପୁଟ୍ ସକ୍ରିୟ କରନ୍ତୁ</string>
+    <string name="preference_eventsub_debug_summary">EventSub ସମ୍ବନ୍ଧୀୟ ଡିବଗ୍ ତଥ୍ୟ ସିଷ୍ଟମ ମେସେଜ୍ ଭାବରେ ଦେଖାଏ</string>
+    <string name="preference_revoke_token_title">ଟୋକେନ୍ ବାତିଲ କରନ୍ତୁ ଏବଂ ପୁନଃଆରମ୍ଭ କରନ୍ତୁ</string>
+    <string name="preference_revoke_token_summary">ବର୍ତ୍ତମାନର ଟୋକେନ୍ ଅବୈଧ କରି ଆପ୍ ପୁନଃଆରମ୍ଭ କରେ</string>
     <string name="preference_fetch_streams_title">ଷ୍ଟ୍ରିମ୍ ସୂଚନା ଆଣ |</string>
     <string name="preference_fetch_streams_summary">ପର୍ଯ୍ୟାୟକ୍ରମେ ଖୋଲା ଚ୍ୟାନେଲଗୁଡିକର ଷ୍ଟ୍ରିମ୍ ସୂଚନା ଆଣେ | ଏମ୍ବେଡ୍ ହୋଇଥିବା ଷ୍ଟ୍ରିମ୍ ଆରମ୍ଭ କରିବା ଆବଶ୍ୟକ |</string>
     <string name="preference_auto_disable_input_title">ଚାଟ୍ ସହିତ ସଂଯୁକ୍ତ ନଥିଲେ ଇନପୁଟ୍ ଅକ୍ଷମ କରନ୍ତୁ |</string>
@@ -572,7 +606,7 @@
     <string name="replacement">ପ୍ରତିସ୍ଥାପନ</string>
     <string name="ignores">ଅବହେଳା କରନ୍ତୁ |</string>
     <string name="preference_ignores_summary">ବାର୍ତ୍ତା ଅଗ୍ରାହ୍ୟ କରନ୍ତୁ |</string>
-    <string name="tab_messages">ଵାର୍ତ୍ତାଗୁଡ଼ିକ</string>
+    <string name="tab_messages">ଵାର୍ତ୍ତାଗୁଡ଼ିକ</string>
     <string name="tab_users">ଉପଯୋଗକର୍ତ୍ତାଗଣ |</string>
     <string name="tab_blacklisted_users">କଳା ତାଲିକାଭୁକ୍ତ ବ୍ୟବହାରକାରୀ |</string>
     <string name="tab_twitch">Twitch</string>
@@ -594,7 +628,7 @@
     <string name="highlights_ignores_entry_custom">କଷ୍ଟମ</string>
     <string name="highlights_messages_title">ନିର୍ଦ୍ଦିଷ୍ଟ s ାଞ୍ଚା ଉପରେ ଆଧାର କରି ବିଜ୍ଞପ୍ତି ସୃଷ୍ଟି କରେ ଏବଂ ବାର୍ତ୍ତାଗୁଡ଼ିକୁ ହାଇଲାଇଟ୍ କରେ |</string>
     <string name="highlights_users_title">ନିର୍ଦ୍ଦିଷ୍ଟ ବ୍ୟବହାରକାରୀଙ୍କ ଠାରୁ ବିଜ୍ଞପ୍ତି ସୃଷ୍ଟି କରେ ଏବଂ ହାଇଲାଇଟ୍ କରେ |</string>
-    <string name="highlights_blacklisted_users_title">ନିର୍ଦ୍ଦିଷ୍ଟ ଉପଭୋକ୍ତାมାନଙ୍କ ଠାରୁ ବିଜ୍ଞପ୍ତି ଏବଂ ହାଇଲାଇଟ୍ ଅକ୍ଷମ କରନ୍ତୁ (ଯଥା ବଟ୍) |</string>
+    <string name="highlights_blacklisted_users_title">ନିର୍ଦ୍ଦିଷ୍ଟ ଉପଭୋକ୍ତାମାନଙ୍କ ଠାରୁ ବିଜ୍ଞପ୍ତି ଏବଂ ହାଇଲାଇଟ୍ ଅକ୍ଷମ କରନ୍ତୁ (ଯଥା ବଟ୍) |</string>
     <string name="highlights_badges_title">ବ୍ୟାଜ୍ ଆଧାରରେ ଉପଭୋକ୍ତାମାନଙ୍କ ଠାରୁ ବିଜ୍ଞପ୍ତି ସୃଷ୍ଟି କରେ ଏବଂ ବାର୍ତ୍ତା ହାଇଲାଇଟ୍ କରେ।</string>
     <string name="ignores_messages_title">ନିର୍ଦ୍ଦିଷ୍ଟ s ାଞ୍ଚା ଉପରେ ଆଧାର କରି ବାର୍ତ୍ତାଗୁଡ଼ିକୁ ଉପେକ୍ଷା କରନ୍ତୁ |</string>
     <string name="ignores_users_title">ନିର୍ଦ୍ଦିଷ୍ଟ ବ୍ୟବହାରକାରୀଙ୍କ ସନ୍ଦେଶକୁ ଅଣଦେଖା କରନ୍ତୁ |</string>
@@ -622,7 +656,42 @@
     <string name="message_history">ବାର୍ତ୍ତା ଇତିହାସ</string>
     <string name="global_history_title">ଗ୍ଲୋବାଲ ଇତିହାସ</string>
     <string name="message_history_title">ଇତିହାସ: %1$s</string>
+    <string name="view_history">ଇତିହାସ ଦେଖନ୍ତୁ</string>
+    <string name="history_empty">ବର୍ତ୍ତମାନର ଫିଲ୍ଟରଗୁଡ଼ିକ ସହ କୌଣସି ସନ୍ଦେଶ ମେଳ ଖାଉନାହିଁ</string>
     <string name="search_messages_hint">ବାର୍ତ୍ତା ଖୋଜନ୍ତୁ…</string>
+    <string name="log_viewer_title">ଲଗ୍</string>
+    <string name="log_viewer_share">ଲଗ୍ ସେୟାର କରନ୍ତୁ</string>
+    <string name="log_viewer_open">ଲଗ୍ ଦେଖନ୍ତୁ</string>
+    <string name="preference_log_viewer_empty">କୌଣସି ଲଗ୍ ଫାଇଲ୍ ଉପಲବ୍ଧ ନାହିଁ</string>
+    <string name="log_viewer_search_hint">ଲଗ୍ ଖୋଜନ୍ତୁ</string>
+    <plurals name="log_viewer_selected_count">
+        <item quantity="one">%1$d ଚୟନ ହୋଇଛି</item>
+        <item quantity="other">%1$d ଚୟନ ହୋଇଛି</item>
+    </plurals>
+    <string name="log_viewer_copy_selection">ଚୟନିତ ଲଗ୍ କପି କରନ୍ତୁ</string>
+    <string name="log_viewer_clear_selection">ଚୟନ ସଫା କରନ୍ତୁ</string>
+    <string name="crash_report_title">କ୍ର୍ୟାସ ଚିହ୍ନଟ ହୋଇଛି</string>
+    <string name="crash_report_message">ଆପଣଙ୍କ ଶେଷ ସେସନ୍ ସମୟରେ ଆପ୍ କ୍ର୍ୟାସ ହୋଇଥିଲା।</string>
+    <string name="crash_report_thread">ଥ୍ରେଡ୍: %1$s</string>
+    <string name="crash_report_copy">କପି</string>
+    <string name="crash_report_send">ଚ୍ୟାଟ୍ ରିପୋର୍ଟ</string>
+    <string name="crash_report_send_description">#flex3rs ରେ ଯୋଗ ଦେଇ ପଠାଇବା ପାଇଁ ଏକ କ୍ର୍ୟାସ ସାରାଂଶ ପ୍ରସ୍ତୁତ କରେ</string>
+    <string name="crash_report_email">ଇମେଲ୍ ରିପୋର୍ଟ</string>
+    <string name="crash_report_email_description">ଇମେଲ୍ ମାଧ୍ୟମରେ ଏକ ବିସ୍ତୃତ କ୍ର୍ୟାସ ରିପୋର୍ଟ ପଠାନ୍ତୁ</string>
+    <string name="crash_email_confirm_title">ଇମେଲ୍ ମାଧ୍ୟମରେ କ୍ର୍ୟାସ ରିପୋର୍ଟ ପଠାନ୍ତୁ</string>
+    <string name="crash_email_confirm_message">ନିମ୍ନଲିଖିତ ତଥ୍ୟ ରିପୋର୍ଟରେ ଅନ୍ତର୍ଭୁକ୍ତ ହେବ:</string>
+    <string name="crash_email_confirm_stacktrace">ଷ୍ଟାକ୍ ଟ୍ରେସ୍</string>
+    <string name="crash_email_confirm_include_logs">ବର୍ତ୍ତମାନର ଲଗ୍ ଫାଇଲ୍ ଅନ୍ତର୍ଭୁକ୍ତ କରନ୍ତୁ</string>
+    <string name="preference_crash_viewer_title">କ୍ର୍ୟାସ ରିପୋର୍ଟ</string>
+    <string name="preference_crash_viewer_summary">ସାମ୍ପ୍ରତିକ କ୍ର୍ୟାସ ରିପୋର୍ଟ ଦେଖନ୍ତୁ</string>
+    <string name="preference_crash_viewer_empty">କୌଣସି କ୍ର୍ୟାସ ରିପୋର୍ଟ ମିଳିଲା ନାହିଁ</string>
+    <string name="crash_viewer_title">କ୍ର୍ୟାସ ରିପୋର୍ଟ</string>
+    <string name="crash_viewer_share">କ୍ର୍ୟାସ ରିପୋର୍ଟ ସେୟାର କରନ୍ତୁ</string>
+    <string name="crash_viewer_delete">ଡିଲିଟ୍</string>
+    <string name="crash_viewer_clear_all">ସବୁ ସଫା କରନ୍ତୁ</string>
+    <string name="crash_viewer_delete_confirm">ଏହି କ୍ର୍ୟାସ ରିପୋର୍ଟ ଡିଲିଟ୍ କରିବେ?</string>
+    <string name="crash_viewer_clear_all_confirm">ସବୁ କ୍ର୍ୟାସ ରିପୋର୍ଟ ଡିଲିଟ୍ କରିବେ?</string>
+    <string name="scroll_to_bottom">ତଳକୁ ସ୍କ୍ରୋଲ୍ କରନ୍ତୁ</string>
     <string name="search_filter_by_username">ଉପଯୋଗକର୍ତ୍ତା ନାମ ଦ୍ୱାରା ଫିଲ୍ଟର କରନ୍ତୁ</string>
     <string name="search_filter_has_link">ଲିଙ୍କ୍ ଥିବା ବାର୍ତ୍ତା</string>
     <string name="search_filter_has_emote">ଇମୋଟ୍ ଥିବା ବାର୍ତ୍ତା</string>
@@ -723,26 +792,6 @@
     <string name="tour_got_it">ବୁଝିଗଲି</string>
     <string name="tour_skip">ଟୁର୍ ଛାଡି ଦିଅନ୍ତୁ</string>
     <string name="tour_add_more_channels_hint">ଆପଣ ଏଠାରେ ଅଧିକ ଚ୍ୟାନେଲ ଯୋଡିପାରିବେ</string>
-
-    <!-- Developer Settings -->
-    <string name="preference_developer_category_general">ସାଧାରଣ</string>
-    <string name="preference_developer_category_auth">ପ୍ରମାଣୀକରଣ</string>
-    <string name="preference_eventsub_title">Twitch EventSub ସକ୍ରିୟ କରନ୍ତୁ</string>
-    <string name="preference_eventsub_summary">ଅଚଳ PubSub ବଦଳରେ ବିଭିନ୍ନ ରିଅଲ-ଟାଇମ ଇଭେଣ୍ଟ ପାଇଁ EventSub ବ୍ୟବହାର କରେ</string>
-    <string name="preference_eventsub_debug_title">EventSub ଡିବଗ୍ ଆଉଟପୁଟ୍ ସକ୍ରିୟ କରନ୍ତୁ</string>
-    <string name="preference_eventsub_debug_summary">EventSub ସମ୍ବନ୍ଧୀୟ ଡିବଗ୍ ତଥ୍ୟ ସିଷ୍ଟମ ମେସେଜ୍ ଭାବରେ ଦେଖାଏ</string>
-    <string name="preference_revoke_token_title">ଟୋକେନ୍ ବାତିଲ କରନ୍ତୁ ଏବଂ ପୁନଃଆରମ୍ଭ କରନ୍ତୁ</string>
-    <string name="preference_revoke_token_summary">ବର୍ତ୍ତମାନର ଟୋକେନ୍ ଅବୈଧ କରି ଆପ୍ ପୁନଃଆରମ୍ଭ କରେ</string>
-    <string name="system_message_send_not_logged_in">ଲଗ୍ ଇନ୍ ହୋଇନାହାଁନ୍ତି</string>
-    <string name="system_message_send_channel_not_resolved">%1$s ପାଇଁ ଚ୍ୟାନେଲ ID ସମାଧାନ ହୋଇପାରିଲା ନାହିଁ</string>
-    <string name="system_message_send_not_delivered">ମେସେଜ୍ ପଠାଯାଇନାହିଁ</string>
-    <string name="system_message_send_dropped">ମେସେଜ୍ ବାଦ୍ ପଡ଼ିଲା: %1$s (%2$s)</string>
-    <string name="system_message_send_missing_scopes">user:write:chat ଅନୁମତି ନାହିଁ, ଦୟାକରି ପୁନଃ ଲଗ୍ ଇନ୍ କରନ୍ତୁ</string>
-    <string name="system_message_send_not_authorized">ଏହି ଚ୍ୟାନେଲରେ ମେସେଜ୍ ପଠାଇବାକୁ ଅନୁମତି ନାହିଁ</string>
-    <string name="system_message_send_message_too_large">ମେସେଜ୍ ବହୁତ ବଡ଼</string>
-    <string name="system_message_send_rate_limited">ହାର ସୀମିତ, କିଛି ସମୟ ପରେ ପୁନଃଚେଷ୍ଟା କରନ୍ତୁ</string>
-    <string name="system_message_send_failed">ପଠାଇବା ବିଫଳ: %1$s</string>
-
     <!-- Command responses -->
     <string name="cmd_error_not_logged_in">%1$s କମାଣ୍ଡ ବ୍ୟବହାର କରିବା ପାଇଁ ଆପଣଙ୍କୁ ଲଗ୍ ଇନ୍ ହେବାକୁ ପଡ଼ିବ</string>
     <string name="cmd_error_no_user_matching">ସେହି ୟୁଜରନେମ୍ ସହ ମେଳ ଖାଉଥିବା କୌଣସି ୟୁଜର ନାହାଁନ୍ତି।</string>
@@ -861,41 +910,4 @@
     <string name="cmd_error_message_too_large">ଆପଣଙ୍କ ମେସେଜ୍ ବହୁତ ଲମ୍ବା ଥିଲା।</string>
     <string name="cmd_error_chat_rate_limited">ଆପଣଙ୍କ ହାର ସୀମିତ ହୋଇଛି। କିଛି ସମୟ ପରେ ପୁନଃଚେଷ୍ଟା କରନ୍ତୁ।</string>
     <string name="cmd_error_target_default">ଲକ୍ଷ୍ୟ ୟୁଜର</string>
-    <string name="preference_log_viewer_title">ଲଗ୍ ଦର୍ଶକ</string>
-    <string name="preference_log_viewer_summary">ଆପ୍ଲିକେସନ୍ ଲଗ୍ ଦେଖନ୍ତୁ</string>
-    <string name="log_viewer_title">ଲଗ୍</string>
-    <string name="log_viewer_share">ଲଗ୍ ସେୟାର କରନ୍ତୁ</string>
-    <string name="log_viewer_open">ଲଗ୍ ଦେଖନ୍ତୁ</string>
-    <string name="preference_log_viewer_empty">କୌଣସି ଲଗ୍ ଫାଇଲ୍ ଉପಲବ୍ଧ ନାହିଁ</string>
-    <string name="log_viewer_search_hint">ଲଗ୍ ଖୋଜନ୍ତୁ</string>
-    <plurals name="log_viewer_selected_count">
-        <item quantity="one">%1$d ଚୟନ ହୋଇଛି</item>
-        <item quantity="other">%1$d ଚୟନ ହୋଇଛି</item>
-    </plurals>
-    <string name="log_viewer_copy_selection">ଚୟନିତ ଲଗ୍ କପି କରନ୍ତୁ</string>
-    <string name="log_viewer_clear_selection">ଚୟନ ସଫା କରନ୍ତୁ</string>
-    <string name="crash_report_title">କ୍ର୍ୟାସ ଚିହ୍ନଟ ହୋଇଛି</string>
-    <string name="crash_report_message">ଆପଣଙ୍କ ଶେଷ ସେସନ୍ ସମୟରେ ଆପ୍ କ୍ର୍ୟାସ ହୋଇଥିଲା।</string>
-    <string name="crash_report_thread">ଥ୍ରେଡ୍: %1$s</string>
-    <string name="crash_report_copy">କପି</string>
-    <string name="crash_report_send">ଚ୍ୟାଟ୍ ରିପୋର୍ଟ</string>
-    <string name="crash_report_send_description">#flex3rs ରେ ଯୋଗ ଦେଇ ପଠାଇବା ପାଇଁ ଏକ କ୍ର୍ୟାସ ସାରାଂଶ ପ୍ରସ୍ତୁତ କରେ</string>
-    <string name="crash_report_email">ଇମେଲ୍ ରିପୋର୍ଟ</string>
-    <string name="crash_report_email_description">ଇମେଲ୍ ମାଧ୍ୟମରେ ଏକ ବିସ୍ତୃତ କ୍ର୍ୟାସ ରିପୋର୍ଟ ପଠାନ୍ତୁ</string>
-    <string name="crash_email_confirm_title">ଇମେଲ୍ ମାଧ୍ୟମରେ କ୍ର୍ୟାସ ରିପୋର୍ଟ ପଠାନ୍ତୁ</string>
-    <string name="crash_email_confirm_message">ନିମ୍ନଲିଖିତ ତଥ୍ୟ ରିପୋର୍ଟରେ ଅନ୍ତର୍ଭୁକ୍ତ ହେବ:</string>
-    <string name="crash_email_confirm_stacktrace">ଷ୍ଟାକ୍ ଟ୍ରେସ୍</string>
-    <string name="crash_email_confirm_include_logs">ବର୍ତ୍ତମାନର ଲଗ୍ ଫାଇଲ୍ ଅନ୍ତର୍ଭୁକ୍ତ କରନ୍ତୁ</string>
-    <string name="preference_crash_viewer_title">କ୍ର୍ୟାସ ରିପୋର୍ଟ</string>
-    <string name="preference_crash_viewer_summary">ସାମ୍ପ୍ରତିକ କ୍ର୍ୟାସ ରିପୋର୍ଟ ଦେଖନ୍ତୁ</string>
-    <string name="preference_crash_viewer_empty">କୌଣସି କ୍ର୍ୟାସ ରିପୋର୍ଟ ମିଳିଲା ନାହିଁ</string>
-    <string name="crash_viewer_title">କ୍ର୍ୟାସ ରିପୋର୍ଟ</string>
-    <string name="crash_viewer_share">କ୍ର୍ୟାସ ରିପୋର୍ଟ ସେୟାର କରନ୍ତୁ</string>
-    <string name="crash_viewer_delete">ଡିଲିଟ୍</string>
-    <string name="crash_viewer_delete_confirm">ଏହି କ୍ର୍ୟାସ ରିପୋର୍ଟ ଡିଲିଟ୍ କରିବେ?</string>
-    <string name="crash_viewer_clear_all">ସବୁ ସଫା କରନ୍ତୁ</string>
-    <string name="crash_viewer_clear_all_confirm">ସବୁ କ୍ର୍ୟାସ ରିପୋର୍ଟ ଡିଲିଟ୍ କରିବେ?</string>
-    <string name="scroll_to_bottom">ତଳକୁ ସ୍କ୍ରୋଲ୍ କରନ୍ତୁ</string>
-    <string name="view_history">ଇତିହାସ ଦେଖନ୍ତୁ</string>
-    <string name="history_empty">ବର୍ତ୍ତମାନର ଫିଲ୍ଟରଗୁଡ଼ିକ ସହ କୌଣସି ସନ୍ଦେଶ ମେଳ ଖାଉନାହିଁ</string>
 </resources>
