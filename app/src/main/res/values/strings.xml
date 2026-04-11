@@ -40,13 +40,14 @@
     <string name="nuuls_upload_title">Custom media upload</string>
     <string name="snackbar_message_copied">Message copied</string>
     <string name="snackbar_message_id_copied">Message id copied</string>
-    <string name="snackbar_link_copied">Link copied</string>
     <string name="snackbar_error_copied">Error information copied</string>
     <string name="notification_stop">Stop</string>
     <string name="notification_title">FeelsDankMan</string>
     <string name="notification_message">DankChat running in the background</string>
     <string name="emote_menu_hint">Open the emote menu</string>
+    <string name="close_emote_menu">Close the emote menu</string>
     <string name="no_recent_emotes">No recent emotes</string>
+    <string name="emote_menu_title">Emotes</string>
     <string name="login_title">Login to Twitch.tv</string>
     <string name="hint_connected">Start chatting</string>
     <string name="hint_disconnected">Disconnected</string>
@@ -298,11 +299,6 @@
     <string name="menu_exit_fullscreen">Exit fullscreen</string>
     <string name="menu_hide_input">Hide input</string>
     <string name="menu_show_input">Show input</string>
-    <string name="preference_fullscreen_button_opacity_title">Fullscreen button opacity</string>
-    <string name="preference_fullscreen_button_opacity_summary">Buttons shown in fullscreen or when input is hidden: %d%%</string>
-    <string name="preference_fullscreen_button_opacity_hint">Opacity (1-100)</string>
-    <string name="preference_fullscreen_button_opacity_validation">Must be between 1 and 100</string>
-    <string name="preference_fullscreen_button_opacity_custom">Custom</string>
     <string name="preference_swipe_navigation_title">Channel swipe navigation</string>
     <string name="preference_swipe_navigation_summary">Switch channels by swiping on the chat</string>
     <string name="menu_mod_actions">Channel moderation</string>
@@ -726,7 +722,6 @@
     <string name="message_reply_original">Reply to original message</string>
     <string name="message_view_thread">View thread</string>
     <string name="message_copy_id">Copy message id</string>
-    <string name="message_copy_link">Copy: %s</string>
     <string name="message_more_actions">More…</string>
     <string name="message_jump_to">Jump to message</string>
     <string name="message_not_in_history">Message no longer in chat history</string>
