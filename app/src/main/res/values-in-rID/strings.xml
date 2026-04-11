@@ -44,6 +44,22 @@
     <string name="login_title">Masuk ke Twitch.tv</string>
     <string name="hint_connected">Mulai chatting</string>
     <string name="hint_disconnected">Terputus</string>
+    <!-- Send errors -->
+    <!-- AutoMod -->
+    <!-- Moderation messages — complete sentence variants for proper localization -->
+    <!-- Timeout (self, IRC — no creator info) -->
+    <!-- Timeout (self, EventSub — has creator) -->
+    <!-- Timeout (other, by creator) -->
+    <!-- Timeout (other, IRC — no creator) -->
+    <!-- Ban (self) -->
+    <!-- Ban (other) -->
+    <!-- Simple actions -->
+    <!-- Delete -->
+    <!-- Clear -->
+    <!-- Room state -->
+    <!-- Shared chat -->
+    <!-- Helper: message + count concatenation -->
+    <!-- Parenthetical count (appended after complete sentences, safe for all languages) -->
     <string name="user_popup_created">Dibuat: %1$s</string>
     <string name="user_popup_following_since">Mengikuti dari %1$s</string>
     <string name="user_popup_not_following">Tidak mengikuti</string>
@@ -59,4 +75,7 @@
     <string name="uploader_field">Bidang formulir</string>
     <string name="uploader_headers">Headers</string>
     <string name="message_history_title">Riwayat: %1$s</string>
+    <!-- Onboarding -->
+    <!-- Feature Tour -->
+    <!-- Command responses -->
 </resources>
