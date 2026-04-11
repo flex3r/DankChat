@@ -53,7 +53,8 @@
     <string name="hint_disconnected">Ажыратты</string>
     <string name="hint_not_logged_int">Жүйеге кірмеген</string>
     <string name="hint_replying">Жауап беру</string>
-    <string name="hint_announcing">Send announcement</string>    <string name="notification_new_mentions">Сізде жаңа ескертулер бар</string>
+    <string name="hint_announcing">Send announcement</string>
+    <string name="notification_new_mentions">Сізде жаңа ескертулер бар</string>
     <string name="notification_mention">%1$s сізді #%2$s ішінде атап өтті</string>
     <string name="notification_notify_mention">Сіз #%1$s ішінде аталды</string>
     <string name="snackbar_login">%1$s ретінде кіру</string>
@@ -86,7 +87,8 @@
     <string name="highlight_header_elevated_chat">Көтерілген чат</string>
     <string name="highlight_header_gigantified_emote">Алып эмоут</string>
     <string name="highlight_header_animated_message">Анимациялық хабарлама</string>
-    <string name="highlight_header_reward_no_cost">Пайдаланылды: %1$s</string>    <plurals name="duration_seconds">
+    <string name="highlight_header_reward_no_cost">Пайдаланылды: %1$s</string>
+    <plurals name="duration_seconds">
         <item quantity="one">%1$d секунд</item>
         <item quantity="other">%1$d секунд</item>
     </plurals>
@@ -135,6 +137,16 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s 7TV эмотиясы %2$s қосты.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s 7TV Emote %2$s атауын %3$s деп өзгертті.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s  %2$s 7TV эмоджины жұлды</string>
+    <!-- Send errors -->
+    <string name="system_message_send_not_logged_in">Жүйеге кірілмеген</string>
+    <string name="system_message_send_channel_not_resolved">%1$s үшін арна ID анықталмады</string>
+    <string name="system_message_send_not_delivered">Хабарлама жіберілмеді</string>
+    <string name="system_message_send_dropped">Хабарлама тасталды: %1$s (%2$s)</string>
+    <string name="system_message_send_missing_scopes">user:write:chat рұқсаты жоқ, қайта кіріңіз</string>
+    <string name="system_message_send_not_authorized">Бұл арнада хабарлама жіберуге рұқсат жоқ</string>
+    <string name="system_message_send_message_too_large">Хабарлама тым үлкен</string>
+    <string name="system_message_send_rate_limited">Жылдамдық шектелді, біраз уақыттан кейін қайталаңыз</string>
+    <string name="system_message_send_failed">Жіберу сәтсіз: %1$s</string>
     <!-- AutoMod -->
     <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Хабарлама себеп бойынша ұсталды: %1$s. Рұқсат ету оны чатта жариялайды.</string>
     <string name="automod_allow">Рұқсат ету</string>
@@ -160,19 +172,26 @@
     <string name="automod_moderation_added_permitted_term" comment="flex3rs added &quot;test&quot; as a permitted term on AutoMod.">%1$s AutoMod жүйесінде %2$s рұқсат етілген термин ретінде қосты.</string>
     <string name="automod_moderation_removed_blocked_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s AutoMod жүйесінен %2$s бұғатталған терминін жойды.</string>
     <string name="automod_moderation_removed_permitted_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s AutoMod жүйесінен %2$s рұқсат етілген терминін жойды.</string>
-    <!-- Moderation messages -->
+    <!-- Moderation messages — complete sentence variants for proper localization -->
+    <!-- Timeout (self, IRC — no creator info) -->
     <string name="mod_timeout_self_irc" comment="You were timed out for 10m">Сіз %1$s уақытқа шектелдіңіз</string>
+    <!-- Timeout (self, EventSub — has creator) -->
     <string name="mod_timeout_self" comment="You were timed out for 10m by flex3rs">Сізді %2$s %1$s уақытқа шектеді</string>
     <string name="mod_timeout_self_reason" comment="You were timed out for 10m by flex3rs: reason">Сізді %2$s %1$s уақытқа шектеді: %3$s</string>
+    <!-- Timeout (other, by creator) -->
     <string name="mod_timeout_by_creator" comment="flex3rs timed out user123 for 10m">%1$s %2$s пайдаланушысын %3$s уақытқа шектеді</string>
     <string name="mod_timeout_by_creator_reason" comment="flex3rs timed out user123 for 10m: reason">%1$s %2$s пайдаланушысын %3$s уақытқа шектеді: %4$s</string>
+    <!-- Timeout (other, IRC — no creator) -->
     <string name="mod_timeout_no_creator" comment="user123 has been timed out for 10m">%1$s %2$s уақытқа шектелді</string>
+    <!-- Ban (self) -->
     <string name="mod_ban_self_irc" comment="You were banned">Сізге тыйым салынды</string>
     <string name="mod_ban_self" comment="You were banned by flex3rs">Сізге %1$s тыйым салды</string>
     <string name="mod_ban_self_reason" comment="You were banned by flex3rs: reason">Сізге %1$s тыйым салды: %2$s</string>
+    <!-- Ban (other) -->
     <string name="mod_ban_by_creator" comment="flex3rs banned user123">%1$s %2$s пайдаланушысына тыйым салды</string>
     <string name="mod_ban_by_creator_reason" comment="flex3rs banned user123: reason">%1$s %2$s пайдаланушысына тыйым салды: %3$s</string>
     <string name="mod_ban_no_creator" comment="user123 has been permanently banned">%1$s пайдаланушысына біржола тыйым салынды</string>
+    <!-- Simple actions -->
     <string name="mod_untimeout" comment="flex3rs untimedout user123">%1$s %2$s шектеуін алып тастады</string>
     <string name="mod_unban" comment="flex3rs unbanned user123">%1$s %2$s тыйымын алды</string>
     <string name="mod_modded" comment="flex3rs modded user123">%1$s %2$s пайдаланушысын модератор етті</string>
@@ -183,12 +202,15 @@
     <string name="mod_warn_reason" comment="flex3rs has warned user123: reason1, reason2">%1$s %2$s пайдаланушысына ескерту жасады: %3$s</string>
     <string name="mod_raid" comment="flex3rs initiated a raid to user123">%1$s %2$s арнасына рейд бастады</string>
     <string name="mod_unraid" comment="flex3rs canceled the raid to user123">%1$s %2$s арнасына рейдті тоқтатты</string>
+    <!-- Delete -->
     <string name="mod_delete_by_creator" comment="flex3rs deleted message from user123">%1$s %2$s пайдаланушысының хабарламасын жойды</string>
     <string name="mod_delete_by_creator_message" comment="flex3rs deleted message from user123 saying: hello">%1$s %2$s пайдаланушысының хабарламасын жойды: %3$s</string>
     <string name="mod_delete_no_creator" comment="A message from user123 was deleted">%1$s пайдаланушысының хабарламасы жойылды</string>
     <string name="mod_delete_no_creator_message" comment="A message from user123 was deleted saying: hello">%1$s пайдаланушысының хабарламасы жойылды: %2$s</string>
+    <!-- Clear -->
     <string name="mod_clear_by_creator" comment="flex3rs cleared the chat">%1$s чатты тазартты</string>
     <string name="mod_clear_no_creator">Чатты модератор тазартты</string>
+    <!-- Room state -->
     <string name="mod_emote_only_on" comment="flex3rs turned on emote-only mode">%1$s тек эмоция режимін қосты</string>
     <string name="mod_emote_only_off" comment="flex3rs turned off emote-only mode">%1$s тек эмоция режимін өшірді</string>
     <string name="mod_followers_on" comment="flex3rs turned on followers-only mode">%1$s тек ізбасарлар режимін қосты</string>
@@ -210,7 +232,9 @@
     <string name="mod_shared_unban" comment="flex3rs unbanned user123 in channel456">%1$s %3$s арнасында %2$s тыйымын алды</string>
     <string name="mod_shared_delete" comment="flex3rs deleted message from user123 in channel456">%1$s %3$s арнасында %2$s пайдаланушысының хабарламасын жойды</string>
     <string name="mod_shared_delete_message" comment="flex3rs deleted message from user123 in channel456 saying: hello">%1$s %3$s арнасында %2$s пайдаланушысының хабарламасын жойды: %4$s</string>
+    <!-- Helper: message + count concatenation -->
     <string name="mod_message_with_count" comment="flex3rs timed out user123 for 10m. (2 times)">%1$s%2$s</string>
+    <!-- Parenthetical count (appended after complete sentences, safe for all languages) -->
     <plurals name="mod_count_suffix" comment=" (2 times)">
         <item quantity="one">\u0020(%1$d рет)</item>
         <item quantity="other">\u0020(%1$d рет)</item>
@@ -282,8 +306,8 @@
     <string name="input_action_mod_actions">Арна модерациясы</string>
     <string name="input_action_fullscreen">Толық экран</string>
     <string name="input_action_hide_input">Енгізуді жасыру</string>
-    <string name="input_action_configure">Әрекеттерді баптау</string>
     <string name="input_action_debug">Жөндеу</string>
+    <string name="input_action_configure">Әрекеттерді баптау</string>
     <string name="room_state_emote_only">Тек эмоция</string>
     <string name="room_state_subscriber_only">Тек жазылушы</string>
     <string name="room_state_slow_mode">Баяу режим</string>
@@ -305,10 +329,10 @@
     <string name="mod_actions_shield_mode">Shield mode</string>
     <string name="mod_actions_clear_chat">Clear chat</string>
     <string name="mod_actions_confirm_clear_chat">Clear all messages in this channel?</string>
-
     <string name="mod_actions_confirm_shield_mode_title">Қалқан режимін іске қосу керек пе?</string>
     <string name="mod_actions_confirm_shield_mode_body">Бұл арнаның алдын ала конфигурацияланған қауіпсіздік параметрлерін қолданады, оның ішінде чат шектеулері, AutoMod параметрлері және тексеру талаптары болуы мүмкін.</string>
-    <string name="mod_actions_shield_mode_activate">Іске қосу</string>    <string name="mod_actions_announce">Announce</string>
+    <string name="mod_actions_shield_mode_activate">Іске қосу</string>
+    <string name="mod_actions_announce">Announce</string>
     <string name="mod_actions_announce_header">Announcement</string>
     <string name="mod_actions_shoutout">Shoutout</string>
     <string name="mod_actions_commercial">Commercial</string>
@@ -453,7 +477,7 @@
     <string name="preference_suggestions_emotes">Эмоттар</string>
     <string name="preference_suggestions_emotes_desc">: арқылы іске қосу</string>
     <string name="preference_suggestions_users">Пайдаланушылар</string>
-    <string name="preference_suggestions_users_desc">@ арқылы іске қосу</string>
+    <string name="preference_suggestions_users_desc">\@ арқылы іске қосу</string>
     <string name="preference_suggestions_commands">Twitch командалары</string>
     <string name="preference_suggestions_commands_desc">/ арқылы іске қосу</string>
     <string name="preference_suggestions_supibot">Supibot командалары</string>
@@ -466,6 +490,8 @@
     <string name="preference_message_history_dashboard_summary">Қызмет туралы қосымша ақпарат алыңыз және өз арнаңыз үшін хабарлар журналын өшіріңіз</string>
     <string name="preference_channel_data_header">Арна деректері</string>
     <string name="preference_developer_header">Әзірлеуші параметрлері</string>
+    <string name="preference_log_viewer_title">Журнал көрсеткіш</string>
+    <string name="preference_log_viewer_summary">Қолданба журналдарын көру</string>
     <string name="preference_debug_mode_title">Дебью режімі</string>
     <string name="preference_debug_mode_summary">Енгізу жолағында жөндеу аналитикасы әрекетін көрсету және апат есептерін жергілікті түрде жинау</string>
     <string name="preference_timestamp_format_title">Таймстам пішімі</string>
@@ -510,28 +536,14 @@
     <string name="preference_show_send_button_title">Жіберу түймесін көрсету</string>
     <string name="preference_input_group_title">Енгізу</string>
     <string name="preference_uploader_header">Медиа жүктеп салушы</string>
-    <string name="preference_uploader_configure_title">Жүктеуді баптау</string>
-    <string name="preference_uploader_recent_uploads_title">Соңғы жүктеулер</string>
-    <string name="preference_tts_user_ignore_list_title">Пайдаланушыларды елемеу тізімі</string>
-    <string name="preference_tts_user_ignore_list_summary">Еленбейтін пайдаланушылар/аккаунттар тізімі</string>
-    <string name="preference_tools_header">Құралдар</string>
-    <string name="preference_theme_title">Тақырып</string>
-    <string name="preference_dark_theme_entry_title">Қараңғы тақырып</string>
-    <string name="preference_light_theme_entry_title">Жарық тақырып</string>
-    <string name="preference_unlisted_emotes_title">Тізімде жоқ эмоцияларға рұқсат ету</string>
-    <string name="preference_unlisted_emotes_summary">Мақұлданбаған немесе тізімде жоқ эмоцияларды сүзуді өшіреді</string>
-    <string name="preference_rm_host_title">Реттелмелі соңғы хабарлар хосты</string>
-    <string name="preference_fetch_streams_title">Ағын ақпаратын алу</string>
-    <string name="preference_fetch_streams_summary">Ашық арналардың ағын ақпаратын мерзімді түрде алады. Кірістірілген ағынды іске қосу үшін қажет.</string>
-    <string name="preference_auto_disable_input_title">Чатқа қосылмаған жағдайда енгізуді өшіру</string>
-    <string name="preference_repeated_sending_title">Қайталанатын жіберуді қосу</string>
-    <string name="preference_repeated_sending_summary">Жіберу түймесі басылып тұрғанда үздіксіз хабар жіберуді қосады</string>
-    <string name="oauth_expired_title">Кіру мерзімі аяқталды!</string>
-    <string name="oauth_expired_message">Сіздің кіру таңбалауышыңыздың мерзімі аяқталды! Қайта кіріңіз.</string>
-    <string name="oauth_expired_login_again">Қайта кіру</string>
-    <string name="oauth_verify_failed">Кіру таңбалауышын тексеру мүмкін болмады, қосылымыңызды тексеріңіз.</string>
-    <string name="preference_retain_webview_title">Ағынды қайта жүктеуді болдырмау</string>
-    <string name="preference_retain_webview_summary">Бағдар өзгерістерінен немесе DankChat-ты қайта ашқаннан кейін ағынды қайта жүктеуді тәжірибелік түрде болдырмайды.</string>
+    <string name="preference_developer_category_general">Жалпы</string>
+    <string name="preference_developer_category_auth">Аутентификация</string>
+    <string name="preference_eventsub_title">Twitch EventSub қосу</string>
+    <string name="preference_eventsub_summary">Ескірген PubSub орнына нақты уақыттағы оқиғалар үшін EventSub пайдаланады</string>
+    <string name="preference_eventsub_debug_title">EventSub жөндеу шығысын қосу</string>
+    <string name="preference_eventsub_debug_summary">EventSubқа қатысты жөндеу ақпаратын жүйелік хабарлар ретінде көрсетеді</string>
+    <string name="preference_revoke_token_title">Токенді қайтарып алу және қайта іске қосу</string>
+    <string name="preference_revoke_token_summary">Ағымдағы токенді жарамсыз етіп, қолданбаны қайта іске қосады</string>
     <string name="preference_show_changelogs">Жаңартылғаннан кейін өзгерістер журналдарын көрсету</string>
     <string name="preference_whats_new_header">Не жаңалық</string>
     <string name="preference_custom_login_title">Арнайы кіру</string>
@@ -554,51 +566,11 @@
     <string name="preference_streams_header">Тікелей трансляциялар</string>
     <string name="preference_pip_title">Суреттегі сурет режимін қосыңыз</string>
     <string name="preference_pip_summary">Қолданба фондық режимде болғанда, ағындарға ойнатуды жалғастыруға мүмкіндік береді</string>
-    <string name="reset_media_uploader_dialog_title">Медиа жүктеуші параметрлерін қалпына келтіру</string>
-    <string name="reset_media_uploader_dialog_message">Медиа жүктеуші параметрлерін әдепкіге қалпына келтіргіңіз келетініне сенімдісіз бе?</string>
-    <string name="reset_media_uploader_dialog_positive">Қалпына келтіру</string>
-    <string name="clear_recent_uploads_dialog_title">Соңғы жүктеулерді тазалау</string>
-    <string name="clear_recent_uploads_dialog_message">Жүктеу тарихын тазалағыңыз келетініне сенімдісіз бе? Жүктелген файлдарыңыз жойылмайды.</string>
-    <string name="clear">Тазалау</string>
-    <string name="pattern">Үлгі</string>
-    <string name="case_sensitive">Регистрді ескеру</string>
-    <string name="highlights">Ерекшелеулер</string>
-    <string name="enabled">Қосулы</string>
-    <string name="create_notification">Хабарландыру</string>
-    <string name="preference_highlights_summary">Хабар ерекшелеулерін өңдеу</string>
-    <string name="preference_highlights_ignores_header">Ерекшелеулер мен елемеулер</string>
-    <string name="username">Пайдаланушы аты</string>
-    <string name="block">Блоктау</string>
-    <string name="replacement">Ауыстыру</string>
-    <string name="ignores">Елемеулер</string>
-    <string name="preference_ignores_summary">Хабар елемеулерін өңдеу</string>
-    <string name="tab_messages">Хабарлар</string>
-    <string name="tab_users">Пайдаланушылар</string>
-    <string name="tab_blacklisted_users">Қара тізімдегі пайдаланушылар</string>
-    <string name="tab_twitch">Twitch</string>
     <string name="tab_badges">Белгілер</string>
-    <string name="undo">Қайтару</string>
-    <string name="item_removed">Элемент жойылды</string>
-    <string name="unblocked_user">%1$s пайдаланушысы блоктан шығарылды</string>
-    <string name="unblocked_user_failed">%1$s пайдаланушысын блоктан шығару сәтсіз аяқталды</string>
     <string name="badge">Белгі</string>
-    <string name="blocked_user_failed">%1$s пайдаланушысын блоктау сәтсіз аяқталды</string>
-    <string name="highlights_entry_username">Сіздің пайдаланушы атыңыз</string>
-    <string name="highlights_ignores_entry_subscriptions">Жазылымдар мен оқиғалар</string>
-    <string name="highlights_ignores_entry_announcements">Хабарландырулар</string>
     <string name="highlights_ignores_entry_watch_streaks">Көру сериялары</string>
-    <string name="highlights_ignores_entry_first_messages">Алғашқы хабарлар</string>
-    <string name="highlights_ignores_entry_elevated_messages">Көтерілген хабарлар</string>
-    <string name="highlights_ignores_entry_redemptions">Арна ұпайларымен сатып алынған ерекшелеулер</string>
     <string name="highlights_ignores_entry_replies">Жауаптар</string>
-    <string name="highlights_ignores_entry_custom">Реттелмелі</string>
-    <string name="highlights_messages_title">Белгілі бір үлгілер негізінде хабарландырулар мен ерекшелеулер жасайды.</string>
-    <string name="highlights_users_title">Белгілі бір пайдаланушылардың хабарлары үшін хабарландырулар мен ерекшелеулер жасайды.</string>
-    <string name="highlights_blacklisted_users_title">Белгілі бір пайдаланушылардан (мысалы, боттар) хабарландырулар мен ерекшелеулерді өшіреді.</string>
     <string name="highlights_badges_title">Белгілер негізінде пайдаланушылардың хабарлары үшін хабарландырулар мен ерекшелеулер жасайды.</string>
-    <string name="ignores_messages_title">Белгілі бір үлгілер негізінде хабарларды елемейді.</string>
-    <string name="ignores_users_title">Белгілі бір пайдаланушылардың хабарларын елемейді.</string>
-    <string name="ignores_twitch_title">Блокталған Twitch пайдаланушыларын басқару.</string>
     <string name="preference_notification_whisper_title">Жеке хабарламалар үшін хабарландырулар жасаңыз</string>
     <string name="login_outdated_title">Кіру ескірген!</string>
     <string name="login_outdated_message">Сіздің логиніңіз ескірген және кейбір функцияларға қол жеткізе алмайды. Қайтадан кіріңіз.</string>
@@ -622,7 +594,42 @@
     <string name="message_history">Хабар тарихы</string>
     <string name="global_history_title">Жаһандық тарих</string>
     <string name="message_history_title">Тарих: %1$s</string>
+    <string name="view_history">Тарихты көру</string>
+    <string name="history_empty">Ағымдағы сүзгілерге сәйкес хабарлар жоқ</string>
     <string name="search_messages_hint">Хабарларды іздеу…</string>
+    <string name="log_viewer_title">Журналдар</string>
+    <string name="log_viewer_share">Журналдарды бөлісу</string>
+    <string name="log_viewer_open">Журналдарды көру</string>
+    <string name="preference_log_viewer_empty">Журнал файлдары жоқ</string>
+    <string name="log_viewer_search_hint">Журналдарды іздеу</string>
+    <plurals name="log_viewer_selected_count">
+        <item quantity="one">%1$d таңдалды</item>
+        <item quantity="other">%1$d таңдалды</item>
+    </plurals>
+    <string name="log_viewer_copy_selection">Таңдалған журналдарды көшіру</string>
+    <string name="log_viewer_clear_selection">Таңдауды тазалау</string>
+    <string name="crash_report_title">Апат анықталды</string>
+    <string name="crash_report_message">Қолданба соңғы сеанс кезінде апатқа ұшырады.</string>
+    <string name="crash_report_thread">Ағын: %1$s</string>
+    <string name="crash_report_copy">Көшіру</string>
+    <string name="crash_report_send">Чат есебі</string>
+    <string name="crash_report_send_description">#flex3rs арнасына қосылып, жіберу үшін апат жиынтығын дайындайды</string>
+    <string name="crash_report_email">Электрондық пошта есебі</string>
+    <string name="crash_report_email_description">Толық апат есебін электрондық пошта арқылы жіберу</string>
+    <string name="crash_email_confirm_title">Апат есебін электрондық пошта арқылы жіберу</string>
+    <string name="crash_email_confirm_message">Келесі деректер есепке қосылады:</string>
+    <string name="crash_email_confirm_stacktrace">Стек ізі</string>
+    <string name="crash_email_confirm_include_logs">Ағымдағы журнал файлын қосу</string>
+    <string name="preference_crash_viewer_title">Апат есептері</string>
+    <string name="preference_crash_viewer_summary">Соңғы апат есептерін көру</string>
+    <string name="preference_crash_viewer_empty">Апат есептері табылмады</string>
+    <string name="crash_viewer_title">Апат есебі</string>
+    <string name="crash_viewer_share">Апат есебін бөлісу</string>
+    <string name="crash_viewer_delete">Жою</string>
+    <string name="crash_viewer_clear_all">Барлығын тазалау</string>
+    <string name="crash_viewer_delete_confirm">Бұл апат есебін жою керек пе?</string>
+    <string name="crash_viewer_clear_all_confirm">Барлық апат есептерін жою керек пе?</string>
+    <string name="scroll_to_bottom">Төменге айналдыру</string>
     <string name="search_filter_by_username">Пайдаланушы аты бойынша сүзу</string>
     <string name="search_filter_has_link">Сілтемелері бар хабарлар</string>
     <string name="search_filter_has_emote">Эмоциялары бар хабарлар</string>
@@ -666,10 +673,6 @@
     <plurals name="viewers_and_uptime">
         <item quantity="one">Жанды вит %1$d қарау құралы үшін %2$s</item>
         <item quantity="other">Жанды вит %1$d қарау құралы үшін %2$s</item>
-    </plurals>
-    <plurals name="months">
-        <item quantity="one">%d ай</item>
-        <item quantity="other">%d ай</item>
     </plurals>
     <string name="open_source_licenses">Ашық бастапқы код лицензиялары</string>
     <plurals name="viewers_and_uptime_with_cateogry" comment="Live with 1 viewer in Just Chatting for 1h 1m&#13;&#10;Live with 10 viewers in Just Chatting for 1h 1m">
@@ -723,26 +726,6 @@
     <string name="tour_got_it">Түсіндім</string>
     <string name="tour_skip">Турды өткізу</string>
     <string name="tour_add_more_channels_hint">Мұнда қосымша арналар қосуға болады</string>
-
-    <!-- Developer Settings -->
-    <string name="preference_developer_category_general">Жалпы</string>
-    <string name="preference_developer_category_auth">Аутентификация</string>
-    <string name="preference_eventsub_title">Twitch EventSub қосу</string>
-    <string name="preference_eventsub_summary">Ескірген PubSub орнына нақты уақыттағы оқиғалар үшін EventSub пайдаланады</string>
-    <string name="preference_eventsub_debug_title">EventSub жөндеу шығысын қосу</string>
-    <string name="preference_eventsub_debug_summary">EventSubқа қатысты жөндеу ақпаратын жүйелік хабарлар ретінде көрсетеді</string>
-    <string name="preference_revoke_token_title">Токенді қайтарып алу және қайта іске қосу</string>
-    <string name="preference_revoke_token_summary">Ағымдағы токенді жарамсыз етіп, қолданбаны қайта іске қосады</string>
-    <string name="system_message_send_not_logged_in">Жүйеге кірілмеген</string>
-    <string name="system_message_send_channel_not_resolved">%1$s үшін арна ID анықталмады</string>
-    <string name="system_message_send_not_delivered">Хабарлама жіберілмеді</string>
-    <string name="system_message_send_dropped">Хабарлама тасталды: %1$s (%2$s)</string>
-    <string name="system_message_send_missing_scopes">user:write:chat рұқсаты жоқ, қайта кіріңіз</string>
-    <string name="system_message_send_not_authorized">Бұл арнада хабарлама жіберуге рұқсат жоқ</string>
-    <string name="system_message_send_message_too_large">Хабарлама тым үлкен</string>
-    <string name="system_message_send_rate_limited">Жылдамдық шектелді, біраз уақыттан кейін қайталаңыз</string>
-    <string name="system_message_send_failed">Жіберу сәтсіз: %1$s</string>
-
     <!-- Command responses -->
     <string name="cmd_error_not_logged_in">%1$s пәрменін пайдалану үшін жүйеге кіруіңіз керек</string>
     <string name="cmd_error_no_user_matching">Бұл пайдаланушы атына сәйкес пайдаланушы табылмады.</string>
@@ -861,41 +844,4 @@
     <string name="cmd_error_message_too_large">Хабарламаңыз тым ұзын.</string>
     <string name="cmd_error_chat_rate_limited">Жылдамдығыңыз шектелді. Біраз уақыттан кейін қайталаңыз.</string>
     <string name="cmd_error_target_default">Мақсатты пайдаланушы</string>
-    <string name="preference_log_viewer_title">Журнал көрсеткіш</string>
-    <string name="preference_log_viewer_summary">Қолданба журналдарын көру</string>
-    <string name="log_viewer_title">Журналдар</string>
-    <string name="log_viewer_share">Журналдарды бөлісу</string>
-    <string name="log_viewer_open">Журналдарды көру</string>
-    <string name="preference_log_viewer_empty">Журнал файлдары жоқ</string>
-    <string name="log_viewer_search_hint">Журналдарды іздеу</string>
-    <plurals name="log_viewer_selected_count">
-        <item quantity="one">%1$d таңдалды</item>
-        <item quantity="other">%1$d таңдалды</item>
-    </plurals>
-    <string name="log_viewer_copy_selection">Таңдалған журналдарды көшіру</string>
-    <string name="log_viewer_clear_selection">Таңдауды тазалау</string>
-    <string name="crash_report_title">Апат анықталды</string>
-    <string name="crash_report_message">Қолданба соңғы сеанс кезінде апатқа ұшырады.</string>
-    <string name="crash_report_thread">Ағын: %1$s</string>
-    <string name="crash_report_copy">Көшіру</string>
-    <string name="crash_report_send">Чат есебі</string>
-    <string name="crash_report_send_description">#flex3rs арнасына қосылып, жіберу үшін апат жиынтығын дайындайды</string>
-    <string name="crash_report_email">Электрондық пошта есебі</string>
-    <string name="crash_report_email_description">Толық апат есебін электрондық пошта арқылы жіберу</string>
-    <string name="crash_email_confirm_title">Апат есебін электрондық пошта арқылы жіберу</string>
-    <string name="crash_email_confirm_message">Келесі деректер есепке қосылады:</string>
-    <string name="crash_email_confirm_stacktrace">Стек ізі</string>
-    <string name="crash_email_confirm_include_logs">Ағымдағы журнал файлын қосу</string>
-    <string name="preference_crash_viewer_title">Апат есептері</string>
-    <string name="preference_crash_viewer_summary">Соңғы апат есептерін көру</string>
-    <string name="preference_crash_viewer_empty">Апат есептері табылмады</string>
-    <string name="crash_viewer_title">Апат есебі</string>
-    <string name="crash_viewer_share">Апат есебін бөлісу</string>
-    <string name="crash_viewer_delete">Жою</string>
-    <string name="crash_viewer_delete_confirm">Бұл апат есебін жою керек пе?</string>
-    <string name="crash_viewer_clear_all">Барлығын тазалау</string>
-    <string name="crash_viewer_clear_all_confirm">Барлық апат есептерін жою керек пе?</string>
-    <string name="scroll_to_bottom">Төменге айналдыру</string>
-    <string name="view_history">Тарихты көру</string>
-    <string name="history_empty">Ағымдағы сүзгілерге сәйкес хабарлар жоқ</string>
 </resources>
