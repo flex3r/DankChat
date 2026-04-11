@@ -24,8 +24,10 @@
     <string name="remove_channel">Odebrat kanál</string>
     <string name="channel_blocked_message">Kanál byl zablokován</string>
     <string name="no_channels_added">Žádné kanály nebyly přidány</string>
+    <string name="no_channels_added_body">Přidejte kanál a začněte chatovat</string>
     <string name="confirm_logout_title">Potvrdit odhlášení</string>
     <string name="confirm_logout_message">Jste si jistí, že se chcete odhlásit?</string>
+    <string name="confirm_logout_question">Odhlásit se?</string>
     <string name="confirm_logout_positive_button">Odhlásit se</string>
     <string name="upload_media">Nahrát média</string>
     <string name="take_picture">Pořídit obrázek</string>
@@ -43,12 +45,14 @@
     <string name="notification_title">FeelsDankMan</string>
     <string name="notification_message">DankChat běží na pozadí</string>
     <string name="emote_menu_hint">Otevřít nabídku emotikonů</string>
+    <string name="no_recent_emotes">Žádné nedávné emotikony</string>
     <string name="login_title">Přihlásit se na Twitch.tv</string>
     <string name="hint_connected">Začít chatovat</string>
     <string name="hint_disconnected">Odpojeno</string>
     <string name="hint_not_logged_int">Nejste přihlášen</string>
     <string name="hint_replying">Odpovědět</string>
-    <string name="hint_announcing">Send announcement</string>    <string name="notification_new_mentions">Máte nové zmínky</string>
+    <string name="hint_announcing">Send announcement</string>
+    <string name="notification_new_mentions">Máte nové zmínky</string>
     <string name="notification_mention">%1$s vás právě zmínil v #%2$s</string>
     <string name="notification_notify_mention">Byli jste zmíněni v #%1$s</string>
     <string name="snackbar_login">Přihlašování jako %1$s</string>
@@ -77,12 +81,12 @@
     <string name="data_loading_step_cheermotes">Cheermoty</string>
     <string name="data_loading_step_recent_messages">Nedávné zprávy</string>
     <string name="data_loading_step_with_channels">%1$s (%2$s)</string>
-
     <string name="highlight_header_first_time_chat">První zpráva</string>
     <string name="highlight_header_elevated_chat">Zvýrazněná zpráva</string>
     <string name="highlight_header_gigantified_emote">Obří emote</string>
     <string name="highlight_header_animated_message">Animovaná zpráva</string>
-    <string name="highlight_header_reward_no_cost">Uplatněno %1$s</string>    <plurals name="duration_seconds">
+    <string name="highlight_header_reward_no_cost">Uplatněno %1$s</string>
+    <plurals name="duration_seconds">
         <item quantity="one">%1$d sekundu</item>
         <item quantity="few">%1$d sekundy</item>
         <item quantity="many">%1$d sekund</item>
@@ -118,6 +122,7 @@
     <string name="add_channel_hint">Název kanálu</string>
     <string name="add_channel_already_added">Kanál je již přidán</string>
     <string name="emote_menu_tab_recent">Nedávné</string>
+    <string name="backspace">Smazat</string>
     <string name="emote_menu_tab_subs">Předplatitelské</string>
     <string name="emote_menu_tab_channel">Kanál</string>
     <string name="emote_menu_tab_global">Globální</string>
@@ -140,6 +145,112 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s přidal 7TV emotikon %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s přejmenoval 7TV emotikon %2$s na %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s odstranil 7TV emotikon %2$s.</string>
+    <!-- Send errors -->
+    <string name="system_message_send_not_logged_in">Nepřihlášen</string>
+    <string name="system_message_send_channel_not_resolved">Nepodařilo se zjistit ID kanálu pro %1$s</string>
+    <string name="system_message_send_not_delivered">Zpráva nebyla odeslána</string>
+    <string name="system_message_send_dropped">Zpráva zahozena: %1$s (%2$s)</string>
+    <string name="system_message_send_missing_scopes">Chybí oprávnění user:write:chat, prosím přihlaste se znovu</string>
+    <string name="system_message_send_not_authorized">Nemáte oprávnění posílat zprávy v tomto kanálu</string>
+    <string name="system_message_send_message_too_large">Zpráva je příliš velká</string>
+    <string name="system_message_send_rate_limited">Příliš mnoho požadavků, zkuste to za chvíli znovu</string>
+    <string name="system_message_send_failed">Odeslání se nezdařilo: %1$s</string>
+    <!-- AutoMod -->
+    <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Zpráva zadržena z důvodu: %1$s. Povolení ji zveřejní v chatu.</string>
+    <string name="automod_allow">Povolit</string>
+    <string name="automod_deny">Zamítnout</string>
+    <string name="automod_status_approved">Schváleno</string>
+    <string name="automod_status_denied">Zamítnuto</string>
+    <string name="automod_ban_user">Zabanovat uživatele</string>
+    <string name="automod_status_expired">Vypršelo</string>
+    <string name="automod_user_held">Hej! Tvoje zpráva je kontrolována moderátory a zatím nebyla odeslána.</string>
+    <string name="automod_user_accepted">Moderátoři přijali tvoji zprávu.</string>
+    <string name="automod_user_denied">Moderátoři zamítli tvoji zprávu.</string>
+    <string name="automod_reason_category" comment="aggressive (level 2)">%1$s (úroveň %2$d)</string>
+    <plurals name="automod_reason_blocked_terms">
+        <item quantity="one">odpovídá %1$d blokovanému výrazu %2$s</item>
+        <item quantity="few">odpovídá %1$d blokovaným výrazům %2$s</item>
+        <item quantity="many">odpovídá %1$d blokovaným výrazům %2$s</item>
+        <item quantity="other">odpovídá %1$d blokovaným výrazům %2$s</item>
+    </plurals>
+    <string name="automod_error_already_processed" comment="Failed to allow AutoMod message - message has already been processed.">Nepodařilo se %1$s zprávu AutoMod - zpráva již byla zpracována.</string>
+    <string name="automod_error_not_authenticated" comment="Failed to allow AutoMod message - you need to re-authenticate.">Nepodařilo se %1$s zprávu AutoMod - je třeba se znovu přihlásit.</string>
+    <string name="automod_error_not_authorized" comment="Failed to allow AutoMod message - you don\'t have permission to perform that action.">Nepodařilo se %1$s zprávu AutoMod - nemáte oprávnění k provedení této akce.</string>
+    <string name="automod_error_not_found" comment="Failed to allow AutoMod message - target message not found.">Nepodařilo se %1$s zprávu AutoMod - cílová zpráva nebyla nalezena.</string>
+    <string name="automod_error_unknown" comment="Failed to allow AutoMod message - an unknown error occurred.">Nepodařilo se %1$s zprávu AutoMod - došlo k neznámé chybě.</string>
+    <string name="automod_moderation_added_blocked_term" comment="flex3rs added &quot;test&quot; as a blocked term on AutoMod.">%1$s přidal/a %2$s jako blokovaný výraz na AutoMod.</string>
+    <string name="automod_moderation_added_permitted_term" comment="flex3rs added &quot;test&quot; as a permitted term on AutoMod.">%1$s přidal/a %2$s jako povolený výraz na AutoMod.</string>
+    <string name="automod_moderation_removed_blocked_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s odebral/a %2$s jako blokovaný výraz z AutoMod.</string>
+    <string name="automod_moderation_removed_permitted_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s odebral/a %2$s jako povolený výraz z AutoMod.</string>
+    <!-- Moderation messages — complete sentence variants for proper localization -->
+    <!-- Timeout (self, IRC — no creator info) -->
+    <string name="mod_timeout_self_irc" comment="You were timed out for 10m">Byl/a jste ztlumen/a na %1$s</string>
+    <!-- Timeout (self, EventSub — has creator) -->
+    <string name="mod_timeout_self" comment="You were timed out for 10m by flex3rs">Byl/a jste ztlumen/a na %1$s uživatelem %2$s</string>
+    <string name="mod_timeout_self_reason" comment="You were timed out for 10m by flex3rs: reason">Byl/a jste ztlumen/a na %1$s uživatelem %2$s: %3$s</string>
+    <!-- Timeout (other, by creator) -->
+    <string name="mod_timeout_by_creator" comment="flex3rs timed out user123 for 10m">%1$s ztlumil/a %2$s na %3$s</string>
+    <string name="mod_timeout_by_creator_reason" comment="flex3rs timed out user123 for 10m: reason">%1$s ztlumil/a %2$s na %3$s: %4$s</string>
+    <!-- Timeout (other, IRC — no creator) -->
+    <string name="mod_timeout_no_creator" comment="user123 has been timed out for 10m">%1$s byl/a ztlumen/a na %2$s</string>
+    <!-- Ban (self) -->
+    <string name="mod_ban_self_irc" comment="You were banned">Byl/a jste zabanován/a</string>
+    <string name="mod_ban_self" comment="You were banned by flex3rs">Byl/a jste zabanován/a uživatelem %1$s</string>
+    <string name="mod_ban_self_reason" comment="You were banned by flex3rs: reason">Byl/a jste zabanován/a uživatelem %1$s: %2$s</string>
+    <!-- Ban (other) -->
+    <string name="mod_ban_by_creator" comment="flex3rs banned user123">%1$s zabanoval/a %2$s</string>
+    <string name="mod_ban_by_creator_reason" comment="flex3rs banned user123: reason">%1$s zabanoval/a %2$s: %3$s</string>
+    <string name="mod_ban_no_creator" comment="user123 has been permanently banned">%1$s byl/a permanentně zabanován/a</string>
+    <!-- Simple actions -->
+    <string name="mod_untimeout" comment="flex3rs untimedout user123">%1$s zrušil/a ztlumení %2$s</string>
+    <string name="mod_unban" comment="flex3rs unbanned user123">%1$s odbanoval/a %2$s</string>
+    <string name="mod_modded" comment="flex3rs modded user123">%1$s jmenoval/a moderátorem %2$s</string>
+    <string name="mod_unmodded" comment="flex3rs unmodded user123">%1$s odebral/a moderátora %2$s</string>
+    <string name="mod_vip_added" comment="flex3rs has added user123 as a VIP of this channel">%1$s přidal/a %2$s jako VIP tohoto kanálu</string>
+    <string name="mod_vip_removed" comment="flex3rs has removed user123 as a VIP of this channel">%1$s odebral/a %2$s jako VIP tohoto kanálu</string>
+    <string name="mod_warn" comment="flex3rs has warned user123">%1$s varoval/a %2$s</string>
+    <string name="mod_warn_reason" comment="flex3rs has warned user123: reason1, reason2">%1$s varoval/a %2$s: %3$s</string>
+    <string name="mod_raid" comment="flex3rs initiated a raid to user123">%1$s zahájil/a raid na %2$s</string>
+    <string name="mod_unraid" comment="flex3rs canceled the raid to user123">%1$s zrušil/a raid na %2$s</string>
+    <!-- Delete -->
+    <string name="mod_delete_by_creator" comment="flex3rs deleted message from user123">%1$s smazal/a zprávu od %2$s</string>
+    <string name="mod_delete_by_creator_message" comment="flex3rs deleted message from user123 saying: hello">%1$s smazal/a zprávu od %2$s s textem: %3$s</string>
+    <string name="mod_delete_no_creator" comment="A message from user123 was deleted">Zpráva od %1$s byla smazána</string>
+    <string name="mod_delete_no_creator_message" comment="A message from user123 was deleted saying: hello">Zpráva od %1$s byla smazána s textem: %2$s</string>
+    <!-- Clear -->
+    <string name="mod_clear_by_creator" comment="flex3rs cleared the chat">%1$s vyčistil/a chat</string>
+    <string name="mod_clear_no_creator">Chat byl vyčištěn moderátorem</string>
+    <!-- Room state -->
+    <string name="mod_emote_only_on" comment="flex3rs turned on emote-only mode">%1$s zapnul/a režim pouze emotikony</string>
+    <string name="mod_emote_only_off" comment="flex3rs turned off emote-only mode">%1$s vypnul/a režim pouze emotikony</string>
+    <string name="mod_followers_on" comment="flex3rs turned on followers-only mode">%1$s zapnul/a režim pouze pro sledující</string>
+    <string name="mod_followers_on_duration" comment="flex3rs turned on followers-only mode (1 week)">%1$s zapnul/a režim pouze pro sledující (%2$s)</string>
+    <string name="mod_followers_off" comment="flex3rs turned off followers-only mode">%1$s vypnul/a režim pouze pro sledující</string>
+    <string name="mod_unique_chat_on" comment="flex3rs turned on unique-chat mode">%1$s zapnul/a režim unikátního chatu</string>
+    <string name="mod_unique_chat_off" comment="flex3rs turned off unique-chat mode">%1$s vypnul/a režim unikátního chatu</string>
+    <string name="mod_slow_on" comment="flex3rs turned on slow mode">%1$s zapnul/a pomalý režim</string>
+    <string name="mod_slow_on_duration" comment="flex3rs turned on slow mode (2 minutes 5 seconds)">%1$s zapnul/a pomalý režim (%2$s)</string>
+    <string name="mod_slow_off" comment="flex3rs turned off slow mode">%1$s vypnul/a pomalý režim</string>
+    <string name="mod_subscribers_on" comment="flex3rs turned on subscribers-only mode">%1$s zapnul/a režim pouze pro odběratele</string>
+    <string name="mod_subscribers_off" comment="flex3rs turned off subscribers-only mode">%1$s vypnul/a režim pouze pro odběratele</string>
+    <!-- Shared chat -->
+    <string name="mod_shared_timeout" comment="flex3rs timed out user123 for 10m in channel456">%1$s ztlumil/a %2$s na %3$s v %4$s</string>
+    <string name="mod_shared_timeout_reason" comment="flex3rs timed out user123 for 10m in channel456: reason">%1$s ztlumil/a %2$s na %3$s v %4$s: %5$s</string>
+    <string name="mod_shared_untimeout" comment="flex3rs untimedout user123 in channel456">%1$s zrušil/a ztlumení %2$s v %3$s</string>
+    <string name="mod_shared_ban" comment="flex3rs banned user123 in channel456">%1$s zabanoval/a %2$s v %3$s</string>
+    <string name="mod_shared_ban_reason" comment="flex3rs banned user123 in channel456: reason">%1$s zabanoval/a %2$s v %3$s: %4$s</string>
+    <string name="mod_shared_unban" comment="flex3rs unbanned user123 in channel456">%1$s odbanoval/a %2$s v %3$s</string>
+    <string name="mod_shared_delete" comment="flex3rs deleted message from user123 in channel456">%1$s smazal/a zprávu od %2$s v %3$s</string>
+    <string name="mod_shared_delete_message" comment="flex3rs deleted message from user123 in channel456 saying: hello">%1$s smazal/a zprávu od %2$s v %3$s s textem: %4$s</string>
+    <!-- Helper: message + count concatenation -->
+    <string name="mod_message_with_count" comment="flex3rs timed out user123 for 10m. (2 times)">%1$s%2$s</string>
+    <!-- Parenthetical count (appended after complete sentences, safe for all languages) -->
+    <plurals name="mod_count_suffix" comment=" (2 times)">
+        <item quantity="one">\u0020(%1$d krát)</item>
+        <item quantity="few">\u0020(%1$d krát)</item>
+        <item quantity="many">\u0020(%1$d krát)</item>
+        <item quantity="other">\u0020(%1$d krát)</item>
+    </plurals>
     <string name="timed_out_message">&lt; Zpráva smazána &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Přidat položku</string>
@@ -162,9 +273,12 @@ Služba dočasně ukládá zprávy pro kanály, které vy (a další) navštív�
     <string name="confirm_channel_removal_title">Potvrdit odebrání kanálu</string>
     <string name="confirm_channel_removal_message">Jste si jistí, že chcete tento kanál odebrat?</string>
     <string name="confirm_channel_removal_message_named">Jste si jistí, že chcete smazat kanál \"%1$s\"?</string>
+    <string name="confirm_channel_removal_question">Odebrat tento kanál?</string>
+    <string name="confirm_channel_removal_question_named">Odebrat kanál \"%1$s\"?</string>
     <string name="confirm_channel_removal_positive_button">Odebrat</string>
     <string name="confirm_channel_block_title">Potvrdit zablokování kanálu</string>
     <string name="confirm_channel_block_message_named">Jste si jistí, že si chcete zablokovat kanál \"%1$s\"?</string>
+    <string name="confirm_channel_block_question_named">Zablokovat kanál \"%1$s\"?</string>
     <string name="user_popup_block">Zablokovat</string>
     <string name="user_popup_unblock">Odblokovat</string>
     <string name="user_popup_mention">Zmínit uživatele</string>
@@ -189,6 +303,64 @@ Služba dočasně ukládá zprávy pro kanály, které vy (a další) navštív�
 Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploader</string>
     <string name="toggle_fullscreen">Zapnou plnou obrazovku</string>
     <string name="toggle_stream">Zapnout stream</string>
+    <string name="menu_show_stream">Zobrazit stream</string>
+    <string name="menu_hide_stream">Skrýt stream</string>
+    <string name="menu_audio_only">Pouze zvuk</string>
+    <string name="menu_exit_audio_only">Ukončit režim zvuku</string>
+    <string name="menu_fullscreen">Celá obrazovka</string>
+    <string name="menu_exit_fullscreen">Ukončit celou obrazovku</string>
+    <string name="menu_hide_input">Skrýt vstup</string>
+    <string name="menu_show_input">Zobrazit vstup</string>
+    <string name="preference_swipe_navigation_title">Navigace kanálů přejetím</string>
+    <string name="preference_swipe_navigation_summary">Přepínejte kanály přejetím po chatu</string>
+    <string name="menu_mod_actions">Moderování kanálu</string>
+    <plurals name="input_actions_max">
+        <item quantity="one">Maximálně %1$d akce</item>
+        <item quantity="few">Maximálně %1$d akce</item>
+        <item quantity="many">Maximálně %1$d akcí</item>
+        <item quantity="other">Maximálně %1$d akcí</item>
+    </plurals>
+    <string name="input_action_search">Hledat zprávy</string>
+    <string name="input_action_last_message">Poslední zpráva</string>
+    <string name="input_action_stream">Přepnout stream</string>
+    <string name="input_action_mod_actions">Moderování kanálu</string>
+    <string name="input_action_fullscreen">Celá obrazovka</string>
+    <string name="input_action_hide_input">Skrýt vstup</string>
+    <string name="input_action_debug">Ladění</string>
+    <string name="input_action_configure">Konfigurovat akce</string>
+    <string name="room_state_emote_only">Pouze emotikony</string>
+    <string name="room_state_subscriber_only">Pouze odběratelé</string>
+    <string name="room_state_slow_mode">Pomalý režim</string>
+    <string name="room_state_slow_mode_duration">Pomalý režim (%1$s)</string>
+    <string name="room_state_unique_chat">Unikátní chat (R9K)</string>
+    <string name="room_state_follower_only">Pouze sledující</string>
+    <string name="room_state_follower_only_duration">Pouze sledující (%1$s)</string>
+    <string name="room_state_preset_custom">Vlastní</string>
+    <string name="room_state_follower_any">Jakýkoliv</string>
+    <string name="room_state_duration_seconds">%1$ds</string>
+    <string name="room_state_duration_minutes">%1$dm</string>
+    <string name="room_state_duration_hours">%1$dh</string>
+    <string name="room_state_duration_days">%1$dd</string>
+    <string name="room_state_duration_weeks">%1$dw</string>
+    <string name="room_state_duration_months">%1$dmo</string>
+    <string name="mod_actions_room_state_section">Room state</string>
+    <string name="mod_actions_section">Mod actions</string>
+    <string name="mod_actions_broadcaster_section">Broadcaster</string>
+    <string name="mod_actions_shield_mode">Shield mode</string>
+    <string name="mod_actions_clear_chat">Clear chat</string>
+    <string name="mod_actions_confirm_clear_chat">Clear all messages in this channel?</string>
+    <string name="mod_actions_confirm_shield_mode_title">Aktivovat režim štítu?</string>
+    <string name="mod_actions_confirm_shield_mode_body">Toto použije předkonfigurovaná bezpečnostní nastavení kanálu, která mohou zahrnovat omezení chatu, nastavení AutoModu a požadavky na ověření.</string>
+    <string name="mod_actions_shield_mode_activate">Aktivovat</string>
+    <string name="mod_actions_announce">Announce</string>
+    <string name="mod_actions_announce_header">Announcement</string>
+    <string name="mod_actions_shoutout">Shoutout</string>
+    <string name="mod_actions_commercial">Commercial</string>
+    <string name="mod_actions_raid">Raid</string>
+    <string name="mod_actions_cancel_raid">Cancel raid</string>
+    <string name="mod_actions_stream_marker">Stream marker</string>
+    <string name="mod_actions_username_hint">Username</string>
+    <string name="mod_actions_channel_hint">Channel</string>
     <string name="account">Účet</string>
     <string name="relogin">Znovu se přihlásit</string>
     <string name="logout">Odhlásit se</string>
@@ -199,12 +371,15 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="change_roomstate">Režimy místnosti</string>
     <string name="confirm_user_ban_title">Potvrdit ban</string>
     <string name="confirm_user_ban_message">Jste si jistý, že chcete tohoto uživatele zabanovat?</string>
+    <string name="confirm_user_ban_question">Zabanovat tohoto uživatele?</string>
     <string name="confirm_user_ban_positive_button">Zabanovat</string>
     <string name="confirm_user_timeout_title">Potvrdit timeout</string>
     <string name="confirm_user_timeout_positive_button">Dočasný zákaz</string>
     <string name="confirm_user_delete_title">Potvrdit smazání zprávy</string>
     <string name="confirm_user_delete_message">Jste si jistí, že chcete tuto zprávu smazat?</string>
+    <string name="confirm_user_delete_question">Smazat tuto zprávu?</string>
     <string name="confirm_user_delete_positive_button">Smazat</string>
+    <string name="confirm_clear_chat_question">Vymazat chat?</string>
     <string name="confirm_user_roomstate_title">Změnit režim místnosti</string>
     <string name="roomstate_emote">Pouze emotikony</string>
     <string name="roomstate_subs">Pouze pro předplatitele</string>
@@ -260,6 +435,9 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_messages_header">Zprávy</string>
     <string name="preference_users_header">Uživatelé</string>
     <string name="preference_emotes_badges_header">Emotikony a odznaky</string>
+    <string name="preference_suggestion_mode_title">Režim návrhů</string>
+    <string name="preference_suggestion_mode_automatic">Navrhovat shody při psaní</string>
+    <string name="preference_suggestion_mode_prefix_only">Navrhovat pouze po spouštěcím znaku</string>
     <string name="preference_about_header">O aplikaci</string>
     <string name="preference_appearance_header">Vzhled</string>
     <string name="preference_about_summary">DankChat %1$s je vytvořen uživatelem @flex3rs a přispěvateli</string>
@@ -318,16 +496,13 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_suggestions_title">Návrhy</string>
     <string name="preference_suggestions_summary">Zvolte, které návrhy zobrazovat při psaní</string>
     <string name="preference_suggestions_emotes">Emotikony</string>
-    <string name="preference_suggestions_users">Uživatelé</string>
-    <string name="preference_suggestions_commands">Příkazy Twitche</string>
-    <string name="preference_suggestions_supibot">Příkazy Supibota</string>
     <string name="preference_suggestions_emotes_desc">Aktivovat pomocí :</string>
+    <string name="preference_suggestions_users">Uživatelé</string>
     <string name="preference_suggestions_users_desc">Aktivovat pomocí @</string>
+    <string name="preference_suggestions_commands">Příkazy Twitche</string>
     <string name="preference_suggestions_commands_desc">Aktivovat pomocí /</string>
+    <string name="preference_suggestions_supibot">Příkazy Supibota</string>
     <string name="preference_suggestions_supibot_desc">Aktivovat pomocí $</string>
-    <string name="preference_suggestion_mode_title">Režim návrhů</string>
-    <string name="preference_suggestion_mode_automatic">Navrhovat shody při psaní</string>
-    <string name="preference_suggestion_mode_prefix_only">Navrhovat pouze po spouštěcím znaku</string>
     <string name="preference_load_message_history_title">Při zapnutí načíst historii zpráv</string>
     <string name="preference_load_messages_on_reconnect_title">Načíst historii zpráv po opětovném připojení</string>
     <string name="preference_load_messages_on_reconnect_summary">Pokusí se o načtení zmeškaných zpráv, které nebyly načteny při výpadcích spojení</string>
@@ -336,6 +511,8 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_message_history_dashboard_summary">Zjistěte více o službě a deaktivujte historii zpráv pro svůj vlastní kanál</string>
     <string name="preference_channel_data_header">Data kanálu</string>
     <string name="preference_developer_header">Nastavení vývojáře</string>
+    <string name="preference_log_viewer_title">Prohlížeč logů</string>
+    <string name="preference_log_viewer_summary">Zobrazit logy aplikace</string>
     <string name="preference_debug_mode_title">Režim ladění</string>
     <string name="preference_debug_mode_summary">Zobrazit akci ladící analytiky ve vstupním panelu a sbírat hlášení o pádech lokálně</string>
     <string name="preference_timestamp_format_title">Formát časových razítek</string>
@@ -391,6 +568,14 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_unlisted_emotes_title">Povolit neuvedené emotikony</string>
     <string name="preference_unlisted_emotes_summary">Zakáže filtrování neschválených nebo neuvedených emotikonů</string>
     <string name="preference_rm_host_title">Vlastní hostitel pro nedávné zprávy</string>
+    <string name="preference_developer_category_general">Obecné</string>
+    <string name="preference_developer_category_auth">Ověření</string>
+    <string name="preference_eventsub_title">Povolit Twitch EventSub</string>
+    <string name="preference_eventsub_summary">Používá EventSub pro různé události v reálném čase místo zastaralého PubSub</string>
+    <string name="preference_eventsub_debug_title">Povolit ladící výstup EventSub</string>
+    <string name="preference_eventsub_debug_summary">Zobrazuje ladící výstup týkající se EventSub jako systémové zprávy</string>
+    <string name="preference_revoke_token_title">Zrušit token a restartovat</string>
+    <string name="preference_revoke_token_summary">Zneplatní aktuální token a restartuje aplikaci</string>
     <string name="preference_fetch_streams_title">Načítat informace o streamu</string>
     <string name="preference_fetch_streams_summary">Pravidelně načítá informace o streamech přidaných kanálů. Nutné pro spuštění vloženého streamu.</string>
     <string name="preference_auto_disable_input_title">Zakázat vstupní pole, pokud není navázáno připojení k chatu</string>
@@ -446,10 +631,12 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="tab_users">Uživatelé</string>
     <string name="tab_blacklisted_users">Blokovaní uživatelé</string>
     <string name="tab_twitch">Twitch</string>
+    <string name="tab_badges">Odznaky</string>
     <string name="undo">Vrátit zpět</string>
     <string name="item_removed">Položka smazána</string>
     <string name="unblocked_user">Odblokován uživatel %1$s</string>
     <string name="unblocked_user_failed">Nepodařilo se odblokovat uživatele %1$s</string>
+    <string name="badge">Odznak</string>
     <string name="blocked_user_failed">Nepodařilo se zablokovat uživatele %1$s</string>
     <string name="highlights_entry_username">Tvá přezdívka</string>
     <string name="highlights_ignores_entry_subscriptions">Předplatné a Události</string>
@@ -463,6 +650,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="highlights_messages_title">Vytvoří oznámení a zvýrazní zprávy založené na určitých vzorech.</string>
     <string name="highlights_users_title">Vytvoří oznámení a zvýrazní zprávy od určitých uživatelů.</string>
     <string name="highlights_blacklisted_users_title">Vypnout oznámení a zvýraznění od některých uživatelů (např. botů).</string>
+    <string name="highlights_badges_title">Vytvářejte upozornění a zvýrazňujte zprávy uživatelů na základě odznáčků.</string>
     <string name="ignores_messages_title">Ignorovat zprávy na základě určitých vzorů</string>
     <string name="ignores_users_title">Ignorovat zprávy od určitých uživatelů</string>
     <string name="ignores_twitch_title">Spravovat zablokované Twitch uživatele</string>
@@ -489,7 +677,44 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="message_history">Historie zpráv</string>
     <string name="global_history_title">Globální historie</string>
     <string name="message_history_title">Historie: %1$s</string>
+    <string name="view_history">Zobrazit historii</string>
+    <string name="history_empty">Žádné zprávy neodpovídají aktuálním filtrům</string>
     <string name="search_messages_hint">Hledat zprávy…</string>
+    <string name="log_viewer_title">Logy</string>
+    <string name="log_viewer_share">Sdílet logy</string>
+    <string name="log_viewer_open">Zobrazit logy</string>
+    <string name="preference_log_viewer_empty">Žádné soubory logů nejsou dostupné</string>
+    <string name="log_viewer_search_hint">Hledat v logách</string>
+    <plurals name="log_viewer_selected_count">
+        <item quantity="one">%1$d vybráno</item>
+        <item quantity="few">%1$d vybráno</item>
+        <item quantity="many">%1$d vybráno</item>
+        <item quantity="other">%1$d vybráno</item>
+    </plurals>
+    <string name="log_viewer_copy_selection">Kopírovat vybrané logy</string>
+    <string name="log_viewer_clear_selection">Zrušit výběr</string>
+    <string name="crash_report_title">Zjištěn pád</string>
+    <string name="crash_report_message">Aplikace spadla během poslední relace.</string>
+    <string name="crash_report_thread">Vlákno: %1$s</string>
+    <string name="crash_report_copy">Kopírovat</string>
+    <string name="crash_report_send">Hlášení přes chat</string>
+    <string name="crash_report_send_description">Připojí se k #flex3rs a připraví shrnutí pádu k odeslání</string>
+    <string name="crash_report_email">Hlášení e-mailem</string>
+    <string name="crash_report_email_description">Odeslat podrobné hlášení o pádu e-mailem</string>
+    <string name="crash_email_confirm_title">Odeslat hlášení o pádu e-mailem</string>
+    <string name="crash_email_confirm_message">Následující data budou zahrnuta v hlášení:</string>
+    <string name="crash_email_confirm_stacktrace">Stopa zásobníku</string>
+    <string name="crash_email_confirm_include_logs">Zahrnout aktuální soubor logů</string>
+    <string name="preference_crash_viewer_title">Hlášení o pádech</string>
+    <string name="preference_crash_viewer_summary">Zobrazit nedávná hlášení o pádech</string>
+    <string name="preference_crash_viewer_empty">Žádná hlášení o pádech nenalezena</string>
+    <string name="crash_viewer_title">Hlášení o pádu</string>
+    <string name="crash_viewer_share">Sdílet hlášení o pádu</string>
+    <string name="crash_viewer_delete">Smazat</string>
+    <string name="crash_viewer_clear_all">Vymazat vše</string>
+    <string name="crash_viewer_delete_confirm">Smazat toto hlášení o pádu?</string>
+    <string name="crash_viewer_clear_all_confirm">Smazat všechna hlášení o pádech?</string>
+    <string name="scroll_to_bottom">Posunout dolů</string>
     <string name="search_filter_by_username">Filtrovat podle uživatelského jména</string>
     <string name="search_filter_has_link">Zprávy obsahující odkazy</string>
     <string name="search_filter_has_emote">Zprávy obsahující emoty</string>
@@ -497,6 +722,12 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="search_filter_user">Uživatel</string>
     <string name="search_filter_badge">Odznak</string>
     <string name="reply_header">Odpověď uživateli @%1$s</string>
+    <string name="whisper_header">Šeptání s @%1$s</string>
+    <string name="hint_whispering">Odeslat šepot</string>
+    <string name="whisper_new">Nový šepot</string>
+    <string name="whisper_new_dialog_title">Odeslat šepot</string>
+    <string name="whisper_new_dialog_hint">Uživatelské jméno</string>
+    <string name="whisper_new_dialog_start">Odeslat</string>
     <string name="reply_thread_not_found">Vlákno odpovědí nebylo nalezeno</string>
     <string name="message_not_found">Zpráva nenalezena</string>
     <string name="emote_sheet_use">Použít emotikon</string>
@@ -537,18 +768,50 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
         <item quantity="other">%d měsíců</item>
     </plurals>
     <string name="open_source_licenses">Licence open source</string>
+    <plurals name="viewers_and_uptime_with_cateogry" comment="Live with 1 viewer in Just Chatting for 1h 1m&#13;&#10;Live with 10 viewers in Just Chatting for 1h 1m">
+        <item quantity="one">Živě s %1$d divákem v %2$s po dobu %3$s</item>
+        <item quantity="few">Živě s %1$d diváky v %2$s po dobu %3$s</item>
+        <item quantity="many">Živě s %1$d diváků v %2$s po dobu %3$s</item>
+        <item quantity="other">Živě s %1$d diváků v %2$s po dobu %3$s</item>
+    </plurals>
     <string name="preference_streaminfo_category_title">Zobrazit kategorii vysílání</string>
     <string name="preference_streaminfo_category_summary">Zobrazit také kategorii vysílání</string>
     <string name="toggle_input">Přepnout vstup</string>
+    <string name="badge_broadcaster">Vysílající</string>
+    <string name="badge_admin">Admin</string>
+    <string name="badge_staff">Staff</string>
+    <string name="badge_moderator">Moderátor</string>
+    <string name="badge_lead_moderator">Hlavní moderátor</string>
+    <string name="badge_verified">Ověřený</string>
+    <string name="badge_vip">VIP</string>
+    <string name="badge_founder">Zakladatel</string>
+    <string name="badge_subscriber">Odběratel</string>
+    <string name="pick_highlight_color_title">Vybrat vlastní barvu zvýraznění</string>
+    <string name="reset_default_highlight_color">Výchozí</string>
+    <string name="choose_highlight_color">Vybrat barvu</string>
     <string name="toggle_app_bar">Přepnout panel aplikace</string>
     <string name="error_with_message">Chyba: %s</string>
-    <string name="confirm_logout_question">Odhlásit se?</string>
-    <string name="confirm_channel_removal_question">Odebrat tento kanál?</string>
-    <string name="confirm_channel_removal_question_named">Odebrat kanál \"%1$s\"?</string>
-    <string name="confirm_channel_block_question_named">Zablokovat kanál \"%1$s\"?</string>
-    <string name="confirm_user_ban_question">Zabanovat tohoto uživatele?</string>
-    <string name="confirm_user_delete_question">Smazat tuto zprávu?</string>
-    <string name="confirm_clear_chat_question">Vymazat chat?</string>
+    <!-- Onboarding -->
+    <string name="onboarding_welcome_title">DankChat</string>
+    <string name="onboarding_welcome_body">Pojďme vše nastavit.</string>
+    <string name="onboarding_get_started">Začít</string>
+    <string name="onboarding_login_title">Přihlásit se přes Twitch</string>
+    <string name="onboarding_login_body">Přihlaste se pro odesílání zpráv, používání emotikonů, příjem šepotů a odemknutí všech funkcí.</string>
+    <string name="onboarding_login_disclaimer">Budete požádáni o udělení několika oprávnění pro Twitch najednou, abyste nemuseli znovu autorizovat při používání různých funkcí. DankChat provádí moderátorské akce a akce správy vysílání pouze tehdy, když o to sami požádáte.</string>
+    <string name="onboarding_login_button">Přihlásit se přes Twitch</string>
+    <string name="onboarding_login_success">Přihlášení úspěšné</string>
+    <string name="onboarding_skip">Přeskočit</string>
+    <string name="onboarding_continue">Pokračovat</string>
+    <string name="onboarding_history_title">Historie zpráv</string>
+    <string name="onboarding_history_body">DankChat načítá historické zprávy ze služby třetí strany při spuštění. Pro získání zpráv DankChat odesílá názvy otevřených kanálů této službě. Služba dočasně ukládá zprávy navštívených kanálů.\n\nToto můžete později změnit v nastavení nebo se dozvědět více na https://recent-messages.robotty.de/</string>
+    <string name="onboarding_history_enable">Povolit</string>
+    <string name="onboarding_history_disable">Zakázat</string>
+    <string name="onboarding_notifications_title">Oznámení</string>
+    <string name="onboarding_notifications_body">DankChat vás může upozornit, když vás někdo zmíní v chatu, zatímco aplikace běží na pozadí.</string>
+    <string name="onboarding_notifications_allow">Povolit oznámení</string>
+    <string name="onboarding_notifications_rationale">Bez oznámení se nedozvíte, když vás někdo zmíní v chatu, zatímco aplikace běží na pozadí.</string>
+    <string name="onboarding_notifications_open_settings">Otevřít nastavení oznámení</string>
+    <!-- Feature Tour -->
     <string name="tour_input_actions">Přizpůsobitelné akce pro rychlý přístup k vyhledávání, streamům a dalším</string>
     <string name="tour_overflow_menu">Klepněte sem pro další akce a konfiguraci panelu akcí</string>
     <string name="tour_configure_actions">Zde můžete přizpůsobit, které akce se zobrazí na panelu akcí</string>
@@ -558,210 +821,6 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="tour_got_it">Rozumím</string>
     <string name="tour_skip">Přeskočit prohlídku</string>
     <string name="tour_add_more_channels_hint">Zde můžete přidat další kanály</string>
-
-    <!-- AutoMod -->
-    <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Zpráva zadržena z důvodu: %1$s. Povolení ji zveřejní v chatu.</string>
-    <string name="automod_allow">Povolit</string>
-    <string name="automod_deny">Zamítnout</string>
-    <string name="automod_status_approved">Schváleno</string>
-    <string name="automod_status_denied">Zamítnuto</string>
-    <string name="automod_ban_user">Zabanovat uživatele</string>
-    <string name="automod_status_expired">Vypršelo</string>
-    <string name="automod_user_held">Hej! Tvoje zpráva je kontrolována moderátory a zatím nebyla odeslána.</string>
-    <string name="automod_user_accepted">Moderátoři přijali tvoji zprávu.</string>
-    <string name="automod_user_denied">Moderátoři zamítli tvoji zprávu.</string>
-    <string name="automod_reason_category" comment="aggressive (level 2)">%1$s (úroveň %2$d)</string>
-    <plurals name="automod_reason_blocked_terms">
-        <item quantity="one">odpovídá %1$d blokovanému výrazu %2$s</item>
-        <item quantity="few">odpovídá %1$d blokovaným výrazům %2$s</item>
-        <item quantity="many">odpovídá %1$d blokovaným výrazům %2$s</item>
-        <item quantity="other">odpovídá %1$d blokovaným výrazům %2$s</item>
-    </plurals>
-    <string name="automod_error_already_processed" comment="Failed to allow AutoMod message - message has already been processed.">Nepodařilo se %1$s zprávu AutoMod - zpráva již byla zpracována.</string>
-    <string name="automod_error_not_authenticated" comment="Failed to allow AutoMod message - you need to re-authenticate.">Nepodařilo se %1$s zprávu AutoMod - je třeba se znovu přihlásit.</string>
-    <string name="automod_error_not_authorized" comment="Failed to allow AutoMod message - you don\'t have permission to perform that action.">Nepodařilo se %1$s zprávu AutoMod - nemáte oprávnění k provedení této akce.</string>
-    <string name="automod_error_not_found" comment="Failed to allow AutoMod message - target message not found.">Nepodařilo se %1$s zprávu AutoMod - cílová zpráva nebyla nalezena.</string>
-    <string name="automod_error_unknown" comment="Failed to allow AutoMod message - an unknown error occurred.">Nepodařilo se %1$s zprávu AutoMod - došlo k neznámé chybě.</string>
-    <string name="automod_moderation_added_blocked_term" comment="flex3rs added &quot;test&quot; as a blocked term on AutoMod.">%1$s přidal/a %2$s jako blokovaný výraz na AutoMod.</string>
-    <string name="automod_moderation_added_permitted_term" comment="flex3rs added &quot;test&quot; as a permitted term on AutoMod.">%1$s přidal/a %2$s jako povolený výraz na AutoMod.</string>
-    <string name="automod_moderation_removed_blocked_term" comment="flex3rs removed &quot;test&quot; as a blocked term on AutoMod.">%1$s odebral/a %2$s jako blokovaný výraz z AutoMod.</string>
-    <string name="automod_moderation_removed_permitted_term" comment="flex3rs removed &quot;test&quot; as a permitted term on AutoMod.">%1$s odebral/a %2$s jako povolený výraz z AutoMod.</string>
-
-    <!-- Moderation messages -->
-    <!-- Timeout -->
-    <string name="mod_timeout_self_irc" comment="You were timed out for 10m">Byl/a jste ztlumen/a na %1$s</string>
-    <string name="mod_timeout_self" comment="You were timed out for 10m by flex3rs">Byl/a jste ztlumen/a na %1$s uživatelem %2$s</string>
-    <string name="mod_timeout_self_reason" comment="You were timed out for 10m by flex3rs: reason">Byl/a jste ztlumen/a na %1$s uživatelem %2$s: %3$s</string>
-    <string name="mod_timeout_by_creator" comment="flex3rs timed out user123 for 10m">%1$s ztlumil/a %2$s na %3$s</string>
-    <string name="mod_timeout_by_creator_reason" comment="flex3rs timed out user123 for 10m: reason">%1$s ztlumil/a %2$s na %3$s: %4$s</string>
-    <string name="mod_timeout_no_creator" comment="user123 has been timed out for 10m">%1$s byl/a ztlumen/a na %2$s</string>
-    <string name="mod_ban_self_irc" comment="You were banned">Byl/a jste zabanován/a</string>
-    <string name="mod_ban_self" comment="You were banned by flex3rs">Byl/a jste zabanován/a uživatelem %1$s</string>
-    <string name="mod_ban_self_reason" comment="You were banned by flex3rs: reason">Byl/a jste zabanován/a uživatelem %1$s: %2$s</string>
-    <string name="mod_ban_by_creator" comment="flex3rs banned user123">%1$s zabanoval/a %2$s</string>
-    <string name="mod_ban_by_creator_reason" comment="flex3rs banned user123: reason">%1$s zabanoval/a %2$s: %3$s</string>
-    <string name="mod_ban_no_creator" comment="user123 has been permanently banned">%1$s byl/a permanentně zabanován/a</string>
-    <string name="mod_untimeout" comment="flex3rs untimedout user123">%1$s zrušil/a ztlumení %2$s</string>
-    <string name="mod_unban" comment="flex3rs unbanned user123">%1$s odbanoval/a %2$s</string>
-    <string name="mod_modded" comment="flex3rs modded user123">%1$s jmenoval/a moderátorem %2$s</string>
-    <string name="mod_unmodded" comment="flex3rs unmodded user123">%1$s odebral/a moderátora %2$s</string>
-    <string name="mod_vip_added" comment="flex3rs has added user123 as a VIP of this channel">%1$s přidal/a %2$s jako VIP tohoto kanálu</string>
-    <string name="mod_vip_removed" comment="flex3rs has removed user123 as a VIP of this channel">%1$s odebral/a %2$s jako VIP tohoto kanálu</string>
-    <string name="mod_warn" comment="flex3rs has warned user123">%1$s varoval/a %2$s</string>
-    <string name="mod_warn_reason" comment="flex3rs has warned user123: reason1, reason2">%1$s varoval/a %2$s: %3$s</string>
-    <string name="mod_raid" comment="flex3rs initiated a raid to user123">%1$s zahájil/a raid na %2$s</string>
-    <string name="mod_unraid" comment="flex3rs canceled the raid to user123">%1$s zrušil/a raid na %2$s</string>
-    <string name="mod_delete_by_creator" comment="flex3rs deleted message from user123">%1$s smazal/a zprávu od %2$s</string>
-    <string name="mod_delete_by_creator_message" comment="flex3rs deleted message from user123 saying: hello">%1$s smazal/a zprávu od %2$s s textem: %3$s</string>
-    <string name="mod_delete_no_creator" comment="A message from user123 was deleted">Zpráva od %1$s byla smazána</string>
-    <string name="mod_delete_no_creator_message" comment="A message from user123 was deleted saying: hello">Zpráva od %1$s byla smazána s textem: %2$s</string>
-    <string name="mod_clear_by_creator" comment="flex3rs cleared the chat">%1$s vyčistil/a chat</string>
-    <string name="mod_clear_no_creator">Chat byl vyčištěn moderátorem</string>
-    <string name="mod_emote_only_on" comment="flex3rs turned on emote-only mode">%1$s zapnul/a režim pouze emotikony</string>
-    <string name="mod_emote_only_off" comment="flex3rs turned off emote-only mode">%1$s vypnul/a režim pouze emotikony</string>
-    <string name="mod_followers_on" comment="flex3rs turned on followers-only mode">%1$s zapnul/a režim pouze pro sledující</string>
-    <string name="mod_followers_on_duration" comment="flex3rs turned on followers-only mode (10 minutes)">%1$s zapnul/a režim pouze pro sledující (%2$s)</string>
-    <string name="mod_followers_off" comment="flex3rs turned off followers-only mode">%1$s vypnul/a režim pouze pro sledující</string>
-    <string name="mod_unique_chat_on" comment="flex3rs turned on unique-chat mode">%1$s zapnul/a režim unikátního chatu</string>
-    <string name="mod_unique_chat_off" comment="flex3rs turned off unique-chat mode">%1$s vypnul/a režim unikátního chatu</string>
-    <string name="mod_slow_on" comment="flex3rs turned on slow mode">%1$s zapnul/a pomalý režim</string>
-    <string name="mod_slow_on_duration" comment="flex3rs turned on slow mode (30 seconds)">%1$s zapnul/a pomalý režim (%2$s)</string>
-    <string name="mod_slow_off" comment="flex3rs turned off slow mode">%1$s vypnul/a pomalý režim</string>
-    <string name="mod_subscribers_on" comment="flex3rs turned on subscribers-only mode">%1$s zapnul/a režim pouze pro odběratele</string>
-    <string name="mod_subscribers_off" comment="flex3rs turned off subscribers-only mode">%1$s vypnul/a režim pouze pro odběratele</string>
-    <string name="mod_shared_timeout" comment="flex3rs timed out user123 for 10m in channel456">%1$s ztlumil/a %2$s na %3$s v %4$s</string>
-    <string name="mod_shared_timeout_reason" comment="flex3rs timed out user123 for 10m in channel456: reason">%1$s ztlumil/a %2$s na %3$s v %4$s: %5$s</string>
-    <string name="mod_shared_untimeout" comment="flex3rs untimedout user123 in channel456">%1$s zrušil/a ztlumení %2$s v %3$s</string>
-    <string name="mod_shared_ban" comment="flex3rs banned user123 in channel456">%1$s zabanoval/a %2$s v %3$s</string>
-    <string name="mod_shared_ban_reason" comment="flex3rs banned user123 in channel456: reason">%1$s zabanoval/a %2$s v %3$s: %4$s</string>
-    <string name="mod_shared_unban" comment="flex3rs unbanned user123 in channel456">%1$s odbanoval/a %2$s v %3$s</string>
-    <string name="mod_shared_delete" comment="flex3rs deleted message from user123 in channel456">%1$s smazal/a zprávu od %2$s v %3$s</string>
-    <string name="mod_shared_delete_message" comment="flex3rs deleted message from user123 in channel456 saying: hello">%1$s smazal/a zprávu od %2$s v %3$s s textem: %4$s</string>
-    <string name="mod_message_with_count" comment="flex3rs timed out user123 for 10m. (2 times)">%1$s%2$s</string>
-    <plurals name="mod_count_suffix" comment=" (2 times)">
-        <item quantity="one">\u0020(%1$d krát)</item>
-        <item quantity="few">\u0020(%1$d krát)</item>
-        <item quantity="many">\u0020(%1$d krát)</item>
-        <item quantity="other">\u0020(%1$d krát)</item>
-    </plurals>
-
-    <!-- Whisper -->
-    <string name="backspace">Smazat</string>
-    <string name="hint_whispering">Odeslat šepot</string>
-    <string name="whisper_header">Šeptání s @%1$s</string>
-    <string name="whisper_new">Nový šepot</string>
-    <string name="whisper_new_dialog_title">Odeslat šepot</string>
-    <string name="whisper_new_dialog_hint">Uživatelské jméno</string>
-    <string name="whisper_new_dialog_start">Odeslat</string>
-
-    <!-- Room State -->
-    <string name="room_state_emote_only">Pouze emotikony</string>
-    <string name="room_state_subscriber_only">Pouze odběratelé</string>
-    <string name="room_state_slow_mode">Pomalý režim</string>
-    <string name="room_state_slow_mode_duration">Pomalý režim (%1$s)</string>
-    <string name="room_state_unique_chat">Unikátní chat (R9K)</string>
-    <string name="room_state_follower_only">Pouze sledující</string>
-    <string name="room_state_follower_only_duration">Pouze sledující (%1$s)</string>
-    <string name="room_state_preset_custom">Vlastní</string>
-    <string name="room_state_follower_any">Jakýkoliv</string>
-    <string name="room_state_duration_seconds">%1$ds</string>
-    <string name="room_state_duration_minutes">%1$dm</string>
-    <string name="room_state_duration_hours">%1$dh</string>
-    <string name="room_state_duration_days">%1$dd</string>
-    <string name="room_state_duration_weeks">%1$dw</string>
-    <string name="room_state_duration_months">%1$dmo</string>
-    <string name="mod_actions_room_state_section">Room state</string>
-    <string name="mod_actions_section">Mod actions</string>
-    <string name="mod_actions_broadcaster_section">Broadcaster</string>
-    <string name="mod_actions_shield_mode">Shield mode</string>
-    <string name="mod_actions_clear_chat">Clear chat</string>
-    <string name="mod_actions_confirm_clear_chat">Clear all messages in this channel?</string>
-
-    <string name="mod_actions_confirm_shield_mode_title">Aktivovat režim štítu?</string>
-    <string name="mod_actions_confirm_shield_mode_body">Toto použije předkonfigurovaná bezpečnostní nastavení kanálu, která mohou zahrnovat omezení chatu, nastavení AutoModu a požadavky na ověření.</string>
-    <string name="mod_actions_shield_mode_activate">Aktivovat</string>    <string name="mod_actions_announce">Announce</string>
-    <string name="mod_actions_announce_header">Announcement</string>
-    <string name="mod_actions_shoutout">Shoutout</string>
-    <string name="mod_actions_commercial">Commercial</string>
-    <string name="mod_actions_raid">Raid</string>
-    <string name="mod_actions_cancel_raid">Cancel raid</string>
-    <string name="mod_actions_stream_marker">Stream marker</string>
-    <string name="mod_actions_username_hint">Username</string>
-    <string name="mod_actions_channel_hint">Channel</string>
-
-    <!-- Empty States -->
-    <string name="no_channels_added_body">Přidejte kanál a začněte chatovat</string>
-    <string name="no_recent_emotes">Žádné nedávné emotikony</string>
-
-    <!-- Menu -->
-    <string name="menu_show_stream">Zobrazit stream</string>
-    <string name="menu_hide_stream">Skrýt stream</string>
-    <string name="menu_audio_only">Pouze zvuk</string>
-    <string name="menu_exit_audio_only">Ukončit režim zvuku</string>
-    <string name="menu_fullscreen">Celá obrazovka</string>
-    <string name="menu_exit_fullscreen">Ukončit celou obrazovku</string>
-    <string name="menu_hide_input">Skrýt vstup</string>
-    <string name="menu_show_input">Zobrazit vstup</string>
-    <string name="preference_swipe_navigation_title">Navigace kanálů přejetím</string>
-    <string name="preference_swipe_navigation_summary">Přepínejte kanály přejetím po chatu</string>
-    <string name="menu_mod_actions">Moderování kanálu</string>
-
-    <!-- Input Actions -->
-    <string name="input_action_search">Hledat zprávy</string>
-    <string name="input_action_last_message">Poslední zpráva</string>
-    <string name="input_action_stream">Přepnout stream</string>
-    <string name="input_action_mod_actions">Moderování kanálu</string>
-    <string name="input_action_fullscreen">Celá obrazovka</string>
-    <string name="input_action_hide_input">Skrýt vstup</string>
-    <string name="input_action_configure">Konfigurovat akce</string>
-    <string name="input_action_debug">Ladění</string>
-    <plurals name="input_actions_max">
-        <item quantity="one">Maximálně %1$d akce</item>
-        <item quantity="few">Maximálně %1$d akce</item>
-        <item quantity="many">Maximálně %1$d akcí</item>
-        <item quantity="other">Maximálně %1$d akcí</item>
-    </plurals>
-
-    <!-- Onboarding -->
-    <string name="onboarding_welcome_title">DankChat</string>
-    <string name="onboarding_welcome_body">Pojďme vše nastavit.</string>
-    <string name="onboarding_login_title">Přihlásit se přes Twitch</string>
-    <string name="onboarding_login_body">Přihlaste se pro odesílání zpráv, používání emotikonů, příjem šepotů a odemknutí všech funkcí.</string>
-    <string name="onboarding_login_disclaimer">Budete požádáni o udělení několika oprávnění pro Twitch najednou, abyste nemuseli znovu autorizovat při používání různých funkcí. DankChat provádí moderátorské akce a akce správy vysílání pouze tehdy, když o to sami požádáte.</string>
-    <string name="onboarding_login_button">Přihlásit se přes Twitch</string>
-    <string name="onboarding_login_success">Přihlášení úspěšné</string>
-    <string name="onboarding_notifications_title">Oznámení</string>
-    <string name="onboarding_notifications_body">DankChat vás může upozornit, když vás někdo zmíní v chatu, zatímco aplikace běží na pozadí.</string>
-    <string name="onboarding_notifications_allow">Povolit oznámení</string>
-    <string name="onboarding_notifications_open_settings">Otevřít nastavení oznámení</string>
-    <string name="onboarding_notifications_rationale">Bez oznámení se nedozvíte, když vás někdo zmíní v chatu, zatímco aplikace běží na pozadí.</string>
-    <string name="onboarding_history_title">Historie zpráv</string>
-    <string name="onboarding_history_body">DankChat načítá historické zprávy ze služby třetí strany při spuštění. Pro získání zpráv DankChat odesílá názvy otevřených kanálů této službě. Služba dočasně ukládá zprávy navštívených kanálů.\n\nToto můžete později změnit v nastavení nebo se dozvědět více na https://recent-messages.robotty.de/</string>
-    <string name="onboarding_history_enable">Povolit</string>
-    <string name="onboarding_history_disable">Zakázat</string>
-    <string name="onboarding_continue">Pokračovat</string>
-    <string name="onboarding_get_started">Začít</string>
-    <string name="onboarding_skip">Přeskočit</string>
-
-    <!-- Developer Settings -->
-    <string name="preference_developer_category_general">Obecné</string>
-    <string name="preference_developer_category_auth">Ověření</string>
-    <string name="preference_eventsub_title">Povolit Twitch EventSub</string>
-    <string name="preference_eventsub_summary">Používá EventSub pro různé události v reálném čase místo zastaralého PubSub</string>
-    <string name="preference_eventsub_debug_title">Povolit ladící výstup EventSub</string>
-    <string name="preference_eventsub_debug_summary">Zobrazuje ladící výstup týkající se EventSub jako systémové zprávy</string>
-    <string name="preference_revoke_token_title">Zrušit token a restartovat</string>
-    <string name="preference_revoke_token_summary">Zneplatní aktuální token a restartuje aplikaci</string>
-    <string name="system_message_send_not_logged_in">Nepřihlášen</string>
-    <string name="system_message_send_channel_not_resolved">Nepodařilo se zjistit ID kanálu pro %1$s</string>
-    <string name="system_message_send_not_delivered">Zpráva nebyla odeslána</string>
-    <string name="system_message_send_dropped">Zpráva zahozena: %1$s (%2$s)</string>
-    <string name="system_message_send_missing_scopes">Chybí oprávnění user:write:chat, prosím přihlaste se znovu</string>
-    <string name="system_message_send_not_authorized">Nemáte oprávnění posílat zprávy v tomto kanálu</string>
-    <string name="system_message_send_message_too_large">Zpráva je příliš velká</string>
-    <string name="system_message_send_rate_limited">Příliš mnoho požadavků, zkuste to za chvíli znovu</string>
-    <string name="system_message_send_failed">Odeslání se nezdařilo: %1$s</string>
-
     <!-- Command responses -->
     <string name="cmd_error_not_logged_in">Pro použití příkazu %1$s musíte být přihlášeni</string>
     <string name="cmd_error_no_user_matching">Nebyl nalezen uživatel s tímto jménem.</string>
@@ -882,64 +941,4 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="cmd_error_message_too_large">Vaše zpráva byla příliš dlouhá.</string>
     <string name="cmd_error_chat_rate_limited">Vaše rychlost je omezována. Zkuste to znovu za chvíli.</string>
     <string name="cmd_error_target_default">Cílový uživatel</string>
-    <string name="preference_log_viewer_title">Prohlížeč logů</string>
-    <string name="preference_log_viewer_summary">Zobrazit logy aplikace</string>
-    <string name="log_viewer_title">Logy</string>
-    <string name="log_viewer_share">Sdílet logy</string>
-    <string name="log_viewer_open">Zobrazit logy</string>
-    <string name="preference_log_viewer_empty">Žádné soubory logů nejsou dostupné</string>
-    <string name="log_viewer_search_hint">Hledat v logách</string>
-    <plurals name="log_viewer_selected_count">
-        <item quantity="one">%1$d vybráno</item>
-        <item quantity="few">%1$d vybráno</item>
-        <item quantity="many">%1$d vybráno</item>
-        <item quantity="other">%1$d vybráno</item>
-    </plurals>
-    <string name="log_viewer_copy_selection">Kopírovat vybrané logy</string>
-    <string name="log_viewer_clear_selection">Zrušit výběr</string>
-    <string name="crash_report_title">Zjištěn pád</string>
-    <string name="crash_report_message">Aplikace spadla během poslední relace.</string>
-    <string name="crash_report_thread">Vlákno: %1$s</string>
-    <string name="crash_report_copy">Kopírovat</string>
-    <string name="crash_report_send">Hlášení přes chat</string>
-    <string name="crash_report_send_description">Připojí se k #flex3rs a připraví shrnutí pádu k odeslání</string>
-    <string name="crash_report_email">Hlášení e-mailem</string>
-    <string name="crash_report_email_description">Odeslat podrobné hlášení o pádu e-mailem</string>
-    <string name="crash_email_confirm_title">Odeslat hlášení o pádu e-mailem</string>
-    <string name="crash_email_confirm_message">Následující data budou zahrnuta v hlášení:</string>
-    <string name="crash_email_confirm_stacktrace">Stopa zásobníku</string>
-    <string name="crash_email_confirm_include_logs">Zahrnout aktuální soubor logů</string>
-    <string name="preference_crash_viewer_title">Hlášení o pádech</string>
-    <string name="preference_crash_viewer_summary">Zobrazit nedávná hlášení o pádech</string>
-    <string name="preference_crash_viewer_empty">Žádná hlášení o pádech nenalezena</string>
-    <string name="crash_viewer_title">Hlášení o pádu</string>
-    <string name="crash_viewer_share">Sdílet hlášení o pádu</string>
-    <string name="crash_viewer_delete">Smazat</string>
-    <string name="crash_viewer_delete_confirm">Smazat toto hlášení o pádu?</string>
-    <string name="crash_viewer_clear_all">Vymazat vše</string>
-    <string name="crash_viewer_clear_all_confirm">Smazat všechna hlášení o pádech?</string>
-    <string name="scroll_to_bottom">Posunout dolů</string>
-    <string name="badge">Odznak</string>
-    <string name="badge_admin">Admin</string>
-    <string name="badge_broadcaster">Vysílající</string>
-    <string name="badge_founder">Zakladatel</string>
-    <string name="badge_lead_moderator">Hlavní moderátor</string>
-    <string name="badge_moderator">Moderátor</string>
-    <string name="badge_staff">Staff</string>
-    <string name="badge_subscriber">Odběratel</string>
-    <string name="badge_verified">Ověřený</string>
-    <string name="badge_vip">VIP</string>
-    <string name="tab_badges">Odznaky</string>
-    <string name="highlights_badges_title">Vytvářejte upozornění a zvýrazňujte zprávy uživatelů na základě odznáčků.</string>
-    <string name="choose_highlight_color">Vybrat barvu</string>
-    <string name="pick_highlight_color_title">Vybrat vlastní barvu zvýraznění</string>
-    <string name="reset_default_highlight_color">Výchozí</string>
-    <plurals name="viewers_and_uptime_with_cateogry">
-        <item quantity="one">Živě s %1$d divákem v %2$s po dobu %3$s</item>
-        <item quantity="few">Živě s %1$d diváky v %2$s po dobu %3$s</item>
-        <item quantity="many">Živě s %1$d diváků v %2$s po dobu %3$s</item>
-        <item quantity="other">Živě s %1$d diváků v %2$s po dobu %3$s</item>
-    </plurals>
-    <string name="view_history">Zobrazit historii</string>
-    <string name="history_empty">Žádné zprávy neodpovídají aktuálním filtrům</string>
 </resources>
