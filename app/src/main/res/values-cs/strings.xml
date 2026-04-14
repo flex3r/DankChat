@@ -334,8 +334,6 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="input_action_hide_input">Skrýt vstup</string>
     <string name="input_action_debug">Ladění</string>
     <string name="input_action_configure">Konfigurovat akce</string>
-    <string name="input_action_hide_all">Skrýt všechny akce</string>
-    <string name="input_actions_none">Žádné viditelné akce</string>
     <string name="room_state_emote_only">Pouze emotikony</string>
     <string name="room_state_subscriber_only">Pouze odběratelé</string>
     <string name="room_state_slow_mode">Pomalý režim</string>
@@ -800,7 +798,6 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="choose_highlight_color">Vybrat barvu</string>
     <string name="toggle_app_bar">Přepnout panel aplikace</string>
     <string name="error_with_message">Chyba: %s</string>
-    <string name="something_went_wrong">Něco se pokazilo</string>
     <!-- Onboarding -->
     <string name="onboarding_welcome_title">DankChat</string>
     <string name="onboarding_welcome_body">Pojďme vše nastavit.</string>
