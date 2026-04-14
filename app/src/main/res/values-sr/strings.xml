@@ -312,8 +312,6 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="input_action_hide_input">Сакриј унос</string>
     <string name="input_action_debug">Отклањање грешака</string>
     <string name="input_action_configure">Подеси акције</string>
-    <string name="input_action_hide_all">Сакриј све радње</string>
-    <string name="input_actions_none">Нема видљивих радњи</string>
     <string name="room_state_emote_only">Само емотикони</string>
     <string name="room_state_subscriber_only">Само претплатници</string>
     <string name="room_state_slow_mode">Спори режим</string>
