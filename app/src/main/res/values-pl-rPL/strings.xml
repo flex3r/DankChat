@@ -333,8 +333,6 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="input_action_hide_input">Ukryj pole wpisywania</string>
     <string name="input_action_debug">Debugowanie</string>
     <string name="input_action_configure">Konfiguruj akcje</string>
-    <string name="input_action_hide_all">Ukryj wszystkie akcje</string>
-    <string name="input_actions_none">Brak widocznych akcji</string>
     <string name="room_state_emote_only">Tylko emotki</string>
     <string name="room_state_subscriber_only">Tylko subskrybenci</string>
     <string name="room_state_slow_mode">Tryb powolny</string>
@@ -798,7 +796,6 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="choose_highlight_color">Wybierz Kolor</string>
     <string name="toggle_app_bar">Przełącz pasek aplikacji</string>
     <string name="error_with_message">Błąd: %s</string>
-    <string name="something_went_wrong">Coś poszło nie tak</string>
     <!-- Onboarding -->
     <string name="onboarding_welcome_title">DankChat</string>
     <string name="onboarding_welcome_body">Skonfigurujmy wszystko.</string>
