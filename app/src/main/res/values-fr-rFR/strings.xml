@@ -317,8 +317,6 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="input_action_hide_input">Masquer la saisie</string>
     <string name="input_action_debug">Débogage</string>
     <string name="input_action_configure">Configurer les actions</string>
-    <string name="input_action_hide_all">Masquer toutes les actions</string>
-    <string name="input_actions_none">Aucune action visible</string>
     <string name="room_state_emote_only">Emotes uniquement</string>
     <string name="room_state_subscriber_only">Abonnés uniquement</string>
     <string name="room_state_slow_mode">Mode lent</string>
@@ -774,7 +772,6 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="choose_highlight_color">Choisir une couleur</string>
     <string name="toggle_app_bar">Activer/désactiver la barre d\'application</string>
     <string name="error_with_message">Erreur : %s</string>
-    <string name="something_went_wrong">Une erreur est survenue</string>
     <!-- Onboarding -->
     <string name="onboarding_welcome_title">DankChat</string>
     <string name="onboarding_welcome_body">Configurons tout ensemble.</string>
