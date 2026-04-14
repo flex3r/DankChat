@@ -328,8 +328,6 @@
     <string name="input_action_hide_input">Схаваць увод</string>
     <string name="input_action_debug">Адладка</string>
     <string name="input_action_configure">Наладзіць дзеянні</string>
-    <string name="input_action_hide_all">Схаваць усе дзеянні</string>
-    <string name="input_actions_none">Няма бачных дзеянняў</string>
     <string name="room_state_emote_only">Толькі эмоуты</string>
     <string name="room_state_subscriber_only">Толькі падпісчыкі</string>
     <string name="room_state_slow_mode">Павольны рэжым</string>
