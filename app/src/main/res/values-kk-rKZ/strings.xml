@@ -312,8 +312,6 @@
     <string name="input_action_hide_input">Енгізуді жасыру</string>
     <string name="input_action_debug">Жөндеу</string>
     <string name="input_action_configure">Әрекеттерді баптау</string>
-    <string name="input_action_hide_all">Барлық әрекеттерді жасыру</string>
-    <string name="input_actions_none">Көрінетін әрекеттер жоқ</string>
     <string name="room_state_emote_only">Тек эмоция</string>
     <string name="room_state_subscriber_only">Тек жазылушы</string>
     <string name="room_state_slow_mode">Баяу режим</string>
