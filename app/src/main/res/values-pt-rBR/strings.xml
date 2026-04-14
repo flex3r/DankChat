@@ -312,8 +312,6 @@
     <string name="input_action_hide_input">Ocultar entrada</string>
     <string name="input_action_debug">Depuração</string>
     <string name="input_action_configure">Configurar ações</string>
-    <string name="input_action_hide_all">Ocultar todas as ações</string>
-    <string name="input_actions_none">Nenhuma ação visível</string>
     <string name="room_state_emote_only">Apenas emotes</string>
     <string name="room_state_subscriber_only">Apenas assinantes</string>
     <string name="room_state_slow_mode">Modo lento</string>
@@ -769,7 +767,6 @@
     <string name="choose_highlight_color">Escolher cor</string>
     <string name="toggle_app_bar">Alternar barra do aplicativo</string>
     <string name="error_with_message">Erro: %s</string>
-    <string name="something_went_wrong">Algo deu errado</string>
     <!-- Onboarding -->
     <string name="onboarding_welcome_title">DankChat</string>
     <string name="onboarding_welcome_body">Vamos configurar tudo.</string>
