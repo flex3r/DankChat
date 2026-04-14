@@ -317,8 +317,6 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="input_action_hide_input">Piilota syöttö</string>
     <string name="input_action_debug">Virheenkorjaus</string>
     <string name="input_action_configure">Muokkaa toimintoja</string>
-    <string name="input_action_hide_all">Piilota kaikki toiminnot</string>
-    <string name="input_actions_none">Ei näkyviä toimintoja</string>
     <string name="room_state_emote_only">Vain hymiöt</string>
     <string name="room_state_subscriber_only">Vain tilaajat</string>
     <string name="room_state_slow_mode">Hidas tila</string>
@@ -717,7 +715,6 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="choose_highlight_color">Valitse väri</string>
     <string name="toggle_app_bar">Näytä/piilota sovelluspalkki</string>
     <string name="error_with_message">Virhe: %s</string>
-    <string name="something_went_wrong">Jokin meni pieleen</string>
     <!-- Onboarding -->
     <string name="onboarding_welcome_title">DankChat</string>
     <string name="onboarding_welcome_body">Aloitetaan käyttöönotto.</string>
