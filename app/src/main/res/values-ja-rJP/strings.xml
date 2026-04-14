@@ -304,8 +304,6 @@
     <string name="input_action_hide_input">入力欄を非表示</string>
     <string name="input_action_debug">デバッグ</string>
     <string name="input_action_configure">アクションを設定</string>
-    <string name="input_action_hide_all">すべてのアクションを非表示</string>
-    <string name="input_actions_none">表示中のアクションなし</string>
     <string name="room_state_emote_only">エモートのみ</string>
     <string name="room_state_subscriber_only">サブスクライバーのみ</string>
     <string name="room_state_slow_mode">スローモード</string>
@@ -756,7 +754,6 @@
     <string name="choose_highlight_color">色を選択</string>
     <string name="toggle_app_bar">アプリバーの切り替え</string>
     <string name="error_with_message">エラー: %s</string>
-    <string name="something_went_wrong">問題が発生しました</string>
     <!-- Onboarding -->
     <string name="onboarding_welcome_title">DankChat</string>
     <string name="onboarding_welcome_body">セットアップを始めましょう。</string>
