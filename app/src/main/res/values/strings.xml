@@ -303,6 +303,8 @@
     <string name="preference_fullscreen_button_opacity_hint">Opacity (1-100)</string>
     <string name="preference_fullscreen_button_opacity_validation">Must be between 1 and 100</string>
     <string name="preference_fullscreen_button_opacity_custom">Custom</string>
+    <string name="preference_require_fullscreen_exit_confirmation_title">Confirm exit fullscreen</string>
+    <string name="preference_require_fullscreen_exit_confirmation_summary">Require a second tap on the exit fullscreen button</string>
     <string name="preference_swipe_navigation_title">Channel swipe navigation</string>
     <string name="preference_swipe_navigation_summary">Switch channels by swiping on the chat</string>
     <string name="menu_mod_actions">Channel moderation</string>
