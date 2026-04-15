@@ -304,6 +304,7 @@
         <item quantity="one">Ең көбі %1$d әрекет</item>
         <item quantity="other">Ең көбі %1$d әрекет</item>
     </plurals>
+    <string name="input_actions_none">Көрінетін әрекеттер жоқ</string>
     <string name="input_action_search">Хабарларды іздеу</string>
     <string name="input_action_last_message">Соңғы хабарлама</string>
     <string name="input_action_stream">Ағынды қосу/өшіру</string>
@@ -313,7 +314,6 @@
     <string name="input_action_debug">Жөндеу</string>
     <string name="input_action_configure">Әрекеттерді баптау</string>
     <string name="input_action_hide_all">Барлық әрекеттерді жасыру</string>
-    <string name="input_actions_none">Көрінетін әрекеттер жоқ</string>
     <string name="room_state_emote_only">Тек эмоция</string>
     <string name="room_state_subscriber_only">Тек жазылушы</string>
     <string name="room_state_slow_mode">Баяу режим</string>
