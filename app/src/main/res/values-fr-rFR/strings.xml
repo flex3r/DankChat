@@ -26,18 +26,18 @@
     <string name="no_channels_added">Aucune chaîne ajoutée</string>
     <string name="no_channels_added_body">Ajoutez une chaîne pour commencer à discuter</string>
     <string name="confirm_logout_title">Confirmer la déconnexion</string>
-    <string name="confirm_logout_message">Êtes-vous sûr de vouloir vous déconnecter ?</string>
+    <string name="confirm_logout_message">Êtes vous sur de vouloir vous déconnecter ?</string>
     <string name="confirm_logout_question">Se déconnecter ?</string>
     <string name="confirm_logout_positive_button">Se déconnecter</string>
     <string name="upload_media">Envoyer un média</string>
     <string name="take_picture">Prendre une photo</string>
-    <string name="record_video">Enregistrer une vidéo</string>
+    <string name="record_video">Prendre une vidéo</string>
     <string name="choose_media">Choisir un fichier existant</string>
     <string name="resume_scroll">Réactiver le défilement</string>
     <string name="uploading_image">Envoi de l\'image</string>
     <string name="settings">Réglages</string>
     <string name="external_upload_disclaimer">Hébergement externe fourni par %1$s, utilisez à vos propres risques.</string>
-    <string name="nuuls_upload_title">Envoi d\'une image personnalisée</string>
+    <string name="nuuls_upload_title">Envoi d\'une image personalisée</string>
     <string name="snackbar_message_copied">Message copié</string>
     <string name="snackbar_message_id_copied">Message copié</string>
     <string name="snackbar_link_copied">Lien copié</string>
@@ -124,8 +124,8 @@
     <string name="system_message_history_unavailable_detailed">Service d\'historique des messages indisponible (Erreur %1$s)</string>
     <string name="system_message_history_unavailable">Service d\'historique des messages indisponible</string>
     <string name="system_message_history_recovering">Récupération de l\'historique des messages, il peut y avoir des vides dans l\'historique des messages.</string>
-    <string name="system_message_history_ignored">Historique des messages indisponible car cette chaîne est exclue du service.</string>
-    <string name="system_message_no_history">Vous ne voyez pas les anciens messages car vous vous êtes désinscrit de l\'intégration</string>
+    <string name="system_message_history_ignored">Historique des messages indisponible car cette chaîne est exclu du service.</string>
+    <string name="system_message_no_history">Vous ne voyez pas les anciens messages car vous vous êtes désinscris de l\'intégration</string>
     <string name="system_message_ffz_emotes_failed">Échec du chargement des emotes FFZ (Erreur %1$s)</string>
     <string name="system_message_bttv_emotes_failed">Échec du chargement des emotes BTTV (Erreur %1$s)</string>
     <string name="system_message_7tv_emotes_failed">Échec du chargement des emotes 7TV (Erreur %1$s)</string>
@@ -244,7 +244,7 @@
     <string name="login_expired">Authentification expirée! Essayez de vous reconnecter.</string>
     <string name="message_history_disclaimer_title">Notice pour les anciens messages</string>
     <string name="message_history_disclaimer_message">DankChat charge les anciens messages à partir d\'un service tiers au démarrage.
-Pour charger ces messages, DankChat envoie le nom des chaînes auxquelles vous êtes connecté.
+Pour charger ces messages, DankChat envoie le nom des chaînes auquelles vous êtes connecté.
 Le service stocke temporairement les messages pour les chaînes que vous (et les autres) visitez sur ce même service.
 
 - Pour ne pas utiliser cette fonction, appuyez sur Ne pas participer ou désactivez l\'option dans les réglages.
@@ -252,9 +252,9 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="dialog_optin">Participer</string>
     <string name="dialog_optout">Ne pas participer</string>
     <string name="more">Plus</string>
-    <string name="mentions_title">Mentions / Messages privés</string>
+    <string name="mentions_title">Mentions / Messages privé</string>
     <string name="replies_title">Répondre dans la discussion</string>
-    <string name="whispers">Messages privés</string>
+    <string name="whispers">Messages privé</string>
     <string name="notification_whisper_mention">%1$s vous a envoyé un message privé</string>
     <string name="mentions">Mentions</string>
     <string name="confirm_channel_removal_title">Confirmer la suppression de la chaîne</string>
@@ -270,13 +270,13 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="user_popup_unblock">Débloquer</string>
     <string name="user_popup_mention">Mentionner l\'utilisateur</string>
     <string name="user_popup_whisper">Envoyer un message privé à l\'utilisateur</string>
-    <string name="user_popup_created">Créé le : %1$s</string>
+    <string name="user_popup_created">Crée le: %1$s</string>
     <string name="user_popup_following_since">Suit depuis %1$s</string>
     <string name="user_popup_not_following">Ne suit pas</string>
     <string name="user_popup_avatar_description">Image de profil</string>
     <string name="user_popup_error">Impossible de charger les données utilisateur: %1$s</string>
-    <string name="confirm_user_block_title">Confirmer le blocage</string>
-    <string name="confirm_user_block_message">Êtes-vous certain de vouloir bloquer cet utilisateur ?</string>
+    <string name="confirm_user_block_title">Confirmer le bloquage</string>
+    <string name="confirm_user_block_message">Êtes-vous certain de vouloir bloquer de suivre cet utilisateur?</string>
     <string name="confirm_user_block_positive_button">Bloquer</string>
     <string name="restart_required">Redémarrez l\'application pour appliquer les changements</string>
     <string name="restart">Redémarrer</string>
@@ -311,6 +311,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
         <item quantity="one">Maximum de %1$d action</item>
         <item quantity="other">Maximum de %1$d actions</item>
     </plurals>
+    <string name="input_actions_none">Aucune action visible</string>
     <string name="input_action_search">Rechercher des messages</string>
     <string name="input_action_last_message">Dernier message</string>
     <string name="input_action_stream">Basculer le stream</string>
@@ -320,7 +321,6 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="input_action_debug">Débogage</string>
     <string name="input_action_configure">Configurer les actions</string>
     <string name="input_action_hide_all">Masquer toutes les actions</string>
-    <string name="input_actions_none">Aucune action visible</string>
     <string name="room_state_emote_only">Emotes uniquement</string>
     <string name="room_state_subscriber_only">Abonnés uniquement</string>
     <string name="room_state_slow_mode">Mode lent</string>
@@ -419,7 +419,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_compact_channel_info_title">Infos de chaîne compactes</string>
     <string name="preference_compact_channel_info_summary">Affiche les modes de discussion et les infos du live sur une seule ligne</string>
     <string name="preference_streaminfo_title">Récupérer les informations du live</string>
-    <string name="preference_streaminfo_summary">Afficher le statut et le nombre de spectateurs</string>
+    <string name="preference_streaminfo_summary">Afficher le status et le nombre de spectateurs</string>
     <string name="preference_notification_title">Afficher les notifications de mentions</string>
     <string name="preference_notification_summary">Crée une notification si vous êtes mentionné et l\'application est en arrière plan</string>
     <string name="preference_notification_header">Notifications</string>
@@ -476,7 +476,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="palette_style_content">Content</string>
     <string name="palette_style_content_desc">Couleur d\'accentuation avec tertiaire analogue</string>
     <string name="palette_style_more">Plus de styles</string>
-    <string name="preference_display_group_title">Affichage</string>
+    <string name="preference_display_group_title">Afficher</string>
     <string name="preference_components_group_title">Fonctionnalités</string>
     <string name="preference_show_timed_out_messages_title">Afficher les messages supprimés</string>
     <string name="preference_animate_gifs_title">Animer les gifs</string>
@@ -531,16 +531,16 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_supibot_suggestions_title">Suggestions de commandes Supibot</string>
     <string name="preference_scrollback_length_title">Longueur de l\'historique du chat</string>
     <string name="preference_show_username_title">Afficher le nom d\'utilisateur</string>
-    <string name="preference_visible_badges_title">Badges visibles</string>
+    <string name="preference_visible_badges_title">Badges visible</string>
     <string name="preference_prefer_emote_suggestions_title">Préférer les suggestions d\'emotes</string>
-    <string name="preference_prefer_emote_suggestions_summary">Prioriser les suggestions d\'emotes par rapport aux suggestions d\'utilisateurs</string>
+    <string name="preference_prefer_emote_suggestions_summary">Prioritizer la suggestion d\'emotes par rapport aux suggestions de l\'utilisateur</string>
     <string name="preference_user_long_click_title">Comportement lors d\'un long clic sur un utilisateur</string>
     <string name="preference_user_long_click_summary_on">Un clic normal ouvre un popup, un clic long mentionne l\'utilisateur</string>
     <string name="preference_user_long_click_summary_off">Un clic normal mentionne l\'utilisateur, un clic long ouvre un popup</string>
     <string name="preference_colorize_nicknames_title">Coloriser les pseudos</string>
     <string name="preference_colorize_nicknames_summary">Attribuer une couleur aléatoire aux utilisateurs sans couleur définie</string>
-    <string name="preference_tts_force_english_title">Forcer la langue anglaise</string>
-    <string name="preference_tts_force_english_summary">Forcer le TTS à utiliser la langue anglaise au lieu de la langue système</string>
+    <string name="preference_tts_force_english_title">Forcer la langue Anglaise</string>
+    <string name="preference_tts_force_english_summary">Forcer le TTS à utiliser la langue Anglaise au lieu de la langue système</string>
     <string name="preference_visible_emotes_title">Emotes d\'extension tiers visibles</string>
     <string name="preference_about_tos">Conditions d\'utilisation de Twitch &amp; politique d\'utilisation :</string>
     <string name="preference_show_chip_actions_title">Bouton d\'action flottant</string>
@@ -551,7 +551,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_show_send_button_title">Afficher le bouton d\'envoi</string>
     <string name="preference_input_group_title">Saisie</string>
     <string name="preference_uploader_header">Mise en ligne de fichiers</string>
-    <string name="preference_uploader_configure_title">Configurer la mise en ligne de fichiers personnalisée</string>
+    <string name="preference_uploader_configure_title">Configurer la mise en ligne de fichiers personnalisé</string>
     <string name="preference_uploader_recent_uploads_title">Fichiers récents</string>
     <string name="preference_tts_user_ignore_list_title">Liste des utilisateurs ignorés</string>
     <string name="preference_tts_user_ignore_list_summary">Liste des utilisateurs/comptes qui seront ignorés</string>
@@ -560,7 +560,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_dark_theme_entry_title">Thème sombre</string>
     <string name="preference_light_theme_entry_title">Thème clair</string>
     <string name="preference_unlisted_emotes_title">Autoriser les emotes non répertoriées</string>
-    <string name="preference_unlisted_emotes_summary">Désactive le filtrage des emotes non approuvées ou non répertoriées</string>
+    <string name="preference_unlisted_emotes_summary">Désactive le filtrage des emotes non approuvées ou non répertorié</string>
     <string name="preference_rm_host_title">Hôte personnalisé des messages récents</string>
     <string name="preference_developer_category_general">Général</string>
     <string name="preference_developer_category_auth">Authentification</string>
@@ -631,7 +631,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="unblocked_user">Utilisateur %1$s débloqué</string>
     <string name="unblocked_user_failed">Impossible de débloquer l\'utilisateur %1$s</string>
     <string name="badge">Badge</string>
-    <string name="blocked_user_failed">Impossible de bloquer l\'utilisateur %1$s</string>
+    <string name="blocked_user_failed">Impossible de débloquer l\'utilisateur %1$s</string>
     <string name="highlights_entry_username">Votre nom d\'utilisateur</string>
     <string name="highlights_ignores_entry_subscriptions">Abonnements et Événements</string>
     <string name="highlights_ignores_entry_announcements">Annonces</string>
@@ -641,14 +641,14 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="highlights_ignores_entry_redemptions">Message mis en avant avec des points de chaîne</string>
     <string name="highlights_ignores_entry_replies">Réponses</string>
     <string name="highlights_ignores_entry_custom">Personnaliser</string>
-    <string name="highlights_messages_title">Crée des notifications et met en surbrillance les messages selon certains modèles.</string>
+    <string name="highlights_messages_title">Crée des notifications et met en surbrillance les messages de certains utilisateurs.</string>
     <string name="highlights_users_title">Crée des notifications et met en surbrillance les messages de certains utilisateurs.</string>
-    <string name="highlights_blacklisted_users_title">Désactive les notifications et les surbrillances de certains utilisateurs (ex. bots).</string>
+    <string name="highlights_blacklisted_users_title">Désactiver les notifications et les surbrillances de certains utilisateurs (ex. bots).</string>
     <string name="highlights_badges_title">Créez des notifications et mettez en surbrillance les messages des utilisateurs en fonction des badges.</string>
     <string name="ignores_messages_title">Ignorer les messages en fonction de certains modèles.</string>
     <string name="ignores_users_title">Ignorer les messages de certains utilisateurs.</string>
     <string name="ignores_twitch_title">Gérer les utilisateurs Twitch bloqués</string>
-    <string name="preference_notification_whisper_title">Créer des notifications pour les messages privés</string>
+    <string name="preference_notification_whisper_title">Créer des notifications pour des chuchotements</string>
     <string name="login_outdated_title">Connexion dépassée !</string>
     <string name="login_outdated_message">Votre connexion est dépassée et n\'a pas accès à certaines fonctionnalités. Veuillez vous reconnecter.</string>
     <string name="custom_user_display_title">Affichage personnalisé de l\'utilisateur</string>
