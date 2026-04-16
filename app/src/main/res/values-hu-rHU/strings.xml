@@ -33,15 +33,15 @@
     <string name="take_picture">Kép készítése</string>
     <string name="record_video">Videó felvétele</string>
     <string name="choose_media">Meglévő média kiválasztása</string>
-    <string name="resume_scroll">Görgetés folytatása</string>
+    <string name="resume_scroll">Folytatás görgetéssel</string>
     <string name="uploading_image">Fájl feltöltése</string>
     <string name="settings">Beállítások</string>
-    <string name="external_upload_disclaimer">A külső tárhelyet a %1$s biztosítja, saját felelősségre használja.</string>
+    <string name="external_upload_disclaimer">A külső hosztolást a %1$s biztosítja, használja a saját érdekében.</string>
     <string name="nuuls_upload_title">Egyéni médiafeltöltés</string>
     <string name="snackbar_message_copied">Üzenet másolva</string>
     <string name="snackbar_message_id_copied">Üzenet id másolva</string>
     <string name="snackbar_link_copied">Link másolva</string>
-    <string name="snackbar_error_copied">Hibainformáció másolva</string>
+    <string name="snackbar_error_copied">Másolt hibainformáció</string>
     <string name="notification_stop">Leállítás</string>
     <string name="notification_title">FeelsDankMan</string>
     <string name="notification_message">A DankChat a háttérben fut</string>
@@ -125,7 +125,7 @@
     <string name="system_message_history_unavailable">Üzenetelőzmény szolgáltatás nem elérhető</string>
     <string name="system_message_history_recovering">Az üzenet előzmény szolgáltatás újraépül, így kihagyások lehetnek az előzményekben.</string>
     <string name="system_message_history_ignored">Az üzenet előzmények nem érhetőek el mert ez a csatorna ki lett zárva a szolgáltatásból.</string>
-    <string name="system_message_no_history">Nem lát üzenetelőzményeket, mert kilépett a legutóbbi üzenetek integrációból.</string>
+    <string name="system_message_no_history">Egyetlen üzenet előzményt sem lát mert kilépett a legutóbbi-üzenetek integrációból.</string>
     <string name="system_message_ffz_emotes_failed">Nem sikerült betölteni a FFZ hangulatjeleket (hiba %1$s)</string>
     <string name="system_message_bttv_emotes_failed">Nem sikerült betölteni a BTTV hangulatjeleket (hiba %1$s)</string>
     <string name="system_message_7tv_emotes_failed">Nem sikerült betölteni a 7TV hangulatjeleket (hiba %1$s)</string>
@@ -238,7 +238,7 @@
         <item quantity="one">\u0020(%1$d alkalommal)</item>
         <item quantity="other">\u0020(%1$d alkalommal)</item>
     </plurals>
-    <string name="timed_out_message">&lt; Üzenet törölve &gt;</string>
+    <string name="timed_out_message">&lt; Üzenete törölve &gt;</string>
     <string name="multi_entry_header_regex">Regex</string>
     <string name="multi_entry_add_entry">Bejegyzés hozzáadása</string>
     <string name="login_expired">Bejelentkezés lejárt! Próbálj meg újra bejelentkezni.</string>
@@ -250,7 +250,7 @@
     <string name="mentions_title">Említések / Suttogóüzenetek</string>
     <string name="replies_title">Válasz gondolatmenet</string>
     <string name="whispers">Suttogóüzenetek</string>
-    <string name="notification_whisper_mention">%1$s küldött neked egy suttogóüzenetet</string>
+    <string name="notification_whisper_mention">%1$s küldött nekeg egy üzenetet</string>
     <string name="mentions">Említések</string>
     <string name="confirm_channel_removal_title">Csatorna eltávolításának megerősítése</string>
     <string name="confirm_channel_removal_message">Biztos, hogy el akarod távolítani ezt a csatornát?</string>
@@ -259,7 +259,7 @@
     <string name="confirm_channel_removal_question_named">Eltávolítod a(z) \"%1$s\" csatornát?</string>
     <string name="confirm_channel_removal_positive_button">Eltávolítás</string>
     <string name="confirm_channel_block_title">Csatorna tiltásának megerősítése</string>
-    <string name="confirm_channel_block_message_named">Biztosan le akarja tiltani a(z) \"%1$s\" csatornát?</string>
+    <string name="confirm_channel_block_message_named">Biztosan tiltani akarja ezt a csatornát \"%1$s\"?</string>
     <string name="confirm_channel_block_question_named">Letiltod a(z) \"%1$s\" csatornát?</string>
     <string name="user_popup_block">Letiltás</string>
     <string name="user_popup_unblock">Feloldás</string>
@@ -276,7 +276,7 @@
     <string name="restart_required">Újraindítás szükséges a módosítások alkalmazásához</string>
     <string name="restart">Újraindítás</string>
     <string name="uploader_reset">Alapértelmezettek visszaállítása</string>
-    <string name="uploader_url">Feltöltési URL</string>
+    <string name="uploader_url">URL feltöltése</string>
     <string name="uploader_field">Űrlapmező</string>
     <string name="uploader_headers">Fejlécek</string>
     <string name="uploader_image_link">Média link minta</string>
@@ -306,6 +306,7 @@
         <item quantity="one">Maximum %1$d művelet</item>
         <item quantity="other">Maximum %1$d művelet</item>
     </plurals>
+    <string name="input_actions_none">Nincs látható művelet</string>
     <string name="input_action_search">Üzenetek keresése</string>
     <string name="input_action_last_message">Utolsó üzenet</string>
     <string name="input_action_stream">Közvetítés váltása</string>
@@ -315,7 +316,6 @@
     <string name="input_action_debug">Hibakeresés</string>
     <string name="input_action_configure">Műveletek beállítása</string>
     <string name="input_action_hide_all">Összes művelet elrejtése</string>
-    <string name="input_actions_none">Nincs látható művelet</string>
     <string name="room_state_emote_only">Csak emote</string>
     <string name="room_state_subscriber_only">Csak feliratkozók</string>
     <string name="room_state_slow_mode">Lassú mód</string>
@@ -387,7 +387,7 @@
     <string name="tts_ignore_list_add_user">Felhasználó hozzáadása</string>
     <string name="tts_ignore_list_remove_user">Felhasználó eltávolítása</string>
     <string name="tts_ignore_list_user_hint">Felhasználó</string>
-    <string name="recent_upload_deletion_link">Törlési link:\n%1$s</string>
+    <string name="recent_upload_deletion_link">Törölt link:\n%1$s</string>
     <string name="recent_uploads_clear">Feltöltések törlése</string>
     <string name="host">Hoszt</string>
     <string name="reset">Visszaállítás</string>
@@ -547,9 +547,9 @@
     <string name="preference_input_group_title">Bevitel</string>
     <string name="preference_uploader_header">Média feltöltő</string>
     <string name="preference_uploader_configure_title">Feltöltő konfigurálása</string>
-    <string name="preference_uploader_recent_uploads_title">Legutóbbi feltöltések</string>
+    <string name="preference_uploader_recent_uploads_title">Legutóbbi feltőltések</string>
     <string name="preference_tts_user_ignore_list_title">Letiltott felhasználók listája</string>
-    <string name="preference_tts_user_ignore_list_summary">Figyelmen kívül hagyandó felhasználók/fiókok listája</string>
+    <string name="preference_tts_user_ignore_list_summary">Felhasználók/fiókok listája amik figyelmen kivűl lesznek hagyva</string>
     <string name="preference_tools_header">Eszközök</string>
     <string name="preference_theme_title">Téma</string>
     <string name="preference_dark_theme_entry_title">Sötét téma</string>
@@ -565,8 +565,8 @@
     <string name="preference_eventsub_debug_summary">EventSubhoz kapcsolódó hibakeresési adatokat jelenít meg rendszerüzenetként</string>
     <string name="preference_revoke_token_title">Token visszavonása és újraindítás</string>
     <string name="preference_revoke_token_summary">Érvényteleníti a jelenlegi tokent és újraindítja az alkalmazást</string>
-    <string name="preference_fetch_streams_title">Élő adás információinak lekérése</string>
-    <string name="preference_fetch_streams_summary">Rendszeresen lekéri a megnyitott csatornák élő adás információit. Szükséges a beágyazott élő adás elindításához.</string>
+    <string name="preference_fetch_streams_title">Az élő adás információinak elragadása</string>
+    <string name="preference_fetch_streams_summary">Periódikusan megragadja a megnyitott csatornák élő adásainak információit. Kötelező a beágyazott élő adás elindítása.</string>
     <string name="preference_auto_disable_input_title">Bemenet kikapcsolása ha nincs csatlakoztatva a chatre</string>
     <string name="preference_repeated_sending_title">Ismételt küldés engedélyezése</string>
     <string name="preference_repeated_sending_summary">Engedélyezi a folyamatos üzenetküldést amíg a küldés gomb le van nyomva</string>
@@ -602,7 +602,7 @@
     <string name="reset_media_uploader_dialog_message">Biztosan alaphelyzetbe állítja a média feltöltő beállításait?</string>
     <string name="reset_media_uploader_dialog_positive">Visszaállítás</string>
     <string name="clear_recent_uploads_dialog_title">Legutóbbi feltöltések törlése</string>
-    <string name="clear_recent_uploads_dialog_message">Biztosan törölni akarja a feltöltési előzményeket? A feltöltött fájlok nem lesznek törölve.</string>
+    <string name="clear_recent_uploads_dialog_message">Biztosan törölni akarja a feltöltésí előzményeit? A feltöltőtt fájlok nem lesznek törölve.</string>
     <string name="clear">Törlés</string>
     <string name="pattern">Minta</string>
     <string name="case_sensitive">Kis- és nagybetűk megkülönböztetése</string>
@@ -614,7 +614,7 @@
     <string name="username">Felhasználónév</string>
     <string name="block">Letiltás</string>
     <string name="replacement">Csere</string>
-    <string name="ignores">Mellőzött</string>
+    <string name="ignores">Melőzött</string>
     <string name="preference_ignores_summary">Üzenet mellőzések szerkesztése</string>
     <string name="tab_messages">Üzenetek</string>
     <string name="tab_users">Felhasználók</string>
@@ -641,7 +641,7 @@
     <string name="highlights_blacklisted_users_title">Kikapcsolja az értesítéseket és kiemeléseket bizonyos felhasználóktól (pl. botok-tól).</string>
     <string name="highlights_badges_title">Értesítések létrehozása és üzenetek kiemelése jelvények alapján.</string>
     <string name="ignores_messages_title">Üzenetek figyelmen kívül hagyása bizonyos minta szerint.</string>
-    <string name="ignores_users_title">Üzenetek figyelmen kívül hagyása bizonyos felhasználóktól.</string>
+    <string name="ignores_users_title">Üzenetek figyelmen kívúl hagyása bizonyos felhasználóktól</string>
     <string name="ignores_twitch_title">Letiltott Twitch-felhasználók kezelése.</string>
     <string name="preference_notification_whisper_title">Értesítések létrehozása suttogóüzenetekre</string>
     <string name="login_outdated_title">Bejelentkezés elavult!</string>
