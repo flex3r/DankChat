@@ -36,7 +36,7 @@
     <string name="resume_scroll">Возобновить прокрутку</string>
     <string name="uploading_image">Загружается файл</string>
     <string name="settings">Настройки</string>
-    <string name="external_upload_disclaimer">Сторонний хостинг предоставлен %1$s, используйте на свой страх и риск.</string>
+    <string name="external_upload_disclaimer">Сторонний хостинг %1$s предоставлен, используйте на свой страх и риск.</string>
     <string name="nuuls_upload_title">Пользовательский загрузчик медиа</string>
     <string name="snackbar_message_copied">Сообщение скопировано</string>
     <string name="snackbar_message_id_copied">ID сообщения скопирован</string>
@@ -327,6 +327,7 @@
         <item quantity="many">Максимум %1$d действий</item>
         <item quantity="other">Максимум %1$d действий</item>
     </plurals>
+    <string name="input_actions_none">Нет видимых действий</string>
     <string name="input_action_search">Поиск сообщений</string>
     <string name="input_action_last_message">Последнее сообщение</string>
     <string name="input_action_stream">Переключить трансляцию</string>
@@ -336,7 +337,6 @@
     <string name="input_action_debug">Отладка</string>
     <string name="input_action_configure">Настроить действия</string>
     <string name="input_action_hide_all">Скрыть все действия</string>
-    <string name="input_actions_none">Нет видимых действий</string>
     <string name="room_state_emote_only">Только эмоуты</string>
     <string name="room_state_subscriber_only">Только подписчики</string>
     <string name="room_state_slow_mode">Медленный режим</string>
@@ -622,9 +622,9 @@
     <string name="reset_media_uploader_dialog_title">Сбросить настройки загрузчика медиа</string>
     <string name="reset_media_uploader_dialog_message">Вы уверены, что хотите сбросить настройки загрузчика медиа по умолчанию?</string>
     <string name="reset_media_uploader_dialog_positive">Сбросить</string>
-    <string name="clear_recent_uploads_dialog_title">Очистить недавние загрузки</string>
-    <string name="clear_recent_uploads_dialog_message">Вы уверены, что хотите очистить историю загрузок? Ваши загруженные файлы не будут удалены.</string>
-    <string name="clear">Очистить</string>
+    <string name="clear_recent_uploads_dialog_title">Отчистить недавние загрузки</string>
+    <string name="clear_recent_uploads_dialog_message">Вы уверены, что хотите отчистить историю загрузок? Ваши загруженные файлы не будут удалены.</string>
+    <string name="clear">Отчистить</string>
     <string name="pattern">Шаблон</string>
     <string name="case_sensitive">Соблюдать регистр</string>
     <string name="highlights">Выделения</string>
@@ -653,7 +653,7 @@
     <string name="highlights_ignores_entry_announcements">Анонсы</string>
     <string name="highlights_ignores_entry_watch_streaks">Серии просмотров</string>
     <string name="highlights_ignores_entry_first_messages">Первые сообщения</string>
-    <string name="highlights_ignores_entry_elevated_messages">Выделенные сообщения</string>
+    <string name="highlights_ignores_entry_elevated_messages">Возвышенные сообщения</string>
     <string name="highlights_ignores_entry_redemptions">Выделения купленные за баллы канала</string>
     <string name="highlights_ignores_entry_replies">Ответы</string>
     <string name="highlights_ignores_entry_custom">Пользовательские</string>
