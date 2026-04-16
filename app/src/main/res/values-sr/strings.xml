@@ -55,7 +55,7 @@
     <string name="snackbar_login_failed">Neuspešno prijavljivanje</string>
     <string name="snackbar_image_uploaded">Kopirano: %1$s</string>
     <string name="system_message_upload_complete">Otpremanje završeno: %1$s</string>
-    <string name="snackbar_upload_failed">Greška prilikom slanja</string>
+    <string name="snackbar_upload_failed">Greška prilkom slanja</string>
     <string name="snackbar_upload_failed_cause">Greška prilikom slanja: %1$s</string>
     <string name="share_upload_label">Отпреми</string>
     <string name="share_upload_copied">Копирано у привремену меморију</string>
@@ -109,7 +109,7 @@
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
     <string name="duration_join_3">%1$s %2$s %3$s</string>
-    <string name="snackbar_paste">Налепи</string>
+    <string name="snackbar_paste">Paste</string>
     <string name="add_channel_hint">Naziv kanala</string>
     <string name="add_channel_already_added">Канал је већ додат</string>
     <string name="backspace">Обриши</string>
@@ -118,7 +118,7 @@
     <string name="emote_menu_tab_global">Globalno</string>
     <string name="system_message_connected">Povezan</string>
     <string name="system_message_reconnected">Поново повезан</string>
-    <string name="system_message_disconnected">Veza prekinuta</string>
+    <string name="system_message_disconnected">Veza prekiuta</string>
     <string name="system_message_no_history">Ne vidite prethodne poruke jer ste onemogućili integraciju nedavnih poruka.</string>
     <string name="system_message_ffz_emotes_failed">Учитавање FFZ емотикона није успело (Грешка %1$s)</string>
     <string name="system_message_bttv_emotes_failed">Учитавање BTTV емотикона није успело (Грешка %1$s)</string>
@@ -279,7 +279,7 @@ Kako biste isključili ovu uslogu, pritisnite odustati ispod ili onemogućiti u�
     <string name="uploader_headers">Hederi</string>
     <string name="uploader_image_link">Obrazac za link slike</string>
     <string name="uploader_deletion_link">Obrazac za brisanje slike</string>
-    <string name="uploader_description">Možete da podesite host za uplodovanje slika, kao sto je imgur.com ili s-ul.eu. DankChat koristi isti format za konfiguraciju kao Chatterino.
+    <string name="uploader_description">Možete da podestie host za uplodovanje slika, kao sto je imgur.com ili s-ul.eu. DankChat koristi isti format za konfiguraciju kao chatteriono.
 Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="toggle_fullscreen">Režim celog ekrana</string>
     <string name="toggle_stream">Režim strima</string>
@@ -306,6 +306,7 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
         <item quantity="few">Максимално %1$d акције</item>
         <item quantity="other">Максимално %1$d акција</item>
     </plurals>
+    <string name="input_actions_none">Нема видљивих радњи</string>
     <string name="input_action_search">Претражи поруке</string>
     <string name="input_action_last_message">Последња порука</string>
     <string name="input_action_stream">Укључи/искључи стрим</string>
@@ -315,7 +316,6 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="input_action_debug">Отклањање грешака</string>
     <string name="input_action_configure">Подеси акције</string>
     <string name="input_action_hide_all">Сакриј све радње</string>
-    <string name="input_actions_none">Нема видљивих радњи</string>
     <string name="room_state_emote_only">Само емотикони</string>
     <string name="room_state_subscriber_only">Само претплатници</string>
     <string name="room_state_slow_mode">Спори режим</string>
@@ -420,7 +420,7 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_appearance_header">Izgled</string>
     <string name="preference_about_summary">DankChat %1$s je napravljen od @flex3rs i saradnicima</string>
     <string name="preference_show_input_title">Prikaži unos</string>
-    <string name="preference_show_input_summary">Prikazuje polje za unos za slanje poruka</string>
+    <string name="preference_show_input_summary">Pirkazuje polje za unos za slanje poruka</string>
     <string name="preference_follow_system_title">Sistem praćenja</string>
     <string name="preference_true_dark_theme_title">AMOLED tamni režim</string>
     <string name="preference_true_dark_theme_summary">Potpuno crna pozadina za OLED ekrane</string>
@@ -512,10 +512,10 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_show_username_title">Prikaži korisničko ime</string>
     <string name="preference_visible_badges_title">Vidljivi bedževi</string>
     <string name="preference_prefer_emote_suggestions_title">Preferiraju automatsku dopunu emote-ova</string>
-    <string name="preference_prefer_emote_suggestions_summary">Prioritizuj automatsko dovršavanje emote-a u odnosu na korisnike</string>
+    <string name="preference_prefer_emote_suggestions_summary">Priorituzuj automatsku dovršavanje emote-a u odnosu na korisnike</string>
     <string name="preference_user_long_click_title">Ponašanje korisničkog dugog klika</string>
     <string name="preference_user_long_click_summary_on">Običan klik otvara iskačući prozor, duži klik otvara pominjanja</string>
-    <string name="preference_user_long_click_summary_off">Običan klik otvara pominjanja, duži klik otvara iskačući prozor</string>
+    <string name="preference_user_long_click_summary_off">Obićan klik otvara pominjanja, duži klik otvara iskačući prozor</string>
     <string name="preference_colorize_nicknames_title">Обојите надимке</string>
     <string name="preference_colorize_nicknames_summary">Додели насумичну боју корисницима без постављене боје</string>
     <string name="preference_tts_force_english_title">Forsiraj engleski jezik</string>
