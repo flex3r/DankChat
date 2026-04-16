@@ -36,7 +36,7 @@
     <string name="resume_scroll">Riprendi scorrimento</string>
     <string name="uploading_image">Caricamento file</string>
     <string name="settings">Impostazioni</string>
-    <string name="external_upload_disclaimer">Hosting esterno fornito da %1$s. Utilizzalo a tuo rischio e pericolo.</string>
+    <string name="external_upload_disclaimer">Hosting esterno fornito da %1$s. Utilizzalo a tuo rischi e pericolo.</string>
     <string name="nuuls_upload_title">Caricamento media personalizzato</string>
     <string name="snackbar_message_copied">Messaggio copiato</string>
     <string name="snackbar_message_id_copied">Id messaggio copiato</string>
@@ -264,7 +264,7 @@
     <string name="user_popup_block">Blocca</string>
     <string name="user_popup_unblock">Sblocca</string>
     <string name="user_popup_mention">Menziona utente</string>
-    <string name="user_popup_whisper">MP all\'utente</string>
+    <string name="user_popup_whisper">Sussurra a utente</string>
     <string name="user_popup_created">Creato il: %1$s</string>
     <string name="user_popup_following_since">Seguito dal %1$s</string>
     <string name="user_popup_not_following">Non seguito</string>
@@ -306,6 +306,7 @@
         <item quantity="one">Massimo %1$d azione</item>
         <item quantity="other">Massimo %1$d azioni</item>
     </plurals>
+    <string name="input_actions_none">Nessuna azione visibile</string>
     <string name="input_action_search">Cerca messaggi</string>
     <string name="input_action_last_message">Ultimo messaggio</string>
     <string name="input_action_stream">Attiva/disattiva stream</string>
@@ -315,7 +316,6 @@
     <string name="input_action_debug">Debug</string>
     <string name="input_action_configure">Configura azioni</string>
     <string name="input_action_hide_all">Nascondi tutte le azioni</string>
-    <string name="input_actions_none">Nessuna azione visibile</string>
     <string name="room_state_emote_only">Solo emote</string>
     <string name="room_state_subscriber_only">Solo abbonati</string>
     <string name="room_state_slow_mode">Modalità lenta</string>
@@ -369,7 +369,7 @@
     <string name="confirm_user_delete_positive_button">Elimina</string>
     <string name="confirm_clear_chat_question">Cancellare la chat?</string>
     <string name="confirm_user_roomstate_title">Aggiorna modalità di chat</string>
-    <string name="roomstate_emote">Solo emote</string>
+    <string name="roomstate_emote">Sole emote</string>
     <string name="roomstate_subs">Solo iscritti</string>
     <string name="roomstate_slow">Modalità lenta</string>
     <string name="roomstate_r9k">Modalità R9K</string>
@@ -432,7 +432,7 @@
     <string name="preference_about_summary">DankChat %1$s, sviluppata da @flex3rs e collaboratori</string>
     <string name="preference_show_input_title">Mostra input</string>
     <string name="preference_show_input_summary">Mostra il campo di inserimento per inviare i messaggi</string>
-    <string name="preference_follow_system_title">Segui il sistema predefinito</string>
+    <string name="preference_follow_system_title">Sistema di follow predefinito</string>
     <string name="preference_true_dark_theme_title">Modalità scura AMOLED</string>
     <string name="preference_true_dark_theme_summary">Sfondi neri puri per schermi OLED</string>
     <string name="preference_accent_color_title">Colore di accento</string>
@@ -471,7 +471,7 @@
     <string name="palette_style_content">Content</string>
     <string name="palette_style_content_desc">Colore di accento con terziario analogo</string>
     <string name="palette_style_more">Altri stili</string>
-    <string name="preference_display_group_title">Visualizzazione</string>
+    <string name="preference_display_group_title">Schermo</string>
     <string name="preference_components_group_title">Componenti</string>
     <string name="preference_show_timed_out_messages_title">Mostra messaggi silenziati</string>
     <string name="preference_animate_gifs_title">Gif animate</string>
@@ -598,7 +598,7 @@
     <string name="preference_streams_header">Canali live</string>
     <string name="preference_pip_title">Attiva modalità picture-in-picture</string>
     <string name="preference_pip_summary">Consente la riproduzione della live mentre l\'applicazione è in background</string>
-    <string name="reset_media_uploader_dialog_title">Ripristina impostazioni caricatore multimediale</string>
+    <string name="reset_media_uploader_dialog_title">RIpristina Impostazioni Caricatore Multimediale</string>
     <string name="reset_media_uploader_dialog_message">Sei sicuro di voler ripristinare le impostazioni del caricatore multimediale ai valori predefiniti?</string>
     <string name="reset_media_uploader_dialog_positive">Ripristina</string>
     <string name="clear_recent_uploads_dialog_title">Cancella Caricamenti Recenti</string>
@@ -643,7 +643,7 @@
     <string name="ignores_messages_title">Ignora messaggi secondo certi schemi.</string>
     <string name="ignores_users_title">Ignora messaggi da certi utenti.</string>
     <string name="ignores_twitch_title">Gestisci utenti di Twitch bloccati.</string>
-    <string name="preference_notification_whisper_title">Crea notifiche per i MP</string>
+    <string name="preference_notification_whisper_title">Crea notifiche per sussurri.</string>
     <string name="login_outdated_title">Accesso Obsoleto!</string>
     <string name="login_outdated_message">Il tuo accesso è obsoleto e non ha accesso ad alcune funzionalità. Sei pregato di accedere nuovamente.</string>
     <string name="custom_user_display_title">Schermata Utente Personalizzata</string>
