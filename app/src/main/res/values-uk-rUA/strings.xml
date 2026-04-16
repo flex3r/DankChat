@@ -328,6 +328,7 @@
         <item quantity="many">Максимум %1$d дій</item>
         <item quantity="other">Максимум %1$d дій</item>
     </plurals>
+    <string name="input_actions_none">Немає видимих дій</string>
     <string name="input_action_search">Пошук повідомлень</string>
     <string name="input_action_last_message">Останнє повідомлення</string>
     <string name="input_action_stream">Перемкнути трансляцію</string>
@@ -337,7 +338,6 @@
     <string name="input_action_debug">Налагодження</string>
     <string name="input_action_configure">Налаштувати дії</string>
     <string name="input_action_hide_all">Сховати всі дії</string>
-    <string name="input_actions_none">Немає видимих дій</string>
     <string name="room_state_emote_only">Лише емоути</string>
     <string name="room_state_subscriber_only">Лише підписники</string>
     <string name="room_state_slow_mode">Повільний режим</string>
