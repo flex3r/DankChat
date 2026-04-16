@@ -123,7 +123,7 @@
     <string name="system_message_disconnected">Desconectado</string>
     <string name="system_message_history_unavailable_detailed">Serviço de histórico de mensagens indisponível (Erro %1$s)</string>
     <string name="system_message_history_unavailable">Serviço de histórico de mensagens indisponível</string>
-    <string name="system_message_history_recovering">Serviço de histórico de mensagens em recuperação, pode haver falhas no histórico de mensagens.</string>
+    <string name="system_message_history_recovering">Serviço de histórico de mensagens em recuperação, podem haver discrepâncias no histórico de mensagens.</string>
     <string name="system_message_history_ignored">Histórico de mensagens indisponível porque este canal foi excluído do serviço.</string>
     <string name="system_message_no_history">Você não está vendo nenhum histórico de mensagens porque desativou a integração de mensagens recentes.</string>
     <string name="system_message_ffz_emotes_failed">Falha ao carregar emotes FFZ (Erro %1$s)</string>
@@ -306,6 +306,7 @@
         <item quantity="one">Máximo de %1$d ação</item>
         <item quantity="other">Máximo de %1$d ações</item>
     </plurals>
+    <string name="input_actions_none">Nenhuma ação visível</string>
     <string name="input_action_search">Pesquisar mensagens</string>
     <string name="input_action_last_message">Última mensagem</string>
     <string name="input_action_stream">Alternar stream</string>
@@ -315,7 +316,6 @@
     <string name="input_action_debug">Depuração</string>
     <string name="input_action_configure">Configurar ações</string>
     <string name="input_action_hide_all">Ocultar todas as ações</string>
-    <string name="input_actions_none">Nenhuma ação visível</string>
     <string name="room_state_emote_only">Apenas emotes</string>
     <string name="room_state_subscriber_only">Apenas assinantes</string>
     <string name="room_state_slow_mode">Modo lento</string>
