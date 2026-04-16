@@ -25,7 +25,7 @@
     <string name="channel_blocked_message">Canal bloqueado</string>
     <string name="no_channels_added">Sem canais adicionados</string>
     <string name="no_channels_added_body">Adicione um canal para começar a conversar</string>
-    <string name="confirm_logout_title">Confirmar encerramento de sessão</string>
+    <string name="confirm_logout_title">Confirmar encerro de sessão</string>
     <string name="confirm_logout_message">Tens a certeza de que desejas terminar a sessão?</string>
     <string name="confirm_logout_question">Terminar sessão?</string>
     <string name="confirm_logout_positive_button">Terminar sessão</string>
@@ -41,7 +41,7 @@
     <string name="snackbar_message_copied">Mensagem copiada</string>
     <string name="snackbar_message_id_copied">ID da mensagem copiado</string>
     <string name="snackbar_link_copied">Link copiado</string>
-    <string name="snackbar_error_copied">Informações de erro copiadas</string>
+    <string name="snackbar_error_copied">Informações de erro copiada</string>
     <string name="notification_stop">Parar</string>
     <string name="notification_title">FeelsDankMan</string>
     <string name="notification_message">DankChat está em execução em segundo plano</string>
@@ -65,7 +65,7 @@
     <string name="share_upload_label">Carregar</string>
     <string name="share_upload_copied">Copiado para a área de transferência</string>
     <string name="share_upload_copy">Copiar URL</string>
-    <string name="snackbar_retry">Tenta novamente</string>
+    <string name="snackbar_retry">Tentaa novamente</string>
     <string name="snackbar_data_reloaded">Emotes recarregados</string>
     <string name="snackbar_data_load_failed_cause">Falha ao carregar dados: %1$s</string>
     <string name="snackbar_data_load_failed_multiple_causes">Falha ao carregar dados com vários erros:\n%1$s</string>
@@ -125,7 +125,7 @@
     <string name="system_message_history_unavailable">Serviço de histórico de mensagens indisponível</string>
     <string name="system_message_history_recovering">Recuperação do serviço histórico de mensagens, pode haver lacunas na história das mensagens.</string>
     <string name="system_message_history_ignored">Histórico de mensagens indisponível porque este canal foi excluído do serviço.</string>
-    <string name="system_message_no_history">Não estás a ver nenhuma mensagem histórica porque optaste por não participar na integração de mensagens recentes.</string>
+    <string name="system_message_no_history">Não estás a ver nenhuma mensagem histórica porque optas-te por não participar na integração de mensagens recentes.</string>
     <string name="system_message_ffz_emotes_failed">Falha ao carregar emotes FFZ (Erro %1$s)</string>
     <string name="system_message_bttv_emotes_failed">Falha ao carregar emotes BTTV (Erro %1$s)</string>
     <string name="system_message_7tv_emotes_failed">Falha ao carregar emotes do 7TV (Erro %1$s)</string>
@@ -250,10 +250,10 @@
     <string name="mentions_title">Menções / Sussurros</string>
     <string name="replies_title">Responde à thread</string>
     <string name="whispers">Sussurros</string>
-    <string name="notification_whisper_mention">%1$s enviou-te um sussurro</string>
+    <string name="notification_whisper_mention">%1$s enviou-te um sussuro</string>
     <string name="mentions">Menções</string>
     <string name="confirm_channel_removal_title">Confirmar exclusão de canal</string>
-    <string name="confirm_channel_removal_message">Tens a certeza que desejas remover este canal?</string>
+    <string name="confirm_channel_removal_message">Tens a  certeza que desejas remover este canal?</string>
     <string name="confirm_channel_removal_message_named">Tens a certeza que desejas remover o canal \"%1$s\"?</string>
     <string name="confirm_channel_removal_question">Remover este canal?</string>
     <string name="confirm_channel_removal_question_named">Remover o canal \"%1$s\"?</string>
@@ -306,6 +306,7 @@
         <item quantity="one">Máximo de %1$d ação</item>
         <item quantity="other">Máximo de %1$d ações</item>
     </plurals>
+    <string name="input_actions_none">Nenhuma ação visível</string>
     <string name="input_action_search">Pesquisar mensagens</string>
     <string name="input_action_last_message">Última mensagem</string>
     <string name="input_action_stream">Alternar transmissão</string>
@@ -315,7 +316,6 @@
     <string name="input_action_debug">Depuração</string>
     <string name="input_action_configure">Configurar ações</string>
     <string name="input_action_hide_all">Ocultar todas as ações</string>
-    <string name="input_actions_none">Nenhuma ação visível</string>
     <string name="room_state_emote_only">Apenas emotes</string>
     <string name="room_state_subscriber_only">Apenas subscritores</string>
     <string name="room_state_slow_mode">Modo lento</string>
@@ -363,7 +363,7 @@
     <string name="confirm_user_ban_positive_button">Banir</string>
     <string name="confirm_user_timeout_title">Confirmar exclusão temporária</string>
     <string name="confirm_user_timeout_positive_button">Exclusão temporária</string>
-    <string name="confirm_user_delete_title">Confirmar exclusão de mensagem</string>
+    <string name="confirm_user_delete_title">Confirmar exclusão de mensagen</string>
     <string name="confirm_user_delete_message">Tens a certeza de que pretendes eliminar esta mensagem?</string>
     <string name="confirm_user_delete_question">Eliminar esta mensagem?</string>
     <string name="confirm_user_delete_positive_button">Apagar</string>
@@ -471,7 +471,7 @@
     <string name="palette_style_content">Content</string>
     <string name="palette_style_content_desc">Cor de destaque com terciário análogo</string>
     <string name="palette_style_more">Mais estilos</string>
-    <string name="preference_display_group_title">Visualização</string>
+    <string name="preference_display_group_title">Ecrã</string>
     <string name="preference_components_group_title">Componentes</string>
     <string name="preference_show_timed_out_messages_title">Mostrar mensagens apagadas por suspensão temporária</string>
     <string name="preference_animate_gifs_title">Gifs animados</string>
@@ -480,7 +480,7 @@
     <string name="preference_font_size_title">Tamanho da fonte</string>
     <string name="preference_font_size_summary_very_small">Muito pequeno</string>
     <string name="preference_font_size_summary_small">Pequeno</string>
-    <string name="preference_font_size_summary_large">Grande</string>
+    <string name="preference_font_size_summary_large">Largo</string>
     <string name="preference_font_size_summary_very_large">Muito grande</string>
     <string name="preference_suggestions_title">Sugestões</string>
     <string name="preference_suggestions_summary">Escolha quais sugestões mostrar ao escrever</string>
@@ -509,7 +509,7 @@
     <string name="preference_tts_summary">Lê as mensagens do canal ativo</string>
     <string name="preference_tts_queue_title"> Modo de fila de mensagens</string>
     <string name="preference_tts_queue_add">Reproduz todas as mensagens usando uma fila</string>
-    <string name="preference_tts_queue_flush">Reproduz apenas a mensagem mais recente</string>
+    <string name="preference_tts_queue_flush">Reproduz apenas as mensagens mais recente</string>
     <string name="preference_tts_message_format_message">Lê apenas mensagem</string>
     <string name="preference_tts_message_format_combined">Lê o nome do utilizador e a mensagem</string>
     <string name="preference_tts_message_format_title">Formato da mensagem</string>
@@ -528,7 +528,7 @@
     <string name="preference_show_username_title">Mostrar nomes de utilizadores</string>
     <string name="preference_visible_badges_title">Emblemas visíveis</string>
     <string name="preference_prefer_emote_suggestions_title">Preferir sugestões de emotes</string>
-    <string name="preference_prefer_emote_suggestions_summary">Priorizar sugestões de emotes sobre sugestões de utilizadores</string>
+    <string name="preference_prefer_emote_suggestions_summary">Prioritizar sugestões de emotes sobre sugestões de utilizadores</string>
     <string name="preference_user_long_click_title">Comportamento de clique longo do utilizador</string>
     <string name="preference_user_long_click_summary_on">Clique regular abre janela, clique longo abre menções</string>
     <string name="preference_user_long_click_summary_off">Clique regular abre menções, clique longo abre janela</string>
@@ -566,12 +566,12 @@
     <string name="preference_revoke_token_title">Revogar token e reiniciar</string>
     <string name="preference_revoke_token_summary">Invalida o token atual e reinicia a aplicação</string>
     <string name="preference_fetch_streams_title">Mostrar informação da stream</string>
-    <string name="preference_fetch_streams_summary">Busca periodicamente informações de transmissão dos canais abertos. Obrigatório para iniciar o stream incorporado.</string>
+    <string name="preference_fetch_streams_summary">Busca periodicamente informações de fluxo de canais abertos. Obrigatório para iniciar o stream incorporado.</string>
     <string name="preference_auto_disable_input_title">Desativar a entrada se não estiver conectado ao chat</string>
     <string name="preference_repeated_sending_title">Habilitar envio repetido</string>
     <string name="preference_repeated_sending_summary">Habilita o envio contínuo de mensagens enquanto o botão de envio é pressionado</string>
-    <string name="oauth_expired_title">Sessão expirada!</string>
-    <string name="oauth_expired_message">O teu token de início de sessão expirou! Por favor, inicia sessão outra vez.</string>
+    <string name="oauth_expired_title">Conecxão expirada!</string>
+    <string name="oauth_expired_message">O teu token do início de sessão expirou!Por favor inicia sessão outra vez.</string>
     <string name="oauth_expired_login_again">Inicia sessão novamente</string>
     <string name="oauth_verify_failed">Falha ao verificar o token de início de sessão, verifica a tua conexão.</string>
     <string name="preference_retain_webview_title">Impedir recarregamentos da stream</string>
