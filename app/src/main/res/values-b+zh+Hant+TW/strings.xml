@@ -107,7 +107,7 @@
     <string name="snackbar_paste">貼上</string>
     <string name="add_channel_hint">頻道名稱</string>
     <string name="add_channel_already_added">頻道已經加入</string>
-    <string name="emote_menu_tab_recent">最近</string>
+    <string name="emote_menu_tab_recent">常用</string>
     <string name="backspace">退格鍵</string>
     <string name="emote_menu_tab_subs">訂閱</string>
     <string name="emote_menu_tab_channel">頻道</string>
@@ -232,9 +232,9 @@
         <item quantity="other">\u0020(%1$d 次)</item>
     </plurals>
     <string name="timed_out_message">&lt; 訊息已被刪除 &gt;</string>
-    <string name="multi_entry_header_regex">Regex 正規表達式</string>
+    <string name="multi_entry_header_regex">Regex 常規式</string>
     <string name="multi_entry_add_entry">新增項目</string>
-    <string name="login_expired">登入已過期！請重新登入。</string>
+    <string name="login_expired">登入失敗！請再試一次。</string>
     <string name="message_history_disclaimer_title">聊天歷史紀錄聲明</string>
     <string name="message_history_disclaimer_message">DankChat 可於啟動時透過第三方服務載入聊天室中的歷史紀錄。
 若要載入這些訊息，DankChat 將會把您所開啟的頻道名稱發送給該服務。
@@ -248,7 +248,7 @@
     <string name="mentions_title">提及/悄悄話</string>
     <string name="replies_title">回覆串</string>
     <string name="whispers">悄悄話</string>
-    <string name="notification_whisper_mention">%1$s 傳送了一則悄悄話給您</string>
+    <string name="notification_whisper_mention">%1$s 傳送了一則訊息給您</string>
     <string name="mentions">提及</string>
     <string name="confirm_channel_removal_title">確認移除頻道</string>
     <string name="confirm_channel_removal_message">您確定要將此頻道移除嗎？</string>
@@ -303,6 +303,7 @@
     <plurals name="input_actions_max">
         <item quantity="other">最多 %1$d 個動作</item>
     </plurals>
+    <string name="input_actions_none">無可見操作</string>
     <string name="input_action_search">搜尋訊息</string>
     <string name="input_action_last_message">上一則訊息</string>
     <string name="input_action_stream">切換實況</string>
@@ -312,7 +313,6 @@
     <string name="input_action_debug">偵錯</string>
     <string name="input_action_configure">設定動作</string>
     <string name="input_action_hide_all">隱藏所有操作</string>
-    <string name="input_actions_none">無可見操作</string>
     <string name="room_state_emote_only">僅限表情符號</string>
     <string name="room_state_subscriber_only">僅限訂閱者</string>
     <string name="room_state_slow_mode">低速模式</string>
@@ -351,13 +351,13 @@
     <string name="logout">登出</string>
     <string name="user_popup_timeout">禁言</string>
     <string name="user_popup_delete">刪除留言</string>
-    <string name="user_popup_ban">封禁</string>
-    <string name="user_popup_unban">解除封禁</string>
-    <string name="change_roomstate">聊天模式</string>
-    <string name="confirm_user_ban_title">確認封禁</string>
-    <string name="confirm_user_ban_message">您確定要封禁此使用者嗎?</string>
+    <string name="user_popup_ban">Ban</string>
+    <string name="user_popup_unban">解ban</string>
+    <string name="change_roomstate">聊天室狀態</string>
+    <string name="confirm_user_ban_title">確認永ban</string>
+    <string name="confirm_user_ban_message">您確定要永ban這名用戶嗎?</string>
     <string name="confirm_user_ban_question">封禁此使用者?</string>
-    <string name="confirm_user_ban_positive_button">封禁</string>
+    <string name="confirm_user_ban_positive_button">Ban</string>
     <string name="confirm_user_timeout_title">確認禁言</string>
     <string name="confirm_user_timeout_positive_button">禁言</string>
     <string name="confirm_user_delete_title">確認訊息刪除</string>
@@ -386,7 +386,7 @@
     <string name="tts_ignore_list_user_hint">使用者</string>
     <string name="recent_upload_deletion_link">刪除連結: \n%1$s</string>
     <string name="recent_uploads_clear">清除上傳</string>
-    <string name="host">主機</string>
+    <string name="host">實況主</string>
     <string name="reset">重置</string>
     <string name="oauth_token">OAuth授權token</string>
     <string name="verify_login">確認&amp;保存</string>
@@ -514,7 +514,7 @@
     <string name="preference_tts_message_ignore_url_message">在文字朗讀時忽略 URL</string>
     <string name="preference_tts_message_ignore_url_title">忽略 URL</string>
     <string name="preference_tts_message_ignore_emote_message">在文字朗讀時忽略表情符號</string>
-    <string name="preference_tts_message_ignore_emote_title">忽略表情符號</string>
+    <string name="preference_tts_message_ignore_emote_title">忽略 表情符號</string>
     <string name="preference_tts_volume_title">音量</string>
     <string name="preference_tts_audio_ducking_title">音訊閃避</string>
     <string name="preference_tts_audio_ducking_summary">TTS朗讀時降低其他應用程式的音量</string>
@@ -536,8 +536,8 @@
     <string name="preference_tts_force_english_summary">強制文字朗讀使用英文，而非系統預設語言</string>
     <string name="preference_visible_emotes_title">顯示第三方表情符號</string>
     <string name="preference_about_tos">Twitch 服務條款和用戶政策</string>
-    <string name="preference_show_chip_actions_title">顯示快捷操作</string>
-    <string name="preference_show_chip_actions_summary">顯示用於切換全螢幕、實況與聊天模式的快捷操作</string>
+    <string name="preference_show_chip_actions_title">顯示微項動作</string>
+    <string name="preference_show_chip_actions_summary">顯示用於切換全螢幕、實況與聊天室模式的微項動作</string>
     <string name="preference_show_character_counter_title">顯示字元計數器</string>
     <string name="preference_show_character_counter_summary">在輸入框中顯示字碼數</string>
     <string name="preference_show_clear_input_button_title">顯示清除輸入按鈕</string>
@@ -546,8 +546,8 @@
     <string name="preference_uploader_header">媒體上傳者</string>
     <string name="preference_uploader_configure_title">設定上傳者</string>
     <string name="preference_uploader_recent_uploads_title">近期上傳</string>
-    <string name="preference_tts_user_ignore_list_title">使用者忽略清單</string>
-    <string name="preference_tts_user_ignore_list_summary">清單內的使用者或帳戶會被忽略</string>
+    <string name="preference_tts_user_ignore_list_title">忽略 使用者 清單</string>
+    <string name="preference_tts_user_ignore_list_summary">清單內的 使用者/帳戶 會被忽略</string>
     <string name="preference_tools_header">工具箱</string>
     <string name="preference_theme_title">主題</string>
     <string name="preference_dark_theme_entry_title">暗色主題</string>
@@ -563,9 +563,9 @@
     <string name="preference_eventsub_debug_summary">將 EventSub 相關除錯資訊以系統訊息顯示</string>
     <string name="preference_revoke_token_title">撤銷權杖並重新啟動</string>
     <string name="preference_revoke_token_summary">使目前的權杖失效並重新啟動應用程式</string>
-    <string name="preference_fetch_streams_title">擷取實況資訊</string>
-    <string name="preference_fetch_streams_summary">定期擷取開啟頻道的實況資訊。啟用嵌入式實況的必要功能。</string>
-    <string name="preference_auto_disable_input_title">未連線至聊天室時停用輸入框</string>
+    <string name="preference_fetch_streams_title">捉取實況資訊</string>
+    <string name="preference_fetch_streams_summary">定期捉取開啟頻道的實況資訊。啟用嵌入式實況的必須功能。</string>
+    <string name="preference_auto_disable_input_title">未連結至聊天室時取消輸入框</string>
     <string name="preference_repeated_sending_title">啟用重複送訊</string>
     <string name="preference_repeated_sending_summary">使在按住送出按鈕時可以連續送出訊息</string>
     <string name="oauth_expired_title">登入失效！</string>
@@ -600,7 +600,7 @@
     <string name="reset_media_uploader_dialog_message">您確定要將媒體上傳者設定重置成預設嗎?</string>
     <string name="reset_media_uploader_dialog_positive">重置</string>
     <string name="clear_recent_uploads_dialog_title">清除近期上傳</string>
-    <string name="clear_recent_uploads_dialog_message">您確定要清除近期上傳歷史嗎? 您已上傳的檔案不會被刪除。</string>
+    <string name="clear_recent_uploads_dialog_message">您確定要清楚近期上傳歷史嗎? 您已上傳的檔案不會被刪除。</string>
     <string name="clear">清除</string>
     <string name="pattern">格式</string>
     <string name="case_sensitive">區分大小寫</string>
@@ -621,7 +621,7 @@
     <string name="tab_badges">徽章</string>
     <string name="undo">復原</string>
     <string name="item_removed">物件已移除</string>
-    <string name="unblocked_user">已解除封鎖使用者 %1$s</string>
+    <string name="unblocked_user">已封鎖使用者 %1$s</string>
     <string name="unblocked_user_failed">無法解除封鎖使用者 %1$s</string>
     <string name="badge">徽章</string>
     <string name="blocked_user_failed">無法封鎖使用者 %1$s</string>
@@ -639,7 +639,7 @@
     <string name="highlights_blacklisted_users_title">關閉來自於某些使用者的通知與醒目提示 (例如機器人)</string>
     <string name="highlights_badges_title">基於徽章對使用者的訊息產生通知與醒目提示</string>
     <string name="ignores_messages_title">基於某些格式忽略訊息</string>
-    <string name="ignores_users_title">忽略來自特定使用者的訊息</string>
+    <string name="ignores_users_title">忽略來自於某些使用的訊息</string>
     <string name="ignores_twitch_title">管理封鎖的Twitch使用者</string>
     <string name="preference_notification_whisper_title">悄悄話時產生通知</string>
     <string name="login_outdated_title">登入已過期!</string>
