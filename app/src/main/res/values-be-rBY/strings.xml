@@ -322,6 +322,7 @@
         <item quantity="many">Максімум %1$d дзеянняў</item>
         <item quantity="other">Максімум %1$d дзеянняў</item>
     </plurals>
+    <string name="input_actions_none">Няма бачных дзеянняў</string>
     <string name="input_action_search">Пошук паведамленняў</string>
     <string name="input_action_last_message">Апошняе паведамленне</string>
     <string name="input_action_stream">Пераключыць трансляцыю</string>
@@ -331,7 +332,6 @@
     <string name="input_action_debug">Адладка</string>
     <string name="input_action_configure">Наладзіць дзеянні</string>
     <string name="input_action_hide_all">Схаваць усе дзеянні</string>
-    <string name="input_actions_none">Няма бачных дзеянняў</string>
     <string name="room_state_emote_only">Толькі эмоуты</string>
     <string name="room_state_subscriber_only">Толькі падпісчыкі</string>
     <string name="room_state_slow_mode">Павольны рэжым</string>
