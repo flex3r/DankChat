@@ -311,6 +311,7 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
         <item quantity="one">Màxim %1$d acció</item>
         <item quantity="other">Màxim %1$d accions</item>
     </plurals>
+    <string name="input_actions_none">Cap acció visible</string>
     <string name="input_action_search">Cerca missatges</string>
     <string name="input_action_last_message">Últim missatge</string>
     <string name="input_action_stream">Commuta l\'emissió</string>
@@ -320,7 +321,6 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="input_action_debug">Depuració</string>
     <string name="input_action_configure">Configura accions</string>
     <string name="input_action_hide_all">Amaga totes les accions</string>
-    <string name="input_actions_none">Cap acció visible</string>
     <string name="room_state_emote_only">Només emotes</string>
     <string name="room_state_subscriber_only">Només subscriptors</string>
     <string name="room_state_slow_mode">Mode lent</string>
