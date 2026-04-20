@@ -34,7 +34,7 @@
     <string name="record_video">Nagraj wideo</string>
     <string name="choose_media">Wybierz istniejące pliki</string>
     <string name="resume_scroll">Wznów przewijanie</string>
-    <string name="uploading_image">Przesyłanie pliku</string>
+    <string name="uploading_image">Prześlij zdjęcie</string>
     <string name="settings">Ustawienia</string>
     <string name="external_upload_disclaimer">Zewnętrzny hosting dostarczony przez %1$s, używaj na własną odpowiedzialność.</string>
     <string name="nuuls_upload_title">Niestandardowe przesyłanie plików</string>
@@ -124,7 +124,7 @@
     <string name="add_channel_already_added">Kanał jest już dodany</string>
     <string name="emote_menu_tab_recent">Ostatnie</string>
     <string name="backspace">Cofnij</string>
-    <string name="emote_menu_tab_subs">Subskrypcje</string>
+    <string name="emote_menu_tab_subs">Subskrybcje</string>
     <string name="emote_menu_tab_channel">Kanał</string>
     <string name="emote_menu_tab_global">Globalne</string>
     <string name="system_message_connected">Połączono</string>
@@ -327,6 +327,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
         <item quantity="many">Maksymalnie %1$d akcji</item>
         <item quantity="other">Maksymalnie %1$d akcji</item>
     </plurals>
+    <string name="input_actions_none">Brak widocznych akcji</string>
     <string name="input_action_search">Szukaj wiadomości</string>
     <string name="input_action_last_message">Ostatnia wiadomość</string>
     <string name="input_action_stream">Przełącz transmisję</string>
@@ -336,7 +337,6 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="input_action_debug">Debugowanie</string>
     <string name="input_action_configure">Konfiguruj akcje</string>
     <string name="input_action_hide_all">Ukryj wszystkie akcje</string>
-    <string name="input_actions_none">Brak widocznych akcji</string>
     <string name="room_state_emote_only">Tylko emotki</string>
     <string name="room_state_subscriber_only">Tylko subskrybenci</string>
     <string name="room_state_slow_mode">Tryb powolny</string>
@@ -557,7 +557,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_colorize_nicknames_summary">Przypisz losowy kolor użytkownikom bez ustawionego koloru</string>
     <string name="preference_tts_force_english_title">Wymuś język angielski</string>
     <string name="preference_tts_force_english_summary">Wymuś język wiadomości TTS na angielski zamiast domyślnego języka systemu</string>
-    <string name="preference_visible_emotes_title">Widoczne emotki z dodatków</string>
+    <string name="preference_visible_emotes_title">Widoczne emotki z dotatków</string>
     <string name="preference_about_tos">Warunki korzystania z usługi Twitch &amp; polisa użytkownika:</string>
     <string name="preference_show_chip_actions_title">Pokaż akcje chipa</string>
     <string name="preference_show_chip_actions_summary">Wyświetla chipy dla przełączania pełnego ekranu, transmisji i dostosowywania trybów chatu</string>
@@ -566,8 +566,8 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_show_clear_input_button_title">Pokaż przycisk czyszczenia pola</string>
     <string name="preference_show_send_button_title">Pokaż przycisk wysyłania</string>
     <string name="preference_input_group_title">Pole tekstowe</string>
-    <string name="preference_uploader_header">Przesyłanie mediów</string>
-    <string name="preference_uploader_configure_title">Konfiguruj przesyłanie</string>
+    <string name="preference_uploader_header">Przesyłacz media</string>
+    <string name="preference_uploader_configure_title">Przesyłacz konfiguracji</string>
     <string name="preference_uploader_recent_uploads_title">Ostatnio udostępnione</string>
     <string name="preference_tts_user_ignore_list_title">Lista ignorowanych użytkowników</string>
     <string name="preference_tts_user_ignore_list_summary">Konta tych użytkowników będą ignorowane</string>
@@ -577,7 +577,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_light_theme_entry_title">Jasny wygląd</string>
     <string name="preference_unlisted_emotes_title">Zezwól na niezatwierdzone emotki</string>
     <string name="preference_unlisted_emotes_summary">Wyłącza filtrowanie niezatwierdzonych lub niepublicznych emotek</string>
-    <string name="preference_rm_host_title">Niestandardowy host ostatnich wiadomości</string>
+    <string name="preference_rm_host_title">Niestandardowa ostatnia wiadomość host</string>
     <string name="preference_developer_category_general">Ogólne</string>
     <string name="preference_developer_category_auth">Autoryzacja</string>
     <string name="preference_eventsub_title">Włącz Twitch EventSub</string>
@@ -619,11 +619,11 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_streams_header">Transmisje na żywo</string>
     <string name="preference_pip_title">Włącz tryb obrazu w obrazie</string>
     <string name="preference_pip_summary">Umożliwia kontynuowanie odtwarzania strumieni, gdy aplikacja działa w tle</string>
-    <string name="reset_media_uploader_dialog_title">Zresetuj ustawienia przesyłania mediów</string>
-    <string name="reset_media_uploader_dialog_message">Czy jesteś pewien, że chcesz zresetować ustawienia przesyłania mediów do domyślnych?</string>
+    <string name="reset_media_uploader_dialog_title">Zresetuj ustawienia przesłania media</string>
+    <string name="reset_media_uploader_dialog_message">Czy jesteś pewien, że chcesz zresetować ustawienia przesłania media do domyślnych?</string>
     <string name="reset_media_uploader_dialog_positive">Zresetuj</string>
     <string name="clear_recent_uploads_dialog_title">Wyczyść ostatnio przesłane</string>
-    <string name="clear_recent_uploads_dialog_message">Czy jesteś pewien, że chcesz wyczyścić historię przesyłania? Twoje przesłane pliki nie będą usunięte.</string>
+    <string name="clear_recent_uploads_dialog_message">Czy jesteś pewien, że chcesz wyczyścić historie przesłania? Twoje przesłane pliki nie będą usunięte.</string>
     <string name="clear">Wyczyść</string>
     <string name="pattern">Wzór</string>
     <string name="case_sensitive">Uwzględnianie wielkości liter</string>
@@ -652,8 +652,8 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="highlights_ignores_entry_subscriptions">Subskrypcje i Wydarzenia</string>
     <string name="highlights_ignores_entry_announcements">Ogłoszenia</string>
     <string name="highlights_ignores_entry_watch_streaks">Serie oglądania</string>
-    <string name="highlights_ignores_entry_first_messages">Pierwsze wiadomości</string>
-    <string name="highlights_ignores_entry_elevated_messages">Podwyższone wiadomości</string>
+    <string name="highlights_ignores_entry_first_messages">Pierwsza Wiadomość</string>
+    <string name="highlights_ignores_entry_elevated_messages">Podwyższone Czaty</string>
     <string name="highlights_ignores_entry_redemptions">Wyróżnienie odebrane za Punkty Kanału</string>
     <string name="highlights_ignores_entry_replies">Odpowiedzi</string>
     <string name="highlights_ignores_entry_custom">Niestandardowe</string>
