@@ -328,6 +328,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
         <item quantity="many">Maximálně %1$d akcí</item>
         <item quantity="other">Maximálně %1$d akcí</item>
     </plurals>
+    <string name="input_actions_none">Žádné viditelné akce</string>
     <string name="input_action_search">Hledat zprávy</string>
     <string name="input_action_last_message">Poslední zpráva</string>
     <string name="input_action_stream">Přepnout stream</string>
@@ -337,7 +338,6 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="input_action_debug">Ladění</string>
     <string name="input_action_configure">Konfigurovat akce</string>
     <string name="input_action_hide_all">Skrýt všechny akce</string>
-    <string name="input_actions_none">Žádné viditelné akce</string>
     <string name="room_state_emote_only">Pouze emotikony</string>
     <string name="room_state_subscriber_only">Pouze odběratelé</string>
     <string name="room_state_slow_mode">Pomalý režim</string>
