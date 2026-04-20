@@ -306,6 +306,7 @@
         <item quantity="one">Maximum %1$d művelet</item>
         <item quantity="other">Maximum %1$d művelet</item>
     </plurals>
+    <string name="input_actions_none">Nincs látható művelet</string>
     <string name="input_action_search">Üzenetek keresése</string>
     <string name="input_action_last_message">Utolsó üzenet</string>
     <string name="input_action_stream">Közvetítés váltása</string>
@@ -315,7 +316,6 @@
     <string name="input_action_debug">Hibakeresés</string>
     <string name="input_action_configure">Műveletek beállítása</string>
     <string name="input_action_hide_all">Összes művelet elrejtése</string>
-    <string name="input_actions_none">Nincs látható művelet</string>
     <string name="room_state_emote_only">Csak emote</string>
     <string name="room_state_subscriber_only">Csak feliratkozók</string>
     <string name="room_state_slow_mode">Lassú mód</string>
