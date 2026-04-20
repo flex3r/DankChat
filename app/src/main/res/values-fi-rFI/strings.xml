@@ -311,6 +311,7 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
         <item quantity="one">Enintään %1$d toiminto</item>
         <item quantity="other">Enintään %1$d toimintoa</item>
     </plurals>
+    <string name="input_actions_none">Ei näkyviä toimintoja</string>
     <string name="input_action_search">Hae viestejä</string>
     <string name="input_action_last_message">Viimeisin viesti</string>
     <string name="input_action_stream">Vaihda lähetys</string>
@@ -320,7 +321,6 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="input_action_debug">Virheenkorjaus</string>
     <string name="input_action_configure">Muokkaa toimintoja</string>
     <string name="input_action_hide_all">Piilota kaikki toiminnot</string>
-    <string name="input_actions_none">Ei näkyviä toimintoja</string>
     <string name="room_state_emote_only">Vain hymiöt</string>
     <string name="room_state_subscriber_only">Vain tilaajat</string>
     <string name="room_state_slow_mode">Hidas tila</string>
