@@ -298,6 +298,7 @@
     <plurals name="input_actions_max">
         <item quantity="other">最大%1$d個のアクション</item>
     </plurals>
+    <string name="input_actions_none">表示中のアクションなし</string>
     <string name="input_action_search">メッセージを検索</string>
     <string name="input_action_last_message">最後のメッセージ</string>
     <string name="input_action_stream">配信を切り替え</string>
@@ -307,7 +308,6 @@
     <string name="input_action_debug">デバッグ</string>
     <string name="input_action_configure">アクションを設定</string>
     <string name="input_action_hide_all">すべてのアクションを非表示</string>
-    <string name="input_actions_none">表示中のアクションなし</string>
     <string name="room_state_emote_only">エモートのみ</string>
     <string name="room_state_subscriber_only">サブスクライバーのみ</string>
     <string name="room_state_slow_mode">スローモード</string>
