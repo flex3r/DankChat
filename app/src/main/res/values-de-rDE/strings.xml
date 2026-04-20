@@ -312,6 +312,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
         <item quantity="one">Maximal %1$d Aktion</item>
         <item quantity="other">Maximal %1$d Aktionen</item>
     </plurals>
+    <string name="input_actions_none">Keine Aktionen sichtbar</string>
     <string name="input_action_search">Nachrichten durchsuchen</string>
     <string name="input_action_last_message">Letzte Nachricht</string>
     <string name="input_action_stream">Stream umschalten</string>
@@ -321,7 +322,6 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="input_action_debug">Debug</string>
     <string name="input_action_configure">Aktionen konfigurieren</string>
     <string name="input_action_hide_all">Alle Aktionen ausblenden</string>
-    <string name="input_actions_none">Keine Aktionen sichtbar</string>
     <string name="room_state_emote_only">Nur Emotes</string>
     <string name="room_state_subscriber_only">Nur Abonnenten</string>
     <string name="room_state_slow_mode">Langsamer Modus</string>
