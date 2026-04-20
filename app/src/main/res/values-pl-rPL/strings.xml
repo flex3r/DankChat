@@ -327,6 +327,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
         <item quantity="many">Maksymalnie %1$d akcji</item>
         <item quantity="other">Maksymalnie %1$d akcji</item>
     </plurals>
+    <string name="input_actions_none">Brak widocznych akcji</string>
     <string name="input_action_search">Szukaj wiadomości</string>
     <string name="input_action_last_message">Ostatnia wiadomość</string>
     <string name="input_action_stream">Przełącz transmisję</string>
@@ -336,7 +337,6 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="input_action_debug">Debugowanie</string>
     <string name="input_action_configure">Konfiguruj akcje</string>
     <string name="input_action_hide_all">Ukryj wszystkie akcje</string>
-    <string name="input_actions_none">Brak widocznych akcji</string>
     <string name="room_state_emote_only">Tylko emotki</string>
     <string name="room_state_subscriber_only">Tylko subskrybenci</string>
     <string name="room_state_slow_mode">Tryb powolny</string>
