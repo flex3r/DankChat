@@ -312,6 +312,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
         <item quantity="one">En fazla %1$d eylem</item>
         <item quantity="other">En fazla %1$d eylem</item>
     </plurals>
+    <string name="input_actions_none">Görünür işlem yok</string>
     <string name="input_action_search">Mesajları ara</string>
     <string name="input_action_last_message">Son mesaj</string>
     <string name="input_action_stream">Yayını aç/kapat</string>
@@ -321,7 +322,6 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="input_action_debug">Hata ayıklama</string>
     <string name="input_action_configure">Eylemleri yapılandır</string>
     <string name="input_action_hide_all">Tüm işlemleri gizle</string>
-    <string name="input_actions_none">Görünür işlem yok</string>
     <string name="room_state_emote_only">Yalnızca emote</string>
     <string name="room_state_subscriber_only">Yalnızca aboneler</string>
     <string name="room_state_slow_mode">Yavaş mod</string>
