@@ -312,6 +312,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
         <item quantity="one">En fazla %1$d eylem</item>
         <item quantity="other">En fazla %1$d eylem</item>
     </plurals>
+    <string name="input_actions_none">Görünür işlem yok</string>
     <string name="input_action_search">Mesajları ara</string>
     <string name="input_action_last_message">Son mesaj</string>
     <string name="input_action_stream">Yayını aç/kapat</string>
@@ -321,7 +322,6 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="input_action_debug">Hata ayıklama</string>
     <string name="input_action_configure">Eylemleri yapılandır</string>
     <string name="input_action_hide_all">Tüm işlemleri gizle</string>
-    <string name="input_actions_none">Görünür işlem yok</string>
     <string name="room_state_emote_only">Yalnızca emote</string>
     <string name="room_state_subscriber_only">Yalnızca aboneler</string>
     <string name="room_state_slow_mode">Yavaş mod</string>
@@ -536,7 +536,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_visible_badges_title">Görünür rozetler</string>
     <string name="preference_prefer_emote_suggestions_title">İfade önerilerini yeğle</string>
     <string name="preference_prefer_emote_suggestions_summary">Kullanıcı önerileri yerine ifade önerilerine öncelik ver</string>
-    <string name="preference_user_long_click_title">Kullanıcı adına uzun basma davranışı</string>
+    <string name="preference_user_long_click_title">Kullanıcı adına uzunca tıklanıncaki davranış</string>
     <string name="preference_user_long_click_summary_on">Normal tıklama pencereyi açar, uzun tıklama bahseder</string>
     <string name="preference_user_long_click_summary_off">Normal tıklama bahseder, uzun tıklama pencereyi açar</string>
     <string name="preference_colorize_nicknames_title">Takma adları renklendir</string>
@@ -546,7 +546,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_visible_emotes_title">Görünür üçüncü taraf ifadeler</string>
     <string name="preference_about_tos">Twitch hizmet koşulları ile kullanıcı politikası:</string>
     <string name="preference_show_chip_actions_title">Çip eylemlerini göster</string>
-    <string name="preference_show_chip_actions_summary">Tam ekranı açıp kapamak, yayınlar ve sohbet modlarını ayarlamak için çipler gösterir</string>
+    <string name="preference_show_chip_actions_summary">Yayınlar, tamekranı açıp kapamak ve sohbet modlarını ayarlamak için çipler gösterir</string>
     <string name="preference_show_character_counter_title">Karakter sayacını göster</string>
     <string name="preference_show_character_counter_summary">Giriş alanında kod noktası sayısını görüntüler</string>
     <string name="preference_show_clear_input_button_title">Girdiyi temizle düğmesini göster</string>
@@ -620,7 +620,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_highlights_ignores_header">Öne Çıkarmalar ve Yoksaymalar</string>
     <string name="username">Kullanıcı adı</string>
     <string name="block">Engelle</string>
-    <string name="replacement">Değiştirme</string>
+    <string name="replacement">Ornatma</string>
     <string name="ignores">Yok Saymalar</string>
     <string name="preference_ignores_summary">Mesaj yok saymaları düzenle</string>
     <string name="tab_messages">Mesajlar</string>
