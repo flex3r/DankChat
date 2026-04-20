@@ -270,6 +270,7 @@
         <item quantity="one">ସର୍ବାଧିକ %1$d କ୍ରିୟା</item>
         <item quantity="other">ସର୍ବାଧିକ %1$d କ୍ରିୟା</item>
     </plurals>
+    <string name="input_actions_none">କୌଣସି କାର୍ଯ୍ୟ ଦୃଶ୍ୟମାନ ନାହିଁ</string>
     <string name="input_action_search">ବାର୍ତ୍ତା ଖୋଜନ୍ତୁ</string>
     <string name="input_action_last_message">ଶେଷ ବାର୍ତ୍ତା</string>
     <string name="input_action_stream">ଷ୍ଟ୍ରିମ୍ ଟୋଗଲ୍ କରନ୍ତୁ</string>
@@ -279,7 +280,6 @@
     <string name="input_action_debug">ଡିବଗ୍</string>
     <string name="input_action_configure">କ୍ରିୟାଗୁଡିକ ବିନ୍ୟାସ କରନ୍ତୁ</string>
     <string name="input_action_hide_all">ସମସ୍ତ କାର୍ଯ୍ୟ ଲୁଚାନ୍ତୁ</string>
-    <string name="input_actions_none">କୌଣସି କାର୍ଯ୍ୟ ଦୃଶ୍ୟମାନ ନାହିଁ</string>
     <string name="room_state_emote_only">କେବଳ ଇମୋଟ୍</string>
     <string name="room_state_subscriber_only">କେବଳ ଗ୍ରାହକ</string>
     <string name="room_state_slow_mode">ସ୍ଲୋ ମୋଡ୍</string>
