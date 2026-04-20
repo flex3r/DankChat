@@ -272,7 +272,7 @@
     <string name="confirm_channel_removal_question">Выдаліць гэты канал?</string>
     <string name="confirm_channel_removal_question_named">Выдаліць канал \"%1$s\"?</string>
     <string name="confirm_channel_removal_positive_button">Выдаліць</string>
-    <string name="confirm_channel_block_title">Пацверджанне блакавання канала</string>
+    <string name="confirm_channel_block_title">Пацверджанне выдалення канала</string>
     <string name="confirm_channel_block_message_named">Вы ўпэўнены, што хочаце заблакіраваць канал \"%1$s\"?</string>
     <string name="confirm_channel_block_question_named">Заблакаваць канал \"%1$s\"?</string>
     <string name="user_popup_block">Заблакіраваць</string>
@@ -284,7 +284,7 @@
     <string name="user_popup_not_following">Не падпісаны</string>
     <string name="user_popup_avatar_description">Аватар</string>
     <string name="user_popup_error">Немагчыма загрузіць дадзеныя карыстальніка: %1$s</string>
-    <string name="confirm_user_block_title">Пацверджанне блакавання</string>
+    <string name="confirm_user_block_title">Пацверджанне блакаванні</string>
     <string name="confirm_user_block_message">Вы ўпэўнены, што хочаце заблакіраваць гэтага карыстальніка?</string>
     <string name="confirm_user_block_positive_button">Заблакіраваць</string>
     <string name="restart_required">Каб змены набылі моц, патрэбна перазагрузка</string>
@@ -322,6 +322,7 @@
         <item quantity="many">Максімум %1$d дзеянняў</item>
         <item quantity="other">Максімум %1$d дзеянняў</item>
     </plurals>
+    <string name="input_actions_none">Няма бачных дзеянняў</string>
     <string name="input_action_search">Пошук паведамленняў</string>
     <string name="input_action_last_message">Апошняе паведамленне</string>
     <string name="input_action_stream">Пераключыць трансляцыю</string>
@@ -331,7 +332,6 @@
     <string name="input_action_debug">Адладка</string>
     <string name="input_action_configure">Наладзіць дзеянні</string>
     <string name="input_action_hide_all">Схаваць усе дзеянні</string>
-    <string name="input_actions_none">Няма бачных дзеянняў</string>
     <string name="room_state_emote_only">Толькі эмоуты</string>
     <string name="room_state_subscriber_only">Толькі падпісчыкі</string>
     <string name="room_state_slow_mode">Павольны рэжым</string>
@@ -379,7 +379,7 @@
     <string name="confirm_user_ban_positive_button">Забаніць</string>
     <string name="confirm_user_timeout_title">Пацверджанне тайм-аўта</string>
     <string name="confirm_user_timeout_positive_button">Тайм-аўт</string>
-    <string name="confirm_user_delete_title">Пацверджанне выдалення паведамлення</string>
+    <string name="confirm_user_delete_title">Пацверджанне выдаленні паведамлення</string>
     <string name="confirm_user_delete_message">Вы ўпэўнены, што хочаце выдаліць гэтае паведамленне?</string>
     <string name="confirm_user_delete_question">Выдаліць гэтае паведамленне?</string>
     <string name="confirm_user_delete_positive_button">Выдаліць</string>
@@ -528,7 +528,7 @@
     <string name="preference_tts_queue_flush">Чытаць толькі новыя паведамленні</string>
     <string name="preference_tts_message_format_message">Чытаць толькі паведамленні</string>
     <string name="preference_tts_message_format_combined">Чытаць нік карыстальніка і паведамленне</string>
-    <string name="preference_tts_message_format_title">Рэжым фарматавання паведамленняў</string>
+    <string name="preference_tts_message_format_title">Рэжым фарматаванні паведамленняў</string>
     <string name="preference_tts_message_ignore_url_message">Ігнараваць URL у сінтэзатары гаворкі</string>
     <string name="preference_tts_message_ignore_url_title">Ігнараваць URL</string>
     <string name="preference_tts_message_ignore_emote_message">Ігнараваць смайлы і эмодзі ў сінтэзатары гаворкі</string>
@@ -621,7 +621,7 @@
     <string name="clear_recent_uploads_dialog_message">Вы ўпэўнены, што хочаце ачысціць гісторыю загрузак? Вашы загружаныя файлы не будуць выдалены.</string>
     <string name="clear">Ачысціць</string>
     <string name="pattern">Шаблон</string>
-    <string name="case_sensitive">Адчувальны да рэгістру</string>
+    <string name="case_sensitive">Чувочны да рэгістра</string>
     <string name="highlights">Выдзяленні</string>
     <string name="enabled">Уключаны</string>
     <string name="create_notification">Апавяшчэнне</string>
@@ -768,8 +768,8 @@
         <item quantity="other">У эфіры з %1$d гледачамі на працягу %2$s</item>
     </plurals>
     <plurals name="months">
-        <item quantity="one">%d месяц</item>
-        <item quantity="few">%d месяцы</item>
+        <item quantity="one">%d месяца</item>
+        <item quantity="few">%d месяцаў</item>
         <item quantity="many">%d месяцаў</item>
         <item quantity="other">%d месяцаў</item>
     </plurals>
