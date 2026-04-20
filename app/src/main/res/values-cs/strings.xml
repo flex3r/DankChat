@@ -36,7 +36,7 @@
     <string name="resume_scroll">Obnovit posouvání chatu</string>
     <string name="uploading_image">Nahrávání souboru</string>
     <string name="settings">Nastavení</string>
-    <string name="external_upload_disclaimer">Externí hostování poskytované %1$s, používejte na vlastní riziko.</string>
+    <string name="external_upload_disclaimer">Externí hostování poskytované %1$s ,používejte na vlastní riziko.</string>
     <string name="nuuls_upload_title">Nahrání vlastního obrázku</string>
     <string name="snackbar_message_copied">Zpráva zkopírována</string>
     <string name="snackbar_message_id_copied">ID zprávy zkopírováno</string>
@@ -288,7 +288,7 @@ Služba dočasně ukládá zprávy pro kanály, které vy (a další) navštív�
     <string name="user_popup_following_since">Sledování od %1$s</string>
     <string name="user_popup_not_following">Nesleduje</string>
     <string name="user_popup_avatar_description">Obrázek avataru</string>
-    <string name="user_popup_error">Chyba při načítání informací o uživateli: %1$s</string>
+    <string name="user_popup_error">Chyba při načítání informaci o uživateli: %1$s</string>
     <string name="confirm_user_block_title">Potvrdit zablokování</string>
     <string name="confirm_user_block_message">Jste si jisti, že si chcete zablokovat tohoto uživatele?</string>
     <string name="confirm_user_block_positive_button">Zablokovat</string>
@@ -302,7 +302,7 @@ Služba dočasně ukládá zprávy pro kanály, které vy (a další) navštív�
     <string name="uploader_deletion_link">Vzor odkazu pro smazání</string>
     <string name="uploader_description">Můžete nastavit vlastního hostitele pro nahrávání médií, jako je imgur.com nebo s-ul.eu. DankChat používá stejný formát nastavení jako Chatterino.
 Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploader</string>
-    <string name="toggle_fullscreen">Zapnout plnou obrazovku</string>
+    <string name="toggle_fullscreen">Zapnou plnou obrazovku</string>
     <string name="toggle_stream">Zapnout stream</string>
     <string name="menu_show_stream">Zobrazit stream</string>
     <string name="menu_hide_stream">Skrýt stream</string>
@@ -328,6 +328,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
         <item quantity="many">Maximálně %1$d akcí</item>
         <item quantity="other">Maximálně %1$d akcí</item>
     </plurals>
+    <string name="input_actions_none">Žádné viditelné akce</string>
     <string name="input_action_search">Hledat zprávy</string>
     <string name="input_action_last_message">Poslední zpráva</string>
     <string name="input_action_stream">Přepnout stream</string>
@@ -337,7 +338,6 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="input_action_debug">Ladění</string>
     <string name="input_action_configure">Konfigurovat akce</string>
     <string name="input_action_hide_all">Skrýt všechny akce</string>
-    <string name="input_actions_none">Žádné viditelné akce</string>
     <string name="room_state_emote_only">Pouze emotikony</string>
     <string name="room_state_subscriber_only">Pouze odběratelé</string>
     <string name="room_state_slow_mode">Pomalý režim</string>
@@ -437,7 +437,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_compact_channel_info_title">Kompaktní informace o kanálu</string>
     <string name="preference_compact_channel_info_summary">Zobrazit režimy chatu a informace o streamu na jednom řádku</string>
     <string name="preference_streaminfo_title">Zobrazit informace o streamu</string>
-    <string name="preference_streaminfo_summary">Zobrazí stav a počet diváků</string>
+    <string name="preference_streaminfo_summary">Zobrazí stav a počet divákú</string>
     <string name="preference_notification_title">Zobrazit upozornění o zmínkách</string>
     <string name="preference_notification_summary">Vytváří upozornění, když jste zmíněni, pokud je aplikace na pozadí</string>
     <string name="preference_notification_header">Upozornění</string>
@@ -622,7 +622,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_pip_title">Zapnout režim obraz v obraze</string>
     <string name="preference_pip_summary">Umožní aby streamy nadále běžely, i když bude aplikace spuštěná na pozadí</string>
     <string name="reset_media_uploader_dialog_title">Obnovit nastavení nahrávače médií</string>
-    <string name="reset_media_uploader_dialog_message">Jste si jistí, že chcete obnovit výchozí nastavení nahrávače médií?</string>
+    <string name="reset_media_uploader_dialog_message">Jste si jístí, že chcete obnovit výchozí nastavení nahrávače médií?</string>
     <string name="reset_media_uploader_dialog_positive">Obnovit</string>
     <string name="clear_recent_uploads_dialog_title">Vymazat nedávná nahrání</string>
     <string name="clear_recent_uploads_dialog_message">Jste si jistí, že chcete smazat historii nahrávání? Vaše nahrané soubory nebudou smazány.</string>
