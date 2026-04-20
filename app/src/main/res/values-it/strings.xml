@@ -306,6 +306,7 @@
         <item quantity="one">Massimo %1$d azione</item>
         <item quantity="other">Massimo %1$d azioni</item>
     </plurals>
+    <string name="input_actions_none">Nessuna azione visibile</string>
     <string name="input_action_search">Cerca messaggi</string>
     <string name="input_action_last_message">Ultimo messaggio</string>
     <string name="input_action_stream">Attiva/disattiva stream</string>
@@ -315,7 +316,6 @@
     <string name="input_action_debug">Debug</string>
     <string name="input_action_configure">Configura azioni</string>
     <string name="input_action_hide_all">Nascondi tutte le azioni</string>
-    <string name="input_actions_none">Nessuna azione visibile</string>
     <string name="room_state_emote_only">Solo emote</string>
     <string name="room_state_subscriber_only">Solo abbonati</string>
     <string name="room_state_slow_mode">Modalità lenta</string>
