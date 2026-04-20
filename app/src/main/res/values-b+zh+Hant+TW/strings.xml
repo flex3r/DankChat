@@ -303,6 +303,7 @@
     <plurals name="input_actions_max">
         <item quantity="other">最多 %1$d 個動作</item>
     </plurals>
+    <string name="input_actions_none">無可見操作</string>
     <string name="input_action_search">搜尋訊息</string>
     <string name="input_action_last_message">上一則訊息</string>
     <string name="input_action_stream">切換實況</string>
@@ -312,7 +313,6 @@
     <string name="input_action_debug">偵錯</string>
     <string name="input_action_configure">設定動作</string>
     <string name="input_action_hide_all">隱藏所有操作</string>
-    <string name="input_actions_none">無可見操作</string>
     <string name="room_state_emote_only">僅限表情符號</string>
     <string name="room_state_subscriber_only">僅限訂閱者</string>
     <string name="room_state_slow_mode">低速模式</string>
