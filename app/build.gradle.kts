@@ -7,7 +7,6 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
-    id("org.jetbrains.kotlin.android")
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.compose)
