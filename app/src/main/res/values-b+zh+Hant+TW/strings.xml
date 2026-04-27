@@ -769,6 +769,7 @@
     <string name="color_picker_opacity">不透明度</string>
     <string name="toggle_app_bar">切換應用程式列</string>
     <string name="error_with_message">錯誤: %s</string>
+    <string name="something_went_wrong">發生未知錯誤</string>
     <!-- Onboarding -->
     <string name="onboarding_welcome_title">DankChat</string>
     <string name="onboarding_welcome_body">讓我們為您進行設定。</string>
