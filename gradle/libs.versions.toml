@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.3.21"
-coroutines = "1.11.0-rc01"
+coroutines = "1.11.0-rc02"
 serialization = "1.11.0"
 datetime = "0.7.1-0.6.x-compat"
 immutable = "0.4.0"
