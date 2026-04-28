@@ -117,7 +117,7 @@ jobs:
 
       - name: Decode Keystore
         id: decode_keystore
-        uses: timheuer/base64-to-file@v1.2
+        uses: timheuer/base64-to-file@v2.0
         with:
           fileName: '/app/keystore/DankChat.jks'
           fileDir: ${{ github.workspace }}
