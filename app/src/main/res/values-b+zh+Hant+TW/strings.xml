@@ -564,7 +564,8 @@
     <string name="preference_revoke_token_title">撤銷權杖並重新啟動</string>
     <string name="preference_revoke_token_summary">使目前的權杖失效並重新啟動應用程式</string>
     <string name="preference_fetch_streams_title">擷取實況資訊</string>
-    <string name="preference_fetch_streams_summary">定期擷取開啟頻道的實況資訊。啟用嵌入式實況的必要功能。</string>
+    <string name="preference_fetch_streams_summary">定期擷取開啟頻道的實況資訊
+啟用嵌入式實況的必要功能</string>
     <string name="preference_auto_disable_input_title">未連線至聊天室時停用輸入框</string>
     <string name="preference_repeated_sending_title">啟用重複送訊</string>
     <string name="preference_repeated_sending_summary">使在按住送出按鈕時可以連續送出訊息</string>
@@ -573,7 +574,7 @@
     <string name="oauth_expired_login_again">重新登入</string>
     <string name="oauth_verify_failed">登入驗證失敗，請確認連線狀態。</string>
     <string name="preference_retain_webview_title">防止實況重新載入</string>
-    <string name="preference_retain_webview_summary">使用實驗性的機制防止在旋轉或重新開啟DankChat時實況重新載入。</string>
+    <string name="preference_retain_webview_summary">使用實驗性的機制防止在旋轉或重新開啟DankChat時實況重新載入</string>
     <string name="preference_show_changelogs">更新後顯示變更紀錄</string>
     <string name="preference_whats_new_header">新功能</string>
     <string name="preference_custom_login_title">自訂登入</string>
@@ -584,6 +585,7 @@
     <string name="preference_helix_sending_summary">透過 Twitch Helix API 傳送聊天訊息，而非 IRC</string>
     <string name="preference_7tv_live_updates_title">7TV即時表情符號更新</string>
     <string name="preference_7tv_live_updates_timeout_title">即時表情更新背景行為</string>
+    <string name="preference_7tv_live_updates_timeout_summary_timeout">更新將停止於%1$s後\n降低這個數字可能會提升電池壽命</string>
     <string name="preference_7tv_live_updates_timeout_summary_always_active">更新保持啟動。新增超時門檻可能會增加電池壽命。</string>
     <string name="preference_7tv_live_updates_timeout_summary_never_active">在背景時更新永遠不保持啟動。</string>
     <string name="preference_7tv_live_updates_entry_never">永不啟動</string>
