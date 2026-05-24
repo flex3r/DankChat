@@ -10,7 +10,7 @@ okhttp = "5.3.2"
 ksp = "2.3.7"
 koin = "4.2.1"
 koin-compiler-plugin = "0.6.2"
-about-libraries = "14.0.1"
+about-libraries = "14.2.1"
 
 androidGradlePlugin = "9.2.0"
 androidDesugarLibs = "2.1.5"
