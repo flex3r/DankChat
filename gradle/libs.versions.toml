@@ -50,7 +50,7 @@ colorpickerCompose = "1.2.0"
 materialKolor = "4.1.1"
 reorderable = "3.1.0"
 
-spotless = "8.4.0"
+spotless = "8.6.0"
 ktlint = "1.8.0"
 detekt = "2.0.0-alpha.3" # TODO switch to stable when released
 composeRules = "0.5.8"
