@@ -1,6 +1,5 @@
 package com.flxrs.dankchat.ui.main.stream
 
-import android.os.Build
 import android.view.MotionEvent
 import android.view.ViewGroup
 import android.webkit.RenderProcessGoneDetail
@@ -286,11 +285,7 @@ private class StreamComposeWebViewClient(
     ) {
         super.onReceivedError(view, request, error)
         if (request?.isForMainFrame != true) return
-        val description = if (Build.VERSION.SDK_INT >= 23) {
-            error?.description?.toString().orEmpty()
-        } else {
-            ""
-        }
+        val description = error?.description?.toString().orEmpty()
         logger.warn { "Stream WebView failed to load ${request.url}: $description" }
     }
 
