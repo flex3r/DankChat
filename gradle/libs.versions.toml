@@ -55,7 +55,7 @@ ktlint = "1.8.0"
 detekt = "2.0.0-alpha.3" # TODO switch to stable when released
 composeRules = "0.5.8"
 
-junit = "6.0.3"
+junit = "6.1.0"
 androidJunit5 = "2.0.1"
 mockk = "1.14.11"
 turbine = "1.2.1"
