@@ -52,7 +52,7 @@ reorderable = "3.1.0"
 spotless = "8.8.0"
 ktlint = "1.8.0"
 detekt = "2.0.0-alpha.5" # TODO switch to stable when released
-composeRules = "0.6.1"
+composeRules = "0.6.3"
 
 junit = "6.1.0"
 androidJunit5 = "2.0.1"
