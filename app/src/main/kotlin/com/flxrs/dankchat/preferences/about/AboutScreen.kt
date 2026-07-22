@@ -91,7 +91,10 @@ fun AboutScreen(onBack: () -> Unit) {
                     .fillMaxSize()
                     .padding(padding),
             contentPadding = WindowInsets.navigationBars.asPaddingValues(),
-            onLibraryClick = { selectedLibrary = it },
+            onLibraryClick = {
+                selectedLibrary = it
+                true
+            },
         )
         selectedLibrary?.let { library ->
             LibraryLicenseSheet(
