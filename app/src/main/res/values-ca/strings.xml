@@ -137,6 +137,9 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s ha afegit l\'emote 7TV %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s ha reanomenat l\'emote 7TV %2$s a %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s ha eliminat l\'emote 7TV %2$s.</string>
+    <string name="system_message_stream_live">%1$s està en directe!</string>
+    <string name="system_message_stream_live_with_title">%1$s està en directe: %2$s</string>
+    <string name="system_message_stream_offline">%1$s ja no està en directe</string>
     <!-- Send errors -->
     <string name="system_message_send_not_logged_in">No s\'ha iniciat sessió</string>
     <string name="system_message_send_channel_not_resolved">No s\'ha pogut resoldre l\'ID del canal per a %1$s</string>
@@ -572,6 +575,8 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="oauth_expired_title">Inici de sessió expirat!</string>
     <string name="oauth_expired_message">L\'inici de sessió ha expirat! Si us plau, accedeix de nou.</string>
     <string name="oauth_expired_login_again">Tornar a iniciar sessió</string>
+    <string name="preference_stream_live_messages_title">Mostra missatges d\'estat del directe</string>
+    <string name="preference_stream_live_messages_summary">Afegeix un missatge al xat quan un canal comença o acaba el directe</string>
     <string name="preference_retain_webview_summary">Permet la prevenció experimental de les recàrregues de l\'emissió després del canvi d\'orientació o tornant a obrir DankChat.</string>
     <string name="preference_show_changelogs">Mostra els canvis després d\'actualitzar</string>
     <string name="preference_whats_new_header">Novetats</string>
@@ -801,6 +806,7 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="cmd_error_no_permission">No teniu permís per realitzar aquesta acció.</string>
     <string name="cmd_error_missing_scopes">Falta el permís requerit. Torneu a iniciar sessió amb el vostre compte i torneu-ho a provar.</string>
     <string name="cmd_error_not_logged_in_credentials">Falten les credencials d\'inici de sessió. Torneu a iniciar sessió amb el vostre compte i torneu-ho a provar.</string>
+    <string name="cmd_error_unknown_command">%1$s no és una comanda coneguda</string>
     <string name="cmd_block_usage">Ús: /block &lt;usuari&gt;</string>
     <string name="cmd_block_success">Heu bloquejat correctament l\'usuari %1$s</string>
     <string name="cmd_block_not_found">No s\'ha pogut bloquejar l\'usuari %1$s, no s\'ha trobat cap usuari amb aquest nom!</string>
