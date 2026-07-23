@@ -137,6 +137,9 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s %2$s 7TV эмотын қосты.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s 7TV Emote %2$s атауын %3$s деп өзгертті.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s %2$s 7TV эмотын жойды.</string>
+    <string name="system_message_stream_live">%1$s тікелей эфирде!</string>
+    <string name="system_message_stream_live_with_title">%1$s тікелей эфирде: %2$s</string>
+    <string name="system_message_stream_offline">%1$s эфирден шықты</string>
     <!-- Send errors -->
     <string name="system_message_send_not_logged_in">Жүйеге кірілмеген</string>
     <string name="system_message_send_channel_not_resolved">%1$s үшін арна ID анықталмады</string>
@@ -575,6 +578,8 @@
     <string name="oauth_expired_message">Кіру токенінің мерзімі аяқталды! Қайта кіріңіз.</string>
     <string name="oauth_expired_login_again">Қайта кіру</string>
     <string name="oauth_verify_failed">Кіру токенін тексеру сәтсіз, байланысыңызды тексеріңіз.</string>
+    <string name="preference_stream_live_messages_title">Эфир күйі туралы хабарларды көрсету</string>
+    <string name="preference_stream_live_messages_summary">Арна эфирге шыққанда немесе эфирден шыққанда чатқа хабар қосады</string>
     <string name="preference_retain_webview_title">Ағын қайта жүктелуін болдырмау</string>
     <string name="preference_retain_webview_summary">Бағдар өзгерісінен немесе DankChat-ты қайта ашқаннан кейін ағынның қайта жүктелуін эксперименталды түрде болдырмайды.</string>
     <string name="preference_show_changelogs">Жаңартудан кейін өзгерістер журналын көрсету</string>
@@ -814,6 +819,7 @@
     <string name="cmd_error_no_permission">Бұл әрекетті орындауға рұқсатыңыз жоқ.</string>
     <string name="cmd_error_missing_scopes">Қажетті рұқсат жоқ. Аккаунтыңызбен қайта кіріп, қайталаңыз.</string>
     <string name="cmd_error_not_logged_in_credentials">Кіру деректері жоқ. Аккаунтыңызбен қайта кіріп, қайталаңыз.</string>
+    <string name="cmd_error_unknown_command">%1$s белгілі пәрмен емес</string>
     <string name="cmd_block_usage">Қолданысы: /block &lt;user&gt;</string>
     <string name="cmd_block_success">%1$s пайдаланушысы сәтті бұғатталды</string>
     <string name="cmd_block_not_found">%1$s пайдаланушысын бұғаттау мүмкін емес, бұл атпен пайдаланушы табылмады!</string>
