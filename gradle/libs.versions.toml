@@ -12,7 +12,7 @@ koin = "4.2.2"
 koin-compiler-plugin = "1.0.2"
 about-libraries = "15.0.4"
 
-androidGradlePlugin = "9.3.0"
+androidGradlePlugin = "9.3.1"
 androidDesugarLibs = "2.1.5"
 androidxActivity = "1.13.0"
 androidxBrowser = "1.10.0"
