@@ -137,6 +137,9 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s added 7TV Emote %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s renamed 7TV Emote %2$s to %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s removed 7TV Emote %2$s.</string>
+    <string name="system_message_stream_live">%1$s is live!</string>
+    <string name="system_message_stream_live_with_title">%1$s is live: %2$s</string>
+    <string name="system_message_stream_offline">%1$s is now offline</string>
     <!-- Send errors -->
     <string name="system_message_send_not_logged_in">Not logged in</string>
     <string name="system_message_send_channel_not_resolved">Could not resolve channel ID for %1$s</string>
@@ -555,6 +558,8 @@ Check this guide for help: https://wiki.chatterino.com/Image%20Uploader/</string
     <string name="preference_eventsub_debug_summary">Prints debug output related to EventSub as system messages</string>
     <string name="preference_revoke_token_title">Revoke token and restart</string>
     <string name="preference_revoke_token_summary">Invalidates the current token and restarts the app</string>
+    <string name="preference_stream_live_messages_title">Show live status messages</string>
+    <string name="preference_stream_live_messages_summary">Adds a chat message when a channel goes live or offline</string>
     <string name="preference_show_changelogs">Show changelogs after update</string>
     <string name="preference_whats_new_header">What\'s new</string>
     <string name="preference_custom_login_title">Custom login</string>
@@ -746,6 +751,7 @@ Check this guide for help: https://wiki.chatterino.com/Image%20Uploader/</string
     <string name="cmd_error_no_permission">You don\'t have permission to perform that action.</string>
     <string name="cmd_error_missing_scopes">Missing required scope. Re-login with your account and try again.</string>
     <string name="cmd_error_not_logged_in_credentials">Missing login credentials. Re-login with your account and try again.</string>
+    <string name="cmd_error_unknown_command">%1$s is not a known command</string>
     <string name="cmd_block_usage">Usage: /block &lt;user&gt;</string>
     <string name="cmd_block_success">You successfully blocked user %1$s</string>
     <string name="cmd_block_not_found">User %1$s couldn\'t be blocked, no user with that name found!</string>
