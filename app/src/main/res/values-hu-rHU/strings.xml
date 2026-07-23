@@ -137,6 +137,9 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s hozzáadta a 7TV hangulatjelet %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s átnevezte a 7TV hangulatjelet %2$s erre %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s eltávolította a 7TV hangulatjelet %2$s.</string>
+    <string name="system_message_stream_live">%1$s élőben van!</string>
+    <string name="system_message_stream_live_with_title">%1$s élőben van: %2$s</string>
+    <string name="system_message_stream_offline">%1$s már nem élő</string>
     <!-- Send errors -->
     <string name="system_message_send_not_logged_in">Nincs bejelentkezve</string>
     <string name="system_message_send_channel_not_resolved">Nem sikerült feloldani a csatorna azonosítót ehhez: %1$s</string>
@@ -575,6 +578,8 @@
     <string name="oauth_expired_message">A bejelentkezési kulcsa lejárt! Kérjük lépjen be újra.</string>
     <string name="oauth_expired_login_again">Bejelentkezés újra</string>
     <string name="oauth_verify_failed">Nem sikerült a bejelentkezési kulcs hitelesítése, ellenőrizze a kapcsolatát.</string>
+    <string name="preference_stream_live_messages_title">Élő állapotüzenetek megjelenítése</string>
+    <string name="preference_stream_live_messages_summary">Üzenetet ad a chathez, amikor egy csatorna élő adásba kezd vagy befejezi azt</string>
     <string name="preference_retain_webview_title">Élő adás újratöltésének megakadályozása</string>
     <string name="preference_retain_webview_summary">Engedélyezi a kísérleti megakadályozását az élő adásnak miután az orientáció megváltozik vagy újranyitja a DankChat-et.</string>
     <string name="preference_show_changelogs">Változtatások mutatása a frissítés után</string>
@@ -814,6 +819,7 @@
     <string name="cmd_error_no_permission">Nincs jogosultságod ehhez a művelethez.</string>
     <string name="cmd_error_missing_scopes">Hiányzó jogosultság. Jelentkezz be újra a fiókoddal, és próbáld újra.</string>
     <string name="cmd_error_not_logged_in_credentials">Hiányzó bejelentkezési adatok. Jelentkezz be újra a fiókoddal, és próbáld újra.</string>
+    <string name="cmd_error_unknown_command">A(z) %1$s nem ismert parancs</string>
     <string name="cmd_block_usage">Használat: /block &lt;felhasználó&gt;</string>
     <string name="cmd_block_success">Sikeresen letiltottad %1$s felhasználót</string>
     <string name="cmd_block_not_found">%1$s felhasználót nem sikerült letiltani, nem található ilyen nevű felhasználó!</string>
