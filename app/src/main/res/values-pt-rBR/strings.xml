@@ -137,6 +137,9 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s adicionou o emote %2$s na 7TV.  </string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s renomeou o emote do 7tv de %2$s para %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s removeu o emote 7TV %2$s.</string>
+    <string name="system_message_stream_live">%1$s está ao vivo!</string>
+    <string name="system_message_stream_live_with_title">%1$s está ao vivo: %2$s</string>
+    <string name="system_message_stream_offline">%1$s não está mais ao vivo</string>
     <!-- Send errors -->
     <string name="system_message_send_not_logged_in">Não conectado</string>
     <string name="system_message_send_channel_not_resolved">Não foi possível resolver o ID do canal para %1$s</string>
@@ -575,6 +578,8 @@
     <string name="oauth_expired_message">Seu token de sessão expirou! Por favor, inicie a sessão novamente.</string>
     <string name="oauth_expired_login_again">Iniciar Sessão Novamente</string>
     <string name="oauth_verify_failed">Falha ao verificar o token de sessão, verifique sua conexão.</string>
+    <string name="preference_stream_live_messages_title">Mostrar mensagens de status da transmissão</string>
+    <string name="preference_stream_live_messages_summary">Adiciona uma mensagem no chat quando um canal entra ou sai do ar</string>
     <string name="preference_retain_webview_title">Impedir recargas de transmissão</string>
     <string name="preference_retain_webview_summary">Permite a prevenção experimental de recargas de stream após mudanças de orientação ou reabertura do DankChat.</string>
     <string name="preference_show_changelogs">Mostrar as alterações após atualizar</string>
@@ -814,6 +819,7 @@
     <string name="cmd_error_no_permission">Você não tem permissão para realizar essa ação.</string>
     <string name="cmd_error_missing_scopes">Permissão necessária ausente. Faça login novamente com sua conta e tente outra vez.</string>
     <string name="cmd_error_not_logged_in_credentials">Credenciais de login ausentes. Faça login novamente com sua conta e tente outra vez.</string>
+    <string name="cmd_error_unknown_command">%1$s não é um comando conhecido</string>
     <string name="cmd_block_usage">Uso: /block &lt;usuário&gt;</string>
     <string name="cmd_block_success">Você bloqueou o usuário %1$s com sucesso</string>
     <string name="cmd_block_not_found">Não foi possível bloquear o usuário %1$s, nenhum usuário encontrado com esse nome!</string>
