@@ -147,6 +147,9 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s přidal 7TV emotikon %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s přejmenoval 7TV emotikon %2$s na %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s odstranil 7TV emotikon %2$s.</string>
+    <string name="system_message_stream_live">%1$s vysílá živě!</string>
+    <string name="system_message_stream_live_with_title">%1$s vysílá živě: %2$s</string>
+    <string name="system_message_stream_offline">%1$s už nevysílá</string>
     <!-- Send errors -->
     <string name="system_message_send_not_logged_in">Nepřihlášen</string>
     <string name="system_message_send_channel_not_resolved">Nepodařilo se zjistit ID kanálu pro %1$s</string>
@@ -598,6 +601,8 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="oauth_expired_message">Váš přihlašovací token vypršel! Přihlašte se prosím znovu.</string>
     <string name="oauth_expired_login_again">Znovu se přihlásit</string>
     <string name="oauth_verify_failed">Nepodařilo se ověřit přihlašovací token, zkontrolujte připojení k internetu.</string>
+    <string name="preference_stream_live_messages_title">Zobrazovat zprávy o stavu vysílání</string>
+    <string name="preference_stream_live_messages_summary">Přidá zprávu do chatu, když kanál začne nebo ukončí vysílání</string>
     <string name="preference_retain_webview_title">Zabránit opětovnému načítání streamu</string>
     <string name="preference_retain_webview_summary">Zapne experimentální funkci zabránění opětovnému načtení streamu po změně orientace obrazovky nebo opětovném otevření DankChatu.</string>
     <string name="preference_show_changelogs">Zobrazit po aktualizaci seznam změn</string>
@@ -845,6 +850,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="cmd_error_no_permission">Nemáte oprávnění k provedení této akce.</string>
     <string name="cmd_error_missing_scopes">Chybí požadované oprávnění. Přihlaste se znovu a zkuste to znovu.</string>
     <string name="cmd_error_not_logged_in_credentials">Chybí přihlašovací údaje. Přihlaste se znovu a zkuste to znovu.</string>
+    <string name="cmd_error_unknown_command">%1$s není známý příkaz</string>
     <string name="cmd_block_usage">Použití: /block &lt;uživatel&gt;</string>
     <string name="cmd_block_success">Úspěšně jste zablokovali uživatele %1$s</string>
     <string name="cmd_block_not_found">Uživatele %1$s se nepodařilo zablokovat, uživatel s tímto jménem nebyl nalezen!</string>
