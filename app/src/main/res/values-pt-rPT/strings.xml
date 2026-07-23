@@ -137,6 +137,9 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s adicionou o emote de 7TV %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s renomeou o emote do 7TV %2$s para %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s removeu o emote de 7TV %2$s.</string>
+    <string name="system_message_stream_live">%1$s está em direto!</string>
+    <string name="system_message_stream_live_with_title">%1$s está em direto: %2$s</string>
+    <string name="system_message_stream_offline">%1$s já não está em direto</string>
     <!-- Send errors -->
     <string name="system_message_send_not_logged_in">Sessão não iniciada</string>
     <string name="system_message_send_channel_not_resolved">Não foi possível resolver o ID do canal para %1$s</string>
@@ -575,6 +578,8 @@
     <string name="oauth_expired_message">O teu token de início de sessão expirou! Por favor, inicia sessão outra vez.</string>
     <string name="oauth_expired_login_again">Inicia sessão novamente</string>
     <string name="oauth_verify_failed">Falha ao verificar o token de início de sessão, verifica a tua conexão.</string>
+    <string name="preference_stream_live_messages_title">Mostrar mensagens de estado do direto</string>
+    <string name="preference_stream_live_messages_summary">Adiciona uma mensagem no chat quando um canal começa ou termina o direto</string>
     <string name="preference_retain_webview_title">Impedir recarregamentos da stream</string>
     <string name="preference_retain_webview_summary">Permite a prevenção experimental de recargas da stream após mudanças da orientação ou reabertura do DankChat.</string>
     <string name="preference_show_changelogs">Mostrar lista de alterações após uma actualização</string>
@@ -812,6 +817,7 @@
     <string name="cmd_error_no_permission">Não tens permissão para realizar essa ação.</string>
     <string name="cmd_error_missing_scopes">Permissão necessária em falta. Inicia sessão novamente com a tua conta e tenta outra vez.</string>
     <string name="cmd_error_not_logged_in_credentials">Credenciais de início de sessão em falta. Inicia sessão novamente com a tua conta e tenta outra vez.</string>
+    <string name="cmd_error_unknown_command">%1$s não é um comando conhecido</string>
     <string name="cmd_block_usage">Utilização: /block &lt;utilizador&gt;</string>
     <string name="cmd_block_success">Bloqueaste o utilizador %1$s com sucesso</string>
     <string name="cmd_block_not_found">Não foi possível bloquear o utilizador %1$s, nenhum utilizador encontrado com esse nome!</string>
