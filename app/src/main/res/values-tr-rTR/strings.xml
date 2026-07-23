@@ -137,6 +137,9 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s, %2$s 7TV İfadesini ekledi.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s, %2$s 7TV İfadesinin adını %3$s olarak değiştirdi.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s, %2$s 7TV İfadesini kaldırdı.</string>
+    <string name="system_message_stream_live">%1$s yayında!</string>
+    <string name="system_message_stream_live_with_title">%1$s yayında: %2$s</string>
+    <string name="system_message_stream_offline">%1$s artık yayında değil</string>
     <!-- Send errors -->
     <string name="system_message_send_not_logged_in">Giriş yapılmadı</string>
     <string name="system_message_send_channel_not_resolved">%1$s için kanal kimliği çözülemedi</string>
@@ -582,6 +585,8 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="oauth_expired_message">Giriş jetonunuzun süresi doldu! Lütfen yeniden giriş yapın.</string>
     <string name="oauth_expired_login_again">Yeniden Giriş Yap</string>
     <string name="oauth_verify_failed">Giriş jetonu doğrulanamadı, bağlantınızı kontrol edin.</string>
+    <string name="preference_stream_live_messages_title">Yayın durumu mesajlarını göster</string>
+    <string name="preference_stream_live_messages_summary">Bir kanal yayına girdiğinde veya yayını sonlandırdığında sohbete bir mesaj ekler</string>
     <string name="preference_retain_webview_title">Yayın yenilemelerini önle</string>
     <string name="preference_retain_webview_summary">Yön değişikliklerinden ya da DankChat\'in yeniden açılmasından sonra yayın yenilemelerinin deneysel önlenmesini etkinleştirir.</string>
     <string name="preference_show_changelogs">Güncellemeden sonra değişiklik günlüklerini göster</string>
@@ -821,6 +826,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="cmd_error_no_permission">Bu işlemi gerçekleştirme yetkiniz yok.</string>
     <string name="cmd_error_missing_scopes">Gerekli izin eksik. Hesabınızla tekrar giriş yapın ve yeniden deneyin.</string>
     <string name="cmd_error_not_logged_in_credentials">Giriş bilgileri eksik. Hesabınızla tekrar giriş yapın ve yeniden deneyin.</string>
+    <string name="cmd_error_unknown_command">%1$s bilinen bir komut değil</string>
     <string name="cmd_block_usage">Kullanım: /block &lt;kullanıcı&gt;</string>
     <string name="cmd_block_success">%1$s kullanıcısını başarıyla engellediniz</string>
     <string name="cmd_block_not_found">%1$s kullanıcısı engellenemedi, bu isimde bir kullanıcı bulunamadı!</string>
