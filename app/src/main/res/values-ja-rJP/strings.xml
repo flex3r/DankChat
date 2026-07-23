@@ -132,6 +132,9 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$sは7TVエモート%2$sを追加しました。</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$sは7TVエモート%2$sを%3$sに変更しました。</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$sは7TVエモート%2$sを削除しました。</string>
+    <string name="system_message_stream_live">%1$s が配信を開始しました</string>
+    <string name="system_message_stream_live_with_title">%1$s が配信を開始しました：%2$s</string>
+    <string name="system_message_stream_offline">%1$s が配信を終了しました</string>
     <!-- Send errors -->
     <string name="system_message_send_not_logged_in">ログインしていません</string>
     <string name="system_message_send_channel_not_resolved">%1$s のチャンネルIDを解決できませんでした</string>
@@ -567,6 +570,8 @@
     <string name="oauth_expired_message">ログイントークンの有効期限が切れています。もう一度ログインしてください。</string>
     <string name="oauth_expired_login_again">再ログイン</string>
     <string name="oauth_verify_failed">ログイントークンの確認に失敗しました。接続を確認してください。</string>
+    <string name="preference_stream_live_messages_title">配信状態のメッセージを表示</string>
+    <string name="preference_stream_live_messages_summary">チャンネルが配信を開始または終了したときにチャットにメッセージを追加します</string>
     <string name="preference_retain_webview_title">ストリームのリロードを防止</string>
     <string name="preference_retain_webview_summary">オリエンテーションの変更またはDankChatの再開後に、実験的にストリームのリロード防止を有効にします。</string>
     <string name="preference_show_changelogs">更新後に更新履歴を表示</string>
@@ -801,6 +806,7 @@
     <string name="cmd_error_no_permission">この操作を実行する権限がありません。</string>
     <string name="cmd_error_missing_scopes">必要なスコープが不足しています。アカウントで再ログインしてやり直してください。</string>
     <string name="cmd_error_not_logged_in_credentials">ログイン情報がありません。アカウントで再ログインしてやり直してください。</string>
+    <string name="cmd_error_unknown_command">%1$s は既知のコマンドではありません</string>
     <string name="cmd_block_usage">使い方: /block &lt;ユーザー&gt;</string>
     <string name="cmd_block_success">ユーザー %1$s を正常にブロックしました</string>
     <string name="cmd_block_not_found">ユーザー %1$s をブロックできませんでした。その名前のユーザーが見つかりません！</string>
