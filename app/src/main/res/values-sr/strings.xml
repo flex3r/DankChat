@@ -131,6 +131,9 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s је додао 7TV емотикон %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s је преименовао 7TV емотикон %2$s у %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s је уклонио 7TV емотикон %2$s.</string>
+    <string name="system_message_stream_live">%1$s je uživo!</string>
+    <string name="system_message_stream_live_with_title">%1$s je uživo: %2$s</string>
+    <string name="system_message_stream_offline">%1$s više nije uživo</string>
     <!-- Send errors -->
     <string name="system_message_send_not_logged_in">Нисте пријављени</string>
     <string name="system_message_send_channel_not_resolved">Није могуће одредити ID канала за %1$s</string>
@@ -535,6 +538,8 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_eventsub_debug_summary">Приказује дебаг излаз везан за EventSub као системске поруке</string>
     <string name="preference_revoke_token_title">Опозови токен и рестартуј</string>
     <string name="preference_revoke_token_summary">Поништава тренутни токен и рестартује апликацију</string>
+    <string name="preference_stream_live_messages_title">Prikaži poruke o statusu strima</string>
+    <string name="preference_stream_live_messages_summary">Dodaje poruku u čet kada kanal počne ili završi strim</string>
     <string name="preference_show_changelogs">Прикажи дневник промена после ажурирања</string>
     <string name="preference_whats_new_header">Шта је ново</string>
     <string name="preference_custom_login_title">Прилагођена пријава</string>
@@ -729,6 +734,7 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="cmd_error_no_permission">Немате дозволу за извршавање ове радње.</string>
     <string name="cmd_error_missing_scopes">Недостаје потребна дозвола. Поново се пријавите и покушајте поново.</string>
     <string name="cmd_error_not_logged_in_credentials">Недостају подаци за пријаву. Поново се пријавите и покушајте поново.</string>
+    <string name="cmd_error_unknown_command">%1$s није позната команда</string>
     <string name="cmd_block_usage">Употреба: /block &lt;корисник&gt;</string>
     <string name="cmd_block_success">Успешно сте блокирали корисника %1$s</string>
     <string name="cmd_block_not_found">Корисник %1$s није могао бити блокиран, корисник са тим именом није пронађен!</string>
