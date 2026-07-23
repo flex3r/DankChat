@@ -137,6 +137,9 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s ha aggiunto l\'Emote 7TV %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s ha rinominato l\'Emote 7TV %2$s in %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s ha rimosso l\'Emote 7TV %2$s.</string>
+    <string name="system_message_stream_live">%1$s è in diretta!</string>
+    <string name="system_message_stream_live_with_title">%1$s è in diretta: %2$s</string>
+    <string name="system_message_stream_offline">%1$s non è più in diretta</string>
     <!-- Send errors -->
     <string name="system_message_send_not_logged_in">Non connesso</string>
     <string name="system_message_send_channel_not_resolved">Impossibile risolvere l\'ID del canale per %1$s</string>
@@ -575,6 +578,8 @@
     <string name="oauth_expired_message">Il tuo token d\'accesso è scaduto! Sei pregato di accedere nuovamente.</string>
     <string name="oauth_expired_login_again">Accedi di nuovo</string>
     <string name="oauth_verify_failed">Impossibile verificare il token d\'accesso, controlla la tua connessione.</string>
+    <string name="preference_stream_live_messages_title">Mostra messaggi sullo stato della diretta</string>
+    <string name="preference_stream_live_messages_summary">Aggiunge un messaggio in chat quando un canale inizia o termina la diretta</string>
     <string name="preference_retain_webview_title">Impedisci ricaricamento live</string>
     <string name="preference_retain_webview_summary">Abilita la prevenzione sperimentale dei ricaricamenti della live, al cambiamento di orientamento o riapertura di DankChat.</string>
     <string name="preference_show_changelogs">Mostra i changelog dopo l\'aggiornamento</string>
@@ -813,6 +818,7 @@
     <string name="cmd_error_no_permission">Non hai il permesso di eseguire questa azione.</string>
     <string name="cmd_error_missing_scopes">Permesso richiesto mancante. Effettua nuovamente l\'accesso con il tuo account e riprova.</string>
     <string name="cmd_error_not_logged_in_credentials">Credenziali di accesso mancanti. Effettua nuovamente l\'accesso con il tuo account e riprova.</string>
+    <string name="cmd_error_unknown_command">%1$s non è un comando conosciuto</string>
     <string name="cmd_block_usage">Uso: /block &lt;utente&gt;</string>
     <string name="cmd_block_success">Hai bloccato con successo l\'utente %1$s</string>
     <string name="cmd_block_not_found">Impossibile bloccare l\'utente %1$s, nessun utente trovato con quel nome!</string>
