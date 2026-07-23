@@ -137,6 +137,9 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s lisäsi 7TV-emotin %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s nimesi 7TV-emotin %2$s uudelleen nimellä %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s poisti 7TV-emotin %2$s.</string>
+    <string name="system_message_stream_live">%1$s on nyt livenä!</string>
+    <string name="system_message_stream_live_with_title">%1$s on livenä: %2$s</string>
+    <string name="system_message_stream_offline">%1$s ei ole enää livenä</string>
     <!-- Send errors -->
     <string name="system_message_send_not_logged_in">Ei kirjautunut sisään</string>
     <string name="system_message_send_channel_not_resolved">Kanavan tunnusta ei voitu selvittää kanavalle %1$s</string>
@@ -556,6 +559,8 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_revoke_token_title">Peruuta tunnus ja käynnistä uudelleen</string>
     <string name="preference_revoke_token_summary">Mitätöi nykyisen tunnuksen ja käynnistää sovelluksen uudelleen</string>
     <string name="oauth_expired_title">Kirjautuminen vanhentunut!</string>
+    <string name="preference_stream_live_messages_title">Näytä live-tilan viestit</string>
+    <string name="preference_stream_live_messages_summary">Lisää chattiin viestin, kun kanava aloittaa tai lopettaa lähetyksen</string>
     <string name="preference_show_changelogs">Näytä muutosloki päivityksen jälkeen</string>
     <string name="preference_whats_new_header">Uutta</string>
     <string name="preference_custom_login_title">Mukautettu kirjautuminen</string>
@@ -762,6 +767,7 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="cmd_error_no_permission">Sinulla ei ole oikeutta suorittaa tätä toimintoa.</string>
     <string name="cmd_error_missing_scopes">Puuttuva vaadittu oikeus. Kirjaudu uudelleen tililläsi ja yritä uudelleen.</string>
     <string name="cmd_error_not_logged_in_credentials">Puuttuvat kirjautumistiedot. Kirjaudu uudelleen tililläsi ja yritä uudelleen.</string>
+    <string name="cmd_error_unknown_command">%1$s ei ole tunnettu komento</string>
     <string name="cmd_block_usage">Käyttö: /block &lt;käyttäjä&gt;</string>
     <string name="cmd_block_success">Estit onnistuneesti käyttäjän %1$s</string>
     <string name="cmd_block_not_found">Käyttäjää %1$s ei voitu estää, tällä nimellä ei löytynyt käyttäjää!</string>
