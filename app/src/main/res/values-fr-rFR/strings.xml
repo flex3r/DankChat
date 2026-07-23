@@ -137,6 +137,9 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s a ajouté 7TV Emote %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s a renommé 7TV Emote %2$s en %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s a retiré l\'émote %2$s de 7TV.</string>
+    <string name="system_message_stream_live">%1$s est en direct !</string>
+    <string name="system_message_stream_live_with_title">%1$s est en direct : %2$s</string>
+    <string name="system_message_stream_offline">%1$s n\'est plus en direct</string>
     <!-- Send errors -->
     <string name="system_message_send_not_logged_in">Non connecté</string>
     <string name="system_message_send_channel_not_resolved">Impossible de résoudre l\'ID du canal pour %1$s</string>
@@ -580,6 +583,8 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="oauth_expired_message">Votre connexion a expiré.  Veuillez vous connecter à nouveau.</string>
     <string name="oauth_expired_login_again">Connecter à nouveau</string>
     <string name="oauth_verify_failed">Impossible de vérifier le jeton de connexion, vérifiez votre connexion.</string>
+    <string name="preference_stream_live_messages_title">Afficher les messages de statut du direct</string>
+    <string name="preference_stream_live_messages_summary">Ajoute un message dans le chat lorsqu\'une chaîne commence ou termine son direct</string>
     <string name="preference_retain_webview_title">Empêcher les rechargements du live</string>
     <string name="preference_retain_webview_summary">Active la prévention expérimentale des recharges du live après changement d\'orientation ou réouverture de DankChat.</string>
     <string name="preference_show_changelogs">Afficher l\'historique des modifications après la mise à jour</string>
@@ -819,6 +824,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="cmd_error_no_permission">Vous n\'avez pas la permission d\'effectuer cette action.</string>
     <string name="cmd_error_missing_scopes">Permission requise manquante. Reconnectez-vous avec votre compte et réessayez.</string>
     <string name="cmd_error_not_logged_in_credentials">Identifiants de connexion manquants. Reconnectez-vous avec votre compte et réessayez.</string>
+    <string name="cmd_error_unknown_command">%1$s n\'est pas une commande connue</string>
     <string name="cmd_block_usage">Utilisation : /block &lt;utilisateur&gt;</string>
     <string name="cmd_block_success">Vous avez bloqué l\'utilisateur %1$s avec succès</string>
     <string name="cmd_block_not_found">L\'utilisateur %1$s n\'a pas pu être bloqué, aucun utilisateur trouvé avec ce nom !</string>
