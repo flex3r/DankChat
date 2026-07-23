@@ -147,6 +147,9 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s dodał(a) emotkę 7TV %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s zmienił(a) nazwę emotki 7TV %2$s na %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s usunął emotkę 7TV %2$s.</string>
+    <string name="system_message_stream_live">%1$s jest na żywo!</string>
+    <string name="system_message_stream_live_with_title">%1$s jest na żywo: %2$s</string>
+    <string name="system_message_stream_offline">%1$s już nie jest na żywo</string>
     <!-- Send errors -->
     <string name="system_message_send_not_logged_in">Nie zalogowano</string>
     <string name="system_message_send_channel_not_resolved">Nie udało się uzyskać ID kanału dla %1$s</string>
@@ -596,6 +599,8 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="oauth_expired_message">Twój token logowania wygasł! Zaloguj się ponownie.</string>
     <string name="oauth_expired_login_again">Zaloguj się ponownie</string>
     <string name="oauth_verify_failed">Nie udało się zweryfikować tokena logowania, sprawdź swoje połączenie internetowe.</string>
+    <string name="preference_stream_live_messages_title">Pokazuj wiadomości o statusie transmisji</string>
+    <string name="preference_stream_live_messages_summary">Dodaje wiadomość na czacie, gdy kanał rozpoczyna lub kończy transmisję</string>
     <string name="preference_retain_webview_title">Zapobiegaj przeładowaniu transmisji</string>
     <string name="preference_retain_webview_summary">Umożliwia eksperymentalne zapobieganie przeładowaniu transmisji po zmianie ustawień lub ponownym otwarciu DankChat.</string>
     <string name="preference_show_changelogs">Pokaż dziennik zmian po aktualizacji</string>
@@ -843,6 +848,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="cmd_error_no_permission">Nie masz uprawnień do wykonania tej czynności.</string>
     <string name="cmd_error_missing_scopes">Brak wymaganego uprawnienia. Zaloguj się ponownie i spróbuj jeszcze raz.</string>
     <string name="cmd_error_not_logged_in_credentials">Brak danych logowania. Zaloguj się ponownie i spróbuj jeszcze raz.</string>
+    <string name="cmd_error_unknown_command">%1$s nie jest znaną komendą</string>
     <string name="cmd_block_usage">Użycie: /block &lt;użytkownik&gt;</string>
     <string name="cmd_block_success">Pomyślnie zablokowano użytkownika %1$s</string>
     <string name="cmd_block_not_found">Nie udało się zablokować użytkownika %1$s, nie znaleziono użytkownika o tej nazwie!</string>
