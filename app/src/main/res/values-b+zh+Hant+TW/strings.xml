@@ -132,6 +132,9 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s新增了7TV表情%2$s。</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s重新命名了7TV表情%2$s成%3$s。</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s移除了7TV表情%2$s。</string>
+    <string name="system_message_stream_live">%1$s 開始直播了！</string>
+    <string name="system_message_stream_live_with_title">%1$s 正在直播：%2$s</string>
+    <string name="system_message_stream_offline">%1$s 已結束直播</string>
     <!-- Send errors -->
     <string name="system_message_send_not_logged_in">未登入</string>
     <string name="system_message_send_channel_not_resolved">無法解析 %1$s 的頻道 ID</string>
@@ -574,6 +577,8 @@
     <string name="oauth_expired_message">你的登入通行令失效了！請重新登入。</string>
     <string name="oauth_expired_login_again">重新登入</string>
     <string name="oauth_verify_failed">登入驗證失敗，請確認連線狀態。</string>
+    <string name="preference_stream_live_messages_title">顯示直播狀態訊息</string>
+    <string name="preference_stream_live_messages_summary">當頻道開始或結束直播時，在聊天室新增一則訊息</string>
     <string name="preference_retain_webview_title">防止實況重新載入</string>
     <string name="preference_retain_webview_summary">使用實驗性的機制防止在旋轉或重新開啟DankChat時實況重新載入</string>
     <string name="preference_show_changelogs">更新後顯示變更紀錄</string>
@@ -809,6 +814,7 @@
     <string name="cmd_error_no_permission">您沒有權限執行該操作。</string>
     <string name="cmd_error_missing_scopes">缺少必要的權限範圍。請重新登入您的帳號後再試一次。</string>
     <string name="cmd_error_not_logged_in_credentials">缺少登入憑證。請重新登入您的帳號後再試一次。</string>
+    <string name="cmd_error_unknown_command">%1$s 不是已知的指令</string>
     <string name="cmd_block_usage">用法：/block &lt;user&gt;</string>
     <string name="cmd_block_success">您已成功封鎖使用者 %1$s</string>
     <string name="cmd_block_not_found">無法封鎖使用者 %1$s，找不到該名稱的使用者！</string>
