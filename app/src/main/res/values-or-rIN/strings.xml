@@ -114,6 +114,9 @@
     <string name="system_message_ffz_emotes_failed">FFZ ଇମୋଟସ୍ ଲୋଡ୍ କରିବାରେ ବିଫଳ (ଇ %1$s)</string>
     <string name="system_message_7tv_emotes_failed">7TV ଇମୋଟସ୍ ଲୋଡ୍ କରିବାରେ ବିଫଳ (ଇ %1$s)</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s 7TV ଇମୋଟ ହଟାଇଛି %2$s.</string>
+    <string name="system_message_stream_live">%1$s ଲାଇଭ ଅଛି!</string>
+    <string name="system_message_stream_live_with_title">%1$s ଲାଇଭ ଅଛି: %2$s</string>
+    <string name="system_message_stream_offline">%1$s ବର୍ତ୍ତମାନ ଅଫଲାଇନ ଅଛି</string>
     <!-- Send errors -->
     <string name="system_message_send_not_logged_in">ଲଗ୍ ଇନ୍ ହୋଇନାହାଁନ୍ତି</string>
     <string name="system_message_send_channel_not_resolved">%1$s ପାଇଁ ଚ୍ୟାନେଲ ID ସମାଧାନ ହୋଇପାରିଲା ନାହିଁ</string>
@@ -525,6 +528,8 @@
     <string name="oauth_expired_message">ତୁମର ଲଗଇନ୍ ଟୋକନ୍ ମିଆଦ ପୂର୍ଣ୍ଣ ହୋଇଛି! ଦୟାକରି ପୁନର୍ବାର ଲଗଇନ୍ କରନ୍ତୁ</string>
     <string name="oauth_expired_login_again">ପୁନର୍ବାର ଲଗଇନ୍ କରନ୍ତୁ</string>
     <string name="oauth_verify_failed">ଲଗଇନ୍ ଟୋକନ୍ ଯାଞ୍ଚ କରିବାରେ ବିଫଳ, ଆପଣଙ୍କର ସଂଯୋଗ ଯାଞ୍ଚ କରନ୍ତୁ</string>
+    <string name="preference_stream_live_messages_title">ଲାଇଭ ସ୍ଥିତି ବାର୍ତ୍ତା ଦେଖାନ୍ତୁ</string>
+    <string name="preference_stream_live_messages_summary">ଏକ ଚ୍ୟାନେଲ ଲାଇଭ କିମ୍ବା ଅଫଲାଇନ ହେଲେ ଚାଟରେ ଏକ ବାର୍ତ୍ତା ଯୋଡ଼େ</string>
     <string name="preference_show_changelogs">ଅପଡେଟ୍ ପରେ ପରିଵର୍ତ୍ତନ ଲଗ୍ ଦେଖାଇବା</string>
     <string name="preference_whats_new_header">କଣ ସବୁ ନୁଆଁ?</string>
     <string name="preference_custom_login_title">କଷ୍ଟମ୍ ଲଗଇନ୍</string>
@@ -746,6 +751,7 @@
     <string name="cmd_error_no_permission">ଏହି କାର୍ଯ୍ୟ କରିବାକୁ ଆପଣଙ୍କର ଅନୁମତି ନାହିଁ।</string>
     <string name="cmd_error_missing_scopes">ଆବଶ୍ୟକ ସ୍କୋପ୍ ନାହିଁ। ଆପଣଙ୍କ ଆକାଉଣ୍ଟରେ ପୁନଃ ଲଗ୍ ଇନ୍ କରି ପୁନଃଚେଷ୍ଟା କରନ୍ତୁ।</string>
     <string name="cmd_error_not_logged_in_credentials">ଲଗ୍ ଇନ୍ ପ୍ରମାଣପତ୍ର ନାହିଁ। ଆପଣଙ୍କ ଆକାଉଣ୍ଟରେ ପୁନଃ ଲଗ୍ ଇନ୍ କରି ପୁନଃଚେଷ୍ଟା କରନ୍ତୁ।</string>
+    <string name="cmd_error_unknown_command">%1$s ଏକ ଜଣା କମାଣ୍ଡ ନୁହେଁ</string>
     <string name="cmd_block_usage">ବ୍ୟବହାର: /block &lt;user&gt;</string>
     <string name="cmd_block_success">ଆପଣ ସଫଳତାର ସହ %1$s ୟୁଜରଙ୍କୁ ବ୍ଲକ୍ କଲେ</string>
     <string name="cmd_block_not_found">%1$s ୟୁଜରଙ୍କୁ ବ୍ଲକ୍ କରାଯାଇପାରିଲା ନାହିଁ, ସେହି ନାମର କୌଣସି ୟୁଜର ମିଳିଲା ନାହିଁ!</string>
