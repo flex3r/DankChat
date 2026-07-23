@@ -137,6 +137,9 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s ha añadido el emoticono 7TV %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s ha cambiado el nombre del emoticono 7TV %2$s a %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s ha eliminado el emoticono 7TV %2$s.</string>
+    <string name="system_message_stream_live">¡%1$s está en directo!</string>
+    <string name="system_message_stream_live_with_title">%1$s está en directo: %2$s</string>
+    <string name="system_message_stream_offline">%1$s ya no está en directo</string>
     <!-- Send errors -->
     <string name="system_message_send_not_logged_in">No has iniciado sesión</string>
     <string name="system_message_send_channel_not_resolved">No se pudo resolver el ID del canal para %1$s</string>
@@ -582,6 +585,8 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="oauth_expired_message">¡Tu token de acceso ha caducado! Por favor, inicia sesión de nuevo.</string>
     <string name="oauth_expired_login_again">Iniciar sesión de nuevo</string>
     <string name="oauth_verify_failed">No se ha podido verificar el token de acceso, comprueba tu conexión.</string>
+    <string name="preference_stream_live_messages_title">Mostrar mensajes de estado del directo</string>
+    <string name="preference_stream_live_messages_summary">Añade un mensaje al chat cuando un canal empieza o termina el directo</string>
     <string name="preference_retain_webview_title">Evitar la recarga de las transmisiones</string>
     <string name="preference_retain_webview_summary">Activa la prevención experimental de recargas de las transmisiones después de cambios de orientación o al volver a abrir DankChat.</string>
     <string name="preference_show_changelogs">Mostrar cambios después de actualizar</string>
@@ -821,6 +826,7 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="cmd_error_no_permission">No tienes permiso para realizar esa acción.</string>
     <string name="cmd_error_missing_scopes">Falta un permiso requerido. Vuelve a iniciar sesión con tu cuenta e inténtalo de nuevo.</string>
     <string name="cmd_error_not_logged_in_credentials">Faltan las credenciales de inicio de sesión. Vuelve a iniciar sesión con tu cuenta e inténtalo de nuevo.</string>
+    <string name="cmd_error_unknown_command">%1$s no es un comando conocido</string>
     <string name="cmd_block_usage">Uso: /block &lt;usuario&gt;</string>
     <string name="cmd_block_success">Has bloqueado correctamente al usuario %1$s</string>
     <string name="cmd_block_not_found">No se pudo bloquear al usuario %1$s, no se encontró ningún usuario con ese nombre.</string>
