@@ -147,6 +147,9 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s дадаў 7TV смайл %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s змяніў назву смайла 7TV %2$s на %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s прыбраў смайл 7TV %2$s.</string>
+    <string name="system_message_stream_live">%1$s у эфіры!</string>
+    <string name="system_message_stream_live_with_title">%1$s у эфіры: %2$s</string>
+    <string name="system_message_stream_offline">%1$s больш не ў эфіры</string>
     <!-- Send errors -->
     <string name="system_message_send_not_logged_in">Не ўвайшлі ў сістэму</string>
     <string name="system_message_send_channel_not_resolved">Не ўдалося вызначыць ID канала для %1$s</string>
@@ -591,6 +594,8 @@
     <string name="oauth_expired_message">Тэрмін дзеяння вашага токена ўвахода сышоў! Калі ласка, увайдзіце ізноў.</string>
     <string name="oauth_expired_login_again">Увайдзіце яшчэ раз</string>
     <string name="oauth_verify_failed">Не ўдалося праверыць токен уваходу, праверце падключэнне.</string>
+    <string name="preference_stream_live_messages_title">Паказваць паведамленні аб статусе эфіру</string>
+    <string name="preference_stream_live_messages_summary">Дадае паведамленне ў чат, калі канал пачынае або заканчвае эфір</string>
     <string name="preference_retain_webview_title">Перапыніць перазагрузкі стрыма</string>
     <string name="preference_retain_webview_summary">Уключае эксперыментальнае запабяганне перазагрузкі стрыма пасля змены арыентацыі ці перазапуску DankChat.</string>
     <string name="preference_show_changelogs">Паказаць змены пасля абнаўлення</string>
@@ -837,6 +842,7 @@
     <string name="cmd_error_no_permission">У вас няма дазволу на гэта дзеянне.</string>
     <string name="cmd_error_missing_scopes">Адсутнічае неабходны дазвол. Увайдзіце зноў і паспрабуйце яшчэ раз.</string>
     <string name="cmd_error_not_logged_in_credentials">Адсутнічаюць уліковыя даныя. Увайдзіце зноў і паспрабуйце яшчэ раз.</string>
+    <string name="cmd_error_unknown_command">%1$s не з\'яўляецца вядомай камандай</string>
     <string name="cmd_block_usage">Выкарыстанне: /block &lt;user&gt;</string>
     <string name="cmd_block_success">Вы паспяхова заблакавалі карыстальніка %1$s</string>
     <string name="cmd_block_not_found">Не ўдалося заблакаваць карыстальніка %1$s, карыстальнік з такім імем не знойдзены!</string>
