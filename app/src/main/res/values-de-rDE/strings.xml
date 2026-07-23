@@ -137,6 +137,9 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s hat 7TV-Emote %2$s hinzugefügt.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s hat 7TV-Emote %2$s in %3$s umbenannt.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s hat 7TV-Emote %2$s entfernt.</string>
+    <string name="system_message_stream_live">%1$s ist live!</string>
+    <string name="system_message_stream_live_with_title">%1$s ist live: %2$s</string>
+    <string name="system_message_stream_offline">%1$s ist jetzt offline</string>
     <!-- Send errors -->
     <string name="system_message_send_not_logged_in">Nicht angemeldet</string>
     <string name="system_message_send_channel_not_resolved">Kanal-ID für %1$s konnte nicht aufgelöst werden</string>
@@ -582,6 +585,8 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="oauth_expired_message">Dein Login-Token ist abgelaufen! Bitte melde dich erneut an.</string>
     <string name="oauth_expired_login_again">Erneut anmelden</string>
     <string name="oauth_verify_failed">Login-Token konnte nicht verifiziert werden, überprüfe deine Verbindung.</string>
+    <string name="preference_stream_live_messages_title">Live-Status-Nachrichten anzeigen</string>
+    <string name="preference_stream_live_messages_summary">Fügt eine Chat-Nachricht hinzu, wenn ein Kanal live oder offline geht</string>
     <string name="preference_retain_webview_title">Neuladen des Streams verhindern</string>
     <string name="preference_retain_webview_summary">Aktiviert experimentelles Verhindern vom Neuladen des Streams, nachdem sich die Orientierung ändert oder DankChat neu geöffnet wird.</string>
     <string name="preference_show_changelogs">Changelogs nach Updates anzeigen</string>
@@ -821,6 +826,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="cmd_error_no_permission">Du hast keine Berechtigung, diese Aktion auszuführen.</string>
     <string name="cmd_error_missing_scopes">Fehlende erforderliche Berechtigung. Melde dich erneut an und versuche es nochmal.</string>
     <string name="cmd_error_not_logged_in_credentials">Fehlende Anmeldedaten. Melde dich erneut an und versuche es nochmal.</string>
+    <string name="cmd_error_unknown_command">%1$s ist kein bekannter Befehl</string>
     <string name="cmd_block_usage">Verwendung: /block &lt;Benutzer&gt;</string>
     <string name="cmd_block_success">Du hast den Benutzer %1$s erfolgreich blockiert</string>
     <string name="cmd_block_not_found">Benutzer %1$s konnte nicht blockiert werden, kein Benutzer mit diesem Namen gefunden!</string>
