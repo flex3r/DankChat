@@ -147,6 +147,9 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s додав 7TV емоцію %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s перейменував 7TV емоцію %2$s на %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s видалив 7TV емоцію %2$s.</string>
+    <string name="system_message_stream_live">%1$s в ефірі!</string>
+    <string name="system_message_stream_live_with_title">%1$s в ефірі: %2$s</string>
+    <string name="system_message_stream_offline">%1$s більше не в ефірі</string>
     <!-- Send errors -->
     <string name="system_message_send_not_logged_in">Не виконано вхід</string>
     <string name="system_message_send_channel_not_resolved">Не вдалося визначити ID каналу для %1$s</string>
@@ -598,6 +601,8 @@
     <string name="oauth_expired_message">Термін дії вашого токена входу минув! Увійдіть ще раз.</string>
     <string name="oauth_expired_login_again">Увійти ще раз</string>
     <string name="oauth_verify_failed">Не вдалося перевірити токен входу, перевірте підключення.</string>
+    <string name="preference_stream_live_messages_title">Показувати повідомлення про статус ефіру</string>
+    <string name="preference_stream_live_messages_summary">Додає повідомлення в чат, коли канал починає або завершує ефір</string>
     <string name="preference_retain_webview_title">Запобігти перезавантаженню трансляції</string>
     <string name="preference_retain_webview_summary">Увімкнути експериментальне запобігання перезавантаженню трансляції після зміни орієнтації або повторного відкриття DankChat.</string>
     <string name="preference_show_changelogs">Показувати журнали змін після оновлення</string>
@@ -844,6 +849,7 @@
     <string name="cmd_error_no_permission">У вас немає дозволу на виконання цієї дії.</string>
     <string name="cmd_error_missing_scopes">Відсутній необхідний дозвіл. Увійдіть знову та спробуйте ще раз.</string>
     <string name="cmd_error_not_logged_in_credentials">Відсутні дані для входу. Увійдіть знову та спробуйте ще раз.</string>
+    <string name="cmd_error_unknown_command">%1$s не є відомою командою</string>
     <string name="cmd_block_usage">Використання: /block &lt;користувач&gt;</string>
     <string name="cmd_block_success">Ви успішно заблокували користувача %1$s</string>
     <string name="cmd_block_not_found">Не вдалося заблокувати користувача %1$s, користувача з таким іменем не знайдено!</string>
