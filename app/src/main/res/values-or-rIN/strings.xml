@@ -375,10 +375,6 @@
     <string name="preference_roomstate_summary">କେବଳ ଚାଟ୍ ମୋଡ୍ ପରି ସାମ୍ପ୍ରତିକ ଚାଟ୍ ମୋଡ୍ ବିଷୟରେ ସୂଚନା ପ୍ରଦର୍ଶନ କରେ</string>
     <string name="preference_streaminfo_title">ଷ୍ଟ୍ରିମ୍ ସୂଚନା ଦେଖାନ୍ତୁ</string>
     <string name="preference_streaminfo_summary">ଲାଇଭ୍ ସ୍ଥିତି ଏବଂ ଦର୍ଶକ ଗଣନା ପ୍ରଦର୍ଶନ କରେ</string>
-    <string name="preference_stream_live_messages_title">ଲାଇଭ ସ୍ଥିତି ବାର୍ତ୍ତା ଦେଖାନ୍ତୁ</string>
-    <string name="preference_stream_live_messages_summary">ଏକ ଚ୍ୟାନେଲ ଲାଇଭ କିମ୍ବା ଅଫଲାଇନ ହେଲେ ଚାଟରେ ଏକ ବାର୍ତ୍ତା ଯୋଡ଼େ</string>
-    <string name="preference_stream_extensions_title">ଷ୍ଟ୍ରିମ୍ ଏକ୍ସଟେନସନ୍ ଦେଖାନ୍ତୁ</string>
-    <string name="preference_stream_extensions_summary">ଷ୍ଟ୍ରିମ୍ ପ୍ଲେୟାରରେ ଏକ୍ସଟେନସନ୍ ଓଭରଲେ ଦେଖାଏ</string>
     <string name="preference_notification_title">ଉଲ୍ଲେଖ ବିଜ୍ଞପ୍ତିଗୁଡିକ ଦେଖାନ୍ତୁ</string>
     <string name="preference_notification_summary">ଆପ୍ ପୃଷ୍ଠଭୂମିରେ ଥିବାବେଳେ ଉଲ୍ଲେଖ କଲାବେଳେ ବିଜ୍ଞପ୍ତି ସୃଷ୍ଟି କରେ</string>
     <string name="preference_notification_header">ଵିଜ୍ଞପ୍ତି</string>
@@ -534,6 +530,10 @@
     <string name="oauth_expired_message">ତୁମର ଲଗଇନ୍ ଟୋକନ୍ ମିଆଦ ପୂର୍ଣ୍ଣ ହୋଇଛି! ଦୟାକରି ପୁନର୍ବାର ଲଗଇନ୍ କରନ୍ତୁ</string>
     <string name="oauth_expired_login_again">ପୁନର୍ବାର ଲଗଇନ୍ କରନ୍ତୁ</string>
     <string name="oauth_verify_failed">ଲଗଇନ୍ ଟୋକନ୍ ଯାଞ୍ଚ କରିବାରେ ବିଫଳ, ଆପଣଙ୍କର ସଂଯୋଗ ଯାଞ୍ଚ କରନ୍ତୁ</string>
+    <string name="preference_stream_live_messages_title">ଲାଇଭ ସ୍ଥିତି ବାର୍ତ୍ତା ଦେଖାନ୍ତୁ</string>
+    <string name="preference_stream_live_messages_summary">ଏକ ଚ୍ୟାନେଲ ଲାଇଭ କିମ୍ବା ଅଫଲାଇନ ହେଲେ ଚାଟରେ ଏକ ବାର୍ତ୍ତା ଯୋଡ଼େ</string>
+    <string name="preference_stream_extensions_title">ଷ୍ଟ୍ରିମ୍ ଏକ୍ସଟେନସନ୍ ଦେଖାନ୍ତୁ</string>
+    <string name="preference_stream_extensions_summary">ଷ୍ଟ୍ରିମ୍ ପ୍ଲେୟାରରେ ଏକ୍ସଟେନସନ୍ ଓଭରଲେ ଦେଖାଏ</string>
     <string name="preference_show_changelogs">ଅପଡେଟ୍ ପରେ ପରିଵର୍ତ୍ତନ ଲଗ୍ ଦେଖାଇବା</string>
     <string name="preference_whats_new_header">କଣ ସବୁ ନୁଆଁ?</string>
     <string name="preference_custom_login_title">କଷ୍ଟମ୍ ଲଗଇନ୍</string>
