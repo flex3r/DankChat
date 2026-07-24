@@ -414,10 +414,6 @@ Check this guide for help: https://wiki.chatterino.com/Image%20Uploader/</string
     <string name="preference_roomstate_summary">Displays information about the current chat modes like subscribers only mode</string>
     <string name="preference_streaminfo_title">Show stream information</string>
     <string name="preference_streaminfo_summary">Displays live status and viewer count</string>
-    <string name="preference_stream_live_messages_title">Show live status messages</string>
-    <string name="preference_stream_live_messages_summary">Adds a chat message when a channel goes live or offline</string>
-    <string name="preference_stream_extensions_title">Show stream extensions</string>
-    <string name="preference_stream_extensions_summary">Shows extension overlays on the stream player</string>
     <string name="preference_notification_title">Show mention notifications</string>
     <string name="preference_notification_summary">Creates notifications when mentioned while the app is in the background</string>
     <string name="preference_notification_header">Notifications</string>
@@ -564,6 +560,10 @@ Check this guide for help: https://wiki.chatterino.com/Image%20Uploader/</string
     <string name="preference_eventsub_debug_summary">Prints debug output related to EventSub as system messages</string>
     <string name="preference_revoke_token_title">Revoke token and restart</string>
     <string name="preference_revoke_token_summary">Invalidates the current token and restarts the app</string>
+    <string name="preference_stream_live_messages_title">Show live status messages</string>
+    <string name="preference_stream_live_messages_summary">Adds a chat message when a channel goes live or offline</string>
+    <string name="preference_stream_extensions_title">Show stream extensions</string>
+    <string name="preference_stream_extensions_summary">Shows extension overlays on the stream player</string>
     <string name="preference_show_changelogs">Show changelogs after update</string>
     <string name="preference_whats_new_header">What\'s new</string>
     <string name="preference_custom_login_title">Custom login</string>
