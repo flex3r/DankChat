@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pin_duration_entries">
+        <item>A közvetítés végéig</item>
+        <item>1 perc</item>
+        <item>5 perc</item>
+        <item>10 perc</item>
+        <item>20 perc</item>
+        <item>30 perc</item>
+    </string-array>
+</resources>
