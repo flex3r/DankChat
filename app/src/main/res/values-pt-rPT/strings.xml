@@ -150,6 +150,14 @@
     <string name="system_message_send_message_too_large">A mensagem é demasiado grande</string>
     <string name="system_message_send_rate_limited">Limite de taxa atingido, tente novamente dentro de momentos</string>
     <string name="system_message_send_failed">Falha no envio: %1$s</string>
+    <!-- Pinned messages -->
+    <string name="pinned_by" comment="Pinned by flex3rs">Fixado por %1$s</string>
+    <string name="pinned_message_unpin">Desafixar</string>
+    <string name="pinned_message_collapse">Recolher mensagem fixada</string>
+    <string name="pinned_message_show">Mostrar mensagem fixada</string>
+    <string name="system_message_pin_failed" comment="%1$s is a http status code">Falha ao fixar a mensagem (%1$s)</string>
+    <string name="system_message_unpin_failed" comment="%1$s is a http status code">Falha ao desafixar a mensagem (%1$s)</string>
+    <string name="system_message_pin_already_pinned">Falha ao fixar a mensagem - já existe outra mensagem fixada</string>
     <!-- AutoMod -->
     <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Mensagem retida pelo motivo: %1$s. Permitir irá publicá-la no chat.</string>
     <string name="automod_allow">Permitir</string>
@@ -371,6 +379,8 @@
     <string name="confirm_user_delete_message">Tens a certeza de que pretendes eliminar esta mensagem?</string>
     <string name="confirm_user_delete_question">Eliminar esta mensagem?</string>
     <string name="confirm_user_delete_positive_button">Apagar</string>
+    <string name="confirm_pin_title">Duração da fixação</string>
+    <string name="confirm_pin_positive_button">Fixar</string>
     <string name="confirm_clear_chat_question">Limpar chat?</string>
     <string name="confirm_user_roomstate_title">Atualizar modos do chat</string>
     <string name="roomstate_emote">Apenas emotes</string>
@@ -415,6 +425,9 @@
     <string name="preference_mention_format_title">Formato de menção</string>
     <string name="preference_roomstate_title">Mostrar modos do chat</string>
     <string name="preference_roomstate_summary">Exibir informações sobre os modos atuais do chat, como o modo somente para subscritores</string>
+    <string name="preference_always_show_pinned_message_title">Mostrar sempre a mensagem fixada</string>
+    <string name="preference_always_show_pinned_message_summary">Desativa a recolha automática do banner da mensagem fixada</string>
+    <string name="preference_show_stream_title_in_live_message_title">Mostrar o título da transmissão nas mensagens em direto</string>
     <string name="preference_compact_channel_info_title">Informação de canal compacta</string>
     <string name="preference_compact_channel_info_summary">Exibe os modos do chat e a informação da stream numa única linha</string>
     <string name="preference_streaminfo_title">Mostrar informação da stream</string>
@@ -673,6 +686,7 @@
     <string name="message_copy_link">Copiar: %s</string>
     <string name="message_more_actions">Mais…</string>
     <string name="message_jump_to">Ir para a mensagem</string>
+    <string name="message_pin">Fixar mensagem</string>
     <string name="message_not_in_history">Mensagem já não está no histórico do chat</string>
     <string name="message_history">Histórico de mensagens</string>
     <string name="global_history_title">Histórico global</string>
