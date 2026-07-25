@@ -144,6 +144,14 @@
     <string name="system_message_send_message_too_large">Порука је превелика</string>
     <string name="system_message_send_rate_limited">Ограничење брзине, покушајте поново за тренутак</string>
     <string name="system_message_send_failed">Слање неуспешно: %1$s</string>
+    <!-- Pinned messages -->
+    <string name="pinned_by" comment="Pinned by flex3rs">Закачено од стране %1$s</string>
+    <string name="pinned_message_unpin">Откачи</string>
+    <string name="pinned_message_collapse">Скупи закачену поруку</string>
+    <string name="pinned_message_show">Прикажи закачену поруку</string>
+    <string name="system_message_pin_failed" comment="%1$s is a http status code">Закачивање поруке није успело (%1$s)</string>
+    <string name="system_message_unpin_failed" comment="%1$s is a http status code">Откачивање поруке није успело (%1$s)</string>
+    <string name="system_message_pin_already_pinned">Закачивање поруке није успело - друга порука је већ закачена</string>
     <!-- AutoMod -->
     <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Порука задржана из разлога: %1$s. Дозвола ће је објавити у ћаскању.</string>
     <string name="automod_allow">Дозволи</string>
@@ -371,6 +379,8 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="confirm_user_delete_message">Da li ste sigurni da želite da obrišete poruku?</string>
     <string name="confirm_user_delete_question">Obrisati ovu poruku?</string>
     <string name="confirm_user_delete_positive_button">Obriši</string>
+    <string name="confirm_pin_title">Трајање закачивања</string>
+    <string name="confirm_pin_positive_button">Закачи</string>
     <string name="confirm_clear_chat_question">Obrisati čet?</string>
     <string name="confirm_user_roomstate_title">Ažuriraj režim sobe</string>
     <string name="roomstate_emote">Samo emotovi</string>
@@ -404,6 +414,9 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_mention_format_title">Format pominjanja</string>
     <string name="preference_roomstate_title">Prikaži informacije o režimu sobe</string>
     <string name="preference_roomstate_summary">Prikazuje informacije o trenutnom režimu sobe, poput režima samo za pretplatnike</string>
+    <string name="preference_always_show_pinned_message_title">Увек прикажи закачену поруку</string>
+    <string name="preference_always_show_pinned_message_summary">Онемогућава аутоматско скупљање банера закачене поруке</string>
+    <string name="preference_show_stream_title_in_live_message_title">Прикажи наслов стрима у порукама о почетку стрима</string>
     <string name="preference_compact_channel_info_title">Kompaktne informacije o kanalu</string>
     <string name="preference_compact_channel_info_summary">Prikaži režime sobe i informacije o strimu u jednom redu</string>
     <string name="preference_streaminfo_title">Prikaži informacije o strimu</string>
@@ -590,6 +603,7 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="message_copy_link">Копирај: %s</string>
     <string name="message_more_actions">Још…</string>
     <string name="message_jump_to">Иди на поруку</string>
+    <string name="message_pin">Закачи поруку</string>
     <string name="message_not_in_history">Порука више није у историји ћаскања</string>
     <string name="message_history">Историја порука</string>
     <string name="global_history_title">Глобална историја</string>
