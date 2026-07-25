@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pin_duration_entries">
+        <item>Striimin loppuun asti</item>
+        <item>1 minuutti</item>
+        <item>5 minuuttia</item>
+        <item>10 minuuttia</item>
+        <item>20 minuuttia</item>
+        <item>30 minuuttia</item>
+    </string-array>
+</resources>
