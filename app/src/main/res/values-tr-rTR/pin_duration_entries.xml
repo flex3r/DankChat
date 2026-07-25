@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pin_duration_entries">
+        <item>Yayın bitene kadar</item>
+        <item>1 dakika</item>
+        <item>5 dakika</item>
+        <item>10 dakika</item>
+        <item>20 dakika</item>
+        <item>30 dakika</item>
+    </string-array>
+</resources>
