@@ -150,6 +150,14 @@
     <string name="system_message_send_message_too_large">El missatge és massa gran</string>
     <string name="system_message_send_rate_limited">Límit de freqüència superat, torna-ho a provar d\'aquí a un moment</string>
     <string name="system_message_send_failed">Error d\'enviament: %1$s</string>
+    <!-- Pinned messages -->
+    <string name="pinned_by" comment="Pinned by flex3rs">Fixat per %1$s</string>
+    <string name="pinned_message_unpin">Deixa de fixar</string>
+    <string name="pinned_message_collapse">Redueix el missatge fixat</string>
+    <string name="pinned_message_show">Mostra el missatge fixat</string>
+    <string name="system_message_pin_failed" comment="%1$s is a http status code">No s\'ha pogut fixar el missatge (%1$s)</string>
+    <string name="system_message_unpin_failed" comment="%1$s is a http status code">No s\'ha pogut deixar de fixar el missatge (%1$s)</string>
+    <string name="system_message_pin_already_pinned">No s\'ha pogut fixar el missatge - ja hi ha un altre missatge fixat</string>
     <!-- AutoMod -->
     <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">S\'ha retingut un missatge per motiu: %1$s. Permetre el publicarà al xat.</string>
     <string name="automod_allow">Permetre</string>
@@ -372,6 +380,8 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="confirm_user_delete_title">Confirmar eliminació del missatge</string>
     <string name="confirm_user_delete_question">Eliminar aquest missatge?</string>
     <string name="confirm_user_delete_positive_button">Eliminar</string>
+    <string name="confirm_pin_title">Durada de la fixació</string>
+    <string name="confirm_pin_positive_button">Fixar</string>
     <string name="confirm_clear_chat_question">Netejar el xat?</string>
     <string name="confirm_user_roomstate_title">Actualitzar modes de xat</string>
     <string name="roomstate_emote">Només emotes</string>
@@ -416,6 +426,9 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="preference_mention_format_title">Format de mencions</string>
     <string name="preference_roomstate_title">Mostrar informació de modes de xat</string>
     <string name="preference_roomstate_summary">Mostra informació sobre els actuals modes de xat com el mode de només subscriptors</string>
+    <string name="preference_always_show_pinned_message_title">Mostra sempre el missatge fixat</string>
+    <string name="preference_always_show_pinned_message_summary">Desactiva la reducció automàtica del bàner del missatge fixat</string>
+    <string name="preference_show_stream_title_in_live_message_title">Mostra el títol del directe als missatges de directe</string>
     <string name="preference_compact_channel_info_title">Informació de canal compacta</string>
     <string name="preference_compact_channel_info_summary">Mostra els modes de xat i la informació de l\'stream en una sola línia</string>
     <string name="preference_streaminfo_title">Mostrar informació sobre l\'stream</string>
@@ -665,6 +678,7 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="message_copy_link">Copia: %s</string>
     <string name="message_more_actions">Més…</string>
     <string name="message_jump_to">Anar al missatge</string>
+    <string name="message_pin">Fixa el missatge</string>
     <string name="message_not_in_history">El missatge ja no és a l\'historial del xat</string>
     <string name="message_history">Historial de missatges</string>
     <string name="global_history_title">Historial global</string>
