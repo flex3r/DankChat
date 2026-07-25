@@ -150,6 +150,14 @@
     <string name="system_message_send_message_too_large">Viesti on liian suuri</string>
     <string name="system_message_send_rate_limited">Nopeusrajoitus, yritä hetken kuluttua uudelleen</string>
     <string name="system_message_send_failed">Lähetys epäonnistui: %1$s</string>
+    <!-- Pinned messages -->
+    <string name="pinned_by" comment="Pinned by flex3rs">Kiinnittänyt %1$s</string>
+    <string name="pinned_message_unpin">Irrota kiinnitys</string>
+    <string name="pinned_message_collapse">Kutista kiinnitetty viesti</string>
+    <string name="pinned_message_show">Näytä kiinnitetty viesti</string>
+    <string name="system_message_pin_failed" comment="%1$s is a http status code">Viestin kiinnittäminen epäonnistui (%1$s)</string>
+    <string name="system_message_unpin_failed" comment="%1$s is a http status code">Viestin kiinnityksen poistaminen epäonnistui (%1$s)</string>
+    <string name="system_message_pin_already_pinned">Viestin kiinnittäminen epäonnistui - toinen viesti on jo kiinnitetty</string>
     <!-- AutoMod -->
     <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Viesti pidätetty syystä: %1$s. Salliminen julkaisee sen chatissa.</string>
     <string name="automod_allow">Salli</string>
@@ -376,6 +384,8 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="confirm_user_delete_message">Haluatko varmasti poistaa tämän viestin?</string>
     <string name="confirm_user_delete_question">Poistetaanko tämä viesti?</string>
     <string name="confirm_user_delete_positive_button">Poista</string>
+    <string name="confirm_pin_title">Kiinnityksen kesto</string>
+    <string name="confirm_pin_positive_button">Kiinnitä</string>
     <string name="confirm_clear_chat_question">Tyhjennetäänkö chat?</string>
     <string name="confirm_user_roomstate_title">Päivitä chattitilat</string>
     <string name="roomstate_emote">Vain hymiöitä</string>
@@ -418,6 +428,9 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_mention_format_title">Maininnan muoto</string>
     <string name="preference_roomstate_title">Näytä chattitilojen tiedot</string>
     <string name="preference_roomstate_summary">Näyttää tiedot nykyisistä chattitiloista, kuten vain tilaajat -tila</string>
+    <string name="preference_always_show_pinned_message_title">Näytä kiinnitetty viesti aina</string>
+    <string name="preference_always_show_pinned_message_summary">Estää kiinnitetyn viestin palkin automaattisen kutistumisen</string>
+    <string name="preference_show_stream_title_in_live_message_title">Näytä striimin otsikko live-viesteissä</string>
     <string name="preference_compact_channel_info_title">Kompaktit kanavatiedot</string>
     <string name="preference_compact_channel_info_summary">Näytä chattitilat ja suoratoistotiedot yhdellä rivillä</string>
     <string name="preference_streaminfo_title">Näytä suoratoistotiedot</string>
@@ -625,6 +638,7 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="message_copy_link">Kopioi: %s</string>
     <string name="message_more_actions">Lisää…</string>
     <string name="message_jump_to">Siirry viestiin</string>
+    <string name="message_pin">Kiinnitä viesti</string>
     <string name="message_not_in_history">Viesti ei ole enää chat-historiassa</string>
     <string name="message_history">Viestihistoria</string>
     <string name="global_history_title">Yleinen historia</string>
