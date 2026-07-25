@@ -150,6 +150,14 @@
     <string name="system_message_send_message_too_large">Le message est trop volumineux</string>
     <string name="system_message_send_rate_limited">Limite de débit atteinte, réessayez dans un instant</string>
     <string name="system_message_send_failed">Échec de l\'envoi : %1$s</string>
+    <!-- Pinned messages -->
+    <string name="pinned_by" comment="Pinned by flex3rs">Épinglé par %1$s</string>
+    <string name="pinned_message_unpin">Désépingler</string>
+    <string name="pinned_message_collapse">Réduire le message épinglé</string>
+    <string name="pinned_message_show">Afficher le message épinglé</string>
+    <string name="system_message_pin_failed" comment="%1$s is a http status code">Échec de l\'épinglage du message (%1$s)</string>
+    <string name="system_message_unpin_failed" comment="%1$s is a http status code">Échec du désépinglage du message (%1$s)</string>
+    <string name="system_message_pin_already_pinned">Échec de l\'épinglage du message - un autre message est déjà épinglé</string>
     <!-- AutoMod -->
     <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Message retenu pour la raison : %1$s. Autoriser le publiera dans le chat.</string>
     <string name="automod_allow">Autoriser</string>
@@ -376,6 +384,8 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="confirm_user_delete_message">Êtes-vous sûr de vouloir supprimer ce message ?</string>
     <string name="confirm_user_delete_question">Supprimer ce message ?</string>
     <string name="confirm_user_delete_positive_button">Supprimer</string>
+    <string name="confirm_pin_title">Durée d\'épinglage</string>
+    <string name="confirm_pin_positive_button">Épingler</string>
     <string name="confirm_clear_chat_question">Effacer le chat ?</string>
     <string name="confirm_user_roomstate_title">Modifier le mode de discussion</string>
     <string name="roomstate_emote">Émoticône uniquement</string>
@@ -420,6 +430,9 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_mention_format_title">Format des mentions</string>
     <string name="preference_roomstate_title">Afficher les informations de la salle de discussion</string>
     <string name="preference_roomstate_summary">Affiche les infos sur la salle de discussion tels que le mode \"sub-only\"</string>
+    <string name="preference_always_show_pinned_message_title">Toujours afficher le message épinglé</string>
+    <string name="preference_always_show_pinned_message_summary">Désactive la réduction automatique de la bannière du message épinglé</string>
+    <string name="preference_show_stream_title_in_live_message_title">Afficher le titre du stream dans les messages de live</string>
     <string name="preference_compact_channel_info_title">Infos de chaîne compactes</string>
     <string name="preference_compact_channel_info_summary">Affiche les modes de discussion et les infos du live sur une seule ligne</string>
     <string name="preference_streaminfo_title">Récupérer les informations du live</string>
@@ -678,6 +691,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="message_copy_link">Copier : %s</string>
     <string name="message_more_actions">Plus…</string>
     <string name="message_jump_to">Aller au message</string>
+    <string name="message_pin">Épingler le message</string>
     <string name="message_not_in_history">Le message n\'est plus dans l\'historique du chat</string>
     <string name="message_history">Historique des messages</string>
     <string name="global_history_title">Historique global</string>
