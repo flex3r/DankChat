@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pin_duration_entries">
+        <item>До краја стрима</item>
+        <item>1 минут</item>
+        <item>5 минута</item>
+        <item>10 минута</item>
+        <item>20 минута</item>
+        <item>30 минута</item>
+    </string-array>
+</resources>
