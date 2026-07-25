@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pin_duration_entries">
+        <item>Do konce streamu</item>
+        <item>1 minuta</item>
+        <item>5 minut</item>
+        <item>10 minut</item>
+        <item>20 minut</item>
+        <item>30 minut</item>
+    </string-array>
+</resources>
