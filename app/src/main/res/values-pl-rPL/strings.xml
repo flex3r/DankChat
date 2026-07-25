@@ -160,6 +160,14 @@
     <string name="system_message_send_message_too_large">Wiadomość jest zbyt duża</string>
     <string name="system_message_send_rate_limited">Osiągnięto limit częstotliwości, spróbuj ponownie za chwilę</string>
     <string name="system_message_send_failed">Wysyłanie nie powiodło się: %1$s</string>
+    <!-- Pinned messages -->
+    <string name="pinned_by" comment="Pinned by flex3rs">Przypięta przez %1$s</string>
+    <string name="pinned_message_unpin">Odepnij</string>
+    <string name="pinned_message_collapse">Zwiń przypiętą wiadomość</string>
+    <string name="pinned_message_show">Pokaż przypiętą wiadomość</string>
+    <string name="system_message_pin_failed" comment="%1$s is a http status code">Nie udało się przypiąć wiadomości (%1$s)</string>
+    <string name="system_message_unpin_failed" comment="%1$s is a http status code">Nie udało się odpiąć wiadomości (%1$s)</string>
+    <string name="system_message_pin_already_pinned">Nie udało się przypiąć wiadomości - inna wiadomość jest już przypięta</string>
     <!-- AutoMod -->
     <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Wiadomość wstrzymana z powodu: %1$s. Zezwolenie opublikuje ją na czacie.</string>
     <string name="automod_allow">Zezwól</string>
@@ -392,6 +400,8 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="confirm_user_delete_message">Czy na pewno chcesz usunąć tę wiadomość?</string>
     <string name="confirm_user_delete_question">Usunąć tę wiadomość?</string>
     <string name="confirm_user_delete_positive_button">Usuń</string>
+    <string name="confirm_pin_title">Czas przypięcia</string>
+    <string name="confirm_pin_positive_button">Przypnij</string>
     <string name="confirm_clear_chat_question">Wyczyścić czat?</string>
     <string name="confirm_user_roomstate_title">Zmień tryb czatu</string>
     <string name="roomstate_emote">Tylko emotki</string>
@@ -436,6 +446,9 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_mention_format_title">Format wzmianek</string>
     <string name="preference_roomstate_title">Pokazuj informacje dotyczące trybu kanału</string>
     <string name="preference_roomstate_summary">Pokazuj informacje dotyczące trybu kanału takie jak \"Czat tylko dla Subskrybentów\"</string>
+    <string name="preference_always_show_pinned_message_title">Zawsze pokazuj przypiętą wiadomość</string>
+    <string name="preference_always_show_pinned_message_summary">Wyłącza automatyczne zwijanie banera przypiętej wiadomości</string>
+    <string name="preference_show_stream_title_in_live_message_title">Pokazuj tytuł transmisji w wiadomości o rozpoczęciu transmisji</string>
     <string name="preference_compact_channel_info_title">Kompaktowe informacje o kanale</string>
     <string name="preference_compact_channel_info_summary">Pokazuj tryby czatu i informacje o transmisji w jednej linii</string>
     <string name="preference_streaminfo_title">Pokazuj informacje transmisji</string>
@@ -694,6 +707,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="message_copy_link">Kopiuj: %s</string>
     <string name="message_more_actions">Więcej…</string>
     <string name="message_jump_to">Przejdź do wiadomości</string>
+    <string name="message_pin">Przypnij wiadomość</string>
     <string name="message_not_in_history">Wiadomość nie jest już w historii czatu</string>
     <string name="message_history">Historia wiadomości</string>
     <string name="global_history_title">Globalna historia</string>
