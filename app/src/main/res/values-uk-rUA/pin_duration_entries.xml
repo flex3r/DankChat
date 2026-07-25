@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pin_duration_entries">
+        <item>До кінця стріму</item>
+        <item>1 хвилина</item>
+        <item>5 хвилин</item>
+        <item>10 хвилин</item>
+        <item>20 хвилин</item>
+        <item>30 хвилин</item>
+    </string-array>
+</resources>
