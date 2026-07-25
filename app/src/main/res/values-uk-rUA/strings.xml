@@ -160,6 +160,14 @@
     <string name="system_message_send_message_too_large">Повідомлення занадто велике</string>
     <string name="system_message_send_rate_limited">Перевищено ліміт запитів, спробуйте через деякий час</string>
     <string name="system_message_send_failed">Помилка надсилання: %1$s</string>
+    <!-- Pinned messages -->
+    <string name="pinned_by" comment="Pinned by flex3rs">Закріплено користувачем %1$s</string>
+    <string name="pinned_message_unpin">Відкріпити</string>
+    <string name="pinned_message_collapse">Згорнути закріплене повідомлення</string>
+    <string name="pinned_message_show">Показати закріплене повідомлення</string>
+    <string name="system_message_pin_failed" comment="%1$s is a http status code">Не вдалося закріпити повідомлення (%1$s)</string>
+    <string name="system_message_unpin_failed" comment="%1$s is a http status code">Не вдалося відкріпити повідомлення (%1$s)</string>
+    <string name="system_message_pin_already_pinned">Не вдалося закріпити повідомлення - інше повідомлення вже закріплено</string>
     <!-- AutoMod -->
     <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Повідомлення затримано з причини: %1$s. Дозвіл опублікує його в чаті.</string>
     <string name="automod_allow">Дозволити</string>
@@ -393,6 +401,8 @@
     <string name="confirm_user_delete_message">Ви дійсно хочете видалити це повідомлення?</string>
     <string name="confirm_user_delete_question">Видалити це повідомлення?</string>
     <string name="confirm_user_delete_positive_button">Видалити</string>
+    <string name="confirm_pin_title">Тривалість закріплення</string>
+    <string name="confirm_pin_positive_button">Закріпити</string>
     <string name="confirm_clear_chat_question">Очистити чат?</string>
     <string name="confirm_user_roomstate_title">Оновлення режимів чату</string>
     <string name="roomstate_emote">Тільки смайлики</string>
@@ -438,6 +448,9 @@
     <string name="preference_mention_format_title">Формат згадок</string>
     <string name="preference_roomstate_title">Показувати статус чату</string>
     <string name="preference_roomstate_summary">Показувати інформацію про статус чату (наприклад, режиму \"Тільки для підписників\")</string>
+    <string name="preference_always_show_pinned_message_title">Завжди показувати закріплене повідомлення</string>
+    <string name="preference_always_show_pinned_message_summary">Вимикає автоматичне згортання банера закріпленого повідомлення</string>
+    <string name="preference_show_stream_title_in_live_message_title">Показувати назву стріму в повідомленнях про вихід в ефір</string>
     <string name="preference_compact_channel_info_title">Компактна інформація про канал</string>
     <string name="preference_compact_channel_info_summary">Показувати режими чату та інформацію про стрім в одному рядку</string>
     <string name="preference_streaminfo_title">Показувати інформацію про стрім</string>
@@ -696,6 +709,7 @@
     <string name="message_copy_link">Скопіювати: %s</string>
     <string name="message_more_actions">Більше…</string>
     <string name="message_jump_to">Перейти до повідомлення</string>
+    <string name="message_pin">Закріпити повідомлення</string>
     <string name="message_not_in_history">Повідомлення більше немає в історії чату</string>
     <string name="message_history">Історія повідомлень</string>
     <string name="global_history_title">Глобальна історія</string>
