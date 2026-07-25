@@ -160,6 +160,14 @@
     <string name="system_message_send_message_too_large">Паведамленне занадта вялікае</string>
     <string name="system_message_send_rate_limited">Перавышаны ліміт запытаў, паспрабуйце пазней</string>
     <string name="system_message_send_failed">Памылка адпраўкі: %1$s</string>
+    <!-- Pinned messages -->
+    <string name="pinned_by" comment="Pinned by flex3rs">Замацавана карыстальнікам %1$s</string>
+    <string name="pinned_message_unpin">Адмацаваць</string>
+    <string name="pinned_message_collapse">Згарнуць замацаванае паведамленне</string>
+    <string name="pinned_message_show">Паказаць замацаванае паведамленне</string>
+    <string name="system_message_pin_failed" comment="%1$s is a http status code">Не ўдалося замацаваць паведамленне (%1$s)</string>
+    <string name="system_message_unpin_failed" comment="%1$s is a http status code">Не ўдалося адмацаваць паведамленне (%1$s)</string>
+    <string name="system_message_pin_already_pinned">Не ўдалося замацаваць паведамленне - іншае паведамленне ўжо замацавана</string>
     <!-- AutoMod -->
     <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Паведамленне затрымана з прычыны: %1$s. Дазвол апублікуе яго ў чаце.</string>
     <string name="automod_allow">Дазволіць</string>
@@ -387,6 +395,8 @@
     <string name="confirm_user_delete_message">Вы ўпэўнены, што хочаце выдаліць гэтае паведамленне?</string>
     <string name="confirm_user_delete_question">Выдаліць гэтае паведамленне?</string>
     <string name="confirm_user_delete_positive_button">Выдаліць</string>
+    <string name="confirm_pin_title">Працягласць замацавання</string>
+    <string name="confirm_pin_positive_button">Замацаваць</string>
     <string name="confirm_clear_chat_question">Ачысціць чат?</string>
     <string name="confirm_user_roomstate_title">Абнавіць рэжымы чату</string>
     <string name="roomstate_emote">Толькі смайлы</string>
@@ -431,6 +441,9 @@
     <string name="preference_mention_format_title">Фармат згадвання</string>
     <string name="preference_roomstate_title">Адлюстраваць статус чату</string>
     <string name="preference_roomstate_summary">Адлюстроўваць інфармацыю пра статус бягучага чату, кшталту рэжыму толькі для падпісчыкаў</string>
+    <string name="preference_always_show_pinned_message_title">Заўсёды паказваць замацаванае паведамленне</string>
+    <string name="preference_always_show_pinned_message_summary">Адключае аўтаматычнае згортванне банера замацаванага паведамлення</string>
+    <string name="preference_show_stream_title_in_live_message_title">Паказваць назву трансляцыі ў паведамленнях пра выхад у эфір</string>
     <string name="preference_compact_channel_info_title">Кампактная інфармацыя пра канал</string>
     <string name="preference_compact_channel_info_summary">Адлюстроўваць рэжымы чату і інфармацыю пра трансляцыю ў адзін радок</string>
     <string name="preference_streaminfo_title">Адлюстроўваць інфармацыю пра трансляцыю</string>
@@ -689,6 +702,7 @@
     <string name="message_copy_link">Скапіраваць: %s</string>
     <string name="message_more_actions">Больш…</string>
     <string name="message_jump_to">Перайсці да паведамлення</string>
+    <string name="message_pin">Замацаваць паведамленне</string>
     <string name="message_not_in_history">Паведамленне больш не ў гісторыі чата</string>
     <string name="message_history">Гісторыя паведамленняў</string>
     <string name="global_history_title">Глабальная гісторыя</string>
