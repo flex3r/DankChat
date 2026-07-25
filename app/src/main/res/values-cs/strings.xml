@@ -160,6 +160,14 @@
     <string name="system_message_send_message_too_large">Zpráva je příliš velká</string>
     <string name="system_message_send_rate_limited">Příliš mnoho požadavků, zkuste to za chvíli znovu</string>
     <string name="system_message_send_failed">Odeslání se nezdařilo: %1$s</string>
+    <!-- Pinned messages -->
+    <string name="pinned_by" comment="Pinned by flex3rs">Připnuto uživatelem %1$s</string>
+    <string name="pinned_message_unpin">Odepnout</string>
+    <string name="pinned_message_collapse">Sbalit připnutou zprávu</string>
+    <string name="pinned_message_show">Zobrazit připnutou zprávu</string>
+    <string name="system_message_pin_failed" comment="%1$s is a http status code">Nepodařilo se připnout zprávu (%1$s)</string>
+    <string name="system_message_unpin_failed" comment="%1$s is a http status code">Nepodařilo se odepnout zprávu (%1$s)</string>
+    <string name="system_message_pin_already_pinned">Nepodařilo se připnout zprávu - jiná zpráva je již připnuta</string>
     <!-- AutoMod -->
     <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Zpráva zadržena z důvodu: %1$s. Povolení ji zveřejní v chatu.</string>
     <string name="automod_allow">Povolit</string>
@@ -393,6 +401,8 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="confirm_user_delete_message">Jste si jistí, že chcete tuto zprávu smazat?</string>
     <string name="confirm_user_delete_question">Smazat tuto zprávu?</string>
     <string name="confirm_user_delete_positive_button">Smazat</string>
+    <string name="confirm_pin_title">Doba připnutí</string>
+    <string name="confirm_pin_positive_button">Připnout</string>
     <string name="confirm_clear_chat_question">Vymazat chat?</string>
     <string name="confirm_user_roomstate_title">Změnit režim místnosti</string>
     <string name="roomstate_emote">Pouze emotikony</string>
@@ -438,6 +448,9 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_mention_format_title">Formát zmínek</string>
     <string name="preference_roomstate_title">Zobrazit informaci o režimu místnosti</string>
     <string name="preference_roomstate_summary">Zobrazí informaci o současném režimu místnosti jako například pouze pro předplatitele</string>
+    <string name="preference_always_show_pinned_message_title">Vždy zobrazovat připnutou zprávu</string>
+    <string name="preference_always_show_pinned_message_summary">Vypne automatické sbalování banneru připnuté zprávy</string>
+    <string name="preference_show_stream_title_in_live_message_title">Zobrazovat název streamu ve zprávě o začátku vysílání</string>
     <string name="preference_compact_channel_info_title">Kompaktní informace o kanálu</string>
     <string name="preference_compact_channel_info_summary">Zobrazit režimy chatu a informace o streamu na jednom řádku</string>
     <string name="preference_streaminfo_title">Zobrazit informace o streamu</string>
@@ -696,6 +709,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="message_copy_link">Kopírovat: %s</string>
     <string name="message_more_actions">Více…</string>
     <string name="message_jump_to">Přejít na zprávu</string>
+    <string name="message_pin">Připnout zprávu</string>
     <string name="message_not_in_history">Zpráva již není v historii chatu</string>
     <string name="message_history">Historie zpráv</string>
     <string name="global_history_title">Globální historie</string>
