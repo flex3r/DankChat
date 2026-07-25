@@ -127,6 +127,7 @@
     <string name="system_message_send_message_too_large">ମେସେଜ୍ ବହୁତ ବଡ଼</string>
     <string name="system_message_send_rate_limited">ହାର ସୀମିତ, କିଛି ସମୟ ପରେ ପୁନଃଚେଷ୍ଟା କରନ୍ତୁ</string>
     <string name="system_message_send_failed">ପଠାଇବା ବିଫଳ: %1$s</string>
+    <!-- Pinned messages -->
     <!-- AutoMod -->
     <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">କାରଣ ପାଇଁ ଏକ ବାର୍ତ୍ତା ଧରାଯାଇଛି: %1$s। ଅନୁମତି ଦେଲେ ଏହା ଚାଟ୍ ରେ ପୋଷ୍ଟ ହେବ।</string>
     <string name="automod_allow">ଅନୁମତି ଦିଅନ୍ତୁ</string>
