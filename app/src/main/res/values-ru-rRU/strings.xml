@@ -160,6 +160,14 @@
     <string name="system_message_send_message_too_large">Сообщение слишком большое</string>
     <string name="system_message_send_rate_limited">Превышен лимит запросов, попробуйте через некоторое время</string>
     <string name="system_message_send_failed">Ошибка отправки: %1$s</string>
+    <!-- Pinned messages -->
+    <string name="pinned_by" comment="Pinned by flex3rs">Закреплено пользователем %1$s</string>
+    <string name="pinned_message_unpin">Открепить</string>
+    <string name="pinned_message_collapse">Свернуть закреплённое сообщение</string>
+    <string name="pinned_message_show">Показать закреплённое сообщение</string>
+    <string name="system_message_pin_failed" comment="%1$s is a http status code">Не удалось закрепить сообщение (%1$s)</string>
+    <string name="system_message_unpin_failed" comment="%1$s is a http status code">Не удалось открепить сообщение (%1$s)</string>
+    <string name="system_message_pin_already_pinned">Не удалось закрепить сообщение - другое сообщение уже закреплено</string>
     <!-- AutoMod -->
     <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Сообщение задержано по причине: %1$s. Разрешение опубликует его в чате.</string>
     <string name="automod_allow">Разрешить</string>
@@ -392,6 +400,8 @@
     <string name="confirm_user_delete_message">Вы уверены, что хотите удалить это сообщение?</string>
     <string name="confirm_user_delete_question">Удалить это сообщение?</string>
     <string name="confirm_user_delete_positive_button">Удалить</string>
+    <string name="confirm_pin_title">Длительность закрепления</string>
+    <string name="confirm_pin_positive_button">Закрепить</string>
     <string name="confirm_clear_chat_question">Очистить чат?</string>
     <string name="confirm_user_roomstate_title">Обновить режимы чата</string>
     <string name="roomstate_emote">Только смайлы</string>
@@ -436,6 +446,9 @@
     <string name="preference_mention_format_title">Формат упоминаний</string>
     <string name="preference_roomstate_title">Отображать статус чата</string>
     <string name="preference_roomstate_summary">Отображать информацию о статусе текущего чата, вроде режима только для подписчиков</string>
+    <string name="preference_always_show_pinned_message_title">Всегда показывать закреплённое сообщение</string>
+    <string name="preference_always_show_pinned_message_summary">Отключает автоматическое сворачивание баннера закреплённого сообщения</string>
+    <string name="preference_show_stream_title_in_live_message_title">Показывать название трансляции в сообщениях о выходе в эфир</string>
     <string name="preference_compact_channel_info_title">Компактная информация о канале</string>
     <string name="preference_compact_channel_info_summary">Отображать режимы чата и информацию о трансляции в одну строку</string>
     <string name="preference_streaminfo_title">Отображать информацию о трансляции</string>
@@ -694,6 +707,7 @@
     <string name="message_copy_link">Копировать: %s</string>
     <string name="message_more_actions">Ещё…</string>
     <string name="message_jump_to">Перейти к сообщению</string>
+    <string name="message_pin">Закрепить сообщение</string>
     <string name="message_not_in_history">Сообщение больше не в истории чата</string>
     <string name="message_history">История сообщений</string>
     <string name="global_history_title">Глобальная история</string>
