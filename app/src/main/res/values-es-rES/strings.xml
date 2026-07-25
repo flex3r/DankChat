@@ -150,6 +150,14 @@
     <string name="system_message_send_message_too_large">El mensaje es demasiado grande</string>
     <string name="system_message_send_rate_limited">Límite de frecuencia alcanzado, inténtalo de nuevo en un momento</string>
     <string name="system_message_send_failed">Error de envío: %1$s</string>
+    <!-- Pinned messages -->
+    <string name="pinned_by" comment="Pinned by flex3rs">Fijado por %1$s</string>
+    <string name="pinned_message_unpin">Dejar de fijar</string>
+    <string name="pinned_message_collapse">Contraer mensaje fijado</string>
+    <string name="pinned_message_show">Mostrar mensaje fijado</string>
+    <string name="system_message_pin_failed" comment="%1$s is a http status code">Error al fijar el mensaje (%1$s)</string>
+    <string name="system_message_unpin_failed" comment="%1$s is a http status code">Error al dejar de fijar el mensaje (%1$s)</string>
+    <string name="system_message_pin_already_pinned">Error al fijar el mensaje: ya hay otro mensaje fijado</string>
     <!-- AutoMod -->
     <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Mensaje retenido por motivo: %1$s. Permitir lo publicará en el chat.</string>
     <string name="automod_allow">Permitir</string>
@@ -377,6 +385,8 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="confirm_user_delete_message">¿Estás seguro de que quieres eliminar este mensaje?</string>
     <string name="confirm_user_delete_question">¿Eliminar este mensaje?</string>
     <string name="confirm_user_delete_positive_button">Eliminar</string>
+    <string name="confirm_pin_title">Duración de la fijación</string>
+    <string name="confirm_pin_positive_button">Fijar</string>
     <string name="confirm_clear_chat_question">¿Limpiar chat?</string>
     <string name="confirm_user_roomstate_title">Actualizar modos de chat</string>
     <string name="roomstate_emote">Solo emotes</string>
@@ -422,6 +432,9 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="preference_mention_format_title">Formato de la mención</string>
     <string name="preference_roomstate_title">Mostrar información sobre el estado del canal</string>
     <string name="preference_roomstate_summary">Mostrar información sobre el actual estado del canal (e.g. Modo solo suscriptores)</string>
+    <string name="preference_always_show_pinned_message_title">Mostrar siempre el mensaje fijado</string>
+    <string name="preference_always_show_pinned_message_summary">Desactiva que el banner del mensaje fijado se contraiga automáticamente</string>
+    <string name="preference_show_stream_title_in_live_message_title">Mostrar el título del stream en los mensajes de directo</string>
     <string name="preference_compact_channel_info_title">Información de canal compacta</string>
     <string name="preference_compact_channel_info_summary">Muestra los modos del chat y la información del stream en una sola línea</string>
     <string name="preference_streaminfo_title">Mostrar información del stream</string>
@@ -680,6 +693,7 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="message_copy_link">Copiar: %s</string>
     <string name="message_more_actions">Ver más…</string>
     <string name="message_jump_to">Ir al mensaje</string>
+    <string name="message_pin">Fijar mensaje</string>
     <string name="message_not_in_history">El mensaje ya no está en el historial del chat</string>
     <string name="message_history">Historial de mensajes</string>
     <string name="global_history_title">Historial global</string>
