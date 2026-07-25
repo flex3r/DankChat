@@ -150,6 +150,14 @@
     <string name="system_message_send_message_too_large">Хабарлама тым үлкен</string>
     <string name="system_message_send_rate_limited">Жылдамдық шектелді, біраз уақыттан кейін қайталаңыз</string>
     <string name="system_message_send_failed">Жіберу сәтсіз: %1$s</string>
+    <!-- Pinned messages -->
+    <string name="pinned_by" comment="Pinned by flex3rs">%1$s бекітті</string>
+    <string name="pinned_message_unpin">Бекітуді алып тастау</string>
+    <string name="pinned_message_collapse">Бекітілген хабарламаны жию</string>
+    <string name="pinned_message_show">Бекітілген хабарламаны көрсету</string>
+    <string name="system_message_pin_failed" comment="%1$s is a http status code">Хабарламаны бекіту сәтсіз аяқталды (%1$s)</string>
+    <string name="system_message_unpin_failed" comment="%1$s is a http status code">Хабарламаның бекітуін алып тастау сәтсіз аяқталды (%1$s)</string>
+    <string name="system_message_pin_already_pinned">Хабарламаны бекіту сәтсіз аяқталды - басқа хабарлама әлдеқашан бекітілген</string>
     <!-- AutoMod -->
     <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Хабарлама себеп бойынша ұсталды: %1$s. Рұқсат ету оны чатта жариялайды.</string>
     <string name="automod_allow">Рұқсат ету</string>
@@ -371,6 +379,8 @@
     <string name="confirm_user_delete_message">Сіз бұл хабарламаны жойғыңыз келетініне сенімдісіз бе?</string>
     <string name="confirm_user_delete_question">Бұл хабарламаны жою керек пе?</string>
     <string name="confirm_user_delete_positive_button">Жою</string>
+    <string name="confirm_pin_title">Бекіту ұзақтығы</string>
+    <string name="confirm_pin_positive_button">Бекіту</string>
     <string name="confirm_clear_chat_question">Чатты тазарту керек пе?</string>
     <string name="confirm_user_roomstate_title">Чат режимдерін жаңарту</string>
     <string name="roomstate_emote">Тек эмот</string>
@@ -415,6 +425,9 @@
     <string name="preference_mention_format_title">Атау пішімі</string>
     <string name="preference_roomstate_title">Чат режимдері туралы ақпаратты көрсету</string>
     <string name="preference_roomstate_summary">Тек абоненттер режимі сияқты ағымдағы чат режимдері туралы ақпаратты көрсетеді</string>
+    <string name="preference_always_show_pinned_message_title">Бекітілген хабарламаны әрқашан көрсету</string>
+    <string name="preference_always_show_pinned_message_summary">Бекітілген хабарлама жолағының автоматты түрде жиылуын өшіреді</string>
+    <string name="preference_show_stream_title_in_live_message_title">Тікелей эфир хабарламаларында ағын атауын көрсету</string>
     <string name="preference_compact_channel_info_title">Ықшам арна ақпараты</string>
     <string name="preference_compact_channel_info_summary">Чат режимдері мен ағын ақпаратын бір жолда көрсетеді</string>
     <string name="preference_streaminfo_title">Ағын ақпаратын көрсету</string>
@@ -673,6 +686,7 @@
     <string name="message_copy_link">Көшіру: %s</string>
     <string name="message_more_actions">Қосымша…</string>
     <string name="message_jump_to">Хабарламаға өту</string>
+    <string name="message_pin">Хабарламаны бекіту</string>
     <string name="message_not_in_history">Хабарлама чат тарихында жоқ</string>
     <string name="message_history">Хабар тарихы</string>
     <string name="global_history_title">Жаһандық тарих</string>
