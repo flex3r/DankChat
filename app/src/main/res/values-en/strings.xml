@@ -147,6 +147,14 @@
     <string name="system_message_send_message_too_large">Message is too large</string>
     <string name="system_message_send_rate_limited">Rate limited, try again in a moment</string>
     <string name="system_message_send_failed">Send failed: %1$s</string>
+    <!-- Pinned messages -->
+    <string name="pinned_by" comment="Pinned by flex3rs">Pinned by %1$s</string>
+    <string name="pinned_message_unpin">Unpin</string>
+    <string name="pinned_message_collapse">Collapse pinned message</string>
+    <string name="pinned_message_show">Show pinned message</string>
+    <string name="system_message_pin_failed" comment="%1$s is a http status code">Failed to pin message (%1$s)</string>
+    <string name="system_message_unpin_failed" comment="%1$s is a http status code">Failed to unpin message (%1$s)</string>
+    <string name="system_message_pin_already_pinned">Failed to pin message - another message is already pinned</string>
     <!-- AutoMod -->
     <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Held a message for reason: %1$s. Allow will post it in chat.</string>
     <string name="automod_allow">Allow</string>
@@ -366,6 +374,8 @@
     <string name="confirm_user_delete_message">Are you sure you want to delete this message?</string>
     <string name="confirm_user_delete_question">Delete this message?</string>
     <string name="confirm_user_delete_positive_button">Delete</string>
+    <string name="confirm_pin_title">Pin duration</string>
+    <string name="confirm_pin_positive_button">Pin</string>
     <string name="confirm_clear_chat_question">Clear chat?</string>
     <string name="confirm_user_roomstate_title">Update chat modes</string>
     <string name="roomstate_emote">Emote only</string>
@@ -410,6 +420,9 @@
     <string name="preference_mention_format_title">Mention format</string>
     <string name="preference_roomstate_title">Show chat modes information</string>
     <string name="preference_roomstate_summary">Displays information about the current chat modes like subscribers only mode</string>
+    <string name="preference_always_show_pinned_message_title">Always show pinned message</string>
+    <string name="preference_always_show_pinned_message_summary">Disables automatic collapsing of the pinned message banner</string>
+    <string name="preference_show_stream_title_in_live_message_title">Show stream title in live messages</string>
     <string name="preference_streaminfo_title">Show stream information</string>
     <string name="preference_streaminfo_summary">Displays live status and viewer count</string>
     <string name="preference_notification_title">Show mention notifications</string>
