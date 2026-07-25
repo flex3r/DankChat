@@ -145,6 +145,14 @@
     <string name="system_message_send_message_too_large">メッセージが大きすぎます</string>
     <string name="system_message_send_rate_limited">レート制限中です。しばらくしてから再試行してください</string>
     <string name="system_message_send_failed">送信失敗: %1$s</string>
+    <!-- Pinned messages -->
+    <string name="pinned_by" comment="Pinned by flex3rs">%1$s がピン留めしました</string>
+    <string name="pinned_message_unpin">ピン留めを解除</string>
+    <string name="pinned_message_collapse">ピン留めメッセージを折りたたむ</string>
+    <string name="pinned_message_show">ピン留めメッセージを表示</string>
+    <string name="system_message_pin_failed" comment="%1$s is a http status code">メッセージのピン留めに失敗しました (%1$s)</string>
+    <string name="system_message_unpin_failed" comment="%1$s is a http status code">メッセージのピン留め解除に失敗しました (%1$s)</string>
+    <string name="system_message_pin_already_pinned">メッセージのピン留めに失敗しました - 別のメッセージがすでにピン留めされています</string>
     <!-- AutoMod -->
     <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">理由: %1$s でメッセージが保留されました。許可するとチャットに投稿されます。</string>
     <string name="automod_allow">許可</string>
@@ -363,6 +371,8 @@
     <string name="confirm_user_delete_message">このメッセージを削除してもよろしいですか？</string>
     <string name="confirm_user_delete_question">このメッセージを削除しますか？</string>
     <string name="confirm_user_delete_positive_button">削除</string>
+    <string name="confirm_pin_title">ピン留め期間</string>
+    <string name="confirm_pin_positive_button">ピン留め</string>
     <string name="confirm_clear_chat_question">チャットをクリアしますか？</string>
     <string name="confirm_user_roomstate_title">チャットモードを更新</string>
     <string name="roomstate_emote">エモートのみ</string>
@@ -407,6 +417,9 @@
     <string name="preference_mention_format_title">メンション形式</string>
     <string name="preference_roomstate_title">チャットモードの情報を表示</string>
     <string name="preference_roomstate_summary">現在のチャットモードに関する情報を表示します（例：サブスクライバー限定モード）</string>
+    <string name="preference_always_show_pinned_message_title">ピン留めメッセージを常に表示</string>
+    <string name="preference_always_show_pinned_message_summary">ピン留めメッセージバナーの自動折りたたみを無効にします</string>
+    <string name="preference_show_stream_title_in_live_message_title">配信開始メッセージに配信タイトルを表示</string>
     <string name="preference_compact_channel_info_title">コンパクトなチャンネル情報</string>
     <string name="preference_compact_channel_info_summary">チャットモードとストリーム情報を1行で表示します</string>
     <string name="preference_streaminfo_title">ストリーム情報を表示</string>
@@ -665,6 +678,7 @@
     <string name="message_copy_link">コピー：%s</string>
     <string name="message_more_actions">もっとみる…</string>
     <string name="message_jump_to">メッセージに移動</string>
+    <string name="message_pin">メッセージをピン留め</string>
     <string name="message_not_in_history">メッセージはチャット履歴にありません</string>
     <string name="message_history">メッセージ履歴</string>
     <string name="global_history_title">グローバル履歴</string>
