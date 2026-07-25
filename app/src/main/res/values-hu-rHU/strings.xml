@@ -150,6 +150,14 @@
     <string name="system_message_send_message_too_large">Az üzenet túl nagy</string>
     <string name="system_message_send_rate_limited">Sebességkorlát elérve, próbáld újra egy pillanat múlva</string>
     <string name="system_message_send_failed">Küldés sikertelen: %1$s</string>
+    <!-- Pinned messages -->
+    <string name="pinned_by" comment="Pinned by flex3rs">Kitűzte: %1$s</string>
+    <string name="pinned_message_unpin">Kitűzés megszüntetése</string>
+    <string name="pinned_message_collapse">Kitűzött üzenet összecsukása</string>
+    <string name="pinned_message_show">Kitűzött üzenet megjelenítése</string>
+    <string name="system_message_pin_failed" comment="%1$s is a http status code">Nem sikerült kitűzni az üzenetet (%1$s)</string>
+    <string name="system_message_unpin_failed" comment="%1$s is a http status code">Nem sikerült megszüntetni az üzenet kitűzését (%1$s)</string>
+    <string name="system_message_pin_already_pinned">Nem sikerült kitűzni az üzenetet - már ki van tűzve egy másik üzenet</string>
     <!-- AutoMod -->
     <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">Üzenet visszatartva az alábbi okból: %1$s. Az engedélyezés közzéteszi a chatben.</string>
     <string name="automod_allow">Engedélyezés</string>
@@ -371,6 +379,8 @@
     <string name="confirm_user_delete_message">Biztosan törölni akarja ezt az üzenetet?</string>
     <string name="confirm_user_delete_question">Törlöd ezt az üzenetet?</string>
     <string name="confirm_user_delete_positive_button">Törlés</string>
+    <string name="confirm_pin_title">Kitűzés időtartama</string>
+    <string name="confirm_pin_positive_button">Kitűzés</string>
     <string name="confirm_clear_chat_question">Chat törlése?</string>
     <string name="confirm_user_roomstate_title">Chat módok frissítése</string>
     <string name="roomstate_emote">Csak hangulatjeles chat</string>
@@ -415,6 +425,9 @@
     <string name="preference_mention_format_title">Említés formátuma</string>
     <string name="preference_roomstate_title">Mutassa a chat módok információit</string>
     <string name="preference_roomstate_summary">Információt jelenít meg a jelenlegi chat módokrol mint a csak feliratkozói mód</string>
+    <string name="preference_always_show_pinned_message_title">Mindig mutassa a kitűzött üzenetet</string>
+    <string name="preference_always_show_pinned_message_summary">Kikapcsolja a kitűzött üzenet sávjának automatikus összecsukását</string>
+    <string name="preference_show_stream_title_in_live_message_title">Mutassa a közvetítés címét az élő adásról szóló üzenetekben</string>
     <string name="preference_compact_channel_info_title">Tömör csatornainformáció</string>
     <string name="preference_compact_channel_info_summary">A chat módokat és az élő adás információit egyetlen sorban jeleníti meg</string>
     <string name="preference_streaminfo_title">Az élő adás információinak mutatása</string>
@@ -673,6 +686,7 @@
     <string name="message_copy_link">Másolás: %s</string>
     <string name="message_more_actions">Több…</string>
     <string name="message_jump_to">Ugrás az üzenethez</string>
+    <string name="message_pin">Üzenet kitűzése</string>
     <string name="message_not_in_history">Az üzenet már nincs a csevegési előzményekben</string>
     <string name="message_history">Üzenetelőzmények</string>
     <string name="global_history_title">Globális előzmények</string>
