@@ -145,7 +145,6 @@
     <string name="system_message_send_message_too_large">訊息過長</string>
     <string name="system_message_send_rate_limited">已被限速，請稍後再試</string>
     <string name="system_message_send_failed">發送失敗：%1$s</string>
-
     <!-- Pinned messages -->
     <string name="pinned_by" comment="Pinned by flex3rs">由 %1$s 釘選</string>
     <string name="pinned_message_unpin">取消釘選</string>
@@ -154,7 +153,6 @@
     <string name="system_message_pin_failed" comment="%1$s is a http status code">釘選訊息失敗 (%1$s)</string>
     <string name="system_message_unpin_failed" comment="%1$s is a http status code">取消釘選訊息失敗 (%1$s)</string>
     <string name="system_message_pin_already_pinned">釘選訊息失敗 - 已有其他訊息被釘選</string>
-
     <!-- AutoMod -->
     <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">因以下原因攔截了一則訊息: %1$s。允許將會把該訊息發佈到聊天室。</string>
     <string name="automod_allow">允許</string>
