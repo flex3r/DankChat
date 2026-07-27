@@ -82,6 +82,7 @@
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s ایموت 7TV %2$s را به %3$s تغییر نام داد.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s ایموت 7TV %2$s را حذف کرد.</string>
     <!-- Send errors -->
+    <!-- Pinned messages -->
     <!-- AutoMod -->
     <!-- Moderation messages — complete sentence variants for proper localization -->
     <!-- Timeout (self, IRC — no creator info) -->
