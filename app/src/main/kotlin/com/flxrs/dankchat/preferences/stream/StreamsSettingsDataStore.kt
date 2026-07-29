@@ -30,6 +30,7 @@ class StreamsSettingsDataStore(
         ShowStreamInfo(R.string.preference_streaminfo_key),
         PreventStreamReloads(R.string.preference_retain_webview_new_key),
         EnablePiP(R.string.preference_pip_key),
+        VaftEnabled(R.string.preference_vaft_enabled_key),
     }
 
     private val initialMigration =
@@ -39,6 +40,7 @@ class StreamsSettingsDataStore(
                 StreamsPreferenceKeys.ShowStreamInfo -> acc.copy(showStreamInfo = value.booleanOrDefault(acc.showStreamInfo))
                 StreamsPreferenceKeys.PreventStreamReloads -> acc.copy(preventStreamReloads = value.booleanOrDefault(acc.preventStreamReloads))
                 StreamsPreferenceKeys.EnablePiP -> acc.copy(enablePiP = value.booleanOrDefault(acc.enablePiP))
+                StreamsPreferenceKeys.VaftEnabled -> acc.copy(vaftEnabled = value.booleanOrDefault(acc.vaftEnabled))
             }
         }
 

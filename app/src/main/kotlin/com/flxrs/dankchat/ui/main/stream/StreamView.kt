@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -45,6 +46,7 @@ import androidx.core.view.doOnAttach
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.utils.ScriptLoader
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.delay
 import org.koin.compose.viewmodel.koinViewModel
@@ -62,6 +64,8 @@ fun StreamView(
     fillPane: Boolean = false,
 ) {
     val streamViewModel: StreamViewModel = koinViewModel()
+    val context = LocalContext.current
+    val streamState by streamViewModel.streamState.collectAsStateWithLifecycle()
     // Bumped when the render process dies, forcing a fresh WebView through the first-open flow
     val webViewGeneration by streamViewModel.webViewGeneration.collectAsStateWithLifecycle()
     // Track whether the WebView has been attached to a window before.
@@ -83,6 +87,11 @@ fun StreamView(
         remember(webViewGeneration) {
             streamViewModel.getOrCreateWebView().also { wv ->
                 wv.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+                wv.addTwitchPlayerBridge(
+                    onPlaybackStarted = { streamViewModel.onPlaybackStarted() },
+                    onLoadingStatus = { message -> streamViewModel.onLoadingStatus(message) },
+                    onAdblocked = { text -> streamViewModel.onAdblocked(text) }
+                )
                 wv.webViewClient =
                     StreamComposeWebViewClient(
                         onPageFinished = { isPageLoaded = true },
@@ -90,6 +99,63 @@ fun StreamView(
                             (wv.parent as? ViewGroup)?.removeView(wv)
                             streamViewModel.onRenderProcessGone(wv, didCrash)
                         },
+                        injectScripts = { url ->
+                            val vaftEnabled = streamViewModel.streamsSettingsDataStore.current().vaftEnabled
+                            val resources = context.resources
+                            
+                            // Inject localized strings for scripts
+                            val stringMap = mapOf(
+                                "loading_stream" to resources.getString(R.string.loading_stream),
+                                "searching_video" to resources.getString(R.string.searching_video),
+                                "preparing_playback" to resources.getString(R.string.preparing_playback),
+                                "initializing_player" to resources.getString(R.string.initializing_player),
+                                "bypassing_ads" to resources.getString(R.string.bypassing_ads)
+                            )
+                            val stringsJson = stringMap.entries.joinToString(",") { "\"${it.key}\": \"${it.value}\"" }
+                            wv.evaluateJavascript("window.SamtchStrings = { $stringsJson };", null)
+
+                            if (vaftEnabled) {
+                                val adScript = ScriptLoader.getScript(context, "js/player/vaft.js")
+                                if (adScript.isNotEmpty()) {
+                                    wv.evaluateJavascript(adScript, null)
+                                }
+                            }
+
+                            val earlyScripts = listOf(
+                                "js/player/playback_monitor.js",
+                                "js/player/early_hider.js"
+                            ).mapNotNull { path ->
+                                val s = ScriptLoader.getScript(context, path)
+                                if (s.isNotEmpty()) s else null
+                            }
+                            if (earlyScripts.isNotEmpty()) {
+                                wv.evaluateJavascript(earlyScripts.joinToString("\n"), null)
+                            }
+
+                            if (url.contains("twitch.tv")) {
+                                val lateScripts = listOf(
+                                    "js/player/ui_cleaner.js",
+                                    "js/player/playback_monitor.js"
+                                ).mapNotNull { path ->
+                                    val script = ScriptLoader.getScript(context, path)
+                                    if (script.isNotEmpty()) script else null
+                                }
+
+                                if (lateScripts.isNotEmpty()) {
+                                    val finalScripts = lateScripts.joinToString("\n")
+                                    wv.postDelayed({
+                                        // Initial tight polling
+                                        repeat(8) { i ->
+                                            wv.postDelayed({ wv.evaluateJavascript(finalScripts, null) }, i * 300L)
+                                        }
+                                        // Steady polling
+                                        repeat(10) { i ->
+                                            wv.postDelayed({ wv.evaluateJavascript(finalScripts, null) }, 2400 + i * 1500L)
+                                        }
+                                    }, 100)
+                                }
+                            }
+                        }
                     )
                 var blockingGesture = false
                 @Suppress("ClickableViewAccessibility")
@@ -184,6 +250,13 @@ fun StreamView(
             Box(modifier = webViewModifier)
         }
 
+        AdblockBanner(
+            text = streamState.adblockMessage,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .then(if (isInPipMode || fillPane) Modifier else Modifier.statusBarsPadding())
+        )
+
         AnimatedVisibility(
             visible = !isInPipMode && showOverlayButtons,
             enter = fadeIn(),
@@ -241,6 +314,7 @@ private fun StreamOverlayButton(
 private class StreamComposeWebViewClient(
     private val onPageFinished: () -> Unit,
     private val onRendererGone: (didCrash: Boolean) -> Unit,
+    private val injectScripts: (url: String) -> Unit,
 ) : WebViewClient() {
     override fun onPageFinished(
         view: WebView?,
@@ -248,7 +322,12 @@ private class StreamComposeWebViewClient(
     ) {
         if (url != null && url != BLANK_URL) {
             onPageFinished()
+            injectScripts(url)
         }
+    }
+
+    override fun onLoadResource(view: WebView?, url: String?) {
+        super.onLoadResource(view, url)
     }
 
     // Default behavior would crash the whole app when the render process dies

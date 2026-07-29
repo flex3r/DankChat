@@ -693,6 +693,7 @@
     <string name="preference_streams_header">Livestreams</string>
     <string name="preference_retain_webview_new_key" translatable="false">retain_webview_new_key</string>
     <string name="preference_pip_key" translatable="false">pip_key</string>
+    <string name="preference_vaft_enabled_key" translatable="false">vaft_enabled_key</string>
     <string name="preference_pip_title">Enable picture-in-picture mode</string>
     <string name="preference_pip_summary">Allows streams to continue playing while the app is in the background</string>
     <string name="reset_media_uploader_dialog_title">Reset Media Uploader Settings</string>
@@ -1031,4 +1032,9 @@
     <string name="cmd_error_message_too_large">Your message was too long.</string>
     <string name="cmd_error_chat_rate_limited">You are being rate-limited. Try again in a moment.</string>
     <string name="cmd_error_target_default">The target user</string>
+    <string name="loading_stream">Loading stream…</string>
+    <string name="searching_video">Searching for video stream…</string>
+    <string name="preparing_playback">Preparing playback…</string>
+    <string name="initializing_player">Initializing player components…</string>
+    <string name="bypassing_ads">Bypassing ads…</string>
 </resources>
