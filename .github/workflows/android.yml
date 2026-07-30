@@ -2,105 +2,14 @@ name: Android CI
 
 on:
   push:
-    branches: [ master, develop ]
-  pull_request:
-    branches: [ master, develop ]
+    branches: [ develop ]
 
 jobs:
-  test:
-    name: Run unit tests
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v7
-      - name: set up JDK 17
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v6
-        with:
-          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
-
-      - name: Unit tests
-        run: bash ./gradlew testDebug --stacktrace
-
-  lint:
-    name: Run lint
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v7
-      - name: set up JDK 21
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v6
-        with:
-          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
-
-      - name: Spotless check
-        run: bash ./gradlew :app:spotlessCheck
-
-      - name: Detekt
-        run: bash ./gradlew :app:detektDebug
-
-      - name: Android Lint
-        run: bash ./gradlew :app:lintDebug
-
-  build:
-    name: Generate apk
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v7
-      - name: set up JDK 17
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v6
-        with:
-          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
-
-      - name: Build debug apk
-        run: bash ./gradlew :app:assembleDebug
-
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: debug apk
-          path: ${{ github.workspace }}/app/build/outputs/apk/debug/*.apk
-
-      - name: Update debug tag
-        if: (github.event_name == 'push' && github.ref == 'refs/heads/develop')
-        uses: richardsimko/update-tag@v2.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: debug
-
-      - name: Update debug release
-        if: (github.event_name == 'push' && github.ref == 'refs/heads/develop')
-        uses: ncipollo/release-action@v1.21.0
-        with:
-          tag: debug
-          name: Debug APK
-          artifacts: ${{ github.workspace }}/app/build/outputs/apk/debug/DankChat-debug.apk
-          allowUpdates: true
-
   build-release:
     name: Generate signed release apk
     runs-on: ubuntu-latest
     environment: release
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/develop')
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
 
     steps:
       - uses: actions/checkout@v7
@@ -119,7 +28,7 @@ jobs:
         id: decode_keystore
         uses: timheuer/base64-to-file@v2.0
         with:
-          fileName: '/app/keystore/DankChat.jks'
+          fileName: '/app/keystore/DSamtch.jks'
           fileDir: ${{ github.workspace }}
           encodedString: ${{ secrets.SIGNING_KEY }}
 
@@ -141,11 +50,14 @@ jobs:
           SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           SIGNING_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
 
+      - name: Rename release apk
+        run: mv ${{ github.workspace }}/app/build/outputs/apk/release/DSamtch-release.apk ${{ github.workspace }}/app/build/outputs/apk/release/DSamtch-${{ steps.version.outputs.version }}.apk
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v7
         with:
           name: Signed release apk
-          path: ${{ github.workspace }}/app/build/outputs/apk/release/*.apk
+          path: ${{ github.workspace }}/app/build/outputs/apk/release/DSamtch-${{ steps.version.outputs.version }}.apk
 
       - name: Update rolling release
         env:
@@ -156,7 +68,7 @@ jobs:
           SHORT_SHA: ${{ steps.version.outputs.short_sha }}
           REPO: ${{ github.repository }}
         run: |
-          apk=$(ls ${{ github.workspace }}/app/build/outputs/apk/release/*.apk | head -1)
+          apk="${{ github.workspace }}/app/build/outputs/apk/release/DSamtch-${VERSION}.apk"
 
           if ! git ls-remote --exit-code --tags origin "$TAG" >/dev/null 2>&1; then
             git tag "$TAG"

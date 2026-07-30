@@ -36,7 +36,7 @@ android {
     val localProperties = gradleLocalProperties(rootDir, providers)
     signingConfigs {
         create("release") {
-            storeFile = file("keystore/DankChat.jks").takeIf { it.exists() } ?: File(System.getProperty("user.home") + "/dankchat/DankChat.jks")
+            storeFile = file("keystore/DSamtch.jks").takeIf { it.exists() } ?: File(System.getProperty("user.home") + "/dankchat/DSamtch.jks")
             storePassword = localProperties.getProperty("SIGNING_STORE_PASSWORD") ?: System.getenv("SIGNING_STORE_PASSWORD")
             keyAlias = localProperties.getProperty("SIGNING_KEY_ALIAS") ?: System.getenv("SIGNING_KEY_ALIAS")
             keyPassword = localProperties.getProperty("SIGNING_KEY_PASSWORD") ?: System.getenv("SIGNING_KEY_PASSWORD")
@@ -91,7 +91,7 @@ android {
     }
 
     androidComponents.onVariants { variant ->
-        val renameTask = tasks.register<RenameApkTask>("renameApk${variant.name.replaceFirstChar { it.uppercase() }}") { apkName.set("DankChat-${variant.name}.apk") }
+        val renameTask = tasks.register<RenameApkTask>("renameApk${variant.name.replaceFirstChar { it.uppercase() }}") { apkName.set("DSamtch-${variant.name}.apk") }
         val transformationRequest =
             variant.artifacts
                 .use(renameTask)
