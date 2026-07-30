@@ -75,6 +75,7 @@ fun StreamView(
     var isPageLoaded by remember(webViewGeneration) { mutableStateOf(hasBeenAttached) }
     var overlayTapTrigger by remember { mutableIntStateOf(0) }
     var showOverlayButtons by remember { mutableStateOf(false) }
+    var isPlaybackStarted by remember(webViewGeneration) { mutableStateOf(false) }
 
     LaunchedEffect(overlayTapTrigger) {
         if (overlayTapTrigger > 0) {
@@ -88,8 +89,15 @@ fun StreamView(
             streamViewModel.getOrCreateWebView().also { wv ->
                 wv.setBackgroundColor(android.graphics.Color.TRANSPARENT)
                 wv.addTwitchPlayerBridge(
-                    onPlaybackStarted = { streamViewModel.onPlaybackStarted() },
-                    onLoadingStatus = { message -> streamViewModel.onLoadingStatus(message) },
+                    onPlaybackStarted = {
+                        isPlaybackStarted = true
+                        streamViewModel.onPlaybackStarted()
+                    },
+                    onLoadingStatus = { message ->
+                        if (!isPlaybackStarted) {
+                            streamViewModel.onLoadingStatus(message)
+                        }
+                    },
                     onAdblocked = { text -> streamViewModel.onAdblocked(text) }
                 )
                 wv.webViewClient =
@@ -146,11 +154,19 @@ fun StreamView(
                                     wv.postDelayed({
                                         // Initial tight polling
                                         repeat(8) { i ->
-                                            wv.postDelayed({ wv.evaluateJavascript(finalScripts, null) }, i * 300L)
+                                            wv.postDelayed({
+                                                if (!isPlaybackStarted) {
+                                                    wv.evaluateJavascript(finalScripts, null)
+                                                }
+                                            }, i * 300L)
                                         }
                                         // Steady polling
                                         repeat(10) { i ->
-                                            wv.postDelayed({ wv.evaluateJavascript(finalScripts, null) }, 2400 + i * 1500L)
+                                            wv.postDelayed({
+                                                if (!isPlaybackStarted) {
+                                                    wv.evaluateJavascript(finalScripts, null)
+                                                }
+                                            }, 2400 + i * 1500L)
                                         }
                                     }, 100)
                                 }

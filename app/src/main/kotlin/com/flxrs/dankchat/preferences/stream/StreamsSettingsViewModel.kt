@@ -30,6 +30,7 @@ class StreamsSettingsViewModel(
                 is StreamsSettingsInteraction.ShowStreamExtensions -> dataStore.update { it.copy(showStreamExtensions = interaction.value) }
                 is StreamsSettingsInteraction.PreventStreamReloads -> dataStore.update { it.copy(preventStreamReloads = interaction.value) }
                 is StreamsSettingsInteraction.EnablePiP -> dataStore.update { it.copy(enablePiP = interaction.value) }
+                is StreamsSettingsInteraction.VaftEnabled -> dataStore.update { it.copy(vaftEnabled = interaction.value) }
             }
         }
     }
@@ -61,6 +62,10 @@ sealed interface StreamsSettingsInteraction {
     ) : StreamsSettingsInteraction
 
     data class EnablePiP(
+        val value: Boolean,
+    ) : StreamsSettingsInteraction
+
+    data class VaftEnabled(
         val value: Boolean,
     ) : StreamsSettingsInteraction
 }

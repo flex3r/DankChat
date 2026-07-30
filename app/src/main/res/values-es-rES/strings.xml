@@ -957,4 +957,11 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="cmd_error_message_too_large">Tu mensaje era demasiado largo.</string>
     <string name="cmd_error_chat_rate_limited">Se te ha limitado la frecuencia. Inténtalo de nuevo en un momento.</string>
     <string name="cmd_error_target_default">El usuario objetivo</string>
+    <string name="loading_stream">Cargando stream…</string>
+    <string name="searching_video">Buscando transmisión de video…</string>
+    <string name="preparing_playback">Preparando la reproducción…</string>
+    <string name="initializing_player">Inicializando componentes del reproductor…</string>
+    <string name="bypassing_ads">Omitiendo anuncios…</string>
+    <string name="preference_vaft_enabled_title">Bloquear anuncios de Twitch</string>
+    <string name="preference_vaft_enabled_summary">Utiliza VAFT para omitir anuncios durante y antes de la transmisión. Puede causar almacenamiento de búfer en algunos dispositivos.</string>
 </resources>

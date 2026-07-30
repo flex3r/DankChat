@@ -114,6 +114,13 @@ private fun StreamsSettingsContent(
                 isEnabled = settings.fetchStreams,
                 onClick = { onInteraction(StreamsSettingsInteraction.PreventStreamReloads(it)) },
             )
+            SwitchPreferenceItem(
+                title = stringResource(R.string.preference_vaft_enabled_title),
+                summary = stringResource(R.string.preference_vaft_enabled_summary),
+                isChecked = settings.vaftEnabled,
+                isEnabled = settings.fetchStreams,
+                onClick = { onInteraction(StreamsSettingsInteraction.VaftEnabled(it)) },
+            )
 
             val activity = LocalActivity.current
             val pipAvailable =

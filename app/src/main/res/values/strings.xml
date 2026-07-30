@@ -694,6 +694,8 @@
     <string name="preference_retain_webview_new_key" translatable="false">retain_webview_new_key</string>
     <string name="preference_pip_key" translatable="false">pip_key</string>
     <string name="preference_vaft_enabled_key" translatable="false">vaft_enabled_key</string>
+    <string name="preference_vaft_enabled_title">Block Twitch ads</string>
+    <string name="preference_vaft_enabled_summary">Uses VAFT to bypass mid-roll and pre-roll ads. May cause buffering on some devices.</string>
     <string name="preference_pip_title">Enable picture-in-picture mode</string>
     <string name="preference_pip_summary">Allows streams to continue playing while the app is in the background</string>
     <string name="reset_media_uploader_dialog_title">Reset Media Uploader Settings</string>
