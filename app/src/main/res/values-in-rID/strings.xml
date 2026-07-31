@@ -45,6 +45,7 @@
     <string name="hint_connected">Mulai chatting</string>
     <string name="hint_disconnected">Terputus</string>
     <!-- Send errors -->
+    <!-- Pinned messages -->
     <!-- AutoMod -->
     <!-- Moderation messages — complete sentence variants for proper localization -->
     <!-- Timeout (self, IRC — no creator info) -->
