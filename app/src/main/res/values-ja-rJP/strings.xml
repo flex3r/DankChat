@@ -145,7 +145,6 @@
     <string name="system_message_send_message_too_large">メッセージが大きすぎます</string>
     <string name="system_message_send_rate_limited">レート制限中です。しばらくしてから再試行してください</string>
     <string name="system_message_send_failed">送信失敗: %1$s</string>
-
     <!-- Pinned messages -->
     <string name="pinned_by" comment="Pinned by flex3rs">%1$s がピン留めしました</string>
     <string name="pinned_message_unpin">ピン留めを解除</string>
@@ -154,7 +153,6 @@
     <string name="system_message_pin_failed" comment="%1$s is a http status code">メッセージのピン留めに失敗しました (%1$s)</string>
     <string name="system_message_unpin_failed" comment="%1$s is a http status code">メッセージのピン留め解除に失敗しました (%1$s)</string>
     <string name="system_message_pin_already_pinned">メッセージのピン留めに失敗しました - 別のメッセージがすでにピン留めされています</string>
-
     <!-- AutoMod -->
     <string name="automod_header" comment="AutoMod: Held a message for reason: aggressive (level 2). Allow will post it in chat.">理由: %1$s でメッセージが保留されました。許可するとチャットに投稿されます。</string>
     <string name="automod_allow">許可</string>
