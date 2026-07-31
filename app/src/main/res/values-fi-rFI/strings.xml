@@ -436,10 +436,6 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_compact_channel_info_summary">Näytä chattitilat ja suoratoistotiedot yhdellä rivillä</string>
     <string name="preference_streaminfo_title">Näytä suoratoistotiedot</string>
     <string name="preference_streaminfo_summary">Näyttää reaaliaikaisen tilan ja katsojien määrän</string>
-    <string name="preference_stream_live_messages_title">Näytä live-tilan viestit</string>
-    <string name="preference_stream_live_messages_summary">Lisää chattiin viestin, kun kanava aloittaa tai lopettaa lähetyksen</string>
-    <string name="preference_stream_extensions_title">Näytä suoratoiston laajennukset</string>
-    <string name="preference_stream_extensions_summary">Näyttää laajennukset suoratoistosoittimen päällä</string>
     <string name="preference_notification_title">Näytä maininta-ilmoitukset</string>
     <string name="preference_notification_summary">Luo ilmoituksia, kun sinut mainitaan, kun sovellus on taustalla</string>
     <string name="preference_notification_header">Ilmoitukset</string>
@@ -538,9 +534,9 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_tts_message_format_message">Lukee vain viestin ääneen</string>
     <string name="preference_tts_message_format_combined">Lukee käyttäjän ja viestin</string>
     <string name="preference_tts_message_format_title">Viestin muoto</string>
+    <string name="preference_tts_message_ignore_url_message">Ohittaa URL-osoitteet TTS:ssä</string>
     <string name="preference_tts_message_ignore_command_message">Ohittaa viestit, jotka alkavat komentoetuliitteellä (!, $, %, +, -, ~)</string>
     <string name="preference_tts_message_ignore_command_title">Ohita komennot</string>
-    <string name="preference_tts_message_ignore_url_message">Ohittaa URL-osoitteet TTS:ssä</string>
     <string name="preference_tts_volume_title">Äänenvoimakkuus</string>
     <string name="preference_tts_audio_ducking_title">Äänen vaimennus</string>
     <string name="preference_tts_audio_ducking_summary">Hiljennä muiden sovellusten ääntä TTS:n puhuessa</string>
@@ -579,6 +575,10 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_revoke_token_title">Peruuta tunnus ja käynnistä uudelleen</string>
     <string name="preference_revoke_token_summary">Mitätöi nykyisen tunnuksen ja käynnistää sovelluksen uudelleen</string>
     <string name="oauth_expired_title">Kirjautuminen vanhentunut!</string>
+    <string name="preference_stream_live_messages_title">Näytä live-tilan viestit</string>
+    <string name="preference_stream_live_messages_summary">Lisää chattiin viestin, kun kanava aloittaa tai lopettaa lähetyksen</string>
+    <string name="preference_stream_extensions_title">Näytä suoratoiston laajennukset</string>
+    <string name="preference_stream_extensions_summary">Näyttää laajennukset suoratoistosoittimen päällä</string>
     <string name="preference_show_changelogs">Näytä muutosloki päivityksen jälkeen</string>
     <string name="preference_whats_new_header">Uutta</string>
     <string name="preference_custom_login_title">Mukautettu kirjautuminen</string>
