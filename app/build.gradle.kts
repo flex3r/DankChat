@@ -24,15 +24,16 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.flxrs.dankchat"
+        applicationId = "com.akumasdk.dsamtch"
         minSdk = 30
         targetSdk = 36
-        versionCode = 40040
-        versionName = "4.0.40"
+        versionCode = 1
+        versionName = "1.0.0"
     }
 
     androidResources { generateLocaleConfig = true }
 
+    val isIdeBuild = project.hasProperty("android.injected.invoked.from.ide")
     val localProperties = gradleLocalProperties(rootDir, providers)
     signingConfigs {
         create("release") {
@@ -75,6 +76,8 @@ android {
             manifestPlaceholders["applicationLabel"] = "@string/app_name_dank"
             applicationIdSuffix = ".dank"
             isDefault = true
+            isMinifyEnabled = !isIdeBuild
+            isShrinkResources = !isIdeBuild
             signingConfig = signingConfigs.getByName("debug")
             matchingFallbacks += "release"
         }
@@ -107,6 +110,7 @@ android {
     }
 
     lint {
+        checkReleaseBuilds = !isIdeBuild
         disable += "RestrictedApi"
         disable += "UnusedResources"
         disable += "ObsoleteSdkInt"

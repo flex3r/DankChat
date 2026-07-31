@@ -1,16 +1,12 @@
 package com.flxrs.dankchat.ui.main.stream
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /**
- * A banner that shows adblock status or loading info.
+ * A subtle floating pill that shows adblock status or loading info.
  */
 @Composable
 fun AdblockBanner(
@@ -31,29 +27,26 @@ fun AdblockBanner(
     modifier: Modifier = Modifier
 ) {
     AnimatedVisibility(
-        visible = text.isNotEmpty(),
-        enter = expandVertically() + fadeIn(),
-        exit = shrinkVertically() + fadeOut(),
-        modifier = modifier
+        visible = text.isNotBlank(),
+        enter = fadeIn(),
+        exit = fadeOut(),
+        modifier = modifier.padding(top = 8.dp)
     ) {
         Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(28.dp),
+            shape = CircleShape,
             color = Color.Black.copy(alpha = 0.7f)
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 12.dp),
+                    .padding(horizontal = 10.dp, vertical = 3.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = text,
-                    color = Color.White,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
+                    color = Color.White.copy(alpha = 0.9f),
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Medium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
