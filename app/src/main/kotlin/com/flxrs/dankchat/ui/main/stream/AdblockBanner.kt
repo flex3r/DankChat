@@ -30,11 +30,11 @@ fun AdblockBanner(
         visible = text.isNotBlank(),
         enter = fadeIn(),
         exit = fadeOut(),
-        modifier = modifier.padding(top = 8.dp)
+        modifier = modifier.padding(top = 8.dp, start = 8.dp)
     ) {
         Surface(
             shape = CircleShape,
-            color = Color.Black.copy(alpha = 0.7f)
+            color = Color.Black.copy(alpha = 0.5f)
         ) {
             Row(
                 modifier = Modifier
@@ -44,7 +44,7 @@ fun AdblockBanner(
             ) {
                 Text(
                     text = text,
-                    color = Color.White.copy(alpha = 0.9f),
+                    color = Color.White.copy(alpha = 0.4f),
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Medium,
                     maxLines = 1,

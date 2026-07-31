@@ -269,7 +269,7 @@ fun StreamView(
         AdblockBanner(
             text = streamState.adblockMessage,
             modifier = Modifier
-                .align(Alignment.TopCenter)
+                .align(Alignment.TopStart)
                 .then(if (isInPipMode || fillPane) Modifier else Modifier.statusBarsPadding())
         )
 
