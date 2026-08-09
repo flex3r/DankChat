@@ -434,10 +434,6 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="preference_compact_channel_info_summary">Mostra els modes de xat i la informació de l\'stream en una sola línia</string>
     <string name="preference_streaminfo_title">Mostrar informació sobre l\'stream</string>
     <string name="preference_streaminfo_summary">Mostra estat en viu i nombre de visualitzacions</string>
-    <string name="preference_stream_live_messages_title">Mostra missatges d\'estat del directe</string>
-    <string name="preference_stream_live_messages_summary">Afegeix un missatge al xat quan un canal comença o acaba el directe</string>
-    <string name="preference_stream_extensions_title">Mostrar extensions de l\'stream</string>
-    <string name="preference_stream_extensions_summary">Mostra les superposicions d\'extensions al reproductor de l\'stream</string>
     <string name="preference_notification_title">Mostrar notificacions de menció</string>
     <string name="preference_notification_summary">Crea notificacions quan siguis mencionat mentre l\'app és en segon pla</string>
     <string name="preference_notification_header">Notificacions</string>
@@ -595,6 +591,10 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="oauth_expired_title">Inici de sessió expirat!</string>
     <string name="oauth_expired_message">L\'inici de sessió ha expirat! Si us plau, accedeix de nou.</string>
     <string name="oauth_expired_login_again">Tornar a iniciar sessió</string>
+    <string name="preference_stream_live_messages_title">Mostra missatges d\'estat del directe</string>
+    <string name="preference_stream_live_messages_summary">Afegeix un missatge al xat quan un canal comença o acaba el directe</string>
+    <string name="preference_stream_extensions_title">Mostrar extensions de l\'stream</string>
+    <string name="preference_stream_extensions_summary">Mostra les superposicions d\'extensions al reproductor de l\'stream</string>
     <string name="preference_retain_webview_summary">Permet la prevenció experimental de les recàrregues de l\'emissió després del canvi d\'orientació o tornant a obrir DankChat.</string>
     <string name="preference_show_changelogs">Mostra els canvis després d\'actualitzar</string>
     <string name="preference_whats_new_header">Novetats</string>
