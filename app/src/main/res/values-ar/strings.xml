@@ -80,6 +80,7 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">قام %1$s بإضافة %1$s إلى 7TV Emote %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">تم تغيير اسم %1$s إلى %2$s إلى %3$s.</string>
     <!-- Send errors -->
+    <!-- Pinned messages -->
     <!-- AutoMod -->
     <!-- Moderation messages — complete sentence variants for proper localization -->
     <!-- Timeout (self, IRC — no creator info) -->
