@@ -422,10 +422,6 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_compact_channel_info_summary">Prikaži režime sobe i informacije o strimu u jednom redu</string>
     <string name="preference_streaminfo_title">Prikaži informacije o strimu</string>
     <string name="preference_streaminfo_summary">Prikazuje da li je strim aktivan i broj gledalaca</string>
-    <string name="preference_stream_live_messages_title">Prikaži poruke o statusu strima</string>
-    <string name="preference_stream_live_messages_summary">Dodaje poruku u čet kada kanal počne ili završi strim</string>
-    <string name="preference_stream_extensions_title">Prikaži proširenja strima</string>
-    <string name="preference_stream_extensions_summary">Prikazuje proširenja preko plejera strima</string>
     <string name="preference_notification_title">Prikaži obaveštenja o pominjanju</string>
     <string name="preference_notification_summary">Stvara obaveštenja kada te neko pomene dok je aplikacija u pozadini</string>
     <string name="preference_notification_header">Notifikacije</string>
@@ -558,6 +554,10 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="preference_eventsub_debug_summary">Приказује дебаг излаз везан за EventSub као системске поруке</string>
     <string name="preference_revoke_token_title">Опозови токен и рестартуј</string>
     <string name="preference_revoke_token_summary">Поништава тренутни токен и рестартује апликацију</string>
+    <string name="preference_stream_live_messages_title">Prikaži poruke o statusu strima</string>
+    <string name="preference_stream_live_messages_summary">Dodaje poruku u čet kada kanal počne ili završi strim</string>
+    <string name="preference_stream_extensions_title">Prikaži proširenja strima</string>
+    <string name="preference_stream_extensions_summary">Prikazuje proširenja preko plejera strima</string>
     <string name="preference_show_changelogs">Прикажи дневник промена после ажурирања</string>
     <string name="preference_whats_new_header">Шта је ново</string>
     <string name="preference_custom_login_title">Прилагођена пријава</string>
