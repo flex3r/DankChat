@@ -59,7 +59,7 @@ androidJunit5 = "2.0.1"
 mockk = "1.14.11"
 turbine = "1.2.1"
 
-benchmark = "1.5.0-beta01"
+benchmark = "1.5.0-rc01"
 profileinstaller = "1.4.1"
 uiautomator = "2.4.0"
 junit4 = "4.13.2"
