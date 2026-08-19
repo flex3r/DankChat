@@ -297,6 +297,13 @@
     <string name="menu_hide_stream">Hide stream</string>
     <string name="menu_audio_only">Audio only</string>
     <string name="menu_exit_audio_only">Exit audio only</string>
+    <string name="input_action_theater">Theater mode</string>
+    <string name="menu_theater_mode">Theater mode</string>
+    <string name="menu_exit_theater_mode">Exit theater mode</string>
+    <string name="menu_show_theater_chat">Show chat</string>
+    <string name="menu_hide_theater_chat">Hide chat</string>
+    <string name="menu_theater_chat_side_by_side">Show chat next to stream</string>
+    <string name="menu_theater_chat_overlay">Show chat over stream</string>
     <string name="menu_fullscreen">Fullscreen</string>
     <string name="menu_exit_fullscreen">Exit fullscreen</string>
     <string name="menu_hide_input">Hide input</string>
