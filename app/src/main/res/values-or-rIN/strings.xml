@@ -257,6 +257,13 @@
     <string name="menu_hide_stream">ଷ୍ଟ୍ରିମ୍ ଲୁଚାନ୍ତୁ</string>
     <string name="menu_audio_only">କେବଳ ଅଡିଓ</string>
     <string name="menu_exit_audio_only">କେବଳ ଅଡିଓ ମୋଡରୁ ବାହାରନ୍ତୁ</string>
+    <string name="input_action_theater">ଥିଏଟର ମୋଡ୍</string>
+    <string name="menu_theater_mode">ଥିଏଟର ମୋଡ୍</string>
+    <string name="menu_exit_theater_mode">ଥିଏଟର ମୋଡରୁ ବାହାରନ୍ତୁ</string>
+    <string name="menu_show_theater_chat">ଚାଟ୍ ଦେଖାନ୍ତୁ</string>
+    <string name="menu_hide_theater_chat">ଚାଟ୍ ଲୁଚାନ୍ତୁ</string>
+    <string name="menu_theater_chat_side_by_side">ଷ୍ଟ୍ରିମ୍ ପାଖରେ ଚାଟ୍ ଦେଖାନ୍ତୁ</string>
+    <string name="menu_theater_chat_overlay">ଷ୍ଟ୍ରିମ୍ ଉପରେ ଚାଟ୍ ଦେଖାନ୍ତୁ</string>
     <string name="menu_fullscreen">ଫୁଲ୍ ସ୍କ୍ରିନ୍</string>
     <string name="menu_exit_fullscreen">ଫୁଲ୍ ସ୍କ୍ରିନ୍ ବାହାରନ୍ତୁ</string>
     <string name="menu_hide_input">ଇନପୁଟ୍ ଲୁଚାନ୍ତୁ</string>
