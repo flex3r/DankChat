@@ -319,6 +319,13 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="menu_hide_stream">Ukryj transmisję</string>
     <string name="menu_audio_only">Tylko dźwięk</string>
     <string name="menu_exit_audio_only">Wyłącz tryb audio</string>
+    <string name="input_action_theater">Tryb teatralny</string>
+    <string name="menu_theater_mode">Tryb teatralny</string>
+    <string name="menu_exit_theater_mode">Wyjdź z trybu teatralnego</string>
+    <string name="menu_show_theater_chat">Pokaż czat</string>
+    <string name="menu_hide_theater_chat">Ukryj czat</string>
+    <string name="menu_theater_chat_side_by_side">Pokaż czat obok transmisji</string>
+    <string name="menu_theater_chat_overlay">Pokaż czat na transmisji</string>
     <string name="menu_fullscreen">Pełny ekran</string>
     <string name="menu_exit_fullscreen">Wyjdź z pełnego ekranu</string>
     <string name="menu_hide_input">Ukryj pole wpisywania</string>
