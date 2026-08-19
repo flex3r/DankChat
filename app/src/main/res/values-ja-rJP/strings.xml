@@ -293,6 +293,13 @@
     <string name="menu_hide_stream">配信を非表示</string>
     <string name="menu_audio_only">音声のみ</string>
     <string name="menu_exit_audio_only">音声モードを終了</string>
+    <string name="input_action_theater">シアターモード</string>
+    <string name="menu_theater_mode">シアターモード</string>
+    <string name="menu_exit_theater_mode">シアターモードを終了</string>
+    <string name="menu_show_theater_chat">チャットを表示</string>
+    <string name="menu_hide_theater_chat">チャットを非表示</string>
+    <string name="menu_theater_chat_side_by_side">チャットを配信の横に表示</string>
+    <string name="menu_theater_chat_overlay">チャットを配信の上に表示</string>
     <string name="menu_fullscreen">全画面</string>
     <string name="menu_exit_fullscreen">全画面を終了</string>
     <string name="menu_hide_input">入力欄を非表示</string>
