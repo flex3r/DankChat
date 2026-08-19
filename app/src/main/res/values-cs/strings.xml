@@ -320,6 +320,13 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="menu_hide_stream">Skrýt stream</string>
     <string name="menu_audio_only">Pouze zvuk</string>
     <string name="menu_exit_audio_only">Ukončit režim zvuku</string>
+    <string name="input_action_theater">Divadelní režim</string>
+    <string name="menu_theater_mode">Divadelní režim</string>
+    <string name="menu_exit_theater_mode">Ukončit divadelní režim</string>
+    <string name="menu_show_theater_chat">Zobrazit chat</string>
+    <string name="menu_hide_theater_chat">Skrýt chat</string>
+    <string name="menu_theater_chat_side_by_side">Zobrazit chat vedle streamu</string>
+    <string name="menu_theater_chat_overlay">Zobrazit chat přes stream</string>
     <string name="menu_fullscreen">Celá obrazovka</string>
     <string name="menu_exit_fullscreen">Ukončit celou obrazovku</string>
     <string name="menu_hide_input">Skrýt vstup</string>
