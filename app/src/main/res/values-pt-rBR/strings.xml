@@ -300,6 +300,13 @@
     <string name="menu_hide_stream">Ocultar stream</string>
     <string name="menu_audio_only">Apenas áudio</string>
     <string name="menu_exit_audio_only">Sair do modo áudio</string>
+    <string name="input_action_theater">Modo teatro</string>
+    <string name="menu_theater_mode">Modo teatro</string>
+    <string name="menu_exit_theater_mode">Sair do modo teatro</string>
+    <string name="menu_show_theater_chat">Mostrar chat</string>
+    <string name="menu_hide_theater_chat">Ocultar chat</string>
+    <string name="menu_theater_chat_side_by_side">Mostrar chat ao lado da stream</string>
+    <string name="menu_theater_chat_overlay">Mostrar chat sobre a stream</string>
     <string name="menu_fullscreen">Tela cheia</string>
     <string name="menu_exit_fullscreen">Sair da tela cheia</string>
     <string name="menu_hide_input">Ocultar entrada</string>
