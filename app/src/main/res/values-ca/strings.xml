@@ -305,6 +305,13 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="menu_hide_stream">Amaga l\'emissió</string>
     <string name="menu_audio_only">Només àudio</string>
     <string name="menu_exit_audio_only">Surt del mode àudio</string>
+    <string name="input_action_theater">Mode teatre</string>
+    <string name="menu_theater_mode">Mode teatre</string>
+    <string name="menu_exit_theater_mode">Surt del mode teatre</string>
+    <string name="menu_show_theater_chat">Mostra el xat</string>
+    <string name="menu_hide_theater_chat">Amaga el xat</string>
+    <string name="menu_theater_chat_side_by_side">Mostra el xat al costat de l\'emissió</string>
+    <string name="menu_theater_chat_overlay">Mostra el xat sobre l\'emissió</string>
     <string name="menu_fullscreen">Pantalla completa</string>
     <string name="menu_exit_fullscreen">Surt de la pantalla completa</string>
     <string name="menu_hide_input">Amaga l\'entrada</string>
