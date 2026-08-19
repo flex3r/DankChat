@@ -299,6 +299,13 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="menu_hide_stream">Сакриј стрим</string>
     <string name="menu_audio_only">Само звук</string>
     <string name="menu_exit_audio_only">Изађи из режима звука</string>
+    <string name="input_action_theater">Биоскопски режим</string>
+    <string name="menu_theater_mode">Биоскопски режим</string>
+    <string name="menu_exit_theater_mode">Изађи из биоскопског режима</string>
+    <string name="menu_show_theater_chat">Прикажи ћаскање</string>
+    <string name="menu_hide_theater_chat">Сакриј ћаскање</string>
+    <string name="menu_theater_chat_side_by_side">Прикажи ћаскање поред стрима</string>
+    <string name="menu_theater_chat_overlay">Прикажи ћаскање преко стрима</string>
     <string name="menu_fullscreen">Цео екран</string>
     <string name="menu_exit_fullscreen">Изађи из целог екрана</string>
     <string name="menu_hide_input">Сакриј унос</string>
