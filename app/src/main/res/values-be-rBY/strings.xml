@@ -314,6 +314,13 @@
     <string name="menu_hide_stream">Схаваць трансляцыю</string>
     <string name="menu_audio_only">Толькі аўдыё</string>
     <string name="menu_exit_audio_only">Выйсці з рэжыму аўдыё</string>
+    <string name="input_action_theater">Рэжым тэатра</string>
+    <string name="menu_theater_mode">Рэжым тэатра</string>
+    <string name="menu_exit_theater_mode">Выйсці з рэжыму тэатра</string>
+    <string name="menu_show_theater_chat">Паказаць чат</string>
+    <string name="menu_hide_theater_chat">Схаваць чат</string>
+    <string name="menu_theater_chat_side_by_side">Паказаць чат побач з трансляцыяй</string>
+    <string name="menu_theater_chat_overlay">Паказаць чат паверх трансляцыі</string>
     <string name="menu_fullscreen">На ўвесь экран</string>
     <string name="menu_exit_fullscreen">Выйсці з поўнаэкраннага рэжыму</string>
     <string name="menu_hide_input">Схаваць увод</string>
