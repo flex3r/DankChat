@@ -300,6 +300,13 @@
     <string name="menu_hide_stream">Nascondi stream</string>
     <string name="menu_audio_only">Solo audio</string>
     <string name="menu_exit_audio_only">Esci da solo audio</string>
+    <string name="input_action_theater">Modalità teatro</string>
+    <string name="menu_theater_mode">Modalità teatro</string>
+    <string name="menu_exit_theater_mode">Esci dalla modalità teatro</string>
+    <string name="menu_show_theater_chat">Mostra chat</string>
+    <string name="menu_hide_theater_chat">Nascondi chat</string>
+    <string name="menu_theater_chat_side_by_side">Mostra la chat accanto allo stream</string>
+    <string name="menu_theater_chat_overlay">Mostra la chat sopra lo stream</string>
     <string name="menu_fullscreen">Schermo intero</string>
     <string name="menu_exit_fullscreen">Esci dallo schermo intero</string>
     <string name="menu_hide_input">Nascondi input</string>
