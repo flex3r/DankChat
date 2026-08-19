@@ -306,6 +306,13 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="menu_hide_stream">Ocultar stream</string>
     <string name="menu_audio_only">Solo audio</string>
     <string name="menu_exit_audio_only">Salir de solo audio</string>
+    <string name="input_action_theater">Modo teatro</string>
+    <string name="menu_theater_mode">Modo teatro</string>
+    <string name="menu_exit_theater_mode">Salir del modo teatro</string>
+    <string name="menu_show_theater_chat">Mostrar chat</string>
+    <string name="menu_hide_theater_chat">Ocultar chat</string>
+    <string name="menu_theater_chat_side_by_side">Mostrar el chat junto al stream</string>
+    <string name="menu_theater_chat_overlay">Mostrar el chat sobre el stream</string>
     <string name="menu_fullscreen">Pantalla completa</string>
     <string name="menu_exit_fullscreen">Salir de pantalla completa</string>
     <string name="menu_hide_input">Ocultar entrada</string>
