@@ -306,6 +306,13 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="menu_hide_stream">Yayını gizle</string>
     <string name="menu_audio_only">Yalnızca ses</string>
     <string name="menu_exit_audio_only">Ses modundan çık</string>
+    <string name="input_action_theater">Tiyatro modu</string>
+    <string name="menu_theater_mode">Tiyatro modu</string>
+    <string name="menu_exit_theater_mode">Tiyatro modundan çık</string>
+    <string name="menu_show_theater_chat">Sohbeti göster</string>
+    <string name="menu_hide_theater_chat">Sohbeti gizle</string>
+    <string name="menu_theater_chat_side_by_side">Sohbeti yayının yanında göster</string>
+    <string name="menu_theater_chat_overlay">Sohbeti yayının üzerinde göster</string>
     <string name="menu_fullscreen">Tam ekran</string>
     <string name="menu_exit_fullscreen">Tam ekrandan çık</string>
     <string name="menu_hide_input">Girişi gizle</string>
