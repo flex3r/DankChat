@@ -305,6 +305,13 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="menu_hide_stream">Piilota lähetys</string>
     <string name="menu_audio_only">Vain ääni</string>
     <string name="menu_exit_audio_only">Poistu äänitilasta</string>
+    <string name="input_action_theater">Teatteritila</string>
+    <string name="menu_theater_mode">Teatteritila</string>
+    <string name="menu_exit_theater_mode">Poistu teatteritilasta</string>
+    <string name="menu_show_theater_chat">Näytä chatti</string>
+    <string name="menu_hide_theater_chat">Piilota chatti</string>
+    <string name="menu_theater_chat_side_by_side">Näytä chatti lähetyksen vieressä</string>
+    <string name="menu_theater_chat_overlay">Näytä chatti lähetyksen päällä</string>
     <string name="menu_fullscreen">Koko näyttö</string>
     <string name="menu_exit_fullscreen">Poistu koko näytöstä</string>
     <string name="menu_hide_input">Piilota syöttö</string>
