@@ -300,6 +300,13 @@
     <string name="menu_hide_stream">Ағынды жасыру</string>
     <string name="menu_audio_only">Тек аудио</string>
     <string name="menu_exit_audio_only">Аудио режимінен шығу</string>
+    <string name="input_action_theater">Театр режимі</string>
+    <string name="menu_theater_mode">Театр режимі</string>
+    <string name="menu_exit_theater_mode">Театр режимінен шығу</string>
+    <string name="menu_show_theater_chat">Чатты көрсету</string>
+    <string name="menu_hide_theater_chat">Чатты жасыру</string>
+    <string name="menu_theater_chat_side_by_side">Чатты ағынның қасында көрсету</string>
+    <string name="menu_theater_chat_overlay">Чатты ағынның үстінде көрсету</string>
     <string name="menu_fullscreen">Толық экран</string>
     <string name="menu_exit_fullscreen">Толық экраннан шығу</string>
     <string name="menu_hide_input">Енгізуді жасыру</string>
