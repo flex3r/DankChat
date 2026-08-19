@@ -298,6 +298,13 @@
     <string name="menu_hide_stream">隱藏實況</string>
     <string name="menu_audio_only">僅音訊</string>
     <string name="menu_exit_audio_only">退出僅音訊模式</string>
+    <string name="input_action_theater">劇院模式</string>
+    <string name="menu_theater_mode">劇院模式</string>
+    <string name="menu_exit_theater_mode">退出劇院模式</string>
+    <string name="menu_show_theater_chat">顯示聊天室</string>
+    <string name="menu_hide_theater_chat">隱藏聊天室</string>
+    <string name="menu_theater_chat_side_by_side">在實況旁邊顯示聊天室</string>
+    <string name="menu_theater_chat_overlay">在實況上顯示聊天室</string>
     <string name="menu_fullscreen">全螢幕</string>
     <string name="menu_exit_fullscreen">退出全螢幕</string>
     <string name="menu_hide_input">隱藏輸入框</string>
