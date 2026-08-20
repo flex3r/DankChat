@@ -306,6 +306,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="menu_hide_stream">Stream ausblenden</string>
     <string name="menu_audio_only">Nur Audio</string>
     <string name="menu_exit_audio_only">Audio-Modus beenden</string>
+    <string name="input_action_theater">Theatermodus</string>
     <string name="menu_theater_mode">Theatermodus</string>
     <string name="menu_exit_theater_mode">Theatermodus beenden</string>
     <string name="menu_show_theater_chat">Chat anzeigen</string>
@@ -337,7 +338,6 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="input_action_stream">Stream umschalten</string>
     <string name="input_action_mod_actions">Kanalmoderation</string>
     <string name="input_action_fullscreen">Vollbild</string>
-    <string name="input_action_theater">Theatermodus</string>
     <string name="input_action_hide_input">Eingabe ausblenden</string>
     <string name="input_action_debug">Debug</string>
     <string name="input_action_configure">Aktionen konfigurieren</string>
