@@ -300,6 +300,7 @@
     <string name="menu_hide_stream">Nascondi stream</string>
     <string name="menu_audio_only">Solo audio</string>
     <string name="menu_exit_audio_only">Esci da solo audio</string>
+    <string name="input_action_theater">Modalità teatro</string>
     <string name="menu_theater_mode">Modalità teatro</string>
     <string name="menu_exit_theater_mode">Esci dalla modalità teatro</string>
     <string name="menu_show_theater_chat">Mostra chat</string>
@@ -331,7 +332,6 @@
     <string name="input_action_stream">Attiva/disattiva stream</string>
     <string name="input_action_mod_actions">Moderazione canale</string>
     <string name="input_action_fullscreen">Schermo intero</string>
-    <string name="input_action_theater">Modalità teatro</string>
     <string name="input_action_hide_input">Nascondi input</string>
     <string name="input_action_debug">Debug</string>
     <string name="input_action_configure">Configura azioni</string>
