@@ -298,6 +298,7 @@
     <string name="menu_hide_stream">隱藏實況</string>
     <string name="menu_audio_only">僅音訊</string>
     <string name="menu_exit_audio_only">退出僅音訊模式</string>
+    <string name="input_action_theater">劇院模式</string>
     <string name="menu_theater_mode">劇院模式</string>
     <string name="menu_exit_theater_mode">退出劇院模式</string>
     <string name="menu_show_theater_chat">顯示聊天室</string>
@@ -328,7 +329,6 @@
     <string name="input_action_stream">切換實況</string>
     <string name="input_action_mod_actions">頻道管理</string>
     <string name="input_action_fullscreen">全螢幕</string>
-    <string name="input_action_theater">劇院模式</string>
     <string name="input_action_hide_input">隱藏輸入框</string>
     <string name="input_action_debug">偵錯</string>
     <string name="input_action_configure">設定動作</string>
