@@ -319,6 +319,7 @@
     <string name="menu_hide_stream">Скрыть трансляцию</string>
     <string name="menu_audio_only">Только аудио</string>
     <string name="menu_exit_audio_only">Выйти из режима аудио</string>
+    <string name="input_action_theater">Режим театра</string>
     <string name="menu_theater_mode">Режим театра</string>
     <string name="menu_exit_theater_mode">Выйти из режима театра</string>
     <string name="menu_show_theater_chat">Показать чат</string>
@@ -352,7 +353,6 @@
     <string name="input_action_stream">Переключить трансляцию</string>
     <string name="input_action_mod_actions">Модерация канала</string>
     <string name="input_action_fullscreen">На весь экран</string>
-    <string name="input_action_theater">Режим театра</string>
     <string name="input_action_hide_input">Скрыть ввод</string>
     <string name="input_action_debug">Отладка</string>
     <string name="input_action_configure">Настроить действия</string>
