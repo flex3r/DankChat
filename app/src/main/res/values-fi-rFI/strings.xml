@@ -305,6 +305,7 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="menu_hide_stream">Piilota lähetys</string>
     <string name="menu_audio_only">Vain ääni</string>
     <string name="menu_exit_audio_only">Poistu äänitilasta</string>
+    <string name="input_action_theater">Teatteritila</string>
     <string name="menu_theater_mode">Teatteritila</string>
     <string name="menu_exit_theater_mode">Poistu teatteritilasta</string>
     <string name="menu_show_theater_chat">Näytä chatti</string>
@@ -336,7 +337,6 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="input_action_stream">Vaihda lähetys</string>
     <string name="input_action_mod_actions">Kanavan moderointi</string>
     <string name="input_action_fullscreen">Koko näyttö</string>
-    <string name="input_action_theater">Teatteritila</string>
     <string name="input_action_hide_input">Piilota syöttö</string>
     <string name="input_action_debug">Virheenkorjaus</string>
     <string name="input_action_configure">Muokkaa toimintoja</string>
