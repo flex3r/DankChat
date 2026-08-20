@@ -300,6 +300,7 @@
     <string name="menu_hide_stream">Ағынды жасыру</string>
     <string name="menu_audio_only">Тек аудио</string>
     <string name="menu_exit_audio_only">Аудио режимінен шығу</string>
+    <string name="input_action_theater">Театр режимі</string>
     <string name="menu_theater_mode">Театр режимі</string>
     <string name="menu_exit_theater_mode">Театр режимінен шығу</string>
     <string name="menu_show_theater_chat">Чатты көрсету</string>
@@ -331,7 +332,6 @@
     <string name="input_action_stream">Ағынды қосу/өшіру</string>
     <string name="input_action_mod_actions">Арна модерациясы</string>
     <string name="input_action_fullscreen">Толық экран</string>
-    <string name="input_action_theater">Театр режимі</string>
     <string name="input_action_hide_input">Енгізуді жасыру</string>
     <string name="input_action_debug">Жөндеу</string>
     <string name="input_action_configure">Әрекеттерді баптау</string>
