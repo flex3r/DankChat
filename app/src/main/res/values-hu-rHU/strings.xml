@@ -300,6 +300,7 @@
     <string name="menu_hide_stream">Közvetítés elrejtése</string>
     <string name="menu_audio_only">Csak hang</string>
     <string name="menu_exit_audio_only">Kilépés a hang módból</string>
+    <string name="input_action_theater">Színházi mód</string>
     <string name="menu_theater_mode">Színházi mód</string>
     <string name="menu_exit_theater_mode">Kilépés a színházi módból</string>
     <string name="menu_show_theater_chat">Chat megjelenítése</string>
@@ -331,7 +332,6 @@
     <string name="input_action_stream">Közvetítés váltása</string>
     <string name="input_action_mod_actions">Csatorna moderálás</string>
     <string name="input_action_fullscreen">Teljes képernyő</string>
-    <string name="input_action_theater">Színházi mód</string>
     <string name="input_action_hide_input">Bevitel elrejtése</string>
     <string name="input_action_debug">Hibakeresés</string>
     <string name="input_action_configure">Műveletek beállítása</string>
