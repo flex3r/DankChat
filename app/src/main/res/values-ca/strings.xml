@@ -305,6 +305,7 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="menu_hide_stream">Amaga l\'emissió</string>
     <string name="menu_audio_only">Només àudio</string>
     <string name="menu_exit_audio_only">Surt del mode àudio</string>
+    <string name="input_action_theater">Mode teatre</string>
     <string name="menu_theater_mode">Mode teatre</string>
     <string name="menu_exit_theater_mode">Surt del mode teatre</string>
     <string name="menu_show_theater_chat">Mostra el xat</string>
@@ -336,7 +337,6 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="input_action_stream">Commuta l\'emissió</string>
     <string name="input_action_mod_actions">Moderació del canal</string>
     <string name="input_action_fullscreen">Pantalla completa</string>
-    <string name="input_action_theater">Mode teatre</string>
     <string name="input_action_hide_input">Amaga l\'entrada</string>
     <string name="input_action_debug">Depuració</string>
     <string name="input_action_configure">Configura accions</string>
