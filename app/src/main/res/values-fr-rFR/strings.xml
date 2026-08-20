@@ -305,6 +305,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="menu_hide_stream">Masquer le stream</string>
     <string name="menu_audio_only">Audio uniquement</string>
     <string name="menu_exit_audio_only">Quitter le mode audio</string>
+    <string name="input_action_theater">Mode cinéma</string>
     <string name="menu_theater_mode">Mode cinéma</string>
     <string name="menu_exit_theater_mode">Quitter le mode cinéma</string>
     <string name="menu_show_theater_chat">Afficher le chat</string>
@@ -336,7 +337,6 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="input_action_stream">Basculer le stream</string>
     <string name="input_action_mod_actions">Modération du canal</string>
     <string name="input_action_fullscreen">Plein écran</string>
-    <string name="input_action_theater">Mode cinéma</string>
     <string name="input_action_hide_input">Masquer la saisie</string>
     <string name="input_action_debug">Débogage</string>
     <string name="input_action_configure">Configurer les actions</string>
