@@ -257,6 +257,7 @@
     <string name="menu_hide_stream">ଷ୍ଟ୍ରିମ୍ ଲୁଚାନ୍ତୁ</string>
     <string name="menu_audio_only">କେବଳ ଅଡିଓ</string>
     <string name="menu_exit_audio_only">କେବଳ ଅଡିଓ ମୋଡରୁ ବାହାରନ୍ତୁ</string>
+    <string name="input_action_theater">ଥିଏଟର ମୋଡ୍</string>
     <string name="menu_theater_mode">ଥିଏଟର ମୋଡ୍</string>
     <string name="menu_exit_theater_mode">ଥିଏଟର ମୋଡରୁ ବାହାରନ୍ତୁ</string>
     <string name="menu_show_theater_chat">ଚାଟ୍ ଦେଖାନ୍ତୁ</string>
@@ -288,7 +289,6 @@
     <string name="input_action_stream">ଷ୍ଟ୍ରିମ୍ ଟୋଗଲ୍ କରନ୍ତୁ</string>
     <string name="input_action_mod_actions">ଚ୍ୟାନେଲ ମଡରେସନ</string>
     <string name="input_action_fullscreen">ଫୁଲ୍ ସ୍କ୍ରିନ୍</string>
-    <string name="input_action_theater">ଥିଏଟର ମୋଡ୍</string>
     <string name="input_action_hide_input">ଇନପୁଟ୍ ଲୁଚାନ୍ତୁ</string>
     <string name="input_action_debug">ଡିବଗ୍</string>
     <string name="input_action_configure">କ୍ରିୟାଗୁଡିକ ବିନ୍ୟାସ କରନ୍ତୁ</string>
