@@ -46,6 +46,7 @@ enum class HighlightType(
     Custom(HighlightPriority.LOW),
     Reply(HighlightPriority.LOW),
     Notification(HighlightPriority.LOW),
+    InlineWhisper(HighlightPriority.LOW),
 }
 
 enum class HighlightPriority(

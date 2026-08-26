@@ -520,6 +520,8 @@
     <string name="preference_components_group_title">Components</string>
     <string name="preference_show_timed_out_messages_key" translatable="false">show_timed_out_messages_key</string>
     <string name="preference_show_timed_out_messages_title">Show timed out messages</string>
+    <string name="preference_show_whispers_inline_title">Show whispers inline</string>
+    <string name="preference_show_whispers_inline_summary">Display sent and received whispers in every open chat</string>
     <string name="preference_animate_gifs_key" translatable="false">animate_gifs_key</string>
     <string name="preference_animate_gifs_title">Animate gifs</string>
     <string name="preference_line_separator_key" translatable="false">line_seperator_key</string>
@@ -739,6 +741,7 @@
     <string name="highlights_ignores_entry_elevated_messages">Elevated Messages</string>
     <string name="highlights_ignores_entry_redemptions">Highlights redeemed with Channel Points</string>
     <string name="highlights_ignores_entry_replies">Replies</string>
+    <string name="highlights_ignores_entry_inline_whispers">Inline Whispers</string>
     <string name="highlights_ignores_entry_custom">Custom</string>
     <string name="highlights_messages_title">Creates notifications and highlights messages based on certain patterns.</string>
     <string name="highlights_users_title">Creates notifications and highlights messages from certain users.</string>

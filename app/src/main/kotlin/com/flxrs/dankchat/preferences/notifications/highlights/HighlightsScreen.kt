@@ -396,6 +396,7 @@ private fun MessageHighlightItem(
             MessageHighlightItem.Type.ElevatedMessage -> R.string.highlights_ignores_entry_elevated_messages
             MessageHighlightItem.Type.ChannelPointRedemption -> R.string.highlights_ignores_entry_redemptions
             MessageHighlightItem.Type.Reply -> R.string.highlights_ignores_entry_replies
+            MessageHighlightItem.Type.InlineWhisper -> R.string.highlights_ignores_entry_inline_whispers
             MessageHighlightItem.Type.Custom -> R.string.highlights_ignores_entry_custom
         }
     val isCustom = item.type == MessageHighlightItem.Type.Custom
@@ -488,7 +489,7 @@ private fun MessageHighlightItem(
                 MessageHighlightItem.Type.ElevatedMessage -> ChatMessageMapper.defaultHighlightColorInt(HighlightType.ElevatedMessage, isDark)
                 MessageHighlightItem.Type.FirstMessage -> ChatMessageMapper.defaultHighlightColorInt(HighlightType.FirstMessage, isDark)
                 MessageHighlightItem.Type.Username -> ChatMessageMapper.defaultHighlightColorInt(HighlightType.Username, isDark)
-                MessageHighlightItem.Type.Reply, MessageHighlightItem.Type.Custom -> ChatMessageMapper.defaultHighlightColorInt(HighlightType.Reply, isDark)
+                MessageHighlightItem.Type.Reply, MessageHighlightItem.Type.InlineWhisper, MessageHighlightItem.Type.Custom -> ChatMessageMapper.defaultHighlightColorInt(HighlightType.Reply, isDark)
             }
         HighlightColorPicker(
             color = item.customColor ?: defaultColor,

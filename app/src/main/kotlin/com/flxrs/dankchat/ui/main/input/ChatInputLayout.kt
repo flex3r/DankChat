@@ -227,6 +227,12 @@ fun ChatInputLayout(
     val view = LocalView.current
     val inputMethodManager = remember(view) { view.context.getSystemService(InputMethodManager::class.java) }
     val keyboardController = LocalSoftwareKeyboardController.current
+    LaunchedEffect(overlay) {
+        if (overlay is InputOverlay.Whisper) {
+            focusRequester.requestFocus()
+            keyboardController?.show()
+        }
+    }
     var visibleActions by remember { mutableStateOf(effectiveActions) }
     val quickActionsExpanded = overflowExpanded || tourState.forceOverflowOpen
     var showConfigSheet by remember { mutableStateOf(false) }

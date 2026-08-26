@@ -7,6 +7,12 @@ import com.flxrs.dankchat.data.database.dao.UserHighlightDao
 import com.flxrs.dankchat.data.database.entity.BadgeHighlightEntity
 import com.flxrs.dankchat.data.database.entity.MessageHighlightEntity
 import com.flxrs.dankchat.data.database.entity.MessageHighlightEntityType
+import com.flxrs.dankchat.data.toDisplayName
+import com.flxrs.dankchat.data.toUserId
+import com.flxrs.dankchat.data.toUserName
+import com.flxrs.dankchat.data.twitch.message.Highlight
+import com.flxrs.dankchat.data.twitch.message.HighlightType
+import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.notifications.NotificationsSettingsDataStore
@@ -58,7 +64,8 @@ internal class HighlightsRepositoryTest {
         type: MessageHighlightEntityType,
         enabled: Boolean = true,
         pattern: String = "",
-    ) = MessageHighlightEntity(id = id, enabled = enabled, type = type, pattern = pattern)
+        customColor: Int? = null,
+    ) = MessageHighlightEntity(id = id, enabled = enabled, type = type, pattern = pattern, customColor = customColor)
 
     @Test
     fun `all defaults are added to an empty database`() = runTest(testDispatcher) {
@@ -124,11 +131,39 @@ internal class HighlightsRepositoryTest {
     }
 
     @Test
+    fun `inline whisper highlight uses configured color`() {
+        val customColor = 0xFF123456.toInt()
+        messageHighlightDao.seed(
+            highlightEntity(
+                id = 1,
+                type = MessageHighlightEntityType.InlineWhisper,
+                customColor = customColor,
+            ),
+        )
+
+        val result = createRepository().calculateInlineWhisperHighlightState(whisperMessage())
+
+        assertEquals(setOf(Highlight(HighlightType.InlineWhisper, customColor)), result.highlights)
+    }
+
+    @Test
     fun `badge highlight defaults are not added to a non-empty table`() = runTest(testDispatcher) {
         createRepository().runMigrationsIfNeeded().join()
 
         coVerify(exactly = 0) { badgeHighlightDao.addHighlights(any()) }
     }
+
+    private fun whisperMessage() = WhisperMessage(
+        userId = "sender-id".toUserId(),
+        name = "sender".toUserName(),
+        displayName = "Sender".toDisplayName(),
+        recipientId = "recipient-id".toUserId(),
+        recipientName = "recipient".toUserName(),
+        recipientDisplayName = "Recipient".toDisplayName(),
+        message = "secret",
+        rawEmotes = "",
+        rawBadges = "",
+    )
 }
 
 private class FakeMessageHighlightDao : MessageHighlightDao {

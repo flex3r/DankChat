@@ -111,6 +111,7 @@ class ChatRepository(
                 )
             val fakeItem = ChatItem(fakeMessage, isMentionTab = true)
             chatNotificationRepository.addWhisper(fakeItem)
+            chatMessageRepository.broadcastWhisperIfEnabled(fakeItem)
         }
     }
 

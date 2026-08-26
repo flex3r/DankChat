@@ -109,6 +109,9 @@ import kotlinx.collections.immutable.ImmutableList
 data class ChatScreenCallbacks(
     val onUserClick: (userId: String?, userName: String, displayName: String, channel: String?, badges: List<BadgeUi>, isLongPress: Boolean) -> Unit,
     val onMessageLongClick: (messageId: String, channel: String?, fullMessage: String) -> Unit,
+    val onWhisperLongClick: (messageId: String, fullMessage: String, replyTarget: UserName) -> Unit = { messageId, fullMessage, _ ->
+        onMessageLongClick(messageId, null, fullMessage)
+    },
     val onEmoteClick: (emotes: List<EmoteSheetData>) -> Unit = {},
     val onReplyClick: (rootMessageId: String, replyName: UserName) -> Unit = { _, _ -> },
     val onWhisperReply: ((userName: UserName) -> Unit)? = null,
@@ -895,7 +898,7 @@ private fun ChatMessageItem(
                     callbacks.onUserClick(userId, userName, displayName, null, badges, isLongPress)
                 },
                 onMessageLongClick = { messageId, fullMessage ->
-                    callbacks.onMessageLongClick(messageId, null, fullMessage)
+                    callbacks.onWhisperLongClick(messageId, fullMessage, message.replyTargetName)
                 },
                 onEmoteClick = callbacks.onEmoteClick,
                 onWhisperReply = callbacks.onWhisperReply,

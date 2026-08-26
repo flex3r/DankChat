@@ -366,6 +366,11 @@ class HighlightsRepository(
         else -> this
     }
 
+    fun calculateInlineWhisperHighlightState(message: WhisperMessage): WhisperMessage {
+        val highlight = validMessageHighlights.value.ofType(MessageHighlightEntityType.InlineWhisper) ?: return message
+        return message.copy(highlights = message.highlights + Highlight(HighlightType.InlineWhisper, highlight.customColor))
+    }
+
     private fun List<MessageHighlightEntity>.ofType(type: MessageHighlightEntityType): MessageHighlightEntity? = find { it.type == type }
 
     private fun MutableCollection<Highlight>.addNotificationHighlightIfEnabled(createNotification: Boolean) {
@@ -427,6 +432,7 @@ class HighlightsRepository(
                 MessageHighlightEntity(id = 0, enabled = true, type = MessageHighlightEntityType.FirstMessage, pattern = "", createNotification = false),
                 MessageHighlightEntity(id = 0, enabled = true, type = MessageHighlightEntityType.ElevatedMessage, pattern = "", createNotification = false),
                 MessageHighlightEntity(id = 0, enabled = true, type = MessageHighlightEntityType.Reply, pattern = ""),
+                MessageHighlightEntity(id = 0, enabled = true, type = MessageHighlightEntityType.InlineWhisper, pattern = "", createNotification = false),
             )
         private val DEFAULT_BADGE_HIGHLIGHTS =
             listOf(

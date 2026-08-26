@@ -6,6 +6,7 @@ import com.flxrs.dankchat.data.twitch.message.AutomodMessage
 import com.flxrs.dankchat.data.twitch.message.Message
 import com.flxrs.dankchat.data.twitch.message.ModerationMessage
 import com.flxrs.dankchat.data.twitch.message.SystemMessageType
+import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import com.flxrs.dankchat.preferences.developer.ChatSendProtocol
@@ -40,7 +41,7 @@ class ChatMessageRepository(
     private val messageProcessor: MessageProcessor,
     private val chatNotificationRepository: ChatNotificationRepository,
     private val dispatchersProvider: DispatchersProvider,
-    chatSettingsDataStore: ChatSettingsDataStore,
+    private val chatSettingsDataStore: ChatSettingsDataStore,
 ) {
     private val scope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
     private val messages = ConcurrentHashMap<UserName, MutableStateFlow<List<ChatItem>>>()
@@ -142,6 +143,17 @@ class ChatMessageRepository(
                 current.addAndLimit(item, scrollBackLength, messageProcessor::onMessageRemoved)
             }
         }
+    }
+
+    fun broadcastWhisperIfEnabled(item: ChatItem) {
+        if (!chatSettingsDataStore.current().showWhispersInline) return
+        val whisper = item.message as? WhisperMessage ?: return
+        val inlineWhisper =
+            item.copy(
+                message = messageProcessor.processInlineWhisper(whisper),
+                isMentionTab = false,
+            )
+        broadcastToAllChannels(inlineWhisper)
     }
 
     fun clearMessages(channel: UserName) {

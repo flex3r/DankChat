@@ -223,7 +223,6 @@ fun MessageHistorySheet(
                                         channel = ch?.let { UserName(it) },
                                         fullMessage = fullMessage,
                                         canModerate = false,
-                                        canReply = false,
                                         canCopy = true,
                                         canJump = true,
                                     ),
