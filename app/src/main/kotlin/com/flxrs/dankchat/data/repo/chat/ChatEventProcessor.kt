@@ -94,6 +94,8 @@ class ChatEventProcessor(
     private val scope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
     private val _lastMessages = MutableStateFlow<PersistentMap<UserName, PersistentList<LastMessage>>>(persistentMapOf())
     internal val lastMessagesFlow: StateFlow<PersistentMap<UserName, PersistentList<LastMessage>>> = _lastMessages.asStateFlow()
+    private val _lastReceivedWhisperUser = MutableStateFlow<UserName?>(null)
+    internal val lastReceivedWhisperUser: StateFlow<UserName?> = _lastReceivedWhisperUser.asStateFlow()
     private val knownRewards = ConcurrentHashMap<String, PubSubMessage.PointRedemption>()
     private val knownAutomodHeldIds: MutableSet<String> = ConcurrentHashMap.newKeySet()
     private val rewardMutex = Mutex()
@@ -458,6 +460,7 @@ class ChatEventProcessor(
         }
 
         val item = ChatItem(message, isMentionTab = true)
+        _lastReceivedWhisperUser.value = message.name
         chatNotificationRepository.addWhisper(item)
         chatNotificationRepository.incrementMentionCount(WhisperMessage.WHISPER_CHANNEL, 1)
         chatNotificationRepository.emitMessages(listOf(item))
