@@ -322,8 +322,8 @@ fun MainScreen(
         isStreamActive = currentStream != null,
         inputSheetState = inputSheetState,
         sheetsReady = sheetsReady,
-        onAddChannel = {
-            channelManagementViewModel.addChannel(it)
+        onAddChannels = {
+            channelManagementViewModel.addChannels(it)
             dialogViewModel.dismissAddChannel()
         },
         onLogout = onLogout,
