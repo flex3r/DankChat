@@ -173,7 +173,7 @@ fun FloatingToolbar(
     LaunchedEffect(toolbarBottomPx) { onToolbarBottomChange(toolbarBottomPx) }
 
     val totalTabs = tabState.tabs.size
-    val selectedIndex = composePagerState.currentPage
+    val selectedIndex = circularPageToChannelIndex(composePagerState.currentPage, totalTabs)
     val tabScrollState = rememberScrollState()
     rememberCoroutineScope()
 
@@ -435,6 +435,7 @@ fun FloatingToolbar(
                                             pagerState = composePagerState,
                                             state = tabLayoutState,
                                             color = indicatorColor,
+                                            pageIndex = { circularPageToChannelIndex(it, totalTabs) },
                                             modifier = Modifier.align(Alignment.BottomStart),
                                         )
                                     }

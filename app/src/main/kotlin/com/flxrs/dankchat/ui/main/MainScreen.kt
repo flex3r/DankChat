@@ -29,6 +29,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -165,6 +166,7 @@ fun MainScreen(
     val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
 
     val mainState by mainScreenViewModel.uiState.collectAsStateWithLifecycle()
+    val pagerState by channelPagerViewModel.uiState.collectAsStateWithLifecycle()
 
     val ime = WindowInsets.ime
     val navBars = WindowInsets.navigationBars
@@ -336,7 +338,17 @@ fun MainScreen(
                 messageOptionsViewModel.dismiss()
                 sheetNavigationViewModel.closeFullScreenSheet()
                 scrollTargets[target.channel] = target.messageId
-                scope.launch { composePagerStateRef?.scrollToPage(target.channelIndex) }
+                scope.launch {
+                    composePagerStateRef?.let { composePagerState ->
+                        composePagerState.scrollToPage(
+                            closestCircularPagerPage(
+                                currentPage = composePagerState.currentPage,
+                                channelIndex = target.channelIndex,
+                                channelCount = pagerState.channels.size,
+                            ),
+                        )
+                    }
+                }
             } else {
                 scope.launch {
                     snackbarHostState.showSnackbar(messageNotInHistoryMsg)
@@ -380,13 +392,13 @@ fun MainScreen(
         }
     }
 
-    val pagerState by channelPagerViewModel.uiState.collectAsStateWithLifecycle()
-
     val composePagerState =
-        rememberPagerState(
-            initialPage = pagerState.currentPage,
-            pageCount = { pagerState.channels.size },
-        ).also { composePagerStateRef = it }
+        key(pagerState.channels.size) {
+            rememberPagerState(
+                initialPage = initialCircularPagerPage(pagerState.currentPage, pagerState.channels.size),
+                pageCount = { circularPagerPageCount(pagerState.channels.size) },
+            )
+        }.also { composePagerStateRef = it }
     var inputHeightPx by remember { mutableIntStateOf(0) }
     var helperTextHeightPx by remember { mutableIntStateOf(0) }
     var inputOverflowExpanded by remember { mutableStateOf(false) }
@@ -624,7 +636,15 @@ fun MainScreen(
                 when (action) {
                     is ToolbarAction.SelectTab -> {
                         channelTabViewModel.selectTab(action.index)
-                        scope.launch { composePagerState.scrollToPage(action.index) }
+                        scope.launch {
+                            composePagerState.scrollToPage(
+                                closestCircularPagerPage(
+                                    currentPage = composePagerState.currentPage,
+                                    channelIndex = action.index,
+                                    channelCount = pagerState.channels.size,
+                                ),
+                            )
+                        }
                     }
 
                     ToolbarAction.LongClickTab -> {
@@ -1101,24 +1121,33 @@ private fun MainScreenPagerEffects(
 ) {
     // Sync Compose pager with ViewModel state
     LaunchedEffect(pagerState.currentPage, pagerState.channels.size) {
+        val channelCount = pagerState.channels.size
+        val currentChannelIndex = circularPageToChannelIndex(composePagerState.currentPage, channelCount)
         if (!composePagerState.isScrollInProgress &&
-            composePagerState.currentPage != pagerState.currentPage &&
-            pagerState.currentPage in 0 until composePagerState.pageCount
+            currentChannelIndex != pagerState.currentPage &&
+            pagerState.currentPage in pagerState.channels.indices
         ) {
-            composePagerState.scrollToPage(pagerState.currentPage)
+            composePagerState.scrollToPage(
+                closestCircularPagerPage(
+                    currentPage = composePagerState.currentPage,
+                    channelIndex = pagerState.currentPage,
+                    channelCount = channelCount,
+                ),
+            )
         }
     }
 
     // Eagerly update active channel on page change for snappy UI (room state, stream info)
-    LaunchedEffect(composePagerState.currentPage) {
-        if (composePagerState.currentPage != pagerState.currentPage) {
-            onSetActivePage(composePagerState.currentPage)
+    LaunchedEffect(composePagerState.currentPage, pagerState.channels.size) {
+        val channelIndex = circularPageToChannelIndex(composePagerState.currentPage, pagerState.channels.size)
+        if (channelIndex != pagerState.currentPage) {
+            onSetActivePage(channelIndex)
         }
     }
 
     // Clear unread/mention indicators when page settles
-    LaunchedEffect(composePagerState.settledPage) {
-        onClearNotifications(composePagerState.settledPage)
+    LaunchedEffect(composePagerState.settledPage, pagerState.channels.size) {
+        onClearNotifications(circularPageToChannelIndex(composePagerState.settledPage, pagerState.channels.size))
     }
 
     // Pager swipe reveals toolbar

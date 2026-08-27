@@ -55,6 +55,9 @@ class ChatViewModel(
     chatSettingsDataStore: ChatSettingsDataStore,
     dispatchersProvider: DispatchersProvider,
 ) : ViewModel() {
+    var scrollPosition = ChatScrollPosition()
+        private set
+
     val chatDisplaySettings: StateFlow<ChatDisplaySettings> =
         combine(
             appearanceSettingsDataStore.currentSettings,
@@ -202,6 +205,10 @@ class ChatViewModel(
                 )
             }
         }
+    }
+
+    fun updateScrollPosition(position: ChatScrollPosition) {
+        scrollPosition = position
     }
 }
 
