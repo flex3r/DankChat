@@ -1,6 +1,7 @@
 package com.flxrs.dankchat.ui.chat.messages
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -69,6 +70,7 @@ fun WhisperMessageComposable(
     modifier: Modifier = Modifier,
     animateGifs: Boolean = true,
     onWhisperReply: ((userName: UserName) -> Unit)? = null,
+    onTap: (() -> Unit)? = null,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val backgroundColor = rememberBackgroundColor(message.lightBackgroundColor, message.darkBackgroundColor)
@@ -81,7 +83,17 @@ fun WhisperMessageComposable(
                 .wrapContentHeight()
                 .alpha(message.textAlpha)
                 .background(backgroundColor)
-                .indication(interactionSource, ripple())
+                .then(
+                    if (onTap != null) {
+                        Modifier.clickable(
+                            interactionSource = interactionSource,
+                            indication = null,
+                            onClick = onTap,
+                        )
+                    } else {
+                        Modifier
+                    },
+                ).indication(interactionSource, ripple())
                 .padding(horizontal = 6.dp, vertical = 3.dp),
     ) {
         Box(modifier = Modifier.weight(1f)) {
@@ -93,6 +105,7 @@ fun WhisperMessageComposable(
                 onUserClick = onUserClick,
                 onMessageLongClick = onMessageLongClick,
                 onEmoteClick = onEmoteClick,
+                onTap = onTap,
             )
         }
         if (onWhisperReply != null) {
@@ -120,6 +133,7 @@ private fun WhisperMessageText(
     onUserClick: (userId: String?, userName: String, displayName: String, badges: List<BadgeUi>, isLongPress: Boolean) -> Unit,
     onMessageLongClick: (messageId: String, fullMessage: String) -> Unit,
     onEmoteClick: (emotes: List<EmoteSheetData>) -> Unit,
+    onTap: (() -> Unit)?,
 ) {
     val context = LocalPlatformContext.current
     val defaultTextColor = rememberAdaptiveTextColor(backgroundColor)
@@ -214,16 +228,18 @@ private fun WhisperMessageText(
         fontSize = fontSize,
         animateGifs = animateGifs,
         onEmoteClick = onEmoteClick,
+        onBackgroundClick = { onTap?.invoke() },
         onTextClick = { offset ->
             val user = annotatedString.getStringAnnotations("USER", offset, offset).firstOrNull()
             val url = annotatedString.getStringAnnotations("URL", offset, offset).firstOrNull()
-
             when {
                 user != null -> parseUserAnnotation(user.item)?.let {
                     onUserClick(it.userId, it.userName, it.displayName, message.badges, false)
                 }
 
                 url != null -> launchCustomTab(context, url.item)
+
+                else -> onTap?.invoke()
             }
         },
         onTextLongClick = { offset ->

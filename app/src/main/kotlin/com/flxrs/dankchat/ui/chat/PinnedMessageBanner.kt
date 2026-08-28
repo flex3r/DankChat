@@ -85,6 +85,9 @@ fun PinnedMessageBanner(
                 onMessageLongClick = callbacks.onMessageLongClick,
                 onEmoteClick = callbacks.onEmoteClick,
                 onReplyClick = callbacks.onReplyClick,
+                onTap = callbacks.onMessageTap?.let { onTap ->
+                    { onTap(state.message.toMessageTapContext()) }
+                },
                 animateGifs = animateGifs,
             )
         }

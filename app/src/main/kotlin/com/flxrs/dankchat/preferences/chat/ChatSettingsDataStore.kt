@@ -242,6 +242,10 @@ class ChatSettingsDataStore(
         settings
             .map { it.userLongClickBehavior }
             .distinctUntilChanged()
+    val messageTapAction =
+        settings
+            .map { it.messageTapAction }
+            .distinctUntilChanged()
 
     val debouncedScrollBack =
         settings

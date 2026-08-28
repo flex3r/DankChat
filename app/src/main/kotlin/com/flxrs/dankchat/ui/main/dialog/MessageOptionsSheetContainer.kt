@@ -10,6 +10,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.ui.chat.message.MessageOptionsState
 import com.flxrs.dankchat.ui.chat.message.MessageOptionsViewModel
+import com.flxrs.dankchat.ui.chat.message.rememberMessageCopyActions
 import com.flxrs.dankchat.ui.main.MainEvent
 import com.flxrs.dankchat.ui.main.MainEventBus
 import com.flxrs.dankchat.ui.main.input.ChatInputViewModel
@@ -31,6 +32,7 @@ fun MessageOptionsSheetContainer(onJumpToMessage: (messageId: String, channel: U
     val params = currentState.params
     val found = currentState.optionsState as? MessageOptionsState.Found ?: return
     val clipboardManager = LocalClipboard.current
+    val messageCopyActions = rememberMessageCopyActions()
     val scope = rememberCoroutineScope()
 
     when (found) {
@@ -58,16 +60,10 @@ fun MessageOptionsSheetContainer(onJumpToMessage: (messageId: String, channel: U
                     sheetNavigationViewModel.openReplies(found.rootThreadId, found.replyName)
                 },
                 onCopy = {
-                    scope.launch {
-                        clipboardManager.setClipEntry(ClipEntry(ClipData.newPlainText("message", found.originalMessage)))
-                        mainEventBus.emitEvent(MainEvent.MessageCopied(found.originalMessage))
-                    }
+                    messageCopyActions.copyMessage(found.originalMessage)
                 },
                 onCopyFullMessage = {
-                    scope.launch {
-                        clipboardManager.setClipEntry(ClipEntry(ClipData.newPlainText("full message", params.fullMessage)))
-                        mainEventBus.emitEvent(MainEvent.MessageCopied(params.fullMessage))
-                    }
+                    messageCopyActions.copyFullMessage(params.fullMessage)
                 },
                 onCopyMessageId = {
                     scope.launch {
@@ -95,10 +91,7 @@ fun MessageOptionsSheetContainer(onJumpToMessage: (messageId: String, channel: U
                 canModerate = found.canModerate,
                 startWithBan = params.startWithBan,
                 onCopy = {
-                    scope.launch {
-                        clipboardManager.setClipEntry(ClipEntry(ClipData.newPlainText("message", found.originalMessage)))
-                        mainEventBus.emitEvent(MainEvent.MessageCopied(found.originalMessage))
-                    }
+                    messageCopyActions.copyMessage(found.originalMessage)
                 },
                 onBan = messageOptionsViewModel::banUser,
                 onUnban = messageOptionsViewModel::unbanUser,

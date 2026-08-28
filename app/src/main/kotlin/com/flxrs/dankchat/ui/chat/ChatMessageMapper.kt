@@ -2,6 +2,7 @@ package com.flxrs.dankchat.ui.chat
 
 import androidx.compose.ui.graphics.Color
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.data.DisplayName
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.chat.ChatImportance
@@ -796,6 +797,8 @@ class ChatMessageMapper(
         val rawSenderColor = resolveNameColor(userDisplay?.color, color, userId, chatSettings)
         val rawRecipientColor = resolveNameColor(recipientDisplay?.color, recipientColor, recipientId, chatSettings)
 
+        val replyTarget = resolveWhisperReplyTarget(currentUserName)
+
         return ChatMessageUiState.WhisperMessageUi(
             id = id,
             tag = tag,
@@ -816,7 +819,10 @@ class ChatMessageMapper(
             links = findLinks(message).toImmutableList(),
             emotes = emoteUis,
             fullMessage = fullMessage,
-            replyTargetName = if (currentUserName != null && name.value.equals(currentUserName.value, ignoreCase = true)) recipientName else name,
+            replyTargetName = replyTarget.userName,
+            replyTargetUserId = replyTarget.userId,
+            replyTargetDisplayName = replyTarget.displayName,
+            replyTargetBadges = if (replyTarget.isOutgoing) persistentListOf() else badgeUis,
         )
     }
 
@@ -1037,6 +1043,23 @@ class ChatMessageMapper(
         private val CHECKERED_LIGHT = Color(android.graphics.Color.argb(CHECKERED_ALPHA, 0, 0, 0))
         private val CHECKERED_DARK = Color(android.graphics.Color.argb(CHECKERED_ALPHA, 255, 255, 255))
     }
+}
+
+internal data class WhisperReplyTarget(
+    val userId: UserId?,
+    val userName: UserName,
+    val displayName: DisplayName,
+    val isOutgoing: Boolean,
+)
+
+internal fun WhisperMessage.resolveWhisperReplyTarget(currentUserName: UserName?): WhisperReplyTarget {
+    val isOutgoing = currentUserName != null && name.value.equals(currentUserName.value, ignoreCase = true)
+    return WhisperReplyTarget(
+        userId = if (isOutgoing) recipientId else userId,
+        userName = if (isOutgoing) recipientName else name,
+        displayName = if (isOutgoing) recipientDisplayName else displayName,
+        isOutgoing = isOutgoing,
+    )
 }
 
 private fun ChatMessageUiState.hasSameHighlightBackground(other: ChatMessageUiState?): Boolean = other != null &&

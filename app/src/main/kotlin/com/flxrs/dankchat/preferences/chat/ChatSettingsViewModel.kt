@@ -53,6 +53,10 @@ class ChatSettingsViewModel(
                     chatSettingsDataStore.update { it.copy(scrollbackLength = interaction.value) }
                 }
 
+                is ChatSettingsInteraction.MessageTapActionChange -> {
+                    chatSettingsDataStore.update { it.copy(messageTapAction = interaction.value) }
+                }
+
                 is ChatSettingsInteraction.ShowUsernames -> {
                     chatSettingsDataStore.update { it.copy(showUsernames = interaction.value) }
                 }
@@ -129,6 +133,7 @@ private fun ChatSettings.toState() = ChatSettingsState(
     customCommands = customCommands.toImmutableList(),
     animateGifs = animateGifs,
     scrollbackLength = scrollbackLength,
+    messageTapAction = messageTapAction,
     showUsernames = showUsernames,
     userLongClickBehavior = userLongClickBehavior,
     colorizeNicknames = colorizeNicknames,

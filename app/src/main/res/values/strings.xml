@@ -462,6 +462,15 @@
     <string name="preference_general_header">General</string>
     <string name="preference_suggestions_header">Suggestions</string>
     <string name="preference_messages_header">Messages</string>
+    <string name="preference_message_tap_action_title">Message tap action</string>
+    <string name="preference_message_tap_action_do_nothing">Do nothing</string>
+    <string name="preference_message_tap_action_reply">Reply to message</string>
+    <string name="preference_message_tap_action_mention">Mention user</string>
+    <string name="preference_message_tap_action_whisper">Whisper user</string>
+    <string name="preference_message_tap_action_open_user_card">Open user card</string>
+    <string name="preference_message_tap_action_open_message_options">Open message options</string>
+    <string name="preference_message_tap_action_copy_message">Copy message</string>
+    <string name="preference_message_tap_action_copy_full_message">Copy full message</string>
     <string name="preference_users_header">Users</string>
     <string name="preference_emotes_badges_header">Emotes &amp; Badges</string>
     <string name="preference_suggestion_mode_title">Suggestion mode</string>
