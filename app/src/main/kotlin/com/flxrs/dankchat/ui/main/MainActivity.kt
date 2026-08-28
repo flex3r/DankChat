@@ -54,6 +54,7 @@ import com.flxrs.dankchat.data.notification.ChatTTSPlayer
 import com.flxrs.dankchat.data.notification.NotificationService
 import com.flxrs.dankchat.data.repo.data.DataRepository
 import com.flxrs.dankchat.data.repo.data.ServiceEvent
+import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.about.AboutScreen
@@ -174,9 +175,7 @@ class MainActivity : ComponentActivity() {
 
         chatTTSPlayer.start()
         setupComposeUi()
-        intent.parcelable<UserName>(OPEN_CHANNEL_KEY)?.let { channel ->
-            lifecycleScope.launch { mainEventBus.emitEvent(MainEvent.OpenChannel(channel)) }
-        }
+        emitNotificationTarget(intent)
 
         viewModel.checkLogin()
         viewModel.serviceEvents
@@ -569,9 +568,19 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        val channelExtra = intent.parcelable<UserName>(OPEN_CHANNEL_KEY) ?: return
-        lifecycleScope.launch { mainEventBus.emitEvent(MainEvent.OpenChannel(channelExtra)) }
+        emitNotificationTarget(intent)
     }
+
+    private fun emitNotificationTarget(intent: Intent) {
+        val channel = intent.userNameExtra(OPEN_CHANNEL_KEY) ?: return
+        val messageId = intent.getStringExtra(OPEN_MESSAGE_KEY)
+        val whisperTarget = intent.userNameExtra(OPEN_WHISPER_TARGET_KEY)
+        lifecycleScope.launch {
+            mainEventBus.emitEvent(MainEvent.OpenChannel(channel, messageId, whisperTarget))
+        }
+    }
+
+    private fun Intent.userNameExtra(key: String): UserName? = parcelable<UserName>(key) ?: getStringExtra(key)?.toUserName()
 
     fun clearNotificationsOfChannel(channel: UserName) {
         notificationService?.clearNotificationsForChannel(channel)
@@ -669,5 +678,7 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         const val OPEN_CHANNEL_KEY = "open_channel"
+        const val OPEN_MESSAGE_KEY = "open_message"
+        const val OPEN_WHISPER_TARGET_KEY = "open_whisper_target"
     }
 }
