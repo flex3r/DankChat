@@ -5,6 +5,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import kotlinx.collections.immutable.ImmutableList
@@ -61,11 +62,42 @@ fun AnnotatedString.Builder.appendWithLinks(
     segmentStart: Int,
     links: ImmutableList<LinkUi>,
     linkColor: Color,
+) = appendWithLinks(text, segmentStart, links, linkColor, emptyList())
+
+internal fun AnnotatedString.Builder.appendWithLinks(
+    text: String,
+    segmentStart: Int,
+    links: ImmutableList<LinkUi>,
+    linkColor: Color,
+    usernameMentions: List<ResolvedUsernameMention>,
 ) {
+    val segmentEnd = segmentStart + text.length
+    val ranges =
+        buildList {
+            links.forEach { link ->
+                if (link.start >= segmentStart && link.end <= segmentEnd) {
+                    add(StyledTextRange.Link(link.start, link.end, link.url))
+                }
+            }
+            usernameMentions.forEach { mention ->
+                if (mention.start >= segmentStart && mention.end <= segmentEnd) {
+                    add(
+                        StyledTextRange.UsernameMention(
+                            mention.start,
+                            mention.end,
+                            mention.color,
+                            mention.isBold,
+                            mention.userAnnotation,
+                        ),
+                    )
+                }
+            }
+        }.sortedBy { it.start }
+
     var lastIndex = 0
-    links.forEach { link ->
-        val start = link.start - segmentStart
-        val end = link.end - segmentStart
+    ranges.forEach { range ->
+        val start = range.start - segmentStart
+        val end = range.end - segmentStart
         if (start < lastIndex || end > text.length) {
             return@forEach
         }
@@ -74,11 +106,28 @@ fun AnnotatedString.Builder.appendWithLinks(
             append(text.substring(lastIndex, start))
         }
 
-        pushStringAnnotation(tag = URL_ANNOTATION_TAG, annotation = link.url)
-        withStyle(SpanStyle(color = linkColor, textDecoration = TextDecoration.Underline)) {
-            append(text.substring(start, end))
+        when (range) {
+            is StyledTextRange.Link -> {
+                pushStringAnnotation(tag = URL_ANNOTATION_TAG, annotation = range.url)
+                withStyle(SpanStyle(color = linkColor, textDecoration = TextDecoration.Underline)) {
+                    append(text.substring(start, end))
+                }
+                pop()
+            }
+
+            is StyledTextRange.UsernameMention -> {
+                pushStringAnnotation(tag = MENTIONED_USER_ANNOTATION_TAG, annotation = range.userAnnotation)
+                withStyle(
+                    SpanStyle(
+                        color = range.color ?: Color.Unspecified,
+                        fontWeight = if (range.isBold) FontWeight.Bold else null,
+                    ),
+                ) {
+                    append(text.substring(start, end))
+                }
+                pop()
+            }
         }
-        pop()
 
         lastIndex = end
     }
@@ -86,6 +135,25 @@ fun AnnotatedString.Builder.appendWithLinks(
     if (lastIndex < text.length) {
         append(text.substring(lastIndex))
     }
+}
+
+private sealed interface StyledTextRange {
+    val start: Int
+    val end: Int
+
+    data class Link(
+        override val start: Int,
+        override val end: Int,
+        val url: String,
+    ) : StyledTextRange
+
+    data class UsernameMention(
+        override val start: Int,
+        override val end: Int,
+        val color: Color?,
+        val isBold: Boolean,
+        val userAnnotation: String,
+    ) : StyledTextRange
 }
 
 fun AnnotatedString.Builder.appendWithLinks(

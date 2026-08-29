@@ -149,6 +149,8 @@ private fun ChatSettingsScreen(
                 showUsernames = settings.showUsernames,
                 userLongClickBehavior = settings.userLongClickBehavior,
                 colorizeNicknames = settings.colorizeNicknames,
+                boldUsernameMentions = settings.boldUsernameMentions,
+                colorUsernameMentions = settings.colorUsernameMentions,
                 onNavToUserDisplays = onNavToUserDisplays,
                 onInteraction = onInteraction,
             )
@@ -281,6 +283,8 @@ private fun UsersCategory(
     showUsernames: Boolean,
     userLongClickBehavior: UserLongClickBehavior,
     colorizeNicknames: Boolean,
+    boldUsernameMentions: Boolean,
+    colorUsernameMentions: Boolean,
     onNavToUserDisplays: () -> Unit,
     onInteraction: (ChatSettingsInteraction) -> Unit,
 ) {
@@ -306,6 +310,18 @@ private fun UsersCategory(
             summary = stringResource(R.string.preference_colorize_nicknames_summary),
             isChecked = colorizeNicknames,
             onClick = { onInteraction(ChatSettingsInteraction.ColorizeNicknames(it)) },
+        )
+        SwitchPreferenceItem(
+            title = stringResource(R.string.preference_bold_username_mentions_title),
+            summary = stringResource(R.string.preference_bold_username_mentions_summary),
+            isChecked = boldUsernameMentions,
+            onClick = { onInteraction(ChatSettingsInteraction.BoldUsernameMentions(it)) },
+        )
+        SwitchPreferenceItem(
+            title = stringResource(R.string.preference_color_username_mentions_title),
+            summary = stringResource(R.string.preference_color_username_mentions_summary),
+            isChecked = colorUsernameMentions,
+            onClick = { onInteraction(ChatSettingsInteraction.ColorUsernameMentions(it)) },
         )
         PreferenceItem(
             title = stringResource(R.string.custom_user_display_title),
