@@ -12,6 +12,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -35,6 +36,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -270,7 +272,12 @@ fun ChatInputLayout(
 
                 val density = LocalDensity.current
                 var singleLineHeight by remember { mutableIntStateOf(0) }
+                val textFieldScrollState = rememberScrollState()
+                val isInputScrollable = textFieldScrollState.maxValue != Int.MAX_VALUE && textFieldScrollState.maxValue > 0
                 val textFieldEnabled = enabled && !tourState.isTourActive
+                LaunchedEffect(isInputScrollable) {
+                    callbacks.onInputScrollableChanged(isInputScrollable)
+                }
                 val onKeyboardSend: (() -> Unit) -> Unit = {
                     if (canSend) {
                         onSend()
@@ -285,7 +292,6 @@ fun ChatInputLayout(
                             if (textFieldState.text.isEmpty()) {
                                 singleLineHeight = maxOf(singleLineHeight, size.height)
                             }
-                            callbacks.onInputMultilineChanged(singleLineHeight > 0 && size.height > singleLineHeight)
                         }
 
                 val chatTextField: @Composable (Modifier, PaddingValues?) -> Unit = { textFieldModifier, contentPadding ->
@@ -298,6 +304,7 @@ fun ChatInputLayout(
                         focusRequester = focusRequester,
                         textFieldColors = textFieldColors,
                         onKeyboardAction = onKeyboardSend,
+                        scrollState = textFieldScrollState,
                         contentPadding = contentPadding,
                         modifier = textFieldModifier.then(sizeTrackingModifier),
                     )
@@ -1038,6 +1045,7 @@ private fun ChatTextField(
     focusRequester: FocusRequester,
     textFieldColors: TextFieldColors,
     onKeyboardAction: (() -> Unit) -> Unit,
+    scrollState: ScrollState,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues? = null,
 ) {
@@ -1118,6 +1126,7 @@ private fun ChatTextField(
                 imeAction = ImeAction.Send,
             ),
         onKeyboardAction = onKeyboardAction,
+        scrollState = scrollState,
     )
 }
 

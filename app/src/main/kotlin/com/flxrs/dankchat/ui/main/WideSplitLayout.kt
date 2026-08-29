@@ -56,12 +56,12 @@ internal fun BoxScope.WideSplitLayout(
     isSheetOpen: Boolean,
     isToolbarMenuOpen: Boolean,
     showInput: Boolean,
-    isInputMultiline: Boolean,
+    isInputScrollable: Boolean,
     inputPopupExpanded: Boolean,
     forceOverflowOpen: Boolean,
     swipeDownThresholdPx: Float,
     suggestionDropdown: @Composable (Modifier) -> Unit,
-    onHideInput: () -> Unit,
+    onInputSwipeDown: () -> Unit,
     onDismissInputPopup: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -148,9 +148,9 @@ internal fun BoxScope.WideSplitLayout(
                             .align(Alignment.BottomCenter)
                             .bottomInsetsPadding(scaffoldBottomInsets)
                             .swipeDownToHide(
-                                enabled = showInput && !isSheetOpen && !isInputMultiline && !isKeyboardVisible && !isEmoteMenuOpen,
+                                enabled = showInput && !isSheetOpen && !isInputScrollable && !isEmoteMenuOpen,
                                 thresholdPx = swipeDownThresholdPx,
-                                onHide = onHideInput,
+                                onHide = onInputSwipeDown,
                             ),
                 ) {
                     bottomBar()

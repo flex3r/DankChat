@@ -39,7 +39,7 @@ private const val MIN_VISIBLE_MESSAGE_LINES = 9
 internal fun BoxScope.NormalStackedLayout(
     currentStream: UserName?,
     isAudioOnly: Boolean,
-    isInputMultiline: Boolean,
+    isInputScrollable: Boolean,
     streamView: @Composable (StreamViewConfig, Modifier) -> Unit,
     hasWebViewBeenAttached: Boolean,
     streamState: StreamToolbarState,
@@ -66,7 +66,7 @@ internal fun BoxScope.NormalStackedLayout(
     forceOverflowOpen: Boolean,
     swipeDownThresholdPx: Float,
     suggestionDropdown: @Composable (Modifier) -> Unit,
-    onHideInput: () -> Unit,
+    onInputSwipeDown: () -> Unit,
     onDismissInputPopup: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -197,9 +197,9 @@ internal fun BoxScope.NormalStackedLayout(
                     .align(Alignment.BottomCenter)
                     .bottomInsetsPadding(scaffoldBottomInsets)
                     .swipeDownToHide(
-                        enabled = showInput && !isSheetOpen && !isInputMultiline && !isKeyboardVisible && !isEmoteMenuOpen,
+                        enabled = showInput && !isSheetOpen && !isInputScrollable && !isEmoteMenuOpen,
                         thresholdPx = swipeDownThresholdPx,
-                        onHide = onHideInput,
+                        onHide = onInputSwipeDown,
                     ),
         ) {
             bottomBar()
