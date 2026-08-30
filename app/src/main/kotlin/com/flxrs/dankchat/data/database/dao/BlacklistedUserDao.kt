@@ -15,6 +15,9 @@ interface BlacklistedUserDao {
     @Query("SELECT * FROM blacklisted_user_highlight")
     fun getBlacklistedUserFlow(): Flow<List<BlacklistedUserEntity>>
 
+    @Query("SELECT * FROM blacklisted_user_highlight WHERE is_regex = 0 AND username COLLATE NOCASE = :username")
+    suspend fun getExactBlacklistedUsers(username: String): List<BlacklistedUserEntity>
+
     @Upsert
     suspend fun addBlacklistedUser(user: BlacklistedUserEntity): Long
 
@@ -23,6 +26,9 @@ interface BlacklistedUserDao {
 
     @Delete
     suspend fun deleteBlacklistedUser(user: BlacklistedUserEntity)
+
+    @Query("DELETE FROM blacklisted_user_highlight WHERE is_regex = 0 AND username COLLATE NOCASE = :username")
+    suspend fun deleteExactBlacklistedUsers(username: String)
 
     @Query("DELETE FROM blacklisted_user_highlight")
     suspend fun deleteAllBlacklistedUsers()

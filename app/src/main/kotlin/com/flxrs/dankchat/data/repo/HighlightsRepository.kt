@@ -228,6 +228,33 @@ class HighlightsRepository(
         blacklistedUserDao.addBlacklistedUsers(entities)
     }
 
+    fun isUserHighlightsIgnored(name: UserName): Boolean = blacklistedUsers.value.any { !it.isRegex && it.enabled && name.value.equals(it.username, ignoreCase = true) }
+
+    suspend fun setUserHighlightsIgnored(
+        name: UserName,
+        ignored: Boolean,
+    ) {
+        if (!ignored) {
+            blacklistedUserDao.deleteExactBlacklistedUsers(name.value)
+            return
+        }
+
+        val existing = blacklistedUserDao.getExactBlacklistedUsers(name.value)
+        when {
+            existing.isEmpty() -> {
+                blacklistedUserDao.addBlacklistedUser(
+                    BlacklistedUserEntity(
+                        id = 0,
+                        enabled = true,
+                        username = name.value,
+                    ),
+                )
+            }
+
+            existing.any { !it.enabled } -> blacklistedUserDao.addBlacklistedUsers(existing.map { it.copy(enabled = true) })
+        }
+    }
+
     private fun UserNoticeMessage.calculateHighlightState(): UserNoticeMessage {
         val messageHighlights = validMessageHighlights.value
 
