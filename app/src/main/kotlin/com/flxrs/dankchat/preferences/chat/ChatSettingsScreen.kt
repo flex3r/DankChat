@@ -160,6 +160,12 @@ private fun ChatSettingsScreen(
                 onInteraction = onInteraction,
             )
             HorizontalDivider(thickness = Dp.Hairline)
+            BTTVCategory(
+                enabled = VisibleThirdPartyEmotes.BTTV in settings.visibleEmotes,
+                liveEmoteUpdates = settings.bttvLiveEmoteUpdates,
+                onInteraction = onInteraction,
+            )
+            HorizontalDivider(thickness = Dp.Hairline)
             SevenTVCategory(
                 enabled = VisibleThirdPartyEmotes.SevenTV in settings.visibleEmotes,
                 allowUnlistedSevenTvEmotes = settings.allowUnlistedSevenTvEmotes,
@@ -346,6 +352,22 @@ private fun EmotesAndBadgesCategory(
             values = VisibleThirdPartyEmotes.entries.toImmutableList(),
             entries = stringArrayResource(R.array.emotes_entries).toImmutableList(),
             onChange = { onInteraction(ChatSettingsInteraction.Emotes(it)) },
+        )
+    }
+}
+
+@Composable
+private fun BTTVCategory(
+    enabled: Boolean,
+    liveEmoteUpdates: Boolean,
+    onInteraction: (ChatSettingsInteraction) -> Unit,
+) {
+    PreferenceCategory(title = stringResource(R.string.preference_bttv_category_title)) {
+        SwitchPreferenceItem(
+            isEnabled = enabled,
+            title = stringResource(R.string.preference_bttv_live_updates_title),
+            isChecked = liveEmoteUpdates,
+            onClick = { onInteraction(ChatSettingsInteraction.BTTVLiveEmoteUpdates(it)) },
         )
     }
 }

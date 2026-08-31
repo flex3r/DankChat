@@ -65,6 +65,18 @@ class ChannelDataCoordinator(
                         update.updated.forEach { chatMessageRepository.addSystemMessage(channel, SystemMessageType.ChannelSevenTVEmoteRenamed(update.actorName, it.oldName, it.name)) }
                         update.removed.forEach { chatMessageRepository.addSystemMessage(channel, SystemMessageType.ChannelSevenTVEmoteRemoved(update.actorName, it.name)) }
                     }
+
+                    is DataUpdateEventMessage.BTTVEmoteAdded -> {
+                        chatMessageRepository.addSystemMessage(event.channel, SystemMessageType.ChannelBTTVEmoteAdded(event.emoteName))
+                    }
+
+                    is DataUpdateEventMessage.BTTVEmoteRenamed -> {
+                        chatMessageRepository.addSystemMessage(event.channel, SystemMessageType.ChannelBTTVEmoteRenamed(event.oldEmoteName, event.emoteName))
+                    }
+
+                    is DataUpdateEventMessage.BTTVEmoteRemoved -> {
+                        chatMessageRepository.addSystemMessage(event.channel, SystemMessageType.ChannelBTTVEmoteRemoved(event.emoteName))
+                    }
                 }
             }
         }

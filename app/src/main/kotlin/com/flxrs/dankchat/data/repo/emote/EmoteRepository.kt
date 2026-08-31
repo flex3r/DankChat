@@ -73,6 +73,7 @@ class EmoteRepository(
     private val globalBadges = ConcurrentHashMap<String, BadgeSet>()
     private val dankChatBadges = CopyOnWriteArrayList<DankChatBadgeDto>()
 
+    private val bttvChannelDisplayNames = ConcurrentHashMap<UserName, DisplayName>()
     private val sevenTvChannelDetails = ConcurrentHashMap<UserName, SevenTVUserDetails>()
 
     private val globalEmoteState = MutableStateFlow(GlobalEmoteState())
@@ -114,6 +115,7 @@ class EmoteRepository(
 
     fun removeChannel(channel: UserName) {
         channelEmoteStates.remove(channel)
+        bttvChannelDisplayNames.remove(channel)
         cachedEmoteMaps.remove(channel)
         cachedMergedEmotes.remove(channel)
     }
@@ -607,10 +609,60 @@ class EmoteRepository(
         channelDisplayName: DisplayName,
         bttvResult: BTTVChannelDto,
     ) = withContext(dispatchersProvider.default) {
+        bttvChannelDisplayNames[channel] = channelDisplayName
         val bttvEmotes = (bttvResult.emotes + bttvResult.sharedEmotes).map { parseBTTVEmote(it, channelDisplayName) }
         channelEmoteStates[channel]?.update {
             it.copy(bttvEmotes = bttvEmotes)
         }
+    }
+
+    suspend fun addBTTVEmote(
+        channel: UserName,
+        emote: BTTVEmoteDto,
+    ): Boolean = withContext(dispatchersProvider.default) {
+        val displayName = bttvChannelDisplayNames[channel] ?: return@withContext false
+        val parsed = parseBTTVEmote(emote, displayName)
+        var added = false
+        channelEmoteStates[channel]?.update { state ->
+            added = true
+            state.copy(bttvEmotes = state.bttvEmotes.filterNot { it.id == parsed.id } + parsed)
+        }
+        added
+    }
+
+    suspend fun updateBTTVEmote(
+        channel: UserName,
+        emote: BTTVEmoteDto,
+    ): Pair<String, String>? = withContext(dispatchersProvider.default) {
+        val displayName = bttvChannelDisplayNames[channel] ?: return@withContext null
+        val parsed = parseBTTVEmote(emote, displayName)
+        var renamed: Pair<String, String>? = null
+        channelEmoteStates[channel]?.update { state ->
+            state.copy(
+                bttvEmotes =
+                    state.bttvEmotes.map { existing ->
+                        if (existing.id == parsed.id) {
+                            renamed = existing.code to parsed.code
+                            parsed
+                        } else {
+                            existing
+                        }
+                    },
+            )
+        }
+        renamed
+    }
+
+    suspend fun removeBTTVEmote(
+        channel: UserName,
+        emoteId: String,
+    ): String? = withContext(dispatchersProvider.default) {
+        var removedName: String? = null
+        channelEmoteStates[channel]?.update { state ->
+            removedName = state.bttvEmotes.firstOrNull { it.id == emoteId }?.code
+            state.copy(bttvEmotes = state.bttvEmotes.filterNot { it.id == emoteId })
+        }
+        removedName
     }
 
     suspend fun setBTTVGlobalEmotes(globalEmotes: List<BTTVGlobalEmoteDto>) = withContext(dispatchersProvider.default) {

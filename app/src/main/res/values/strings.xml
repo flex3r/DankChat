@@ -140,6 +140,9 @@
     <string name="system_message_7tv_emote_added" comment="flex3rs added 7TV emote asd.">%1$s added 7TV Emote %2$s.</string>
     <string name="system_message_7tv_emote_renamed" comment="flex3rs renamed 7TV emote asd to ASD.">%1$s renamed 7TV Emote %2$s to %3$s.</string>
     <string name="system_message_7tv_emote_removed" comment="flex3rs removed 7TV emote asd.">%1$s removed 7TV Emote %2$s.</string>
+    <string name="system_message_bttv_emote_added" comment="A BetterTTV emote named asd was added.">BetterTTV Emote %1$s was added.</string>
+    <string name="system_message_bttv_emote_renamed" comment="A BetterTTV emote named asd was renamed to ASD.">BetterTTV Emote %1$s was renamed to %2$s.</string>
+    <string name="system_message_bttv_emote_removed" comment="A BetterTTV emote named asd was removed.">BetterTTV Emote %1$s was removed.</string>
     <string name="system_message_stream_live">%1$s is live!</string>
     <string name="system_message_stream_live_with_title">%1$s is live: %2$s</string>
     <string name="system_message_stream_offline">%1$s is now offline</string>
@@ -679,6 +682,8 @@
     <string name="preference_7tv_live_updates_key" translatable="false">7tv_live_updates_key</string>
     <string name="preference_7tv_live_updates_title">7TV live emote updates</string>
     <string name="preference_7tv_category_title" translatable="false">7TV</string>
+    <string name="preference_bttv_live_updates_title">BetterTTV live emote updates</string>
+    <string name="preference_bttv_category_title" translatable="false">BetterTTV</string>
     <string name="preference_streams_header">Livestreams</string>
     <string name="preference_retain_webview_new_key" translatable="false">retain_webview_new_key</string>
     <string name="preference_pip_key" translatable="false">pip_key</string>
