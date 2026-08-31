@@ -14,6 +14,8 @@ import com.flxrs.dankchat.data.api.helix.dto.ChatSettingsRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.CommercialRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.MarkerRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.ShieldModeRequestDto
+import com.flxrs.dankchat.data.api.helix.dto.WarnRequestDataDto
+import com.flxrs.dankchat.data.api.helix.dto.WarnRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.WhisperRequestDto
 import com.flxrs.dankchat.data.auth.AuthDataStore
 import com.flxrs.dankchat.data.repo.ShieldModeRepository
@@ -140,6 +142,8 @@ class TwitchCommandRepository(
             TwitchCommand.Vip -> addVip(command, context)
 
             TwitchCommand.Vips -> getVips(command, context)
+
+            TwitchCommand.Warn -> warnUser(command, currentUserId, context)
 
             TwitchCommand.Whisper -> sendWhisper(command, currentUserId, context.trigger, context.args)
 
@@ -377,6 +381,31 @@ class TwitchCommandRepository(
             onSuccess = { CommandResult.AcceptedTwitchCommand(command) },
             onFailure = {
                 val response = TextResource.Res(R.string.cmd_fail_ban, persistentListOf(it.toErrorMessage(command, targetUser)))
+                CommandResult.AcceptedTwitchCommand(command, response)
+            },
+        )
+    }
+
+    private suspend fun warnUser(
+        command: TwitchCommand,
+        currentUserId: UserId,
+        context: CommandContext,
+    ): CommandResult {
+        val args = context.args
+        if (args.size < 2 || args[0].isBlank() || args[1].isBlank()) {
+            return CommandResult.AcceptedTwitchCommand(command, TextResource.Res(R.string.cmd_usage_warn, persistentListOf(context.trigger)))
+        }
+
+        val target =
+            helixApiClient.getUserByName(args.first().toUserName()).getOrElse {
+                return CommandResult.AcceptedTwitchCommand(command, response = TextResource.Res(R.string.cmd_error_no_user_matching))
+            }
+        val reason = args.drop(1).joinToString(separator = " ")
+        val request = WarnRequestDto(WarnRequestDataDto(target.id, reason))
+        return helixApiClient.postWarning(context.channelId, currentUserId, request).fold(
+            onSuccess = { CommandResult.AcceptedTwitchCommand(command) },
+            onFailure = {
+                val response = TextResource.Res(R.string.cmd_fail_warn, persistentListOf(it.toErrorMessage(command, target.displayName)))
                 CommandResult.AcceptedTwitchCommand(command, response)
             },
         )
@@ -878,8 +907,16 @@ class TwitchCommandRepository(
                 TextResource.Res(R.string.cmd_error_cannot_perform, persistentListOf(command.trigger, target))
             }
 
+            HelixError.TargetCannotBeWarned -> {
+                TextResource.Res(R.string.cmd_error_cannot_perform, persistentListOf(command.trigger, target))
+            }
+
             HelixError.ConflictingBanOperation -> {
                 TextResource.Res(R.string.cmd_error_conflicting_ban)
+            }
+
+            HelixError.ConflictingWarnOperation -> {
+                TextResource.Res(R.string.cmd_error_conflicting_warn)
             }
 
             HelixError.InvalidColor -> {

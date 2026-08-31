@@ -47,7 +47,11 @@ sealed interface HelixError {
 
     data object TargetCannotBeBanned : HelixError
 
+    data object TargetCannotBeWarned : HelixError
+
     data object ConflictingBanOperation : HelixError
+
+    data object ConflictingWarnOperation : HelixError
 
     data object InvalidColor : HelixError
 
