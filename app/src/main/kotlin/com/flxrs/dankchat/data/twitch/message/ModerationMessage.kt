@@ -406,12 +406,9 @@ data class ModerationMessage(
         private fun joinDurationParts(
             parts: List<TextResource>,
             fallback: () -> TextResource,
-        ): TextResource = when (parts.size) {
-            0 -> fallback()
-            1 -> parts[0]
-            2 -> TextResource.Res(R.string.duration_join_2, persistentListOf(parts[0], parts[1]))
-            else -> TextResource.Res(R.string.duration_join_3, persistentListOf(parts[0], parts[1], parts[2]))
-        }
+        ): TextResource = parts.reduceOrNull { joined, part ->
+            TextResource.Res(R.string.duration_join_2, persistentListOf(joined, part))
+        } ?: fallback()
 
         fun parseClearChat(message: IrcMessage): ModerationMessage = with(message) {
             val channel = params[0].substring(1)
