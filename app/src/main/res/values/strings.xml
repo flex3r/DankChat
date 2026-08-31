@@ -615,6 +615,8 @@
     <string name="preference_show_chip_actions_summary">Displays chips for toggling fullscreen, streams and adjusting chat modes</string>
     <string name="preference_show_character_counter_title">Show character counter</string>
     <string name="preference_show_character_counter_summary">Displays code point count in the input field</string>
+    <string name="preference_show_send_wait_timer_title">Show countdown on slow mode or when timed out</string>
+    <string name="preference_show_send_wait_timer_summary">Shows a countdown during slow mode or a timeout</string>
     <string name="preference_show_clear_input_button_title">Show clear input button</string>
     <string name="preference_show_send_button_title">Show send button</string>
     <string name="preference_input_group_title">Input</string>

@@ -89,6 +89,7 @@ class ChatEventProcessor(
     private val channelRepository: ChannelRepository,
     private val chatSettingsDataStore: ChatSettingsDataStore,
     private val messageRateTracker: ChannelMessageRateTracker,
+    private val sendWaitRepository: SendWaitRepository,
     dispatchersProvider: DispatchersProvider,
 ) {
     private val scope = CoroutineScope(SupervisorJob() + dispatchersProvider.default)
@@ -367,9 +368,27 @@ class ChatEventProcessor(
 
             "CLEARMSG" -> handleClearMsg(msg)
 
-            "ROOMSTATE" -> channelRepository.handleRoomState(msg)
+            "ROOMSTATE" -> {
+                channelRepository.handleRoomState(msg)
+                val channel = msg.params
+                    .firstOrNull()
+                    ?.removePrefix("#")
+                    ?.toUserName()
+                if (channel != null) {
+                    sendWaitRepository.onRoomStateChanged(channel, channelRepository.getRoomState(channel)?.slowModeWaitTime)
+                }
+            }
 
-            "USERSTATE" -> userStateRepository.handleUserState(msg)
+            "USERSTATE" -> {
+                userStateRepository.handleUserState(msg)
+                val channel = msg.params
+                    .firstOrNull()
+                    ?.removePrefix("#")
+                    ?.toUserName()
+                if (channel != null) {
+                    sendWaitRepository.onHighRateLimitChanged(channel, userStateRepository.isModeratorInChannel(channel))
+                }
+            }
 
             "GLOBALUSERSTATE" -> userStateRepository.handleGlobalUserState(msg)
 
@@ -424,6 +443,12 @@ class ChatEventProcessor(
             }.getOrElse { return }
 
         chatMessageRepository.applyModerationMessage(parsed)
+
+        if (parsed.targetUser == authDataStore.userName) {
+            msg.tags["ban-duration"]?.toIntOrNull()?.let { duration ->
+                sendWaitRepository.startTimeout(parsed.channel, duration)
+            }
+        }
     }
 
     private fun handleClearMsg(msg: IrcMessage) {
@@ -466,9 +491,21 @@ class ChatEventProcessor(
     private suspend fun handleMessage(ircMessage: IrcMessage) {
         if (ircMessage.command == "NOTICE") {
             val msgId = ircMessage.tags["msg-id"]
+            val channel = ircMessage.params
+                .firstOrNull()
+                ?.removePrefix("#")
+                ?.toUserName()
+            val sendWaitNotice = parseSendWaitNotice(msgId, ircMessage.params.getOrNull(1).orEmpty())
+            if (channel != null) {
+                when (sendWaitNotice) {
+                    is SendWaitNotice.SlowMode -> sendWaitRepository.startSlowMode(channel, sendWaitNotice.durationSeconds, hasHighRateLimit = false)
+                    is SendWaitNotice.Timeout -> sendWaitRepository.startTimeout(channel, sendWaitNotice.durationSeconds)
+                    null -> Unit
+                }
+            }
             if (msgId in NoticeMessage.ROOM_STATE_CHANGE_MSG_IDS) {
-                val channel = ircMessage.params[0].substring(1).toUserName()
-                if (chatConnector.connectedAndHasModerateTopic(channel)) {
+                val noticeChannel = ircMessage.params[0].substring(1).toUserName()
+                if (chatConnector.connectedAndHasModerateTopic(noticeChannel)) {
                     return
                 }
             }
@@ -633,13 +670,19 @@ class ChatEventProcessor(
         }
 
         if (message.name == authDataStore.userName) {
+            val userState = userStateRepository.userState.value
+            val hasVip = message.badges.any { badge -> badge.badgeTag?.startsWith("vip") == true }
+            sendWaitRepository.startSlowMode(
+                channel = message.channel,
+                durationSeconds = channelRepository.getRoomState(message.channel)?.slowModeWaitTime,
+                hasHighRateLimit = message.channel in userState.moderationChannels || message.channel in userState.vipChannels || hasVip,
+            )
             val previousLastMessage = getLastMessage(message.channel).orEmpty()
             val lastMessageWasCommand = previousLastMessage.startsWith('.') || previousLastMessage.startsWith('/')
             if (!lastMessageWasCommand && previousLastMessage.withoutInvisibleChar != message.originalMessage.withoutInvisibleChar) {
                 setLastMessage(channel = message.channel, sent = message.originalMessage, typed = message.originalMessage.withoutInvisibleChar)
             }
 
-            val hasVip = message.badges.any { badge -> badge.badgeTag?.startsWith("vip") == true }
             when {
                 hasVip -> userStateRepository.addVipChannel(message.channel)
                 else -> userStateRepository.removeVipChannel(message.channel)

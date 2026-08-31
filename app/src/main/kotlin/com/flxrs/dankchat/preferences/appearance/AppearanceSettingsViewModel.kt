@@ -53,6 +53,8 @@ class AppearanceSettingsViewModel(
 
                 is AppearanceSettingsInteraction.ShowCharacterCounter -> dataStore.update { it.copy(showCharacterCounter = interaction.value) }
 
+                is AppearanceSettingsInteraction.ShowSendWaitTimer -> dataStore.update { it.copy(showSendWaitTimer = interaction.value) }
+
                 is AppearanceSettingsInteraction.ShowClearInputButton -> dataStore.update { it.copy(showClearInputButton = interaction.value) }
 
                 is AppearanceSettingsInteraction.ShowSendButton -> dataStore.update { it.copy(showSendButton = interaction.value) }

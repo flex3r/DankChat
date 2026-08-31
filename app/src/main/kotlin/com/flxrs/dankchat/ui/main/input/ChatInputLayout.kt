@@ -316,6 +316,7 @@ fun ChatInputLayout(
                             modifier = Modifier.size(40.dp),
                         )
                         chatTextField(Modifier.weight(1f), TextFieldDefaults.contentPaddingWithoutLabel(end = 8.dp))
+                        SendWaitTimer(uiState.sendWaitTime)
                         if (onNewWhisper != null) {
                             IconButton(
                                 onClick = onNewWhisper,
@@ -376,6 +377,7 @@ fun ChatInputLayout(
                     InputActionsRow(
                         inputActions = inputActions,
                         effectiveActions = effectiveActions,
+                        sendWaitTime = uiState.sendWaitTime,
                         showTheaterDockToggle = showTheaterDockToggle,
                         isTheaterChatDocked = isTheaterChatDocked,
                         onToggleTheaterChatMode = onToggleTheaterChatMode,
@@ -815,6 +817,7 @@ private fun InputOverlayHeader(
 private fun InputActionsRow(
     inputActions: ImmutableList<InputAction>,
     effectiveActions: ImmutableList<InputAction>,
+    sendWaitTime: String?,
     isEmoteMenuOpen: Boolean,
     enabled: Boolean,
     showQuickActions: Boolean,
@@ -886,6 +889,8 @@ private fun InputActionsRow(
             }
 
             Spacer(modifier = Modifier.weight(1f))
+
+            SendWaitTimer(sendWaitTime)
 
             // End-aligned group: overflow + actions + whisper + send
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -1119,6 +1124,18 @@ private fun ChatTextField(
             ),
         onKeyboardAction = onKeyboardAction,
     )
+}
+
+@Composable
+private fun SendWaitTimer(sendWaitTime: String?) {
+    if (sendWaitTime != null) {
+        Text(
+            text = sendWaitTime,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelSmall,
+            modifier = Modifier.padding(horizontal = 4.dp),
+        )
+    }
 }
 
 @Composable
