@@ -20,6 +20,7 @@ import com.flxrs.dankchat.data.api.helix.dto.ManageAutomodMessageRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.MarkerDto
 import com.flxrs.dankchat.data.api.helix.dto.MarkerRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.ModVipDto
+import com.flxrs.dankchat.data.api.helix.dto.ModifyChannelRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.PagedDto
 import com.flxrs.dankchat.data.api.helix.dto.PinnedChatMessageDto
 import com.flxrs.dankchat.data.api.helix.dto.RaidDto
@@ -27,6 +28,7 @@ import com.flxrs.dankchat.data.api.helix.dto.SendChatMessageRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.SendChatMessageResponseDto
 import com.flxrs.dankchat.data.api.helix.dto.ShieldModeRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.ShieldModeStatusDto
+import com.flxrs.dankchat.data.api.helix.dto.StreamCategoryDto
 import com.flxrs.dankchat.data.api.helix.dto.StreamDto
 import com.flxrs.dankchat.data.api.helix.dto.UserBlockDto
 import com.flxrs.dankchat.data.api.helix.dto.UserDto
@@ -109,6 +111,23 @@ class HelixApiClient(
                 .body<DataListDto<StreamDto>>()
                 .data
         }
+    }
+
+    suspend fun searchCategories(query: String): Result<List<StreamCategoryDto>> = runCatching {
+        helixApi
+            .searchCategories(query)
+            .throwHelixApiErrorOnFailure()
+            .body<DataListDto<StreamCategoryDto>>()
+            .data
+    }
+
+    suspend fun patchChannel(
+        broadcasterUserId: UserId,
+        request: ModifyChannelRequestDto,
+    ): Result<Unit> = runCatching {
+        helixApi
+            .patchChannel(broadcasterUserId, request)
+            .throwHelixApiErrorOnFailure()
     }
 
     suspend fun getUserBlocksUnvalidated(
