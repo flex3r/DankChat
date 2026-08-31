@@ -13,9 +13,13 @@ import com.flxrs.dankchat.data.repo.chat.ChatRepository
 import com.flxrs.dankchat.domain.ChannelDataCoordinator
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.model.ChannelWithRename
+import com.flxrs.dankchat.preferences.notifications.NotificationsSettingsDataStore
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -33,6 +37,7 @@ class ChannelManagementViewModel(
     private val chatNotificationRepository: ChatNotificationRepository,
     private val ignoresRepository: IgnoresRepository,
     private val channelRepository: ChannelRepository,
+    private val notificationsSettingsDataStore: NotificationsSettingsDataStore,
     channelSelectionDataStore: ChannelSelectionDataStore,
 ) : ViewModel() {
     val channels: StateFlow<ImmutableList<ChannelWithRename>> =
@@ -40,6 +45,11 @@ class ChannelManagementViewModel(
             .getChannelsWithRenamesFlow()
             .map { it.toImmutableList() }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), persistentListOf())
+
+    val mutedNotificationChannels: StateFlow<ImmutableSet<UserName>> =
+        notificationsSettingsDataStore.settings
+            .map { it.mutedChannels.toImmutableSet() }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), persistentSetOf())
 
     init {
         // Restore persisted channel selection, falling back to first channel
@@ -116,6 +126,15 @@ class ChannelManagementViewModel(
 
     fun reconnect() {
         chatConnector.reconnect()
+    }
+
+    fun setChannelNotificationsEnabled(
+        channel: UserName,
+        enabled: Boolean,
+    ) {
+        viewModelScope.launch {
+            notificationsSettingsDataStore.setChannelNotificationsEnabled(channel, enabled)
+        }
     }
 
     fun blockChannel(channel: UserName) = viewModelScope.launch {

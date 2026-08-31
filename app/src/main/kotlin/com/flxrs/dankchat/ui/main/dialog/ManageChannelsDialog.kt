@@ -27,6 +27,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -74,8 +76,10 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @Composable
 fun ManageChannelsDialog(
     channels: List<ChannelWithRename>,
+    mutedNotificationChannels: Set<UserName>,
     onApplyChanges: (List<ChannelWithRename>) -> Unit,
     onChannelSelect: (UserName) -> Unit,
+    onChannelNotificationsChange: (UserName, Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
     var channelToDelete by remember { mutableStateOf<UserName?>(null) }
@@ -138,6 +142,7 @@ fun ManageChannelsDialog(
                                         ChannelItem(
                                             channelWithRename = channelWithRename,
                                             isEditing = editingChannel == channelWithRename.channel,
+                                            notificationsEnabled = channelWithRename.channel.lowercase() !in mutedNotificationChannels,
                                             modifier =
                                                 Modifier.longPressDraggableHandle(
                                                     onDragStarted = { /* Optional haptic feedback here */ },
@@ -161,6 +166,9 @@ fun ManageChannelsDialog(
                                                 editingChannel = null
                                             },
                                             onDelete = { channelToDelete = channelWithRename.channel },
+                                            onNotificationsChange = { enabled ->
+                                                onChannelNotificationsChange(channelWithRename.channel, enabled)
+                                            },
                                         )
                                         if (index < localChannels.lastIndex) {
                                             HorizontalDivider(
@@ -205,10 +213,12 @@ fun ManageChannelsDialog(
 private fun ChannelItem(
     channelWithRename: ChannelWithRename,
     isEditing: Boolean,
+    notificationsEnabled: Boolean,
     onNavigate: () -> Unit,
     onEdit: () -> Unit,
     onRename: (String?) -> Unit,
     onDelete: () -> Unit,
+    onNotificationsChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -243,6 +253,24 @@ private fun ChannelItem(
                         .weight(1f)
                         .padding(horizontal = 8.dp),
             )
+
+            IconButton(onClick = { onNotificationsChange(!notificationsEnabled) }) {
+                Icon(
+                    imageVector =
+                        when {
+                            notificationsEnabled -> Icons.Default.Notifications
+                            else -> Icons.Default.NotificationsOff
+                        },
+                    contentDescription =
+                        stringResource(
+                            when {
+                                notificationsEnabled -> R.string.disable_channel_notifications
+                                else -> R.string.enable_channel_notifications
+                            },
+                            channelWithRename.channel.value,
+                        ),
+                )
+            }
 
             IconButton(onClick = onNavigate) {
                 Icon(
