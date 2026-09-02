@@ -22,6 +22,7 @@ import com.flxrs.dankchat.data.twitch.message.PointRedemptionMessage
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.SystemMessage
 import com.flxrs.dankchat.data.twitch.message.SystemMessageType
+import com.flxrs.dankchat.data.twitch.message.TwitchGif
 import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import com.flxrs.dankchat.data.twitch.message.aliasOrFormattedName
@@ -34,10 +35,12 @@ import com.flxrs.dankchat.data.twitch.message.recipientAliasOrFormattedName
 import com.flxrs.dankchat.data.twitch.message.senderAliasOrFormattedName
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import com.flxrs.dankchat.preferences.chat.ChatSettings
+import com.flxrs.dankchat.ui.chat.messages.common.LinkUi
 import com.flxrs.dankchat.ui.chat.messages.common.findLinks
 import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.TextResource
 import com.flxrs.dankchat.utils.extensions.parseColorOrNull
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import org.koin.core.annotation.Single
@@ -655,6 +658,8 @@ class ChatMessageMapper(
             }
 
         val rawNameColor = resolveNameColor(userDisplay?.color, color, userId, chatSettings)
+        val links = findLinks(message).toImmutableList()
+        val gifContentParts = buildTwitchGifContentParts(message, gifs, links, emoteUis, chatSettings.showTwitchGifs)
 
         return ChatMessageUiState.PrivMessageUi(
             id = id,
@@ -673,8 +678,9 @@ class ChatMessageMapper(
             rawNameColor = rawNameColor,
             nameText = nameText,
             message = message,
-            links = findLinks(message).toImmutableList(),
+            links = links,
             emotes = emoteUis,
+            gifContentParts = gifContentParts,
             isAction = isAction,
             thread = threadUi,
             highlightHeader = highlightHeader,
@@ -1037,6 +1043,87 @@ class ChatMessageMapper(
         private val CHECKERED_LIGHT = Color(android.graphics.Color.argb(CHECKERED_ALPHA, 0, 0, 0))
         private val CHECKERED_DARK = Color(android.graphics.Color.argb(CHECKERED_ALPHA, 255, 255, 255))
     }
+}
+
+internal fun buildTwitchGifContentParts(
+    message: String,
+    gifs: List<TwitchGif>,
+    links: ImmutableList<LinkUi>,
+    emotes: ImmutableList<EmoteUi>,
+    showTwitchGifs: Boolean = true,
+): ImmutableList<TwitchGifContentPartUi> {
+    if (!showTwitchGifs || gifs.isEmpty()) return persistentListOf()
+
+    val validGifs =
+        gifs
+            .sortedBy { it.position.first }
+            .filter { it.position.first >= 0 && it.position.last < message.length }
+    if (validGifs.isEmpty()) return persistentListOf()
+
+    return buildList {
+        var cursor = 0
+        validGifs.forEach { gif ->
+            if (gif.position.first < cursor) return@forEach
+            makeTwitchGifTextPart(
+                message = message,
+                start = cursor,
+                endExclusive = gif.position.first,
+                links = links,
+                emotes = emotes,
+                trimStart = cursor > 0,
+                trimEnd = true,
+            )?.let(::add)
+            add(
+                TwitchGifContentPartUi.Gif(
+                    TwitchGifUi(gif.id, gif.url, gif.altText),
+                ),
+            )
+            cursor = gif.position.last + 1
+        }
+        makeTwitchGifTextPart(
+            message = message,
+            start = cursor,
+            endExclusive = message.length,
+            links = links,
+            emotes = emotes,
+            trimStart = cursor > 0,
+            trimEnd = false,
+        )?.let(::add)
+    }.toImmutableList()
+}
+
+private fun makeTwitchGifTextPart(
+    message: String,
+    start: Int,
+    endExclusive: Int,
+    links: List<LinkUi>,
+    emotes: List<EmoteUi>,
+    trimStart: Boolean,
+    trimEnd: Boolean,
+): TwitchGifContentPartUi.Text? {
+    var contentStart = start
+    var contentEndExclusive = endExclusive
+    if (trimStart) {
+        while (contentStart < contentEndExclusive && message[contentStart] == ' ') contentStart++
+    }
+    if (trimEnd) {
+        while (contentEndExclusive > contentStart && message[contentEndExclusive - 1] == ' ') contentEndExclusive--
+    }
+    if (contentStart >= contentEndExclusive) return null
+
+    return TwitchGifContentPartUi.Text(
+        text = message.substring(contentStart, contentEndExclusive),
+        links =
+            links
+                .filter { it.start >= contentStart && it.end <= contentEndExclusive }
+                .map { it.copy(start = it.start - contentStart, end = it.end - contentStart) }
+                .toImmutableList(),
+        emotes =
+            emotes
+                .filter { it.position.first >= contentStart && it.position.last <= contentEndExclusive }
+                .map { it.copy(position = it.position.first - contentStart..it.position.last - contentStart) }
+                .toImmutableList(),
+    )
 }
 
 private fun ChatMessageUiState.hasSameHighlightBackground(other: ChatMessageUiState?): Boolean = other != null &&

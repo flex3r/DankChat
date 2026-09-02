@@ -26,11 +26,17 @@ data class PrivMessage(
     val color: Int? = null,
     val message: String,
     val originalMessage: String = message,
+    val tags: Map<String, String>,
     val emotes: List<ChatMessageEmote> = emptyList(),
+    val gifs: List<TwitchGif> = emptyList(),
+    val gifData: TwitchGifData =
+        TwitchGifData(
+            message = originalMessage,
+            gifs = parseTwitchGifTag(originalMessage, tags["gifs"].orEmpty()),
+        ),
     val isAction: Boolean = false,
     val badges: List<Badge> = emptyList(),
     val timedOut: Boolean = false,
-    val tags: Map<String, String>,
     val userDisplay: UserDisplay? = null,
     val thread: MessageThreadHeader? = null,
     val replyMentionOffset: Int = 0,
@@ -81,6 +87,8 @@ data class PrivMessage(
                     ?.toUserId()
                     ?.let(findChannel)
 
+            val gifs = parseTwitchGifTag(message, tags["gifs"].orEmpty())
+
             return PrivMessage(
                 timestamp = ts,
                 channel = channel,
@@ -89,6 +97,8 @@ data class PrivMessage(
                 displayName = displayName.toDisplayName(),
                 color = color,
                 message = message,
+                gifs = gifs,
+                gifData = TwitchGifData(message, gifs),
                 isAction = isAction,
                 id = id,
                 userId = tags["user-id"]?.toUserId(),

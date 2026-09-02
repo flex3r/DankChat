@@ -154,6 +154,7 @@ private fun ChatSettingsScreen(
             )
             HorizontalDivider(thickness = Dp.Hairline)
             EmotesAndBadgesCategory(
+                showTwitchGifs = settings.showTwitchGifs,
                 animateGifs = settings.animateGifs,
                 visibleBadges = settings.visibleBadges,
                 visibleEmotes = settings.visibleEmotes,
@@ -318,12 +319,18 @@ private fun UsersCategory(
 
 @Composable
 private fun EmotesAndBadgesCategory(
+    showTwitchGifs: Boolean,
     animateGifs: Boolean,
     visibleBadges: ImmutableList<VisibleBadges>,
     visibleEmotes: ImmutableList<VisibleThirdPartyEmotes>,
     onInteraction: (ChatSettingsInteraction) -> Unit,
 ) {
     PreferenceCategory(title = stringResource(R.string.preference_emotes_badges_header)) {
+        SwitchPreferenceItem(
+            title = stringResource(R.string.preference_show_twitch_gifs_title),
+            isChecked = showTwitchGifs,
+            onClick = { onInteraction(ChatSettingsInteraction.ShowTwitchGifs(it)) },
+        )
         SwitchPreferenceItem(
             title = stringResource(R.string.preference_animate_gifs_title),
             isChecked = animateGifs,

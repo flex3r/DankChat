@@ -38,9 +38,12 @@ import com.flxrs.dankchat.data.twitch.emote.GenericEmote
 import com.flxrs.dankchat.data.twitch.emote.toChatMessageEmoteType
 import com.flxrs.dankchat.data.twitch.message.EmoteWithPositions
 import com.flxrs.dankchat.data.twitch.message.Message
+import com.flxrs.dankchat.data.twitch.message.PositionedTextEdit
+import com.flxrs.dankchat.data.twitch.message.PositionedTextEditOverlapPolicy
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
+import com.flxrs.dankchat.data.twitch.message.applyTextEdits
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.chat.ChatSettingsDataStore
 import com.flxrs.dankchat.utils.extensions.analyzeCodePoints
@@ -213,10 +216,33 @@ class EmoteRepository(
                 ESCAPE_TAG_REGEX,
                 ZERO_WIDTH_JOINER,
             )
+        var adjustedGifs = (message as? PrivMessage)?.gifData?.gifs.orEmpty()
+        if (adjustedGifs.isNotEmpty()) {
+            adjustedGifs = adjustedGifs.applyTextEdits(
+                ESCAPE_TAG_REGEX
+                    .findAll(messageString)
+                    .map { match ->
+                        PositionedTextEdit(match.range.first, match.range.last + 1, ZERO_WIDTH_JOINER.length)
+                    }.toList(),
+                PositionedTextEditOverlapPolicy.PreserveContainedEdits,
+            )
+        }
 
         // Combined single-pass: find supplementary codepoint positions AND remove duplicate whitespace
         val (supplementaryCodePointPositions, duplicateSpaceAdjustedMessage, removedSpaces) = withEmojiFix.analyzeCodePoints()
+        if (adjustedGifs.isNotEmpty()) {
+            adjustedGifs = adjustedGifs.applyTextEdits(
+                duplicateWhitespaceEdits(withEmojiFix),
+                PositionedTextEditOverlapPolicy.PreserveContainedEdits,
+            )
+        }
         val (appendedSpaceAdjustedMessage, appendedSpaces) = duplicateSpaceAdjustedMessage.appendSpacesBetweenEmojiGroup()
+        if (adjustedGifs.isNotEmpty()) {
+            adjustedGifs = adjustedGifs.applyTextEdits(
+                appendedSpaces.map { position -> PositionedTextEdit(position, position, 1) },
+                PositionedTextEditOverlapPolicy.PreserveContainedEdits,
+            )
+        }
 
         val twitchEmotes =
             parseTwitchEmotes(
@@ -237,11 +263,19 @@ class EmoteRepository(
         )
         val emotes = twitchEmotes + thirdPartyEmotes + cheermotes
 
-        val (adjustedMessage, adjustedEmotes) = adjustOverlayEmotes(appendedSpaceAdjustedMessage, emotes)
+        val overlayResult = adjustOverlayEmotes(appendedSpaceAdjustedMessage, emotes, trackTextEdits = adjustedGifs.isNotEmpty())
+        val (adjustedMessage, adjustedEmotes) = overlayResult
+        if (adjustedGifs.isNotEmpty()) {
+            adjustedGifs =
+                adjustedGifs.applyTextEdits(
+                    overlayResult.textEdits,
+                    PositionedTextEditOverlapPolicy.PreserveContainedEdits,
+                )
+        }
         val messageWithEmotes =
             when (message) {
                 is PrivMessage -> {
-                    message.copy(message = adjustedMessage, emotes = adjustedEmotes, originalMessage = withEmojiFix)
+                    message.copy(message = adjustedMessage, emotes = adjustedEmotes, gifs = adjustedGifs, originalMessage = withEmojiFix)
                 }
 
                 is WhisperMessage -> {
@@ -832,12 +866,14 @@ class EmoteRepository(
     }
 
     @VisibleForTesting
-    fun adjustOverlayEmotes(
+    internal fun adjustOverlayEmotes(
         message: String,
         emotes: List<ChatMessageEmote>,
-    ): Pair<String, List<ChatMessageEmote>> {
+        trackTextEdits: Boolean = false,
+    ): OverlayAdjustmentResult {
         var adjustedMessage = message
         val adjustedEmotes = emotes.sortedBy { it.position.first }.toMutableList()
+        val textEdits = mutableListOf<PositionedTextEdit>()
 
         for (i in adjustedEmotes.lastIndex downTo 0) {
             val emote = adjustedEmotes[i]
@@ -863,11 +899,15 @@ class EmoteRepository(
                         break
                     }
 
-                    adjustedMessage =
+                    val removalEndExclusive =
                         when (emote.position.last) {
-                            adjustedMessage.length -> adjustedMessage.substring(0, emote.position.first)
-                            else -> adjustedMessage.removeRange(emote.position)
+                            adjustedMessage.length -> adjustedMessage.length
+                            else -> (emote.position.last + 1).coerceAtMost(adjustedMessage.length)
                         }
+                    adjustedMessage = adjustedMessage.removeRange(emote.position.first, removalEndExclusive)
+                    if (trackTextEdits) {
+                        textEdits += PositionedTextEdit(emote.position.first, removalEndExclusive, 0)
+                    }
                     adjustedEmotes[i] = emote.copy(position = previousEmote.position)
                     foundEmote = true
 
@@ -890,7 +930,28 @@ class EmoteRepository(
             }
         }
 
-        return adjustedMessage to adjustedEmotes
+        return OverlayAdjustmentResult(adjustedMessage, adjustedEmotes, textEdits)
+    }
+
+    internal data class OverlayAdjustmentResult(
+        val message: String,
+        val emotes: List<ChatMessageEmote>,
+        val textEdits: List<PositionedTextEdit>,
+    )
+
+    private fun duplicateWhitespaceEdits(message: String): List<PositionedTextEdit> = buildList {
+        var previousWhitespace = false
+        var offset = 0
+        while (offset < message.length) {
+            val codePoint = message.codePointAt(offset)
+            val length = Character.charCount(codePoint)
+            val isWhitespace = Character.isWhitespace(codePoint) || codePoint == 0x3164
+            if (previousWhitespace && isWhitespace) {
+                add(PositionedTextEdit(offset, offset + length, 0))
+            }
+            previousWhitespace = isWhitespace
+            offset += length
+        }
     }
 
     /**

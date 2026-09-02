@@ -45,6 +45,10 @@ class ChatSettingsViewModel(
                     chatSettingsDataStore.update { it.copy(customCommands = interaction.value) }
                 }
 
+                is ChatSettingsInteraction.ShowTwitchGifs -> {
+                    chatSettingsDataStore.update { it.copy(showTwitchGifs = interaction.value) }
+                }
+
                 is ChatSettingsInteraction.AnimateGifs -> {
                     chatSettingsDataStore.update { it.copy(animateGifs = interaction.value) }
                 }
@@ -127,6 +131,7 @@ private fun ChatSettings.toState() = ChatSettingsState(
     suggestionTypes = suggestionTypes.toImmutableList(),
     suggestionMode = suggestionMode,
     customCommands = customCommands.toImmutableList(),
+    showTwitchGifs = showTwitchGifs,
     animateGifs = animateGifs,
     scrollbackLength = scrollbackLength,
     showUsernames = showUsernames,

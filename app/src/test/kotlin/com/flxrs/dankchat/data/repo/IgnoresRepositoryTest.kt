@@ -5,6 +5,11 @@ import com.flxrs.dankchat.data.database.dao.MessageIgnoreDao
 import com.flxrs.dankchat.data.database.dao.UserIgnoreDao
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntity
 import com.flxrs.dankchat.data.database.entity.MessageIgnoreEntityType
+import com.flxrs.dankchat.data.toDisplayName
+import com.flxrs.dankchat.data.toUserName
+import com.flxrs.dankchat.data.twitch.message.PrivMessage
+import com.flxrs.dankchat.data.twitch.message.TwitchGif
+import com.flxrs.dankchat.data.twitch.message.TwitchGifData
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.preferences.DankChatPreferenceStore
 import io.mockk.every
@@ -17,6 +22,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -32,7 +38,7 @@ internal class IgnoresRepositoryTest {
 
     private val messageIgnoreDao = FakeMessageIgnoreDao()
 
-    private fun createRepository(): IgnoresRepository = IgnoresRepository(
+    private fun createRepository(messageIgnoreDao: MessageIgnoreDao = this.messageIgnoreDao): IgnoresRepository = IgnoresRepository(
         helixApiClient = mockk<HelixApiClient>(),
         messageIgnoreDao = messageIgnoreDao,
         userIgnoreDao = mockk<UserIgnoreDao> { every { getUserIgnoresFlow() } returns flowOf(emptyList()) },
@@ -45,7 +51,8 @@ internal class IgnoresRepositoryTest {
         type: MessageIgnoreEntityType,
         enabled: Boolean = false,
         pattern: String = "",
-    ) = MessageIgnoreEntity(id = id, enabled = enabled, type = type, pattern = pattern)
+        replacement: String? = null,
+    ) = MessageIgnoreEntity(id = id, enabled = enabled, type = type, pattern = pattern, replacement = replacement)
 
     @Test
     fun `all defaults are added to an empty database`() = runTest(testDispatcher) {
@@ -108,6 +115,73 @@ internal class IgnoresRepositoryTest {
         repository.runMigrationsIfNeeded().join()
 
         assertEquals(afterFirstRun, messageIgnoreDao.getMessageIgnores())
+    }
+
+    @Test
+    fun `literal replacement escaping does not shift gifs by the escaped length`() = runTest(testDispatcher) {
+        listOf("$", "\\").forEachIndexed { index, replacement ->
+            val dao = FakeMessageIgnoreDao()
+            dao.seed(
+                ignoreEntity(
+                    id = index + 1L,
+                    enabled = true,
+                    type = MessageIgnoreEntityType.Custom,
+                    pattern = "x",
+                    replacement = replacement,
+                ),
+            )
+            val repository = createRepository(dao)
+            val source = "x [GIF]"
+            val gif = TwitchGif("gif", "https://example.com/a.gif", "[GIF]", 2..6)
+            val message =
+                PrivMessage(
+                    channel = "forsen".toUserName(),
+                    sourceChannel = null,
+                    name = "forsen".toUserName(),
+                    displayName = "forsen".toDisplayName(),
+                    message = source,
+                    tags = emptyMap(),
+                    gifs = listOf(gif),
+                    gifData = TwitchGifData(source, listOf(gif)),
+                )
+
+            val filtered = assertIs<PrivMessage>(repository.applyIgnores(message))
+
+            assertEquals("$replacement [GIF]", filtered.message)
+            assertEquals(2..6, filtered.gifs.single().position)
+        }
+    }
+
+    @Test
+    fun `replacement intersecting gif fallback removes the gif`() = runTest(testDispatcher) {
+        messageIgnoreDao.seed(
+            ignoreEntity(
+                id = 1,
+                enabled = true,
+                type = MessageIgnoreEntityType.Custom,
+                pattern = "GIF",
+                replacement = "image",
+            ),
+        )
+        val repository = createRepository()
+        val source = "before [GIF] after"
+        val gif = TwitchGif("gif", "https://example.com/a.gif", "[GIF]", 7..11)
+        val message =
+            PrivMessage(
+                channel = "forsen".toUserName(),
+                sourceChannel = null,
+                name = "forsen".toUserName(),
+                displayName = "forsen".toDisplayName(),
+                message = source,
+                tags = emptyMap(),
+                gifs = listOf(gif),
+                gifData = TwitchGifData(source, listOf(gif)),
+            )
+
+        val filtered = assertIs<PrivMessage>(repository.applyIgnores(message))
+
+        assertEquals("before [image] after", filtered.message)
+        assertTrue(filtered.gifs.isEmpty())
     }
 }
 

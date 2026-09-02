@@ -50,6 +50,7 @@ sealed interface ChatMessageUiState {
         val message: String,
         val links: ImmutableList<LinkUi>,
         val emotes: ImmutableList<EmoteUi>,
+        val gifContentParts: ImmutableList<TwitchGifContentPartUi> = persistentListOf(),
         val isAction: Boolean,
         val thread: ThreadUi?,
         val highlightHeader: TextResource? = null,
@@ -252,6 +253,28 @@ data class EmoteUi(
     val cheerAmount: Int? = null,
     val cheerColor: Color? = null,
 )
+
+@Immutable
+data class TwitchGifUi(
+    val id: String,
+    val url: String,
+    val altText: String,
+)
+
+@Immutable
+sealed interface TwitchGifContentPartUi {
+    @Immutable
+    data class Text(
+        val text: String,
+        val links: ImmutableList<LinkUi>,
+        val emotes: ImmutableList<EmoteUi>,
+    ) : TwitchGifContentPartUi
+
+    @Immutable
+    data class Gif(
+        val gif: TwitchGifUi,
+    ) : TwitchGifContentPartUi
+}
 
 @Immutable
 data class ThreadUi(

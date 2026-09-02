@@ -11,9 +11,11 @@ import com.flxrs.dankchat.data.database.entity.UserIgnoreEntity
 import com.flxrs.dankchat.data.twitch.message.EmoteWithPositions
 import com.flxrs.dankchat.data.twitch.message.Message
 import com.flxrs.dankchat.data.twitch.message.PointRedemptionMessage
+import com.flxrs.dankchat.data.twitch.message.PositionedTextEdit
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
 import com.flxrs.dankchat.data.twitch.message.UserNoticeMessage
 import com.flxrs.dankchat.data.twitch.message.WhisperMessage
+import com.flxrs.dankchat.data.twitch.message.applyTextEdits
 import com.flxrs.dankchat.data.twitch.message.isAnnouncement
 import com.flxrs.dankchat.data.twitch.message.isElevatedMessage
 import com.flxrs.dankchat.data.twitch.message.isFirstMessage
@@ -272,9 +274,12 @@ class IgnoresRepository(
             .isIgnoredMessageWithReplacement(message) { replacement ->
                 replacement ?: return null
                 val filteredPositions = adaptEmotePositions(replacement, emoteData.emotesWithPositions)
+                val adjustedGifs = gifData.gifs.applyTextEdits(replacement.toTextEdits())
                 return copy(
                     message = replacement.filtered,
                     originalMessage = replacement.filtered,
+                    gifs = adjustedGifs,
+                    gifData = gifData.copy(message = replacement.filtered, gifs = adjustedGifs),
                     emoteData = emoteData.copy(message = replacement.filtered, emotesWithPositions = filteredPositions),
                 )
             }
@@ -334,7 +339,7 @@ class IgnoresRepository(
 
     private data class ReplacementResult(
         val filtered: String,
-        val replacement: String,
+        val replacementLength: Int,
         val matchedRanges: List<IntRange>,
     )
 
@@ -347,9 +352,15 @@ class IgnoresRepository(
             val results = regex.findAll(message).toList()
 
             if (results.isNotEmpty()) {
-                ignoreEntity.escapedReplacement?.let { replacement ->
-                    val filtered = message.replace(regex, replacement)
-                    return onReplacement(ReplacementResult(filtered, replacement, results.map(MatchResult::range)))
+                ignoreEntity.escapedReplacement?.let { escapedReplacement ->
+                    val filtered = message.replace(regex, escapedReplacement)
+                    return onReplacement(
+                        ReplacementResult(
+                            filtered = filtered,
+                            replacementLength = ignoreEntity.replacement.orEmpty().length,
+                            matchedRanges = results.map(MatchResult::range),
+                        ),
+                    )
                 }
 
                 return onReplacement(null)
@@ -368,10 +379,18 @@ class IgnoresRepository(
                     val offset =
                         replacement.matchedRanges
                             .filter { it.last < pos.first } // only replacements before an emote need to be considered
-                            .sumOf { replacement.replacement.length - (it.last + 1 - it.first) } // change between original match and replacement
+                            .sumOf { replacement.replacementLength - (it.last + 1 - it.first) } // change between original match and replacement
                     pos.first + offset..pos.last + offset // add sum of changes to the emote position
                 }
         emoteWithPos.copy(positions = adjusted)
+    }
+
+    private fun ReplacementResult.toTextEdits(): List<PositionedTextEdit> = matchedRanges.map { range ->
+        PositionedTextEdit(
+            start = range.first,
+            endExclusive = range.last + 1,
+            replacementLength = replacementLength,
+        )
     }
 
     private operator fun IntRange.contains(other: IntRange): Boolean = other.first >= first && other.last <= last
