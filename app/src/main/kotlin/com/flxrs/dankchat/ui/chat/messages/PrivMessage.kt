@@ -330,6 +330,7 @@ private fun PrivMessageText(
         emotes = message.emotes,
         fontSize = fontSize,
         animateGifs = animateGifs,
+        isAsciiArt = message.isAsciiArt,
         interactionSource = interactionSource,
         onEmoteClick = onEmoteClick,
         onTextClick = { offset ->

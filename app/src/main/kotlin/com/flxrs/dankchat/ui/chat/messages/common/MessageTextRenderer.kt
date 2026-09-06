@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +22,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
@@ -50,6 +52,7 @@ fun MessageTextWithInlineContent(
     onTextClick: (Int) -> Unit,
     onEmoteClick: (List<EmoteSheetData>) -> Unit,
     modifier: Modifier = Modifier,
+    isAsciiArt: Boolean = false,
     onTextLongClick: ((Int) -> Unit)? = null,
     interactionSource: MutableInteractionSource? = null,
 ) {
@@ -134,12 +137,18 @@ fun MessageTextWithInlineContent(
         inlineContentProviders = inlineContentProviders,
         style = TextStyle(fontSize = fontSize.sp),
         knownDimensions = knownDimensions,
-        modifier = modifier.fillMaxWidth(),
+        modifier =
+            modifier
+                .then(if (isAsciiArt) Modifier.widthIn(max = ASCII_ART_MAX_WIDTH) else Modifier)
+                .fillMaxWidth(),
         interactionSource = interactionSource,
         onTextClick = onTextClick,
         onTextLongClick = onTextLongClick,
     )
 }
+
+// Compose's density-independent pixels match the logical CSS-pixel chat width.
+private val ASCII_ART_MAX_WIDTH = 300.dp
 
 private fun EmoteUi.dimensionKey(baseHeightPx: Int): String = when {
     urls.size == 1 -> singleEmoteCacheKey(urls.first(), baseHeightPx)
