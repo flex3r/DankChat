@@ -16,6 +16,8 @@ data class TwitchGifData(
     val gifs: List<TwitchGif>,
 )
 
+// The `gifs` tag contains comma-separated `start-end|id|url` entries:
+// https://dev.twitch.tv/docs/chat/irc/#:~:text=its%20succeeding%20whitespace.-,gifs,-Comma%2Dseparated%20list
 internal fun parseTwitchGifTag(
     message: String,
     tag: String,
@@ -59,6 +61,10 @@ private fun String.isValidHttpsUrl(): Boolean = runCatching {
     uri.scheme.equals("https", ignoreCase = true) && !uri.host.isNullOrEmpty()
 }.getOrDefault(false)
 
+// Giphy provides GIF, MP4 and WebP versions. We use the 200px-high `200.webp` because
+// WebP is more size efficient than GIF.
+// Giphy's MP4 files are smaller than WebP, but do not support transparency.
+// https://developers.giphy.com/docs/api/schema/image-object/
 internal fun String.toTwitchGifLoadUrl(): String {
     val uri = runCatching { URI(this) }.getOrNull() ?: return this
     val host = uri.host?.lowercase() ?: return this
