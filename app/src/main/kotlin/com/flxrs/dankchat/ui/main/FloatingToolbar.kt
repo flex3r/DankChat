@@ -31,7 +31,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.isImeVisible
@@ -101,6 +100,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -161,6 +161,7 @@ fun FloatingToolbar(
     streamToolbarAlpha: () -> Float = { 1f },
 ) {
     val density = LocalDensity.current
+    val popupMaxWidthPx = LocalWindowInfo.current.containerSize.width
     var showOverflowMenu by remember { mutableStateOf(false) }
     var showQuickSwitch by remember { mutableStateOf(false) }
     var overflowInitialMenu by remember { mutableStateOf<AppBarMenu>(AppBarMenu.Main) }
@@ -224,7 +225,7 @@ fun FloatingToolbar(
         Box(
             modifier =
                 Modifier
-                    .fillMaxSize()
+                    .coverWindow()
                     .clickable(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
@@ -496,7 +497,7 @@ fun FloatingToolbar(
                                 modifier =
                                     Modifier
                                         .padding(top = 4.dp)
-                                        .endAlignedOverflow(),
+                                        .endAlignedOverflow(popupMaxWidthPx),
                             ) {
                                 var quickSwitchBackProgress by remember { mutableFloatStateOf(0f) }
                                 Surface(
@@ -536,7 +537,7 @@ fun FloatingToolbar(
                                         modifier =
                                             Modifier
                                                 .width(IntrinsicSize.Min)
-                                                .widthIn(min = 125.dp, max = 200.dp)
+                                                .widthIn(min = 125.dp, max = 280.dp)
                                                 .heightIn(max = quickSwitchMaxHeightDp),
                                     ) {
                                         // Freeze the displayed selection while the dropdown is closing so the newly
@@ -874,7 +875,7 @@ fun FloatingToolbar(
                                         Modifier
                                             .skipIntrinsicHeight()
                                             .padding(top = 4.dp)
-                                            .endAlignedOverflow(),
+                                            .endAlignedOverflow(popupMaxWidthPx),
                                 ) {
                                     InlineOverflowMenu(
                                         isLoggedIn = isLoggedIn,
@@ -897,13 +898,8 @@ fun FloatingToolbar(
     }
 }
 
-/**
- * Allows the child to measure at its natural width (up to 3x parent width)
- * without affecting the parent Column's width.
- * Reports 0 intrinsic width so [IntrinsicSize.Min] ignores this child.
- * Places the child end-aligned (right edge matches parent right edge).
- */
-private fun Modifier.endAlignedOverflow() = this.then(
+// Popups measure up to the window width and hang off the end edge, invisible to the pill's intrinsic width
+private fun Modifier.endAlignedOverflow(maxWidthPx: Int) = this.then(
     object : LayoutModifier {
         override fun MeasureScope.measure(
             measurable: Measurable,
@@ -912,7 +908,7 @@ private fun Modifier.endAlignedOverflow() = this.then(
             val parentWidth = constraints.maxWidth
             val placeable =
                 measurable.measure(
-                    constraints.copy(minWidth = 0, maxWidth = (parentWidth * 3).coerceAtMost(MAX_LAYOUT_SIZE)),
+                    constraints.copy(minWidth = 0, maxWidth = maxWidthPx),
                 )
             return layout(parentWidth, placeable.height) {
                 placeable.place(parentWidth - placeable.width, 0)
@@ -980,7 +976,6 @@ private fun Modifier.skipIntrinsicHeight() = this.then(
     },
 )
 
-private const val MAX_LAYOUT_SIZE = 16_777_215
 private val TOOLBAR_ACTION_SLOT_WIDTH = 48.dp
 private val MIN_TABS_PILL_WIDTH = 120.dp
 
