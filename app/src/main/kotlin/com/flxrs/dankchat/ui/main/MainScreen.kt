@@ -105,6 +105,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 private val ROUNDED_CORNER_THRESHOLD = 8.dp
+private const val QUICK_SWITCH_HEIGHT_FRACTION = 0.5f
 
 // Per-layout parameters for the movable stream content
 internal data class StreamViewConfig(
@@ -449,6 +450,12 @@ fun MainScreen(
         val menuMaxHeightDp =
             (containerHeightDp - toolbarBottomDp - inputHeightDp - bottomReserveDp - 8.dp)
                 .coerceAtLeast(0.dp)
+        // Half of the chat area in portrait, landscape has little height to give up
+        val quickSwitchMaxHeightDp =
+            when {
+                isLandscape -> menuMaxHeightDp
+                else -> menuMaxHeightDp * QUICK_SWITCH_HEIGHT_FRACTION
+            }
         Box(
             modifier =
                 Modifier
@@ -734,6 +741,7 @@ fun MainScreen(
                     onAddChannelTooltipDismiss = featureTourViewModel::onToolbarHintDismissed,
                     onSkipTour = featureTourViewModel::skipTour,
                     menuMaxHeightDp = menuMaxHeightDp,
+                    quickSwitchMaxHeightDp = quickSwitchMaxHeightDp,
                     onToolbarBottomChange = { toolbarBottomPx = it },
                     isEmoteMenuOpen = inputState.isEmoteMenuOpen,
                     onCloseEmoteMenu = { chatInputViewModel.setEmoteMenuOpen(false) },

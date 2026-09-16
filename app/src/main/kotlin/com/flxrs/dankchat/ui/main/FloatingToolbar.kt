@@ -150,6 +150,7 @@ fun FloatingToolbar(
     onAddChannelTooltipDismiss: () -> Unit = {},
     onSkipTour: () -> Unit = {},
     menuMaxHeightDp: Dp = 0.dp,
+    quickSwitchMaxHeightDp: Dp = menuMaxHeightDp,
     onToolbarBottomChange: (Int) -> Unit = {},
     isEmoteMenuOpen: Boolean = false,
     onCloseEmoteMenu: () -> Unit = {},
@@ -162,12 +163,19 @@ fun FloatingToolbar(
     var overflowInitialMenu by remember { mutableStateOf<AppBarMenu>(AppBarMenu.Main) }
     var toolbarRowHeight by remember { mutableFloatStateOf(0f) }
 
+    val hasStream = currentStream != null && streamHeightDp > 0.dp
     val statusBarTopPx = WindowInsets.statusBars.getTop(density)
     val toolbarBottomPx = with(density) {
+        // Under a stream the toolbar sits below the video instead of the status bar
+        val toolbarTopPx =
+            when {
+                hasStream -> streamHeightDp.roundToPx()
+                else -> statusBarTopPx
+            }
         when {
             isFullscreen -> 0
             !showAppBar -> statusBarTopPx
-            else -> statusBarTopPx + (8.dp.toPx() + 16.dp.toPx()).toInt() + toolbarRowHeight.toInt()
+            else -> toolbarTopPx + (8.dp.toPx() + 16.dp.toPx()).toInt() + toolbarRowHeight.toInt()
         }
     }
     LaunchedEffect(toolbarBottomPx) { onToolbarBottomChange(toolbarBottomPx) }
@@ -224,8 +232,6 @@ fun FloatingToolbar(
                     },
         )
     }
-
-    val hasStream = currentStream != null && streamHeightDp > 0.dp
 
     AnimatedVisibility(
         visible = showAppBar && !isFullscreen,
@@ -509,7 +515,12 @@ fun FloatingToolbar(
                                     var itemHeightPx by remember { mutableIntStateOf(0) }
                                     val scrollbarAlpha = remember { Animatable(RESTING_SCROLLBAR_ALPHA) }
                                     LaunchedEffect(Unit) {
-                                        val maxScroll = snapshotFlow { quickSwitchScrollState.maxValue }.first { it != Int.MAX_VALUE }
+                                        val (maxScroll, rowHeight, viewport) =
+                                            snapshotFlow { Triple(quickSwitchScrollState.maxValue, itemHeightPx, quickSwitchScrollState.viewportSize) }
+                                                .first { (max, row, _) -> max != Int.MAX_VALUE && row > 0 }
+                                        // Opens centered on the selected channel instead of the top of the list
+                                        val selectedTop = with(density) { 8.dp.roundToPx() } + selectedIndex * rowHeight
+                                        quickSwitchScrollState.scrollTo((selectedTop - (viewport - rowHeight) / 2).coerceIn(0, maxScroll))
                                         if (maxScroll > 0) {
                                             scrollbarAlpha.snapTo(1f)
                                             delay(400)
@@ -522,7 +533,7 @@ fun FloatingToolbar(
                                             Modifier
                                                 .width(IntrinsicSize.Min)
                                                 .widthIn(min = 125.dp, max = 200.dp)
-                                                .heightIn(max = menuMaxHeightDp),
+                                                .heightIn(max = quickSwitchMaxHeightDp),
                                     ) {
                                         // Freeze the displayed selection while the dropdown is closing so the newly
                                         // picked row doesn't flash as selected before the exit animation completes.
@@ -550,6 +561,7 @@ fun FloatingToolbar(
                                                 Row(
                                                     modifier =
                                                         Modifier
+                                                            .then(if (index == 0) Modifier.onSizeChanged { itemHeightPx = it.height } else Modifier)
                                                             .fillMaxWidth()
                                                             .clickable {
                                                                 frozenSelection = selectedIndex
@@ -557,8 +569,7 @@ fun FloatingToolbar(
                                                                 showQuickSwitch = false
                                                             }.selectedIndicatorBar(isSelected, selectedIndicatorColor)
                                                             .defaultMinSize(minHeight = 48.dp)
-                                                            .padding(horizontal = 16.dp, vertical = 10.dp)
-                                                            .then(if (index == 0) Modifier.onSizeChanged { itemHeightPx = it.height } else Modifier),
+                                                            .padding(horizontal = 16.dp, vertical = 10.dp),
                                                     verticalAlignment = Alignment.CenterVertically,
                                                     horizontalArrangement = Arrangement.Start,
                                                 ) {
