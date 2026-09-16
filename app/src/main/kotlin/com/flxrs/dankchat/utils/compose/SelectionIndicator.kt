@@ -21,6 +21,7 @@ import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlin.math.absoluteValue
 
 /**
  * Tracks per-tab position and width so [PagerTabIndicator] can interpolate smoothly during swipes.
@@ -70,6 +71,7 @@ fun PagerTabIndicator(
     state: PagerTabIndicatorState,
     color: Color,
     modifier: Modifier = Modifier,
+    pageIndex: (Int) -> Int = { it },
     height: Dp = 3.dp,
     bottomInset: Dp = 8.dp,
 ) {
@@ -79,12 +81,14 @@ fun PagerTabIndicator(
         modifier = modifier
             // defer reads of the frequently changing pager offset to the layout phase to avoid recomposing on every swipe frame
             .layout { measurable, _ ->
-                val pagerOffset = pagerState.currentPage + pagerState.currentPageOffsetFraction
-                val lowIndex = pagerOffset.toInt().coerceIn(0, state.offsets.lastIndex)
-                val highIndex = (lowIndex + 1).coerceAtMost(state.offsets.lastIndex)
-                val fraction = (pagerOffset - lowIndex).coerceIn(0f, 1f)
-                val offsetPx = (state.offsets[lowIndex] * (1f - fraction) + state.offsets[highIndex] * fraction).toInt()
-                val widthPx = (state.widths[lowIndex] * (1f - fraction) + state.widths[highIndex] * fraction).toInt().coerceAtLeast(0)
+                val currentPage = pagerState.currentPage
+                val offsetFraction = pagerState.currentPageOffsetFraction
+                val adjacentPage = currentPage + if (offsetFraction < 0f) -1 else 1
+                val currentIndex = pageIndex(currentPage).coerceIn(0, state.offsets.lastIndex)
+                val adjacentIndex = pageIndex(adjacentPage).coerceIn(0, state.offsets.lastIndex)
+                val fraction = offsetFraction.absoluteValue
+                val offsetPx = (state.offsets[currentIndex] * (1f - fraction) + state.offsets[adjacentIndex] * fraction).toInt()
+                val widthPx = (state.widths[currentIndex] * (1f - fraction) + state.widths[adjacentIndex] * fraction).toInt().coerceAtLeast(0)
                 val placeable = measurable.measure(Constraints.fixed(widthPx, height.roundToPx()))
                 layout(placeable.width, placeable.height) {
                     placeable.place(offsetPx, -bottomInset.roundToPx())

@@ -179,11 +179,15 @@ internal fun MainScreenPagerContent(
                         state = composePagerState,
                         modifier = Modifier.fillMaxSize().nestedScroll(crossAxisGestureGuard).edgeGestureGuard(),
                         userScrollEnabled = swipeNavigation,
-                        beyondViewportPageCount = 1,
-                        key = { index -> pagerState.channels.getOrNull(index)?.value ?: index },
+                        beyondViewportPageCount = if (pagerState.channels.size == 2) 0 else 1,
+                        key = { page ->
+                            val channel = pagerState.channels[circularPageToChannelIndex(page, pagerState.channels.size)]
+                            "$page:${channel.value}"
+                        },
                     ) { page ->
-                        if (page in pagerState.channels.indices) {
-                            val channel = pagerState.channels[page]
+                        if (pagerState.channels.isNotEmpty()) {
+                            val channelIndex = circularPageToChannelIndex(page, pagerState.channels.size)
+                            val channel = pagerState.channels[channelIndex]
                             val isPageVisible = page == composePagerState.currentPage || page == visibleNeighbor
                             CompositionLocalProvider(LocalChatPageVisible provides isPageVisible) {
                                 ChatComposable(

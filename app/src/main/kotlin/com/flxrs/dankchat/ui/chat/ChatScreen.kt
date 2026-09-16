@@ -69,8 +69,10 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -105,6 +107,8 @@ import com.flxrs.dankchat.ui.main.TheaterChatModeIcon
 import com.flxrs.dankchat.ui.main.input.TourTooltip
 import com.flxrs.dankchat.utils.compose.predictiveBackScale
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 
 data class ChatScreenCallbacks(
     val onUserClick: (userId: String?, userName: String, displayName: String, channel: String?, badges: List<BadgeUi>, isLongPress: Boolean) -> Unit,
@@ -117,6 +121,26 @@ data class ChatScreenCallbacks(
     val onAutomodBanUser: (messageId: String, channel: String?, fullMessage: String) -> Unit = { _, _, _ -> },
 )
 
+@Immutable
+data class ChatScrollPosition(
+    val firstVisibleItemId: String? = null,
+    val firstVisibleItemIndex: Int = 0,
+    val firstVisibleItemScrollOffset: Int = 0,
+    val shouldAutoScroll: Boolean = true,
+)
+
+internal fun <T> ChatScrollPosition.resolveFirstVisibleItemIndex(
+    items: List<T>,
+    itemId: (T) -> String,
+): Int {
+    val anchoredIndex = firstVisibleItemId?.let { anchor -> items.indexOfFirst { itemId(it) == anchor } } ?: -1
+    return when {
+        anchoredIndex >= 0 -> anchoredIndex
+        items.isEmpty() -> 0
+        else -> firstVisibleItemIndex.coerceIn(items.indices)
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
@@ -125,6 +149,9 @@ fun ChatScreen(
     callbacks: ChatScreenCallbacks,
     modifier: Modifier = Modifier,
     scrollModifier: Modifier = Modifier,
+    initialScrollPosition: ChatScrollPosition = ChatScrollPosition(),
+    trackScrollPosition: Boolean = false,
+    onScrollPositionChange: (ChatScrollPosition) -> Unit = {},
     showChannelPrefix: Boolean = false,
     animateGifs: Boolean = true,
     showInput: Boolean = true,
@@ -151,10 +178,41 @@ fun ChatScreen(
     onTourAdvance: (() -> Unit)? = null,
     onTourSkip: (() -> Unit)? = null,
 ) {
-    val listState = rememberLazyListState()
+    val reversedMessages = messages.asReversed()
+    val currentReversedMessages by rememberUpdatedState(reversedMessages)
+    val initialFirstVisibleItemIndex =
+        remember {
+            initialScrollPosition.resolveFirstVisibleItemIndex(
+                items = reversedMessages,
+                itemId = ChatMessageUiState::id,
+            )
+        }
+    val listState =
+        rememberLazyListState(
+            initialFirstVisibleItemIndex = initialFirstVisibleItemIndex,
+            initialFirstVisibleItemScrollOffset = initialScrollPosition.firstVisibleItemScrollOffset,
+        )
 
     // Track if we should auto-scroll to bottom (sticky state)
-    var shouldAutoScroll by rememberSaveable { mutableStateOf(true) }
+    var shouldAutoScroll by rememberSaveable { mutableStateOf(initialScrollPosition.shouldAutoScroll) }
+
+    LaunchedEffect(trackScrollPosition, listState) {
+        if (!trackScrollPosition) return@LaunchedEffect
+        snapshotFlow {
+            if (listState.isScrollInProgress) {
+                null
+            } else {
+                ChatScrollPosition(
+                    firstVisibleItemId = currentReversedMessages.getOrNull(listState.firstVisibleItemIndex)?.id,
+                    firstVisibleItemIndex = listState.firstVisibleItemIndex,
+                    firstVisibleItemScrollOffset = listState.firstVisibleItemScrollOffset,
+                    shouldAutoScroll = shouldAutoScroll,
+                )
+            }
+        }.filterNotNull()
+            .distinctUntilChanged()
+            .collect(onScrollPositionChange)
+    }
 
     // Detect if we're showing the newest messages (with reverseLayout, index 0 = newest).
     // Require zero scroll offset so items scrolled into the bottom content padding
@@ -184,8 +242,6 @@ fun ChatScreen(
             listState.scrollToItem(0)
         }
     }
-
-    val reversedMessages = messages.asReversed()
 
     // Handle scroll-to-message requests — keyed on both scrollToMessageId and whether messages
     // are available, so the scroll retries after ViewModel recreation (which briefly empties messages).
