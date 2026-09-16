@@ -292,6 +292,13 @@ fun MainScreen(
     val tabState = channelTabViewModel.uiState.collectAsStateWithLifecycle().value
     val activeChannel = tabState.tabs.getOrNull(tabState.selectedIndex)?.channel
 
+    // The theater chat shows the streamed channel, so the input has to target it as well
+    LaunchedEffect(theaterStream, activeChannel) {
+        if (theaterStream != null && theaterStream != activeChannel) {
+            channelTabViewModel.selectTab(preferenceStore.channels.indexOf(theaterStream))
+        }
+    }
+
     // Same key as in ChatComposable, so this resolves the active page's instance
     val activePinnedMessageViewModel =
         activeChannel?.let { channel ->
