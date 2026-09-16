@@ -330,4 +330,19 @@ internal class EmoteRepositoryTest {
         assertEquals(expected = "FeelsDankMan", actual = campaignBadge.title)
         assertEquals(expected = "4x", actual = campaignBadge.url)
     }
+
+    @Test
+    fun `gif positions survive message normalisation and emote reparsing`() = runBlocking {
+        val raw =
+            "@badge-info=;badges=;color=#F1C40F;display-name=Forsen;emotes=;gifs=3-7|gif-id|https://example.com/a.gif;id=gif-message;room-id=1;user-id=2 :forsen!forsen@forsen.tmi.twitch.tv PRIVMSG #forsen :a  [GIF]"
+        val message = assertIs<PrivMessage>(Message.parse(IrcMessage.parse(raw)) { null })
+
+        val parsed = assertIs<PrivMessage>(emoteRepository.parseEmotesAndBadges(message))
+        val reparsed = assertIs<PrivMessage>(emoteRepository.parseEmotesAndBadges(parsed))
+
+        assertEquals("a [GIF]", parsed.message)
+        assertEquals(2..6, parsed.gifs.single().position)
+        assertEquals(parsed.gifs, reparsed.gifs)
+        assertEquals(message.gifData, reparsed.gifData)
+    }
 }
