@@ -86,7 +86,10 @@ fun PinnedMessageBanner(
                 onEmoteClick = callbacks.onEmoteClick,
                 onReplyClick = callbacks.onReplyClick,
                 animateGifs = animateGifs,
+                maxLines = PINNED_MESSAGE_MAX_LINES,
             )
         }
     }
 }
+
+private const val PINNED_MESSAGE_MAX_LINES = 3

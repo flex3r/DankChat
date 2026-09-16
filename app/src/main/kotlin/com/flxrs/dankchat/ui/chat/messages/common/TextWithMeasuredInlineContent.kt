@@ -17,6 +17,7 @@ import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableMap
@@ -39,6 +40,8 @@ fun TextWithMeasuredInlineContent(
     onTextClick: ((Int) -> Unit)? = null,
     onTextLongClick: ((Int) -> Unit)? = null,
     interactionSource: MutableInteractionSource? = null,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
 ) {
     val density = LocalDensity.current
     val inlineContent = remember(knownDimensions, text, density, inlineContentProviders) {
@@ -52,6 +55,8 @@ fun TextWithMeasuredInlineContent(
         onTextClick = onTextClick,
         onTextLongClick = onTextLongClick,
         interactionSource = interactionSource,
+        maxLines = maxLines,
+        overflow = overflow,
     )
 }
 
@@ -63,6 +68,8 @@ private fun ClickableInlineText(
     onTextClick: ((Int) -> Unit)?,
     onTextLongClick: ((Int) -> Unit)?,
     interactionSource: MutableInteractionSource?,
+    maxLines: Int,
+    overflow: TextOverflow,
     modifier: Modifier = Modifier,
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -72,6 +79,8 @@ private fun ClickableInlineText(
         text = text,
         style = style,
         inlineContent = inlineContent,
+        maxLines = maxLines,
+        overflow = overflow,
         modifier =
             modifier.pointerInput(text, interactionSource) {
                 detectTapGestures(

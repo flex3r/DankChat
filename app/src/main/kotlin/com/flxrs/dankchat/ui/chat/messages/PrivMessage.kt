@@ -74,6 +74,7 @@ fun PrivMessageComposable(
     highlightShape: Shape = RectangleShape,
     showChannelPrefix: Boolean = false,
     animateGifs: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val backgroundColor = rememberBackgroundColor(message.lightBackgroundColor, message.darkBackgroundColor)
@@ -192,6 +193,7 @@ fun PrivMessageComposable(
             onUserClick = onUserClick,
             onMessageLongClick = onMessageLongClick,
             onEmoteClick = onEmoteClick,
+            maxLines = maxLines,
         )
     }
 }
@@ -207,6 +209,7 @@ private fun PrivMessageText(
     onUserClick: (userId: String?, userName: String, displayName: String, channel: String?, badges: List<BadgeUi>, isLongPress: Boolean) -> Unit,
     onMessageLongClick: (messageId: String, channel: String?, fullMessage: String) -> Unit,
     onEmoteClick: (emotes: List<EmoteSheetData>) -> Unit,
+    maxLines: Int,
 ) {
     val context = LocalPlatformContext.current
     val defaultTextColor = rememberAdaptiveTextColor(backgroundColor)
@@ -332,6 +335,8 @@ private fun PrivMessageText(
         animateGifs = animateGifs,
         isAsciiArt = message.isAsciiArt,
         interactionSource = interactionSource,
+        maxLines = maxLines,
+        overflow = TextOverflow.Ellipsis,
         onEmoteClick = onEmoteClick,
         onTextClick = { offset ->
             val user = annotatedString.getStringAnnotations("USER", offset, offset).firstOrNull()
