@@ -76,6 +76,7 @@ fun PrivMessageComposable(
     highlightShape: Shape = RectangleShape,
     showChannelPrefix: Boolean = false,
     animateGifs: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val backgroundColor = rememberBackgroundColor(message.lightBackgroundColor, message.darkBackgroundColor)
@@ -184,7 +185,8 @@ fun PrivMessageComposable(
         }
 
         // Main message
-        if (message.gifContentParts.isEmpty()) {
+        // Keep line-limited previews bounded by rendering GIF captions instead of image blocks.
+        if (message.gifContentParts.isEmpty() || maxLines != Int.MAX_VALUE) {
             PrivMessageText(
                 message = message,
                 fontSize = fontSize,
@@ -195,6 +197,7 @@ fun PrivMessageComposable(
                 onUserClick = onUserClick,
                 onMessageLongClick = onMessageLongClick,
                 onEmoteClick = onEmoteClick,
+                maxLines = maxLines,
             )
         } else {
             PrivMessageWithTwitchGifs(
@@ -252,6 +255,7 @@ private fun PrivMessageWithTwitchGifs(
             onUserClick = onUserClick,
             onMessageLongClick = onMessageLongClick,
             onEmoteClick = onEmoteClick,
+            maxLines = Int.MAX_VALUE,
         )
     }
 
@@ -281,6 +285,7 @@ private fun PrivMessageWithTwitchGifs(
                     onUserClick = onUserClick,
                     onMessageLongClick = onMessageLongClick,
                     onEmoteClick = onEmoteClick,
+                    maxLines = Int.MAX_VALUE,
                 )
             }
         }
@@ -298,6 +303,7 @@ private fun PrivMessageText(
     onUserClick: (userId: String?, userName: String, displayName: String, channel: String?, badges: List<BadgeUi>, isLongPress: Boolean) -> Unit,
     onMessageLongClick: (messageId: String, channel: String?, fullMessage: String) -> Unit,
     onEmoteClick: (emotes: List<EmoteSheetData>) -> Unit,
+    maxLines: Int,
     part: TwitchGifContentPartUi.Text? = null,
     includeMessagePrefix: Boolean = true,
 ) {
@@ -431,6 +437,8 @@ private fun PrivMessageText(
         fontSize = fontSize,
         animateGifs = animateGifs,
         interactionSource = interactionSource,
+        maxLines = maxLines,
+        overflow = TextOverflow.Ellipsis,
         onEmoteClick = onEmoteClick,
         onTextClick = { offset ->
             val user = annotatedString.getStringAnnotations("USER", offset, offset).firstOrNull()

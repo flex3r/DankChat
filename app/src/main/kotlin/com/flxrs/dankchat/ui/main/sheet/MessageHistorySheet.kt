@@ -287,6 +287,7 @@ fun MessageHistorySheet(
             Surface(
                 shape = MaterialTheme.shapes.extraLarge,
                 color = MaterialTheme.colorScheme.surfaceContainerLow,
+                modifier = Modifier.weight(1f, fill = false),
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -303,6 +304,9 @@ fun MessageHistorySheet(
                         },
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.primary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false),
                     )
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
@@ -461,7 +465,7 @@ private fun SearchToolbar(state: TextFieldState) {
     TextField(
         state = state,
         modifier = Modifier.fillMaxWidth(),
-        placeholder = { Text(stringResource(R.string.search_messages_hint)) },
+        placeholder = { Text(stringResource(R.string.search_messages_hint), maxLines = 1, overflow = TextOverflow.Ellipsis) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
