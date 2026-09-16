@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBars
@@ -727,7 +728,8 @@ private fun HighlightColorPicker(
                 onColorSelect(selectedColor)
                 showColorPicker = false
             },
-            contentWindowInsets = { WindowInsets.statusBars },
+            // The column pads the navigation bar itself, so the keyboard inset must not count it twice
+            contentWindowInsets = { WindowInsets.statusBars.union(WindowInsets.ime.exclude(WindowInsets.navigationBars)) },
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         ) {
             Column(
@@ -737,8 +739,7 @@ private fun HighlightColorPicker(
                     .windowInsetsPadding(
                         WindowInsets(left = 16.dp, right = 16.dp)
                             .union(WindowInsets.safeGestures.only(WindowInsetsSides.Horizontal)),
-                    ).imePadding()
-                    .navigationBarsPadding(),
+                    ).navigationBarsPadding(),
             ) {
                 Text(
                     text = stringResource(R.string.pick_highlight_color_title),
