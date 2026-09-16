@@ -213,6 +213,7 @@ private fun WhisperMessageText(
         emotes = message.emotes,
         fontSize = fontSize,
         animateGifs = animateGifs,
+        isAsciiArt = message.isAsciiArt,
         onEmoteClick = onEmoteClick,
         onTextClick = { offset ->
             val user = annotatedString.getStringAnnotations("USER", offset, offset).firstOrNull()
