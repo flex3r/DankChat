@@ -42,6 +42,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -83,7 +84,7 @@ fun ManageChannelsDialog(
 
     // Local state for smooth reordering and deferred updates
     val localChannels = remember { mutableStateListOf<ChannelWithRename>() }
-    LaunchedEffect(channels) {
+    SideEffect(channels) {
         if (localChannels.isEmpty() && channels.isNotEmpty()) {
             localChannels.addAll(channels)
         }

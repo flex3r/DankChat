@@ -30,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -89,7 +90,7 @@ fun InputBottomSheet(
             detents = listOf(SheetDetent.Hidden, SheetDetent.FullyExpanded),
         )
 
-    LaunchedEffect(sheetState.currentDetent) {
+    SideEffect(sheetState.currentDetent) {
         if (sheetState.currentDetent == SheetDetent.Hidden) {
             onDismiss()
         }
@@ -143,7 +144,7 @@ fun InputBottomSheet(
                 val isClosing = source > 0 && target == 0
                 val nearlyDone = current < 200
 
-                LaunchedEffect(isClosing, nearlyDone) {
+                SideEffect(isClosing, nearlyDone) {
                     if (isClosing && nearlyDone) {
                         onDismiss()
                     }

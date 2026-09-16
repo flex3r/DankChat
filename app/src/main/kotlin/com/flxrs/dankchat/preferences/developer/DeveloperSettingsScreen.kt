@@ -54,6 +54,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -509,7 +510,7 @@ private fun CustomLoginBottomSheet(
             else -> null
         }
 
-    LaunchedEffect(state) {
+    SideEffect(state) {
         if (state is CustomLoginState.Validated) {
             onRequestRestart()
         }

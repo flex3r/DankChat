@@ -16,7 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,7 +53,7 @@ fun HexColorPicker(
     val initialColor = remember { Color(color) }
     var lastFromPicker by remember { mutableStateOf<Int?>(null) }
 
-    LaunchedEffect(color) {
+    SideEffect(color) {
         if (color != lastFromPicker) {
             controller.selectByColor(Color(color), fromUser = false)
             lastFromPicker = color
@@ -166,7 +166,7 @@ private fun HexInputField(
     var isFocused by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf(formatHex(color, showAlpha)) }
 
-    LaunchedEffect(color, showAlpha) {
+    SideEffect(color, showAlpha) {
         if (!isFocused) {
             text = formatHex(color, showAlpha)
         }

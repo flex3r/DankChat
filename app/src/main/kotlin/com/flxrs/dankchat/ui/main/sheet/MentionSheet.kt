@@ -38,7 +38,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -109,7 +109,7 @@ fun MentionSheet(
 
     val whisperMentionCount by mentionViewModel.whisperMentionCount.collectAsStateWithLifecycle()
 
-    LaunchedEffect(pagerState.currentPage) {
+    SideEffect(pagerState.currentPage) {
         mentionViewModel.setCurrentTab(pagerState.currentPage)
         when (pagerState.currentPage) {
             0 -> mentionViewModel.markMentionsRead()
