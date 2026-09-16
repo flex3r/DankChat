@@ -52,6 +52,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -111,7 +112,7 @@ fun MessageHistorySheet(
     val messageOptionsViewModel: MessageOptionsViewModel = koinViewModel()
 
     var lastAppliedFilter by rememberSaveable { mutableStateOf<String?>(null) }
-    LaunchedEffect(initialFilter) {
+    SideEffect(initialFilter) {
         if (lastAppliedFilter != initialFilter) {
             viewModel.setInitialQuery(initialFilter)
             lastAppliedFilter = initialFilter

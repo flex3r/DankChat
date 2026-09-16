@@ -182,7 +182,7 @@ fun FloatingToolbar(
             else -> toolbarTopPx + (8.dp.toPx() + 16.dp.toPx()).toInt() + toolbarRowHeight.toInt()
         }
     }
-    LaunchedEffect(toolbarBottomPx) { onToolbarBottomChange(toolbarBottomPx) }
+    SideEffect(toolbarBottomPx) { onToolbarBottomChange(toolbarBottomPx) }
 
     val totalTabs = tabState.tabs.size
     val selectedIndex = composePagerState.currentPage
@@ -197,26 +197,26 @@ fun FloatingToolbar(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     // Reset menus when toolbar hides or keyboard opens
-    LaunchedEffect(showAppBar) {
+    SideEffect(showAppBar) {
         if (!showAppBar) {
             showOverflowMenu = false
             showQuickSwitch = false
         }
     }
     val isKeyboardOpen = WindowInsets.isImeVisible
-    LaunchedEffect(isKeyboardOpen) {
+    SideEffect(isKeyboardOpen) {
         if (isKeyboardOpen) {
             showOverflowMenu = false
             showQuickSwitch = false
         }
     }
-    LaunchedEffect(isEmoteMenuOpen) {
+    SideEffect(isEmoteMenuOpen) {
         if (isEmoteMenuOpen) {
             showOverflowMenu = false
             showQuickSwitch = false
         }
     }
-    LaunchedEffect(showOverflowMenu, showQuickSwitch) {
+    SideEffect(showOverflowMenu, showQuickSwitch) {
         onMenuVisibleChange(showOverflowMenu || showQuickSwitch)
     }
 

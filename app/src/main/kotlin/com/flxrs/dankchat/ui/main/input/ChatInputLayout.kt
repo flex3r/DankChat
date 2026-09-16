@@ -72,7 +72,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -429,7 +428,7 @@ fun ChatInputLayout(
         }
 
         // Recent messages popup — overlays above input, end-aligned
-        LaunchedEffect(uiState.recentMessages) {
+        SideEffect(uiState.recentMessages) {
             if (recentMessagesExpanded && uiState.recentMessages.isEmpty()) {
                 onRecentMessagesExpandedChange(false)
             }
