@@ -9,7 +9,7 @@ coil = "3.5.0"
 okhttp = "5.5.0"
 ksp = "2.3.11"
 koin = "4.2.2"
-koin-compiler-plugin = "1.1.0"
+koin-compiler-plugin = "1.2.1"
 about-libraries = "15.0.4"
 
 androidGradlePlugin = "9.3.1"
