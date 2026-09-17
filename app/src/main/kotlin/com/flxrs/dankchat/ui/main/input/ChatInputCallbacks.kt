@@ -20,5 +20,5 @@ data class ChatInputCallbacks(
     val onDebugInfoClick: () -> Unit = {},
     val onNewWhisper: (() -> Unit)? = null,
     val onRepeatedSendChange: (Boolean) -> Unit = {},
-    val onInputMultilineChanged: (Boolean) -> Unit = {},
+    val onInputScrollableChanged: (Boolean) -> Unit = {},
 )

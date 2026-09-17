@@ -55,7 +55,7 @@ internal fun TheaterLayout(
     showInput: Boolean,
     isKeyboardVisible: Boolean,
     isSheetOpen: Boolean,
-    isInputMultiline: Boolean,
+    isInputScrollable: Boolean,
     isEmoteMenuOpen: Boolean,
     inputHeightDp: Dp,
     helperTextHeightDp: Dp,
@@ -64,7 +64,7 @@ internal fun TheaterLayout(
     chatOffsetX: () -> Float,
     onChatDrag: (Float) -> Unit,
     onChatDragEnd: () -> Unit,
-    onHideInput: () -> Unit,
+    onInputSwipeDown: () -> Unit,
     onOpenReplies: (String, UserName) -> Unit,
     onRecover: () -> Unit,
     streamView: @Composable (StreamViewConfig, Modifier) -> Unit,
@@ -189,9 +189,9 @@ internal fun TheaterLayout(
                                     Modifier
                                         .align(Alignment.BottomCenter)
                                         .swipeDownToHide(
-                                            enabled = showInput && !isSheetOpen && !isInputMultiline && !isKeyboardVisible && !isEmoteMenuOpen,
+                                            enabled = showInput && !isSheetOpen && !isInputScrollable && !isEmoteMenuOpen,
                                             thresholdPx = swipeDownThresholdPx,
-                                            onHide = onHideInput,
+                                            onHide = onInputSwipeDown,
                                         ),
                             ) {
                                 bottomBar()
