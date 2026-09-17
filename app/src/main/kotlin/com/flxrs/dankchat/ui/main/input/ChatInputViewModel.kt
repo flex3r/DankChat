@@ -14,6 +14,7 @@ import com.flxrs.dankchat.data.repo.channel.ChannelRepository
 import com.flxrs.dankchat.data.repo.chat.ChatChannelProvider
 import com.flxrs.dankchat.data.repo.chat.ChatConnector
 import com.flxrs.dankchat.data.repo.chat.ChatRepository
+import com.flxrs.dankchat.data.repo.chat.SendWaitRepository
 import com.flxrs.dankchat.data.repo.chat.UserStateRepository
 import com.flxrs.dankchat.data.repo.command.CommandRepository
 import com.flxrs.dankchat.data.repo.command.CommandResult
@@ -37,6 +38,7 @@ import com.flxrs.dankchat.ui.main.MainEvent
 import com.flxrs.dankchat.ui.main.MainEventBus
 import com.flxrs.dankchat.ui.main.RepeatedSendData
 import com.flxrs.dankchat.ui.main.sheet.FullScreenSheetState
+import com.flxrs.dankchat.utils.DateTimeUtils
 import com.flxrs.dankchat.utils.TextResource
 import com.flxrs.dankchat.utils.extensions.combine
 import kotlinx.collections.immutable.ImmutableList
@@ -71,6 +73,7 @@ class ChatInputViewModel(
     private val commandRepository: CommandRepository,
     private val channelRepository: ChannelRepository,
     private val userStateRepository: UserStateRepository,
+    private val sendWaitRepository: SendWaitRepository,
     suggestionProvider: SuggestionProvider,
     private val preferenceStore: DankChatPreferenceStore,
     private val chatSettingsDataStore: ChatSettingsDataStore,
@@ -255,7 +258,16 @@ class ChatInputViewModel(
                         chatConnector.getConnectionState(channel)
                     }
                 },
-                appearanceSettingsDataStore.settings.map { InputSettings(it.autoDisableInput, it.showCharacterCounter, it.showClearInputButton, it.showSendButton, it.inputActions.isEmpty()) },
+                appearanceSettingsDataStore.settings.map {
+                    InputSettings(
+                        autoDisableInput = it.autoDisableInput,
+                        showCharacterCounter = it.showCharacterCounter,
+                        showSendWaitTimer = it.showSendWaitTimer,
+                        showClearInputButton = it.showClearInputButton,
+                        showSendButton = it.showSendButton,
+                        isCompactMode = it.inputActions.isEmpty(),
+                    )
+                },
                 preferenceStore.isLoggedInFlow,
             ) { hasText, activeChannel, connectionState, inputSettings, isLoggedIn ->
                 UiDependencies(hasText, activeChannel, connectionState, isLoggedIn, inputSettings)
@@ -283,13 +295,19 @@ class ChatInputViewModel(
                 InputOverlayState(sheetState, tab, replyState.isReplying, replyState.replyName, replyState.replyMessageId, replyState.replyMessage, isEmoteMenuOpen, whisperTarget, isAnnouncing)
             }
 
+        val sendWaitFlow =
+            chatChannelProvider.activeChannel.flatMapLatest { channel ->
+                channel?.let(sendWaitRepository::getRemainingSeconds) ?: flowOf(null)
+            }
+
         return combine(
             baseFlow,
             inputOverlayFlow,
             helperText,
             chatSettingsDataStore.userLongClickBehavior,
             chatRepository.lastMessagesFlow,
-        ) { deps, overlayState, helperText, userLongClickBehavior, _ ->
+            sendWaitFlow,
+        ) { deps, overlayState, helperText, userLongClickBehavior, _, sendWaitSeconds ->
             val isMentionsTabActive = (overlayState.sheetState is FullScreenSheetState.Mention || overlayState.sheetState is FullScreenSheetState.Whisper) && overlayState.tab == 0
             val isWhisperTabActive = (overlayState.sheetState is FullScreenSheetState.Mention || overlayState.sheetState is FullScreenSheetState.Whisper) && overlayState.tab == 1
             val isInReplyThread = overlayState.sheetState is FullScreenSheetState.Replies
@@ -354,6 +372,7 @@ class ChatInputViewModel(
                 isWhisperTabActive = isWhisperTabActive,
                 showClearInputButton = deps.inputSettings.showClearInputButton,
                 showSendButton = deps.inputSettings.showSendButton,
+                sendWaitTime = sendWaitSeconds?.takeIf { deps.inputSettings.showSendWaitTimer && !isWhisperTabActive }?.let(DateTimeUtils::formatSeconds),
                 isCompactMode = deps.inputSettings.isCompactMode,
                 userLongClickBehavior = userLongClickBehavior,
             )
@@ -639,6 +658,7 @@ private data class SuggestionInput(
 private data class InputSettings(
     val autoDisableInput: Boolean,
     val showCharacterCounter: Boolean,
+    val showSendWaitTimer: Boolean,
     val showClearInputButton: Boolean,
     val showSendButton: Boolean,
     val isCompactMode: Boolean,
