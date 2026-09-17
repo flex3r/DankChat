@@ -442,13 +442,17 @@ class ChatInputViewModel(
             }
 
             is CommandResult.AcceptedTwitchCommand -> {
-                if (commandResult.command == TwitchCommand.Whisper) {
+                val whisperSent =
+                    commandResult.command == TwitchCommand.Whisper &&
+                        (commandResult.response as? TextResource.Res)?.id == R.string.cmd_whisper_sent
+                if (whisperSent) {
                     chatRepository.fakeWhisperIfNecessary(message)
                 }
                 val isWhisperContext =
                     chatState is FullScreenSheetState.Whisper ||
                         (chatState is FullScreenSheetState.Mention && _whisperTarget.value != null)
-                if (commandResult.response != null && !isWhisperContext) {
+                val inlineWhisperReplacesResponse = whisperSent && chatSettingsDataStore.current().showWhispersInline
+                if (commandResult.response != null && !isWhisperContext && !inlineWhisperReplacesResponse) {
                     chatRepository.makeAndPostCustomSystemMessage(commandResult.response, channel)
                 }
             }
