@@ -294,6 +294,18 @@ class ChatMessageMapper(
                     TextResource.Res(R.string.system_message_7tv_emote_set_changed, persistentListOf(type.actorName, type.newEmoteSetName))
                 }
 
+                is SystemMessageType.ChannelBTTVEmoteAdded -> {
+                    TextResource.Res(R.string.system_message_bttv_emote_added, persistentListOf(type.emoteName))
+                }
+
+                is SystemMessageType.ChannelBTTVEmoteRenamed -> {
+                    TextResource.Res(R.string.system_message_bttv_emote_renamed, persistentListOf(type.oldEmoteName, type.emoteName))
+                }
+
+                is SystemMessageType.ChannelBTTVEmoteRemoved -> {
+                    TextResource.Res(R.string.system_message_bttv_emote_removed, persistentListOf(type.emoteName))
+                }
+
                 is SystemMessageType.StreamLive -> {
                     val title = type.title?.takeIf { chatSettings.showStreamTitleInLiveMessage }
                     when (title) {

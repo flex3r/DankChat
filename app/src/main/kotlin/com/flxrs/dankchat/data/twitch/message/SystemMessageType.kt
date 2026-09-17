@@ -66,6 +66,19 @@ sealed interface SystemMessageType {
         val emoteName: String,
     ) : SystemMessageType
 
+    data class ChannelBTTVEmoteAdded(
+        val emoteName: String,
+    ) : SystemMessageType
+
+    data class ChannelBTTVEmoteRenamed(
+        val oldEmoteName: String,
+        val emoteName: String,
+    ) : SystemMessageType
+
+    data class ChannelBTTVEmoteRemoved(
+        val emoteName: String,
+    ) : SystemMessageType
+
     data class Custom(
         val message: TextResource,
     ) : SystemMessageType
