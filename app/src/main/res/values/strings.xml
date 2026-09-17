@@ -284,6 +284,7 @@
     <string name="user_popup_unblock">Unblock</string>
     <string name="user_popup_mention">Mention user</string>
     <string name="user_popup_whisper">Whisper user</string>
+    <string name="user_popup_ignore_highlights">Ignore highlights</string>
     <string name="user_popup_created">Created: %1$s</string>
     <string name="user_popup_following_since">Following since %1$s</string>
     <string name="user_popup_not_following">Not following</string>

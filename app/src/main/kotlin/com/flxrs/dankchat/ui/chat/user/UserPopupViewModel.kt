@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flxrs.dankchat.data.UserId
 import com.flxrs.dankchat.data.UserName
+import com.flxrs.dankchat.data.repo.HighlightsRepository
 import com.flxrs.dankchat.data.repo.IgnoresRepository
 import com.flxrs.dankchat.data.repo.channel.ChannelRepository
 import com.flxrs.dankchat.data.repo.chat.UserStateRepository
@@ -24,12 +25,14 @@ data class UserPopupUiState(
     val channel: UserName?,
     val badges: List<Badge>,
     val isOwnUser: Boolean,
+    val ignoresHighlights: Boolean,
 )
 
 @KoinViewModel
 class UserPopupViewModel(
     private val channelRepository: ChannelRepository,
     private val dataRepository: DataRepository,
+    private val highlightsRepository: HighlightsRepository,
     private val ignoresRepository: IgnoresRepository,
     private val userStateRepository: UserStateRepository,
     private val preferenceStore: DankChatPreferenceStore,
@@ -60,6 +63,17 @@ class UserPopupViewModel(
         ignoresRepository.removeUserBlock(targetUserId, targetUsername)
     }
 
+    fun setIgnoreHighlights(ignored: Boolean) {
+        val params = currentParams ?: return
+        viewModelScope.launch {
+            runCatching {
+                highlightsRepository.setUserHighlightsIgnored(params.targetUserName, ignored)
+            }.onSuccess {
+                _state.value = _state.value?.copy(ignoresHighlights = ignored)
+            }
+        }
+    }
+
     private fun emitState(
         params: UserPopupStateParams,
         popupState: UserPopupState,
@@ -69,6 +83,7 @@ class UserPopupViewModel(
             channel = params.channel,
             badges = params.badges,
             isOwnUser = params.targetUserId != null && preferenceStore.userIdString == params.targetUserId,
+            ignoresHighlights = highlightsRepository.isUserHighlightsIgnored(params.targetUserName),
         )
     }
 
