@@ -72,6 +72,8 @@ fun InputBottomSheet(
     capitalization: KeyboardCapitalization = KeyboardCapitalization.Unspecified,
     autoCorrectEnabled: Boolean = true,
     showClearButton: Boolean = false,
+    singleLine: Boolean = true,
+    maxLines: Int = if (singleLine) 1 else 5,
     validate: ((String) -> String?)? = null,
 ) {
     var inputValue by remember { mutableStateOf(TextFieldValue(defaultValue, selection = TextRange(defaultValue.length))) }
@@ -172,7 +174,8 @@ fun InputBottomSheet(
                     value = inputValue,
                     onValueChange = { inputValue = it },
                     label = { Text(hint) },
-                    singleLine = true,
+                    singleLine = singleLine,
+                    maxLines = maxLines,
                     isError = errorText != null,
                     trailingIcon =
                         if (showClearButton && inputValue.text.isNotEmpty()) {
@@ -192,7 +195,7 @@ fun InputBottomSheet(
                             capitalization = capitalization,
                             autoCorrectEnabled = autoCorrectEnabled,
                             keyboardType = keyboardType,
-                            imeAction = ImeAction.Done,
+                            imeAction = if (singleLine) ImeAction.Done else ImeAction.Default,
                         ),
                     keyboardActions =
                         KeyboardActions(onDone = {

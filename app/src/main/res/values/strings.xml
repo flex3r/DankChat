@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Copy</string>
     <string name="error_dialog_title">Caught exception: %1$s</string>
     <string name="add_channel">Add channel</string>
+    <string name="add_channels">Add channels</string>
     <string name="manage_channels">Manage channels</string>
     <string name="report_channel">Report channel</string>
     <string name="block_channel">Block channel</string>
@@ -115,6 +116,8 @@
 
     <string name="snackbar_paste">Paste</string>
     <string name="add_channel_hint">Channel name</string>
+    <string name="add_channels_hint">Channel names</string>
+    <string name="add_channels_empty">Enter at least one channel name</string>
     <string name="add_channel_already_added">Channel is already added</string>
     <string name="emote_menu_tab_recent">Recent</string>
     <string name="backspace">Backspace</string>

@@ -80,7 +80,7 @@ fun MainScreenDialogs(
     isStreamActive: Boolean,
     inputSheetState: InputSheetState,
     sheetsReady: Boolean,
-    onAddChannel: (UserName) -> Unit,
+    onAddChannels: (List<UserName>) -> Unit,
     onLogout: () -> Unit,
     onLogin: () -> Unit,
     onOpenUrl: (String) -> Unit,
@@ -99,7 +99,7 @@ fun MainScreenDialogs(
     if (dialogState.showAddChannel) {
         AddChannelDialog(
             onDismiss = dialogViewModel::dismissAddChannel,
-            onAddChannel = onAddChannel,
+            onAddChannels = onAddChannels,
             isChannelAlreadyAdded = channelManagementViewModel::isChannelAdded,
         )
     }

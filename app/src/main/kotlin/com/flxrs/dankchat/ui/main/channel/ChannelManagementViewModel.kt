@@ -73,13 +73,21 @@ class ChannelManagementViewModel(
     fun isChannelAdded(name: String): Boolean = preferenceStore.channels.any { it.value.equals(name, ignoreCase = true) }
 
     fun addChannel(channel: UserName) {
-        val normalized = channel.lowercase()
+        addChannels(listOf(channel))
+    }
+
+    fun addChannels(channels: List<UserName>) {
         val current = preferenceStore.channels
-        if (normalized !in current) {
-            preferenceStore.channels = current + normalized
-            chatRepository.joinChannel(normalized)
-            chatChannelProvider.setActiveChannel(normalized)
-        }
+        val newChannels =
+            channels
+                .map(UserName::lowercase)
+                .distinct()
+                .filterNot(current::contains)
+        if (newChannels.isEmpty()) return
+
+        preferenceStore.channels = current + newChannels
+        newChannels.forEach(chatRepository::joinChannel)
+        chatChannelProvider.setActiveChannel(newChannels.last())
     }
 
     fun removeChannel(channel: UserName) {
