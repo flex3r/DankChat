@@ -769,6 +769,9 @@
     <string name="message_more_actions">More…</string>
     <string name="message_jump_to">Jump to message</string>
     <string name="message_pin">Pin message</string>
+    <string name="message_warn">Warn</string>
+    <string name="message_warn_reason">Reason</string>
+    <string name="message_warn_confirm">Warn</string>
     <string name="message_not_in_history">Message no longer in chat history</string>
     <string name="message_history">Message history</string>
     <string name="global_history_title">Global History</string>
@@ -967,6 +970,8 @@
     <string name="cmd_fail_ban">Failed to ban user - %1$s</string>
     <string name="cmd_usage_unban">Usage: %1$s &lt;username&gt; - Removes a ban on a user.</string>
     <string name="cmd_fail_unban">Failed to unban user - %1$s</string>
+    <string name="cmd_usage_warn">Usage: %1$s &lt;username&gt; &lt;reason&gt; - Warn a user. Reason is required and will be shown to the target user and other moderators.</string>
+    <string name="cmd_fail_warn">Failed to warn user - %1$s</string>
     <string name="cmd_usage_timeout">Usage: %1$s &lt;username&gt; [duration][time unit] [reason] - Temporarily prevent a user from chatting. Duration (optional, default: 10 minutes) must be a positive integer; time unit (optional, default: s) must be one of s, m, h, d, w; maximum duration is 2 weeks. Reason is optional and will be shown to the target user and other moderators.</string>
     <string name="cmd_timeout_cannot_self">Failed to ban user - You cannot timeout yourself.</string>
     <string name="cmd_timeout_cannot_broadcaster">Failed to ban user - You cannot timeout the broadcaster.</string>
@@ -1024,6 +1029,7 @@
     <string name="cmd_error_already_banned">%1$s is already banned in this channel.</string>
     <string name="cmd_error_cannot_perform">You cannot %1$s %2$s.</string>
     <string name="cmd_error_conflicting_ban">There was a conflicting ban operation on this user. Please try again.</string>
+    <string name="cmd_error_conflicting_warn">There was a conflicting warn operation on this user. Please try again.</string>
     <string name="cmd_error_invalid_color">Color must be one of Twitch\'s supported colors (%1$s) or a hex code (#000000) if you have Turbo or Prime.</string>
     <string name="cmd_error_commercial_not_streaming">You must be streaming live to run commercials.</string>
     <string name="cmd_error_commercial_rate_limited">You must wait until your cool-down period expires before you can run another commercial.</string>
