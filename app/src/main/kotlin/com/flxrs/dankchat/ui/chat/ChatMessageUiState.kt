@@ -49,6 +49,7 @@ sealed interface ChatMessageUiState {
         val nameText: String,
         val message: String,
         val links: ImmutableList<LinkUi>,
+        val usernameMentions: ImmutableList<UsernameMentionUi>,
         val emotes: ImmutableList<EmoteUi>,
         val isAction: Boolean,
         val thread: ThreadUi?,
@@ -231,6 +232,16 @@ sealed interface ChatMessageUiState {
         val replyTargetName: UserName,
     ) : ChatMessageUiState
 }
+
+@Immutable
+data class UsernameMentionUi(
+    val start: Int,
+    val end: Int,
+    val userName: UserName,
+    val displayName: DisplayName,
+    val rawColor: Int?,
+    val isBold: Boolean,
+)
 
 @Immutable
 data class BadgeUi(

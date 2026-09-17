@@ -603,6 +603,10 @@
     <string name="preference_user_long_click_summary_off">Regular click mentions, long click opens popup</string>
     <string name="preference_colorize_nicknames_title">Colorize nicknames</string>
     <string name="preference_colorize_nicknames_summary">Assign a random color to users without a set color</string>
+    <string name="preference_bold_username_mentions_title">Bold @usernames</string>
+    <string name="preference_bold_username_mentions_summary">Make @mentions more noticeable</string>
+    <string name="preference_color_username_mentions_title">Color @usernames</string>
+    <string name="preference_color_username_mentions_summary">Use a user’s Twitch color for @mentions when available</string>
     <string name="preference_tts_force_english_key" translatable="false">tts_force_english_key</string>
     <string name="preference_tts_force_english_title">Force language to English</string>
     <string name="preference_tts_force_english_summary">Force TTS voice language to English instead of system default</string>

@@ -7,6 +7,7 @@ import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.chat.ChatImportance
 import com.flxrs.dankchat.data.chat.ChatItem
 import com.flxrs.dankchat.data.repo.chat.UsersRepository
+import com.flxrs.dankchat.data.toDisplayName
 import com.flxrs.dankchat.data.toUserId
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.emote.ChatMessageEmoteType
@@ -655,6 +656,24 @@ class ChatMessageMapper(
             }
 
         val rawNameColor = resolveNameColor(userDisplay?.color, color, userId, chatSettings)
+        val usernameMentions =
+            findUsernameMentions(message)
+                .map { mention ->
+                    val userName = mention.userName.lowercase()
+                    UsernameMentionUi(
+                        start = mention.start,
+                        end = mention.end,
+                        userName = userName,
+                        displayName = usersRepository.findDisplayName(channel, userName) ?: mention.userName.toDisplayName(),
+                        rawColor =
+                            if (chatSettings.colorUsernameMentions) {
+                                usersRepository.getCachedUserColor(userName)
+                            } else {
+                                null
+                            },
+                        isBold = chatSettings.boldUsernameMentions,
+                    )
+                }.toImmutableList()
 
         return ChatMessageUiState.PrivMessageUi(
             id = id,
@@ -674,6 +693,7 @@ class ChatMessageMapper(
             nameText = nameText,
             message = message,
             links = findLinks(message).toImmutableList(),
+            usernameMentions = usernameMentions,
             emotes = emoteUis,
             isAction = isAction,
             thread = threadUi,
