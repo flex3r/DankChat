@@ -38,6 +38,7 @@ fun MainScreenEventHandler(
     sheetNavigationViewModel: SheetNavigationViewModel,
     mainScreenViewModel: MainScreenViewModel,
     preferenceStore: DankChatPreferenceStore,
+    onJumpToMessage: (messageId: String, channel: UserName) -> Boolean,
 ) {
     val context = LocalContext.current
     val resources = LocalResources.current
@@ -111,10 +112,15 @@ fun MainScreenEventHandler(
                 is MainEvent.OpenChannel -> {
                     if (event.channel == UserName.EMPTY) {
                         sheetNavigationViewModel.openWhispers()
+                        chatInputViewModel.setWhisperTarget(event.whisperTarget)
                     } else {
-                        channelTabViewModel.selectTab(
-                            preferenceStore.channels.indexOf(event.channel),
-                        )
+                        sheetNavigationViewModel.closeFullScreenSheet()
+                        val jumped = event.messageId?.let { onJumpToMessage(it, event.channel) } == true
+                        if (!jumped) {
+                            channelTabViewModel.selectTab(
+                                preferenceStore.channels.indexOf(event.channel),
+                            )
+                        }
                     }
                     (context as? MainActivity)?.clearNotificationsOfChannel(event.channel)
                 }
