@@ -1008,6 +1008,14 @@
     <string name="cmd_usage_shoutout">Usage: %1$s &lt;username&gt; - Sends a shoutout to the specified Twitch user.</string>
     <string name="cmd_success_shoutout">Sent shoutout to %1$s</string>
     <string name="cmd_fail_shoutout">Failed to send shoutout - %1$s</string>
+    <string name="cmd_usage_set_title">Usage: /settitle &lt;stream title&gt;</string>
+    <string name="cmd_success_set_title">Updated title to %1$s</string>
+    <string name="cmd_fail_set_title">Failed to set title - %1$s</string>
+    <string name="cmd_usage_set_game">Usage: /setgame &lt;stream game&gt;</string>
+    <string name="cmd_game_not_found">Game not found.</string>
+    <string name="cmd_success_set_game">Updated game to %1$s</string>
+    <string name="cmd_fail_search_game">Failed to look up game - %1$s</string>
+    <string name="cmd_fail_set_game">Failed to set game - %1$s</string>
     <string name="cmd_shield_activated">Shield mode was activated.</string>
     <string name="cmd_shield_deactivated">Shield mode was deactivated.</string>
     <string name="cmd_fail_shield">Failed to update shield mode - %1$s</string>

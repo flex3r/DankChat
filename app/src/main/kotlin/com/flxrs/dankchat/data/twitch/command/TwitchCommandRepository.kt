@@ -13,6 +13,7 @@ import com.flxrs.dankchat.data.api.helix.dto.BanRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.ChatSettingsRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.CommercialRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.MarkerRequestDto
+import com.flxrs.dankchat.data.api.helix.dto.ModifyChannelRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.ShieldModeRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.WhisperRequestDto
 import com.flxrs.dankchat.data.auth.AuthDataStore
@@ -109,6 +110,10 @@ class TwitchCommandRepository(
 
             TwitchCommand.Raid -> startRaid(command, context)
 
+            TwitchCommand.SetGame -> setGame(command, context)
+
+            TwitchCommand.SetTitle -> setTitle(command, context)
+
             TwitchCommand.Shield,
             TwitchCommand.ShieldOff,
             -> toggleShieldMode(command, currentUserId, context)
@@ -168,6 +173,55 @@ class TwitchCommandRepository(
             onSuccess = { CommandResult.AcceptedTwitchCommand(command, response = TextResource.Res(R.string.cmd_whisper_sent)) },
             onFailure = {
                 val response = TextResource.Res(R.string.cmd_fail_whisper, persistentListOf(it.toErrorMessage(command)))
+                CommandResult.AcceptedTwitchCommand(command, response)
+            },
+        )
+    }
+
+    private suspend fun setTitle(
+        command: TwitchCommand,
+        context: CommandContext,
+    ): CommandResult {
+        if (context.args.isEmpty() || context.args.first().isBlank()) {
+            return CommandResult.AcceptedTwitchCommand(command, TextResource.Res(R.string.cmd_usage_set_title))
+        }
+
+        val title = context.args.joinToString(" ")
+        return helixApiClient.patchChannel(context.channelId, ModifyChannelRequestDto(title = title)).fold(
+            onSuccess = {
+                CommandResult.AcceptedTwitchCommand(command, TextResource.Res(R.string.cmd_success_set_title, persistentListOf(title)))
+            },
+            onFailure = {
+                val response = TextResource.Res(R.string.cmd_fail_set_title, persistentListOf(it.toErrorMessage(command)))
+                CommandResult.AcceptedTwitchCommand(command, response)
+            },
+        )
+    }
+
+    private suspend fun setGame(
+        command: TwitchCommand,
+        context: CommandContext,
+    ): CommandResult {
+        if (context.args.isEmpty() || context.args.first().isBlank()) {
+            return CommandResult.AcceptedTwitchCommand(command, TextResource.Res(R.string.cmd_usage_set_game))
+        }
+
+        val query = context.args.joinToString(" ")
+        val categories = helixApiClient.searchCategories(query).getOrElse {
+            val response = TextResource.Res(R.string.cmd_fail_search_game, persistentListOf(it.toErrorMessage(command)))
+            return CommandResult.AcceptedTwitchCommand(command, response)
+        }
+        val category = categories.firstOrNull { it.name.equals(query, ignoreCase = true) } ?: categories.firstOrNull()
+        if (category == null) {
+            return CommandResult.AcceptedTwitchCommand(command, TextResource.Res(R.string.cmd_game_not_found))
+        }
+
+        return helixApiClient.patchChannel(context.channelId, ModifyChannelRequestDto(gameId = category.id)).fold(
+            onSuccess = {
+                CommandResult.AcceptedTwitchCommand(command, TextResource.Res(R.string.cmd_success_set_game, persistentListOf(category.name)))
+            },
+            onFailure = {
+                val response = TextResource.Res(R.string.cmd_fail_set_game, persistentListOf(it.toErrorMessage(command)))
                 CommandResult.AcceptedTwitchCommand(command, response)
             },
         )
