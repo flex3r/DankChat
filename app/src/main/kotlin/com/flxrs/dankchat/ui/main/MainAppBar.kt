@@ -40,6 +40,8 @@ import androidx.compose.material.icons.filled.EmojiEmotions
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.RemoveCircleOutline
@@ -145,6 +147,7 @@ internal data class CollapsedToolbarAction(
 @Composable
 internal fun InlineOverflowMenu(
     isLoggedIn: Boolean,
+    channelNotificationsEnabled: Boolean,
     onDismiss: () -> Unit,
     onAction: (ToolbarAction) -> Unit,
     initialMenu: AppBarMenu = AppBarMenu.Main,
@@ -244,6 +247,7 @@ internal fun InlineOverflowMenu(
 
                         AppBarMenu.Channel -> ChannelMenuContent(
                             isLoggedIn = isLoggedIn,
+                            notificationsEnabled = channelNotificationsEnabled,
                             onAction = onAction,
                             onDismiss = onDismiss,
                             onBack = { currentMenu = AppBarMenu.Main },
@@ -513,6 +517,7 @@ private fun ColumnScope.UploadMenuContent(
 @Composable
 private fun ColumnScope.ChannelMenuContent(
     isLoggedIn: Boolean,
+    notificationsEnabled: Boolean,
     onAction: (ToolbarAction) -> Unit,
     onDismiss: () -> Unit,
     onBack: () -> Unit,
@@ -520,13 +525,29 @@ private fun ColumnScope.ChannelMenuContent(
 ) {
     InlineSubMenuHeader(title = stringResource(R.string.channel), onBack = onBack)
     InlineMenuItem(
+        text =
+            stringResource(
+                when {
+                    notificationsEnabled -> R.string.channel_highlight_notifications_on
+                    else -> R.string.channel_highlight_notifications_off
+                },
+            ),
+        icon =
+            when {
+                notificationsEnabled -> Icons.Default.Notifications
+                else -> Icons.Default.NotificationsOff
+            },
+        onClick = { onAction(ToolbarAction.ToggleChannelNotifications) },
+        modifier = modifier,
+        maxLines = 2,
+    )
+    InlineMenuItem(
         text = stringResource(R.string.open_channel),
         icon = Icons.Default.OpenInBrowser,
         onClick = {
             onAction(ToolbarAction.OpenChannel)
             onDismiss()
         },
-        modifier = modifier,
         maxLines = 2,
     )
     InlineMenuItem(

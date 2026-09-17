@@ -106,10 +106,13 @@ fun MainScreenDialogs(
 
     if (dialogState.showManageChannels) {
         val channels by channelManagementViewModel.channels.collectAsStateWithLifecycle()
+        val mutedNotificationChannels by channelManagementViewModel.mutedNotificationChannels.collectAsStateWithLifecycle()
         ManageChannelsDialog(
             channels = channels,
+            mutedNotificationChannels = mutedNotificationChannels,
             onApplyChanges = channelManagementViewModel::applyChanges,
             onChannelSelect = channelManagementViewModel::selectChannel,
+            onChannelNotificationsChange = channelManagementViewModel::setChannelNotificationsEnabled,
             onDismiss = dialogViewModel::dismissManageChannels,
         )
     }

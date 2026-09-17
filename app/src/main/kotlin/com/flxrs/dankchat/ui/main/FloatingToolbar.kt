@@ -143,6 +143,7 @@ fun FloatingToolbar(
     totalMentionCount: Int,
     hasActivePinnedMessage: Boolean,
     isPinnedMessageShown: Boolean,
+    channelNotificationsEnabled: Boolean,
     onAction: (ToolbarAction) -> Unit,
     onAudioOnly: () -> Unit,
     onStreamClose: () -> Unit,
@@ -879,6 +880,7 @@ fun FloatingToolbar(
                                 ) {
                                     InlineOverflowMenu(
                                         isLoggedIn = isLoggedIn,
+                                        channelNotificationsEnabled = channelNotificationsEnabled,
                                         onDismiss = {
                                             showOverflowMenu = false
                                             overflowInitialMenu = AppBarMenu.Main

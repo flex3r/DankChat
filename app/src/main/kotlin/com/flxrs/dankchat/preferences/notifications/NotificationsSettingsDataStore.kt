@@ -2,6 +2,7 @@ package com.flxrs.dankchat.preferences.notifications
 
 import android.content.Context
 import com.flxrs.dankchat.R
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.di.DispatchersProvider
 import com.flxrs.dankchat.utils.datastore.PreferenceKeys
 import com.flxrs.dankchat.utils.datastore.booleanOrDefault
@@ -77,6 +78,13 @@ class NotificationsSettingsDataStore(
             .distinctUntilChanged()
 
     fun current() = currentSettings.value
+
+    suspend fun setChannelNotificationsEnabled(
+        channel: UserName,
+        enabled: Boolean,
+    ) {
+        update { it.withChannelNotificationsEnabled(channel, enabled) }
+    }
 
     suspend fun update(transform: suspend (NotificationsSettings) -> NotificationsSettings) {
         runCatching { dataStore.updateData(transform) }
