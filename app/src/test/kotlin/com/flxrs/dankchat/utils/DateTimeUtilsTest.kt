@@ -174,6 +174,21 @@ internal class DateTimeUtilsTest {
     }
 
     @Test
+    fun `decomposes 36000 seconds to 10 hours`() {
+        val result = DateTimeUtils.decomposeSeconds(36000)
+        assertEquals(expected = listOf(DurationPart(10, HOURS)), actual = result)
+    }
+
+    @Test
+    fun `decomposes seconds to days hours minutes and seconds`() {
+        val result = DateTimeUtils.decomposeSeconds(90061)
+        assertEquals(
+            expected = listOf(DurationPart(1, DAYS), DurationPart(1, HOURS), DurationPart(1, MINUTES), DurationPart(1, SECONDS)),
+            actual = result,
+        )
+    }
+
+    @Test
     fun `decomposes 0 seconds to empty list`() {
         val result = DateTimeUtils.decomposeSeconds(0)
         assertEquals(expected = emptyList(), actual = result)
