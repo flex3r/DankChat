@@ -8,5 +8,5 @@ import kotlinx.serialization.Serializable
 data class BTTVEmoteDto(
     val id: String,
     val code: String,
-    val user: BTTVEmoteUserDto?,
+    val user: BTTVEmoteUserDto? = null,
 )
