@@ -443,6 +443,8 @@
     <string name="preference_display_group_title">ପ୍ରଦର୍ଶନ</string>
     <string name="preference_components_group_title">ଉପାଦାନଗୁଡ଼ିକ</string>
     <string name="preference_show_timed_out_messages_title">ସମୟ ସମାପ୍ତ ବାର୍ତ୍ତା ଦେଖାନ୍ତୁ</string>
+    <string name="preference_show_whispers_inline_title">ଚାଟରେ ଫୁସ୍ଫୁସ୍ ଦେଖାନ୍ତୁ</string>
+    <string name="preference_show_whispers_inline_summary">ସମସ୍ତ ଖୋଲା ଚ୍ୟାନେଲରେ ପଠାଯାଇଥିବା ଏବଂ ପ୍ରାପ୍ତ ଫୁସ୍ଫୁସ୍ ଦେଖାଏ</string>
     <string name="preference_animate_gifs_title">ଆନିମେଟ ଗିଫ୍</string>
     <string name="preference_line_separator_title">ରେଖା ସହିତ ବାର୍ତ୍ତା ପୃଥକ କରନ୍ତୁ</string>
     <string name="preference_keep_screen_on_title">ସ୍କ୍ରୀନ୍ ସଚଳ ରଖିବା</string>
@@ -589,6 +591,7 @@
     <string name="highlights_ignores_entry_elevated_messages">ଉଚ୍ଚତର ବାର୍ତ୍ତା</string>
     <string name="highlights_ignores_entry_redemptions">ଚ୍ୟାନେଲ ପଏଣ୍ଟ ସହିତ ମୁକ୍ତ ହୋଇଥିବା ହାଇଲାଇଟ୍</string>
     <string name="highlights_ignores_entry_replies">ଉତ୍ତରଗୁଡିକ</string>
+    <string name="highlights_ignores_entry_inline_whispers">ଚାଟରେ ଫୁସ୍ଫୁସ୍</string>
     <string name="highlights_ignores_entry_custom">କଷ୍ଟମ</string>
     <string name="highlights_users_title">ନିର୍ଦ୍ଦିଷ୍ଟ ବ୍ୟବହାରକାରୀଙ୍କ ଠାରୁ ବିଜ୍ଞପ୍ତି ସୃଷ୍ଟି କରେ ଏବଂ ହାଇଲାଇଟ୍ କରେ</string>
     <string name="highlights_blacklisted_users_title">ନିର୍ଦ୍ଦିଷ୍ଟ ଉପଭୋକ୍ତାମାନଙ୍କ ଠାରୁ ବିଜ୍ଞପ୍ତି ଏବଂ ହାଇଲାଇଟ୍ ଅକ୍ଷମ କରନ୍ତୁ (ଯଥା ବଟ୍)</string>

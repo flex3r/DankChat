@@ -522,6 +522,8 @@
     <string name="preference_display_group_title">Дисплей</string>
     <string name="preference_components_group_title">Елементи</string>
     <string name="preference_show_timed_out_messages_title">Показувати видалені повідомлення</string>
+    <string name="preference_show_whispers_inline_title">Показувати особисті повідомлення в чаті</string>
+    <string name="preference_show_whispers_inline_summary">Показує надіслані та отримані особисті повідомлення в усіх відкритих каналах</string>
     <string name="preference_animate_gifs_title">Анімовані смайли</string>
     <string name="preference_line_separator_title">Відокремити повідомлення лініями</string>
     <string name="preference_keep_screen_on_title">Не вимикати екран</string>
@@ -697,6 +699,7 @@
     <string name="highlights_ignores_entry_elevated_messages">Піднесені повідомлення</string>
     <string name="highlights_ignores_entry_redemptions">Виділення куплені балами каналу</string>
     <string name="highlights_ignores_entry_replies">Відповіді</string>
+    <string name="highlights_ignores_entry_inline_whispers">Особисті повідомлення в чаті</string>
     <string name="highlights_ignores_entry_custom">Власне</string>
     <string name="highlights_messages_title">Створює сповіщення та виділяє повідомлення на основі певних шаблонів.</string>
     <string name="highlights_users_title">Створює сповіщення та виділяє повідомлення від певних користувачів.</string>

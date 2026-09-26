@@ -487,6 +487,8 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="palette_style_more">Više stilova</string>
     <string name="preference_display_group_title">Ekran</string>
     <string name="preference_show_timed_out_messages_title">Prikaži obrisane poruke</string>
+    <string name="preference_show_whispers_inline_title">Прикажи шапате у ћаскању</string>
+    <string name="preference_show_whispers_inline_summary">Приказује послате и примљене шапате у свим отвореним каналима</string>
     <string name="preference_animate_gifs_title">Animirani gifovi</string>
     <string name="preference_line_separator_title">Odvojite poruke linijama</string>
     <string name="preference_keep_screen_on_title">Držati ekran upaljen</string>
@@ -599,6 +601,7 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="badge">Значка</string>
     <string name="highlights_ignores_entry_watch_streaks">Серије гледања</string>
     <string name="highlights_ignores_entry_replies">Одговори</string>
+    <string name="highlights_ignores_entry_inline_whispers">Шапати у ћаскању</string>
     <string name="highlights_badges_title">Прави обавештења и истиче поруке од корисника на основу значки.</string>
     <string name="login_outdated_title">Пријава је застарела!</string>
     <string name="login_outdated_message">Ваша пријава је застарела и нема приступ неким функцијама. Пријавите се поново.</string>
