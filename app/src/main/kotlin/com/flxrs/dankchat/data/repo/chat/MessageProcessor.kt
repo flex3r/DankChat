@@ -11,6 +11,7 @@ import com.flxrs.dankchat.data.repo.UserDisplayRepository
 import com.flxrs.dankchat.data.repo.channel.ChannelRepository
 import com.flxrs.dankchat.data.repo.emote.EmoteRepository
 import com.flxrs.dankchat.data.twitch.message.Message
+import com.flxrs.dankchat.data.twitch.message.WhisperMessage
 import org.koin.core.annotation.Single
 
 /**
@@ -59,6 +60,8 @@ class MessageProcessor(
         ?.calculateHighlightState()
         ?.calculateUserDisplays()
         ?.parseEmotesAndBadges()
+
+    fun processInlineWhisper(message: WhisperMessage): WhisperMessage = highlightsRepository.calculateInlineWhisperHighlightState(message)
 
     /** Re-parse emotes and badges (e.g. after emote set changes). */
     suspend fun reparseEmotesAndBadges(message: Message): Message = message.parseEmotesAndBadges().updateMessageInThread()

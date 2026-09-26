@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Copy</string>
     <string name="error_dialog_title">Caught exception: %1$s</string>
     <string name="add_channel">Add channel</string>
+    <string name="add_channels">Add channels</string>
     <string name="manage_channels">Manage channels</string>
     <string name="report_channel">Report channel</string>
     <string name="block_channel">Block channel</string>
@@ -111,10 +112,10 @@
         <item quantity="other">%1$d weeks</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
 
     <string name="snackbar_paste">Paste</string>
-    <string name="add_channel_hint">Channel name</string>
+    <string name="add_channels_hint">Channel names</string>
+    <string name="add_channels_empty">Enter at least one channel name</string>
     <string name="add_channel_already_added">Channel is already added</string>
     <string name="emote_menu_tab_recent">Recent</string>
     <string name="backspace">Backspace</string>
@@ -521,6 +522,8 @@
     <string name="preference_components_group_title">Components</string>
     <string name="preference_show_timed_out_messages_key" translatable="false">show_timed_out_messages_key</string>
     <string name="preference_show_timed_out_messages_title">Show timed out messages</string>
+    <string name="preference_show_whispers_inline_title">Show whispers inline</string>
+    <string name="preference_show_whispers_inline_summary">Display sent and received whispers in every open chat</string>
     <string name="preference_animate_gifs_key" translatable="false">animate_gifs_key</string>
     <string name="preference_animate_gifs_title">Animate gifs</string>
     <string name="preference_line_separator_key" translatable="false">line_seperator_key</string>
@@ -740,6 +743,7 @@
     <string name="highlights_ignores_entry_elevated_messages">Elevated Messages</string>
     <string name="highlights_ignores_entry_redemptions">Highlights redeemed with Channel Points</string>
     <string name="highlights_ignores_entry_replies">Replies</string>
+    <string name="highlights_ignores_entry_inline_whispers">Inline Whispers</string>
     <string name="highlights_ignores_entry_custom">Custom</string>
     <string name="highlights_messages_title">Creates notifications and highlights messages based on certain patterns.</string>
     <string name="highlights_users_title">Creates notifications and highlights messages from certain users.</string>
@@ -1009,6 +1013,14 @@
     <string name="cmd_usage_shoutout">Usage: %1$s &lt;username&gt; - Sends a shoutout to the specified Twitch user.</string>
     <string name="cmd_success_shoutout">Sent shoutout to %1$s</string>
     <string name="cmd_fail_shoutout">Failed to send shoutout - %1$s</string>
+    <string name="cmd_usage_set_title">Usage: %1$s &lt;stream title&gt;</string>
+    <string name="cmd_success_set_title">Updated title to %1$s</string>
+    <string name="cmd_fail_set_title">Failed to set title - %1$s</string>
+    <string name="cmd_usage_set_game">Usage: %1$s &lt;stream game&gt;</string>
+    <string name="cmd_game_not_found">Game not found.</string>
+    <string name="cmd_success_set_game">Updated game to %1$s</string>
+    <string name="cmd_fail_search_game">Failed to look up game - %1$s</string>
+    <string name="cmd_fail_set_game">Failed to set game - %1$s</string>
     <string name="cmd_shield_activated">Shield mode was activated.</string>
     <string name="cmd_shield_deactivated">Shield mode was deactivated.</string>
     <string name="cmd_fail_shield">Failed to update shield mode - %1$s</string>

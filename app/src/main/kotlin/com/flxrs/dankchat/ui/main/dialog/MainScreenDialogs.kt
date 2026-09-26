@@ -80,7 +80,7 @@ fun MainScreenDialogs(
     isStreamActive: Boolean,
     inputSheetState: InputSheetState,
     sheetsReady: Boolean,
-    onAddChannel: (UserName) -> Unit,
+    onAddChannels: (List<UserName>) -> Unit,
     onLogout: () -> Unit,
     onLogin: () -> Unit,
     onOpenUrl: (String) -> Unit,
@@ -99,7 +99,7 @@ fun MainScreenDialogs(
     if (dialogState.showAddChannel) {
         AddChannelDialog(
             onDismiss = dialogViewModel::dismissAddChannel,
-            onAddChannel = onAddChannel,
+            onAddChannels = onAddChannels,
             isChannelAlreadyAdded = channelManagementViewModel::isChannelAdded,
         )
     }
@@ -246,7 +246,7 @@ fun MainScreenDialogs(
                 val reportMessage = dialogViewModel.getCrashReportMessage() ?: return@CrashReportDialog
                 val channel = UserName(CRASH_REPORT_CHANNEL)
                 if (!channelManagementViewModel.isChannelAdded(CRASH_REPORT_CHANNEL)) {
-                    channelManagementViewModel.addChannel(channel)
+                    channelManagementViewModel.addChannels(listOf(channel))
                 } else {
                     channelManagementViewModel.selectChannel(channel)
                 }

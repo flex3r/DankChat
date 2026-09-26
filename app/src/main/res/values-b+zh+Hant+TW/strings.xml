@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">複製</string>
     <string name="error_dialog_title">例外訊息: %1$s</string>
     <string name="add_channel">新增頻道</string>
+    <string name="add_channels">新增頻道</string>
     <string name="manage_channels">管理頻道</string>
     <string name="report_channel">檢舉頻道</string>
     <string name="block_channel">封鎖頻道</string>
@@ -104,9 +105,9 @@
         <item quantity="other">%1$d 週</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">貼上</string>
-    <string name="add_channel_hint">頻道名稱</string>
+    <string name="add_channels_hint">頻道名稱</string>
+    <string name="add_channels_empty">請輸入至少一個頻道名稱</string>
     <string name="add_channel_already_added">頻道已經加入</string>
     <string name="emote_menu_tab_recent">最近</string>
     <string name="backspace">退格鍵</string>
@@ -497,6 +498,8 @@
     <string name="preference_display_group_title">顯示</string>
     <string name="preference_components_group_title">元件</string>
     <string name="preference_show_timed_out_messages_title">顯示被靜音的訊息</string>
+    <string name="preference_show_whispers_inline_title">在聊天室中顯示悄悄話</string>
+    <string name="preference_show_whispers_inline_summary">在所有開啟的頻道中顯示傳送和接收的悄悄話</string>
     <string name="preference_animate_gifs_title">顯示動圖 (GIF)</string>
     <string name="preference_line_separator_title">透過格線分隔訊息</string>
     <string name="preference_keep_screen_on_title">保持螢幕恆開</string>
@@ -673,6 +676,7 @@
     <string name="highlights_ignores_entry_elevated_messages">固定訊息顯示</string>
     <string name="highlights_ignores_entry_redemptions">使用頻道點數兌換的醒目訊息</string>
     <string name="highlights_ignores_entry_replies">回覆</string>
+    <string name="highlights_ignores_entry_inline_whispers">聊天室中的悄悄話</string>
     <string name="highlights_ignores_entry_custom">自訂</string>
     <string name="highlights_messages_title">基於某些格式產生通知與醒目訊息提示</string>
     <string name="highlights_users_title">當某些使用者發出訊息時產生通知與醒目提示</string>
@@ -929,6 +933,14 @@
     <string name="cmd_usage_shoutout">用法：%1$s &lt;username&gt; - 向指定的 Twitch 使用者發送推薦。</string>
     <string name="cmd_success_shoutout">已向 %1$s 發送推薦</string>
     <string name="cmd_fail_shoutout">發送推薦失敗 - %1$s</string>
+    <string name="cmd_usage_set_title">用法：%1$s &lt;實況標題&gt;</string>
+    <string name="cmd_success_set_title">已將標題更新為 %1$s</string>
+    <string name="cmd_fail_set_title">設定標題失敗 - %1$s</string>
+    <string name="cmd_usage_set_game">用法：%1$s &lt;實況遊戲&gt;</string>
+    <string name="cmd_game_not_found">找不到遊戲。</string>
+    <string name="cmd_success_set_game">已將遊戲更新為 %1$s</string>
+    <string name="cmd_fail_search_game">查詢遊戲失敗 - %1$s</string>
+    <string name="cmd_fail_set_game">設定遊戲失敗 - %1$s</string>
     <string name="cmd_shield_activated">護盾模式已啟用。</string>
     <string name="cmd_shield_deactivated">護盾模式已停用。</string>
     <string name="cmd_fail_shield">更新護盾模式失敗 - %1$s</string>

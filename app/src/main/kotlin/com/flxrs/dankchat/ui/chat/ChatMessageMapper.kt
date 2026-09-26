@@ -727,7 +727,13 @@ class ChatMessageMapper(
         textAlpha: Float,
         currentUserName: UserName?,
     ): ChatMessageUiState.WhisperMessageUi {
-        val backgroundColors = calculateCheckeredBackgroundColors(isAlternateBackground, true)
+        val inlineWhisperHighlight = highlights.firstOrNull { it.type == HighlightType.InlineWhisper }
+        val backgroundColors =
+            if (inlineWhisperHighlight != null) {
+                setOf(inlineWhisperHighlight).toBackgroundColors()
+            } else {
+                calculateCheckeredBackgroundColors(isAlternateBackground, true)
+            }
         val timestamp =
             if (chatSettings.showTimestamps && timestamp > 0L) {
                 DateTimeUtils.timestampToLocalTime(timestamp, chatSettings.formatter)
@@ -804,9 +810,13 @@ class ChatMessageMapper(
             darkBackgroundColor = backgroundColors.dark,
             textAlpha = textAlpha,
             enableRipple = true,
+            isHighlighted = inlineWhisperHighlight != null,
             userId = userId ?: error("Whisper must have userId"),
             userName = name,
             displayName = displayName,
+            recipientId = recipientId,
+            recipientUserName = recipientName,
+            recipientDisplayName = recipientDisplayName,
             badges = badgeUis,
             rawSenderColor = rawSenderColor,
             rawRecipientColor = rawRecipientColor,
@@ -889,6 +899,7 @@ class ChatMessageMapper(
         HighlightType.Reply,
         HighlightType.Badge,
         HighlightType.Notification,
+        HighlightType.InlineWhisper,
         -> {
             BackgroundColors(
                 light = COLOR_MENTION_HIGHLIGHT_LIGHT,
@@ -955,7 +966,7 @@ class ChatMessageMapper(
         ): Int = when (type) {
             HighlightType.Subscription, HighlightType.Announcement -> if (isDark) 0xCC6A45A0 else 0xCC7E57C2
             HighlightType.WatchStreak -> if (isDark) 0xCC1A5C8A else 0xCC2979B7
-            HighlightType.Username, HighlightType.Custom, HighlightType.Reply, HighlightType.Notification, HighlightType.Badge -> if (isDark) 0xCC8C3A3B else 0xCCCF5050
+            HighlightType.Username, HighlightType.Custom, HighlightType.Reply, HighlightType.Notification, HighlightType.Badge, HighlightType.InlineWhisper -> if (isDark) 0xCC8C3A3B else 0xCCCF5050
             HighlightType.ChannelPointRedemption -> if (isDark) 0xCC00606B else 0xCC458B93
             HighlightType.FirstMessage -> if (isDark) 0xCC3A6600 else 0xCC558B2F
             HighlightType.ElevatedMessage -> if (isDark) 0xCC6B5800 else 0xCCB08D2A

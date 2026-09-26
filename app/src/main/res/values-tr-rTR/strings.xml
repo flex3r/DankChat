@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Kopyala</string>
     <string name="error_dialog_title">Hata yakalandı: %1$s</string>
     <string name="add_channel">Kanal ekle</string>
+    <string name="add_channels">Kanal ekle</string>
     <string name="manage_channels">Kanalları yönet</string>
     <string name="report_channel">Kanalı bildir</string>
     <string name="block_channel">Kanalı engelle</string>
@@ -109,9 +110,9 @@
         <item quantity="other">%1$d hafta</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Yapıştır</string>
-    <string name="add_channel_hint">Kanal adı</string>
+    <string name="add_channels_hint">Kanal adları</string>
+    <string name="add_channels_empty">En az bir kanal adı girin</string>
     <string name="add_channel_already_added">Kanal zaten eklenmiş</string>
     <string name="emote_menu_tab_recent">Son kullanılanlar</string>
     <string name="backspace">Geri sil</string>
@@ -506,6 +507,8 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="preference_display_group_title">Görünüm</string>
     <string name="preference_components_group_title">Bileşenler</string>
     <string name="preference_show_timed_out_messages_title">Zaman aşımına uğrayan mesajları göster</string>
+    <string name="preference_show_whispers_inline_title">Fısıltıları sohbette göster</string>
+    <string name="preference_show_whispers_inline_summary">Gönderilen ve alınan fısıltıları tüm açık kanallarda gösterir</string>
     <string name="preference_animate_gifs_title">GIF\'leri hareketlendir</string>
     <string name="preference_line_separator_title">Mesajları çizgiler ile ayır</string>
     <string name="preference_keep_screen_on_title">Ekranı açık tut</string>
@@ -681,6 +684,7 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="highlights_ignores_entry_elevated_messages">Yükseltilmiş Mesaj</string>
     <string name="highlights_ignores_entry_redemptions">Kanal Puanlarıyla alınan Öne Çıkarmalar</string>
     <string name="highlights_ignores_entry_replies">Yanıtlar</string>
+    <string name="highlights_ignores_entry_inline_whispers">Sohbetteki fısıltılar</string>
     <string name="highlights_ignores_entry_custom">Özel</string>
     <string name="highlights_messages_title">Belli şablonlara göre bildirimler oluşturup mesajları öne çıkarır.</string>
     <string name="highlights_users_title">Belli kullanıcılardan bildirimler oluşturup mesajlar öne çıkarır.</string>
@@ -942,6 +946,14 @@ Yardım için bu kılavuza bakın: https://wiki.chatterino.com/Image%20Uploader/
     <string name="cmd_usage_shoutout">Kullanım: %1$s &lt;kullanıcı adı&gt; - Belirtilen Twitch kullanıcısına tanıtım gönderir.</string>
     <string name="cmd_success_shoutout">%1$s kullanıcısına tanıtım gönderildi</string>
     <string name="cmd_fail_shoutout">Tanıtım gönderilemedi - %1$s</string>
+    <string name="cmd_usage_set_title">Kullanım: %1$s &lt;yayın başlığı&gt;</string>
+    <string name="cmd_success_set_title">Başlık %1$s olarak güncellendi</string>
+    <string name="cmd_fail_set_title">Başlık ayarlanamadı - %1$s</string>
+    <string name="cmd_usage_set_game">Kullanım: %1$s &lt;yayın oyunu&gt;</string>
+    <string name="cmd_game_not_found">Oyun bulunamadı.</string>
+    <string name="cmd_success_set_game">Oyun %1$s olarak güncellendi</string>
+    <string name="cmd_fail_search_game">Oyun aranamadı - %1$s</string>
+    <string name="cmd_fail_set_game">Oyun ayarlanamadı - %1$s</string>
     <string name="cmd_shield_activated">Kalkan modu etkinleştirildi.</string>
     <string name="cmd_shield_deactivated">Kalkan modu devre dışı bırakıldı.</string>
     <string name="cmd_fail_shield">Kalkan modu güncellenemedi - %1$s</string>

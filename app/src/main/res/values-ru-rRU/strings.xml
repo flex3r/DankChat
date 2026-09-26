@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Копировать</string>
     <string name="error_dialog_title">Записанное исключение: %1$s</string>
     <string name="add_channel">Добавить канал</string>
+    <string name="add_channels">Добавить каналы</string>
     <string name="manage_channels">Управление каналами</string>
     <string name="report_channel">Пожаловаться на канал</string>
     <string name="block_channel">Заблокировать канал</string>
@@ -119,9 +120,9 @@
         <item quantity="other">%1$d недель</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Вставить</string>
-    <string name="add_channel_hint">Имя канала</string>
+    <string name="add_channels_hint">Имена каналов</string>
+    <string name="add_channels_empty">Введите хотя бы одно имя канала</string>
     <string name="add_channel_already_added">Канал уже добавлен</string>
     <string name="emote_menu_tab_recent">Недавние</string>
     <string name="backspace">Удалить</string>
@@ -520,6 +521,8 @@
     <string name="preference_display_group_title">Отображение</string>
     <string name="preference_components_group_title">Компоненты</string>
     <string name="preference_show_timed_out_messages_title">Отображать удалённые сообщения</string>
+    <string name="preference_show_whispers_inline_title">Отображать личные сообщения в чате</string>
+    <string name="preference_show_whispers_inline_summary">Отображает отправленные и полученные личные сообщения во всех открытых каналах</string>
     <string name="preference_animate_gifs_title">Анимировать GIF</string>
     <string name="preference_line_separator_title">Разделять сообщения линиями</string>
     <string name="preference_keep_screen_on_title">Не затемнять экран</string>
@@ -695,6 +698,7 @@
     <string name="highlights_ignores_entry_elevated_messages">Выделенные сообщения</string>
     <string name="highlights_ignores_entry_redemptions">Выделения купленные за баллы канала</string>
     <string name="highlights_ignores_entry_replies">Ответы</string>
+    <string name="highlights_ignores_entry_inline_whispers">Личные сообщения в чате</string>
     <string name="highlights_ignores_entry_custom">Пользовательские</string>
     <string name="highlights_messages_title">Создает уведомления, и выделяет сообщения на основе определенных шаблонов.</string>
     <string name="highlights_users_title">Создает уведомления, и выделяет сообщения от определенных пользователей.</string>
@@ -966,6 +970,14 @@
     <string name="cmd_usage_shoutout">Использование: %1$s &lt;имя пользователя&gt; - Отправляет шаут-аут указанному пользователю Twitch.</string>
     <string name="cmd_success_shoutout">Шаут-аут отправлен %1$s</string>
     <string name="cmd_fail_shoutout">Не удалось отправить шаут-аут - %1$s</string>
+    <string name="cmd_usage_set_title">Использование: %1$s &lt;название трансляции&gt;</string>
+    <string name="cmd_success_set_title">Название изменено на %1$s</string>
+    <string name="cmd_fail_set_title">Не удалось изменить название - %1$s</string>
+    <string name="cmd_usage_set_game">Использование: %1$s &lt;игра трансляции&gt;</string>
+    <string name="cmd_game_not_found">Игра не найдена.</string>
+    <string name="cmd_success_set_game">Игра изменена на %1$s</string>
+    <string name="cmd_fail_search_game">Не удалось выполнить поиск игры - %1$s</string>
+    <string name="cmd_fail_set_game">Не удалось изменить игру - %1$s</string>
     <string name="cmd_shield_activated">Режим щита активирован.</string>
     <string name="cmd_shield_deactivated">Режим щита деактивирован.</string>
     <string name="cmd_fail_shield">Не удалось обновить режим щита - %1$s</string>

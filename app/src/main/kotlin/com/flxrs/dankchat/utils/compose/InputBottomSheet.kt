@@ -30,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -71,6 +72,8 @@ fun InputBottomSheet(
     capitalization: KeyboardCapitalization = KeyboardCapitalization.Unspecified,
     autoCorrectEnabled: Boolean = true,
     showClearButton: Boolean = false,
+    singleLine: Boolean = true,
+    maxLines: Int = if (singleLine) 1 else 5,
     validate: ((String) -> String?)? = null,
 ) {
     var inputValue by remember { mutableStateOf(TextFieldValue(defaultValue, selection = TextRange(defaultValue.length))) }
@@ -89,7 +92,7 @@ fun InputBottomSheet(
             detents = listOf(SheetDetent.Hidden, SheetDetent.FullyExpanded),
         )
 
-    LaunchedEffect(sheetState.currentDetent) {
+    SideEffect(sheetState.currentDetent) {
         if (sheetState.currentDetent == SheetDetent.Hidden) {
             onDismiss()
         }
@@ -143,7 +146,7 @@ fun InputBottomSheet(
                 val isClosing = source > 0 && target == 0
                 val nearlyDone = current < 200
 
-                LaunchedEffect(isClosing, nearlyDone) {
+                SideEffect(isClosing, nearlyDone) {
                     if (isClosing && nearlyDone) {
                         onDismiss()
                     }
@@ -171,7 +174,8 @@ fun InputBottomSheet(
                     value = inputValue,
                     onValueChange = { inputValue = it },
                     label = { Text(hint) },
-                    singleLine = true,
+                    singleLine = singleLine,
+                    maxLines = maxLines,
                     isError = errorText != null,
                     trailingIcon =
                         if (showClearButton && inputValue.text.isNotEmpty()) {
@@ -191,7 +195,7 @@ fun InputBottomSheet(
                             capitalization = capitalization,
                             autoCorrectEnabled = autoCorrectEnabled,
                             keyboardType = keyboardType,
-                            imeAction = ImeAction.Done,
+                            imeAction = if (singleLine) ImeAction.Done else ImeAction.Default,
                         ),
                     keyboardActions =
                         KeyboardActions(onDone = {

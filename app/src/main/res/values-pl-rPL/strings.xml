@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Kopiuj</string>
     <string name="error_dialog_title">Wystąpił błąd: %1$s</string>
     <string name="add_channel">Dodaj kanał</string>
+    <string name="add_channels">Dodaj kanały</string>
     <string name="manage_channels">Zarządzaj kanałami</string>
     <string name="report_channel">Zgłoś kanał</string>
     <string name="block_channel">Zablokuj kanał</string>
@@ -119,9 +120,9 @@
         <item quantity="other">%1$d tygodni</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Wklej</string>
-    <string name="add_channel_hint">Nazwa kanału</string>
+    <string name="add_channels_hint">Nazwy kanałów</string>
+    <string name="add_channels_empty">Wpisz co najmniej jedną nazwę kanału</string>
     <string name="add_channel_already_added">Kanał jest już dodany</string>
     <string name="emote_menu_tab_recent">Ostatnie</string>
     <string name="backspace">Cofnij</string>
@@ -520,6 +521,8 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_display_group_title">Wyświetl</string>
     <string name="preference_components_group_title">Komponenty</string>
     <string name="preference_show_timed_out_messages_title">Pokazuj usunięte wiadomości</string>
+    <string name="preference_show_whispers_inline_title">Pokazuj szepty na czacie</string>
+    <string name="preference_show_whispers_inline_summary">Pokazuje wysłane i odebrane szepty na wszystkich otwartych kanałach</string>
     <string name="preference_animate_gifs_title">Animowane GIFy</string>
     <string name="preference_line_separator_title">Oddziel wiadomości liniami</string>
     <string name="preference_keep_screen_on_title">Nie wygaszaj ekranu</string>
@@ -695,6 +698,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="highlights_ignores_entry_elevated_messages">Podwyższone wiadomości</string>
     <string name="highlights_ignores_entry_redemptions">Wyróżnienie odebrane za Punkty Kanału</string>
     <string name="highlights_ignores_entry_replies">Odpowiedzi</string>
+    <string name="highlights_ignores_entry_inline_whispers">Szepty na czacie</string>
     <string name="highlights_ignores_entry_custom">Niestandardowe</string>
     <string name="highlights_messages_title">Tworzy powiadomienia i wyróżnia wiadomości na podstawie określonych wzorów.</string>
     <string name="highlights_users_title">Tworzy powiadomienia i wyróżnia wiadomości od określonych użytkowników.</string>
@@ -966,6 +970,14 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="cmd_usage_shoutout">Użycie: %1$s &lt;nazwa użytkownika&gt; - Wysyła wyróżnienie dla podanego użytkownika Twitcha.</string>
     <string name="cmd_success_shoutout">Wysłano wyróżnienie dla %1$s</string>
     <string name="cmd_fail_shoutout">Nie udało się wysłać wyróżnienia - %1$s</string>
+    <string name="cmd_usage_set_title">Użycie: %1$s &lt;tytuł transmisji&gt;</string>
+    <string name="cmd_success_set_title">Zmieniono tytuł na %1$s</string>
+    <string name="cmd_fail_set_title">Nie udało się zmienić tytułu - %1$s</string>
+    <string name="cmd_usage_set_game">Użycie: %1$s &lt;gra transmisji&gt;</string>
+    <string name="cmd_game_not_found">Nie znaleziono gry.</string>
+    <string name="cmd_success_set_game">Zmieniono grę na %1$s</string>
+    <string name="cmd_fail_search_game">Nie udało się wyszukać gry - %1$s</string>
+    <string name="cmd_fail_set_game">Nie udało się zmienić gry - %1$s</string>
     <string name="cmd_shield_activated">Tryb tarczy został aktywowany.</string>
     <string name="cmd_shield_deactivated">Tryb tarczy został dezaktywowany.</string>
     <string name="cmd_fail_shield">Nie udało się zaktualizować trybu tarczy - %1$s</string>

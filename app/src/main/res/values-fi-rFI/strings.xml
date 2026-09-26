@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Kopioi</string>
     <string name="error_dialog_title">Siepattu poikkeus: %1$s</string>
     <string name="add_channel">Lisää kanava</string>
+    <string name="add_channels">Lisää kanavia</string>
     <string name="manage_channels">Hallitse kanavia</string>
     <string name="report_channel">Raportoi kanava</string>
     <string name="block_channel">Estä kanava</string>
@@ -109,9 +110,9 @@
         <item quantity="other">%1$d viikkoa</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Liitä</string>
-    <string name="add_channel_hint">Kanavan nimi</string>
+    <string name="add_channels_hint">Kanavien nimet</string>
+    <string name="add_channels_empty">Anna vähintään yksi kanavan nimi</string>
     <string name="add_channel_already_added">Kanava on jo lisätty</string>
     <string name="emote_menu_tab_recent">Viimeisimmät</string>
     <string name="backspace">Askelpalautin</string>
@@ -502,6 +503,8 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_display_group_title">Näyttö</string>
     <string name="preference_components_group_title">Komponentit</string>
     <string name="preference_show_timed_out_messages_title">Näytä jäähyviestit</string>
+    <string name="preference_show_whispers_inline_title">Näytä kuiskaukset chatissa</string>
+    <string name="preference_show_whispers_inline_summary">Näyttää lähetetyt ja vastaanotetut kuiskaukset kaikilla avoimilla kanavilla</string>
     <string name="preference_animate_gifs_title">Animoi gifit</string>
     <string name="preference_line_separator_title">Erota viestit riveillä</string>
     <string name="preference_keep_screen_on_title">Pidä näyttö päällä</string>
@@ -633,6 +636,7 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="highlights_ignores_entry_watch_streaks">Katseluputket</string>
     <string name="highlights_ignores_entry_first_messages">Ensimmäiset viestit</string>
     <string name="highlights_ignores_entry_replies">Vastaukset</string>
+    <string name="highlights_ignores_entry_inline_whispers">Kuiskaukset chatissa</string>
     <string name="highlights_ignores_entry_custom">Mukautettu</string>
     <string name="highlights_badges_title">Luo ilmoituksia ja korostaa viestejä käyttäjiltä merkkien perusteella.</string>
     <string name="login_outdated_title">Kirjautuminen vanhentunut!</string>
@@ -883,6 +887,14 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="cmd_usage_shoutout">Käyttö: %1$s &lt;käyttäjänimi&gt; - Lähettää shoutoutin määritetylle Twitch-käyttäjälle.</string>
     <string name="cmd_success_shoutout">Shoutout lähetetty käyttäjälle %1$s</string>
     <string name="cmd_fail_shoutout">Shoutoutin lähetys epäonnistui - %1$s</string>
+    <string name="cmd_usage_set_title">Käyttö: %1$s &lt;lähetyksen otsikko&gt;</string>
+    <string name="cmd_success_set_title">Otsikko vaihdettu: %1$s</string>
+    <string name="cmd_fail_set_title">Otsikon vaihto epäonnistui - %1$s</string>
+    <string name="cmd_usage_set_game">Käyttö: %1$s &lt;lähetyksen peli&gt;</string>
+    <string name="cmd_game_not_found">Peliä ei löytynyt.</string>
+    <string name="cmd_success_set_game">Peli vaihdettu: %1$s</string>
+    <string name="cmd_fail_search_game">Pelin haku epäonnistui - %1$s</string>
+    <string name="cmd_fail_set_game">Pelin vaihto epäonnistui - %1$s</string>
     <string name="cmd_shield_activated">Suojatila aktivoitiin.</string>
     <string name="cmd_shield_deactivated">Suojatila poistettiin käytöstä.</string>
     <string name="cmd_fail_shield">Suojatilan päivitys epäonnistui - %1$s</string>

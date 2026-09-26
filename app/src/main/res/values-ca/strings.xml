@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Copiar</string>
     <string name="error_dialog_title">Excepció atrapada: %1$s</string>
     <string name="add_channel">Afegir canal</string>
+    <string name="add_channels">Afegir canals</string>
     <string name="manage_channels">Gestionar canals</string>
     <string name="report_channel">Reportar canal</string>
     <string name="block_channel">Bloquejar canal</string>
@@ -109,9 +110,9 @@
         <item quantity="other">%1$d setmanes</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Enganxa</string>
-    <string name="add_channel_hint">Nom del canal</string>
+    <string name="add_channels_hint">Noms dels canals</string>
+    <string name="add_channels_empty">Introdueix almenys un nom de canal</string>
     <string name="add_channel_already_added">El canal ja està afegit</string>
     <string name="emote_menu_tab_recent">Recent</string>
     <string name="backspace">Retrocés</string>
@@ -499,6 +500,8 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="preference_display_group_title">Visualització</string>
     <string name="preference_components_group_title">Components</string>
     <string name="preference_show_timed_out_messages_title">Mostrar missatges eliminats</string>
+    <string name="preference_show_whispers_inline_title">Mostrar missatges privats al xat</string>
+    <string name="preference_show_whispers_inline_summary">Mostra els missatges privats enviats i rebuts a tots els canals oberts</string>
     <string name="preference_animate_gifs_title">Animar gifs</string>
     <string name="preference_line_separator_title">Separar missatges amb línies</string>
     <string name="preference_keep_screen_on_title">Mantenir pantalla encesa</string>
@@ -666,6 +669,7 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="highlights_ignores_entry_first_messages">Primers missatges</string>
     <string name="highlights_ignores_entry_redemptions">Missatges destacats amb punts de canal</string>
     <string name="highlights_ignores_entry_replies">Respostes</string>
+    <string name="highlights_ignores_entry_inline_whispers">Missatges privats al xat</string>
     <string name="highlights_ignores_entry_custom">Personalitzat</string>
     <string name="highlights_messages_title">Crea notificacions i missatges destacats basats en certes configuracions</string>
     <string name="highlights_users_title">Crea notificacions i destaca missatges de certs usuaris</string>
@@ -922,6 +926,14 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="cmd_usage_shoutout">Ús: %1$s &lt;nom d\'usuari&gt; - Envia un shoutout a l\'usuari de Twitch especificat.</string>
     <string name="cmd_success_shoutout">S\'ha enviat un shoutout a %1$s</string>
     <string name="cmd_fail_shoutout">No s\'ha pogut enviar el shoutout - %1$s</string>
+    <string name="cmd_usage_set_title">Ús: %1$s &lt;títol del directe&gt;</string>
+    <string name="cmd_success_set_title">S\'ha canviat el títol a %1$s</string>
+    <string name="cmd_fail_set_title">No s\'ha pogut canviar el títol - %1$s</string>
+    <string name="cmd_usage_set_game">Ús: %1$s &lt;joc del directe&gt;</string>
+    <string name="cmd_game_not_found">No s\'ha trobat el joc.</string>
+    <string name="cmd_success_set_game">S\'ha canviat el joc a %1$s</string>
+    <string name="cmd_fail_search_game">No s\'ha pogut cercar el joc - %1$s</string>
+    <string name="cmd_fail_set_game">No s\'ha pogut canviar el joc - %1$s</string>
     <string name="cmd_shield_activated">El mode d\'escut s\'ha activat.</string>
     <string name="cmd_shield_deactivated">El mode d\'escut s\'ha desactivat.</string>
     <string name="cmd_fail_shield">No s\'ha pogut actualitzar el mode d\'escut - %1$s</string>

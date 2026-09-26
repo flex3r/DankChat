@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -159,6 +160,7 @@ private fun RoundedCorner.safeBottomPadding(screenHeight: Int): Int {
  * On API < 31 or when no rounded corners are present, returns [fallback].
  */
 @Composable
+@ReadOnlyComposable
 fun rememberRoundedCornerHorizontalPadding(fallback: Dp = 0.dp): PaddingValues {
     val fallbackPadding = PaddingValues(horizontal = fallback)
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {

@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Zkopírovat</string>
     <string name="error_dialog_title">Zachycená chyba: %1$s</string>
     <string name="add_channel">Přidat kanál</string>
+    <string name="add_channels">Přidat kanály</string>
     <string name="manage_channels">Spravovat kanály</string>
     <string name="report_channel">Nahlásit kanál</string>
     <string name="block_channel">Zablokovat kanál</string>
@@ -119,9 +120,9 @@
         <item quantity="other">%1$d týdnů</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Vložit</string>
-    <string name="add_channel_hint">Název kanálu</string>
+    <string name="add_channels_hint">Názvy kanálů</string>
+    <string name="add_channels_empty">Zadejte alespoň jeden název kanálu</string>
     <string name="add_channel_already_added">Kanál je již přidán</string>
     <string name="emote_menu_tab_recent">Nedávné</string>
     <string name="backspace">Smazat</string>
@@ -522,6 +523,8 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_display_group_title">Zobrazení</string>
     <string name="preference_components_group_title">Nástroje</string>
     <string name="preference_show_timed_out_messages_title">Zobrazit smazané zprávy</string>
+    <string name="preference_show_whispers_inline_title">Zobrazit šepoty v chatu</string>
+    <string name="preference_show_whispers_inline_summary">Zobrazí odeslané a přijaté šepoty ve všech otevřených kanálech</string>
     <string name="preference_animate_gifs_title">Animované gify</string>
     <string name="preference_line_separator_title">Oddělit zprávy řádky</string>
     <string name="preference_keep_screen_on_title">Udržovat obrazovku zapnutou</string>
@@ -697,6 +700,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="highlights_ignores_entry_elevated_messages">Zvýrazněné zprávy</string>
     <string name="highlights_ignores_entry_redemptions">Zvýraznění zakoupené přes věrnostní body</string>
     <string name="highlights_ignores_entry_replies">Odpovědi</string>
+    <string name="highlights_ignores_entry_inline_whispers">Šepoty v chatu</string>
     <string name="highlights_ignores_entry_custom">Vlastní</string>
     <string name="highlights_messages_title">Vytvoří oznámení a zvýrazní zprávy založené na určitých vzorech.</string>
     <string name="highlights_users_title">Vytvoří oznámení a zvýrazní zprávy od určitých uživatelů.</string>
@@ -968,6 +972,14 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="cmd_usage_shoutout">Použití: %1$s &lt;uživatelské jméno&gt; - Odešle shoutout zadanému uživateli Twitche.</string>
     <string name="cmd_success_shoutout">Shoutout odeslán uživateli %1$s</string>
     <string name="cmd_fail_shoutout">Nepodařilo se odeslat shoutout - %1$s</string>
+    <string name="cmd_usage_set_title">Použití: %1$s &lt;název streamu&gt;</string>
+    <string name="cmd_success_set_title">Název změněn na %1$s</string>
+    <string name="cmd_fail_set_title">Nepodařilo se změnit název - %1$s</string>
+    <string name="cmd_usage_set_game">Použití: %1$s &lt;hra streamu&gt;</string>
+    <string name="cmd_game_not_found">Hra nenalezena.</string>
+    <string name="cmd_success_set_game">Hra změněna na %1$s</string>
+    <string name="cmd_fail_search_game">Nepodařilo se vyhledat hru - %1$s</string>
+    <string name="cmd_fail_set_game">Nepodařilo se změnit hru - %1$s</string>
     <string name="cmd_shield_activated">Režim štítu byl aktivován.</string>
     <string name="cmd_shield_deactivated">Režim štítu byl deaktivován.</string>
     <string name="cmd_fail_shield">Nepodařilo se aktualizovat režim štítu - %1$s</string>

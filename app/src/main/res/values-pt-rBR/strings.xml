@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Copiar</string>
     <string name="error_dialog_title">Exceção capturada: %1$s</string>
     <string name="add_channel">Adicionar canal</string>
+    <string name="add_channels">Adicionar canais</string>
     <string name="manage_channels">Gerenciar canais</string>
     <string name="report_channel">Denunciar canal</string>
     <string name="block_channel">Bloquear canal</string>
@@ -109,9 +110,9 @@
         <item quantity="other">%1$d semanas</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Colar</string>
-    <string name="add_channel_hint">Nome do canal</string>
+    <string name="add_channels_hint">Nomes dos canais</string>
+    <string name="add_channels_empty">Digite pelo menos um nome de canal</string>
     <string name="add_channel_already_added">O canal já foi adicionado</string>
     <string name="emote_menu_tab_recent">Recente</string>
     <string name="backspace">Apagar</string>
@@ -499,6 +500,8 @@
     <string name="preference_display_group_title">Exibição</string>
     <string name="preference_components_group_title">Componentes</string>
     <string name="preference_show_timed_out_messages_title">Mostrar mensagens apagadas</string>
+    <string name="preference_show_whispers_inline_title">Mostrar sussurros no chat</string>
+    <string name="preference_show_whispers_inline_summary">Mostra os sussurros enviados e recebidos em todos os canais abertos</string>
     <string name="preference_animate_gifs_title">Animar gifs</string>
     <string name="preference_line_separator_title">Separar mensagens com linhas</string>
     <string name="preference_keep_screen_on_title">Manter tela ligada</string>
@@ -674,6 +677,7 @@
     <string name="highlights_ignores_entry_elevated_messages">Mensagens Elevadas</string>
     <string name="highlights_ignores_entry_redemptions">Destaques resgatados com Pontos de Canal</string>
     <string name="highlights_ignores_entry_replies">Respostas</string>
+    <string name="highlights_ignores_entry_inline_whispers">Sussurros no chat</string>
     <string name="highlights_ignores_entry_custom">Personalizado</string>
     <string name="highlights_messages_title">Cria notificações e destaca mensagens baseado em determinados padrões.</string>
     <string name="highlights_users_title">Cria notificações e destaca mensagens de determinados usuários.</string>
@@ -935,6 +939,14 @@
     <string name="cmd_usage_shoutout">Uso: %1$s &lt;nome de usuário&gt; - Envia um shoutout para o usuário Twitch especificado.</string>
     <string name="cmd_success_shoutout">Shoutout enviado para %1$s</string>
     <string name="cmd_fail_shoutout">Falha ao enviar shoutout - %1$s</string>
+    <string name="cmd_usage_set_title">Uso: %1$s &lt;título da live&gt;</string>
+    <string name="cmd_success_set_title">Título atualizado para %1$s</string>
+    <string name="cmd_fail_set_title">Falha ao definir o título - %1$s</string>
+    <string name="cmd_usage_set_game">Uso: %1$s &lt;jogo da live&gt;</string>
+    <string name="cmd_game_not_found">Jogo não encontrado.</string>
+    <string name="cmd_success_set_game">Jogo atualizado para %1$s</string>
+    <string name="cmd_fail_search_game">Falha ao buscar o jogo - %1$s</string>
+    <string name="cmd_fail_set_game">Falha ao definir o jogo - %1$s</string>
     <string name="cmd_shield_activated">O modo escudo foi ativado.</string>
     <string name="cmd_shield_deactivated">O modo escudo foi desativado.</string>
     <string name="cmd_fail_shield">Falha ao atualizar o modo escudo - %1$s</string>
