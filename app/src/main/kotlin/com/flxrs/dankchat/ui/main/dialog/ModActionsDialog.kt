@@ -34,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -97,6 +98,7 @@ private val FOLLOWER_MODE_PRESETS =
     )
 
 @Composable
+@ReadOnlyComposable
 private fun formatFollowerPreset(minutes: Int): String = when (minutes) {
     0 -> stringResource(R.string.room_state_follower_any)
     in 1..59 -> stringResource(R.string.room_state_duration_minutes, minutes)

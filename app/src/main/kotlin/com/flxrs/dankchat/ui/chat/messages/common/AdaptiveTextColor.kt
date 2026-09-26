@@ -2,6 +2,7 @@ package com.flxrs.dankchat.ui.chat.messages.common
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
@@ -16,6 +17,7 @@ import com.materialkolor.ktx.isLight
  * Semi-transparent colors are composited over the surface color.
  */
 @Composable
+@ReadOnlyComposable
 private fun resolveEffectiveBackground(backgroundColor: Color): Color {
     val surfaceColor = MaterialTheme.colorScheme.surface
     return when {
