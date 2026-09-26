@@ -497,6 +497,8 @@
     <string name="preference_display_group_title">顯示</string>
     <string name="preference_components_group_title">元件</string>
     <string name="preference_show_timed_out_messages_title">顯示被靜音的訊息</string>
+    <string name="preference_show_whispers_inline_title">在聊天室中顯示悄悄話</string>
+    <string name="preference_show_whispers_inline_summary">在所有開啟的頻道中顯示傳送和接收的悄悄話</string>
     <string name="preference_animate_gifs_title">顯示動圖 (GIF)</string>
     <string name="preference_line_separator_title">透過格線分隔訊息</string>
     <string name="preference_keep_screen_on_title">保持螢幕恆開</string>
@@ -673,6 +675,7 @@
     <string name="highlights_ignores_entry_elevated_messages">固定訊息顯示</string>
     <string name="highlights_ignores_entry_redemptions">使用頻道點數兌換的醒目訊息</string>
     <string name="highlights_ignores_entry_replies">回覆</string>
+    <string name="highlights_ignores_entry_inline_whispers">聊天室中的悄悄話</string>
     <string name="highlights_ignores_entry_custom">自訂</string>
     <string name="highlights_messages_title">基於某些格式產生通知與醒目訊息提示</string>
     <string name="highlights_users_title">當某些使用者發出訊息時產生通知與醒目提示</string>

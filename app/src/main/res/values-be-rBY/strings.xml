@@ -515,6 +515,8 @@
     <string name="preference_display_group_title">Адлюстраванне</string>
     <string name="preference_components_group_title">Кампаненты</string>
     <string name="preference_show_timed_out_messages_title">Адлюстроўваць выдаленыя паведамленні</string>
+    <string name="preference_show_whispers_inline_title">Адлюстроўваць асабістыя паведамленні ў чаце</string>
+    <string name="preference_show_whispers_inline_summary">Адлюстроўвае адпраўленыя і атрыманыя асабістыя паведамленні ва ўсіх адкрытых каналах</string>
     <string name="preference_animate_gifs_title">Анімаваць GIF</string>
     <string name="preference_line_separator_title">Падзяляць паведамлення лініямі</string>
     <string name="preference_keep_screen_on_title">Не зацямняць экрана</string>
@@ -690,6 +692,7 @@
     <string name="highlights_ignores_entry_elevated_messages">Павышаныя паведамленні</string>
     <string name="highlights_ignores_entry_redemptions">Выдзяленні, абмененыя за балы канала</string>
     <string name="highlights_ignores_entry_replies">Адказы</string>
+    <string name="highlights_ignores_entry_inline_whispers">Асабістыя паведамленні ў чаце</string>
     <string name="highlights_ignores_entry_custom">Індывідуалізаваць</string>
     <string name="highlights_messages_title">Стварыць апавяшчэнні і выдзяленні паведамленняў на аснове пэўных шаблонаў.</string>
     <string name="highlights_users_title">Стварае апавяшчэнні і выдзяленні паведамленняў ад пэўных карыстальнікаў.</string>

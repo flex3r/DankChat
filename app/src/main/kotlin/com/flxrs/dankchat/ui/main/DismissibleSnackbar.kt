@@ -7,7 +7,7 @@ import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 
@@ -20,7 +20,7 @@ fun DismissibleSnackbar(data: SnackbarData) {
     val state = rememberSwipeToDismissBoxState(
         positionalThreshold = { total -> total * DRAG_DISMISS_THRESHOLD_FRACTION },
     )
-    LaunchedEffect(state.currentValue) {
+    SideEffect(state.currentValue) {
         if (state.currentValue == SwipeToDismissBoxValue.StartToEnd) {
             data.dismiss()
         }

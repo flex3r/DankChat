@@ -506,6 +506,8 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="preference_display_group_title">Anzeige</string>
     <string name="preference_components_group_title">Komponenten</string>
     <string name="preference_show_timed_out_messages_title">Entfernte Nachrichten anzeigen</string>
+    <string name="preference_show_whispers_inline_title">Private Nachrichten im Chat anzeigen</string>
+    <string name="preference_show_whispers_inline_summary">Zeigt gesendete und empfangene private Nachrichten in allen geöffneten Kanälen an</string>
     <string name="preference_animate_gifs_title">GIFs animieren</string>
     <string name="preference_line_separator_title">Nachrichten durch Striche trennen</string>
     <string name="preference_keep_screen_on_title">Bildschirm eingeschaltet lassen</string>
@@ -681,6 +683,7 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="highlights_ignores_entry_elevated_messages">Hervorgehobene Nachrichten</string>
     <string name="highlights_ignores_entry_redemptions">Mit Kanalpunkten eingelöste Hervorhebungen</string>
     <string name="highlights_ignores_entry_replies">Antworten</string>
+    <string name="highlights_ignores_entry_inline_whispers">Private Nachrichten im Chat</string>
     <string name="highlights_ignores_entry_custom">Benutzerdefiniert</string>
     <string name="highlights_messages_title">Erzeugt Benachrichtigungen und hebt Nachrichten nach bestimmten Mustern hervor.</string>
     <string name="highlights_users_title">Erzeugt Benachrichtigungen und hebt Nachrichten von bestimmten Benutzern hervor.</string>

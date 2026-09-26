@@ -4,7 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.LayoutScopeMarker
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -51,7 +51,7 @@ fun SecretDankerModeTrigger(content: @Composable SecretDankerScope.() -> Unit) {
     val context = LocalContext.current
     if (!secretDankerMode) {
         val clicksNeeded = preferences.secretDankerModeClicks
-        LaunchedEffect(currentClicks) {
+        SideEffect(currentClicks) {
             lastToast?.cancel()
             when (currentClicks) {
                 in 2..<clicksNeeded -> {

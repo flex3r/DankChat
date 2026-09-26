@@ -522,6 +522,8 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="preference_display_group_title">Zobrazení</string>
     <string name="preference_components_group_title">Nástroje</string>
     <string name="preference_show_timed_out_messages_title">Zobrazit smazané zprávy</string>
+    <string name="preference_show_whispers_inline_title">Zobrazit šepoty v chatu</string>
+    <string name="preference_show_whispers_inline_summary">Zobrazí odeslané a přijaté šepoty ve všech otevřených kanálech</string>
     <string name="preference_animate_gifs_title">Animované gify</string>
     <string name="preference_line_separator_title">Oddělit zprávy řádky</string>
     <string name="preference_keep_screen_on_title">Udržovat obrazovku zapnutou</string>
@@ -697,6 +699,7 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="highlights_ignores_entry_elevated_messages">Zvýrazněné zprávy</string>
     <string name="highlights_ignores_entry_redemptions">Zvýraznění zakoupené přes věrnostní body</string>
     <string name="highlights_ignores_entry_replies">Odpovědi</string>
+    <string name="highlights_ignores_entry_inline_whispers">Šepoty v chatu</string>
     <string name="highlights_ignores_entry_custom">Vlastní</string>
     <string name="highlights_messages_title">Vytvoří oznámení a zvýrazní zprávy založené na určitých vzorech.</string>
     <string name="highlights_users_title">Vytvoří oznámení a zvýrazní zprávy od určitých uživatelů.</string>

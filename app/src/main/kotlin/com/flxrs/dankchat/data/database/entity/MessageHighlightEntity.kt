@@ -53,5 +53,6 @@ enum class MessageHighlightEntityType {
     FirstMessage,
     ElevatedMessage,
     Reply,
+    InlineWhisper,
     Custom,
 }

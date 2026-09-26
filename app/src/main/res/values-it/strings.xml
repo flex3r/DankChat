@@ -499,6 +499,8 @@
     <string name="preference_display_group_title">Visualizzazione</string>
     <string name="preference_components_group_title">Componenti</string>
     <string name="preference_show_timed_out_messages_title">Mostra messaggi silenziati</string>
+    <string name="preference_show_whispers_inline_title">Mostra gli MP nella chat</string>
+    <string name="preference_show_whispers_inline_summary">Mostra gli MP inviati e ricevuti in tutti i canali aperti</string>
     <string name="preference_animate_gifs_title">Gif animate</string>
     <string name="preference_line_separator_title">Separa messaggi con righe</string>
     <string name="preference_keep_screen_on_title">Mantieni lo schermo acceso</string>
@@ -674,6 +676,7 @@
     <string name="highlights_ignores_entry_elevated_messages">Messaggi Elevati</string>
     <string name="highlights_ignores_entry_redemptions">Evidenziazioni riscattate con Punti Canale</string>
     <string name="highlights_ignores_entry_replies">Risposte</string>
+    <string name="highlights_ignores_entry_inline_whispers">MP nella chat</string>
     <string name="highlights_ignores_entry_custom">Personalizzati</string>
     <string name="highlights_messages_title">Crea notifiche ed evidenzia messaggi secondo certi modelli.</string>
     <string name="highlights_users_title">Crea notifiche ed evidenzia messaggi da certi utenti.</string>
