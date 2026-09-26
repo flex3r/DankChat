@@ -21,6 +21,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.luminance
 
@@ -36,6 +37,7 @@ object ContentAlpha {
      */
     val high: Float
         @Composable
+        @ReadOnlyComposable
         get() =
             resolveAlpha(
                 highContrastAlpha = HighContrastContentAlpha.high,
@@ -48,6 +50,7 @@ object ContentAlpha {
      */
     val medium: Float
         @Composable
+        @ReadOnlyComposable
         get() =
             resolveAlpha(
                 highContrastAlpha = HighContrastContentAlpha.medium,
@@ -60,6 +63,7 @@ object ContentAlpha {
      */
     val disabled: Float
         @Composable
+        @ReadOnlyComposable
         get() =
             resolveAlpha(
                 highContrastAlpha = HighContrastContentAlpha.disabled,
@@ -75,6 +79,7 @@ object ContentAlpha {
      * for, and under what circumstances.
      */
     @Composable
+    @ReadOnlyComposable
     private fun resolveAlpha(
         @FloatRange(from = 0.0, to = 1.0) highContrastAlpha: Float,
         @FloatRange(from = 0.0, to = 1.0) lowContrastAlpha: Float,

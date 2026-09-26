@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">コピー</string>
     <string name="error_dialog_title">例外が発生しました: %1$s</string>
     <string name="add_channel">チャンネルを追加</string>
+    <string name="add_channels">チャンネルを追加</string>
     <string name="manage_channels">チャンネルの管理</string>
     <string name="report_channel">チャンネルを報告</string>
     <string name="block_channel">チャンネルをブロック</string>
@@ -104,9 +105,9 @@
         <item quantity="other">%1$d週間</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">貼り付け</string>
-    <string name="add_channel_hint">チャンネル名</string>
+    <string name="add_channels_hint">チャンネル名</string>
+    <string name="add_channels_empty">チャンネル名を1つ以上入力してください</string>
     <string name="add_channel_already_added">チャンネルは既に追加されています</string>
     <string name="emote_menu_tab_recent">最近</string>
     <string name="backspace">バックスペース</string>
@@ -491,6 +492,8 @@
     <string name="preference_display_group_title">表示</string>
     <string name="preference_components_group_title">コンポーネント</string>
     <string name="preference_show_timed_out_messages_title">タイムアウトメッセージを表示</string>
+    <string name="preference_show_whispers_inline_title">チャットにウィスパーを表示</string>
+    <string name="preference_show_whispers_inline_summary">送受信したウィスパーを開いているすべてのチャンネルに表示します</string>
     <string name="preference_animate_gifs_title">アニメーションGIF</string>
     <string name="preference_line_separator_title">ラインでメッセージを分離</string>
     <string name="preference_keep_screen_on_title">画面を常にオン</string>
@@ -666,6 +669,7 @@
     <string name="highlights_ignores_entry_elevated_messages">メッセージのピン留め表示</string>
     <string name="highlights_ignores_entry_redemptions">チャンネルポイントで交換されたメッセージのハイライト</string>
     <string name="highlights_ignores_entry_replies">返信</string>
+    <string name="highlights_ignores_entry_inline_whispers">チャット内のウィスパー</string>
     <string name="highlights_ignores_entry_custom">カスタム</string>
     <string name="highlights_messages_title">特定のパターンで通知を作成し、メッセージをハイライト表示する。</string>
     <string name="highlights_users_title">特定のユーザーからの通知やハイライトメッセージを作成する。</string>

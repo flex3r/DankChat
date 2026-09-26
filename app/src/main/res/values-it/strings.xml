@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Copia</string>
     <string name="error_dialog_title">Eccezione rilevata: %1$s</string>
     <string name="add_channel">Aggiungi canale</string>
+    <string name="add_channels">Aggiungi canali</string>
     <string name="manage_channels">Gestisci canali</string>
     <string name="report_channel">Segnala canale</string>
     <string name="block_channel">Blocca canale</string>
@@ -109,9 +110,9 @@
         <item quantity="other">%1$d settimane</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Incolla</string>
-    <string name="add_channel_hint">Nome del canale</string>
+    <string name="add_channels_hint">Nomi dei canali</string>
+    <string name="add_channels_empty">Inserisci almeno un nome di canale</string>
     <string name="add_channel_already_added">Il canale è già stato aggiunto</string>
     <string name="emote_menu_tab_recent">Recente</string>
     <string name="backspace">Cancella</string>
@@ -499,6 +500,8 @@
     <string name="preference_display_group_title">Visualizzazione</string>
     <string name="preference_components_group_title">Componenti</string>
     <string name="preference_show_timed_out_messages_title">Mostra messaggi silenziati</string>
+    <string name="preference_show_whispers_inline_title">Mostra gli MP nella chat</string>
+    <string name="preference_show_whispers_inline_summary">Mostra gli MP inviati e ricevuti in tutti i canali aperti</string>
     <string name="preference_animate_gifs_title">Gif animate</string>
     <string name="preference_line_separator_title">Separa messaggi con righe</string>
     <string name="preference_keep_screen_on_title">Mantieni lo schermo acceso</string>
@@ -674,6 +677,7 @@
     <string name="highlights_ignores_entry_elevated_messages">Messaggi Elevati</string>
     <string name="highlights_ignores_entry_redemptions">Evidenziazioni riscattate con Punti Canale</string>
     <string name="highlights_ignores_entry_replies">Risposte</string>
+    <string name="highlights_ignores_entry_inline_whispers">MP nella chat</string>
     <string name="highlights_ignores_entry_custom">Personalizzati</string>
     <string name="highlights_messages_title">Crea notifiche ed evidenzia messaggi secondo certi modelli.</string>
     <string name="highlights_users_title">Crea notifiche ed evidenzia messaggi da certi utenti.</string>

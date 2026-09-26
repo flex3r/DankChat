@@ -111,12 +111,15 @@ class ChatRepository(
                 )
             val fakeItem = ChatItem(fakeMessage, isMentionTab = true)
             chatNotificationRepository.addWhisper(fakeItem)
+            chatMessageRepository.broadcastWhisperIfEnabled(fakeItem)
         }
     }
 
     fun getLastMessage(): String? = chatEventProcessor.getLastMessageForDisplay(chatChannelProvider.activeChannel.value)
 
     fun getRecentMessages(): ImmutableList<String> = chatEventProcessor.getRecentMessagesForDisplay(chatChannelProvider.activeChannel.value)
+
+    internal val lastReceivedWhisperUser get() = chatEventProcessor.lastReceivedWhisperUser
 
     internal val lastMessagesFlow get() = chatEventProcessor.lastMessagesFlow
 

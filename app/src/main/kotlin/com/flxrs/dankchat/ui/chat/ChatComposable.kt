@@ -36,9 +36,11 @@ import com.flxrs.dankchat.preferences.chat.UserLongClickBehavior
 import com.flxrs.dankchat.ui.chat.emote.EmoteInfoViewModel
 import com.flxrs.dankchat.ui.chat.message.MessageOptionsParams
 import com.flxrs.dankchat.ui.chat.message.MessageOptionsViewModel
+import com.flxrs.dankchat.ui.chat.message.MessageReplyAction
 import com.flxrs.dankchat.ui.chat.user.UserPopupStateParams
 import com.flxrs.dankchat.ui.chat.user.UserPopupViewModel
 import com.flxrs.dankchat.ui.main.input.ChatInputViewModel
+import com.flxrs.dankchat.ui.main.sheet.SheetNavigationViewModel
 import kotlinx.collections.immutable.ImmutableList
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -87,6 +89,7 @@ fun ChatComposable(
     val userPopupViewModel: UserPopupViewModel = koinViewModel()
     val messageOptionsViewModel: MessageOptionsViewModel = koinViewModel()
     val chatInputViewModel: ChatInputViewModel = koinViewModel()
+    val sheetNavigationViewModel: SheetNavigationViewModel = koinViewModel()
     val chatSettingsDataStore: ChatSettingsDataStore = koinInject()
     val preferenceStore: DankChatPreferenceStore = koinInject()
 
@@ -135,13 +138,29 @@ fun ChatComposable(
                         channel = ch?.let { UserName(it) },
                         fullMessage = fullMessage,
                         canModerate = isLoggedIn,
-                        canReply = isLoggedIn,
                         canCopy = true,
+                        replyAction = MessageReplyAction.Channel.takeIf { isLoggedIn },
+                    ),
+                )
+            },
+            onWhisperLongClick = { messageId, fullMessage, replyTarget ->
+                messageOptionsViewModel.show(
+                    MessageOptionsParams(
+                        messageId = messageId,
+                        channel = null,
+                        fullMessage = fullMessage,
+                        canModerate = false,
+                        canCopy = true,
+                        replyAction = MessageReplyAction.Whisper(replyTarget).takeIf { isLoggedIn },
                     ),
                 )
             },
             onEmoteClick = { emoteInfoViewModel.show(it) },
             onReplyClick = onReplyClick,
+            onWhisperReply = { target ->
+                sheetNavigationViewModel.openWhispers()
+                chatInputViewModel.setWhisperTarget(target)
+            },
             onAutomodAllow = { heldMessageId, ch -> viewModel.manageAutomodMessage(heldMessageId, ch, allow = true) },
             onAutomodDeny = { heldMessageId, ch -> viewModel.manageAutomodMessage(heldMessageId, ch, allow = false) },
             onAutomodBanUser = { messageId, ch, fullMessage ->
@@ -151,7 +170,6 @@ fun ChatComposable(
                         channel = ch?.let { UserName(it) },
                         fullMessage = fullMessage,
                         canModerate = isLoggedIn,
-                        canReply = false,
                         canCopy = false,
                         startWithBan = true,
                     ),

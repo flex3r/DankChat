@@ -12,6 +12,7 @@
     <string name="error_dialog_copy">କପି କରନ୍ତୁ</string>
     <string name="error_dialog_title">ବ୍ୟତିକ୍ରମ ଧରିଲା: %1$s</string>
     <string name="add_channel">ଚ୍ୟାନେଲ୍ ଯୋଡନ୍ତୁ</string>
+    <string name="add_channels">ଚ୍ୟାନେଲଗୁଡ଼ିକ ଯୋଡନ୍ତୁ</string>
     <string name="manage_channels">ଚ୍ୟାନେଲଗୁଡିକ ପରିଚାଳନା କରନ୍ତୁ</string>
     <string name="report_channel">ଚ୍ୟାନେଲ ରିପୋର୍ଟ କରନ୍ତୁ</string>
     <string name="block_channel">ବ୍ଲକ୍ ଚ୍ୟାନେଲ୍</string>
@@ -95,9 +96,9 @@
         <item quantity="other">%1$d ସପ୍ତାହ</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">ଲେପନ କରନ୍ତୁ</string>
-    <string name="add_channel_hint">ଚ୍ୟାନେଲ ନାମ</string>
+    <string name="add_channels_hint">ଚ୍ୟାନେଲ ନାମଗୁଡ଼ିକ</string>
+    <string name="add_channels_empty">ଅତି କମରେ ଗୋଟିଏ ଚ୍ୟାନେଲ ନାମ ଲେଖନ୍ତୁ</string>
     <string name="add_channel_already_added">ଚ୍ୟାନେଲ ପୂର୍ବରୁ ଯୋଡ଼ା ହୋଇସାରିଛି</string>
     <string name="emote_menu_tab_recent">ସମ୍ପ୍ରତି</string>
     <string name="emote_menu_tab_subs">ଗ୍ରାହକଗଣ</string>
@@ -443,6 +444,8 @@
     <string name="preference_display_group_title">ପ୍ରଦର୍ଶନ</string>
     <string name="preference_components_group_title">ଉପାଦାନଗୁଡ଼ିକ</string>
     <string name="preference_show_timed_out_messages_title">ସମୟ ସମାପ୍ତ ବାର୍ତ୍ତା ଦେଖାନ୍ତୁ</string>
+    <string name="preference_show_whispers_inline_title">ଚାଟରେ ଫୁସ୍ଫୁସ୍ ଦେଖାନ୍ତୁ</string>
+    <string name="preference_show_whispers_inline_summary">ସମସ୍ତ ଖୋଲା ଚ୍ୟାନେଲରେ ପଠାଯାଇଥିବା ଏବଂ ପ୍ରାପ୍ତ ଫୁସ୍ଫୁସ୍ ଦେଖାଏ</string>
     <string name="preference_animate_gifs_title">ଆନିମେଟ ଗିଫ୍</string>
     <string name="preference_line_separator_title">ରେଖା ସହିତ ବାର୍ତ୍ତା ପୃଥକ କରନ୍ତୁ</string>
     <string name="preference_keep_screen_on_title">ସ୍କ୍ରୀନ୍ ସଚଳ ରଖିବା</string>
@@ -589,6 +592,7 @@
     <string name="highlights_ignores_entry_elevated_messages">ଉଚ୍ଚତର ବାର୍ତ୍ତା</string>
     <string name="highlights_ignores_entry_redemptions">ଚ୍ୟାନେଲ ପଏଣ୍ଟ ସହିତ ମୁକ୍ତ ହୋଇଥିବା ହାଇଲାଇଟ୍</string>
     <string name="highlights_ignores_entry_replies">ଉତ୍ତରଗୁଡିକ</string>
+    <string name="highlights_ignores_entry_inline_whispers">ଚାଟରେ ଫୁସ୍ଫୁସ୍</string>
     <string name="highlights_ignores_entry_custom">କଷ୍ଟମ</string>
     <string name="highlights_users_title">ନିର୍ଦ୍ଦିଷ୍ଟ ବ୍ୟବହାରକାରୀଙ୍କ ଠାରୁ ବିଜ୍ଞପ୍ତି ସୃଷ୍ଟି କରେ ଏବଂ ହାଇଲାଇଟ୍ କରେ</string>
     <string name="highlights_blacklisted_users_title">ନିର୍ଦ୍ଦିଷ୍ଟ ଉପଭୋକ୍ତାମାନଙ୍କ ଠାରୁ ବିଜ୍ଞପ୍ତି ଏବଂ ହାଇଲାଇଟ୍ ଅକ୍ଷମ କରନ୍ତୁ (ଯଥା ବଟ୍)</string>

@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Másolás</string>
     <string name="error_dialog_title">Elkapott kivétel: %1$s</string>
     <string name="add_channel">Csatorna hozzáadása</string>
+    <string name="add_channels">Csatornák hozzáadása</string>
     <string name="manage_channels">Csatornák kezelése</string>
     <string name="report_channel">Csatorna jelentése</string>
     <string name="block_channel">Csatorna letiltása</string>
@@ -109,9 +110,9 @@
         <item quantity="other">%1$d hét</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Beillesztés</string>
-    <string name="add_channel_hint">Csatorna neve</string>
+    <string name="add_channels_hint">Csatornák nevei</string>
+    <string name="add_channels_empty">Adj meg legalább egy csatornanevet</string>
     <string name="add_channel_already_added">A csatorna már hozzá van adva</string>
     <string name="emote_menu_tab_recent">Legutóbbi</string>
     <string name="backspace">Törlés</string>
@@ -499,6 +500,8 @@
     <string name="preference_display_group_title">Megjelenés</string>
     <string name="preference_components_group_title">Komponensek</string>
     <string name="preference_show_timed_out_messages_title">Ideiglenesen kitiltott üzenetek mutatása</string>
+    <string name="preference_show_whispers_inline_title">Suttogóüzenetek mutatása a chatben</string>
+    <string name="preference_show_whispers_inline_summary">Megjeleníti az elküldött és fogadott suttogóüzeneteket minden megnyitott csatornán</string>
     <string name="preference_animate_gifs_title">Animált gif-ek</string>
     <string name="preference_line_separator_title">Üzenetek elkülönítése vonalakkal</string>
     <string name="preference_keep_screen_on_title">Képernyő ébren tartása</string>
@@ -674,6 +677,7 @@
     <string name="highlights_ignores_entry_elevated_messages">Kiemelt üzenetek</string>
     <string name="highlights_ignores_entry_redemptions">Kiemelések kiváltása csatorna pontokkal</string>
     <string name="highlights_ignores_entry_replies">Válaszok</string>
+    <string name="highlights_ignores_entry_inline_whispers">Suttogóüzenetek a chatben</string>
     <string name="highlights_ignores_entry_custom">Egyéni</string>
     <string name="highlights_messages_title">Értesítéseket hoz létre és kiemel üzeneteket egy bizonyos minta szerint</string>
     <string name="highlights_users_title">Értesítéseket hoz létre és kiemel üzeneteket bizonyos felhasználóktól.</string>

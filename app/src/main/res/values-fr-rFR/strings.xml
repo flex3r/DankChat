@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Copier</string>
     <string name="error_dialog_title">Exception capturée: %1$s</string>
     <string name="add_channel">Ajouter une chaîne</string>
+    <string name="add_channels">Ajouter des chaînes</string>
     <string name="manage_channels">Gérer les chaînes</string>
     <string name="report_channel">Signaler la chaîne</string>
     <string name="block_channel">Bloquer la chaîne</string>
@@ -109,9 +110,9 @@
         <item quantity="other">%1$d semaines</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Coller</string>
-    <string name="add_channel_hint">Nom de la chaîne</string>
+    <string name="add_channels_hint">Noms des chaînes</string>
+    <string name="add_channels_empty">Saisissez au moins un nom de chaîne</string>
     <string name="add_channel_already_added">La chaîne est déjà ajoutée</string>
     <string name="emote_menu_tab_recent">Récentes</string>
     <string name="backspace">Retour arrière</string>
@@ -504,6 +505,8 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="preference_display_group_title">Affichage</string>
     <string name="preference_components_group_title">Fonctionnalités</string>
     <string name="preference_show_timed_out_messages_title">Afficher les messages supprimés</string>
+    <string name="preference_show_whispers_inline_title">Afficher les messages privés dans le chat</string>
+    <string name="preference_show_whispers_inline_summary">Affiche les messages privés envoyés et reçus dans toutes les chaînes ouvertes</string>
     <string name="preference_animate_gifs_title">Animer les gifs</string>
     <string name="preference_line_separator_title">Séparer les messages par des lignes</string>
     <string name="preference_keep_screen_on_title">Forcer l\'écran allumé</string>
@@ -679,6 +682,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="highlights_ignores_entry_elevated_messages">Message mis en avant</string>
     <string name="highlights_ignores_entry_redemptions">Message mis en avant avec des points de chaîne</string>
     <string name="highlights_ignores_entry_replies">Réponses</string>
+    <string name="highlights_ignores_entry_inline_whispers">Messages privés dans le chat</string>
     <string name="highlights_ignores_entry_custom">Personnaliser</string>
     <string name="highlights_messages_title">Crée des notifications et met en surbrillance les messages selon certains modèles.</string>
     <string name="highlights_users_title">Crée des notifications et met en surbrillance les messages de certains utilisateurs.</string>
