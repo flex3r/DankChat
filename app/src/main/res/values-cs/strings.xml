@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Zkopírovat</string>
     <string name="error_dialog_title">Zachycená chyba: %1$s</string>
     <string name="add_channel">Přidat kanál</string>
+    <string name="add_channels">Přidat kanály</string>
     <string name="manage_channels">Spravovat kanály</string>
     <string name="report_channel">Nahlásit kanál</string>
     <string name="block_channel">Zablokovat kanál</string>
@@ -120,7 +121,8 @@
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
     <string name="snackbar_paste">Vložit</string>
-    <string name="add_channel_hint">Název kanálu</string>
+    <string name="add_channels_hint">Názvy kanálů</string>
+    <string name="add_channels_empty">Zadejte alespoň jeden název kanálu</string>
     <string name="add_channel_already_added">Kanál je již přidán</string>
     <string name="emote_menu_tab_recent">Nedávné</string>
     <string name="backspace">Smazat</string>

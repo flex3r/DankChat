@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Másolás</string>
     <string name="error_dialog_title">Elkapott kivétel: %1$s</string>
     <string name="add_channel">Csatorna hozzáadása</string>
+    <string name="add_channels">Csatornák hozzáadása</string>
     <string name="manage_channels">Csatornák kezelése</string>
     <string name="report_channel">Csatorna jelentése</string>
     <string name="block_channel">Csatorna letiltása</string>
@@ -110,7 +111,8 @@
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
     <string name="snackbar_paste">Beillesztés</string>
-    <string name="add_channel_hint">Csatorna neve</string>
+    <string name="add_channels_hint">Csatornák nevei</string>
+    <string name="add_channels_empty">Adj meg legalább egy csatornanevet</string>
     <string name="add_channel_already_added">A csatorna már hozzá van adva</string>
     <string name="emote_menu_tab_recent">Legutóbbi</string>
     <string name="backspace">Törlés</string>

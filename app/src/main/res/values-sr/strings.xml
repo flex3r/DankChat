@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Kopirati</string>
     <string name="error_dialog_title">Izuzetak uhvaćen: %1$s</string>
     <string name="add_channel">Dodaj kanal</string>
+    <string name="add_channels">Додај канале</string>
     <string name="manage_channels">Upravljaj kanalima</string>
     <string name="open_channel">Otvori kanal</string>
     <string name="no_channels_added">Nijedan kanal nije dodat</string>
@@ -110,7 +111,8 @@
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
     <string name="snackbar_paste">Налепи</string>
-    <string name="add_channel_hint">Naziv kanala</string>
+    <string name="add_channels_hint">Називи канала</string>
+    <string name="add_channels_empty">Унесите бар један назив канала</string>
     <string name="add_channel_already_added">Канал је већ додат</string>
     <string name="backspace">Обриши</string>
     <string name="emote_menu_tab_subs">Pretplatnici</string>

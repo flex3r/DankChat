@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Copiar</string>
     <string name="error_dialog_title">Excepció atrapada: %1$s</string>
     <string name="add_channel">Afegir canal</string>
+    <string name="add_channels">Afegir canals</string>
     <string name="manage_channels">Gestionar canals</string>
     <string name="report_channel">Reportar canal</string>
     <string name="block_channel">Bloquejar canal</string>
@@ -110,7 +111,8 @@
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
     <string name="snackbar_paste">Enganxa</string>
-    <string name="add_channel_hint">Nom del canal</string>
+    <string name="add_channels_hint">Noms dels canals</string>
+    <string name="add_channels_empty">Introdueix almenys un nom de canal</string>
     <string name="add_channel_already_added">El canal ja està afegit</string>
     <string name="emote_menu_tab_recent">Recent</string>
     <string name="backspace">Retrocés</string>

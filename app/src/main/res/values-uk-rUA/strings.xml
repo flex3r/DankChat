@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Копіювати</string>
     <string name="error_dialog_title">Помилка: %1$s</string>
     <string name="add_channel">Додати канал</string>
+    <string name="add_channels">Додати канали</string>
     <string name="manage_channels">Керування каналами</string>
     <string name="report_channel">Поскаржитись на канал</string>
     <string name="block_channel">Заблокувати канал</string>
@@ -120,7 +121,8 @@
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
     <string name="snackbar_paste">Вставити</string>
-    <string name="add_channel_hint">Ім\'я каналу</string>
+    <string name="add_channels_hint">Імена каналів</string>
+    <string name="add_channels_empty">Введіть хоча б одне ім\'я каналу</string>
     <string name="add_channel_already_added">Канал вже додано</string>
     <string name="emote_menu_tab_recent">Останні</string>
     <string name="backspace">Видалити</string>
