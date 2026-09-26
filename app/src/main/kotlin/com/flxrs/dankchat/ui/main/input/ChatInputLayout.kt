@@ -229,7 +229,7 @@ fun ChatInputLayout(
     val inputMethodManager = remember(view) { view.context.getSystemService(InputMethodManager::class.java) }
     val keyboardController = LocalSoftwareKeyboardController.current
     SideEffect(overlay) {
-        if (overlay is InputOverlay.Whisper) {
+        if (overlay is InputOverlay.Reply || overlay is InputOverlay.Whisper) {
             focusRequester.requestFocus()
             keyboardController?.show()
         }
