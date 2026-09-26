@@ -939,6 +939,14 @@
     <string name="cmd_usage_shoutout">Қолданысы: %1$s &lt;username&gt; - Көрсетілген Twitch пайдаланушысына шаутаут жібереді.</string>
     <string name="cmd_success_shoutout">%1$s пайдаланушысына шаутаут жіберілді</string>
     <string name="cmd_fail_shoutout">Шаутаут жіберу сәтсіз - %1$s</string>
+    <string name="cmd_usage_set_title">Қолданысы: %1$s &lt;трансляция атауы&gt;</string>
+    <string name="cmd_success_set_title">Атау %1$s болып өзгертілді</string>
+    <string name="cmd_fail_set_title">Атауды өзгерту сәтсіз - %1$s</string>
+    <string name="cmd_usage_set_game">Қолданысы: %1$s &lt;трансляция ойыны&gt;</string>
+    <string name="cmd_game_not_found">Ойын табылмады.</string>
+    <string name="cmd_success_set_game">Ойын %1$s болып өзгертілді</string>
+    <string name="cmd_fail_search_game">Ойынды іздеу сәтсіз - %1$s</string>
+    <string name="cmd_fail_set_game">Ойынды өзгерту сәтсіз - %1$s</string>
     <string name="cmd_shield_activated">Қалқан режимі қосылды.</string>
     <string name="cmd_shield_deactivated">Қалқан режимі өшірілді.</string>
     <string name="cmd_fail_shield">Қалқан режимін жаңарту сәтсіз - %1$s</string>

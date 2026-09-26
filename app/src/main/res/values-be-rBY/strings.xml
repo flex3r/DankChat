@@ -964,6 +964,14 @@
     <string name="cmd_usage_shoutout">Выкарыстанне: %1$s &lt;username&gt; - Адпраўляе шаўтаўт указанаму карыстальніку Twitch.</string>
     <string name="cmd_success_shoutout">Шаўтаўт адпраўлены %1$s</string>
     <string name="cmd_fail_shoutout">Не ўдалося адправіць шаўтаўт - %1$s</string>
+    <string name="cmd_usage_set_title">Выкарыстанне: %1$s &lt;назва трансляцыі&gt;</string>
+    <string name="cmd_success_set_title">Назва зменена на %1$s</string>
+    <string name="cmd_fail_set_title">Не ўдалося змяніць назву - %1$s</string>
+    <string name="cmd_usage_set_game">Выкарыстанне: %1$s &lt;гульня трансляцыі&gt;</string>
+    <string name="cmd_game_not_found">Гульня не знойдзена.</string>
+    <string name="cmd_success_set_game">Гульня зменена на %1$s</string>
+    <string name="cmd_fail_search_game">Не ўдалося выканаць пошук гульні - %1$s</string>
+    <string name="cmd_fail_set_game">Не ўдалося змяніць гульню - %1$s</string>
     <string name="cmd_shield_activated">Рэжым шчыта актываваны.</string>
     <string name="cmd_shield_deactivated">Рэжым шчыта дэактываваны.</string>
     <string name="cmd_fail_shield">Не ўдалося абнавіць рэжым шчыта - %1$s</string>

@@ -933,6 +933,14 @@
     <string name="cmd_usage_shoutout">用法：%1$s &lt;username&gt; - 向指定的 Twitch 使用者發送推薦。</string>
     <string name="cmd_success_shoutout">已向 %1$s 發送推薦</string>
     <string name="cmd_fail_shoutout">發送推薦失敗 - %1$s</string>
+    <string name="cmd_usage_set_title">用法：%1$s &lt;實況標題&gt;</string>
+    <string name="cmd_success_set_title">已將標題更新為 %1$s</string>
+    <string name="cmd_fail_set_title">設定標題失敗 - %1$s</string>
+    <string name="cmd_usage_set_game">用法：%1$s &lt;實況遊戲&gt;</string>
+    <string name="cmd_game_not_found">找不到遊戲。</string>
+    <string name="cmd_success_set_game">已將遊戲更新為 %1$s</string>
+    <string name="cmd_fail_search_game">查詢遊戲失敗 - %1$s</string>
+    <string name="cmd_fail_set_game">設定遊戲失敗 - %1$s</string>
     <string name="cmd_shield_activated">護盾模式已啟用。</string>
     <string name="cmd_shield_deactivated">護盾模式已停用。</string>
     <string name="cmd_fail_shield">更新護盾模式失敗 - %1$s</string>

@@ -855,6 +855,14 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="cmd_usage_shoutout">Употреба: %1$s &lt;корисничко име&gt; - Шаље шаутаут наведеном Twitch кориснику.</string>
     <string name="cmd_success_shoutout">Послат шаутаут за %1$s</string>
     <string name="cmd_fail_shoutout">Слање шаутаута није успело - %1$s</string>
+    <string name="cmd_usage_set_title">Употреба: %1$s &lt;наслов стрима&gt;</string>
+    <string name="cmd_success_set_title">Наслов промењен у %1$s</string>
+    <string name="cmd_fail_set_title">Промена наслова није успела - %1$s</string>
+    <string name="cmd_usage_set_game">Употреба: %1$s &lt;игра стрима&gt;</string>
+    <string name="cmd_game_not_found">Игра није пронађена.</string>
+    <string name="cmd_success_set_game">Игра промењена у %1$s</string>
+    <string name="cmd_fail_search_game">Претрага игре није успела - %1$s</string>
+    <string name="cmd_fail_set_game">Промена игре није успела - %1$s</string>
     <string name="cmd_shield_activated">Режим штита је активиран.</string>
     <string name="cmd_shield_deactivated">Режим штита је деактивиран.</string>
     <string name="cmd_fail_shield">Ажурирање режима штита није успело - %1$s</string>

@@ -939,6 +939,14 @@
     <string name="cmd_usage_shoutout">Használat: %1$s &lt;felhasználónév&gt; - Shoutoutot küld a megadott Twitch felhasználónak.</string>
     <string name="cmd_success_shoutout">Shoutout elküldve %1$s számára</string>
     <string name="cmd_fail_shoutout">Nem sikerült elküldeni a shoutoutot - %1$s</string>
+    <string name="cmd_usage_set_title">Használat: %1$s &lt;közvetítés címe&gt;</string>
+    <string name="cmd_success_set_title">Cím módosítva: %1$s</string>
+    <string name="cmd_fail_set_title">Nem sikerült módosítani a címet - %1$s</string>
+    <string name="cmd_usage_set_game">Használat: %1$s &lt;közvetítés játéka&gt;</string>
+    <string name="cmd_game_not_found">A játék nem található.</string>
+    <string name="cmd_success_set_game">Játék módosítva: %1$s</string>
+    <string name="cmd_fail_search_game">Nem sikerült megkeresni a játékot - %1$s</string>
+    <string name="cmd_fail_set_game">Nem sikerült módosítani a játékot - %1$s</string>
     <string name="cmd_shield_activated">A pajzs mód aktiválva lett.</string>
     <string name="cmd_shield_deactivated">A pajzs mód deaktiválva lett.</string>
     <string name="cmd_fail_shield">Nem sikerült frissíteni a pajzs módot - %1$s</string>

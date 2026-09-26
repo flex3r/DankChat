@@ -971,6 +971,14 @@
     <string name="cmd_usage_shoutout">Використання: %1$s &lt;ім\'я користувача&gt; - Надсилає шаут-аут вказаному користувачу Twitch.</string>
     <string name="cmd_success_shoutout">Шаут-аут надіслано %1$s</string>
     <string name="cmd_fail_shoutout">Не вдалося надіслати шаут-аут - %1$s</string>
+    <string name="cmd_usage_set_title">Використання: %1$s &lt;назва трансляції&gt;</string>
+    <string name="cmd_success_set_title">Назву змінено на %1$s</string>
+    <string name="cmd_fail_set_title">Не вдалося змінити назву - %1$s</string>
+    <string name="cmd_usage_set_game">Використання: %1$s &lt;гра трансляції&gt;</string>
+    <string name="cmd_game_not_found">Гру не знайдено.</string>
+    <string name="cmd_success_set_game">Гру змінено на %1$s</string>
+    <string name="cmd_fail_search_game">Не вдалося виконати пошук гри - %1$s</string>
+    <string name="cmd_fail_set_game">Не вдалося змінити гру - %1$s</string>
     <string name="cmd_shield_activated">Режим щита активовано.</string>
     <string name="cmd_shield_deactivated">Режим щита деактивовано.</string>
     <string name="cmd_fail_shield">Не вдалося оновити режим щита - %1$s</string>
