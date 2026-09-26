@@ -109,7 +109,6 @@
         <item quantity="other">%1$d hét</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Beillesztés</string>
     <string name="add_channel_hint">Csatorna neve</string>
     <string name="add_channel_already_added">A csatorna már hozzá van adva</string>

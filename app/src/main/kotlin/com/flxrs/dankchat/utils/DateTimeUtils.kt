@@ -98,17 +98,9 @@ object DateTimeUtils {
     }
 
     fun decomposeSeconds(totalSeconds: Int): List<DurationPart> = buildList {
-        var remaining = totalSeconds
-        val days = remaining / 86400
-        remaining %= 86400
-        if (days > 0) add(DurationPart(days, DurationUnit.DAYS))
-        val hours = remaining / 3600
-        remaining %= 3600
-        if (hours > 0) add(DurationPart(hours, DurationUnit.HOURS))
-        val minutes = remaining / 60
-        remaining %= 60
-        if (minutes > 0) add(DurationPart(minutes, DurationUnit.MINUTES))
-        if (remaining > 0) add(DurationPart(remaining, DurationUnit.SECONDS))
+        addAll(decomposeMinutes(totalSeconds / 60))
+        val seconds = totalSeconds % 60
+        if (seconds > 0) add(DurationPart(seconds, DurationUnit.SECONDS))
     }
 
     fun calculateUptime(startedAtString: String): String {

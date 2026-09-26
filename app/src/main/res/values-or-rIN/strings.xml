@@ -95,7 +95,6 @@
         <item quantity="other">%1$d ସପ୍ତାହ</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">ଲେପନ କରନ୍ତୁ</string>
     <string name="add_channel_hint">ଚ୍ୟାନେଲ ନାମ</string>
     <string name="add_channel_already_added">ଚ୍ୟାନେଲ ପୂର୍ବରୁ ଯୋଡ଼ା ହୋଇସାରିଛି</string>

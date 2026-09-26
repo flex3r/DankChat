@@ -189,6 +189,12 @@ internal class DateTimeUtilsTest {
     }
 
     @Test
+    fun `decomposes 1209600 seconds to 2 weeks`() {
+        val result = DateTimeUtils.decomposeSeconds(1209600)
+        assertEquals(expected = listOf(DurationPart(2, WEEKS)), actual = result)
+    }
+
+    @Test
     fun `decomposes 0 seconds to empty list`() {
         val result = DateTimeUtils.decomposeSeconds(0)
         assertEquals(expected = emptyList(), actual = result)
