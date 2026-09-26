@@ -39,6 +39,10 @@ sealed interface AppearanceSettingsInteraction {
         val value: Boolean,
     ) : AppearanceSettingsInteraction
 
+    data class ShowSendWaitTimer(
+        val value: Boolean,
+    ) : AppearanceSettingsInteraction
+
     data class ShowClearInputButton(
         val value: Boolean,
     ) : AppearanceSettingsInteraction
