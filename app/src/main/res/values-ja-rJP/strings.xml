@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">コピー</string>
     <string name="error_dialog_title">例外が発生しました: %1$s</string>
     <string name="add_channel">チャンネルを追加</string>
+    <string name="add_channels">チャンネルを追加</string>
     <string name="manage_channels">チャンネルの管理</string>
     <string name="report_channel">チャンネルを報告</string>
     <string name="block_channel">チャンネルをブロック</string>
@@ -105,7 +106,8 @@
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
     <string name="snackbar_paste">貼り付け</string>
-    <string name="add_channel_hint">チャンネル名</string>
+    <string name="add_channels_hint">チャンネル名</string>
+    <string name="add_channels_empty">チャンネル名を1つ以上入力してください</string>
     <string name="add_channel_already_added">チャンネルは既に追加されています</string>
     <string name="emote_menu_tab_recent">最近</string>
     <string name="backspace">バックスペース</string>

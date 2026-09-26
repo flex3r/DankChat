@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Copier</string>
     <string name="error_dialog_title">Exception capturée: %1$s</string>
     <string name="add_channel">Ajouter une chaîne</string>
+    <string name="add_channels">Ajouter des chaînes</string>
     <string name="manage_channels">Gérer les chaînes</string>
     <string name="report_channel">Signaler la chaîne</string>
     <string name="block_channel">Bloquer la chaîne</string>
@@ -110,7 +111,8 @@
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
     <string name="snackbar_paste">Coller</string>
-    <string name="add_channel_hint">Nom de la chaîne</string>
+    <string name="add_channels_hint">Noms des chaînes</string>
+    <string name="add_channels_empty">Saisissez au moins un nom de chaîne</string>
     <string name="add_channel_already_added">La chaîne est déjà ajoutée</string>
     <string name="emote_menu_tab_recent">Récentes</string>
     <string name="backspace">Retour arrière</string>

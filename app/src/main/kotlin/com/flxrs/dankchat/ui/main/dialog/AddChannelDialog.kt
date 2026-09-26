@@ -31,8 +31,7 @@ fun AddChannelDialog(
             }
         },
         onConfirm = { input ->
-            val channels = parseChannelNames(input).filterNot { isChannelAlreadyAdded(it.value) }
-            onAddChannels(channels)
+            onAddChannels(parseChannelNames(input))
             onDismiss()
         },
         onDismiss = onDismiss,

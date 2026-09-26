@@ -72,10 +72,6 @@ class ChannelManagementViewModel(
 
     fun isChannelAdded(name: String): Boolean = preferenceStore.channels.any { it.value.equals(name, ignoreCase = true) }
 
-    fun addChannel(channel: UserName) {
-        addChannels(listOf(channel))
-    }
-
     fun addChannels(channels: List<UserName>) {
         val current = preferenceStore.channels
         val newChannels =

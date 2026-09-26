@@ -60,7 +60,6 @@
     <string name="snackbar_data_load_failed_cause">بارگیری داده‌ها ناموفق بود: %1$s</string>
     <string name="snackbar_data_load_failed_multiple_causes">بارگیری داده با چندین خطا ناموفق بود:\n%1$s</string>
     <string name="snackbar_paste">جای گذاری</string>
-    <string name="add_channel_hint">نام کانال</string>
     <string name="emote_menu_tab_recent">اخیر</string>
     <string name="emote_menu_tab_subs">زیرنویس</string>
     <string name="emote_menu_tab_channel">کانال</string>

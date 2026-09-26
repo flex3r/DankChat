@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">複製</string>
     <string name="error_dialog_title">例外訊息: %1$s</string>
     <string name="add_channel">新增頻道</string>
+    <string name="add_channels">新增頻道</string>
     <string name="manage_channels">管理頻道</string>
     <string name="report_channel">檢舉頻道</string>
     <string name="block_channel">封鎖頻道</string>
@@ -105,7 +106,8 @@
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
     <string name="snackbar_paste">貼上</string>
-    <string name="add_channel_hint">頻道名稱</string>
+    <string name="add_channels_hint">頻道名稱</string>
+    <string name="add_channels_empty">請輸入至少一個頻道名稱</string>
     <string name="add_channel_already_added">頻道已經加入</string>
     <string name="emote_menu_tab_recent">最近</string>
     <string name="backspace">退格鍵</string>

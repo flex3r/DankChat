@@ -12,6 +12,7 @@
     <string name="error_dialog_copy">କପି କରନ୍ତୁ</string>
     <string name="error_dialog_title">ବ୍ୟତିକ୍ରମ ଧରିଲା: %1$s</string>
     <string name="add_channel">ଚ୍ୟାନେଲ୍ ଯୋଡନ୍ତୁ</string>
+    <string name="add_channels">ଚ୍ୟାନେଲଗୁଡ଼ିକ ଯୋଡନ୍ତୁ</string>
     <string name="manage_channels">ଚ୍ୟାନେଲଗୁଡିକ ପରିଚାଳନା କରନ୍ତୁ</string>
     <string name="report_channel">ଚ୍ୟାନେଲ ରିପୋର୍ଟ କରନ୍ତୁ</string>
     <string name="block_channel">ବ୍ଲକ୍ ଚ୍ୟାନେଲ୍</string>
@@ -96,7 +97,8 @@
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
     <string name="snackbar_paste">ଲେପନ କରନ୍ତୁ</string>
-    <string name="add_channel_hint">ଚ୍ୟାନେଲ ନାମ</string>
+    <string name="add_channels_hint">ଚ୍ୟାନେଲ ନାମଗୁଡ଼ିକ</string>
+    <string name="add_channels_empty">ଅତି କମରେ ଗୋଟିଏ ଚ୍ୟାନେଲ ନାମ ଲେଖନ୍ତୁ</string>
     <string name="add_channel_already_added">ଚ୍ୟାନେଲ ପୂର୍ବରୁ ଯୋଡ଼ା ହୋଇସାରିଛି</string>
     <string name="emote_menu_tab_recent">ସମ୍ପ୍ରତି</string>
     <string name="emote_menu_tab_subs">ଗ୍ରାହକଗଣ</string>

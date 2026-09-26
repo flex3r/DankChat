@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Kopioi</string>
     <string name="error_dialog_title">Siepattu poikkeus: %1$s</string>
     <string name="add_channel">Lisää kanava</string>
+    <string name="add_channels">Lisää kanavia</string>
     <string name="manage_channels">Hallitse kanavia</string>
     <string name="report_channel">Raportoi kanava</string>
     <string name="block_channel">Estä kanava</string>
@@ -110,7 +111,8 @@
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
     <string name="snackbar_paste">Liitä</string>
-    <string name="add_channel_hint">Kanavan nimi</string>
+    <string name="add_channels_hint">Kanavien nimet</string>
+    <string name="add_channels_empty">Anna vähintään yksi kanavan nimi</string>
     <string name="add_channel_already_added">Kanava on jo lisätty</string>
     <string name="emote_menu_tab_recent">Viimeisimmät</string>
     <string name="backspace">Askelpalautin</string>

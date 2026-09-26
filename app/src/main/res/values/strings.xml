@@ -114,7 +114,6 @@
     <string name="duration_join_2">%1$s %2$s</string>
 
     <string name="snackbar_paste">Paste</string>
-    <string name="add_channel_hint">Channel name</string>
     <string name="add_channels_hint">Channel names</string>
     <string name="add_channels_empty">Enter at least one channel name</string>
     <string name="add_channel_already_added">Channel is already added</string>

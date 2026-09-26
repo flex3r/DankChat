@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Көшіру</string>
     <string name="error_dialog_title">Қате ұсталды: %1$s</string>
     <string name="add_channel">Арна қосу</string>
+    <string name="add_channels">Арналарды қосу</string>
     <string name="manage_channels">Арналарды басқару</string>
     <string name="report_channel">Арнаға шағымдану</string>
     <string name="block_channel">Арнаны бұғаттау</string>
@@ -110,7 +111,8 @@
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
     <string name="snackbar_paste">Қою</string>
-    <string name="add_channel_hint">Арна аты</string>
+    <string name="add_channels_hint">Арна аттары</string>
+    <string name="add_channels_empty">Кемінде бір арна атын енгізіңіз</string>
     <string name="add_channel_already_added">Арна әлдеқашан қосылған</string>
     <string name="emote_menu_tab_recent">Соңғы</string>
     <string name="backspace">Кері жою</string>

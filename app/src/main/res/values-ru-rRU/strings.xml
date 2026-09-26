@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Копировать</string>
     <string name="error_dialog_title">Записанное исключение: %1$s</string>
     <string name="add_channel">Добавить канал</string>
+    <string name="add_channels">Добавить каналы</string>
     <string name="manage_channels">Управление каналами</string>
     <string name="report_channel">Пожаловаться на канал</string>
     <string name="block_channel">Заблокировать канал</string>
@@ -120,7 +121,8 @@
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
     <string name="snackbar_paste">Вставить</string>
-    <string name="add_channel_hint">Имя канала</string>
+    <string name="add_channels_hint">Имена каналов</string>
+    <string name="add_channels_empty">Введите хотя бы одно имя канала</string>
     <string name="add_channel_already_added">Канал уже добавлен</string>
     <string name="emote_menu_tab_recent">Недавние</string>
     <string name="backspace">Удалить</string>

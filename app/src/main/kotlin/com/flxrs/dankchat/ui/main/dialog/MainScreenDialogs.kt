@@ -246,7 +246,7 @@ fun MainScreenDialogs(
                 val reportMessage = dialogViewModel.getCrashReportMessage() ?: return@CrashReportDialog
                 val channel = UserName(CRASH_REPORT_CHANNEL)
                 if (!channelManagementViewModel.isChannelAdded(CRASH_REPORT_CHANNEL)) {
-                    channelManagementViewModel.addChannel(channel)
+                    channelManagementViewModel.addChannels(listOf(channel))
                 } else {
                     channelManagementViewModel.selectChannel(channel)
                 }
