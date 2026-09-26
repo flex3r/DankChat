@@ -31,6 +31,7 @@ data class MessageHighlightItem(
         FirstMessage,
         ElevatedMessage,
         Reply,
+        InlineWhisper,
         Custom,
     }
 
@@ -103,6 +104,7 @@ fun MessageHighlightItem.Type.toEntityType(): MessageHighlightEntityType = when 
     MessageHighlightItem.Type.FirstMessage -> MessageHighlightEntityType.FirstMessage
     MessageHighlightItem.Type.ElevatedMessage -> MessageHighlightEntityType.ElevatedMessage
     MessageHighlightItem.Type.Reply -> MessageHighlightEntityType.Reply
+    MessageHighlightItem.Type.InlineWhisper -> MessageHighlightEntityType.InlineWhisper
     MessageHighlightItem.Type.Custom -> MessageHighlightEntityType.Custom
 }
 
@@ -115,6 +117,7 @@ fun MessageHighlightEntityType.toItemType(): MessageHighlightItem.Type = when (t
     MessageHighlightEntityType.FirstMessage -> MessageHighlightItem.Type.FirstMessage
     MessageHighlightEntityType.ElevatedMessage -> MessageHighlightItem.Type.ElevatedMessage
     MessageHighlightEntityType.Reply -> MessageHighlightItem.Type.Reply
+    MessageHighlightEntityType.InlineWhisper -> MessageHighlightItem.Type.InlineWhisper
     MessageHighlightEntityType.Custom -> MessageHighlightItem.Type.Custom
 }
 

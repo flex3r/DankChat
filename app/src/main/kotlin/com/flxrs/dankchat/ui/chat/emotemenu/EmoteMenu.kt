@@ -33,6 +33,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -71,7 +72,7 @@ fun EmoteMenu(
             pageCount = { tabItems.size },
         )
 
-    LaunchedEffect(pagerState.currentPage) {
+    SideEffect(pagerState.currentPage) {
         viewModel.selectTab(pagerState.currentPage)
     }
     val subsGridState = rememberLazyGridState()

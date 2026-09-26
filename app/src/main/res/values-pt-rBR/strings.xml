@@ -499,6 +499,8 @@
     <string name="preference_display_group_title">Exibição</string>
     <string name="preference_components_group_title">Componentes</string>
     <string name="preference_show_timed_out_messages_title">Mostrar mensagens apagadas</string>
+    <string name="preference_show_whispers_inline_title">Mostrar sussurros no chat</string>
+    <string name="preference_show_whispers_inline_summary">Mostra os sussurros enviados e recebidos em todos os canais abertos</string>
     <string name="preference_animate_gifs_title">Animar gifs</string>
     <string name="preference_line_separator_title">Separar mensagens com linhas</string>
     <string name="preference_keep_screen_on_title">Manter tela ligada</string>
@@ -674,6 +676,7 @@
     <string name="highlights_ignores_entry_elevated_messages">Mensagens Elevadas</string>
     <string name="highlights_ignores_entry_redemptions">Destaques resgatados com Pontos de Canal</string>
     <string name="highlights_ignores_entry_replies">Respostas</string>
+    <string name="highlights_ignores_entry_inline_whispers">Sussurros no chat</string>
     <string name="highlights_ignores_entry_custom">Personalizado</string>
     <string name="highlights_messages_title">Cria notificações e destaca mensagens baseado em determinados padrões.</string>
     <string name="highlights_users_title">Cria notificações e destaca mensagens de determinados usuários.</string>

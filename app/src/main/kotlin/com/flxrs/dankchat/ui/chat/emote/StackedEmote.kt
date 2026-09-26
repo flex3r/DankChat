@@ -11,6 +11,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -165,8 +166,8 @@ fun StackedEmote(
     }
 
     // Update animation state when setting changes
-    LaunchedEffect(animateGifs, layerDrawableState.value) {
-        val loaded = layerDrawableState.value as? EmoteLoadState.Loaded ?: return@LaunchedEffect
+    SideEffect(animateGifs, layerDrawableState.value) {
+        val loaded = layerDrawableState.value as? EmoteLoadState.Loaded ?: return@SideEffect
         (loaded.drawable as? LayerDrawable)?.forEachLayer<Animatable> { it.setRunning(animateGifs) }
     }
 
@@ -299,8 +300,8 @@ private fun SingleEmoteDrawable(
     }
 
     // Update animation state when setting changes
-    LaunchedEffect(animateGifs, drawableState.value) {
-        val loaded = drawableState.value as? EmoteLoadState.Loaded ?: return@LaunchedEffect
+    SideEffect(animateGifs, drawableState.value) {
+        val loaded = drawableState.value as? EmoteLoadState.Loaded ?: return@SideEffect
         (loaded.drawable as? Animatable)?.setRunning(animateGifs)
     }
 
@@ -372,7 +373,7 @@ private fun EmoteCodeFallback(
     // Report the fallback text size so waiting rows resize this emote's inline placeholder
     val textMeasurer = rememberTextMeasurer()
     val textStyle = LocalTextStyle.current
-    LaunchedEffect(cacheKey, fontSize) {
+    SideEffect(cacheKey, fontSize) {
         val size = textMeasurer.measure(AnnotatedString(code), textStyle.copy(fontSize = fontSize.sp)).size
         emoteCoordinator.putDimensions(cacheKey, size.width to size.height)
     }

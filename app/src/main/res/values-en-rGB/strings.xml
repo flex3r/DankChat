@@ -493,6 +493,8 @@ Check this guide for help: https://wiki.chatterino.com/Image%20Uploader/</string
     <string name="palette_style_more">More styles</string>
     <string name="preference_display_group_title">Display</string>
     <string name="preference_show_timed_out_messages_title">Show timed out messages</string>
+    <string name="preference_show_whispers_inline_title">Show whispers inline</string>
+    <string name="preference_show_whispers_inline_summary">Display sent and received whispers in every open chat</string>
     <string name="preference_animate_gifs_title">Animate gifs</string>
     <string name="preference_line_separator_title">Separate messages with lines</string>
     <string name="preference_keep_screen_on_title">Keep screen on</string>
@@ -619,6 +621,7 @@ Check this guide for help: https://wiki.chatterino.com/Image%20Uploader/</string
     <string name="badge">Badge</string>
     <string name="highlights_ignores_entry_watch_streaks">Watch Streaks</string>
     <string name="highlights_ignores_entry_replies">Replies</string>
+    <string name="highlights_ignores_entry_inline_whispers">Inline Whispers</string>
     <string name="highlights_badges_title">Create notifications and highlights messages from users based on badges.</string>
     <string name="login_outdated_title">Login Outdated!</string>
     <string name="login_outdated_message">Your login is outdated and does not have access to some functionality. Please login again.</string>
