@@ -24,6 +24,8 @@ sealed interface MainEvent {
 
     data class OpenChannel(
         val channel: UserName,
+        val messageId: String? = null,
+        val whisperTarget: UserName? = null,
     ) : MainEvent
 
     data class MessageCopied(
