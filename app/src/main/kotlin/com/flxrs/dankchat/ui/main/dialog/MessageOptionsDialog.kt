@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,9 +33,11 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +46,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringArrayResource
@@ -59,6 +64,7 @@ private enum class MessageOptionsSubView {
     Ban,
     Delete,
     Pin,
+    Warn,
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,6 +89,7 @@ fun MessageOptionsDialog(
     onTimeout: (index: Int) -> Unit,
     onBan: () -> Unit,
     onUnban: () -> Unit,
+    onWarn: (String) -> Unit,
     onPinMessage: (index: Int) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -143,6 +150,7 @@ fun MessageOptionsDialog(
                             onUnban()
                             onDismiss()
                         },
+                        onWarn = { subView = MessageOptionsSubView.Warn },
                         onTimeout = { subView = MessageOptionsSubView.Timeout },
                         onBan = { subView = MessageOptionsSubView.Ban },
                         onDelete = { subView = MessageOptionsSubView.Delete },
@@ -193,6 +201,16 @@ fun MessageOptionsDialog(
                         onBack = { subView = null },
                     )
                 }
+
+                MessageOptionsSubView.Warn -> {
+                    WarnSubView(
+                        onConfirm = { reason ->
+                            onWarn(reason)
+                            onDismiss()
+                        },
+                        onBack = { subView = null },
+                    )
+                }
             }
         }
     }
@@ -216,6 +234,7 @@ private fun MessageOptionsMainView(
     onCopyMessageId: () -> Unit,
     onCopyUrl: (String) -> Unit,
     onUnban: () -> Unit,
+    onWarn: () -> Unit,
     onTimeout: () -> Unit,
     onBan: () -> Unit,
     onDelete: () -> Unit,
@@ -288,6 +307,7 @@ private fun MessageOptionsMainView(
             if (channel != null) {
                 MessageOptionItem(Icons.Default.PushPin, stringResource(R.string.message_pin), onPinMessage)
             }
+            MessageOptionItem(Icons.Default.Warning, stringResource(R.string.message_warn), onWarn)
             MessageOptionItem(Icons.Default.Timer, stringResource(R.string.user_popup_timeout), onTimeout)
             MessageOptionItem(Icons.Default.Delete, stringResource(R.string.user_popup_delete), onDelete)
             MessageOptionItem(Icons.Default.Gavel, stringResource(R.string.user_popup_ban), onBan)
@@ -303,6 +323,7 @@ fun AutomodMessageOptionsDialog(
     onCopy: () -> Unit,
     onBan: () -> Unit,
     onUnban: () -> Unit,
+    onWarn: (String) -> Unit,
     onDismiss: () -> Unit,
     startWithBan: Boolean = false,
 ) {
@@ -330,6 +351,7 @@ fun AutomodMessageOptionsDialog(
                         })
                         if (canModerate) {
                             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                            MessageOptionItem(Icons.Default.Warning, stringResource(R.string.message_warn), onClick = { subView = MessageOptionsSubView.Warn })
                             MessageOptionItem(Icons.Default.Gavel, stringResource(R.string.user_popup_ban), onClick = { subView = MessageOptionsSubView.Ban })
                             MessageOptionItem(Icons.Default.Gavel, stringResource(R.string.user_popup_unban), onClick = {
                                 onUnban()
@@ -345,6 +367,16 @@ fun AutomodMessageOptionsDialog(
                         confirmText = stringResource(R.string.confirm_user_ban_positive_button),
                         onConfirm = {
                             onBan()
+                            onDismiss()
+                        },
+                        onBack = { subView = null },
+                    )
+                }
+
+                MessageOptionsSubView.Warn -> {
+                    WarnSubView(
+                        onConfirm = { reason ->
+                            onWarn(reason)
                             onDismiss()
                         },
                         onBack = { subView = null },
@@ -531,3 +563,67 @@ private fun ConfirmationSubView(
         }
     }
 }
+
+@Composable
+private fun WarnSubView(
+    onConfirm: (String) -> Unit,
+    onBack: () -> Unit,
+) {
+    var reason by remember { mutableStateOf("") }
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
+    Column(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 16.dp),
+    ) {
+        Text(
+            text = stringResource(R.string.message_warn),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.padding(bottom = 12.dp),
+        )
+
+        OutlinedTextField(
+            value = reason,
+            onValueChange = { value ->
+                if (value.codePointCount(0, value.length) <= WARN_REASON_LIMIT) {
+                    reason = value
+                }
+            },
+            label = { Text(stringResource(R.string.message_warn_reason)) },
+            minLines = 3,
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester),
+        )
+
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp),
+        ) {
+            OutlinedButton(onClick = onBack, modifier = Modifier.weight(1f)) {
+                Text(stringResource(R.string.dialog_cancel))
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Button(
+                onClick = { onConfirm(reason.trim()) },
+                enabled = reason.isNotBlank(),
+                modifier = Modifier.weight(1f),
+            ) {
+                Text(stringResource(R.string.message_warn_confirm))
+            }
+        }
+    }
+}
+
+private const val WARN_REASON_LIMIT = 500
