@@ -16,7 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TooltipState
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -214,7 +214,7 @@ fun ChatComposable(
         // the toolbar pin icon; it can still be expanded manually and new pins still pop up
         val isCompactHeightWindow =
             !currentWindowAdaptiveInfo().windowSizeClass.isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
-        LaunchedEffect(isCompactHeightWindow) {
+        SideEffect(isCompactHeightWindow) {
             if (isCompactHeightWindow) {
                 pinnedMessageViewModel.collapse()
             }

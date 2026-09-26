@@ -52,6 +52,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -111,7 +112,7 @@ fun MessageHistorySheet(
     val messageOptionsViewModel: MessageOptionsViewModel = koinViewModel()
 
     var lastAppliedFilter by rememberSaveable { mutableStateOf<String?>(null) }
-    LaunchedEffect(initialFilter) {
+    SideEffect(initialFilter) {
         if (lastAppliedFilter != initialFilter) {
             viewModel.setInitialQuery(initialFilter)
             lastAppliedFilter = initialFilter
@@ -286,6 +287,7 @@ fun MessageHistorySheet(
             Surface(
                 shape = MaterialTheme.shapes.extraLarge,
                 color = MaterialTheme.colorScheme.surfaceContainerLow,
+                modifier = Modifier.weight(1f, fill = false),
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -302,6 +304,9 @@ fun MessageHistorySheet(
                         },
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.primary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false),
                     )
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
@@ -460,7 +465,7 @@ private fun SearchToolbar(state: TextFieldState) {
     TextField(
         state = state,
         modifier = Modifier.fillMaxWidth(),
-        placeholder = { Text(stringResource(R.string.search_messages_hint)) },
+        placeholder = { Text(stringResource(R.string.search_messages_hint), maxLines = 1, overflow = TextOverflow.Ellipsis) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,

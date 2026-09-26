@@ -59,6 +59,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -170,7 +171,7 @@ fun LogViewerSheet(onDismiss: () -> Unit) {
         }
     }
 
-    LaunchedEffect(listState.isScrollInProgress) {
+    SideEffect(listState.isScrollInProgress) {
         if (listState.lastScrolledForward && shouldAutoScroll) {
             shouldAutoScroll = false
         }
