@@ -9,7 +9,9 @@ import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.message.Message
 import com.flxrs.dankchat.data.twitch.message.MessageThread
 import com.flxrs.dankchat.data.twitch.message.MessageThreadHeader
+import com.flxrs.dankchat.data.twitch.message.PositionedTextEdit
 import com.flxrs.dankchat.data.twitch.message.PrivMessage
+import com.flxrs.dankchat.data.twitch.message.applyTextEdits
 import com.flxrs.dankchat.utils.extensions.replaceIf
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -157,10 +159,14 @@ class RepliesRepository(
 
         if (message.startsWith("@$displayName ")) {
             val stripped = message.substringAfter("@$displayName ")
+            val removedLength = displayName.length + 2
+            val adjustedGifs = gifData.gifs.applyTextEdits(listOf(PositionedTextEdit(0, removedLength, 0)))
             return copy(
                 message = stripped,
                 originalMessage = stripped,
-                replyMentionOffset = displayName.length + 2,
+                gifs = adjustedGifs,
+                gifData = gifData.copy(message = stripped, gifs = adjustedGifs),
+                replyMentionOffset = removedLength,
                 emoteData = emoteData.copy(message = stripped),
             )
         }

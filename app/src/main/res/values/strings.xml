@@ -520,6 +520,7 @@
     <string name="preference_components_group_title">Components</string>
     <string name="preference_show_timed_out_messages_key" translatable="false">show_timed_out_messages_key</string>
     <string name="preference_show_timed_out_messages_title">Show timed out messages</string>
+    <string name="preference_show_twitch_gifs_title">Show Twitch GIFs</string>
     <string name="preference_animate_gifs_key" translatable="false">animate_gifs_key</string>
     <string name="preference_animate_gifs_title">Animate gifs</string>
     <string name="preference_line_separator_key" translatable="false">line_seperator_key</string>
