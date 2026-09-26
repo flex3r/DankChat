@@ -333,6 +333,7 @@ private fun PrivMessageText(
         emotes = message.emotes,
         fontSize = fontSize,
         animateGifs = animateGifs,
+        isAsciiArt = message.isAsciiArt,
         interactionSource = interactionSource,
         maxLines = maxLines,
         overflow = TextOverflow.Ellipsis,
