@@ -33,6 +33,8 @@ fun UserPopupSheetContainer(onOpenUrl: (String) -> Unit) {
         state = currentState.popupState,
         badges = badges,
         isOwnUser = currentState.isOwnUser,
+        ignoresHighlights = currentState.ignoresHighlights,
+        onIgnoreHighlightsChange = userPopupViewModel::setIgnoreHighlights,
         onBlockUser = userPopupViewModel::blockUser,
         onUnblockUser = userPopupViewModel::unblockUser,
         onDismiss = userPopupViewModel::dismiss,

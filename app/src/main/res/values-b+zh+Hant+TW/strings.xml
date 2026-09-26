@@ -276,6 +276,7 @@
     <string name="user_popup_unblock">移除封鎖</string>
     <string name="user_popup_mention">提及使用者</string>
     <string name="user_popup_whisper">與使用者悄悄話</string>
+    <string name="user_popup_ignore_highlights">忽略標示</string>
     <string name="user_popup_created">建立於：%1$s</string>
     <string name="user_popup_following_since">自 %1$s 起開始追隨</string>
     <string name="user_popup_not_following">目前尚未追隨</string>

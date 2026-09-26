@@ -297,6 +297,7 @@
     <string name="user_popup_unblock">Разблокировать</string>
     <string name="user_popup_mention">Упомянуть пользователя</string>
     <string name="user_popup_whisper">Написать личное сообщение</string>
+    <string name="user_popup_ignore_highlights">Игнорировать выделения</string>
     <string name="user_popup_created">Канал создан: %1$s</string>
     <string name="user_popup_following_since">Фолловит с %1$s</string>
     <string name="user_popup_not_following">Не фолловит</string>

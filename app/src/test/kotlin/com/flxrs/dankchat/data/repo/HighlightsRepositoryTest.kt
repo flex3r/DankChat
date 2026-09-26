@@ -1,10 +1,12 @@
 package com.flxrs.dankchat.data.repo
 
+import com.flxrs.dankchat.data.UserName
 import com.flxrs.dankchat.data.database.dao.BadgeHighlightDao
 import com.flxrs.dankchat.data.database.dao.BlacklistedUserDao
 import com.flxrs.dankchat.data.database.dao.MessageHighlightDao
 import com.flxrs.dankchat.data.database.dao.UserHighlightDao
 import com.flxrs.dankchat.data.database.entity.BadgeHighlightEntity
+import com.flxrs.dankchat.data.database.entity.BlacklistedUserEntity
 import com.flxrs.dankchat.data.database.entity.MessageHighlightEntity
 import com.flxrs.dankchat.data.database.entity.MessageHighlightEntityType
 import com.flxrs.dankchat.data.toDisplayName
@@ -23,12 +25,14 @@ import io.mockk.mockk
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -43,6 +47,31 @@ internal class HighlightsRepositoryTest {
         }
 
     private val messageHighlightDao = FakeMessageHighlightDao()
+    private val blacklistedUsers = MutableStateFlow<List<BlacklistedUserEntity>>(emptyList())
+    private val blacklistedUserDao =
+        mockk<BlacklistedUserDao> {
+            every { getBlacklistedUserFlow() } returns blacklistedUsers
+            coEvery { getExactBlacklistedUsers(any()) } answers {
+                val username = firstArg<String>()
+                blacklistedUsers.value.filter { !it.isRegex && it.username.equals(username, ignoreCase = true) }
+            }
+            coEvery { addBlacklistedUser(any()) } answers {
+                val user = firstArg<BlacklistedUserEntity>()
+                val id = user.id.takeIf { it != 0L } ?: ((blacklistedUsers.value.maxOfOrNull { it.id } ?: 0L) + 1L)
+                blacklistedUsers.value = blacklistedUsers.value.filterNot { it.id == id } + user.copy(id = id)
+                id
+            }
+            coEvery { addBlacklistedUsers(any()) } answers {
+                firstArg<List<BlacklistedUserEntity>>().forEach { user ->
+                    val id = user.id.takeIf { it != 0L } ?: ((blacklistedUsers.value.maxOfOrNull { it.id } ?: 0L) + 1L)
+                    blacklistedUsers.value = blacklistedUsers.value.filterNot { it.id == id } + user.copy(id = id)
+                }
+            }
+            coEvery { deleteExactBlacklistedUsers(any()) } answers {
+                val username = firstArg<String>()
+                blacklistedUsers.value = blacklistedUsers.value.filterNot { !it.isRegex && it.username.equals(username, ignoreCase = true) }
+            }
+        }
     private val badgeHighlightDao =
         mockk<BadgeHighlightDao> {
             every { getBadgeHighlightsFlow() } returns flowOf(emptyList())
@@ -53,7 +82,7 @@ internal class HighlightsRepositoryTest {
         messageHighlightDao = messageHighlightDao,
         userHighlightDao = mockk<UserHighlightDao> { every { getUserHighlightsFlow() } returns flowOf(emptyList()) },
         badgeHighlightDao = badgeHighlightDao,
-        blacklistedUserDao = mockk<BlacklistedUserDao> { every { getBlacklistedUserFlow() } returns flowOf(emptyList()) },
+        blacklistedUserDao = blacklistedUserDao,
         preferences = mockk<DankChatPreferenceStore> { every { currentUserAndDisplayFlow } returns emptyFlow() },
         notificationsSettingsDataStore = mockk<NotificationsSettingsDataStore>(),
         dispatchersProvider = dispatchersProvider,
@@ -151,6 +180,57 @@ internal class HighlightsRepositoryTest {
         createRepository().runMigrationsIfNeeded().join()
 
         coVerify(exactly = 0) { badgeHighlightDao.addHighlights(any()) }
+    }
+
+    @Test
+    fun `ignoring highlights enables all case insensitive exact entries`() = runTest(testDispatcher) {
+        blacklistedUsers.value =
+            listOf(
+                BlacklistedUserEntity(id = 1, enabled = true, username = "for.*", isRegex = true),
+                BlacklistedUserEntity(id = 2, enabled = false, username = "forsen"),
+                BlacklistedUserEntity(id = 3, enabled = false, username = "FORSEN"),
+            )
+        val repository = createRepository()
+
+        assertFalse(repository.isUserHighlightsIgnored(UserName("forsen")))
+
+        repository.setUserHighlightsIgnored(UserName("forsen"), true)
+
+        assertTrue(repository.isUserHighlightsIgnored(UserName("forsen")))
+        assertEquals(3, blacklistedUsers.value.size)
+        assertTrue(blacklistedUsers.value.filterNot { it.isRegex }.all { it.enabled })
+    }
+
+    @Test
+    fun `ignoring highlights adds an exact entry when none exists`() = runTest(testDispatcher) {
+        val regex = BlacklistedUserEntity(id = 1, enabled = true, username = "for.*", isRegex = true)
+        blacklistedUsers.value = listOf(regex)
+        val repository = createRepository()
+
+        repository.setUserHighlightsIgnored(UserName("forsen"), true)
+
+        assertEquals(
+            listOf(regex, BlacklistedUserEntity(id = 2, enabled = true, username = "forsen")),
+            blacklistedUsers.value,
+        )
+    }
+
+    @Test
+    fun `allowing highlights removes only exact entries for that user`() = runTest(testDispatcher) {
+        val regex = BlacklistedUserEntity(id = 1, enabled = true, username = "for.*", isRegex = true)
+        val otherUser = BlacklistedUserEntity(id = 2, enabled = true, username = "Iore")
+        blacklistedUsers.value =
+            listOf(
+                regex,
+                otherUser,
+                BlacklistedUserEntity(id = 3, enabled = true, username = "forsen"),
+                BlacklistedUserEntity(id = 4, enabled = false, username = "FORSEN"),
+            )
+        val repository = createRepository()
+
+        repository.setUserHighlightsIgnored(UserName("Forsen"), false)
+
+        assertEquals(listOf(regex, otherUser), blacklistedUsers.value)
     }
 
     private fun whisperMessage() = WhisperMessage(

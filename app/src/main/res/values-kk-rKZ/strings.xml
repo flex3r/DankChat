@@ -278,6 +278,7 @@
     <string name="user_popup_unblock">Бұғаттан шығару</string>
     <string name="user_popup_mention">Пайдаланушыны атап өту</string>
     <string name="user_popup_whisper">Пайдаланушыға сыбырлау</string>
+    <string name="user_popup_ignore_highlights">Ерекшелеулерді елемеу</string>
     <string name="user_popup_created">Жасалған: %1$s</string>
     <string name="user_popup_following_since">%1$s бері жазылуда</string>
     <string name="user_popup_not_following">Жазылмаған</string>

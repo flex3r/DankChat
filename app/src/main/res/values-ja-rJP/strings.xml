@@ -271,6 +271,7 @@
     <string name="user_popup_unblock">ブロックを解除</string>
     <string name="user_popup_mention">ユーザーをメンション</string>
     <string name="user_popup_whisper">ユーザーにウィスパーを送る</string>
+    <string name="user_popup_ignore_highlights">ハイライトを無視</string>
     <string name="user_popup_created">作成日：%1$s</string>
     <string name="user_popup_following_since">%1$sからフォロー中</string>
     <string name="user_popup_not_following">フォローしていません</string>

@@ -282,6 +282,7 @@ El servei emmagatzema temporalment missatges per a canals que tu (i altres) visi
     <string name="user_popup_unblock">Desbloquejar</string>
     <string name="user_popup_mention">Mencionar l\'usuari</string>
     <string name="user_popup_whisper">Missatge privat a l\'usuari</string>
+    <string name="user_popup_ignore_highlights">Ignorar missatges destacats</string>
     <string name="user_popup_created">Creat: %1$s</string>
     <string name="user_popup_following_since">Seguint des de %1$s</string>
     <string name="user_popup_not_following">Sense seguir</string>

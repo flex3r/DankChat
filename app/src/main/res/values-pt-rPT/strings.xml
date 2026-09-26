@@ -278,6 +278,7 @@
     <string name="user_popup_unblock">Desbloquear</string>
     <string name="user_popup_mention">Mencionar utilizador</string>
     <string name="user_popup_whisper">Envia um sussurro ao utilizador</string>
+    <string name="user_popup_ignore_highlights">Ignorar destaques</string>
     <string name="user_popup_created">Criado %1$s</string>
     <string name="user_popup_following_since">A seguir desde %1$s</string>
     <string name="user_popup_not_following">Não estás a seguir</string>

@@ -23,6 +23,7 @@ import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Report
 import androidx.compose.material3.Button
@@ -36,6 +37,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PlainTooltip
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
@@ -71,6 +73,8 @@ fun UserPopupDialog(
     badges: ImmutableList<BadgeUi>,
     onBlockUser: () -> Unit,
     onUnblockUser: () -> Unit,
+    ignoresHighlights: Boolean,
+    onIgnoreHighlightsChange: (Boolean) -> Unit,
     onDismiss: () -> Unit,
     onOpenChannel: (String) -> Unit,
     onReport: (String) -> Unit,
@@ -224,6 +228,19 @@ fun UserPopupDialog(
                                     }
                                 }
                                 if (!isOwnUser) {
+                                    ListItem(
+                                        leadingContent = { Icon(Icons.Default.NotificationsOff, contentDescription = null) },
+                                        trailingContent = {
+                                            Switch(
+                                                checked = ignoresHighlights,
+                                                onCheckedChange = onIgnoreHighlightsChange,
+                                            )
+                                        },
+                                        modifier = Modifier.clickable { onIgnoreHighlightsChange(!ignoresHighlights) },
+                                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                                    ) {
+                                        Text(stringResource(R.string.user_popup_ignore_highlights))
+                                    }
                                     ListItem(
                                         leadingContent = { Icon(Icons.Default.Report, contentDescription = null) },
                                         modifier =

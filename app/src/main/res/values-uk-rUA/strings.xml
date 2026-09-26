@@ -297,6 +297,7 @@
     <string name="user_popup_unblock">Розблокувати</string>
     <string name="user_popup_mention">Згадати користувача</string>
     <string name="user_popup_whisper">Відправити приватне повідомлення</string>
+    <string name="user_popup_ignore_highlights">Ігнорувати виділення</string>
     <string name="user_popup_created">Канал створений: %1$s</string>
     <string name="user_popup_following_since">Відстежується з %1$s</string>
     <string name="user_popup_not_following">Не відстежується</string>

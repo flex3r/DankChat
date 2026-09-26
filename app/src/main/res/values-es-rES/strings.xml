@@ -283,6 +283,7 @@ El servicio temporalmente almacena mensajes para canales que tú (y otros) visit
     <string name="user_popup_unblock">Desbloquear</string>
     <string name="user_popup_mention">Mencionar usuario</string>
     <string name="user_popup_whisper">Susurrar usuario</string>
+    <string name="user_popup_ignore_highlights">Ignorar destacados</string>
     <string name="user_popup_created">Creado: %1$s</string>
     <string name="user_popup_following_since">Siguiendo desde %1$s</string>
     <string name="user_popup_not_following">Sin seguir</string>
