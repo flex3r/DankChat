@@ -462,6 +462,7 @@ class ChatEventProcessor(
         val item = ChatItem(message, isMentionTab = true)
         _lastReceivedWhisperUser.value = message.name
         chatNotificationRepository.addWhisper(item)
+        chatMessageRepository.broadcastWhisperIfEnabled(item)
         chatNotificationRepository.incrementMentionCount(WhisperMessage.WHISPER_CHANNEL, 1)
         chatNotificationRepository.emitMessages(listOf(item))
     }

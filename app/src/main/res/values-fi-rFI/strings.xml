@@ -502,6 +502,8 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="preference_display_group_title">Näyttö</string>
     <string name="preference_components_group_title">Komponentit</string>
     <string name="preference_show_timed_out_messages_title">Näytä jäähyviestit</string>
+    <string name="preference_show_whispers_inline_title">Näytä kuiskaukset chatissa</string>
+    <string name="preference_show_whispers_inline_summary">Näyttää lähetetyt ja vastaanotetut kuiskaukset kaikilla avoimilla kanavilla</string>
     <string name="preference_animate_gifs_title">Animoi gifit</string>
     <string name="preference_line_separator_title">Erota viestit riveillä</string>
     <string name="preference_keep_screen_on_title">Pidä näyttö päällä</string>
@@ -633,6 +635,7 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="highlights_ignores_entry_watch_streaks">Katseluputket</string>
     <string name="highlights_ignores_entry_first_messages">Ensimmäiset viestit</string>
     <string name="highlights_ignores_entry_replies">Vastaukset</string>
+    <string name="highlights_ignores_entry_inline_whispers">Kuiskaukset chatissa</string>
     <string name="highlights_ignores_entry_custom">Mukautettu</string>
     <string name="highlights_badges_title">Luo ilmoituksia ja korostaa viestejä käyttäjiltä merkkien perusteella.</string>
     <string name="login_outdated_title">Kirjautuminen vanhentunut!</string>

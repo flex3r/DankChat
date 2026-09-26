@@ -520,6 +520,8 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="preference_display_group_title">Wyświetl</string>
     <string name="preference_components_group_title">Komponenty</string>
     <string name="preference_show_timed_out_messages_title">Pokazuj usunięte wiadomości</string>
+    <string name="preference_show_whispers_inline_title">Pokazuj szepty na czacie</string>
+    <string name="preference_show_whispers_inline_summary">Pokazuje wysłane i odebrane szepty na wszystkich otwartych kanałach</string>
     <string name="preference_animate_gifs_title">Animowane GIFy</string>
     <string name="preference_line_separator_title">Oddziel wiadomości liniami</string>
     <string name="preference_keep_screen_on_title">Nie wygaszaj ekranu</string>
@@ -695,6 +697,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="highlights_ignores_entry_elevated_messages">Podwyższone wiadomości</string>
     <string name="highlights_ignores_entry_redemptions">Wyróżnienie odebrane za Punkty Kanału</string>
     <string name="highlights_ignores_entry_replies">Odpowiedzi</string>
+    <string name="highlights_ignores_entry_inline_whispers">Szepty na czacie</string>
     <string name="highlights_ignores_entry_custom">Niestandardowe</string>
     <string name="highlights_messages_title">Tworzy powiadomienia i wyróżnia wiadomości na podstawie określonych wzorów.</string>
     <string name="highlights_users_title">Tworzy powiadomienia i wyróżnia wiadomości od określonych użytkowników.</string>
