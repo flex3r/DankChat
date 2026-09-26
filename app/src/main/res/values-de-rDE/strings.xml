@@ -946,6 +946,14 @@ Für Hilfe, siehe: https://wiki.chatterino.com/Image%20Uploader/</string>
     <string name="cmd_usage_shoutout">Verwendung: %1$s &lt;Benutzername&gt; - Sendet einen Shoutout an den angegebenen Twitch-Benutzer.</string>
     <string name="cmd_success_shoutout">Shoutout an %1$s gesendet</string>
     <string name="cmd_fail_shoutout">Shoutout konnte nicht gesendet werden - %1$s</string>
+    <string name="cmd_usage_set_title">Verwendung: %1$s &lt;Streamtitel&gt;</string>
+    <string name="cmd_success_set_title">Titel geändert zu %1$s</string>
+    <string name="cmd_fail_set_title">Titel konnte nicht geändert werden - %1$s</string>
+    <string name="cmd_usage_set_game">Verwendung: %1$s &lt;Spiel&gt;</string>
+    <string name="cmd_game_not_found">Spiel nicht gefunden.</string>
+    <string name="cmd_success_set_game">Spiel geändert zu %1$s</string>
+    <string name="cmd_fail_search_game">Spielsuche fehlgeschlagen - %1$s</string>
+    <string name="cmd_fail_set_game">Spiel konnte nicht geändert werden - %1$s</string>
     <string name="cmd_shield_activated">Schildmodus wurde aktiviert.</string>
     <string name="cmd_shield_deactivated">Schildmodus wurde deaktiviert.</string>
     <string name="cmd_fail_shield">Schildmodus konnte nicht aktualisiert werden - %1$s</string>

@@ -183,7 +183,7 @@ class TwitchCommandRepository(
         context: CommandContext,
     ): CommandResult {
         if (context.args.isEmpty() || context.args.first().isBlank()) {
-            return CommandResult.AcceptedTwitchCommand(command, TextResource.Res(R.string.cmd_usage_set_title))
+            return CommandResult.AcceptedTwitchCommand(command, TextResource.Res(R.string.cmd_usage_set_title, persistentListOf(context.trigger)))
         }
 
         val title = context.args.joinToString(" ")
@@ -203,7 +203,7 @@ class TwitchCommandRepository(
         context: CommandContext,
     ): CommandResult {
         if (context.args.isEmpty() || context.args.first().isBlank()) {
-            return CommandResult.AcceptedTwitchCommand(command, TextResource.Res(R.string.cmd_usage_set_game))
+            return CommandResult.AcceptedTwitchCommand(command, TextResource.Res(R.string.cmd_usage_set_game, persistentListOf(context.trigger)))
         }
 
         val query = context.args.joinToString(" ")

@@ -925,6 +925,14 @@
     <string name="cmd_usage_shoutout">使い方: %1$s &lt;ユーザー名&gt; - 指定したTwitchユーザーにシャウトアウトを送信します。</string>
     <string name="cmd_success_shoutout">%1$s にシャウトアウトを送信しました</string>
     <string name="cmd_fail_shoutout">シャウトアウトの送信に失敗しました - %1$s</string>
+    <string name="cmd_usage_set_title">使い方: %1$s &lt;配信タイトル&gt;</string>
+    <string name="cmd_success_set_title">タイトルを %1$s に更新しました</string>
+    <string name="cmd_fail_set_title">タイトルの設定に失敗しました - %1$s</string>
+    <string name="cmd_usage_set_game">使い方: %1$s &lt;配信ゲーム&gt;</string>
+    <string name="cmd_game_not_found">ゲームが見つかりませんでした。</string>
+    <string name="cmd_success_set_game">ゲームを %1$s に更新しました</string>
+    <string name="cmd_fail_search_game">ゲームの検索に失敗しました - %1$s</string>
+    <string name="cmd_fail_set_game">ゲームの設定に失敗しました - %1$s</string>
     <string name="cmd_shield_activated">シールドモードが有効になりました。</string>
     <string name="cmd_shield_deactivated">シールドモードが無効になりました。</string>
     <string name="cmd_fail_shield">シールドモードの更新に失敗しました - %1$s</string>

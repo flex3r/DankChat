@@ -926,6 +926,14 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="cmd_usage_shoutout">Ús: %1$s &lt;nom d\'usuari&gt; - Envia un shoutout a l\'usuari de Twitch especificat.</string>
     <string name="cmd_success_shoutout">S\'ha enviat un shoutout a %1$s</string>
     <string name="cmd_fail_shoutout">No s\'ha pogut enviar el shoutout - %1$s</string>
+    <string name="cmd_usage_set_title">Ús: %1$s &lt;títol del directe&gt;</string>
+    <string name="cmd_success_set_title">S\'ha canviat el títol a %1$s</string>
+    <string name="cmd_fail_set_title">No s\'ha pogut canviar el títol - %1$s</string>
+    <string name="cmd_usage_set_game">Ús: %1$s &lt;joc del directe&gt;</string>
+    <string name="cmd_game_not_found">No s\'ha trobat el joc.</string>
+    <string name="cmd_success_set_game">S\'ha canviat el joc a %1$s</string>
+    <string name="cmd_fail_search_game">No s\'ha pogut cercar el joc - %1$s</string>
+    <string name="cmd_fail_set_game">No s\'ha pogut canviar el joc - %1$s</string>
     <string name="cmd_shield_activated">El mode d\'escut s\'ha activat.</string>
     <string name="cmd_shield_deactivated">El mode d\'escut s\'ha desactivat.</string>
     <string name="cmd_fail_shield">No s\'ha pogut actualitzar el mode d\'escut - %1$s</string>

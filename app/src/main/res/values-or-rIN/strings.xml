@@ -840,6 +840,14 @@
     <string name="cmd_usage_shoutout">ବ୍ୟବହାର: %1$s &lt;username&gt; - ନିର୍ଦ୍ଦିଷ୍ଟ Twitch ୟୁଜରଙ୍କୁ ଏକ ସାଉଟଆଉଟ୍ ପଠାଏ।</string>
     <string name="cmd_success_shoutout">%1$s ଙ୍କୁ ସାଉଟଆଉଟ୍ ପଠାଯାଇଛି</string>
     <string name="cmd_fail_shoutout">ସାଉଟଆଉଟ୍ ପଠାଇବା ବିଫଳ - %1$s</string>
+    <string name="cmd_usage_set_title">ବ୍ୟବହାର: %1$s &lt;ଷ୍ଟ୍ରିମ୍ ଶୀର୍ଷକ&gt;</string>
+    <string name="cmd_success_set_title">ଶୀର୍ଷକ %1$s କୁ ଅପଡେଟ୍ ହୋଇଛି</string>
+    <string name="cmd_fail_set_title">ଶୀର୍ଷକ ସେଟ୍ କରିବା ବିଫଳ - %1$s</string>
+    <string name="cmd_usage_set_game">ବ୍ୟବହାର: %1$s &lt;ଷ୍ଟ୍ରିମ୍ ଗେମ୍&gt;</string>
+    <string name="cmd_game_not_found">ଗେମ୍ ମିଳିଲା ନାହିଁ।</string>
+    <string name="cmd_success_set_game">ଗେମ୍ %1$s କୁ ଅପଡେଟ୍ ହୋଇଛି</string>
+    <string name="cmd_fail_search_game">ଗେମ୍ ଖୋଜିବା ବିଫଳ - %1$s</string>
+    <string name="cmd_fail_set_game">ଗେମ୍ ସେଟ୍ କରିବା ବିଫଳ - %1$s</string>
     <string name="cmd_shield_activated">ଶିଲ୍ଡ ମୋଡ୍ ସକ୍ରିୟ ହୋଇଛି।</string>
     <string name="cmd_shield_deactivated">ଶିଲ୍ଡ ମୋଡ୍ ନିଷ୍କ୍ରିୟ ହୋଇଛି।</string>
     <string name="cmd_fail_shield">ଶିଲ୍ଡ ମୋଡ୍ ଅପଡେଟ୍ କରିବା ବିଫଳ - %1$s</string>

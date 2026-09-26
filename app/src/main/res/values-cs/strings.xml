@@ -972,6 +972,14 @@ Koukněte na tento návod pro pomoc: https://wiki.chatterino.com/Image%20Uploade
     <string name="cmd_usage_shoutout">Použití: %1$s &lt;uživatelské jméno&gt; - Odešle shoutout zadanému uživateli Twitche.</string>
     <string name="cmd_success_shoutout">Shoutout odeslán uživateli %1$s</string>
     <string name="cmd_fail_shoutout">Nepodařilo se odeslat shoutout - %1$s</string>
+    <string name="cmd_usage_set_title">Použití: %1$s &lt;název streamu&gt;</string>
+    <string name="cmd_success_set_title">Název změněn na %1$s</string>
+    <string name="cmd_fail_set_title">Nepodařilo se změnit název - %1$s</string>
+    <string name="cmd_usage_set_game">Použití: %1$s &lt;hra streamu&gt;</string>
+    <string name="cmd_game_not_found">Hra nenalezena.</string>
+    <string name="cmd_success_set_game">Hra změněna na %1$s</string>
+    <string name="cmd_fail_search_game">Nepodařilo se vyhledat hru - %1$s</string>
+    <string name="cmd_fail_set_game">Nepodařilo se změnit hru - %1$s</string>
     <string name="cmd_shield_activated">Režim štítu byl aktivován.</string>
     <string name="cmd_shield_deactivated">Režim štítu byl deaktivován.</string>
     <string name="cmd_fail_shield">Nepodařilo se aktualizovat režim štítu - %1$s</string>

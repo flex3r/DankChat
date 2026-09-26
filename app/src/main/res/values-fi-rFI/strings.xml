@@ -887,6 +887,14 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="cmd_usage_shoutout">Käyttö: %1$s &lt;käyttäjänimi&gt; - Lähettää shoutoutin määritetylle Twitch-käyttäjälle.</string>
     <string name="cmd_success_shoutout">Shoutout lähetetty käyttäjälle %1$s</string>
     <string name="cmd_fail_shoutout">Shoutoutin lähetys epäonnistui - %1$s</string>
+    <string name="cmd_usage_set_title">Käyttö: %1$s &lt;lähetyksen otsikko&gt;</string>
+    <string name="cmd_success_set_title">Otsikko vaihdettu: %1$s</string>
+    <string name="cmd_fail_set_title">Otsikon vaihto epäonnistui - %1$s</string>
+    <string name="cmd_usage_set_game">Käyttö: %1$s &lt;lähetyksen peli&gt;</string>
+    <string name="cmd_game_not_found">Peliä ei löytynyt.</string>
+    <string name="cmd_success_set_game">Peli vaihdettu: %1$s</string>
+    <string name="cmd_fail_search_game">Pelin haku epäonnistui - %1$s</string>
+    <string name="cmd_fail_set_game">Pelin vaihto epäonnistui - %1$s</string>
     <string name="cmd_shield_activated">Suojatila aktivoitiin.</string>
     <string name="cmd_shield_deactivated">Suojatila poistettiin käytöstä.</string>
     <string name="cmd_fail_shield">Suojatilan päivitys epäonnistui - %1$s</string>

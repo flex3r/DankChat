@@ -938,6 +938,14 @@
     <string name="cmd_usage_shoutout">Uso: %1$s &lt;nome utente&gt; - Invia uno shoutout all\'utente Twitch specificato.</string>
     <string name="cmd_success_shoutout">Shoutout inviato a %1$s</string>
     <string name="cmd_fail_shoutout">Impossibile inviare lo shoutout - %1$s</string>
+    <string name="cmd_usage_set_title">Uso: %1$s &lt;titolo della live&gt;</string>
+    <string name="cmd_success_set_title">Titolo aggiornato a %1$s</string>
+    <string name="cmd_fail_set_title">Impossibile impostare il titolo - %1$s</string>
+    <string name="cmd_usage_set_game">Uso: %1$s &lt;gioco della live&gt;</string>
+    <string name="cmd_game_not_found">Gioco non trovato.</string>
+    <string name="cmd_success_set_game">Gioco aggiornato a %1$s</string>
+    <string name="cmd_fail_search_game">Impossibile cercare il gioco - %1$s</string>
+    <string name="cmd_fail_set_game">Impossibile impostare il gioco - %1$s</string>
     <string name="cmd_shield_activated">La modalità scudo è stata attivata.</string>
     <string name="cmd_shield_deactivated">La modalità scudo è stata disattivata.</string>
     <string name="cmd_fail_shield">Impossibile aggiornare la modalità scudo - %1$s</string>

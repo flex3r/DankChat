@@ -944,6 +944,14 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="cmd_usage_shoutout">Utilisation : %1$s &lt;nom d\'utilisateur&gt; - Envoie un shoutout à l\'utilisateur Twitch spécifié.</string>
     <string name="cmd_success_shoutout">Shoutout envoyé à %1$s</string>
     <string name="cmd_fail_shoutout">Échec de l\'envoi du shoutout - %1$s</string>
+    <string name="cmd_usage_set_title">Utilisation : %1$s &lt;titre du live&gt;</string>
+    <string name="cmd_success_set_title">Titre modifié en %1$s</string>
+    <string name="cmd_fail_set_title">Échec de la modification du titre - %1$s</string>
+    <string name="cmd_usage_set_game">Utilisation : %1$s &lt;jeu du live&gt;</string>
+    <string name="cmd_game_not_found">Jeu introuvable.</string>
+    <string name="cmd_success_set_game">Jeu modifié en %1$s</string>
+    <string name="cmd_fail_search_game">Échec de la recherche du jeu - %1$s</string>
+    <string name="cmd_fail_set_game">Échec de la modification du jeu - %1$s</string>
     <string name="cmd_shield_activated">Le mode bouclier a été activé.</string>
     <string name="cmd_shield_deactivated">Le mode bouclier a été désactivé.</string>
     <string name="cmd_fail_shield">Échec de la mise à jour du mode bouclier - %1$s</string>

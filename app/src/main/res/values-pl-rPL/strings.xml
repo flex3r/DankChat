@@ -970,6 +970,14 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="cmd_usage_shoutout">Użycie: %1$s &lt;nazwa użytkownika&gt; - Wysyła wyróżnienie dla podanego użytkownika Twitcha.</string>
     <string name="cmd_success_shoutout">Wysłano wyróżnienie dla %1$s</string>
     <string name="cmd_fail_shoutout">Nie udało się wysłać wyróżnienia - %1$s</string>
+    <string name="cmd_usage_set_title">Użycie: %1$s &lt;tytuł transmisji&gt;</string>
+    <string name="cmd_success_set_title">Zmieniono tytuł na %1$s</string>
+    <string name="cmd_fail_set_title">Nie udało się zmienić tytułu - %1$s</string>
+    <string name="cmd_usage_set_game">Użycie: %1$s &lt;gra transmisji&gt;</string>
+    <string name="cmd_game_not_found">Nie znaleziono gry.</string>
+    <string name="cmd_success_set_game">Zmieniono grę na %1$s</string>
+    <string name="cmd_fail_search_game">Nie udało się wyszukać gry - %1$s</string>
+    <string name="cmd_fail_set_game">Nie udało się zmienić gry - %1$s</string>
     <string name="cmd_shield_activated">Tryb tarczy został aktywowany.</string>
     <string name="cmd_shield_deactivated">Tryb tarczy został dezaktywowany.</string>
     <string name="cmd_fail_shield">Nie udało się zaktualizować trybu tarczy - %1$s</string>
