@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Көшіру</string>
     <string name="error_dialog_title">Қате ұсталды: %1$s</string>
     <string name="add_channel">Арна қосу</string>
+    <string name="add_channels">Арналарды қосу</string>
     <string name="manage_channels">Арналарды басқару</string>
     <string name="report_channel">Арнаға шағымдану</string>
     <string name="block_channel">Арнаны бұғаттау</string>
@@ -109,9 +110,9 @@
         <item quantity="other">%1$d апта</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Қою</string>
-    <string name="add_channel_hint">Арна аты</string>
+    <string name="add_channels_hint">Арна аттары</string>
+    <string name="add_channels_empty">Кемінде бір арна атын енгізіңіз</string>
     <string name="add_channel_already_added">Арна әлдеқашан қосылған</string>
     <string name="emote_menu_tab_recent">Соңғы</string>
     <string name="backspace">Кері жою</string>
@@ -499,6 +500,8 @@
     <string name="preference_display_group_title">Көрсету</string>
     <string name="preference_components_group_title">Компоненттер</string>
     <string name="preference_show_timed_out_messages_title">Шектелген хабарларды көрсету</string>
+    <string name="preference_show_whispers_inline_title">Сыбырларды чатта көрсету</string>
+    <string name="preference_show_whispers_inline_summary">Жіберілген және алынған сыбырларды барлық ашық арналарда көрсетеді</string>
     <string name="preference_animate_gifs_title">GIF анимациялау</string>
     <string name="preference_line_separator_title">Хабарларды сызықтармен бөлу</string>
     <string name="preference_keep_screen_on_title">Экранды сақтау</string>
@@ -674,6 +677,7 @@
     <string name="highlights_ignores_entry_elevated_messages">Көтерілген хабарлар</string>
     <string name="highlights_ignores_entry_redemptions">Арна ұпайларымен өтелген ерекшелеулер</string>
     <string name="highlights_ignores_entry_replies">Жауаптар</string>
+    <string name="highlights_ignores_entry_inline_whispers">Чаттағы сыбырлар</string>
     <string name="highlights_ignores_entry_custom">Реттелмелі</string>
     <string name="highlights_messages_title">Белгілі бір үлгілер негізінде хабарландырулар жасайды және хабарларды ерекшелейді.</string>
     <string name="highlights_users_title">Белгілі бір пайдаланушылардың хабарлары үшін хабарландырулар жасайды және ерекшелейді.</string>

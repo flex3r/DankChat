@@ -16,6 +16,7 @@
     <string name="error_dialog_copy">Copiar</string>
     <string name="error_dialog_title">Excepción encontrada: %1$s</string>
     <string name="add_channel">Añadir canal</string>
+    <string name="add_channels">Añadir canales</string>
     <string name="manage_channels">Gestionar canales</string>
     <string name="report_channel">Reportar canal</string>
     <string name="block_channel">Bloquear canal</string>
@@ -109,9 +110,9 @@
         <item quantity="other">%1$d semanas</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Pegar</string>
-    <string name="add_channel_hint">Nombre del canal</string>
+    <string name="add_channels_hint">Nombres de los canales</string>
+    <string name="add_channels_empty">Introduce al menos un nombre de canal</string>
     <string name="add_channel_already_added">El canal ya está añadido</string>
     <string name="emote_menu_tab_recent">Reciente</string>
     <string name="backspace">Retroceso</string>
@@ -506,6 +507,8 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="preference_display_group_title">Visualización</string>
     <string name="preference_components_group_title">Componentes</string>
     <string name="preference_show_timed_out_messages_title">Mostrar mensajes eliminados</string>
+    <string name="preference_show_whispers_inline_title">Mostrar susurros en el chat</string>
+    <string name="preference_show_whispers_inline_summary">Muestra los susurros enviados y recibidos en todos los canales abiertos</string>
     <string name="preference_animate_gifs_title">Animar gifs</string>
     <string name="preference_line_separator_title">Separar mensajes con líneas</string>
     <string name="preference_keep_screen_on_title">Mantener pantalla encendida</string>
@@ -681,6 +684,7 @@ Mira esta guía para más ayuda: https://wiki.chatterino.com/Image%20Uploader/</
     <string name="highlights_ignores_entry_elevated_messages">Mensajes elevados</string>
     <string name="highlights_ignores_entry_redemptions">Destacados canjeados con Puntos Canal</string>
     <string name="highlights_ignores_entry_replies">Respuestas</string>
+    <string name="highlights_ignores_entry_inline_whispers">Susurros en el chat</string>
     <string name="highlights_ignores_entry_custom">Personalizado</string>
     <string name="highlights_messages_title">Crea notificaciones y destaca mensajes basados en ciertos patrones.</string>
     <string name="highlights_users_title">Crea notificaciones y destaca los mensajes de ciertos usuarios.</string>
