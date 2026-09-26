@@ -109,7 +109,6 @@
         <item quantity="other">%1$d недеља</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Налепи</string>
     <string name="add_channel_hint">Naziv kanala</string>
     <string name="add_channel_already_added">Канал је већ додат</string>

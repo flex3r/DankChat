@@ -109,7 +109,6 @@
         <item quantity="other">%1$d semanas</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">Pegar</string>
     <string name="add_channel_hint">Nombre del canal</string>
     <string name="add_channel_already_added">El canal ya está añadido</string>

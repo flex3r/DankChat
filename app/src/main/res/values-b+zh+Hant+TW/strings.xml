@@ -104,7 +104,6 @@
         <item quantity="other">%1$d 週</item>
     </plurals>
     <string name="duration_join_2">%1$s %2$s</string>
-    <string name="duration_join_3">%1$s %2$s %3$s</string>
     <string name="snackbar_paste">貼上</string>
     <string name="add_channel_hint">頻道名稱</string>
     <string name="add_channel_already_added">頻道已經加入</string>
