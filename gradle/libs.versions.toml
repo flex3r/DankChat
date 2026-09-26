@@ -104,7 +104,7 @@ compose-icons-extended = { module = "androidx.compose.material:material-icons-ex
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
 compose-unstyled = { module = "com.composables:core", version.ref = "compose-unstyled" }
-lazycolumn-scrollbar = { module = "com.github.nanihadesuka:LazyColumnScrollbar", version.ref = "lazyColumnScrollbar" }
+lazycolumn-scrollbar = { module = "com.github.nanihadesuka.LazyColumnScrollbar:lazycolumnscrollbar", version.ref = "lazyColumnScrollbar" }
 compose-material3-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "compose-material3-adaptive" }
 
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
