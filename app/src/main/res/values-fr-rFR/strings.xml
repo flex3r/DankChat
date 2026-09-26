@@ -283,6 +283,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="user_popup_unblock">Débloquer</string>
     <string name="user_popup_mention">Mentionner l\'utilisateur</string>
     <string name="user_popup_whisper">Envoyer un message privé à l\'utilisateur</string>
+    <string name="user_popup_ignore_highlights">Ignorer la surbrillance</string>
     <string name="user_popup_created">Créé le : %1$s</string>
     <string name="user_popup_following_since">Suit depuis %1$s</string>
     <string name="user_popup_not_following">Ne suit pas</string>

@@ -283,6 +283,7 @@ Voit oppia lisää palvelusta ja poistaa viestihistorian käytöstä omalla kana
     <string name="user_popup_unblock">Poista esto</string>
     <string name="user_popup_mention">Mainitse käyttäjä</string>
     <string name="user_popup_whisper">Kuiskaa käyttäjälle</string>
+    <string name="user_popup_ignore_highlights">Ohita kohokohdat</string>
     <string name="user_popup_created">Luotu: %1$s</string>
     <string name="user_popup_following_since">Seurannut %1$s alkaen</string>
     <string name="user_popup_not_following">Ei seuraa</string>

@@ -242,6 +242,7 @@
     <string name="user_popup_unblock">ଅନ୍-ବ୍ଲକ୍</string>
     <string name="user_popup_mention">ବ୍ୟବହାରକାରୀଙ୍କୁ ଉଲ୍ଲେଖ କରନ୍ତୁ</string>
     <string name="user_popup_whisper">ଫୁସ୍ଫୁସ୍ ୟୁଜର୍</string>
+    <string name="user_popup_ignore_highlights">ହାଇଲାଇଟ୍ସ ଅବହେଳା କରନ୍ତୁ</string>
     <string name="user_popup_created">ସୃଷ୍ଟି: %1$s</string>
     <string name="user_popup_following_since">ଏହା ପରଠାରୁ %1$s</string>
     <string name="user_popup_not_following">ଅନୁସରଣ କରୁନାହିଁ</string>

@@ -283,6 +283,7 @@
     <string name="user_popup_unblock">Entblocken</string>
     <string name="user_popup_mention">Nutzer erwähnen</string>
     <string name="user_popup_whisper">Private Nachricht senden</string>
+    <string name="user_popup_ignore_highlights">Hervorhebungen ignorieren</string>
     <string name="user_popup_created">Erstellt: %1$s</string>
     <string name="user_popup_following_since">Folgt dem Kanal seit %1$s</string>
     <string name="user_popup_not_following">Folgt dem Kanal nicht</string>

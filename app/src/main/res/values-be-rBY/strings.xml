@@ -292,6 +292,7 @@
     <string name="user_popup_unblock">Разблакіраваць</string>
     <string name="user_popup_mention">Згадаць карыстальніка</string>
     <string name="user_popup_whisper">Напісаць асабістае паведамленне</string>
+    <string name="user_popup_ignore_highlights">Ігнараваць выдзяленні</string>
     <string name="user_popup_created">Канал створаны: %1$s</string>
     <string name="user_popup_following_since">Падпісаны з %1$s</string>
     <string name="user_popup_not_following">Не падпісаны</string>

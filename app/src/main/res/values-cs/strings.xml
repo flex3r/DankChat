@@ -297,6 +297,7 @@ Služba dočasně ukládá zprávy pro kanály, které vy (a další) navštív�
     <string name="user_popup_unblock">Odblokovat</string>
     <string name="user_popup_mention">Zmínit uživatele</string>
     <string name="user_popup_whisper">Soukromá zpráva</string>
+    <string name="user_popup_ignore_highlights">Ignorovat zvýraznění</string>
     <string name="user_popup_created">Vytvořeno: %1$s</string>
     <string name="user_popup_following_since">Sledování od %1$s</string>
     <string name="user_popup_not_following">Nesleduje</string>

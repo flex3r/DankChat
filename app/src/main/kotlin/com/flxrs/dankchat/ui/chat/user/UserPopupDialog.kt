@@ -241,8 +241,6 @@ fun UserPopupDialog(
                                     ) {
                                         Text(stringResource(R.string.user_popup_ignore_highlights))
                                     }
-                                }
-                                if (!isOwnUser) {
                                     ListItem(
                                         leadingContent = { Icon(Icons.Default.Report, contentDescription = null) },
                                         modifier =
