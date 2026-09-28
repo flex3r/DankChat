@@ -708,6 +708,9 @@
     <string name="message_more_actions">Mais…</string>
     <string name="message_jump_to">Ir para a mensagem</string>
     <string name="message_pin">Fixar mensagem</string>
+    <string name="message_warn">Avisar</string>
+    <string name="message_warn_reason">Motivo</string>
+    <string name="message_warn_confirm">Avisar</string>
     <string name="message_not_in_history">Mensagem já não está no histórico do chat</string>
     <string name="message_history">Histórico de mensagens</string>
     <string name="global_history_title">Histórico global</string>
@@ -897,6 +900,8 @@
     <string name="cmd_fail_ban">Falha ao banir o utilizador - %1$s</string>
     <string name="cmd_usage_unban">Utilização: %1$s &lt;nome de utilizador&gt; - Remove o banimento de um utilizador.</string>
     <string name="cmd_fail_unban">Falha ao desbanir o utilizador - %1$s</string>
+    <string name="cmd_usage_warn">Utilização: %1$s &lt;nome de utilizador&gt; &lt;motivo&gt; - Avisa um utilizador. O motivo é obrigatório e será mostrado ao utilizador alvo e a outros moderadores.</string>
+    <string name="cmd_fail_warn">Falha ao avisar o utilizador - %1$s</string>
     <string name="cmd_usage_timeout">Utilização: %1$s &lt;nome de utilizador&gt; [duração][unidade de tempo] [motivo] - Impede temporariamente um utilizador de conversar. A duração (opcional, predefinição: 10 minutos) deve ser um inteiro positivo; a unidade de tempo (opcional, predefinição: s) deve ser s, m, h, d ou w; a duração máxima é de 2 semanas. O motivo é opcional e será mostrado ao utilizador alvo e a outros moderadores.</string>
     <string name="cmd_timeout_cannot_self">Falha ao banir o utilizador - Não podes aplicar timeout a ti próprio.</string>
     <string name="cmd_timeout_cannot_broadcaster">Falha ao banir o utilizador - Não podes aplicar timeout ao broadcaster.</string>
@@ -962,6 +967,7 @@
     <string name="cmd_error_already_banned">%1$s já está banido neste canal.</string>
     <string name="cmd_error_cannot_perform">Não podes %1$s %2$s.</string>
     <string name="cmd_error_conflicting_ban">Houve uma operação de banimento conflituante neste utilizador. Tenta novamente.</string>
+    <string name="cmd_error_conflicting_warn">Houve uma operação de aviso conflituante neste utilizador. Tenta novamente.</string>
     <string name="cmd_error_invalid_color">A cor deve ser uma das cores suportadas pelo Twitch (%1$s) ou um hex code (#000000) se tiveres Turbo ou Prime.</string>
     <string name="cmd_error_commercial_not_streaming">Tens de estar em direto para executar anúncios.</string>
     <string name="cmd_error_commercial_rate_limited">Tens de esperar que o período de espera expire antes de executar outro anúncio.</string>

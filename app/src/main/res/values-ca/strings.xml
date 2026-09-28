@@ -700,6 +700,9 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="message_more_actions">Més…</string>
     <string name="message_jump_to">Anar al missatge</string>
     <string name="message_pin">Fixa el missatge</string>
+    <string name="message_warn">Advertir</string>
+    <string name="message_warn_reason">Motiu</string>
+    <string name="message_warn_confirm">Advertir</string>
     <string name="message_not_in_history">El missatge ja no és a l\'historial del xat</string>
     <string name="message_history">Historial de missatges</string>
     <string name="global_history_title">Historial global</string>
@@ -886,6 +889,8 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="cmd_fail_ban">No s\'ha pogut prohibir l\'usuari - %1$s</string>
     <string name="cmd_usage_unban">Ús: %1$s &lt;nom d\'usuari&gt; - Elimina la prohibició d\'un usuari.</string>
     <string name="cmd_fail_unban">No s\'ha pogut eliminar la prohibició de l\'usuari - %1$s</string>
+    <string name="cmd_usage_warn">Ús: %1$s &lt;nom d\'usuari&gt; &lt;motiu&gt; - Adverteix un usuari. El motiu és obligatori i es mostrarà a l\'usuari objectiu i als altres moderadors.</string>
+    <string name="cmd_fail_warn">No s\'ha pogut advertir l\'usuari - %1$s</string>
     <string name="cmd_usage_timeout">Ús: %1$s &lt;nom d\'usuari&gt; [durada][unitat de temps] [motiu] - Prohibeix temporalment a un usuari xatejar. La durada (opcional, per defecte: 10 minuts) ha de ser un nombre enter positiu; la unitat de temps (opcional, per defecte: s) ha de ser s, m, h, d o w; la durada màxima és de 2 setmanes. El motiu és opcional i es mostrarà a l\'usuari objectiu i als altres moderadors.</string>
     <string name="cmd_timeout_cannot_self">No s\'ha pogut prohibir l\'usuari - No us podeu aplicar un temps d\'espera a vós mateix.</string>
     <string name="cmd_timeout_cannot_broadcaster">No s\'ha pogut prohibir l\'usuari - No podeu aplicar un temps d\'espera a l\'emissor.</string>
@@ -951,6 +956,7 @@ Mira aquesta guia per a més ajuda: https://wiki.chatterino.com/Image%20Uploader
     <string name="cmd_error_already_banned">%1$s ja està prohibit en aquest canal.</string>
     <string name="cmd_error_cannot_perform">No podeu %1$s %2$s.</string>
     <string name="cmd_error_conflicting_ban">Hi ha hagut una operació de prohibició en conflicte en aquest usuari. Torneu-ho a provar.</string>
+    <string name="cmd_error_conflicting_warn">Hi ha hagut una operació d\'advertiment en conflicte en aquest usuari. Torneu-ho a provar.</string>
     <string name="cmd_error_invalid_color">El color ha de ser un dels colors compatibles de Twitch (%1$s) o un hex code (#000000) si teniu Turbo o Prime.</string>
     <string name="cmd_error_commercial_not_streaming">Heu d\'estar en directe per executar anuncis.</string>
     <string name="cmd_error_commercial_rate_limited">Heu d\'esperar que el vostre període de refredament expiri abans de poder executar un altre anunci.</string>

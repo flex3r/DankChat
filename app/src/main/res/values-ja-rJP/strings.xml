@@ -700,6 +700,9 @@
     <string name="message_more_actions">もっとみる…</string>
     <string name="message_jump_to">メッセージに移動</string>
     <string name="message_pin">メッセージをピン留め</string>
+    <string name="message_warn">警告</string>
+    <string name="message_warn_reason">理由</string>
+    <string name="message_warn_confirm">警告する</string>
     <string name="message_not_in_history">メッセージはチャット履歴にありません</string>
     <string name="message_history">メッセージ履歴</string>
     <string name="global_history_title">グローバル履歴</string>
@@ -886,6 +889,8 @@
     <string name="cmd_fail_ban">ユーザーのBANに失敗しました - %1$s</string>
     <string name="cmd_usage_unban">使い方: %1$s &lt;ユーザー名&gt; - ユーザーのBANを解除します。</string>
     <string name="cmd_fail_unban">ユーザーのBAN解除に失敗しました - %1$s</string>
+    <string name="cmd_usage_warn">使い方: %1$s &lt;ユーザー名&gt; &lt;理由&gt; - ユーザーに警告します。理由は必須で、対象ユーザーと他のモデレーターに表示されます。</string>
+    <string name="cmd_fail_warn">ユーザーへの警告に失敗しました - %1$s</string>
     <string name="cmd_usage_timeout">使い方: %1$s &lt;ユーザー名&gt; [期間][時間単位] [理由] - ユーザーのチャットを一時的に禁止します。期間（任意、デフォルト: 10分）は正の整数、時間単位（任意、デフォルト: s）はs、m、h、d、wのいずれか、最大期間は2週間です。理由は任意で、対象ユーザーと他のモデレーターに表示されます。</string>
     <string name="cmd_timeout_cannot_self">ユーザーのBANに失敗しました - 自分自身をタイムアウトすることはできません。</string>
     <string name="cmd_timeout_cannot_broadcaster">ユーザーのBANに失敗しました - 配信者をタイムアウトすることはできません。</string>
@@ -950,6 +955,7 @@
     <string name="cmd_error_already_banned">%1$s は既にこのチャンネルでBANされています。</string>
     <string name="cmd_error_cannot_perform">%2$s を %1$s することはできません。</string>
     <string name="cmd_error_conflicting_ban">このユーザーに対して競合するBAN操作がありました。もう一度お試しください。</string>
+    <string name="cmd_error_conflicting_warn">このユーザーに対して競合する警告操作がありました。もう一度お試しください。</string>
     <string name="cmd_error_invalid_color">色はTwitchがサポートする色（%1$s）またはTurboかPrimeをお持ちの場合はhex code（#000000）である必要があります。</string>
     <string name="cmd_error_commercial_not_streaming">CMを実行するにはライブ配信中である必要があります。</string>
     <string name="cmd_error_commercial_rate_limited">次のCMを実行するにはクールダウン期間が終了するまで待つ必要があります。</string>

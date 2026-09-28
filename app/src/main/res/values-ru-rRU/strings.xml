@@ -729,6 +729,9 @@
     <string name="message_more_actions">Ещё…</string>
     <string name="message_jump_to">Перейти к сообщению</string>
     <string name="message_pin">Закрепить сообщение</string>
+    <string name="message_warn">Предупредить</string>
+    <string name="message_warn_reason">Причина</string>
+    <string name="message_warn_confirm">Предупредить</string>
     <string name="message_not_in_history">Сообщение больше не в истории чата</string>
     <string name="message_history">История сообщений</string>
     <string name="global_history_title">Глобальная история</string>
@@ -928,6 +931,8 @@
     <string name="cmd_fail_ban">Не удалось забанить пользователя - %1$s</string>
     <string name="cmd_usage_unban">Использование: %1$s &lt;имя пользователя&gt; - Снимает бан с пользователя.</string>
     <string name="cmd_fail_unban">Не удалось разбанить пользователя - %1$s</string>
+    <string name="cmd_usage_warn">Использование: %1$s &lt;имя пользователя&gt; &lt;причина&gt; - Выдать предупреждение пользователю. Причина обязательна и будет показана целевому пользователю и другим модераторам.</string>
+    <string name="cmd_fail_warn">Не удалось предупредить пользователя - %1$s</string>
     <string name="cmd_usage_timeout">Использование: %1$s &lt;имя пользователя&gt; [длительность][единица времени] [причина] - Временно запретить пользователю писать в чат. Длительность (необязательно, по умолчанию: 10 минут) должна быть положительным целым числом; единица времени (необязательно, по умолчанию: s) должна быть s, m, h, d или w; максимальная длительность — 2 недели. Причина необязательна и будет показана целевому пользователю и другим модераторам.</string>
     <string name="cmd_timeout_cannot_self">Не удалось забанить пользователя - Вы не можете дать тайм-аут самому себе.</string>
     <string name="cmd_timeout_cannot_broadcaster">Не удалось забанить пользователя - Вы не можете дать тайм-аут стримеру.</string>
@@ -995,6 +1000,7 @@
     <string name="cmd_error_already_banned">%1$s уже забанен на этом канале.</string>
     <string name="cmd_error_cannot_perform">Вы не можете %1$s %2$s.</string>
     <string name="cmd_error_conflicting_ban">Произошла конфликтующая операция бана для этого пользователя. Пожалуйста, попробуйте снова.</string>
+    <string name="cmd_error_conflicting_warn">Произошла конфликтующая операция предупреждения для этого пользователя. Пожалуйста, попробуйте снова.</string>
     <string name="cmd_error_invalid_color">Цвет должен быть одним из поддерживаемых Twitch цветов (%1$s) или hex code (#000000), если у вас есть Turbo или Prime.</string>
     <string name="cmd_error_commercial_not_streaming">Вы должны вести прямую трансляцию для запуска рекламы.</string>
     <string name="cmd_error_commercial_rate_limited">Необходимо дождаться окончания периода ожидания, прежде чем запускать следующую рекламу.</string>

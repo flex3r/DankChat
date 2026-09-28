@@ -34,6 +34,7 @@ import com.flxrs.dankchat.data.api.helix.dto.UserBlockDto
 import com.flxrs.dankchat.data.api.helix.dto.UserDto
 import com.flxrs.dankchat.data.api.helix.dto.UserEmoteDto
 import com.flxrs.dankchat.data.api.helix.dto.UserFollowsDto
+import com.flxrs.dankchat.data.api.helix.dto.WarnRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.WhisperRequestDto
 import com.flxrs.dankchat.utils.extensions.decodeOrNull
 import io.ktor.client.call.body
@@ -232,6 +233,16 @@ class HelixApiClient(
     ): Result<Unit> = runCatching {
         helixApi
             .postBan(broadcastUserId, moderatorUserId, requestDto)
+            .throwHelixApiErrorOnFailure()
+    }
+
+    suspend fun postWarning(
+        broadcastUserId: UserId,
+        moderatorUserId: UserId,
+        requestDto: WarnRequestDto,
+    ): Result<Unit> = runCatching {
+        helixApi
+            .postWarning(broadcastUserId, moderatorUserId, requestDto)
             .throwHelixApiErrorOnFailure()
     }
 
@@ -521,6 +532,10 @@ class HelixApiClient(
                             HelixError.TargetCannotBeBanned
                         }
 
+                        message.startsWith(USER_MAY_NOT_BE_WARNED_ERROR, ignoreCase = true) -> {
+                            HelixError.TargetCannotBeWarned
+                        }
+
                         message.startsWith(USER_NOT_BANNED_ERROR, ignoreCase = true) -> {
                             HelixError.TargetNotBanned
                         }
@@ -609,7 +624,8 @@ class HelixApiClient(
 
                 HttpStatusCode.Conflict -> {
                     when (request.url.encodedPath) {
-                        "helix/moderation/bans" -> HelixError.ConflictingBanOperation
+                        "/helix/moderation/bans" -> HelixError.ConflictingBanOperation
+                        "/helix/moderation/warnings" -> HelixError.ConflictingWarnOperation
                         else -> HelixError.Forwarded
                     }
                 }
@@ -639,6 +655,7 @@ class HelixApiClient(
         private const val USER_NOT_BANNED_ERROR = "The user in the user_id query parameter is not banned"
         private const val USER_ALREADY_BANNED_ERROR = "The user specified in the user_id field is already banned"
         private const val USER_MAY_NOT_BE_BANNED_ERROR = "The user specified in the user_id field may not be banned"
+        private const val USER_MAY_NOT_BE_WARNED_ERROR = "The user specified in the user_id field may not be warned"
         private const val INVALID_COLOR_ERROR = "invalid color"
         private const val BROADCASTER_NOT_LIVE_ERROR = "To start a commercial, the broadcaster must be streaming live."
         private const val MISSING_REQUIRED_PARAM_ERROR = "Missing required parameter"

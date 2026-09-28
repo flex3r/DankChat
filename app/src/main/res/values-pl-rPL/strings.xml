@@ -729,6 +729,9 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="message_more_actions">Więcej…</string>
     <string name="message_jump_to">Przejdź do wiadomości</string>
     <string name="message_pin">Przypnij wiadomość</string>
+    <string name="message_warn">Ostrzeż</string>
+    <string name="message_warn_reason">Powód</string>
+    <string name="message_warn_confirm">Ostrzeż</string>
     <string name="message_not_in_history">Wiadomość nie jest już w historii czatu</string>
     <string name="message_history">Historia wiadomości</string>
     <string name="global_history_title">Globalna historia</string>
@@ -928,6 +931,8 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="cmd_fail_ban">Nie udało się zbanować użytkownika - %1$s</string>
     <string name="cmd_usage_unban">Użycie: %1$s &lt;nazwa użytkownika&gt; - Usuwa bana z użytkownika.</string>
     <string name="cmd_fail_unban">Nie udało się odbanować użytkownika - %1$s</string>
+    <string name="cmd_usage_warn">Użycie: %1$s &lt;nazwa użytkownika&gt; &lt;powód&gt; - Ostrzeż użytkownika. Powód jest wymagany i będzie widoczny dla użytkownika oraz innych moderatorów.</string>
+    <string name="cmd_fail_warn">Nie udało się ostrzec użytkownika - %1$s</string>
     <string name="cmd_usage_timeout">Użycie: %1$s &lt;nazwa użytkownika&gt; [czas trwania][jednostka czasu] [powód] - Tymczasowo zablokuj użytkownikowi możliwość czatowania. Czas trwania (opcjonalny, domyślnie: 10 minut) musi być dodatnią liczbą całkowitą; jednostka czasu (opcjonalna, domyślnie: s) musi być jedną z s, m, h, d, w; maksymalny czas to 2 tygodnie. Powód jest opcjonalny i będzie widoczny dla użytkownika oraz innych moderatorów.</string>
     <string name="cmd_timeout_cannot_self">Nie udało się zbanować użytkownika - Nie możesz dać sobie timeout.</string>
     <string name="cmd_timeout_cannot_broadcaster">Nie udało się zbanować użytkownika - Nie możesz dać timeout nadawcy.</string>
@@ -995,6 +1000,7 @@ Aby zapewnić tą usługę, wspomniany serwis tymczasowo przechowuje wiadomości
     <string name="cmd_error_already_banned">%1$s jest już zbanowany na tym kanale.</string>
     <string name="cmd_error_cannot_perform">Nie możesz %1$s %2$s.</string>
     <string name="cmd_error_conflicting_ban">Wystąpił konflikt operacji bana na tym użytkowniku. Spróbuj ponownie.</string>
+    <string name="cmd_error_conflicting_warn">Wystąpił konflikt operacji ostrzeżenia na tym użytkowniku. Spróbuj ponownie.</string>
     <string name="cmd_error_invalid_color">Kolor musi być jednym z obsługiwanych kolorów Twitcha (%1$s) lub kodem hex (#000000), jeśli masz Turbo lub Prime.</string>
     <string name="cmd_error_commercial_not_streaming">Musisz nadawać na żywo, aby uruchamiać reklamy.</string>
     <string name="cmd_error_commercial_rate_limited">Musisz poczekać na zakończenie okresu odnowienia, zanim uruchomisz kolejną reklamę.</string>

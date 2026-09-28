@@ -43,6 +43,7 @@ enum class TwitchCommand(
     Unvip(trigger = "unvip"),
     Vip(trigger = "vip"),
     Vips(trigger = "vips"),
+    Warn(trigger = "warn"),
     Whisper(trigger = "w"),
     ;
 

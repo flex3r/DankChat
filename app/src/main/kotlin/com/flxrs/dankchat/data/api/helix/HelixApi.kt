@@ -12,6 +12,7 @@ import com.flxrs.dankchat.data.api.helix.dto.MarkerRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.ModifyChannelRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.SendChatMessageRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.ShieldModeRequestDto
+import com.flxrs.dankchat.data.api.helix.dto.WarnRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.WhisperRequestDto
 import com.flxrs.dankchat.data.auth.AuthDataStore
 import com.flxrs.dankchat.data.auth.StartupValidationHolder
@@ -235,6 +236,19 @@ class HelixApi(
         moderatorUserId: UserId,
         request: BanRequestDto,
     ): HttpResponse? = ktorClient.post("moderation/bans") {
+        val oAuth = getValidToken() ?: return null
+        bearerAuth(oAuth)
+        parameter("broadcaster_id", broadcasterUserId)
+        parameter("moderator_id", moderatorUserId)
+        contentType(ContentType.Application.Json)
+        setBody(request)
+    }
+
+    suspend fun postWarning(
+        broadcasterUserId: UserId,
+        moderatorUserId: UserId,
+        request: WarnRequestDto,
+    ): HttpResponse? = ktorClient.post("moderation/warnings") {
         val oAuth = getValidToken() ?: return null
         bearerAuth(oAuth)
         parameter("broadcaster_id", broadcasterUserId)

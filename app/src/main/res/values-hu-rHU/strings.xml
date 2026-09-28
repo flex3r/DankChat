@@ -708,6 +708,9 @@
     <string name="message_more_actions">Több…</string>
     <string name="message_jump_to">Ugrás az üzenethez</string>
     <string name="message_pin">Üzenet kitűzése</string>
+    <string name="message_warn">Figyelmeztetés</string>
+    <string name="message_warn_reason">Indok</string>
+    <string name="message_warn_confirm">Figyelmeztetés</string>
     <string name="message_not_in_history">Az üzenet már nincs a csevegési előzményekben</string>
     <string name="message_history">Üzenetelőzmények</string>
     <string name="global_history_title">Globális előzmények</string>
@@ -899,6 +902,8 @@
     <string name="cmd_fail_ban">Nem sikerült kitiltani a felhasználót - %1$s</string>
     <string name="cmd_usage_unban">Használat: %1$s &lt;felhasználónév&gt; - Feloldja a felhasználó tiltását.</string>
     <string name="cmd_fail_unban">Nem sikerült feloldani a felhasználó tiltását - %1$s</string>
+    <string name="cmd_usage_warn">Használat: %1$s &lt;felhasználónév&gt; &lt;indok&gt; - Figyelmezteti a felhasználót. Az indok kötelező, és megjelenik a célfelhasználónak és a többi moderátornak.</string>
+    <string name="cmd_fail_warn">Nem sikerült figyelmeztetni a felhasználót - %1$s</string>
     <string name="cmd_usage_timeout">Használat: %1$s &lt;felhasználónév&gt; [időtartam][időegység] [indok] - Ideiglenesen letiltja a felhasználót a csevegésből. Az időtartam (opcionális, alapértelmezett: 10 perc) pozitív egész szám legyen; az időegység (opcionális, alapértelmezett: s) s, m, h, d, w egyike legyen; a maximális időtartam 2 hét. Az indok opcionális, és megjelenik a célfelhasználónak és a többi moderátornak.</string>
     <string name="cmd_timeout_cannot_self">Nem sikerült kitiltani a felhasználót - Nem adhatsz saját magadnak időkorlátot.</string>
     <string name="cmd_timeout_cannot_broadcaster">Nem sikerült kitiltani a felhasználót - Nem adhatsz a műsorvezetőnek időkorlátot.</string>
@@ -964,6 +969,7 @@
     <string name="cmd_error_already_banned">%1$s már ki van tiltva ebből a csatornából.</string>
     <string name="cmd_error_cannot_perform">Nem tudod %1$s %2$s.</string>
     <string name="cmd_error_conflicting_ban">Ütköző kitiltási művelet történt ennél a felhasználónál. Kérjük, próbáld újra.</string>
+    <string name="cmd_error_conflicting_warn">Ütköző figyelmeztetési művelet történt ennél a felhasználónál. Kérjük, próbáld újra.</string>
     <string name="cmd_error_invalid_color">A szín a Twitch által támogatott színek egyike (%1$s) vagy hex kód (#000000) legyen, ha rendelkezel Turbo vagy Prime előfizetéssel.</string>
     <string name="cmd_error_commercial_not_streaming">Reklámok futtatásához élőben kell közvetítened.</string>
     <string name="cmd_error_commercial_rate_limited">Meg kell várnod a hűtési időszak lejártát, mielőtt újabb reklámot futtathatnál.</string>

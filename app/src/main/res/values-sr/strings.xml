@@ -625,6 +625,9 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="message_more_actions">Још…</string>
     <string name="message_jump_to">Иди на поруку</string>
     <string name="message_pin">Закачи поруку</string>
+    <string name="message_warn">Упозори</string>
+    <string name="message_warn_reason">Разлог</string>
+    <string name="message_warn_confirm">Упозори</string>
     <string name="message_not_in_history">Порука више није у историји ћаскања</string>
     <string name="message_history">Историја порука</string>
     <string name="global_history_title">Глобална историја</string>
@@ -814,6 +817,8 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="cmd_fail_ban">Забрана корисника није успела - %1$s</string>
     <string name="cmd_usage_unban">Употреба: %1$s &lt;корисничко име&gt; - Уклања забрану корисника.</string>
     <string name="cmd_fail_unban">Уклањање забране корисника није успело - %1$s</string>
+    <string name="cmd_usage_warn">Употреба: %1$s &lt;корисничко име&gt; &lt;разлог&gt; - Упозорите корисника. Разлог је обавезан и биће приказан циљном кориснику и осталим модераторима.</string>
+    <string name="cmd_fail_warn">Упозоравање корисника није успело - %1$s</string>
     <string name="cmd_usage_timeout">Употреба: %1$s &lt;корисничко име&gt; [трајање][јединица времена] [разлог] - Привремено забраните кориснику да ћаска. Трајање (опционално, подразумевано: 10 минута) мора бити позитиван цео број; јединица времена (опционално, подразумевано: s) мора бити s, m, h, d или w; максимално трајање је 2 недеље. Разлог је опционалан и биће приказан циљном кориснику и осталим модераторима.</string>
     <string name="cmd_timeout_cannot_self">Забрана корисника није успела - Не можете искључити себе.</string>
     <string name="cmd_timeout_cannot_broadcaster">Забрана корисника није успела - Не можете искључити емитера.</string>
@@ -880,6 +885,7 @@ Pogledajte ovaj guide za pomoć https://wiki.chatterino.com/Image%20Uploader/</s
     <string name="cmd_error_already_banned">%1$s је већ забрањен у овом каналу.</string>
     <string name="cmd_error_cannot_perform">Не можете %1$s %2$s.</string>
     <string name="cmd_error_conflicting_ban">Дошло је до конфликтне операције забране за овог корисника. Молимо покушајте поново.</string>
+    <string name="cmd_error_conflicting_warn">Дошло је до конфликтне операције упозорења за овог корисника. Молимо покушајте поново.</string>
     <string name="cmd_error_invalid_color">Боја мора бити једна од подржаних боја на Twitch-у (%1$s) или hex code (#000000) ако имате Turbo или Prime.</string>
     <string name="cmd_error_commercial_not_streaming">Морате бити уживо да бисте покретали рекламе.</string>
     <string name="cmd_error_commercial_rate_limited">Морате сачекати да истекне период хлађења пре него што можете покренути другу рекламу.</string>

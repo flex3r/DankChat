@@ -147,6 +147,12 @@ class MessageOptionsViewModel(
         sendCommand(".unban $name")
     }
 
+    fun warnUser(reason: String) = viewModelScope.launch {
+        val name = (_state.value?.optionsState as? MessageOptionsState.Found)?.name ?: return@launch
+        val singleLineReason = reason.lines().filter { it.isNotBlank() }.joinToString(separator = " ")
+        sendCommand(".warn $name $singleLineReason")
+    }
+
     fun deleteMessage() = viewModelScope.launch {
         val messageId = currentParams?.messageId ?: return@launch
         sendCommand(".delete $messageId")

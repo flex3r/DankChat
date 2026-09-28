@@ -4,9 +4,13 @@ import com.flxrs.dankchat.R
 import com.flxrs.dankchat.data.api.helix.HelixApiClient
 import com.flxrs.dankchat.data.api.helix.dto.ModifyChannelRequestDto
 import com.flxrs.dankchat.data.api.helix.dto.StreamCategoryDto
+import com.flxrs.dankchat.data.api.helix.dto.UserDto
+import com.flxrs.dankchat.data.api.helix.dto.WarnRequestDataDto
+import com.flxrs.dankchat.data.api.helix.dto.WarnRequestDto
 import com.flxrs.dankchat.data.auth.AuthDataStore
 import com.flxrs.dankchat.data.repo.ShieldModeRepository
 import com.flxrs.dankchat.data.repo.command.CommandResult
+import com.flxrs.dankchat.data.toDisplayName
 import com.flxrs.dankchat.data.toUserId
 import com.flxrs.dankchat.data.toUserName
 import com.flxrs.dankchat.data.twitch.message.RoomState
@@ -94,6 +98,46 @@ internal class TwitchCommandRepositoryTest {
             result,
         )
         coVerify(exactly = 0) { helixApiClient.patchChannel(any(), any()) }
+    }
+
+    @Test
+    fun `warn requires a reason`() = runTest {
+        val result = repository.handleTwitchCommand(
+            TwitchCommand.Warn,
+            context(trigger = "/warn", args = listOf("forsen")),
+        )
+
+        assertEquals(
+            CommandResult.AcceptedTwitchCommand(
+                TwitchCommand.Warn,
+                TextResource.Res(R.string.cmd_usage_warn, persistentListOf("/warn")),
+            ),
+            result,
+        )
+        coVerify(exactly = 0) { helixApiClient.getUserByName(any()) }
+    }
+
+    @Test
+    fun `warn sends the full reason`() = runTest {
+        val target = mockk<UserDto> {
+            every { id } returns "target-id".toUserId()
+            every { displayName } returns "Forsen".toDisplayName()
+        }
+        coEvery { helixApiClient.getUserByName("forsen".toUserName()) } returns Result.success(target)
+        coEvery {
+            helixApiClient.postWarning(
+                "channel-id".toUserId(),
+                "current-user".toUserId(),
+                WarnRequestDto(WarnRequestDataDto("target-id".toUserId(), "stop doing that")),
+            )
+        } returns Result.success(Unit)
+
+        val result = repository.handleTwitchCommand(
+            TwitchCommand.Warn,
+            context(trigger = "/warn", args = listOf("forsen", "stop", "doing", "that")),
+        )
+
+        assertEquals(CommandResult.AcceptedTwitchCommand(TwitchCommand.Warn), result)
     }
 
     private fun context(

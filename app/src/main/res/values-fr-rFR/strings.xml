@@ -713,6 +713,9 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="message_more_actions">Plus…</string>
     <string name="message_jump_to">Aller au message</string>
     <string name="message_pin">Épingler le message</string>
+    <string name="message_warn">Avertir</string>
+    <string name="message_warn_reason">Raison</string>
+    <string name="message_warn_confirm">Avertir</string>
     <string name="message_not_in_history">Le message n\'est plus dans l\'historique du chat</string>
     <string name="message_history">Historique des messages</string>
     <string name="global_history_title">Historique global</string>
@@ -904,6 +907,8 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="cmd_fail_ban">Échec du bannissement de l\'utilisateur - %1$s</string>
     <string name="cmd_usage_unban">Utilisation : %1$s &lt;nom d\'utilisateur&gt; - Lève le bannissement d\'un utilisateur.</string>
     <string name="cmd_fail_unban">Échec du débannissement de l\'utilisateur - %1$s</string>
+    <string name="cmd_usage_warn">Utilisation : %1$s &lt;nom d\'utilisateur&gt; &lt;raison&gt; - Avertit un utilisateur. La raison est obligatoire et sera affichée à l\'utilisateur ciblé et aux autres modérateurs.</string>
+    <string name="cmd_fail_warn">Échec de l\'avertissement de l\'utilisateur - %1$s</string>
     <string name="cmd_usage_timeout">Utilisation : %1$s &lt;nom d\'utilisateur&gt; [durée][unité de temps] [raison] - Empêche temporairement un utilisateur de discuter. La durée (facultative, par défaut : 10 minutes) doit être un entier positif ; l\'unité de temps (facultative, par défaut : s) doit être s, m, h, d ou w ; la durée maximale est de 2 semaines. La raison est facultative et sera affichée à l\'utilisateur ciblé et aux autres modérateurs.</string>
     <string name="cmd_timeout_cannot_self">Échec du bannissement - Vous ne pouvez pas vous mettre en timeout vous-même.</string>
     <string name="cmd_timeout_cannot_broadcaster">Échec du bannissement - Vous ne pouvez pas mettre le broadcaster en timeout.</string>
@@ -969,6 +974,7 @@ Le service stocke temporairement les messages pour les chaînes que vous (et les
     <string name="cmd_error_already_banned">%1$s est déjà banni de cette chaîne.</string>
     <string name="cmd_error_cannot_perform">Vous ne pouvez pas %1$s %2$s.</string>
     <string name="cmd_error_conflicting_ban">Il y a eu une opération de bannissement en conflit sur cet utilisateur. Veuillez réessayer.</string>
+    <string name="cmd_error_conflicting_warn">Il y a eu une opération d\'avertissement en conflit sur cet utilisateur. Veuillez réessayer.</string>
     <string name="cmd_error_invalid_color">La couleur doit être l\'une des couleurs prises en charge par Twitch (%1$s) ou un hex code (#000000) si vous avez Turbo ou Prime.</string>
     <string name="cmd_error_commercial_not_streaming">Vous devez être en direct pour lancer des publicités.</string>
     <string name="cmd_error_commercial_rate_limited">Vous devez attendre la fin de votre période de récupération avant de pouvoir lancer une autre publicité.</string>

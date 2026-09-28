@@ -620,6 +620,9 @@
     <string name="message_copy_link">କପି: %s</string>
     <string name="message_more_actions">ଅଧିକ…</string>
     <string name="message_jump_to">ବାର୍ତ୍ତାକୁ ଯାଆନ୍ତୁ</string>
+    <string name="message_warn">ଚେତାବନୀ</string>
+    <string name="message_warn_reason">କାରଣ</string>
+    <string name="message_warn_confirm">ଚେତାବନୀ ଦିଅନ୍ତୁ</string>
     <string name="message_not_in_history">ବାର୍ତ୍ତା ଆଉ ଚାଟ୍ ଇତିହାସରେ ନାହିଁ</string>
     <string name="message_history">ବାର୍ତ୍ତା ଇତିହାସ</string>
     <string name="global_history_title">ଗ୍ଲୋବାଲ ଇତିହାସ</string>
@@ -800,6 +803,8 @@
     <string name="cmd_fail_ban">ୟୁଜରଙ୍କୁ ବ୍ୟାନ କରିବା ବିଫଳ - %1$s</string>
     <string name="cmd_usage_unban">ବ୍ୟବହାର: %1$s &lt;username&gt; - ଏକ ୟୁଜରଙ୍କଠାରୁ ବ୍ୟାନ ହଟାଏ।</string>
     <string name="cmd_fail_unban">ୟୁଜରଙ୍କୁ ଅନବ୍ୟାନ କରିବା ବିଫଳ - %1$s</string>
+    <string name="cmd_usage_warn">ବ୍ୟବହାର: %1$s &lt;username&gt; &lt;କାରଣ&gt; - ଏକ ୟୁଜରଙ୍କୁ ଚେତାବନୀ ଦିଅନ୍ତୁ। କାରଣ ଆବଶ୍ୟକ ଏବଂ ଲକ୍ଷ୍ୟ ୟୁଜର ଓ ଅନ୍ୟ ମୋଡେରେଟରଙ୍କୁ ଦେଖାଯିବ।</string>
+    <string name="cmd_fail_warn">ୟୁଜରଙ୍କୁ ଚେତାବନୀ ଦେବା ବିଫଳ - %1$s</string>
     <string name="cmd_usage_timeout">ବ୍ୟବହାର: %1$s &lt;username&gt; [ସମୟସୀମା][ସମୟ ଏକକ] [କାରଣ] - ଏକ ୟୁଜରଙ୍କୁ ସାମୟିକ ଭାବରେ ଚ୍ୟାଟ୍ କରିବାରୁ ବାରଣ କରନ୍ତୁ। ସମୟସୀମା (ଐଚ୍ଛିକ, ଡିଫଲ୍ଟ: 10 ମିନିଟ୍) ଏକ ଧନାତ୍ମକ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା ହେବା ଉଚିତ; ସମୟ ଏକକ (ଐଚ୍ଛିକ, ଡିଫଲ୍ଟ: s) s, m, h, d, w ମଧ୍ୟରୁ ଗୋଟିଏ ହେବା ଉଚିତ; ସର୍ବାଧିକ ସମୟସୀମା 2 ସପ୍ତାହ। କାରଣ ଐଚ୍ଛିକ ଏବଂ ଲକ୍ଷ୍ୟ ୟୁଜର ଓ ଅନ୍ୟ ମୋଡେରେଟରଙ୍କୁ ଦେଖାଯିବ।</string>
     <string name="cmd_timeout_cannot_self">ୟୁଜରଙ୍କୁ ବ୍ୟାନ କରିବା ବିଫଳ - ଆପଣ ନିଜକୁ ଟାଇମଆଉଟ୍ କରିପାରିବେ ନାହିଁ।</string>
     <string name="cmd_timeout_cannot_broadcaster">ୟୁଜରଙ୍କୁ ବ୍ୟାନ କରିବା ବିଫଳ - ଆପଣ ବ୍ରଡ୍‌କାଷ୍ଟରଙ୍କୁ ଟାଇମଆଉଟ୍ କରିପାରିବେ ନାହିଁ।</string>
@@ -865,6 +870,7 @@
     <string name="cmd_error_already_banned">%1$s ଏହି ଚ୍ୟାନେଲରେ ପୂର୍ବରୁ ବ୍ୟାନ ହୋଇଛନ୍ତି।</string>
     <string name="cmd_error_cannot_perform">ଆପଣ %2$s ଙ୍କୁ %1$s କରିପାରିବେ ନାହିଁ।</string>
     <string name="cmd_error_conflicting_ban">ଏହି ୟୁଜରଙ୍କ ଉପରେ ଏକ ବିରୋଧାତ୍ମକ ବ୍ୟାନ କାର୍ଯ୍ୟ ଥିଲା। ଦୟାକରି ପୁନଃଚେଷ୍ଟା କରନ୍ତୁ।</string>
+    <string name="cmd_error_conflicting_warn">ଏହି ୟୁଜରଙ୍କ ଉପରେ ଏକ ବିରୋଧାତ୍ମକ ଚେତାବନୀ କାର୍ଯ୍ୟ ଥିଲା। ଦୟାକରି ପୁନଃଚେଷ୍ଟା କରନ୍ତୁ।</string>
     <string name="cmd_error_invalid_color">ରଙ୍ଗ Twitch ସମର୍ଥିତ ରଙ୍ଗଗୁଡ଼ିକ ମଧ୍ୟରୁ ଗୋଟିଏ (%1$s) କିମ୍ବା ଯଦି ଆପଣଙ୍କ ପାଖରେ Turbo କିମ୍ବା Prime ଅଛି ତେବେ hex code (#000000) ହେବା ଉଚିତ।</string>
     <string name="cmd_error_commercial_not_streaming">ବିଜ୍ଞାପନ ଚଲାଇବା ପାଇଁ ଆପଣ ଲାଇଭ ଷ୍ଟ୍ରିମିଂ କରୁଥିବା ଆବଶ୍ୟକ।</string>
     <string name="cmd_error_commercial_rate_limited">ଆଉ ଏକ ବିଜ୍ଞାପନ ଚଲାଇବା ପୂର୍ବରୁ ଆପଣଙ୍କ କୁଲ୍-ଡାଉନ୍ ସମୟ ଶେଷ ହେବା ପର୍ଯ୍ୟନ୍ତ ଅପେକ୍ଷା କରନ୍ତୁ।</string>
